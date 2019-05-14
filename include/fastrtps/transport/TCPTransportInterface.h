@@ -19,61 +19,29 @@
 #include <fastrtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/transport/tcp/RTCPHeader.h>
-#include <fastrtps/transport/TCPChannelResource.h>
+#include <fastrtps/transport/TCPChannelResourceBasic.h>
+#include <fastrtps/transport/TCPAcceptorBasic.h>
+#if TLS_FOUND
+#include <fastrtps/transport/TCPAcceptorSecure.h>
+#include <asio/ssl.hpp>
+#endif
+
 
 #include <asio.hpp>
 #include <thread>
 #include <vector>
 #include <map>
+#include <memory>
 #include <mutex>
+#include <fastrtps/utils/eClock.h> // Includes <windows.h> and may produce problems when included before asio.
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
 class RTCPMessageManager;
-class CleanTCPSocketsEvent;
 class TCPChannelResource;
-class TCPTransportInterface;
-
-class TCPAcceptor
-{
-public:
-    asio::ip::tcp::acceptor mAcceptor;
-    Locator_t mLocator;
-    eProsimaTCPSocket mSocket;
-    asio::ip::tcp::endpoint mEndPoint;
-    std::vector<Locator_t> mPendingOutLocators;
-
-    /**
-    * Constructor
-    * @param io_service Reference to the ASIO service.
-    * @param parent Pointer to the transport that is going to manage the acceptor.
-    * @param locator Locator with the information about where to accept connections.
-    */
-    TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const Locator_t& locator);
-
-    /**
-    * Constructor
-    * @param io_service Reference to the ASIO service.
-    * @param sInterface Network interface to bind the socket
-    * @param locator Locator with the information about where to accept connections.
-    */
-    TCPAcceptor(asio::io_service& io_service, const std::string& sInterface, const Locator_t& locator);
-
-    /**
-    * Destructor
-    */
-    ~TCPAcceptor()
-    {
-        try { asio::error_code ec; mSocket.cancel(ec); }
-        catch (...) {}
-        mSocket.close();
-    }
-
-    //! Method to start the accepting process.
-    void Accept(TCPTransportInterface* parent, asio::io_service&);
-};
+class TCPKeepAliveEvent;
 
 /**
  * This is a default TCP Interface implementation.
@@ -91,33 +59,154 @@ public:
  */
 class TCPTransportInterface : public TransportInterface
 {
+    class ReceiverInUseCV
+    {
+        public:
+
+            bool in_use = false;
+
+            std::condition_variable cv;
+    };
+
+    std::atomic<bool> alive_;
+
+protected:
+
+    std::vector<IPFinder::info_IP> current_interfaces_;
+    asio::io_service io_service_;
+    asio::io_service io_service_timers_;
+#if TLS_FOUND
+    asio::ssl::context ssl_context_;
+#endif
+    std::shared_ptr<std::thread> io_service_thread_;
+    std::shared_ptr<std::thread> io_service_timers_thread_;
+    std::shared_ptr<RTCPMessageManager> rtcp_message_manager_;
+    std::mutex rtcp_message_manager_mutex_;
+    std::condition_variable rtcp_message_manager_cv_;
+    mutable std::mutex sockets_map_mutex_;
+    mutable std::mutex unbound_map_mutex_;
+
+    std::map<Locator_t, std::shared_ptr<TCPChannelResource>> channel_resources_; // The key is the "Physical locator"
+    std::vector<std::shared_ptr<TCPChannelResource>> unbound_channel_resources_;
+    // The key is the logical port
+    std::map<uint16_t, std::pair<TransportReceiverInterface*, ReceiverInUseCV*>> receiver_resources_;
+
+    std::vector<std::pair<TCPChannelResource*, uint64_t>> sockets_timestamp_;
+    eClock my_clock_;
+
+    TCPKeepAliveEvent* keep_alive_event_;
+
+    std::map<Locator_t, std::shared_ptr<TCPAcceptor>> acceptors_;
+
+    TCPTransportInterface(int32_t transport_kind);
+
+    virtual bool compare_locator_ip(
+        const Locator_t& lh,
+        const Locator_t& rh) const = 0;
+
+    virtual bool compare_locator_ip_and_port(
+        const Locator_t& lh,
+        const Locator_t& rh) const = 0;
+
+    virtual void fill_local_ip(Locator_t& loc) const = 0;
+
+    //! Methods to manage the TCP headers and their CRC values.
+    bool check_crc(
+        const TCPHeader &header,
+        const octet *data,
+        uint32_t size) const;
+
+    void calculate_crc(
+        TCPHeader &header,
+        const octet *data,
+        uint32_t size) const;
+
+    void fill_rtcp_header(
+        TCPHeader& header,
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        uint16_t logical_port) const;
+
+    //! Closes the given p_channel_resource and unbind it from every resource.
+    void close_tcp_socket(std::shared_ptr<TCPChannelResource>& channel);
+
+    //! Creates a TCP acceptor to wait for incomming connections by the given locator.
+    bool create_acceptor_socket(const Locator_t& locator);
+
+    virtual void get_ips(
+        std::vector<IPFinder::info_IP>& loc_names,
+        bool return_loopback = false) const = 0;
+
+    bool is_input_port_open(uint16_t port) const;
+
+    //! Functions to be called from new threads, which takes cares of performing a blocking receive
+    void perform_listen_operation(
+            std::weak_ptr<TCPChannelResource> channel,
+            std::weak_ptr<RTCPMessageManager> rtcp_manager);
+
+    bool read_body(
+        octet* receive_buffer,
+        uint32_t receive_buffer_capacity,
+        uint32_t* bytes_received,
+        std::shared_ptr<TCPChannelResource>& channel,
+        std::size_t body_size);
+
+    virtual void set_receive_buffer_size(uint32_t size) = 0;
+    virtual void set_send_buffer_size(uint32_t size) = 0;
+
+    void clean(); // Must be called on childs destructors!
+
+    virtual void endpoint_to_locator(
+        const asio::ip::tcp::endpoint& endpoint,
+        Locator_t& locator) const = 0;
+
+    /**
+     * Shutdown method to close the connections of the transports.
+    */
+    virtual void shutdown() override;
+
+    /**
+     * Applies TLS configuration to ssl_context
+     */
+    void apply_tls_config();
+
+    /**
+     * Aux method to retrieve cert password as a callback
+     */
+    std::string get_password() const;
+
 public:
     friend class RTCPMessageManager;
-    friend class test_RTCPMessageManager;
-    friend class CleanTCPSocketsEvent;
 
     virtual ~TCPTransportInterface();
 
-    //! Stores the binding between the given locator and the given TCP socket.
-    TCPChannelResource* BindSocket(const Locator_t&, TCPChannelResource*);
+    //! Stores the binding between the given locator and the given TCP socket. Server side.
+    void bind_socket(std::shared_ptr<TCPChannelResource>&);
 
     //! Removes the listening socket for the specified port.
     virtual bool CloseInputChannel(const Locator_t&) override;
 
     //! Removes all outbound sockets on the given port.
-    virtual bool CloseOutputChannel(const Locator_t&) override;
+    void CloseOutputChannel(std::shared_ptr<TCPChannelResource>& channel);
 
     //! Reports whether Locators correspond to the same port.
-    virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
-    virtual bool DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
+    virtual bool DoInputLocatorsMatch(
+        const Locator_t&,
+        const Locator_t&) const override;
 
-    virtual asio::ip::tcp::endpoint GenerateEndpoint(uint16_t port) const = 0;
-    virtual asio::ip::tcp::endpoint GenerateEndpoint(const Locator_t& loc, uint16_t port) const = 0;
-    virtual asio::ip::tcp::endpoint GenerateLocalEndpoint(Locator_t& loc, uint16_t port) const = 0;
-    virtual asio::ip::tcp GenerateProtocol() const = 0;
+    virtual asio::ip::tcp::endpoint generate_endpoint(uint16_t port) const = 0;
 
+    virtual asio::ip::tcp::endpoint generate_endpoint(
+        const Locator_t& loc,
+        uint16_t port) const = 0;
 
-    virtual asio::ip::tcp GetProtocolType() const = 0;
+    virtual asio::ip::tcp::endpoint generate_local_endpoint(
+        Locator_t& loc,
+        uint16_t port) const = 0;
+
+    virtual asio::ip::tcp generate_protocol() const = 0;
+
+    virtual asio::ip::tcp get_protocol_type() const = 0;
 
     virtual uint16_t GetLogicalPortIncrement() const  = 0;
 
@@ -131,38 +220,34 @@ public:
     virtual bool IsInputChannelOpen(const Locator_t&) const override;
 
     //! Checks if the interfaces white list is empty.
-    virtual bool IsInterfaceWhiteListEmpty() const = 0;
+    virtual bool is_interface_whitelist_empty() const = 0;
 
     /**
     * Checks if the given locator is allowed by the white list.
     * @param loc locator to check.
     * @return True if the locator passes the white list.
     */
-    virtual bool IsInterfaceAllowed(const Locator_t& loc) const = 0;
+    virtual bool is_interface_allowed(const Locator_t& loc) const = 0;
+
+    virtual bool is_interface_allowed(const std::string& interface) const = 0;
 
     //! Checks for TCP kinds.
     virtual bool IsLocatorSupported(const Locator_t&) const override;
-    virtual bool IsInterfaceAllowed(const std::string& interface) const = 0;
-
-    //! Checks if the channel is bound to the given sender resource.
-    bool IsOutputChannelBound(const Locator_t&) const;
-
-    //! Checks if the channel is connected or the locator is bound to an input channel.
-    bool IsOutputChannelConnected(const Locator_t&) const;
 
     //! Checks whether there are open and bound sockets for the given port.
-    virtual bool IsOutputChannelOpen(const Locator_t&) const override;
-
-    //! Opens an additional output socket on the given address and port.
-    virtual bool OpenExtraOutputChannel(const Locator_t&) override;
+    bool is_output_channel_open_for(const Locator_t&) const ;
 
     /** Opens an input channel to receive incomming connections.
     *   If there is an existing channel it registers the receiver resource.
     */
-    virtual bool OpenInputChannel(const Locator_t&, TransportReceiverInterface*, uint32_t) override;
+    virtual bool OpenInputChannel(
+        const Locator_t&,
+        TransportReceiverInterface*, uint32_t) override;
 
     //! Opens a socket on the given address and port (as long as they are white listed).
-    virtual bool OpenOutputChannel(const Locator_t&) override;
+    virtual bool OpenOutputChannel(
+            SendResourceList& send_resource_list,
+            const Locator_t&) override;
 
     /**
     * Converts a given remote locator (that is, a locator referring to a remote
@@ -173,177 +258,100 @@ public:
 
     /**
     * Blocking Receive from the specified channel.
-    * @param pChannelResource pointer to the socket where the method is going to read the messages.
-    * @param receiveBuffer vector with enough capacity (not size) to accomodate a full receive buffer. That
-    * capacity must not be less than the receiveBufferSize supplied to this class during construction.
-    * @param receiveBufferCapacity maximum size of the buffer.
-    * @param[out] receiveBufferSize Size of the packet received.
-    * @param[out] remoteLocator associated remote locator.
+    * @param rtcp_manager pointer to the RTCP Manager.
+    * @param channel pointer to the socket where the method is going to read the messages.
+    * @param receive_buffer vector with enough capacity (not size) to accomodate a full receive buffer. That
+    * capacity must not be less than the receive_buffer_size supplied to this class during construction.
+    * @param receive_buffer_capacity maximum size of the buffer.
+    * @param[out] receive_buffer_size Size of the packet received.
+    * @param[out] remote_locator associated remote locator.
     */
-    bool Receive(TCPChannelResource* pChannelResource, octet* receiveBuffer, uint32_t receiveBufferCapacity,
-        uint32_t& receiveBufferSize, Locator_t& remoteLocator);
+    bool Receive(
+        std::weak_ptr<RTCPMessageManager>& rtcp_manager,
+        std::shared_ptr<TCPChannelResource>& channel,
+        octet* receive_buffer,
+        uint32_t receive_buffer_capacity,
+        uint32_t& receive_buffer_size,
+        Locator_t& remote_locator);
 
     /**
     * Blocking Send through the specified channel.
-    * @param sendBuffer Slice into the raw data to send.
-    * @param sendBufferSize Size of the raw data. It will be used as a bounds check for the previous argument.
-    * It must not exceed the sendBufferSize fed to this class during construction.
-    * @param localLocator Locator mapping to the channel we're sending from.
-    * @param remoteLocator Locator describing the remote destination we're sending to.
+    * @param send_buffer Slice into the raw data to send.
+    * @param send_buffer_size Size of the raw data. It will be used as a bounds check for the previous argument.
+    * It must not exceed the send_buffer_size fed to this class during construction.
+    * @param channel channel we're sending from.
+    * @param remote_locator Locator describing the remote destination we're sending to.
     */
-    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
-        const Locator_t& remoteLocator) override;
-
-    /**
-    * Blocking Send through the specified channel.
-    * @param sendBuffer Slice into the raw data to send.
-    * @param sendBufferSize Size of the raw data. It will be used as a bounds check for the previous argument.
-    * It must not exceed the sendBufferSize fed to this class during construction.
-    * @param localLocator Locator mapping to the channel we're sending from.
-    * @param remoteLocator Locator describing the remote destination we're sending to.
-    * @param pChannelResource Pointer to the socket to send the message.
-    */
-    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
-        const Locator_t& remoteLocator, ChannelResource* pChannelResource) override;
+    bool send(
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        std::shared_ptr<TCPChannelResource>& channel,
+        const Locator_t& remote_locator);
 
     virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
 
     //! Callback called each time that an incomming connection is accepted.
-    void SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error);
+    void SocketAccepted(
+            std::shared_ptr<asio::ip::tcp::socket> socket,
+            const Locator_t& locator,
+            const asio::error_code& error);
+
+#if TLS_FOUND
+    //! Callback called each time that an incomming connection is accepted (secure).
+    void SecureSocketAccepted(
+            std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
+            const Locator_t& locator,
+            const asio::error_code& error);
+#endif
 
     //! Callback called each time that an outgoing connection is established.
-    void SocketConnected(Locator_t locator, const asio::error_code& error);
-
-    //! Unbind the given socket from every registered locator.
-    void UnbindSocket(TCPChannelResource*);
+    void SocketConnected(
+            const std::weak_ptr<TCPChannelResource>& channel,
+            const asio::error_code& error);
 
     /**
-    * Method to get a list of interfaces to bind the socket associated to the given locator.
-    * @param locator Input locator.
+    * Method to get a list of binding interfaces.
     * @return Vector of interfaces in string format.
     */
-    virtual std::vector<std::string> GetBindingInterfacesList() = 0;
+    virtual std::vector<std::string> get_binding_interfaces_list() = 0;
 
-    virtual bool getDefaultMetatrafficMulticastLocators(LocatorList_t &locators,
+    virtual bool getDefaultMetatrafficMulticastLocators(
+        LocatorList_t &locators,
         uint32_t metatraffic_multicast_port) const override;
 
-    virtual bool getDefaultMetatrafficUnicastLocators(LocatorList_t &locators,
+    virtual bool getDefaultMetatrafficUnicastLocators(
+        LocatorList_t &locators,
         uint32_t metatraffic_unicast_port) const override;
 
-    bool getDefaultUnicastLocators(LocatorList_t &locators, uint32_t unicast_port) const override;
+    bool getDefaultUnicastLocators(
+        LocatorList_t &locators,
+        uint32_t unicast_port) const override;
 
-    virtual bool fillMetatrafficMulticastLocator(Locator_t &locator,
+    virtual bool fillMetatrafficMulticastLocator(
+        Locator_t &locator,
         uint32_t metatraffic_multicast_port) const override;
 
-    virtual bool fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const override;
+    virtual bool fillMetatrafficUnicastLocator(
+        Locator_t &locator,
+        uint32_t metatraffic_unicast_port) const override;
 
-    virtual bool configureInitialPeerLocator(Locator_t &locator, const PortParameters &port_params, uint32_t domainId,
+    virtual bool configureInitialPeerLocator(
+        Locator_t &locator,
+        const PortParameters &port_params,
+        uint32_t domainId,
         LocatorList_t& list) const override;
 
-    virtual bool fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const override;
+    virtual bool fillUnicastLocator(
+        Locator_t &locator,
+        uint32_t well_known_port) const override;
 
     void DeleteSocket(TCPChannelResource *channelResource);
 
-private:
+    virtual const TCPTransportDescriptor* configuration() const = 0;
 
-    class ReceiverInUseCV
-    {
-        public:
+    virtual TCPTransportDescriptor* configuration() = 0;
 
-            bool in_use = false;
-
-            std::condition_variable cv;
-    };
-
-protected:
-
-    std::vector<IPFinder::info_IP> mCurrentInterfaces;
-    int32_t mTransportKind;
-    asio::io_service mService;
-    std::shared_ptr<std::thread> ioServiceThread;
-    RTCPMessageManager* mRTCPMessageManager;
-    mutable std::mutex mSocketsMapMutex;
-    std::atomic<bool> mSendRetryActive;
-
-    std::map<uint16_t, std::vector<TCPAcceptor*>> mSocketAcceptors; // The Key is the "Physical Port"
-    std::vector<TCPAcceptor*> mDeletedAcceptors;
-    std::map<Locator_t, TCPChannelResource*> mChannelResources; // The key is the "Physical locator"
-    std::vector<TCPChannelResource*> mUnboundChannelResources; // Needed to avoid memory leaks if client doesn't bound
-    // The key is the logical port
-    std::map<uint16_t, std::pair<TransportReceiverInterface*, ReceiverInUseCV*>> mReceiverResources;
-
-    std::vector<TCPChannelResource*> mDeletedSocketsPool;
-    std::recursive_mutex mDeletedSocketsPoolMutex;
-    CleanTCPSocketsEvent* mCleanSocketsPoolTimer;
-
-    std::map<Locator_t, std::vector<SenderResource*>> mPendingOutputPorts;
-
-    TCPTransportInterface();
-
-    virtual bool CompareLocatorIP(const Locator_t& lh, const Locator_t& rh) const = 0;
-    virtual bool CompareLocatorIPAndPort(const Locator_t& lh, const Locator_t& rh) const = 0;
-
-    virtual void FillLocalIp(Locator_t& loc) const = 0;
-
-    //! Methods to manage the TCP headers and their CRC values.
-    bool CheckCRC(const TCPHeader &header, const octet *data, uint32_t size) const;
-    void CalculateCRC(TCPHeader &header, const octet *data, uint32_t size) const;
-    void FillTCPHeader(TCPHeader& header, const octet* sendBuffer, uint32_t sendBufferSize, uint16_t logicalPort) const;
-
-    //! Cleans the sockets pending to delete.
-    void CleanDeletedSockets();
-
-    //! Closes the given pChannelResource and unbind it from every resource.
-    void CloseTCPSocket(TCPChannelResource* pChannelResource);
-
-    //! Creates a TCP acceptor to wait for incomming connections by the given locator.
-    bool CreateAcceptorSocket(const Locator_t& locator);
-
-    //! Method to create a TCP connector to establish a socket with the given locator.
-    void CreateConnectorSocket(const Locator_t& locator, SenderResource *senderResource,
-        std::vector<Locator_t>& pendingLocators, uint32_t msgSize);
-
-    //! Adds the logical port of the given locator to send an Open Logical Port request.
-    bool EnqueueLogicalOutputPort(const Locator_t& locator);
-
-    virtual const TCPTransportDescriptor* GetConfiguration() const = 0;
-    virtual TCPTransportDescriptor* GetConfiguration() = 0;
-
-    virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) const = 0;
-
-    //! Checks if the socket of the given locator has been opened as an input socket.
-    bool IsTCPInputSocket(const Locator_t& locator) const;
-
-    bool IsInputPortOpen(uint16_t port) const;
-
-    //! Intermediate method to open an output socket.
-    bool OpenOutputSockets(const Locator_t& locator, SenderResource *senderResource);
-
-    //! Functions to be called from new threads, which takes cares of performing a blocking receive
-    void performListenOperation(TCPChannelResource* pChannelResource);
-    void performRTPCManagementThread(TCPChannelResource* pChannelResource);
-
-    bool ReadBody(octet* receiveBuffer, uint32_t receiveBufferCapacity, uint32_t* bytes_received,
-        TCPChannelResource* pChannelResource, std::size_t body_size);
-
-    size_t Send(TCPChannelResource* pChannelResource, const octet* data, size_t size, eSocketErrorCodes &error) const;
-    size_t Send(TCPChannelResource* pChannelResource, const octet* data, size_t size) const;
-
-    //! Sends the given buffer by the given socket.
-    bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
-        TCPChannelResource* socket);
-
-    virtual void SetReceiveBufferSize(uint32_t size) = 0;
-    virtual void SetSendBufferSize(uint32_t size) = 0;
-
-    void Clean(); // Must be called on childs destructors!
-
-    virtual void EndpointToLocator(const asio::ip::tcp::endpoint& endpoint, Locator_t& locator) const = 0;
-
-    /**
-     * Shutdown method to close the connections of the transports.
-    */
-    virtual void Shutdown() override;
+    void keep_alive();
 };
 
 } // namespace rtps

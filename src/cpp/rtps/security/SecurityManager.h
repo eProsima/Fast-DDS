@@ -301,7 +301,9 @@ class SecurityManager
 
                 ~ParticipantStatelessMessageListener(){};
 
-                void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change);
+                void onNewCacheChangeAdded(
+                        RTPSReader* reader,
+                        const CacheChange_t* const change) override;
 
             private:
 
@@ -317,7 +319,9 @@ class SecurityManager
 
                 ~ParticipantVolatileMessageListener(){};
 
-                void onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change);
+                void onNewCacheChangeAdded(
+                        RTPSReader* reader,
+                        const CacheChange_t* const change) override;
 
             private:
 

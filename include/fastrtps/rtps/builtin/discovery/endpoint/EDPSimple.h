@@ -102,12 +102,14 @@ class EDPSimple : public EDP
 
     /**
      * This method generates the corresponding change in the subscription writer and send it to all known remote endpoints.
+     * @param reader Pointer to the Reader object.
      * @param rdata Pointer to the ReaderProxyData object.
      * @return true if correct.
      */
     bool processLocalReaderProxyData(RTPSReader* reader, ReaderProxyData* rdata) override;
     /**
      * This method generates the corresponding change in the publciations writer and send it to all known remote endpoints.
+     * @param writer Pointer to the Writer object.
      * @param wdata Pointer to the WriterProxyData object.
      * @return true if correct.
      */

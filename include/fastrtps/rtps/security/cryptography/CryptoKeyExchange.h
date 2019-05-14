@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*!
- * @file Authentication.h	
+ * @file Authentication.h
  */
 #ifndef _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOKEYEXCHANGE_H_
 #define _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOKEYEXCHANGE_H_
@@ -31,7 +31,7 @@ class CryptoKeyExchange
 
     virtual ~CryptoKeyExchange(){}
     /**
-     * Creates Crypto Tokens containing the info to decrypt text encoded by the local Participant. 
+     * Creates Crypto Tokens containing the info to decrypt text encoded by the local Participant.
      * To be sent to the remote participant.
      * @param local_participant_crypto_tokens (out) Returned CryptoTokenSeq.
      * @param local_participant_crypto CryptoHandle returned by a previous call to register_local_participant.
@@ -50,7 +50,7 @@ class CryptoKeyExchange
      * @param local_participant_crypto CryptoHandle returned by a previous call to register_local_participant.
      * @param remote_participant_crypto CryptoHandle returned by a previous call to register_matched_remote_participant.
      * @param remote_participant_tokens CryptoToken sequence received from the remote Participant
-     * @param exception (out) Security exception 
+     * @param exception (out) Security exception
      * @return TRUE if successful
      */
     virtual bool set_remote_participant_crypto_tokens(
@@ -63,7 +63,7 @@ class CryptoKeyExchange
      * Creates CryptoTokens containing the info to decrypt text encoded by the local DataWriter.
      * @param local_datawriter_crypto_tokens (out) Returned CryptoSeq
      * @param local_datawriter_crypto CryptoHandle returned by a previous call to register_local_datawriter.
-     * @param remote_datawriter_crypto CryptoHandle returned by a previous call to register_matched_remote_datareader
+     * @param remote_datareader_crypto CryptoHandle returned by a previous call to register_matched_remote_datareader
      * @param exception (out) Security exception
      * @return TRUE if successful
      */

@@ -102,9 +102,10 @@ class Authentication
          * @brief This operation is used to initiate a handshake.
          * @param handshake_handle (out) A handle returned by the Authentication plugin used to keep the state of the
          * handshake.
-         * @param handshake_message_token (out) A HandshakeMessageToken to be sent using the BuiltinParticipantMessageWriter.
+         * @param handshake_message (out) A HandshakeMessageToken to be sent using the BuiltinParticipantMessageWriter.
          * @param initiator_identity_handle Handle to the local participant that originated the handshake.
          * @param replier_identity_handle Handle to the remote participant whose identity is being validated.
+         * @param cdr_participant_data Participant's data.
          * @param exception (out) A SecurityException object.
          * @result Validation status.
          */
@@ -126,10 +127,12 @@ class Authentication
          * BuiltinParticipantMessageReader.
          * @param initiator_identity_handle Handle to the remote participant that originated the handshake.
          * @param replier_identity_handle Handle to the local participant that is initiaing the handshake.
-         * @param exception (out) A SecurityException object.
+         * @param cdr_participant_data Participant's CDRMessage.
+         * @param exception A SecurityException object.
          * @result Validation status.
          */
-        virtual ValidationResult_t begin_handshake_reply(HandshakeHandle** handshake_handle,
+        virtual ValidationResult_t begin_handshake_reply(
+                HandshakeHandle** handshake_handle,
                 HandshakeMessageToken** handshake_message_out,
                 HandshakeMessageToken&& handshake_message_in,
                 IdentityHandle& initiator_identity_handle,
@@ -139,16 +142,17 @@ class Authentication
 
         /*!
          * @brief This operation is used to continue a handshake.
-         * @handshake_message_out (out) A HandshakeMessageToken containing the message_data that should be place in a
-         * ParticipantStatelessMessage to be sent using the BuiltinParticipantMessageWriter.
+         * @param handshake_message_out (out) A HandshakeMessageToken containing the message_data that should be
+         * place in a ParticipantStatelessMessage to be sent using the BuiltinParticipantMessageWriter.
          * @param handshake_message_in The HandshakeMessageToken contained in the message_data attribute of the
          * ParticipantStatelessMessage received.
          * @param handshake_handle Handle returned by a correspoing previous call to begin_handshake_request or
          * begin_handshake_reply.
-         * @exception (out) A SecurityException object.
+         * @param exception A SecurityException object.
          * @return Validation status.
          */
-        virtual ValidationResult_t process_handshake(HandshakeMessageToken** handshake_message_out,
+        virtual ValidationResult_t process_handshake(
+                HandshakeMessageToken** handshake_message_out,
                 HandshakeMessageToken&& handshake_message_in,
                 HandshakeHandle& handshake_handle,
                 SecurityException& exception) = 0;
@@ -157,10 +161,11 @@ class Authentication
          * @brief Retrieve the SharedSecretHandle resulting with a successfully completed handshake.
          * @param handshake_handle Handle returned bu a corresponding previous call to begin_handshake_request or
          * begin_handshake_reply, which has successfully complete the handshake operations.
-         * @exception (out) A SecurityException object.
+         * @param exception SecurityException object
          * @return SharedSecretHandle.
          */
-        virtual SharedSecretHandle* get_shared_secret(const HandshakeHandle& handshake_handle,
+        virtual SharedSecretHandle* get_shared_secret(
+                const HandshakeHandle& handshake_handle,
                 SecurityException& exception) = 0;
 
         /*!

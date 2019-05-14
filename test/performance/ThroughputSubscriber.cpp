@@ -33,6 +33,7 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::types;
 
 #include <vector>
 
@@ -87,11 +88,11 @@ void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscri
         {
             if (info.sampleKind == ALIVE)
             {
-                if ((lastseqnum + 1) < m_up.m_DynData->GetUint32Value(0))
+                if ((lastseqnum + 1) < m_up.m_DynData->get_uint32_value(0))
                 {
-                    lostsamples += m_up.m_DynData->GetUint32Value(0) - lastseqnum - 1;
+                    lostsamples += m_up.m_DynData->get_uint32_value(0) - lastseqnum - 1;
                 }
-                lastseqnum = m_up.m_DynData->GetUint32Value(0);
+                lastseqnum = m_up.m_DynData->get_uint32_value(0);
             }
             else
             {
@@ -158,13 +159,17 @@ void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber*
     m_up.disc_cond_.notify_one();
 }
 
-void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subscriber)
+void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber*)
+{
+}
+
+void ThroughputSubscriber::processMessage()
 {
     //cout << "Command Received: ";
-    if (subscriber->takeNextData((void*)&m_commandin, &info))
+    if (mp_commandsub->takeNextData((void*)&m_CommandSubListener.m_commandin, &m_CommandSubListener.info))
     {
-        //cout << "RECEIVED COMMAND: "<< m_commandin.m_command << endl;
-        switch (m_commandin.m_command)
+        //cout << "RECEIVED COMMAND: "<< m_CommandSubListener.m_commandin.m_command << endl;
+        switch (m_CommandSubListener.m_commandin.m_command)
         {
             default: break;
             case (DEFAULT): break;
@@ -175,99 +180,105 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
             case (READY_TO_START):
             {
                 std::cout << "Command: READY_TO_START" << std::endl;
-                m_up.m_datasize = m_commandin.m_size;
-                m_up.m_demand = m_commandin.m_demand;
+                m_datasize = m_CommandSubListener.m_commandin.m_size;
+                m_demand = m_CommandSubListener.m_commandin.m_demand;
                 //cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
-                if (m_up.dynamic_data)
+                if (dynamic_data)
                 {
                     // Create basic builders
                     DynamicTypeBuilder_ptr struct_type_builder(
-                        DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+                        DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
 
                     // Add members to the struct.
-                    struct_type_builder->AddMember(0, "seqnum",
-                        DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
-                    struct_type_builder->AddMember(1, "data",
-                        DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
-                            DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), m_up.m_datasize
+                    struct_type_builder->add_member(0, "seqnum",
+                        DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
+                    struct_type_builder->add_member(1, "data",
+                        DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                            DynamicTypeBuilderFactory::get_instance()->create_byte_type(), m_datasize
                         ));
-                    struct_type_builder->SetName("ThroughputType");
+                    struct_type_builder->set_name("ThroughputType");
 
-                    m_up.m_pDynType = struct_type_builder->Build();
-                    m_up.m_DynType.CleanDynamicType();
-                    m_up.m_DynType.SetDynamicType(m_up.m_pDynType);
+                    m_pDynType = struct_type_builder->build();
+                    m_DynType.CleanDynamicType();
+                    m_DynType.SetDynamicType(m_pDynType);
 
-                    Domain::registerType(m_up.mp_par, &m_up.m_DynType);
+                    Domain::registerType(mp_par, &m_DynType);
 
-                    m_up.mp_datasub = Domain::createSubscriber(m_up.mp_par, m_up.subAttr, &m_up.m_DataSubListener);
-
-                    m_up.m_DynData = DynamicDataFactory::GetInstance()->CreateData(m_up.m_pDynType);
+                    m_DynData = DynamicDataFactory::get_instance()->create_data(m_pDynType);
                 }
                 else
                 {
-                    delete(m_up.throughputin);
-                    //m_up.throughputin = nullptr;
-                    m_up.throughputin = new ThroughputType((uint16_t)m_up.m_datasize);
+                    delete(throughput_t);
+                    delete(throughputin);
+                    //throughputin = nullptr;
+                    throughput_t = new ThroughputDataType(m_datasize);
+
+                    Domain::registerType(mp_par, throughput_t);
+
+                    throughputin = new ThroughputType((uint16_t)m_datasize);
                 }
 
-                std::cout << "Waiting for data discovery" << std::endl;
-                std::unique_lock<std::mutex> data_disc_lock(m_up.dataMutex_);
-                m_up.data_disc_cond_.wait(data_disc_lock, [&]()
-                {
-                    return m_up.data_disc_count_ > 0;
-                });
-                data_disc_lock.unlock();
-                std::cout << "Discovery data complete" << std::endl;
+                mp_datasub = Domain::createSubscriber(mp_par, subAttr, &m_DataSubListener);
 
                 ThroughputCommandType command(BEGIN);
                 eClock::my_sleep(50);
-                m_up.m_DataSubListener.reset();
+                m_DataSubListener.reset();
                 //cout << "SEND COMMAND: "<< command.m_command << endl;
                 //cout << "writecall "<< ++writecalls << endl;
-                m_up.mp_commandpubli->write(&command);
+                mp_commandpubli->write(&command);
+
+                std::cout << "Waiting for data discovery" << std::endl;
+                std::unique_lock<std::mutex> data_disc_lock(dataMutex_);
+                data_disc_cond_.wait(data_disc_lock, [&]()
+                {
+                    return data_disc_count_ > 0;
+                });
+                data_disc_lock.unlock();
+                std::cout << "Discovery data complete" << std::endl;
                 break;
             }
             case (TEST_STARTS):
             {
-                m_up.t_start_ = std::chrono::steady_clock::now();
+                t_start_ = std::chrono::steady_clock::now();
                 std::cout << "Command: TEST_STARTS" << std::endl;
                 break;
             }
             case (TEST_ENDS):
             {
-                m_up.t_end_ = std::chrono::steady_clock::now();
-                m_up.m_DataSubListener.saveNumbers();
+                t_end_ = std::chrono::steady_clock::now();
+                m_DataSubListener.saveNumbers();
                 std::cout << "Command: TEST_ENDS" << std::endl;
-                std::unique_lock<std::mutex> lock(m_up.mutex_);
-                m_up.stop_count_ = 1;
+                std::unique_lock<std::mutex> lock(mutex_);
+                stop_count_ = 1;
                 lock.unlock();
-                if (m_up.dynamic_data)
+                if (dynamic_data)
                 {
-                    DynamicTypeBuilderFactory::DeleteInstance();
-                    DynamicDataFactory::GetInstance()->DeleteData(m_up.m_DynData);
-                    m_up.subAttr = m_up.mp_datasub->getAttributes();
+                    DynamicTypeBuilderFactory::delete_instance();
+                    DynamicDataFactory::get_instance()->delete_data(m_DynData);
                 }
                 else
                 {
-                    //delete(m_up.throughputin);
-                    //m_up.throughputin = nullptr;
+                    //delete throughput_t;
+                    //throughput_t = nullptr;
+                    delete(throughputin);
+                    throughputin = nullptr;
                 }
-                m_up.stop_cond_.notify_one();
+                subAttr = mp_datasub->getAttributes();
                 break;
             }
             case (ALL_STOPS):
             {
-                std::unique_lock<std::mutex> lock(m_up.mutex_);
-                m_up.stop_count_ = 2;
+                std::unique_lock<std::mutex> lock(mutex_);
+                stop_count_ = 2;
                 lock.unlock();
-                m_up.stop_cond_.notify_one();
                 std::cout << "Command: ALL_STOPS" << std::endl;
             }
         }
     }
     else
     {
-        std::cout << "Error reading command" << std::endl;
+        //std::cout << "Error reading command" << std::endl;
+        eClock::my_sleep(5);
     }
 }
 
@@ -319,17 +330,17 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     if (dynamic_data) // Dummy type registration
     {
         // Create basic builders
-        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
 
         // Add members to the struct.
-        struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
-        struct_type_builder->AddMember(1, "data",
-            DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
-                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), LENGTH_UNLIMITED
+        struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
+        struct_type_builder->add_member(1, "data",
+            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), LENGTH_UNLIMITED
             ));
-        struct_type_builder->SetName("ThroughputType");
+        struct_type_builder->set_name("ThroughputType");
 
-        m_pDynType = struct_type_builder->Build();
+        m_pDynType = struct_type_builder->build();
         m_DynType.SetDynamicType(m_pDynType);
     }
 
@@ -377,15 +388,8 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
         return;
     }
 
-    //REGISTER THE TYPES
-    if (dynamic_data)
-    {
-        Domain::registerType(mp_par, &m_DynType);
-    }
-    else
-    {
-        Domain::registerType(mp_par, (TopicDataType*)&throughput_t);
-    }
+    //REGISTER THE COMMAND TYPE
+    throughput_t = nullptr;
     Domain::registerType(mp_par, (TopicDataType*)&throuputcommand_t);
 
     std::string profile_name = "subscriber_profile";
@@ -403,7 +407,7 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     if (reliable)
     {
         //RELIABLE
-        Sparam.times.heartbeatResponseDelay = TimeConv::MilliSeconds2Time_t(0);
+        Sparam.times.heartbeatResponseDelay = TimeConv::MilliSeconds2Time_t(0).to_duration_t();
         Sparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     }
     else
@@ -415,12 +419,17 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
 
     if (m_sXMLConfigFile.length() > 0)
     {
-        mp_datasub = Domain::createSubscriber(mp_par, profile_name, &this->m_DataSubListener);
+        if (xmlparser::XMLP_ret::XML_ERROR
+                == xmlparser::XMLProfileManager::fillSubscriberAttributes(profile_name, subAttr))
+        {
+            std::cout << "Cannot read subscriber profile " << profile_name << std::endl;
+        }
     }
     else
     {
-        mp_datasub = Domain::createSubscriber(mp_par, Sparam, (SubscriberListener*)&this->m_DataSubListener);
+        subAttr = Sparam;
     }
+    mp_datasub = nullptr;
 
     //COMMAND
     PublisherAttributes Wparam;
@@ -468,20 +477,12 @@ ThroughputSubscriber::ThroughputSubscriber(bool reliable, uint32_t pid, bool hos
     t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
     std::cout << "Overhead " << t_overhead_.count() << std::endl;
 
-    if (mp_datasub == nullptr || mp_commandsub == nullptr || mp_commandpubli == nullptr)
+    if (mp_commandsub == nullptr || mp_commandpubli == nullptr)
     {
         ready = false;
     }
 
     eClock::my_sleep(1000);
-
-    if (dynamic_data)
-    {
-        DynamicTypeBuilderFactory::DeleteInstance();
-        subAttr = mp_datasub->getAttributes();
-        Domain::removeSubscriber(mp_datasub);
-        Domain::unregisterType(mp_par, "ThroughputType"); // Unregister as we will register it later with correct size
-    }
 }
 
 void ThroughputSubscriber::run()
@@ -491,15 +492,18 @@ void ThroughputSubscriber::run()
         return;
     }
     std::cout << "Waiting for command discovery" << std::endl;
-    std::unique_lock<std::mutex> lock(mutex_);
-    disc_cond_.wait(lock, [&](){
-        return disc_count_ >= 2;
-    });
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        disc_cond_.wait(lock, [&](){
+            return disc_count_ >= 2;
+        });
+    }
     std::cout << "Discovery command complete" << std::endl;
 
-    while (stop_count_ != 2)
+    do
     {
-        stop_cond_.wait(lock);
+        processMessage();
+
         if (stop_count_ == 1)
         {
             std::cout << "Waiting clean state" << std::endl;
@@ -515,7 +519,9 @@ void ThroughputSubscriber::run()
             comm.m_lastrecsample = m_DataSubListener.saved_lastseqnum;
             comm.m_lostsamples = m_DataSubListener.saved_lostsamples;
 
-            auto total_time_count = (std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count();
+            auto total_time_count =
+                (std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count();
+
             if (total_time_count < std::numeric_limits<uint64_t>::min())
             {
                 comm.m_totaltime = std::numeric_limits<uint64_t>::min();
@@ -538,12 +544,18 @@ void ThroughputSubscriber::run()
             mp_commandpubli->write(&comm);
 
             stop_count_ = 0;
-            if(dynamic_data)
+
+            Domain::removeSubscriber(mp_datasub);
+            mp_datasub = nullptr;
+            Domain::unregisterType(mp_par, "ThroughputType");
+
+            if (!dynamic_data)
             {
-                Domain::removeSubscriber(mp_datasub);
-                Domain::unregisterType(mp_par, "ThroughputType");
+                delete throughput_t;
+                throughput_t = nullptr;
             }
         }
-    }
+    } while (stop_count_ != 2);
+
     return;
 }

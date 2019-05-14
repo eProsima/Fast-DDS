@@ -18,6 +18,7 @@
 #include "RTPSAsSocketWriter.hpp"
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
+#include <thread>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -247,4 +248,3 @@ BLACKBOXTEST_F(BlackBoxPersistence, AsyncRTPSAsReliableWithPersistence)
 
     std::cout << "Second round finished." << std::endl;
 }
-

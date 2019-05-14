@@ -19,7 +19,10 @@
 #ifndef _RTPS_HISTORY_WRITERHISTORY_H_
 #define _RTPS_HISTORY_WRITERHISTORY_H_
 
+#include <fastrtps/rtps/common/CacheChange.h>
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
+
+#include <gmock/gmock.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -31,6 +34,8 @@ class WriterHistory
 
 
         WriterHistory(const HistoryAttributes& /*att*/) : samples_number_(0) {}
+
+        WriterHistory() : samples_number_(0) {}
 
         MOCK_METHOD1(release_Cache, bool (CacheChange_t* change));
 
@@ -46,6 +51,8 @@ class WriterHistory
             samples_number_cond_.notify_all();
             return ret;
         }
+
+        MOCK_METHOD3(get_change, bool(const SequenceNumber_t& seq, const GUID_t& guid, CacheChange_t** change));
 
         MOCK_METHOD1(remove_change, bool (const SequenceNumber_t&));
 
@@ -69,6 +76,8 @@ class WriterHistory
                 samples_number_cond_.wait(lock, [&]() {return samples_number_ > minimum;});
             }
         }
+
+        HistoryAttributes m_att;
 
     private:
 

@@ -42,35 +42,37 @@ class RTPSReader;
  */
 class PDPSimpleListener: public ReaderListener {
 public:
-	/**
-	* @param in_SPDP
-	*/
-	PDPSimpleListener(PDPSimple* in_SPDP) : mp_SPDP(in_SPDP)
-	{
-	}
+    /**
+    * @param in_SPDP
+    */
+    PDPSimpleListener(PDPSimple* in_SPDP) : mp_SPDP(in_SPDP)
+    {
+    }
 
-	virtual ~PDPSimpleListener() {}
-	//!Pointer to the associated mp_SPDP;
-	PDPSimple* mp_SPDP;
-	/**
-	 * New added cache
-	 * @param reader
-	 * @param change
-	 */
-	void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change);
-	/**
-	 * Process a new added cache with this method.
-	 * @return True on success
-	 */
-	bool newAddedCache();
-	/**
-	 * Get the key of a CacheChange_t
-	 * @param change Pointer to the CacheChange_t
-	 * @return True on success
-	 */
-	bool getKey(CacheChange_t* change);
-	//!Auxiliary message.
-	CDRMessage_t aux_msg;
+    virtual ~PDPSimpleListener() {}
+    //!Pointer to the associated mp_SPDP;
+    PDPSimple* mp_SPDP;
+    /**
+     * New added cache
+     * @param reader
+     * @param change
+     */
+    void onNewCacheChangeAdded(
+            RTPSReader* reader,
+            const CacheChange_t* const change) override;
+    /**
+     * Process a new added cache with this method.
+     * @return True on success
+     */
+    bool newAddedCache();
+    /**
+     * Get the key of a CacheChange_t
+     * @param change Pointer to the CacheChange_t
+     * @return True on success
+     */
+    bool getKey(CacheChange_t* change);
+    //!Auxiliary message.
+    CDRMessage_t aux_msg;
 };
 
 

@@ -426,11 +426,9 @@ TEST(SequenceNumber, SubtractionBetweenSesOperator)
  */
 TEST(SequenceNumberSet, AddOperation)
 {
-    SequenceNumberSet_t set;
-
     SequenceNumber_t seq(10, UINT32_MAX - 1);
 
-    set.base =  seq;
+    SequenceNumberSet_t set(seq);
 
     ASSERT_TRUE(set.add(seq));
 
@@ -458,11 +456,10 @@ TEST(SequenceNumberSet, AddOperation)
  */
 TEST(SequenceNumberSet, GetMaxSeqNumOperation)
 {
-    SequenceNumberSet_t set;
 
     SequenceNumber_t seq(10, UINT32_MAX - 3);
 
-    set.base =  seq;
+    SequenceNumberSet_t set(seq);
 
     seq.low = UINT32_MAX - 1;
 
@@ -490,7 +487,7 @@ TEST(SequenceNumberSet, GetMaxSeqNumOperation)
 
     SequenceNumber_t expected_seq(11, 20);
 
-    ASSERT_EQ(set.get_maxSeqNum(), expected_seq);
+    ASSERT_EQ(set.max(), expected_seq);
 }
 
 int main(int argc, char **argv)

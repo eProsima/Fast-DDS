@@ -23,6 +23,9 @@
 #include "../common/Guid.h"
 #include "../flowcontrol/ThroughputControllerDescriptor.h"
 #include "EndpointAttributes.h"
+#include "../../utils/collections/ResourceLimitedContainerConfig.hpp"
+
+#include <functional>
 
 namespace eprosima{
 namespace fastrtps{
@@ -37,17 +40,27 @@ typedef enum RTPSWriterPublishMode : octet
 
 
 /**
- * Class WriterTimes, defining the times associated with the Reliable Writers events.
+ * Struct WriterTimes, defining the times associated with the Reliable Writers events.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
-class  WriterTimes
+struct WriterTimes
 {
-public:
+    //! Initial heartbeat delay. Default value ~11ms.
+    Duration_t initialHeartbeatDelay;
+    //! Periodic HB period, default value 3s.
+    Duration_t heartbeatPeriod;
+    //!Delay to apply to the response of a ACKNACK message, default value ~5ms.
+    Duration_t nackResponseDelay;
+    //!This time allows the RTPSWriter to ignore nack messages too soon after the data as sent, default value 0s.
+    Duration_t nackSupressionDuration;
+
     WriterTimes()
     {
-        initialHeartbeatDelay.fraction = 50*1000*1000;
+        //initialHeartbeatDelay.fraction = 50*1000*1000;
+        initialHeartbeatDelay.nanosec = 12*1000*1000;
         heartbeatPeriod.seconds = 3;
-        nackResponseDelay.fraction = 20*1000*1000;
+        //nackResponseDelay.fraction = 20*1000*1000;
+        nackResponseDelay.nanosec = 5*1000*1000;
     }
 
     virtual ~WriterTimes() {}
@@ -59,27 +72,21 @@ public:
                (this->nackResponseDelay == b.nackResponseDelay) &&
                (this->nackSupressionDuration == b.nackSupressionDuration);
     }
-
-    //! Initial heartbeat delay. Default value ~11ms.
-    Duration_t initialHeartbeatDelay;
-    //! Periodic HB period, default value 3s.
-    Duration_t heartbeatPeriod;
-    //!Delay to apply to the response of a ACKNACK message, default value ~5ms.
-    Duration_t nackResponseDelay;
-    //!This time allows the RTPSWriter to ignore nack messages too soon after the data as sent, default value 0s.
-    Duration_t nackSupressionDuration;
 };
 
 /**
  * Class WriterAttributes, defining the attributes of a RTPSWriter.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
-class  WriterAttributes
+class WriterAttributes
 {
     public:
 
-        WriterAttributes() : mode(SYNCHRONOUS_WRITER),
-            disableHeartbeatPiggyback(false)
+        WriterAttributes()
+            : mode(SYNCHRONOUS_WRITER)
+            , disable_heartbeat_piggyback(false)
+            , disable_positive_acks(false)
+            , keep_duration(c_TimeInfinite)
         {
             endpoint.endpointKind = WRITER;
             endpoint.durabilityKind = TRANSIENT_LOCAL;
@@ -101,7 +108,16 @@ class  WriterAttributes
         ThroughputControllerDescriptor throughputController;
 
         //! Disable the sending of heartbeat piggybacks.
-        bool disableHeartbeatPiggyback;
+        bool disable_heartbeat_piggyback;
+
+        //! Define the allocation behaviour for matched-reader-dependent collections.
+        ResourceLimitedContainerConfig matched_readers_allocation;
+
+        //! Disable the sending of positive ACKs
+        bool disable_positive_acks;
+
+        //! Keep duration to keep a sample before considering it has been acked
+        Duration_t keep_duration;
 };
 
 /**
@@ -112,14 +128,18 @@ class  RemoteReaderAttributes
 {
     public:
 
-        RemoteReaderAttributes() : expectsInlineQos(false),
-        is_eprosima_endpoint(true)
+        RemoteReaderAttributes()
+            : expectsInlineQos(false)
+            , is_eprosima_endpoint(true)
+            , disable_positive_acks(false)
         {
             endpoint.endpointKind = READER;
         }
 
-        RemoteReaderAttributes(const VendorId_t& vendor_id) : expectsInlineQos(false),
-        is_eprosima_endpoint(vendor_id == c_VendorId_eProsima)
+        RemoteReaderAttributes(const VendorId_t& vendor_id)
+            : expectsInlineQos(false)
+            , is_eprosima_endpoint(vendor_id == c_VendorId_eProsima)
+            , disable_positive_acks(false)
         {
             endpoint.endpointKind = READER;
         }
@@ -127,6 +147,14 @@ class  RemoteReaderAttributes
         virtual ~RemoteReaderAttributes()
         {
 
+        }
+
+        std::function<bool(const RemoteReaderAttributes&)> compare_guid_function() const
+        {
+            return [this](const RemoteReaderAttributes& rhs)
+            {
+                return this->guid == rhs.guid;
+            };
         }
 
         //!Attributes of the associated endpoint.
@@ -139,7 +167,10 @@ class  RemoteReaderAttributes
         bool expectsInlineQos;
 
         bool is_eprosima_endpoint;
+
+        bool disable_positive_acks;
 };
+
 }
 }
 }

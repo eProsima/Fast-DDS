@@ -52,7 +52,7 @@ class PDPSimpleListener;
  * Class PDPSimple that implements the SimpleRTPSParticipantDiscoveryProtocol as defined in the RTPS specification.
  *@ingroup DISCOVERY_MODULE
  */
-class PDPSimple 
+class PDPSimple
 {
     friend class ResendRTPSParticipantProxyDataPeriod;
     friend class RemoteRTPSParticipantLeaseDuration;
@@ -77,7 +77,7 @@ class PDPSimple
     /**
      * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
      * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
-     * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED 
+     * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED
      */
     void announceParticipantState(bool new_change, bool dispose = false);
     //!Stop the RTPSParticipantAnnouncement (only used in tests).
@@ -88,7 +88,7 @@ class PDPSimple
     /**
      * Add a ReaderProxyData to the correct ParticipantProxyData.
      * @param rdata Pointer to the ReaderProxyData objectr to add.
-     * @param pdata
+     * @param pdata_out
      * @return True if correct.
      */
     bool addReaderProxyData(ReaderProxyData* rdata, ParticipantProxyData &pdata_out);
@@ -235,7 +235,7 @@ class PDPSimple
     //!Registered RTPSParticipants (including the local one, that is the first one.)
     std::vector<ParticipantProxyData*> m_participantProxies;
     //!Variable to indicate if any parameter has changed.
-    bool m_hasChangedLocalPDP;
+    std::atomic_bool m_hasChangedLocalPDP;
     //!TimedEvent to periodically resend the local RTPSParticipant information.
     ResendParticipantProxyDataPeriod* mp_resendParticipantTimer;
     //!Listener for the SPDP messages.

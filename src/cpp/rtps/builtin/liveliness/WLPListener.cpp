@@ -49,7 +49,9 @@ WLPListener::~WLPListener()
 
 typedef std::vector<WriterProxy*>::iterator WPIT;
 
-void WLPListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const changeIN)
+void WLPListener::onNewCacheChangeAdded(
+        RTPSReader* reader,
+        const CacheChange_t* const changeIN)
 {
 	std::lock_guard<std::recursive_mutex> guard2(*mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
 	logInfo(RTPS_LIVELINESS,"");
@@ -99,29 +101,6 @@ void WLPListener::onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* 
 
 	return;
 }
-
-
-//bool WLPListener::processParameterList(ParameterList_t* param,GuidPrefix_t* guidP,LivelinessQosPolicyKind* liveliness)
-//{
-//	for(std::vector<Parameter_t*>::iterator it=param->m_parameters.begin();
-//			it!=param->m_parameters.end();++it)
-//	{
-//		switch((*it)->Pid)
-//		{
-//		case(PID_KEY_HASH):
-//						{
-//			ParameterKey_t* p = (ParameterKey_t*)(*it);
-//			return separateKey(p->key,guidP,liveliness);
-//						}
-//		default:
-//		{
-//			logWarning(RTPS_LIVELINESS,"In this ParameterList should not be anything but the Key");
-//			break;
-//		}
-//		}
-//	}
-//	return false;
-//}
 
 bool WLPListener::separateKey(InstanceHandle_t& key,GuidPrefix_t* guidP,LivelinessQosPolicyKind* liveliness)
 {

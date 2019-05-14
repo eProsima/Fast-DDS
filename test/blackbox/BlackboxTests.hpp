@@ -42,6 +42,8 @@
 #endif
 
 #include "types/HelloWorldType.h"
+#include "types/FixedSizedType.h"
+#include "types/KeyedHelloWorldType.h"
 #include "types/StringType.h"
 #include "types/Data64kbType.h"
 #include "types/Data1mbType.h"
@@ -52,6 +54,9 @@
 
 #if HAVE_SECURITY
 extern void blackbox_security_init();
+#endif
+#if TLS_FOUND
+extern void tls_init();
 #endif
 
 extern uint16_t global_port;
@@ -65,6 +70,9 @@ void default_receive_print(const Type&)
 
 template<>
 void default_receive_print(const HelloWorld& hello);
+
+template<>
+void default_receive_print(const FixedSized& hello);
 
 template<>
 void default_receive_print(const String& str);
@@ -88,6 +96,9 @@ template<>
 void default_send_print(const HelloWorld& hello);
 
 template<>
+void default_send_print(const FixedSized& hello);
+
+template<>
 void default_send_print(const String& str);
 
 template<>
@@ -99,6 +110,10 @@ void default_send_print(const Data1mb& data);
 /****** Auxiliary data generators *******/
 std::list<HelloWorld> default_helloworld_data_generator(size_t max = 0);
 
+std::list<FixedSized> default_fixed_sized_data_generator(size_t max = 0);
+
+std::list<KeyedHelloWorld> default_keyedhelloworld_data_generator(size_t max = 0);
+
 std::list<String> default_large_string_data_generator(size_t max = 0);
 
 std::list<Data64kb> default_data64kb_data_generator(size_t max = 0);
@@ -109,6 +124,10 @@ std::list<Data1mb> default_data300kb_mix_data_generator(size_t max = 0);
 
 /****** Auxiliary lambda functions  ******/
 extern const std::function<void(const HelloWorld&)>  default_helloworld_print;
+
+extern const std::function<void(const FixedSized&)>  default_fixed_sized_print;
+
+extern const std::function<void(const KeyedHelloWorld&)>  default_keyedhelloworld_print;
 
 extern const std::function<void(const String&)>  default_string_print;
 

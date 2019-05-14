@@ -40,6 +40,7 @@ const char* TCP_WAN_ADDR = "wan_addr";
 const char* RECEIVE_BUFFER_SIZE = "receiveBufferSize";
 const char* SEND_BUFFER_SIZE = "sendBufferSize";
 const char* TTL = "TTL";
+const char* NON_BLOCKING_SEND = "non_blocking_send";
 const char* WHITE_LIST = "interfaceWhiteList";
 const char* MAX_MESSAGE_SIZE = "maxMessageSize";
 const char* MAX_INITIAL_PEERS_RANGE = "maxInitialPeersRange";
@@ -92,6 +93,7 @@ const char* HIST_MEM_POLICY = "historyMemoryPolicy";
 //const char* PROPERTIES_POLICY = "propertiesPolicy";
 const char* USER_DEF_ID = "userDefinedID";
 const char* ENTITY_ID = "entityID";
+const char* MATCHED_SUBSCRIBERS_ALLOCATION = "matchedSubscribersAllocation";
 
 ///
 const char* PROPERTIES = "properties";
@@ -128,7 +130,7 @@ const char* DURATION_INFINITY = "DURATION_INFINITY";
 const char* DURATION_INFINITE_SEC = "DURATION_INFINITE_SEC";
 const char* DURATION_INFINITE_NSEC = "DURATION_INFINITE_NSEC";
 const char* SECONDS = "sec";
-const char* FRACTION = "fraction";
+const char* NANOSECONDS = "nanosec";
 const char* SHARED = "SHARED";
 const char* EXCLUSIVE = "EXCLUSIVE";
 
@@ -149,6 +151,7 @@ const char* PARTITION = "partition";
 const char* TOPIC_DATA = "topicData";
 const char* GROUP_DATA = "groupData";
 const char* PUB_MODE = "publishMode";
+const char* DISABLE_POSITIVE_ACKS = "disablePositiveAcks";
 
 const char* SYNCHRONOUS = "SYNCHRONOUS";
 const char* ASYNCHRONOUS = "ASYNCHRONOUS";
@@ -215,7 +218,9 @@ const char* PUBREADER_SUBWRITER = "PUBREADER_SUBWRITER";
 const char* STATIC_ENDPOINT_XML = "staticEndpointXMLFilename";
 const char* READER_HIST_MEM_POLICY = "readerHistoryMemoryPolicy";
 const char* WRITER_HIST_MEM_POLICY = "writerHistoryMemoryPolicy";
+const char* MUTATION_TRIES = "mutation_tries";
 const char* ACCESS_SCOPE = "access_scope";
+const char* ENABLED = "enabled";
 
 // Endpoint parser
 const char* STATICDISCOVERY = "staticdiscovery";
@@ -272,6 +277,8 @@ const char* UNION = "union";
 const char* SEQUENCE = "sequence";
 const char* MAP = "map";
 const char* TYPEDEF = "typedef";
+const char* BITSET = "bitset";
+const char* BITMASK = "bitmask";
 const char* ENUM = "enum";
 const char* CASE = "case";
 const char* DEFAULT = "default";
@@ -287,11 +294,63 @@ const char* NON_BASIC_TYPE = "nonBasic";
 const char* NON_BASIC_TYPE_NAME = "nonBasicTypeName";
 const char* KEY = "key";
 const char* MEMBER = "member";
+const char* BITFIELD = "bitfield";
+const char* BIT_VALUE = "bit_value";
+const char* POSITION = "position";
+const char* BIT_BOUND = "bit_bound";
+const char* BASE_TYPE = "baseType";
 
 // LOG
 const char* USE_DEFAULT = "use_default";
 const char* CONSUMER = "consumer";
 const char* CLASS = "class";
+
+// Allocation config
+const char* INITIAL = "initial";
+const char* MAXIMUM = "maximum";
+const char* INCREMENT = "increment";
+
+// TLS Config
+const char* TLS = "tls";
+const char* TLS_PASSWORD = "password";
+const char* TLS_OPTIONS = "options";
+const char* TLS_CERT_CHAIN_FILE = "cert_chain_file";
+const char* TLS_PRIVATE_KEY_FILE = "private_key_file";
+const char* TLS_TMP_DH_FILE = "tmp_dh_file";
+const char* TLS_VERIFY_FILE = "verify_file";
+const char* TLS_VERIFY_MODE = "verify_mode";
+const char* TLS_VERIFY_PATHS = "verify_paths";
+const char* TLS_DEFAULT_VERIFY_PATH = "default_verify_path";
+const char* TLS_VERIFY_DEPTH = "verify_depth";
+const char* TLS_RSA_PRIVATE_KEY_FILE = "rsa_private_key_file";
+const char* TLS_HANDSHAKE_ROLE = "handshake_role";
+
+// TLS HandShake Role
+const char* TLS_HANDSHAKE_ROLE_DEFAULT = "DEFAULT";
+const char* TLS_HANDSHAKE_ROLE_CLIENT = "CLIENT";
+const char* TLS_HANDSHAKE_ROLE_SERVER = "SERVER";
+
+// TLS Verify Stuff
+const char* TLS_VERIFY_PATH = "verify_path";
+const char* TLS_VERIFY = "verify";
+
+// TLS Options
+const char* TLS_OPTION = "option";
+const char* TLS_DEFAULT_WORKAROUNDS = "DEFAULT_WORKAROUNDS";
+const char* TLS_NO_COMPRESSION = "NO_COMPRESSION";
+const char* TLS_NO_SSLV2 = "NO_SSLV2";
+const char* TLS_NO_SSLV3 = "NO_SSLV3";
+const char* TLS_NO_TLSV1 = "NO_TLSV1";
+const char* TLS_NO_TLSV1_1 = "NO_TLSV1_1";
+const char* TLS_NO_TLSV1_2 = "NO_TLSV1_2";
+const char* TLS_NO_TLSV1_3 = "NO_TLSV1_3";
+const char* TLS_SINGLE_DH_USE = "SINGLE_DH_USE";
+
+// TLS Verify Mode
+const char* TLS_VERIFY_NONE = "VERIFY_NONE";
+const char* TLS_VERIFY_PEER = "VERIFY_PEER";
+const char* TLS_VERIFY_FAIL_IF_NO_PEER_CERT = "VERIFY_FAIL_IF_NO_PEER_CERT";
+const char* TLS_VERIFY_CLIENT_ONCE = "VERIFY_CLIENT_ONCE";
 
 } /* xmlparser */
 } /* namespace */

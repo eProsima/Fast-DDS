@@ -19,6 +19,7 @@
 #define _FASTRTPS_RTPS_COMMON_WRITEPARAMS_H_
 
 #include "SampleIdentity.h"
+#include <chrono>
 
 namespace eprosima
 {
@@ -37,23 +38,23 @@ namespace eprosima
                     /*!
                      * @brief Default constructor.
                      */
-                    WriteParams()
-                    {
-                    }
+                    WriteParams() = default;
 
                     /*!
                      * @brief Copy constructor.
                      */
-                    WriteParams(const WriteParams &wparam) : sample_identity_(wparam.sample_identity_),
-                    related_sample_identity_(wparam.related_sample_identity_)
+                    WriteParams(const WriteParams &wparam)
+                        : sample_identity_(wparam.sample_identity_)
+                        , related_sample_identity_(wparam.related_sample_identity_)
                     {
                     }
 
                     /*!
                      * @brief Move constructor.
                      */
-                    WriteParams(WriteParams &&wparam) : sample_identity_(std::move(wparam.sample_identity_)),
-                    related_sample_identity_(std::move(wparam.related_sample_identity_))
+                    WriteParams(WriteParams &&wparam)
+                        : sample_identity_(std::move(wparam.sample_identity_))
+                        , related_sample_identity_(std::move(wparam.related_sample_identity_))
                     {
                     }
 
@@ -120,8 +121,6 @@ namespace eprosima
                     {
                         return related_sample_identity_;
                     }
-
-                    static WriteParams WRITE_PARAM_DEFAULT;
 
                 private:
 

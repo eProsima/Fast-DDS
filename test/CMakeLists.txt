@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
+check_gtest()
+check_gmock()
+
 option(PERFORMANCE_TESTS "Activate the building and execution of performance tests" OFF)
 option(PROFILING_TESTS "Activate the building and execution of profiling tests" OFF)
 option(EPROSIMA_BUILD_TESTS "Activate the building and execution unit tests and integral tests" OFF)
@@ -30,6 +34,10 @@ if(EPROSIMA_BUILD_TESTS AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER)
     add_subdirectory(blackbox)
     add_subdirectory(communication)
     add_subdirectory(unittest)
+
+    if(UNIX AND NOT APPLE)
+        add_subdirectory(realtime)
+    endif()
 endif()
 
 ###############################################################################
@@ -48,4 +56,3 @@ endif()
 if(PERFORMANCE_TESTS)
     add_subdirectory(performance)
 endif()
-

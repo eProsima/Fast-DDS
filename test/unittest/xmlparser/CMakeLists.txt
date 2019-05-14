@@ -43,6 +43,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/log_node_file_append.xml
             ${CMAKE_CURRENT_BINARY_DIR}/log_node_file_append.xml
             COPYONLY)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/tls_config.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/tls_config.xml
+            COPYONLY)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/UDP_transport_descriptors_config.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/UDP_transport_descriptors_config.xml
+            COPYONLY)
 
         set(XMLPROFILEPARSER_SOURCE
             XMLProfileParserTests.cpp
@@ -78,7 +84,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectHashId.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeNamesGenerator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypesBase.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/BuiltinAnnotationsTypeObject.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
             )
 
         # External sources
@@ -98,6 +106,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
@@ -149,7 +158,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectHashId.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeNamesGenerator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypesBase.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/BuiltinAnnotationsTypeObject.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         )
 
         # External sources
@@ -168,6 +179,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
             ${PROJECT_SOURCE_DIR}/include

@@ -52,7 +52,8 @@ class StatefulReader:public RTPSReader
          * @param wdata Pointer to the WPD object to add.
          * @return True if correctly added.
          */
-        bool matched_writer_add(RemoteWriterAttributes& wdata);
+        bool matched_writer_add(RemoteWriterAttributes& wdata) override;
+
         /**
          * Remove a WriterProxyData from the matached writers.
          * @param wdata Pointer to the WPD object.
@@ -60,18 +61,21 @@ class StatefulReader:public RTPSReader
          * @return True if correct.
          */
         bool matched_writer_remove(const RemoteWriterAttributes& wdata,bool deleteWP);
+
         /**
          * Remove a WriterProxyData from the matached writers.
          * @param wdata Pointer to the WPD object.
          * @return True if correct.
          */
-        bool matched_writer_remove(const RemoteWriterAttributes& wdata);
+        bool matched_writer_remove(const RemoteWriterAttributes& wdata) override;
+
         /**
          * Tells us if a specific Writer is matched against this reader
          * @param wdata Pointer to the WriterProxyData object
          * @return True if it is matched.
          */
-        bool matched_writer_is_matched(const RemoteWriterAttributes& wdata);
+        bool matched_writer_is_matched(const RemoteWriterAttributes& wdata) override;
+
         /**
          * Look for a specific WriterProxy.
          * @param writerGUID GUID_t of the writer we are looking for.
@@ -85,7 +89,7 @@ class StatefulReader:public RTPSReader
          * @param change Pointer to the CacheChange_t.
          * @return true if the reader accepts messages.
          */
-        bool processDataMsg(CacheChange_t *change);
+        bool processDataMsg(CacheChange_t *change) override;
 
         /**
          * Processes a new DATA FRAG message. Previously the message must have been accepted by function acceptMsgDirectedTo.
@@ -94,17 +98,28 @@ class StatefulReader:public RTPSReader
          * @param fragmentStartingNum fragment number of this particular fragment.
          * @return true if the reader accepts messages.
          */
-        bool processDataFragMsg(CacheChange_t *change, uint32_t sampleSize, uint32_t fragmentStartingNum);
+        bool processDataFragMsg(
+                CacheChange_t *change,
+                uint32_t sampleSize,
+                uint32_t fragmentStartingNum) override;
 
         /**
          * Processes a new HEARTBEAT message. Previously the message must have been accepted by function acceptMsgDirectedTo.
          *
          * @return true if the reader accepts messages.
          */
-        bool processHeartbeatMsg(GUID_t &writerGUID, uint32_t hbCount, SequenceNumber_t &firstSN,
-                SequenceNumber_t &lastSN, bool finalFlag, bool livelinessFlag);
+        bool processHeartbeatMsg(
+                GUID_t &writerGUID,
+                uint32_t hbCount,
+                SequenceNumber_t &firstSN,
+                SequenceNumber_t &lastSN,
+                bool finalFlag,
+                bool livelinessFlag) override;
 
-        bool processGapMsg(GUID_t &writerGUID, SequenceNumber_t &gapStart, SequenceNumberSet_t &gapList);
+        bool processGapMsg(
+                GUID_t &writerGUID,
+                SequenceNumber_t &gapStart,
+                SequenceNumberSet_t &gapList) override;
 
         /**
          * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
@@ -112,14 +127,15 @@ class StatefulReader:public RTPSReader
          * @param prox Pointer to the WriterProxy.
          * @return True if correctly removed.
          */
-        bool change_removed_by_history(CacheChange_t* change ,WriterProxy* prox = nullptr);
+        bool change_removed_by_history(
+                CacheChange_t* change,
+                WriterProxy* prox = nullptr) override;
 
         /**
          * This method is called when a new change is received. This method calls the received_change of the History
          * and depending on the implementation performs different actions.
          * @param a_change Pointer of the change to add.
          * @param prox Pointer to the WriterProxy that adds the Change.
-         * @param lock mutex protecting the StatefulReader.
          * @return True if added.
          */
         bool change_received(CacheChange_t* a_change, WriterProxy* prox);
@@ -136,7 +152,9 @@ class StatefulReader:public RTPSReader
          * @param wpout Pointer to pointer the matched writer proxy
          * @return True if read.
          */
-        bool nextUnreadCache(CacheChange_t** change,WriterProxy** wpout=nullptr);
+        bool nextUnreadCache(
+                CacheChange_t** change,
+                WriterProxy** wpout=nullptr) override;
 
         /**
          * Take the next CacheChange_t from the history;
@@ -144,7 +162,9 @@ class StatefulReader:public RTPSReader
          * @param wpout Pointer to pointer the matched writer proxy
          * @return True if read.
          */
-        bool nextUntakenCache(CacheChange_t** change,WriterProxy** wpout=nullptr);
+        bool nextUntakenCache(
+                CacheChange_t** change,
+                WriterProxy** wpout=nullptr) override;
 
 
         /**
@@ -171,7 +191,7 @@ class StatefulReader:public RTPSReader
          * its WriterProxies are up to date.
          * @return There is a clean state with all Writers.
          */
-        bool isInCleanState() const;
+        bool isInCleanState() override;
 
         //! Acknack Count
         uint32_t m_acknackCount;
@@ -193,6 +213,8 @@ class StatefulReader:public RTPSReader
         ReaderTimes m_times;
         //! Vector containing pointers to the matched writers.
         std::vector<WriterProxy*> matched_writers;
+        //! True to disable positive ACKs
+        bool disable_positive_acks_;
 };
 
 }

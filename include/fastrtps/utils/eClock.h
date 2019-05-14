@@ -61,31 +61,38 @@ public:
 	int32_t m_seconds_from_1900_to_1970;
 	//!Difference from UTC in seconds
 	int32_t m_utc_seconds_diff;
-	
+
+	/**
+	* Fill a Time_t with the current time
+	* @param now Pointer to a RTPS Time_t instance to fill with the current time
+	* @return true on success
+	*/
+	bool setTimeNow(rtps::Time_t* now);
+
 	/**
 	* Fill a Time_t with the current time
 	* @param now Pointer to a Time_t instance to fill with the current time
 	* @return true on success
 	*/
-	bool setTimeNow(rtps::Time_t* now);
-	
+	bool setTimeNow(fastrtps::Time_t* now);
+
 	/**
 	* Method to start measuring an interval in us.
 	*/
 	void intervalStart();
-	
+
 	/**
 	* Method to finish measuring an interval in us.
 	* @return Time of the interval in us
 	*/
 	uint64_t intervalEnd();
-	
+
 	/**
 	* Put the current thread to sleep.
 	* @param milliseconds Time to sleep
 	*/
 	static void my_sleep(uint32_t milliseconds);
-	
+
 #if defined(_WIN32)
 	FILETIME ft;
 	unsigned long long ftlong;

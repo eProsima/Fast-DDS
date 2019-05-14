@@ -24,6 +24,8 @@ repositories {
 
 dependencies {
     compile files('../thirdparty/idl/build/libs/idlparser-1.0.0.jar')
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+    compile 'junit:junit:4.+'
 }
 
 task buildIDLParser(type: GradleBuild) {
@@ -44,22 +46,30 @@ task copyResources {
     Properties pversion = new Properties()
     project.hasProperty('customversion') ? pversion.setProperty('version', project.customversion.toString()) : pversion.setProperty('version', '0.0.0')
     File versionFile = new File("${project.buildDir}/resources/main/version")
-    versionFile.createNewFile();
-    pversion.store(versionFile.newWriter(), null)
+    versionFile.withWriter {
+        pversion.store(it, null)
+    }
+
 }
 
 sourceSets {
     main {
         java {
-            srcDir 'src'
+            srcDir 'src/main/java'
             srcDir '../thirdparty/fastcdr/src/java'
         }
 
         resources {
-            srcDir 'src'
+            srcDir 'src/main/java'
             include '**/*.stg'
             srcDir '../thirdparty/fastcdr/src/java'
             include '**/*.stg'
+        }
+    }
+
+    test {
+        java {
+            srcDir 'src/test/java'
         }
     }
 }
@@ -77,4 +87,9 @@ compileJava.dependsOn buildIDLParser,copyResources
 compileJava {
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
+}
+
+test {
+    systemProperty 'branch', System.getProperty('branch')
+    useJUnit()
 }

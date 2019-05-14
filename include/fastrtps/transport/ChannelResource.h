@@ -32,36 +32,40 @@ public:
     ChannelResource(ChannelResource&& channelResource);
     ChannelResource(uint32_t rec_buffer_size);
     virtual ~ChannelResource();
-    virtual void Clear();
 
-    inline void SetThread(std::thread* pThread)
+    virtual void clear();
+
+    inline void thread(std::thread&& pThread)
     {
-        mThread = pThread;
+        if(thread_.joinable())
+        {
+            thread_.join();
+        }
+
+        thread_.swap(pThread);
     }
 
-    std::thread* ReleaseThread();
-
-    inline bool IsAlive() const
+    inline bool alive() const
     {
-        return mAlive;
+        return alive_.load();
     }
 
-    inline virtual void Disable()
+    inline virtual void disable()
     {
-        mAlive = false;
+        alive_.store(false);
     }
 
-    inline CDRMessage_t& GetMessageBuffer()
+    inline CDRMessage_t& message_buffer()
     {
-        return m_rec_msg;
+        return message_buffer_;
     }
 
 protected:
     //!Received message
-    CDRMessage_t m_rec_msg;
+    CDRMessage_t message_buffer_;
 
-    std::atomic<bool> mAlive;
-    std::thread* mThread;
+    std::atomic<bool> alive_;
+    std::thread thread_;
 };
 
 } // namespace rtps

@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <mutex>
 #include <atomic>
+#include <chrono>
 #include <fastrtps/utils/Semaphore.h>
 
 #if defined(_WIN32)
@@ -171,7 +172,11 @@ public:
     ResourceEvent& getEventResource();
 
     //!Send Method - Deprecated - Stays here for reference purposes
-    void sendSync(CDRMessage_t* msg, Endpoint *pend, const Locator_t& destination_loc);
+    bool sendSync(
+            CDRMessage_t* msg,
+            Endpoint *pend,
+            const Locator_t& destination_loc,
+            std::chrono::steady_clock::time_point& max_blocking_time_point);
 
     //!Get the participant Mutex
     std::recursive_mutex* getParticipantMutex() const { return mp_mutex; };
@@ -277,8 +282,8 @@ private:
     std::mutex m_receiverResourcelistMutex;
 
     //!SenderResource List
-    std::mutex m_send_resources_mutex;
-    std::vector<SenderResource> m_senderResourceList;
+    std::timed_mutex m_send_resources_mutex_;
+    SendResourceList send_resource_list_;
 
     //!Participant Listener
     RTPSParticipantListener* mp_participantListener;
@@ -328,10 +333,13 @@ private:
         */
     Locator_t& applyLocatorAdaptRule(Locator_t &loc);
 
-    /** Checks if there is any sender resource available to reach the given locator.
-    @param loc -  Locator we want to check
-    */
-    bool checkSenderResource(Locator_t& locator);
+    /**
+     * Update port for all endpoint locators when it has a value of 0 and then
+     * apply locator normalization.
+     *
+     * @param [in, out] endpoint_att  EndpointAttributes to be updated
+     */
+    void normalize_endpoint_locators(EndpointAttributes& endpoint_att);
 
     //!Participant Mutex
     std::recursive_mutex* mp_mutex;
@@ -462,7 +470,6 @@ private:
           @param Locator_list - Locator list to be used to create the ReceiverResources
           @param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
           */
-        static const int MutationTries = 100;
         void createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
         void createSenderResources(LocatorList_t& Locator_list, bool ApplyMutation);
 

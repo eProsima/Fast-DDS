@@ -224,12 +224,28 @@ option(SECURITY "Activate security" OFF)
 
 if(SECURITY)
     find_package(OpenSSL REQUIRED)
+else()
+    find_package(OpenSSL)
+endif()
+
+option(NO_TLS "Disables TLS Support" OFF)
+if(OpenSSL_FOUND AND NOT NO_TLS)
+    set(TLS_FOUND 1)
+else()
+    set(TLS_FOUND 0)
+endif()
+
+if(SECURITY OR TLS_FOUND)
+    set(LINK_SSL 1)
+else()
+    set(LINK_SSL 0)
 endif()
 
 ###############################################################################
 # Java application
 ###############################################################################
 option(BUILD_JAVA "Activate the compilation of the Java application" OFF)
+option(TEST_JAVA "Perform testing when compile the Java application" OFF)
 
 if(EPROSIMA_INSTALLER)
     set(BUILD_JAVA ON)
@@ -238,7 +254,13 @@ endif()
 if(BUILD_JAVA)
     include(${PROJECT_SOURCE_DIR}/cmake/dev/java_support.cmake)
 
-    gradle_build(${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen
+    if(TEST_JAVA)
+        set(CMD_JAVA "build")
+    else()
+        set(CMD_JAVA "assemble")
+    endif()
+
+    gradle_build(${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen ${CMD_JAVA}
         THIRDPARTY_DEPENDENCY idl
         THIRDPARTY_DEPENDENCY fastcdr
         )

@@ -23,7 +23,6 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -34,62 +33,86 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 HelloWorldPublisher::HelloWorldPublisher()
-    : mp_participant(nullptr)
-    , mp_publisher(nullptr)
+    : participant_(nullptr)
+    , publisher_(nullptr)
 {
 }
 
-bool HelloWorldPublisher::init(const std::string &wan_ip, unsigned short port)
+bool HelloWorldPublisher::init(
+        const std::string &wan_ip,
+        unsigned short port,
+        bool use_tls,
+        const std::vector<std::string>& whitelist)
 {
-    stop = false;
-    m_Hello.index(0);
-    m_Hello.message("HelloWorld");
-    ParticipantAttributes PParam;
+    stop_ = false;
+    hello_.index(0);
+    hello_.message("HelloWorld");
+    ParticipantAttributes pparam;
 
-    PParam.rtps.builtin.domainId = 0;
-    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-    PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5, 0);
-    PParam.rtps.setName("Participant_pub");
+    pparam.rtps.builtin.domainId = 0;
+    pparam.rtps.builtin.leaseDuration = c_TimeInfinite;
+    pparam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(5, 0);
+    pparam.rtps.setName("Participant_pub");
 
-    PParam.rtps.useBuiltinTransports = false;
+    pparam.rtps.useBuiltinTransports = false;
 
     std::shared_ptr<TCPv4TransportDescriptor> descriptor = std::make_shared<TCPv4TransportDescriptor>();
+
+    for (std::string ip : whitelist)
+    {
+        descriptor->interfaceWhiteList.push_back(ip);
+        std::cout << "Whitelisted " << ip << std::endl;
+    }
+
+    if (use_tls)
+    {
+        using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+        descriptor->apply_security = true;
+        descriptor->tls_config.password = "test";
+        descriptor->tls_config.cert_chain_file = "server.pem";
+        descriptor->tls_config.private_key_file = "server.pem";
+        descriptor->tls_config.tmp_dh_file = "dh2048.pem";
+        descriptor->tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+        descriptor->tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+        descriptor->tls_config.add_option(TLSOptions::NO_SSLV2);
+    }
+
     descriptor->wait_for_tcp_negotiation = false;
     descriptor->sendBufferSize = 0;
     descriptor->receiveBufferSize = 0;
-    //descriptor->set_WAN_address("127.0.0.1");
+
     if (!wan_ip.empty())
     {
         descriptor->set_WAN_address(wan_ip);
         std::cout << wan_ip << ":" << port << std::endl;
     }
     descriptor->add_listener_port(port);
-    PParam.rtps.userTransports.push_back(descriptor);
+    pparam.rtps.userTransports.push_back(descriptor);
 
-    mp_participant = Domain::createParticipant(PParam);
+    participant_ = Domain::createParticipant(pparam);
 
-    if (mp_participant == nullptr)
+    if (participant_ == nullptr)
     {
         return false;
     }
     //REGISTER THE TYPE
 
-    Domain::registerType(mp_participant, &m_type);
+    Domain::registerType(participant_, &type_);
 
     //CREATE THE PUBLISHER
-    PublisherAttributes Wparam;
-    Wparam.topic.topicKind = NO_KEY;
-    Wparam.topic.topicDataType = "HelloWorld";
-    Wparam.topic.topicName = "HelloWorldTopicTCP";
-    Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    Wparam.topic.historyQos.depth = 30;
-    Wparam.topic.resourceLimitsQos.max_samples = 50;
-    Wparam.topic.resourceLimitsQos.allocated_samples = 20;
-    Wparam.times.heartbeatPeriod.seconds = 2;
-    Wparam.times.heartbeatPeriod.fraction = 200 * 1000 * 1000;
-    Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    mp_publisher = Domain::createPublisher(mp_participant, Wparam, (PublisherListener*)&m_listener);
-    if (mp_publisher == nullptr)
+    PublisherAttributes wparam;
+    wparam.topic.topicKind = NO_KEY;
+    wparam.topic.topicDataType = "HelloWorld";
+    wparam.topic.topicName = "HelloWorldTopicTCP";
+    wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+    wparam.topic.historyQos.depth = 30;
+    wparam.topic.resourceLimitsQos.max_samples = 50;
+    wparam.topic.resourceLimitsQos.allocated_samples = 20;
+    wparam.times.heartbeatPeriod.seconds = 2;
+    wparam.times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
+    wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    publisher_ = Domain::createPublisher(participant_, wparam, (PublisherListener*)&listener_);
+    if (publisher_ == nullptr)
     {
         return false;
     }
@@ -99,10 +122,12 @@ bool HelloWorldPublisher::init(const std::string &wan_ip, unsigned short port)
 
 HelloWorldPublisher::~HelloWorldPublisher()
 {
-    Domain::removeParticipant(mp_participant);
+    Domain::removeParticipant(participant_);
 }
 
-void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher*, MatchingInfo& info)
+void HelloWorldPublisher::PubListener::onPublicationMatched(
+        Publisher*,
+        MatchingInfo& info)
 {
     if (info.status == MATCHED_MATCHING)
     {
@@ -118,16 +143,19 @@ void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher*, Matching
     }
 }
 
-void HelloWorldPublisher::runThread(uint32_t samples, long sleep_ms)
+void HelloWorldPublisher::runThread(
+        uint32_t samples,
+        long sleep_ms)
 {
     if (samples == 0)
     {
-        while (!stop)
+        while (!stop_)
         {
             if (publish(false))
             {
-                //logError(HW, "SENT " <<  m_Hello.index());
-                std::cout << "[RTCP] Message: " << m_Hello.message() << " with index: " << m_Hello.index() << " SENT" << std::endl;
+                //logError(HW, "SENT " <<  hello_.index());
+                std::cout << "[RTCP] Message: " << hello_.message() << " with index: "
+                    << hello_.index() << " SENT" << std::endl;
             }
             eClock::my_sleep(sleep_ms);
         }
@@ -142,21 +170,24 @@ void HelloWorldPublisher::runThread(uint32_t samples, long sleep_ms)
             }
             else
             {
-                std::cout << "[RTCP] Message: " << m_Hello.message() << " with index: " << m_Hello.index() << " SENT" << std::endl;
+                std::cout << "[RTCP] Message: " << hello_.message() << " with index: "
+                    << hello_.index() << " SENT" << std::endl;
             }
             eClock::my_sleep(sleep_ms);
         }
     }
 }
 
-void HelloWorldPublisher::run(uint32_t samples, long sleep_ms)
+void HelloWorldPublisher::run(
+        uint32_t samples,
+        long sleep_ms)
 {
     std::thread thread(&HelloWorldPublisher::runThread, this, samples, sleep_ms);
     if (samples == 0)
     {
-        std::cout << "Publisher running. Please press enter to stop the Publisher at any time." << std::endl;
+        std::cout << "Publisher running. Please press enter to stop_ the Publisher at any time." << std::endl;
         std::cin.ignore();
-        stop = true;
+        stop_ = true;
     }
     else
     {
@@ -167,10 +198,10 @@ void HelloWorldPublisher::run(uint32_t samples, long sleep_ms)
 
 bool HelloWorldPublisher::publish(bool waitForListener)
 {
-    if (m_listener.firstConnected || !waitForListener || m_listener.n_matched > 0)
+    if (listener_.firstConnected || !waitForListener || listener_.n_matched > 0)
     {
-        m_Hello.index(m_Hello.index() + 1);
-        mp_publisher->write((void*)&m_Hello);
+        hello_.index(hello_.index() + 1);
+        publisher_->write((void*)&hello_);
         return true;
     }
     return false;

@@ -35,62 +35,200 @@ namespace rtps {
 class IPLocator
 {
     public:
-        IPLocator();
-        virtual ~IPLocator();
+        /**
+         * Fills locator with the given parameters.
+         * @param kindin Kind of the locator.
+         * @param address IP Address of the locator as string.
+         * @param portin Port of the locator.
+         * @param locator Locator to be filled.
+         */
+        RTPS_DllAPI static void createLocator(
+                int32_t kindin,
+                const std::string& address,
+                uint32_t portin,
+                Locator_t& locator);
 
-        // Factory
-        RTPS_DllAPI static void createLocator(int32_t kindin, const std::string& address, uint32_t portin, Locator_t& locator);
+        //! Sets locator's IPv4.
+        RTPS_DllAPI static bool setIPv4(
+                Locator_t& locator,
+                const unsigned char* addr);
 
-        // IPv4
-        RTPS_DllAPI static bool setIPv4(Locator_t &locator, const unsigned char* addr);
-        RTPS_DllAPI static bool setIPv4(Locator_t &locator, octet o1, octet o2, octet o3, octet o4);
-        RTPS_DllAPI static bool setIPv4(Locator_t &locator, const std::string &ipv4);
-        RTPS_DllAPI static bool setIPv4(Locator_t &destlocator, const Locator_t &origlocator);
-        RTPS_DllAPI static const octet* getIPv4(const Locator_t &locator);
-        RTPS_DllAPI static bool hasIPv4(const Locator_t &locator);
-        RTPS_DllAPI static std::string toIPv4string(const Locator_t &locator);
-        RTPS_DllAPI static bool copyIPv4(const Locator_t &locator, unsigned char* dest);
+        //! Sets locator's IPv4.
+        RTPS_DllAPI static bool setIPv4(
+                Locator_t& locator,
+                octet o1,
+                octet o2,
+                octet o3,
+                octet o4);
+
+        //! Sets locator's IPv4.
+        RTPS_DllAPI static bool setIPv4(
+                Locator_t& locator,
+                const std::string& ipv4);
+
+        //! Copies locator's IPv4.
+        RTPS_DllAPI static bool setIPv4(
+                Locator_t& destlocator,
+                const Locator_t& origlocator);
+
+        //! Retrieves locator's IPv4 as octet array.
+        RTPS_DllAPI static const octet* getIPv4(const Locator_t& locator);
+
+        //! Check if the locator has IPv4.
+        RTPS_DllAPI static bool hasIPv4(const Locator_t& locator);
+
+        //! Returns a string representation of the locator's IPv4.
+        RTPS_DllAPI static std::string toIPv4string(const Locator_t& locator);
+
+        //! Copies locator's IPv4.
+        RTPS_DllAPI static bool copyIPv4(
+                const Locator_t& locator,
+                unsigned char* dest);
 
         // IPv6
-        RTPS_DllAPI static bool setIPv6(Locator_t &locator, const unsigned char* addr);
-        RTPS_DllAPI static bool setIPv6(Locator_t &locator,
-                uint16_t group0, uint16_t group1, uint16_t group2, uint16_t group3,
-                uint16_t group4, uint16_t group5, uint16_t group6, uint16_t group7);
-        RTPS_DllAPI static bool setIPv6(Locator_t &locator, const std::string &ipv6);
-        RTPS_DllAPI static bool setIPv6(Locator_t &destlocator, const Locator_t &origlocator);
-        RTPS_DllAPI static const octet* getIPv6(const Locator_t &locator);
-        RTPS_DllAPI static bool hasIPv6(const Locator_t &locator);
-        RTPS_DllAPI static std::string toIPv6string(const Locator_t &locator);
-        RTPS_DllAPI static bool copyIPv6(const Locator_t &locator, unsigned char* dest);
+        //! Sets locator's IPv6.
+        RTPS_DllAPI static bool setIPv6(
+                Locator_t& locator,
+                const unsigned char* addr);
+
+        //! Sets locator's IPv6.
+        RTPS_DllAPI static bool setIPv6(
+                Locator_t& locator,
+                uint16_t group0,
+                uint16_t group1,
+                uint16_t group2,
+                uint16_t group3,
+                uint16_t group4,
+                uint16_t group5,
+                uint16_t group6,
+                uint16_t group7);
+
+        //! Sets locator's IPv6.
+        RTPS_DllAPI static bool setIPv6(
+                Locator_t& locator,
+                const std::string& ipv6);
+
+        //! Copies locator's IPv6.
+        RTPS_DllAPI static bool setIPv6(
+                Locator_t& destlocator,
+                const Locator_t& origlocator);
+
+        //! Retrieves locator's IPv6 as octet array.
+        RTPS_DllAPI static const octet* getIPv6(const Locator_t& locator);
+
+        //! Check if the locator has IPv6.
+        RTPS_DllAPI static bool hasIPv6(const Locator_t& locator);
+
+        //! Returns a string representation of the locator's IPv6.
+        RTPS_DllAPI static std::string toIPv6string(const Locator_t& locator);
+
+        //! Copies locator's IPv6.
+        RTPS_DllAPI static bool copyIPv6(
+                const Locator_t& locator,
+                unsigned char* dest);
+
+        //! Sets locator's IP
+        RTPS_DllAPI static bool ip(
+                Locator_t& locator,
+                const std::string& ip);
+
+        //! Returns a string representation of the locator's IP.
+        RTPS_DllAPI static std::string ip_to_string(const Locator_t& locator);
 
         // TCP
-        RTPS_DllAPI static bool setLogicalPort(Locator_t &locator, uint16_t port);
-        RTPS_DllAPI static uint16_t getLogicalPort(const Locator_t &locator);
-        RTPS_DllAPI static bool setPhysicalPort(Locator_t &locator, uint16_t port);
-        RTPS_DllAPI static uint16_t getPhysicalPort(const Locator_t &locator);
+        //! Sets locator's logical port (as in RTCP protocol)
+        RTPS_DllAPI static bool setLogicalPort(
+                Locator_t& locator,
+                uint16_t port);
+
+        //! Gets locator's logical port (as in RTCP protocol)
+        RTPS_DllAPI static uint16_t getLogicalPort(const Locator_t& locator);
+
+        //! Sets locator's physical port (as in RTCP protocol)
+        RTPS_DllAPI static bool setPhysicalPort(
+                Locator_t& locator,
+                uint16_t port);
+
+        //! Gets locator's physical port (as in RTCP protocol)
+        RTPS_DllAPI static uint16_t getPhysicalPort(const Locator_t& locator);
 
         // TCPv4
-        RTPS_DllAPI static bool setWan(Locator_t &locator, octet o1, octet o2, octet o3, octet o4);
-        RTPS_DllAPI static bool setWan(Locator_t &locator, const std::string &wan);
-        RTPS_DllAPI static const octet* getWan(const Locator_t &locator);
-        RTPS_DllAPI static bool hasWan(const Locator_t &locator);
-        RTPS_DllAPI static std::string toWanstring(const Locator_t &locator);
+        //! Sets locator's WAN address (as in RTCP protocol)
+        RTPS_DllAPI static bool setWan(
+                Locator_t& locator,
+                octet o1,
+                octet o2,
+                octet o3,
+                octet o4);
 
-        RTPS_DllAPI static bool setLanID(Locator_t &locator, const std::string &lanId);
-        RTPS_DllAPI static const octet* getLanID(const Locator_t &locator);
-        RTPS_DllAPI static std::string toLanIDstring(const Locator_t &locator);
-        RTPS_DllAPI static Locator_t toPhysicalLocator(const Locator_t &locator);
+        //! Sets locator's WAN address (as in RTCP protocol)
+        RTPS_DllAPI static bool setWan(
+                Locator_t& locator,
+                const std::string& wan);
+
+        //! Gets locator's WAN address (as in RTCP protocol)
+        RTPS_DllAPI static const octet* getWan(const Locator_t& locator);
+
+        //! Checks if the locator has WAN address (as in RTCP protocol)
+        RTPS_DllAPI static bool hasWan(const Locator_t& locator);
+
+        //! Retrieves a string representation of the locator's WAN address (as in RTCP protocol)
+        RTPS_DllAPI static std::string toWanstring(const Locator_t& locator);
+
+        //! Sets locator's LAN ID (as in RTCP protocol)
+        RTPS_DllAPI static bool setLanID(
+                Locator_t& locator,
+                const std::string& lanId);
+
+        //! Gets locator's LAN ID (as in RTCP protocol)
+        RTPS_DllAPI static const octet* getLanID(const Locator_t& locator);
+
+        //! Retrieves a string representation of the locator's LAN ID (as in RTCP protocol)
+        RTPS_DllAPI static std::string toLanIDstring(const Locator_t& locator);
+
+        //! Returns a new locator without logical port (as in RTCP protocol).
+        RTPS_DllAPI static Locator_t toPhysicalLocator(const Locator_t& locator);
+
+        //! Checks if a locator WAN address and IP address are the same (as in RTCP protocol).
+        RTPS_DllAPI static bool ip_equals_wan(const Locator_t& locator);
 
         // Common
-        RTPS_DllAPI static bool setPortRTPS(Locator_t &locator, uint16_t port);
-        RTPS_DllAPI static uint16_t getPortRTPS(Locator_t &locator);
-        RTPS_DllAPI static bool isLocal(const Locator_t &locator);
-        RTPS_DllAPI static bool isAny(const Locator_t &locator);
-        RTPS_DllAPI static bool compareAddress(const Locator_t &loc1, const Locator_t &loc2, bool fullAddress = false);
-        RTPS_DllAPI static bool compareAddressAndPhysicalPort(const Locator_t &loc1, const Locator_t &loc2);
+        //! Sets locator's RTPC port. Physical for UDP and logical for TCP (as in RTCP protocol)
+        RTPS_DllAPI static bool setPortRTPS(
+                Locator_t& locator,
+                uint16_t port);
+
+        //! Gets locator's RTPC port. Physical for UDP and logical for TCP (as in RTCP protocol)
+        RTPS_DllAPI static uint16_t getPortRTPS(Locator_t& locator);
+
+        //! Checks if a locator has local IP address.
+        RTPS_DllAPI static bool isLocal(const Locator_t& locator);
+
+        //! Checks if a locator has any IP address.
+        RTPS_DllAPI static bool isAny(const Locator_t& locator);
+
+        //! Checks if a both locators has the same IP address.
+        RTPS_DllAPI static bool compareAddress(
+                const Locator_t& loc1,
+                const Locator_t& loc2,
+                bool fullAddress = false);
+
+        //! Checks if a both locators has the same IP address and physical port  (as in RTCP protocol).
+        RTPS_DllAPI static bool compareAddressAndPhysicalPort(
+                const Locator_t& loc1,
+                const Locator_t& loc2);
+
+        //! Returns a string representation of the given locator.
+        RTPS_DllAPI static std::string to_string(const Locator_t& locator);
 
         // UDP
-        RTPS_DllAPI static bool isMulticast(const Locator_t &locator);
+        //! Checks if the locator has a multicast IP address.
+        RTPS_DllAPI static bool isMulticast(const Locator_t& locator);
+
+    private:
+        IPLocator();
+
+        virtual ~IPLocator();
 };
 
 }

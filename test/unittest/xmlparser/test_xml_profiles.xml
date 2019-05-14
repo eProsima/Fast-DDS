@@ -31,7 +31,7 @@
                 </leaseDuration>
                 <leaseAnnouncement>
                     <sec>10</sec>
-                    <fraction>333</fraction>
+                    <nanosec>333</nanosec>
                 </leaseAnnouncement>
                 <simpleEDP>
                     <PUBWRITER_SUBREADER>false</PUBWRITER_SUBREADER>
@@ -75,6 +75,7 @@
                 </initialPeersList>
                 <readerHistoryMemoryPolicy>PREALLOCATED</readerHistoryMemoryPolicy>
                 <writerHistoryMemoryPolicy>PREALLOCATED</writerHistoryMemoryPolicy>
+                <mutation_tries>55</mutation_tries>
             </builtin>
             <port>
                 <portBase>12</portBase>
@@ -119,7 +120,7 @@
                 <kind>MANUAL_BY_PARTICIPANT</kind>
                 <lease_duration>
                     <sec>1</sec>
-                    <fraction>2</fraction>
+                    <nanosec>2</nanosec>
                 </lease_duration>
                 <announcement_period>
                     <sec>DURATION_INFINITY</sec>
@@ -129,7 +130,7 @@
                 <kind>BEST_EFFORT</kind>
                 <max_blocking_time>
                     <sec>0</sec>
-                    <fraction>0</fraction>
+                    <nanosec>0</nanosec>
                 </max_blocking_time>
             </reliability>
             <partition>
@@ -145,19 +146,19 @@
         <times>
             <initialHeartbeatDelay>
                 <sec>0</sec>
-                <fraction>0</fraction>
+                <nanosec>0</nanosec>
             </initialHeartbeatDelay>
             <heartbeatPeriod>
                 <sec>11</sec>
-                <fraction>32</fraction>
+                <nanosec>32</nanosec>
             </heartbeatPeriod>
             <nackResponseDelay>
                 <sec>0</sec>
-                <fraction>0</fraction>
+                <nanosec>0</nanosec>
             </nackResponseDelay>
             <nackSupressionDuration>
                 <sec>121</sec>
-                <fraction>332</fraction>
+                <nanosec>332</nanosec>
             </nackSupressionDuration>
         </times>
         <unicastLocatorList>
@@ -198,6 +199,11 @@
         <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
         <userDefinedID>67</userDefinedID>
         <entityID>87</entityID>
+        <matchedSubscribersAllocation>
+            <initial>10</initial>
+            <maximum>10</maximum>
+            <increment>0</increment>
+        </matchedSubscribersAllocation>
     </publisher>
 
     <subscriber profile_name="test_subscriber_profile" is_default_profile="true">
@@ -224,11 +230,11 @@
                 <kind>MANUAL_BY_TOPIC</kind>
                 <lease_duration>
                     <sec>11</sec>
-                    <fraction>22</fraction>
+                    <nanosec>22</nanosec>
                 </lease_duration>
                 <announcement_period>
                     <sec>0</sec>
-                    <fraction>0</fraction>
+                    <nanosec>0</nanosec>
                 </announcement_period>
             </liveliness>
             <reliability>
@@ -249,11 +255,11 @@
         <times>
             <initialAcknackDelay>
                 <sec>0</sec>
-                <fraction>0</fraction>
+                <nanosec>0</nanosec>
             </initialAcknackDelay>
             <heartbeatResponseDelay>
                 <sec>18</sec>
-                <fraction>81</fraction>
+                <nanosec>81</nanosec>
             </heartbeatResponseDelay>
         </times>
         <unicastLocatorList>

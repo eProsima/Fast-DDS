@@ -103,7 +103,7 @@ class RTPSAsSocketReader
 
             // By default, heartbeat period delay is 100 milliseconds.
             reader_attr_.times.heartbeatResponseDelay.seconds = 0;
-            reader_attr_.times.heartbeatResponseDelay.fraction = 4294967 * 100;
+            reader_attr_.times.heartbeatResponseDelay.nanosec = 100000000;
         }
 
         virtual ~RTPSAsSocketReader()
@@ -179,7 +179,7 @@ class RTPSAsSocketReader
             receiving_ = true;
             mutex_.unlock();
 
-            std::unique_lock<std::recursive_mutex> lock(*history_->getMutex());
+            std::unique_lock<std::recursive_timed_mutex> lock(*history_->getMutex());
             while(history_->changesBegin() != history_->changesEnd())
             {
                 eprosima::fastrtps::rtps::CacheChange_t* change = *history_->changesBegin();

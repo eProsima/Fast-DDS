@@ -18,6 +18,7 @@
 #include "RTPSAsSocketWriter.hpp"
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
+#include <thread>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -324,8 +325,7 @@ BLACKBOXTEST(BlackBox, RTPSAsReliableVolatileSocket)
     reader.block_for_all();
 
     // Wait for acks to be sent and check writer history is empty
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    writer.wait_for_all_acked(std::chrono::seconds(100));
 
     ASSERT_TRUE(writer.is_history_empty());
 }
-

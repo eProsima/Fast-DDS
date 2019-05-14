@@ -56,7 +56,8 @@ void triggers(){
     Pparam.topic.resourceLimitsQos.max_instances = 1;
     Pparam.topic.resourceLimitsQos.max_samples_per_instance = 100;
     Pparam.times.heartbeatPeriod.seconds = 0;
-    Pparam.times.heartbeatPeriod.fraction = 42949673;
+    //Pparam.times.heartbeatPeriod.fraction = 42949673;
+    Pparam.times.heartbeatPeriod.nanosec = 10000000;
 
     std::cout << "Creating Reliable Publisher..." << std::endl;
     Publisher *myPub= Domain::createPublisher(PubParticipant, Pparam, nullptr);

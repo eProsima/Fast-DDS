@@ -19,10 +19,9 @@
 
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 
-#include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastrtps/rtps/writer/RTPSWriter.h>
 
-#include <fastrtps/rtps/writer/ReaderProxy.h>
+#include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/reader/WriterProxy.h>
 
 #include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
@@ -505,14 +504,11 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
         }
     }
 
-    int32_t inlineQosSize = 0;
+    uint32_t inlineQosSize = 0;
 
     if(inlineQosFlag)
     {
-        ParameterList_t parameter_list;
-        inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg, &parameter_list, &ch, false);
-
-        if(inlineQosSize <= 0)
+        if(false == ParameterList::updateCacheChangeFromInlineQos(ch, msg, inlineQosSize) )
         {
             logInfo(RTPS_MSG_IN,IDSTRING"SubMessage Data ERROR, Inline Qos ParameterList error");
             return false;
@@ -691,14 +687,11 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
         }
     }
 
-    int32_t inlineQosSize = 0;
+    uint32_t inlineQosSize = 0;
 
     if (inlineQosFlag)
     {
-        ParameterList_t parameter_list;
-        inlineQosSize = ParameterList::readParameterListfromCDRMsg(msg, &parameter_list, &ch, false);
-
-        if (inlineQosSize <= 0)
+        if (false == ParameterList::updateCacheChangeFromInlineQos(ch, msg, inlineQosSize))
         {
             logInfo(RTPS_MSG_IN, IDSTRING"SubMessage Data ERROR, Inline Qos ParameterList error");
             return false;
@@ -839,8 +832,7 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
     CDRMessage::readEntityId(msg,&writerGUID.entityId);
 
 
-    SequenceNumberSet_t SNSet;
-    CDRMessage::readSequenceNumberSet(msg,&SNSet);
+    SequenceNumberSet_t SNSet = CDRMessage::readSequenceNumberSet(msg);
     uint32_t Ackcount;
     CDRMessage::readUInt32(msg,&Ackcount);
 
@@ -849,19 +841,14 @@ bool MessageReceiver::proc_Submsg_Acknack(CDRMessage_t* msg,SubmessageHeader_t* 
     for (std::vector<RTPSWriter*>::iterator it = AssociatedWriters.begin();
             it != AssociatedWriters.end(); ++it)
     {
-        if((*it)->getGuid() == writerGUID)
+        bool result;
+        if ((*it)->process_acknack(writerGUID, readerGUID, Ackcount, SNSet, finalFlag, result))
         {
-            if((*it)->getAttributes().reliabilityKind == RELIABLE)
+            if (!result)
             {
-                StatefulWriter* SF = (StatefulWriter*)(*it);
-                SF->process_acknack(readerGUID, Ackcount, SNSet, finalFlag);
-                return true;
+                logInfo(RTPS_MSG_IN, IDSTRING"Acknack msg to NOT stateful writer ");
             }
-            else
-            {
-                logInfo(RTPS_MSG_IN,IDSTRING"Acknack msg to NOT stateful writer ");
-                return false;
-            }
+            return result;
         }
     }
     logInfo(RTPS_MSG_IN,IDSTRING"Acknack msg to UNKNOWN writer (I loooked through "
@@ -887,8 +874,7 @@ bool MessageReceiver::proc_Submsg_Gap(CDRMessage_t* msg,SubmessageHeader_t* smh)
     CDRMessage::readEntityId(msg,&writerGUID.entityId);
     SequenceNumber_t gapStart;
     CDRMessage::readSequenceNumber(msg,&gapStart);
-    SequenceNumberSet_t gapList;
-    CDRMessage::readSequenceNumberSet(msg,&gapList);
+    SequenceNumberSet_t gapList = CDRMessage::readSequenceNumberSet(msg);
     if(gapStart <= SequenceNumber_t(0, 0))
         return false;
 
@@ -997,39 +983,14 @@ bool MessageReceiver::proc_Submsg_NackFrag(CDRMessage_t*msg, SubmessageHeader_t*
     for (std::vector<RTPSWriter*>::iterator it = AssociatedWriters.begin();
             it != AssociatedWriters.end(); ++it)
     {
-        //Look for the readerProxy the acknack is from
-        std::lock_guard<std::recursive_mutex> guardW(*(*it)->getMutex());
-        if ((*it)->getGuid() == writerGUID)
+        bool result;
+        if ((*it)->process_nack_frag(writerGUID, readerGUID, Ackcount, writerSN, fnState, result))
         {
-            if ((*it)->getAttributes().reliabilityKind == RELIABLE)
-            {
-                StatefulWriter* SF = (StatefulWriter*)(*it);
-
-                for (auto rit = SF->matchedReadersBegin(); rit != SF->matchedReadersEnd(); ++rit)
-                {
-                    std::lock_guard<std::recursive_mutex> guardReaderProxy(*(*rit)->mp_mutex);
-
-                    if ((*rit)->m_att.guid == readerGUID)
-                    {
-                        if ((*rit)->getLastNackfragCount() < Ackcount)
-                        {
-                            (*rit)->setLastNackfragCount(Ackcount);
-                            // TODO Not doing Acknowledged.
-                            if((*rit)->requested_fragment_set(writerSN, fnState))
-                            {
-                                SF->nack_response_event_->restart_timer();
-                            }
-                        }
-                        break;
-                    }
-                }
-                return true;
-            }
-            else
+            if (!result)
             {
                 logInfo(RTPS_MSG_IN, IDSTRING"Acknack msg to NOT stateful writer ");
-                return false;
             }
+            return result;
         }
     }
     logInfo(RTPS_MSG_IN, IDSTRING"Acknack msg to UNKNOWN writer (I looked through "

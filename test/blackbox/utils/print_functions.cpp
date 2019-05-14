@@ -21,6 +21,12 @@ void default_receive_print(const HelloWorld& hello)
 }
 
 template<>
+void default_receive_print(const FixedSized& hello)
+{
+    std::cout << "Received FixedSized " << hello.index() << std::endl;
+}
+
+template<>
 void default_receive_print(const String& str)
 {
     std::cout << "Received String " << str.message()[str.message().size() - 2]
@@ -49,6 +55,12 @@ template<>
 void default_send_print(const HelloWorld& hello)
 {
     std::cout << "Sent HelloWorld " << hello.index() << std::endl;
+}
+
+template<>
+void default_send_print(const FixedSized& hello)
+{
+    std::cout << "Sent FixedSized " << hello.index() << std::endl;
 }
 
 template<>

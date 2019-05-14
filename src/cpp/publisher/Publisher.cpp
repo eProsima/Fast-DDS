@@ -69,7 +69,7 @@ bool Publisher::removeAllChange(size_t* removed )
     return mp_impl->removeAllChange(removed);
 }
 
-bool Publisher::wait_for_all_acked(const Time_t& max_wait)
+bool Publisher::wait_for_all_acked(const eprosima::fastrtps::Time_t& max_wait)
 {
     logInfo(PUBLISHER,"Waiting for all samples acknowledged");
     return mp_impl->wait_for_all_acked(max_wait);
@@ -88,4 +88,20 @@ const PublisherAttributes& Publisher::getAttributes() const
 bool Publisher::updateAttributes(const PublisherAttributes& att)
 {
     return mp_impl->updateAttributes(att);
+}
+
+void Publisher::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &status)
+{
+    mp_impl->get_offered_deadline_missed_status(status);
+}
+
+void Publisher::get_liveliness_lost_status(LivelinessLostStatus &status)
+{
+    (void)status;
+    logWarning(PUBLISHER, "get_liveliness_lost_status() is not implemented yet");
+}
+
+void Publisher::assert_liveliness()
+{
+    logWarning(PUBLISHER, "assert_liveliness() is not implemented yet");
 }

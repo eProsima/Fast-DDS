@@ -160,7 +160,7 @@ bool BenchMarkPublisher::init(int transport, ReliabilityQosPolicyKind reliabilit
     Wparam.topic.resourceLimitsQos.max_samples = 50;
     Wparam.topic.resourceLimitsQos.allocated_samples = 20;
     Wparam.times.heartbeatPeriod.seconds = 2;
-    Wparam.times.heartbeatPeriod.fraction = 200*1000*1000;
+    Wparam.times.heartbeatPeriod.nanosec = 200*1000*1000;
     Wparam.qos.m_reliability.kind = reliabilityKind;
 	Wparam.qos.m_publishMode.kind = ASYNCHRONOUS_PUBLISH_MODE;
     //Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;

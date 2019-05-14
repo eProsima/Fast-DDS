@@ -251,4 +251,21 @@
             <member name="my_union" type="nonBasic" nonBasicTypeName="WCharUnion"/>
         </struct>
     </type>
+    <type>
+        <bitset name="MyBitSet">
+            <bitfield name="a" bit_bound="3"/>
+            <bitfield name="b" bit_bound="1"/>
+            <bitfield bit_bound="4"/>
+            <bitfield name="c" bit_bound="10"/>
+            <bitfield name="d" bit_bound="12" type="int16"/>
+        </bitset>
+    </type>
+    <type>
+        <bitmask name="MyBitMask" bit_bound="8">
+            <bit_value name="flag0" position="0"/>
+            <bit_value name="flag1"/>
+            <bit_value name="flag2" position="2"/>
+            <bit_value name="flag5" position="5"/>
+        </bitmask>
+    </type>
 </types>

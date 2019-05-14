@@ -86,7 +86,12 @@ class TCPReqRepHelloWorldReplier
 
         TCPReqRepHelloWorldReplier();
         virtual ~TCPReqRepHelloWorldReplier();
-        void init(int participantId, int domainId, uint16_t listeningPort, uint32_t maxInitialPeer = 0);
+        void init(
+            int participantId,
+            int domainId,
+            uint16_t listeningPort,
+            uint32_t maxInitialPeer = 0,
+            const char* certs_path = nullptr);
         bool isInitialized() const { return initialized_; }
         void newNumber(eprosima::fastrtps::rtps::SampleIdentity sample_identity, uint16_t number);
         void wait_discovery(std::chrono::seconds timeout = std::chrono::seconds::zero());

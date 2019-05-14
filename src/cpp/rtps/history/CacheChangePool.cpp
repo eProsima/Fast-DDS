@@ -41,7 +41,7 @@ CacheChangePool::~CacheChangePool()
     }
 }
 
-CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size, MemoryManagementPolicy_t memoryPolicy) : 
+CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32_t max_pool_size, MemoryManagementPolicy_t memoryPolicy) :
     memoryMode(memoryPolicy)
 {
     //Common for all modes: Set the payload size (maximum allowed), size and size limit
@@ -97,8 +97,6 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, const std::function<ui
 
 bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
 {
-    std::lock_guard<std::mutex> guard(this->mp_mutex);
-
     switch(memoryMode)
     {
         case PREALLOCATED_MEMORY_MODE:
@@ -150,8 +148,6 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
 
 void CacheChangePool::release_Cache(CacheChange_t* ch)
 {
-    std::lock_guard<std::mutex> guard(this->mp_mutex);
-
     switch(memoryMode)
     {
         case PREALLOCATED_MEMORY_MODE:
@@ -164,8 +160,8 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
             for(uint8_t i=0;i<16;++i)
                 ch->instanceHandle.value[i] = 0;
             ch->isRead = 0;
-            ch->sourceTimestamp.seconds = 0;
-            ch->sourceTimestamp.fraction = 0;
+            ch->sourceTimestamp.seconds(0);
+            ch->sourceTimestamp.fraction(0);
             m_freeCaches.push_back(ch);
             break;
         case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
@@ -178,13 +174,13 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
             for(uint8_t i=0;i<16;++i)
                 ch->instanceHandle.value[i] = 0;
             ch->isRead = 0;
-            ch->sourceTimestamp.seconds = 0;
-            ch->sourceTimestamp.fraction = 0;
+            ch->sourceTimestamp.seconds(0);
+            ch->sourceTimestamp.fraction(0);
             m_freeCaches.push_back(ch);
             break;
         case DYNAMIC_RESERVE_MEMORY_MODE:
             // Find pointer in CacheChange vector, remove element, then delete it
-            std::vector<CacheChange_t*>::iterator target = m_allCaches.begin();	
+            std::vector<CacheChange_t*>::iterator target = m_allCaches.begin();
             target = find(m_allCaches.begin(),m_allCaches.end(), ch);
             if(target != m_allCaches.end())
             {

@@ -16,6 +16,8 @@
 #include <fastrtps/log/FileConsumer.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/transport/TCPTransportDescriptor.h>
+#include <fastrtps/transport/UDPTransportDescriptor.h>
 #include <gtest/gtest.h>
 #include <memory>
 #include <thread>
@@ -45,6 +47,12 @@ class XMLProfileParserTests: public ::testing::Test
         ~XMLProfileParserTests()
         {
             delete log_mock;
+        }
+
+    protected:
+        void SetUp() override
+        {
+            xmlparser::XMLProfileManager::DeleteInstance();
         }
 };
 
@@ -101,7 +109,7 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     EXPECT_EQ(builtin.domainId, 2019102u);
     EXPECT_EQ(builtin.leaseDuration, c_TimeInfinite);
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.seconds, 10);
-    EXPECT_EQ(builtin.leaseDuration_announcementperiod.fraction, 333u);
+    EXPECT_EQ(builtin.leaseDuration_announcementperiod.nanosec, 333u);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
     IPLocator::setIPv4(locator, 192, 168, 1, 5);
@@ -123,6 +131,7 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
     EXPECT_EQ(builtin.readerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
     EXPECT_EQ(builtin.writerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
+    EXPECT_EQ(builtin.mutation_tries, 55u);
     EXPECT_EQ(port.portBase, 12);
     EXPECT_EQ(port.domainIDGain, 34);
     EXPECT_EQ(port.participantIDGain, 56);
@@ -169,7 +178,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
     EXPECT_EQ(builtin.domainId, 2019102u);
     EXPECT_EQ(builtin.leaseDuration, c_TimeInfinite);
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.seconds, 10);
-    EXPECT_EQ(builtin.leaseDuration_announcementperiod.fraction, 333u);
+    EXPECT_EQ(builtin.leaseDuration_announcementperiod.nanosec, 333u);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
     IPLocator::setIPv4(locator, 192, 168, 1, 5);
@@ -191,6 +200,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
     EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
     EXPECT_EQ(builtin.readerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
     EXPECT_EQ(builtin.writerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
+    EXPECT_EQ(builtin.mutation_tries, 55u);
     EXPECT_EQ(port.portBase, 12);
     EXPECT_EQ(port.domainIDGain, 34);
     EXPECT_EQ(port.participantIDGain, 56);
@@ -233,7 +243,7 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     EXPECT_EQ(pub_qos.m_durability.kind, TRANSIENT_LOCAL_DURABILITY_QOS);
     EXPECT_EQ(pub_qos.m_liveliness.kind, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
     EXPECT_EQ(pub_qos.m_liveliness.lease_duration.seconds, 1);
-    EXPECT_EQ(pub_qos.m_liveliness.lease_duration.fraction, 2u);
+    EXPECT_EQ(pub_qos.m_liveliness.lease_duration.nanosec, 2u);
     EXPECT_EQ(pub_qos.m_liveliness.announcement_period, c_TimeInfinite);
     EXPECT_EQ(pub_qos.m_reliability.kind, BEST_EFFORT_RELIABILITY_QOS);
     EXPECT_EQ(pub_qos.m_reliability.max_blocking_time, c_TimeZero);
@@ -242,10 +252,10 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
-    EXPECT_EQ(pub_times.heartbeatPeriod.fraction, 32u);
+    EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
     EXPECT_EQ(pub_times.nackResponseDelay, c_TimeZero);
     EXPECT_EQ(pub_times.nackSupressionDuration.seconds, 121);
-    EXPECT_EQ(pub_times.nackSupressionDuration.fraction, 332u);
+    EXPECT_EQ(pub_times.nackSupressionDuration.nanosec, 332u);
     IPLocator::setIPv4(locator, 192, 168, 1, 3);
     locator.port = 197;
     EXPECT_EQ(*(loc_list_it = publisher_atts.unicastLocatorList.begin()), locator);
@@ -271,6 +281,7 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     EXPECT_EQ(publisher_atts.historyMemoryPolicy, DYNAMIC_RESERVE_MEMORY_MODE);
     EXPECT_EQ(publisher_atts.getUserDefinedID(), 67);
     EXPECT_EQ(publisher_atts.getEntityID(), 87);
+    EXPECT_EQ(publisher_atts.matched_subscriber_allocation, ResourceLimitedContainerConfig::fixed_size_configuration(10u));
 }
 
 TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
@@ -300,7 +311,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     EXPECT_EQ(pub_qos.m_durability.kind, TRANSIENT_LOCAL_DURABILITY_QOS);
     EXPECT_EQ(pub_qos.m_liveliness.kind, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
     EXPECT_EQ(pub_qos.m_liveliness.lease_duration.seconds, 1);
-    EXPECT_EQ(pub_qos.m_liveliness.lease_duration.fraction, 2u);
+    EXPECT_EQ(pub_qos.m_liveliness.lease_duration.nanosec, 2u);
     EXPECT_EQ(pub_qos.m_liveliness.announcement_period, c_TimeInfinite);
     EXPECT_EQ(pub_qos.m_reliability.kind, BEST_EFFORT_RELIABILITY_QOS);
     EXPECT_EQ(pub_qos.m_reliability.max_blocking_time, c_TimeZero);
@@ -309,10 +320,10 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     EXPECT_EQ(pub_qos.m_publishMode.kind, ASYNCHRONOUS_PUBLISH_MODE);
     EXPECT_EQ(pub_times.initialHeartbeatDelay, c_TimeZero);
     EXPECT_EQ(pub_times.heartbeatPeriod.seconds, 11);
-    EXPECT_EQ(pub_times.heartbeatPeriod.fraction, 32u);
+    EXPECT_EQ(pub_times.heartbeatPeriod.nanosec, 32u);
     EXPECT_EQ(pub_times.nackResponseDelay, c_TimeZero);
     EXPECT_EQ(pub_times.nackSupressionDuration.seconds, 121);
-    EXPECT_EQ(pub_times.nackSupressionDuration.fraction, 332u);
+    EXPECT_EQ(pub_times.nackSupressionDuration.nanosec, 332u);
     IPLocator::setIPv4(locator, 192, 168, 1, 3);
     locator.port = 197;
     EXPECT_EQ(*(loc_list_it = publisher_atts.unicastLocatorList.begin()), locator);
@@ -338,6 +349,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     EXPECT_EQ(publisher_atts.historyMemoryPolicy, DYNAMIC_RESERVE_MEMORY_MODE);
     EXPECT_EQ(publisher_atts.getUserDefinedID(), 67);
     EXPECT_EQ(publisher_atts.getEntityID(), 87);
+    EXPECT_EQ(publisher_atts.matched_subscriber_allocation, ResourceLimitedContainerConfig::fixed_size_configuration(10u));
 }
 
 TEST_F(XMLProfileParserTests, XMLParserSubscriber)
@@ -368,7 +380,7 @@ TEST_F(XMLProfileParserTests, XMLParserSubscriber)
     EXPECT_EQ(sub_qos.m_durability.kind, PERSISTENT_DURABILITY_QOS);
     EXPECT_EQ(sub_qos.m_liveliness.kind, MANUAL_BY_TOPIC_LIVELINESS_QOS);
     EXPECT_EQ(sub_qos.m_liveliness.lease_duration.seconds, 11);
-    EXPECT_EQ(sub_qos.m_liveliness.lease_duration.fraction, 22u);
+    EXPECT_EQ(sub_qos.m_liveliness.lease_duration.nanosec, 22u);
     EXPECT_EQ(sub_qos.m_liveliness.announcement_period, c_TimeZero);
     EXPECT_EQ(sub_qos.m_reliability.kind, RELIABLE_RELIABILITY_QOS);
     EXPECT_EQ(sub_qos.m_reliability.max_blocking_time, c_TimeInfinite);
@@ -378,7 +390,7 @@ TEST_F(XMLProfileParserTests, XMLParserSubscriber)
     EXPECT_EQ(sub_qos.m_partition.getNames()[3], "partition_name_f");
     EXPECT_EQ(sub_times.initialAcknackDelay, c_TimeZero);
     EXPECT_EQ(sub_times.heartbeatResponseDelay.seconds, 18);
-    EXPECT_EQ(sub_times.heartbeatResponseDelay.fraction, 81u);
+    EXPECT_EQ(sub_times.heartbeatResponseDelay.nanosec, 81u);
     IPLocator::setIPv4(locator, 192, 168, 1, 10);
     locator.port = 196;
     EXPECT_EQ(*(loc_list_it = subscriber_atts.unicastLocatorList.begin()), locator);
@@ -432,7 +444,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
     EXPECT_EQ(sub_qos.m_durability.kind, PERSISTENT_DURABILITY_QOS);
     EXPECT_EQ(sub_qos.m_liveliness.kind, MANUAL_BY_TOPIC_LIVELINESS_QOS);
     EXPECT_EQ(sub_qos.m_liveliness.lease_duration.seconds, 11);
-    EXPECT_EQ(sub_qos.m_liveliness.lease_duration.fraction, 22u);
+    EXPECT_EQ(sub_qos.m_liveliness.lease_duration.nanosec, 22u);
     EXPECT_EQ(sub_qos.m_liveliness.announcement_period, c_TimeZero);
     EXPECT_EQ(sub_qos.m_reliability.kind, RELIABLE_RELIABILITY_QOS);
     EXPECT_EQ(sub_qos.m_reliability.max_blocking_time, c_TimeInfinite);
@@ -442,7 +454,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
     EXPECT_EQ(sub_qos.m_partition.getNames()[3], "partition_name_f");
     EXPECT_EQ(sub_times.initialAcknackDelay, c_TimeZero);
     EXPECT_EQ(sub_times.heartbeatResponseDelay.seconds, 18);
-    EXPECT_EQ(sub_times.heartbeatResponseDelay.fraction, 81u);
+    EXPECT_EQ(sub_times.heartbeatResponseDelay.nanosec, 81u);
     IPLocator::setIPv4(locator, 192, 168, 1, 10);
     locator.port = 196;
     EXPECT_EQ(*(loc_list_it = subscriber_atts.unicastLocatorList.begin()), locator);
@@ -556,6 +568,81 @@ TEST_F(XMLProfileParserTests, file_and_default)
 {
     EXPECT_CALL(*log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
     xmlparser::XMLProfileManager::loadXMLFile("log_def_file.xml");
+}
+
+TEST_F(XMLProfileParserTests, tls_config)
+{
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
+        xmlparser::XMLProfileManager::loadXMLFile("tls_config.xml"));
+
+    xmlparser::sp_transport_t transport = xmlparser::XMLProfileManager::getTransportById("Test");
+
+    using TCPDescriptor = std::shared_ptr<TCPTransportDescriptor>;
+    TCPDescriptor descriptor = std::dynamic_pointer_cast<TCPTransportDescriptor>(transport);
+
+    /*
+    <tls>
+        <password>Password</password>
+        <private_key_file>Key_file.pem</private_key_file>
+        <cert_chain_file>Chain.pem</cert_chain_file>
+        <tmp_dh_file>DH.pem</tmp_dh_file>
+        <verify_file>verify.pem</verify_file>
+        <verify_mode>VERIFY_PEER</verify_mode>
+        <options>
+            <option>NO_TLSV1</option>
+            <option>NO_TLSV1_1</option>
+        </options>
+    </tls>
+    */
+
+    EXPECT_EQ("Password", descriptor->tls_config.password);
+    EXPECT_EQ("Key_file.pem", descriptor->tls_config.private_key_file);
+    EXPECT_EQ("RSA_file.pem", descriptor->tls_config.rsa_private_key_file);
+    EXPECT_EQ("Chain.pem", descriptor->tls_config.cert_chain_file);
+    EXPECT_EQ("DH.pem", descriptor->tls_config.tmp_dh_file);
+    EXPECT_EQ("verify.pem", descriptor->tls_config.verify_file);
+    EXPECT_EQ(TCPTransportDescriptor::TLSConfig::TLSVerifyMode::VERIFY_PEER, descriptor->tls_config.verify_mode);
+    EXPECT_TRUE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1));
+    EXPECT_TRUE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_1));
+    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV2));
+    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_SSLV3));
+    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_2));
+    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_TLSV1_3));
+    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::DEFAULT_WORKAROUNDS));
+    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::NO_COMPRESSION));
+    EXPECT_FALSE(descriptor->tls_config.get_option(TCPTransportDescriptor::TLSConfig::TLSOptions::SINGLE_DH_USE));
+
+    EXPECT_EQ(descriptor->tls_config.verify_paths.size(), static_cast<size_t>(3));
+    EXPECT_EQ(descriptor->tls_config.verify_paths[0], "Path1");
+    EXPECT_EQ(descriptor->tls_config.verify_paths[1], "Path2");
+    EXPECT_EQ(descriptor->tls_config.verify_paths[2], "Path3");
+    EXPECT_EQ(descriptor->tls_config.verify_depth, static_cast<int32_t>(55));
+    EXPECT_TRUE(descriptor->tls_config.default_verify_path);
+
+    EXPECT_EQ(descriptor->tls_config.handshake_role, TCPTransportDescriptor::TLSConfig::TLSHandShakeRole::SERVER);
+}
+
+TEST_F(XMLProfileParserTests, UDP_transport_descriptors_config)
+{
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
+        xmlparser::XMLProfileManager::loadXMLFile("UDP_transport_descriptors_config.xml"));
+
+    xmlparser::sp_transport_t transport = xmlparser::XMLProfileManager::getTransportById("Test");
+
+    using UDPDescriptor = std::shared_ptr<UDPTransportDescriptor>;
+    UDPDescriptor descriptor = std::dynamic_pointer_cast<UDPTransportDescriptor>(transport);
+
+    ASSERT_NE(descriptor, nullptr);
+    EXPECT_EQ(descriptor->sendBufferSize, 8192u);
+    EXPECT_EQ(descriptor->receiveBufferSize, 8192u);
+    EXPECT_EQ(descriptor->TTL, 250u);
+    EXPECT_EQ(descriptor->non_blocking_send, true);
+    EXPECT_EQ(descriptor->maxMessageSize, 16384u);
+    EXPECT_EQ(descriptor->maxInitialPeersRange, 100u);
+    EXPECT_EQ(descriptor->interfaceWhiteList.size(), 2u);
+    EXPECT_EQ(descriptor->interfaceWhiteList[0], "192.168.1.41");
+    EXPECT_EQ(descriptor->interfaceWhiteList[1], "127.0.0.1");
+    EXPECT_EQ(descriptor->m_output_udp_socket, 5101u);
 }
 
 int main(int argc, char **argv)

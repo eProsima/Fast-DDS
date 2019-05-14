@@ -34,26 +34,30 @@ namespace fastrtps{
  */
 class TopicAttributes
 {
-    public:
-        /**
-         * Default constructor
-         */
-        TopicAttributes()
-            : topicKind(rtps::NO_KEY)
-            , topicName("UNDEF")
-            , topicDataType("UNDEF")
-        {
-            topicDiscoveryKind = rtps::TopicDiscoveryKind_t::NO_CHECK;
-        }
+public:
 
-        //!Constructor, you need to provide the topic name and the topic data type.
-        TopicAttributes(const char* name, const char* dataType, rtps::TopicKind_t tKind= rtps::NO_KEY,
+    /**
+     * Default constructor
+     */
+    TopicAttributes()
+        : topicKind(rtps::NO_KEY)
+        , topicName("UNDEF")
+        , topicDataType("UNDEF")
+    {
+        topicDiscoveryKind = rtps::TopicDiscoveryKind_t::NO_CHECK;
+    }
+
+    //!Constructor, you need to provide the topic name and the topic data type.
+    TopicAttributes(
+            const char* name,
+            const char* dataType,
+            rtps::TopicKind_t tKind= rtps::NO_KEY,
             rtps::TopicDiscoveryKind_t tDiscovery = rtps::NO_CHECK)
         {
             topicKind = tKind;
             topicDiscoveryKind = tDiscovery;
-            topicName = std::string(name);
-            topicDataType = std::string(dataType);
+            topicName = name;
+            topicDataType = dataType;
         }
 
         virtual ~TopicAttributes() {}
@@ -70,7 +74,7 @@ class TopicAttributes
         * Get the topic data type
         * @return Topic data type
         */
-        const std::string& getTopicDataType() const {
+        const string_255& getTopicDataType() const {
             return topicDataType;
         }
 
@@ -95,7 +99,7 @@ class TopicAttributes
          * Get the topic name
          * @return Topic name
          */
-        const std::string& getTopicName() const {
+        const string_255& getTopicName() const {
             return topicName;
         }
 
@@ -104,9 +108,9 @@ class TopicAttributes
         //! Topic discovery kind, default value NO_CHECK.
         rtps::TopicDiscoveryKind_t topicDiscoveryKind;
         //! Topic Name.
-        std::string topicName;
+        string_255 topicName;
         //!Topic Data Type.
-        std::string topicDataType;
+        string_255 topicDataType;
         //!QOS Regarding the History to be saved.
         HistoryQosPolicy historyQos;
         //!QOS Regarding the resources to allocate.

@@ -48,12 +48,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectHashId.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeNamesGenerator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/types/TypesBase.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/types/BuiltinAnnotationsTypeObject.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/FileConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         )
 
         # External sources
@@ -89,6 +91,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${DYNAMIC_TYPES_SOURCE}
         )
 
+        set(DYNAMIC_TYPES_4_2_TEST_SOURCE
+            DynamicTypes_4_2_Tests.cpp
+            idl/new_features_4_2.cxx
+            idl/new_features_4_2PubSubTypes.cxx
+            idl/new_features_4_2TypeObject.cxx
+            ${DYNAMIC_TYPES_SOURCE}
+        )
+
         include_directories(mock/)
 
         add_executable(DynamicTypesTests ${DYNAMIC_TYPES_TEST_SOURCE})
@@ -98,6 +108,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
             ${TINYXML2_INCLUDE_DIR}
@@ -124,6 +135,20 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             fastcdr
         )
         add_gtest(DynamicComplexTypesTests SOURCES ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
+
+
+        add_executable(DynamicTypes_4_2_Tests ${DYNAMIC_TYPES_4_2_TEST_SOURCE})
+        target_compile_definitions(DynamicTypes_4_2_Tests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(DynamicTypes_4_2_Tests PRIVATE
+            ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        target_link_libraries(DynamicTypes_4_2_Tests ${GTEST_LIBRARIES}
+            $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+            $<$<BOOL:${WIN32}>:ws2_32>
+            ${TINYXML2_LIBRARY}
+            fastcdr
+        )
+        add_gtest(DynamicTypes_4_2_Tests SOURCES ${DYNAMIC_TYPES_4_2_TEST_SOURCE})
 
     endif()
 endif()

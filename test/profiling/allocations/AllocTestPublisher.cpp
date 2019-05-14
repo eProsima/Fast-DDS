@@ -25,23 +25,36 @@
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-AllocTestPublisher::AllocTestPublisher():mp_participant(nullptr),
-mp_publisher(nullptr)
+AllocTestPublisher::AllocTestPublisher()
+: mp_participant(nullptr)
+, mp_publisher(nullptr)
 {
 
 
 }
 
-bool AllocTestPublisher::init(const char* profile)
+bool AllocTestPublisher::init(const char* profile, int domainId, const std::string& outputFile)
 {
     m_data.index(0);
 
+    m_profile = profile;
+    m_outputFile = outputFile;
     Domain::loadXMLProfilesFile("test_xml_profiles.xml");
-    mp_participant = Domain::createParticipant("test_participant_profile");
+
+    ParticipantAttributes participant_att;
+    if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
+        eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes("test_participant_profile",
+            participant_att))
+    {
+        participant_att.rtps.builtin.domainId = domainId;
+        mp_participant = Domain::createParticipant(participant_att);
+    }
+
     if (mp_participant == nullptr)
         return false;
 
@@ -55,6 +68,7 @@ bool AllocTestPublisher::init(const char* profile)
     if(mp_publisher == nullptr)
         return false;
 
+    eprosima_profiling::entities_created();
     return true;
 
 }
@@ -66,6 +80,7 @@ AllocTestPublisher::~AllocTestPublisher()
 
 void AllocTestPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
 {
+    std::unique_lock<std::mutex> lock(mtx);
     if(info.status == MATCHED_MATCHING)
     {
         n_matched++;
@@ -76,24 +91,41 @@ void AllocTestPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,Ma
         n_matched--;
         std::cout << "Publisher unmatched"<<std::endl;
     }
+    cv.notify_all();
 }
 
-void AllocTestPublisher::run(uint32_t samples)
+bool AllocTestPublisher::PubListener::is_matched()
+{
+    std::unique_lock<std::mutex> lock(mtx);
+    return n_matched > 0;
+}
+
+void AllocTestPublisher::PubListener::wait_match()
+{
+    std::unique_lock<std::mutex> lock(mtx);
+    cv.wait(lock, [this]() { return n_matched > 0; });
+}
+
+void AllocTestPublisher::PubListener::wait_unmatch()
+{
+    std::unique_lock<std::mutex> lock(mtx);
+    cv.wait(lock, [this]() { return n_matched <= 0; });
+}
+
+void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
 {
     // Restart callgrind graph
-    callgrind_zero_count();
+    eprosima_profiling::callgrind_zero_count();
 
     std::cout << "Publisher waiting for subscriber..." << std::endl;
-    while (m_listener.n_matched <= 0)
-    {
-        eClock::my_sleep(25);
-    }
+    m_listener.wait_match();
 
     // Flush callgrind graph
-    callgrind_dump();
+    eprosima_profiling::callgrind_dump();
+    eprosima_profiling::discovery_finished();
 
-    std::cout << "Publisher matched. Press enter to start sending samples" << std::endl;
-    std::cin.ignore();
+    std::cout << "Publisher matched. Sending samples" << std::endl;
+    eClock::my_sleep(500);
 
     for(uint32_t i = 0;i<samples;++i)
     {
@@ -101,33 +133,45 @@ void AllocTestPublisher::run(uint32_t samples)
             --i;
         else
         {
-            std::cout << "Message with index: "<< m_data.index()<< " SENT"<<std::endl;
+            std::cout << "Message with index: "<< m_data.index() << " SENT" << std::endl;
         }
         eClock::my_sleep(500);
 
         if (i == 0)
         {
             // Flush callgrind graph
-            callgrind_dump();
+            eprosima_profiling::callgrind_dump();
+            eprosima_profiling::first_sample_exchanged();
 
-            std::cout << "First message has been sent. Press enter to continue sending samples" << std::endl;
-            std::cin.ignore();
+            std::cout << "First message has been sent" << std::endl;
+            eClock::my_sleep(500);
         }
     }
 
     // Flush callgrind graph
-    callgrind_dump();
+    eprosima_profiling::callgrind_dump();
+    eprosima_profiling::all_samples_exchanged();
 
-    std::cout << "All messages have been sent. Press enter to stop publisher" << std::endl;
-    std::cin.ignore();
+    if(wait_unmatch)
+    {
+        std::cout << "All messages have been sent. Waiting for subscriber to stop." << std::endl;
+        m_listener.wait_unmatch();
+    }
+    else
+    {
+        std::cout << "All messages have been sent. Waiting a bit to let subscriber receive samples." << std::endl;
+        eClock::my_sleep(500);
+    }
 
     // Flush callgrind graph
-    callgrind_dump();
+    eprosima_profiling::callgrind_dump();
+    eprosima_profiling::undiscovery_finished();
+    eprosima_profiling::print_results(m_outputFile, "publisher", m_profile);
 }
 
 bool AllocTestPublisher::publish()
 {
-    if(m_listener.n_matched>0)
+    if(m_listener.is_matched())
     {
         m_data.index(m_data.index()+1);
         mp_publisher->write((void*)&m_data);

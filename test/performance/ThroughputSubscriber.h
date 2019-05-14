@@ -57,6 +57,7 @@ public:
         const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
         const std::string& sXMLConfigFile, bool dynamic_types, int forced_domain);
     virtual ~ThroughputSubscriber();
+    void processMessage();
     eprosima::fastrtps::Participant* mp_par;
     eprosima::fastrtps::Subscriber* mp_datasub;
     eprosima::fastrtps::Publisher* mp_commandpubli;
@@ -71,7 +72,6 @@ public:
     std::condition_variable data_disc_cond_;
     //! 0 - Continuing test, 1 - End of a test, 2 - Finish application
     int stop_count_;
-    std::condition_variable stop_cond_;
     class DataSubListener : public eprosima::fastrtps::SubscriberListener
     {
     public:
@@ -135,7 +135,7 @@ public:
     int m_forced_domain;
 
     // Static Data
-    ThroughputDataType throughput_t;
+    ThroughputDataType* throughput_t;
     ThroughputType* throughputin;
     // Dynamic Data
     eprosima::fastrtps::types::DynamicData* m_DynData;

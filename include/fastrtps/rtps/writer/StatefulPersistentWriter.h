@@ -41,12 +41,15 @@ class StatefulPersistentWriter : public StatefulWriter, private PersistentWriter
     StatefulPersistentWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr, IPersistenceService* persistence = nullptr);
     public:
     virtual ~StatefulPersistentWriter();
-    
+
     /**
      * Add a specific change to all ReaderLocators.
      * @param p Pointer to the change.
+     * @param max_blocking_time
      */
-    void unsent_change_added_to_history(CacheChange_t* p) override;
+    void unsent_change_added_to_history(
+            CacheChange_t* p,
+            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time) override;
 
     /**
      * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.

@@ -37,8 +37,8 @@ class ReaderTimes
 public:
     ReaderTimes()
     {
-        initialAcknackDelay.fraction = 300*1000*1000;
-        heartbeatResponseDelay.fraction = 20*1000*1000;
+        initialAcknackDelay.nanosec = 70*1000*1000;
+        heartbeatResponseDelay.nanosec = 5*1000*1000;
     }
 
     virtual ~ReaderTimes() {}
@@ -49,9 +49,9 @@ public:
                (this->heartbeatResponseDelay == b.heartbeatResponseDelay);
     }
 
-    //!Initial AckNack delay. Default value ~70ms.
+    //!Initial AckNack delay. Default value 70ms.
     Duration_t initialAcknackDelay;
-    //!Delay to be applied when a hearbeat message is received, default value ~5ms.
+    //!Delay to be applied when a hearbeat message is received, default value 5ms.
     Duration_t heartbeatResponseDelay;
 };
 
@@ -63,14 +63,16 @@ class  ReaderAttributes
 {
     public:
 
-        ReaderAttributes() : expectsInlineQos(false)
+        ReaderAttributes()
+            : expectsInlineQos(false)
+            , disable_positive_acks(false)
         {
             endpoint.endpointKind = READER;
             endpoint.durabilityKind = VOLATILE;
             endpoint.reliabilityKind = BEST_EFFORT;
         };
 
-        virtual ~ReaderAttributes(){};
+        virtual ~ReaderAttributes() {};
 
         //!Attributes of the associated endpoint.
         EndpointAttributes endpoint;
@@ -80,6 +82,9 @@ class  ReaderAttributes
 
         //!Indicates if the reader expects Inline qos, default value 0.
         bool expectsInlineQos;
+
+        //! Disable positive ACKs
+        bool disable_positive_acks;
 };
 
 /**
@@ -89,14 +94,18 @@ class  ReaderAttributes
 class  RemoteWriterAttributes
 {
     public:
-        RemoteWriterAttributes() : livelinessLeaseDuration(c_TimeInfinite), ownershipStrength(0),
-        is_eprosima_endpoint(true)
+        RemoteWriterAttributes()
+            : livelinessLeaseDuration(c_TimeInfinite)
+            , ownershipStrength(0)
+            , is_eprosima_endpoint(true)
         {
             endpoint.endpointKind = WRITER;
         }
 
-        RemoteWriterAttributes(const VendorId_t& vendor_id) : livelinessLeaseDuration(c_TimeInfinite), ownershipStrength(0),
-        is_eprosima_endpoint(vendor_id == c_VendorId_eProsima)
+        RemoteWriterAttributes(const VendorId_t& vendor_id)
+            : livelinessLeaseDuration(c_TimeInfinite)
+            , ownershipStrength(0)
+            , is_eprosima_endpoint(vendor_id == c_VendorId_eProsima)
         {
             endpoint.endpointKind = WRITER;
         }

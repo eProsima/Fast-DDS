@@ -19,8 +19,9 @@
 #include <vector>
 #include "../rtps/common/Locator.h"
 #include "../rtps/common/PortParameters.h"
-#include "./TransportDescriptorInterface.h"
-#include "./TransportReceiverInterface.h"
+#include "TransportDescriptorInterface.h"
+#include "TransportReceiverInterface.h"
+#include "../rtps/network/SenderResource.h"
 
 namespace eprosima{
 namespace fastrtps{
@@ -32,8 +33,9 @@ static const uint32_t s_minimumSocketBuffer = 65536;
 static const std::string s_IPv4AddressAny = "0.0.0.0";
 static const std::string s_IPv6AddressAny = "::";
 
-class SenderResource;
 class ChannelResource;
+
+using SendResourceList = std::vector<std::unique_ptr<SenderResource>>;
 
 /**
  * Interface against which to implement a transport layer, decoupled from FastRTPS internals.
@@ -65,12 +67,6 @@ public:
     virtual bool init() = 0;
 
     /**
-    * Must report whether the output channel associated to this locator is open. Channels must either be
-    * fully closed or fully open, so that "open" and "close" operations are whole and definitive.
-    */
-    virtual bool IsOutputChannelOpen(const Locator_t&) const = 0;
-
-    /**
     * Must report whether the input channel associated to this locator is open. Channels must either be
     * fully closed or fully open, so that "open" and "close" operations are whole and definitive.
     */
@@ -80,24 +76,20 @@ public:
     virtual bool IsLocatorSupported(const Locator_t&) const = 0;
 
     //! Must report whether the given locator is allowed by this transport.
-    virtual bool IsLocatorAllowed(const Locator_t&) const = 0;
+    virtual bool is_locator_allowed(const Locator_t&) const = 0;
 
     //! Returns the locator describing the main (most general) channel that can write to the provided remote locator.
     virtual Locator_t RemoteToMainLocal(const Locator_t& remote) const = 0;
 
     //! Must open the channel that maps to/from the given locator. This method must allocate, reserve and mark
     //! any resources that are needed for said channel.
-    virtual bool OpenOutputChannel(const Locator_t&) = 0;
-    virtual bool OpenExtraOutputChannel(const Locator_t&) = 0;
+    virtual bool OpenOutputChannel(
+            SendResourceList& sender_resource_list,
+            const Locator_t&) = 0;
 
-    virtual bool OpenInputChannel(const Locator_t&, TransportReceiverInterface*, uint32_t) = 0;
-
-    /**
-    * Must close the channel that maps to/from the given locator.
-    * IMPORTANT: It MUST be safe to call this method even during a Send operation on another thread. You must implement
-    * any necessary mutual exclusion and timeout mechanisms to make sure the channel can be closed without damage.
-    */
-    virtual bool CloseOutputChannel(const Locator_t&) = 0;
+    virtual bool OpenInputChannel(
+        const Locator_t&,
+        TransportReceiverInterface*, uint32_t) = 0;
 
     /**
     * Must close the channel that maps to/from the given locator.
@@ -108,18 +100,6 @@ public:
 
     //! Must report whether two locators map to the same internal channel.
     virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const = 0;
-    //! Must report whether two locators map to the same internal channel.
-    virtual bool DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const = 0;
-    /**
-     * Must execute a blocking send, through the outbound channel that maps to the localLocator, targeted to the
-     * remote address defined by remoteLocator. Must be threadsafe between channels, but not necessarily
-     * within the same channel.
-     */
-    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator) = 0;
-
-    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, ChannelResource* pChannelResource) = 0;
-
-    //virtual ChannelResource* FindSocket(const Locator_t& remoteLocator) = 0;
 
     virtual LocatorList_t NormalizeLocator(const Locator_t& locator) = 0;
 
@@ -131,27 +111,49 @@ public:
 
     virtual void AddDefaultOutputLocator(LocatorList_t &defaultList) = 0;
 
-    virtual bool getDefaultMetatrafficMulticastLocators(LocatorList_t &locators,
+    virtual bool getDefaultMetatrafficMulticastLocators(
+        LocatorList_t& locators,
         uint32_t metatraffic_multicast_port) const = 0;
 
-    virtual bool getDefaultMetatrafficUnicastLocators(LocatorList_t &locators,
+    virtual bool getDefaultMetatrafficUnicastLocators(
+        LocatorList_t& locators,
         uint32_t metatraffic_unicast_port) const = 0;
 
-    virtual bool getDefaultUnicastLocators(LocatorList_t &locators, uint32_t unicast_port) const = 0;
+    virtual bool getDefaultUnicastLocators(
+        LocatorList_t& locators,
+        uint32_t unicast_port) const = 0;
 
-    virtual bool fillMetatrafficMulticastLocator(Locator_t &locator, uint32_t metatraffic_multicast_port) const = 0;
+    virtual bool fillMetatrafficMulticastLocator(
+        Locator_t& locator,
+        uint32_t metatraffic_multicast_port) const = 0;
 
-    virtual bool fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const = 0;
+    virtual bool fillMetatrafficUnicastLocator(
+        Locator_t& locator,
+        uint32_t metatraffic_unicast_port) const = 0;
 
-    virtual bool configureInitialPeerLocator(Locator_t &locator, const PortParameters &port_params, uint32_t domainId,
+    virtual bool configureInitialPeerLocator(
+        Locator_t& locator,
+        const PortParameters &port_params,
+        uint32_t domainId,
         LocatorList_t& list) const = 0;
 
-    virtual bool fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const = 0;
+    virtual bool fillUnicastLocator(
+        Locator_t& locator,
+        uint32_t well_known_port) const = 0;
 
     /**
      * Shutdown method to close the connections of the transports.
     */
-    virtual void Shutdown() {};
+    virtual void shutdown() {};
+
+    int32_t kind() const { return transport_kind_; }
+
+protected:
+
+    TransportInterface(int32_t transport_kind)
+        : transport_kind_(transport_kind) {}
+
+    int32_t transport_kind_;
 };
 
 } // namespace rtps

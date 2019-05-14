@@ -26,7 +26,8 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/SubscriberHistory.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
-
+#include <fastrtps/rtps/timedevent/TimedCallback.h>
+#include <fastrtps/qos/DeadlineMissedStatus.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -80,7 +81,7 @@ public:
 	bool takeNextData(void* data,SampleInfo_t* info);
 
 	///@}
-	
+
 	/**
 	 * Update the Attributes of the subscriber;
 	 * @param att Reference to a SubscriberAttributes object to update the parameters;
@@ -120,8 +121,22 @@ public:
 	 */
 	uint64_t getUnreadCount() const;
 
+    /**
+     * @brief A method called when a new cache change is added
+     * @param change The cache change that has been added
+     * @return True if the change was added (due to some QoS it could have been 'rejected')
+     */
+    bool onNewCacheChangeAdded(const rtps::CacheChange_t* const change);
+
+    /**
+     * @brief Get the requested deadline missed status
+     * @return The deadline missed status
+     */
+    void get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status);
+
 private:
-	//!Participant
+
+    //!Participant
 	ParticipantImpl* mp_participant;
 
 	//!Pointer to associated RTPSReader
@@ -134,19 +149,54 @@ private:
 	SubscriberHistory m_history;
 	//!Listener
 	SubscriberListener* mp_listener;
-	class SubscriberReaderListener : public rtps::ReaderListener
-	{
-	public:
+
+    class SubscriberReaderListener : public rtps::ReaderListener
+    {
+    public:
         SubscriberReaderListener(SubscriberImpl* s): mp_subscriberImpl(s) {}
         virtual ~SubscriberReaderListener() {}
-		void onReaderMatched(rtps::RTPSReader* reader, rtps::MatchingInfo& info);
-		void onNewCacheChangeAdded(rtps::RTPSReader * reader,const rtps::CacheChange_t* const change);
-		SubscriberImpl* mp_subscriberImpl;
+        void onReaderMatched(
+                rtps::RTPSReader* reader,
+                rtps::MatchingInfo& info) override;
+        void onNewCacheChangeAdded(
+                rtps::RTPSReader* reader,
+                const rtps::CacheChange_t* const change) override;
+        SubscriberImpl* mp_subscriberImpl;
     } m_readerListener;
 
-	Subscriber* mp_userSubscriber;
-	//!RTPSParticipant
-	rtps::RTPSParticipant* mp_rtpsParticipant;
+    Subscriber* mp_userSubscriber;
+    //!RTPSParticipant
+    rtps::RTPSParticipant* mp_rtpsParticipant;
+
+    //! A timer used to check for deadlines
+    rtps::TimedCallback deadline_timer_;
+    //! Deadline duration in microseconds
+    std::chrono::duration<double, std::ratio<1, 1000000>> deadline_duration_us_;
+    //! The current timer owner, i.e. the instance which started the deadline timer
+    rtps::InstanceHandle_t timer_owner_;
+    //! Requested deadline missed status
+    RequestedDeadlineMissedStatus deadline_missed_status_;
+
+    //! A timed callback to remove expired samples
+    rtps::TimedCallback lifespan_timer_;
+    //! The lifespan duration
+    std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
+
+    /**
+     * @brief Method called when an instance misses the deadline
+     */
+    void deadline_missed();
+
+    /**
+     * @brief A method to reschedule the deadline timer
+     */
+    void deadline_timer_reschedule();
+
+    /**
+     * @brief A method called when the lifespan timer expires
+     */
+    void lifespan_expired();
+
 };
 
 

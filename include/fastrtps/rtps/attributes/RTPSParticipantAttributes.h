@@ -26,6 +26,7 @@
 #include "../flowcontrol/ThroughputControllerDescriptor.h"
 #include "../../transport/TransportInterface.h"
 #include "../resources/ResourceManagement.h"
+#include "../../utils/fixed_size_string.hpp"
 
 #include <memory>
 
@@ -39,48 +40,49 @@ namespace rtps {
  */
 class SimpleEDPAttributes
 {
-    public:
+public:
 
-        //!Default value true.
-        bool use_PublicationWriterANDSubscriptionReader;
-        //!Default value true.
-        bool use_PublicationReaderANDSubscriptionWriter;
+    //!Default value true.
+    bool use_PublicationWriterANDSubscriptionReader;
+
+    //!Default value true.
+    bool use_PublicationReaderANDSubscriptionWriter;
 
 #if HAVE_SECURITY
-        bool enable_builtin_secure_publications_writer_and_subscriptions_reader;
+    bool enable_builtin_secure_publications_writer_and_subscriptions_reader;
 
-        bool enable_builtin_secure_subscriptions_writer_and_publications_reader;
+    bool enable_builtin_secure_subscriptions_writer_and_publications_reader;
 #endif
 
-        SimpleEDPAttributes():
-            use_PublicationWriterANDSubscriptionReader(true),
-            use_PublicationReaderANDSubscriptionWriter(true)
+    SimpleEDPAttributes()
+        : use_PublicationWriterANDSubscriptionReader(true)
+        , use_PublicationReaderANDSubscriptionWriter(true)
 #if HAVE_SECURITY
-            , enable_builtin_secure_publications_writer_and_subscriptions_reader(true),
-            enable_builtin_secure_subscriptions_writer_and_publications_reader(true)
+        , enable_builtin_secure_publications_writer_and_subscriptions_reader(true)
+        , enable_builtin_secure_subscriptions_writer_and_publications_reader(true)
 #endif
-        {
+    {
+    }
 
-        }
-
-        bool operator==(const SimpleEDPAttributes& b) const
-        {
-            return (this->use_PublicationWriterANDSubscriptionReader == b.use_PublicationWriterANDSubscriptionReader) &&
+    bool operator==(const SimpleEDPAttributes& b) const
+    {
+        return (this->use_PublicationWriterANDSubscriptionReader == b.use_PublicationWriterANDSubscriptionReader) &&
 #if HAVE_SECURITY
-                   (this->enable_builtin_secure_publications_writer_and_subscriptions_reader ==
-                    b.enable_builtin_secure_publications_writer_and_subscriptions_reader) &&
-                   (this->enable_builtin_secure_subscriptions_writer_and_publications_reader ==
-                    b.enable_builtin_secure_subscriptions_writer_and_publications_reader) &&
+                (this->enable_builtin_secure_publications_writer_and_subscriptions_reader ==
+                b.enable_builtin_secure_publications_writer_and_subscriptions_reader) &&
+                (this->enable_builtin_secure_subscriptions_writer_and_publications_reader ==
+                b.enable_builtin_secure_subscriptions_writer_and_publications_reader) &&
 #endif
-                   (this->use_PublicationReaderANDSubscriptionWriter == b.use_PublicationReaderANDSubscriptionWriter);
-        }
+                (this->use_PublicationReaderANDSubscriptionWriter == b.use_PublicationReaderANDSubscriptionWriter);
+    }
 };
 
 /**
  * Class BuiltinAttributes, to define the behavior of the RTPSParticipant builtin protocols.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
-class BuiltinAttributes{
+class BuiltinAttributes
+{
     public:
         /**
          * If set to false, NO discovery whatsoever would be used.
@@ -91,10 +93,12 @@ class BuiltinAttributes{
 
         //!Indicates to use the WriterLiveliness protocol.
         bool use_WriterLivelinessProtocol;
+
         /**
          * If set to true, SimpleEDP would be used.
          */
         bool use_SIMPLE_EndpointDiscoveryProtocol;
+
         /**
          * If set to true, StaticEDP based on an XML file would be implemented.
          * The XML filename must be provided.
@@ -105,19 +109,28 @@ class BuiltinAttributes{
          * DomainId to be used by the RTPSParticipant (80 by default).
          */
         uint32_t domainId;
-        //!Lease Duration of the RTPSParticipant, indicating how much time remote RTPSParticipants should consider this RTPSParticipant alive.
+
+        /**
+         * Lease Duration of the RTPSParticipant,
+         * indicating how much time remote RTPSParticipants should consider this RTPSParticipant alive.
+         */
         Duration_t leaseDuration;
+
         /**
          * The period for the RTPSParticipant to send its Discovery Message to all other discovered RTPSParticipants
          * as well as to all Multicast ports.
          */
         Duration_t leaseDuration_announcementperiod;
+
         //!Attributes of the SimpleEDP protocol
         SimpleEDPAttributes m_simpleEDP;
+
         //!Metatraffic Unicast Locator List
         LocatorList_t metatrafficUnicastLocatorList;
+
         //!Metatraffic Multicast Locator List.
         LocatorList_t metatrafficMulticastLocatorList;
+
         //! Initial peers.
         LocatorList_t initialPeersList;
 
@@ -126,6 +139,9 @@ class BuiltinAttributes{
 
         //! Memory policy for builtin writers
         MemoryManagementPolicy_t writerHistoryMemoryPolicy;
+
+        //! Mutation tries if the port is being used.
+        uint32_t mutation_tries;
 
         BuiltinAttributes()
         {
@@ -139,12 +155,14 @@ class BuiltinAttributes{
             use_WriterLivelinessProtocol = true;
             readerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
             writerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
+            mutation_tries = 100u;
         }
         virtual ~BuiltinAttributes() {}
 
         bool operator==(const BuiltinAttributes& b) const
         {
-            return (this->use_SIMPLE_RTPSParticipantDiscoveryProtocol == b.use_SIMPLE_RTPSParticipantDiscoveryProtocol) &&
+            return (this->use_SIMPLE_RTPSParticipantDiscoveryProtocol ==
+                       b.use_SIMPLE_RTPSParticipantDiscoveryProtocol) &&
                    (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
                    (this->use_SIMPLE_EndpointDiscoveryProtocol == b.use_SIMPLE_EndpointDiscoveryProtocol) &&
                    (this->use_STATIC_EndpointDiscoveryProtocol == b.use_STATIC_EndpointDiscoveryProtocol) &&
@@ -157,7 +175,8 @@ class BuiltinAttributes{
                    (this->initialPeersList == b.initialPeersList) &&
                    (this->readerHistoryMemoryPolicy == b.readerHistoryMemoryPolicy) &&
                    (this->writerHistoryMemoryPolicy == b.writerHistoryMemoryPolicy) &&
-                   (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename);
+                   (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename) &&
+                   (this->mutation_tries == b.mutation_tries);
         }
 
         /**
@@ -165,17 +184,17 @@ class BuiltinAttributes{
          * @return Static endpoint XML filename
          */
         const char* getStaticEndpointXMLFilename() const { return m_staticEndpointXMLFilename.c_str(); }
+
         /**
          * Set the static endpoint XML filename
          * @param str Static endpoint XML filename
          */
-        void setStaticEndpointXMLFilename(const char* str){ m_staticEndpointXMLFilename = std::string(str); }
+        void setStaticEndpointXMLFilename(const char* str) { m_staticEndpointXMLFilename = std::string(str); }
+
     private:
         //! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
         std::string m_staticEndpointXMLFilename;
 };
-
-
 
 /**
  * Class RTPSParticipantAttributes used to define different aspects of a RTPSParticipant.
@@ -219,8 +238,8 @@ class RTPSParticipantAttributes
         LocatorList_t defaultUnicastLocatorList;
 
         /**
-         * Default list of Multicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case
-         * that it was defined with NO UnicastLocators. This is usually left empty.
+         * Default list of Multicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the
+         * case that it was defined with NO UnicastLocators. This is usually left empty.
          */
         LocatorList_t defaultMulticastLocatorList;
 
@@ -237,33 +256,41 @@ class RTPSParticipantAttributes
 
         //! Builtin parameters.
         BuiltinAttributes builtin;
+
         //!Port Parameters
         PortParameters port;
+
         //!User Data of the participant
         std::vector<octet> userData;
+
         //!Participant ID
         int32_t participantID;
-        //!Set the name of the participant.
-        inline void setName(const char* nam){name = nam;}
-        //!Get the name of the participant.
-        inline const char* getName() const {return name.c_str();}
+
         //!Throughput controller parameters. Leave default for uncontrolled flow.
         ThroughputControllerDescriptor throughputController;
+
         //!User defined transports to use alongside or in place of builtins.
-        std::vector<std::shared_ptr<TransportDescriptorInterface> > userTransports;
+        std::vector<std::shared_ptr<TransportDescriptorInterface>> userTransports;
+
         //!Set as false to disable the default UDPv4 implementation.
         bool useBuiltinTransports;
 
         //! Property policies
         PropertyPolicy properties;
 
+        //!Set the name of the participant.
+        inline void setName(const char* nam) { name = nam; }
+
+        //!Get the name of the participant.
+        inline const char* getName() const { return name.c_str(); }
+
     private:
         //!Name of the participant.
-        std::string name;
+        string_255 name;
 };
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif /* _RTPSPARTICIPANTPARAMETERS_H_ */

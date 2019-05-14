@@ -27,11 +27,10 @@ namespace fastrtps{
 namespace rtps {
 
 
- PersistentWriter::PersistentWriter(GUID_t& guid,WriterAttributes& att,WriterHistory* hist,IPersistenceService* persistence):
-     persistence_(persistence),
-     persistence_guid_()
+PersistentWriter::PersistentWriter(GUID_t& guid,WriterAttributes& att,WriterHistory* hist,IPersistenceService* persistence):
+    persistence_(persistence),
+    persistence_guid_()
 {
-
      // When persistence GUID is unknown, create from rtps GUID
      GUID_t p_guid = att.endpoint.persistence_guid == c_Guid_Unknown ? guid : att.endpoint.persistence_guid;
      std::ostringstream ss;
@@ -49,13 +48,13 @@ namespace rtps {
      }
  }
 
- PersistentWriter::~PersistentWriter()
+PersistentWriter::~PersistentWriter()
 {
-     delete persistence_;
+    delete persistence_;
 }
 
 /*
- *	CHANGE-RELATED METHODS
+ * CHANGE-RELATED METHODS
  */
 
 void PersistentWriter::add_persistent_change(CacheChange_t* cptr)

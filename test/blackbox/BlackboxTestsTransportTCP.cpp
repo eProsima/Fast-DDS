@@ -20,6 +20,10 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+#if TLS_FOUND
+static const char* certs_path = nullptr;
+#endif
+
 // TCP and Domain management with logical ports tests
 BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D0)
 {
@@ -355,3 +359,37 @@ BLACKBOXTEST(BlackBox, TCPMaxInitialPeer_P0_5_P4)
     ASSERT_TRUE(requester.is_matched());
     ASSERT_TRUE(replier.is_matched());
 }
+
+#if TLS_FOUND
+BLACKBOXTEST(BlackBox, TCP_TLS)
+{
+    TCPReqRepHelloWorldRequester requester;
+    TCPReqRepHelloWorldReplier replier;
+
+    requester.init(0, 0, global_port, 5, certs_path);
+
+    ASSERT_TRUE(requester.isInitialized());
+
+    replier.init(4, 0, global_port, 5, certs_path);
+
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery.
+    requester.wait_discovery();
+    replier.wait_discovery();
+
+    ASSERT_TRUE(requester.is_matched());
+    ASSERT_TRUE(replier.is_matched());
+}
+
+void tls_init()
+{
+    certs_path = std::getenv("CERTS_PATH");
+
+    if (certs_path == nullptr)
+    {
+        std::cout << "Cannot get enviroment variable CERTS_PATH" << std::endl;
+        exit(-1);
+    }
+}
+#endif

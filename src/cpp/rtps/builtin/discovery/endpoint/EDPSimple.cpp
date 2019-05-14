@@ -176,8 +176,13 @@ bool EDPSimple::createSEDPEndpoints()
                 mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
             watt.mode = ASYNCHRONOUS_WRITER;
 
-        created &=this->mp_RTPSParticipant->createWriter(&waux, watt, publications_writer_.second,
-                publications_listener_, c_EntityId_SEDPPubWriter, true);
+        created &=this->mp_RTPSParticipant->createWriter(
+                    &waux,
+                    watt,
+                    publications_writer_.second,
+                    publications_listener_,
+                    c_EntityId_SEDPPubWriter,
+                    true);
 
         if(created)
         {
@@ -203,8 +208,13 @@ bool EDPSimple::createSEDPEndpoints()
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay = edp_heartbeat_response_delay;
 
-        created &=this->mp_RTPSParticipant->createReader(&raux, ratt, subscriptions_reader_.second,
-                subscriptions_listener_, c_EntityId_SEDPSubReader, true);
+        created &=this->mp_RTPSParticipant->createReader(
+                    &raux,
+                    ratt,
+                    subscriptions_reader_.second,
+                    subscriptions_listener_,
+                    c_EntityId_SEDPSubReader,
+                    true);
 
         if(created)
         {
@@ -485,8 +495,6 @@ bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
 
         if(change !=nullptr)
         {
-            rdata->toParameterList();
-
             CDRMessage_t aux_msg(change->serializedPayload);
 
 #if __BIG_ENDIAN__
@@ -497,12 +505,11 @@ bool EDPSimple::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
             aux_msg.msg_endian =  LITTLEEND;
 #endif
 
-            ParameterList_t parameter_list = rdata->toParameterList();
-            ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true);
+            rdata->writeToCDRMessage(&aux_msg, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
             {
-                std::unique_lock<std::recursive_mutex> lock(*writer->second->getMutex());
+                std::unique_lock<std::recursive_timed_mutex> lock(*writer->second->getMutex());
                 for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
                     if((*ch)->instanceHandle == change->instanceHandle)
@@ -543,8 +550,6 @@ bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
                 ALIVE, wdata->key());
         if(change != nullptr)
         {
-            //wdata->toParameterList();
-
             CDRMessage_t aux_msg(change->serializedPayload);
 
 #if __BIG_ENDIAN__
@@ -555,12 +560,11 @@ bool EDPSimple::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
             aux_msg.msg_endian =  LITTLEEND;
 #endif
 
-            ParameterList_t parameter_list = wdata->toParameterList();
-            ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true);
+            wdata->writeToCDRMessage(&aux_msg, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
             {
-                std::unique_lock<std::recursive_mutex> lock(*writer->second->getMutex());
+                std::unique_lock<std::recursive_timed_mutex> lock(*writer->second->getMutex());
                 for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
                     if((*ch)->instanceHandle == change->instanceHandle)
@@ -602,7 +606,7 @@ bool EDPSimple::removeLocalWriter(RTPSWriter* W)
         if(change != nullptr)
         {
             {
-                std::lock_guard<std::recursive_mutex> guard(*writer->second->getMutex());
+                std::lock_guard<std::recursive_timed_mutex> guard(*writer->second->getMutex());
                 for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
                     if((*ch)->instanceHandle == change->instanceHandle)
@@ -642,7 +646,7 @@ bool EDPSimple::removeLocalReader(RTPSReader* R)
         if(change != nullptr)
         {
             {
-                std::lock_guard<std::recursive_mutex> guard(*writer->second->getMutex());
+                std::lock_guard<std::recursive_timed_mutex> guard(*writer->second->getMutex());
                 for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
                     if((*ch)->instanceHandle == change->instanceHandle)

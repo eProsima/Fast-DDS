@@ -40,17 +40,24 @@ StatelessReader::~StatelessReader()
     logInfo(RTPS_READER,"Removing reader "<<this->getGuid());
 }
 
-StatelessReader::StatelessReader(RTPSParticipantImpl* pimpl,GUID_t& guid,
-        ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen):
-    RTPSReader(pimpl,guid,att,hist, listen)
+StatelessReader::StatelessReader(
+        RTPSParticipantImpl* pimpl,
+        GUID_t& guid,
+        ReaderAttributes& att,
+        ReaderHistory* hist,
+        ReaderListener* listen)
+    : RTPSReader(
+          pimpl,
+          guid,
+          att,
+          hist,
+          listen)
 {
 }
 
-
-
 bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
     {
         if((*it).guid == wdata.guid)
@@ -67,7 +74,7 @@ bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
 }
 bool StatelessReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
     {
         if((*it).guid == wdata.guid)
@@ -83,7 +90,7 @@ bool StatelessReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
 
 bool StatelessReader::matched_writer_is_matched(const RemoteWriterAttributes& wdata)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
     {
         if((*it).guid == wdata.guid)
@@ -118,15 +125,16 @@ bool StatelessReader::change_received(CacheChange_t* change)
 
 bool StatelessReader::nextUntakenCache(CacheChange_t** change, WriterProxy** /*wpout*/)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     return mp_history->get_min_change(change);
 }
 
 
 bool StatelessReader::nextUnreadCache(CacheChange_t** change,WriterProxy** /*wpout*/)
 {
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     //m_reader_cache.sortCacheChangesBySeqNum();
+
     bool found = false;
     std::vector<CacheChange_t*>::iterator it;
     //TODO PROTEGER ACCESO A HISTORIA AQUI??? YO CREO QUE NO, YA ESTA EL READER PROTEGIDO
@@ -149,7 +157,9 @@ bool StatelessReader::nextUnreadCache(CacheChange_t** change,WriterProxy** /*wpo
 }
 
 
-bool StatelessReader::change_removed_by_history(CacheChange_t* /*ch*/, WriterProxy* /*prox*/)
+bool StatelessReader::change_removed_by_history(
+        CacheChange_t* /*ch*/,
+        WriterProxy* /*prox*/)
 {
     return true;
 }
@@ -158,7 +168,7 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
 {
     assert(change);
 
-    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
     if(acceptMsgFrom(change->writerGUID))
     {
@@ -220,7 +230,7 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
 {
     assert(incomingChange);
 
-    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
     if (acceptMsgFrom(incomingChange->writerGUID))
     {
@@ -248,6 +258,9 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
             }
 #endif
 
+            // Try to remove previous CacheChange_t from PitStop.
+            fragmentedChangePitStop_->try_to_remove_until(incomingChange->sequenceNumber, incomingChange->writerGUID);
+
             // Fragments manager has to process incomming fragments.
             // If CacheChange_t is completed, it will be returned;
             CacheChange_t* change_completed = fragmentedChangePitStop_->process(change_to_add, sampleSize, fragmentStartingNum);
@@ -260,9 +273,6 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
             // If the change was completed, process it.
             if(change_completed != nullptr)
             {
-                // Try to remove previous CacheChange_t from PitStop.
-                fragmentedChangePitStop_->try_to_remove_until(incomingChange->sequenceNumber, incomingChange->writerGUID);
-
                 if (!change_received(change_completed))
                 {
                     logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long());
@@ -283,13 +293,21 @@ bool StatelessReader::processDataFragMsg(CacheChange_t *incomingChange, uint32_t
     return true;
 }
 
-bool StatelessReader::processHeartbeatMsg(GUID_t& /*writerGUID*/, uint32_t /*hbCount*/, SequenceNumber_t& /*firstSN*/,
-        SequenceNumber_t& /*lastSN*/, bool /*finalFlag*/, bool /*livelinessFlag*/)
+bool StatelessReader::processHeartbeatMsg(
+        GUID_t& /*writerGUID*/,
+        uint32_t /*hbCount*/,
+        SequenceNumber_t& /*firstSN*/,
+        SequenceNumber_t& /*lastSN*/,
+        bool /*finalFlag*/,
+        bool /*livelinessFlag*/)
 {
     return true;
 }
 
-bool StatelessReader::processGapMsg(GUID_t& /*writerGUID*/, SequenceNumber_t& /*gapStart*/, SequenceNumberSet_t& /*gapList*/)
+bool StatelessReader::processGapMsg(
+        GUID_t& /*writerGUID*/,
+        SequenceNumber_t& /*gapStart*/,
+        SequenceNumberSet_t& /*gapList*/)
 {
     return true;
 }
@@ -303,7 +321,9 @@ bool StatelessReader::acceptMsgFrom(GUID_t& writerId)
     else
     {
         if(writerId.entityId == this->m_trustedWriterEntityId)
+        {
             return true;
+        }
 
         for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
         {

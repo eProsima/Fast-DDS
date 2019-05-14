@@ -81,11 +81,14 @@ class IPFinder
          */
         RTPS_DllAPI static bool getAllIPAddress(LocatorList_t* locators);
         /**
-         * Parses an IP4 string, populating a locator with its value.
-         * @param[in] str IP string to parse.
-         * @param[out] loc Locator to populate.
+         * Parses an IP4 string, populating a info_IP with its value.
+         * @param[out] info info_IP to populate.
          * */
         RTPS_DllAPI static bool parseIP4(info_IP& info);
+        /**
+         * Parses an IP6 string, populating a info_IP with its value.
+         * @param[out] info info_IP to populate.
+         * */
         RTPS_DllAPI static bool parseIP6(info_IP& info);
 
         RTPS_DllAPI static std::string getIPv4Address(const std::string &name);

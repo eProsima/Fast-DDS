@@ -36,10 +36,12 @@ class test_UDPv4Transport : public UDPv4Transport
 public:
     test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor);
 
-    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator) override;
-
-    virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
-                        const Locator_t& remoteLocator, ChannelResource* pChannelResource) override;
+    virtual bool send(
+           const octet* send_buffer,
+           uint32_t send_buffer_size,
+           eProsimaUDPSocket& socket,
+           const Locator_t& remote_locator,
+           bool only_multicast_purpose) override;
 
     RTPS_DllAPI static bool test_UDPv4Transport_ShutdownAllNetwork;
     // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
@@ -47,19 +49,33 @@ public:
     RTPS_DllAPI static uint32_t test_UDPv4Transport_DropLogLength;
 
 private:
-    uint8_t mDropDataMessagesPercentage;
-    bool mDropParticipantBuiltinTopicData;
-    bool mDropPublicationBuiltinTopicData;
-    bool mDropSubscriptionBuiltinTopicData;
-    uint8_t mDropDataFragMessagesPercentage;
-    uint8_t mDropHeartbeatMessagesPercentage;
-    uint8_t mDropAckNackMessagesPercentage;
-    std::vector<SequenceNumber_t> mSequenceNumberDataMessagesToDrop;
-    uint8_t mPercentageOfMessagesToDrop;
 
-    bool LogDrop(const octet* buffer, uint32_t size);
-    bool PacketShouldDrop(const octet* sendBuffer, uint32_t sendBufferSize);
-    bool RandomChanceDrop();
+    struct PercentageData
+    {
+        PercentageData(uint8_t percent)
+            : percentage(percent)
+            , accumulator(0)
+        {
+        }
+
+        uint8_t percentage;
+        uint8_t accumulator;
+    };
+
+    PercentageData drop_data_messages_percentage_;
+    bool drop_participant_builtin_topic_data_;
+    bool drop_publication_builtin_topic_data_;
+    bool drop_subscription_builtin_topic_data_;
+    PercentageData drop_data_frag_messages_percentage_;
+    PercentageData drop_heartbeat_messages_percentage_;
+    PercentageData drop_ack_nack_messages_percentage_;
+    std::vector<SequenceNumber_t> sequence_number_data_messages_to_drop_;
+    PercentageData percentage_of_messages_to_drop_;
+
+    bool log_drop(const octet* buffer, uint32_t size);
+    bool packet_should_drop(const octet* send_buffer, uint32_t send_buffer_size);
+    bool random_chance_drop();
+    bool should_be_dropped(PercentageData* percentage);
 };
 
 } // namespace rtps

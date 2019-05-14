@@ -32,19 +32,18 @@ NetworkFactory::NetworkFactory() : maxMessageSizeBetweenTransports_(0),
 {
 }
 
-vector<SenderResource> NetworkFactory::BuildSenderResources(Locator_t& local)
+bool NetworkFactory::build_send_resources(
+        SendResourceList& sender_resource_list,
+        const Locator_t& locator)
 {
-    vector<SenderResource> newSenderResources;
+    bool returned_value = false;
+
     for (auto& transport : mRegisteredTransports)
     {
-        if (transport->IsLocatorSupported(local) && !transport->IsOutputChannelOpen(local))
-        {
-            SenderResource newSenderResource(*transport, local);
-            if (newSenderResource.mValid)
-                newSenderResources.push_back(move(newSenderResource));
-        }
+        returned_value |= transport->OpenOutputChannel(sender_resource_list, locator);
     }
-    return newSenderResources;
+
+    return returned_value;
 }
 
 bool NetworkFactory::BuildReceiverResources(Locator_t& local, uint32_t maxMsgSize,
@@ -106,7 +105,9 @@ void NetworkFactory::NormalizeLocators(LocatorList_t& locators)
         for (auto& transport : mRegisteredTransports)
         {
             // Check if the locator is supported and filter unicast locators.
-            if (transport->IsLocatorSupported(loc) && (IPLocator::isMulticast(loc) || transport->IsLocatorAllowed(loc)))
+            if (transport->IsLocatorSupported(loc) &&
+                (IPLocator::isMulticast(loc) ||
+                transport->is_locator_allowed(loc)))
             {
                 // First found transport that supports it, this will normalize the locator.
                 normalizedLocators.push_back(transport->NormalizeLocator(loc));
@@ -136,12 +137,14 @@ LocatorList_t NetworkFactory::ShrinkLocatorLists(const std::vector<LocatorList_t
             LocatorList_t resultList;
 
             for(auto it = locatorList.begin(); it != locatorList.end(); ++it)
+            {
                 if(transport->IsLocatorSupported(*it))
+                {
                     resultList.push_back(*it);
-
+                }
+            }
             transportLocatorLists.push_back(resultList);
         }
-
         returnedList.push_back(transport->ShrinkLocatorLists(transportLocatorLists));
     }
 
@@ -281,16 +284,29 @@ void NetworkFactory::Shutdown()
 {
     for (auto& transport : mRegisteredTransports)
     {
-        transport->Shutdown();
+        transport->shutdown();
     }
 }
 
 uint16_t NetworkFactory::calculateWellKnownPort(const RTPSParticipantAttributes& att) const
 {
-    return static_cast<uint16_t>(att.port.portBase +
-            att.port.domainIDGain*att.builtin.domainId +
-            att.port.offsetd3 +
-            att.port.participantIDGain*att.participantID);
+
+    uint32_t port = att.port.portBase +
+        att.port.domainIDGain * att.builtin.domainId +
+        att.port.offsetd3 +
+        att.port.participantIDGain * att.participantID;
+
+    if (port > 65535)
+    {
+        logError(RTPS, "Calculated port number is too high. Probably the domainId is over 232, there are "
+            << "too much participants created or portBase is too high.");
+        std::cout << "Calculated port number is too high. Probably the domainId is over 232, there are "
+            << "too much participants created or portBase is too high." << std::endl;
+        std::cout.flush();
+        exit(EXIT_FAILURE);
+    }
+
+    return static_cast<uint16_t>(port);
 }
 
 } // namespace rtps

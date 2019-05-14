@@ -35,8 +35,10 @@ class RTPSReader;
  * Class ReaderHistory, container of the different CacheChanges of a reader
  * @ingroup READER_MODULE
  */
-class ReaderHistory : public History {
+class ReaderHistory : public History
+{
     friend class RTPSReader;
+
 public:
     /**
      * Constructor of the ReaderHistory. It needs a HistoryAttributes.
@@ -65,7 +67,7 @@ public:
      * @param a_change Pointer to the CacheChange to remove.
      * @return True if removed.
      */
-    RTPS_DllAPI bool remove_change(CacheChange_t* a_change);
+    RTPS_DllAPI bool remove_change(CacheChange_t* a_change) override;
 
     /**
      * Remove all changes from the History that have a certain guid.
@@ -74,13 +76,13 @@ public:
      * */
     RTPS_DllAPI bool remove_changes_with_guid(const GUID_t& a_guid);
     /**
-     * Sort the CacheChange_t from the History.
+     * Sort the CacheChange_t from the History by timestamp
      */
     RTPS_DllAPI void sortCacheChanges();
     /**
      * Update the maximum and minimum sequenceNumber cacheChanges.
      */
-    RTPS_DllAPI void updateMaxMinSeqNum();
+    RTPS_DllAPI void updateMaxMinSeqNum() override;
 
     //!Post to the semaphore
     RTPS_DllAPI void postSemaphore();

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TCP_CHANNEL_RESOURCE_INFO_
-#define TCP_CHANNEL_RESOURCE_INFO_
+#ifndef _TCP_CHANNEL_RESOURCE_BASE_
+#define _TCP_CHANNEL_RESOURCE_BASE_
 
-#include <asio.hpp>
+#include <fastrtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/transport/TransportReceiverInterface.h>
 #include <fastrtps/transport/ChannelResource.h>
 #include <fastrtps/transport/tcp/RTCPMessageManager.h>
@@ -38,203 +38,161 @@ enum eSocketErrorCodes
     eConnectionAborted = 125
 };
 
-#if defined(ASIO_HAS_MOVE)
-    // Typedefs
-	typedef asio::ip::tcp::socket eProsimaTCPSocket;
-    typedef eProsimaTCPSocket& eProsimaTCPSocketRef;
-
-    // TCP
-	inline eProsimaTCPSocket* getSocketPtr(eProsimaTCPSocket &socket)
-    {
-        return &socket;
-    }
-    inline eProsimaTCPSocket moveSocket(eProsimaTCPSocket &socket)
-    {
-        return std::move(socket);
-    }
-    inline eProsimaTCPSocket createTCPSocket(asio::io_service& io_service)
-    {
-        return asio::ip::tcp::socket(io_service);
-    }
-	inline eProsimaTCPSocket& getTCPSocketRef(eProsimaTCPSocket& socket)
-	{
-		return socket;
-	}
-#else
-    // Typedefs
-	typedef std::shared_ptr<asio::ip::tcp::socket> eProsimaTCPSocket;
-    typedef eProsimaTCPSocket eProsimaTCPSocketRef;
-
-    // TCP
-    inline eProsimaTCPSocket getSocketPtr(eProsimaTCPSocket socket)
-    {
-        return socket;
-    }
-    inline eProsimaTCPSocket moveSocket(eProsimaTCPSocket socket)
-    {
-        return socket;
-    }
-    inline eProsimaTCPSocket createTCPSocket(asio::io_service& io_service)
-    {
-        return std::make_shared<asio::ip::tcp::socket>(io_service);
-    }
-	inline asio::ip::tcp::socket& getTCPSocketRef(eProsimaTCPSocket socket)
-    {
-        return *socket;
-    }
-#endif
-
 class TCPChannelResource : public ChannelResource
 {
-enum eConnectionStatus
-{
-    eDisconnected = 0,
-    eConnecting,                // Output -> Trying connection.
-    eConnected,                 // Output -> Send bind message.
-    eWaitingForBind,            // Input -> Waiting for the bind message.
-    eWaitingForBindResponse,    // Output -> Waiting for the bind response message.
-    eEstablished,
-    eUnbinding
-};
+
+protected:
+
+    enum TCPConnectionType
+    {
+        TCP_ACCEPT_TYPE = 0,
+        TCP_CONNECT_TYPE = 1
+    };
+
+    enum eConnectionStatus
+    {
+        eDisconnected = 0,
+        eConnecting,                // Output -> Trying connection.
+        eConnected,                 // Output -> Send bind message.
+        eWaitingForBind,            // Input -> Waiting for the bind message.
+        eWaitingForBindResponse,    // Output -> Waiting for the bind response message.
+        eEstablished,
+        eUnbinding
+    };
+
+    TCPTransportInterface* parent_;
+    Locator_t locator_;
+    bool waiting_for_keep_alive_;
+    // Must be accessed after lock pending_logical_mutex_
+    std::map<TCPTransactionId, uint16_t> negotiating_logical_ports_;
+    std::map<TCPTransactionId, uint16_t> last_checked_logical_port_;
+    std::vector<uint16_t> pending_logical_output_ports_; // Must be accessed after lock pending_logical_mutex_
+    std::vector<uint16_t> logical_output_ports_;
+    std::mutex read_mutex_;
+    std::mutex write_mutex_;
+    std::recursive_mutex pending_logical_mutex_;
+    std::atomic<eConnectionStatus> connection_status_;
 
 public:
-    // Constructor called when trying to connect to a remote server
-    TCPChannelResource(TCPTransportInterface* parent, RTCPMessageManager* rtcpManager,
-        asio::io_service& service, const Locator_t& locator, uint32_t maxMsgSize);
 
-    // Constructor called when local server accepted connection
-    TCPChannelResource(TCPTransportInterface* parent, RTCPMessageManager* rtcpManager,
-        asio::io_service& service, eProsimaTCPSocketRef socket, uint32_t maxMsgSize);
+    void add_logical_port(
+            uint16_t port,
+            RTCPMessageManager* rtcp_manager);
+
+    void set_logical_port_pending(uint16_t port);
+
+    bool remove_logical_port(uint16_t port);
+
+    virtual void disable() override;
+
+    bool is_logical_port_opened(uint16_t port);
+
+    bool is_logical_port_added(uint16_t port);
+
+    bool connection_established()
+    {
+        return connection_status_ == eConnectionStatus::eEstablished;
+    }
+
+    eConnectionStatus connection_status()
+    {
+        return connection_status_;
+    }
+
+    inline const Locator_t& locator() const
+    {
+        return locator_;
+    }
+
+    ResponseCode process_bind_request(const Locator_t& locator);
+
+    // Socket related methods
+    virtual void connect(
+            const std::shared_ptr<TCPChannelResource>& myself) = 0;
+
+    virtual void disconnect() = 0;
+
+    virtual uint32_t read(
+        octet* buffer,
+        std::size_t size,
+        asio::error_code& ec) = 0;
+
+    virtual size_t send(
+        const octet* header,
+        size_t header_size,
+        const octet* buffer,
+        size_t size,
+        asio::error_code& ec) = 0;
+
+    virtual asio::ip::tcp::endpoint remote_endpoint() const = 0;
+
+    virtual asio::ip::tcp::endpoint local_endpoint() const = 0;
+
+    virtual void set_options(const TCPTransportDescriptor* options) = 0;
+
+    virtual void cancel() = 0;
+
+    virtual void close() = 0;
+
+    virtual void shutdown(asio::socket_base::shutdown_type what) = 0;
+
+    TCPConnectionType tcp_connection_type() const { return tcp_connection_type_; }
 
     virtual ~TCPChannelResource();
 
-    bool operator==(const TCPChannelResource& channelResource) const
-    {
-        return &mSocket == &(channelResource.mSocket);
-    }
-
-    void fillLogicalPorts(std::vector<Locator_t>& outVector);
-
-    void AddLogicalPort(uint16_t port);
-
-    void SetLogicalPortPending(uint16_t port);
-
-    bool RemoveLogicalPort(uint16_t port);
-
-	virtual void Disable() override;
-
-	uint32_t GetMsgSize() const;
-
-#if defined(ASIO_HAS_MOVE)
-    inline eProsimaTCPSocket* getSocket()
-#else
-    inline eProsimaTCPSocket getSocket()
-#endif
-    {
-        return getSocketPtr(mSocket);
-    }
-
-    std::recursive_mutex& GetReadMutex()
-    {
-        return mReadMutex;
-    }
-
-    std::recursive_mutex& GetWriteMutex()
-    {
-        return mWriteMutex;
-    }
-
-    inline void SetRTCPThread(std::thread* pThread)
-    {
-        mRTCPThread = pThread;
-    }
-
-    std::thread* ReleaseRTCPThread();
-
-    inline bool GetIsInputSocket() const
-    {
-        return m_inputSocket;
-    }
-
-    inline void SetIsInputSocket(bool bInput)
-    {
-        m_inputSocket = bInput;
-    }
-
-	bool IsLogicalPortOpened(uint16_t port);
-
-    bool IsLogicalPortAdded(uint16_t port);
-
-    bool IsConnectionEstablished()
-    {
-        std::unique_lock<std::mutex> scoped(mStatusMutex);
-        return mConnectionStatus == eConnectionStatus::eEstablished;
-    }
-
-    inline const Locator_t& GetLocator() const
-    {
-        return mLocator;
-    }
-
-    void InputPortClosed(uint16_t port);
-
-    void Connect();
-    ResponseCode ProcessBindRequest(const Locator_t& locator);
-    void Disconnect();
-
-    bool WaitUntilPortIsOpenOrConnectionIsClosed(uint16_t port);
-
 protected:
-    inline bool ChangeStatus(eConnectionStatus s)
+
+    // Constructor called when trying to connect to a remote server
+    TCPChannelResource(
+        TCPTransportInterface* parent,
+        const Locator_t& locator,
+        uint32_t maxMsgSize);
+
+    // Constructor called when local server accepted connection
+    TCPChannelResource(
+        TCPTransportInterface* parent,
+        uint32_t maxMsgSize);
+
+    inline eConnectionStatus change_status(eConnectionStatus s, RTCPMessageManager* rtcp_manager = nullptr)
     {
-        std::unique_lock<std::mutex> scoped(mStatusMutex);
-        if (mConnectionStatus != s)
+        eConnectionStatus old = connection_status_.exchange(s);
+
+        if (old != s)
         {
-        	mConnectionStatus = s;
-	        if (mConnectionStatus == eEstablished)
-	        {
-	            SendPendingOpenLogicalPorts();
-	        }
-            mNegotiationCondition.notify_all();
-	        return true;
-	    }
-	    return false;
+            if (s == eEstablished)
+            {
+                assert(rtcp_manager != nullptr);
+                send_pending_open_logical_ports(rtcp_manager);
+            }
+        }
+
+        return old;
     }
 
-    void AddLogicalPortResponse(const TCPTransactionId &id, bool success);
-    void ProcessCheckLogicalPortsResponse(const TCPTransactionId &transactionId,
-        const std::vector<uint16_t> &availablePorts);
+    void add_logical_port_response(const TCPTransactionId &id, bool success, RTCPMessageManager* rtcp_manager);
+
+    void process_check_logical_ports_response(
+            const TCPTransactionId &transactionId,
+            const std::vector<uint16_t> &availablePorts,
+            RTCPMessageManager* rtcp_manager);
+
+    TCPConnectionType tcp_connection_type_;
 
     friend class TCPTransportInterface;
     friend class RTCPMessageManager;
-    friend class test_RTCPMessageManager;
 
 private:
-    TCPTransportInterface * mParent;
-    RTCPMessageManager* mRTCPManager;
-    Locator_t mLocator;
-    bool m_inputSocket;
-    bool mWaitingForKeepAlive;
-    std::map<TCPTransactionId, uint16_t> mNegotiatingLogicalPorts; // Must be accessed after lock mPendingLogicalMutex
-    std::map<TCPTransactionId, uint16_t> mLastCheckedLogicalPort;
-    std::thread* mRTCPThread;
-    std::vector<uint16_t> mPendingLogicalOutputPorts; // Must be accessed after lock mPendingLogicalMutex
-    std::vector<uint16_t> mLogicalOutputPorts;
-    std::recursive_mutex mReadMutex;
-    std::recursive_mutex mWriteMutex;
-    std::recursive_mutex mPendingLogicalMutex;
-    std::condition_variable mNegotiationCondition;
-    asio::io_service& mService;
-    eProsimaTCPSocket mSocket;
-    eConnectionStatus mConnectionStatus;
-    std::mutex mStatusMutex;
 
-    void PrepareAndSendCheckLogicalPortsRequest(uint16_t closedPort);
-    void SendPendingOpenLogicalPorts();
-    void CopyPendingPortsFrom(TCPChannelResource* from);
-    void SetAllPortsAsPending();
+    void prepare_send_check_logical_ports_req(
+            uint16_t closedPort,
+            RTCPMessageManager* rtcp_manager);
+
+    void send_pending_open_logical_ports(RTCPMessageManager* rtcp_manager);
+
+    void set_all_ports_pending();
 
     TCPChannelResource(const TCPChannelResource&) = delete;
+
     TCPChannelResource& operator=(const TCPChannelResource&) = delete;
 };
 
@@ -243,4 +201,4 @@ private:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TCP_CHANNEL_RESOURCE_INFO_
+#endif // _TCP_CHANNEL_RESOURCE_BASE_

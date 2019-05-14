@@ -1,0 +1,71 @@
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+group ProtocolHeader;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "Serialization.h"], description=["This file contains serialization definitions."])$
+
+#ifndef _$ctx.headerGuardName$_SERIALIZATION_H_
+#define _$ctx.headerGuardName$_SERIALIZATION_H_
+
+#include "$ctx.filename$.h"
+
+$definitions; separator="\n"$
+
+#endif //_$ctx.headerGuardName$_SERIALIZATION_H_
+>>
+
+struct_type(ctx, parent, struct) ::= <<
+void print$struct.name$($struct.name$* topic);
+void initialize$struct.name$($struct.name$* topic, int idx = 0);
+int compare$struct.name$($struct.name$* a, $struct.name$* b);
+$struct.name$ createKey$struct.name$(int idx);
+
+>>
+
+union_type(ctx, parent, union) ::= <<
+void print$union.name$($union.name$* topic);
+void initialize$union.name$($union.name$* topic);
+int compare$union.name$($union.name$* a, $union.name$* b);
+
+>>
+
+enum_type(ctx, parent, enum) ::= <<>>
+
+typedef_decl(ctx, parent, typedefs) ::= <<>>
+
+bitmask_type(ctx, parent, bitmask) ::= <<>>
+
+bitset_type(ctx, parent, bitset) ::= <<
+void print$bitset.name$($bitset.name$* topic);
+void initialize$bitset.name$($bitset.name$* topic);
+int compare$bitset.name$($bitset.name$* a, $bitset.name$* b);
+
+>>
+
+annotation(ctx, annotation) ::= <<>>
+
+module(ctx, parent, module, definition_list) ::= <<
+namespace $module.name$
+{
+    $definition_list$
+}
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+>>
+
+fwd_decl(ctx, parent, type) ::= <<>>

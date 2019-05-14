@@ -21,6 +21,9 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
+#include <fastrtps/types/BuiltinAnnotationsTypeObject.h>
+#include <fastrtps/types/AnnotationDescriptor.h>
+#include <fastrtps/utils/md5.h>
 #include <fastrtps/log/Log.h>
 #include <sstream>
 
@@ -33,22 +36,23 @@ class TypeObjectFactoryReleaser
 public:
     ~TypeObjectFactoryReleaser()
     {
-        TypeObjectFactory::DeleteInstance();
+        TypeObjectFactory::delete_instance();
     }
 };
 
 static TypeObjectFactoryReleaser s_releaser;
 static TypeObjectFactory* g_instance = nullptr;
-TypeObjectFactory* TypeObjectFactory::GetInstance()
+TypeObjectFactory* TypeObjectFactory::get_instance()
 {
     if (g_instance == nullptr)
     {
         g_instance = new TypeObjectFactory();
+        g_instance->create_builtin_annotations();
     }
     return g_instance;
 }
 
-ResponseCode TypeObjectFactory::DeleteInstance()
+ResponseCode TypeObjectFactory::delete_instance()
 {
     if (g_instance != nullptr)
     {
@@ -63,120 +67,125 @@ TypeObjectFactory::TypeObjectFactory()
 {
     std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
     // Generate basic TypeIdentifiers
-    TypeIdentifier *auxIdent;
+    TypeIdentifier* auxIdent;
     // TK_BOOLEAN:
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_BOOLEAN);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_BOOLEAN, auxIdent));
+    identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_BOOLEAN, auxIdent));
     // TK_BYTE:
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_BYTE);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_BYTE, auxIdent));
+    identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_BYTE, auxIdent));
     // TK_BYTE:
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_BYTE);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT8, auxIdent));
+    identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT8, auxIdent));
     // TK_BYTE:
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_BYTE);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT8, auxIdent));
+    identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT8, auxIdent));
     // TK_INT16:
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_INT16);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT16, auxIdent));
+    identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT16, auxIdent));
     // TK_INT32:
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_INT32);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT32, auxIdent));
+    identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT32, auxIdent));
     // TK_INT64:
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_INT64);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT64, auxIdent));
+    identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT64, auxIdent));
     // TK_UINT16:
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_UINT16);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT16, auxIdent));
+    identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT16, auxIdent));
     // TK_UINT32:
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_UINT32);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT32, auxIdent));
+    identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT32, auxIdent));
     // TK_UINT64:
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_UINT64);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT64, auxIdent));
+    identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT64, auxIdent));
     // TK_FLOAT32:
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_FLOAT32);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_FLOAT32, auxIdent));
+    identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_FLOAT32, auxIdent));
     // TK_FLOAT64:
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_FLOAT64);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_FLOAT64, auxIdent));
+    identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_FLOAT64, auxIdent));
     // TK_FLOAT128:
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_FLOAT128);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_FLOAT128, auxIdent));
+    identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_FLOAT128, auxIdent));
     // TK_CHAR8:
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_CHAR8);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR8, auxIdent));
+    identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR8, auxIdent));
     // TK_CHAR16:
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_CHAR16);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR16, auxIdent));
+    identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR16, auxIdent));
     // TK_CHAR16:
     auxIdent = new TypeIdentifier;
     auxIdent->_d(TK_CHAR16);
-    m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR16T, auxIdent));
+    identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR16T, auxIdent));
 }
 
 TypeObjectFactory::~TypeObjectFactory()
 {
     {
         std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
-        auto id_it = m_Identifiers.begin();
-        while (id_it != m_Identifiers.end())
+        auto id_it = identifiers_.begin();
+        while (id_it != identifiers_.end())
         {
             const TypeIdentifier* id = id_it->second;
-            nullifyAllEntries(id);
+            nullify_all_entries(id);
             delete (id);
             ++id_it;
         }
-        m_Identifiers.clear();
+        identifiers_.clear();
 
-        auto idc_it = m_CompleteIdentifiers.begin();
-        while (idc_it != m_CompleteIdentifiers.end())
+        auto idc_it = complete_identifiers_.begin();
+        while (idc_it != complete_identifiers_.end())
         {
             const TypeIdentifier* id = idc_it->second;
-            nullifyAllEntries(id);
+            nullify_all_entries(id);
             delete (id);
             ++idc_it;
         }
-        m_CompleteIdentifiers.clear();
+        complete_identifiers_.clear();
     }
     {
         std::unique_lock<std::recursive_mutex> scoped(m_MutexObjects);
-        auto obj_it = m_Objects.begin();
-        while (obj_it != m_Objects.end())
+        auto obj_it = objects_.begin();
+        while (obj_it != objects_.end())
         {
             delete (obj_it->second);
             ++obj_it;
         }
-        m_Objects.clear();
+        objects_.clear();
 
-        auto objc_it = m_CompleteObjects.begin();
-        while (objc_it != m_CompleteObjects.end())
+        auto objc_it = complete_objects_.begin();
+        while (objc_it != complete_objects_.end())
         {
             delete (objc_it->second);
             ++objc_it;
         }
-        m_CompleteObjects.clear();
+        complete_objects_.clear();
     }
 }
 
-void TypeObjectFactory::nullifyAllEntries(const TypeIdentifier *identifier)
+void TypeObjectFactory::create_builtin_annotations()
 {
-    for (auto it = m_Identifiers.begin(); it != m_Identifiers.end(); ++it)
+    register_builtin_annotations_types(g_instance);
+}
+
+void TypeObjectFactory::nullify_all_entries(const TypeIdentifier* identifier)
+{
+    for (auto it = identifiers_.begin(); it != identifiers_.end(); ++it)
     {
         if (it->second == identifier)
         {
@@ -184,7 +193,7 @@ void TypeObjectFactory::nullifyAllEntries(const TypeIdentifier *identifier)
         }
     }
 
-    for (auto it = m_CompleteIdentifiers.begin(); it != m_CompleteIdentifiers.end(); ++it)
+    for (auto it = complete_identifiers_.begin(); it != complete_identifiers_.end(); ++it)
     {
         if (it->second == identifier)
         {
@@ -193,51 +202,51 @@ void TypeObjectFactory::nullifyAllEntries(const TypeIdentifier *identifier)
     }
 }
 
-const TypeObject* TypeObjectFactory::GetTypeObject(const std::string &type_name, bool complete) const
+const TypeObject* TypeObjectFactory::get_type_object(const std::string& type_name, bool complete) const
 {
-    const TypeIdentifier* identifier = GetTypeIdentifier(type_name, complete);
+    const TypeIdentifier* identifier = get_type_identifier(type_name, complete);
     if (identifier == nullptr)
     {
         return nullptr;
     }
 
-    return GetTypeObject(identifier);
+    return get_type_object(identifier);
 }
 
-const TypeObject* TypeObjectFactory::GetTypeObject(const TypeIdentifier* identifier) const
+const TypeObject* TypeObjectFactory::get_type_object(const TypeIdentifier* identifier) const
 {
     std::unique_lock<std::recursive_mutex> scoped(m_MutexObjects);
     if (identifier == nullptr) return nullptr;
     if (identifier->_d() == EK_COMPLETE)
     {
-        if (m_CompleteObjects.find(identifier) != m_CompleteObjects.end())
+        if (complete_objects_.find(identifier) != complete_objects_.end())
         {
-            return m_CompleteObjects.at(identifier);
+            return complete_objects_.at(identifier);
         }
     }
     else
     {
-        if (m_Objects.find(identifier) != m_Objects.end())
+        if (objects_.find(identifier) != objects_.end())
         {
-            return m_Objects.at(identifier);
+            return objects_.at(identifier);
         }
     }
 
     // Maybe they are using an external TypeIdentifier?
-    const TypeIdentifier* internalId = GetStoredTypeIdentifier(identifier);
+    const TypeIdentifier* internalId = get_stored_type_identifier(identifier);
     if (internalId != nullptr)
     {
         if (internalId == identifier)
         {
             return nullptr; // Type without object
         }
-        return GetTypeObject(internalId);
+        return get_type_object(internalId);
     }
 
     return nullptr;
 }
 
-TypeKind TypeObjectFactory::GetTypeKind(const std::string &type_name) const
+TypeKind TypeObjectFactory::get_type_kind(const std::string& type_name) const
 {
     if (type_name == TKNAME_BOOLEAN)
     {
@@ -339,7 +348,7 @@ TypeKind TypeObjectFactory::GetTypeKind(const std::string &type_name) const
     {
         return TI_PLAIN_MAP_LARGE;
     }
-    else if (GetTypeIdentifier(type_name) != nullptr)
+    else if (get_type_identifier(type_name) != nullptr)
     {
         return EK_MINIMAL;
     }
@@ -349,7 +358,7 @@ TypeKind TypeObjectFactory::GetTypeKind(const std::string &type_name) const
     }
 }
 
-std::string TypeObjectFactory::GetTypeName(const TypeKind kind) const
+std::string TypeObjectFactory::get_type_name(const TypeKind kind) const
 {
     switch (kind)
     {
@@ -373,81 +382,81 @@ std::string TypeObjectFactory::GetTypeName(const TypeKind kind) const
     return "";
 }
 
-const TypeIdentifier* TypeObjectFactory::GetPrimitiveTypeIdentifier(TypeKind kind)
+const TypeIdentifier* TypeObjectFactory::get_primitive_type_identifier(TypeKind kind) const
 {
-    std::string typeName = GetTypeName(kind);
+    std::string typeName = get_type_name(kind);
     if (typeName.empty()) return nullptr;
-    return GetTypeIdentifier(typeName);
+    return get_type_identifier(typeName);
 }
 
 /*
-const TypeIdentifier* TypeObjectFactory::TryCreateTypeIdentifier(const std::string &type_name)
+const TypeIdentifier* TypeObjectFactory::TryCreateTypeIdentifier(const std::string& type_name)
 {
     std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
     // TODO Makes sense here? I don't think so.
 }
 */
 
-const TypeIdentifier* TypeObjectFactory::GetTypeIdentifier(const std::string &type_name, bool complete) const
+const TypeIdentifier* TypeObjectFactory::get_type_identifier(const std::string& type_name, bool complete) const
 {
     std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
 
     if (complete)
     {
-        if (m_CompleteIdentifiers.find(type_name) != m_CompleteIdentifiers.end())
+        if (complete_identifiers_.find(type_name) != complete_identifiers_.end())
         {
-            return m_CompleteIdentifiers.at(type_name);
+            return complete_identifiers_.at(type_name);
         }
         /*else // Try it with minimal
         {
-            return GetTypeIdentifier(type_name, false);
+            return get_type_identifier(type_name, false);
         }*/
     }
     else
     {
-        if (m_Identifiers.find(type_name) != m_Identifiers.end())
+        if (identifiers_.find(type_name) != identifiers_.end())
         {
-            return m_Identifiers.at(type_name);
+            return identifiers_.at(type_name);
         }
     }
 
     // Try with aliases
-    if (m_Aliases.find(type_name) != m_Aliases.end())
+    if (aliases_.find(type_name) != aliases_.end())
     {
-        return GetTypeIdentifier(m_Aliases.at(type_name), complete);
+        return get_type_identifier(aliases_.at(type_name), complete);
     }
 
     return nullptr;
 }
 
-const TypeIdentifier* TypeObjectFactory::GetTypeIdentifierTryingComplete(const std::string &type_name) const
+const TypeIdentifier* TypeObjectFactory::get_type_identifier_trying_complete(const std::string& type_name) const
 {
     std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
 
-    if (m_CompleteIdentifiers.find(type_name) != m_CompleteIdentifiers.end())
+    if (complete_identifiers_.find(type_name) != complete_identifiers_.end())
     {
-        return m_CompleteIdentifiers.at(type_name);
+        return complete_identifiers_.at(type_name);
     }
     else // Try it with minimal
     {
-        return GetTypeIdentifier(type_name, false);
+        return get_type_identifier(type_name, false);
     }
 }
 
-const TypeIdentifier* TypeObjectFactory::GetStoredTypeIdentifier(const TypeIdentifier *identifier) const
+const TypeIdentifier* TypeObjectFactory::get_stored_type_identifier(const TypeIdentifier* identifier) const
 {
     std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
     if (identifier == nullptr) return nullptr;
     if (identifier->_d() == EK_COMPLETE)
     {
-        for (auto& it : m_CompleteIdentifiers)
+        for (auto& it : complete_identifiers_)
         {
             if (*(it.second) == *identifier) return it.second;
         }
     }
     else
     {
-        for (auto& it : m_Identifiers)
+        for (auto& it : identifiers_)
         {
             if (*(it.second) == *identifier) return it.second;
         }
@@ -455,36 +464,36 @@ const TypeIdentifier* TypeObjectFactory::GetStoredTypeIdentifier(const TypeIdent
     return nullptr;
 }
 
-std::string TypeObjectFactory::GetTypeName(const TypeIdentifier* identifier) const
+std::string TypeObjectFactory::get_type_name(const TypeIdentifier* identifier) const
 {
     std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
     if (identifier == nullptr) return "<NULLPTR>";
     if (identifier->_d() == EK_COMPLETE)
     {
-        for (auto& it : m_CompleteIdentifiers)
+        for (auto& it : complete_identifiers_)
         {
             if (*(it.second) == *identifier) return it.first;
         }
     }
     else
     {
-        for (auto& it : m_Identifiers)
+        for (auto& it : identifiers_)
         {
             if (*(it.second) == *identifier) return it.first;
         }
     }
 
     // Maybe they are using an external TypeIdentifier?
-    const TypeIdentifier* internalId = GetStoredTypeIdentifier(identifier);
+    const TypeIdentifier* internalId = get_stored_type_identifier(identifier);
     if (internalId != nullptr)
     {
-        return GetTypeName(internalId);
+        return get_type_name(internalId);
     }
 
     return "UNDEF";
 }
 
-const TypeIdentifier* TypeObjectFactory::TryGetComplete(const TypeIdentifier* identifier) const
+const TypeIdentifier* TypeObjectFactory::try_get_complete(const TypeIdentifier* identifier) const
 {
     if (identifier->_d() == EK_COMPLETE)
     {
@@ -492,53 +501,53 @@ const TypeIdentifier* TypeObjectFactory::TryGetComplete(const TypeIdentifier* id
     }
 
     std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
-    std::string name = GetTypeName(identifier);
-    return GetTypeIdentifierTryingComplete(name);
+    std::string name = get_type_name(identifier);
+    return get_type_identifier_trying_complete(name);
 }
 
-void TypeObjectFactory::AddTypeIdentifier(const std::string &type_name, const TypeIdentifier* identifier)
+void TypeObjectFactory::add_type_identifier(const std::string& type_name, const TypeIdentifier* identifier)
 {
-    const TypeIdentifier *alreadyExists = GetStoredTypeIdentifier(identifier);
+    const TypeIdentifier* alreadyExists = get_stored_type_identifier(identifier);
     if (alreadyExists != nullptr)
     {
         // Don't copy
         if (alreadyExists->_d() == EK_COMPLETE)
         {
-            m_CompleteIdentifiers[type_name] = alreadyExists;
+            complete_identifiers_[type_name] = alreadyExists;
         }
         else
         {
-            m_Identifiers[type_name] = alreadyExists;
+            identifiers_[type_name] = alreadyExists;
         }
         return;
     }
 
     std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
-    //m_Identifiers.insert(std::pair<const std::string, const TypeIdentifier*>(type_name, identifier));
+    //identifiers_.insert(std::pair<const std::string, const TypeIdentifier*>(type_name, identifier));
     if (identifier->_d() == EK_COMPLETE)
     {
-        if (m_CompleteIdentifiers.find(type_name) == m_CompleteIdentifiers.end())
+        if (complete_identifiers_.find(type_name) == complete_identifiers_.end())
         {
             TypeIdentifier* id = new TypeIdentifier;
             *id = *identifier;
-            m_CompleteIdentifiers[type_name] = id;
+            complete_identifiers_[type_name] = id;
         }
     }
     else
     {
-        if (m_Identifiers.find(type_name) == m_Identifiers.end())
+        if (identifiers_.find(type_name) == identifiers_.end())
         {
             TypeIdentifier* id = new TypeIdentifier;
             *id = *identifier;
-            m_Identifiers[type_name] = id;
+            identifiers_[type_name] = id;
         }
     }
 }
 
-void TypeObjectFactory::AddTypeObject(const std::string &type_name, const TypeIdentifier* identifier,
+void TypeObjectFactory::add_type_object(const std::string& type_name, const TypeIdentifier* identifier,
     const TypeObject* object)
 {
-    AddTypeIdentifier(type_name, identifier);
+    add_type_identifier(type_name, identifier);
 
     std::unique_lock<std::recursive_mutex> scopedObj(m_MutexObjects);
 
@@ -546,32 +555,34 @@ void TypeObjectFactory::AddTypeObject(const std::string &type_name, const TypeId
     {
         if (object->_d() == EK_MINIMAL)
         {
-            const TypeIdentifier* typeId = m_Identifiers[type_name];
-            if (m_Objects.find(typeId) == m_Objects.end())
+            const TypeIdentifier* typeId = identifiers_[type_name];
+            if (objects_.find(typeId) == objects_.end())
             {
                 TypeObject* obj = new TypeObject;
                 *obj = *object;
-                m_Objects[typeId] = obj;
+                objects_[typeId] = obj;
             }
         }
         else if (object->_d() == EK_COMPLETE)
         {
-            const TypeIdentifier* typeId = m_CompleteIdentifiers[type_name];
-            if (m_CompleteObjects.find(typeId) == m_CompleteObjects.end())
+            const TypeIdentifier* typeId = complete_identifiers_[type_name];
+            if (complete_objects_.find(typeId) == complete_objects_.end())
             {
                 TypeObject* obj = new TypeObject;
                 *obj = *object;
-                m_CompleteObjects[typeId] = obj;
+                complete_objects_[typeId] = obj;
             }
         }
     }
 }
 
-const TypeIdentifier* TypeObjectFactory::GetStringIdentifier(uint32_t bound, bool wide)
+const TypeIdentifier* TypeObjectFactory::get_string_identifier(
+        uint32_t bound,
+        bool wide)
 {
-    std::string type = TypeNamesGenerator::getStringTypeName(bound, wide, false);
+    std::string type = TypeNamesGenerator::get_string_type_name(bound, wide, false);
 
-    const TypeIdentifier* c_auxIdent = GetTypeIdentifier(type);
+    const TypeIdentifier* c_auxIdent = get_type_identifier(type);
 
     if (c_auxIdent != nullptr)
     {
@@ -590,20 +601,20 @@ const TypeIdentifier* TypeObjectFactory::GetStringIdentifier(uint32_t bound, boo
             auxIdent._d(wide ? TI_STRING16_LARGE : TI_STRING8_LARGE);
             auxIdent.string_ldefn().bound(bound);
         }
-        //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(type, auxIdent));
-        //m_Identifiers[type] = auxIdent;
-        AddTypeIdentifier(type, &auxIdent);
-        return GetTypeIdentifier(type);
+        //identifiers_.insert(std::pair<std::string, TypeIdentifier*>(type, auxIdent));
+        //identifiers_[type] = auxIdent;
+        add_type_identifier(type, &auxIdent);
+        return get_type_identifier(type);
     }
     return nullptr;
 }
 
-const TypeIdentifier* TypeObjectFactory::GetSequenceIdentifier(const std::string &type_name,
+const TypeIdentifier* TypeObjectFactory::get_sequence_identifier(const std::string& type_name,
     uint32_t bound, bool complete)
 {
-    std::string auxType = TypeNamesGenerator::getSequenceTypeName(type_name, bound, false);
+    std::string auxType = TypeNamesGenerator::get_sequence_type_name(type_name, bound, false);
 
-    const TypeIdentifier* c_auxIdent = GetTypeIdentifier(auxType, complete);
+    const TypeIdentifier* c_auxIdent = get_type_identifier(auxType, complete);
 
     if (c_auxIdent != nullptr)
     {
@@ -612,8 +623,8 @@ const TypeIdentifier* TypeObjectFactory::GetSequenceIdentifier(const std::string
     else
     {
         const TypeIdentifier* innerIdent = (complete)
-            ? GetTypeIdentifierTryingComplete(type_name)
-            : GetTypeIdentifier(type_name);
+            ? get_type_identifier_trying_complete(type_name)
+            : get_type_identifier(type_name);
 
         TypeIdentifier auxIdent;
         if (bound < 256)
@@ -628,7 +639,7 @@ const TypeIdentifier* TypeObjectFactory::GetSequenceIdentifier(const std::string
             auxIdent.seq_sdefn().header().element_flags().IS_MUST_UNDERSTAND(false);
             auxIdent.seq_sdefn().header().element_flags().IS_KEY(false);
             auxIdent.seq_sdefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent.seq_sdefn().header().equiv_kind(GetTypeKind(type_name));
+            auxIdent.seq_sdefn().header().equiv_kind(get_type_kind(type_name));
         }
         else
         {
@@ -642,23 +653,23 @@ const TypeIdentifier* TypeObjectFactory::GetSequenceIdentifier(const std::string
             auxIdent.seq_ldefn().header().element_flags().IS_MUST_UNDERSTAND(false);
             auxIdent.seq_ldefn().header().element_flags().IS_KEY(false);
             auxIdent.seq_ldefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent.seq_ldefn().header().equiv_kind(GetTypeKind(type_name));
+            auxIdent.seq_ldefn().header().equiv_kind(get_type_kind(type_name));
         }
-        //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
-        //m_Identifiers[auxType] = auxIdent;
-        AddTypeIdentifier(auxType, &auxIdent);
-        return GetTypeIdentifier(auxType);
+        //identifiers_.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
+        //identifiers_[auxType] = auxIdent;
+        add_type_identifier(auxType, &auxIdent);
+        return get_type_identifier(auxType);
     }
     return nullptr;
 }
 
-const TypeIdentifier* TypeObjectFactory::GetArrayIdentifier(const std::string &type_name,
+const TypeIdentifier* TypeObjectFactory::get_array_identifier(const std::string& type_name,
     const std::vector<uint32_t> &bound, bool complete)
 {
     uint32_t size;
-    std::string auxType = TypeNamesGenerator::getArrayTypeName(type_name, bound, size, false);
+    std::string auxType = TypeNamesGenerator::get_array_type_name(type_name, bound, size, false);
 
-    const TypeIdentifier* c_auxIdent = GetTypeIdentifier(auxType, complete);
+    const TypeIdentifier* c_auxIdent = get_type_identifier(auxType, complete);
 
     if (c_auxIdent != nullptr)
     {
@@ -667,8 +678,8 @@ const TypeIdentifier* TypeObjectFactory::GetArrayIdentifier(const std::string &t
     else
     {
         const TypeIdentifier* innerIdent = (complete)
-            ? GetTypeIdentifierTryingComplete(type_name)
-            : GetTypeIdentifier(type_name);
+            ? get_type_identifier_trying_complete(type_name)
+            : get_type_identifier(type_name);
 
         TypeIdentifier auxIdent;
         if (size < 256)
@@ -686,7 +697,7 @@ const TypeIdentifier* TypeObjectFactory::GetArrayIdentifier(const std::string &t
             auxIdent.array_sdefn().header().element_flags().IS_MUST_UNDERSTAND(false);
             auxIdent.array_sdefn().header().element_flags().IS_KEY(false);
             auxIdent.array_sdefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent.array_sdefn().header().equiv_kind(GetTypeKind(type_name));
+            auxIdent.array_sdefn().header().equiv_kind(get_type_kind(type_name));
         }
         else
         {
@@ -703,22 +714,22 @@ const TypeIdentifier* TypeObjectFactory::GetArrayIdentifier(const std::string &t
             auxIdent.array_ldefn().header().element_flags().IS_MUST_UNDERSTAND(false);
             auxIdent.array_ldefn().header().element_flags().IS_KEY(false);
             auxIdent.array_ldefn().header().element_flags().IS_DEFAULT(false);
-            auxIdent.array_ldefn().header().equiv_kind(GetTypeKind(type_name));
+            auxIdent.array_ldefn().header().equiv_kind(get_type_kind(type_name));
         }
-        //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
-        //m_Identifiers[auxType] = auxIdent;
-        AddTypeIdentifier(auxType, &auxIdent);
-        return GetTypeIdentifier(auxType);
+        //identifiers_.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
+        //identifiers_[auxType] = auxIdent;
+        add_type_identifier(auxType, &auxIdent);
+        return get_type_identifier(auxType);
     }
     return nullptr;
 }
 
-const TypeIdentifier* TypeObjectFactory::GetMapIdentifier(const std::string &key_type_name,
-    const std::string &value_type_name, uint32_t bound, bool complete)
+const TypeIdentifier* TypeObjectFactory::get_map_identifier(const std::string& key_type_name,
+    const std::string& value_type_name, uint32_t bound, bool complete)
 {
-    std::string auxType = TypeNamesGenerator::getMapTypeName(key_type_name, value_type_name, bound, false);
+    std::string auxType = TypeNamesGenerator::get_map_type_name(key_type_name, value_type_name, bound, false);
 
-    const TypeIdentifier* c_auxIdent = GetTypeIdentifier(auxType, complete);
+    const TypeIdentifier* c_auxIdent = get_type_identifier(auxType, complete);
 
     if (c_auxIdent != nullptr)
     {
@@ -727,11 +738,11 @@ const TypeIdentifier* TypeObjectFactory::GetMapIdentifier(const std::string &key
     else
     {
         const TypeIdentifier* keyIdent = (complete)
-            ? GetTypeIdentifierTryingComplete(key_type_name)
-            : GetTypeIdentifier(key_type_name);
+            ? get_type_identifier_trying_complete(key_type_name)
+            : get_type_identifier(key_type_name);
         const TypeIdentifier* valIdent = (complete)
-            ? GetTypeIdentifierTryingComplete(value_type_name)
-            : GetTypeIdentifier(value_type_name);
+            ? get_type_identifier_trying_complete(value_type_name)
+            : get_type_identifier(value_type_name);
 
         TypeIdentifier auxIdent;
         if (bound < 256)
@@ -754,7 +765,7 @@ const TypeIdentifier* TypeObjectFactory::GetMapIdentifier(const std::string &key
             auxIdent.map_sdefn().key_flags().IS_MUST_UNDERSTAND(false);
             auxIdent.map_sdefn().key_flags().IS_KEY(false);
             auxIdent.map_sdefn().key_flags().IS_DEFAULT(false);
-            auxIdent.map_sdefn().header().equiv_kind(GetTypeKind(value_type_name));
+            auxIdent.map_sdefn().header().equiv_kind(get_type_kind(value_type_name));
         }
         else
         {
@@ -776,12 +787,12 @@ const TypeIdentifier* TypeObjectFactory::GetMapIdentifier(const std::string &key
             auxIdent.map_ldefn().key_flags().IS_MUST_UNDERSTAND(false);
             auxIdent.map_ldefn().key_flags().IS_KEY(false);
             auxIdent.map_ldefn().key_flags().IS_DEFAULT(false);
-            auxIdent.map_ldefn().header().equiv_kind(GetTypeKind(value_type_name));
+            auxIdent.map_ldefn().header().equiv_kind(get_type_kind(value_type_name));
         }
-        //m_Identifiers.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
-        //m_Identifiers[auxType] = auxIdent;
-        AddTypeIdentifier(auxType, &auxIdent);
-        return GetTypeIdentifier(auxType);
+        //identifiers_.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
+        //identifiers_[auxType] = auxIdent;
+        add_type_identifier(auxType, &auxIdent);
+        return get_type_identifier(auxType);
     }
     return nullptr;
 }
@@ -815,7 +826,7 @@ static TypeKind GetTypeKindFromIdentifier(const TypeIdentifier* identifier)
     }
 }
 
-DynamicType_ptr TypeObjectFactory::BuildDynamicType(const std::string& name, const TypeIdentifier* identifier,
+DynamicType_ptr TypeObjectFactory::build_dynamic_type(const std::string& name, const TypeIdentifier* identifier,
     const TypeObject* object) const
 {
     TypeKind kind = GetTypeKindFromIdentifier(identifier);
@@ -844,41 +855,41 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const std::string& name, con
         {
             if (identifier->_d() == TI_STRING8_SMALL)
             {
-                descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
+                descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
             }
             else
             {
-                descriptor.mBound.emplace_back(identifier->string_ldefn().bound());
+                descriptor.bound_.emplace_back(identifier->string_ldefn().bound());
             }
-            descriptor.mElementType = DynamicTypeBuilderFactory::GetInstance()->CreateChar8Type();
+            descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance()->create_char8_type();
             break;
         }
         case TK_STRING16:
         {
             if (identifier->_d() == TI_STRING16_SMALL)
             {
-                descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
+                descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
             }
             else
             {
-                descriptor.mBound.emplace_back(identifier->string_ldefn().bound());
+                descriptor.bound_.emplace_back(identifier->string_ldefn().bound());
             }
-            descriptor.mElementType = DynamicTypeBuilderFactory::GetInstance()->CreateChar16Type();
+            descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance()->create_char16_type();
             break;
         }
         case TK_SEQUENCE:
         {
             if (identifier->_d() == TI_PLAIN_SEQUENCE_SMALL)
             {
-                const TypeIdentifier *aux = TryGetComplete(identifier->seq_sdefn().element_identifier());
-                descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->seq_sdefn().bound()));
-                descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+                const TypeIdentifier* aux = try_get_complete(identifier->seq_sdefn().element_identifier());
+                descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->seq_sdefn().bound()));
+                descriptor.element_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
             }
             else
             {
-                const TypeIdentifier *aux = TryGetComplete(identifier->seq_ldefn().element_identifier());
-                descriptor.mBound.emplace_back(identifier->seq_ldefn().bound());
-                descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+                const TypeIdentifier* aux = try_get_complete(identifier->seq_ldefn().element_identifier());
+                descriptor.bound_.emplace_back(identifier->seq_ldefn().bound());
+                descriptor.element_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
             }
             break;
         }
@@ -886,18 +897,18 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const std::string& name, con
         {
             if (identifier->_d() == TI_PLAIN_ARRAY_SMALL)
             {
-                const TypeIdentifier *aux = TryGetComplete(identifier->array_sdefn().element_identifier());
+                const TypeIdentifier* aux = try_get_complete(identifier->array_sdefn().element_identifier());
                 for (octet b : identifier->array_sdefn().array_bound_seq())
                 {
-                    descriptor.mBound.emplace_back(static_cast<uint32_t>(b));
+                    descriptor.bound_.emplace_back(static_cast<uint32_t>(b));
                 }
-                descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+                descriptor.element_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
             }
             else
             {
-                const TypeIdentifier *aux = identifier->array_ldefn().element_identifier();
-                descriptor.mBound = identifier->array_ldefn().array_bound_seq();
-                descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+                const TypeIdentifier* aux = identifier->array_ldefn().element_identifier();
+                descriptor.bound_ = identifier->array_ldefn().array_bound_seq();
+                descriptor.element_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
             }
             break;
         }
@@ -905,19 +916,19 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const std::string& name, con
         {
             if (identifier->_d() == TI_PLAIN_MAP_SMALL)
             {
-                const TypeIdentifier *aux = TryGetComplete(identifier->map_sdefn().element_identifier());
-                const TypeIdentifier *aux2 = TryGetComplete(identifier->map_sdefn().key_identifier());
-                descriptor.mBound.emplace_back(static_cast<uint32_t>(identifier->map_sdefn().bound()));
-                descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
-                descriptor.mKeyElementType = BuildDynamicType(GetTypeName(aux), aux2, GetTypeObject(aux2));
+                const TypeIdentifier* aux = try_get_complete(identifier->map_sdefn().element_identifier());
+                const TypeIdentifier* aux2 = try_get_complete(identifier->map_sdefn().key_identifier());
+                descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->map_sdefn().bound()));
+                descriptor.element_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
+                descriptor.key_element_type_ = build_dynamic_type(get_type_name(aux), aux2, get_type_object(aux2));
             }
             else
             {
-                const TypeIdentifier *aux = TryGetComplete(identifier->map_ldefn().element_identifier());
-                const TypeIdentifier *aux2 = TryGetComplete(identifier->map_ldefn().key_identifier());
-                descriptor.mBound.emplace_back(identifier->map_ldefn().bound());
-                descriptor.mElementType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
-                descriptor.mKeyElementType = BuildDynamicType(GetTypeName(aux), aux2, GetTypeObject(aux2));
+                const TypeIdentifier* aux = try_get_complete(identifier->map_ldefn().element_identifier());
+                const TypeIdentifier* aux2 = try_get_complete(identifier->map_ldefn().key_identifier());
+                descriptor.bound_.emplace_back(identifier->map_ldefn().bound());
+                descriptor.element_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
+                descriptor.key_element_type_ = build_dynamic_type(get_type_name(aux), aux2, get_type_object(aux2));
             }
             break;
         }
@@ -926,20 +937,23 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(const std::string& name, con
             // A MinimalTypeObject cannot instantiate a valid TypeDescriptor, but maybe the object isn't minimal
             if (object != nullptr && object->_d() == EK_COMPLETE)
             {
-                return BuildDynamicType(descriptor, object);
+                return build_dynamic_type(descriptor, object);
             }
             break;
         default:
             break;
     }
 
-    DynamicTypeBuilder_ptr outputType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
-    //outputType->SetName(name);
-    return outputType->Build();
+    DynamicTypeBuilder_ptr outputType = DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+    //outputType->set_name(name);
+    return outputType->build();
 }
 
 // TODO annotations
-DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, const TypeObject* object) const
+DynamicType_ptr TypeObjectFactory::build_dynamic_type(
+        TypeDescriptor& descriptor,
+        const TypeObject* object,
+        const DynamicType_ptr annotation_member_type) const
 {
     if (object == nullptr || object->_d() != EK_COMPLETE)
     {
@@ -947,142 +961,255 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
     }
 
     // Change descriptor's kind
-    descriptor.SetKind(object->complete()._d());
+    descriptor.set_kind(object->complete()._d());
 
     switch (object->complete()._d())
     {
         // From here, we need TypeObject
         case TK_ALIAS:
         {
-            const TypeIdentifier *aux =
-                GetStoredTypeIdentifier(&object->complete().alias_type().body().common().related_type());
-            descriptor.mBaseType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
-            descriptor.SetName(object->complete().alias_type().header().detail().type_name());
-            return DynamicTypeBuilderFactory::GetInstance()->CreateType(&descriptor);
+            const TypeIdentifier* aux =
+                get_stored_type_identifier(&object->complete().alias_type().body().common().related_type());
+            descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
+            descriptor.set_name(object->complete().alias_type().header().detail().type_name());
+            DynamicTypeBuilder_ptr alias_type =
+                DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(alias_type, object->complete().alias_type().header().detail().ann_custom());
+
+            return alias_type->build();
         }
         case TK_STRUCTURE:
         {
-            //const TypeIdentifier *aux = &object->complete().struct_type().header().base_type();
-            //const TypeIdentifier *aux = GetTypeIdentifierTryingComplete(descriptor.GetName());
-            // TODO Used for inheritance!
-            //descriptor.mBaseType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+            const TypeIdentifier* aux = &object->complete().struct_type().header().base_type();
+            if (aux->_d() == EK_COMPLETE)
+            {
+                descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
+            }
 
-            DynamicTypeBuilder_ptr structType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
+            DynamicTypeBuilder_ptr struct_type =
+                DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(struct_type, object->complete().struct_type().header().detail().ann_custom());
 
             //uint32_t order = 0;
             const CompleteStructMemberSeq& structVector = object->complete().struct_type().member_seq();
             for (auto member = structVector.begin(); member != structVector.end(); ++member)
             {
-                //const TypeIdentifier *auxMem = &member.common().member_type_id();
-                const TypeIdentifier *auxMem = GetStoredTypeIdentifier(&member->common().member_type_id());
+                //const TypeIdentifier* auxMem = &member.common().member_type_id();
+                const TypeIdentifier* auxMem = get_stored_type_identifier(&member->common().member_type_id());
                 if (auxMem == nullptr)
                 {
-                    std::cout << "(Struct) auxMem is nullptr, but original member has " << (int)member->common().member_type_id()._d() << std::endl;
+                    logWarning(DYNAMIC_TYPES, "(Struct) auxMem is nullptr, but original member has "
+                        << (int)member->common().member_type_id()._d());
                 }
                 MemberDescriptor memDesc;
-                memDesc.mId = member->common().member_id();
-                memDesc.SetType(BuildDynamicType(GetTypeName(auxMem), auxMem, GetTypeObject(auxMem)));
-                //memDesc.SetIndex(order++);
-                memDesc.SetName(member->detail().name());
-                structType->AddMember(&memDesc);
+                memDesc.id_ = member->common().member_id();
+                memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
+                //memDesc.set_index(order++);
+                memDesc.set_name(member->detail().name());
+                struct_type->add_member(&memDesc);
+                apply_member_annotations(struct_type, member->common().member_id(), member->detail().ann_custom());
             }
-            return structType->Build();
+            return struct_type->build();
         }
         case TK_ENUM:
         {
-            DynamicTypeBuilder_ptr enumType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
+            // bit_bound annotation effect!
+            descriptor.annotation_set_bit_bound(object->complete().enumerated_type().header().common().bit_bound());
 
-            uint32_t order = 0;
+            DynamicTypeBuilder_ptr enum_type =
+                DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(enum_type, object->complete().enumerated_type().header().detail().ann_custom());
+            /*
+            {
+                const AppliedAnnotationSeq& annotations =
+                    object->complete().enumerated_type().header().detail().ann_custom();
+                for (const AppliedAnnotation& annotation : annotations)
+                {
+                    const TypeIdentifier* anno_id = get_stored_type_identifier(&annotation.annotation_typeid());
+                    if (anno_id == nullptr)
+                    {
+                        logWarning(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
+                            << (int)annotation.annotation_typeid()._d());
+                    }
+                    AnnotationDescriptor anno_desc;
+                    anno_desc.set_type(build_dynamic_type(get_type_name(anno_id), anno_id, get_type_object(anno_id)));
+                    const AppliedAnnotationParameterSeq& anno_params = annotation.param_seq();
+                    for (const AppliedAnnotationParameter a_param : anno_params)
+                    {
+                        std::string param_key = get_key_from_hash(anno_desc.type(), a_param.paramname_hash());
+                        anno_desc.set_value(param_key, a_param.value().to_string());
+                    }
+                    enum_type->apply_annotation(anno_desc);
+                }
+            }
+            */
+
             const CompleteEnumeratedLiteralSeq& enumVector = object->complete().enumerated_type().literal_seq();
             for (auto member = enumVector.begin(); member != enumVector.end(); ++member)
             {
-                enumType->AddEmptyMember(order++, member->detail().name());
+                enum_type->add_empty_member(member->common().value(), member->detail().name());
+                apply_member_annotations(enum_type, member->common().value(), member->detail().ann_custom());
+                if (member->common().flags().IS_DEFAULT())
+                {
+                    AnnotationDescriptor def_flag;
+                    def_flag.set_value(ANNOTATION_DEFAULT_LITERAL_ID, CONST_TRUE);
+                    enum_type->apply_annotation_to_member(member->common().value(), def_flag);
+                }
             }
-            return enumType->Build();
+            return enum_type->build();
         }
         case TK_BITMASK:
         {
-            // TODO To implement
-            return nullptr;
+            descriptor.annotation_set_bit_bound(object->complete().bitmask_type().header().common().bit_bound());
+            descriptor.bound_.emplace_back(static_cast<uint32_t>(
+                object->complete().bitmask_type().header().common().bit_bound()));
+            descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance()->create_bool_type();
+
+            DynamicTypeBuilder_ptr bitmask_type =
+                DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(bitmask_type, object->complete().bitmask_type().header().detail().ann_custom());
+
+            const CompleteBitflagSeq& seq = object->complete().bitmask_type().flag_seq();
+            for (auto member = seq.begin(); member != seq.end(); ++member)
+            {
+                bitmask_type->add_empty_member(member->common().position(), member->detail().name());
+                MemberId m_id = bitmask_type->get_member_id_by_name(member->detail().name());
+                // member->common().position() should be already an annotation
+                apply_member_annotations(bitmask_type, m_id, member->detail().ann_custom());
+            }
+            return bitmask_type->build();
         }
         case TK_BITSET:
         {
-            // TODO To implement
-            return nullptr;
+            const TypeIdentifier* aux = &object->complete().bitset_type().header().base_type();
+            if (aux->_d() == EK_COMPLETE)
+            {
+                descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
+            }
+
+            DynamicTypeBuilder_ptr bitsetType =
+                DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(bitsetType, object->complete().bitset_type().header().detail().ann_custom());
+
+            //uint32_t order = 0;
+            const CompleteBitfieldSeq& fields = object->complete().bitset_type().field_seq();
+            for (auto member = fields.begin(); member != fields.end(); ++member)
+            {
+                //const TypeIdentifier* auxMem = &member.common().member_type_id();
+                const TypeIdentifier* auxMem = get_primitive_type_identifier(member->common().holder_type());
+                if (auxMem == nullptr)
+                {
+                    logWarning(DYNAMIC_TYPES, "(Bitset) auxMem is nullptr, but original member has "
+                        << (int)member->common().holder_type());
+                }
+                MemberDescriptor memDesc;
+                //memDesc.id_ = order++;
+                memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
+                memDesc.set_name(member->detail().name());
+                // bounds are meant for string, arrays, sequences, maps, but not for bitset!
+                // Lack in the standard?
+                bitsetType->add_member(&memDesc);
+                MemberId m_id = bitsetType->get_member_id_by_name(memDesc.get_name());
+                // member->common().position() and member->common().bitcount() should be annotations
+                apply_member_annotations(bitsetType, m_id, member->detail().ann_custom());
+            }
+            return bitsetType->build();
+
+            //logError(XTYPES, "Bitset isn't supported by DynamicType");
+            //return nullptr;
         }
         case TK_UNION:
         {
-            const TypeIdentifier *aux =
-                GetStoredTypeIdentifier(&object->complete().union_type().discriminator().common().type_id());
-            descriptor.mDiscriminatorType = BuildDynamicType(GetTypeName(aux), aux, GetTypeObject(aux));
+            const TypeIdentifier* aux =
+                get_stored_type_identifier(&object->complete().union_type().discriminator().common().type_id());
+            descriptor.discriminator_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
 
-            DynamicTypeBuilder_ptr unionType = DynamicTypeBuilderFactory::GetInstance()->CreateCustomBuilder(&descriptor);
+            DynamicTypeBuilder_ptr union_type =
+                DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(union_type, object->complete().union_type().header().detail().ann_custom());
 
             //uint32_t order = 0;
             const CompleteUnionMemberSeq& unionVector = object->complete().union_type().member_seq();
             for (auto member = unionVector.begin(); member != unionVector.end(); ++member)
             {
-                const TypeIdentifier *auxMem = GetStoredTypeIdentifier(&member->common().type_id());
+                const TypeIdentifier* auxMem = get_stored_type_identifier(&member->common().type_id());
                 if (auxMem == nullptr)
                 {
-                    std::cout << "(Union) auxMem is nullptr, but original member has " << (int)member->common().type_id()._d() << std::endl;
+                    logWarning(DYNAMIC_TYPES, "(Union) auxMem is nullptr, but original member has "
+                        << (int)member->common().type_id()._d());
                 }
                 MemberDescriptor memDesc;
-                memDesc.SetType(BuildDynamicType(GetTypeName(auxMem), auxMem, GetTypeObject(auxMem)));
-                //memDesc.SetIndex(order++);
-                memDesc.mId = member->common().member_id();
-                memDesc.SetName(member->detail().name());
-                memDesc.SetDefaultUnionValue(member->common().member_flags().IS_DEFAULT());
-                if (descriptor.mDiscriminatorType->GetKind() == TK_ENUM)
+                memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
+                //memDesc.set_index(order++);
+                memDesc.id_ = member->common().member_id();
+                memDesc.set_name(member->detail().name());
+                memDesc.set_default_union_value(member->common().member_flags().IS_DEFAULT());
+                if (descriptor.discriminator_type_->get_kind() == TK_ENUM)
                 {
                     DynamicTypeMember enumMember;
-                    descriptor.mDiscriminatorType->GetMember(enumMember, memDesc.mId);
-                    memDesc.mDefaultValue = enumMember.GetDescriptor()->mName;
+                    descriptor.discriminator_type_->get_member(enumMember, memDesc.id_);
+                    memDesc.default_value_ = enumMember.get_descriptor()->name_;
                     for (uint32_t lab : member->common().label_seq())
                     {
-                        memDesc.AddUnionCaseIndex(lab);
+                        memDesc.add_union_case_index(lab);
                     }
                 }
                 else
                 {
-                    memDesc.mDefaultValue = std::to_string(memDesc.mId);
+                    memDesc.default_value_ = std::to_string(memDesc.id_);
                     for (uint32_t lab : member->common().label_seq())
                     {
-                        memDesc.AddUnionCaseIndex(lab);
+                        memDesc.add_union_case_index(lab);
                     }
                 }
-                unionType->AddMember(&memDesc);
+                union_type->add_member(&memDesc);
+                apply_member_annotations(union_type, member->common().member_id(), member->detail().ann_custom());
             }
 
-            return unionType->Build();
+            return union_type->build();
         }
         case TK_ANNOTATION:
         {
-            // TODO To implement
-            return nullptr;
+            DynamicTypeBuilder_ptr annotation_type =
+                DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
 
-            /*
-            uint64_t order = 0;
-            for (MinimalAnnotationParameter &member : object->minimal().annotation_type().member_seq())
+            for (const CompleteAnnotationParameter& member : object->complete().annotation_type().member_seq())
             {
-            const TypeIdentifier *auxMem = &member.common().type_id();
+                const TypeIdentifier* aux_mem = get_stored_type_identifier(&member.common().member_type_id());
+                if (aux_mem == nullptr)
+                {
+                    logWarning(DYNAMIC_TYPES, "(Annotation) aux_mem is nullptr, but original member has "
+                        << (int)member.common().member_type_id()._d());
+                }
 
-            MemberDescriptor *memDesc = new MemberDescriptor();
-            memDesc->SetName(member.name());
-            memDesc->default_value(); [...]
-            // Copy pasted...
-            memDesc->SetType(BuildDynamicType(auxMem, GetTypeObject(auxMem)));
-            memDesc->SetIndex(order++);
-            memDesc->mId = member.common().member_id();
-            memDesc->SetDefaultUnionValue(member.common().member_flags().IS_DEFAULT());
-            memDesc->mDefaultValue = std::to_string(memDesc->mIndex);
-            for (uint32_t lab : member.common().label_seq())
-            {
-            memDesc->AddUnionCaseIndex(lab);
+                MemberDescriptor mem_desc;
+                mem_desc.set_name(member.name());
+                if (annotation_member_type != nullptr)
+                {
+                    mem_desc.set_type(annotation_member_type);
+                }
+                else
+                {
+                    mem_desc.set_type(build_dynamic_type(get_type_name(aux_mem), aux_mem, get_type_object(aux_mem)));
+                }
+                mem_desc.set_default_value(member.default_value().to_string());
+                annotation_type->add_member(&mem_desc);
             }
-            memDesc->mType->mDescriptor->mBaseType = descriptor;
-            }
-            */
+            // Annotation inner definitions?
+
+            return annotation_type->build();
         }
         default:
             break;
@@ -1090,7 +1217,78 @@ DynamicType_ptr TypeObjectFactory::BuildDynamicType(TypeDescriptor &descriptor, 
     return nullptr;
 }
 
+void TypeObjectFactory::apply_type_annotations(
+        DynamicTypeBuilder_ptr& type_builder,
+        const AppliedAnnotationSeq& annotations) const
+{
+    for (const AppliedAnnotation& annotation : annotations)
+    {
+        const TypeIdentifier* anno_id = get_stored_type_identifier(&annotation.annotation_typeid());
+        if (anno_id == nullptr)
+        {
+            logWarning(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
+                << (int)annotation.annotation_typeid()._d());
+        }
+        AnnotationDescriptor anno_desc;
+        anno_desc.set_type(build_dynamic_type(get_type_name(anno_id), anno_id, get_type_object(anno_id)));
+        const AppliedAnnotationParameterSeq& anno_params = annotation.param_seq();
+        for (const AppliedAnnotationParameter a_param : anno_params)
+        {
+            std::string param_key = get_key_from_hash(anno_desc.type(), a_param.paramname_hash());
+            anno_desc.set_value(param_key, a_param.value().to_string());
+        }
+        type_builder->apply_annotation(anno_desc);
+    }
+}
+
+void TypeObjectFactory::apply_member_annotations(
+        DynamicTypeBuilder_ptr& parent_type_builder,
+        MemberId member_id,
+        const AppliedAnnotationSeq& annotations) const
+{
+    for (const AppliedAnnotation& annotation : annotations)
+    {
+        const TypeIdentifier* anno_id = get_stored_type_identifier(&annotation.annotation_typeid());
+        if (anno_id == nullptr)
+        {
+            logWarning(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
+                << (int)annotation.annotation_typeid()._d());
+        }
+        AnnotationDescriptor anno_desc;
+        anno_desc.set_type(build_dynamic_type(get_type_name(anno_id), anno_id, get_type_object(anno_id)));
+        const AppliedAnnotationParameterSeq& anno_params = annotation.param_seq();
+        for (const AppliedAnnotationParameter a_param : anno_params)
+        {
+            std::string param_key = get_key_from_hash(anno_desc.type(), a_param.paramname_hash());
+            anno_desc.set_value(param_key, a_param.value().to_string());
+        }
+        parent_type_builder->apply_annotation_to_member(member_id, anno_desc);
+    }
+}
+
+std::string TypeObjectFactory::get_key_from_hash(
+        const DynamicType_ptr annotation_descriptor_type,
+        const NameHash& hash) const
+{
+    std::map<MemberId, DynamicTypeMember*> members;
+    annotation_descriptor_type->get_all_members(members);
+    for (auto it : members)
+    {
+        std::string name = it.second->get_name();
+        NameHash memberHash;
+        MD5 message_hash(name);
+        for(int i = 0; i < 4; ++i)
+        {
+            memberHash[i] = message_hash.digest[i];
+        }
+        if (memberHash == hash)
+        {
+            return name;
+        }
+    }
+    return "";
+}
+
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
-

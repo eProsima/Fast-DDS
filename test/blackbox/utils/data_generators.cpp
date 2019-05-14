@@ -34,6 +34,43 @@ std::list<HelloWorld> default_helloworld_data_generator(size_t max)
     return returnedValue;
 }
 
+std::list<FixedSized> default_fixed_sized_data_generator(size_t max)
+{
+    uint16_t index = 1;
+    size_t maximum = max ? max : 10;
+    std::list<FixedSized> returnedValue(maximum);
+
+    std::generate(returnedValue.begin(), returnedValue.end(), [&index]
+    {
+        FixedSized fs;
+        fs.index(index);
+        ++index;
+        return fs;
+    });
+
+    return returnedValue;
+}
+
+std::list<KeyedHelloWorld> default_keyedhelloworld_data_generator(size_t max)
+{
+    uint16_t index = 0;
+    size_t maximum = max ? max : 10;
+    std::list<KeyedHelloWorld> returnedValue(maximum);
+
+    std::generate(returnedValue.begin(), returnedValue.end(), [&index]
+    {
+        KeyedHelloWorld hello;
+        hello.key(index % 2);
+        std::stringstream ss;
+        ss << "HelloWorld " << index;
+        hello.message(ss.str());
+        ++index;
+        return hello;
+    });
+
+    return returnedValue;
+}
+
 std::list<String> default_large_string_data_generator(size_t max)
 {
     uint16_t index = 1;

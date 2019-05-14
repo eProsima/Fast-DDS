@@ -32,13 +32,33 @@ namespace fastcdr{
 
 namespace eprosima {
 namespace fastrtps {
-
-using namespace rtps;
-
 namespace types {
 
-const std::string ANNOTATION_KEY_ID = "@Key";
-const std::string ANNOTATION_TOPIC_ID = "@Topic";
+using eprosima::fastrtps::rtps::octet;
+
+const std::string CONST_TRUE = "true";
+const std::string CONST_FALSE = "false";
+
+const std::string ANNOTATION_KEY_ID = "key";
+const std::string ANNOTATION_EPKEY_ID = "Key";
+const std::string ANNOTATION_TOPIC_ID = "Topic";
+const std::string ANNOTATION_EXTENSIBILITY_ID = "extensibility";
+const std::string ANNOTATION_FINAL_ID = "final";
+const std::string ANNOTATION_APPENDABLE_ID = "appendable";
+const std::string ANNOTATION_MUTABLE_ID = "mutable";
+const std::string ANNOTATION_NESTED_ID = "nested";
+const std::string ANNOTATION_OPTIONAL_ID = "optional";
+const std::string ANNOTATION_MUST_UNDERSTAND_ID = "must_understand";
+const std::string ANNOTATION_NON_SERIALIZED_ID = "non_serialized";
+const std::string ANNOTATION_BIT_BOUND_ID = "bit_bound";
+const std::string ANNOTATION_DEFAULT_ID = "default";
+const std::string ANNOTATION_DEFAULT_LITERAL_ID = "default_literal";
+const std::string ANNOTATION_VALUE_ID = "value";
+const std::string ANNOTATION_POSITION_ID = "position";
+
+const std::string EXTENSIBILITY_FINAL = "FINAL";
+const std::string EXTENSIBILITY_APPENDABLE = "APPENDABLE";
+const std::string EXTENSIBILITY_MUTABLE = "MUTABLE";
 
 const std::string TKNAME_BOOLEAN = "bool";
 const std::string TKNAME_INT16 = "int16_t";
@@ -174,6 +194,31 @@ typedef octet SBound;
 typedef std::vector<SBound> SBoundSeq;
 const SBound INVALID_SBOUND = 0;
 
+// Auxiliar function to compare sequences (std::vector)
+template<class T>
+bool compareSequence(const std::vector<T>& a, const std::vector<T>& b)
+{
+    if (a.size() == b.size())
+    {
+        auto aIt = a.begin();
+        auto bIt = b.begin();
+        while (aIt != a.end() && bIt != b.end())
+        {
+            if (*aIt == *bIt)
+            {
+                ++aIt;
+                ++bIt;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
 // Flags that apply to struct/union/collection/enum/bitmask/bitset
 // members/elements and DO affect type assignability
 // Depending on the flag it may not apply to members of all types
@@ -274,6 +319,11 @@ public:
     void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     static size_t getCdrSerializedSize(const MemberFlag&, size_t current_alignment = 0);
+
+    bool operator==(const MemberFlag& other) const
+    {
+        return m_MemberFlag == other.m_MemberFlag;
+    }
 };
 
 typedef MemberFlag CollectionElementFlag;   // T1, T2, X
@@ -366,6 +416,11 @@ public:
     void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     static size_t getCdrSerializedSize(const TypeFlag&, size_t current_alignment = 0);
+
+    bool operator==(const TypeFlag& other) const
+    {
+        return m_TypeFlag == other.m_TypeFlag;
+    }
 };
 
 typedef TypeFlag   StructTypeFlag;      // All flags apply
@@ -391,5 +446,3 @@ const uint32_t ANNOTATION_OCTETSEC_VALUE_MAX_LEN = 128;
 } // namespace eprosima
 
 #endif // TYPES_BASE_H
-
-

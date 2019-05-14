@@ -22,12 +22,12 @@ struct TCPHeader
     char rtcp[4];
     uint32_t length;
     uint32_t crc;
-    uint16_t logicalPort;
+    uint16_t logical_port;
 
     TCPHeader()
         : length(sizeof(TCPHeader))
         , crc(0)
-        , logicalPort(0)
+        , logical_port(0)
     {
         // There isn't a explicit constructor because VS2013 doesn't support it.
         rtcp[0] = 'R';
@@ -36,18 +36,22 @@ struct TCPHeader
         rtcp[3] = 'P';
     }
 
-    const octet* getAddress() const
+    const octet* address() const
     {
-        return (const octet*)this;
+        return reinterpret_cast<const octet*>(this);
+    }
+
+    octet* address()
+    {
+        return (octet*)this;
     }
 
     /*!
      * @brief This function returns the maximum serialized size of an object
      * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static inline size_t getSize()
+    static inline size_t size()
     {
         return TCPHEADER_SIZE;
     }
@@ -181,82 +185,131 @@ enum TCPCPMKind : octet
     UNBIND_CONNECTION_REQUEST =         0xD6
 };
 
-struct TCPControlMsgHeader
+class TCPControlMsgHeader
 {
-    TCPCPMKind kind; // 1 byte
-    octet flags; // 1 byte
-    uint16_t length; // 2 bytes
-    TCPTransactionId transactionId; // 12 bytes
+    TCPCPMKind kind_; // 1 byte
+    octet flags_; // 1 byte
+    uint16_t length_; // 2 bytes
+    TCPTransactionId transaction_id_; // 12 bytes
 
+public:
     TCPControlMsgHeader()
     {
-        kind = static_cast<TCPCPMKind>(0x00);
-        flags = static_cast<octet>(0x00);
-        length = 0;
+        kind_ = static_cast<TCPCPMKind>(0x00);
+        flags_ = static_cast<octet>(0x00);
+        length_ = 0;
     }
 
-    void setFlags(bool endianess, bool hasPayload, bool requiresResponse)
+    void kind(TCPCPMKind kind)
+    {
+        kind_ = kind;
+    }
+
+    TCPCPMKind kind() const
+    {
+        return kind_;
+    }
+
+    TCPCPMKind& kind()
+    {
+        return kind_;
+    }
+
+    void length(uint16_t length)
+    {
+        length_ = length;
+    }
+
+    uint16_t length() const
+    {
+        return length_;
+    }
+
+    uint16_t& length()
+    {
+        return length_;
+    }
+
+    void transaction_id(TCPTransactionId transaction_id)
+    {
+        transaction_id_ = transaction_id;
+    }
+
+    TCPTransactionId transaction_id() const
+    {
+        return transaction_id_;
+    }
+
+    TCPTransactionId& transaction_id()
+    {
+        return transaction_id_;
+    }
+
+    void flags(
+            bool endianess,
+            bool payload,
+            bool requires_response)
     {
         //TODO: Optimize receiving a Endianness_t
         octet e = (endianess) ? BIT(1) : 0x00;
-        octet p = (hasPayload) ? BIT(2) : 0x00;
-        octet r = (requiresResponse) ? BIT(3) : 0x00;
-        flags = e | p | r;
+        octet p = (payload) ? BIT(2) : 0x00;
+        octet r = (requires_response) ? BIT(3) : 0x00;
+        flags_ = e | p | r;
     }
 
-    void setEndianess(Endianness_t endianess)
+    void endianess(Endianness_t endianess)
     {
         // Endianess flag has inverse logic than Endianness_t :-/
         if (endianess == Endianness_t::BIGEND)
         {
-            flags &= 0xFE;
+            flags_ &= 0xFE;
         }
         else
         {
-            flags |= BIT(1);
+            flags_ |= BIT(1);
         }
     }
 
-    void setHasPayload(bool hasPayload)
+    void payload(bool payload)
     {
-        if (hasPayload)
+        if (payload)
         {
-            flags |= BIT(2);
+            flags_ |= BIT(2);
         }
         else
         {
-            flags &= 0xFD;
+            flags_ &= 0xFD;
         }
     }
 
-    void setRequiresResponse(bool requiresResponse)
+    void requires_response(bool requires_response)
     {
-        if (requiresResponse)
+        if (requires_response)
         {
-            flags |= BIT(3);
+            flags_ |= BIT(3);
         }
         else
         {
-            flags &= 0xFB;
+            flags_ &= 0xFB;
         }
     }
 
-    bool getEndianess()
+    bool endianess()
     {
-        return (flags & BIT(1)) != 0;
+        return (flags_ & BIT(1)) != 0;
     }
 
-    bool getHasPayload()
+    bool payload()
     {
-        return (flags & BIT(2)) != 0;
+        return (flags_ & BIT(2)) != 0;
     }
 
-    bool getRequiresResponse()
+    bool requires_response()
     {
-        return (flags & BIT(3)) != 0;
+        return (flags_ & BIT(3)) != 0;
     }
 
-    static inline size_t getSize()
+    static inline size_t size()
     {
         return 16;
     }

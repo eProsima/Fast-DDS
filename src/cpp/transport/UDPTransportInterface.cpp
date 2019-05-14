@@ -15,6 +15,7 @@
 #include <fastrtps/transport/TransportInterface.h>
 #include <fastrtps/transport/UDPTransportInterface.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
+#include "UDPSenderResource.hpp"
 #include <utility>
 #include <cstring>
 #include <algorithm>
@@ -53,9 +54,10 @@ UDPTransportDescriptor::UDPTransportDescriptor(const UDPTransportDescriptor& t)
 {
 }
 
-UDPTransportInterface::UDPTransportInterface()
-: mSendBufferSize(0)
-, mReceiveBufferSize(0)
+UDPTransportInterface::UDPTransportInterface(int32_t transport_kind)
+    : TransportInterface(transport_kind)
+    , mSendBufferSize(0)
+    , mReceiveBufferSize(0)
 {
 }
 
@@ -63,10 +65,9 @@ UDPTransportInterface::~UDPTransportInterface()
 {
 }
 
-void UDPTransportInterface::Clean()
+void UDPTransportInterface::clean()
 {
     assert(mInputSockets.size() == 0);
-    assert(mOutputSockets.size() == 0);
 }
 
 bool UDPTransportInterface::CloseInputChannel(const Locator_t& locator)
@@ -89,45 +90,33 @@ bool UDPTransportInterface::CloseInputChannel(const Locator_t& locator)
     // be used in the ReleaseInputChannel call later.
     for (UDPChannelResource* channel_resource : channel_resources)
     {
-        if (channel_resource->IsAlive())
+        if (channel_resource->alive())
         {
-            addresses[channel_resource] = channel_resource->getSocket()->local_endpoint().address();
+            addresses[channel_resource] = channel_resource->socket()->local_endpoint().address();
         }
         else
         {
             addresses[channel_resource] = asio::ip::address();
         }
-        channel_resource->Disable();
+        channel_resource->disable();
     }
 
     // Then we release the channels
     for (UDPChannelResource* channel : channel_resources)
     {
         ReleaseInputChannel(locator, addresses[channel]);
-        channel->getSocket()->cancel();
-        channel->getSocket()->close();
+        channel->socket()->cancel();
+        channel->socket()->close();
         delete channel;
     }
 
     return true;
 }
 
-bool UDPTransportInterface::CloseOutputChannel(const Locator_t& locator)
+void UDPTransportInterface::CloseOutputChannel(eProsimaUDPSocket& socket)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
-    if (!IsOutputChannelOpen(locator))
-        return false;
-
-    for (auto& socket : mOutputSockets)
-    {
-        socket->getSocket()->cancel();
-        socket->getSocket()->close();
-
-        delete socket;
-    }
-    mOutputSockets.clear();
-
-    return true;
+    socket.cancel();
+    socket.close();
 }
 
 bool UDPTransportInterface::DoInputLocatorsMatch(const Locator_t& left, const Locator_t& right) const
@@ -135,66 +124,61 @@ bool UDPTransportInterface::DoInputLocatorsMatch(const Locator_t& left, const Lo
     return IPLocator::getPhysicalPort(left) == IPLocator::getPhysicalPort(right);
 }
 
-bool UDPTransportInterface::DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const
-{
-    return true;
-}
-
 bool UDPTransportInterface::init()
 {
-    if (GetConfiguration()->sendBufferSize == 0 || GetConfiguration()->receiveBufferSize == 0)
+    if (configuration()->sendBufferSize == 0 || configuration()->receiveBufferSize == 0)
     {
         // Check system buffer sizes.
-        ip::udp::socket socket(mService);
-        socket.open(GenerateProtocol());
+        ip::udp::socket socket(io_service_);
+        socket.open(generate_protocol());
 
-        if (GetConfiguration()->sendBufferSize == 0)
+        if (configuration()->sendBufferSize == 0)
         {
             socket_base::send_buffer_size option;
             socket.get_option(option);
-            SetSendBufferSize(option.value());
+            set_send_buffer_size(option.value());
 
-            if (GetConfiguration()->sendBufferSize < s_minimumSocketBuffer)
+            if (configuration()->sendBufferSize < s_minimumSocketBuffer)
             {
-                SetSendBufferSize(s_minimumSocketBuffer);
+                set_send_buffer_size(s_minimumSocketBuffer);
                 mSendBufferSize = s_minimumSocketBuffer;
             }
         }
 
-        if (GetConfiguration()->receiveBufferSize == 0)
+        if (configuration()->receiveBufferSize == 0)
         {
             socket_base::receive_buffer_size option;
             socket.get_option(option);
-            SetReceiveBufferSize(option.value());
+            set_receive_buffer_size(option.value());
 
-            if (GetConfiguration()->receiveBufferSize < s_minimumSocketBuffer)
+            if (configuration()->receiveBufferSize < s_minimumSocketBuffer)
             {
-                SetReceiveBufferSize(s_minimumSocketBuffer);
+                set_receive_buffer_size(s_minimumSocketBuffer);
                 mReceiveBufferSize = s_minimumSocketBuffer;
             }
         }
     }
 
-    if (GetConfiguration()->maxMessageSize > s_maximumMessageSize)
+    if (configuration()->maxMessageSize > s_maximumMessageSize)
     {
         logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than 65000");
         return false;
     }
 
-    if (GetConfiguration()->maxMessageSize > GetConfiguration()->sendBufferSize)
+    if (configuration()->maxMessageSize > configuration()->sendBufferSize)
     {
-        logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than sendBufferSize");
+        logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than send_buffer_size");
         return false;
     }
 
-    if (GetConfiguration()->maxMessageSize > GetConfiguration()->receiveBufferSize)
+    if (configuration()->maxMessageSize > configuration()->receiveBufferSize)
     {
-        logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than receiveBufferSize");
+        logError(RTPS_MSG_OUT, "maxMessageSize cannot be greater than receive_buffer_size");
         return false;
     }
 
     // TODO(Ricardo) Create an event that update this list.
-    GetIPs(currentInterfaces);
+    get_ips(currentInterfaces);
 
     return true;
 }
@@ -207,16 +191,7 @@ bool UDPTransportInterface::IsInputChannelOpen(const Locator_t& locator) const
 
 bool UDPTransportInterface::IsLocatorSupported(const Locator_t& locator) const
 {
-    return locator.kind == mTransportKind;
-}
-
-bool UDPTransportInterface::IsOutputChannelOpen(const Locator_t& locator) const
-{
-    std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
-    if (!IsLocatorSupported(locator))
-        return false;
-
-    return mOutputSockets.size() > 0;
+    return locator.kind == transport_kind_;
 }
 
 bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, TransportReceiverInterface* receiver,
@@ -226,12 +201,12 @@ bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, Tr
 
     try
     {
-        std::vector<std::string> vInterfaces = GetBindingInterfacesList();
+        std::vector<std::string> vInterfaces = get_binding_interfaces_list();
         for (std::string sInterface : vInterfaces)
         {
-            UDPChannelResource* pChannelResource;
-            pChannelResource = CreateInputChannelResource(sInterface, locator, is_multicast, maxMsgSize, receiver);
-            mInputSockets[IPLocator::getPhysicalPort(locator)].push_back(pChannelResource);
+            UDPChannelResource* p_channel_resource;
+            p_channel_resource = CreateInputChannelResource(sInterface, locator, is_multicast, maxMsgSize, receiver);
+            mInputSockets[IPLocator::getPhysicalPort(locator)].push_back(p_channel_resource);
         }
     }
     catch (asio::system_error const& e)
@@ -250,28 +225,66 @@ UDPChannelResource* UDPTransportInterface::CreateInputChannelResource(const std:
     bool is_multicast, uint32_t maxMsgSize, TransportReceiverInterface* receiver)
 {
     eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(sInterface, IPLocator::getPhysicalPort(locator), is_multicast);
-    UDPChannelResource* pChannelResource = new UDPChannelResource(unicastSocket, maxMsgSize);
-    pChannelResource->SetMessageReceiver(receiver);
-    pChannelResource->SetInterface(sInterface);
-    std::thread* newThread = new std::thread(&UDPTransportInterface::performListenOperation, this,
-        pChannelResource, locator);
-    pChannelResource->SetThread(newThread);
-    return pChannelResource;
+    UDPChannelResource* p_channel_resource = new UDPChannelResource(unicastSocket, maxMsgSize);
+    p_channel_resource->message_receiver(receiver);
+    p_channel_resource->interface(sInterface);
+    p_channel_resource->thread(std::thread(&UDPTransportInterface::perform_listen_operation, this,
+        p_channel_resource, locator));
+    return p_channel_resource;
 }
 
-bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
+eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(
+        const ip::udp::endpoint& endpoint,
+        uint16_t& port)
 {
-    (void)locator;
+    eProsimaUDPSocket socket = createUDPSocket(io_service_);
+    getSocketPtr(socket)->open(generate_protocol());
+    if (mSendBufferSize != 0)
+    {
+        getSocketPtr(socket)->set_option(socket_base::send_buffer_size(mSendBufferSize));
+    }
+    getSocketPtr(socket)->set_option(ip::multicast::hops(configuration()->TTL));
+    getSocketPtr(socket)->bind(endpoint);
+    getSocketPtr(socket)->non_blocking(configuration()->non_blocking_send);
 
-    std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
+    if (port == 0)
+    {
+        port = getSocketPtr(socket)->local_endpoint().port();
+    }
+
+    return socket;
+}
+
+bool UDPTransportInterface::OpenOutputChannel(
+        SendResourceList& sender_resource_list,
+        const Locator_t& locator)
+{
+    if (!IsLocatorSupported(locator))
+    {
+        return false;
+    }
+
+    // We try to find a SenderResource that can be reuse to this locator.
+    // Note: This is done in this level because if we do in NetworkFactory level, we have to mantain what transport
+    // already reuses a SenderResource.
+    for(auto& sender_resource : sender_resource_list)
+    {
+        UDPSenderResource* udp_sender_resource = UDPSenderResource::cast(*this, sender_resource.get());
+
+        if(udp_sender_resource)
+        {
+            return true;
+        }
+    }
+
     try
     {
-        uint16_t port = GetConfiguration()->m_output_udp_socket;
+        uint16_t port = configuration()->m_output_udp_socket;
         std::vector<IPFinder::info_IP> locNames;
-        GetIPs(locNames);
+        get_ips(locNames);
         // If there is no whitelist, we can simply open a generic output socket
         // and gain efficiency.
-        if (IsInterfaceWhiteListEmpty())
+        if (is_interface_whitelist_empty())
         {
             eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(GenerateAnyAddressEndpoint(port), port);
             getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback(true));
@@ -286,45 +299,57 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
             if (locNames.size() > 1)
             {
                 auto locIt = locNames.begin();
-                mOutputSockets.push_back(new UDPChannelResource(unicastSocket));
+                sender_resource_list.emplace_back(
+                        static_cast<SenderResource*>(new UDPSenderResource(*this, unicastSocket)));
 
                 // Create other socket for outbounding rest of interfaces.
                 for (++locIt; locIt != locNames.end(); ++locIt)
                 {
                     uint16_t new_port = 0;
-                    eProsimaUDPSocket multicastSocket = OpenAndBindUnicastOutputSocket(GenerateEndpoint((*locIt).name, new_port), new_port);
-                    SetSocketOutboundInterface(multicastSocket, (*locIt).name);
+                    try
+                    {
+                        eProsimaUDPSocket multicastSocket =
+                            OpenAndBindUnicastOutputSocket(generate_endpoint((*locIt).name, new_port), new_port);
+                        SetSocketOutboundInterface(multicastSocket, (*locIt).name);
 
-                    UDPChannelResource* mSocket = new UDPChannelResource(multicastSocket);
-                    mSocket->only_multicast_purpose(true);
-                    mOutputSockets.push_back(mSocket);
+                        sender_resource_list.emplace_back(
+                                static_cast<SenderResource*>(new UDPSenderResource(*this, multicastSocket, true)));
+                    }
+                    catch(asio::system_error const& e)
+                    {
+                        (void)e;
+                        logWarning(RTPS_MSG_OUT, "UDPTransport Error binding interface "
+                            << (*locIt).name << " (skipping) with msg: " << e.what());
+                    }
                 }
             }
             else
             {
                 // Multicast data will be sent for the only one interface.
-                UDPChannelResource *mSocket = new UDPChannelResource(unicastSocket);
-                mOutputSockets.push_back(mSocket);
+                sender_resource_list.emplace_back(
+                        static_cast<SenderResource*>(new UDPSenderResource(*this, unicastSocket)));
             }
         }
         else
         {
             locNames.clear();
-            GetIPs(locNames, true);
+            get_ips(locNames, true);
 
             bool firstInterface = false;
             for (const auto& infoIP : locNames)
             {
-                if (IsInterfaceAllowed(infoIP.name))
+                if (is_interface_allowed(infoIP.name))
                 {
-                    eProsimaUDPSocket unicastSocket = OpenAndBindUnicastOutputSocket(GenerateEndpoint(infoIP.name, port), port);
+                    eProsimaUDPSocket unicastSocket =
+                        OpenAndBindUnicastOutputSocket(generate_endpoint(infoIP.name, port), port);
                     SetSocketOutboundInterface(unicastSocket, infoIP.name);
                     if (!firstInterface)
                     {
                         getSocketPtr(unicastSocket)->set_option(ip::multicast::enable_loopback(true));
                         firstInterface = true;
                     }
-                    mOutputSockets.push_back(new UDPChannelResource(unicastSocket));
+                    sender_resource_list.emplace_back(
+                            static_cast<SenderResource*>(new UDPSenderResource(*this, unicastSocket)));
                 }
             }
         }
@@ -332,68 +357,39 @@ bool UDPTransportInterface::OpenAndBindOutputSockets(const Locator_t& locator)
     catch (asio::system_error const& e)
     {
         (void)e;
-        logInfo(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")" << " with msg: " << e.what());
+        /* TODO Que hacer?
+        logError(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")"
+            << " with msg: " << e.what());
         for (auto& socket : mOutputSockets)
         {
             delete socket;
         }
         mOutputSockets.clear();
+        */
         return false;
     }
 
     return true;
 }
 
-eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(const ip::udp::endpoint& endpoint, uint16_t& port)
+void UDPTransportInterface::perform_listen_operation(UDPChannelResource* p_channel_resource, Locator_t input_locator)
 {
-    eProsimaUDPSocket socket = createUDPSocket(mService);
-    getSocketPtr(socket)->open(GenerateProtocol());
-    if (mSendBufferSize != 0)
-    {
-        getSocketPtr(socket)->set_option(socket_base::send_buffer_size(mSendBufferSize));
-    }
-    getSocketPtr(socket)->set_option(ip::multicast::hops(GetConfiguration()->TTL));
-    getSocketPtr(socket)->bind(endpoint);
+    Locator_t remote_locator;
 
-    if (port == 0)
-    {
-        port = getSocketPtr(socket)->local_endpoint().port();
-    }
-
-    return socket;
-}
-
-bool UDPTransportInterface::OpenOutputChannel(const Locator_t& locator)
-{
-    if (!IsLocatorSupported(locator) || IsOutputChannelOpen(locator))
-        return false;
-
-    return OpenAndBindOutputSockets(locator);
-}
-
-bool UDPTransportInterface::OpenExtraOutputChannel(const Locator_t&)
-{
-    return false;
-}
-
-void UDPTransportInterface::performListenOperation(UDPChannelResource* pChannelResource, Locator_t input_locator)
-{
-    Locator_t remoteLocator;
-
-    while (pChannelResource->IsAlive())
+    while (p_channel_resource->alive())
     {
         // Blocking receive.
-        auto& msg = pChannelResource->GetMessageBuffer();
-        if (!Receive(pChannelResource, msg.buffer, msg.max_size, msg.length, remoteLocator))
+        auto& msg = p_channel_resource->message_buffer();
+        if (!Receive(p_channel_resource, msg.buffer, msg.max_size, msg.length, remote_locator))
         {
             continue;
         }
 
         // Processes the data through the CDR Message interface.
-        auto receiver = pChannelResource->GetMessageReceiver();
+        auto receiver = p_channel_resource->message_receiver();
         if (receiver != nullptr)
         {
-            receiver->OnDataReceived(msg.buffer, msg.length, input_locator, remoteLocator);
+            receiver->OnDataReceived(msg.buffer, msg.length, input_locator, remote_locator);
         }
         else
         {
@@ -402,24 +398,24 @@ void UDPTransportInterface::performListenOperation(UDPChannelResource* pChannelR
     }
 }
 
-bool UDPTransportInterface::Receive(UDPChannelResource* pChannelResource, octet* receiveBuffer,
-    uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize, Locator_t& remoteLocator)
+bool UDPTransportInterface::Receive(UDPChannelResource* p_channel_resource, octet* receive_buffer,
+    uint32_t receive_buffer_capacity, uint32_t& receive_buffer_size, Locator_t& remote_locator)
 {
     try
     {
         ip::udp::endpoint senderEndpoint;
 
-        size_t bytes = pChannelResource->getSocket()->receive_from(asio::buffer(receiveBuffer, receiveBufferCapacity), senderEndpoint);
-        receiveBufferSize = static_cast<uint32_t>(bytes);
-        if (receiveBufferSize > 0)
+        size_t bytes = p_channel_resource->socket()->receive_from(asio::buffer(receive_buffer, receive_buffer_capacity), senderEndpoint);
+        receive_buffer_size = static_cast<uint32_t>(bytes);
+        if (receive_buffer_size > 0)
         {
-            if (receiveBufferSize == 13 && memcmp(receiveBuffer, "EPRORTPSCLOSE", 13) == 0)
+            if (receive_buffer_size == 13 && memcmp(receive_buffer, "EPRORTPSCLOSE", 13) == 0)
             {
                 return false;
             }
-            EndpointToLocator(senderEndpoint, remoteLocator);
+            endpoint_to_locator(senderEndpoint, remote_locator);
         }
-        return (receiveBufferSize > 0);
+        return (receive_buffer_size > 0);
     }
     catch (const std::exception& error)
     {
@@ -435,43 +431,48 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const 
     {
         uint16_t port = IPLocator::getPhysicalPort(locator);
 
-        if(IsInterfaceWhiteListEmpty())
+        if(is_interface_whitelist_empty())
         {
             Locator_t localLocator;
-            FillLocalIp(localLocator);
+            fill_local_ip(localLocator);
 
-            ip::udp::socket socket(mService);
-            socket.open(GenerateProtocol());
-            socket.bind(GenerateLocalEndpoint(localLocator, 0));
+            ip::udp::socket socket(io_service_);
+            socket.open(generate_protocol());
+            socket.bind(generate_local_endpoint(localLocator, 0));
 
             // We first send directly to localhost, in case all network interfaces are disabled
             // (which would mean that multicast traffic may not be sent)
-            auto localEndpoint = GenerateLocalEndpoint(localLocator, port);
+            auto localEndpoint = generate_local_endpoint(localLocator, port);
             socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), localEndpoint);
 
             // We then send to the address of the input locator
-            auto destinationEndpoint = GenerateLocalEndpoint(locator, port);
+            auto destinationEndpoint = generate_local_endpoint(locator, port);
 
             asio::error_code ec;
             socket_base::message_flags flags = 0;
 
             // We ignore the error message because some OS don't allow this functionality like Windows (WSAENETUNREACH) or Mac (EADDRNOTAVAIL)
             socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint,flags, ec);
-            
+
             socket.close();
         }
         else
         {
-            ip::udp::socket socket(mService);
-            socket.open(GenerateProtocol());
+            ip::udp::socket socket(io_service_);
+            socket.open(generate_protocol());
             socket.bind(asio::ip::udp::endpoint(interface_address, 0));
 
             auto localEndpoint = ip::udp::endpoint(interface_address, port);
             socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), localEndpoint);
 
             // We then send to the address of the input locator
-            auto destinationEndpoint = GenerateLocalEndpoint(locator, port);
-            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint);
+            auto destinationEndpoint = generate_local_endpoint(locator, port);
+
+            asio::error_code ec;
+            socket_base::message_flags flags = 0;
+
+            // We ignore the error message because some OS don't allow this functionality like Windows (WSAENETUNREACH) or Mac (EADDRNOTAVAIL)
+            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint, flags, ec);
 
             socket.close();
         }
@@ -488,7 +489,9 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const 
 Locator_t UDPTransportInterface::RemoteToMainLocal(const Locator_t& remote) const
 {
     if (!IsLocatorSupported(remote))
+    {
         return false;
+    }
 
     Locator_t mainLocal(remote);
     //memset(mainLocal.address, 0x00, sizeof(mainLocal.address));
@@ -496,51 +499,57 @@ Locator_t UDPTransportInterface::RemoteToMainLocal(const Locator_t& remote) cons
     return mainLocal;
 }
 
-bool UDPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
+bool UDPTransportInterface::send(
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        eProsimaUDPSocket& socket,
+        const Locator_t& remote_locator,
+        bool only_multicast_purpose)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(mOutputMapMutex);
-    if (!IsOutputChannelOpen(localLocator) || sendBufferSize > GetConfiguration()->sendBufferSize)
+    if (!IsLocatorSupported(remote_locator) || send_buffer_size > configuration()->sendBufferSize)
+    {
         return false;
+    }
 
     bool success = false;
-    bool is_multicast_remote_address = IPLocator::isMulticast(remoteLocator);
+    bool is_multicast_remote_address = IPLocator::isMulticast(remote_locator);
 
-    for (auto& socket : mOutputSockets)
+    if (is_multicast_remote_address || !only_multicast_purpose)
     {
-        if (is_multicast_remote_address || !socket->only_multicast_purpose())
-            success |= SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(socket->getSocket()));
+        auto destinationEndpoint = generate_endpoint(remote_locator, IPLocator::getPhysicalPort(remote_locator));
+
+        size_t bytesSent = 0;
+
+        try
+        {
+            asio::error_code ec;
+            bytesSent = getSocketPtr(socket)->send_to(asio::buffer(send_buffer, send_buffer_size), destinationEndpoint, 0, ec);
+            if(!!ec)
+            {
+                if ((ec.value() == asio::error::would_block) ||
+                    (ec.value() == asio::error::try_again))
+                {
+                    logWarning(RTPS_MSG_OUT, "UDP send would have blocked. Packet is dropped.");
+                    return true;
+                }
+
+                logWarning(RTPS_MSG_OUT, ec.message());
+                return false;
+            }
+        }
+        catch (const std::exception& error)
+        {
+            logWarning(RTPS_MSG_OUT, error.what());
+            return false;
+        }
+
+        (void)bytesSent;
+        logInfo(RTPS_MSG_OUT, "UDPTransport: " << bytesSent << " bytes TO endpoint: " << destinationEndpoint
+            << " FROM " << getSocketPtr(socket)->local_endpoint());
+        success = true;
     }
 
     return success;
-}
-
-bool UDPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& /*localLocator*/, const Locator_t& remoteLocator, ChannelResource *pChannelResource)
-{
-    UDPChannelResource *udpSocket = dynamic_cast<UDPChannelResource*>(pChannelResource);
-    return SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, getRefFromPtr(udpSocket->getSocket()));
-}
-
-bool UDPTransportInterface::SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize,
-    const Locator_t& remoteLocator, eProsimaUDPSocketRef socket)
-{
-    auto destinationEndpoint = GenerateEndpoint(remoteLocator, IPLocator::getPhysicalPort(remoteLocator));
-
-    size_t bytesSent = 0;
-
-    try
-    {
-        bytesSent = getSocketPtr(socket)->send_to(asio::buffer(sendBuffer, sendBufferSize), destinationEndpoint);
-    }
-    catch (const std::exception& error)
-    {
-        logWarning(RTPS_MSG_OUT, error.what());
-        return false;
-    }
-
-    (void)bytesSent;
-    logInfo(RTPS_MSG_OUT, "UDPTransport: " << bytesSent << " bytes TO endpoint: " << destinationEndpoint
-        << " FROM " << getSocketPtr(socket)->local_endpoint());
-    return true;
 }
 
 LocatorList_t UDPTransportInterface::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)
@@ -556,7 +565,7 @@ LocatorList_t UDPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
 
         while (it != locatorList.end())
         {
-            assert((*it).kind == mTransportKind);
+            assert((*it).kind == transport_kind_);
 
             if (IPLocator::isMulticast(*it))
             {
@@ -604,28 +613,27 @@ LocatorList_t UDPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
                     auto localInterface = currentInterfaces.begin();
                     for (; localInterface != currentInterfaces.end(); ++localInterface)
                     {
-                        if (CompareLocatorIP(localInterface->locator, *it))
+                        if (compare_locator_ip(localInterface->locator, *it))
                         {
                             // Check 127.0.0.1 in the whitelist
                             Locator_t loopbackLocator;
-                            FillLocalIp(loopbackLocator);
-                            if (IsLocatorAllowed(loopbackLocator))
+                            fill_local_ip(loopbackLocator);
+                            if (is_locator_allowed(loopbackLocator))
                             {
                                 // Loopback locator
                                 IPLocator::setPhysicalPort(loopbackLocator, IPLocator::getPhysicalPort(*it));
                                 pendingUnicast.push_back(loopbackLocator);
-                                break;
                             }
                             else
                             {
                                 // Check interface in whitelist
-                                if (IsLocatorAllowed(*it))
+                                if (is_locator_allowed(*it))
                                 {
                                     // Custom Loopback locator
                                     pendingUnicast.push_back(*it);
-                                    break;
                                 }
                             }
+                            break;
                         }
                     }
 
@@ -688,7 +696,7 @@ bool UDPTransportInterface::configureInitialPeerLocator(Locator_t &locator, cons
 {
     if(locator.port == 0)
     {
-        for(uint32_t i = 0; i < GetConfiguration()->maxInitialPeersRange; ++i)
+        for(uint32_t i = 0; i < configuration()->maxInitialPeersRange; ++i)
         {
             Locator_t auxloc(locator);
             auxloc.port = port_params.getUnicastPort(domainId, i);

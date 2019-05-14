@@ -66,9 +66,9 @@ class RTPSAsSocketWriter : public eprosima::fastrtps::rtps::WriterListener
 
             // By default, heartbeat period and nack response delay are 100 milliseconds.
             writer_attr_.times.heartbeatPeriod.seconds = 0;
-            writer_attr_.times.heartbeatPeriod.fraction = 4294967 * 100;
+            writer_attr_.times.heartbeatPeriod.nanosec = 100000000;
             writer_attr_.times.nackResponseDelay.seconds = 0;
-            writer_attr_.times.nackResponseDelay.fraction = 4294967 * 100;
+            writer_attr_.times.nackResponseDelay.nanosec = 100000000;
         }
 
         virtual ~RTPSAsSocketWriter()
@@ -137,6 +137,12 @@ class RTPSAsSocketWriter : public eprosima::fastrtps::rtps::WriterListener
                 history_->add_change(ch);
                 it = msgs.erase(it);
             }
+        }
+
+        bool wait_for_all_acked(const std::chrono::seconds& seconds)
+        {
+            eprosima::fastrtps::Duration_t max_time(int32_t(seconds.count()), 0);
+            return writer_->wait_for_all_acked(max_time);
         }
 
         bool is_history_empty ()
@@ -239,9 +245,9 @@ class RTPSAsSocketWriter : public eprosima::fastrtps::rtps::WriterListener
             return *this;
         }
 
-        RTPSAsSocketWriter& heartbeat_period_fraction(uint32_t frac)
+        RTPSAsSocketWriter& heartbeat_period_nanosec(uint32_t nanosec)
         {
-            writer_attr_.times.heartbeatPeriod.fraction = frac;
+            writer_attr_.times.heartbeatPeriod.nanosec = nanosec;
             return *this;
         }
 

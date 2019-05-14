@@ -22,6 +22,8 @@
 #include "../rtps/common/all_common.h"
 #include "../rtps/common/Token.h"
 
+#include "../utils/fixed_size_string.hpp"
+
 #if HAVE_SECURITY
 #include "../rtps/security/accesscontrol/ParticipantSecurityAttributes.h"
 #include "../rtps/security/accesscontrol/EndpointSecurityAttributes.h"
@@ -113,15 +115,8 @@ enum ParameterId_t	: uint16_t
     PID_RELATED_SAMPLE_IDENTITY = 0x800f,
     PID_DATA_REPRESENTATION = 0x0073,
     PID_TYPE_CONSISTENCY_ENFORCEMENT = 0x0074,
+    PID_DISABLE_POSITIVE_ACKS = 0x8005,
 };
-
-
-
-
-
-
-
-
 
 //!Base Parameter class with parameter PID and parameter length in bytes.
 //!@ingroup PARAMETER_MODULE
@@ -207,7 +202,8 @@ class ParameterLocator_t: public Parameter_t {
 /**
  *
  */
-class ParameterString_t: public Parameter_t {
+class ParameterString_t: public Parameter_t 
+{
     public:
         ParameterString_t(){};
         /**
@@ -216,7 +212,8 @@ class ParameterString_t: public Parameter_t {
          * @param in_length Its associated length
          */
         ParameterString_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
-        ParameterString_t(ParameterId_t pid,uint16_t in_length,std::string& strin):Parameter_t(pid,in_length),m_string(strin){}
+        ParameterString_t(ParameterId_t pid,uint16_t in_length,const string_255& strin):Parameter_t(pid,in_length),m_string(strin){}
+
         /**
          * Add the parameter to a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message where the parameter should be added.
@@ -224,9 +221,9 @@ class ParameterString_t: public Parameter_t {
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
         inline const char* getName()const { return m_string.c_str(); };
-        inline void setName(const char* name){ m_string = std::string(name); };
+        inline void setName(const char* name){ m_string = name; };
     private:
-        std::string m_string;
+        string_255 m_string;
 };
 
 /**
@@ -384,6 +381,32 @@ class ParameterBool_t:public Parameter_t{
 #define PARAMETER_BOOL_LENGTH 4
 
 /**
+*
+*/
+class ParameterStatusInfo_t :public Parameter_t
+{
+public:
+    uint8_t status;
+    ParameterStatusInfo_t() :status(0) {}
+
+    /**
+    * Constructor using a parameter PID and the parameter length
+    * @param pid Pid of the parameter
+    * @param in_length Its associated length
+    */
+    ParameterStatusInfo_t(ParameterId_t pid, uint16_t in_length) :Parameter_t(pid, in_length), status(0) {}
+    ParameterStatusInfo_t(ParameterId_t pid, uint16_t in_length, uint8_t instatus) :Parameter_t(pid, in_length), status(instatus) {}
+    /**
+    * Add the parameter to a CDRMessage_t message.
+    * @param[in,out] msg Pointer to the message where the parameter should be added.
+    * @return True if the parameter was correctly added.
+    */
+    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+};
+
+#define PARAMETER_STATUS_INFO_LENGTH 4
+
+/**
  *
  */
 class ParameterCount_t:public Parameter_t{
@@ -455,7 +478,7 @@ class ParameterTime_t:public Parameter_t{
 /**
  *
  */
-class ParameterBuiltinEndpointSet_t:public Parameter_t{
+class ParameterBuiltinEndpointSet_t : public Parameter_t{
     public:
 		rtps::BuiltinEndpointSet_t endpointSet;
         ParameterBuiltinEndpointSet_t():endpointSet(0){};
@@ -464,7 +487,12 @@ class ParameterBuiltinEndpointSet_t:public Parameter_t{
          * @param pid Pid of the parameter
          * @param in_length Its associated length
          */
-        ParameterBuiltinEndpointSet_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length),endpointSet(0){};
+        ParameterBuiltinEndpointSet_t(
+                ParameterId_t pid,
+                uint16_t in_length)
+            : Parameter_t(pid, in_length)
+            , endpointSet(0)
+        {};
         /**
          * Add the parameter to a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message where the parameter should be added.

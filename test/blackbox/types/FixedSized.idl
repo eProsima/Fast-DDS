@@ -1,0 +1,4 @@
+struct HelloWorld
+{
+	unsigned short index;
+};

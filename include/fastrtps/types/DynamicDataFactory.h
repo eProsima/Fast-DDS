@@ -29,28 +29,34 @@ namespace types {
 
 class DynamicDataFactory
 {
-public:
-    ~DynamicDataFactory();
-
-    RTPS_DllAPI static DynamicDataFactory* GetInstance();
-    RTPS_DllAPI static ResponseCode DeleteInstance();
-
-    RTPS_DllAPI DynamicData* CreateData(DynamicTypeBuilder* pBuilder);
-    RTPS_DllAPI DynamicData* CreateData(DynamicType_ptr pType);
-    RTPS_DllAPI DynamicData* CreateCopy(const DynamicData* pData);
-    RTPS_DllAPI ResponseCode DeleteData(DynamicData* pData);
-
-    RTPS_DllAPI bool IsEmpty() const;
-
 protected:
     DynamicDataFactory();
 
-    ResponseCode CreateMembers(DynamicData* pData, DynamicType_ptr pType);
+    ResponseCode create_members(
+            DynamicData* pData,
+            DynamicType_ptr pType);
 
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    std::vector<DynamicData*> mDynamicDatas;
-    mutable std::recursive_mutex mMutex;
+    std::vector<DynamicData*> dynamic_datas_;
+    mutable std::recursive_mutex mutex_;
 #endif
+
+public:
+    ~DynamicDataFactory();
+
+    RTPS_DllAPI static DynamicDataFactory* get_instance();
+
+    RTPS_DllAPI static ResponseCode delete_instance();
+
+    RTPS_DllAPI DynamicData* create_data(DynamicTypeBuilder* pBuilder);
+
+    RTPS_DllAPI DynamicData* create_data(DynamicType_ptr pType);
+
+    RTPS_DllAPI DynamicData* create_copy(const DynamicData* pData);
+
+    RTPS_DllAPI ResponseCode delete_data(DynamicData* pData);
+
+    RTPS_DllAPI bool is_empty() const;
 };
 
 

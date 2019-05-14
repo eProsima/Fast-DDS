@@ -72,12 +72,12 @@ ParticipantImpl::~ParticipantImpl()
         this->removeSubscriber(m_subscribers.begin()->first);
     }
 
-    delete(mp_participant);
-
     if(this->mp_rtpsParticipant != nullptr)
     {
         RTPSDomain::removeRTPSParticipant(this->mp_rtpsParticipant);
     }
+
+    delete(mp_participant);
 }
 
 
@@ -189,12 +189,13 @@ Publisher* ParticipantImpl::createPublisher(
         watt.endpoint.setUserDefinedID((uint8_t)att.getUserDefinedID());
     }
     watt.times = att.times;
+    watt.matched_readers_allocation = att.matched_subscriber_allocation;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
     Property property;
     property.name("topic_name");
-    property.value(att.topic.getTopicName());
+    property.value(att.topic.getTopicName().c_str());
     watt.endpoint.properties.properties().push_back(std::move(property));
     if(att.qos.m_partition.getNames().size() > 0)
     {
@@ -207,11 +208,18 @@ Publisher* ParticipantImpl::createPublisher(
         property.value(std::move(partitions));
         watt.endpoint.properties.properties().push_back(std::move(property));
     }
+    if (att.qos.m_disablePositiveACKs.enabled &&
+            att.qos.m_disablePositiveACKs.duration != c_TimeInfinite)
+    {
+        watt.disable_positive_acks = true;
+        watt.keep_duration = att.qos.m_disablePositiveACKs.duration;
+    }
 
-    RTPSWriter* writer = RTPSDomain::createRTPSWriter(this->mp_rtpsParticipant,
-            watt,
-            (WriterHistory*)&pubimpl->m_history,
-            (WriterListener*)&pubimpl->m_writerListener);
+    RTPSWriter* writer = RTPSDomain::createRTPSWriter(
+                this->mp_rtpsParticipant,
+                watt,
+                (WriterHistory*)&pubimpl->m_history,
+                (WriterListener*)&pubimpl->m_writerListener);
     if(writer == nullptr)
     {
         logError(PARTICIPANT,"Problem creating associated Writer");
@@ -305,7 +313,7 @@ Subscriber* ParticipantImpl::createSubscriber(
     // Insert topic_name and partitions
     Property property;
     property.name("topic_name");
-    property.value(att.topic.getTopicName());
+    property.value(att.topic.getTopicName().c_str());
     ratt.endpoint.properties.properties().push_back(std::move(property));
     if(att.qos.m_partition.getNames().size() > 0)
     {
@@ -317,6 +325,10 @@ Subscriber* ParticipantImpl::createSubscriber(
         }
         property.value(std::move(partitions));
         ratt.endpoint.properties.properties().push_back(std::move(property));
+    }
+    if (att.qos.m_disablePositiveACKs.enabled)
+    {
+        ratt.disable_positive_acks = true;
     }
 
     RTPSReader* reader = RTPSDomain::createRTPSReader(this->mp_rtpsParticipant,
@@ -494,4 +506,9 @@ bool ParticipantImpl::get_remote_reader_info(
         ReaderProxyData& returnedInfo)
 {
     return mp_rtpsParticipant->get_remote_reader_info(readerGuid, returnedInfo);
+}
+
+ResourceEvent& ParticipantImpl::get_resource_event() const
+{
+    return mp_rtpsParticipant->get_resource_event();
 }

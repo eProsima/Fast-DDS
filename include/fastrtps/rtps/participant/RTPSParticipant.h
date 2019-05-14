@@ -41,7 +41,7 @@ class RTPSWriter;
 class RTPSReader;
 class WriterProxyData;
 class ReaderProxyData;
-
+class ResourceEvent;
 
 /**
  * @brief Class RTPSParticipant, contains the public API for a RTPSParticipant.
@@ -51,24 +51,31 @@ class RTPS_DllAPI RTPSParticipant
 {
     friend class RTPSParticipantImpl;
     friend class RTPSDomain;
-    private:
+private:
     /**
      * Constructor. Requires a pointer to the implementation.
      * @param pimpl Implementation.
      */
     RTPSParticipant(RTPSParticipantImpl* pimpl);
+
     virtual ~ RTPSParticipant();
-    public:
+
+public:
     //!Get the GUID_t of the RTPSParticipant.
     const GUID_t& getGuid() const ;
+
     //!Force the announcement of the RTPSParticipant state.
     void announceRTPSParticipantState();
+
     //	//!Method to loose the next change (ONLY FOR TEST). //TODO remove this method because is only for testing
     //	void loose_next_change();
+
     //!Stop the RTPSParticipant announcement period. //TODO remove this method because is only for testing
     void stopRTPSParticipantAnnouncement();
+
     //!Reset the RTPSParticipant announcement period. //TODO remove this method because is only for testing
     void resetRTPSParticipantAnnouncement();
+
     /**
      * Indicate the Participant that you have discovered a new Remote Writer.
      * This method can be used by the user to implements its own Static Endpoint
@@ -77,7 +84,10 @@ class RTPS_DllAPI RTPSParticipant
      * @param userDefinedId ID of the discovered Writer.
      * @return True if correctly added.
      */
-    bool newRemoteWriterDiscovered(const GUID_t& pguid, int16_t userDefinedId);
+
+    bool newRemoteWriterDiscovered(
+            const GUID_t& pguid,
+            int16_t userDefinedId);
     /**
      * Indicate the Participant that you have discovered a new Remote Reader.
      * This method can be used by the user to implements its own Static Endpoint
@@ -86,12 +96,16 @@ class RTPS_DllAPI RTPSParticipant
      * @param userDefinedId ID of the discovered Reader.
      * @return True if correctly added.
      */
-    bool newRemoteReaderDiscovered(const GUID_t& pguid, int16_t userDefinedId);
+    bool newRemoteReaderDiscovered(
+            const GUID_t& pguid,
+            int16_t userDefinedId);
+
     /**
      * Get the Participant ID.
      * @return Participant ID.
      */
     uint32_t getRTPSParticipantID() const;
+
     /**
      * Register a RTPSWriter in the builtin Protocols.
      * @param Writer Pointer to the RTPSWriter.
@@ -99,7 +113,11 @@ class RTPS_DllAPI RTPSParticipant
      * @param wqos WriterQos.
      * @return True if correctly registered.
      */
-    bool registerWriter(RTPSWriter* Writer, const TopicAttributes& topicAtt, const WriterQos& wqos);
+    bool registerWriter(
+            RTPSWriter* Writer,
+            const TopicAttributes& topicAtt,
+            const WriterQos& wqos);
+
     /**
      * Register a RTPSReader in the builtin Protocols.
      * @param Reader Pointer to the RTPSReader.
@@ -107,7 +125,11 @@ class RTPS_DllAPI RTPSParticipant
      * @param rqos ReaderQos.
      * @return True if correctly registered.
      */
-    bool registerReader(RTPSReader* Reader, const TopicAttributes& topicAtt, const ReaderQos& rqos);
+    bool registerReader(
+            RTPSReader* Reader,
+            const TopicAttributes& topicAtt,
+            const ReaderQos& rqos);
+
     /**
      * Update writer QOS
      * @param Writer to update
@@ -115,7 +137,11 @@ class RTPS_DllAPI RTPSParticipant
      * @param wqos New writer QoS
      * @return true on success
      */
-    bool updateWriter(RTPSWriter* Writer, const TopicAttributes& topicAtt, const WriterQos& wqos);
+    bool updateWriter(
+            RTPSWriter* Writer,
+            const TopicAttributes& topicAtt,
+            const WriterQos& wqos);
+
     /**
      * Update reader QOS
      * @param Reader to update
@@ -123,8 +149,15 @@ class RTPS_DllAPI RTPSParticipant
      * @param rqos New reader QoS
      * @return true on success
      */
-    bool updateReader(RTPSReader* Reader, const TopicAttributes& topicAtt, const ReaderQos& rqos);
+    bool updateReader(
+            RTPSReader* Reader,
+            const TopicAttributes& topicAtt,
+            const ReaderQos& rqos);
 
+    /**
+     * Returns a list with the participant names.
+     * @return list of participant names.
+     */
     std::vector<std::string> getParticipantNames() const;
 
     /**
@@ -133,15 +166,37 @@ class RTPS_DllAPI RTPSParticipant
      */
     const RTPSParticipantAttributes & getRTPSParticipantAttributes() const;
 
+    /**
+     * Retrieves the maximum message size.
+     */
     uint32_t getMaxMessageSize() const;
 
+    /**
+     * Retrieves the maximum data size.
+     */
     uint32_t getMaxDataSize() const;
 
-    bool get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo);
+    /**
+     * Retrieves remote write information.
+     * @param writerGuid GUID of the writer.
+     * @param returnedInfo WriterProxyData to be filled.
+     */
+    bool get_remote_writer_info(
+            const GUID_t& writerGuid,
+            WriterProxyData& returnedInfo);
 
-    bool get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo);
+    /**
+     * Retrieves remote reader information.
+     * @param readerGuid GUID of the reader.
+     * @param returnedInfo ReaderProxyData to be filled.
+     */
+    bool get_remote_reader_info(
+            const GUID_t& readerGuid,
+            ReaderProxyData& returnedInfo);
 
-    private:
+    ResourceEvent& get_resource_event() const;
+
+private:
 
     //!Pointer to the implementation.
     RTPSParticipantImpl* mp_impl;
@@ -152,8 +207,3 @@ class RTPS_DllAPI RTPSParticipant
 } /* namespace eprosima */
 
 #endif /* RTPSParticipant_H_ */
-
-
-
-
-

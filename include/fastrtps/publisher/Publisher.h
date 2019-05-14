@@ -21,21 +21,20 @@
 #define PUBLISHER_H_
 
 #include "../fastrtps_dll.h"
-#include <cstdio>
 #include "../rtps/common/Guid.h"
 #include "../rtps/common/Time_t.h"
 #include "../attributes/PublisherAttributes.h"
+#include "../qos/DeadlineMissedStatus.h"
+#include "../qos/LivelinessLostStatus.h"
 
 namespace eprosima {
 namespace fastrtps {
 
 namespace rtps
 {
-struct GUID_t;
-class WriteParams;
+    struct GUID_t;
+    class WriteParams;
 }
-
-
 
 class PublisherImpl;
 
@@ -48,8 +47,11 @@ class RTPS_DllAPI Publisher
     friend class PublisherImpl;
     virtual ~Publisher();
 
-    public:
-
+public:
+    /**
+     * Constructor from a PublisherImpl pointer
+     * @param pimpl Actual implementation of the publisher
+     */
     Publisher(PublisherImpl* pimpl);
 
     /**
@@ -59,7 +61,7 @@ class RTPS_DllAPI Publisher
      * @par Calling example:
      * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
-    bool write(void*Data);
+    bool write(void* Data);
 
     /**
      * Write data with params to the topic.
@@ -69,26 +71,28 @@ class RTPS_DllAPI Publisher
      * @par Calling example:
      * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
-    bool write(void*Data, rtps::WriteParams &wparams);
+    bool write(
+            void* Data,
+            rtps::WriteParams& wparams);
 
     /**
      * Dispose of a previously written data.
      * @param Data Pointer to the data.
      * @return True if correct.
      */
-    bool dispose(void*Data);
+    bool dispose(void* Data);
     /**
      * Unregister a previously written data.
      * @param Data Pointer to the data.
      * @return True if correct.
      */
-    bool unregister(void*Data);
+    bool unregister(void* Data);
     /**
      * Dispose and unregister a previously written data.
      * @param Data Pointer to the data.
      * @return True if correct.
      */
-    bool dispose_and_unregister(void*Data);
+    bool dispose_and_unregister(void* Data);
 
     /**
      * Remove all the Changes in the associated RTPSWriter.
@@ -97,7 +101,12 @@ class RTPS_DllAPI Publisher
      */
     bool removeAllChange(size_t* removed = nullptr);
 
-    bool wait_for_all_acked(const rtps::Time_t& max_wait);
+    /**
+    * Waits until all changes were acknowledged or max_wait.
+    * @param max_wait Maximum time to wait until all changes are acknowledged.
+    * @return True if all were acknowledged.
+    */
+    bool wait_for_all_acked(const Time_t& max_wait);
 
     /**
      * Get the GUID_t of the associated RTPSWriter.
@@ -118,7 +127,24 @@ class RTPS_DllAPI Publisher
      */
     bool updateAttributes(const PublisherAttributes& att);
 
-    private:
+    /**
+     * @brief Returns the offered deadline missed status
+     * @param status missed status struct
+     */
+    void get_offered_deadline_missed_status(OfferedDeadlineMissedStatus& status);
+
+    /**
+     * @brief Asserts liveliness
+     */
+    void assert_liveliness();
+
+    /**
+     * @brief Returns the liveliness lost status
+     * @param status Liveliness lost status
+     */
+    void get_liveliness_lost_status(LivelinessLostStatus& status);
+
+private:
 
     PublisherImpl* mp_impl;
 };

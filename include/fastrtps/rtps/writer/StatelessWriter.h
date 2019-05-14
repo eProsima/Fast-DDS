@@ -21,9 +21,10 @@
 #define STATELESSWRITER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include "../common/Time_t.h"
 #include "RTPSWriter.h"
 #include "ReaderLocator.h"
+#include "../common/Time_t.h"
+#include "../../utils/collections/ResourceLimitedVector.hpp"
 
 #include <list>
 
@@ -40,40 +41,56 @@ class StatelessWriter : public RTPSWriter
 {
     friend class RTPSParticipantImpl;
 
-    protected:
-    StatelessWriter(RTPSParticipantImpl*,GUID_t& guid,WriterAttributes& att,WriterHistory* hist,WriterListener* listen=nullptr);
-    public:
+protected:
+
+    StatelessWriter(
+            RTPSParticipantImpl* participant,
+            GUID_t& guid,
+            WriterAttributes& attributes,
+            WriterHistory* history,
+            WriterListener* listener = nullptr);
+
+public:
+
     virtual ~StatelessWriter();
+
     /**
      * Add a specific change to all ReaderLocators.
-     * @param p Pointer to the change.
+     * @param change Pointer to the change.
+     * @param max_blocking_time
      */
-    void unsent_change_added_to_history(CacheChange_t* p) override;
+    void unsent_change_added_to_history(
+            CacheChange_t* change,
+            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time) override;
 
     /**
      * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
-     * @param a_change Pointer to the change that is going to be removed.
+     * @param change Pointer to the change that is going to be removed.
      * @return True if removed correctly.
      */
-    bool change_removed_by_history(CacheChange_t* a_change) override;
+    bool change_removed_by_history(CacheChange_t* change) override;
+
     /**
      * Add a matched reader.
-     * @param ratt Attributes of the reader to add.
+     * @param reader_attributes Attributes of the reader to add.
      * @return True if added.
      */
-    bool matched_reader_add(RemoteReaderAttributes& ratt) override;
+    bool matched_reader_add(RemoteReaderAttributes& reader_attributes) override;
+
     /**
      * Remove a matched reader.
-     * @param ratt Attributes of the reader to remove.
+     * @param reader_attributes Attributes of the reader to remove.
      * @return True if removed.
      */
-    bool matched_reader_remove(const RemoteReaderAttributes& ratt) override;
+    bool matched_reader_remove(const RemoteReaderAttributes& reader_attributes) override;
+
     /**
      * Tells us if a specific Reader is matched against this writer
-     * @param ratt Attributes of the reader to check.
+     * @param reader_attributes Attributes of the reader to check.
      * @return True if it was matched.
      */
-    bool matched_reader_is_matched(const RemoteReaderAttributes& ratt) override;
+    bool matched_reader_is_matched(const RemoteReaderAttributes& reader_attributes) override;
+
     /**
      * Method to indicate that there are changes not sent in some of all ReaderProxy.
      */
@@ -88,37 +105,39 @@ class StatelessWriter : public RTPSWriter
         //FOR NOW THERE IS NOTHING TO UPDATE.
     }
 
-    bool add_locator(Locator_t& loc);
+    bool set_fixed_locators(const LocatorList_t& locator_list);
 
-    void update_unsent_changes(ReaderLocator& reader_locator,
-            const SequenceNumber_t& seqNum, const FragmentNumber_t fragNum);
+    void update_unsent_changes(
+            const SequenceNumber_t& seq_num,
+            const FragmentNumber_t& frag_num);
 
     //!Reset the unsent changes.
     void unsent_changes_reset();
 
-    /**
-     * Get the number of matched readers
-     * @return Number of matched readers
-     */
-    inline size_t getMatchedReadersSize() const {return m_matched_readers.size();};
+    bool is_acked_by_all(const CacheChange_t* change) const override;
 
-    bool is_acked_by_all(const CacheChange_t* a_change) const override;
-
-    bool try_remove_change(std::chrono::microseconds&, std::unique_lock<std::recursive_mutex>&) override { 
-        return remove_older_changes(1); 
+    bool try_remove_change(
+            std::chrono::steady_clock::time_point&,
+            std::unique_lock<std::recursive_timed_mutex>&) override
+    {
+        return remove_older_changes(1);
     }
 
     void add_flow_controller(std::unique_ptr<FlowController> controller) override;
 
-    private:
+private:
 
-    std::vector<GUID_t> get_builtin_guid();
+    void get_builtin_guid(ResourceLimitedVector<GUID_t>& guid_vector);
 
-    void update_locators_nts_(const GUID_t& optionalGuid);
+    bool has_builtin_guid();
 
-    std::vector<ReaderLocator> reader_locators, fixed_locators;
-    std::vector<RemoteReaderAttributes> m_matched_readers;
-    std::vector<std::unique_ptr<FlowController> > m_controllers;
+    void update_locators_nts();
+
+    bool is_inline_qos_expected_ = false;
+    LocatorList_t fixed_locators_;
+    ResourceLimitedVector<RemoteReaderAttributes> matched_readers_;
+    ResourceLimitedVector<ChangeForReader_t, std::true_type> unsent_changes_;
+    std::vector<std::unique_ptr<FlowController> > flow_controllers_;
 };
 }
 } /* namespace rtps */

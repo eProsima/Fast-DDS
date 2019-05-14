@@ -26,6 +26,7 @@ class RTPSParticipantImpl;
 class MessageReceiver;
 class ChannelResource;
 class TransportInterface;
+class Locator_t;
 
 /**
  * RAII object that encapsulates the Send operation over one chanel in an unknown transport.
@@ -36,61 +37,56 @@ class TransportInterface;
  */
 class SenderResource
 {
-   //! Only NetworkFactory is ever allowed to construct a SenderResource from scratch.
-   //! In doing so, it guarantees the transport and channel are in a valid state for
-   //! this resource to exist.
-   friend class NetworkFactory;
-
 public:
-   /**
-    * Sends to a destination locator, through the channel managed by this resource.
-    * @param data Raw data slice to be sent.
-    * @param dataLength Length of the data to be sent. Will be used as a boundary for
-    * the previous parameter.
-    * @param destinationLocator Locator describing the destination endpoint.
-    * @return Success of the send operation.
-    */
-   bool Send(const octet* data, uint32_t dataLength, const Locator_t& destinationLocator);
 
-   /**
-   * Reports whether this resource supports the given local locator (i.e., said locator
-   * maps to the transport channel managed by this resource).
-   */
-   bool SupportsLocator(const Locator_t& local);
+    /**
+     * Sends to a destination locator, through the channel managed by this resource.
+     * @param data Raw data slice to be sent.
+     * @param dataLength Length of the data to be sent. Will be used as a boundary for
+     * the previous parameter.
+     * @param destination_locator Locator describing the destination endpoint.
+     * @return Success of the send operation.
+     */
+    bool send(const octet* data, uint32_t dataLength, const Locator_t& destination_locator)
+    {
+        bool returned_value = false;
 
-   /**
-   * Communicate to the transport that this locator is going to be used to send messages
-   */
-   bool AddSenderLocator(const Locator_t& local);
+        if (send_lambda_)
+        {
+            returned_value = send_lambda_(data, dataLength, destination_locator);
+        }
 
-   /**
-   * Reports whether this resource supports the given remote locator (i.e., this resource
-   * maps to a transport channel capable of sending to it).
-   */
-   bool CanSendToRemoteLocator(const Locator_t& remote);
+        return returned_value;
+    }
 
-   //void SetChannelResource(ChannelResource* pChannelResource) { m_pChannelResource = pChannelResource; }
+    /**
+     * Resources can only be transfered through move semantics. Copy, assignment, and
+     * construction outside of the factory are forbidden.
+     */
+    SenderResource(SenderResource&& rValueResource)
+    {
+        clean_up.swap(rValueResource.clean_up);
+        send_lambda_.swap(rValueResource.send_lambda_);
+    }
 
-   /**
-   * Resources can only be transfered through move semantics. Copy, assignment, and
-   * construction outside of the factory are forbidden.
-   */
-   SenderResource(SenderResource&&);
-   ~SenderResource();
+    virtual ~SenderResource() = default;
+
+    int32_t kind() const { return transport_kind_; }
+
+protected:
+
+    SenderResource(int32_t transport_kind) : transport_kind_(transport_kind) {}
+
+    int32_t transport_kind_;
+
+    std::function<void()> clean_up;
+    std::function<bool(const octet*, uint32_t, const Locator_t&)> send_lambda_;
 
 private:
-   SenderResource()                                 = delete;
-   SenderResource(const SenderResource&)            = delete;
-   SenderResource& operator=(const SenderResource&) = delete;
 
-   SenderResource(TransportInterface&, Locator_t&);
-   std::function<void()> Cleanup;
-   std::function<bool(const Locator_t&)> AddSenderLocatorToManagedChannel;
-   std::function<bool(const octet*, uint32_t, const Locator_t&, ChannelResource*)> SendThroughAssociatedChannel;
-   std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
-   std::function<bool(const Locator_t&)> ManagedChannelMapsToRemote;
-   bool mValid; // Post-construction validity check for the NetworkFactory
-   //ChannelResource* m_pChannelResource;
+    SenderResource()                                 = delete;
+    SenderResource(const SenderResource&)            = delete;
+    SenderResource& operator=(const SenderResource&) = delete;
 };
 
 } // namespace rtps

@@ -26,15 +26,15 @@ uint32_t test_UDPv4Transport::test_UDPv4Transport_DropLogLength = 0;
 bool test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
 
 test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor):
-    mDropDataMessagesPercentage(descriptor.dropDataMessagesPercentage),
-    mDropParticipantBuiltinTopicData(descriptor.dropParticipantBuiltinTopicData),
-    mDropPublicationBuiltinTopicData(descriptor.dropPublicationBuiltinTopicData),
-    mDropSubscriptionBuiltinTopicData(descriptor.dropSubscriptionBuiltinTopicData),
-    mDropDataFragMessagesPercentage(descriptor.dropDataFragMessagesPercentage),
-    mDropHeartbeatMessagesPercentage(descriptor.dropHeartbeatMessagesPercentage),
-    mDropAckNackMessagesPercentage(descriptor.dropAckNackMessagesPercentage),
-    mSequenceNumberDataMessagesToDrop(descriptor.sequenceNumberDataMessagesToDrop),
-    mPercentageOfMessagesToDrop(descriptor.percentageOfMessagesToDrop)
+    drop_data_messages_percentage_(descriptor.dropDataMessagesPercentage),
+    drop_participant_builtin_topic_data_(descriptor.dropParticipantBuiltinTopicData),
+    drop_publication_builtin_topic_data_(descriptor.dropPublicationBuiltinTopicData),
+    drop_subscription_builtin_topic_data_(descriptor.dropSubscriptionBuiltinTopicData),
+    drop_data_frag_messages_percentage_(descriptor.dropDataFragMessagesPercentage),
+    drop_heartbeat_messages_percentage_(descriptor.dropHeartbeatMessagesPercentage),
+    drop_ack_nack_messages_percentage_(descriptor.dropAckNackMessagesPercentage),
+    sequence_number_data_messages_to_drop_(descriptor.sequenceNumberDataMessagesToDrop),
+    percentage_of_messages_to_drop_(descriptor.percentageOfMessagesToDrop)
     {
         test_UDPv4Transport_DropLogLength = 0;
         test_UDPv4Transport_ShutdownAllNetwork = false;
@@ -42,7 +42,6 @@ test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& de
         UDPv4Transport::mReceiveBufferSize = descriptor.receiveBufferSize;
         test_UDPv4Transport_DropLog.clear();
         test_UDPv4Transport_DropLogLength = descriptor.dropLogLength;
-        srand(static_cast<unsigned>(time(NULL)));
     }
 
 test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor():
@@ -65,29 +64,21 @@ TransportInterface* test_UDPv4TransportDescriptor::create_transport() const
     return new test_UDPv4Transport(*this);
 }
 
-bool test_UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator)
+bool test_UDPv4Transport::send(
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        eProsimaUDPSocket& socket,
+        const Locator_t& remote_locator,
+        bool only_multicast_purpose)
 {
-    if (PacketShouldDrop(sendBuffer, sendBufferSize))
+    if (packet_should_drop(send_buffer, send_buffer_size))
     {
-        LogDrop(sendBuffer, sendBufferSize);
+        log_drop(send_buffer, send_buffer_size);
         return true;
     }
     else
     {
-        return UDPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator);
-    }
-}
-
-bool test_UDPv4Transport::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator, const Locator_t& remoteLocator, ChannelResource *pChannelResource)
-{
-    if (PacketShouldDrop(sendBuffer, sendBufferSize))
-    {
-        LogDrop(sendBuffer, sendBufferSize);
-        return true;
-    }
-    else
-    {
-        return UDPv4Transport::Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, pChannelResource);
+        return UDPv4Transport::send(send_buffer, send_buffer_size, socket, remote_locator, only_multicast_purpose);
     }
 }
 
@@ -121,16 +112,16 @@ static bool ReadSubmessageHeader(CDRMessage_t& msg, SubmessageHeader_t& smh)
     return true;
 }
 
-bool test_UDPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sendBufferSize)
+bool test_UDPv4Transport::packet_should_drop(const octet* send_buffer, uint32_t send_buffer_size)
 {
     if(test_UDPv4Transport_ShutdownAllNetwork)
     {
         return true;
     }
 
-    CDRMessage_t cdrMessage(sendBufferSize);;
-    memcpy(cdrMessage.buffer, sendBuffer, sendBufferSize);
-    cdrMessage.length = sendBufferSize;
+    CDRMessage_t cdrMessage(send_buffer_size);;
+    memcpy(cdrMessage.buffer, send_buffer, send_buffer_size);
+    cdrMessage.length = send_buffer_size;
 
     if(cdrMessage.length < RTPSMESSAGE_HEADER_SIZE)
         return false;
@@ -164,18 +155,18 @@ bool test_UDPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sen
                 CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
                 cdrMessage.pos = old_pos;
 
-                if((!mDropParticipantBuiltinTopicData && writer_id == c_EntityId_SPDPWriter) ||
-                        (!mDropPublicationBuiltinTopicData && writer_id == c_EntityId_SEDPPubWriter) ||
-                        (!mDropSubscriptionBuiltinTopicData && writer_id == c_EntityId_SEDPSubWriter))
+                if((!drop_participant_builtin_topic_data_ && writer_id == c_EntityId_SPDPWriter) ||
+                        (!drop_publication_builtin_topic_data_ && writer_id == c_EntityId_SEDPPubWriter) ||
+                        (!drop_subscription_builtin_topic_data_ && writer_id == c_EntityId_SEDPSubWriter))
                     return false;
 
-                if(mDropDataMessagesPercentage > (rand()%100))
+                if(should_be_dropped(&drop_data_messages_percentage_))
                     return true;
 
                 break;
 
             case ACKNACK:
-                if(mDropAckNackMessagesPercentage > (rand()%100))
+                if(should_be_dropped(&drop_ack_nack_messages_percentage_))
                     return true;
 
                 break;
@@ -185,13 +176,13 @@ bool test_UDPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sen
                 CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
                 CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
                 cdrMessage.pos = old_pos;
-                if(mDropHeartbeatMessagesPercentage > (rand()%100))
+                if(should_be_dropped(&drop_heartbeat_messages_percentage_))
                     return true;
 
                 break;
 
             case DATA_FRAG:
-                if(mDropDataFragMessagesPercentage  > (rand()%100))
+                if(should_be_dropped(&drop_data_frag_messages_percentage_))
                     return true;
 
                 break;
@@ -206,21 +197,21 @@ bool test_UDPv4Transport::PacketShouldDrop(const octet* sendBuffer, uint32_t sen
         }
 
         if(sequence_number != SequenceNumber_t::unknown() &&
-                find(mSequenceNumberDataMessagesToDrop.begin(),
-                    mSequenceNumberDataMessagesToDrop.end(),
-                    sequence_number) != mSequenceNumberDataMessagesToDrop.end())
+                find(sequence_number_data_messages_to_drop_.begin(),
+                    sequence_number_data_messages_to_drop_.end(),
+                    sequence_number) != sequence_number_data_messages_to_drop_.end())
             return true;
 
         cdrMessage.pos += cdrSubMessageHeader.submessageLength;
     }
 
-    if(RandomChanceDrop())
+    if(random_chance_drop())
         return true;
 
     return false;
 }
 
-bool test_UDPv4Transport::LogDrop(const octet* buffer, uint32_t size)
+bool test_UDPv4Transport::log_drop(const octet* buffer, uint32_t size)
 {
     if (test_UDPv4Transport_DropLog.size() < test_UDPv4Transport_DropLogLength)
     {
@@ -233,9 +224,21 @@ bool test_UDPv4Transport::LogDrop(const octet* buffer, uint32_t size)
     return false;
 }
 
-bool test_UDPv4Transport::RandomChanceDrop()
+bool test_UDPv4Transport::random_chance_drop()
 {
-    return mPercentageOfMessagesToDrop > (rand()%100);
+    return should_be_dropped(&percentage_of_messages_to_drop_);
+}
+
+bool test_UDPv4Transport::should_be_dropped(PercentageData* percent)
+{
+    percent->accumulator += percent->percentage;
+    if (percent->accumulator >= 100u)
+    {
+        percent->accumulator -= 100u;
+        return true;
+    }
+
+    return false;
 }
 
 } // namespace rtps

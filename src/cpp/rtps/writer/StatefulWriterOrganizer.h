@@ -35,10 +35,10 @@ class StatefulWriterOrganizer
 
         void add_sequence_number(const SequenceNumber_t& seqNum, ReaderProxy* remoteReader)
         {
-            if(mLastGuid_ != remoteReader->m_att.guid)
+            if(mLastGuid_ != remoteReader->guid())
                 organize();
 
-            mLastGuid_ = remoteReader->m_att.guid;
+            mLastGuid_ = remoteReader->guid();
             mLastReader_ = remoteReader;
             mLastSeqList_.insert(seqNum);
         }

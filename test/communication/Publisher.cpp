@@ -30,7 +30,9 @@
 #include <types/HelloWorldType.h>
 
 #include <mutex>
+#include <condition_variable>
 #include <fstream>
+#include <string>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -44,23 +46,32 @@ class ParListener : public ParticipantListener
         virtual ~ParListener(){};
 
         /**
-         * This method is called when a new Participant is discovered, or a previously discovered participant changes its QOS or is removed.
+         * This method is called when a new Participant is discovered, or a previously discovered participant
+         * changes its QOS or is removed.
          * @param p Pointer to the Participant
          * @param info DiscoveryInfo.
          */
         void onParticipantDiscovery(Participant*, rtps::ParticipantDiscoveryInfo&& info) override
         {
             if(info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+            {
                 std::cout << "Published discovered a participant" << std::endl;
+            }
             else if(info.status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+            {
                 std::cout << "Published detected changes on a participant" << std::endl;
+            }
             else if(info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+            {
                 std::cout << "Published removed a participant" << std::endl;
+            }
             else if(info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
             {
                 std::cout << "Published dropped a participant" << std::endl;
                 if(exit_on_lost_liveliness_)
+                {
                     run = false;
+                }
             }
         }
 
@@ -104,6 +115,8 @@ int main(int argc, char** argv)
     bool exit_on_lost_liveliness = false;
     uint32_t seed = 7800, wait = 0;
     char* xml_file = nullptr;
+    uint32_t samples = 4;
+    std::string magic;
 
     while(arg_count < argc)
     {
@@ -131,6 +144,26 @@ int main(int argc, char** argv)
 
             wait = strtol(argv[arg_count], nullptr, 10);
         }
+        else if(strcmp(argv[arg_count], "--samples") == 0)
+        {
+            if(++arg_count >= argc)
+            {
+                std::cout << "--samples expects a parameter" << std::endl;
+                return -1;
+            }
+
+            samples = strtol(argv[arg_count], nullptr, 10);
+        }
+        else if(strcmp(argv[arg_count], "--magic") == 0)
+        {
+            if(++arg_count >= argc)
+            {
+                std::cout << "--magic expects a parameter" << std::endl;
+                return -1;
+            }
+
+            magic = argv[arg_count];
+        }
         else if(strcmp(argv[arg_count], "--xmlfile") == 0)
         {
             if(++arg_count >= argc)
@@ -157,7 +190,9 @@ int main(int argc, char** argv)
     Participant* participant = Domain::createParticipant(participant_attributes, &participant_listener);
 
     if(participant == nullptr)
+    {
         return 1;
+    }
 
     HelloWorldType type;
     Domain::registerType(participant,&type);
@@ -166,11 +201,11 @@ int main(int argc, char** argv)
 
     // Generate topic name
     std::ostringstream topic;
-    topic << "HelloWorldTopic_" << asio::ip::host_name() << "_" << seed;
+    topic << "HelloWorldTopic_" << ((magic.empty()) ? asio::ip::host_name() : magic) << "_" << seed;
 
     //CREATE THE PUBLISHER
     PublisherAttributes publisher_attributes;
-    Domain::getDefaultPublisherAttributes(publisher_attributes);
+    //Domain::getDefaultPublisherAttributes(publisher_attributes);
     publisher_attributes.topic.topicKind = NO_KEY;
     publisher_attributes.topic.topicDataType = type.getName();
     publisher_attributes.topic.topicName = topic.str();
@@ -195,10 +230,14 @@ int main(int argc, char** argv)
     {
         publisher->write((void*)&data);
 
-        if(data.index() == 4)
+        if(data.index() == samples)
+        {
             data.index() = 1;
+        }
         else
+        {
             ++data.index();
+        }
 
         eClock::my_sleep(250);
     };

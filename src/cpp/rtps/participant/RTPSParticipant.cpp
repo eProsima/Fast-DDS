@@ -115,6 +115,11 @@ bool RTPSParticipant::get_remote_reader_info(const GUID_t& readerGuid, ReaderPro
     return mp_impl->get_remote_reader_info(readerGuid, returnedInfo);
 }
 
+ResourceEvent& RTPSParticipant::get_resource_event() const
+{
+    return mp_impl->getEventResource();
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

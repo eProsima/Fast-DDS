@@ -56,16 +56,18 @@ PublisherHistory::PublisherHistory(
     , mp_pubImpl(pimpl)
 {
     // TODO Auto-generated constructor stub
-
 }
 
-PublisherHistory::~PublisherHistory() {
-    // TODO Auto-generated destructor stub
+PublisherHistory::~PublisherHistory()
+{
 }
 
 
-bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparams,
-        std::unique_lock<std::recursive_mutex>& lock)
+bool PublisherHistory::add_pub_change(
+        CacheChange_t* change,
+        WriteParams &wparams,
+        std::unique_lock<std::recursive_timed_mutex>& lock,
+        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
 {
     if(m_isHistoryFull)
     {
@@ -73,7 +75,7 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
 
         if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
         {
-            ret = this->mp_pubImpl->try_remove_change(lock);
+            ret = this->mp_writer->try_remove_change(max_blocking_time, lock);
         }
         else if(m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
         {
@@ -94,7 +96,7 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
     //NO KEY HISTORY
     if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
-        if(this->add_change(change, wparams))
+        if(this->add_change_(change, wparams, max_blocking_time))
         {
             returnedValue = true;
         }
@@ -102,14 +104,14 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
     //HISTORY WITH KEY
     else if(mp_pubImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
     {
-        t_v_Inst_Caches::iterator vit;
-        if(find_Key(change,&vit))
+        t_m_Inst_Caches::iterator vit;
+        if(find_key(change,&vit))
         {
             logInfo(RTPS_HISTORY,"Found key: "<< vit->first);
             bool add = false;
             if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
             {
-                if((int32_t)vit->second.size() < m_resourceLimitsQos.max_samples_per_instance)
+                if((int32_t)vit->second.cache_changes.size() < m_resourceLimitsQos.max_samples_per_instance)
                 {
                     add = true;
                 }
@@ -120,13 +122,13 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
             }
             else if (m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
             {
-                if(vit->second.size()< (size_t)m_historyQos.depth)
+                if(vit->second.cache_changes.size() < (size_t)m_historyQos.depth)
                 {
                     add = true;
                 }
                 else
                 {
-                    if(remove_change_pub(vit->second.front(),&vit))
+                    if(remove_change_pub(vit->second.cache_changes.front()))
                     {
                         add = true;
                     }
@@ -135,12 +137,12 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
 
             if(add)
             {
-                if(this->add_change(change, wparams))
+                if(this->add_change_(change, wparams, max_blocking_time))
                 {
                     logInfo(RTPS_HISTORY,this->mp_pubImpl->getGuid().entityId <<" Change "
                             << change->sequenceNumber << " added with key: "<<change->instanceHandle
                             << " and "<<change->serializedPayload.length<< " bytes");
-                    vit->second.push_back(change);
+                    vit->second.cache_changes.push_back(change);
                     returnedValue =  true;
                 }
             }
@@ -151,44 +153,35 @@ bool PublisherHistory::add_pub_change(CacheChange_t* change, WriteParams &wparam
     return returnedValue;
 }
 
-bool PublisherHistory::find_Key(CacheChange_t* a_change,t_v_Inst_Caches::iterator* vit_out)
+bool PublisherHistory::find_key(
+        CacheChange_t* a_change,
+        t_m_Inst_Caches::iterator* vit_out)
 {
-    t_v_Inst_Caches::iterator vit;
-    bool found = false;
-    for(vit= m_keyedChanges.begin();vit!=m_keyedChanges.end();++vit)
+    t_m_Inst_Caches::iterator vit;
+    vit = keyed_changes_.find(a_change->instanceHandle);
+    if (vit != keyed_changes_.end())
     {
-        if(a_change->instanceHandle == vit->first)
-        {
-            *vit_out = vit;
-            return true;
-        }
+        *vit_out = vit;
+        return true;
     }
-    if(!found)
+
+    if ((int)keyed_changes_.size() < m_resourceLimitsQos.max_instances)
     {
-        if((int)m_keyedChanges.size() < m_resourceLimitsQos.max_instances)
+        *vit_out = keyed_changes_.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
+        return true;
+    }
+    else
+    {
+        for (vit = keyed_changes_.begin(); vit != keyed_changes_.end(); ++vit)
         {
-            t_p_I_Change newpair;
-            newpair.first = a_change->instanceHandle;
-            m_keyedChanges.push_back(newpair);
-            *vit_out = m_keyedChanges.end()-1;
-            return true;
-        }
-        else
-        {
-            for (vit = m_keyedChanges.begin(); vit != m_keyedChanges.end(); ++vit)
+            if (vit->second.cache_changes.size() == 0)
             {
-                if (vit->second.size() == 0)
-                {
-                    m_keyedChanges.erase(vit);
-                    t_p_I_Change newpair;
-                    newpair.first = a_change->instanceHandle;
-                    m_keyedChanges.push_back(newpair);
-                    *vit_out = m_keyedChanges.end() - 1;
-                    return true;
-                }
+                keyed_changes_.erase(vit);
+                *vit_out = keyed_changes_.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
+                return true;
             }
-            logWarning(SUBSCRIBER, "History has reached the maximum number of instances" << endl;)
         }
+        logWarning(PUBLISHER, "History has reached the maximum number of instances" << endl;)
     }
     return false;
 }
@@ -198,7 +191,7 @@ bool PublisherHistory::removeAllChange(size_t* removed)
 {
 
     size_t rem = 0;
-    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
 
     while(m_changes.size()>0)
     {
@@ -208,9 +201,13 @@ bool PublisherHistory::removeAllChange(size_t* removed)
             break;
     }
     if(removed!=nullptr)
+    {
         *removed = rem;
+    }
     if (rem>0)
+    {
         return true;
+    }
     return false;
 }
 
@@ -223,13 +220,13 @@ bool PublisherHistory::removeMinChange()
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
     if(m_changes.size()>0)
         return remove_change_pub(m_changes.front());
     return false;
 }
 
-bool PublisherHistory::remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::iterator* vit_in)
+bool PublisherHistory::remove_change_pub(CacheChange_t* change)
 {
 
     if(mp_writer == nullptr || mp_mutex == nullptr)
@@ -238,7 +235,7 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
     if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
         if(this->remove_change(change))
@@ -251,24 +248,19 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::
     }
     else
     {
-        t_v_Inst_Caches::iterator vit;
-        if(vit_in!=nullptr)
-            vit = *vit_in;
-        else if(this->find_Key(change,&vit))
+        t_m_Inst_Caches::iterator vit;
+        if(!this->find_key(change,&vit))
         {
-
-        }
-        else
             return false;
-        for(auto chit = vit->second.begin();
-                chit!= vit->second.end();++chit)
+        }
+
+        for(auto chit = vit->second.cache_changes.begin(); chit!= vit->second.cache_changes.end(); ++chit)
         {
-            if( ((*chit)->sequenceNumber == change->sequenceNumber)
-                    && ((*chit)->writerGUID == change->writerGUID) )
+            if( ((*chit)->sequenceNumber == change->sequenceNumber) && ((*chit)->writerGUID == change->writerGUID) )
             {
                 if(remove_change(change))
                 {
-                    vit->second.erase(chit);
+                    vit->second.cache_changes.erase(chit);
                     m_isHistoryFull = false;
                     return true;
                 }
@@ -282,4 +274,67 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change,t_v_Inst_Caches::
 bool PublisherHistory::remove_change_g(CacheChange_t* a_change)
 {
     return remove_change_pub(a_change);
+}
+
+bool PublisherHistory::set_next_deadline(
+        const InstanceHandle_t& handle,
+        const std::chrono::steady_clock::time_point& next_deadline_us)
+{
+    if(mp_writer == nullptr || mp_mutex == nullptr)
+    {
+        logError(RTPS_HISTORY,"You need to create a Writer with this History before using it");
+        return false;
+    }
+    std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
+
+    if (mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
+    {
+        next_deadline_us_ = next_deadline_us;
+        return true;
+    }
+    else if(mp_pubImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
+    {
+        if (keyed_changes_.find(handle) == keyed_changes_.end())
+        {
+            return false;
+        }
+
+        keyed_changes_[handle].next_deadline_us = next_deadline_us;
+        return true;
+    }
+
+    return false;
+}
+
+bool PublisherHistory::get_next_deadline(
+        InstanceHandle_t &handle,
+        std::chrono::steady_clock::time_point &next_deadline_us)
+{
+    if(mp_writer == nullptr || mp_mutex == nullptr)
+    {
+        logError(RTPS_HISTORY,"You need to create a Writer with this History before using it");
+        return false;
+    }
+    std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
+
+    if(mp_pubImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
+    {
+        auto min = std::min_element(keyed_changes_.begin(),
+                                    keyed_changes_.end(),
+                                    [](
+                                    const std::pair<InstanceHandle_t, KeyedChanges> &lhs,
+                                    const std::pair<InstanceHandle_t, KeyedChanges> &rhs)
+        { return lhs.second.next_deadline_us < rhs.second.next_deadline_us; });
+
+        handle = min->first;
+        next_deadline_us = min->second.next_deadline_us;
+        return true;
+    }
+    else if (mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
+    {
+        next_deadline_us = next_deadline_us_;
+        return true;
+    }
+
+    return false;
 }

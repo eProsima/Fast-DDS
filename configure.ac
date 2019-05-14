@@ -20,8 +20,8 @@
 # Define variables for the FastRTPS version number.
 #
 m4_define([version_major],[1])
-m4_define([version_minor],[7])
-m4_define([version_micro],[2])
+m4_define([version_minor],[8])
+m4_define([version_micro],[0])
 
 AC_INIT([fastrtps], [version_major.version_minor.version_micro], [support@eprosima.com], [eProsima FastRTPS], [http://eprosima.com/])
 CONFIG_ARGS="$*"
@@ -57,6 +57,14 @@ AC_C_BIGENDIAN(
   AC_MSG_ERROR(universial endianess not supported)
 )
 
+# OpenSSL
+AX_CHECK_OPENSSL(ac_openssl_found=yes,
+                 ac_openssl_found=no)
+
+AS_IF([test "$ac_openssl_found" = yes],
+     AC_DEFINE([TLS_FOUND], [1], [Defined if TLS support is enable]),
+     AC_DEFINE([TLS_FOUND], [0], [Defined if TLS support is enable]))
+
 # Security
 AC_ARG_ENABLE([security],
     AS_HELP_STRING([--enable-security], [Enables security support]),
@@ -64,11 +72,10 @@ AC_ARG_ENABLE([security],
     ac_enable_security=no
     )
 AS_IF([test "$ac_enable_security" = yes],
-    [
-     AC_DEFINE([HAVE_SECURITY], [1], [Defined if security support is enable])
-     AX_CHECK_OPENSSL([AC_MSG_NOTICE([Found OpenSSL])], [AC_MSG_ERROR([Could not find OpenSSL])])
-    ],
-    [AC_DEFINE([HAVE_SECURITY], [0], [Defined if security support is enable])])
+    AS_IF([test "$ac_openssl_found" = yes],
+        AC_DEFINE([HAVE_SECURITY], [1], [Defined if security support is enable]),
+        AC_MSG_ERROR([To support security you need OpenSSL libraries])),
+    AC_DEFINE([HAVE_SECURITY], [0], [Defined if security support is enable]))
 AM_CONDITIONAL(SECURITY, test $ac_enable_security = yes)
 
 # Check for libraries used in the main build process

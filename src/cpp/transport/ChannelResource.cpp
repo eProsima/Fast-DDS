@@ -20,53 +20,42 @@ namespace fastrtps {
 namespace rtps {
 
 ChannelResource::ChannelResource()
-    : m_rec_msg()
-    , mAlive(true)
-    , mThread(nullptr)
+    : message_buffer_()
+    , alive_(true)
 {
-    logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
+    logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << message_buffer_.max_size);
 }
 
 ChannelResource::ChannelResource(ChannelResource&& channelResource)
-    : m_rec_msg(std::move(channelResource.m_rec_msg))
-    , mThread(channelResource.mThread)
+    : message_buffer_(std::move(channelResource.message_buffer_))
+    , thread_(std::move(channelResource.thread_))
 {
-    bool b = channelResource.mAlive;
-    mAlive = b;
-    channelResource.mThread = nullptr;
-    //logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
-    //m_rec_msg = std::move(channelResource.m_rec_msg);
+    bool b = channelResource.alive_;
+    alive_.store(b);
+    //logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << message_buffer_.max_size);
+    //message_buffer_ = std::move(channelResource.message_buffer_);
 }
 
 ChannelResource::ChannelResource(uint32_t rec_buffer_size)
-    : m_rec_msg(rec_buffer_size)
-    , mAlive(true)
-    , mThread(nullptr)
+    : message_buffer_(rec_buffer_size)
+    , alive_(true)
 {
-    logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << m_rec_msg.max_size);
+    memset(message_buffer_.buffer, 0, rec_buffer_size);
+    logInfo(RTPS_MSG_IN, "Created with CDRMessage of size: " << message_buffer_.max_size);
 }
 
 ChannelResource::~ChannelResource()
 {
-    Clear();
+    clear();
 }
 
-void ChannelResource::Clear()
+void ChannelResource::clear()
 {
-    mAlive = false;
-    if (mThread != nullptr)
+    alive_.store(false);
+    if(thread_.joinable())
     {
-        mThread->join();
-        delete mThread;
-        mThread = nullptr;
+        thread_.join();
     }
-}
-
-std::thread* ChannelResource::ReleaseThread()
-{
-    std::thread* outThread = mThread;
-    mThread = nullptr;
-    return outThread;
 }
 
 } // namespace rtps

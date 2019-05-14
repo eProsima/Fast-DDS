@@ -41,9 +41,10 @@
 #include <condition_variable>
 #include <asio.hpp>
 #include <gtest/gtest.h>
+#include <thread>
 
 using eprosima::fastrtps::rtps::IPLocator;
-using eprosima::fastrtps::UDPv4TransportDescriptor;
+using eprosima::fastrtps::rtps::UDPv4TransportDescriptor;
 
 template<class TypeSupport>
 class PubSubWriter
@@ -56,7 +57,8 @@ class PubSubWriter
 
             ~ParticipantListener() {}
 
-            void onParticipantDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantDiscoveryInfo&& info) override
+            void onParticipantDiscovery(eprosima::fastrtps::Participant*,
+                    eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
             {
                 if(writer_.onDiscovery_!=nullptr)
                 {
@@ -76,7 +78,7 @@ class PubSubWriter
             }
 
 #if HAVE_SECURITY
-            void onParticipantAuthentication(eprosima::fastrtps::Participant*, eprosima::fastrtps::ParticipantAuthenticationInfo&& info) override
+            void onParticipantAuthentication(eprosima::fastrtps::Participant*, eprosima::fastrtps::rtps::ParticipantAuthenticationInfo&& info) override
             {
                 if(info.status == eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT)
                 {
@@ -132,11 +134,16 @@ class PubSubWriter
     {
         public:
 
-            Listener(PubSubWriter &writer) : writer_(writer){};
+            Listener(PubSubWriter &writer)
+                : writer_(writer)
+                , times_deadline_missed_(0)
+            {};
 
             ~Listener(){};
 
-            void onPublicationMatched(eprosima::fastrtps::Publisher* /*pub*/, eprosima::fastrtps::rtps::MatchingInfo &info)
+            void onPublicationMatched(
+                    eprosima::fastrtps::Publisher* /*pub*/,
+                    eprosima::fastrtps::rtps::MatchingInfo &info) override
             {
                 if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
                 {
@@ -150,11 +157,26 @@ class PubSubWriter
                 }
             }
 
+            void on_offered_deadline_missed(
+                    eprosima::fastrtps::Publisher* pub,
+                    const eprosima::fastrtps::OfferedDeadlineMissedStatus& status) override
+            {
+                (void)pub;
+                times_deadline_missed_ = status.total_count;
+            }
+
+            unsigned int missed_deadlines() const
+            {
+                return times_deadline_missed_;
+            }
+
         private:
 
             Listener& operator=(const Listener&) = delete;
 
             PubSubWriter &writer_;
+
+            unsigned int times_deadline_missed_;
 
     } listener_;
 
@@ -163,9 +185,16 @@ class PubSubWriter
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
 
-    PubSubWriter(const std::string &topic_name) : participant_listener_(*this), listener_(*this),
-    participant_(nullptr), publisher_(nullptr), initialized_(false), matched_(0),
-    participant_matched_(0), discovery_result_(false), onDiscovery_(nullptr)
+    PubSubWriter(const std::string &topic_name)
+        : participant_listener_(*this)
+        , listener_(*this)
+        , participant_(nullptr)
+        , publisher_(nullptr)
+        , initialized_(false)
+        , matched_(0)
+        , participant_matched_(0)
+        , discovery_result_(false)
+        , onDiscovery_(nullptr)
 #if HAVE_SECURITY
     , authorized_(0), unauthorized_(0)
 #endif
@@ -187,9 +216,9 @@ class PubSubWriter
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
         publisher_attr_.times.heartbeatPeriod.seconds = 0;
-        publisher_attr_.times.heartbeatPeriod.fraction = 4294967 * 100;
+        publisher_attr_.times.heartbeatPeriod.nanosec = 100000000;
         publisher_attr_.times.nackResponseDelay.seconds = 0;
-        publisher_attr_.times.nackResponseDelay.fraction = 4294967 * 100;
+        publisher_attr_.times.nackResponseDelay.nanosec = 100000000;
     }
 
     ~PubSubWriter()
@@ -334,7 +363,7 @@ class PubSubWriter
             >
             bool waitForAllAcked(const std::chrono::duration<_Rep, _Period>& max_wait)
             {
-                return publisher_->wait_for_all_acked(eprosima::fastrtps::rtps::Time_t((int32_t)max_wait.count(), 0));
+                return publisher_->wait_for_all_acked(eprosima::fastrtps::Time_t((int32_t)max_wait.count(), 0));
             }
 
     void block_until_discover_topic(const std::string& topicName, int repeatedTimes)
@@ -366,7 +395,35 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& max_blocking_time(const eprosima::fastrtps::rtps::Duration_t time)
+    PubSubWriter& deadline_period(const eprosima::fastrtps::Duration_t deadline_period)
+    {
+        publisher_attr_.qos.m_deadline.period = deadline_period;
+        return *this;
+    }
+
+    PubSubWriter& key(bool keyed)
+    {
+        publisher_attr_.topic.topicKind =
+                keyed ?
+                    eprosima::fastrtps::rtps::TopicKind_t::WITH_KEY :
+                    eprosima::fastrtps::rtps::TopicKind_t::NO_KEY;
+        return *this;
+    }
+
+    PubSubWriter& lifespan_period(const eprosima::fastrtps::Duration_t lifespan_period)
+    {
+        publisher_attr_.qos.m_lifespan.duration = lifespan_period;
+        return *this;
+    }
+
+    PubSubWriter& keep_duration(const eprosima::fastrtps::Duration_t duration)
+    {
+        publisher_attr_.qos.m_disablePositiveACKs.enabled = true;
+        publisher_attr_.qos.m_disablePositiveACKs.duration = duration;
+        return *this;
+    }
+
+    PubSubWriter& max_blocking_time(const eprosima::fastrtps::Duration_t time)
     {
         publisher_attr_.qos.m_reliability.max_blocking_time = time;
         return *this;
@@ -395,6 +452,12 @@ class PubSubWriter
     PubSubWriter& history_depth(const int32_t depth)
     {
         publisher_attr_.topic.historyQos.depth = depth;
+        return *this;
+    }
+
+    PubSubWriter& topic_kind(const eprosima::fastrtps::rtps::TopicKind_t kind)
+    {
+        publisher_attr_.topic.topicKind = kind;
         return *this;
     }
 
@@ -428,15 +491,28 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& matched_readers_allocation(size_t initial, size_t maximum)
+    {
+        publisher_attr_.matched_subscriber_allocation.initial = initial;
+        publisher_attr_.matched_subscriber_allocation.maximum = maximum;
+        return *this;
+    }
+
+    PubSubWriter& expect_no_allocs()
+    {
+        // TODO(Mcc): Add no allocations check code when feature is completely ready
+        return *this;
+    }
+
     PubSubWriter& heartbeat_period_seconds(int32_t sec)
     {
         publisher_attr_.times.heartbeatPeriod.seconds = sec;
         return *this;
     }
 
-    PubSubWriter& heartbeat_period_fraction(uint32_t frac)
+    PubSubWriter& heartbeat_period_nanosec(uint32_t nanosec)
     {
-        publisher_attr_.times.heartbeatPeriod.fraction = frac;
+        publisher_attr_.times.heartbeatPeriod.nanosec = nanosec;
         return *this;
     }
 
@@ -571,7 +647,7 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& lease_duration(eprosima::fastrtps::rtps::Duration_t lease_duration, eprosima::fastrtps::rtps::Duration_t announce_period)
+    PubSubWriter& lease_duration(eprosima::fastrtps::Duration_t lease_duration, eprosima::fastrtps::Duration_t announce_period)
     {
         participant_attr_.rtps.builtin.leaseDuration = lease_duration;
         participant_attr_.rtps.builtin.leaseDuration_announcementperiod = announce_period;
@@ -649,6 +725,11 @@ class PubSubWriter
         return matched_ > 0;
     }
 
+    unsigned int missed_deadlines() const
+    {
+        return listener_.missed_deadlines();
+    }
+
     private:
 
     void participant_matched()
@@ -707,7 +788,7 @@ class PubSubWriter
             ret.first->second = writer_data;
         }
 
-        auto ret_topic = mapTopicCountList_.insert(std::make_pair(writer_data.topicName(), 1));
+        auto ret_topic = mapTopicCountList_.insert(std::make_pair(writer_data.topicName().to_string(), 1));
 
         if(!ret_topic.second)
         {
@@ -737,7 +818,7 @@ class PubSubWriter
         eprosima::fastrtps::rtps::WriterProxyData old_writer_data = ret.first->second;
         ret.first->second = writer_data;
 
-        ASSERT_GT(mapTopicCountList_.count(writer_data.topicName()), 0ul);
+        ASSERT_GT(mapTopicCountList_.count(writer_data.topicName().to_string()), 0ul);
 
         // Remove previous partitions
         for(auto partition : old_writer_data.m_qos.m_partition.getNames())
@@ -776,7 +857,7 @@ class PubSubWriter
             ret.first->second = reader_data;
         }
 
-        auto ret_topic = mapTopicCountList_.insert(std::make_pair(reader_data.topicName(), 1));
+        auto ret_topic = mapTopicCountList_.insert(std::make_pair(reader_data.topicName().to_string(), 1));
 
         if(!ret_topic.second)
         {
@@ -806,7 +887,7 @@ void change_reader_info(const eprosima::fastrtps::rtps::ReaderProxyData& reader_
         eprosima::fastrtps::rtps::ReaderProxyData old_reader_data = ret.first->second;
         ret.first->second = reader_data;
 
-        ASSERT_GT(mapTopicCountList_.count(reader_data.topicName()), 0ul);
+        ASSERT_GT(mapTopicCountList_.count(reader_data.topicName().to_string()), 0ul);
 
         // Remove previous partitions
         for(auto partition : old_reader_data.m_qos.m_partition.getNames())
@@ -842,9 +923,9 @@ void change_reader_info(const eprosima::fastrtps::rtps::ReaderProxyData& reader_
 
         mapWriterInfoList_.erase(writer_data.guid());
 
-        ASSERT_GT(mapTopicCountList_.count(writer_data.topicName()), 0ul);
+        ASSERT_GT(mapTopicCountList_.count(writer_data.topicName().to_string()), 0ul);
 
-        --mapTopicCountList_[writer_data.topicName()];
+        --mapTopicCountList_[writer_data.topicName().to_string()];
 
         for(auto partition : writer_data.m_qos.m_partition.getNames())
         {
@@ -869,9 +950,9 @@ void change_reader_info(const eprosima::fastrtps::rtps::ReaderProxyData& reader_
 
         mapReaderInfoList_.erase(reader_data.guid());
 
-        ASSERT_GT(mapTopicCountList_.count(reader_data.topicName()), 0ul);
+        ASSERT_GT(mapTopicCountList_.count(reader_data.topicName().to_string()), 0ul);
 
-        --mapTopicCountList_[reader_data.topicName()];
+        --mapTopicCountList_[reader_data.topicName().to_string()];
 
         for(auto partition : reader_data.m_qos.m_partition.getNames())
         {
@@ -910,7 +991,7 @@ void change_reader_info(const eprosima::fastrtps::rtps::ReaderProxyData& reader_
     std::map<std::string,  int> mapPartitionCountList_;
     bool discovery_result_;
 
-    std::function<bool(const eprosima::fastrtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
+    std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
 
 #if HAVE_SECURITY
     std::mutex mutexAuthentication_;

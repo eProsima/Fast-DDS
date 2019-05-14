@@ -101,400 +101,411 @@ WriterProxyData& WriterProxyData::operator=(const WriterProxyData& writerInfo)
     return *this;
 }
 
-ParameterList_t WriterProxyData::toParameterList()
+bool WriterProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulation)
 {
-    ParameterList_t parameter_list;
+    if (write_encapsulation)
+    {
+        if (!ParameterList::writeEncapsulationToCDRMsg(msg)) return false;
+    }
 
     for(LocatorListIterator lit = m_unicastLocatorList.begin();
             lit!=m_unicastLocatorList.end();++lit)
     {
-        ParameterLocator_t* p = new ParameterLocator_t(PID_UNICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,*lit);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterLocator_t p(PID_UNICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,*lit);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     for(LocatorListIterator lit = m_multicastLocatorList.begin();
             lit!=m_multicastLocatorList.end();++lit)
     {
-        ParameterLocator_t* p = new ParameterLocator_t(PID_MULTICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,*lit);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterLocator_t p(PID_MULTICAST_LOCATOR,PARAMETER_LOCATOR_LENGTH,*lit);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     {
-        ParameterGuid_t* p = new ParameterGuid_t(PID_PARTICIPANT_GUID,PARAMETER_GUID_LENGTH,m_RTPSParticipantKey);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterGuid_t p(PID_PARTICIPANT_GUID,PARAMETER_GUID_LENGTH,m_RTPSParticipantKey);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     {
-        ParameterString_t * p = new ParameterString_t(PID_TOPIC_NAME, 0, m_topicName);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterString_t p(PID_TOPIC_NAME, 0, m_topicName);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     {
-        ParameterString_t * p = new ParameterString_t(PID_TYPE_NAME,0,m_typeName);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterString_t p(PID_TYPE_NAME,0,m_typeName);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     {
-        ParameterKey_t * p = new ParameterKey_t(PID_KEY_HASH,16,m_key);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterKey_t p(PID_KEY_HASH,16,m_key);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     {
-        ParameterGuid_t * p = new ParameterGuid_t(PID_ENDPOINT_GUID,16,m_guid);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterGuid_t p(PID_ENDPOINT_GUID,16,m_guid);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     {
-        ParameterPort_t* p = new ParameterPort_t(PID_TYPE_MAX_SIZE_SERIALIZED,4,m_typeMaxSerialized);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterPort_t p(PID_TYPE_MAX_SIZE_SERIALIZED,4,m_typeMaxSerialized);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     {
-        ParameterProtocolVersion_t* p = new ParameterProtocolVersion_t(PID_PROTOCOL_VERSION,4);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterProtocolVersion_t p(PID_PROTOCOL_VERSION,4);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     {
-        ParameterVendorId_t*p = new ParameterVendorId_t(PID_VENDORID,4);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterVendorId_t p(PID_VENDORID,4);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     if(persistence_guid_ != c_Guid_Unknown)
     {
-        ParameterGuid_t * p = new ParameterGuid_t(PID_PERSISTENCE_GUID, 16, persistence_guid_);
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterGuid_t p(PID_PERSISTENCE_GUID, 16, persistence_guid_);
+        if (!p.addToCDRMessage(msg)) return false;
     }
     if( m_qos.m_durability.sendAlways() || m_qos.m_durability.hasChanged)
     {
-        DurabilityQosPolicy*p = new DurabilityQosPolicy();
-        *p = m_qos.m_durability;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_durability.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_durabilityService.sendAlways() || m_qos.m_durabilityService.hasChanged)
     {
-        DurabilityServiceQosPolicy*p = new DurabilityServiceQosPolicy();
-        *p = m_qos.m_durabilityService;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_durabilityService.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_deadline.sendAlways() ||  m_qos.m_deadline.hasChanged)
     {
-        DeadlineQosPolicy*p = new DeadlineQosPolicy();
-        *p = m_qos.m_deadline;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_deadline.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_latencyBudget.sendAlways() ||  m_qos.m_latencyBudget.hasChanged)
     {
-        LatencyBudgetQosPolicy*p = new LatencyBudgetQosPolicy();
-        *p = m_qos.m_latencyBudget;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_latencyBudget.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_durability.sendAlways() ||  m_qos.m_liveliness.hasChanged)
     {
-        LivelinessQosPolicy*p = new LivelinessQosPolicy();
-        *p = m_qos.m_liveliness;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_liveliness.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_reliability.sendAlways() ||  m_qos.m_reliability.hasChanged)
     {
-        ReliabilityQosPolicy*p = new ReliabilityQosPolicy();
-        *p = m_qos.m_reliability;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_reliability.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_lifespan.sendAlways() ||  m_qos.m_lifespan.hasChanged)
     {
-        LifespanQosPolicy*p = new LifespanQosPolicy();
-        *p = m_qos.m_lifespan;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_lifespan.addToCDRMessage(msg)) return false;
     }
     if( m_qos.m_userData.sendAlways() || m_qos.m_userData.hasChanged)
     {
-        UserDataQosPolicy*p = new UserDataQosPolicy();
-        *p = m_qos.m_userData;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_userData.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_timeBasedFilter.sendAlways() ||  m_qos.m_timeBasedFilter.hasChanged)
     {
-        TimeBasedFilterQosPolicy*p = new TimeBasedFilterQosPolicy();
-        *p = m_qos.m_timeBasedFilter;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_timeBasedFilter.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_ownership.sendAlways() ||  m_qos.m_ownership.hasChanged)
     {
-        OwnershipQosPolicy*p = new OwnershipQosPolicy();
-        *p = m_qos.m_ownership;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_ownership.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_durability.sendAlways() ||  m_qos.m_ownershipStrength.hasChanged)
     {
-        OwnershipStrengthQosPolicy*p = new OwnershipStrengthQosPolicy();
-        *p = m_qos.m_ownershipStrength;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_ownershipStrength.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_destinationOrder.sendAlways() ||  m_qos.m_destinationOrder.hasChanged)
     {
-        DestinationOrderQosPolicy*p = new DestinationOrderQosPolicy();
-        *p = m_qos.m_destinationOrder;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_destinationOrder.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_presentation.sendAlways() ||  m_qos.m_presentation.hasChanged)
     {
-        PresentationQosPolicy*p = new PresentationQosPolicy();
-        *p = m_qos.m_presentation;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_presentation.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_partition.sendAlways() ||  m_qos.m_partition.hasChanged)
     {
-        PartitionQosPolicy*p = new PartitionQosPolicy();
-        *p = m_qos.m_partition;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_partition.addToCDRMessage(msg)) return false;
     }
     if(m_qos.m_topicData.sendAlways() || m_qos.m_topicData.hasChanged)
     {
-        TopicDataQosPolicy*p = new TopicDataQosPolicy();
-        *p = m_qos.m_topicData;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_topicData.addToCDRMessage(msg)) return false;
+    }
+    if(m_qos.m_disablePositiveACKs.sendAlways() || m_qos.m_topicData.hasChanged)
+    {
+        if (!m_qos.m_disablePositiveACKs.addToCDRMessage(msg))
+        {
+            return false;
+        }
     }
     if(m_qos.m_groupData.sendAlways() ||  m_qos.m_groupData.hasChanged)
     {
         GroupDataQosPolicy*p = new GroupDataQosPolicy();
         *p = m_qos.m_groupData;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        if (!m_qos.m_groupData.addToCDRMessage(msg)) return false;
     }
 
     if (m_topicDiscoveryKind != NO_CHECK)
     {
-        if (m_type_id.m_type_identifier->_d() != 0)
+        if (m_type_id.m_type_identifier._d() != 0)
         {
-            TypeIdV1 * p = new TypeIdV1();
-            *p = m_type_id;
-            parameter_list.m_parameters.push_back((Parameter_t*)p);
+            if (!m_type_id.addToCDRMessage(msg)) return false;
         }
 
-        if (m_type.m_type_object->_d() != 0)
+        if (m_type.m_type_object._d() != 0)
         {
-            TypeObjectV1 * p = new TypeObjectV1();
-            *p = m_type;
-            parameter_list.m_parameters.push_back((Parameter_t*)p);
+            if (!m_type.addToCDRMessage(msg)) return false;
         }
     }
 #if HAVE_SECURITY
     if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
     {
-        ParameterEndpointSecurityInfo_t*p = new ParameterEndpointSecurityInfo_t();
-        p->security_attributes = security_attributes_;
-        p->plugin_security_attributes = plugin_security_attributes_;
-        parameter_list.m_parameters.push_back((Parameter_t*)p);
+        ParameterEndpointSecurityInfo_t p;
+        p.security_attributes = security_attributes_;
+        p.plugin_security_attributes = plugin_security_attributes_;
+        if (!p.addToCDRMessage(msg)) return false;
     }
 #endif
 
-    logInfo(RTPS_PROXY_DATA," with " << parameter_list.m_parameters.size()<< " parameters");
-    return parameter_list;
+    return CDRMessage::addParameterSentinel(msg);
 }
 
 bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
 {
-    ParameterList_t parameter_list;
-    if(ParameterList::readParameterListfromCDRMsg(msg, &parameter_list, NULL, true) > 0)
+    auto param_process = [this](const Parameter_t* param)
     {
-        for(std::vector<Parameter_t*>::iterator it = parameter_list.m_parameters.begin();
-                it!=parameter_list.m_parameters.end();++it)
+        switch (param->Pid)
         {
-            switch((*it)->Pid)
+            case PID_DURABILITY:
             {
-                case PID_DURABILITY:
-                    {
-                        DurabilityQosPolicy * p = (DurabilityQosPolicy*)(*it);
-                        m_qos.m_durability = *p;
-                        break;
-                    }
-                case PID_DURABILITY_SERVICE:
-                    {
-                        DurabilityServiceQosPolicy * p = (DurabilityServiceQosPolicy*)(*it);
-                        m_qos.m_durabilityService = *p;
-                        break;
-                    }
-                case PID_DEADLINE:
-                    {
-                        DeadlineQosPolicy * p = (DeadlineQosPolicy*)(*it);
-                        m_qos.m_deadline = *p;
-                        break;
-                    }
-                case PID_LATENCY_BUDGET:
-                    {
-                        LatencyBudgetQosPolicy * p = (LatencyBudgetQosPolicy*)(*it);
-                        m_qos.m_latencyBudget = *p;
-                        break;
-                    }
-                case PID_LIVELINESS:
-                    {
-                        LivelinessQosPolicy * p = (LivelinessQosPolicy*)(*it);
-                        m_qos.m_liveliness = *p;
-                        break;
-                    }
-                case PID_RELIABILITY:
-                    {
-                        ReliabilityQosPolicy * p = (ReliabilityQosPolicy*)(*it);
-                        m_qos.m_reliability = *p;
-                        break;
-                    }
-                case PID_LIFESPAN:
-                    {
-
-                        LifespanQosPolicy * p = (LifespanQosPolicy*)(*it);
-                        m_qos.m_lifespan = *p;
-                        break;
-                    }
-                case PID_USER_DATA:
-                    {
-                        UserDataQosPolicy * p = (UserDataQosPolicy*)(*it);
-                        m_qos.m_userData = *p;
-                        break;
-                    }
-                case PID_TIME_BASED_FILTER:
-                    {
-                        TimeBasedFilterQosPolicy * p = (TimeBasedFilterQosPolicy*)(*it);
-                        m_qos.m_timeBasedFilter = *p;
-                        break;
-                    }
-                case PID_OWNERSHIP:
-                    {
-                        OwnershipQosPolicy * p = (OwnershipQosPolicy*)(*it);
-                        m_qos.m_ownership = *p;
-                        break;
-                    }
-                case PID_OWNERSHIP_STRENGTH:
-                    {
-                        OwnershipStrengthQosPolicy * p = (OwnershipStrengthQosPolicy*)(*it);
-                        m_qos.m_ownershipStrength = *p;
-                        break;
-                    }
-                case PID_DESTINATION_ORDER:
-                    {
-                        DestinationOrderQosPolicy * p = (DestinationOrderQosPolicy*)(*it);
-                        m_qos.m_destinationOrder = *p;
-                        break;
-                    }
-
-                case PID_PRESENTATION:
-                    {
-                        PresentationQosPolicy * p = (PresentationQosPolicy*)(*it);
-                        m_qos.m_presentation = *p;
-                        break;
-                    }
-                case PID_PARTITION:
-                    {
-                        PartitionQosPolicy * p = (PartitionQosPolicy*)(*it);
-                        m_qos.m_partition = *p;
-                        break;
-                    }
-                case PID_TOPIC_DATA:
-                    {
-                        TopicDataQosPolicy * p = (TopicDataQosPolicy*)(*it);
-                        m_qos.m_topicData = *p;
-                        break;
-                    }
-                case PID_GROUP_DATA:
-                    {
-
-                        GroupDataQosPolicy * p = (GroupDataQosPolicy*)(*it);
-                        m_qos.m_groupData = *p;
-                        break;
-                    }
-                case PID_TOPIC_NAME:
-                {
-                    ParameterString_t*p = (ParameterString_t*)(*it);
-                    m_topicName = std::string(p->getName());
-                    break;
-                }
-                case PID_TYPE_NAME:
-                    {
-                        ParameterString_t*p = (ParameterString_t*)(*it);
-                        m_typeName = std::string(p->getName());
-                        break;
-                    }
-                case PID_PARTICIPANT_GUID:
-                    {
-                        ParameterGuid_t * p = (ParameterGuid_t*)(*it);
-                        for(uint8_t i = 0; i < 16; ++i)
-                        {
-                            if(i < 12)
-                                m_RTPSParticipantKey.value[i] = p->guid.guidPrefix.value[i];
-                            else
-                                m_RTPSParticipantKey.value[i] = p->guid.entityId.value[i - 12];
-                        }
-                        break;
-                    }
-                case PID_ENDPOINT_GUID:
-                    {
-                        ParameterGuid_t * p = (ParameterGuid_t*)(*it);
-                        m_guid = p->guid;
-                        for(uint8_t i=0;i<16;++i)
-                        {
-                            if(i<12)
-                                m_key.value[i] = p->guid.guidPrefix.value[i];
-                            else
-                                m_key.value[i] = p->guid.entityId.value[i - 12];
-                        }
-                        break;
-                    }
-                case PID_PERSISTENCE_GUID:
-                    {
-                        ParameterGuid_t * p = (ParameterGuid_t*)(*it);
-                        persistence_guid_ = p->guid;
-                    }
-                    break;
-                case PID_UNICAST_LOCATOR:
-                    {
-                        ParameterLocator_t* p = (ParameterLocator_t*)(*it);
-                        m_unicastLocatorList.push_back(p->locator);
-                        break;
-                    }
-                case PID_MULTICAST_LOCATOR:
-                    {
-                        ParameterLocator_t* p = (ParameterLocator_t*)(*it);
-                        m_multicastLocatorList.push_back(p->locator);
-                        break;
-                    }
-                case PID_KEY_HASH:
-                    {
-                        ParameterKey_t*p=(ParameterKey_t*)(*it);
-                        m_key = p->key;
-                        iHandle2GUID(m_guid,m_key);
-                        break;
-                    }
-                case PID_TYPE_IDV1:
-                    {
-                        TypeIdV1 * p = (TypeIdV1*)(*it);
-                        m_type_id = *p;
-                        m_topicDiscoveryKind = MINIMAL;
-                        if (m_type_id.m_type_identifier->_d() == EK_COMPLETE)
-                        {
-                            m_topicDiscoveryKind = COMPLETE;
-                        }
-                        break;
-                    }
-                case PID_TYPE_OBJECTV1:
-                    {
-                        TypeObjectV1 * p = (TypeObjectV1*)(*it);
-                        m_type = *p;
-                        m_topicDiscoveryKind = MINIMAL;
-                        if (m_type.m_type_object->_d() == EK_COMPLETE)
-                        {
-                            m_topicDiscoveryKind = COMPLETE;
-                        }
-                        break;
-                    }
-#if HAVE_SECURITY
-                case PID_ENDPOINT_SECURITY_INFO:
-                    {
-                        ParameterEndpointSecurityInfo_t*p=(ParameterEndpointSecurityInfo_t*)(*it);
-                        security_attributes_ = p->security_attributes;
-                        plugin_security_attributes_ = p->plugin_security_attributes;
-                    }
-#endif
-                default:
-                    {
-                        //logInfo(RTPS_PROXY_DATA,"Parameter with ID: " << (uint16_t)(*it)->Pid <<" NOT CONSIDERED");
-                        break;
-                    }
+                const DurabilityQosPolicy* p = dynamic_cast<const DurabilityQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_durability = *p;
+                break;
             }
-            if(m_guid.entityId.value[3] == 0x03)
-                m_topicKind = NO_KEY;
-            else if(m_guid.entityId.value[3] == 0x02)
-                m_topicKind = WITH_KEY;
+            case PID_DURABILITY_SERVICE:
+            {
+                const DurabilityServiceQosPolicy* p = dynamic_cast<const DurabilityServiceQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_durabilityService = *p;
+                break;
+            }
+            case PID_DEADLINE:
+            {
+                const DeadlineQosPolicy* p = dynamic_cast<const DeadlineQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_deadline = *p;
+                break;
+            }
+            case PID_LATENCY_BUDGET:
+            {
+                const LatencyBudgetQosPolicy* p = dynamic_cast<const LatencyBudgetQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_latencyBudget = *p;
+                break;
+            }
+            case PID_LIVELINESS:
+            {
+                const LivelinessQosPolicy* p = dynamic_cast<const LivelinessQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_liveliness = *p;
+                break;
+            }
+            case PID_RELIABILITY:
+            {
+                const ReliabilityQosPolicy* p = dynamic_cast<const ReliabilityQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_reliability = *p;
+                break;
+            }
+            case PID_LIFESPAN:
+            {
+                const LifespanQosPolicy* p = dynamic_cast<const LifespanQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_lifespan = *p;
+                break;
+            }
+            case PID_USER_DATA:
+            {
+                const UserDataQosPolicy* p = dynamic_cast<const UserDataQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_userData = *p;
+                break;
+            }
+            case PID_TIME_BASED_FILTER:
+            {
+                const TimeBasedFilterQosPolicy* p = dynamic_cast<const TimeBasedFilterQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_timeBasedFilter = *p;
+                break;
+            }
+            case PID_OWNERSHIP:
+            {
+                const OwnershipQosPolicy* p = dynamic_cast<const OwnershipQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_ownership = *p;
+                break;
+            }
+            case PID_OWNERSHIP_STRENGTH:
+            {
+                const OwnershipStrengthQosPolicy* p = dynamic_cast<const OwnershipStrengthQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_ownershipStrength = *p;
+                break;
+            }
+            case PID_DESTINATION_ORDER:
+            {
+                const DestinationOrderQosPolicy* p = dynamic_cast<const DestinationOrderQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_destinationOrder = *p;
+                break;
+            }
+
+            case PID_PRESENTATION:
+            {
+                const PresentationQosPolicy* p = dynamic_cast<const PresentationQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_presentation = *p;
+                break;
+            }
+            case PID_PARTITION:
+            {
+                const PartitionQosPolicy* p = dynamic_cast<const PartitionQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_partition = *p;
+                break;
+            }
+            case PID_TOPIC_DATA:
+            {
+                const TopicDataQosPolicy* p = dynamic_cast<const TopicDataQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_topicData = *p;
+                break;
+            }
+            case PID_GROUP_DATA:
+            {
+                const GroupDataQosPolicy* p = dynamic_cast<const GroupDataQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_groupData = *p;
+                break;
+            }
+            case PID_TOPIC_NAME:
+            {
+                const ParameterString_t* p = dynamic_cast<const ParameterString_t*>(param);
+                assert(p != nullptr);
+                m_topicName = p->getName();
+                break;
+            }
+            case PID_TYPE_NAME:
+            {
+                const ParameterString_t* p = dynamic_cast<const ParameterString_t*>(param);
+                assert(p != nullptr);
+                m_typeName = p->getName();
+                break;
+            }
+            case PID_PARTICIPANT_GUID:
+            {
+                const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
+                assert(p != nullptr);
+                for (uint8_t i = 0; i < 16; ++i)
+                {
+                    if (i < 12)
+                        m_RTPSParticipantKey.value[i] = p->guid.guidPrefix.value[i];
+                    else
+                        m_RTPSParticipantKey.value[i] = p->guid.entityId.value[i - 12];
+                }
+                break;
+            }
+            case PID_ENDPOINT_GUID:
+            {
+                const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
+                assert(p != nullptr);
+                m_guid = p->guid;
+                for (uint8_t i = 0; i<16; ++i)
+                {
+                    if (i<12)
+                        m_key.value[i] = p->guid.guidPrefix.value[i];
+                    else
+                        m_key.value[i] = p->guid.entityId.value[i - 12];
+                }
+                break;
+            }
+            case PID_PERSISTENCE_GUID:
+            {
+                const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
+                assert(p != nullptr);
+                persistence_guid_ = p->guid;
+            }
+            break;
+            case PID_UNICAST_LOCATOR:
+            {
+                const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
+                assert(p != nullptr);
+                m_unicastLocatorList.push_back(p->locator);
+                break;
+            }
+            case PID_MULTICAST_LOCATOR:
+            {
+                const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
+                assert(p != nullptr);
+                m_multicastLocatorList.push_back(p->locator);
+                break;
+            }
+            case PID_KEY_HASH:
+            {
+                const ParameterKey_t* p = dynamic_cast<const ParameterKey_t*>(param);
+                assert(p != nullptr);
+                m_key = p->key;
+                iHandle2GUID(m_guid, m_key);
+                break;
+            }
+            case PID_TYPE_IDV1:
+            {
+                const TypeIdV1* p = dynamic_cast<const TypeIdV1*>(param);
+                assert(p != nullptr);
+                m_type_id = *p;
+                m_topicDiscoveryKind = MINIMAL;
+                if (m_type_id.m_type_identifier._d() == types::EK_COMPLETE)
+                {
+                    m_topicDiscoveryKind = COMPLETE;
+                }
+                break;
+            }
+            case PID_TYPE_OBJECTV1:
+            {
+                const TypeObjectV1* p = dynamic_cast<const TypeObjectV1*>(param);
+                assert(p != nullptr);
+                m_type = *p;
+                m_topicDiscoveryKind = MINIMAL;
+                if (m_type.m_type_object._d() == types::EK_COMPLETE)
+                {
+                    m_topicDiscoveryKind = COMPLETE;
+                }
+                break;
+            }
+            case PID_DISABLE_POSITIVE_ACKS:
+            {
+                const DisablePositiveACKsQosPolicy* p = dynamic_cast<const DisablePositiveACKsQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_disablePositiveACKs = *p;
+                break;
+            }
+#if HAVE_SECURITY
+            case PID_ENDPOINT_SECURITY_INFO:
+            {
+                const ParameterEndpointSecurityInfo_t* p =
+                    dynamic_cast<const ParameterEndpointSecurityInfo_t*>(param);
+                assert(p != nullptr);
+                security_attributes_ = p->security_attributes;
+                plugin_security_attributes_ = p->plugin_security_attributes;
+            }
+#endif
+            default:
+            {
+                //logInfo(RTPS_PROXY_DATA,"Parameter with ID: " << (uint16_t)(param)->Pid <<" NOT CONSIDERED");
+                break;
+            }
         }
         return true;
+    };
+
+    uint32_t qos_size;
+    if (ParameterList::readParameterListfromCDRMsg(*msg, param_process, true, qos_size))
+    {
+        if (m_guid.entityId.value[3] == 0x03)
+            m_topicKind = NO_KEY;
+        else if (m_guid.entityId.value[3] == 0x02)
+            m_topicKind = WITH_KEY;
+
+        return true;
     }
+
     return false;
 }
 
@@ -569,5 +580,3 @@ RemoteWriterAttributes WriterProxyData::toRemoteWriterAttributes() const
 }
 } /* namespace rtps */
 } /* namespace eprosima */
-
-

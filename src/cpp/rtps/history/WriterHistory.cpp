@@ -20,19 +20,13 @@
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
-#include "fastrtps/rtps/common/WriteParams.h"
+#include <fastrtps/rtps/common/WriteParams.h>
 
 #include <mutex>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
-
-WriteParams WriteParams::WRITE_PARAM_DEFAULT;
-
-typedef std::pair<InstanceHandle_t,std::vector<CacheChange_t*>> t_pairKeyChanges;
-typedef std::vector<t_pairKeyChanges> t_vectorPairKeyChanges;
-
 
 WriterHistory::WriterHistory(const HistoryAttributes& att):
     History(att),
@@ -48,10 +42,17 @@ WriterHistory::~WriterHistory()
 
 bool WriterHistory::add_change(CacheChange_t* a_change)
 {
-    return add_change(a_change, WriteParams::WRITE_PARAM_DEFAULT);
+    WriteParams wparams;
+    return add_change_(a_change, wparams);
 }
 
 bool WriterHistory::add_change(CacheChange_t* a_change, WriteParams& wparams)
+{
+    return add_change_(a_change, wparams);
+}
+
+bool WriterHistory::add_change_(CacheChange_t* a_change, WriteParams &wparams,
+        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
 {
     if(mp_writer == nullptr || mp_mutex == nullptr)
     {
@@ -59,7 +60,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change, WriteParams& wparams)
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
     if(a_change->writerGUID != mp_writer->getGuid())
     {
         logError(RTPS_HISTORY,"Change writerGUID "<< a_change->writerGUID << " different than Writer GUID "<< mp_writer->getGuid());
@@ -82,15 +83,13 @@ bool WriterHistory::add_change(CacheChange_t* a_change, WriteParams& wparams)
 
     ++m_lastCacheChangeSeqNum;
     a_change->sequenceNumber = m_lastCacheChangeSeqNum;
+    a_change->sourceTimestamp = Time_t(std::chrono::duration_cast<std::chrono::nanoseconds>(
+                                           std::chrono::system_clock::now().time_since_epoch()).count() * 1e-9);
 
-    if(&wparams != &WriteParams::WRITE_PARAM_DEFAULT)
-    {
-        a_change->write_params = wparams;
-
-        // Updated sample identity
-        wparams.sample_identity().writer_guid(a_change->writerGUID);
-        wparams.sample_identity().sequence_number(a_change->sequenceNumber);
-    }
+    a_change->write_params = wparams;
+    // Updated sample identity
+    wparams.sample_identity().writer_guid(a_change->writerGUID);
+    wparams.sample_identity().sequence_number(a_change->sequenceNumber);
 
     m_changes.push_back(a_change);
 
@@ -102,7 +101,7 @@ bool WriterHistory::add_change(CacheChange_t* a_change, WriteParams& wparams)
     logInfo(RTPS_HISTORY,"Change "<< a_change->sequenceNumber << " added with "<<a_change->serializedPayload.length<< " bytes");
 
     updateMaxMinSeqNum();
-    mp_writer->unsent_change_added_to_history(a_change);
+    mp_writer->unsent_change_added_to_history(a_change, max_blocking_time);
 
     return true;
 }
@@ -115,7 +114,7 @@ bool WriterHistory::remove_change(CacheChange_t* a_change)
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
     if(a_change == nullptr)
     {
         logError(RTPS_HISTORY,"Pointer is not valid")
@@ -160,7 +159,7 @@ bool WriterHistory::remove_change(const SequenceNumber_t& sequence_number)
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
 
     for(std::vector<CacheChange_t*>::iterator chit = m_changes.begin();
             chit!=m_changes.end();++chit)
@@ -188,7 +187,7 @@ CacheChange_t* WriterHistory::remove_change_and_reuse(const SequenceNumber_t& se
         return nullptr;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
 
     for(std::vector<CacheChange_t*>::iterator chit = m_changes.begin();
             chit!=m_changes.end();++chit)
@@ -232,14 +231,16 @@ bool WriterHistory::remove_min_change()
         return false;
     }
 
-    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
     if(m_changes.size() > 0 && remove_change_g(mp_minSeqCacheChange))
     {
         updateMaxMinSeqNum();
         return true;
     }
     else
+    {
         return false;
+    }
 }
 
 //TODO Hacer metodos de remove_all_changes. y hacer los metodos correspondientes en los writers y publishers.

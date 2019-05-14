@@ -21,7 +21,6 @@
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/writer/ReaderProxy.h>
 
 #include "../../participant/RTPSParticipantImpl.h"
 
@@ -45,10 +44,13 @@ PeriodicHeartbeat::~PeriodicHeartbeat()
 PeriodicHeartbeat::PeriodicHeartbeat(
         StatefulWriter* p_SFW,
         double interval)
-    : TimedEvent(p_SFW->getRTPSParticipant()->getEventResource().getIOService(),
-            p_SFW->getRTPSParticipant()->getEventResource().getThread(), interval)
-    , m_cdrmessages(p_SFW->getRTPSParticipant()->getMaxMessageSize(),
-            p_SFW->getRTPSParticipant()->getGuid().guidPrefix)
+    : TimedEvent(
+          p_SFW->getRTPSParticipant()->getEventResource().getIOService(),
+          p_SFW->getRTPSParticipant()->getEventResource().getThread(),
+          interval)
+    , m_cdrmessages(
+          p_SFW->getRTPSParticipant()->getMaxMessageSize(),
+          p_SFW->getRTPSParticipant()->getGuid().guidPrefix)
     , mp_SFW(p_SFW)
 {
 
@@ -64,80 +66,7 @@ void PeriodicHeartbeat::event(
 
     if(code == EVENT_SUCCESS)
     {
-        SequenceNumber_t firstSeq, lastSeq;
-        bool unacked_changes = false;
-
-        if (mp_SFW->get_separate_sending())
-        {
-            std::lock_guard<std::recursive_mutex> guardW(*mp_SFW->getMutex());
-            for (std::vector<ReaderProxy*>::iterator it = mp_SFW->matchedReadersBegin();
-                it != mp_SFW->matchedReadersEnd(); ++it)
-            {
-                if ((*it)->thereIsUnacknowledged())
-                {
-                    // FinalFlag is always false because this class is used only by StatefulWriter in Reliable.
-                    mp_SFW->send_heartbeat_to_nts(**it, false);
-                    unacked_changes = true;
-                }
-            }
-        }
-        else
-        {
-            Count_t heartbeatCount = 0;
-            std::vector<LocatorList_t> locList;
-            std::vector<GUID_t> remote_readers;
-
-            {//BEGIN PROTECTION
-                std::lock_guard<std::recursive_mutex> guardW(*mp_SFW->getMutex());
-                for (std::vector<ReaderProxy*>::iterator it = mp_SFW->matchedReadersBegin();
-                    it != mp_SFW->matchedReadersEnd(); ++it)
-                {
-                    if (!unacked_changes)
-                    {
-                        if ((*it)->thereIsUnacknowledged())
-                        {
-                            unacked_changes = true;
-                        }
-                    }
-                    locList.push_back((*it)->m_att.endpoint.remoteLocatorList);
-                    remote_readers.push_back((*it)->m_att.guid);
-                }
-
-                if (unacked_changes)
-                {
-                    firstSeq = mp_SFW->get_seq_num_min();
-                    lastSeq = mp_SFW->get_seq_num_max();
-
-                    if (firstSeq == c_SequenceNumber_Unknown || lastSeq == c_SequenceNumber_Unknown)
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        (void)firstSeq;
-                        assert(firstSeq <= lastSeq);
-                    }
-
-                    mp_SFW->incrementHBCount();
-                    heartbeatCount = mp_SFW->getHeartbeatCount();
-
-                    // TODO(Ricardo) Use StatefulWriter::send_heartbeat_to_nts.
-                }
-            }
-
-            if (unacked_changes)
-            {
-                RTPSMessageGroup group(mp_SFW->getRTPSParticipant(), mp_SFW, RTPSMessageGroup::WRITER, m_cdrmessages);
-
-                // FinalFlag is always false because this class is used only by StatefulWriter in Reliable.
-                group.add_heartbeat(remote_readers, firstSeq, lastSeq, heartbeatCount, false, false,
-                        mp_SFW->getRTPSParticipant()->network_factory().ShrinkLocatorLists(locList));
-                logInfo(RTPS_WRITER, mp_SFW->getGuid().entityId << " Sending Heartbeat (" << firstSeq
-                        << " - " << lastSeq << ")");
-            }
-        }
-
-        if (unacked_changes)
+        if (mp_SFW->send_periodic_heartbeat())
         {
             //Reset TIMER
             this->restart_timer();

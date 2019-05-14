@@ -38,19 +38,18 @@ public:
 
    virtual ~UDPTransportInterface() override;
 
-   void Clean();
+   void clean();
 
    //! Removes the listening socket for the specified port.
    virtual bool CloseInputChannel(const Locator_t&) override;
 
    //! Removes all outbound sockets on the given port.
-   virtual bool CloseOutputChannel(const Locator_t&) override;
+   void CloseOutputChannel(eProsimaUDPSocket& socket);
 
    //! Reports whether Locators correspond to the same port.
    virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
-   virtual bool DoOutputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
 
-   virtual const UDPTransportDescriptor* GetConfiguration() const = 0;
+   virtual const UDPTransportDescriptor* configuration() const = 0;
 
    bool init() override;
 
@@ -60,24 +59,22 @@ public:
    //! Checks for TCP kinds.
    virtual bool IsLocatorSupported(const Locator_t&) const override;
 
-   //! Checks whether there are open and bound sockets for the given port.
-   virtual bool IsOutputChannelOpen(const Locator_t&) const override;
-
    //! Opens a socket on the given address and port (as long as they are white listed).
-   virtual bool OpenOutputChannel(const Locator_t&) override;
-   virtual bool OpenExtraOutputChannel(const Locator_t&) override;
+   virtual bool OpenOutputChannel(
+           SendResourceList& sender_resource_list,
+           const Locator_t&) override;
 
    /**
    * Blocking Receive from the specified channel.
-   * @param pChannelResource Pointer to the channer resource that stores the socket.
-   * @param receiveBuffer vector with enough capacity (not size) to accomodate a full receive buffer. That
-   * capacity must not be less than the receiveBufferSize supplied to this class during construction.
-   * @param receiveBufferCapacity Maximum size of the receiveBuffer.
-   * @param[out] receiveBufferSize Size of the received buffer.
-   * @param[out] remoteLocator Locator describing the remote restination we received a packet from.
+   * @param p_channel_resource Pointer to the channer resource that stores the socket.
+   * @param receive_buffer vector with enough capacity (not size) to accomodate a full receive buffer. That
+   * capacity must not be less than the receive_buffer_size supplied to this class during construction.
+   * @param receive_buffer_capacity Maximum size of the receive_buffer.
+   * @param[out] receive_buffer_size Size of the received buffer.
+   * @param[out] remote_locator Locator describing the remote restination we received a packet from.
    */
-   bool Receive(UDPChannelResource* pChannelResource, octet* receiveBuffer,
-       uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize, Locator_t& remoteLocator);
+   bool Receive(UDPChannelResource* p_channel_resource, octet* receive_buffer,
+       uint32_t receive_buffer_capacity, uint32_t& receive_buffer_size, Locator_t& remote_locator);
 
    //! Release the listening socket for the specified port.
    bool ReleaseInputChannel(const Locator_t& locator, const asio::ip::address& interface_address);
@@ -92,17 +89,19 @@ public:
    /**
    * Blocking Send through the specified channel. In both modes, using a localLocator of 0.0.0.0 will
    * send through all whitelisted interfaces provided the channel is open.
-   * @param sendBuffer Slice into the raw data to send.
-   * @param sendBufferSize Size of the raw data. It will be used as a bounds check for the previous argument.
-   * It must not exceed the sendBufferSize fed to this class during construction.
-   * @param localLocator Locator mapping to the channel we're sending from.
-   * @param remoteLocator Locator describing the remote destination we're sending to.
+   * @param send_buffer Slice into the raw data to send.
+   * @param send_buffer_size Size of the raw data. It will be used as a bounds check for the previous argument.
+   * It must not exceed the send_buffer_size fed to this class during construction.
+   * @param socket channel we're sending from.
+   * @param remote_locator Locator describing the remote destination we're sending to.
+   * @param only_multicast_purpose
    */
-   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
-       const Locator_t& remoteLocator) override;
-
-   virtual bool Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
-       const Locator_t& remoteLocator, ChannelResource* pChannelResource) override;
+   virtual bool send(
+           const octet* send_buffer,
+           uint32_t send_buffer_size,
+           eProsimaUDPSocket& socket,
+           const Locator_t& remote_locator,
+           bool only_multicast_purpose);
 
    virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
 
@@ -118,77 +117,62 @@ public:
 
 protected:
 
-    int32_t mTransportKind;
-
     // For UDPv6, the notion of channel corresponds to a port + direction tuple.
-    asio::io_service mService;
+    asio::io_service io_service_;
     std::vector<IPFinder::info_IP> currentInterfaces;
 
-    mutable std::recursive_mutex mOutputMapMutex;
     mutable std::recursive_mutex mInputMapMutex;
     std::map<uint16_t, std::vector<UDPChannelResource*>> mInputSockets;
-    std::vector<UDPChannelResource*> mOutputSockets;
 
     uint32_t mSendBufferSize;
     uint32_t mReceiveBufferSize;
 
-    UDPTransportInterface();
+    UDPTransportInterface(int32_t transport_kind);
 
-    virtual bool CompareLocatorIP(const Locator_t& lh, const Locator_t& rh) const = 0;
-    virtual bool CompareLocatorIPAndPort(const Locator_t& lh, const Locator_t& rh) const = 0;
+    virtual bool compare_locator_ip(const Locator_t& lh, const Locator_t& rh) const = 0;
+    virtual bool compare_locator_ip_and_port(const Locator_t& lh, const Locator_t& rh) const = 0;
 
-    virtual void EndpointToLocator(asio::ip::udp::endpoint& endpoint, Locator_t& locator) = 0;
-    virtual void FillLocalIp(Locator_t& loc) = 0;
+    virtual void endpoint_to_locator(asio::ip::udp::endpoint& endpoint, Locator_t& locator) = 0;
+    virtual void fill_local_ip(Locator_t& loc) = 0;
 
     virtual asio::ip::udp::endpoint GenerateAnyAddressEndpoint(uint16_t port) = 0;
-    virtual asio::ip::udp::endpoint GenerateEndpoint(uint16_t port) = 0;
-    virtual asio::ip::udp::endpoint GenerateEndpoint(const std::string& sIp, uint16_t port) = 0;
-    virtual asio::ip::udp::endpoint GenerateEndpoint(const Locator_t& loc, uint16_t port) = 0;
-    virtual asio::ip::udp::endpoint GenerateLocalEndpoint(const Locator_t& loc, uint16_t port) = 0;
-    virtual asio::ip::udp GenerateProtocol() const = 0;
-    virtual void GetIPs(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) = 0;
+    virtual asio::ip::udp::endpoint generate_endpoint(uint16_t port) = 0;
+    virtual asio::ip::udp::endpoint generate_endpoint(const std::string& sIp, uint16_t port) = 0;
+    virtual asio::ip::udp::endpoint generate_endpoint(const Locator_t& loc, uint16_t port) = 0;
+    virtual asio::ip::udp::endpoint generate_local_endpoint(const Locator_t& loc, uint16_t port) = 0;
+    virtual asio::ip::udp generate_protocol() const = 0;
+    virtual void get_ips(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) = 0;
 
     //! Checks if the interfaces white list is empty.
-    virtual bool IsInterfaceWhiteListEmpty() const = 0;
+    virtual bool is_interface_whitelist_empty() const = 0;
 
     //! Checks if the given interface is allowed by the white list.
-    virtual bool IsInterfaceAllowed(const std::string& interface) const = 0;
+    virtual bool is_interface_allowed(const std::string& interface) const = 0;
 
     /**
     * Method to get a list of interfaces to bind the socket associated to the given locator.
-    * @param locator Input locator.
     * @return Vector of interfaces in string format.
     */
-    virtual std::vector<std::string> GetBindingInterfacesList() = 0;
+    virtual std::vector<std::string> get_binding_interfaces_list() = 0;
 
     bool OpenAndBindInputSockets(const Locator_t& locator, TransportReceiverInterface* receiver, bool is_multicast,
         uint32_t maxMsgSize);
     UDPChannelResource* CreateInputChannelResource(const std::string& sInterface, const Locator_t& locator,
         bool is_multicast, uint32_t maxMsgSize, TransportReceiverInterface* receiver);
     virtual eProsimaUDPSocket OpenAndBindInputSocket(const std::string& sIp, uint16_t port, bool is_multicast) = 0;
-    bool OpenAndBindOutputSockets(const Locator_t& locator);
     eProsimaUDPSocket OpenAndBindUnicastOutputSocket(const asio::ip::udp::endpoint& endpoint, uint16_t& port);
-    /** Function to be called from a new thread, which takes cares of performing a blocking receive
-    operation on the ReceiveResource
-    @param input_locator - Locator that triggered the creation of the resource
+
+    /**
+     * Function to be called from a new thread, which takes cares of performing a blocking receive
+     * operation on the ReceiveResource
+     * @param p_channel_resource - Associated ChannelResource
+     * @param input_locator - Locator that triggered the creation of the resource
     */
-    void performListenOperation(UDPChannelResource* pChannelResource, Locator_t input_locator);
+    void perform_listen_operation(UDPChannelResource* p_channel_resource, Locator_t input_locator);
 
-    bool SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& remoteLocator,
-        eProsimaUDPSocketRef socket);
-
-    virtual void SetReceiveBufferSize(uint32_t size) = 0;
-    virtual void SetSendBufferSize(uint32_t size) = 0;
+    virtual void set_receive_buffer_size(uint32_t size) = 0;
+    virtual void set_send_buffer_size(uint32_t size) = 0;
     virtual void SetSocketOutboundInterface(eProsimaUDPSocket&, const std::string&) = 0;
-
-    /*
-        struct LocatorCompare {
-        bool operator()(const Locator_t& lhs, const Locator_t& rhs) const
-        {
-            return (memcmp(&lhs, &rhs, sizeof(Locator_t)) < 0);
-        }
-    };
-    */
 };
 
 } // namespace rtps

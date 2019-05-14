@@ -23,52 +23,146 @@
 using namespace eprosima;
 using namespace eprosima::fastrtps;
 using namespace asio;
-int main(int argc, char** argv)
+
+/**
+ * @brief Parses command line arguments
+ * @param argc Number of command line arguments
+ * @param argv Array of command line arguments
+ * @param type Publisher or subscriber
+ * @param deadline_ms Deadline value read from command line arguments (populated if specified)
+ * @param sleep_ms Writer sleep read from command line arguments (populated if specified)
+ * @param samples Number of samples read from command line arguments (populated if specified)
+ * @return True if command line arguments were parsed succesfully and execution can continue
+ */
+bool parse_arguments(
+        int argc,
+        char** argv,
+        int& type,
+        int& deadline_ms,
+        int& sleep_ms,
+        int& samples)
 {
-    std::cout << "Starting " << std::endl;
-    int type = 1;
-    if (argc > 1)
+    if (argc == 1)
     {
-        if (strcmp(argv[1], "publisher") == 0)
+        // No arguments provided
+        return false;
+    }
+
+    for (int i=0; i<argc; i++)
+    {
+        if (!strcmp(argv[i], "--help"))
         {
-            type = 1;
-        }
-        else if (strcmp(argv[1], "subscriber") == 0)
-        {
-            type = 2;
+            // --help command found
+            return false;
         }
     }
-    else
+
+    if (strcmp(argv[1], "publisher") == 0)
     {
-        std::cout << "publisher OR subscriber argument needed" << std::endl;
+        type = 1;
+
+        if (argc != 2 && argc != 4 && argc != 6 && argc != 8)
+        {
+            // Incorrect number of command line arguments for publisher
+            return false;
+        }
+
+        int count = 2;
+        while (count < argc)
+        {
+            if (!strcmp(argv[count], "--deadline"))
+            {
+                deadline_ms = atoi(argv[count + 1]);
+            }
+            else if (!strcmp(argv[count], "--sleep"))
+            {
+                sleep_ms = atoi(argv[count + 1]);
+            }
+            else if (!strcmp(argv[count], "--samples"))
+            {
+                samples = atoi(argv[count + 1]);
+            }
+            else
+            {
+                std::cout << "Unknown command line option " << argv[count] << " for publisher" << std::endl;
+                return false;
+            }
+            count = count + 2;
+        }
+        return true;
+    }
+
+    if (strcmp(argv[1], "subscriber") == 0)
+    {
+        type = 2;
+
+        if (argc != 2 && argc != 4)
+        {
+            // Incorrect number of command line arguments for subscriber
+            return false;
+        }
+
+        if (argc > 2)
+        {
+            if (!strcmp(argv[2], "--deadline"))
+            {
+                deadline_ms = atoi(argv[3]);
+            }
+            else
+            {
+                std::cout << "Unknown command line option " << argv[2] << " for publisher" << std::endl;
+                return false;
+            }
+        }
+        return true;
+    }
+
+    return false;
+}
+
+int main(int argc, char** argv)
+{
+    int deadline_ms = 2000;
+    int sleep_ms = 1000;
+    int samples = 0;
+    int type = 1;
+
+    if (!parse_arguments(argc,
+                         argv,
+                         type,
+                         deadline_ms,
+                         sleep_ms,
+                         samples))
+    {
+        std::cout << "Usage: " << std::endl;
+        std::cout << argv[0] << " publisher [--deadline <deadline_ms>] [--sleep <writer_sleep_ms>] [--samples <samples>]" << std::endl;
+        std::cout << "OR" << std::endl;
+        std::cout << argv[0] << " subscriber [--deadline <deadline_ms>]" << std::endl;
         return 0;
     }
 
     // Register the type being used
 
-
     switch(type)
     {
-        case 1:
-            {
-                deadlinepayloadPublisher mypub;
-                if (mypub.init())
-                {
-                    mypub.run();
-                }
-                break;
-            }
-        case 2:
-            {
-                io_service io;
-                steady_timer myTimer(io);
-                deadlinepayloadSubscriber mysub(myTimer,io);
-                if (mysub.init())
-                {
-                    mysub.run();
-                }
-                break;
-            }
+    case 1:
+    {
+        deadlinepayloadPublisher mypub;
+        if (mypub.init(deadline_ms))
+        {
+            mypub.run(sleep_ms, samples);
+        }
+        break;
+    }
+    case 2:
+    {
+        deadlinepayloadSubscriber mysub;
+        if (mysub.init(deadline_ms))
+        {
+            mysub.run();
+        }
+        break;
+    }
     }
 
     return 0;

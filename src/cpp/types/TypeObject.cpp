@@ -90,6 +90,13 @@ void CommonStructMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_member_type_id;
 }
 
+bool CommonStructMember::operator==(const CommonStructMember& other) const
+{
+    return m_member_id == other.m_member_id &&
+            m_member_flags == other.m_member_flags &&
+            m_member_type_id == other.m_member_type_id;
+}
+
 CompleteMemberDetail::CompleteMemberDetail()
 {
 }
@@ -160,6 +167,16 @@ void CompleteMemberDetail::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_ann_custom;
 }
 
+bool CompleteMemberDetail::operator==(const CompleteMemberDetail& other) const
+{
+    if(m_name == other.m_name &&
+        m_ann_builtin == other.m_ann_builtin)
+    {
+        return compareSequence(m_ann_custom, other.m_ann_custom);
+    }
+    return false;
+}
+
 MinimalMemberDetail::MinimalMemberDetail()
 {
 }
@@ -209,6 +226,11 @@ void MinimalMemberDetail::serialize(eprosima::fastcdr::Cdr &scdr) const
 void MinimalMemberDetail::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_name_hash;
+}
+
+bool MinimalMemberDetail::operator==(const MinimalMemberDetail& other) const
+{
+    return m_name_hash == other.m_name_hash;
 }
 
 CompleteStructMember::CompleteStructMember()
@@ -269,6 +291,12 @@ void CompleteStructMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
+bool CompleteStructMember::operator==(const CompleteStructMember& other) const
+{
+    return m_common == other.m_common &&
+            m_detail == other.m_detail;
+}
+
 MinimalStructMember::MinimalStructMember()
 {
 }
@@ -327,6 +355,12 @@ void MinimalStructMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
+bool MinimalStructMember::operator==(const MinimalStructMember& other) const
+{
+    return m_common == other.m_common &&
+            m_detail == other.m_detail;
+}
+
 AppliedBuiltinTypeAnnotations::AppliedBuiltinTypeAnnotations()
 {
 }
@@ -376,6 +410,11 @@ void AppliedBuiltinTypeAnnotations::serialize(eprosima::fastcdr::Cdr &scdr) cons
 void AppliedBuiltinTypeAnnotations::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_verbatim;
+}
+
+bool AppliedBuiltinTypeAnnotations::operator==(const AppliedBuiltinTypeAnnotations& other) const
+{
+    return m_verbatim == other.m_verbatim;
 }
 
 MinimalTypeDetail::MinimalTypeDetail()
@@ -487,6 +526,15 @@ void CompleteTypeDetail::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_type_name;
 }
 
+bool CompleteTypeDetail::operator==(const CompleteTypeDetail& other) const
+{
+    if (m_ann_builtin == other.m_ann_builtin)
+    {
+        return compareSequence(m_ann_custom, other.m_ann_custom);
+    }
+    return false;
+}
+
 CompleteStructHeader::CompleteStructHeader()
 {
 }
@@ -545,6 +593,12 @@ void CompleteStructHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
+bool CompleteStructHeader::operator==(const CompleteStructHeader& other) const
+{
+    return m_base_type == other.m_base_type &&
+            m_detail == other.m_detail;
+}
+
 MinimalStructHeader::MinimalStructHeader()
 {
 }
@@ -601,6 +655,12 @@ void MinimalStructHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_base_type;
     dcdr >> m_detail;
+}
+
+bool MinimalStructHeader::operator==(const MinimalStructHeader& other) const
+{
+    return m_base_type == other.m_base_type &&
+            m_detail == other.m_detail;
 }
 
 CompleteStructType::CompleteStructType()
@@ -672,6 +732,16 @@ void CompleteStructType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_member_seq;
 }
 
+bool CompleteStructType::operator==(const CompleteStructType& other) const
+{
+    if(m_struct_flags == other.m_struct_flags &&
+        m_header == other.m_header)
+    {
+        return compareSequence(m_member_seq, other.m_member_seq);
+    }
+    return false;
+}
+
 MinimalStructType::MinimalStructType()
 {
 }
@@ -739,6 +809,16 @@ void MinimalStructType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_struct_flags;
     dcdr >> m_header;
     dcdr >> m_member_seq;
+}
+
+bool MinimalStructType::operator==(const MinimalStructType& other) const
+{
+    if(m_struct_flags == other.m_struct_flags &&
+        m_header == other.m_header)
+    {
+        return compareSequence(m_member_seq, other.m_member_seq);
+    }
+    return false;
 }
 
 CommonUnionMember::CommonUnionMember()
@@ -818,6 +898,17 @@ void CommonUnionMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_label_seq;
 }
 
+bool CommonUnionMember::operator==(const CommonUnionMember& other) const
+{
+    if(m_member_id == other.m_member_id &&
+        m_member_flags == other.m_member_flags &&
+        m_type_id == other.m_type_id)
+    {
+        return compareSequence(m_label_seq, other.m_label_seq);
+    }
+    return false;
+}
+
 CompleteUnionMember::CompleteUnionMember()
 {
 }
@@ -874,6 +965,12 @@ void CompleteUnionMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_common;
     dcdr >> m_detail;
+}
+
+bool CompleteUnionMember::operator==(const CompleteUnionMember& other) const
+{
+    return m_common == other.m_common &&
+            m_detail == other.m_detail;
 }
 
 MinimalUnionMember::MinimalUnionMember()
@@ -934,6 +1031,12 @@ void MinimalUnionMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
+bool MinimalUnionMember::operator==(const MinimalUnionMember& other) const
+{
+    return m_common == other.m_common &&
+            m_detail == other.m_detail;
+}
+
 CommonDiscriminatorMember::CommonDiscriminatorMember()
 {
 }
@@ -990,6 +1093,12 @@ void CommonDiscriminatorMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_member_flags;
     dcdr >> m_type_id;
+}
+
+bool CommonDiscriminatorMember::operator==(const CommonDiscriminatorMember& other) const
+{
+    return m_member_flags == other.m_member_flags &&
+            m_type_id == other.m_type_id;
 }
 
 CompleteDiscriminatorMember::CompleteDiscriminatorMember()
@@ -1062,6 +1171,16 @@ void CompleteDiscriminatorMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_ann_custom;
 }
 
+bool CompleteDiscriminatorMember::operator==(const CompleteDiscriminatorMember& other) const
+{
+    if(m_common == other.m_common &&
+        m_ann_builtin == other.m_ann_builtin)
+    {
+        return compareSequence(m_ann_custom, other.m_ann_custom);
+    }
+    return false;
+}
+
 MinimalDiscriminatorMember::MinimalDiscriminatorMember()
 {
 }
@@ -1111,6 +1230,11 @@ void MinimalDiscriminatorMember::serialize(eprosima::fastcdr::Cdr &scdr) const
 void MinimalDiscriminatorMember::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_common;
+}
+
+bool MinimalDiscriminatorMember::operator==(const MinimalDiscriminatorMember& other) const
+{
+    return m_common == other.m_common;
 }
 
 CompleteUnionHeader::CompleteUnionHeader()
@@ -1164,6 +1288,11 @@ void CompleteUnionHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
+bool CompleteUnionHeader::operator==(const CompleteUnionHeader& other) const
+{
+    return m_detail == other.m_detail;
+}
+
 MinimalUnionHeader::MinimalUnionHeader()
 {
 }
@@ -1213,6 +1342,11 @@ void MinimalUnionHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void MinimalUnionHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_detail;
+}
+
+bool MinimalUnionHeader::operator==(const MinimalUnionHeader& other) const
+{
+    return m_detail == other.m_detail;
 }
 
 CompleteUnionType::CompleteUnionType()
@@ -1292,6 +1426,17 @@ void CompleteUnionType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_member_seq;
 }
 
+bool CompleteUnionType::operator==(const CompleteUnionType& other) const
+{
+    if(m_union_flags == other.m_union_flags &&
+        m_header == other.m_header &&
+        m_discriminator == other.m_discriminator)
+    {
+        return compareSequence(m_member_seq, other.m_member_seq);
+    }
+    return false;
+}
+
 MinimalUnionType::MinimalUnionType()
 {
 }
@@ -1369,6 +1514,17 @@ void MinimalUnionType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_member_seq;
 }
 
+bool MinimalUnionType::operator==(const MinimalUnionType& other) const
+{
+    if(m_union_flags == other.m_union_flags &&
+        m_header == other.m_header &&
+        m_discriminator == other.m_discriminator)
+    {
+        return compareSequence(m_member_seq, other.m_member_seq);
+    }
+    return false;
+}
+
 CommonAnnotationParameter::CommonAnnotationParameter()
 {
 }
@@ -1425,6 +1581,12 @@ void CommonAnnotationParameter::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_member_flags;
     dcdr >> m_member_type_id;
+}
+
+bool CommonAnnotationParameter::operator==(const CommonAnnotationParameter& other) const
+{
+    return m_member_flags == other.m_member_flags &&
+            m_member_type_id == other.m_member_type_id;
 }
 
 CompleteAnnotationParameter::CompleteAnnotationParameter()
@@ -1492,6 +1654,13 @@ void CompleteAnnotationParameter::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_default_value;
 }
 
+bool CompleteAnnotationParameter::operator==(const CompleteAnnotationParameter& other) const
+{
+    return m_common == other.m_common &&
+            m_name == other.m_name &&
+            m_default_value == other.m_default_value;
+}
+
 MinimalAnnotationParameter::MinimalAnnotationParameter()
 {
 }
@@ -1557,6 +1726,13 @@ void MinimalAnnotationParameter::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_default_value;
 }
 
+bool MinimalAnnotationParameter::operator==(const MinimalAnnotationParameter& other) const
+{
+    return m_common == other.m_common &&
+            m_name == other.m_name &&
+            m_default_value == other.m_default_value;
+}
+
 CompleteAnnotationHeader::CompleteAnnotationHeader()
 {
 }
@@ -1606,6 +1782,11 @@ void CompleteAnnotationHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void CompleteAnnotationHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_annotation_name;
+}
+
+bool CompleteAnnotationHeader::operator==(const CompleteAnnotationHeader& other) const
+{
+    return m_annotation_name == other.m_annotation_name;
 }
 
 MinimalAnnotationHeader::MinimalAnnotationHeader()
@@ -1719,6 +1900,16 @@ void CompleteAnnotationType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_member_seq;
 }
 
+bool CompleteAnnotationType::operator==(const CompleteAnnotationType& other) const
+{
+    if(m_annotation_flag == other.m_annotation_flag &&
+        m_header == other.m_header)
+    {
+        return compareSequence(m_member_seq, other.m_member_seq);
+    }
+    return false;
+}
+
 MinimalAnnotationType::MinimalAnnotationType()
 {
 }
@@ -1789,6 +1980,16 @@ void MinimalAnnotationType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_member_seq;
 }
 
+bool MinimalAnnotationType::operator==(const MinimalAnnotationType& other) const
+{
+    if(m_annotation_flag == other.m_annotation_flag &&
+        m_header == other.m_header)
+    {
+        return compareSequence(m_member_seq, other.m_member_seq);
+    }
+    return false;
+}
+
 CommonAliasBody::CommonAliasBody()
 {
 }
@@ -1845,6 +2046,12 @@ void CommonAliasBody::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_related_flags;
     dcdr >> m_related_type;
+}
+
+bool CommonAliasBody::operator==(const CommonAliasBody& other) const
+{
+    return m_related_flags == other.m_related_flags &&
+        m_related_type == other.m_related_type;
 }
 
 CompleteAliasBody::CompleteAliasBody()
@@ -1917,6 +2124,16 @@ void CompleteAliasBody::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_ann_custom;
 }
 
+bool CompleteAliasBody::operator==(const CompleteAliasBody& other) const
+{
+    if(m_common == other.m_common &&
+        m_ann_builtin == other.m_ann_builtin)
+    {
+        return compareSequence(m_ann_custom, other.m_ann_custom);
+    }
+    return false;
+}
+
 MinimalAliasBody::MinimalAliasBody()
 {
 }
@@ -1968,6 +2185,11 @@ void MinimalAliasBody::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_common;
 }
 
+bool MinimalAliasBody::operator==(const MinimalAliasBody& other) const
+{
+    return m_common == other.m_common;
+}
+
 CompleteAliasHeader::CompleteAliasHeader()
 {
 }
@@ -2017,6 +2239,11 @@ void CompleteAliasHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void CompleteAliasHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_detail;
+}
+
+bool CompleteAliasHeader::operator==(const CompleteAliasHeader& other) const
+{
+    return m_detail == other.m_detail;
 }
 
 MinimalAliasHeader::MinimalAliasHeader()
@@ -2125,6 +2352,13 @@ void CompleteAliasType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_body;
 }
 
+bool CompleteAliasType::operator==(const CompleteAliasType& other) const
+{
+    return m_alias_flags == other.m_alias_flags &&
+            m_header == other.m_header &&
+            m_body == other.m_body;
+}
+
 MinimalAliasType::MinimalAliasType()
 {
 }
@@ -2190,6 +2424,13 @@ void MinimalAliasType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_body;
 }
 
+bool MinimalAliasType::operator==(const MinimalAliasType& other) const
+{
+    return m_alias_flags == other.m_alias_flags &&
+            m_header == other.m_header &&
+            m_body == other.m_body;
+}
+
 CompleteElementDetail::CompleteElementDetail()
 {
 }
@@ -2253,6 +2494,15 @@ void CompleteElementDetail::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_ann_custom;
 }
 
+bool CompleteElementDetail::operator==(const CompleteElementDetail& other) const
+{
+    if(m_ann_builtin == other.m_ann_builtin)
+    {
+        return compareSequence(m_ann_custom, other.m_ann_custom);
+    }
+    return false;
+}
+
 CommonCollectionElement::CommonCollectionElement()
 {
 }
@@ -2309,6 +2559,12 @@ void CommonCollectionElement::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_element_flags;
     dcdr >> m_type;
+}
+
+bool CommonCollectionElement::operator==(const CommonCollectionElement& other) const
+{
+    return m_element_flags == other.m_element_flags &&
+            m_type == other.m_type;
 }
 
 CompleteCollectionElement::CompleteCollectionElement()
@@ -2369,6 +2625,12 @@ void CompleteCollectionElement::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
+bool CompleteCollectionElement::operator==(const CompleteCollectionElement& other) const
+{
+    return m_common == other.m_common &&
+            m_detail == other.m_detail;
+}
+
 MinimalCollectionElement::MinimalCollectionElement()
 {
 }
@@ -2420,6 +2682,11 @@ void MinimalCollectionElement::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_common;
 }
 
+bool MinimalCollectionElement::operator==(const MinimalCollectionElement& other) const
+{
+    return m_common == other.m_common;
+}
+
 CommonCollectionHeader::CommonCollectionHeader()
 {
 }
@@ -2469,6 +2736,11 @@ void CommonCollectionHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void CommonCollectionHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_bound;
+}
+
+bool CommonCollectionHeader::operator==(const CommonCollectionHeader& other) const
+{
+    return m_bound == other.m_bound;
 }
 
 CompleteCollectionHeader::CompleteCollectionHeader()
@@ -2529,6 +2801,12 @@ void CompleteCollectionHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
+bool CompleteCollectionHeader::operator==(const CompleteCollectionHeader& other) const
+{
+    return m_common == other.m_common &&
+            m_detail == other.m_detail;
+}
+
 MinimalCollectionHeader::MinimalCollectionHeader()
 {
 }
@@ -2578,6 +2856,11 @@ void MinimalCollectionHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void MinimalCollectionHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_common;
+}
+
+bool MinimalCollectionHeader::operator==(const MinimalCollectionHeader& other) const
+{
+    return m_common == other.m_common;
 }
 
 CompleteSequenceType::CompleteSequenceType()
@@ -2656,6 +2939,13 @@ void CompleteSequenceType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_element;
 }
 
+bool CompleteSequenceType::operator==(const CompleteSequenceType& other) const
+{
+    return m_collection_flag == other.m_collection_flag &&
+            m_header == other.m_header &&
+            m_element == other.m_element;
+}
+
 MinimalSequenceType::MinimalSequenceType()
 {
 }
@@ -2732,6 +3022,13 @@ void MinimalSequenceType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_element;
 }
 
+bool MinimalSequenceType::operator==(const MinimalSequenceType& other) const
+{
+    return m_collection_flag == other.m_collection_flag &&
+            m_header == other.m_header &&
+            m_element == other.m_element;
+}
+
 CommonArrayHeader::CommonArrayHeader()
 {
 }
@@ -2785,6 +3082,11 @@ void CommonArrayHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void CommonArrayHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_bound_seq;
+}
+
+bool CommonArrayHeader::operator==(const CommonArrayHeader& other) const
+{
+    return compareSequence(m_bound_seq, other.m_bound_seq);
 }
 
 CompleteArrayHeader::CompleteArrayHeader()
@@ -2845,6 +3147,12 @@ void CompleteArrayHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
+bool CompleteArrayHeader::operator==(const CompleteArrayHeader& other) const
+{
+    return m_common == other.m_common &&
+            m_detail == other.m_detail;
+}
+
 MinimalArrayHeader::MinimalArrayHeader()
 {
 }
@@ -2894,6 +3202,11 @@ void MinimalArrayHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void MinimalArrayHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_common;
+}
+
+bool MinimalArrayHeader::operator==(const MinimalArrayHeader& other) const
+{
+    return m_common == other.m_common;
 }
 
 CompleteArrayType::CompleteArrayType()
@@ -2961,6 +3274,13 @@ void CompleteArrayType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_element;
 }
 
+bool CompleteArrayType::operator==(const CompleteArrayType& other) const
+{
+    return m_collection_flag == other.m_collection_flag &&
+            m_header == other.m_header &&
+            m_element == other.m_element;
+}
+
 MinimalArrayType::MinimalArrayType()
 {
 }
@@ -3024,6 +3344,13 @@ void MinimalArrayType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_collection_flag;
     dcdr >> m_header;
     dcdr >> m_element;
+}
+
+bool MinimalArrayType::operator==(const MinimalArrayType& other) const
+{
+    return m_collection_flag == other.m_collection_flag &&
+            m_header == other.m_header &&
+            m_element == other.m_element;
 }
 
 CompleteMapType::CompleteMapType()
@@ -3098,6 +3425,14 @@ void CompleteMapType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_element;
 }
 
+bool CompleteMapType::operator==(const CompleteMapType& other) const
+{
+    return m_collection_flag == other.m_collection_flag &&
+            m_header == other.m_header &&
+            m_key == other.m_key &&
+            m_element == other.m_element;
+}
+
 MinimalMapType::MinimalMapType()
 {
 }
@@ -3170,6 +3505,14 @@ void MinimalMapType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_element;
 }
 
+bool MinimalMapType::operator==(const MinimalMapType& other) const
+{
+    return m_collection_flag == other.m_collection_flag &&
+            m_header == other.m_header &&
+            m_key == other.m_key &&
+            m_element == other.m_element;
+}
+
 CommonEnumeratedLiteral::CommonEnumeratedLiteral()
 {
 }
@@ -3226,6 +3569,12 @@ void CommonEnumeratedLiteral::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_value;
     dcdr >> m_flags;
+}
+
+bool CommonEnumeratedLiteral::operator==(const CommonEnumeratedLiteral& other) const
+{
+    return m_value == other.m_value &&
+            m_flags == other.m_flags;
 }
 
 CompleteEnumeratedLiteral::CompleteEnumeratedLiteral()
@@ -3286,6 +3635,12 @@ void CompleteEnumeratedLiteral::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
+bool CompleteEnumeratedLiteral::operator==(const CompleteEnumeratedLiteral& other) const
+{
+    return m_common == other.m_common &&
+            m_detail == other.m_detail;
+}
+
 MinimalEnumeratedLiteral::MinimalEnumeratedLiteral()
 {
 }
@@ -3344,6 +3699,12 @@ void MinimalEnumeratedLiteral::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
+bool MinimalEnumeratedLiteral::operator==(const MinimalEnumeratedLiteral& other) const
+{
+    return m_common == other.m_common &&
+            m_detail == other.m_detail;
+}
+
 CommonEnumeratedHeader::CommonEnumeratedHeader()
 {
 }
@@ -3393,6 +3754,11 @@ void CommonEnumeratedHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void CommonEnumeratedHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_bit_bound;
+}
+
+bool CommonEnumeratedHeader::operator==(const CommonEnumeratedHeader& other) const
+{
+    return m_bit_bound == other.m_bit_bound;
 }
 
 CompleteEnumeratedHeader::CompleteEnumeratedHeader()
@@ -3453,6 +3819,12 @@ void CompleteEnumeratedHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
+bool CompleteEnumeratedHeader::operator==(const CompleteEnumeratedHeader& other) const
+{
+    return m_common == other.m_common &&
+            m_detail == other.m_detail;
+}
+
 MinimalEnumeratedHeader::MinimalEnumeratedHeader()
 {
 }
@@ -3502,6 +3874,11 @@ void MinimalEnumeratedHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void MinimalEnumeratedHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_common;
+}
+
+bool MinimalEnumeratedHeader::operator==(const MinimalEnumeratedHeader& other) const
+{
+    return m_common == other.m_common;
 }
 
 CompleteEnumeratedType::CompleteEnumeratedType()
@@ -3574,6 +3951,16 @@ void CompleteEnumeratedType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_literal_seq;
 }
 
+bool CompleteEnumeratedType::operator==(const CompleteEnumeratedType& other) const
+{
+    if(m_enum_flags == other.m_enum_flags &&
+        m_header == other.m_header)
+    {
+        return compareSequence(m_literal_seq, other.m_literal_seq);
+    }
+    return false;
+}
+
 MinimalEnumeratedType::MinimalEnumeratedType()
 {
 }
@@ -3644,6 +4031,16 @@ void MinimalEnumeratedType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_literal_seq;
 }
 
+bool MinimalEnumeratedType::operator==(const MinimalEnumeratedType& other) const
+{
+    if(m_enum_flags == other.m_enum_flags &&
+        m_header == other.m_header)
+    {
+        return compareSequence(m_literal_seq, other.m_literal_seq);
+    }
+    return false;
+}
+
 CommonBitflag::CommonBitflag()
 {
 }
@@ -3700,6 +4097,12 @@ void CommonBitflag::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_position;
     dcdr >> m_flags;
+}
+
+bool CommonBitflag::operator==(const CommonBitflag& other) const
+{
+    return m_position == other.m_position &&
+            m_flags == other.m_flags;
 }
 
 CompleteBitflag::CompleteBitflag()
@@ -3760,6 +4163,12 @@ void CompleteBitflag::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
+bool CompleteBitflag::operator==(const CompleteBitflag& other) const
+{
+    return m_common == other.m_common &&
+            m_detail == other.m_detail;
+}
+
 MinimalBitflag::MinimalBitflag()
 {
 }
@@ -3818,6 +4227,12 @@ void MinimalBitflag::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_detail;
 }
 
+bool MinimalBitflag::operator==(const MinimalBitflag& other) const
+{
+    return m_common == other.m_common &&
+            m_detail == other.m_detail;
+}
+
 CommonBitmaskHeader::CommonBitmaskHeader()
 {
 }
@@ -3867,6 +4282,11 @@ void CommonBitmaskHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 void CommonBitmaskHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_bit_bound;
+}
+
+bool CommonBitmaskHeader::operator==(const CommonBitmaskHeader& other) const
+{
+    return m_bit_bound == other.m_bit_bound;
 }
 
 CompleteBitmaskType::CompleteBitmaskType()
@@ -3939,6 +4359,16 @@ void CompleteBitmaskType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_flag_seq;
 }
 
+bool CompleteBitmaskType::operator==(const CompleteBitmaskType& other) const
+{
+    if(m_bitmask_flags == other.m_bitmask_flags &&
+        m_header == other.m_header)
+    {
+        return compareSequence(m_flag_seq, other.m_flag_seq);
+    }
+    return false;
+}
+
 MinimalBitmaskType::MinimalBitmaskType()
 {
 }
@@ -4007,6 +4437,16 @@ void MinimalBitmaskType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_bitmask_flags;
     dcdr >> m_header;
     dcdr >> m_flag_seq;
+}
+
+bool MinimalBitmaskType::operator==(const MinimalBitmaskType& other) const
+{
+    if(m_bitmask_flags == other.m_bitmask_flags &&
+        m_header == other.m_header)
+    {
+        return compareSequence(m_flag_seq, other.m_flag_seq);
+    }
+    return false;
 }
 
 CommonBitfield::CommonBitfield()
@@ -4081,6 +4521,14 @@ void CommonBitfield::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_holder_type;
 }
 
+bool CommonBitfield::operator==(const CommonBitfield& other) const
+{
+    return m_position == other.m_position &&
+            m_flags == other.m_flags &&
+            m_bitcount == other.m_bitcount &&
+            m_holder_type == other.m_holder_type;
+}
+
 CompleteBitfield::CompleteBitfield()
 {
 }
@@ -4137,6 +4585,12 @@ void CompleteBitfield::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_common;
     dcdr >> m_detail;
+}
+
+bool CompleteBitfield::operator==(const CompleteBitfield& other) const
+{
+    return m_common == other.m_common &&
+            m_detail == other.m_detail;
 }
 
 MinimalBitfield::MinimalBitfield()
@@ -4197,6 +4651,12 @@ void MinimalBitfield::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_name_hash;
 }
 
+bool MinimalBitfield::operator==(const MinimalBitfield& other) const
+{
+    return m_common == other.m_common &&
+            m_name_hash == other.m_name_hash;
+}
+
 CompleteBitsetHeader::CompleteBitsetHeader()
 {
 }
@@ -4208,16 +4668,19 @@ CompleteBitsetHeader::~CompleteBitsetHeader()
 CompleteBitsetHeader::CompleteBitsetHeader(const CompleteBitsetHeader &x)
 {
     m_detail = x.m_detail;
+    m_base_type = x.m_base_type;
 }
 
 CompleteBitsetHeader::CompleteBitsetHeader(CompleteBitsetHeader &&x)
 {
     m_detail = std::move(x.m_detail);
+    m_base_type = std::move(x.m_base_type);
 }
 
 CompleteBitsetHeader& CompleteBitsetHeader::operator=(const CompleteBitsetHeader &x)
 {
     m_detail = x.m_detail;
+    m_base_type = x.m_base_type;
 
     return *this;
 }
@@ -4225,6 +4688,7 @@ CompleteBitsetHeader& CompleteBitsetHeader::operator=(const CompleteBitsetHeader
 CompleteBitsetHeader& CompleteBitsetHeader::operator=(CompleteBitsetHeader &&x)
 {
     m_detail = std::move(x.m_detail);
+    m_base_type = std::move(x.m_base_type);
 
     return *this;
 }
@@ -4233,6 +4697,7 @@ size_t CompleteBitsetHeader::getCdrSerializedSize(const CompleteBitsetHeader& da
 {
     size_t initial_alignment = current_alignment;
 
+    current_alignment += TypeIdentifier::getCdrSerializedSize(data.base_type(), current_alignment);
     current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
 
     return current_alignment - initial_alignment;
@@ -4240,12 +4705,20 @@ size_t CompleteBitsetHeader::getCdrSerializedSize(const CompleteBitsetHeader& da
 
 void CompleteBitsetHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
+    scdr << m_base_type;
     scdr << m_detail;
 }
 
 void CompleteBitsetHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
+    dcdr >> m_base_type;
     dcdr >> m_detail;
+}
+
+bool CompleteBitsetHeader::operator==(const CompleteBitsetHeader& other) const
+{
+    return m_base_type == other.m_base_type &&
+            m_detail == other.m_detail;
 }
 
 MinimalBitsetHeader::MinimalBitsetHeader()
@@ -4256,37 +4729,50 @@ MinimalBitsetHeader::~MinimalBitsetHeader()
 {
 }
 
-MinimalBitsetHeader::MinimalBitsetHeader(const MinimalBitsetHeader &)
+MinimalBitsetHeader::MinimalBitsetHeader(const MinimalBitsetHeader &x)
 {
+    m_base_type = x.m_base_type;
 }
 
-MinimalBitsetHeader::MinimalBitsetHeader(MinimalBitsetHeader &&)
+MinimalBitsetHeader::MinimalBitsetHeader(MinimalBitsetHeader &&x)
 {
+    m_base_type = std::move(x.m_base_type);
 }
 
-MinimalBitsetHeader& MinimalBitsetHeader::operator=(const MinimalBitsetHeader &)
+MinimalBitsetHeader& MinimalBitsetHeader::operator=(const MinimalBitsetHeader &x)
 {
+    m_base_type = x.m_base_type;
     return *this;
 }
 
-MinimalBitsetHeader& MinimalBitsetHeader::operator=(MinimalBitsetHeader &&)
+MinimalBitsetHeader& MinimalBitsetHeader::operator=(MinimalBitsetHeader &&x)
 {
+    m_base_type = std::move(x.m_base_type);
     return *this;
 }
 
-size_t MinimalBitsetHeader::getCdrSerializedSize(const MinimalBitsetHeader& , size_t current_alignment)
+size_t MinimalBitsetHeader::getCdrSerializedSize(const MinimalBitsetHeader& data, size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
+
+    current_alignment += TypeIdentifier::getCdrSerializedSize(data.base_type(), current_alignment);
 
     return current_alignment - initial_alignment;
 }
 
-void MinimalBitsetHeader::serialize(eprosima::fastcdr::Cdr &) const
+void MinimalBitsetHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
+    scdr << m_base_type;
 }
 
-void MinimalBitsetHeader::deserialize(eprosima::fastcdr::Cdr &)
+void MinimalBitsetHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
+    dcdr >> m_base_type;
+}
+
+bool MinimalBitsetHeader::operator==(const MinimalBitsetHeader& other) const
+{
+    return m_base_type == other.m_base_type;
 }
 
 CompleteBitsetType::CompleteBitsetType()
@@ -4359,6 +4845,16 @@ void CompleteBitsetType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_field_seq;
 }
 
+bool CompleteBitsetType::operator==(const CompleteBitsetType& other) const
+{
+    if(m_bitset_flags == other.m_bitset_flags &&
+        m_header == other.m_header)
+    {
+        return compareSequence(m_field_seq, other.m_field_seq);
+    }
+    return false;
+}
+
 MinimalBitsetType::MinimalBitsetType()
 {
 }
@@ -4427,6 +4923,16 @@ void MinimalBitsetType::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_bitset_flags;
     dcdr >> m_header;
     dcdr >> m_field_seq;
+}
+
+bool MinimalBitsetType::operator==(const MinimalBitsetType& other) const
+{
+    if(m_bitset_flags == other.m_bitset_flags &&
+        m_header == other.m_header)
+    {
+        return compareSequence(m_field_seq, other.m_field_seq);
+    }
+    return false;
 }
 
 CompleteExtendedType::CompleteExtendedType()
@@ -5627,6 +6133,50 @@ void CompleteTypeObject::deserialize(eprosima::fastcdr::Cdr &cdr)
     }
 }
 
+bool CompleteTypeObject::operator==(const CompleteTypeObject& other) const
+{
+    if (m__d == other.m__d)
+    {
+        switch(m__d)
+        {
+            case TK_ALIAS:
+            return m_alias_type == other.m_alias_type;
+            break;
+            case TK_ANNOTATION:
+            return m_annotation_type == other.m_annotation_type;
+            break;
+            case TK_STRUCTURE:
+            return m_struct_type == other.m_struct_type;
+            break;
+            case TK_UNION:
+            return m_union_type == other.m_union_type;
+            break;
+            case TK_BITSET:
+            return m_bitset_type == other.m_bitset_type;
+            break;
+            case TK_SEQUENCE:
+            return m_sequence_type == other.m_sequence_type;
+            break;
+            case TK_ARRAY:
+            return m_array_type == other.m_array_type;
+            break;
+            case TK_MAP:
+            return m_map_type == other.m_map_type;
+            break;
+            case TK_ENUM:
+            return m_enumerated_type == other.m_enumerated_type;
+            break;
+            case TK_BITMASK:
+            return m_bitmask_type == other.m_bitmask_type;
+            break;
+            default:
+            return m_extended_type == other.m_extended_type;
+            break;
+        }
+    }
+    return false;
+}
+
 /****************************************************************************************************************/
 
 MinimalTypeObject::MinimalTypeObject()
@@ -6499,6 +7049,50 @@ void MinimalTypeObject::deserialize(eprosima::fastcdr::Cdr &cdr)
     }
 }
 
+bool MinimalTypeObject::operator==(const MinimalTypeObject& other) const
+{
+    if (m__d == other.m__d)
+    {
+        switch(m__d)
+        {
+            case TK_ALIAS:
+            return m_alias_type == other.m_alias_type;
+            break;
+            case TK_ANNOTATION:
+            return m_annotation_type == other.m_annotation_type;
+            break;
+            case TK_STRUCTURE:
+            return m_struct_type == other.m_struct_type;
+            break;
+            case TK_UNION:
+            return m_union_type == other.m_union_type;
+            break;
+            case TK_BITSET:
+            return m_bitset_type == other.m_bitset_type;
+            break;
+            case TK_SEQUENCE:
+            return m_sequence_type == other.m_sequence_type;
+            break;
+            case TK_ARRAY:
+            return m_array_type == other.m_array_type;
+            break;
+            case TK_MAP:
+            return m_map_type == other.m_map_type;
+            break;
+            case TK_ENUM:
+            return m_enumerated_type == other.m_enumerated_type;
+            break;
+            case TK_BITMASK:
+            return m_bitmask_type == other.m_bitmask_type;
+            break;
+            default:
+            return m_extended_type == other.m_extended_type;
+            break;
+        }
+    }
+    return false;
+}
+
 TypeObject::TypeObject()
 {
     m__d = 0x00; // Default
@@ -6785,6 +7379,25 @@ void TypeObject::deserialize(eprosima::fastcdr::Cdr &dcdr)
         default:
         break;
     }
+}
+
+bool TypeObject::operator==(const TypeObject& other) const
+{
+    if (m__d == other.m__d)
+    {
+        switch(m__d)
+        {
+            case EK_COMPLETE:
+            return m_complete == other.m_complete;
+            break;
+            case EK_MINIMAL:
+            return m_minimal == other.m_minimal;
+            break;
+            default:
+            break;
+        }
+    }
+    return false;
 }
 
 TypeInformation::TypeInformation()

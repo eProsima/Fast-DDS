@@ -22,9 +22,9 @@
 #include "fastrtps/log/Colors.h"
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-using namespace eprosima;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::types;
 
 
 uint32_t datassub[] = {12,28,60,124,252,508,1020,2044,4092,8188,16380};
@@ -85,17 +85,17 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     if (dynamic_data)
     {
         // Create basic builders
-        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::GetInstance()->CreateStructBuilder());
+        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
 
         // Add members to the struct.
-        struct_type_builder->AddMember(0, "seqnum", DynamicTypeBuilderFactory::GetInstance()->CreateUint32Type());
-        struct_type_builder->AddMember(1, "data",
-            DynamicTypeBuilderFactory::GetInstance()->CreateSequenceBuilder(
-                DynamicTypeBuilderFactory::GetInstance()->CreateByteType(), data_size_sub.back()
+        struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
+        struct_type_builder->add_member(1, "data",
+            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), data_size_sub.back()
             ));
-        struct_type_builder->SetName("LatencyType");
+        struct_type_builder->set_name("LatencyType");
 
-        m_pDynType = struct_type_builder->Build();
+        m_pDynType = struct_type_builder->build();
         m_DynType.SetDynamicType(m_pDynType);
     }
 
@@ -166,7 +166,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     pt << pid << "_SUB2PUB";
     PubDataparam.topic.topicName = pt.str();
     PubDataparam.times.heartbeatPeriod.seconds = 0;
-    PubDataparam.times.heartbeatPeriod.fraction = 4294967 * 100;
+    PubDataparam.times.heartbeatPeriod.nanosec = 100000000;
 
     if (!reliable)
     {
@@ -439,16 +439,16 @@ bool LatencyTestSubscriber::test(uint32_t datasize)
     cout << "Preparing test with data size: " << datasize + 4 << endl;
     if (dynamic_data)
     {
-        m_DynData = DynamicDataFactory::GetInstance()->CreateData(m_pDynType);
+        m_DynData = DynamicDataFactory::get_instance()->create_data(m_pDynType);
 
         MemberId id;
-        DynamicData *my_data = m_DynData->LoanValue(m_DynData->GetMemberIdAtIndex(1));
+        DynamicData *my_data = m_DynData->loan_value(m_DynData->get_member_id_at_index(1));
         for (uint32_t i = 0; i < datasize; ++i)
         {
-            my_data->InsertSequenceData(id);
-            my_data->SetByteValue(0, id);
+            my_data->insert_sequence_data(id);
+            my_data->set_byte_value(0, id);
         }
-        m_DynData->ReturnLoanedValue(my_data);
+        m_DynData->return_loaned_value(my_data);
     }
     else
     {
@@ -482,7 +482,7 @@ bool LatencyTestSubscriber::test(uint32_t datasize)
     //cout << "REMOVED: "<< removed<<endl;
     if (dynamic_data)
     {
-        DynamicDataFactory::GetInstance()->DeleteData(m_DynData);
+        DynamicDataFactory::get_instance()->delete_data(m_DynData);
     }
     else
     {

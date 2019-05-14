@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds>
+    <profiles>
+	<transport_descriptors>
+	    <transport_descriptor>
+	        <transport_id>Test</transport_id>
+	        <type>UDPv4</type>
+        	<sendBufferSize>8192</sendBufferSize>
+	        <receiveBufferSize>8192</receiveBufferSize>
+        	<TTL>250</TTL>
+        	<non_blocking_send>true</non_blocking_send>
+        	<maxMessageSize>16384</maxMessageSize>
+	        <maxInitialPeersRange>100</maxInitialPeersRange>
+        	<interfaceWhiteList>
+        	    <address>192.168.1.41</address>
+        	    <address>127.0.0.1</address>
+        	</interfaceWhiteList>
+        	<output_port>5101</output_port>
+	    </transport_descriptor>
+	</transport_descriptors>
+    </profiles>
+</dds>

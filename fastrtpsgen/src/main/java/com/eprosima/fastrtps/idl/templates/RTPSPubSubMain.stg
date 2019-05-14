@@ -1,0 +1,125 @@
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+group ProtocolHeader;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "PubSubMain.cpp"], description=["This file acts as a main entry point to the application."])$
+
+
+#include "$ctx.filename$Publisher.h"
+#include "$ctx.filename$Subscriber.h"
+
+
+#include <fastrtps/Domain.h>
+
+using namespace eprosima;
+using namespace eprosima::fastrtps;
+
+int main(int argc, char** argv)
+{
+	int type = 0;
+
+	if (argc == 2)
+	{
+		if (strcmp(argv[1], "publisher") == 0)
+		{
+			type = 1;
+		}
+		else if (strcmp(argv[1], "subscriber") == 0)
+		{
+			type = 2;
+		}
+	}
+
+	if (type==0)
+	{
+		std::cout << "Error: Incorrect arguments." << std::endl;
+        	std::cout << "Usage: " << std::endl << std::endl;
+		std::cout << argv[0] << " publisher|subscriber" << std::endl << std::endl;
+		return 0;
+	}
+
+	std::cout << "Starting " << std::endl;
+
+	// Register the type being used
+
+	switch(type)
+	{
+		case 1:
+		{
+			$ctx.filename$Publisher mypub;
+			if (mypub.init())
+			{
+				mypub.run();
+			}
+			break;
+		}
+		case 2:
+		{
+			$ctx.filename$Subscriber mysub;
+			if (mysub.init())
+			{
+				mysub.run();
+			}
+			break;
+		}
+	}
+
+	return 0;
+}
+
+>>
+
+module(ctx, parent, module, definition_list) ::= <<
+$definition_list$
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+
+>>
+
+annotation(ctx, annotation) ::= <<>>
+
+interface(ctx, parent, interface, export_list) ::= <<
+$export_list$
+>>
+
+export_list(exports) ::= <<
+$exports; separator="\n"$
+
+>>
+
+exception(ctx, parent, exception) ::= <<>>
+
+operation(ctx, parent, operation, param_list) ::= <<>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, parent, const) ::= <<>>
+
+typedef_decl(ctx, parent, typedefs) ::= <<>>
+
+struct_type(ctx, parent, struct) ::= <<>>
+
+union_type(ctx, parent, union) ::= <<>>
+
+enum_type(ctx, parent, enum) ::= <<>>
+
+bitmask_type(ctx, parent, bitmask) ::= <<>>
+
+bitset_type(ctx, parent, bitset) ::= <<>>

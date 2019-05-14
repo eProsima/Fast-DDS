@@ -47,38 +47,41 @@ struct CacheChange_t;
  */
 class WLPListener: public ReaderListener {
 public:
-	/**
-	 * Constructor
-	 * @param pwlp Pointer to the WLP object.
-	 */
-	WLPListener(WLP* pwlp);
-	virtual ~WLPListener();
+    /**
+     * Constructor
+     * @param pwlp Pointer to the WLP object.
+     */
+    WLPListener(WLP* pwlp);
+    virtual ~WLPListener();
 
-	/**
-	*
-	* @param reader
-	* @param change
-	*/
-	void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const  change);
-	/**
-	* Separate the Key between the GuidPrefix_t and the liveliness Kind
-	* @param key InstanceHandle_t to separate.
-	* @param guidP GuidPrefix_t pointer to store the info.
-	* @param liveliness Liveliness Kind Pointer.
-	* @return True if correctly separated.
-	*/
-	bool separateKey(InstanceHandle_t& key,
-			GuidPrefix_t* guidP,
-			LivelinessQosPolicyKind* liveliness);
-			
-	/**
-	* Compute the key from a CacheChange_t 
-	* @param change
-	*/
-	bool computeKey(CacheChange_t* change);
-	
+    /**
+    *
+    * @param reader
+    * @param change
+    */
+    void onNewCacheChangeAdded(
+            RTPSReader* reader,
+            const CacheChange_t* const  change) override;
+
+    /**
+    * Separate the Key between the GuidPrefix_t and the liveliness Kind
+    * @param key InstanceHandle_t to separate.
+    * @param guidP GuidPrefix_t pointer to store the info.
+    * @param liveliness Liveliness Kind Pointer.
+    * @return True if correctly separated.
+    */
+    bool separateKey(InstanceHandle_t& key,
+            GuidPrefix_t* guidP,
+            LivelinessQosPolicyKind* liveliness);
+
+    /**
+    * Compute the key from a CacheChange_t
+    * @param change
+    */
+    bool computeKey(CacheChange_t* change);
+
 private:
-	WLP* mp_WLP;
+    WLP* mp_WLP;
 
 };
 

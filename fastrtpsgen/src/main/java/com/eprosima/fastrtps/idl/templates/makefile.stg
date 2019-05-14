@@ -1,0 +1,112 @@
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+group Makefile;
+
+makecxx(solution, example, arch) ::= <<
+CPP= g++
+CPPFLAGS = -c -Wall -fpic $arch$ -O2 -std=c++0x
+LN= g++
+AR=ar
+LDFLAGS= $arch$
+SYSLIBS= -ldl -lnsl -lm -lpthread -lrt
+DEFINES= $solution.defines : {define | -D$define$};separator=" "$
+
+INCLUDES= -I. $solution.includes : {include | -I$include$};separator=" "$
+
+LIBS = $solution.libraryPaths : {path |-L$path$};separator=" "$ $solution.libraries : {library |-l$library$};separator=" "$ \$(shell test -x "\$\$(which pkg-config)" && pkg-config libssl libcrypto --libs --silence-errors) \$(SYSLIBS)
+
+DIRECTORIES= output.dir output/$example$.dir lib.dir lib/$example$.dir bin.dir bin/$example$.dir
+
+all: \$(DIRECTORIES) $solution.projects:{$it.name$ $if(it.hasStruct)$$it.name$PublisherSubscriber$endif$}; separator=" \\\n\t"$
+
+$solution.projects:{
+$it.name$_TARGET= lib/$example$/lib$it.name$.so
+$it.name$_TARGET_Z= lib/$example$/lib$it.name$.a
+
+$if(it.hasStruct)$
+$it.name$_CLIENT_EXAMPLE_TARGET= bin/$example$/$it.name$PublisherSubscriber
+$endif$
+
+$if(solution.isJavaLanguage)$
+$it.name$_JNI_TARGET= lib/$example$/lib$it.name$PubSubJNI.so
+$it.name$_JNI_TARGET_Z= lib/$example$/lib$it.name$PubSubJNI.a
+$endif$
+
+$it.name$_COMMON_SRC_CXXFILES = $it.commonSrcFiles : {srcfile | $srcfile$}; separator=" \\\n\t"$
+
+$it.name$_COMMON_SRC_CPPFILES=
+
+$it.name$_CLIENTSOURCES = $it.projectSrcFiles : {srcfile | $srcfile$}; separator=" \\\n\t"$
+
+$if(solution.isJavaLanguage)$
+$it.name$_JNISOURCES = $it.jniSrcFiles : {srcfile | $srcfile$}; separator=" \\\n\t"$
+$endif$
+
+$it.name$_COMMONOBJS    = \$($it.name$_COMMON_SRC_CXXFILES:%.cxx=output/$example$/%.o) \$($it.name$_COMMON_SRC_CPPFILES:%.cpp=output/$example$/%.o)
+
+$it.name$_CLIENTOBJS    = \$($it.name$_CLIENTSOURCES:%.cxx=output/$example$/%.o)
+
+$if(solution.isJavaLanguage)$
+$it.name$_JNIOBJS    = \$($it.name$_JNISOURCES:%.cxx=output/$example$/%.o)
+$endif$
+
+$it.name$OBJS+= \$($it.name$_COMMONOBJS) \$($it.name$_CLIENTOBJS)$if(solution.isJavaLanguage)$ \$($it.name$_JNI_OBJS)$endif$
+OBJS+= \$($it.name$OBJS)
+
+\$($it.name$_TARGET): \$($it.name$_COMMONOBJS)
+	\$(LN) \$(LDFLAGS) -shared -o \$($it.name$_TARGET) \$($it.name$_COMMONOBJS) \$(LIBS) -Llib/$example$ $it.dependencies : {dep | -l$dep$}; separator=" "$
+
+\$($it.name$_TARGET_Z): \$($it.name$_COMMONOBJS)
+	\$(AR) -cru \$($it.name$_TARGET_Z) \$($it.name$_COMMONOBJS)
+
+$if(solution.isJavaLanguage)$
+\$($it.name$_JNI_TARGET): \$($it.name$_JNIOBJS)
+	\$(LN) \$(LDFLAGS) -shared -o \$($it.name$_JNI_TARGET) \$($it.name$_JNIOBJS) -Llib/$example$ -l$it.name$ \$(LIBS)
+
+\$($it.name$_JNI_TARGET_Z): \$($it.name$_JNIOBJS)
+	\$(AR) -cru \$($it.name$_JNI_TARGET_Z) \$($it.name$_JNIOBJS)
+
+$it.name$JNI : \$($it.name$_JNI_TARGET) \$($it.name$_JNI_TARGET_Z)
+
+$endif$
+
+$if(it.hasStruct)$
+\$($it.name$_CLIENT_EXAMPLE_TARGET): \$($it.name$OBJS) lib/$example$/lib$it.name$.a $it.dependencies : {dep | lib/$example$/lib$dep$.a}; separator=" "$
+	\$(LN) \$(LDFLAGS) -o \$@ \$($it.name$OBJS) -Wl,-Bstatic -Llib/$example$ -l$it.name$ $it.dependencies : {dep | -l$dep$}; separator=" "$ -Wl,-Bdynamic \$(LIBS)
+
+$it.name$PublisherSubscriber : \$($it.name$_CLIENT_EXAMPLE_TARGET)
+$endif$
+
+$it.name$: \$($it.name$_TARGET) \$($it.name$_TARGET_Z) $if(it.hasStruct)$$it.name$PublisherSubscriber$endif$$if(solution.isJavaLanguage)$ $it.name$JNI$endif$}; separator="\n"$
+
+output/$example$/%.o:%.cxx
+	\$(CPP) \$(CPPFLAGS) \$(INCLUDES) \$(DEFINES) -c \$< -o \$@
+
+output/$example$/%.o:%.cpp
+	\$(CPP) \$(CPPFLAGS) \$(INCLUDES) \$(DEFINES) -c \$< -o \$@
+
+.PHONY: $solution.projects:{$it.name$ $if(it.hasStruct)$$it.name$PublisherSubscriber$endif$$if(solution.isJavaLanguage)$ $it.name$JNI$endif$}; separator=" \\\n\t"$
+
+clean:
+	@rm -f \$(OBJS)
+
+%.dir : 
+	@echo "Checking directory \$*"
+	@if [ ! -d \$* ]; then \
+		echo "Making directory \$*"; \
+		mkdir -p \$* ; \
+	fi;
+
+>>

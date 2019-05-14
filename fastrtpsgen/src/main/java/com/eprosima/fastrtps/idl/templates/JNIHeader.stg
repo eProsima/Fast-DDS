@@ -1,0 +1,100 @@
+// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+group JNIHeader;
+
+main(ctx, definitions) ::= <<
+$fileHeader(ctx=ctx,  file=[ctx.filename, "JNII.cxx"], description=[""])$
+
+#include "$ctx.filename$.h"
+#include <jni.h>
+
+#if defined(_WIN32)
+#if defined(EPROSIMA_USER_DLL_EXPORT)
+#define eProsima_user_DllExport __declspec( dllexport )
+#else
+#define eProsima_user_DllExport
+#endif
+#else
+#define eProsima_user_DllExport
+#endif
+
+#if defined(_WIN32)
+#if defined(EPROSIMA_USER_DLL_EXPORT)
+#if defined($ctx.filename;format="toUpper"$_SOURCE)
+#define $ctx.filename;format="toUpper"$_DllAPI __declspec( dllexport )
+#else
+#define $ctx.filename;format="toUpper"$_DllAPI __declspec( dllimport )
+#endif // $ctx.filename;format="toUpper"$_SOURCE
+#else
+#define $ctx.filename;format="toUpper"$_DllAPI
+#endif
+#else
+#define $ctx.filename;format="toUpper"$_DllAPI
+#endif // _WIN32
+
+$definitions; separator="\n"$
+>>
+
+module(ctx, parent, module, definition_list) ::= <<
+$definition_list$
+>>
+
+definition_list(definitions) ::= <<
+$definitions; separator="\n"$
+>>
+
+annotation(ctx, annotation) ::= <<>>
+
+interface(ctx, parent, interface, export_list) ::= <<
+$export_list$
+>>
+
+export_list(exports) ::= <<
+$exports; separator="\n"$
+>>
+
+exception(ctx, parent, exception) ::= <<>>
+
+operation(ctx, parent, operation, param_list) ::= <<>>
+
+param_list(parameters) ::= <<>>
+
+param(parameter) ::= <<>>
+
+const_decl(ctx, parent, const) ::= <<>>
+
+typedef_decl(ctx, parent, typedefs) ::= <<
+$if(typedefs.typedefContentTypeCode.isType_e)$
+eProsima_user_DllExport bool $typedefs.name$_copy(std::vector<$typedefs.contentTypeCode.scopedname$> &dst, jobject src, JNIEnv *env);
+
+eProsima_user_DllExport bool $typedefs.name$_copy(jobject dst, std::vector<$typedefs.contentTypeCode.scopedname$> &src, JNIEnv *env);
+
+$endif$
+
+>>
+
+struct_type(ctx, parent, struct) ::= <<
+eProsima_user_DllExport bool $struct.name$_copy($struct.scopedname$ &dst, jobject src, JNIEnv *env);
+
+eProsima_user_DllExport bool $struct.name$_copy(jobject dst, $struct.scopedname$ &src, JNIEnv *env);
+>>
+
+union_type(ctx, parent, union) ::= <<>>
+
+enum_type(ctx, parent, enum) ::= <<>>
+
+bitmask_type(ctx, parent, bitmask) ::= <<>>
+
+bitset_type(ctx, parent, bitset) ::= <<>>

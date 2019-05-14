@@ -41,7 +41,9 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in)
+void EDPSimplePUBListener::onNewCacheChangeAdded(
+        RTPSReader* reader,
+        const CacheChange_t * const change_in)
 {
     CacheChange_t* change = (CacheChange_t*)change_in;
     //std::lock_guard<std::recursive_mutex> guard(*this->sedp_->publications_reader_.first->getMutex());
@@ -79,12 +81,12 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
             if(this->sedp_->mp_PDP->addWriterProxyData(&writerProxyData, pdata)) //ADDED NEW DATA
             {
                 // At this point we can release reader lock, cause change is not used
-                reader->getMutex()->unlock();
+                reader->getMutex().unlock();
 
                 sedp_->pairing_writer_proxy_with_any_local_reader(&pdata, &writerProxyData);
 
                 // Take again the reader lock.
-                reader->getMutex()->lock();
+                reader->getMutex().lock();
             }
             else //NOT ADDED BECAUSE IT WAS ALREADY THERE
             {
@@ -117,7 +119,9 @@ bool EDPSimpleSUBListener::computeKey(CacheChange_t* change)
     return ParameterList::readInstanceHandleFromCDRMsg(change, PID_ENDPOINT_GUID);
 }
 
-void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in)
+void EDPSimpleSUBListener::onNewCacheChangeAdded(
+        RTPSReader* reader,
+        const CacheChange_t * const change_in)
 {
     CacheChange_t* change = (CacheChange_t*)change_in;
     //std::lock_guard<std::recursive_mutex> guard(*this->sedp_->subscriptions_reader_.first->getMutex());
@@ -155,12 +159,12 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
             if(this->sedp_->mp_PDP->addReaderProxyData(&readerProxyData, pdata)) //ADDED NEW DATA
             {
                 // At this point we can release reader lock, cause change is not used
-                reader->getMutex()->unlock();
+                reader->getMutex().unlock();
 
                 sedp_->pairing_reader_proxy_with_any_local_writer(&pdata, &readerProxyData);
 
                 // Take again the reader lock.
-                reader->getMutex()->lock();
+                reader->getMutex().lock();
             }
             else
             {

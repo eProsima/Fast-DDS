@@ -150,7 +150,7 @@ bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind reliabili
             Domain::registerType(mp_participant, &m_dynType);
             break;
         }
-        m_DynamicData->SetUint32Value(0, 0);
+        m_DynamicData->set_uint32_value(0, 0);
     }
     else*/
     {
@@ -209,7 +209,7 @@ bool BenchMarkSubscriber::init(int transport, ReliabilityQosPolicyKind reliabili
     Wparam.topic.resourceLimitsQos.max_samples = 1;
     Wparam.topic.resourceLimitsQos.allocated_samples = 1;
     Wparam.times.heartbeatPeriod.seconds = 2;
-    Wparam.times.heartbeatPeriod.fraction = 200 * 1000 * 1000;
+    Wparam.times.heartbeatPeriod.nanosec = 200 * 1000 * 1000;
     Wparam.qos.m_reliability.kind = reliabilityKind;
 	Wparam.qos.m_publishMode.kind = ASYNCHRONOUS_PUBLISH_MODE;
     //Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
@@ -283,7 +283,7 @@ void BenchMarkSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
         {
             if (m_info.sampleKind == ALIVE)
             {
-                mParent->m_DynamicData->SetUint32Value(mParent->m_DynamicData->GetUint32Value(0) + 1, 0);
+                mParent->m_DynamicData->set_uint32_value(mParent->m_DynamicData->get_uint32_value(0) + 1, 0);
                 mParent->mp_publisher->write((void*)mParent->m_DynamicData.get());
             }
         }

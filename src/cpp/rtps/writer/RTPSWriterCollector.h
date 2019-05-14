@@ -78,12 +78,12 @@ class RTPSWriterCollector
         {
             if(change->getFragmentSize() > 0)
             {
-                for(auto sn = optionalFragmentsNotSent.get_begin(); sn != optionalFragmentsNotSent.get_end(); ++sn)
+                optionalFragmentsNotSent.for_each([this, change, remoteReader](FragmentNumber_t sn)
                 {
-                    assert(*sn <= change->getDataFragments()->size());
-                    auto it = mItems_.emplace(change->sequenceNumber, *sn, change);
+                    assert(sn <= change->getDataFragments()->size());
+                    auto it = mItems_.emplace(change->sequenceNumber, sn, change);
                     it.first->remoteReaders.push_back(remoteReader);
-                }
+                });
             }
             else
             {

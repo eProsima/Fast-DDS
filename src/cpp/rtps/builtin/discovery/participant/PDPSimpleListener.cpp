@@ -42,9 +42,9 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-
-
-void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in)
+void PDPSimpleListener::onNewCacheChangeAdded(
+        RTPSReader* reader,
+        const CacheChange_t * const change_in)
 {
     CacheChange_t* change = (CacheChange_t*)(change_in);
     logInfo(RTPS_PDP,"SPDP Message received");
@@ -75,7 +75,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             }
 
             // At this point we can release reader lock.
-            reader->getMutex()->unlock();
+            reader->getMutex().unlock();
 
             //LOOK IF IS AN UPDATED INFORMATION
             ParticipantProxyData* pdata = nullptr;
@@ -100,7 +100,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
                 pdata->isAlive = true;
                 pdata->mp_leaseDurationTimer = new RemoteParticipantLeaseDuration(mp_SPDP,
                         pdata,
-                        TimeConv::Time_t2MilliSecondsDouble(pdata->m_leaseDuration));
+                        TimeConv::Duration_t2MilliSecondsDouble(pdata->m_leaseDuration));
                 pdata->mp_leaseDurationTimer->restart_timer();
                 this->mp_SPDP->m_participantProxies.push_back(pdata);
                 lock.unlock();
@@ -129,7 +129,7 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             }
 
             // Take again the reader lock
-            reader->getMutex()->lock();
+            reader->getMutex().lock();
         }
     }
     else
@@ -149,6 +149,8 @@ void PDPSimpleListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             {
                 listener->onParticipantDiscovery(this->mp_SPDP->getRTPSParticipant()->getUserRTPSParticipant(), std::move(info));
             }
+
+            return; // change already removed from history
         }
     }
 

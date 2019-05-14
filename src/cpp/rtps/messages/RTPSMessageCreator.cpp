@@ -21,7 +21,6 @@
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/qos/ParameterList.h>
 #include <fastrtps/utils/eClock.h>
-#include <fastrtps/rtps/messages/CDRMessagePool.h>
 
 #include <fastrtps/log/Log.h>
 
@@ -32,7 +31,6 @@ namespace fastrtps{
 namespace rtps{
 
 // Auxiliary message to avoid creation of new messages each time.
-CDRMessagePool g_pool_submsg(100);
 eClock g_clock;
 
 
@@ -74,12 +72,16 @@ bool RTPSMessageCreator::addCustomContent(CDRMessage_t*msg, const octet* content
 {
     CDRMessage::addData(msg, content, static_cast<uint32_t>(contentSize));
     msg->length = msg->pos;
-	
+
     return true;
 }
 
-bool RTPSMessageCreator::addSubmessageHeader(CDRMessage_t* msg,
-        octet id,octet flags,uint16_t size) {
+bool RTPSMessageCreator::addSubmessageHeader(
+        CDRMessage_t* msg,
+        octet id,
+        octet flags,
+        uint16_t size)
+{
     CDRMessage::addOctet(msg,id);
     CDRMessage::addOctet(msg,flags);
     CDRMessage::addUInt16(msg, size);
@@ -88,7 +90,10 @@ bool RTPSMessageCreator::addSubmessageHeader(CDRMessage_t* msg,
     return true;
 }
 
-bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool invalidateFlag)
+bool RTPSMessageCreator::addSubmessageInfoTS(
+        CDRMessage_t* msg,
+        const Time_t &time,
+        bool invalidateFlag)
 {
     octet flags = 0x0;
     uint16_t size = 8;
@@ -110,14 +115,14 @@ bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool
     CDRMessage::addUInt16(msg, size);
     if(!invalidateFlag)
     {
-        CDRMessage::addInt32(msg,time.seconds);
-        CDRMessage::addUInt32(msg,time.fraction);
+        CDRMessage::addInt32(msg, time.seconds());
+        CDRMessage::addUInt32(msg, time.fraction());
     }
 
     return true;
 }
 
-bool RTPSMessageCreator::addSubmessageInfoSRC(CDRMessage_t* msg, const ProtocolVersion_t& version, 
+bool RTPSMessageCreator::addSubmessageInfoSRC(CDRMessage_t* msg, const ProtocolVersion_t& version,
     const VendorId_t& vendorId, const GuidPrefix_t& guidPrefix)
 {
     octet flags = 0x0;

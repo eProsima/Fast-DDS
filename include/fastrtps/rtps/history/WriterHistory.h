@@ -64,7 +64,9 @@ class WriterHistory : public History
      * @param wparams Extra write parameters.
      * @return True if added.
      */
-    RTPS_DllAPI bool add_change(CacheChange_t* a_change, WriteParams &wparams);
+    RTPS_DllAPI bool add_change(
+            CacheChange_t* a_change,
+            WriteParams &wparams);
 
     /**
      * Remove a specific change from the history.
@@ -88,6 +90,11 @@ class WriterHistory : public History
     RTPS_DllAPI SequenceNumber_t next_sequence_number() const { return m_lastCacheChangeSeqNum + 1; }
 
     protected:
+
+    bool add_change_(CacheChange_t* a_change, WriteParams &wparams,
+            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time
+                = std::chrono::steady_clock::now() + std::chrono::hours(24));
+
     //!Last CacheChange Sequence Number added to the History.
     SequenceNumber_t m_lastCacheChangeSeqNum;
     //!Pointer to the associated RTPSWriter;

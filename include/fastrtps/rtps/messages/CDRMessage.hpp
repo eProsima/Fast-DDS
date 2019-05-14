@@ -153,63 +153,51 @@ inline bool CDRMessage::readSequenceNumber(CDRMessage_t* msg,SequenceNumber_t* s
     return true;
 }
 
-inline bool CDRMessage::readSequenceNumberSet(CDRMessage_t* msg,SequenceNumberSet_t* sns)
+inline SequenceNumberSet_t CDRMessage::readSequenceNumberSet(CDRMessage_t* msg)
 {
     bool valid = true;
-    valid &=CDRMessage::readSequenceNumber(msg,&sns->base);
+
+    SequenceNumber_t seqNum;
+    valid &=CDRMessage::readSequenceNumber(msg,&seqNum);
+    SequenceNumberSet_t sns(seqNum);
     uint32_t numBits = 0;
     valid &=CDRMessage::readUInt32(msg,&numBits);
-    int32_t bitmap;
-    SequenceNumber_t seqNum;
-    for(uint32_t i=0;i<(numBits+31)/32;++i)
+    uint32_t n_longs = (numBits + 31ul) / 32ul;
+    uint32_t bitmap[8];
+    for(uint32_t i=0;i<n_longs;++i)
     {
-        valid &= CDRMessage::readInt32(msg,&bitmap);
-        for(uint8_t bit=0;bit<32;++bit)
-        {
-            if((bitmap & (1<<(31-bit%32)))==(1<<(31-bit%32)))
-            {
-                seqNum = sns->base+(i*32+bit);
-                if(!sns->add(seqNum))
-                {
-                    return false;
-                }
-            }
-        }
+        valid &= CDRMessage::readUInt32(msg,&bitmap[i]);
     }
-    return valid;
+    if (valid) sns.bitmap_set(numBits, bitmap);
+
+    return sns;
 }
 
 inline bool CDRMessage::readFragmentNumberSet(CDRMessage_t* msg, FragmentNumberSet_t* fns)
 {
     bool valid = true;
-    valid &= CDRMessage::readUInt32(msg, &fns->base);
+    FragmentNumber_t base = 0ul;
+    valid &= CDRMessage::readUInt32(msg, &base);
+    fns->base(base);
     uint32_t numBits = 0;
     valid &= CDRMessage::readUInt32(msg, &numBits);
-    int32_t bitmap;
-    FragmentNumber_t fragNum;
-    for (uint32_t i = 0; i<(numBits + 31) / 32; ++i)
+    uint32_t n_longs = (numBits + 31ul) / 32ul;
+    uint32_t bitmap[8];
+    for (uint32_t i = 0; i<n_longs; ++i)
     {
-        valid &= CDRMessage::readInt32(msg, &bitmap);
-        for (uint8_t bit = 0; bit<32; ++bit)
-        {
-            if ((bitmap & (1 << (31 - bit % 32))) == (1 << (31 - bit % 32)))
-            {
-                fragNum = fns->base + (i * 32 + bit);
-                if (!fns->add(fragNum))
-                {
-                    return false;
-                }
-            }
-        }
+        valid &= CDRMessage::readUInt32(msg, &bitmap[i]);
     }
+    if (valid) fns->bitmap_set(numBits, bitmap);
     return valid;
 }
 
-inline bool CDRMessage::readTimestamp(CDRMessage_t* msg, Time_t* ts)
+inline bool CDRMessage::readTimestamp(CDRMessage_t* msg, rtps::Time_t* ts)
 {
     bool valid = true;
-    valid &=CDRMessage::readInt32(msg,&ts->seconds);
-    valid &=CDRMessage::readUInt32(msg,&ts->fraction);
+    valid &= CDRMessage::readInt32(msg, &ts->seconds());
+    uint32_t frac(0);
+    valid &= CDRMessage::readUInt32(msg, &frac);
+    ts->fraction(frac);
     return valid;
 }
 
@@ -314,6 +302,28 @@ inline bool CDRMessage::readString(CDRMessage_t*msg, std::string* stri)
     return valid;
 }
 
+inline bool CDRMessage::readString(CDRMessage_t*msg, string_255* stri)
+{
+    uint32_t str_size = 1;
+    bool valid = true;
+    valid &= CDRMessage::readUInt32(msg, &str_size);
+    if (msg->pos + str_size > msg->length)
+    {
+        return false;
+    }
+
+    *stri = "";
+    if (str_size > 1)
+    {
+        *stri = (const char*) &(msg->buffer[msg->pos]);
+    }
+    msg->pos += str_size;
+    int rest = (str_size) % 4;
+    rest = rest == 0 ? 0 : 4 - rest;
+    msg->pos += rest;
+
+    return valid;
+}
 
 inline bool CDRMessage::addData(CDRMessage_t*msg, const octet *data, const uint32_t length)
 {
@@ -525,90 +535,54 @@ inline bool CDRMessage::addSequenceNumber(CDRMessage_t* msg,
 inline bool CDRMessage::addSequenceNumberSet(CDRMessage_t* msg,
         const SequenceNumberSet_t* sns)
 {
-    CDRMessage::addSequenceNumber(msg, &sns->base);
+    SequenceNumber_t base = sns->base();
+    CDRMessage::addSequenceNumber(msg, &base);
 
     //Add set
-    if(sns->isSetEmpty())
+    if(sns->empty())
     {
         addUInt32(msg,0); //numbits 0
         return true;
     }
 
-    SequenceNumber_t maxseqNum = sns->get_maxSeqNum();
-
-    uint32_t numBits = (maxseqNum - sns->base + 1).low;
-    assert((maxseqNum - sns->base + 1).high == 0);
-
-    if(numBits >= 256)
-        numBits = 255;
+    uint32_t numBits;
+    uint32_t n_longs;
+    std::array<uint32_t,8> bitmap;
+    sns->bitmap_get(numBits, bitmap, n_longs);
 
     addUInt32(msg, numBits);
-    uint8_t n_longs = (uint8_t)((numBits + 31) / 32);
-    uint32_t bitmap[8];
-
-    for(uint32_t i = 0; i < n_longs; i++)
-        bitmap[i] = 0;
-
-    uint32_t deltaN = 0;
-    for(auto it = sns->get_begin();
-            it != sns->get_end(); ++it)
-    {
-        deltaN = (*it - sns->base).low;
-        assert((*it - sns->base).high == 0);
-        if(deltaN < 256)
-            bitmap[(uint32_t)(deltaN/32)] = (bitmap[(uint32_t)(deltaN/32)] | (1<<(31-deltaN%32)));
-        else
-            break;
-    }
 
     for(uint32_t i= 0;i<n_longs;i++)
-        addInt32(msg,bitmap[i]);
+        addUInt32(msg,bitmap[i]);
 
     return true;
 }
 
 inline bool CDRMessage::addFragmentNumberSet(CDRMessage_t* msg,
-        FragmentNumberSet_t* fns) {
-
-    if (fns->base == 0)
+        FragmentNumberSet_t* fns)
+{
+    FragmentNumber_t base = fns->base();
+    if (base == 0)
         return false;
 
-    CDRMessage::addUInt32(msg, fns->base);
+    CDRMessage::addUInt32(msg, base);
 
     //Add set
-    if (fns->isSetEmpty())
+    if (fns->empty())
     {
         addUInt32(msg, 0); //numbits 0
         return true;
     }
 
-    FragmentNumber_t maxfragNum = *(std::prev(fns->set.end()));
-
-    uint32_t numBits = (uint32_t)(maxfragNum - fns->base + 1);
-
-    if (numBits > 256)
-        return false;
+    uint32_t numBits;
+    uint32_t n_longs;
+    std::array<uint32_t, 8> bitmap;
+    fns->bitmap_get(numBits, bitmap, n_longs);
 
     addUInt32(msg, numBits);
-    uint8_t n_longs = (uint8_t)((numBits + 31) / 32);
-    int32_t* bitmap = new int32_t[n_longs];
 
     for (uint32_t i = 0; i<n_longs; i++)
-        bitmap[i] = 0;
-
-    uint32_t deltaN = 0;
-
-    for (auto it = fns->get_begin();
-            it != fns->get_end(); ++it)
-    {
-        deltaN = (uint32_t)(*it - fns->base);
-        bitmap[(uint32_t)(deltaN / 32)] = (bitmap[(uint32_t)(deltaN / 32)] | (1 << (31 - deltaN % 32)));
-    }
-
-    for (uint32_t i = 0; i<n_longs; i++)
-        addInt32(msg, bitmap[i]);
-
-    delete[] bitmap;
+        addUInt32(msg, bitmap[i]);
 
     return true;
 }

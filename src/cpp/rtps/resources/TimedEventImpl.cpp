@@ -61,9 +61,18 @@ namespace eprosima
 
 using namespace eprosima::fastrtps::rtps;
 
-TimedEventImpl::TimedEventImpl(TimedEvent* event, asio::io_service &service, const std::thread& event_thread, std::chrono::microseconds interval, TimedEvent::AUTODESTRUCTION_MODE autodestruction) :
-timer_(service, interval), m_interval_microsec(interval), mp_event(event),
-autodestruction_(autodestruction), state_(std::make_shared<TimerState>(autodestruction)), event_thread_id_(event_thread.get_id())
+TimedEventImpl::TimedEventImpl(
+        TimedEvent* event,
+        asio::io_service &service,
+        const std::thread& event_thread,
+        std::chrono::microseconds interval,
+        TimedEvent::AUTODESTRUCTION_MODE autodestruction)
+    : timer_(service, interval)
+    , m_interval_microsec(interval)
+    , mp_event(event)
+    , autodestruction_(autodestruction)
+    , state_(std::make_shared<TimerState>(autodestruction))
+    , event_thread_id_(event_thread.get_id())
 {
 	//TIME_INFINITE(m_timeInfinite);
 }
@@ -150,10 +159,10 @@ void TimedEventImpl::restart_timer()
     }
 }
 
-bool TimedEventImpl::update_interval(const Duration_t& inter)
+bool TimedEventImpl::update_interval(const eprosima::fastrtps::Duration_t& inter)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-	m_interval_microsec = std::chrono::microseconds(TimeConv::Time_t2MicroSecondsInt64(inter));
+	m_interval_microsec = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(inter));
 	return true;
 }
 

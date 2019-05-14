@@ -26,12 +26,13 @@ set(${PROJECT_NAME}_source_files
     utils/StringMatching.cpp
     utils/IPLocator.cpp
     utils/System.cpp
+    rtps/common/Time_t.cpp
     rtps/resources/ResourceEvent.cpp
     rtps/resources/TimedEvent.cpp
     rtps/resources/TimedEventImpl.cpp
     rtps/resources/AsyncWriterThread.cpp
     rtps/resources/AsyncInterestTree.cpp
-    rtps/Endpoint.cpp
+    rtps/timedevent/TimedCallback.cpp
     rtps/writer/RTPSWriter.cpp
     rtps/writer/StatefulWriter.cpp
     rtps/writer/ReaderProxy.cpp
@@ -52,7 +53,6 @@ set(${PROJECT_NAME}_source_files
     rtps/reader/StatelessReader.cpp
     rtps/reader/RTPSReader.cpp
     rtps/reader/FragmentedChangePitStop.cpp
-    rtps/messages/CDRMessagePool.cpp
     rtps/messages/RTPSMessageCreator.cpp
     rtps/messages/RTPSMessageGroup.cpp
     rtps/messages/MessageReceiver.cpp
@@ -61,7 +61,6 @@ set(${PROJECT_NAME}_source_files
     rtps/messages/submessages/GapMsg.hpp
     rtps/messages/submessages/HeartbeatMsg.hpp
     rtps/network/NetworkFactory.cpp
-    rtps/network/SenderResource.cpp
     rtps/network/ReceiverResource.cpp
     rtps/participant/RTPSParticipant.cpp
     rtps/participant/RTPSParticipantImpl.cpp
@@ -75,10 +74,12 @@ set(${PROJECT_NAME}_source_files
     subscriber/Subscriber.cpp
     subscriber/SubscriberImpl.cpp
     subscriber/SubscriberHistory.cpp
-    transport/timedevent/CleanTCPSocketsEvent.cpp
     transport/ChannelResource.cpp
     transport/UDPChannelResource.cpp
     transport/TCPChannelResource.cpp
+    transport/TCPChannelResourceBasic.cpp
+    transport/TCPAcceptor.cpp
+    transport/TCPAcceptorBasic.cpp
     transport/UDPv4Transport.cpp
     transport/TCPTransportInterface.cpp
     transport/UDPTransportInterface.cpp
@@ -86,10 +87,9 @@ set(${PROJECT_NAME}_source_files
     transport/UDPv6Transport.cpp
     transport/TCPv6Transport.cpp
     transport/test_UDPv4Transport.cpp
-    transport/test_TCPv4Transport.cpp
     transport/tcp/TCPControlMessage.cpp
     transport/tcp/RTCPMessageManager.cpp
-    transport/tcp/test_RTCPMessageManager.cpp
+    transport/timedevent/TCPKeepAliveEvent.cpp
 
     types/AnnotationDescriptor.cpp
     types/AnnotationParameterValue.cpp
@@ -112,6 +112,7 @@ set(${PROJECT_NAME}_source_files
     types/TypeObjectFactory.cpp
     types/TypeNamesGenerator.cpp
     types/TypesBase.cpp
+    types/BuiltinAnnotationsTypeObject.cpp
 
     attributes/TopicAttributes.cpp
     qos/ParameterList.cpp
@@ -154,6 +155,14 @@ set(${PROJECT_NAME}_source_files
     rtps/persistence/SQLite3PersistenceService.cpp
     rtps/persistence/sqlite3.c
     )
+
+# TLS Support
+if(TLS_FOUND)
+    list(APPEND ${PROJECT_NAME}_source_files
+        transport/TCPChannelResourceSecure.cpp
+        transport/TCPAcceptorSecure.cpp
+        )
+endif()
 
 # Add sources to Makefile.am
 set_sources(${${PROJECT_NAME}_source_files})
@@ -286,7 +295,7 @@ elseif(NOT EPROSIMA_INSTALLER)
     target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr
         ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
         ${TINYXML2_LIBRARY}
-        $<$<BOOL:${SECURITY}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+        $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         )
 
@@ -428,16 +437,20 @@ elseif(NOT EPROSIMA_INSTALLER)
                 )
         endif()
 
-        if(EPROSIMA_INSTALLER_MINION AND SECURITY)
+        if(EPROSIMA_INSTALLER_MINION AND LINK_SSL)
             # Libraries from https://www.npcglib.org/~stathis/blog/precompiled-openssl/
             install(FILES ${OPENSSL_ROOT_DIR}/bin/libeay32MD.dll
                 ${OPENSSL_ROOT_DIR}/bin/libeay32MDd.dll
+                ${OPENSSL_ROOT_DIR}/bin/ssleay32MD.dll
+                ${OPENSSL_ROOT_DIR}/bin/ssleay32MDd.dll
                 DESTINATION ${BIN_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
                 COMPONENT libraries${MSVCARCH_EXTENSION}
                 )
 
             install(FILES ${OPENSSL_ROOT_DIR}/lib/libeay32MD.lib
                 ${OPENSSL_ROOT_DIR}/lib/libeay32MDd.lib
+                ${OPENSSL_ROOT_DIR}/lib/ssleay32MD.lib
+                ${OPENSSL_ROOT_DIR}/lib/ssleay32MDd.lib
                 DESTINATION ${LIB_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
                 COMPONENT libraries${MSVCARCH_EXTENSION}
                 )
@@ -450,7 +463,7 @@ elseif(NOT EPROSIMA_INSTALLER)
     include(CMakePackageConfigHelpers)
 
     # Add fastrtps dependencies in its CMake config file.
-    if(SECURITY AND NOT EPROSIMA_INSTALLER_MINION)
+    if(LINK_SSL AND NOT EPROSIMA_INSTALLER_MINION)
         set(FASTRTPS_PACKAGE_OPT_DEPS "find_package(OpenSSL REQUIRED)")
     endif()
 

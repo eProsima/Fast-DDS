@@ -14,17 +14,22 @@
 
 #include <fastrtps/transport/TCPTransportInterface.h>
 #include <fastrtps/transport/tcp/RTCPMessageManager.h>
-#include <fastrtps/transport/timedevent/CleanTCPSocketsEvent.h>
-#include <utility>
-#include <asio.hpp>
-#include <cstring>
-#include <algorithm>
+#include "TCPSenderResource.hpp"
 #include <fastrtps/log/Log.h>
-#include "asio.hpp"
-#include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
-#include <fastrtps/transport/TCPChannelResource.h>
+#include <fastrtps/transport/TCPChannelResourceBasic.h>
+#include <fastrtps/transport/TCPAcceptorBasic.h>
+#if TLS_FOUND
+#include <fastrtps/transport/TCPChannelResourceSecure.h>
+#include <fastrtps/transport/TCPAcceptorSecure.h>
+#endif
+#include "timedevent/TCPKeepAliveEvent.hpp"
+
+#include <asio/steady_timer.hpp>
+#include <utility>
+#include <cstring>
+#include <algorithm>
 
 using namespace std;
 using namespace asio;
@@ -33,40 +38,10 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps {
 
-static const int s_default_keep_alive_frequency = 50000; // 50 SECONDS
-static const int s_default_keep_alive_timeout = 10000; // 10 SECONDS
-static const int s_clean_deleted_sockets_pool_timeout = 100; // 100 MILLISECONDS
+static const int s_default_keep_alive_frequency = 5000; // 5 SECONDS
+static const int s_default_keep_alive_timeout = 15000; // 15 SECONDS
+//static const int s_clean_deleted_sockets_pool_timeout = 100; // 100 MILLISECONDS
 static const int s_default_tcp_negotitation_timeout = 5000; // 5 Seconds
-
-TCPAcceptor::TCPAcceptor(asio::io_service& io_service, TCPTransportInterface* parent, const Locator_t& locator)
-    : mAcceptor(io_service, parent->GenerateEndpoint(IPLocator::getPhysicalPort(locator)))
-    , mLocator(locator)
-    , mSocket(createTCPSocket(io_service))
-{
-    mEndPoint = asio::ip::tcp::endpoint(parent->GenerateProtocol(), IPLocator::getPhysicalPort(locator));
-}
-
-TCPAcceptor::TCPAcceptor(asio::io_service& io_service, const std::string& sInterface, const Locator_t& locator)
-    : mAcceptor(io_service, asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(sInterface),
-        IPLocator::getPhysicalPort(locator)))
-    , mLocator(locator)
-    , mSocket(createTCPSocket(io_service))
-{
-    mEndPoint = asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(sInterface),
-        IPLocator::getPhysicalPort(locator));
-}
-
-void TCPAcceptor::Accept(TCPTransportInterface* parent, asio::io_service& io_service)
-{
-    mSocket = createTCPSocket(io_service);
-
-    // std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-    // std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-    // std::cout << std::put_time(std::localtime(&now_c), "%F %T") << "--> Async_Accept" << std::endl;
-
-    mAcceptor.async_accept(getTCPSocketRef(mSocket), mEndPoint, std::bind(&TCPTransportInterface::SocketAccepted,
-        parent, this, std::placeholders::_1));
-}
 
 TCPTransportDescriptor::TCPTransportDescriptor()
     : SocketTransportDescriptor(s_maximumMessageSize, s_maximumInitialPeersRange)
@@ -80,6 +55,7 @@ TCPTransportDescriptor::TCPTransportDescriptor()
     , wait_for_tcp_negotiation(false)
     , calculate_crc(true)
     , check_crc(true)
+    , apply_security(false)
 {
 }
 
@@ -96,13 +72,42 @@ TCPTransportDescriptor::TCPTransportDescriptor(const TCPTransportDescriptor& t)
     , wait_for_tcp_negotiation(t.wait_for_tcp_negotiation)
     , calculate_crc(t.calculate_crc)
     , check_crc(t.check_crc)
+    , apply_security(t.apply_security)
+    , tls_config(t.tls_config)
 {
 }
 
-TCPTransportInterface::TCPTransportInterface()
-    : mRTCPMessageManager(nullptr)
-    , mSendRetryActive(true)
-    , mCleanSocketsPoolTimer(nullptr)
+TCPTransportDescriptor& TCPTransportDescriptor::operator=(const TCPTransportDescriptor& t)
+{
+
+    maxMessageSize = t.maxMessageSize;
+    maxInitialPeersRange = t.maxInitialPeersRange;
+    sendBufferSize = t.sendBufferSize;
+    receiveBufferSize = t.receiveBufferSize;
+    TTL = t.TTL;
+    listening_ports = t.listening_ports;
+    keep_alive_frequency_ms = t.keep_alive_frequency_ms;
+    keep_alive_timeout_ms = t.keep_alive_timeout_ms;
+    max_logical_port = t.max_logical_port;
+    logical_port_range = t.logical_port_range;
+    logical_port_increment = t.logical_port_increment;
+    tcp_negotiation_timeout = t.tcp_negotiation_timeout;
+    enable_tcp_nodelay = t.enable_tcp_nodelay;
+    wait_for_tcp_negotiation = t.wait_for_tcp_negotiation;
+    calculate_crc = t.calculate_crc;
+    check_crc = t.check_crc;
+    apply_security = t.apply_security;
+    tls_config = t.tls_config;
+    return *this;
+}
+
+TCPTransportInterface::TCPTransportInterface(int32_t transport_kind)
+    : TransportInterface(transport_kind)
+    , alive_(true)
+#if TLS_FOUND
+    , ssl_context_(asio::ssl::context::sslv23)
+#endif
+    , keep_alive_event_(nullptr)
 {
 }
 
@@ -110,129 +115,93 @@ TCPTransportInterface::~TCPTransportInterface()
 {
 }
 
-void TCPTransportInterface::Clean()
+void TCPTransportInterface::clean()
 {
-    std::vector<TCPChannelResource*> vDeletedSockets;
+    assert(receiver_resources_.size() == 0);
+    alive_.store(false);
 
-    if (mCleanSocketsPoolTimer != nullptr)
+    if(keep_alive_event_ != nullptr)
     {
-        mCleanSocketsPoolTimer->cancel_timer();
-        delete mCleanSocketsPoolTimer;
-        mCleanSocketsPoolTimer = nullptr;
+        delete keep_alive_event_;
+        io_service_timers_.stop();
+        io_service_timers_thread_->join();
+        io_service_timers_thread_ = nullptr;
     }
 
-    // Collect all the existing sockets to delete them outside of the mutex.
     {
-        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
-        for (auto it = mSocketAcceptors.begin(); it != mSocketAcceptors.end(); ++it)
+        std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);
+        std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+        std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
+
+        for (auto& unbound_channel_resource : unbound_channel_resources_)
         {
-            for (TCPAcceptor* acceptorIt : it->second)
-            {
-                mDeletedAcceptors.push_back(acceptorIt);
-                delete acceptorIt;
-            }
+            unbound_channel_resource->disable();
         }
-        mSocketAcceptors.clear();
 
-        for (auto it = mChannelResources.begin(); it != mChannelResources.end(); ++it)
+        for (auto& channel_resource : channel_resources_)
         {
-            auto delIt = std::find(vDeletedSockets.begin(), vDeletedSockets.end(), it->second);
-            if (delIt == vDeletedSockets.end())
+            if (channel_resource.second->connection_established())
             {
-                vDeletedSockets.push_back(it->second);
+                rtcp_message_manager_->sendUnbindConnectionRequest(channel_resource.second);
             }
-            if (it->second->IsConnectionEstablished())
-            {
-                mRTCPMessageManager->sendUnbindConnectionRequest(it->second);
-            }
+
+            channel_resource.second->disable();
         }
-        mChannelResources.clear();
+        scopedLock.unlock();
 
-        vDeletedSockets.insert(vDeletedSockets.end(), mUnboundChannelResources.begin(),
-            mUnboundChannelResources.end());
-        mUnboundChannelResources.clear();
+        rtcp_message_manager_cv_.wait(lock, [&]()
+        {
+            return 1 >= rtcp_message_manager_.use_count();
+        });
+
+        if (rtcp_message_manager_)
+        {
+            rtcp_message_manager_->dispose();
+            rtcp_message_manager_.reset();
+        }
     }
 
-    std::for_each(vDeletedSockets.begin(), vDeletedSockets.end(), [this](TCPChannelResource* it)
     {
-        this->DeleteSocket(it); // Disable all added TCPChannelResources
-    });
+        std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+        std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
+        for (auto& unbound_channel_resource : unbound_channel_resources_)
+        {
+            unbound_channel_resource->thread(std::thread());
+        }
 
-    CleanDeletedSockets();
-
-    if (ioServiceThread)
-    {
-        mService.stop();
-        ioServiceThread->join();
+        for (auto& channel_resource : channel_resources_)
+        {
+            channel_resource.second->thread(std::thread());
+        }
     }
 
-    delete mRTCPMessageManager;
+    if (io_service_thread_)
+    {
+        io_service_.stop();
+        io_service_thread_->join();
+        io_service_thread_ = nullptr;
+    }
+
+    channel_resources_.clear();
+    unbound_channel_resources_.clear();
 }
 
-TCPChannelResource* TCPTransportInterface::BindSocket(const Locator_t& locator, TCPChannelResource *pChannelResource)
+void TCPTransportInterface::bind_socket(
+        std::shared_ptr<TCPChannelResource>& channel)
 {
-    std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
-    if (IsLocatorSupported(locator))
-    {
-        auto it_remove = std::find(mUnboundChannelResources.begin(), mUnboundChannelResources.end(), pChannelResource);
-        if (it_remove != mUnboundChannelResources.end())
-        {
-            mUnboundChannelResources.erase(it_remove);
-        }
+    std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+    std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
 
-        const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(locator);
-        auto it = mChannelResources.find(physicalLocator);
-        if (it == mChannelResources.end())
-        {
-            mChannelResources[physicalLocator] = pChannelResource;
-            return nullptr;
-        }
-
-        TCPChannelResource* oldChannel = it->second;
-        if (oldChannel->IsConnectionEstablished())
-        {
-            logWarning(RTCP, "Trying to restablish connection on already connected locator." << locator);
-        }
-        else
-        {
-            mChannelResources[physicalLocator] = pChannelResource;
-            return oldChannel;
-        }
-    }
-    return nullptr;
+    auto it_remove = std::find(unbound_channel_resources_.begin(), unbound_channel_resources_.end(), channel);
+    assert(it_remove != unbound_channel_resources_.end());
+    unbound_channel_resources_.erase(it_remove);
+    channel_resources_[channel->locator()] = channel;
 }
 
-void TCPTransportInterface::CleanDeletedSockets()
-{
-    std::vector<TCPChannelResource*> deleteList;
-    {
-        std::unique_lock<std::recursive_mutex> scopedLock(mDeletedSocketsPoolMutex);
-        deleteList = std::move(mDeletedSocketsPool);
-    }
-
-    for (auto it = deleteList.begin(); it != deleteList.end(); ++it)
-    {
-        delete(*it);
-    }
-}
-
-void TCPTransportInterface::DeleteSocket(TCPChannelResource *channelResource)
-{
-    if (channelResource != nullptr && channelResource->IsAlive())
-    {
-        channelResource->Disable();
-        {
-            std::unique_lock<std::recursive_mutex> scopedPoolLock(mDeletedSocketsPoolMutex);
-            auto it = std::find(mDeletedSocketsPool.begin(), mDeletedSocketsPool.end(), channelResource);
-            if (it == mDeletedSocketsPool.end())
-            {
-                mDeletedSocketsPool.emplace_back(channelResource);
-            }
-        }
-    }
-}
-
-bool TCPTransportInterface::CheckCRC(const TCPHeader &header, const octet *data, uint32_t size) const
+bool TCPTransportInterface::check_crc(
+        const TCPHeader &header,
+        const octet *data,
+        uint32_t size) const
 {
     uint32_t crc(0);
     for (uint32_t i = 0; i < size; ++i)
@@ -242,7 +211,10 @@ bool TCPTransportInterface::CheckCRC(const TCPHeader &header, const octet *data,
     return crc == header.crc;
 }
 
-void TCPTransportInterface::CalculateCRC(TCPHeader &header, const octet *data, uint32_t size) const
+void TCPTransportInterface::calculate_crc(
+        TCPHeader &header,
+        const octet *data,
+        uint32_t size) const
 {
     uint32_t crc(0);
     for (uint32_t i = 0; i < size; ++i)
@@ -253,49 +225,57 @@ void TCPTransportInterface::CalculateCRC(TCPHeader &header, const octet *data, u
 }
 
 
-bool TCPTransportInterface::CreateAcceptorSocket(const Locator_t& locator)
+bool TCPTransportInterface::create_acceptor_socket(const Locator_t& locator)
 {
-    std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
     try
     {
-        TCPAcceptor* newAcceptor(nullptr);
-
-        if (IsInterfaceWhiteListEmpty())
+        if (is_interface_whitelist_empty())
         {
-            newAcceptor = new TCPAcceptor(mService, this, locator);
-            uint16_t port = IPLocator::getPhysicalPort(locator);
-            if (mSocketAcceptors.find(port) != mSocketAcceptors.end())
+#if TLS_FOUND
+            if (configuration()->apply_security)
             {
-                std::vector<TCPAcceptor*> vAcceptors{ newAcceptor };
-                mSocketAcceptors.insert(std::make_pair(port, vAcceptors));
+                std::shared_ptr<TCPAcceptorSecure> acceptor =
+                    std::make_shared<TCPAcceptorSecure>(io_service_, this, locator);
+                acceptors_[locator] = acceptor;
+                acceptor->accept(this, ssl_context_);
             }
-            else if (std::find(mSocketAcceptors[port].begin(), mSocketAcceptors[port].end(), newAcceptor) == mSocketAcceptors[port].end())
+            else
+#endif
             {
-                mSocketAcceptors[port].push_back(newAcceptor);
+                std::shared_ptr<TCPAcceptorBasic> acceptor =
+                    std::make_shared<TCPAcceptorBasic>(io_service_, this, locator);
+                acceptors_[locator] = acceptor;
+                acceptor->accept(this);
             }
 
-            logInfo(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << IPLocator::getLogicalPort(locator) << ")");
-            newAcceptor->Accept(this, mService);
+            logInfo(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
+                << IPLocator::getLogicalPort(locator) << ")");
+
         }
         else
         {
-            std::vector<std::string> vInterfaces = GetBindingInterfacesList();
+            std::vector<std::string> vInterfaces = get_binding_interfaces_list();
             for (std::string& sInterface : vInterfaces)
             {
-                newAcceptor = new TCPAcceptor(mService, sInterface, locator);
-                uint16_t port = IPLocator::getPhysicalPort(locator);
-                if (mSocketAcceptors.find(port) != mSocketAcceptors.end())
+#if TLS_FOUND
+                if (configuration()->apply_security)
                 {
-                    std::vector<TCPAcceptor*> vAcceptors{ newAcceptor };
-                    mSocketAcceptors.insert(std::make_pair(port, vAcceptors));
+                    std::shared_ptr<TCPAcceptorSecure> acceptor =
+                        std::make_shared<TCPAcceptorSecure>(io_service_, sInterface, locator);
+                    acceptors_[locator] = acceptor;
+                    acceptor->accept(this, ssl_context_);
                 }
-                else if (std::find(mSocketAcceptors[port].begin(), mSocketAcceptors[port].end(), newAcceptor) == mSocketAcceptors[port].end())
+                else
+#endif
                 {
-                    mSocketAcceptors[port].push_back(newAcceptor);
+                    std::shared_ptr<TCPAcceptorBasic> acceptor =
+                        std::make_shared<TCPAcceptorBasic>(io_service_, sInterface, locator);
+                    acceptors_[locator] = acceptor;
+                    acceptor->accept(this);
                 }
 
-                logInfo(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " << IPLocator::getLogicalPort(locator) << ")");
-                newAcceptor->Accept(this, mService);
+                logInfo(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
+                    << IPLocator::getLogicalPort(locator) << ")");
             }
         }
     }
@@ -315,189 +295,152 @@ bool TCPTransportInterface::CreateAcceptorSocket(const Locator_t& locator)
     return true;
 }
 
-bool TCPTransportInterface::EnqueueLogicalOutputPort(const Locator_t& locator)
+void TCPTransportInterface::fill_rtcp_header(
+        TCPHeader& header,
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        uint16_t logical_port) const
 {
-    std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
-    auto socketIt = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
-    if (socketIt != mChannelResources.end())
+    header.length = send_buffer_size + static_cast<uint32_t>(TCPHeader::size());
+    header.logical_port = logical_port;
+    if (configuration()->calculate_crc)
     {
-        socketIt->second->AddLogicalPort(IPLocator::getLogicalPort(locator));
-        return true;
-    }
-    return false;
-}
-
-void TCPTransportInterface::FillTCPHeader(TCPHeader& header, const octet* sendBuffer, uint32_t sendBufferSize,
-        uint16_t logicalPort) const
-{
-    header.length = sendBufferSize + static_cast<uint32_t>(TCPHeader::getSize());
-    header.logicalPort = logicalPort;
-    if (GetConfiguration()->calculate_crc)
-    {
-        CalculateCRC(header, sendBuffer, sendBufferSize);
+        calculate_crc(header, send_buffer, send_buffer_size);
     }
 }
 
-
-bool TCPTransportInterface::IsOutputChannelBound(const Locator_t& locator) const
-{
-    if (!IsLocatorSupported(locator))
-        return false;
-
-    auto socket = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
-    if (socket != mChannelResources.end())
-    {
-        return true;
-    }
-
-    return false;
-}
-
-bool TCPTransportInterface::IsOutputChannelConnected(const Locator_t& locator) const
-{
-    if (!IsLocatorSupported(locator))
-        return false;
-
-    auto socketIt = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
-    if (socketIt != mChannelResources.end())
-    {
-        return true;
-    }
-
-    return IsOutputChannelBound(locator);
-}
-
-bool TCPTransportInterface::IsTCPInputSocket(const Locator_t& locator) const
-{
-    if (is_local_locator(locator))
-    {
-        for (auto it = GetConfiguration()->listening_ports.begin();
-                it != GetConfiguration()->listening_ports.end(); ++it)
-        {
-            if (IPLocator::getPhysicalPort(locator) == *it)
-            {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-bool TCPTransportInterface::DoInputLocatorsMatch(const Locator_t& left, const Locator_t& right) const
+bool TCPTransportInterface::DoInputLocatorsMatch(
+        const Locator_t& left,
+        const Locator_t& right) const
 {
     return IPLocator::getPhysicalPort(left) ==  IPLocator::getPhysicalPort(right);
 }
 
-bool TCPTransportInterface::DoOutputLocatorsMatch(const Locator_t& left, const Locator_t& right) const
-{
-    return CompareLocatorIPAndPort(left, right);
-}
-
 bool TCPTransportInterface::init()
 {
-    if (GetConfiguration()->sendBufferSize == 0 || GetConfiguration()->receiveBufferSize == 0)
+    apply_tls_config();
+    if (configuration()->sendBufferSize == 0 || configuration()->receiveBufferSize == 0)
     {
         // Check system buffer sizes.
-        ip::tcp::socket socket(mService);
-        socket.open(GenerateProtocol());
+        ip::tcp::socket socket(io_service_);
+        socket.open(generate_protocol());
 
-        if (GetConfiguration()->sendBufferSize == 0)
+        if (configuration()->sendBufferSize == 0)
         {
             socket_base::send_buffer_size option;
             socket.get_option(option);
-            SetSendBufferSize(option.value());
+            set_send_buffer_size(option.value());
 
-            if (GetConfiguration()->sendBufferSize < s_minimumSocketBuffer)
+            if (configuration()->sendBufferSize < s_minimumSocketBuffer)
             {
-                SetSendBufferSize(s_minimumSocketBuffer);
+                set_send_buffer_size(s_minimumSocketBuffer);
             }
         }
 
-        if (GetConfiguration()->receiveBufferSize == 0)
+        if (configuration()->receiveBufferSize == 0)
         {
             socket_base::receive_buffer_size option;
             socket.get_option(option);
-            SetReceiveBufferSize(option.value());
+            set_receive_buffer_size(option.value());
 
-            if (GetConfiguration()->receiveBufferSize < s_minimumSocketBuffer)
+            if (configuration()->receiveBufferSize < s_minimumSocketBuffer)
             {
-                SetReceiveBufferSize(s_minimumSocketBuffer);
+                set_receive_buffer_size(s_minimumSocketBuffer);
             }
         }
 
         socket.close();
     }
 
-    if (GetConfiguration()->maxMessageSize > s_maximumMessageSize)
+    if (configuration()->maxMessageSize > s_maximumMessageSize)
     {
         logError(RTCP_MSG_OUT, "maxMessageSize cannot be greater than 65000");
         return false;
     }
 
-    if (GetConfiguration()->maxMessageSize > GetConfiguration()->sendBufferSize)
+    if (configuration()->maxMessageSize > configuration()->sendBufferSize)
     {
-        logError(RTCP_MSG_OUT, "maxMessageSize cannot be greater than sendBufferSize");
+        logError(RTCP_MSG_OUT, "maxMessageSize cannot be greater than send_buffer_size");
         return false;
     }
 
-    if (GetConfiguration()->maxMessageSize > GetConfiguration()->receiveBufferSize)
+    if (configuration()->maxMessageSize > configuration()->receiveBufferSize)
     {
-        logError(RTCP_MSG_OUT, "maxMessageSize cannot be greater than receiveBufferSize");
+        logError(RTCP_MSG_OUT, "maxMessageSize cannot be greater than receive_buffer_size");
         return false;
     }
 
-    if (mRTCPMessageManager == nullptr)
+    if (!rtcp_message_manager_)
     {
-        mRTCPMessageManager = new RTCPMessageManager(this);
+        rtcp_message_manager_ = std::make_shared<RTCPMessageManager>(this);
     }
 
     // TODO(Ricardo) Create an event that update this list.
-    GetIPs(mCurrentInterfaces);
+    get_ips(current_interfaces_);
 
     auto ioServiceFunction = [&]()
     {
-        io_service::work work(mService);
-        mService.run();
+#if ASIO_VERSION >= 101200
+        asio::executor_work_guard<asio::io_service::executor_type> work(io_service_.get_executor());
+#else
+        io_service::work work(io_service_);
+#endif
+        io_service_.run();
     };
-    ioServiceThread.reset(new std::thread(ioServiceFunction));
+    io_service_thread_ = std::make_shared<std::thread>(ioServiceFunction);
 
-    mCleanSocketsPoolTimer = new CleanTCPSocketsEvent(this, mService, *ioServiceThread.get(),
-        s_clean_deleted_sockets_pool_timeout);
+    if (0 < configuration()->keep_alive_frequency_ms)
+    {
+        io_service_timers_thread_ = std::make_shared<std::thread>([&]()
+        {
+
+#if ASIO_VERSION >= 101200
+            asio::executor_work_guard<asio::io_service::executor_type> work(io_service_timers_.get_executor());
+#else
+            io_service::work work(io_service_timers_);
+#endif
+            io_service_timers_.run();
+        });
+        keep_alive_event_ = new TCPKeepAliveEvent(*this, io_service_timers_, *io_service_timers_thread_.get(),
+            configuration()->keep_alive_frequency_ms);
+        keep_alive_event_->restart_timer();
+    }
 
     return true;
 }
 
-bool TCPTransportInterface::IsInputPortOpen(uint16_t port) const
+bool TCPTransportInterface::is_input_port_open(uint16_t port) const
 {
-    std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
-    return mReceiverResources.find(port) != mReceiverResources.end();
+    std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+    return receiver_resources_.find(port) != receiver_resources_.end();
 }
 
 bool TCPTransportInterface::IsInputChannelOpen(const Locator_t& locator) const
 {
-    return IsLocatorSupported(locator) && IsInputPortOpen(IPLocator::getLogicalPort(locator));
+    return IsLocatorSupported(locator) && is_input_port_open(IPLocator::getLogicalPort(locator));
 }
 
 bool TCPTransportInterface::IsLocatorSupported(const Locator_t& locator) const
 {
-    return locator.kind == mTransportKind;
+    return locator.kind == transport_kind_;
 }
 
-bool TCPTransportInterface::IsOutputChannelOpen(const Locator_t& locator) const
+bool TCPTransportInterface::is_output_channel_open_for(const Locator_t& locator) const
 {
     if (!IsLocatorSupported(locator))
     {
         return false;
     }
 
-    std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
+    std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
 
     // Check if there is any socket opened with the given locator.
-    auto socketIt = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
-    if (socketIt != mChannelResources.end())
+    auto channel_resource = channel_resources_.find(IPLocator::toPhysicalLocator(locator));
+
+    if (channel_resource != channel_resources_.end())
     {
         // And it is registered as output logical port
-        return socketIt->second->IsLogicalPortAdded(IPLocator::getLogicalPort(locator));
+        return channel_resource->second->is_logical_port_added(IPLocator::getLogicalPort(locator));
     }
 
     return false;
@@ -514,35 +457,37 @@ Locator_t TCPTransportInterface::RemoteToMainLocal(const Locator_t& remote) cons
 }
 
 
-bool TCPTransportInterface::CloseOutputChannel(const Locator_t& locator)
+void TCPTransportInterface::CloseOutputChannel(std::shared_ptr<TCPChannelResource>& channel)
 {
-    std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
-    auto socketIt = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
-    if (socketIt != mChannelResources.end())
-    {
-        return socketIt->second->RemoveLogicalPort(IPLocator::getLogicalPort(locator));
-    }
-    return false;
+    Locator_t physical_locator = channel->locator();
+    channel.reset();
+    std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+    auto channel_resource = channel_resources_.find(physical_locator);
+    assert(channel_resource != channel_resources_.end());
+    (void)channel_resource;
 }
 
 bool TCPTransportInterface::CloseInputChannel(const Locator_t& locator)
 {
     bool bClosed = false;
     {
-        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
+        std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
 
         uint16_t logicalPort = IPLocator::getLogicalPort(locator);
-        auto receiverIt = mReceiverResources.find(logicalPort);
-        if (receiverIt != mReceiverResources.end())
+        auto receiverIt = receiver_resources_.find(logicalPort);
+        if (receiverIt != receiver_resources_.end())
         {
             bClosed = true;
             ReceiverInUseCV* receiver_in_use = receiverIt->second.second;
-            mReceiverResources.erase(receiverIt);
+            receiver_resources_.erase(receiverIt);
 
             // Inform all channel resources that logical port has been closed
-            for (auto channelIt : mChannelResources)
+            for (auto channelIt : channel_resources_)
             {
-                channelIt.second->InputPortClosed(logicalPort);
+                if (channelIt.second->connection_established())
+                {
+                    rtcp_message_manager_->sendLogicalPortIsClosedRequest(channelIt.second, logicalPort);
+                }
             }
 
             receiver_in_use->cv.wait(scopedLock, [&]() { return receiver_in_use->in_use == false; });
@@ -553,98 +498,125 @@ bool TCPTransportInterface::CloseInputChannel(const Locator_t& locator)
     return bClosed;
 }
 
-void TCPTransportInterface::CloseTCPSocket(TCPChannelResource *pChannelResource)
+void TCPTransportInterface::close_tcp_socket(
+        std::shared_ptr<TCPChannelResource>& channel)
 {
-    std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
-
-    // This check has been added because ASIO sends callbacks sometimes when the channel resource has been deleted.
-    auto searchIt = std::find_if(mChannelResources.begin(), mChannelResources.end(), [pChannelResource](const std::pair<Locator_t, TCPChannelResource*>& p)
-    {
-        return p.second == pChannelResource;
-    });
-
-    if (searchIt != mChannelResources.end() && pChannelResource->IsAlive() && mSendRetryActive)
-    {
-        TCPChannelResource *newChannel = nullptr;
-        const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(pChannelResource->GetLocator());
-        {
-            auto it = mChannelResources.find(physicalLocator);
-            if (it != mChannelResources.end())
-            {
-                if (!pChannelResource->GetIsInputSocket())
-                {
-                    newChannel = new TCPChannelResource(this, mRTCPMessageManager, mService, physicalLocator,
-                        GetConfiguration()->maxMessageSize);
-                    pChannelResource->SetAllPortsAsPending();
-                    newChannel->CopyPendingPortsFrom(pChannelResource);
-                }
-                mChannelResources.erase(it);
-            }
-        }
-
-        DeleteSocket(pChannelResource);
-
-        if (newChannel != nullptr)
-        {
-            mChannelResources[physicalLocator] = newChannel;
-            newChannel->Connect();
-        }
-    }
+    channel->disable();
+    channel.reset();
 }
 
 
-bool TCPTransportInterface::OpenOutputChannel(const Locator_t& locator)
+bool TCPTransportInterface::OpenOutputChannel(
+        SendResourceList& send_resource_list,
+        const Locator_t& locator)
 {
-    bool success = false;
-    uint16_t logicalPort = IPLocator::getLogicalPort(locator);
-    if (IsLocatorSupported(locator) && (logicalPort != 0))
+    if (!IsLocatorSupported(locator))
     {
-        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
-        logInfo(RTCP, "OpenOutputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: " \
-            << IPLocator::getLogicalPort(locator) << ") @ IP: " << IPLocator::toIPv4string(locator));
+        return false;
+    }
 
-        const Locator_t& physicalLocator = IPLocator::toPhysicalLocator(locator);
-        auto socketIt = mChannelResources.find(physicalLocator);
-        TCPChannelResource* channel = nullptr;
-        if (socketIt != mChannelResources.end())
+    bool success = false;
+    uint16_t logical_port = IPLocator::getLogicalPort(locator);
+
+    if (logical_port != 0)
+    {
+        Locator_t physical_locator = IPLocator::toPhysicalLocator(locator);
+
+        // We try to find a SenderResource that can be reuse to this locator.
+        // Note: This is done in this level because if we do in NetworkFactory level, we have to mantain what transport
+        // already reuses a SenderResource.
+        for(auto& sender_resource : send_resource_list)
         {
-            channel = socketIt->second;
+            TCPSenderResource* tcp_sender_resource = TCPSenderResource::cast(*this, sender_resource.get());
+
+            //TODO Review with wan ip.
+            if(tcp_sender_resource && physical_locator == tcp_sender_resource->channel()->locator())
+            {
+                if(!tcp_sender_resource->channel()->is_logical_port_added(logical_port))
+                {
+                    tcp_sender_resource->channel()->add_logical_port(logical_port, rtcp_message_manager_.get());
+                }
+
+                return true;
+            }
+        }
+
+        // At this point, if there no SenderResource to reuse, the channel was created for reception (through an
+        // acceptor) or we have to create a new one.
+
+        std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+        logInfo(RTCP, "Called to OpenOutputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
+            << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
+
+        auto channel_resource = channel_resources_.find(physical_locator);
+
+        // Maybe as WAN?
+        if (channel_resource == channel_resources_.end() && IPLocator::hasWan(locator))
+        {
+            Locator_t wan_locator;
+            wan_locator.kind = locator.kind;
+            wan_locator.port = locator.port; // Copy full port
+            IPLocator::setIPv4(wan_locator, IPLocator::toWanstring(locator)); // WAN to IP
+            channel_resource = channel_resources_.find(IPLocator::toPhysicalLocator(wan_locator));
+            if(channel_resource != channel_resources_.end())
+            {
+                channel_resources_[IPLocator::toPhysicalLocator(locator)] = channel_resource->second; // Add alias!
+            }
+        }
+
+        std::shared_ptr<TCPChannelResource> channel;
+
+        if (channel_resource != channel_resources_.end())
+        {
+            channel = channel_resource->second;
         }
         else
         {
             // Create output channel
-            eProsimaTCPSocket socket = createTCPSocket(mService);
-            channel = new TCPChannelResource(this, mRTCPMessageManager, mService, physicalLocator,
-                GetConfiguration()->maxMessageSize);
-            mChannelResources[physicalLocator] = channel;
-            channel->Connect();
+            logInfo(OpenOutputChannel, "OpenOutputChannel (physical: "
+                << IPLocator::getPhysicalPort(locator) << "; logical: "
+                << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
+
+            channel.reset(
+#if TLS_FOUND
+                (configuration()->apply_security) ?
+                    static_cast<TCPChannelResource*>(
+                        new TCPChannelResourceSecure(this, io_service_, ssl_context_,
+                        physical_locator, configuration()->maxMessageSize)) :
+#endif
+                    static_cast<TCPChannelResource*>(
+                        new TCPChannelResourceBasic(this, io_service_, physical_locator,
+                        configuration()->maxMessageSize))
+                );
+
+            channel_resources_[physical_locator] = channel;
+            channel->connect(channel_resources_[physical_locator]);
         }
 
         success = true;
-        channel->AddLogicalPort(logicalPort);
+        channel->add_logical_port(logical_port, rtcp_message_manager_.get());
+        send_resource_list.emplace_back(
+                static_cast<SenderResource*>(new TCPSenderResource(*this, channel)));
     }
 
     return success;
 }
 
-bool TCPTransportInterface::OpenExtraOutputChannel(const Locator_t& locator)
-{
-    return OpenOutputChannel(locator);
-}
-
-bool TCPTransportInterface::OpenInputChannel(const Locator_t& locator, TransportReceiverInterface* receiver,
-    uint32_t /*maxMsgSize*/)
+bool TCPTransportInterface::OpenInputChannel(
+        const Locator_t& locator,
+        TransportReceiverInterface* receiver,
+        uint32_t /*maxMsgSize*/)
 {
     bool success = false;
     if (IsLocatorSupported(locator))
     {
         uint16_t logicalPort = IPLocator::getLogicalPort(locator);
-        if (!IsInputPortOpen(logicalPort))
+        if (!is_input_port_open(logicalPort))
         {
             success = true;
             {
-                std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
-                mReceiverResources[logicalPort] = std::pair<TransportReceiverInterface*, ReceiverInUseCV*>
+                std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+                receiver_resources_[logicalPort] = std::pair<TransportReceiverInterface*, ReceiverInUseCV*>
                     (receiver, new ReceiverInUseCV());
             }
 
@@ -655,100 +627,160 @@ bool TCPTransportInterface::OpenInputChannel(const Locator_t& locator, Transport
     return success;
 }
 
-void TCPTransportInterface::performRTPCManagementThread(TCPChannelResource *pChannelResource)
+void TCPTransportInterface::keep_alive()
 {
+    std::map<Locator_t, std::shared_ptr<TCPChannelResource>> tmp_vec;
+
+    {
+        std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_); // Why mutex here?
+        tmp_vec = channel_resources_;
+    }
+
+
+    for (auto& channel_resource : tmp_vec)
+    {
+        if(TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE == channel_resource.second->tcp_connection_type())
+        {
+            rtcp_message_manager_->sendKeepAliveRequest(channel_resource.second);
+        }
+    }
+    //TODO Check timeout.
+
+    /*
+    const TCPTransportDescriptor* config = configuration(); // Keep a copy for us.
+
     std::chrono::time_point<std::chrono::system_clock> time_now = std::chrono::system_clock::now();
     std::chrono::time_point<std::chrono::system_clock> next_time = time_now +
-        std::chrono::milliseconds(GetConfiguration()->keep_alive_frequency_ms);
+        std::chrono::milliseconds(config->keep_alive_frequency_ms);
     std::chrono::time_point<std::chrono::system_clock> timeout_time =
-        time_now + std::chrono::milliseconds(GetConfiguration()->keep_alive_timeout_ms);
+        time_now + std::chrono::milliseconds(config->keep_alive_timeout_ms);
 
-    logInfo(RTCP, "START performRTPCManagementThread " << IPLocator::toIPv4string(pChannelResource->GetLocator()) \
-            << ":" << IPLocator::getPhysicalPort(pChannelResource->GetLocator()) << " (" \
-            << pChannelResource->getSocket()->local_endpoint().address() << ":" \
-            << pChannelResource->getSocket()->local_endpoint().port() << "->" \
-            << pChannelResource->getSocket()->remote_endpoint().address() << ":" \
-            << pChannelResource->getSocket()->remote_endpoint().port() << ")");
-
-    while (pChannelResource->IsAlive())
+    while (channel && TCPChannelResource::TCPConnectionStatus::TCP_CONNECTED == channel->tcp_connection_status())
     {
-        if (pChannelResource->IsConnectionEstablished())
+        if (channel->connection_established())
         {
             // KeepAlive
-            if (GetConfiguration()->keep_alive_frequency_ms > 0 && GetConfiguration()->keep_alive_timeout_ms > 0)
+            if (config->keep_alive_frequency_ms > 0 && config->keep_alive_timeout_ms > 0)
             {
                 time_now = std::chrono::system_clock::now();
 
                 // Keep Alive Management
-                if (!pChannelResource->mWaitingForKeepAlive && time_now > next_time)
+                if (!channel->waiting_for_keep_alive_ && time_now > next_time)
                 {
-                    mRTCPMessageManager->sendKeepAliveRequest(pChannelResource);
-                    pChannelResource->mWaitingForKeepAlive = true;
-                    next_time = time_now + std::chrono::milliseconds(GetConfiguration()->keep_alive_frequency_ms);
-                    timeout_time = time_now + std::chrono::milliseconds(GetConfiguration()->keep_alive_timeout_ms);
+                    std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_); // Why mutex here?
+                    rtcp_message_manager_->sendKeepAliveRequest(channel);
+                    channel->waiting_for_keep_alive_ = true;
+                    next_time = time_now + std::chrono::milliseconds(config->keep_alive_frequency_ms);
+                    timeout_time = time_now + std::chrono::milliseconds(config->keep_alive_timeout_ms);
                 }
-                else if (pChannelResource->mWaitingForKeepAlive && time_now >= timeout_time)
+                else if (channel->waiting_for_keep_alive_ && time_now >= timeout_time)
                 {
                     // Disable the socket to erase it after the reception.
-                    CloseTCPSocket(pChannelResource);
-                    break;
+                    close_tcp_socket(channel);
                 }
             }
         }
+
+        //TODO Remove
         eClock::my_sleep(100);
     }
-    logInfo(RTCP, "End performRTPCManagementThread " << pChannelResource->GetLocator());
+    logInfo(RTCP, "End perform_rtcp_management_thread " << channel->locator());
+    */
 }
 
-void TCPTransportInterface::performListenOperation(TCPChannelResource *pChannelResource)
+void TCPTransportInterface::perform_listen_operation(
+        std::weak_ptr<TCPChannelResource> channel_weak,
+        std::weak_ptr<RTCPMessageManager> rtcp_manager)
 {
-    Locator_t remoteLocator;
+    Locator_t remote_locator;
     uint16_t logicalPort(0);
+    std::shared_ptr<RTCPMessageManager> rtcp_message_manager;
+    std::shared_ptr<TCPChannelResource> channel;
+    rtcp_message_manager = rtcp_manager.lock();
 
-    while (pChannelResource->IsAlive())
+    // RTCP Control Message
+    if(rtcp_message_manager)
+    {
+        channel = channel_weak.lock();
+
+        if(channel)
+        {
+            if (channel->tcp_connection_type() == TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE)
+            {
+                rtcp_message_manager->sendConnectionRequest(channel);
+            }
+            else
+            {
+                channel->change_status(TCPChannelResource::eConnectionStatus::eWaitingForBind);
+            }
+        }
+
+        std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);
+        rtcp_message_manager.reset();
+        rtcp_message_manager_cv_.notify_one();
+    }
+    else
+    {
+        return;
+    }
+
+    while (channel && TCPChannelResource::eConnectionStatus::eConnecting < channel->connection_status())
     {
         // Blocking receive.
-        CDRMessage_t& msg = pChannelResource->GetMessageBuffer();
+        CDRMessage_t& msg = channel->message_buffer();
         CDRMessage::initCDRMsg(&msg);
-        if (!Receive(pChannelResource, msg.buffer, msg.max_size, msg.length, remoteLocator))
+        if (!Receive(rtcp_manager, channel, msg.buffer, msg.max_size, msg.length, remote_locator))
         {
             continue;
         }
 
-        // Processes the data through the CDR Message interface.
-        logicalPort = IPLocator::getLogicalPort(remoteLocator);
-        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
-        auto it = mReceiverResources.find(logicalPort);
-        //TransportReceiverInterface* receiver = pChannelResource->GetMessageReceiver(logicalPort);
-        if (it != mReceiverResources.end())
+        if(TCPChannelResource::eConnectionStatus::eConnecting < channel->connection_status())
         {
-            TransportReceiverInterface* receiver = it->second.first;
-            ReceiverInUseCV* receiver_in_use = it->second.second;
-            receiver_in_use->in_use = true;
-            scopedLock.unlock();
-            receiver->OnDataReceived(msg.buffer, msg.length, pChannelResource->GetLocator(), remoteLocator);
-            scopedLock.lock();
-            receiver_in_use->in_use = false;
-            receiver_in_use->cv.notify_one();
-        }
-        else
-        {
-            logWarning(RTCP, "Received Message, but no TransportReceiverInterface attached: " << logicalPort);
+            // Processes the data through the CDR Message interface.
+            logicalPort = IPLocator::getLogicalPort(remote_locator);
+            std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+            auto it = receiver_resources_.find(logicalPort);
+            //TransportReceiverInterface* receiver = channel->GetMessageReceiver(logicalPort);
+            if (it != receiver_resources_.end())
+            {
+                TransportReceiverInterface* receiver = it->second.first;
+                ReceiverInUseCV* receiver_in_use = it->second.second;
+                receiver_in_use->in_use = true;
+                scopedLock.unlock();
+                receiver->OnDataReceived(msg.buffer, msg.length, channel->locator(), remote_locator);
+                scopedLock.lock();
+                receiver_in_use->in_use = false;
+                receiver_in_use->cv.notify_one();
+            }
+            else
+            {
+                logWarning(RTCP, "Received Message, but no TransportReceiverInterface attached: " << logicalPort);
+            }
         }
     }
 
-    logInfo(RTCP, "End PerformListenOperation " << pChannelResource->GetLocator());
+    logInfo(RTCP, "End PerformListenOperation " << channel->locator());
 }
 
-bool TCPTransportInterface::ReadBody(octet* receiveBuffer, uint32_t receiveBufferCapacity,
-    uint32_t* bytes_received, TCPChannelResource *pChannelResource, std::size_t body_size)
+bool TCPTransportInterface::read_body(
+        octet* receive_buffer,
+        uint32_t,
+        uint32_t* bytes_received,
+        std::shared_ptr<TCPChannelResource>& channel,
+        std::size_t body_size)
 {
-    *bytes_received = static_cast<uint32_t>(read(*pChannelResource->getSocket(),
-        asio::buffer(receiveBuffer, receiveBufferCapacity), transfer_exactly(body_size)));
+    asio::error_code ec;
 
-    if (*bytes_received != body_size)
+    *bytes_received = channel->read(receive_buffer, body_size, ec);
+
+    if (ec)
     {
-        logError(RTCP, "Bad TCP body size: " << bytes_received << "(expected: " << TCPHeader::getSize() << ")");
+        logWarning(RTCP, "Error reading RTCP body: " << ec.message());
+        return false;
+    }
+    else if (*bytes_received != body_size)
+    {
+        logError(RTCP, "Bad RTCP body size: " << *bytes_received << " (expected: " << body_size << ")");
         return false;
     }
 
@@ -758,315 +790,266 @@ bool TCPTransportInterface::ReadBody(octet* receiveBuffer, uint32_t receiveBuffe
 /**
 * On TCP, we must receive the header (14 Bytes) and then,
 * the rest of the message, whose length is on the header.
-* TCP Header is transparent to the caller, so receiveBuffer
+* TCP Header is transparent to the caller, so receive_buffer
 * doesn't include it.
 * */
-bool TCPTransportInterface::Receive(TCPChannelResource *pChannelResource, octet* receiveBuffer,
-    uint32_t receiveBufferCapacity, uint32_t& receiveBufferSize, Locator_t& remoteLocator)
+bool TCPTransportInterface::Receive(
+        std::weak_ptr<RTCPMessageManager>& rtcp_manager,
+        std::shared_ptr<TCPChannelResource>& channel,
+        octet* receive_buffer,
+        uint32_t receive_buffer_capacity,
+        uint32_t& receive_buffer_size,
+        Locator_t& remote_locator)
 {
     bool success = false;
 
-    { // lock scope
-        if (!pChannelResource->IsAlive())
+    try
+    {
+        success = true;
+
+        // Read the header
+        //octet header[TCPHEADER_SIZE];
+        TCPHeader tcp_header;
+        asio::error_code ec;
+
+        size_t bytes_received = channel->read(reinterpret_cast<octet*>(&tcp_header),
+                TCPHeader::size(), ec);
+
+        remote_locator = channel->locator();
+
+        if (bytes_received != TCPHeader::size())
         {
+            if (bytes_received > 0)
+            {
+                logError(RTCP_MSG_IN, "Bad TCP header size: " << bytes_received << " (expected: : "
+                        << TCPHeader::size() << ")" << ec.message());
+                close_tcp_socket(channel);
+            }
+            else if (ec)
+            {
+                logWarning(DEBUG, "Error reading TCP header: " << ec.message());
+                close_tcp_socket(channel);
+            }
+
             success = false;
         }
         else
         {
-            success = true;
-            try
+            // Check RTPC Header
+            if (tcp_header.rtcp[0] != 'R'
+                    || tcp_header.rtcp[1] != 'T'
+                    || tcp_header.rtcp[2] != 'C'
+                    || tcp_header.rtcp[3] != 'P')
             {
-                std::unique_lock<std::recursive_mutex> scopedLock(pChannelResource->GetReadMutex());
-                // Read the header
-                //octet header[TCPHEADER_SIZE];
-                TCPHeader tcp_header;
-                asio::error_code ec;
-                size_t bytes_received = read(*pChannelResource->getSocket(),
-                    asio::buffer(&tcp_header, TCPHeader::getSize()),
-                    transfer_exactly(TCPHeader::getSize()), ec);
+                logError(RTCP_MSG_IN, "Bad RTCP header identifier, closing connection.");
+                close_tcp_socket(channel);
+                success = false;
+            }
+            else
+            {
+                size_t body_size = tcp_header.length - static_cast<uint32_t>(TCPHeader::size());
 
-                remoteLocator = pChannelResource->GetLocator();
-
-                if (bytes_received != TCPHeader::getSize())
+                if (body_size > receive_buffer_capacity)
                 {
-                    if (bytes_received > 0)
-                    {
-                        logError(RTCP_MSG_IN, "Bad TCP header size: " << bytes_received << "(expected: : " << TCPHeader::getSize() << ")" << ec);
-                    }
-                    CloseTCPSocket(pChannelResource);
+                    logError(RTCP_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: "
+                            << static_cast<uint32_t>(body_size) << " vs. " << receive_buffer_capacity << ". "
+                            << "The full message will be dropped.");
                     success = false;
+                    // Drop the message
+                    size_t to_read = body_size;
+                    size_t read_block = receive_buffer_capacity;
+                    uint32_t readed;
+                    while (read_block > 0)
+                    {
+                        read_body(receive_buffer, receive_buffer_capacity, &readed, channel,
+                                read_block);
+                        to_read -= readed;
+                        read_block = (to_read >= receive_buffer_capacity) ? receive_buffer_capacity : to_read;
+                    }
                 }
                 else
                 {
-                    size_t body_size = tcp_header.length - static_cast<uint32_t>(TCPHeader::getSize());
+                    logInfo(RTCP_MSG_IN, "Received RTCP MSG. Logical Port " << tcp_header.logical_port);
+                    success = read_body(receive_buffer, receive_buffer_capacity, &receive_buffer_size,
+                            channel, body_size);
 
-                    if (body_size > receiveBufferCapacity)
+                    if (success)
                     {
-                        logError(RTCP_MSG_IN, "Size of incoming TCP message is bigger than buffer capacity: "
-                            << static_cast<uint32_t>(body_size) << " vs. " << receiveBufferCapacity << ". " <<
-                            "The full message will be dropped.");
-                        success = false;
-                        // Drop the message
-                        size_t to_read = body_size;
-                        size_t read_block = receiveBufferCapacity;
-                        uint32_t readed;
-                        while (read_block > 0)
-                        {
-                            ReadBody(receiveBuffer, receiveBufferCapacity, &readed, pChannelResource, read_block);
-                            to_read -= readed;
-                            read_block = (to_read >= receiveBufferCapacity) ? receiveBufferCapacity : to_read;
-                        }
-                    }
-                    else
-                    {
-                        logInfo(RTCP_MSG_IN, "Received RTCP MSG. Logical Port " << tcp_header.logicalPort);
-                        success = ReadBody(receiveBuffer, receiveBufferCapacity, &receiveBufferSize, pChannelResource,
-                            body_size);
-                        //logInfo(RTCP_MSG_IN, " Received [ReadBody]");
-
-                        if (GetConfiguration()->check_crc && !CheckCRC(tcp_header, receiveBuffer, receiveBufferSize))
+                        if (configuration()->check_crc
+                                && !check_crc(tcp_header, receive_buffer, receive_buffer_size))
                         {
                             logWarning(RTCP_MSG_IN, "Bad TCP header CRC");
                         }
 
-                        if (tcp_header.logicalPort == 0)
+                        if (tcp_header.logical_port == 0)
                         {
-                            //logInfo(RTCP_MSG_IN, " Receive [RTCP Control]  (" << receiveBufferSize+bytes_received
-                            // << " bytes): " << receiveBufferSize << " bytes.");
-                            ResponseCode responseCode =
-                                mRTCPMessageManager->processRTCPMessage(pChannelResource, receiveBuffer, body_size);
-                            if (responseCode != RETCODE_OK)
+                            std::shared_ptr<RTCPMessageManager> rtcp_message_manager;
+                            if(TCPChannelResource::eConnectionStatus::eDisconnected != channel->connection_status())
+
                             {
-                                switch (responseCode)
-                                {
-                                    case RETCODE_INCOMPATIBLE_VERSION:
-                                        {
-                                            CloseOutputChannel(pChannelResource->mLocator);
-                                            break;
-                                        }
-                                    default: // Ignore
-                                        {
-                                            CloseTCPSocket(pChannelResource);
-                                            break;
-                                        }
-                                }
+                                std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);
+                                rtcp_message_manager = rtcp_manager.lock();
                             }
-                            success = false;
+
+                            if (rtcp_message_manager)
+                            {
+                                // The channel is not going to be deleted because we lock it for reading.
+                                ResponseCode responseCode = rtcp_message_manager->processRTCPMessage(
+                                        channel, receive_buffer, body_size);
+
+                                if (responseCode != RETCODE_OK)
+                                {
+                                    close_tcp_socket(channel);
+                                }
+                                success = false;
+
+                                std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);
+                                rtcp_message_manager.reset();
+                                rtcp_message_manager_cv_.notify_one();
+                            }
+                            else
+                            {
+                                success = false;
+                                close_tcp_socket(channel);
+                            }
+
                         }
                         else
                         {
-                            IPLocator::setLogicalPort(remoteLocator, tcp_header.logicalPort);
-                            logInfo(RTCP_MSG_IN, "[RECEIVE] From: " << remoteLocator \
-                                << " - " << receiveBufferSize << " bytes.");
+                            IPLocator::setLogicalPort(remote_locator, tcp_header.logical_port);
+                            logInfo(RTCP_MSG_IN, "[RECEIVE] From: " << remote_locator \
+                                    << " - " << receive_buffer_size << " bytes.");
                         }
                     }
+                    // Error message already shown by read_body method.
                 }
             }
-            catch (const asio::error_code& code)
-            {
-                if ((code == asio::error::eof) || (code == asio::error::connection_reset))
-                {
-                    // Close the channel
-                    logInfo(RTCP_MSG_IN, "ASIO [RECEIVE]: " << code.message());
-                    //pChannelResource->ConnectionLost();
-                    CloseTCPSocket(pChannelResource);
-                }
-                success = false;
-            }
-            catch (const asio::system_error& error)
-            {
-                (void)error;
-                // Close the channel
-                logInfo(RTCP_MSG_IN, "ASIO [RECEIVE]: " << error.what());
-                //pChannelResource->ConnectionLost();
-                CloseTCPSocket(pChannelResource);
-                success = false;
-            }
         }
     }
-    success = success && receiveBufferSize > 0;
-
-    if (!success)
+    catch (const asio::error_code& code)
     {
-        // TODO Manage errors, but don't remove the Channel Resource wihtout checks
-        /*
-        auto it = mChannelResources.find(IPLocator::toPhysicalLocator(pChannelResource->GetLocator()));
-        if (it != mChannelResources.end())
+        if ((code == asio::error::eof) || (code == asio::error::connection_reset))
         {
-            mChannelResources.erase(it);
+            // Close the channel
+            logError(RTCP_MSG_IN, "ASIO [RECEIVE]: " << code.message());
+            //channel->ConnectionLost();
+            close_tcp_socket(channel);
         }
-        */
-    }
-    return success;
-}
-
-size_t TCPTransportInterface::Send(TCPChannelResource *pChannelResource, const octet *data,
-    size_t size, eSocketErrorCodes &errorCode) const
-{
-    size_t bytesSent = 0;
-    try
-    {
-        asio::error_code ec;
-        std::unique_lock<std::recursive_mutex> scopedLock(pChannelResource->GetWriteMutex());
-        bytesSent = pChannelResource->getSocket()->send(asio::buffer(data, size), 0, ec);
-        errorCode = eSocketErrorCodes::eNoError;
-    }
-    catch (const asio::error_code& error)
-    {
-        logInfo(RTCP, "ASIO [SEND]: " << error.message());
-        if ((asio::error::eof == error.value()) || (asio::error::connection_reset == error.value()))
-        {
-            errorCode = eSocketErrorCodes::eBrokenPipe;
-        }
-        else
-        {
-            errorCode = eSocketErrorCodes::eAsioError;
-        }
+        success = false;
     }
     catch (const asio::system_error& error)
     {
         (void)error;
-        logInfo(RTCP, "ASIO [SEND]: " << error.what());
-        errorCode = eSocketErrorCodes::eSystemError;
-    }
-    catch (const std::exception& error)
-    {
-        (void)error;
-        logInfo(RTCP, "ASIO [SEND]: " << error.what());
-        errorCode = eSocketErrorCodes::eException;
+        // Close the channel
+        logError(RTCP_MSG_IN, "ASIO SYSTEM_ERROR [RECEIVE]: " << error.what());
+        //channel->ConnectionLost();
+        close_tcp_socket(channel);
+        success = false;
     }
 
-    return bytesSent;
+    success = success && receive_buffer_size > 0;
+
+    return success;
 }
 
-size_t TCPTransportInterface::Send(TCPChannelResource *pChannelResource, const octet *data, size_t size) const
+bool TCPTransportInterface::send(
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        std::shared_ptr<TCPChannelResource>& channel,
+        const Locator_t& remote_locator)
 {
-    eSocketErrorCodes error;
-    return Send(pChannelResource, data, size, error);
-}
+    bool locator_mismatch = false;
 
-
-bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& localLocator,
-    const Locator_t& remoteLocator)
-{
-    /*
-    logInfo(RTCP, " SEND [RTPS Data] to locator " << IPLocator::getPhysicalPort(remoteLocator) << ":" << \
-        IPLocator::getLogicalPort(remoteLocator));
-    */
-
-    TCPChannelResource* channelResource = nullptr;
+    if (channel->locator() != IPLocator::toPhysicalLocator(remote_locator))
     {
-        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
-        if (!IsOutputChannelConnected(remoteLocator) || sendBufferSize > GetConfiguration()->sendBufferSize)
-        {
-            logWarning(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remoteLocator) \
-                << " @ IP: " << IPLocator::toIPv4string(remoteLocator));
-            return false;
-        }
+        locator_mismatch = true;
+    }
 
-        auto it = mChannelResources.find(IPLocator::toPhysicalLocator(remoteLocator));
-        if (it == mChannelResources.end())
+    // Maybe is WAN?
+    if (locator_mismatch && IPLocator::hasWan(remote_locator))
+    {
+        Locator_t wan_locator;
+        wan_locator.kind = remote_locator.kind;
+        wan_locator.port = IPLocator::toPhysicalLocator(remote_locator).port;
+        IPLocator::setIPv4(wan_locator, IPLocator::toWanstring(remote_locator)); // WAN to IP
+        //std::cout << "WANLocator: " << IPLocator::to_string(wan_locator) << std::endl;
+        if(channel->locator() == wan_locator)
         {
-            EnqueueLogicalOutputPort(remoteLocator);
-            logInfo(RTCP, "SEND [RTPS] Failed: Not yet bound: " << IPLocator::getLogicalPort(remoteLocator) \
-                << " @ IP: " << IPLocator::toIPv4string(remoteLocator) << " will be bound.");
-            return false;
-        }
-        else
-        {
-            channelResource = it->second;
+            locator_mismatch = false;
         }
     }
 
-    bool result = true;
-    if (channelResource != nullptr)
+    if (locator_mismatch || send_buffer_size > configuration()->sendBufferSize)
     {
-        result = result && Send(sendBuffer, sendBufferSize, localLocator, remoteLocator, channelResource);
+        //std::cout << "ChannelLocator: " << IPLocator::to_string(channel->locator()) << std::endl;
+        //std::cout << "RemoteLocator: " << IPLocator::to_string(remote_locator) << std::endl;
+
+        logWarning(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remote_locator) \
+            << " @ IP: " << IPLocator::toIPv4string(remote_locator));
+        return false;
     }
-    return result;
-}
 
-bool TCPTransportInterface::Send(const octet* sendBuffer, uint32_t sendBufferSize, const Locator_t& /*localLocator*/,
-    const Locator_t& remoteLocator, ChannelResource *pChannelResource)
-{
-    TCPChannelResource* tcpChannelResource = dynamic_cast<TCPChannelResource*>(pChannelResource);
-    if (tcpChannelResource != nullptr && tcpChannelResource->IsConnectionEstablished())
+    bool success = false;
+
+    /* TODO Verify when cable is removed
+    if(TCPChannelResource::TCPConnectionStatus::TCP_DISCONNECTED == channel->tcp_connection_status() &&
+        TCPChannelResource::TCPConnectionType::TCP_ACCEPT_TYPE == channel->tcp_connection_type())
     {
-        bool success = false;
-        uint16_t logicalPort = IPLocator::getLogicalPort(remoteLocator);
-
-        if (tcpChannelResource->IsLogicalPortAdded(logicalPort))
+        std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+        auto channel_resource = channel_resources_.find(channel->locator());
+        if (channel_resource != channel_resources_.end() && channel != channel_resource->second)
         {
-            bool bShouldWait = GetConfiguration()->wait_for_tcp_negotiation;
-            bool bConnected = tcpChannelResource->IsAlive() && tcpChannelResource->IsConnectionEstablished();
-            while (bShouldWait && bConnected && !tcpChannelResource->IsLogicalPortOpened(logicalPort))
-            {
-                bConnected = tcpChannelResource->WaitUntilPortIsOpenOrConnectionIsClosed(logicalPort);
-            }
+            channel = channel_resource->second;
+        }
+    }*/
 
-            if (bConnected && tcpChannelResource->IsLogicalPortOpened(logicalPort))
+    if (channel->connection_established())
+    {
+        uint16_t logical_port = IPLocator::getLogicalPort(remote_locator);
+
+        if (channel->is_logical_port_added(logical_port))
+        {
+            if (channel->is_logical_port_opened(logical_port))
             {
                 TCPHeader tcp_header;
-                FillTCPHeader(tcp_header, sendBuffer, sendBufferSize, logicalPort);
+                fill_rtcp_header(tcp_header, send_buffer, send_buffer_size, logical_port);
 
                 {
-                    std::unique_lock<std::recursive_mutex> sendLock(tcpChannelResource->GetWriteMutex());
-                    success = SendThroughSocket((octet*)&tcp_header, static_cast<uint32_t>(TCPHeader::getSize()), remoteLocator, tcpChannelResource);
+                    asio::error_code ec;
+                    size_t sent = channel->send(
+                        (octet*)&tcp_header,
+                        static_cast<uint32_t>(TCPHeader::size()),
+                        send_buffer,
+                        send_buffer_size,
+                        ec);
 
-                    if (success)
+                    if (sent != static_cast<uint32_t>(TCPHeader::size() + send_buffer_size) || ec)
                     {
-                        success = SendThroughSocket(sendBuffer, sendBufferSize, remoteLocator, tcpChannelResource);
+                        logWarning(DEBUG, "Failed to send RTCP message (" << sent << " of " <<
+                                TCPHeader::size() + send_buffer_size << " b): " << ec.message());
+                        success = false;
+                    }
+                    else
+                    {
+                        success = true;
                     }
                 }
             }
         }
         else
         {
-            tcpChannelResource->AddLogicalPort(logicalPort);
+            channel->add_logical_port(logical_port, rtcp_message_manager_.get());
         }
-
-        return success;
     }
-    else if (mSendRetryActive)
+    else if(TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE == channel->tcp_connection_type() &&
+            TCPChannelResource::eConnectionStatus::eDisconnected == channel->connection_status())
     {
-        logWarning(RTCP, " SEND [RTPS] Failed: Connection not established " \
-            << IPLocator::getLogicalPort(remoteLocator));
-        return false;
-    }
-    else
-    {
-        // With the retry disabled, the messages are discarded
-        return true;
-    }
-}
-
-bool TCPTransportInterface::SendThroughSocket(const octet* sendBuffer, uint32_t sendBufferSize,
-    const Locator_t& remoteLocator, TCPChannelResource *socket)
-{
-    auto destinationEndpoint = GenerateEndpoint(remoteLocator, IPLocator::getPhysicalPort(remoteLocator));
-
-    size_t bytesSent = 0;
-    (void)destinationEndpoint;
-
-    //logInfo(RTCP, "SOCKET SEND to physical port " << socket->getSocket()->remote_endpoint().port());
-
-    eSocketErrorCodes errorCode;
-    bytesSent = Send(socket, sendBuffer, sendBufferSize, errorCode);
-    switch (errorCode)
-    {
-    case eNoError:
-        //logInfo(RTCP, " Sent [OK]: " << sendBufferSize << " bytes to locator " << IPLocator::getLogicalPort(remoteLocator));
-        break;
-    default:
-        // Inform that connection has been lost
-        logInfo(RTCP, " Sent [FAILED]: " << sendBufferSize << " bytes to locator " << IPLocator::getLogicalPort(remoteLocator) << " ERROR=" << errorCode);
-        //socket->ConnectionLost();
-        CloseTCPSocket(socket);
-        break;
+        channel->set_all_ports_pending();
+        std::unique_lock<std::mutex> lock(sockets_map_mutex_);
+        channel->connect(channel_resources_[channel->locator()]);
     }
 
-    logInfo(RTCP_MSG_OUT, "[SENT] TO " << remoteLocator << " - " << sendBufferSize << " (" << bytesSent << ").");
-    return bytesSent > 0;
+    return success;
 }
 
 LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)
@@ -1079,17 +1062,17 @@ LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
 
         while (it != locatorList.end())
         {
-            assert((*it).kind == mTransportKind);
+            assert((*it).kind == transport_kind_);
 
             // Check is local interface.
-            auto localInterface = mCurrentInterfaces.begin();
-            for (; localInterface != mCurrentInterfaces.end(); ++localInterface)
+            auto localInterface = current_interfaces_.begin();
+            for (; localInterface != current_interfaces_.end(); ++localInterface)
             {
-                if (CompareLocatorIP(localInterface->locator, *it))
+                if (compare_locator_ip(localInterface->locator, *it))
                 {
                     // Loopback locator
                     Locator_t loopbackLocator;
-                    FillLocalIp(loopbackLocator);
+                    fill_local_ip(loopbackLocator);
                     IPLocator::setPhysicalPort(loopbackLocator, IPLocator::getPhysicalPort(*it));
                     IPLocator::setLogicalPort(loopbackLocator, IPLocator::getLogicalPort(*it));
                     pendingUnicast.push_back(loopbackLocator);
@@ -1097,7 +1080,7 @@ LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
                 }
             }
 
-            if (localInterface == mCurrentInterfaces.end())
+            if (localInterface == current_interfaces_.end())
                 pendingUnicast.push_back(*it);
 
             ++it;
@@ -1110,143 +1093,131 @@ LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<Locato
     return result;
 }
 
-void TCPTransportInterface::SocketAccepted(TCPAcceptor* acceptor, const asio::error_code& error)
+void TCPTransportInterface::SocketAccepted(
+        std::shared_ptr<asio::ip::tcp::socket> socket,
+        const Locator_t& locator,
+        const asio::error_code& error)
 {
+    if(alive_.load())
     {
-        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
-        if (std::find(mDeletedAcceptors.begin(), mDeletedAcceptors.end(), acceptor) != mDeletedAcceptors.end())
+        if (!error.value())
         {
-            //std::cout << "Acceptor called on delete" << std::endl;
-            // SocketAccepted was called by asio after the acceptor was deleted. By must abort any operation.
-            logWarning(RTCP, "Acceptor called on delete");
-            return;
+            // Store the new connection.
+            std::shared_ptr<TCPChannelResource> channel(new TCPChannelResourceBasic(this,
+                        io_service_, socket, configuration()->maxMessageSize));
+
+            {
+                std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
+                unbound_channel_resources_.push_back(channel);
+            }
+
+            channel->set_options(configuration());
+            std::weak_ptr<TCPChannelResource> channel_weak_ptr = channel;
+            std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
+            channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
+                        channel_weak_ptr, rtcp_manager_weak_ptr));
+
+            logInfo(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
+                    << ", remote: " << channel->remote_endpoint().address()
+                    << ":" << channel->remote_endpoint().port() << ")");
+        }
+        else
+        {
+            logInfo(RTCP, " Accepting connection (" << error.message() << ")");
+            eClock::my_sleep(200); // Wait a little to accept again.
+        }
+
+        if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
+        {
+            std::shared_ptr<TCPAcceptor> acceptor = acceptors_[locator];
+            if (acceptor != nullptr)
+            {
+                dynamic_cast<TCPAcceptorBasic*>(acceptor.get())->accept(this);
+            }
         }
     }
+}
 
-    if (!error.value())
+#if TLS_FOUND
+void TCPTransportInterface::SecureSocketAccepted(
+        std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
+        const Locator_t& locator,
+        const asio::error_code& error)
+{
+    if(alive_.load())
     {
-        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
-        if (mSocketAcceptors.find(IPLocator::getPhysicalPort(acceptor->mLocator)) != mSocketAcceptors.end())
+        if (!error.value())
         {
-#if defined(ASIO_HAS_MOVE)
-            eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(std::move(acceptor->mSocket));
-#else
-            eProsimaTCPSocket unicastSocket = eProsimaTCPSocket(acceptor->mSocket);
-            acceptor->mSocket = nullptr;
+            // Store the new connection.
+            std::shared_ptr<TCPChannelResource> secure_channel(new TCPChannelResourceSecure(this,
+                        io_service_, ssl_context_, socket, configuration()->maxMessageSize));
+
+            {
+                std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
+                unbound_channel_resources_.push_back(secure_channel);
+            }
+
+            secure_channel->set_options(configuration());
+            std::weak_ptr<TCPChannelResource> channel_weak_ptr = secure_channel;
+            std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
+            secure_channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
+                        channel_weak_ptr, rtcp_manager_weak_ptr));
+
+            logInfo(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
+                    << ", remote: " << socket->lowest_layer().remote_endpoint().address()
+                    << ":" << socket->lowest_layer().remote_endpoint().port() << ")");
+        }
+        else
+        {
+            logInfo(RTCP, " Accepting connection (" << error.message() << ")");
+            eClock::my_sleep(200); // Wait a little to accept again.
+        }
+
+        if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
+        {
+            std::shared_ptr<TCPAcceptor> acceptor = acceptors_[locator];
+            if (acceptor != nullptr)
+            {
+                dynamic_cast<TCPAcceptorSecure*>(acceptor.get())->accept(this, ssl_context_);
+            }
+        }
+    }
+}
 #endif
 
-            getSocketPtr(unicastSocket)->set_option(socket_base::receive_buffer_size(GetConfiguration()->receiveBufferSize));
-            getSocketPtr(unicastSocket)->set_option(socket_base::send_buffer_size(GetConfiguration()->sendBufferSize));
-            getSocketPtr(unicastSocket)->set_option(ip::tcp::no_delay(GetConfiguration()->enable_tcp_nodelay));
-
-            // Store the new connection.
-            TCPChannelResource *pChannelResource = new TCPChannelResource(this, mRTCPMessageManager, mService,
-                unicastSocket, GetConfiguration()->maxMessageSize);
-
-            mUnboundChannelResources.push_back(pChannelResource);
-            pChannelResource->SetThread(new std::thread(&TCPTransportInterface::performListenOperation, this,
-                pChannelResource));
-            pChannelResource->SetRTCPThread(new std::thread(&TCPTransportInterface::performRTPCManagementThread,
-                this, pChannelResource));
-
-            logInfo(RTCP, " Accepted connection (physical local: " << IPLocator::getPhysicalPort(acceptor->mLocator)
-                << ", remote: " << pChannelResource->getSocket()->remote_endpoint().port()
-                << ") IP: " << pChannelResource->getSocket()->remote_endpoint().address());
-
-
-            // std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-            // std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-            // std::cout << std::put_time(std::localtime(&now_c), "%F %T")
-            //     <<  "--> Accepted connection (physical local: " << acceptor->mLocator.get_physical_port()
-            //     << ", remote: " << pChannelResource->getSocket()->remote_endpoint().port()
-            //     << ") IP: " << pChannelResource->getSocket()->remote_endpoint().address() << std::endl;
-        }
-        else
-        {
-            logError(RTPC, "Incomming connection from unknown Acceptor: "
-                << IPLocator::getPhysicalPort(acceptor->mLocator));
-            return;
-        }
-    }
-    else
-    {
-        logInfo(RTCP, " Accepting connection failed (error: " << error.message() << ")");
-        eClock::my_sleep(200); // Wait a little to accept again.
-    }
-
-    if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
-    {
-        // Accept new connections for the same port. Could be not found when exiting.
-        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
-        if (mSocketAcceptors.find(IPLocator::getPhysicalPort(acceptor->mLocator)) != mSocketAcceptors.end())
-        {
-            acceptor->Accept(this, mService);
-        }
-    }
-}
-
-void TCPTransportInterface::SocketConnected(Locator_t locator, const asio::error_code& error)
+void TCPTransportInterface::SocketConnected(
+        const std::weak_ptr<TCPChannelResource>& channel_weak_ptr,
+        const asio::error_code& error)
 {
-    TCPChannelResource* outputSocket = nullptr;
+    if(alive_.load())
     {
-        std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
-        auto it = mChannelResources.find(IPLocator::toPhysicalLocator(locator));
-        if (it != mChannelResources.end())
-        {
-            outputSocket = it->second;
-        }
-    }
+        auto channel = channel_weak_ptr.lock();
 
-    if(outputSocket != nullptr)
-    {
-        if(error.value() == 0)
+        if(channel)
         {
-            try
+            if (!error)
             {
-                outputSocket->getSocket()->set_option(socket_base::receive_buffer_size(GetConfiguration()->receiveBufferSize));
-                outputSocket->getSocket()->set_option(socket_base::send_buffer_size(GetConfiguration()->sendBufferSize));
-                outputSocket->getSocket()->set_option(ip::tcp::no_delay(GetConfiguration()->enable_tcp_nodelay));
+                if(TCPChannelResource::eConnectionStatus::eDisconnected < channel->connection_status())
+                {
+                    channel->change_status(TCPChannelResource::eConnectionStatus::eConnected);
+                    channel->set_options(configuration());
 
-                outputSocket->SetThread(
-                    new std::thread(&TCPTransportInterface::performListenOperation, this, outputSocket));
-                outputSocket->SetRTCPThread(
-                    new std::thread(&TCPTransportInterface::performRTPCManagementThread, this, outputSocket));
-
-                // RTCP Control Message
-                mRTCPMessageManager->sendConnectionRequest(outputSocket);
+                    std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
+                    channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
+                                channel_weak_ptr, rtcp_manager_weak_ptr));
+                }
             }
-            catch (asio::system_error const& /*e*/)
+            else
             {
-                /*
-                (void)e;
-                logInfo(RTCP_MSG_OUT, "TCPTransport Error establishing the connection at port:(" << IPLocator::getPhysicalPort(locator) << ")" << " with msg:" << e.what());
-                CloseOutputChannel(locator);
-                */
+                channel->disable();
             }
-        }
-        else
-        {
-            if (error.value() == asio::error::basic_errors::connection_refused)
-            {
-                // Wait a little before try again to avoid exhaust file descriptors in some systems
-                eClock::my_sleep(200);
-            }
-            CloseTCPSocket(outputSocket);
         }
     }
 }
 
-void TCPTransportInterface::UnbindSocket(TCPChannelResource *pSocket)
-{
-    std::unique_lock<std::mutex> scopedLock(mSocketsMapMutex);
-    auto it = mChannelResources.find(IPLocator::toPhysicalLocator(pSocket->mLocator));
-    if (it != mChannelResources.end())
-    {
-        mChannelResources.erase(it);
-    }
-}
-
-bool TCPTransportInterface::getDefaultMetatrafficMulticastLocators(LocatorList_t &, uint32_t ) const
+bool TCPTransportInterface::getDefaultMetatrafficMulticastLocators(
+        LocatorList_t &,
+        uint32_t ) const
 {
     // TCP doesn't have multicast support
     return true;
@@ -1256,35 +1227,40 @@ bool TCPTransportInterface::getDefaultMetatrafficUnicastLocators(LocatorList_t &
     uint32_t metatraffic_unicast_port) const
 {
     Locator_t locator;
-    locator.kind = mTransportKind;
+    locator.kind = transport_kind_;
     locator.set_Invalid_Address();
     fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
     locators.push_back(locator);
     return true;
 }
 
-bool TCPTransportInterface::getDefaultUnicastLocators(LocatorList_t &locators, uint32_t unicast_port) const
+bool TCPTransportInterface::getDefaultUnicastLocators(
+        LocatorList_t &locators,
+        uint32_t unicast_port) const
 {
     Locator_t locator;
-    locator.kind = mTransportKind;
+    locator.kind = transport_kind_;
     locator.set_Invalid_Address();
     fillUnicastLocator(locator, unicast_port);
     locators.push_back(locator);
     return true;
 }
 
-bool TCPTransportInterface::fillMetatrafficMulticastLocator(Locator_t &, uint32_t) const
+bool TCPTransportInterface::fillMetatrafficMulticastLocator(
+        Locator_t &,
+        uint32_t) const
 {
     // TCP doesn't have multicast support
     return true;
 }
 
-bool TCPTransportInterface::fillMetatrafficUnicastLocator(Locator_t &locator,
+bool TCPTransportInterface::fillMetatrafficUnicastLocator(
+        Locator_t &locator,
         uint32_t metatraffic_unicast_port) const
 {
     if (IPLocator::getPhysicalPort(locator.port) == 0)
     {
-        const TCPTransportDescriptor* config = GetConfiguration();
+        const TCPTransportDescriptor* config = configuration();
         if (config != nullptr)
         {
             if (!config->listening_ports.empty())
@@ -1303,17 +1279,18 @@ bool TCPTransportInterface::fillMetatrafficUnicastLocator(Locator_t &locator,
         IPLocator::setLogicalPort(locator, static_cast<uint16_t>(metatraffic_unicast_port));
     }
 
-    // TODO: Add WAN address
-
     return true;
 }
 
-bool TCPTransportInterface::configureInitialPeerLocator(Locator_t &locator, const PortParameters &port_params,
-        uint32_t domainId, LocatorList_t& list) const
+bool TCPTransportInterface::configureInitialPeerLocator(
+        Locator_t &locator,
+        const PortParameters &port_params,
+        uint32_t domainId,
+        LocatorList_t& list) const
 {
     if(IPLocator::getPhysicalPort(locator) == 0)
     {
-        for(uint32_t i = 0; i < GetConfiguration()->maxInitialPeersRange; ++i)
+        for(uint32_t i = 0; i < configuration()->maxInitialPeersRange; ++i)
         {
             Locator_t auxloc(locator);
             auxloc.port = static_cast<uint16_t>(port_params.getUnicastPort(domainId, i));
@@ -1330,7 +1307,7 @@ bool TCPTransportInterface::configureInitialPeerLocator(Locator_t &locator, cons
     {
         if (IPLocator::getLogicalPort(locator) == 0)
         {
-            for(uint32_t i = 0; i < GetConfiguration()->maxInitialPeersRange; ++i)
+            for(uint32_t i = 0; i < configuration()->maxInitialPeersRange; ++i)
             {
                 Locator_t auxloc(locator);
                 IPLocator::setLogicalPort(auxloc, static_cast<uint16_t>(port_params.getUnicastPort(domainId, i)));
@@ -1346,11 +1323,13 @@ bool TCPTransportInterface::configureInitialPeerLocator(Locator_t &locator, cons
     return true;
 }
 
-bool TCPTransportInterface::fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const
+bool TCPTransportInterface::fillUnicastLocator(
+        Locator_t &locator,
+        uint32_t well_known_port) const
 {
     if (IPLocator::getPhysicalPort(locator.port) == 0)
     {
-        const TCPTransportDescriptor* config = GetConfiguration();
+        const TCPTransportDescriptor* config = configuration();
         if (config != nullptr)
         {
             if (!config->listening_ports.empty())
@@ -1369,16 +1348,136 @@ bool TCPTransportInterface::fillUnicastLocator(Locator_t &locator, uint32_t well
         IPLocator::setLogicalPort(locator, static_cast<uint16_t>(well_known_port));
     }
 
-    // TODO: Add WAN address
-
     return true;
 }
 
-void TCPTransportInterface::Shutdown()
+void TCPTransportInterface::shutdown()
 {
-    mSendRetryActive = false;
 }
 
+void TCPTransportInterface::apply_tls_config()
+{
+#if TLS_FOUND
+    const TCPTransportDescriptor* descriptor = configuration();
+    if (descriptor->apply_security)
+    {
+        ssl_context_.set_verify_callback([](bool preverified, ssl::verify_context&)
+        {
+            return preverified;
+        });
+
+        const TCPTransportDescriptor::TLSConfig* config = &descriptor->tls_config;
+        using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+
+        if (!config->password.empty())
+        {
+            ssl_context_.set_password_callback(std::bind(&TCPTransportInterface::get_password, this));
+        }
+
+        if (!config->verify_file.empty())
+        {
+            ssl_context_.load_verify_file(config->verify_file);
+        }
+
+        if (!config->cert_chain_file.empty())
+        {
+            ssl_context_.use_certificate_chain_file(config->cert_chain_file);
+        }
+
+        if (!config->private_key_file.empty())
+        {
+            ssl_context_.use_private_key_file(config->private_key_file, ssl::context::pem);
+        }
+
+        if (!config->tmp_dh_file.empty())
+        {
+            ssl_context_.use_tmp_dh_file(config->tmp_dh_file);
+        }
+
+        if (!config->verify_paths.empty())
+        {
+            for (const std::string& path : config->verify_paths)
+            {
+                ssl_context_.add_verify_path(path);
+            }
+        }
+
+        if (config->default_verify_path)
+        {
+            ssl_context_.set_default_verify_paths();
+        }
+
+        if (config->verify_depth >= 0)
+        {
+            ssl_context_.set_verify_depth(config->verify_depth);
+        }
+
+        if (!config->rsa_private_key_file.empty())
+        {
+            ssl_context_.use_private_key_file(config->rsa_private_key_file, ssl::context::pem);
+        }
+
+        if (config->options != TLSOptions::NONE)
+        {
+            uint32_t options = 0;
+
+            if (config->get_option(TLSOptions::DEFAULT_WORKAROUNDS))
+            {
+                options |= ssl::context::default_workarounds;
+            }
+
+            if (config->get_option(TLSOptions::NO_COMPRESSION))
+            {
+                options |= ssl::context::no_compression;
+            }
+
+            if (config->get_option(TLSOptions::NO_SSLV2))
+            {
+                options |= ssl::context::no_sslv2;
+            }
+
+            if (config->get_option(TLSOptions::NO_SSLV3))
+            {
+                options |= ssl::context::no_sslv3;
+            }
+
+            if (config->get_option(TLSOptions::NO_TLSV1))
+            {
+                options |= ssl::context::no_tlsv1;
+            }
+
+            if (config->get_option(TLSOptions::NO_TLSV1_1))
+            {
+                options |= ssl::context::no_tlsv1_1;
+            }
+
+            if (config->get_option(TLSOptions::NO_TLSV1_2))
+            {
+                options |= ssl::context::no_tlsv1_2;
+            }
+
+#if ASIO_VERSION >= 106900 // no_tlsv1_3 added in asio 1.69
+            if (config->get_option(TLSOptions::NO_TLSV1_3))
+            {
+                options |= ssl::context::no_tlsv1_3;
+            }
+#endif
+
+            if (config->get_option(TLSOptions::SINGLE_DH_USE))
+            {
+                options |= ssl::context::single_dh_use;
+            }
+
+            ssl_context_.set_options(options);
+        }
+    }
+#endif
+}
+
+std::string TCPTransportInterface::get_password() const
+{
+    return configuration()->tls_config.password;
+}
 
 } // namespace rtps
 } // namespace fastrtps

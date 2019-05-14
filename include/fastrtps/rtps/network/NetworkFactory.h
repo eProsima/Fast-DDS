@@ -33,7 +33,7 @@ class RTPSParticipantAttributes;
  * in turn manage the SEND and RECEIVE operations over some transport.
  * Once a transport is registered, it becomes invisible to the library
  * and is abstracted away for good.
- * @ingroup NETWORK_MODULE.
+ * @ingroup NETWORK_MODULE
  */
 class NetworkFactory
 {
@@ -63,17 +63,23 @@ class NetworkFactory
         /**
          * Walks over the list of transports, opening every possible channel that can send through
          * the given locator and returning a vector of Sender Resources associated with it.
-         * @param local Locator through which to send.
+         * @param locator Locator through which to send.
          */
-        std::vector<SenderResource> BuildSenderResources(Locator_t& local);
+        bool build_send_resources(
+                SendResourceList&,
+                const Locator_t& locator);
 
         /**
          * Walks over the list of transports, opening every possible channel that we can listen to
          * from the given locator, and returns a vector of Receiver Resources for this goal.
          * @param local Locator from which to listen.
+         * @param maxMsgSize Maximum size of the message.
+         * @param returned_resources_list List that will be filled with the created ReceiverResources.
          */
-        bool BuildReceiverResources(Locator_t& local, uint32_t maxMsgSize,
-            std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list);
+        bool BuildReceiverResources(
+                Locator_t& local,
+                uint32_t maxMsgSize,
+                std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list);
 
         void NormalizeLocators(LocatorList_t& locators);
 

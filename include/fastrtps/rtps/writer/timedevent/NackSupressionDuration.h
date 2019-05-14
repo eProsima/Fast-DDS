@@ -17,18 +17,19 @@
  *
  */
 
-#ifndef NACKSUPRESSIONDURATION_H_
-#define NACKSUPRESSIONDURATION_H_
+#ifndef FASTRTPS_RTPS_WRITER_TIMEDEVENT_NACKSUPRESSIONDURATION_H_
+#define FASTRTPS_RTPS_WRITER_TIMEDEVENT_NACKSUPRESSIONDURATION_H_
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "../../resources/TimedEvent.h"
+#include "../../common/Guid.h"
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class StatefulWriter;
-class ReaderProxy;
 
 /**
  * NackSupressionDuration class, used to avoid too "recent" NACK messages.
@@ -37,28 +38,48 @@ class ReaderProxy;
 class NackSupressionDuration : public TimedEvent
 {
 public:
-	virtual ~NackSupressionDuration();
-	/**
-	*
-	* @param p_RP
-	* @param intervalmillisec
-	*/
-	NackSupressionDuration(ReaderProxy* p_RP,double intervalmillisec);
+    /**
+     * Construct a NackSupressionDuration event.
+     *
+     * @param writer           Pointer to the StatefulWriter creating this event
+     * @param interval_in_ms   Event interval in miliseconds
+     */
+    NackSupressionDuration(
+            StatefulWriter* writer,
+            double interval_in_ms);
 
-	/**
-	* Method invoked when the event occurs
-	*
-	* @param code Code representing the status of the event
-	* @param msg Message associated to the event
-	*/
-	void event(EventCode code, const char* msg= nullptr);
+    virtual ~NackSupressionDuration();
 
-	//!Reader proxy
-	ReaderProxy* mp_RP;
+    /**
+     * Method invoked when the event occurs
+     *
+     * @param code Code representing the status of the event
+     * @param msg Message associated to the event
+     */
+    void event(
+            EventCode code,
+            const char* msg = nullptr) override;
+
+    /**
+     * Set a new reader guid value
+     */
+    inline void reader_guid(const GUID_t guid)
+    {
+        reader_guid_ = guid;
+    }
+
+private:
+
+    //! Associated stateful writer
+    StatefulWriter* writer_;
+
+    //! GUID of the reader proxy
+    GUID_t reader_guid_;
 };
 
-}
-}
+} /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
+
 #endif
-#endif /* NACKSUPRESSIONDURATION_H_ */
+#endif /* FASTRTPS_RTPS_WRITER_TIMEDEVENT_NACKSUPRESSIONDURATION_H_ */

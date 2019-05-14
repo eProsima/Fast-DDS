@@ -40,8 +40,6 @@ namespace eprosima
 namespace eprosima {
 namespace fastrtps {
 
-using namespace rtps;
-
 namespace types {
 
 // First 14 bytes of MD5 of the serialized TypeObject using XCDR

@@ -28,6 +28,8 @@
 #include <array>
 #include <string>
 #include <vector>
+#include <codecvt>
+#include <locale>
 
 namespace eprosima
 {
@@ -38,8 +40,6 @@ namespace eprosima
 }
 namespace eprosima{
 namespace fastrtps{
-
-using namespace rtps;
 
 namespace types{
 
@@ -134,6 +134,8 @@ public:
      * @param cdr CDR serialization object.
      */
     void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+
+    bool operator==(const ExtendedAnnotationParameterValue&) const { return true; }
 
 private:
 };
@@ -590,6 +592,155 @@ public:
      */
     void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
 
+    bool operator==(const AnnotationParameterValue& other) const;
+
+    /**
+     * Aux method to return value as its string representation.
+     */
+    std::string to_string() const
+    {
+        switch(m__d)
+        {
+            case TK_BOOLEAN:
+                return (m_boolean_value) ? "true" : "false";
+            case TK_BYTE:
+                return std::to_string(m_byte_value);
+            case TK_INT16:
+                return std::to_string(m_int16_value);
+            case TK_UINT16:
+                return std::to_string(m_uint_16_value);
+            case TK_INT32:
+                return std::to_string(m_int32_value);
+            case TK_UINT32:
+                return std::to_string(m_uint32_value);
+            case TK_INT64:
+                return std::to_string(m_int64_value);
+            case TK_UINT64:
+                return std::to_string(m_uint64_value);
+            case TK_FLOAT32:
+                return std::to_string(m_float32_value);
+            case TK_FLOAT64:
+                return std::to_string(m_float64_value);
+            case TK_FLOAT128:
+                return std::to_string(m_float128_value);
+            case TK_CHAR8:
+                return std::to_string(m_char_value);
+            case TK_CHAR16:
+                return std::to_string(m_wchar_value);
+            case TK_ENUM:
+                return std::to_string(m_enumerated_value);
+            case TK_STRING16:
+            {
+                std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+                return conv.to_bytes(m_string16_value);
+            }
+            case TK_STRING8:
+            case TK_NONE: // Cheat!
+                return m_string8_value;
+            default:
+                return "";
+        }
+    }
+
+    /**
+     * Aux method to set value from its string representation.
+     */
+    void from_string(const std::string& value)
+    {
+        switch(m__d)
+        {
+            case TK_BOOLEAN:
+            {
+                std::string val_ = value;
+                std::transform(val_.begin(), val_.end(), val_.begin(), 
+                    [](unsigned char c){ return static_cast<char>(std::tolower(c));});
+                boolean_value(val_.compare("0") != 0 || val_.compare(CONST_TRUE) == 0);
+            }
+            break;
+            case TK_BYTE:
+            {
+                byte_value(static_cast<uint8_t>(std::stoul(value)));
+            }
+            break;
+            case TK_INT16:
+            {
+                int16_value(static_cast<int16_t>(std::stoi(value)));
+            }
+            break;
+            case TK_INT32:
+            {
+                int32_value(static_cast<int32_t>(std::stoi(value)));
+            }
+            break;
+            case TK_INT64:
+            {
+                int64_value(static_cast<int64_t>(std::stoll(value)));
+            }
+            break;
+            case TK_UINT16:
+            {
+                uint_16_value(static_cast<uint16_t>(std::stoul(value)));
+            }
+            break;
+            case TK_UINT32:
+            {
+                uint32_value(static_cast<uint32_t>(std::stoul(value)));
+            }
+            break;
+            case TK_UINT64:
+            {
+                uint64_value(static_cast<uint64_t>(std::stoull(value)));
+            }
+            break;
+            case TK_FLOAT32:
+            {
+                float32_value(std::stof(value));
+            }
+            break;
+            case TK_FLOAT64:
+            {
+                float64_value(std::stod(value));
+            }
+            break;
+            case TK_FLOAT128:
+            {
+                float128_value(std::stold(value));
+            }
+            break;
+            case TK_CHAR8:
+            {
+                char_value(value.c_str()[0]);
+            }
+            break;
+            case TK_CHAR16:
+            {
+                std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+                wchar_value(conv.from_bytes(value).c_str()[0]);
+            }
+            break;
+            case TK_STRING8:
+            case TK_NONE: // Cheat!
+            {
+                string8_value(value);
+            }
+            break;
+            case TK_STRING16:
+            {
+                std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
+                string16_value(conv.from_bytes(value));
+            }
+            break;
+            case TK_ENUM:
+            {
+                // TODO Translate from enum value name to integer value
+                enumerated_value(static_cast<uint32_t>(std::stoul(value)));
+            }
+            break;
+            default:
+            break;
+        }
+    }
+
 private:
     char m__d;
 
@@ -774,6 +925,8 @@ public:
      */
     void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
 
+    bool operator==(const AppliedAnnotationParameter& other) const;
+
 private:
     NameHash m_paramname_hash;
     AnnotationParameterValue m_value;
@@ -854,6 +1007,8 @@ public:
     static bool isKeyDefined();
     void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
 
+    bool operator==(const AppliedAnnotation& other) const;
+
 private:
     TypeIdentifier m_annotation_typeid;
     AppliedAnnotationParameterSeq m_param_seq;
@@ -900,6 +1055,8 @@ public:
     static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
     static bool isKeyDefined();
     void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+
+    bool operator==(const AppliedVerbatimAnnotation& other) const;
 
 private:
     std::string m_placement;
@@ -952,6 +1109,8 @@ public:
     static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
     static bool isKeyDefined();
     void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+
+    bool operator==(const AppliedBuiltinMemberAnnotations& other) const;
 
 private:
     std::string m_unit;

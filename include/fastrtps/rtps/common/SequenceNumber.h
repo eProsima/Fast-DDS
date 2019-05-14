@@ -19,11 +19,11 @@
 #ifndef RPTS_ELEM_SEQNUM_H_
 #define RPTS_ELEM_SEQNUM_H_
 #include "../../fastrtps_dll.h"
+#include "../../utils/fixed_size_bitmap.hpp"
 #include "Types.h"
 
 #include <vector>
 #include <algorithm>
-#include <sstream>
 #include <limits.h>
 #include <cassert>
 
@@ -42,7 +42,7 @@ struct RTPS_DllAPI SequenceNumber_t
     uint32_t low;
 
     //!Default constructor
-    SequenceNumber_t()
+    SequenceNumber_t() noexcept
     {
         high = 0;
         low = 0;
@@ -51,7 +51,7 @@ struct RTPS_DllAPI SequenceNumber_t
     /*!
      * @brief Copy constructor.
      */
-    SequenceNumber_t(const SequenceNumber_t& seq) : high(seq.high), low(seq.low)
+    SequenceNumber_t(const SequenceNumber_t& seq) noexcept : high(seq.high), low(seq.low)
     {
     }
 
@@ -59,7 +59,7 @@ struct RTPS_DllAPI SequenceNumber_t
      * @param hi
      * @param lo
      */
-    SequenceNumber_t(int32_t hi, uint32_t lo): high(hi),low(lo)
+    SequenceNumber_t(int32_t hi, uint32_t lo) noexcept : high(hi),low(lo)
     {
     }
 
@@ -68,7 +68,7 @@ struct RTPS_DllAPI SequenceNumber_t
     /*! Convert the number to 64 bit.
      * @return 64 bit representation of the SequenceNumber
      */
-    uint64_t to64long() const
+    uint64_t to64long() const noexcept
     {
         return (((uint64_t)high) << 32) + low;
     }
@@ -78,7 +78,7 @@ struct RTPS_DllAPI SequenceNumber_t
      * Assignment operator
      * @param seq SequenceNumber_t to copy the data from
      */
-    SequenceNumber_t& operator=(const SequenceNumber_t& seq)
+    SequenceNumber_t& operator= (const SequenceNumber_t& seq) noexcept
     {
         high = seq.high;
         low = seq.low;
@@ -87,17 +87,22 @@ struct RTPS_DllAPI SequenceNumber_t
 
 
     //! Increase SequenceNumber in 1.
-    SequenceNumber_t& operator++()
+    SequenceNumber_t& operator++() noexcept
     {
         if(low == UINT32_MAX)
-        { ++high; low = 0; }
+        {
+            ++high;
+            low = 0;
+        }
         else
+        {
             ++low;
+        }
 
         return *this;
     }
 
-    SequenceNumber_t operator++(int)
+    SequenceNumber_t operator++(int) noexcept
     {
         SequenceNumber_t result(*this);
         ++(*this);
@@ -108,7 +113,7 @@ struct RTPS_DllAPI SequenceNumber_t
      * Increase SequenceNumber.
      * @param inc Number to add to the SequenceNumber
      */
-    SequenceNumber_t& operator+=(int inc)
+    SequenceNumber_t& operator+=(int inc) noexcept
     {
         uint32_t aux_low = low;
         low += inc;
@@ -122,7 +127,7 @@ struct RTPS_DllAPI SequenceNumber_t
         return *this;
     }
 
-    static SequenceNumber_t unknown()
+    static SequenceNumber_t unknown() noexcept
     {
         return SequenceNumber_t(-1, 0);
     }
@@ -137,7 +142,7 @@ struct RTPS_DllAPI SequenceNumber_t
  * @param sn2 Second SequenceNumber_t to compare
  * @return True if equal
  */
-inline bool operator==(const SequenceNumber_t& sn1, const SequenceNumber_t& sn2)
+inline bool operator==(const SequenceNumber_t& sn1, const SequenceNumber_t& sn2) noexcept
 {
     if(sn1.high != sn2.high || sn1.low != sn2.low)
         return false;
@@ -151,10 +156,12 @@ inline bool operator==(const SequenceNumber_t& sn1, const SequenceNumber_t& sn2)
  * @param sn2 Second SequenceNumber_t to compare
  * @return True if not equal
  */
-inline bool operator!=(const SequenceNumber_t& sn1, const SequenceNumber_t& sn2)
+inline bool operator!=(const SequenceNumber_t& sn1, const SequenceNumber_t& sn2) noexcept
 {
     if(sn1.high == sn2.high && sn1.low == sn2.low)
+    {
         return false;
+    }
 
     return true;
 }
@@ -165,16 +172,22 @@ inline bool operator!=(const SequenceNumber_t& sn1, const SequenceNumber_t& sn2)
  * @param seq2 Second SequenceNumber_t to compare
  * @return True if the first SequenceNumber_t is greater than the second
  */
-inline bool operator>(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2)
+inline bool operator>(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2) noexcept
 {
     if(seq1.high > seq2.high)
+    {
         return true;
+    }
     else if(seq1.high < seq2.high)
+    {
         return false;
+    }
     else
     {
         if(seq1.low > seq2.low)
+        {
             return true;
+        }
     }
     return false;
 }
@@ -185,16 +198,22 @@ inline bool operator>(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2
  * @param seq2 Second SequenceNumber_t to compare
  * @return True if the first SequenceNumber_t is less than the second
  */
-inline bool operator<(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2)
+inline bool operator<(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2) noexcept
 {
     if(seq1.high > seq2.high)
+    {
         return false;
+    }
     else if(seq1.high < seq2.high)
+    {
         return true;
+    }
     else
     {
         if(seq1.low < seq2.low)
+        {
             return true;
+        }
     }
     return false;
 }
@@ -205,16 +224,22 @@ inline bool operator<(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2
  * @param seq2 Second SequenceNumber_t to compare
  * @return True if the first SequenceNumber_t is greater or equal than the second
  */
-inline bool operator>=(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2)
+inline bool operator>=(const SequenceNumber_t& seq1, const SequenceNumber_t& seq2) noexcept
 {
     if(seq1.high > seq2.high)
+    {
         return true;
+    }
     else if(seq1.high < seq2.high)
+    {
         return false;
+    }
     else
     {
         if(seq1.low >= seq2.low)
+        {
             return true;
+        }
     }
     return false;
 }
@@ -225,16 +250,22 @@ inline bool operator>=(const SequenceNumber_t& seq1, const SequenceNumber_t& seq
  * @param seq2 Second SequenceNumber_t to compare
  * @return True if the first SequenceNumber_t is less or equal than the second
  */
-inline bool operator<=( const SequenceNumber_t& seq1, const  SequenceNumber_t& seq2)
+inline bool operator<=( const SequenceNumber_t& seq1, const  SequenceNumber_t& seq2) noexcept
 {
     if(seq1.high > seq2.high)
+    {
         return false;
+    }
     else if(seq1.high < seq2.high)
+    {
         return true;
+    }
     else
     {
         if(seq1.low <= seq2.low)
+        {
             return true;
+        }
     }
     return false;
 }
@@ -245,7 +276,7 @@ inline bool operator<=( const SequenceNumber_t& seq1, const  SequenceNumber_t& s
  * @param inc SequenceNumber_t to substract
  * @return Result of the substraction
  */
-inline SequenceNumber_t operator-(const SequenceNumber_t& seq, const uint32_t inc)
+inline SequenceNumber_t operator-(const SequenceNumber_t& seq, const uint32_t inc) noexcept
 {
     SequenceNumber_t res(seq.high, seq.low - inc);
 
@@ -264,7 +295,7 @@ inline SequenceNumber_t operator-(const SequenceNumber_t& seq, const uint32_t in
  * @param inc value to add to the base
  * @return Result of the addition
  */
-inline SequenceNumber_t operator+(const SequenceNumber_t& seq, const uint32_t inc)
+inline SequenceNumber_t operator+(const SequenceNumber_t& seq, const uint32_t inc) noexcept
 {
     SequenceNumber_t res(seq.high, seq.low + inc);
 
@@ -283,7 +314,7 @@ inline SequenceNumber_t operator+(const SequenceNumber_t& seq, const uint32_t in
  * @param subtrahend Subtrahend.
  * @return Result of the subtraction
  */
-inline SequenceNumber_t operator-(const SequenceNumber_t& minuend, const SequenceNumber_t& subtrahend)
+inline SequenceNumber_t operator-(const SequenceNumber_t& minuend, const SequenceNumber_t& subtrahend) noexcept
 {
     assert(minuend >= subtrahend);
     SequenceNumber_t res(minuend.high - subtrahend.high, minuend.low - subtrahend.low);
@@ -306,7 +337,7 @@ const SequenceNumber_t c_SequenceNumber_Unknown(-1,0);
  * @param s2 First SequenceNumber_t to compare
  * @return True if s1 is less than s2
  */
-inline bool sort_seqNum(const SequenceNumber_t& s1, const SequenceNumber_t& s2)
+inline bool sort_seqNum(const SequenceNumber_t& s1, const SequenceNumber_t& s2) noexcept
 {
     return(s1 < s2);
 }
@@ -340,7 +371,7 @@ inline std::ostream& operator<<(std::ostream& output, std::vector<SequenceNumber
  */
 struct SequenceNumberHash
 {
-    std::size_t operator()(const SequenceNumber_t& sequence_number) const
+    std::size_t operator()(const SequenceNumber_t& sequence_number) const noexcept
     {
 #ifdef LLONG_MAX
         return static_cast<std::size_t>(sequence_number.to64long());
@@ -350,124 +381,20 @@ struct SequenceNumberHash
     };
 };
 
+struct SequenceNumberDiff
+{
+    uint32_t operator () (const SequenceNumber_t& a, const SequenceNumber_t& b) const noexcept
+    {
+        SequenceNumber_t diff = a - b;
+        return diff.low;
+    }
+};
+
 #endif
 
 //!Structure SequenceNumberSet_t, contains a group of sequencenumbers.
 //!@ingroup COMMON_MODULE
-class SequenceNumberSet_t
-{
-    public:
-        //!Base sequence number
-        SequenceNumber_t base;
-
-        /**
-         * Assignment operator
-         * @param set2 SequenceNumberSet_t to copy the data from
-         */
-        SequenceNumberSet_t& operator=(const SequenceNumberSet_t& set2)
-        {
-            base = set2.base;
-            set = set2.set;
-            return *this;
-        }
-
-        /**
-         * Add a sequence number to the set
-         * @param in SequenceNumberSet_t to add
-         * @return True on success
-         */
-        bool add(const SequenceNumber_t& in)
-        {
-            SequenceNumber_t max = base + 255;
-            if(in >= base && in < max)
-                set.push_back(in);
-            else
-                return false;
-
-            return true;
-        }
-
-        /**
-         * Get the maximum sequence number in the set
-         * @return maximum sequence number in the set
-         */
-        SequenceNumber_t get_maxSeqNum() const
-        {
-            return *std::max_element(set.begin(),set.end(),sort_seqNum);
-        }
-
-        /**
-         * Check if the set is empty
-         * @return True if the set is empty
-         */
-        bool isSetEmpty() const
-        {
-            return set.empty();
-        }
-
-        /**
-         * Get the begin of the set
-         * @return Vector iterator pointing to the begin of the set
-         */
-        std::vector<SequenceNumber_t>::const_iterator get_begin() const
-        {
-            return set.begin();
-        }
-
-        /**
-         * Get the end of the set
-         * @return Vector iterator pointing to the end of the set
-         */
-        std::vector<SequenceNumber_t>::const_iterator get_end() const
-        {
-            return set.end();
-        }
-
-        /**
-         * Get the number of SequenceNumbers in the set
-         * @return Size of the set
-         */
-        size_t get_size()
-        {
-            return set.size();
-        }
-
-        /**
-         * Get the set of SequenceNumbers 
-         * @return Set of SequenceNumbers
-         */
-        std::vector<SequenceNumber_t> get_set() const
-        {
-            return set;
-        }
-
-        /**
-         * Get a string representation of the set
-         * @return string representation of the set
-         */
-        std::string print()
-        {
-            std::stringstream ss;
-
-#ifdef LLONG_MAX
-            ss << base.to64long() << ":";
-#else
-            ss << "{high: " << base.high << ", low: " << base.low << "} :";
-#endif
-            for(std::vector<SequenceNumber_t>::iterator it = set.begin(); it != set.end(); ++it)
-            {
-#ifdef LLONG_MAX
-                ss << it->to64long() << "-";
-#else
-                ss << "{high: " << it->high << ", low: " << it->low << "} -";
-#endif
-            }
-            return ss.str();
-        }
-
-    private:
-        std::vector<SequenceNumber_t> set;
-};
+using SequenceNumberSet_t = BitmapRange<SequenceNumber_t, SequenceNumberDiff, 256>;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
@@ -477,9 +404,23 @@ class SequenceNumberSet_t
  * @param sns SequenceNumber set
  * @return OStream.
  */
-inline std::ostream& operator<<(std::ostream& output, SequenceNumberSet_t& sns)
+inline std::ostream& operator<<(std::ostream& output, const SequenceNumberSet_t& sns)
 {
-    return output << sns.print();
+#ifdef LLONG_MAX
+    output << sns.base().to64long() << ":";
+#else
+    output << "{high: " << sns.base().high << ", low: " << sns.base().low << "} :";
+#endif
+    sns.for_each([&](SequenceNumber_t it)
+    {
+#ifdef LLONG_MAX
+        output << it.to64long() << "-";
+#else
+        output << "{high: " << it.high << ", low: " << it.low << "} -";
+#endif
+    });
+
+    return output;
 }
 
 #endif
