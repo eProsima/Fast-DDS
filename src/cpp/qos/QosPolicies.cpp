@@ -265,6 +265,8 @@ bool DisablePositiveACKsQosPolicy::addToCDRMessage(CDRMessage_t* msg)
         valid &= CDRMessage::addOctet(msg, (octet)0x00);
         return valid;
     }
+
+    return true;
 }
 
 bool TypeIdV1::addToCDRMessage(CDRMessage_t* msg)
