@@ -38,17 +38,19 @@ class LivelinessManager
 public:
 
     /**
-     * @brief LivelinessManager
-     * @param liveliness_lost_callback
-     * @param liveliness_lost_callback
-     * @param service
-     * @param event_thread
+     * @brief Constructor
+     * @param liveliness_lost_callback A callback that will be invoked when a writer loses liveliness
+     * @param liveliness_lost_callback A callback that will be invoked when a writer recovers liveliness
+     * @param service The asio I/O service
+     * @param event_thread The event thread
+     * @param manage_automatic True to manage writers with automatic liveliness, false otherwise
      */
     LivelinessManager(
             const std::function<void(GUID_t)>& liveliness_lost_callback,
             const std::function<void(GUID_t)>& liveliness_recovered_callback,
             asio::io_service& service,
-            const std::thread& event_thread);
+            const std::thread& event_thread,
+            bool manage_automatic = true);
 
     /**
      * @brief Constructor
@@ -121,6 +123,9 @@ private:
 
     //! A method called if the timer expires
     void timer_expired();
+
+    //! A boolean indicating whether we are managing writers with automatic liveliness
+    bool manage_automatic_;
 
     //! A vector of liveliness data
     ResourceLimitedVector<LivelinessData> writers_;

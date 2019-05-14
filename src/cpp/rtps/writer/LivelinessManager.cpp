@@ -13,12 +13,15 @@ LivelinessManager::LivelinessManager(
         const std::function<void(GUID_t)>& liveliness_lost_callback,
         const std::function<void(GUID_t)>& liveliness_recovered_callback,
         asio::io_service& service,
-        const std::thread& event_thread)
-    : timer_(
+        const std::thread& event_thread,
+        bool manage_automatic)
+    : manage_automatic_(manage_automatic)
+    , timer_(
           std::bind(&LivelinessManager::timer_expired, this),
           0,
           service,
           event_thread)
+    , timer_owner_(nullptr)
     , liveliness_lost_callback_(liveliness_lost_callback)
     , liveliness_recovered_callback_(liveliness_recovered_callback)
 {
@@ -26,6 +29,8 @@ LivelinessManager::LivelinessManager(
 
 LivelinessManager::~LivelinessManager()
 {
+    std::unique_lock<std::mutex> lock(mutex_);
+    timer_owner_ = nullptr;
 }
 
 bool LivelinessManager::add_writer(
@@ -34,6 +39,12 @@ bool LivelinessManager::add_writer(
         Duration_t lease_duration)
 {
     std::unique_lock<std::mutex> lock(mutex_);
+
+    if (!manage_automatic_ && kind == AUTOMATIC_LIVELINESS_QOS)
+    {
+        logWarning(RTPS_WRITER, "Liveliness manager not managing automatic writers, writer not added");
+        return false;
+    }
 
     for (const auto&writer : writers_)
     {
@@ -56,7 +67,7 @@ bool LivelinessManager::remove_writer(GUID_t guid)
         {
             writers_.remove(writer);
 
-            if (timer_owner_->guid == guid)
+            if (timer_owner_ != nullptr && timer_owner_->guid == guid)
             {
                 timer_owner_ = nullptr;
                 if (!calculate_next())
@@ -134,6 +145,12 @@ bool LivelinessManager::assert_liveliness(GUID_t guid)
 bool LivelinessManager::assert_liveliness(LivelinessQosPolicyKind kind)
 {
     std::unique_lock<std::mutex> lock(mutex_);
+
+    if (!manage_automatic_ && kind == AUTOMATIC_LIVELINESS_QOS)
+    {
+        logWarning(RTPS_WRITER, "Liveliness manager not managing automatic writers, writer not added");
+        return false;
+    }
 
     for (auto& writer: writers_)
     {
