@@ -34,44 +34,44 @@ CFLAGS = $(COMMON_CFLAGS) -O2
 
 INCLUDES= -I../../../thirdparty/asio/asio/include
 
-LIBS = -lfastcdr -lfastrtps $(SYSLIBS)
+LIBS = -lfastcdr -lfastrtps $(shell test -x "$$(which pkg-config)" && pkg-config libssl libcrypto --libs --silence-errors) $(SYSLIBS)
 
 DIRECTORIES= output.dir bin.dir
 
 all: $(DIRECTORIES) DisablePositiveACKs
 
-DEADLINEQOSEXAMPLE_TARGET= bin/DisablePositiveACKs
+DISABLEPOSITIVEACKSEXAMPLE_TARGET= bin/DisablePositiveACKs
 
-DEADLINEQOSEXAMPLE_SRC_CXXFILES=
-
-DEADLINEQOSEXAMPLE_SRC_CPPFILES= \
+DISABLEPOSITIVEACKSEXAMPLE_SRC_CXXFILES= \
 DisablePositiveACKs/Topic.cxx \
-DisablePositiveACKs/TopicTypes.cxx \
-DisablePositiveACKs/DisablePositiveACKsPublisher.cxx \
-DisablePositiveACKs/DisablePositiveACKsSubscriber.cxx \
-DisablePositiveACKs/DisablePositiveACKs_main.cxx
+DisablePositiveACKs/TopicTypes.cxx
+
+DISABLEPOSITIVEACKSEXAMPLE_SRC_CPPFILES= \
+DisablePositiveACKs/DisablePositiveACKsPublisher.cpp \
+DisablePositiveACKs/DisablePositiveACKsSubscriber.cpp \
+DisablePositiveACKs/DisablePositiveACKS_main.cpp
 
 
 # Project sources are copied to the current directory
-DEADLINEQOSEXAMPLE_SRCS= $(DEADLINEQOSEXAMPLE_SRC_CXXFILES) $(DEADLINEQOSEXAMPLE_SRC_CPPFILES)
+DISABLEPOSITIVEACKSEXAMPLE_SRCS= $(DISABLEPOSITIVEACKSEXAMPLE_SRC_CXXFILES) $(DISABLEPOSITIVEACKSEXAMPLE_SRC_CPPFILES)
 
 # Source directories
-DEADLINEQOSEXAMPLE_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(DEADLINEQOSEXAMPLE_SRCS)), $(srcdir))
-DEADLINEQOSEXAMPLE_SOURCES_DIRS= $(shell echo $(DEADLINEQOSEXAMPLE_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
+DISABLEPOSITIVEACKSEXAMPLE_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(DISABLEPOSITIVEACKSEXAMPLE_SRCS)), $(srcdir))
+DISABLEPOSITIVEACKSEXAMPLE_SOURCES_DIRS= $(shell echo $(DISABLEPOSITIVEACKSEXAMPLE_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
 
-DEADLINEQOSEXAMPLE_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(DEADLINEQOSEXAMPLE_SRCS))), output/$(obj))
-DEADLINEQOSEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(DEADLINEQOSEXAMPLE_SRCS))), output/$(dep))
+DISABLEPOSITIVEACKSEXAMPLE_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(DISABLEPOSITIVEACKSEXAMPLE_SRCS))), output/$(obj))
+DISABLEPOSITIVEACKSEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(DISABLEPOSITIVEACKSEXAMPLE_SRCS))), output/$(dep))
 
-OBJS+=  $(DEADLINEQOSEXAMPLE_OBJS)
-DEPS+=  $(DEADLINEQOSEXAMPLE_DEPS)
+OBJS+=  $(DISABLEPOSITIVEACKSEXAMPLE_OBJS)
+DEPS+=  $(DISABLEPOSITIVEACKSEXAMPLE_DEPS)
 
-DisablePositiveACKs: $(DEADLINEQOSEXAMPLE_TARGET)
+DisablePositiveACKs: $(DISABLEPOSITIVEACKSEXAMPLE_TARGET)
 
-$(DEADLINEQOSEXAMPLE_TARGET): $(DEADLINEQOSEXAMPLE_OBJS)
-	$(LN) $(LDFLAGS) -o $(DEADLINEQOSEXAMPLE_TARGET) $(DEADLINEQOSEXAMPLE_OBJS) $(LIBS)
+$(DISABLEPOSITIVEACKSEXAMPLE_TARGET): $(DISABLEPOSITIVEACKSEXAMPLE_OBJS)
+	$(LN) $(LDFLAGS) -o $(DISABLEPOSITIVEACKSEXAMPLE_TARGET) $(DISABLEPOSITIVEACKSEXAMPLE_OBJS) $(LIBS)
 
-vpath %.cxx $(DEADLINEQOSEXAMPLE_SOURCES_DIRS)
-vpath %.cpp $(DEADLINEQOSEXAMPLE_SOURCES_DIRS)
+vpath %.cxx $(DISABLEPOSITIVEACKSEXAMPLE_SOURCES_DIRS)
+vpath %.cpp $(DISABLEPOSITIVEACKSEXAMPLE_SOURCES_DIRS)
 
 output/%.cxx.o:%.cxx
 	@echo Calculating dependencies $<

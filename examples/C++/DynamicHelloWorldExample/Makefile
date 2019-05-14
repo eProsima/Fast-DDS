@@ -34,41 +34,41 @@ CFLAGS = $(COMMON_CFLAGS) -O2
 
 INCLUDES= -I../../../thirdparty/asio/asio/include
 
-LIBS = -lfastcdr -lfastrtps $(SYSLIBS)
+LIBS = -lfastrtps -lfastcdr $(shell test -x "$$(which pkg-config)" && pkg-config libssl libcrypto --libs --silence-errors) $(SYSLIBS)
 
 DIRECTORIES= output.dir bin.dir
 
 all: $(DIRECTORIES) DynamicHelloWorldExample
 
-DEADLINEQOSEXAMPLE_TARGET= bin/DynamicHelloWorldExample
+DYNAMICEXAMPLE_TARGET= bin/DynamicHelloWorldExample
 
-DEADLINEQOSEXAMPLE_SRC_CXXFILES=
+DYNAMICEXAMPLE_SRC_CXXFILES=
 
-DEADLINEQOSEXAMPLE_SRC_CPPFILES= \
-DynamicHelloWorldExample/HelloWorldPublisher.cxx \
-DynamicHelloWorldExample/HelloWorldSubscriber.cxx \
-DynamicHelloWorldExample/HelloWorld_main.cxx
+DYNAMICEXAMPLE_SRC_CPPFILES= \
+			     DynamicHelloWorldExample/HelloWorldPublisher.cpp \
+			     DynamicHelloWorldExample/HelloWorldSubscriber.cpp \
+			     DynamicHelloWorldExample/HelloWorld_main.cpp
 
 # Project sources are copied to the current directory
-DEADLINEQOSEXAMPLE_SRCS= $(DEADLINEQOSEXAMPLE_SRC_CXXFILES) $(DEADLINEQOSEXAMPLE_SRC_CPPFILES)
+DYNAMICEXAMPLE_SRCS= $(DYNAMICEXAMPLE_SRC_CXXFILES) $(DYNAMICEXAMPLE_SRC_CPPFILES)
 
 # Source directories
-DEADLINEQOSEXAMPLE_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(DEADLINEQOSEXAMPLE_SRCS)), $(srcdir))
-DEADLINEQOSEXAMPLE_SOURCES_DIRS= $(shell echo $(DEADLINEQOSEXAMPLE_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
+DYNAMICEXAMPLE_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(DYNAMICEXAMPLE_SRCS)), $(srcdir))
+DYNAMICEXAMPLE_SOURCES_DIRS= $(shell echo $(DYNAMICEXAMPLE_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
 
-DEADLINEQOSEXAMPLE_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(DEADLINEQOSEXAMPLE_SRCS))), output/$(obj))
-DEADLINEQOSEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(DEADLINEQOSEXAMPLE_SRCS))), output/$(dep))
+DYNAMICEXAMPLE_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(DYNAMICEXAMPLE_SRCS))), output/$(obj))
+DYNAMICEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(DYNAMICEXAMPLE_SRCS))), output/$(dep))
 
-OBJS+=  $(DEADLINEQOSEXAMPLE_OBJS)
-DEPS+=  $(DEADLINEQOSEXAMPLE_DEPS)
+OBJS+=  $(DYNAMICEXAMPLE_OBJS)
+DEPS+=  $(DYNAMICEXAMPLE_DEPS)
 
-DynamicHelloWorldExample: $(DEADLINEQOSEXAMPLE_TARGET)
+DynamicHelloWorldExample: $(DYNAMICEXAMPLE_TARGET)
 
-$(DEADLINEQOSEXAMPLE_TARGET): $(DEADLINEQOSEXAMPLE_OBJS)
-	$(LN) $(LDFLAGS) -o $(DEADLINEQOSEXAMPLE_TARGET) $(DEADLINEQOSEXAMPLE_OBJS) $(LIBS)
+$(DYNAMICEXAMPLE_TARGET): $(DYNAMICEXAMPLE_OBJS)
+	$(LN) $(LDFLAGS) -o $(DYNAMICEXAMPLE_TARGET) $(DYNAMICEXAMPLE_OBJS) $(LIBS)
 
-vpath %.cxx $(DEADLINEQOSEXAMPLE_SOURCES_DIRS)
-vpath %.cpp $(DEADLINEQOSEXAMPLE_SOURCES_DIRS)
+vpath %.cxx $(DYNAMICEXAMPLE_SOURCES_DIRS)
+vpath %.cpp $(DYNAMICEXAMPLE_SOURCES_DIRS)
 
 output/%.cxx.o:%.cxx
 	@echo Calculating dependencies $<

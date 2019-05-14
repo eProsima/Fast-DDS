@@ -34,43 +34,43 @@ CFLAGS = $(COMMON_CFLAGS) -O2
 
 INCLUDES= -I../../../thirdparty/asio/asio/include
 
-LIBS = -lfastcdr -lfastrtps $(SYSLIBS)
+LIBS = -lfastcdr -lfastrtps $(shell test -x "$$(which pkg-config)" && pkg-config libssl libcrypto --libs --silence-errors) $(SYSLIBS)
 
 DIRECTORIES= output.dir bin.dir
 
 all: $(DIRECTORIES) LifespanQoSExample
 
-DEADLINEQOSEXAMPLE_TARGET= bin/LifespanQoSExample
+LIFESPANEXAMPLE_TARGET= bin/LifespanQoSExample
 
-DEADLINEQOSEXAMPLE_SRC_CXXFILES=
+LIFESPANEXAMPLE_SRC_CXXFILES= \
+			      LifespanQoSExample/Lifespan.cxx \
+			      LifespanQoSExample/LifespanTypes.cxx
 
-DEADLINEQOSEXAMPLE_SRC_CPPFILES= \
-LifespanQoSExample/Lifespan.cxx \
-LifespanQoSExample/LifespanTypes.cxx \
-LifespanQoSExample/LifespanPublisher.cxx \
-LifespanQoSExample/LifespanSubscriber.cxx \
-LifespanQoSExample/Lifespan_main.cxx
+LIFESPANEXAMPLE_SRC_CPPFILES= \
+LifespanQoSExample/LifespanPublisher.cpp \
+LifespanQoSExample/LifespanSubscriber.cpp \
+LifespanQoSExample/Lifespan_main.cpp
 
 # Project sources are copied to the current directory
-DEADLINEQOSEXAMPLE_SRCS= $(DEADLINEQOSEXAMPLE_SRC_CXXFILES) $(DEADLINEQOSEXAMPLE_SRC_CPPFILES)
+LIFESPANEXAMPLE_SRCS= $(LIFESPANEXAMPLE_SRC_CXXFILES) $(LIFESPANEXAMPLE_SRC_CPPFILES)
 
 # Source directories
-DEADLINEQOSEXAMPLE_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(DEADLINEQOSEXAMPLE_SRCS)), $(srcdir))
-DEADLINEQOSEXAMPLE_SOURCES_DIRS= $(shell echo $(DEADLINEQOSEXAMPLE_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
+LIFESPANEXAMPLE_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(LIFESPANEXAMPLE_SRCS)), $(srcdir))
+LIFESPANEXAMPLE_SOURCES_DIRS= $(shell echo $(LIFESPANEXAMPLE_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
 
-DEADLINEQOSEXAMPLE_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(DEADLINEQOSEXAMPLE_SRCS))), output/$(obj))
-DEADLINEQOSEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(DEADLINEQOSEXAMPLE_SRCS))), output/$(dep))
+LIFESPANEXAMPLE_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(LIFESPANEXAMPLE_SRCS))), output/$(obj))
+LIFESPANEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(LIFESPANEXAMPLE_SRCS))), output/$(dep))
 
-OBJS+=  $(DEADLINEQOSEXAMPLE_OBJS)
-DEPS+=  $(DEADLINEQOSEXAMPLE_DEPS)
+OBJS+=  $(LIFESPANEXAMPLE_OBJS)
+DEPS+=  $(LIFESPANEXAMPLE_DEPS)
 
-LifespanQoSExample: $(DEADLINEQOSEXAMPLE_TARGET)
+LifespanQoSExample: $(LIFESPANEXAMPLE_TARGET)
 
-$(DEADLINEQOSEXAMPLE_TARGET): $(DEADLINEQOSEXAMPLE_OBJS)
-	$(LN) $(LDFLAGS) -o $(DEADLINEQOSEXAMPLE_TARGET) $(DEADLINEQOSEXAMPLE_OBJS) $(LIBS)
+$(LIFESPANEXAMPLE_TARGET): $(LIFESPANEXAMPLE_OBJS)
+	$(LN) $(LDFLAGS) -o $(LIFESPANEXAMPLE_TARGET) $(LIFESPANEXAMPLE_OBJS) $(LIBS)
 
-vpath %.cxx $(DEADLINEQOSEXAMPLE_SOURCES_DIRS)
-vpath %.cpp $(DEADLINEQOSEXAMPLE_SOURCES_DIRS)
+vpath %.cxx $(LIFESPANEXAMPLE_SOURCES_DIRS)
+vpath %.cpp $(LIFESPANEXAMPLE_SOURCES_DIRS)
 
 output/%.cxx.o:%.cxx
 	@echo Calculating dependencies $<

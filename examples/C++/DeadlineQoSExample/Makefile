@@ -42,15 +42,14 @@ all: $(DIRECTORIES) DeadlineQoSExample
 
 DEADLINEQOSEXAMPLE_TARGET= bin/DeadlineQoSExample
 
-DEADLINEQOSEXAMPLE_SRC_CXXFILES=
+DEADLINEQOSEXAMPLE_SRC_CXXFILES= DeadlineQoSExample/deadlinepayload.cxx \
+				 DeadlineQoSExample/deadlinepayloadPubSubTypes.cxx \
+				 DeadlineQoSExample/deadlinepayloadPublisher.cxx \
+				 DeadlineQoSExample/deadlinepayloadSubscriber.cxx \
+				 DeadlineQoSExample/deadlinepayloadPubSubMain.cxx
 
-DEADLINEQOSEXAMPLE_SRC_CPPFILES= DeadlineQoSExample/deadlinepayload.cxx \
-								DeadlineQoSExample/deadlinepayloadPubSubTypes.cxx \
-								DeadlineQoSExample/deadlinepayloadPublisher.cxx \
-								DeadlineQoSExample/deadlinepayloadSubscriber.cxx \
-								DeadlineQoSExample/deadlinepayloadPubSubMain.cxx \
-								DeadlineQoSExample/deadlineQoS.cxx
 
+DEADLINEQOSEXAMPLE_SRC_CPPFILES= 
 
 # Project sources are copied to the current directory
 DEADLINEQOSEXAMPLE_SRCS= $(DEADLINEQOSEXAMPLE_SRC_CXXFILES) $(DEADLINEQOSEXAMPLE_SRC_CPPFILES)
