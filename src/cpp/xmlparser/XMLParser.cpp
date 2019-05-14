@@ -464,7 +464,8 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             strcmp(name, MAX_LOGICAL_PORT) == 0 || strcmp(name, LOGICAL_PORT_RANGE) == 0 ||
             strcmp(name, LOGICAL_PORT_INCREMENT) == 0 || strcmp(name, LISTENING_PORTS) == 0 ||
             strcmp(name, CALCULATE_CRC) == 0 || strcmp(name, CHECK_CRC) == 0 ||
-            strcmp(name, ENABLE_TCP_NODELAY) == 0 || strcmp(name, TLS) == 0)
+            strcmp(name, ENABLE_TCP_NODELAY) == 0 || strcmp(name, TLS) == 0 ||
+            strcmp(name, NON_BLOCKING_SEND) == 0 )
         {
             // Parsed outside of this method
         }

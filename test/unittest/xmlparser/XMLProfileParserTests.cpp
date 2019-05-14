@@ -17,6 +17,7 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/transport/TCPTransportDescriptor.h>
+#include <fastrtps/transport/UDPTransportDescriptor.h>
 #include <gtest/gtest.h>
 #include <memory>
 #include <thread>
@@ -613,6 +614,29 @@ TEST_F(XMLProfileParserTests, tls_config)
     EXPECT_TRUE(descriptor->tls_config.default_verify_path);
 
     EXPECT_EQ(descriptor->tls_config.handshake_role, TCPTransportDescriptor::TLSConfig::TLSHandShakeRole::SERVER);
+}
+
+TEST_F(XMLProfileParserTests, UDP_transport_descriptors_config)
+{
+    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
+        xmlparser::XMLProfileManager::loadXMLFile("UDP_transport_descriptors_config.xml"));
+
+    xmlparser::sp_transport_t transport = xmlparser::XMLProfileManager::getTransportById("Test");
+
+    using UDPDescriptor = std::shared_ptr<UDPTransportDescriptor>;
+    UDPDescriptor descriptor = std::dynamic_pointer_cast<UDPTransportDescriptor>(transport);
+
+    ASSERT_NE(descriptor, nullptr);
+    EXPECT_EQ(descriptor->sendBufferSize, 8192u);
+    EXPECT_EQ(descriptor->receiveBufferSize, 8192u);
+    EXPECT_EQ(descriptor->TTL, 250u);
+    EXPECT_EQ(descriptor->non_blocking_send, true);
+    EXPECT_EQ(descriptor->maxMessageSize, 16384u);
+    EXPECT_EQ(descriptor->maxInitialPeersRange, 100u);
+    EXPECT_EQ(descriptor->interfaceWhiteList.size(), 2u);
+    EXPECT_EQ(descriptor->interfaceWhiteList[0], "192.168.1.41");
+    EXPECT_EQ(descriptor->interfaceWhiteList[1], "127.0.0.1");
+    EXPECT_EQ(descriptor->m_output_udp_socket, 5101u);
 }
 
 int main(int argc, char **argv)
