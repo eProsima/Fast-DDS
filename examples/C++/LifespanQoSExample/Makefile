@@ -1,4 +1,4 @@
-# Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ LN=g++
 AR=ar
 CP=cp
 SYSLIBS= -ldl -lnsl -lm -lpthread -lrt
-DEFINES= 
+DEFINES=
 COMMON_CFLAGS= -c -Wall -D__LITTLE_ENDIAN__ -std=c++11
 
 ## CHOOSE HERE BETWEEN 32 and 64 bit architecture
@@ -32,41 +32,45 @@ LDFLAGS=-m64
 
 CFLAGS = $(COMMON_CFLAGS) -O2
 
-INCLUDES= -I.
+INCLUDES= -I../../../thirdparty/asio/asio/include
 
 LIBS = -lfastcdr -lfastrtps $(shell test -x "$$(which pkg-config)" && pkg-config libssl libcrypto --libs --silence-errors) $(SYSLIBS)
 
 DIRECTORIES= output.dir bin.dir
 
-all: $(DIRECTORIES) SampleConfig_Events
+all: $(DIRECTORIES) LifespanQoSExample
 
-SAMPLECONFIG_EVENTS_TARGET= bin/SampleConfig_Events
+LIFESPANEXAMPLE_TARGET= bin/LifespanQoSExample
 
-SAMPLECONFIG_EVENTS_SRC_CXXFILES=
+LIFESPANEXAMPLE_SRC_CXXFILES= \
+			      LifespanQoSExample/Lifespan.cxx \
+			      LifespanQoSExample/LifespanTypes.cxx
 
-SAMPLECONFIG_EVENTS_SRC_CPPFILES= SampleConfig_Events/sampleconfig_triggers.cpp \
-				SampleConfig_Events/sample.cxx \
-				SampleConfig_Events/samplePubSubTypes.cxx
+LIFESPANEXAMPLE_SRC_CPPFILES= \
+LifespanQoSExample/LifespanPublisher.cpp \
+LifespanQoSExample/LifespanSubscriber.cpp \
+LifespanQoSExample/Lifespan_main.cpp
+
 # Project sources are copied to the current directory
-SAMPLECONFIG_EVENTS_SRCS= $(SAMPLECONFIG_EVENTS_SRC_CXXFILES) $(SAMPLECONFIG_EVENTS_SRC_CPPFILES)
+LIFESPANEXAMPLE_SRCS= $(LIFESPANEXAMPLE_SRC_CXXFILES) $(LIFESPANEXAMPLE_SRC_CPPFILES)
 
 # Source directories
-SAMPLECONFIG_EVENTS_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(SAMPLECONFIG_EVENTS_SRCS)), $(srcdir))
-SAMPLECONFIG_EVENTS_SOURCES_DIRS= $(shell echo $(SAMPLECONFIG_EVENTS_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
+LIFESPANEXAMPLE_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(LIFESPANEXAMPLE_SRCS)), $(srcdir))
+LIFESPANEXAMPLE_SOURCES_DIRS= $(shell echo $(LIFESPANEXAMPLE_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
 
-SAMPLECONFIG_EVENTS_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(SAMPLECONFIG_EVENTS_SRCS))), output/$(obj))
-SAMPLECONFIG_EVENTS_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(SAMPLECONFIG_EVENTS_SRCS))), output/$(dep))
+LIFESPANEXAMPLE_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(LIFESPANEXAMPLE_SRCS))), output/$(obj))
+LIFESPANEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(LIFESPANEXAMPLE_SRCS))), output/$(dep))
 
-OBJS+=  $(SAMPLECONFIG_EVENTS_OBJS)
-DEPS+=  $(SAMPLECONFIG_EVENTS_DEPS)
+OBJS+=  $(LIFESPANEXAMPLE_OBJS)
+DEPS+=  $(LIFESPANEXAMPLE_DEPS)
 
-SampleConfig_Events: $(SAMPLECONFIG_EVENTS_TARGET)
+LifespanQoSExample: $(LIFESPANEXAMPLE_TARGET)
 
-$(SAMPLECONFIG_EVENTS_TARGET): $(SAMPLECONFIG_EVENTS_OBJS)
-	$(LN) $(LDFLAGS) -o $(SAMPLECONFIG_EVENTS_TARGET) $(SAMPLECONFIG_EVENTS_OBJS) $(LIBS)
+$(LIFESPANEXAMPLE_TARGET): $(LIFESPANEXAMPLE_OBJS)
+	$(LN) $(LDFLAGS) -o $(LIFESPANEXAMPLE_TARGET) $(LIFESPANEXAMPLE_OBJS) $(LIBS)
 
-vpath %.cxx $(SAMPLECONFIG_EVENTS_SOURCES_DIRS)
-vpath %.cpp $(SAMPLECONFIG_EVENTS_SOURCES_DIRS)
+vpath %.cxx $(LIFESPANEXAMPLE_SOURCES_DIRS)
+vpath %.cpp $(LIFESPANEXAMPLE_SOURCES_DIRS)
 
 output/%.cxx.o:%.cxx
 	@echo Calculating dependencies $<
@@ -80,7 +84,7 @@ output/%.cpp.o:%.cpp
 	@echo Compiling $<
 	@$(CPP) $(CFLAGS) $(INCLUDES) $< -o $@
 
-.PHONY: SampleConfig_Events
+.PHONY: LifespanQoSExample
 
 clean:
 	@rm -f $(OBJS)
@@ -90,7 +94,7 @@ ifneq ($(MAKECMDGOALS), clean)
 -include $(DEPS)
 endif
 
-%.dir : 
+%.dir :
 	@echo "Checking directory $*"
 	@if [ ! -d $* ]; then \
 		echo "Making directory $*"; \

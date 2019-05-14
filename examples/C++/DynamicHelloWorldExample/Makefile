@@ -17,7 +17,7 @@ LN=g++
 AR=ar
 CP=cp
 SYSLIBS= -ldl -lnsl -lm -lpthread -lrt
-DEFINES= 
+DEFINES=
 COMMON_CFLAGS= -c -Wall -D__LITTLE_ENDIAN__ -std=c++11
 
 ## CHOOSE HERE BETWEEN 32 and 64 bit architecture
@@ -32,41 +32,43 @@ LDFLAGS=-m64
 
 CFLAGS = $(COMMON_CFLAGS) -O2
 
-INCLUDES= -I.
+INCLUDES= -I../../../thirdparty/asio/asio/include
 
-LIBS = -lfastcdr -lfastrtps $(shell test -x "$$(which pkg-config)" && pkg-config libssl libcrypto --libs --silence-errors) $(SYSLIBS)
+LIBS = -lfastrtps -lfastcdr $(shell test -x "$$(which pkg-config)" && pkg-config libssl libcrypto --libs --silence-errors) $(SYSLIBS)
 
 DIRECTORIES= output.dir bin.dir
 
-all: $(DIRECTORIES) SampleConfig_Events
+all: $(DIRECTORIES) DynamicHelloWorldExample
 
-SAMPLECONFIG_EVENTS_TARGET= bin/SampleConfig_Events
+DYNAMICEXAMPLE_TARGET= bin/DynamicHelloWorldExample
 
-SAMPLECONFIG_EVENTS_SRC_CXXFILES=
+DYNAMICEXAMPLE_SRC_CXXFILES=
 
-SAMPLECONFIG_EVENTS_SRC_CPPFILES= SampleConfig_Events/sampleconfig_triggers.cpp \
-				SampleConfig_Events/sample.cxx \
-				SampleConfig_Events/samplePubSubTypes.cxx
+DYNAMICEXAMPLE_SRC_CPPFILES= \
+			     DynamicHelloWorldExample/HelloWorldPublisher.cpp \
+			     DynamicHelloWorldExample/HelloWorldSubscriber.cpp \
+			     DynamicHelloWorldExample/HelloWorld_main.cpp
+
 # Project sources are copied to the current directory
-SAMPLECONFIG_EVENTS_SRCS= $(SAMPLECONFIG_EVENTS_SRC_CXXFILES) $(SAMPLECONFIG_EVENTS_SRC_CPPFILES)
+DYNAMICEXAMPLE_SRCS= $(DYNAMICEXAMPLE_SRC_CXXFILES) $(DYNAMICEXAMPLE_SRC_CPPFILES)
 
 # Source directories
-SAMPLECONFIG_EVENTS_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(SAMPLECONFIG_EVENTS_SRCS)), $(srcdir))
-SAMPLECONFIG_EVENTS_SOURCES_DIRS= $(shell echo $(SAMPLECONFIG_EVENTS_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
+DYNAMICEXAMPLE_SOURCES_DIRS_AUX= $(foreach srcdir, $(dir $(DYNAMICEXAMPLE_SRCS)), $(srcdir))
+DYNAMICEXAMPLE_SOURCES_DIRS= $(shell echo $(DYNAMICEXAMPLE_SOURCES_DIRS_AUX) | tr " " "\n" | sort | uniq | tr "\n" " ")
 
-SAMPLECONFIG_EVENTS_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(SAMPLECONFIG_EVENTS_SRCS))), output/$(obj))
-SAMPLECONFIG_EVENTS_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(SAMPLECONFIG_EVENTS_SRCS))), output/$(dep))
+DYNAMICEXAMPLE_OBJS = $(foreach obj,$(notdir $(addsuffix .o, $(DYNAMICEXAMPLE_SRCS))), output/$(obj))
+DYNAMICEXAMPLE_DEPS = $(foreach dep,$(notdir $(addsuffix .d, $(DYNAMICEXAMPLE_SRCS))), output/$(dep))
 
-OBJS+=  $(SAMPLECONFIG_EVENTS_OBJS)
-DEPS+=  $(SAMPLECONFIG_EVENTS_DEPS)
+OBJS+=  $(DYNAMICEXAMPLE_OBJS)
+DEPS+=  $(DYNAMICEXAMPLE_DEPS)
 
-SampleConfig_Events: $(SAMPLECONFIG_EVENTS_TARGET)
+DynamicHelloWorldExample: $(DYNAMICEXAMPLE_TARGET)
 
-$(SAMPLECONFIG_EVENTS_TARGET): $(SAMPLECONFIG_EVENTS_OBJS)
-	$(LN) $(LDFLAGS) -o $(SAMPLECONFIG_EVENTS_TARGET) $(SAMPLECONFIG_EVENTS_OBJS) $(LIBS)
+$(DYNAMICEXAMPLE_TARGET): $(DYNAMICEXAMPLE_OBJS)
+	$(LN) $(LDFLAGS) -o $(DYNAMICEXAMPLE_TARGET) $(DYNAMICEXAMPLE_OBJS) $(LIBS)
 
-vpath %.cxx $(SAMPLECONFIG_EVENTS_SOURCES_DIRS)
-vpath %.cpp $(SAMPLECONFIG_EVENTS_SOURCES_DIRS)
+vpath %.cxx $(DYNAMICEXAMPLE_SOURCES_DIRS)
+vpath %.cpp $(DYNAMICEXAMPLE_SOURCES_DIRS)
 
 output/%.cxx.o:%.cxx
 	@echo Calculating dependencies $<
@@ -80,7 +82,7 @@ output/%.cpp.o:%.cpp
 	@echo Compiling $<
 	@$(CPP) $(CFLAGS) $(INCLUDES) $< -o $@
 
-.PHONY: SampleConfig_Events
+.PHONY: DynamicHelloWorldExample
 
 clean:
 	@rm -f $(OBJS)
@@ -90,7 +92,7 @@ ifneq ($(MAKECMDGOALS), clean)
 -include $(DEPS)
 endif
 
-%.dir : 
+%.dir :
 	@echo "Checking directory $*"
 	@if [ ! -d $* ]; then \
 		echo "Making directory $*"; \
