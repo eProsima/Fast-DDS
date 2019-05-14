@@ -79,6 +79,7 @@ typedef enum DurabilityQosPolicyKind: rtps::octet{
 }DurabilityQosPolicyKind_t;
 
 #define PARAMETER_KIND_LENGTH 4
+#define PARAMETER_BOOL_LENGTH 4
 
 /**
  * Class DurabilityQosPolicy, to indicate the durability of the samples.
@@ -926,8 +927,8 @@ public:
  * Enum PublishModeQosPolicyKind, different kinds of publication synchronism
  */
 typedef enum PublishModeQosPolicyKind : rtps::octet{
-    SYNCHRONOUS_PUBLISH_MODE,	//!< Synchronous publication mode (default for writers).
-    ASYNCHRONOUS_PUBLISH_MODE	//!< Asynchronous publication mode.
+    SYNCHRONOUS_PUBLISH_MODE,    //!< Synchronous publication mode (default for writers).
+    ASYNCHRONOUS_PUBLISH_MODE    //!< Asynchronous publication mode.
 }PublishModeQosPolicyKind_t;
 
 /**
@@ -945,9 +946,9 @@ class PublishModeQosPolicy : public QosPolicy {
 * Enum DataRepresentationId, different kinds of topic data representation
 */
 typedef enum DataRepresentationId : int16_t {
-    XCDR_DATA_REPRESENTATION,	//!<
-    XML_DATA_REPRESENTATION,	//!<
-    XCDR2_DATA_REPRESENTATION	//!<
+    XCDR_DATA_REPRESENTATION,    //!<
+    XML_DATA_REPRESENTATION,    //!<
+    XCDR2_DATA_REPRESENTATION    //!<
 }DataRepresentationId_t;
 
 /**
@@ -1009,7 +1010,7 @@ class DisablePositiveACKsQosPolicy : public Parameter_t, public QosPolicy
 public:
 
     RTPS_DllAPI DisablePositiveACKsQosPolicy()
-        : Parameter_t(PID_DISABLE_POSITIVE_ACKS, 0)
+        : Parameter_t(PID_DISABLE_POSITIVE_ACKS, PARAMETER_BOOL_LENGTH)
         , QosPolicy(true)
         , enabled(false)
         , duration(c_TimeInfinite)
