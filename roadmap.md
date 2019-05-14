@@ -23,7 +23,6 @@ Disclaimer:
 The following list of features are planned to be addressed in the short term, and incorporated into the coming
 release(s) of the product:
 
-* QNX Support.
 * Liveliness QoS
 
 ## Medium term
