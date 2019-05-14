@@ -48,6 +48,12 @@ class XMLProfileParserTests: public ::testing::Test
         {
             delete log_mock;
         }
+
+    protected:
+        void SetUp() override
+        {
+            xmlparser::XMLProfileManager::DeleteInstance();
+        }
 };
 
 TEST_F(XMLProfileParserTests, XMLoadProfiles)
