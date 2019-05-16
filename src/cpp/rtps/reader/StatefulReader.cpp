@@ -462,11 +462,11 @@ bool StatefulReader::processGapMsg(
             }
         });
 
-		wpLock.unlock();
+        wpLock.unlock();
 
-		// Maybe now we have to notify user from new CacheChanges.
-		NotifyChanges(pWP);
-	}
+        // Maybe now we have to notify user from new CacheChanges.
+        NotifyChanges(pWP);
+    }
 
     return true;
 }
