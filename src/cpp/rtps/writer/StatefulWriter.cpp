@@ -1238,8 +1238,9 @@ bool StatefulWriter::process_acknack(
                             mp_periodicHB->restart_timer();
                         }
                     }
-                    else if (SequenceNumber_t() == remote_reader->changes_low_mark() && sn_set.empty() && !final_flag)
+                    else if (sn_set.empty() && !final_flag)
                     {
+						// This is the preemptive acknack. Always send heartbeat
                         send_heartbeat_to_nts(*remote_reader);
                     }
 
