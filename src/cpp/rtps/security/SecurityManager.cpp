@@ -2495,6 +2495,10 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                                 ParticipantGenericMessage message = generate_writer_crypto_token_message(remote_participant_key,
                                     remote_reader_data.guid(), writer_guid, local_writer_crypto_tokens);
 
+                                local_writer->second.associated_readers.emplace(remote_reader_data.guid(),
+                                    std::make_tuple(remote_reader_data, remote_reader_handle));
+                                lock.unlock();
+
                                 CacheChange_t* change = participant_volatile_message_secure_writer_->new_change([&message]() -> uint32_t
                                 {
                                     return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
@@ -2527,10 +2531,6 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                                     if (CDRMessage::addParticipantGenericMessage(&aux_msg, message))
                                     {
                                         change->serializedPayload.length = aux_msg.length;
-
-                                        local_writer->second.associated_readers.emplace(remote_reader_data.guid(),
-                                                std::make_tuple(remote_reader_data, remote_reader_handle));
-                                        lock.unlock();
 
                                         // Send
                                         if (participant_volatile_message_secure_writer_history_->add_change(change))
@@ -2803,6 +2803,10 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
                                 ParticipantGenericMessage message = generate_reader_crypto_token_message(remote_participant_key,
                                     remote_writer_data.guid(), reader_guid, local_reader_crypto_tokens);
 
+                                local_reader->second.associated_writers.emplace(remote_writer_data.guid(),
+                                    std::make_tuple(remote_writer_data, remote_writer_handle));
+                                lock.unlock();
+                                
                                 CacheChange_t* change = participant_volatile_message_secure_writer_->new_change([&message]() -> uint32_t
                                 {
                                     return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
@@ -2835,10 +2839,6 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
                                     if (CDRMessage::addParticipantGenericMessage(&aux_msg, message))
                                     {
                                         change->serializedPayload.length = aux_msg.length;
-
-                                        local_reader->second.associated_writers.emplace(remote_writer_data.guid(),
-                                                std::make_tuple(remote_writer_data, remote_writer_handle));
-                                        lock.unlock();
 
                                         // Send
                                         if (participant_volatile_message_secure_writer_history_->add_change(change))

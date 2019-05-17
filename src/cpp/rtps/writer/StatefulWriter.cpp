@@ -140,7 +140,7 @@ StatefulWriter::~StatefulWriter()
 }
 
 /*
- *	CHANGE-RELATED METHODS
+ * CHANGE-RELATED METHODS
  */
 
 void StatefulWriter::unsent_change_added_to_history(
@@ -570,7 +570,7 @@ void StatefulWriter::send_any_unsent_changes()
 }
 
 /*
- *	MATCHED_READER-RELATED METHODS
+ * MATCHED_READER-RELATED METHODS
  */
 void StatefulWriter::update_reader_info(bool create_sender_resources)
 {
@@ -1189,8 +1189,9 @@ bool StatefulWriter::process_acknack(
                             mp_periodicHB->restart_timer();
                         }
                     }
-                    else if (SequenceNumber_t() == remote_reader->changes_low_mark() && sn_set.empty() && !final_flag)
+                    else if (sn_set.empty() && !final_flag)
                     {
+                        // This is the preemptive acknack. Always send heartbeat
                         send_heartbeat_to_nts(*remote_reader);
                     }
 

@@ -456,7 +456,7 @@ bool StatefulReader::processGapMsg(
     if(acceptMsgFrom(writerGUID, &pWP))
     {
         // TODO (Miguel C): Refactor this inside WriterProxy
-        std::lock_guard<std::recursive_mutex> guardWriterProxy(*pWP->get_mutex());
+        std::unique_lock<std::recursive_mutex> wpLock(*pWP->get_mutex());
         SequenceNumber_t auxSN;
         SequenceNumber_t finalSN = gapList.base() - 1;
         for(auxSN = gapStart; auxSN<=finalSN;auxSN++)
@@ -474,6 +474,11 @@ bool StatefulReader::processGapMsg(
                 fragmentedChangePitStop_->try_to_remove(it, pWP->guid());
             }
         });
+
+        wpLock.unlock();
+
+        // Maybe now we have to notify user from new CacheChanges.
+        NotifyChanges(pWP);
     }
 
     return true;

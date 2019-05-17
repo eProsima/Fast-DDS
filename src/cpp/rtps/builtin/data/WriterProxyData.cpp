@@ -480,13 +480,13 @@ bool WriterProxyData::readFromCDRMessage(
                 }
                 break;
             }
-        case PID_DISABLE_POSITIVE_ACKS:
-        {
-            const DisablePositiveACKsQosPolicy* p = dynamic_cast<const DisablePositiveACKsQosPolicy*>(param);
-            assert(p != nullptr);
-            m_qos.m_disablePositiveACKs = *p;
-            break;
-        }
+            case PID_DISABLE_POSITIVE_ACKS:
+            {
+                const DisablePositiveACKsQosPolicy* p = dynamic_cast<const DisablePositiveACKsQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.m_disablePositiveACKs = *p;
+                break;
+            }
 #if HAVE_SECURITY
             case PID_ENDPOINT_SECURITY_INFO:
             {

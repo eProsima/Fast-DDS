@@ -383,7 +383,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
                 <xs:element name="TTL" type="uint8Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="maxMessageSize" type="uint32Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="maxInitialPeersRange" type="uint32Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="interfaceWhiteList" type="stringListType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="interfaceWhiteList" type="addressListType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="wan_addr" type="stringType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="output_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="keep_alive_frequency_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
@@ -397,26 +397,27 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
         </xs:complexType>
     */
 
-    std::shared_ptr<rtps::SocketTransportDescriptor> pDesc = std::dynamic_pointer_cast<rtps::SocketTransportDescriptor>(p_transport);
+    std::shared_ptr<rtps::SocketTransportDescriptor> pDesc =
+            std::dynamic_pointer_cast<rtps::SocketTransportDescriptor>(p_transport);
 
     tinyxml2::XMLElement *p_aux0 = nullptr;
     const char* name = nullptr;
-    for (p_aux0 = p_root->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
         if (strcmp(name, SEND_BUFFER_SIZE) == 0)
         {
             // sendBufferSize - int32Type
-            int iSize = 0;
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iSize, 0) || iSize < 0)
+            uint32_t iSize = 0;
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &iSize, 0))
                 return XMLP_ret::XML_ERROR;
             pDesc->sendBufferSize = iSize;
         }
         else if (strcmp(name, RECEIVE_BUFFER_SIZE) == 0)
         {
             // receiveBufferSize - int32Type
-            int iSize = 0;
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iSize, 0) || iSize < 0)
+            uint32_t iSize = 0;
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &iSize, 0))
                 return XMLP_ret::XML_ERROR;
             pDesc->receiveBufferSize = iSize;
         }
@@ -446,16 +447,25 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
         }
         else if (strcmp(name, WHITE_LIST) == 0)
         {
-            // InterfaceWhiteList stringListType
-            tinyxml2::XMLElement* p_aux1 = p_aux0->FirstChildElement(ADDRESS);
-            while (nullptr != p_aux1)
+            // InterfaceWhiteList addressListType
+            const char* address = nullptr;
+            for (tinyxml2::XMLElement* p_aux1 = p_aux0->FirstChildElement();
+                 p_aux1 != nullptr; p_aux1 = p_aux1->NextSiblingElement())
             {
-                const char* text = p_aux1->GetText();
-                if (nullptr != text)
+                address = p_aux1->Name();
+                if (strcmp(address, ADDRESS) == 0)
                 {
-                    pDesc->interfaceWhiteList.emplace_back(text);
+                    const char* text = p_aux1->GetText();
+                    if (nullptr != text)
+                    {
+                        pDesc->interfaceWhiteList.emplace_back(text);
+                    }
                 }
-                p_aux1 = p_aux1->NextSiblingElement(ADDRESS);
+                else
+                {
+                    logError(XMLPARSER, "Invalid element found into 'interfaceWhiteList'. Name: " << address);
+                    return XMLP_ret::XML_ERROR;
+                }
             }
         }
         else if (strcmp(name, TCP_WAN_ADDR) == 0 || strcmp(name, UDP_OUTPUT_PORT) == 0 ||
@@ -464,7 +474,8 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(tinyxml2::XMLElement* p_root, sp
             strcmp(name, MAX_LOGICAL_PORT) == 0 || strcmp(name, LOGICAL_PORT_RANGE) == 0 ||
             strcmp(name, LOGICAL_PORT_INCREMENT) == 0 || strcmp(name, LISTENING_PORTS) == 0 ||
             strcmp(name, CALCULATE_CRC) == 0 || strcmp(name, CHECK_CRC) == 0 ||
-            strcmp(name, ENABLE_TCP_NODELAY) == 0 || strcmp(name, TLS) == 0)
+            strcmp(name, ENABLE_TCP_NODELAY) == 0 || strcmp(name, TLS) == 0 ||
+            strcmp(name, NON_BLOCKING_SEND) == 0 )
         {
             // Parsed outside of this method
         }
@@ -507,7 +518,7 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(tinyxml2::XMLElement* p_root,
     {
         tinyxml2::XMLElement *p_aux0 = nullptr;
         const char* name = nullptr;
-        for (p_aux0 = p_root->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+        for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
         {
             name = p_aux0->Name();
             if (strcmp(name, KEEP_ALIVE_FREQUENCY) == 0)
@@ -1161,7 +1172,7 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(tinyxml2::XMLElement* p_root)
             const char* boundStr = p_root->Attribute(STR_MAXLENGTH);
             if (boundStr != nullptr)
             {
-                bound = std::atoi(boundStr);
+                bound = static_cast<uint32_t>(std::atoi(boundStr));
             }
             valueBuilder = getDiscriminatorTypeBuilder(type, bound);
         }
@@ -1538,7 +1549,7 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(tinyxml2::XMLElement* p_root)
         const char* value = literal->Attribute(VALUE);
         if (value != nullptr)
         {
-            currValue = std::atoi(value);
+            currValue = static_cast<uint32_t>(std::atoi(value));
         }
         typeBuilder->add_empty_member(currValue++, name);
     }
@@ -1719,7 +1730,7 @@ static void dimensionsToArrayBounds(const std::string& dimensions, std::vector<u
 
     while (std::getline(ss, item, ','))
     {
-        bounds.push_back(std::atoi(item.c_str()));
+        bounds.push_back(static_cast<uint32_t>(std::atoi(item.c_str())));
     }
 }
 
@@ -1735,7 +1746,7 @@ static bool dimensionsToLabels(const std::string& labelStr, std::vector<uint64_t
         if (item == DEFAULT)
             def = true;
         else
-            labels.push_back(std::atoi(item.c_str()));
+            labels.push_back(static_cast<uint64_t>(std::atoi(item.c_str())));
     }
 
     return def;
@@ -1830,7 +1841,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
         uint32_t length = types::MAX_ELEMENTS_COUNT;
         if (lengthStr != nullptr)
         {
-            length = std::stoi(lengthStr);
+            length = static_cast<uint32_t>(std::stoi(lengthStr));
         }
 
         if (!isArray)
@@ -1906,7 +1917,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
         uint32_t length = types::MAX_ELEMENTS_COUNT;
         if (lengthStr != nullptr)
         {
-            length = std::stoi(lengthStr);
+            length = static_cast<uint32_t>(std::stoi(lengthStr));
         }
 
         if (!isArray)
@@ -2124,7 +2135,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
         const char* boundStr = p_root->Attribute(STR_MAXLENGTH);
         if (boundStr != nullptr)
         {
-            bound = std::atoi(boundStr);
+            bound = static_cast<uint32_t>(std::atoi(boundStr));
         }
         if (!isArray)
         {
@@ -2145,7 +2156,7 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
         const char* boundStr = p_root->Attribute(STR_MAXLENGTH);
         if (boundStr != nullptr)
         {
-            bound = std::atoi(boundStr);
+            bound = static_cast<uint32_t>(std::atoi(boundStr));
         }
         if (!isArray)
         {
@@ -2571,7 +2582,7 @@ template <typename T>
 void XMLParser::addAllAttributes(tinyxml2::XMLElement* p_profile, DataNode<T>& node)
 {
     const tinyxml2::XMLAttribute* attrib;
-    for (attrib = p_profile->FirstAttribute(); attrib != NULL; attrib = attrib->Next())
+    for (attrib = p_profile->FirstAttribute(); attrib != nullptr; attrib = attrib->Next())
     {
         node.addAttribute(attrib->Name(), attrib->Value());
     }
@@ -2637,7 +2648,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
     uint8_t ident = 1;
     tinyxml2::XMLElement *p_aux0 = nullptr;
     const char* name = nullptr;
-    for (p_aux0 = p_element->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    for (p_aux0 = p_element->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
         if (strcmp(name, ALLOCATION) == 0)
@@ -2798,7 +2809,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Publi
     uint8_t ident = 1;
     tinyxml2::XMLElement *p_aux0 = nullptr;
     const char* name = nullptr;
-    for (p_aux0 = p_profile->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    for (p_aux0 = p_profile->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
         if (strcmp(name, TOPIC) == 0)
@@ -2918,7 +2929,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Subsc
     uint8_t ident = 1;
     tinyxml2::XMLElement *p_aux0 = nullptr;
     const char* name = nullptr;
-    for (p_aux0 = p_profile->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    for (p_aux0 = p_profile->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
         if (strcmp(name, TOPIC) == 0)

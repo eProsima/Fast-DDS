@@ -323,7 +323,7 @@ private:
     //!Pool of writer proxy data objects ready for reuse
     ResourceLimitedVector<WriterProxyData*> writer_proxies_pool_;
     //!Variable to indicate if any parameter has changed.
-    bool m_hasChangedLocalPDP;
+    std::atomic_bool m_hasChangedLocalPDP;
     //!TimedEvent to periodically resend the local RTPSParticipant information.
     ResendParticipantProxyDataPeriod* mp_resendParticipantTimer;
     //!Listener for the SPDP messages.

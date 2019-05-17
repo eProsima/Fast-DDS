@@ -166,6 +166,7 @@ class XMLProfileManager
             m_publisher_profiles.clear();
             m_subscriber_profiles.clear();
             m_xml_files.clear();
+            m_transport_profiles.clear();
 
             for (auto pair : m_dynamictypes)
             {

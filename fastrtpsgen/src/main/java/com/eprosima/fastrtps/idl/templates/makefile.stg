@@ -25,7 +25,7 @@ DEFINES= $solution.defines : {define | -D$define$};separator=" "$
 
 INCLUDES= -I. $solution.includes : {include | -I$include$};separator=" "$
 
-LIBS = $solution.libraryPaths : {path |-L$path$};separator=" "$ $solution.libraries : {library |-l$library$};separator=" "$ \$(SYSLIBS)
+LIBS = $solution.libraryPaths : {path |-L$path$};separator=" "$ $solution.libraries : {library |-l$library$};separator=" "$ \$(shell test -x "\$\$(which pkg-config)" && pkg-config libssl libcrypto --libs --silence-errors) \$(SYSLIBS)
 
 DIRECTORIES= output.dir output/$example$.dir lib.dir lib/$example$.dir bin.dir bin/$example$.dir
 

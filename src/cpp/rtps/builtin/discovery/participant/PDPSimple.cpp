@@ -383,7 +383,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
 
     if(!dispose)
     {
-        if(new_change || m_hasChangedLocalPDP)
+        if(new_change || m_hasChangedLocalPDP.load())
         {
             this->mp_mutex->lock();
             ParticipantProxyData* local_participant_data = getLocalParticipantProxyData();
@@ -421,7 +421,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
                 }
             }
 
-            m_hasChangedLocalPDP = false;
+            m_hasChangedLocalPDP.exchange(false);
         }
         else
         {

@@ -118,7 +118,7 @@ TCPTransportInterface::~TCPTransportInterface()
 void TCPTransportInterface::clean()
 {
     assert(receiver_resources_.size() == 0);
-    alive_ = false;
+    alive_.store(false);
 
     if(keep_alive_event_ != nullptr)
     {
@@ -1097,7 +1097,7 @@ void TCPTransportInterface::SocketAccepted(
         const Locator_t& locator,
         const asio::error_code& error)
 {
-    if(alive_)
+    if(alive_.load())
     {
         if (!error.value())
         {
@@ -1143,7 +1143,7 @@ void TCPTransportInterface::SecureSocketAccepted(
         const Locator_t& locator,
         const asio::error_code& error)
 {
-    if(alive_)
+    if(alive_.load())
     {
         if (!error.value())
         {
@@ -1188,7 +1188,7 @@ void TCPTransportInterface::SocketConnected(
         const std::weak_ptr<TCPChannelResource>& channel_weak_ptr,
         const asio::error_code& error)
 {
-    if(alive_)
+    if(alive_.load())
     {
         auto channel = channel_weak_ptr.lock();
 

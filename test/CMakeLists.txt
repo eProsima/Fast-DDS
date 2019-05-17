@@ -34,6 +34,10 @@ if(EPROSIMA_BUILD_TESTS AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER)
     add_subdirectory(blackbox)
     add_subdirectory(communication)
     add_subdirectory(unittest)
+
+    if(UNIX AND NOT APPLE)
+        add_subdirectory(realtime)
+    endif()
 endif()
 
 ###############################################################################
@@ -51,8 +55,4 @@ endif()
 ###############################################################################
 if(PERFORMANCE_TESTS)
     add_subdirectory(performance)
-endif()
-
-if(UNIX AND NOT APPLE)
-    add_subdirectory(realtime)
 endif()

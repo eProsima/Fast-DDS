@@ -143,7 +143,7 @@ public:
 
     void dispose()
     {
-        alive_ = false;
+        alive_.store(false);
     }
 
 protected:
@@ -213,7 +213,7 @@ protected:
 
     inline bool alive() const
     {
-        return alive_;
+        return alive_.load();
     }
 };
 } /* namespace rtps */

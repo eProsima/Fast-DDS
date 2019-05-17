@@ -255,10 +255,18 @@ bool TypeConsistencyEnforcementQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 
 bool DisablePositiveACKsQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 {
-    bool valid = CDRMessage::addUInt16(msg, this->Pid);
-    valid &= CDRMessage::addUInt16(msg, this->length);
-    valid &= CDRMessage::addOctet(msg, (octet)enabled);
-    return valid;
+    if (enabled)
+    {
+        bool valid = CDRMessage::addUInt16(msg, this->Pid);
+        valid &= CDRMessage::addUInt16(msg, this->length);
+        valid &= CDRMessage::addOctet(msg, (octet)0x01);
+        valid &= CDRMessage::addOctet(msg, (octet)0x00);
+        valid &= CDRMessage::addOctet(msg, (octet)0x00);
+        valid &= CDRMessage::addOctet(msg, (octet)0x00);
+        return valid;
+    }
+
+    return true;
 }
 
 bool TypeIdV1::addToCDRMessage(CDRMessage_t* msg)
