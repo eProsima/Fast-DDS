@@ -164,7 +164,10 @@ RTPSMessageGroup::RTPSMessageGroup(
     CDRMessage::initCDRMsg(submessage_msg_);
 
 #if HAVE_SECURITY
-    CDRMessage::initCDRMsg(encrypt_msg_);
+    if (participant->is_secure())
+    {
+        CDRMessage::initCDRMsg(encrypt_msg_);
+    }
 #endif
 }
 
