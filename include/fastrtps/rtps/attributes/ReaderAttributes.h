@@ -66,7 +66,8 @@ class  ReaderAttributes
     public:
 
         ReaderAttributes()
-            : expectsInlineQos(false)
+            : liveliness_lease_duration(c_TimeInfinite)
+            , expectsInlineQos(false)
             , disable_positive_acks(false)
         {
             endpoint.endpointKind = READER;

@@ -643,6 +643,7 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
                 if (W->getGuid().entityId == (*it)->getGuid().entityId)
                 {
                     found = true;
+                    wToEraseIt = it;
                 }
             }
             if (found)
@@ -667,60 +668,6 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
     }
     logWarning(RTPS_LIVELINESS,"Writer "<<W->getGuid().entityId << " not found.");
     return false;
-}
-
-bool WLP::updateLocalWriter(RTPSWriter* W, const WriterQos& wqos)
-{
-
-    // Unused in release mode.
-    (void)W;
-
-    std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
-    logInfo(RTPS_LIVELINESS, W->getGuid().entityId);
-    double wAnnouncementPeriodMilliSec(TimeConv::Duration_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));
-    if(wqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
-    {
-        if(automatic_liveliness_assertion_ == nullptr)
-        {
-            automatic_liveliness_assertion_ = new WLivelinessPeriodicAssertion(this,AUTOMATIC_LIVELINESS_QOS);
-            automatic_liveliness_assertion_->update_interval_millisec(wAnnouncementPeriodMilliSec);
-            automatic_liveliness_assertion_->restart_timer();
-            min_automatic_ms_ = wAnnouncementPeriodMilliSec;
-        }
-        else if(min_automatic_ms_ > wAnnouncementPeriodMilliSec)
-        {
-            min_automatic_ms_ = wAnnouncementPeriodMilliSec;
-            automatic_liveliness_assertion_->update_interval_millisec(wAnnouncementPeriodMilliSec);
-            //CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-            if(automatic_liveliness_assertion_->getRemainingTimeMilliSec() > min_automatic_ms_)
-            {
-                automatic_liveliness_assertion_->cancel_timer();
-            }
-            automatic_liveliness_assertion_->restart_timer();
-        }
-    }
-    else if(wqos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-    {
-        if(manual_liveliness_assertion_ == nullptr)
-        {
-            manual_liveliness_assertion_ = new WLivelinessPeriodicAssertion(this,MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
-            manual_liveliness_assertion_->update_interval_millisec(wAnnouncementPeriodMilliSec);
-            manual_liveliness_assertion_->restart_timer();
-            min_manual_by_participant_ms_ = wAnnouncementPeriodMilliSec;
-        }
-        else if(min_manual_by_participant_ms_ > wAnnouncementPeriodMilliSec)
-        {
-            min_manual_by_participant_ms_ = wAnnouncementPeriodMilliSec;
-            manual_liveliness_assertion_->update_interval_millisec(min_manual_by_participant_ms_);
-            //CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-            if(manual_liveliness_assertion_->getRemainingTimeMilliSec() > min_manual_by_participant_ms_)
-            {
-                manual_liveliness_assertion_->cancel_timer();
-            }
-            manual_liveliness_assertion_->restart_timer();
-        }
-    }
-    return true;
 }
 
 StatefulWriter* WLP::getBuiltinWriter()

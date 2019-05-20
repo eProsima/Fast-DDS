@@ -143,10 +143,6 @@ bool BuiltinProtocols::updateLocalWriter(RTPSWriter* W, const TopicAttributes& t
     {
         ok |= mp_PDP->getEDP()->updatedLocalWriter(W, topicAtt, wqos);
     }
-    if(mp_WLP!=nullptr)
-    {
-        ok |= mp_WLP->updateLocalWriter(W, wqos);
-    }
     return ok;
 }
 

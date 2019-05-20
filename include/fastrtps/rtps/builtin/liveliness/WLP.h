@@ -121,14 +121,6 @@ public:
 	BuiltinProtocols* getBuiltinProtocols(){return mp_builtinProtocols;};
 	
 	/**
-	 * Update local writer.
-	 * @param W Writer to update
-	 * @param wqos New writer QoS
-	 * @return True on success
-	 */
-	bool updateLocalWriter(RTPSWriter* W, const WriterQos& wqos);
-	
-	/**
 	 * Get the RTPS participant
 	 * @return RTPS participant
 	 */
