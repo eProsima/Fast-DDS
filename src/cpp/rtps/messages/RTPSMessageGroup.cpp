@@ -604,7 +604,12 @@ bool RTPSMessageGroup::add_acknack(
         bool finalFlag)
 {
     // A vector is used to avoid dynamic allocations, but only first item is used
-    assert(sender_.remote_guids().size() == 1);
+    size_t n_guids = sender_.remote_guids().size();
+    if (n_guids == 0) 
+    {
+        return false;
+    }
+    assert(n_guids == 1);
 
     check_and_maybe_flush();
 
