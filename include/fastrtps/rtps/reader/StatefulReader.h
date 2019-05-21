@@ -26,6 +26,7 @@
 #include "../common/CDRMessage_t.h"
 
 #include <mutex>
+#include <atomic>
 
 namespace eprosima {
 namespace fastrtps{
@@ -290,6 +291,8 @@ class StatefulReader : public RTPSReader
         ResourceLimitedContainerConfig proxy_changes_config_;
         //! True to disable positive ACKs
         bool disable_positive_acks_;
+        //! False when being destroyed
+        std::atomic_bool is_alive_;
 };
 
 } /* namespace rtps */
