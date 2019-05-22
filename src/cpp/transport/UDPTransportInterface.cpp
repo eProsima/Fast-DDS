@@ -430,6 +430,8 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const 
 {
     try
     {
+        asio::error_code ec;
+        socket_base::message_flags flags = 0;
         uint16_t port = IPLocator::getPhysicalPort(locator);
 
         if(is_interface_whitelist_empty())
@@ -443,14 +445,12 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const 
 
             // We first send directly to localhost, in case all network interfaces are disabled
             // (which would mean that multicast traffic may not be sent)
+            // We ignore the error message because some OS don't allow this functionality like Windows (WSAENETUNREACH) or Mac (EADDRNOTAVAIL)
             auto localEndpoint = generate_local_endpoint(localLocator, port);
-            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), localEndpoint);
+            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), localEndpoint, flags, ec);
 
             // We then send to the address of the input locator
             auto destinationEndpoint = generate_local_endpoint(locator, port);
-
-            asio::error_code ec;
-            socket_base::message_flags flags = 0;
 
             // We ignore the error message because some OS don't allow this functionality like Windows (WSAENETUNREACH) or Mac (EADDRNOTAVAIL)
             socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint,flags, ec);
@@ -463,14 +463,12 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const 
             socket.open(generate_protocol());
             socket.bind(asio::ip::udp::endpoint(interface_address, 0));
 
+            // We ignore the error message because some OS don't allow this functionality like Windows (WSAENETUNREACH) or Mac (EADDRNOTAVAIL)
             auto localEndpoint = ip::udp::endpoint(interface_address, port);
-            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), localEndpoint);
+            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), localEndpoint, flags, ec);
 
             // We then send to the address of the input locator
             auto destinationEndpoint = generate_local_endpoint(locator, port);
-
-            asio::error_code ec;
-            socket_base::message_flags flags = 0;
 
             // We ignore the error message because some OS don't allow this functionality like Windows (WSAENETUNREACH) or Mac (EADDRNOTAVAIL)
             socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint, flags, ec);
