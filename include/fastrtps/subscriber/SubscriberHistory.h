@@ -94,24 +94,12 @@ class SubscriberHistory: public rtps::ReaderHistory
          */
         bool remove_change_sub(rtps::CacheChange_t* change);
 
-        //!Increase the unread count.
-        inline void increaseUnreadCount()
-        {
-            ++m_unreadCacheCount;
-        }
-
-        //!Decrease the unread count.
-        inline void decreaseUnreadCount()
-        {
-            if(m_unreadCacheCount>0)
-                --m_unreadCacheCount;
-        }
-
         /** Get the unread count.
          * @return Unread count
          */
         inline uint64_t getUnreadCount() const
         {
+            std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
             return m_unreadCacheCount;
         }
 
@@ -164,6 +152,19 @@ class SubscriberHistory: public rtps::ReaderHistory
         bool find_key(
                 rtps::CacheChange_t* a_change,
                 t_m_Inst_Caches::iterator* map_it);
+
+        //!Increase the unread count.
+        inline void increaseUnreadCount()
+        {
+            ++m_unreadCacheCount;
+        }
+
+        //!Decrease the unread count.
+        inline void decreaseUnreadCount()
+        {
+            if (m_unreadCacheCount > 0)
+                --m_unreadCacheCount;
+        }
 };
 
 } /* namespace fastrtps */
