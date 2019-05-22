@@ -114,6 +114,7 @@ private:
         Listener(PubSubReader &reader)
             : reader_(reader)
             , times_deadline_missed_(0)
+            , times_liveliness_changed_(0)
         {}
 
         ~Listener(){}
@@ -155,9 +156,23 @@ private:
             times_deadline_missed_ = status.total_count;
         }
 
+        virtual void on_liveliness_changed(
+                eprosima::fastrtps::Subscriber* sub,
+                const eprosima::fastrtps::LivelinessChangedStatus& status)
+        {
+            (void)sub;
+            (void)status;
+            times_liveliness_changed_++;
+        }
+
         unsigned int missed_deadlines() const
         {
             return times_deadline_missed_;
+        }
+
+        unsigned int times_liveliness_changed() const
+        {
+            return times_liveliness_changed_;
         }
 
     private:
@@ -166,7 +181,10 @@ private:
 
         PubSubReader& reader_;
 
+        //! Number of times deadline was missed
         unsigned int times_deadline_missed_;
+        //! Number of times liveliness changed
+        unsigned int times_liveliness_changed_;
 
     } listener_;
 
@@ -388,6 +406,18 @@ public:
     PubSubReader& deadline_period(const eprosima::fastrtps::Duration_t deadline_period)
     {
         subscriber_attr_.qos.m_deadline.period = deadline_period;
+        return *this;
+    }
+
+    PubSubReader& liveliness_kind(const eprosima::fastrtps::LivelinessQosPolicyKind& kind)
+    {
+        subscriber_attr_.qos.m_liveliness.kind = kind;
+        return *this;
+    }
+
+    PubSubReader& liveliness_lease_duration(const eprosima::fastrtps::Duration_t lease_duration)
+    {
+        subscriber_attr_.qos.m_liveliness.lease_duration = lease_duration;
         return *this;
     }
 
@@ -693,6 +723,11 @@ public:
     unsigned int missed_deadlines() const
     {
         return listener_.missed_deadlines();
+    }
+
+    unsigned int times_liveliness_changed() const
+    {
+        return listener_.times_liveliness_changed();
     }
 
     bool is_matched() const

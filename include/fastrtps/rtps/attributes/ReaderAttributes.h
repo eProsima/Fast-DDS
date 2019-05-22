@@ -66,7 +66,8 @@ class  ReaderAttributes
     public:
 
         ReaderAttributes()
-            : liveliness_lease_duration(c_TimeInfinite)
+            : liveliness_kind_(AUTOMATIC_LIVELINESS_QOS)
+            , liveliness_lease_duration(c_TimeInfinite)
             , expectsInlineQos(false)
             , disable_positive_acks(false)
         {
@@ -82,6 +83,9 @@ class  ReaderAttributes
 
         //!Times associated with this reader (only for stateful readers)
         ReaderTimes times;
+
+        //! Liveliness kind
+        LivelinessQosPolicyKind liveliness_kind_;
 
         //! Liveliness lease duration
         Duration_t liveliness_lease_duration;

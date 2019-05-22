@@ -75,6 +75,11 @@ private:
 
         void onNewDataMessage(eprosima::fastrtps::Subscriber* sub) override;
 
+        void on_liveliness_changed(
+                eprosima::fastrtps::Subscriber* sub,
+                const eprosima::fastrtps::LivelinessChangedStatus& status) override;
+
+
 		eprosima::fastrtps::SampleInfo_t m_info;
 		int n_matched;
 		uint32_t n_samples;

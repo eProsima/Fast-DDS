@@ -229,6 +229,12 @@ public:
     */
     virtual bool isInCleanState() = 0;
 
+    /**
+     * @brief Sets a pointer to the liveliness manager shared among all readers within the same participant
+     * @param liveliness_manager A pointer to the shared liveliness manager
+     */
+    void set_liveliness_manager(LivelinessManager* liveliness_manager);
+
     //! The liveliness changed status struct as defined in the DDS
     LivelinessChangedStatus liveliness_changed_status_;
 
@@ -308,6 +314,11 @@ protected:
     //! Only used if the lease duration of this reader is not infinite
     //! Classes inheriting from RTPSReader should keep this class updated
     LivelinessManager* liveliness_manager_;
+
+    //! The liveliness kind of this reader
+    LivelinessQosPolicyKind liveliness_kind_;
+    //! The liveliness lease duration of this reader
+    Duration_t liveliness_lease_duration_;
 
 private:
 

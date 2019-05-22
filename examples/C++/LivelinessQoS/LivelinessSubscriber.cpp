@@ -43,7 +43,7 @@ bool LivelinessSubscriber::init(
     PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.domainId = 0;
+    PParam.rtps.builtin.domainId = 14;
     PParam.rtps.builtin.use_WriterLivelinessProtocol = true;
     PParam.rtps.setName("Participant_sub");
     participant_ = Domain::createParticipant(PParam, &part_listener_);
@@ -115,6 +115,14 @@ void LivelinessSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
             std::cout << "Message with index " << topic.index()<< " RECEIVED" << std::endl;
         }
     }
+}
+
+void LivelinessSubscriber::SubListener::on_liveliness_changed(
+        Subscriber *sub,
+        const LivelinessChangedStatus &status)
+{
+    (void)status;
+    std::cout << "Subscriber " << sub->getGuid() << " changed liveliness" << std::endl;
 }
 
 void LivelinessSubscriber::run()

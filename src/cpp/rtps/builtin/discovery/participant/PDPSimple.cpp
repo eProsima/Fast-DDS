@@ -283,7 +283,7 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
         {
             this->mp_mutex->lock();
             ParticipantProxyData* local_participant_data = getLocalParticipantProxyData();
-            local_participant_data->m_manualLivelinessCount++;
+            local_participant_data->m_manualLivelinessCount++; // TODO raquel think about this
             InstanceHandle_t key = local_participant_data->m_key;
             ParticipantProxyData proxy_data_copy(*local_participant_data);
             this->mp_mutex->unlock();

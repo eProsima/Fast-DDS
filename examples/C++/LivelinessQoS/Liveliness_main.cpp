@@ -181,6 +181,10 @@ bool parse_arguments(
                 {
                     first_kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
                 }
+                else if(!strcmp(argv[count + 1], "MANUAL_BY_TOPIC"))
+                {
+                    first_kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS;
+                }
                 else
                 {
                     std::cout << "Unknown command line value " << argv[count + 1] << " for publisher" << std::endl;
@@ -229,6 +233,10 @@ bool parse_arguments(
                 {
                     first_kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
                 }
+                else if(!strcmp(argv[count + 1], "MANUAL_BY_TOPIC"))
+                {
+                    first_kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS;
+                }
                 else
                 {
                     std::cout << "Unknown command line value " << argv[count + 1] << " for publisher" << std::endl;
@@ -244,6 +252,10 @@ bool parse_arguments(
                 else if(!strcmp(argv[count + 1], "MANUAL_BY_PARTICIPANT"))
                 {
                     second_kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+                }
+                else if(!strcmp(argv[count * 1], "MANUAL_BY_TOPIC"))
+                {
+                    second_kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS;
                 }
                 else
                 {
@@ -291,6 +303,11 @@ bool parse_arguments(
                 {
                     std::cout << "+++++++ Setting kind to MANUAL" << std::endl;
                     first_kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+                }
+                else if(!strcmp(argv[count + 1], "MANUAL_BY_TOPIC"))
+                {
+                    std::cout << "+++++++ Setting kind to MANUAL_BY_TOPIC" << std::endl;
+                    first_kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS;
                 }
                 else
                 {

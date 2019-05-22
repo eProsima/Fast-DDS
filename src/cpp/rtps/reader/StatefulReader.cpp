@@ -28,6 +28,8 @@
 #include "../participant/RTPSParticipantImpl.h"
 #include "FragmentedChangePitStop.h"
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
 #include <mutex>
 #include <thread>
@@ -93,14 +95,26 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
     wp->loaded_from_storage_nts(get_last_notified(wdata.guid));
     matched_writers.push_back(wp);
 
-    if (liveliness_manager_ != nullptr)
+    if (liveliness_lease_duration_ < c_TimeInfinite)
     {
-        if (!liveliness_manager_->add_writer(
-                    wdata.guid,
-                    wdata.liveliness_kind,
-                    wdata.liveliness_lease_duration))
+        auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+        if ( wlp != nullptr)
         {
-            logError(RTPS_READER, "Writer " << wp->m_att.guid << " could not be added to liveliness manager");
+            // A return value of false is not necessary an error, as the writer could have already been
+            // added to the liveliness manager by another reader
+            bool added = wlp->sub_liveliness_manager_->add_writer(
+                                        wdata.guid,
+                                        wdata.liveliness_kind,
+                                        wdata.liveliness_lease_duration);
+
+            if (added)
+            {
+                std::cout << "\t\t+++ StatefulReader " << getGuid() << " added writer " << wdata.guid << std::endl;
+            }
+        }
+        else
+        {
+            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
         }
     }
 
@@ -132,6 +146,7 @@ bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
 
     if (liveliness_manager_ != nullptr)
     {
+        // TODO raquel What if another reader is matched to this writer?
         if (!liveliness_manager_->remove_writer(wdata.guid))
         {
             logError(RTPS_READER, "Writer " << wdata.guid << " could not be removed from liveliness manager");
@@ -211,12 +226,38 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
     if(acceptMsgFrom(change->writerGUID, &pWP))
     {
-        if (liveliness_manager_ != nullptr)
+        if (getGuid().entityId == c_EntityId_ReaderLiveliness)
         {
-            if (!liveliness_manager_->assert_liveliness(change->writerGUID))
-            {
-                logError(RTPS_READER, "Could not assert liveliness of writer " << change->writerGUID);
-            }
+            std::cout << "Reader " << getGuid() << " receiving change" << std::endl;
+        }
+
+        if (liveliness_kind_ != AUTOMATIC_LIVELINESS_QOS)
+        {
+            // TODO
+//            auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+//            if ( wlp != nullptr )
+//            {
+//                if (liveliness_kind_ == AUTOMATIC_LIVELINESS_QOS)
+//                {
+//                    if (!wlp->sub_liveliness_manager_->assert_liveliness(AUTOMATIC_LIVELINESS_QOS))
+//                    {
+//                        logError(RTPS_READER, "Reader " << getGuid() << " Could not assert liveliness *** " << wlp->sub_liveliness_manager_);
+//                    }
+//                }
+//                else if (!wlp->sub_liveliness_manager_->assert_liveliness(change->writerGUID))
+//                {
+//                    logError(RTPS_READER, "Reader " << getGuid() << " Could not assert liveliness of writer +++ " << change->writerGUID);
+//                }
+//            }
+
+//            if (liveliness_manager_ != nullptr)
+//            {
+//                std::cout << "StatefulReader " << getGuid() << " asserting liveliness of writer " << change->writerGUID << std::endl;
+//                if (!liveliness_manager_->assert_liveliness(change->writerGUID))
+//                {
+//    //                logError(RTPS_READER, "Reader " << getGuid() << " Could not assert liveliness of writer " << change->writerGUID);
+//                }
+//            }
         }
 
         // Check if CacheChange was received.
@@ -289,13 +330,7 @@ bool StatefulReader::processDataFragMsg(
 
     if(acceptMsgFrom(incomingChange->writerGUID, &pWP))
     {
-        if (liveliness_manager_ != nullptr)
-        {
-            if (!liveliness_manager_->assert_liveliness(incomingChange->writerGUID))
-            {
-                logError(RTPS_READER, "Could not assert liveliness of writer " << incomingChange->writerGUID);
-            }
-        }
+        // TODO raquel Do the same as in processDataMsg()
 
         // Check if CacheChange was received.
         if(!pWP->change_was_received(incomingChange->sequenceNumber))
@@ -368,14 +403,6 @@ bool StatefulReader::processHeartbeatMsg(
     {
         std::unique_lock<std::recursive_mutex> wpLock(*pWP->getMutex());
 
-        if (liveliness_manager_ != nullptr)
-        {
-            if (!liveliness_manager_->assert_liveliness(writerGUID))
-            {
-                logError(RTPS_READER, "Could not assert liveliness of writer " << writerGUID);
-            }
-        }
-
         if(pWP->m_lastHeartbeatCount < hbCount)
         {
             // If it is the first heartbeat message, we can try to cancel initial ack.
@@ -413,9 +440,9 @@ bool StatefulReader::processHeartbeatMsg(
                 }
             }
 
-            if(livelinessFlag)
+            if (livelinessFlag)
             {
-                // TODO Raquel
+                // TODO raquel
             }
 
             wpLock.unlock();

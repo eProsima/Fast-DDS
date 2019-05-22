@@ -75,17 +75,8 @@ bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
     add_persistence_guid(wdata);
     m_acceptMessagesFromUnkownWriters = false;
 
-    if (liveliness_manager_ != nullptr)
-    {
-        // Add the matched writer to the liveliness manager too
-        if(!liveliness_manager_->add_writer(
-                    wdata.guid,
-                    wdata.liveliness_kind,
-                    wdata.liveliness_lease_duration))
-        {
-            logError(RTPS_READER, "Could not add writer " << wdata.guid << " to liveliness manager");
-        }
-    }
+    // TODO raquel liveliness
+
     return true;
 }
 
@@ -100,14 +91,8 @@ bool StatelessReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
             m_matched_writers.erase(it);
             remove_persistence_guid(wdata);
 
-            //Remove it from the liveliness manager too
-            if (liveliness_manager_ != nullptr)
-            {
-                if(!liveliness_manager_->remove_writer(wdata.guid))
-                {
-                    logError(RTPS_READER, "Could not remove writer " << wdata.guid << " from liveliness manager");
-                }
-            }
+            // TODO raquel liveliness
+
             return true;
         }
     }
@@ -200,13 +185,7 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
     {
         logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
 
-        if (liveliness_manager_ != nullptr)
-        {
-            if (!liveliness_manager_->assert_liveliness(change->writerGUID))
-            {
-                logError(RTPS_READER, "Could not assert liveliness of writer " << change->writerGUID);
-            }
-        }
+        // TODO raquel liveliness
 
         CacheChange_t* change_to_add;
 
@@ -271,13 +250,7 @@ bool StatelessReader::processDataFragMsg(
 
     if (acceptMsgFrom(incomingChange->writerGUID))
     {
-        if (liveliness_manager_ != nullptr)
-        {
-            if (!liveliness_manager_->assert_liveliness(incomingChange->writerGUID))
-            {
-                logError(RTPS_READER, "Could not assert liveliness of writer " << incomingChange->writerGUID);
-            }
-        }
+        // TODO raquel liveliness
 
         // Check if CacheChange was received.
         if(!thereIsUpperRecordOf(incomingChange->writerGUID, incomingChange->sequenceNumber))
@@ -344,7 +317,7 @@ bool StatelessReader::processHeartbeatMsg(
         SequenceNumber_t& /*firstSN*/,
         SequenceNumber_t& /*lastSN*/,
         bool /*finalFlag*/,
-        bool /*livelinessFlag*/)
+        bool livelinessFlag)
 {
     return true;
 }

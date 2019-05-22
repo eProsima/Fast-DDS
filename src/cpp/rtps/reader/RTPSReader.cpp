@@ -49,19 +49,12 @@ RTPSReader::RTPSReader(
     , m_expectsInlineQos(att.expectsInlineQos)
     , fragmentedChangePitStop_(nullptr)
     , liveliness_manager_(nullptr)
+    , liveliness_kind_(att.liveliness_kind_)
+    , liveliness_lease_duration_(att.liveliness_lease_duration)
 {
     mp_history->mp_reader = this;
     mp_history->mp_mutex = &mp_mutex;
     fragmentedChangePitStop_ = new FragmentedChangePitStop(this);
-
-    if (att.liveliness_lease_duration < c_TimeInfinite)
-    {
-        liveliness_manager_ = new LivelinessManager(
-                    std::bind(&RTPSReader::on_liveliness_lost, this, std::placeholders::_1),
-                    std::bind(&RTPSReader::on_liveliness_recovered, this, std::placeholders::_1),
-                    pimpl->getEventResource().getIOService(),
-                    pimpl->getEventResource().getThread());
-    }
 
     logInfo(RTPS_READER,"RTPSReader created correctly");
 }
@@ -229,6 +222,11 @@ void RTPSReader::on_liveliness_recovered(GUID_t writer)
 
     liveliness_changed_status_.alive_count_change = 0;
     liveliness_changed_status_.not_alive_count_change = 0;
+}
+
+void RTPSReader::set_liveliness_manager(LivelinessManager *liveliness_manager)
+{
+    liveliness_manager_ = liveliness_manager;
 }
 
 }

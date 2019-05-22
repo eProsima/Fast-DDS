@@ -48,7 +48,7 @@ bool LivelinessPublisher::init(
     PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.domainId = 0;
+    PParam.rtps.builtin.domainId = 14;
     PParam.rtps.builtin.use_WriterLivelinessProtocol = true;
     PParam.rtps.setName("Participant_pub");
     participant_ = Domain::createParticipant(PParam);
@@ -97,6 +97,13 @@ void LivelinessPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,M
     }
 }
 
+void LivelinessPublisher::PubListener::on_liveliness_lost(
+        Publisher *pub,
+        const LivelinessLostStatus &status)
+{
+    std::cout << "Publisher " << pub->getGuid() << " lost liveliness: " << status.total_count << std::endl;
+}
+
 void LivelinessPublisher::run(uint32_t samples, uint32_t sleep)
 {
     std::thread thread1(&LivelinessPublisher::runThread, this, publisher_, samples, sleep);
@@ -119,6 +126,13 @@ void LivelinessPublisher::runThread(
         {
             std::cout << "Message with index: " << topic_.index()<< " SENT by publisher " << pub->getGuid() << std::endl;
         }
+
+        if (i==samples - 1)
+        {
+            int* p;
+            *p = 5;
+        }
+
         eClock::my_sleep(sleep);
 
     }

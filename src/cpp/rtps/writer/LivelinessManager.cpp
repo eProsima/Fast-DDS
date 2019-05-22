@@ -72,6 +72,7 @@ bool LivelinessManager::remove_writer(GUID_t guid)
                 timer_owner_ = nullptr;
                 if (!calculate_next())
                 {
+                    timer_.cancel_timer();
                     return true;
                 }
 
@@ -97,6 +98,8 @@ bool LivelinessManager::assert_liveliness(GUID_t guid)
     {
         return false;
     }
+
+    timer_.cancel_timer();
 
     if (wit->kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS ||
         wit->kind == AUTOMATIC_LIVELINESS_QOS)
@@ -152,6 +155,13 @@ bool LivelinessManager::assert_liveliness(LivelinessQosPolicyKind kind)
         return false;
     }
 
+    if (writers_.empty())
+    {
+        return true;
+    }
+
+    timer_.cancel_timer();
+
     for (auto& writer: writers_)
     {
         if (writer.kind == kind)
@@ -171,7 +181,7 @@ bool LivelinessManager::assert_liveliness(LivelinessQosPolicyKind kind)
     // Updates the timer owner
     if (!calculate_next())
     {
-        logError(RTPS_WRITER, "Error when restarting liveliness timer");
+        logError(RTPS_WRITER, "Error when restarting liveliness timer: " << writers_.size() << " writers");
         return false;
     }
 
@@ -185,6 +195,7 @@ bool LivelinessManager::assert_liveliness(LivelinessQosPolicyKind kind)
 
 bool LivelinessManager::calculate_next()
 {
+
     timer_owner_ = nullptr;
 
     steady_clock::time_point min_time = steady_clock::now() + nanoseconds(c_TimeInfinite.to_ns());

@@ -155,6 +155,11 @@ void StatefulWriter::unsent_change_added_to_history(
 
     if(!matched_readers_.empty())
     {
+        if (getGuid().entityId == c_EntityId_WriterLiveliness)
+        {
+            std::cout << "Writer " << getGuid() << " sending change" << std::endl;
+        }
+
         if(!isAsync())
         {
             //TODO(Ricardo) Temporal.

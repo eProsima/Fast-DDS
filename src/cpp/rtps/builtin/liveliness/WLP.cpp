@@ -56,13 +56,13 @@ WLP::WLP(BuiltinProtocols* p)
     , mp_builtinReader(nullptr)
     , mp_builtinWriterHistory(nullptr)
     , mp_builtinReaderHistory(nullptr)
-    , mp_listener(nullptr)
     , automatic_liveliness_assertion_(nullptr)
     , manual_liveliness_assertion_(nullptr)
     , automatic_writers_()
     , manual_by_participant_writers_()
     , manual_by_topic_writers_()
-    , liveliness_manager_(nullptr)
+    , pub_liveliness_manager_(nullptr)
+    , sub_liveliness_manager_(nullptr)
 #if HAVE_SECURITY
     , mp_builtinWriterSecure(nullptr)
     , mp_builtinReaderSecure(nullptr)
@@ -84,7 +84,6 @@ WLP::~WLP()
     mp_participant->deleteUserEndpoint(mp_builtinWriter);
     delete(this->mp_builtinReaderHistory);
     delete(this->mp_builtinWriterHistory);
-    delete(this->mp_listener);
     if(this->automatic_liveliness_assertion_!=nullptr)
     {
         delete(automatic_liveliness_assertion_);
@@ -93,17 +92,24 @@ WLP::~WLP()
     {
         delete(this->manual_liveliness_assertion_);
     }
-    delete liveliness_manager_;
+    delete pub_liveliness_manager_;
+    delete sub_liveliness_manager_;
 }
 
 bool WLP::initWL(RTPSParticipantImpl* p)
 {
-    logInfo(RTPS_LIVELINESS,"Beginning Liveliness Protocol");
+    logInfo(RTPS_LIVELINESS,"Initializing Liveliness Protocol");
+
     mp_participant = p;
 
-    liveliness_manager_ = new LivelinessManager(
-                std::bind(&WLP::on_liveliness_lost, this, std::placeholders::_1),
-                std::bind(&WLP::on_livelienss_recovered, this, std::placeholders::_1),
+    pub_liveliness_manager_ = new LivelinessManager(
+                std::bind(&WLP::pub_liveliness_lost, this, std::placeholders::_1),
+                std::bind(&WLP::pub_livelienss_recovered, this, std::placeholders::_1),
+                mp_participant->getEventResource().getIOService(),
+                mp_participant->getEventResource().getThread());
+    sub_liveliness_manager_ = new LivelinessManager(
+                std::bind(&WLP::sub_liveliness_lost, this, std::placeholders::_1),
+                std::bind(&WLP::pub_livelienss_recovered, this, std::placeholders::_1),
                 mp_participant->getEventResource().getIOService(),
                 mp_participant->getEventResource().getThread());
 
@@ -116,26 +122,40 @@ bool WLP::initWL(RTPSParticipantImpl* p)
 
 bool WLP::createEndpoints()
 {
-    //CREATE WRITER
+    // WLP listener
+
+    mp_listener = new WLPListener(this);
+
+    // Built-in writer history
+
     HistoryAttributes hatt;
     hatt.initialReservedCaches = 20;
     hatt.maximumReservedCaches = 1000;
     hatt.payloadMaxSize = BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
     mp_builtinWriterHistory = new WriterHistory(hatt);
+
+    // Built-in writer
+
     WriterAttributes watt;
     watt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
     watt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
     watt.endpoint.remoteLocatorList = mp_builtinProtocols->m_initialPeersList;
-    //	Wparam.topic.topicName = "DCPSRTPSParticipantMessage";
-    //	Wparam.topic.topicDataType = "RTPSParticipantMessageData";
     watt.endpoint.topicKind = WITH_KEY;
     watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     watt.endpoint.reliabilityKind = RELIABLE;
     if(mp_participant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
             mp_participant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
+    {
         watt.mode = ASYNCHRONOUS_WRITER;
+    }
     RTPSWriter* wout;
-    if(mp_participant->createWriter(&wout,watt,mp_builtinWriterHistory,nullptr,c_EntityId_WriterLiveliness,true))
+    if(mp_participant->createWriter(
+                &wout,
+                watt,
+                mp_builtinWriterHistory,
+                nullptr,
+                c_EntityId_WriterLiveliness,
+                true))
     {
         mp_builtinWriter = dynamic_cast<StatefulWriter*>(wout);
         logInfo(RTPS_LIVELINESS,"Builtin Liveliness Writer created");
@@ -147,10 +167,16 @@ bool WLP::createEndpoints()
         mp_builtinWriterHistory = nullptr;
         return false;
     }
+
+    // Built-in reader history
+
     hatt.initialReservedCaches = 100;
     hatt.maximumReservedCaches = 2000;
     hatt.payloadMaxSize = BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
     mp_builtinReaderHistory = new ReaderHistory(hatt);
+
+    // Built-in reader
+
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = WITH_KEY;
     ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
@@ -159,13 +185,15 @@ bool WLP::createEndpoints()
     ratt.endpoint.unicastLocatorList =  mp_builtinProtocols->m_metatrafficUnicastLocatorList;
     ratt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
     ratt.endpoint.remoteLocatorList = mp_builtinProtocols->m_initialPeersList;
-    //Rparam.topic.topicName = "DCPSRTPSParticipantMessage";
-    //Rparam.topic.topicDataType = "RTPSParticipantMessageData";
     ratt.endpoint.topicKind = WITH_KEY;
-    //LISTENER CREATION
-    mp_listener = new WLPListener(this);
     RTPSReader* rout;
-    if(mp_participant->createReader(&rout,ratt,mp_builtinReaderHistory,(ReaderListener*)mp_listener,c_EntityId_ReaderLiveliness,true))
+    if(mp_participant->createReader(
+                &rout,
+                ratt,
+                mp_builtinReaderHistory,
+                (ReaderListener*)mp_listener,
+                c_EntityId_ReaderLiveliness,
+                true))
     {
         mp_builtinReader = dynamic_cast<StatefulReader*>(rout);
         logInfo(RTPS_LIVELINESS,"Builtin Liveliness Reader created");
@@ -175,8 +203,6 @@ bool WLP::createEndpoints()
         logError(RTPS_LIVELINESS,"Liveliness Reader Creation failed.");
         delete(mp_builtinReaderHistory);
         mp_builtinReaderHistory = nullptr;
-        delete(mp_listener);
-        mp_listener = nullptr;
         return false;
     }
 
@@ -256,7 +282,7 @@ bool WLP::createSecureEndpoints()
             sec_attrs->plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
     }
     RTPSReader* rout;
-    if (mp_participant->createReader(&rout, ratt, mp_builtinReaderSecureHistory, (ReaderListener*)mp_listener, c_EntityId_ReaderLivelinessSecure, true))
+    if (mp_participant->createReader(&rout, ratt, mp_builtinReaderSecureHistory, nullptr, c_EntityId_ReaderLivelinessSecure, true))
     {
         mp_builtinReaderSecure = dynamic_cast<StatefulReader*>(rout);
         logInfo(RTPS_LIVELINESS, "Builtin Liveliness Reader created");
@@ -475,9 +501,7 @@ void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
 #endif
 }
 
-
-
-bool WLP::addLocalWriter(RTPSWriter* W, const WriterQos& wqos)
+bool WLP::add_local_writer(RTPSWriter* W, const WriterQos& wqos)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
     logInfo(RTPS_LIVELINESS, W->getGuid().entityId << " to Liveliness Protocol");
@@ -533,7 +557,7 @@ bool WLP::addLocalWriter(RTPSWriter* W, const WriterQos& wqos)
         manual_by_topic_writers_.push_back(W);
     }
 
-    if (!liveliness_manager_->add_writer(
+    if (!pub_liveliness_manager_->add_writer(
                 W->getGuid(),
                 wqos.m_liveliness.kind,
                 wqos.m_liveliness.lease_duration))
@@ -546,7 +570,7 @@ bool WLP::addLocalWriter(RTPSWriter* W, const WriterQos& wqos)
 
 typedef std::vector<RTPSWriter*>::iterator t_WIT;
 
-bool WLP::removeLocalWriter(RTPSWriter* W)
+bool WLP::remove_local_writer(RTPSWriter* W)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
@@ -652,7 +676,7 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
             }
         }
 
-        if (!liveliness_manager_->remove_writer(W->getGuid()))
+        if (!pub_liveliness_manager_->remove_writer(W->getGuid()))
         {
             logError(RTPS_LIVELINESS, "Could not remove writer " << W->getGuid() << " from liveliness manager");
         }
@@ -667,6 +691,66 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
         }
     }
     logWarning(RTPS_LIVELINESS,"Writer "<<W->getGuid().entityId << " not found.");
+    return false;
+}
+
+bool WLP::add_local_reader(RTPSReader *reader, const ReaderQos &rqos)
+{
+    std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
+
+    if (rqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
+    {
+        automatic_readers_.push_back(reader);
+    }
+    else if (rqos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    {
+        manual_by_participant_readers_.push_back(reader);
+    }
+    else if (rqos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+    {
+        manual_by_topic_readers_.push_back(reader);
+    }
+    else
+    {
+        logWarning(RTPS_LIVELINESS, "Reader not added to WLP, unknown liveliness kind");
+        return false;
+    }
+    return true;
+}
+
+bool WLP::remove_local_reader(RTPSReader *reader)
+{
+    auto it = std::find(
+                automatic_readers_.begin(),
+                automatic_readers_.end(),
+                reader);
+    if (it != automatic_readers_.end())
+    {
+        automatic_readers_.erase(it);
+        return true;
+    }
+
+    it = std::find(
+                manual_by_participant_readers_.begin(),
+                manual_by_participant_readers_.end(),
+                reader);
+    if (it != manual_by_participant_readers_.end())
+    {
+        manual_by_participant_readers_.erase(it);
+        return true;
+    }
+
+    it = std::find(
+                manual_by_topic_readers_.begin(),
+                manual_by_topic_readers_.end(),
+                reader);
+    if (it != manual_by_topic_readers_.end())
+    {
+        manual_by_topic_readers_.erase(it);
+        return true;
+    }
+
+    logWarning(RTPS_LIVELINESS, "Reader not removed from WLP, unknown reader");
     return false;
 }
 
@@ -700,15 +784,18 @@ WriterHistory* WLP::getBuiltinWriterHistory()
 
 bool WLP::assert_liveliness(LivelinessQosPolicyKind kind)
 {
-    return liveliness_manager_->assert_liveliness(kind);
+    sub_liveliness_manager_->assert_liveliness(kind);
+    pub_liveliness_manager_->assert_liveliness(kind);
+
+    return true;
 }
 
 bool WLP::assert_liveliness(GUID_t writer)
 {
-    return liveliness_manager_->assert_liveliness(writer);
+    return pub_liveliness_manager_->assert_liveliness(writer);
 }
 
-void WLP::on_liveliness_lost(GUID_t writer)
+void WLP::pub_liveliness_lost(GUID_t writer)
 {
     for (const auto& w: automatic_writers_)
     {
@@ -767,11 +854,21 @@ void WLP::on_liveliness_lost(GUID_t writer)
     // TODO raquel: this could be optimized if we added the liveliness kind as an argument to this method
 }
 
-void WLP::on_livelienss_recovered(GUID_t writer)
+void WLP::pub_livelienss_recovered(GUID_t writer)
 {
     // Nothing to do here
 
     (void)writer;
+}
+
+void WLP::sub_liveliness_lost(GUID_t writer)
+{
+    std::cout << "+++ WLP Sub liveliness lost: writer " << writer << std::endl;
+}
+
+void WLP::sub_liveliness_recovered(GUID_t writer)
+{
+
 }
 
 } /* namespace rtps */

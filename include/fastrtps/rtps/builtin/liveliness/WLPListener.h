@@ -47,21 +47,28 @@ struct CacheChange_t;
  */
 class WLPListener: public ReaderListener {
 public:
+
     /**
-     * Constructor
-     * @param pwlp Pointer to the WLP object.
+     * @brief Constructor
+     * @param pwlp Pointer to the writer liveliness protocol
      */
     WLPListener(WLP* pwlp);
+
+    /**
+     * @brief Destructor
+     */
     virtual ~WLPListener();
 
     /**
-    *
-    * @param reader
-    * @param change
-    */
+     * @brief Method call when this class is notified of a new cache change
+     * @param reader The reader receiving the cache change
+     * @param change The cache change
+     */
     void onNewCacheChangeAdded(
             RTPSReader* reader,
             const CacheChange_t* const  change) override;
+
+private:
 
     /**
     * Separate the Key between the GuidPrefix_t and the liveliness Kind
@@ -70,7 +77,8 @@ public:
     * @param liveliness Liveliness Kind Pointer.
     * @return True if correctly separated.
     */
-    bool separateKey(InstanceHandle_t& key,
+    bool separateKey(
+            InstanceHandle_t& key,
             GuidPrefix_t* guidP,
             LivelinessQosPolicyKind* liveliness);
 
@@ -80,7 +88,7 @@ public:
     */
     bool computeKey(CacheChange_t* change);
 
-private:
+    //! A pointer to the writer liveliness protocol
     WLP* mp_WLP;
 
 };

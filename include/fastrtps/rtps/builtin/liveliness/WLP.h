@@ -30,8 +30,8 @@
 namespace eprosima {
 namespace fastrtps{
 
+class ReaderQos;
 class WriterQos;
-
 
 namespace rtps {
 
@@ -40,6 +40,7 @@ class LivelinessManager;
 class ReaderHistory;
 class ReaderProxyData;
 class RTPSParticipantImpl;
+class RTPSReader;
 class RTPSWriter;
 class StatefulReader;
 class StatefulWriter;
@@ -71,11 +72,6 @@ public:
 	 */
 	bool initWL(RTPSParticipantImpl* p);
 	/**
-	 * Create the endpoitns used in the WLP.
-	 * @return true if correct.
-	 */
-	bool createEndpoints();
-	/**
 	 * Assign the remote endpoints for a newly discovered RTPSParticipant.
 	 * @param pdata Pointer to the RTPSParticipantProxyData object.
 	 * @return True if correct.
@@ -92,13 +88,28 @@ public:
 	 * @param wqos Quality of service policies for the writer.
     * @return True if correct.
 	 */
-	bool addLocalWriter(RTPSWriter* W, const WriterQos& wqos);
+    bool add_local_writer(RTPSWriter* W, const WriterQos& wqos);
 	/**
 	 * Remove a local writer from the liveliness protocol.
 	 * @param W Pointer to the RTPSWriter.
 	 * @return True if removed.
 	 */
-	bool removeLocalWriter(RTPSWriter* W);
+    bool remove_local_writer(RTPSWriter* W);
+
+    /**
+     * @brief Adds a local reader to the liveliness protocol
+     * @param reader Pointer to the RTPS reader
+     * @param rqos Quality of service policies for the reader
+     * @return True if added successfully
+     */
+    bool add_local_reader(RTPSReader* reader, const ReaderQos& rqos);
+
+    /**
+     * @brief Removes a local reader from the livliness protocol
+     * @param reader Pointer to the reader to remove
+     * @return True if removed successfully
+     */
+    bool remove_local_reader(RTPSReader* reader);
 
     /**
      * @brief Asserts liveliness of writers with given kind
@@ -119,12 +130,6 @@ public:
 	 * @return Builtin protocols
 	 */
 	BuiltinProtocols* getBuiltinProtocols(){return mp_builtinProtocols;};
-	
-	/**
-	 * Get the RTPS participant
-	 * @return RTPS participant
-	 */
-	inline RTPSParticipantImpl* getRTPSParticipant(){return mp_participant;}
 
     /**
      * Get the livelines builtin writer
@@ -146,7 +151,22 @@ public:
         const WriterProxyData& remote_writer_data);
 #endif
 
+    //! A class used by readers in this participant to manage liveliness of matched writers
+    //! Public, as it needs to be accessed by readers
+    LivelinessManager* sub_liveliness_manager_;
+
 private:
+    /**
+     * Create the endpoitns used in the WLP.
+     * @return true if correct.
+     */
+    bool createEndpoints();
+
+    /**
+     * Get the RTPS participant
+     * @return RTPS participant
+     */
+    inline RTPSParticipantImpl* getRTPSParticipant(){return mp_participant;}
 
     //! Minimum time among liveliness periods of automatic writers, in milliseconds
     double min_automatic_ms_;
@@ -163,8 +183,8 @@ private:
 	WriterHistory* mp_builtinWriterHistory;
 	//!Reader History
 	ReaderHistory* mp_builtinReaderHistory;
-	//!Listener object.
-	WLPListener* mp_listener;
+    //!Listener object.
+    WLPListener* mp_listener;
     //!Pointer to the periodic assertion timer object for automatic liveliness writers
     WLivelinessPeriodicAssertion* automatic_liveliness_assertion_;
     //!Pointer to the periodic assertion timer object for manual by participant liveliness writers
@@ -176,20 +196,30 @@ private:
     //! List of writers using manual by topic liveliness
     std::vector<RTPSWriter*> manual_by_topic_writers_;
 
+    //! List of readers using AUTOMATIC liveliness
+    std::vector<RTPSReader*> automatic_readers_;
+    //! List of readers using MANUAL_BY_PARTICIPANT liveliness
+    std::vector<RTPSReader*> manual_by_participant_readers_;
+    //! List of readers using MANUAL_BY_TOPIC liveliness
+    std::vector<RTPSReader*> manual_by_topic_readers_;
+
     //! A class managing liveliness of writers in this participant
-    LivelinessManager* liveliness_manager_;
+    LivelinessManager* pub_liveliness_manager_;
 
     /**
      * @brief A method invoked by the liveliness manager to inform that a writer lost liveliness
      * @param writer The writer losing liveliness
      */
-    void on_liveliness_lost(GUID_t writer);
+    void pub_liveliness_lost(GUID_t writer);
 
     /**
      * @brief A method invoked by the liveliness manager to inform that a writer recovered liveliness
      * @param writer The writer losing liveliness
      */
-    void on_livelienss_recovered(GUID_t writer);
+    void pub_livelienss_recovered(GUID_t writer);
+
+    void sub_liveliness_lost(GUID_t writer);
+    void sub_liveliness_recovered(GUID_t writer);
 
 #if HAVE_SECURITY
     //!Pointer to the builtinRTPSParticipantMEssageWriter.

@@ -113,7 +113,7 @@ bool BuiltinProtocols::addLocalWriter(RTPSWriter* w, const fastrtps::TopicAttrib
     }
     if(mp_WLP !=nullptr)
     {
-        ok|= mp_WLP->addLocalWriter(w,wqos);
+        ok|= mp_WLP->add_local_writer(w,wqos);
     }
     else
     {
@@ -132,6 +132,10 @@ bool BuiltinProtocols::addLocalReader(RTPSReader* R, const fastrtps::TopicAttrib
     else
     {
         logWarning(RTPS_EDP, "EDP is not used in this Participant, register a Reader is impossible");
+    }
+    if (mp_WLP != nullptr)
+    {
+        ok|= mp_WLP->add_local_reader(R, rqos);
     }
     return ok;
 }
@@ -161,7 +165,7 @@ bool BuiltinProtocols::removeLocalWriter(RTPSWriter* W)
     bool ok = false;
     if(mp_WLP !=nullptr)
     {
-        ok|= mp_WLP->removeLocalWriter(W);
+        ok|= mp_WLP->remove_local_writer(W);
     }
     if(mp_PDP!=nullptr && mp_PDP->getEDP() != nullptr)
     {
@@ -173,6 +177,10 @@ bool BuiltinProtocols::removeLocalWriter(RTPSWriter* W)
 bool BuiltinProtocols::removeLocalReader(RTPSReader* R)
 {
     bool ok = false;
+    if (mp_WLP != nullptr)
+    {
+        ok|= mp_WLP->remove_local_reader(R);
+    }
     if(mp_PDP!=nullptr && mp_PDP->getEDP() != nullptr)
     {
         ok|= mp_PDP->getEDP()->removeLocalReader(R);

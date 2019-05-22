@@ -55,7 +55,7 @@ void WLPListener::onNewCacheChangeAdded(
 {
 
 	std::lock_guard<std::recursive_mutex> guard2(*mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
-	logInfo(RTPS_LIVELINESS,"");
+
 	GuidPrefix_t guidP;
 	LivelinessQosPolicyKind livelinessKind;
 	CacheChange_t* change = (CacheChange_t*)changeIN;
@@ -97,7 +97,7 @@ void WLPListener::onNewCacheChangeAdded(
 		return;
 	}
 
-    this->mp_WLP->assert_liveliness(livelinessKind);
+    mp_WLP->assert_liveliness(livelinessKind);
 	return;
 }
 

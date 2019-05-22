@@ -72,7 +72,12 @@ private:
 
         void onPublicationMatched(
                 eprosima::fastrtps::Publisher* pub,
-                eprosima::fastrtps::rtps::MatchingInfo& info);
+                eprosima::fastrtps::rtps::MatchingInfo& info) override;
+
+        void on_liveliness_lost(
+                eprosima::fastrtps::Publisher* pub,
+                const eprosima::fastrtps::LivelinessLostStatus& status) override;
+
 		int n_matched;
         bool first_connected;
     };

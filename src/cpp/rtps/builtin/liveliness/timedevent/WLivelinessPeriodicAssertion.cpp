@@ -83,7 +83,7 @@ void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
                 manual_by_participant_liveliness_assertion();
             }
         }
-        this->mp_WLP->assert_liveliness(m_livelinessKind);
+
         this->restart_timer();
     }
     else if(code == EVENT_ABORT)
@@ -142,8 +142,11 @@ bool WLivelinessPeriodicAssertion::manual_by_participant_liveliness_assertion()
 
     bool livelinessAsserted = false;
 
-    for(std::vector<RTPSWriter*>::iterator wit=this->mp_WLP->manual_by_participant_writers_.begin();
-            wit!=this->mp_WLP->manual_by_participant_writers_.end();++wit)
+    std::cout << "***************************** manual_by_participant_liveliness_assertion" << std::endl;
+
+    for(auto wit=mp_WLP->manual_by_participant_writers_.begin();
+        wit != mp_WLP->manual_by_participant_writers_.end();
+        ++wit)
     {
 
 // TODO Raquel
