@@ -60,7 +60,7 @@ bool LivelinessSubscriber::init(
     Rparam.topic.historyQos.depth = 30;
     Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    Rparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
     Rparam.qos.m_liveliness.lease_duration = Duration_t(liveliness_ms * 1e-3);
     Rparam.qos.m_liveliness.announcement_period = Duration_t(liveliness_ms * 1e-3 * 0.5);
     Rparam.qos.m_liveliness.kind = kind;

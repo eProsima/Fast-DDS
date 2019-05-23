@@ -22,6 +22,8 @@
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/common/CacheChange.h>
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
 #include "../participant/RTPSParticipantImpl.h"
 #include "FragmentedChangePitStop.h"
 
@@ -75,7 +77,38 @@ bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
     add_persistence_guid(wdata);
     m_acceptMessagesFromUnkownWriters = false;
 
-    // TODO raquel liveliness
+    if (liveliness_lease_duration_ < c_TimeInfinite)
+    {
+        auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+        if ( wlp != nullptr)
+        {
+            // A return value of false is not necessary an error, as the writer could have already been
+            // added to the liveliness manager by another reader
+            bool added = wlp->sub_liveliness_manager_->add_writer(
+                                        wdata.guid,
+                                        liveliness_kind_,
+                                        liveliness_lease_duration_);
+
+            if (added)
+            {
+                std::cout << "\t\t+++ StatefulReader " << getGuid() << " added writer " << wdata.guid;
+                std::cout << " with kind ";
+                if (liveliness_kind_ == AUTOMATIC_LIVELINESS_QOS)
+                {
+                    std::cout << "AUTOMATIC ";
+                }
+                else if (liveliness_kind_ == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+                {
+                    std::cout << "MANUAL_BY_PARTICIPANT";
+                }
+                std::cout << " and lease duration " << liveliness_lease_duration_ << std::endl;
+            }
+        }
+        else
+        {
+            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+        }
+    }
 
     return true;
 }
@@ -120,6 +153,11 @@ bool StatelessReader::change_received(CacheChange_t* change)
     {
         if(mp_history->received_change(change, 0))
         {
+            if (getGuid().entityId == c_EntityId_ReaderLiveliness)
+            {
+                std::cout << "Reader " << getGuid() << " receiving change" << std::endl;
+            }
+
             update_last_notified(change->writerGUID, change->sequenceNumber);
             if(getListener() != nullptr)
             {
@@ -185,7 +223,19 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
     {
         logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
 
-        // TODO raquel liveliness
+        if (liveliness_lease_duration_ < c_TimeInfinite &&
+                liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+        {
+            auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+            if ( wlp != nullptr)
+            {
+                wlp->sub_liveliness_manager_->assert_liveliness(change->writerGUID);
+            }
+            else
+            {
+                logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+            }
+        }
 
         CacheChange_t* change_to_add;
 

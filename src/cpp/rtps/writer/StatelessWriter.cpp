@@ -25,6 +25,8 @@
 #include "../flowcontrol/FlowController.h"
 #include "../history/HistoryAttributesExtension.hpp"
 #include "RTPSWriterCollector.h"
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
 #include <algorithm>
 #include <mutex>
@@ -159,6 +161,7 @@ void StatelessWriter::unsent_change_added_to_history(
             unsent_changes_.push_back(ChangeForReader_t(change));
             AsyncWriterThread::wakeUp(this);
         }
+        mp_RTPSParticipant->get_builtin_protocols()->mp_WLP->assert_liveliness(getGuid());
     }
     else
     {

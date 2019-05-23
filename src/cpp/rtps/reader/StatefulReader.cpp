@@ -102,25 +102,10 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
         {
             // A return value of false is not necessary an error, as the writer could have already been
             // added to the liveliness manager by another reader
-            bool added = wlp->sub_liveliness_manager_->add_writer(
-                                        wdata.guid,
-                                        liveliness_kind_,
-                                        liveliness_lease_duration_);
-
-            if (added)
-            {
-                std::cout << "\t\t+++ StatefulReader " << getGuid() << " added writer " << wdata.guid;
-                std::cout << " with kind ";
-                if (liveliness_kind_ == AUTOMATIC_LIVELINESS_QOS)
-                {
-                    std::cout << "AUTOMATIC ";
-                }
-                else if (liveliness_kind_ == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-                {
-                    std::cout << "MANUAL_BY_PARTICIPANT";
-                }
-                std::cout << " and lease duration " << liveliness_lease_duration_ << std::endl;
-            }
+            wlp->sub_liveliness_manager_->add_writer(
+                        wdata.guid,
+                        liveliness_kind_,
+                        liveliness_lease_duration_);
         }
         else
         {
@@ -621,24 +606,6 @@ bool StatefulReader::nextUntakenCache(
 
                 takeok = true;
                 break;
-                //				if((*it)->kind == ALIVE)
-                //				{
-                //					this->mp_type->deserialize(&(*it)->serializedPayload,data);
-                //				}
-                //				(*it)->isRead = true;
-                //				if(info!=NULL)
-                //				{
-                //					info->sampleKind = (*it)->kind;
-                //					info->writerGUID = (*it)->writerGUID;
-                //					info->sourceTimestamp = (*it)->sourceTimestamp;
-                //					info->iHandle = (*it)->instanceHandle;
-                //					if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
-                //						info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
-                //				}
-                //				m_reader_cache.decreaseUnreadCount();
-                //				logInfo(RTPS_READER,this->getGuid().entityId<<": reading change "<< (*it)->sequenceNumber.to64long());
-                //				readok = true;
-                //				break;
             }
         }
         else
