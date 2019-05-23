@@ -74,6 +74,21 @@ bool LivelinessPublisher::init(
         return false;
     }
 
+    std::cout << "Publichser using:" << std::endl;
+    std::cout << "Lease duration: " << liveliness_ms << std::endl;
+    if (kind == eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+    {
+        std::cout << "Kind: AUTOMATIC" << std::endl;
+    }
+    else if (kind == eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    {
+        std::cout << "Kind: MANUAL_BY_PARTICIPANT_LIVELINESS_QOS" << std::endl;
+    }
+    else if (kind == eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS)
+    {
+        std::cout << "Kind: MANUAL_BY_TOPIC_LIVELINESS_QOS" << std::endl;
+    }
+    std::cout << std::endl;
     return true;
 }
 
@@ -129,8 +144,8 @@ void LivelinessPublisher::runThread(
 
         if (i==samples - 1)
         {
-            int* p;
-            *p = 5;
+//            int* p;
+//            *p = 5;
         }
 
         eClock::my_sleep(sleep);

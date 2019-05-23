@@ -79,6 +79,10 @@ bool LivelinessSubscriber::init(
     {
         std::cout << "Kind: MANUAL_BY_PARTICIPANT_LIVELINESS_QOS" << std::endl;
     }
+    else if (kind == eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS)
+    {
+        std::cout << "Kind: MANUAL_BY_TOPIC_LIVELINESS_QOS" << std::endl;
+    }
     std::cout << std::endl;
 
     return true;

@@ -296,17 +296,14 @@ bool parse_arguments(
             {
                 if (!strcmp(argv[count + 1], "AUTOMATIC"))
                 {
-                    std::cout << "+++++++ Setting kind to AUTOMATIC" << std::endl;
                     first_kind = eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
                 }
                 else if(!strcmp(argv[count + 1], "MANUAL_BY_PARTICIPANT"))
                 {
-                    std::cout << "+++++++ Setting kind to MANUAL" << std::endl;
                     first_kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
                 }
                 else if(!strcmp(argv[count + 1], "MANUAL_BY_TOPIC"))
                 {
-                    std::cout << "+++++++ Setting kind to MANUAL_BY_TOPIC" << std::endl;
                     first_kind = eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS;
                 }
                 else

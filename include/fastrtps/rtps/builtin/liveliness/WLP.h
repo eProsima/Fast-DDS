@@ -216,10 +216,21 @@ private:
      * @brief A method invoked by the liveliness manager to inform that a writer recovered liveliness
      * @param writer The writer losing liveliness
      */
-    void pub_livelienss_recovered(GUID_t writer);
+    void pub_liveliness_recovered(GUID_t writer);
 
     void sub_liveliness_lost(GUID_t writer);
     void sub_liveliness_recovered(GUID_t writer);
+
+    /**
+     * @brief A method to update the liveliness changed status for a given reader
+     * @param writer The writer specified by its guid
+     * @param reader The reader
+     * @param lost True if liveliness of a writer was lost. False if it was recovered
+     */
+    void update_liveliness_changed_status(
+            GUID_t writer,
+            RTPSReader* reader,
+            bool lost);
 
 #if HAVE_SECURITY
     //!Pointer to the builtinRTPSParticipantMEssageWriter.

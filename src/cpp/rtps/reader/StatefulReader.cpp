@@ -104,12 +104,22 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
             // added to the liveliness manager by another reader
             bool added = wlp->sub_liveliness_manager_->add_writer(
                                         wdata.guid,
-                                        wdata.liveliness_kind,
-                                        wdata.liveliness_lease_duration);
+                                        liveliness_kind_,
+                                        liveliness_lease_duration_);
 
             if (added)
             {
-                std::cout << "\t\t+++ StatefulReader " << getGuid() << " added writer " << wdata.guid << std::endl;
+                std::cout << "\t\t+++ StatefulReader " << getGuid() << " added writer " << wdata.guid;
+                std::cout << " with kind ";
+                if (liveliness_kind_ == AUTOMATIC_LIVELINESS_QOS)
+                {
+                    std::cout << "AUTOMATIC ";
+                }
+                else if (liveliness_kind_ == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+                {
+                    std::cout << "MANUAL_BY_PARTICIPANT";
+                }
+                std::cout << " and lease duration " << liveliness_lease_duration_ << std::endl;
             }
         }
         else
@@ -228,36 +238,12 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
     {
         if (getGuid().entityId == c_EntityId_ReaderLiveliness)
         {
-            std::cout << "Reader " << getGuid() << " receiving change" << std::endl;
+//            std::cout << "Reader " << getGuid() << " receiving change" << std::endl;
         }
 
         if (liveliness_kind_ != AUTOMATIC_LIVELINESS_QOS)
         {
-            // TODO
-//            auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
-//            if ( wlp != nullptr )
-//            {
-//                if (liveliness_kind_ == AUTOMATIC_LIVELINESS_QOS)
-//                {
-//                    if (!wlp->sub_liveliness_manager_->assert_liveliness(AUTOMATIC_LIVELINESS_QOS))
-//                    {
-//                        logError(RTPS_READER, "Reader " << getGuid() << " Could not assert liveliness *** " << wlp->sub_liveliness_manager_);
-//                    }
-//                }
-//                else if (!wlp->sub_liveliness_manager_->assert_liveliness(change->writerGUID))
-//                {
-//                    logError(RTPS_READER, "Reader " << getGuid() << " Could not assert liveliness of writer +++ " << change->writerGUID);
-//                }
-//            }
-
-//            if (liveliness_manager_ != nullptr)
-//            {
-//                std::cout << "StatefulReader " << getGuid() << " asserting liveliness of writer " << change->writerGUID << std::endl;
-//                if (!liveliness_manager_->assert_liveliness(change->writerGUID))
-//                {
-//    //                logError(RTPS_READER, "Reader " << getGuid() << " Could not assert liveliness of writer " << change->writerGUID);
-//                }
-//            }
+            // TODO raquel
         }
 
         // Check if CacheChange was received.

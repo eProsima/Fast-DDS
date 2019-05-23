@@ -40,6 +40,9 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
 
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
+
 #include "RTPSWriterCollector.h"
 #include "StatefulWriterOrganizer.h"
 
@@ -157,7 +160,7 @@ void StatefulWriter::unsent_change_added_to_history(
     {
         if (getGuid().entityId == c_EntityId_WriterLiveliness)
         {
-            std::cout << "Writer " << getGuid() << " sending change" << std::endl;
+//            std::cout << "Writer " << getGuid() << " sending change" << std::endl;
         }
 
         if(!isAsync())
@@ -282,6 +285,8 @@ void StatefulWriter::unsent_change_added_to_history(
             ack_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
             ack_timer_->restart_timer();
         }
+
+        mp_RTPSParticipant->get_builtin_protocols()->mp_WLP->assert_liveliness(getGuid());
     }
     else
     {

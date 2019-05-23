@@ -31,6 +31,7 @@
 
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/writer/LivelinessManager.h>
 
 #include <mutex>
 
@@ -77,13 +78,14 @@ void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
             if(m_livelinessKind == AUTOMATIC_LIVELINESS_QOS)
             {
                 automatic_liveliness_assertion();
+
+                mp_WLP->pub_liveliness_manager_->assert_liveliness(m_livelinessKind);
             }
             else if(m_livelinessKind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
             {
                 manual_by_participant_liveliness_assertion();
             }
         }
-
         this->restart_timer();
     }
     else if(code == EVENT_ABORT)
@@ -140,29 +142,14 @@ bool WLivelinessPeriodicAssertion::manual_by_participant_liveliness_assertion()
 {
     std::lock_guard<std::recursive_mutex> guard(*this->mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
 
-    bool livelinessAsserted = false;
-
-    std::cout << "***************************** manual_by_participant_liveliness_assertion" << std::endl;
-
-    for(auto wit=mp_WLP->manual_by_participant_writers_.begin();
-        wit != mp_WLP->manual_by_participant_writers_.end();
-        ++wit)
-    {
-
-// TODO Raquel
-//        if((*wit)->getLivelinessAsserted())
-//        {
-//            livelinessAsserted = true;
-//        }
-//        (*wit)->setLivelinessAsserted(false);
-    }
-
     // Liveliness was asserted for at least one of the writers using MANUAL_BY_PARTICIPANT
-    if(livelinessAsserted)
+    if(mp_WLP->pub_liveliness_manager_->is_any_alive(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS))
     {
         auto writer = this->mp_WLP->getBuiltinWriter();
         auto history = this->mp_WLP->getBuiltinWriterHistory();
+
         std::lock_guard<std::recursive_timed_mutex> wguard(writer->getMutex());
+
         CacheChange_t* change=writer->new_change([]() -> uint32_t {return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE);
         if(change!=nullptr)
         {
@@ -175,11 +162,12 @@ bool WLivelinessPeriodicAssertion::manual_by_participant_liveliness_assertion()
             memcpy(change->serializedPayload.data,m_guidP.value,12);
 
             for(uint8_t i =12;i<24;++i)
+            {
                 change->serializedPayload.data[i] = 0;
+            }
             change->serializedPayload.data[15] = m_livelinessKind+1;
             change->serializedPayload.length = 12+4+4+4;
-            for(auto ch = history->changesBegin();
-                    ch!=history->changesEnd();++ch)
+            for(auto ch = history->changesBegin(); ch!=history->changesEnd(); ++ch)
             {
                 if((*ch)->instanceHandle == change->instanceHandle)
                 {

@@ -322,18 +322,6 @@ protected:
 
 private:
 
-    /**
-     * @brief A method invoked by the liveliness manager when a writer loses liveliness
-     * @param writer The writer losing liveliness
-     */
-    void on_liveliness_lost(GUID_t writer);
-
-    /**
-     * @brief A method invoked by the liveliness manager when a writer recovers liveliness
-     * @param writer The writer recovering liveliness
-     */
-    void on_liveliness_recovered(GUID_t writer);
-
     RTPSReader& operator=(const RTPSReader&) = delete;
 };
 

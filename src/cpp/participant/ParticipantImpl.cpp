@@ -309,6 +309,7 @@ Subscriber* ParticipantImpl::createSubscriber(
     if(att.getUserDefinedID()>0)
         ratt.endpoint.setUserDefinedID((uint8_t)att.getUserDefinedID());
     ratt.times = att.times;
+    ratt.liveliness_kind_ = att.qos.m_liveliness.kind;
     ratt.liveliness_lease_duration = att.qos.m_liveliness.lease_duration;
 
     // TODO(Ricardo) Remove in future

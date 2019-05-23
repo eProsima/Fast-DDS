@@ -96,6 +96,7 @@ bool LivelinessManager::assert_liveliness(GUID_t guid)
                 guid,
                 &wit))
     {
+//        std::cout << " WRITER NOT FOUND " << guid << " " << writers_.size() << " writers " << std::endl;
         return false;
     }
 
@@ -248,6 +249,18 @@ bool LivelinessManager::find_writer(
         if (it->guid == guid)
         {
             *wit_out = it;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool LivelinessManager::is_any_alive(LivelinessQosPolicyKind kind)
+{
+    for (const auto& writer : writers_)
+    {
+        if (writer.kind == kind && writer.alive == true)
+        {
             return true;
         }
     }

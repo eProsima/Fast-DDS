@@ -181,49 +181,6 @@ void RTPSReader::set_last_notified(const GUID_t& peristence_guid, const Sequence
     history_record_[peristence_guid] = seq;
 }
 
-void RTPSReader::on_liveliness_lost(GUID_t writer)
-{
-    assert(liveliness_manager_ != nullptr);
-
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
-
-    liveliness_changed_status_.alive_count--;
-    liveliness_changed_status_.alive_count_change--;
-    liveliness_changed_status_.not_alive_count++;
-    liveliness_changed_status_.not_alive_count_change++;
-    liveliness_changed_status_.last_publication_handle = writer;
-
-    if (getListener() != nullptr)
-    {
-        getListener()->on_liveliness_changed(this, liveliness_changed_status_);
-    }
-
-    liveliness_changed_status_.alive_count_change = 0;
-    liveliness_changed_status_.not_alive_count_change = 0;
-}
-
-void RTPSReader::on_liveliness_recovered(GUID_t writer)
-{
-    (void)writer;
-
-    assert(liveliness_manager_ != nullptr);
-
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
-
-    liveliness_changed_status_.alive_count++;
-    liveliness_changed_status_.alive_count_change++;
-    liveliness_changed_status_.not_alive_count--;
-    liveliness_changed_status_.not_alive_count_change--;
-
-    if (getListener() != nullptr)
-    {
-        getListener()->on_liveliness_changed(this, liveliness_changed_status_);
-    }
-
-    liveliness_changed_status_.alive_count_change = 0;
-    liveliness_changed_status_.not_alive_count_change = 0;
-}
-
 void RTPSReader::set_liveliness_manager(LivelinessManager *liveliness_manager)
 {
     liveliness_manager_ = liveliness_manager;

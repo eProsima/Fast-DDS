@@ -104,12 +104,12 @@ bool WLP::initWL(RTPSParticipantImpl* p)
 
     pub_liveliness_manager_ = new LivelinessManager(
                 std::bind(&WLP::pub_liveliness_lost, this, std::placeholders::_1),
-                std::bind(&WLP::pub_livelienss_recovered, this, std::placeholders::_1),
+                std::bind(&WLP::pub_liveliness_recovered, this, std::placeholders::_1),
                 mp_participant->getEventResource().getIOService(),
                 mp_participant->getEventResource().getThread());
     sub_liveliness_manager_ = new LivelinessManager(
                 std::bind(&WLP::sub_liveliness_lost, this, std::placeholders::_1),
-                std::bind(&WLP::pub_livelienss_recovered, this, std::placeholders::_1),
+                std::bind(&WLP::sub_liveliness_recovered, this, std::placeholders::_1),
                 mp_participant->getEventResource().getIOService(),
                 mp_participant->getEventResource().getThread());
 
@@ -784,15 +784,22 @@ WriterHistory* WLP::getBuiltinWriterHistory()
 
 bool WLP::assert_liveliness(LivelinessQosPolicyKind kind)
 {
-    sub_liveliness_manager_->assert_liveliness(kind);
-    pub_liveliness_manager_->assert_liveliness(kind);
+    bool pub = pub_liveliness_manager_->assert_liveliness(kind);
+    bool sub = sub_liveliness_manager_->assert_liveliness(kind);
+
+//    std::cout << pub << " " << sub << std::endl;
 
     return true;
 }
 
 bool WLP::assert_liveliness(GUID_t writer)
 {
-    return pub_liveliness_manager_->assert_liveliness(writer);
+    bool pub = pub_liveliness_manager_->assert_liveliness(writer);
+    bool sub = sub_liveliness_manager_->assert_liveliness(writer);
+
+//    std::cout << pub << " " << sub << std::endl;
+
+    return true;
 }
 
 void WLP::pub_liveliness_lost(GUID_t writer)
@@ -854,7 +861,7 @@ void WLP::pub_liveliness_lost(GUID_t writer)
     // TODO raquel: this could be optimized if we added the liveliness kind as an argument to this method
 }
 
-void WLP::pub_livelienss_recovered(GUID_t writer)
+void WLP::pub_liveliness_recovered(GUID_t writer)
 {
     // Nothing to do here
 
@@ -863,12 +870,101 @@ void WLP::pub_livelienss_recovered(GUID_t writer)
 
 void WLP::sub_liveliness_lost(GUID_t writer)
 {
-    std::cout << "+++ WLP Sub liveliness lost: writer " << writer << std::endl;
+    // Writer with given guid lost liveliness, check which readers were matched and inform them
+
+    RemoteWriterAttributes ratt;
+    ratt.guid = writer;
+
+    for (const auto& reader : automatic_readers_)
+    {
+        if (reader->matched_writer_is_matched(ratt))
+        {
+            update_liveliness_changed_status(writer, reader, true);
+        }
+    }
+    for (const auto& reader : manual_by_participant_readers_)
+    {
+        if (reader->matched_writer_is_matched(ratt))
+        {
+            update_liveliness_changed_status(writer, reader, true);
+        }
+    }
+    for (const auto& reader : manual_by_topic_readers_)
+    {
+        if (reader->matched_writer_is_matched(ratt))
+        {
+            update_liveliness_changed_status(writer, reader, true);
+        }
+    }
 }
 
 void WLP::sub_liveliness_recovered(GUID_t writer)
 {
+    // Writer with given guid lost liveliness, check which readers were matched and inform them
 
+    RemoteWriterAttributes ratt;
+    ratt.guid = writer;
+
+    for (const auto& reader : automatic_readers_)
+    {
+        if (reader->matched_writer_is_matched(ratt))
+        {
+            update_liveliness_changed_status(writer, reader, false);
+        }
+    }
+    for (const auto& reader : manual_by_participant_readers_)
+    {
+        if (reader->matched_writer_is_matched(ratt))
+        {
+            update_liveliness_changed_status(writer, reader, false);
+        }
+    }
+    for (const auto& reader : manual_by_topic_readers_)
+    {
+        if (reader->matched_writer_is_matched(ratt))
+        {
+            update_liveliness_changed_status(writer, reader, false);
+        }
+    }
+}
+
+void WLP::update_liveliness_changed_status(
+        GUID_t writer,
+        RTPSReader* reader,
+        bool lost)
+{
+    if (lost)
+    {
+        reader->liveliness_changed_status_.alive_count--;
+        reader->liveliness_changed_status_.alive_count_change--;
+        reader->liveliness_changed_status_.not_alive_count++;
+        reader->liveliness_changed_status_.not_alive_count_change++;
+        reader->liveliness_changed_status_.last_publication_handle = writer;
+
+        if (reader->getListener() != nullptr)
+        {
+            reader->getListener()->on_liveliness_changed(reader, reader->liveliness_changed_status_);
+        }
+
+        reader->liveliness_changed_status_.alive_count_change = 0;
+        reader->liveliness_changed_status_.not_alive_count_change = 0;
+    }
+    else
+    {
+        reader->liveliness_changed_status_.alive_count++;
+        reader->liveliness_changed_status_.alive_count_change++;
+        reader->liveliness_changed_status_.not_alive_count--;
+        reader->liveliness_changed_status_.not_alive_count_change--;
+        reader->liveliness_changed_status_.last_publication_handle = writer;
+
+        if (reader->getListener() != nullptr)
+        {
+            reader->getListener()->on_liveliness_changed(reader, reader->liveliness_changed_status_);
+        }
+
+        reader->liveliness_changed_status_.alive_count_change = 0;
+        reader->liveliness_changed_status_.not_alive_count_change = 0;
+    }
 }
 
 } /* namespace rtps */

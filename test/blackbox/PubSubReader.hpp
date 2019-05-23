@@ -114,7 +114,8 @@ private:
         Listener(PubSubReader &reader)
             : reader_(reader)
             , times_deadline_missed_(0)
-            , times_liveliness_changed_(0)
+            , times_liveliness_lost_(0)
+            , times_liveliness_recovered_(0)
         {}
 
         ~Listener(){}
@@ -162,7 +163,17 @@ private:
         {
             (void)sub;
             (void)status;
-            times_liveliness_changed_++;
+
+            if (status.alive_count_change == 1)
+            {
+                // Liveliness recovered
+                times_liveliness_recovered_++;
+            }
+            else if (status.not_alive_count_change == 1)
+            {
+                // Liveliness lost
+                times_liveliness_lost_++;
+            }
         }
 
         unsigned int missed_deadlines() const
@@ -170,9 +181,14 @@ private:
             return times_deadline_missed_;
         }
 
-        unsigned int times_liveliness_changed() const
+        unsigned int times_liveliness_lost() const
         {
-            return times_liveliness_changed_;
+            return times_liveliness_lost_;
+        }
+
+        unsigned int times_liveliness_recovered() const
+        {
+            return times_liveliness_recovered_;
         }
 
     private:
@@ -183,8 +199,10 @@ private:
 
         //! Number of times deadline was missed
         unsigned int times_deadline_missed_;
-        //! Number of times liveliness changed
-        unsigned int times_liveliness_changed_;
+        //! Number of times liveliness was lost
+        unsigned int times_liveliness_lost_;
+        //! Number of times liveliness was recovered
+        unsigned int times_liveliness_recovered_;
 
     } listener_;
 
@@ -725,9 +743,14 @@ public:
         return listener_.missed_deadlines();
     }
 
-    unsigned int times_liveliness_changed() const
+    unsigned int times_liveliness_lost() const
     {
-        return listener_.times_liveliness_changed();
+        return listener_.times_liveliness_lost();
+    }
+
+    unsigned int times_liveliness_recovered() const
+    {
+        return listener_.times_liveliness_recovered();
     }
 
     bool is_matched() const
