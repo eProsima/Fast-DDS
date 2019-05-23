@@ -96,7 +96,6 @@ bool LivelinessManager::assert_liveliness(GUID_t guid)
                 guid,
                 &wit))
     {
-//        std::cout << " WRITER NOT FOUND " << guid << " " << writers_.size() << " writers " << std::endl;
         return false;
     }
 
@@ -123,9 +122,12 @@ bool LivelinessManager::assert_liveliness(GUID_t guid)
     }
     else if (wit->kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
     {
-        if (liveliness_recovered_callback_ != nullptr)
+        if (wit->alive == false)
         {
-            liveliness_recovered_callback_(guid);
+            if (liveliness_recovered_callback_ != nullptr)
+            {
+                liveliness_recovered_callback_(guid);
+            }
         }
         wit->alive = true;
         wit->time = steady_clock::now() + nanoseconds(wit->lease_duration.to_ns());

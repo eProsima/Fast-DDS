@@ -241,9 +241,18 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 //            std::cout << "Reader " << getGuid() << " receiving change" << std::endl;
         }
 
-        if (liveliness_kind_ != AUTOMATIC_LIVELINESS_QOS)
+        if (liveliness_lease_duration_ < c_TimeInfinite &&
+                liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS)
         {
-            // TODO raquel
+            auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+            if ( wlp != nullptr)
+            {
+                wlp->sub_liveliness_manager_->assert_liveliness(change->writerGUID);
+            }
+            else
+            {
+                logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+            }
         }
 
         // Check if CacheChange was received.
