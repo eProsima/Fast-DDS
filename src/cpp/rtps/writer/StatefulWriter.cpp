@@ -1013,7 +1013,9 @@ SequenceNumber_t StatefulWriter::next_sequence_number() const
     return mp_history->next_sequence_number();
 }
 
-bool StatefulWriter::send_periodic_heartbeat(bool final)
+bool StatefulWriter::send_periodic_heartbeat(
+        bool final,
+        bool liveliness)
 {
     std::lock_guard<std::recursive_timed_mutex> guardW(mp_mutex);
 
@@ -1024,12 +1026,12 @@ bool StatefulWriter::send_periodic_heartbeat(bool final)
         {
             if (it->has_unacknowledged())
             {
-                send_heartbeat_to_nts(*it);
+                send_heartbeat_to_nts(*it, liveliness);
                 unacked_changes = true;
             }
         }
     }
-    else
+    else if (!liveliness)
     {
         SequenceNumber_t firstSeq, lastSeq;
 
@@ -1054,13 +1056,19 @@ bool StatefulWriter::send_periodic_heartbeat(bool final)
             {
                 try
                 {
-                    RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
-                        mAllShrinkedLocatorList, all_remote_readers_);
+                    RTPSMessageGroup group(
+                                mp_RTPSParticipant,
+                                this,
+                                RTPSMessageGroup::WRITER,
+                                m_cdrmessages,
+                                mAllShrinkedLocatorList,
+                                all_remote_readers_);
                     send_heartbeat_nts_(
                                 all_remote_readers_,
                                 mAllShrinkedLocatorList,
                                 group,
-                                disable_positive_acks_);
+                                disable_positive_acks_,
+                                liveliness);
                 }
                 catch(const RTPSMessageGroup::timeout&)
                 {
@@ -1069,12 +1077,37 @@ bool StatefulWriter::send_periodic_heartbeat(bool final)
             }
         }
     }
+    else
+    {
+        // This is a liveliness heartbeat, we don't care about checking sequence numbers
+        try
+        {
+            RTPSMessageGroup group(
+                        mp_RTPSParticipant,
+                        this,
+                        RTPSMessageGroup::WRITER,
+                        m_cdrmessages,
+                        mAllShrinkedLocatorList,
+                        all_remote_readers_);
+            send_heartbeat_nts_(
+                        all_remote_readers_,
+                        mAllShrinkedLocatorList,
+                        group,
+                        final,
+                        liveliness);
+        }
+        catch(const RTPSMessageGroup::timeout&)
+        {
+            logError(RTPS_WRITER, "Max blocking time reached");
+        }
+    }
 
     return unacked_changes;
 }
 
 void StatefulWriter::send_heartbeat_to_nts(
-        ReaderProxy& remoteReaderProxy)
+        ReaderProxy& remoteReaderProxy,
+        bool liveliness)
 {
     try
     {
@@ -1087,7 +1120,8 @@ void StatefulWriter::send_heartbeat_to_nts(
                     guids,
                     locators,
                     group,
-                    disable_positive_acks_);
+                    disable_positive_acks_,
+                    liveliness);
     }
     catch(const RTPSMessageGroup::timeout&)
     {
@@ -1096,10 +1130,11 @@ void StatefulWriter::send_heartbeat_to_nts(
 }
 
 void StatefulWriter::send_heartbeat_nts_(
-    const std::vector<GUID_t>& remote_readers,
-    const LocatorList_t& locators,
-    RTPSMessageGroup& message_group,
-    bool final)
+        const std::vector<GUID_t>& remote_readers,
+        const LocatorList_t& locators,
+        RTPSMessageGroup& message_group,
+        bool final,
+        bool liveliness)
 {
 
     SequenceNumber_t firstSeq = get_seq_num_min();
@@ -1133,7 +1168,7 @@ void StatefulWriter::send_heartbeat_nts_(
                 lastSeq,
                 m_heartbeatCount,
                 final,
-                false,
+                liveliness,
                 locators);
     // Update calculate of heartbeat piggyback.
     currentUsageSendBufferSize_ = static_cast<int32_t>(sendBufferSize_);

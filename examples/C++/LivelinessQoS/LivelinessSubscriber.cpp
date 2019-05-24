@@ -60,7 +60,7 @@ bool LivelinessSubscriber::init(
     Rparam.topic.historyQos.depth = 30;
     Rparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    Rparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+    Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Rparam.qos.m_liveliness.lease_duration = Duration_t(liveliness_ms * 1e-3);
     Rparam.qos.m_liveliness.announcement_period = Duration_t(liveliness_ms * 1e-3 * 0.5);
     Rparam.qos.m_liveliness.kind = kind;
@@ -125,8 +125,14 @@ void LivelinessSubscriber::SubListener::on_liveliness_changed(
         Subscriber *sub,
         const LivelinessChangedStatus &status)
 {
-    (void)status;
-    std::cout << "Subscriber " << sub->getGuid() << " changed liveliness" << std::endl;
+    if (status.alive_count_change == 1)
+    {
+        std::cout << "Subscriber " << sub->getGuid() << " recovered liveliness" << std::endl;
+    }
+    else if (status.not_alive_count_change == 1)
+    {
+        std::cout << "Subscriber " << sub->getGuid() << " lost liveliness" << std::endl;
+    }
 }
 
 void LivelinessSubscriber::run()

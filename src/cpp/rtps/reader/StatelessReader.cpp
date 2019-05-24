@@ -300,7 +300,19 @@ bool StatelessReader::processDataFragMsg(
 
     if (acceptMsgFrom(incomingChange->writerGUID))
     {
-        // TODO raquel liveliness
+        if (liveliness_lease_duration_ < c_TimeInfinite &&
+                liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+        {
+            auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+            if ( wlp != nullptr)
+            {
+                wlp->sub_liveliness_manager_->assert_liveliness(incomingChange->writerGUID);
+            }
+            else
+            {
+                logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+            }
+        }
 
         // Check if CacheChange was received.
         if(!thereIsUpperRecordOf(incomingChange->writerGUID, incomingChange->sequenceNumber))

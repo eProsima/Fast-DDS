@@ -797,8 +797,6 @@ bool WLP::assert_liveliness(GUID_t writer)
     bool pub = pub_liveliness_manager_->assert_liveliness(writer);
     bool sub = sub_liveliness_manager_->assert_liveliness(writer);
 
-//    std::cout << pub << " " << sub << std::endl;
-
     return true;
 }
 

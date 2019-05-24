@@ -422,7 +422,19 @@ bool StatefulReader::processHeartbeatMsg(
 
             if (livelinessFlag)
             {
-                // TODO raquel
+                if (liveliness_lease_duration_ < c_TimeInfinite &&
+                        liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+                {
+                    auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+                    if ( wlp != nullptr)
+                    {
+                        wlp->sub_liveliness_manager_->assert_liveliness(writerGUID);
+                    }
+                    else
+                    {
+                        logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                    }
+                }
             }
 
             wpLock.unlock();

@@ -308,6 +308,11 @@ class PubSubWriter
         return publisher_->write((void*)&msg);
     }
 
+    void assert_liveliness()
+    {
+        publisher_->assert_liveliness();
+    }
+
     void wait_discovery(std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);

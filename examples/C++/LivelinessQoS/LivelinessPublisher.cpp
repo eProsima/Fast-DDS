@@ -62,7 +62,7 @@ bool LivelinessPublisher::init(
     Wparam.topic.topicKind = NO_KEY;
     Wparam.topic.topicDataType = "Topic";
     Wparam.topic.topicName = "Name";
-    Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+    Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
     Wparam.topic.historyQos.depth = 30;
     Wparam.qos.m_liveliness.lease_duration = Duration_t(liveliness_ms * 1e-3);
@@ -162,7 +162,8 @@ bool LivelinessPublisher::publish(
     if(listener_.first_connected || !waitForListener || listener_.n_matched > 0)
     {
         topic_.index(topic_.index()+1);
-        pub->write((void*)&topic_);
+//        pub->write((void*)&topic_);
+        pub->assert_liveliness();
 
         return true;
     }

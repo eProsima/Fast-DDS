@@ -25,6 +25,7 @@
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastrtps/rtps/writer/StatelessWriter.h>
 
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/rtps/RTPSDomain.h>
@@ -516,14 +517,14 @@ void PublisherImpl::assert_liveliness()
 
     if (m_att.qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
     {
-        // As described in the RTPS specification if liveliness kind is manual by topic a heartbeat must be sent
+        // As described in the RTPS specification, if liveliness kind is manual a heartbeat must be sent
         // This only applies to stateful writers, as stateless writers do not send heartbeats
 
         StatefulWriter* stateful_writer = dynamic_cast<StatefulWriter*>(mp_writer);
 
         if (stateful_writer != nullptr)
         {
-            stateful_writer->send_periodic_heartbeat(true);
+            stateful_writer->send_periodic_heartbeat(true, true);
         }
     }
 }
