@@ -131,9 +131,13 @@ class PubSubWriterReader
             void onPublicationMatched(eprosima::fastrtps::Publisher* /*pub*/, eprosima::fastrtps::rtps::MatchingInfo &info)
             {
                 if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
-                    wreader_.matched();
+                {
+                    wreader_.publication_matched(info);
+                }
                 else
-                    wreader_.unmatched();
+                {
+                    wreader_.publication_unmatched(info);
+                }
             }
 
         private:
@@ -168,9 +172,13 @@ class PubSubWriterReader
             void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, eprosima::fastrtps::rtps::MatchingInfo& info)
             {
                 if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
-                    wreader_.matched();
+                {
+                    wreader_.subscription_matched(info);
+                }
                 else
-                    wreader_.unmatched();
+                {
+                    wreader_.subscription_unmatched(info);
+                }
             }
 
         private:
@@ -196,7 +204,6 @@ class PubSubWriterReader
           publisher_(nullptr),
           subscriber_(nullptr),
           initialized_(false),
-          matched_(0),
           receiving_(false),
           current_received_count_(0),
           number_samples_expected_(0)
@@ -209,6 +216,7 @@ class PubSubWriterReader
         // Generate topic name
         std::ostringstream t;
         t << topic_name << "_" << asio::ip::host_name() << "_" << GET_PID();
+
         publisher_attr_.topic.topicName = t.str();
         subscriber_attr_.topic.topicName = t.str();
         topic_name_ = t.str();
@@ -230,7 +238,8 @@ class PubSubWriterReader
 
     PubSubWriterReader(const PubSubWriterReader& other)
         : PubSubWriterReader(other.topic_name_)
-    {}
+    {
+    }
 
     ~PubSubWriterReader()
     {
@@ -341,26 +350,30 @@ class PubSubWriterReader
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
-        std::cout << "WReader is waiting discovery..." << std::endl;
+        std::cout << "Waiting discovery..." << std::endl;
 
-        if(matched_ < 2)
+        if(matched_readers_.size() < 1 || matched_writers_.size() < 1)
+        {
             cvDiscovery_.wait(lock);
+        }
 
-        ASSERT_GE(matched_, 2u);
-        std::cout << "WReader discovery finished..." << std::endl;
+        ASSERT_GE(matched_readers_.size() + matched_writers_.size(), 2u);
+        std::cout << "Discovery finished..." << std::endl;
     }
 
     void waitRemoval()
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
-        std::cout << "WReader is waiting removal..." << std::endl;
+        std::cout << "Waiting removal..." << std::endl;
 
-        if(matched_ != 0)
+        if(matched_writers_.size() != 0 || matched_readers_.size() != 0)
+        {
             cvDiscovery_.wait(lock);
+        }
 
-        ASSERT_EQ(matched_, 0u);
-        std::cout << "WReader removal finished..." << std::endl;
+        ASSERT_EQ(matched_readers_.size() + matched_writers_.size(), 0u);
+        std::cout << "Removal finished..." << std::endl;
     }
 
 #if HAVE_SECURITY
@@ -429,7 +442,7 @@ class PubSubWriterReader
         std::sort(participant_listener_.discovered_participants_.begin(),
                   participant_listener_.discovered_participants_.end());
 
-        std::cout << "Participant " << participant_->getGuid() << " discovered the following participants:" << std::endl;
+        std::cout << "Participant " << participant_->getGuid().guidPrefix << " discovered the following participants:" << std::endl;
         for (const auto& p : participant_listener_.discovered_participants_)
         {
             std::cout << p << std::endl;
@@ -442,7 +455,7 @@ class PubSubWriterReader
         std::sort(participant_listener_.discovered_publishers_.begin(),
                   participant_listener_.discovered_publishers_.end());
 
-        std::cout << "Participant " << participant_->getGuid() << " discovered the following publishers:" << std::endl;
+        std::cout << "Participant " << participant_->getGuid().guidPrefix << " discovered the following publishers:" << std::endl;
         for (const auto& p : participant_listener_.discovered_publishers_)
         {
             std::cout << p << std::endl;
@@ -455,12 +468,50 @@ class PubSubWriterReader
         std::sort(participant_listener_.discovered_subscribers_.begin(),
                   participant_listener_.discovered_subscribers_.end());
 
-        std::cout << "Participant " << participant_->getGuid() << " discovered the following subscribers:" << std::endl;
+        std::cout << "Participant " << participant_->getGuid().guidPrefix << " discovered the following subscribers:" << std::endl;
         for (const auto& p : participant_listener_.discovered_subscribers_)
         {
             std::cout << p << std::endl;
         }
         std::cout << std::endl;
+    }
+
+    void print_publication_matched()
+    {
+        std::sort(matched_writers_.begin(),
+                  matched_writers_.end());
+
+        std::cout << "Participant " << participant_->getGuid().guidPrefix << " matched the following readers and writers:" << std::endl;
+        for (const auto& p : matched_writers_)
+        {
+            std::cout << p << std::endl;
+        }
+        std::cout << std::endl;
+    }
+
+    void print_subscription_matched()
+    {
+        std::sort(matched_readers_.begin(),
+                  matched_readers_.end());
+
+        std::cout << "Participant " << participant_->getGuid().guidPrefix << " matched the following readers and writers:" << std::endl;
+        for (const auto& p : matched_readers_)
+        {
+            std::cout << p << std::endl;
+        }
+        std::cout << std::endl;
+    }
+
+    unsigned int get_publication_matched()
+    {
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+        return matched_writers_.size();
+    }
+
+    unsigned int get_subscription_matched()
+    {
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+        return matched_readers_.size();
     }
 
     private:
@@ -493,17 +544,31 @@ class PubSubWriterReader
         }
     }
 
-    void matched()
+    void publication_matched(eprosima::fastrtps::rtps::MatchingInfo& info)
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
-        ++matched_;
+        matched_writers_.push_back(info.remoteEndpointGuid);
         cvDiscovery_.notify_one();
     }
 
-    void unmatched()
+    void publication_unmatched(eprosima::fastrtps::rtps::MatchingInfo& info)
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
-        --matched_;
+        unmatched_writers_.push_back(info.remoteEndpointGuid);
+        cvDiscovery_.notify_one();
+    }
+
+    void subscription_matched(eprosima::fastrtps::rtps::MatchingInfo& info)
+    {
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+        matched_readers_.push_back(info.remoteEndpointGuid);
+        cvDiscovery_.notify_one();
+    }
+
+    void subscription_unmatched(eprosima::fastrtps::rtps::MatchingInfo& info)
+    {
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+        unmatched_readers_.push_back(info.remoteEndpointGuid);
         cvDiscovery_.notify_one();
     }
 
@@ -543,7 +608,10 @@ class PubSubWriterReader
     std::condition_variable cv_;
     std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
-    unsigned int matched_;
+    std::vector<eprosima::fastrtps::rtps::GUID_t> matched_writers_;
+    std::vector<eprosima::fastrtps::rtps::GUID_t> matched_readers_;
+    std::vector<eprosima::fastrtps::rtps::GUID_t> unmatched_writers_;
+    std::vector<eprosima::fastrtps::rtps::GUID_t> unmatched_readers_;
     std::atomic<bool> receiving_;
     type_support type_;
 	eprosima::fastrtps::rtps::SequenceNumber_t last_seq;
