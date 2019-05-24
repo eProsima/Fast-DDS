@@ -14,6 +14,7 @@
 
 #include "BlackboxTests.hpp"
 
+#include "PubSubWriterReader.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
@@ -480,4 +481,38 @@ TEST(BlackBox, PubSubAsReliableHelloworldUserData)
     writer.wait_discovery();
 
     reader.wait_discovery_result();
+}
+
+//! Tests discovery of thirty participants, having one publisher and one subscriber each
+BLACKBOXTEST(Discovery, ThirtyParticipants)
+{
+    // Number of participants
+    unsigned int n = 30;
+    // Wait time for discovery
+    unsigned int wait_ms = 1000;
+
+    std::vector<PubSubWriterReader<HelloWorldType>> pubsub;
+
+    for (unsigned int i=0; i<n; i++)
+    {
+        pubsub.emplace_back(TEST_TOPIC_NAME);
+    }
+
+    // Initialization of all the participants
+    for (auto& ps : pubsub)
+    {
+        ps.init();
+        ASSERT_EQ(ps.isInitialized(), true);
+    }
+
+    // Give some time so that participants can discover each other
+    std::this_thread::sleep_for(std::chrono::milliseconds(wait_ms));
+
+    for (const auto& ps : pubsub)
+    {
+        EXPECT_EQ(ps.get_num_discovered_participants(), n-1);
+        EXPECT_EQ(ps.get_num_discovered_publishers(), n);
+        EXPECT_EQ(ps.get_num_discovered_subscribers(), n);
+    }
+
 }

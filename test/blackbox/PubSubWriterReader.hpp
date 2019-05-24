@@ -32,6 +32,7 @@
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/SampleInfo.h>
+
 #include <string>
 #include <list>
 #include <map>
@@ -64,12 +65,59 @@ class PubSubWriterReader
                 }
             }
 #endif
+            void onParticipantDiscovery(
+                    eprosima::fastrtps::Participant* participant,
+                    eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
+            {
+                (void)participant;
+
+                if (info.status != eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+                {
+                    return;
+                }
+                discovered_participants_.push_back(info.info.m_guid);
+            }
+
+            void onSubscriberDiscovery(
+                    eprosima::fastrtps::Participant* participant,
+                    eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info) override
+            {
+                (void)participant;
+
+                if (info.status != eprosima::fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERED_READER)
+                {
+                    return;
+                }
+                discovered_subscribers_.push_back(info.info.guid());
+            }
+
+            void onPublisherDiscovery(
+                    eprosima::fastrtps::Participant* participant,
+                    eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info) override
+            {
+                (void)participant;
+
+                if (info.status != eprosima::fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER)
+                {
+                    return;
+                }
+                discovered_publishers_.push_back(info.info.guid());
+            }
+
+            //! The discovered participants excluding the participant this listener is listening to
+            std::vector<eprosima::fastrtps::rtps::GUID_t> discovered_participants_;
+            //! Number of subscribers discovered
+            std::vector<eprosima::fastrtps::rtps::GUID_t> discovered_subscribers_;
+            //! Number of publishers discovered
+            std::vector<eprosima::fastrtps::rtps::GUID_t> discovered_publishers_;
 
         private:
 
+            //! Deleted assignment operator
             ParticipantListener& operator=(const ParticipantListener&) = delete;
-
+            //! Pointer to the pub sub writer reader
             PubSubWriterReader& wreader_;
+
     } participant_listener_;
 
     class PubListener : public eprosima::fastrtps::PublisherListener
@@ -140,9 +188,18 @@ class PubSubWriterReader
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
 
-    PubSubWriterReader(const std::string &topic_name) : participant_listener_(*this), pub_listener_(*this),
-    sub_listener_(*this), participant_(nullptr), publisher_(nullptr), subscriber_(nullptr), initialized_(false),
-    matched_(0), receiving_(false), current_received_count_(0), number_samples_expected_(0)
+    PubSubWriterReader(const std::string &topic_name)
+        : participant_listener_(*this),
+          pub_listener_(*this),
+          sub_listener_(*this),
+          participant_(nullptr),
+          publisher_(nullptr),
+          subscriber_(nullptr),
+          initialized_(false),
+          matched_(0),
+          receiving_(false),
+          current_received_count_(0),
+          number_samples_expected_(0)
 #if HAVE_SECURITY
     , authorized_(0), unauthorized_(0)
 #endif
@@ -170,6 +227,10 @@ class PubSubWriterReader
         subscriber_attr_.times.heartbeatResponseDelay.seconds = 0;
         subscriber_attr_.times.heartbeatResponseDelay.nanosec = 100000000;
     }
+
+    PubSubWriterReader(const PubSubWriterReader& other)
+        : PubSubWriterReader(other.topic_name_)
+    {}
 
     ~PubSubWriterReader()
     {
@@ -348,6 +409,60 @@ class PubSubWriterReader
         return *this;
     }
 
+    unsigned int get_num_discovered_participants() const
+    {
+        return participant_listener_.discovered_participants_.size();
+    }
+
+    unsigned int get_num_discovered_publishers() const
+    {
+        return participant_listener_.discovered_publishers_.size();
+    }
+
+    unsigned int get_num_discovered_subscribers() const
+    {
+        return participant_listener_.discovered_subscribers_.size();
+    }
+
+    void print_discovered_participants()
+    {
+        std::sort(participant_listener_.discovered_participants_.begin(),
+                  participant_listener_.discovered_participants_.end());
+
+        std::cout << "Participant " << participant_->getGuid() << " discovered the following participants:" << std::endl;
+        for (const auto& p : participant_listener_.discovered_participants_)
+        {
+            std::cout << p << std::endl;
+        }
+        std::cout << std::endl;
+    }
+
+    void print_discovered_publishers()
+    {
+        std::sort(participant_listener_.discovered_publishers_.begin(),
+                  participant_listener_.discovered_publishers_.end());
+
+        std::cout << "Participant " << participant_->getGuid() << " discovered the following publishers:" << std::endl;
+        for (const auto& p : participant_listener_.discovered_publishers_)
+        {
+            std::cout << p << std::endl;
+        }
+        std::cout << std::endl;
+    }
+
+    void print_discovered_subscribers()
+    {
+        std::sort(participant_listener_.discovered_subscribers_.begin(),
+                  participant_listener_.discovered_subscribers_.end());
+
+        std::cout << "Participant " << participant_->getGuid() << " discovered the following subscribers:" << std::endl;
+        for (const auto& p : participant_listener_.discovered_subscribers_)
+        {
+            std::cout << p << std::endl;
+        }
+        std::cout << std::endl;
+    }
+
     private:
 
     void receive_one(eprosima::fastrtps::Subscriber* subscriber, bool& returnedValue)
@@ -414,10 +529,13 @@ class PubSubWriterReader
 
     eprosima::fastrtps::Participant *participant_;
     eprosima::fastrtps::ParticipantAttributes participant_attr_;
+
     eprosima::fastrtps::Publisher *publisher_;
     eprosima::fastrtps::PublisherAttributes publisher_attr_;
+
     eprosima::fastrtps::Subscriber *subscriber_;
     eprosima::fastrtps::SubscriberAttributes subscriber_attr_;
+
     std::string topic_name_;
     bool initialized_;
     std::list<type> total_msgs_;
