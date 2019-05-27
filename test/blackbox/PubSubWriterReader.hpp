@@ -282,7 +282,7 @@ class PubSubWriterReader
         bool ret_val = initialized_;
         if (ret_val)
         {
-            std::string topic_name = publisher_attr_.topic.topicName;
+            std::string topic_name = publisher_attr_.topic.topicName.c_str();
 
             for (int i = 0; ret_val && (i < num_topics); i++)
             {
@@ -292,7 +292,7 @@ class PubSubWriterReader
                     nullptr != eprosima::fastrtps::Domain::createPublisher(participant_, publisher_attr_, &pub_listener_);
             }
 
-            topic_name = subscriber_attr_.topic.topicName;
+            topic_name = subscriber_attr_.topic.topicName.c_str();
 
             for (int i = 0; ret_val && (i < num_topics); i++)
             {
