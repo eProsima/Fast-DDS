@@ -487,14 +487,14 @@ TEST(BlackBox, PubSubAsReliableHelloworldUserData)
 BLACKBOXTEST(Discovery, TwentyParticipants)
 {
     // Number of participants
-    unsigned int n = 20;
+    constexpr size_t n_participants = 20;
     // Wait time for discovery
     unsigned int wait_ms = 1500;
 
     std::vector<PubSubWriterReader<HelloWorldType>> pubsub;
-    pubsub.reserve(n);
+    pubsub.reserve(n_participants);
 
-    for (unsigned int i=0; i<n; i++)
+    for (unsigned int i=0; i<n_participants; i++)
     {
         pubsub.emplace_back(TEST_TOPIC_NAME);
     }
@@ -511,10 +511,51 @@ BLACKBOXTEST(Discovery, TwentyParticipants)
 
     for (auto& ps : pubsub)
     {
-        EXPECT_EQ(ps.get_num_discovered_participants(), n-1);
-        EXPECT_EQ(ps.get_num_discovered_publishers(), n);
-        EXPECT_EQ(ps.get_num_discovered_subscribers(), n);
-        EXPECT_EQ(ps.get_publication_matched(), n);
-        EXPECT_EQ(ps.get_subscription_matched(), n);
+        EXPECT_EQ(ps.get_num_discovered_participants(), n_participants - 1);
+        EXPECT_EQ(ps.get_num_discovered_publishers(), n_participants);
+        EXPECT_EQ(ps.get_num_discovered_subscribers(), n_participants);
+        EXPECT_EQ(ps.get_publication_matched(), n_participants);
+        EXPECT_EQ(ps.get_subscription_matched(), n_participants);
+    }
+}
+
+//! Regression for ROS2 #280 and #281
+BLACKBOXTEST(Discovery, TwentyParticipantsSeveralEndpoints)
+{
+    // Number of participants
+    constexpr size_t n_participants = 20;
+    // Number of endpoints
+    constexpr size_t n_topics = 10;
+    // Total number of discovered endpoints
+    constexpr size_t n_total_endpoints = n_participants * n_topics;
+    // Wait time for discovery
+    unsigned int wait_ms = 1500;
+
+    std::vector<PubSubWriterReader<HelloWorldType>> pubsub;
+    pubsub.reserve(n_participants);
+
+    for (unsigned int i = 0; i < n_participants; i++)
+    {
+        pubsub.emplace_back(TEST_TOPIC_NAME);
+    }
+
+    // Initialization of all the participants
+    for (auto& ps : pubsub)
+    {
+        ps.init();
+        ASSERT_EQ(ps.isInitialized(), true);
+        ASSERT_TRUE(ps.create_additional_topics(n_topics - 1));
+    }
+
+    // Give some time so that participants can discover each other
+    std::this_thread::sleep_for(std::chrono::milliseconds(wait_ms));
+
+    for (auto& ps : pubsub)
+    {
+        EXPECT_EQ(ps.get_num_discovered_participants(), n_participants - 1);
+        EXPECT_EQ(ps.get_num_discovered_publishers(), n_total_endpoints);
+        EXPECT_EQ(ps.get_num_discovered_subscribers(), n_total_endpoints);
+        EXPECT_EQ(ps.get_publication_matched(), n_total_endpoints);
+        EXPECT_EQ(ps.get_subscription_matched(), n_total_endpoints);
     }
 }

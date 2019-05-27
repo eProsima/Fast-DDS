@@ -277,6 +277,35 @@ class PubSubWriterReader
         }
     }
 
+    bool create_additional_topics(int num_topics)
+    {
+        bool ret_val = initialized_;
+        if (ret_val)
+        {
+            std::string topic_name = publisher_attr_.topic.topicName;
+
+            for (int i = 0; ret_val && (i < num_topics); i++)
+            {
+                topic_name += "/";
+                publisher_attr_.topic.topicName = topic_name;
+                ret_val &=
+                    nullptr != eprosima::fastrtps::Domain::createPublisher(participant_, publisher_attr_, &pub_listener_);
+            }
+
+            topic_name = subscriber_attr_.topic.topicName;
+
+            for (int i = 0; ret_val && (i < num_topics); i++)
+            {
+                topic_name += "/";
+                subscriber_attr_.topic.topicName = topic_name;
+                ret_val &=
+                    nullptr != eprosima::fastrtps::Domain::createSubscriber(participant_, subscriber_attr_, &sub_listener_);
+            }
+        }
+
+        return ret_val;
+    }
+
     bool isInitialized() const { return initialized_; }
 
     void destroy()
@@ -422,17 +451,17 @@ class PubSubWriterReader
         return *this;
     }
 
-    unsigned int get_num_discovered_participants() const
+    size_t get_num_discovered_participants() const
     {
         return participant_listener_.discovered_participants_.size();
     }
 
-    unsigned int get_num_discovered_publishers() const
+    size_t get_num_discovered_publishers() const
     {
         return participant_listener_.discovered_publishers_.size();
     }
 
-    unsigned int get_num_discovered_subscribers() const
+    size_t get_num_discovered_subscribers() const
     {
         return participant_listener_.discovered_subscribers_.size();
     }
@@ -502,13 +531,13 @@ class PubSubWriterReader
         std::cout << std::endl;
     }
 
-    unsigned int get_publication_matched()
+    size_t get_publication_matched()
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
         return matched_writers_.size();
     }
 
-    unsigned int get_subscription_matched()
+    size_t get_subscription_matched()
     {
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
         return matched_readers_.size();
