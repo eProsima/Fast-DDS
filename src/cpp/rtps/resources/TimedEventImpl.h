@@ -28,10 +28,8 @@
 
 #include <memory>
 
-#include <asio/io_service.hpp>
 #include <asio/steady_timer.hpp>
 #include <asio/placeholders.hpp>
-#include <asio/io_service.hpp>
 
 #include <fastrtps/utils/Semaphore.h>
 
@@ -50,6 +48,7 @@ namespace eprosima
         namespace rtps
         {
             class TimerState;
+            class ResourceEvent;
 
             /**
              * Timed Event class used to define any timed events.
@@ -66,7 +65,11 @@ namespace eprosima
                      * @param serv IO service
                      * @param milliseconds Interval of the timedEvent.
                      */
-                    TimedEventImpl(TimedEvent* ev, asio::io_service &service, const std::thread& event_thread, std::chrono::microseconds interval, TimedEvent::AUTODESTRUCTION_MODE autodestruction);
+                    TimedEventImpl(
+                            TimedEvent* ev,
+                            ResourceEvent& service,
+                            std::chrono::microseconds interval,
+                            TimedEvent::AUTODESTRUCTION_MODE autodestruction);
 
                     /**
                      * Method invoked when the event occurs. Abstract method.
@@ -76,16 +79,22 @@ namespace eprosima
                      */
                     void event(const std::error_code& ec, const std::shared_ptr<TimerState>& state);
 
-
-                protected:
                     //!Pointer to the timer.
                     asio::steady_timer timer_;
+
+
+                protected:
                     //!Interval to be used in the timed Event.
                     std::chrono::microseconds m_interval_microsec;
+
                     //!TimedEvent pointer
                     TimedEvent* mp_event;
 
                 public:
+
+                    //!Method to restart the timer.
+                    void restart_timer(const std::chrono::steady_clock::time_point& timeout);
+
                     //!Method to restart the timer.
                     void restart_timer();
 
@@ -133,9 +142,13 @@ namespace eprosima
 
                 private:
 
+                    ResourceEvent& service_;
+
                     TimedEvent::AUTODESTRUCTION_MODE autodestruction_;
+
                     //Duration_t m_timeInfinite;
                     std::mutex mutex_;
+
                     std::condition_variable cond_;
 
                     std::shared_ptr<TimerState> state_;

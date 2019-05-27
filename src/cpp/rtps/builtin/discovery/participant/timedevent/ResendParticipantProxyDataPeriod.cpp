@@ -33,8 +33,7 @@ namespace rtps {
 
 ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(PDPSimple* p_SPDP,
         double interval):
-    TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
-            p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval),
+    TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource(), interval),
     mp_PDP(p_SPDP)
     {
 

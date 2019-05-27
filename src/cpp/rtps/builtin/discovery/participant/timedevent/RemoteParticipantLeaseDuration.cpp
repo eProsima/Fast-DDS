@@ -39,8 +39,7 @@ namespace rtps {
 RemoteParticipantLeaseDuration::RemoteParticipantLeaseDuration(PDPSimple* p_SPDP,
         ParticipantProxyData* pdata,
         double interval):
-    TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
-            p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval),
+    TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource(), interval),
     mp_PDP(p_SPDP),
     mp_participantProxyData(pdata)
     {

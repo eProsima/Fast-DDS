@@ -27,9 +27,8 @@ namespace rtps {
 TimedCallback::TimedCallback(
         std::function<void()> callback,
         double milliseconds,
-        asio::io_service &service,
-        const std::thread &event_thread)
-    : TimedEvent(service, event_thread, milliseconds)
+        ResourceEvent& service)
+    : TimedEvent(service, milliseconds)
     , callback_(callback)
 {
 }

@@ -22,6 +22,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(WRITERPROXYTESTS_SOURCE ReaderProxyTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/ReaderProxy.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp

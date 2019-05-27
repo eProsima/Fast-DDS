@@ -18,8 +18,12 @@ int MockEvent::destructed_ = 0;
 std::mutex MockEvent::destruction_mutex_;
 std::condition_variable MockEvent::destruction_cond_;
 
-MockEvent::MockEvent(asio::io_service& service, const std::thread& event_thread, double milliseconds, bool autorestart, TimedEvent::AUTODESTRUCTION_MODE autodestruction) :
-    TimedEvent(service, event_thread, milliseconds, autodestruction), successed_(0), cancelled_(0), sem_count_(0), autorestart_(autorestart)
+MockEvent::MockEvent(
+        eprosima::fastrtps::rtps::ResourceEvent& service,
+        double milliseconds,
+        bool autorestart,
+        TimedEvent::AUTODESTRUCTION_MODE autodestruction) :
+    TimedEvent(service, milliseconds, autodestruction), successed_(0), cancelled_(0), sem_count_(0), autorestart_(autorestart)
 {
 }
 

@@ -43,8 +43,7 @@ public:
     TimedCallback(
             std::function<void()> callback,
             double milliseconds,
-            asio::io_service &service,
-            const std::thread& event_thread);
+            ResourceEvent& service);
 
     /** Destructor
      */

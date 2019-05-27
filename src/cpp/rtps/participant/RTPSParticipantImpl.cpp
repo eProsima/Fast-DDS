@@ -22,7 +22,6 @@
 #include "../flowcontrol/ThroughputController.h"
 #include "../persistence/PersistenceService.h"
 
-#include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 #include <fastrtps/rtps/messages/MessageReceiver.h>
@@ -83,7 +82,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         RTPSParticipant* par, RTPSParticipantListener* plisten)
     : m_att(PParam)
     , m_guid(guidP ,c_EntityId_RTPSParticipant)
-    , mp_event_thr(nullptr)
     , mp_builtinProtocols(nullptr)
     , mp_ResourceSemaphore(new Semaphore(0))
     , IdCounter(0)
@@ -110,8 +108,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     }
 
     mp_userParticipant->mp_impl = this;
-    mp_event_thr = new ResourceEvent();
-    mp_event_thr->init_thread(this);
+    mp_event_thr.init_thread();
 
     // Throughput controller, if the descriptor has valid values
     if (PParam.throughputController.bytesPerPeriod != UINT32_MAX && PParam.throughputController.periodMillisecs != 0)
@@ -280,7 +277,6 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
     delete(this->mp_userParticipant);
     send_resource_list_.clear();
 
-    delete(this->mp_event_thr);
     delete(this->mp_mutex);
 }
 
@@ -942,7 +938,7 @@ void RTPSParticipantImpl::normalize_endpoint_locators(EndpointAttributes& endpoi
 
 ResourceEvent& RTPSParticipantImpl::getEventResource()
 {
-    return *this->mp_event_thr;
+    return this->mp_event_thr;
 }
 
 std::vector<std::string> RTPSParticipantImpl::getParticipantNames() const

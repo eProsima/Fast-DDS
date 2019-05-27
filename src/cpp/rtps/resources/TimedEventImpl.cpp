@@ -19,6 +19,7 @@
 
 
 #include "TimedEventImpl.h"
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/resources/TimedEvent.h>
 #include <fastrtps/utils/TimeConversion.h>
 
@@ -63,18 +64,18 @@ using namespace eprosima::fastrtps::rtps;
 
 TimedEventImpl::TimedEventImpl(
         TimedEvent* event,
-        asio::io_service &service,
-        const std::thread& event_thread,
+        ResourceEvent& service,
         std::chrono::microseconds interval,
         TimedEvent::AUTODESTRUCTION_MODE autodestruction)
-    : timer_(service, interval)
+    : timer_(service.get_io_service(), interval)
     , m_interval_microsec(interval)
     , mp_event(event)
+    , service_(service)
     , autodestruction_(autodestruction)
     , state_(std::make_shared<TimerState>(autodestruction))
-    , event_thread_id_(event_thread.get_id())
+    , event_thread_id_(service_.get_thread().get_id())
 {
-	//TIME_INFINITE(m_timeInfinite);
+    //TIME_INFINITE(m_timeInfinite);
 }
 
 TimedEventImpl::~TimedEventImpl()
@@ -126,6 +127,39 @@ void TimedEventImpl::cancel_timer()
     }
 }
 
+void TimedEventImpl::restart_timer(const std::chrono::steady_clock::time_point& timeout)
+{
+    // Lock timer to protect state_ and timer_ objects.
+    std::unique_lock<std::mutex> lock(mutex_);
+
+    // Get current state.
+    TimerState::StateCode code = state_.get()->code_.load(std::memory_order_relaxed);
+
+    // if the code is executed in the event thread, and the event is being destroyed, don't start other event.
+    // if the code indicate an event is already waiting, don't start other event.
+    if(code != TimerState::DESTROYED && code != TimerState::WAITING)
+    {
+        bool restartTimer = true;
+
+        // If there is an event running, desattach state and set to not notify.
+        if(code == TimerState::RUNNING)
+        {
+            if(state_.get()->forwardRestart_)
+                restartTimer = false;
+            else
+                state_.get()->forwardRestart_ = true;
+        }
+        else
+            state_.get()->code_.store(TimerState::WAITING, std::memory_order_relaxed);
+
+        if(restartTimer)
+        {
+            timer_.expires_from_now(m_interval_microsec);
+            service_.push(this, state_, timeout);
+        }
+    }
+}
+
 void TimedEventImpl::restart_timer()
 {
     // Lock timer to protect state_ and timer_ objects.
@@ -154,7 +188,7 @@ void TimedEventImpl::restart_timer()
         if(restartTimer)
         {
             timer_.expires_from_now(m_interval_microsec);
-            timer_.async_wait(std::bind(&TimedEventImpl::event,this,std::placeholders::_1, state_));
+            service_.push(this, state_);
         }
     }
 }
@@ -162,15 +196,15 @@ void TimedEventImpl::restart_timer()
 bool TimedEventImpl::update_interval(const eprosima::fastrtps::Duration_t& inter)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-	m_interval_microsec = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(inter));
-	return true;
+    m_interval_microsec = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(inter));
+    return true;
 }
 
 bool TimedEventImpl::update_interval_millisec(double time_millisec)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-	m_interval_microsec = std::chrono::microseconds((int64_t)(time_millisec*1000));
-	return true;
+    m_interval_microsec = std::chrono::microseconds((int64_t)(time_millisec*1000));
+    return true;
 }
 
 void TimedEventImpl::event(const std::error_code& ec, const std::shared_ptr<TimerState>& state)

@@ -44,6 +44,7 @@
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #if HAVE_SECURITY
 #include <fastrtps/rtps/Endpoint.h>
@@ -63,7 +64,6 @@ namespace rtps
 {
 class RTPSParticipant;
 class RTPSParticipantListener;
-class ResourceEvent;
 class AsyncWriterThread;
 class BuiltinProtocols;
 struct CDRMessage_t;
@@ -257,7 +257,7 @@ private:
     //! Sending resources. - DEPRECATED -Stays commented for reference purposes
     // ResourceSend* mp_send_thr;
     //! Event Resource
-    ResourceEvent* mp_event_thr;
+    ResourceEvent mp_event_thr;
     //! BuiltinProtocols of this RTPSParticipant
     BuiltinProtocols* mp_builtinProtocols;
     //!Semaphore to wait for the listen thread creation.

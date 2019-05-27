@@ -41,8 +41,7 @@ namespace rtps {
 
 
 WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(WLP* pwlp,LivelinessQosPolicyKind kind):
-    TimedEvent(pwlp->getRTPSParticipant()->getEventResource().getIOService(),
-            pwlp->getRTPSParticipant()->getEventResource().getThread(), 0),
+    TimedEvent(pwlp->getRTPSParticipant()->getEventResource(), 0),
     m_livelinessKind(kind), mp_WLP(pwlp)
     {
         m_guidP = this->mp_WLP->getRTPSParticipant()->getGuid().guidPrefix;

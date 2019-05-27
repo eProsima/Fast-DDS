@@ -207,7 +207,7 @@ TEST_F(UserThreadNonBlockedTest, write_sample_besteffort)
     }
 }
 
-/*
+
 TEST_F(UserThreadNonBlockedTest, write_sample_reliable)
 {
     publisher_attr_.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
@@ -256,7 +256,6 @@ TEST_F(UserThreadNonBlockedTest, write_sample_reliable)
         eprosima::fastrtps::tmutex_unlock_mutex(count);
     }
 }
-*/
 
 TEST_F(UserThreadNonBlockedTest, read_sample_besteffort)
 {

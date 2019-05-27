@@ -18,57 +18,103 @@
  */
 
 #include <fastrtps/rtps/resources/ResourceEvent.h>
+#include "TimedEventImpl.h"
 
 #include <asio.hpp>
 #include <thread>
 #include <functional>
-#include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/log/Log.h>
+#include <asio/steady_timer.hpp>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
 
-ResourceEvent::ResourceEvent():
-    mp_b_thread(nullptr),
-    mp_io_service(nullptr),
-    mp_work(nullptr),
-    mp_RTPSParticipantImpl(nullptr)
+ResourceEvent::ResourceEvent()
+    : stop_(false)
+    , io_service_(ASIO_CONCURRENCY_HINT_UNSAFE_IO)
+    , timer_(io_service_, std::chrono::seconds(1))
     {
-        mp_io_service = new asio::io_service();
-        mp_work = (void*)new asio::io_service::work(*mp_io_service);
     }
 
 ResourceEvent::~ResourceEvent() {
     logInfo(RTPS_PARTICIPANT,"Removing event thread");
-    mp_io_service->stop();
-    mp_b_thread->join();
-    delete(mp_b_thread);
-    delete((asio::io_service::work*)mp_work);
-    delete(mp_io_service);
+    stop_ = true,
+    io_service_.stop();
+    thread_.join();
 
+}
+
+void ResourceEvent::event()
+{
+    if(!stop_)
+    {
+        timer_.async_wait(std::bind(&ResourceEvent::event, this));
+    }
 }
 
 void ResourceEvent::run_io_service()
 {
-    mp_io_service->run();
+    timer_.async_wait(std::bind(&ResourceEvent::event, this));
+
+    while (!stop_)
+    {
+        io_service_.poll();
+
+        std::unique_lock<std::timed_mutex> lock(mutex_);
+
+        if (cv_.wait_for(lock, std::chrono::milliseconds(1), [&]()
+            {
+                return !queue_.empty();
+            }))
+        {
+            do
+            {
+                queue_.back().first->timer_.async_wait(std::bind(&TimedEventImpl::event, queue_.back().first,
+                            std::placeholders::_1, queue_.back().second));
+                queue_.pop_back();
+            }
+            while (!queue_.empty());
+        }
+    }
 }
 
-void ResourceEvent::init_thread(RTPSParticipantImpl* pimpl)
+void ResourceEvent::init_thread()
 {
-    mp_RTPSParticipantImpl = pimpl;
-    mp_b_thread = new std::thread(&ResourceEvent::run_io_service,this);
-    mp_io_service->post(std::bind(&ResourceEvent::announce_thread,this));
-    mp_RTPSParticipantImpl->ResourceSemaphoreWait();
+    thread_ = std::thread(&ResourceEvent::run_io_service, this);
+    std::promise<bool> ready;
+    std::future<bool> ready_fut = ready.get_future();
+    io_service_.post([&ready]()
+        {
+            ready.set_value(true);
+        });
+    ready_fut.wait();
 }
 
-void ResourceEvent::announce_thread()
+void ResourceEvent::push(
+        TimedEventImpl* event,
+        std::shared_ptr<TimerState> state)
 {
-    logInfo(RTPS_PARTICIPANT,"Thread: " << std::this_thread::get_id() << " created and waiting for tasks.");
-    mp_RTPSParticipantImpl->ResourceSemaphorePost();
-
+    std::unique_lock<std::timed_mutex> lock(mutex_);
+    queue_.emplace_back(event, state);
+    cv_.notify_one();
 }
+
+void ResourceEvent::push(
+        TimedEventImpl* event,
+        std::shared_ptr<TimerState> state,
+        const std::chrono::steady_clock::time_point timeout)
+{
+    std::unique_lock<std::timed_mutex> lock(mutex_, std::defer_lock);
+
+    if(lock.try_lock_until(timeout))
+    {
+        queue_.emplace_back(event, state);
+        cv_.notify_one();
+    }
+}
+
 }
 } /* namespace */
 } /* namespace eprosima */

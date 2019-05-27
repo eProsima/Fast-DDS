@@ -27,7 +27,10 @@ class MockParentEvent : public eprosima::fastrtps::rtps::TimedEvent
 {
     public:
 
-        MockParentEvent(asio::io_service &service, const std::thread& event_thread, double milliseconds, unsigned int countUntilDestruction,
+        MockParentEvent(
+                eprosima::fastrtps::rtps::ResourceEvent& service,
+                double milliseconds,
+                unsigned int countUntilDestruction,
                 TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
 
         virtual ~MockParentEvent();

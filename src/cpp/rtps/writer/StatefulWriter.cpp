@@ -88,8 +88,7 @@ StatefulWriter::StatefulWriter(
         ack_timer_ = new TimedCallback(
                     std::bind(&StatefulWriter::ack_timer_expired, this),
                     att.keep_duration.to_ns() * 1e-6, // in milliseconds
-                    pimpl->getUserRTPSParticipant()->get_resource_event().getIOService(),
-                    pimpl->getUserRTPSParticipant()->get_resource_event().getThread());
+                    pimpl->getUserRTPSParticipant()->get_resource_event());
     }
 
     for (size_t n = 0; n < att.matched_readers_allocation.initial; ++n)

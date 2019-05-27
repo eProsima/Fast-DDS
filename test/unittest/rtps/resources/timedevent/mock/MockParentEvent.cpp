@@ -18,12 +18,20 @@ int MockParentEvent::destructed_ = 0;
 std::mutex MockParentEvent::destruction_mutex_;
 std::condition_variable MockParentEvent::destruction_cond_;
 
-MockParentEvent::MockParentEvent(asio::io_service& service, const std::thread& event_thread, double milliseconds, unsigned int countUntilDestruction,
-        TimedEvent::AUTODESTRUCTION_MODE autodestruction) :
-    TimedEvent(service, event_thread, milliseconds, autodestruction), successed_(0), cancelled_(0), sem_count_(0),
-    event_(nullptr), countUntilDestruction_(countUntilDestruction), currentCount_(0)
+MockParentEvent::MockParentEvent(
+        eprosima::fastrtps::rtps::ResourceEvent& service,
+        double milliseconds,
+        unsigned int countUntilDestruction,
+        TimedEvent::AUTODESTRUCTION_MODE autodestruction)
+    : TimedEvent(service, milliseconds, autodestruction)
+    , successed_(0)
+    , cancelled_(0)
+    , sem_count_(0)
+    , event_(nullptr)
+    , countUntilDestruction_(countUntilDestruction)
+    , currentCount_(0)
 {
-    event_ = new MockEvent(service, event_thread, milliseconds / 2.0, false, autodestruction);
+    event_ = new MockEvent(service, milliseconds / 2.0, false, autodestruction);
     event_->restart_timer();
 }
 

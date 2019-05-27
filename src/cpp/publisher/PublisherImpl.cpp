@@ -69,15 +69,13 @@ PublisherImpl::PublisherImpl(
     , high_mark_for_frag_(0)
     , deadline_timer_(std::bind(&PublisherImpl::deadline_missed, this),
                       att.qos.m_deadline.period.to_ns() * 1e-6,
-                      mp_participant->get_resource_event().getIOService(),
-                      mp_participant->get_resource_event().getThread())
+                      mp_participant->get_resource_event())
     , deadline_duration_us_(m_att.qos.m_deadline.period.to_ns() * 1e-3)
     , timer_owner_()
     , deadline_missed_status_()
     , lifespan_timer_(std::bind(&PublisherImpl::lifespan_expired, this),
                       m_att.qos.m_lifespan.duration.to_ns() * 1e-6,
-                      mp_participant->get_resource_event().getIOService(),
-                      mp_participant->get_resource_event().getThread())
+                      mp_participant->get_resource_event())
     , lifespan_duration_us_(m_att.qos.m_lifespan.duration.to_ns() * 1e-3)
 {
 }

@@ -401,9 +401,10 @@ bool TCPTransportInterface::init()
 #endif
             io_service_timers_.run();
         });
-        keep_alive_event_ = new TCPKeepAliveEvent(*this, io_service_timers_, *io_service_timers_thread_.get(),
-            configuration()->keep_alive_frequency_ms);
-        keep_alive_event_->restart_timer();
+        //TODO (Ricardo) Fix
+        //keep_alive_event_ = new TCPKeepAliveEvent(*this, io_service_timers_, *io_service_timers_thread_.get(),
+            //configuration()->keep_alive_frequency_ms);
+        //keep_alive_event_->restart_timer();
     }
 
     return true;

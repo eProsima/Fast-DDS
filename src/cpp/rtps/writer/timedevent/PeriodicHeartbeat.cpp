@@ -45,8 +45,7 @@ PeriodicHeartbeat::PeriodicHeartbeat(
         StatefulWriter* p_SFW,
         double interval)
     : TimedEvent(
-            p_SFW->getRTPSParticipant()->getEventResource().getIOService(),
-            p_SFW->getRTPSParticipant()->getEventResource().getThread(),
+            p_SFW->getRTPSParticipant()->getEventResource(),
             interval)
     , m_cdrmessages(
             p_SFW->getRTPSParticipant()->getMaxMessageSize(),

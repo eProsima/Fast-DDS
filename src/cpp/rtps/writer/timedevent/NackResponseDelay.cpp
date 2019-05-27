@@ -38,8 +38,7 @@ NackResponseDelay::NackResponseDelay(
         StatefulWriter* writer,
         double interval_in_ms)
     : TimedEvent(
-            writer->getRTPSParticipant()->getEventResource().getIOService(),
-            writer->getRTPSParticipant()->getEventResource().getThread(), 
+            writer->getRTPSParticipant()->getEventResource(),
             interval_in_ms)
     , writer_(writer)
 {

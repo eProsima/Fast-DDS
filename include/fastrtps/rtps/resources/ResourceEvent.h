@@ -22,56 +22,75 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
+#include <vector>
 #include <asio.hpp>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-class RTPSParticipantImpl;
+class TimerState;
+class TimedEventImpl;
 
 /**
  * Class ResourceEvent used to manage the temporal events.
  *@ingroup MANAGEMENT_MODULE
  */
-class ResourceEvent {
-public:
-	ResourceEvent();
-	virtual ~ResourceEvent();
+class ResourceEvent
+{
+    public:
 
-    /**
-    * Method to initialize the thread.
-    * @param p
-    */
-    void init_thread(RTPSParticipantImpl*p);
+        ResourceEvent();
+        virtual ~ResourceEvent();
 
-	/**
-	* Get the associated IO service
-	* @return Associated IO service
-	*/
-	asio::io_service& getIOService() { return *mp_io_service; }
+        /**
+         * Method to initialize the thread.
+         * @param p
+         */
+        void init_thread();
 
-    std::thread& getThread() { return *mp_b_thread; }
+        void push(
+                TimedEventImpl* event,
+                std::shared_ptr<TimerState> state,
+                const std::chrono::steady_clock::time_point timeout);
 
-private:
+        void push(
+                TimedEventImpl* event,
+                std::shared_ptr<TimerState> state);
 
-	//!Thread
-	std::thread* mp_b_thread;
-	//!IO service
-	asio::io_service* mp_io_service;
-	//!
-	void * mp_work;
+        /**
+         * Get the associated IO service
+         * @return Associated IO service
+         */
+        asio::io_service& get_io_service() { return io_service_; }
 
-	/**
-	 * Task to announce the correctness of the thread.
-	 */
-	void announce_thread();
+        std::thread& get_thread() { return thread_; }
 
-	//!Method to run the tasks
-	void run_io_service();
+    private:
 
-	//!Pointer to the RTPSParticipantImpl.
-	RTPSParticipantImpl* mp_RTPSParticipantImpl;
+        std::atomic<bool> stop_;
+
+        std::timed_mutex mutex_;
+
+        std::condition_variable_any cv_;
+
+        std::vector<std::pair<TimedEventImpl*, const std::shared_ptr<TimerState>>> queue_;
+
+        //!Thread
+        std::thread thread_;
+
+        //!IO service
+        asio::io_service io_service_;
+
+        asio::steady_timer timer_;
+
+        void event();
+
+        //!Method to run the tasks
+        void run_io_service();
 };
 }
 }

@@ -45,8 +45,7 @@ InitialAckNack::InitialAckNack(
         RTPSParticipantImpl* participant,
         WriterProxy* writer_proxy)
     : TimedEvent(
-            participant->getEventResource().getIOService(),
-            participant->getEventResource().getThread(),
+            participant->getEventResource(),
             0)
     , message_buffer_(
             participant->getMaxMessageSize(),

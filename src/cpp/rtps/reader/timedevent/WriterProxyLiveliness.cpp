@@ -37,8 +37,7 @@ namespace rtps {
 
 WriterProxyLiveliness::WriterProxyLiveliness(StatefulReader* reader)
     : TimedEvent(
-            reader->getRTPSParticipant()->getEventResource().getIOService(),
-            reader->getRTPSParticipant()->getEventResource().getThread(),
+            reader->getRTPSParticipant()->getEventResource(),
             0)
     , reader_(reader)
     , writer_guid_()

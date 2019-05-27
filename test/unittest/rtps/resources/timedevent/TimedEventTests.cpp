@@ -14,6 +14,7 @@
 
 #include "mock/MockEvent.h"
 #include "mock/MockParentEvent.h"
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <thread>
 #include <random>
 #include <gtest/gtest.h>
@@ -22,30 +23,16 @@ class TimedEventEnvironment : public ::testing::Environment
 {
     public:
 
-        TimedEventEnvironment() : work_(service_) {}
-
         void SetUp()
         {
-            thread_ = new std::thread(&TimedEventEnvironment::run, this);
+            service_.init_thread();
         }
 
         void TearDown()
         {
-            service_.stop();
-            thread_->join();
-            delete thread_;
         }
 
-        void run()
-        {
-            service_.run();
-        }
-
-        asio::io_service service_;
-
-        asio::io_service::work work_;
-
-        std::thread *thread_;
+        eprosima::fastrtps::rtps::ResourceEvent service_;
 };
 
 TimedEventEnvironment* const env = dynamic_cast<TimedEventEnvironment*>(testing::AddGlobalTestEnvironment(new TimedEventEnvironment));
@@ -58,7 +45,7 @@ TimedEventEnvironment* const env = dynamic_cast<TimedEventEnvironment*>(testing:
  */
 TEST(TimedEvent, EventNonAutoDestruc_SuccessEvents)
 {
-    MockEvent event(env->service_, *env->thread_, 100, false);
+    MockEvent event(env->service_, 100, false);
 
     for(int i = 0; i < 10; ++i)
     {
@@ -84,7 +71,7 @@ TEST(TimedEvent, EventNonAutoDestruc_SuccessEvents)
  */
 TEST(TimedEvent, EventNonAutoDestruc_CancelEvents)
 {
-    MockEvent event(env->service_, *env->thread_, 100, false);
+    MockEvent event(env->service_, 100, false);
 
     for(int i = 0; i < 10; ++i)
     {
@@ -109,7 +96,7 @@ TEST(TimedEvent, EventNonAutoDestruc_CancelEvents)
  */
 TEST(TimedEvent, EventNonAutoDestruc_RestartEvents)
 {
-    MockEvent event(env->service_, *env->thread_, 100, false);
+    MockEvent event(env->service_, 100, false);
 
     for(int i = 0; i < 10; ++i)
     {
@@ -140,7 +127,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_SuccessEvents)
 {
     // Restart destruction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(env->service_, *env->thread_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
+    MockEvent *event = new MockEvent(env->service_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
 
     event->restart_timer();
 
@@ -164,7 +151,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_CancelEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(env->service_, *env->thread_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
+    MockEvent *event = new MockEvent(env->service_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
 
     // Cancel ten times.
     for(int i = 0; i < 10; ++i)
@@ -208,7 +195,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickCancelEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(env->service_, *env->thread_, 1, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
+    MockEvent *event = new MockEvent(env->service_, 1, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
 
     // Cancel ten times.
     for(int i = 0; i < 10; ++i)
@@ -252,7 +239,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_RestartEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(env->service_, *env->thread_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
+    MockEvent *event = new MockEvent(env->service_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
 
     for(int i = 0; i < 10; ++i)
     {
@@ -280,7 +267,7 @@ TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickRestartEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(env->service_, *env->thread_, 1, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
+    MockEvent *event = new MockEvent(env->service_, 1, false, eprosima::fastrtps::rtps::TimedEvent::ON_SUCCESS);
 
     for(int i = 0; i < 10; ++i)
     {
@@ -307,7 +294,7 @@ TEST(TimedEvent, EventAlwaysAutoDestruc_SuccessEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(env->service_, *env->thread_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ALLWAYS);
+    MockEvent *event = new MockEvent(env->service_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ALLWAYS);
 
     event->restart_timer();
 
@@ -330,7 +317,7 @@ TEST(TimedEvent, EventAlwaysAutoDestruc_CancelEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(env->service_, *env->thread_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ALLWAYS);
+    MockEvent *event = new MockEvent(env->service_, 100, false, eprosima::fastrtps::rtps::TimedEvent::ALLWAYS);
 
     event->restart_timer();
     event->cancel_timer();
@@ -354,7 +341,7 @@ TEST(TimedEvent, EventAlwaysAutoDestruc_QuickCancelEvents)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(env->service_, *env->thread_, 1, false, eprosima::fastrtps::rtps::TimedEvent::ALLWAYS);
+    MockEvent *event = new MockEvent(env->service_, 1, false, eprosima::fastrtps::rtps::TimedEvent::ALLWAYS);
 
     event->restart_timer();
     event->cancel_timer();
@@ -378,7 +365,7 @@ TEST(TimedEvent, EventNonAutoDestruct_AutoRestart)
 {
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
-    MockEvent *event = new MockEvent(env->service_, *env->thread_, 10 , true);
+    MockEvent *event = new MockEvent(env->service_, 10 , true);
 
     for(unsigned int i = 0; i < 100; ++i)
     {
@@ -418,7 +405,7 @@ TEST(TimedEvent, EventNonAutoDestruc_AutoRestartAndDeleteRandomly)
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dis(10, 100);
 
-    MockEvent* event = new MockEvent(env->service_, *env->thread_, 2, true);
+    MockEvent* event = new MockEvent(env->service_, 2, true);
 
     event->restart_timer();
     std::this_thread::sleep_for(std::chrono::milliseconds(dis(gen)));
@@ -445,7 +432,7 @@ TEST(TimedEvent, ParentEventNonAutoDestruc_InternallyDeleteEventNonAutoDestruct)
     // Restart destriction counter.
     MockEvent::destructed_ = 0;
 
-    MockParentEvent event(env->service_, *env->thread_, 10, 2);
+    MockParentEvent event(env->service_, 10, 2);
 
     event.restart_timer();
 
@@ -506,7 +493,7 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_TwoStartTwoCancel)
     std::thread *thr1 = nullptr, *thr2 = nullptr,
         *thr3 = nullptr, *thr4 = nullptr;
 
-    MockEvent event(env->service_, *env->thread_, 3, false);
+    MockEvent event(env->service_, 3, false);
 
     // 2 Thread restarting and two thread cancel.
     // Thread 1 -> Restart 100 times waiting 100ms between each one.
@@ -553,7 +540,7 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickTwoStartTwoCancel)
     std::thread *thr1 = nullptr, *thr2 = nullptr,
         *thr3 = nullptr, *thr4 = nullptr;
 
-    MockEvent event(env->service_, *env->thread_, 3, false);
+    MockEvent event(env->service_, 3, false);
 
     // 2 Thread restarting and two thread cancel.
     // Thread 1 -> Restart 100 times waiting 2ms between each one.
@@ -600,7 +587,7 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_QuickestTwoStartTwoCancel)
     std::thread *thr1 = nullptr, *thr2 = nullptr,
         *thr3 = nullptr, *thr4 = nullptr;
 
-    MockEvent event(env->service_, *env->thread_, 2, false);
+    MockEvent event(env->service_, 2, false);
 
     // 2 Thread restarting and two thread cancel.
     // Thread 1 -> Restart 100 times waiting 0ms between each one.
@@ -648,7 +635,7 @@ TEST(TimedEventMultithread, EventNonAutoDestruc_FourAutoRestart)
     std::thread *thr1 = nullptr, *thr2 = nullptr,
         *thr3 = nullptr, *thr4 = nullptr;
 
-    MockEvent *event = new MockEvent(env->service_, *env->thread_, 2, true);
+    MockEvent *event = new MockEvent(env->service_, 2, true);
 
     // 2 Thread restarting and two thread cancel.
     // Thread 1 -> AutoRestart 100 times waiting 2ms between each one.

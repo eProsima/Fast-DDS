@@ -26,7 +26,11 @@ class MockEvent : public eprosima::fastrtps::rtps::TimedEvent
 {
     public:
 
-        MockEvent(asio::io_service &service, const std::thread& event_thread, double milliseconds, bool autorestart, TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
+        MockEvent(
+                eprosima::fastrtps::rtps::ResourceEvent& service,
+                double milliseconds,
+                bool autorestart,
+                TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
 
         virtual ~MockEvent();
 

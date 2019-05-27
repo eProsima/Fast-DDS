@@ -36,8 +36,7 @@ class TCPKeepAliveEvent: public TimedEvent
          */
         TCPKeepAliveEvent(
                 TCPTransportInterface& transport,
-                asio::io_service &service,
-                const std::thread& event_thread,
+                ResourceEvent& service,
                 double interval);
 
         virtual ~TCPKeepAliveEvent();
