@@ -100,7 +100,10 @@ bool History::get_max_change(CacheChange_t** max_change)
     return false;
 }
 
-bool History::get_change(const SequenceNumber_t& seq, const GUID_t& guid, CacheChange_t** change)
+bool History::get_change(
+        const SequenceNumber_t& seq,
+        const GUID_t& guid,
+        CacheChange_t** change)
 {
 
     if (mp_mutex == nullptr)

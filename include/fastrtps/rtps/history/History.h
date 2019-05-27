@@ -148,7 +148,10 @@ class History
          */
         RTPS_DllAPI inline std::recursive_timed_mutex* getMutex() { assert(mp_mutex != nullptr); return mp_mutex; }
 
-        RTPS_DllAPI bool get_change(const SequenceNumber_t& seq, const GUID_t& guid, CacheChange_t** change);
+        RTPS_DllAPI bool get_change(
+                const SequenceNumber_t& seq,
+                const GUID_t& guid,
+                CacheChange_t** change);
 
         /**
          * @brief A method to get the change with the earliest timestamp
