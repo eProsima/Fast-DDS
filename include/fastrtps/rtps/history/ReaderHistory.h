@@ -92,6 +92,8 @@ public:
 
     RTPS_DllAPI bool get_min_change_from(CacheChange_t** min_change, const GUID_t& writerGuid);
 
+    void set_reader(RTPSReader* reader, std::recursive_timed_mutex* mp_mutex);
+
 protected:
     //!Pointer to the reader
     RTPSReader* mp_reader;

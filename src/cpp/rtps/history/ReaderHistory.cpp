@@ -208,6 +208,15 @@ bool ReaderHistory::get_min_change_from(
     return ret;
 }
 
+void ReaderHistory::set_reader(
+        RTPSReader* reader,
+        std::recursive_timed_mutex* mutex)
+
+{
+    mp_reader = reader;
+    mp_mutex = mutex;
+}
+
 }
 } /* namespace rtps */
 } /* namespace eprosima */

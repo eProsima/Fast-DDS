@@ -41,6 +41,8 @@ class RTPSReader : public Endpoint
 
         virtual bool matched_writer_remove(RemoteWriterAttributes& wdata) = 0;
 
+        MOCK_METHOD1(change_removed_by_history, bool(CacheChange_t* change));
+
         MOCK_METHOD0(getHistory_mock, ReaderHistory*());
 
         MOCK_CONST_METHOD0(getGuid, const GUID_t&());
