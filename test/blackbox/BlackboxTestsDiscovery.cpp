@@ -489,7 +489,7 @@ BLACKBOXTEST(Discovery, TwentyParticipants)
     // Number of participants
     constexpr size_t n_participants = 20;
     // Wait time for discovery
-    unsigned int wait_ms = 1500;
+    constexpr unsigned int wait_ms = 20;
 
     std::vector<PubSubWriterReader<HelloWorldType>> pubsub;
     pubsub.reserve(n_participants);
@@ -506,17 +506,32 @@ BLACKBOXTEST(Discovery, TwentyParticipants)
         ASSERT_EQ(ps.isInitialized(), true);
     }
 
-    // Give some time so that participants can discover each other
-    std::this_thread::sleep_for(std::chrono::milliseconds(wait_ms));
-
-    for (auto& ps : pubsub)
+    bool all_discovered = false;
+    while (!all_discovered)
     {
-        EXPECT_EQ(ps.get_num_discovered_participants(), n_participants - 1);
-        EXPECT_EQ(ps.get_num_discovered_publishers(), n_participants);
-        EXPECT_EQ(ps.get_num_discovered_subscribers(), n_participants);
-        EXPECT_EQ(ps.get_publication_matched(), n_participants);
-        EXPECT_EQ(ps.get_subscription_matched(), n_participants);
+        all_discovered = true;
+
+        for (auto& ps : pubsub)
+        {
+            if ((ps.get_num_discovered_participants() != n_participants - 1) ||
+                (ps.get_num_discovered_publishers() != n_participants) ||
+                (ps.get_num_discovered_subscribers() != n_participants) ||
+                (ps.get_publication_matched() != n_participants) ||
+                (ps.get_subscription_matched() != n_participants))
+            {
+                all_discovered = false;
+                break;
+            }
+        }
+
+        if (!all_discovered)
+        {
+            // Give some time so that participants can discover each other
+            std::this_thread::sleep_for(std::chrono::milliseconds(wait_ms));
+        }
     }
+
+    // Test will fail by timeout if a discovery error happens
 }
 
 //! Regression for ROS2 #280 and #281
@@ -529,7 +544,7 @@ BLACKBOXTEST(Discovery, TwentyParticipantsSeveralEndpoints)
     // Total number of discovered endpoints
     constexpr size_t n_total_endpoints = n_participants * n_topics;
     // Wait time for discovery
-    unsigned int wait_ms = 1500;
+    constexpr unsigned int wait_ms = 20;
 
     std::vector<PubSubWriterReader<HelloWorldType>> pubsub;
     pubsub.reserve(n_participants);
@@ -547,15 +562,30 @@ BLACKBOXTEST(Discovery, TwentyParticipantsSeveralEndpoints)
         ASSERT_TRUE(ps.create_additional_topics(n_topics - 1));
     }
 
-    // Give some time so that participants can discover each other
-    std::this_thread::sleep_for(std::chrono::milliseconds(wait_ms));
-
-    for (auto& ps : pubsub)
+    bool all_discovered = false;
+    while (!all_discovered)
     {
-        EXPECT_EQ(ps.get_num_discovered_participants(), n_participants - 1);
-        EXPECT_EQ(ps.get_num_discovered_publishers(), n_total_endpoints);
-        EXPECT_EQ(ps.get_num_discovered_subscribers(), n_total_endpoints);
-        EXPECT_EQ(ps.get_publication_matched(), n_total_endpoints);
-        EXPECT_EQ(ps.get_subscription_matched(), n_total_endpoints);
+        all_discovered = true;
+
+        for (auto& ps : pubsub)
+        {
+            if ((ps.get_num_discovered_participants() != n_participants - 1) ||
+                (ps.get_num_discovered_publishers() != n_total_endpoints) ||
+                (ps.get_num_discovered_subscribers() != n_total_endpoints) ||
+                (ps.get_publication_matched() != n_total_endpoints) ||
+                (ps.get_subscription_matched() != n_total_endpoints))
+            {
+                all_discovered = false;
+                break;
+            }
+        }
+
+        if (!all_discovered)
+        {
+            // Give some time so that participants can discover each other
+            std::this_thread::sleep_for(std::chrono::milliseconds(wait_ms));
+        }
     }
+
+    // Test will fail by timeout if a discovery error happens
 }
