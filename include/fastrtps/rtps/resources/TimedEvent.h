@@ -20,10 +20,12 @@
 #ifndef TIMEDEVENT_H_
 #define TIMEDEVENT_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include <thread>
-#include <cstdint>
-#include <asio.hpp>
+
 #include "../common/Time_t.h"
+
+#include <thread>
+#include <functional>
+#include <cstdint>
 
 namespace eprosima {
 namespace fastrtps{
@@ -46,15 +48,7 @@ class TimedEvent
         enum EventCode
         {
             EVENT_SUCCESS,
-            EVENT_ABORT,
-            EVENT_MSG
-        };
-
-        enum AUTODESTRUCTION_MODE
-        {
-            NONE,
-            ON_SUCCESS,
-            ALLWAYS
+            EVENT_ABORT
         };
 
         /**
@@ -65,23 +59,17 @@ class TimedEvent
          */
         TimedEvent(
                 ResourceEvent& service,
-                double milliseconds,
-                TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
+                std::function<bool(EventCode)> callback,
+                double milliseconds);
 
         virtual ~TimedEvent();
-
-        /**
-         * Method invoked when the event occurs. Abstract method.
-         *
-         * @param code Code representing the status of the event
-         * @param msg Message associated to the event. It can be nullptr.
-         */
-        virtual void event(EventCode code, const char* msg) = 0;
 
         void cancel_timer();
 
         //!Method to restart the timer.
         void restart_timer();
+
+        void restart_timer(const std::chrono::steady_clock::time_point& timeout);
 
         /**
          * Update event interval.
@@ -113,12 +101,11 @@ class TimedEvent
          */
         double getRemainingTimeMilliSec();
 
-    protected:
-
-        void destroy();
-
     private:
-        TimedEventImpl* mp_impl;
+
+        ResourceEvent& service_;
+
+        TimedEventImpl* impl_;
 };
 }
 } /* namespace rtps */

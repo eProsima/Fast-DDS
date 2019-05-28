@@ -23,19 +23,20 @@
 #include <asio.hpp>
 #include <thread>
 
-class MockParentEvent : public eprosima::fastrtps::rtps::TimedEvent
+class MockParentEvent
 {
     public:
 
         MockParentEvent(
                 eprosima::fastrtps::rtps::ResourceEvent& service,
                 double milliseconds,
-                unsigned int countUntilDestruction,
-                TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
+                unsigned int countUntilDestruction);
 
         virtual ~MockParentEvent();
 
-        void event(EventCode code, const char* msg= nullptr);
+        eprosima::fastrtps::rtps::TimedEvent& event() { return event_; }
+
+        bool callback(eprosima::fastrtps::rtps::TimedEvent::EventCode code);
 
         bool wait(unsigned int milliseconds);
 
@@ -47,10 +48,11 @@ class MockParentEvent : public eprosima::fastrtps::rtps::TimedEvent
 
     private:
 
+        eprosima::fastrtps::rtps::TimedEvent event_;
+        MockEvent *mock_;
         int sem_count_;
         std::mutex sem_mutex_;
         std::condition_variable sem_cond_;
-        MockEvent *event_;
         unsigned int countUntilDestruction_;
         unsigned int currentCount_;
 };

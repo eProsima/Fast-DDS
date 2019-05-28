@@ -33,17 +33,107 @@ namespace rtps {
 
 ResourceEvent::ResourceEvent()
     : stop_(false)
+    , notified_(false)
+    , allow_to_delete_(false)
+    , front_(nullptr)
+    , back_(nullptr)
     , io_service_(ASIO_CONCURRENCY_HINT_UNSAFE_IO)
     , timer_(io_service_, std::chrono::seconds(1))
-    {
-    }
+{
+}
 
-ResourceEvent::~ResourceEvent() {
+ResourceEvent::~ResourceEvent() 
+{
+    // All timer should be unregistered before destroying this object.
+    assert(front_ == nullptr);
+    assert(back_ == nullptr);
+
     logInfo(RTPS_PARTICIPANT,"Removing event thread");
     stop_ = true,
     io_service_.stop();
     thread_.join();
 
+}
+
+void ResourceEvent::register_timer(TimedEventImpl* event)
+{
+    std::unique_lock<std::timed_mutex> lock(mutex_);
+
+    if(back_)
+    {
+        back_->next(event);
+        back_ = event;
+    }
+    else
+    {
+        assert(front_ == nullptr);
+        front_ = event;
+        back_ = event;
+    }
+}
+
+void ResourceEvent::unregister_timer(TimedEventImpl* event)
+{
+    assert(front_ != nullptr);
+    assert(back_ != nullptr);
+
+    std::unique_lock<std::timed_mutex> lock(mutex_);
+
+    cv_.wait(lock, [&]()
+    {
+        return allow_to_delete_;
+    });
+
+    TimedEventImpl *prev = nullptr, *curr = front_;
+
+    while(curr != event && curr->next())
+    {
+        prev = curr;
+        curr = curr->next();
+    }
+
+    assert(curr);
+
+    if(curr)
+    {
+        if(prev)
+        {
+            prev->next(curr->next());
+        }
+        else
+        {
+            front_ = curr->next();
+        }
+
+        if(!curr->next())
+        {
+            back_ = prev;
+        }
+
+        curr->next(nullptr);
+        curr->go_cancel();
+        curr->update();
+        curr->terminate();
+    }
+}
+
+void ResourceEvent::notify()
+{
+    std::unique_lock<std::timed_mutex> lock(mutex_);
+    notified_ = true;
+    cv_.notify_one();
+}
+
+void ResourceEvent::notify(const std::chrono::steady_clock::time_point& timeout)
+{
+    std::unique_lock<std::timed_mutex> lock(mutex_, std::defer_lock);
+
+    if(lock.try_lock_until(timeout))
+    {
+        notified_ = true;
+    }
+
+    cv_.notify_one();
 }
 
 void ResourceEvent::event()
@@ -64,19 +154,26 @@ void ResourceEvent::run_io_service()
 
         std::unique_lock<std::timed_mutex> lock(mutex_);
 
+        allow_to_delete_ = true;
+        cv_.notify_one();
+
         if (cv_.wait_for(lock, std::chrono::milliseconds(1), [&]()
             {
-                return !queue_.empty();
+                return notified_;
             }))
         {
-            do
+            TimedEventImpl* curr = front_;
+
+            while(curr)
             {
-                queue_.back().first->timer_.async_wait(std::bind(&TimedEventImpl::event, queue_.back().first,
-                            std::placeholders::_1, queue_.back().second));
-                queue_.pop_back();
+                curr->update();
+                curr = curr->next();
             }
-            while (!queue_.empty());
+
+            notified_ = false;
         }
+
+        allow_to_delete_ = false;
     }
 }
 
@@ -90,29 +187,6 @@ void ResourceEvent::init_thread()
             ready.set_value(true);
         });
     ready_fut.wait();
-}
-
-void ResourceEvent::push(
-        TimedEventImpl* event,
-        std::shared_ptr<TimerState> state)
-{
-    std::unique_lock<std::timed_mutex> lock(mutex_);
-    queue_.emplace_back(event, state);
-    cv_.notify_one();
-}
-
-void ResourceEvent::push(
-        TimedEventImpl* event,
-        std::shared_ptr<TimerState> state,
-        const std::chrono::steady_clock::time_point timeout)
-{
-    std::unique_lock<std::timed_mutex> lock(mutex_, std::defer_lock);
-
-    if(lock.try_lock_until(timeout))
-    {
-        queue_.emplace_back(event, state);
-        cv_.notify_one();
-    }
 }
 
 }

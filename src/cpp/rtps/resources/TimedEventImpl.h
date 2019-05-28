@@ -26,14 +26,10 @@
 #include <fastrtps/rtps/common/Time_t.h>
 #include <fastrtps/rtps/resources/TimedEvent.h>
 
-#include <memory>
-
-#include <asio/steady_timer.hpp>
-#include <asio/placeholders.hpp>
-
-#include <fastrtps/utils/Semaphore.h>
+#include <asio.hpp>
 
 #include <thread>
+#include <memory>
 #include <functional>
 #include <mutex>
 #include <condition_variable>
@@ -47,9 +43,6 @@ namespace eprosima
     {
         namespace rtps
         {
-            class TimerState;
-            class ResourceEvent;
-
             /**
              * Timed Event class used to define any timed events.
              * All timedEvents must be a specification of this class, implementing the event method.
@@ -57,7 +50,15 @@ namespace eprosima
              */
             class TimedEventImpl
             {
+                using Callback = std::function<bool(TimedEvent::EventCode)>;
                 public:
+
+                    typedef enum
+                    {
+                        INACTIVE = 0,
+                        READY,
+                        WAITING,
+                    } StateCode;
 
                     ~TimedEventImpl();
 
@@ -66,10 +67,9 @@ namespace eprosima
                      * @param milliseconds Interval of the timedEvent.
                      */
                     TimedEventImpl(
-                            TimedEvent* ev,
-                            ResourceEvent& service,
-                            std::chrono::microseconds interval,
-                            TimedEvent::AUTODESTRUCTION_MODE autodestruction);
+                            asio::io_service& service,
+                            Callback callback,
+                            std::chrono::microseconds interval);
 
                     /**
                      * Method invoked when the event occurs. Abstract method.
@@ -77,26 +77,26 @@ namespace eprosima
                      * @param code Code representing the status of the event
                      * @param msg Message associated to the event
                      */
-                    void event(const std::error_code& ec, const std::shared_ptr<TimerState>& state);
-
-                    //!Pointer to the timer.
-                    asio::steady_timer timer_;
-
+                    void event(
+                            std::weak_ptr<Callback> callback_weak_ptr,
+                            const std::error_code& ec);
 
                 protected:
+
                     //!Interval to be used in the timed Event.
                     std::chrono::microseconds m_interval_microsec;
 
-                    //!TimedEvent pointer
-                    TimedEvent* mp_event;
-
                 public:
 
-                    //!Method to restart the timer.
-                    void restart_timer(const std::chrono::steady_clock::time_point& timeout);
+                    TimedEventImpl* next() const
+                    {
+                        return next_;
+                    }
 
-                    //!Method to restart the timer.
-                    void restart_timer();
+                    void next(TimedEventImpl* next)
+                    {
+                        next_ = next;
+                    }
 
                     /**
                      * Update event interval.
@@ -140,20 +140,31 @@ namespace eprosima
                         return static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(timer_.expires_from_now()).count());
                     }
 
+                    bool go_ready();
+
+                    bool go_cancel();
+
+                    void update();
+
+                    void terminate();
+
                 private:
 
-                    ResourceEvent& service_;
+                    //!Pointer to the timer.
+                    asio::steady_timer timer_;
 
-                    TimedEvent::AUTODESTRUCTION_MODE autodestruction_;
+                    Callback callback_;
+
+                    std::shared_ptr<Callback> callback_ptr_;
+
+                    std::atomic<StateCode> state_;
+
+                    std::atomic<bool> cancel_;
+
+                    TimedEventImpl* next_;
 
                     //Duration_t m_timeInfinite;
                     std::mutex mutex_;
-
-                    std::condition_variable cond_;
-
-                    std::shared_ptr<TimerState> state_;
-
-                    std::thread::id event_thread_id_;
             };
 
 

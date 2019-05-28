@@ -32,7 +32,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-class TimerState;
 class TimedEventImpl;
 
 /**
@@ -44,6 +43,7 @@ class ResourceEvent
     public:
 
         ResourceEvent();
+
         virtual ~ResourceEvent();
 
         /**
@@ -52,14 +52,13 @@ class ResourceEvent
          */
         void init_thread();
 
-        void push(
-                TimedEventImpl* event,
-                std::shared_ptr<TimerState> state,
-                const std::chrono::steady_clock::time_point timeout);
+        void register_timer(TimedEventImpl* event);
 
-        void push(
-                TimedEventImpl* event,
-                std::shared_ptr<TimerState> state);
+        void unregister_timer(TimedEventImpl* event);
+
+        void notify();
+
+        void notify(const std::chrono::steady_clock::time_point& timeout);
 
         /**
          * Get the associated IO service
@@ -77,7 +76,13 @@ class ResourceEvent
 
         std::condition_variable_any cv_;
 
-        std::vector<std::pair<TimedEventImpl*, const std::shared_ptr<TimerState>>> queue_;
+        bool notified_;
+
+        bool allow_to_delete_;
+
+        TimedEventImpl* front_;
+
+        TimedEventImpl* back_;
 
         //!Thread
         std::thread thread_;

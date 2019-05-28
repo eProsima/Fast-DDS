@@ -35,7 +35,6 @@ TimedCallback::TimedCallback(
 
 TimedCallback::~TimedCallback()
 {
-    destroy();
 }
 
 void TimedCallback::event(EventCode code, const char *msg)

@@ -14,6 +14,8 @@
 
 #include "MockParentEvent.h"
 
+using namespace eprosima::fastrtps::rtps;
+
 int MockParentEvent::destructed_ = 0;
 std::mutex MockParentEvent::destruction_mutex_;
 std::condition_variable MockParentEvent::destruction_cond_;
@@ -21,59 +23,54 @@ std::condition_variable MockParentEvent::destruction_cond_;
 MockParentEvent::MockParentEvent(
         eprosima::fastrtps::rtps::ResourceEvent& service,
         double milliseconds,
-        unsigned int countUntilDestruction,
-        TimedEvent::AUTODESTRUCTION_MODE autodestruction)
-    : TimedEvent(service, milliseconds, autodestruction)
-    , successed_(0)
+        unsigned int countUntilDestruction)
+    : successed_(0)
     , cancelled_(0)
+    , event_(service, std::bind(&MockParentEvent::callback, this, std::placeholders::_1), milliseconds)
+    , mock_(nullptr)
     , sem_count_(0)
-    , event_(nullptr)
     , countUntilDestruction_(countUntilDestruction)
     , currentCount_(0)
 {
-    event_ = new MockEvent(service, milliseconds / 2.0, false, autodestruction);
-    event_->restart_timer();
+    mock_ = new MockEvent(service, milliseconds / 2.0, false);
+    mock_->event().restart_timer();
 }
 
 MockParentEvent::~MockParentEvent()
 {
-    destroy();
-
     destruction_mutex_.lock();
     ++destructed_;
     destruction_mutex_.unlock();
     destruction_cond_.notify_one();
 }
 
-void MockParentEvent::event(EventCode code, const char* msg)
+bool MockParentEvent::callback(TimedEvent::EventCode code)
 {
-    (void)msg;
-
-    if(code == EventCode::EVENT_SUCCESS)
+    if(code == TimedEvent::EventCode::EVENT_SUCCESS)
     {
         successed_.fetch_add(1, std::memory_order_relaxed);
 
-        if(event_ != nullptr)
+        if(mock_ != nullptr)
         {
-            event_->restart_timer();
-
             if(++currentCount_ == countUntilDestruction_)
             {
-                delete event_;
-                event_ = nullptr;
+                delete mock_;
+                mock_ = nullptr;
             }
         }
 
-        restart_timer();
+        event_.restart_timer();
 
     }
-    else if(code == EventCode::EVENT_ABORT)
+    else if(code == TimedEvent::EventCode::EVENT_ABORT)
         cancelled_.fetch_add(1, std::memory_order_relaxed);
 
     sem_mutex_.lock();
     ++sem_count_;
     sem_mutex_.unlock();
     sem_cond_.notify_one();
+
+    return true;
 }
 
 bool MockParentEvent::wait(unsigned int milliseconds)

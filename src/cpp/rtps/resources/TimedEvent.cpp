@@ -18,6 +18,7 @@
  */
 
 #include <fastrtps/rtps/resources/TimedEvent.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 #include "TimedEventImpl.h"
 
 
@@ -28,51 +29,64 @@ namespace rtps {
 
 TimedEvent::TimedEvent(
         ResourceEvent& service,
-        double milliseconds,
-        TimedEvent::AUTODESTRUCTION_MODE autodestruction)
+        std::function<bool(EventCode)> callback,
+        double milliseconds)
+    : service_(service)
+    , impl_(nullptr)
 {
-    mp_impl = new TimedEventImpl(this, service, std::chrono::microseconds((int64_t)(milliseconds*1000)), autodestruction);
+    impl_ = new TimedEventImpl(service_.get_io_service(), callback, std::chrono::microseconds((int64_t)(milliseconds*1000)));
+    service_.register_timer(impl_);
 }
 
 TimedEvent::~TimedEvent()
 {
-    delete(mp_impl);
+    service_.unregister_timer(impl_);
+    delete(impl_);
 }
 
 void TimedEvent::cancel_timer()
 {
-    mp_impl->cancel_timer();
+    if(impl_->go_cancel())
+    {
+        service_.notify();
+    }
 }
 
 
 void TimedEvent::restart_timer()
 {
-    mp_impl->restart_timer();
+    if(impl_->go_ready())
+    {
+        service_.notify();
+    }
+}
+
+void TimedEvent::restart_timer(const std::chrono::steady_clock::time_point& timeout)
+{
+    if(impl_->go_ready())
+    {
+        service_.notify(timeout);
+    }
 }
 
 bool TimedEvent::update_interval(const Duration_t& inter)
 {
-    return mp_impl->update_interval(inter);
+    return impl_->update_interval(inter);
 }
 
 bool TimedEvent::update_interval_millisec(double time_millisec)
 {
-    return mp_impl->update_interval_millisec(time_millisec);
+    return impl_->update_interval_millisec(time_millisec);
 }
 
 double TimedEvent::getIntervalMilliSec()
 {
-    return mp_impl->getIntervalMsec();
+    return impl_->getIntervalMsec();
 }
 
 double TimedEvent::getRemainingTimeMilliSec()
 {
-    return mp_impl->getRemainingTimeMilliSec();
-}
-
-void TimedEvent::destroy()
-{
-    mp_impl->destroy();
+    return impl_->getRemainingTimeMilliSec();
 }
 
 }
