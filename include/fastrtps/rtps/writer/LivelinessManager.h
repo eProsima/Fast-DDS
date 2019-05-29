@@ -98,6 +98,13 @@ public:
     bool assert_liveliness(LivelinessQosPolicyKind kind);
 
     /**
+     * @brief Asserts liveliness of writers belonging to given participant
+     * @param prefix The prefix determining the participant
+     * @return True if liveliness was successfully asserted
+     */
+    bool assert_liveliness(GuidPrefix_t prefix);
+
+    /**
      * @brief A method to check any writer of the given kind is alive
      * @param kind The liveliness kind to check for
      * @return True if at least one writer of this kind is alive. False otherwise

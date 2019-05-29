@@ -221,22 +221,26 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
     if(acceptMsgFrom(change->writerGUID, &pWP))
     {
+
         if (getGuid().entityId == c_EntityId_ReaderLiveliness)
         {
 //            std::cout << "Reader " << getGuid() << " receiving change" << std::endl;
         }
 
-        if (liveliness_lease_duration_ < c_TimeInfinite &&
-                liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+        if (liveliness_lease_duration_ < c_TimeInfinite)
         {
-            auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
-            if ( wlp != nullptr)
+            if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
+                    pWP->m_att.liveliness_kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
-                wlp->sub_liveliness_manager_->assert_liveliness(change->writerGUID);
-            }
-            else
-            {
-                logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+                if ( wlp != nullptr)
+                {
+                    wlp->sub_liveliness_manager_->assert_liveliness(change->writerGUID);
+                }
+                else
+                {
+                    logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                }
             }
         }
 
@@ -422,17 +426,20 @@ bool StatefulReader::processHeartbeatMsg(
 
             if (livelinessFlag)
             {
-                if (liveliness_lease_duration_ < c_TimeInfinite &&
-                        liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+                if (liveliness_lease_duration_ < c_TimeInfinite)
                 {
-                    auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
-                    if ( wlp != nullptr)
+                    if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
+                            pWP->m_att.liveliness_kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
                     {
-                        wlp->sub_liveliness_manager_->assert_liveliness(writerGUID);
-                    }
-                    else
-                    {
-                        logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                        auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+                        if ( wlp != nullptr)
+                        {
+                            wlp->sub_liveliness_manager_->assert_liveliness(writerGUID);
+                        }
+                        else
+                        {
+                            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                        }
                     }
                 }
             }
@@ -498,6 +505,7 @@ bool StatefulReader::acceptMsgFrom(
         if((*it)->m_att.guid == writerId)
         {
             *wp = *it;
+//            std::cout << "Found matched writer " << (*wp)->m_att.liveliness_kind << " " << (*wp)->m_att.liveliness_lease_duration << std::endl;
             return true;
         }
     }

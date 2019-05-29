@@ -777,8 +777,6 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByTopic_BestEffort_AssertMethod
     }
 
     EXPECT_EQ(writer.times_liveliness_lost(), 0u);
-
-    // Note that
     EXPECT_EQ(reader.times_liveliness_lost(), 0u);
     EXPECT_EQ(reader.times_liveliness_recovered(), 0u);
 
@@ -793,8 +791,593 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByTopic_BestEffort_AssertMethod
     EXPECT_EQ(reader.times_liveliness_recovered(), 0u);
 }
 
-// TODO raquel add tests mixing different liveliness kinds (i.e. different subscribers with different kinds):
-// MANUAL_BY_PARTICIPANT AUTOMATIC
-// MANUAL_BY_TOPIC       AUTOMATIC
-// MANUAL_BY_TOPIC       MANUAL_BY_PARTICIPANT
-// TODO raquel test at least one case with HAVE_SECURITY
+//! Tests liveliness with the following parameters
+//! Writer is reliable, has long liveliness, is manual by participant, and uses write method
+//! Reader is reliable, has long liveliness, is automatic
+BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliable_Write)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Write rate in milliseconds and number of samples to write
+    uint32_t writer_sleep_ms = 100;
+    uint32_t num_samples = 3;
+
+    // Liveliness lease duration and announcement period, in seconds
+    eprosima::fastrtps::Duration_t liveliness_s(writer_sleep_ms * 2 * 1e-3);
+    eprosima::fastrtps::Duration_t announcement_period(writer_sleep_ms * 2 * 1e-3 * 0.9);
+
+    reader.reliability(RELIABLE_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+    writer.reliability(RELIABLE_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+            .liveliness_announcement_period(announcement_period)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator(num_samples);
+    reader.startReception(data);
+
+    size_t count = 0;
+    for (auto data_sample : data)
+    {
+        // Send data
+        writer.send_sample(data_sample);
+        ++count;
+        reader.block_for_at_least(count);
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+
+    // Wait a bit longer
+    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 2));
+
+    EXPECT_EQ(writer.times_liveliness_lost(), 1u);
+    EXPECT_EQ(reader.times_liveliness_lost(), 1u);
+    EXPECT_EQ(reader.times_liveliness_recovered(), 1u);
+}
+
+//! Tests liveliness with the following parameters
+//! Writer is reliable, has short liveliness, is manual by participant, and uses write method
+//! Reader is reliable, has short liveliness, is automatic
+BLACKBOXTEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable_Write)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Write rate in milliseconds and number of samples to write
+    uint32_t writer_sleep_ms = 100;
+    uint32_t num_samples = 3;
+
+    // Liveliness lease duration and announcement period, in seconds
+    eprosima::fastrtps::Duration_t liveliness_s(writer_sleep_ms * 0.1 * 1e-3);
+    eprosima::fastrtps::Duration_t announcement_period(writer_sleep_ms * 0.1 * 1e-3 * 0.9);
+
+    reader.reliability(RELIABLE_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+    writer.reliability(RELIABLE_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+            .liveliness_announcement_period(announcement_period)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator(num_samples);
+    reader.startReception(data);
+
+    size_t count = 0;
+    for (auto data_sample : data)
+    {
+        // Send data
+        writer.send_sample(data_sample);
+        ++count;
+        reader.block_for_at_least(count);
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+
+    EXPECT_EQ(writer.times_liveliness_lost(), num_samples);
+    EXPECT_EQ(reader.times_liveliness_lost(), num_samples);
+    EXPECT_EQ(reader.times_liveliness_recovered(), num_samples);
+}
+
+//! Tests liveliness with the following parameters
+//! Writer is reliable, has long liveliness, is manual by participant, and uses assert method
+//! Reader is reliable, has long liveliness, is automatic
+BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliable_Assert)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Write rate in milliseconds and number of samples to write
+    uint32_t writer_sleep_ms = 100;
+    uint32_t num_samples = 3;
+
+    // Liveliness lease duration and announcement period, in seconds
+    eprosima::fastrtps::Duration_t liveliness_s(writer_sleep_ms * 2 * 1e-3);
+    eprosima::fastrtps::Duration_t announcement_period(writer_sleep_ms * 2 * 1e-3 * 0.9);
+
+    reader.reliability(RELIABLE_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+    writer.reliability(RELIABLE_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+            .liveliness_announcement_period(announcement_period)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    for (size_t count = 0; count < num_samples; count++)
+    {
+        writer.assert_liveliness();
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+
+    // Wait a bit longer
+    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 2));
+
+    EXPECT_EQ(writer.times_liveliness_lost(), 1u);
+    EXPECT_EQ(reader.times_liveliness_lost(), 1u);
+    EXPECT_EQ(reader.times_liveliness_recovered(), 1u);
+}
+
+//! Tests liveliness with the following parameters
+//! Writer is reliable, has short liveliness, is manual by participant, and uses assert method
+//! Reader is reliable, has short liveliness, is automatic
+BLACKBOXTEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable_Assert)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Write rate in milliseconds and number of samples to write
+    uint32_t writer_sleep_ms = 100;
+    uint32_t num_samples = 3;
+
+    // Liveliness lease duration and announcement period, in seconds
+    eprosima::fastrtps::Duration_t liveliness_s(writer_sleep_ms * 0.1 * 1e-3);
+    eprosima::fastrtps::Duration_t announcement_period(writer_sleep_ms * 0.1 * 1e-3 * 0.9);
+
+    reader.reliability(RELIABLE_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+    writer.reliability(RELIABLE_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+            .liveliness_announcement_period(announcement_period)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    for (size_t count = 0; count<num_samples; count++)
+    {
+        writer.assert_liveliness();
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+
+    EXPECT_EQ(writer.times_liveliness_lost(), num_samples);
+    EXPECT_EQ(reader.times_liveliness_lost(), num_samples);
+    EXPECT_EQ(reader.times_liveliness_recovered(), num_samples);
+}
+
+//! Tests liveliness with the following parameters
+//! Writer is best-effort, has long liveliness, is manual by participant, and uses write method
+//! Reader is best-effort, has long liveliness, is automatic
+BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEffort_Write)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Write rate in milliseconds and number of samples to write
+    uint32_t writer_sleep_ms = 100;
+    uint32_t num_samples = 3;
+
+    // Liveliness lease duration and announcement period, in seconds
+    eprosima::fastrtps::Duration_t liveliness_s(writer_sleep_ms * 2 * 1e-3);
+    eprosima::fastrtps::Duration_t announcement_period(writer_sleep_ms * 2 * 1e-3 * 0.9);
+
+    reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+    writer.reliability(BEST_EFFORT_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+            .liveliness_announcement_period(announcement_period)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator(num_samples);
+    reader.startReception(data);
+
+    size_t count = 0;
+    for (auto data_sample : data)
+    {
+        // Send data
+        writer.send_sample(data_sample);
+        ++count;
+        reader.block_for_at_least(count);
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+
+    // Wait a bit longer
+    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 2));
+
+    EXPECT_EQ(writer.times_liveliness_lost(), 1u);
+    EXPECT_EQ(reader.times_liveliness_lost(), 1u);
+    EXPECT_EQ(reader.times_liveliness_recovered(), 1u);
+}
+
+//! Tests liveliness with the following parameters
+//! Writer is best-effort, has short liveliness, is manual by participant, and uses write method
+//! Reader is best-effort, has short liveliness, is automatic
+BLACKBOXTEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort_Write)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Write rate in milliseconds and number of samples to write
+    uint32_t writer_sleep_ms = 100;
+    uint32_t num_samples = 3;
+
+    // Liveliness lease duration and announcement period, in seconds
+    eprosima::fastrtps::Duration_t liveliness_s(writer_sleep_ms * 0.1 * 1e-3);
+    eprosima::fastrtps::Duration_t announcement_period(writer_sleep_ms * 0.1 * 1e-3 * 0.9);
+
+    reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+    writer.reliability(BEST_EFFORT_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+            .liveliness_announcement_period(announcement_period)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator(num_samples);
+    reader.startReception(data);
+
+    size_t count = 0;
+    for (auto data_sample : data)
+    {
+        // Send data
+        writer.send_sample(data_sample);
+        ++count;
+        reader.block_for_at_least(count);
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+
+    EXPECT_EQ(writer.times_liveliness_lost(), num_samples);
+    EXPECT_EQ(reader.times_liveliness_lost(), num_samples);
+    EXPECT_EQ(reader.times_liveliness_recovered(), num_samples);
+}
+
+//! Tests liveliness with the following parameters
+//! Writer is best-effort, has long liveliness, is manual by participant, and uses assert method
+//! Reader is best-effort, has long liveliness, is automatic
+BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEffort_Assert)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Write rate in milliseconds and number of samples to write
+    uint32_t writer_sleep_ms = 100;
+    uint32_t num_samples = 3;
+
+    // Liveliness lease duration and announcement period, in seconds
+    eprosima::fastrtps::Duration_t liveliness_s(writer_sleep_ms * 2 * 1e-3);
+    eprosima::fastrtps::Duration_t announcement_period(writer_sleep_ms * 2 * 1e-3 * 0.9);
+
+    reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+    writer.reliability(BEST_EFFORT_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+            .liveliness_announcement_period(announcement_period)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    for (size_t count = 0; count < num_samples; count++)
+    {
+        writer.assert_liveliness();
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+
+    // Wait a bit longer
+    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 2));
+
+    EXPECT_EQ(writer.times_liveliness_lost(), 1u);
+    EXPECT_EQ(reader.times_liveliness_lost(), 1u);
+    EXPECT_EQ(reader.times_liveliness_recovered(), 1u);
+}
+
+//! Tests liveliness with the following parameters
+//! Writer is reliable, and uses manual by topic liveliness kind
+//! Reader is reliable, and uses automatic liveliness kind
+//! Liveliness lease duration is short in comparison to writer write/assert rate
+BLACKBOXTEST(LivelinessQos, ManualByTopic_Automatic_Reliable)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Write rate in milliseconds and number of samples to write
+    uint32_t writer_sleep_ms = 100;
+    uint32_t num_samples = 3;
+
+    // Liveliness lease duration and announcement period, in seconds
+    eprosima::fastrtps::Duration_t liveliness_s(writer_sleep_ms * 0.1 * 1e-3);
+    eprosima::fastrtps::Duration_t announcement_period(writer_sleep_ms * 0.1 * 1e-3 * 0.9);
+
+    reader.reliability(RELIABLE_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+    writer.reliability(RELIABLE_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS)
+            .liveliness_announcement_period(announcement_period)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator(num_samples);
+    reader.startReception(data);
+
+    // Write some samples
+    size_t count = 0;
+    for (auto data_sample : data)
+    {
+        // Send data
+        writer.send_sample(data_sample);
+        ++count;
+        reader.block_for_at_least(count);
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+    // Now use assert_liveliness() method
+    for (count = 0; count < num_samples; count++)
+    {
+        writer.assert_liveliness();
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+
+    EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
+    EXPECT_EQ(reader.times_liveliness_lost(), num_samples * 2);
+    EXPECT_EQ(reader.times_liveliness_recovered(), num_samples * 2);
+}
+
+//! Tests liveliness with the following parameters
+//! Writer is best-effort, and uses manual by topic liveliness kind
+//! Reader is best-effort, and uses automatic liveliness kind
+//! Liveliness lease duration is short in comparison to writer write/assert rate
+BLACKBOXTEST(LivelinessQos, ManualByTopic_Automatic_BestEffort)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Write rate in milliseconds and number of samples to write
+    uint32_t writer_sleep_ms = 100;
+    uint32_t num_samples = 3;
+
+    // Liveliness lease duration and announcement period, in seconds
+    eprosima::fastrtps::Duration_t liveliness_s(writer_sleep_ms * 0.1 * 1e-3);
+    eprosima::fastrtps::Duration_t announcement_period(writer_sleep_ms * 0.1 * 1e-3 * 0.9);
+
+    reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+    writer.reliability(BEST_EFFORT_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS)
+            .liveliness_announcement_period(announcement_period)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator(num_samples);
+    reader.startReception(data);
+
+    // Write some samples
+    size_t count = 0;
+    for (auto data_sample : data)
+    {
+        // Send data
+        writer.send_sample(data_sample);
+        ++count;
+        reader.block_for_at_least(count);
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+    // Now use assert_liveliness() method
+    for (count = 0; count < num_samples; count++)
+    {
+        writer.assert_liveliness();
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+
+    EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
+    // As best-effort readers do not process heartbeats the expected number of times liveliness was lost
+    // and recovered corresponds to the bit in the test when we sent samples (not when we asserted liveliness)
+    EXPECT_EQ(reader.times_liveliness_lost(), num_samples);
+    EXPECT_EQ(reader.times_liveliness_recovered(), num_samples);
+}
+
+//! Tests liveliness with the following parameters
+//! Writer is reliable, and uses manual by topic liveliness kind
+//! Reader is reliable, and uses manual by participant liveliness kind
+//! Liveliness lease duration is short in comparison to writer write/assert rate
+BLACKBOXTEST(LivelinessQos, ManualByTopic_ManualByParticipant_Reliable)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Write rate in milliseconds and number of samples to write
+    uint32_t writer_sleep_ms = 100;
+    uint32_t num_samples = 3;
+
+    // Liveliness lease duration and announcement period, in seconds
+    eprosima::fastrtps::Duration_t liveliness_s(writer_sleep_ms * 0.1 * 1e-3);
+    eprosima::fastrtps::Duration_t announcement_period(writer_sleep_ms * 0.1 * 1e-3 * 0.9);
+
+    reader.reliability(RELIABLE_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+    writer.reliability(RELIABLE_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS)
+            .liveliness_announcement_period(announcement_period)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator(num_samples);
+    reader.startReception(data);
+
+    // Write some samples
+    size_t count = 0;
+    for (auto data_sample : data)
+    {
+        // Send data
+        writer.send_sample(data_sample);
+        ++count;
+        reader.block_for_at_least(count);
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+    // Now use assert_liveliness() method
+    for (count = 0; count < num_samples; count++)
+    {
+        writer.assert_liveliness();
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+
+    EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
+    EXPECT_EQ(reader.times_liveliness_lost(), num_samples * 2);
+    EXPECT_EQ(reader.times_liveliness_recovered(), num_samples * 2);
+}
+
+//! Tests liveliness with the following parameters
+//! Writer is best-effort, and uses manual by topic liveliness kind
+//! Reader is best-effort, and uses manual by participant liveliness kind
+//! Liveliness lease duration is short in comparison to writer write/assert rate
+BLACKBOXTEST(LivelinessQos, ManualByTopic_ManualByParticipant_BestEffort)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Write rate in milliseconds and number of samples to write
+    uint32_t writer_sleep_ms = 100;
+    uint32_t num_samples = 3;
+
+    // Liveliness lease duration and announcement period, in seconds
+    eprosima::fastrtps::Duration_t liveliness_s(writer_sleep_ms * 0.1 * 1e-3);
+    eprosima::fastrtps::Duration_t announcement_period(writer_sleep_ms * 0.1 * 1e-3 * 0.9);
+
+    reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+    writer.reliability(BEST_EFFORT_RELIABILITY_QOS)
+            .liveliness_kind(eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS)
+            .liveliness_announcement_period(announcement_period)
+            .liveliness_lease_duration(liveliness_s)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator(num_samples);
+    reader.startReception(data);
+
+    // Write some samples
+    size_t count = 0;
+    for (auto data_sample : data)
+    {
+        // Send data
+        writer.send_sample(data_sample);
+        ++count;
+        reader.block_for_at_least(count);
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+    // Now use assert_liveliness() method
+    for (count = 0; count < num_samples; count++)
+    {
+        writer.assert_liveliness();
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+
+    EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
+    // Note that, as best-effor readers do not proccess heartbeats and assert_liveliness() relies on sending a
+    // heartbeat to assess liveliness, the expected number of times liveliness was lost and recovered
+    // corresponds only to the bit in the test when the writer wrote samples
+    EXPECT_EQ(reader.times_liveliness_lost(), num_samples);
+    EXPECT_EQ(reader.times_liveliness_recovered(), num_samples);
+}
+
+// TODO raquel Add tests with participants having more than one publisher/subscriber

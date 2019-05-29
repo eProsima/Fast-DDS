@@ -54,6 +54,7 @@ class RTPSReader : public Endpoint
     friend class RTPSParticipantImpl;
     friend class MessageReceiver;
     friend class EDP;
+    friend class WLPListener;
 
 protected:
 

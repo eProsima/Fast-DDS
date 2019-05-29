@@ -184,7 +184,49 @@ bool LivelinessManager::assert_liveliness(LivelinessQosPolicyKind kind)
     // Updates the timer owner
     if (!calculate_next())
     {
-        logError(RTPS_WRITER, "Error when restarting liveliness timer: " << writers_.size() << " writers");
+        logError(RTPS_WRITER, "Error when restarting liveliness timer: " << writers_.size() << " writers, liveliness " << kind);
+        return false;
+    }
+
+    auto interval = timer_owner_->time - steady_clock::now();
+    assert(interval.count() > 0);
+    timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+    timer_.restart_timer();
+
+    return true;
+}
+
+bool LivelinessManager::assert_liveliness(GuidPrefix_t prefix)
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+
+    if (writers_.empty())
+    {
+        return true;
+    }
+
+    timer_.cancel_timer();
+
+    for (auto& writer: writers_)
+    {
+        if (writer.guid.guidPrefix == prefix)
+        {
+            if (writer.alive == false)
+            {
+                if (liveliness_recovered_callback_ != nullptr)
+                {
+                    liveliness_recovered_callback_(writer.guid);
+                }
+            }
+            writer.alive = true;
+            writer.time = steady_clock::now() + nanoseconds(writer.lease_duration.to_ns());
+        }
+    }
+
+    // Updates the timer owner
+    if (!calculate_next())
+    {
+        logError(RTPS_WRITER, "Error when restarting liveliness for participant " << prefix);
         return false;
     }
 

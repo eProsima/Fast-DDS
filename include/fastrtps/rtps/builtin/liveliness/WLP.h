@@ -119,6 +119,13 @@ public:
     bool assert_liveliness(LivelinessQosPolicyKind kind);
 
     /**
+     * @brief Asserts liveliness of writers within a participant
+     * @param preefix The prefix of the partcipant
+     * @return True on success
+     */
+    bool assert_liveliness(GuidPrefix_t preefix);
+
+    /**
      * @brief A method to assert liveliness of a given writer
      * @param writer The writer, specified via its id
      * @return True if liveliness was asserted

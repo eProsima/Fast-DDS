@@ -191,6 +191,49 @@ TEST(LivelinessManagerTests, AssertLivelinessByKind)
     EXPECT_GT(liveliness_data[5].time, std::chrono::steady_clock::now());
 }
 
+//! Tests that the assert_liveliness() method that takes guid prefix as argument sets the alive state and time
+//! correctly
+TEST(LivelinessManagerTests, AssertLivelinessByPrefix)
+{
+    LivelinessManager liveliness_manager(
+                nullptr,
+                nullptr,
+                env->service_,
+                *env->thread_);
+
+    GuidPrefix_t guidP_1;
+    GuidPrefix_t guidP_2;
+    guidP_1.value[0] = 1;
+    guidP_2.value[0] = 2;
+
+    liveliness_manager.add_writer(GUID_t(guidP_1, 1), AUTOMATIC_LIVELINESS_QOS, Duration_t(10));
+    liveliness_manager.add_writer(GUID_t(guidP_2, 2), AUTOMATIC_LIVELINESS_QOS, Duration_t(10));
+    liveliness_manager.add_writer(GUID_t(guidP_1, 3), MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, Duration_t(10));
+    liveliness_manager.add_writer(GUID_t(guidP_2, 4), MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, Duration_t(10));
+    liveliness_manager.add_writer(GUID_t(guidP_1, 5), MANUAL_BY_TOPIC_LIVELINESS_QOS, Duration_t(10));
+    liveliness_manager.add_writer(GUID_t(guidP_2, 6), MANUAL_BY_TOPIC_LIVELINESS_QOS, Duration_t(10));
+
+    // Assert liveliness of writers with prefix GuidP_1
+    EXPECT_TRUE(liveliness_manager.assert_liveliness(guidP_1));
+    auto liveliness_data = liveliness_manager.get_liveliness_data();
+    EXPECT_EQ(liveliness_data[0].alive, true);
+    EXPECT_EQ(liveliness_data[1].alive, false);
+    EXPECT_EQ(liveliness_data[2].alive, true);
+    EXPECT_EQ(liveliness_data[3].alive, false);
+    EXPECT_EQ(liveliness_data[4].alive, true);
+    EXPECT_EQ(liveliness_data[5].alive, false);
+
+    // Assert liveliness of writers with prefix GuidP_2
+    EXPECT_TRUE(liveliness_manager.assert_liveliness(guidP_2));
+    liveliness_data = liveliness_manager.get_liveliness_data();
+    EXPECT_EQ(liveliness_data[0].alive, true);
+    EXPECT_EQ(liveliness_data[1].alive, true);
+    EXPECT_EQ(liveliness_data[2].alive, true);
+    EXPECT_EQ(liveliness_data[3].alive, true);
+    EXPECT_EQ(liveliness_data[4].alive, true);
+    EXPECT_EQ(liveliness_data[5].alive, true);
+}
+
 //! Tests that the assert_liveliness() method that takes a guid as an argument sets the alive state and time correctly
 TEST(LivelinessManagerTests, AssertLivelinessByGuid)
 {

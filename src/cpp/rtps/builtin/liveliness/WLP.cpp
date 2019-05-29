@@ -784,8 +784,20 @@ WriterHistory* WLP::getBuiltinWriterHistory()
 
 bool WLP::assert_liveliness(LivelinessQosPolicyKind kind)
 {
-    bool pub = pub_liveliness_manager_->assert_liveliness(kind);
+//    bool pub = pub_liveliness_manager_->assert_liveliness(kind);
+
     bool sub = sub_liveliness_manager_->assert_liveliness(kind);
+
+//    std::cout << pub << " " << sub << std::endl;
+
+    return true;
+}
+
+bool WLP::assert_liveliness(GuidPrefix_t prefix)
+{
+//    bool pub = pub_liveliness_manager_->assert_liveliness(kind);
+
+    bool sub = sub_liveliness_manager_->assert_liveliness(prefix);
 
 //    std::cout << pub << " " << sub << std::endl;
 

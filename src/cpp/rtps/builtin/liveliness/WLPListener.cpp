@@ -68,8 +68,7 @@ void WLPListener::onNewCacheChangeAdded(
     auto history = reader->getHistory();
 	for(auto ch = history->changesBegin(); ch!=history->changesEnd();++ch)
 	{
-		if((*ch)->instanceHandle == change->instanceHandle &&
-				(*ch)->sequenceNumber < change->sequenceNumber)
+        if((*ch)->instanceHandle == change->instanceHandle && (*ch)->sequenceNumber < change->sequenceNumber)
 		{
 			history->remove_change(*ch);
 			break;
@@ -86,8 +85,13 @@ void WLPListener::onNewCacheChangeAdded(
 	}
 	else
 	{
-		if(!separateKey(change->instanceHandle,&guidP,&livelinessKind))
-			return;
+        if(!separateKey(
+                    change->instanceHandle,
+                    &guidP,
+                    &livelinessKind))
+        {
+            return;
+        }
 	}
 
     if(guidP == reader->getGuid().guidPrefix)
@@ -97,11 +101,14 @@ void WLPListener::onNewCacheChangeAdded(
 		return;
 	}
 
-    mp_WLP->assert_liveliness(livelinessKind);
+    mp_WLP->assert_liveliness(guidP);
 	return;
 }
 
-bool WLPListener::separateKey(InstanceHandle_t& key,GuidPrefix_t* guidP,LivelinessQosPolicyKind* liveliness)
+bool WLPListener::separateKey(
+        InstanceHandle_t& key,
+        GuidPrefix_t* guidP,
+        LivelinessQosPolicyKind* liveliness)
 {
 	for(uint8_t i=0;i<12;++i)
 	{

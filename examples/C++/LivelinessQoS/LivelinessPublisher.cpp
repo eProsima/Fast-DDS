@@ -162,8 +162,8 @@ bool LivelinessPublisher::publish(
     if(listener_.first_connected || !waitForListener || listener_.n_matched > 0)
     {
         topic_.index(topic_.index()+1);
-//        pub->write((void*)&topic_);
-        pub->assert_liveliness();
+        pub->write((void*)&topic_);
+//        pub->assert_liveliness();
 
         return true;
     }

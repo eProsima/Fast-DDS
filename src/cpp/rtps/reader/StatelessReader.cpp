@@ -223,17 +223,38 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
     {
         logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
 
-        if (liveliness_lease_duration_ < c_TimeInfinite &&
-                liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+        if (liveliness_lease_duration_ < c_TimeInfinite)
         {
-            auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
-            if ( wlp != nullptr)
+            if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
-                wlp->sub_liveliness_manager_->assert_liveliness(change->writerGUID);
+                auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+                if ( wlp != nullptr)
+                {
+                    wlp->sub_liveliness_manager_->assert_liveliness(change->writerGUID);
+                }
+                else
+                {
+                    logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                }
             }
             else
             {
-                logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                RemoteWriterAttributes att;
+                if (find_remote_writer_attributes(
+                            change->writerGUID,
+                            att) &&
+                        att.liveliness_kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+                {
+                    auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+                    if ( wlp != nullptr)
+                    {
+                        wlp->sub_liveliness_manager_->assert_liveliness(change->writerGUID);
+                    }
+                    else
+                    {
+                        logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                    }
+                }
             }
         }
 
@@ -300,17 +321,38 @@ bool StatelessReader::processDataFragMsg(
 
     if (acceptMsgFrom(incomingChange->writerGUID))
     {
-        if (liveliness_lease_duration_ < c_TimeInfinite &&
-                liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+        if (liveliness_lease_duration_ < c_TimeInfinite)
         {
-            auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
-            if ( wlp != nullptr)
+            if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
-                wlp->sub_liveliness_manager_->assert_liveliness(incomingChange->writerGUID);
+                auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+                if ( wlp != nullptr)
+                {
+                    wlp->sub_liveliness_manager_->assert_liveliness(incomingChange->writerGUID);
+                }
+                else
+                {
+                    logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                }
             }
             else
             {
-                logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                RemoteWriterAttributes att;
+                if (find_remote_writer_attributes(
+                            incomingChange->writerGUID,
+                            att) &&
+                        att.liveliness_kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+                {
+                    auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+                    if ( wlp != nullptr)
+                    {
+                        wlp->sub_liveliness_manager_->assert_liveliness(incomingChange->writerGUID);
+                    }
+                    else
+                    {
+                        logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                    }
+                }
             }
         }
 
@@ -420,4 +462,19 @@ bool StatelessReader::acceptMsgFrom(GUID_t& writerId)
 bool StatelessReader::thereIsUpperRecordOf(GUID_t& guid, SequenceNumber_t& seq)
 {
     return get_last_notified(guid) >= seq;
+}
+
+bool StatelessReader::find_remote_writer_attributes(
+        const GUID_t &guid,
+        RemoteWriterAttributes &att)
+{
+    for (auto it = m_matched_writers.begin(); it!= m_matched_writers.end(); ++it)
+    {
+        if ((*it).guid == guid)
+        {
+            att = (*it);
+            return true;
+        }
+    }
+    return false;
 }
