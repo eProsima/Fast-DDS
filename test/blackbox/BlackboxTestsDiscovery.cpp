@@ -491,12 +491,12 @@ BLACKBOXTEST(Discovery, TwentyParticipants)
     // Wait time for discovery
     constexpr unsigned int wait_ms = 20;
 
-    std::vector<PubSubWriterReader<HelloWorldType>*> pubsub;
+    std::vector<std::shared_ptr<PubSubWriterReader<HelloWorldType>>> pubsub;
     pubsub.reserve(n_participants);
 
     for (unsigned int i=0; i<n_participants; i++)
     {
-        pubsub.emplace_back(new PubSubWriterReader<HelloWorldType>(TEST_TOPIC_NAME));
+        pubsub.emplace_back(std::make_shared<PubSubWriterReader<HelloWorldType>>(TEST_TOPIC_NAME));
     }
 
     // Initialization of all the participants
@@ -546,12 +546,12 @@ BLACKBOXTEST(Discovery, TwentyParticipantsSeveralEndpoints)
     // Wait time for discovery
     constexpr unsigned int wait_ms = 20;
 
-    std::vector<PubSubWriterReader<HelloWorldType>*> pubsub;
+    std::vector<std::shared_ptr<PubSubWriterReader<HelloWorldType>>> pubsub;
     pubsub.reserve(n_participants);
 
     for (unsigned int i = 0; i < n_participants; i++)
     {
-        pubsub.emplace_back(new PubSubWriterReader<HelloWorldType>(TEST_TOPIC_NAME));
+        pubsub.emplace_back(std::make_shared<PubSubWriterReader<HelloWorldType>>(TEST_TOPIC_NAME));
     }
 
     // Initialization of all the participants
