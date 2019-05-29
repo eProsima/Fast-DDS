@@ -40,6 +40,7 @@ TimedEventImpl::TimedEventImpl(
     , callback_ptr_(&callback, [](Callback*){})
     , state_(StateCode::INACTIVE)
     , cancel_(false)
+    , next_(nullptr)
 {
     //TIME_INFINITE(m_timeInfinite);
 }

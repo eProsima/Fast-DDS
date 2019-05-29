@@ -31,8 +31,8 @@
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
+#include <fastrtps/rtps/resources/TimedEvent.h>
 
 #include <functional>
 
@@ -67,21 +67,41 @@ PublisherImpl::PublisherImpl(
     , mp_userPublisher(nullptr)
     , mp_rtpsParticipant(nullptr)
     , high_mark_for_frag_(0)
-    , deadline_timer_(std::bind(&PublisherImpl::deadline_missed, this),
-                      att.qos.m_deadline.period.to_ns() * 1e-6,
-                      mp_participant->get_resource_event())
     , deadline_duration_us_(m_att.qos.m_deadline.period.to_ns() * 1e-3)
     , timer_owner_()
     , deadline_missed_status_()
-    , lifespan_timer_(std::bind(&PublisherImpl::lifespan_expired, this),
-                      m_att.qos.m_lifespan.duration.to_ns() * 1e-6,
-                      mp_participant->get_resource_event())
     , lifespan_duration_us_(m_att.qos.m_lifespan.duration.to_ns() * 1e-3)
 {
+    deadline_timer_ = new TimedEvent(mp_participant->get_resource_event(),
+            [&](TimedEvent::EventCode code) -> bool
+            {
+                if (TimedEvent::EVENT_SUCCESS == code)
+                {
+                    return deadline_missed();
+                }
+
+                return false;
+            },
+            att.qos.m_deadline.period.to_ns() * 1e-6);
+
+    lifespan_timer_ = new TimedEvent(mp_participant->get_resource_event(),
+            [&](TimedEvent::EventCode code) -> bool
+            {
+                if (TimedEvent::EVENT_SUCCESS == code)
+                {
+                    return lifespan_expired();
+                }
+
+                return false;
+            },
+            m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
 }
 
 PublisherImpl::~PublisherImpl()
 {
+    delete(lifespan_timer_);
+    delete(deadline_timer_);
+
     if(mp_writer != nullptr)
     {
         logInfo(PUBLISHER, this->getGuid().entityId << " in topic: " << this->m_att.topic.topicName);
@@ -218,7 +238,11 @@ bool PublisherImpl::create_new_change_with_params(
                 {
                     if (timer_owner_ == handle || timer_owner_ == InstanceHandle_t())
                     {
-                        deadline_timer_reschedule();
+                        if (deadline_timer_reschedule())
+                        {
+                            deadline_timer_->cancel_timer();
+                            deadline_timer_->restart_timer();
+                        }
                     }
                 }
             }
@@ -226,8 +250,8 @@ bool PublisherImpl::create_new_change_with_params(
             if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
             {
                 lifespan_duration_us_ = std::chrono::duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
-                lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
-                lifespan_timer_.restart_timer();
+                lifespan_timer_->update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
+                lifespan_timer_->restart_timer();
             }
 
             return true;
@@ -340,11 +364,11 @@ bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
         {
             deadline_duration_us_ =
                     duration<double, std::ratio<1, 1000000>>(m_att.qos.m_deadline.period.to_ns() * 1e-3);
-            deadline_timer_.update_interval_millisec(m_att.qos.m_deadline.period.to_ns() * 1e-6);
+            deadline_timer_->update_interval_millisec(m_att.qos.m_deadline.period.to_ns() * 1e-6);
         }
         else
         {
-            deadline_timer_.cancel_timer();
+            deadline_timer_->cancel_timer();
         }
 
         // Lifespan
@@ -353,11 +377,11 @@ bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
         {
             lifespan_duration_us_ =
                     duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
-            lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
+            lifespan_timer_->update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
         }
         else
         {
-            lifespan_timer_.cancel_timer();
+            lifespan_timer_->cancel_timer();
         }
     }
 
@@ -389,7 +413,7 @@ bool PublisherImpl::wait_for_all_acked(const eprosima::fastrtps::Time_t& max_wai
     return mp_writer->wait_for_all_acked(max_wait);
 }
 
-void PublisherImpl::deadline_timer_reschedule()
+bool PublisherImpl::deadline_timer_reschedule()
 {
     assert(m_att.qos.m_deadline.period != c_TimeInfinite);
 
@@ -399,16 +423,16 @@ void PublisherImpl::deadline_timer_reschedule()
     if (!m_history.get_next_deadline(timer_owner_, next_deadline_us))
     {
         logError(PUBLISHER, "Could not get the next deadline from the history");
-        return;
+        return false;
     }
-    auto interval_ms = duration_cast<milliseconds>(next_deadline_us - steady_clock::now());
 
-    deadline_timer_.cancel_timer();
-    deadline_timer_.update_interval_millisec((double)interval_ms.count());
-    deadline_timer_.restart_timer();
+    auto interval_ms = duration_cast<milliseconds>(next_deadline_us - steady_clock::now());
+    deadline_timer_->update_interval_millisec((double)interval_ms.count());
+    return true;
+
 }
 
-void PublisherImpl::deadline_missed()
+bool PublisherImpl::deadline_missed()
 {
     assert(m_att.qos.m_deadline.period != c_TimeInfinite);
 
@@ -425,9 +449,10 @@ void PublisherImpl::deadline_missed()
                 steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
     {
         logError(PUBLISHER, "Could not set the next deadline in the history");
-        return;
+        return false;
     }
-    deadline_timer_reschedule();
+
+    return deadline_timer_reschedule();
 }
 
 void PublisherImpl::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &status)
@@ -438,14 +463,14 @@ void PublisherImpl::get_offered_deadline_missed_status(OfferedDeadlineMissedStat
     deadline_missed_status_.total_count_change = 0;
 }
 
-void PublisherImpl::lifespan_expired()
+bool PublisherImpl::lifespan_expired()
 {
     std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
 
     CacheChange_t* earliest_change;
     if (!m_history.get_earliest_change(&earliest_change))
     {
-        return;
+        return false;
     }
 
     auto source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
@@ -455,9 +480,8 @@ void PublisherImpl::lifespan_expired()
     if (now - source_timestamp < lifespan_duration_us_)
     {
         auto interval = source_timestamp - now + lifespan_duration_us_;
-        lifespan_timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
-        lifespan_timer_.restart_timer();
-        return;
+        lifespan_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+        return true;
     }
 
     // The earliest change has expired
@@ -466,7 +490,7 @@ void PublisherImpl::lifespan_expired()
     // Set the timer for the next change if there is one
     if (!m_history.get_earliest_change(&earliest_change))
     {
-        return;
+        return false;
     }
 
     // Calculate when the next change is due to expire and restart
@@ -476,6 +500,6 @@ void PublisherImpl::lifespan_expired()
 
     assert(interval.count() > 0);
 
-    lifespan_timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
-    lifespan_timer_.restart_timer();
+    lifespan_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+    return true;
 }

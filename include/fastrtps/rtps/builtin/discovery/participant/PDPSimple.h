@@ -44,7 +44,7 @@ class ReaderHistory;
 class RTPSParticipantImpl;
 class BuiltinProtocols;
 class EDP;
-class ResendParticipantProxyDataPeriod;
+class TimedEvent;
 class RemoteParticipantLeaseDuration;
 class ReaderProxyData;
 class WriterProxyData;
@@ -58,7 +58,6 @@ class PDPSimpleListener;
  */
 class PDPSimple
 {
-    friend class ResendRTPSParticipantProxyDataPeriod;
     friend class RemoteRTPSParticipantLeaseDuration;
     friend class PDPSimpleListener;
 
@@ -325,7 +324,7 @@ private:
     //!Variable to indicate if any parameter has changed.
     std::atomic_bool m_hasChangedLocalPDP;
     //!TimedEvent to periodically resend the local RTPSParticipant information.
-    ResendParticipantProxyDataPeriod* mp_resendParticipantTimer;
+    TimedEvent* resend_participant_info_event_;
     //!Listener for the SPDP messages.
     PDPSimpleListener* mp_listener;
     //!WriterHistory

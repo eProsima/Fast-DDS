@@ -19,8 +19,8 @@
 #ifndef RTPSParticipantIMPL_H_
 #define RTPSParticipantIMPL_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <list>
 #include <sys/types.h>
 #include <mutex>
@@ -179,7 +179,7 @@ public:
     void ResourceSemaphoreWait();
 
     //!Get Pointer to the Event Resource.
-    ResourceEvent& getEventResource();
+    ResourceEvent& getEventResource() { return mp_event_thr; }
 
     //!Send Method - Deprecated - Stays here for reference purposes
     bool sendSync(

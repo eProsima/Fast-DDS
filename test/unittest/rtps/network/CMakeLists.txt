@@ -39,7 +39,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/RTCPMessageManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/timedevent/TCPKeepAliveEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResourceBasic.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPAcceptor.cpp

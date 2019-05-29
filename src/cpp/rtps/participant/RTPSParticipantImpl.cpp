@@ -936,11 +936,6 @@ void RTPSParticipantImpl::normalize_endpoint_locators(EndpointAttributes& endpoi
     }
 }
 
-ResourceEvent& RTPSParticipantImpl::getEventResource()
-{
-    return this->mp_event_thr;
-}
-
 std::vector<std::string> RTPSParticipantImpl::getParticipantNames() const
 {
     std::vector<std::string> participant_names;

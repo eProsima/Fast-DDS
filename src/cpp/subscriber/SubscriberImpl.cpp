@@ -27,6 +27,7 @@
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
+#include <fastrtps/rtps/resources/TimedEvent.h>
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/log/Log.h>
 
@@ -52,20 +53,40 @@ SubscriberImpl::SubscriberImpl(
     , m_readerListener(this)
     , mp_userSubscriber(nullptr)
     , mp_rtpsParticipant(nullptr)
-    , deadline_timer_(std::bind(&SubscriberImpl::deadline_missed, this),
-                      att.qos.m_deadline.period.to_ns() * 1e-6,
-                      mp_participant->get_resource_event())
     , deadline_duration_us_(m_att.qos.m_deadline.period.to_ns() * 1e-3)
     , deadline_missed_status_()
-    , lifespan_timer_(std::bind(&SubscriberImpl::lifespan_expired, this),
-                      m_att.qos.m_lifespan.duration.to_ns() * 1e-6,
-                      mp_participant->get_resource_event())
     , lifespan_duration_us_(m_att.qos.m_lifespan.duration.to_ns() * 1e-3)
 {
+    deadline_timer_ = new TimedEvent(mp_participant->get_resource_event(),
+            [&](TimedEvent::EventCode code) -> bool
+            {
+                if (TimedEvent::EVENT_SUCCESS == code)
+                {
+                    return deadline_missed();
+                }
+
+                return false;
+            },
+            att.qos.m_deadline.period.to_ns() * 1e-6);
+
+    lifespan_timer_ = new TimedEvent(mp_participant->get_resource_event(),
+            [&](TimedEvent::EventCode code) -> bool
+            {
+                if (TimedEvent::EVENT_SUCCESS == code)
+                {
+                    return lifespan_expired();
+                }
+
+                return false;
+            },
+            att.qos.m_lifespan.duration.to_ns() * 1e-6);
 }
 
 SubscriberImpl::~SubscriberImpl()
 {
+    delete(lifespan_timer_);
+    delete(deadline_timer_);
+
     if(mp_reader != nullptr)
     {
         logInfo(SUBSCRIBER,this->getGuid().entityId << " in topic: "<<this->m_att.topic.topicName);
@@ -182,11 +203,11 @@ bool SubscriberImpl::updateAttributes(const SubscriberAttributes& att)
         {
             deadline_duration_us_ =
                     duration<double, std::ratio<1, 1000000>>(m_att.qos.m_deadline.period.to_ns() * 1e-3);
-            deadline_timer_.update_interval_millisec(m_att.qos.m_deadline.period.to_ns() * 1e-6);
+            deadline_timer_->update_interval_millisec(m_att.qos.m_deadline.period.to_ns() * 1e-6);
         }
         else
         {
-            deadline_timer_.cancel_timer();
+            deadline_timer_->cancel_timer();
         }
 
         // Lifespan
@@ -195,11 +216,11 @@ bool SubscriberImpl::updateAttributes(const SubscriberAttributes& att)
         {
             lifespan_duration_us_ =
                     std::chrono::duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
-            lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
+            lifespan_timer_->update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
         }
         else
         {
-            lifespan_timer_.cancel_timer();
+            lifespan_timer_->cancel_timer();
         }
     }
 
@@ -242,7 +263,11 @@ bool SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change_in)
         }
         else if (timer_owner_ == change_in->instanceHandle || timer_owner_ == InstanceHandle_t())
         {
-            deadline_timer_reschedule();
+            if(deadline_timer_reschedule())
+            {
+                deadline_timer_->cancel_timer();
+                deadline_timer_->restart_timer();
+            }
         }
     }
 
@@ -272,7 +297,7 @@ bool SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change_in)
             // The new change has been added at the begining of the the history
             // As the history is sorted by timestamp, this means that the new change has the smallest timestamp
             // We have to stop the timer as this will be the next change to expire
-            lifespan_timer_.cancel_timer();
+            lifespan_timer_->cancel_timer();
         }
     }
     else
@@ -284,8 +309,8 @@ bool SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change_in)
 
     // Update and restart the timer
     // If the timer is already running this will not have any effect
-    lifespan_timer_.update_interval_millisec(interval.count() * 1e-6);
-    lifespan_timer_.restart_timer();
+    lifespan_timer_->update_interval_millisec(interval.count() * 1e-6);
+    lifespan_timer_->restart_timer();
     return true;
 }
 
@@ -305,7 +330,7 @@ uint64_t SubscriberImpl::get_unread_count() const
     return mp_reader->get_unread_count();
 }
 
-void SubscriberImpl::deadline_timer_reschedule()
+bool SubscriberImpl::deadline_timer_reschedule()
 {
     assert(m_att.qos.m_deadline.period != c_TimeInfinite);
 
@@ -315,16 +340,14 @@ void SubscriberImpl::deadline_timer_reschedule()
     if (!m_history.get_next_deadline(timer_owner_, next_deadline_us))
     {
         logError(SUBSCRIBER, "Could not get the next deadline from the history");
-        return;
+        return false;
     }
     auto interval_ms = duration_cast<milliseconds>(next_deadline_us - steady_clock::now());
-
-    deadline_timer_.cancel_timer();
-    deadline_timer_.update_interval_millisec((double)interval_ms.count());
-    deadline_timer_.restart_timer();
+    deadline_timer_->update_interval_millisec((double)interval_ms.count());
+    return true;
 }
 
-void SubscriberImpl::deadline_missed()
+bool SubscriberImpl::deadline_missed()
 {
     assert(m_att.qos.m_deadline.period != c_TimeInfinite);
 
@@ -341,9 +364,9 @@ void SubscriberImpl::deadline_missed()
                 steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
     {
         logError(SUBSCRIBER, "Could not set next deadline in the history");
-        return;
+        return false;
     }
-    deadline_timer_reschedule();
+    return deadline_timer_reschedule();
 }
 
 
@@ -355,14 +378,14 @@ void SubscriberImpl::get_requested_deadline_missed_status(RequestedDeadlineMisse
     deadline_missed_status_.total_count_change = 0;
 }
 
-void SubscriberImpl::lifespan_expired()
+bool SubscriberImpl::lifespan_expired()
 {
     std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
 
     CacheChange_t* earliest_change;
     if (!m_history.get_earliest_change(&earliest_change))
     {
-        return;
+        return false;
     }
 
     auto source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
@@ -372,9 +395,8 @@ void SubscriberImpl::lifespan_expired()
     if (now - source_timestamp < lifespan_duration_us_)
     {
         auto interval = source_timestamp - now + lifespan_duration_us_;
-        lifespan_timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
-        lifespan_timer_.restart_timer();
-        return;
+        lifespan_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+        return true;
     }
 
     // The earliest change has expired
@@ -383,7 +405,7 @@ void SubscriberImpl::lifespan_expired()
     // Set the timer for the next change if there is one
     if (!m_history.get_earliest_change(&earliest_change))
     {
-        return;
+        return false;
     }
 
     // Calculate when the next change is due to expire and restart
@@ -393,8 +415,8 @@ void SubscriberImpl::lifespan_expired()
 
     assert(interval.count() > 0);
 
-    lifespan_timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
-    lifespan_timer_.restart_timer();
+    lifespan_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+    return true;
 }
 
 } /* namespace fastrtps */

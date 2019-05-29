@@ -21,7 +21,7 @@
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h>
+#include <fastrtps/rtps/resources/TimedEvent.h>
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/log/Log.h>
@@ -49,7 +49,7 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
     , plugin_security_attributes_(0UL)
 #endif
     , isAlive(false)
-    , mp_leaseDurationTimer(nullptr)
+    , lease_duration_event(nullptr)
     , m_readers(allocation.readers)
     , m_writers(allocation.writers)
     {
@@ -76,7 +76,7 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
     , isAlive(pdata.isAlive)
     , m_properties(pdata.m_properties)
     , m_userData(pdata.m_userData)
-    , mp_leaseDurationTimer(nullptr)
+    , lease_duration_event(nullptr)
     {
     }
 
@@ -94,9 +94,9 @@ ParticipantProxyData::~ParticipantProxyData()
         delete it;
     }
 
-    if (mp_leaseDurationTimer != nullptr)
+    if (lease_duration_event != nullptr)
     {
-        delete mp_leaseDurationTimer;
+        delete lease_duration_event;
     }
 }
 
@@ -434,11 +434,11 @@ bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
     security_attributes_ = pdata.security_attributes_;
     plugin_security_attributes_ = pdata.plugin_security_attributes_;
 #endif
-    if (this->mp_leaseDurationTimer != nullptr)
+    if (this->lease_duration_event != nullptr)
     {
-        mp_leaseDurationTimer->cancel_timer();
-        mp_leaseDurationTimer->update_interval(m_leaseDuration);
-        mp_leaseDurationTimer->restart_timer();
+        lease_duration_event->cancel_timer();
+        lease_duration_event->update_interval(m_leaseDuration);
+        lease_duration_event->restart_timer();
     }
     return true;
 }

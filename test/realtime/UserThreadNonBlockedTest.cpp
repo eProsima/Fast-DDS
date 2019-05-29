@@ -223,9 +223,9 @@ TEST_F(UserThreadNonBlockedTest, write_sample_reliable)
 
     eprosima::fastrtps::tmutex_stop_recording();
 
-    ASSERT_EQ(5, eprosima::fastrtps::tmutex_get_num_mutexes());
-    ASSERT_EQ(3, eprosima::fastrtps::tmutex_get_num_lock_type());
-    ASSERT_EQ(2, eprosima::fastrtps::tmutex_get_num_timedlock_type());
+    ASSERT_EQ(4, eprosima::fastrtps::tmutex_get_num_mutexes());
+    ASSERT_EQ(1, eprosima::fastrtps::tmutex_get_num_lock_type());
+    ASSERT_EQ(3, eprosima::fastrtps::tmutex_get_num_timedlock_type());
 
     for(size_t count = 0; count < 2; ++count)
     {

@@ -21,7 +21,6 @@
 #include <algorithm>
 #include <mutex>
 #include <set>
-#include <memory>
 #include <atomic>
 
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
@@ -42,7 +41,7 @@ namespace fastrtps {
 namespace rtps {
 
 class StatefulWriter;
-class NackSupressionDuration;
+class TimedEvent;
 
 /**
  * ReaderProxy class that helps to keep the state of a specific Reader with respect to the RTPSWriter.
@@ -90,6 +89,11 @@ public:
     void add_change(
             const ChangeForReader_t& change,
             bool restart_nack_supression);
+
+    void add_change(
+            const ChangeForReader_t& change,
+            bool restart_nack_supression,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     /**
      * Check if there are changes pending for this reader.
@@ -339,7 +343,7 @@ private:
     //!Set of the changes and its state.
     ResourceLimitedVector<ChangeForReader_t, std::true_type> changes_for_reader_;
     //! Timed Event to manage the delay to mark a change as UNACKED after sending it.
-    std::shared_ptr<NackSupressionDuration> nack_supression_event_;
+    TimedEvent* nack_supression_event_;
     //! Are timed events enabled?
     std::atomic_bool timers_enabled_;
     //! Last ack/nack count
@@ -373,6 +377,9 @@ private:
     bool requested_fragment_set(
             const SequenceNumber_t& seq_num,
             const FragmentNumberSet_t& frag_set);
+
+    void add_change(
+            const ChangeForReader_t& change);
 
     /**
      * @brief Find a change with the specified sequence number.

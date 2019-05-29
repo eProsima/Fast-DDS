@@ -107,7 +107,7 @@ TCPTransportInterface::TCPTransportInterface(int32_t transport_kind)
 #if TLS_FOUND
     , ssl_context_(asio::ssl::context::sslv23)
 #endif
-    , keep_alive_event_(nullptr)
+    , keep_alive_event_(io_service_timers_)
 {
 }
 
@@ -120,13 +120,10 @@ void TCPTransportInterface::clean()
     assert(receiver_resources_.size() == 0);
     alive_.store(false);
 
-    if(keep_alive_event_ != nullptr)
-    {
-        delete keep_alive_event_;
-        io_service_timers_.stop();
-        io_service_timers_thread_->join();
-        io_service_timers_thread_ = nullptr;
-    }
+    keep_alive_event_.cancel();
+    io_service_timers_.stop();
+    io_service_timers_thread_->join();
+    io_service_timers_thread_ = nullptr;
 
     {
         std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);

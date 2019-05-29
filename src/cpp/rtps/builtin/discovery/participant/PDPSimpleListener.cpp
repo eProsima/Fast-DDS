@@ -19,14 +19,13 @@
 
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimpleListener.h>
 
-#include <fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h>
-
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include "../../../participant/RTPSParticipantImpl.h"
 
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 
+#include <fastrtps/rtps/resources/TimedEvent.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
@@ -116,8 +115,8 @@ void PDPSimpleListener::onNewCacheChangeAdded(
                 {
                     pdata->copy(temp_participant_data_);
                     pdata->isAlive = true;
-                    pdata->mp_leaseDurationTimer->update_interval(pdata->m_leaseDuration);
-                    pdata->mp_leaseDurationTimer->restart_timer();
+                    pdata->lease_duration_event->update_interval(pdata->m_leaseDuration);
+                    pdata->lease_duration_event->restart_timer();
                     lock.unlock();
 
                     parent_pdp_->announceParticipantState(false);

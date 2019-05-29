@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef TIMEDEVENT_H_
-#define TIMEDEVENT_H_
+#ifndef _RTPS_RESOURCES_TIMEDEVENT_H_
+#define _RTPS_RESOURCES_TIMEDEVENT_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "../common/Time_t.h"
@@ -110,5 +110,7 @@ class TimedEvent
 }
 } /* namespace rtps */
 } /* namespace eprosima */
+
 #endif
-#endif
+
+#endif //_RTPS_RESOURCES_TIMEDEVENT_H_

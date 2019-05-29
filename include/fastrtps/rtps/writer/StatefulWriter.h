@@ -32,8 +32,7 @@ namespace fastrtps {
 namespace rtps {
 
 class ReaderProxy;
-class NackResponseDelay;
-class TimedCallback;
+class TimedEvent;
 
 /**
  * Class StatefulWriter, specialization of RTPSWriter that maintains information of each matched Reader.
@@ -59,8 +58,16 @@ protected:
             WriterListener* listen = nullptr);
 
 private:
+
     //!Timed Event to manage the periodic HB to the Reader.
-    PeriodicHeartbeat* mp_periodicHB;
+    TimedEvent* periodic_hb_event_;
+
+    //! Timed Event to manage the Acknack response delay.
+    TimedEvent* nack_response_event_;
+
+    //! A timed event to mark samples as acknowledget (used only if disable positive ACKs QoS is enabled)
+    TimedEvent* ack_event_;
+
     //!Count of the sent heartbeats.
     Count_t m_heartbeatCount;
     //!WriterTimes
@@ -83,8 +90,6 @@ private:
     bool all_acked_;
     std::condition_variable_any may_remove_change_cond_;
     unsigned int may_remove_change_;
-    //! Timed Event to manage the Acknack response delay.
-    NackResponseDelay* nack_response_event_;
 
 public:
 
@@ -95,7 +100,7 @@ public:
      */
     void unsent_change_added_to_history(
             CacheChange_t* p,
-            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time) override;
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
 
     /**
      * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
@@ -274,7 +279,7 @@ private:
      * @brief A method called when the ack timer expires
      * @details Only used if disable positive ACKs QoS is enabled
      */
-    void ack_timer_expired();
+    bool ack_timer_expired();
 
     //! True to disable piggyback heartbeats
     bool disable_heartbeat_piggyback_;
@@ -282,8 +287,6 @@ private:
     bool disable_positive_acks_;
     //! Keep duration for disable positive ACKs QoS, in microseconds
     std::chrono::duration<double, std::ratio<1, 1000000>> keep_duration_us_;
-    //! A timed event to mark samples as acknowledget (used only if disable positive ACKs QoS is enabled)
-    TimedCallback* ack_timer_;
     //! Last acknowledged cache change (only used if using disable positive ACKs QoS)
     SequenceNumber_t last_sequence_number_;
 

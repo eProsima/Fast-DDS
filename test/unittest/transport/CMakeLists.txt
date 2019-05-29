@@ -102,7 +102,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPAcceptorBasic.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/RTCPMessageManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/timedevent/TCPKeepAliveEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
@@ -142,7 +141,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPAcceptorBasic.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/RTCPMessageManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/timedevent/TCPKeepAliveEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp

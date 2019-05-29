@@ -43,6 +43,8 @@ class StatefulReader : public RTPSReader
 
         MOCK_METHOD1(matched_writer_remove, bool(const GUID_t&));
 
+        MOCK_METHOD1(liveliness_expired, bool(const GUID_t&));
+
         // In real class, inherited from Endpoint base class.
         inline const GUID_t& getGuid() const { return guid_; };
 
@@ -50,14 +52,12 @@ class StatefulReader : public RTPSReader
 
         void send_acknack(
                 const SequenceNumberSet_t& /*sns*/,
-                RTPSMessageGroup_t& /*buffer*/,
                 const RTPSMessageSenderInterface& /*sender*/,
                 bool /*is_final*/)
         {}
 
         void send_acknack(
                 const WriterProxy* /*writer*/,
-                RTPSMessageGroup_t& /*buffer*/,
                 const RTPSMessageSenderInterface& /*sender*/,
                 bool /*heartbeat_was_final*/)
         {}

@@ -46,6 +46,8 @@ class StatefulWriter : public RTPSWriter
 
         MOCK_METHOD1(unsent_change_added_to_history_mock, void(CacheChange_t*));
 
+        MOCK_METHOD1(perform_nack_supression, void(const GUID_t&));
+
         RTPSParticipantImpl* getRTPSParticipant() { return participant_; }
 
         SequenceNumber_t get_seq_num_min() { return SequenceNumber_t(0, 0); }

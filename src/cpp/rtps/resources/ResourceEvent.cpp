@@ -113,7 +113,7 @@ void ResourceEvent::unregister_timer(TimedEventImpl* event)
         curr->next(nullptr);
         curr->go_cancel();
         curr->update();
-        curr->terminate();
+        curr->update();
     }
 }
 
