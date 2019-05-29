@@ -21,9 +21,10 @@
 #define RESOURCEEVENT_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include "../../utils/TimedConditionVariable.hpp"
+
 #include <thread>
 #include <mutex>
-#include <condition_variable>
 #include <atomic>
 #include <vector>
 #include <asio.hpp>
@@ -74,7 +75,7 @@ class ResourceEvent
 
         std::timed_mutex mutex_;
 
-        std::condition_variable_any cv_;
+        TimedConditionVariable cv_;
 
         bool notified_;
 

@@ -52,7 +52,6 @@ ResourceEvent::~ResourceEvent()
     stop_ = true,
     io_service_.stop();
     thread_.join();
-
 }
 
 void ResourceEvent::register_timer(TimedEventImpl* event)
@@ -128,12 +127,11 @@ void ResourceEvent::notify(const std::chrono::steady_clock::time_point& timeout)
 {
     std::unique_lock<std::timed_mutex> lock(mutex_, std::defer_lock);
 
-    if(lock.try_lock_until(timeout))
+    if (lock.try_lock_until(timeout))
     {
         notified_ = true;
+        cv_.notify_one();
     }
-
-    cv_.notify_one();
 }
 
 void ResourceEvent::event()
@@ -157,7 +155,7 @@ void ResourceEvent::run_io_service()
         allow_to_delete_ = true;
         cv_.notify_one();
 
-        if (cv_.wait_for(lock, std::chrono::milliseconds(1), [&]()
+        if (cv_.wait_for(lock, std::chrono::nanoseconds(1000000), [&]()
             {
                 return notified_;
             }))
