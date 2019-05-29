@@ -21,84 +21,246 @@
 using namespace eprosima::fastrtps::rtps;
 using namespace ::testing;
 
-TEST(ReaderHistoryTests, AddChange)
+class ReaderHistoryTests : public Test
 {
+protected:
     HistoryAttributes history_attr;
-    ReaderHistory* history = new ReaderHistory(history_attr);
-
+    ReaderHistory* history;
     StatefulReader readerMock;
     std::recursive_timed_mutex mutex;
-    history->set_reader(&readerMock, &mutex);
+
+    ReaderHistoryTests() {}
+
+    virtual ~ReaderHistoryTests() {}
+
+    virtual void SetUp()
+    {
+        history_attr.memoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
+        history_attr.payloadMaxSize = 4;
+        history_attr.initialReservedCaches = 10;
+        history_attr.maximumReservedCaches = 20;
+
+        history = new ReaderHistory(history_attr);
+        history->set_reader(&readerMock, &mutex);
+    }
+
+    virtual void TearDown()
+    {
+        delete history;
+    }
+
+    void insert_cache_changes(int num_writers, int num_sequence_numbers)
+    {
+        int t=1;
+
+        for(int i=1; i<=num_writers; i++)
+        {
+            GUID_t writer_guid = GUID_t(GuidPrefix_t::unknown(), i);
+
+            for(int j=1; j<=num_sequence_numbers; j++)
+            {
+                CacheChange_t* ch = new CacheChange_t();
+                ch->writerGUID = writer_guid;
+                ch->sequenceNumber = SequenceNumber_t(0,j);;
+                ch->sourceTimestamp = Time_t(0,t);
+                t++;
+
+                history->add_change(ch);
+            }
+        }
+    }
+
+    void insert_alternate_cache_changes(int num_writers, int num_sequence_numbers)
+    {
+        int t=1;
+
+        for(int i=1; i<=num_sequence_numbers; i++)
+        {
+            SequenceNumber_t seq_number(0,i);
+
+            for(int j=1; j<=num_writers; j++)
+            {
+                CacheChange_t* ch = new CacheChange_t();
+                ch->writerGUID = GUID_t(GuidPrefix_t::unknown(), (uint32_t)j);
+                ch->sequenceNumber = seq_number;
+                ch->sourceTimestamp = Time_t(0,t);
+                t++;
+
+                history->add_change(ch);
+            }
+        }
+    }
+};
+
+TEST_F(ReaderHistoryTests, FailIfNoReaderOrMutex)
+{
+    EXPECT_CALL(readerMock, change_removed_by_history(_)).Times(0);
 
     CacheChange_t* ch = new CacheChange_t();
-    ch->writerGUID = GUID_t(GuidPrefix_t::unknown(), 1U);
-
-    history->add_change(ch);
-
-    ASSERT_TRUE(history->getHistorySize() == 1);
-}
-
-TEST(ReaderHistoryTests, RemoveChange)
-{
-    HistoryAttributes history_attr;
-    ReaderHistory* history = new ReaderHistory(history_attr);
-
-    StatefulReader readerMock;
-    EXPECT_CALL(readerMock, change_removed_by_history(_)).Times(1).
-            WillOnce(Return(false));
-
-    std::recursive_timed_mutex mutex;
-    history->set_reader(&readerMock, &mutex);
-
-    CacheChange_t* ch = new CacheChange_t();
-    ch->writerGUID = GUID_t(GuidPrefix_t::unknown(), 1U);
-
-    history->add_change(ch);
-    history->remove_change(ch);
-
-    ASSERT_TRUE(history->getHistorySize() == 0);
-}
-
-TEST(ReaderHistoryTests, GetRepeatedSequenceNumber)
-{
-    HistoryAttributes history_attr;
-    ReaderHistory* history = new ReaderHistory(history_attr);
-
-    StatefulReader readerMock;
-//    EXPECT_CALL(readerMock, change_removed_by_history(_)).Times(1).
-//            WillOnce(Return(false));
-
-    std::recursive_timed_mutex mutex;
-    history->set_reader(&readerMock, &mutex);
-
     GUID_t w1(GuidPrefix_t::unknown(), 1U);
-    GUID_t w2(GuidPrefix_t::unknown(), 2U);
+    ch->writerGUID = w1;
 
-    SequenceNumber_t s1(0,1);
-    SequenceNumber_t s2(0,2);
+    ASSERT_TRUE(history->add_change(ch));
 
-    CacheChange_t* w1_ch1 = new CacheChange_t();
-    w1_ch1->writerGUID = w1;
-    w1_ch1->sequenceNumber = s1;
-    w1_ch1->sourceTimestamp = Time_t(0,1);
+    history->set_reader(nullptr, &mutex);
+    ASSERT_FALSE(history->add_change(ch));
+    ASSERT_FALSE(history->remove_change(ch));
+    ASSERT_FALSE(history->remove_changes_with_guid(w1));
 
-    CacheChange_t* w1_ch2 = new CacheChange_t();
-    w1_ch2->writerGUID = w1;
-    w1_ch2->sequenceNumber = s2;
-    w1_ch2->sourceTimestamp = Time_t(0,2);
+    history->set_reader(&readerMock, nullptr);
+    ASSERT_FALSE(history->add_change(ch));
+    ASSERT_FALSE(history->remove_change(ch));
+    ASSERT_FALSE(history->remove_changes_with_guid(w1));
 
-    // Same sequence number and later timestamp
-    CacheChange_t* w2_ch1 = new CacheChange_t();
-    w2_ch1->writerGUID = w2;
-    w2_ch1->sequenceNumber = s1;
-    w2_ch1->sourceTimestamp = Time_t(0,3);
+    history->set_reader(nullptr, nullptr);
+    ASSERT_FALSE(history->add_change(ch));
+    ASSERT_FALSE(history->remove_change(ch));
+    ASSERT_FALSE(history->remove_changes_with_guid(w1));
+}
 
-    history->add_change(w1_ch1);
-    history->add_change(w1_ch2);
-    history->add_change(w2_ch1);
+TEST_F(ReaderHistoryTests, AddAndRemoveChanges)
+{
+    int num_changes = history_attr.initialReservedCaches;
 
-    CacheChange_t** change = nullptr;
-    ASSERT_TRUE(history->get_change(s1, w2, change));
+    EXPECT_CALL(readerMock, change_removed_by_history(_)).Times(num_changes).
+            WillRepeatedly(Return(true));
+
+    CacheChange_t* ch = new CacheChange_t();
+    ch->writerGUID = GUID_t(GuidPrefix_t::unknown(), 1U);
+
+    for(int i=0; i<num_changes; i++)
+    {
+        history->add_change(ch);
+        ASSERT_EQ(history->getHistorySize(), i+1);
+    }
+
+    for(int i=0; i<num_changes; i++)
+    {
+        history->remove_change(ch);
+        ASSERT_EQ(history->getHistorySize(), num_changes-i-1);
+    }
+}
+
+TEST_F(ReaderHistoryTests, RemoveEmptyHistory)
+{
+    EXPECT_CALL(readerMock, change_removed_by_history(_)).Times(0);
+
+    CacheChange_t* ch = new CacheChange_t();
+    ch->writerGUID = GUID_t(GuidPrefix_t::unknown(), 1U);
+
+    ASSERT_FALSE(history->remove_change(ch));
+}
+
+TEST_F(ReaderHistoryTests, RemoveNullPointerCacheChange)
+{
+    EXPECT_CALL(readerMock, change_removed_by_history(_)).Times(0);
+
+    CacheChange_t* ch = nullptr;
+    ASSERT_FALSE(history->remove_change(ch));
+}
+
+TEST_F(ReaderHistoryTests, CacheChangePayloadMaxSize)
+{
+    int ch_payload_length = history_attr.payloadMaxSize + 1;
+    CacheChange_t* ch = new CacheChange_t();
+
+    ch->serializedPayload.length = ch_payload_length;
+    ch->writerGUID = GUID_t(GuidPrefix_t::unknown(), 1U);
+
+    ASSERT_FALSE(history->add_change(ch));
+    ASSERT_EQ(history->getHistorySize(), 0);
+}
+
+TEST_F(ReaderHistoryTests, GetChange)
+{
+    int num_writers = 2;
+    int num_sequence_numbers = 2;
+    int num_changes = num_writers * num_sequence_numbers;
+
+    insert_cache_changes(num_writers, num_sequence_numbers);
+
+    ASSERT_EQ(history->getHistorySize(), num_changes);
+
+    for(int i=1; i<=num_writers; i++)
+    {
+        GUID_t writer_guid = GUID_t(GuidPrefix_t::unknown(), i);
+
+        for(int j=1; j<=num_sequence_numbers; j++)
+        {
+            SequenceNumber_t seq_number = SequenceNumber_t(0,j);
+
+            CacheChange_t* change = new CacheChange_t();
+            ASSERT_TRUE(history->get_change(seq_number, writer_guid, &change));
+            ASSERT_EQ(change->writerGUID, writer_guid);
+            ASSERT_EQ(change->sequenceNumber, seq_number);
+        }
+    }
+}
+
+TEST_F(ReaderHistoryTests, GetChangeAlternatesSequences)
+{
+    int num_writers = 2;
+    int num_sequence_numbers = 2;
+    int num_changes = num_writers * num_sequence_numbers;
+
+    insert_alternate_cache_changes(num_writers, num_sequence_numbers);
+
+    ASSERT_EQ(history->getHistorySize(), num_changes);
+
+    for(int i=1; i<=num_writers; i++)
+    {
+        GUID_t writer_guid = GUID_t(GuidPrefix_t::unknown(), i);
+
+        for(int j=1; j<=num_sequence_numbers; j++)
+        {
+            SequenceNumber_t seq_number = SequenceNumber_t(0,j);
+
+            CacheChange_t* change = new CacheChange_t();
+            ASSERT_TRUE(history->get_change(seq_number, writer_guid, &change));
+            ASSERT_EQ(change->writerGUID, writer_guid);
+            ASSERT_EQ(change->sequenceNumber, seq_number);
+        }
+    }
+}
+
+TEST_F(ReaderHistoryTests, GetMinCacheFromwriter)
+{
+    insert_alternate_cache_changes(2, 2);
+
+    ASSERT_EQ(history->getHistorySize(), 4);
+
+    CacheChange_t* change = new CacheChange_t();
+    GUID_t w1 = GUID_t(GuidPrefix_t::unknown(), 1U);
+    ASSERT_TRUE(history->get_min_change_from(&change, w1));
+    ASSERT_EQ(change->writerGUID, GUID_t(GuidPrefix_t::unknown(), 1U));
+    ASSERT_EQ(change->sequenceNumber, SequenceNumber_t(0,1));
+
+    GUID_t w2 = GUID_t(GuidPrefix_t::unknown(), 2U);
+    ASSERT_TRUE(history->get_min_change_from(&change, w2));
+    ASSERT_EQ(change->writerGUID, GUID_t(GuidPrefix_t::unknown(), 2U));
+    ASSERT_EQ(change->sequenceNumber, SequenceNumber_t(0,1));
+}
+
+TEST_F(ReaderHistoryTests, GetMinCacheFromwriterReturnsFalse)
+{
+    GUID_t w1(GuidPrefix_t::unknown(), 1U);
+
+    CacheChange_t* change = new CacheChange_t();
+    ASSERT_FALSE(history->get_min_change_from(&change, w1));
+}
+
+TEST_F(ReaderHistoryTests, RemoveChangesWithGUID)
+{
+    insert_alternate_cache_changes(3, 2);
+
+    EXPECT_CALL(readerMock, change_removed_by_history(_)).Times(2).
+            WillRepeatedly(Return(true));
+
+    ASSERT_EQ(history->getHistorySize(), 6);
+    GUID_t w1 = GUID_t(GuidPrefix_t::unknown(), 1U);
+    ASSERT_TRUE(history->remove_changes_with_guid(w1));
+
+    ASSERT_EQ(history->getHistorySize(), 4);
 }
 
 int main(int argc, char **argv)
