@@ -47,13 +47,19 @@ class PubSubWriterReader
     {
         public:
 
-            ParticipantListener(PubSubWriterReader &wreader) : wreader_(wreader) {}
+            ParticipantListener(PubSubWriterReader &wreader) 
+                : wreader_(wreader) 
+            {
+            }
 
-            ~ParticipantListener() {}
+            ~ParticipantListener() 
+            {
+            }
 
 #if HAVE_SECURITY
-            void onParticipantAuthentication(eprosima::fastrtps::Participant*,
-                eprosima::fastrtps::rtps::ParticipantAuthenticationInfo&& info) override
+            void onParticipantAuthentication(
+                    eprosima::fastrtps::Participant*,
+                    eprosima::fastrtps::rtps::ParticipantAuthenticationInfo&& info) override
             {
                 if(info.status == eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT)
                 {
@@ -71,11 +77,24 @@ class PubSubWriterReader
             {
                 (void)participant;
 
-                if (info.status != eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+                switch (info.status)
                 {
-                    return;
+                    case eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT:
+                        info_add(discovered_participants_, info.info.m_guid);
+                        break;
+
+                    case eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT:
+                        info_remove(discovered_participants_, info.info.m_guid);
+                        break;
+
+                    case eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT:
+                        // TODO: Should we warn here?
+                        info_remove(discovered_participants_, info.info.m_guid);
+                        break;
+
+                    default:
+                        break;
                 }
-                discovered_participants_.push_back(info.info.m_guid);
             }
 
             void onSubscriberDiscovery(
@@ -84,11 +103,19 @@ class PubSubWriterReader
             {
                 (void)participant;
 
-                if (info.status != eprosima::fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERED_READER)
+                switch (info.status)
                 {
-                    return;
+                    case eprosima::fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERED_READER:
+                        info_add(discovered_subscribers_, info.info.guid());
+                        break;
+
+                    case eprosima::fastrtps::rtps::ReaderDiscoveryInfo::REMOVED_READER:
+                        info_remove(discovered_subscribers_, info.info.guid());
+                        break;
+
+                    default:
+                        break;
                 }
-                discovered_subscribers_.push_back(info.info.guid());
             }
 
             void onPublisherDiscovery(
@@ -97,21 +124,65 @@ class PubSubWriterReader
             {
                 (void)participant;
 
-                if (info.status != eprosima::fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER)
+                switch(info.status)
                 {
-                    return;
+                    case eprosima::fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER:
+                        info_add(discovered_publishers_, info.info.guid());
+                        break;
+
+                    case eprosima::fastrtps::rtps::WriterDiscoveryInfo::REMOVED_WRITER:
+                        info_remove(discovered_publishers_, info.info.guid());
+                        break;
+
+                    default:
+                        break;
                 }
-                discovered_publishers_.push_back(info.info.guid());
             }
 
-            //! The discovered participants excluding the participant this listener is listening to
-            std::vector<eprosima::fastrtps::rtps::GUID_t> discovered_participants_;
-            //! Number of subscribers discovered
-            std::vector<eprosima::fastrtps::rtps::GUID_t> discovered_subscribers_;
-            //! Number of publishers discovered
-            std::vector<eprosima::fastrtps::rtps::GUID_t> discovered_publishers_;
+            size_t get_num_discovered_participants() const
+            {
+                std::lock_guard<std::mutex> guard(info_mutex_);
+                return discovered_participants_.size();
+            }
+
+            size_t get_num_discovered_publishers() const
+            {
+                std::lock_guard<std::mutex> guard(info_mutex_);
+                return discovered_publishers_.size();
+            }
+
+            size_t get_num_discovered_subscribers() const
+            {
+                std::lock_guard<std::mutex> guard(info_mutex_);
+                return discovered_subscribers_.size();
+            }
 
         private:
+
+            //! Mutex guarding all info collections
+            mutable std::mutex info_mutex_;
+            //! The discovered participants excluding the participant this listener is listening to
+            std::set<eprosima::fastrtps::rtps::GUID_t> discovered_participants_;
+            //! Number of subscribers discovered
+            std::set<eprosima::fastrtps::rtps::GUID_t> discovered_subscribers_;
+            //! Number of publishers discovered
+            std::set<eprosima::fastrtps::rtps::GUID_t> discovered_publishers_;
+
+            void info_add(
+                    std::set<eprosima::fastrtps::rtps::GUID_t>& collection,
+                    const eprosima::fastrtps::rtps::GUID_t& item)
+            {
+                std::lock_guard<std::mutex> guard(info_mutex_);
+                collection.insert(item);
+            }
+
+            void info_remove(
+                    std::set<eprosima::fastrtps::rtps::GUID_t>& collection,
+                    const eprosima::fastrtps::rtps::GUID_t& item)
+            {
+                std::lock_guard<std::mutex> guard(info_mutex_);
+                collection.erase(item);
+            }
 
             //! Deleted assignment operator
             ParticipantListener& operator=(const ParticipantListener&) = delete;
@@ -453,17 +524,17 @@ class PubSubWriterReader
 
     size_t get_num_discovered_participants() const
     {
-        return participant_listener_.discovered_participants_.size();
+        return participant_listener_.get_num_discovered_participants();
     }
 
     size_t get_num_discovered_publishers() const
     {
-        return participant_listener_.discovered_publishers_.size();
+        return participant_listener_.get_num_discovered_publishers();
     }
 
     size_t get_num_discovered_subscribers() const
     {
-        return participant_listener_.discovered_subscribers_.size();
+        return participant_listener_.get_num_discovered_subscribers();
     }
 
     void print_discovered_participants()
@@ -510,7 +581,7 @@ class PubSubWriterReader
         std::sort(matched_writers_.begin(),
                   matched_writers_.end());
 
-        std::cout << "Participant " << participant_->getGuid().guidPrefix << " matched the following readers and writers:" << std::endl;
+        std::cout << "Participant " << participant_->getGuid().guidPrefix << " matched the following writers:" << std::endl;
         for (const auto& p : matched_writers_)
         {
             std::cout << p << std::endl;
@@ -523,7 +594,7 @@ class PubSubWriterReader
         std::sort(matched_readers_.begin(),
                   matched_readers_.end());
 
-        std::cout << "Participant " << participant_->getGuid().guidPrefix << " matched the following readers and writers:" << std::endl;
+        std::cout << "Participant " << participant_->getGuid().guidPrefix << " matched the following readers:" << std::endl;
         for (const auto& p : matched_readers_)
         {
             std::cout << p << std::endl;
@@ -533,13 +604,13 @@ class PubSubWriterReader
 
     size_t get_publication_matched()
     {
-        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+        std::lock_guard<std::mutex> guard(mutexDiscovery_);
         return matched_writers_.size();
     }
 
     size_t get_subscription_matched()
     {
-        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+        std::lock_guard<std::mutex> guard(mutexDiscovery_);
         return matched_readers_.size();
     }
 
@@ -575,29 +646,29 @@ class PubSubWriterReader
 
     void publication_matched(eprosima::fastrtps::rtps::MatchingInfo& info)
     {
-        std::unique_lock<std::mutex> lock(mutexDiscovery_);
-        matched_writers_.push_back(info.remoteEndpointGuid);
+        std::lock_guard<std::mutex> guard(mutexDiscovery_);
+        matched_writers_.insert(info.remoteEndpointGuid);
         cvDiscovery_.notify_one();
     }
 
     void publication_unmatched(eprosima::fastrtps::rtps::MatchingInfo& info)
     {
-        std::unique_lock<std::mutex> lock(mutexDiscovery_);
-        unmatched_writers_.push_back(info.remoteEndpointGuid);
+        std::lock_guard<std::mutex> guard(mutexDiscovery_);
+        matched_writers_.erase(info.remoteEndpointGuid);
         cvDiscovery_.notify_one();
     }
 
     void subscription_matched(eprosima::fastrtps::rtps::MatchingInfo& info)
     {
-        std::unique_lock<std::mutex> lock(mutexDiscovery_);
-        matched_readers_.push_back(info.remoteEndpointGuid);
+        std::lock_guard<std::mutex> guard(mutexDiscovery_);
+        matched_readers_.insert(info.remoteEndpointGuid);
         cvDiscovery_.notify_one();
     }
 
     void subscription_unmatched(eprosima::fastrtps::rtps::MatchingInfo& info)
     {
-        std::unique_lock<std::mutex> lock(mutexDiscovery_);
-        unmatched_readers_.push_back(info.remoteEndpointGuid);
+        std::lock_guard<std::mutex> guard(mutexDiscovery_);
+        matched_readers_.erase(info.remoteEndpointGuid);
         cvDiscovery_.notify_one();
     }
 
@@ -637,10 +708,8 @@ class PubSubWriterReader
     std::condition_variable cv_;
     std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
-    std::vector<eprosima::fastrtps::rtps::GUID_t> matched_writers_;
-    std::vector<eprosima::fastrtps::rtps::GUID_t> matched_readers_;
-    std::vector<eprosima::fastrtps::rtps::GUID_t> unmatched_writers_;
-    std::vector<eprosima::fastrtps::rtps::GUID_t> unmatched_readers_;
+    std::set<eprosima::fastrtps::rtps::GUID_t> matched_writers_;
+    std::set<eprosima::fastrtps::rtps::GUID_t> matched_readers_;
     std::atomic<bool> receiving_;
     type_support type_;
 	eprosima::fastrtps::rtps::SequenceNumber_t last_seq;
