@@ -513,11 +513,11 @@ BLACKBOXTEST(Discovery, TwentyParticipants)
 
         for (auto& ps : pubsub)
         {
-            if ((ps->get_num_discovered_participants() != n_participants - 1) ||
-                (ps->get_num_discovered_publishers() != n_participants) ||
-                (ps->get_num_discovered_subscribers() != n_participants) ||
-                (ps->get_publication_matched() != n_participants) ||
-                (ps->get_subscription_matched() != n_participants))
+            if ((ps->get_num_discovered_participants() < n_participants - 1) ||
+                (ps->get_num_discovered_publishers() < n_participants) ||
+                (ps->get_num_discovered_subscribers() < n_participants) ||
+                (ps->get_publication_matched() < n_participants) ||
+                (ps->get_subscription_matched() < n_participants))
             {
                 all_discovered = false;
                 break;
@@ -569,11 +569,11 @@ BLACKBOXTEST(Discovery, TwentyParticipantsSeveralEndpoints)
 
         for (auto& ps : pubsub)
         {
-            if ((ps->get_num_discovered_participants() != n_participants - 1) ||
-                (ps->get_num_discovered_publishers() != n_total_endpoints) ||
-                (ps->get_num_discovered_subscribers() != n_total_endpoints) ||
-                (ps->get_publication_matched() != n_total_endpoints) ||
-                (ps->get_subscription_matched() != n_total_endpoints))
+            if ((ps->get_num_discovered_participants() < n_participants - 1) ||
+                (ps->get_num_discovered_publishers() < n_total_endpoints) ||
+                (ps->get_num_discovered_subscribers() < n_total_endpoints) ||
+                (ps->get_publication_matched() < n_total_endpoints) ||
+                (ps->get_subscription_matched() < n_total_endpoints))
             {
                 all_discovered = false;
                 break;
