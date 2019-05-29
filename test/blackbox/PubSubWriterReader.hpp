@@ -47,12 +47,12 @@ class PubSubWriterReader
     {
         public:
 
-            ParticipantListener(PubSubWriterReader &wreader) 
-                : wreader_(wreader) 
+            ParticipantListener(PubSubWriterReader &wreader)
+                : wreader_(wreader)
             {
             }
 
-            ~ParticipantListener() 
+            ~ParticipantListener()
             {
             }
 
@@ -195,11 +195,18 @@ class PubSubWriterReader
     {
         public:
 
-            PubListener(PubSubWriterReader &wreader) : wreader_(wreader){};
+            PubListener(PubSubWriterReader &wreader)
+                : wreader_(wreader)
+            {
+            }
 
-            ~PubListener(){};
+            ~PubListener()
+            {
+            }
 
-            void onPublicationMatched(eprosima::fastrtps::Publisher* /*pub*/, eprosima::fastrtps::rtps::MatchingInfo &info)
+            void onPublicationMatched(
+                    eprosima::fastrtps::Publisher* /*pub*/,
+                    eprosima::fastrtps::rtps::MatchingInfo& info)
             {
                 if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
                 {
@@ -222,9 +229,14 @@ class PubSubWriterReader
     class SubListener: public eprosima::fastrtps::SubscriberListener
     {
         public:
-            SubListener(PubSubWriterReader &wreader) : wreader_(wreader) {}
+            SubListener(PubSubWriterReader &wreader)
+                : wreader_(wreader)
+            {
+            }
 
-            ~SubListener(){}
+            ~SubListener()
+            {
+            }
 
             void onNewDataMessage(eprosima::fastrtps::Subscriber *sub)
             {
@@ -240,7 +252,9 @@ class PubSubWriterReader
                 }
             }
 
-            void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, eprosima::fastrtps::rtps::MatchingInfo& info)
+            void onSubscriptionMatched(
+                    eprosima::fastrtps::Subscriber* /*sub*/,
+                    eprosima::fastrtps::rtps::MatchingInfo& info)
             {
                 if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
                 {
@@ -268,18 +282,19 @@ class PubSubWriterReader
     typedef typename type_support::type type;
 
     PubSubWriterReader(const std::string &topic_name)
-        : participant_listener_(*this),
-          pub_listener_(*this),
-          sub_listener_(*this),
-          participant_(nullptr),
-          publisher_(nullptr),
-          subscriber_(nullptr),
-          initialized_(false),
-          receiving_(false),
-          current_received_count_(0),
-          number_samples_expected_(0)
+        : participant_listener_(*this)
+        , pub_listener_(*this)
+        , sub_listener_(*this)
+        , participant_(nullptr)
+        , publisher_(nullptr)
+        , subscriber_(nullptr)
+        , initialized_(false)
+        , receiving_(false)
+        , current_received_count_(0)
+        , number_samples_expected_(0)
 #if HAVE_SECURITY
-    , authorized_(0), unauthorized_(0)
+        , authorized_(0)
+        , unauthorized_(0)
 #endif
     {
         publisher_attr_.topic.topicDataType = type_.getName();
@@ -305,11 +320,6 @@ class PubSubWriterReader
         // By default, heartbeat period delay is 100 milliseconds.
         subscriber_attr_.times.heartbeatResponseDelay.seconds = 0;
         subscriber_attr_.times.heartbeatResponseDelay.nanosec = 100000000;
-    }
-
-    PubSubWriterReader(const PubSubWriterReader& other)
-        : PubSubWriterReader(other.topic_name_)
-    {
     }
 
     ~PubSubWriterReader()
@@ -377,7 +387,10 @@ class PubSubWriterReader
         return ret_val;
     }
 
-    bool isInitialized() const { return initialized_; }
+    bool isInitialized() const
+    { 
+        return initialized_; 
+    }
 
     void destroy()
     {
@@ -616,7 +629,9 @@ class PubSubWriterReader
 
     private:
 
-    void receive_one(eprosima::fastrtps::Subscriber* subscriber, bool& returnedValue)
+    void receive_one(
+            eprosima::fastrtps::Subscriber* subscriber,
+            bool& returnedValue)
     {
         returnedValue = false;
         type data;

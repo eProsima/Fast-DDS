@@ -491,19 +491,19 @@ BLACKBOXTEST(Discovery, TwentyParticipants)
     // Wait time for discovery
     constexpr unsigned int wait_ms = 20;
 
-    std::vector<PubSubWriterReader<HelloWorldType>> pubsub;
+    std::vector<PubSubWriterReader<HelloWorldType>*> pubsub;
     pubsub.reserve(n_participants);
 
     for (unsigned int i=0; i<n_participants; i++)
     {
-        pubsub.emplace_back(TEST_TOPIC_NAME);
+        pubsub.emplace_back(new PubSubWriterReader<HelloWorldType>(TEST_TOPIC_NAME));
     }
 
     // Initialization of all the participants
     for (auto& ps : pubsub)
     {
-        ps.init();
-        ASSERT_EQ(ps.isInitialized(), true);
+        ps->init();
+        ASSERT_EQ(ps->isInitialized(), true);
     }
 
     bool all_discovered = false;
@@ -513,11 +513,11 @@ BLACKBOXTEST(Discovery, TwentyParticipants)
 
         for (auto& ps : pubsub)
         {
-            if ((ps.get_num_discovered_participants() != n_participants - 1) ||
-                (ps.get_num_discovered_publishers() != n_participants) ||
-                (ps.get_num_discovered_subscribers() != n_participants) ||
-                (ps.get_publication_matched() != n_participants) ||
-                (ps.get_subscription_matched() != n_participants))
+            if ((ps->get_num_discovered_participants() != n_participants - 1) ||
+                (ps->get_num_discovered_publishers() != n_participants) ||
+                (ps->get_num_discovered_subscribers() != n_participants) ||
+                (ps->get_publication_matched() != n_participants) ||
+                (ps->get_subscription_matched() != n_participants))
             {
                 all_discovered = false;
                 break;
@@ -546,20 +546,20 @@ BLACKBOXTEST(Discovery, TwentyParticipantsSeveralEndpoints)
     // Wait time for discovery
     constexpr unsigned int wait_ms = 20;
 
-    std::vector<PubSubWriterReader<HelloWorldType>> pubsub;
+    std::vector<PubSubWriterReader<HelloWorldType>*> pubsub;
     pubsub.reserve(n_participants);
 
     for (unsigned int i = 0; i < n_participants; i++)
     {
-        pubsub.emplace_back(TEST_TOPIC_NAME);
+        pubsub.emplace_back(new PubSubWriterReader<HelloWorldType>(TEST_TOPIC_NAME));
     }
 
     // Initialization of all the participants
     for (auto& ps : pubsub)
     {
-        ps.init();
-        ASSERT_EQ(ps.isInitialized(), true);
-        ASSERT_TRUE(ps.create_additional_topics(n_topics - 1));
+        ps->init();
+        ASSERT_EQ(ps->isInitialized(), true);
+        ASSERT_TRUE(ps->create_additional_topics(n_topics - 1));
     }
 
     bool all_discovered = false;
@@ -569,11 +569,11 @@ BLACKBOXTEST(Discovery, TwentyParticipantsSeveralEndpoints)
 
         for (auto& ps : pubsub)
         {
-            if ((ps.get_num_discovered_participants() != n_participants - 1) ||
-                (ps.get_num_discovered_publishers() != n_total_endpoints) ||
-                (ps.get_num_discovered_subscribers() != n_total_endpoints) ||
-                (ps.get_publication_matched() != n_total_endpoints) ||
-                (ps.get_subscription_matched() != n_total_endpoints))
+            if ((ps->get_num_discovered_participants() != n_participants - 1) ||
+                (ps->get_num_discovered_publishers() != n_total_endpoints) ||
+                (ps->get_num_discovered_subscribers() != n_total_endpoints) ||
+                (ps->get_publication_matched() != n_total_endpoints) ||
+                (ps->get_subscription_matched() != n_total_endpoints))
             {
                 all_discovered = false;
                 break;
