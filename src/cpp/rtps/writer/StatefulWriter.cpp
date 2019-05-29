@@ -130,7 +130,7 @@ StatefulWriter::~StatefulWriter()
 
     AsyncWriterThread::removeWriter(*this);
 
-    if (disable_positive_acks)
+    if (disable_positive_acks_)
     {
         delete(ack_event_);
         ack_event_ = nullptr;
@@ -305,7 +305,7 @@ void StatefulWriter::unsent_change_added_to_history(
             auto interval = source_timestamp - now + keep_duration_us_;
             assert(interval.count() >= 0);
 
-            ack_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+            ack_event_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
             ack_event_->restart_timer(max_blocking_time);
         }
     }
@@ -1307,7 +1307,7 @@ bool StatefulWriter::ack_timer_expired()
                     getGuid(),
                     &change))
         {
-            return;
+            return false;
         }
 
         auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
