@@ -100,27 +100,36 @@ bool History::get_max_change(CacheChange_t** max_change)
     return false;
 }
 
-bool History::get_change(const SequenceNumber_t& seq, const GUID_t& guid,CacheChange_t** change)
+bool History::get_change(
+        const SequenceNumber_t& seq,
+        const GUID_t& guid,
+        CacheChange_t** change)
 {
 
-    if(mp_mutex == nullptr)
+    if (mp_mutex == nullptr)
     {
         logError(RTPS_HISTORY,"You need to create a RTPS Entity with this History before using it");
         return false;
     }
 
     std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
-    for(std::vector<CacheChange_t*>::iterator it = m_changes.begin();
-            it!=m_changes.end();++it)
+
+    for (std::vector<CacheChange_t*>::iterator it = m_changes.begin(); it != m_changes.end(); ++it)
     {
-        if((*it)->sequenceNumber == seq && (*it)->writerGUID == guid)
+        if ((*it)->writerGUID == guid)
         {
-            *change = *it;
-            return true;
+            if ((*it)->sequenceNumber == seq)
+            {
+                *change = *it;
+                return true;
+            }
+            else if((*it)->sequenceNumber > seq)
+            {
+                break;
+            }
         }
-        else if((*it)->sequenceNumber > seq)
-            break;
     }
+
     return false;
 }
 
