@@ -45,8 +45,9 @@ class TimedConditionVariable
         pthread_cond_init(&cv_, NULL);
     }
 
+    template<typename Mutex>
     void wait(
-            std::unique_lock<std::timed_mutex>& lock,
+            std::unique_lock<Mutex>& lock,
             std::function<bool()> predicate)
     {
         while (!predicate())
@@ -55,8 +56,9 @@ class TimedConditionVariable
         }
     }
 
+    template<typename Mutex>
     bool wait_for(
-            std::unique_lock<std::timed_mutex>& lock,
+            std::unique_lock<Mutex>& lock,
             const std::chrono::nanoseconds& max_blocking_time,
             std::function<bool()> predicate)
     {
@@ -76,9 +78,36 @@ class TimedConditionVariable
         return ret_value;
     }
 
+    template<typename Mutex>
+    bool wait_until(
+            std::unique_lock<Mutex>& lock,
+            const std::chrono::steady_clock::time_point& max_blocking_time,
+            std::function<bool()> predicate)
+    {
+        bool ret_value = true;
+        std::chrono::nanoseconds nsecs = max_blocking_time - std::chrono::steady_clock::now();
+        auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
+        nsecs -= secs;
+        struct timespec max_wait = {0, 0};
+        clock_gettime(CLOCK_REALTIME, &max_wait);
+        max_wait.tv_sec += secs.count();
+        max_wait.tv_nsec += nsecs.count();
+        while (ret_value && !(ret_value = predicate()))
+        {
+            ret_value = (pthread_cond_timedwait(&cv_, lock.mutex()->native_handle(), &max_wait) == 0);
+        }
+
+        return ret_value;
+    }
+
     void notify_one()
     {
         pthread_cond_signal(&cv_);
+    }
+
+    void notify_all()
+    {
+        pthread_cond_broadcast(&cv_);
     }
 
     private:

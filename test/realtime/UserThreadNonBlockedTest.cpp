@@ -481,8 +481,6 @@ TEST_F(UserThreadNonBlockedTest, take_sample_reliable)
     }
 }
 
-/* wait_for_unread_samples is not perfect with standard library because the wait_until of the condition variable
- * locks using a not timed lock
 TEST_F(UserThreadNonBlockedTest, wait_for_sample_besteffort)
 {
     publisher_attr_.qos.m_reliability.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
@@ -594,7 +592,6 @@ TEST_F(UserThreadNonBlockedTest, wait_for_sample_reliable)
         eprosima::fastrtps::tmutex_unlock_mutex(count);
     }
 }
-*/
 
 int main(int argc, char** argv)
 {

@@ -26,8 +26,7 @@
 #include "../common/SequenceNumber.h"
 #include "../common/Time_t.h"
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-
-#include <condition_variable>
+#include "../../utils/TimedConditionVariable.hpp"
 
 namespace eprosima {
 namespace fastrtps {
@@ -320,7 +319,7 @@ protected:
 
     uint64_t total_unread_ = 0;
 
-    std::condition_variable_any new_notification_cv_;
+    TimedConditionVariable new_notification_cv_;
 
 private:
 
