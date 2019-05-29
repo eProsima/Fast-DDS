@@ -127,11 +127,11 @@ void LivelinessSubscriber::SubListener::on_liveliness_changed(
 {
     if (status.alive_count_change == 1)
     {
-        std::cout << "Subscriber " << sub->getGuid() << " recovered liveliness" << std::endl;
+        std::cout << "Publisher " << status.last_publication_handle << " recovered liveliness" << std::endl;
     }
     else if (status.not_alive_count_change == 1)
     {
-        std::cout << "Subscriber " << sub->getGuid() << " lost liveliness" << std::endl;
+        std::cout << "Publisher " << status.last_publication_handle << " lost liveliness" << std::endl;
     }
 }
 

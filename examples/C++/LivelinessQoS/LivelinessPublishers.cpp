@@ -50,7 +50,7 @@ bool LivelinessPublishers::init(
     PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.domainId = 0;
+    PParam.rtps.builtin.domainId = 14;
     PParam.rtps.builtin.use_WriterLivelinessProtocol = true;
     PParam.rtps.setName("Participant_pub");
     participant_ = Domain::createParticipant(PParam);
@@ -139,9 +139,9 @@ void LivelinessPublishers::PubListener::onPublicationMatched(Publisher* /*pub*/,
 void LivelinessPublishers::run(uint32_t samples, uint32_t sleep)
 {
     std::thread thread1(&LivelinessPublishers::runThread, this, publisher_1_, samples, sleep);
-    std::thread thread2(&LivelinessPublishers::runThread, this, publisher_2_, samples, sleep);
+//    std::thread thread2(&LivelinessPublishers::runThread, this, publisher_2_, samples, sleep);
     thread1.join();
-    thread2.join();
+//    thread2.join();
 }
 
 void LivelinessPublishers::runThread(
@@ -175,7 +175,7 @@ bool LivelinessPublishers::publish(
     {
         std::unique_lock<std::recursive_mutex> lock(pub_mutex);
         topic_.index(topic_.index()+1);
-        pub->write((void*)&topic_);
+//        pub->write((void*)&topic_);
 
         return true;
     }

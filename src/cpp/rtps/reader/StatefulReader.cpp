@@ -139,14 +139,7 @@ bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
 
     lock.unlock();
 
-    if (liveliness_manager_ != nullptr)
-    {
-        // TODO raquel What if another reader is matched to this writer?
-        if (!liveliness_manager_->remove_writer(wdata.guid))
-        {
-            logError(RTPS_READER, "Writer " << wdata.guid << " could not be removed from liveliness manager");
-        }
-    }
+    // TODO raquel remove from liveliness manager
 
     if(wproxy != nullptr)
     {
@@ -221,12 +214,6 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
     if(acceptMsgFrom(change->writerGUID, &pWP))
     {
-
-        if (getGuid().entityId == c_EntityId_ReaderLiveliness)
-        {
-//            std::cout << "Reader " << getGuid() << " receiving change" << std::endl;
-        }
-
         if (liveliness_lease_duration_ < c_TimeInfinite)
         {
             if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
@@ -314,7 +301,22 @@ bool StatefulReader::processDataFragMsg(
 
     if(acceptMsgFrom(incomingChange->writerGUID, &pWP))
     {
-        // TODO raquel Do the same as in processDataMsg()
+        if (liveliness_lease_duration_ < c_TimeInfinite)
+        {
+            if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
+                    pWP->m_att.liveliness_kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+            {
+                auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+                if ( wlp != nullptr)
+                {
+                    wlp->sub_liveliness_manager_->assert_liveliness(incomingChange->writerGUID);
+                }
+                else
+                {
+                    logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                }
+            }
+        }
 
         // Check if CacheChange was received.
         if(!pWP->change_was_received(incomingChange->sequenceNumber))
@@ -505,7 +507,6 @@ bool StatefulReader::acceptMsgFrom(
         if((*it)->m_att.guid == writerId)
         {
             *wp = *it;
-//            std::cout << "Found matched writer " << (*wp)->m_att.liveliness_kind << " " << (*wp)->m_att.liveliness_lease_duration << std::endl;
             return true;
         }
     }

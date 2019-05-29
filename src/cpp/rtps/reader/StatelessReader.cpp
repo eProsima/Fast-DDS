@@ -84,25 +84,10 @@ bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
         {
             // A return value of false is not necessary an error, as the writer could have already been
             // added to the liveliness manager by another reader
-            bool added = wlp->sub_liveliness_manager_->add_writer(
-                                        wdata.guid,
-                                        liveliness_kind_,
-                                        liveliness_lease_duration_);
-
-            if (added)
-            {
-                std::cout << "\t\t+++ StatefulReader " << getGuid() << " added writer " << wdata.guid;
-                std::cout << " with kind ";
-                if (liveliness_kind_ == AUTOMATIC_LIVELINESS_QOS)
-                {
-                    std::cout << "AUTOMATIC ";
-                }
-                else if (liveliness_kind_ == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-                {
-                    std::cout << "MANUAL_BY_PARTICIPANT";
-                }
-                std::cout << " and lease duration " << liveliness_lease_duration_ << std::endl;
-            }
+            wlp->sub_liveliness_manager_->add_writer(
+                        wdata.guid,
+                        liveliness_kind_,
+                        liveliness_lease_duration_);
         }
         else
         {
@@ -124,7 +109,7 @@ bool StatelessReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
             m_matched_writers.erase(it);
             remove_persistence_guid(wdata);
 
-            // TODO raquel liveliness
+            // TODO raquel remove from liveliness manager
 
             return true;
         }
@@ -421,7 +406,7 @@ bool StatelessReader::processHeartbeatMsg(
         SequenceNumber_t& /*firstSN*/,
         SequenceNumber_t& /*lastSN*/,
         bool /*finalFlag*/,
-        bool livelinessFlag)
+        bool /*livelinessFlag*/)
 {
     return true;
 }

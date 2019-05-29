@@ -58,6 +58,9 @@ class WLP
 {
 	friend class WLPListener;
 	friend class WLivelinessPeriodicAssertion;
+    friend class StatefulReader;
+    friend class StatelessReader;
+
 public:
 	/**
 	* Constructor
@@ -158,10 +161,6 @@ public:
         const WriterProxyData& remote_writer_data);
 #endif
 
-    //! A class used by readers in this participant to manage liveliness of matched writers
-    //! Public, as it needs to be accessed by readers
-    LivelinessManager* sub_liveliness_manager_;
-
 private:
     /**
      * Create the endpoitns used in the WLP.
@@ -178,7 +177,8 @@ private:
     //! Minimum time among liveliness periods of automatic writers, in milliseconds
     double min_automatic_ms_;
     //! Minimum time among liveliness periods of manual by participant writers, in milliseconds
-    double min_manual_by_participant_ms_;	//!Pointer to the local RTPSParticipant.
+    double min_manual_by_participant_ms_;
+    //!Pointer to the local RTPSParticipant.
 	RTPSParticipantImpl* mp_participant;
 	//!Pointer to the builtinprotocol class.
 	BuiltinProtocols* mp_builtinProtocols;
@@ -203,36 +203,43 @@ private:
     //! List of writers using manual by topic liveliness
     std::vector<RTPSWriter*> manual_by_topic_writers_;
 
-    //! List of readers using AUTOMATIC liveliness
-    std::vector<RTPSReader*> automatic_readers_;
-    //! List of readers using MANUAL_BY_PARTICIPANT liveliness
-    std::vector<RTPSReader*> manual_by_participant_readers_;
-    //! List of readers using MANUAL_BY_TOPIC liveliness
-    std::vector<RTPSReader*> manual_by_topic_readers_;
+    //! List of readers
+    std::vector<RTPSReader*> readers_;
 
-    //! A class managing liveliness of writers in this participant
+    //! A class used by writers in this participant to keep track of their liveliness
     LivelinessManager* pub_liveliness_manager_;
+    //! A class used by readers in this participant to keep track of liveliness of matched writers
+    LivelinessManager* sub_liveliness_manager_;
 
     /**
-     * @brief A method invoked by the liveliness manager to inform that a writer lost liveliness
+     * @brief A method invoked by pub_liveliness_manager_ to inform that a writer lost liveliness
      * @param writer The writer losing liveliness
      */
     void pub_liveliness_lost(GUID_t writer);
 
     /**
-     * @brief A method invoked by the liveliness manager to inform that a writer recovered liveliness
-     * @param writer The writer losing liveliness
+     * @brief A method invoked by pub_liveliness_manager_ to inform that a writer recovered liveliness
+     * @param writer The writer recovering liveliness
      */
     void pub_liveliness_recovered(GUID_t writer);
 
+    /**
+     * @brief A method invoked by sub_liveliness_manager_ to inform that a writer lost liveliness
+     * @param writer The writer losing liveliness
+     */
     void sub_liveliness_lost(GUID_t writer);
+
+    /**
+     * @brief A method invoked by sub_liveliness_manager_ to inform that a writer recovered liveliness
+     * @param writer The writer recovering liveliness
+     */
     void sub_liveliness_recovered(GUID_t writer);
 
     /**
-     * @brief A method to update the liveliness changed status for a given reader
-     * @param writer The writer specified by its guid
-     * @param reader The reader
-     * @param lost True if liveliness of a writer was lost. False if it was recovered
+     * @brief A method to update the liveliness changed status of a given reader
+     * @param writer The writer changing liveliness, specified by its guid
+     * @param reader The reader whose liveliness needs to be updated
+     * @param lost True to indicate that liveliness of the writer was lost. False to indicate it was recovered
      */
     void update_liveliness_changed_status(
             GUID_t writer,

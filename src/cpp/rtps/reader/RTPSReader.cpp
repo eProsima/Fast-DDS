@@ -48,7 +48,6 @@ RTPSReader::RTPSReader(
     , m_acceptMessagesFromUnkownWriters(true)
     , m_expectsInlineQos(att.expectsInlineQos)
     , fragmentedChangePitStop_(nullptr)
-    , liveliness_manager_(nullptr)
     , liveliness_kind_(att.liveliness_kind_)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
 {
@@ -65,11 +64,6 @@ RTPSReader::~RTPSReader()
     delete fragmentedChangePitStop_;
     mp_history->mp_reader = nullptr;
     mp_history->mp_mutex = nullptr;
-
-    if (liveliness_manager_ != nullptr)
-    {
-        delete liveliness_manager_;
-    }
 }
 
 bool RTPSReader::acceptMsgDirectedTo(EntityId_t& entityId)
@@ -179,11 +173,6 @@ SequenceNumber_t RTPSReader::get_last_notified(const GUID_t& guid)
 void RTPSReader::set_last_notified(const GUID_t& peristence_guid, const SequenceNumber_t& seq)
 {
     history_record_[peristence_guid] = seq;
-}
-
-void RTPSReader::set_liveliness_manager(LivelinessManager *liveliness_manager)
-{
-    liveliness_manager_ = liveliness_manager;
 }
 
 }

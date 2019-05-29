@@ -698,55 +698,22 @@ bool WLP::add_local_reader(RTPSReader *reader, const ReaderQos &rqos)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
-    if (rqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
-    {
-        automatic_readers_.push_back(reader);
-    }
-    else if (rqos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-    {
-        manual_by_participant_readers_.push_back(reader);
-    }
-    else if (rqos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
-    {
-        manual_by_topic_readers_.push_back(reader);
-    }
-    else
-    {
-        logWarning(RTPS_LIVELINESS, "Reader not added to WLP, unknown liveliness kind");
-        return false;
-    }
+    (void)rqos;
+
+    readers_.push_back(reader);
+
     return true;
 }
 
 bool WLP::remove_local_reader(RTPSReader *reader)
 {
     auto it = std::find(
-                automatic_readers_.begin(),
-                automatic_readers_.end(),
+                readers_.begin(),
+                readers_.end(),
                 reader);
-    if (it != automatic_readers_.end())
+    if (it != readers_.end())
     {
-        automatic_readers_.erase(it);
-        return true;
-    }
-
-    it = std::find(
-                manual_by_participant_readers_.begin(),
-                manual_by_participant_readers_.end(),
-                reader);
-    if (it != manual_by_participant_readers_.end())
-    {
-        manual_by_participant_readers_.erase(it);
-        return true;
-    }
-
-    it = std::find(
-                manual_by_topic_readers_.begin(),
-                manual_by_topic_readers_.end(),
-                reader);
-    if (it != manual_by_topic_readers_.end())
-    {
-        manual_by_topic_readers_.erase(it);
+        readers_.erase(it);
         return true;
     }
 
@@ -784,32 +751,22 @@ WriterHistory* WLP::getBuiltinWriterHistory()
 
 bool WLP::assert_liveliness(LivelinessQosPolicyKind kind)
 {
-//    bool pub = pub_liveliness_manager_->assert_liveliness(kind);
-
-    bool sub = sub_liveliness_manager_->assert_liveliness(kind);
-
-//    std::cout << pub << " " << sub << std::endl;
-
-    return true;
+    return sub_liveliness_manager_->assert_liveliness(kind);
 }
 
 bool WLP::assert_liveliness(GuidPrefix_t prefix)
 {
-//    bool pub = pub_liveliness_manager_->assert_liveliness(kind);
-
-    bool sub = sub_liveliness_manager_->assert_liveliness(prefix);
-
-//    std::cout << pub << " " << sub << std::endl;
-
-    return true;
+    return sub_liveliness_manager_->assert_liveliness(prefix);
 }
 
 bool WLP::assert_liveliness(GUID_t writer)
 {
+    // TODO raquel split this method into two
+
     bool pub = pub_liveliness_manager_->assert_liveliness(writer);
     bool sub = sub_liveliness_manager_->assert_liveliness(writer);
 
-    return true;
+    return (pub && sub);
 }
 
 void WLP::pub_liveliness_lost(GUID_t writer)
@@ -885,21 +842,7 @@ void WLP::sub_liveliness_lost(GUID_t writer)
     RemoteWriterAttributes ratt;
     ratt.guid = writer;
 
-    for (const auto& reader : automatic_readers_)
-    {
-        if (reader->matched_writer_is_matched(ratt))
-        {
-            update_liveliness_changed_status(writer, reader, true);
-        }
-    }
-    for (const auto& reader : manual_by_participant_readers_)
-    {
-        if (reader->matched_writer_is_matched(ratt))
-        {
-            update_liveliness_changed_status(writer, reader, true);
-        }
-    }
-    for (const auto& reader : manual_by_topic_readers_)
+    for (const auto& reader : readers_)
     {
         if (reader->matched_writer_is_matched(ratt))
         {
@@ -915,21 +858,7 @@ void WLP::sub_liveliness_recovered(GUID_t writer)
     RemoteWriterAttributes ratt;
     ratt.guid = writer;
 
-    for (const auto& reader : automatic_readers_)
-    {
-        if (reader->matched_writer_is_matched(ratt))
-        {
-            update_liveliness_changed_status(writer, reader, false);
-        }
-    }
-    for (const auto& reader : manual_by_participant_readers_)
-    {
-        if (reader->matched_writer_is_matched(ratt))
-        {
-            update_liveliness_changed_status(writer, reader, false);
-        }
-    }
-    for (const auto& reader : manual_by_topic_readers_)
+    for (const auto& reader : readers_)
     {
         if (reader->matched_writer_is_matched(ratt))
         {
