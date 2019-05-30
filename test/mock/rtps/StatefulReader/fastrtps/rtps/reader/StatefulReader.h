@@ -51,6 +51,7 @@ class StatefulReader : public RTPSReader
         inline ReaderTimes& getTimes() { return times_; }
 
         void send_acknack(
+                const WriterProxy* /*writer*/,
                 const SequenceNumberSet_t& /*sns*/,
                 const RTPSMessageSenderInterface& /*sender*/,
                 bool /*is_final*/)

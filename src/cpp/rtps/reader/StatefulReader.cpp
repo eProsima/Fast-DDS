@@ -797,12 +797,19 @@ bool StatefulReader::isInCleanState()
 }
 
 void StatefulReader::send_acknack(
+        const WriterProxy* writer,
         const SequenceNumberSet_t& sns,
         const RTPSMessageSenderInterface& sender,
         bool is_final)
 {
 
     std::lock_guard<std::recursive_timed_mutex> guard_reader(mp_mutex);
+
+    if (!writer->is_alive())
+    {
+        return;
+    }
+
     acknack_count_++;
 
 
@@ -810,7 +817,6 @@ void StatefulReader::send_acknack(
 
     RTPSMessageGroup group(getRTPSParticipant(), this, message_buffer_, sender);
     group.add_acknack(sns, acknack_count_, is_final);
-
 }
 
 void StatefulReader::send_acknack(
@@ -820,7 +826,8 @@ void StatefulReader::send_acknack(
 {
     // Protect reader
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
-    if (!is_alive_)
+
+    if (!writer->is_alive())
     {
         return;
     }

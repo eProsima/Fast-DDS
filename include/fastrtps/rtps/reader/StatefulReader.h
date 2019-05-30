@@ -232,6 +232,7 @@ class StatefulReader : public RTPSReader
          * @param is_final Value for final flag.
          */
         void send_acknack(
+                const WriterProxy* writer,
                 const SequenceNumberSet_t& sns,
                 const RTPSMessageSenderInterface& sender,
                 bool is_final);

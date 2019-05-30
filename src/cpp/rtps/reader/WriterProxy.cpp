@@ -574,7 +574,7 @@ void WriterProxy::perform_initial_ack_nack() const
 {
     // Send initial NACK.
     SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
-    reader_->send_acknack(sns, *this, false);
+    reader_->send_acknack(this, sns, *this, false);
 }
 
 void WriterProxy::perform_heartbeat_response() const
