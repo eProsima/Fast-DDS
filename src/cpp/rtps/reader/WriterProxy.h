@@ -384,7 +384,7 @@ private:
             ChangeFromWriterStatus_t or_status,
             ChangeFromWriterStatus_t new_status);
 
-#if !defined(NDEBUG) and defined(FASTRTPS_SOURCE) and !defined(_WIN32)
+#if !defined(NDEBUG) and defined(FASTRTPS_SOURCE) and defined(__linux__)
     int get_mutex_owner() const;
 
     int get_thread_id() const;
