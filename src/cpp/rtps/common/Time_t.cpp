@@ -19,11 +19,23 @@
 
 using namespace eprosima::fastrtps;
 
-constexpr uint64_t C_FRACTIONS = 4294967296;
-constexpr uint64_t C_SECONDS = 1000000000;
+namespace { // unnamed namespace for inline functions in compilation unit. Better practice than static inline.
 
-#define frac_to_nano(x) (static_cast<uint32_t>(((x) * C_SECONDS) / C_FRACTIONS))
-#define nano_to_frac(x) (static_cast<uint32_t>(((x) * C_FRACTIONS) / C_SECONDS))
+constexpr uint64_t C_FRACTIONS_PER_SEC = 4294967296ULL;
+constexpr uint64_t C_SECONDS_PER_SEC = 1000000000ULL;
+
+inline uint32_t frac_to_nano(
+        uint32_t fractions)
+{
+    return static_cast<uint32_t>(((fractions) * C_SECONDS_PER_SEC ) / C_FRACTIONS_PER_SEC );
+}
+
+inline uint32_t nano_to_frac(
+        uint32_t nanosecs)
+{
+    return static_cast<uint32_t>(((nanosecs) * C_FRACTIONS_PER_SEC ) / C_SECONDS_PER_SEC );
+}
+} // unnamed namespace
 
 Time_t::Time_t()
 {
@@ -43,7 +55,7 @@ Time_t::Time_t(
         long double sec)
 {
     seconds = static_cast<int32_t>(sec);
-    nanosec = static_cast<uint32_t>((sec - seconds) * C_SECONDS);
+    nanosec = static_cast<uint32_t>((sec - seconds) * C_SECONDS_PER_SEC );
 }
 
 void Time_t::fraction(
@@ -57,24 +69,24 @@ void Time_t::fraction(
 uint32_t Time_t::fraction() const
 {
     uint32_t fraction = (nanosec == 0xffffffff)
-		? 0xffffffff
-		: nano_to_frac(nanosec);
+        ? 0xffffffff
+        : nano_to_frac(nanosec);
 
-	if (fraction != 0xffffffff)
-	{
-		uint32_t nano_check = frac_to_nano(fraction);
-		while (nano_check != nanosec)
-		{
-			nano_check = frac_to_nano(++fraction);
-		}
-	}
+    if (fraction != 0xffffffff)
+    {
+        uint32_t nano_check = frac_to_nano(fraction);
+        while (nano_check != nanosec)
+        {
+            nano_check = frac_to_nano(++fraction);
+        }
+    }
 
     return fraction;
 }
 
 int64_t Time_t::to_ns() const
 {
-    int64_t nano = seconds * C_SECONDS;
+    int64_t nano = seconds * C_SECONDS_PER_SEC ;
     nano += nanosec;
     return nano;
 }
@@ -98,7 +110,7 @@ rtps::Time_t::Time_t(
         long double sec)
 {
     seconds_ = static_cast<int32_t>(sec);
-    set_fraction(static_cast<uint32_t>((sec - seconds_) * C_FRACTIONS));
+    set_fraction(static_cast<uint32_t>((sec - seconds_) * C_FRACTIONS_PER_SEC ));
 }
 
 rtps::Time_t::Time_t(
@@ -110,7 +122,7 @@ rtps::Time_t::Time_t(
 
 int64_t rtps::Time_t::to_ns() const
 {
-    int64_t nano = seconds_ * C_SECONDS;
+    int64_t nano = seconds_ * C_SECONDS_PER_SEC ;
     nano += nanosec_;
     return nano;
 }
@@ -139,7 +151,7 @@ uint32_t rtps::Time_t::nanosec() const
 void rtps::Time_t::nanosec(
         uint32_t nanos)
 {
-    const uint32_t s_to_nano = static_cast<uint32_t>(C_SECONDS);
+    const uint32_t s_to_nano = static_cast<uint32_t>(C_SECONDS_PER_SEC );
     if (nanos >= s_to_nano)
     {
         nanos %= s_to_nano; // Remove the seconds
@@ -182,10 +194,10 @@ void rtps::Time_t::set_nanosec(
         uint32_t nanos)
 {
     nanosec_ = nanos;
-	
-	fraction_ = (nanos == 0xffffffff)
-		? 0xffffffff
-		: nano_to_frac(nanos);
+
+    fraction_ = (nanos == 0xffffffff)
+        ? 0xffffffff
+        : nano_to_frac(nanos);
 
     if (fraction_ != 0xffffffff)
     {
