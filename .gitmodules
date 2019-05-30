@@ -13,3 +13,6 @@
 [submodule "thirdparty/tinyxml2"]
 	path = thirdparty/tinyxml2
 	url = https://github.com/leethomason/tinyxml2.git
+[submodule "thirdparty/libddssec"]
+	path = thirdparty/libddssec
+	url = https://github.com/ARM-software/libddssec
