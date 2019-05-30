@@ -144,8 +144,10 @@ bool StatelessReader::nextUntakenCache(
     {
         if(!(*change)->isRead)
         {
-            assert(total_unread_ > 0);
-            --total_unread_;
+            if (0 < total_unread_)
+            {
+                --total_unread_;
+            }
         }
 
         (*change)->isRead = true;
@@ -176,8 +178,10 @@ bool StatelessReader::nextUnreadCache(
     if(found)
     {
         *change = *it;
-        assert(total_unread_ > 0);
-        --total_unread_;
+        if (0 < total_unread_)
+        {
+            --total_unread_;
+        }
         (*change)->isRead = true;
 
         return true;
@@ -194,8 +198,10 @@ bool StatelessReader::change_removed_by_history(
 {
     if(!ch->isRead)
     {
-        assert(total_unread_ > 0);
-        --total_unread_;
+        if (0 < total_unread_)
+        {
+            --total_unread_;
+        }
     }
 
     return true;
