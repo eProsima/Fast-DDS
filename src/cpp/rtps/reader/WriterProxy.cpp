@@ -34,7 +34,7 @@
 #include <foonathan/memory/namespace_alias.hpp>
 #include <fastrtps/utils/collections/foonathan_memory_helpers.hpp>
 
-#if !defined(NDEBUG) and defined(FASTRTPS_SOURCE) and defined(__linux__)
+#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
 #include <sys/syscall.h>
 #include <unistd.h>
 #include <pthread.h>
@@ -154,7 +154,7 @@ void WriterProxy::start(const WriterProxyData& attributes)
 
 void WriterProxy::update(const WriterProxyData& attributes)
 {
-#if !defined(NDEBUG) and defined(FASTRTPS_SOURCE) and defined(__linux__)
+#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
@@ -184,7 +184,7 @@ void WriterProxy::clear()
 
 void WriterProxy::loaded_from_storage(const SequenceNumber_t& seq_num)
 {
-#if !defined(NDEBUG) and defined(FASTRTPS_SOURCE) and defined(__linux__)
+#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
@@ -194,7 +194,7 @@ void WriterProxy::loaded_from_storage(const SequenceNumber_t& seq_num)
 
 void WriterProxy::missing_changes_update(const SequenceNumber_t& seq_num)
 {
-#if !defined(NDEBUG) and defined(FASTRTPS_SOURCE) and defined(__linux__)
+#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
@@ -262,7 +262,7 @@ bool WriterProxy::maybe_add_changes_from_writer_up_to(
 
 void WriterProxy::lost_changes_update(const SequenceNumber_t& seq_num)
 {
-#if !defined(NDEBUG) and defined(FASTRTPS_SOURCE) and defined(__linux__)
+#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
@@ -307,7 +307,7 @@ bool WriterProxy::received_change_set(
         const SequenceNumber_t& seq_num,
         bool is_relevance)
 {
-#if !defined(NDEBUG) and defined(FASTRTPS_SOURCE) and defined(__linux__)
+#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
@@ -375,7 +375,7 @@ bool WriterProxy::received_change_set(
 
 SequenceNumberSet_t WriterProxy::missing_changes() const
 {
-#if defined(__DEBUG) and defined(__linux__)
+#if defined(__DEBUG) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
@@ -401,7 +401,7 @@ SequenceNumberSet_t WriterProxy::missing_changes() const
 
 bool WriterProxy::change_was_received(const SequenceNumber_t& seq_num) const
 {
-#if defined(__DEBUG) and defined(__linux__)
+#if defined(__DEBUG) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
@@ -416,7 +416,7 @@ bool WriterProxy::change_was_received(const SequenceNumber_t& seq_num) const
 
 const SequenceNumber_t WriterProxy::available_changes_max() const
 {
-#if defined(__DEBUG) and defined(__linux__)
+#if defined(__DEBUG) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
@@ -434,7 +434,7 @@ void WriterProxy::assert_liveliness()
 
 void WriterProxy::change_removed_from_history(const SequenceNumber_t& seq_num)
 {
-#if defined(__DEBUG) and defined(__linux__)
+#if defined(__DEBUG) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
@@ -473,7 +473,7 @@ void WriterProxy::cleanup()
 
 bool WriterProxy::are_there_missing_changes() const
 {
-#if defined(__DEBUG) and defined(__linux__)
+#if defined(__DEBUG) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
@@ -490,7 +490,7 @@ bool WriterProxy::are_there_missing_changes() const
 
 size_t WriterProxy::unknown_missing_changes_up_to(const SequenceNumber_t& seq_num) const
 {
-#if defined(__DEBUG) and defined(__linux__)
+#if defined(__DEBUG) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
@@ -515,7 +515,7 @@ size_t WriterProxy::unknown_missing_changes_up_to(const SequenceNumber_t& seq_nu
 
 size_t WriterProxy::number_of_changes_from_writer() const
 {
-#if defined(__DEBUG) and defined(__linux__)
+#if defined(__DEBUG) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
@@ -524,7 +524,7 @@ size_t WriterProxy::number_of_changes_from_writer() const
 
 SequenceNumber_t WriterProxy::next_cache_change_to_be_notified()
 {
-#if defined(__DEBUG) and defined(__linux__)
+#if defined(__DEBUG) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
@@ -557,7 +557,7 @@ bool WriterProxy::process_heartbeat(
         bool liveliness_flag,
         bool disable_positive)
 {
-#if defined(__DEBUG) and defined(__linux__)
+#if defined(__DEBUG) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
@@ -622,7 +622,7 @@ bool WriterProxy::send(
     return true;
 }
 
-#if !defined(NDEBUG) and defined(FASTRTPS_SOURCE) and defined(__linux__)
+#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
 int WriterProxy::get_mutex_owner() const
 {
     auto mutex = reader_->getMutex().native_handle();
