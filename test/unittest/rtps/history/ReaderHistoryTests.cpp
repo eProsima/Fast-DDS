@@ -119,7 +119,7 @@ TEST_F(ReaderHistoryTests, add_and_remove_changes)
     for (uint32_t i=0; i<num_changes; i++)
     {
         history->add_change(changes_list[i]);
-        ASSERT_EQ(history->getHistorySize(), i+1);
+        ASSERT_EQ(history->getHistorySize(), i+1U);
     }
 
     for (uint32_t i=0; i<num_changes; i++)
