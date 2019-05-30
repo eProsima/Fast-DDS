@@ -158,7 +158,7 @@ TEST_F(ReaderHistoryTests, cache_change_payload_max_size)
     ch->writerGUID = GUID_t(GuidPrefix_t::unknown(), 1U);
 
     ASSERT_FALSE(history->add_change(ch));
-    ASSERT_EQ(history->getHistorySize(), 0);
+    ASSERT_EQ(history->getHistorySize(), 0U);
 
     delete ch;
 }
