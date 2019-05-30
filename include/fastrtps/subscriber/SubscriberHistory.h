@@ -151,19 +151,6 @@ class SubscriberHistory: public rtps::ReaderHistory
         bool find_key(
                 rtps::CacheChange_t* a_change,
                 t_m_Inst_Caches::iterator* map_it);
-
-        //!Increase the unread count.
-        inline void increaseUnreadCount()
-        {
-            ++m_unreadCacheCount;
-        }
-
-        //!Decrease the unread count.
-        inline void decreaseUnreadCount()
-        {
-            if (m_unreadCacheCount > 0)
-                --m_unreadCacheCount;
-        }
 };
 
 } /* namespace fastrtps */
