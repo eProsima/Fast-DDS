@@ -53,11 +53,11 @@ protected:
 
         //Create changes list
         uint32_t t=0;
-        for(uint32_t i=1; i<=num_writers; i++)
+        for (uint32_t i=1; i<=num_writers; i++)
         {
             GUID_t writer_guid = GUID_t(GuidPrefix_t::unknown(), i);
 
-            for(uint32_t j=1; j<=num_sequence_numbers; j++)
+            for (uint32_t j=1; j<=num_sequence_numbers; j++)
             {
                 CacheChange_t* ch = new CacheChange_t();
                 ch->writerGUID = writer_guid;
@@ -73,7 +73,7 @@ protected:
 
     virtual void TearDown()
     {
-        for(uint32_t i=0; i<num_changes; i++)
+        for (uint32_t i=0; i<num_changes; i++)
         {
             CacheChange_t* ch = changes_list[i];
             delete ch;
@@ -83,7 +83,7 @@ protected:
     }
 };
 
-TEST_F(ReaderHistoryTests, FailIfNoReaderOrMutex)
+TEST_F(ReaderHistoryTests, no_reader_or_mutex)
 {
     EXPECT_CALL(readerMock, change_removed_by_history(_)).Times(0);
 
@@ -111,24 +111,25 @@ TEST_F(ReaderHistoryTests, FailIfNoReaderOrMutex)
     delete ch;
 }
 
-TEST_F(ReaderHistoryTests, AddAndRemoveChanges)
+TEST_F(ReaderHistoryTests, add_and_remove_changes)
 {
     EXPECT_CALL(readerMock, change_removed_by_history(_)).Times(num_changes).
             WillRepeatedly(Return(true));
 
-    for(uint32_t i=0; i<num_changes; i++)
+    for (uint32_t i=0; i<num_changes; i++)
     {
         history->add_change(changes_list[i]);
         ASSERT_EQ(history->getHistorySize(), i+1);
     }
-    for(uint32_t i=0; i<num_changes; i++)
+
+    for (uint32_t i=0; i<num_changes; i++)
     {
         history->remove_change(changes_list[i]);
         ASSERT_EQ(history->getHistorySize(), num_changes-i-1U);
     }
 }
 
-TEST_F(ReaderHistoryTests, RemoveEmptyHistory)
+TEST_F(ReaderHistoryTests, remove_empty_history)
 {
     EXPECT_CALL(readerMock, change_removed_by_history(_)).Times(0);
 
@@ -140,7 +141,7 @@ TEST_F(ReaderHistoryTests, RemoveEmptyHistory)
     delete ch;
 }
 
-TEST_F(ReaderHistoryTests, RemoveNullPointerCacheChange)
+TEST_F(ReaderHistoryTests, remove_null_cache_change)
 {
     EXPECT_CALL(readerMock, change_removed_by_history(_)).Times(0);
 
@@ -148,7 +149,7 @@ TEST_F(ReaderHistoryTests, RemoveNullPointerCacheChange)
     ASSERT_FALSE(history->remove_change(ch));
 }
 
-TEST_F(ReaderHistoryTests, CacheChangePayloadMaxSize)
+TEST_F(ReaderHistoryTests, cache_change_payload_max_size)
 {
     uint32_t ch_payload_length = history_attr.payloadMaxSize + 1U;
     CacheChange_t* ch = new CacheChange_t();
@@ -162,20 +163,20 @@ TEST_F(ReaderHistoryTests, CacheChangePayloadMaxSize)
     delete ch;
 }
 
-TEST_F(ReaderHistoryTests, GetChange)
+TEST_F(ReaderHistoryTests, get_change)
 {
-    for(uint32_t i=0; i<num_changes; i++)
+    for (uint32_t i=0; i<num_changes; i++)
     {
         history->add_change(changes_list[i]);
     }
 
     ASSERT_EQ(history->getHistorySize(), num_changes);
 
-    for(uint32_t i=1; i<=num_writers; i++)
+    for (uint32_t i=1; i<=num_writers; i++)
     {
         GUID_t writer_guid = GUID_t(GuidPrefix_t::unknown(), i);
 
-        for(uint32_t j=1; j<=num_sequence_numbers; j++)
+        for (uint32_t j=1; j<=num_sequence_numbers; j++)
         {
             SequenceNumber_t seq_number = SequenceNumber_t(0,j);
 
@@ -187,9 +188,9 @@ TEST_F(ReaderHistoryTests, GetChange)
     }
 }
 
-TEST_F(ReaderHistoryTests, GetMinCacheFromwriter)
+TEST_F(ReaderHistoryTests, get_min_change_from_writer)
 {
-    for(uint32_t i=0; i<num_changes; i++)
+    for (uint32_t i=0; i<num_changes; i++)
     {
         history->add_change(changes_list[i]);
     }
@@ -208,7 +209,7 @@ TEST_F(ReaderHistoryTests, GetMinCacheFromwriter)
     ASSERT_EQ(ch->sequenceNumber, SequenceNumber_t(0,1U));
 }
 
-TEST_F(ReaderHistoryTests, GetMinCacheFromwriterReturnsFalse)
+TEST_F(ReaderHistoryTests, get_min_change_from_writer_non_existent)
 {
     GUID_t w1(GuidPrefix_t::unknown(), 1U);
 
@@ -216,9 +217,9 @@ TEST_F(ReaderHistoryTests, GetMinCacheFromwriterReturnsFalse)
     ASSERT_FALSE(history->get_min_change_from(&ch, w1));
 }
 
-TEST_F(ReaderHistoryTests, RemoveChangesWithGUID)
+TEST_F(ReaderHistoryTests, remove_changes_with_guid)
 {
-    for(uint32_t i=0; i<num_changes; i++)
+    for (uint32_t i=0; i<num_changes; i++)
     {
         history->add_change(changes_list[i]);
     }
