@@ -34,7 +34,9 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-bool EDPClient::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProxyData* rdata)
+bool EDPClient::processLocalReaderProxyData(
+    RTPSReader* local_reader,
+    ReaderProxyData* rdata)
 {
     logInfo(RTPS_EDP,rdata->guid().entityId);
     (void)local_reader;
@@ -51,7 +53,8 @@ bool EDPClient::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
     if(writer->first != nullptr)
     {
         // TODO(Ricardo) Write a getCdrSerializedPayload for ReaderProxyData.
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t {return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;},
+        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+            {return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;},
                 ALIVE,rdata->key());
 
         if(change !=nullptr)
@@ -101,7 +104,9 @@ bool EDPClient::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
     return true;
 }
 
-bool EDPClient::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProxyData* wdata)
+bool EDPClient::processLocalWriterProxyData(
+    RTPSWriter* local_writer,
+    WriterProxyData* wdata)
 {
     logInfo(RTPS_EDP, wdata->guid().entityId);
     (void)local_writer;
@@ -117,7 +122,8 @@ bool EDPClient::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
 
     if(writer->first !=nullptr)
     {
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t {return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;},
+        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+            {return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;},
                 ALIVE, wdata->key());
         if(change != nullptr)
         {
@@ -183,7 +189,8 @@ bool EDPClient::removeLocalWriter(RTPSWriter* W)
     {
         InstanceHandle_t iH;
         iH = W->getGuid();
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t {return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;},
+        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+            {return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;},
                 NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
         if(change != nullptr)
         {
@@ -231,7 +238,8 @@ bool EDPClient::removeLocalReader(RTPSReader* R)
     {
         InstanceHandle_t iH;
         iH = (R->getGuid());
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t {return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;},
+        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+            {return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;},
                 NOT_ALIVE_DISPOSED_UNREGISTERED,iH);
         if(change != nullptr)
         {

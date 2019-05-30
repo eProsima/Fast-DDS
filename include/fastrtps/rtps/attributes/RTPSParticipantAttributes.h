@@ -39,26 +39,28 @@ namespace rtps {
 //!PDP subclass choice
 typedef enum PDPType
 {
-    /*  NO discovery whatsoever would be used.
+    NONE,
+    /*!<
+        NO discovery whatsoever would be used.
         Publisher and Subscriber defined with the same topic name would NOT be linked.
         All matching must be done manually through the addReaderLocator, addReaderProxy, addWriterProxy methods.
     */
-    NONE,
-    /*
+    SIMPLE,
+    /*!<
         Discovery works according to 'The Real-time Publish-Subscribe Protocol(RTPS) DDS
         Interoperability Wire Protocol Specification'
     */
-    SIMPLE,
-    /*
-    A user defined PDP subclass object must be provided in the attributes that deals with the discovery. Framework is not responsible of this object lifetime.
-    */
     EXTERNAL,
-    /*
-        Discovery is managed by well-known devoted servers. Only client behaviour is currently available.
-    */
-    CLIENT,
-    SERVER,
-    BACKUP
+    /*!<
+        A user defined PDP subclass object must be provided in the attributes that deals with the discovery.
+        Framework is not responsible of this object lifetime.
+     */
+    CLIENT, /*!< The participant will behave as a client concerning discovery operation.
+                 Server locators should be specified as attributes. */
+    SERVER, /*!< The participant will behave as a server concerning discovery operation.
+                 Discovery operation is volatile (discovery handshake must take place if shutdown). */
+    BACKUP  /*!< The participant will behave as a server concerning discovery operation.
+                 Discovery operation persist on a file (discovery handshake wouldn't repeat if shutdown). */
 
 } PDPType_t;
 

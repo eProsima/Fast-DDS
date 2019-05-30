@@ -63,8 +63,7 @@ PDPServer::PDPServer(
 
 PDPServer::~PDPServer()
 {
-    if (mp_sync != nullptr)
-        delete(mp_sync);
+    delete(mp_sync);
 }
 
 bool PDPServer::initPDP(RTPSParticipantImpl* part)
@@ -75,7 +74,7 @@ bool PDPServer::initPDP(RTPSParticipantImpl* part)
     }
 
     //INIT EDP
-    mp_EDP = (EDP*)(new EDPServer(this, mp_RTPSParticipant, _durability));
+    mp_EDP = new EDPServer(this, mp_RTPSParticipant, _durability);
     if (!mp_EDP->initEDP(m_discovery))
     {
         logError(RTPS_PDP, "Endpoint discovery configuration failed");
@@ -86,7 +85,8 @@ bool PDPServer::initPDP(RTPSParticipantImpl* part)
         Given the fact that a participant is either a client or a server the
         discoveryServer_client_syncperiod parameter has a context defined meaning.
     */
-    mp_sync = new DServerEvent(this, TimeConv::Time_t2MilliSecondsDouble(m_discovery.discoveryServer_client_syncperiod));
+    mp_sync = new DServerEvent(this,
+        TimeConv::Time_t2MilliSecondsDouble(m_discovery.discoveryServer_client_syncperiod));
     awakeServerThread(); 
     // the timer is also restart from removeRemoteParticipant, remove(Publisher|Subscriber)FromHistory
     // and queueParticipantForEDPMatch
@@ -94,7 +94,9 @@ bool PDPServer::initPDP(RTPSParticipantImpl* part)
     return true;
 }
 
-ParticipantProxyData * PDPServer::createParticipantProxyData(const ParticipantProxyData & participant_data, const CacheChange_t & change)
+ParticipantProxyData* PDPServer::createParticipantProxyData(
+    const ParticipantProxyData& participant_data,
+    const CacheChange_t& change)
 {
     std::unique_lock<std::recursive_mutex> lock(*getMutex());
 
@@ -158,7 +160,8 @@ bool PDPServer::createPDPEndpoints()
 
     mp_listener = new PDPServerListener(this);
 
-    if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, mp_PDPReaderHistory, mp_listener, c_EntityId_SPDPReader, true, false))
+    if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, mp_PDPReaderHistory,
+        mp_listener, c_EntityId_SPDPReader, true, false))
     {
         // enable unknown clients to reach this reader
         mp_PDPReader->enableMessagesFromUnkownWriters(true);
@@ -201,7 +204,8 @@ bool PDPServer::createPDPEndpoints()
     watt.endpoint.endpointKind = WRITER;
     watt.endpoint.durabilityKind = _durability;
     watt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
-    watt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename", GetPersistenceFileName()));
+    watt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
+        GetPersistenceFileName()));
     watt.endpoint.reliabilityKind = RELIABLE;
     watt.endpoint.topicKind = WITH_KEY;
     watt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
@@ -216,7 +220,8 @@ bool PDPServer::createPDPEndpoints()
         watt.mode = ASYNCHRONOUS_WRITER;
     }
 
-    if (mp_RTPSParticipant->createWriter(&mp_PDPWriter, watt, mp_PDPWriterHistory, nullptr, c_EntityId_SPDPWriter, true))
+    if (mp_RTPSParticipant->createWriter(&mp_PDPWriter, watt, mp_PDPWriterHistory,
+        nullptr, c_EntityId_SPDPWriter, true))
     {
 
         for (auto it = mp_builtin->m_DiscoveryServers.begin(); it != mp_builtin->m_DiscoveryServers.end(); ++it)
@@ -348,7 +353,7 @@ void PDPServer::removeRemoteEndpoints(ParticipantProxyData* pdata)
     {
         std::unique_lock<std::recursive_mutex> lock(*getMutex());
 
-        for (auto & svr : mp_builtin->m_DiscoveryServers)
+        for (RemoteServerAttributes & svr : mp_builtin->m_DiscoveryServers)
         {
             if (svr.guidPrefix == pdata->m_guid.guidPrefix)
             {
@@ -482,8 +487,12 @@ bool PDPServer::trimPDPWriterHistory()
     std::forward_list<CacheChange_t*> removal;
     std::lock_guard<std::recursive_mutex> guardW(*mp_PDPWriter->getMutex());
 
-    std::copy_if(mp_PDPWriterHistory->changesBegin(), mp_PDPWriterHistory->changesBegin(), std::front_inserter(removal),
-        [this](const CacheChange_t* chan) { return _demises.find(chan->instanceHandle) != _demises.cend();  });
+    std::copy_if(mp_PDPWriterHistory->changesBegin(),
+        mp_PDPWriterHistory->changesBegin(), std::front_inserter(removal),
+        [this](const CacheChange_t* chan) 
+        { 
+            return _demises.find(chan->instanceHandle) != _demises.cend();
+        });
 
     if (removal.empty())
         return true;
@@ -507,7 +516,7 @@ bool PDPServer::trimPDPWriterHistory()
 }
 
 // CacheChange_t's ParticipantProxyData wouldn't be loaded when this function is called
-bool PDPServer::addRelayedChangeToHistory( CacheChange_t & c)
+bool PDPServer::addRelayedChangeToHistory( CacheChange_t& c)
 {
     assert(mp_PDPWriter && mp_PDPWriter->getMutex() && c.serializedPayload.max_size);
 
@@ -553,7 +562,7 @@ bool PDPServer::addRelayedChangeToHistory( CacheChange_t & c)
 }
 
 // Always call after PDP proxies update
-void PDPServer::removeParticipantFromHistory(const InstanceHandle_t & key)
+void PDPServer::removeParticipantFromHistory(const InstanceHandle_t& key)
 {
     std::lock_guard<std::recursive_mutex> guardP(*mp_mutex);
 
@@ -561,7 +570,7 @@ void PDPServer::removeParticipantFromHistory(const InstanceHandle_t & key)
     trimWriterHistory();
 }
 
-void PDPServer::queueParticipantForEDPMatch(const ParticipantProxyData * pdata)
+void PDPServer::queueParticipantForEDPMatch(const ParticipantProxyData* pdata)
 {
     assert(pdata != nullptr);
 
@@ -574,7 +583,8 @@ void PDPServer::queueParticipantForEDPMatch(const ParticipantProxyData * pdata)
     // and initPDP
 
     logInfo(PDP_SERVER, "participant " << pdata->m_participantName << " prefix: " << pdata->m_guid
-        << " waiting for EDP match with server " << this->getRTPSParticipant()->getRTPSParticipantAttributes().getName());
+        << " waiting for EDP match with server "
+        << getRTPSParticipant()->getRTPSParticipantAttributes().getName());
 }
 
 void PDPServer::removeParticipantForEDPMatch(const ParticipantProxyData * pdata)
@@ -649,7 +659,7 @@ bool PDPServer::all_servers_acknowledge_PDP()
 
 bool PDPServer::is_all_servers_PDPdata_updated()
 {
-    StatefulReader * pR = dynamic_cast<StatefulReader *>(mp_PDPReader);
+    StatefulReader * pR = dynamic_cast<StatefulReader*>(mp_PDPReader);
     assert(pR);
 
     // This answer includes also clients but is accurate enough
@@ -668,7 +678,7 @@ bool PDPServer::match_servers_EDP_endpoints()
 
         if (svr.proxy && !mp_EDP->areRemoteEndpointsMatched(svr.proxy))
         {
-            this->queueParticipantForEDPMatch(svr.proxy);
+            queueParticipantForEDPMatch(svr.proxy);
         }
     }
 

@@ -8,7 +8,7 @@
         <xs:restriction base="xs:string"/>
     </xs:simpleType>
 
-	  <xs:simpleType name="idType">
+      <xs:simpleType name="idType">
         <xs:restriction base="xs:unsignedShort"/>
     </xs:simpleType>
 
@@ -262,8 +262,8 @@
             <xs:element name="PUBREADER_SUBWRITER" type="boolType"/>
         </xs:all>
     </xs:complexType>
-	
-	<xs:simpleType name="PDPType">
+
+    <xs:simpleType name="PDPType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="NONE"/>
             <xs:enumeration value="SIMPLE"/>
@@ -272,42 +272,42 @@
             <xs:enumeration value="BACKUP"/>-->
         </xs:restriction>
     </xs:simpleType>
-	
+
    <xs:simpleType name="EDPType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="SIMPLE"/>
             <xs:enumeration value="STATIC"/>
         </xs:restriction>
     </xs:simpleType>
-	
-	<xs:simpleType name="guid">
-		<xs:restriction base="xs:string">
-		  <xs:pattern value="([0-9a-fA-F]{1,2}\.){11}[0-9a-fA-F]{1,2}" />
+    
+    <xs:simpleType name="guid">
+        <xs:restriction base="xs:string">
+          <xs:pattern value="([0-9a-fA-F]{1,2}\.){11}[0-9a-fA-F]{1,2}" />
       <xs:whiteSpace value='collapse'/>
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:complexType name="RemoteServerAttributes">
-		<xs:choice>
-			<xs:sequence>
-				<xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="1" />
-				<xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0" />
-			</xs:sequence>
-			<xs:sequence>
-				<xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="1" />
-				<xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0" />
-			</xs:sequence>			
-		</xs:choice>
-		<xs:attribute name="prefix" type="guid" use="required"/>
-	</xs:complexType>
-	
-	<xs:complexType name="DiscoveryServerList">
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="RemoteServerAttributes">
+        <xs:choice>
+            <xs:sequence>
+                <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="1" />
+                <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0" />
+            </xs:sequence>
+            <xs:sequence>
+                <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="1" />
+                <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0" />
+            </xs:sequence>			
+        </xs:choice>
+        <xs:attribute name="prefix" type="guid" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="DiscoveryServerList">
         <xs:sequence>
             <xs:element name="RemoteServer" type="RemoteServerAttributes" minOccurs="1" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
-	
-	<xs:complexType name="builtinAttributesType">
+
+    <xs:complexType name="builtinAttributesType">
         <xs:all minOccurs="0">
             <xs:element name="discoveryProtocol" type="PDPType" minOccurs="0"/>
             <xs:element name="use_WriterLivelinessProtocol" type="boolType" minOccurs="0"/>
@@ -319,15 +319,15 @@
             <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="initialPeersList" type="locatorListType" minOccurs="0"/>
-			      <xs:element name="clientAnnouncementPeriod" type="durationType" minOccurs="0"/>
-			      <xs:element name="discoveryServersList" type="DiscoveryServerList" minOccurs="0"/>
+                  <xs:element name="clientAnnouncementPeriod" type="durationType" minOccurs="0"/>
+                  <xs:element name="discoveryServersList" type="DiscoveryServerList" minOccurs="0"/>
             <xs:element name="staticEndpointXMLFilename" type="stringType" minOccurs="0"/>
             <xs:element name="readerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
             <xs:element name="writerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
-	
-	<xs:complexType name="throughputControllerType">
+
+    <xs:complexType name="throughputControllerType">
         <xs:all minOccurs="0">
             <xs:element name="bytesPerPeriod" type="uint32Type" minOccurs="0"/>
             <xs:element name="periodMillisecs" type="uint32Type" minOccurs="0"/>
@@ -373,7 +373,7 @@
             <xs:element name="resourceLimitsQos" type="resourceLimitsQosPolicyType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
-	
+
    <xs:simpleType name="durabilityQosKindType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="VOLATILE"/>
@@ -472,7 +472,7 @@
             <xs:element name="kind" type="ownershipQosKindType"/>
         </xs:all>
     </xs:complexType>
-	
+
     <xs:complexType name="ownershipStrengthQosPolicyType">
         <xs:all>
             <xs:element name="value" type="uint32Type"/>
@@ -573,7 +573,7 @@
             <xs:element name="publishMode" type="publishModeQosPolicyType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
-	
+
     <xs:complexType name="readerQosPoliciesType">
         <xs:all minOccurs="0">
             <xs:element name="durability" type="durabilityQosPolicyType" minOccurs="0"/>
@@ -685,8 +685,8 @@
             <xs:element name="logical_port_increment" type="uint16Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="metadata_logical_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="listening_ports" type="portListType" minOccurs="0" maxOccurs="1"/>
-			      <xs:element name="calculate_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
-			      <xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
+                  <xs:element name="calculate_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
+                  <xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="enable_tcp_nodelay" type="boolType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
@@ -816,7 +816,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-	<xs:complexType name="consumerDataType">
+    <xs:complexType name="consumerDataType">
         <xs:all>
             <xs:element name="class" type="string"/>
             <xs:element name="property" type="propertyVectorType"/>
@@ -852,8 +852,8 @@
             <xs:group ref="moduleElems"/>
         </xs:complexType>
     </xs:element>
-	
-	<xs:group name="moduleElems">
+
+    <xs:group name="moduleElems">
         <xs:sequence>
             <xs:choice maxOccurs="unbounded">
                 <xs:element name="struct" type="structDcl" minOccurs="0"/>

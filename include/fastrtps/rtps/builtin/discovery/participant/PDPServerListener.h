@@ -41,7 +41,8 @@ public:
 	/**
 	* @param in_PDP
 	*/
-    PDPServerListener(PDPServer* in_PDP) : mp_PDP(in_PDP)
+    PDPServerListener(PDPServer* in_PDP) 
+    : mp_PDP(in_PDP)
 	{
 	}
 
@@ -53,7 +54,9 @@ public:
 	 * @param reader
 	 * @param change
 	 */
-	void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change);
+	void onNewCacheChangeAdded(
+        RTPSReader* reader,
+        const CacheChange_t* const change);
 
 	/**
 	 * Get the key of a CacheChange_t

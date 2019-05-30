@@ -37,31 +37,34 @@ class PDP;
  */
 class PDPListener: public ReaderListener {
 public:
-	/**
-	* @param in_PDP
-	*/
-	PDPListener(PDP* in_PDP) : mp_PDP(in_PDP)
-	{
-	}
+    /**
+    * @param in_PDP
+    */
+    PDPListener(PDP* in_PDP) 
+        : mp_PDP(in_PDP)
+    {
+    }
 
-	~PDPListener() override {}
-	//!Pointer to the associated mp_SPDP;
-	PDP* mp_PDP;
-	/**
-	 * New added cache
-	 * @param reader
-	 * @param change
-	 */
-	void onNewCacheChangeAdded(RTPSReader* reader,const CacheChange_t* const change);
+    ~PDPListener() override {}
+    //!Pointer to the associated mp_SPDP;
+    PDP* mp_PDP;
+    /**
+    * New added cache
+    * @param reader
+    * @param change
+    */
+    void onNewCacheChangeAdded(
+        RTPSReader* reader,
+        const CacheChange_t* const change);
 
-	/**
-	 * Get the key of a CacheChange_t
-	 * @param change Pointer to the CacheChange_t
-	 * @return True on success
-	 */
-	bool getKey(CacheChange_t* change);
-	//!Auxiliary message.
-	CDRMessage_t aux_msg;
+    /**
+    * Get the key of a CacheChange_t
+    * @param change Pointer to the CacheChange_t
+    * @return True on success
+    */
+    bool getKey(CacheChange_t* change);
+    //!Auxiliary message.
+    CDRMessage_t aux_msg;
 };
 
 

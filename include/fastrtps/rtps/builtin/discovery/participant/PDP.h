@@ -78,7 +78,9 @@ class PDP
      * @return True on success
      */
     virtual bool initPDP(RTPSParticipantImpl* part) = 0;
-    bool initPDP(RTPSParticipantImpl* part, bool enableReader);
+    bool initPDP(
+        RTPSParticipantImpl* part,
+        bool enableReader);
 
     /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info
@@ -86,15 +88,21 @@ class PDP
      * @param CacheChange_t from DATA msg
      * @return new ParticipantProxyData * or nullptr on failure
      */
-    virtual ParticipantProxyData * createParticipantProxyData(const ParticipantProxyData &, const CacheChange_t &) = 0;
+    virtual ParticipantProxyData* createParticipantProxyData(
+        const ParticipantProxyData&,
+        const CacheChange_t&) = 0;
 
     /**
      * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
-     * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
+     * @param new_change If true a new change (with new seqNum) is created and sent;
+     *    if false the last change is re-sent
      * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED 
      * @param wparams allows to identify the change
      */
-    virtual void announceParticipantState(bool new_change, bool dispose = false, WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT);
+    virtual void announceParticipantState(
+        bool new_change,
+        bool dispose = false,
+        WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT);
 
     //!Stop the RTPSParticipantAnnouncement (only used in tests).
     virtual void stopParticipantAnnouncement();
@@ -108,7 +116,9 @@ class PDP
      * @param pdata
      * @return True if correct.
      */
-    bool addReaderProxyData(ReaderProxyData* rdata, ParticipantProxyData &pdata_out);
+    bool addReaderProxyData(
+        ReaderProxyData* rdata,
+        ParticipantProxyData &pdata_out);
 
     /**
      * Add a WriterProxyData to the correct ParticipantProxyData.
@@ -116,31 +126,44 @@ class PDP
      * @param pdata
      * @return True if correct.
      */
-    bool addWriterProxyData(WriterProxyData* wdata, ParticipantProxyData &pdata);
+    bool addWriterProxyData(
+        WriterProxyData* wdata,
+        ParticipantProxyData &pdata);
 
     /**
-     * This method returns a pointer to a ReaderProxyData object if it is found among the registered RTPSParticipants (including the local RTPSParticipant).
+     * This method returns a pointer to a ReaderProxyData object if it is found among
+     * the registered RTPSParticipants (including the local RTPSParticipant).
      * @param[in] reader GUID_t of the reader we are looking for.
      * @param rdata Pointer to pointer of the ReaderProxyData object.
      * @param pdata Pointer to pointer of the ParticipantProxyData object.
      * @return True if found.
      */
-    bool lookupReaderProxyData(const GUID_t& reader, ReaderProxyData& rdata, ParticipantProxyData& pdata);
+    bool lookupReaderProxyData(
+        const GUID_t& reader,
+        ReaderProxyData& rdata,
+        ParticipantProxyData& pdata);
     /**
-     * This method returns a pointer to a WriterProxyData object if it is found among the registered RTPSParticipants (including the local RTPSParticipant).
+     * This method returns a pointer to a WriterProxyData object if it is found among
+     * the registered RTPSParticipants (including the local RTPSParticipant).
      * @param[in] writer GUID_t of the writer we are looking for.
      * @param wdata Pointer to pointer of the WriterProxyData object.
      * @param pdata Pointer to pointer of the ParticipantProxyData object.
      * @return True if found.
      */
-    bool lookupWriterProxyData(const GUID_t& writer, WriterProxyData& wdata, ParticipantProxyData& pdata);
+    bool lookupWriterProxyData(
+        const GUID_t& writer,
+        WriterProxyData& wdata,
+        ParticipantProxyData& pdata);
     /**
-     * This method returns a pointer to a RTPSParticipantProxyData object if it is found among the registered RTPSParticipants.
+     * This method returns a pointer to a RTPSParticipantProxyData object if it is found among
+     * the registered RTPSParticipants.
      * @param[in] pguid GUID_t of the RTPSParticipant we are looking for.
      * @param pdata Copy information on ParticipantProxyData object.
      * @return True if found.
      */
-    bool lookupParticipantProxyData(const GUID_t& pguid, ParticipantProxyData& pdata);
+    bool lookupParticipantProxyData(
+        const GUID_t& pguid,
+        ParticipantProxyData& pdata);
     /**
      * This method removes and deletes a ReaderProxyData object from its corresponding RTPSParticipant.
      * @return true if found and deleted.
@@ -209,13 +232,19 @@ class PDP
      * Get a cons_iterator to the beginning of the RTPSParticipant Proxies.
      * @return const_iterator.
      */
-    inline  std::vector<ParticipantProxyData*>::const_iterator ParticipantProxiesBegin(){return m_participantProxies.begin();};
+    inline std::vector<ParticipantProxyData*>::const_iterator ParticipantProxiesBegin()
+    {
+        return m_participantProxies.begin();
+    };
     
     /**
      * Get a cons_iterator to the end RTPSParticipant Proxies.
      * @return const_iterator.
      */
-    inline std::vector<ParticipantProxyData*>::const_iterator ParticipantProxiesEnd(){return m_participantProxies.end();};
+    inline std::vector<ParticipantProxyData*>::const_iterator ParticipantProxiesEnd()
+    {
+        return m_participantProxies.end();
+    };
 
     /**
      * Assert the liveliness of a Remote Participant.
@@ -234,7 +263,9 @@ class PDP
      * @param guidP GuidPrefix_t of the participant whose writers liveliness is begin asserted.
      * @param kind LivelinessQosPolicyKind of the writers.
      */
-    void assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind);
+    void assertRemoteWritersLiveliness(
+        GuidPrefix_t& guidP,
+        LivelinessQosPolicyKind kind);
 
     /**
      * Get the RTPS participant

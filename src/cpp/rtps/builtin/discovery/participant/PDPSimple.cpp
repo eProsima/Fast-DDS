@@ -138,7 +138,9 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
 
     // Enable DATA(p) processing
     if (!mp_RTPSParticipant->enableReader(mp_PDPReader))
+    {
         return false;
+    }
 
     return true;
 }

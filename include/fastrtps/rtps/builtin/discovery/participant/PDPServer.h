@@ -42,7 +42,7 @@ class PDPServer : public PDP
     friend class DServerEvent;
     friend class PDPServerListener;
 
-    typedef std::set<const ParticipantProxyData *> pending_matches_list;
+    typedef std::set<const ParticipantProxyData*> pending_matches_list;
     typedef std::set<InstanceHandle_t> key_list;
 
     //! EDP pending matches
@@ -62,7 +62,9 @@ class PDPServer : public PDP
      * Constructor
      * @param builtin Pointer to the BuiltinProcols object.
      */
-    PDPServer(BuiltinProtocols* builtin, DurabilityKind_t durability_kind = TRANSIENT_LOCAL);
+    PDPServer(
+        BuiltinProtocols* builtin,
+        DurabilityKind_t durability_kind = TRANSIENT_LOCAL);
     ~PDPServer();
 
     void initializeParticipantProxyData(ParticipantProxyData* participant_data) override;
@@ -80,7 +82,9 @@ class PDPServer : public PDP
      * @param CacheChange_t from DATA msg
      * @return new ParticipantProxyData * or nullptr on failure
      */
-    ParticipantProxyData * createParticipantProxyData(const ParticipantProxyData &, const CacheChange_t &) override;
+    ParticipantProxyData* createParticipantProxyData(
+        const ParticipantProxyData&,
+        const CacheChange_t&) override;
 
     /**
      * Create the SPDP Writer and Reader
@@ -117,14 +121,14 @@ class PDPServer : public PDP
      * @param metatraffic CacheChange_t
      * @return True if successfully modified WriterHistory
      */
-    bool addRelayedChangeToHistory( CacheChange_t &);
+    bool addRelayedChangeToHistory(CacheChange_t&);
 
     /**
      * Trigger the participant CacheChange_t removal system
      * @param instanceHandle associated with participants CacheChange_ts
      * @return True if successfully modified WriterHistory
      */
-    void removeParticipantFromHistory(const InstanceHandle_t &);
+    void removeParticipantFromHistory(const InstanceHandle_t&);
 
     /**
      * Methods to synchronize EDP matching
@@ -134,13 +138,13 @@ class PDPServer : public PDP
      * Add a participant to the queue of pending participants to EDP matching
      * @param ParticipantProxyData associated with the new participant
      */
-    void queueParticipantForEDPMatch(const ParticipantProxyData * );
+    void queueParticipantForEDPMatch(const ParticipantProxyData*);
 
     /**
      * Remove a participant from the queue of pending participants to EDP matching
      * @param ParticipantProxyData associated with the new participant
      */
-    void removeParticipantForEDPMatch(const ParticipantProxyData *);
+    void removeParticipantForEDPMatch(const ParticipantProxyData*);
 
     /**
      * Check if all client have acknowledge the server PDP data
@@ -191,7 +195,10 @@ class PDPServer : public PDP
      * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
      * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED
      */
-    void announceParticipantState(bool new_change, bool dispose = false, WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
+    void announceParticipantState(
+        bool new_change,
+        bool dispose = false,
+        WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
 
     /**
      * These methods wouldn't be needed under perfect server operation (no need of dynamic endpoint allocation)

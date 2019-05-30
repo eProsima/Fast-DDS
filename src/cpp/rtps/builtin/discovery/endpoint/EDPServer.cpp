@@ -66,11 +66,14 @@ bool EDPServer::createSEDPEndpoints()
         //Wparam.pushMode = true;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.topicKind = WITH_KEY;
-        watt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        watt.endpoint.unicastLocatorList = mp_PDP->getLocalParticipantProxyData()
+            ->m_metatrafficUnicastLocatorList;
+        watt.endpoint.multicastLocatorList = mp_PDP->getLocalParticipantProxyData()
+            ->m_metatrafficMulticastLocatorList;
         //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
-        watt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename", pPDP->GetPersistenceFileName()));
+        watt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
+            pPDP->GetPersistenceFileName()));
         watt.endpoint.durabilityKind = _durability;
         watt.times.heartbeatPeriod = edp_heartbeat_period;
         watt.times.nackResponseDelay = edp_nack_response_delay;
@@ -100,8 +103,10 @@ bool EDPServer::createSEDPEndpoints()
         ratt.expectsInlineQos = false;
         ratt.endpoint.reliabilityKind = RELIABLE;
         ratt.endpoint.topicKind = WITH_KEY;
-        ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()
+            ->m_metatrafficUnicastLocatorList;
+        ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()
+            ->m_metatrafficMulticastLocatorList;
         //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay = edp_heartbeat_response_delay;
@@ -129,8 +134,10 @@ bool EDPServer::createSEDPEndpoints()
         ratt.expectsInlineQos = false;
         ratt.endpoint.reliabilityKind = RELIABLE;
         ratt.endpoint.topicKind = WITH_KEY;
-        ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()
+            ->m_metatrafficUnicastLocatorList;
+        ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()
+            ->m_metatrafficMulticastLocatorList;
         //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.times.heartbeatResponseDelay = edp_heartbeat_response_delay;
@@ -157,11 +164,14 @@ bool EDPServer::createSEDPEndpoints()
         //Wparam.pushMode = true;
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.topicKind = WITH_KEY;
-        watt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()->m_metatrafficMulticastLocatorList;
+        watt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()
+            ->m_metatrafficUnicastLocatorList;
+        watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()
+            ->m_metatrafficMulticastLocatorList;
         //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
         watt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
-        watt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename", pPDP->GetPersistenceFileName()));
+        watt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
+            pPDP->GetPersistenceFileName()));
         watt.endpoint.durabilityKind = _durability;
         watt.times.heartbeatPeriod= edp_heartbeat_period;
         watt.times.nackResponseDelay = edp_nack_response_delay;
@@ -190,7 +200,11 @@ bool EDPServer::createSEDPEndpoints()
 }
 
 template<class ProxyCont>
-bool EDPServer::trimWriterHistory(key_list & _demises, StatefulWriter & writer, WriterHistory & history, ProxyCont ParticipantProxyData::* pC)
+bool EDPServer::trimWriterHistory(
+    key_list& _demises,
+    StatefulWriter& writer,
+    WriterHistory& history,
+    ProxyCont ParticipantProxyData::* pC)
 {
     // trim demises container
     key_list disposal, aux;
@@ -222,7 +236,10 @@ bool EDPServer::trimWriterHistory(key_list & _demises, StatefulWriter & writer, 
     std::lock_guard<std::recursive_mutex> guardW(*writer.getMutex());
 
     std::copy_if(history.changesBegin(), history.changesBegin(), std::front_inserter(removal),
-        [_demises](const CacheChange_t* chan) { return _demises.find(chan->instanceHandle) != _demises.cend();  });
+        [_demises](const CacheChange_t* chan) 
+        { 
+            return _demises.find(chan->instanceHandle) != _demises.cend();
+        });
 
     if (removal.empty())
         return true;
@@ -246,7 +263,10 @@ bool EDPServer::trimWriterHistory(key_list & _demises, StatefulWriter & writer, 
 
 }
 
-bool EDPServer::addEndpointFromHistory(StatefulWriter & writer, WriterHistory & history, CacheChange_t & c)
+bool EDPServer::addEndpointFromHistory(
+    StatefulWriter& writer,
+    WriterHistory& history,
+    CacheChange_t& c)
 {
     std::lock_guard<std::recursive_mutex> guardW(*writer.getMutex());
     CacheChange_t * pCh = nullptr;
@@ -287,7 +307,7 @@ bool EDPServer::addEndpointFromHistory(StatefulWriter & writer, WriterHistory & 
     return false;
 }
 
-void EDPServer::removePublisherFromHistory(const InstanceHandle_t & key)
+void EDPServer::removePublisherFromHistory(const InstanceHandle_t& key)
 {
     std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
 
@@ -300,7 +320,7 @@ void EDPServer::removePublisherFromHistory(const InstanceHandle_t & key)
     }
 }
 
-void EDPServer::removeSubscriberFromHistory(const InstanceHandle_t & key)
+void EDPServer::removeSubscriberFromHistory(const InstanceHandle_t& key)
 {
     std::lock_guard<std::recursive_mutex> guardP(*mp_PDP->getMutex());
 
@@ -324,11 +344,15 @@ bool EDPServer::removeLocalReader(RTPSReader* R)
     {
         InstanceHandle_t iH;
         iH = (R->getGuid());
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t {return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE; },
+        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+            {
+                return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
+            },
             NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
         if (change != nullptr)
         {
-            // unlike on EDPSimple we would remove old WriterHistory related entities when all clients-servers have acknownledge reception
+            // unlike on EDPSimple we would remove old WriterHistory related entities when all
+            // clients-servers have acknownledge reception
             // We must key-signed the CacheChange_t to avoid duplications:
             WriteParams wp;
             SampleIdentity local;
@@ -355,11 +379,15 @@ bool EDPServer::removeLocalWriter(RTPSWriter* W)
     {
         InstanceHandle_t iH;
         iH = W->getGuid();
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t {return DISCOVERY_PUBLICATION_DATA_MAX_SIZE; },
+        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+            {
+                return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
+            },
             NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
         if (change != nullptr)
         {
-            // unlike on EDPSimple we would remove old WriterHistory related entities when all clients-servers have acknownledge reception
+            // unlike on EDPSimple we would remove old WriterHistory related
+            // entities when all clients-servers have acknownledge reception
             // We must key-signed the CacheChange_t to avoid duplications:
             WriteParams wp;
             SampleIdentity local;
@@ -376,7 +404,9 @@ bool EDPServer::removeLocalWriter(RTPSWriter* W)
     return mp_PDP->removeWriterProxyData(W->getGuid());
 }
 
-bool EDPServer::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProxyData* wdata)
+bool EDPServer::processLocalWriterProxyData(
+    RTPSWriter* local_writer,
+    WriterProxyData* wdata)
 {
     logInfo(RTPS_EDP, wdata->guid().entityId);
     (void)local_writer;
@@ -385,7 +415,10 @@ bool EDPServer::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
 
     if (writer->first != nullptr)
     {
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t {return DISCOVERY_PUBLICATION_DATA_MAX_SIZE; },
+        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+            {
+                return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
+            },
             ALIVE, wdata->key());
         if (change != nullptr)
         {
@@ -405,7 +438,8 @@ bool EDPServer::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
             ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
-            // unlike on EDPSimple we wouldn't remove endpoint outdate info till all client-servers acknowledge reception
+            // unlike on EDPSimple we wouldn't remove endpoint outdate info till all
+            // client-servers acknowledge reception
             // We must key-signed the CacheChange_t to avoid duplications:
             WriteParams wp;
             SampleIdentity local;
@@ -423,7 +457,9 @@ bool EDPServer::processLocalWriterProxyData(RTPSWriter* local_writer, WriterProx
     return true;
 }
 
-bool EDPServer::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProxyData* rdata)
+bool EDPServer::processLocalReaderProxyData(
+    RTPSReader* local_reader,
+    ReaderProxyData* rdata)
 {
     logInfo(RTPS_EDP, rdata->guid().entityId);
     (void)local_reader;
@@ -433,7 +469,10 @@ bool EDPServer::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
     if (writer->first != nullptr)
     {
         // TODO(Ricardo) Write a getCdrSerializedPayload for ReaderProxyData.
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t {return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE; },
+        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+            {
+                return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
+            },
             ALIVE, rdata->key());
 
         if (change != nullptr)
@@ -452,7 +491,8 @@ bool EDPServer::processLocalReaderProxyData(RTPSReader* local_reader, ReaderProx
             ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
-            // unlike on EDPSimple we wouldn't remove endpoint outdate info till all client-servers acknowledge reception
+            // unlike on EDPSimple we wouldn't remove endpoint outdate info till
+            // all client-servers acknowledge reception
             // We must key-signed the CacheChange_t to avoid duplications:
             WriteParams wp;
             SampleIdentity local;

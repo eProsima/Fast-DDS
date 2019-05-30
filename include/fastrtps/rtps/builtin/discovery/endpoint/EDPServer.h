@@ -61,30 +61,45 @@ class EDPServer : public EDPSimple
      * @param p Pointer to the PDP
      * @param part Pointer to the RTPSParticipantImpl
      */
-    EDPServer(PDP* p, RTPSParticipantImpl* part, DurabilityKind_t durability_kind)
-        : EDPSimple(p, part), _durability(durability_kind) {}
+    EDPServer(
+        PDP* p,
+        RTPSParticipantImpl* part,
+        DurabilityKind_t durability_kind)
+        : EDPSimple(p, part)
+        , _durability(durability_kind)
+    {
+    }
+
     ~EDPServer() override {}
 
     /**
-     * This method generates the corresponding change in the subscription writer and send it to all known remote endpoints.
+     * This method generates the corresponding change in the subscription writer and send it
+     * to all known remote endpoints.
      * @param rdata Pointer to the ReaderProxyData object.
      * @return true if correct.
      */
-    bool processLocalReaderProxyData(RTPSReader* reader, ReaderProxyData* rdata) override;
+    bool processLocalReaderProxyData(
+        RTPSReader* reader,
+        ReaderProxyData* rdata) override;
     /**
-     * This method generates the corresponding change in the publciations writer and send it to all known remote endpoints.
+     * This method generates the corresponding change in the publciations writer and send it
+     * to all known remote endpoints.
      * @param wdata Pointer to the WriterProxyData object.
      * @return true if correct.
      */
-    bool processLocalWriterProxyData(RTPSWriter* writer, WriterProxyData* wdata) override;
+    bool processLocalWriterProxyData(
+        RTPSWriter* writer,
+        WriterProxyData* wdata) override;
     /**
-     * This methods generates the change disposing of the local Reader and calls the unpairing and removal methods of the base class.
+     * This methods generates the change disposing of the local Reader and calls the unpairing
+     * and removal methods of the base class.
      * @param R Pointer to the RTPSReader object.
      * @return True if correct.
      */
     bool removeLocalReader(RTPSReader*R) override;
     /**
-     * This methods generates the change disposing of the local Writer and calls the unpairing and removal methods of the base class.
+     * This methods generates the change disposing of the local Writer and calls the unpairing
+     * and removal methods of the base class.
      * @param W Pointer to the RTPSWriter object.
      * @return True if correct.
      */
@@ -119,12 +134,12 @@ class EDPServer : public EDPSimple
         * Add participant CacheChange_ts from reader to writer
         * @return True if successfully modified WriterHistory
         */
-    bool addPublisherFromHistory( CacheChange_t & c)
+    bool addPublisherFromHistory( CacheChange_t& c)
     {
         return addEndpointFromHistory(*publications_writer_.first, *publications_writer_.second, c);
     }
 
-    bool addSubscriberFromHistory( CacheChange_t & c)
+    bool addSubscriberFromHistory( CacheChange_t& c)
     {
         return addEndpointFromHistory(*subscriptions_writer_.first, *subscriptions_writer_.second, c);
     }
@@ -133,8 +148,8 @@ class EDPServer : public EDPSimple
     * Trigger the participant CacheChange_t removal system
     * @return True if successfully modified WriterHistory
     */
-    void removePublisherFromHistory(const InstanceHandle_t &);
-    void removeSubscriberFromHistory(const InstanceHandle_t &);
+    void removePublisherFromHistory(const InstanceHandle_t&);
+    void removeSubscriberFromHistory(const InstanceHandle_t&);
 
     private:
 
@@ -143,10 +158,17 @@ class EDPServer : public EDPSimple
     * @return True if trim is finished
     */
     template<class ProxyCont> 
-    bool trimWriterHistory(key_list & _demises, StatefulWriter & writer, WriterHistory & history, ProxyCont ParticipantProxyData::* pCont);
+    bool trimWriterHistory(
+        key_list& _demises,
+        StatefulWriter& writer,
+        WriterHistory& history,
+        ProxyCont ParticipantProxyData::* pCont);
 
     //! addPublisherFromHistory and addSubscriberFromHistory common implementation
-    bool addEndpointFromHistory(StatefulWriter & writer, WriterHistory & history,  CacheChange_t & c);
+    bool addEndpointFromHistory(
+        StatefulWriter& writer,
+        WriterHistory& history,
+        CacheChange_t& c);
 
     /**
      * Create local SEDP Endpoints based on the DiscoveryAttributes.

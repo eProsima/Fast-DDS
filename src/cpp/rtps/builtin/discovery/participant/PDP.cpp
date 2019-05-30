@@ -63,6 +63,7 @@ namespace rtps {
 
 
 // Default configuration values for PDP reliable entities.
+// TODO: Duration_t constructor gets now nanosecond I must be aware of that when rebasing
 const Duration_t pdp_heartbeat_period{ 0, 1500 * 1000 * 1000 }; // 348 milliseconds
 const Duration_t pdp_nack_response_delay{ 0, 400 * 1000 * 1000 }; // ~93 milliseconds
 const Duration_t pdp_nack_supression_duration{ 0, 50 * 1000 * 1000 }; // ~11 milliseconds
@@ -71,46 +72,37 @@ const Duration_t pdp_heartbeat_response_delay{ 0, 50 * 1000 * 1000 }; // ~11 mil
 const int32_t pdp_initial_reserved_caches = 20;
 
 
-PDP::PDP(BuiltinProtocols* built):
-    mp_builtin(built),
-    mp_resendParticipantTimer(nullptr),
-    mp_RTPSParticipant(nullptr),
-    mp_PDPWriter(nullptr),
-    mp_PDPReader(nullptr),
-    mp_EDP(nullptr),
-    m_hasChangedLocalPDP(true),
-    mp_listener(nullptr),
-    mp_PDPWriterHistory(nullptr),
-    mp_PDPReaderHistory(nullptr),
-    mp_mutex(new std::recursive_mutex())
+PDP::PDP(BuiltinProtocols* built)
+    : mp_builtin(built)
+    , mp_resendParticipantTimer(nullptr)
+    , mp_RTPSParticipant(nullptr)
+    , mp_PDPWriter(nullptr)
+    , mp_PDPReader(nullptr)
+    , mp_EDP(nullptr)
+    , m_hasChangedLocalPDP(true)
+    , mp_listener(nullptr)
+    , mp_PDPWriterHistory(nullptr)
+    , mp_PDPReaderHistory(nullptr)
+    , mp_mutex(new std::recursive_mutex())
     {
 
     }
 
 PDP::~PDP()
 {
-    if (mp_resendParticipantTimer != nullptr)
-        delete(mp_resendParticipantTimer);
-
+    delete(mp_resendParticipantTimer);
     mp_RTPSParticipant->disableReader(mp_PDPReader);
-
-    if(mp_EDP!=nullptr)
-    {
-        delete(mp_EDP);
-    }
-
+    delete(mp_EDP);
     mp_RTPSParticipant->deleteUserEndpoint(mp_PDPWriter);
     mp_RTPSParticipant->deleteUserEndpoint(mp_PDPReader);
     delete(mp_PDPWriterHistory);
     delete(mp_PDPReaderHistory);
-
     delete(mp_listener);
     for(auto it = this->m_participantProxies.begin();
             it!=this->m_participantProxies.end();++it)
     {
         delete(*it);
     }
-
     delete(mp_mutex);
 }
 
@@ -172,7 +164,8 @@ void PDP::initializeParticipantProxyData(ParticipantProxyData* participant_data)
     }
 
     PermissionsToken* permissions_token = nullptr;
-    if(mp_RTPSParticipant->security_manager().get_permissions_token(&permissions_token) && permissions_token != nullptr)
+    if(mp_RTPSParticipant->security_manager().get_permissions_token(&permissions_token)
+        && permissions_token != nullptr)
     {
         participant_data->permissions_token_ = std::move(*permissions_token);
         mp_RTPSParticipant->security_manager().return_permissions_token(permissions_token);
@@ -192,7 +185,9 @@ void PDP::initializeParticipantProxyData(ParticipantProxyData* participant_data)
 #endif
 }
 
-bool PDP::initPDP(RTPSParticipantImpl* part, bool enableReader)
+bool PDP::initPDP(
+    RTPSParticipantImpl* part,
+    bool enableReader)
 {
     logInfo(RTPS_PDP,"Beginning");
     mp_RTPSParticipant = part;
@@ -207,16 +202,22 @@ bool PDP::initPDP(RTPSParticipantImpl* part, bool enableReader)
     m_participantProxies.push_back(new ParticipantProxyData());
     initializeParticipantProxyData(m_participantProxies.front());
 
-    if(enableReader && !mp_RTPSParticipant->enableReader(mp_PDPReader))
+    if (enableReader && !mp_RTPSParticipant->enableReader(mp_PDPReader))
+    {
         return false;
+    }
 
-    mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this, TimeConv::Time_t2MilliSecondsDouble(m_discovery.leaseDuration_announcementperiod));
+    mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this,
+        TimeConv::Time_t2MilliSecondsDouble(m_discovery.leaseDuration_announcementperiod));
 
     return true;
 }
 
 
-void PDP::announceParticipantState(bool new_change, bool dispose, WriteParams& wparams)
+void PDP::announceParticipantState(
+    bool new_change,
+    bool dispose,
+    WriteParams& wparams)
 {
     logInfo(RTPS_PDP,"Announcing RTPSParticipant State (new change: "<< new_change <<")");
     CacheChange_t* change = nullptr;
@@ -235,7 +236,11 @@ void PDP::announceParticipantState(bool new_change, bool dispose, WriteParams& w
             if(mp_PDPWriterHistory->getHistorySize() > 0)
                 mp_PDPWriterHistory->remove_min_change();
             // TODO(Ricardo) Change DISCOVERY_PARTICIPANT_DATA_MAX_SIZE with getLocalParticipantProxyData()->size().
-            change = mp_PDPWriter->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE, key);
+            change = mp_PDPWriter->new_change([]() -> uint32_t 
+                {
+                    return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+                }
+            , ALIVE, key);
 
             if(change != nullptr)
             {
@@ -273,7 +278,11 @@ void PDP::announceParticipantState(bool new_change, bool dispose, WriteParams& w
 
         if(mp_PDPWriterHistory->getHistorySize() > 0)
             mp_PDPWriterHistory->remove_min_change();
-        change = mp_PDPWriter->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;}, NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
+        change = mp_PDPWriter->new_change([]() -> uint32_t 
+            {
+                return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+            }
+        , NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
 
         if(change != nullptr)
         {
@@ -312,7 +321,10 @@ void PDP::resetParticipantAnnouncement()
     mp_resendParticipantTimer->restart_timer();
 }
 
-bool PDP::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData& rdata, ParticipantProxyData& pdata)
+bool PDP::lookupReaderProxyData(
+    const GUID_t& reader,
+    ReaderProxyData& rdata,
+    ParticipantProxyData& pdata)
 {
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
     for (auto pit = m_participantProxies.begin();
@@ -332,7 +344,10 @@ bool PDP::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData& rdata, Pa
     return false;
 }
 
-bool PDP::lookupWriterProxyData(const GUID_t& writer, WriterProxyData& wdata, ParticipantProxyData& pdata)
+bool PDP::lookupWriterProxyData(
+    const GUID_t& writer,
+    WriterProxyData& wdata,
+    ParticipantProxyData& pdata)
 {
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
     for (auto pit = m_participantProxies.begin();
@@ -421,7 +436,9 @@ bool PDP::removeWriterProxyData(const GUID_t& writer_guid)
 }
 
 
-bool PDP::lookupParticipantProxyData(const GUID_t& pguid, ParticipantProxyData& pdata)
+bool PDP::lookupParticipantProxyData(
+    const GUID_t& pguid,
+    ParticipantProxyData& pdata)
 {
     logInfo(RTPS_PDP,pguid);
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
@@ -437,7 +454,9 @@ bool PDP::lookupParticipantProxyData(const GUID_t& pguid, ParticipantProxyData& 
     return false;
 }
 
-bool PDP::addReaderProxyData(ReaderProxyData* rdata, ParticipantProxyData& pdata)
+bool PDP::addReaderProxyData(
+    ReaderProxyData* rdata,
+    ParticipantProxyData& pdata)
 {
     logInfo(RTPS_PDP, "Adding reader proxy data " << rdata->guid());
 
@@ -500,7 +519,9 @@ bool PDP::addReaderProxyData(ReaderProxyData* rdata, ParticipantProxyData& pdata
     return false;
 }
 
-bool PDP::addWriterProxyData(WriterProxyData* wdata, ParticipantProxyData& pdata)
+bool PDP::addWriterProxyData(
+    WriterProxyData* wdata,
+    ParticipantProxyData& pdata)
 {
     logInfo(RTPS_PDP, "Adding writer proxy data " << wdata->guid());
 
@@ -680,7 +701,9 @@ void PDP::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
     }
 }
 
-void PDP::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind)
+void PDP::assertRemoteWritersLiveliness(
+    GuidPrefix_t& guidP,
+    LivelinessQosPolicyKind kind)
 {
     std::lock_guard<std::recursive_mutex> guardP(*mp_RTPSParticipant->getParticipantMutex());
     std::lock_guard<std::recursive_mutex> pguard(*this->mp_mutex);

@@ -30,9 +30,9 @@ namespace eprosima {
 
 namespace fastrtps{
 
-    class WriterQos;
-    class ReaderQos;
-    class TopicAttributes;
+class WriterQos;
+class ReaderQos;
+class TopicAttributes;
 
 namespace rtps {
 
@@ -59,10 +59,13 @@ class BuiltinProtocols
      * @param p_part Pointer to the Participant implementation
      * @return True if correct.
      */
-    bool initBuiltinProtocols(RTPSParticipantImpl* p_part, BuiltinAttributes& attributes);
+    bool initBuiltinProtocols(
+        RTPSParticipantImpl* p_part,
+        BuiltinAttributes& attributes);
 
     /**
-     * Update the metatraffic locatorlist after it was created. Because when you create the EDP readers you are not sure the selected endpoints can be used.
+     * Update the metatraffic locatorlist after it was created. Because when you create
+     * the EDP readers you are not sure the selected endpoints can be used.
      * @param loclist LocatorList to update
      * @return True on success
      */
@@ -92,7 +95,10 @@ class BuiltinProtocols
      * @param wqos QoS policies dictated by the publisher
      * @return True if correct.
      */
-    bool addLocalWriter(RTPSWriter* w, const TopicAttributes& topicAtt, const WriterQos& wqos);
+    bool addLocalWriter(
+        RTPSWriter* w,
+        const TopicAttributes& topicAtt,
+        const WriterQos& wqos);
     /**
      * Add a local Reader to the BuiltinProtocols.
      * @param R Pointer to the RTPSReader.
@@ -100,7 +106,10 @@ class BuiltinProtocols
      * @param rqos QoS policies dictated by the subscriber
      * @return True if correct.
      */
-    bool addLocalReader(RTPSReader* R, const TopicAttributes& topicAtt, const ReaderQos& rqos);
+    bool addLocalReader(
+        RTPSReader* R,
+        const TopicAttributes& topicAtt,
+        const ReaderQos& rqos);
     /**
      * Update a local Writer QOS
      * @param W Writer to update
@@ -108,7 +117,10 @@ class BuiltinProtocols
      * @param wqos New Writer QoS
      * @return
      */
-    bool updateLocalWriter(RTPSWriter* W, const TopicAttributes& topicAtt, const WriterQos& wqos);
+    bool updateLocalWriter(
+        RTPSWriter* W,
+        const TopicAttributes& topicAtt,
+        const WriterQos& wqos);
     /**
      * Update a local Reader QOS
      * @param R Reader to update
@@ -116,7 +128,10 @@ class BuiltinProtocols
      * @param qos New Reader QoS
      * @return
      */
-    bool updateLocalReader(RTPSReader* R, const TopicAttributes& topicAtt, const ReaderQos& qos);
+    bool updateLocalReader(
+        RTPSReader* R,
+        const TopicAttributes& topicAtt,
+        const ReaderQos& qos);
     /**
      * Remove a local Writer from the builtinProtocols.
      * @param W Pointer to the writer.
@@ -143,7 +158,10 @@ class BuiltinProtocols
      * @param userDefinedId User Defined ID.
      * @param kind Kind of endpoint.
      */
-    bool newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId, EndpointKind_t kind);
+    bool newRemoteEndpointStaticallyDiscovered(
+        const GUID_t& pguid,
+        int16_t userDefinedId,
+        EndpointKind_t kind);
 
 };
 

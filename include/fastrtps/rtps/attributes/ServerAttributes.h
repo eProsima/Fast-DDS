@@ -42,7 +42,8 @@ namespace rtps {
     class RemoteServerAttributes 
     {
     public:
-        RTPS_DllAPI inline bool operator==(const RemoteServerAttributes & r) const { return guidPrefix == r.guidPrefix; }
+        RTPS_DllAPI inline bool operator==(const RemoteServerAttributes& r) const
+        { return guidPrefix == r.guidPrefix; }
 
         RTPS_DllAPI GUID_t GetParticipant() const;
 

@@ -69,7 +69,9 @@ class PDPClient : public PDP
      * @param CacheChange_t from DATA msg
      * @return new ParticipantProxyData * or nullptr on failure
      */
-    ParticipantProxyData * createParticipantProxyData(const ParticipantProxyData &, const CacheChange_t &) override;
+    ParticipantProxyData* createParticipantProxyData(
+        const ParticipantProxyData&,
+        const CacheChange_t&) override;
 
     /**
      * Create the SPDP Writer and Reader
@@ -93,18 +95,23 @@ class PDPClient : public PDP
 
     /**
      * Force the sending of our local PDP to all servers
-     * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
+     * @param new_change If true a new change (with new seqNum) is created and sent;
+     * if false the last change is re-sent
      * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED
      */
-    void announceParticipantState(bool new_change, bool dispose = false, WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
+    void announceParticipantState(
+        bool new_change,
+        bool dispose = false,
+        WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
 
     /**
-     * These methods wouldn't be needed under perfect server operation (no need of dynamic endpoint allocation) but must be implemented
+     * These methods wouldn't be needed under perfect server operation 
+     * (no need of dynamic endpoint allocation) but must be implemented
      * to solve server shutdown situations.
      * @param pdata Pointer to the RTPSParticipantProxyData object.
      */
     void assignRemoteEndpoints(ParticipantProxyData* pdata) override;
-    void removeRemoteEndpoints(ParticipantProxyData * pdata) override;
+    void removeRemoteEndpoints(ParticipantProxyData* pdata) override;
     void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata) override;
 
     /**
@@ -117,7 +124,8 @@ class PDPClient : public PDP
 
     /**
     * TimedEvent for server synchronization:
-    *   first stage: periodically resend the local RTPSParticipant information until all servers have acknowledge reception
+    *   first stage: periodically resend the local RTPSParticipant information until
+    *    all servers have acknowledge reception
     *   second stage: waiting PDP info is up to date before allowing EDP matching
     */
     DSClientEvent* mp_sync;

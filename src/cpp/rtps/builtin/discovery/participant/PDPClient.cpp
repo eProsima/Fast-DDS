@@ -120,13 +120,15 @@ void PDPClient::initializeParticipantProxyData(ParticipantProxyData* participant
     }
 
 //#if HAVE_SECURITY
-//    if (getRTPSParticipant()->getAttributes().builtin.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader)
+//    if (getRTPSParticipant()->getAttributes().builtin.m_simpleEDP
+//    .enable_builtin_secure_publications_writer_and_subscriptions_reader)
 //    {
 //        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
 //        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
 //    }
 //
-//    if (getRTPSParticipant()->getAttributes().builtin.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader)
+//    if (getRTPSParticipant()->getAttributes().builtin.m_simpleEDP
+//    .enable_builtin_secure_subscriptions_writer_and_publications_reader)
 //    {
 //        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
 //        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
@@ -142,8 +144,9 @@ bool PDPClient::initPDP(RTPSParticipantImpl* part)
         return false;
     }
 
-    /* We keep using EPDSimple notwithstanding its method EDPSimple::assignRemoteEndpoints regards all server EDPs as TRANSIENT_LOCAL.
-       Server builtin Writers are actually TRANSIENT. Currently this mistake is not an issue but must be kept in mind if further development
+    /* We keep using EPDSimple notwithstanding its method EDPSimple::assignRemoteEndpoints regards
+       all server EDPs as TRANSIENT_LOCAL. Server builtin Writers are actually TRANSIENT.
+       Currently this mistake is not an issue but must be kept in mind if further development
        justifies the creation of an EDPClient class.
     */
     mp_EDP = (EDP*)(new EDPClient(this,mp_RTPSParticipant));
@@ -159,7 +162,9 @@ bool PDPClient::initPDP(RTPSParticipantImpl* part)
     return true;
 }
 
-ParticipantProxyData * PDPClient::createParticipantProxyData(const ParticipantProxyData & participant_data, const CacheChange_t &)
+ParticipantProxyData* PDPClient::createParticipantProxyData(
+    const ParticipantProxyData& participant_data,
+    const CacheChange_t&)
 {
     std::unique_lock<std::recursive_mutex> lock(*getMutex());
 
@@ -218,7 +223,8 @@ bool PDPClient::createPDPEndpoints()
 
     mp_listener = new PDPListener(this);
 
-    if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, mp_PDPReaderHistory, mp_listener, c_EntityId_SPDPReader, true, false))
+    if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, mp_PDPReaderHistory, mp_listener,
+        c_EntityId_SPDPReader, true, false))
     {
 //#if HAVE_SECURITY
 //        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(rout, false);
@@ -275,7 +281,8 @@ bool PDPClient::createPDPEndpoints()
         watt.mode = ASYNCHRONOUS_WRITER;
     }
 
-    if (mp_RTPSParticipant->createWriter(&mp_PDPWriter, watt, mp_PDPWriterHistory, nullptr, c_EntityId_SPDPWriter, true))
+    if (mp_RTPSParticipant->createWriter(&mp_PDPWriter, watt, mp_PDPWriterHistory, nullptr,
+        c_EntityId_SPDPWriter, true))
     {
 //#if HAVE_SECURITY
 //        mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
@@ -422,7 +429,8 @@ bool PDPClient::all_servers_acknowledge_PDP()
     }
     else
     {
-        logError(RTPS_PDP, "ParticipantProxy data should have been added to client PDP history cache by a previous call to announceParticipantState()");
+        logError(RTPS_PDP, "ParticipantProxy data should have been added to client PDP history cache "
+            "by a previous call to announceParticipantState()");
     }
 
     return false;
@@ -436,7 +444,10 @@ bool PDPClient::is_all_servers_PDPdata_updated()
     return pR->isInCleanState();
 }
 
-void PDPClient::announceParticipantState(bool new_change, bool dispose, WriteParams& )
+void PDPClient::announceParticipantState(
+    bool new_change,
+    bool dispose,
+    WriteParams& )
 {
     WriteParams wp;
     SampleIdentity local;
@@ -530,7 +541,8 @@ void PDPClient::announceParticipantState(bool new_change, bool dispose, WritePar
             }
             else
             {
-                logError(RTPS_PDP, "ParticipantProxy data should have been added to client PDP history cache by a previous call to announceParticipantState()");
+                logError(RTPS_PDP, "ParticipantProxy data should have been added to client PDP history "
+                    "cache by a previous call to announceParticipantState()");
             }
         }
     }

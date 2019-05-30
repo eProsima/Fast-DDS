@@ -78,7 +78,7 @@ public:
 	 * @param pdata Pointer to the RTPSParticipantProxyData object.
 	 * @return True if correct.
 	 */
-    RTPS_DllAPI bool assignRemoteEndpoints(const ParticipantProxyData& pdata);  // TODO: remove RTPS_DllAPI when discovery server is incorporated into fast RTPS library
+    bool assignRemoteEndpoints(const ParticipantProxyData& pdata);
 	/**
 	 * Remove remote endpoints from the liveliness protocol.
 	 * @param pdata Pointer to the ParticipantProxyData to remove
@@ -90,7 +90,9 @@ public:
 	 * @param wqos Quality of service policies for the writer.
     * @return True if correct.
 	 */
-	bool addLocalWriter(RTPSWriter* W, const WriterQos& wqos);
+	bool addLocalWriter(
+        RTPSWriter* W,
+        const WriterQos& wqos);
 	/**
 	 * Remove a local writer from the liveliness protocol.
 	 * @param W Pointer to the RTPSWriter.

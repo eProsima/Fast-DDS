@@ -46,7 +46,9 @@ namespace rtps {
 
 
 
-void PDPServerListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in)
+void PDPServerListener::onNewCacheChangeAdded(
+    RTPSReader* reader,
+    const CacheChange_t* const change_in)
 {
     CacheChange_t* change = (CacheChange_t*)(change_in);
     logInfo(RTPS_PDP,"SPDP Message received");
@@ -56,7 +58,7 @@ void PDPServerListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
         if(!this->getKey(change))
         {
             logWarning(RTPS_PDP,"Problem getting the key of the change, removing");
-            this->mp_PDP->mp_PDPReaderHistory->remove_change(change);
+            mp_PDP->mp_PDPReaderHistory->remove_change(change);
             return;
         }
     }
@@ -64,7 +66,7 @@ void PDPServerListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
     // update the PDP Writer with this reader info
     if (!mp_PDP->addRelayedChangeToHistory(*change))
     {
-        this->mp_PDP->mp_PDPReaderHistory->remove_change(change);
+        mp_PDP->mp_PDPReaderHistory->remove_change(change);
         return; // already there
     }
 
@@ -81,7 +83,7 @@ void PDPServerListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             if(participant_data.m_guid == mp_PDP->getRTPSParticipant()->getGuid())
             {
                 logInfo(RTPS_PDP,"Message from own RTPSParticipant, removing");
-                this->mp_PDP->mp_PDPReaderHistory->remove_change(change);
+                mp_PDP->mp_PDPReaderHistory->remove_change(change);
                 return;
             }
 
@@ -127,18 +129,21 @@ void PDPServerListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
                 lock.unlock();
 
                 if (mp_PDP->updateInfoMatchesEDP())
+                {
                     mp_PDP->mp_EDP->assignRemoteEndpoints(*pdata);
+                }
 
             }
 
-            auto listener = this->mp_PDP->getRTPSParticipant()->getListener();
+            RTPSParticipantListener* listener = mp_PDP->getRTPSParticipant()->getListener();
             if (listener != nullptr)
             {
                 ParticipantDiscoveryInfo info;
                 info.status = status;
                 info.info = participant_data;
 
-                listener->onParticipantDiscovery(this->mp_PDP->getRTPSParticipant()->getUserRTPSParticipant(), std::move(info));
+                listener->onParticipantDiscovery(mp_PDP->getRTPSParticipant()->getUserRTPSParticipant(),
+                    std::move(info));
             }
 
             // Take again the reader lock
@@ -156,7 +161,7 @@ void PDPServerListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
         if (!mp_PDP->lookupParticipantProxyData(guid, info.info))
         {
             logWarning(RTPS_PDP, "PDPServerListener received DATA(p) NOT_ALIVE_DISPOSED from unknown participant");
-            this->mp_PDP->mp_PDPReaderHistory->remove_change(change);
+            mp_PDP->mp_PDPReaderHistory->remove_change(change);
             return;
         }
 
@@ -165,7 +170,8 @@ void PDPServerListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
             auto listener = this->mp_PDP->getRTPSParticipant()->getListener();
             if(listener != nullptr)
             {
-                listener->onParticipantDiscovery(this->mp_PDP->getRTPSParticipant()->getUserRTPSParticipant(), std::move(info));
+                listener->onParticipantDiscovery(mp_PDP->getRTPSParticipant()->getUserRTPSParticipant(),
+                    std::move(info));
             }
 
             return; // all changes related with this participant have been removed from history by removeRemoteParticipant
@@ -173,7 +179,7 @@ void PDPServerListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheCha
     }
 
     //Remove change form history.
-    this->mp_PDP->mp_PDPReaderHistory->remove_change(change);
+    mp_PDP->mp_PDPReaderHistory->remove_change(change);
 
     return;
 }

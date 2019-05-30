@@ -61,7 +61,9 @@ class PDPSimple : public PDP
      * @param CacheChange_t from DATA msg
      * @return new ParticipantProxyData * or nullptr on failure
      */
-    ParticipantProxyData * createParticipantProxyData(const ParticipantProxyData &, const CacheChange_t &) override;
+    ParticipantProxyData* createParticipantProxyData(
+        const ParticipantProxyData&,
+        const CacheChange_t&) override;
 
     /**
      * Some PDP classes require EDP matching with update PDP DATAs like EDPStatic
@@ -74,7 +76,10 @@ class PDPSimple : public PDP
      * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
      * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED
      */
-    void announceParticipantState(bool new_change, bool dispose = false, WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
+    void announceParticipantState(
+        bool new_change,
+        bool dispose = false,
+        WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
 
     /**
      * This method assigns remote endpoints to the builtin endpoints defined in this protocol. It also calls the corresponding methods in EDP and WLP.
