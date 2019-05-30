@@ -102,7 +102,7 @@ class StatefulReader : public RTPSReader
          * @return True if found.
          */
         bool matched_writer_lookup(
-                const GUID_t& writerGUID, 
+                const GUID_t& writerGUID,
                 WriterProxy** WP);
 
         /**
@@ -160,14 +160,14 @@ class StatefulReader : public RTPSReader
          * @return True if added.
          */
         bool change_received(
-                CacheChange_t* a_change, 
+                CacheChange_t* a_change,
                 WriterProxy* prox);
 
         /**
          * Get the RTPS participant
          * @return Associated RTPS participant
          */
-        inline RTPSParticipantImpl* getRTPSParticipant() const 
+        inline RTPSParticipantImpl* getRTPSParticipant() const
         {
             return mp_RTPSParticipant;
         }
@@ -212,9 +212,9 @@ class StatefulReader : public RTPSReader
          * Get the number of matched writers
          * @return Number of matched writers
          */
-        inline size_t getMatchedWritersSize() const 
-        { 
-            return matched_writers_.size(); 
+        inline size_t getMatchedWritersSize() const
+        {
+            return matched_writers_.size();
         }
 
         /*!
@@ -272,7 +272,7 @@ class StatefulReader : public RTPSReader
          * @remarks Nn thread-safe.
          */
         bool findWriterProxy(
-                const GUID_t& writerGUID, 
+                const GUID_t& writerGUID,
                 WriterProxy** wp) const;
 
         void NotifyChanges(WriterProxy* wp);
@@ -292,7 +292,7 @@ class StatefulReader : public RTPSReader
         //! True to disable positive ACKs
         bool disable_positive_acks_;
         //! False when being destroyed
-        std::atomic_bool is_alive_;
+        bool is_alive_;
 };
 
 } /* namespace rtps */
