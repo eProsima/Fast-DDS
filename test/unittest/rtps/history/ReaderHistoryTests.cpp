@@ -113,27 +113,19 @@ TEST_F(ReaderHistoryTests, FailIfNoReaderOrMutex)
 
 TEST_F(ReaderHistoryTests, AddAndRemoveChanges)
 {
-    uint32_t num_changes = static_cast<uint32_t>(history_attr.initialReservedCaches);
-
     EXPECT_CALL(readerMock, change_removed_by_history(_)).Times(num_changes).
             WillRepeatedly(Return(true));
 
-    CacheChange_t* ch = new CacheChange_t();
-    ch->writerGUID = GUID_t(GuidPrefix_t::unknown(), 1U);
-
     for(uint32_t i=0; i<num_changes; i++)
     {
-        history->add_change(ch);
+        history->add_change(changes_list[i]);
         ASSERT_EQ(history->getHistorySize(), i+1);
     }
-
     for(uint32_t i=0; i<num_changes; i++)
     {
-        history->remove_change(ch);
+        history->remove_change(changes_list[i]);
         ASSERT_EQ(history->getHistorySize(), num_changes-i-1U);
     }
-
-    delete ch;
 }
 
 TEST_F(ReaderHistoryTests, RemoveEmptyHistory)
