@@ -550,8 +550,10 @@ bool StatefulReader::change_removed_by_history(
         {
             if(!a_change->isRead && wp->available_changes_max() >= a_change->sequenceNumber)
             {
-                assert(total_unread_ > 0);
-                --total_unread_;
+                if (0 < total_unread_)
+                {
+                    --total_unread_;
+                }
             }
 
             wp->change_removed_from_history(a_change->sequenceNumber);
@@ -663,8 +665,10 @@ bool StatefulReader::nextUntakenCache(
 
                 if(!(*change)->isRead)
                 {
-                    assert(total_unread_ > 0);
-                    --total_unread_;
+                    if (0 < total_unread_)
+                    {
+                        --total_unread_;
+                    }
                 }
 
                 (*change)->isRead = true;
@@ -719,8 +723,10 @@ bool StatefulReader::nextUnreadCache(
             {
                 *change = *it;
 
-                assert(total_unread_ > 0);
-                --total_unread_;
+                if (0 < total_unread_)
+                {
+                    --total_unread_;
+                }
 
                 (*change)->isRead = true;
 
