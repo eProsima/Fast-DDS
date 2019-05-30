@@ -45,7 +45,6 @@ class RTPSParticipantImpl;
 class BuiltinProtocols;
 class EDP;
 class TimedEvent;
-class RemoteParticipantLeaseDuration;
 class ReaderProxyData;
 class WriterProxyData;
 class ParticipantProxyData;

@@ -22,7 +22,6 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "RTPSWriter.h"
-#include "timedevent/PeriodicHeartbeat.h"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
 #include <condition_variable>
 #include <mutex>

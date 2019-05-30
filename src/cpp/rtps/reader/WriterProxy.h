@@ -45,7 +45,6 @@ namespace rtps {
 
 class RTPSParticipantImpl;
 class StatefulReader;
-class WriterProxyLiveliness;
 class RTPSMessageGroup_t;
 class TimedEvent;
 

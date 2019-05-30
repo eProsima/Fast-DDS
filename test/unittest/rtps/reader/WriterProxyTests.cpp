@@ -24,8 +24,7 @@
 #include "WriterProxy.h"
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/rtps/reader/timedevent/InitialAckNack.h>
-#include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
+#include <fastrtps/rtps/resources/TimedEvent.h>
 
 namespace eprosima {
 namespace fastrtps {

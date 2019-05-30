@@ -34,6 +34,7 @@
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/rtps/resources/TimedEvent.h>
 
 
 #include <mutex>

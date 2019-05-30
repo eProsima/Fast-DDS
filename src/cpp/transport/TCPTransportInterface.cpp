@@ -24,7 +24,6 @@
 #include <fastrtps/transport/TCPChannelResourceSecure.h>
 #include <fastrtps/transport/TCPAcceptorSecure.h>
 #endif
-#include "timedevent/TCPKeepAliveEvent.hpp"
 
 #include <asio/steady_timer.hpp>
 #include <utility>
