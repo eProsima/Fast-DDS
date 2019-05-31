@@ -98,12 +98,17 @@ void ReceiverResource::OnDataReceived(const octet * data, const uint32_t size,
 
 }
 
-ReceiverResource::~ReceiverResource()
+void ReceiverResource::disable()
 {
+    std::unique_lock<std::mutex> lock(mtx);
     if (Cleanup)
     {
         Cleanup();
     }
+}
+
+ReceiverResource::~ReceiverResource()
+{
 }
 
 } // namespace rtps

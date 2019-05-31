@@ -22,6 +22,7 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/utils/eClock.h>
 
 using namespace std;
 using namespace asio;
@@ -222,15 +223,17 @@ bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, Tr
     return true;
 }
 
-UDPChannelResource* UDPTransportInterface::CreateInputChannelResource(const std::string& sInterface, const Locator_t& locator,
-    bool is_multicast, uint32_t maxMsgSize, TransportReceiverInterface* receiver)
+UDPChannelResource* UDPTransportInterface::CreateInputChannelResource(
+        const std::string& sInterface,
+        const Locator_t& locator,
+        bool is_multicast,
+        uint32_t maxMsgSize,
+        TransportReceiverInterface* receiver)
 {
-    eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(sInterface, IPLocator::getPhysicalPort(locator), is_multicast);
-    UDPChannelResource* p_channel_resource = new UDPChannelResource(unicastSocket, maxMsgSize);
-    p_channel_resource->message_receiver(receiver);
-    p_channel_resource->interface(sInterface);
-    p_channel_resource->thread(std::thread(&UDPTransportInterface::perform_listen_operation, this,
-        p_channel_resource, locator));
+    eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(sInterface,
+                                                             IPLocator::getPhysicalPort(locator), is_multicast);
+    UDPChannelResource* p_channel_resource = new UDPChannelResource(this, unicastSocket, maxMsgSize, locator,
+                                                                    sInterface, receiver);
     return p_channel_resource;
 }
 
@@ -371,59 +374,6 @@ bool UDPTransportInterface::OpenOutputChannel(
     }
 
     return true;
-}
-
-void UDPTransportInterface::perform_listen_operation(UDPChannelResource* p_channel_resource, Locator_t input_locator)
-{
-    Locator_t remote_locator;
-
-    while (p_channel_resource->alive())
-    {
-        // Blocking receive.
-        auto& msg = p_channel_resource->message_buffer();
-        if (!Receive(p_channel_resource, msg.buffer, msg.max_size, msg.length, remote_locator))
-        {
-            continue;
-        }
-
-        // Processes the data through the CDR Message interface.
-        auto receiver = p_channel_resource->message_receiver();
-        if (receiver != nullptr)
-        {
-            receiver->OnDataReceived(msg.buffer, msg.length, input_locator, remote_locator);
-        }
-        else
-        {
-            logWarning(RTPS_MSG_IN, "Received Message, but no receiver attached");
-        }
-    }
-}
-
-bool UDPTransportInterface::Receive(UDPChannelResource* p_channel_resource, octet* receive_buffer,
-    uint32_t receive_buffer_capacity, uint32_t& receive_buffer_size, Locator_t& remote_locator)
-{
-    try
-    {
-        ip::udp::endpoint senderEndpoint;
-
-        size_t bytes = p_channel_resource->socket()->receive_from(asio::buffer(receive_buffer, receive_buffer_capacity), senderEndpoint);
-        receive_buffer_size = static_cast<uint32_t>(bytes);
-        if (receive_buffer_size > 0)
-        {
-            if (receive_buffer_size == 13 && memcmp(receive_buffer, "EPRORTPSCLOSE", 13) == 0)
-            {
-                return false;
-            }
-            endpoint_to_locator(senderEndpoint, remote_locator);
-        }
-        return (receive_buffer_size > 0);
-    }
-    catch (const std::exception& error)
-    {
-        (void)error;
-        logWarning(RTPS_MSG_OUT, "Error receiving data: " << error.what());
-        return false;
-    }
 }
 
 bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const asio::ip::address& interface_address)

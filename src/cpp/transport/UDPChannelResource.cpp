@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <asio.hpp>
+#include <fastrtps/transport/UDPTransportInterface.h>
 #include <fastrtps/transport/UDPChannelResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 
@@ -20,32 +21,81 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-UDPChannelResource::UDPChannelResource(eProsimaUDPSocket& socket)
-    : message_receiver_(nullptr)
-    , socket_(moveSocket(socket))
-    , only_multicast_purpose_(false)
-{
-}
-
-UDPChannelResource::UDPChannelResource(eProsimaUDPSocket& socket, uint32_t maxMsgSize)
+UDPChannelResource::UDPChannelResource(
+        UDPTransportInterface* transport,
+        eProsimaUDPSocket& socket,
+        uint32_t maxMsgSize,
+        const Locator_t& locator,
+        const std::string& sInterface,
+        TransportReceiverInterface* receiver)
     : ChannelResource(maxMsgSize)
-    , message_receiver_(nullptr)
+    , message_receiver_(receiver)
     , socket_(moveSocket(socket))
     , only_multicast_purpose_(false)
+    , interface_(sInterface)
+    , transport_(transport)
 {
-}
-
-UDPChannelResource::UDPChannelResource(UDPChannelResource&& channelResource)
-    : message_receiver_(channelResource.message_receiver_)
-    , socket_(moveSocket(channelResource.socket_))
-    , only_multicast_purpose_(channelResource.only_multicast_purpose_)
-{
-    channelResource.message_receiver_ = nullptr;
+    thread(std::thread(&UDPChannelResource::perform_listen_operation, this, locator));
 }
 
 UDPChannelResource::~UDPChannelResource()
 {
     message_receiver_ = nullptr;
+}
+
+void UDPChannelResource::perform_listen_operation(Locator_t input_locator)
+{
+    Locator_t remote_locator;
+
+    while (alive())
+    {
+        // Blocking receive.
+        auto& msg = message_buffer();
+        if (!Receive(msg.buffer, msg.max_size, msg.length, remote_locator))
+        {
+            continue;
+        }
+
+        // Processes the data through the CDR Message interface.
+        if (message_receiver() != nullptr)
+        {
+            message_receiver()->OnDataReceived(msg.buffer, msg.length, input_locator, remote_locator);
+        }
+        else if (alive())
+        {
+            logWarning(RTPS_MSG_IN, "Received Message, but no receiver attached");
+        }
+    }
+}
+
+bool UDPChannelResource::Receive(
+        octet* receive_buffer,
+        uint32_t receive_buffer_capacity,
+        uint32_t& receive_buffer_size,
+        Locator_t& remote_locator)
+{
+    try
+    {
+        asio::ip::udp::endpoint senderEndpoint;
+
+        size_t bytes = socket()->receive_from(asio::buffer(receive_buffer, receive_buffer_capacity), senderEndpoint);
+        receive_buffer_size = static_cast<uint32_t>(bytes);
+        if (receive_buffer_size > 0)
+        {
+            if (receive_buffer_size == 13 && memcmp(receive_buffer, "EPRORTPSCLOSE", 13) == 0)
+            {
+                return false;
+            }
+            transport_->endpoint_to_locator(senderEndpoint, remote_locator);
+        }
+        return (receive_buffer_size > 0);
+    }
+    catch (const std::exception& error)
+    {
+        (void)error;
+        logWarning(RTPS_MSG_OUT, "Error receiving data: " << error.what());
+        return false;
+    }
 }
 
 } // namespace rtps

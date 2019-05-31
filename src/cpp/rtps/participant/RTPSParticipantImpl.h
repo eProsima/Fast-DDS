@@ -105,6 +105,14 @@ class RTPSParticipantImpl
             origen.mp_receiver = nullptr;
         }
 
+        void disable()
+        {
+            if (Receiver != nullptr)
+            {
+                Receiver->disable();
+            }
+        }
+
     private:
         ReceiverControlBlock(const ReceiverControlBlock&) = delete;
         const ReceiverControlBlock& operator=(const ReceiverControlBlock&) = delete;
