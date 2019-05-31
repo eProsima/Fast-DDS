@@ -64,12 +64,13 @@ class TimedConditionVariable
     {
         bool ret_value = true;
         auto nsecs = max_blocking_time;
-        auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
-        nsecs -= secs;
         struct timespec max_wait = {0, 0};
         clock_gettime(CLOCK_REALTIME, &max_wait);
+        nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
+        auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
+        nsecs -= secs;
         max_wait.tv_sec += secs.count();
-        max_wait.tv_nsec += nsecs.count();
+        max_wait.tv_nsec = nsecs.count();
         while (ret_value && !(ret_value = predicate()))
         {
             ret_value = (pthread_cond_timedwait(&cv_, lock.mutex()->native_handle(), &max_wait) == 0);
@@ -86,12 +87,13 @@ class TimedConditionVariable
     {
         bool ret_value = true;
         std::chrono::nanoseconds nsecs = max_blocking_time - std::chrono::steady_clock::now();
-        auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
-        nsecs -= secs;
         struct timespec max_wait = {0, 0};
         clock_gettime(CLOCK_REALTIME, &max_wait);
+        nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
+        auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
+        nsecs -= secs;
         max_wait.tv_sec += secs.count();
-        max_wait.tv_nsec += nsecs.count();
+        max_wait.tv_nsec = nsecs.count();
         while (ret_value && !(ret_value = predicate()))
         {
             ret_value = (pthread_cond_timedwait(&cv_, lock.mutex()->native_handle(), &max_wait) == 0);
