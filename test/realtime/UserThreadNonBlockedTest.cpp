@@ -112,6 +112,8 @@ class UserThreadNonBlockedTest : public ::testing::Test
             // Create subscriber
             subscriber_attr_.topic.topicDataType = type_.getName();
             subscriber_attr_.topic.topicName = "Dummy";
+            subscriber_attr_.times.initialAcknackDelay.seconds = 10;
+            subscriber_attr_.times.heartbeatResponseDelay.seconds = 10;
         }
 
         virtual void TearDown()
