@@ -42,7 +42,6 @@ using namespace eprosima::fastrtps::rtps;
 
 StatefulReader::~StatefulReader()
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     logInfo(RTPS_READER,"StatefulReader destructor.");
     is_alive_ = false;
 
