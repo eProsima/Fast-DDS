@@ -29,7 +29,7 @@ class ReaderHistoryTests : public Test
 protected:
     HistoryAttributes history_attr;
     ReaderHistory* history;
-    StatefulReader readerMock;
+    StatefulReader* readerMock;
     std::recursive_timed_mutex mutex;
 
     uint32_t num_writers = 2;
@@ -49,7 +49,7 @@ protected:
         history_attr.maximumReservedCaches = 20;
 
         history = new ReaderHistory(history_attr);
-        history->set_reader(&readerMock, &mutex);
+        readerMock = new StatefulReader(history, &mutex);
 
         //Create changes list
         uint32_t t=0;
@@ -80,40 +80,13 @@ protected:
         }
 
         delete history;
+        delete readerMock;
     }
 };
 
-TEST_F(ReaderHistoryTests, no_reader_or_mutex)
-{
-    EXPECT_CALL(readerMock, change_removed_by_history(_)).Times(0);
-
-    CacheChange_t* ch = new CacheChange_t();
-    GUID_t w1(GuidPrefix_t::unknown(), 1U);
-    ch->writerGUID = w1;
-
-    ASSERT_TRUE(history->add_change(ch));
-
-    history->set_reader(nullptr, &mutex);
-    ASSERT_FALSE(history->add_change(ch));
-    ASSERT_FALSE(history->remove_change(ch));
-    ASSERT_FALSE(history->remove_changes_with_guid(w1));
-
-    history->set_reader(&readerMock, nullptr);
-    ASSERT_FALSE(history->add_change(ch));
-    ASSERT_FALSE(history->remove_change(ch));
-    ASSERT_FALSE(history->remove_changes_with_guid(w1));
-
-    history->set_reader(nullptr, nullptr);
-    ASSERT_FALSE(history->add_change(ch));
-    ASSERT_FALSE(history->remove_change(ch));
-    ASSERT_FALSE(history->remove_changes_with_guid(w1));
-
-    delete ch;
-}
-
 TEST_F(ReaderHistoryTests, add_and_remove_changes)
 {
-    EXPECT_CALL(readerMock, change_removed_by_history(_)).Times(num_changes).
+    EXPECT_CALL(*readerMock, change_removed_by_history(_)).Times(num_changes).
             WillRepeatedly(Return(true));
 
     for (uint32_t i=0; i<num_changes; i++)
@@ -131,7 +104,7 @@ TEST_F(ReaderHistoryTests, add_and_remove_changes)
 
 TEST_F(ReaderHistoryTests, remove_empty_history)
 {
-    EXPECT_CALL(readerMock, change_removed_by_history(_)).Times(0);
+    EXPECT_CALL(*readerMock, change_removed_by_history(_)).Times(0);
 
     CacheChange_t* ch = new CacheChange_t();
     ch->writerGUID = GUID_t(GuidPrefix_t::unknown(), 1U);
@@ -143,7 +116,7 @@ TEST_F(ReaderHistoryTests, remove_empty_history)
 
 TEST_F(ReaderHistoryTests, remove_null_cache_change)
 {
-    EXPECT_CALL(readerMock, change_removed_by_history(_)).Times(0);
+    EXPECT_CALL(*readerMock, change_removed_by_history(_)).Times(0);
 
     CacheChange_t* ch = nullptr;
     ASSERT_FALSE(history->remove_change(ch));
@@ -224,7 +197,7 @@ TEST_F(ReaderHistoryTests, remove_changes_with_guid)
         history->add_change(changes_list[i]);
     }
 
-    EXPECT_CALL(readerMock, change_removed_by_history(_)).Times(2).
+    EXPECT_CALL(*readerMock, change_removed_by_history(_)).Times(2).
             WillRepeatedly(Return(true));
 
     ASSERT_EQ(history->getHistorySize(), num_changes);

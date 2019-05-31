@@ -35,6 +35,12 @@ class RTPSReader : public Endpoint
 {
     public:
 
+        RTPSReader(ReaderHistory* history, std::recursive_timed_mutex* mutex)
+        {
+            history->mp_reader = this;
+            history->mp_mutex = mutex;
+        }
+
         virtual ~RTPSReader() = default;
 
         virtual bool matched_writer_add(RemoteWriterAttributes& wdata) = 0;
@@ -46,16 +52,6 @@ class RTPSReader : public Endpoint
         MOCK_METHOD0(getHistory_mock, ReaderHistory*());
 
         MOCK_CONST_METHOD0(getGuid, const GUID_t&());
-
-        ReaderHistory* getHistory()
-        {
-            getHistory_mock();
-            return history_;
-        }
-
-        ReaderHistory* history_;
-
-        ReaderListener* listener_;
 };
 
 } // namespace rtps
