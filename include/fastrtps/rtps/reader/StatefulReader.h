@@ -50,9 +50,10 @@ class StatefulReader:public RTPSReader
         /**
          * Add a matched writer represented by a WriterProxyData object.
          * @param wdata Pointer to the WPD object to add.
+         * @param persist If the Reader must try to recover Writer formered registered state
          * @return True if correctly added.
          */
-        bool matched_writer_add(RemoteWriterAttributes& wdata) override;
+        bool matched_writer_add(RemoteWriterAttributes& wdata, bool persist = true);
 
         /**
          * Remove a WriterProxyData from the matached writers.

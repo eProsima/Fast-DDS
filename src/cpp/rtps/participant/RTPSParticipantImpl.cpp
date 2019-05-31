@@ -245,6 +245,9 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
     // Disable Retries on Transports
     m_network_Factory.Shutdown();
 
+    // disable callbacks
+    mp_event_thr->getIOService().stop();
+
     // Safely abort threads.
     for(auto& block : m_receiverResourcelist)
     {
@@ -718,9 +721,9 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp, LocatorList
 {
     /* Note:
        The previous version of this function associated (or created) ListenResources and added the endpoint to them.
-       It then requested the list of Locators the Listener is listening to and appended to the LocatorList_t from the paremeters.
+       It then requested the list of Locators the Listener is listening to and appended to the LocatorList_t from the parameters.
 
-       This has been removed becuase it is considered redundant. For ReceiveResources that listen on multiple interfaces, only
+       This has been removed because it is considered redundant. For ReceiveResources that listen on multiple interfaces, only
        one of the supported Locators is needed to make the match, and the case of new ListenResources being created has been removed
        since its the NetworkFactory the one that takes care of Resource creation.
        */
@@ -1014,7 +1017,7 @@ bool RTPSParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16
         logWarning(RTPS_PARTICIPANT, "Remote Endpoints can only be activated with static discovery protocol");
         return false;
     }
-    return mp_builtinProtocols->mp_PDP->newRemoteEndpointStaticallyDiscovered(pguid, userDefinedId, kind);
+    return mp_builtinProtocols->newRemoteEndpointStaticallyDiscovered(pguid, userDefinedId, kind);
 }
 
 void RTPSParticipantImpl::ResourceSemaphorePost()
@@ -1108,7 +1111,7 @@ bool RTPSParticipantImpl::pairing_remote_writer_with_local_reader_after_security
 
 PDPSimple* RTPSParticipantImpl::pdpsimple()
 {
-    return mp_builtinProtocols->mp_PDP;
+    return dynamic_cast<PDPSimple*>(mp_builtinProtocols->mp_PDP);
 }
 
 bool RTPSParticipantImpl::get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo)

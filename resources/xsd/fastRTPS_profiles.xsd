@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles"       
+           targetNamespace="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles"
+           elementFormDefault="qualified">
 
     <xs:simpleType name="stringType">
         <xs:restriction base="xs:string"/>
     </xs:simpleType>
 
-    <xs:simpleType name="idType">
+      <xs:simpleType name="idType">
         <xs:restriction base="xs:unsignedShort"/>
     </xs:simpleType>
 
@@ -249,7 +252,7 @@
 
     <xs:complexType name="locatorListType">
         <xs:sequence>
-            <xs:element name="locator" type="locatorType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="locator" type="locatorType" minOccurs="1" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -260,16 +263,53 @@
         </xs:all>
     </xs:complexType>
 
-    <xs:simpleType name="EDPType">
+    <xs:simpleType name="PDPType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="SIMPLE"/>
+            <xs:enumeration value="CLIENT"/>
+            <xs:enumeration value="SERVER"/>
+            <xs:enumeration value="BACKUP"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+   <xs:simpleType name="EDPType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="SIMPLE"/>
             <xs:enumeration value="STATIC"/>
         </xs:restriction>
     </xs:simpleType>
+    
+    <xs:simpleType name="guid">
+        <xs:restriction base="xs:string">
+          <xs:pattern value="([0-9a-fA-F]{1,2}\.){11}[0-9a-fA-F]{1,2}" />
+      <xs:whiteSpace value='collapse'/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="RemoteServerAttributes">
+        <xs:choice>
+            <xs:sequence>
+                <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="1" />
+                <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0" />
+            </xs:sequence>
+            <xs:sequence>
+                <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="1" />
+                <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0" />
+            </xs:sequence>			
+        </xs:choice>
+        <xs:attribute name="prefix" type="guid" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="DiscoveryServerList">
+        <xs:sequence>
+            <xs:element name="RemoteServer" type="RemoteServerAttributes" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 
     <xs:complexType name="builtinAttributesType">
         <xs:all minOccurs="0">
-            <xs:element name="use_SIMPLE_RTPS_PDP" type="boolType" minOccurs="0"/>
+            <xs:element name="discoveryProtocol" type="PDPType" minOccurs="0"/>
             <xs:element name="use_WriterLivelinessProtocol" type="boolType" minOccurs="0"/>
             <xs:element name="EDP" type="EDPType" minOccurs="0"/>
             <xs:element name="domainId" type="uint32Type" minOccurs="0"/>
@@ -279,6 +319,8 @@
             <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="initialPeersList" type="locatorListType" minOccurs="0"/>
+                  <xs:element name="clientAnnouncementPeriod" type="durationType" minOccurs="0"/>
+                  <xs:element name="discoveryServersList" type="DiscoveryServerList" minOccurs="0"/>
             <xs:element name="staticEndpointXMLFilename" type="stringType" minOccurs="0"/>
             <xs:element name="readerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
             <xs:element name="writerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
@@ -341,7 +383,7 @@
         </xs:all>
     </xs:complexType>
 
-    <xs:simpleType name="durabilityQosKindType">
+   <xs:simpleType name="durabilityQosKindType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="VOLATILE"/>
             <xs:enumeration value="TRANSIENT_LOCAL"/>
@@ -565,6 +607,7 @@
 
     <xs:complexType name="rtpsParticipantAttributesType">
         <xs:all minOccurs="0">
+            <xs:element name="prefix" type="guid" minOccurs="0"/>
             <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="sendSocketBufferSize" type="uint32Type" minOccurs="0"/>
@@ -918,3 +961,4 @@
     </xs:complexType>
 
 </xs:schema>
+

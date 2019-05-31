@@ -19,7 +19,7 @@
 
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include "EDPSimpleListeners.h"
-#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDP.h>
 #include "../../../participant/RTPSParticipantImpl.h"
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
@@ -52,7 +52,7 @@ const int32_t edp_initial_reserved_caches = 20;
 
 
 EDPSimple::EDPSimple(
-        PDPSimple* p,
+        PDP* p,
         RTPSParticipantImpl* part)
     : EDP(p,part)
     , publications_listener_(nullptr)
@@ -683,6 +683,11 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
         //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
+
+        // TODO remove the join when Reader and Writer match functions are updated
+        watt.endpoint.remoteLocatorList.push_back(pdata.m_metatrafficUnicastLocatorList);
+        watt.endpoint.remoteLocatorList.push_back(pdata.m_metatrafficMulticastLocatorList);
+
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         publications_reader_.first->matched_writer_add(watt);
@@ -701,6 +706,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
         //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
+
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         publications_writer_.first->matched_reader_add(ratt);
@@ -719,6 +725,11 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         watt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
         //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
+
+        // TODO remove the join when Reader and Writer match functions are updated
+        watt.endpoint.remoteLocatorList.push_back(pdata.m_metatrafficUnicastLocatorList);
+        watt.endpoint.remoteLocatorList.push_back(pdata.m_metatrafficMulticastLocatorList);
+
         watt.endpoint.reliabilityKind = RELIABLE;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         subscriptions_reader_.first->matched_writer_add(watt);
@@ -737,6 +748,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
         ratt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
         //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
+
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
         subscriptions_writer_.first->matched_reader_add(ratt);
@@ -1003,6 +1015,73 @@ void EDPSimple::removeRemoteEndpoints(ParticipantProxyData* pdata)
         }
     }
 #endif
+}
+
+bool EDPSimple::areRemoteEndpointsMatched(const ParticipantProxyData* pdata)
+{
+    uint32_t endp = pdata->m_availableBuiltinEndpoints;
+
+    uint32_t auxendp = endp;
+    auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
+    if (auxendp != 0 && publications_reader_.first != nullptr) //Exist Pub Writer and I have Pub Reader
+    {
+        RemoteWriterAttributes watt(pdata->m_VendorId);
+        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        watt.guid.entityId = c_EntityId_SEDPPubWriter;
+        watt.endpoint.persistence_guid = watt.guid;
+        watt.endpoint.reliabilityKind = RELIABLE;
+        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+
+        if (!publications_reader_.first->matched_writer_is_matched(watt))
+            return false;
+    }
+
+    auxendp = endp;
+    auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
+    if (auxendp != 0 && publications_writer_.first != nullptr) //Exist Pub Detector
+    {
+        RemoteReaderAttributes ratt(pdata->m_VendorId);
+        ratt.expectsInlineQos = false;
+        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        ratt.guid.entityId = c_EntityId_SEDPPubReader;
+        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+        ratt.endpoint.reliabilityKind = RELIABLE;
+
+        if (!publications_writer_.first->matched_reader_is_matched(ratt))
+            return false;
+    }
+
+    auxendp = endp;
+    auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+    if (auxendp != 0 && subscriptions_reader_.first != nullptr) //Exist Pub Announcer
+    {
+        RemoteWriterAttributes watt(pdata->m_VendorId);
+        watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        watt.guid.entityId = c_EntityId_SEDPSubWriter;
+        watt.endpoint.persistence_guid = watt.guid;
+        watt.endpoint.reliabilityKind = RELIABLE;
+        watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+
+        if (!subscriptions_reader_.first->matched_writer_is_matched(watt))
+            return false;
+    }
+
+    auxendp = endp;
+    auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
+    if (auxendp != 0 && subscriptions_writer_.first != nullptr) //Exist Pub Announcer
+    {
+        RemoteReaderAttributes ratt(pdata->m_VendorId);
+        ratt.expectsInlineQos = false;
+        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
+        ratt.guid.entityId = c_EntityId_SEDPSubReader;
+        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
+        ratt.endpoint.reliabilityKind = RELIABLE;
+
+        if (!subscriptions_writer_.first->matched_reader_is_matched(ratt))
+            return false;
+    }
+
+    return true;
 }
 
 #if HAVE_SECURITY

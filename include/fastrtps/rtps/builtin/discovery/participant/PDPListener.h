@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,63 +13,55 @@
 // limitations under the License.
 
 /**
- * @file PDPSimpleListener.h
+ * @file PDPListener.h
  *
  */
 
-#ifndef PDPSIMPLELISTENER_H_
-#define PDPSIMPLELISTENER_H_
+#ifndef PDPLISTENER_H_
+#define PDPLISTENER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "../../../reader/ReaderListener.h"
-#include "../../../../qos/ParameterList.h"
-#include "../../data/ParticipantProxyData.h"
-
+#include "../../../common/CDRMessage_t.h"
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-class PDPSimple;
-class DiscoveredParticipantData;
-class RTPSReader;
-
+class PDP;
 
 /**
- * Class PDPSimpleListener, specification of SubscriberListener used by the SPDP to perform the History check when a new message is received.
+ * Class PDPListener, specification used by the PDP to perform the History check when a new message is received.
  * This class is implemented in order to use the same structure than with any other RTPSReader.
  *@ingroup DISCOVERY_MODULE
  */
-class PDPSimpleListener: public ReaderListener {
+class PDPListener: public ReaderListener {
 public:
     /**
-    * @param in_SPDP
+    * @param in_PDP
     */
-    PDPSimpleListener(PDPSimple* in_SPDP) : mp_SPDP(in_SPDP)
+    PDPListener(PDP* in_PDP) 
+        : mp_PDP(in_PDP)
     {
     }
 
-    virtual ~PDPSimpleListener() {}
+    ~PDPListener() override {}
     //!Pointer to the associated mp_SPDP;
-    PDPSimple* mp_SPDP;
+    PDP* mp_PDP;
     /**
-     * New added cache
-     * @param reader
-     * @param change
-     */
+    * New added cache
+    * @param reader
+    * @param change
+    */
     void onNewCacheChangeAdded(
-            RTPSReader* reader,
-            const CacheChange_t* const change) override;
+        RTPSReader* reader,
+        const CacheChange_t* const change);
+
     /**
-     * Process a new added cache with this method.
-     * @return True on success
-     */
-    bool newAddedCache();
-    /**
-     * Get the key of a CacheChange_t
-     * @param change Pointer to the CacheChange_t
-     * @return True on success
-     */
+    * Get the key of a CacheChange_t
+    * @param change Pointer to the CacheChange_t
+    * @return True on success
+    */
     bool getKey(CacheChange_t* change);
     //!Auxiliary message.
     CDRMessage_t aux_msg;
@@ -81,4 +73,4 @@ public:
 } /* namespace eprosima */
 
 #endif
-#endif /* PDPSIMPLELISTENER_H_ */
+#endif /* PDPLISTENER_H_ */

@@ -26,7 +26,7 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-    TimedEvent::TimedEvent(asio::io_service &service, const std::thread& event_thread, double milliseconds, TimedEvent::AUTODESTRUCTION_MODE autodestruction)
+TimedEvent::TimedEvent(asio::io_service &service, const std::thread& event_thread, double milliseconds, TimedEvent::AUTODESTRUCTION_MODE autodestruction)
 {
 	mp_impl = new TimedEventImpl(this, service, event_thread, std::chrono::microseconds((int64_t)(milliseconds*1000)), autodestruction);
 }

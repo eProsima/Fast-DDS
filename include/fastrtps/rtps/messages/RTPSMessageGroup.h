@@ -70,7 +70,7 @@ class RTPSWriter;
  * RTPSMessageGroup Class used to construct a RTPS message.
  * @ingroup WRITER_MODULE
  */
-class RTPSMessageGroup
+ class RTPSMessageGroup 
 {
     public:
 

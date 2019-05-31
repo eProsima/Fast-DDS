@@ -27,24 +27,25 @@ using namespace eprosima::fastrtps::xmlparser;
 XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinAttributes &builtin, uint8_t ident)
 {
     /*
-        <xs:complexType name="builtinAttributesType">
-            <xs:all minOccurs="0">
-                <xs:element name="use_SIMPLE_RTPS_PDP" type="boolType" minOccurs="0"/>
-                <xs:element name="use_WriterLivelinessProtocol" type="boolType" minOccurs="0"/>
-                <xs:element name="EDP" type="EDPType" minOccurs="0"/>
-                <xs:element name="domainId" type="uint32Type" minOccurs="0"/>
-                <xs:element name="leaseDuration" type="durationType" minOccurs="0"/>
-                <xs:element name="leaseAnnouncement" type="durationType" minOccurs="0"/>
-                <xs:element name="simpleEDP" type="simpleEDPType" minOccurs="0"/>
-                <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0"/>
-                <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0"/>
-                <xs:element name="initialPeersList" type="locatorListType" minOccurs="0"/>
-                <xs:element name="staticEndpointXMLFilename" type="stringType" minOccurs="0"/>
-                <xs:element name="readerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
-                <xs:element name="writerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
-                <xs:element name="mutation_tries" type="uint32Type" minOccurs="0"/>
-            </xs:all>
-        </xs:complexType>
+    <xs:complexType name="builtinAttributesType">
+        <xs:all minOccurs="0">
+            <xs:element name="discoveryProtocol" type="PDPType" minOccurs="0"/>
+            <xs:element name="use_WriterLivelinessProtocol" type="boolType" minOccurs="0"/>
+            <xs:element name="EDP" type="EDPType" minOccurs="0"/>
+            <xs:element name="domainId" type="uint32Type" minOccurs="0"/>
+            <xs:element name="leaseDuration" type="durationType" minOccurs="0"/>
+            <xs:element name="leaseAnnouncement" type="durationType" minOccurs="0"/>
+            <xs:element name="simpleEDP" type="simpleEDPType" minOccurs="0"/>
+            <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0"/>
+            <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0"/>
+            <xs:element name="initialPeersList" type="locatorListType" minOccurs="0"/>
+            <xs:element name="clientAnnouncementPeriod" type="durationType" minOccurs="0"/>
+            <xs:element name="discoveryServersList" type="DiscoveryServerList" minOccurs="0"/>
+            <xs:element name="staticEndpointXMLFilename" type="stringType" minOccurs="0"/>
+            <xs:element name="readerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
+            <xs:element name="writerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
     */
 
     tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
@@ -52,10 +53,10 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
     for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
-        if (strcmp(name, SIMPLE_RTPS_PDP) == 0)
+        if (strcmp(name, RTPS_PDP_TYPE) == 0)
         {
-            // use_SIMPLE_RTPS_PDP - boolType
-            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol, ident))
+            // discoveryProtocol - PDPType
+            if (XMLP_ret::XML_OK != getXMLEnum(p_aux0, &builtin.discoveryProtocol, ident))
                 return XMLP_ret::XML_ERROR;
         }
         else if (strcmp(name, WRITER_LVESS_PROTOCOL) == 0)
@@ -155,6 +156,18 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
         {
             // initialPeersList
             if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, builtin.initialPeersList, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, CLIENTANNOUNCEMENTPERIOD) == 0)
+        {
+            // clientAnnouncementPeriod - durationType
+            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, builtin.discoveryServer_client_syncperiod, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, SERVER_LIST) == 0)
+        {
+            // discoverServersList - DiscoveryServerList
+            if (XMLP_ret::XML_OK != getXMLList(p_aux0, builtin.m_DiscoveryServers, ident))
                 return XMLP_ret::XML_ERROR;
         }
         else if (strcmp(name, STATIC_ENDPOINT_XML) == 0)
@@ -2309,6 +2322,156 @@ XMLP_ret XMLParser::getXMLBool(tinyxml2::XMLElement *elem, bool *b, uint8_t /*id
     return XMLP_ret::XML_OK;
 }
 
+XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, PDPType_t * e, uint8_t /*ident*/)
+{
+    /*
+    	<xs:simpleType name="PDPType">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="NONE"/>
+                <xs:enumeration value="SIMPLE"/>
+                <xs:enumeration value="CLIENT"/>
+                <xs:enumeration value="SERVER"/>
+                <xs:enumeration value="BACKUP"/>
+            </xs:restriction>
+        </xs:simpleType>
+    */
+
+    const char* text = nullptr;
+
+    if (nullptr == elem || nullptr == e)
+    {
+        logError(XMLPARSER, "nullptr when getXMLEnum XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    else if (nullptr == (text = elem->GetText()))
+    {
+        logError(XMLPARSER, "<" << elem->Value() << "> getXMLBool XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    else if (strcmp(text, NONE) == 0)
+    {
+        *e = PDPType_t::NONE;
+    }
+    else if (strcmp(text, SIMPLE) == 0)
+    {
+        *e = PDPType_t::SIMPLE;
+    }
+    else if (strcmp(text, CLIENT) == 0)
+    {
+        *e = PDPType_t::CLIENT;
+    }
+    else if (strcmp(text, SERVER) == 0)
+    {
+        *e = PDPType_t::SERVER;
+    }
+    else if (strcmp(text, BACKUP) == 0)
+    {
+        *e = PDPType_t::BACKUP;
+    }
+    else
+    {
+        logError(XMLPARSER, "Node '" << RTPS_PDP_TYPE << "' with bad content");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLRemoteServer(tinyxml2::XMLElement* elem, RemoteServerAttributes & server, uint8_t ident)
+{
+    /*
+ 	    <xs:complexType name="RemoteServerAttributes">
+		    <xs:all minOccurs="1">
+                <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0"/>
+		    </xs:all>
+		    <xs:attribute name="guidPrefix" type="guid" use="required"/>
+	    </xs:complexType>   
+    */
+
+    const char* Prefix = nullptr;
+    tinyxml2::XMLElement * pLU = nullptr, * pLM = nullptr;
+
+    if (nullptr == elem )
+    {
+        logError(XMLPARSER, "nullptr when getXMLRemoteServer XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    else if (nullptr == (Prefix = elem->Attribute(PREFIX)))
+    {
+        logError(XMLPARSER, "nullptr when getXMLRemoteServer try to recover server's guidPrefix XML_ERROR!");
+            return XMLP_ret::XML_ERROR;
+    }
+    else if (!server.ReadguidPrefix(Prefix))
+    {
+        logError(XMLPARSER, "getXMLRemoteServer found an invalid server's guidPrefix XML_ERROR!");
+            return XMLP_ret::XML_ERROR;
+    }
+    
+    pLU = elem->FirstChildElement(META_UNI_LOC_LIST);
+    pLM = elem->FirstChildElement(META_MULTI_LOC_LIST);
+
+    if ( pLU == nullptr && pLM ==nullptr )
+    {
+        logError(XMLPARSER, "getXMLRemoteServer couldn't find any server's locator XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    
+    if (pLU && XMLP_ret::XML_OK != getXMLLocatorList(pLU, server.metatrafficUnicastLocatorList, ident))
+    {
+        logError(XMLPARSER, "getXMLRemoteServer was given a misformatted server's " << META_UNI_LOC_LIST << " XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    if (pLM && XMLP_ret::XML_OK != getXMLLocatorList(pLM, server.metatrafficMulticastLocatorList, ident))
+    {
+        logError(XMLPARSER, "getXMLRemoteServer was given a misformatted server's " << META_MULTI_LOC_LIST << " XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLList(tinyxml2::XMLElement* elem, RemoteServerList_t & list, uint8_t ident)
+{
+    /*
+        <xs:complexType name="DiscoveryServerList">
+            <xs:sequence>
+                <xs:element name="RemoteServer" type="RemoteServerAttributes" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    */
+
+    tinyxml2::XMLElement * pS = nullptr;
+
+    if (nullptr == elem)
+    {
+        logError(XMLPARSER, "nullptr when getXMLList XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    else if (nullptr == (pS = elem->FirstChildElement(RSERVER)))
+    {
+        logError(XMLPARSER, "getXMLList couldn't find any RemoteServer XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    while (pS)
+    {
+        RemoteServerAttributes server;
+        if (XMLP_ret::XML_OK != getXMLRemoteServer(pS, server, ident))
+        {
+            logError(XMLPARSER, "getXMLList was given a misformatted RemoteServer XML_ERROR!");
+            return XMLP_ret::XML_ERROR;
+        }
+        list.push_back(std::move(server));
+
+        pS = pS->NextSiblingElement(RSERVER);
+    }
+
+    return XMLP_ret::XML_OK;
+
+}
+
 XMLP_ret XMLParser::getXMLString(tinyxml2::XMLElement *elem, std::string *s, uint8_t /*ident*/)
 {
     const char* text = nullptr;
@@ -2325,4 +2488,24 @@ XMLP_ret XMLParser::getXMLString(tinyxml2::XMLElement *elem, std::string *s, uin
     }
     *s = text;
     return XMLP_ret::XML_OK;
+}
+
+XMLP_ret XMLParser::getXMLguidPrefix(tinyxml2::XMLElement *elem, GuidPrefix_t &prefix, uint8_t /*ident*/)
+{
+    const char* text = nullptr;
+
+    if (nullptr == elem )
+    {
+        logError(XMLPARSER, "nullptr when getXMLguidPrefix XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    else if (nullptr == (text = elem->GetText()))
+    {
+        logError(XMLPARSER, "<" << elem->Value() << "> getXMLguidPrefix XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    std::istringstream is(text);
+    return (is >> prefix ? XMLP_ret::XML_OK : XMLP_ret::XML_ERROR);
+
 }

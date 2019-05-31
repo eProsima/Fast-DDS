@@ -2612,6 +2612,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
     /*
         <xs:complexType name="rtpsParticipantAttributesType">
             <xs:all minOccurs="0">
+                <xs:element name="prefix" type="guid" minOccurs="0"/>
                 <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="sendSocketBufferSize" type="uint32Type" minOccurs="0"/>
@@ -2650,7 +2651,15 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
     for (p_aux0 = p_element->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
-        if (strcmp(name, DEF_UNI_LOC_LIST) == 0)
+
+        if (strcmp(name, PREFIX) == 0)
+        {
+            // prefix
+            if (XMLP_ret::XML_OK !=
+                getXMLguidPrefix(p_aux0, participant_node.get()->rtps.prefix, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, DEF_UNI_LOC_LIST) == 0)
         {
             // defaultUnicastLocatorList
             if (XMLP_ret::XML_OK !=

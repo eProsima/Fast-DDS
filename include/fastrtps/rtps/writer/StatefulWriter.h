@@ -27,6 +27,7 @@
 #include <condition_variable>
 #include <mutex>
 
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -139,6 +140,8 @@ public:
     bool is_acked_by_all(const CacheChange_t* a_change) const override;
 
     bool wait_for_all_acked(const Duration_t& max_wait) override;
+
+    bool all_readers_updated();
 
     /**
      * Remove the change with the minimum SequenceNumber

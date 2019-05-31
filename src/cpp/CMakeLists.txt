@@ -16,7 +16,21 @@ include(${PROJECT_SOURCE_DIR}/cmake/dev/set_sources.cmake)
 include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 
 # Set source files
+
+if(WIN32)
+
+file(GLOB_RECURSE ALL_HEADERS 
+	${PROJECT_SOURCE_DIR}/include/**/*.h
+	${PROJECT_SOURCE_DIR}/include/**/*.hpp
+	${PROJECT_SOURCE_DIR}/src/cpp/**/*.h
+	${PROJECT_SOURCE_DIR}/src/cpp/**/*.hpp
+	)  #TODO: remove when development process is finished
+
+endif(WIN32)
+
 set(${PROJECT_NAME}_source_files
+	${ALL_HEADERS} #TODO: remove when development process is finished
+
     log/Log.cpp
     log/StdoutConsumer.cpp
     log/FileConsumer.cpp
@@ -121,13 +135,22 @@ set(${PROJECT_NAME}_source_files
     qos/WriterQos.cpp
     qos/ReaderQos.cpp
     rtps/builtin/BuiltinProtocols.cpp
+	rtps/builtin/discovery/participant/PDP.cpp
     rtps/builtin/discovery/participant/PDPSimple.cpp
-    rtps/builtin/discovery/participant/PDPSimpleListener.cpp
+    rtps/builtin/discovery/participant/PDPListener.cpp
+	rtps/builtin/discovery/participant/PDPServerListener.cpp
+	rtps/builtin/discovery/participant/PDPClient.cpp
+	rtps/builtin/discovery/participant/PDPServer.cpp
     rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp
     rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp
+	rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
+	rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
     rtps/builtin/discovery/endpoint/EDP.cpp
     rtps/builtin/discovery/endpoint/EDPSimple.cpp
+	rtps/builtin/discovery/endpoint/EDPClient.cpp
+	rtps/builtin/discovery/endpoint/EDPServer.cpp
     rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp
+	rtps/builtin/discovery/endpoint/EDPServerListeners.cpp
     rtps/builtin/discovery/endpoint/EDPStatic.cpp
     rtps/builtin/liveliness/WLP.cpp
     rtps/builtin/liveliness/WLPListener.cpp
@@ -267,6 +290,11 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:SQLITE_OS_WINRT>
         $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
         )
+
+    if(WIN32)
+        #TODO: remove when discovery-server incorporated into the library
+        target_compile_options(${PROJECT_NAME} PRIVATE	-wd4251)
+    endif()
 
     # Define public headers
     target_include_directories(${PROJECT_NAME} PUBLIC

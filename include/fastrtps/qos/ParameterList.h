@@ -34,8 +34,8 @@ namespace fastrtps {
  * ParameterList class has static methods to update or read a list of Parameter_t
  * @ingroup PARAMETER_MODULE
  */
-
-class ParameterList
+ 
+class ParameterList 
 {
     public:
 

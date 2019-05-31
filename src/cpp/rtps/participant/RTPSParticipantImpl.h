@@ -85,7 +85,7 @@ class IPersistenceService;
     * allows the creation and removal of writers and readers. It manages the send and receive threads.
     * @ingroup RTPS_MODULE
     */
-class RTPSParticipantImpl
+class RTPS_DllAPI RTPSParticipantImpl // TODO: remove RTPS_DllAPI when discovery server incorporated to the library
 {
     /*
     Receiver Control block is a struct we use to encapsulate the resources that take part in message reception.
