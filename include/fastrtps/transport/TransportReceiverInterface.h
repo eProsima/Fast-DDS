@@ -28,10 +28,6 @@ namespace rtps {
 class TransportReceiverInterface
 {
 public:
-    /**
-     * Closes related ChannelResources.
-     */
-    virtual void disable() {}
 
     virtual ~TransportReceiverInterface() = default;
 

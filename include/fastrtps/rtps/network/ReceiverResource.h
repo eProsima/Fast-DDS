@@ -71,7 +71,7 @@ public:
     /**
      * Closes related ChannelResources.
      */
-    void disable() override;
+    void disable();
 
     /**
      * Resources can only be transfered through move semantics. Copy, assignment, and

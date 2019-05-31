@@ -146,7 +146,6 @@ protected:
     /**
      * Function to be called from a new thread, which takes cares of performing a blocking receive
      * operation on the ReceiveResource
-     * @param p_channel_resource - Associated ChannelResource
      * @param input_locator - Locator that triggered the creation of the resource
     */
     void perform_listen_operation(
@@ -154,7 +153,6 @@ protected:
 
     /**
     * Blocking Receive from the specified channel.
-    * @param p_channel_resource Pointer to the channer resource that stores the socket.
     * @param receive_buffer vector with enough capacity (not size) to accomodate a full receive buffer. That
     * capacity must not be less than the receive_buffer_size supplied to this class during construction.
     * @param receive_buffer_capacity Maximum size of the receive_buffer.
