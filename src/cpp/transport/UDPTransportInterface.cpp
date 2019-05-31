@@ -138,7 +138,7 @@ bool UDPTransportInterface::init()
         {
             socket_base::send_buffer_size option;
             socket.get_option(option);
-            set_send_buffer_size(option.value());
+            set_send_buffer_size(static_cast<uint32_t>(option.value()));
 
             if (configuration()->sendBufferSize < s_minimumSocketBuffer)
             {
@@ -151,7 +151,7 @@ bool UDPTransportInterface::init()
         {
             socket_base::receive_buffer_size option;
             socket.get_option(option);
-            set_receive_buffer_size(option.value());
+            set_receive_buffer_size(static_cast<uint32_t>(option.value()));
 
             if (configuration()->receiveBufferSize < s_minimumSocketBuffer)
             {
@@ -245,7 +245,7 @@ eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(
     getSocketPtr(socket)->open(generate_protocol());
     if (mSendBufferSize != 0)
     {
-        getSocketPtr(socket)->set_option(socket_base::send_buffer_size(mSendBufferSize));
+        getSocketPtr(socket)->set_option(socket_base::send_buffer_size(static_cast<int32_t>(mSendBufferSize)));
     }
     getSocketPtr(socket)->set_option(ip::multicast::hops(configuration()->TTL));
     getSocketPtr(socket)->bind(endpoint);
@@ -428,7 +428,7 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const 
     }
     catch (const std::exception& error)
     {
-        logError(RTPS_MSG_OUT, "Error: " << error.what());
+        logError(RTPS_MSG_OUT, "Error " << error.what());
         return false;
     }
 
