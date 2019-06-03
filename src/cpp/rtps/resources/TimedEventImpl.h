@@ -93,9 +93,11 @@ namespace eprosima
                         return next_;
                     }
 
-                    void next(TimedEventImpl* next)
+                    TimedEventImpl* next(TimedEventImpl* next)
                     {
+                        TimedEventImpl* old = next_;
                         next_ = next;
+                        return old;
                     }
 
                     /**

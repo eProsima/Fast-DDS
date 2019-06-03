@@ -33,7 +33,6 @@ namespace rtps {
 
 ResourceEvent::ResourceEvent()
     : stop_(false)
-    , notified_(false)
     , allow_to_delete_(false)
     , front_(nullptr)
     , back_(nullptr)
@@ -41,7 +40,7 @@ ResourceEvent::ResourceEvent()
 {
 }
 
-ResourceEvent::~ResourceEvent() 
+ResourceEvent::~ResourceEvent()
 {
     // All timer should be unregistered before destroying this object.
     assert(front_ == nullptr);
@@ -53,9 +52,19 @@ ResourceEvent::~ResourceEvent()
     thread_.join();
 }
 
-void ResourceEvent::register_timer(TimedEventImpl* event)
+bool ResourceEvent::register_timer_nts(TimedEventImpl* event)
 {
-    std::unique_lock<std::timed_mutex> lock(mutex_);
+    TimedEventImpl* curr = front_;
+
+    while(curr != nullptr)
+    {
+        if(curr == event)
+        {
+            return false;
+        }
+
+        curr = curr->next();
+    }
 
     if(back_)
     {
@@ -68,12 +77,13 @@ void ResourceEvent::register_timer(TimedEventImpl* event)
         front_ = event;
         back_ = event;
     }
+
+    return true;
 }
 
 void ResourceEvent::unregister_timer(TimedEventImpl* event)
 {
-    assert(front_ != nullptr);
-    assert(back_ != nullptr);
+    assert(!stop_);
 
     std::unique_lock<std::timed_mutex> lock(mutex_);
 
@@ -84,13 +94,11 @@ void ResourceEvent::unregister_timer(TimedEventImpl* event)
 
     TimedEventImpl *prev = nullptr, *curr = front_;
 
-    while(curr != event && curr->next())
+    while(curr && curr != event && curr->next())
     {
         prev = curr;
         curr = curr->next();
     }
-
-    assert(curr);
 
     if(curr)
     {
@@ -114,21 +122,26 @@ void ResourceEvent::unregister_timer(TimedEventImpl* event)
     }
 }
 
-void ResourceEvent::notify()
+void ResourceEvent::notify(TimedEventImpl* event)
 {
     std::unique_lock<std::timed_mutex> lock(mutex_);
-    notified_ = true;
-    cv_.notify_one();
+
+    if(register_timer_nts(event))
+    {
+        cv_.notify_one();
+    }
 }
 
-void ResourceEvent::notify(const std::chrono::steady_clock::time_point& timeout)
+void ResourceEvent::notify(TimedEventImpl* event, const std::chrono::steady_clock::time_point& timeout)
 {
     std::unique_lock<std::timed_mutex> lock(mutex_, std::defer_lock);
 
     if (lock.try_lock_until(timeout))
     {
-        notified_ = true;
-        cv_.notify_one();
+        if(register_timer_nts(event))
+        {
+            cv_.notify_one();
+        }
     }
 }
 
@@ -150,7 +163,7 @@ void ResourceEvent::run_io_service()
 
         if (cv_.wait_for(lock, std::chrono::nanoseconds(1000000), [&]()
             {
-                return notified_;
+                return front_ != nullptr;
             }))
         {
             TimedEventImpl* curr = front_;
@@ -158,10 +171,11 @@ void ResourceEvent::run_io_service()
             while(curr)
             {
                 curr->update();
-                curr = curr->next();
+                curr = curr->next(nullptr);
             }
 
-            notified_ = false;
+            front_ = nullptr;
+            back_ = nullptr;
         }
 
         allow_to_delete_ = false;

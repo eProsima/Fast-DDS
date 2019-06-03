@@ -35,7 +35,6 @@ TimedEvent::TimedEvent(
     , impl_(nullptr)
 {
     impl_ = new TimedEventImpl(service_.get_io_service(), callback, std::chrono::microseconds((int64_t)(milliseconds*1000)));
-    service_.register_timer(impl_);
 }
 
 TimedEvent::~TimedEvent()
@@ -48,7 +47,7 @@ void TimedEvent::cancel_timer()
 {
     if(impl_->go_cancel())
     {
-        service_.notify();
+        service_.notify(impl_);
     }
 }
 
@@ -57,7 +56,7 @@ void TimedEvent::restart_timer()
 {
     if(impl_->go_ready())
     {
-        service_.notify();
+        service_.notify(impl_);
     }
 }
 
@@ -65,7 +64,7 @@ void TimedEvent::restart_timer(const std::chrono::steady_clock::time_point& time
 {
     if(impl_->go_ready())
     {
-        service_.notify(timeout);
+        service_.notify(impl_, timeout);
     }
 }
 

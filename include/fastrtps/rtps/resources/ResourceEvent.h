@@ -53,13 +53,11 @@ class ResourceEvent
          */
         void init_thread();
 
-        void register_timer(TimedEventImpl* event);
-
         void unregister_timer(TimedEventImpl* event);
 
-        void notify();
+        void notify(TimedEventImpl* event);
 
-        void notify(const std::chrono::steady_clock::time_point& timeout);
+        void notify(TimedEventImpl* event, const std::chrono::steady_clock::time_point& timeout);
 
         /**
          * Get the associated IO service
@@ -77,8 +75,6 @@ class ResourceEvent
 
         TimedConditionVariable cv_;
 
-        bool notified_;
-
         bool allow_to_delete_;
 
         TimedEventImpl* front_;
@@ -90,6 +86,8 @@ class ResourceEvent
 
         //!IO service
         asio::io_service io_service_;
+
+        bool register_timer_nts(TimedEventImpl* event);
 
         void event();
 
