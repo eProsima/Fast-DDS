@@ -54,6 +54,16 @@ class RTPSReader : public Endpoint
         MOCK_METHOD0(getHistory_mock, ReaderHistory*());
 
         MOCK_CONST_METHOD0(getGuid, const GUID_t&());
+
+        ReaderHistory* getHistory()
+        {
+            getHistory_mock();
+            return history_;
+        }
+
+        ReaderHistory* history_;
+
+        ReaderListener* listener_;
 };
 
 } // namespace rtps
