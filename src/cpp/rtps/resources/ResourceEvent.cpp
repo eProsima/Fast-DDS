@@ -38,7 +38,6 @@ ResourceEvent::ResourceEvent()
     , front_(nullptr)
     , back_(nullptr)
     , io_service_(ASIO_CONCURRENCY_HINT_UNSAFE_IO)
-    , timer_(io_service_, std::chrono::seconds(1))
 {
 }
 
@@ -112,7 +111,6 @@ void ResourceEvent::unregister_timer(TimedEventImpl* event)
         curr->next(nullptr);
         curr->go_cancel();
         curr->update();
-        curr->update();
     }
 }
 
@@ -136,18 +134,13 @@ void ResourceEvent::notify(const std::chrono::steady_clock::time_point& timeout)
 
 void ResourceEvent::event()
 {
-    if(!stop_)
-    {
-        timer_.async_wait(std::bind(&ResourceEvent::event, this));
-    }
 }
 
 void ResourceEvent::run_io_service()
 {
-    timer_.async_wait(std::bind(&ResourceEvent::event, this));
-
     while (!stop_)
     {
+        io_service_.restart();
         io_service_.poll();
 
         std::unique_lock<std::timed_mutex> lock(mutex_);

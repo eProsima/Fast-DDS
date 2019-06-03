@@ -91,8 +91,6 @@ class ResourceEvent
         //!IO service
         asio::io_service io_service_;
 
-        asio::steady_timer timer_;
-
         void event();
 
         //!Method to run the tasks
