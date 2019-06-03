@@ -118,7 +118,7 @@ class RTPSAsSocketReader
         void init()
         {
             eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
-            pattr.builtin.discoveryProtocol = eprosima::fastrtps::rtps::PDPType::SIMPLE;
+            pattr.builtin.discoveryProtocol = eprosima::fastrtps::rtps::PDPType::NONE;
             pattr.builtin.use_WriterLivelinessProtocol = false;
             pattr.builtin.domainId = (uint32_t)GET_PID() % 230;
             pattr.participantID = 1;

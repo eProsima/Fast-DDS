@@ -123,7 +123,7 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
     }
     else if(m_discovery.use_SIMPLE_EndpointDiscoveryProtocol)
     {
-        mp_EDP = (EDP*)(new EDPSimple(this,mp_RTPSParticipant));
+        mp_EDP = new EDPSimple(this,mp_RTPSParticipant);
         if(!mp_EDP->initEDP(m_discovery))
         {
             logError(RTPS_PDP,"Endpoint discovery configuration failed");
@@ -251,10 +251,10 @@ bool PDPSimple::createPDPEndpoints()
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(wout, false);
 #endif
-        mp_PDPWriter = dynamic_cast<StatelessWriter*>(wout);
+        mp_PDPWriter = wout;
         if (mp_PDPWriter != nullptr)
         {
-            mp_PDPWriter->set_fixed_locators(mp_builtin->m_initialPeersList);
+            dynamic_cast<StatelessWriter*>(wout)->set_fixed_locators(mp_builtin->m_initialPeersList);
 
             RemoteReaderAttributes rratt;
             for (auto it = mp_builtin->m_initialPeersList.begin(); it != mp_builtin->m_initialPeersList.end(); ++it)

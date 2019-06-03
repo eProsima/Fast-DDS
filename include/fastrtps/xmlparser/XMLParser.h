@@ -468,6 +468,21 @@ class XMLParser
         bool* b,
         uint8_t ident);
 
+    RTPS_DllAPI static XMLP_ret getXMLEnum(
+        tinyxml2::XMLElement* elem,
+        rtps::PDPType_t * e,
+        uint8_t ident);
+
+    RTPS_DllAPI static XMLP_ret getXMLList(
+        tinyxml2::XMLElement* elem,
+        rtps::RemoteServerList_t & list,
+        uint8_t ident);
+
+    RTPS_DllAPI static XMLP_ret getXMLRemoteServer(
+        tinyxml2::XMLElement* elem,
+        rtps::RemoteServerAttributes & server,
+        uint8_t ident);
+
     RTPS_DllAPI static XMLP_ret getXMLString(
         tinyxml2::XMLElement* elem,
         std::string* s,
@@ -481,6 +496,11 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret getXMLDisablePositiveAcksQos(
         tinyxml2::XMLElement* elem,
         DisablePositiveACKsQosPolicy& disablePositiveAcks,
+        uint8_t ident);
+
+    RTPS_DllAPI static XMLP_ret getXMLguidPrefix(
+        tinyxml2::XMLElement *elem,
+        rtps::GuidPrefix_t &prefix,
         uint8_t ident);
 };
 

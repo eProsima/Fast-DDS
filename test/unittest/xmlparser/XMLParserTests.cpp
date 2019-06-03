@@ -383,7 +383,7 @@ TEST_F(XMLParserTests, Data)
     locator.port = 1979;
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32u);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
-    EXPECT_EQ(builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.discoveryProtocol, eprosima::fastrtps::rtps::PDPType::SIMPLE);
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.use_STATIC_EndpointDiscoveryProtocol, false);
@@ -470,7 +470,7 @@ TEST_F(XMLParserTests, DataBuffer)
     locator.port = 1979;
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32u);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
-    EXPECT_EQ(builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.discoveryProtocol, eprosima::fastrtps::rtps::PDPType::SIMPLE);
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
     EXPECT_EQ(builtin.use_SIMPLE_EndpointDiscoveryProtocol, true);
     EXPECT_EQ(builtin.use_STATIC_EndpointDiscoveryProtocol, false);

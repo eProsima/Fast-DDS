@@ -208,7 +208,7 @@ bool PDP::initPDP(
     }
 
     mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this,
-        TimeConv::Duration_t2MillisecondsDouble(m_discovery.leaseDuration_announcementperiod));
+        TimeConv::Duration_t2MilliSecondsDouble(m_discovery.leaseDuration_announcementperiod));
 
     return true;
 }
@@ -224,7 +224,7 @@ void PDP::announceParticipantState(
 
     if(!dispose)
     {
-        if(new_change || m_hasChangedLocalPDP)
+        if(new_change || m_hasChangedLocalPDP.load())
         {
             this->mp_mutex->lock();
             ParticipantProxyData* local_participant_data = getLocalParticipantProxyData();
@@ -266,7 +266,7 @@ void PDP::announceParticipantState(
                 }
             }
 
-            m_hasChangedLocalPDP = false;
+            m_hasChangedLocalPDP.exchange(false);
         }
 
     }

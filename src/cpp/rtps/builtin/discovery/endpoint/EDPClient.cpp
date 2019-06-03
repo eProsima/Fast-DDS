@@ -69,12 +69,11 @@ bool EDPClient::processLocalReaderProxyData(
             aux_msg.msg_endian =  LITTLEEND;
 #endif
 
-            ParameterList_t parameter_list = rdata->toParameterList();
-            ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true);
+            rdata->writeToCDRMessage(&aux_msg, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
             {
-                std::unique_lock<std::recursive_mutex> lock(*writer->second->getMutex());
+                std::unique_lock<std::recursive_timed_mutex> lock(*writer->second->getMutex());
                 for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
                     if((*ch)->instanceHandle == change->instanceHandle)
@@ -139,12 +138,11 @@ bool EDPClient::processLocalWriterProxyData(
             aux_msg.msg_endian =  LITTLEEND;
 #endif
 
-            ParameterList_t parameter_list = wdata->toParameterList();
-            ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true);
+            wdata->writeToCDRMessage(&aux_msg, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
             {
-                std::unique_lock<std::recursive_mutex> lock(*writer->second->getMutex());
+                std::unique_lock<std::recursive_timed_mutex> lock(*writer->second->getMutex());
                 for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
                     if((*ch)->instanceHandle == change->instanceHandle)
@@ -195,7 +193,7 @@ bool EDPClient::removeLocalWriter(RTPSWriter* W)
         if(change != nullptr)
         {
             {
-                std::lock_guard<std::recursive_mutex> guard(*writer->second->getMutex());
+                std::lock_guard<std::recursive_timed_mutex> guard(*writer->second->getMutex());
                 for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
                     if((*ch)->instanceHandle == change->instanceHandle)
@@ -244,7 +242,7 @@ bool EDPClient::removeLocalReader(RTPSReader* R)
         if(change != nullptr)
         {
             {
-                std::lock_guard<std::recursive_mutex> guard(*writer->second->getMutex());
+                std::lock_guard<std::recursive_timed_mutex> guard(*writer->second->getMutex());
                 for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
                     if((*ch)->instanceHandle == change->instanceHandle)

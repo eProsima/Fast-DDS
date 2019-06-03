@@ -836,12 +836,11 @@ bool StatefulWriter::is_acked_by_all(const CacheChange_t* change) const
 
 bool StatefulWriter::all_readers_updated()
 {
-    std::unique_lock<std::recursive_mutex> lock(*mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
-    for (auto it = matched_readers.begin(); it != matched_readers.end(); ++it)
+    for (auto it = matched_readers_.begin(); it != matched_readers_.end(); ++it)
     {
-        std::lock_guard<std::recursive_mutex> rguard(*(*it)->mp_mutex);
-        if ((*it)->countChangesForReader() > 0)
+        if ((*it)->has_changes())
         {
             return false;
         }

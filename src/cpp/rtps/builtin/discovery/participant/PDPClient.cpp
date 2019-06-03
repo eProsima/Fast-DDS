@@ -156,7 +156,7 @@ bool PDPClient::initPDP(RTPSParticipantImpl* part)
         return false;
     }
 
-    mp_sync = new DSClientEvent(this, TimeConv::Duration_t2MillisecondsDouble(m_discovery.discoveryServer_client_syncperiod));
+    mp_sync = new DSClientEvent(this, TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discoveryServer_client_syncperiod));
     mp_sync->restart_timer();
 
     return true;
@@ -475,21 +475,33 @@ void PDPClient::announceParticipantState(
             change->sequenceNumber = mp_PDPWriterHistory->next_sequence_number();
             change->write_params = wp;
 
-            std::lock_guard<std::recursive_mutex> wlock(*pW->getMutex());
+            std::lock_guard<std::recursive_timed_mutex> wlock(pW->getMutex());
 
             RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, RTPSMessageGroup::WRITER, _msgbuffer);
 
             std::vector<GUID_t> remote_readers;
             LocatorList_t locators;
 
-            for (auto it = pW->matchedReadersBegin(); it != pW->matchedReadersEnd(); ++it)
-            {
-                RemoteReaderAttributes & att = (*it)->m_att;
-                remote_readers.push_back(att.guid);
+            //  TODO: modify announcement mechanism to allow direct message sending
+            //for (auto it = pW->matchedReadersBegin(); it != pW->matchedReadersEnd(); ++it)
+            //{
+            //    RemoteReaderAttributes & att = (*it)->m_att;
+            //    remote_readers.push_back(att.guid);
 
-                EndpointAttributes & ep = att.endpoint;
-                locators.push_back(ep.unicastLocatorList);
-                //locators.push_back(ep.multicastLocatorList);
+            //    EndpointAttributes & ep = att.endpoint;
+            //    locators.push_back(ep.unicastLocatorList);
+            //    //locators.push_back(ep.multicastLocatorList);
+            //}
+            // temporary workaround
+            for (auto & svr : mp_builtin->m_DiscoveryServers)
+            {
+                // if we are matched to a server report demise
+                if (svr.proxy != nullptr)
+                {
+                    remote_readers.push_back(svr.GetPDPReader());
+                    //locators.push_back(svr.metatrafficMulticastLocatorList);
+                    locators.push_back(svr.metatrafficUnicastLocatorList);
+                }
             }
 
             if (!group.add_data(*change, remote_readers, locators, false))

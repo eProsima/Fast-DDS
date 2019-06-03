@@ -26,6 +26,9 @@
 
 #include "timedevent/DServerEvent.h"
 
+ // TODO: remove when the Writer API issue is resolved
+#include <fastrtps/rtps/attributes/WriterAttributes.h>
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -56,6 +59,10 @@ class PDPServer : public PDP
 
     //! Messages announcement ancillary
     RTPSMessageGroup_t _msgbuffer;
+
+    //! Temporary locator list to solve new Writer API issue
+    // TODO: remove when the Writer API issue is resolved
+    std::map<GUID_t, RemoteReaderAttributes> clients_;
 
     public:
     /**

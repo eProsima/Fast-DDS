@@ -233,7 +233,7 @@ bool EDPServer::trimWriterHistory(
 
     // traverse the WriterHistory searching CacheChanges_t with demised keys
     std::forward_list<CacheChange_t*> removal;
-    std::lock_guard<std::recursive_mutex> guardW(*writer.getMutex());
+    std::lock_guard<std::recursive_timed_mutex> guardW(writer.getMutex());
 
     std::copy_if(history.changesBegin(), history.changesBegin(), std::front_inserter(removal),
         [_demises](const CacheChange_t* chan) 
@@ -268,7 +268,7 @@ bool EDPServer::addEndpointFromHistory(
     WriterHistory& history,
     CacheChange_t& c)
 {
-    std::lock_guard<std::recursive_mutex> guardW(*writer.getMutex());
+    std::lock_guard<std::recursive_timed_mutex> guardW(writer.getMutex());
     CacheChange_t * pCh = nullptr;
 
     // validate the sample, if no sample data update it
@@ -434,8 +434,7 @@ bool EDPServer::processLocalWriterProxyData(
             aux_msg.msg_endian = LITTLEEND;
 #endif
 
-            ParameterList_t parameter_list = wdata->toParameterList();
-            ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true);
+            wdata->writeToCDRMessage(&aux_msg, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
             // unlike on EDPSimple we wouldn't remove endpoint outdate info till all
@@ -487,8 +486,7 @@ bool EDPServer::processLocalReaderProxyData(
             aux_msg.msg_endian = LITTLEEND;
 #endif
 
-            ParameterList_t parameter_list = rdata->toParameterList();
-            ParameterList::writeParameterListToCDRMsg(&aux_msg, &parameter_list, true);
+            rdata->writeToCDRMessage(&aux_msg, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
             // unlike on EDPSimple we wouldn't remove endpoint outdate info till

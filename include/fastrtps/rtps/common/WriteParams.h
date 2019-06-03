@@ -122,6 +122,8 @@ namespace eprosima
                         return related_sample_identity_;
                     }
 
+                    static WriteParams WRITE_PARAM_DEFAULT;
+
                 private:
 
                     SampleIdentity sample_identity_;

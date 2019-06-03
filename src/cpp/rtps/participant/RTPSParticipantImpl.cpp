@@ -245,9 +245,6 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
     // Disable Retries on Transports
     m_network_Factory.Shutdown();
 
-    // disable callbacks
-    mp_event_thr->getIOService().stop();
-
     // Safely abort threads.
     for(auto& block : m_receiverResourcelist)
     {

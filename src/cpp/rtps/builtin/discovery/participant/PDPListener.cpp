@@ -76,7 +76,7 @@ void PDPListener::onNewCacheChangeAdded(
             }
 
             // At this point we can release reader lock.
-            reader->getMutex()->unlock();
+            reader->getMutex().unlock();
 
             //LOOK IF IS AN UPDATED INFORMATION
             ParticipantProxyData* pdata = nullptr;
@@ -128,7 +128,7 @@ void PDPListener::onNewCacheChangeAdded(
             }
 
             // Take again the reader lock
-            reader->getMutex()->lock();
+            reader->getMutex().lock();
         }
     }
     else

@@ -91,7 +91,7 @@ class RTPSAsSocketWriter : public eprosima::fastrtps::rtps::WriterListener
         {
             //Create participant
             eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
-            pattr.builtin.discoveryProtocol = eprosima::fastrtps::rtps::PDPType::SIMPLE;
+            pattr.builtin.discoveryProtocol = eprosima::fastrtps::rtps::PDPType::NONE;
             pattr.builtin.use_WriterLivelinessProtocol = false;
             pattr.builtin.domainId = (uint32_t)GET_PID() % 230;
             pattr.participantID = 2;

@@ -296,7 +296,7 @@ class PDP
     //!Registered RTPSParticipants (including the local one, that is the first one.)
     std::vector<ParticipantProxyData*> m_participantProxies;
     //!Variable to indicate if any parameter has changed.
-    bool m_hasChangedLocalPDP;
+    std::atomic_bool m_hasChangedLocalPDP;
     //!Listener for the SPDP messages.
     ReaderListener* mp_listener;
     //!WriterHistory

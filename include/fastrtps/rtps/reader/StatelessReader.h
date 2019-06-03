@@ -57,7 +57,7 @@ public:
       * @param persist If the Reader must try to recover Writer formered registered state
       * @return True if correctly added.
       */
-    bool matched_writer_add(RemoteWriterAttributes& wdata, bool persist = true);
+    bool matched_writer_add(RemoteWriterAttributes& wdata, bool persist = true) override;
 
     /**
      * Remove a WriterProxyData from the matached writers.

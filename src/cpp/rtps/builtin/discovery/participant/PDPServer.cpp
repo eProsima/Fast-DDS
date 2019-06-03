@@ -86,7 +86,7 @@ bool PDPServer::initPDP(RTPSParticipantImpl* part)
         discoveryServer_client_syncperiod parameter has a context defined meaning.
     */
     mp_sync = new DServerEvent(this,
-        TimeConv::Duration_t2MillisecondsDouble(m_discovery.discoveryServer_client_syncperiod));
+        TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discoveryServer_client_syncperiod));
     awakeServerThread(); 
     // the timer is also restart from removeRemoteParticipant, remove(Publisher|Subscriber)FromHistory
     // and queueParticipantForEDPMatch
@@ -328,6 +328,9 @@ void PDPServer::assignRemoteEndpoints(ParticipantProxyData* pdata)
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
 
         mp_PDPWriter->matched_reader_add(ratt);
+
+        // TODO: remove when the Writer API issue is resolved
+        clients_[ratt.guid] = ratt;
     }
 
     // Notify another endpoints
@@ -414,6 +417,11 @@ void PDPServer::removeRemoteEndpoints(ParticipantProxyData* pdata)
         {
             mp_PDPWriter->matched_reader_add(ratt);
         }
+        else
+        {
+            // TODO: remove when the Writer API issue is resolved
+            clients_.erase(ratt.guid);
+        }
     }
 
 }
@@ -463,7 +471,7 @@ bool PDPServer::trimWriterHistory()
 
 bool PDPServer::trimPDPWriterHistory()
 {
-    assert(mp_mutex && mp_PDPWriter && mp_PDPWriter->getMutex());
+    assert(mp_mutex && mp_PDPWriter);
 
     // trim demises container
     key_list disposal, aux;
@@ -485,7 +493,7 @@ bool PDPServer::trimPDPWriterHistory()
 
     // traverse the WriterHistory searching CacheChanges_t with demised keys
     std::forward_list<CacheChange_t*> removal;
-    std::lock_guard<std::recursive_mutex> guardW(*mp_PDPWriter->getMutex());
+    std::lock_guard<std::recursive_timed_mutex> guardW(mp_PDPWriter->getMutex());
 
     std::copy_if(mp_PDPWriterHistory->changesBegin(),
         mp_PDPWriterHistory->changesBegin(), std::front_inserter(removal),
@@ -518,9 +526,9 @@ bool PDPServer::trimPDPWriterHistory()
 // CacheChange_t's ParticipantProxyData wouldn't be loaded when this function is called
 bool PDPServer::addRelayedChangeToHistory( CacheChange_t& c)
 {
-    assert(mp_PDPWriter && mp_PDPWriter->getMutex() && c.serializedPayload.max_size);
+    assert(mp_PDPWriter && c.serializedPayload.max_size);
 
-    std::lock_guard<std::recursive_mutex> lock(*mp_PDPWriter->getMutex());
+    std::lock_guard<std::recursive_timed_mutex> lock(mp_PDPWriter->getMutex());
     CacheChange_t * pCh = nullptr;
 
     // validate the sample, if no sample data update it
@@ -720,21 +728,41 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
                 change->sequenceNumber = mp_PDPWriterHistory->next_sequence_number();
                 change->write_params = wp;
 
-                std::lock_guard<std::recursive_mutex> wlock(*pW->getMutex());
+                std::lock_guard<std::recursive_timed_mutex> wlock(pW->getMutex());
 
                 RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, RTPSMessageGroup::WRITER, _msgbuffer);
 
                 std::vector<GUID_t> remote_readers;
                 LocatorList_t locators;
 
-                for (auto it = pW->matchedReadersBegin(); it != pW->matchedReadersEnd(); ++it)
-                {
-                    RemoteReaderAttributes & att = (*it)->m_att;
-                    remote_readers.push_back(att.guid);
+                // TODO: modify announcement mechanism to allow direct message sending
+                //for (auto it = pW->matchedReadersBegin(); it != pW->matchedReadersEnd(); ++it)
+                //{
+                //    RemoteReaderAttributes & att = (*it)->m_att;
+                //    remote_readers.push_back(att.guid);
 
-                    EndpointAttributes & ep = att.endpoint;
-                    locators.push_back(ep.unicastLocatorList);
-                    //locators.push_back(ep.multicastLocatorList);
+                //    EndpointAttributes & ep = att.endpoint;
+                //    locators.push_back(ep.unicastLocatorList);
+                //    //locators.push_back(ep.multicastLocatorList);
+                //}
+
+                // TODO: remove when the Writer API issue is resolved
+                for (auto client : clients_)
+                {
+                    RemoteReaderAttributes & rat = client.second;
+                    remote_readers.push_back(rat.guid);
+                    locators.push_back(rat.endpoint.unicastLocatorList);
+                    // locators.push_back(rat.endpoint.multicastLocatorList);
+                }
+
+                for (auto & svr : mp_builtin->m_DiscoveryServers)
+                {
+                    if (svr.proxy != nullptr)
+                    {
+                        remote_readers.push_back(svr.GetPDPReader());
+                        // locators.push_back(svr.metatrafficMulticastLocatorList);
+                        locators.push_back(svr.metatrafficUnicastLocatorList);
+                    }
                 }
 
                 if (!group.add_data(*change, remote_readers, locators, false))
@@ -761,14 +789,24 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
             std::vector<GUID_t> remote_readers;
             LocatorList_t locators;
 
-            for (auto it = pW->matchedReadersBegin(); it != pW->matchedReadersEnd(); ++it)
-            {
-                RemoteReaderAttributes & att = (*it)->m_att;
-                remote_readers.push_back(att.guid);
+            // TODO: modify announcement mechanism to allow direct message sending
+            //for (auto it = pW->matchedReadersBegin(); it != pW->matchedReadersEnd(); ++it)
+            //{
+            //    RemoteReaderAttributes & att = (*it)->m_att;
+            //    remote_readers.push_back(att.guid);
 
-                EndpointAttributes & ep = att.endpoint;
-                locators.push_back(ep.unicastLocatorList);
-                locators.push_back(ep.multicastLocatorList);
+            //    EndpointAttributes & ep = att.endpoint;
+            //    locators.push_back(ep.unicastLocatorList);
+            //    locators.push_back(ep.multicastLocatorList);
+            //}
+
+            // TODO: remove when the Writer API issue is resolved
+            for (auto client : clients_)
+            {
+                RemoteReaderAttributes & rat = client.second;
+                remote_readers.push_back(rat.guid);
+                locators.push_back(rat.endpoint.unicastLocatorList);
+                locators.push_back(rat.endpoint.multicastLocatorList);
             }
 
             for (auto & svr : mp_builtin->m_DiscoveryServers)
