@@ -112,22 +112,25 @@ void UDPChannelResource::release(
         const Locator_t& locator,
         const asio::ip::address& address)
 {
-    std::unique_lock<std::mutex> lock(mtx_closing_);
-    uint32_t tries_ = 0;
-    while (!closing_.load())
+    if (!address.is_multicast())
     {
-        transport_->ReleaseInputChannel(locator, address);
-        cv_closing_.wait_for(lock, std::chrono::milliseconds(50),
-            [this]{
-                return closing_.load();
-            });
-        ++tries_;
-        if (tries_ == 100)
+        std::unique_lock<std::mutex> lock(mtx_closing_);
+        uint32_t tries_ = 0;
+        while (!closing_.load())
         {
-            logError(UDPChannelResource, "After 100 retries UDP Socket doesn't close. Aborting.");
-            socket()->cancel();
-            closing_.store(true);
-            message_receiver(nullptr);
+            transport_->ReleaseInputChannel(locator, address);
+            cv_closing_.wait_for(lock, std::chrono::milliseconds(5),
+                [this]{
+                    return closing_.load();
+                });
+            ++tries_;
+            if (tries_ == 10)
+            {
+                logError(UDPChannelResource, "After " << tries_ << " retries UDP Socket doesn't close. Aborting.");
+                socket()->cancel();
+                closing_.store(true);
+                message_receiver(nullptr);
+            }
         }
     }
     socket()->cancel();
