@@ -37,13 +37,13 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-bool run = true;
+static bool run = true;
 
 class ParListener : public ParticipantListener
 {
     public:
-        ParListener(bool exit_on_lost_liveliness) : exit_on_lost_liveliness_(exit_on_lost_liveliness) {};
-        virtual ~ParListener(){};
+        ParListener(bool exit_on_lost_liveliness) : exit_on_lost_liveliness_(exit_on_lost_liveliness) {}
+        ~ParListener() override {}
 
         /**
          * This method is called when a new Participant is discovered, or a previously discovered participant
@@ -64,6 +64,10 @@ class ParListener : public ParticipantListener
             else if(info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
             {
                 std::cout << "Published removed a participant" << std::endl;
+                if(exit_on_lost_liveliness_)
+                {
+                    run = false;
+                }
             }
             else if(info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
             {
@@ -84,9 +88,9 @@ class PubListener : public PublisherListener
 {
     public:
 
-        PubListener() : matched_(0) {};
+        PubListener() : matched_(0) {}
 
-        ~PubListener() {};
+        ~PubListener() override {}
 
         void onPublicationMatched(Publisher* /*publisher*/, MatchingInfo& info) override
         {
@@ -106,7 +110,7 @@ class PubListener : public PublisherListener
 
         std::mutex mutex_;
         std::condition_variable cv_;
-        unsigned int matched_;
+        uint32_t matched_;
 };
 
 int main(int argc, char** argv)
@@ -132,7 +136,7 @@ int main(int argc, char** argv)
                 return -1;
             }
 
-            seed = strtol(argv[arg_count], nullptr, 10);
+            seed = static_cast<uint32_t>(strtoul(argv[arg_count], nullptr, 10));
         }
         else if(strcmp(argv[arg_count], "--wait") == 0)
         {
@@ -142,7 +146,7 @@ int main(int argc, char** argv)
                 return -1;
             }
 
-            wait = strtol(argv[arg_count], nullptr, 10);
+            wait = static_cast<uint32_t>(strtoul(argv[arg_count], nullptr, 10));
         }
         else if(strcmp(argv[arg_count], "--samples") == 0)
         {
@@ -152,7 +156,7 @@ int main(int argc, char** argv)
                 return -1;
             }
 
-            samples = strtol(argv[arg_count], nullptr, 10);
+            samples = static_cast<uint32_t>(strtoul(argv[arg_count], nullptr, 10));
         }
         else if(strcmp(argv[arg_count], "--magic") == 0)
         {
@@ -228,7 +232,7 @@ int main(int argc, char** argv)
 
     while(run)
     {
-        publisher->write((void*)&data);
+        publisher->write(&data);
 
         if(data.index() == samples)
         {

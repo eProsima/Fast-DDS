@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,31 +41,26 @@ class RTPS_DllAPI SubscriberListener
 {
     public:
 
-        SubscriberListener(){}
+        SubscriberListener();
 
-        virtual ~SubscriberListener(){}
+        virtual ~SubscriberListener();
 
         /**
-         * Virtual function to be implemented by the user containing the actions to be performed when a new  Data Message is received.
+         * Virtual function to be implemented by the user containing the actions to be performed
+         * when a new  Data Message is received.
          * @param sub Subscriber
          */
-        virtual void onNewDataMessage(Subscriber* sub)
-        {
-            (void)sub;
-        }
+        virtual void onNewDataMessage(Subscriber* sub);
 
         /**
-         * Virtual method to be called when the subscriber is matched with a new Writer (or unmatched); i.e., when a writer publishing in the same topic is discovered.
+         * Virtual method to be called when the subscriber is matched with a new Writer (or unmatched);
+         * i.e., when a writer publishing in the same topic is discovered.
          * @param sub Subscriber
          * @param info Matching information
          */
         virtual void onSubscriptionMatched(
                 Subscriber* sub,
-                rtps::MatchingInfo& info)
-        {
-            (void)sub;
-            (void)info;
-        }
+                rtps::MatchingInfo& info);
 
         /**
          * Virtual method to be called when a topic misses the deadline period
@@ -74,11 +69,7 @@ class RTPS_DllAPI SubscriberListener
          */
         virtual void on_requested_deadline_missed(
                 Subscriber* sub,
-                const RequestedDeadlineMissedStatus& status)
-        {
-            (void)sub;
-            (void)status;
-        }
+                const RequestedDeadlineMissedStatus& status);
 
         /**
          * @brief Method called when the liveliness status associated to a subscriber changes
@@ -87,11 +78,7 @@ class RTPS_DllAPI SubscriberListener
          */
         virtual void on_liveliness_changed(
                 Subscriber* sub,
-                const LivelinessChangedStatus& status)
-        {
-            (void)sub;
-            (void)status;
-        }
+                const LivelinessChangedStatus& status);
 
 };
 

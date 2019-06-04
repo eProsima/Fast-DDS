@@ -68,12 +68,15 @@ set(${PROJECT_NAME}_source_files
     Domain.cpp
     participant/Participant.cpp
     participant/ParticipantImpl.cpp
+    participant/ParticipantListener.cpp
     publisher/Publisher.cpp
     publisher/PublisherImpl.cpp
     publisher/PublisherHistory.cpp
+    publisher/PublisherListener.cpp
     subscriber/Subscriber.cpp
     subscriber/SubscriberImpl.cpp
     subscriber/SubscriberHistory.cpp
+    subscriber/SubscriberListener.cpp
     transport/ChannelResource.cpp
     transport/UDPChannelResource.cpp
     transport/TCPChannelResource.cpp

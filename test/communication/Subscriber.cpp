@@ -42,8 +42,8 @@ using namespace eprosima::fastrtps::rtps;
 class ParListener : public ParticipantListener
 {
     public:
-        ParListener() {};
-        virtual ~ParListener(){};
+        ParListener() {}
+        ~ParListener() override {}
 
         /**
          * This method is called when a new Participant is discovered, or a previously discovered participant changes its QOS or is removed.
@@ -77,7 +77,7 @@ class SubListener : public SubscriberListener
 
         SubListener() : number_samples_(0) {}
 
-        ~SubListener() {}
+        ~SubListener() override {}
 
         void onSubscriptionMatched(Subscriber* /*subscriber*/, MatchingInfo& info) override
         {
@@ -96,7 +96,7 @@ class SubListener : public SubscriberListener
             HelloWorld sample;
             SampleInfo_t info;
 
-            if(subscriber->takeNextData((void*)&sample, &info))
+            if(subscriber->takeNextData(&sample, &info))
             {
                 if(info.sampleKind == ALIVE)
                 {
@@ -137,7 +137,7 @@ int main(int argc, char** argv)
                 return -1;
             }
 
-            seed = strtol(argv[arg_count], nullptr, 10);
+            seed = static_cast<uint32_t>(strtol(argv[arg_count], nullptr, 10));
         }
         else if(strcmp(argv[arg_count], "--samples") == 0)
         {
@@ -147,7 +147,7 @@ int main(int argc, char** argv)
                 return -1;
             }
 
-            samples = strtol(argv[arg_count], nullptr, 10);
+            samples = static_cast<uint32_t>(strtol(argv[arg_count], nullptr, 10));
         }
         else if(strcmp(argv[arg_count], "--magic") == 0)
         {

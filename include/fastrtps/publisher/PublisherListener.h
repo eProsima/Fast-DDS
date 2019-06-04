@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file PublisherListener.h	
+ * @file PublisherListener.h
  */
 
 #ifndef PUBLISHERLISTENER_H_
@@ -37,21 +37,17 @@ class Publisher;
 class RTPS_DllAPI PublisherListener
 {
 public:
-    PublisherListener(){}
-    virtual ~PublisherListener(){}
+    PublisherListener();
+    virtual ~PublisherListener();
 
-	/**
-	 * This method is called when the Publisher is matched (or unmatched) against an endpoint.
-	 * @param pub Pointer to the associated Publisher
-	 * @param info Information regarding the matched subscriber
-	 */
+    /**
+     * This method is called when the Publisher is matched (or unmatched) against an endpoint.
+     * @param pub Pointer to the associated Publisher
+     * @param info Information regarding the matched subscriber
+     */
     virtual void onPublicationMatched(
             Publisher* pub,
-            rtps::MatchingInfo& info)
-    {
-        (void)pub;
-        (void)info;
-    }
+            rtps::MatchingInfo& info);
 
     /**
      * A method called when a deadline is missed
@@ -60,11 +56,7 @@ public:
      */
     virtual void on_offered_deadline_missed(
             Publisher* pub,
-            const OfferedDeadlineMissedStatus& status)
-    {
-        (void)pub;
-        (void)status;
-    }
+            const OfferedDeadlineMissedStatus& status);
 
     /**
      * @brief Method called when the livelivess of a publisher is lost
@@ -73,11 +65,7 @@ public:
      */
     virtual void on_liveliness_lost(
             Publisher* pub,
-            const LivelinessLostStatus& status)
-    {
-        (void)pub;
-        (void)status;
-    }
+            const LivelinessLostStatus& status);
 };
 
 } /* namespace rtps */
