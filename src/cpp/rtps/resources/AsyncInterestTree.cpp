@@ -31,16 +31,6 @@ void AsyncInterestTree::RegisterInterest(const RTPSWriter* writer)
    mHiddenInterest->insert(writer); 
 }
 
-void AsyncInterestTree::RegisterInterest(const RTPSParticipantImpl* participant)
-{
-   std::lock_guard<std::recursive_mutex> guard_participant(*participant->getParticipantMutex());
-   std::unique_lock<std::mutex> guard(mMutexHidden);
-   auto writers = participant->getAllWriters();
-
-   for (auto writer : writers)
-      mHiddenInterest->insert(writer); 
-}
-
 void AsyncInterestTree::Swap()
 {
    std::unique_lock<std::mutex> activeGuard(mMutexActive);

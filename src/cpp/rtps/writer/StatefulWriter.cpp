@@ -131,7 +131,7 @@ StatefulWriter::~StatefulWriter()
 {
     logInfo(RTPS_WRITER,"StatefulWriter destructor");
 
-    AsyncWriterThread::removeWriter(*this);
+    mp_RTPSParticipant->async_thread().removeWriter(*this);
 
     if (disable_positive_acks_)
     {
@@ -285,7 +285,7 @@ void StatefulWriter::unsent_change_added_to_history(
 
             if (m_pushMode)
             {
-                AsyncWriterThread::wakeUp(this);
+                mp_RTPSParticipant->async_thread().wakeUp(this);
             }
         }
 
@@ -520,7 +520,7 @@ void StatefulWriter::send_any_unsent_changes()
 
                             if (must_wake_up_async_thread)
                             {
-                                AsyncWriterThread::wakeUp(this);
+                                mp_RTPSParticipant->async_thread().wakeUp(this);
                             }
                         }
                         else
@@ -1206,7 +1206,7 @@ void StatefulWriter::perform_nack_response()
 
     if (must_wake_up_async_thread)
     {
-        AsyncWriterThread::wakeUp(this);
+        mp_RTPSParticipant->async_thread().wakeUp(this);
     }
 }
 

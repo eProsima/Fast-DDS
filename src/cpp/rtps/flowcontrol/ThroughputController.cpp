@@ -14,6 +14,8 @@
 
 #include "ThroughputController.h"
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
+#include "../participant/RTPSParticipantImpl.h"
+#include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <asio.hpp>
 #include <asio/steady_timer.hpp>
 #include <cassert>
@@ -23,7 +25,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-ThroughputController::ThroughputController(const ThroughputControllerDescriptor& descriptor, const RTPSWriter* associatedWriter):
+ThroughputController::ThroughputController(const ThroughputControllerDescriptor& descriptor, RTPSWriter* associatedWriter):
     mBytesPerPeriod(descriptor.bytesPerPeriod),
     mAccumulatedPayloadSize(0),
     mPeriodMillisecs(descriptor.periodMillisecs),
@@ -32,7 +34,7 @@ ThroughputController::ThroughputController(const ThroughputControllerDescriptor&
 {
 }
 
-ThroughputController::ThroughputController(const ThroughputControllerDescriptor& descriptor, const RTPSParticipantImpl* associatedParticipant):
+ThroughputController::ThroughputController(const ThroughputControllerDescriptor& descriptor, RTPSParticipantImpl* associatedParticipant):
     mBytesPerPeriod(descriptor.bytesPerPeriod),
     mAccumulatedPayloadSize(0),
     mPeriodMillisecs(descriptor.periodMillisecs),
@@ -110,9 +112,18 @@ void ThroughputController::ScheduleRefresh(uint32_t sizeToRestore)
                 mAccumulatedPayloadSize = sizeToRestore > mAccumulatedPayloadSize ? 0 : mAccumulatedPayloadSize - sizeToRestore;
 
                 if (mAssociatedWriter)
-                    AsyncWriterThread::wakeUp(mAssociatedWriter);
+                {
+                    mAssociatedWriter->getRTPSParticipant()->async_thread().wakeUp(mAssociatedWriter);
+                }
                 else if (mAssociatedParticipant)
-                    AsyncWriterThread::wakeUp(mAssociatedParticipant);
+                {
+                    std::unique_lock<std::recursive_mutex> lock(*mAssociatedParticipant->getParticipantMutex());
+                    for (auto it = mAssociatedParticipant->userWritersListBegin();
+                            it != mAssociatedParticipant->userWritersListEnd(); ++it)
+                    {
+                        mAssociatedParticipant->async_thread().wakeUp(*it);
+                    }
+                }
             }
         };
 

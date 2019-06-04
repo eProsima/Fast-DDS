@@ -31,6 +31,7 @@ namespace fastrtps {
 namespace rtps {
 
 class WriterHistory;
+class RTPSParticipantImpl;
 
 class RTPSWriter : public Endpoint
 {
@@ -46,6 +47,8 @@ class RTPSWriter : public Endpoint
             ChangeKind_t, InstanceHandle_t));
 
         MOCK_METHOD1(set_separate_sending, void(bool));
+
+        MOCK_METHOD0(getRTPSParticipant, RTPSParticipantImpl*());
 
         WriterHistory* history_;
 };

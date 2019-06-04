@@ -35,12 +35,6 @@ public:
    void RegisterInterest(const RTPSWriter*);
 
    /**
-    * Registers all writers from  participant in a hidden set.
-    * Threadsafe thanks to set swap.
-    */
-   void RegisterInterest(const RTPSParticipantImpl*);
-
-   /**
     * Clears the visible set and swaps
     * with the hidden set.
     */
@@ -52,7 +46,7 @@ public:
 private:
    std::set<const RTPSWriter*> mInterestAlpha, mInterestBeta;
    mutable std::mutex mMutexActive, mMutexHidden;
-   
+
    std::set<const RTPSWriter*>* mActiveInterest;
    std::set<const RTPSWriter*>* mHiddenInterest;
 };

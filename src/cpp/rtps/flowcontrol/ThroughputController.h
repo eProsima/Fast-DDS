@@ -36,8 +36,8 @@ class RTPSParticipantImpl;
 class ThroughputController : public FlowController
 {
 public:
-   ThroughputController(const ThroughputControllerDescriptor&, const RTPSWriter* associatedWriter);
-   ThroughputController(const ThroughputControllerDescriptor&, const RTPSParticipantImpl* associatedParticipant);
+   ThroughputController(const ThroughputControllerDescriptor&, RTPSWriter* associatedWriter);
+   ThroughputController(const ThroughputControllerDescriptor&, RTPSParticipantImpl* associatedParticipant);
 
    virtual void operator()(RTPSWriterCollector<ReaderLocator*>& changesToSend);
    virtual void operator()(RTPSWriterCollector<ReaderProxy*>& changesToSend);
@@ -52,8 +52,8 @@ private:
    uint32_t mPeriodMillisecs;
    std::recursive_mutex mThroughputControllerMutex;
 
-   const RTPSParticipantImpl* mAssociatedParticipant;
-   const RTPSWriter* mAssociatedWriter;
+   RTPSParticipantImpl* mAssociatedParticipant;
+   RTPSWriter* mAssociatedWriter;
 
    /*
     * Schedules the filter to be refreshed in period ms. When it does, its capacity

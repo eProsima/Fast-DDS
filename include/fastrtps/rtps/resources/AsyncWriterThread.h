@@ -30,6 +30,7 @@
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
+
 class RTPSWriter;
 
 /**
@@ -41,53 +42,51 @@ class RTPSWriter;
 class AsyncWriterThread
 {
 public:
+
+    AsyncWriterThread() = default;
+
+    ~AsyncWriterThread() = default;
+
     /**
      * @brief Adds a writer to be managed by this thread.
      * Only asynchronous writers are permitted.
      * @param writer Asynchronous writer to be added.
      * @return Result of the operation.
      */
-    static bool addWriter(RTPSWriter& writer);
+    bool addWriter(RTPSWriter& writer);
 
     /**
      * @brief Removes a writer.
      * @param writer Asynchronous writer to be removed.
      * @return Result of the operation.
      */
-    static bool removeWriter(RTPSWriter& writer);
-
-    /**
-     * Wakes the thread up.
-     * @param interestedParticipant The participant interested in an async write.
-     */
-    static void wakeUp(const RTPSParticipantImpl* interestedParticipant);
+    bool removeWriter(RTPSWriter& writer);
 
     /**
      * Wakes the thread up.
      * @param interestedWriter The writer interested in an async write.
      */
-    static void wakeUp(const RTPSWriter* interestedWriter);
+    void wakeUp(const RTPSWriter* interestedWriter);
 
 private:
-    AsyncWriterThread() = delete;
-    ~AsyncWriterThread() = delete;
+
     AsyncWriterThread(const AsyncWriterThread&) = delete;
     const AsyncWriterThread& operator=(const AsyncWriterThread&) = delete;
 
     //! @brief runs main method
-    static void run();
+    void run();
 
-    static std::thread* thread_;
-    static std::mutex data_structure_mutex_;
-    static std::mutex condition_variable_mutex_;
+    std::thread* thread_ = nullptr;
+    std::mutex data_structure_mutex_;
+    std::mutex condition_variable_mutex_;
 
     //! List of asynchronous writers.
-    static std::list<RTPSWriter*> async_writers;
-    static AsyncInterestTree interestTree;
+    std::list<RTPSWriter*> async_writers_;
+    AsyncInterestTree interestTree_;
 
-    static bool running_;
-    static bool run_scheduled_;
-    static std::condition_variable cv_;
+    bool running_ = false;
+    bool run_scheduled_ = false;
+    std::condition_variable cv_;
 };
 
 } // namespace rtps
