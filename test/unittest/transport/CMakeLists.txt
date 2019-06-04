@@ -129,7 +129,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterList.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/qos/QosPolicies.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp

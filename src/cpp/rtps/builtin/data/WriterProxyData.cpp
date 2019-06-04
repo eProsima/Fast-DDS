@@ -476,6 +476,13 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 }
                 break;
             }
+            case PID_TYPE_INFORMATION:
+            {
+                const XTypes::TypeInformation* p = dynamic_cast<XTypes::TypeInformation*>(param);
+                assert(p != nullptr);
+                m_type_information = *p;
+                break;
+            }
             case PID_DISABLE_POSITIVE_ACKS:
             {
                 const DisablePositiveACKsQosPolicy* p = dynamic_cast<const DisablePositiveACKsQosPolicy*>(param);

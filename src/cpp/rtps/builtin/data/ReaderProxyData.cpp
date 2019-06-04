@@ -471,6 +471,12 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 }
                 break;
             }
+            case PID_TYPE_INFORMATION:
+            {
+                XTypes::TypeInformation * p = (XTypes::TypeInformation*)(*it);
+                m_type_information = *p;
+                break;
+            }
             case PID_DISABLE_POSITIVE_ACKS:
             {
                 const DisablePositiveACKsQosPolicy* p = dynamic_cast<const DisablePositiveACKsQosPolicy*>(param);

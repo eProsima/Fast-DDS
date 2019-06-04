@@ -44,7 +44,6 @@
 #include <mutex>
 
 using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::types;
 
 namespace eprosima {
 namespace fastrtps{
@@ -94,7 +93,7 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
     {
         if (att.type_id.m_type_identifier._d() == 0) // Not set
         {
-            const TypeIdentifier* type_id = TypeObjectFactory::get_instance()->get_type_identifier(
+            const types::TypeIdentifier* type_id = types::TypeObjectFactory::get_instance()->get_type_identifier(
                     rpd.typeName().c_str(), att.getTopicDiscoveryKind() == COMPLETE);
             if (type_id == nullptr)
             {
@@ -112,11 +111,11 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
         }
 
         if (att.type.m_type_object._d() == 0
-            && (att.type_id.m_type_identifier._d() == EK_MINIMAL
-                || att.type_id.m_type_identifier._d() == EK_COMPLETE)) // Not set
+            && (att.type_id.m_type_identifier._d() == types::EK_MINIMAL
+                || att.type_id.m_type_identifier._d() == types::EK_COMPLETE)) // Not set
         {
             //*rpd.type().m_type_object = *TypeObjectFactory::get_instance()->get_type_object(rpd.typeName());
-            const TypeObject *type_obj = TypeObjectFactory::get_instance()->get_type_object(
+            const types::TypeObject *type_obj = types::TypeObjectFactory::get_instance()->get_type_object(
                     rpd.typeName().c_str(), att.getTopicDiscoveryKind() == COMPLETE);
             if (type_obj == nullptr)
             {
@@ -148,8 +147,9 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
                 {
                     if (att.type_id.m_type_identifier->_d() == 0) // Not set
                     {
-                        const TypeIdentifier* type_id = TypeObjectFactory::GetInstance()->GetTypeIdentifier(
-                                rpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
+                        const types::TypeIdentifier* type_id =
+                                types::TypeObjectFactory::GetInstance()->GetTypeIdentifier(
+                                    rpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
                         if (type_id == nullptr)
                         {
                             logError(EDP, "Type identifier " << rpd.typeName() << " isn't registered.");
@@ -165,10 +165,10 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
                     }
 
                     if (att.type.m_type_object->_d() == 0
-                        && (att.type_id.m_type_identifier->_d() == EK_MINIMAL
-                        || att.type_id.m_type_identifier->_d() == EK_COMPLETE)) // Not set
+                        && (att.type_id.m_type_identifier->_d() == types::EK_MINIMAL
+                        || att.type_id.m_type_identifier->_d() == types::EK_COMPLETE)) // Not set
                     {
-                        const TypeObject *type_obj = TypeObjectFactory::GetInstance()->GetTypeObject(
+                        const types::TypeObject *type_obj = types::TypeObjectFactory::GetInstance()->GetTypeObject(
                                 rpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
                         if (type_obj == nullptr)
                         {
@@ -196,8 +196,8 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
                     }
                     else
                     {
-                        const TypeInformation* type_info =
-                            TypeObjectFactory::GetInstance()->GetTypeInformation(rpd.typeName());
+                        const types::TypeInformation* type_info =
+                            types::TypeObjectFactory::GetInstance()->GetTypeInformation(rpd.typeName());
                         if (type_info == nullptr)
                         {
                             logError(EDP, "Type information " << rpd.typeName() << " isn't registered.");
@@ -263,7 +263,7 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
     {
         if (att.type_id.m_type_identifier._d() == 0) // Not set
         {
-            const TypeIdentifier* type_id = TypeObjectFactory::get_instance()->get_type_identifier(
+            const types::TypeIdentifier* type_id = types::TypeObjectFactory::get_instance()->get_type_identifier(
                     wpd.typeName().c_str(), att.getTopicDiscoveryKind() == COMPLETE);
             if (type_id == nullptr)
             {
@@ -281,10 +281,10 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
         }
 
         if (att.type.m_type_object._d() == 0
-            && (att.type_id.m_type_identifier._d() == EK_MINIMAL
-                || att.type_id.m_type_identifier._d() == EK_COMPLETE)) // Not set
+            && (att.type_id.m_type_identifier._d() == types::EK_MINIMAL
+                || att.type_id.m_type_identifier._d() == types::EK_COMPLETE)) // Not set
         {
-            const TypeObject *type_obj = TypeObjectFactory::get_instance()->get_type_object(
+            const types::TypeObject *type_obj = types::TypeObjectFactory::get_instance()->get_type_object(
                     wpd.typeName().c_str(), att.getTopicDiscoveryKind() == COMPLETE);
             if (type_obj == nullptr)
             {
@@ -316,8 +316,9 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
                 {
                     if (att.type_id.m_type_identifier->_d() == 0) // Not set
                     {
-                        const TypeIdentifier* type_id = TypeObjectFactory::GetInstance()->GetTypeIdentifier(
-                                wpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
+                        const types::TypeIdentifier* type_id =
+                                types::TypeObjectFactory::GetInstance()->GetTypeIdentifier(
+                                    wpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
                         if (type_id == nullptr)
                         {
                             logError(EDP, "Type identifier " << wpd.typeName() << " isn't registered.");
@@ -333,10 +334,10 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
                     }
 
                     if (att.type.m_type_object->_d() == 0
-                        && (att.type_id.m_type_identifier->_d() == EK_MINIMAL
-                        || att.type_id.m_type_identifier->_d() == EK_COMPLETE)) // Not set
+                        && (att.type_id.m_type_identifier->_d() == types::EK_MINIMAL
+                        || att.type_id.m_type_identifier->_d() == types::EK_COMPLETE)) // Not set
                     {
-                        const TypeObject *type_obj = TypeObjectFactory::GetInstance()->GetTypeObject(
+                        const types::TypeObject *type_obj = types::TypeObjectFactory::GetInstance()->GetTypeObject(
                                 wpd.typeName(), att.getTopicDiscoveryKind() == COMPLETE);
                         if (type_obj == nullptr)
                         {
@@ -364,8 +365,8 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
                     }
                     else
                     {
-                        const TypeInformation* type_info =
-                            TypeObjectFactory::GetInstance()->GetTypeInformation(wpd.typeName());
+                        const types::TypeInformation* type_info =
+                            types::TypeObjectFactory::GetInstance()->GetTypeInformation(wpd.typeName());
                         if (type_info == nullptr)
                         {
                             logError(EDP, "Type information " << wpd.typeName() << " isn't registered.");
@@ -925,7 +926,7 @@ bool EDP::pairingReader(RTPSReader* R, const ParticipantProxyData& pdata, const 
                     logError(RTPS_EDP, "Security manager returns an error for reader " << R->getGuid());
                 }
 #else
-				RemoteWriterAttributes rwatt = (*wdatait)->toRemoteWriterAttributes();
+                RemoteWriterAttributes rwatt = (*wdatait)->toRemoteWriterAttributes();
                 if(R->matched_writer_add(rwatt))
                 {
                     logInfo(RTPS_EDP, "Valid Matching to writerProxy: " << (*wdatait)->guid());
@@ -990,8 +991,8 @@ bool EDP::pairingWriter(RTPSWriter* W, const ParticipantProxyData& pdata, const 
                     logError(RTPS_EDP, "Security manager returns an error for writer " << W->getGuid());
                 }
 #else
-				RemoteReaderAttributes rratt = (*rdatait)->toRemoteReaderAttributes();
-				if(W->matched_reader_add(rratt))
+                RemoteReaderAttributes rratt = (*rdatait)->toRemoteReaderAttributes();
+                if(W->matched_reader_add(rratt))
                 {
                     logInfo(RTPS_EDP,"Valid Matching to readerProxy: " << (*rdatait)->guid());
                     //MATCHED AND ADDED CORRECTLY:
@@ -1216,7 +1217,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(ParticipantProxyData *pdata
                     logError(RTPS_EDP, "Security manager returns an error for reader " << readerGUID);
                 }
 #else
-				RemoteWriterAttributes rwatt = wdata->toRemoteWriterAttributes();
+                RemoteWriterAttributes rwatt = wdata->toRemoteWriterAttributes();
                 if((*rit)->matched_writer_add(rwatt))
                 {
                     logInfo(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId);

@@ -961,8 +961,8 @@ class DataRepresentationQosPolicy : public Parameter_t, public QosPolicy
     friend class ParameterList;
 public:
     std::vector<DataRepresentationId_t> m_value;
-    RTPS_DllAPI DataRepresentationQosPolicy() : Parameter_t(PID_DATA_REPRESENTATION, 0), QosPolicy(false) {};
-    virtual RTPS_DllAPI ~DataRepresentationQosPolicy() {};
+    RTPS_DllAPI DataRepresentationQosPolicy() : Parameter_t(PID_DATA_REPRESENTATION, 0), QosPolicy(false) {}
+    virtual RTPS_DllAPI ~DataRepresentationQosPolicy() override {}
 
     /**
     * Compares the given policy to check if it's equal.
@@ -1015,7 +1015,7 @@ public:
         m_force_type_validation = false;
     }
 
-    virtual RTPS_DllAPI ~TypeConsistencyEnforcementQosPolicy() {}
+    virtual RTPS_DllAPI ~TypeConsistencyEnforcementQosPolicy() override {}
     /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
@@ -1074,6 +1074,7 @@ class TypeIdV1 : public Parameter_t, public QosPolicy
 public:
     types::TypeIdentifier m_type_identifier;
 
+
     RTPS_DllAPI TypeIdV1()
             : Parameter_t(PID_TYPE_IDV1, 0)
             , QosPolicy(false)
@@ -1117,7 +1118,7 @@ public:
         return *this;
     }
 
-    virtual RTPS_DllAPI ~TypeIdV1()
+    virtual RTPS_DllAPI ~TypeIdV1() override
     {
     }
 
@@ -1195,7 +1196,7 @@ public:
         return *this;
     }
 
-    virtual RTPS_DllAPI ~TypeObjectV1()
+    virtual RTPS_DllAPI ~TypeObjectV1() override
     {
     }
     /**
@@ -1231,7 +1232,6 @@ class TypeInformation : private Parameter_t, public QosPolicy
 public:
     RTPS_DllAPI TypeInformation() : Parameter_t(PID_TYPE_INFORMATION, 0), QosPolicy(false)
     {
-        //m_type_information = new eprosima::fastrtps::TypeInformation();
         m_type_information = nullptr;
         m_is_assigned = false;
     }
@@ -1241,7 +1241,7 @@ public:
     {
         if (type.m_type_information != nullptr)
         {
-            m_type_information = new eprosima::fastrtps::TypeInformation();
+            m_type_information = new types::TypeInformation();
             *m_type_information = *type.m_type_information;
             m_is_assigned = true;
         }
@@ -1270,7 +1270,7 @@ public:
 
         if (type.m_type_information != nullptr)
         {
-            m_type_information = new eprosima::fastrtps::TypeInformation();
+            m_type_information = new types::TypeInformation();
             *m_type_information = *type.m_type_information;
             m_is_assigned = true;
         }
@@ -1296,7 +1296,7 @@ public:
         return *this;
     }
 
-    virtual RTPS_DllAPI ~TypeInformation()
+    virtual RTPS_DllAPI ~TypeInformation() override
     {
         delete m_type_information;
     }
@@ -1310,22 +1310,22 @@ public:
 
     RTPS_DllAPI bool isAssigned() const { return m_is_assigned; }
 
-    RTPS_DllAPI TypeInformation& operator=(const eprosima::fastrtps::TypeInformation& type_info)
+    RTPS_DllAPI TypeInformation& operator=(const types::TypeInformation& type_info)
     {
         delete m_type_information;
-        m_type_information = new eprosima::fastrtps::TypeInformation();
+        m_type_information = new types::TypeInformation();
         *m_type_information = type_info;
         m_is_assigned = true;
         return *this;
     }
 
-    RTPS_DllAPI const eprosima::fastrtps::TypeInformation* get() const
+    RTPS_DllAPI const types::TypeInformation* get() const
     {
         return m_type_information;
     }
 
 private:
-    eprosima::fastrtps::TypeInformation* m_type_information;
+    types::TypeInformation* m_type_information;
     bool m_is_assigned;
 };
 
