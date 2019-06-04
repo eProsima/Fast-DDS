@@ -796,7 +796,7 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
         {
             std::lock_guard<std::mutex> lock(m_receiverResourcelistMutex);
             //Push the new items into the ReceiverResource buffer
-            m_receiverResourcelist.push_back(ReceiverControlBlock(std::move(*it_buffer)));
+            m_receiverResourcelist.emplace_back(*it_buffer);
             //Create and init the MessageReceiver
             auto mr = new MessageReceiver(this, size);
             m_receiverResourcelist.back().mp_receiver = mr;

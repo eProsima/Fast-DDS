@@ -97,12 +97,13 @@ class RTPSParticipantImpl
     {
         std::shared_ptr<ReceiverResource> Receiver;
         MessageReceiver* mp_receiver; //Associated Readers/Writers inside of MessageReceiver
-        ReceiverControlBlock(std::shared_ptr<ReceiverResource>&& rec) :Receiver(std::move(rec)), mp_receiver(nullptr)
+        ReceiverControlBlock(std::shared_ptr<ReceiverResource>& rec) :Receiver(rec), mp_receiver(nullptr)
         {
         }
-        ReceiverControlBlock(ReceiverControlBlock&& origen) :Receiver(std::move(origen.Receiver)), mp_receiver(origen.mp_receiver)
+        ReceiverControlBlock(ReceiverControlBlock&& origen) :Receiver(origen.Receiver), mp_receiver(origen.mp_receiver)
         {
             origen.mp_receiver = nullptr;
+            origen.Receiver.reset();
         }
 
         void disable()

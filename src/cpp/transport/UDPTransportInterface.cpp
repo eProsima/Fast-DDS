@@ -105,9 +105,7 @@ bool UDPTransportInterface::CloseInputChannel(const Locator_t& locator)
     // Then we release the channels
     for (UDPChannelResource* channel : channel_resources)
     {
-        ReleaseInputChannel(locator, addresses[channel]);
-        channel->socket()->cancel();
-        channel->socket()->close();
+        channel->release(locator, addresses[channel]);
         delete channel;
     }
 

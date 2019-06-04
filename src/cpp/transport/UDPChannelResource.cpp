@@ -16,6 +16,7 @@
 #include <fastrtps/transport/UDPTransportInterface.h>
 #include <fastrtps/transport/UDPChannelResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
+#include <fastrtps/utils/eClock.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -34,6 +35,7 @@ UDPChannelResource::UDPChannelResource(
     , only_multicast_purpose_(false)
     , interface_(sInterface)
     , transport_(transport)
+    , closing_(false)
 {
     thread(std::thread(&UDPChannelResource::perform_listen_operation, this, locator));
 }
@@ -84,6 +86,13 @@ bool UDPChannelResource::Receive(
         {
             if (receive_buffer_size == 13 && memcmp(receive_buffer, "EPRORTPSCLOSE", 13) == 0)
             {
+                if (!alive())
+                {
+                    std::lock_guard<std::mutex> lock(mtx_closing_);
+                    closing_.store(true);
+                    message_receiver(nullptr);
+                    cv_closing_.notify_all();
+                }
                 return false;
             }
             transport_->endpoint_to_locator(senderEndpoint, remote_locator);
@@ -94,8 +103,44 @@ bool UDPChannelResource::Receive(
     {
         (void)error;
         logWarning(RTPS_MSG_OUT, "Error receiving data: " << error.what());
+        std::cout << "+++ERROR: " << error.what() << " - " << message_receiver() << " (" << this << ")" << std::endl;
         return false;
     }
+}
+
+void UDPChannelResource::release(
+        const Locator_t& locator,
+        const asio::ip::address& address)
+{
+    std::unique_lock<std::mutex> lock(mtx_closing_);
+    uint32_t tries_ = 0;
+    while (!closing_.load())
+    {
+        transport_->ReleaseInputChannel(locator, address);
+        cv_closing_.wait_for(lock, std::chrono::milliseconds(50),
+            [this]{
+                return closing_.load();
+            });
+        ++tries_;
+        if (tries_ % 100 == 0)
+        {
+            if (tries_ < 1000)
+            {
+                logError(UDPChannelResource, "Cannot close UDP Socket " << address << " after " << tries_
+                         << " tries. Retrying...");
+                socket()->cancel();
+            }
+            else
+            {
+                logError(UDPChannelResource, "After 1000 retries UDP Socket doesn't close. Aborting.");
+                socket()->cancel();
+                closing_.store(true);
+                message_receiver(nullptr);
+            }
+        }
+    }
+    socket()->cancel();
+    socket()->close();
 }
 
 } // namespace rtps
