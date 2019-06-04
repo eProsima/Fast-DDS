@@ -135,12 +135,15 @@ void TimedEventImpl::event(
     {
         if(ec != asio::error::operation_aborted)
         {
+            StateCode expected = StateCode::WAITING;
+            state_.compare_exchange_strong(expected, StateCode::INACTIVE);
+
             //Exec
             bool restart = callback_(TimedEvent::EVENT_SUCCESS);
 
             if (restart)
             {
-                StateCode expected = StateCode::WAITING;
+                StateCode expected = StateCode::INACTIVE;
                 if (state_.compare_exchange_strong(expected, StateCode::WAITING))
                 {
                     {
@@ -150,11 +153,6 @@ void TimedEventImpl::event(
 
                     timer_.async_wait(std::bind(&TimedEventImpl::event, this, callback_weak_ptr, std::placeholders::_1));
                 }
-            }
-            else
-            {
-                StateCode expected = StateCode::WAITING;
-                state_.compare_exchange_strong(expected, StateCode::INACTIVE);
             }
         }
         else

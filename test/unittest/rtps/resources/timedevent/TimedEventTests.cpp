@@ -38,7 +38,7 @@ class TimedEventEnvironment : public ::testing::Environment
 TimedEventEnvironment* const env = dynamic_cast<TimedEventEnvironment*>(testing::AddGlobalTestEnvironment(new TimedEventEnvironment));
 
 /*!
- * @fn TEST(TimedEvent, EventNonAutoDestruc_SuccessEvents)
+ * @fn TEST(TimedEvent, Event_SuccessEvents)
  * @brief This test checks the correct behavior of launching events.
  * This test launches an event several times.
  * For each one it waits its execution and then launches it again.
@@ -63,7 +63,7 @@ TEST(TimedEvent, Event_SuccessEvents)
 }
 
 /*!
- * @fn TEST(TimedEvent, EventNonAutoDestruc_CancelEvents)
+ * @fn TEST(TimedEvent, Event_CancelEvents)
  * @brief This test  checks the correct behavior of cancelling events.
  * This test launches an event several times and cancels it.
  * For each one it launchs the event and inmediatly it cancels the event.
@@ -90,7 +90,7 @@ TEST(TimedEvent, Event_CancelEvents)
 }
 
 /*!
- * @fn TEST(TimedEvent, EventNonAutoDestruc_RestartEvents)
+ * @fn TEST(TimedEvent, Event_RestartEvents)
  * @brief This test checks the correct behaviour of restarting events.
  * This test restart continuisly several events.
  */
@@ -183,7 +183,7 @@ TEST(TimedEvent, Event_QuickRestartEvents)
 }
 
 /*!
- * @fn TEST(TimedEvent, EventNonAutoDestruct_AutoRestart)
+ * @fn TEST(TimedEvent, Event_AutoRestart)
  * @brief This test checks an event is able to restart itself.
  * This test launches an event several times and this event also restarts itself.
  */
@@ -204,7 +204,7 @@ TEST(TimedEvent, Event_AutoRestart)
 
 
 /*!
- * @fn TEST(TimedEvent, EventNonAutoDestruc_AutoRestartAndDeleteRandomly)
+ * @fn TEST(TimedEvent, Event_AutoRestartAndDeleteRandomly)
  * This test checks an event, configured to restart itself, can be deleted while
  * it is being scheduled.
  * This test launches an event that restarts itself, and then randomly deletes it.
