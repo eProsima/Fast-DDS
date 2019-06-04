@@ -67,19 +67,19 @@ void WriterProxyLiveliness::event(
     // Unused in release mode.
     (void) msg;
 
-	if(code == EVENT_SUCCESS)
+    if(code == EVENT_SUCCESS)
     {
         logInfo(RTPS_LIVELINESS, "Deleting Writer: " << writer_guid_);
-		reader_->liveliness_expired(writer_guid_);
-	}
-	else if(code == EVENT_ABORT)
-	{
+        reader_->liveliness_expired(writer_guid_);
+    }
+    else if(code == EVENT_ABORT)
+    {
         logInfo(RTPS_LIVELINESS, "WriterProxyLiveliness aborted");
-	}
-	else
-	{
-		logInfo(RTPS_LIVELINESS,"message: " <<msg);
-	}
+    }
+    else
+    {
+        logInfo(RTPS_LIVELINESS,"message: " <<msg);
+    }
 }
 
 

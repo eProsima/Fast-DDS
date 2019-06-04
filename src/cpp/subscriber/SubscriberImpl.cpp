@@ -27,7 +27,7 @@
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
-
+#include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps::rtps;
@@ -77,26 +77,23 @@ SubscriberImpl::~SubscriberImpl()
     delete(this->mp_userSubscriber);
 }
 
-void SubscriberImpl::waitForUnreadMessage()
+bool SubscriberImpl::wait_for_unread_samples(const Duration_t& timeout)
 {
-    if(m_history.getUnreadCount()==0)
-    {
-        do
-        {
-            m_history.waitSemaphore();
-        }
-        while(m_history.getUnreadCount() == 0);
-    }
+    return mp_reader->wait_for_unread_cache(timeout);
 }
 
 bool SubscriberImpl::readNextData(void* data,SampleInfo_t* info)
 {
-    return this->m_history.readNextData(data,info);
+    auto max_blocking_time = std::chrono::steady_clock::now() +
+        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
+    return this->m_history.readNextData(data, info, max_blocking_time);
 }
 
 bool SubscriberImpl::takeNextData(void* data,SampleInfo_t* info)
 {
-    return this->m_history.takeNextData(data,info);
+    auto max_blocking_time = std::chrono::steady_clock::now() +
+        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
+    return this->m_history.takeNextData(data, info, max_blocking_time);
 }
 
 const GUID_t& SubscriberImpl::getGuid()
@@ -305,9 +302,9 @@ bool SubscriberImpl::isInCleanState() const
     return mp_reader->isInCleanState();
 }
 
-uint64_t SubscriberImpl::getUnreadCount() const
+uint64_t SubscriberImpl::get_unread_count() const
 {
-    return m_history.getUnreadCount();
+    return mp_reader->get_unread_count();
 }
 
 void SubscriberImpl::deadline_timer_reschedule()
