@@ -389,6 +389,7 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const 
             ip::udp::socket socket(io_service_);
             socket.open(generate_protocol());
             socket.bind(generate_local_endpoint(localLocator, 0));
+            socket.set_option(ip::multicast::enable_loopback(true));
 
             // We first send directly to localhost, in case all network interfaces are disabled
             // (which would mean that multicast traffic may not be sent)
@@ -409,6 +410,7 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const 
             ip::udp::socket socket(io_service_);
             socket.open(generate_protocol());
             socket.bind(asio::ip::udp::endpoint(interface_address, 0));
+            socket.set_option(ip::multicast::enable_loopback(true));
 
             // We ignore the error message because some OS don't allow this functionality like Windows (WSAENETUNREACH) or Mac (EADDRNOTAVAIL)
             auto localEndpoint = ip::udp::endpoint(interface_address, port);
