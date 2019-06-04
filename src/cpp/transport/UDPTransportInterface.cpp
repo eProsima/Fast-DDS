@@ -381,7 +381,7 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const 
         socket_base::message_flags flags = 0;
         uint16_t port = IPLocator::getPhysicalPort(locator);
 
-        if(is_interface_whitelist_empty() || interface_address.is_multicast())
+        if(is_interface_whitelist_empty())
         {
             Locator_t localLocator;
             fill_local_ip(localLocator);
@@ -405,12 +405,14 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const 
 
             socket.close();
         }
-        else
+        else if (!interface_address.is_multicast())
         {
             ip::udp::socket socket(io_service_);
             socket.open(generate_protocol());
-            socket.bind(asio::ip::udp::endpoint(interface_address, 0));
+            auto bound_endpoint = asio::ip::udp::endpoint(interface_address, 0);
+            socket.bind(bound_endpoint);
             socket.set_option(ip::multicast::enable_loopback(true));
+            SetSocketOutboundInterface(socket, bound_endpoint.address().to_string());
 
             // We ignore the error message because some OS don't allow this functionality like Windows (WSAENETUNREACH) or Mac (EADDRNOTAVAIL)
             auto localEndpoint = ip::udp::endpoint(interface_address, port);
