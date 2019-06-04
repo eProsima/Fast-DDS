@@ -122,21 +122,12 @@ void UDPChannelResource::release(
                 return closing_.load();
             });
         ++tries_;
-        if (tries_ % 100 == 0)
+        if (tries_ == 100)
         {
-            if (tries_ < 1000)
-            {
-                logError(UDPChannelResource, "Cannot close UDP Socket " << address << " after " << tries_
-                         << " tries. Retrying...");
-                socket()->cancel();
-            }
-            else
-            {
-                logError(UDPChannelResource, "After 1000 retries UDP Socket doesn't close. Aborting.");
-                socket()->cancel();
-                closing_.store(true);
-                message_receiver(nullptr);
-            }
+            logError(UDPChannelResource, "After 100 retries UDP Socket doesn't close. Aborting.");
+            socket()->cancel();
+            closing_.store(true);
+            message_receiver(nullptr);
         }
     }
     socket()->cancel();
