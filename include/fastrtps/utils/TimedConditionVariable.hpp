@@ -23,7 +23,7 @@
 #include <chrono>
 #include <functional>
 
-#ifdef _WIN32
+#if !defined(__linux__)
 #include <condition_variable>
 #else
 #include <pthread.h>
@@ -32,7 +32,7 @@
 namespace eprosima {
 namespace fastrtps {
 
-#ifdef _WIN32
+#if !defined(__linux__)
 using TimedConditionVariable = std::condition_variable_any;
 #else
 
