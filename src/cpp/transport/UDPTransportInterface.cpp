@@ -381,7 +381,7 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const 
         socket_base::message_flags flags = 0;
         uint16_t port = IPLocator::getPhysicalPort(locator);
 
-        if(is_interface_whitelist_empty())
+        if(is_interface_whitelist_empty() || interface_address.is_multicast())
         {
             Locator_t localLocator;
             fill_local_ip(localLocator);
