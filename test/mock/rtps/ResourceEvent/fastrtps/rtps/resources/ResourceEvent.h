@@ -24,8 +24,13 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
+#include <gmock/gmock.h>
+
 class ResourceEvent
 {
+    public:
+
+    MOCK_METHOD0(init_thread, void());
 };
 
 }

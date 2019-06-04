@@ -76,6 +76,11 @@ class RTPSParticipantImpl
 {
     public:
 
+        RTPSParticipantImpl()
+        {
+            events_.init_thread();
+        }
+
         MOCK_CONST_METHOD0(getRTPSParticipantAttributes, const RTPSParticipantAttributes&());
 
         MOCK_CONST_METHOD0(getGuid, const GUID_t&());
