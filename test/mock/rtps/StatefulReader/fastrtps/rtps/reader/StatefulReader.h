@@ -27,6 +27,10 @@ class StatefulReader : public RTPSReader
     {
         public:
 
+            StatefulReader() {}
+
+            StatefulReader(ReaderHistory* history, std::recursive_timed_mutex* mutex) : RTPSReader(history, mutex) {}
+
             virtual ~StatefulReader() {}
 
             MOCK_METHOD1(matched_writer_add, bool(RemoteWriterAttributes&));

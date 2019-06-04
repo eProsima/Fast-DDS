@@ -125,18 +125,7 @@ bool ReaderHistory::remove_changes_with_guid(const GUID_t& a_guid)
         std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
         for(std::vector<CacheChange_t*>::iterator chit = m_changes.begin(); chit!=m_changes.end();++chit)
         {
-            bool matches = true;
-            unsigned int size = a_guid.guidPrefix.size;
-            if( !std::equal( (*chit)->writerGUID.guidPrefix.value , (*chit)->writerGUID.guidPrefix.value + size -1, a_guid.guidPrefix.value ) )
-            {
-                matches = false;
-            }
-            size = a_guid.entityId.size;
-            if( !std::equal( (*chit)->writerGUID.entityId.value , (*chit)->writerGUID.entityId.value + size -1, a_guid.entityId.value ) )
-            {
-                matches = false;
-            }
-            if(matches)
+            if((*chit)->writerGUID == a_guid)
             {
                 changes_to_remove.push_back( (*chit) );
             }
