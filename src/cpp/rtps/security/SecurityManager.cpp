@@ -803,8 +803,18 @@ bool SecurityManager::on_process_handshake(const ParticipantProxyData& participa
                     if(ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE)
                     {
                         remote_participant_info->expected_sequence_number_ = expected_sequence_number;
-                        remote_participant_info->event_ = new HandshakeMessageTokenResent(*this,
-                                participant_data.m_guid, 500); // TODO (Ricardo) Configurable
+                        const GUID_t guid = participant_data.m_guid;
+                        remote_participant_info->event_ = new TimedEvent(participant_->getEventResource(),
+                                [&, guid](TimedEvent::EventCode code) -> bool
+                                {
+                                    if (TimedEvent::EVENT_SUCCESS == code)
+                                    {
+                                        resend_handshake_message_token(guid);
+                                    }
+
+                                    return true;
+                                },
+                                500); // TODO (Ricardo) Configurable
                         remote_participant_info->event_->restart_timer();
                     }
 
@@ -3484,4 +3494,38 @@ uint32_t SecurityManager::calculate_extra_size_for_encoded_payload(const GUID_t&
     }
 
     return 0;
+}
+
+void SecurityManager::resend_handshake_message_token(const GUID_t& remote_participant_key)
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+    auto dp_it = discovered_participants_.find(remote_participant_key);
+
+    if(dp_it != discovered_participants_.end())
+    {
+        SecurityManager::DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = dp_it->second.get_auth();
+
+        if(remote_participant_info)
+        {
+            if(remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
+            {
+                CacheChange_t* p_change = participant_stateless_message_writer_history_->remove_change_and_reuse(
+                        remote_participant_info->change_sequence_number_);
+                remote_participant_info->change_sequence_number_ = SequenceNumber_t::unknown();
+
+                if(p_change != nullptr)
+                {
+                    logInfo(SECURITY, "Authentication handshake resent to participant " <<
+                            remote_participant_key_);
+                    if(participant_stateless_message_writer_history_->add_change(p_change))
+                    {
+                        remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;
+                    }
+                    //TODO (Ricardo) What to do if not added?
+                }
+            }
+
+            dp_it->second.set_auth(remote_participant_info);
+        }
+    }
 }

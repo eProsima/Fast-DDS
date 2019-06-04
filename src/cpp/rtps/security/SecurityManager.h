@@ -24,11 +24,11 @@
 #include <fastrtps/rtps/security/common/ParticipantGenericMessage.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/common/SequenceNumber.h>
-#include "timedevent/HandshakeMessageTokenResent.h"
 #include <fastrtps/rtps/common/SerializedPayload.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastrtps/rtps/resources/TimedEvent.h>
 
 #include <map>
 #include <mutex>
@@ -58,8 +58,6 @@ struct EndpointSecurityAttributes;
 
 class SecurityManager
 {
-    friend class HandshakeMessageTokenResent;
-
     public:
 
         SecurityManager(RTPSParticipantImpl* participant);
@@ -189,7 +187,7 @@ class SecurityManager
 
                     SequenceNumber_t change_sequence_number_;
 
-                    HandshakeMessageTokenResent* event_;
+                    TimedEvent* event_;
 
                 private:
 
@@ -395,6 +393,8 @@ class SecurityManager
         bool participant_authorized(const ParticipantProxyData& participant_data,
                 const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
                 SharedSecretHandle* shared_secret_handle);
+
+        void resend_handshake_message_token(const GUID_t& remote_participant_key);
 
         RTPSParticipantImpl* participant_;
         StatelessWriter* participant_stateless_message_writer_;

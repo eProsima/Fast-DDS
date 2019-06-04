@@ -13,29 +13,24 @@
 // limitations under the License.
 
 /**
- * @file Endpoint.h
+ * @file ResourceEvent.h
+ *
  */
 
-#ifndef _RTPS_ENDPOINT_H_
-#define _RTPS_ENDPOINT_H_
+#ifndef _RTPS_RESOURCES_RESOURCEEVENT_H_
+#define _RTPS_RESOURCES_RESOURCEEVENT_H_
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastrtps{
 namespace rtps {
 
-class Endpoint
+class ResourceEvent
 {
-    public:
-
-        virtual ~Endpoint() = default;
-
-#if HAVE_SECURITY
-        bool supports_rtps_protection_;
-#endif
 };
 
-} // namespace rtps
-} // namespace fastrtps
-} // namespace eprosima
+}
+}
+}
 
-#endif // _RTPS_ENDPOINT_H_
+#endif //_RTPS_RESOURCES_RESOURCEEVENT_H_
+

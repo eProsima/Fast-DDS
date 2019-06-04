@@ -16,8 +16,8 @@
  * @file RTPSParticipantImpl.h
  */
 
-#ifndef RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
-#define RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
+#ifndef _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
+#define _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
 
 // Include first possible mocks (depending on include on CMakeLists.txt)
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
@@ -62,22 +62,19 @@ class MockParticipantListener : public RTPSParticipantListener
 
         MOCK_METHOD2(onParticipantDiscovery, void (RTPSParticipant*, const ParticipantDiscoveryInfo&));
 
+#if HAVE_SECURITY
         void onParticipantAuthentication(RTPSParticipant* participant, ParticipantAuthenticationInfo&& info) override
         {
             onParticipantAuthentication(participant, info);
         }
 
         MOCK_METHOD2(onParticipantAuthentication, void (RTPSParticipant*, const ParticipantAuthenticationInfo&));
+#endif
 };
 
 class RTPSParticipantImpl
 {
     public:
-
-        RTPSParticipantImpl()
-        {
-            events_.init_thread(this);
-        }
 
         MOCK_CONST_METHOD0(getRTPSParticipantAttributes, const RTPSParticipantAttributes&());
 
@@ -87,7 +84,7 @@ class RTPSParticipantImpl
 
 #if HAVE_SECURITY
         MOCK_CONST_METHOD0(security_attributes, const security::ParticipantSecurityAttributes&());
-		
+
         MOCK_METHOD2(pairing_remote_reader_with_local_writer_after_security, bool(const GUID_t&, const ReaderProxyData&));
 
         MOCK_METHOD2(pairing_remote_writer_with_local_reader_after_security,bool(const GUID_t&, const WriterProxyData& remote_writer_data));
@@ -154,5 +151,4 @@ class RTPSParticipantImpl
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
-
+#endif // _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_

@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef PDPSIMPLE_H_
-#define PDPSIMPLE_H_
+#ifndef _RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
+#define _RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <mutex>
@@ -365,4 +365,4 @@ private:
 } /* namespace rtps */
 } /* namespace eprosima */
 #endif
-#endif /* PDPSIMPLE_H_ */
+#endif //_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_

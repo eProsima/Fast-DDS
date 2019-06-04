@@ -16,8 +16,8 @@
  * @file RTPSParticipantImpl.h
  */
 
-#ifndef RTPSParticipantIMPL_H_
-#define RTPSParticipantIMPL_H_
+#ifndef _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
+#define _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <cstdio>
 #include <cstdlib>
@@ -497,4 +497,4 @@ private:
 } /* namespace rtps */
 } /* namespace eprosima */
 #endif
-#endif /* RTPSParticipant_H_ */
+#endif //_RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_

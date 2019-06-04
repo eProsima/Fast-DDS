@@ -22,7 +22,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(WRITERPROXYTESTS_SOURCE WriterProxyTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/WriterQos.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader/WriterProxy.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
@@ -39,11 +38,18 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TimedEvent
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyData
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDPSimple
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ResourceEvent
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            )
         target_link_libraries(WriterProxyTests foonathan_memory
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})

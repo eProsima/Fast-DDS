@@ -163,7 +163,6 @@ set(${PROJECT_NAME}_security_source_files
     rtps/security/common/SharedSecretHandle.cpp
     rtps/security/SecurityManager.cpp
     rtps/security/SecurityPluginFactory.cpp
-    rtps/security/timedevent/HandshakeMessageTokenResent.cpp
     security/OpenSSLInit.cpp
     security/authentication/PKIDH.cpp
     security/accesscontrol/Permissions.cpp

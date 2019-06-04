@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef RESOURCEEVENT_H_
-#define RESOURCEEVENT_H_
+#ifndef _RTPS_RESOURCES_RESOURCEEVENT_H_
+#define _RTPS_RESOURCES_RESOURCEEVENT_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "../../utils/TimedConditionVariable.hpp"
@@ -98,4 +98,4 @@ class ResourceEvent
 }
 } /* namespace eprosima */
 #endif
-#endif /* RESOURCEEVENT_H_ */
+#endif //_RTPS_RESOURCES_RESOURCEEVENT_H_
