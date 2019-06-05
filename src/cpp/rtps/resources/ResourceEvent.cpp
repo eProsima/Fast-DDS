@@ -49,7 +49,11 @@ ResourceEvent::~ResourceEvent()
     logInfo(RTPS_PARTICIPANT,"Removing event thread");
     stop_ = true,
     io_service_.stop();
-    thread_.join();
+
+    if (thread_.joinable())
+    {
+        thread_.join();
+    }
 }
 
 bool ResourceEvent::register_timer_nts(TimedEventImpl* event)
