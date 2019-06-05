@@ -89,7 +89,7 @@ bool UDPChannelResource::Receive(
                 if (!alive())
                 {
                     std::lock_guard<std::mutex> lock(mtx_closing_);
-                    closing_.store(true);
+                    closing_ = true;
                     message_receiver(nullptr);
                     cv_closing_.notify_all();
                 }
@@ -116,19 +116,19 @@ void UDPChannelResource::release(
     {
         std::unique_lock<std::mutex> lock(mtx_closing_);
         uint32_t tries_ = 0;
-        while (!closing_.load())
+        while (!closing_)
         {
             transport_->ReleaseInputChannel(locator, address);
             cv_closing_.wait_for(lock, std::chrono::milliseconds(5),
                 [this]{
-                    return closing_.load();
+                    return closing_;
                 });
             ++tries_;
             if (tries_ == 10)
             {
                 logError(UDPChannelResource, "After " << tries_ << " retries UDP Socket doesn't close. Aborting.");
                 socket()->cancel();
-                closing_.store(true);
+                closing_ = true;
                 message_receiver(nullptr);
             }
         }

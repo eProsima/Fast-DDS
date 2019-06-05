@@ -141,11 +141,6 @@ public:
         ChannelResource::disable();
     }
 
-    inline bool closing()
-    {
-        return closing_.load();
-    }
-
     void release(
             const Locator_t& locator,
             const asio::ip::address& address);
@@ -180,7 +175,7 @@ private:
     bool only_multicast_purpose_;
     std::string interface_;
     UDPTransportInterface* transport_;
-    std::atomic<bool> closing_;
+    bool closing_;
     std::mutex mtx_closing_;
     std::condition_variable cv_closing_;
 
