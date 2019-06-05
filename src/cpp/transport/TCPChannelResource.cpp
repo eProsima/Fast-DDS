@@ -63,14 +63,10 @@ TCPChannelResource::TCPChannelResource(
 {
 }
 
-TCPChannelResource::~TCPChannelResource()
-{
-    alive_ = false;
-}
 
 void TCPChannelResource::disable()
 {
-    disconnect();
+    ChannelResource::disable(); // prevent asio callback workings on this channel.
 }
 
 ResponseCode TCPChannelResource::process_bind_request(const Locator_t& locator)

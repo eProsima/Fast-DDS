@@ -81,7 +81,10 @@ void TCPChannelResourceBasic::connect(
 #endif
                         )
                 {
-                    parent_->SocketConnected(channel_weak_ptr, ec);
+                    if (!channel_weak_ptr.expired())
+                    {
+                        parent_->SocketConnected(channel_weak_ptr, ec);
+                    }
                 }
             );
         }
