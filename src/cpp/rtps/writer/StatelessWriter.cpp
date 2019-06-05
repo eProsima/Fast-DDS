@@ -186,7 +186,7 @@ void StatelessWriter::unsent_change_added_to_history(
         else
         {
             unsent_changes_.push_back(ChangeForReader_t(change));
-            mp_RTPSParticipant->async_thread().wakeUp(this);
+            mp_RTPSParticipant->async_thread().wakeUp(this, max_blocking_time);
         }
 
         if (liveliness_lease_duration_ < c_TimeInfinite)

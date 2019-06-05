@@ -25,30 +25,35 @@ namespace rtps {
 
 class AsyncInterestTree
 {
-public:
+    public:
 
-   AsyncInterestTree();
-   /**
-    * Registers a writer in a hidden set.
-    * Threadsafe thanks to set swap.
-    */
-   void RegisterInterest(const RTPSWriter*);
+        AsyncInterestTree();
+        /**
+         * Registers a writer in a hidden set.
+         * Threadsafe thanks to set swap.
+         */
+        void RegisterInterest(
+                const RTPSWriter*);
 
-   /**
-    * Clears the visible set and swaps
-    * with the hidden set.
-    */
-   void Swap();
+        bool RegisterInterest(
+                const RTPSWriter*,
+                const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
-   //! Extracts from the visible set 
-   std::set<const RTPSWriter*> GetInterestedWriters() const;
+            /**
+             * Clears the visible set and swaps
+             * with the hidden set.
+             */
+            void Swap();
 
-private:
-   std::set<const RTPSWriter*> mInterestAlpha, mInterestBeta;
-   mutable std::mutex mMutexActive, mMutexHidden;
+        //! Extracts from the visible set 
+        std::set<const RTPSWriter*> GetInterestedWriters() const;
 
-   std::set<const RTPSWriter*>* mActiveInterest;
-   std::set<const RTPSWriter*>* mHiddenInterest;
+    private:
+        std::set<const RTPSWriter*> mInterestAlpha, mInterestBeta;
+        mutable std::timed_mutex mMutexActive, mMutexHidden;
+
+        std::set<const RTPSWriter*>* mActiveInterest;
+        std::set<const RTPSWriter*>* mHiddenInterest;
 };
 
 } /* namespace rtps */

@@ -20,30 +20,47 @@
 using namespace eprosima::fastrtps::rtps;
 
 AsyncInterestTree::AsyncInterestTree():
-   mActiveInterest(&mInterestAlpha),
-   mHiddenInterest(&mInterestBeta)
+    mActiveInterest(&mInterestAlpha),
+    mHiddenInterest(&mInterestBeta)
 {
 }
 
-void AsyncInterestTree::RegisterInterest(const RTPSWriter* writer)
+void AsyncInterestTree::RegisterInterest(
+        const RTPSWriter* writer)
 {
-   std::unique_lock<std::mutex> guard(mMutexHidden);
-   mHiddenInterest->insert(writer); 
+    std::unique_lock<std::timed_mutex> guard(mMutexHidden);
+    mHiddenInterest->insert(writer); 
+}
+
+bool AsyncInterestTree::RegisterInterest(
+        const RTPSWriter* writer,
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+{
+    bool ret_value = false;
+    std::unique_lock<std::timed_mutex> guard(mMutexHidden, std::defer_lock);
+
+    if(guard.try_lock_until(max_blocking_time))
+    {
+        mHiddenInterest->insert(writer); 
+        ret_value = true;
+    }
+
+    return ret_value;
 }
 
 void AsyncInterestTree::Swap()
 {
-   std::unique_lock<std::mutex> activeGuard(mMutexActive);
-   std::unique_lock<std::mutex> hiddenGuard(mMutexHidden);
+    std::unique_lock<std::timed_mutex> activeGuard(mMutexActive);
+    std::unique_lock<std::timed_mutex> hiddenGuard(mMutexHidden);
 
-   mActiveInterest->clear();
-   auto swap = mActiveInterest;
-   mActiveInterest = mHiddenInterest;
-   mHiddenInterest = swap;
+    mActiveInterest->clear();
+    auto swap = mActiveInterest;
+    mActiveInterest = mHiddenInterest;
+    mHiddenInterest = swap;
 }
 
 std::set<const RTPSWriter*> AsyncInterestTree::GetInterestedWriters() const
 {
-   std::unique_lock<std::mutex> activeGuard(mMutexActive);
-   return *mActiveInterest;
+    std::unique_lock<std::timed_mutex> activeGuard(mMutexActive);
+    return *mActiveInterest;
 }

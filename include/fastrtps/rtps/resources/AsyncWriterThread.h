@@ -22,10 +22,10 @@
 #include <thread>
 #include <atomic>
 #include <mutex>
-#include <condition_variable>
 #include <list>
 
 #include <fastrtps/rtps/resources/AsyncInterestTree.h>
+#include <fastrtps/utils/TimedConditionVariable.hpp>
 
 namespace eprosima{
 namespace fastrtps{
@@ -66,7 +66,12 @@ public:
      * Wakes the thread up.
      * @param interestedWriter The writer interested in an async write.
      */
-    void wakeUp(const RTPSWriter* interestedWriter);
+    void wakeUp(
+            const RTPSWriter* interestedWriter);
+
+    void wakeUp(
+            const RTPSWriter* interestedWriter,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
 private:
 
@@ -78,7 +83,7 @@ private:
 
     std::thread* thread_ = nullptr;
     std::mutex data_structure_mutex_;
-    std::mutex condition_variable_mutex_;
+    std::timed_mutex condition_variable_mutex_;
 
     //! List of asynchronous writers.
     std::list<RTPSWriter*> async_writers_;
@@ -86,7 +91,7 @@ private:
 
     bool running_ = false;
     bool run_scheduled_ = false;
-    std::condition_variable cv_;
+    TimedConditionVariable cv_;
 };
 
 } // namespace rtps

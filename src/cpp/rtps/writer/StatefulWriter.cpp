@@ -285,7 +285,7 @@ void StatefulWriter::unsent_change_added_to_history(
 
             if (m_pushMode)
             {
-                mp_RTPSParticipant->async_thread().wakeUp(this);
+                mp_RTPSParticipant->async_thread().wakeUp(this, max_blocking_time);
             }
         }
 

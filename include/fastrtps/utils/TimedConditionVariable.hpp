@@ -73,10 +73,17 @@ class TimedConditionVariable
         }
 
         template<typename Mutex>
+        void wait(
+                std::unique_lock<Mutex>& lock)
+        {
+            pthread_cond_wait(&cv_, lock.mutex()->native_handle());
+        }
+
+        template<typename Mutex>
         bool wait_for(
-            std::unique_lock<Mutex>& lock,
-            const std::chrono::nanoseconds& max_blocking_time,
-            std::function<bool()> predicate)
+                std::unique_lock<Mutex>& lock,
+                const std::chrono::nanoseconds& max_blocking_time,
+                std::function<bool()> predicate)
         {
             bool ret_value = true;
             auto nsecs = max_blocking_time;
@@ -97,9 +104,9 @@ class TimedConditionVariable
 
         template<typename Mutex>
         bool wait_until(
-            std::unique_lock<Mutex>& lock,
-            const std::chrono::steady_clock::time_point& max_blocking_time,
-            std::function<bool()> predicate)
+                std::unique_lock<Mutex>& lock,
+                const std::chrono::steady_clock::time_point& max_blocking_time,
+                std::function<bool()> predicate)
         {
             bool ret_value = true;
             std::chrono::nanoseconds nsecs = max_blocking_time - std::chrono::steady_clock::now();

@@ -30,7 +30,7 @@ bool AsyncWriterThread::addWriter(RTPSWriter& writer)
     async_writers_.push_back(&writer);
     returnedValue = true;
 
-    std::unique_lock<std::mutex> cond_guard(condition_variable_mutex_);
+    std::unique_lock<std::timed_mutex> cond_guard(condition_variable_mutex_);
     data_structure_mutex_.unlock();
     // If thread not running, start it.
     if(thread_ == nullptr)
@@ -63,7 +63,7 @@ bool AsyncWriterThread::removeWriter(RTPSWriter& writer)
         // If there is not more asynchronous writers, stop the thread.
         if(async_writers_.empty())
         {
-            std::unique_lock<std::mutex> cond_guard(condition_variable_mutex_);
+            std::unique_lock<std::timed_mutex> cond_guard(condition_variable_mutex_);
             data_guard.unlock();
             running_ = false;
             run_scheduled_ = false;
@@ -79,34 +79,53 @@ bool AsyncWriterThread::removeWriter(RTPSWriter& writer)
     return returnedValue;
 }
 
-void AsyncWriterThread::wakeUp(const RTPSWriter* interestedWriter)
+void AsyncWriterThread::wakeUp(
+        const RTPSWriter* interestedWriter)
 {
-   interestTree_.RegisterInterest(interestedWriter);
-   std::unique_lock<std::mutex> cond_guard(condition_variable_mutex_);
-   run_scheduled_ = true;
-   cv_.notify_all();
+    interestTree_.RegisterInterest(interestedWriter);
+    std::unique_lock<std::timed_mutex> lock(condition_variable_mutex_);
+    run_scheduled_ = true;
+    cv_.notify_all();
+}
+
+void AsyncWriterThread::wakeUp(
+        const RTPSWriter* interestedWriter,
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+{
+    if(interestTree_.RegisterInterest(interestedWriter, max_blocking_time))
+    {
+        std::unique_lock<std::timed_mutex> lock(condition_variable_mutex_, std::defer_lock);
+
+        if(lock.try_lock_until(max_blocking_time))
+        {
+            run_scheduled_ = true;
+            cv_.notify_all();
+        }
+    }
 }
 
 void AsyncWriterThread::run()
 {
-    std::unique_lock<std::mutex> cond_guard(condition_variable_mutex_);
+    std::unique_lock<std::timed_mutex> cond_guard(condition_variable_mutex_);
     while(running_)
     {
-       if(run_scheduled_)
-       {
-          run_scheduled_ = false;
-          cond_guard.unlock();
-          interestTree_.Swap();
-          auto interestedWriters = interestTree_.GetInterestedWriters();
+        if(run_scheduled_)
+        {
+            run_scheduled_ = false;
+            cond_guard.unlock();
+            interestTree_.Swap();
+            auto interestedWriters = interestTree_.GetInterestedWriters();
 
-          std::unique_lock<std::mutex> data_guard(data_structure_mutex_);
-          for(auto writer : async_writers_)
-             if (interestedWriters.count(writer))
-               writer->send_any_unsent_changes();
+            std::unique_lock<std::mutex> data_guard(data_structure_mutex_);
+            for(auto writer : async_writers_)
+                if (interestedWriters.count(writer))
+                    writer->send_any_unsent_changes();
 
-          cond_guard.lock();
-       }
-       else
-           cv_.wait(cond_guard);
+            cond_guard.lock();
+        }
+        else
+        {
+            cv_.wait(cond_guard);
+        }
     }
 }
