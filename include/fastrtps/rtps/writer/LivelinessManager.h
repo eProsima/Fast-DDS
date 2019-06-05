@@ -46,8 +46,14 @@ public:
      * @param manage_automatic True to manage writers with automatic liveliness, false otherwise
      */
     LivelinessManager(
-            const std::function<void(GUID_t)>& liveliness_lost_callback,
-            const std::function<void(GUID_t)>& liveliness_recovered_callback,
+            const std::function<void(
+                const GUID_t&,
+                const LivelinessQosPolicyKind&,
+                const Duration_t&)>& liveliness_lost_callback,
+            const std::function<void(
+                const GUID_t&,
+                const LivelinessQosPolicyKind&,
+                const Duration_t&)>& liveliness_recovered_callback,
             asio::io_service& service,
             const std::thread& event_thread,
             bool manage_automatic = true);
@@ -78,17 +84,26 @@ public:
     /**
      * @brief Removes a writer
      * @param guid GUID of the writer
+     * @param kind Liveliness kind
+     * @param lease_duration Liveliness lease duration
      * @return True if the writer was successfully removed
      */
-    bool remove_writer(GUID_t guid);
+    bool remove_writer(
+            GUID_t guid,
+            LivelinessQosPolicyKind kind,
+            Duration_t lease_duration);
 
     /**
      * @brief Asserts liveliness of a writer in the set
-     * @details Other writers are asserted as well if applicable
      * @param guid The writer to assert liveliness of
+     * @param kind The kind of the writer
+     * @param lease_duration The lease duration
      * @return True if liveliness was successfully asserted
      */
-    bool assert_liveliness(GUID_t guid);
+    bool assert_liveliness(
+            GUID_t guid,
+            LivelinessQosPolicyKind kind,
+            Duration_t lease_duration);
 
     /**
      * @brief Asserts liveliness of writers with given liveliness kind
@@ -96,13 +111,6 @@ public:
      * @return True if liveliness was successfully asserted
      */
     bool assert_liveliness(LivelinessQosPolicyKind kind);
-
-    /**
-     * @brief Asserts liveliness of writers belonging to given participant
-     * @param prefix The prefix determining the participant
-     * @return True if liveliness was successfully asserted
-     */
-    bool assert_liveliness(GuidPrefix_t prefix);
 
     /**
      * @brief A method to check any writer of the given kind is alive
@@ -127,11 +135,16 @@ private:
      */
     bool calculate_next();
 
-    //! A method to find a writer from a guid
-    //! Returns an iterator to the writer liveliness data
-    //! Returns true if writer was found, false otherwise
+    //! @brief A method to find a writer from a guid, liveliness kind and lease duration
+    //! @param guid The guid of the writer
+    //! @param kind The liveliness kind
+    //! @param lease_duration The lease duration
+    //! @param wit_out Returns an iterator to the writer liveliness data
+    //! @return Returns true if writer was found, false otherwise
     bool find_writer(
-            GUID_t guid,
+            const GUID_t &guid,
+            const LivelinessQosPolicyKind &kind,
+            const Duration_t &lease_duration,
             ResourceLimitedVector<LivelinessData>::iterator* wit_out);
 
 
@@ -151,10 +164,16 @@ private:
     LivelinessData* timer_owner_;
 
     //! A callback to inform outside classes that a writer lost its liveliness
-    std::function<void(GUID_t)> liveliness_lost_callback_;
+    std::function<void(
+            const GUID_t&,
+            const LivelinessQosPolicyKind&,
+            const Duration_t&)> liveliness_lost_callback_;
 
     //! A callback to inform outside classes that a writer recovered its liveliness
-    std::function<void(GUID_t)> liveliness_recovered_callback_;
+    std::function<void(
+            const GUID_t&,
+            const LivelinessQosPolicyKind&,
+            const Duration_t&)> liveliness_recovered_callback_;
 
     //! A mutex to protect the liveliness data
     std::mutex mutex_;

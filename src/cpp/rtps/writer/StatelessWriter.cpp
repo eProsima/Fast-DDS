@@ -161,7 +161,14 @@ void StatelessWriter::unsent_change_added_to_history(
             unsent_changes_.push_back(ChangeForReader_t(change));
             AsyncWriterThread::wakeUp(this);
         }
-        mp_RTPSParticipant->get_builtin_protocols()->mp_WLP->assert_liveliness(getGuid());
+
+        if (liveliness_lease_duration_ < c_TimeInfinite)
+        {
+            mp_RTPSParticipant->get_builtin_protocols()->mp_WLP->assert_liveliness(
+                        getGuid(),
+                        liveliness_kind_,
+                        liveliness_lease_duration_);
+        }
     }
     else
     {

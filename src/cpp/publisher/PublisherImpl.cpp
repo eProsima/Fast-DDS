@@ -510,7 +510,10 @@ void PublisherImpl::get_liveliness_lost_status(LivelinessLostStatus &status)
 
 void PublisherImpl::assert_liveliness()
 {
-    if (!mp_rtpsParticipant->get_builtin_protocols()->mp_WLP->assert_liveliness(mp_writer->getGuid()))
+    if (!mp_rtpsParticipant->get_builtin_protocols()->mp_WLP->assert_liveliness(
+                mp_writer->getGuid(),
+                mp_writer->get_liveliness_kind(),
+                mp_writer->get_liveliness_lease_duration()))
     {
         logError(PUBLISHER, "Could not assert liveliness of writer " << mp_writer->getGuid());
     }

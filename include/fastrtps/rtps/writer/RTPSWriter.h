@@ -256,6 +256,18 @@ public:
         return writer_guid == m_guid;
     }
 
+    /**
+     * @brief A method to retrieve the liveliness kind
+     * @return Liveliness kind
+     */
+    const LivelinessQosPolicyKind& get_liveliness_kind() const;
+
+    /**
+     * @brief A method to retrieve the liveliness lease duration
+     * @return Lease durtation
+     */
+    const Duration_t& get_liveliness_lease_duration() const;
+
     //! Liveliness lost status of this writer
     LivelinessLostStatus liveliness_lost_status_;
 
@@ -306,6 +318,11 @@ protected:
 
     bool encrypt_cachechange(CacheChange_t* change);
 #endif
+
+    //! The liveliness kind of this reader
+    LivelinessQosPolicyKind liveliness_kind_;
+    //! The liveliness lease duration of this reader
+    Duration_t liveliness_lease_duration_;
 
 private:
 

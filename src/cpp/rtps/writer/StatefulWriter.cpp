@@ -281,7 +281,13 @@ void StatefulWriter::unsent_change_added_to_history(
             ack_timer_->restart_timer();
         }
 
-        mp_RTPSParticipant->get_builtin_protocols()->mp_WLP->assert_liveliness(getGuid());
+        if (liveliness_lease_duration_ < c_TimeInfinite)
+        {
+            mp_RTPSParticipant->get_builtin_protocols()->mp_WLP->assert_liveliness(
+                        getGuid(),
+                        liveliness_kind_,
+                        liveliness_lease_duration_);
+        }
     }
     else
     {
@@ -1139,7 +1145,7 @@ void StatefulWriter::send_heartbeat_nts_(
     {
         assert(firstSeq == c_SequenceNumber_Unknown && lastSeq == c_SequenceNumber_Unknown);
 
-        if(remote_readers.size() == 1)
+        if(remote_readers.size() == 1 || liveliness)
         {
             firstSeq = next_sequence_number();
             lastSeq = firstSeq - 1;
@@ -1155,8 +1161,6 @@ void StatefulWriter::send_heartbeat_nts_(
     }
 
     incrementHBCount();
-
-    // FinalFlag is always false because this class is used only by StatefulWriter in Reliable.
     message_group.add_heartbeat(
                 remote_readers,
                 firstSeq,

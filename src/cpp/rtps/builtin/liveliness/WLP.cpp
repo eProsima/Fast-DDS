@@ -61,6 +61,8 @@ WLP::WLP(BuiltinProtocols* p)
     , automatic_writers_()
     , manual_by_participant_writers_()
     , manual_by_topic_writers_()
+    , readers_()
+    , automatic_readers_(false)
     , pub_liveliness_manager_(nullptr)
     , sub_liveliness_manager_(nullptr)
 #if HAVE_SECURITY
@@ -106,10 +108,11 @@ bool WLP::initWL(RTPSParticipantImpl* p)
                 std::bind(&WLP::pub_liveliness_lost, this, std::placeholders::_1),
                 std::bind(&WLP::pub_liveliness_recovered, this, std::placeholders::_1),
                 mp_participant->getEventResource().getIOService(),
-                mp_participant->getEventResource().getThread());
+                mp_participant->getEventResource().getThread(),
+                false);
     sub_liveliness_manager_ = new LivelinessManager(
-                std::bind(&WLP::sub_liveliness_lost, this, std::placeholders::_1),
-                std::bind(&WLP::sub_liveliness_recovered, this, std::placeholders::_1),
+                std::bind(&WLP::sub_liveliness_lost, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
+                std::bind(&WLP::sub_liveliness_recovered, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
                 mp_participant->getEventResource().getIOService(),
                 mp_participant->getEventResource().getThread());
 
@@ -551,18 +554,26 @@ bool WLP::add_local_writer(RTPSWriter* W, const WriterQos& wqos)
             manual_liveliness_assertion_->restart_timer();
         }
         manual_by_participant_writers_.push_back(W);
+
+        if (!pub_liveliness_manager_->add_writer(
+                    W->getGuid(),
+                    wqos.m_liveliness.kind,
+                    wqos.m_liveliness.lease_duration))
+        {
+            logError(RTPS_LIVELINESS, "Could not add writer " << W->getGuid() << " to liveliness manager");
+        }
     }
     else if (wqos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
     {
         manual_by_topic_writers_.push_back(W);
-    }
 
-    if (!pub_liveliness_manager_->add_writer(
-                W->getGuid(),
-                wqos.m_liveliness.kind,
-                wqos.m_liveliness.lease_duration))
-    {
-        logError(RTPS_LIVELINESS, "Could not add writer " << W->getGuid() << " to liveliness manager");
+        if (!pub_liveliness_manager_->add_writer(
+                    W->getGuid(),
+                    wqos.m_liveliness.kind,
+                    wqos.m_liveliness.lease_duration))
+        {
+            logError(RTPS_LIVELINESS, "Could not add writer " << W->getGuid() << " to liveliness manager");
+        }
     }
 
     return true;
@@ -659,6 +670,14 @@ bool WLP::remove_local_writer(RTPSWriter* W)
                     }
                 }
             }
+
+            if (!pub_liveliness_manager_->remove_writer(
+                        W->getGuid(),
+                        wdata.m_qos.m_liveliness.kind,
+                        wdata.m_qos.m_liveliness.lease_duration))
+            {
+                logError(RTPS_LIVELINESS, "Could not remove writer " << W->getGuid() << " from liveliness manager");
+            }
         }
         else if (wdata.m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
         {
@@ -674,11 +693,14 @@ bool WLP::remove_local_writer(RTPSWriter* W)
             {
                 manual_by_topic_writers_.erase(wToEraseIt);
             }
-        }
 
-        if (!pub_liveliness_manager_->remove_writer(W->getGuid()))
-        {
-            logError(RTPS_LIVELINESS, "Could not remove writer " << W->getGuid() << " from liveliness manager");
+            if (!pub_liveliness_manager_->remove_writer(
+                        W->getGuid(),
+                        wdata.m_qos.m_liveliness.kind,
+                        wdata.m_qos.m_liveliness.lease_duration))
+            {
+                logError(RTPS_LIVELINESS, "Could not remove writer " << W->getGuid() << " from liveliness manager");
+            }
         }
 
         if(found)
@@ -698,7 +720,10 @@ bool WLP::add_local_reader(RTPSReader *reader, const ReaderQos &rqos)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
-    (void)rqos;
+    if (rqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
+    {
+        automatic_readers_ = true;
+    }
 
     readers_.push_back(reader);
 
@@ -751,22 +776,19 @@ WriterHistory* WLP::getBuiltinWriterHistory()
 
 bool WLP::assert_liveliness(LivelinessQosPolicyKind kind)
 {
+    // TODO raquel check we only want to assert liveliness on subscribing side and document in header file
     return sub_liveliness_manager_->assert_liveliness(kind);
 }
 
-bool WLP::assert_liveliness(GuidPrefix_t prefix)
+bool WLP::assert_liveliness(
+        GUID_t writer,
+        LivelinessQosPolicyKind kind,
+        Duration_t lease_duration)
 {
-    return sub_liveliness_manager_->assert_liveliness(prefix);
-}
-
-bool WLP::assert_liveliness(GUID_t writer)
-{
-    // TODO raquel split this method into two
-
-    bool pub = pub_liveliness_manager_->assert_liveliness(writer);
-    bool sub = sub_liveliness_manager_->assert_liveliness(writer);
-
-    return (pub && sub);
+    return pub_liveliness_manager_->assert_liveliness(
+                writer,
+                kind,
+                lease_duration);
 }
 
 void WLP::pub_liveliness_lost(GUID_t writer)
@@ -835,7 +857,10 @@ void WLP::pub_liveliness_recovered(GUID_t writer)
     (void)writer;
 }
 
-void WLP::sub_liveliness_lost(GUID_t writer)
+void WLP::sub_liveliness_lost(
+        const GUID_t& writer,
+        const LivelinessQosPolicyKind& kind,
+        const Duration_t& lease_duration)
 {
     // Writer with given guid lost liveliness, check which readers were matched and inform them
 
@@ -844,14 +869,22 @@ void WLP::sub_liveliness_lost(GUID_t writer)
 
     for (const auto& reader : readers_)
     {
-        if (reader->matched_writer_is_matched(ratt))
+        if (reader->liveliness_kind_ == kind &&
+                reader->liveliness_lease_duration_ == lease_duration)
         {
-            update_liveliness_changed_status(writer, reader, true);
+            if (reader->matched_writer_is_matched(ratt))
+            {
+                update_liveliness_changed_status(writer, reader, true);
+            }
         }
     }
 }
 
-void WLP::sub_liveliness_recovered(GUID_t writer)
+void WLP::sub_liveliness_recovered(
+        const GUID_t& writer,
+        const LivelinessQosPolicyKind& kind,
+        const Duration_t& lease_duration)
+
 {
     // Writer with given guid lost liveliness, check which readers were matched and inform them
 
@@ -860,9 +893,13 @@ void WLP::sub_liveliness_recovered(GUID_t writer)
 
     for (const auto& reader : readers_)
     {
-        if (reader->matched_writer_is_matched(ratt))
+        if (reader->liveliness_kind_ == kind &&
+                reader->liveliness_lease_duration_ == lease_duration)
         {
-            update_liveliness_changed_status(writer, reader, false);
+            if (reader->matched_writer_is_matched(ratt))
+            {
+                update_liveliness_changed_status(writer, reader, false);
+            }
         }
     }
 }

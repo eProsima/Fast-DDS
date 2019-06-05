@@ -54,6 +54,8 @@ RTPSWriter::RTPSWriter(
 #if HAVE_SECURITY
     , encrypt_payload_(mp_history->getTypeMaxSerialized())
 #endif
+    , liveliness_kind_(att.liveliness_kind)
+    , liveliness_lease_duration_(att.liveliness_lease_duration)
 {
     mp_history->mp_writer = this;
     mp_history->mp_mutex = &mp_mutex;
@@ -233,6 +235,16 @@ bool RTPSWriter::encrypt_cachechange(CacheChange_t* change)
     return true;
 }
 #endif
+
+const LivelinessQosPolicyKind& RTPSWriter::get_liveliness_kind() const
+{
+    return liveliness_kind_;
+}
+
+const Duration_t& RTPSWriter::get_liveliness_lease_duration() const
+{
+    return liveliness_lease_duration_;
+}
 
 }  // namespace rtps
 }  // namespace fastrtps

@@ -46,14 +46,12 @@ struct LivelinessData
         : guid(guid_in)
         , kind(kind_in)
         , lease_duration(lease_duration_in)
-        , alive(false)
     {}
 
     LivelinessData()
         : guid()
         , kind(AUTOMATIC_LIVELINESS_QOS)
         , lease_duration(c_TimeInfinite)
-        , alive(false)
     {}
 
     ~LivelinessData()
@@ -89,6 +87,9 @@ struct LivelinessData
 
     //! The lease duration
     Duration_t lease_duration;
+
+    //! The number of times the writer is being counted
+    unsigned int count = 1;
 
     //! True if the writer is alive, false otherwise
     bool alive = false;

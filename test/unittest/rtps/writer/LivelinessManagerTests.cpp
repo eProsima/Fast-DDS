@@ -82,7 +82,7 @@ using eprosima::fastrtps::rtps::LivelinessManager;
 using eprosima::fastrtps::rtps::GuidPrefix_t;
 using eprosima::fastrtps::rtps::GUID_t;
 
-TEST(LivelinessManagerTests, WriterCannotBeAddedTwice)
+TEST(LivelinessManagerTests, WriterCanAlwaysBeAdded)
 {
     LivelinessManager liveliness_manager(
                 nullptr,
@@ -94,17 +94,21 @@ TEST(LivelinessManagerTests, WriterCannotBeAddedTwice)
     guidP.value[0] = 1;
     GUID_t guid(guidP, 0);
 
+    // Writers with same Guid, liveliness kind and lease duration cannot be added
+
     EXPECT_EQ(liveliness_manager.add_writer(guid, AUTOMATIC_LIVELINESS_QOS, Duration_t(1)), true);
 
-    // Different liveliness kind but same guid cannot be added
-    EXPECT_EQ(liveliness_manager.add_writer(guid, AUTOMATIC_LIVELINESS_QOS, Duration_t(1)), false);
-    EXPECT_EQ(liveliness_manager.add_writer(guid, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, Duration_t(1)), false);
-    EXPECT_EQ(liveliness_manager.add_writer(guid, MANUAL_BY_TOPIC_LIVELINESS_QOS, Duration_t(1)), false);
+    // Same guid and different liveliness kind can be added
+    EXPECT_EQ(liveliness_manager.add_writer(guid, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, Duration_t(1)), true);
+    EXPECT_EQ(liveliness_manager.add_writer(guid, MANUAL_BY_TOPIC_LIVELINESS_QOS, Duration_t(1)), true);
 
-    // Different lease duration but same guid cannot be added
-    EXPECT_EQ(liveliness_manager.add_writer(guid, AUTOMATIC_LIVELINESS_QOS, Duration_t(2)), false);
-    EXPECT_EQ(liveliness_manager.add_writer(guid, AUTOMATIC_LIVELINESS_QOS, Duration_t(3)), false);
-    EXPECT_EQ(liveliness_manager.add_writer(guid, AUTOMATIC_LIVELINESS_QOS, Duration_t(4)), false);
+    // Same guid and different lease duration can be added
+    EXPECT_EQ(liveliness_manager.add_writer(guid, AUTOMATIC_LIVELINESS_QOS, Duration_t(2)), true);
+    EXPECT_EQ(liveliness_manager.add_writer(guid, AUTOMATIC_LIVELINESS_QOS, Duration_t(3)), true);
+    EXPECT_EQ(liveliness_manager.add_writer(guid, AUTOMATIC_LIVELINESS_QOS, Duration_t(4)), true);
+
+    // Same guid, same kind, and same lease duration can also be added
+    EXPECT_EQ(liveliness_manager.add_writer(guid, AUTOMATIC_LIVELINESS_QOS, Duration_t(1)), true);
 }
 
 TEST(LivelinessManagerTests, WriterCannotBeRemovedTwice)
@@ -120,16 +124,16 @@ TEST(LivelinessManagerTests, WriterCannotBeRemovedTwice)
     GUID_t guid(guidP, 0);
 
     EXPECT_EQ(liveliness_manager.add_writer(guid, AUTOMATIC_LIVELINESS_QOS, Duration_t(1)), true);
-    EXPECT_EQ(liveliness_manager.remove_writer(guid), true);
-    EXPECT_EQ(liveliness_manager.remove_writer(guid), false);
+    EXPECT_EQ(liveliness_manager.remove_writer(guid, AUTOMATIC_LIVELINESS_QOS, Duration_t(1)), true);
+    EXPECT_EQ(liveliness_manager.remove_writer(guid, AUTOMATIC_LIVELINESS_QOS, Duration_t(1)), false);
 
     EXPECT_EQ(liveliness_manager.add_writer(guid, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, Duration_t(1)), true);
-    EXPECT_EQ(liveliness_manager.remove_writer(guid), true);
-    EXPECT_EQ(liveliness_manager.remove_writer(guid), false);
+    EXPECT_EQ(liveliness_manager.remove_writer(guid, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, Duration_t(1)), true);
+    EXPECT_EQ(liveliness_manager.remove_writer(guid, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, Duration_t(1)), false);
 
     EXPECT_EQ(liveliness_manager.add_writer(guid, MANUAL_BY_TOPIC_LIVELINESS_QOS, Duration_t(1)), true);
-    EXPECT_EQ(liveliness_manager.remove_writer(guid), true);
-    EXPECT_EQ(liveliness_manager.remove_writer(guid), false);
+    EXPECT_EQ(liveliness_manager.remove_writer(guid, MANUAL_BY_TOPIC_LIVELINESS_QOS, Duration_t(1)), true);
+    EXPECT_EQ(liveliness_manager.remove_writer(guid, MANUAL_BY_TOPIC_LIVELINESS_QOS, Duration_t(1)), false);
 }
 
 //! Tests that the assert_liveliness() method that takes liveliness kind as argument sets the alive state and time
@@ -191,51 +195,8 @@ TEST(LivelinessManagerTests, AssertLivelinessByKind)
     EXPECT_GT(liveliness_data[5].time, std::chrono::steady_clock::now());
 }
 
-//! Tests that the assert_liveliness() method that takes guid prefix as argument sets the alive state and time
-//! correctly
-TEST(LivelinessManagerTests, AssertLivelinessByPrefix)
-{
-    LivelinessManager liveliness_manager(
-                nullptr,
-                nullptr,
-                env->service_,
-                *env->thread_);
-
-    GuidPrefix_t guidP_1;
-    GuidPrefix_t guidP_2;
-    guidP_1.value[0] = 1;
-    guidP_2.value[0] = 2;
-
-    liveliness_manager.add_writer(GUID_t(guidP_1, 1), AUTOMATIC_LIVELINESS_QOS, Duration_t(10));
-    liveliness_manager.add_writer(GUID_t(guidP_2, 2), AUTOMATIC_LIVELINESS_QOS, Duration_t(10));
-    liveliness_manager.add_writer(GUID_t(guidP_1, 3), MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, Duration_t(10));
-    liveliness_manager.add_writer(GUID_t(guidP_2, 4), MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, Duration_t(10));
-    liveliness_manager.add_writer(GUID_t(guidP_1, 5), MANUAL_BY_TOPIC_LIVELINESS_QOS, Duration_t(10));
-    liveliness_manager.add_writer(GUID_t(guidP_2, 6), MANUAL_BY_TOPIC_LIVELINESS_QOS, Duration_t(10));
-
-    // Assert liveliness of writers with prefix GuidP_1
-    EXPECT_TRUE(liveliness_manager.assert_liveliness(guidP_1));
-    auto liveliness_data = liveliness_manager.get_liveliness_data();
-    EXPECT_EQ(liveliness_data[0].alive, true);
-    EXPECT_EQ(liveliness_data[1].alive, false);
-    EXPECT_EQ(liveliness_data[2].alive, true);
-    EXPECT_EQ(liveliness_data[3].alive, false);
-    EXPECT_EQ(liveliness_data[4].alive, true);
-    EXPECT_EQ(liveliness_data[5].alive, false);
-
-    // Assert liveliness of writers with prefix GuidP_2
-    EXPECT_TRUE(liveliness_manager.assert_liveliness(guidP_2));
-    liveliness_data = liveliness_manager.get_liveliness_data();
-    EXPECT_EQ(liveliness_data[0].alive, true);
-    EXPECT_EQ(liveliness_data[1].alive, true);
-    EXPECT_EQ(liveliness_data[2].alive, true);
-    EXPECT_EQ(liveliness_data[3].alive, true);
-    EXPECT_EQ(liveliness_data[4].alive, true);
-    EXPECT_EQ(liveliness_data[5].alive, true);
-}
-
-//! Tests that the assert_liveliness() method that takes a guid as an argument sets the alive state and time correctly
-TEST(LivelinessManagerTests, AssertLivelinessByGuid)
+//! Tests that the assert_liveliness() method that takes a writer as an argument sets the alive state and time correctly
+TEST(LivelinessManagerTests, AssertLivelinessByWriter)
 {
     LivelinessManager liveliness_manager(
                 nullptr,
@@ -254,7 +215,10 @@ TEST(LivelinessManagerTests, AssertLivelinessByGuid)
     liveliness_manager.add_writer(GUID_t(guidP, 6), MANUAL_BY_TOPIC_LIVELINESS_QOS, Duration_t(1));
 
     // If a manual by topic writer is asserted the other writers are unchanged
-    EXPECT_TRUE(liveliness_manager.assert_liveliness(GUID_t(guidP, 6)));
+    EXPECT_TRUE(liveliness_manager.assert_liveliness(
+                    GUID_t(guidP, 6),
+                    MANUAL_BY_TOPIC_LIVELINESS_QOS,
+                    Duration_t(1)));
     auto liveliness_data = liveliness_manager.get_liveliness_data();
     EXPECT_EQ(liveliness_data[0].alive, false);
     EXPECT_EQ(liveliness_data[1].alive, false);
@@ -263,7 +227,10 @@ TEST(LivelinessManagerTests, AssertLivelinessByGuid)
     EXPECT_EQ(liveliness_data[4].alive, false);
     EXPECT_EQ(liveliness_data[5].alive, true);
 
-    EXPECT_TRUE(liveliness_manager.assert_liveliness(GUID_t(guidP, 5)));
+    EXPECT_TRUE(liveliness_manager.assert_liveliness(
+                    GUID_t(guidP, 5),
+                    MANUAL_BY_TOPIC_LIVELINESS_QOS,
+                    Duration_t(1)));
     liveliness_data = liveliness_manager.get_liveliness_data();
     EXPECT_EQ(liveliness_data[0].alive, false);
     EXPECT_EQ(liveliness_data[1].alive, false);
@@ -273,7 +240,10 @@ TEST(LivelinessManagerTests, AssertLivelinessByGuid)
     EXPECT_EQ(liveliness_data[5].alive, true);
 
     // If an automatic writer is asserted all automatic writers are asserted as well
-    EXPECT_TRUE(liveliness_manager.assert_liveliness(GUID_t(guidP, 1)));
+    EXPECT_TRUE(liveliness_manager.assert_liveliness(
+                    GUID_t(guidP, 1),
+                    AUTOMATIC_LIVELINESS_QOS,
+                    Duration_t(1)));
     liveliness_data = liveliness_manager.get_liveliness_data();
     EXPECT_EQ(liveliness_data[0].alive, true);
     EXPECT_EQ(liveliness_data[1].alive, true);
@@ -283,7 +253,10 @@ TEST(LivelinessManagerTests, AssertLivelinessByGuid)
     EXPECT_EQ(liveliness_data[5].alive, true);
 
     // If a manual by participant writer is asserted all manual by participant writers are asserted as well
-    EXPECT_TRUE(liveliness_manager.assert_liveliness(GUID_t(guidP, 4)));
+    EXPECT_TRUE(liveliness_manager.assert_liveliness(
+                    GUID_t(guidP, 4),
+                    MANUAL_BY_PARTICIPANT_LIVELINESS_QOS,
+                    Duration_t(1)));
     liveliness_data = liveliness_manager.get_liveliness_data();
     EXPECT_EQ(liveliness_data[0].alive, true);
     EXPECT_EQ(liveliness_data[1].alive, true);
@@ -317,7 +290,7 @@ TEST(LivelinessManagerTests, TimerExpired_Automatic)
     liveliness_manager.add_writer(GUID_t(guidP, 2), AUTOMATIC_LIVELINESS_QOS, Duration_t(0.5));
 
     // Assert liveliness
-    liveliness_manager.assert_liveliness(GUID_t(guidP, 2));
+    liveliness_manager.assert_liveliness(GUID_t(guidP, 2), AUTOMATIC_LIVELINESS_QOS, Duration_t(0.5));
     env->num_writers_recovered = 0u;
 
     // Wait so that first writer loses liveliness
@@ -329,7 +302,7 @@ TEST(LivelinessManagerTests, TimerExpired_Automatic)
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 2));
 
     // Assert first writer
-    liveliness_manager.assert_liveliness(GUID_t(guidP, 1));
+    liveliness_manager.assert_liveliness(GUID_t(guidP, 1), AUTOMATIC_LIVELINESS_QOS, Duration_t(0.1));
     EXPECT_EQ(env->num_writers_recovered, 2u);
 }
 
@@ -350,7 +323,7 @@ TEST(LivelinessManagerTests, TimerExpired_ManualByParticipant)
     liveliness_manager.add_writer(GUID_t(guidP, 2), MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, Duration_t(0.5));
 
     // Assert liveliness
-    liveliness_manager.assert_liveliness(GUID_t(guidP, 2));
+    liveliness_manager.assert_liveliness(GUID_t(guidP, 2), MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, Duration_t(0.5));
     env->num_writers_recovered = 0u;
 
     // Wait so that first writer loses liveliness
@@ -364,7 +337,7 @@ TEST(LivelinessManagerTests, TimerExpired_ManualByParticipant)
     EXPECT_EQ(env->num_writers_lost, 2u);
 
     // Assert first writer
-    liveliness_manager.assert_liveliness(GUID_t(guidP, 1));
+    liveliness_manager.assert_liveliness(GUID_t(guidP, 1), MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, Duration_t(0.1));
     EXPECT_EQ(env->num_writers_recovered, 2u);
 }
 
@@ -385,7 +358,7 @@ TEST(LivelinessManagerTests, TimerExpired_ManualByTopic)
     liveliness_manager.add_writer(GUID_t(guidP, 2), MANUAL_BY_TOPIC_LIVELINESS_QOS, Duration_t(0.2));
 
     // Assert first writer
-    liveliness_manager.assert_liveliness(GUID_t(guidP, 1));
+    liveliness_manager.assert_liveliness(GUID_t(guidP, 1), MANUAL_BY_TOPIC_LIVELINESS_QOS, Duration_t(0.1));
 
     // Wait so that first writer loses liveliness
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
@@ -398,13 +371,45 @@ TEST(LivelinessManagerTests, TimerExpired_ManualByTopic)
     EXPECT_EQ(env->num_writers_lost, 1u);
 
     // Assert second writer
-    liveliness_manager.assert_liveliness(GUID_t(guidP, 2));
+    liveliness_manager.assert_liveliness(GUID_t(guidP, 2), MANUAL_BY_TOPIC_LIVELINESS_QOS, Duration_t(0.2));
     env->num_writers_lost = 0u;
 
     // Wait so that it loses liveliness
     std::this_thread::sleep_for(std::chrono::milliseconds(400));
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 2));
     EXPECT_EQ(env->num_writers_lost, 1u);
+}
+
+//! Tests that the timer owner is calculated correctly
+//! This is tested indirectly by checking which writer lost liveliness last
+TEST(LivelinessManagerTests, TimerOwnerCalculation)
+{
+    LivelinessManager liveliness_manager(
+                std::bind(&TimedEventEnvironment::liveliness_lost, env, std::placeholders::_1),
+                std::bind(&TimedEventEnvironment::liveliness_recovered, env, std::placeholders::_1),
+                env->service_,
+                *env->thread_);
+
+    GuidPrefix_t guidP;
+    guidP.value[0] = 1;
+
+    liveliness_manager.add_writer(GUID_t(guidP, 1), AUTOMATIC_LIVELINESS_QOS, Duration_t(100 * 1e-3));
+    liveliness_manager.add_writer(GUID_t(guidP, 2), AUTOMATIC_LIVELINESS_QOS, Duration_t(1000 * 1e-3));
+    liveliness_manager.add_writer(GUID_t(guidP, 3), AUTOMATIC_LIVELINESS_QOS, Duration_t(500 * 1e-3));
+
+    liveliness_manager.assert_liveliness(AUTOMATIC_LIVELINESS_QOS);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 1));
+    EXPECT_EQ(env->num_writers_lost, 1);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 3));
+    EXPECT_EQ(env->num_writers_lost, 2);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 2));
+    EXPECT_EQ(env->num_writers_lost, 3);
 }
 
 //! Tests that the writer that is the current timer owner can be removed, and that the timer is restarted
@@ -423,8 +428,8 @@ TEST(LivelinessManagerTests, TimerOwnerRemoved)
     liveliness_manager.add_writer(GUID_t(guidP, 1), AUTOMATIC_LIVELINESS_QOS, Duration_t(0.5));
     liveliness_manager.add_writer(GUID_t(guidP, 2), AUTOMATIC_LIVELINESS_QOS, Duration_t(1));
 
-    liveliness_manager.assert_liveliness(GUID_t(guidP, 1));
-    liveliness_manager.remove_writer(GUID_t(guidP, 1));
+    liveliness_manager.assert_liveliness(GUID_t(guidP, 1), AUTOMATIC_LIVELINESS_QOS, Duration_t(0.5));
+    liveliness_manager.remove_writer(GUID_t(guidP, 1), AUTOMATIC_LIVELINESS_QOS, Duration_t(0.5));
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 2));

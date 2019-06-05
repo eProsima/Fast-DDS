@@ -84,7 +84,9 @@ class WriterAttributes
     public:
 
         WriterAttributes()
-            : mode(SYNCHRONOUS_WRITER)
+            : liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
+            , liveliness_lease_duration(c_TimeInfinite)
+            , mode(SYNCHRONOUS_WRITER)
             , disable_heartbeat_piggyback(false)
             , disable_positive_acks(false)
             , keep_duration(c_TimeInfinite)

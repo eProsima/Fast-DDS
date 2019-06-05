@@ -122,18 +122,16 @@ public:
     bool assert_liveliness(LivelinessQosPolicyKind kind);
 
     /**
-     * @brief Asserts liveliness of writers within a participant
-     * @param preefix The prefix of the partcipant
-     * @return True on success
-     */
-    bool assert_liveliness(GuidPrefix_t preefix);
-
-    /**
      * @brief A method to assert liveliness of a given writer
      * @param writer The writer, specified via its id
+     * @param kind The writer liveliness kind
+     * @param lease_duration The writer lease duration
      * @return True if liveliness was asserted
      */
-    bool assert_liveliness(GUID_t writer);
+    bool assert_liveliness(
+            GUID_t writer,
+            LivelinessQosPolicyKind kind,
+            Duration_t lease_duration);
 
 	/**
 	 * Get the builtin protocols
@@ -205,6 +203,8 @@ private:
 
     //! List of readers
     std::vector<RTPSReader*> readers_;
+    //! A boolean indicating that there is at least one reader requesting automatic liveliness
+    bool automatic_readers_;
 
     //! A class used by writers in this participant to keep track of their liveliness
     LivelinessManager* pub_liveliness_manager_;
@@ -226,14 +226,25 @@ private:
     /**
      * @brief A method invoked by sub_liveliness_manager_ to inform that a writer lost liveliness
      * @param writer The writer losing liveliness
+     * @param kind The liveliness kind of the writer losing liveliness
+     * @param lease_duration The liveliness lease duration of the writer losing liveliness
      */
-    void sub_liveliness_lost(GUID_t writer);
+    void sub_liveliness_lost(
+            const GUID_t& writer,
+            const LivelinessQosPolicyKind& kind,
+            const Duration_t& lease_duration);
 
     /**
      * @brief A method invoked by sub_liveliness_manager_ to inform that a writer recovered liveliness
      * @param writer The writer recovering liveliness
+     * @param kind The liveliness kind of the writer recovering liveliness
+     * @param lease_duration The liveliness lease duration of the writer recovering liveliness
      */
-    void sub_liveliness_recovered(GUID_t writer);
+    void sub_liveliness_recovered(
+            const GUID_t& writer,
+            const LivelinessQosPolicyKind& kind,
+            const Duration_t& lease_duration);
+
 
     /**
      * @brief A method to update the liveliness changed status of a given reader

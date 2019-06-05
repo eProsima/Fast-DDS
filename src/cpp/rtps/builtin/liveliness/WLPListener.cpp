@@ -101,7 +101,14 @@ void WLPListener::onNewCacheChangeAdded(
 		return;
 	}
 
-    mp_WLP->assert_liveliness(guidP);
+    if (mp_WLP->automatic_readers_)
+    {
+        mp_WLP->assert_liveliness(AUTOMATIC_LIVELINESS_QOS);
+    }
+    if (livelinessKind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    {
+        mp_WLP->assert_liveliness(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
+    }
 	return;
 }
 

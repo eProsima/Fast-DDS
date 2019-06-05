@@ -109,7 +109,7 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
         }
         else
         {
-            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled, cannot add writer");
         }
     }
 
@@ -139,7 +139,21 @@ bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
 
     lock.unlock();
 
-    // TODO raquel remove from liveliness manager
+    if (liveliness_lease_duration_ < c_TimeInfinite)
+    {
+        auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+        if ( wlp != nullptr)
+        {
+            wlp->sub_liveliness_manager_->remove_writer(
+                        wdata.guid,
+                        liveliness_kind_,
+                        liveliness_lease_duration_);
+        }
+        else
+        {
+            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
+        }
+    }
 
     if(wproxy != nullptr)
     {
@@ -222,7 +236,10 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
                 auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
                 if ( wlp != nullptr)
                 {
-                    wlp->sub_liveliness_manager_->assert_liveliness(change->writerGUID);
+                    wlp->sub_liveliness_manager_->assert_liveliness(
+                                change->writerGUID,
+                                liveliness_kind_,
+                                liveliness_lease_duration_);
                 }
                 else
                 {
@@ -309,7 +326,10 @@ bool StatefulReader::processDataFragMsg(
                 auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
                 if ( wlp != nullptr)
                 {
-                    wlp->sub_liveliness_manager_->assert_liveliness(incomingChange->writerGUID);
+                    wlp->sub_liveliness_manager_->assert_liveliness(
+                                incomingChange->writerGUID,
+                                liveliness_kind_,
+                                liveliness_lease_duration_);
                 }
                 else
                 {
@@ -389,6 +409,7 @@ bool StatefulReader::processHeartbeatMsg(
     {
         std::unique_lock<std::recursive_mutex> wpLock(*pWP->getMutex());
 
+
         if(pWP->m_lastHeartbeatCount < hbCount)
         {
             // If it is the first heartbeat message, we can try to cancel initial ack.
@@ -425,8 +446,7 @@ bool StatefulReader::processHeartbeatMsg(
                     pWP->mp_heartbeatResponse->restart_timer();
                 }
             }
-
-            if (livelinessFlag)
+            else if (livelinessFlag)
             {
                 if (liveliness_lease_duration_ < c_TimeInfinite)
                 {
@@ -436,7 +456,10 @@ bool StatefulReader::processHeartbeatMsg(
                         auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
                         if ( wlp != nullptr)
                         {
-                            wlp->sub_liveliness_manager_->assert_liveliness(writerGUID);
+                            wlp->sub_liveliness_manager_->assert_liveliness(
+                                        writerGUID,
+                                        liveliness_kind_,
+                                        liveliness_lease_duration_);
                         }
                         else
                         {

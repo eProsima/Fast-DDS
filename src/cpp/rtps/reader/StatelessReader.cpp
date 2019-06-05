@@ -101,6 +101,7 @@ bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
 bool StatelessReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+
     for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
     {
         if((*it).guid == wdata.guid)
@@ -109,11 +110,27 @@ bool StatelessReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
             m_matched_writers.erase(it);
             remove_persistence_guid(wdata);
 
-            // TODO raquel remove from liveliness manager
+            if (liveliness_lease_duration_ < c_TimeInfinite)
+            {
+                auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+                if ( wlp != nullptr)
+                {
+                    wlp->sub_liveliness_manager_->remove_writer(
+                                wdata.guid,
+                                liveliness_kind_,
+                                liveliness_lease_duration_);
+                }
+                else
+                {
+                    logError(RTPS_LIVELINESS,
+                             "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
+                }
+            }
 
             return true;
         }
     }
+
     return false;
 }
 
@@ -215,7 +232,10 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
                 auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
                 if ( wlp != nullptr)
                 {
-                    wlp->sub_liveliness_manager_->assert_liveliness(change->writerGUID);
+                    wlp->sub_liveliness_manager_->assert_liveliness(
+                                change->writerGUID,
+                                liveliness_kind_,
+                                liveliness_lease_duration_);
                 }
                 else
                 {
@@ -233,7 +253,10 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
                     auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
                     if ( wlp != nullptr)
                     {
-                        wlp->sub_liveliness_manager_->assert_liveliness(change->writerGUID);
+                        wlp->sub_liveliness_manager_->assert_liveliness(
+                                    change->writerGUID,
+                                    liveliness_kind_,
+                                    liveliness_lease_duration_);
                     }
                     else
                     {
@@ -313,7 +336,10 @@ bool StatelessReader::processDataFragMsg(
                 auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
                 if ( wlp != nullptr)
                 {
-                    wlp->sub_liveliness_manager_->assert_liveliness(incomingChange->writerGUID);
+                    wlp->sub_liveliness_manager_->assert_liveliness(
+                                incomingChange->writerGUID,
+                                liveliness_kind_,
+                                liveliness_lease_duration_);
                 }
                 else
                 {
@@ -331,7 +357,10 @@ bool StatelessReader::processDataFragMsg(
                     auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
                     if ( wlp != nullptr)
                     {
-                        wlp->sub_liveliness_manager_->assert_liveliness(incomingChange->writerGUID);
+                        wlp->sub_liveliness_manager_->assert_liveliness(
+                                    incomingChange->writerGUID,
+                                    liveliness_kind_,
+                                    liveliness_lease_duration_);
                     }
                     else
                     {

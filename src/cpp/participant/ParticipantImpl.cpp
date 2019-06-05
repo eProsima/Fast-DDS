@@ -189,6 +189,7 @@ Publisher* ParticipantImpl::createPublisher(
         watt.endpoint.setUserDefinedID((uint8_t)att.getUserDefinedID());
     }
     watt.times = att.times;
+    watt.liveliness_kind = att.qos.m_liveliness.kind;
     watt.liveliness_lease_duration = att.qos.m_liveliness.lease_duration;
     watt.matched_readers_allocation = att.matched_subscriber_allocation;
 

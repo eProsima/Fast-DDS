@@ -10,8 +10,14 @@ namespace fastrtps {
 namespace rtps {
 
 LivelinessManager::LivelinessManager(
-        const std::function<void(GUID_t)>& liveliness_lost_callback,
-        const std::function<void(GUID_t)>& liveliness_recovered_callback,
+        const std::function<void(
+            const GUID_t&,
+            const LivelinessQosPolicyKind&,
+            const Duration_t&)>& liveliness_lost_callback,
+        const std::function<void(
+            const GUID_t&,
+            const LivelinessQosPolicyKind&,
+            const Duration_t&)>& liveliness_recovered_callback,
         asio::io_service& service,
         const std::thread& event_thread,
         bool manage_automatic)
@@ -46,54 +52,71 @@ bool LivelinessManager::add_writer(
         return false;
     }
 
-    for (const auto&writer : writers_)
+    for (auto& writer : writers_)
     {
-        if (writer.guid == guid)
+        if (writer.guid == guid &&
+                writer.kind == kind &&
+                writer.lease_duration == lease_duration)
         {
-            return false;
-        }
-    }
-    writers_.push_back(LivelinessData(guid, kind, lease_duration));
-    return true;
-}
-
-bool LivelinessManager::remove_writer(GUID_t guid)
-{
-    std::unique_lock<std::mutex> lock(mutex_);
-
-    for (const auto& writer: writers_)
-    {
-        if (writer.guid == guid)
-        {
-            writers_.remove(writer);
-
-            if (timer_owner_ != nullptr && timer_owner_->guid == guid)
-            {
-                timer_owner_ = nullptr;
-                if (!calculate_next())
-                {
-                    timer_.cancel_timer();
-                    return true;
-                }
-
-                auto interval = timer_owner_->time - steady_clock::now();
-                assert(interval.count() > 0);
-                timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
-                timer_.restart_timer();
-            }
+            writer.count++;
             return true;
         }
     }
+    writers_.emplace_back(guid, kind, lease_duration);
+    return true;
+}
+
+bool LivelinessManager::remove_writer(
+        GUID_t guid,
+        LivelinessQosPolicyKind kind,
+        Duration_t lease_duration)
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+
+    for (auto& writer: writers_)
+    {
+        if (writer.guid == guid &&
+                writer.kind == kind &&
+                writer.lease_duration == lease_duration)
+        {
+            if (--writer.count == 0)
+            {
+                writers_.remove(writer);
+
+                if (timer_owner_ != nullptr && timer_owner_->guid == guid)
+                {
+                    timer_owner_ = nullptr;
+                    if (!calculate_next())
+                    {
+                        timer_.cancel_timer();
+                        return true;
+                    }
+
+                    auto interval = timer_owner_->time - steady_clock::now();
+                    assert(interval.count() > 0);
+                    timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+                    timer_.restart_timer();
+                }
+                return true;
+            }
+        }
+    }
+
     return false;
 }
 
-bool LivelinessManager::assert_liveliness(GUID_t guid)
+bool LivelinessManager::assert_liveliness(
+        GUID_t guid,
+        LivelinessQosPolicyKind kind,
+        Duration_t lease_duration)
 {
     std::unique_lock<std::mutex> lock(mutex_);
 
     ResourceLimitedVector<LivelinessData>::iterator wit;
     if (!find_writer(
                 guid,
+                kind,
+                lease_duration,
                 &wit))
     {
         return false;
@@ -112,7 +135,10 @@ bool LivelinessManager::assert_liveliness(GUID_t guid)
                 {
                     if (liveliness_recovered_callback_ != nullptr)
                     {
-                        liveliness_recovered_callback_(w.guid);
+                        liveliness_recovered_callback_(
+                                    w.guid,
+                                    w.kind,
+                                    w.lease_duration);
                     }
                 }
                 w.alive = true;
@@ -126,7 +152,10 @@ bool LivelinessManager::assert_liveliness(GUID_t guid)
         {
             if (liveliness_recovered_callback_ != nullptr)
             {
-                liveliness_recovered_callback_(guid);
+                liveliness_recovered_callback_(
+                            wit->guid,
+                            wit->kind,
+                            wit->lease_duration);
             }
         }
         wit->alive = true;
@@ -173,7 +202,10 @@ bool LivelinessManager::assert_liveliness(LivelinessQosPolicyKind kind)
             {
                 if (liveliness_recovered_callback_ != nullptr)
                 {
-                    liveliness_recovered_callback_(writer.guid);
+                    liveliness_recovered_callback_(
+                                writer.guid,
+                                writer.kind,
+                                writer.lease_duration);
                 }
             }
             writer.alive = true;
@@ -196,54 +228,14 @@ bool LivelinessManager::assert_liveliness(LivelinessQosPolicyKind kind)
     return true;
 }
 
-bool LivelinessManager::assert_liveliness(GuidPrefix_t prefix)
-{
-    std::unique_lock<std::mutex> lock(mutex_);
-
-    if (writers_.empty())
-    {
-        return true;
-    }
-
-    timer_.cancel_timer();
-
-    for (auto& writer: writers_)
-    {
-        if (writer.guid.guidPrefix == prefix)
-        {
-            if (writer.alive == false)
-            {
-                if (liveliness_recovered_callback_ != nullptr)
-                {
-                    liveliness_recovered_callback_(writer.guid);
-                }
-            }
-            writer.alive = true;
-            writer.time = steady_clock::now() + nanoseconds(writer.lease_duration.to_ns());
-        }
-    }
-
-    // Updates the timer owner
-    if (!calculate_next())
-    {
-        logError(RTPS_WRITER, "Error when restarting liveliness for participant " << prefix);
-        return false;
-    }
-
-    auto interval = timer_owner_->time - steady_clock::now();
-    assert(interval.count() > 0);
-    timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
-    timer_.restart_timer();
-
-    return true;
-}
-
 bool LivelinessManager::calculate_next()
 {
 
     timer_owner_ = nullptr;
 
     steady_clock::time_point min_time = steady_clock::now() + nanoseconds(c_TimeInfinite.to_ns());
+
+    bool any_alive = false;
 
     for (auto it=writers_.begin(); it!=writers_.end(); ++it)
     {
@@ -253,11 +245,11 @@ bool LivelinessManager::calculate_next()
             {
                 min_time = it->time;
                 timer_owner_ = &*it;
-                return true;
             }
+            any_alive = true;
         }
     }
-    return false;
+    return any_alive;
 }
 
 void LivelinessManager::timer_expired()
@@ -272,9 +264,13 @@ void LivelinessManager::timer_expired()
 
     if (liveliness_lost_callback_ != nullptr)
     {
-        liveliness_lost_callback_(timer_owner_->guid);
+        liveliness_lost_callback_(
+                    timer_owner_->guid,
+                    timer_owner_->kind,
+                    timer_owner_->lease_duration);
     }
     timer_owner_->alive = false;
+//    timer_owner_->time = std::chrono::steady_clock::time_point();
 
     if (calculate_next())
     {
@@ -285,12 +281,16 @@ void LivelinessManager::timer_expired()
 }
 
 bool LivelinessManager::find_writer(
-        GUID_t guid,
+        const GUID_t& guid,
+        const LivelinessQosPolicyKind& kind,
+        const Duration_t& lease_duration,
         ResourceLimitedVector<LivelinessData>::iterator *wit_out)
 {
     for (auto it=writers_.begin(); it!=writers_.end(); ++it)
     {
-        if (it->guid == guid)
+        if (it->guid == guid &&
+                it->kind == kind &&
+                it->lease_duration == lease_duration)
         {
             *wit_out = it;
             return true;
