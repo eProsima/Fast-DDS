@@ -69,11 +69,17 @@ public:
     void UnregisterReceiver(MessageReceiver* receiver);
 
     /**
+     * Closes related ChannelResources.
+     */
+    void disable();
+
+    /**
      * Resources can only be transfered through move semantics. Copy, assignment, and
      * construction outside of the factory are forbidden.
      */
     ReceiverResource(ReceiverResource&&);
-    ~ReceiverResource();
+
+    ~ReceiverResource() override;
 
 private:
     ReceiverResource() = delete;
