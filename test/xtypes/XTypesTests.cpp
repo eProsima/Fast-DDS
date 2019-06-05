@@ -67,7 +67,7 @@ TEST_F(XTypes, ValidMinimal)
     //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
     //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
 
-	//TypeConsistencyEnforcementQosPolicy typeConQos;
+    //TypeConsistencyEnforcementQosPolicy typeConQos;
     //typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
     //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
     //typeConQos.m_ignore_sequence_bounds = true;
@@ -90,7 +90,7 @@ TEST_F(XTypes, ValidMinimal)
 TEST_F(XTypes, InvalidMinimal)
 {
     BasicStructPubSubType type1;
-    BasicStructPubSubType type2; // Instead of BasicNamesStructPubSubType
+    BasicNamesStructPubSubType type2;
     const TypeObject* type_obj1 = GetMinimalBasicStructObject();
     const TypeIdentifier* type_id1 = GetBasicStructIdentifier(false);
     const TypeObject* type_obj2 = GetMinimalBasicNamesStructObject();
@@ -104,7 +104,7 @@ TEST_F(XTypes, InvalidMinimal)
     //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
     //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
 
-	//TypeConsistencyEnforcementQosPolicy typeConQos;
+    //TypeConsistencyEnforcementQosPolicy typeConQos;
     //typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
     //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
     //typeConQos.m_ignore_sequence_bounds = true;
@@ -120,11 +120,44 @@ TEST_F(XTypes, InvalidMinimal)
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
-    sub.waitDiscovery(false, 10);
-    pub.waitDiscovery(false, 10);
+    sub.waitDiscovery(false, 3);
+    pub.waitDiscovery(false, 3);
 }
 
-// TEST_F(XTypes, ValidComplete)
+TEST_F(XTypes, ValidComplete)
+{
+    BasicStructPubSubType type;
+    const TypeObject* type_obj = GetMinimalBasicStructObject();
+    const TypeIdentifier* type_id = GetBasicStructIdentifier(true);
+    TestPublisher pub;
+    TestSubscriber sub;
+    //TypeInformation* type_info = nullptr; // Not using it
+
+    //DataRepresentationQosPolicy dataRepQos;
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    //TypeConsistencyEnforcementQosPolicy typeConQos;
+    //typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
+    //typeConQos.m_ignore_sequence_bounds = true;
+    //typeConQos.m_ignore_string_bounds = true;
+    //typeConQos.m_ignore_member_names = true;
+    //typeConQos.m_prevent_type_widening = false;
+    //typeConQos.m_force_type_validation = false;
+
+    pub.init("ValidComplete", 10, &type, type_obj, type_id, nullptr, "Pub1", nullptr, nullptr);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("ValidComplete", 10, &type, type_obj, type_id, nullptr, "Sub1", nullptr, nullptr);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(true, 3);
+    pub.waitDiscovery(true, 3);
+}
+
 // TEST_F(XTypes, InvalidComplete)
 // TEST_F(XTypes, InvalidMinimalComplete)
 // TEST_F(XTypes, TypeWideningPermitted)
@@ -145,6 +178,7 @@ TEST_F(XTypes, InvalidMinimal)
 // TEST_F(XTypes, XMLAndXCDR)
 // TEST_F(XTypes, XCDRAndXML)
 // TEST_F(XTypes, XCDR2AndXML)
+
 
 int main(int argc, char **argv)
 {
