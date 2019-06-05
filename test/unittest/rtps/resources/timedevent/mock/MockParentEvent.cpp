@@ -58,9 +58,6 @@ bool MockParentEvent::callback(TimedEvent::EventCode code)
                 mock_ = nullptr;
             }
         }
-
-        event_.restart_timer();
-
     }
     else if(code == TimedEvent::EventCode::EVENT_ABORT)
         cancelled_.fetch_add(1, std::memory_order_relaxed);
@@ -73,16 +70,11 @@ bool MockParentEvent::callback(TimedEvent::EventCode code)
     return true;
 }
 
-bool MockParentEvent::wait(unsigned int milliseconds)
+void MockParentEvent::wait()
 {
     std::unique_lock<std::mutex> lock(sem_mutex_);
 
-    if(sem_count_ == 0)
-    {
-        if(sem_cond_.wait_for(lock, std::chrono::milliseconds(milliseconds)) != std::cv_status::no_timeout)
-            return false;
-    }
+    sem_cond_.wait(lock, [&]() -> bool { return sem_count_ != 0; } );
 
     --sem_count_;
-    return true;
 }

@@ -231,7 +231,7 @@ TEST(TimedEvent, ParentEvent_InternallyDeleteEventNonAutoDestruct)
     MockParentEvent event(env->service_, 10, 2);
 
     event.event().restart_timer();
-    //TODO
+    event.wait();
 }
 
 /*!

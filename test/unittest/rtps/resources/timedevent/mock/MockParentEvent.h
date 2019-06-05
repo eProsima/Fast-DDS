@@ -38,7 +38,7 @@ class MockParentEvent
 
         bool callback(eprosima::fastrtps::rtps::TimedEvent::EventCode code);
 
-        bool wait(unsigned int milliseconds);
+        void wait();
 
         std::atomic<int> successed_;
         std::atomic<int> cancelled_;
