@@ -7500,37 +7500,26 @@ bool CompleteTypeObject::operator==(const CompleteTypeObject& other) const
         {
             case TK_ALIAS:
             return m_alias_type == other.m_alias_type;
-            break;
             case TK_ANNOTATION:
             return m_annotation_type == other.m_annotation_type;
-            break;
             case TK_STRUCTURE:
             return m_struct_type == other.m_struct_type;
-            break;
             case TK_UNION:
             return m_union_type == other.m_union_type;
-            break;
             case TK_BITSET:
             return m_bitset_type == other.m_bitset_type;
-            break;
             case TK_SEQUENCE:
             return m_sequence_type == other.m_sequence_type;
-            break;
             case TK_ARRAY:
             return m_array_type == other.m_array_type;
-            break;
             case TK_MAP:
             return m_map_type == other.m_map_type;
-            break;
             case TK_ENUM:
             return m_enumerated_type == other.m_enumerated_type;
-            break;
             case TK_BITMASK:
             return m_bitmask_type == other.m_bitmask_type;
-            break;
             default:
             return m_extended_type == other.m_extended_type;
-            break;
         }
     }
     return false;
@@ -7544,7 +7533,7 @@ bool CompleteTypeObject::consistent(const CompleteTypeObject &x,
     if (m__d == TK_ALIAS)
     {
         const TypeIdentifier& aliasedId = m_alias_type.body().common().related_type();
-        const TypeObject* aliasedObj = TypeObjectFactory::GetInstance()->GetTypeObject(&aliasedId);
+        const TypeObject* aliasedObj = TypeObjectFactory::get_instance()->get_type_object(&aliasedId);
         if (aliasedObj == nullptr)
         {
             logWarning(XTYPES, "Local type is aliased to an unkown TypeObject");
@@ -7556,7 +7545,7 @@ bool CompleteTypeObject::consistent(const CompleteTypeObject &x,
     if (x.m__d == TK_ALIAS)
     {
         const TypeIdentifier& aliasedId = x.m_alias_type.body().common().related_type();
-        const TypeObject* aliasedObj = TypeObjectFactory::GetInstance()->GetTypeObject(&aliasedId);
+        const TypeObject* aliasedObj = TypeObjectFactory::get_instance()->get_type_object(&aliasedId);
         if (aliasedObj == nullptr)
         {
             logWarning(XTYPES, "Remote type is aliased to an unkown TypeObject");
@@ -8476,37 +8465,26 @@ bool MinimalTypeObject::operator==(const MinimalTypeObject& other) const
         {
             case TK_ALIAS:
             return m_alias_type == other.m_alias_type;
-            break;
             case TK_ANNOTATION:
             return m_annotation_type == other.m_annotation_type;
-            break;
             case TK_STRUCTURE:
             return m_struct_type == other.m_struct_type;
-            break;
             case TK_UNION:
             return m_union_type == other.m_union_type;
-            break;
             case TK_BITSET:
             return m_bitset_type == other.m_bitset_type;
-            break;
             case TK_SEQUENCE:
             return m_sequence_type == other.m_sequence_type;
-            break;
             case TK_ARRAY:
             return m_array_type == other.m_array_type;
-            break;
             case TK_MAP:
             return m_map_type == other.m_map_type;
-            break;
             case TK_ENUM:
             return m_enumerated_type == other.m_enumerated_type;
-            break;
             case TK_BITMASK:
             return m_bitmask_type == other.m_bitmask_type;
-            break;
             default:
             return m_extended_type == other.m_extended_type;
-            break;
         }
     }
     return false;
@@ -8520,7 +8498,7 @@ bool MinimalTypeObject::consistent(const MinimalTypeObject &x,
     if (m__d == TK_ALIAS)
     {
         const TypeIdentifier& aliasedId = m_alias_type.body().common().related_type();
-        const TypeObject* aliasedObj = TypeObjectFactory::GetInstance()->GetTypeObject(&aliasedId);
+        const TypeObject* aliasedObj = TypeObjectFactory::get_instance()->get_type_object(&aliasedId);
         if (aliasedObj == nullptr)
         {
             logWarning(XTYPES, "Local type is aliased to an unkown TypeObject");
@@ -8532,7 +8510,7 @@ bool MinimalTypeObject::consistent(const MinimalTypeObject &x,
     if (x.m__d == TK_ALIAS)
     {
         const TypeIdentifier& aliasedId = x.m_alias_type.body().common().related_type();
-        const TypeObject* aliasedObj = TypeObjectFactory::GetInstance()->GetTypeObject(&aliasedId);
+        const TypeObject* aliasedObj = TypeObjectFactory::get_instance()->get_type_object(&aliasedId);
         if (aliasedObj == nullptr)
         {
             logWarning(XTYPES, "Remote type is aliased to an unkown TypeObject");
@@ -8894,10 +8872,8 @@ bool TypeObject::operator==(const TypeObject& other) const
         {
             case EK_COMPLETE:
             return m_complete == other.m_complete;
-            break;
             case EK_MINIMAL:
             return m_minimal == other.m_minimal;
-            break;
             default:
             break;
         }

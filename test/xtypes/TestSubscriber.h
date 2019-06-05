@@ -27,30 +27,32 @@
 #include <fastrtps/TopicDataType.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 
+#include <condition_variable>
+
 class TestSubscriber
 {
 public:
-	TestSubscriber();
+    TestSubscriber();
 
-	virtual ~TestSubscriber();
+    virtual ~TestSubscriber();
 
     //!Initialize the subscriber
-	bool init(const std::string& topicName, int domain, eprosima::fastrtps::TopicDataType* type,
-		const eprosima::fastrtps::types::TypeObject* type_object,
-		const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
-		const eprosima::fastrtps::types::TypeInformation* type_info,
-		const std::string& name,
+    bool init(const std::string& topicName, int domain, eprosima::fastrtps::TopicDataType* type,
+        const eprosima::fastrtps::types::TypeObject* type_object,
+        const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
+        const eprosima::fastrtps::types::TypeInformation* type_info,
+        const std::string& name,
         const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
-		const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos);
+        const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos);
 
     //!RUN the subscriber
-	void run();
+    void run();
 
-	// Auxiliar test methods
-	bool isInitialized() const { return m_bInitialized; }
-	void waitDiscovery(bool expectMatch = true, int maxWait = 10);
-	void matched(bool unmatched = false);
-	bool isMatched() { return m_subListener.n_matched > 0; }
+    // Auxiliar test methods
+    bool isInitialized() const { return m_bInitialized; }
+    void waitDiscovery(bool expectMatch = true, int maxWait = 10);
+    void matched(bool unmatched = false);
+    bool isMatched() { return m_subListener.n_matched > 0; }
     uint32_t samplesReceived() { return m_subListener.n_samples; }
 
     void block(std::function<bool()> checker)
@@ -68,16 +70,16 @@ public:
     }
 
 private:
-	std::string m_Name;
+    std::string m_Name;
     eprosima::fastrtps::TopicDataType *m_Type;
     eprosima::fastrtps::Participant* mp_participant;
     eprosima::fastrtps::Subscriber* mp_subscriber;
-	void *m_Data;
-	bool m_bInitialized;
-	std::mutex m_mDiscovery;
-	std::mutex mutex_;
-	std::condition_variable m_cvDiscovery;
-	std::condition_variable cv_;
+    void *m_Data;
+    bool m_bInitialized;
+    std::mutex m_mDiscovery;
+    std::mutex mutex_;
+    std::condition_variable m_cvDiscovery;
+    std::condition_variable cv_;
 
 public:
     class SubListener :public eprosima::fastrtps::SubscriberListener
@@ -93,7 +95,7 @@ public:
         void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
 
         TestSubscriber* mParent;
-		eprosima::fastrtps::SampleInfo_t m_info;
+        eprosima::fastrtps::SampleInfo_t m_info;
         int n_matched;
         uint32_t n_samples;
     }m_subListener;

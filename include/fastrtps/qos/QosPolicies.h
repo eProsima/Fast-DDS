@@ -1130,15 +1130,13 @@ public:
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
     bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size);
 
-    RTPS_DllAPI TypeIdV1& operator=(const TypeIdentifier& type_id)
+    RTPS_DllAPI TypeIdV1& operator=(const types::TypeIdentifier& type_id)
     {
-        delete m_type_identifier;
-        m_type_identifier = new TypeIdentifier();
-        *m_type_identifier = type_id;
+        m_type_identifier = type_id;
         return *this;
     }
 
-    RTPS_DllAPI const TypeIdentifier* get() const
+    RTPS_DllAPI const types::TypeIdentifier& get() const
     {
         return m_type_identifier;
     }
@@ -1207,15 +1205,13 @@ public:
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
     bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size);
 
-    RTPS_DllAPI TypeObjectV1& operator=(const TypeObject& type_object)
+    RTPS_DllAPI TypeObjectV1& operator=(const types::TypeObject& type_object)
     {
-        delete m_type_object;
-        m_type_object = new TypeObject();
-        *m_type_object = type_object;
+        m_type_object = type_object;
         return *this;
     }
 
-    RTPS_DllAPI const TypeObject* get() const
+    RTPS_DllAPI const types::TypeObject& get() const
     {
         return m_type_object;
     }
@@ -1227,37 +1223,33 @@ public:
 namespace XTypes
 {
 
-class TypeInformation : private Parameter_t, public QosPolicy
+class TypeInformation : public Parameter_t, public QosPolicy
 {
 public:
-    RTPS_DllAPI TypeInformation() : Parameter_t(PID_TYPE_INFORMATION, 0), QosPolicy(false)
+    types::TypeInformation type_information;
+
+    RTPS_DllAPI TypeInformation()
+        : Parameter_t(PID_TYPE_INFORMATION, 0)
+        , QosPolicy(false)
+        , type_information()
+        , assigned_(false)
     {
-        m_type_information = nullptr;
-        m_is_assigned = false;
     }
 
     RTPS_DllAPI TypeInformation(const TypeInformation& type)
-         : Parameter_t(type.Pid, type.length), QosPolicy(type.m_sendAlways)
+         : Parameter_t(type.Pid, type.length)
+         , QosPolicy(type.m_sendAlways)
+         , type_information(type.type_information)
+         , assigned_(true)
     {
-        if (type.m_type_information != nullptr)
-        {
-            m_type_information = new types::TypeInformation();
-            *m_type_information = *type.m_type_information;
-            m_is_assigned = true;
-        }
-        else
-        {
-            m_type_information = nullptr;
-            m_is_assigned = false;
-        }
     }
 
     RTPS_DllAPI TypeInformation(TypeInformation&& type)
-         : Parameter_t(type.Pid, type.length), QosPolicy(type.m_sendAlways)
+         : Parameter_t(type.Pid, type.length)
+         , QosPolicy(type.m_sendAlways)
+         , type_information(std::move(type.type_information))
+         , assigned_(type.assigned_)
     {
-        m_type_information = type.m_type_information;
-        type.m_type_information = nullptr;
-        m_is_assigned = m_type_information != nullptr;
     }
 
     RTPS_DllAPI TypeInformation& operator=(const TypeInformation& type)
@@ -1266,19 +1258,8 @@ public:
         length = type.length;
         m_sendAlways = type.m_sendAlways;
 
-        delete m_type_information;
-
-        if (type.m_type_information != nullptr)
-        {
-            m_type_information = new types::TypeInformation();
-            *m_type_information = *type.m_type_information;
-            m_is_assigned = true;
-        }
-        else
-        {
-            m_type_information = nullptr;
-            m_is_assigned = false;
-        }
+        type_information = type.type_information;
+        assigned_ = type.assigned_;
 
         return *this;
     }
@@ -1289,44 +1270,36 @@ public:
         length = type.length;
         m_sendAlways = type.m_sendAlways;
 
-        m_type_information = type.m_type_information;
-        type.m_type_information = nullptr;
-        m_is_assigned = m_type_information != nullptr;
+        type_information = std::move(type.type_information);
+        assigned_ = type.assigned_;
 
         return *this;
     }
 
     virtual RTPS_DllAPI ~TypeInformation() override
     {
-        delete m_type_information;
     }
+
     /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
     * @return True if the modified CDRMessage is valid.
     */
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
     bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size);
 
-    RTPS_DllAPI bool isAssigned() const { return m_is_assigned; }
+    RTPS_DllAPI bool assigned() const { return assigned_; }
 
     RTPS_DllAPI TypeInformation& operator=(const types::TypeInformation& type_info)
     {
-        delete m_type_information;
-        m_type_information = new types::TypeInformation();
-        *m_type_information = type_info;
-        m_is_assigned = true;
+        type_information = type_info;
+        assigned_ = true;
         return *this;
     }
 
-    RTPS_DllAPI const types::TypeInformation* get() const
-    {
-        return m_type_information;
-    }
-
 private:
-    types::TypeInformation* m_type_information;
-    bool m_is_assigned;
+    bool assigned_;
 };
 
 } // namespace XTypes

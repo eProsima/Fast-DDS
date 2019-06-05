@@ -36,14 +36,12 @@ namespace fastrtps{
 
 class TypeConsistencyEnforcementQosPolicy;
 
-using namespace rtps;
-
 namespace types{
 
 /*struct CommonStructMember final {
-	MemberId                                   member_id;
-	StructMemberFlag                           member_flags;
-	TypeIdentifier                             member_type_id;
+    MemberId                                   member_id;
+    StructMemberFlag                           member_flags;
+    TypeIdentifier                             member_type_id;
 };*/
 class CommonStructMember
 {
@@ -88,9 +86,9 @@ private:
 
 // COMPLETE Details for a member of an aggregate type
 /*struct CompleteMemberDetail final{
-	MemberName                                 name;
-	AppliedBuiltinMemberAnnotations  ann_builtin; // Optional
-	AppliedAnnotationSeq             ann_custom; // Optional
+    MemberName                                 name;
+    AppliedBuiltinMemberAnnotations  ann_builtin; // Optional
+    AppliedAnnotationSeq             ann_custom; // Optional
 };*/
 class CompleteMemberDetail
 {
@@ -135,7 +133,7 @@ private:
 
 // MINIMAL Details for a member of an aggregate type
 /*struct MinimalMemberDetail final{
-	NameHash                                  name_hash;
+    NameHash                                  name_hash;
 };*/
 
 class MinimalMemberDetail final
@@ -169,8 +167,8 @@ private:
 
 // Member of an aggregate type
 /*struct CompleteStructMember {
-	CommonStructMember                         common;
-	CompleteMemberDetail                       detail;
+    CommonStructMember                         common;
+    CompleteMemberDetail                       detail;
 };*/
 class CompleteStructMember
 {
@@ -212,8 +210,8 @@ typedef std::vector<CompleteStructMember> CompleteStructMemberSeq;
 
 // Member of an aggregate type
 /*struct MinimalStructMember {
-	CommonStructMember                         common;
-	MinimalMemberDetail                        detail;
+    CommonStructMember                         common;
+    MinimalMemberDetail                        detail;
 };*/
 class MinimalStructMember
 {
@@ -254,7 +252,7 @@ private:
 typedef std::vector<MinimalStructMember> MinimalStructMemberSeq;
 
 /*struct AppliedBuiltinTypeAnnotations {
-	AppliedVerbatimAnnotation verbatim;  // @verbatim(...) // @optional
+    AppliedVerbatimAnnotation verbatim;  // @verbatim(...) // @optional
 };*/
 class AppliedBuiltinTypeAnnotations
 {
@@ -286,7 +284,7 @@ private:
 };
 
 /*struct MinimalTypeDetail final{
-	// Empty. Available for future extension
+    // Empty. Available for future extension
 };*/
 class MinimalTypeDetail
 {
@@ -312,9 +310,9 @@ private:
 };
 
 /*struct CompleteTypeDetail final{
-	AppliedBuiltinTypeAnnotations  ann_builtin; // @optional
-	AppliedAnnotationSeq           ann_custom; // @optional
-	QualifiedTypeName                        type_name;
+    AppliedBuiltinTypeAnnotations  ann_builtin; // @optional
+    AppliedAnnotationSeq           ann_custom; // @optional
+    QualifiedTypeName                        type_name;
 };*/
 class CompleteTypeDetail
 {
@@ -357,8 +355,8 @@ private:
     QualifiedTypeName m_type_name;
 };
 /*struct CompleteStructHeader {
-	TypeIdentifier                           base_type;
-	CompleteTypeDetail                       detail;
+    TypeIdentifier                           base_type;
+    CompleteTypeDetail                       detail;
 };*/
 class CompleteStructHeader
 {
@@ -395,8 +393,8 @@ private:
     CompleteTypeDetail m_detail;
 };
 /*struct MinimalStructHeader {
-	TypeIdentifier                           base_type;
-	MinimalTypeDetail                        detail;
+    TypeIdentifier                           base_type;
+    MinimalTypeDetail                        detail;
 };*/
 class MinimalStructHeader
 {
@@ -434,9 +432,9 @@ private:
 };
 
 /*struct CompleteStructType final{
-	StructTypeFlag             struct_flags;
-	CompleteStructHeader       header;
-	CompleteStructMemberSeq    member_seq;
+    StructTypeFlag             struct_flags;
+    CompleteStructHeader       header;
+    CompleteStructMemberSeq    member_seq;
 };*/
 class CompleteStructType
 {
@@ -480,9 +478,9 @@ private:
 };
 
 /*struct MinimalStructType final{
-	StructTypeFlag             struct_flags;
-	MinimalStructHeader        header;
-	MinimalStructMemberSeq     member_seq;
+    StructTypeFlag             struct_flags;
+    MinimalStructHeader        header;
+    MinimalStructMemberSeq     member_seq;
 };*/
 class MinimalStructType
 {
@@ -532,10 +530,10 @@ private:
 typedef std::vector<int32_t> UnionCaseLabelSeq;
 
 /*struct CommonUnionMember final{
-	MemberId                    member_id;
-	UnionMemberFlag             member_flags;
-	TypeIdentifier              type_id;
-	UnionCaseLabelSeq           label_seq;
+    MemberId                    member_id;
+    UnionMemberFlag             member_flags;
+    TypeIdentifier              type_id;
+    UnionCaseLabelSeq           label_seq;
 };*/
 class CommonUnionMember
 {
@@ -586,8 +584,8 @@ private:
 
 // Member of a union type
 /*struct CompleteUnionMember {
-	CommonUnionMember      common;
-	CompleteMemberDetail   detail;
+    CommonUnionMember      common;
+    CompleteMemberDetail   detail;
 };*/
 class CompleteUnionMember
 {
@@ -629,8 +627,8 @@ typedef std::vector<CompleteUnionMember> CompleteUnionMemberSeq;
 
 // Member of a union type
 /*struct MinimalUnionMember {
-	CommonUnionMember   common;
-	MinimalMemberDetail detail;
+    CommonUnionMember   common;
+    MinimalMemberDetail detail;
 };*/
 class MinimalUnionMember
 {
@@ -671,8 +669,8 @@ private:
 typedef std::vector<MinimalUnionMember> MinimalUnionMemberSeq;
 
 /*struct CommonDiscriminatorMember final{
-	UnionDiscriminatorFlag       member_flags;
-	TypeIdentifier               type_id;
+    UnionDiscriminatorFlag       member_flags;
+    TypeIdentifier               type_id;
 };*/
 class CommonDiscriminatorMember
 {
@@ -711,9 +709,9 @@ private:
 
 // Member of a union type
 /*struct CompleteDiscriminatorMember {
-	CommonDiscriminatorMember                common;
-	AppliedBuiltinTypeAnnotations  ann_builtin; // Optional
-	AppliedAnnotationSeq           ann_custom; // Optional
+    CommonDiscriminatorMember                common;
+    AppliedBuiltinTypeAnnotations  ann_builtin; // Optional
+    AppliedAnnotationSeq           ann_custom; // Optional
 };*/
 class CompleteDiscriminatorMember
 {
@@ -758,7 +756,7 @@ private:
 
 // Member of a union type
 /*struct MinimalDiscriminatorMember {
-	CommonDiscriminatorMember   common;
+    CommonDiscriminatorMember   common;
 };*/
 class MinimalDiscriminatorMember
 {
@@ -790,7 +788,7 @@ private:
 };
 
 /*struct CompleteUnionHeader {
-	CompleteTypeDetail          detail;
+    CompleteTypeDetail          detail;
 };*/
 class CompleteUnionHeader
 {
@@ -822,7 +820,7 @@ private:
 };
 
 /*struct MinimalUnionHeader {
-	MinimalTypeDetail           detail;
+    MinimalTypeDetail           detail;
 };*/
 class MinimalUnionHeader
 {
@@ -854,10 +852,10 @@ private:
 };
 
 /*struct CompleteUnionType final{
-	UnionTypeFlag                union_flags;
-	CompleteUnionHeader          header;
-	CompleteDiscriminatorMember  discriminator;
-	CompleteUnionMemberSeq       member_seq;
+    UnionTypeFlag                union_flags;
+    CompleteUnionHeader          header;
+    CompleteDiscriminatorMember  discriminator;
+    CompleteUnionMemberSeq       member_seq;
 };*/
 class CompleteUnionType
 {
@@ -907,10 +905,10 @@ private:
 };
 
 /*struct MinimalUnionType final{
-	UnionTypeFlag                union_flags;
-	MinimalUnionHeader           header;
-	MinimalDiscriminatorMember   discriminator;
-	MinimalUnionMemberSeq        member_seq;
+    UnionTypeFlag                union_flags;
+    MinimalUnionHeader           header;
+    MinimalDiscriminatorMember   discriminator;
+    MinimalUnionMemberSeq        member_seq;
 };*/
 class MinimalUnionType
 {
@@ -961,8 +959,8 @@ private:
 
 // --- Annotation: ---------------------------------------------------
 /*struct CommonAnnotationParameter final{
-	AnnotationParameterFlag      member_flags;
-	TypeIdentifier               member_type_id;
+    AnnotationParameterFlag      member_flags;
+    TypeIdentifier               member_type_id;
 };*/
 class CommonAnnotationParameter
 {
@@ -1002,9 +1000,9 @@ private:
 // Member of an annotation type
 
 /*struct CompleteAnnotationParameter {
-	CommonAnnotationParameter  common;
-	MemberName                 name;
-	AnnotationParameterValue   default_value;
+    CommonAnnotationParameter  common;
+    MemberName                 name;
+    AnnotationParameterValue   default_value;
 };*/
 class CompleteAnnotationParameter
 {
@@ -1049,9 +1047,9 @@ private:
 // Ordered by CompleteAnnotationParameter.name
 typedef    std::vector<CompleteAnnotationParameter> CompleteAnnotationParameterSeq;
 /*struct MinimalAnnotationParameter {
-	CommonAnnotationParameter  common;
-	NameHash                   name_hash;
-	AnnotationParameterValue   default_value;
+    CommonAnnotationParameter  common;
+    NameHash                   name_hash;
+    AnnotationParameterValue   default_value;
 };*/
 class MinimalAnnotationParameter
 {
@@ -1097,7 +1095,7 @@ private:
 // Ordered by MinimalAnnotationParameter.name_hash
 typedef    std::vector<MinimalAnnotationParameter> MinimalAnnotationParameterSeq;
 /*struct CompleteAnnotationHeader {
-	QualifiedTypeName         annotation_name;
+    QualifiedTypeName         annotation_name;
 };*/
 class CompleteAnnotationHeader
 {
@@ -1129,7 +1127,7 @@ private:
 };
 
 /*struct MinimalAnnotationHeader {
-	// Empty. Available for future extension
+    // Empty. Available for future extension
 };*/
 class MinimalAnnotationHeader
 {
@@ -1155,9 +1153,9 @@ private:
 };
 
 /*struct CompleteAnnotationType final{
-	AnnotationTypeFlag             annotation_flag;
-	CompleteAnnotationHeader       header;
-	CompleteAnnotationParameterSeq member_seq;
+    AnnotationTypeFlag             annotation_flag;
+    CompleteAnnotationHeader       header;
+    CompleteAnnotationParameterSeq member_seq;
 };*/
 class CompleteAnnotationType final
 {
@@ -1200,9 +1198,9 @@ private:
     CompleteAnnotationParameterSeq m_member_seq;
 };
 /*struct MinimalAnnotationType final{
-	AnnotationTypeFlag             annotation_flag;
-	MinimalAnnotationHeader        header;
-	MinimalAnnotationParameterSeq  member_seq;
+    AnnotationTypeFlag             annotation_flag;
+    MinimalAnnotationHeader        header;
+    MinimalAnnotationParameterSeq  member_seq;
 };*/
 class MinimalAnnotationType final
 {
@@ -1247,8 +1245,8 @@ private:
 
 // --- Alias: ---------------------------------------------------------
 /*struct CommonAliasBody final{
-	AliasMemberFlag       related_flags;
-	TypeIdentifier        related_type;
+    AliasMemberFlag       related_flags;
+    TypeIdentifier        related_type;
 };*/
 class CommonAliasBody
 {
@@ -1286,9 +1284,9 @@ private:
 };
 
 /*struct CompleteAliasBody {
-	CommonAliasBody       common;
-	AppliedBuiltinMemberAnnotations  ann_builtin; // Optional
-	AppliedAnnotationSeq             ann_custom; // Optional
+    CommonAliasBody       common;
+    AppliedBuiltinMemberAnnotations  ann_builtin; // Optional
+    AppliedAnnotationSeq             ann_custom; // Optional
 };*/
 class CompleteAliasBody
 {
@@ -1332,7 +1330,7 @@ private:
 };
 
 /*struct MinimalAliasBody {
-	CommonAliasBody       common;
+    CommonAliasBody       common;
 };*/
 class MinimalAliasBody
 {
@@ -1364,7 +1362,7 @@ private:
 };
 
 /*struct CompleteAliasHeader {
-	CompleteTypeDetail    detail;
+    CompleteTypeDetail    detail;
 };*/
 class CompleteAliasHeader
 {
@@ -1396,7 +1394,7 @@ private:
 };
 
 /*struct MinimalAliasHeader {
-	// Empty. Available for future extension
+    // Empty. Available for future extension
 };*/
 class MinimalAliasHeader
 {
@@ -1422,9 +1420,9 @@ private:
 };
 
 /*struct CompleteAliasType final{
-	AliasTypeFlag         alias_flags;
-	CompleteAliasHeader   header;
-	CompleteAliasBody     body;
+    AliasTypeFlag         alias_flags;
+    CompleteAliasHeader   header;
+    CompleteAliasBody     body;
 };*/
 class CompleteAliasType
 {
@@ -1467,9 +1465,9 @@ private:
     CompleteAliasBody m_body;
 };
 /*struct MinimalAliasType final{
-	AliasTypeFlag         alias_flags;
-	MinimalAliasHeader    header;
-	MinimalAliasBody      body;
+    AliasTypeFlag         alias_flags;
+    MinimalAliasHeader    header;
+    MinimalAliasBody      body;
 };*/
 class MinimalAliasType
 {
@@ -1514,8 +1512,8 @@ private:
 
 // --- Collections: ---------------------------------------------------
 /*struct CompleteElementDetail final{
-	AppliedBuiltinMemberAnnotations  ann_builtin; // Optional
-	AppliedAnnotationSeq             ann_custom; // Optional
+    AppliedBuiltinMemberAnnotations  ann_builtin; // Optional
+    AppliedAnnotationSeq             ann_custom; // Optional
 };*/
 class CompleteElementDetail
 {
@@ -1552,8 +1550,8 @@ private:
     AppliedAnnotationSeq m_ann_custom;
 };
 /*struct CommonCollectionElement final{
-	CollectionElementFlag     element_flags;
-	TypeIdentifier            type;
+    CollectionElementFlag     element_flags;
+    TypeIdentifier            type;
 };*/
 class CommonCollectionElement final
 {
@@ -1591,8 +1589,8 @@ private:
 };
 
 /*struct CompleteCollectionElement {
-	CommonCollectionElement   common;
-	CompleteElementDetail     detail;
+    CommonCollectionElement   common;
+    CompleteElementDetail     detail;
 };*/
 class CompleteCollectionElement
 {
@@ -1630,7 +1628,7 @@ private:
 };
 
 /*struct MinimalCollectionElement {
-	CommonCollectionElement   common;
+    CommonCollectionElement   common;
 };*/
 class MinimalCollectionElement
 {
@@ -1662,7 +1660,7 @@ private:
 };
 
 /*struct CommonCollectionHeader final{
-	LBound                    bound;
+    LBound                    bound;
 };*/
 class CommonCollectionHeader
 {
@@ -1694,8 +1692,8 @@ private:
 };
 
 /*struct CompleteCollectionHeader {
-	CommonCollectionHeader        common;
-	CompleteTypeDetail  detail; // Optional // not present for anonymous
+    CommonCollectionHeader        common;
+    CompleteTypeDetail  detail; // Optional // not present for anonymous
 };*/
 class CompleteCollectionHeader
 {
@@ -1733,7 +1731,7 @@ private:
 };
 
 /*struct MinimalCollectionHeader {
-	CommonCollectionHeader        common;
+    CommonCollectionHeader        common;
 };*/
 class MinimalCollectionHeader
 {
@@ -1766,9 +1764,9 @@ private:
 
 // --- Sequence: -----------------------------------------------------
 /*struct CompleteSequenceType final{
-	CollectionTypeFlag         collection_flag;
-	CompleteCollectionHeader   header;
-	CompleteCollectionElement  element;
+    CollectionTypeFlag         collection_flag;
+    CompleteCollectionHeader   header;
+    CompleteCollectionElement  element;
 };*/
 class CompleteSequenceType
 {
@@ -1812,9 +1810,9 @@ private:
 };
 
 /*struct MinimalSequenceType final{
-	CollectionTypeFlag         collection_flag;
-	MinimalCollectionHeader    header;
-	MinimalCollectionElement   element;
+    CollectionTypeFlag         collection_flag;
+    MinimalCollectionHeader    header;
+    MinimalCollectionElement   element;
 };*/
 class MinimalSequenceType
 {
@@ -1859,7 +1857,7 @@ private:
 
 // --- Array: -----------------------------------------------------
 /*struct CommonArrayHeader final{
-	LBoundSeq           bound_seq;
+    LBoundSeq           bound_seq;
 };*/
 class CommonArrayHeader
 {
@@ -1891,8 +1889,8 @@ private:
 };
 
 /*struct CompleteArrayHeader {
-	CommonArrayHeader   common;
-	CompleteTypeDetail  detail;
+    CommonArrayHeader   common;
+    CompleteTypeDetail  detail;
 };*/
 class CompleteArrayHeader
 {
@@ -1930,7 +1928,7 @@ private:
 };
 
 /*struct MinimalArrayHeader {
-	CommonArrayHeader   common;
+    CommonArrayHeader   common;
 };*/
 class MinimalArrayHeader
 {
@@ -1962,9 +1960,9 @@ private:
 };
 
 /*struct CompleteArrayType  {
-	CollectionTypeFlag          collection_flag;
-	CompleteArrayHeader         header;
-	CompleteCollectionElement   element;
+    CollectionTypeFlag          collection_flag;
+    CompleteArrayHeader         header;
+    CompleteCollectionElement   element;
 };*/
 class CompleteArrayType
 {
@@ -2008,9 +2006,9 @@ private:
 };
 
 /*struct MinimalArrayType final{
-	CollectionTypeFlag         collection_flag;
-	MinimalArrayHeader         header;
-	MinimalCollectionElement   element;
+    CollectionTypeFlag         collection_flag;
+    MinimalArrayHeader         header;
+    MinimalCollectionElement   element;
 };*/
 class MinimalArrayType
 {
@@ -2055,10 +2053,10 @@ private:
 
 // --- Map: -----------------------------------------------------
 /*struct CompleteMapType final{
-	CollectionTypeFlag            collection_flag;
-	CompleteCollectionHeader      header;
-	CompleteCollectionElement     key;
-	CompleteCollectionElement     element;
+    CollectionTypeFlag            collection_flag;
+    CompleteCollectionHeader      header;
+    CompleteCollectionElement     key;
+    CompleteCollectionElement     element;
 };*/
 class CompleteMapType final
 {
@@ -2107,10 +2105,10 @@ private:
     CompleteCollectionElement m_element;
 };
 /*struct MinimalMapType final{
-	CollectionTypeFlag          collection_flag;
-	MinimalCollectionHeader     header;
-	MinimalCollectionElement    key;
-	MinimalCollectionElement    element;
+    CollectionTypeFlag          collection_flag;
+    MinimalCollectionHeader     header;
+    MinimalCollectionElement    key;
+    MinimalCollectionElement    element;
 };*/
 class MinimalMapType final
 {
@@ -2165,8 +2163,8 @@ typedef uint16_t BitBound;
 // Constant in an enumerated type
 
 /*struct CommonEnumeratedLiteral {
-	int32_t                     value;
-	EnumeratedLiteralFlag    flags;
+    int32_t                     value;
+    EnumeratedLiteralFlag    flags;
 };*/
 class CommonEnumeratedLiteral
 {
@@ -2206,8 +2204,8 @@ private:
 // Constant in an enumerated type
 
 /*struct CompleteEnumeratedLiteral {
-	CommonEnumeratedLiteral  common;
-	CompleteMemberDetail     detail;
+    CommonEnumeratedLiteral  common;
+    CompleteMemberDetail     detail;
 };*/
 class CompleteEnumeratedLiteral
 {
@@ -2249,8 +2247,8 @@ typedef std::vector<CompleteEnumeratedLiteral> CompleteEnumeratedLiteralSeq;
 // Constant in an enumerated type
 
 /*struct MinimalEnumeratedLiteral {
-	CommonEnumeratedLiteral  common;
-	MinimalMemberDetail      detail;
+    CommonEnumeratedLiteral  common;
+    MinimalMemberDetail      detail;
 };*/
 class MinimalEnumeratedLiteral
 {
@@ -2291,7 +2289,7 @@ private:
 typedef std::vector<MinimalEnumeratedLiteral> MinimalEnumeratedLiteralSeq;
 
 /*struct CommonEnumeratedHeader final{
-	BitBound                bit_bound;
+    BitBound                bit_bound;
 };*/
 class CommonEnumeratedHeader final
 {
@@ -2323,8 +2321,8 @@ private:
 };
 
 /*struct CompleteEnumeratedHeader {
-	CommonEnumeratedHeader  common;
-	CompleteTypeDetail      detail;
+    CommonEnumeratedHeader  common;
+    CompleteTypeDetail      detail;
 };*/
 class CompleteEnumeratedHeader
 {
@@ -2362,7 +2360,7 @@ private:
 };
 
 /*struct MinimalEnumeratedHeader {
-	CommonEnumeratedHeader  common;
+    CommonEnumeratedHeader  common;
 };*/
 class MinimalEnumeratedHeader
 {
@@ -2395,9 +2393,9 @@ private:
 
 // Enumerated type
 /*struct CompleteEnumeratedType final{
-	EnumTypeFlag                    enum_flags; // unused
-	CompleteEnumeratedHeader        header;
-	CompleteEnumeratedLiteralSeq    literal_seq;
+    EnumTypeFlag                    enum_flags; // unused
+    CompleteEnumeratedHeader        header;
+    CompleteEnumeratedLiteralSeq    literal_seq;
 };*/
 class CompleteEnumeratedType
 {
@@ -2441,9 +2439,9 @@ private:
 };
 // Enumerated type
 /*struct MinimalEnumeratedType final{
-	EnumTypeFlag                  enum_flags; // unused
-	MinimalEnumeratedHeader       header;
-	MinimalEnumeratedLiteralSeq   literal_seq;
+    EnumTypeFlag                  enum_flags; // unused
+    MinimalEnumeratedHeader       header;
+    MinimalEnumeratedLiteralSeq   literal_seq;
 };*/
 class MinimalEnumeratedType
 {
@@ -2489,8 +2487,8 @@ private:
 // --- Bitmask: -------------------------------------------------------
 // Bit in a bit mask
 /*struct CommonBitflag final{
-	uint16_t         position;
-	BitflagFlag            flags;
+    uint16_t         position;
+    BitflagFlag            flags;
 };*/
 class CommonBitflag final
 {
@@ -2528,8 +2526,8 @@ private:
 };
 
 /*struct CompleteBitflag {
-	CommonBitflag          common;
-	CompleteMemberDetail   detail;
+    CommonBitflag          common;
+    CompleteMemberDetail   detail;
 };*/
 class CompleteBitflag
 {
@@ -2568,8 +2566,8 @@ private:
 // Ordered by Bitflag.position
 typedef std::vector<CompleteBitflag> CompleteBitflagSeq;
 /*struct MinimalBitflag {
-	CommonBitflag        common;
-	MinimalMemberDetail  detail;
+    CommonBitflag        common;
+    MinimalMemberDetail  detail;
 };*/
 class MinimalBitflag
 {
@@ -2610,7 +2608,7 @@ private:
 typedef std::vector<MinimalBitflag> MinimalBitflagSeq;
 
 /*struct CommonBitmaskHeader final{
-	BitBound             bit_bound;
+    BitBound             bit_bound;
 };*/
 class CommonBitmaskHeader final
 {
@@ -2644,9 +2642,9 @@ typedef CompleteEnumeratedHeader CompleteBitmaskHeader;
 
 typedef MinimalEnumeratedHeader  MinimalBitmaskHeader;
 /*struct CompleteBitmaskType {
-	BitmaskTypeFlag          bitmask_flags; // unused
-	CompleteBitmaskHeader    header;
-	CompleteBitflagSeq       flag_seq;
+    BitmaskTypeFlag          bitmask_flags; // unused
+    CompleteBitmaskHeader    header;
+    CompleteBitflagSeq       flag_seq;
 };*/
 class CompleteBitmaskType
 {
@@ -2690,9 +2688,9 @@ private:
 };
 
 /*struct MinimalBitmaskType {
-	BitmaskTypeFlag          bitmask_flags; // unused
-	MinimalBitmaskHeader     header;
-	MinimalBitflagSeq        flag_seq;
+    BitmaskTypeFlag          bitmask_flags; // unused
+    MinimalBitmaskHeader     header;
+    MinimalBitflagSeq        flag_seq;
 };*/
 class MinimalBitmaskType
 {
@@ -2737,10 +2735,10 @@ private:
 
 // --- Bitset: ---------------------------------------------------------
 /*struct CommonBitfield final{
-	uint16_t        position;
-	BitsetMemberFlag      flags;
-	octet                 bitcount;
-	TypeKind              holder_type; // Must be primitive integer type
+    uint16_t        position;
+    BitsetMemberFlag      flags;
+    octet                 bitcount;
+    TypeKind              holder_type; // Must be primitive integer type
 };*/
 class CommonBitfield final
 {
@@ -2790,8 +2788,8 @@ private:
 };
 
 /*struct CompleteBitfield {
-	CommonBitfield           common;
-	CompleteMemberDetail     detail;
+    CommonBitfield           common;
+    CompleteMemberDetail     detail;
 };*/
 class CompleteBitfield
 {
@@ -2830,8 +2828,8 @@ private:
 // Ordered by Bitfield.position
 typedef std::vector<CompleteBitfield> CompleteBitfieldSeq;
 /*struct MinimalBitfield {
-	CommonBitfield       common;
-	NameHash             name_hash;
+    CommonBitfield       common;
+    NameHash             name_hash;
 };*/
 class MinimalBitfield
 {
@@ -2870,7 +2868,7 @@ private:
 // Ordered by Bitfield.position
 typedef std::vector<MinimalBitfield> MinimalBitfieldSeq;
 /*struct CompleteBitsetHeader {
-	CompleteTypeDetail   detail;
+    CompleteTypeDetail   detail;
 };*/
 class CompleteBitsetHeader
 {
@@ -2908,7 +2906,7 @@ private:
 };
 
 /*struct MinimalBitsetHeader {
-	// Empty. Available for future extension
+    // Empty. Available for future extension
 };*/
 class MinimalBitsetHeader
 {
@@ -2939,9 +2937,9 @@ private:
     TypeIdentifier m_base_type;
 };
 /*struct CompleteBitsetType  {
-	BitsetTypeFlag         bitset_flags; // unused
-	CompleteBitsetHeader   header;
-	CompleteBitfieldSeq    field_seq;
+    BitsetTypeFlag         bitset_flags; // unused
+    CompleteBitsetHeader   header;
+    CompleteBitfieldSeq    field_seq;
 };*/
 class CompleteBitsetType
 {
@@ -2985,9 +2983,9 @@ private:
 };
 
 /*struct MinimalBitsetType  {
-	BitsetTypeFlag       bitset_flags; // unused
-	MinimalBitsetHeader  header;
-	MinimalBitfieldSeq   field_seq;
+    BitsetTypeFlag       bitset_flags; // unused
+    MinimalBitsetHeader  header;
+    MinimalBitfieldSeq   field_seq;
 };*/
 class MinimalBitsetType
 {
@@ -3035,7 +3033,7 @@ private:
 // kind APPENDABLE or MUTABLE so that they can be extended in the future
 
 /*struct CompleteExtendedType {
-	// Empty. Available for future extension
+    // Empty. Available for future extension
 };*/
 class CompleteExtendedType
 {
@@ -3061,7 +3059,7 @@ private:
 };
 
 /*struct MinimalExtendedType  {
-	// Empty. Available for future extension
+    // Empty. Available for future extension
 };*/
 class MinimalExtendedType
 {
@@ -3412,8 +3410,8 @@ typedef std::vector<TypeObject> TypeObjectSeq;
 typedef TypeObjectSeq        StronglyConnectedComponent;
 
 /*struct TypeIdentifierTypeObjectPair final {
-	TypeIdentifier  type_identifier;
-	TypeObject      type_object;
+    TypeIdentifier  type_identifier;
+    TypeObject      type_object;
 };*/
 class TypeIdentifierTypeObjectPair final
 {
@@ -3446,8 +3444,8 @@ private:
 typedef std::vector<TypeIdentifierTypeObjectPair> TypeIdentifierTypeObjectPairSeq;
 
 /*struct TypeIdentifierPair final {
-	TypeIdentifier  type_identifier1;
-	TypeIdentifier  type_identifier2;
+    TypeIdentifier  type_identifier1;
+    TypeIdentifier  type_identifier2;
 };*/
 class TypeIdentifierPair final
 {
@@ -3480,8 +3478,8 @@ private:
 
 typedef std::vector<TypeIdentifierPair> TypeIdentifierPairSeq;
 /*struct TypeIdentifierWithSize {
-	TypeIdentifier  type_id;
-	uint32_t                typeobject_serialized_size;
+    TypeIdentifier  type_id;
+    uint32_t                typeobject_serialized_size;
 };*/
 class TypeIdentifierWithSize
 {
@@ -3515,10 +3513,10 @@ private:
 typedef std::vector<TypeIdentifierWithSize> TypeIdentifierWithSizeSeq;
 
 /*struct TypeIdentifierWithDependencies {
-	TypeIdentifierWithSize            typeid_with_size;
-	// The total additional types related to minimal_type
-	int32_t                             dependent_typeid_count;
-	TypeIdentifierWithSizeSeq  dependent_typeids;
+    TypeIdentifierWithSize            typeid_with_size;
+    // The total additional types related to minimal_type
+    int32_t                             dependent_typeid_count;
+    TypeIdentifierWithSizeSeq  dependent_typeids;
 };*/
 class TypeIdentifierWithDependencies
 {
@@ -3562,8 +3560,8 @@ typedef    std::vector<TypeIdentifierWithDependencies> TypeIdentifierWithDepende
 // and SubscriptionBuiltinTopicData
 
 /*struct TypeInformation  {
-	TypeIdentifierWithDependencies minimal; // @id{0x1001}
-	TypeIdentifierWithDependencies complete; // @id{0x1002}
+    TypeIdentifierWithDependencies minimal; // @id{0x1001}
+    TypeIdentifierWithDependencies complete; // @id{0x1002}
 };*/
 class TypeInformation
 {

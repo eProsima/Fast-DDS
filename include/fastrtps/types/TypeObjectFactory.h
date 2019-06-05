@@ -37,6 +37,7 @@ protected:
     std::map<const std::string, const TypeIdentifier*> complete_identifiers_; // Only EK_COMPLETE
     std::map<const TypeIdentifier*, const TypeObject*> objects_; // EK_MINIMAL
     std::map<const TypeIdentifier*, const TypeObject*> complete_objects_; // EK_COMPLETE
+    mutable std::map<const TypeIdentifier*, TypeInformation*> informations_;
     std::map<std::string, std::string> aliases_; // Aliases
 
     DynamicType_ptr build_dynamic_type(
@@ -67,13 +68,11 @@ protected:
 
     void fill_minimal_information(
             TypeInformation* info,
-            const TypeIdentifier* ident,
-            const TypeObject* obj) const;
+            const TypeIdentifier* ident) const;
 
     void fill_complete_information(
             TypeInformation* info,
-            const TypeIdentifier* ident,
-            const TypeObject* obj) const;
+            const TypeIdentifier* ident) const;
 
 public:
     RTPS_DllAPI static TypeObjectFactory* get_instance();

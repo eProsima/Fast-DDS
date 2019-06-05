@@ -42,8 +42,6 @@ namespace fastrtps{
 
 class TypeConsistencyEnforcementQosPolicy;
 
-using namespace rtps;
-
 namespace types{
 
 

@@ -975,7 +975,7 @@ class TypeInformation;
 
 namespace XTypes {
 
-class TypeInformation : private Parameter_t, public QosPolicy
+class TypeInformation : public Parameter_t, public QosPolicy
 {
 public:
     RTPS_DllAPI TypeInformation() : Parameter_t(PID_TYPE_INFORMATION, 0), QosPolicy(false)

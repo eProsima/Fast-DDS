@@ -749,9 +749,9 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                 }
                 case PID_TYPE_INFORMATION:
                 {
-                    XTypes::TypeInformation * p = new XTypes::TypeInformation();
-                    valid &= p->readFromCDRMessage(msg, plength);
-                    IF_VALID_ADD
+                    XTypes::TypeInformation p;
+                    valid &= p.readFromCDRMessage(&msg, plength);
+                    IF_VALID_CALL
                 }
 
 #if HAVE_SECURITY

@@ -35,9 +35,6 @@ using namespace eprosima::fastcdr::exception;
 
 namespace eprosima{
 namespace fastrtps{
-
-using namespace rtps;
-
 namespace types{
 
 

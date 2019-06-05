@@ -386,7 +386,7 @@ void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
     }
 }
 
-bool PublisherImpl::wait_for_all_acked(const eprosima::fastrtps::Time_t& max_wait)
+bool PublisherImpl::wait_for_all_acked(const eprosima::fastrtps::Duration_t& max_wait)
 {
     return mp_writer->wait_for_all_acked(max_wait);
 }

@@ -1400,8 +1400,8 @@ bool TypeIdentifier::consistent(const TypeIdentifier &x,
                 return false;
             }
 
-            const TypeObject* localObj = TypeObjectFactory::GetInstance()->GetTypeObject(this);
-            const TypeObject* remoteObj = TypeObjectFactory::GetInstance()->GetTypeObject(&x);
+            const TypeObject* localObj = TypeObjectFactory::get_instance()->get_type_object(this);
+            const TypeObject* remoteObj = TypeObjectFactory::get_instance()->get_type_object(&x);
             if (localObj == nullptr)
             {
                 logWarning(XTYPES, "Local TypeIdentifier doesn't have a related TypeObject");

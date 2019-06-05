@@ -215,8 +215,8 @@ const TypeInformation* TypeObjectFactory::get_type_information(
     TypeInformation *information = nullptr;
     if (min_identifier != nullptr)
     {
-        auto innerInfo = m_Informations.find(min_identifier);
-        if (innerInfo != m_Informations.end())
+        auto innerInfo = informations_.find(min_identifier);
+        if (innerInfo != informations_.end())
         {
             information = innerInfo->second;
         }
@@ -232,8 +232,8 @@ const TypeInformation* TypeObjectFactory::get_type_information(
     {
         if (information == nullptr)
         {
-            auto innerInfo = m_Informations.find(comp_identifier);
-            if (innerInfo != m_Informations.end())
+            auto innerInfo = informations_.find(comp_identifier);
+            if (innerInfo != informations_.end())
             {
                 information = innerInfo->second;
             }
@@ -254,7 +254,7 @@ void TypeObjectFactory::fill_minimal_information(
         const TypeIdentifier* ident) const
 {
     info->minimal().typeid_with_size().type_id(*ident);
-    const TypeObject* obj = GetTypeObject(ident);
+    const TypeObject* obj = get_type_object(ident);
 
     if (obj == nullptr)
     {
@@ -292,63 +292,63 @@ void TypeObjectFactory::fill_minimal_information(
         case TK_SEQUENCE:
         {
             info->minimal().dependent_typeid_count(1);
-            const TypeIdentifier *innerId = GetStoredTypeIdentifier(
+            const TypeIdentifier *innerId = get_stored_type_identifier(
                 &obj->minimal().sequence_type().element().common().type());
-            auto innerInfo = m_Informations.find(innerId);
-            if (innerInfo != m_Informations.end())
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
             {
                 info->minimal().dependent_typeids().push_back(innerInfo->second->minimal().typeid_with_size());
             }
             else
             {
                 TypeInformation *information = new TypeInformation();
-                FillCompleteInformation(information, innerId);
+                fill_complete_information(information, innerId);
             }
             break;
         }
         case TK_ARRAY:
         {
             info->minimal().dependent_typeid_count(1);
-            const TypeIdentifier *innerId = GetStoredTypeIdentifier(
+            const TypeIdentifier *innerId = get_stored_type_identifier(
                 &obj->minimal().array_type().element().common().type());
-            auto innerInfo = m_Informations.find(innerId);
-            if (innerInfo != m_Informations.end())
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
             {
                 info->minimal().dependent_typeids().push_back(innerInfo->second->minimal().typeid_with_size());
             }
             else
             {
                 TypeInformation *information = new TypeInformation();
-                FillCompleteInformation(information, innerId);
+                fill_complete_information(information, innerId);
             }
             break;
         }
         case TK_MAP:
         {
             info->minimal().dependent_typeid_count(2);
-            const TypeIdentifier *innerId = GetStoredTypeIdentifier(
+            const TypeIdentifier *innerId = get_stored_type_identifier(
                 &obj->minimal().map_type().element().common().type());
-            auto innerInfo = m_Informations.find(innerId);
-            if (innerInfo != m_Informations.end())
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
             {
                 info->minimal().dependent_typeids().push_back(innerInfo->second->minimal().typeid_with_size());
             }
             else
             {
                 TypeInformation *information = new TypeInformation();
-                FillCompleteInformation(information, innerId);
+                fill_complete_information(information, innerId);
             }
-            const TypeIdentifier *keyId = GetStoredTypeIdentifier(
+            const TypeIdentifier *keyId = get_stored_type_identifier(
                 &obj->minimal().map_type().key().common().type());
-            auto keyInfo = m_Informations.find(keyId);
-            if (keyInfo != m_Informations.end())
+            auto keyInfo = informations_.find(keyId);
+            if (keyInfo != informations_.end())
             {
                 info->minimal().dependent_typeids().push_back(keyInfo->second->minimal().typeid_with_size());
             }
             else
             {
                 TypeInformation *information = new TypeInformation();
-                FillCompleteInformation(information, keyId);
+                fill_complete_information(information, keyId);
             }
             break;
         }
@@ -358,17 +358,17 @@ void TypeObjectFactory::fill_minimal_information(
                 case TK_ALIAS:
                 {
                     info->minimal().dependent_typeid_count(1);
-                    const TypeIdentifier *innerId = GetStoredTypeIdentifier(
+                    const TypeIdentifier *innerId = get_stored_type_identifier(
                         &obj->minimal().alias_type().body().common().related_type());
-                    auto keyInfo = m_Informations.find(innerId);
-                    if (keyInfo != m_Informations.end())
+                    auto keyInfo = informations_.find(innerId);
+                    if (keyInfo != informations_.end())
                     {
                         info->minimal().dependent_typeids().push_back(keyInfo->second->minimal().typeid_with_size());
                     }
                     else
                     {
                         TypeInformation *information = new TypeInformation();
-                        FillCompleteInformation(information, innerId);
+                        fill_complete_information(information, innerId);
                     }
                     break;
                 }
@@ -377,10 +377,10 @@ void TypeObjectFactory::fill_minimal_information(
                     const MinimalStructMemberSeq& members = obj->minimal().struct_type().member_seq();
                     for (auto member = members.begin(); member != members.end(); ++member)
                     {
-                        const TypeIdentifier *innerId = GetStoredTypeIdentifier(
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
                             &member->common().member_type_id());
-                        auto memberType = m_Informations.find(innerId);
-                        if (memberType != m_Informations.end())
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
                         {
                             info->minimal().dependent_typeids().push_back(
                                 memberType->second->minimal().typeid_with_size());
@@ -388,7 +388,7 @@ void TypeObjectFactory::fill_minimal_information(
                         else
                         {
                             TypeInformation *information = new TypeInformation();
-                            FillCompleteInformation(information, innerId);
+                            fill_complete_information(information, innerId);
                         }
                     }
                     info->minimal().dependent_typeid_count(members.size());
@@ -408,10 +408,10 @@ void TypeObjectFactory::fill_minimal_information(
                     const MinimalUnionMemberSeq& members = obj->minimal().union_type().member_seq();
                     for (auto member = members.begin(); member != members.end(); ++member)
                     {
-                        const TypeIdentifier *innerId = GetStoredTypeIdentifier(
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
                             &member->common().type_id());
-                        auto memberType = m_Informations.find(innerId);
-                        if (memberType != m_Informations.end())
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
                         {
                             info->minimal().dependent_typeids().push_back(
                                 memberType->second->minimal().typeid_with_size());
@@ -419,20 +419,20 @@ void TypeObjectFactory::fill_minimal_information(
                         else
                         {
                             TypeInformation *information = new TypeInformation();
-                            FillCompleteInformation(information, innerId);
+                            fill_complete_information(information, innerId);
                         }
                     }
-                    const TypeIdentifier *descId = GetStoredTypeIdentifier(
+                    const TypeIdentifier *descId = get_stored_type_identifier(
                         &obj->minimal().union_type().discriminator().common().type_id());
-                    auto descInfo = m_Informations.find(descId);
-                    if (descInfo != m_Informations.end())
+                    auto descInfo = informations_.find(descId);
+                    if (descInfo != informations_.end())
                     {
                         info->minimal().dependent_typeids().push_back(descInfo->second->minimal().typeid_with_size());
                     }
                     else
                     {
                         TypeInformation *information = new TypeInformation();
-                        FillCompleteInformation(information, descId);
+                        fill_complete_information(information, descId);
                     }
                     info->minimal().dependent_typeid_count(members.size() + 1);
                     break;
@@ -446,15 +446,15 @@ void TypeObjectFactory::fill_minimal_information(
             // Cannot happen
             break;
     }
-    m_Informations[ident] = info;
+    informations_[ident] = info;
 }
 
 void TypeObjectFactory::fill_complete_information(
         TypeInformation *info,
-        const TypeIdentifier* ident)
+        const TypeIdentifier* ident) const
 {
     info->complete().typeid_with_size().type_id(*ident);
-    const TypeObject* obj = GetTypeObject(ident);
+    const TypeObject* obj = get_type_object(ident);
 
     if (obj == nullptr)
     {
@@ -492,63 +492,63 @@ void TypeObjectFactory::fill_complete_information(
         case TK_SEQUENCE:
         {
             info->complete().dependent_typeid_count(1);
-            const TypeIdentifier *innerId = GetStoredTypeIdentifier(
+            const TypeIdentifier *innerId = get_stored_type_identifier(
                 &obj->complete().sequence_type().element().common().type());
-            auto innerInfo = m_Informations.find(innerId);
-            if (innerInfo != m_Informations.end())
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
             {
                 info->complete().dependent_typeids().push_back(innerInfo->second->complete().typeid_with_size());
             }
             else
             {
                 TypeInformation *information = new TypeInformation();
-                FillCompleteInformation(information, innerId);
+                fill_complete_information(information, innerId);
             }
             break;
         }
         case TK_ARRAY:
         {
             info->complete().dependent_typeid_count(1);
-            const TypeIdentifier *innerId = GetStoredTypeIdentifier(
+            const TypeIdentifier *innerId = get_stored_type_identifier(
                 &obj->complete().array_type().element().common().type());
-            auto innerInfo = m_Informations.find(innerId);
-            if (innerInfo != m_Informations.end())
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
             {
                 info->complete().dependent_typeids().push_back(innerInfo->second->complete().typeid_with_size());
             }
             else
             {
                 TypeInformation *information = new TypeInformation();
-                FillCompleteInformation(information, innerId);
+                fill_complete_information(information, innerId);
             }
             break;
         }
         case TK_MAP:
         {
             info->complete().dependent_typeid_count(2);
-            const TypeIdentifier *innerId = GetStoredTypeIdentifier(
+            const TypeIdentifier *innerId = get_stored_type_identifier(
                 &obj->complete().map_type().element().common().type());
-            auto innerInfo = m_Informations.find(innerId);
-            if (innerInfo != m_Informations.end())
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
             {
                 info->complete().dependent_typeids().push_back(innerInfo->second->complete().typeid_with_size());
             }
             else
             {
                 TypeInformation *information = new TypeInformation();
-                FillCompleteInformation(information, innerId);
+                fill_complete_information(information, innerId);
             }
-            const TypeIdentifier *keyId = GetStoredTypeIdentifier(
+            const TypeIdentifier *keyId = get_stored_type_identifier(
                 &obj->complete().map_type().key().common().type());
-            auto keyInfo = m_Informations.find(keyId);
-            if (keyInfo != m_Informations.end())
+            auto keyInfo = informations_.find(keyId);
+            if (keyInfo != informations_.end())
             {
                 info->complete().dependent_typeids().push_back(keyInfo->second->complete().typeid_with_size());
             }
             else
             {
                 TypeInformation *information = new TypeInformation();
-                FillCompleteInformation(information, keyId);
+                fill_complete_information(information, keyId);
             }
             break;
         }
@@ -558,17 +558,17 @@ void TypeObjectFactory::fill_complete_information(
                 case TK_ALIAS:
                 {
                     info->minimal().dependent_typeid_count(1);
-                    const TypeIdentifier *innerId = GetStoredTypeIdentifier(
+                    const TypeIdentifier *innerId = get_stored_type_identifier(
                         &obj->minimal().alias_type().body().common().related_type());
-                    auto keyInfo = m_Informations.find(innerId);
-                    if (keyInfo != m_Informations.end())
+                    auto keyInfo = informations_.find(innerId);
+                    if (keyInfo != informations_.end())
                     {
                         info->minimal().dependent_typeids().push_back(keyInfo->second->minimal().typeid_with_size());
                     }
                     else
                     {
                         TypeInformation *information = new TypeInformation();
-                        FillCompleteInformation(information, innerId);
+                        fill_complete_information(information, innerId);
                     }
                     break;
                 }
@@ -577,10 +577,10 @@ void TypeObjectFactory::fill_complete_information(
                     const MinimalStructMemberSeq& members = obj->minimal().struct_type().member_seq();
                     for (auto member = members.begin(); member != members.end(); ++member)
                     {
-                        const TypeIdentifier *innerId = GetStoredTypeIdentifier(
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
                             &member->common().member_type_id());
-                        auto memberType = m_Informations.find(innerId);
-                        if (memberType != m_Informations.end())
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
                         {
                             info->minimal().dependent_typeids().push_back(
                                 memberType->second->minimal().typeid_with_size());
@@ -588,7 +588,7 @@ void TypeObjectFactory::fill_complete_information(
                         else
                         {
                             TypeInformation *information = new TypeInformation();
-                            FillCompleteInformation(information, innerId);
+                            fill_complete_information(information, innerId);
                         }
                     }
                     info->minimal().dependent_typeid_count(members.size());
@@ -608,10 +608,10 @@ void TypeObjectFactory::fill_complete_information(
                     const MinimalUnionMemberSeq& members = obj->minimal().union_type().member_seq();
                     for (auto member = members.begin(); member != members.end(); ++member)
                     {
-                        const TypeIdentifier *innerId = GetStoredTypeIdentifier(
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
                             &member->common().type_id());
-                        auto memberType = m_Informations.find(innerId);
-                        if (memberType != m_Informations.end())
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
                         {
                             info->minimal().dependent_typeids().push_back(
                                 memberType->second->minimal().typeid_with_size());
@@ -619,20 +619,20 @@ void TypeObjectFactory::fill_complete_information(
                         else
                         {
                             TypeInformation *information = new TypeInformation();
-                            FillCompleteInformation(information, innerId);
+                            fill_complete_information(information, innerId);
                         }
                     }
-                    const TypeIdentifier *descId = GetStoredTypeIdentifier(
+                    const TypeIdentifier *descId = get_stored_type_identifier(
                         &obj->minimal().union_type().discriminator().common().type_id());
-                    auto descInfo = m_Informations.find(descId);
-                    if (descInfo != m_Informations.end())
+                    auto descInfo = informations_.find(descId);
+                    if (descInfo != informations_.end())
                     {
                         info->minimal().dependent_typeids().push_back(descInfo->second->minimal().typeid_with_size());
                     }
                     else
                     {
                         TypeInformation *information = new TypeInformation();
-                        FillCompleteInformation(information, descId);
+                        fill_complete_information(information, descId);
                     }
                     info->minimal().dependent_typeid_count(members.size() + 1);
                     break;
@@ -648,17 +648,17 @@ void TypeObjectFactory::fill_complete_information(
                 case TK_ALIAS:
                 {
                     info->complete().dependent_typeid_count(1);
-                    const TypeIdentifier *innerId = GetStoredTypeIdentifier(
+                    const TypeIdentifier *innerId = get_stored_type_identifier(
                         &obj->complete().alias_type().body().common().related_type());
-                    auto keyInfo = m_Informations.find(innerId);
-                    if (keyInfo != m_Informations.end())
+                    auto keyInfo = informations_.find(innerId);
+                    if (keyInfo != informations_.end())
                     {
                         info->complete().dependent_typeids().push_back(keyInfo->second->complete().typeid_with_size());
                     }
                     else
                     {
                         TypeInformation *information = new TypeInformation();
-                        FillCompleteInformation(information, innerId);
+                        fill_complete_information(information, innerId);
                     }
                     break;
                 }
@@ -667,10 +667,10 @@ void TypeObjectFactory::fill_complete_information(
                     const CompleteStructMemberSeq& members = obj->complete().struct_type().member_seq();
                     for (auto member = members.begin(); member != members.end(); ++member)
                     {
-                        const TypeIdentifier *innerId = GetStoredTypeIdentifier(
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
                             &member->common().member_type_id());
-                        auto memberType = m_Informations.find(innerId);
-                        if (memberType != m_Informations.end())
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
                         {
                             info->complete().dependent_typeids().push_back(
                                 memberType->second->complete().typeid_with_size());
@@ -678,7 +678,7 @@ void TypeObjectFactory::fill_complete_information(
                         else
                         {
                             TypeInformation *information = new TypeInformation();
-                            FillCompleteInformation(information, innerId);
+                            fill_complete_information(information, innerId);
                         }
                     }
                     info->complete().dependent_typeid_count(members.size());
@@ -698,10 +698,10 @@ void TypeObjectFactory::fill_complete_information(
                     const CompleteUnionMemberSeq& members = obj->complete().union_type().member_seq();
                     for (auto member = members.begin(); member != members.end(); ++member)
                     {
-                        const TypeIdentifier *innerId = GetStoredTypeIdentifier(
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
                             &member->common().type_id());
-                        auto memberType = m_Informations.find(innerId);
-                        if (memberType != m_Informations.end())
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
                         {
                             info->complete().dependent_typeids().push_back(
                                 memberType->second->complete().typeid_with_size());
@@ -709,20 +709,20 @@ void TypeObjectFactory::fill_complete_information(
                         else
                         {
                             TypeInformation *information = new TypeInformation();
-                            FillCompleteInformation(information, innerId);
+                            fill_complete_information(information, innerId);
                         }
                     }
-                    const TypeIdentifier *descId = GetStoredTypeIdentifier(
+                    const TypeIdentifier *descId = get_stored_type_identifier(
                         &obj->complete().union_type().discriminator().common().type_id());
-                    auto descInfo = m_Informations.find(descId);
-                    if (descInfo != m_Informations.end())
+                    auto descInfo = informations_.find(descId);
+                    if (descInfo != informations_.end())
                     {
                         info->complete().dependent_typeids().push_back(descInfo->second->complete().typeid_with_size());
                     }
                     else
                     {
                         TypeInformation *information = new TypeInformation();
-                        FillCompleteInformation(information, descId);
+                        fill_complete_information(information, descId);
                     }
                     info->complete().dependent_typeid_count(members.size() + 1);
                     break;
@@ -733,7 +733,7 @@ void TypeObjectFactory::fill_complete_information(
             }
             break;
     }
-    m_Informations[ident] = info;
+    informations_[ident] = info;
 }
 
 const TypeObject* TypeObjectFactory::get_type_object(const std::string& type_name, bool complete) const

@@ -367,7 +367,7 @@ bool TypeObjectV1::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 
 bool XTypes::TypeInformation::addToCDRMessage(CDRMessage_t* msg)
 {
-    size_t size = types::TypeInformation::getCdrSerializedSize(*m_type_information) + 4;
+    size_t size = types::TypeInformation::getCdrSerializedSize(type_information) + 4;
     SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
@@ -377,7 +377,7 @@ bool XTypes::TypeInformation::addToCDRMessage(CDRMessage_t* msg)
 
     ser.serialize_encapsulation();
 
-    m_type_information->serialize(ser);
+    type_information.serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
 
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
@@ -403,7 +403,7 @@ bool XTypes::TypeInformation::readFromCDRMessage(CDRMessage_t* msg, uint32_t siz
 
     try
     {
-        m_type_information->deserialize(deser);
+        type_information.deserialize(deser);
     }
     catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {

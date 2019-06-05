@@ -54,7 +54,7 @@ public:
                (this->m_groupData == b.m_groupData) &&
                (this->m_durabilityService == b.m_durabilityService) &&
                (this->m_lifespan == b.m_lifespan) &&
-               (this->m_disablePositiveACKs == b.m_disablePositiveACKs)
+               (this->m_disablePositiveACKs == b.m_disablePositiveACKs) &&
                (this->m_dataRepresentation == b.m_dataRepresentation);
     }
 
@@ -94,12 +94,12 @@ public:
     TypeConsistencyEnforcementQosPolicy m_typeConsistency;
     //!Disable positive ACKs QoS
     DisablePositiveACKsQosPolicy m_disablePositiveACKs;
-	//!Type Identifier XTYPES 1.1
-	TypeIdV1 type_id;
-	//!Type Object XTYPES 1.1
-	TypeObjectV1 type;
-	//!XTYPES 1.2
-	XTypes::TypeInformation type_information;
+    //!Type Identifier XTYPES 1.1
+    TypeIdV1 type_id;
+    //!Type Object XTYPES 1.1
+    TypeObjectV1 type;
+    //!XTYPES 1.2
+    XTypes::TypeInformation type_information;
     /**
      * Set Qos from another class
      * @param readerqos Reference from a ReaderQos object.

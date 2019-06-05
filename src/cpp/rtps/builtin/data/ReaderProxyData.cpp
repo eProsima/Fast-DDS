@@ -213,7 +213,7 @@ bool ReaderProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
     {
         if (!m_qos.m_timeBasedFilter.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_disablePositiveACKs.sendAlways() || m_qos.m_disablePositiveACKs.hasChanged)
+    if(m_qos.m_disablePositiveACKs.sendAlways() || m_qos.m_disablePositiveACKs.hasChanged())
     {
         if (!m_qos.m_disablePositiveACKs.addToCDRMessage(msg))
         {
@@ -473,7 +473,8 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
             }
             case PID_TYPE_INFORMATION:
             {
-                XTypes::TypeInformation * p = (XTypes::TypeInformation*)(*it);
+                const XTypes::TypeInformation* p = dynamic_cast<const XTypes::TypeInformation*>(param);
+                assert(p != nullptr);
                 m_type_information = *p;
                 break;
             }

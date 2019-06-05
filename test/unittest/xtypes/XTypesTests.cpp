@@ -32,7 +32,7 @@ class XTypesTests: public ::testing::Test
 
         ~XTypesTests()
         {
-            TypeObjectFactory::DeleteInstance();
+            TypeObjectFactory::delete_instance();
             Log::KillThread();
         }
 

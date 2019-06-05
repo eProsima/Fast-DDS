@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file WideEnumTypeObject.cpp
  * This source file contains the definition of the described types in the IDL file.
  *
@@ -39,32 +39,32 @@ using namespace eprosima::fastrtps::rtps;
 
 void registerWideEnumTypes()
 {
-    TypeObjectFactory *factory = TypeObjectFactory::GetInstance();
-    factory->AddTypeObject("MyEnumWide", GetMyEnumWideIdentifier(true), GetMyEnumWideObject(true));
-    factory->AddTypeObject("MyEnumWide", GetMyEnumWideIdentifier(false), GetMyEnumWideObject(false));
-    factory->AddTypeObject("MyEnumWideStruct", GetMyEnumWideStructIdentifier(true), GetMyEnumWideStructObject(true));
-    factory->AddTypeObject("MyEnumWideStruct", GetMyEnumWideStructIdentifier(false), GetMyEnumWideStructObject(false));
-    factory->AddTypeObject("SimpleWideUnion", GetSimpleWideUnionIdentifier(true), GetSimpleWideUnionObject(true));
-    factory->AddTypeObject("SimpleWideUnion", GetSimpleWideUnionIdentifier(false), GetSimpleWideUnionObject(false));
-    factory->AddTypeObject("SimpleWideUnionStruct", GetSimpleWideUnionStructIdentifier(true), GetSimpleWideUnionStructObject(true));
-    factory->AddTypeObject("SimpleWideUnionStruct", GetSimpleWideUnionStructIdentifier(false), GetSimpleWideUnionStructObject(false));
+    TypeObjectFactory *factory = TypeObjectFactory::get_instance();
+    factory->add_type_object("MyEnumWide", GetMyEnumWideIdentifier(true), GetMyEnumWideObject(true));
+    factory->add_type_object("MyEnumWide", GetMyEnumWideIdentifier(false), GetMyEnumWideObject(false));
+    factory->add_type_object("MyEnumWideStruct", GetMyEnumWideStructIdentifier(true), GetMyEnumWideStructObject(true));
+    factory->add_type_object("MyEnumWideStruct", GetMyEnumWideStructIdentifier(false), GetMyEnumWideStructObject(false));
+    factory->add_type_object("SimpleWideUnion", GetSimpleWideUnionIdentifier(true), GetSimpleWideUnionObject(true));
+    factory->add_type_object("SimpleWideUnion", GetSimpleWideUnionIdentifier(false), GetSimpleWideUnionObject(false));
+    factory->add_type_object("SimpleWideUnionStruct", GetSimpleWideUnionStructIdentifier(true), GetSimpleWideUnionStructObject(true));
+    factory->add_type_object("SimpleWideUnionStruct", GetSimpleWideUnionStructIdentifier(false), GetSimpleWideUnionStructObject(false));
 }
 
 const TypeIdentifier* GetMyEnumWideIdentifier(bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("MyEnumWide", complete);
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MyEnumWide", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetMyEnumWideObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("MyEnumWide", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("MyEnumWide", complete);
 }
 
 const TypeObject* GetMyEnumWideObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyEnumWide", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyEnumWide", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -79,7 +79,7 @@ const TypeObject* GetMyEnumWideObject(bool complete)
 
 const TypeObject* GetMinimalMyEnumWideObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyEnumWide", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyEnumWide", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -189,14 +189,14 @@ const TypeObject* GetMinimalMyEnumWideObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyEnumWide", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("MyEnumWide", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("MyEnumWide", false);
+    return TypeObjectFactory::get_instance()->get_type_object("MyEnumWide", false);
 }
 
 const TypeObject* GetCompleteMyEnumWideObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyEnumWide", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyEnumWide", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -301,26 +301,26 @@ const TypeObject* GetCompleteMyEnumWideObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyEnumWide", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("MyEnumWide", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("MyEnumWide", true);
+    return TypeObjectFactory::get_instance()->get_type_object("MyEnumWide", true);
 }
 
 const TypeIdentifier* GetMyEnumWideStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("MyEnumWideStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MyEnumWideStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetMyEnumWideStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("MyEnumWideStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("MyEnumWideStruct", complete);
 }
 
 const TypeObject* GetMyEnumWideStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyEnumWideStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyEnumWideStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -335,7 +335,7 @@ const TypeObject* GetMyEnumWideStructObject(bool complete)
 
 const TypeObject* GetMinimalMyEnumWideStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyEnumWideStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyEnumWideStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -397,14 +397,14 @@ const TypeObject* GetMinimalMyEnumWideStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyEnumWideStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("MyEnumWideStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("MyEnumWideStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("MyEnumWideStruct", false);
 }
 
 const TypeObject* GetCompleteMyEnumWideStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("MyEnumWideStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyEnumWideStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -467,26 +467,26 @@ const TypeObject* GetCompleteMyEnumWideStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("MyEnumWideStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("MyEnumWideStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("MyEnumWideStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("MyEnumWideStruct", true);
 }
 
 const TypeIdentifier* GetSimpleWideUnionIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("SimpleWideUnion", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("SimpleWideUnion", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetSimpleWideUnionObject(complete);
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("SimpleWideUnion", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("SimpleWideUnion", complete);
 }
 
 const TypeObject* GetSimpleWideUnionObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SimpleWideUnion", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SimpleWideUnion", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -501,7 +501,7 @@ const TypeObject* GetSimpleWideUnionObject(bool complete)
 
 const TypeObject* GetMinimalSimpleWideUnionObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SimpleWideUnion", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SimpleWideUnion", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -525,7 +525,7 @@ const TypeObject* GetMinimalSimpleWideUnionObject()
     type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false);
     type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
 
-    type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier("int32_t", false));
+    type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MemberId memberId = 0;
     MinimalUnionMember mst_first;
@@ -543,7 +543,7 @@ const TypeObject* GetMinimalSimpleWideUnionObject()
         {
             cppType = "longdouble";
         }
-        mst_first.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     mst_first.common().label_seq().emplace_back(A);
@@ -569,7 +569,7 @@ const TypeObject* GetMinimalSimpleWideUnionObject()
         {
             cppType = "longdouble";
         }
-        mst_second.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     mst_second.common().label_seq().emplace_back(B);
@@ -595,7 +595,7 @@ const TypeObject* GetMinimalSimpleWideUnionObject()
         {
             cppType = "longdouble";
         }
-        mst_third.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        mst_third.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     mst_third.common().label_seq().emplace_back(D);
@@ -632,15 +632,15 @@ const TypeObject* GetMinimalSimpleWideUnionObject()
         identifier->equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("SimpleWideUnion", identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("SimpleWideUnion", identifier, type_object);
     delete type_object;
     delete identifier;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("SimpleWideUnion", false);
+    return TypeObjectFactory::get_instance()->get_type_object("SimpleWideUnion", false);
 }
 
 const TypeObject* GetCompleteSimpleWideUnionObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SimpleWideUnion", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SimpleWideUnion", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -666,7 +666,7 @@ const TypeObject* GetCompleteSimpleWideUnionObject()
     type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false);
     type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
 
-    type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier("int32_t", false));
+    type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false));
 
     MemberId memberId = 0;
     CompleteUnionMember cst_first;
@@ -684,7 +684,7 @@ const TypeObject* GetCompleteSimpleWideUnionObject()
         {
             cppType = "longdouble";
         }
-        cst_first.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_first.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_first.common().label_seq().emplace_back(A);
@@ -710,7 +710,7 @@ const TypeObject* GetCompleteSimpleWideUnionObject()
         {
             cppType = "longdouble";
         }
-        cst_second.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_second.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_second.common().label_seq().emplace_back(B);
@@ -736,7 +736,7 @@ const TypeObject* GetCompleteSimpleWideUnionObject()
         {
             cppType = "longdouble";
         }
-        cst_third.common().type_id(*TypeObjectFactory::GetInstance()->GetTypeIdentifier(cppType, false));
+        cst_third.common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
     }
 
     cst_third.common().label_seq().emplace_back(D);
@@ -776,27 +776,27 @@ const TypeObject* GetCompleteSimpleWideUnionObject()
         identifier->equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("SimpleWideUnion", identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("SimpleWideUnion", identifier, type_object);
     delete type_object;
     delete identifier;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("SimpleWideUnion", true);
+    return TypeObjectFactory::get_instance()->get_type_object("SimpleWideUnion", true);
 }
 
 const TypeIdentifier* GetSimpleWideUnionStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::GetInstance()->GetTypeIdentifier("SimpleWideUnionStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("SimpleWideUnionStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
     GetSimpleWideUnionStructObject(complete); // Generated inside
-    return TypeObjectFactory::GetInstance()->GetTypeIdentifier("SimpleWideUnionStruct", complete);
+    return TypeObjectFactory::get_instance()->get_type_identifier("SimpleWideUnionStruct", complete);
 }
 
 const TypeObject* GetSimpleWideUnionStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SimpleWideUnionStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SimpleWideUnionStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -811,7 +811,7 @@ const TypeObject* GetSimpleWideUnionStructObject(bool complete)
 
 const TypeObject* GetMinimalSimpleWideUnionStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SimpleWideUnionStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SimpleWideUnionStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -873,14 +873,14 @@ const TypeObject* GetMinimalSimpleWideUnionStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("SimpleWideUnionStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("SimpleWideUnionStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("SimpleWideUnionStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("SimpleWideUnionStruct", false);
 }
 
 const TypeObject* GetCompleteSimpleWideUnionStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::GetInstance()->GetTypeObject("SimpleWideUnionStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SimpleWideUnionStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -943,7 +943,7 @@ const TypeObject* GetCompleteSimpleWideUnionStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::GetInstance()->AddTypeObject("SimpleWideUnionStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("SimpleWideUnionStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::GetInstance()->GetTypeObject("SimpleWideUnionStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("SimpleWideUnionStruct", true);
 }

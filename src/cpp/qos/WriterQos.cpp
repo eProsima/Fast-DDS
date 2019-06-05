@@ -134,7 +134,7 @@ void WriterQos::setQos(const WriterQos& qos, bool first_time)
     if (first_time)
     {
         m_disablePositiveACKs = qos.m_disablePositiveACKs;
-        m_disablePositiveACKs.hasChanged = true;
+        m_disablePositiveACKs.hasChanged(true);
     }
     // Writers only manages the first element in the list of data representations.
     if (qos.m_dataRepresentation.m_value.size() != m_dataRepresentation.m_value.size() ||

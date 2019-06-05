@@ -219,7 +219,7 @@ bool WriterProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
     {
         if (!m_qos.m_topicData.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_disablePositiveACKs.sendAlways() || m_qos.m_topicData.hasChanged)
+    if(m_qos.m_disablePositiveACKs.sendAlways() || m_qos.m_topicData.hasChanged())
     {
         if (!m_qos.m_disablePositiveACKs.addToCDRMessage(msg))
         {
@@ -478,7 +478,7 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
             }
             case PID_TYPE_INFORMATION:
             {
-                const XTypes::TypeInformation* p = dynamic_cast<XTypes::TypeInformation*>(param);
+                const XTypes::TypeInformation* p = dynamic_cast<const XTypes::TypeInformation*>(param);
                 assert(p != nullptr);
                 m_type_information = *p;
                 break;
@@ -503,14 +503,17 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
 
             case PID_DATA_REPRESENTATION:
             {
-                DataRepresentationQosPolicy* p = (DataRepresentationQosPolicy*)(*it);
+                const DataRepresentationQosPolicy* p = dynamic_cast<const DataRepresentationQosPolicy*>(param);
+                assert(p != nullptr);
                 m_qos.m_dataRepresentation = *p;
                 break;
             }
 
             case PID_TYPE_CONSISTENCY_ENFORCEMENT:
             {
-                TypeConsistencyEnforcementQosPolicy * p = (TypeConsistencyEnforcementQosPolicy*)(*it);
+                const TypeConsistencyEnforcementQosPolicy * p =
+                        dynamic_cast<const TypeConsistencyEnforcementQosPolicy*>(param);
+                assert(p != nullptr);
                 m_qos.m_typeConsistency = *p;
                 break;
             }

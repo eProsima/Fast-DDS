@@ -127,7 +127,7 @@ class PublisherImpl
      */
     TopicDataType* getType() {return mp_type;};
 
-    bool wait_for_all_acked(const Time_t& max_wait);
+    bool wait_for_all_acked(const Duration_t& max_wait);
 
     /**
      * @brief Returns the offered deadline missed status
@@ -138,7 +138,7 @@ class PublisherImpl
     private:
     ParticipantImpl* mp_participant;
     //! Pointer to the associated Data Writer.
-	rtps::RTPSWriter* mp_writer;
+    rtps::RTPSWriter* mp_writer;
     //! Pointer to the TopicDataType object.
     TopicDataType* mp_type;
     //!Attributes of the Publisher
@@ -160,7 +160,7 @@ class PublisherImpl
 
     Publisher* mp_userPublisher;
 
-	rtps::RTPSParticipant* mp_rtpsParticipant;
+    rtps::RTPSParticipant* mp_rtpsParticipant;
 
     uint32_t high_mark_for_frag_;
 
