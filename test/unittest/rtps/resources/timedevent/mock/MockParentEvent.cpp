@@ -26,11 +26,11 @@ MockParentEvent::MockParentEvent(
         unsigned int countUntilDestruction)
     : successed_(0)
     , cancelled_(0)
-    , event_(service, std::bind(&MockParentEvent::callback, this, std::placeholders::_1), milliseconds)
     , mock_(nullptr)
     , sem_count_(0)
     , countUntilDestruction_(countUntilDestruction)
     , currentCount_(0)
+    , event_(service, std::bind(&MockParentEvent::callback, this, std::placeholders::_1), milliseconds)
 {
     mock_ = new MockEvent(service, milliseconds / 2.0, false);
     mock_->event().restart_timer();

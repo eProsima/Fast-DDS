@@ -48,13 +48,13 @@ class MockParentEvent
 
     private:
 
-        eprosima::fastrtps::rtps::TimedEvent event_;
         MockEvent *mock_;
         int sem_count_;
         std::mutex sem_mutex_;
         std::condition_variable sem_cond_;
         unsigned int countUntilDestruction_;
         unsigned int currentCount_;
+        eprosima::fastrtps::rtps::TimedEvent event_;
 };
 
 #endif // _TEST_RTPS_RESOURCES_TIMEDEVENT_MOCKPARENTEVENT_H_

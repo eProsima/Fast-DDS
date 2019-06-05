@@ -48,11 +48,11 @@ class MockEvent
 
     private:
 
-        eprosima::fastrtps::rtps::TimedEvent event_;
         int sem_count_;
         std::mutex sem_mutex_;
         std::condition_variable sem_cond_;
         bool autorestart_;
+        eprosima::fastrtps::rtps::TimedEvent event_;
 };
 
 #endif // _TEST_RTPS_RESOURCES_TIMEDEVENT_MOCKEVENT_H_
