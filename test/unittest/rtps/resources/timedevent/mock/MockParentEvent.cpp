@@ -46,6 +46,8 @@ MockParentEvent::~MockParentEvent()
 
 bool MockParentEvent::callback(TimedEvent::EventCode code)
 {
+    bool restart = false;
+
     if(code == TimedEvent::EventCode::EVENT_SUCCESS)
     {
         successed_.fetch_add(1, std::memory_order_relaxed);
@@ -58,6 +60,8 @@ bool MockParentEvent::callback(TimedEvent::EventCode code)
                 mock_ = nullptr;
             }
         }
+
+        restart = true;
     }
     else if(code == TimedEvent::EventCode::EVENT_ABORT)
         cancelled_.fetch_add(1, std::memory_order_relaxed);
@@ -67,7 +71,7 @@ bool MockParentEvent::callback(TimedEvent::EventCode code)
     sem_mutex_.unlock();
     sem_cond_.notify_one();
 
-    return true;
+    return restart;
 }
 
 void MockParentEvent::wait()

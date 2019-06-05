@@ -226,13 +226,16 @@ TEST(TimedEvent, Event_AutoRestartAndDeleteRandomly)
  * This test checks an event can delete other event while the later is waiting.
  * This test launches an event that internally will destroy other event.
  */
+/* Not permitted in current implementation
 TEST(TimedEvent, ParentEvent_InternallyDeleteEventNonAutoDestruct)
 {
     MockParentEvent event(env->service_, 10, 2);
 
     event.event().restart_timer();
     event.wait();
+    event.wait();
 }
+*/
 
 /*!
  * @brief Auxyliary function to be run in multithread tests.

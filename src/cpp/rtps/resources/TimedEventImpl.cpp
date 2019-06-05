@@ -143,7 +143,7 @@ void TimedEventImpl::event(
 
             if (restart)
             {
-                StateCode expected = StateCode::INACTIVE;
+                expected = StateCode::INACTIVE;
                 if (state_.compare_exchange_strong(expected, StateCode::WAITING))
                 {
                     {
