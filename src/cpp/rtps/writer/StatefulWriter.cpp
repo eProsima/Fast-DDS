@@ -110,15 +110,6 @@ StatefulWriter::~StatefulWriter()
         delete ack_timer_;
     }
 
-    // Stop all active proxies and pass them to the pool
-    while (!matched_readers_.empty())
-    {
-        ReaderProxy* remote_reader = matched_readers_.back();
-        matched_readers_.pop_back();
-        remote_reader->stop();
-        matched_readers_pool_.push_back(remote_reader);
-    }
-
     if(nack_response_event_ != nullptr)
     {
         delete(nack_response_event_);
@@ -132,11 +123,21 @@ StatefulWriter::~StatefulWriter()
         mp_periodicHB = nullptr;
     }
 
+    // Stop all active proxies and pass them to the pool
+    while (!matched_readers_.empty())
+    {
+        ReaderProxy* remote_reader = matched_readers_.back();
+        matched_readers_.pop_back();
+        remote_reader->stop();
+        matched_readers_pool_.push_back(remote_reader);
+    }
+
     // Delete all proxies in the pool
     for (ReaderProxy* remote_reader : matched_readers_pool_)
     {
         delete(remote_reader);
     }
+
 }
 
 /*

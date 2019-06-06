@@ -26,12 +26,6 @@
 namespace eprosima{
 namespace fastrtps{
 
-namespace rtps{
-// 1 fraction = 1/(2^32) seconds
-constexpr long double FRACTION_TO_NANO = 0.23283064365386962890625; // 1000000000 / 4294967296
-constexpr long double NANO_TO_FRACTION = 4.294967296; // 4294967296 / 1000000000
-} // namespace rtps
-
 /**
  * Structure Time_t, used to describe times.
  * @ingroup COMMON_MODULE
