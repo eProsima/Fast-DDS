@@ -223,6 +223,10 @@ class RTPSWithRegistrationReader
             });
         }
 
+        eprosima::fastrtps::rtps::SequenceNumber_t get_last_received_sequence_number() const
+        {
+            return last_seq_;
+        }
 
         void wait_discovery()
         {
@@ -304,7 +308,7 @@ class RTPSWithRegistrationReader
 
             std::cout << "Initializing persistent READER " << reader_attr_.endpoint.persistence_guid << " with file " << filename << std::endl;
 
-            return durability(eprosima::fastrtps::rtps::DurabilityKind_t::PERSISTENT)
+            return durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT)
                 .add_property("dds.persistence.plugin", "builtin.SQLITE3")
                 .add_property("dds.persistence.sqlite3.filename", filename);
         }

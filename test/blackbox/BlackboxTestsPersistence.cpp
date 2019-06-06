@@ -76,6 +76,8 @@ public:
             }
         }
 
+        std::cout << "Last received sequence was " << reader.get_last_received_sequence_number() << std::endl;
+
         std::cout << "Destroying reader..." << std::endl;
         reader.destroy();
         std::cout << "Destroying writer..." << std::endl;
