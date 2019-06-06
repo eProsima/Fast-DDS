@@ -14,6 +14,7 @@
 
 #include <gtest/gtest.h>
 #include <fastrtps/rtps/history/CacheChangePool.h>
+#include <fastrtps/rtps/common/CacheChange.h>
 
 using namespace eprosima::fastrtps::rtps;
 using namespace ::testing;
@@ -23,35 +24,68 @@ class CacheChangePoolAttributes
 {
 public:
     CacheChangePoolAttributes()
-        :   pool_size(10),
-            max_pool_size(0),
-            payload_size(128) {}
+        : pool_size(10)
+        , max_pool_size(0)
+        , payload_size(128)
+        , memory_policy(MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE)
+    {
+    }
 
     CacheChangePoolAttributes(
             int32_t pool_size_,
             int32_t max_pool_size_,
-            uint32_t payload_size_)
-        :   pool_size(pool_size_),
-            max_pool_size(max_pool_size_),
-            payload_size(payload_size_) {}
+            uint32_t payload_size_,
+            MemoryManagementPolicy_t memory_policy_)
+        : pool_size(pool_size_)
+        , max_pool_size(max_pool_size_)
+        , payload_size(payload_size_)
+        , memory_policy(memory_policy_)
+    {
+    }
 
     int32_t pool_size;
     int32_t max_pool_size;
     uint32_t payload_size;
+    MemoryManagementPolicy_t memory_policy;
 
     friend ostream& operator<<(ostream& os, const CacheChangePoolAttributes& attrs) {
-        return os << "[pool_size: " << attrs.pool_size
-                  << ", max_pool_size: " << attrs.max_pool_size
-                  << ", payload_size: " << attrs.payload_size << "]" ;
+        return os << attrs.to_string();
+    }
+
+private:
+    string to_string() const
+    {
+        string memory_policy_str;
+        switch (memory_policy)
+        {
+        case MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE:
+            memory_policy_str = "PREALLOC";
+            break;
+        case MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
+            memory_policy_str = "REALLOC";
+            break;
+        case MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE:
+            memory_policy_str = "DYNAMIC";
+            break;
+        }
+
+        std::stringstream ss;
+        ss << "[pool_size: " << pool_size
+        << ", max_pool_size: " << max_pool_size
+        << ", payload_size: " << payload_size
+        << ", memory_policy: " << memory_policy_str << "]";
+
+        return ss.str();
     }
 };
 
 class CacheChangePoolTests : public TestWithParam<CacheChangePoolAttributes>
 {
 protected:
-    CacheChangePoolTests(MemoryManagementPolicy_t memory_policy_)
-        : pool(nullptr),
-          memory_policy(memory_policy_) {}
+    CacheChangePoolTests()
+        : pool(nullptr)
+    {
+    }
 
     virtual ~CacheChangePoolTests() {}
 
@@ -62,7 +96,7 @@ protected:
                 attrs.pool_size,
                 attrs.payload_size,
                 attrs.max_pool_size,
-                memory_policy);
+                attrs.memory_policy);
     }
 
     virtual void TearDown()
@@ -72,80 +106,87 @@ protected:
 
     CacheChangePoolAttributes attrs;
     CacheChangePool* pool;
-    MemoryManagementPolicy_t memory_policy;
 };
 
-class PreallocatedTests : public CacheChangePoolTests
-{
-public:
-    PreallocatedTests() : CacheChangePoolTests(MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE) {}
-
-    virtual ~PreallocatedTests() {}
-};
-
-class ReallocTests : public CacheChangePoolTests
-{
-public:
-    ReallocTests() : CacheChangePoolTests(MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE) {}
-
-    virtual ~ReallocTests() {}
-};
-
-class DynamicTests : public CacheChangePoolTests
-{
-public:
-    DynamicTests() : CacheChangePoolTests(MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE) {}
-
-    virtual ~DynamicTests() {}
-};
-
-TEST_P(PreallocatedTests, init_pool)
+TEST_P(CacheChangePoolTests, init_pool)
 {
     ASSERT_EQ(pool->getInitialPayloadSize(), attrs.payload_size);
-    ASSERT_EQ(pool->get_allCachesSize(), attrs.pool_size + 1U);
-    ASSERT_EQ(pool->get_freeCachesSize(), attrs.pool_size + 1U);
+
+    size_t expected_size;
+    if (attrs.memory_policy == MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
+    {
+        expected_size = 0;
+    }
+    else {
+        expected_size = static_cast<size_t>(attrs.pool_size + 1U);
+    }
+
+    ASSERT_EQ(pool->get_allCachesSize(), expected_size);
+    ASSERT_EQ(pool->get_freeCachesSize(), expected_size);
 }
 
-TEST_P(ReallocTests, init_pool)
+TEST_P(CacheChangePoolTests, reserve_cache)
 {
-    ASSERT_EQ(pool->getInitialPayloadSize(), attrs.payload_size);
-    ASSERT_EQ(pool->get_allCachesSize(), attrs.pool_size + 1U);
-    ASSERT_EQ(pool->get_freeCachesSize(), attrs.pool_size + 1U);
-}
+    CacheChange_t* ch = nullptr;
 
-TEST_P(DynamicTests, init_pool)
-{
-    ASSERT_EQ(pool->getInitialPayloadSize(), attrs.payload_size);
-    ASSERT_EQ(pool->get_allCachesSize(), 0U);
-    ASSERT_EQ(pool->get_freeCachesSize(), 0U);
+    uint32_t payload = attrs.payload_size;
+    uint32_t pool_size = static_cast<uint32_t>(attrs.pool_size);
+    uint32_t max_pool_size = static_cast<uint32_t>(attrs.max_pool_size);
+
+    uint32_t num_inserts;
+    if (attrs.max_pool_size == 0)
+    {
+        num_inserts = 1000U;
+    }
+    else if (attrs.max_pool_size <= attrs.pool_size)
+    {
+        max_pool_size = pool_size;
+        num_inserts = pool_size + 1;
+    }
+    else // max_pool_size > pool_size
+    {
+        num_inserts = max_pool_size + 1;
+    }
+
+    for (uint32_t i=0; i<num_inserts; i++)
+    {
+        EXPECT_TRUE(pool->reserve_Cache(&ch, payload));
+        EXPECT_EQ(pool->getInitialPayloadSize(), payload);
+        EXPECT_GE(pool->get_freeCachesSize(), 0);
+
+        if(max_pool_size > 0)
+        {
+            EXPECT_LE(pool->get_allCachesSize(), max_pool_size + 1U);
+        }
+    }
+
+    if (max_pool_size == 0)
+    {
+        EXPECT_TRUE(pool->reserve_Cache(&ch, payload));
+    }
+    else
+    {
+        EXPECT_FALSE(pool->reserve_Cache(&ch, payload));
+    }
 }
 
 INSTANTIATE_TEST_CASE_P(
-    init_pool_instanciation,
-    PreallocatedTests,
-    Values(CacheChangePoolAttributes(10, 10, 128),
-           CacheChangePoolAttributes(10, 20, 128),
-           CacheChangePoolAttributes(10, 0,  128),
-           CacheChangePoolAttributes(20, 10, 128),
-           CacheChangePoolAttributes(20, 10, 128)));
-
-INSTANTIATE_TEST_CASE_P(
-    init_pool_instanciation,
-    ReallocTests,
-    Values(CacheChangePoolAttributes(10, 10, 128),
-           CacheChangePoolAttributes(10, 20, 128),
-           CacheChangePoolAttributes(10, 0,  128),
-           CacheChangePoolAttributes(20, 10, 128),
-           CacheChangePoolAttributes(20, 10, 128)));
-
-INSTANTIATE_TEST_CASE_P(
-    init_pool_instanciation,
-    DynamicTests,
-    Values(CacheChangePoolAttributes(10, 10, 128),
-           CacheChangePoolAttributes(10, 20, 128),
-           CacheChangePoolAttributes(10, 0,  128),
-           CacheChangePoolAttributes(20, 10, 128),
-           CacheChangePoolAttributes(20, 10, 128)));
+    instanciation,
+    CacheChangePoolTests,
+    Values( CacheChangePoolAttributes(10, 10,  128,  MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE)
+           ,CacheChangePoolAttributes(10, 100, 128,  MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE)
+           ,CacheChangePoolAttributes(10, 0,   128,  MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE)
+           ,CacheChangePoolAttributes(20, 10,  128,  MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE)
+           ,CacheChangePoolAttributes(10, 10,  128,  MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
+           ,CacheChangePoolAttributes(10, 100, 128,  MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
+           ,CacheChangePoolAttributes(10, 0,   128,  MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
+           ,CacheChangePoolAttributes(20, 10,  128,  MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
+           ,CacheChangePoolAttributes(10, 10,  128,  MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
+           ,CacheChangePoolAttributes(10, 100, 128,  MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
+           ,CacheChangePoolAttributes(10, 0,   128,  MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
+           ,CacheChangePoolAttributes(20, 10,  128,  MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
+    )
+);
 
 int main(int argc, char **argv)
 {
