@@ -949,7 +949,7 @@ class PublishModeQosPolicy : public QosPolicy {
 */
 typedef enum DataRepresentationId : int16_t {
     XCDR_DATA_REPRESENTATION = 0,   //!< Extended CDR Encoding version 1
-    XML_DATA_REPRESENTATION = 1,    //!< XML Data Representation
+    XML_DATA_REPRESENTATION = 1,    //!< XML Data Representation (Unsupported)
     XCDR2_DATA_REPRESENTATION= 2    //!< Extended CDR Encoding version 2
 }DataRepresentationId_t;
 
@@ -961,7 +961,9 @@ class DataRepresentationQosPolicy : public Parameter_t, public QosPolicy
     friend class ParameterList;
 public:
     std::vector<DataRepresentationId_t> m_value;
-    RTPS_DllAPI DataRepresentationQosPolicy() : Parameter_t(PID_DATA_REPRESENTATION, 0), QosPolicy(false) {}
+    RTPS_DllAPI DataRepresentationQosPolicy()
+        : Parameter_t(PID_DATA_REPRESENTATION, 0)
+        , QosPolicy(true) {}
     virtual RTPS_DllAPI ~DataRepresentationQosPolicy() override {}
 
     /**
@@ -1004,8 +1006,9 @@ public:
     bool m_prevent_type_widening;
     bool m_force_type_validation;
 
-    RTPS_DllAPI TypeConsistencyEnforcementQosPolicy() : Parameter_t(PID_TYPE_CONSISTENCY_ENFORCEMENT, 9),
-            QosPolicy(false)
+    RTPS_DllAPI TypeConsistencyEnforcementQosPolicy()
+        : Parameter_t(PID_TYPE_CONSISTENCY_ENFORCEMENT, 9) // 4 + 5 bytes
+        , QosPolicy(true)
     {
         m_kind = ALLOW_TYPE_COERCION;
         m_ignore_sequence_bounds = true;
@@ -1016,6 +1019,19 @@ public:
     }
 
     virtual RTPS_DllAPI ~TypeConsistencyEnforcementQosPolicy() override {}
+
+    bool operator==(const TypeConsistencyEnforcementQosPolicy& b) const
+    {
+        return m_kind == b.m_kind &&
+                m_ignore_sequence_bounds == b.m_ignore_sequence_bounds &&
+                m_ignore_string_bounds == b.m_ignore_string_bounds &&
+                m_ignore_member_names == b.m_ignore_member_names &&
+                m_prevent_type_widening == b.m_prevent_type_widening &&
+                m_force_type_validation == b.m_force_type_validation &&
+                Parameter_t::operator==(b) &&
+                QosPolicy::operator==(b);
+    }
+
     /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
@@ -1240,7 +1256,7 @@ public:
          : Parameter_t(type.Pid, type.length)
          , QosPolicy(type.m_sendAlways)
          , type_information(type.type_information)
-         , assigned_(true)
+         , assigned_(type.assigned_)
     {
     }
 

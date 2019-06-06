@@ -148,12 +148,10 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool consistent(const StringSTypeDefn &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
     RTPS_DllAPI bool consistent(const StringLTypeDefn &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 private:
     SBound m_bound;
@@ -257,12 +255,10 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool consistent(const StringLTypeDefn &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
     RTPS_DllAPI bool consistent(const StringSTypeDefn &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 private:
     LBound m_bound;
@@ -392,8 +388,7 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool consistent(const PlainCollectionHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 
 private:
@@ -557,8 +552,7 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool consistent(const PlainSequenceSElemDefn &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 
 private:
@@ -723,8 +717,7 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool consistent(const PlainSequenceLElemDefn &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 
 
@@ -899,8 +892,7 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool consistent(const PlainArraySElemDefn &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 
 
@@ -1075,8 +1067,7 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool consistent(const PlainArrayLElemDefn &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 
 
@@ -1291,8 +1282,7 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool consistent(const PlainMapSTypeDefn &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 
 
@@ -1509,8 +1499,7 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool consistent(const PlainMapLTypeDefn &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 
 private:
@@ -1680,8 +1669,7 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool consistent(const StronglyConnectedComponentId &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 
 private:
@@ -1760,8 +1748,7 @@ public:
     RTPS_DllAPI virtual void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool consistent(const ExtendedTypeDefn &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 
 };

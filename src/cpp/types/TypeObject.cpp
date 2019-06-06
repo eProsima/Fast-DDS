@@ -101,11 +101,10 @@ bool CommonStructMember::operator==(const CommonStructMember& other) const
 }
 
 bool CommonStructMember::consistent(const CommonStructMember &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     return m_member_id == x.m_member_id
-        && m_member_type_id.consistent(x.m_member_type_id, localConsistency, remoteConsistency);
+        && m_member_type_id.consistent(x.m_member_type_id, consistency);
 }
 
 CompleteMemberDetail::CompleteMemberDetail()
@@ -190,10 +189,9 @@ bool CompleteMemberDetail::operator==(const CompleteMemberDetail& other) const
 }
 
 bool CompleteMemberDetail::consistent(const CompleteMemberDetail &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy&) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return (localConsistency.m_kind == ALLOW_TYPE_COERCION && localConsistency.m_ignore_member_names)
+    return (consistency.m_kind == ALLOW_TYPE_COERCION && consistency.m_ignore_member_names)
         || m_name == x.m_name;
 
 }
@@ -256,10 +254,9 @@ bool MinimalMemberDetail::operator==(const MinimalMemberDetail& other) const
 }
 
 bool MinimalMemberDetail::consistent(const MinimalMemberDetail &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy&) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return (localConsistency.m_kind == ALLOW_TYPE_COERCION && localConsistency.m_ignore_member_names)
+    return (consistency.m_kind == ALLOW_TYPE_COERCION && consistency.m_ignore_member_names)
         || m_name_hash == x.m_name_hash;
 
 }
@@ -330,11 +327,10 @@ bool CompleteStructMember::operator==(const CompleteStructMember& other) const
 }
 
 bool CompleteStructMember::consistent(const CompleteStructMember &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency)
-        && m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency)
+        && m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -404,11 +400,10 @@ bool MinimalStructMember::operator==(const MinimalStructMember& other) const
 }
 
 bool MinimalStructMember::consistent(const MinimalStructMember &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency)
-        && m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency)
+        && m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -470,7 +465,6 @@ bool AppliedBuiltinTypeAnnotations::operator==(const AppliedBuiltinTypeAnnotatio
 }
 
 bool AppliedBuiltinTypeAnnotations::consistent(const AppliedBuiltinTypeAnnotations&,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     // TODO Annotations
@@ -519,7 +513,6 @@ void MinimalTypeDetail::deserialize(eprosima::fastcdr::Cdr &)
 }
 
 bool MinimalTypeDetail::consistent(const MinimalTypeDetail&,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     return true;
@@ -605,7 +598,6 @@ bool CompleteTypeDetail::operator==(const CompleteTypeDetail& other) const
 }
 
 bool CompleteTypeDetail::consistent(const CompleteTypeDetail&,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     // Don't check Type details
@@ -613,7 +605,7 @@ bool CompleteTypeDetail::consistent(const CompleteTypeDetail&,
 
     // TODO annotations?
     // Isn't a member name, but makes sense to apply here?
-    //return (localConsistency.m_kind == ALLOW_TYPE_COERCION && localConsistency.m_ignore_member_names)
+    //return (consistency.m_kind == ALLOW_TYPE_COERCION && consistency.m_ignore_member_names)
     //    || m_type_name == x.m_type_name;
 }
 
@@ -683,11 +675,10 @@ bool CompleteStructHeader::operator==(const CompleteStructHeader& other) const
 }
 
 bool CompleteStructHeader::consistent(const CompleteStructHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency)
-        && m_base_type.consistent(x.m_base_type, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency)
+        && m_base_type.consistent(x.m_base_type, consistency);
 
 }
 
@@ -757,11 +748,10 @@ bool MinimalStructHeader::operator==(const MinimalStructHeader& other) const
 }
 
 bool MinimalStructHeader::consistent(const MinimalStructHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency)
-        && m_base_type.consistent(x.m_base_type, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency)
+        && m_base_type.consistent(x.m_base_type, consistency);
 
 }
 
@@ -846,14 +836,13 @@ bool CompleteStructType::operator==(const CompleteStructType& other) const
 }
 
 bool CompleteStructType::consistent(const CompleteStructType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    if (m_header.consistent(x.m_header, localConsistency, remoteConsistency))
+    if (m_header.consistent(x.m_header, consistency))
     {
-        if (localConsistency.m_kind == DISALLOW_TYPE_COERCION || localConsistency.m_prevent_type_widening)
+        if (consistency.m_kind == DISALLOW_TYPE_COERCION || consistency.m_prevent_type_widening)
         {
-            if (localConsistency.m_kind == DISALLOW_TYPE_COERCION
+            if (consistency.m_kind == DISALLOW_TYPE_COERCION
                 && m_member_seq.size() != x.m_member_seq.size())
             {
                 return false; // different sizes (coercion disallowed or type widening prevented)
@@ -865,7 +854,7 @@ bool CompleteStructType::consistent(const CompleteStructType &x,
                 auto remote_it = x.m_member_seq.begin();
                 while (local_it != m_member_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Member inconsistent
                     }
@@ -884,7 +873,7 @@ bool CompleteStructType::consistent(const CompleteStructType &x,
                 auto remote_it = x.m_member_seq.begin();
                 while (local_it != m_member_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Member inconsistent
                     }
@@ -898,7 +887,7 @@ bool CompleteStructType::consistent(const CompleteStructType &x,
                 auto remote_it = x.m_member_seq.begin();
                 while (remote_it != x.m_member_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Member inconsistent
                     }
@@ -994,14 +983,13 @@ bool MinimalStructType::operator==(const MinimalStructType& other) const
 }
 
 bool MinimalStructType::consistent(const MinimalStructType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    if (m_header.consistent(x.m_header, localConsistency, remoteConsistency))
+    if (m_header.consistent(x.m_header, consistency))
     {
-        if (localConsistency.m_kind == DISALLOW_TYPE_COERCION || localConsistency.m_prevent_type_widening)
+        if (consistency.m_kind == DISALLOW_TYPE_COERCION || consistency.m_prevent_type_widening)
         {
-            if (localConsistency.m_kind == DISALLOW_TYPE_COERCION
+            if (consistency.m_kind == DISALLOW_TYPE_COERCION
                 && m_member_seq.size() != x.m_member_seq.size())
             {
                 return false; // different sizes (coercion disallowed or type widening prevented)
@@ -1013,7 +1001,7 @@ bool MinimalStructType::consistent(const MinimalStructType &x,
                 auto remote_it = x.m_member_seq.begin();
                 while (local_it != m_member_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Member inconsistent
                     }
@@ -1032,7 +1020,7 @@ bool MinimalStructType::consistent(const MinimalStructType &x,
                 auto remote_it = x.m_member_seq.begin();
                 while (local_it != m_member_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Member inconsistent
                     }
@@ -1046,7 +1034,7 @@ bool MinimalStructType::consistent(const MinimalStructType &x,
                 auto remote_it = x.m_member_seq.begin();
                 while (remote_it != x.m_member_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Member inconsistent
                     }
@@ -1151,12 +1139,11 @@ bool CommonUnionMember::operator==(const CommonUnionMember& other) const
 }
 
 bool CommonUnionMember::consistent(const CommonUnionMember &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     if (m_member_id == x.m_member_id)
     {
-        if (m_type_id.consistent(x.m_type_id, localConsistency, remoteConsistency))
+        if (m_type_id.consistent(x.m_type_id, consistency))
         {
             if (m_label_seq.size() == x.m_label_seq.size())
             {
@@ -1246,11 +1233,10 @@ bool CompleteUnionMember::operator==(const CompleteUnionMember& other) const
 }
 
 bool CompleteUnionMember::consistent(const CompleteUnionMember &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency)
-        && m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency)
+        && m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -1320,11 +1306,10 @@ bool MinimalUnionMember::operator==(const MinimalUnionMember& other) const
 }
 
 bool MinimalUnionMember::consistent(const MinimalUnionMember &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency)
-        && m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency)
+        && m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -1394,10 +1379,9 @@ bool CommonDiscriminatorMember::operator==(const CommonDiscriminatorMember& othe
 }
 
 bool CommonDiscriminatorMember::consistent(const CommonDiscriminatorMember &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_type_id.consistent(x.m_type_id, localConsistency, remoteConsistency);
+    return m_type_id.consistent(x.m_type_id, consistency);
 
 }
 
@@ -1483,11 +1467,10 @@ bool CompleteDiscriminatorMember::operator==(const CompleteDiscriminatorMember& 
 }
 
 bool CompleteDiscriminatorMember::consistent(const CompleteDiscriminatorMember &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     // TODO Annotations?
-    return m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -1549,10 +1532,9 @@ bool MinimalDiscriminatorMember::operator==(const MinimalDiscriminatorMember& ot
 }
 
 bool MinimalDiscriminatorMember::consistent(const MinimalDiscriminatorMember &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -1614,10 +1596,9 @@ bool CompleteUnionHeader::operator==(const CompleteUnionHeader& other) const
 }
 
 bool CompleteUnionHeader::consistent(const CompleteUnionHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency);
 
 }
 
@@ -1679,10 +1660,9 @@ bool MinimalUnionHeader::operator==(const MinimalUnionHeader& other) const
 }
 
 bool MinimalUnionHeader::consistent(const MinimalUnionHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency);
 
 }
 
@@ -1776,15 +1756,14 @@ bool CompleteUnionType::operator==(const CompleteUnionType& other) const
 }
 
 bool CompleteUnionType::consistent(const CompleteUnionType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    if (m_header.consistent(x.m_header, localConsistency, remoteConsistency)
-            && m_discriminator.consistent(x.m_discriminator, localConsistency, remoteConsistency))
+    if (m_header.consistent(x.m_header, consistency)
+            && m_discriminator.consistent(x.m_discriminator, consistency))
     {
-        if (localConsistency.m_kind == DISALLOW_TYPE_COERCION || localConsistency.m_prevent_type_widening)
+        if (consistency.m_kind == DISALLOW_TYPE_COERCION || consistency.m_prevent_type_widening)
         {
-            if (localConsistency.m_kind == DISALLOW_TYPE_COERCION
+            if (consistency.m_kind == DISALLOW_TYPE_COERCION
                 && m_member_seq.size() != x.m_member_seq.size())
             {
                 return false; // different sizes (coercion disallowed or type widening prevented)
@@ -1796,7 +1775,7 @@ bool CompleteUnionType::consistent(const CompleteUnionType &x,
                 auto remote_it = x.m_member_seq.begin();
                 while (local_it != m_member_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Member inconsistent
                     }
@@ -1815,7 +1794,7 @@ bool CompleteUnionType::consistent(const CompleteUnionType &x,
                 auto remote_it = x.m_member_seq.begin();
                 while (local_it != m_member_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Member inconsistent
                     }
@@ -1829,7 +1808,7 @@ bool CompleteUnionType::consistent(const CompleteUnionType &x,
                 auto remote_it = x.m_member_seq.begin();
                 while (remote_it != x.m_member_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Member inconsistent
                     }
@@ -1934,15 +1913,14 @@ bool MinimalUnionType::operator==(const MinimalUnionType& other) const
 }
 
 bool MinimalUnionType::consistent(const MinimalUnionType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    if (m_header.consistent(x.m_header, localConsistency, remoteConsistency)
-            && m_discriminator.consistent(x.m_discriminator, localConsistency, remoteConsistency))
+    if (m_header.consistent(x.m_header, consistency)
+            && m_discriminator.consistent(x.m_discriminator, consistency))
     {
-        if (localConsistency.m_kind == DISALLOW_TYPE_COERCION || localConsistency.m_prevent_type_widening)
+        if (consistency.m_kind == DISALLOW_TYPE_COERCION || consistency.m_prevent_type_widening)
         {
-            if (localConsistency.m_kind == DISALLOW_TYPE_COERCION
+            if (consistency.m_kind == DISALLOW_TYPE_COERCION
                 && m_member_seq.size() != x.m_member_seq.size())
             {
                 return false; // different sizes (coercion disallowed or type widening prevented)
@@ -1954,7 +1932,7 @@ bool MinimalUnionType::consistent(const MinimalUnionType &x,
                 auto remote_it = x.m_member_seq.begin();
                 while (local_it != m_member_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Member inconsistent
                     }
@@ -1973,7 +1951,7 @@ bool MinimalUnionType::consistent(const MinimalUnionType &x,
                 auto remote_it = x.m_member_seq.begin();
                 while (local_it != m_member_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Member inconsistent
                     }
@@ -1987,7 +1965,7 @@ bool MinimalUnionType::consistent(const MinimalUnionType &x,
                 auto remote_it = x.m_member_seq.begin();
                 while (remote_it != x.m_member_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Member inconsistent
                     }
@@ -2068,7 +2046,6 @@ bool CommonAnnotationParameter::operator==(const CommonAnnotationParameter& othe
 }
 
 bool CommonAnnotationParameter::consistent(const CommonAnnotationParameter&,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     // TODO This is an annotation, implement if finally is needed
@@ -2150,7 +2127,6 @@ bool CompleteAnnotationParameter::operator==(const CompleteAnnotationParameter& 
 }
 
 bool CompleteAnnotationParameter::consistent(const CompleteAnnotationParameter&,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     // TODO This is an annotation, implement if finally is needed
@@ -2232,7 +2208,6 @@ bool MinimalAnnotationParameter::operator==(const MinimalAnnotationParameter& ot
 }
 
 bool MinimalAnnotationParameter::consistent(const MinimalAnnotationParameter&,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     // TODO This is an annotation, implement if finally is needed
@@ -2298,7 +2273,6 @@ bool CompleteAnnotationHeader::operator==(const CompleteAnnotationHeader& other)
 }
 
 bool CompleteAnnotationHeader::consistent(const CompleteAnnotationHeader&,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     // TODO This is an annotation, implement if finally is needed
@@ -2348,7 +2322,6 @@ void MinimalAnnotationHeader::deserialize(eprosima::fastcdr::Cdr &)
 }
 
 bool MinimalAnnotationHeader::consistent(const MinimalAnnotationHeader&,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     // TODO This is an annotation, implement if finally is needed
@@ -2437,7 +2410,6 @@ bool CompleteAnnotationType::operator==(const CompleteAnnotationType& other) con
 }
 
 bool CompleteAnnotationType::consistent(const CompleteAnnotationType&,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     // TODO This is an annotation, implement if finally is needed
@@ -2527,7 +2499,6 @@ bool MinimalAnnotationType::operator==(const MinimalAnnotationType& other) const
 }
 
 bool MinimalAnnotationType::consistent(const MinimalAnnotationType&,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     // TODO This is an annotation, implement if finally is needed
@@ -2601,10 +2572,9 @@ bool CommonAliasBody::operator==(const CommonAliasBody& other) const
 }
 
 //bool CommonAliasBody::consistent(const CommonAliasBody &x,
-//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+//        const TypeConsistencyEnforcementQosPolicy& consistency) const
 //{
-//    return m_related_type.consistent(x.m_related_type, localConsistency, remoteConsistency);
+//    return m_related_type.consistent(x.m_related_type, consistency);
 //}
 
 CompleteAliasBody::CompleteAliasBody()
@@ -2689,11 +2659,10 @@ bool CompleteAliasBody::operator==(const CompleteAliasBody& other) const
 }
 
 //bool CompleteAliasBody::consistent(const CompleteAliasBody &x,
-//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+//        const TypeConsistencyEnforcementQosPolicy& consistency) const
 //{
 //    // TODO Annotations?
-//    return m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+//    return m_common.consistent(x.m_common, consistency);
 //}
 
 MinimalAliasBody::MinimalAliasBody()
@@ -2754,10 +2723,9 @@ bool MinimalAliasBody::operator==(const MinimalAliasBody& other) const
 }
 
 //bool MinimalAliasBody::consistent(const MinimalAliasBody &x,
-//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+//        const TypeConsistencyEnforcementQosPolicy& consistency) const
 //{
-//    return m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+//    return m_common.consistent(x.m_common, consistency);
 //}
 
 CompleteAliasHeader::CompleteAliasHeader()
@@ -2818,10 +2786,9 @@ bool CompleteAliasHeader::operator==(const CompleteAliasHeader& other) const
 }
 
 //bool CompleteAliasHeader::consistent(const CompleteAliasHeader &x,
-//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+//        const TypeConsistencyEnforcementQosPolicy& consistency) const
 //{
-//    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency);
+//    return m_detail.consistent(x.m_detail, consistency);
 //}
 
 MinimalAliasHeader::MinimalAliasHeader()
@@ -2866,7 +2833,6 @@ void MinimalAliasHeader::deserialize(eprosima::fastcdr::Cdr &)
 }
 
 //bool MinimalAliasHeader::consistent(const MinimalAliasHeader&,
-//        const TypeConsistencyEnforcementQosPolicy&,
 //        const TypeConsistencyEnforcementQosPolicy&) const
 //{
 //    return true;
@@ -2946,11 +2912,10 @@ bool CompleteAliasType::operator==(const CompleteAliasType& other) const
 }
 
 //bool CompleteAliasType::consistent(const CompleteAliasType &x,
-//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+//        const TypeConsistencyEnforcementQosPolicy& consistency) const
 //{
-//    return m_header.consistent(x.m_header, localConsistency, remoteConsistency)
-//        && m_body.consistent(x.m_body, localConsistency, remoteConsistency);
+//    return m_header.consistent(x.m_header, consistency)
+//        && m_body.consistent(x.m_body, consistency);
 //}
 
 MinimalAliasType::MinimalAliasType()
@@ -3027,11 +2992,10 @@ bool MinimalAliasType::operator==(const MinimalAliasType& other) const
 }
 
 //bool MinimalAliasType::consistent(const MinimalAliasType &x,
-//        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-//        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+//        const TypeConsistencyEnforcementQosPolicy& consistency) const
 //{
-//    return m_header.consistent(x.m_header, localConsistency, remoteConsistency)
-//        && m_body.consistent(x.m_body, localConsistency, remoteConsistency);
+//    return m_header.consistent(x.m_header, consistency)
+//        && m_body.consistent(x.m_body, consistency);
 //}
 
 CompleteElementDetail::CompleteElementDetail()
@@ -3108,7 +3072,6 @@ bool CompleteElementDetail::operator==(const CompleteElementDetail& other) const
 }
 
 bool CompleteElementDetail::consistent(const CompleteElementDetail&,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     // TODO Annotation consistency?
@@ -3182,10 +3145,9 @@ bool CommonCollectionElement::operator==(const CommonCollectionElement& other) c
 }
 
 bool CommonCollectionElement::consistent(const CommonCollectionElement &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_type.consistent(x.m_type, localConsistency, remoteConsistency);
+    return m_type.consistent(x.m_type, consistency);
 
 }
 
@@ -3255,11 +3217,10 @@ bool CompleteCollectionElement::operator==(const CompleteCollectionElement& othe
 }
 
 bool CompleteCollectionElement::consistent(const CompleteCollectionElement &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency)
-        && m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency)
+        && m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -3321,10 +3282,9 @@ bool MinimalCollectionElement::operator==(const MinimalCollectionElement& other)
 }
 
 bool MinimalCollectionElement::consistent(const MinimalCollectionElement &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -3386,10 +3346,9 @@ bool CommonCollectionHeader::operator==(const CommonCollectionHeader& other) con
 }
 
 bool CommonCollectionHeader::consistent(const CommonCollectionHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy&) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return (localConsistency.m_kind == ALLOW_TYPE_COERCION && localConsistency.m_ignore_sequence_bounds)
+    return (consistency.m_kind == ALLOW_TYPE_COERCION && consistency.m_ignore_sequence_bounds)
         || m_bound >= x.m_bound;
 
 }
@@ -3460,11 +3419,10 @@ bool CompleteCollectionHeader::operator==(const CompleteCollectionHeader& other)
 }
 
 bool CompleteCollectionHeader::consistent(const CompleteCollectionHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency)
-        && m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency)
+        && m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -3526,10 +3484,9 @@ bool MinimalCollectionHeader::operator==(const MinimalCollectionHeader& other) c
 }
 
 bool MinimalCollectionHeader::consistent(const MinimalCollectionHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -3618,11 +3575,10 @@ bool CompleteSequenceType::operator==(const CompleteSequenceType& other) const
 }
 
 bool CompleteSequenceType::consistent(const CompleteSequenceType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_header.consistent(x.m_header, localConsistency, remoteConsistency)
-        && m_element.consistent(x.m_element, localConsistency, remoteConsistency);
+    return m_header.consistent(x.m_header, consistency)
+        && m_element.consistent(x.m_element, consistency);
 
 }
 
@@ -3711,11 +3667,10 @@ bool MinimalSequenceType::operator==(const MinimalSequenceType& other) const
 }
 
 bool MinimalSequenceType::consistent(const MinimalSequenceType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_header.consistent(x.m_header, localConsistency, remoteConsistency)
-        && m_element.consistent(x.m_element, localConsistency, remoteConsistency);
+    return m_header.consistent(x.m_header, consistency)
+        && m_element.consistent(x.m_element, consistency);
 
 }
 
@@ -3781,7 +3736,6 @@ bool CommonArrayHeader::operator==(const CommonArrayHeader& other) const
 }
 
 bool CommonArrayHeader::consistent(const CommonArrayHeader &x,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     // TODO Does prevent_type_widening apply here?
@@ -3871,11 +3825,10 @@ bool CompleteArrayHeader::operator==(const CompleteArrayHeader& other) const
 }
 
 bool CompleteArrayHeader::consistent(const CompleteArrayHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency)
-        && m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency)
+        && m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -3937,10 +3890,9 @@ bool MinimalArrayHeader::operator==(const MinimalArrayHeader& other) const
 }
 
 bool MinimalArrayHeader::consistent(const MinimalArrayHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -4018,11 +3970,10 @@ bool CompleteArrayType::operator==(const CompleteArrayType& other) const
 }
 
 bool CompleteArrayType::consistent(const CompleteArrayType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_header.consistent(x.m_header, localConsistency, remoteConsistency)
-        && m_element.consistent(x.m_element, localConsistency, remoteConsistency);
+    return m_header.consistent(x.m_header, consistency)
+        && m_element.consistent(x.m_element, consistency);
 
 }
 
@@ -4100,11 +4051,10 @@ bool MinimalArrayType::operator==(const MinimalArrayType& other) const
 }
 
 bool MinimalArrayType::consistent(const MinimalArrayType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_header.consistent(x.m_header, localConsistency, remoteConsistency)
-        && m_element.consistent(x.m_element, localConsistency, remoteConsistency);
+    return m_header.consistent(x.m_header, consistency)
+        && m_element.consistent(x.m_element, consistency);
 
 }
 
@@ -4190,12 +4140,11 @@ bool CompleteMapType::operator==(const CompleteMapType& other) const
 }
 
 bool CompleteMapType::consistent(const CompleteMapType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_header.consistent(x.m_header, localConsistency, remoteConsistency)
-        && m_key.consistent(x.m_key, localConsistency, remoteConsistency)
-        && m_element.consistent(x.m_element, localConsistency, remoteConsistency);
+    return m_header.consistent(x.m_header, consistency)
+        && m_key.consistent(x.m_key, consistency)
+        && m_element.consistent(x.m_element, consistency);
 
 }
 
@@ -4281,12 +4230,11 @@ bool MinimalMapType::operator==(const MinimalMapType& other) const
 }
 
 bool MinimalMapType::consistent(const MinimalMapType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_header.consistent(x.m_header, localConsistency, remoteConsistency)
-        && m_key.consistent(x.m_key, localConsistency, remoteConsistency)
-        && m_element.consistent(x.m_element, localConsistency, remoteConsistency);
+    return m_header.consistent(x.m_header, consistency)
+        && m_key.consistent(x.m_key, consistency)
+        && m_element.consistent(x.m_element, consistency);
 
 }
 
@@ -4356,7 +4304,6 @@ bool CommonEnumeratedLiteral::operator==(const CommonEnumeratedLiteral& other) c
 }
 
 bool CommonEnumeratedLiteral::consistent(const CommonEnumeratedLiteral &x,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     return m_value == x.m_value;
@@ -4429,11 +4376,10 @@ bool CompleteEnumeratedLiteral::operator==(const CompleteEnumeratedLiteral& othe
 }
 
 bool CompleteEnumeratedLiteral::consistent(const CompleteEnumeratedLiteral &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency)
-        && m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency)
+        && m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -4503,11 +4449,10 @@ bool MinimalEnumeratedLiteral::operator==(const MinimalEnumeratedLiteral& other)
 }
 
 bool MinimalEnumeratedLiteral::consistent(const MinimalEnumeratedLiteral &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency)
-        && m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency)
+        && m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -4569,11 +4514,10 @@ bool CommonEnumeratedHeader::operator==(const CommonEnumeratedHeader& other) con
 }
 
 bool CommonEnumeratedHeader::consistent(const CommonEnumeratedHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy&) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     // TODO type widening applies here?
-    return (localConsistency.m_kind == ALLOW_TYPE_COERCION && !localConsistency.m_prevent_type_widening)
+    return (consistency.m_kind == ALLOW_TYPE_COERCION && !consistency.m_prevent_type_widening)
         || m_bit_bound == x.m_bit_bound;
 
 }
@@ -4644,11 +4588,10 @@ bool CompleteEnumeratedHeader::operator==(const CompleteEnumeratedHeader& other)
 }
 
 bool CompleteEnumeratedHeader::consistent(const CompleteEnumeratedHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency)
-        && m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency)
+        && m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -4710,10 +4653,9 @@ bool MinimalEnumeratedHeader::operator==(const MinimalEnumeratedHeader& other) c
 }
 
 bool MinimalEnumeratedHeader::consistent(const MinimalEnumeratedHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -4799,14 +4741,13 @@ bool CompleteEnumeratedType::operator==(const CompleteEnumeratedType& other) con
 }
 
 bool CompleteEnumeratedType::consistent(const CompleteEnumeratedType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    if (m_header.consistent(x.m_header, localConsistency, remoteConsistency))
+    if (m_header.consistent(x.m_header, consistency))
     {
-        if (localConsistency.m_kind == DISALLOW_TYPE_COERCION || localConsistency.m_prevent_type_widening)
+        if (consistency.m_kind == DISALLOW_TYPE_COERCION || consistency.m_prevent_type_widening)
         {
-            if (localConsistency.m_kind == DISALLOW_TYPE_COERCION
+            if (consistency.m_kind == DISALLOW_TYPE_COERCION
                 && m_literal_seq.size() != x.m_literal_seq.size())
             {
                 return false; // different sizes (coercion disallowed or type widening prevented)
@@ -4818,7 +4759,7 @@ bool CompleteEnumeratedType::consistent(const CompleteEnumeratedType &x,
                 auto remote_it = x.m_literal_seq.begin();
                 while (local_it != m_literal_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Literal inconsistent
                     }
@@ -4837,7 +4778,7 @@ bool CompleteEnumeratedType::consistent(const CompleteEnumeratedType &x,
                 auto remote_it = x.m_literal_seq.begin();
                 while (local_it != m_literal_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Literal inconsistent
                     }
@@ -4851,7 +4792,7 @@ bool CompleteEnumeratedType::consistent(const CompleteEnumeratedType &x,
                 auto remote_it = x.m_literal_seq.begin();
                 while (remote_it != x.m_literal_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Literal inconsistent
                     }
@@ -4948,14 +4889,13 @@ bool MinimalEnumeratedType::operator==(const MinimalEnumeratedType& other) const
 }
 
 bool MinimalEnumeratedType::consistent(const MinimalEnumeratedType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    if (m_header.consistent(x.m_header, localConsistency, remoteConsistency))
+    if (m_header.consistent(x.m_header, consistency))
     {
-        if (localConsistency.m_kind == DISALLOW_TYPE_COERCION || localConsistency.m_prevent_type_widening)
+        if (consistency.m_kind == DISALLOW_TYPE_COERCION || consistency.m_prevent_type_widening)
         {
-            if (localConsistency.m_kind == DISALLOW_TYPE_COERCION
+            if (consistency.m_kind == DISALLOW_TYPE_COERCION
                 && m_literal_seq.size() != x.m_literal_seq.size())
             {
                 return false; // different sizes (coercion disallowed or type widening prevented)
@@ -4967,7 +4907,7 @@ bool MinimalEnumeratedType::consistent(const MinimalEnumeratedType &x,
                 auto remote_it = x.m_literal_seq.begin();
                 while (local_it != m_literal_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Literal inconsistent
                     }
@@ -4986,7 +4926,7 @@ bool MinimalEnumeratedType::consistent(const MinimalEnumeratedType &x,
                 auto remote_it = x.m_literal_seq.begin();
                 while (local_it != m_literal_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Literal inconsistent
                     }
@@ -5000,7 +4940,7 @@ bool MinimalEnumeratedType::consistent(const MinimalEnumeratedType &x,
                 auto remote_it = x.m_literal_seq.begin();
                 while (remote_it != x.m_literal_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Literal inconsistent
                     }
@@ -5081,7 +5021,6 @@ bool CommonBitflag::operator==(const CommonBitflag& other) const
 }
 
 bool CommonBitflag::consistent(const CommonBitflag &x,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     return m_position == x.m_position;
@@ -5154,11 +5093,10 @@ bool CompleteBitflag::operator==(const CompleteBitflag& other) const
 }
 
 bool CompleteBitflag::consistent(const CompleteBitflag &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency)
-        && m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency)
+        && m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -5228,11 +5166,10 @@ bool MinimalBitflag::operator==(const MinimalBitflag& other) const
 }
 
 bool MinimalBitflag::consistent(const MinimalBitflag &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency)
-        && m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency)
+        && m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -5294,11 +5231,10 @@ bool CommonBitmaskHeader::operator==(const CommonBitmaskHeader& other) const
 }
 
 bool CommonBitmaskHeader::consistent(const CommonBitmaskHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy&) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     // TODO type widening applies here?
-    return (localConsistency.m_kind == ALLOW_TYPE_COERCION && !localConsistency.m_prevent_type_widening)
+    return (consistency.m_kind == ALLOW_TYPE_COERCION && !consistency.m_prevent_type_widening)
         || m_bit_bound == x.m_bit_bound;
 
 }
@@ -5385,14 +5321,13 @@ bool CompleteBitmaskType::operator==(const CompleteBitmaskType& other) const
 }
 
 bool CompleteBitmaskType::consistent(const CompleteBitmaskType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    if (m_header.consistent(x.m_header, localConsistency, remoteConsistency))
+    if (m_header.consistent(x.m_header, consistency))
     {
-        if (localConsistency.m_kind == DISALLOW_TYPE_COERCION || localConsistency.m_prevent_type_widening)
+        if (consistency.m_kind == DISALLOW_TYPE_COERCION || consistency.m_prevent_type_widening)
         {
-            if (localConsistency.m_kind == DISALLOW_TYPE_COERCION
+            if (consistency.m_kind == DISALLOW_TYPE_COERCION
                 && m_flag_seq.size() != x.m_flag_seq.size())
             {
                 return false; // different sizes (coercion disallowed or type widening prevented)
@@ -5404,7 +5339,7 @@ bool CompleteBitmaskType::consistent(const CompleteBitmaskType &x,
                 auto remote_it = x.m_flag_seq.begin();
                 while (local_it != m_flag_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Flag inconsistent
                     }
@@ -5423,7 +5358,7 @@ bool CompleteBitmaskType::consistent(const CompleteBitmaskType &x,
                 auto remote_it = x.m_flag_seq.begin();
                 while (local_it != m_flag_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Flag inconsistent
                     }
@@ -5437,7 +5372,7 @@ bool CompleteBitmaskType::consistent(const CompleteBitmaskType &x,
                 auto remote_it = x.m_flag_seq.begin();
                 while (remote_it != x.m_flag_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Flag inconsistent
                     }
@@ -5534,14 +5469,13 @@ bool MinimalBitmaskType::operator==(const MinimalBitmaskType& other) const
 }
 
 bool MinimalBitmaskType::consistent(const MinimalBitmaskType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    if (m_header.consistent(x.m_header, localConsistency, remoteConsistency))
+    if (m_header.consistent(x.m_header, consistency))
     {
-        if (localConsistency.m_kind == DISALLOW_TYPE_COERCION || localConsistency.m_prevent_type_widening)
+        if (consistency.m_kind == DISALLOW_TYPE_COERCION || consistency.m_prevent_type_widening)
         {
-            if (localConsistency.m_kind == DISALLOW_TYPE_COERCION
+            if (consistency.m_kind == DISALLOW_TYPE_COERCION
                 && m_flag_seq.size() != x.m_flag_seq.size())
             {
                 return false; // different sizes (coercion disallowed or type widening prevented)
@@ -5553,7 +5487,7 @@ bool MinimalBitmaskType::consistent(const MinimalBitmaskType &x,
                 auto remote_it = x.m_flag_seq.begin();
                 while (local_it != m_flag_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Flag inconsistent
                     }
@@ -5572,7 +5506,7 @@ bool MinimalBitmaskType::consistent(const MinimalBitmaskType &x,
                 auto remote_it = x.m_flag_seq.begin();
                 while (local_it != m_flag_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Flag inconsistent
                     }
@@ -5586,7 +5520,7 @@ bool MinimalBitmaskType::consistent(const MinimalBitmaskType &x,
                 auto remote_it = x.m_flag_seq.begin();
                 while (remote_it != x.m_flag_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Flag inconsistent
                     }
@@ -5683,7 +5617,6 @@ bool CommonBitfield::operator==(const CommonBitfield& other) const
 }
 
 bool CommonBitfield::consistent(const CommonBitfield &x,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     // TODO Not sure about bitcount...
@@ -5759,11 +5692,10 @@ bool CompleteBitfield::operator==(const CompleteBitfield& other) const
 }
 
 bool CompleteBitfield::consistent(const CompleteBitfield &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency)
-        && m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency)
+        && m_common.consistent(x.m_common, consistency);
 
 }
 
@@ -5833,13 +5765,12 @@ bool MinimalBitfield::operator==(const MinimalBitfield& other) const
 }
 
 bool MinimalBitfield::consistent(const MinimalBitfield &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    if ((localConsistency.m_kind == ALLOW_TYPE_COERCION && localConsistency.m_ignore_member_names)
+    if ((consistency.m_kind == ALLOW_TYPE_COERCION && consistency.m_ignore_member_names)
             || m_name_hash == x.m_name_hash)
     {
-        return m_common.consistent(x.m_common, localConsistency, remoteConsistency);
+        return m_common.consistent(x.m_common, consistency);
     }
     return false;
 
@@ -5911,10 +5842,9 @@ bool CompleteBitsetHeader::operator==(const CompleteBitsetHeader& other) const
 }
 
 bool CompleteBitsetHeader::consistent(const CompleteBitsetHeader &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, localConsistency, remoteConsistency);
+    return m_detail.consistent(x.m_detail, consistency);
 
 }
 
@@ -5973,7 +5903,6 @@ bool MinimalBitsetHeader::operator==(const MinimalBitsetHeader& other) const
 }
 
 bool MinimalBitsetHeader::consistent(const MinimalBitsetHeader&,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     return true;
@@ -6061,14 +5990,13 @@ bool CompleteBitsetType::operator==(const CompleteBitsetType& other) const
 }
 
 bool CompleteBitsetType::consistent(const CompleteBitsetType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    if (m_header.consistent(x.m_header, localConsistency, remoteConsistency))
+    if (m_header.consistent(x.m_header, consistency))
     {
-        if (localConsistency.m_kind == DISALLOW_TYPE_COERCION || localConsistency.m_prevent_type_widening)
+        if (consistency.m_kind == DISALLOW_TYPE_COERCION || consistency.m_prevent_type_widening)
         {
-            if (localConsistency.m_kind == DISALLOW_TYPE_COERCION
+            if (consistency.m_kind == DISALLOW_TYPE_COERCION
                 && m_field_seq.size() != x.m_field_seq.size())
             {
                 return false; // different sizes (coercion disallowed or type widening prevented)
@@ -6080,7 +6008,7 @@ bool CompleteBitsetType::consistent(const CompleteBitsetType &x,
                 auto remote_it = x.m_field_seq.begin();
                 while (local_it != m_field_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Field inconsistent
                     }
@@ -6099,7 +6027,7 @@ bool CompleteBitsetType::consistent(const CompleteBitsetType &x,
                 auto remote_it = x.m_field_seq.begin();
                 while (local_it != m_field_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Field inconsistent
                     }
@@ -6113,7 +6041,7 @@ bool CompleteBitsetType::consistent(const CompleteBitsetType &x,
                 auto remote_it = x.m_field_seq.begin();
                 while (remote_it != x.m_field_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Field inconsistent
                     }
@@ -6210,14 +6138,13 @@ bool MinimalBitsetType::operator==(const MinimalBitsetType& other) const
 }
 
 bool MinimalBitsetType::consistent(const MinimalBitsetType &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    if (m_header.consistent(x.m_header, localConsistency, remoteConsistency))
+    if (m_header.consistent(x.m_header, consistency))
     {
-        if (localConsistency.m_kind == DISALLOW_TYPE_COERCION || localConsistency.m_prevent_type_widening)
+        if (consistency.m_kind == DISALLOW_TYPE_COERCION || consistency.m_prevent_type_widening)
         {
-            if (localConsistency.m_kind == DISALLOW_TYPE_COERCION
+            if (consistency.m_kind == DISALLOW_TYPE_COERCION
                 && m_field_seq.size() != x.m_field_seq.size())
             {
                 return false; // different sizes (coercion disallowed or type widening prevented)
@@ -6229,7 +6156,7 @@ bool MinimalBitsetType::consistent(const MinimalBitsetType &x,
                 auto remote_it = x.m_field_seq.begin();
                 while (local_it != m_field_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Field inconsistent
                     }
@@ -6248,7 +6175,7 @@ bool MinimalBitsetType::consistent(const MinimalBitsetType &x,
                 auto remote_it = x.m_field_seq.begin();
                 while (local_it != m_field_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Field inconsistent
                     }
@@ -6262,7 +6189,7 @@ bool MinimalBitsetType::consistent(const MinimalBitsetType &x,
                 auto remote_it = x.m_field_seq.begin();
                 while (remote_it != x.m_field_seq.end())
                 {
-                    if (!local_it->consistent(*remote_it, localConsistency, remoteConsistency))
+                    if (!local_it->consistent(*remote_it, consistency))
                     {
                         return false; // Field inconsistent
                     }
@@ -6319,7 +6246,6 @@ void CompleteExtendedType::deserialize(eprosima::fastcdr::Cdr &)
 }
 
 bool CompleteExtendedType::consistent(const CompleteExtendedType&,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     return true;
@@ -6367,7 +6293,6 @@ void MinimalExtendedType::deserialize(eprosima::fastcdr::Cdr &)
 }
 
 bool MinimalExtendedType::consistent(const MinimalExtendedType&,
-        const TypeConsistencyEnforcementQosPolicy&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     return true;
@@ -7526,8 +7451,7 @@ bool CompleteTypeObject::operator==(const CompleteTypeObject& other) const
 }
 
 bool CompleteTypeObject::consistent(const CompleteTypeObject &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     // Resolve aliases
     if (m__d == TK_ALIAS)
@@ -7539,7 +7463,7 @@ bool CompleteTypeObject::consistent(const CompleteTypeObject &x,
             logWarning(XTYPES, "Local type is aliased to an unkown TypeObject");
             return false;
         }
-        return aliasedObj->complete().consistent(x, localConsistency, remoteConsistency);
+        return aliasedObj->complete().consistent(x, consistency);
     }
 
     if (x.m__d == TK_ALIAS)
@@ -7551,7 +7475,7 @@ bool CompleteTypeObject::consistent(const CompleteTypeObject &x,
             logWarning(XTYPES, "Remote type is aliased to an unkown TypeObject");
             return false;
         }
-        return this->consistent(aliasedObj->complete(), localConsistency, remoteConsistency);
+        return this->consistent(aliasedObj->complete(), consistency);
     }
 
     if (m__d != x.m__d) return false;
@@ -7559,27 +7483,27 @@ bool CompleteTypeObject::consistent(const CompleteTypeObject &x,
     switch(m__d)
     {
         //case TK_ALIAS:
-        //    return m_alias_type.consistent(x.m_alias_type, localConsistency, remoteConsistency);
+        //    return m_alias_type.consistent(x.m_alias_type, consistency);
         case TK_ANNOTATION:
-            return m_annotation_type.consistent(x.m_annotation_type, localConsistency, remoteConsistency);
+            return m_annotation_type.consistent(x.m_annotation_type, consistency);
         case TK_STRUCTURE:
-            return m_struct_type.consistent(x.m_struct_type, localConsistency, remoteConsistency);
+            return m_struct_type.consistent(x.m_struct_type, consistency);
         case TK_UNION:
-            return m_union_type.consistent(x.m_union_type, localConsistency, remoteConsistency);
+            return m_union_type.consistent(x.m_union_type, consistency);
         case TK_BITSET:
-            return m_bitset_type.consistent(x.m_bitset_type, localConsistency, remoteConsistency);
+            return m_bitset_type.consistent(x.m_bitset_type, consistency);
         case TK_SEQUENCE:
-            return m_sequence_type.consistent(x.m_sequence_type, localConsistency, remoteConsistency);
+            return m_sequence_type.consistent(x.m_sequence_type, consistency);
         case TK_ARRAY:
-            return m_array_type.consistent(x.m_array_type, localConsistency, remoteConsistency);
+            return m_array_type.consistent(x.m_array_type, consistency);
         case TK_MAP:
-            return m_map_type.consistent(x.m_map_type, localConsistency, remoteConsistency);
+            return m_map_type.consistent(x.m_map_type, consistency);
         case TK_ENUM:
-            return m_enumerated_type.consistent(x.m_enumerated_type, localConsistency, remoteConsistency);
+            return m_enumerated_type.consistent(x.m_enumerated_type, consistency);
         case TK_BITMASK:
-            return m_bitmask_type.consistent(x.m_bitmask_type, localConsistency, remoteConsistency);
+            return m_bitmask_type.consistent(x.m_bitmask_type, consistency);
         default:
-            return m_extended_type.consistent(x.m_extended_type, localConsistency, remoteConsistency);
+            return m_extended_type.consistent(x.m_extended_type, consistency);
     }
 
 }
@@ -8491,8 +8415,7 @@ bool MinimalTypeObject::operator==(const MinimalTypeObject& other) const
 }
 
 bool MinimalTypeObject::consistent(const MinimalTypeObject &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     // Resolve aliases
     if (m__d == TK_ALIAS)
@@ -8504,7 +8427,7 @@ bool MinimalTypeObject::consistent(const MinimalTypeObject &x,
             logWarning(XTYPES, "Local type is aliased to an unkown TypeObject");
             return false;
         }
-        return aliasedObj->minimal().consistent(x, localConsistency, remoteConsistency);
+        return aliasedObj->minimal().consistent(x, consistency);
     }
 
     if (x.m__d == TK_ALIAS)
@@ -8516,7 +8439,7 @@ bool MinimalTypeObject::consistent(const MinimalTypeObject &x,
             logWarning(XTYPES, "Remote type is aliased to an unkown TypeObject");
             return false;
         }
-        return this->consistent(aliasedObj->minimal(), localConsistency, remoteConsistency);
+        return this->consistent(aliasedObj->minimal(), consistency);
     }
 
     if (m__d != x.m__d) return false;
@@ -8524,27 +8447,27 @@ bool MinimalTypeObject::consistent(const MinimalTypeObject &x,
     switch(m__d)
     {
         //case TK_ALIAS:
-        //    return m_alias_type.consistent(x.m_alias_type, localConsistency, remoteConsistency);
+        //    return m_alias_type.consistent(x.m_alias_type, consistency);
         case TK_ANNOTATION:
-            return m_annotation_type.consistent(x.m_annotation_type, localConsistency, remoteConsistency);
+            return m_annotation_type.consistent(x.m_annotation_type, consistency);
         case TK_STRUCTURE:
-            return m_struct_type.consistent(x.m_struct_type, localConsistency, remoteConsistency);
+            return m_struct_type.consistent(x.m_struct_type, consistency);
         case TK_UNION:
-            return m_union_type.consistent(x.m_union_type, localConsistency, remoteConsistency);
+            return m_union_type.consistent(x.m_union_type, consistency);
         case TK_BITSET:
-            return m_bitset_type.consistent(x.m_bitset_type, localConsistency, remoteConsistency);
+            return m_bitset_type.consistent(x.m_bitset_type, consistency);
         case TK_SEQUENCE:
-            return m_sequence_type.consistent(x.m_sequence_type, localConsistency, remoteConsistency);
+            return m_sequence_type.consistent(x.m_sequence_type, consistency);
         case TK_ARRAY:
-            return m_array_type.consistent(x.m_array_type, localConsistency, remoteConsistency);
+            return m_array_type.consistent(x.m_array_type, consistency);
         case TK_MAP:
-            return m_map_type.consistent(x.m_map_type, localConsistency, remoteConsistency);
+            return m_map_type.consistent(x.m_map_type, consistency);
         case TK_ENUM:
-            return m_enumerated_type.consistent(x.m_enumerated_type, localConsistency, remoteConsistency);
+            return m_enumerated_type.consistent(x.m_enumerated_type, consistency);
         case TK_BITMASK:
-            return m_bitmask_type.consistent(x.m_bitmask_type, localConsistency, remoteConsistency);
+            return m_bitmask_type.consistent(x.m_bitmask_type, consistency);
         default:
-            return m_extended_type.consistent(x.m_extended_type, localConsistency, remoteConsistency);
+            return m_extended_type.consistent(x.m_extended_type, consistency);
     }
 
 }
@@ -8740,23 +8663,22 @@ void TypeObject::minimal(MinimalTypeObject &&_minimal)
 }
 
 bool TypeObject::consistent(const TypeObject &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     if (m__d != x.m__d) return false;
 
     switch(m__d)
     {
         case EK_COMPLETE:
-            return m_complete.consistent(x.m_complete, localConsistency, remoteConsistency);
+            return m_complete.consistent(x.m_complete, consistency);
         case EK_MINIMAL:
-            return m_minimal.consistent(x.m_minimal, localConsistency, remoteConsistency);
+            return m_minimal.consistent(x.m_minimal, consistency);
         default:
             return false;
     }
 
 
-//    if (localConsistency.m_kind == DISALLOW_TYPE_COERCION)
+//    if (consistency.m_kind == DISALLOW_TYPE_COERCION)
 //    {
 //
 //    }

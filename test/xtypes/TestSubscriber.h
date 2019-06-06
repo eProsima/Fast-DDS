@@ -26,6 +26,7 @@
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/TopicDataType.h>
 #include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/rtps/common/Types.h>
 
 #include <condition_variable>
 

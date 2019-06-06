@@ -319,21 +319,6 @@ class WriterProxyData
             return m_type_information;
         }
 
-        RTPS_DllAPI void topicDiscoveryKind(TopicDiscoveryKind_t topicDiscoveryKind)
-        {
-            m_topicDiscoveryKind = topicDiscoveryKind;
-        }
-
-        RTPS_DllAPI TopicDiscoveryKind_t topicDiscoveryKind() const
-        {
-            return m_topicDiscoveryKind;
-        }
-
-        RTPS_DllAPI TopicDiscoveryKind_t& topicDiscoveryKind()
-        {
-            return m_topicDiscoveryKind;
-        }
-
         //!WriterQOS
         WriterQos m_qos;
 
@@ -399,9 +384,6 @@ class WriterProxyData
 
         //!Persistence GUID
         GUID_t persistence_guid_;
-
-        //!Topic Discovery Kind
-        TopicDiscoveryKind_t m_topicDiscoveryKind;
 
         //!Type Identifier
         TypeIdV1 m_type_id;

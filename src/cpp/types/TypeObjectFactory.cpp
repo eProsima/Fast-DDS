@@ -598,10 +598,10 @@ void TypeObjectFactory::fill_complete_information(
                     // Already fully defined by obj
                     break;
                 case TK_BITMASK:
-                    // TODO To implement
+                    // TODO To implement (already fully defined?)
                     break;
                 case TK_BITSET:
-                    // TODO To implement
+                    // TODO To implement (already fully defined? Fields are primitives.)
                     break;
                 case TK_UNION:
                 {
@@ -638,7 +638,7 @@ void TypeObjectFactory::fill_complete_information(
                     break;
                 }
                 case TK_ANNOTATION:
-                    // TODO To implement
+                    // TODO To implement (already fully defined? Fields are primitives.)
                     break;
             }
             break;
@@ -691,7 +691,7 @@ void TypeObjectFactory::fill_complete_information(
                     // TODO To implement
                     break;
                 case TK_BITSET:
-                    // TODO To implement
+                    // TODO To implement (already fully defined? Fields are primitives.)
                     break;
                 case TK_UNION:
                 {
@@ -728,7 +728,7 @@ void TypeObjectFactory::fill_complete_information(
                     break;
                 }
                 case TK_ANNOTATION:
-                    // TODO To implement
+                    // TODO To implement (already fully defined? Fields are primitives.)
                     break;
             }
             break;

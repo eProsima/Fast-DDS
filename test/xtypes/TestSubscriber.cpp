@@ -39,17 +39,17 @@ TestSubscriber::TestSubscriber()
     : mp_participant(nullptr)
     , mp_subscriber(nullptr)
     , m_bInitialized(false)
-	, m_subListener(this)
+    , m_subListener(this)
 {
 }
 
 bool TestSubscriber::init(const std::string& topicName, int domain, eprosima::fastrtps::TopicDataType* type,
-		const eprosima::fastrtps::types::TypeObject* type_object,
-		const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
-		const eprosima::fastrtps::types::TypeInformation* type_info,
-		const std::string& name,
+        const eprosima::fastrtps::types::TypeObject* type_object,
+        const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
+        const eprosima::fastrtps::types::TypeInformation* type_info,
+        const std::string& name,
         const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
-		const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos)
+        const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos)
 {
     m_Name = name;
     m_Type = type;
@@ -71,32 +71,27 @@ bool TestSubscriber::init(const std::string& topicName, int domain, eprosima::fa
     //REGISTER THE TYPE
     Domain::registerType(mp_participant, m_Type);
 
-	Rparam.topic.topicName = topicName;
+    Rparam.topic.topicName = topicName;
     if (type_object != nullptr)
     {
         Rparam.topic.type = *type_object;
-        Rparam.qos.type = *type_object;
     }
     if (type_identifier != nullptr)
     {
         Rparam.topic.type_id = *type_identifier;
-        Rparam.qos.type_id = *type_identifier;
     }
     if (type_info != nullptr)
     {
         Rparam.topic.type_information = *type_info;
-        Rparam.qos.type_information = *type_info;
     }
 
     if (typeConsistencyQos != nullptr)
     {
-        Rparam.topic.typeConsistencyQos = *typeConsistencyQos;
-        Rparam.qos.m_typeConsistency = *typeConsistencyQos;
+        Rparam.qos.type_consistency = *typeConsistencyQos;
     }
     if (dataRepresentationQos != nullptr)
     {
-        Rparam.topic.dataRepresentationQos = *dataRepresentationQos;
-        Rparam.qos.m_dataRepresentation = *dataRepresentationQos;
+        Rparam.qos.representation = *dataRepresentationQos;
     }
 
     mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_subListener);
@@ -188,5 +183,5 @@ void TestSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
 void TestSubscriber::run()
 {
     std::cout << m_Name << " running..." << std::endl;
-	std::cin.ignore();
+    std::cin.ignore();
 }

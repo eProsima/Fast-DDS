@@ -379,8 +379,7 @@ public:
     bool operator==(const TypeIdentifier &other) const;
 
     RTPS_DllAPI bool consistent(const TypeIdentifier &x,
-        const TypeConsistencyEnforcementQosPolicy& localConsistency,
-        const TypeConsistencyEnforcementQosPolicy& remoteConsistency) const;
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 private:
     octet m__d;

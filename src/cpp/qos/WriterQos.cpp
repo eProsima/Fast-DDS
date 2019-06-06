@@ -137,12 +137,12 @@ void WriterQos::setQos(const WriterQos& qos, bool first_time)
         m_disablePositiveACKs.hasChanged(true);
     }
     // Writers only manages the first element in the list of data representations.
-    if (qos.m_dataRepresentation.m_value.size() != m_dataRepresentation.m_value.size() ||
-        (qos.m_dataRepresentation.m_value.size() > 0 && m_dataRepresentation.m_value.size() > 0 &&
-        *qos.m_dataRepresentation.m_value.begin() != *m_dataRepresentation.m_value.begin()))
+    if (qos.representation.m_value.size() != representation.m_value.size() ||
+        (qos.representation.m_value.size() > 0 && representation.m_value.size() > 0 &&
+        *qos.representation.m_value.begin() != *representation.m_value.begin()))
     {
-        m_dataRepresentation = qos.m_dataRepresentation;
-        m_dataRepresentation.hasChanged(true);
+        representation = qos.representation;
+        representation.hasChanged(true);
     }
 }
 

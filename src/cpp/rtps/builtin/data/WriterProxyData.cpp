@@ -39,11 +39,7 @@ WriterProxyData::WriterProxyData()
     , m_typeMaxSerialized(0)
     , m_isAlive(true)
     , m_topicKind(NO_KEY)
-    , m_topicDiscoveryKind(NO_CHECK)
     {
-        // As DDS-XTypes, v1.2 (page 182) document stablishes, local default is ALLOW_TYPE_COERCION,
-        // but when remotes doesn't send TypeConsistencyQos, we must assume DISALLOW.
-        m_qos.m_typeConsistency.m_kind = DISALLOW_TYPE_COERCION;
     }
 
 WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo)
@@ -65,9 +61,9 @@ WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo)
     , m_isAlive(writerInfo.m_isAlive)
     , m_topicKind(writerInfo.m_topicKind)
     , persistence_guid_(writerInfo.persistence_guid_)
-    , m_topicDiscoveryKind(writerInfo.m_topicDiscoveryKind)
     , m_type_id(writerInfo.m_type_id)
     , m_type(writerInfo.m_type)
+    , m_type_information(writerInfo.m_type_information)
 {
     m_qos.setQos(writerInfo.m_qos, true);
 }
@@ -96,9 +92,9 @@ WriterProxyData& WriterProxyData::operator=(const WriterProxyData& writerInfo)
     m_topicKind = writerInfo.m_topicKind;
     persistence_guid_ = writerInfo.persistence_guid_;
     m_qos.setQos(writerInfo.m_qos, true);
-    m_topicDiscoveryKind = writerInfo.m_topicDiscoveryKind;
     m_type_id = writerInfo.m_type_id;
     m_type = writerInfo.m_type;
+    m_type_information = writerInfo.m_type_information;
 
     return *this;
 }
@@ -233,18 +229,16 @@ bool WriterProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
         if (!m_qos.m_groupData.addToCDRMessage(msg)) return false;
     }
 
-    if (m_topicDiscoveryKind != NO_CHECK)
+    if (m_type_id.m_type_identifier._d() != 0)
     {
-        if (m_type_id.m_type_identifier._d() != 0)
-        {
-            if (!m_type_id.addToCDRMessage(msg)) return false;
-        }
-
-        if (m_type.m_type_object._d() != 0)
-        {
-            if (!m_type.addToCDRMessage(msg)) return false;
-        }
+        if (!m_type_id.addToCDRMessage(msg)) return false;
     }
+
+    if (m_type.m_type_object._d() != 0)
+    {
+        if (!m_type.addToCDRMessage(msg)) return false;
+    }
+
 #if HAVE_SECURITY
     if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
     {
@@ -255,9 +249,9 @@ bool WriterProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
     }
 #endif
 
-    if (m_qos.m_dataRepresentation.sendAlways() || m_qos.m_dataRepresentation.hasChanged())
+    if (m_qos.representation.sendAlways() || m_qos.representation.hasChanged())
     {
-        if (!m_qos.m_dataRepresentation.addToCDRMessage(msg)) return false;
+        if (!m_qos.representation.addToCDRMessage(msg)) return false;
     }
 
     return CDRMessage::addParameterSentinel(msg);
@@ -457,11 +451,6 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 const TypeIdV1* p = dynamic_cast<const TypeIdV1*>(param);
                 assert(p != nullptr);
                 m_type_id = *p;
-                m_topicDiscoveryKind = MINIMAL;
-                if (m_type_id.m_type_identifier._d() == types::EK_COMPLETE)
-                {
-                    m_topicDiscoveryKind = COMPLETE;
-                }
                 break;
             }
             case PID_TYPE_OBJECTV1:
@@ -469,11 +458,6 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 const TypeObjectV1* p = dynamic_cast<const TypeObjectV1*>(param);
                 assert(p != nullptr);
                 m_type = *p;
-                m_topicDiscoveryKind = MINIMAL;
-                if (m_type.m_type_object._d() == types::EK_COMPLETE)
-                {
-                    m_topicDiscoveryKind = COMPLETE;
-                }
                 break;
             }
             case PID_TYPE_INFORMATION:
@@ -505,16 +489,13 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
             {
                 const DataRepresentationQosPolicy* p = dynamic_cast<const DataRepresentationQosPolicy*>(param);
                 assert(p != nullptr);
-                m_qos.m_dataRepresentation = *p;
+                m_qos.representation = *p;
                 break;
             }
 
             case PID_TYPE_CONSISTENCY_ENFORCEMENT:
             {
-                const TypeConsistencyEnforcementQosPolicy * p =
-                        dynamic_cast<const TypeConsistencyEnforcementQosPolicy*>(param);
-                assert(p != nullptr);
-                m_qos.m_typeConsistency = *p;
+                logError(RTPS_PROXY_DATA, "Received TypeConsistencyEnforcementQos from a writer, but they haven't.");
                 break;
             }
 
@@ -556,7 +537,6 @@ void WriterProxyData::clear()
     m_isAlive = true;
     m_topicKind = NO_KEY;
     persistence_guid_ = c_Guid_Unknown;
-    m_topicDiscoveryKind = NO_CHECK;
 }
 
 void WriterProxyData::copy(WriterProxyData* wdata)
@@ -574,7 +554,6 @@ void WriterProxyData::copy(WriterProxyData* wdata)
     m_isAlive = wdata->m_isAlive;
     m_topicKind = wdata->m_topicKind;
     persistence_guid_ = wdata->persistence_guid_;
-    m_topicDiscoveryKind = wdata->m_topicDiscoveryKind;
     m_type_id = wdata->m_type_id;
     m_type = wdata->m_type;
     m_type_information = wdata->m_type_information;

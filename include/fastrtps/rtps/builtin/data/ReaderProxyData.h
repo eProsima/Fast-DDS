@@ -284,21 +284,6 @@ class ReaderProxyData
             return m_type_information;
         }
 
-        RTPS_DllAPI void topicDiscoveryKind(TopicDiscoveryKind_t topicDiscoveryKind)
-        {
-            m_topicDiscoveryKind = topicDiscoveryKind;
-        }
-
-        RTPS_DllAPI TopicDiscoveryKind_t topicDiscoveryKind() const
-        {
-            return m_topicDiscoveryKind;
-        }
-
-        RTPS_DllAPI TopicDiscoveryKind_t& topicDiscoveryKind()
-        {
-            return m_topicDiscoveryKind;
-        }
-
         /**
          * Write as a parameter list on a CDRMessage_t
          * @return True on success
@@ -368,8 +353,6 @@ class ReaderProxyData
         bool m_isAlive;
         //!Topic kind
         TopicKind_t m_topicKind;
-        //!Topic Discovery Kind
-        TopicDiscoveryKind_t m_topicDiscoveryKind;
         //!Type Identifier
         TypeIdV1 m_type_id;
         //!Type Object

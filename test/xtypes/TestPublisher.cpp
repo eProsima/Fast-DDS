@@ -37,21 +37,20 @@ using namespace eprosima::fastrtps::rtps;
 TestPublisher::TestPublisher()
     : m_iSamples(-1)
     , m_sentSamples(0)
-	, m_iWaitTime(1000)
+    , m_iWaitTime(1000)
     , m_bInitialized(false)
-	, mp_participant(nullptr)
-	, mp_publisher(nullptr)
-	, m_pubListener(this)
+    , mp_participant(nullptr)
+    , mp_publisher(nullptr)
+    , m_pubListener(this)
 {
 }
 
 bool TestPublisher::init(const std::string& topicName, int domain, eprosima::fastrtps::TopicDataType* type,
-		const eprosima::fastrtps::types::TypeObject* type_object,
-		const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
-		const eprosima::fastrtps::types::TypeInformation* type_info,
-		const std::string& name,
-        const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
-		const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos)
+        const eprosima::fastrtps::types::TypeObject* type_object,
+        const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
+        const eprosima::fastrtps::types::TypeInformation* type_info,
+        const std::string& name,
+        const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos)
 {
     m_Name = name;
     m_Type = type;
@@ -69,40 +68,31 @@ bool TestPublisher::init(const std::string& topicName, int domain, eprosima::fas
         return false;
     }
 
-	// CREATE THE PUBLISHER
-	PublisherAttributes Wparam;
-	Wparam.topic.topicKind = m_Type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
+    // CREATE THE PUBLISHER
+    PublisherAttributes Wparam;
+    Wparam.topic.topicKind = m_Type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
     Wparam.topic.topicDataType = m_Type->getName();
 
     //REGISTER THE TYPE
     Domain::registerType(mp_participant, m_Type);
 
-	Wparam.topic.topicName = topicName;
+    Wparam.topic.topicName = topicName;
     if (type_object != nullptr)
     {
         Wparam.topic.type = *type_object;
-        Wparam.qos.type = *type_object;
     }
     if (type_identifier != nullptr)
     {
         Wparam.topic.type_id = *type_identifier;
-        Wparam.qos.type_id = *type_identifier;
     }
     if (type_info != nullptr)
     {
         Wparam.topic.type_information = *type_info;
-        Wparam.qos.type_information = *type_info;
     }
 
-    if (typeConsistencyQos != nullptr)
-    {
-        Wparam.topic.typeConsistencyQos = *typeConsistencyQos;
-        Wparam.qos.m_typeConsistency = *typeConsistencyQos;
-    }
     if (dataRepresentationQos != nullptr)
     {
-        Wparam.topic.dataRepresentationQos = *dataRepresentationQos;
-        Wparam.qos.m_dataRepresentation = *dataRepresentationQos;
+        Wparam.qos.representation = *dataRepresentationQos;
     }
     // Wparam.topic.dataRepresentationQos = XCDR_DATA_REPRESENTATION
     // Wparam.topic.dataRepresentationQos = XML_DATA_REPRESENTATION
@@ -154,7 +144,7 @@ void TestPublisher::matched()
 
 TestPublisher::PubListener::PubListener(TestPublisher* parent)
     : mParent(parent)
-	, n_matched(0)
+    , n_matched(0)
 {
 }
 
@@ -173,13 +163,13 @@ void TestPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,Matchin
 
 void TestPublisher::runThread()
 {
-	int iPrevCount = 0;
-	std::cout << m_Name << " running..." << std::endl;
+    int iPrevCount = 0;
+    std::cout << m_Name << " running..." << std::endl;
     while (!publish() && iPrevCount < m_iSamples)
     {
-		eClock::my_sleep(m_iWaitTime);
+        eClock::my_sleep(m_iWaitTime);
         ++iPrevCount;
-	}
+    }
 }
 
 void TestPublisher::run()

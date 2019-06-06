@@ -55,7 +55,8 @@ public:
                (this->m_durabilityService == b.m_durabilityService) &&
                (this->m_lifespan == b.m_lifespan) &&
                (this->m_disablePositiveACKs == b.m_disablePositiveACKs) &&
-               (this->m_dataRepresentation == b.m_dataRepresentation);
+               (this->type_consistency == b.type_consistency) &&
+               (this->representation == b.representation);
     }
 
     //!Durability Qos, implemented in the library.
@@ -89,17 +90,11 @@ public:
     //!Lifespan Qos, NOT implemented in the library.
     LifespanQosPolicy m_lifespan;
     //!Data Representation Qos, implemented in the library.
-    DataRepresentationQosPolicy m_dataRepresentation;
+    DataRepresentationQosPolicy representation;
     //!Type consistency enforcement Qos, NOT implemented in the library.
-    TypeConsistencyEnforcementQosPolicy m_typeConsistency;
+    TypeConsistencyEnforcementQosPolicy type_consistency;
     //!Disable positive ACKs QoS
     DisablePositiveACKsQosPolicy m_disablePositiveACKs;
-    //!Type Identifier XTYPES 1.1
-    TypeIdV1 type_id;
-    //!Type Object XTYPES 1.1
-    TypeObjectV1 type;
-    //!XTYPES 1.2
-    XTypes::TypeInformation type_information;
     /**
      * Set Qos from another class
      * @param readerqos Reference from a ReaderQos object.

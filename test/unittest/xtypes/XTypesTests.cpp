@@ -45,7 +45,6 @@ TEST_F(XTypesTests, EnumMinimalCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
     TypeConsistencyEnforcementQosPolicy consistencyQos;
-    TypeConsistencyEnforcementQosPolicy unused;
     const TypeObject* my_enum = GetMinimalMyEnumStructObject();
     const TypeObject* my_bad_enum = GetMinimalMyBadEnumStructObject();
     const TypeObject* my_wide_enum = GetMinimalMyEnumWideStructObject();
@@ -59,29 +58,28 @@ TEST_F(XTypesTests, EnumMinimalCoercion)
     consistencyQos.m_kind = ALLOW_TYPE_COERCION;
 
     // Check results
-    ASSERT_TRUE(my_enum->consistent(*my_enum, consistencyQos, unused));
-    ASSERT_TRUE(my_enum->consistent(*my_bad_enum, consistencyQos, unused));
-    ASSERT_TRUE(my_enum->consistent(*my_wide_enum, consistencyQos, unused));
-    ASSERT_TRUE(my_wide_enum->consistent(*my_enum, consistencyQos, unused));
+    ASSERT_TRUE(my_enum->consistent(*my_enum, consistencyQos));
+    ASSERT_TRUE(my_enum->consistent(*my_bad_enum, consistencyQos));
+    ASSERT_TRUE(my_enum->consistent(*my_wide_enum, consistencyQos));
+    ASSERT_TRUE(my_wide_enum->consistent(*my_enum, consistencyQos));
 
     // Now don't ignore names
     consistencyQos.m_ignore_member_names = false;
-    ASSERT_FALSE(my_enum->consistent(*my_bad_enum, consistencyQos, unused));
-    ASSERT_FALSE(my_enum->consistent(*my_wide_enum, consistencyQos, unused));
-    ASSERT_FALSE(my_wide_enum->consistent(*my_enum, consistencyQos, unused));
+    ASSERT_FALSE(my_enum->consistent(*my_bad_enum, consistencyQos));
+    ASSERT_FALSE(my_enum->consistent(*my_wide_enum, consistencyQos));
+    ASSERT_FALSE(my_wide_enum->consistent(*my_enum, consistencyQos));
 
     // Now don't allow type widening
     consistencyQos.m_ignore_member_names = true;
     consistencyQos.m_prevent_type_widening = true;
-    ASSERT_TRUE(my_enum->consistent(*my_wide_enum, consistencyQos, unused));
-    ASSERT_FALSE(my_wide_enum->consistent(*my_enum, consistencyQos, unused));
+    ASSERT_TRUE(my_enum->consistent(*my_wide_enum, consistencyQos));
+    ASSERT_FALSE(my_wide_enum->consistent(*my_enum, consistencyQos));
 }
 
 TEST_F(XTypesTests, EnumCompleteCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
     TypeConsistencyEnforcementQosPolicy consistencyQos;
-    TypeConsistencyEnforcementQosPolicy unused;
     const TypeObject* my_enum = GetCompleteMyEnumStructObject();
     const TypeObject* my_bad_enum = GetCompleteMyBadEnumStructObject();
     const TypeObject* my_wide_enum = GetCompleteMyEnumWideStructObject();
@@ -95,29 +93,28 @@ TEST_F(XTypesTests, EnumCompleteCoercion)
     consistencyQos.m_kind = ALLOW_TYPE_COERCION;
 
     // Check results
-    ASSERT_TRUE(my_enum->consistent(*my_enum, consistencyQos, unused));
-    ASSERT_TRUE(my_enum->consistent(*my_bad_enum, consistencyQos, unused));
-    ASSERT_TRUE(my_enum->consistent(*my_wide_enum, consistencyQos, unused));
-    ASSERT_TRUE(my_wide_enum->consistent(*my_enum, consistencyQos, unused));
+    ASSERT_TRUE(my_enum->consistent(*my_enum, consistencyQos));
+    ASSERT_TRUE(my_enum->consistent(*my_bad_enum, consistencyQos));
+    ASSERT_TRUE(my_enum->consistent(*my_wide_enum, consistencyQos));
+    ASSERT_TRUE(my_wide_enum->consistent(*my_enum, consistencyQos));
 
     // Now don't ignore names
     consistencyQos.m_ignore_member_names = false;
-    ASSERT_FALSE(my_enum->consistent(*my_bad_enum, consistencyQos, unused));
-    ASSERT_FALSE(my_enum->consistent(*my_wide_enum, consistencyQos, unused));
-    ASSERT_FALSE(my_wide_enum->consistent(*my_enum, consistencyQos, unused));
+    ASSERT_FALSE(my_enum->consistent(*my_bad_enum, consistencyQos));
+    ASSERT_FALSE(my_enum->consistent(*my_wide_enum, consistencyQos));
+    ASSERT_FALSE(my_wide_enum->consistent(*my_enum, consistencyQos));
 
     // Now don't allow type widening
     consistencyQos.m_ignore_member_names = true;
     consistencyQos.m_prevent_type_widening = true;
-    ASSERT_TRUE(my_enum->consistent(*my_wide_enum, consistencyQos, unused));
-    ASSERT_FALSE(my_wide_enum->consistent(*my_enum, consistencyQos, unused));
+    ASSERT_TRUE(my_enum->consistent(*my_wide_enum, consistencyQos));
+    ASSERT_FALSE(my_wide_enum->consistent(*my_enum, consistencyQos));
 }
 
 TEST_F(XTypesTests, AliasMinimalCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
     TypeConsistencyEnforcementQosPolicy consistencyQos;
-    TypeConsistencyEnforcementQosPolicy unused;
     const TypeObject* my_enum = GetMinimalMyEnumStructObject();
     const TypeObject* my_alias_enum = GetMinimalMyAliasEnumStructObject();
 
@@ -130,20 +127,19 @@ TEST_F(XTypesTests, AliasMinimalCoercion)
     consistencyQos.m_kind = ALLOW_TYPE_COERCION;
 
     // Check results
-    ASSERT_TRUE(my_enum->consistent(*my_alias_enum, consistencyQos, unused));
-    ASSERT_TRUE(my_alias_enum->consistent(*my_enum, consistencyQos, unused));
+    ASSERT_TRUE(my_enum->consistent(*my_alias_enum, consistencyQos));
+    ASSERT_TRUE(my_alias_enum->consistent(*my_enum, consistencyQos));
 
     // Don't ignoring member names
     consistencyQos.m_ignore_member_names = false;
-    ASSERT_TRUE(my_enum->consistent(*my_alias_enum, consistencyQos, unused));
-    ASSERT_TRUE(my_alias_enum->consistent(*my_enum, consistencyQos, unused));
+    ASSERT_TRUE(my_enum->consistent(*my_alias_enum, consistencyQos));
+    ASSERT_TRUE(my_alias_enum->consistent(*my_enum, consistencyQos));
 }
 
 TEST_F(XTypesTests, AliasCompleteCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
     TypeConsistencyEnforcementQosPolicy consistencyQos;
-    TypeConsistencyEnforcementQosPolicy unused;
     const TypeObject* my_enum = GetCompleteMyEnumStructObject();
     const TypeObject* my_alias_enum = GetCompleteMyAliasEnumStructObject();
 
@@ -156,20 +152,19 @@ TEST_F(XTypesTests, AliasCompleteCoercion)
     consistencyQos.m_kind = ALLOW_TYPE_COERCION;
 
     // Check results
-    ASSERT_TRUE(my_enum->consistent(*my_alias_enum, consistencyQos, unused));
-    ASSERT_TRUE(my_alias_enum->consistent(*my_enum, consistencyQos, unused));
+    ASSERT_TRUE(my_enum->consistent(*my_alias_enum, consistencyQos));
+    ASSERT_TRUE(my_alias_enum->consistent(*my_enum, consistencyQos));
 
     // Don't ignoring member names
     consistencyQos.m_ignore_member_names = false;
-    ASSERT_TRUE(my_enum->consistent(*my_alias_enum, consistencyQos, unused));
-    ASSERT_TRUE(my_alias_enum->consistent(*my_enum, consistencyQos, unused));
+    ASSERT_TRUE(my_enum->consistent(*my_alias_enum, consistencyQos));
+    ASSERT_TRUE(my_alias_enum->consistent(*my_enum, consistencyQos));
 }
 
 TEST_F(XTypesTests, BasicStructMinimalCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
     TypeConsistencyEnforcementQosPolicy consistencyQos;
-    TypeConsistencyEnforcementQosPolicy unused;
     const TypeObject* basic_struct = GetMinimalBasicStructObject();
     const TypeObject* basic_names_struct = GetMinimalBasicNamesStructObject();
     const TypeObject* basic_bad_struct = GetMinimalBasicBadStructObject();
@@ -185,38 +180,37 @@ TEST_F(XTypesTests, BasicStructMinimalCoercion)
     consistencyQos.m_kind = ALLOW_TYPE_COERCION;
 
     // Check results
-    ASSERT_TRUE(basic_struct->consistent(*basic_names_struct, consistencyQos, unused));
-    ASSERT_FALSE(basic_struct->consistent(*basic_bad_struct, consistencyQos, unused));
-    ASSERT_TRUE(basic_struct->consistent(*basic_wide_struct, consistencyQos, unused));
-    ASSERT_TRUE(basic_wide_struct->consistent(*basic_struct, consistencyQos, unused));
-    ASSERT_FALSE(basic_struct->consistent(*basic_wide_bad_struct, consistencyQos, unused));
-    ASSERT_FALSE(basic_wide_bad_struct->consistent(*basic_struct, consistencyQos, unused));
+    ASSERT_TRUE(basic_struct->consistent(*basic_names_struct, consistencyQos));
+    ASSERT_FALSE(basic_struct->consistent(*basic_bad_struct, consistencyQos));
+    ASSERT_TRUE(basic_struct->consistent(*basic_wide_struct, consistencyQos));
+    ASSERT_TRUE(basic_wide_struct->consistent(*basic_struct, consistencyQos));
+    ASSERT_FALSE(basic_struct->consistent(*basic_wide_bad_struct, consistencyQos));
+    ASSERT_FALSE(basic_wide_bad_struct->consistent(*basic_struct, consistencyQos));
 
     // Don't ignoring member names
     consistencyQos.m_ignore_member_names = false;
-    ASSERT_FALSE(basic_struct->consistent(*basic_names_struct, consistencyQos, unused));
-    ASSERT_TRUE(basic_struct->consistent(*basic_wide_struct, consistencyQos, unused));
-    ASSERT_TRUE(basic_wide_struct->consistent(*basic_struct, consistencyQos, unused));
+    ASSERT_FALSE(basic_struct->consistent(*basic_names_struct, consistencyQos));
+    ASSERT_TRUE(basic_struct->consistent(*basic_wide_struct, consistencyQos));
+    ASSERT_TRUE(basic_wide_struct->consistent(*basic_struct, consistencyQos));
 
     // Don't allow type widening
     consistencyQos.m_ignore_member_names = true;
     consistencyQos.m_prevent_type_widening = true;
-    ASSERT_TRUE(basic_struct->consistent(*basic_wide_struct, consistencyQos, unused));
-    ASSERT_FALSE(basic_wide_struct->consistent(*basic_struct, consistencyQos, unused));
-    ASSERT_FALSE(basic_struct->consistent(*basic_wide_bad_struct, consistencyQos, unused));
-    ASSERT_FALSE(basic_wide_bad_struct->consistent(*basic_struct, consistencyQos, unused));
+    ASSERT_TRUE(basic_struct->consistent(*basic_wide_struct, consistencyQos));
+    ASSERT_FALSE(basic_wide_struct->consistent(*basic_struct, consistencyQos));
+    ASSERT_FALSE(basic_struct->consistent(*basic_wide_bad_struct, consistencyQos));
+    ASSERT_FALSE(basic_wide_bad_struct->consistent(*basic_struct, consistencyQos));
 
     // DISALLOW coercion
     consistencyQos.m_kind = DISALLOW_TYPE_COERCION;
-    ASSERT_FALSE(basic_struct->consistent(*basic_wide_struct, consistencyQos, unused));
-    ASSERT_FALSE(basic_wide_struct->consistent(*basic_struct, consistencyQos, unused));
+    ASSERT_FALSE(basic_struct->consistent(*basic_wide_struct, consistencyQos));
+    ASSERT_FALSE(basic_wide_struct->consistent(*basic_struct, consistencyQos));
 }
 
 TEST_F(XTypesTests, BasicStructCompleteCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
     TypeConsistencyEnforcementQosPolicy consistencyQos;
-    TypeConsistencyEnforcementQosPolicy unused;
     const TypeObject* basic_struct = GetCompleteBasicStructObject();
     const TypeObject* basic_names_struct = GetCompleteBasicNamesStructObject();
     const TypeObject* basic_bad_struct = GetCompleteBasicBadStructObject();
@@ -232,38 +226,37 @@ TEST_F(XTypesTests, BasicStructCompleteCoercion)
     consistencyQos.m_kind = ALLOW_TYPE_COERCION;
 
     // Check results
-    ASSERT_TRUE(basic_struct->consistent(*basic_names_struct, consistencyQos, unused));
-    ASSERT_FALSE(basic_struct->consistent(*basic_bad_struct, consistencyQos, unused));
-    ASSERT_TRUE(basic_struct->consistent(*basic_wide_struct, consistencyQos, unused));
-    ASSERT_TRUE(basic_wide_struct->consistent(*basic_struct, consistencyQos, unused));
-    ASSERT_FALSE(basic_struct->consistent(*basic_wide_bad_struct, consistencyQos, unused));
-    ASSERT_FALSE(basic_wide_bad_struct->consistent(*basic_struct, consistencyQos, unused));
+    ASSERT_TRUE(basic_struct->consistent(*basic_names_struct, consistencyQos));
+    ASSERT_FALSE(basic_struct->consistent(*basic_bad_struct, consistencyQos));
+    ASSERT_TRUE(basic_struct->consistent(*basic_wide_struct, consistencyQos));
+    ASSERT_TRUE(basic_wide_struct->consistent(*basic_struct, consistencyQos));
+    ASSERT_FALSE(basic_struct->consistent(*basic_wide_bad_struct, consistencyQos));
+    ASSERT_FALSE(basic_wide_bad_struct->consistent(*basic_struct, consistencyQos));
 
     // Don't ignoring member names
     consistencyQos.m_ignore_member_names = false;
-    ASSERT_FALSE(basic_struct->consistent(*basic_names_struct, consistencyQos, unused));
-    ASSERT_TRUE(basic_struct->consistent(*basic_wide_struct, consistencyQos, unused));
-    ASSERT_TRUE(basic_wide_struct->consistent(*basic_struct, consistencyQos, unused));
+    ASSERT_FALSE(basic_struct->consistent(*basic_names_struct, consistencyQos));
+    ASSERT_TRUE(basic_struct->consistent(*basic_wide_struct, consistencyQos));
+    ASSERT_TRUE(basic_wide_struct->consistent(*basic_struct, consistencyQos));
 
     // Don't allow type widening
     consistencyQos.m_ignore_member_names = true;
     consistencyQos.m_prevent_type_widening = true;
-    ASSERT_TRUE(basic_struct->consistent(*basic_wide_struct, consistencyQos, unused));
-    ASSERT_FALSE(basic_wide_struct->consistent(*basic_struct, consistencyQos, unused));
-    ASSERT_FALSE(basic_struct->consistent(*basic_wide_bad_struct, consistencyQos, unused));
-    ASSERT_FALSE(basic_wide_bad_struct->consistent(*basic_struct, consistencyQos, unused));
+    ASSERT_TRUE(basic_struct->consistent(*basic_wide_struct, consistencyQos));
+    ASSERT_FALSE(basic_wide_struct->consistent(*basic_struct, consistencyQos));
+    ASSERT_FALSE(basic_struct->consistent(*basic_wide_bad_struct, consistencyQos));
+    ASSERT_FALSE(basic_wide_bad_struct->consistent(*basic_struct, consistencyQos));
 
     // DISALLOW coercion
     consistencyQos.m_kind = DISALLOW_TYPE_COERCION;
-    ASSERT_FALSE(basic_struct->consistent(*basic_wide_struct, consistencyQos, unused));
-    ASSERT_FALSE(basic_wide_struct->consistent(*basic_struct, consistencyQos, unused));
+    ASSERT_FALSE(basic_struct->consistent(*basic_wide_struct, consistencyQos));
+    ASSERT_FALSE(basic_wide_struct->consistent(*basic_struct, consistencyQos));
 }
 
 TEST_F(XTypesTests, StringMinimalCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
     TypeConsistencyEnforcementQosPolicy consistencyQos;
-    TypeConsistencyEnforcementQosPolicy unused;
     const TypeObject* my_string = GetMinimalStringStructObject();
     const TypeObject* my_lstring = GetMinimalLargeStringStructObject();
     const TypeObject* my_wstring = GetMinimalWStringStructObject();
@@ -278,36 +271,35 @@ TEST_F(XTypesTests, StringMinimalCoercion)
     consistencyQos.m_kind = ALLOW_TYPE_COERCION;
 
     // Check results
-    ASSERT_TRUE(my_string->consistent(*my_lstring, consistencyQos, unused));
-    ASSERT_TRUE(my_lstring->consistent(*my_string, consistencyQos, unused));
-    ASSERT_TRUE(my_wstring->consistent(*my_lwstring, consistencyQos, unused));
-    ASSERT_TRUE(my_lwstring->consistent(*my_wstring, consistencyQos, unused));
-    ASSERT_FALSE(my_string->consistent(*my_wstring, consistencyQos, unused));
-    ASSERT_FALSE(my_wstring->consistent(*my_string, consistencyQos, unused));
-    ASSERT_FALSE(my_lstring->consistent(*my_lwstring, consistencyQos, unused));
-    ASSERT_FALSE(my_lwstring->consistent(*my_lstring, consistencyQos, unused));
+    ASSERT_TRUE(my_string->consistent(*my_lstring, consistencyQos));
+    ASSERT_TRUE(my_lstring->consistent(*my_string, consistencyQos));
+    ASSERT_TRUE(my_wstring->consistent(*my_lwstring, consistencyQos));
+    ASSERT_TRUE(my_lwstring->consistent(*my_wstring, consistencyQos));
+    ASSERT_FALSE(my_string->consistent(*my_wstring, consistencyQos));
+    ASSERT_FALSE(my_wstring->consistent(*my_string, consistencyQos));
+    ASSERT_FALSE(my_lstring->consistent(*my_lwstring, consistencyQos));
+    ASSERT_FALSE(my_lwstring->consistent(*my_lstring, consistencyQos));
 
     // Don't ignoring member names
     consistencyQos.m_ignore_member_names = false;
-    ASSERT_FALSE(my_string->consistent(*my_lstring, consistencyQos, unused));
-    ASSERT_FALSE(my_lstring->consistent(*my_string, consistencyQos, unused));
-    ASSERT_FALSE(my_wstring->consistent(*my_lwstring, consistencyQos, unused));
-    ASSERT_FALSE(my_lwstring->consistent(*my_wstring, consistencyQos, unused));
+    ASSERT_FALSE(my_string->consistent(*my_lstring, consistencyQos));
+    ASSERT_FALSE(my_lstring->consistent(*my_string, consistencyQos));
+    ASSERT_FALSE(my_wstring->consistent(*my_lwstring, consistencyQos));
+    ASSERT_FALSE(my_lwstring->consistent(*my_wstring, consistencyQos));
 
     // Don't ignoring string bounds
     consistencyQos.m_ignore_member_names = true;
     consistencyQos.m_ignore_string_bounds = false;
-    ASSERT_FALSE(my_string->consistent(*my_lstring, consistencyQos, unused));
-    ASSERT_TRUE(my_lstring->consistent(*my_string, consistencyQos, unused));
-    ASSERT_FALSE(my_wstring->consistent(*my_lwstring, consistencyQos, unused));
-    ASSERT_TRUE(my_lwstring->consistent(*my_wstring, consistencyQos, unused));
+    ASSERT_FALSE(my_string->consistent(*my_lstring, consistencyQos));
+    ASSERT_TRUE(my_lstring->consistent(*my_string, consistencyQos));
+    ASSERT_FALSE(my_wstring->consistent(*my_lwstring, consistencyQos));
+    ASSERT_TRUE(my_lwstring->consistent(*my_wstring, consistencyQos));
 }
 
 TEST_F(XTypesTests, StringCompleteCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
     TypeConsistencyEnforcementQosPolicy consistencyQos;
-    TypeConsistencyEnforcementQosPolicy unused;
     const TypeObject* my_string = GetCompleteStringStructObject();
     const TypeObject* my_lstring = GetCompleteLargeStringStructObject();
     const TypeObject* my_wstring = GetCompleteWStringStructObject();
@@ -322,36 +314,35 @@ TEST_F(XTypesTests, StringCompleteCoercion)
     consistencyQos.m_kind = ALLOW_TYPE_COERCION;
 
     // Check results
-    ASSERT_TRUE(my_string->consistent(*my_lstring, consistencyQos, unused));
-    ASSERT_TRUE(my_lstring->consistent(*my_string, consistencyQos, unused));
-    ASSERT_TRUE(my_wstring->consistent(*my_lwstring, consistencyQos, unused));
-    ASSERT_TRUE(my_lwstring->consistent(*my_wstring, consistencyQos, unused));
-    ASSERT_FALSE(my_string->consistent(*my_wstring, consistencyQos, unused));
-    ASSERT_FALSE(my_wstring->consistent(*my_string, consistencyQos, unused));
-    ASSERT_FALSE(my_lstring->consistent(*my_lwstring, consistencyQos, unused));
-    ASSERT_FALSE(my_lwstring->consistent(*my_lstring, consistencyQos, unused));
+    ASSERT_TRUE(my_string->consistent(*my_lstring, consistencyQos));
+    ASSERT_TRUE(my_lstring->consistent(*my_string, consistencyQos));
+    ASSERT_TRUE(my_wstring->consistent(*my_lwstring, consistencyQos));
+    ASSERT_TRUE(my_lwstring->consistent(*my_wstring, consistencyQos));
+    ASSERT_FALSE(my_string->consistent(*my_wstring, consistencyQos));
+    ASSERT_FALSE(my_wstring->consistent(*my_string, consistencyQos));
+    ASSERT_FALSE(my_lstring->consistent(*my_lwstring, consistencyQos));
+    ASSERT_FALSE(my_lwstring->consistent(*my_lstring, consistencyQos));
 
     // Don't ignoring member names
     consistencyQos.m_ignore_member_names = false;
-    ASSERT_FALSE(my_string->consistent(*my_lstring, consistencyQos, unused));
-    ASSERT_FALSE(my_lstring->consistent(*my_string, consistencyQos, unused));
-    ASSERT_FALSE(my_wstring->consistent(*my_lwstring, consistencyQos, unused));
-    ASSERT_FALSE(my_lwstring->consistent(*my_wstring, consistencyQos, unused));
+    ASSERT_FALSE(my_string->consistent(*my_lstring, consistencyQos));
+    ASSERT_FALSE(my_lstring->consistent(*my_string, consistencyQos));
+    ASSERT_FALSE(my_wstring->consistent(*my_lwstring, consistencyQos));
+    ASSERT_FALSE(my_lwstring->consistent(*my_wstring, consistencyQos));
 
     // Don't ignoring string bounds
     consistencyQos.m_ignore_member_names = true;
     consistencyQos.m_ignore_string_bounds = false;
-    ASSERT_FALSE(my_string->consistent(*my_lstring, consistencyQos, unused));
-    ASSERT_TRUE(my_lstring->consistent(*my_string, consistencyQos, unused));
-    ASSERT_FALSE(my_wstring->consistent(*my_lwstring, consistencyQos, unused));
-    ASSERT_TRUE(my_lwstring->consistent(*my_wstring, consistencyQos, unused));
+    ASSERT_FALSE(my_string->consistent(*my_lstring, consistencyQos));
+    ASSERT_TRUE(my_lstring->consistent(*my_string, consistencyQos));
+    ASSERT_FALSE(my_wstring->consistent(*my_lwstring, consistencyQos));
+    ASSERT_TRUE(my_lwstring->consistent(*my_wstring, consistencyQos));
 }
 
 TEST_F(XTypesTests, ArrayMinimalCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
     TypeConsistencyEnforcementQosPolicy consistencyQos;
-    TypeConsistencyEnforcementQosPolicy unused;
     const TypeObject* my_array = GetMinimalArrayStructObject();
     const TypeObject* my_array_equal = GetMinimalArrayStructEqualObject();
     const TypeObject* my_array_bad = GetMinimalArrayBadStructObject();
@@ -367,25 +358,24 @@ TEST_F(XTypesTests, ArrayMinimalCoercion)
     consistencyQos.m_kind = ALLOW_TYPE_COERCION;
 
     // Check results
-    ASSERT_TRUE(my_array->consistent(*my_array_equal, consistencyQos, unused));
-    ASSERT_FALSE(my_array->consistent(*my_array_bad, consistencyQos, unused));
-    ASSERT_FALSE(my_array->consistent(*my_array_dims, consistencyQos, unused));
-    ASSERT_FALSE(my_array->consistent(*my_array_size, consistencyQos, unused));
-    ASSERT_TRUE(my_array_equal->consistent(*my_array, consistencyQos, unused));
-    ASSERT_FALSE(my_array_bad->consistent(*my_array, consistencyQos, unused));
-    ASSERT_FALSE(my_array_dims->consistent(*my_array, consistencyQos, unused));
-    ASSERT_FALSE(my_array_size->consistent(*my_array, consistencyQos, unused));
+    ASSERT_TRUE(my_array->consistent(*my_array_equal, consistencyQos));
+    ASSERT_FALSE(my_array->consistent(*my_array_bad, consistencyQos));
+    ASSERT_FALSE(my_array->consistent(*my_array_dims, consistencyQos));
+    ASSERT_FALSE(my_array->consistent(*my_array_size, consistencyQos));
+    ASSERT_TRUE(my_array_equal->consistent(*my_array, consistencyQos));
+    ASSERT_FALSE(my_array_bad->consistent(*my_array, consistencyQos));
+    ASSERT_FALSE(my_array_dims->consistent(*my_array, consistencyQos));
+    ASSERT_FALSE(my_array_size->consistent(*my_array, consistencyQos));
 
     // Don't ignoring member names
     consistencyQos.m_ignore_member_names = false;
-    ASSERT_FALSE(my_array->consistent(*my_array_equal, consistencyQos, unused));
+    ASSERT_FALSE(my_array->consistent(*my_array_equal, consistencyQos));
 }
 
 TEST_F(XTypesTests, ArrayCompleteCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
     TypeConsistencyEnforcementQosPolicy consistencyQos;
-    TypeConsistencyEnforcementQosPolicy unused;
     const TypeObject* my_array = GetCompleteArrayStructObject();
     const TypeObject* my_array_equal = GetCompleteArrayStructEqualObject();
     const TypeObject* my_array_bad = GetCompleteArrayBadStructObject();
@@ -401,25 +391,24 @@ TEST_F(XTypesTests, ArrayCompleteCoercion)
     consistencyQos.m_kind = ALLOW_TYPE_COERCION;
 
     // Check results
-    ASSERT_TRUE(my_array->consistent(*my_array_equal, consistencyQos, unused));
-    ASSERT_FALSE(my_array->consistent(*my_array_bad, consistencyQos, unused));
-    ASSERT_FALSE(my_array->consistent(*my_array_dims, consistencyQos, unused));
-    ASSERT_FALSE(my_array->consistent(*my_array_size, consistencyQos, unused));
-    ASSERT_TRUE(my_array_equal->consistent(*my_array, consistencyQos, unused));
-    ASSERT_FALSE(my_array_bad->consistent(*my_array, consistencyQos, unused));
-    ASSERT_FALSE(my_array_dims->consistent(*my_array, consistencyQos, unused));
-    ASSERT_FALSE(my_array_size->consistent(*my_array, consistencyQos, unused));
+    ASSERT_TRUE(my_array->consistent(*my_array_equal, consistencyQos));
+    ASSERT_FALSE(my_array->consistent(*my_array_bad, consistencyQos));
+    ASSERT_FALSE(my_array->consistent(*my_array_dims, consistencyQos));
+    ASSERT_FALSE(my_array->consistent(*my_array_size, consistencyQos));
+    ASSERT_TRUE(my_array_equal->consistent(*my_array, consistencyQos));
+    ASSERT_FALSE(my_array_bad->consistent(*my_array, consistencyQos));
+    ASSERT_FALSE(my_array_dims->consistent(*my_array, consistencyQos));
+    ASSERT_FALSE(my_array_size->consistent(*my_array, consistencyQos));
 
     // Don't ignoring member names
     consistencyQos.m_ignore_member_names = false;
-    ASSERT_FALSE(my_array->consistent(*my_array_equal, consistencyQos, unused));
+    ASSERT_FALSE(my_array->consistent(*my_array_equal, consistencyQos));
 }
 
 TEST_F(XTypesTests, SequenceMinimalCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
     TypeConsistencyEnforcementQosPolicy consistencyQos;
-    TypeConsistencyEnforcementQosPolicy unused;
     const TypeObject* my_sequence = GetMinimalSequenceStructObject();
     const TypeObject* my_sequence_equal = GetMinimalSequenceStructEqualObject();
     const TypeObject* my_sequence_bad = GetMinimalSequenceBadStructObject();
@@ -436,43 +425,42 @@ TEST_F(XTypesTests, SequenceMinimalCoercion)
     consistencyQos.m_kind = ALLOW_TYPE_COERCION;
 
     // Check results
-    ASSERT_TRUE(my_sequence->consistent(*my_sequence_equal, consistencyQos, unused));
-    ASSERT_FALSE(my_sequence->consistent(*my_sequence_bad, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence->consistent(*my_sequence_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence_equal->consistent(*my_sequence, consistencyQos, unused));
-    ASSERT_FALSE(my_sequence_bad->consistent(*my_sequence, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence_bound->consistent(*my_sequence, consistencyQos, unused));
+    ASSERT_TRUE(my_sequence->consistent(*my_sequence_equal, consistencyQos));
+    ASSERT_FALSE(my_sequence->consistent(*my_sequence_bad, consistencyQos));
+    ASSERT_TRUE(my_sequence->consistent(*my_sequence_bound, consistencyQos));
+    ASSERT_TRUE(my_sequence_equal->consistent(*my_sequence, consistencyQos));
+    ASSERT_FALSE(my_sequence_bad->consistent(*my_sequence, consistencyQos));
+    ASSERT_TRUE(my_sequence_bound->consistent(*my_sequence, consistencyQos));
 
-    ASSERT_TRUE(my_sequence_sequence->consistent(*my_sequence_sequence_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence_sequence_bound->consistent(*my_sequence_sequence, consistencyQos, unused));
+    ASSERT_TRUE(my_sequence_sequence->consistent(*my_sequence_sequence_bound, consistencyQos));
+    ASSERT_TRUE(my_sequence_sequence_bound->consistent(*my_sequence_sequence, consistencyQos));
 
     // Don't ignoring member names
     consistencyQos.m_ignore_member_names = false;
-    ASSERT_FALSE(my_sequence->consistent(*my_sequence_equal, consistencyQos, unused));
-    ASSERT_FALSE(my_sequence_equal->consistent(*my_sequence, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence->consistent(*my_sequence_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence_bound->consistent(*my_sequence, consistencyQos, unused));
+    ASSERT_FALSE(my_sequence->consistent(*my_sequence_equal, consistencyQos));
+    ASSERT_FALSE(my_sequence_equal->consistent(*my_sequence, consistencyQos));
+    ASSERT_TRUE(my_sequence->consistent(*my_sequence_bound, consistencyQos));
+    ASSERT_TRUE(my_sequence_bound->consistent(*my_sequence, consistencyQos));
 
-    ASSERT_TRUE(my_sequence_sequence->consistent(*my_sequence_sequence_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence_sequence_bound->consistent(*my_sequence_sequence, consistencyQos, unused));
+    ASSERT_TRUE(my_sequence_sequence->consistent(*my_sequence_sequence_bound, consistencyQos));
+    ASSERT_TRUE(my_sequence_sequence_bound->consistent(*my_sequence_sequence, consistencyQos));
 
     // Don't ignoring sequence bounds
     consistencyQos.m_ignore_member_names = true;
     consistencyQos.m_ignore_sequence_bounds = false;
-    ASSERT_TRUE(my_sequence->consistent(*my_sequence_equal, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence_equal->consistent(*my_sequence, consistencyQos, unused));
-    ASSERT_FALSE(my_sequence->consistent(*my_sequence_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence_bound->consistent(*my_sequence, consistencyQos, unused));
+    ASSERT_TRUE(my_sequence->consistent(*my_sequence_equal, consistencyQos));
+    ASSERT_TRUE(my_sequence_equal->consistent(*my_sequence, consistencyQos));
+    ASSERT_FALSE(my_sequence->consistent(*my_sequence_bound, consistencyQos));
+    ASSERT_TRUE(my_sequence_bound->consistent(*my_sequence, consistencyQos));
 
-    ASSERT_FALSE(my_sequence_sequence->consistent(*my_sequence_sequence_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence_sequence_bound->consistent(*my_sequence_sequence, consistencyQos, unused));
+    ASSERT_FALSE(my_sequence_sequence->consistent(*my_sequence_sequence_bound, consistencyQos));
+    ASSERT_TRUE(my_sequence_sequence_bound->consistent(*my_sequence_sequence, consistencyQos));
 }
 
 TEST_F(XTypesTests, SequenceCompleteCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
     TypeConsistencyEnforcementQosPolicy consistencyQos;
-    TypeConsistencyEnforcementQosPolicy unused;
     const TypeObject* my_sequence = GetCompleteSequenceStructObject();
     const TypeObject* my_sequence_equal = GetCompleteSequenceStructEqualObject();
     const TypeObject* my_sequence_bad = GetCompleteSequenceBadStructObject();
@@ -489,43 +477,42 @@ TEST_F(XTypesTests, SequenceCompleteCoercion)
     consistencyQos.m_kind = ALLOW_TYPE_COERCION;
 
     // Check results
-    ASSERT_TRUE(my_sequence->consistent(*my_sequence_equal, consistencyQos, unused));
-    ASSERT_FALSE(my_sequence->consistent(*my_sequence_bad, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence->consistent(*my_sequence_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence_equal->consistent(*my_sequence, consistencyQos, unused));
-    ASSERT_FALSE(my_sequence_bad->consistent(*my_sequence, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence_bound->consistent(*my_sequence, consistencyQos, unused));
+    ASSERT_TRUE(my_sequence->consistent(*my_sequence_equal, consistencyQos));
+    ASSERT_FALSE(my_sequence->consistent(*my_sequence_bad, consistencyQos));
+    ASSERT_TRUE(my_sequence->consistent(*my_sequence_bound, consistencyQos));
+    ASSERT_TRUE(my_sequence_equal->consistent(*my_sequence, consistencyQos));
+    ASSERT_FALSE(my_sequence_bad->consistent(*my_sequence, consistencyQos));
+    ASSERT_TRUE(my_sequence_bound->consistent(*my_sequence, consistencyQos));
 
-    ASSERT_TRUE(my_sequence_sequence->consistent(*my_sequence_sequence_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence_sequence_bound->consistent(*my_sequence_sequence, consistencyQos, unused));
+    ASSERT_TRUE(my_sequence_sequence->consistent(*my_sequence_sequence_bound, consistencyQos));
+    ASSERT_TRUE(my_sequence_sequence_bound->consistent(*my_sequence_sequence, consistencyQos));
 
     // Don't ignoring member names
     consistencyQos.m_ignore_member_names = false;
-    ASSERT_FALSE(my_sequence->consistent(*my_sequence_equal, consistencyQos, unused));
-    ASSERT_FALSE(my_sequence_equal->consistent(*my_sequence, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence->consistent(*my_sequence_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence_bound->consistent(*my_sequence, consistencyQos, unused));
+    ASSERT_FALSE(my_sequence->consistent(*my_sequence_equal, consistencyQos));
+    ASSERT_FALSE(my_sequence_equal->consistent(*my_sequence, consistencyQos));
+    ASSERT_TRUE(my_sequence->consistent(*my_sequence_bound, consistencyQos));
+    ASSERT_TRUE(my_sequence_bound->consistent(*my_sequence, consistencyQos));
 
-    ASSERT_TRUE(my_sequence_sequence->consistent(*my_sequence_sequence_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence_sequence_bound->consistent(*my_sequence_sequence, consistencyQos, unused));
+    ASSERT_TRUE(my_sequence_sequence->consistent(*my_sequence_sequence_bound, consistencyQos));
+    ASSERT_TRUE(my_sequence_sequence_bound->consistent(*my_sequence_sequence, consistencyQos));
 
     // Don't ignoring sequence bounds
     consistencyQos.m_ignore_member_names = true;
     consistencyQos.m_ignore_sequence_bounds = false;
-    ASSERT_TRUE(my_sequence->consistent(*my_sequence_equal, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence_equal->consistent(*my_sequence, consistencyQos, unused));
-    ASSERT_FALSE(my_sequence->consistent(*my_sequence_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence_bound->consistent(*my_sequence, consistencyQos, unused));
+    ASSERT_TRUE(my_sequence->consistent(*my_sequence_equal, consistencyQos));
+    ASSERT_TRUE(my_sequence_equal->consistent(*my_sequence, consistencyQos));
+    ASSERT_FALSE(my_sequence->consistent(*my_sequence_bound, consistencyQos));
+    ASSERT_TRUE(my_sequence_bound->consistent(*my_sequence, consistencyQos));
 
-    ASSERT_FALSE(my_sequence_sequence->consistent(*my_sequence_sequence_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_sequence_sequence_bound->consistent(*my_sequence_sequence, consistencyQos, unused));
+    ASSERT_FALSE(my_sequence_sequence->consistent(*my_sequence_sequence_bound, consistencyQos));
+    ASSERT_TRUE(my_sequence_sequence_bound->consistent(*my_sequence_sequence, consistencyQos));
 }
 
 TEST_F(XTypesTests, MapMinimalCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
     TypeConsistencyEnforcementQosPolicy consistencyQos;
-    TypeConsistencyEnforcementQosPolicy unused;
     const TypeObject* my_map = GetMinimalMapStructObject();
     const TypeObject* my_map_equal = GetMinimalMapStructEqualObject();
     const TypeObject* my_map_bad_key = GetMinimalMapBadKeyStructObject();
@@ -543,46 +530,45 @@ TEST_F(XTypesTests, MapMinimalCoercion)
     consistencyQos.m_kind = ALLOW_TYPE_COERCION;
 
     // Check results
-    ASSERT_TRUE(my_map->consistent(*my_map_equal, consistencyQos, unused));
-    ASSERT_FALSE(my_map->consistent(*my_map_bad_key, consistencyQos, unused));
-    ASSERT_FALSE(my_map->consistent(*my_map_bad_elem, consistencyQos, unused));
-    ASSERT_TRUE(my_map->consistent(*my_map_bound, consistencyQos, unused));
+    ASSERT_TRUE(my_map->consistent(*my_map_equal, consistencyQos));
+    ASSERT_FALSE(my_map->consistent(*my_map_bad_key, consistencyQos));
+    ASSERT_FALSE(my_map->consistent(*my_map_bad_elem, consistencyQos));
+    ASSERT_TRUE(my_map->consistent(*my_map_bound, consistencyQos));
 
-    ASSERT_TRUE(my_map_equal->consistent(*my_map, consistencyQos, unused));
-    ASSERT_FALSE(my_map_bad_key->consistent(*my_map, consistencyQos, unused));
-    ASSERT_FALSE(my_map_bad_elem->consistent(*my_map, consistencyQos, unused));
-    ASSERT_TRUE(my_map_bound->consistent(*my_map, consistencyQos, unused));
+    ASSERT_TRUE(my_map_equal->consistent(*my_map, consistencyQos));
+    ASSERT_FALSE(my_map_bad_key->consistent(*my_map, consistencyQos));
+    ASSERT_FALSE(my_map_bad_elem->consistent(*my_map, consistencyQos));
+    ASSERT_TRUE(my_map_bound->consistent(*my_map, consistencyQos));
 
-    ASSERT_TRUE(my_map_map->consistent(*my_map_map_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_map_map_bound->consistent(*my_map_map, consistencyQos, unused));
+    ASSERT_TRUE(my_map_map->consistent(*my_map_map_bound, consistencyQos));
+    ASSERT_TRUE(my_map_map_bound->consistent(*my_map_map, consistencyQos));
 
     // Don't ignoring member names
     consistencyQos.m_ignore_member_names = false;
-    ASSERT_FALSE(my_map->consistent(*my_map_equal, consistencyQos, unused));
-    ASSERT_FALSE(my_map_equal->consistent(*my_map, consistencyQos, unused));
-    ASSERT_TRUE(my_map->consistent(*my_map_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_map_bound->consistent(*my_map, consistencyQos, unused));
+    ASSERT_FALSE(my_map->consistent(*my_map_equal, consistencyQos));
+    ASSERT_FALSE(my_map_equal->consistent(*my_map, consistencyQos));
+    ASSERT_TRUE(my_map->consistent(*my_map_bound, consistencyQos));
+    ASSERT_TRUE(my_map_bound->consistent(*my_map, consistencyQos));
 
-    ASSERT_TRUE(my_map_map->consistent(*my_map_map_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_map_map_bound->consistent(*my_map_map, consistencyQos, unused));
+    ASSERT_TRUE(my_map_map->consistent(*my_map_map_bound, consistencyQos));
+    ASSERT_TRUE(my_map_map_bound->consistent(*my_map_map, consistencyQos));
 
     // Don't ignoring map bounds, doesn't apply on maps
     consistencyQos.m_ignore_member_names = true;
     consistencyQos.m_ignore_sequence_bounds = false;
-    ASSERT_TRUE(my_map->consistent(*my_map_equal, consistencyQos, unused));
-    ASSERT_TRUE(my_map_equal->consistent(*my_map, consistencyQos, unused));
-    ASSERT_FALSE(my_map->consistent(*my_map_bound, consistencyQos, unused));
-    ASSERT_FALSE(my_map_bound->consistent(*my_map, consistencyQos, unused));
+    ASSERT_TRUE(my_map->consistent(*my_map_equal, consistencyQos));
+    ASSERT_TRUE(my_map_equal->consistent(*my_map, consistencyQos));
+    ASSERT_FALSE(my_map->consistent(*my_map_bound, consistencyQos));
+    ASSERT_FALSE(my_map_bound->consistent(*my_map, consistencyQos));
 
-    ASSERT_FALSE(my_map_map->consistent(*my_map_map_bound, consistencyQos, unused));
-    ASSERT_FALSE(my_map_map_bound->consistent(*my_map_map, consistencyQos, unused));
+    ASSERT_FALSE(my_map_map->consistent(*my_map_map_bound, consistencyQos));
+    ASSERT_FALSE(my_map_map_bound->consistent(*my_map_map, consistencyQos));
 }
 
 TEST_F(XTypesTests, MapCompleteCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
     TypeConsistencyEnforcementQosPolicy consistencyQos;
-    TypeConsistencyEnforcementQosPolicy unused;
     const TypeObject* my_map = GetCompleteMapStructObject();
     const TypeObject* my_map_equal = GetCompleteMapStructEqualObject();
     const TypeObject* my_map_bad_key = GetCompleteMapBadKeyStructObject();
@@ -600,46 +586,45 @@ TEST_F(XTypesTests, MapCompleteCoercion)
     consistencyQos.m_kind = ALLOW_TYPE_COERCION;
 
     // Check results
-    ASSERT_TRUE(my_map->consistent(*my_map_equal, consistencyQos, unused));
-    ASSERT_FALSE(my_map->consistent(*my_map_bad_key, consistencyQos, unused));
-    ASSERT_FALSE(my_map->consistent(*my_map_bad_elem, consistencyQos, unused));
-    ASSERT_TRUE(my_map->consistent(*my_map_bound, consistencyQos, unused));
+    ASSERT_TRUE(my_map->consistent(*my_map_equal, consistencyQos));
+    ASSERT_FALSE(my_map->consistent(*my_map_bad_key, consistencyQos));
+    ASSERT_FALSE(my_map->consistent(*my_map_bad_elem, consistencyQos));
+    ASSERT_TRUE(my_map->consistent(*my_map_bound, consistencyQos));
 
-    ASSERT_TRUE(my_map_equal->consistent(*my_map, consistencyQos, unused));
-    ASSERT_FALSE(my_map_bad_key->consistent(*my_map, consistencyQos, unused));
-    ASSERT_FALSE(my_map_bad_elem->consistent(*my_map, consistencyQos, unused));
-    ASSERT_TRUE(my_map_bound->consistent(*my_map, consistencyQos, unused));
+    ASSERT_TRUE(my_map_equal->consistent(*my_map, consistencyQos));
+    ASSERT_FALSE(my_map_bad_key->consistent(*my_map, consistencyQos));
+    ASSERT_FALSE(my_map_bad_elem->consistent(*my_map, consistencyQos));
+    ASSERT_TRUE(my_map_bound->consistent(*my_map, consistencyQos));
 
-    ASSERT_TRUE(my_map_map->consistent(*my_map_map_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_map_map_bound->consistent(*my_map_map, consistencyQos, unused));
+    ASSERT_TRUE(my_map_map->consistent(*my_map_map_bound, consistencyQos));
+    ASSERT_TRUE(my_map_map_bound->consistent(*my_map_map, consistencyQos));
 
     // Don't ignoring member names
     consistencyQos.m_ignore_member_names = false;
-    ASSERT_FALSE(my_map->consistent(*my_map_equal, consistencyQos, unused));
-    ASSERT_FALSE(my_map_equal->consistent(*my_map, consistencyQos, unused));
-    ASSERT_TRUE(my_map->consistent(*my_map_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_map_bound->consistent(*my_map, consistencyQos, unused));
+    ASSERT_FALSE(my_map->consistent(*my_map_equal, consistencyQos));
+    ASSERT_FALSE(my_map_equal->consistent(*my_map, consistencyQos));
+    ASSERT_TRUE(my_map->consistent(*my_map_bound, consistencyQos));
+    ASSERT_TRUE(my_map_bound->consistent(*my_map, consistencyQos));
 
-    ASSERT_TRUE(my_map_map->consistent(*my_map_map_bound, consistencyQos, unused));
-    ASSERT_TRUE(my_map_map_bound->consistent(*my_map_map, consistencyQos, unused));
+    ASSERT_TRUE(my_map_map->consistent(*my_map_map_bound, consistencyQos));
+    ASSERT_TRUE(my_map_map_bound->consistent(*my_map_map, consistencyQos));
 
     // Don't ignoring map bounds, doesn't apply on maps
     consistencyQos.m_ignore_member_names = true;
     consistencyQos.m_ignore_sequence_bounds = false;
-    ASSERT_TRUE(my_map->consistent(*my_map_equal, consistencyQos, unused));
-    ASSERT_TRUE(my_map_equal->consistent(*my_map, consistencyQos, unused));
-    ASSERT_FALSE(my_map->consistent(*my_map_bound, consistencyQos, unused));
-    ASSERT_FALSE(my_map_bound->consistent(*my_map, consistencyQos, unused));
+    ASSERT_TRUE(my_map->consistent(*my_map_equal, consistencyQos));
+    ASSERT_TRUE(my_map_equal->consistent(*my_map, consistencyQos));
+    ASSERT_FALSE(my_map->consistent(*my_map_bound, consistencyQos));
+    ASSERT_FALSE(my_map_bound->consistent(*my_map, consistencyQos));
 
-    ASSERT_FALSE(my_map_map->consistent(*my_map_map_bound, consistencyQos, unused));
-    ASSERT_FALSE(my_map_map_bound->consistent(*my_map_map, consistencyQos, unused));
+    ASSERT_FALSE(my_map_map->consistent(*my_map_map_bound, consistencyQos));
+    ASSERT_FALSE(my_map_map_bound->consistent(*my_map_map, consistencyQos));
 }
 
 TEST_F(XTypesTests, SimpleUnionMinimalCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
     TypeConsistencyEnforcementQosPolicy consistencyQos;
-    TypeConsistencyEnforcementQosPolicy unused;
     const TypeObject* basic_union = GetMinimalSimpleUnionStructObject();
     const TypeObject* basic_union_equal = GetMinimalSimpleUnionStructEqualObject();
     const TypeObject* basic_union_names = GetMinimalSimpleUnionNamesStructObject();
@@ -657,45 +642,44 @@ TEST_F(XTypesTests, SimpleUnionMinimalCoercion)
     consistencyQos.m_kind = ALLOW_TYPE_COERCION;
 
     // Check results
-    ASSERT_TRUE(basic_union->consistent(*basic_union_equal, consistencyQos, unused));
-    ASSERT_TRUE(basic_union->consistent(*basic_union_names, consistencyQos, unused));
-    ASSERT_FALSE(basic_union->consistent(*basic_union_type, consistencyQos, unused));
-    ASSERT_FALSE(basic_union->consistent(*basic_bad_union, consistencyQos, unused));
-    ASSERT_FALSE(basic_union->consistent(*basic_bad_union_disc, consistencyQos, unused));
-    ASSERT_TRUE(basic_union_equal->consistent(*basic_union, consistencyQos, unused));
-    ASSERT_TRUE(basic_union_names->consistent(*basic_union, consistencyQos, unused));
-    ASSERT_FALSE(basic_union_type->consistent(*basic_union, consistencyQos, unused));
-    ASSERT_FALSE(basic_bad_union->consistent(*basic_union, consistencyQos, unused));
-    ASSERT_FALSE(basic_bad_union_disc->consistent(*basic_union, consistencyQos, unused));
+    ASSERT_TRUE(basic_union->consistent(*basic_union_equal, consistencyQos));
+    ASSERT_TRUE(basic_union->consistent(*basic_union_names, consistencyQos));
+    ASSERT_FALSE(basic_union->consistent(*basic_union_type, consistencyQos));
+    ASSERT_FALSE(basic_union->consistent(*basic_bad_union, consistencyQos));
+    ASSERT_FALSE(basic_union->consistent(*basic_bad_union_disc, consistencyQos));
+    ASSERT_TRUE(basic_union_equal->consistent(*basic_union, consistencyQos));
+    ASSERT_TRUE(basic_union_names->consistent(*basic_union, consistencyQos));
+    ASSERT_FALSE(basic_union_type->consistent(*basic_union, consistencyQos));
+    ASSERT_FALSE(basic_bad_union->consistent(*basic_union, consistencyQos));
+    ASSERT_FALSE(basic_bad_union_disc->consistent(*basic_union, consistencyQos));
 
 
-    ASSERT_TRUE(basic_union->consistent(*basic_wide_union, consistencyQos, unused));
-    ASSERT_TRUE(basic_wide_union->consistent(*basic_union, consistencyQos, unused));
+    ASSERT_TRUE(basic_union->consistent(*basic_wide_union, consistencyQos));
+    ASSERT_TRUE(basic_wide_union->consistent(*basic_union, consistencyQos));
 
     // Don't ignoring member names
     consistencyQos.m_ignore_member_names = false;
-    ASSERT_FALSE(basic_union->consistent(*basic_union_names, consistencyQos, unused));
-    ASSERT_FALSE(basic_union->consistent(*basic_union_equal, consistencyQos, unused));
-    ASSERT_FALSE(basic_union_equal->consistent(*basic_union, consistencyQos, unused));
-    ASSERT_TRUE(basic_union->consistent(*basic_wide_union, consistencyQos, unused));
+    ASSERT_FALSE(basic_union->consistent(*basic_union_names, consistencyQos));
+    ASSERT_FALSE(basic_union->consistent(*basic_union_equal, consistencyQos));
+    ASSERT_FALSE(basic_union_equal->consistent(*basic_union, consistencyQos));
+    ASSERT_TRUE(basic_union->consistent(*basic_wide_union, consistencyQos));
 
     // Don't allow type widening
     consistencyQos.m_ignore_member_names = true;
     consistencyQos.m_prevent_type_widening = true;
-    ASSERT_TRUE(basic_union->consistent(*basic_wide_union, consistencyQos, unused));
-    ASSERT_FALSE(basic_wide_union->consistent(*basic_union, consistencyQos, unused));
+    ASSERT_TRUE(basic_union->consistent(*basic_wide_union, consistencyQos));
+    ASSERT_FALSE(basic_wide_union->consistent(*basic_union, consistencyQos));
 
     // DISALLOW coercion
     consistencyQos.m_kind = DISALLOW_TYPE_COERCION;
-    ASSERT_FALSE(basic_union->consistent(*basic_wide_union, consistencyQos, unused));
-    ASSERT_FALSE(basic_wide_union->consistent(*basic_union, consistencyQos, unused));
+    ASSERT_FALSE(basic_union->consistent(*basic_wide_union, consistencyQos));
+    ASSERT_FALSE(basic_wide_union->consistent(*basic_union, consistencyQos));
 }
 
 TEST_F(XTypesTests, SimpleUnionCompleteCoercion)
 {
     // Get Struct TypeObjects (always test struct to test the aliases and types hierarchy)
     TypeConsistencyEnforcementQosPolicy consistencyQos;
-    TypeConsistencyEnforcementQosPolicy unused;
     const TypeObject* basic_union = GetCompleteSimpleUnionStructObject();
     const TypeObject* basic_union_equal = GetCompleteSimpleUnionStructEqualObject();
     const TypeObject* basic_union_names = GetCompleteSimpleUnionNamesStructObject();
@@ -713,38 +697,38 @@ TEST_F(XTypesTests, SimpleUnionCompleteCoercion)
     consistencyQos.m_kind = ALLOW_TYPE_COERCION;
 
     // Check results
-    ASSERT_TRUE(basic_union->consistent(*basic_union_equal, consistencyQos, unused));
-    ASSERT_TRUE(basic_union->consistent(*basic_union_names, consistencyQos, unused));
-    ASSERT_FALSE(basic_union->consistent(*basic_union_type, consistencyQos, unused));
-    ASSERT_FALSE(basic_union->consistent(*basic_bad_union, consistencyQos, unused));
-    ASSERT_FALSE(basic_union->consistent(*basic_bad_union_disc, consistencyQos, unused));
-    ASSERT_TRUE(basic_union_equal->consistent(*basic_union, consistencyQos, unused));
-    ASSERT_TRUE(basic_union_names->consistent(*basic_union, consistencyQos, unused));
-    ASSERT_FALSE(basic_union_type->consistent(*basic_union, consistencyQos, unused));
-    ASSERT_FALSE(basic_bad_union->consistent(*basic_union, consistencyQos, unused));
-    ASSERT_FALSE(basic_bad_union_disc->consistent(*basic_union, consistencyQos, unused));
+    ASSERT_TRUE(basic_union->consistent(*basic_union_equal, consistencyQos));
+    ASSERT_TRUE(basic_union->consistent(*basic_union_names, consistencyQos));
+    ASSERT_FALSE(basic_union->consistent(*basic_union_type, consistencyQos));
+    ASSERT_FALSE(basic_union->consistent(*basic_bad_union, consistencyQos));
+    ASSERT_FALSE(basic_union->consistent(*basic_bad_union_disc, consistencyQos));
+    ASSERT_TRUE(basic_union_equal->consistent(*basic_union, consistencyQos));
+    ASSERT_TRUE(basic_union_names->consistent(*basic_union, consistencyQos));
+    ASSERT_FALSE(basic_union_type->consistent(*basic_union, consistencyQos));
+    ASSERT_FALSE(basic_bad_union->consistent(*basic_union, consistencyQos));
+    ASSERT_FALSE(basic_bad_union_disc->consistent(*basic_union, consistencyQos));
 
 
-    ASSERT_TRUE(basic_union->consistent(*basic_wide_union, consistencyQos, unused));
-    ASSERT_TRUE(basic_wide_union->consistent(*basic_union, consistencyQos, unused));
+    ASSERT_TRUE(basic_union->consistent(*basic_wide_union, consistencyQos));
+    ASSERT_TRUE(basic_wide_union->consistent(*basic_union, consistencyQos));
 
     // Don't ignoring member names
     consistencyQos.m_ignore_member_names = false;
-    ASSERT_FALSE(basic_union->consistent(*basic_union_names, consistencyQos, unused));
-    ASSERT_FALSE(basic_union->consistent(*basic_union_equal, consistencyQos, unused));
-    ASSERT_FALSE(basic_union_equal->consistent(*basic_union, consistencyQos, unused));
-    ASSERT_TRUE(basic_union->consistent(*basic_wide_union, consistencyQos, unused));
+    ASSERT_FALSE(basic_union->consistent(*basic_union_names, consistencyQos));
+    ASSERT_FALSE(basic_union->consistent(*basic_union_equal, consistencyQos));
+    ASSERT_FALSE(basic_union_equal->consistent(*basic_union, consistencyQos));
+    ASSERT_TRUE(basic_union->consistent(*basic_wide_union, consistencyQos));
 
     // Don't allow type widening
     consistencyQos.m_ignore_member_names = true;
     consistencyQos.m_prevent_type_widening = true;
-    ASSERT_TRUE(basic_union->consistent(*basic_wide_union, consistencyQos, unused));
-    ASSERT_FALSE(basic_wide_union->consistent(*basic_union, consistencyQos, unused));
+    ASSERT_TRUE(basic_union->consistent(*basic_wide_union, consistencyQos));
+    ASSERT_FALSE(basic_wide_union->consistent(*basic_union, consistencyQos));
 
     // DISALLOW coercion
     consistencyQos.m_kind = DISALLOW_TYPE_COERCION;
-    ASSERT_FALSE(basic_union->consistent(*basic_wide_union, consistencyQos, unused));
-    ASSERT_FALSE(basic_wide_union->consistent(*basic_union, consistencyQos, unused));
+    ASSERT_FALSE(basic_union->consistent(*basic_wide_union, consistencyQos));
+    ASSERT_FALSE(basic_wide_union->consistent(*basic_union, consistencyQos));
 }
 
 int main(int argc, char **argv)

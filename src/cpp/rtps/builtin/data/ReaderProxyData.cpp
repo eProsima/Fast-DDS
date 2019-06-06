@@ -37,11 +37,10 @@ ReaderProxyData::ReaderProxyData()
     , m_userDefinedId(0)
     , m_isAlive(true)
     , m_topicKind(NO_KEY)
-    , m_topicDiscoveryKind(NO_CHECK)
     {
         // As DDS-XTypes, v1.2 (page 182) document stablishes, local default is ALLOW_TYPE_COERCION,
         // but when remotes doesn't send TypeConsistencyQos, we must assume DISALLOW.
-        m_qos.m_typeConsistency.m_kind = DISALLOW_TYPE_COERCION;
+        m_qos.type_consistency.m_kind = DISALLOW_TYPE_COERCION;
     }
 
 ReaderProxyData::~ReaderProxyData()
@@ -65,9 +64,9 @@ ReaderProxyData::ReaderProxyData(const ReaderProxyData& readerInfo)
     , m_userDefinedId(readerInfo.m_userDefinedId)
     , m_isAlive(readerInfo.m_isAlive)
     , m_topicKind(readerInfo.m_topicKind)
-    , m_topicDiscoveryKind(readerInfo.m_topicDiscoveryKind)
     , m_type_id(readerInfo.m_type_id)
     , m_type(readerInfo.m_type)
+    , m_type_information(readerInfo.m_type_information)
 {
     m_qos.setQos(readerInfo.m_qos, true);
 }
@@ -91,9 +90,9 @@ ReaderProxyData& ReaderProxyData::operator=(const ReaderProxyData& readerInfo)
     m_expectsInlineQos = readerInfo.m_expectsInlineQos;
     m_topicKind = readerInfo.m_topicKind;
     m_qos.setQos(readerInfo.m_qos, true);
-    m_topicDiscoveryKind = readerInfo.m_topicDiscoveryKind;
     m_type_id = readerInfo.m_type_id;
     m_type = readerInfo.m_type;
+    m_type_information = readerInfo.m_type_information;
 
     return *this;
 }
@@ -220,18 +219,17 @@ bool ReaderProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
             return false;
         }
     }
-    if (m_topicDiscoveryKind != NO_CHECK)
-    {
-        if (m_type_id.m_type_identifier._d() != 0)
-        {
-            if (!m_type_id.addToCDRMessage(msg)) return false;
-        }
 
-        if (m_type.m_type_object._d() != 0)
-        {
-            if (!m_type.addToCDRMessage(msg)) return false;
-        }
+    if (m_type_id.m_type_identifier._d() != 0)
+    {
+        if (!m_type_id.addToCDRMessage(msg)) return false;
     }
+
+    if (m_type.m_type_object._d() != 0)
+    {
+        if (!m_type.addToCDRMessage(msg)) return false;
+    }
+
 #if HAVE_SECURITY
     if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
     {
@@ -242,9 +240,17 @@ bool ReaderProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
     }
 #endif
 
-    if (m_qos.m_dataRepresentation.sendAlways() || m_qos.m_dataRepresentation.hasChanged())
+    if (m_qos.representation.sendAlways() || m_qos.representation.hasChanged())
     {
-        if (!m_qos.m_dataRepresentation.addToCDRMessage(msg)) return false;
+        if (!m_qos.representation.addToCDRMessage(msg)) return false;
+    }
+
+    if (m_qos.type_consistency.sendAlways() || m_qos.type_consistency.hasChanged())
+    {
+        if (!m_qos.type_consistency.addToCDRMessage(msg))
+        {
+            return false;
+        }
     }
 
     return CDRMessage::addParameterSentinel(msg);
@@ -436,7 +442,7 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
             {
                 const DataRepresentationQosPolicy* p = dynamic_cast<const DataRepresentationQosPolicy*>(param);
                 assert(p != nullptr);
-                m_qos.m_dataRepresentation = *p;
+                m_qos.representation = *p;
                 break;
             }
             case PID_TYPE_CONSISTENCY_ENFORCEMENT:
@@ -444,7 +450,7 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 const TypeConsistencyEnforcementQosPolicy* p =
                     dynamic_cast<const TypeConsistencyEnforcementQosPolicy*>(param);
                 assert(p != nullptr);
-                m_qos.m_typeConsistency = *p;
+                m_qos.type_consistency = *p;
                 break;
             }
             case PID_TYPE_IDV1:
@@ -452,11 +458,6 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 const TypeIdV1* p = dynamic_cast<const TypeIdV1*>(param);
                 assert(p != nullptr);
                 m_type_id = *p;
-                m_topicDiscoveryKind = MINIMAL;
-                if (m_type_id.m_type_identifier._d() == types::EK_COMPLETE)
-                {
-                    m_topicDiscoveryKind = COMPLETE;
-                }
                 break;
             }
             case PID_TYPE_OBJECTV1:
@@ -464,11 +465,6 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 const TypeObjectV1* p = dynamic_cast<const TypeObjectV1*>(param);
                 assert(p != nullptr);
                 m_type = *p;
-                m_topicDiscoveryKind = MINIMAL;
-                if (m_type.m_type_object._d() == types::EK_COMPLETE)
-                {
-                    m_topicDiscoveryKind = COMPLETE;
-                }
                 break;
             }
             case PID_TYPE_INFORMATION:
@@ -558,7 +554,6 @@ void ReaderProxyData::copy(ReaderProxyData* rdata)
     m_expectsInlineQos = rdata->m_expectsInlineQos;
     m_isAlive = rdata->m_isAlive;
     m_topicKind = rdata->m_topicKind;
-    m_topicDiscoveryKind = rdata->m_topicDiscoveryKind;
     m_type_id = rdata->m_type_id;
     m_type = rdata->m_type;
     m_type_information = rdata->m_type_information;

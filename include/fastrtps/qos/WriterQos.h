@@ -59,7 +59,7 @@ public:
                (this->m_groupData == b.m_groupData) &&
                (this->m_publishMode == b.m_publishMode) &&
                (this->m_disablePositiveACKs == b.m_disablePositiveACKs) &&
-               (this->m_dataRepresentation == b.m_dataRepresentation);
+               (this->representation == b.representation);
     }
 
     //!Durability Qos, implemented in the library.
@@ -96,18 +96,10 @@ public:
     GroupDataQosPolicy m_groupData;
     //!Publication Mode Qos, implemented in the library.
     PublishModeQosPolicy m_publishMode;
+    //!Data Representation Qos, implemented in the library.
+    DataRepresentationQosPolicy representation;
     //!Disable positive acks QoS, implemented in the library.
     DisablePositiveACKsQosPolicy m_disablePositiveACKs;
-    //!Data Representation Qos, implemented in the library.
-    DataRepresentationQosPolicy m_dataRepresentation;
-    //!Type consistency enforcement Qos, NOT implemented in the library.
-    TypeConsistencyEnforcementQosPolicy m_typeConsistency;
-    //!Type Identifier XTYPES 1.1
-    TypeIdV1 type_id;
-    //!Type Object XTYPES 1.1
-    TypeObjectV1 type;
-    //!XTYPES 1.2
-    XTypes::TypeInformation type_information;
     /**
      * Set Qos from another class
      * @param qos Reference from a WriterQos object.
