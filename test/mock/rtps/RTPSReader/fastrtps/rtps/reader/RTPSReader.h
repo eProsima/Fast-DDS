@@ -24,6 +24,7 @@
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
 #include <gmock/gmock.h>
 

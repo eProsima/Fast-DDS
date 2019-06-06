@@ -25,6 +25,7 @@
 #include "../attributes/ReaderAttributes.h"
 #include "../common/SequenceNumber.h"
 #include "../common/Time_t.h"
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
 #include <condition_variable>
 
@@ -39,6 +40,7 @@ struct CacheChange_t;
 class WriterProxy;
 class FragmentedChangePitStop;
 struct ReaderHistoryState;
+class WriterProxyData;
 
 /**
  * Class RTPSReader, manages the reception of data from its matched writers.

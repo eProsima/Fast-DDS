@@ -26,10 +26,16 @@ namespace rtps {
 class RTPSMessageGroup_t;
 class WriterProxy;
 class RTPSMessageSenderInterface;
+class RTPSParticipantImpl;
+struct CDRMessage_t;
 
 class StatefulReader : public RTPSReader
 {
     public:
+
+        StatefulReader() {}
+
+        StatefulReader(ReaderHistory* history, std::recursive_timed_mutex* mutex) : RTPSReader(history, mutex) {}
 
         virtual ~StatefulReader() {}
 
@@ -39,12 +45,6 @@ class StatefulReader : public RTPSReader
 
         // In real class, inherited from Endpoint base class.
         inline const GUID_t& getGuid() const { return guid_; };
-
-        StatefulReader() {}
-
-        StatefulReader(ReaderHistory* history, std::recursive_timed_mutex* mutex) : RTPSReader(history, mutex) {}
-
-        virtual ~StatefulReader() {}
 
         inline ReaderTimes& getTimes() { return times_; }
 

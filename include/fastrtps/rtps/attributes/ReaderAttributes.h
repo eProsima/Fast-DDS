@@ -31,8 +31,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class WriterProxyData;
-
 /**
  * Class ReaderTimes, defining the times associated with the Reliable Readers events.
  * @ingroup RTPS_ATTRIBUTES_MODULE
