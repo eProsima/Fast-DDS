@@ -532,6 +532,11 @@ BLACKBOXTEST(Discovery, TwentyParticipants)
     }
 
     // Test will fail by timeout if a discovery error happens
+    std::cout << "All discovered. Closing participants..." << std::endl;
+    for (auto& ps : pubsub)
+    {
+        ps->destroy();
+    }
 }
 
 //! Regression for ROS2 #280 and #281
@@ -588,4 +593,9 @@ BLACKBOXTEST(Discovery, TwentyParticipantsSeveralEndpoints)
     }
 
     // Test will fail by timeout if a discovery error happens
+    std::cout << "All discovered. Closing participants..." << std::endl;
+    for (auto& ps : pubsub)
+    {
+        ps->destroy();
+    }
 }
