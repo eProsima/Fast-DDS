@@ -16,74 +16,21 @@
 #include <fastrtps/rtps/history/CacheChangePool.h>
 #include <fastrtps/rtps/common/CacheChange.h>
 
+#include <tuple>
+
 using namespace eprosima::fastrtps::rtps;
 using namespace ::testing;
 using namespace std;
 
-class CacheChangePoolAttributes
-{
-public:
-    CacheChangePoolAttributes()
-        : pool_size(10)
-        , max_pool_size(0)
-        , payload_size(128)
-        , memory_policy(MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE)
-    {
-    }
-
-    CacheChangePoolAttributes(
-            int32_t pool_size_,
-            int32_t max_pool_size_,
-            uint32_t payload_size_,
-            MemoryManagementPolicy_t memory_policy_)
-        : pool_size(pool_size_)
-        , max_pool_size(max_pool_size_)
-        , payload_size(payload_size_)
-        , memory_policy(memory_policy_)
-    {
-    }
-
-    int32_t pool_size;
-    int32_t max_pool_size;
-    uint32_t payload_size;
-    MemoryManagementPolicy_t memory_policy;
-
-    friend ostream& operator<<(ostream& os, const CacheChangePoolAttributes& attrs) {
-        return os << attrs.to_string();
-    }
-
-private:
-    string to_string() const
-    {
-        string memory_policy_str;
-        switch (memory_policy)
-        {
-        case MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE:
-            memory_policy_str = "PREALLOC";
-            break;
-        case MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
-            memory_policy_str = "REALLOC";
-            break;
-        case MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE:
-            memory_policy_str = "DYNAMIC";
-            break;
-        }
-
-        std::stringstream ss;
-        ss << "[pool_size: " << pool_size
-        << ", max_pool_size: " << max_pool_size
-        << ", payload_size: " << payload_size
-        << ", memory_policy: " << memory_policy_str << "]";
-
-        return ss.str();
-    }
-};
-
-class CacheChangePoolTests : public TestWithParam<CacheChangePoolAttributes>
+class CacheChangePoolTests : public TestWithParam<tuple<int32_t, int32_t, uint32_t, MemoryManagementPolicy_t>>
 {
 protected:
     CacheChangePoolTests()
         : pool(nullptr)
+        , pool_size(10)
+        , max_pool_size(0)
+        , payload_size(128)
+        , memory_policy(MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE)
     {
     }
 
@@ -91,12 +38,16 @@ protected:
 
     virtual void SetUp()
     {
-        attrs = GetParam();
+        pool_size     = get<0>(GetParam());
+        max_pool_size = get<1>(GetParam());
+        payload_size  = get<2>(GetParam());
+        memory_policy = get<3>(GetParam());
+
         pool = new CacheChangePool(
-                attrs.pool_size,
-                attrs.payload_size,
-                attrs.max_pool_size,
-                attrs.memory_policy);
+                pool_size,
+                payload_size,
+                max_pool_size,
+                memory_policy);
     }
 
     virtual void TearDown()
@@ -104,21 +55,25 @@ protected:
         delete pool;
     }
 
-    CacheChangePoolAttributes attrs;
     CacheChangePool* pool;
+
+    int32_t pool_size;
+    int32_t max_pool_size;
+    uint32_t payload_size;
+    MemoryManagementPolicy_t memory_policy;
 };
 
 TEST_P(CacheChangePoolTests, init_pool)
 {
-    ASSERT_EQ(pool->getInitialPayloadSize(), attrs.payload_size);
+    ASSERT_EQ(pool->getInitialPayloadSize(), payload_size);
 
     size_t expected_size;
-    if (attrs.memory_policy == MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
+    if (memory_policy == MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
     {
         expected_size = 0;
     }
     else {
-        expected_size = static_cast<size_t>(attrs.pool_size + 1U);
+        expected_size = static_cast<size_t>(pool_size + 1U);
     }
 
     ASSERT_EQ(pool->get_allCachesSize(), expected_size);
@@ -129,38 +84,52 @@ TEST_P(CacheChangePoolTests, reserve_cache)
 {
     CacheChange_t* ch = nullptr;
 
-    uint32_t payload = attrs.payload_size;
-    uint32_t pool_size = static_cast<uint32_t>(attrs.pool_size);
-    uint32_t max_pool_size = static_cast<uint32_t>(attrs.max_pool_size);
+    uint32_t payload = payload_size;
+    uint32_t size = static_cast<uint32_t>(pool_size);
+    uint32_t max_size = static_cast<uint32_t>(max_pool_size);
 
     uint32_t num_inserts;
-    if (attrs.max_pool_size == 0)
+    if (max_size == 0)
     {
         num_inserts = 1000U;
     }
-    else if (attrs.max_pool_size <= attrs.pool_size)
+    else if (max_size <= size)
     {
-        max_pool_size = pool_size;
-        num_inserts = pool_size + 1;
+        max_size = size;
+        num_inserts = size + 1;
     }
-    else // max_pool_size > pool_size
+    else // max_size > size
     {
-        num_inserts = max_pool_size + 1;
+        num_inserts = max_size + 1;
     }
 
     for (uint32_t i=0; i<num_inserts; i++)
     {
-        EXPECT_TRUE(pool->reserve_Cache(&ch, payload));
+        uint32_t data_size = i*16;
+        EXPECT_TRUE(pool->reserve_Cache(&ch, [data_size]() -> uint32_t {return data_size;}));
         EXPECT_EQ(pool->getInitialPayloadSize(), payload);
         EXPECT_GE(pool->get_freeCachesSize(), 0);
 
-        if(max_pool_size > 0)
+        switch (memory_policy)
         {
-            EXPECT_LE(pool->get_allCachesSize(), max_pool_size + 1U);
+            case MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE:
+                EXPECT_EQ(ch->serializedPayload.max_size, payload);
+                break;
+            case MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
+                EXPECT_EQ(ch->serializedPayload.max_size, max(payload, data_size));
+                break;
+            case MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE:
+                EXPECT_EQ(ch->serializedPayload.max_size, data_size);
+                break;
+        }
+
+        if (max_size > 0)
+        {
+            EXPECT_LE(pool->get_allCachesSize(), max_size + 1U);
         }
     }
 
-    if (max_pool_size == 0)
+    if (max_size == 0)
     {
         EXPECT_TRUE(pool->reserve_Cache(&ch, payload));
     }
@@ -170,23 +139,41 @@ TEST_P(CacheChangePoolTests, reserve_cache)
     }
 }
 
+TEST_P(CacheChangePoolTests, release_cache)
+{
+    CacheChange_t* ch = nullptr;
+
+    uint32_t num_inserts = 10;
+    for (uint32_t i=0; i<num_inserts; i++)
+    {
+        uint32_t data_size = i*16;
+        pool->reserve_Cache(&ch, [data_size]() -> uint32_t {return data_size;});
+        pool->release_Cache(ch);
+
+        switch (memory_policy)
+        {
+            case MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE:
+               //EXPECT_EQ(ch->serializedPayload.max_size, payload);
+               break;
+            case MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
+               //EXPECT_EQ(ch->serializedPayload.max_size, max(payload, data_size));
+               break;
+            case MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE:
+               //EXPECT_EQ(&ch, nullptr);
+               break;
+        }
+    }
+}
+
 INSTANTIATE_TEST_CASE_P(
-    instanciation,
+    instance_1,
     CacheChangePoolTests,
-    Values( CacheChangePoolAttributes(10, 10,  128,  MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE)
-           ,CacheChangePoolAttributes(10, 100, 128,  MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE)
-           ,CacheChangePoolAttributes(10, 0,   128,  MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE)
-           ,CacheChangePoolAttributes(20, 10,  128,  MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE)
-           ,CacheChangePoolAttributes(10, 10,  128,  MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
-           ,CacheChangePoolAttributes(10, 100, 128,  MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
-           ,CacheChangePoolAttributes(10, 0,   128,  MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
-           ,CacheChangePoolAttributes(20, 10,  128,  MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE)
-           ,CacheChangePoolAttributes(10, 10,  128,  MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
-           ,CacheChangePoolAttributes(10, 100, 128,  MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
-           ,CacheChangePoolAttributes(10, 0,   128,  MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
-           ,CacheChangePoolAttributes(20, 10,  128,  MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
-    )
-);
+    Combine(Values(0, 10, 20, 30),
+            Values(0, 10, 20, 30),
+            Values(128, 256, 512, 1024),
+            Values(MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE,
+                   MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
+                   MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)));
 
 int main(int argc, char **argv)
 {
