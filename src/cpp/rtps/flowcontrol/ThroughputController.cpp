@@ -113,7 +113,7 @@ void ThroughputController::ScheduleRefresh(uint32_t sizeToRestore)
 
                 if (mAssociatedWriter)
                 {
-                    mAssociatedWriter->getRTPSParticipant()->async_thread().wakeUp(mAssociatedWriter);
+                    mAssociatedWriter->getRTPSParticipant()->async_thread().wake_up(mAssociatedWriter);
                 }
                 else if (mAssociatedParticipant)
                 {
@@ -121,7 +121,7 @@ void ThroughputController::ScheduleRefresh(uint32_t sizeToRestore)
                     for (auto it = mAssociatedParticipant->userWritersListBegin();
                             it != mAssociatedParticipant->userWritersListEnd(); ++it)
                     {
-                        mAssociatedParticipant->async_thread().wakeUp(*it);
+                        mAssociatedParticipant->async_thread().wake_up(*it);
                     }
                 }
             }

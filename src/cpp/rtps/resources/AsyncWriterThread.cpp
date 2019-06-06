@@ -22,16 +22,36 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-bool AsyncWriterThread::addWriter(RTPSWriter& writer)
+/*!
+ * @brief This function removes a writer.
+ * @param writer Asynchronous writer to be removed.
+ * @return Result of the operation.
+ */
+void AsyncWriterThread::unregister_writer(RTPSWriter* writer)
 {
-    bool returnedValue = false;
+    if(interestTree_.UnregisterInterest(writer))
+    {
+        std::unique_lock<std::timed_mutex> lock(condition_variable_mutex_);
+        running_ = false;
+        run_scheduled_ = false;
+        cv_.notify_all();
+        if (thread_)
+        {
+            lock.unlock();
+            thread_->join();
+            lock.lock();
+            delete thread_;
+            thread_ = nullptr;
+            }
+    }
+}
 
-    data_structure_mutex_.lock();
-    async_writers_.push_back(&writer);
-    returnedValue = true;
-
-    std::unique_lock<std::timed_mutex> cond_guard(condition_variable_mutex_);
-    data_structure_mutex_.unlock();
+void AsyncWriterThread::wake_up(
+        RTPSWriter* interestedWriter)
+{
+    interestTree_.RegisterInterest(interestedWriter);
+    std::unique_lock<std::timed_mutex> lock(condition_variable_mutex_);
+    run_scheduled_ = true;
     // If thread not running, start it.
     if(thread_ == nullptr)
     {
@@ -39,57 +59,14 @@ bool AsyncWriterThread::addWriter(RTPSWriter& writer)
         run_scheduled_ = true;
         thread_ = new std::thread(&AsyncWriterThread::run, this);
     }
-
-    return returnedValue;
-}
-
-/*!
- * @brief This function removes a writer.
- * @param writer Asynchronous writer to be removed.
- * @return Result of the operation.
- */
-bool AsyncWriterThread::removeWriter(RTPSWriter& writer)
-{
-    bool returnedValue = false;
-
-    std::unique_lock<std::mutex> data_guard(data_structure_mutex_);
-    auto it = std::find(async_writers_.begin(), async_writers_.end(), &writer);
-
-    if(it != async_writers_.end())
+    else
     {
-        async_writers_.erase(it);
-        returnedValue = true;
-
-        // If there is not more asynchronous writers, stop the thread.
-        if(async_writers_.empty())
-        {
-            std::unique_lock<std::timed_mutex> cond_guard(condition_variable_mutex_);
-            data_guard.unlock();
-            running_ = false;
-            run_scheduled_ = false;
-            cv_.notify_all();
-            cond_guard.unlock();
-            thread_->join();
-            cond_guard.lock();
-            delete thread_;
-            thread_ = nullptr;
-        }
+        cv_.notify_all();
     }
-
-    return returnedValue;
 }
 
-void AsyncWriterThread::wakeUp(
-        const RTPSWriter* interestedWriter)
-{
-    interestTree_.RegisterInterest(interestedWriter);
-    std::unique_lock<std::timed_mutex> lock(condition_variable_mutex_);
-    run_scheduled_ = true;
-    cv_.notify_all();
-}
-
-void AsyncWriterThread::wakeUp(
-        const RTPSWriter* interestedWriter,
+void AsyncWriterThread::wake_up(
+        RTPSWriter* interestedWriter,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
     if(interestTree_.RegisterInterest(interestedWriter, max_blocking_time))
@@ -99,7 +76,17 @@ void AsyncWriterThread::wakeUp(
         if(lock.try_lock_until(max_blocking_time))
         {
             run_scheduled_ = true;
-            cv_.notify_all();
+            // If thread not running, start it.
+            if(thread_ == nullptr)
+            {
+                running_ = true;
+                run_scheduled_ = true;
+                thread_ = new std::thread(&AsyncWriterThread::run, this);
+            }
+            else
+            {
+                cv_.notify_all();
+            }
         }
     }
 }
@@ -114,12 +101,12 @@ void AsyncWriterThread::run()
             run_scheduled_ = false;
             cond_guard.unlock();
             interestTree_.Swap();
-            auto interestedWriters = interestTree_.GetInterestedWriters();
+            RTPSWriter* curr = nullptr;
 
-            std::unique_lock<std::mutex> data_guard(data_structure_mutex_);
-            for(auto writer : async_writers_)
-                if (interestedWriters.count(writer))
-                    writer->send_any_unsent_changes();
+            while ((curr = interestTree_.next_active()))
+            {
+                curr->send_any_unsent_changes();
+            }
 
             cond_guard.lock();
         }

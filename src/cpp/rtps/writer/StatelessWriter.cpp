@@ -69,7 +69,7 @@ StatelessWriter::StatelessWriter(
 
 StatelessWriter::~StatelessWriter()
 {
-    mp_RTPSParticipant->async_thread().removeWriter(*this);
+    mp_RTPSParticipant->async_thread().unregister_writer(this);
     logInfo(RTPS_WRITER,"StatelessWriter destructor";);
 }
 
@@ -186,7 +186,7 @@ void StatelessWriter::unsent_change_added_to_history(
         else
         {
             unsent_changes_.push_back(ChangeForReader_t(change));
-            mp_RTPSParticipant->async_thread().wakeUp(this, max_blocking_time);
+            mp_RTPSParticipant->async_thread().wake_up(this, max_blocking_time);
         }
 
         if (liveliness_lease_duration_ < c_TimeInfinite)
@@ -412,7 +412,7 @@ bool StatelessWriter::matched_reader_add(const ReaderProxyData& data)
     if (data.m_qos.m_durability.kind >= TRANSIENT_LOCAL_DURABILITY_QOS)
     {
         unsent_changes_.assign(mp_history->changesBegin(), mp_history->changesEnd());
-        mp_RTPSParticipant->async_thread().wakeUp(this);
+        mp_RTPSParticipant->async_thread().wake_up(this);
     }
 
     logInfo(RTPS_READER,"Reader " << data.guid() << " added to "<<m_guid.entityId);
@@ -478,7 +478,7 @@ void StatelessWriter::unsent_changes_reset()
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     unsent_changes_.assign(mp_history->changesBegin(), mp_history->changesEnd());
-    mp_RTPSParticipant->async_thread().wakeUp(this);
+    mp_RTPSParticipant->async_thread().wake_up(this);
 }
 
 void StatelessWriter::add_flow_controller(std::unique_ptr<FlowController> controller)

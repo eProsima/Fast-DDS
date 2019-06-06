@@ -19,21 +19,15 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-AsyncInterestTree::AsyncInterestTree():
-    mActiveInterest(&mInterestAlpha),
-    mHiddenInterest(&mInterestBeta)
-{
-}
-
-void AsyncInterestTree::RegisterInterest(
-        const RTPSWriter* writer)
+bool AsyncInterestTree::RegisterInterest(
+        RTPSWriter* writer)
 {
     std::unique_lock<std::timed_mutex> guard(mMutexHidden);
-    mHiddenInterest->insert(writer); 
+    return register_interest_nts(writer);
 }
 
 bool AsyncInterestTree::RegisterInterest(
-        const RTPSWriter* writer,
+        RTPSWriter* writer,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
     bool ret_value = false;
@@ -41,11 +35,96 @@ bool AsyncInterestTree::RegisterInterest(
 
     if(guard.try_lock_until(max_blocking_time))
     {
-        mHiddenInterest->insert(writer); 
-        ret_value = true;
+        ret_value = register_interest_nts(writer);
     }
 
     return ret_value;
+}
+
+bool AsyncInterestTree::register_interest_nts(
+        RTPSWriter* writer)
+{
+    RTPSWriter *curr = hidden_front_, *prev = nullptr;
+
+    while (curr)
+    {
+        if (writer == curr)
+        {
+            return false;
+        }
+
+        prev = curr;
+        curr = prev->next_[hidden_pos_];
+    }
+
+    if (!prev)
+    {
+        hidden_front_ = writer;
+    }
+    else
+    {
+        prev->next_[hidden_pos_] = writer;
+    }
+
+    return true;
+}
+
+bool AsyncInterestTree::UnregisterInterest(
+        RTPSWriter* writer)
+{
+    std::unique_lock<std::timed_mutex> activeGuard(mMutexActive);
+    std::unique_lock<std::timed_mutex> hiddenGuard(mMutexHidden);
+
+    RTPSWriter *curr = active_front_, *prev = nullptr;
+
+    while (curr)
+    {
+        if (curr == writer)
+        {
+            if (prev)
+            {
+                prev->next_[active_pos_] = curr->next_[active_pos_];
+            }
+            else
+            {
+                active_front_ = curr->next_[active_pos_];
+            }
+
+            curr->next_[active_pos_] = nullptr;
+            break;
+        }
+        else
+        {
+            curr = curr->next_[active_pos_];
+        }
+    }
+
+    curr = hidden_front_;
+    prev = nullptr;
+
+    while (curr)
+    {
+        if (curr == writer)
+        {
+            if (prev)
+            {
+                prev->next_[hidden_pos_] = curr->next_[hidden_pos_];
+            }
+            else
+            {
+                hidden_front_ = curr->next_[hidden_pos_];
+            }
+
+            curr->next_[hidden_pos_] = nullptr;
+            break;
+        }
+        else
+        {
+            curr = curr->next_[hidden_pos_];
+        }
+    }
+
+    return (active_front_ == nullptr && hidden_front_ == nullptr);
 }
 
 void AsyncInterestTree::Swap()
@@ -53,14 +132,20 @@ void AsyncInterestTree::Swap()
     std::unique_lock<std::timed_mutex> activeGuard(mMutexActive);
     std::unique_lock<std::timed_mutex> hiddenGuard(mMutexHidden);
 
-    mActiveInterest->clear();
-    auto swap = mActiveInterest;
-    mActiveInterest = mHiddenInterest;
-    mHiddenInterest = swap;
+    active_front_ = hidden_front_;
+    hidden_front_ = nullptr;
+    active_pos_ = (active_pos_ + 1) & 0x1;
+    hidden_pos_ = (hidden_pos_ + 1) & 0x1;
 }
 
-std::set<const RTPSWriter*> AsyncInterestTree::GetInterestedWriters() const
+RTPSWriter* AsyncInterestTree::next_active()
 {
     std::unique_lock<std::timed_mutex> activeGuard(mMutexActive);
-    return *mActiveInterest;
+    RTPSWriter* ret_writer = active_front_;
+    if (active_front_)
+    {
+        active_front_ = active_front_->next_[active_pos_];
+        ret_writer->next_[active_pos_] = nullptr;
+    }
+    return ret_writer;
 }

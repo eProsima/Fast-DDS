@@ -48,29 +48,21 @@ public:
     ~AsyncWriterThread() = default;
 
     /**
-     * @brief Adds a writer to be managed by this thread.
-     * Only asynchronous writers are permitted.
-     * @param writer Asynchronous writer to be added.
-     * @return Result of the operation.
-     */
-    bool addWriter(RTPSWriter& writer);
-
-    /**
      * @brief Removes a writer.
      * @param writer Asynchronous writer to be removed.
      * @return Result of the operation.
      */
-    bool removeWriter(RTPSWriter& writer);
+    void unregister_writer(RTPSWriter* writer);
 
     /**
      * Wakes the thread up.
      * @param interestedWriter The writer interested in an async write.
      */
-    void wakeUp(
-            const RTPSWriter* interestedWriter);
+    void wake_up(
+            RTPSWriter* interestedWriter);
 
-    void wakeUp(
-            const RTPSWriter* interestedWriter,
+    void wake_up(
+            RTPSWriter* interestedWriter,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
 private:
@@ -82,11 +74,9 @@ private:
     void run();
 
     std::thread* thread_ = nullptr;
-    std::mutex data_structure_mutex_;
     std::timed_mutex condition_variable_mutex_;
 
     //! List of asynchronous writers.
-    std::list<RTPSWriter*> async_writers_;
     AsyncInterestTree interestTree_;
 
     bool running_ = false;

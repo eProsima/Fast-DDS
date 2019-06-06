@@ -64,6 +64,7 @@ RTPSWriter::RTPSWriter(
 #endif
     , liveliness_kind_(att.liveliness_kind)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
+    , next_{nullptr}
 {
     mp_history->mp_writer = this;
     mp_history->mp_mutex = &mp_mutex;
