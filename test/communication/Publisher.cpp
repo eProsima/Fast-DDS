@@ -51,29 +51,49 @@ class ParListener : public ParticipantListener
          * @param p Pointer to the Participant
          * @param info DiscoveryInfo.
          */
-        void onParticipantDiscovery(Participant*, rtps::ParticipantDiscoveryInfo&& info) override
+        void onParticipantDiscovery(
+                Participant* participant,
+                rtps::ParticipantDiscoveryInfo&& info) override
         {
             if(info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
             {
-                std::cout << "Publisher discovered participant " << info.info.m_guid << std::endl;
+                std::cout << "Publisher participant " << participant->getGuid() <<
+                    " discovered participant " << info.info.m_guid << std::endl;
             }
             else if(info.status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
             {
-                std::cout << "Publisher detected changes on participant " << info.info.m_guid << std::endl;
+                std::cout << "Publisher participant " << participant->getGuid() <<
+                    " detected changes on participant " << info.info.m_guid << std::endl;
             }
             else if(info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
             {
-                std::cout << "Publisher removed participant " << info.info.m_guid << std::endl;
+                std::cout << "Publisher participant " << participant->getGuid() <<
+                    " removed participant " << info.info.m_guid << std::endl;
             }
             else if(info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
             {
-                std::cout << "Publisher dropped participant " << info.info.m_guid << std::endl;
-                if(exit_on_lost_liveliness_)
-                {
-                    run = false;
-                }
+                std::cout << "Publisher participant " << participant->getGuid() <<
+                    " dropped participant " << info.info.m_guid << std::endl;
             }
         }
+
+#if HAVE_SECURITY
+        void onParticipantAuthentication(
+                Participant* participant,
+                rtps::ParticipantAuthenticationInfo&& info) override
+        {
+            if (rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
+            {
+                std::cout << "Publisher participant " << participant->getGuid() <<
+                    " authorized participant " << info.guid << std::endl;
+            }
+            else
+            {
+                std::cout << "Publisher participant " << participant->getGuid() <<
+                    " unauthorized participant " << info.guid << std::endl;
+            }
+        }
+#endif
 
     private:
 
