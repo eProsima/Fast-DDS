@@ -246,7 +246,9 @@ public:
     ~PubSubReader()
     {
         if(participant_ != nullptr)
+        {
             eprosima::fastrtps::Domain::removeParticipant(participant_);
+        }
     }
 
     void init()

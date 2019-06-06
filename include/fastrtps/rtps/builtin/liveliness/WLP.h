@@ -115,13 +115,6 @@ public:
     bool remove_local_reader(RTPSReader* reader);
 
     /**
-     * @brief Asserts liveliness of writers with given kind
-     * @param kind The liveliness kind
-     * @return True if liveliness was asserted
-     */
-    bool assert_liveliness(LivelinessQosPolicyKind kind);
-
-    /**
      * @brief A method to assert liveliness of a given writer
      * @param writer The writer, specified via its id
      * @param kind The writer liveliness kind
@@ -214,14 +207,13 @@ private:
     /**
      * @brief A method invoked by pub_liveliness_manager_ to inform that a writer lost liveliness
      * @param writer The writer losing liveliness
+     * @param kind The liveliness kind
+     * @param lease_duration The liveliness lease duration
      */
-    void pub_liveliness_lost(GUID_t writer);
-
-    /**
-     * @brief A method invoked by pub_liveliness_manager_ to inform that a writer recovered liveliness
-     * @param writer The writer recovering liveliness
-     */
-    void pub_liveliness_recovered(GUID_t writer);
+    void pub_liveliness_lost(
+            const GUID_t& writer,
+            const LivelinessQosPolicyKind& kind,
+            const Duration_t& lease_duration);
 
     /**
      * @brief A method invoked by sub_liveliness_manager_ to inform that a writer lost liveliness

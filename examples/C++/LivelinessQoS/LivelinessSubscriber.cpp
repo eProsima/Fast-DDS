@@ -125,6 +125,8 @@ void LivelinessSubscriber::SubListener::on_liveliness_changed(
         Subscriber *sub,
         const LivelinessChangedStatus &status)
 {
+    (void)sub;
+
     if (status.alive_count_change == 1)
     {
         std::cout << "Publisher " << status.last_publication_handle << " recovered liveliness" << std::endl;

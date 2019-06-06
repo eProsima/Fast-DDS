@@ -229,7 +229,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Reliable)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 100;
+    uint32_t writer_sleep_ms = 10;
     uint32_t num_samples = 3;
 
     // Liveliness lease duration and announcement period, in seconds
@@ -265,7 +265,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Reliable)
         std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
     }
     // Wait a bit longer
-    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 2));
+    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 5));
     EXPECT_EQ(writer.times_liveliness_lost(), 1u);
     EXPECT_EQ(reader.times_liveliness_lost(), 1u);
     EXPECT_EQ(reader.times_liveliness_recovered(), 1u);
@@ -276,7 +276,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Reliable)
         std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
     }
     // Wait a bit longer
-    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 2));
+    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 5));
     EXPECT_EQ(writer.times_liveliness_lost(), 2u);
     EXPECT_EQ(reader.times_liveliness_lost(), 2u);
     EXPECT_EQ(reader.times_liveliness_recovered(), 2u);
@@ -292,7 +292,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_BestEffort)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 100;
+    uint32_t writer_sleep_ms = 10;
     uint32_t writer_samples = 3;
 
     // Liveliness lease duration and announcement period, in seconds
@@ -328,7 +328,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_BestEffort)
         std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
     }
     // Wait a bit longer
-    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 2));
+    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 5));
     EXPECT_EQ(writer.times_liveliness_lost(), 1u);
     EXPECT_EQ(reader.times_liveliness_lost(), 1u);
     EXPECT_EQ(reader.times_liveliness_recovered(), 1u);
@@ -339,7 +339,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_BestEffort)
         std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
     }
     // Wait a bit longer
-    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 2));
+    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 5));
     EXPECT_EQ(writer.times_liveliness_lost(), 2u);
     EXPECT_EQ(reader.times_liveliness_lost(), 2u);
     EXPECT_EQ(reader.times_liveliness_recovered(), 2u);
@@ -477,7 +477,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByTopic_Reliable)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 100;
+    uint32_t writer_sleep_ms = 10;
     uint32_t num_samples = 3;
 
     // Liveliness lease duration and announcement period, in seconds
@@ -541,7 +541,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByTopic_BestEffort)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 100;
+    uint32_t writer_sleep_ms = 10;
     uint32_t num_samples = 3;
 
     // Liveliness lease duration and announcement period, in seconds
@@ -607,7 +607,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliabl
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 100;
+    uint32_t writer_sleep_ms = 10;
     uint32_t num_samples = 3;
 
     // Liveliness lease duration and announcement period, in seconds
@@ -643,7 +643,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliabl
         reader.block_for_at_least(count);
         std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 2));
+    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 5));
     EXPECT_EQ(writer.times_liveliness_lost(), 1u);
     EXPECT_EQ(reader.times_liveliness_lost(), 1u);
     EXPECT_EQ(reader.times_liveliness_recovered(), 1u);
@@ -653,7 +653,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliabl
         writer.assert_liveliness();
         std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 2));
+    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 5));
     EXPECT_EQ(writer.times_liveliness_lost(), 2u);
     EXPECT_EQ(reader.times_liveliness_lost(), 2u);
     EXPECT_EQ(reader.times_liveliness_recovered(), 2u);
@@ -728,7 +728,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEff
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 100;
+    uint32_t writer_sleep_ms = 10;
     uint32_t num_samples = 3;
 
     // Liveliness lease duration and announcement period, in seconds
@@ -763,7 +763,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEff
         reader.block_for_at_least(count);
         std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 2));
+    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 5));
     EXPECT_EQ(writer.times_liveliness_lost(), 1u);
     EXPECT_EQ(reader.times_liveliness_lost(), 1u);
     EXPECT_EQ(reader.times_liveliness_recovered(), 1u);
@@ -773,7 +773,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEff
         writer.assert_liveliness();
         std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 2));
+    std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms * 5));
     EXPECT_EQ(writer.times_liveliness_lost(), 2u);
     EXPECT_EQ(reader.times_liveliness_lost(), 2u);
     EXPECT_EQ(reader.times_liveliness_recovered(), 2u);
@@ -1422,5 +1422,3 @@ BLACKBOXTEST(LivelinessQos, UnmatchedWriter)
     std::this_thread::sleep_for(std::chrono::milliseconds(announcement_period_ms * 2));
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 1u);
 }
-
-// TODO raquel Test the case of two readers matched to a writer and one reader being removed

@@ -141,15 +141,7 @@ void LivelinessPublisher::runThread(
         {
             std::cout << "Message with index: " << topic_.index()<< " SENT by publisher " << pub->getGuid() << std::endl;
         }
-
-        if (i==samples - 1)
-        {
-//            int* p;
-//            *p = 5;
-        }
-
         eClock::my_sleep(sleep);
-
     }
 
     std::cin.ignore();
@@ -163,8 +155,6 @@ bool LivelinessPublisher::publish(
     {
         topic_.index(topic_.index()+1);
         pub->write((void*)&topic_);
-//        pub->assert_liveliness();
-
         return true;
     }
     return false;

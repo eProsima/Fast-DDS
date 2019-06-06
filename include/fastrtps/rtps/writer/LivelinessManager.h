@@ -155,7 +155,7 @@ private:
     bool manage_automatic_;
 
     //! A vector of liveliness data
-    ResourceLimitedVector<LivelinessData> writers_; // TODO raquel allocation QoS
+    ResourceLimitedVector<LivelinessData> writers_;
 
     //! A timed callback expiring when a writer (the timer owner) loses its liveliness
     TimedCallback timer_;

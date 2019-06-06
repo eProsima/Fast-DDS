@@ -86,13 +86,16 @@ WLP::~WLP()
     mp_participant->deleteUserEndpoint(mp_builtinWriter);
     delete(this->mp_builtinReaderHistory);
     delete(this->mp_builtinWriterHistory);
-    if(this->automatic_liveliness_assertion_!=nullptr)
+    delete(this->mp_listener);
+    if(automatic_liveliness_assertion_!=nullptr)
     {
         delete(automatic_liveliness_assertion_);
+        automatic_liveliness_assertion_ = nullptr;
     }
-    if(this->manual_liveliness_assertion_!=nullptr)
+    if(manual_liveliness_assertion_!=nullptr)
     {
         delete(this->manual_liveliness_assertion_);
+        manual_liveliness_assertion_ = nullptr;
     }
     delete pub_liveliness_manager_;
     delete sub_liveliness_manager_;
@@ -105,14 +108,27 @@ bool WLP::initWL(RTPSParticipantImpl* p)
     mp_participant = p;
 
     pub_liveliness_manager_ = new LivelinessManager(
-                std::bind(&WLP::pub_liveliness_lost, this, std::placeholders::_1),
-                std::bind(&WLP::pub_liveliness_recovered, this, std::placeholders::_1),
+                [&](const GUID_t& guid,
+                    const LivelinessQosPolicyKind& kind,
+                    const Duration_t& lease_duration) -> void
+                {
+                    pub_liveliness_lost(guid, kind, lease_duration);
+                },
+                nullptr,
                 mp_participant->getEventResource().getIOService(),
-                mp_participant->getEventResource().getThread(),
-                false);
+                mp_participant->getEventResource().getThread());
+
     sub_liveliness_manager_ = new LivelinessManager(
-                std::bind(&WLP::sub_liveliness_lost, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
-                std::bind(&WLP::sub_liveliness_recovered, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
+                [&](const GUID_t& guid,
+                    const LivelinessQosPolicyKind& kind,
+                    const Duration_t& lease_duration) -> void
+                {
+                    sub_liveliness_lost(guid, kind, lease_duration);
+                },
+                [&](const GUID_t& guid, const LivelinessQosPolicyKind& kind, const Duration_t& lease_duration) -> void
+                {
+                    sub_liveliness_recovered(guid, kind, lease_duration);
+                },
                 mp_participant->getEventResource().getIOService(),
                 mp_participant->getEventResource().getThread());
 
@@ -125,10 +141,6 @@ bool WLP::initWL(RTPSParticipantImpl* p)
 
 bool WLP::createEndpoints()
 {
-    // WLP listener
-
-    mp_listener = new WLPListener(this);
-
     // Built-in writer history
 
     HistoryAttributes hatt;
@@ -178,6 +190,10 @@ bool WLP::createEndpoints()
     hatt.payloadMaxSize = BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
     mp_builtinReaderHistory = new ReaderHistory(hatt);
 
+    // WLP listener
+
+    mp_listener = new WLPListener(this);
+
     // Built-in reader
 
     ReaderAttributes ratt;
@@ -206,6 +222,8 @@ bool WLP::createEndpoints()
         logError(RTPS_LIVELINESS,"Liveliness Reader Creation failed.");
         delete(mp_builtinReaderHistory);
         mp_builtinReaderHistory = nullptr;
+        delete(mp_listener);
+        mp_listener = nullptr;
         return false;
     }
 
@@ -774,12 +792,6 @@ WriterHistory* WLP::getBuiltinWriterHistory()
     return ret_val;
 }
 
-bool WLP::assert_liveliness(LivelinessQosPolicyKind kind)
-{
-    // TODO raquel check we only want to assert liveliness on subscribing side and document in header file
-    return sub_liveliness_manager_->assert_liveliness(kind);
-}
-
 bool WLP::assert_liveliness(
         GUID_t writer,
         LivelinessQosPolicyKind kind,
@@ -791,70 +803,73 @@ bool WLP::assert_liveliness(
                 lease_duration);
 }
 
-void WLP::pub_liveliness_lost(GUID_t writer)
+void WLP::pub_liveliness_lost(
+        const GUID_t& writer,
+        const LivelinessQosPolicyKind& kind,
+        const Duration_t& lease_duration)
 {
-    for (const auto& w: automatic_writers_)
+    (void)lease_duration;
+
+    if (kind == AUTOMATIC_LIVELINESS_QOS)
     {
-        if (w->getGuid() == writer)
+        for (const auto& w: automatic_writers_)
         {
-            std::unique_lock<std::recursive_timed_mutex> lock(w->getMutex());
-
-            w->liveliness_lost_status_.total_count++;
-            w->liveliness_lost_status_.total_count_change++;
-            if (w->getListener() != nullptr)
+            if (w->getGuid() == writer)
             {
-                w->getListener()->on_liveliness_lost(w, w->liveliness_lost_status_);
-            }
-            w->liveliness_lost_status_.total_count_change = 0u;
+                std::unique_lock<std::recursive_timed_mutex> lock(w->getMutex());
 
-            return;
+                w->liveliness_lost_status_.total_count++;
+                w->liveliness_lost_status_.total_count_change++;
+                if (w->getListener() != nullptr)
+                {
+                    w->getListener()->on_liveliness_lost(w, w->liveliness_lost_status_);
+                }
+                w->liveliness_lost_status_.total_count_change = 0u;
+
+                return;
+            }
         }
     }
-
-    for (const auto& w: manual_by_participant_writers_)
+    else if (kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
-        if (w->getGuid() == writer)
+        for (const auto& w: manual_by_participant_writers_)
         {
-            std::unique_lock<std::recursive_timed_mutex> lock(w->getMutex());
-
-            w->liveliness_lost_status_.total_count++;
-            w->liveliness_lost_status_.total_count_change++;
-            if (w->getListener() != nullptr)
+            if (w->getGuid() == writer)
             {
-                w->getListener()->on_liveliness_lost(w, w->liveliness_lost_status_);
-            }
-            w->liveliness_lost_status_.total_count_change = 0u;
+                std::unique_lock<std::recursive_timed_mutex> lock(w->getMutex());
 
-            return;
+                w->liveliness_lost_status_.total_count++;
+                w->liveliness_lost_status_.total_count_change++;
+                if (w->getListener() != nullptr)
+                {
+                    w->getListener()->on_liveliness_lost(w, w->liveliness_lost_status_);
+                }
+                w->liveliness_lost_status_.total_count_change = 0u;
+
+                return;
+            }
         }
     }
-
-    for (const auto& w: manual_by_topic_writers_)
+    else if (kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
     {
-        if (w->getGuid() == writer)
+        for (const auto& w: manual_by_topic_writers_)
         {
-            std::unique_lock<std::recursive_timed_mutex> lock(w->getMutex());
-
-            w->liveliness_lost_status_.total_count++;
-            w->liveliness_lost_status_.total_count_change++;
-            if (w->getListener() != nullptr)
+            if (w->getGuid() == writer)
             {
-                w->getListener()->on_liveliness_lost(w, w->liveliness_lost_status_);
-            }
-            w->liveliness_lost_status_.total_count_change = 0u;
+                std::unique_lock<std::recursive_timed_mutex> lock(w->getMutex());
 
-            return;
+                w->liveliness_lost_status_.total_count++;
+                w->liveliness_lost_status_.total_count_change++;
+                if (w->getListener() != nullptr)
+                {
+                    w->getListener()->on_liveliness_lost(w, w->liveliness_lost_status_);
+                }
+                w->liveliness_lost_status_.total_count_change = 0u;
+
+                return;
+            }
         }
     }
-
-    // TODO raquel: this could be optimized if we added the liveliness kind as an argument to this method
-}
-
-void WLP::pub_liveliness_recovered(GUID_t writer)
-{
-    // Nothing to do here
-
-    (void)writer;
 }
 
 void WLP::sub_liveliness_lost(

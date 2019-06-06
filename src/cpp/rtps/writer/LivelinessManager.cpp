@@ -37,6 +37,7 @@ LivelinessManager::~LivelinessManager()
 {
     std::unique_lock<std::mutex> lock(mutex_);
     timer_owner_ = nullptr;
+    timer_.cancel_timer();
 }
 
 bool LivelinessManager::add_writer(
@@ -270,7 +271,6 @@ void LivelinessManager::timer_expired()
                     timer_owner_->lease_duration);
     }
     timer_owner_->alive = false;
-//    timer_owner_->time = std::chrono::steady_clock::time_point();
 
     if (calculate_next())
     {
