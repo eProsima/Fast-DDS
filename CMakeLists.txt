@@ -221,10 +221,19 @@ endif()
 # Options
 ###############################################################################
 option(SECURITY "Activate security" OFF)
+option(TEE "Activate TEE support. Only available if SECURITY is ON" OFF)
 
 if(SECURITY)
     find_package(OpenSSL REQUIRED)
+
+    if(TEE)
+        eprosima_find_package(libddssec REQUIRED)
+    endif()
 else()
+    if(TEE)
+        message(FATAL_ERROR "TEE support must be used in conjunction with SECURITY")
+    endif()
+
     find_package(OpenSSL)
 endif()
 

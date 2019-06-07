@@ -48,6 +48,30 @@ file(GLOB HELLOWORLD_EXAMPLE_SOURCES_CPP "*.cpp")
 add_executable(SecureHelloWorldExample ${HELLOWORLD_EXAMPLE_SOURCES_CXX} ${HELLOWORLD_EXAMPLE_SOURCES_CPP})
 target_include_directories(SecureHelloWorldExample PRIVATE)
 target_link_libraries(SecureHelloWorldExample fastrtps fastcdr)
+
+if(TEE)
+    if(NOT libddssec_FOUND)
+        find_package(libddssec REQUIRED)
+    endif()
+
+    dsec_build_ta(
+        TARGET_NAME
+            ta-secure-helloworld
+        TA_UUID
+            ${DSEC_TA_UUID}
+        OUTPUT_DIR
+            ${PROJECT_BINARY_DIR}/ta
+        FILE_PATH
+            certs/maincacert.pem
+            certs/mainpubcert.pem
+            certs/mainpubkey.pem
+            certs/mainsubcert.pem
+            certs/mainsubkey.pem
+    )
+
+    add_dependencies(SecureHelloWorldExample ta-secure-helloworld)
+endif()
+
 install(TARGETS SecureHelloWorldExample
     RUNTIME DESTINATION examples/C++/SecureHelloWorldExample/${BIN_INSTALL_DIR})
 

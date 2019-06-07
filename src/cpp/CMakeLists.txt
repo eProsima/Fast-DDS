@@ -176,6 +176,7 @@ set(${PROJECT_NAME}_security_source_files
     rtps/security/SecurityPluginFactory.cpp
     rtps/security/timedevent/HandshakeMessageTokenResent.cpp
     security/OpenSSLInit.cpp
+    $<$<BOOL:${TEE}>:security/TEE.cpp>
     security/authentication/PKIDH.cpp
     security/accesscontrol/Permissions.cpp
     security/cryptography/AESGCMGMAC.cpp
@@ -266,6 +267,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<$<AND:$<BOOL:${WIN32}>,$<NOT:$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>>:_WIN32_WINNT=0x0601>
         $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:SQLITE_OS_WINRT>
         $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
+        $<$<BOOL:${TEE}>:LIBDDSSEC_ENABLED>
         )
 
     # Define public headers
@@ -297,7 +299,9 @@ elseif(NOT EPROSIMA_INSTALLER)
         ${TINYXML2_LIBRARY}
         $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
-        )
+        $<$<BOOL:${TEE}>:arm::libddssec>
+        $<$<BOOL:${TEE}>:OPTEECLIENT::OPTEECLIENT>
+    )
 
     if(MSVC OR MSVC_IDE)
         set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX -${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})

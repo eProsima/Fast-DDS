@@ -22,7 +22,18 @@
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/rtps/common/Token.h>
 
+#ifdef LIBDDSSEC_ENABLED
+
+#include <dsec_ih.h>
+#include <fastrtps/rtps/security/common/TEE.h>
+#include <fastrtps/log/Log.h>
+
+#else
+
 #include <openssl/x509.h>
+
+#endif
+
 #include <string>
 
 namespace eprosima {
@@ -39,6 +50,29 @@ static const char* const ECDH_prime256v1 = "ECDH+prime256v1-CEUM";
 class PKIIdentity
 {
     public:
+
+#ifdef LIBDDSSEC_ENABLED
+
+        PKIIdentity(): ih_id(-1), kagree_alg_(DH_2048_256), there_are_crls_(false)
+        {
+            int32_t libddssec_success;
+            libddssec_success = dsec_ih_create(&ih_id, &(tee.instance));
+            if (libddssec_success != 0) {
+                logWarning(SECURITY_AUTHENTICATION, "Could not create identity handle.");
+            }
+        }
+
+        ~PKIIdentity()
+        {
+            dsec_ih_delete(&(tee.instance), ih_id);
+        }
+
+
+        int ih_id;
+        uint8_t cert_content_[2048];
+        uint32_t cert_content_size_ = 2048;
+
+#else
 
         PKIIdentity() : store_(nullptr),
         cert_(nullptr), pkey_(nullptr),
@@ -70,14 +104,17 @@ class PKIIdentity
             }
         }
 
-
-        static const char* const class_id_;
-
         X509_STORE* store_;
         X509* cert_;
         EVP_PKEY* pkey_;
-        GUID_t participant_key_;
         BUF_MEM* cert_content_;
+
+#endif
+
+        static const char* const class_id_;
+
+        GUID_t participant_key_;
+
         std::string sn;
         std::string algo;
         std::string sign_alg_;

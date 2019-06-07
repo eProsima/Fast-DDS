@@ -39,6 +39,17 @@
 #include <cassert>
 #include <algorithm>
 
+#ifdef LIBDDSSEC_ENABLED
+#include <dsec_ih_cert.h>
+#include <dsec_ih_ca.h>
+#include <dsec_ih_privkey.h>
+#include <dsec_hh.h>
+#include <dsec_hh_challenge.h>
+#include <dsec_hh_dh.h>
+#include <dsec_ssh.h>
+#include <fastrtps/rtps/security/common/TEE.h>
+#endif
+
 #define S1(x) #x
 #define S2(x) S1(x)
 #define LOCATION " (" __FILE__ ":" S2(__LINE__) ")"
@@ -48,28 +59,506 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
-static const unsigned char* BN_deserialize_raw(BIGNUM** bn, const unsigned char* raw_pointer,
-    size_t length, SecurityException& exception)
+#ifdef LIBDDSSEC_ENABLED
+
+static void get_rfc2253_sn(int ih_id, std::string& cert_sn_rfc2253_)
 {
-    BIGNUM *bnn = BN_new();
 
-    if (bnn != nullptr)
-    {
-        if (BN_bin2bn(raw_pointer, static_cast<int>(length), bnn) != nullptr)
-        {
-            *bn = bnn;
-            return raw_pointer + length;
-        }
-        else
-            exception = _SecurityException_("Cannot deserialize DH");
+    /*
+     * mbedTLS does not support rfc2253, so extract the subject name
+     * and use OpenSSL to generate the rfc2253 format for the permissions.
+     */
 
-        BN_free(bnn);
+    uint32_t raw_subject_p_size = 2048;
+    unsigned char* raw_subject_p_name = (unsigned char*) malloc(sizeof(char)*raw_subject_p_size);
+
+    int32_t libddssec_success = 0;
+
+    libddssec_success = dsec_ih_cert_get_raw_sn((uint8_t*) raw_subject_p_name,
+                                                &raw_subject_p_size,
+                                                &(tee.instance),
+                                                ih_id);
+
+    if (libddssec_success != 0) {
+        return;
     }
-    else
-        exception = _SecurityException_("OpenSSL library cannot create bignum");
 
-    return nullptr;
+    X509_NAME *a = NULL;
+    d2i_X509_NAME(&a, (const unsigned char**) &raw_subject_p_name, raw_subject_p_size);
+    assert(a != nullptr);
+    BIO* cert_sn_rfc2253_str = BIO_new(BIO_s_mem());
+    X509_NAME_print_ex(cert_sn_rfc2253_str, a, 0, XN_FLAG_RFC2253 & ~ASN1_STRFLGS_ESC_MSB);
+    const int bufsize = 1024;
+    char buffer[bufsize];
+    int length = BIO_read(cert_sn_rfc2253_str, buffer, bufsize);
+    cert_sn_rfc2253_.assign(buffer, length);
+    BIO_free(cert_sn_rfc2253_str);
 }
+
+static bool get_sn(int ih_id, bool is_ca, std::string& cert_sn, SecurityException& exception)
+{
+    bool return_success = false;
+    int32_t libddssec_code = 0;
+
+    uint32_t sn_size = 2048;
+    std::vector<char> sn(sn_size);
+
+    if (is_ca) {
+        libddssec_code = dsec_ih_ca_get_sn((uint8_t*)sn.data(),
+                                           &sn_size,
+                                           &(tee.instance),
+                                           ih_id);
+
+    } else {
+        libddssec_code = dsec_ih_cert_get_sn((uint8_t*)sn.data(),
+                                             &sn_size,
+                                             &(tee.instance),
+                                             ih_id);
+
+    }
+
+    if (libddssec_code == 0) {
+        cert_sn = sn.data();
+
+        size_t pos = 0;
+        std::string s = ", ";
+        std::string t = "/";
+
+        while ((pos = cert_sn.find(s, pos)) != std::string::npos) {
+          cert_sn.replace(pos, s.size(), t);
+          pos += t.size();
+        }
+
+        return_success = true;
+    } else {
+        exception = _SecurityException_("Could not get Subject Name.");
+    }
+
+    return return_success;
+}
+
+static bool get_signature_algorithm(int ih_id, bool is_ca, std::string& signature_algorithm, SecurityException& exception)
+{
+    bool returnedValue = false;
+    int32_t libddssec_code = 0;
+
+    uint32_t signature_size = 1024;
+    std::vector<char> signature(signature_size);
+
+    if (is_ca) {
+        libddssec_code = dsec_ih_ca_get_signature_algorithm((uint8_t*) signature.data(), &signature_size, &(tee.instance), ih_id);
+    } else {
+        libddssec_code = dsec_ih_cert_get_signature_algorithm((uint8_t*) signature.data(), &signature_size, &(tee.instance), ih_id);
+    }
+
+    if (libddssec_code == 0) {
+        if (strncmp(signature.data(), "ECDSA with SHA256", signature_size) == 0)
+        {
+            signature_algorithm = ECDSA_SHA256;
+            returnedValue = true;
+        } else {
+            exception = _SecurityException_("Unkown or unsupported signature.");
+        }
+    }
+    else {
+        exception = _SecurityException_("libddssec cannot retrieve signature.");
+    }
+
+    return returnedValue;
+}
+
+/*
+ * Load the Certificate Authority to the given Identity Handle and Retrieve
+ * the subject name and signature algorithm.
+ */
+static bool load_identity_ca(int ih_id, const std::string& identity_ca, bool& there_are_crls,
+        std::string& ca_sn, std::string& ca_algo, SecurityException& exception)
+{
+    int32_t libddssec_code = 0;
+    bool return_success = false;
+
+    if (identity_ca.size() >= 7 && identity_ca.compare(0, 7, "file://") == 0)
+    {
+        libddssec_code = dsec_ih_ca_load(&(tee.instance), ih_id,
+                                identity_ca.substr(7).c_str());
+
+        if (libddssec_code == 0) {
+            there_are_crls = false;
+
+            return_success = get_signature_algorithm(ih_id, true /* ca */, ca_algo, exception);
+            if (return_success) {
+                return_success = get_sn(ih_id, true /* ca */, ca_sn, exception);
+            } else {
+                logWarning(SECURITY_AUTHENTICATION, "Could not extract signature.");
+                exception = _SecurityException_("Could not get signature.");
+            }
+
+        } else {
+            logWarning(SECURITY_AUTHENTICATION, "Loading CA failled.");
+            exception = _SecurityException_("Could not load CA.");
+        }
+    } else {
+        exception = _SecurityException_(std::string("Requested file ") + identity_ca + std::string(" is invalid."));
+    }
+
+    return return_success;
+}
+
+static bool load_certificate(int32_t ih_id, const std::string& identity_cert, SecurityException& exception)
+{
+    int32_t libddssec_code = 0;
+    bool return_success = false;
+    if (identity_cert.size() >= 7 && identity_cert.compare(0, 7, "file://") == 0)
+    {
+        libddssec_code =  dsec_ih_cert_load(&(tee.instance),
+                                            ih_id,
+                                            identity_cert.substr(7).c_str());
+
+        if (libddssec_code == 0) {
+            return_success = true;
+        } else {
+            logWarning(SECURITY_AUTHENTICATION, "Loading certificate failled.");
+            exception = _SecurityException_("Cannot load certificate.");
+        }
+    } else {
+        exception = _SecurityException_(std::string("Requested file ") + identity_cert + std::string(" is invalid."));
+    }
+    return return_success;
+}
+
+static bool load_certificate(int32_t lih_id, int32_t rih_id, const std::vector<uint8_t>& data)
+{
+    int32_t libddssec_code = 0;
+    bool return_success = false;
+
+    std::vector<uint8_t> certificate_buffer(data);
+    certificate_buffer.push_back('\0');
+    libddssec_code =  dsec_ih_cert_load_from_buffer(&(tee.instance),
+                                        rih_id,
+                                        certificate_buffer.data(),
+                                        certificate_buffer.size(),
+                                        lih_id);
+
+    if (libddssec_code == 0) {
+        return_success = true;
+    } else {
+        logWarning(SECURITY_AUTHENTICATION, "Loading certificate failled.");
+    }
+
+    return return_success;
+}
+
+static bool load_private_key(int32_t ih_id, const std::string& file, const std::string& password,
+        SecurityException& exception)
+{
+    bool return_success = false;
+    int32_t libddssec_code = 0;
+    if (file.size() >= 7 && file.compare(0, 7, "file://") == 0)
+    {
+        libddssec_code =  dsec_ih_privkey_load(&(tee.instance),
+                                               ih_id,
+                                               file.substr(7).c_str(),
+                                               password.c_str(),
+                                               password.length() + 1);
+
+        if (libddssec_code == 0) {
+            return_success = true;
+        } else {
+            exception = _SecurityException_("Cannot load private key.");
+        }
+    } else {
+        exception = _SecurityException_(std::string("Requested file ") + file + std::string(" is invalid."));
+    }
+
+    return return_success;
+}
+
+static bool store_certificate_in_buffer(int32_t ih_id, uint8_t* ptr, uint32_t* size, SecurityException& exception)
+{
+    int32_t libddssec_code = 0;
+    bool returnedValue = false;
+    libddssec_code = dsec_ih_cert_get(ptr, size, &(tee.instance), ih_id);
+
+    if (libddssec_code == 0) {
+        returnedValue = true;
+    } else {
+        exception = _SecurityException_("Cannot store certificate in buffer.");
+    }
+
+    return returnedValue;
+}
+
+static bool sign_sha256(int32_t ih_id, const unsigned char* data, const uint32_t data_length,
+        std::vector<uint8_t>& signature, SecurityException& exception)
+{
+    assert(data);
+    int32_t libddssec_code = 0;
+    uint32_t signature_size = 1024;
+    bool returnedValue = false;
+
+    signature.resize(signature_size);
+    libddssec_code = dsec_ih_privkey_sign(signature.data(),
+                                          &signature_size,
+                                          &(tee.instance),
+                                          ih_id,
+                                          data,
+                                          data_length);
+
+    if (libddssec_code == 0) {
+        signature.resize(signature_size);
+        returnedValue = true;
+    } else {
+        exception = _SecurityException_("Cannot create signature.");
+    }
+
+    return returnedValue;
+}
+
+static bool check_sign_sha256(int32_t ih_id, const unsigned char* data, const uint32_t data_length,
+        const std::vector<uint8_t>& signature, SecurityException& exception)
+{
+    assert(data);
+
+    int32_t libddssec_code = 0;
+    bool returnedValue = false;
+
+    libddssec_code = dsec_ih_cert_verify(&(tee.instance),
+                                         ih_id,
+                                         data,
+                                         data_length,
+                                         signature.data(),
+                                         signature.size());
+
+    if (libddssec_code == 0) {
+        returnedValue = true;
+    } else {
+        exception = _SecurityException_("Cannot verify signature.");
+    }
+
+    return returnedValue;
+}
+
+static bool adjust_participant_key(int32_t ih_id, const GUID_t& candidate_participant_key,
+        GUID_t& adjusted_participant_key, SecurityException& exception)
+{
+    uint32_t length = 32;
+    unsigned char md[length];
+    int32_t libddssec_code = 0;
+
+    libddssec_code = dsec_ih_cert_get_sha256_sn((uint8_t*)md,
+                                                 &length,
+                                                 &(tee.instance),
+                                                 ih_id);
+
+    if (libddssec_code != 0) {
+        exception = _SecurityException_("libddssec cannot get hashed subject name.");
+        return false;
+    }
+
+    adjusted_participant_key.guidPrefix.value[0] = 0x80 | (md[0] >> 1);
+    adjusted_participant_key.guidPrefix.value[1] = (md[0] << 7) | (md[1] >> 1);
+    adjusted_participant_key.guidPrefix.value[2] = (md[1] << 7) | (md[2] >> 1);
+    adjusted_participant_key.guidPrefix.value[3] = (md[2] << 7) | (md[3] >> 1);
+    adjusted_participant_key.guidPrefix.value[4] = (md[3] << 7) | (md[4] >> 1);
+    adjusted_participant_key.guidPrefix.value[5] = (md[4] << 7) | (md[5] >> 1);
+
+    unsigned char key[16] = {
+        candidate_participant_key.guidPrefix.value[0],
+        candidate_participant_key.guidPrefix.value[1],
+        candidate_participant_key.guidPrefix.value[2],
+        candidate_participant_key.guidPrefix.value[3],
+        candidate_participant_key.guidPrefix.value[4],
+        candidate_participant_key.guidPrefix.value[5],
+        candidate_participant_key.guidPrefix.value[6],
+        candidate_participant_key.guidPrefix.value[7],
+        candidate_participant_key.guidPrefix.value[8],
+        candidate_participant_key.guidPrefix.value[9],
+        candidate_participant_key.guidPrefix.value[10],
+        candidate_participant_key.guidPrefix.value[11],
+        candidate_participant_key.entityId.value[0],
+        candidate_participant_key.entityId.value[1],
+        candidate_participant_key.entityId.value[2],
+        candidate_participant_key.entityId.value[3]
+    };
+
+    if(!EVP_Digest(&key, 16, md, NULL, EVP_sha256(), NULL))
+    {
+        exception = _SecurityException_("OpenSSL library cannot hash sha256");
+        return false;
+    }
+
+    adjusted_participant_key.guidPrefix.value[6] = md[0];
+    adjusted_participant_key.guidPrefix.value[7] = md[1];
+    adjusted_participant_key.guidPrefix.value[8] = md[2];
+    adjusted_participant_key.guidPrefix.value[9] = md[3];
+    adjusted_participant_key.guidPrefix.value[10] = md[4];
+    adjusted_participant_key.guidPrefix.value[11] = md[5];
+
+    adjusted_participant_key.entityId.value[0] = candidate_participant_key.entityId.value[0];
+    adjusted_participant_key.entityId.value[1] = candidate_participant_key.entityId.value[1];
+    adjusted_participant_key.entityId.value[2] = candidate_participant_key.entityId.value[2];
+    adjusted_participant_key.entityId.value[3] = candidate_participant_key.entityId.value[3];
+
+    return true;
+}
+
+static bool generate_dh_key(int32_t hh_id, int type, SecurityException& exception)
+{
+    bool return_success = false;
+    int32_t libddssec_code = 0;
+    if (type == EVP_PKEY_DH) {
+        libddssec_code = dsec_hh_dh_generate(&(tee.instance), hh_id);
+
+        if (libddssec_code == 0) {
+            return_success = true;
+        } else {
+            exception = _SecurityException_("Cannot generate DH key.");
+        }
+    } else {
+        exception = _SecurityException_("Unsupported type.");
+    }
+    return return_success;
+}
+
+static bool store_dh_public_key(int32_t hh_id, std::vector<uint8_t>& buffer,
+        SecurityException& exception)
+{
+    int32_t libddssec_code = 0;
+    bool return_success = false;
+
+    uint32_t key_size = 2048;
+    std::vector<uint8_t> key(key_size);
+
+    libddssec_code = dsec_hh_dh_get_public(key.data(), &key_size, &(tee.instance), hh_id);
+
+    if (libddssec_code == 0) {
+        buffer.assign(key.data(), key.data() + key_size);
+        return_success = true;
+    } else {
+        exception = _SecurityException_("Cannot load private key.");
+    }
+
+    return return_success;
+}
+
+static bool generate_dh_peer_key(int32_t hh_id, const std::vector<uint8_t>& buffer, SecurityException& exception, int alg_kind = EVP_PKEY_DH)
+{
+    int32_t libddssec_code = 0;
+    bool return_success = false;
+
+    libddssec_code = dsec_hh_dh_set_public(&(tee.instance),
+                                           hh_id,
+                                           buffer.data(),
+                                           buffer.size());
+
+    if (libddssec_code == 0) {
+        return_success = true;
+    } else {
+        exception = _SecurityException_("Cannot set DH peer key.");
+    }
+
+    return return_success;
+}
+
+static bool generate_challenge(int32_t hh_id, int32_t challenge_id, std::vector<uint8_t>& vector,
+    SecurityException& exception)
+{
+    int32_t libddssec_code = 0;
+    bool returned_success = false;
+    uint32_t number_byte = 256;
+    std::vector<uint8_t> challenge(number_byte);
+
+    libddssec_code = dsec_hh_challenge_generate(&(tee.instance), hh_id, number_byte, challenge_id);
+
+    if (libddssec_code == 0) {
+        libddssec_code = dsec_hh_challenge_get(challenge.data(), &number_byte, &(tee.instance), hh_id, challenge_id);
+        if (libddssec_code == 0) {
+            returned_success = true;
+            vector.assign(challenge.data(), challenge.data() + number_byte);
+        } else {
+            exception = _SecurityException_("Cannot get challenge.");
+        }
+    } else {
+        exception = _SecurityException_("Cannot generate challenge.");
+    }
+
+   return returned_success;
+}
+
+static bool set_challenge(int32_t hh_id, int32_t challenge_id, std::vector<uint8_t>& vector,
+    SecurityException& exception)
+{
+    int32_t libddssec_code = 0;
+    bool returned_success = false;
+
+    libddssec_code = dsec_hh_challenge_set(&(tee.instance), hh_id, vector.data(), vector.size(), challenge_id);
+
+    if (libddssec_code == 0) {
+        returned_success = true;
+    } else {
+        exception = _SecurityException_("Cannot set challenge.");
+    }
+
+   return returned_success;
+}
+
+static SharedSecretHandle* generate_sharedsecret(int32_t hh_id, SecurityException& exception)
+{
+    int32_t ssh_id = 0;
+    int32_t libddssec_code = 0;
+
+    SharedSecretHandle* handle = nullptr;
+
+    uint32_t shared_key_size = 256;
+    std::vector<uint8_t> shared_key(shared_key_size);
+    uint32_t challenge1_size = 256;
+    std::vector<uint8_t> challenge1(challenge1_size);
+    uint32_t challenge2_size = 256;
+    std::vector<uint8_t> challenge2(challenge2_size);
+
+    libddssec_code = dsec_ssh_derive(&ssh_id, &(tee.instance), hh_id);
+    if (libddssec_code == 0) {
+
+        libddssec_code = dsec_ssh_get_data(shared_key.data(),
+                                           &shared_key_size,
+                                           challenge1.data(),
+                                           &challenge1_size,
+                                           challenge2.data(),
+                                           &challenge2_size,
+                                           &(tee.instance),
+                                           ssh_id);
+        if (libddssec_code == 0) {
+            handle = new SharedSecretHandle();
+
+            SharedSecret::BinaryData bshared_key;
+            bshared_key.name("SharedSecret");
+            bshared_key.value().resize(shared_key_size);
+            bshared_key.value().assign(shared_key.data(), shared_key.data() + shared_key_size);
+            (*handle)->data_.push_back(std::move(bshared_key));
+
+            SharedSecret::BinaryData bchallenge1;
+            bchallenge1.name("Challenge1");
+            bchallenge1.value().resize(challenge1_size);
+            bchallenge1.value().assign(challenge1.data(), challenge1.data() + challenge1_size);
+            (*handle)->data_.emplace_back(bchallenge1);
+
+            SharedSecret::BinaryData bchallenge2;
+            bchallenge2.name("Challenge2");
+            bchallenge2.value().resize(challenge2_size);
+            bchallenge2.value().assign(challenge2.data(), challenge2.data() + challenge2_size);
+            (*handle)->data_.emplace_back(bchallenge2);
+
+        } else {
+            exception = _SecurityException_("Cannot get derived secret");
+        }
+    } else {
+        exception = _SecurityException_("Cannot derive");
+    }
+
+    return handle;
+}
+
+#else
 
 static bool get_signature_algorithm(X509* certificate, std::string& signature_algorithm, SecurityException& exception)
 {
@@ -123,7 +612,6 @@ static bool get_signature_algorithm(X509* certificate, std::string& signature_al
     return returnedValue;
 }
 
-// Auxiliary functions
 static X509_STORE* load_identity_ca(const std::string& identity_ca, bool& there_are_crls,
         std::string& ca_sn, std::string& ca_algo, SecurityException& exception)
 {
@@ -595,15 +1083,27 @@ static bool adjust_participant_key(X509* cert, const GUID_t& candidate_participa
     return true;
 }
 
-static int get_dh_type(const std::string& algorithm)
+static const unsigned char* BN_deserialize_raw(BIGNUM** bn, const unsigned char* raw_pointer,
+    size_t length, SecurityException& exception)
 {
-    auto raw_alg = algorithm.c_str();
-    if(strcmp(DH_2048_256, raw_alg) == 0)
-        return EVP_PKEY_DH;
-    else if(strcmp(ECDH_prime256v1, raw_alg) == 0)
-        return EVP_PKEY_EC;
+    BIGNUM *bnn = BN_new();
 
-    return 0;
+    if (bnn != nullptr)
+    {
+        if (BN_bin2bn(raw_pointer, static_cast<int>(length), bnn) != nullptr)
+        {
+            *bn = bnn;
+            return raw_pointer + length;
+        }
+        else
+            exception = _SecurityException_("Cannot deserialize DH");
+
+        BN_free(bnn);
+    }
+    else
+        exception = _SecurityException_("OpenSSL library cannot create bignum");
+
+    return nullptr;
 }
 
 static EVP_PKEY* generate_dh_key(int type, SecurityException& exception)
@@ -666,14 +1166,14 @@ static EVP_PKEY* generate_dh_key(int type, SecurityException& exception)
         {
             exception = _SecurityException_("Cannot init EVP key");
         }
-        
+
         EVP_PKEY_CTX_free(kctx);
     }
     else
     {
         exception = _SecurityException_("Cannot create EVP context");
     }
-    
+
     ERR_clear_error();
     EVP_PKEY_free(params);
     if (pctx != nullptr) EVP_PKEY_CTX_free(pctx);
@@ -735,7 +1235,7 @@ static bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& buffer,
             else
                 exception = _SecurityException_("Cannot serialize public key");
         }
-        else 
+        else
             exception = _SecurityException_("OpenSSL library doesn't retrieve DH");
     }
 
@@ -844,27 +1344,6 @@ static EVP_PKEY* generate_dh_peer_key(const std::vector<uint8_t>& buffer, Securi
     return nullptr;
 }
 
-static bool generate_challenge(std::vector<uint8_t>& vector, SecurityException& exception)
-{
-    bool returnedValue = false;
-    BIGNUM* bn = BN_new();
-
-    if(BN_rand(bn, 256, 0 /*BN_RAND_TOP_ONE*/, 0 /*BN_RAND_BOTTOM_ANY*/))
-    {
-        int len = BN_num_bytes(bn);
-        vector.resize(len);
-
-        if(BN_bn2bin(bn, vector.data()) == len)
-            returnedValue = true;
-        else
-            exception = _SecurityException_("OpenSSL library cannot store challenge");
-    }
-
-    BN_clear_free(bn);
-
-    return returnedValue;
-}
-
 static SharedSecretHandle* generate_sharedsecret(EVP_PKEY* private_key, EVP_PKEY* public_key,
         SecurityException& exception)
 {
@@ -923,6 +1402,41 @@ static SharedSecretHandle* generate_sharedsecret(EVP_PKEY* private_key, EVP_PKEY
     }
 
     return handle;
+}
+
+static bool generate_challenge(std::vector<uint8_t>& vector, SecurityException& exception)
+{
+    bool returnedValue = false;
+    BIGNUM* bn = BN_new();
+
+    if(BN_rand(bn, 256, 0 /*BN_RAND_TOP_ONE*/, 0 /*BN_RAND_BOTTOM_ANY*/))
+    {
+        int len = BN_num_bytes(bn);
+        vector.resize(len);
+
+        if(BN_bn2bin(bn, vector.data()) == len)
+            returnedValue = true;
+        else
+            exception = _SecurityException_("OpenSSL library cannot store challenge");
+    }
+
+    BN_clear_free(bn);
+
+    return returnedValue;
+}
+
+#endif
+
+
+static int get_dh_type(const std::string& algorithm)
+{
+    auto raw_alg = algorithm.c_str();
+    if(strcmp(DH_2048_256, raw_alg) == 0)
+        return EVP_PKEY_DH;
+    else if(strcmp(ECDH_prime256v1, raw_alg) == 0)
+        return EVP_PKEY_EC;
+
+    return 0;
 }
 
 static bool generate_identity_token(PKIIdentityHandle& handle)
@@ -1005,9 +1519,47 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
 
     PKIIdentityHandle* ih = new PKIIdentityHandle();
 
+#ifdef LIBDDSSEC_ENABLED
+
+    bool load_ca_success = load_identity_ca((*ih)->ih_id, *identity_ca, (*ih)->there_are_crls_,
+            (*ih)->sn, (*ih)->algo, exception);
+
+    if(load_ca_success)
+    {
+        bool load_cert_success = load_certificate((*ih)->ih_id, *identity_cert, exception);
+        if(load_cert_success)
+        {
+            get_rfc2253_sn((*ih)->ih_id, (*ih)->cert_sn_rfc2253_);
+            get_sn((*ih)->ih_id, false /* is_ca */, (*ih)->cert_sn_, exception);
+
+            if(store_certificate_in_buffer((*ih)->ih_id, (*ih)->cert_content_, &((*ih)->cert_content_size_), exception))
+            {
+                if(get_signature_algorithm((*ih)->ih_id, false /* is_ca */, (*ih)->sign_alg_, exception))
+                {
+                    bool return_success = load_private_key((*ih)->ih_id, *private_key, *password, exception);
+                    if(return_success)
+                    {
+                        if(adjust_participant_key((*ih)->ih_id, candidate_participant_key, adjusted_participant_key, exception))
+                        {
+                            // Generate IdentityToken.
+                            if(generate_identity_token(*ih))
+                            {
+                                (*ih)->participant_key_ = adjusted_participant_key;
+                                *local_identity_handle = ih;
+
+                                return ValidationResult_t::VALIDATION_OK;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+#else
+
     (*ih)->store_ = load_identity_ca(*identity_ca, (*ih)->there_are_crls_, (*ih)->sn, (*ih)->algo,
             exception);
-
     if((*ih)->store_ != nullptr)
     {
         ERR_clear_error();
@@ -1032,7 +1584,6 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
         ERR_clear_error();
 
         (*ih)->cert_ = load_certificate(*identity_cert, exception);
-
         if((*ih)->cert_ != nullptr)
         {
             // Get subject name.
@@ -1049,7 +1600,6 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
             int length = BIO_read(cert_sn_rfc2253_str, buffer, bufsize);
             BIO_free(cert_sn_rfc2253_str);
             (*ih)->cert_sn_rfc2253_.assign(buffer, length);
-
 
             if(verify_certificate((*ih)->store_, (*ih)->cert_, (*ih)->there_are_crls_))
             {
@@ -1078,6 +1628,8 @@ ValidationResult_t PKIDH::validate_local_identity(IdentityHandle** local_identit
             }
         }
     }
+
+#endif
 
     delete ih;
 
@@ -1165,8 +1717,19 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
 
     // c.id
     bproperty.name("c.id");
+
+#ifdef LIBDDSSEC_ENABLED
+
+    bproperty.value().assign(lih->cert_content_,
+            lih->cert_content_ + lih->cert_content_size_);
+
+#else
+
     bproperty.value().assign(lih->cert_content_->data,
             lih->cert_content_->data + lih->cert_content_->length);
+
+#endif
+
     bproperty.propagate(true);
     (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
@@ -1228,6 +1791,36 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
     (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
     // dh1
+#ifdef LIBDDSSEC_ENABLED
+
+    if(generate_dh_key((*handshake_handle_aux)->hh_id, get_dh_type((*handshake_handle_aux)->kagree_alg_), exception))
+    {
+        bproperty.name("dh1");
+        bproperty.propagate(true);
+        if(store_dh_public_key((*handshake_handle_aux)->hh_id, bproperty.value(), exception))
+        {
+
+            (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
+
+            // challenge1
+            bproperty.name("challenge1");
+            bproperty.propagate(true);
+
+            if(generate_challenge((*handshake_handle_aux)->hh_id, 1, bproperty.value(), exception))
+            {
+                (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
+
+                (*handshake_handle_aux)->local_identity_handle_ = &lih;
+                (*handshake_handle_aux)->remote_identity_handle_ = &rih;
+                *handshake_handle = handshake_handle_aux;
+                *handshake_message = &(*handshake_handle_aux)->handshake_message_;
+                return ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE;
+            }
+        }
+    }
+
+#else
+
     if(((*handshake_handle_aux)->dhkeys_ = generate_dh_key(get_dh_type((*handshake_handle_aux)->kagree_alg_), exception)) != nullptr)
     {
         bproperty.name("dh1");
@@ -1252,6 +1845,8 @@ ValidationResult_t PKIDH::begin_handshake_request(HandshakeHandle** handshake_ha
             }
         }
     }
+
+#endif
 
     delete handshake_handle_aux;
 
@@ -1304,8 +1899,29 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    rih->cert_ = load_certificate(*cid);
+#ifdef LIBDDSSEC_ENABLED
 
+    bool load_cert_success = load_certificate(lih->ih_id, rih->ih_id, *cid);
+    if(!load_cert_success)
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Cannot load certificate");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    get_rfc2253_sn(rih->ih_id, rih->cert_sn_rfc2253_);
+    std::string cert_sn_str;
+    get_sn(rih->ih_id, false /* is_ca */, cert_sn_str, exception);
+
+    if(!rih->cert_sn_.empty() && rih->cert_sn_.compare(cert_sn_str) != 0)
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Certificated subject name invalid");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+    rih->cert_sn_.assign(cert_sn_str);
+
+#else
+
+    rih->cert_ = load_certificate(*cid);
     if(rih->cert_ == nullptr)
     {
         logWarning(SECURITY_AUTHENTICATION, "Cannot load certificate");
@@ -1337,6 +1953,8 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
         logWarning(SECURITY_AUTHENTICATION, "Error verifying certificate");
         return ValidationResult_t::VALIDATION_FAILED;
     }
+
+#endif
 
     // c.perm
     if(lih->permissions_credential_token_.class_id().compare("DDS:Access:PermissionsCredential") == 0)
@@ -1388,11 +2006,30 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     unsigned char hash_c1[SHA256_DIGEST_LENGTH];
     unsigned int length = 0;
 
+#ifdef LIBDDSSEC_ENABLED
+
+    length = 32;
+    int32_t libddssec_code = 0;
+    libddssec_code = dsec_ih_cert_get_sha256_sn((uint8_t*)md,
+                                                 (uint32_t*)&length,
+                                                 &(tee.instance),
+                                                 rih->ih_id);
+
+    if (libddssec_code != 0)
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Cannot generate SHA256 of subject name");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+#else
+
     if(!X509_NAME_digest(cert_sn, EVP_sha256(), md, &length) || length != SHA256_DIGEST_LENGTH)
     {
         logWarning(SECURITY_AUTHENTICATION, "Cannot generate SHA256 of subject name");
         return ValidationResult_t::VALIDATION_FAILED;
     }
+
+#endif
 
     md[5] &= 0xFE;
     unsigned char bytes[6]{
@@ -1498,6 +2135,29 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     int kagree_kind = get_dh_type((*handshake_handle_aux)->kagree_alg_);
 
     // Store dh1
+#ifdef LIBDDSSEC_ENABLED
+
+    if(!set_challenge((*handshake_handle_aux)->hh_id, 1, *challenge1, exception)) {
+        exception = _SecurityException_("Cannot set challenge1");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    if(!generate_dh_peer_key((*handshake_handle_aux)->hh_id, *dh1, exception, kagree_kind))
+    {
+        exception = _SecurityException_("Cannot store peer key from dh1");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    BinaryProperty bproperty;
+
+    // c.id
+    bproperty.name("c.id");
+
+    bproperty.value().assign(lih->cert_content_,
+            lih->cert_content_ + lih->cert_content_size_);
+
+#else
+
     if(((*handshake_handle_aux)->peerkeys_ = generate_dh_peer_key(*dh1, exception, kagree_kind)) == nullptr)
     {
         exception = _SecurityException_("Cannot store peer key from dh1");
@@ -1510,6 +2170,9 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     bproperty.name("c.id");
     bproperty.value().assign(lih->cert_content_->data,
             lih->cert_content_->data + lih->cert_content_->length);
+
+#endif
+
     bproperty.propagate(true);
     (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
@@ -1570,6 +2233,17 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
     bproperty.propagate(true);
     (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
+#ifdef LIBDDSSEC_ENABLED
+
+    if(generate_dh_key((*handshake_handle_aux)->hh_id, get_dh_type((*handshake_handle_aux)->kagree_alg_), exception))
+    {
+        bproperty.name("dh2");
+        bproperty.propagate(true);
+        if(store_dh_public_key((*handshake_handle_aux)->hh_id, bproperty.value(), exception))
+        {
+
+ #else
+
     // dh2
     if(((*handshake_handle_aux)->dhkeys_ = generate_dh_key(kagree_kind, exception)) != nullptr)
     {
@@ -1578,6 +2252,9 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
 
         if(store_dh_public_key((*handshake_handle_aux)->dhkeys_, bproperty.value(), exception))
         {
+
+#endif
+
             (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
             // hash_c1
@@ -1601,8 +2278,19 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
             // challenge2
             bproperty.name("challenge2");
             bproperty.propagate(true);
+
+#ifdef LIBDDSSEC_ENABLED
+
+            if(generate_challenge((*handshake_handle_aux)->hh_id, 2, bproperty.value(), exception))
+            {
+
+#else
+
             if(generate_challenge(bproperty.value(), exception))
             {
+
+#endif
+
                 (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
                 // signature
@@ -1625,8 +2313,19 @@ ValidationResult_t PKIDH::begin_handshake_reply(HandshakeHandle** handshake_hand
 
                 bproperty.name("signature");
                 bproperty.propagate("true");
+
+#ifdef LIBDDSSEC_ENABLED
+
+                if(sign_sha256(lih->ih_id, cdrmessage2.buffer, cdrmessage2.length, bproperty.value(), exception))
+                {
+
+#else
+
                 if(sign_sha256(lih->pkey_, cdrmessage2.buffer, cdrmessage2.length, bproperty.value(), exception))
                 {
+
+#endif
+
                     (*handshake_handle_aux)->handshake_message_.binary_properties().push_back(std::move(bproperty));
 
                     (*handshake_handle_aux)->local_identity_handle_ = &lih;
@@ -1701,8 +2400,27 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    rih->cert_ = load_certificate(*cid);
+#ifdef LIBDDSSEC_ENABLED
 
+    bool load_cert_success = load_certificate(lih->ih_id, rih->ih_id, *cid);
+    if(!load_cert_success)
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Certificate was previously loaded");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    get_rfc2253_sn(rih->ih_id, rih->cert_sn_rfc2253_);
+    std::string cert_sn_str;
+    get_sn(rih->ih_id, false /* is_ca */, cert_sn_str, exception);
+    if(!rih->cert_sn_.empty() && rih->cert_sn_.compare(cert_sn_str) != 0)
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Certificated subject name invalid");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+#else
+
+    rih->cert_ = load_certificate(*cid);
     if(rih->cert_ == nullptr)
     {
         logWarning(SECURITY_AUTHENTICATION, "Cannot load certificate");
@@ -1733,6 +2451,8 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
         logWarning(SECURITY_AUTHENTICATION, "Error verifying certificate");
         return ValidationResult_t::VALIDATION_FAILED;
     }
+
+#endif
 
     // c.perm
     if(lih->permissions_credential_token_.class_id().compare("DDS:Access:PermissionsCredential") == 0)
@@ -1780,14 +2500,33 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    unsigned char md[SHA256_DIGEST_LENGTH];
+    unsigned char md[32];
     unsigned int length = 0;
+
+#ifdef LIBDDSSEC_ENABLED
+
+    length = 32;
+    int32_t libddssec_code = 0;
+    libddssec_code = dsec_ih_cert_get_sha256_sn((uint8_t*)md,
+                                                (uint32_t*)&length,
+                                                &(tee.instance),
+                                                rih->ih_id);
+
+    if (libddssec_code != 0)
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Cannot generate SHA256 of subject name");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+#else
 
     if(!X509_NAME_digest(cert_sn, EVP_sha256(), md, &length) || length != SHA256_DIGEST_LENGTH)
     {
         logWarning(SECURITY_AUTHENTICATION, "Cannot generate SHA256 of subject name");
         return ValidationResult_t::VALIDATION_FAILED;
     }
+
+#endif
 
     md[5] &= 0xFE;
     unsigned char bytes[6]{
@@ -1882,19 +2621,41 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
+#ifdef LIBDDSSEC_ENABLED
+
+    if(!generate_dh_peer_key(handshake_handle->hh_id, dh2->value(), exception))
+    {
+
+#else
+
     if((handshake_handle->peerkeys_ = generate_dh_peer_key(dh2->value(), exception)) == nullptr)
     {
+
+#endif
+
         exception = _SecurityException_("Cannot store peer key from dh2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
     BinaryProperty* challenge2 = DataHolderHelper::find_binary_property(handshake_message_in, "challenge2");
 
+    std::vector<uint8_t> challenge2_array (*DataHolderHelper::find_binary_property_value(handshake_message_in, "challenge2"));
+
     if(challenge2 == nullptr)
     {
         logWarning(SECURITY_AUTHENTICATION, "Cannot find property challenge2");
         return ValidationResult_t::VALIDATION_FAILED;
     }
+
+#ifdef LIBDDSSEC_ENABLED
+
+    if(!set_challenge(handshake_handle->hh_id, 2, challenge2_array, exception))
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Cannot set challenge 2");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+#endif
 
     // hash_c1
     BinaryProperty* hash_c1 = DataHolderHelper::find_binary_property(handshake_message_in, "hash_c1");
@@ -1990,8 +2751,18 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
     //add hash_c1
     CDRMessage::addBinaryProperty(&cdrmessage2, *hash_c1, false);
 
+#ifdef LIBDDSSEC_ENABLED
+
+    if(!check_sign_sha256(rih->ih_id, cdrmessage2.buffer, cdrmessage2.length, *signature, exception))
+    {
+
+#else
+
     if(!check_sign_sha256(rih->cert_, cdrmessage2.buffer, cdrmessage2.length, *signature, exception))
     {
+
+#endif
+
         logWarning(SECURITY_AUTHENTICATION, "Error verifying signature");
         return ValidationResult_t::VALIDATION_FAILED;
     }
@@ -2059,6 +2830,24 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
 
     bproperty.name("signature");
     bproperty.propagate("true");
+
+#ifdef LIBDDSSEC_ENABLED
+
+    if(sign_sha256(lih->ih_id, cdrmessage2.buffer, cdrmessage2.length, bproperty.value(), exception))
+    {
+        final_message.binary_properties().push_back(std::move(bproperty));
+        handshake_handle->sharedsecret_ = generate_sharedsecret(handshake_handle->hh_id, exception);
+        if(handshake_handle->sharedsecret_ != nullptr)
+        {
+            handshake_handle->handshake_message_ = std::move(final_message);
+            *handshake_message_out = &handshake_handle->handshake_message_;
+
+            return ValidationResult_t::VALIDATION_OK_WITH_FINAL_MESSAGE;
+        }
+    }
+
+#else
+
     if(sign_sha256(lih->pkey_, cdrmessage2.buffer, cdrmessage2.length, bproperty.value(), exception))
     {
         final_message.binary_properties().push_back(std::move(bproperty));
@@ -2080,6 +2869,8 @@ ValidationResult_t PKIDH::process_handshake_request(HandshakeMessageToken** hand
             return ValidationResult_t::VALIDATION_OK_WITH_FINAL_MESSAGE;
         }
     }
+
+#endif
 
     ERR_clear_error();
 
@@ -2238,6 +3029,18 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** /*hand
     //add hash_c2
     CDRMessage::addBinaryProperty(&cdrmessage, *hash_c2_reply, false);
 
+#ifdef LIBDDSSEC_ENABLED
+
+    if(!check_sign_sha256(rih->ih_id, cdrmessage.buffer, cdrmessage.length, *signature, exception))
+    {
+        logWarning(SECURITY_AUTHENTICATION, "Error verifying signature");
+        return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    handshake_handle->sharedsecret_ = generate_sharedsecret(handshake_handle->hh_id, exception);
+
+#else
+
     if(!check_sign_sha256(rih->cert_, cdrmessage.buffer, cdrmessage.length, *signature, exception))
     {
         logWarning(SECURITY_AUTHENTICATION, "Error verifying signature");
@@ -2246,6 +3049,8 @@ ValidationResult_t PKIDH::process_handshake_reply(HandshakeMessageToken** /*hand
 
     handshake_handle->sharedsecret_ = generate_sharedsecret(handshake_handle->dhkeys_, handshake_handle->peerkeys_,
             exception);
+
+#endif
 
     if(handshake_handle->sharedsecret_ != nullptr)
     {

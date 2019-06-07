@@ -185,5 +185,51 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
             LABELS "NoMemoryCheck"
             )
+
+        if(TEE)
+            if(NOT libddssec_FOUND)
+                find_package(libddssec REQUIRED)
+            endif()
+
+            dsec_build_ta(
+                TARGET_NAME
+                    ta-secure-test
+                TA_UUID
+                    ${DSEC_TA_UUID}
+                OUTPUT_DIR
+                    ${CMAKE_CURRENT_BINARY_DIR}/ta
+                FILE_PATH
+                    ${PROJECT_SOURCE_DIR}/test/certs/pwdpubcert.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/mainpubcert.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/revokedpubkey.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/seccakey.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/joinedcacertcrl.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/seccacert.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/expiredpubreq.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/pwdpubkey.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/revokedpubcert.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/mainpubkey.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/maincakey.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/certs/AE7BAD8C075AEAF5.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/certs/AE7BAD8C075AEAF4.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/certs/AE7BAD8C075AEAF7.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/certs/AE7BAD8C075AEAF3.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/certs/AE7BAD8C075AEAF6.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/pwdpubreq.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/mainsubkey.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/mainpubreq.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/revokedpubreq.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/maincrl.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/expiredpubcert.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/mainsubcert.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/expiredpubkey.pem
+                    ${PROJECT_SOURCE_DIR}/test/certs/mainsubreq.pem
+            )
+
+            add_dependencies(BlackboxTests_DynMem ta-secure-test)
+            add_dependencies(BlackboxTests_ReallocMem ta-secure-test)
+            add_dependencies(BlackboxTests_PreallocMem ta-secure-test)
+        endif()
     endif()
 endif()

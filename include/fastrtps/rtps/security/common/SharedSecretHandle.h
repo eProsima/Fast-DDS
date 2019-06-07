@@ -116,6 +116,10 @@ class SharedSecret
 
         static const char* const class_id_;
 
+#ifdef LIBDDSSEC_ENABLED
+        int32_t ssh_id;
+#endif
+
         std::vector<BinaryData> data_;
 };
 
