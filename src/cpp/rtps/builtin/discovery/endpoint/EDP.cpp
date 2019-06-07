@@ -500,13 +500,6 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
                 "), local writer publishes as keyed: "<< wdata->topicKind())
             return false;
     }
-    /*
-    if(!checkTypeIdentifier(wdata, rdata))
-    {
-        logInfo(RTPS_EDP, "Matching failed on checkTypeIdentifier.");
-        return false;
-    }
-    */
     if(!rdata->isAlive()) //Matching
     {
         logWarning(RTPS_EDP,"ReaderProxyData object is NOT alive");
@@ -547,7 +540,7 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
     if (!checkDataRepresentationQos(wdata, rdata))
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE Data Representation QOS (topic: " << rdata->topicName()
-            << "):Remote reader " << rdata->guid() << " hasn't any representation compatible");
+            << "):Remote reader " << rdata->guid() << " has no compatible representation");
         return false;
     }
 
@@ -648,81 +641,19 @@ bool EDP::checkDataRepresentationQos(const WriterProxyData* wdata, const ReaderP
 
 bool EDP::checkTypeValidation(const WriterProxyData* wdata, const ReaderProxyData* rdata) const
 {
-    if (rdata->m_qos.type_consistency.m_kind == DISALLOW_TYPE_COERCION)
+    // Step 1: Both specify a TypeObject
+    if (hasTypeObject(wdata, rdata))
     {
-        if (!checkTypeIdentifier(wdata, rdata))
-        {
-            logWarning(RTPS_EDP, "Type Validation (DISALLOW_TYPE_COERCION) FAILED (typeName: " << rdata->typeName()
-                << "): Local reader " << rdata->guid() << " didn't match with remote writer ("
-                << wdata->guid() << ") (typeName: " << wdata->typeName() << ")");
-            return false;
-        }
-        return true;
+        return checkTypeObject(wdata, rdata);
+    }
+    // Not explicitely said in the standard, but is not done, what's the intention of TypeIdV1?
+    if (hasTypeIdentifier(wdata, rdata))
+    {
+        return checkTypeIdentifier(wdata, rdata);
     }
 
-    const std::vector<DataRepresentationId_t>& wr = wdata->m_qos.representation.m_value;
-    const std::vector<DataRepresentationId_t>& rr = rdata->m_qos.representation.m_value;
-
-    if (wr.empty() || rr.empty())
-    {
-        return wdata->typeName() == rdata->typeName();
-    }
-
-    if (std::find(wr.begin(), wr.end(), XCDR2_DATA_REPRESENTATION) != wr.end())
-    {
-        if (std::find(rr.begin(), rr.end(), XCDR2_DATA_REPRESENTATION) != rr.end())
-        {
-            if (wdata->type_information().assigned() && rdata->type_information().assigned())
-            {
-                std::cout << "Both has XCDR2" << std::endl;
-                return wdata->type_information().type_information.complete().typeid_with_size().type_id().consistent(
-                    rdata->type_information().type_information.complete().typeid_with_size().type_id(),
-                    rdata->m_qos.type_consistency);
-            }
-            std::cout << "Both has XCDR2 but at least one of them haven't assigned it." << std::endl;
-            return false;
-        }
-        // Not compatible (p. 170, XTypes 1.2)
-        /*
-        else if (std::find(rr.begin(), rr.end(), XCDR_DATA_REPRESENTATION) != rr.end())
-        {
-            return wdata->type_information().type_information.complete().typeid_with_size().type_id().consistent(
-                rdata->type_id().m_type_identifier,
-                rdata->m_qos.type_consistency);
-        }
-        */
-    }
-
-    if (std::find(wr.begin(), wr.end(), XCDR_DATA_REPRESENTATION) != wr.end())
-    {
-        if (std::find(rr.begin(), rr.end(), XCDR2_DATA_REPRESENTATION) != rr.end())
-        {
-            if (wdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00))
-            {
-                std::cout << "XCDR vs XCDR2" << std::endl;
-                return wdata->type_id().m_type_identifier.consistent(
-                            rdata->type_information().type_information.complete().typeid_with_size().type_id(),
-                            rdata->m_qos.type_consistency);
-            }
-            std::cout << "XCDR vs XCDR2 writer has no type identifier." << std::endl;
-            return false;
-        }
-        else if (std::find(rr.begin(), rr.end(), XCDR_DATA_REPRESENTATION) != rr.end())
-        {
-            if (wdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00))
-            {
-                std::cout << "Both XCDR" << std::endl;
-                return wdata->type_id().m_type_identifier.consistent(
-                            rdata->type_id().m_type_identifier,
-                            rdata->m_qos.type_consistency);
-            }
-            std::cout << "Both XCDR, but writer has no type identifier." << std::endl;
-            return false;
-        }
-    }
-
-    std::cout << "Checks ended... FAILED" << std::endl;
-    return false;
+    // Step 2: Writer or reader doesn't specify a TypeObject
+    return !rdata->m_qos.type_consistency.m_force_type_validation && (wdata->typeName() == rdata->typeName());
 }
 
 bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wdata)
@@ -746,14 +677,6 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
             << rdata->topicKind());
         return false;
     }
-    /* Now it is done in checkTypeValidation
-    if(!checkTypeIdentifier(wdata, rdata))
-    {
-        logInfo(RTPS_EDP, "Matching failed on checkTypeIdentifier.");
-        std::cout << "--- TypeIdentifier failed ---" << std::endl;
-        return false;
-    }
-    */
     if(!wdata->isAlive()) //Matching
     {
         logWarning(RTPS_EDP, "WriterProxyData " << wdata->guid() << " is NOT alive");
@@ -796,7 +719,7 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
     if (!checkDataRepresentationQos(wdata, rdata))
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE Data Representation QOS (topic: " << rdata->topicName()
-            << "):Local reader " << rdata->guid() << " hasn't any representation compatible");
+            << "):Local reader " << rdata->guid() << " has no compatible representation");
         std::cout << "Data representation failed :D" << std::endl;
         return false;
     }
@@ -1306,44 +1229,83 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(const GUID_t& l
 
 bool EDP::checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const
 {
-    const std::vector<DataRepresentationId_t>& wr = wdata->m_qos.representation.m_value;
-    const std::vector<DataRepresentationId_t>& rr = rdata->m_qos.representation.m_value;
+    return wdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00) &&
+            wdata->type_id().m_type_identifier.consistent(
+                rdata->type_id().m_type_identifier, rdata->m_qos.type_consistency);
+}
 
-    if (wr.empty() || rr.empty())
+bool EDP::hasTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const
+{
+    return wdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00) &&
+           rdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00);
+}
+
+bool EDP::checkTypeObject(const WriterProxyData* wdata, const ReaderProxyData* rdata) const
+{
+    if (wdata->type_information().assigned() && rdata->type_information().assigned())
     {
-        return wdata->typeName() == rdata->typeName();
+        const types::TypeIdentifier* rtype = nullptr;
+        const types::TypeIdentifier* wtype = nullptr;
+
+        if (wdata->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
+                static_cast<uint8_t>(0x00) &&
+                rdata->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
+                static_cast<uint8_t>(0x00))
+        {
+            rtype = &rdata->type_information().type_information.complete().typeid_with_size().type_id();
+            wtype = &wdata->type_information().type_information.complete().typeid_with_size().type_id();
+        }
+        else if (wdata->type_information().type_information.minimal().typeid_with_size().type_id()._d() !=
+                static_cast<uint8_t>(0x00) &&
+                rdata->type_information().type_information.minimal().typeid_with_size().type_id()._d() !=
+                static_cast<uint8_t>(0x00))
+        {
+            rtype = &rdata->type_information().type_information.minimal().typeid_with_size().type_id();
+            wtype = &wdata->type_information().type_information.minimal().typeid_with_size().type_id();
+        }
+
+        if (wtype != nullptr)
+        {
+            return wtype->consistent(*rtype, rdata->m_qos.type_consistency);
+        }
+
+        return false;
     }
 
-    if (std::find(wr.begin(), wr.end(), XCDR2_DATA_REPRESENTATION) != wr.end())
+    if (wdata->type().m_type_object._d() != static_cast<uint8_t>(0x00) &&
+            rdata->type().m_type_object._d() != static_cast<uint8_t>(0x00))
     {
-        if (std::find(rr.begin(), rr.end(), XCDR2_DATA_REPRESENTATION) != rr.end())
-        {
-            return wdata->type_information().type_information.minimal().typeid_with_size().type_id()
-                    == rdata->type_information().type_information.minimal().typeid_with_size().type_id();
-        }
-        // Not compatible (p. 170, XTypes 1.2)
-        /*
-        else if (std::find(rr.begin(), rr.end(), XCDR_DATA_REPRESENTATION) != rr.end())
-        {
-            return wdata->type_information().type_information.minimal().typeid_with_size().type_id()
-                    == rdata->type_id().m_type_identifier;
-        }
-        */
+        return wdata->type().m_type_object.consistent(rdata->type().m_type_object, rdata->m_qos.type_consistency);
     }
 
-    if (std::find(wr.begin(), wr.end(), XCDR_DATA_REPRESENTATION) != wr.end())
-    {
-        if (std::find(rr.begin(), rr.end(), XCDR2_DATA_REPRESENTATION) != rr.end())
-        {
-            return wdata->type_id().m_type_identifier == rdata->type_id().m_type_identifier
-                    || wdata->type_id().m_type_identifier
-                    == rdata->type_information().type_information.minimal().typeid_with_size().type_id();
-        }
-        else if (std::find(rr.begin(), rr.end(), XCDR_DATA_REPRESENTATION) != rr.end())
-        {
-            return wdata->type_id().m_type_identifier == rdata->type_id().m_type_identifier;
-        }
+    return false;
+}
 
+bool EDP::hasTypeObject(const WriterProxyData* wdata, const ReaderProxyData* rdata) const
+{
+    if (wdata->type_information().assigned() && rdata->type_information().assigned())
+    {
+        if (wdata->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
+                static_cast<uint8_t>(0x00) &&
+                rdata->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
+                static_cast<uint8_t>(0x00))
+        {
+            return true;
+        }
+        else if (wdata->type_information().type_information.minimal().typeid_with_size().type_id()._d() !=
+                static_cast<uint8_t>(0x00) &&
+                rdata->type_information().type_information.minimal().typeid_with_size().type_id()._d() !=
+                static_cast<uint8_t>(0x00))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    if (wdata->type().m_type_object._d() != static_cast<uint8_t>(0x00) &&
+            rdata->type().m_type_object._d() != static_cast<uint8_t>(0x00))
+    {
+        return true;
     }
 
     return false;

@@ -235,8 +235,11 @@ class EDP
 
         bool checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
 
-        bool checkTypeIdentifier(const eprosima::fastrtps::types::TypeIdentifier * wti,
-                const eprosima::fastrtps::types::TypeIdentifier * rti) const;
+        bool hasTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
+
+        bool checkTypeObject(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
+
+        bool hasTypeObject(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
 };
 
 }
