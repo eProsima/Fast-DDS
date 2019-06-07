@@ -615,10 +615,16 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
  */
 bool EDP::checkDataRepresentationQos(const WriterProxyData* wdata, const ReaderProxyData* rdata) const
 {
-    bool compatible = wdata->m_qos.representation.m_value.empty() || rdata->m_qos.representation.m_value.empty();
-    if (!compatible)
+    bool compatible = false;
+    const std::vector<DataRepresentationId_t>& rr = rdata->m_qos.representation.m_value;
+
+    if (wdata->m_qos.representation.m_value.empty())
     {
-        const std::vector<DataRepresentationId_t>& rr = rdata->m_qos.representation.m_value;
+        compatible |= std::find(rr.begin(), rr.end(), XCDR2_DATA_REPRESENTATION) != rr.end();
+        compatible |= std::find(rr.begin(), rr.end(), XCDR_DATA_REPRESENTATION) != rr.end() || rr.empty();
+    }
+    else
+    {
         for (DataRepresentationId writerRepresentation : wdata->m_qos.representation.m_value)
         {
             if (writerRepresentation == XCDR2_DATA_REPRESENTATION)
@@ -628,7 +634,7 @@ bool EDP::checkDataRepresentationQos(const WriterProxyData* wdata, const ReaderP
             else if (writerRepresentation == XCDR_DATA_REPRESENTATION)
             {
                 compatible |= std::find(rr.begin(), rr.end(), XCDR2_DATA_REPRESENTATION) != rr.end();
-                compatible |= std::find(rr.begin(), rr.end(), XCDR_DATA_REPRESENTATION) != rr.end();
+                compatible |= std::find(rr.begin(), rr.end(), XCDR_DATA_REPRESENTATION) != rr.end() || rr.empty();
             }
             else // XML_DATA_REPRESENTATION
             {
@@ -636,6 +642,7 @@ bool EDP::checkDataRepresentationQos(const WriterProxyData* wdata, const ReaderP
             }
         }
     }
+
     return compatible;
 }
 

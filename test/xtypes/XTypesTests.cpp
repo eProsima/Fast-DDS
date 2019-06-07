@@ -632,73 +632,35 @@ TEST_F(XTypes, MixingMinimalAndComplete)
 /*
  * Empty representation test:
  * Empty-Empty == Type
- * Empty-Empty != Type
- * Empty-Empty ~= Type
- *
  * Empty-XCDR1 == Type
- * Empty-XCDR1 != Type
- * Empty-XCDR1 ~= Type
- *
  * Empty-XCDR2 == Type
- * Empty-XCDR2 != Type
- * Empty-XCDR2 ~= Type
- *
  * Empty-XML == Type
- * Empty-XML != Type
- * Empty-XML ~= Type
- *
  * XCDR1-Empty == Type
- * XCDR1-Empty != Type
- * XCDR1-Empty ~= Type
- *
  * XCDR2-Empty == Type
- * XCDR2-Empty != Type
- * XCDR2-Empty ~= Type
- *
- * XML-Empty == Type
- * XML-Empty != Type
  * XML-Empty ~= Type
  */
 
 /*
  * XML representation test:
- * XML-XML == Type
- * XML-XML != Type
  * XML-XML ~= Type
- *
  * XML-XCDR1 == Type
- * XML-XCDR1 != Type
- * XML-XCDR1 ~= Type
- *
  * XML-XCDR2 == Type
- * XML-XCDR2 != Type
- * XML-XCDR2 ~= Type
- *
  * XCDR1-XML == Type
- * XCDR1-XML != Type
- * XCDR1-XML ~= Type
- *
  * XCDR2-XML == Type
- * XCDR2-XML != Type
- * XCDR2-XML ~= Type
  */
 
 /*
  * Pub XCDR2 + Sub XCDR1 incompatibility.
  * XCDR2-XCDR1 == Type
- * XCDR2-XCDR1 != Type
  *
  * Pub XCDR1 + Sub XCDR1 compatibility.
  * XCDR1-XCDR1 == Type
- * XCDR1-XCDR1 != Type
  *
  * Pub XCDR1 + Sub XCDR2 compatibility.
  * XCDR1-XCDR2 == Type
- * XCDR1-XCDR2 != Type
  *
  * Pub XCDR2 + Sub XCDR2 compatibility.
  * XCDR2-XCDR2 == Type
- * XCDR2-XCDR2 != Type
  */
 
 /*
