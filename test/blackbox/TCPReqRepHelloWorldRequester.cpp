@@ -42,16 +42,9 @@ TCPReqRepHelloWorldRequester::TCPReqRepHelloWorldRequester(): reply_listener_(*t
     participant_(nullptr), reply_subscriber_(nullptr), request_publisher_(nullptr),
     initialized_(false), matched_(0)
 {
-#if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
-            sattr.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-            puattr.historyMemoryPolicy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-#elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
-            sattr.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
-            puattr.historyMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
-#else
-            sattr.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
-            puattr.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
-#endif
+    // By default, memory mode is preallocated (the most restritive)
+    sattr.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
+    puattr.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
 }
 
 TCPReqRepHelloWorldRequester::~TCPReqRepHelloWorldRequester()

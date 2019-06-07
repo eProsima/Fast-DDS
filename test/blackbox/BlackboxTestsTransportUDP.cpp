@@ -22,7 +22,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-BLACKBOXTEST(BlackBox, UDPv4TransportWrongConfig)
+TEST(BlackBox, UDPv4TransportWrongConfig)
 {
     {
         PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -62,7 +62,7 @@ BLACKBOXTEST(BlackBox, UDPv4TransportWrongConfig)
 }
 
 // TODO - GASCO: UDPMaxInitialPeer tests should use static discovery through initial peers.
-BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P0_4_P3)
+TEST(BlackBox, UDPMaxInitialPeer_P0_4_P3)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -87,7 +87,7 @@ BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P0_4_P3)
     ASSERT_TRUE(reader.is_matched());
 }
 
-BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P0_4_P4)
+TEST(BlackBox, UDPMaxInitialPeer_P0_4_P4)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -112,7 +112,7 @@ BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P0_4_P4)
     ASSERT_TRUE(reader.is_matched());
 }
 
-BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P5_4_P4)
+TEST(BlackBox, UDPMaxInitialPeer_P5_4_P4)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -136,7 +136,7 @@ BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P5_4_P4)
     ASSERT_FALSE(reader.is_matched());
 }
 
-BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P5_6_P4)
+TEST(BlackBox, UDPMaxInitialPeer_P5_6_P4)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -162,7 +162,7 @@ BLACKBOXTEST(BlackBox, UDPMaxInitialPeer_P5_6_P4)
 }
 
 // Used to reproduce VPN environment issue with multicast.
-BLACKBOXTEST(BlackBox, MulticastCommunicationBadReader)
+TEST(BlackBox, MulticastCommunicationBadReader)
 {
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -194,7 +194,7 @@ BLACKBOXTEST(BlackBox, MulticastCommunicationBadReader)
 }
 
 // Used to reproduce VPN environment issue with multicast.
-BLACKBOXTEST(BlackBox, MulticastCommunicationOkReader)
+TEST(BlackBox, MulticastCommunicationOkReader)
 {
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -224,7 +224,7 @@ BLACKBOXTEST(BlackBox, MulticastCommunicationOkReader)
 }
 
 // #4420 Using whitelists in localhost sometimes UDP doesn't receive the release input channel message.
-BLACKBOXTEST(BlackBox, whitelisting_udp_localhost_multi)
+TEST(BlackBox, whitelisting_udp_localhost_multi)
 {
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -254,7 +254,7 @@ BLACKBOXTEST(BlackBox, whitelisting_udp_localhost_multi)
 }
 
 // #4420 Using whitelists in localhost sometimes UDP doesn't receive the release input channel message.
-BLACKBOXTEST(BlackBox, whitelisting_udp_localhost_alone)
+TEST(BlackBox, whitelisting_udp_localhost_alone)
 {
     auto transport = std::make_shared<UDPv4TransportDescriptor>();
     std::string ip0("127.0.0.1");

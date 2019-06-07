@@ -21,7 +21,7 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 // Test created to check bug #1568 (Github #34)
-BLACKBOXTEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
+TEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -64,7 +64,7 @@ BLACKBOXTEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
 }
 
 //Test created to deal with Issue 39 on Github
-BLACKBOXTEST(BlackBox, CacheChangeReleaseTest)
+TEST(BlackBox, CacheChangeReleaseTest)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -104,7 +104,7 @@ BLACKBOXTEST(BlackBox, CacheChangeReleaseTest)
 }
 
 // Test created to check bug #1555 (Github #31)
-BLACKBOXTEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
+TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -151,7 +151,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
 }
 
 // Test created to check bug #1738 (Github #54)
-BLACKBOXTEST(BlackBox, PubSubAsReliableKeepLastWriterSmallDepth)
+TEST(BlackBox, PubSubAsReliableKeepLastWriterSmallDepth)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -183,7 +183,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableKeepLastWriterSmallDepth)
 }
 
 // Test created to check bug #1558 (Github #33)
-BLACKBOXTEST(BlackBox, PubSubKeepAll)
+TEST(BlackBox, PubSubKeepAll)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -230,7 +230,7 @@ BLACKBOXTEST(BlackBox, PubSubKeepAll)
 }
 
 // Test created to check bug #1558 (Github #33)
-BLACKBOXTEST(BlackBox, PubSubKeepAllTransient)
+TEST(BlackBox, PubSubKeepAllTransient)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -277,7 +277,7 @@ BLACKBOXTEST(BlackBox, PubSubKeepAllTransient)
     }
 }
 
-BLACKBOXTEST(BlackBox, PubReliableKeepAllSubNonReliable)
+TEST(BlackBox, PubReliableKeepAllSubNonReliable)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -309,7 +309,7 @@ BLACKBOXTEST(BlackBox, PubReliableKeepAllSubNonReliable)
 }
 
 //Verify that Cachechanges are removed from History when the a Writer unmatches
-BLACKBOXTEST(BlackBox, StatefulReaderCacheChangeRelease){
+TEST(BlackBox, StatefulReaderCacheChangeRelease){
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -345,7 +345,7 @@ void send_async_data(PubSubWriter<T>& writer, std::list<typename T::type> data_t
     ASSERT_TRUE(data_to_send.empty());
 }
 
-BLACKBOXTEST(BlackBox, PubSubAsReliableMultithreadKeepLast1)
+TEST(BlackBox, PubSubAsReliableMultithreadKeepLast1)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);

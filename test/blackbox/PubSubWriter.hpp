@@ -206,13 +206,8 @@ class PubSubWriter
         publisher_attr_.topic.topicName = t.str();
         topic_name_ = t.str();
 
-#if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
-        publisher_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-#elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
-        publisher_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
-#else
+        // By default, memory mode is preallocated (the most restritive)
         publisher_attr_.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
-#endif
 
         // By default, heartbeat period and nack response delay are 100 milliseconds.
         publisher_attr_.times.heartbeatPeriod.seconds = 0;
