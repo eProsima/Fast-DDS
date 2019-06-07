@@ -53,20 +53,22 @@ class XTypes : public ::testing::Test
         }
 };
 
+/**** NO TYPE OBJECT ****/
+
 /*
  * Both endpoints share the same type without DataRepresentationQos, so they must match.
  * This represents classical match.
 */
-TEST_F(XTypes, EmptyEmptySameType)
+TEST_F(XTypes, NoTypeObjectSameType)
 {
     BasicStructPubSubType type;
     TestPublisher pub;
     TestSubscriber sub;
 
-    pub.init("EmptyEmptySameType", 10, &type, nullptr, nullptr, nullptr, "Pub1", nullptr);
+    pub.init("NoTypeObjectSameType", 10, &type, nullptr, nullptr, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("EmptyEmptySameType", 10, &type, nullptr, nullptr, nullptr, "Sub1", nullptr, nullptr);
+    sub.init("NoTypeObjectSameType", 10, &type, nullptr, nullptr, nullptr, "Sub1", nullptr, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -75,20 +77,28 @@ TEST_F(XTypes, EmptyEmptySameType)
 }
 
 /*
- * The endpoints have different types without DataRepresentationQos, so they must not match.
- * This represents classical mismatch.
+ * Both endpoints share the same type without DataRepresentationQosm, but they force type validation,
+ * so they must not match.
 */
-TEST_F(XTypes, EmptyEmptyDifferentType)
+TEST_F(XTypes, NoTypeObjectSameTypeForce)
 {
     BasicStructPubSubType type;
-    BasicNamesStructPubSubType type2;
     TestPublisher pub;
     TestSubscriber sub;
 
-    pub.init("EmptyEmptyDifferentType", 10, &type, nullptr, nullptr, nullptr, "Pub1", nullptr);
+    TypeConsistencyEnforcementQosPolicy typeConQos;
+    //typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
+    //typeConQos.m_ignore_sequence_bounds = true;
+    //typeConQos.m_ignore_string_bounds = true;
+    //typeConQos.m_ignore_member_names = true;
+    //typeConQos.m_prevent_type_widening = false;
+    typeConQos.m_force_type_validation = false;
+
+    pub.init("NoTypeObjectSameTypeForce", 10, &type, nullptr, nullptr, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("EmptyEmptyDifferentType", 10, &type2, nullptr, nullptr, nullptr, "Sub1", nullptr, nullptr);
+    sub.init("NoTypeObjectSameTypeForce", 10, &type, nullptr, nullptr, nullptr, "Sub1", nullptr, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -97,10 +107,34 @@ TEST_F(XTypes, EmptyEmptyDifferentType)
 }
 
 /*
+ * The endpoints have different types without DataRepresentationQos, so they must not match.
+ * This represents classical mismatch.
+*/
+TEST_F(XTypes, NoTypeObjectDifferentType)
+{
+    BasicStructPubSubType type;
+    BasicNamesStructPubSubType type2;
+    TestPublisher pub;
+    TestSubscriber sub;
+
+    pub.init("NoTypeObjectDifferentType", 10, &type, nullptr, nullptr, nullptr, "Pub1", nullptr);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("NoTypeObjectDifferentType", 10, &type2, nullptr, nullptr, nullptr, "Sub1", nullptr, nullptr);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(false, 3);
+    pub.waitDiscovery(false, 3);
+}
+
+/**** TYPE OBJECT V1 ****/
+
+/*
  * Both endpoints share the same type using XCDR1 so they must match.
  * This represents classical match.
 */
-TEST_F(XTypes, XCDR1XCDR1SameType)
+TEST_F(XTypes, TypeObjectV1SameType)
 {
     BasicStructPubSubType type;
     const TypeObject* type_obj = GetMinimalBasicStructObject();
@@ -123,10 +157,10 @@ TEST_F(XTypes, XCDR1XCDR1SameType)
     //typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("XCDR1XCDR1SameType", 10, &type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeObjectV1SameType", 10, &type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("XCDR1XCDR1SameType", 10, &type, type_obj, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeObjectV1SameType", 10, &type, type_obj, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -137,7 +171,7 @@ TEST_F(XTypes, XCDR1XCDR1SameType)
 /*
  * Both endpoints different types using XCDR1 so they must not match even with full coercion allowed.
 */
-TEST_F(XTypes, XCDR1XCDR1DifferentType)
+TEST_F(XTypes, TypeObjectV1DifferentType)
 {
     BasicStructPubSubType type1;
     BasicBadStructPubSubType type2;
@@ -163,10 +197,10 @@ TEST_F(XTypes, XCDR1XCDR1DifferentType)
     typeConQos.m_prevent_type_widening = false;
     typeConQos.m_force_type_validation = false;
 
-    pub.init("XCDR1XCDR1DifferentType", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeObjectV1DifferentType", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("XCDR1XCDR1DifferentType", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1DifferentType", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -178,7 +212,7 @@ TEST_F(XTypes, XCDR1XCDR1DifferentType)
  * BasicStruct and BasicNamesStruct are similar structures, but with different names in members.
  * This test checks failure at the member names through TypeIdentifier's hashes. The endpoints must not match.
 */
-TEST_F(XTypes, XCDR1XCDR1NamesManaged)
+TEST_F(XTypes, TypeObjectV1NamesManaged)
 {
     BasicStructPubSubType type1;
     BasicNamesStructPubSubType type2;
@@ -204,10 +238,10 @@ TEST_F(XTypes, XCDR1XCDR1NamesManaged)
     //typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("XCDR1XCDR1NamesManaged", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeObjectV1NamesManaged", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("XCDR1XCDR1NamesManaged", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1NamesManaged", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -219,7 +253,7 @@ TEST_F(XTypes, XCDR1XCDR1NamesManaged)
  * BasicStruct and BasicNamesStruct are similar structures, but with different names in struct and members.
  * This test checks ignoring at the member names through TypeIdentifier's hashes. The endpoints must match.
 */
-TEST_F(XTypes, XCDR1XCDR1NamesIgnored)
+TEST_F(XTypes, TypeObjectV1NamesIgnored)
 {
     BasicStructPubSubType type1;
     BasicNamesStructPubSubType type2;
@@ -245,10 +279,10 @@ TEST_F(XTypes, XCDR1XCDR1NamesIgnored)
     //typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("XCDR1XCDR1NamesIgnored", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeObjectV1NamesIgnored", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("XCDR1XCDR1NamesIgnored", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1NamesIgnored", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -261,7 +295,7 @@ TEST_F(XTypes, XCDR1XCDR1NamesIgnored)
  * This test checks ignoring at the member names when disallowed type coercion has no effect.
  * The endpoints must not match.
 */
-TEST_F(XTypes, XCDR1XCDR1NamesIgnoredDisallow)
+TEST_F(XTypes, TypeObjectV1NamesIgnoredDisallow)
 {
     BasicStructPubSubType type1;
     BasicNamesStructPubSubType type2;
@@ -287,10 +321,10 @@ TEST_F(XTypes, XCDR1XCDR1NamesIgnoredDisallow)
     //typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("XCDR1XCDR1NamesIgnoredDisallow", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeObjectV1NamesIgnoredDisallow", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("XCDR1XCDR1NamesIgnoredDisallow", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1NamesIgnoredDisallow", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -302,7 +336,7 @@ TEST_F(XTypes, XCDR1XCDR1NamesIgnoredDisallow)
  * BasicStruct and BasicWideStruct are similar structures, but with "Wide" adds a member.
  * This test checks type widening. The endpoints must match.
 */
-TEST_F(XTypes, XCDR1XCDR1TypeWidening)
+TEST_F(XTypes, TypeObjectV1TypeWidening)
 {
     BasicStructPubSubType type1;
     BasicWideStructPubSubType type2;
@@ -328,10 +362,10 @@ TEST_F(XTypes, XCDR1XCDR1TypeWidening)
     typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("XCDR1XCDR1TypeWidening", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeObjectV1TypeWidening", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("XCDR1XCDR1TypeWidening", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1TypeWidening", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -343,7 +377,7 @@ TEST_F(XTypes, XCDR1XCDR1TypeWidening)
  * BasicStruct and BadBasicWideStruct are similar structures, but with "Wide" adds a member, and in this case
  * modifies the type of other member. The endpoints must not match.
 */
-TEST_F(XTypes, XCDR1XCDR1BadTypeWidening)
+TEST_F(XTypes, TypeObjectV1BadTypeWidening)
 {
     BasicStructPubSubType type1;
     BadBasicWideStructPubSubType type2;
@@ -369,10 +403,10 @@ TEST_F(XTypes, XCDR1XCDR1BadTypeWidening)
     typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("XCDR1XCDR1BadTypeWidening", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeObjectV1BadTypeWidening", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("XCDR1XCDR1BadTypeWidening", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1BadTypeWidening", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -384,7 +418,7 @@ TEST_F(XTypes, XCDR1XCDR1BadTypeWidening)
  * BasicStruct and BasicWideStruct are similar structures, but with "Wide" adds a member.
  * This test checks prevent type widening when assigning narrow to wide. The endpoints must match.
 */
-TEST_F(XTypes, XCDR1XCDR1TypeWideningPreventedNarrowToWide)
+TEST_F(XTypes, TypeObjectV1TypeWideningPreventedNarrowToWide)
 {
     BasicStructPubSubType type1;
     BasicWideStructPubSubType type2;
@@ -410,10 +444,10 @@ TEST_F(XTypes, XCDR1XCDR1TypeWideningPreventedNarrowToWide)
     typeConQos.m_prevent_type_widening = true;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("XCDR1XCDR1TypeWideningPreventedNarrowToWide", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeObjectV1TypeWideningPreventedNarrowToWide", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("XCDR1XCDR1TypeWideningPreventedNarrowToWide", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1TypeWideningPreventedNarrowToWide", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -425,7 +459,7 @@ TEST_F(XTypes, XCDR1XCDR1TypeWideningPreventedNarrowToWide)
  * BasicStruct and BasicWideStruct are similar structures, but with "Wide" adds a member.
  * This test checks prevent type widening when assining from wide to narrow. The endpoints must not match.
 */
-TEST_F(XTypes, XCDR1XCDR1TypeWideningPreventedWideToNarrow)
+TEST_F(XTypes, TypeObjectV1TypeWideningPreventedWideToNarrow)
 {
     BasicStructPubSubType type1;
     BasicWideStructPubSubType type2;
@@ -451,10 +485,10 @@ TEST_F(XTypes, XCDR1XCDR1TypeWideningPreventedWideToNarrow)
     typeConQos.m_prevent_type_widening = true;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("XCDR1XCDR1TypeWideningPreventedWideToNarrow", 10, &type2, type_obj2, type_id2, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeObjectV1TypeWideningPreventedWideToNarrow", 10, &type2, type_obj2, type_id2, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("XCDR1XCDR1TypeWideningPreventedWideToNarrow", 10, &type1, type_obj1, type_id1, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1TypeWideningPreventedWideToNarrow", 10, &type1, type_obj1, type_id1, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -466,7 +500,7 @@ TEST_F(XTypes, XCDR1XCDR1TypeWideningPreventedWideToNarrow)
  * BasicStruct and BasicWideStruct are similar structures, but with "Wide" adds a member, but coercion is disallowed.
  * This test checks type widening. The endpoints must match.
 */
-TEST_F(XTypes, XCDR1XCDR1TypeWideningDisallow)
+TEST_F(XTypes, TypeObjectV1TypeWideningDisallow)
 {
     BasicStructPubSubType type1;
     BasicWideStructPubSubType type2;
@@ -492,10 +526,10 @@ TEST_F(XTypes, XCDR1XCDR1TypeWideningDisallow)
     typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("XCDR1XCDR1TypeWideningDisallow", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeObjectV1TypeWideningDisallow", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("XCDR1XCDR1TypeWideningDisallow", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1TypeWideningDisallow", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -503,17 +537,174 @@ TEST_F(XTypes, XCDR1XCDR1TypeWideningDisallow)
     pub.waitDiscovery(false, 3);
 }
 
-// TEST_F(XTypes, TypeWideningPermitted)
-// TEST_F(XTypes, TypeWideningBlocked)
-// TEST_F(XTypes, SequenceBoundsIgnored)
-// TEST_F(XTypes, SequenceBoundsManaged)
-// TEST_F(XTypes, StringBoundsIgnored)
-// TEST_F(XTypes, StringBoundsManaged)
+/*
+ * SequenceStruct and SequenceBoundsStruct are similar structures, but with "Bounds" the size of the sequence is bigger.
+ * This test checks sequence bounds. The endpoints must match.
+*/
+TEST_F(XTypes, TypeObjectV1SequenceBoundsIgnored)
+{
+    SequenceStructPubSubType type1;
+    SequenceBoundsStructPubSubType type2;
+    const TypeObject* type_obj1 = GetMinimalSequenceStructObject();
+    const TypeIdentifier* type_id1 = GetSequenceStructIdentifier(false);
+    const TypeObject* type_obj2 = GetMinimalSequenceBoundsStructObject();
+    const TypeIdentifier* type_id2 = GetSequenceBoundsStructIdentifier(false);
+    TestPublisher pub;
+    TestSubscriber sub;
+    //TypeInformation* type_info = nullptr; // Not using it
+
+    DataRepresentationQosPolicy dataRepQos;
+    dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    TypeConsistencyEnforcementQosPolicy typeConQos;
+    typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
+    typeConQos.m_ignore_sequence_bounds = true;
+    //typeConQos.m_ignore_string_bounds = true;
+    //typeConQos.m_ignore_member_names = true;
+    //typeConQos.m_prevent_type_widening = false;
+    //typeConQos.m_force_type_validation = false;
+
+    pub.init("TypeObjectV1SequenceBoundsIgnored", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeObjectV1SequenceBoundsIgnored", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(true, 3);
+    pub.waitDiscovery(true, 3);
+}
+
+/*
+ * SequenceStruct and SequenceBoundsStruct are similar structures, but with "Bounds" the size of the sequence is bigger.
+ * This test checks sequence bounds. The endpoints must not match.
+*/
+TEST_F(XTypes, TypeObjectV1SequenceBoundsManaged)
+{
+    SequenceStructPubSubType type1;
+    SequenceBoundsStructPubSubType type2;
+    const TypeObject* type_obj1 = GetMinimalSequenceStructObject();
+    const TypeIdentifier* type_id1 = GetSequenceStructIdentifier(false);
+    const TypeObject* type_obj2 = GetMinimalSequenceBoundsStructObject();
+    const TypeIdentifier* type_id2 = GetSequenceBoundsStructIdentifier(false);
+    TestPublisher pub;
+    TestSubscriber sub;
+    //TypeInformation* type_info = nullptr; // Not using it
+
+    DataRepresentationQosPolicy dataRepQos;
+    dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    TypeConsistencyEnforcementQosPolicy typeConQos;
+    typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
+    typeConQos.m_ignore_sequence_bounds = false;
+    //typeConQos.m_ignore_string_bounds = true;
+    //typeConQos.m_ignore_member_names = true;
+    //typeConQos.m_prevent_type_widening = false;
+    //typeConQos.m_force_type_validation = false;
+
+    pub.init("TypeObjectV1SequenceBoundsManaged", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeObjectV1SequenceBoundsManaged", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(false, 3);
+    pub.waitDiscovery(false, 3);
+}
+
+/*
+ * StringStruct and LargeStringStruct are similar structures, but with "Large" the size of the string is bigger.
+ * This test checks string bounds. The endpoints must match.
+*/
+TEST_F(XTypes, TypeObjectV1LargeStringIgnored)
+{
+    StringStructPubSubType type1;
+    LargeStringStructPubSubType type2;
+    const TypeObject* type_obj1 = GetMinimalStringStructObject();
+    const TypeIdentifier* type_id1 = GetStringStructIdentifier(false);
+    const TypeObject* type_obj2 = GetMinimalLargeStringStructObject();
+    const TypeIdentifier* type_id2 = GetLargeStringStructIdentifier(false);
+    TestPublisher pub;
+    TestSubscriber sub;
+    //TypeInformation* type_info = nullptr; // Not using it
+
+    DataRepresentationQosPolicy dataRepQos;
+    dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    TypeConsistencyEnforcementQosPolicy typeConQos;
+    typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
+    //typeConQos.m_ignore_sequence_bounds = true;
+    typeConQos.m_ignore_string_bounds = true;
+    //typeConQos.m_ignore_member_names = true;
+    //typeConQos.m_prevent_type_widening = false;
+    //typeConQos.m_force_type_validation = false;
+
+    pub.init("TypeObjectV1LargeStringIgnored", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeObjectV1LargeStringIgnored", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(true, 3);
+    pub.waitDiscovery(true, 3);
+}
+
+/*
+ * StringStruct and LargeStringStruct are similar structures, but with "Large" the size of the string is bigger.
+ * This test checks string bounds. The endpoints must not match.
+*/
+TEST_F(XTypes, TypeObjectV1LargeStringManaged)
+{
+    StringStructPubSubType type1;
+    LargeStringStructPubSubType type2;
+    const TypeObject* type_obj1 = GetMinimalStringStructObject();
+    const TypeIdentifier* type_id1 = GetStringStructIdentifier(false);
+    const TypeObject* type_obj2 = GetMinimalLargeStringStructObject();
+    const TypeIdentifier* type_id2 = GetLargeStringStructIdentifier(false);
+    TestPublisher pub;
+    TestSubscriber sub;
+    //TypeInformation* type_info = nullptr; // Not using it
+
+    DataRepresentationQosPolicy dataRepQos;
+    dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    TypeConsistencyEnforcementQosPolicy typeConQos;
+    typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
+    //typeConQos.m_ignore_sequence_bounds = false;
+    typeConQos.m_ignore_string_bounds = false;
+    //typeConQos.m_ignore_member_names = true;
+    //typeConQos.m_prevent_type_widening = false;
+    //typeConQos.m_force_type_validation = false;
+
+    pub.init("TypeObjectV1LargeStringManaged", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeObjectV1LargeStringManaged", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(false, 3);
+    pub.waitDiscovery(false, 3);
+}
 
 /*
  * Both endpoints share the same type using XCDR1 so they must match, in this case using Complete.
 */
-TEST_F(XTypes, XCDR1XCDR1SameTypeComplete)
+TEST_F(XTypes, TypeObjectV1SameTypeComplete)
 {
     BasicStructPubSubType type;
     const TypeObject* type_obj = GetCompleteBasicStructObject();
@@ -536,10 +727,10 @@ TEST_F(XTypes, XCDR1XCDR1SameTypeComplete)
     //typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("XCDR1XCDR1SameTypeComplete", 10, &type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeObjectV1SameTypeComplete", 10, &type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("XCDR1XCDR1SameTypeComplete", 10, &type, type_obj, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeObjectV1SameTypeComplete", 10, &type, type_obj, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -551,7 +742,7 @@ TEST_F(XTypes, XCDR1XCDR1SameTypeComplete)
  * Both endpoints use compatible but different types using XCDR1 but without coercion so they must not match,
  * in this case using Complete.
 */
-TEST_F(XTypes, XCDR1XCDR1InvalidComplete)
+TEST_F(XTypes, TypeObjectV1InvalidComplete)
 {
     BasicStructPubSubType type1;
     BasicNamesStructPubSubType type2;
@@ -577,10 +768,10 @@ TEST_F(XTypes, XCDR1XCDR1InvalidComplete)
     //typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("XCDR1XCDR1InvalidComplete", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeObjectV1InvalidComplete", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("XCDR1XCDR1InvalidComplete", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeObjectV1InvalidComplete", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -628,64 +819,578 @@ TEST_F(XTypes, MixingMinimalAndComplete)
     pub.waitDiscovery(false, 3);
 }
 
+/**** TYPE IDENTIFIER ****/
 
 /*
- * Empty representation test:
- * Empty-Empty == Type
- * Empty-XCDR1 == Type
- * Empty-XCDR2 == Type
- * Empty-XML == Type
- * XCDR1-Empty == Type
- * XCDR2-Empty == Type
- * XML-Empty ~= Type
- */
+ * Both endpoints share the same type using XCDR1 so they must match.
+ * This represents classical match.
+*/
+TEST_F(XTypes, TypeIdentifierSameType)
+{
+    BasicStructPubSubType type;
+    const TypeIdentifier* type_id = GetBasicStructIdentifier(false);
+    TestPublisher pub;
+    TestSubscriber sub;
+    //TypeInformation* type_info = nullptr; // Not using it
+
+    DataRepresentationQosPolicy dataRepQos;
+    dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    //TypeConsistencyEnforcementQosPolicy typeConQos;
+    //typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
+    //typeConQos.m_ignore_sequence_bounds = true;
+    //typeConQos.m_ignore_string_bounds = true;
+    //typeConQos.m_ignore_member_names = true;
+    //typeConQos.m_prevent_type_widening = false;
+    //typeConQos.m_force_type_validation = false;
+
+    pub.init("TypeIdentifierSameType", 10, &type, nullptr, type_id, nullptr, "Pub1", &dataRepQos);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeIdentifierSameType", 10, &type, nullptr, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(true, 3);
+    pub.waitDiscovery(true, 3);
+}
 
 /*
- * XML representation test:
- * XML-XML ~= Type
- * XML-XCDR1 == Type
- * XML-XCDR2 == Type
- * XCDR1-XML == Type
- * XCDR2-XML == Type
- */
+ * Both endpoints different types using XCDR1 so they must not match even with full coercion allowed.
+*/
+TEST_F(XTypes, TypeIdentifierDifferentType)
+{
+    BasicStructPubSubType type1;
+    BasicBadStructPubSubType type2;
+    const TypeIdentifier* type_id1 = GetBasicStructIdentifier(false);
+    const TypeIdentifier* type_id2 = GetBasicBadStructIdentifier(false);
+    TestPublisher pub;
+    TestSubscriber sub;
+    //TypeInformation* type_info = nullptr; // Not using it
+
+    DataRepresentationQosPolicy dataRepQos;
+    dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    TypeConsistencyEnforcementQosPolicy typeConQos;
+    typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
+    typeConQos.m_ignore_sequence_bounds = true;
+    typeConQos.m_ignore_string_bounds = true;
+    typeConQos.m_ignore_member_names = true;
+    typeConQos.m_prevent_type_widening = false;
+    typeConQos.m_force_type_validation = false;
+
+    pub.init("TypeIdentifierDifferentType", 10, &type1, nullptr, type_id1, nullptr, "Pub1", &dataRepQos);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeIdentifierDifferentType", 10, &type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(false, 3);
+    pub.waitDiscovery(false, 3);
+}
 
 /*
- * Pub XCDR2 + Sub XCDR1 incompatibility.
- * XCDR2-XCDR1 == Type
- *
- * Pub XCDR1 + Sub XCDR1 compatibility.
- * XCDR1-XCDR1 == Type
- *
- * Pub XCDR1 + Sub XCDR2 compatibility.
- * XCDR1-XCDR2 == Type
- *
- * Pub XCDR2 + Sub XCDR2 compatibility.
- * XCDR2-XCDR2 == Type
- */
+ * BasicStruct and BasicNamesStruct are similar structures, but with different names in members.
+ * This test checks failure at the member names through TypeIdentifier's hashes. The endpoints must not match.
+*/
+TEST_F(XTypes, TypeIdentifierNamesManaged)
+{
+    BasicStructPubSubType type1;
+    BasicNamesStructPubSubType type2;
+    const TypeIdentifier* type_id1 = GetBasicStructIdentifier(false);
+    const TypeIdentifier* type_id2 = GetBasicNamesStructIdentifier(false);
+    TestPublisher pub;
+    TestSubscriber sub;
+    //TypeInformation* type_info = nullptr; // Not using it
+
+    DataRepresentationQosPolicy dataRepQos;
+    dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    TypeConsistencyEnforcementQosPolicy typeConQos;
+    typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
+    //typeConQos.m_ignore_sequence_bounds = true;
+    //typeConQos.m_ignore_string_bounds = true;
+    typeConQos.m_ignore_member_names = false;
+    //typeConQos.m_prevent_type_widening = false;
+    //typeConQos.m_force_type_validation = false;
+
+    pub.init("TypeIdentifierNamesManaged", 10, &type1, nullptr, type_id1, nullptr, "Pub1", &dataRepQos);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeIdentifierNamesManaged", 10, &type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(false, 3);
+    pub.waitDiscovery(false, 3);
+}
 
 /*
- * XCDR2-XCDR1 ~= Type
- * XCDR1-XCDR1 ~= Type
- * XCDR1-XCDR2 ~= Type
- * XCDR2-XCDR2 ~= Type
- *
- * Coercion Allow vs Disallow
- * Widening Allowed vs prevented
- * SequenceBounds Managed vs Ignored
- * StringBounds Managed vs Ignored
- * MemberNames Managed vs Ignored
- */
+ * BasicStruct and BasicNamesStruct are similar structures, but with different names in struct and members.
+ * This test checks ignoring at the member names through TypeIdentifier's hashes. The endpoints must match.
+*/
+TEST_F(XTypes, TypeIdentifierNamesIgnored)
+{
+    BasicStructPubSubType type1;
+    BasicNamesStructPubSubType type2;
+    const TypeIdentifier* type_id1 = GetBasicStructIdentifier(false);
+    const TypeIdentifier* type_id2 = GetBasicNamesStructIdentifier(false);
+    TestPublisher pub;
+    TestSubscriber sub;
+    //TypeInformation* type_info = nullptr; // Not using it
 
-// TEST_F(XTypes, EmptyRepresentationLists)
-// TEST_F(XTypes, EmptyRepresentationListsAndXCDR)
-// TEST_F(XTypes, XCDRAndXCDR2)
-// TEST_F(XTypes, XCDR2AndXCDR)
-// TEST_F(XTypes, XCDR2AndXCDR2)
-// TEST_F(XTypes, XMLAndXCDR2)
-// TEST_F(XTypes, XMLAndXCDR)
-// TEST_F(XTypes, XCDRAndXML)
-// TEST_F(XTypes, XCDR2AndXML)
+    DataRepresentationQosPolicy dataRepQos;
+    dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
 
+    TypeConsistencyEnforcementQosPolicy typeConQos;
+    typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
+    //typeConQos.m_ignore_sequence_bounds = true;
+    //typeConQos.m_ignore_string_bounds = true;
+    typeConQos.m_ignore_member_names = true;
+    //typeConQos.m_prevent_type_widening = false;
+    //typeConQos.m_force_type_validation = false;
+
+    pub.init("TypeIdentifierNamesIgnored", 10, &type1, nullptr, type_id1, nullptr, "Pub1", &dataRepQos);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeIdentifierNamesIgnored", 10, &type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(true, 3);
+    pub.waitDiscovery(true, 3);
+}
+
+/**** TYPE INFORMATION ****/
+
+/*
+ * Both endpoints share the same type using XCDR1 so they must match.
+ * This represents classical match.
+*/
+TEST_F(XTypes, TypeInformationSameType)
+{
+    BasicStructPubSubType type;
+    const TypeInformation* type_info = TypeObjectFactory::get_instance()->get_type_information("BasicStruct");
+    TestPublisher pub;
+    TestSubscriber sub;
+
+    DataRepresentationQosPolicy dataRepQos;
+    dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    //TypeConsistencyEnforcementQosPolicy typeConQos;
+    //typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
+    //typeConQos.m_ignore_sequence_bounds = true;
+    //typeConQos.m_ignore_string_bounds = true;
+    //typeConQos.m_ignore_member_names = true;
+    //typeConQos.m_prevent_type_widening = false;
+    //typeConQos.m_force_type_validation = false;
+
+    pub.init("TypeInformationSameType", 10, &type, nullptr, nullptr, type_info, "Pub1", &dataRepQos);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeInformationSameType", 10, &type, nullptr, nullptr, type_info, "Sub1", &dataRepQos, nullptr);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(true, 3);
+    pub.waitDiscovery(true, 3);
+}
+
+/*
+ * Both endpoints different types using XCDR1 so they must not match even with full coercion allowed.
+*/
+TEST_F(XTypes, TypeInformationDifferentType)
+{
+    BasicStructPubSubType type1;
+    BasicBadStructPubSubType type2;
+    const TypeInformation* type_info1 = TypeObjectFactory::get_instance()->get_type_information("BasicStruct");
+    const TypeInformation* type_info2 = TypeObjectFactory::get_instance()->get_type_information("BasicBadStruct");
+    TestPublisher pub;
+    TestSubscriber sub;
+    //TypeInformation* type_info = nullptr; // Not using it
+
+    DataRepresentationQosPolicy dataRepQos;
+    dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    TypeConsistencyEnforcementQosPolicy typeConQos;
+    typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
+    typeConQos.m_ignore_sequence_bounds = true;
+    typeConQos.m_ignore_string_bounds = true;
+    typeConQos.m_ignore_member_names = true;
+    typeConQos.m_prevent_type_widening = false;
+    typeConQos.m_force_type_validation = false;
+
+    pub.init("TypeInformationDifferentType", 10, &type1, nullptr, nullptr, type_info1, "Pub1", &dataRepQos);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeInformationDifferentType", 10, &type2, nullptr, nullptr, type_info2, "Sub1", &dataRepQos, &typeConQos);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(false, 3);
+    pub.waitDiscovery(false, 3);
+}
+
+/*
+ * BasicStruct and BasicNamesStruct are similar structures, but with different names in members.
+ * This test checks failure at the member names through TypeInformation's hashes. The endpoints must not match.
+*/
+TEST_F(XTypes, TypeInformationNamesManaged)
+{
+    BasicStructPubSubType type1;
+    BasicNamesStructPubSubType type2;
+    const TypeInformation* type_info1 = TypeObjectFactory::get_instance()->get_type_information("BasicStruct");
+    const TypeInformation* type_info2 = TypeObjectFactory::get_instance()->get_type_information("BasicNamesStruct");
+    TestPublisher pub;
+    TestSubscriber sub;
+    //TypeInformation* type_info = nullptr; // Not using it
+
+    DataRepresentationQosPolicy dataRepQos;
+    dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    TypeConsistencyEnforcementQosPolicy typeConQos;
+    typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
+    //typeConQos.m_ignore_sequence_bounds = true;
+    //typeConQos.m_ignore_string_bounds = true;
+    typeConQos.m_ignore_member_names = false;
+    //typeConQos.m_prevent_type_widening = false;
+    //typeConQos.m_force_type_validation = false;
+
+    pub.init("TypeInformationNamesManaged", 10, &type1, nullptr, nullptr, type_info1, "Pub1", &dataRepQos);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeInformationNamesManaged", 10, &type2, nullptr, nullptr, type_info2, "Sub1", &dataRepQos, &typeConQos);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(false, 3);
+    pub.waitDiscovery(false, 3);
+}
+
+/*
+ * BasicStruct and BasicNamesStruct are similar structures, but with different names in struct and members.
+ * This test checks ignoring at the member names through TypeInformation's hashes. The endpoints must match.
+*/
+TEST_F(XTypes, TypeInformationNamesIgnored)
+{
+    BasicStructPubSubType type1;
+    BasicNamesStructPubSubType type2;
+    const TypeInformation* type_info1 = TypeObjectFactory::get_instance()->get_type_information("BasicStruct");
+    const TypeInformation* type_info2 = TypeObjectFactory::get_instance()->get_type_information("BasicNamesStruct");
+    TestPublisher pub;
+    TestSubscriber sub;
+    //TypeInformation* type_info = nullptr; // Not using it
+
+    DataRepresentationQosPolicy dataRepQos;
+    dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    TypeConsistencyEnforcementQosPolicy typeConQos;
+    typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
+    //typeConQos.m_ignore_sequence_bounds = true;
+    //typeConQos.m_ignore_string_bounds = true;
+    typeConQos.m_ignore_member_names = true;
+    //typeConQos.m_prevent_type_widening = false;
+    //typeConQos.m_force_type_validation = false;
+
+    pub.init("TypeInformationNamesIgnored", 10, &type1, nullptr, nullptr, type_info1, "Pub1", &dataRepQos);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeInformationNamesIgnored", 10, &type2, nullptr, nullptr, type_info2, "Sub1", &dataRepQos, &typeConQos);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(true, 3);
+    pub.waitDiscovery(true, 3);
+}
+
+/**** TODO - Mixing TypeObject, TypeInformation and TypeIdentifier ****/
+
+/**** DataRepresentation Compatibility tests ****/
+
+/*
+ * Empty-Empty
+*/
+TEST_F(XTypes, DataRepQoSEE)
+{
+    BasicStructPubSubType type;
+    TestPublisher pub;
+    TestSubscriber sub;
+
+    DataRepresentationQosPolicy dataRepQos;
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    pub.init("DataRepQoSEE", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("DataRepQoSEE", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(true, 3);
+    pub.waitDiscovery(true, 3);
+}
+
+/*
+ * Empty-XCDR1
+*/
+TEST_F(XTypes, DataRepQoSE1)
+{
+    BasicStructPubSubType type;
+    TestPublisher pub;
+    TestSubscriber sub;
+
+    DataRepresentationQosPolicy dataRepQos1;
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    DataRepresentationQosPolicy dataRepQos2;
+    dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    pub.init("DataRepQoSE1", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos1);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("DataRepQoSE1", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(true, 3);
+    pub.waitDiscovery(true, 3);
+}
+
+/*
+ * Empty-XCDR2
+*/
+TEST_F(XTypes, DataRepQoSE2)
+{
+    BasicStructPubSubType type;
+    TestPublisher pub;
+    TestSubscriber sub;
+
+    DataRepresentationQosPolicy dataRepQos1;
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    DataRepresentationQosPolicy dataRepQos2;
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    pub.init("DataRepQoSE2", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos1);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("DataRepQoSE2", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(false, 3);
+    pub.waitDiscovery(false, 3);
+}
+
+/*
+ * Empty-XML
+*/
+TEST_F(XTypes, DataRepQoSEX)
+{
+    BasicStructPubSubType type;
+    TestPublisher pub;
+    TestSubscriber sub;
+
+    DataRepresentationQosPolicy dataRepQos1;
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    DataRepresentationQosPolicy dataRepQos2;
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    dataRepQos2.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    pub.init("DataRepQoSEX", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos1);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("DataRepQoSEX", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(false, 3);
+    pub.waitDiscovery(false, 3);
+}
+
+/*
+ * Empty-XCDR12
+*/
+TEST_F(XTypes, DataRepQoSE12)
+{
+    BasicStructPubSubType type;
+    TestPublisher pub;
+    TestSubscriber sub;
+
+    DataRepresentationQosPolicy dataRepQos1;
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    DataRepresentationQosPolicy dataRepQos2;
+    dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    pub.init("DataRepQoSE12", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos1);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("DataRepQoSE12", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(true, 3);
+    pub.waitDiscovery(true, 3);
+}
+
+/*
+ * XCDR1-XCDR2
+*/
+TEST_F(XTypes, DataRepQoS12)
+{
+    BasicStructPubSubType type;
+    TestPublisher pub;
+    TestSubscriber sub;
+
+    DataRepresentationQosPolicy dataRepQos1;
+    dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    DataRepresentationQosPolicy dataRepQos2;
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    pub.init("DataRepQoS12", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos1);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("DataRepQoS12", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(true, 3);
+    pub.waitDiscovery(true, 3);
+}
+
+/*
+ * XCDR2-XCDR1
+*/
+TEST_F(XTypes, DataRepQoS21)
+{
+    BasicStructPubSubType type;
+    TestPublisher pub;
+    TestSubscriber sub;
+
+    DataRepresentationQosPolicy dataRepQos1;
+    dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    DataRepresentationQosPolicy dataRepQos2;
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    pub.init("DataRepQoS21", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos2);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("DataRepQoS21", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(false, 3);
+    pub.waitDiscovery(false, 3);
+}
+
+/*
+ * XCDR2-XCDR2
+*/
+TEST_F(XTypes, DataRepQoS22)
+{
+    BasicStructPubSubType type;
+    TestPublisher pub;
+    TestSubscriber sub;
+
+    DataRepresentationQosPolicy dataRepQos2;
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    pub.init("DataRepQoS22", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos2);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("DataRepQoS22", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(true, 3);
+    pub.waitDiscovery(true, 3);
+}
+
+/*
+ * XML-Empty
+*/
+TEST_F(XTypes, DataRepQoSXE)
+{
+    BasicStructPubSubType type;
+    TestPublisher pub;
+    TestSubscriber sub;
+
+    DataRepresentationQosPolicy dataRepQos1;
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    DataRepresentationQosPolicy dataRepQos2;
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    dataRepQos2.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    pub.init("DataRepQoSXE", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos2);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("DataRepQoSXE", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(false, 3);
+    pub.waitDiscovery(false, 3);
+}
 
 int main(int argc, char **argv)
 {
