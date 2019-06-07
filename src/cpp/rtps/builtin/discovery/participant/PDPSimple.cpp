@@ -204,10 +204,12 @@ bool PDPSimple::createPDPEndpoints()
     StatelessReader* rout;
     if (mp_RTPSParticipant->createReader(&mp_PDPReader, ratt, mp_PDPReaderHistory, mp_listener, c_EntityId_SPDPReader, true, false))
     {
+        rout = dynamic_cast<StatelessReader*>(mp_PDPReader);
+
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(rout, false);
 #endif
-        rout = dynamic_cast<StatelessReader*>(mp_PDPReader);
+        
         if (rout != nullptr)
         {
             RemoteWriterAttributes rwatt;

@@ -63,11 +63,11 @@ namespace rtps {
 
 
 // Default configuration values for PDP reliable entities.
-// TODO: Duration_t constructor gets now nanosecond I must be aware of that when rebasing
-const Duration_t pdp_heartbeat_period{ 0, 1500 * 1000 * 1000 }; // 348 milliseconds
-const Duration_t pdp_nack_response_delay{ 0, 400 * 1000 * 1000 }; // ~93 milliseconds
-const Duration_t pdp_nack_supression_duration{ 0, 50 * 1000 * 1000 }; // ~11 milliseconds
-const Duration_t pdp_heartbeat_response_delay{ 0, 50 * 1000 * 1000 }; // ~11 milliseconds
+
+const Duration_t pdp_heartbeat_period{ 0, 350 * 1000  }; // 350 milliseconds
+const Duration_t pdp_nack_response_delay{ 0, 100 * 1000  }; // 100 milliseconds
+const Duration_t pdp_nack_supression_duration{ 0, 11 * 1000 }; // ~11 milliseconds
+const Duration_t pdp_heartbeat_response_delay{ 0, 11 * 1000 }; // ~11 milliseconds
 
 const int32_t pdp_initial_reserved_caches = 20;
 

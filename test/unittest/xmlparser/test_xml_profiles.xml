@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"  ?>
+<dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
 <profiles>
-
     <participant profile_name="test_participant_profile" is_default_profile="true">
         <rtps>
             <defaultUnicastLocatorList>
@@ -22,7 +22,7 @@
             <sendSocketBufferSize>32</sendSocketBufferSize>
             <listenSocketBufferSize>1000</listenSocketBufferSize>
             <builtin>
-                <use_SIMPLE_RTPS_PDP>true</use_SIMPLE_RTPS_PDP>
+                <discoveryProtocol>SIMPLE</discoveryProtocol>
                 <use_WriterLivelinessProtocol>false</use_WriterLivelinessProtocol>
                 <EDP>SIMPLE</EDP>
                 <domainId>2019102</domainId>
@@ -300,3 +300,4 @@
     </subscriber>
 
 </profiles>
+</dds>

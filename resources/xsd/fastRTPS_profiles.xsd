@@ -629,6 +629,7 @@
             <xs:element name="rtps" type="rtpsParticipantAttributesType"/>
         </xs:sequence>
         <xs:attribute name="profile_name" type="stringType" use="required"/>
+        <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
     </xs:complexType>
 
     <xs:complexType name="publisherProfileType">
@@ -715,18 +716,25 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:element name="profiles">
+    <xs:element name="dds">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="transport_descriptors" type="TransportDescriptorListType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="participant" type="participantProfileType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="publisher" type="publisherProfileType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="subscriber" type="subscriberProfileType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="topic" type="topicAttributesType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="profiles" type="profilesType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="types" type="topicAttributesType" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+
+    <xs:complexType name="profilesType">
+        <xs:sequence>
+            <xs:element name="transport_descriptors" type="TransportDescriptorListType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="participant" type="participantProfileType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="publisher" type="publisherProfileType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="subscriber" type="subscriberProfileType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="topic" type="topicAttributesType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="types" type="topicAttributesType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 
     <!-- DDS XML TYPES (FULL) -->
     <!-- Primitive types -->

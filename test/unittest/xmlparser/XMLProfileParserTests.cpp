@@ -62,8 +62,6 @@ TEST_F(XMLProfileParserTests, XMLoadProfiles)
                 xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileManager::loadXMLFile("test_xml_security_profiles.xml"));
-    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_ERROR,
                 xmlparser::XMLProfileManager::loadXMLFile("missing_file.xml"));
 

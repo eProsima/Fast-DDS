@@ -285,12 +285,16 @@ TEST_F(XMLParserTests, Types)
 {
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
+   
+    BaseNode * profiles(root->getChild(0));
+    ASSERT_TRUE(profiles);
+    ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
 
     ParticipantAttributes participant_atts;
     bool participant_profile = false;
     bool publisher_profile   = false;
     bool subscriber_profile  = false;
-    for (const auto& profile : root->getChildren())
+    for (const auto& profile : profiles->getChildren())
     {
         if (profile->getType() == NodeType::PARTICIPANT)
         {
@@ -319,11 +323,15 @@ TEST_F(XMLParserTests, TypesBuffer)
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML(strStream.str().data(), strStream.str().size(), root), XMLP_ret::XML_OK);
 
+    BaseNode * profiles(root->getChild(0));
+    ASSERT_TRUE(profiles);
+    ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
+
     ParticipantAttributes participant_atts;
     bool participant_profile = false;
     bool publisher_profile   = false;
     bool subscriber_profile  = false;
-    for (const auto& profile : root->getChildren())
+    for (const auto& profile : profiles->getChildren())
     {
         if (profile->getType() == NodeType::PARTICIPANT)
         {
@@ -351,9 +359,13 @@ TEST_F(XMLParserTests, Data)
 
     ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
 
+    BaseNode * profiles(root->getChild(0));
+    ASSERT_TRUE(profiles);
+    ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
+
     ParticipantAttributes participant_atts;
     bool participant_profile = false;
-    for (const auto& profile : root->getChildren())
+    for (const auto& profile : profiles->getChildren())
     {
         if (profile->getType() == NodeType::PARTICIPANT)
         {
@@ -438,9 +450,13 @@ TEST_F(XMLParserTests, DataBuffer)
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML(strStream.str().data(), strStream.str().size(), root), XMLP_ret::XML_OK);
 
+    BaseNode * profiles(root->getChild(0));
+    ASSERT_TRUE(profiles);
+    ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
+
     ParticipantAttributes participant_atts;
     bool participant_profile = false;
-    for (const auto& profile : root->getChildren())
+    for (const auto& profile : profiles->getChildren())
     {
         if (profile->getType() == NodeType::PARTICIPANT)
         {
