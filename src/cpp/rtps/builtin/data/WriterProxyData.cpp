@@ -249,10 +249,12 @@ bool WriterProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
     }
 #endif
 
+    /* TODO - Enable when implement XCDR, XCDR2 and/or XML
     if (m_qos.representation.sendAlways() || m_qos.representation.hasChanged())
     {
         if (!m_qos.representation.addToCDRMessage(msg)) return false;
     }
+    */
 
     if (m_type_information.assigned())
     {

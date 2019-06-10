@@ -427,12 +427,14 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
         return false;
     }
 
+    /* TODO - Enable when implement XCDR, XCDR2 and/or XML
     if (!checkDataRepresentationQos(wdata, rdata))
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE Data Representation QOS (topic: " << rdata->topicName()
             << "):Remote reader " << rdata->guid() << " has no compatible representation");
         return false;
     }
+    */
 
 #if HAVE_SECURITY
     // TODO: Check EndpointSecurityInfo
@@ -613,12 +615,14 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
     // TODO: Check EndpointSecurityInfo
 #endif
 
+    /* TODO - Enable when implement XCDR, XCDR2 and/or XML
     if (!checkDataRepresentationQos(wdata, rdata))
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE Data Representation QOS (topic: " << rdata->topicName()
             << "):Local reader " << rdata->guid() << " has no compatible representation");
         return false;
     }
+    */
 
     //Partition check:
     bool matched = false;

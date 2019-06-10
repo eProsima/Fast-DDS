@@ -1202,12 +1202,12 @@ TEST_F(XTypes, TypeObject_TypeInformation)
     pub.waitDiscovery(false, 3);
 }
 
-/**** DataRepresentation Compatibility tests ****/
+/**** TODO - Enable when implemented - DataRepresentation Compatibility tests ****/
 
 /*
  * Empty-Empty
 */
-TEST_F(XTypes, DataRepQoSEE)
+TEST_F(XTypes, DISABLED_DataRepQoSEE)
 {
     BasicStructPubSubType type;
     TestPublisher pub;
@@ -1232,7 +1232,7 @@ TEST_F(XTypes, DataRepQoSEE)
 /*
  * Empty-XCDR1
 */
-TEST_F(XTypes, DataRepQoSE1)
+TEST_F(XTypes, DISABLED_DataRepQoSE1)
 {
     BasicStructPubSubType type;
     TestPublisher pub;
@@ -1262,7 +1262,7 @@ TEST_F(XTypes, DataRepQoSE1)
 /*
  * Empty-XCDR2
 */
-TEST_F(XTypes, DataRepQoSE2)
+TEST_F(XTypes, DISABLED_DataRepQoSE2)
 {
     BasicStructPubSubType type;
     TestPublisher pub;
@@ -1292,7 +1292,7 @@ TEST_F(XTypes, DataRepQoSE2)
 /*
  * Empty-XML
 */
-TEST_F(XTypes, DataRepQoSEX)
+TEST_F(XTypes, DISABLED_DataRepQoSEX)
 {
     BasicStructPubSubType type;
     TestPublisher pub;
@@ -1322,7 +1322,7 @@ TEST_F(XTypes, DataRepQoSEX)
 /*
  * Empty-XCDR12
 */
-TEST_F(XTypes, DataRepQoSE12)
+TEST_F(XTypes, DISABLED_DataRepQoSE12)
 {
     BasicStructPubSubType type;
     TestPublisher pub;
@@ -1352,7 +1352,7 @@ TEST_F(XTypes, DataRepQoSE12)
 /*
  * XCDR1-XCDR2
 */
-TEST_F(XTypes, DataRepQoS12)
+TEST_F(XTypes, DISABLED_DataRepQoS12)
 {
     BasicStructPubSubType type;
     TestPublisher pub;
@@ -1382,7 +1382,7 @@ TEST_F(XTypes, DataRepQoS12)
 /*
  * XCDR2-Empty
 */
-TEST_F(XTypes, DataRepQoS2E)
+TEST_F(XTypes, DISABLED_DataRepQoS2E)
 {
     BasicStructPubSubType type;
     TestPublisher pub;
@@ -1412,7 +1412,7 @@ TEST_F(XTypes, DataRepQoS2E)
 /*
  * XCDR2-XCDR1
 */
-TEST_F(XTypes, DataRepQoS21)
+TEST_F(XTypes, DISABLED_DataRepQoS21)
 {
     BasicStructPubSubType type;
     TestPublisher pub;
@@ -1442,7 +1442,7 @@ TEST_F(XTypes, DataRepQoS21)
 /*
  * XCDR2-XCDR2
 */
-TEST_F(XTypes, DataRepQoS22)
+TEST_F(XTypes, DISABLED_DataRepQoS22)
 {
     BasicStructPubSubType type;
     TestPublisher pub;
@@ -1467,7 +1467,7 @@ TEST_F(XTypes, DataRepQoS22)
 /*
  * XML-Empty
 */
-TEST_F(XTypes, DataRepQoSXE)
+TEST_F(XTypes, DISABLED_DataRepQoSXE)
 {
     BasicStructPubSubType type;
     TestPublisher pub;
@@ -1497,7 +1497,7 @@ TEST_F(XTypes, DataRepQoSXE)
 /*
  * XML-XML - Fails until supported.
 */
-TEST_F(XTypes, DataRepQoSXX)
+TEST_F(XTypes, DISABLED_DataRepQoSXX)
 {
     BasicStructPubSubType type;
     TestPublisher pub;
