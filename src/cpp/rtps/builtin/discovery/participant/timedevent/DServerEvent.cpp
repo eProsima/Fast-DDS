@@ -37,7 +37,8 @@ DServerEvent::DServerEvent(PDPServer* p_PDP,
         double interval):
     TimedEvent(p_PDP->getRTPSParticipant()->getEventResource().getIOService(),
             p_PDP->getRTPSParticipant()->getEventResource().getThread(), interval),
-    mp_PDP(p_PDP)
+    mp_PDP(p_PDP),
+    messages_enabled_(false)
     {
 
     }
@@ -58,6 +59,12 @@ void DServerEvent::event(EventCode code, const char* msg)
 
         std::lock_guard<std::recursive_mutex> lock(*mp_PDP->getMutex());
         bool restart = false;
+
+        if (!messages_enabled_)
+        {
+            messages_enabled_ = true;
+            mp_PDP->getRTPSParticipant()->enableReader(mp_PDP->mp_PDPReader);
+        }
 
         // Check Server matching
         if (mp_PDP->all_servers_acknowledge_PDP())

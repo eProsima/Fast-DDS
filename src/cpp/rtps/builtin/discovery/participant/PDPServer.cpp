@@ -68,7 +68,7 @@ PDPServer::~PDPServer()
 
 bool PDPServer::initPDP(RTPSParticipantImpl* part)
 {
-    if (!PDP::initPDP(part,true))
+    if (!PDP::initPDP(part,false))
     {
         return false;
     }

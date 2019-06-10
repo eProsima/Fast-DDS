@@ -57,6 +57,8 @@ public:
 	
 	//!Pointer to the PDPServer object.
     PDPServer* mp_PDP;
+    //!Initialize PDP reception when first run
+    bool messages_enabled_;
 };
 }
 } /* namespace rtps */
