@@ -401,6 +401,12 @@ size_t PlainSequenceSElemDefn::getCdrSerializedSize(const PlainSequenceSElemDefn
         size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
         current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
     }
+    else
+    {
+        TypeIdentifier emptyId;
+        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
 
     return current_alignment - initial_alignment;
 }
@@ -409,7 +415,12 @@ void PlainSequenceSElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_header;
     scdr << m_bound;
-    if (m_element_identifier != nullptr)
+    if (m_element_identifier == nullptr)
+    {
+        TypeIdentifier emptyId;
+        scdr << emptyId;
+    }
+    else
     {
         scdr << *m_element_identifier;
     }
@@ -419,10 +430,11 @@ void PlainSequenceSElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_bound;
-    if (m_element_identifier != nullptr)
+    if (m_element_identifier == nullptr)
     {
-         dcdr >> *m_element_identifier;
+        m_element_identifier = new TypeIdentifier();
     }
+    dcdr >> *m_element_identifier;
 }
 
 bool PlainSequenceSElemDefn::consistent(const PlainSequenceSElemDefn &x,
@@ -571,6 +583,12 @@ size_t PlainSequenceLElemDefn::getCdrSerializedSize(const PlainSequenceLElemDefn
         size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
         current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
     }
+    else
+    {
+        TypeIdentifier emptyId;
+        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
 
 
     return current_alignment - initial_alignment;
@@ -584,16 +602,22 @@ void PlainSequenceLElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
     {
         scdr << *m_element_identifier;
     }
+    else
+    {
+        TypeIdentifier emptyId;
+        scdr << emptyId;
+    }
 }
 
 void PlainSequenceLElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_bound;
-    if (m_element_identifier != nullptr)
+    if (m_element_identifier == nullptr)
     {
-        dcdr >> *m_element_identifier;
+        m_element_identifier = new TypeIdentifier();
     }
+    dcdr >> *m_element_identifier;
 }
 
 bool PlainSequenceLElemDefn::consistent(const PlainSequenceLElemDefn &x,
@@ -742,6 +766,12 @@ size_t PlainArraySElemDefn::getCdrSerializedSize(const PlainArraySElemDefn& data
         size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
         current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
     }
+    else
+    {
+        TypeIdentifier emptyId;
+        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
 
 
     return current_alignment - initial_alignment;
@@ -756,16 +786,22 @@ void PlainArraySElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
     {
         scdr << *m_element_identifier;
     }
+    else
+    {
+        TypeIdentifier emptyId;
+        scdr << emptyId;
+    }
 }
 
 void PlainArraySElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_array_bound_seq;
-    if (m_element_identifier != nullptr)
+    if (m_element_identifier == nullptr)
     {
-        dcdr >> *m_element_identifier;
+        m_element_identifier = new TypeIdentifier();
     }
+    dcdr >> *m_element_identifier;
 }
 
 bool PlainArraySElemDefn::consistent(const PlainArraySElemDefn &x,
@@ -930,6 +966,12 @@ size_t PlainArrayLElemDefn::getCdrSerializedSize(const PlainArrayLElemDefn& data
         size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
         current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
     }
+    else
+    {
+        TypeIdentifier emptyId;
+        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
 
     return current_alignment - initial_alignment;
 }
@@ -942,16 +984,22 @@ void PlainArrayLElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
     {
         scdr << *m_element_identifier;
     }
+    else
+    {
+        TypeIdentifier emptyId;
+        scdr << emptyId;
+    }
 }
 
 void PlainArrayLElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_array_bound_seq;
-    if (m_element_identifier != nullptr)
+    if (m_element_identifier == nullptr)
     {
-        dcdr >> *m_element_identifier;
+        m_element_identifier = new TypeIdentifier();
     }
+    dcdr >> *m_element_identifier;
 }
 
 bool PlainArrayLElemDefn::consistent(const PlainArrayLElemDefn &x,
@@ -1187,6 +1235,12 @@ size_t PlainMapSTypeDefn::getCdrSerializedSize(const PlainMapSTypeDefn& data, si
         size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
         current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
     }
+    else
+    {
+        TypeIdentifier emptyId;
+        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
 
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
@@ -1194,6 +1248,12 @@ size_t PlainMapSTypeDefn::getCdrSerializedSize(const PlainMapSTypeDefn& data, si
     if (data.key_identifier() != nullptr)
     {
         size = TypeIdentifier::getCdrSerializedSize(*data.key_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
         current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
     }
 
@@ -1209,10 +1269,20 @@ void PlainMapSTypeDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
     {
         scdr << *m_element_identifier;
     }
+    else
+    {
+        TypeIdentifier emptyId;
+        scdr << emptyId;
+    }
     scdr << m_key_flags;
     if (m_key_identifier != nullptr)
     {
         scdr << *m_key_identifier;
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        scdr << emptyId;
     }
 }
 
@@ -1220,15 +1290,17 @@ void PlainMapSTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_bound;
-    if (m_element_identifier != nullptr)
+    if (m_element_identifier == nullptr)
     {
-        dcdr >> *m_element_identifier;
+        m_element_identifier = new TypeIdentifier();
     }
+    dcdr >> *m_element_identifier;
     dcdr >> m_key_flags;
-    if (m_key_identifier != nullptr)
+    if (m_key_identifier == nullptr)
     {
-        dcdr >> *m_key_identifier;
+        m_key_identifier = new TypeIdentifier();
     }
+    dcdr >> *m_key_identifier;
 }
 
 bool PlainMapSTypeDefn::consistent(const PlainMapSTypeDefn &x,
@@ -1478,6 +1550,12 @@ size_t PlainMapLTypeDefn::getCdrSerializedSize(const PlainMapLTypeDefn& data, si
         size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
         current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
     }
+    else
+    {
+        TypeIdentifier emptyId;
+        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
 
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
@@ -1485,6 +1563,12 @@ size_t PlainMapLTypeDefn::getCdrSerializedSize(const PlainMapLTypeDefn& data, si
     if (data.key_identifier() != nullptr)
     {
         size = TypeIdentifier::getCdrSerializedSize(*data.key_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
         current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
     }
 
@@ -1500,10 +1584,20 @@ void PlainMapLTypeDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
     {
         scdr << *m_element_identifier;
     }
+    else
+    {
+        TypeIdentifier emptyId;
+        scdr << emptyId;
+    }
     scdr << m_key_flags;
     if (m_key_identifier != nullptr)
     {
         scdr << *m_key_identifier;
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        scdr << emptyId;
     }
 }
 
@@ -1511,15 +1605,17 @@ void PlainMapLTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_bound;
-    if (m_element_identifier != nullptr)
+    if (m_element_identifier == nullptr)
     {
-        dcdr >> *m_element_identifier;
+        m_element_identifier = new TypeIdentifier();
     }
+    dcdr >> *m_element_identifier;
     dcdr >> m_key_flags;
-    if (m_key_identifier != nullptr)
+    if (m_key_identifier == nullptr)
     {
-        dcdr >> *m_key_identifier;
+        m_key_identifier = new TypeIdentifier();
     }
+    dcdr >> *m_key_identifier;
 }
 
 bool PlainMapLTypeDefn::consistent(const PlainMapLTypeDefn &x,

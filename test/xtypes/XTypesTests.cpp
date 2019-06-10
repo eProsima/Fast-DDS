@@ -43,6 +43,7 @@ class XTypes : public ::testing::Test
         {
             //Log::SetVerbosity(Log::Info);
             //Log::SetCategoryFilter(std::regex("(SECURITY)"));
+            registerTypesTypes();
         }
 
         ~XTypes()
@@ -93,7 +94,7 @@ TEST_F(XTypes, NoTypeObjectSameTypeForce)
     //typeConQos.m_ignore_string_bounds = true;
     //typeConQos.m_ignore_member_names = true;
     //typeConQos.m_prevent_type_widening = false;
-    typeConQos.m_force_type_validation = false;
+    typeConQos.m_force_type_validation = true;
 
     pub.init("NoTypeObjectSameTypeForce", 10, &type, nullptr, nullptr, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
@@ -621,6 +622,7 @@ TEST_F(XTypes, TypeObjectV1SequenceBoundsManaged)
 
 /*
  * StringStruct and LargeStringStruct are similar structures, but with "Large" the size of the string is bigger.
+ * Names are ignored because the member is named different.
  * This test checks string bounds. The endpoints must match.
 */
 TEST_F(XTypes, TypeObjectV1LargeStringIgnored)
@@ -645,7 +647,7 @@ TEST_F(XTypes, TypeObjectV1LargeStringIgnored)
     //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
     //typeConQos.m_ignore_sequence_bounds = true;
     typeConQos.m_ignore_string_bounds = true;
-    //typeConQos.m_ignore_member_names = true;
+    typeConQos.m_ignore_member_names = true;
     //typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
@@ -662,6 +664,7 @@ TEST_F(XTypes, TypeObjectV1LargeStringIgnored)
 
 /*
  * StringStruct and LargeStringStruct are similar structures, but with "Large" the size of the string is bigger.
+ * Names are ignored because the member is named different.
  * This test checks string bounds. The endpoints must not match.
 */
 TEST_F(XTypes, TypeObjectV1LargeStringManaged)
@@ -686,7 +689,7 @@ TEST_F(XTypes, TypeObjectV1LargeStringManaged)
     //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
     //typeConQos.m_ignore_sequence_bounds = false;
     typeConQos.m_ignore_string_bounds = false;
-    //typeConQos.m_ignore_member_names = true;
+    typeConQos.m_ignore_member_names = true;
     //typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
@@ -1128,7 +1131,76 @@ TEST_F(XTypes, TypeInformationNamesIgnored)
     pub.waitDiscovery(true, 3);
 }
 
-/**** TODO - Mixing TypeObject, TypeInformation and TypeIdentifier ****/
+/**** Mixing TypeObject, TypeInformation and TypeIdentifier ****/
+
+TEST_F(XTypes, TypeIdentifier_TypeObject)
+{
+    BasicStructPubSubType type;
+    const TypeObject* type_obj = GetMinimalBasicStructObject();
+    const TypeIdentifier* type_id = GetBasicStructIdentifier(false);
+    TestPublisher pub;
+    TestSubscriber sub;
+
+    TypeConsistencyEnforcementQosPolicy typeConQos;
+    typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    typeConQos.m_force_type_validation = true;
+
+    pub.init("TypeIdentifier_TypeObject", 10, &type, nullptr, type_id, nullptr, "Pub1", nullptr);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeIdentifier_TypeObject", 10, &type, type_obj, nullptr, nullptr, "Sub1", nullptr, &typeConQos);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(false, 3);
+    pub.waitDiscovery(false, 3);
+}
+
+TEST_F(XTypes, TypeIdentifier_TypeInformation)
+{
+    BasicStructPubSubType type;
+    const TypeIdentifier* type_id = GetBasicStructIdentifier(false);
+    TestPublisher pub;
+    TestSubscriber sub;
+    const TypeInformation* type_info = TypeObjectFactory::get_instance()->get_type_information("BasicStruct");
+
+    TypeConsistencyEnforcementQosPolicy typeConQos;
+    typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    typeConQos.m_force_type_validation = true;
+
+    pub.init("TypeIdentifier_TypeInformation", 10, &type, nullptr, type_id, nullptr, "Pub1", nullptr);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeIdentifier_TypeInformation", 10, &type, nullptr, nullptr, type_info, "Sub1", nullptr, &typeConQos);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(false, 3);
+    pub.waitDiscovery(false, 3);
+}
+
+TEST_F(XTypes, TypeObject_TypeInformation)
+{
+    BasicStructPubSubType type;
+    const TypeObject* type_obj = GetMinimalBasicStructObject();
+    TestPublisher pub;
+    TestSubscriber sub;
+    const TypeInformation* type_info = TypeObjectFactory::get_instance()->get_type_information("BasicStruct");
+
+    TypeConsistencyEnforcementQosPolicy typeConQos;
+    typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    typeConQos.m_force_type_validation = true;
+
+    pub.init("TypeObject_TypeInformation", 10, &type, type_obj, nullptr, nullptr, "Pub1", nullptr);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeObject_TypeInformation", 10, &type, nullptr, nullptr, type_info, "Sub1", nullptr, &typeConQos);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(false, 3);
+    pub.waitDiscovery(false, 3);
+}
 
 /**** DataRepresentation Compatibility tests ****/
 
@@ -1213,8 +1285,8 @@ TEST_F(XTypes, DataRepQoSE2)
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
-    sub.waitDiscovery(false, 3);
-    pub.waitDiscovery(false, 3);
+    sub.waitDiscovery(true, 3);
+    pub.waitDiscovery(true, 3);
 }
 
 /*
@@ -1308,6 +1380,36 @@ TEST_F(XTypes, DataRepQoS12)
 }
 
 /*
+ * XCDR2-Empty
+*/
+TEST_F(XTypes, DataRepQoS2E)
+{
+    BasicStructPubSubType type;
+    TestPublisher pub;
+    TestSubscriber sub;
+
+    DataRepresentationQosPolicy dataRepQos1;
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    DataRepresentationQosPolicy dataRepQos2;
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    pub.init("DataRepQoS21", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos2);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("DataRepQoS21", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(false, 3);
+    pub.waitDiscovery(false, 3);
+}
+
+/*
  * XCDR2-XCDR1
 */
 TEST_F(XTypes, DataRepQoS21)
@@ -1374,6 +1476,36 @@ TEST_F(XTypes, DataRepQoSXE)
     DataRepresentationQosPolicy dataRepQos1;
     //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
     //dataRepQos1.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    DataRepresentationQosPolicy dataRepQos2;
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    dataRepQos2.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos2.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    pub.init("DataRepQoSXE", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos2);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("DataRepQoSXE", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(false, 3);
+    pub.waitDiscovery(false, 3);
+}
+
+/*
+ * XML-XML - Fails until supported.
+*/
+TEST_F(XTypes, DataRepQoSXX)
+{
+    BasicStructPubSubType type;
+    TestPublisher pub;
+    TestSubscriber sub;
+
+    DataRepresentationQosPolicy dataRepQos1;
+    //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    dataRepQos1.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
     //dataRepQos1.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
 
     DataRepresentationQosPolicy dataRepQos2;

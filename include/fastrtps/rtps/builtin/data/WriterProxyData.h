@@ -309,7 +309,7 @@ class WriterProxyData
             m_type_information = type_information;
         }
 
-        RTPS_DllAPI XTypes::TypeInformation type_information() const
+        RTPS_DllAPI const XTypes::TypeInformation& type_information() const
         {
             return m_type_information;
         }

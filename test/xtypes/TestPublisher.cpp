@@ -72,6 +72,7 @@ bool TestPublisher::init(const std::string& topicName, int domain, eprosima::fas
     PublisherAttributes Wparam;
     Wparam.topic.topicKind = m_Type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
     Wparam.topic.topicDataType = m_Type->getName();
+    Wparam.topic.auto_fill_xtypes = false;
 
     //REGISTER THE TYPE
     Domain::registerType(mp_participant, m_Type);

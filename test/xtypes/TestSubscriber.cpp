@@ -67,6 +67,7 @@ bool TestSubscriber::init(const std::string& topicName, int domain, eprosima::fa
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = m_Type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
     Rparam.topic.topicDataType = m_Type->getName();
+    Rparam.topic.auto_fill_xtypes = false;
 
     //REGISTER THE TYPE
     Domain::registerType(mp_participant, m_Type);

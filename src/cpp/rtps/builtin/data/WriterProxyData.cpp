@@ -254,6 +254,14 @@ bool WriterProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
         if (!m_qos.representation.addToCDRMessage(msg)) return false;
     }
 
+    if (m_type_information.assigned())
+    {
+        if (!m_type_information.addToCDRMessage(msg))
+        {
+            return false;
+        }
+    }
+
     return CDRMessage::addParameterSentinel(msg);
 }
 

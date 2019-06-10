@@ -43,6 +43,7 @@ public:
         : topicKind(rtps::NO_KEY)
         , topicName("UNDEF")
         , topicDataType("UNDEF")
+        , auto_fill_xtypes(true)
     {
     }
 
@@ -55,6 +56,7 @@ public:
             topicKind = tKind;
             topicName = name;
             topicDataType = dataType;
+            auto_fill_xtypes = true;
         }
 
         virtual ~TopicAttributes() {}
@@ -107,6 +109,8 @@ public:
         TypeObjectV1 type;
         //!XTYPES 1.2
         XTypes::TypeInformation type_information;
+        //!Tries to complete type information
+        bool auto_fill_xtypes;
 
         /**
          * Method to check whether the defined QOS are correct.

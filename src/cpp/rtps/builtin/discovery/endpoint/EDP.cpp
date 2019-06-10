@@ -72,6 +72,9 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
     rpd.topicName(att.getTopicName());
     rpd.typeName(att.getTopicDataType());
     rpd.topicKind(att.getTopicKind());
+    rpd.type_id(att.type_id);
+    rpd.type(att.type);
+    rpd.type_information(att.type_information);
     rpd.m_qos = rqos;
     rpd.userDefinedId(reader->getAttributes().getUserDefinedID());
 #if HAVE_SECURITY
@@ -88,97 +91,39 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
 #endif
     reader->m_acceptMessagesFromUnkownWriters = false;
 
-    // Data representation guessings if the user didn't change it.
-    if (rpd.m_qos.representation.m_value.empty() && !rpd.m_qos.representation.hasChanged())
+    if (att.auto_fill_xtypes)
     {
-        if (att.type_information.assigned())
+        // TypeInformation, TypeObject and TypeIdentifier
+        if (!rpd.type_information().assigned())
         {
-            rpd.m_qos.representation.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
-            logInfo(EDP, "Added XCDR2_DATA_REPRESENTATION due to existence of type_information");
+            const types::TypeInformation* type_info =
+                types::TypeObjectFactory::get_instance()->get_type_information(rpd.typeName().c_str());
+            if (type_info != nullptr)
+            {
+                rpd.type_information() = *type_info;
+            }
         }
-        if (att.type_id.m_type_identifier._d() != 0)
+
+        if (rpd.type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
         {
-            rpd.m_qos.representation.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
-            logInfo(EDP, "Added XCDR_DATA_REPRESENTATION due to existence of type_identifier");
+            const types::TypeIdentifier* type_id =
+                    types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                        rpd.typeName().c_str());
+            if (type_id != nullptr)
+            {
+                rpd.type_id().m_type_identifier = *type_id;
+            }
         }
-    }
 
-    // DataRepresentation checkings
-    for (DataRepresentationId_t representation : rpd.m_qos.representation.m_value)
-    {
-        switch (representation)
+        if (rpd.type().m_type_object._d() == static_cast<uint8_t>(0x00))
         {
-            case DataRepresentationId_t::XCDR_DATA_REPRESENTATION:
-                {
-                    if (att.type_id.m_type_identifier._d() == 0) // Not set
-                    {
-                        const types::TypeIdentifier* type_id =
-                                types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                                    rpd.typeName().c_str());
-                        if (type_id == nullptr)
-                        {
-                            logError(EDP, "Type identifier " << rpd.typeName() << " isn't registered using "
-                                     << "XCDR_DATA_REPRESENTATION.");
-                        }
-                        else
-                        {
-                            rpd.type_id().m_type_identifier = *type_id;
-                        }
-                    }
-                    else
-                    {
-                        rpd.type_id(att.type_id);
-                    }
-
-                    if (att.type.m_type_object._d() == 0
-                        && (att.type_id.m_type_identifier._d() == types::EK_MINIMAL
-                        || att.type_id.m_type_identifier._d() == types::EK_COMPLETE)) // Not set
-                    {
-                        const types::TypeObject *type_obj = types::TypeObjectFactory::get_instance()->get_type_object(
-                                rpd.typeName().c_str(), att.type_id.m_type_identifier._d() == types::EK_COMPLETE);
-                        if (type_obj == nullptr)
-                        {
-                            logError(EDP, "Type object " << rpd.typeName() << " isn't registered using "
-                                     << "XCDR_DATA_REPRESENTATION.");
-                        }
-                        else
-                        {
-                            rpd.type().m_type_object = *type_obj;
-                        }
-                    }
-                    else
-                    {
-                        rpd.type(att.type);
-                    }
-                }
-                break;
-            case DataRepresentationId_t::XML_DATA_REPRESENTATION:
-                // Not supported
-                logError(EDP, "Unsupported DataRepresentation: XML_DATA_REPRESENTATION: " << rpd.typeName().c_str());
-                break;
-            case DataRepresentationId_t::XCDR2_DATA_REPRESENTATION:
-                {
-                    if (att.type_information.assigned())
-                    {
-                        rpd.type_information(att.type_information);
-                    }
-                    else
-                    {
-                        const types::TypeInformation* type_info =
-                            types::TypeObjectFactory::get_instance()->get_type_information(rpd.typeName().c_str());
-                        if (type_info == nullptr)
-                        {
-                            logError(EDP, "Type information " << rpd.typeName() << " isn't registered using "
-                                     << "XCDR2_DATA_REPRESENTATION.");
-                        }
-                        else
-                        {
-                            rpd.type_information() = *type_info;
-                        }
-                    }
-                }
-                break;
-            //default: break;
+            const types::TypeObject* type_obj =
+                    types::TypeObjectFactory::get_instance()->get_type_object(
+                    rpd.typeName().c_str(), rpd.type_id().m_type_identifier._d() == types::EK_COMPLETE);
+            if (type_obj != nullptr)
+            {
+                rpd.type().m_type_object = *type_obj;
+            }
         }
     }
 
@@ -211,6 +156,9 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
     wpd.typeName(att.getTopicDataType());
     wpd.topicKind(att.getTopicKind());
     wpd.typeMaxSerialized(writer->getTypeMaxSerialized());
+    wpd.type_id(att.type_id);
+    wpd.type(att.type);
+    wpd.type_information(att.type_information);
     wpd.m_qos = wqos;
     wpd.userDefinedId(writer->getAttributes().getUserDefinedID());
     wpd.persistence_guid(writer->getAttributes().persistence_guid);
@@ -227,97 +175,39 @@ bool EDP::newLocalWriterProxyData(RTPSWriter* writer, const TopicAttributes& att
     }
 #endif
 
-    // Data representation guessings if the user didn't change it.
-    if (wpd.m_qos.representation.m_value.empty() && !wpd.m_qos.representation.hasChanged())
+    if (att.auto_fill_xtypes)
     {
-        if (att.type_information.assigned())
+        // TypeInformation, TypeObject and TypeIdentifier
+        if (!wpd.type_information().assigned())
         {
-            wpd.m_qos.representation.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
-            logInfo(EDP, "Added XCDR2_DATA_REPRESENTATION due to existence of type_information");
+            const types::TypeInformation* type_info =
+                types::TypeObjectFactory::get_instance()->get_type_information(wpd.typeName().c_str());
+            if (type_info != nullptr)
+            {
+                wpd.type_information() = *type_info;
+            }
         }
-        if (att.type_id.m_type_identifier._d() != 0)
+
+        if (wpd.type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
         {
-            wpd.m_qos.representation.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
-            logInfo(EDP, "Added XCDR_DATA_REPRESENTATION due to existence of type_identifier");
+            const types::TypeIdentifier* type_id =
+                    types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                        wpd.typeName().c_str());
+            if (type_id != nullptr)
+            {
+                wpd.type_id().m_type_identifier = *type_id;
+            }
         }
-    }
 
-    // DataRepresentation checkings
-    for (DataRepresentationId_t representation : wpd.m_qos.representation.m_value)
-    {
-        switch (representation)
+        if (wpd.type().m_type_object._d() == static_cast<uint8_t>(0x00))
         {
-            case DataRepresentationId_t::XCDR_DATA_REPRESENTATION:
-                {
-                    if (att.type_id.m_type_identifier._d() == 0) // Not set
-                    {
-                        const types::TypeIdentifier* type_id =
-                                types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-                                    wpd.typeName().c_str());
-                        if (type_id == nullptr)
-                        {
-                            logError(EDP, "Type identifier " << wpd.typeName() << " isn't registered using "
-                                     << " XCDR_DATA_REPRESENTATION.");
-                        }
-                        else
-                        {
-                            wpd.type_id().m_type_identifier = *type_id;
-                        }
-                    }
-                    else
-                    {
-                        wpd.type_id(att.type_id);
-                    }
-
-                    if (att.type.m_type_object._d() == 0
-                        && (att.type_id.m_type_identifier._d() == types::EK_MINIMAL
-                        || att.type_id.m_type_identifier._d() == types::EK_COMPLETE)) // Not set
-                    {
-                        const types::TypeObject *type_obj = types::TypeObjectFactory::get_instance()->get_type_object(
-                                wpd.typeName().c_str(), att.type_id.m_type_identifier._d() == types::EK_COMPLETE);
-                        if (type_obj == nullptr)
-                        {
-                            logError(EDP, "Type object " << wpd.typeName() << " isn't registered using "
-                                     << " XCDR_DATA_REPRESENTATION.");
-                        }
-                        else
-                        {
-                            wpd.type().m_type_object = *type_obj;
-                        }
-                    }
-                    else
-                    {
-                        wpd.type(att.type);
-                    }
-                }
-                break;
-            case DataRepresentationId_t::XML_DATA_REPRESENTATION:
-                logError(EDP, "Unsupported DataRepresentation: XML_DATA_REPRESENTATION: " << wpd.typeName().c_str());
-                // Not supported
-                break;
-            case DataRepresentationId_t::XCDR2_DATA_REPRESENTATION:
-                {
-                    if (att.type_information.assigned())
-                    {
-                        wpd.type_information(att.type_information);
-                    }
-                    else
-                    {
-                        const types::TypeInformation* type_info =
-                            types::TypeObjectFactory::get_instance()->get_type_information(wpd.typeName().c_str());
-                        if (type_info == nullptr)
-                        {
-                            logError(EDP, "Type information " << wpd.typeName() << " isn't registered using "
-                                     << " XCDR2_DATA_REPRESENTATION.");
-                        }
-                        else
-                        {
-                            wpd.type_information() = *type_info;
-                        }
-                    }
-                }
-                break;
-            //default: break;
+            const types::TypeObject* type_obj =
+                    types::TypeObjectFactory::get_instance()->get_type_object(
+                    wpd.typeName().c_str(), wpd.type_id().m_type_identifier._d() == types::EK_COMPLETE);
+            if (type_obj != nullptr)
+            {
+                wpd.type().m_type_object = *type_obj;
+            }
         }
     }
 
@@ -727,7 +617,6 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE Data Representation QOS (topic: " << rdata->topicName()
             << "):Local reader " << rdata->guid() << " has no compatible representation");
-        std::cout << "Data representation failed :D" << std::endl;
         return false;
     }
 

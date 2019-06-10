@@ -416,5 +416,7 @@ bool XTypes::TypeInformation::readFromCDRMessage(CDRMessage_t* msg, uint32_t siz
         return false;
     }
 
+    this->assigned_ = true;
+
     return true;
 }
