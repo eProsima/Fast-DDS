@@ -97,7 +97,7 @@ protected:
         *p_value++ = info->line();
         *p_value = GET_PID();
         guid_prefix_.value[8] = HAVE_SECURITY;
-        guid_prefix_.value[9] = 1; //PREALLOCATED_MEMORY_MODE
+        guid_prefix_.value[9] = 3; //PREALLOCATED_MEMORY_MODE
         eprosima::fastrtps::rtps::LocatorList_t loc;
         eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
         if (loc.size() > 0)

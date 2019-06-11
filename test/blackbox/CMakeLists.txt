@@ -75,8 +75,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             ${CMAKE_CURRENT_BINARY_DIR}/PubSubReader.xml)
 
         add_executable(BlackboxTests ${BLACKBOXTESTS_SOURCE})
-        target_compile_definitions(BlackboxTests PRIVATE
-            PREALLOCATED_MEMORY_MODE_TEST)
+        target_compile_definitions(BlackboxTests PRIVATE)
         target_include_directories(BlackboxTests PRIVATE ${GTEST_INCLUDE_DIRS})
         target_link_libraries(BlackboxTests fastrtps fastcdr ${GTEST_LIBRARIES})
         add_gtest(BlackboxTests SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
