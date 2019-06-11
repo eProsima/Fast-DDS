@@ -1129,9 +1129,18 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(const GUID_t& l
 
 bool EDP::checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const
 {
+    // TODO - Remove once XCDR or XCDR2 is implemented.
+    TypeConsistencyEnforcementQosPolicy coercion;
+    coercion.m_kind = DISALLOW_TYPE_COERCION;
+    coercion.m_ignore_member_names = false;
+    coercion.m_ignore_string_bounds = false;
+    coercion.m_force_type_validation = true;
+    coercion.m_prevent_type_widening = true;
+    coercion.m_ignore_sequence_bounds = false;
     return wdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00) &&
             wdata->type_id().m_type_identifier.consistent(
-                rdata->type_id().m_type_identifier, rdata->m_qos.type_consistency);
+                //rdata->type_id().m_type_identifier, rdata->m_qos.type_consistency);
+                rdata->type_id().m_type_identifier, coercion);
 }
 
 bool EDP::hasTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const
@@ -1166,7 +1175,16 @@ bool EDP::checkTypeObject(const WriterProxyData* wdata, const ReaderProxyData* r
 
         if (wtype != nullptr)
         {
-            return wtype->consistent(*rtype, rdata->m_qos.type_consistency);
+            // TODO - Remove once XCDR or XCDR2 is implemented.
+            TypeConsistencyEnforcementQosPolicy coercion;
+            coercion.m_kind = DISALLOW_TYPE_COERCION;
+            coercion.m_ignore_member_names = false;
+            coercion.m_ignore_string_bounds = false;
+            coercion.m_force_type_validation = true;
+            coercion.m_prevent_type_widening = true;
+            coercion.m_ignore_sequence_bounds = false;
+            //return wtype->consistent(*rtype, rdata->m_qos.type_consistency);
+            return wtype->consistent(*rtype, coercion);
         }
 
         return false;
@@ -1175,7 +1193,16 @@ bool EDP::checkTypeObject(const WriterProxyData* wdata, const ReaderProxyData* r
     if (wdata->type().m_type_object._d() != static_cast<uint8_t>(0x00) &&
             rdata->type().m_type_object._d() != static_cast<uint8_t>(0x00))
     {
-        return wdata->type().m_type_object.consistent(rdata->type().m_type_object, rdata->m_qos.type_consistency);
+        // TODO - Remove once XCDR or XCDR2 is implemented.
+        TypeConsistencyEnforcementQosPolicy coercion;
+        coercion.m_kind = DISALLOW_TYPE_COERCION;
+        coercion.m_ignore_member_names = false;
+        coercion.m_ignore_string_bounds = false;
+        coercion.m_force_type_validation = true;
+        coercion.m_prevent_type_widening = true;
+        coercion.m_ignore_sequence_bounds = false;
+        //return wdata->type().m_type_object.consistent(rdata->type().m_type_object, rdata->m_qos.type_consistency);
+        return wdata->type().m_type_object.consistent(rdata->type().m_type_object, coercion);
     }
 
     return false;

@@ -35,6 +35,8 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+// TODO - Remove DISABLED when XTYPES are implemented.
+
 class XTypes : public ::testing::Test
 {
     public:
@@ -254,7 +256,7 @@ TEST_F(XTypes, TypeObjectV1NamesManaged)
  * BasicStruct and BasicNamesStruct are similar structures, but with different names in struct and members.
  * This test checks ignoring at the member names through TypeIdentifier's hashes. The endpoints must match.
 */
-TEST_F(XTypes, TypeObjectV1NamesIgnored)
+TEST_F(XTypes, DISABLED_TypeObjectV1NamesIgnored)
 {
     BasicStructPubSubType type1;
     BasicNamesStructPubSubType type2;
@@ -337,7 +339,7 @@ TEST_F(XTypes, TypeObjectV1NamesIgnoredDisallow)
  * BasicStruct and BasicWideStruct are similar structures, but with "Wide" adds a member.
  * This test checks type widening. The endpoints must match.
 */
-TEST_F(XTypes, TypeObjectV1TypeWidening)
+TEST_F(XTypes, DISABLED_TypeObjectV1TypeWidening)
 {
     BasicStructPubSubType type1;
     BasicWideStructPubSubType type2;
@@ -419,7 +421,7 @@ TEST_F(XTypes, TypeObjectV1BadTypeWidening)
  * BasicStruct and BasicWideStruct are similar structures, but with "Wide" adds a member.
  * This test checks prevent type widening when assigning narrow to wide. The endpoints must match.
 */
-TEST_F(XTypes, TypeObjectV1TypeWideningPreventedNarrowToWide)
+TEST_F(XTypes, DISABLED_TypeObjectV1TypeWideningPreventedNarrowToWide)
 {
     BasicStructPubSubType type1;
     BasicWideStructPubSubType type2;
@@ -542,7 +544,7 @@ TEST_F(XTypes, TypeObjectV1TypeWideningDisallow)
  * SequenceStruct and SequenceBoundsStruct are similar structures, but with "Bounds" the size of the sequence is bigger.
  * This test checks sequence bounds. The endpoints must match.
 */
-TEST_F(XTypes, TypeObjectV1SequenceBoundsIgnored)
+TEST_F(XTypes, DISABLED_TypeObjectV1SequenceBoundsIgnored)
 {
     SequenceStructPubSubType type1;
     SequenceBoundsStructPubSubType type2;
@@ -625,7 +627,7 @@ TEST_F(XTypes, TypeObjectV1SequenceBoundsManaged)
  * Names are ignored because the member is named different.
  * This test checks string bounds. The endpoints must match.
 */
-TEST_F(XTypes, TypeObjectV1LargeStringIgnored)
+TEST_F(XTypes, DISABLED_TypeObjectV1LargeStringIgnored)
 {
     StringStructPubSubType type1;
     LargeStringStructPubSubType type2;
@@ -942,7 +944,7 @@ TEST_F(XTypes, TypeIdentifierNamesManaged)
  * BasicStruct and BasicNamesStruct are similar structures, but with different names in struct and members.
  * This test checks ignoring at the member names through TypeIdentifier's hashes. The endpoints must match.
 */
-TEST_F(XTypes, TypeIdentifierNamesIgnored)
+TEST_F(XTypes, DISABLED_TypeIdentifierNamesIgnored)
 {
     BasicStructPubSubType type1;
     BasicNamesStructPubSubType type2;
@@ -1096,7 +1098,7 @@ TEST_F(XTypes, TypeInformationNamesManaged)
  * BasicStruct and BasicNamesStruct are similar structures, but with different names in struct and members.
  * This test checks ignoring at the member names through TypeInformation's hashes. The endpoints must match.
 */
-TEST_F(XTypes, TypeInformationNamesIgnored)
+TEST_F(XTypes, DISABLED_TypeInformationNamesIgnored)
 {
     BasicStructPubSubType type1;
     BasicNamesStructPubSubType type2;

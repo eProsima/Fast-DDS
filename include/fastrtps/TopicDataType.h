@@ -28,6 +28,9 @@
 
 namespace eprosima {
 namespace fastrtps {
+namespace types {
+class TypeIdentifier;
+}
 
 /**
  * Class TopicDataType used to provide the DomainRTPSParticipant with the methods to serialize, deserialize and get the key of a specific data type.
@@ -93,6 +96,20 @@ class  TopicDataType {
          */
         RTPS_DllAPI inline const char* getName() const { return m_topicDataTypeName.c_str(); }
 
+        /**
+         * Get topic data type identifier
+         * @return Topic data type identifier
+         */
+        RTPS_DllAPI inline const types::TypeIdentifier* type_identifier() const { return type_id_; }
+
+        /**
+         * Set topic data type identifier
+         */
+        RTPS_DllAPI inline void type_identifier(const types::TypeIdentifier* type_identifier)
+        {
+            type_id_ = type_identifier;
+        }
+
         //! Maximum serialized size of the type in bytes.
         //! If the type has unbounded fields, and therefore cannot have a maximum size, use 0.
         uint32_t m_typeSize;
@@ -102,7 +119,8 @@ class  TopicDataType {
     private:
         //! Data Type Name.
         std::string m_topicDataTypeName;
-
+        //! Type Identifier.
+        const types::TypeIdentifier* type_id_;
 
 
 };
