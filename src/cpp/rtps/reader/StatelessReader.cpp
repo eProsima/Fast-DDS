@@ -82,8 +82,6 @@ bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
         auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
         if ( wlp != nullptr)
         {
-            // A return value of false is not necessary an error, as the writer could have already been
-            // added to the liveliness manager by another reader
             wlp->sub_liveliness_manager_->add_writer(
                         wdata.guid,
                         liveliness_kind_,
@@ -155,11 +153,6 @@ bool StatelessReader::change_received(CacheChange_t* change)
     {
         if(mp_history->received_change(change, 0))
         {
-            if (getGuid().entityId == c_EntityId_ReaderLiveliness)
-            {
-                std::cout << "Reader " << getGuid() << " receiving change" << std::endl;
-            }
-
             update_last_notified(change->writerGUID, change->sequenceNumber);
             if(getListener() != nullptr)
             {

@@ -45,9 +45,9 @@ LIVELINESSQOS_TARGET= bin/LivelinessQoS
 LIVELINESSQOS_SRC_CXXFILES= LivelinessQoS/Topic.cxx \
 				LivelinessQoS/TopicType.cxx
 
-LIVELINESSQOS_SRC_CPPFILES= LivelinessQoS/LivelinessPublisher.cxx \
-				LivelinessQoS/LivelinessSubscriber.cxx \
-				LivelinessQoS/Liveliness_main.cxx
+LIVELINESSQOS_SRC_CPPFILES= LivelinessQoS/LivelinessPublisher.cpp \
+				LivelinessQoS/LivelinessSubscriber.cpp \
+				LivelinessQoS/Liveliness_main.cpp
 
 # Project sources are copied to the current directory
 LIVELINESSQOS_SRCS= $(LIVELINESSQOS_SRC_CXXFILES) $(LIVELINESSQOS_SRC_CPPFILES)

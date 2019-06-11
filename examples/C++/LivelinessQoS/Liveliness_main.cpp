@@ -68,13 +68,15 @@ int main(int argc, char** argv)
     {
         std::cout << "Usage: " << std::endl;
         std::cout << argv[0] << " publisher ";
-        std::cout << "[--liveliness <lease_duration_ms>] ";
+        std::cout << "[--lease_duration <lease_duration_ms>] ";
+        std::cout << "[--kind <kind>]";
         std::cout << "[--sleep <writer_sleep_ms>] ";
         std::cout << "[--samples <samples>]" << std::endl;
 
         std::cout << "OR" << std::endl;
         std::cout << argv[0] << " subscriber ";
-        std::cout << "[--liveliness <lease_duration_ms>]" << std::endl;
+        std::cout << "[--lease_duration <lease_duration_ms>]";
+        std::cout << "[--kind <kind>]" << std::endl;
         return 0;
     }
 
@@ -135,7 +137,7 @@ bool parse_arguments(
         int count = 2;
         while (count < argc)
         {
-            if (!strcmp(argv[count], "--liveliness"))
+            if (!strcmp(argv[count], "--lease_duration"))
             {
                 lease_duration_ms = atoi(argv[count + 1]);
             }
@@ -178,12 +180,12 @@ bool parse_arguments(
     }
     else if (strcmp(argv[1], "subscriber") == 0)
     {
-        type = 3;
+        type = 2;
 
         int count = 2;
         while (count < argc)
         {
-            if (!strcmp(argv[count], "--liveliness"))
+            if (!strcmp(argv[count], "--lease_duration"))
             {
                 lease_duration_ms = atoi(argv[count + 1]);
             }

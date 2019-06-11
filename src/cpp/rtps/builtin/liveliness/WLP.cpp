@@ -305,7 +305,13 @@ bool WLP::createSecureEndpoints()
             sec_attrs->plugin_endpoint_attributes |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
     }
     RTPSReader* rout;
-    if (mp_participant->createReader(&rout, ratt, mp_builtinReaderSecureHistory, nullptr, c_EntityId_ReaderLivelinessSecure, true))
+    if (mp_participant->createReader(
+                &rout,
+                ratt,
+                mp_builtinReaderSecureHistory,
+                (ReaderListener*)mp_listener,
+                c_EntityId_ReaderLivelinessSecure,
+                true))
     {
         mp_builtinReaderSecure = dynamic_cast<StatefulReader*>(rout);
         logInfo(RTPS_LIVELINESS, "Builtin Liveliness Reader created");

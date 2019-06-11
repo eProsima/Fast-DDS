@@ -40,7 +40,7 @@ public:
     /**
      * @brief Constructor
      * @param liveliness_lost_callback A callback that will be invoked when a writer loses liveliness
-     * @param liveliness_lost_callback A callback that will be invoked when a writer recovers liveliness
+     * @param liveliness_recovered_callback A callback that will be invoked when a writer recovers liveliness
      * @param service The asio I/O service
      * @param event_thread The event thread
      * @param manage_automatic True to manage writers with automatic liveliness, false otherwise

@@ -43,7 +43,7 @@ bool LivelinessSubscriber::init(
     PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    PParam.rtps.builtin.domainId = 14;
+    PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.use_WriterLivelinessProtocol = true;
     PParam.rtps.setName("Participant_sub");
     participant_ = Domain::createParticipant(PParam, &part_listener_);
@@ -69,22 +69,6 @@ bool LivelinessSubscriber::init(
     {
         return false;
     }
-    std::cout << "Subscriber using:" << std::endl;
-    std::cout << "Lease duration: " << liveliness_ms << std::endl;
-    if (kind == eprosima::fastrtps::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
-    {
-        std::cout << "Kind: AUTOMATIC" << std::endl;
-    }
-    else if (kind == eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-    {
-        std::cout << "Kind: MANUAL_BY_PARTICIPANT_LIVELINESS_QOS" << std::endl;
-    }
-    else if (kind == eprosima::fastrtps::LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS)
-    {
-        std::cout << "Kind: MANUAL_BY_TOPIC_LIVELINESS_QOS" << std::endl;
-    }
-    std::cout << std::endl;
-
     return true;
 }
 
