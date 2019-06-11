@@ -24,7 +24,7 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 //! Tests that when kind is automatic liveliness is never lost, even if the writer never sends data
-BLACKBOXTEST(LivelinessQos, Liveliness_Automatic_Reliable)
+TEST(LivelinessQos, Liveliness_Automatic_Reliable)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -61,7 +61,7 @@ BLACKBOXTEST(LivelinessQos, Liveliness_Automatic_Reliable)
 }
 
 //! Same as above using best-effort reliability
-BLACKBOXTEST(LivelinessQos, Liveliness_Automatic_BestEffort)
+TEST(LivelinessQos, Liveliness_Automatic_BestEffort)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -101,7 +101,7 @@ BLACKBOXTEST(LivelinessQos, Liveliness_Automatic_BestEffort)
 //! Writer is reliable, and MANUAL_BY_PARTICIPANT
 //! Reader is reliable, and MANUAL_BY_PARTICIPANT
 //! Liveliness lease duration is short in comparison to writer write/assert rate
-BLACKBOXTEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
+TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -162,7 +162,7 @@ BLACKBOXTEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
 //! Writer is best-effort, and MANUAL_BY_PARTICIPANT
 //! Reader is best-effort, and MANUAL_BY_PARTICIPANT
 //! Liveliness lease duration is short in comparison to writer write/assert rate
-BLACKBOXTEST(LivelinessQos, ShortLiveliness_ManualByParticipant_BestEffort)
+TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_BestEffort)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -223,7 +223,7 @@ BLACKBOXTEST(LivelinessQos, ShortLiveliness_ManualByParticipant_BestEffort)
 //! Writer is best-effort, and MANUAL_BY_PARTICIPANT
 //! Reader is best-effort, and MANUAL_BY_PARTICIPANT
 //! Liveliness lease duration is long in comparison to writer write/assert rate
-BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Reliable)
+TEST(LivelinessQos, LongLiveliness_ManualByParticipant_Reliable)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -286,7 +286,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Reliable)
 //! Writer is best-effort, and MANUAL_BY_PARTICIPANT
 //! Reader is best-effort, and MANUAL_BY_PARTICIPANT
 //! Liveliness lease duration is long in comparison to writer write/assert rate
-BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_BestEffort)
+TEST(LivelinessQos, LongLiveliness_ManualByParticipant_BestEffort)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -349,7 +349,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_BestEffort)
 //! Writer is reliable, and MANUAL_BY_TOPIC
 //! Reader is reliable, and MANUAL_BY_TOPIC
 //! Liveliness lease duration is short in comparison to writer write/assert rate
-BLACKBOXTEST(LivelinessQos, ShortLiveliness_ManualByTopic_Reliable)
+TEST(LivelinessQos, ShortLiveliness_ManualByTopic_Reliable)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -409,7 +409,7 @@ BLACKBOXTEST(LivelinessQos, ShortLiveliness_ManualByTopic_Reliable)
 //! Writer is best-effort, and MANUAL_BY_TOPIC
 //! Reader is best-effort, and MANUAL_BY_TOPIC
 //! Liveliness lease duration is short in comparison to writer write/assert rate
-BLACKBOXTEST(LivelinessQos, ShortLiveliness_ManualByTopic_BestEffort)
+TEST(LivelinessQos, ShortLiveliness_ManualByTopic_BestEffort)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -471,7 +471,7 @@ BLACKBOXTEST(LivelinessQos, ShortLiveliness_ManualByTopic_BestEffort)
 //! Writer is reliable, and MANUAL_BY_TOPIC
 //! Reader is reliable, and MANUAL_BY_TOPIC
 //! Liveliness lease duration is long in comparison to writer write/assert rate
-BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByTopic_Reliable)
+TEST(LivelinessQos, LongLiveliness_ManualByTopic_Reliable)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -535,7 +535,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByTopic_Reliable)
 //! Writer is best-effort, and MANUAL_BY_TOPIC
 //! Reader is best-effort, and MANUAL_BY_TOPIC
 //! Liveliness lease duration is long in comparison to writer write/assert rate
-BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByTopic_BestEffort)
+TEST(LivelinessQos, LongLiveliness_ManualByTopic_BestEffort)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -601,7 +601,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByTopic_BestEffort)
 //! Writer is reliable, liveliness is manual by participant
 //! Reader is reliable, liveliness is automatic
 //! Liveliness lease duration is long in comparison to the writer write/assert rate
-BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliable)
+TEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliable)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -663,7 +663,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliabl
 //! Writer is reliable, liveliness is manual by participant
 //! Reader is reliable, liveliness is automatic
 //! Liveliness is short in comparison to the writer write/assert rate
-BLACKBOXTEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
+TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -722,7 +722,7 @@ BLACKBOXTEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliab
 //! Writer is best-effort, liveliness is manual by participant
 //! Reader is best-effort, liveliness is automatic
 //! Liveliness is long in comparison to the writer write/assert rate
-BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEffort)
+TEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEffort)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -783,7 +783,7 @@ BLACKBOXTEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEff
 //! Writer is best-effort, liveliness is manual by participant
 //! Reader is best-effort, liveliness is automatic
 //! Liveliness is short in comparison to the writer write/assert rate
-BLACKBOXTEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
+TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -842,7 +842,7 @@ BLACKBOXTEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEf
 //! Writer is reliable, and uses manual by topic liveliness kind
 //! Reader is reliable, and uses automatic liveliness kind
 //! Liveliness lease duration is short in comparison to writer write/assert rate
-BLACKBOXTEST(LivelinessQos, ManualByTopic_Automatic_Reliable)
+TEST(LivelinessQos, ManualByTopic_Automatic_Reliable)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -901,7 +901,7 @@ BLACKBOXTEST(LivelinessQos, ManualByTopic_Automatic_Reliable)
 //! Writer is best-effort, and uses manual by topic liveliness kind
 //! Reader is best-effort, and uses automatic liveliness kind
 //! Liveliness lease duration is short in comparison to writer write/assert rate
-BLACKBOXTEST(LivelinessQos, ManualByTopic_Automatic_BestEffort)
+TEST(LivelinessQos, ManualByTopic_Automatic_BestEffort)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -961,7 +961,7 @@ BLACKBOXTEST(LivelinessQos, ManualByTopic_Automatic_BestEffort)
 //! Writer is reliable, and uses manual by topic liveliness kind
 //! Reader is reliable, and uses manual by participant liveliness kind
 //! Liveliness lease duration is short in comparison to writer write/assert rate
-BLACKBOXTEST(LivelinessQos, ManualByTopic_ManualByParticipant_Reliable)
+TEST(LivelinessQos, ManualByTopic_ManualByParticipant_Reliable)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -1020,7 +1020,7 @@ BLACKBOXTEST(LivelinessQos, ManualByTopic_ManualByParticipant_Reliable)
 //! Writer is best-effort, and uses manual by topic liveliness kind
 //! Reader is best-effort, and uses manual by participant liveliness kind
 //! Liveliness lease duration is short in comparison to writer write/assert rate
-BLACKBOXTEST(LivelinessQos, ManualByTopic_ManualByParticipant_BestEffort)
+TEST(LivelinessQos, ManualByTopic_ManualByParticipant_BestEffort)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -1080,7 +1080,7 @@ BLACKBOXTEST(LivelinessQos, ManualByTopic_ManualByParticipant_BestEffort)
 //! Tests liveliness in the following scenario
 //! A participant with two publishers (AUTOMATIC and MANUAL_BY_PARTICIPANT) and a single topic
 //! A participant with one subscriber (AUTOMATIC)
-BLACKBOXTEST(LivelinessQos, TwoWriters_OneReader_ManualByTopic)
+TEST(LivelinessQos, TwoWriters_OneReader_ManualByTopic)
 {
     unsigned int num_pub = 2;
     unsigned int num_sub = 1;
@@ -1129,7 +1129,7 @@ BLACKBOXTEST(LivelinessQos, TwoWriters_OneReader_ManualByTopic)
 //! A participant with two subscribers and two topics
 //! Manual by participant liveliness
 //! Only one publisher asserts liveliness manually
-BLACKBOXTEST(LivelinessQos, TwoWriters_TwoReaders_ManualByParticipant)
+TEST(LivelinessQos, TwoWriters_TwoReaders_ManualByParticipant)
 {
     unsigned int num_pub = 2;
     unsigned int num_sub = 2;
@@ -1189,7 +1189,7 @@ BLACKBOXTEST(LivelinessQos, TwoWriters_TwoReaders_ManualByParticipant)
 //! A participant with two subscribers and two topics
 //! Manual by topic liveliness
 //! Only one publisher asserts liveliness manually
-BLACKBOXTEST(LivelinessQos, TwoWriters_TwoReaders_ManualByTopic)
+TEST(LivelinessQos, TwoWriters_TwoReaders_ManualByTopic)
 {
     unsigned int num_pub = 2;
     unsigned int num_sub = 2;
@@ -1249,7 +1249,7 @@ BLACKBOXTEST(LivelinessQos, TwoWriters_TwoReaders_ManualByTopic)
 //! Tests liveliness in the following scenario
 //! A participant with two publishers with different liveliness kinds
 //! A participant with two subscribers with different liveliness kinds
-BLACKBOXTEST(LivelinessQos, TwoWriters_TwoReaders)
+TEST(LivelinessQos, TwoWriters_TwoReaders)
 {
     unsigned int num_pub = 2;
     unsigned int num_sub = 2;
@@ -1303,7 +1303,7 @@ BLACKBOXTEST(LivelinessQos, TwoWriters_TwoReaders)
 //! Tests liveliness in the same scenario as above but using manual by topic liveliness
 //! A participant with three publishers with different liveliness kinds
 //! A participant with three subscribers with different liveliness kinds
-BLACKBOXTEST(LivelinessQos, ThreeWriters_ThreeReaders)
+TEST(LivelinessQos, ThreeWriters_ThreeReaders)
 {
     unsigned int num_pub = 3;
     unsigned int num_sub = 3;
@@ -1381,7 +1381,7 @@ BLACKBOXTEST(LivelinessQos, ThreeWriters_ThreeReaders)
 }
 
 //! Tests the case where a writer matched to two readers changes QoS and stays matched to only one reader
-BLACKBOXTEST(LivelinessQos, UnmatchedWriter)
+TEST(LivelinessQos, UnmatchedWriter)
 {
     unsigned int num_pub = 1;
     unsigned int num_sub = 2;
