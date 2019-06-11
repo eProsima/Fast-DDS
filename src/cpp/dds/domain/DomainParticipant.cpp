@@ -212,6 +212,16 @@ bool DomainParticipant::get_current_time(
     return impl_->get_current_time(current_time);
 }
 
+const fastrtps::rtps::RTPSParticipant* DomainParticipant::rtps_participant() const
+{
+    return impl_->rtps_participant();
+}
+
+fastrtps::rtps::RTPSParticipant* DomainParticipant::rtps_participant()
+{
+    return impl_->rtps_participant();
+}
+
 TypeSupport DomainParticipant::find_type(
         const std::string& type_name) const
 {

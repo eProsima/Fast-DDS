@@ -115,6 +115,24 @@ void ReaderQos::setQos(const ReaderQos& qos, bool first_time)
         m_disablePositiveACKs = qos.m_disablePositiveACKs;
         m_disablePositiveACKs.hasChanged = true;
     }
+
+    if (representation.m_value != qos.representation.m_value)
+    {
+        representation = qos.representation;
+        representation.hasChanged = true;
+    }
+
+    if (first_time ||
+        type_consistency.m_kind != qos.type_consistency.m_kind ||
+        type_consistency.m_ignore_member_names != qos.type_consistency.m_ignore_member_names ||
+        type_consistency.m_ignore_string_bounds != qos.type_consistency.m_ignore_string_bounds ||
+        type_consistency.m_ignore_sequence_bounds != qos.type_consistency.m_ignore_sequence_bounds ||
+        type_consistency.m_force_type_validation != qos.type_consistency.m_force_type_validation ||
+        type_consistency.m_prevent_type_widening != qos.type_consistency.m_prevent_type_widening)
+    {
+        type_consistency = qos.type_consistency;
+        type_consistency.hasChanged = true;
+    }
 }
 
 

@@ -117,6 +117,11 @@ public:
 
     RTPS_DllAPI void set_type(DynamicType_ptr type);
 
+    RTPS_DllAPI DynamicType_ptr get_type() const
+    {
+        return type_;
+    }
+
     RTPS_DllAPI void set_default_union_value(bool bDefault);
 
     RTPS_DllAPI void set_default_value(const std::string& value)

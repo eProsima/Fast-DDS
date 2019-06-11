@@ -693,7 +693,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                 }
                 case PID_TYPE_CONSISTENCY_ENFORCEMENT:
                 {
-                    uint16_t uKind(0);
+                    uint32_t uKind(0);
                     octet temp(0);
                     TypeConsistencyEnforcementQosPolicy p;
                     p.m_ignore_sequence_bounds = false;
@@ -705,7 +705,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     valid &= plength >= 2;
                     if (valid)
                     {
-                        valid &= CDRMessage::readUInt16(&msg, &uKind);
+                        valid &= CDRMessage::readUInt32(&msg, &uKind);
                         p.m_kind = static_cast<TypeConsistencyKind>(uKind);
                     }
                     if (valid && plength >= 3)
@@ -744,6 +744,12 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                 case PID_TYPE_OBJECTV1:
                 {
                     TypeObjectV1 p;
+                    valid &= p.readFromCDRMessage(&msg, plength);
+                    IF_VALID_CALL
+                }
+                case PID_TYPE_INFORMATION:
+                {
+                    XTypes::TypeInformation p;
                     valid &= p.readFromCDRMessage(&msg, plength);
                     IF_VALID_CALL
                 }

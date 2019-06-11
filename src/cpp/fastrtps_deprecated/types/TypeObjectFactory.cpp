@@ -202,6 +202,540 @@ void TypeObjectFactory::nullify_all_entries(const TypeIdentifier* identifier)
     }
 }
 
+const TypeInformation* TypeObjectFactory::get_type_information(
+        const std::string &type_name) const
+{
+    const TypeIdentifier* comp_identifier = get_type_identifier(type_name, true);
+    const TypeIdentifier* min_identifier = get_type_identifier(type_name, false);
+    if (comp_identifier == nullptr && min_identifier == nullptr)
+    {
+        return nullptr;
+    }
+
+    TypeInformation *information = nullptr;
+    if (min_identifier != nullptr)
+    {
+        auto innerInfo = informations_.find(min_identifier);
+        if (innerInfo != informations_.end())
+        {
+            information = innerInfo->second;
+        }
+        else
+        {
+            information = new TypeInformation();
+        }
+
+        fill_minimal_information(information, min_identifier);
+    }
+
+    if (comp_identifier != nullptr)
+    {
+        if (information == nullptr)
+        {
+            auto innerInfo = informations_.find(comp_identifier);
+            if (innerInfo != informations_.end())
+            {
+                information = innerInfo->second;
+            }
+            else
+            {
+                information = new TypeInformation();
+            }
+        }
+
+        fill_complete_information(information, comp_identifier);
+    }
+
+    return information;
+}
+
+void TypeObjectFactory::fill_minimal_information(
+        TypeInformation *info,
+        const TypeIdentifier* ident) const
+{
+    info->minimal().typeid_with_size().type_id(*ident);
+    const TypeObject* obj = get_type_object(ident);
+
+    if (obj == nullptr)
+    {
+        info->minimal().dependent_typeid_count(0);
+        info->minimal().typeid_with_size().typeobject_serialized_size(0);
+        // TODO Size in this case should be zero or the size of the identifier?
+        // info->minimal().typeid_with_size().typeobject_serialized_size(TypeIdentifier::getCdrSerializedSize(*ident));
+    }
+    else
+    {
+        info->minimal().typeid_with_size().typeobject_serialized_size(TypeObject::getCdrSerializedSize(*obj));
+    }
+
+    switch(ident->_d())
+    {
+        /*
+        case TK_BOOLEAN:
+        case TK_BYTE:
+        case TK_INT16:
+        case TK_INT32:
+        case TK_INT64:
+        case TK_UINT16:
+        case TK_UINT32:
+        case TK_UINT64:
+        case TK_FLOAT32:
+        case TK_FLOAT64:
+        case TK_FLOAT128:
+        case TK_CHAR8:
+        case TK_CHAR16:
+        case TK_STRING8:
+        case TK_STRING16:
+            info->minimal().dependent_typeid_count(0);
+            break;
+        */
+        case TK_SEQUENCE:
+        {
+            info->minimal().dependent_typeid_count(1);
+            const TypeIdentifier *innerId = get_stored_type_identifier(
+                &obj->minimal().sequence_type().element().common().type());
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
+            {
+                info->minimal().dependent_typeids().push_back(innerInfo->second->minimal().typeid_with_size());
+            }
+            else
+            {
+                TypeInformation *information = new TypeInformation();
+                fill_complete_information(information, innerId);
+            }
+            break;
+        }
+        case TK_ARRAY:
+        {
+            info->minimal().dependent_typeid_count(1);
+            const TypeIdentifier *innerId = get_stored_type_identifier(
+                &obj->minimal().array_type().element().common().type());
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
+            {
+                info->minimal().dependent_typeids().push_back(innerInfo->second->minimal().typeid_with_size());
+            }
+            else
+            {
+                TypeInformation *information = new TypeInformation();
+                fill_complete_information(information, innerId);
+            }
+            break;
+        }
+        case TK_MAP:
+        {
+            info->minimal().dependent_typeid_count(2);
+            const TypeIdentifier *innerId = get_stored_type_identifier(
+                &obj->minimal().map_type().element().common().type());
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
+            {
+                info->minimal().dependent_typeids().push_back(innerInfo->second->minimal().typeid_with_size());
+            }
+            else
+            {
+                TypeInformation *information = new TypeInformation();
+                fill_complete_information(information, innerId);
+            }
+            const TypeIdentifier *keyId = get_stored_type_identifier(
+                &obj->minimal().map_type().key().common().type());
+            auto keyInfo = informations_.find(keyId);
+            if (keyInfo != informations_.end())
+            {
+                info->minimal().dependent_typeids().push_back(keyInfo->second->minimal().typeid_with_size());
+            }
+            else
+            {
+                TypeInformation *information = new TypeInformation();
+                fill_complete_information(information, keyId);
+            }
+            break;
+        }
+        case EK_MINIMAL:
+            switch(obj->minimal()._d())
+            {
+                case TK_ALIAS:
+                {
+                    info->minimal().dependent_typeid_count(1);
+                    const TypeIdentifier *innerId = get_stored_type_identifier(
+                        &obj->minimal().alias_type().body().common().related_type());
+                    auto keyInfo = informations_.find(innerId);
+                    if (keyInfo != informations_.end())
+                    {
+                        info->minimal().dependent_typeids().push_back(keyInfo->second->minimal().typeid_with_size());
+                    }
+                    else
+                    {
+                        TypeInformation *information = new TypeInformation();
+                        fill_complete_information(information, innerId);
+                    }
+                    break;
+                }
+                case TK_STRUCTURE:
+                {
+                    const MinimalStructMemberSeq& members = obj->minimal().struct_type().member_seq();
+                    for (auto member = members.begin(); member != members.end(); ++member)
+                    {
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
+                            &member->common().member_type_id());
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
+                        {
+                            info->minimal().dependent_typeids().push_back(
+                                memberType->second->minimal().typeid_with_size());
+                        }
+                        else
+                        {
+                            TypeInformation *information = new TypeInformation();
+                            fill_complete_information(information, innerId);
+                        }
+                    }
+                    info->minimal().dependent_typeid_count(members.size());
+                    break;
+                }
+                case TK_ENUM:
+                    // Already fully defined by obj
+                    break;
+                case TK_BITMASK:
+                    // TODO To implement
+                    break;
+                case TK_BITSET:
+                    // TODO To implement
+                    break;
+                case TK_UNION:
+                {
+                    const MinimalUnionMemberSeq& members = obj->minimal().union_type().member_seq();
+                    for (auto member = members.begin(); member != members.end(); ++member)
+                    {
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
+                            &member->common().type_id());
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
+                        {
+                            info->minimal().dependent_typeids().push_back(
+                                memberType->second->minimal().typeid_with_size());
+                        }
+                        else
+                        {
+                            TypeInformation *information = new TypeInformation();
+                            fill_complete_information(information, innerId);
+                        }
+                    }
+                    const TypeIdentifier *descId = get_stored_type_identifier(
+                        &obj->minimal().union_type().discriminator().common().type_id());
+                    auto descInfo = informations_.find(descId);
+                    if (descInfo != informations_.end())
+                    {
+                        info->minimal().dependent_typeids().push_back(descInfo->second->minimal().typeid_with_size());
+                    }
+                    else
+                    {
+                        TypeInformation *information = new TypeInformation();
+                        fill_complete_information(information, descId);
+                    }
+                    info->minimal().dependent_typeid_count(members.size() + 1);
+                    break;
+                }
+                case TK_ANNOTATION:
+                    // TODO To implement
+                    break;
+            }
+            break;
+        case EK_COMPLETE:
+            // Cannot happen
+            break;
+    }
+    informations_[ident] = info;
+}
+
+void TypeObjectFactory::fill_complete_information(
+        TypeInformation *info,
+        const TypeIdentifier* ident) const
+{
+    info->complete().typeid_with_size().type_id(*ident);
+    const TypeObject* obj = get_type_object(ident);
+
+    if (obj == nullptr)
+    {
+        info->complete().dependent_typeid_count(0);
+        info->complete().typeid_with_size().typeobject_serialized_size(0);
+        // TODO Size in this case should be zero or the size of the identifier?
+        // info->complete().typeid_with_size().typeobject_serialized_size(TypeIdentifier::getCdrSerializedSize(*ident));
+    }
+    else
+    {
+        info->complete().typeid_with_size().typeobject_serialized_size(TypeObject::getCdrSerializedSize(*obj));
+    }
+
+    switch(ident->_d())
+    {
+        /*
+        case TK_BOOLEAN:
+        case TK_BYTE:
+        case TK_INT16:
+        case TK_INT32:
+        case TK_INT64:
+        case TK_UINT16:
+        case TK_UINT32:
+        case TK_UINT64:
+        case TK_FLOAT32:
+        case TK_FLOAT64:
+        case TK_FLOAT128:
+        case TK_CHAR8:
+        case TK_CHAR16:
+        case TK_STRING8:
+        case TK_STRING16:
+            info->complete().dependent_typeid_count(0);
+            break;
+        */
+        case TK_SEQUENCE:
+        {
+            info->complete().dependent_typeid_count(1);
+            const TypeIdentifier *innerId = get_stored_type_identifier(
+                &obj->complete().sequence_type().element().common().type());
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
+            {
+                info->complete().dependent_typeids().push_back(innerInfo->second->complete().typeid_with_size());
+            }
+            else
+            {
+                TypeInformation *information = new TypeInformation();
+                fill_complete_information(information, innerId);
+            }
+            break;
+        }
+        case TK_ARRAY:
+        {
+            info->complete().dependent_typeid_count(1);
+            const TypeIdentifier *innerId = get_stored_type_identifier(
+                &obj->complete().array_type().element().common().type());
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
+            {
+                info->complete().dependent_typeids().push_back(innerInfo->second->complete().typeid_with_size());
+            }
+            else
+            {
+                TypeInformation *information = new TypeInformation();
+                fill_complete_information(information, innerId);
+            }
+            break;
+        }
+        case TK_MAP:
+        {
+            info->complete().dependent_typeid_count(2);
+            const TypeIdentifier *innerId = get_stored_type_identifier(
+                &obj->complete().map_type().element().common().type());
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
+            {
+                info->complete().dependent_typeids().push_back(innerInfo->second->complete().typeid_with_size());
+            }
+            else
+            {
+                TypeInformation *information = new TypeInformation();
+                fill_complete_information(information, innerId);
+            }
+            const TypeIdentifier *keyId = get_stored_type_identifier(
+                &obj->complete().map_type().key().common().type());
+            auto keyInfo = informations_.find(keyId);
+            if (keyInfo != informations_.end())
+            {
+                info->complete().dependent_typeids().push_back(keyInfo->second->complete().typeid_with_size());
+            }
+            else
+            {
+                TypeInformation *information = new TypeInformation();
+                fill_complete_information(information, keyId);
+            }
+            break;
+        }
+        case EK_MINIMAL:
+            switch(obj->minimal()._d())
+            {
+                case TK_ALIAS:
+                {
+                    info->minimal().dependent_typeid_count(1);
+                    const TypeIdentifier *innerId = get_stored_type_identifier(
+                        &obj->minimal().alias_type().body().common().related_type());
+                    auto keyInfo = informations_.find(innerId);
+                    if (keyInfo != informations_.end())
+                    {
+                        info->minimal().dependent_typeids().push_back(keyInfo->second->minimal().typeid_with_size());
+                    }
+                    else
+                    {
+                        TypeInformation *information = new TypeInformation();
+                        fill_complete_information(information, innerId);
+                    }
+                    break;
+                }
+                case TK_STRUCTURE:
+                {
+                    const MinimalStructMemberSeq& members = obj->minimal().struct_type().member_seq();
+                    for (auto member = members.begin(); member != members.end(); ++member)
+                    {
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
+                            &member->common().member_type_id());
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
+                        {
+                            info->minimal().dependent_typeids().push_back(
+                                memberType->second->minimal().typeid_with_size());
+                        }
+                        else
+                        {
+                            TypeInformation *information = new TypeInformation();
+                            fill_complete_information(information, innerId);
+                        }
+                    }
+                    info->minimal().dependent_typeid_count(members.size());
+                    break;
+                }
+                case TK_ENUM:
+                    // Already fully defined by obj
+                    break;
+                case TK_BITMASK:
+                    // TODO To implement (already fully defined?)
+                    break;
+                case TK_BITSET:
+                    // TODO To implement (already fully defined? Fields are primitives.)
+                    break;
+                case TK_UNION:
+                {
+                    const MinimalUnionMemberSeq& members = obj->minimal().union_type().member_seq();
+                    for (auto member = members.begin(); member != members.end(); ++member)
+                    {
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
+                            &member->common().type_id());
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
+                        {
+                            info->minimal().dependent_typeids().push_back(
+                                memberType->second->minimal().typeid_with_size());
+                        }
+                        else
+                        {
+                            TypeInformation *information = new TypeInformation();
+                            fill_complete_information(information, innerId);
+                        }
+                    }
+                    const TypeIdentifier *descId = get_stored_type_identifier(
+                        &obj->minimal().union_type().discriminator().common().type_id());
+                    auto descInfo = informations_.find(descId);
+                    if (descInfo != informations_.end())
+                    {
+                        info->minimal().dependent_typeids().push_back(descInfo->second->minimal().typeid_with_size());
+                    }
+                    else
+                    {
+                        TypeInformation *information = new TypeInformation();
+                        fill_complete_information(information, descId);
+                    }
+                    info->minimal().dependent_typeid_count(members.size() + 1);
+                    break;
+                }
+                case TK_ANNOTATION:
+                    // TODO To implement (already fully defined? Fields are primitives.)
+                    break;
+            }
+            break;
+        case EK_COMPLETE:
+            switch(obj->complete()._d())
+            {
+                case TK_ALIAS:
+                {
+                    info->complete().dependent_typeid_count(1);
+                    const TypeIdentifier *innerId = get_stored_type_identifier(
+                        &obj->complete().alias_type().body().common().related_type());
+                    auto keyInfo = informations_.find(innerId);
+                    if (keyInfo != informations_.end())
+                    {
+                        info->complete().dependent_typeids().push_back(keyInfo->second->complete().typeid_with_size());
+                    }
+                    else
+                    {
+                        TypeInformation *information = new TypeInformation();
+                        fill_complete_information(information, innerId);
+                    }
+                    break;
+                }
+                case TK_STRUCTURE:
+                {
+                    const CompleteStructMemberSeq& members = obj->complete().struct_type().member_seq();
+                    for (auto member = members.begin(); member != members.end(); ++member)
+                    {
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
+                            &member->common().member_type_id());
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
+                        {
+                            info->complete().dependent_typeids().push_back(
+                                memberType->second->complete().typeid_with_size());
+                        }
+                        else
+                        {
+                            TypeInformation *information = new TypeInformation();
+                            fill_complete_information(information, innerId);
+                        }
+                    }
+                    info->complete().dependent_typeid_count(members.size());
+                    break;
+                }
+                case TK_ENUM:
+                    // Already fully defined by obj
+                    break;
+                case TK_BITMASK:
+                    // TODO To implement
+                    break;
+                case TK_BITSET:
+                    // TODO To implement (already fully defined? Fields are primitives.)
+                    break;
+                case TK_UNION:
+                {
+                    const CompleteUnionMemberSeq& members = obj->complete().union_type().member_seq();
+                    for (auto member = members.begin(); member != members.end(); ++member)
+                    {
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
+                            &member->common().type_id());
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
+                        {
+                            info->complete().dependent_typeids().push_back(
+                                memberType->second->complete().typeid_with_size());
+                        }
+                        else
+                        {
+                            TypeInformation *information = new TypeInformation();
+                            fill_complete_information(information, innerId);
+                        }
+                    }
+                    const TypeIdentifier *descId = get_stored_type_identifier(
+                        &obj->complete().union_type().discriminator().common().type_id());
+                    auto descInfo = informations_.find(descId);
+                    if (descInfo != informations_.end())
+                    {
+                        info->complete().dependent_typeids().push_back(descInfo->second->complete().typeid_with_size());
+                    }
+                    else
+                    {
+                        TypeInformation *information = new TypeInformation();
+                        fill_complete_information(information, descId);
+                    }
+                    info->complete().dependent_typeid_count(members.size() + 1);
+                    break;
+                }
+                case TK_ANNOTATION:
+                    // TODO To implement (already fully defined? Fields are primitives.)
+                    break;
+            }
+            break;
+    }
+    informations_[ident] = info;
+}
+
 const TypeObject* TypeObjectFactory::get_type_object(const std::string& type_name, bool complete) const
 {
     const TypeIdentifier* identifier = get_type_identifier(type_name, complete);
@@ -946,7 +1480,11 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(const std::string& name, c
 
     DynamicTypeBuilder_ptr outputType = DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
     //outputType->set_name(name);
-    return outputType->build();
+    if (outputType != nullptr)
+    {
+        return outputType->build();
+    }
+    return nullptr;
 }
 
 // TODO annotations

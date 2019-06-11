@@ -86,6 +86,23 @@ class RTPS_DllAPI RTPSParticipantListener
             (void)participant, (void)info;
         }
 
+        /*!
+         * This method is called when a participant discovers a new Type
+         * The ownership of all object belongs to the caller so if needs to be used after the
+         * method ends, a full copy should be perform (except for dyn_type due to its shared_ptr nature.
+         * For example:
+         * fastrtps::types::TypeIdentifier new_type_id = *identifier;
+         */
+        virtual void on_type_discovery(
+            RTPSParticipant* participant,
+            const string_255& topic,
+            const types::TypeIdentifier* identifier,
+            const types::TypeObject* object,
+            types::DynamicType_ptr dyn_type)
+        {
+            (void)participant, (void)topic, (void)identifier, (void)object, (void)dyn_type;
+        }
+
 };
 
 } // namespace rtps
