@@ -76,6 +76,17 @@ WLP::WLP(BuiltinProtocols* p)
 
 WLP::~WLP()
 {
+    if(automatic_liveliness_assertion_!=nullptr)
+    {
+        delete(automatic_liveliness_assertion_);
+        automatic_liveliness_assertion_ = nullptr;
+    }
+    if(manual_liveliness_assertion_!=nullptr)
+    {
+        delete(this->manual_liveliness_assertion_);
+        manual_liveliness_assertion_ = nullptr;
+    }
+
 #if HAVE_SECURITY
     mp_participant->deleteUserEndpoint(mp_builtinReaderSecure);
     mp_participant->deleteUserEndpoint(mp_builtinWriterSecure);
@@ -87,16 +98,7 @@ WLP::~WLP()
     delete(this->mp_builtinReaderHistory);
     delete(this->mp_builtinWriterHistory);
     delete(this->mp_listener);
-    if(automatic_liveliness_assertion_!=nullptr)
-    {
-        delete(automatic_liveliness_assertion_);
-        automatic_liveliness_assertion_ = nullptr;
-    }
-    if(manual_liveliness_assertion_!=nullptr)
-    {
-        delete(this->manual_liveliness_assertion_);
-        manual_liveliness_assertion_ = nullptr;
-    }
+
     delete pub_liveliness_manager_;
     delete sub_liveliness_manager_;
 }
@@ -641,12 +643,12 @@ bool WLP::remove_local_writer(RTPSWriter* W)
                 if(automatic_liveliness_assertion_!=nullptr)
                 {
                     if(automatic_writers_.size()>0)
+                    {
                         automatic_liveliness_assertion_->update_interval_millisec(min_automatic_ms_);
+                    }
                     else
                     {
-                        delete(automatic_liveliness_assertion_);
-                        automatic_liveliness_assertion_ = nullptr;
-
+                        automatic_liveliness_assertion_->cancel_timer();
                     }
                 }
             }
@@ -680,11 +682,12 @@ bool WLP::remove_local_writer(RTPSWriter* W)
                 if(manual_liveliness_assertion_!=nullptr)
                 {
                     if(manual_by_participant_writers_.size()>0)
+                    {
                         manual_liveliness_assertion_->update_interval_millisec(min_manual_by_participant_ms_);
+                    }
                     else
                     {
-                        delete(manual_liveliness_assertion_);
-                        manual_liveliness_assertion_ = nullptr;
+                        manual_liveliness_assertion_->cancel_timer();
                     }
                 }
             }
