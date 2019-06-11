@@ -106,36 +106,36 @@ TEST_P(CacheChangePoolTests, reserve_cache)
     for (uint32_t i=0; i<num_inserts; i++)
     {
         uint32_t data_size = i*16;
-        EXPECT_TRUE(pool->reserve_Cache(&ch, [data_size]() -> uint32_t {return data_size;}));
-        EXPECT_EQ(pool->getInitialPayloadSize(), payload);
-        EXPECT_GE(pool->get_freeCachesSize(), 0);
+        ASSERT_TRUE(pool->reserve_Cache(&ch, [data_size]() -> uint32_t {return data_size;}));
+        ASSERT_EQ(pool->getInitialPayloadSize(), payload);
+        ASSERT_GE(pool->get_freeCachesSize(), 0U);
 
         switch (memory_policy)
         {
             case MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE:
-                EXPECT_EQ(ch->serializedPayload.max_size, payload);
+                ASSERT_EQ(ch->serializedPayload.max_size, payload);
                 break;
             case MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
-                EXPECT_EQ(ch->serializedPayload.max_size, max(payload, data_size));
+                ASSERT_EQ(ch->serializedPayload.max_size, max(payload, data_size));
                 break;
             case MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE:
-                EXPECT_EQ(ch->serializedPayload.max_size, data_size);
+                ASSERT_EQ(ch->serializedPayload.max_size, data_size);
                 break;
         }
 
         if (max_size > 0)
         {
-            EXPECT_LE(pool->get_allCachesSize(), max_size + 1U);
+            ASSERT_LE(pool->get_allCachesSize(), max_size + 1U);
         }
     }
 
     if (max_size == 0)
     {
-        EXPECT_TRUE(pool->reserve_Cache(&ch, payload));
+        ASSERT_TRUE(pool->reserve_Cache(&ch, payload));
     }
     else
     {
-        EXPECT_FALSE(pool->reserve_Cache(&ch, payload));
+        ASSERT_FALSE(pool->reserve_Cache(&ch, payload));
     }
 }
 
@@ -146,34 +146,34 @@ TEST_P(CacheChangePoolTests, release_cache)
     uint32_t num_inserts = 10;
     for (uint32_t i=0; i<num_inserts; i++)
     {
-        uint32_t all_caches_size = pool->get_allCachesSize();
-        uint32_t free_caches_size = pool->get_freeCachesSize();
+        size_t all_caches_size = pool->get_allCachesSize();
+        size_t free_caches_size = pool->get_freeCachesSize();
         uint32_t data_size = i*16;
 
         pool->reserve_Cache(&ch, [data_size]() -> uint32_t {return data_size;});
 
         if (memory_policy == MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
         {
-            EXPECT_EQ(pool->get_allCachesSize(), all_caches_size + 1U);
-            EXPECT_EQ(pool->get_freeCachesSize(), 0);
+            ASSERT_EQ(pool->get_allCachesSize(), all_caches_size + 1U);
+            ASSERT_EQ(pool->get_freeCachesSize(), 0U);
         }
         else
         {
-            EXPECT_EQ(pool->get_allCachesSize(), all_caches_size);
-            EXPECT_EQ(pool->get_freeCachesSize(), free_caches_size - 1U);
+            ASSERT_EQ(pool->get_allCachesSize(), all_caches_size);
+            ASSERT_EQ(pool->get_freeCachesSize(), free_caches_size - 1U);
         }
 
         pool->release_Cache(ch);
 
         if (memory_policy == MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
         {
-            EXPECT_EQ(pool->get_allCachesSize(), all_caches_size);
-            EXPECT_EQ(pool->get_freeCachesSize(), 0);
+            ASSERT_EQ(pool->get_allCachesSize(), all_caches_size);
+            ASSERT_EQ(pool->get_freeCachesSize(), 0U);
         }
         else
         {
-            EXPECT_EQ(pool->get_allCachesSize(), all_caches_size);
-            EXPECT_EQ(pool->get_freeCachesSize(), free_caches_size);
+            ASSERT_EQ(pool->get_allCachesSize(), all_caches_size);
+            ASSERT_EQ(pool->get_freeCachesSize(), free_caches_size);
         }
     }
 }
@@ -189,18 +189,18 @@ TEST_P(CacheChangePoolTests, chage_change)
     // Check that cache change is initilized
     ASSERT_EQ(ch->kind, ALIVE);
     ASSERT_EQ(ch->sequenceNumber.high, 0);
-    ASSERT_EQ(ch->sequenceNumber.low, 0);
+    ASSERT_EQ(ch->sequenceNumber.low, 0U);
     ASSERT_EQ(ch->writerGUID, c_Guid_Unknown);
-    ASSERT_EQ(ch->serializedPayload.length, 0);
-    ASSERT_EQ(ch->serializedPayload.pos, 0);
+    ASSERT_EQ(ch->serializedPayload.length, 0U);
+    ASSERT_EQ(ch->serializedPayload.pos, 0U);
     for(uint8_t i=0;i<16;++i)
     {
-        ASSERT_EQ(ch->instanceHandle.value[i], 0);
+        ASSERT_EQ(ch->instanceHandle.value[i], 0U);
     }
 
-    ASSERT_EQ(ch->isRead, 0);
+    ASSERT_FALSE(ch->isRead);
     ASSERT_EQ(ch->sourceTimestamp.seconds(), 0);
-    ASSERT_EQ(ch->sourceTimestamp.fraction(), 0);
+    ASSERT_EQ(ch->sourceTimestamp.fraction(), 0U);
 
     // Modify cache change
     ch->kind = NOT_ALIVE_DISPOSED;
@@ -211,7 +211,7 @@ TEST_P(CacheChangePoolTests, chage_change)
     ch->serializedPayload.pos = 1;
     for(uint8_t i=0;i<16;++i)
         ch->instanceHandle.value[i] = 1;
-    ch->isRead = 1;
+    ch->isRead = true;
     ch->sourceTimestamp.seconds(1);
     ch->sourceTimestamp.fraction(1);
 
@@ -222,18 +222,18 @@ TEST_P(CacheChangePoolTests, chage_change)
         // Check that cache change is initialized again
         ASSERT_EQ(ch->kind, ALIVE);
         ASSERT_EQ(ch->sequenceNumber.high, 0);
-        ASSERT_EQ(ch->sequenceNumber.low, 0);
+        ASSERT_EQ(ch->sequenceNumber.low, 0U);
         ASSERT_EQ(ch->writerGUID, c_Guid_Unknown);
-        ASSERT_EQ(ch->serializedPayload.length, 0);
-        ASSERT_EQ(ch->serializedPayload.pos, 0);
+        ASSERT_EQ(ch->serializedPayload.length, 0U);
+        ASSERT_EQ(ch->serializedPayload.pos, 0U);
         for(uint8_t i=0;i<16;++i)
         {
-            ASSERT_EQ(ch->instanceHandle.value[i], 0);
+            ASSERT_EQ(ch->instanceHandle.value[i], 0U);
         }
 
-        ASSERT_EQ(ch->isRead, 0);
+        ASSERT_FALSE(ch->isRead);
         ASSERT_EQ(ch->sourceTimestamp.seconds(), 0);
-        ASSERT_EQ(ch->sourceTimestamp.fraction(), 0);
+        ASSERT_EQ(ch->sourceTimestamp.fraction(), 0U);
     }
 }
 
