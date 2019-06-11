@@ -25,7 +25,7 @@ static const char* certs_path = nullptr;
 #endif
 
 // TCP and Domain management with logical ports tests
-BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D0)
+TEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D0)
 {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
@@ -54,7 +54,7 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D0)
 
 }
 
-BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D1)
+TEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D1)
 {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
@@ -74,7 +74,7 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D0_D1)
     ASSERT_FALSE(replier.is_matched());
 }
 
-BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D1_D0)
+TEST(BlackBox, TCPDomainHelloWorld_P0_P1_D1_D0)
 {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
@@ -95,7 +95,7 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P1_D1_D0)
 
 }
 
-BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P3_D0_D0)
+TEST(BlackBox, TCPDomainHelloWorld_P0_P3_D0_D0)
 {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
@@ -121,7 +121,7 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P3_D0_D0)
 
 }
 
-BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P3_D0_D1)
+TEST(BlackBox, TCPDomainHelloWorld_P0_P3_D0_D1)
 {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
@@ -141,7 +141,7 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P3_D0_D1)
     ASSERT_FALSE(replier.is_matched());
 }
 
-BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P3_D1_D0)
+TEST(BlackBox, TCPDomainHelloWorld_P0_P3_D1_D0)
 {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
@@ -162,7 +162,7 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P0_P3_D1_D0)
 
 }
 
-BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P3_P0_D0_D0)
+TEST(BlackBox, TCPDomainHelloWorld_P3_P0_D0_D0)
 {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
@@ -191,7 +191,7 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P3_P0_D0_D0)
 
 }
 
-BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P3_P0_D0_D1)
+TEST(BlackBox, TCPDomainHelloWorld_P3_P0_D0_D1)
 {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
@@ -211,7 +211,7 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P3_P0_D0_D1)
     ASSERT_FALSE(replier.is_matched());
 }
 
-BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P3_P0_D1_D0)
+TEST(BlackBox, TCPDomainHelloWorld_P3_P0_D1_D0)
 {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
@@ -232,7 +232,7 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P3_P0_D1_D0)
 
 }
 
-BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P2_P3_D0_D0)
+TEST(BlackBox, TCPDomainHelloWorld_P2_P3_D0_D0)
 {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
@@ -258,7 +258,7 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P2_P3_D0_D0)
 
 }
 
-BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P2_P3_D0_D1)
+TEST(BlackBox, TCPDomainHelloWorld_P2_P3_D0_D1)
 {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
@@ -278,7 +278,7 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P2_P3_D0_D1)
     ASSERT_FALSE(replier.is_matched());
 }
 
-BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P2_P3_D1_D0)
+TEST(BlackBox, TCPDomainHelloWorld_P2_P3_D1_D0)
 {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
@@ -298,7 +298,7 @@ BLACKBOXTEST(BlackBox, TCPDomainHelloWorld_P2_P3_D1_D0)
     ASSERT_FALSE(replier.is_matched());
 }
 
-BLACKBOXTEST(BlackBox, TCPMaxInitialPeer_P0_4_P3)
+TEST(BlackBox, TCPMaxInitialPeer_P0_4_P3)
 {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
@@ -319,7 +319,7 @@ BLACKBOXTEST(BlackBox, TCPMaxInitialPeer_P0_4_P3)
     ASSERT_TRUE(replier.is_matched());
 }
 
-BLACKBOXTEST(BlackBox, TCPMaxInitialPeer_P0_4_P4)
+TEST(BlackBox, TCPMaxInitialPeer_P0_4_P4)
 {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
@@ -339,7 +339,7 @@ BLACKBOXTEST(BlackBox, TCPMaxInitialPeer_P0_4_P4)
     ASSERT_FALSE(replier.is_matched());
 }
 
-BLACKBOXTEST(BlackBox, TCPMaxInitialPeer_P0_5_P4)
+TEST(BlackBox, TCPMaxInitialPeer_P0_5_P4)
 {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;
@@ -361,7 +361,7 @@ BLACKBOXTEST(BlackBox, TCPMaxInitialPeer_P0_5_P4)
 }
 
 #if TLS_FOUND
-BLACKBOXTEST(BlackBox, TCP_TLS)
+TEST(BlackBox, TCP_TLS)
 {
     TCPReqRepHelloWorldRequester requester;
     TCPReqRepHelloWorldReplier replier;

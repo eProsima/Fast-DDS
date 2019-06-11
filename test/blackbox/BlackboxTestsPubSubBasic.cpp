@@ -22,7 +22,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-BLACKBOXTEST(BlackBox, PubSubAsNonReliableHelloworld)
+TEST(BlackBox, PubSubAsNonReliableHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -50,7 +50,7 @@ BLACKBOXTEST(BlackBox, PubSubAsNonReliableHelloworld)
     reader.block_for_at_least(2);
 }
 
-BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
+TEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -80,7 +80,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
     reader.block_for_at_least(2);
 }
 
-BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworld)
+TEST(BlackBox, PubSubAsReliableHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -111,7 +111,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworld)
     reader.block_for_all();
 }
 
-BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableHelloworld)
+TEST(BlackBox, AsyncPubSubAsReliableHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -143,7 +143,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableHelloworld)
     reader.block_for_all();
 }
 
-BLACKBOXTEST(BlackBox, ReqRepAsReliableHelloworld)
+TEST(BlackBox, ReqRepAsReliableHelloworld)
 {
     ReqRepAsReliableHelloWorldRequester requester;
     ReqRepAsReliableHelloWorldReplier replier;
@@ -167,7 +167,7 @@ BLACKBOXTEST(BlackBox, ReqRepAsReliableHelloworld)
     }
 }
 
-BLACKBOXTEST(BlackBox, PubSubAsReliableData64kb)
+TEST(BlackBox, PubSubAsReliableData64kb)
 {
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
@@ -198,7 +198,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableData64kb)
     reader.block_for_all();
 }
 
-BLACKBOXTEST(BlackBox, PubSubMoreThan256Unacknowledged)
+TEST(BlackBox, PubSubMoreThan256Unacknowledged)
 {
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -225,7 +225,7 @@ BLACKBOXTEST(BlackBox, PubSubMoreThan256Unacknowledged)
     reader.block_for_all();
 }
 
-BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
+TEST(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);

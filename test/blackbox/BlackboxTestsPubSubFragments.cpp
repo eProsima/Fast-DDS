@@ -23,7 +23,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-BLACKBOXTEST(BlackBox, PubSubAsNonReliableData300kb)
+TEST(BlackBox, PubSubAsNonReliableData300kb)
 {
     // Mutes an expected error
     Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
@@ -41,7 +41,7 @@ BLACKBOXTEST(BlackBox, PubSubAsNonReliableData300kb)
     ASSERT_FALSE(data.empty());
 }
 
-BLACKBOXTEST(BlackBox, PubSubAsReliableData300kb)
+TEST(BlackBox, PubSubAsReliableData300kb)
 {
     // Mutes an expected error
     Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
@@ -59,7 +59,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableData300kb)
     ASSERT_FALSE(data.empty());
 }
 
-BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
+TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -96,7 +96,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
     reader.block_for_at_least(2);
 }
 
-BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kb)
+TEST(BlackBox, AsyncPubSubAsReliableData300kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -134,7 +134,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kb)
     reader.block_for_all();
 }
 
-BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
+TEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -186,7 +186,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
     ASSERT_EQ(eprosima::fastrtps::rtps::test_UDPv4Transport::test_UDPv4Transport_DropLog.size(), testTransport->dropLogLength);
 }
 
-BLACKBOXTEST(BlackBox, AsyncFragmentSizeTest)
+TEST(BlackBox, AsyncFragmentSizeTest)
 {
     // ThroghputController size large than maxMessageSize.
     {

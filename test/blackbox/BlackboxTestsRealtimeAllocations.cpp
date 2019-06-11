@@ -20,10 +20,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-// This tests only make sense when not allocating data on the history pool
-#ifndef DYNAMIC_RESERVE_MEMORY_MODE_TEST
-
-BLACKBOXTEST(BlackBox, PubSubReliableWithLimitedSubscribers)
+TEST(BlackBox, PubSubReliableWithLimitedSubscribers)
 {
     PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
     PubSubReader<FixedSizedType> reader2(TEST_TOPIC_NAME);
@@ -75,7 +72,7 @@ BLACKBOXTEST(BlackBox, PubSubReliableWithLimitedSubscribers)
     ASSERT_EQ(reader2.getReceivedCount(), 0u);
 }
 
-BLACKBOXTEST(BlackBox, AsyncPubSubReliableWithLimitedSubscribers)
+TEST(BlackBox, AsyncPubSubReliableWithLimitedSubscribers)
 {
     PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
     PubSubReader<FixedSizedType> reader2(TEST_TOPIC_NAME);
@@ -128,7 +125,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubReliableWithLimitedSubscribers)
     ASSERT_EQ(reader2.getReceivedCount(), 0u);
 }
 
-BLACKBOXTEST(BlackBox, PubSubBestEffortWithLimitedSubscribers)
+TEST(BlackBox, PubSubBestEffortWithLimitedSubscribers)
 {
     PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
     PubSubReader<FixedSizedType> reader2(TEST_TOPIC_NAME);
@@ -179,7 +176,7 @@ BLACKBOXTEST(BlackBox, PubSubBestEffortWithLimitedSubscribers)
     ASSERT_EQ(reader2.getReceivedCount(), 0u);
 }
 
-BLACKBOXTEST(BlackBox, AsyncPubSubBestEffortWithLimitedSubscribers)
+TEST(BlackBox, AsyncPubSubBestEffortWithLimitedSubscribers)
 {
     PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
     PubSubReader<FixedSizedType> reader2(TEST_TOPIC_NAME);
@@ -230,5 +227,3 @@ BLACKBOXTEST(BlackBox, AsyncPubSubBestEffortWithLimitedSubscribers)
     // Second reader should not receive data
     ASSERT_EQ(reader2.getReceivedCount(), 0u);
 }
-
-#endif

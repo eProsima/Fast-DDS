@@ -39,7 +39,7 @@ static void GetIP4s(std::vector<IPFinder::info_IP>& interfaces)
 }
 
 //Verify that outLocatorList is used to select the desired output channel
-BLACKBOXTEST(BlackBox, PubSubOutLocatorSelection)
+TEST(BlackBox, PubSubOutLocatorSelection)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -87,7 +87,7 @@ BLACKBOXTEST(BlackBox, PubSubOutLocatorSelection)
     reader.block_for_all();
 }
 
-BLACKBOXTEST(BlackBox, PubSubInterfaceWhitelistLocalhost)
+TEST(BlackBox, PubSubInterfaceWhitelistLocalhost)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -123,7 +123,7 @@ BLACKBOXTEST(BlackBox, PubSubInterfaceWhitelistLocalhost)
     reader.block_for_all();
 }
 
-BLACKBOXTEST(BlackBox, PubSubInterfaceWhitelistUnicast)
+TEST(BlackBox, PubSubInterfaceWhitelistUnicast)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);

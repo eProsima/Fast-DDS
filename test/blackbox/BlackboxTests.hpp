@@ -15,21 +15,6 @@
 #ifndef __BLACKBOX_BLACKBOXTESTS_HPP__
 #define __BLACKBOX_BLACKBOXTESTS_HPP__
 
-#if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
-#define MEMORY_MODE_STRING ReallocMem
-#define MEMORY_MODE_BYTE 1
-#elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
-#define MEMORY_MODE_STRING DynMem
-#define MEMORY_MODE_BYTE 2
-#else
-#define MEMORY_MODE_STRING PreallocMem
-#define MEMORY_MODE_BYTE 3
-#endif
-
-#define PASTER(x, y) x ## _ ## y
-#define EVALUATOR(x, y) PASTER(x, y)
-#define BLACKBOXTEST(test_case_name, test_name) TEST(EVALUATOR(test_case_name, MEMORY_MODE_STRING), test_name)
-#define BLACKBOXTEST_F(test_case_name, test_name) TEST_F(EVALUATOR(test_case_name, MEMORY_MODE_STRING), test_name)
 #define TEST_TOPIC_NAME std::string(test_info_->test_case_name() + std::string("_") + test_info_->name())
 
 #if defined(_WIN32)
