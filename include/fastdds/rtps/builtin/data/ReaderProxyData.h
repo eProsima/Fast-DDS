@@ -231,7 +231,7 @@ class ReaderProxyData
             return m_topicKind;
         }
 
-        RTPS_DllAPI void type_id(TypeIdV1 type_id)
+        RTPS_DllAPI void type_id(const TypeIdV1& type_id)
         {
             m_type_id = type_id;
         }
@@ -246,7 +246,7 @@ class ReaderProxyData
             return m_type_id;
         }
 
-        RTPS_DllAPI void type(TypeObjectV1 type)
+        RTPS_DllAPI void type(const TypeObjectV1& type)
         {
             m_type = type;
         }
@@ -261,19 +261,19 @@ class ReaderProxyData
             return m_type;
         }
 
-        RTPS_DllAPI void topicDiscoveryKind(TopicDiscoveryKind_t topicDiscoveryKind)
+        RTPS_DllAPI void type_information(const XTypes::TypeInformation& type_information)
         {
-            m_topicDiscoveryKind = topicDiscoveryKind;
+            m_type_information = type_information;
         }
 
-        RTPS_DllAPI TopicDiscoveryKind_t topicDiscoveryKind() const
+        RTPS_DllAPI const XTypes::TypeInformation& type_information() const
         {
-            return m_topicDiscoveryKind;
+            return m_type_information;
         }
 
-        RTPS_DllAPI TopicDiscoveryKind_t& topicDiscoveryKind()
+        RTPS_DllAPI XTypes::TypeInformation& type_information()
         {
-            return m_topicDiscoveryKind;
+            return m_type_information;
         }
 
         inline bool disable_positive_acks() const
@@ -354,12 +354,12 @@ class ReaderProxyData
         bool m_isAlive;
         //!Topic kind
         TopicKind_t m_topicKind;
-        //!Topic Discovery Kind
-        TopicDiscoveryKind_t m_topicDiscoveryKind;
         //!Type Identifier
         TypeIdV1 m_type_id;
         //!Type Object
         TypeObjectV1 m_type;
+        //!Type Information
+        XTypes::TypeInformation m_type_information;
 };
 
 }

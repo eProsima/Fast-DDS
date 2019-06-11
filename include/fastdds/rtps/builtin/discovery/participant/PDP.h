@@ -42,6 +42,7 @@ class RTPSReader;
 class WriterHistory;
 class ReaderHistory;
 class RTPSParticipantImpl;
+class RTPSParticipantListener;
 class BuiltinProtocols;
 class EDP;
 class TimedEvent;
@@ -373,6 +374,21 @@ protected:
     bool lookup_participant_key(
             const GUID_t& participant_guid,
             InstanceHandle_t& key);
+
+    void check_and_notify_type_discovery(
+        RTPSParticipantListener* listener,
+        const WriterProxyData& wdata) const;
+
+    void check_and_notify_type_discovery(
+        RTPSParticipantListener* listener,
+        const ReaderProxyData& rdata) const;
+
+    void check_and_notify_type_discovery(
+        RTPSParticipantListener* listener,
+        const string_255 topic_name,
+        const string_255 type_name,
+        const types::TypeIdentifier& type_id,
+        const types::TypeObject& type_obj) const;
 
 };
 

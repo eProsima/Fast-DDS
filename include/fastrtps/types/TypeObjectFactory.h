@@ -37,6 +37,7 @@ protected:
     std::map<const std::string, const TypeIdentifier*> complete_identifiers_; // Only EK_COMPLETE
     std::map<const TypeIdentifier*, const TypeObject*> objects_; // EK_MINIMAL
     std::map<const TypeIdentifier*, const TypeObject*> complete_objects_; // EK_COMPLETE
+    mutable std::map<const TypeIdentifier*, TypeInformation*> informations_;
     std::map<std::string, std::string> aliases_; // Aliases
 
     DynamicType_ptr build_dynamic_type(
@@ -65,12 +66,23 @@ protected:
             const DynamicType_ptr annotation_descriptor_type,
             const NameHash& hash) const;
 
+    void fill_minimal_information(
+            TypeInformation* info,
+            const TypeIdentifier* ident) const;
+
+    void fill_complete_information(
+            TypeInformation* info,
+            const TypeIdentifier* ident) const;
+
 public:
     RTPS_DllAPI static TypeObjectFactory* get_instance();
 
     RTPS_DllAPI static ResponseCode delete_instance();
 
     ~TypeObjectFactory();
+
+    RTPS_DllAPI const TypeInformation* get_type_information(
+            const std::string &type_name) const;
 
     RTPS_DllAPI const TypeObject* get_type_object(
             const std::string& type_name,

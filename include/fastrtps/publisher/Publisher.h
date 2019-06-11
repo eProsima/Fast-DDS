@@ -113,7 +113,7 @@ public:
     * @param max_wait Maximum time to wait until all changes are acknowledged.
     * @return True if all were acknowledged.
     */
-    bool wait_for_all_acked(const Time_t& max_wait);
+    bool wait_for_all_acked(const Duration_t& max_wait);
 
     /**
      * Get the GUID_t of the associated RTPSWriter.

@@ -129,7 +129,7 @@ class PublisherImpl
      */
     fastdds::dds::TopicDataType* getType() {return mp_type;};
 
-    bool wait_for_all_acked(const Time_t& max_wait);
+    bool wait_for_all_acked(const Duration_t& max_wait);
 
     /**
      * @brief Returns the offered deadline missed status

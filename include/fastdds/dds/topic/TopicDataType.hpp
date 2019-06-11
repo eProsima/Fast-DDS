@@ -27,10 +27,16 @@
 namespace eprosima {
 
 namespace fastrtps {
+
 namespace rtps {
 struct SerializedPayload_t;
 struct InstanceHandle_t;
 } // namesapace rtps
+
+namespace types {
+class TypeIdentifier;
+} // namespace types
+
 } // namesapace fastrtps
 
 namespace fastdds {
@@ -122,6 +128,20 @@ class  TopicDataType
             return m_topicDataTypeName.c_str();
         }
 
+        /**
+         * Get topic data type identifier
+         * @return Topic data type identifier
+         */
+        RTPS_DllAPI inline const fastrtps::types::TypeIdentifier* type_identifier() const { return type_id_; }
+
+        /**
+         * Set topic data type identifier
+         */
+        RTPS_DllAPI inline void type_identifier(const fastrtps::types::TypeIdentifier* type_identifier)
+        {
+            type_id_ = type_identifier;
+        }
+
         //! Maximum serialized size of the type in bytes.
         //! If the type has unbounded fields, and therefore cannot have a maximum size, use 0.
         uint32_t m_typeSize;
@@ -131,6 +151,8 @@ class  TopicDataType
     private:
         //! Data Type Name.
         std::string m_topicDataTypeName;
+        //! Type Identifier.
+        const fastrtps::types::TypeIdentifier* type_id_;
 
         friend class fastdds::dds::TypeSupport;
 };
