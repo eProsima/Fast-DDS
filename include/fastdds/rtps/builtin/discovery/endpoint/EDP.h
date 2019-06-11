@@ -150,14 +150,14 @@ class EDP
          * @param rdata Pointer to the ReaderProxyData object.
          * @return True if the two can be matched.
          */
-        static bool validMatching(const WriterProxyData* wdata, const ReaderProxyData* rdata);
+        bool validMatching(const WriterProxyData* wdata, const ReaderProxyData* rdata);
         /**
          * Check the validity of a matching between a RTPSReader and a WriterProxyData object.
          * @param rdata Pointer to the ReaderProxyData object.
          * @param wdata Pointer to the WriterProxyData object.
          * @return True if the two can be matched.
          */
-        static bool validMatching(const ReaderProxyData* rdata, const WriterProxyData* wdata);
+        bool validMatching(const ReaderProxyData* rdata, const WriterProxyData* wdata);
 
         /**
          * Unpair a WriterProxyData object from all local readers.
@@ -233,10 +233,29 @@ class EDP
          */
         bool pairingWriter(RTPSWriter* W, const GUID_t& participant_guid, const WriterProxyData& wdata);
 
-        static bool checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata);
+        bool checkDataRepresentationQos(
+                const WriterProxyData* wdata,
+                const ReaderProxyData* rdata) const;
 
-        static bool checkTypeIdentifier(const eprosima::fastrtps::types::TypeIdentifier * wti,
-                const eprosima::fastrtps::types::TypeIdentifier * rti);
+        bool checkTypeValidation(
+                const WriterProxyData* wdata,
+                const ReaderProxyData* rdata) const;
+
+        bool checkTypeIdentifier(
+                const WriterProxyData* wdata,
+                const ReaderProxyData* rdata) const;
+
+        bool hasTypeIdentifier(
+                const WriterProxyData* wdata,
+                const ReaderProxyData* rdata) const;
+
+        bool checkTypeObject(
+                const WriterProxyData* wdata,
+                const ReaderProxyData* rdata) const;
+
+        bool hasTypeObject(
+                const WriterProxyData* wdata,
+                const ReaderProxyData* rdata) const;
 
         ReaderProxyData temp_reader_proxy_data_;
         WriterProxyData temp_writer_proxy_data_;

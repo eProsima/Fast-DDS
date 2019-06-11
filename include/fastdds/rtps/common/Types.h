@@ -74,14 +74,6 @@ typedef enum TopicKind_t
     WITH_KEY
 }TopicKind_t;
 
-//!Topic discovery kind
-typedef enum TopicDiscoveryKind_t
-{
-    NO_CHECK,
-    MINIMAL,
-    COMPLETE
-}TopicDiscoveryKind_t;
-
 #if __BIG_ENDIAN__
 const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #else

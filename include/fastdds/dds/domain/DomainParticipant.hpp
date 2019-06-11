@@ -367,6 +367,10 @@ public:
 
     fastrtps::rtps::ResourceEvent& get_resource_event() const;
 
+    const fastrtps::rtps::RTPSParticipant* rtps_participant() const;
+
+    fastrtps::rtps::RTPSParticipant* rtps_participant();
+
 private:
 
     DomainParticipant();

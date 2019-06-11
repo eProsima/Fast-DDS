@@ -58,7 +58,8 @@ public:
                (this->m_topicData == b.m_topicData) &&
                (this->m_groupData == b.m_groupData) &&
                (this->m_publishMode == b.m_publishMode) &&
-               (this->m_disablePositiveACKs == b.m_disablePositiveACKs);
+               (this->m_disablePositiveACKs == b.m_disablePositiveACKs) &&
+               (this->representation == b.representation);
     }
 
     //!Durability Qos, implemented in the library.
@@ -111,6 +112,9 @@ public:
 
     //!Publication Mode Qos, implemented in the library.
     PublishModeQosPolicy m_publishMode;
+
+    //!Data Representation Qos, implemented in the library.
+    DataRepresentationQosPolicy representation;
 
     //!Disable positive acks QoS, implemented in the library.
     DisablePositiveACKsQosPolicy m_disablePositiveACKs;

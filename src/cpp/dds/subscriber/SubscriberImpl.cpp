@@ -228,6 +228,7 @@ bool SubscriberImpl::delete_datareader(
         auto dr_it = std::find(it->second.begin(), it->second.end(), reader->impl_);
         if (dr_it != it->second.end())
         {
+            (*dr_it)->set_listener(nullptr);
             it->second.erase(dr_it);
             return true;
         }

@@ -129,6 +129,15 @@ public:
             const std::string& type_name);
 
     /**
+     * @brief Registers into types Factories an already registered dynamic type
+     * to ease its use through factories.
+     * @param type_name
+     * @return True if registered.
+     */
+    bool register_dynamic_type_to_factories(
+        const std::string& type_name) const;
+
+    /**
      * Unregister a type in this participant.
      * @param typeName Name of the type
      * @return True if unregistered.
@@ -321,6 +330,13 @@ private:
             void onWriterDiscovery(
                     fastrtps::rtps::RTPSParticipant* participant,
                     fastrtps::rtps::WriterDiscoveryInfo&& info) override;
+
+            void on_type_discovery(
+                fastrtps::rtps::RTPSParticipant* participant,
+                const fastrtps::string_255& topic,
+                const fastrtps::types::TypeIdentifier* identifier,
+                const fastrtps::types::TypeObject* object,
+                fastrtps::types::DynamicType_ptr dyn_type) override;
 
             DomainParticipantImpl* participant_;
 

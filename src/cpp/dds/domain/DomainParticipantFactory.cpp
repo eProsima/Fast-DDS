@@ -125,21 +125,36 @@ bool DomainParticipantFactory::delete_instance()
 bool DomainParticipantFactory::delete_participant(
         DomainParticipant* part)
 {
+    using PartVectorIt = std::vector<DomainParticipantImpl*>::iterator;
+    using VectorIt = std::map<uint8_t, std::vector<DomainParticipantImpl*>>::iterator;
+
     if (part != nullptr)
     {
         std::lock_guard<std::mutex> guard(mtx_participants_);
 
-        auto it = participants_.find(part->get_domain_id());
+        VectorIt vit = participants_.find(part->get_domain_id());
 
-        if (it != participants_.end())
+        if (vit != participants_.end())
         {
-            auto pit = std::find(it->second.begin(), it->second.end(), part->impl_);
-            if (pit != it->second.end())
+            for (PartVectorIt pit = vit->second.begin(); pit != vit->second.end();)
             {
-                it->second.erase(pit);
-                delete *pit;
-                return true;
+                if ((*pit)->get_participant() == part
+                    || (*pit) ->get_participant()->guid() == part->guid())
+                {
+                    PartVectorIt next_it = vit->second.erase(pit);
+                    delete (*pit);
+                    pit = next_it;
+                }
+                else
+                {
+                    ++pit;
+                }
             }
+            if (vit->second.empty())
+            {
+                participants_.erase(vit);
+            }
+            return true;
         }
     }
     return false;
@@ -185,7 +200,18 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 
     {
         std::lock_guard<std::mutex> guard(mtx_participants_);
-        participants_[domain_id].push_back(dom_part_impl);
+        using VectorIt = std::map<uint8_t, std::vector<DomainParticipantImpl*>>::iterator;
+        VectorIt vector_it = participants_.find(domain_id);
+
+        if (vector_it == participants_.end())
+        {
+            // Insert the vector
+            std::vector<DomainParticipantImpl*> new_vector;
+            auto pair_it = participants_.insert(std::make_pair(domain_id, std::move(new_vector)));
+            vector_it = pair_it.first;
+        }
+
+        vector_it->second.push_back(pspartimpl);
     }
     return dom_part;
 }
@@ -202,6 +228,25 @@ DomainParticipant* DomainParticipantFactory::lookup_participant(
     }
 
     return nullptr;
+}
+
+std::vector<DomainParticipant*> DomainParticipantFactory::lookup_participants(
+    uint8_t domain_id) const
+{
+    std::lock_guard<std::mutex> guard(mtx_participants_);
+
+    std::vector<DomainParticipant*> result;
+    auto it = participants_.find(domain_id);
+    if (it != participants_.end())
+    {
+        const std::vector<DomainParticipantImpl*>& v = it->second;
+        for (auto pit = v.begin(); pit != v.end(); ++pit)
+        {
+            result.push_back((*pit)->get_participant());
+        }
+    }
+
+    return result;
 }
 
 bool DomainParticipantFactory::get_default_participant_qos(

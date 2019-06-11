@@ -270,6 +270,7 @@ bool PublisherImpl::delete_datawriter(
         auto dw_it = std::find(vit->second.begin(), vit->second.end(), writer->impl_);
         if (dw_it != vit->second.end())
         {
+            (*dw_it)->set_listener(nullptr);
             vit->second.erase(dw_it);
             return true;
         }
