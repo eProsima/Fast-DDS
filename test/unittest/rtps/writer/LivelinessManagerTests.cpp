@@ -401,15 +401,15 @@ TEST(LivelinessManagerTests, TimerOwnerCalculation)
 
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 1));
-    EXPECT_EQ(env->num_writers_lost, 1);
+    EXPECT_EQ(env->num_writers_lost, 1u);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 3));
-    EXPECT_EQ(env->num_writers_lost, 2);
+    EXPECT_EQ(env->num_writers_lost, 2u);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 2));
-    EXPECT_EQ(env->num_writers_lost, 3);
+    EXPECT_EQ(env->num_writers_lost, 3u);
 }
 
 //! Tests that the writer that is the current timer owner can be removed, and that the timer is restarted
@@ -433,7 +433,7 @@ TEST(LivelinessManagerTests, TimerOwnerRemoved)
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 2));
-    EXPECT_EQ(env->num_writers_lost, 1);
+    EXPECT_EQ(env->num_writers_lost, 1u);
 }
 
 }

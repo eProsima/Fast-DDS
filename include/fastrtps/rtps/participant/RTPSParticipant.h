@@ -36,13 +36,13 @@ class ReaderQos;
 
 namespace rtps {
 
-class BuiltinProtocols;
 class RTPSParticipantImpl;
 class RTPSWriter;
 class RTPSReader;
 class WriterProxyData;
 class ReaderProxyData;
 class ResourceEvent;
+class WLP;
 
 /**
  * @brief Class RTPSParticipant, contains the public API for a RTPSParticipant.
@@ -198,10 +198,10 @@ public:
     ResourceEvent& get_resource_event() const;
 
     /**
-     * @brief A method to retrieve the built-in protocols
-     * @return Built-in protocols
+     * @brief A method to retrieve the built-in writer liveliness protocol
+     * @return Writer liveliness protocol
      */
-    BuiltinProtocols* get_builtin_protocols() const;
+    WLP* wlp() const;
 
 private:
 

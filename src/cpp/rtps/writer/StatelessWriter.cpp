@@ -164,7 +164,7 @@ void StatelessWriter::unsent_change_added_to_history(
 
         if (liveliness_lease_duration_ < c_TimeInfinite)
         {
-            mp_RTPSParticipant->get_builtin_protocols()->mp_WLP->assert_liveliness(
+            mp_RTPSParticipant->wlp()->assert_liveliness(
                         getGuid(),
                         liveliness_kind_,
                         liveliness_lease_duration_);

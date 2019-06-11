@@ -79,7 +79,7 @@ bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
 
     if (liveliness_lease_duration_ < c_TimeInfinite)
     {
-        auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+        auto wlp = this->mp_RTPSParticipant->wlp();
         if ( wlp != nullptr)
         {
             wlp->sub_liveliness_manager_->add_writer(
@@ -110,7 +110,7 @@ bool StatelessReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
 
             if (liveliness_lease_duration_ < c_TimeInfinite)
             {
-                auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+                auto wlp = this->mp_RTPSParticipant->wlp();
                 if ( wlp != nullptr)
                 {
                     wlp->sub_liveliness_manager_->remove_writer(
@@ -222,7 +222,7 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
         {
             if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
-                auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+                auto wlp = this->mp_RTPSParticipant->wlp();
                 if ( wlp != nullptr)
                 {
                     wlp->sub_liveliness_manager_->assert_liveliness(
@@ -243,7 +243,7 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
                             att) &&
                         att.liveliness_kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
                 {
-                    auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+                    auto wlp = this->mp_RTPSParticipant->wlp();
                     if ( wlp != nullptr)
                     {
                         wlp->sub_liveliness_manager_->assert_liveliness(
@@ -326,7 +326,7 @@ bool StatelessReader::processDataFragMsg(
         {
             if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
-                auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+                auto wlp = this->mp_RTPSParticipant->wlp();
                 if ( wlp != nullptr)
                 {
                     wlp->sub_liveliness_manager_->assert_liveliness(
@@ -347,7 +347,7 @@ bool StatelessReader::processDataFragMsg(
                             att) &&
                         att.liveliness_kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
                 {
-                    auto wlp = this->mp_RTPSParticipant->get_builtin_protocols()->mp_WLP;
+                    auto wlp = this->mp_RTPSParticipant->wlp();
                     if ( wlp != nullptr)
                     {
                         wlp->sub_liveliness_manager_->assert_liveliness(

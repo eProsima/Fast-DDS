@@ -89,9 +89,6 @@ void WriterProxy::for_each_set_status_from_and_maybe_remove(decltype(WriterProxy
     }
 }
 
-static const int WRITERPROXY_LIVELINESS_PERIOD_MULTIPLIER = 1;
-
-
 WriterProxy::~WriterProxy()
 {
     if(mp_initialAcknack != nullptr)

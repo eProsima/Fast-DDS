@@ -1169,7 +1169,7 @@ BLACKBOXTEST(LivelinessQos, TwoWriters_TwoReaders_ManualByParticipant)
     unsigned int assert_rate_ms = 50;
     for (unsigned int count = 0; count < num_assertions; count++)
     {
-        publishers.assert_liveliness(0);
+        publishers.assert_liveliness(0u);
         std::this_thread::sleep_for(std::chrono::milliseconds(assert_rate_ms));
     }
     // Only one publisher asserts liveliness but the other should be asserted by the QoS, as
@@ -1233,7 +1233,7 @@ BLACKBOXTEST(LivelinessQos, TwoWriters_TwoReaders_ManualByTopic)
     unsigned int assert_rate_ms = 10;
     for (unsigned int count = 0; count < num_assertions; count++)
     {
-        publishers.assert_liveliness(0);
+        publishers.assert_liveliness(0u);
         std::this_thread::sleep_for(std::chrono::milliseconds(assert_rate_ms));
     }
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 0u);
@@ -1289,7 +1289,7 @@ BLACKBOXTEST(LivelinessQos, TwoWriters_TwoReaders)
     publishers.pub_wait_discovery();
     subscribers.sub_wait_discovery();
 
-    publishers.assert_liveliness(1);
+    publishers.assert_liveliness(1u);
     std::this_thread::sleep_for(std::chrono::milliseconds(announcement_period_ms * 2));
 
     // All three subscribers are notified that liveliness was recovered
@@ -1361,13 +1361,13 @@ BLACKBOXTEST(LivelinessQos, ThreeWriters_ThreeReaders)
     // The manual by participant writer asserts liveliness
     // The manual by participant reader will consider that both the manual by participant and manual by topic
     // writers have recovered liveliness
-    publishers.assert_liveliness(1);
+    publishers.assert_liveliness(1u);
     std::this_thread::sleep_for(std::chrono::milliseconds(announcement_period_ms * 2));
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 5u);
 
     // The manual by topic publisher asserts liveliness
     // The manual by topic reader will detect that a new writer has recovered liveliness
-    publishers.assert_liveliness(2);
+    publishers.assert_liveliness(2u);
     std::this_thread::sleep_for(std::chrono::milliseconds(announcement_period_ms * 2));
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 6u);
 
@@ -1416,9 +1416,9 @@ BLACKBOXTEST(LivelinessQos, UnmatchedWriter)
     subscribers.sub_wait_discovery();
 
     // Change deadline period of the first subscriber so that it no longer matches with the publisher
-    subscribers.sub_update_deadline_period(0.10, 0);
+    subscribers.sub_update_deadline_period(0.10, 0u);
 
-    publishers.assert_liveliness(0);
+    publishers.assert_liveliness(0u);
     std::this_thread::sleep_for(std::chrono::milliseconds(announcement_period_ms * 2));
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 1u);
 }
