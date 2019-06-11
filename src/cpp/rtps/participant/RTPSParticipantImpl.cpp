@@ -39,6 +39,7 @@
 
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/transport/TCPv4TransportDescriptor.h>
 
 #include <fastrtps/rtps/RTPSDomain.h>
 
@@ -103,10 +104,42 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         m_network_Factory.RegisterTransport(&descriptor);
     }
 
-    // User defined transports
-    for (const auto& transportDescriptor : PParam.userTransports)
+    /// Creation of metatraffic locator and receiver resources
+    uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(m_att.builtin.domainId);
+    uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(m_att.builtin.domainId, m_att.participantID);
+
+    // Workaround TCP discovery issues when register
+    switch (PParam.builtin.discoveryProtocol)
     {
-        m_network_Factory.RegisterTransport(transportDescriptor.get());
+    case PDPType::CLIENT:
+    case PDPType::SERVER:
+    case PDPType::BACKUP:
+
+        // Verify if listening ports are provided, if not provide them to enable discovery server functionality
+        // Note that PParam.userTransports is a vector of shared_ptr so if I want to modify it locally I must get
+        // my own copy and restore it afterwards
+        for ( auto& transportDescriptor : PParam.userTransports)
+        {
+            TCPTransportDescriptor * pT = dynamic_cast< TCPTransportDescriptor *>(transportDescriptor.get());
+            if (pT && pT->listening_ports.empty())
+            {
+                pT->add_listener_port(static_cast<uint16_t>(metatraffic_unicast_port));
+                m_network_Factory.RegisterTransport(pT);
+                pT->listening_ports.clear();
+            }
+            else
+            {
+                m_network_Factory.RegisterTransport(transportDescriptor.get());
+            }
+        }
+        break;
+    default:
+
+        // User defined transports
+        for (const auto& transportDescriptor : PParam.userTransports)
+        {
+            m_network_Factory.RegisterTransport(transportDescriptor.get());
+        }
     }
 
     mp_userParticipant->mp_impl = this;
@@ -119,10 +152,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         std::unique_ptr<FlowController> controller(new ThroughputController(PParam.throughputController, this));
         m_controllers.push_back(std::move(controller));
     }
-
-    /// Creation of metatraffic locator and receiver resources
-    uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(m_att.builtin.domainId);
-    uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(m_att.builtin.domainId, m_att.participantID);
 
     /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
        Else -> Take them */
