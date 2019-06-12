@@ -56,47 +56,47 @@ class WriterProxyData;
  */
 class WLP
 {
-	friend class WLPListener;
-	friend class WLivelinessPeriodicAssertion;
+    friend class WLPListener;
+    friend class WLivelinessPeriodicAssertion;
     friend class StatefulReader;
     friend class StatelessReader;
 
 public:
-	/**
-	* Constructor
-	* @param prot Pointer to the BuiltinProtocols object.
-	*/
-	WLP(BuiltinProtocols* prot);
-	virtual ~WLP();
-	/**
-	 * Initialize the WLP protocol.
-	 * @param p Pointer to the RTPS participant implementation.
-	 * @return true if the initialziacion was succesful.
-	 */
-	bool initWL(RTPSParticipantImpl* p);
-	/**
-	 * Assign the remote endpoints for a newly discovered RTPSParticipant.
-	 * @param pdata Pointer to the RTPSParticipantProxyData object.
-	 * @return True if correct.
-	 */
-	bool assignRemoteEndpoints(const ParticipantProxyData& pdata);
-	/**
-	 * Remove remote endpoints from the liveliness protocol.
-	 * @param pdata Pointer to the ParticipantProxyData to remove
-	 */
-	void removeRemoteEndpoints(ParticipantProxyData* pdata);
-	/**
-	 * Add a local writer to the liveliness protocol.
-	 * @param W Pointer to the RTPSWriter.
-	 * @param wqos Quality of service policies for the writer.
+    /**
+    * Constructor
+    * @param prot Pointer to the BuiltinProtocols object.
+    */
+    WLP(BuiltinProtocols* prot);
+    virtual ~WLP();
+    /**
+     * Initialize the WLP protocol.
+     * @param p Pointer to the RTPS participant implementation.
+     * @return true if the initialziacion was succesful.
+     */
+    bool initWL(RTPSParticipantImpl* p);
+    /**
+     * Assign the remote endpoints for a newly discovered RTPSParticipant.
+     * @param pdata Pointer to the RTPSParticipantProxyData object.
+     * @return True if correct.
+     */
+    bool assignRemoteEndpoints(const ParticipantProxyData& pdata);
+    /**
+     * Remove remote endpoints from the liveliness protocol.
+     * @param pdata Pointer to the ParticipantProxyData to remove
+     */
+    void removeRemoteEndpoints(ParticipantProxyData* pdata);
+    /**
+     * Add a local writer to the liveliness protocol.
+     * @param W Pointer to the RTPSWriter.
+     * @param wqos Quality of service policies for the writer.
     * @return True if correct.
-	 */
+     */
     bool add_local_writer(RTPSWriter* W, const WriterQos& wqos);
-	/**
-	 * Remove a local writer from the liveliness protocol.
-	 * @param W Pointer to the RTPSWriter.
-	 * @return True if removed.
-	 */
+    /**
+     * Remove a local writer from the liveliness protocol.
+     * @param W Pointer to the RTPSWriter.
+     * @return True if removed.
+     */
     bool remove_local_writer(RTPSWriter* W);
 
     /**
@@ -126,11 +126,11 @@ public:
             LivelinessQosPolicyKind kind,
             Duration_t lease_duration);
 
-	/**
-	 * Get the builtin protocols
-	 * @return Builtin protocols
-	 */
-	BuiltinProtocols* getBuiltinProtocols(){return mp_builtinProtocols;};
+    /**
+     * Get the builtin protocols
+     * @return Builtin protocols
+     */
+    BuiltinProtocols* getBuiltinProtocols(){return mp_builtinProtocols;};
 
     /**
      * Get the livelines builtin writer
@@ -143,7 +143,7 @@ public:
     * @return writer history
     */
     WriterHistory* getBuiltinWriterHistory();
-	
+
 #if HAVE_SECURITY
     bool pairing_remote_reader_with_local_writer_after_security(const GUID_t& local_writer,
         const ReaderProxyData& remote_reader_data);
@@ -154,7 +154,7 @@ public:
 
 private:
     /**
-     * Create the endpoitns used in the WLP.
+     * Create the endpoints used in the WLP.
      * @return true if correct.
      */
     bool createEndpoints();
@@ -170,17 +170,17 @@ private:
     //! Minimum time among liveliness periods of manual by participant writers, in milliseconds
     double min_manual_by_participant_ms_;
     //!Pointer to the local RTPSParticipant.
-	RTPSParticipantImpl* mp_participant;
-	//!Pointer to the builtinprotocol class.
-	BuiltinProtocols* mp_builtinProtocols;
-	//!Pointer to the builtinRTPSParticipantMEssageWriter.
-	StatefulWriter* mp_builtinWriter;
-	//!Pointer to the builtinRTPSParticipantMEssageReader.
-	StatefulReader* mp_builtinReader;
-	//!Writer History
-	WriterHistory* mp_builtinWriterHistory;
-	//!Reader History
-	ReaderHistory* mp_builtinReaderHistory;
+    RTPSParticipantImpl* mp_participant;
+    //!Pointer to the builtinprotocol class.
+    BuiltinProtocols* mp_builtinProtocols;
+    //!Pointer to the builtinRTPSParticipantMEssageWriter.
+    StatefulWriter* mp_builtinWriter;
+    //!Pointer to the builtinRTPSParticipantMEssageReader.
+    StatefulReader* mp_builtinReader;
+    //!Writer History
+    WriterHistory* mp_builtinWriterHistory;
+    //!Reader History
+    ReaderHistory* mp_builtinReaderHistory;
     //!Listener object.
     WLPListener* mp_listener;
     //!Pointer to the periodic assertion timer object for automatic liveliness writers

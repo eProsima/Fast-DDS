@@ -58,14 +58,23 @@ public:
     * @param code Code representing the status of the event
     * @param msg Message associated to the event
     */
-    void event(EventCode code, const char* msg= nullptr) override;
+    void event(
+            EventCode code,
+            const char* msg= nullptr) override;
 
 private:
 
-    //! Asserts the liveliness of AUTOMATIC kind writers
+    //! @brief Asserts the liveliness of AUTOMATIC kind writers
+    //! @return True if liveliness was successfully asserted
     bool automatic_liveliness_assertion();
-    //! Asserts the liveliness of MANUAL_BY_PARTICIPANT kind writers
+
+    //! @brief Asserts the liveliness of MANUAL_BY_PARTICIPANT kind writers
+    //! @return True if liveliness was successfully asserted
     bool manual_by_participant_liveliness_assertion();
+
+    //! @brief Adds a cache change to the writer history
+    //! @return True if the cache change was added
+    bool add_cache_change();
 
     //! Liveliness Kind that is being asserted by this object.
     LivelinessQosPolicyKind m_livelinessKind;

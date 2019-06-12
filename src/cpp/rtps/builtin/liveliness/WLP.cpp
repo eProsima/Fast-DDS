@@ -76,28 +76,28 @@ WLP::WLP(BuiltinProtocols* p)
 
 WLP::~WLP()
 {
-    if(automatic_liveliness_assertion_!=nullptr)
+    if (automatic_liveliness_assertion_ != nullptr)
     {
-        delete(automatic_liveliness_assertion_);
+        delete automatic_liveliness_assertion_;
         automatic_liveliness_assertion_ = nullptr;
     }
-    if(manual_liveliness_assertion_!=nullptr)
+    if (manual_liveliness_assertion_ != nullptr)
     {
-        delete(this->manual_liveliness_assertion_);
+        delete this->manual_liveliness_assertion_;
         manual_liveliness_assertion_ = nullptr;
     }
 
 #if HAVE_SECURITY
     mp_participant->deleteUserEndpoint(mp_builtinReaderSecure);
     mp_participant->deleteUserEndpoint(mp_builtinWriterSecure);
-    delete(this->mp_builtinReaderSecureHistory);
-    delete(this->mp_builtinWriterSecureHistory);
+    delete this->mp_builtinReaderSecureHistory;
+    delete this->mp_builtinWriterSecureHistory;
 #endif
     mp_participant->deleteUserEndpoint(mp_builtinReader);
     mp_participant->deleteUserEndpoint(mp_builtinWriter);
-    delete(this->mp_builtinReaderHistory);
-    delete(this->mp_builtinWriterHistory);
-    delete(this->mp_listener);
+    delete this->mp_builtinReaderHistory;
+    delete this->mp_builtinWriterHistory;
+    delete this->mp_listener;
 
     delete pub_liveliness_manager_;
     delete sub_liveliness_manager_;
@@ -137,7 +137,7 @@ bool WLP::initWL(RTPSParticipantImpl* p)
 
     bool retVal = createEndpoints();
 #if HAVE_SECURITY
-    if(retVal) createSecureEndpoints();
+    if (retVal) createSecureEndpoints();
 #endif
     return retVal;
 }
@@ -161,13 +161,13 @@ bool WLP::createEndpoints()
     watt.endpoint.topicKind = WITH_KEY;
     watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     watt.endpoint.reliabilityKind = RELIABLE;
-    if(mp_participant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
+    if (mp_participant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
             mp_participant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
     {
         watt.mode = ASYNCHRONOUS_WRITER;
     }
     RTPSWriter* wout;
-    if(mp_participant->createWriter(
+    if (mp_participant->createWriter(
                 &wout,
                 watt,
                 mp_builtinWriterHistory,
@@ -209,7 +209,7 @@ bool WLP::createEndpoints()
     ratt.endpoint.remoteLocatorList = mp_builtinProtocols->m_initialPeersList;
     ratt.endpoint.topicKind = WITH_KEY;
     RTPSReader* rout;
-    if(mp_participant->createReader(
+    if (mp_participant->createReader(
                 &rout,
                 ratt,
                 mp_builtinReaderHistory,
@@ -364,7 +364,7 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     partdet &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
     auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
 
-    if((auxendp!=0 || partdet!=0) && this->mp_builtinReader!=nullptr)
+    if ((auxendp!=0 || partdet!=0) && this->mp_builtinReader!=nullptr)
     {
         logInfo(RTPS_LIVELINESS,"Adding remote writer to my local Builtin Reader");
         RemoteWriterAttributes watt(pdata.m_VendorId);
@@ -380,7 +380,7 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     }
     auxendp = endp;
     auxendp &=BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
-    if((auxendp!=0 || partdet!=0) && this->mp_builtinWriter!=nullptr)
+    if ((auxendp!=0 || partdet!=0) && this->mp_builtinWriter!=nullptr)
     {
         logInfo(RTPS_LIVELINESS,"Adding remote reader to my local Builtin Writer");
         RemoteReaderAttributes ratt(pdata.m_VendorId);
@@ -410,7 +410,7 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         watt.topicKind(WITH_KEY);
         watt.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         watt.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-        if(!mp_participant->security_manager().discovered_builtin_writer(
+        if (!mp_participant->security_manager().discovered_builtin_writer(
             mp_builtinReaderSecure->getGuid(), pdata.m_guid, watt,
             mp_builtinReaderSecure->getAttributes().security_attributes()))
         {
@@ -454,7 +454,7 @@ void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
     partdet &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
     auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
 
-    if((auxendp!=0 || partdet!=0) && this->mp_builtinReader!=nullptr)
+    if ((auxendp!=0 || partdet!=0) && this->mp_builtinReader!=nullptr)
     {
         logInfo(RTPS_LIVELINESS,"Removing remote writer from my local Builtin Reader");
         RemoteWriterAttributes watt;
@@ -470,7 +470,7 @@ void WLP::removeRemoteEndpoints(ParticipantProxyData* pdata)
     }
     auxendp = endp;
     auxendp &=BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
-    if((auxendp!=0 || partdet!=0) && this->mp_builtinWriter!=nullptr)
+    if ((auxendp!=0 || partdet!=0) && this->mp_builtinWriter!=nullptr)
     {
         logInfo(RTPS_LIVELINESS,"Removing remote reader from my local Builtin Writer");
         RemoteReaderAttributes ratt;
@@ -538,21 +538,21 @@ bool WLP::add_local_writer(RTPSWriter* W, const WriterQos& wqos)
 
     double wAnnouncementPeriodMilliSec(TimeConv::Duration_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));
 
-    if(wqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
+    if (wqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
     {
-        if(automatic_liveliness_assertion_ == nullptr)
+        if (automatic_liveliness_assertion_ == nullptr)
         {
             automatic_liveliness_assertion_ = new WLivelinessPeriodicAssertion(this,AUTOMATIC_LIVELINESS_QOS);
             automatic_liveliness_assertion_->update_interval_millisec(wAnnouncementPeriodMilliSec);
             automatic_liveliness_assertion_->restart_timer();
             min_automatic_ms_ = wAnnouncementPeriodMilliSec;
         }
-        else if(min_automatic_ms_ > wAnnouncementPeriodMilliSec)
+        else if (min_automatic_ms_ > wAnnouncementPeriodMilliSec)
         {
             min_automatic_ms_ = wAnnouncementPeriodMilliSec;
             automatic_liveliness_assertion_->update_interval_millisec(wAnnouncementPeriodMilliSec);
             //CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-            if(automatic_liveliness_assertion_->getRemainingTimeMilliSec() > min_automatic_ms_)
+            if (automatic_liveliness_assertion_->getRemainingTimeMilliSec() > min_automatic_ms_)
             {
                 automatic_liveliness_assertion_->cancel_timer();
             }
@@ -560,21 +560,21 @@ bool WLP::add_local_writer(RTPSWriter* W, const WriterQos& wqos)
         }
         automatic_writers_.push_back(W);
     }
-    else if(wqos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    else if (wqos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
-        if(manual_liveliness_assertion_ == nullptr)
+        if (manual_liveliness_assertion_ == nullptr)
         {
             manual_liveliness_assertion_ = new WLivelinessPeriodicAssertion(this,MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
             manual_liveliness_assertion_->update_interval_millisec(wAnnouncementPeriodMilliSec);
             manual_liveliness_assertion_->restart_timer();
             min_manual_by_participant_ms_ = wAnnouncementPeriodMilliSec;
         }
-        else if(min_manual_by_participant_ms_ > wAnnouncementPeriodMilliSec)
+        else if (min_manual_by_participant_ms_ > wAnnouncementPeriodMilliSec)
         {
             min_manual_by_participant_ms_ = wAnnouncementPeriodMilliSec;
             manual_liveliness_assertion_->update_interval_millisec(min_manual_by_participant_ms_);
             //CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-            if(manual_liveliness_assertion_->getRemainingTimeMilliSec() > min_manual_by_participant_ms_)
+            if (manual_liveliness_assertion_->getRemainingTimeMilliSec() > min_manual_by_participant_ms_)
             {
                 manual_liveliness_assertion_->cancel_timer();
             }
@@ -612,44 +612,44 @@ bool WLP::remove_local_writer(RTPSWriter* W)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
-    logInfo(RTPS_LIVELINESS,W->getGuid().entityId <<" from Liveliness Protocol");
+    logInfo(RTPS_LIVELINESS, W->getGuid().entityId <<" from Liveliness Protocol");
 
     t_WIT wToEraseIt;
     ParticipantProxyData pdata;
     WriterProxyData wdata;
-    if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(W->getGuid(), wdata, pdata))
+    if (this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(W->getGuid(), wdata, pdata))
     {
         bool found = false;
-        if(wdata.m_qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
+        if (wdata.m_qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
         {
             min_automatic_ms_ = std::numeric_limits<double>::max();
-            for(t_WIT it= automatic_writers_.begin();it!=automatic_writers_.end();++it)
+            for (t_WIT it = automatic_writers_.begin(); it != automatic_writers_.end(); ++it)
             {
                 ParticipantProxyData pdata2;
                 WriterProxyData wdata2;
-                if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), wdata2, pdata2))
+                if (this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), wdata2, pdata2))
                 {
                     double mintimeWIT(TimeConv::Duration_t2MilliSecondsDouble(
                         wdata2.m_qos.m_liveliness.announcement_period));
 
-                    if(W->getGuid().entityId == (*it)->getGuid().entityId)
+                    if (W->getGuid().entityId == (*it)->getGuid().entityId)
                     {
                         found = true;
                         wToEraseIt = it;
                         continue;
                     }
-                    if(min_automatic_ms_ > mintimeWIT)
+                    if (min_automatic_ms_ > mintimeWIT)
                     {
                         min_automatic_ms_ = mintimeWIT;
                     }
                 }
             }
-            if(found)
+            if (found)
             {
                 automatic_writers_.erase(wToEraseIt);
-                if(automatic_liveliness_assertion_!=nullptr)
+                if (automatic_liveliness_assertion_ != nullptr)
                 {
-                    if(automatic_writers_.size()>0)
+                    if (automatic_writers_.size() > 0)
                     {
                         automatic_liveliness_assertion_->update_interval_millisec(min_automatic_ms_);
                     }
@@ -660,35 +660,35 @@ bool WLP::remove_local_writer(RTPSWriter* W)
                 }
             }
         }
-        else if(wdata.m_qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+        else if (wdata.m_qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
         {
             min_manual_by_participant_ms_ = std::numeric_limits<double>::max();
-            for(t_WIT it= manual_by_participant_writers_.begin();it!=manual_by_participant_writers_.end();++it)
+            for(t_WIT it = manual_by_participant_writers_.begin(); it != manual_by_participant_writers_.end(); ++it)
             {
                 ParticipantProxyData pdata2;
                 WriterProxyData wdata2;
-                if(this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), wdata2, pdata2))
+                if (this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), wdata2, pdata2))
                 {
                     double mintimeWIT(TimeConv::Duration_t2MilliSecondsDouble(
                         wdata2.m_qos.m_liveliness.announcement_period));
-                    if(W->getGuid().entityId == (*it)->getGuid().entityId)
+                    if (W->getGuid().entityId == (*it)->getGuid().entityId)
                     {
                         found = true;
                         wToEraseIt = it;
                         continue;
                     }
-                    if(min_manual_by_participant_ms_ > mintimeWIT)
+                    if (min_manual_by_participant_ms_ > mintimeWIT)
                     {
                         min_manual_by_participant_ms_ = mintimeWIT;
                     }
                 }
             }
-            if(found)
+            if (found)
             {
                 manual_by_participant_writers_.erase(wToEraseIt);
-                if(manual_liveliness_assertion_!=nullptr)
+                if (manual_liveliness_assertion_ != nullptr)
                 {
-                    if(manual_by_participant_writers_.size()>0)
+                    if (manual_by_participant_writers_.size() > 0)
                     {
                         manual_liveliness_assertion_->update_interval_millisec(min_manual_by_participant_ms_);
                     }
@@ -731,7 +731,7 @@ bool WLP::remove_local_writer(RTPSWriter* W)
             }
         }
 
-        if(found)
+        if (found)
         {
             return true;
         }
@@ -744,7 +744,7 @@ bool WLP::remove_local_writer(RTPSWriter* W)
     return false;
 }
 
-bool WLP::add_local_reader(RTPSReader *reader, const ReaderQos &rqos)
+bool WLP::add_local_reader(RTPSReader* reader, const ReaderQos &rqos)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
@@ -758,7 +758,7 @@ bool WLP::add_local_reader(RTPSReader *reader, const ReaderQos &rqos)
     return true;
 }
 
-bool WLP::remove_local_reader(RTPSReader *reader)
+bool WLP::remove_local_reader(RTPSReader* reader)
 {
     auto it = std::find(
                 readers_.begin(),
@@ -934,38 +934,21 @@ void WLP::update_liveliness_changed_status(
         RTPSReader* reader,
         bool lost)
 {
-    if (lost)
+    int change = lost ? -1 : 1;
+
+    reader->liveliness_changed_status_.alive_count += change;
+    reader->liveliness_changed_status_.alive_count_change += change;
+    reader->liveliness_changed_status_.not_alive_count -= change;
+    reader->liveliness_changed_status_.not_alive_count_change -= change;
+    reader->liveliness_changed_status_.last_publication_handle = writer;
+
+    if (reader->getListener() != nullptr)
     {
-        reader->liveliness_changed_status_.alive_count--;
-        reader->liveliness_changed_status_.alive_count_change--;
-        reader->liveliness_changed_status_.not_alive_count++;
-        reader->liveliness_changed_status_.not_alive_count_change++;
-        reader->liveliness_changed_status_.last_publication_handle = writer;
-
-        if (reader->getListener() != nullptr)
-        {
-            reader->getListener()->on_liveliness_changed(reader, reader->liveliness_changed_status_);
-        }
-
-        reader->liveliness_changed_status_.alive_count_change = 0;
-        reader->liveliness_changed_status_.not_alive_count_change = 0;
+        reader->getListener()->on_liveliness_changed(reader, reader->liveliness_changed_status_);
     }
-    else
-    {
-        reader->liveliness_changed_status_.alive_count++;
-        reader->liveliness_changed_status_.alive_count_change++;
-        reader->liveliness_changed_status_.not_alive_count--;
-        reader->liveliness_changed_status_.not_alive_count_change--;
-        reader->liveliness_changed_status_.last_publication_handle = writer;
 
-        if (reader->getListener() != nullptr)
-        {
-            reader->getListener()->on_liveliness_changed(reader, reader->liveliness_changed_status_);
-        }
-
-        reader->liveliness_changed_status_.alive_count_change = 0;
-        reader->liveliness_changed_status_.not_alive_count_change = 0;
-    }
+    reader->liveliness_changed_status_.alive_count_change = 0;
+    reader->liveliness_changed_status_.not_alive_count_change = 0;
 }
 
 } /* namespace rtps */

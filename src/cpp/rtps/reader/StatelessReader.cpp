@@ -61,9 +61,9 @@ bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
-    for(auto it = m_matched_writers.begin();it!=m_matched_writers.end();++it)
+    for(const RemoteWriterAttributes& rwa : m_matched_writers)
     {
-        if((*it).guid == wdata.guid)
+        if(rwa.guid == wdata.guid)
         {
             return false;
         }
@@ -472,14 +472,14 @@ bool StatelessReader::thereIsUpperRecordOf(GUID_t& guid, SequenceNumber_t& seq)
 }
 
 bool StatelessReader::find_remote_writer_attributes(
-        const GUID_t &guid,
-        RemoteWriterAttributes &att)
+        const GUID_t& guid,
+        RemoteWriterAttributes& att)
 {
-    for (auto it = m_matched_writers.begin(); it!= m_matched_writers.end(); ++it)
+    for (const RemoteWriterAttributes& rwa : m_matched_writers)
     {
-        if ((*it).guid == guid)
+        if (rwa.guid == guid)
         {
-            att = (*it);
+            att = rwa;
             return true;
         }
     }

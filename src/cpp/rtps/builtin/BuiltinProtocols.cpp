@@ -165,11 +165,11 @@ bool BuiltinProtocols::removeLocalWriter(RTPSWriter* W)
     bool ok = false;
     if(mp_WLP !=nullptr)
     {
-        ok|= mp_WLP->remove_local_writer(W);
+        ok |= mp_WLP->remove_local_writer(W);
     }
     if(mp_PDP!=nullptr && mp_PDP->getEDP() != nullptr)
     {
-        ok|= mp_PDP->getEDP()->removeLocalWriter(W);
+        ok |= mp_PDP->getEDP()->removeLocalWriter(W);
     }
     return ok;
 }
@@ -179,11 +179,11 @@ bool BuiltinProtocols::removeLocalReader(RTPSReader* R)
     bool ok = false;
     if (mp_WLP != nullptr)
     {
-        ok|= mp_WLP->remove_local_reader(R);
+        ok |= mp_WLP->remove_local_reader(R);
     }
     if(mp_PDP!=nullptr && mp_PDP->getEDP() != nullptr)
     {
-        ok|= mp_PDP->getEDP()->removeLocalReader(R);
+        ok |= mp_PDP->getEDP()->removeLocalReader(R);
     }
     return ok;
 }

@@ -446,23 +446,11 @@ bool EDP::validMatching(const WriterProxyData* wdata, const ReaderProxyData* rda
                     << rdata->m_qos.m_liveliness.lease_duration);
          return false;
      }
-     else
-     {
-         if (wdata->m_qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS &&
-                 rdata->m_qos.m_liveliness.kind != AUTOMATIC_LIVELINESS_QOS)
-         {
-             logWarning(RTPS_EDP, "Incompatible liveliness kinds: offered kind is AUTOMATIC but "
-                        << "requested kind is not");
-             return false;
-         }
-         else if (wdata->m_qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS &&
-                  rdata->m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
-         {
-             logWarning(RTPS_EDP, "Incompatible liveliness kinds: offered kind is MANUAL_BY_PARTICIPANT and "
-                        << "requested kind is MANUAL_BY_TOPIC");
-             return false;
-         }
-     }
+    if (wdata->m_qos.m_liveliness.kind < rdata->m_qos.m_liveliness.kind)
+    {
+        logWarning(RTPS_EDP, "Incompatible liveliness kinds: offered kind is < requested kind");
+        return false;
+    }
 
 #if HAVE_SECURITY
     // TODO: Check EndpointSecurityInfo
@@ -572,29 +560,17 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
         return false;
     }
     if (wdata->m_qos.m_liveliness.lease_duration > rdata->m_qos.m_liveliness.lease_duration)
-     {
-         logWarning(RTPS_EDP, "Incompatible liveliness lease durations: offered lease duration "
-                    << wdata->m_qos.m_liveliness.lease_duration << " must be <= requested lease duration "
-                    << rdata->m_qos.m_liveliness.lease_duration);
-         return false;
-     }
-     else
-     {
-         if (wdata->m_qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS &&
-                 rdata->m_qos.m_liveliness.kind != AUTOMATIC_LIVELINESS_QOS)
-         {
-             logWarning(RTPS_EDP, "Incompatible liveliness kinds: offered kind is AUTOMATIC but "
-                        << "requested kind is not");
-             return false;
-         }
-         else if (wdata->m_qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS &&
-                  rdata->m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
-         {
-             logWarning(RTPS_EDP, "Incompatible liveliness kinds: offered kind is MANUAL_BY_PARTICIPANT and "
-                        << "requested kind is MANUAL_BY_TOPIC");
-             return false;
-         }
-     }
+    {
+        logWarning(RTPS_EDP, "Incompatible liveliness lease durations: offered lease duration "
+                   << wdata->m_qos.m_liveliness.lease_duration << " must be <= requested lease duration "
+                   << rdata->m_qos.m_liveliness.lease_duration);
+        return false;
+    }
+    if (wdata->m_qos.m_liveliness.kind < rdata->m_qos.m_liveliness.kind)
+    {
+        logWarning(RTPS_EDP, "Incompatible liveliness kinds: offered kind is < than requested kind");
+        return false;
+    }
 #if HAVE_SECURITY
     // TODO: Check EndpointSecurityInfo
 #endif

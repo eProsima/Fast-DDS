@@ -48,7 +48,7 @@ class StatefulReader:public RTPSReader
                 GUID_t& guid,
                 ReaderAttributes& att,
                 ReaderHistory* hist,
-                ReaderListener* listen=nullptr);
+                ReaderListener* listen = nullptr);
     public:
 
         /**

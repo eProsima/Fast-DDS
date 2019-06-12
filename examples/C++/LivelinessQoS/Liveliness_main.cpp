@@ -69,14 +69,20 @@ int main(int argc, char** argv)
         std::cout << "Usage: " << std::endl;
         std::cout << argv[0] << " publisher ";
         std::cout << "[--lease_duration <lease_duration_ms>] ";
-        std::cout << "[--kind <kind>]";
+        std::cout << "[--kind <AUTOMATIC|MANUAL_BY_PARTICIPANT|MANUAL_BY_TOPIC>]";
         std::cout << "[--sleep <writer_sleep_ms>] ";
         std::cout << "[--samples <samples>]" << std::endl;
 
         std::cout << "OR" << std::endl;
         std::cout << argv[0] << " subscriber ";
         std::cout << "[--lease_duration <lease_duration_ms>]";
-        std::cout << "[--kind <kind>]" << std::endl;
+        std::cout << "[--kind <AUTOMATIC|MANUAL_BY_PARTICIPANT|MANUAL_BY_TOPIC>]" << std::endl << std::endl;
+
+        std::cout << "Default values:" << std::endl;
+        std::cout << "lease_duration_ms = 100" << std::endl;
+        std::cout << "kind = AUTOMATIC" << std::endl;
+        std::cout << "writer_sleep_ms = 1000" << std::endl;
+        std::cout << "samples = 10" << std::endl;
         return 0;
     }
 

@@ -669,7 +669,7 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 10;
+    uint32_t writer_sleep_ms = 50;
     uint32_t num_samples = 3;
 
     // Liveliness lease duration and announcement period, in seconds

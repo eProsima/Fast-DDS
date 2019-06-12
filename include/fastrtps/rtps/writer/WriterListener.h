@@ -43,7 +43,7 @@ public:
     virtual ~WriterListener() = default;
 
     /**
-     * This method is called when a new Reader is matched with this Writer by hte builtin protocols
+     * This method is called when a new Reader is matched with this Writer by the builtin protocols
      * @param writer Pointer to the RTPSWriter.
      * @param info Matching Information.
      */

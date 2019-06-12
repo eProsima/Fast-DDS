@@ -64,7 +64,9 @@ WLivelinessPeriodicAssertion::~WLivelinessPeriodicAssertion()
     destroy();
 }
 
-void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
+void WLivelinessPeriodicAssertion::event(
+        EventCode code,
+        const char* msg)
 {
 
     // Unused in release mode.
@@ -99,39 +101,10 @@ void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
 bool WLivelinessPeriodicAssertion::automatic_liveliness_assertion()
 {
     std::lock_guard<std::recursive_mutex> guard(*this->mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
-    if(this->mp_WLP->automatic_writers_.size()>0)
+
+    if(this->mp_WLP->automatic_writers_.size() > 0)
     {
-        auto writer = this->mp_WLP->getBuiltinWriter();
-        auto history = this->mp_WLP->getBuiltinWriterHistory();
-        std::lock_guard<std::recursive_timed_mutex> wguard(writer->getMutex());
-        CacheChange_t* change=writer->new_change([]() -> uint32_t {return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE,m_iHandle);
-        if(change!=nullptr)
-        {
-            //change->instanceHandle = m_iHandle;
-#if __BIG_ENDIAN__
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
-#else
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
-#endif
-            memcpy(change->serializedPayload.data,m_guidP.value,12);
-            for(uint8_t i =12;i<24;++i)
-                change->serializedPayload.data[i] = 0;
-            change->serializedPayload.data[15] = m_livelinessKind+1;
-            change->serializedPayload.length = 12+4+4+4;
-            if(history->getHistorySize() > 0)
-            {
-                for(std::vector<CacheChange_t*>::iterator chit = history->changesBegin();
-                        chit!=history->changesEnd();++chit)
-                {
-                    if((*chit)->instanceHandle == change->instanceHandle)
-                    {
-                        history->remove_change(*chit);
-                        break;
-                    }
-                }
-            }
-            history->add_change(change);
-        }
+        return add_cache_change();
     }
     return true;
 }
@@ -140,41 +113,58 @@ bool WLivelinessPeriodicAssertion::manual_by_participant_liveliness_assertion()
 {
     std::lock_guard<std::recursive_mutex> guard(*this->mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
 
-    // Liveliness was asserted for at least one of the writers using MANUAL_BY_PARTICIPANT
-    if(mp_WLP->pub_liveliness_manager_->is_any_alive(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS))
+    if (mp_WLP->manual_by_participant_writers_.size() > 0)
     {
-        auto writer = this->mp_WLP->getBuiltinWriter();
-        auto history = this->mp_WLP->getBuiltinWriterHistory();
-
-        std::lock_guard<std::recursive_timed_mutex> wguard(writer->getMutex());
-
-        CacheChange_t* change=writer->new_change([]() -> uint32_t {return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE);
-        if(change!=nullptr)
+        // Liveliness was asserted for at least one of the writers using MANUAL_BY_PARTICIPANT
+        if(mp_WLP->pub_liveliness_manager_->is_any_alive(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS))
         {
-            change->instanceHandle = m_iHandle;
-#if __BIG_ENDIAN__
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
-#else
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
-#endif
-            memcpy(change->serializedPayload.data,m_guidP.value,12);
+            return add_cache_change();
+        }
+    }
+    return false;
+}
 
-            for(uint8_t i =12;i<24;++i)
+bool WLivelinessPeriodicAssertion::add_cache_change()
+{
+    auto writer = mp_WLP->getBuiltinWriter();
+    auto history = mp_WLP->getBuiltinWriterHistory();
+
+    std::lock_guard<std::recursive_timed_mutex> wguard(writer->getMutex());
+
+    CacheChange_t* change=writer->new_change(
+                []() -> uint32_t { return BUILTIN_PARTICIPANT_DATA_MAX_SIZE; },
+                ALIVE,
+                m_iHandle);
+
+    if(change != nullptr)
+    {
+#if __BIG_ENDIAN__
+        change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+#else
+        change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+#endif
+        memcpy(change->serializedPayload.data,m_guidP.value,12);
+
+        for(uint8_t i =12;i<24;++i)
+        {
+            change->serializedPayload.data[i] = 0;
+        }
+        change->serializedPayload.data[15] = m_livelinessKind+1;
+        change->serializedPayload.length = 12+4+4+4;
+
+        if(history->getHistorySize() > 0)
+        {
+            for(auto chit = history->changesBegin(); chit != history->changesEnd(); ++chit)
             {
-                change->serializedPayload.data[i] = 0;
-            }
-            change->serializedPayload.data[15] = m_livelinessKind+1;
-            change->serializedPayload.length = 12+4+4+4;
-            for(auto ch = history->changesBegin(); ch!=history->changesEnd(); ++ch)
-            {
-                if((*ch)->instanceHandle == change->instanceHandle)
+                if((*chit)->instanceHandle == change->instanceHandle)
                 {
-                    history->remove_change(*ch);
+                    history->remove_change(*chit);
                     break;
                 }
             }
-            history->add_change(change);
         }
+        history->add_change(change);
+        return true;
     }
     return false;
 }
