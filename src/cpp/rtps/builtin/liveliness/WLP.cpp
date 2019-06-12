@@ -118,7 +118,8 @@ bool WLP::initWL(RTPSParticipantImpl* p)
                 },
                 nullptr,
                 mp_participant->getEventResource().getIOService(),
-                mp_participant->getEventResource().getThread());
+                mp_participant->getEventResource().getThread(),
+                false);
 
     sub_liveliness_manager_ = new LivelinessManager(
                 [&](const GUID_t& guid,

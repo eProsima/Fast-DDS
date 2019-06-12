@@ -78,8 +78,6 @@ void WLivelinessPeriodicAssertion::event(EventCode code, const char* msg)
             if(m_livelinessKind == AUTOMATIC_LIVELINESS_QOS)
             {
                 automatic_liveliness_assertion();
-
-                mp_WLP->pub_liveliness_manager_->assert_liveliness(m_livelinessKind);
             }
             else if(m_livelinessKind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
             {
