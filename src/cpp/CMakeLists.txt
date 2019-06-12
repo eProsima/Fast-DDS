@@ -291,11 +291,6 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
         )
 
-    if(WIN32)
-        #TODO: remove when discovery-server incorporated into the library
-        target_compile_options(${PROJECT_NAME} PRIVATE	-wd4251)
-    endif()
-
     # Define public headers
     target_include_directories(${PROJECT_NAME} PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>

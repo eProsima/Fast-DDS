@@ -52,6 +52,7 @@
 #include <fastrtps/utils/eClock.h>
 
 #include <fastrtps/utils/Semaphore.h>
+#include <fastrtps/utils/System.h>
 
 #include <mutex>
 #include <algorithm>
@@ -114,25 +115,36 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     case PDPType::CLIENT:
     case PDPType::SERVER:
     case PDPType::BACKUP:
-
-        // Verify if listening ports are provided, if not provide them to enable discovery server functionality
-        // Note that PParam.userTransports is a vector of shared_ptr so if I want to modify it locally I must get
-        // my own copy and restore it afterwards
-        for ( auto& transportDescriptor : PParam.userTransports)
         {
-            TCPTransportDescriptor * pT = dynamic_cast< TCPTransportDescriptor *>(transportDescriptor.get());
-            if (pT && pT->listening_ports.empty())
+            // Verify if listening ports are provided, if not provide them to enable discovery server functionality
+            // Note that PParam.userTransports is a vector of shared_ptr so if I want to modify it locally I must get
+            // my own copy and restore it afterwards
+            bool mutate_port = true;
+
+            for (auto& transportDescriptor : PParam.userTransports)
             {
-                pT->add_listener_port(static_cast<uint16_t>(metatraffic_unicast_port));
-                m_network_Factory.RegisterTransport(pT);
-                pT->listening_ports.clear();
+                TCPTransportDescriptor * pT = dynamic_cast<TCPTransportDescriptor *>(transportDescriptor.get());
+                if (pT && pT->listening_ports.empty())
+                {
+                    // prevent interference from other processes
+                    // TODO: improve the non-collision mechanism
+                    if (mutate_port)
+                    {
+                        metatraffic_unicast_port = (metatraffic_unicast_port + System::GetPID()) % 10000;
+                        mutate_port = false;
+                    }
+
+                    pT->add_listener_port(static_cast<uint16_t>(metatraffic_unicast_port));
+                    m_network_Factory.RegisterTransport(pT);
+                    pT->listening_ports.clear();
+                }
+                else
+                {
+                    m_network_Factory.RegisterTransport(transportDescriptor.get());
+                }
             }
-            else
-            {
-                m_network_Factory.RegisterTransport(transportDescriptor.get());
-            }
+            break;
         }
-        break;
     default:
 
         // User defined transports
