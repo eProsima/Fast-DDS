@@ -30,9 +30,9 @@ TEST(LivelinessQos, Liveliness_Automatic_Reliable)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Liveliness lease duration and announcement period
-    uint32_t liveliness_ms = 20;
+    uint32_t liveliness_ms = 200;
     Duration_t liveliness_s(liveliness_ms * 1e-3);
-    Duration_t announcement_period(liveliness_ms * 1e-3 * 0.9);
+    Duration_t announcement_period(liveliness_ms * 1e-3 * 0.5);
 
     reader.reliability(RELIABLE_RELIABILITY_QOS)
             .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
@@ -67,9 +67,9 @@ TEST(LivelinessQos, Liveliness_Automatic_BestEffort)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Liveliness lease duration and announcement period
-    uint32_t liveliness_ms = 20;
+    uint32_t liveliness_ms = 200;
     Duration_t liveliness_s(liveliness_ms * 1e-3);
-    Duration_t announcement_period(liveliness_ms * 1e-3 * 0.9);
+    Duration_t announcement_period(liveliness_ms * 1e-3 * 0.5);
 
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
             .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
@@ -297,7 +297,7 @@ TEST(LivelinessQos, LongLiveliness_ManualByParticipant_BestEffort)
 
     // Liveliness lease duration and announcement period, in seconds
     Duration_t liveliness_s(writer_sleep_ms * 2.0 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 2.0 * 1e-3 * 0.9);
+    Duration_t announcement_period(writer_sleep_ms * 2.0 * 1e-3 * 0.1);
 
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
             .liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
@@ -482,7 +482,7 @@ TEST(LivelinessQos, LongLiveliness_ManualByTopic_Reliable)
 
     // Liveliness lease duration and announcement period, in seconds
     Duration_t liveliness_s(writer_sleep_ms * 2 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 2 * 1e-3 * 0.9);
+    Duration_t announcement_period(writer_sleep_ms * 2 * 1e-3 * 0.25);
 
     reader.reliability(RELIABLE_RELIABILITY_QOS)
             .liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS)
@@ -546,7 +546,7 @@ TEST(LivelinessQos, LongLiveliness_ManualByTopic_BestEffort)
 
     // Liveliness lease duration and announcement period, in seconds
     Duration_t liveliness_s(writer_sleep_ms * 2 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 2 * 1e-3 * 0.9);
+    Duration_t announcement_period(writer_sleep_ms * 2 * 1e-3 * 0.25);
 
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
             .liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS)
@@ -607,12 +607,12 @@ TEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliable)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 10;
+    uint32_t writer_sleep_ms = 50;
     uint32_t num_samples = 3;
 
     // Liveliness lease duration and announcement period, in seconds
     Duration_t liveliness_s(writer_sleep_ms * 2 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 2 * 1e-3 * 0.9);
+    Duration_t announcement_period(writer_sleep_ms * 2 * 1e-3 * 0.20);
 
     reader.reliability(RELIABLE_RELIABILITY_QOS)
             .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
@@ -669,12 +669,12 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 100;
+    uint32_t writer_sleep_ms = 10;
     uint32_t num_samples = 3;
 
     // Liveliness lease duration and announcement period, in seconds
     Duration_t liveliness_s(writer_sleep_ms * 0.1 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 0.1 * 1e-3 * 0.9);
+    Duration_t announcement_period(writer_sleep_ms * 0.1 * 1e-3 * 0.1);
 
     reader.reliability(RELIABLE_RELIABILITY_QOS)
             .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
@@ -728,12 +728,12 @@ TEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEffort)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 10;
+    uint32_t writer_sleep_ms = 50;
     uint32_t num_samples = 3;
 
     // Liveliness lease duration and announcement period, in seconds
     Duration_t liveliness_s(writer_sleep_ms * 2 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 2 * 1e-3 * 0.9);
+    Duration_t announcement_period(writer_sleep_ms * 2 * 1e-3 * 0.1);
 
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
             .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
@@ -1088,29 +1088,29 @@ TEST(LivelinessQos, TwoWriters_OneReader_ManualByTopic)
     unsigned int announcement_period_ms = 250;
 
     // Publishers
-    PubSubParticipant<HelloWorldType> publishers(num_pub, 0, num_sub, 0);
+    PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, 2u, 0u);
     ASSERT_TRUE(publishers.init_participant());
     publishers.pub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
             .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
             .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .pub_liveliness_kind(AUTOMATIC_LIVELINESS_QOS);
-    ASSERT_TRUE(publishers.init_publisher(0));
+    ASSERT_TRUE(publishers.init_publisher(0u));
     publishers.pub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
             .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
             .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .pub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
-    ASSERT_TRUE(publishers.init_publisher(1));
+    ASSERT_TRUE(publishers.init_publisher(1u));
 
     // Subscribers
-    PubSubParticipant<HelloWorldType> subscribers(0, num_sub, 0, num_pub);
+    PubSubParticipant<HelloWorldType> subscribers(0u, num_sub, 0u, 2u);
     ASSERT_TRUE(subscribers.init_participant());
     subscribers.sub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
             .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .sub_liveliness_kind(AUTOMATIC_LIVELINESS_QOS);
-    ASSERT_TRUE(subscribers.init_subscriber(0));
+    ASSERT_TRUE(subscribers.init_subscriber(0u));
 
     publishers.pub_wait_discovery();
     subscribers.sub_wait_discovery();
@@ -1133,34 +1133,34 @@ TEST(LivelinessQos, TwoWriters_TwoReaders_ManualByParticipant)
 {
     unsigned int num_pub = 2;
     unsigned int num_sub = 2;
-    unsigned int lease_duration_s = 1;
-    unsigned int announcement_period_s = 0.5;
+    unsigned int lease_duration_ms = 1000;
+    unsigned int announcement_period_ms = 100;
 
     // Publishers
-    PubSubParticipant<HelloWorldType> publishers(num_pub, 0, num_sub, 0);
+    PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, num_sub, 0u);
     ASSERT_TRUE(publishers.init_participant());
     publishers.pub_topic_name(TEST_TOPIC_NAME + "1")
-            .pub_liveliness_announcement_period(announcement_period_s)
-            .pub_liveliness_lease_duration(lease_duration_s)
+            .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
+            .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .pub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
-    ASSERT_TRUE(publishers.init_publisher(0));
+    ASSERT_TRUE(publishers.init_publisher(0u));
     publishers.pub_topic_name(TEST_TOPIC_NAME + "2")
-            .pub_liveliness_announcement_period(announcement_period_s)
-            .pub_liveliness_lease_duration(lease_duration_s)
+            .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
+            .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .pub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
-    ASSERT_TRUE(publishers.init_publisher(1));
+    ASSERT_TRUE(publishers.init_publisher(1u));
 
     // Subscribers
-    PubSubParticipant<HelloWorldType> subscribers(0, num_sub, 0, num_pub);
+    PubSubParticipant<HelloWorldType> subscribers(0u, num_sub, 0u, num_pub);
     ASSERT_TRUE(subscribers.init_participant());
     subscribers.sub_topic_name(TEST_TOPIC_NAME + "1")
-            .sub_liveliness_lease_duration(lease_duration_s)
+            .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .sub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
-    ASSERT_TRUE(subscribers.init_subscriber(0));
+    ASSERT_TRUE(subscribers.init_subscriber(0u));
     subscribers.sub_topic_name(TEST_TOPIC_NAME + "2")
-            .sub_liveliness_lease_duration(lease_duration_s)
+            .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .sub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
-    ASSERT_TRUE(subscribers.init_subscriber(1));
+    ASSERT_TRUE(subscribers.init_subscriber(1u));
 
     publishers.pub_wait_discovery();
     subscribers.sub_wait_discovery();
@@ -1197,34 +1197,34 @@ TEST(LivelinessQos, TwoWriters_TwoReaders_ManualByTopic)
     unsigned int announcement_period_ms = 250;
 
     // Publishers
-    PubSubParticipant<HelloWorldType> publishers(num_pub, 0, num_sub, 0);
+    PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, num_sub, 0u);
     ASSERT_TRUE(publishers.init_participant());
     publishers.pub_topic_name(TEST_TOPIC_NAME + "1")
             .reliability(RELIABLE_RELIABILITY_QOS)
             .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
             .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .pub_liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS);
-    ASSERT_TRUE(publishers.init_publisher(0));
+    ASSERT_TRUE(publishers.init_publisher(0u));
     publishers.pub_topic_name(TEST_TOPIC_NAME + "2")
             .reliability(RELIABLE_RELIABILITY_QOS)
             .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
             .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .pub_liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS);
-    ASSERT_TRUE(publishers.init_publisher(1));
+    ASSERT_TRUE(publishers.init_publisher(1u));
 
     // Subscribers
-    PubSubParticipant<HelloWorldType> subscribers(0, num_sub, 0, num_pub);
+    PubSubParticipant<HelloWorldType> subscribers(0u, num_sub, 0u, num_pub);
     ASSERT_TRUE(subscribers.init_participant());
     subscribers.sub_topic_name(TEST_TOPIC_NAME + "1")
             .reliability(RELIABLE_RELIABILITY_QOS)
             .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .sub_liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS);
-    ASSERT_TRUE(subscribers.init_subscriber(0));
+    ASSERT_TRUE(subscribers.init_subscriber(0u));
     subscribers.sub_topic_name(TEST_TOPIC_NAME + "2")
             .reliability(RELIABLE_RELIABILITY_QOS)
             .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .sub_liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS);
-    ASSERT_TRUE(subscribers.init_subscriber(1));
+    ASSERT_TRUE(subscribers.init_subscriber(1u));
 
     publishers.pub_wait_discovery();
     subscribers.sub_wait_discovery();
@@ -1257,34 +1257,34 @@ TEST(LivelinessQos, TwoWriters_TwoReaders)
     unsigned int announcement_period_ms = 250;
 
     // Publishers
-    PubSubParticipant<HelloWorldType> publishers(num_pub, 0, num_sub, 0);
+    PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, 3u, 0u);
     ASSERT_TRUE(publishers.init_participant());
     publishers.pub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
             .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
             .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .pub_liveliness_kind(AUTOMATIC_LIVELINESS_QOS);
-    ASSERT_TRUE(publishers.init_publisher(0));
+    ASSERT_TRUE(publishers.init_publisher(0u));
     publishers.pub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
             .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
             .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .pub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
-    ASSERT_TRUE(publishers.init_publisher(1));
+    ASSERT_TRUE(publishers.init_publisher(1u));
 
     // Subscribers
-    PubSubParticipant<HelloWorldType> subscribers(0, num_sub, 0, num_pub);
+    PubSubParticipant<HelloWorldType> subscribers(0u, num_sub, 0u, 3u);
     ASSERT_TRUE(subscribers.init_participant());
     subscribers.sub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
             .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .sub_liveliness_kind(AUTOMATIC_LIVELINESS_QOS);
-    ASSERT_TRUE(subscribers.init_subscriber(0));
+    ASSERT_TRUE(subscribers.init_subscriber(0u));
     subscribers.sub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
             .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .sub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
-    ASSERT_TRUE(subscribers.init_subscriber(1));
+    ASSERT_TRUE(subscribers.init_subscriber(1u));
 
     publishers.pub_wait_discovery();
     subscribers.sub_wait_discovery();
@@ -1311,45 +1311,45 @@ TEST(LivelinessQos, ThreeWriters_ThreeReaders)
     unsigned int announcement_period_ms = 250;
 
     // Publishers
-    PubSubParticipant<HelloWorldType> publishers(num_pub, 0, num_sub, 0);
+    PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, 6u, 0u);
     ASSERT_TRUE(publishers.init_participant());
     publishers.pub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
             .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
             .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .pub_liveliness_kind(AUTOMATIC_LIVELINESS_QOS);
-    ASSERT_TRUE(publishers.init_publisher(0));
+    ASSERT_TRUE(publishers.init_publisher(0u));
     publishers.pub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
             .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
             .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .pub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
-    ASSERT_TRUE(publishers.init_publisher(1));
+    ASSERT_TRUE(publishers.init_publisher(1u));
     publishers.pub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
             .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
             .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .pub_liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS);
-    ASSERT_TRUE(publishers.init_publisher(2));
+    ASSERT_TRUE(publishers.init_publisher(2u));
 
     // Subscribers
-    PubSubParticipant<HelloWorldType> subscribers(0, num_sub, 0, num_pub);
+    PubSubParticipant<HelloWorldType> subscribers(0u, num_sub, 0u, 6u);
     ASSERT_TRUE(subscribers.init_participant());
     subscribers.sub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
             .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .sub_liveliness_kind(AUTOMATIC_LIVELINESS_QOS);
-    ASSERT_TRUE(subscribers.init_subscriber(0));
+    ASSERT_TRUE(subscribers.init_subscriber(0u));
     subscribers.sub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
             .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .sub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
-    ASSERT_TRUE(subscribers.init_subscriber(1));
+    ASSERT_TRUE(subscribers.init_subscriber(1u));
     subscribers.sub_topic_name(TEST_TOPIC_NAME)
             .reliability(RELIABLE_RELIABILITY_QOS)
             .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .sub_liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS);
-    ASSERT_TRUE(subscribers.init_subscriber(2));
+    ASSERT_TRUE(subscribers.init_subscriber(2u));
 
     publishers.pub_wait_discovery();
     subscribers.sub_wait_discovery();
@@ -1389,28 +1389,28 @@ TEST(LivelinessQos, UnmatchedWriter)
     unsigned int announcement_period_ms = 250;
 
     // Publishers
-    PubSubParticipant<HelloWorldType> publishers(num_pub, 0, num_sub, 0);
+    PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, 2u, 0u);
     ASSERT_TRUE(publishers.init_participant());
     publishers.pub_topic_name(TEST_TOPIC_NAME)
             .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
             .pub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
             .pub_deadline_period(0.15);
-    ASSERT_TRUE(publishers.init_publisher(0));
+    ASSERT_TRUE(publishers.init_publisher(0u));
 
     // Subscribers
-    PubSubParticipant<HelloWorldType> subscribers(0, num_sub, 0, num_pub);
+    PubSubParticipant<HelloWorldType> subscribers(0u, num_sub, 0u, 2u);
     ASSERT_TRUE(subscribers.init_participant());
     subscribers.sub_topic_name(TEST_TOPIC_NAME)
             .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .sub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
             .sub_deadline_period(0.5);
-    ASSERT_TRUE(subscribers.init_subscriber(0));
+    ASSERT_TRUE(subscribers.init_subscriber(0u));
     subscribers.sub_topic_name(TEST_TOPIC_NAME)
             .sub_liveliness_lease_duration(lease_duration_ms * 1e-3)
             .sub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
             .sub_deadline_period(1.5);
-    ASSERT_TRUE(subscribers.init_subscriber(1));
+    ASSERT_TRUE(subscribers.init_subscriber(1u));
 
     publishers.pub_wait_discovery();
     subscribers.sub_wait_discovery();

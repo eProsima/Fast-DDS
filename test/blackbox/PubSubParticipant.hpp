@@ -27,6 +27,8 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/publisher/PublisherListener.h>
+#include <fastrtps/subscriber/Subscriber.h>
+#include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 
 #include <asio.hpp>
@@ -242,11 +244,11 @@ public:
 
         if(timeout == std::chrono::seconds::zero())
         {
-            pub_cv_.wait(lock, [&](){ return pub_matched_ == num_publishers_; });
+            pub_cv_.wait(lock, [&](){ return pub_matched_ == num_expected_publishers_; });
         }
         else
         {
-            pub_cv_.wait_for(lock, timeout, [&](){return pub_matched_ == num_publishers_;});
+            pub_cv_.wait_for(lock, timeout, [&](){return pub_matched_ == num_expected_publishers_;});
         }
 
         std::cout << "Publisher discovery finished " << std::endl;
@@ -261,11 +263,11 @@ public:
 
         if(timeout == std::chrono::seconds::zero())
         {
-            sub_cv_.wait(lock, [&](){ return sub_matched_ == num_subscribers_; });
+            sub_cv_.wait(lock, [&](){ return sub_matched_ == num_expected_subscribers_; });
         }
         else
         {
-            sub_cv_.wait_for(lock, timeout, [&](){return sub_matched_ == num_subscribers_;});
+            sub_cv_.wait_for(lock, timeout, [&](){return sub_matched_ == num_expected_subscribers_;});
         }
 
         std::cout << "Subscriber discovery finished " << std::endl;
