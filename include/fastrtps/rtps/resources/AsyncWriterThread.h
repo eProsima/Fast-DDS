@@ -45,7 +45,7 @@ public:
 
     AsyncWriterThread() = default;
 
-    ~AsyncWriterThread() = default;
+    ~AsyncWriterThread();
 
     /**
      * @brief Removes a writer.

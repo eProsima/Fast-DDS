@@ -22,6 +22,22 @@
 
 using namespace eprosima::fastrtps::rtps;
 
+AsyncWriterThread::~AsyncWriterThread()
+{
+    std::unique_lock<std::timed_mutex> lock(condition_variable_mutex_);
+    running_ = false;
+    run_scheduled_ = false;
+    cv_.notify_all();
+    if (thread_)
+    {
+        lock.unlock();
+        thread_->join();
+        lock.lock();
+        delete thread_;
+        thread_ = nullptr;
+    }
+}
+
 /*!
  * @brief This function removes a writer.
  * @param writer Asynchronous writer to be removed.
@@ -42,7 +58,7 @@ void AsyncWriterThread::unregister_writer(RTPSWriter* writer)
             lock.lock();
             delete thread_;
             thread_ = nullptr;
-            }
+        }
     }
 }
 

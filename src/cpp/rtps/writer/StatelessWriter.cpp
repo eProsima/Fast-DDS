@@ -69,8 +69,9 @@ StatelessWriter::StatelessWriter(
 
 StatelessWriter::~StatelessWriter()
 {
-    mp_RTPSParticipant->async_thread().unregister_writer(this);
     logInfo(RTPS_WRITER,"StatelessWriter destructor";);
+
+    mp_RTPSParticipant->async_thread().unregister_writer(this);
 }
 
 void StatelessWriter::get_builtin_guid()

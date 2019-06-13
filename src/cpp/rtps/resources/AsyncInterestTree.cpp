@@ -54,7 +54,7 @@ bool AsyncInterestTree::register_interest_nts(
         }
 
         prev = curr;
-        curr = prev->next_[hidden_pos_];
+        curr = curr->next_[hidden_pos_];
     }
 
     if (!prev)
@@ -95,6 +95,7 @@ bool AsyncInterestTree::UnregisterInterest(
         }
         else
         {
+            prev = curr;
             curr = curr->next_[active_pos_];
         }
     }
@@ -120,6 +121,7 @@ bool AsyncInterestTree::UnregisterInterest(
         }
         else
         {
+            prev = curr;
             curr = curr->next_[hidden_pos_];
         }
     }
