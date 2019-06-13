@@ -59,7 +59,7 @@ TimedEvent* event = new TimedEvent(resource_event_,
  *   aborted.
  *
  * - The returned value tells if the event has to be scheduled again or not. true value tells to reschedule the event.
- *   false value not.
+ *   false value doesn't.
  *
  * Usually the callback will call a method of the owner of the event. So the callback surely accesses internal data that
  * object. Then you have to be aware of deleting the event before deleting any other attribute of the object. Here are
@@ -115,7 +115,7 @@ class TimedEvent
         };
 
         /*!
-         * @brief Default destructor.
+         * @brief Default constructor.
          *
          * The event is not created scheduled.
          * @param service ResourceEvent object that will operate with the event.
@@ -167,7 +167,7 @@ class TimedEvent
 
         /**
          * Get the milliseconds interval
-         * @return Mulliseconds interval
+         * @return Milliseconds interval
          */
         double getIntervalMilliSec();
 
