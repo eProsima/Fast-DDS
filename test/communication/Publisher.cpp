@@ -74,6 +74,10 @@ class ParListener : public ParticipantListener
             {
                 std::cout << "Publisher participant " << //participant->getGuid() <<
                     " dropped participant " << info.info.m_guid << std::endl;
+                if(exit_on_lost_liveliness_)
+                {
+                    run = false;
+                }
             }
         }
 
