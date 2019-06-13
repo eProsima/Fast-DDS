@@ -106,11 +106,6 @@ void TimedEventImpl::update()
     }
 }
 
-void TimedEventImpl::terminate()
-{
-    callback_ptr_ = nullptr;
-}
-
 bool TimedEventImpl::update_interval(const eprosima::fastrtps::Duration_t& inter)
 {
     std::unique_lock<std::mutex> lock(mutex_);

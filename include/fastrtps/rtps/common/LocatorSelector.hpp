@@ -88,8 +88,7 @@ public:
 
     /**
      * Remove an entry from this selector.
-     *
-     * @param entry Pointer to the LocatorSelectorEntry to remove.
+     * @param guid Identifier of the entry to be removed.
      */
     bool remove_entry(const GUID_t& guid)
     {

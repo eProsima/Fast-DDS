@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file TimedConditionVariable.h
+ * @file TimedConditionVariable.hpp
  */
 
 #ifndef _UTILS_TIMEDCONDITIONVARIABLE_HPP_

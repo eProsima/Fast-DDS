@@ -277,9 +277,7 @@ typedef enum ReliabilityQosPolicyKind:rtps::octet {
 }ReliabilityQosPolicyKind;
 
 /**
- * Class ReliabilityQosPolicy, to indicate the reliability of the endpoints.
- * kind: Default value BEST_EFFORT_RELIABILITY_QOS for ReaderQos and RELIABLE_RELIABILITY_QOS for WriterQos.
- * max_blocking_time: Not Used in this version.
+ * Indicates the reliability of the endpoint.
  */
 class ReliabilityQosPolicy : public Parameter_t, public QosPolicy
 {
@@ -311,7 +309,22 @@ public:
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
 
 public:
+
+    /*!
+     * @brief Defined the reliability kind of the endpoint.
+     *
+     * Default value BEST_EFFORT_RELIABILITY_QOS for ReaderQos and RELIABLE_RELIABILITY_QOS for WriterQos.
+     */
     ReliabilityQosPolicyKind kind;
+
+    /*!
+     * @brief Defines the maximum period of time certain methods will be blocked.
+     *
+     * Methods affected by this property are:
+     * - Publisher::write
+     * - Subscriber::takeNextData
+     * - Subscriber::readNextData
+     */
     Duration_t max_blocking_time;
 };
 

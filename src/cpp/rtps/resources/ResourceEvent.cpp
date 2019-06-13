@@ -149,10 +149,6 @@ void ResourceEvent::notify(TimedEventImpl* event, const std::chrono::steady_cloc
     }
 }
 
-void ResourceEvent::event()
-{
-}
-
 void ResourceEvent::run_io_service()
 {
     while (!stop_)

@@ -185,11 +185,13 @@ class PublisherImpl
 
     /**
      * @brief A method to reschedule the deadline timer
+     * @return true value when the event has to be rescheduled. false value if not.
      */
     bool deadline_timer_reschedule();
 
     /**
      * @brief A method to remove expired samples, invoked when the lifespan timer expires
+     * @return true value when the event has to be rescheduled. false value if not.
      */
     bool lifespan_expired();
 };

@@ -227,6 +227,7 @@ class StatefulReader : public RTPSReader
 
         /**
          * Sends an acknack message from this reader.
+         * @param writer Pointer to the info of the remote writer.
          * @param sns Sequence number bitmap with the acknack information.
          * @param sender Message sender interface.
          * @param is_final Value for final flag.
@@ -250,9 +251,9 @@ class StatefulReader : public RTPSReader
 
         /**
          * Use the participant of this reader to send a message to certain locator.
-         *
          * @param message Message to be sent.
          * @param locator Destination locator.
+         * @param max_blocking_time_point Future time point where any blocking should end.
          */
         bool send_sync_nts(
                 CDRMessage_t* message,

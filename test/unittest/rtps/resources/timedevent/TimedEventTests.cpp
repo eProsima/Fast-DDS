@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include "mock/MockEvent.h"
-#include "mock/MockParentEvent.h"
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <thread>
 #include <random>
@@ -220,22 +219,6 @@ TEST(TimedEvent, Event_AutoRestartAndDeleteRandomly)
     event.event().restart_timer();
     std::this_thread::sleep_for(std::chrono::milliseconds(dis(gen)));
 }
-
-/*!
- * @fn TEST(TimedEvent, ParentEventNonAutoDestruc_InternallyDeleteEventNonAutoDestruct)
- * This test checks an event can delete other event while the later is waiting.
- * This test launches an event that internally will destroy other event.
- */
-// Not permitted in current implementation
-/*TEST(TimedEvent, ParentEvent_InternallyDeleteEventNonAutoDestruct)
-{
-    MockParentEvent event(env->service_, 10, 2);
-
-    event.event().restart_timer();
-    event.wait();
-    event.wait();
-}
-*/
 
 /*!
  * @brief Auxyliary function to be run in multithread tests.

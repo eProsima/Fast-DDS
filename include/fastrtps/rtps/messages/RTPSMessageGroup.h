@@ -56,7 +56,7 @@ class RTPSMessageGroup_t
 #endif
         {
             (void)has_security; // unused when built without security
-            
+
             CDRMessage::initCDRMsg(&rtpsmsg_fullmsg_);
             RTPSMessageCreator::addHeader(&rtpsmsg_fullmsg_, participant_guid);
         }
@@ -94,10 +94,9 @@ class RTPSMessageGroup
          * Constructs a RTPSMessageGroup allowing the destination endpoints to change.
          * @param participant Pointer to the participant sending data.
          * @param endpoint Pointer to the endpoint sending data.
-         * @param type Type of endpoint (reader / writer).
          * @param msg_group Reference to data buffer for messages.
          * @param msg_sender Reference to message sender interface.
-         * @param max_blocking_time_point Future timepoint where blocking send should end.
+         * @param max_blocking_time_point Future time point where blocking send should end.
          */
         RTPSMessageGroup(
                 RTPSParticipantImpl* participant,

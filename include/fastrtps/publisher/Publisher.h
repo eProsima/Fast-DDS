@@ -48,31 +48,36 @@ class RTPS_DllAPI Publisher
     virtual ~Publisher();
 
 public:
+
     /**
      * Constructor from a PublisherImpl pointer
      * @param pimpl Actual implementation of the publisher
      */
     Publisher(PublisherImpl* pimpl);
 
-    /**
-     * Write data to the topic.
-     * @param Data Pointer to the data
-     * @return True if correct
+    /*!
+     * @brief Writes a sample of the topic.
+     * @param sample Pointer to the sample.
+     * @return true when operation works successfully.
+     * @note This method is blocked for a period of time.
+     * ReliabilityQosPolicy.max_blocking_time on PublisherAttributes defines this period of time.
      * @par Calling example:
      * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
-    bool write(void* Data);
+    bool write(void* sample);
 
-    /**
-     * Write data with params to the topic.
-     * @param Data Pointer to the data
+    /*!
+     * @brief Writes a sample of the topic with additional options.
+     * @param sample Pointer to the sample.
      * @param wparams Extra write parameters.
-     * @return True if correct
+     * @return true when operation works successfully.
+     * @note This method is blocked for a period of time.
+     * ReliabilityQosPolicy.max_blocking_time on PublisherAttributes defines this period of time.
      * @par Calling example:
      * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
     bool write(
-            void* Data,
+            void* sample,
             rtps::WriteParams& wparams);
 
     /**
