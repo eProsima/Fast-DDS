@@ -24,7 +24,7 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/subscriber/SampleInfo.h>
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 #include <condition_variable>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/rtps/common/Types.h>

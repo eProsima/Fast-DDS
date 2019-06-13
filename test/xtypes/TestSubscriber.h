@@ -24,7 +24,7 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/subscriber/SampleInfo.h>
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/rtps/common/Types.h>
 

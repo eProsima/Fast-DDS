@@ -20,7 +20,7 @@
 #ifndef THROUGHPUTTYPES_H_
 #define THROUGHPUTTYPES_H_
 
-#include "fastrtps/TopicDataType.h"
+#include "fastrtps/topic/TopicDataType.h"
 #include "fastrtps/log/Log.h"
 #include <zmq.hpp>
 

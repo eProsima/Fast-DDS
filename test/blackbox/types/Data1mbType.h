@@ -23,7 +23,7 @@
 #ifndef _DATA1MBTYPE_H_
 #define _DATA1MBTYPE_H_
 
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 
 
 
