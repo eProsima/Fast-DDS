@@ -23,7 +23,7 @@
 #ifndef _SAMPLE_PUBSUBTYPES_H_
 #define _SAMPLE_PUBSUBTYPES_H_
 
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 
 #include "sample.h"
 

@@ -20,7 +20,7 @@
 #ifndef HELLOWORLDTYPE_H_
 #define HELLOWORLDTYPE_H_
 
-#include "fastrtps/TopicDataType.h"
+#include "fastrtps/topic/TopicDataType.h"
 
 
 

@@ -23,7 +23,7 @@
 #ifndef _BENCHMARK_MEDIUM_PUBSUBTYPES_H_
 #define _BENCHMARK_MEDIUM_PUBSUBTYPES_H_
 
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 
 #include "Benchmark_medium.h"
 

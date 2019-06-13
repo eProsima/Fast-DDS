@@ -20,7 +20,7 @@
 #ifndef FIXEDSIZEDTYPE_H_
 #define FIXEDSIZEDTYPE_H_
 
-#include "fastrtps/TopicDataType.h"
+#include "fastrtps/topic/TopicDataType.h"
 
 
 

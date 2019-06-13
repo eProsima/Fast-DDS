@@ -23,7 +23,7 @@
 #ifndef _DATA64KB_TYPES_H_
 #define _DATA64KB_TYPES_H_
 
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 
 
 

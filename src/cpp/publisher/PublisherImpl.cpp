@@ -20,7 +20,7 @@
 #include "PublisherImpl.h"
 #include "../participant/ParticipantImpl.h"
 #include <fastrtps/publisher/Publisher.h>
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 #include <fastrtps/publisher/PublisherListener.h>
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>

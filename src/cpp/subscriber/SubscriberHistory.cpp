@@ -23,7 +23,7 @@
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/reader/WriterProxy.h>
 
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 #include <fastrtps/log/Log.h>
 
 #include <mutex>
