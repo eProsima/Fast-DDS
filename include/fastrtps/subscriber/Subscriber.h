@@ -30,6 +30,11 @@ namespace fastrtps {
 
 class SubscriberImpl;
 class SampleInfo_t;
+class TopicAttributes;
+
+namespace rtps {
+class RTPSReader;
+}
 
 /**
  * Class Subscriber, contains the public API that allows the user to control the reception of messages.
@@ -120,6 +125,13 @@ public:
      * @param status Liveliness changed status
      */
     void get_liveliness_changed_status(LivelinessChangedStatus& status);
+
+    /**
+     * @brief Created a new reader
+     * @param topic_att TopicAttributes
+     */
+    rtps::RTPSReader* create_reader(
+            const TopicAttributes& topic_att);
 
 private:
     SubscriberImpl* mp_impl;

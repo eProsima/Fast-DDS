@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,26 +13,22 @@
 // limitations under the License.
 
 /**
- * @file Publisher.h
+ * @file DataWriter.hpp
  */
 
-
-
-#ifndef PUBLISHERIMPL_H_
-#define PUBLISHERIMPL_H_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#ifndef _FASTRTPS_DATAWRITER_HPP_
+#define _FASTRTPS_DATAWRITER_HPP_
 
 #include <fastrtps/rtps/common/Locator.h>
 #include <fastrtps/rtps/common/Guid.h>
+#include <fastrtps/rtps/common/WriteParams.h>
 
-#include <fastrtps/attributes/PublisherAttributes.h>
-
+#include <fastrtps/rtps/attributes/WriterAttributes.h>
+#include <fastrtps/publisher/PublisherHistory.h>
 
 #include <fastrtps/rtps/writer/WriterListener.h>
 #include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
-
-#include <map>
 
 namespace eprosima {
 namespace fastrtps{
@@ -42,31 +38,35 @@ class RTPSWriter;
 class RTPSParticipant;
 }
 
+class TopicDataType;
+class PublisherAttributes;
 class PublisherListener;
-class ParticipantImpl;
+class PublisherImpl;
 class Publisher;
 
-
 /**
- * Class PublisherImpl, contains the actual implementation of the behaviour of the Publisher.
+ * Class DataWriter, contains the actual implementation of the behaviour of the DataWriter.
  * @ingroup FASTRTPS_MODULE
  */
-class PublisherImpl
+class DataWriter
 {
-    friend class ParticipantImpl;
+    friend class PublisherImpl;
 
     /**
      * Create a publisher, assigning its pointer to the associated writer.
      * Don't use directly, create Publisher using DomainRTPSParticipant static function.
      */
-    PublisherImpl(
-        ParticipantImpl* p,
-        const PublisherAttributes& att,
-        PublisherListener* p_listen = nullptr);
+    DataWriter(
+            PublisherImpl* p,
+            TopicDataType* topic,
+            const PublisherAttributes& pub_att,
+            const rtps::WriterAttributes& att,
+            PublisherHistory&& history,
+            PublisherListener* p_listen = nullptr);
 
 public:
 
-    virtual ~PublisherImpl();
+    virtual ~DataWriter();
 
     /**
      *
@@ -75,8 +75,8 @@ public:
      * @return
      */
     bool create_new_change(
-        rtps::ChangeKind_t kind,
-        void* Data);
+            rtps::ChangeKind_t kind,
+            void* Data);
 
     /**
      *
@@ -86,85 +86,93 @@ public:
      * @return
      */
     bool create_new_change_with_params(
-        rtps::ChangeKind_t kind,
-        void* Data,
-        rtps::WriteParams& wparams);
+            rtps::ChangeKind_t kind,
+            void* Data,
+            rtps::WriteParams& wparams);
 
     /**
      * Removes the cache change with the minimum sequence number
      * @return True if correct.
      */
-    bool removeMinSeqChange();
+    bool remove_min_seq_change();
+
     /**
      * Removes all changes from the History.
      * @param[out] removed Number of removed elements
      * @return True if correct.
      */
-    bool removeAllChange(size_t* removed);
+    bool remove_all_change(
+            size_t* removed);
 
     /**
      *
      * @return
      */
-    const rtps::GUID_t& getGuid();
+    const rtps::GUID_t& guid();
 
     /**
-     * Update the Attributes of the publisher;
-     * @param att Reference to a PublisherAttributes object to update the parameters;
-     * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
+     * Get topic data type
+     * @return Topic data type
      */
-    bool updateAttributes(const PublisherAttributes& att);
+    TopicDataType* type()
+    {
+        return type_;
+    }
 
-    /**
-     * Get the Attributes of the Subscriber.
-     * @return Attributes of the Subscriber.
-     */
-    inline const PublisherAttributes& getAttributes(){ return m_att; };
-
-    bool wait_for_all_acked(const Duration_t& max_wait);
+    bool wait_for_all_acked(
+            const Duration_t& max_wait);
 
     /**
      * @brief Returns the offered deadline missed status
      * @param Deadline missed status struct
      */
-    void get_offered_deadline_missed_status(OfferedDeadlineMissedStatus& status);
+    void get_offered_deadline_missed_status(
+            OfferedDeadlineMissedStatus& status);
 
-    ParticipantImpl* participant()
-    {
-        return mp_participant;
-    }
+private:
+    PublisherImpl* publisher_;
 
-    /**
-     * @brief Created a new writer
-     * @param topic_att TopicAttributes
-     */
-    rtps::RTPSWriter* create_writer(
-            const TopicAttributes& topic_att);
-
-    private:
-    ParticipantImpl* mp_participant;
     //! Pointer to the associated Data Writer.
-    rtps::RTPSWriter* mp_writer;
-    //!Attributes of the Publisher
-    PublisherAttributes m_att;
+    rtps::RTPSWriter* writer_;
+
+    //! Pointer to the TopicDataType object.
+    TopicDataType* type_;
+
+    rtps::WriterAttributes w_att_;
+
     //!Publisher History
-    PublisherHistory m_history;
+    PublisherHistory history_;
+
     //!PublisherListener
-    PublisherListener* mp_listener;
+    PublisherListener* listener_;
+
     //!Listener to capture the events of the Writer
-    class PublisherWriterListener: public rtps::WriterListener
+    class DataWriterListener : public rtps::WriterListener
     {
         public:
-            PublisherWriterListener(PublisherImpl* p):mp_publisherImpl(p){};
-            virtual ~PublisherWriterListener(){};
-            void onWriterMatched(rtps::RTPSWriter* writer, rtps::MatchingInfo& info);
-            void onWriterChangeReceivedByAll(rtps::RTPSWriter* writer, rtps::CacheChange_t* change);
-            PublisherImpl* mp_publisherImpl;
-    }m_writerListener;
+            DataWriterListener(
+                    DataWriter* w)
+                : data_writer_(w)
+            {
 
-    Publisher* mp_userPublisher;
+            }
 
-    rtps::RTPSParticipant* mp_rtpsParticipant;
+            virtual ~DataWriterListener() {}
+
+            void onWriterMatched(
+                    rtps::RTPSWriter* writer,
+                    rtps::MatchingInfo& info);
+
+            void onWriterChangeReceivedByAll(
+                    rtps::RTPSWriter* writer,
+                    rtps::CacheChange_t* change);
+
+            DataWriter* data_writer_;
+    } writer_listener_;
+
+    Publisher* user_publisher_;
+
+    rtps::RTPSParticipant* rtps_participant_;
 
     uint32_t high_mark_for_frag_;
 
@@ -202,8 +210,7 @@ public:
     void lifespan_expired();
 };
 
-
 } /* namespace  */
 } /* namespace eprosima */
-#endif
-#endif /* PUBLISHER_H_ */
+
+#endif //_FASTRTPS_DATAWRITER_HPP_

@@ -34,9 +34,11 @@ namespace rtps
 {
     struct GUID_t;
     class WriteParams;
+    class RTPSWriter;
 }
 
 class PublisherImpl;
+class TopicAttributes;
 
 /**
  * Class Publisher, used to send data to associated subscribers.
@@ -143,6 +145,13 @@ public:
      * @param status Liveliness lost status
      */
     void get_liveliness_lost_status(LivelinessLostStatus& status);
+
+    /**
+     * @brief Created a new writer
+     * @param topic_att TopicAttributes
+     */
+    rtps::RTPSWriter* create_writer(
+            const TopicAttributes& topic_att);
 
 private:
 

@@ -20,7 +20,7 @@
 #include "SubscriberImpl.h"
 #include "../participant/ParticipantImpl.h"
 #include <fastrtps/subscriber/Subscriber.h>
-#include <fastrtps/topic/TopicDataType.h>
+#include <fastrtps/TopicDataType.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
@@ -39,11 +39,15 @@ namespace fastrtps {
 
 SubscriberImpl::SubscriberImpl(
         ParticipantImpl* p,
+        TopicDataType* ptype,
         const SubscriberAttributes& att,
         SubscriberListener* listen)
     : mp_participant(p)
+    , mp_reader(nullptr)
+    , mp_type(ptype)
     , m_att(att)
 #pragma warning (disable : 4355 )
+    , m_history(this,ptype->m_typeSize  + 3/*Possible alignment*/, att.topic.historyQos, att.topic.resourceLimitsQos,att.historyMemoryPolicy)
     , mp_listener(listen)
     , m_readerListener(this)
     , mp_userSubscriber(nullptr)
@@ -71,92 +75,6 @@ SubscriberImpl::~SubscriberImpl()
 
     RTPSDomain::removeRTPSReader(mp_reader);
     delete(this->mp_userSubscriber);
-}
-
-RTPSReader* SubscriberImpl::create_reader(
-        const TopicAttributes& topic_att)
-{
-    logInfo(PARTICIPANT, "CREATING READER IN TOPIC: " << topic_att.getTopicName())
-    //Look for the correct type registration
-
-    TopicDataType* topic_data_type = mp_participant->get_registered_type(topic_att.topicDataType.c_str());
-
-    if(topic_data_type == nullptr)
-    {
-        logError(SUBSCRIBER, "Type: "<< topic_att.getTopicDataType() << " Not Registered");
-        return nullptr;
-    }
-    if(topic_att.topicKind == WITH_KEY && !topic_data_type->m_isGetKeyDefined)
-    {
-        logError(SUBSCRIBER, "Keyed Topic " << topic_att.getTopicName() << " needs getKey function");
-        return nullptr;
-    }
-
-    if(!topic_att.checkQos())
-    {
-        return nullptr;
-    }
-
-    ReaderAttributes ratt;
-    ratt.endpoint.durabilityKind = m_att.qos.m_durability.durabilityKind();
-    ratt.endpoint.endpointKind = READER;
-    ratt.endpoint.multicastLocatorList = m_att.multicastLocatorList;
-    ratt.endpoint.reliabilityKind = m_att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    ratt.endpoint.topicKind = topic_att.topicKind;
-    ratt.endpoint.unicastLocatorList = m_att.unicastLocatorList;
-    ratt.endpoint.remoteLocatorList = m_att.remoteLocatorList;
-    ratt.expectsInlineQos = m_att.expectsInlineQos;
-    ratt.endpoint.properties = m_att.properties;
-    if(m_att.getEntityID()>0)
-        ratt.endpoint.setEntityID((uint8_t)m_att.getEntityID());
-    if(m_att.getUserDefinedID()>0)
-        ratt.endpoint.setUserDefinedID((uint8_t)m_att.getUserDefinedID());
-    ratt.times = m_att.times;
-
-    // TODO(Ricardo) Remove in future
-    // Insert topic_name and partitions
-    Property property;
-    property.name("topic_name");
-    property.value(topic_att.getTopicName().c_str());
-    ratt.endpoint.properties.properties().push_back(std::move(property));
-    if(m_att.qos.m_partition.getNames().size() > 0)
-    {
-        property.name("partitions");
-        std::string partitions;
-        for(auto partition : m_att.qos.m_partition.getNames())
-        {
-            partitions += partition + ";";
-        }
-        property.value(std::move(partitions));
-        ratt.endpoint.properties.properties().push_back(std::move(property));
-    }
-    if (m_att.qos.m_disablePositiveACKs.enabled)
-    {
-        ratt.disable_positive_acks = true;
-    }
-
-    SubscriberHistory history(this,
-                              topic_data_type->m_typeSize  + 3/*Possible alignment*/,
-                              topic_att.historyQos,
-                              topic_att.resourceLimitsQos,
-                              m_att.historyMemoryPolicy);
-
-    RTPSReader* reader = RTPSDomain::createRTPSReader(this->mp_rtpsParticipant,
-            ratt,
-            (ReaderHistory*)&history,
-            (ReaderListener*)&m_readerListener);
-
-    if(reader == nullptr)
-    {
-        logError(PARTICIPANT,"Problem creating associated Reader");
-        return nullptr;
-    }
-    mp_readers[reader->getGuid()] = reader;
-    mp_types[reader->getGuid()] = topic_data_type;
-    m_histories[reader->getGuid()] = std::move(history);
-
-    //REGISTER THE READER
-    mp_rtpsParticipant->registerReader(reader, topic_att, m_att.qos);
 }
 
 void SubscriberImpl::waitForUnreadMessage()

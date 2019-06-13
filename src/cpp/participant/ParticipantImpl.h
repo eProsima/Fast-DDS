@@ -64,9 +64,10 @@ class ParticipantImpl
 
     private:
     ParticipantImpl(
-        const ParticipantAttributes& patt,
-        Participant* pspart,
-        ParticipantListener* listen = nullptr);
+            const ParticipantAttributes& patt,
+            Participant* pspart,
+            ParticipantListener* listen = nullptr);
+
     virtual ~ParticipantImpl();
 
     public:
@@ -92,8 +93,8 @@ class ParticipantImpl
      * @return Pointer to the created Publisher.
      */
     Publisher* createPublisher(
-        const PublisherAttributes& att,
-        PublisherListener* listen=nullptr);
+           const PublisherAttributes& att,
+           PublisherListener* listen=nullptr);
 
     /**
      * Create a Subscriber in this Participant.
@@ -102,8 +103,8 @@ class ParticipantImpl
      * @return Pointer to the created Subscriber.
      */
     Subscriber* createSubscriber(
-        const SubscriberAttributes& att,
-        SubscriberListener* listen=nullptr);
+            const SubscriberAttributes& att,
+            SubscriberListener* listen=nullptr);
 
     /**
      * Remove a Publisher from this participant.
@@ -146,25 +147,29 @@ class ParticipantImpl
      * @return True if correctly found and activated.
      */
     bool newRemoteEndpointDiscovered(
-        const rtps::GUID_t& partguid,
-        uint16_t userId,
-        rtps::EndpointKind_t kind);
+            const rtps::GUID_t& partguid,
+            uint16_t userId,
+            rtps::EndpointKind_t kind);
 
     bool get_remote_writer_info(
-        const rtps::GUID_t& writerGuid,
-        rtps::WriterProxyData& returnedInfo);
+            const rtps::GUID_t& writerGuid,
+            rtps::WriterProxyData& returnedInfo);
 
     bool get_remote_reader_info(
-        const rtps::GUID_t& readerGuid,
-        rtps::ReaderProxyData& returnedInfo);
+            const rtps::GUID_t& readerGuid,
+            rtps::ReaderProxyData& returnedInfo);
 
     rtps::ResourceEvent& get_resource_event() const;
 
-    private:
+    bool getRegisteredType(
+            const char* typeName,
+            TopicDataType** type);
+
+private:
     //!Participant Attributes
     ParticipantAttributes m_att;
     //!RTPSParticipant
-	rtps::RTPSParticipant* mp_rtpsParticipant;
+    rtps::RTPSParticipant* mp_rtpsParticipant;
     //!Participant*
     Participant* mp_participant;
     //!Participant Listener
@@ -175,8 +180,6 @@ class ParticipantImpl
     t_v_SubscriberPairs m_subscribers;
     //!TOpicDatType vector
     std::vector<TopicDataType*> m_types;
-
-    bool getRegisteredType(const char* typeName, TopicDataType** type);
 
     class MyRTPSParticipantListener : public rtps::RTPSParticipantListener
     {

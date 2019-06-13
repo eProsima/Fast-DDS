@@ -105,3 +105,9 @@ void Publisher::assert_liveliness()
 {
     logWarning(PUBLISHER, "assert_liveliness() is not implemented yet");
 }
+
+rtps::RTPSWriter* Publisher::create_writer(
+        const TopicAttributes& topic_att)
+{
+    return mp_impl->create_writer(topic_att);
+}

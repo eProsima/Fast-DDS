@@ -61,7 +61,7 @@ bool Subscriber::isInCleanState() const
 
 uint64_t Subscriber::getUnreadCount() const
 {
-	return mp_impl->getUnreadCount();
+    return mp_impl->getUnreadCount();
 }
 
 void Subscriber::get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status)
@@ -73,4 +73,10 @@ void Subscriber::get_liveliness_changed_status(LivelinessChangedStatus &status)
 {
     (void)status;
     logWarning(SUBSCRIBER, "get_liveliness_changed_status is not implemented yet");
+}
+
+rtps::RTPSReader* Subscriber::create_reader(
+        const TopicAttributes& topic_att)
+{
+    return mp_impl->create_reader(topic_att);
 }

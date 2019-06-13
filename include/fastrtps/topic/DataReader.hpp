@@ -29,8 +29,6 @@
 #include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 
-#include <map>
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps
@@ -40,7 +38,6 @@ class RTPSParticipant;
 }
 
 class TopicDataType;
-class TopicAttributes;
 class SubscriberListener;
 class ParticipantImpl;
 class SampleInfo_t;
@@ -51,57 +48,64 @@ class Subscriber;
  *  @ingroup FASTRTPS_MODULE
  */
 class SubscriberImpl {
-    friend class ParticipantImpl;
+	friend class ParticipantImpl;
 public:
 
-    /**
-    * @param p
-    * @param ptype
-    * @param attr
-    * @param listen
-    */
+	/**
+	* @param p
+	* @param ptype
+	* @param attr
+	* @param listen
+	*/
     SubscriberImpl(
         ParticipantImpl* p,
+        TopicDataType* ptype,
         const SubscriberAttributes& attr,
         SubscriberListener* listen = nullptr);
 
-    virtual ~SubscriberImpl();
+	virtual ~SubscriberImpl();
 
-    /**
-     * Method to block the current thread until an unread message is available
-     */
-    void waitForUnreadMessage();
+	/**
+	 * Method to block the current thread until an unread message is available
+	 */
+	void waitForUnreadMessage();
 
 
-    /** @name Read or take data methods.
-     * Methods to read or take data from the History.
-     */
+	/** @name Read or take data methods.
+	 * Methods to read or take data from the History.
+	 */
 
-    ///@{
+	///@{
 
-    bool readNextData(void* data,SampleInfo_t* info);
-    bool takeNextData(void* data,SampleInfo_t* info);
+	bool readNextData(void* data,SampleInfo_t* info);
+	bool takeNextData(void* data,SampleInfo_t* info);
 
-    ///@}
+	///@}
 
-    /**
-     * Update the Attributes of the subscriber;
-     * @param att Reference to a SubscriberAttributes object to update the parameters;
-     * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
-     */
-    bool updateAttributes(const SubscriberAttributes& att);
+	/**
+	 * Update the Attributes of the subscriber;
+	 * @param att Reference to a SubscriberAttributes object to update the parameters;
+	 * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
+	 */
+	bool updateAttributes(const SubscriberAttributes& att);
 
-    /**
-    * Get associated GUID
-    * @return Associated GUID
-    */
-    const rtps::GUID_t& getGuid();
+	/**
+	* Get associated GUID
+	* @return Associated GUID
+	*/
+	const rtps::GUID_t& getGuid();
 
-    /**
-     * Get the Attributes of the Subscriber.
-     * @return Attributes of the Subscriber.
-     */
+	/**
+	 * Get the Attributes of the Subscriber.
+	 * @return Attributes of the Subscriber.
+	 */
     const SubscriberAttributes& getAttributes() const {return m_att;}
+
+	/**
+	* Get topic data type
+	* @return Topic data type
+	*/
+    TopicDataType* getType() {return mp_type;}
 
     /*!
     * @brief Returns there is a clean state with all Publishers.
@@ -111,11 +115,11 @@ public:
     */
     bool isInCleanState() const;
 
-    /**
-     * Get the unread count.
-     * @return Unread count
-     */
-    uint64_t getUnreadCount() const;
+	/**
+	 * Get the unread count.
+	 * @return Unread count
+	 */
+	uint64_t getUnreadCount() const;
 
     /**
      * @brief A method called when a new cache change is added
@@ -130,28 +134,21 @@ public:
      */
     void get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status);
 
-    /**
-     * @brief Created a new reader
-     * @param topic_att TopicAttributes
-     */
-    rtps::RTPSReader* create_reader(
-            const TopicAttributes& topic_att);
-
 private:
 
     //!Participant
-    ParticipantImpl* mp_participant;
+	ParticipantImpl* mp_participant;
 
-    //!Pointer to associated RTPSReader
-    rtps::RTPSReader* mp_reader;
-    //! Pointer to the TopicDataType object.
-    TopicDataType* mp_type;
-    //!Attributes of the Subscriber
-    SubscriberAttributes m_att;
-    //!History
-    SubscriberHistory m_history;
-    //!Listener
-    SubscriberListener* mp_listener;
+	//!Pointer to associated RTPSReader
+	rtps::RTPSReader* mp_reader;
+	//! Pointer to the TopicDataType object.
+	TopicDataType* mp_type;
+	//!Attributes of the Subscriber
+	SubscriberAttributes m_att;
+	//!History
+	SubscriberHistory m_history;
+	//!Listener
+	SubscriberListener* mp_listener;
 
     class SubscriberReaderListener : public rtps::ReaderListener
     {
@@ -168,25 +165,20 @@ private:
     } m_readerListener;
 
     Subscriber* mp_userSubscriber;
-
     //!RTPSParticipant
     rtps::RTPSParticipant* mp_rtpsParticipant;
 
     //! A timer used to check for deadlines
     rtps::TimedCallback deadline_timer_;
-
     //! Deadline duration in microseconds
     std::chrono::duration<double, std::ratio<1, 1000000>> deadline_duration_us_;
-
     //! The current timer owner, i.e. the instance which started the deadline timer
     rtps::InstanceHandle_t timer_owner_;
-
     //! Requested deadline missed status
     RequestedDeadlineMissedStatus deadline_missed_status_;
 
     //! A timed callback to remove expired samples
     rtps::TimedCallback lifespan_timer_;
-
     //! The lifespan duration
     std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
 

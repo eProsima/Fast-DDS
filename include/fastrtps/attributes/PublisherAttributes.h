@@ -23,9 +23,7 @@
 
 #include "../rtps/common/Locator.h"
 #include "../rtps/common/Time_t.h"
-#include "../rtps/attributes/WriterAttributes.h"
 #include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
-#include "TopicAttributes.h"
 #include "../qos/WriterQos.h"
 #include "../rtps/attributes/PropertyPolicy.h"
 
@@ -51,9 +49,7 @@ public:
     {
         return (this->m_userDefinedID == b.m_userDefinedID) &&
                (this->m_entityID == b.m_entityID) &&
-               (this->topic == b.topic) &&
                (this->qos == b.qos) &&
-               (this->times == b.times) &&
                (this->unicastLocatorList == b.unicastLocatorList) &&
                (this->multicastLocatorList == b.multicastLocatorList) &&
                (this->remoteLocatorList == b.remoteLocatorList) &&
@@ -61,14 +57,8 @@ public:
                (this->properties == b.properties);
     }
 
-    //!Topic Attributes for the Publisher
-    TopicAttributes topic;
-
     //!QOS for the Publisher
     WriterQos qos;
-
-    //!Writer Attributes
-    rtps::WriterTimes times;
 
     //!Unicast locator list
     rtps::LocatorList_t unicastLocatorList;
@@ -87,6 +77,7 @@ public:
 
     //!Properties
     rtps::PropertyPolicy properties;
+
     ResourceLimitedContainerConfig matched_subscriber_allocation;
 
     /**
@@ -112,14 +103,16 @@ public:
      * @param id Entity ID to be set
      */
     inline void setEntityID(uint8_t id) { m_entityID = id; }
+
 private:
     //!User Defined ID, used for StaticEndpointDiscovery, default value -1.
     int16_t m_userDefinedID;
+
     //!Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.
     int16_t m_entityID;
 };
 
-}
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif /* PUBLISHERATTRIBUTES_H_ */

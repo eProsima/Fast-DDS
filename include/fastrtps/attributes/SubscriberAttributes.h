@@ -23,8 +23,6 @@
 
 #include "../rtps/common/Time_t.h"
 #include "../rtps/common/Locator.h"
-#include "../rtps/attributes/ReaderAttributes.h"
-#include "TopicAttributes.h"
 #include "../qos/ReaderQos.h"
 #include "../rtps/attributes/PropertyPolicy.h"
 
@@ -40,14 +38,8 @@ namespace fastrtps {
 class SubscriberAttributes
 {
     public:
-        //!Topic Attributes
-        TopicAttributes topic;
-
         //!Reader QOs.
         ReaderQos qos;
-
-        //!Times for a RELIABLE Reader
-        rtps::ReaderTimes times;
 
         //!Unicast locator list
         rtps::LocatorList_t unicastLocatorList;
@@ -78,9 +70,7 @@ class SubscriberAttributes
 
         bool operator==(const SubscriberAttributes& b) const
         {
-            return (this->topic == b.topic) &&
-                (this->qos == b.qos) &&
-                (this->times == b.times) &&
+            return (this->qos == b.qos) &&
                 (this->unicastLocatorList == b.unicastLocatorList) &&
                 (this->multicastLocatorList == b.multicastLocatorList) &&
                 (this->remoteLocatorList == b.remoteLocatorList) &&

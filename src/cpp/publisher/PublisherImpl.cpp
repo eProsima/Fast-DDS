@@ -20,7 +20,7 @@
 #include "PublisherImpl.h"
 #include "../participant/ParticipantImpl.h"
 #include <fastrtps/publisher/Publisher.h>
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 #include <fastrtps/publisher/PublisherListener.h>
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
@@ -46,21 +46,11 @@ using namespace std::chrono;
 
 PublisherImpl::PublisherImpl(
         ParticipantImpl* p,
-        TopicDataType* pdatatype,
         const PublisherAttributes& att,
         PublisherListener* listen )
     : mp_participant(p)
-    , mp_writer(nullptr)
-    , mp_type(pdatatype)
     , m_att(att)
 #pragma warning (disable : 4355 )
-    , m_history(this, pdatatype->m_typeSize
-#if HAVE_SECURITY
-            // In future v2 changepool is in writer, and writer set this value to cachechagepool.
-            + 20 /*SecureDataHeader*/ + 4 + ((2* 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
-            + 16 + 4 /*SecureDataTag*/
-#endif
-            , att.topic.historyQos, att.topic.resourceLimitsQos, att.historyMemoryPolicy)
     , mp_listener(listen)
 #pragma warning (disable : 4355 )
     , m_writerListener(this)
@@ -93,7 +83,106 @@ PublisherImpl::~PublisherImpl()
     delete(this->mp_userPublisher);
 }
 
+RTPSWriter* PublisherImpl::create_writer(
+        const TopicAttributes& topic_att)
+{
+    logInfo(PUBLISHER, "CREATING WRITER IN TOPIC: " << topic_att.getTopicName());
+    //Look for the correct type registration
 
+    TopicDataType* topic_data_type = mp_participant->get_registered_type(topic_att.topicDataType.c_str());
+
+    /// Preconditions
+    // Check the type was registered.
+    if(topic_data_type == nullptr)
+    {
+        logError(PUBLISHER,"Type : "<< topic_att.getTopicDataType() << " Not Registered");
+        return nullptr;
+    }
+    // Check the type supports keys.
+    if(topic_att.topicKind == WITH_KEY && !topic_data_type->m_isGetKeyDefined)
+    {
+        logError(PUBLISHER, "Keyed Topic " << topic_att.getTopicName() << " needs getKey function");
+        return nullptr;
+    }
+
+    if(!topic_att.checkQos())
+    {
+        return nullptr;
+    }
+
+    WriterAttributes watt;
+    watt.throughputController = m_att.throughputController;
+    watt.endpoint.durabilityKind = m_att.qos.m_durability.durabilityKind();
+    watt.endpoint.endpointKind = WRITER;
+    watt.endpoint.multicastLocatorList = m_att.multicastLocatorList;
+    watt.endpoint.reliabilityKind = m_att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
+    watt.endpoint.topicKind = topic_att.topicKind;
+    watt.endpoint.unicastLocatorList = m_att.unicastLocatorList;
+    watt.endpoint.remoteLocatorList = m_att.remoteLocatorList;
+    watt.mode = m_att.qos.m_publishMode.kind == eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE
+                    ? SYNCHRONOUS_WRITER
+                    : ASYNCHRONOUS_WRITER;
+    watt.endpoint.properties = m_att.properties;
+    if(m_att.getEntityID()>0)
+    {
+        watt.endpoint.setEntityID(static_cast<uint8_t>(m_att.getEntityID()));
+    }
+    if(m_att.getUserDefinedID()>0)
+    {
+        watt.endpoint.setUserDefinedID(static_cast<uint8_t>(m_att.getUserDefinedID()));
+    }
+    watt.times = m_att.times;
+    watt.matched_readers_allocation = m_att.matched_subscriber_allocation;
+
+    // TODO(Ricardo) Remove in future
+    // Insert topic_name and partitions
+    Property property;
+    property.name("topic_name");
+    property.value(topic_att.getTopicName().c_str());
+    watt.endpoint.properties.properties().push_back(std::move(property));
+    if(m_att.qos.m_partition.getNames().size() > 0)
+    {
+        property.name("partitions");
+        std::string partitions;
+        for(auto partition : m_att.qos.m_partition.getNames())
+        {
+            partitions += partition + ";";
+        }
+        property.value(std::move(partitions));
+        watt.endpoint.properties.properties().push_back(std::move(property));
+    }
+    if (m_att.qos.m_disablePositiveACKs.enabled &&
+            m_att.qos.m_disablePositiveACKs.duration != c_TimeInfinite)
+    {
+        watt.disable_positive_acks = true;
+        watt.keep_duration = m_att.qos.m_disablePositiveACKs.duration;
+    }
+
+    PublisherHistory history(this, topic_data_type->m_typeSize
+#if HAVE_SECURITY
+            // In future v2 changepool is in writer, and writer set this value to cachechagepool.
+            + 20 /*SecureDataHeader*/ + 4 + ((2* 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
+            + 16 + 4 /*SecureDataTag*/
+#endif
+             , topic_att.historyQos, topic_att.resourceLimitsQos, m_att.historyMemoryPolicy);
+
+    RTPSWriter* writer = RTPSDomain::createRTPSWriter(
+                this->mp_rtpsParticipant,
+                watt,
+                static_cast<WriterHistory*>(&history),
+                static_cast<WriterListener*>(&m_writerListener));
+    if(writer == nullptr)
+    {
+        logError(PUBLISHER,"Problem creating associated Writer");
+        return nullptr;
+    }
+    mp_writers[writer->getGuid()] = writer;
+    mp_types[writer->getGuid()] = topic_data_type;
+    m_histories[writer->getGuid()] = std::move(history);
+
+    //REGISTER THE WRITER
+    mp_rtpsParticipant->registerWriter(writer, topic_att, m_att.qos);
+}
 
 bool PublisherImpl::create_new_change(
         ChangeKind_t changeKind,
