@@ -2543,7 +2543,8 @@ XMLP_ret XMLParser::loadXML(const std::string& filename, up_base_node_t& root)
     tinyxml2::XMLError load_error = xmlDoc.LoadFile(filename.c_str());
     if (tinyxml2::XMLError::XML_SUCCESS != load_error)
     {
-        logError(XMLPARSER, "Error loading '" << filename << "'. Error code: " << load_error);
+        logError(XMLPARSER,
+            "Error loading '" << filename << "'. Error code: " << load_error << ". Trying to load default profiles.");
         if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
             logError(XMLPARSER, "Error opening '" << filename << "'");
 
