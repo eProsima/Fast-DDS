@@ -25,7 +25,7 @@
 // TODO Poner en el contexto.
 
 #include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)

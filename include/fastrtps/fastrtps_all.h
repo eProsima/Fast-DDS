@@ -41,7 +41,7 @@
 #include "attributes/SubscriberAttributes.h"
 
 #include "subscriber/SampleInfo.h"
-#include "TopicDataType.h"
+#include "topic/TopicDataType.h"
 
 #include "utils/IPFinder.h"
 #include "utils/eClock.h"

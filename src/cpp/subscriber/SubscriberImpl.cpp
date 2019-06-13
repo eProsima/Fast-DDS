@@ -20,7 +20,7 @@
 #include "SubscriberImpl.h"
 #include "../participant/ParticipantImpl.h"
 #include <fastrtps/subscriber/Subscriber.h>
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>

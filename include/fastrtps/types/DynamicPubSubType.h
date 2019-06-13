@@ -16,7 +16,7 @@
 #define TYPES_DYNAMIC_PUB_SUB_TYPE_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/DynamicDataPtr.h>
 

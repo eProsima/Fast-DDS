@@ -24,7 +24,7 @@
 #define _BASIC_PUBSUBTYPES_H_
 
 #include <fastrtps/config.h>
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 
 #include "Basic.h"
 

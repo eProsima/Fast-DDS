@@ -24,7 +24,7 @@
 #include <fastrtps/rtps/writer/WriterDiscoveryInfo.h>
 #include <fastrtps/participant/ParticipantListener.h>
 
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 

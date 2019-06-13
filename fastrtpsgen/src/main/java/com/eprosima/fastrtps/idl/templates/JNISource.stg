@@ -25,7 +25,7 @@ $ctx.directIncludeDependencies : {include | #include "$include$PubSubJNII.h"}; s
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/Domain.h>
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastcdr/FastBuffer.h>

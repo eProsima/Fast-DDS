@@ -24,7 +24,7 @@
 #define _NEW_FEATURES_4_2_PUBSUBTYPES_H_
 
 #include <fastrtps/config.h>
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 
 #include "new_features_4_2.h"
 

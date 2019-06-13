@@ -20,7 +20,7 @@
 #ifndef STRINGTYPE_H_
 #define STRINGTYPE_H_
 
-#include "fastrtps/TopicDataType.h"
+#include "fastrtps/topic/TopicDataType.h"
 
 
 

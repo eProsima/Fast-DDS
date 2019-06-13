@@ -22,7 +22,7 @@ $fileHeader(ctx=ctx,  file=[ctx.filename, "PubSubTypes.h"], description=["This h
 #define _$ctx.headerGuardName$_PUBSUBTYPES_H_
 
 #include <fastrtps/config.h>
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 
 #include "$ctx.filename$.h"
 

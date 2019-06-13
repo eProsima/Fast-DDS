@@ -3,7 +3,7 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastcdr/Cdr.h>
 
