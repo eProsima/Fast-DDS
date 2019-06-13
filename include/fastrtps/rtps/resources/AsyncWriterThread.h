@@ -47,22 +47,30 @@ public:
 
     ~AsyncWriterThread();
 
-    /**
-     * @brief Removes a writer.
+    /*!
+     * @brief Unregister a writer if it is waiting to be processed.
      * @param writer Asynchronous writer to be removed.
      * @return Result of the operation.
+     * @note Always call this function from writer's destructor.
      */
-    void unregister_writer(RTPSWriter* writer);
+    void unregister_writer(
+            RTPSWriter* writer);
 
-    /**
-     * Wakes the thread up.
-     * @param interestedWriter The writer interested in an async write.
+    /*!
+     * Wakes the thread up and starts processing async writers.
+     * @param interested_writer The writer interested in an async write.
      */
     void wake_up(
-            RTPSWriter* interestedWriter);
+            RTPSWriter* interested_writer);
 
+    /*!
+     * Wakes the thread up and starts processing async writers.
+     * @param interested_writer The writer interested in an async write.
+     * @param max_blocking_time Time point until the function must be blocked.
+     * @note This method is blocked for a period of time.
+     */
     void wake_up(
-            RTPSWriter* interestedWriter,
+            RTPSWriter* interested_writer,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
 private:

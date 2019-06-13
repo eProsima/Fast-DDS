@@ -45,7 +45,7 @@ AsyncWriterThread::~AsyncWriterThread()
  */
 void AsyncWriterThread::unregister_writer(RTPSWriter* writer)
 {
-    if(interestTree_.UnregisterInterest(writer))
+    if(interestTree_.unregister_interest(writer))
     {
         std::unique_lock<std::timed_mutex> lock(condition_variable_mutex_);
         running_ = false;
@@ -63,9 +63,9 @@ void AsyncWriterThread::unregister_writer(RTPSWriter* writer)
 }
 
 void AsyncWriterThread::wake_up(
-        RTPSWriter* interestedWriter)
+        RTPSWriter* interested_writer)
 {
-    interestTree_.RegisterInterest(interestedWriter);
+    interestTree_.register_interest(interested_writer);
     std::unique_lock<std::timed_mutex> lock(condition_variable_mutex_);
     run_scheduled_ = true;
     // If thread not running, start it.
@@ -82,10 +82,10 @@ void AsyncWriterThread::wake_up(
 }
 
 void AsyncWriterThread::wake_up(
-        RTPSWriter* interestedWriter,
+        RTPSWriter* interested_writer,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
-    if(interestTree_.RegisterInterest(interestedWriter, max_blocking_time))
+    if(interestTree_.register_interest(interested_writer, max_blocking_time))
     {
         std::unique_lock<std::timed_mutex> lock(condition_variable_mutex_, std::defer_lock);
 
@@ -116,7 +116,7 @@ void AsyncWriterThread::run()
         {
             run_scheduled_ = false;
             cond_guard.unlock();
-            interestTree_.Swap();
+            interestTree_.swap();
             RTPSWriter* curr = nullptr;
 
             while ((curr = interestTree_.next_active()))

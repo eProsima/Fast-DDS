@@ -19,14 +19,14 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-bool AsyncInterestTree::RegisterInterest(
+bool AsyncInterestTree::register_interest(
         RTPSWriter* writer)
 {
     std::unique_lock<std::timed_mutex> guard(mMutexHidden);
     return register_interest_nts(writer);
 }
 
-bool AsyncInterestTree::RegisterInterest(
+bool AsyncInterestTree::register_interest(
         RTPSWriter* writer,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
@@ -69,7 +69,7 @@ bool AsyncInterestTree::register_interest_nts(
     return true;
 }
 
-bool AsyncInterestTree::UnregisterInterest(
+bool AsyncInterestTree::unregister_interest(
         RTPSWriter* writer)
 {
     std::unique_lock<std::timed_mutex> activeGuard(mMutexActive);
@@ -129,7 +129,7 @@ bool AsyncInterestTree::UnregisterInterest(
     return (active_front_ == nullptr && hidden_front_ == nullptr);
 }
 
-void AsyncInterestTree::Swap()
+void AsyncInterestTree::swap()
 {
     std::unique_lock<std::timed_mutex> activeGuard(mMutexActive);
     std::unique_lock<std::timed_mutex> hiddenGuard(mMutexHidden);
