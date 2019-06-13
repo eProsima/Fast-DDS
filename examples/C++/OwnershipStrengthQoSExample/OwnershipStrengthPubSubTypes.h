@@ -23,7 +23,7 @@
 #ifndef _OWNERSHIPSTRENGTH_PUBSUBTYPES_H_
 #define _OWNERSHIPSTRENGTH_PUBSUBTYPES_H_
 
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 
 
 

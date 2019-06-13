@@ -23,7 +23,7 @@
 #ifndef _MetaTestTypes_PUBSUBTYPE_H_
 #define _MetaTestTypes_PUBSUBTYPE_H_
 
-#include "fastrtps/TopicDataType.h"
+#include "fastrtps/topic/TopicDataType.h"
 
 
 

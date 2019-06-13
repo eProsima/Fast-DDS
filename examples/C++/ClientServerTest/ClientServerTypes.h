@@ -20,7 +20,7 @@
 #ifndef CLIENTSERVERTYPES_H_
 #define CLIENTSERVERTYPES_H_
 
-#include "fastrtps/TopicDataType.h"
+#include "fastrtps/topic/TopicDataType.h"
 #include "fastrtps/rtps/common/all_common.h"
 
 namespace clientserver{

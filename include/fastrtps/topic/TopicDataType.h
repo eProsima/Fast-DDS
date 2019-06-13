@@ -19,10 +19,10 @@
 #ifndef TOPICDATATYPE_H_
 #define TOPICDATATYPE_H_
 
-#include "rtps/common/Types.h"
-#include "rtps/common/SerializedPayload.h"
-#include "rtps/common/InstanceHandle.h"
-#include "utils/md5.h"
+#include "../rtps/common/Types.h"
+#include "../rtps/common/SerializedPayload.h"
+#include "../rtps/common/InstanceHandle.h"
+#include "../utils/md5.h"
 #include <string>
 #include <functional>
 
