@@ -152,8 +152,6 @@ class TimedEventImpl
      * @brief Tries to cancel the event and set it as INACTIVE.
      * To achieve it, the event has to be WAITING.
      * @return true on success.
-     * @return true on success.
-     * @return true on success.
      */
     bool go_cancel();
 
