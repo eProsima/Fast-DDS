@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef PDPSIMPLE_H_
-#define PDPSIMPLE_H_
+#ifndef _RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
+#define _RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <mutex>
@@ -44,8 +44,7 @@ class ReaderHistory;
 class RTPSParticipantImpl;
 class BuiltinProtocols;
 class EDP;
-class ResendParticipantProxyDataPeriod;
-class RemoteParticipantLeaseDuration;
+class TimedEvent;
 class ReaderProxyData;
 class WriterProxyData;
 class ParticipantProxyData;
@@ -58,7 +57,6 @@ class PDPSimpleListener;
  */
 class PDPSimple
 {
-    friend class ResendRTPSParticipantProxyDataPeriod;
     friend class RemoteRTPSParticipantLeaseDuration;
     friend class PDPSimpleListener;
 
@@ -325,7 +323,7 @@ private:
     //!Variable to indicate if any parameter has changed.
     std::atomic_bool m_hasChangedLocalPDP;
     //!TimedEvent to periodically resend the local RTPSParticipant information.
-    ResendParticipantProxyDataPeriod* mp_resendParticipantTimer;
+    TimedEvent* resend_participant_info_event_;
     //!Listener for the SPDP messages.
     PDPSimpleListener* mp_listener;
     //!WriterHistory
@@ -367,4 +365,4 @@ private:
 } /* namespace rtps */
 } /* namespace eprosima */
 #endif
-#endif /* PDPSIMPLE_H_ */
+#endif //_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_

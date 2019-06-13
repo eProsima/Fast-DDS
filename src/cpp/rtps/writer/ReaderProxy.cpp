@@ -22,9 +22,10 @@
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/writer/ReaderProxy.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
+#include <fastrtps/rtps/resources/TimedEvent.h>
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/rtps/common/LocatorListComparisons.hpp>
+#include "../participant/RTPSParticipantImpl.h"
 
 #include <mutex>
 #include <cassert>
@@ -50,14 +51,28 @@ ReaderProxy::ReaderProxy(
     , last_acknack_count_(0)
     , last_nackfrag_count_(0)
 {
-    nack_supression_event_ = std::make_shared <NackSupressionDuration>(writer_,
-        TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
+    nack_supression_event_ = new TimedEvent(writer_->getRTPSParticipant()->getEventResource(),
+            [&](TimedEvent::EventCode code) -> bool
+            {
+                if (TimedEvent::EVENT_SUCCESS == code)
+                {
+                    writer_->perform_nack_supression(reader_attributes_.guid());
+                }
+
+                return false;
+            },
+            TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
 
     stop();
 }
 
 ReaderProxy::~ReaderProxy()
 {
+    if (nack_supression_event_)
+    {
+        delete(nack_supression_event_);
+        nack_supression_event_ = nullptr;
+    }
 }
 
 void ReaderProxy::start(const ReaderProxyData& reader_attributes)
@@ -71,7 +86,6 @@ void ReaderProxy::start(const ReaderProxyData& reader_attributes)
     is_active_ = true;
     reader_attributes_ = reader_attributes;
 
-    nack_supression_event_->reader_guid(reader_attributes_.guid());
     timers_enabled_.store(reader_attributes_.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS);
 
     logInfo(RTPS_WRITER, "Reader Proxy started");
@@ -126,14 +140,33 @@ void ReaderProxy::add_change(
         const ChangeForReader_t& change,
         bool restart_nack_supression)
 {
-    assert(change.getSequenceNumber() > changes_low_mark_);
-    assert(changes_for_reader_.empty() ? true :
-        change.getSequenceNumber() > changes_for_reader_.back().getSequenceNumber());
-
     if (restart_nack_supression && timers_enabled_.load())
     {
         nack_supression_event_->restart_timer();
     }
+
+    add_change(change);
+}
+
+void ReaderProxy::add_change(
+        const ChangeForReader_t& change,
+        bool restart_nack_supression,
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+{
+    if (restart_nack_supression && timers_enabled_)
+    {
+        nack_supression_event_->restart_timer(max_blocking_time);
+    }
+
+    add_change(change);
+}
+
+void ReaderProxy::add_change(
+        const ChangeForReader_t& change)
+{
+    assert(change.getSequenceNumber() > changes_low_mark_);
+    assert(changes_for_reader_.empty() ? true :
+        change.getSequenceNumber() > changes_for_reader_.back().getSequenceNumber());
 
     // For best effort readers, changes are acked when being sent
     if (changes_for_reader_.empty() && change.getStatus() == ACKNOWLEDGED)

@@ -20,7 +20,6 @@
 
 #include <fastrtps/rtps/builtin/liveliness/WLP.h>
 #include <fastrtps/rtps/builtin/liveliness/WLPListener.h>
-#include <fastrtps/rtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.h>
 #include "../../participant/RTPSParticipantImpl.h"
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
@@ -35,6 +34,7 @@
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/rtps/resources/TimedEvent.h>
 
 
 #include <mutex>
@@ -54,8 +54,8 @@ WLP::WLP(BuiltinProtocols* p)
     , mp_builtinWriterHistory(nullptr)
     , mp_builtinReaderHistory(nullptr)
     , mp_listener(nullptr)
-    , mp_livelinessAutomatic(nullptr)
-    , mp_livelinessManRTPSParticipant(nullptr)
+    , liveliness_automatic_event_(nullptr)
+    , livelines_participant_event_(nullptr)
 #if HAVE_SECURITY
     , mp_builtinWriterSecure(nullptr)
     , mp_builtinReaderSecure(nullptr)
@@ -73,6 +73,16 @@ WLP::WLP(BuiltinProtocols* p)
 
 WLP::~WLP()
 {
+    if(liveliness_automatic_event_ != nullptr)
+    {
+        delete(liveliness_automatic_event_);
+    }
+
+    if(livelines_participant_event_ != nullptr)
+    {
+        delete(livelines_participant_event_);
+    }
+
 #if HAVE_SECURITY
     mp_participant->deleteUserEndpoint(mp_builtinReaderSecure);
     mp_participant->deleteUserEndpoint(mp_builtinWriterSecure);
@@ -84,10 +94,6 @@ WLP::~WLP()
     delete(this->mp_builtinReaderHistory);
     delete(this->mp_builtinWriterHistory);
     delete(this->mp_listener);
-    if(this->mp_livelinessAutomatic!=nullptr)
-        delete(mp_livelinessAutomatic);
-    if(this->mp_livelinessManRTPSParticipant!=nullptr)
-        delete(this->mp_livelinessManRTPSParticipant);
 }
 
 bool WLP::initWL(RTPSParticipantImpl* p)
@@ -434,45 +440,67 @@ bool WLP::addLocalWriter(RTPSWriter* W, const WriterQos& wqos)
 
     if(wqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
     {
-        if(mp_livelinessAutomatic == nullptr)
+        if(liveliness_automatic_event_ == nullptr)
         {
-            mp_livelinessAutomatic = new WLivelinessPeriodicAssertion(this,AUTOMATIC_LIVELINESS_QOS);
-            mp_livelinessAutomatic->update_interval_millisec(wAnnouncementPeriodMilliSec);
-            mp_livelinessAutomatic->restart_timer();
+            liveliness_automatic_event_ = new TimedEvent(mp_participant->getEventResource(),
+                    [&](TimedEvent::EventCode code) -> bool
+                    {
+                        if (TimedEvent::EVENT_SUCCESS == code)
+                        {
+                            automatic_liveliness_assertion();
+                            mp_builtinProtocols->mp_PDP->assertLocalWritersLiveliness(AUTOMATIC_LIVELINESS_QOS);
+                            return true;
+                        }
+
+                        return false;
+                    },
+                    wAnnouncementPeriodMilliSec);
+            liveliness_automatic_event_->restart_timer();
             m_minAutomatic_MilliSec = wAnnouncementPeriodMilliSec;
         }
         else if(m_minAutomatic_MilliSec > wAnnouncementPeriodMilliSec)
         {
             m_minAutomatic_MilliSec = wAnnouncementPeriodMilliSec;
-            mp_livelinessAutomatic->update_interval_millisec(wAnnouncementPeriodMilliSec);
+            liveliness_automatic_event_->update_interval_millisec(wAnnouncementPeriodMilliSec);
             //CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-            if(mp_livelinessAutomatic->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
+            if(liveliness_automatic_event_->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
             {
-                mp_livelinessAutomatic->cancel_timer();
+                liveliness_automatic_event_->cancel_timer();
             }
-            mp_livelinessAutomatic->restart_timer();
+            liveliness_automatic_event_->restart_timer();
         }
         m_livAutomaticWriters.push_back(W);
     }
     else if(wqos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
-        if(mp_livelinessManRTPSParticipant == nullptr)
+        if(livelines_participant_event_ == nullptr)
         {
-            mp_livelinessManRTPSParticipant = new WLivelinessPeriodicAssertion(this,MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
-            mp_livelinessManRTPSParticipant->update_interval_millisec(wAnnouncementPeriodMilliSec);
-            mp_livelinessManRTPSParticipant->restart_timer();
+            livelines_participant_event_ = new TimedEvent(mp_participant->getEventResource(),
+                    [&](TimedEvent::EventCode code) -> bool
+                    {
+                        if (TimedEvent::EVENT_SUCCESS == code)
+                        {
+                            participant_liveliness_assertion();
+                            mp_builtinProtocols->mp_PDP->assertLocalWritersLiveliness(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
+                            return true;
+                        }
+
+                        return false;
+                    },
+                    wAnnouncementPeriodMilliSec);
+            livelines_participant_event_->restart_timer();
             m_minManRTPSParticipant_MilliSec = wAnnouncementPeriodMilliSec;
         }
         else if(m_minManRTPSParticipant_MilliSec > wAnnouncementPeriodMilliSec)
         {
             m_minManRTPSParticipant_MilliSec = wAnnouncementPeriodMilliSec;
-            mp_livelinessManRTPSParticipant->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
+            livelines_participant_event_->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
             //CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-            if(mp_livelinessManRTPSParticipant->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
+            if(livelines_participant_event_->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
             {
-                mp_livelinessManRTPSParticipant->cancel_timer();
+                livelines_participant_event_->cancel_timer();
             }
-            mp_livelinessManRTPSParticipant->restart_timer();
+            livelines_participant_event_->restart_timer();
         }
         m_livManRTPSParticipantWriters.push_back(W);
     }
@@ -517,14 +545,16 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
             if(found)
             {
                 m_livAutomaticWriters.erase(wToEraseIt);
-                if(mp_livelinessAutomatic!=nullptr)
+                if(liveliness_automatic_event_ != nullptr)
                 {
-                    if(m_livAutomaticWriters.size()>0)
-                        mp_livelinessAutomatic->update_interval_millisec(m_minAutomatic_MilliSec);
+                    if (0 < m_livAutomaticWriters.size())
+                    {
+                        liveliness_automatic_event_->update_interval_millisec(m_minAutomatic_MilliSec);
+                    }
                     else
                     {
-                        delete(mp_livelinessAutomatic);
-                        mp_livelinessAutomatic = nullptr;
+                        delete(liveliness_automatic_event_);
+                        liveliness_automatic_event_ = nullptr;
 
                     }
                 }
@@ -554,14 +584,16 @@ bool WLP::removeLocalWriter(RTPSWriter* W)
             if(found)
             {
                 m_livManRTPSParticipantWriters.erase(wToEraseIt);
-                if(mp_livelinessManRTPSParticipant!=nullptr)
+                if (livelines_participant_event_ != nullptr)
                 {
-                    if(m_livManRTPSParticipantWriters.size()>0)
-                        mp_livelinessManRTPSParticipant->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
+                    if (0 < m_livManRTPSParticipantWriters.size())
+                    {
+                        livelines_participant_event_->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
+                    }
                     else
                     {
-                        delete(mp_livelinessManRTPSParticipant);
-                        mp_livelinessManRTPSParticipant = nullptr;
+                        delete(livelines_participant_event_);
+                        livelines_participant_event_ = nullptr;
                     }
                 }
             }
@@ -588,75 +620,170 @@ bool WLP::updateLocalWriter(RTPSWriter* W, const WriterQos& wqos)
     double wAnnouncementPeriodMilliSec(TimeConv::Duration_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));
     if(wqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
     {
-        if(mp_livelinessAutomatic == nullptr)
+        if(liveliness_automatic_event_ == nullptr)
         {
-            mp_livelinessAutomatic = new WLivelinessPeriodicAssertion(this,AUTOMATIC_LIVELINESS_QOS);
-            mp_livelinessAutomatic->update_interval_millisec(wAnnouncementPeriodMilliSec);
-            mp_livelinessAutomatic->restart_timer();
+            liveliness_automatic_event_ = new TimedEvent(mp_participant->getEventResource(),
+                    [&](TimedEvent::EventCode code) -> bool
+                    {
+                        if (TimedEvent::EVENT_SUCCESS == code)
+                        {
+                            automatic_liveliness_assertion();
+                            mp_builtinProtocols->mp_PDP->assertLocalWritersLiveliness(AUTOMATIC_LIVELINESS_QOS);
+                            return true;
+                        }
+
+                        return false;
+                    },
+                    wAnnouncementPeriodMilliSec);
+            liveliness_automatic_event_->restart_timer();
             m_minAutomatic_MilliSec = wAnnouncementPeriodMilliSec;
         }
         else if(m_minAutomatic_MilliSec > wAnnouncementPeriodMilliSec)
         {
             m_minAutomatic_MilliSec = wAnnouncementPeriodMilliSec;
-            mp_livelinessAutomatic->update_interval_millisec(wAnnouncementPeriodMilliSec);
+            liveliness_automatic_event_->update_interval_millisec(wAnnouncementPeriodMilliSec);
             //CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-            if(mp_livelinessAutomatic->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
+            if(liveliness_automatic_event_->getRemainingTimeMilliSec() > m_minAutomatic_MilliSec)
             {
-                mp_livelinessAutomatic->cancel_timer();
+                liveliness_automatic_event_->cancel_timer();
             }
-            mp_livelinessAutomatic->restart_timer();
+            liveliness_automatic_event_->restart_timer();
         }
     }
     else if(wqos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
-        if(mp_livelinessManRTPSParticipant == nullptr)
+        if(livelines_participant_event_ == nullptr)
         {
-            mp_livelinessManRTPSParticipant = new WLivelinessPeriodicAssertion(this,MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
-            mp_livelinessManRTPSParticipant->update_interval_millisec(wAnnouncementPeriodMilliSec);
-            mp_livelinessManRTPSParticipant->restart_timer();
+            livelines_participant_event_ = new TimedEvent(mp_participant->getEventResource(),
+                    [&](TimedEvent::EventCode code) -> bool
+                    {
+                        if (TimedEvent::EVENT_SUCCESS == code)
+                        {
+                            participant_liveliness_assertion();
+                            mp_builtinProtocols->mp_PDP->assertLocalWritersLiveliness(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
+                            return true;
+                        }
+
+                        return false;
+                    },
+                    wAnnouncementPeriodMilliSec);
+            livelines_participant_event_->restart_timer();
             m_minManRTPSParticipant_MilliSec = wAnnouncementPeriodMilliSec;
         }
         else if(m_minManRTPSParticipant_MilliSec > wAnnouncementPeriodMilliSec)
         {
             m_minManRTPSParticipant_MilliSec = wAnnouncementPeriodMilliSec;
-            mp_livelinessManRTPSParticipant->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
+            livelines_participant_event_->update_interval_millisec(m_minManRTPSParticipant_MilliSec);
             //CHECK IF THE TIMER IS GOING TO BE CALLED AFTER THIS NEW SET LEASE DURATION
-            if(mp_livelinessManRTPSParticipant->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
+            if(livelines_participant_event_->getRemainingTimeMilliSec() > m_minManRTPSParticipant_MilliSec)
             {
-                mp_livelinessManRTPSParticipant->cancel_timer();
+                livelines_participant_event_->cancel_timer();
             }
-            mp_livelinessManRTPSParticipant->restart_timer();
+            livelines_participant_event_->restart_timer();
         }
     }
     return true;
 }
 
-StatefulWriter* WLP::getBuiltinWriter()
+bool WLP::automatic_liveliness_assertion()
 {
-    StatefulWriter* ret_val = mp_builtinWriter;
+    std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
-#if HAVE_SECURITY
-    if (mp_participant->security_attributes().is_liveliness_protected)
+    if (0 < m_livAutomaticWriters.size())
     {
-        ret_val = mp_builtinWriterSecure;
-    }
-#endif
+        InstanceHandle_t handle;
+        for(uint8_t i =0;i<12;++i)
+        {
+            handle.value[i] = mp_participant->getGuid().guidPrefix.value[i];
+        }
+        handle.value[15] = AUTOMATIC_LIVELINESS_QOS + 0x01;
 
-    return ret_val;
+        std::lock_guard<std::recursive_timed_mutex> wguard(mp_builtinWriter->getMutex());
+        CacheChange_t* change = mp_builtinWriter->new_change([]() -> uint32_t {return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE, handle);
+
+        if (change != nullptr)
+        {
+#if __BIG_ENDIAN__
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+#else
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+#endif
+            memcpy(change->serializedPayload.data, mp_participant->getGuid().guidPrefix.value, 12);
+            for(uint8_t i =12;i<24;++i)
+                change->serializedPayload.data[i] = 0;
+            change->serializedPayload.data[15] = AUTOMATIC_LIVELINESS_QOS + 1;
+            change->serializedPayload.length = 12+4+4+4;
+            if (mp_builtinWriterHistory->getHistorySize() > 0)
+            {
+                for(std::vector<CacheChange_t*>::iterator chit = mp_builtinWriterHistory->changesBegin();
+                        chit != mp_builtinWriterHistory->changesEnd();++chit)
+                {
+                    if((*chit)->instanceHandle == change->instanceHandle)
+                    {
+                        mp_builtinWriterHistory->remove_change(*chit);
+                        break;
+                    }
+                }
+            }
+            mp_builtinWriterHistory->add_change(change);
+        }
+    }
+
+    return true;
 }
 
-WriterHistory* WLP::getBuiltinWriterHistory()
+bool WLP::participant_liveliness_assertion()
 {
-    WriterHistory* ret_val = mp_builtinWriterHistory;
+    std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
+    bool livelinessAsserted = false;
 
-#if HAVE_SECURITY
-    if (mp_participant->security_attributes().is_liveliness_protected)
+    for(std::vector<RTPSWriter*>::iterator wit = m_livManRTPSParticipantWriters.begin();
+            wit != m_livManRTPSParticipantWriters.end(); ++wit)
     {
-        ret_val = mp_builtinWriterSecureHistory;
+        if((*wit)->getLivelinessAsserted())
+        {
+            livelinessAsserted = true;
+        }
+        (*wit)->setLivelinessAsserted(false);
     }
-#endif
 
-    return ret_val;
+    if (livelinessAsserted)
+    {
+        InstanceHandle_t handle;
+        for(uint8_t i =0;i<12;++i)
+        {
+            handle.value[i] = mp_participant->getGuid().guidPrefix.value[i];
+        }
+        handle.value[15] = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS + 0x01;
+
+        std::lock_guard<std::recursive_timed_mutex> wguard(mp_builtinWriter->getMutex());
+        CacheChange_t* change = mp_builtinWriter->new_change([]() -> uint32_t {return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE, handle);
+        if (change != nullptr)
+        {
+#if __BIG_ENDIAN__
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+#else
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+#endif
+            memcpy(change->serializedPayload.data, mp_participant->getGuid().guidPrefix.value, 12);
+
+            for(uint8_t i =12;i<24;++i)
+                change->serializedPayload.data[i] = 0;
+            change->serializedPayload.data[15] = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS + 1;
+            change->serializedPayload.length = 12+4+4+4;
+            for(auto ch = mp_builtinWriterHistory->changesBegin();
+                    ch != mp_builtinWriterHistory->changesEnd();++ch)
+            {
+                if((*ch)->instanceHandle == change->instanceHandle)
+                {
+                    mp_builtinWriterHistory->remove_change(*ch);
+                }
+            }
+            mp_builtinWriterHistory->add_change(change);
+        }
+    }
+
+    return false;
 }
 
 } /* namespace rtps */

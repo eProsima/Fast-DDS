@@ -26,11 +26,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         set(NETWORKFACTORYTESTS_SOURCE
             NetworkFactoryTests.cpp
             mock/MockTransport.cpp
-            
+
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
-            
+
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPTransportInterface.cpp
@@ -39,7 +39,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/RTCPMessageManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cpp
-			${PROJECT_SOURCE_DIR}/src/cpp/transport/timedevent/TCPKeepAliveEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResourceBasic.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPAcceptor.cpp
@@ -53,6 +52,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterList.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
 
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
 

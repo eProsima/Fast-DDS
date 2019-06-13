@@ -24,6 +24,7 @@
 #include "RTPSReader.h"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
 #include "../common/CDRMessage_t.h"
+#include "../messages/RTPSMessageGroup.h"
 
 #include <mutex>
 #include <atomic>
@@ -33,7 +34,6 @@ namespace fastrtps{
 namespace rtps {
 
 class WriterProxy;
-class RTPSMessageGroup_t;
 class RTPSMessageSenderInterface;
 
 /**
@@ -227,35 +227,33 @@ class StatefulReader : public RTPSReader
 
         /**
          * Sends an acknack message from this reader.
+         * @param writer Pointer to the info of the remote writer.
          * @param sns Sequence number bitmap with the acknack information.
-         * @param buffer Message buffer to use for serialization.
          * @param sender Message sender interface.
          * @param is_final Value for final flag.
          */
         void send_acknack(
+                const WriterProxy* writer,
                 const SequenceNumberSet_t& sns,
-                RTPSMessageGroup_t& buffer,
                 const RTPSMessageSenderInterface& sender,
                 bool is_final);
 
         /**
          * Sends an acknack message from this reader in response to a heartbeat.
          * @param writer Pointer to the proxy representing the writer to send the acknack to.
-         * @param buffer Message buffer to use for serialization.
          * @param sender Message sender interface.
          * @param heartbeat_was_final Final flag of the last received heartbeat.
          */
         void send_acknack(
                 const WriterProxy* writer,
-                RTPSMessageGroup_t& buffer,
                 const RTPSMessageSenderInterface& sender,
                 bool heartbeat_was_final);
 
         /**
          * Use the participant of this reader to send a message to certain locator.
-         *
          * @param message Message to be sent.
          * @param locator Destination locator.
+         * @param max_blocking_time_point Future time point where any blocking should end.
          */
         bool send_sync_nts(
                 CDRMessage_t* message,
@@ -293,6 +291,8 @@ class StatefulReader : public RTPSReader
         bool disable_positive_acks_;
         //! False when being destroyed
         bool is_alive_;
+        //! Message buffer used in the response.
+        RTPSMessageGroup_t message_buffer_;
 };
 
 } /* namespace rtps */

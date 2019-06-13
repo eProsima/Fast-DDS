@@ -12,34 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _RTPS_READER_TIMEDEVENT_WRITERPROXYLIVELINESS_H_
-#define _RTPS_READER_TIMEDEVENT_WRITERPROXYLIVELINESS_H_
+/**
+ * @file ResourceEvent.h
+ *
+ */
+
+#ifndef _RTPS_RESOURCES_RESOURCEEVENT_H_
+#define _RTPS_RESOURCES_RESOURCEEVENT_H_
+
+namespace eprosima {
+namespace fastrtps{
+namespace rtps {
 
 #include <gmock/gmock.h>
 
-namespace eprosima {
-namespace fastrtps {
-namespace rtps {
-
-// Forward declarations
-class StatefulReader;
-struct GUID_t;
-
-class WriterProxyLiveliness
+class ResourceEvent
 {
     public:
 
-        WriterProxyLiveliness(StatefulReader* /*reader*/)
-        {
-        }
-
-        MOCK_METHOD2(start, void(const GUID_t&, const Duration_t&));
-        MOCK_METHOD0(restart_timer, void());
-        MOCK_METHOD0(cancel_timer, void());
+    MOCK_METHOD0(init_thread, void());
 };
 
-} //namespace rtps
-} //namespace fastrtps
-} //namespace eprosima
+}
+}
+}
 
-#endif // _RTPS_READER_TIMEDEVENT_WRITERPROXYLIVELINESS_H_
+#endif //_RTPS_RESOURCES_RESOURCEEVENT_H_
+

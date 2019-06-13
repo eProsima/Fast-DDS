@@ -20,8 +20,6 @@
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
-#include <fastrtps/rtps/reader/timedevent/InitialAckNack.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include "../participant/RTPSParticipantImpl.h"
@@ -70,6 +68,15 @@ StatefulReader::StatefulReader(
     , proxy_changes_config_(resource_limits_from_history(hist->m_att, 0))
     , disable_positive_acks_(att.disable_positive_acks)
     , is_alive_(true)
+    , message_buffer_(
+            pimpl->getMaxMessageSize(),
+            pimpl->getGuid().guidPrefix,
+#if HAVE_SECURITY
+            pimpl->is_secure()
+#else
+            false
+#endif
+            )
 {
     // Update resource limits on proxy changes set adding 256 possibly missing changes
     proxy_changes_config_.initial += 256u;
@@ -790,37 +797,37 @@ bool StatefulReader::isInCleanState()
 }
 
 void StatefulReader::send_acknack(
+        const WriterProxy* writer,
         const SequenceNumberSet_t& sns,
-        RTPSMessageGroup_t& buffer,
         const RTPSMessageSenderInterface& sender,
         bool is_final)
 {
 
-    Count_t acknackCount = 0;
+    std::lock_guard<std::recursive_timed_mutex> guard_reader(mp_mutex);
 
-    {//BEGIN PROTECTION
-        std::lock_guard<std::recursive_timed_mutex> guard_reader(mp_mutex);
-        acknack_count_++;
-        acknackCount = acknack_count_;
+    if (!writer->is_alive())
+    {
+        return;
     }
+
+    acknack_count_++;
 
 
     logInfo(RTPS_READER, "Sending ACKNACK: " << sns);
 
-    RTPSMessageGroup group(getRTPSParticipant(), this, buffer, sender);
-    group.add_acknack(sns, acknackCount, is_final);
-
+    RTPSMessageGroup group(getRTPSParticipant(), this, message_buffer_, sender);
+    group.add_acknack(sns, acknack_count_, is_final);
 }
 
 void StatefulReader::send_acknack(
         const WriterProxy* writer,
-        RTPSMessageGroup_t& buffer,
         const RTPSMessageSenderInterface& sender,
         bool heartbeat_was_final)
 {
     // Protect reader
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
-    if (!is_alive_)
+
+    if (!writer->is_alive())
     {
         return;
     }
@@ -831,7 +838,7 @@ void StatefulReader::send_acknack(
 
     try
     {
-        RTPSMessageGroup group(getRTPSParticipant(), this, buffer, sender);
+        RTPSMessageGroup group(getRTPSParticipant(), this, message_buffer_, sender);
         if (!missing_changes.empty() || !heartbeat_was_final)
         {
             GUID_t guid = sender.remote_guids().at(0);

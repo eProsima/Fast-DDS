@@ -22,10 +22,12 @@
     FRIEND_TEST(WriterProxyTests, IrrelevantChangeSet);
 
 #include "WriterProxy.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/rtps/reader/timedevent/InitialAckNack.h>
-#include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
+#include <fastrtps/rtps/resources/TimedEvent.h>
+
+#include <rtps/reader/WriterProxy.cpp>
 
 namespace eprosima {
 namespace fastrtps {

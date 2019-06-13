@@ -12,32 +12,47 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _RTPS_READER_TIMEDEVENT_INITIALACKNACK_H_
-#define _RTPS_READER_TIMEDEVENT_INITIALACKNACK_H_
+#ifndef _RTPS_RESOURCES_TIMEDEVENT_H_
+#define _RTPS_RESOURCES_TIMEDEVENT_H_
 
 #include <gmock/gmock.h>
+
+#include <fastrtps/rtps/common/Time_t.h>
+
+#include <chrono>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-// Forward declarations
-class WriterProxy;
-class RTPSParticipantImpl;
+class ResourceEvent;
 
-class InitialAckNack
+class TimedEvent
 {
     public:
 
-        InitialAckNack(RTPSParticipantImpl* /*participant*/, WriterProxy* /*wp*/) { }
+        enum EventCode
+        {
+            EVENT_SUCCESS,
+            EVENT_ABORT
+        };
 
-        MOCK_METHOD1(update_interval, void(const Duration_t&));
+        TimedEvent(
+                ResourceEvent&,
+                std::function<bool(EventCode)>,
+                double)
+        {
+        }
+
         MOCK_METHOD0(restart_timer, void());
+        MOCK_METHOD1(restart_timer, void(const std::chrono::steady_clock::time_point& timeout));
         MOCK_METHOD0(cancel_timer, void());
+        MOCK_METHOD1(update_interval, void(const Duration_t&));
 };
 
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // _RTPS_READER_TIMEDEVENT_INITIALACKNACK_H_
+#endif // _RTPS_RESOURCES_TIMEDEVENT_H_
+

@@ -134,7 +134,7 @@ void StatelessWriter::update_reader_info(bool create_sender_resources)
 // TODO(Ricardo) Look for other functions
 void StatelessWriter::unsent_change_added_to_history(
         CacheChange_t* change,
-        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 

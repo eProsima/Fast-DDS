@@ -45,10 +45,8 @@ namespace rtps {
 
 class RTPSParticipantImpl;
 class StatefulReader;
-class HeartbeatResponseDelay;
-class WriterProxyLiveliness;
-class InitialAckNack;
 class RTPSMessageGroup_t;
+class TimedEvent;
 
 /**
  * Class WriterProxy that contains the state of each matched writer for a specific reader.
@@ -229,15 +227,13 @@ public:
 
     /**
      * Sends a preemptive acknack to the writer represented by this proxy.
-     * @param buffer Message buffer to use for serialization.
      */
-    void perform_initial_ack_nack(RTPSMessageGroup_t& buffer) const;
+    void perform_initial_ack_nack() const;
 
     /**
      * Sends the necessary acknac and nackfrag messages to answer the last received heartbeat message.
-     * @param buffer Message buffer to use for serialization.
      */
-    void perform_heartbeat_response(RTPSMessageGroup_t& buffer) const;
+    void perform_heartbeat_response() const;
 
     /**
      * Process an incoming heartbeat from the writer represented by this proxy.
@@ -342,11 +338,11 @@ private:
     //! Parameters of the WriterProxy
     WriterProxyData attributes_;
     //!Timed event to postpone the heartbeatResponse.
-    HeartbeatResponseDelay* heartbeat_response_;
+    TimedEvent* heartbeat_response_;
     //!To check the liveliness Status periodically.
-    WriterProxyLiveliness* writer_proxy_liveliness_;
+    TimedEvent* writer_proxy_liveliness_;
     //! Timed event to send initial acknack.
-    InitialAckNack* initial_acknack_;
+    TimedEvent* initial_acknack_;
     //! Last Heartbeatcount.
     uint32_t last_heartbeat_count_;
     //!Indicates if the heartbeat has the final flag set.

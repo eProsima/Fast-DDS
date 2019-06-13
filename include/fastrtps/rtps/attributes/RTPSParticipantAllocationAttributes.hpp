@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file RTPSParticipantAllocationAttributes.h
+ * @file RTPSParticipantAllocationAttributes.hpp
  */
 
 #ifndef _FASTRTPS_RTPS_RTPSPARTICIPANTALLOCATIONATTRIBUTES_HPP_

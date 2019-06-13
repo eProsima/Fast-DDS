@@ -30,10 +30,7 @@
 
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
-#include <fastrtps/rtps/timedevent/TimedCallback.h>
-#include <fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.h>
-#include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
-#include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
+#include <fastrtps/rtps/resources/TimedEvent.h>
 
 #include <fastrtps/rtps/history/WriterHistory.h>
 
@@ -58,7 +55,9 @@ StatefulWriter::StatefulWriter(
         WriterHistory* hist,
         WriterListener* listen)
     : RTPSWriter(pimpl, guid, att, hist, listen)
-    , mp_periodicHB(nullptr)
+    , periodic_hb_event_(nullptr)
+    , nack_response_event_(nullptr)
+    , ack_event_(nullptr)
     , m_heartbeatCount(0)
     , m_times(att.times)
     , matched_readers_(att.matched_readers_allocation)
@@ -67,11 +66,9 @@ StatefulWriter::StatefulWriter(
     , all_acked_(false)
     , may_remove_change_cond_()
     , may_remove_change_(0)
-    , nack_response_event_(nullptr)
     , disable_heartbeat_piggyback_(att.disable_heartbeat_piggyback)
     , disable_positive_acks_(att.disable_positive_acks)
     , keep_duration_us_(att.keep_duration.to_ns() * 1e-3)
-    , ack_timer_(nullptr)
     , last_sequence_number_()
     , sendBufferSize_(pimpl->get_min_network_send_buffer_size())
     , currentUsageSendBufferSize_(static_cast<int32_t>(pimpl->get_min_network_send_buffer_size()))
@@ -80,16 +77,44 @@ StatefulWriter::StatefulWriter(
     m_heartbeatCount = 0;
 
     const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
-    mp_periodicHB = new PeriodicHeartbeat(this,TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
-    nack_response_event_ = new NackResponseDelay(this, TimeConv::Time_t2MilliSecondsDouble(m_times.nackResponseDelay));
+
+    periodic_hb_event_ = new TimedEvent(pimpl->getEventResource(), [&](TimedEvent::EventCode code) -> bool
+            {
+                if(TimedEvent::EVENT_SUCCESS == code)
+                {
+                    if (send_periodic_heartbeat())
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            },
+            TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
+
+    nack_response_event_ = new TimedEvent(pimpl->getEventResource(), [&](TimedEvent::EventCode code) -> bool
+            {
+                if (TimedEvent::EVENT_SUCCESS == code)
+                {
+                    perform_nack_response();
+                }
+
+                return false;
+            },
+            TimeConv::Time_t2MilliSecondsDouble(m_times.nackResponseDelay));
 
     if (disable_positive_acks_)
     {
-        ack_timer_ = new TimedCallback(
-                    std::bind(&StatefulWriter::ack_timer_expired, this),
-                    att.keep_duration.to_ns() * 1e-6, // in milliseconds
-                    pimpl->getUserRTPSParticipant()->get_resource_event().getIOService(),
-                    pimpl->getUserRTPSParticipant()->get_resource_event().getThread());
+        ack_event_ = new TimedEvent(pimpl->getEventResource(), [&](TimedEvent::EventCode code) -> bool
+                {
+                    if (TimedEvent::EVENT_SUCCESS == code)
+                    {
+                        return ack_timer_expired();
+                    }
+
+                    return false;
+                },
+                    att.keep_duration.to_ns() * 1e-6); // in milliseconds
     }
 
     for (size_t n = 0; n < att.matched_readers_allocation.initial; ++n)
@@ -101,26 +126,36 @@ StatefulWriter::StatefulWriter(
 
 StatefulWriter::~StatefulWriter()
 {
-    AsyncWriterThread::removeWriter(*this);
-
     logInfo(RTPS_WRITER,"StatefulWriter destructor");
+
+    AsyncWriterThread::removeWriter(*this);
 
     if (disable_positive_acks_)
     {
-        delete ack_timer_;
+        delete(ack_event_);
+        ack_event_ = nullptr;
     }
 
-    if(nack_response_event_ != nullptr)
+    if (nack_response_event_ != nullptr)
     {
         delete(nack_response_event_);
         nack_response_event_ = nullptr;
     }
 
     // Destroy heartbeat event
-    if (mp_periodicHB != nullptr)
+    if (periodic_hb_event_ != nullptr)
     {
-        delete(mp_periodicHB);
-        mp_periodicHB = nullptr;
+        delete(periodic_hb_event_);
+        periodic_hb_event_ = nullptr;
+    }
+
+    // Stop all active proxies and pass them to the pool
+    while (!matched_readers_.empty())
+    {
+        ReaderProxy* remote_reader = matched_readers_.back();
+        matched_readers_.pop_back();
+        remote_reader->stop();
+        matched_readers_pool_.push_back(remote_reader);
     }
 
     // Stop all active proxies and pass them to the pool
@@ -146,7 +181,7 @@ StatefulWriter::~StatefulWriter()
 
 void StatefulWriter::unsent_change_added_to_history(
         CacheChange_t* change,
-        std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
@@ -188,7 +223,7 @@ void StatefulWriter::unsent_change_added_to_history(
                 }
 
                 changeForReader.setRelevance(it->rtps_is_relevant(change));
-                it->add_change(changeForReader, true);
+                it->add_change(changeForReader, true, max_blocking_time);
                 expectsInlineQos |= it->expects_inline_qos();
             }
 
@@ -222,7 +257,7 @@ void StatefulWriter::unsent_change_added_to_history(
                     }
                 }
 
-                this->mp_periodicHB->restart_timer();
+                periodic_hb_event_->restart_timer(max_blocking_time);
                 if ( (mp_listener != nullptr) && this->is_acked_by_all(change) )
                 {
                     mp_listener->onWriterChangeReceivedByAll(this, change);
@@ -254,7 +289,7 @@ void StatefulWriter::unsent_change_added_to_history(
                 }
 
                 changeForReader.setRelevance(it->rtps_is_relevant(change));
-                it->add_change(changeForReader, false);
+                it->add_change(changeForReader, false, max_blocking_time);
             }
 
             if (m_pushMode)
@@ -270,8 +305,8 @@ void StatefulWriter::unsent_change_added_to_history(
             auto interval = source_timestamp - now + keep_duration_us_;
             assert(interval.count() >= 0);
 
-            ack_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
-            ack_timer_->restart_timer();
+            ack_event_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+            ack_event_->restart_timer(max_blocking_time);
         }
     }
     else
@@ -561,7 +596,7 @@ void StatefulWriter::send_any_unsent_changes()
 
     if (activateHeartbeatPeriod)
     {
-        this->mp_periodicHB->restart_timer();
+        periodic_hb_event_->restart_timer();
     }
 
     // On VOLATILE writers, remove auto-acked (best effort readers) changes
@@ -710,7 +745,7 @@ bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
 
         // Always activate heartbeat period. We need a confirmation of the reader.
         // The state has to be updated.
-        this->mp_periodicHB->restart_timer();
+        periodic_hb_event_->restart_timer();
     }
     else
     {
@@ -749,8 +784,10 @@ bool StatefulWriter::matched_reader_remove(const GUID_t& reader_guid)
     locator_selector_.remove_entry(reader_guid);
     update_reader_info(false);
 
-    if(matched_readers_.size()==0)
-        this->mp_periodicHB->cancel_timer();
+    if (matched_readers_.size() == 0)
+    {
+        periodic_hb_event_->cancel_timer();
+    }
 
     lock.unlock();
 
@@ -950,7 +987,7 @@ void StatefulWriter::updateTimes(const WriterTimes& times)
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     if(m_times.heartbeatPeriod != times.heartbeatPeriod)
     {
-        this->mp_periodicHB->update_interval(times.heartbeatPeriod);
+        periodic_hb_event_->update_interval(times.heartbeatPeriod);
     }
     if(m_times.nackResponseDelay != times.nackResponseDelay)
     {
@@ -1153,7 +1190,7 @@ void StatefulWriter::perform_nack_supression(const GUID_t& reader_guid)
         if (remote_reader->guid() == reader_guid)
         {
             remote_reader->perform_nack_supression();
-            mp_periodicHB->restart_timer();
+            periodic_hb_event_->restart_timer();
             return;
         }
     }
@@ -1187,7 +1224,7 @@ bool StatefulWriter::process_acknack(
                         }
                         else if (!final_flag)
                         {
-                            mp_periodicHB->restart_timer();
+                            periodic_hb_event_->restart_timer();
                         }
                     }
                     else if (sn_set.empty() && !final_flag)
@@ -1237,7 +1274,7 @@ bool StatefulWriter::process_nack_frag(
     return result;
 }
 
-void StatefulWriter::ack_timer_expired()
+bool StatefulWriter::ack_timer_expired()
 {
     std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
@@ -1270,7 +1307,7 @@ void StatefulWriter::ack_timer_expired()
                     getGuid(),
                     &change))
         {
-            return;
+            return false;
         }
 
         auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
@@ -1279,6 +1316,6 @@ void StatefulWriter::ack_timer_expired()
     }
     assert(interval.count() >= 0);
 
-    ack_timer_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
-    ack_timer_->restart_timer();
+    ack_event_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+    return true;
 }

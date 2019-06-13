@@ -174,7 +174,7 @@ class EDP
 
         /**
          * Try to pair/unpair ReaderProxyData.
-         * @param pdata Pointer to the participant proxy data.
+         * @param participant_guid Identifier of the participant.
          * @param rdata Pointer to the ReaderProxyData object.
          * @return True.
          */
@@ -190,7 +190,7 @@ class EDP
 
         /**
          * Try to pair/unpair WriterProxyData.
-         * @param pdata Pointer to the participant proxy data.
+         * @param participant_guid Identifier of the participant.
          * @param wdata Pointer to the WriterProxyData.
          * @return True.
          */

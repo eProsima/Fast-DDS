@@ -32,22 +32,15 @@ set(${PROJECT_NAME}_source_files
     rtps/resources/TimedEventImpl.cpp
     rtps/resources/AsyncWriterThread.cpp
     rtps/resources/AsyncInterestTree.cpp
-    rtps/timedevent/TimedCallback.cpp
     rtps/writer/RTPSWriter.cpp
     rtps/writer/StatefulWriter.cpp
     rtps/writer/ReaderProxy.cpp
     rtps/writer/StatelessWriter.cpp
     rtps/writer/ReaderLocator.cpp
-    rtps/writer/timedevent/PeriodicHeartbeat.cpp
-    rtps/writer/timedevent/NackResponseDelay.cpp
-    rtps/writer/timedevent/NackSupressionDuration.cpp
     rtps/history/CacheChangePool.cpp
     rtps/history/History.cpp
     rtps/history/WriterHistory.cpp
     rtps/history/ReaderHistory.cpp
-    rtps/reader/timedevent/HeartbeatResponseDelay.cpp
-    rtps/reader/timedevent/WriterProxyLiveliness.cpp
-    rtps/reader/timedevent/InitialAckNack.cpp
     rtps/reader/WriterProxy.cpp
     rtps/reader/StatefulReader.cpp
     rtps/reader/StatelessReader.cpp
@@ -89,7 +82,6 @@ set(${PROJECT_NAME}_source_files
     transport/test_UDPv4Transport.cpp
     transport/tcp/TCPControlMessage.cpp
     transport/tcp/RTCPMessageManager.cpp
-    transport/timedevent/TCPKeepAliveEvent.cpp
 
     types/AnnotationDescriptor.cpp
     types/AnnotationParameterValue.cpp
@@ -123,15 +115,12 @@ set(${PROJECT_NAME}_source_files
     rtps/builtin/BuiltinProtocols.cpp
     rtps/builtin/discovery/participant/PDPSimple.cpp
     rtps/builtin/discovery/participant/PDPSimpleListener.cpp
-    rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp
-    rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp
     rtps/builtin/discovery/endpoint/EDP.cpp
     rtps/builtin/discovery/endpoint/EDPSimple.cpp
     rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp
     rtps/builtin/discovery/endpoint/EDPStatic.cpp
     rtps/builtin/liveliness/WLP.cpp
     rtps/builtin/liveliness/WLPListener.cpp
-    rtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp
     rtps/builtin/data/ParticipantProxyData.cpp
     rtps/builtin/data/WriterProxyData.cpp
     rtps/builtin/data/ReaderProxyData.cpp
@@ -174,7 +163,6 @@ set(${PROJECT_NAME}_security_source_files
     rtps/security/common/SharedSecretHandle.cpp
     rtps/security/SecurityManager.cpp
     rtps/security/SecurityPluginFactory.cpp
-    rtps/security/timedevent/HandshakeMessageTokenResent.cpp
     security/OpenSSLInit.cpp
     security/authentication/PKIDH.cpp
     security/accesscontrol/Permissions.cpp

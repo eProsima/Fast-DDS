@@ -25,11 +25,9 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
-#include <fastrtps/rtps/reader/timedevent/WriterProxyLiveliness.h>
-#include <fastrtps/rtps/reader/timedevent/InitialAckNack.h>
-
+#include <fastrtps/rtps/resources/TimedEvent.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
+#include "../participant/RTPSParticipantImpl.h"
 
 #include <foonathan/memory/namespace_alias.hpp>
 #include <fastrtps/utils/collections/foonathan_memory_helpers.hpp>
@@ -128,9 +126,38 @@ WriterProxy::WriterProxy(
     , guid_prefix_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
 {
     //Create Events
-    writer_proxy_liveliness_ = new WriterProxyLiveliness(reader);
-    heartbeat_response_ = new HeartbeatResponseDelay(reader_->getRTPSParticipant(), this);
-    initial_acknack_ = new InitialAckNack(reader_->getRTPSParticipant(), this);
+    writer_proxy_liveliness_ = new TimedEvent(reader->getRTPSParticipant()->getEventResource(),
+            [&](TimedEvent::EventCode code) -> bool
+            {
+                if (TimedEvent::EVENT_SUCCESS == code)
+                {
+                    reader_->liveliness_expired(attributes_.guid());
+                }
+
+                return false;
+            }, 0);
+
+    heartbeat_response_ = new TimedEvent(reader_->getRTPSParticipant()->getEventResource(),
+            [&](TimedEvent::EventCode code) -> bool
+            {
+                if (TimedEvent::EVENT_SUCCESS == code)
+                {
+                    perform_heartbeat_response();
+                }
+
+                return false;
+            }, 0);
+
+    initial_acknack_ = new TimedEvent(reader_->getRTPSParticipant()->getEventResource(),
+            [&](TimedEvent::EventCode code) -> bool
+            {
+                if (TimedEvent::EVENT_SUCCESS == code)
+                {
+                    perform_initial_ack_nack();
+                }
+
+                return false;
+            }, 0 );
 
     clear();
     logInfo(RTPS_READER, "Writer Proxy created in reader: " << reader_->getGuid().entityId);
@@ -147,7 +174,9 @@ void WriterProxy::start(const WriterProxyData& attributes)
     is_alive_ = true;
     if (attributes_.m_qos.m_liveliness.lease_duration < c_TimeInfinite)
     {
-        writer_proxy_liveliness_->start(attributes_.guid(), attributes_.m_qos.m_liveliness.lease_duration);
+        writer_proxy_liveliness_->cancel_timer();
+        writer_proxy_liveliness_->update_interval(attributes_.m_qos.m_liveliness.lease_duration);
+        writer_proxy_liveliness_->restart_timer();
     }
     initial_acknack_->restart_timer();
 }
@@ -428,8 +457,12 @@ void WriterProxy::assert_liveliness()
     logInfo(RTPS_READER,attributes_.guid().entityId << " Liveliness asserted");
 
     is_alive_ = true;
-    writer_proxy_liveliness_->cancel_timer();
-    writer_proxy_liveliness_->restart_timer();
+
+    if (attributes_.m_qos.m_liveliness.lease_duration < c_TimeInfinite)
+    {
+        writer_proxy_liveliness_->cancel_timer();
+        writer_proxy_liveliness_->restart_timer();
+    }
 }
 
 void WriterProxy::change_removed_from_history(const SequenceNumber_t& seq_num)
@@ -537,16 +570,16 @@ SequenceNumber_t WriterProxy::next_cache_change_to_be_notified()
     return SequenceNumber_t::unknown();
 }
 
-void WriterProxy::perform_initial_ack_nack(RTPSMessageGroup_t& buffer) const
+void WriterProxy::perform_initial_ack_nack() const
 {
     // Send initial NACK.
     SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
-    reader_->send_acknack(sns, buffer, *this, false);
+    reader_->send_acknack(this, sns, *this, false);
 }
 
-void WriterProxy::perform_heartbeat_response(RTPSMessageGroup_t& buffer) const
+void WriterProxy::perform_heartbeat_response() const
 {
-    reader_->send_acknack(this, buffer, *this, heartbeat_final_flag_);
+    reader_->send_acknack(this, *this, heartbeat_final_flag_);
 }
 
 bool WriterProxy::process_heartbeat(

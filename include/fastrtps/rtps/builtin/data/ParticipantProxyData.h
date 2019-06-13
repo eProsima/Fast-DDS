@@ -67,7 +67,7 @@ namespace rtps {
 
 struct CDRMessage_t;
 class PDPSimple;
-class RemoteParticipantLeaseDuration;
+class TimedEvent;
 class RTPSParticipantImpl;
 class ReaderProxyData;
 class WriterProxyData;
@@ -125,7 +125,7 @@ class ParticipantProxyData
         //!
         std::vector<octet> m_userData;
         //!
-        RemoteParticipantLeaseDuration* mp_leaseDurationTimer;
+        TimedEvent* lease_duration_event;
         //!
         ResourceLimitedVector<ReaderProxyData*> m_readers;
         //!

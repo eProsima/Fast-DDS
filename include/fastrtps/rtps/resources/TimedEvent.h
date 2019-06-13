@@ -17,105 +17,176 @@
  *
  */
 
-#ifndef TIMEDEVENT_H_
-#define TIMEDEVENT_H_
+#ifndef _RTPS_RESOURCES_TIMEDEVENT_H_
+#define _RTPS_RESOURCES_TIMEDEVENT_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include <thread>
-#include <cstdint>
-#include <asio.hpp>
+
 #include "../common/Time_t.h"
+
+#include <thread>
+#include <functional>
+#include <cstdint>
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
 class TimedEventImpl;
+class ResourceEvent;
 
-/**
- * Timed Event class used to define any timed events.
+/*!
+ * Implementation of events.
+ * This class can be used to launch an event through ResourceEvent's internal thread.
+ *
+ * In the construct you can set the callback to be called when the expiration time expires.
+ * @code
+TimedEvent* event = new TimedEvent(resource_event_,
+        [&](TimedEvent::EventCode code) -> bool
+        {
+            if(TimedEvent::EVENT_SUCCESS == code)
+            {
+                std::cout << "hello" << std::endl;
+                return true;
+            }
+
+            return false;
+        },
+        100);
+ * @endcode
+ *
+ * The signature of the callback is:
+ * - The parameter of TimedEvent::EventCode type tells the user if the event achieves the deadline timer or it was
+ *   aborted.
+ *
+ * - The returned value tells if the event has to be scheduled again or not. true value tells to reschedule the event.
+ *   false value doesn't.
+ *
+ * Usually the callback will call a method of the owner of the event. So the callback surely accesses internal data that
+ * object. Then you have to be aware of deleting the event before deleting any other attribute of the object. Here are
+ * explained two cases:
+ *
+ * - The event is an attribute of the class. Then it has to be declared as the last member of the class. Then we assure
+ *   it will be the last one on being constructed and the first one on being deleted.
+ *   @code
+class Owner
+{
+    int attr1;
+
+    long attr2;
+
+    TimedEvent event;  // Declared as the last member of the class.
+};
+ * @endcode
+ *
+ * - The class has a pointer to the event (TimedEvent is created in heap). Then the pointer has to be the first one on
+ *   being freed in the destructor of the class.
+ * @code
+ class Owner
+ {
+     int* attr1;
+
+     TimedEvent* event;
+
+     long attr2,
+};
+
+Owner::~Owner()
+{
+    delete(event); // First pointer to be deleted;
+
+    delete(attr1);
+}
+ * @endcode
+ *
  * @ingroup MANAGEMENT_MODULE
+ * @warning Read carefully the detailed description. This class cannot be used in any way.
  */
-class TimedEvent {
-public:
+class TimedEvent
+{
+    public:
 
-	/**
-	* Enum representing event statuses
-	*/
-	enum EventCode
-	{
-		EVENT_SUCCESS,
-		EVENT_ABORT,
-		EVENT_MSG
-	};
+        /**
+         * Enum representing event statuses
+         */
+        enum EventCode
+        {
+            EVENT_SUCCESS,
+            EVENT_ABORT
+        };
 
-    enum AUTODESTRUCTION_MODE
-    {
-        NONE,
-        ON_SUCCESS,
-        ALLWAYS
-    };
-	
-	/**
-	* @param service IO service to run the event.
-   * @param event_thread starting thread for identification.
-	* @param milliseconds Interval of the timedEvent.
-   * @param autodestruction Self-destruct mode flag.
-	*/
-    TimedEvent(asio::io_service &service, const std::thread& event_thread, double milliseconds, TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
-	virtual ~TimedEvent();
-	
-	/**
-	* Method invoked when the event occurs. Abstract method.
-	*
-	* @param code Code representing the status of the event
-	* @param msg Message associated to the event. It can be nullptr.
-	*/
-	virtual void event(EventCode code, const char* msg) = 0;
+        /*!
+         * @brief Default constructor.
+         *
+         * The event is not created scheduled.
+         * @param service ResourceEvent object that will operate with the event.
+         * @param callback Callback called when the event expires.
+         * @param milliseconds Expiration time in milliseconds.
+         */
+        TimedEvent(
+                ResourceEvent& service,
+                std::function<bool(EventCode)> callback,
+                double milliseconds);
 
-    void cancel_timer();
-	
-	//!Method to restart the timer.
-	void restart_timer();
-	
-	/**
-	* Update event interval.
-	* When updating the interval, the timer is not restarted and the new interval will only be used the next time you call restart_timer().
-	*
-	* @param inter New interval for the timedEvent
-	* @return true on success
-	*/
-	bool update_interval(const Duration_t& inter);
-	
-	/**
-	* Update event interval.
-	* When updating the interval, the timer is not restarted and the new interval will only be used the next time you call restart_timer().
-	*
-	* @param time_millisec New interval for the timedEvent
-	* @return true on success
-	*/
-	bool update_interval_millisec(double time_millisec);
-	
-	/**
-	* Get the milliseconds interval
-	* @return Mulliseconds interval
-	*/
-    double getIntervalMilliSec();
-	
-	/**
-	* Get the remaining milliseconds for the timer to expire
-	* @return Remaining milliseconds for the timer to expire
-	*/
-    double getRemainingTimeMilliSec();
+        //! Default destructor.
+        virtual ~TimedEvent();
 
-    protected:
+        /*!
+         * @brief Cancels any previous scheduling of the event.
+         */
+        void cancel_timer();
 
-    void destroy();
+        /*!
+         * @brief Schedules the event if there is not a previous scheduling.
+         */
+        void restart_timer();
 
-private:
-	TimedEventImpl* mp_impl;
+        /*!
+         * @brief Schedules the event if there is not a previous scheduling.
+         * @note Non-blocking call version.
+         * @param timeout Time point in the future until the method can be blocked.
+         */
+        void restart_timer(const std::chrono::steady_clock::time_point& timeout);
+
+        /**
+         * Update event interval.
+         * When updating the interval, the timer is not restarted and the new interval will only be used the next time you call restart_timer().
+         *
+         * @param inter New interval for the timedEvent
+         * @return true on success
+         */
+        bool update_interval(const Duration_t& inter);
+
+        /**
+         * Update event interval.
+         * When updating the interval, the timer is not restarted and the new interval will only be used the next time you call restart_timer().
+         *
+         * @param time_millisec New interval for the timedEvent
+         * @return true on success
+         */
+        bool update_interval_millisec(double time_millisec);
+
+        /**
+         * Get the milliseconds interval
+         * @return Milliseconds interval
+         */
+        double getIntervalMilliSec();
+
+        /**
+         * Get the remaining milliseconds for the timer to expire
+         * @return Remaining milliseconds for the timer to expire
+         */
+        double getRemainingTimeMilliSec();
+
+    private:
+
+        ResourceEvent& service_;
+
+        TimedEventImpl* impl_;
 };
 }
 } /* namespace rtps */
 } /* namespace eprosima */
+
 #endif
-#endif
+
+#endif //_RTPS_RESOURCES_TIMEDEVENT_H_

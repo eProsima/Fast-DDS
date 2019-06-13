@@ -41,7 +41,6 @@ namespace rtps{
 
 class RTCPMessageManager;
 class TCPChannelResource;
-class TCPKeepAliveEvent;
 
 /**
  * This is a default TCP Interface implementation.
@@ -94,7 +93,7 @@ protected:
     std::vector<std::pair<TCPChannelResource*, uint64_t>> sockets_timestamp_;
     eClock my_clock_;
 
-    TCPKeepAliveEvent* keep_alive_event_;
+    asio::steady_timer keep_alive_event_;
 
     std::map<Locator_t, std::shared_ptr<TCPAcceptor>> acceptors_;
 

@@ -22,25 +22,29 @@
 #include <asio.hpp>
 #include <thread>
 
-class MockEvent : public eprosima::fastrtps::rtps::TimedEvent
+class MockEvent
 {
     public:
 
-        MockEvent(asio::io_service &service, const std::thread& event_thread, double milliseconds, bool autorestart, TimedEvent::AUTODESTRUCTION_MODE autodestruction = TimedEvent::NONE);
+        MockEvent(
+                eprosima::fastrtps::rtps::ResourceEvent& service,
+                double milliseconds,
+                bool autorestart);
 
         virtual ~MockEvent();
 
-        void event(EventCode code, const char* msg= nullptr);
+        eprosima::fastrtps::rtps::TimedEvent& event() { return event_; }
+
+        bool callback(eprosima::fastrtps::rtps::TimedEvent::EventCode code);
 
         void wait();
+
+        void wait_success();
 
         bool wait(unsigned int milliseconds);
 
         std::atomic<int> successed_;
         std::atomic<int> cancelled_;
-        static int destructed_;
-        static std::mutex destruction_mutex_;
-        static std::condition_variable destruction_cond_;
 
     private:
 
@@ -48,6 +52,7 @@ class MockEvent : public eprosima::fastrtps::rtps::TimedEvent
         std::mutex sem_mutex_;
         std::condition_variable sem_cond_;
         bool autorestart_;
+        eprosima::fastrtps::rtps::TimedEvent event_;
 };
 
 #endif // _TEST_RTPS_RESOURCES_TIMEDEVENT_MOCKEVENT_H_

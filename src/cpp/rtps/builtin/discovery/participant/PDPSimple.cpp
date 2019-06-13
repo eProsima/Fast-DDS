@@ -25,7 +25,7 @@
 
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
-#include <fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.h>
+#include <fastrtps/rtps/resources/TimedEvent.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
@@ -33,9 +33,6 @@
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h>
 
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
-
-#include <fastrtps/rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.h>
-
 
 #include "../../../participant/RTPSParticipantImpl.h"
 
@@ -77,7 +74,7 @@ PDPSimple::PDPSimple (
     , writer_proxies_number_(allocation.total_writers().initial)
     , writer_proxies_pool_(allocation.total_writers())
     , m_hasChangedLocalPDP(true)
-    , mp_resendParticipantTimer(nullptr)
+    , resend_participant_info_event_(nullptr)
     , mp_listener(nullptr)
     , mp_SPDPWriterHistory(nullptr)
     , mp_SPDPReaderHistory(nullptr)
@@ -106,8 +103,10 @@ PDPSimple::PDPSimple (
 
 PDPSimple::~PDPSimple()
 {
-    if(mp_resendParticipantTimer != nullptr)
-        delete(mp_resendParticipantTimer);
+    if(resend_participant_info_event_ != nullptr)
+    {
+        delete(resend_participant_info_event_);
+    }
 
     mp_RTPSParticipant->disableReader(mp_SPDPReader);
 
@@ -161,7 +160,16 @@ ParticipantProxyData* PDPSimple::add_participant_proxy_data(const GUID_t& partic
             ret_val = new ParticipantProxyData(mp_RTPSParticipant->getRTPSParticipantAttributes().allocation);
             if (participant_guid != mp_RTPSParticipant->getGuid())
             {
-                ret_val->mp_leaseDurationTimer = new RemoteParticipantLeaseDuration(this, ret_val, 0.0);
+                ret_val->lease_duration_event = new TimedEvent(mp_RTPSParticipant->getEventResource(),
+                        [&, participant_guid](TimedEvent::EventCode code) -> bool
+                        {
+                            if (TimedEvent::EVENT_SUCCESS == code)
+                            {
+                                remove_remote_participant(participant_guid, ParticipantDiscoveryInfo::DROPPED_PARTICIPANT);
+                            }
+
+                            return false;
+                        }, 0.0);
             }
         }
         else
@@ -328,7 +336,17 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
     // Create lease events on already created proxy data objects
     for (ParticipantProxyData* pool_item : participant_proxies_pool_)
     {
-        pool_item->mp_leaseDurationTimer = new RemoteParticipantLeaseDuration(this, pool_item, 0.0);
+        const GUID_t guid = pool_item->m_guid;
+        pool_item->lease_duration_event = new TimedEvent(mp_RTPSParticipant->getEventResource(),
+                [&, guid](TimedEvent::EventCode code) -> bool
+                {
+                    if (TimedEvent::EVENT_SUCCESS == code)
+                    {
+                        remove_remote_participant(guid, ParticipantDiscoveryInfo::DROPPED_PARTICIPANT);
+                    }
+
+                    return false;
+                }, 0.0);
     }
 
     //INIT EDP
@@ -359,8 +377,21 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
     if(!mp_RTPSParticipant->enableReader(mp_SPDPReader))
         return false;
 
-    mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(
-            this,
+    resend_participant_info_event_ = new TimedEvent(mp_RTPSParticipant->getEventResource(),
+            [&](TimedEvent::EventCode code) -> bool
+            {
+                if (TimedEvent::EVENT_SUCCESS == code)
+                {
+                    {
+                        std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+                        getLocalParticipantProxyData()->m_manualLivelinessCount++;
+                    }
+                    announceParticipantState(false);
+                    return true;
+                }
+
+                return false;
+            },
             TimeConv::Duration_t2MilliSecondsDouble(m_discovery.leaseDuration_announcementperiod));
 
     return true;
@@ -368,12 +399,12 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
 
 void PDPSimple::stopParticipantAnnouncement()
 {
-    mp_resendParticipantTimer->cancel_timer();
+    resend_participant_info_event_->cancel_timer();
 }
 
 void PDPSimple::resetParticipantAnnouncement()
 {
-    mp_resendParticipantTimer->restart_timer();
+    resend_participant_info_event_->restart_timer();
 }
 
 void PDPSimple::announceParticipantState(bool new_change, bool dispose)
@@ -1116,9 +1147,9 @@ bool PDPSimple::remove_remote_participant(
         pdata->m_writers.clear();
 
         // Cancel lease event
-        if (pdata->mp_leaseDurationTimer != nullptr)
+        if (pdata->lease_duration_event != nullptr)
         {
-            pdata->mp_leaseDurationTimer->cancel_timer();
+            pdata->lease_duration_event->cancel_timer();
         }
 
         // Return proxy object to pool
@@ -1147,10 +1178,10 @@ void PDPSimple::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
             logInfo(RTPS_LIVELINESS,"RTPSParticipant "<< it->m_guid << " is Alive");
             // TODO Ricardo: Study if isAlive attribute is necessary.
             it->isAlive = true;
-            if(it->mp_leaseDurationTimer != nullptr)
+            if(it->lease_duration_event != nullptr)
             {
-                it->mp_leaseDurationTimer->cancel_timer();
-                it->mp_leaseDurationTimer->restart_timer();
+                it->lease_duration_event->cancel_timer();
+                it->lease_duration_event->restart_timer();
             }
             break;
         }

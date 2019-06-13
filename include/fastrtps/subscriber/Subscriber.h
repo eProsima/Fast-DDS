@@ -59,29 +59,35 @@ public:
     const rtps::GUID_t& getGuid();
 
     /*!
-     * Method to block the current thread until an unread sample is available.
-     * @param timeout Maximun time the function will be blocked if any sample is received.
+     * @brief Blocks the current thread until an unread sample is available.
+     * @param timeout Maximum time the function will be blocked if any sample is received.
+     * @return true in case unread samples are available.
+     * In other case, false.
      */
     bool wait_for_unread_samples(const Duration_t& timeout);
 
     /**
-     * Read next unread Data from the Subscriber.
-     * @param data Pointer to the object where you want the data stored.
+     * @brief Reads next unread sample from the Subscriber.
+     * @param sample Pointer to the object where you want the sample stored.
      * @param info Pointer to a SampleInfo_t structure that informs you about your sample.
      * @return True if a sample was read.
+     * @note This method is blocked for a period of time.
+     * ReliabilityQosPolicy.max_blocking_time on PublisherAttributes defines this period of time.
      */
     bool readNextData(
-            void* data,
+            void* sample,
             SampleInfo_t* info);
 
     /**
-     * Take next Data from the Subscriber. The data is removed from the subscriber.
-     * @param data Pointer to the object where you want the data stored.
+     * @brief Takes next sample from the Subscriber. The sample is removed from the subscriber.
+     * @param sample Pointer to the object where you want the sample stored.
      * @param info Pointer to a SampleInfo_t structure that informs you about your sample.
      * @return True if a sample was taken.
+     * @note This method is blocked for a period of time.
+     * ReliabilityQosPolicy.max_blocking_time on PublisherAttributes defines this period of time.
      */
     bool takeNextData(
-            void* data,
+            void* sample,
             SampleInfo_t* info);
 
     /**

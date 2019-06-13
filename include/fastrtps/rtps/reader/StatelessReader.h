@@ -73,7 +73,7 @@ public:
      * @param writer_guid GUID of the writer to check.
      * @return True if it is matched.
      */
-    bool matched_writer_is_matched(const GUID_t& wdata) override;
+    bool matched_writer_is_matched(const GUID_t& writer_guid) override;
 
     /**
      * Method to indicate the reader that some change has been removed due to HistoryQos requirements.

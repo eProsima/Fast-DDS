@@ -22,8 +22,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(WRITERPROXYTESTS_SOURCE ReaderProxyTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/ReaderProxy.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
@@ -47,11 +45,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderProxyData
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderLocator
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/HeartbeatResponseDelay
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyLiveliness
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/InitialAckNack
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/NackSupressionDuration
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TimedEvent
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            )
         target_link_libraries(ReaderProxyTests
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
