@@ -42,9 +42,11 @@ class RTPSWriter;
 class RTPSParticipant;
 }
 
+class TopicAttributes;
 class PublisherListener;
 class ParticipantImpl;
 class Publisher;
+class WriterQos;
 
 
 /**
@@ -60,35 +62,13 @@ class PublisherImpl
      * Don't use directly, create Publisher using DomainRTPSParticipant static function.
      */
     PublisherImpl(
-        ParticipantImpl* p,
-        const PublisherAttributes& att,
-        PublisherListener* p_listen = nullptr);
+            ParticipantImpl* p,
+            const PublisherAttributes& att,
+            PublisherListener* p_listen = nullptr);
 
 public:
 
     virtual ~PublisherImpl();
-
-    /**
-     *
-     * @param kind
-     * @param  Data
-     * @return
-     */
-    bool create_new_change(
-        rtps::ChangeKind_t kind,
-        void* Data);
-
-    /**
-     *
-     * @param kind
-     * @param  Data
-     * @param wparams
-     * @return
-     */
-    bool create_new_change_with_params(
-        rtps::ChangeKind_t kind,
-        void* Data,
-        rtps::WriteParams& wparams);
 
     /**
      * Removes the cache change with the minimum sequence number
@@ -103,12 +83,6 @@ public:
     bool removeAllChange(size_t* removed);
 
     /**
-     *
-     * @return
-     */
-    const rtps::GUID_t& getGuid();
-
-    /**
      * Update the Attributes of the publisher;
      * @param att Reference to a PublisherAttributes object to update the parameters;
      * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
@@ -120,14 +94,6 @@ public:
      * @return Attributes of the Subscriber.
      */
     inline const PublisherAttributes& getAttributes(){ return m_att; };
-
-    bool wait_for_all_acked(const Duration_t& max_wait);
-
-    /**
-     * @brief Returns the offered deadline missed status
-     * @param Deadline missed status struct
-     */
-    void get_offered_deadline_missed_status(OfferedDeadlineMissedStatus& status);
 
     ParticipantImpl* participant()
     {
@@ -141,16 +107,28 @@ public:
     rtps::RTPSWriter* create_writer(
             const TopicAttributes& topic_att);
 
-    private:
+    bool update_writer(
+            rtps::RTPSWriter* Writer,
+            const TopicAttributes& topicAtt,
+            const WriterQos& wqos) const;
+
+    Publisher* user_publisher()
+    {
+        return mp_userPublisher;
+    }
+
+private:
     ParticipantImpl* mp_participant;
+
     //! Pointer to the associated Data Writer.
     rtps::RTPSWriter* mp_writer;
+
     //!Attributes of the Publisher
     PublisherAttributes m_att;
-    //!Publisher History
-    PublisherHistory m_history;
+
     //!PublisherListener
     PublisherListener* mp_listener;
+
     //!Listener to capture the events of the Writer
     class PublisherWriterListener: public rtps::WriterListener
     {
@@ -166,40 +144,6 @@ public:
 
     rtps::RTPSParticipant* mp_rtpsParticipant;
 
-    uint32_t high_mark_for_frag_;
-
-    //! A timer used to check for deadlines
-    rtps::TimedCallback deadline_timer_;
-
-    //! Deadline duration in microseconds
-    std::chrono::duration<double, std::ratio<1,1000000>> deadline_duration_us_;
-
-    //! The current timer owner, i.e. the instance which started the deadline timer
-    rtps::InstanceHandle_t timer_owner_;
-
-    //! The offered deadline missed status
-    OfferedDeadlineMissedStatus deadline_missed_status_;
-
-    //! A timed callback to remove expired samples for lifespan QoS
-    rtps::TimedCallback lifespan_timer_;
-
-    //! The lifespan duration, in microseconds
-    std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
-
-    /**
-     * @brief A method called when an instance misses the deadline
-     */
-    void deadline_missed();
-
-    /**
-     * @brief A method to reschedule the deadline timer
-     */
-    void deadline_timer_reschedule();
-
-    /**
-     * @brief A method to remove expired samples, invoked when the lifespan timer expires
-     */
-    void lifespan_expired();
 };
 
 

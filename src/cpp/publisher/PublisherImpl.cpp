@@ -23,6 +23,8 @@
 #include <fastrtps/topic/TopicDataType.h>
 #include <fastrtps/publisher/PublisherListener.h>
 
+#include <fastrtps/publisher/PublisherHistory.h>
+
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 
@@ -343,6 +345,15 @@ const GUID_t& PublisherImpl::getGuid()
 {
     return mp_writer->getGuid();
 }
+
+bool PublisherImpl::update_writer(
+        RTPSWriter* writer,
+        const TopicAttributes& topic_att,
+        const WriterQos& qos) const
+{
+    return mp_rtpsParticipant->updateWriter(writer, topic_att, qos);
+}
+
 //
 bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
 {

@@ -20,8 +20,8 @@
 #include <fastrtps/topic/DataWriter.hpp>
 #include <fastrtps/topic/TopicDataType.h>
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/PublisherListener.h>
+#include <fastrtps/publisher/Publisher.h>
 #include "../publisher/PublisherImpl.h"
 #include "../participant/ParticipantImpl.h"
 
@@ -45,33 +45,35 @@ using namespace std::chrono;
 DataWriter::DataWriter(
         PublisherImpl* p,
         TopicDataType* topic,
-        const PublisherAttributes& pub_att,
+        const TopicAttributes& topic_att,
         const WriterAttributes& att,
+        const WriterQos& qos,
         PublisherHistory&& history,
         PublisherListener* listen )
     : publisher_(p)
     , writer_(nullptr)
     , type_(topic)
+    , topic_att_(topic_att)
     , w_att_(att)
+    , qos_(qos)
     , history_(std::move(history))
     , listener_(listen)
 #pragma warning (disable : 4355 )
     , writer_listener_(this)
-    , user_publisher_(nullptr)
     , rtps_participant_(nullptr)
     , high_mark_for_frag_(0)
     , deadline_timer_(std::bind(&DataWriter::deadline_missed, this),
-                      pub_att.qos.m_deadline.period.to_ns() * 1e-6,
+                      qos.m_deadline.period.to_ns() * 1e-6,
                       publisher_->participant()->get_resource_event().getIOService(),
                       publisher_->participant()->get_resource_event().getThread())
-    , deadline_duration_us_(pub_att.qos.m_deadline.period.to_ns() * 1e-3)
+    , deadline_duration_us_(qos.m_deadline.period.to_ns() * 1e-3)
     , timer_owner_()
     , deadline_missed_status_()
     , lifespan_timer_(std::bind(&DataWriter::lifespan_expired, this),
-                      pub_att.qos.m_lifespan.duration.to_ns() * 1e-6,
+                      qos.m_lifespan.duration.to_ns() * 1e-6,
                       publisher_->participant()->get_resource_event().getIOService(),
                       publisher_->participant()->get_resource_event().getThread())
-    , lifespan_duration_us_(pub_att.qos.m_lifespan.duration.to_ns() * 1e-3)
+    , lifespan_duration_us_(qos.m_lifespan.duration.to_ns() * 1e-3)
 {
 }
 
@@ -79,11 +81,10 @@ DataWriter::~DataWriter()
 {
     if(writer_ != nullptr)
     {
-        logInfo(PUBLISHER, this->getGuid().entityId << " in topic: " << this->w_att_.topic.topicName);
+        logInfo(PUBLISHER, guid().entityId << " in topic: " << type_->getName());
     }
 
     RTPSDomain::removeRTPSWriter(writer_);
-    delete(this->user_publisher_);
 }
 
 
@@ -101,8 +102,7 @@ bool DataWriter::create_new_change_with_params(
         void* data,
         WriteParams& wparams)
 {
-
-    /// Preconditions
+    // Preconditions
     if (data == nullptr)
     {
         logError(PUBLISHER, "Data pointer not valid");
@@ -112,7 +112,7 @@ bool DataWriter::create_new_change_with_params(
     if(changeKind == NOT_ALIVE_UNREGISTERED || changeKind == NOT_ALIVE_DISPOSED ||
             changeKind == NOT_ALIVE_DISPOSED_UNREGISTERED)
     {
-        if(w_att_.topic.topicKind == NO_KEY)
+        if(!type_->m_isGetKeyDefined)
         {
             logError(PUBLISHER,"Topic is NO_KEY, operation not permitted");
             return false;
@@ -120,7 +120,7 @@ bool DataWriter::create_new_change_with_params(
     }
 
     InstanceHandle_t handle;
-    if(w_att_.topic.topicKind == WITH_KEY)
+    if(type_->m_isGetKeyDefined)
     {
         bool is_key_protected = false;
 #if HAVE_SECURITY
@@ -131,7 +131,7 @@ bool DataWriter::create_new_change_with_params(
 
     // Block lowlevel writer
     auto max_blocking_time = std::chrono::steady_clock::now() +
-        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(w_att_.qos.m_reliability.max_blocking_time));
+        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.m_reliability.max_blocking_time));
     std::unique_lock<std::recursive_timed_mutex> lock(writer_->getMutex(), std::defer_lock);
 
     if(lock.try_lock_until(max_blocking_time))
@@ -180,7 +180,7 @@ bool DataWriter::create_new_change_with_params(
             if(ch->serializedPayload.length > final_high_mark_for_frag)
             {
                 // Check ASYNCHRONOUS_PUBLISH_MODE is being used, but it is an error case.
-                if( w_att_.qos.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
+                if( qos_.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
                 {
                     logError(PUBLISHER, "Data cannot be sent. It's serialized size is " <<
                             ch->serializedPayload.length << "' which exceeds the maximum payload size of '" <<
@@ -201,7 +201,7 @@ bool DataWriter::create_new_change_with_params(
                 return false;
             }
 
-            if (w_att_.qos.m_deadline.period != c_TimeInfinite)
+            if (qos_.m_deadline.period != c_TimeInfinite)
             {
                 if (!history_.set_next_deadline(
                             ch->instanceHandle,
@@ -218,10 +218,10 @@ bool DataWriter::create_new_change_with_params(
                 }
             }
 
-            if (w_att_.qos.m_lifespan.duration != c_TimeInfinite)
+            if (qos_.m_lifespan.duration != c_TimeInfinite)
             {
-                lifespan_duration_us_ = std::chrono::duration<double, std::ratio<1, 1000000>>(w_att_.qos.m_lifespan.duration.to_ns() * 1e-3);
-                lifespan_timer_.update_interval_millisec(w_att_.qos.m_lifespan.duration.to_ns() * 1e-6);
+                lifespan_duration_us_ = std::chrono::duration<double, std::ratio<1, 1000000>>(qos_.m_lifespan.duration.to_ns() * 1e-3);
+                lifespan_timer_.update_interval_millisec(qos_.m_lifespan.duration.to_ns() * 1e-6);
                 lifespan_timer_.restart_timer();
             }
 
@@ -233,41 +233,42 @@ bool DataWriter::create_new_change_with_params(
 }
 
 
-bool DataWriter::removeMinSeqChange()
+bool DataWriter::remove_min_seq_change()
 {
     return history_.removeMinChange();
 }
 
-bool DataWriter::removeAllChange(size_t* removed)
+bool DataWriter::remove_all_change(size_t* removed)
 {
     return history_.removeAllChange(removed);
 }
 
-const GUID_t& DataWriter::getGuid()
+const GUID_t& DataWriter::guid()
 {
     return writer_->getGuid();
 }
-//
-bool DataWriter::updateAttributes(const PublisherAttributes& att)
+
+bool DataWriter::update_attributes(const WriterAttributes& att)
 {
     bool updated = true;
     bool missing = false;
-    if(this->w_att_.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+
+    if(qos_.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
     {
-        if(att.unicastLocatorList.size() != this->w_att_.unicastLocatorList.size() ||
-                att.multicastLocatorList.size() != this->w_att_.multicastLocatorList.size())
+        if(att.endpoint.unicastLocatorList.size() != w_att_.endpoint.unicastLocatorList.size() ||
+                att.endpoint.multicastLocatorList.size() != w_att_.endpoint.multicastLocatorList.size())
         {
             logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
             updated &= false;
         }
         else
         {
-            for(LocatorListConstIterator lit1 = this->w_att_.unicastLocatorList.begin();
-                    lit1!=this->w_att_.unicastLocatorList.end();++lit1)
+            for(LocatorListConstIterator lit1 = w_att_.endpoint.unicastLocatorList.begin();
+                    lit1!=this->w_att_.endpoint.unicastLocatorList.end();++lit1)
             {
                 missing = true;
-                for(LocatorListConstIterator lit2 = att.unicastLocatorList.begin();
-                        lit2!= att.unicastLocatorList.end();++lit2)
+                for(LocatorListConstIterator lit2 = att.endpoint.unicastLocatorList.begin();
+                        lit2!= att.endpoint.unicastLocatorList.end();++lit2)
                 {
                     if(*lit1 == *lit2)
                     {
@@ -281,12 +282,12 @@ bool DataWriter::updateAttributes(const PublisherAttributes& att)
                     logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
                 }
             }
-            for(LocatorListConstIterator lit1 = this->w_att_.multicastLocatorList.begin();
-                    lit1!=this->w_att_.multicastLocatorList.end();++lit1)
+            for(LocatorListConstIterator lit1 = this->w_att_.endpoint.multicastLocatorList.begin();
+                    lit1!=this->w_att_.endpoint.multicastLocatorList.end();++lit1)
             {
                 missing = true;
-                for(LocatorListConstIterator lit2 = att.multicastLocatorList.begin();
-                        lit2!= att.multicastLocatorList.end();++lit2)
+                for(LocatorListConstIterator lit2 = att.endpoint.multicastLocatorList.begin();
+                        lit2!= att.endpoint.multicastLocatorList.end();++lit2)
                 {
                     if(*lit1 == *lit2)
                     {
@@ -303,39 +304,45 @@ bool DataWriter::updateAttributes(const PublisherAttributes& att)
         }
     }
 
-    //TOPIC ATTRIBUTES
-    if(this->w_att_.topic != att.topic)
-    {
-        logWarning(PUBLISHER,"Topic Attributes cannot be updated");
-        updated &= false;
-    }
-    //QOS:
-    //CHECK IF THE QOS CAN BE SET
-    if(!this->w_att_.qos.canQosBeUpdated(att.qos))
-    {
-        updated &=false;
-    }
     if(updated)
     {
-        if(this->w_att_.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+        if(qos_.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
         {
             //UPDATE TIMES:
             StatefulWriter* sfw = (StatefulWriter*)writer_;
             sfw->updateTimes(att.times);
         }
 
-        this->w_att_.qos.setQos(att.qos,false);
         this->w_att_ = att;
+    }
+
+    return updated;
+}
+
+bool DataWriter::update_qos(const WriterQos& qos)
+{
+    bool updated = true;
+
+    //QOS:
+    //CHECK IF THE QOS CAN BE SET
+    if(!qos_.canQosBeUpdated(qos))
+    {
+        updated &=false;
+    }
+    if(updated)
+    {
+        qos_.setQos(qos,false);
+
         //Notify the participant that a Writer has changed its QOS
-        rtps_participant_->updateWriter(this->writer_, w_att_.topic, w_att_.qos);
+        publisher_->update_writer(this->writer_, topic_att_, qos_);
 
         // Deadline
 
-        if (w_att_.qos.m_deadline.period != c_TimeInfinite)
+        if (qos_.m_deadline.period != c_TimeInfinite)
         {
             deadline_duration_us_ =
-                    duration<double, std::ratio<1, 1000000>>(w_att_.qos.m_deadline.period.to_ns() * 1e-3);
-            deadline_timer_.update_interval_millisec(w_att_.qos.m_deadline.period.to_ns() * 1e-6);
+                    duration<double, std::ratio<1, 1000000>>(qos_.m_deadline.period.to_ns() * 1e-3);
+            deadline_timer_.update_interval_millisec(qos_.m_deadline.period.to_ns() * 1e-6);
         }
         else
         {
@@ -344,11 +351,11 @@ bool DataWriter::updateAttributes(const PublisherAttributes& att)
 
         // Lifespan
 
-        if (w_att_.qos.m_lifespan.duration != c_TimeInfinite)
+        if (qos_.m_lifespan.duration != c_TimeInfinite)
         {
             lifespan_duration_us_ =
-                    duration<double, std::ratio<1, 1000000>>(w_att_.qos.m_lifespan.duration.to_ns() * 1e-3);
-            lifespan_timer_.update_interval_millisec(w_att_.qos.m_lifespan.duration.to_ns() * 1e-6);
+                    duration<double, std::ratio<1, 1000000>>(qos_.m_lifespan.duration.to_ns() * 1e-3);
+            lifespan_timer_.update_interval_millisec(qos_.m_lifespan.duration.to_ns() * 1e-6);
         }
         else
         {
@@ -359,23 +366,36 @@ bool DataWriter::updateAttributes(const PublisherAttributes& att)
     return updated;
 }
 
-void DataWriter::PublisherWriterListener::onWriterMatched(
+bool DataWriter::update_topic(const TopicAttributes& att)
+{
+    //TOPIC ATTRIBUTES
+    if(topic_att_ != att)
+    {
+        logWarning(DATA_WRITER, "Topic Attributes cannot be updated");
+        return false;
+    }
+    publisher_->update_writer(this->writer_, topic_att_, qos_);
+    return true;
+}
+
+void DataWriter::DataWriterListener::on_writer_matched(
         RTPSWriter* /*writer*/,
         MatchingInfo& info)
 {
-    if( mp_publisherImpl->listener_ != nullptr )
+    if( data_writer_->listener_ != nullptr )
     {
-        mp_publisherImpl->listener_->onPublicationMatched(mp_publisherImpl->user_publisher_, info);
+        data_writer_->listener_->onPublicationMatched(
+            data_writer_->publisher_->user_publisher(), info);
     }
 }
 
-void DataWriter::PublisherWriterListener::onWriterChangeReceivedByAll(
+void DataWriter::DataWriterListener::on_writer_change_received_by_all(
         RTPSWriter* /*writer*/,
         CacheChange_t* ch)
 {
-    if (mp_publisherImpl->w_att_.qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
+    if (data_writer_->qos_.m_durability.kind == VOLATILE_DURABILITY_QOS)
     {
-        mp_publisherImpl->history_.remove_change_g(ch);
+        data_writer_->history_.remove_change_g(ch);
     }
 }
 
@@ -386,7 +406,7 @@ bool DataWriter::wait_for_all_acked(const eprosima::fastrtps::Duration_t& max_wa
 
 void DataWriter::deadline_timer_reschedule()
 {
-    assert(w_att_.qos.m_deadline.period != c_TimeInfinite);
+    assert(qos_.m_deadline.period != c_TimeInfinite);
 
     std::unique_lock<std::recursive_timed_mutex> lock(writer_->getMutex());
 
@@ -405,14 +425,14 @@ void DataWriter::deadline_timer_reschedule()
 
 void DataWriter::deadline_missed()
 {
-    assert(w_att_.qos.m_deadline.period != c_TimeInfinite);
+    assert(qos_.m_deadline.period != c_TimeInfinite);
 
     std::unique_lock<std::recursive_timed_mutex> lock(writer_->getMutex());
 
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
-    listener_->on_offered_deadline_missed(user_publisher_, deadline_missed_status_);
+    listener_->on_offered_deadline_missed(publisher_->user_publisher(), deadline_missed_status_);
     deadline_missed_status_.total_count_change = 0;
 
     if (!history_.set_next_deadline(

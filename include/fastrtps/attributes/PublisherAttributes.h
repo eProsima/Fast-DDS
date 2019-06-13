@@ -24,7 +24,6 @@
 #include "../rtps/common/Locator.h"
 #include "../rtps/common/Time_t.h"
 #include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
-#include "../qos/WriterQos.h"
 #include "../rtps/attributes/PropertyPolicy.h"
 
 namespace eprosima {
@@ -49,16 +48,12 @@ public:
     {
         return (this->m_userDefinedID == b.m_userDefinedID) &&
                (this->m_entityID == b.m_entityID) &&
-               (this->qos == b.qos) &&
                (this->unicastLocatorList == b.unicastLocatorList) &&
                (this->multicastLocatorList == b.multicastLocatorList) &&
                (this->remoteLocatorList == b.remoteLocatorList) &&
                (this->historyMemoryPolicy == b.historyMemoryPolicy) &&
                (this->properties == b.properties);
     }
-
-    //!QOS for the Publisher
-    WriterQos qos;
 
     //!Unicast locator list
     rtps::LocatorList_t unicastLocatorList;
