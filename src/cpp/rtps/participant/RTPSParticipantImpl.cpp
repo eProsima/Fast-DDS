@@ -291,16 +291,17 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
     for(auto& block : m_receiverResourcelist)
     {
         block.Receiver->UnregisterReceiver(block.mp_receiver);
+        block.disable();
     }
 
     while(m_userReaderList.size() > 0)
     {
-        deleteUserEndpoint((Endpoint*)*m_userReaderList.begin());
+        deleteUserEndpoint(static_cast<Endpoint*>(*m_userReaderList.begin()));
     }
 
     while(m_userWriterList.size() > 0)
     {
-        deleteUserEndpoint((Endpoint*)*m_userWriterList.begin());
+        deleteUserEndpoint(static_cast<Endpoint*>(*m_userWriterList.begin()));
     }
 
     delete(this->mp_builtinProtocols);
@@ -340,7 +341,7 @@ bool RTPSParticipantImpl::createWriter(
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
     logInfo(RTPS_PARTICIPANT," of type " << type);
     EntityId_t entId;
-    if(entityId== c_EntityId_Unknown)
+    if(entityId == c_EntityId_Unknown)
     {
         if(param.endpoint.topicKind == NO_KEY)
         {
@@ -351,9 +352,9 @@ bool RTPSParticipantImpl::createWriter(
             entId.value[3] = 0x02;
         }
         uint32_t idnum;
-        if(param.endpoint.getEntityID()>0)
+        if(param.endpoint.getEntityID() > 0)
         {
-            idnum = param.endpoint.getEntityID();
+            idnum = static_cast<uint32_t>(param.endpoint.getEntityID());
         }
         else
         {
@@ -361,11 +362,11 @@ bool RTPSParticipantImpl::createWriter(
             idnum = IdCounter;
         }
 
-        octet* c = (octet*)&idnum;
+        octet* c = reinterpret_cast<octet*>(&idnum);
         entId.value[2] = c[0];
         entId.value[1] = c[1];
         entId.value[0] = c[2];
-        if(this->existsEntityId(entId,WRITER))
+        if(this->existsEntityId(entId, WRITER))
         {
             logError(RTPS_PARTICIPANT,"A writer with the same entityId already exists in this RTPSParticipant");
             return false;
@@ -417,14 +418,14 @@ bool RTPSParticipantImpl::createWriter(
     if (param.endpoint.reliabilityKind == BEST_EFFORT)
     {
         SWriter = (persistence == nullptr) ?
-            (RTPSWriter*) new StatelessWriter(this, guid, param, hist, listen) :
-            (RTPSWriter*) new StatelessPersistentWriter(this, guid, param, hist, listen, persistence);
+            new StatelessWriter(this, guid, param, hist, listen) :
+            new StatelessPersistentWriter(this, guid, param, hist, listen, persistence);
     }
     else if (param.endpoint.reliabilityKind == RELIABLE)
     {
         SWriter = (persistence == nullptr) ?
-            (RTPSWriter*) new StatefulWriter(this, guid, param, hist, listen) :
-            (RTPSWriter*) new StatefulPersistentWriter(this, guid, param, hist, listen, persistence);
+            new StatefulWriter(this, guid, param, hist, listen) :
+            new StatefulPersistentWriter(this, guid, param, hist, listen, persistence);
     }
 
     if (SWriter == nullptr)
@@ -453,10 +454,10 @@ bool RTPSParticipantImpl::createWriter(
     }
 #endif
 
-    createSendResources((Endpoint *)SWriter);
+    createSendResources(SWriter);
     if (param.endpoint.reliabilityKind == RELIABLE)
     {
-        if (!createAndAssociateReceiverswithEndpoint((Endpoint *)SWriter))
+        if (!createAndAssociateReceiverswithEndpoint(SWriter))
         {
             delete(SWriter);
             return false;
@@ -511,7 +512,7 @@ bool RTPSParticipantImpl::createReader(
         uint32_t idnum;
         if (param.endpoint.getEntityID() > 0)
         {
-            idnum = param.endpoint.getEntityID();
+            idnum = static_cast<uint32_t>(param.endpoint.getEntityID());
         }
         else
         {
@@ -519,7 +520,7 @@ bool RTPSParticipantImpl::createReader(
             idnum = IdCounter;
         }
 
-        octet* c = (octet*)&idnum;
+        octet* c = reinterpret_cast<octet*>(&idnum);
         entId.value[2] = c[0];
         entId.value[1] = c[1];
         entId.value[0] = c[2];
@@ -568,14 +569,14 @@ bool RTPSParticipantImpl::createReader(
     if (param.endpoint.reliabilityKind == BEST_EFFORT)
     {
         SReader = (persistence == nullptr) ?
-            (RTPSReader*) new StatelessReader(this, guid, param, hist, listen) :
-            (RTPSReader*) new StatelessPersistentReader(this, guid, param, hist, listen, persistence);
+            new StatelessReader(this, guid, param, hist, listen) :
+            new StatelessPersistentReader(this, guid, param, hist, listen, persistence);
     }
     else if (param.endpoint.reliabilityKind == RELIABLE)
     {
         SReader = (persistence == nullptr) ?
-            (RTPSReader*) new StatefulReader(this, guid, param, hist, listen) :
-            (RTPSReader*) new StatefulPersistentReader(this, guid, param, hist, listen, persistence);
+            new StatefulReader(this, guid, param, hist, listen) :
+            new StatefulPersistentReader(this, guid, param, hist, listen, persistence);
     }
 
     if (SReader == nullptr)
@@ -607,7 +608,7 @@ bool RTPSParticipantImpl::createReader(
 
     if (param.endpoint.reliabilityKind == RELIABLE)
     {
-        createSendResources((Endpoint *)SReader);
+        createSendResources(SReader);
     }
 
     if (isBuiltin)
@@ -617,7 +618,7 @@ bool RTPSParticipantImpl::createReader(
 
     if (enable)
     {
-        if (!createAndAssociateReceiverswithEndpoint((Endpoint *)SReader))
+        if (!createAndAssociateReceiverswithEndpoint(SReader))
         {
             delete(SReader);
             return false;
@@ -636,7 +637,7 @@ bool RTPSParticipantImpl::createReader(
 
 bool RTPSParticipantImpl::enableReader(RTPSReader *reader)
 {
-    if (!assignEndpointListenResources((Endpoint*)reader))
+    if (!assignEndpointListenResources(reader))
     {
         return false;
     }
@@ -836,7 +837,7 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
         {
             std::lock_guard<std::mutex> lock(m_receiverResourcelistMutex);
             //Push the new items into the ReceiverResource buffer
-            m_receiverResourcelist.push_back(ReceiverControlBlock(std::move(*it_buffer)));
+            m_receiverResourcelist.emplace_back(*it_buffer);
             //Create and init the MessageReceiver
             auto mr = new MessageReceiver(this, size);
             m_receiverResourcelist.back().mp_receiver = mr;
@@ -934,7 +935,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
         {
             if (found_in_users)
             {
-                mp_builtinProtocols->removeLocalWriter((RTPSWriter*)p_endpoint);
+                mp_builtinProtocols->removeLocalWriter(static_cast<RTPSWriter*>(p_endpoint));
             }
 
 #if HAVE_SECURITY
@@ -949,7 +950,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
         {
             if (found_in_users)
             {
-                mp_builtinProtocols->removeLocalReader((RTPSReader*)p_endpoint);
+                mp_builtinProtocols->removeLocalReader(static_cast<RTPSReader*>(p_endpoint));
             }
 
 #if HAVE_SECURITY

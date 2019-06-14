@@ -434,7 +434,11 @@ target/
 # Eclipse
 .cproject
 .project
+.settings
 
 .pydevproject
 
 compile_commands.json
+
+# Visual Studio Code
+.vscode

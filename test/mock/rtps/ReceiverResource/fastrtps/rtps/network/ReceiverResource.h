@@ -49,7 +49,7 @@ public:
     }
     void Abort() {}
     ReceiverResource(ReceiverResource&&) {}
-    ~ReceiverResource()
+    virtual ~ReceiverResource() override
     {
         if (Cleanup)
         {

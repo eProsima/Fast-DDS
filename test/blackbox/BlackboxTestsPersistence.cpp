@@ -25,7 +25,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class EVALUATOR(BlackBoxPersistence, MEMORY_MODE_STRING) : public ::testing::Test
+class BlackBoxPersistence : public ::testing::Test
 {
 public:
     const std::string& db_file_name() const
@@ -99,7 +99,7 @@ protected:
         *p_value++ = info->line();
         *p_value = GET_PID();
         guid_prefix_.value[8] = HAVE_SECURITY;
-        guid_prefix_.value[9] = MEMORY_MODE_BYTE;
+        guid_prefix_.value[9] = 3; //PREALLOCATED_MEMORY_MODE
         eprosima::fastrtps::rtps::LocatorList_t loc;
         eprosima::fastrtps::rtps::IPFinder::getIP4Address(&loc);
         if (loc.size() > 0)
@@ -120,7 +120,7 @@ protected:
     }
 };
 
-BLACKBOXTEST_F(BlackBoxPersistence, RTPSAsNonReliableWithPersistence)
+TEST_F(BlackBoxPersistence, RTPSAsNonReliableWithPersistence)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -153,7 +153,7 @@ BLACKBOXTEST_F(BlackBoxPersistence, RTPSAsNonReliableWithPersistence)
     std::cout << "Second round finished." << std::endl;
 }
 
-BLACKBOXTEST_F(BlackBoxPersistence, AsyncRTPSAsNonReliableWithPersistence)
+TEST_F(BlackBoxPersistence, AsyncRTPSAsNonReliableWithPersistence)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -185,7 +185,7 @@ BLACKBOXTEST_F(BlackBoxPersistence, AsyncRTPSAsNonReliableWithPersistence)
     std::cout << "Second round finished." << std::endl;
 }
 
-BLACKBOXTEST_F(BlackBoxPersistence, RTPSAsReliableWithPersistence)
+TEST_F(BlackBoxPersistence, RTPSAsReliableWithPersistence)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -217,7 +217,7 @@ BLACKBOXTEST_F(BlackBoxPersistence, RTPSAsReliableWithPersistence)
     std::cout << "Second round finished." << std::endl;
 }
 
-BLACKBOXTEST_F(BlackBoxPersistence, AsyncRTPSAsReliableWithPersistence)
+TEST_F(BlackBoxPersistence, AsyncRTPSAsReliableWithPersistence)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);

@@ -24,7 +24,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-BLACKBOXTEST(DeadlineQos, NoKeyTopicLongDeadline)
+TEST(DeadlineQos, NoKeyTopicLongDeadline)
 {
     // This test sets a long deadline (long in comparison to the write rate),
     // makes the writer send a few samples and checks that the deadline was
@@ -71,7 +71,7 @@ BLACKBOXTEST(DeadlineQos, NoKeyTopicLongDeadline)
     EXPECT_EQ(reader.missed_deadlines(), 0u);
 }
 
-BLACKBOXTEST(DeadlineQos, NoKeyTopicShortDeadline)
+TEST(DeadlineQos, NoKeyTopicShortDeadline)
 {
     // This test sets a short deadline (short compared to the write rate),
     // makes the writer send a few samples and checks that the deadline was missed every time
@@ -118,7 +118,7 @@ BLACKBOXTEST(DeadlineQos, NoKeyTopicShortDeadline)
     EXPECT_GE(reader.missed_deadlines(), writer_samples);
 }
 
-BLACKBOXTEST(DeadlineQos, KeyedTopicLongDeadline)
+TEST(DeadlineQos, KeyedTopicLongDeadline)
 {
     // This test sets a long deadline (long in comparison to the write rate),
     // makes the writer send a few samples and checks that the deadline was met
@@ -167,7 +167,7 @@ BLACKBOXTEST(DeadlineQos, KeyedTopicLongDeadline)
     EXPECT_EQ(reader.missed_deadlines(), 0u);
 }
 
-BLACKBOXTEST(DeadlineQos, KeyedTopicShortDeadline)
+TEST(DeadlineQos, KeyedTopicShortDeadline)
 {
     // This test sets a short deadline (short compared to the write rate),
     // makes the writer send a few samples and checks that the deadline was missed every time

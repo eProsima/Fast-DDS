@@ -22,7 +22,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-BLACKBOXTEST(BlackBox, ParticipantRemoval)
+TEST(BlackBox, ParticipantRemoval)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -53,7 +53,7 @@ BLACKBOXTEST(BlackBox, ParticipantRemoval)
     reader.wait_participant_undiscovery();
 }
 
-BLACKBOXTEST(BlackBox, StaticDiscovery)
+TEST(BlackBox, StaticDiscovery)
 {
     //Log::SetVerbosity(Log::Info);
     char* value = nullptr;
@@ -163,7 +163,7 @@ BLACKBOXTEST(BlackBox, StaticDiscovery)
     reader.block_for_all();
 }
 
-BLACKBOXTEST(BlackBox, EDPSlaveReaderAttachment)
+TEST(BlackBox, EDPSlaveReaderAttachment)
 {
     PubSubWriter<HelloWorldType> checker(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldType>* reader = new PubSubReader<HelloWorldType>(TEST_TOPIC_NAME);
@@ -196,7 +196,7 @@ BLACKBOXTEST(BlackBox, EDPSlaveReaderAttachment)
 }
 
 // Used to detect Github issue #155
-BLACKBOXTEST(BlackBox, EndpointRediscovery)
+TEST(BlackBox, EndpointRediscovery)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -235,7 +235,7 @@ BLACKBOXTEST(BlackBox, EndpointRediscovery)
 }
 
 // Used to detect Github issue #457
-BLACKBOXTEST(BlackBox, EndpointRediscovery_2)
+TEST(BlackBox, EndpointRediscovery_2)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -267,7 +267,7 @@ BLACKBOXTEST(BlackBox, EndpointRediscovery_2)
 }
 
 // Regression test of Refs #2535, github micro-RTPS #1
-BLACKBOXTEST(BlackBox, PubXmlLoadedPartition)
+TEST(BlackBox, PubXmlLoadedPartition)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -301,7 +301,7 @@ BLACKBOXTEST(BlackBox, PubXmlLoadedPartition)
 }
 
 // Used to detect Github issue #154
-BLACKBOXTEST(BlackBox, LocalInitialPeers)
+TEST(BlackBox, LocalInitialPeers)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -351,7 +351,7 @@ BLACKBOXTEST(BlackBox, LocalInitialPeers)
 }
 
 // Test created to check bug #2010 (Github #90)
-BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldPartitions)
+TEST(BlackBox, PubSubAsReliableHelloworldPartitions)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -405,7 +405,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldPartitions)
     reader.block_for_all();
 }
 
-BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
+TEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -449,7 +449,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
     reader.wait_discovery_result();
 }
 
-BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldUserData)
+TEST(BlackBox, PubSubAsReliableHelloworldUserData)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
