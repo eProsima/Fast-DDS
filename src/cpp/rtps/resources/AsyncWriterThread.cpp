@@ -117,11 +117,12 @@ void AsyncWriterThread::run()
             run_scheduled_ = false;
             cond_guard.unlock();
             interestTree_.swap();
-            RTPSWriter* curr = nullptr;
+            RTPSWriter* curr = interestTree_.next_active();
 
-            while ((curr = interestTree_.next_active()))
+            while (curr)
             {
                 curr->send_any_unsent_changes();
+                curr = interestTree_.next_active();
             }
 
             cond_guard.lock();
