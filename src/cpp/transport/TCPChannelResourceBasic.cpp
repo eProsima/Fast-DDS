@@ -97,7 +97,7 @@ void TCPChannelResourceBasic::connect(
 
 void TCPChannelResourceBasic::disconnect()
 {
-    if (eConnecting < change_status(eConnectionStatus::eDisconnected))
+    if (eConnecting < change_status(eConnectionStatus::eDisconnected) && alive())
     {
         auto socket = socket_;
 
