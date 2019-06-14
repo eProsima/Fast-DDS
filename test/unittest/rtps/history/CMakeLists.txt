@@ -28,6 +28,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
 
+        set(CACHECHANGEPOOLTESTS_SOURCE CacheChangePoolTests.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
+
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)
         endif()
@@ -44,5 +50,17 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
         add_gtest(ReaderHistoryTests SOURCES ${READERHISTORYTESTS_SOURCE})
+
+        add_executable(CacheChangePoolTests ${CACHECHANGEPOOLTESTS_SOURCE})
+        target_compile_definitions(CacheChangePoolTests PRIVATE FASTRTPS_NO_LIB)
+        target_include_directories(CacheChangePoolTests PRIVATE
+            ${GTEST_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+        target_link_libraries(CacheChangePoolTests
+            ${GTEST_LIBRARIES}
+            ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+        add_gtest(CacheChangePoolTests SOURCES ${CACHECHANGEPOOLTESTS_SOURCE})
+
+
     endif()
 endif()

@@ -17,7 +17,7 @@
                 <publish>
                     <topics>
                         <topic>*clock*</topic>
-                        <topic>BlackBox_*_BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions*_validation_ok*</topic>
+                        <topic>BlackBox_BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions*_validation_ok*</topic>
                     </topics>
                 </publish>
             </allow_rule>
@@ -39,7 +39,7 @@
                 <subscribe>
                     <topics>
                         <topic>*clock*</topic>
-                        <topic>BlackBox_*_BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions*_validation_ok*</topic>
+                        <topic>BlackBox_BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions*_validation_ok*</topic>
                         <topic>*temperature*</topic>
                     </topics>
                 </subscribe>

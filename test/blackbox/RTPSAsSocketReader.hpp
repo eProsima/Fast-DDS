@@ -94,13 +94,8 @@ class RTPSAsSocketReader
             mw << magicword << "_" << asio::ip::host_name() << "_" << GET_PID();
             magicword_ = mw.str();
 
-#if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
-            hattr_.memoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-#elif defined(DYNAMIC_RESERVE_MEMORY_MODE_TEST)
-            hattr_.memoryPolicy = eprosima::fastrtps::rtps::DYNAMIC_RESERVE_MEMORY_MODE;
-#else
+            // By default, memory mode is preallocated (the most restritive)
             hattr_.memoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_MEMORY_MODE;
-#endif
 
             // By default, heartbeat period delay is 100 milliseconds.
             reader_attr_.times.heartbeatResponseDelay.seconds = 0;

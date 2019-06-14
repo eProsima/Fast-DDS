@@ -24,7 +24,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-BLACKBOXTEST(LifespanQos, LongLifespan)
+TEST(LifespanQos, LongLifespan)
 {
     // This test sets a long lifespan, makes the writer send a few samples
     // and checks that those changes can be removed from the history
@@ -74,7 +74,7 @@ BLACKBOXTEST(LifespanQos, LongLifespan)
     EXPECT_EQ(reader.takeNextData(&msg, &info), true);
 }
 
-BLACKBOXTEST(LifespanQos, ShortLifespan)
+TEST(LifespanQos, ShortLifespan)
 {
     // This test sets a short lifespan, makes the writer send a few samples
     // and checks that those samples cannot be removed from the history as

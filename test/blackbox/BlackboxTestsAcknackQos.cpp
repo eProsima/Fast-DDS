@@ -25,7 +25,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-BLACKBOXTEST(AcknackQos, RecoverAfterLosingCommunicationWithDisablePositiveAck)
+TEST(AcknackQos, RecoverAfterLosingCommunicationWithDisablePositiveAck)
 {
     // This test makes the writer send a few samples
     // and checks that those changes were received by the reader.
@@ -91,7 +91,7 @@ BLACKBOXTEST(AcknackQos, RecoverAfterLosingCommunicationWithDisablePositiveAck)
     reader.block_for_all();
 }
 
-BLACKBOXTEST(AcknackQos, NotRecoverAfterLosingCommunicationWithDisablePositiveAck)
+TEST(AcknackQos, NotRecoverAfterLosingCommunicationWithDisablePositiveAck)
 {
     // This test makes the writer send a few samples
     // and checks that those changes were received by the reader.
