@@ -23,8 +23,12 @@
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/rtps/common/WriteParams.h>
 
+#include <fastrtps/qos/WriterQos.h>
+
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
+#include <fastrtps/topic/DataWriterListener.hpp>
 #include <fastrtps/publisher/PublisherHistory.h>
+#include <fastrtps/attributes/TopicAttributes.h>
 
 #include <fastrtps/rtps/writer/WriterListener.h>
 #include <fastrtps/rtps/timedevent/TimedCallback.h>
@@ -39,7 +43,6 @@ class RTPSParticipant;
 }
 
 class TopicDataType;
-class PublisherAttributes;
 class PublisherListener;
 class PublisherImpl;
 class Publisher;
@@ -53,16 +56,17 @@ class DataWriter
     friend class PublisherImpl;
 
     /**
-     * Create a publisher, assigning its pointer to the associated writer.
+     * Create a data writer, assigning its pointer to the associated writer.
      * Don't use directly, create Publisher using DomainRTPSParticipant static function.
      */
     DataWriter(
             PublisherImpl* p,
             TopicDataType* topic,
-            const PublisherAttributes& pub_att,
+            const TopicAttributes& topic_att,
             const rtps::WriterAttributes& att,
+            const WriterQos& qos,
             PublisherHistory&& history,
-            PublisherListener* p_listen = nullptr);
+            DataWriterListener* listener = nullptr);
 
 public:
 
@@ -129,6 +133,12 @@ public:
     void get_offered_deadline_missed_status(
             OfferedDeadlineMissedStatus& status);
 
+    bool update_attributes(const rtps::WriterAttributes& att);
+
+    bool update_qos(const WriterQos& qos);
+
+    bool update_topic(const TopicAttributes& att);
+
 private:
     PublisherImpl* publisher_;
 
@@ -138,39 +148,41 @@ private:
     //! Pointer to the TopicDataType object.
     TopicDataType* type_;
 
+    TopicAttributes topic_att_;
+
     rtps::WriterAttributes w_att_;
+
+    WriterQos qos_;
 
     //!Publisher History
     PublisherHistory history_;
 
-    //!PublisherListener
-    PublisherListener* listener_;
+    //! DataWriterListener
+    DataWriterListener* listener_;
 
     //!Listener to capture the events of the Writer
-    class DataWriterListener : public rtps::WriterListener
+    class InnerDataWriterListener : public rtps::WriterListener
     {
         public:
-            DataWriterListener(
+            InnerDataWriterListener(
                     DataWriter* w)
                 : data_writer_(w)
             {
 
             }
 
-            virtual ~DataWriterListener() {}
+            virtual ~InnerDataWriterListener() {}
 
-            void onWriterMatched(
+            void on_writer_matched(
                     rtps::RTPSWriter* writer,
                     rtps::MatchingInfo& info);
 
-            void onWriterChangeReceivedByAll(
+            void on_writer_change_received_by_all(
                     rtps::RTPSWriter* writer,
                     rtps::CacheChange_t* change);
 
             DataWriter* data_writer_;
     } writer_listener_;
-
-    Publisher* user_publisher_;
 
     rtps::RTPSParticipant* rtps_participant_;
 

@@ -58,46 +58,32 @@ PublisherImpl::PublisherImpl(
     , m_writerListener(this)
     , mp_userPublisher(nullptr)
     , mp_rtpsParticipant(nullptr)
-    , high_mark_for_frag_(0)
-    , deadline_timer_(std::bind(&PublisherImpl::deadline_missed, this),
-                      att.qos.m_deadline.period.to_ns() * 1e-6,
-                      mp_participant->get_resource_event().getIOService(),
-                      mp_participant->get_resource_event().getThread())
     , deadline_duration_us_(m_att.qos.m_deadline.period.to_ns() * 1e-3)
-    , timer_owner_()
-    , deadline_missed_status_()
-    , lifespan_timer_(std::bind(&PublisherImpl::lifespan_expired, this),
-                      m_att.qos.m_lifespan.duration.to_ns() * 1e-6,
-                      mp_participant->get_resource_event().getIOService(),
-                      mp_participant->get_resource_event().getThread())
     , lifespan_duration_us_(m_att.qos.m_lifespan.duration.to_ns() * 1e-3)
 {
 }
 
 PublisherImpl::~PublisherImpl()
 {
-    if(mp_writer != nullptr)
-    {
-        logInfo(PUBLISHER, this->getGuid().entityId << " in topic: " << this->m_att.topic.topicName);
-    }
-
-    RTPSDomain::removeRTPSWriter(mp_writer);
     delete(this->mp_userPublisher);
 }
 
-RTPSWriter* PublisherImpl::create_writer(
-        const TopicAttributes& topic_att)
+DataWriter* PublisherImpl::create_writer(
+        const TopicAttributes& topic_att,
+        const WriterQos& wqos,
+        DataWriterListener* listener)
 {
     logInfo(PUBLISHER, "CREATING WRITER IN TOPIC: " << topic_att.getTopicName());
     //Look for the correct type registration
 
-    TopicDataType* topic_data_type = mp_participant->get_registered_type(topic_att.topicDataType.c_str());
+    TopicDataType* topic_data_type = nullptr;
+    mp_participant->getRegisteredType(topic_att.topicDataType.c_str(), &topic_data_type);
 
     /// Preconditions
     // Check the type was registered.
     if(topic_data_type == nullptr)
     {
-        logError(PUBLISHER,"Type : "<< topic_att.getTopicDataType() << " Not Registered");
+        logError(PUBLISHER, "Type: "<< topic_att.getTopicDataType() << " Not Registered");
         return nullptr;
     }
     // Check the type supports keys.
@@ -168,182 +154,26 @@ RTPSWriter* PublisherImpl::create_writer(
 #endif
              , topic_att.historyQos, topic_att.resourceLimitsQos, m_att.historyMemoryPolicy);
 
-    RTPSWriter* writer = RTPSDomain::createRTPSWriter(
-                this->mp_rtpsParticipant,
-                watt,
-                static_cast<WriterHistory*>(&history),
-                static_cast<WriterListener*>(&m_writerListener));
-    if(writer == nullptr)
+    DataWriter* writer = new DataWriter(
+        this,
+        topic_data_type,
+        topic_att,
+        watt,
+        wqos,
+        std::move(history),
+        listener);
+
+    if(writer->writer_ == nullptr)
     {
-        logError(PUBLISHER,"Problem creating associated Writer");
+        logError(PUBLISHER, "Problem creating associated Writer");
+        delete writer;
         return nullptr;
     }
-    mp_writers[writer->getGuid()] = writer;
-    mp_types[writer->getGuid()] = topic_data_type;
-    m_histories[writer->getGuid()] = std::move(history);
 
     //REGISTER THE WRITER
-    mp_rtpsParticipant->registerWriter(writer, topic_att, m_att.qos);
-}
+    mp_rtpsParticipant->registerWriter(writer->writer_, topic_att, m_att.qos);
 
-bool PublisherImpl::create_new_change(
-        ChangeKind_t changeKind,
-        void* data)
-{
-    WriteParams wparams;
-    return create_new_change_with_params(changeKind, data, wparams);
-}
-
-bool PublisherImpl::create_new_change_with_params(
-        ChangeKind_t changeKind,
-        void* data,
-        WriteParams& wparams)
-{
-
-    /// Preconditions
-    if (data == nullptr)
-    {
-        logError(PUBLISHER, "Data pointer not valid");
-        return false;
-    }
-
-    if(changeKind == NOT_ALIVE_UNREGISTERED || changeKind == NOT_ALIVE_DISPOSED ||
-            changeKind == NOT_ALIVE_DISPOSED_UNREGISTERED)
-    {
-        if(m_att.topic.topicKind == NO_KEY)
-        {
-            logError(PUBLISHER,"Topic is NO_KEY, operation not permitted");
-            return false;
-        }
-    }
-
-    InstanceHandle_t handle;
-    if(m_att.topic.topicKind == WITH_KEY)
-    {
-        bool is_key_protected = false;
-#if HAVE_SECURITY
-        is_key_protected = mp_writer->getAttributes().security_attributes().is_key_protected;
-#endif
-        mp_type->getKey(data,&handle,is_key_protected);
-    }
-
-    // Block lowlevel writer
-    auto max_blocking_time = std::chrono::steady_clock::now() +
-        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex(), std::defer_lock);
-
-    if(lock.try_lock_until(max_blocking_time))
-    {
-        CacheChange_t* ch = mp_writer->new_change(mp_type->getSerializedSizeProvider(data), changeKind, handle);
-        if(ch != nullptr)
-        {
-            if(changeKind == ALIVE)
-            {
-                //If these two checks are correct, we asume the cachechange is valid and thwn we can write to it.
-                if(!mp_type->serialize(data, &ch->serializedPayload))
-                {
-                    logWarning(RTPS_WRITER,"RTPSWriter:Serialization returns false";);
-                    m_history.release_Cache(ch);
-                    return false;
-                }
-            }
-
-            //TODO(Ricardo) This logic in a class. Then a user of rtps layer can use it.
-            if(high_mark_for_frag_ == 0)
-            {
-                uint32_t max_data_size = mp_writer->getMaxDataSize();
-                uint32_t writer_throughput_controller_bytes =
-                    mp_writer->calculateMaxDataSize(m_att.throughputController.bytesPerPeriod);
-                uint32_t participant_throughput_controller_bytes =
-                    mp_writer->calculateMaxDataSize(
-                            mp_rtpsParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod);
-
-                high_mark_for_frag_ =
-                    max_data_size > writer_throughput_controller_bytes ?
-                    writer_throughput_controller_bytes :
-                    (max_data_size > participant_throughput_controller_bytes ?
-                     participant_throughput_controller_bytes :
-                     max_data_size);
-            }
-
-            uint32_t final_high_mark_for_frag = high_mark_for_frag_;
-
-            // If needed inlineqos for related_sample_identity, then remove the inlinqos size from final fragment size.
-            if(wparams.related_sample_identity() != SampleIdentity::unknown())
-            {
-                final_high_mark_for_frag -= 32;
-            }
-
-            // If it is big data, fragment it.
-            if(ch->serializedPayload.length > final_high_mark_for_frag)
-            {
-                // Check ASYNCHRONOUS_PUBLISH_MODE is being used, but it is an error case.
-                if( m_att.qos.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
-                {
-                    logError(PUBLISHER, "Data cannot be sent. It's serialized size is " <<
-                            ch->serializedPayload.length << "' which exceeds the maximum payload size of '" <<
-                            final_high_mark_for_frag << "' and therefore ASYNCHRONOUS_PUBLISH_MODE must be used.");
-                    m_history.release_Cache(ch);
-                    return false;
-                }
-
-                /// Fragment the data.
-                // Set the fragment size to the cachechange.
-                // Note: high_mark will always be a value that can be casted to uint16_t)
-                ch->setFragmentSize((uint16_t)final_high_mark_for_frag);
-            }
-
-            if(!this->m_history.add_pub_change(ch, wparams, lock, max_blocking_time))
-            {
-                m_history.release_Cache(ch);
-                return false;
-            }
-
-            if (m_att.qos.m_deadline.period != c_TimeInfinite)
-            {
-                if (!m_history.set_next_deadline(
-                            ch->instanceHandle,
-                            steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
-                {
-                    logError(PUBLISHER, "Could not set the next deadline in the history");
-                }
-                else
-                {
-                    if (timer_owner_ == handle || timer_owner_ == InstanceHandle_t())
-                    {
-                        deadline_timer_reschedule();
-                    }
-                }
-            }
-
-            if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
-            {
-                lifespan_duration_us_ = std::chrono::duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
-                lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
-                lifespan_timer_.restart_timer();
-            }
-
-            return true;
-        }
-    }
-
-    return false;
-}
-
-
-bool PublisherImpl::removeMinSeqChange()
-{
-    return m_history.removeMinChange();
-}
-
-bool PublisherImpl::removeAllChange(size_t* removed)
-{
-    return m_history.removeAllChange(removed);
-}
-
-const GUID_t& PublisherImpl::getGuid()
-{
-    return mp_writer->getGuid();
+    return writer;
 }
 
 bool PublisherImpl::update_writer(
@@ -354,7 +184,6 @@ bool PublisherImpl::update_writer(
     return mp_rtpsParticipant->updateWriter(writer, topic_att, qos);
 }
 
-//
 bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
 {
     bool updated = true;
@@ -410,174 +239,20 @@ bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
         }
     }
 
-    //TOPIC ATTRIBUTES
-    if(this->m_att.topic != att.topic)
-    {
-        logWarning(PUBLISHER,"Topic Attributes cannot be updated");
-        updated &= false;
-    }
-    //QOS:
-    //CHECK IF THE QOS CAN BE SET
-    if(!this->m_att.qos.canQosBeUpdated(att.qos))
-    {
-        updated &=false;
-    }
     if(updated)
     {
-        if(this->m_att.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
-        {
-            //UPDATE TIMES:
-            StatefulWriter* sfw = (StatefulWriter*)mp_writer;
-            sfw->updateTimes(att.times);
-        }
-
-        this->m_att.qos.setQos(att.qos,false);
         this->m_att = att;
-        //Notify the participant that a Writer has changed its QOS
-        mp_rtpsParticipant->updateWriter(this->mp_writer, m_att.topic, m_att.qos);
-
-        // Deadline
-
-        if (m_att.qos.m_deadline.period != c_TimeInfinite)
-        {
-            deadline_duration_us_ =
-                    duration<double, std::ratio<1, 1000000>>(m_att.qos.m_deadline.period.to_ns() * 1e-3);
-            deadline_timer_.update_interval_millisec(m_att.qos.m_deadline.period.to_ns() * 1e-6);
-        }
-        else
-        {
-            deadline_timer_.cancel_timer();
-        }
-
-        // Lifespan
-
-        if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
-        {
-            lifespan_duration_us_ =
-                    duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
-            lifespan_timer_.update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
-        }
-        else
-        {
-            lifespan_timer_.cancel_timer();
-        }
     }
 
     return updated;
 }
 
 void PublisherImpl::PublisherWriterListener::onWriterMatched(
-        RTPSWriter* /*writer*/,
+        DataWriter* /*writer*/,
         MatchingInfo& info)
 {
     if( mp_publisherImpl->mp_listener != nullptr )
     {
         mp_publisherImpl->mp_listener->onPublicationMatched(mp_publisherImpl->mp_userPublisher, info);
     }
-}
-
-void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
-        RTPSWriter* /*writer*/,
-        CacheChange_t* ch)
-{
-    if (mp_publisherImpl->m_att.qos.m_durability.kind == VOLATILE_DURABILITY_QOS)
-    {
-        mp_publisherImpl->m_history.remove_change_g(ch);
-    }
-}
-
-bool PublisherImpl::wait_for_all_acked(const eprosima::fastrtps::Duration_t& max_wait)
-{
-    return mp_writer->wait_for_all_acked(max_wait);
-}
-
-void PublisherImpl::deadline_timer_reschedule()
-{
-    assert(m_att.qos.m_deadline.period != c_TimeInfinite);
-
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
-
-    steady_clock::time_point next_deadline_us;
-    if (!m_history.get_next_deadline(timer_owner_, next_deadline_us))
-    {
-        logError(PUBLISHER, "Could not get the next deadline from the history");
-        return;
-    }
-    auto interval_ms = duration_cast<milliseconds>(next_deadline_us - steady_clock::now());
-
-    deadline_timer_.cancel_timer();
-    deadline_timer_.update_interval_millisec((double)interval_ms.count());
-    deadline_timer_.restart_timer();
-}
-
-void PublisherImpl::deadline_missed()
-{
-    assert(m_att.qos.m_deadline.period != c_TimeInfinite);
-
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
-
-    deadline_missed_status_.total_count++;
-    deadline_missed_status_.total_count_change++;
-    deadline_missed_status_.last_instance_handle = timer_owner_;
-    mp_listener->on_offered_deadline_missed(mp_userPublisher, deadline_missed_status_);
-    deadline_missed_status_.total_count_change = 0;
-
-    if (!m_history.set_next_deadline(
-                timer_owner_,
-                steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
-    {
-        logError(PUBLISHER, "Could not set the next deadline in the history");
-        return;
-    }
-    deadline_timer_reschedule();
-}
-
-void PublisherImpl::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &status)
-{
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
-
-    status = deadline_missed_status_;
-    deadline_missed_status_.total_count_change = 0;
-}
-
-void PublisherImpl::lifespan_expired()
-{
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
-
-    CacheChange_t* earliest_change;
-    if (!m_history.get_earliest_change(&earliest_change))
-    {
-        return;
-    }
-
-    auto source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
-    auto now = system_clock::now();
-
-    // Check that the earliest change has expired (the change which started the timer could have been removed from the history)
-    if (now - source_timestamp < lifespan_duration_us_)
-    {
-        auto interval = source_timestamp - now + lifespan_duration_us_;
-        lifespan_timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
-        lifespan_timer_.restart_timer();
-        return;
-    }
-
-    // The earliest change has expired
-    m_history.remove_change_pub(earliest_change);
-
-    // Set the timer for the next change if there is one
-    if (!m_history.get_earliest_change(&earliest_change))
-    {
-        return;
-    }
-
-    // Calculate when the next change is due to expire and restart
-    source_timestamp = system_clock::time_point() + nanoseconds(earliest_change->sourceTimestamp.to_ns());
-    now = system_clock::now();
-    auto interval = source_timestamp - now + lifespan_duration_us_;
-
-    assert(interval.count() > 0);
-
-    lifespan_timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
-    lifespan_timer_.restart_timer();
 }

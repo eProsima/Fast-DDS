@@ -49,7 +49,7 @@ DataWriter::DataWriter(
         const WriterAttributes& att,
         const WriterQos& qos,
         PublisherHistory&& history,
-        PublisherListener* listen )
+        DataWriterListener* listen )
     : publisher_(p)
     , writer_(nullptr)
     , type_(topic)
@@ -75,6 +75,18 @@ DataWriter::DataWriter(
                       publisher_->participant()->get_resource_event().getThread())
     , lifespan_duration_us_(qos.m_lifespan.duration.to_ns() * 1e-3)
 {
+    RTPSWriter* writer = RTPSDomain::createRTPSWriter(
+                publisher_->rtps_participant(),
+                w_att_,
+                static_cast<WriterHistory*>(&history),
+                static_cast<WriterListener*>(&writer_listener_));
+
+    if(writer == nullptr)
+    {
+        logError(DATA_WRITER, "Problem creating associated Writer");
+    }
+
+    writer_ = writer;
 }
 
 DataWriter::~DataWriter()
@@ -378,18 +390,18 @@ bool DataWriter::update_topic(const TopicAttributes& att)
     return true;
 }
 
-void DataWriter::DataWriterListener::on_writer_matched(
+void DataWriter::InnerDataWriterListener::on_writer_matched(
         RTPSWriter* /*writer*/,
         MatchingInfo& info)
 {
     if( data_writer_->listener_ != nullptr )
     {
-        data_writer_->listener_->onPublicationMatched(
-            data_writer_->publisher_->user_publisher(), info);
+        data_writer_->listener_->on_publication_matched(
+            data_writer_, info);
     }
 }
 
-void DataWriter::DataWriterListener::on_writer_change_received_by_all(
+void DataWriter::InnerDataWriterListener::on_writer_change_received_by_all(
         RTPSWriter* /*writer*/,
         CacheChange_t* ch)
 {
@@ -432,7 +444,7 @@ void DataWriter::deadline_missed()
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
-    listener_->on_offered_deadline_missed(publisher_->user_publisher(), deadline_missed_status_);
+    listener_->on_offered_deadline_missed(this, deadline_missed_status_);
     deadline_missed_status_.total_count_change = 0;
 
     if (!history_.set_next_deadline(

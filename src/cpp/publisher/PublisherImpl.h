@@ -28,11 +28,11 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 
 
-#include <fastrtps/rtps/writer/WriterListener.h>
+#include <fastrtps/topic/DataWriterListener.hpp>
 #include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 
-#include <map>
+#include <fastrtps/topic/DataWriter.hpp>
 
 namespace eprosima {
 namespace fastrtps{
@@ -75,37 +75,52 @@ public:
      * @return True if correct.
      */
     bool removeMinSeqChange();
+
     /**
      * Removes all changes from the History.
      * @param[out] removed Number of removed elements
      * @return True if correct.
      */
-    bool removeAllChange(size_t* removed);
+    bool removeAllChange(
+            size_t* removed);
 
     /**
      * Update the Attributes of the publisher;
      * @param att Reference to a PublisherAttributes object to update the parameters;
      * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
      */
-    bool updateAttributes(const PublisherAttributes& att);
+    bool updateAttributes(
+            const PublisherAttributes& att);
 
     /**
      * Get the Attributes of the Subscriber.
      * @return Attributes of the Subscriber.
      */
-    inline const PublisherAttributes& getAttributes(){ return m_att; };
+    inline const PublisherAttributes& getAttributes()
+    {
+        return m_att;
+    }
 
     ParticipantImpl* participant()
     {
         return mp_participant;
     }
 
+    rtps::RTPSParticipant* rtps_participant()
+    {
+        return mp_rtpsParticipant;
+    }
+
     /**
      * @brief Created a new writer
      * @param topic_att TopicAttributes
+     * @param wqos WriterQos
+     * @param listener DataWriterListener
      */
-    rtps::RTPSWriter* create_writer(
-            const TopicAttributes& topic_att);
+    DataWriter* create_writer(
+            const TopicAttributes& topic_att,
+            const WriterQos& wqos,
+            DataWriterListener* listener = nullptr);
 
     bool update_writer(
             rtps::RTPSWriter* Writer,
@@ -120,9 +135,6 @@ public:
 private:
     ParticipantImpl* mp_participant;
 
-    //! Pointer to the associated Data Writer.
-    rtps::RTPSWriter* mp_writer;
-
     //!Attributes of the Publisher
     PublisherAttributes m_att;
 
@@ -130,13 +142,20 @@ private:
     PublisherListener* mp_listener;
 
     //!Listener to capture the events of the Writer
-    class PublisherWriterListener: public rtps::WriterListener
+    class PublisherWriterListener : public DataWriterListener
     {
         public:
-            PublisherWriterListener(PublisherImpl* p):mp_publisherImpl(p){};
-            virtual ~PublisherWriterListener(){};
-            void onWriterMatched(rtps::RTPSWriter* writer, rtps::MatchingInfo& info);
-            void onWriterChangeReceivedByAll(rtps::RTPSWriter* writer, rtps::CacheChange_t* change);
+            PublisherWriterListener(
+                    PublisherImpl* p)
+                : mp_publisherImpl(p)
+            {}
+
+            virtual ~PublisherWriterListener() {}
+
+            void onWriterMatched(
+                    DataWriter* writer,
+                    rtps::MatchingInfo& info);
+
             PublisherImpl* mp_publisherImpl;
     }m_writerListener;
 
