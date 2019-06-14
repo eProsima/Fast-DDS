@@ -137,12 +137,12 @@ bool PublisherHistory::add_pub_change(
 
             if(add)
             {
+                vit->second.cache_changes.push_back(change);
                 if(this->add_change_(change, wparams, max_blocking_time))
                 {
                     logInfo(RTPS_HISTORY,this->mp_pubImpl->getGuid().entityId <<" Change "
                             << change->sequenceNumber << " added with key: "<<change->instanceHandle
                             << " and "<<change->serializedPayload.length<< " bytes");
-                    vit->second.cache_changes.push_back(change);
                     returnedValue =  true;
                 }
             }
