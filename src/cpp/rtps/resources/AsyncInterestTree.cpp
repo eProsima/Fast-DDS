@@ -140,9 +140,8 @@ void AsyncInterestTree::swap()
     hidden_pos_ = (hidden_pos_ + 1) & 0x1;
 }
 
-RTPSWriter* AsyncInterestTree::next_active()
+RTPSWriter* AsyncInterestTree::next_active_nts()
 {
-    std::unique_lock<std::timed_mutex> activeGuard(mMutexActive);
     RTPSWriter* ret_writer = active_front_;
     if (active_front_)
     {

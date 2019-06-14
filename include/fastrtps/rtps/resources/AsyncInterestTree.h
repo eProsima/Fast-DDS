@@ -70,7 +70,7 @@ class AsyncInterestTree
      * @brief Remove next writer from visible queue and returns it.
      * @return Next writer.
      */
-    RTPSWriter* next_active();
+    RTPSWriter* next_active_nts();
 
     private:
 
