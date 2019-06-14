@@ -484,7 +484,7 @@ TEST(BlackBox, PubSubAsReliableHelloworldUserData)
 }
 
 //! Tests discovery of 20 participants, having one publisher and one subscriber each
-BLACKBOXTEST(Discovery, TwentyParticipants)
+TEST(Discovery, TwentyParticipants)
 {
     // Number of participants
     constexpr size_t n_participants = 20;
@@ -540,7 +540,7 @@ BLACKBOXTEST(Discovery, TwentyParticipants)
 }
 
 //! Regression for ROS2 #280 and #281
-BLACKBOXTEST(Discovery, TwentyParticipantsSeveralEndpoints)
+TEST(Discovery, TwentyParticipantsSeveralEndpoints)
 {
     // Number of participants
     constexpr size_t n_participants = 20;
