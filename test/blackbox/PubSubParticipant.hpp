@@ -349,7 +349,8 @@ public:
             return false;
         }
 
-        auto attr = subscriber_attr_;
+        SubscriberAttributes attr;
+        attr = subscriber_attr_;
         attr.qos.m_deadline.period = deadline_period;
 
         return subscribers_[index]->updateAttributes(attr);
