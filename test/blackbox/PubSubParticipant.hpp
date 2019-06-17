@@ -109,9 +109,9 @@ class PubSubParticipant
             (info.status == rtps::MATCHED_MATCHING) ? participant_->sub_matched() : participant_->sub_unmatched();
         }
 
-        virtual void on_liveliness_changed(
+        void on_liveliness_changed(
                 Subscriber* sub,
-                const LivelinessChangedStatus& status)
+                const LivelinessChangedStatus& status) override
         {
             (void)sub;
             (status.alive_count_change == 1) ? times_liveliness_recovered_++ : times_liveliness_lost_++;

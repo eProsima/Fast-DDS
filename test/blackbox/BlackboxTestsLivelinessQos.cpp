@@ -1376,8 +1376,8 @@ TEST(LivelinessQos, ThreeWriters_ThreeReaders)
     // The manual by topic subscriber will detect that one writer lost liveliness
     // This means that the subscribint participant will see that liveliness was lost three times
     std::this_thread::sleep_for(std::chrono::milliseconds(lease_duration_ms * 2));
-    EXPECT_EQ(publishers.pub_times_liveliness_lost(), 2);
-    EXPECT_EQ(subscribers.sub_times_liveliness_lost(), 3);
+    EXPECT_EQ(publishers.pub_times_liveliness_lost(), 2u);
+    EXPECT_EQ(subscribers.sub_times_liveliness_lost(), 3u);
 }
 
 //! Tests the case where a writer matched to two readers changes QoS and stays matched to only one reader

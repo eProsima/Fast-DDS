@@ -157,9 +157,9 @@ private:
             times_deadline_missed_ = status.total_count;
         }
 
-        virtual void on_liveliness_changed(
+        void on_liveliness_changed(
                 eprosima::fastrtps::Subscriber* sub,
-                const eprosima::fastrtps::LivelinessChangedStatus& status)
+                const eprosima::fastrtps::LivelinessChangedStatus& status) override
         {
             (void)sub;
             (void)status;
