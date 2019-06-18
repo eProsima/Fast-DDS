@@ -47,10 +47,7 @@ macro(gradle_build directory command_build)
         endif()
 
         add_custom_target(java ALL
-            COMMAND ${CMAKE_COMMAND} -E env
-            --unset=JAVA_HOME
-            "PATH=${Java_JAVA_EXECUTABLE_DIR_NATIVE}${delimiter_}$<JOIN:$ENV{PATH},${delimiter_}>"
-            "${GRADLE_EXE}" -Pcustomversion=${PROJECT_VERSION} ${command_build}
+            COMMAND "${GRADLE_EXE}" -Pcustomversion=${PROJECT_VERSION} ${command_build}
             WORKING_DIRECTORY ${directory}
             COMMENT "Generating Java application" VERBATIM)
     endif()
