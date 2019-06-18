@@ -234,7 +234,7 @@ TEST(LivelinessQos, LongLiveliness_ManualByParticipant_Reliable)
 
     // Liveliness lease duration and announcement period, in seconds
     Duration_t liveliness_s(writer_sleep_ms * 2.0 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 2.0 * 1e-3 * 0.9);
+    Duration_t announcement_period(writer_sleep_ms * 2.0 * 1e-3 * 0.1);
 
     reader.reliability(RELIABLE_RELIABILITY_QOS)
             .liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
