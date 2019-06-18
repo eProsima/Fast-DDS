@@ -26,7 +26,6 @@
 #include "../attributes/ReaderAttributes.h"
 #include "../common/SequenceNumber.h"
 #include "../../qos/LivelinessChangedStatus.h"
-#include <fastrtps/rtps/writer/LivelinessManager.h>
 
 #include <map>
 

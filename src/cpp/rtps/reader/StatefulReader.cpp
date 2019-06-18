@@ -30,6 +30,7 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 #include <fastrtps/rtps/builtin/liveliness/WLP.h>
+#include <fastrtps/rtps/writer/LivelinessManager.h>
 
 #include <mutex>
 #include <thread>

@@ -26,7 +26,7 @@
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 
 #include <fastrtps/rtps/reader/StatefulReader.h>
-
+#include <fastrtps/rtps/writer/LivelinessManager.h>
 #include <fastrtps/log/Log.h>
 
 #include <mutex>
