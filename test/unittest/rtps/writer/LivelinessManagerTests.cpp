@@ -332,7 +332,7 @@ TEST(LivelinessManagerTests, TimerExpired_ManualByParticipant)
     EXPECT_EQ(env->num_writers_lost, 1u);
 
     // Wait a bit longer so that second writer loses liveliness
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 2));
     EXPECT_EQ(env->num_writers_lost, 2u);
 
