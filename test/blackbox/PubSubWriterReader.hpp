@@ -88,7 +88,7 @@ class PubSubWriterReader
                         break;
 
                     case eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT:
-                        // TODO: Should we warn here?
+                        std::cout << "Participant " << info.info.m_guid << " has been dropped";
                         info_remove(discovered_participants_, info.info.m_guid);
                         break;
 
