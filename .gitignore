@@ -69,6 +69,8 @@ Session.vim
 .netrwhist
 *~
 
+### VisualStudio Code ###
+*.vscode
 
 ### VisualStudio ###
 ## Ignore Visual Studio temporary files, build results, and
