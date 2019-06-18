@@ -288,6 +288,8 @@ void publisherKeys()
     }
 
     eClock::my_sleep(1500);
+
+    Domain::stopAll();
 }
 
 void subscriberKeys()
@@ -306,4 +308,6 @@ void subscriberKeys()
     }
 
     std::cin.ignore();
+
+    Domain::stopAll();
 }
