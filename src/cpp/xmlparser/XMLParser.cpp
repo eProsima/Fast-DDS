@@ -2540,8 +2540,7 @@ XMLP_ret XMLParser::loadXML(const std::string& filename, up_base_node_t& root)
     }
 
     tinyxml2::XMLDocument xmlDoc;
-    tinyxml2::XMLError load_error = xmlDoc.LoadFile(filename.c_str());
-    if (tinyxml2::XMLError::XML_SUCCESS != load_error)
+    if (tinyxml2::XMLError::XML_SUCCESS != xmlDoc.LoadFile(filename.c_str()))
     {
         logError(XMLPARSER, "Error opening '" << filename << "'");
         return XMLP_ret::XML_ERROR;
