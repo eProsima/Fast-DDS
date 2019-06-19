@@ -87,6 +87,8 @@ compileJava.dependsOn buildIDLParser,copyResources
 compileJava {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
+    options.compilerArgs.add('-Xlint:deprecation')
+    options.compilerArgs.add('-Xlint:unchecked')
 }
 
 test {
