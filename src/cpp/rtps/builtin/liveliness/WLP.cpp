@@ -822,7 +822,7 @@ void WLP::pub_liveliness_lost(
 
     if (kind == AUTOMATIC_LIVELINESS_QOS)
     {
-        for (const auto& w: automatic_writers_)
+        for (RTPSWriter* w: automatic_writers_)
         {
             if (w->getGuid() == writer)
             {
@@ -842,7 +842,7 @@ void WLP::pub_liveliness_lost(
     }
     else if (kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
-        for (const auto& w: manual_by_participant_writers_)
+        for (RTPSWriter* w: manual_by_participant_writers_)
         {
             if (w->getGuid() == writer)
             {
@@ -862,7 +862,7 @@ void WLP::pub_liveliness_lost(
     }
     else if (kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
     {
-        for (const auto& w: manual_by_topic_writers_)
+        for (RTPSWriter* w: manual_by_topic_writers_)
         {
             if (w->getGuid() == writer)
             {
@@ -892,7 +892,7 @@ void WLP::sub_liveliness_lost(
     RemoteWriterAttributes ratt;
     ratt.guid = writer;
 
-    for (const auto& reader : readers_)
+    for (RTPSReader* reader : readers_)
     {
         if (reader->liveliness_kind_ == kind &&
                 reader->liveliness_lease_duration_ == lease_duration)
@@ -916,7 +916,7 @@ void WLP::sub_liveliness_recovered(
     RemoteWriterAttributes ratt;
     ratt.guid = writer;
 
-    for (const auto& reader : readers_)
+    for (RTPSReader* reader : readers_)
     {
         if (reader->liveliness_kind_ == kind &&
                 reader->liveliness_lease_duration_ == lease_duration)

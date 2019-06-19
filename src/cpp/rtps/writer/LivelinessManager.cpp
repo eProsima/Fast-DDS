@@ -9,6 +9,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+using LivelinessDataIterator = ResourceLimitedVector<LivelinessData>::iterator;
+
 LivelinessManager::LivelinessManager(
         const std::function<void(
             const GUID_t&,
@@ -55,7 +57,7 @@ bool LivelinessManager::add_writer(
         return false;
     }
 
-    for (auto& writer : writers_)
+    for (LivelinessData& writer : writers_)
     {
         if (writer.guid == guid &&
                 writer.kind == kind &&
@@ -76,7 +78,7 @@ bool LivelinessManager::remove_writer(
 {
     std::unique_lock<std::mutex> lock(mutex_);
 
-    for (auto& writer: writers_)
+    for (LivelinessData& writer: writers_)
     {
         if (writer.guid == guid &&
                 writer.kind == kind &&
@@ -130,7 +132,7 @@ bool LivelinessManager::assert_liveliness(
     if (wit->kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS ||
         wit->kind == AUTOMATIC_LIVELINESS_QOS)
     {
-        for (auto& w: writers_)
+        for (LivelinessData& w: writers_)
         {
             if (w.kind == wit->kind)
             {
@@ -197,7 +199,7 @@ bool LivelinessManager::assert_liveliness(LivelinessQosPolicyKind kind)
 
     timer_.cancel_timer();
 
-    for (auto& writer: writers_)
+    for (LivelinessData& writer: writers_)
     {
         if (writer.kind == kind)
         {
@@ -240,7 +242,7 @@ bool LivelinessManager::calculate_next()
 
     bool any_alive = false;
 
-    for (auto it=writers_.begin(); it!=writers_.end(); ++it)
+    for (LivelinessDataIterator it=writers_.begin(); it!=writers_.end(); ++it)
     {
         if (it->alive)
         {
@@ -288,7 +290,7 @@ bool LivelinessManager::find_writer(
         const Duration_t& lease_duration,
         ResourceLimitedVector<LivelinessData>::iterator *wit_out)
 {
-    for (auto it=writers_.begin(); it!=writers_.end(); ++it)
+    for (LivelinessDataIterator it=writers_.begin(); it!=writers_.end(); ++it)
     {
         if (it->guid == guid &&
                 it->kind == kind &&

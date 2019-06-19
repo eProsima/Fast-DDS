@@ -50,14 +50,14 @@ WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(
           0)
     , m_livelinessKind(kind)
     , mp_WLP(pwlp)
+{
+    m_guidP = this->mp_WLP->getRTPSParticipant()->getGuid().guidPrefix;
+    for(uint8_t i =0;i<12;++i)
     {
-        m_guidP = this->mp_WLP->getRTPSParticipant()->getGuid().guidPrefix;
-        for(uint8_t i =0;i<12;++i)
-        {
-            m_iHandle.value[i] = m_guidP.value[i];
-        }
-        m_iHandle.value[15] = m_livelinessKind+0x01;
+        m_iHandle.value[i] = m_guidP.value[i];
     }
+    m_iHandle.value[15] = m_livelinessKind+0x01;
+}
 
 WLivelinessPeriodicAssertion::~WLivelinessPeriodicAssertion()
 {
