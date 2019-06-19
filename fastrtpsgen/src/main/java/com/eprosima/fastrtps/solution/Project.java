@@ -22,16 +22,16 @@ import com.eprosima.idl.util.Util;
 
 public class Project extends com.eprosima.solution.Project
 {
-    public Project(String name, String file, LinkedHashSet dependencies)
+    public Project(String name, String file, LinkedHashSet<String> dependencies)
     {
         super(name, file, dependencies);
 
-        m_subscribersrcfiles = new ArrayList();
-        m_subscriberincludefiles = new ArrayList();
-        m_publishersrcfiles = new ArrayList();
-        m_publisherincludefiles = new ArrayList();
-        m_projectincludefiles = new ArrayList();
-        m_projectsrcfiles = new ArrayList();
+        m_subscribersrcfiles = new ArrayList<String>();
+        m_subscriberincludefiles = new ArrayList<String>();
+        m_publishersrcfiles = new ArrayList<String>();
+        m_publisherincludefiles = new ArrayList<String>();
+        m_projectincludefiles = new ArrayList<String>();
+        m_projectsrcfiles = new ArrayList<String>();
         m_jnisrcfiles = new ArrayList<String>();
         m_jniincludefiles = new ArrayList<String>();
         m_idlincludefiles = new ArrayList<String>();
@@ -214,13 +214,13 @@ public class Project extends com.eprosima.solution.Project
     }
 
     private boolean m_containsInterfaces = false;
-    private ArrayList m_subscribersrcfiles = null;
-    private ArrayList m_subscriberincludefiles = null;
-    private ArrayList m_publishersrcfiles = null;
-    private ArrayList m_publisherincludefiles = null;
+    private ArrayList<String> m_subscribersrcfiles = null;
+    private ArrayList<String> m_subscriberincludefiles = null;
+    private ArrayList<String> m_publishersrcfiles = null;
+    private ArrayList<String> m_publisherincludefiles = null;
 
-    private ArrayList m_projectsrcfiles = null;
-    private ArrayList m_projectincludefiles = null;
+    private ArrayList<String> m_projectsrcfiles = null;
+    private ArrayList<String> m_projectincludefiles = null;
     private boolean m_hasStruct = false;
     private ArrayList<String> m_jnisrcfiles = null;
     private ArrayList<String> m_jniincludefiles = null;
