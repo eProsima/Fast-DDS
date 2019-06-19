@@ -237,7 +237,7 @@ class BuiltinAttributes
                    (this->readerHistoryMemoryPolicy == b.readerHistoryMemoryPolicy) &&
                    (this->writerHistoryMemoryPolicy == b.writerHistoryMemoryPolicy) &&
                    (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename) &&
-                   (this->mutation_tries == b.mutation_tries);
+                   (this->mutation_tries == b.mutation_tries) &&
                    (this->m_DiscoveryServers == b.m_DiscoveryServers);
         }
 

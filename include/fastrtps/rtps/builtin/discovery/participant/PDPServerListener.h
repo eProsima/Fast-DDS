@@ -56,7 +56,7 @@ public:
 	 */
 	void onNewCacheChangeAdded(
         RTPSReader* reader,
-        const CacheChange_t* const change);
+        const CacheChange_t* const change) override;
 
 	/**
 	 * Get the key of a CacheChange_t

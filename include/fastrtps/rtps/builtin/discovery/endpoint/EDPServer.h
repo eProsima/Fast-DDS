@@ -174,7 +174,7 @@ class EDPServer : public EDPSimple
      * Create local SEDP Endpoints based on the DiscoveryAttributes.
      * @return True if correct.
      */
-    virtual bool createSEDPEndpoints();
+    virtual bool createSEDPEndpoints() override;
 
 };
 
