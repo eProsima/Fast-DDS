@@ -82,7 +82,7 @@ public class fastrtpsgen {
     private boolean m_subscribercode = true;
     private boolean m_atLeastOneStructure = false;
     protected static String m_localAppProduct = "fastrtps";
-    private ArrayList m_includePaths = new ArrayList();
+    private ArrayList<String> m_includePaths = new ArrayList<String>();
 
     private String m_command = null;
     private String m_extra_command = null;
@@ -962,7 +962,7 @@ public class fastrtpsgen {
         final String METHOD_NAME = "callPreprocessor";
 
         // Set line command.
-        ArrayList lineCommand = new ArrayList();
+        ArrayList<String> lineCommand = new ArrayList<String>();
         String [] lineCommandArray = null;
         String outputfile = Util.getIDLFileOnly(idlFilename) + ".cc";
         int exitVal = -1;
