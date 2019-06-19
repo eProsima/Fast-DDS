@@ -151,18 +151,6 @@ private:
     //! A method called if the timer expires
     void timer_expired();
 
-    //! A boolean indicating whether we are managing writers with automatic liveliness
-    bool manage_automatic_;
-
-    //! A vector of liveliness data
-    ResourceLimitedVector<LivelinessData> writers_;
-
-    //! A timed callback expiring when a writer (the timer owner) loses its liveliness
-    TimedCallback timer_;
-
-    //! The timer owner, i.e. the writer which is next due to lose its liveliness
-    LivelinessData* timer_owner_;
-
     //! A callback to inform outside classes that a writer lost its liveliness
     std::function<void(
             const GUID_t&,
@@ -175,8 +163,20 @@ private:
             const LivelinessQosPolicyKind&,
             const Duration_t&)> liveliness_recovered_callback_;
 
+    //! A boolean indicating whether we are managing writers with automatic liveliness
+    bool manage_automatic_;
+
+    //! A vector of liveliness data
+    ResourceLimitedVector<LivelinessData> writers_;
+
     //! A mutex to protect the liveliness data
     std::mutex mutex_;
+
+    //! The timer owner, i.e. the writer which is next due to lose its liveliness
+    LivelinessData* timer_owner_;
+
+    //! A timed callback expiring when a writer (the timer owner) loses its liveliness
+    TimedCallback timer_;
 };
 
 } /* namespace rtps */

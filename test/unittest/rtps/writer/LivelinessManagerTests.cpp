@@ -19,6 +19,7 @@
 #include <fastrtps/rtps/common/Time_t.h>
 #include <asio.hpp>
 #include <thread>
+#include <condition_variable>
 #include <gtest/gtest.h>
 
 class TimedEventEnvironment : public ::testing::Environment
@@ -57,20 +58,41 @@ class TimedEventEnvironment : public ::testing::Environment
 
         void liveliness_lost(eprosima::fastrtps::rtps::GUID_t guid)
         {
+            std::unique_lock<std::mutex> lock(liveliness_lost_mutex_);
             writer_losing_liveliness = guid;
             num_writers_lost++;
+            liveliness_lost_cv_.notify_one();
         }
 
         void liveliness_recovered(eprosima::fastrtps::rtps::GUID_t guid)
         {
+            std::unique_lock<std::mutex> lock(liveliness_recovered_mutex_);
             writer_recovering_liveliness = guid;
             num_writers_recovered++;
+            liveliness_recovered_cv_.notify_one();
+        }
+
+        void wait_liveliness_lost(unsigned int num_lost)
+        {
+            std::unique_lock<std::mutex> lock(liveliness_lost_mutex_);
+            liveliness_lost_cv_.wait(lock, [&](){ return num_writers_lost == num_lost; });
+        }
+
+        void wait_liveliness_recovered(unsigned int num_recovered)
+        {
+            std::unique_lock<std::mutex> lock(liveliness_recovered_mutex_);
+            liveliness_recovered_cv_.wait(lock, [&](){ return num_writers_recovered == num_recovered;});
         }
 
         eprosima::fastrtps::rtps::GUID_t writer_losing_liveliness;
         eprosima::fastrtps::rtps::GUID_t writer_recovering_liveliness;
         unsigned int num_writers_lost;
         unsigned int num_writers_recovered;
+
+        std::mutex liveliness_lost_mutex_;
+        std::condition_variable liveliness_lost_cv_;
+        std::mutex liveliness_recovered_mutex_;
+        std::condition_variable liveliness_recovered_cv_;
 };
 
 TimedEventEnvironment* const env = dynamic_cast<TimedEventEnvironment*>(testing::AddGlobalTestEnvironment(new TimedEventEnvironment));
@@ -294,15 +316,16 @@ TEST(LivelinessManagerTests, TimerExpired_Automatic)
     env->num_writers_recovered = 0u;
 
     // Wait so that first writer loses liveliness
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    env->wait_liveliness_lost(1u);
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 1));
 
     // Wait a bit longer so that second writer loses liveliness
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    env->wait_liveliness_lost(2u);
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 2));
 
     // Assert first writer
     liveliness_manager.assert_liveliness(GUID_t(guidP, 1), AUTOMATIC_LIVELINESS_QOS, Duration_t(0.1));
+    env->wait_liveliness_recovered(2u);
     EXPECT_EQ(env->num_writers_recovered, 2u);
 }
 
@@ -327,17 +350,18 @@ TEST(LivelinessManagerTests, TimerExpired_ManualByParticipant)
     env->num_writers_recovered = 0u;
 
     // Wait so that first writer loses liveliness
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    env->wait_liveliness_lost(1u);
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 1));
     EXPECT_EQ(env->num_writers_lost, 1u);
 
     // Wait a bit longer so that second writer loses liveliness
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    env->wait_liveliness_lost(2u);
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 2));
     EXPECT_EQ(env->num_writers_lost, 2u);
 
     // Assert first writer
     liveliness_manager.assert_liveliness(GUID_t(guidP, 1), MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, Duration_t(0.1));
+    env->wait_liveliness_recovered(2u);
     EXPECT_EQ(env->num_writers_recovered, 2u);
 }
 
@@ -359,9 +383,10 @@ TEST(LivelinessManagerTests, TimerExpired_ManualByTopic)
 
     // Assert first writer
     liveliness_manager.assert_liveliness(GUID_t(guidP, 1), MANUAL_BY_TOPIC_LIVELINESS_QOS, Duration_t(0.1));
+    env->wait_liveliness_recovered(1u);
 
     // Wait so that first writer loses liveliness
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    env->wait_liveliness_lost(1u);
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 1));
     EXPECT_EQ(env->num_writers_lost, 1u);
 
@@ -372,10 +397,11 @@ TEST(LivelinessManagerTests, TimerExpired_ManualByTopic)
 
     // Assert second writer
     liveliness_manager.assert_liveliness(GUID_t(guidP, 2), MANUAL_BY_TOPIC_LIVELINESS_QOS, Duration_t(0.2));
+    env->wait_liveliness_recovered(2u);
     env->num_writers_lost = 0u;
 
     // Wait so that it loses liveliness
-    std::this_thread::sleep_for(std::chrono::milliseconds(400));
+    env->wait_liveliness_lost(1u);
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 2));
     EXPECT_EQ(env->num_writers_lost, 1u);
 }
@@ -399,15 +425,15 @@ TEST(LivelinessManagerTests, TimerOwnerCalculation)
 
     liveliness_manager.assert_liveliness(AUTOMATIC_LIVELINESS_QOS);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    env->wait_liveliness_lost(1u);
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 1));
     EXPECT_EQ(env->num_writers_lost, 1u);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    env->wait_liveliness_lost(2u);
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 3));
     EXPECT_EQ(env->num_writers_lost, 2u);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    env->wait_liveliness_lost(3u);
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 2));
     EXPECT_EQ(env->num_writers_lost, 3u);
 }
@@ -431,7 +457,7 @@ TEST(LivelinessManagerTests, TimerOwnerRemoved)
     liveliness_manager.assert_liveliness(GUID_t(guidP, 1), AUTOMATIC_LIVELINESS_QOS, Duration_t(0.5));
     liveliness_manager.remove_writer(GUID_t(guidP, 1), AUTOMATIC_LIVELINESS_QOS, Duration_t(0.5));
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    env->wait_liveliness_lost(1u);
     EXPECT_EQ(env->writer_losing_liveliness, GUID_t(guidP, 2));
     EXPECT_EQ(env->num_writers_lost, 1u);
 }

@@ -114,8 +114,6 @@ private:
         Listener(PubSubReader &reader)
             : reader_(reader)
             , times_deadline_missed_(0)
-            , times_liveliness_lost_(0)
-            , times_liveliness_recovered_(0)
         {}
 
         ~Listener(){}
@@ -166,29 +164,17 @@ private:
 
             if (status.alive_count_change == 1)
             {
-                // Liveliness recovered
-                times_liveliness_recovered_++;
+                reader_.liveliness_recovered();
             }
             else if (status.not_alive_count_change == 1)
             {
-                // Liveliness lost
-                times_liveliness_lost_++;
+                reader_.liveliness_lost();
             }
         }
 
         unsigned int missed_deadlines() const
         {
             return times_deadline_missed_;
-        }
-
-        unsigned int times_liveliness_lost() const
-        {
-            return times_liveliness_lost_;
-        }
-
-        unsigned int times_liveliness_recovered() const
-        {
-            return times_liveliness_recovered_;
         }
 
     private:
@@ -199,10 +185,6 @@ private:
 
         //! Number of times deadline was missed
         unsigned int times_deadline_missed_;
-        //! Number of times liveliness was lost
-        unsigned int times_liveliness_lost_;
-        //! Number of times liveliness was recovered
-        unsigned int times_liveliness_recovered_;
 
     } listener_;
 
@@ -228,6 +210,10 @@ public:
         , authorized_(0)
         , unauthorized_(0)
 #endif
+        , liveliness_mutex_()
+        , liveliness_cv_()
+        , times_liveliness_lost_(0)
+        , times_liveliness_recovered_(0)
         {
             subscriber_attr_.topic.topicDataType = type_.getName();
             // Generate topic name
@@ -385,6 +371,13 @@ public:
         cvDiscovery_.wait(lock, [&](){return matched_ == 0;});
 
         std::cout << "Reader removal finished..." << std::endl;
+    }
+
+    void wait_liveliness_recovered()
+    {
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+
+        liveliness_cv_.wait(lock, [&](){ return times_liveliness_recovered_ == 1; });
     }
 
 #if HAVE_SECURITY
@@ -745,14 +738,31 @@ public:
         return listener_.missed_deadlines();
     }
 
-    unsigned int times_liveliness_lost() const
+    void liveliness_lost()
     {
-        return listener_.times_liveliness_lost();
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+        times_liveliness_lost_++;
     }
 
-    unsigned int times_liveliness_recovered() const
+    void liveliness_recovered()
     {
-        return listener_.times_liveliness_recovered();
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+        times_liveliness_recovered_++;
+        liveliness_cv_.notify_one();
+    }
+
+    unsigned int times_liveliness_lost()
+    {
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+
+        return times_liveliness_lost_;
+    }
+
+    unsigned int times_liveliness_recovered()
+    {
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+
+        return times_liveliness_recovered_;
     }
 
     bool is_matched() const
@@ -874,6 +884,15 @@ private:
     unsigned int authorized_;
     unsigned int unauthorized_;
 #endif
+
+    //! A mutex for liveliness status
+    std::mutex liveliness_mutex_;
+    //! A condition variable to notify when liveliness was recovered
+    std::condition_variable liveliness_cv_;
+    //! Number of times liveliness was lost
+    unsigned int times_liveliness_lost_;
+    //! Number of times liveliness was recovered
+    unsigned int times_liveliness_recovered_;
 };
 
 #endif // _TEST_BLACKBOX_PUBSUBREADER_HPP_

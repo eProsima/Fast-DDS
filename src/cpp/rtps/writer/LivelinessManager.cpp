@@ -21,15 +21,17 @@ LivelinessManager::LivelinessManager(
         asio::io_service& service,
         const std::thread& event_thread,
         bool manage_automatic)
-    : manage_automatic_(manage_automatic)
+    : liveliness_lost_callback_(liveliness_lost_callback)
+    , liveliness_recovered_callback_(liveliness_recovered_callback)
+    , manage_automatic_(manage_automatic)
+    , writers_()
+    , mutex_()
+    , timer_owner_(nullptr)
     , timer_(
           std::bind(&LivelinessManager::timer_expired, this),
           0,
           service,
           event_thread)
-    , timer_owner_(nullptr)
-    , liveliness_lost_callback_(liveliness_lost_callback)
-    , liveliness_recovered_callback_(liveliness_recovered_callback)
 {
 }
 
