@@ -44,7 +44,10 @@ public:
         writer.wait_discovery();
         reader.wait_discovery();
 
+        std::cout << "Discovery finished." << std::endl;
+
         auto data = default_helloworld_data_generator();
+        size_t n_samples = data.size();
         not_received_data.insert(not_received_data.end(), data.begin(), data.end());
 
         reader.expected_data(not_received_data);
@@ -58,21 +61,28 @@ public:
         // Block reader until reception finished or timeout.
         if (seq_check > 0)
         {
+            std::cout << "Reader waiting for sequence " << seq_check << "." << std::endl;
             reader.block_until_seq_number_greater_or_equal({ 0,seq_check });
         }
         else
         {
             if (reliable)
             {
+                std::cout << "Reader waiting for " << n_samples << " samples." << std::endl;
                 reader.block_for_all();
             }
             else
             {
+                std::cout << "Reader waiting for 2 samples." << std::endl;
                 reader.block_for_at_least(2);
             }
         }
 
+        std::cout << "Last received sequence was " << reader.get_last_received_sequence_number() << std::endl;
+
+        std::cout << "Destroying reader..." << std::endl;
         reader.destroy();
+        std::cout << "Destroying writer..." << std::endl;
         writer.destroy();
 
         data = reader.not_received_data();

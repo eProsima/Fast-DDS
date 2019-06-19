@@ -224,7 +224,7 @@ void PDP::announceParticipantState(
 
     if(!dispose)
     {
-        if(new_change || m_hasChangedLocalPDP.load())
+        if(new_change || m_hasChangedLocalPDP.exchange(false))
         {
             this->mp_mutex->lock();
             ParticipantProxyData* local_participant_data = getLocalParticipantProxyData();
@@ -265,8 +265,6 @@ void PDP::announceParticipantState(
                     logError(RTPS_PDP, "Cannot serialize ParticipantProxyData.");
                 }
             }
-
-            m_hasChangedLocalPDP.exchange(false);
         }
 
     }

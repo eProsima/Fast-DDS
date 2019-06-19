@@ -166,6 +166,14 @@ TEST_F(XMLParserTests, NoFIle)
     ASSERT_EQ(XMLParser::loadXML("missing_file.xml", root), XMLP_ret::XML_ERROR);
 }
 
+TEST_F(XMLParserTests, EmptyDefaultFile)
+{
+    std::ifstream inFile;
+    inFile.open("DEFAULT_FASTRTPS_PROFILES.xml");
+    std::unique_ptr<BaseNode> root;
+    ASSERT_EQ(XMLParser::loadDefaultXMLFile(root), XMLP_ret::XML_ERROR);
+}
+
 TEST_F(XMLParserTests, EmptyString)
 {
     std::ifstream inFile;
