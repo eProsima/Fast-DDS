@@ -1325,27 +1325,27 @@ TEST(LivelinessQos, ThreeWriters_ThreeReaders)
     subscribers.sub_wait_discovery();
 
     // From the point of view of the AUTOMATIC reader, the three writers will have recovered liveliness
-    std::this_thread::sleep_for(std::chrono::milliseconds(announcement_period_ms * 2));
+    subscribers.sub_wait_liveliness_recovered(3u);
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 3u);
 
     // The manual by participant writer asserts liveliness
     // The manual by participant reader will consider that both the manual by participant and manual by topic
     // writers have recovered liveliness
     publishers.assert_liveliness(1u);
-    std::this_thread::sleep_for(std::chrono::milliseconds(announcement_period_ms * 2));
+    subscribers.sub_wait_liveliness_recovered(5u);
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 5u);
 
     // The manual by topic publisher asserts liveliness
     // The manual by topic reader will detect that a new writer has recovered liveliness
     publishers.assert_liveliness(2u);
-    std::this_thread::sleep_for(std::chrono::milliseconds(announcement_period_ms * 2));
+    subscribers.sub_wait_liveliness_recovered(6u);
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 6u);
 
     // Wait so that the manual by participant and manual by topic writers lose liveliness
     // The manual by participant subscriber will detect that two writers lost liveliness
     // The manual by topic subscriber will detect that one writer lost liveliness
-    // This means that the subscribint participant will see that liveliness was lost three times
-    std::this_thread::sleep_for(std::chrono::milliseconds(lease_duration_ms * 2));
+    // This means that the subscribing participant will see that liveliness was lost three times
+    subscribers.sub_wait_liveliness_lost(3u);
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 2u);
     EXPECT_EQ(subscribers.sub_times_liveliness_lost(), 3u);
 }
