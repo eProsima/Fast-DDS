@@ -111,19 +111,18 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     case PDPType::CLIENT:
     case PDPType::SERVER:
     case PDPType::BACKUP:
+        // Verify if listening ports are provided
+        for (auto& transportDescriptor : PParam.userTransports)
         {
-            // Verify if listening ports are provided
-            for (auto& transportDescriptor : PParam.userTransports)
+            TCPTransportDescriptor * pT = dynamic_cast<TCPTransportDescriptor *>(transportDescriptor.get());
+            if (pT && pT->listening_ports.empty())
             {
-                TCPTransportDescriptor * pT = dynamic_cast<TCPTransportDescriptor *>(transportDescriptor.get());
-                if (pT && pT->listening_ports.empty())
-                {
-                    logError(RTPS_PARTICIPANT, "Participant " << m_att.getName() << " with GUID " << m_guid 
-                        << " tries to use discovery server over TCP without providing a proper listening port");
-                }
+                logError(RTPS_PARTICIPANT, "Participant " << m_att.getName() << " with GUID " << m_guid 
+                    << " tries to use discovery server over TCP without providing a proper listening port");
             }
-            break;
         }
+    default:
+        break;
     }
 
     // User defined transports
