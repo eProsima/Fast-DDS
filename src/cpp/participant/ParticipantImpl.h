@@ -169,7 +169,7 @@ class ParticipantImpl
     //!Participant Attributes
     ParticipantAttributes m_att;
     //!RTPSParticipant
-	rtps::RTPSParticipant* mp_rtpsParticipant;
+    rtps::RTPSParticipant* mp_rtpsParticipant;
     //!Participant*
     Participant* mp_participant;
     //!Participant Listener

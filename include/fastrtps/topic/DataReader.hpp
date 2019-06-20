@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,19 +13,23 @@
 // limitations under the License.
 
 /**
- * @file SubscriberImpl.h
+ * @file DataReader.hpp
  *
  */
 
-#ifndef SUBSCRIBERIMPL_H_
-#define SUBSCRIBERIMPL_H_
+#ifndef _FASTRTPS_DATAREADER_HPP_
+#define _FASTRTPS_DATAREADER_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <fastrtps/rtps/common/Locator.h>
 #include <fastrtps/rtps/common/Guid.h>
 
-#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/qos/ReaderQos.h>
+
+#include <fastrtps/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/subscriber/SubscriberHistory.h>
+#include <fastrtps/topic/DataReaderListener.hpp>
 #include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastrtps/attributes/TopicAttributes.h>
 #include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 
@@ -38,38 +42,36 @@ class RTPSParticipant;
 }
 
 class TopicDataType;
-class SubscriberListener;
-class Participant;
 class ParticipantImpl;
 class SampleInfo_t;
 class Subscriber;
 
 /**
- * Class SubscriberImpl, contains the actual implementation of the behaviour of the Subscriber.
+ * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
  *  @ingroup FASTRTPS_MODULE
  */
-class SubscriberImpl {
+class DataReader {
     friend class ParticipantImpl;
-public:
 
     /**
-    * @param p
-    * @param ptype
-    * @param attr
-    * @param listen
+    * Creates a DataReader. Don't use it directly, but through Subscriber.
     */
-    SubscriberImpl(
-        ParticipantImpl* p,
-        TopicDataType* ptype,
-        const SubscriberAttributes& attr,
-        SubscriberListener* listen = nullptr);
+    DataReader(
+            SubscriberImpl* s,
+            TopicDataType* topic,
+            const TopicAttributes& topic_att,
+            const rtps::ReaderAttributes& att,
+            const ReaderQos& qos,
+            SubscriberHistory&& history,
+            DataReaderListener* listener = nullptr);
 
-    virtual ~SubscriberImpl();
+public:
+    virtual ~DataReader();
 
     /**
      * Method to block the current thread until an unread message is available
      */
-    void waitForUnreadMessage();
+    void wait_for_unread_message();
 
 
     /** @name Read or take data methods.
@@ -78,35 +80,40 @@ public:
 
     ///@{
 
-    bool readNextData(void* data,SampleInfo_t* info);
-    bool takeNextData(void* data,SampleInfo_t* info);
+    bool read(
+            std::vector<void*>& data_values,
+            std::vector<SampleInfo_t>& sample_infos,
+            uint32_t max_samples);
+
+    bool read_next_sample(
+            void* data,
+            SampleInfo_t* info);
+
+    bool take(
+            std::vector<void*>& data_values,
+            std::vector<SampleInfo_t>& sample_infos,
+            uint32_t max_samples);
+
+    bool take_next_sample(
+            void* data,
+            SampleInfo_t* info);
 
     ///@}
-
-    /**
-     * Update the Attributes of the subscriber;
-     * @param att Reference to a SubscriberAttributes object to update the parameters;
-     * @return True if correctly updated, false if ANY of the updated parameters cannot be updated
-     */
-    bool updateAttributes(const SubscriberAttributes& att);
 
     /**
     * Get associated GUID
     * @return Associated GUID
     */
-    const rtps::GUID_t& getGuid();
-
-    /**
-     * Get the Attributes of the Subscriber.
-     * @return Attributes of the Subscriber.
-     */
-    const SubscriberAttributes& getAttributes() const {return m_att;}
+    const rtps::GUID_t& guid();
 
     /**
     * Get topic data type
     * @return Topic data type
     */
-    TopicDataType* getType() {return mp_type;}
+    TopicDataType* type()
+    {
+        return type_;
+    }
 
     /*!
     * @brief Returns there is a clean state with all Publishers.
@@ -114,93 +121,127 @@ public:
     * its WriterProxies are up to date.
     * @return There is a clean state with all Publishers.
     */
-    bool isInCleanState() const;
+    bool is_in_clean_state() const;
 
     /**
      * Get the unread count.
      * @return Unread count
      */
-    uint64_t getUnreadCount() const;
+    uint64_t get_unread_count() const;
 
     /**
      * @brief A method called when a new cache change is added
      * @param change The cache change that has been added
      * @return True if the change was added (due to some QoS it could have been 'rejected')
      */
-    bool on_new_cache_change_added(const rtps::CacheChange_t* const change);
+    bool on_new_cache_change_added(
+            const rtps::CacheChange_t* const change);
 
     /**
      * @brief Get the requested deadline missed status
      * @return The deadline missed status
      */
-    void get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status);
+    void get_requested_deadline_missed_status(
+            RequestedDeadlineMissedStatus& status);
 
-    /**
-     * @brief Returns the liveliness changed status
-     * @param status Liveliness changed status
-     */
-    void get_liveliness_changed_status(LivelinessChangedStatus& status);
+    bool set_attributes(const rtps::ReaderAttributes& att);
 
-    const Participant* get_participant() const;
+    const rtps::ReaderAttributes& get_attributes() const;
 
-    rtps::RTPSParticipant* rtps_participant() const
-    {
-        return mp_rtpsParticipant;
-    }
+    bool set_qos(const ReaderQos& qos);
 
-    const Subscriber* get_subscriber() const
-    {
-        return mp_userSubscriber;
-    }
+    const ReaderQos& get_qos() const;
+
+    bool set_topic(const TopicAttributes& att);
+
+    const TopicAttributes& get_topic() const;
+
+    bool set_listener(DataReaderListener* listener);
+
+    const DataReaderListener* get_listener() const;
+
+    bool get_key_value(
+            void* data,
+            const rtps::InstanceHandle_t& handle);
+
+    bool get_liveliness_changed_status(
+            LivelinessChangedStatus& status) const;
+
+    bool get_requested_incompatible_qos_status(
+            RequestedIncompatibleQosStatus& status) const;
+
+    bool get_sample_lost_status(
+            SampleLostStatus& status) const;
+
+    bool get_sample_rejected_status(
+            SampleRejectedStatus& status) const;
+
+    const Subscriber* get_subscriber() const;
+
+    bool wait_for_historical_data(
+            const Duration_t& max_wait) const;
 
 private:
 
-    //!Participant
-    ParticipantImpl* mp_participant;
+    //!Subscriber
+    SubscriberImpl* subscriber_;
 
     //!Pointer to associated RTPSReader
-    rtps::RTPSReader* mp_reader;
-    //! Pointer to the TopicDataType object.
-    TopicDataType* mp_type;
-    //!Attributes of the Subscriber
-    SubscriberAttributes m_att;
-    //!History
-    SubscriberHistory m_history;
-    //!Listener
-    SubscriberListener* mp_listener;
+    rtps::RTPSReader* reader_;
 
-    class SubscriberReaderListener : public rtps::ReaderListener
+    //! Pointer to the TopicDataType object.
+    TopicDataType* type_;
+
+    TopicAttributes topic_att_;
+
+    //!Attributes of the Subscriber
+    rtps::ReaderAttributes att_;
+
+    ReaderQos qos_;
+
+    //!History
+    SubscriberHistory history_;
+
+    //!Listener
+    DataReaderListener* listener_;
+
+    class InnerDataReaderListener : public rtps::ReaderListener
     {
     public:
-        SubscriberReaderListener(SubscriberImpl* s): mp_subscriberImpl(s) {}
-        virtual ~SubscriberReaderListener() {}
+        InnerDataReaderListener(
+                DataReader* s)
+            : data_reader_(s)
+        {
+        }
+
+        virtual ~InnerDataReaderListener() override {}
+
         void on_reader_matched(
                 rtps::RTPSReader* reader,
                 rtps::MatchingInfo& info) override;
+
         void on_new_cache_change_added(
                 rtps::RTPSReader* reader,
                 const rtps::CacheChange_t* const change) override;
-        void on_liveliness_changed(
-                rtps::RTPSReader* reader,
-                const LivelinessChangedStatus& status) override;
-        SubscriberImpl* mp_subscriberImpl;
-    } m_readerListener;
 
-    Subscriber* mp_userSubscriber;
-    //!RTPSParticipant
-    rtps::RTPSParticipant* mp_rtpsParticipant;
+        DataReader* data_reader_;
+    } reader_listener_;
 
     //! A timer used to check for deadlines
     rtps::TimedCallback deadline_timer_;
+
     //! Deadline duration in microseconds
     std::chrono::duration<double, std::ratio<1, 1000000>> deadline_duration_us_;
+
     //! The current timer owner, i.e. the instance which started the deadline timer
     rtps::InstanceHandle_t timer_owner_;
+
     //! Requested deadline missed status
     RequestedDeadlineMissedStatus deadline_missed_status_;
 
     //! A timed callback to remove expired samples
     rtps::TimedCallback lifespan_timer_;
+
     //! The lifespan duration
     std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
 
@@ -225,4 +266,4 @@ private:
 } /* namespace fastrtps */
 } /* namespace eprosima */
 #endif
-#endif /* SUBSCRIBERIMPL_H_ */
+#endif /* _FASTRTPS_DATAREADER_HPP_*/
