@@ -18,6 +18,7 @@
  */
 
 #include <fastrtps/publisher/Publisher.h>
+#include <fastrtps/participant/Participant.h>
 #include "PublisherImpl.h"
 
 #include <fastrtps/log/Log.h>
@@ -103,4 +104,24 @@ void Publisher::get_liveliness_lost_status(LivelinessLostStatus &status)
 void Publisher::assert_liveliness()
 {
     mp_impl->assert_liveliness();
+}
+
+const Participant* Publisher::get_participant() const
+{
+    return mp_impl->get_participant();
+}
+
+const rtps::RTPSParticipant* Publisher::rtps_participant() const
+{
+    return mp_impl->rtps_participant();
+}
+
+rtps::RTPSParticipant* Publisher::rtps_participant()
+{
+    return mp_impl->rtps_participant();
+}
+
+const Publisher* Publisher::get_publisher() const
+{
+    return mp_impl->get_publisher();
 }

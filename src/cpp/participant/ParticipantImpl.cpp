@@ -529,3 +529,8 @@ void ParticipantImpl::assert_liveliness()
         logError(PARTICIPANT, "Invalid WLP, cannot assert liveliness of participant");
     }
 }
+
+const Participant* ParticipantImpl::get_participant() const
+{
+    return mp_participant;
+}

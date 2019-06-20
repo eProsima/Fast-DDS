@@ -36,6 +36,7 @@ namespace rtps
     class WriterProxyData;
     class ReaderProxyData;
     class ResourceEvent;
+    class RTPSParticipant;
 }
 
 /**
@@ -99,6 +100,12 @@ class RTPS_DllAPI Participant
          * @brief Asserts liveliness of manual by participant publishers
          */
         void assert_liveliness();
+
+        rtps::ResourceEvent& get_resource_event() const;
+
+        const rtps::RTPSParticipant* rtps_participant() const;
+
+        rtps::RTPSParticipant* rtps_participant();
 
     private:
         Participant();

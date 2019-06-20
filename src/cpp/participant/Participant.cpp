@@ -75,3 +75,18 @@ void Participant::assert_liveliness()
 {
     mp_impl->assert_liveliness();
 }
+
+ResourceEvent& Participant::get_resource_event() const
+{
+    return mp_impl->get_resource_event();
+}
+
+const rtps::RTPSParticipant* Participant::rtps_participant() const
+{
+    return mp_impl->rtps_participant();
+}
+
+rtps::RTPSParticipant* Participant::rtps_participant()
+{
+    return mp_impl->rtps_participant();
+}
