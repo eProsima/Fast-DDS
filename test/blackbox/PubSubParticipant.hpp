@@ -54,7 +54,6 @@ class PubSubParticipant
 
             PubListener(PubSubParticipant* participant)
                 : participant_(participant)
-                , times_liveliness_lost()
             {}
 
             ~PubListener()
@@ -74,7 +73,7 @@ class PubSubParticipant
             {
                 (void)pub;
                 (void)status;
-                times_liveliness_lost++;
+                participant_->pub_liveliness_lost();
             }
 
         private:
@@ -82,8 +81,6 @@ class PubSubParticipant
             PubListener& operator=(const PubListener&) = delete;
             //! A pointer to the participant
             PubSubParticipant* participant_;
-            //! Number of times liveliness was lost
-            unsigned int times_liveliness_lost;
     };
 
     class SubListener : public SubscriberListener
@@ -94,8 +91,6 @@ class PubSubParticipant
 
         SubListener(PubSubParticipant* participant)
             : participant_(participant)
-            , times_liveliness_lost_()
-            , times_liveliness_recovered_()
         {}
 
         ~SubListener()
@@ -114,7 +109,7 @@ class PubSubParticipant
                 const LivelinessChangedStatus& status) override
         {
             (void)sub;
-            (status.alive_count_change == 1) ? times_liveliness_recovered_++ : times_liveliness_lost_++;
+            (status.alive_count_change == 1) ? participant_->sub_liveliness_recovered() : participant_->sub_liveliness_lost();
         }
 
     private:
@@ -122,10 +117,6 @@ class PubSubParticipant
         SubListener& operator=(const SubListener&) = delete;
         //! A pointer to the participant
         PubSubParticipant* participant_;
-        //! The number of times liveliness was lost
-        unsigned int times_liveliness_lost_;
-        //! The number of times liveliness was recovered
-        unsigned int times_liveliness_recovered_;
     };
 
 public:
@@ -151,6 +142,9 @@ public:
         , sub_listener_(this)
         , pub_matched_(0)
         , sub_matched_(0)
+        , pub_times_liveliness_lost_(0)
+        , sub_times_liveliness_lost_(0)
+        , sub_times_liveliness_recovered_(0)
     {
 
 #if defined(PREALLOCATED_WITH_REALLOC_MEMORY_MODE_TEST)
@@ -256,7 +250,6 @@ public:
 
     void sub_wait_discovery(std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
-
         std::unique_lock<std::mutex> lock(sub_mutex_);
 
         std::cout << "Subscriber is waiting discovery..." << std::endl;
@@ -271,6 +264,18 @@ public:
         }
 
         std::cout << "Subscriber discovery finished " << std::endl;
+    }
+
+    void sub_wait_liveliness_recovered(unsigned int num_recovered)
+    {
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+        liveliness_cv_.wait(lock, [&]() { return sub_times_liveliness_recovered == num_recovered; });
+    }
+
+    void sub_wait_liveliness_lost(unsigned int num_lost)
+    {
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+        liveliness_cv_.wait(lock, [&]() { return sub_times_liveliness_lost_ == num_lost;  });
     }
 
     PubSubParticipant& pub_topic_name(std::string topicName)
@@ -356,19 +361,42 @@ public:
         return subscribers_[index]->updateAttributes(attr);
     }
 
+    void pub_liveliness_lost()
+    {
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+        pub_times_liveliness_lost_++;
+    }
+
+    void sub_liveliness_lost()
+    {
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+        sub_times_liveliness_lost_++;
+        liveliness_cv_.notify_one();
+    }
+
+    void sub_liveliness_recovered()
+    {
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+        sub_times_liveliness_recovered_++;
+        liveliness_cv_.notify_one();
+    }
+
     unsigned int pub_times_liveliness_lost()
     {
-        return pub_listener_.times_liveliness_lost;
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+        return pub_times_liveliness_lost_;
     }
 
     unsigned int sub_times_liveliness_lost()
     {
-        return sub_listener_.times_liveliness_lost_;
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+        return sub_times_liveliness_lost_;
     }
 
     unsigned int sub_times_liveliness_recovered()
     {
-        return sub_listener_.times_liveliness_recovered_;
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+        return sub_times_liveliness_recovered_;
     }
 
 private:
@@ -434,6 +462,17 @@ private:
     std::condition_variable sub_cv_;
     std::atomic<unsigned int> pub_matched_;
     std::atomic<unsigned int> sub_matched_;
+
+    //! Number of times liveliness was lost on the publishing side
+    unsigned int pub_times_liveliness_lost_;
+    //! The number of times liveliness was lost on the subscribing side
+    unsigned int sub_times_liveliness_lost_;
+    //! The number of times liveliness was recovered on the subscribing side
+    unsigned int sub_times_liveliness_recovered_;
+    //! A mutex protecting liveliness data
+    std::mutex liveliness_mutex_;
+    //! A condition variable for liveliness data
+    std::condition_variable liveliness_cv_;
 
     type_support type_;
 };
