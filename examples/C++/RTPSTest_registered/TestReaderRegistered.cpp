@@ -92,7 +92,7 @@ void TestReaderRegistered::run()
     std::cin.ignore();
 }
 
-void TestReaderRegistered::MyListener::onNewCacheChangeAdded(
+void TestReaderRegistered::MyListener::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t * const change)
 {

@@ -49,7 +49,7 @@ WLPListener::~WLPListener()
 
 typedef std::vector<WriterProxy*>::iterator WPIT;
 
-void WLPListener::onNewCacheChangeAdded(
+void WLPListener::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t* const changeIN)
 {

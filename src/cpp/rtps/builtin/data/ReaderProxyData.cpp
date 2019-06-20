@@ -429,7 +429,7 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
             {
                 const DataRepresentationQosPolicy* p = dynamic_cast<const DataRepresentationQosPolicy*>(param);
                 assert(p != nullptr);
-                m_qos.m_dataRepresentation = *p;
+                m_qos.representation = *p;
                 break;
             }
             case PID_TYPE_CONSISTENCY_ENFORCEMENT:
@@ -437,7 +437,7 @@ bool ReaderProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 const TypeConsistencyEnforcementQosPolicy* p =
                     dynamic_cast<const TypeConsistencyEnforcementQosPolicy*>(param);
                 assert(p != nullptr);
-                m_qos.m_typeConsistency = *p;
+                m_qos.type_consistency = *p;
                 break;
             }
             case PID_TYPE_IDV1:

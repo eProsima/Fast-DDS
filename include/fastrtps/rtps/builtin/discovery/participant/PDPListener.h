@@ -48,15 +48,20 @@ public:
     ~PDPListener() override {}
     //!Pointer to the associated mp_SPDP;
     PDP* mp_PDP;
-    /**
-    * New added cache
-    * @param reader
-    * @param change
-    */
-    void onNewCacheChangeAdded(
-        RTPSReader* reader,
-        const CacheChange_t* const change) override;
 
+    /**
+     * New added cache
+     * @param reader
+     * @param change
+     */
+    void on_new_cache_change_added(
+            RTPSReader* reader,
+            const CacheChange_t* const change) override;
+    /**
+     * Process a new added cache with this method.
+     * @return True on success
+     */
+    bool newAddedCache();
     /**
     * Get the key of a CacheChange_t
     * @param change Pointer to the CacheChange_t

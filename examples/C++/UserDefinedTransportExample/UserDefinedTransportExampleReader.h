@@ -34,7 +34,7 @@ class my_ReaderListener: public eprosima::fastrtps::rtps::ReaderListener
         my_ReaderListener();
         ~my_ReaderListener();
         void onNewDataMessage(eprosima::fastrtps::rtps::RTPSReader* reader, const eprosima::fastrtps::rtps::CacheChange_t* const change);
-        void onReaderMatched(eprosima::fastrtps::rtps::RTPSReader* reader, eprosima::fastrtps::rtps::MatchingInfo& info);
+        void on_reader_matched(eprosima::fastrtps::rtps::RTPSReader* reader, eprosima::fastrtps::rtps::MatchingInfo& info);
 };
 
 class UserDefinedTransportExampleReader
