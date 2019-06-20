@@ -33,6 +33,7 @@
 #include <fastrtps/rtps/writer/WriterListener.h>
 #include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
+#include <fastrtps/qos/IncompatibleQosStatus.hpp>
 
 namespace eprosima {
 namespace fastrtps{
@@ -73,6 +74,28 @@ public:
     virtual ~DataWriter();
 
     /**
+     * Write data to the topic.
+     * @param Data Pointer to the data
+     * @return True if correct
+     * @par Calling example:
+     * @snippet fastrtps_example.cpp ex_PublisherWrite
+     */
+    bool write(
+            void* data);
+
+    /**
+     * Write data with params to the topic.
+     * @param Data Pointer to the data
+     * @param wparams Extra write parameters.
+     * @return True if correct
+     * @par Calling example:
+     * @snippet fastrtps_example.cpp ex_PublisherWrite
+     */
+    bool write(
+            void* data,
+            rtps::WriteParams& params);
+
+    /**
      *
      * @param kind
      * @param  Data
@@ -80,7 +103,7 @@ public:
      */
     bool create_new_change(
             rtps::ChangeKind_t kind,
-            void* Data);
+            void* data);
 
     /**
      *
@@ -91,8 +114,22 @@ public:
      */
     bool create_new_change_with_params(
             rtps::ChangeKind_t kind,
-            void* Data,
+            void* data,
             rtps::WriteParams& wparams);
+
+    /**
+     *
+     * @param kind
+     * @param  Data
+     * @param wparams
+     * @param handle
+     * @return
+     */
+    bool create_new_change_with_params(
+            rtps::ChangeKind_t kind,
+            void* data,
+            rtps::WriteParams& wparams,
+            const rtps::InstanceHandle_t& handle);
 
     /**
      * Removes the cache change with the minimum sequence number
@@ -139,6 +176,41 @@ public:
 
     bool update_topic(const TopicAttributes& att);
 
+    DataWriterListener* listener() const;
+
+    bool listener(DataWriterListener* listener);
+
+    bool get_key_value(
+            void* key_holder,
+            const rtps::InstanceHandle_t& handle);
+
+    bool dispose(
+            void* data,
+            const rtps::InstanceHandle_t& handle);
+
+    bool dispose(
+            void* data);
+
+    bool get_liveliness_lost_status(
+            LivelinessLostStatus& status)
+    {
+        // Not implemented
+        (void)status;
+        return false;
+    }
+
+    bool get_offered_incompatible_qos_status(
+            OfferedIncompatibleQosStatus& status)
+    {
+        // Not implemented
+        (void)status;
+        return false;
+    }
+
+    Publisher* publisher() const;
+
+    bool assert_liveliness();
+
 private:
     PublisherImpl* publisher_;
 
@@ -168,18 +240,17 @@ private:
                     DataWriter* w)
                 : data_writer_(w)
             {
-
             }
 
-            virtual ~InnerDataWriterListener() {}
+            virtual ~InnerDataWriterListener() override {}
 
             void on_writer_matched(
                     rtps::RTPSWriter* writer,
-                    rtps::MatchingInfo& info);
+                    rtps::MatchingInfo& info) override;
 
             void on_writer_change_received_by_all(
                     rtps::RTPSWriter* writer,
-                    rtps::CacheChange_t* change);
+                    rtps::CacheChange_t* change) override;
 
             DataWriter* data_writer_;
     } writer_listener_;
@@ -220,6 +291,10 @@ private:
      * @brief A method to remove expired samples, invoked when the lifespan timer expires
      */
     void lifespan_expired();
+
+    bool check_new_change_preconditions(
+            rtps::ChangeKind_t change_kind,
+            void* data)
 };
 
 } /* namespace  */

@@ -29,6 +29,8 @@
 #include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 
+#include <fastrtps/topic/DataReader.hpp>
+
 #include <map>
 
 namespace eprosima {
@@ -143,7 +145,8 @@ private:
     ParticipantImpl* mp_participant;
 
     //!Pointer to associated RTPSReader
-    rtps::RTPSReader* mp_reader;
+    std::map<std::string, DataReader*> readers_;
+
     //! Pointer to the TopicDataType object.
     TopicDataType* mp_type;
     //!Attributes of the Subscriber

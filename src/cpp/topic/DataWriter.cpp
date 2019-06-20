@@ -99,7 +99,37 @@ DataWriter::~DataWriter()
     RTPSDomain::removeRTPSWriter(writer_);
 }
 
+bool DataWriter::write(
+        void* data)
+{
+    logInfo(DATA_WRITER, "Writing new data");
+    return create_new_change(ALIVE, data);
+}
 
+bool DataWriter::write(
+        void* data,
+        rtps::WriteParams& params)
+{
+    logInfo(DATA_WRITER, "Writing new data with WriteParams");
+    return create_new_change_with_params(ALIVE, data, params);
+}
+
+bool DataWriter::dispose(
+        void* data,
+        const rtps::InstanceHandle_t& handle)
+{
+    logInfo(DATA_WRITER, "Disposing of data");
+    WriteParams wparams;
+    return create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams, handle);
+}
+
+bool DataWriter::dispose(
+        void* data)
+{
+    logInfo(DATA_WRITER, "Disposing of data");
+    WriteParams wparams;
+    return create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams);
+}
 
 bool DataWriter::create_new_change(
         ChangeKind_t changeKind,
@@ -109,10 +139,168 @@ bool DataWriter::create_new_change(
     return create_new_change_with_params(changeKind, data, wparams);
 }
 
+
+bool DataWriter::check_new_change_preconditions(
+        ChangeKind_t change_kind,
+        void* data)
+{
+    // Preconditions
+    if (data == nullptr)
+    {
+        logError(PUBLISHER, "Data pointer not valid");
+        return false;
+    }
+
+    if(change_kind == NOT_ALIVE_UNREGISTERED || change_kind == NOT_ALIVE_DISPOSED ||
+            change_kind == NOT_ALIVE_DISPOSED_UNREGISTERED)
+    {
+        if(!type_->m_isGetKeyDefined)
+        {
+            logError(PUBLISHER,"Topic is NO_KEY, operation not permitted");
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool DataWriter::perform_create_new_change(
+        ChangeKind_t change_kind,
+        void* data,
+        WriteParams& wparams,
+        const InstanceHandle_t& handle)
+{
+    // Block lowlevel writer
+    auto max_blocking_time = std::chrono::steady_clock::now() +
+        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.m_reliability.max_blocking_time));
+    std::unique_lock<std::recursive_timed_mutex> lock(writer_->getMutex(), std::defer_lock);
+
+    if(lock.try_lock_until(max_blocking_time))
+    {
+        CacheChange_t* ch = writer_->new_change(type_->getSerializedSizeProvider(data), change_kind, handle);
+        if(ch != nullptr)
+        {
+            if(change_kind == ALIVE)
+            {
+                //If these two checks are correct, we asume the cachechange is valid and thwn we can write to it.
+                if(!type_->serialize(data, &ch->serializedPayload))
+                {
+                    logWarning(RTPS_WRITER,"RTPSWriter:Serialization returns false";);
+                    history_.release_Cache(ch);
+                    return false;
+                }
+            }
+
+            //TODO(Ricardo) This logic in a class. Then a user of rtps layer can use it.
+            if(high_mark_for_frag_ == 0)
+            {
+                uint32_t max_data_size = writer_->getMaxDataSize();
+                uint32_t writer_throughput_controller_bytes =
+                    writer_->calculateMaxDataSize(w_att_.throughputController.bytesPerPeriod);
+                uint32_t participant_throughput_controller_bytes =
+                    writer_->calculateMaxDataSize(
+                            rtps_participant_->getRTPSParticipantAttributes().throughputController.bytesPerPeriod);
+
+                high_mark_for_frag_ =
+                    max_data_size > writer_throughput_controller_bytes ?
+                    writer_throughput_controller_bytes :
+                    (max_data_size > participant_throughput_controller_bytes ?
+                     participant_throughput_controller_bytes :
+                     max_data_size);
+            }
+
+            uint32_t final_high_mark_for_frag = high_mark_for_frag_;
+
+            // If needed inlineqos for related_sample_identity, then remove the inlinqos size from final fragment size.
+            if(wparams.related_sample_identity() != SampleIdentity::unknown())
+            {
+                final_high_mark_for_frag -= 32;
+            }
+
+            // If it is big data, fragment it.
+            if(ch->serializedPayload.length > final_high_mark_for_frag)
+            {
+                // Check ASYNCHRONOUS_PUBLISH_MODE is being used, but it is an error case.
+                if( qos_.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
+                {
+                    logError(PUBLISHER, "Data cannot be sent. It's serialized size is " <<
+                            ch->serializedPayload.length << "' which exceeds the maximum payload size of '" <<
+                            final_high_mark_for_frag << "' and therefore ASYNCHRONOUS_PUBLISH_MODE must be used.");
+                    history_.release_Cache(ch);
+                    return false;
+                }
+
+                /// Fragment the data.
+                // Set the fragment size to the cachechange.
+                // Note: high_mark will always be a value that can be casted to uint16_t)
+                ch->setFragmentSize(static_cast<uint16_t>(final_high_mark_for_frag));
+            }
+
+            if(!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
+            {
+                history_.release_Cache(ch);
+                return false;
+            }
+
+            if (qos_.m_deadline.period != c_TimeInfinite)
+            {
+                if (!history_.set_next_deadline(
+                            ch->instanceHandle,
+                            steady_clock::now() + duration_cast<system_clock::duration>(deadline_duration_us_)))
+                {
+                    logError(PUBLISHER, "Could not set the next deadline in the history");
+                }
+                else
+                {
+                    if (timer_owner_ == handle || timer_owner_ == InstanceHandle_t())
+                    {
+                        deadline_timer_reschedule();
+                    }
+                }
+            }
+
+            if (qos_.m_lifespan.duration != c_TimeInfinite)
+            {
+                lifespan_duration_us_ = std::chrono::duration<double, std::ratio<1, 1000000>>(qos_.m_lifespan.duration.to_ns() * 1e-3);
+                lifespan_timer_.update_interval_millisec(qos_.m_lifespan.duration.to_ns() * 1e-6);
+                lifespan_timer_.restart_timer();
+            }
+
+            return true;
+        }
+    }
+
+    return false;
+
+}
+
 bool DataWriter::create_new_change_with_params(
         ChangeKind_t changeKind,
         void* data,
         WriteParams& wparams)
+{
+    if (!check_new_change_preconditions(changeKind, data))
+    {
+        return false;
+    }
+
+    InstanceHandle_t handle;
+    if(type_->m_isGetKeyDefined)
+    {
+        bool is_key_protected = false;
+#if HAVE_SECURITY
+        is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
+#endif
+        type_->getKey(data,&handle,is_key_protected);
+    }
+
+}
+
+bool DataWriter::create_new_change_with_params(
+        ChangeKind_t changeKind,
+        void* data,
+        WriteParams& wparams,
+        const rtps::InstanceHandle_t& handle)
 {
     // Preconditions
     if (data == nullptr)
@@ -131,7 +319,6 @@ bool DataWriter::create_new_change_with_params(
         }
     }
 
-    InstanceHandle_t handle;
     if(type_->m_isGetKeyDefined)
     {
         bool is_key_protected = false;
@@ -204,7 +391,7 @@ bool DataWriter::create_new_change_with_params(
                 /// Fragment the data.
                 // Set the fragment size to the cachechange.
                 // Note: high_mark will always be a value that can be casted to uint16_t)
-                ch->setFragmentSize((uint16_t)final_high_mark_for_frag);
+                ch->setFragmentSize(static_cast<uint16_t>(final_high_mark_for_frag));
             }
 
             if(!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
@@ -346,7 +533,7 @@ bool DataWriter::update_qos(const WriterQos& qos)
         qos_.setQos(qos,false);
 
         //Notify the participant that a Writer has changed its QOS
-        publisher_->update_writer(this->writer_, topic_att_, qos_);
+        publisher_->update_writer(this, topic_att_, qos_);
 
         // Deadline
 
@@ -386,7 +573,7 @@ bool DataWriter::update_topic(const TopicAttributes& att)
         logWarning(DATA_WRITER, "Topic Attributes cannot be updated");
         return false;
     }
-    publisher_->update_writer(this->writer_, topic_att_, qos_);
+    publisher_->update_writer(this, topic_att_, qos_);
     return true;
 }
 

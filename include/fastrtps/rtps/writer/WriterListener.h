@@ -45,7 +45,7 @@ class RTPS_DllAPI WriterListener
          * @param writer Pointer to the RTPSWriter.
          * @param info Matching Information.
          */
-        virtual void onWriterMatched(
+        virtual void on_writer_matched(
                 RTPSWriter* writer,
                 MatchingInfo& info)
         {
@@ -54,13 +54,13 @@ class RTPS_DllAPI WriterListener
         }
 
         /**
-         * This method is called when all the readers matched with this Writer acknowledge that a cache 
+         * This method is called when all the readers matched with this Writer acknowledge that a cache
          * change has been received.
          * @param writer Pointer to the RTPSWriter.
          * @param change Pointer to the affected CacheChange_t.
          */
-        virtual void onWriterChangeReceivedByAll(
-                RTPSWriter* writer, 
+        virtual void on_writer_change_received_by_all(
+                RTPSWriter* writer,
                 CacheChange_t* change)
         {
             (void)writer;

@@ -34,6 +34,8 @@
 
 #include <fastrtps/topic/DataWriter.hpp>
 
+#include <map>
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps
@@ -70,19 +72,8 @@ public:
 
     virtual ~PublisherImpl();
 
-    /**
-     * Removes the cache change with the minimum sequence number
-     * @return True if correct.
-     */
-    bool removeMinSeqChange();
-
-    /**
-     * Removes all changes from the History.
-     * @param[out] removed Number of removed elements
-     * @return True if correct.
-     */
-    bool removeAllChange(
-            size_t* removed);
+    bool wait_for_all_acked(
+            const Duration_t& max_wait);
 
     /**
      * Update the Attributes of the publisher;
@@ -123,9 +114,20 @@ public:
             DataWriterListener* listener = nullptr);
 
     bool update_writer(
-            rtps::RTPSWriter* Writer,
+            DataWriter* Writer,
             const TopicAttributes& topicAtt,
-            const WriterQos& wqos) const;
+            const WriterQos& wqos);
+
+    PublisherListener* listener();
+
+    void listener(
+            PublisherListener* listener);
+
+    bool delete_writer(
+            DataWriter* writer);
+
+    DataWriter* lookup_writer(
+            const std::string& topic_name);
 
     Publisher* user_publisher()
     {
@@ -140,6 +142,10 @@ private:
 
     //!PublisherListener
     PublisherListener* mp_listener;
+
+    std::map<std::string, DataWriter*> writers_;
+
+    std::mutex mtx_writers_;
 
     //!Listener to capture the events of the Writer
     class PublisherWriterListener : public DataWriterListener

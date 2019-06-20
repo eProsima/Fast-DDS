@@ -107,7 +107,7 @@ public:
     //!Data Representation Qos, implemented in the library.
     DataRepresentationQosPolicy representation;
 
-    //!Type consistency enforcement Qos, NOT implemented in the library.
+    //!Type consistency enforcement Qos, implemented in the library.
     TypeConsistencyEnforcementQosPolicy type_consistency;
 
     //!Disable positive ACKs QoS

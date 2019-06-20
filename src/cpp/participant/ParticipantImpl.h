@@ -165,6 +165,11 @@ class ParticipantImpl
             const char* typeName,
             TopicDataType** type);
 
+    Participant* participant() const
+    {
+        return mp_participant;
+    }
+
 private:
     //!Participant Attributes
     ParticipantAttributes m_att;

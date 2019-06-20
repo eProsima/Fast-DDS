@@ -19,6 +19,7 @@
 
 #include <fastrtps/publisher/Publisher.h>
 #include "PublisherImpl.h"
+#include "../participant/ParticipantImpl.h"
 
 #include <fastrtps/log/Log.h>
 
@@ -34,52 +35,6 @@ Publisher::~Publisher() {
     // TODO Auto-generated destructor stub
 }
 
-bool Publisher::write(void* Data) {
-    logInfo(PUBLISHER,"Writing new data");
-    return mp_impl->create_new_change(ALIVE,Data);
-}
-
-bool Publisher::write(void* Data, WriteParams &wparams) {
-    logInfo(PUBLISHER,"Writing new data with WriteParams");
-    return mp_impl->create_new_change_with_params(ALIVE, Data, wparams);
-}
-
-bool Publisher::dispose(void* Data)
-{
-    logInfo(PUBLISHER,"Disposing of Data");
-    return mp_impl->create_new_change(NOT_ALIVE_DISPOSED,Data);
-}
-
-
-bool Publisher::unregister(void* Data) {
-    //Convert data to serialized Payload
-    logInfo(PUBLISHER,"Unregistering of Data");
-    return mp_impl->create_new_change(NOT_ALIVE_UNREGISTERED,Data);
-}
-
-bool Publisher::dispose_and_unregister(void* Data) {
-    //Convert data to serialized Payload
-    logInfo(PUBLISHER,"Disposing and Unregistering Data");
-    return mp_impl->create_new_change(NOT_ALIVE_DISPOSED_UNREGISTERED,Data);
-}
-
-bool Publisher::removeAllChange(size_t* removed )
-{
-    logInfo(PUBLISHER,"Removing all data from history");
-    return mp_impl->removeAllChange(removed);
-}
-
-bool Publisher::wait_for_all_acked(const eprosima::fastrtps::Duration_t& max_wait)
-{
-    logInfo(PUBLISHER,"Waiting for all samples acknowledged");
-    return mp_impl->wait_for_all_acked(max_wait);
-}
-
-const GUID_t& Publisher::getGuid()
-{
-    return mp_impl->getGuid();
-}
-
 const PublisherAttributes& Publisher::getAttributes() const
 {
     return mp_impl->getAttributes();
@@ -90,24 +45,43 @@ bool Publisher::updateAttributes(const PublisherAttributes& att)
     return mp_impl->updateAttributes(att);
 }
 
-void Publisher::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &status)
+DataWriter* Publisher::create_writer(
+        const TopicAttributes& topic_att,
+        const WriterQos& qos,
+        DataWriterListener* listener)
 {
-    mp_impl->get_offered_deadline_missed_status(status);
+    return mp_impl->create_writer(topic_att, qos, listener);
 }
 
-void Publisher::get_liveliness_lost_status(LivelinessLostStatus &status)
+bool Publisher::update_writer(
+            DataWriter* Writer,
+            const TopicAttributes& topicAtt,
+            const WriterQos& wqos)
 {
-    (void)status;
-    logWarning(PUBLISHER, "get_liveliness_lost_status() is not implemented yet");
+    return mp_impl->update_writer(Writer, topicAtt, wqos);
 }
 
-void Publisher::assert_liveliness()
+PublisherListener* Publisher::listener() const
 {
-    logWarning(PUBLISHER, "assert_liveliness() is not implemented yet");
+    return mp_impl->listener();
 }
 
-rtps::RTPSWriter* Publisher::create_writer(
-        const TopicAttributes& topic_att)
+void Publisher::listener(PublisherListener* listener)
 {
-    return mp_impl->create_writer(topic_att);
+    mp_impl->listener(listener);
+}
+
+bool Publisher::delete_writer(DataWriter* writer)
+{
+    return mp_impl->delete_writer(writer);
+}
+
+DataWriter* Publisher::lookup_writer(const std::string& topic_name) const
+{
+    return mp_impl->lookup_writer(topic_name);
+}
+
+Participant* Publisher::participant() const
+{
+    return mp_impl->participant()->participant();
 }

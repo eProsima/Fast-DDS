@@ -173,15 +173,33 @@ DataWriter* PublisherImpl::create_writer(
     //REGISTER THE WRITER
     mp_rtpsParticipant->registerWriter(writer->writer_, topic_att, m_att.qos);
 
+    {
+        std::lock_guard<std::mutex> lock(mtx_writers_);
+        writers_[topic_att.getTopicDataType().to_string()] = writer;
+    }
+
     return writer;
 }
 
 bool PublisherImpl::update_writer(
-        RTPSWriter* writer,
+        DataWriter* writer,
         const TopicAttributes& topic_att,
-        const WriterQos& qos) const
+        const WriterQos& qos)
 {
-    return mp_rtpsParticipant->updateWriter(writer, topic_att, qos);
+    bool result = mp_rtpsParticipant->updateWriter(writer->writer_, topic_att, qos);
+
+    const TopicAttributes& old_topic_att = writer->topic_att_;
+
+    if (result && old_topic_att.getTopicDataType() != topic_att.getTopicDataType())
+    {
+        std::lock_guard<std::mutex> lock(mtx_writers_);
+        auto it = writers_.find(old_topic_att.getTopicDataType().to_string());
+        assert(it != writers_.end());
+        writers_.erase(it);
+        writers_[topic_att.getTopicDataType().to_string()] = writer;
+    }
+
+    return result;
 }
 
 bool PublisherImpl::updateAttributes(const PublisherAttributes& att)

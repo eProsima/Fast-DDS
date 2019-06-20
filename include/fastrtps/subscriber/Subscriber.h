@@ -130,8 +130,27 @@ public:
      * @brief Created a new reader
      * @param topic_att TopicAttributes
      */
-    rtps::RTPSReader* create_reader(
-            const TopicAttributes& topic_att);
+    DataReader* create_reader(
+            const TopicAttributes& topic_att,
+            const ReaderQos& qos,
+            DataReaderListener* listener = nullptr);
+
+    SubscriberListener* listener();
+
+    void listener(SubscriberListener* listener);
+
+    bool delete_reader(DataReader* reader);
+
+    DataReader* lookup_reader(
+            const std::string& topic_name);
+
+    bool get_readers(
+            std::vector<DataReader*>& readers,
+            const std::vector<SampleStateKind>& sample_states);
+
+    bool notify_readers();
+
+    Participant* participan();
 
 private:
     SubscriberImpl* mp_impl;
