@@ -70,3 +70,18 @@ bool Participant::get_remote_reader_info(
 {
     return mp_impl->get_remote_reader_info(readerGuid, returnedInfo);
 }
+
+ResourceEvent& Participant::get_resource_event() const
+{
+    return mp_impl->get_resource_event();
+}
+
+const rtps::RTPSParticipant* Participant::rtps_participant() const
+{
+    return mp_impl->rtps_participant();
+}
+
+rtps::RTPSParticipant* Participant::rtps_participant()
+{
+    return mp_impl->rtps_participant();
+}

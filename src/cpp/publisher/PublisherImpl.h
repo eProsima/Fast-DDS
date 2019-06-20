@@ -44,6 +44,7 @@ class RTPSParticipant;
 class TopicDataType;
 class PublisherListener;
 class ParticipantImpl;
+class Participant;
 class Publisher;
 
 
@@ -146,10 +147,19 @@ class PublisherImpl
      */
     void assert_liveliness();
 
+    const Participant* get_participant() const;
+
+    rtps::RTPSParticipant* rtps_participant() const
+    {
+        return mp_rtpsParticipant;
+    }
+
+    const Publisher* get_publisher() const;
+
     private:
     ParticipantImpl* mp_participant;
     //! Pointer to the associated Data Writer.
-	rtps::RTPSWriter* mp_writer;
+    rtps::RTPSWriter* mp_writer;
     //! Pointer to the TopicDataType object.
     TopicDataType* mp_type;
     //!Attributes of the Publisher
@@ -179,7 +189,7 @@ class PublisherImpl
 
     Publisher* mp_userPublisher;
 
-	rtps::RTPSParticipant* mp_rtpsParticipant;
+    rtps::RTPSParticipant* mp_rtpsParticipant;
 
     uint32_t high_mark_for_frag_;
 

@@ -516,3 +516,8 @@ ResourceEvent& ParticipantImpl::get_resource_event() const
 {
     return mp_rtpsParticipant->get_resource_event();
 }
+
+const Participant* ParticipantImpl::get_participant() const
+{
+    return mp_participant;
+}

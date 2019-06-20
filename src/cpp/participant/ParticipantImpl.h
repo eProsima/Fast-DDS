@@ -160,11 +160,23 @@ class ParticipantImpl
 
     rtps::ResourceEvent& get_resource_event() const;
 
+    const Participant* get_participant() const;
+
+    const rtps::RTPSParticipant* rtps_participant() const
+    {
+        return mp_rtpsParticipant;
+    }
+
+    rtps::RTPSParticipant* rtps_participant()
+    {
+        return mp_rtpsParticipant;
+    }
+
     private:
     //!Participant Attributes
     ParticipantAttributes m_att;
     //!RTPSParticipant
-	rtps::RTPSParticipant* mp_rtpsParticipant;
+    rtps::RTPSParticipant* mp_rtpsParticipant;
     //!Participant*
     Participant* mp_participant;
     //!Participant Listener

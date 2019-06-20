@@ -36,6 +36,7 @@ namespace rtps
     class WriterProxyData;
     class ReaderProxyData;
     class ResourceEvent;
+    class RTPSParticipant;
 }
 
 /**
@@ -94,6 +95,12 @@ class RTPS_DllAPI Participant
         bool get_remote_reader_info(
                 const rtps::GUID_t& readerGuid,
                 rtps::ReaderProxyData& returnedInfo);
+
+        rtps::ResourceEvent& get_resource_event() const;
+
+        const rtps::RTPSParticipant* rtps_participant() const;
+
+        rtps::RTPSParticipant* rtps_participant();
 
     private:
         Participant();
