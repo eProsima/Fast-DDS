@@ -45,9 +45,9 @@ WLivelinessPeriodicAssertion::WLivelinessPeriodicAssertion(
         WLP* pwlp,
         LivelinessQosPolicyKind kind)
     : TimedEvent(
-          pwlp->getRTPSParticipant()->getEventResource().getIOService(),
-          pwlp->getRTPSParticipant()->getEventResource().getThread(),
-          0)
+        pwlp->getRTPSParticipant()->getEventResource().getIOService(),
+        pwlp->getRTPSParticipant()->getEventResource().getThread(),
+        0)
     , m_livelinessKind(kind)
     , mp_WLP(pwlp)
 {
