@@ -369,7 +369,7 @@ bool PublisherImpl::updateAttributes(const PublisherAttributes& att)
     return updated;
 }
 
-void PublisherImpl::PublisherWriterListener::onWriterMatched(
+void PublisherImpl::PublisherWriterListener::on_writer_matched(
         RTPSWriter* /*writer*/,
         MatchingInfo& info)
 {
@@ -379,7 +379,7 @@ void PublisherImpl::PublisherWriterListener::onWriterMatched(
     }
 }
 
-void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
+void PublisherImpl::PublisherWriterListener::on_writer_change_received_by_all(
         RTPSWriter* /*writer*/,
         CacheChange_t* ch)
 {

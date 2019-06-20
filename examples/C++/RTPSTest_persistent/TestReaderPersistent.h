@@ -41,10 +41,10 @@ public:
     public:
         MyListener():n_received(0),n_matched(0){};
         ~MyListener(){};
-        void onNewCacheChangeAdded(
+        void on_new_cache_change_added(
                 eprosima::fastrtps::rtps::RTPSReader* reader,
                 const eprosima::fastrtps::rtps::CacheChange_t* const change) override;
-        void onReaderMatched(
+        void on_reader_matched(
                 eprosima::fastrtps::rtps::RTPSReader*,
                 eprosima::fastrtps::rtps::MatchingInfo& info) override
         {

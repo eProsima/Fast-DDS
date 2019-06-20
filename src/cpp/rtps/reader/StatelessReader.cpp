@@ -163,7 +163,7 @@ bool StatelessReader::change_received(CacheChange_t* change)
             update_last_notified(change->writerGUID, change->sequenceNumber);
             if(getListener() != nullptr)
             {
-                getListener()->onNewCacheChangeAdded((RTPSReader*)this,change);
+                getListener()->on_new_cache_change_added((RTPSReader*)this,change);
             }
 
             mp_history->postSemaphore();

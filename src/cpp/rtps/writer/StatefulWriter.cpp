@@ -232,7 +232,7 @@ void StatefulWriter::unsent_change_added_to_history(
                 this->mp_periodicHB->restart_timer();
                 if ( (mp_listener != nullptr) && this->is_acked_by_all(change) )
                 {
-                    mp_listener->onWriterChangeReceivedByAll(this, change);
+                    mp_listener->on_writer_change_received_by_all(this, change);
                 }
 
                 if (disable_positive_acks_ && last_sequence_number_ == SequenceNumber_t())
@@ -294,7 +294,7 @@ void StatefulWriter::unsent_change_added_to_history(
         logInfo(RTPS_WRITER,"No reader proxy to add change.");
         if (mp_listener != nullptr)
         {
-            mp_listener->onWriterChangeReceivedByAll(this, change);
+            mp_listener->on_writer_change_received_by_all(this, change);
         }
     }
 }
@@ -915,7 +915,7 @@ void StatefulWriter::check_acked_status()
                     });
                 if(cit != history_end && (*cit)->sequenceNumber == current_seq)
                 {
-                    mp_listener->onWriterChangeReceivedByAll(this, *cit);
+                    mp_listener->on_writer_change_received_by_all(this, *cit);
                 }
             }
 

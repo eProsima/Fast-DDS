@@ -211,11 +211,11 @@ bool SubscriberImpl::updateAttributes(const SubscriberAttributes& att)
     return updated;
 }
 
-void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(
+void SubscriberImpl::SubscriberReaderListener::on_new_cache_change_added(
         RTPSReader* /*reader*/,
         const CacheChange_t * const change_in)
 {
-    if (mp_subscriberImpl->onNewCacheChangeAdded(change_in))
+    if (mp_subscriberImpl->on_new_cache_change_added(change_in))
     {
         if(mp_subscriberImpl->mp_listener != nullptr)
         {
@@ -225,7 +225,7 @@ void SubscriberImpl::SubscriberReaderListener::onNewCacheChangeAdded(
     }
 }
 
-void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* /*reader*/, MatchingInfo& info)
+void SubscriberImpl::SubscriberReaderListener::on_reader_matched(RTPSReader* /*reader*/, MatchingInfo& info)
 {
     if (this->mp_subscriberImpl->mp_listener != nullptr)
     {
@@ -247,7 +247,7 @@ void SubscriberImpl::SubscriberReaderListener::on_liveliness_changed(
     }
 }
 
-bool SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change_in)
+bool SubscriberImpl::on_new_cache_change_added(const CacheChange_t* const change_in)
 {
     if (m_att.qos.m_deadline.period != c_TimeInfinite)
     {

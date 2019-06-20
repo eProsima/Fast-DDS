@@ -33,7 +33,7 @@ class my_WriterListener: public eprosima::fastrtps::rtps::WriterListener
 	public:
 		my_WriterListener();
 		~my_WriterListener();
-		void onWriterMatched(eprosima::fastrtps::rtps::RTPSWriter* writer, eprosima::fastrtps::rtps::MatchingInfo& info);
+		void on_writer_matched(eprosima::fastrtps::rtps::RTPSWriter* writer, eprosima::fastrtps::rtps::MatchingInfo& info);
 		int n_matched;
 };
 

@@ -42,7 +42,6 @@ namespace fastrtps{
 namespace rtps {
 
 
-
 void PDPListener::onNewCacheChangeAdded(
     RTPSReader* reader,
     const CacheChange_t* const change_in)

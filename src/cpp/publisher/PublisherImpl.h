@@ -164,10 +164,10 @@ class PublisherImpl
         public:
             PublisherWriterListener(PublisherImpl* p):mp_publisherImpl(p){};
             virtual ~PublisherWriterListener(){};
-            void onWriterMatched(
+            void on_writer_matched(
                     rtps::RTPSWriter* writer,
                     rtps::MatchingInfo& info) override;
-            void onWriterChangeReceivedByAll(
+            void on_writer_change_received_by_all(
                     rtps::RTPSWriter* writer,
                     rtps::CacheChange_t* change) override;
             void on_liveliness_lost(
