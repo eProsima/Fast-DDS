@@ -38,6 +38,7 @@ struct CacheChange_t;
 class RTPS_DllAPI WriterListener
 {
 public:
+
     WriterListener() = default;
 
     virtual ~WriterListener() = default;
@@ -47,7 +48,7 @@ public:
      * @param writer Pointer to the RTPSWriter.
      * @param info Matching Information.
      */
-    virtual void onWriterMatched(
+    virtual void on_writer_matched(
             RTPSWriter* writer,
             MatchingInfo& info)
     {
@@ -61,7 +62,7 @@ public:
      * @param writer Pointer to the RTPSWriter.
      * @param change Pointer to the affected CacheChange_t.
      */
-    virtual void onWriterChangeReceivedByAll(
+    virtual void on_writer_change_received_by_all(
             RTPSWriter* writer,
             CacheChange_t* change)
     {
