@@ -269,7 +269,7 @@ public:
     void sub_wait_liveliness_recovered(unsigned int num_recovered)
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
-        liveliness_cv_.wait(lock, [&]() { return sub_times_liveliness_recovered == num_recovered; });
+        liveliness_cv_.wait(lock, [&]() { return sub_times_liveliness_recovered_ == num_recovered; });
     }
 
     void sub_wait_liveliness_lost(unsigned int num_lost)
