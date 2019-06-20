@@ -343,7 +343,7 @@ bool EDP::unpairWriterProxy(const GUID_t& participant_guid, const GUID_t& writer
                 MatchingInfo info;
                 info.status = REMOVED_MATCHING;
                 info.remoteEndpointGuid = writer_guid;
-                (*rit)->getListener()->onReaderMatched((*rit),info);
+                (*rit)->getListener()->on_reader_matched((*rit),info);
             }
         }
     }
@@ -373,7 +373,7 @@ bool EDP::unpairReaderProxy(const GUID_t& participant_guid, const GUID_t& reader
                 MatchingInfo info;
                 info.status = REMOVED_MATCHING;
                 info.remoteEndpointGuid = reader_guid;
-                (*wit)->getListener()->onWriterMatched((*wit),info);
+                (*wit)->getListener()->on_writer_matched((*wit),info);
             }
         }
     }
@@ -656,7 +656,7 @@ bool EDP::pairingReader(RTPSReader* R, const ParticipantProxyData& pdata, const 
                     logError(RTPS_EDP, "Security manager returns an error for reader " << R->getGuid());
                 }
 #else
-				RemoteWriterAttributes rwatt = (*wdatait)->toRemoteWriterAttributes();
+                RemoteWriterAttributes rwatt = (*wdatait)->toRemoteWriterAttributes();
                 if(R->matched_writer_add(rwatt))
                 {
                     logInfo(RTPS_EDP, "Valid Matching to writerProxy: " << (*wdatait)->guid());
@@ -666,7 +666,7 @@ bool EDP::pairingReader(RTPSReader* R, const ParticipantProxyData& pdata, const 
                         MatchingInfo info;
                         info.status = MATCHED_MATCHING;
                         info.remoteEndpointGuid = (*wdatait)->guid();
-                        R->getListener()->onReaderMatched(R,info);
+                        R->getListener()->on_reader_matched(R,info);
                     }
                 }
 #endif
@@ -687,7 +687,7 @@ bool EDP::pairingReader(RTPSReader* R, const ParticipantProxyData& pdata, const 
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
                         info.remoteEndpointGuid = (*wdatait)->guid();
-                        R->getListener()->onReaderMatched(R,info);
+                        R->getListener()->on_reader_matched(R,info);
                     }
                 }
             }
@@ -721,8 +721,8 @@ bool EDP::pairingWriter(RTPSWriter* W, const ParticipantProxyData& pdata, const 
                     logError(RTPS_EDP, "Security manager returns an error for writer " << W->getGuid());
                 }
 #else
-				RemoteReaderAttributes rratt = (*rdatait)->toRemoteReaderAttributes();
-				if(W->matched_reader_add(rratt))
+                RemoteReaderAttributes rratt = (*rdatait)->toRemoteReaderAttributes();
+                if(W->matched_reader_add(rratt))
                 {
                     logInfo(RTPS_EDP,"Valid Matching to readerProxy: " << (*rdatait)->guid());
                     //MATCHED AND ADDED CORRECTLY:
@@ -731,7 +731,7 @@ bool EDP::pairingWriter(RTPSWriter* W, const ParticipantProxyData& pdata, const 
                         MatchingInfo info;
                         info.status = MATCHED_MATCHING;
                         info.remoteEndpointGuid = (*rdatait)->guid();
-                        W->getListener()->onWriterMatched(W,info);
+                        W->getListener()->on_writer_matched(W,info);
                     }
                 }
 #endif
@@ -751,7 +751,7 @@ bool EDP::pairingWriter(RTPSWriter* W, const ParticipantProxyData& pdata, const 
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
                         info.remoteEndpointGuid = (*rdatait)->guid();
-                        W->getListener()->onWriterMatched(W,info);
+                        W->getListener()->on_writer_matched(W,info);
                     }
                 }
             }
@@ -798,7 +798,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(ParticipantProxyData* pdata
                         MatchingInfo info;
                         info.status = MATCHED_MATCHING;
                         info.remoteEndpointGuid = rdata->guid();
-                        (*wit)->getListener()->onWriterMatched((*wit),info);
+                        (*wit)->getListener()->on_writer_matched((*wit),info);
                     }
                 }
 #endif
@@ -817,7 +817,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(ParticipantProxyData* pdata
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
                         info.remoteEndpointGuid = rdata->guid();
-                        (*wit)->getListener()->onWriterMatched((*wit),info);
+                        (*wit)->getListener()->on_writer_matched((*wit),info);
                     }
                 }
             }
@@ -870,7 +870,7 @@ bool EDP::pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, con
                             MatchingInfo info;
                             info.status = REMOVED_MATCHING;
                             info.remoteEndpointGuid = rdata.guid();
-                            (*wit)->getListener()->onWriterMatched((*wit),info);
+                            (*wit)->getListener()->on_writer_matched((*wit),info);
                         }
                     }
                 }
@@ -904,7 +904,7 @@ bool EDP::pairing_remote_reader_with_local_writer_after_security(const GUID_t& l
                     MatchingInfo info;
                     info.status = MATCHED_MATCHING;
                     info.remoteEndpointGuid = remote_reader_data.guid();
-                    (*wit)->getListener()->onWriterMatched((*wit),info);
+                    (*wit)->getListener()->on_writer_matched((*wit),info);
                 }
 
                 return true;
@@ -947,7 +947,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(ParticipantProxyData *pdata
                     logError(RTPS_EDP, "Security manager returns an error for reader " << readerGUID);
                 }
 #else
-				RemoteWriterAttributes rwatt = wdata->toRemoteWriterAttributes();
+                RemoteWriterAttributes rwatt = wdata->toRemoteWriterAttributes();
                 if((*rit)->matched_writer_add(rwatt))
                 {
                     logInfo(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId);
@@ -957,7 +957,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(ParticipantProxyData *pdata
                         MatchingInfo info;
                         info.status = MATCHED_MATCHING;
                         info.remoteEndpointGuid = wdata->guid();
-                        (*rit)->getListener()->onReaderMatched((*rit),info);
+                        (*rit)->getListener()->on_reader_matched((*rit),info);
                     }
                 }
 #endif
@@ -976,7 +976,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(ParticipantProxyData *pdata
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
                         info.remoteEndpointGuid = wdata->guid();
-                        (*rit)->getListener()->onReaderMatched((*rit),info);
+                        (*rit)->getListener()->on_reader_matched((*rit),info);
                     }
                 }
             }
@@ -1029,7 +1029,7 @@ bool EDP::pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, con
                             MatchingInfo info;
                             info.status = REMOVED_MATCHING;
                             info.remoteEndpointGuid = wdata.guid();
-                            (*rit)->getListener()->onReaderMatched((*rit),info);
+                            (*rit)->getListener()->on_reader_matched((*rit),info);
                         }
                     }
                 }
@@ -1064,7 +1064,7 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(const GUID_t& l
                     MatchingInfo info;
                     info.status = MATCHED_MATCHING;
                     info.remoteEndpointGuid = remote_writer_data.guid();
-                    (*rit)->getListener()->onReaderMatched((*rit),info);
+                    (*rit)->getListener()->on_reader_matched((*rit),info);
                 }
 
                 return true;

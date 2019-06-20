@@ -238,7 +238,7 @@ class SecurityTest : public ::testing::Test
                 WillOnce(Return(true));
             EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
-            stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+            stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
             if(reply_message_change != nullptr)
                 *reply_message_change = change2;
@@ -320,7 +320,7 @@ class SecurityTest : public ::testing::Test
             info.guid = remote_participant_key;
             EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
-            stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
+            stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
 
             if(final_message_change == nullptr)
                 delete change2;

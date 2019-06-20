@@ -42,7 +42,7 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-void PDPSimpleListener::onNewCacheChangeAdded(
+void PDPSimpleListener::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t * const change_in)
 {

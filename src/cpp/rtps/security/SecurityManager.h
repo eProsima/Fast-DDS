@@ -66,7 +66,7 @@ class SecurityManager
 
         ~SecurityManager();
 
-        bool init(ParticipantSecurityAttributes& attributes, const PropertyPolicy& participant_properties, 
+        bool init(ParticipantSecurityAttributes& attributes, const PropertyPolicy& participant_properties,
             bool& security_activated);
 
         void destroy();
@@ -301,7 +301,7 @@ class SecurityManager
 
                 ~ParticipantStatelessMessageListener(){};
 
-                void onNewCacheChangeAdded(
+                void on_new_cache_change_added(
                         RTPSReader* reader,
                         const CacheChange_t* const change) override;
 
@@ -319,7 +319,7 @@ class SecurityManager
 
                 ~ParticipantVolatileMessageListener(){};
 
-                void onNewCacheChangeAdded(
+                void on_new_cache_change_added(
                         RTPSReader* reader,
                         const CacheChange_t* const change) override;
 

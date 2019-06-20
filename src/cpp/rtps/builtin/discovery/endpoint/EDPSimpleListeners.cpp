@@ -41,7 +41,7 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-void EDPSimplePUBListener::onNewCacheChangeAdded(
+void EDPSimplePUBListener::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t * const change_in)
 {
@@ -119,7 +119,7 @@ bool EDPSimpleSUBListener::computeKey(CacheChange_t* change)
     return ParameterList::readInstanceHandleFromCDRMsg(change, PID_ENDPOINT_GUID);
 }
 
-void EDPSimpleSUBListener::onNewCacheChangeAdded(
+void EDPSimpleSUBListener::on_new_cache_change_added(
         RTPSReader* reader,
         const CacheChange_t * const change_in)
 {
@@ -187,7 +187,7 @@ void EDPSimpleSUBListener::onNewCacheChangeAdded(
     return;
 }
 
-void EDPSimplePUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change)
+void EDPSimplePUBListener::on_writer_change_received_by_all(RTPSWriter* writer, CacheChange_t* change)
 {
     (void)writer;
 
@@ -204,7 +204,7 @@ void EDPSimplePUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, Cache
     }
 }
 
-void EDPSimpleSUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change)
+void EDPSimpleSUBListener::on_writer_change_received_by_all(RTPSWriter* writer, CacheChange_t* change)
 {
     (void)writer;
 

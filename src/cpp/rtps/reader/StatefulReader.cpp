@@ -613,7 +613,7 @@ void StatefulReader::NotifyChanges(WriterProxy* prox)
             {
                 if (!ch_to_give->isRead)
                 {
-                    getListener()->onNewCacheChangeAdded((RTPSReader*)this, ch_to_give);
+                    getListener()->on_new_cache_change_added((RTPSReader*)this, ch_to_give);
                 }
             }
 

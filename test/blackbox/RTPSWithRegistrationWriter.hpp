@@ -57,7 +57,7 @@ class RTPSWithRegistrationWriter
 
             ~Listener(){};
 
-            void onWriterMatched(eprosima::fastrtps::rtps::RTPSWriter* /*writer*/, eprosima::fastrtps::rtps::MatchingInfo& info)
+            void on_writer_matched(eprosima::fastrtps::rtps::RTPSWriter* /*writer*/, eprosima::fastrtps::rtps::MatchingInfo& info)
             {
                 if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
                     writer_.matched();

@@ -148,7 +148,7 @@ void StatelessWriter::unsent_change_added_to_history(
 
                 if (mp_listener != nullptr)
                 {
-                    mp_listener->onWriterChangeReceivedByAll(this, change);
+                    mp_listener->on_writer_change_received_by_all(this, change);
                 }
             }
             catch(const RTPSMessageGroup::timeout&)
@@ -175,7 +175,7 @@ void StatelessWriter::unsent_change_added_to_history(
         logInfo(RTPS_WRITER, "No reader to add change.");
         if (mp_listener != nullptr)
         {
-            mp_listener->onWriterChangeReceivedByAll(this, change);
+            mp_listener->on_writer_change_received_by_all(this, change);
         }
     }
 }
@@ -304,7 +304,7 @@ void StatelessWriter::send_any_unsent_changes()
 
             if (bHasListener && is_acked_by_all(changeToSend.cacheChange))
             {
-                mp_listener->onWriterChangeReceivedByAll(this, changeToSend.cacheChange);
+                mp_listener->on_writer_change_received_by_all(this, changeToSend.cacheChange);
             }
         }
     }
