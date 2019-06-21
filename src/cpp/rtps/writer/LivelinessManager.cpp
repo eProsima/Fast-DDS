@@ -98,7 +98,6 @@ bool LivelinessManager::remove_writer(
                     }
 
                     auto interval = timer_owner_->time - steady_clock::now();
-                    assert(interval.count() > 0);
                     timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
                     timer_.restart_timer();
                 }
@@ -175,7 +174,6 @@ bool LivelinessManager::assert_liveliness(
     }
 
     auto interval = timer_owner_->time - steady_clock::now();
-    assert(interval.count() > 0);
     timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
     timer_.restart_timer();
 
@@ -226,7 +224,6 @@ bool LivelinessManager::assert_liveliness(LivelinessQosPolicyKind kind)
     }
 
     auto interval = timer_owner_->time - steady_clock::now();
-    assert(interval.count() > 0);
     timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
     timer_.restart_timer();
 
