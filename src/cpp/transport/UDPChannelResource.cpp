@@ -127,7 +127,14 @@ void UDPChannelResource::release(
             if (tries_ == 10)
             {
                 logError(UDPChannelResource, "After " << tries_ << " retries UDP Socket doesn't close. Aborting.");
+                // Cancel all asynchronous operations associated with the socket.
                 socket()->cancel();
+                // Disable receives on the socket.
+                // shutdown always returns a 'shutdown: Transport endpoint is not connected' error,
+                // since the endpoint is indeed not connected. However, it unblocks the synchronous receive
+                // anyways, which is what we want.
+                asio::error_code ec;
+                socket()->shutdown(asio::socket_base::shutdown_type::shutdown_receive, ec);
                 closing_ = true;
                 message_receiver(nullptr);
             }
