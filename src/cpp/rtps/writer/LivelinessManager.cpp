@@ -97,6 +97,8 @@ bool LivelinessManager::remove_writer(
                         return true;
                     }
 
+		    // Some times the interval could be negative if a writer expired during the call to this function
+		    // Once in this situation there is not much we can do but let asio timers expire inmediately
                     auto interval = timer_owner_->time - steady_clock::now();
                     timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
                     timer_.restart_timer();
@@ -173,6 +175,8 @@ bool LivelinessManager::assert_liveliness(
         return false;
     }
 
+    // Some times the interval could be negative if a writer expired during the call to this function
+    // Once in this situation there is not much we can do but let asio timers expire inmediately
     auto interval = timer_owner_->time - steady_clock::now();
     timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
     timer_.restart_timer();
@@ -223,6 +227,8 @@ bool LivelinessManager::assert_liveliness(LivelinessQosPolicyKind kind)
         return false;
     }
 
+    // Some times the interval could be negative if a writer expired during the call to this function
+    // Once in this situation there is not much we can do but let asio timers expire inmediately
     auto interval = timer_owner_->time - steady_clock::now();
     timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
     timer_.restart_timer();
@@ -275,6 +281,8 @@ void LivelinessManager::timer_expired()
 
     if (calculate_next())
     {
+        // Some times the interval could be negative if a writer expired during the call to this function
+        // Once in this situation there is not much we can do but let asio timers expire inmediately
         auto interval = timer_owner_->time - steady_clock::now();
         timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
         timer_.restart_timer();
