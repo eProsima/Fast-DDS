@@ -141,9 +141,7 @@ public:
         ChannelResource::disable();
     }
 
-    void release(
-            const Locator_t& locator,
-            const asio::ip::address& address);
+    void release();
 
 protected:
     /**

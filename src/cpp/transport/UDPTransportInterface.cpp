@@ -84,28 +84,11 @@ bool UDPTransportInterface::CloseInputChannel(const Locator_t& locator)
 
     }
 
-    std::map<UDPChannelResource*, asio::ip::address> addresses;
-    // It may sound redundant, but we must mark all the related channel to be killed first.
-    // Mostly in Windows, but in Linux can happen too, if we access to the endpoint
-    // of an already closed socket we get an exception. So we store the interface address to
-    // be used in the ReleaseInputChannel call later.
-    for (UDPChannelResource* channel_resource : channel_resources)
-    {
-        if (channel_resource->alive())
-        {
-            addresses[channel_resource] = channel_resource->socket()->local_endpoint().address();
-        }
-        else
-        {
-            addresses[channel_resource] = asio::ip::address();
-        }
-        channel_resource->disable();
-    }
-
-    // Then we release the channels
+    // We now disable and release the channels
     for (UDPChannelResource* channel : channel_resources)
     {
-        channel->release(locator, addresses[channel]);
+        channel->disable();
+        channel->release();
         delete channel;
     }
 
