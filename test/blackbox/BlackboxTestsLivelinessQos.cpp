@@ -1277,8 +1277,8 @@ TEST(LivelinessQos, ThreeWriters_ThreeReaders)
 {
     unsigned int num_pub = 3;
     unsigned int num_sub = 3;
-    unsigned int lease_duration_ms = 500;
-    unsigned int announcement_period_ms = 250;
+    unsigned int lease_duration_ms = 100;
+    unsigned int announcement_period_ms = 10;
 
     // Publishers
     PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, 6u, 0u);
