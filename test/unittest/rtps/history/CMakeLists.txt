@@ -21,18 +21,18 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         find_package(Threads REQUIRED)
 
         set(READERHISTORYTESTS_SOURCE ReaderHistoryTests.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/ReaderHistory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/History.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/history/ReaderHistory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/history/History.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/history/CacheChangePool.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/common/Time_t.cpp)
 
         set(CACHECHANGEPOOLTESTS_SOURCE CacheChangePoolTests.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/history/CacheChangePool.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/common/Time_t.cpp)
 
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)

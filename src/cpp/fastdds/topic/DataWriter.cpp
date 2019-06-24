@@ -17,13 +17,13 @@
  *
  */
 
-#include <fastrtps/topic/DataWriter.hpp>
+#include <fastdds/topic/DataWriter.hpp>
 #include <fastrtps/topic/TopicDataType.h>
-#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/topic/attributes/TopicAttributes.h>
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/publisher/Publisher.h>
-#include "../publisher/PublisherImpl.h"
-#include "../participant/ParticipantImpl.h"
+#include "../../fastrtps/publisher/PublisherImpl.h"
+#include "../../fastrtps/participant/ParticipantImpl.h"
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>

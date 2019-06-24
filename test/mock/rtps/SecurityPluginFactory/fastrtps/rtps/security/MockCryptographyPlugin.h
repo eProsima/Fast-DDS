@@ -21,9 +21,9 @@
 
 #include <fastrtps/rtps/security/cryptography/Cryptography.h>
 
-#include <rtps/security/MockCryptoKeyFactory.h>
-#include <rtps/security/MockCryptoKeyExchange.h>
-#include <rtps/security/MockCryptoTransform.h>
+#include <fastrtps/rtps/security/MockCryptoKeyFactory.h>
+#include <fastrtps/rtps/security/MockCryptoKeyExchange.h>
+#include <fastrtps/rtps/security/MockCryptoTransform.h>
 
 namespace eprosima {
 namespace fastrtps {

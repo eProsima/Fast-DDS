@@ -23,13 +23,13 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 	# ReaderProxy
 	
         set(WRITERPROXYTESTS_SOURCE ReaderProxyTests.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/ReaderProxy.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp 
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
-           )
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/writer/ReaderProxy.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/resources/TimedEvent.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/resources/TimedEventImpl.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/common/Time_t.cpp
+            )
 
         if(WIN32)
             add_definitions(-D_WIN32_WINNT=0x0601)

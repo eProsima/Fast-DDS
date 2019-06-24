@@ -22,26 +22,26 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         endif()
 
         set(COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Token.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/exceptions/Exception.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/exceptions/SecurityException.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/common/SharedSecretHandle.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/OpenSSLInit.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/attributes/PropertyPolicy.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/common/Token.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/common/Time_t.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/exceptions/Exception.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/security/exceptions/SecurityException.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/security/common/SharedSecretHandle.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/security/OpenSSLInit.cpp
             )
 
         add_executable(BuiltinAESGCMGMAC ${COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE}
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyExchange.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Transform.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Types.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIIdentityHandle.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/AccessPermissionsHandle.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/OpenSSLInit.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/security/cryptography/AESGCMGMAC.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/security/cryptography/AESGCMGMAC_KeyExchange.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/security/cryptography/AESGCMGMAC_KeyFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/security/cryptography/AESGCMGMAC_Transform.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/security/cryptography/AESGCMGMAC_Types.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/security/authentication/PKIIdentityHandle.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/security/accesscontrol/AccessPermissionsHandle.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/security/OpenSSLInit.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/builtinAESGCMGMACTests.cpp)
 
         target_compile_definitions(BuiltinAESGCMGMAC PRIVATE FASTRTPS_NO_LIB)
@@ -51,12 +51,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
         target_link_libraries(BuiltinAESGCMGMAC fastcdr ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES})
         add_gtest(BuiltinAESGCMGMAC SOURCES ${COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE}
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyExchange.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Transform.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Types.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/OpenSSLInit.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/security/cryptography/AESGCMGMAC.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/security/cryptography/AESGCMGMAC_KeyExchange.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/security/cryptography/AESGCMGMAC_KeyFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/security/cryptography/AESGCMGMAC_Transform.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/security/cryptography/AESGCMGMAC_Types.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/security/OpenSSLInit.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/builtinAESGCMGMACTests.cpp
             ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
     endif()

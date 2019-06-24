@@ -14,7 +14,7 @@
 
 #include "HandshakeMessageTokenResent.h"
 #include "../SecurityManager.h"
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastrtps/rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/log/Log.h>

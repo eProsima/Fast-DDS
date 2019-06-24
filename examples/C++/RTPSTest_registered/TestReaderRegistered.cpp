@@ -29,7 +29,7 @@
 
 #include "fastrtps/rtps/history/ReaderHistory.h"
 
-#include "fastrtps/attributes/TopicAttributes.h"
+#include "fastrtps/topic/attributes/TopicAttributes.h"
 #include "fastrtps/qos/ReaderQos.h"
 
 using namespace eprosima::fastrtps;

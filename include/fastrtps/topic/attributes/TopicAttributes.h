@@ -21,8 +21,8 @@
 
 #include <string>
 
-#include "../rtps/common/Types.h"
-#include "../qos/QosPolicies.h"
+#include "../../rtps/common/Types.h"
+#include "../../qos/QosPolicies.h"
 
 
 namespace eprosima {

@@ -17,8 +17,8 @@
  *
  */
 
-#include <fastrtps/topic/DataReader.hpp>
-#include "../subscriber/SubscriberImpl.h"
+#include <fastdds/topic/DataReader.hpp>
+#include "../../fastrtps/subscriber/SubscriberImpl.h"
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/topic/TopicDataType.h>
 #include <fastrtps/subscriber/SubscriberListener.h>

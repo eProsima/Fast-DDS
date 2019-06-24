@@ -27,9 +27,9 @@
 
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/subscriber/SubscriberHistory.h>
-#include <fastrtps/topic/DataReaderListener.hpp>
+#include <fastdds/topic/DataReaderListener.hpp>
 #include <fastrtps/rtps/reader/ReaderListener.h>
-#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/topic/attributes/TopicAttributes.h>
 #include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 

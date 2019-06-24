@@ -19,12 +19,12 @@
 #ifndef _FASTRTPS_DATAREADERLISTENER_H_
 #define _FASTRTPS_DATAREADERLISTENER_H_
 
-#include "../fastrtps_dll.h"
-#include "../qos/DeadlineMissedStatus.h"
-#include "../qos/LivelinessChangedStatus.h"
-#include "../qos/SampleLostStatus.hpp"
-#include "../qos/SampleRejectedStatus.hpp"
-#include "../qos/IncompatibleQosStatus.hpp"
+#include "../../fastrtps/fastrtps_dll.h"
+#include "../../fastrtps/qos/DeadlineMissedStatus.h"
+#include "../../fastrtps/qos/LivelinessChangedStatus.h"
+#include "../../fastrtps/qos/SampleLostStatus.hpp"
+#include "../../fastrtps/qos/SampleRejectedStatus.hpp"
+#include "../../fastrtps/qos/IncompatibleQosStatus.hpp"
 
 namespace eprosima {
 namespace fastrtps {
