@@ -449,6 +449,9 @@ void PDPClient::announceParticipantState(
     bool dispose,
     WriteParams& )
 {
+    // protect sequence number
+    std::lock_guard<std::recursive_timed_mutex> wlock(mp_PDPWriter->getMutex());
+
     WriteParams wp;
     SampleIdentity local;
     local.writer_guid(mp_PDPWriter->getGuid());
@@ -475,8 +478,6 @@ void PDPClient::announceParticipantState(
             change->sequenceNumber = mp_PDPWriterHistory->next_sequence_number();
             change->write_params = wp;
 
-            std::lock_guard<std::recursive_timed_mutex> wlock(pW->getMutex());
-
             RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, RTPSMessageGroup::WRITER, _msgbuffer);
 
             std::vector<GUID_t> remote_readers;
@@ -492,15 +493,19 @@ void PDPClient::announceParticipantState(
             //    locators.push_back(ep.unicastLocatorList);
             //    //locators.push_back(ep.multicastLocatorList);
             //}
-            // temporary workaround
-            for (auto & svr : mp_builtin->m_DiscoveryServers)
             {
-                // if we are matched to a server report demise
-                if (svr.proxy != nullptr)
+                // temporary workaround
+                std::lock_guard<std::recursive_mutex> lock(*getMutex());
+
+                for (auto & svr : mp_builtin->m_DiscoveryServers)
                 {
-                    remote_readers.push_back(svr.GetPDPReader());
-                    //locators.push_back(svr.metatrafficMulticastLocatorList);
-                    locators.push_back(svr.metatrafficUnicastLocatorList);
+                    // if we are matched to a server report demise
+                    if (svr.proxy != nullptr)
+                    {
+                        remote_readers.push_back(svr.GetPDPReader());
+                        //locators.push_back(svr.metatrafficMulticastLocatorList);
+                        locators.push_back(svr.metatrafficUnicastLocatorList);
+                    }
                 }
             }
 

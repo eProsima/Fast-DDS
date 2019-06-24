@@ -701,6 +701,9 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
     // Servers only send direct DATA(p) to servers in order to allow discovery
     if (new_change)
     {
+        // protect sequence number
+        std::lock_guard<std::recursive_timed_mutex> wlock(pW->getMutex());
+
         // only builtinprotocols uses new_change = true, delegate in base class
         // in order to get the ParticipantProxyData into the WriterHistory and broadcast the first DATA(p)
 
@@ -728,8 +731,6 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
                 change->sequenceNumber = mp_PDPWriterHistory->next_sequence_number();
                 change->write_params = wp;
 
-                std::lock_guard<std::recursive_timed_mutex> wlock(pW->getMutex());
-
                 RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, RTPSMessageGroup::WRITER, _msgbuffer);
 
                 std::vector<GUID_t> remote_readers;
@@ -747,6 +748,8 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
                 //}
 
                 // TODO: remove when the Writer API issue is resolved
+                std::lock_guard<std::recursive_mutex> lock(*getMutex());
+
                 for (auto client : clients_)
                 {
                     RemoteReaderAttributes & rat = client.second;
@@ -849,9 +852,9 @@ bool PDPServer::removeRemoteParticipant(GUID_t& partGUID)
         CacheChange_t *pC;
 
         // Check if the DATA(p[UD]) is already in Reader
-        if (!mp_PDPReaderHistory->get_max_change(&pC) && 
+        if (! (mp_PDPReaderHistory->get_max_change(&pC) && 
                 pC->kind == NOT_ALIVE_DISPOSED_UNREGISTERED && // last message received is aun DATA(p[UD])
-                pC->instanceHandle == info.m_key) // from the same participant I'm going to report
+                pC->instanceHandle == info.m_key )) // from the same participant I'm going to report
         {   // We must create the DATA(p[UD])
             if ((pC = mp_PDPWriter->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE; },
                 NOT_ALIVE_DISPOSED_UNREGISTERED, info.m_key)))
