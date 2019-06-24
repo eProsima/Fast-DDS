@@ -31,11 +31,12 @@
 
 #include <fastrtps/log/Log.h>
 
+using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace std::chrono;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 
 DataReader::DataReader(
@@ -554,5 +555,5 @@ bool DataReader::wait_for_historical_data(
     return false;
 }
 
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */

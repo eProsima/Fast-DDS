@@ -25,7 +25,7 @@
 #include "../../fastrtps/qos/LivelinessLostStatus.h"
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 class DataWriter;
 
@@ -47,7 +47,7 @@ public:
      */
     virtual void on_publication_matched(
             DataWriter* writer,
-            rtps::MatchingInfo& info)
+            fastrtps::rtps::MatchingInfo& info)
     {
         (void)writer;
         (void)info;
@@ -60,7 +60,7 @@ public:
      */
     virtual void on_offered_deadline_missed(
             DataWriter* writer,
-            const OfferedDeadlineMissedStatus& status)
+            const fastrtps::OfferedDeadlineMissedStatus& status)
     {
         (void)writer;
         (void)status;
@@ -73,14 +73,14 @@ public:
      */
     virtual void on_liveliness_lost(
             DataWriter* writer,
-            const LivelinessLostStatus& status)
+            const fastrtps::LivelinessLostStatus& status)
     {
         (void)writer;
         (void)status;
     }
 };
 
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* _FASTRTPS_DATAWRITERLISTENER_H_ */
