@@ -46,6 +46,10 @@ class ParticipantImpl;
 class SampleInfo_t;
 class Subscriber;
 
+} // namespace fastrtps
+
+namespace fastdds {
+
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
  *  @ingroup FASTRTPS_MODULE
@@ -57,12 +61,12 @@ class DataReader {
     * Creates a DataReader. Don't use it directly, but through Subscriber.
     */
     DataReader(
-            SubscriberImpl* s,
-            TopicDataType* topic,
-            const TopicAttributes& topic_att,
-            const rtps::ReaderAttributes& att,
-            const ReaderQos& qos,
-            SubscriberHistory&& history,
+            fastrtps::SubscriberImpl* s,
+            fastrtps::TopicDataType* topic,
+            const fastrtps::TopicAttributes& topic_att,
+            const fastrtps::rtps::ReaderAttributes& att,
+            const fastrtps::ReaderQos& qos,
+            fastrtps::SubscriberHistory&& history,
             DataReaderListener* listener = nullptr);
 
 public:
@@ -82,21 +86,21 @@ public:
 
     bool read(
             std::vector<void*>& data_values,
-            std::vector<SampleInfo_t>& sample_infos,
+            std::vector<fastrtps::SampleInfo_t>& sample_infos,
             uint32_t max_samples);
 
     bool read_next_sample(
             void* data,
-            SampleInfo_t* info);
+            fastrtps::SampleInfo_t* info);
 
     bool take(
             std::vector<void*>& data_values,
-            std::vector<SampleInfo_t>& sample_infos,
+            std::vector<fastrtps::SampleInfo_t>& sample_infos,
             uint32_t max_samples);
 
     bool take_next_sample(
             void* data,
-            SampleInfo_t* info);
+            fastrtps::SampleInfo_t* info);
 
     ///@}
 
@@ -104,13 +108,13 @@ public:
     * Get associated GUID
     * @return Associated GUID
     */
-    const rtps::GUID_t& guid();
+    const fastrtps::rtps::GUID_t& guid();
 
     /**
     * Get topic data type
     * @return Topic data type
     */
-    TopicDataType* type()
+    fastrtps::TopicDataType* type()
     {
         return type_;
     }
@@ -135,26 +139,26 @@ public:
      * @return True if the change was added (due to some QoS it could have been 'rejected')
      */
     bool on_new_cache_change_added(
-            const rtps::CacheChange_t* const change);
+            const fastrtps::rtps::CacheChange_t* const change);
 
     /**
      * @brief Get the requested deadline missed status
      * @return The deadline missed status
      */
     void get_requested_deadline_missed_status(
-            RequestedDeadlineMissedStatus& status);
+            fastrtps::RequestedDeadlineMissedStatus& status);
 
-    bool set_attributes(const rtps::ReaderAttributes& att);
+    bool set_attributes(const fastrtps::rtps::ReaderAttributes& att);
 
-    const rtps::ReaderAttributes& get_attributes() const;
+    const fastrtps::rtps::ReaderAttributes& get_attributes() const;
 
-    bool set_qos(const ReaderQos& qos);
+    bool set_qos(const fastrtps::ReaderQos& qos);
 
-    const ReaderQos& get_qos() const;
+    const fastrtps::ReaderQos& get_qos() const;
 
-    bool set_topic(const TopicAttributes& att);
+    bool set_topic(const fastrtps::TopicAttributes& att);
 
-    const TopicAttributes& get_topic() const;
+    const fastrtps::TopicAttributes& get_topic() const;
 
     bool set_listener(DataReaderListener* listener);
 
@@ -162,50 +166,50 @@ public:
 
     bool get_key_value(
             void* data,
-            const rtps::InstanceHandle_t& handle);
+            const fastrtps::rtps::InstanceHandle_t& handle);
 
     bool get_liveliness_changed_status(
-            LivelinessChangedStatus& status) const;
+            fastrtps::LivelinessChangedStatus& status) const;
 
     bool get_requested_incompatible_qos_status(
-            RequestedIncompatibleQosStatus& status) const;
+            fastrtps::RequestedIncompatibleQosStatus& status) const;
 
     bool get_sample_lost_status(
-            SampleLostStatus& status) const;
+            fastrtps::SampleLostStatus& status) const;
 
     bool get_sample_rejected_status(
-            SampleRejectedStatus& status) const;
+            fastrtps::SampleRejectedStatus& status) const;
 
-    const Subscriber* get_subscriber() const;
+    const fastrtps::Subscriber* get_subscriber() const;
 
     bool wait_for_historical_data(
-            const Duration_t& max_wait) const;
+            const fastrtps::Duration_t& max_wait) const;
 
 private:
 
     //!Subscriber
-    SubscriberImpl* subscriber_;
+    fastrtps::SubscriberImpl* subscriber_;
 
     //!Pointer to associated RTPSReader
-    rtps::RTPSReader* reader_;
+    fastrtps::rtps::RTPSReader* reader_;
 
     //! Pointer to the TopicDataType object.
-    TopicDataType* type_;
+    fastrtps::TopicDataType* type_;
 
-    TopicAttributes topic_att_;
+    fastrtps::TopicAttributes topic_att_;
 
     //!Attributes of the Subscriber
-    rtps::ReaderAttributes att_;
+    fastrtps::rtps::ReaderAttributes att_;
 
-    ReaderQos qos_;
+    fastrtps::ReaderQos qos_;
 
     //!History
-    SubscriberHistory history_;
+    fastrtps::SubscriberHistory history_;
 
     //!Listener
     DataReaderListener* listener_;
 
-    class InnerDataReaderListener : public rtps::ReaderListener
+    class InnerDataReaderListener : public fastrtps::rtps::ReaderListener
     {
     public:
         InnerDataReaderListener(
@@ -217,30 +221,30 @@ private:
         virtual ~InnerDataReaderListener() override {}
 
         void on_reader_matched(
-                rtps::RTPSReader* reader,
-                rtps::MatchingInfo& info) override;
+                fastrtps::rtps::RTPSReader* reader,
+                fastrtps::rtps::MatchingInfo& info) override;
 
         void on_new_cache_change_added(
-                rtps::RTPSReader* reader,
-                const rtps::CacheChange_t* const change) override;
+                fastrtps::rtps::RTPSReader* reader,
+                const fastrtps::rtps::CacheChange_t* const change) override;
 
         DataReader* data_reader_;
     } reader_listener_;
 
     //! A timer used to check for deadlines
-    rtps::TimedCallback deadline_timer_;
+    fastrtps::rtps::TimedCallback deadline_timer_;
 
     //! Deadline duration in microseconds
     std::chrono::duration<double, std::ratio<1, 1000000>> deadline_duration_us_;
 
     //! The current timer owner, i.e. the instance which started the deadline timer
-    rtps::InstanceHandle_t timer_owner_;
+    fastrtps::rtps::InstanceHandle_t timer_owner_;
 
     //! Requested deadline missed status
-    RequestedDeadlineMissedStatus deadline_missed_status_;
+    fastrtps::RequestedDeadlineMissedStatus deadline_missed_status_;
 
     //! A timed callback to remove expired samples
-    rtps::TimedCallback lifespan_timer_;
+    fastrtps::rtps::TimedCallback lifespan_timer_;
 
     //! The lifespan duration
     std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
@@ -263,7 +267,7 @@ private:
 };
 
 
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 #endif
 #endif /* _FASTRTPS_DATAREADER_HPP_*/
