@@ -24,9 +24,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         set(TIMEDEVENTTESTS_SOURCE mock/MockEvent.cpp
             mock/MockParentEvent.cpp
             TimedEventTests.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/resources/TimedEventImpl.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/resources/TimedEvent.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/common/Time_t.cpp
             )
 
         if(WIN32)

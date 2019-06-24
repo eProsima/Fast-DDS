@@ -1,4 +1,4 @@
-# Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -184,8 +184,8 @@ set(${PROJECT_NAME}_source_files
 # TLS Support
 if(TLS_FOUND)
     list(APPEND ${PROJECT_NAME}_source_files
-        transport/TCPChannelResourceSecure.cpp
-        transport/TCPAcceptorSecure.cpp
+        fastrtps/transport/TCPChannelResourceSecure.cpp
+        fastrtps/transport/TCPAcceptorSecure.cpp
         )
 endif()
 
@@ -195,25 +195,25 @@ set_sources(${${PROJECT_NAME}_source_files})
 
 # Security sources
 set(${PROJECT_NAME}_security_source_files
-    rtps/security/exceptions/SecurityException.cpp
-    rtps/security/common/SharedSecretHandle.cpp
-    rtps/security/SecurityManager.cpp
-    rtps/security/SecurityPluginFactory.cpp
-    rtps/security/timedevent/HandshakeMessageTokenResent.cpp
-    security/OpenSSLInit.cpp
-    security/authentication/PKIDH.cpp
-    security/accesscontrol/Permissions.cpp
-    security/cryptography/AESGCMGMAC.cpp
-    security/cryptography/AESGCMGMAC_KeyExchange.cpp
-    security/cryptography/AESGCMGMAC_KeyFactory.cpp
-    security/cryptography/AESGCMGMAC_Transform.cpp
-    security/cryptography/AESGCMGMAC_Types.cpp
-    security/authentication/PKIIdentityHandle.cpp
-    security/authentication/PKIHandshakeHandle.cpp
-    security/accesscontrol/AccessPermissionsHandle.cpp
-    security/accesscontrol/CommonParser.cpp
-    security/accesscontrol/GovernanceParser.cpp
-    security/accesscontrol/PermissionsParser.cpp
+    fastrtps/rtps/security/exceptions/SecurityException.cpp
+    fastrtps/rtps/security/common/SharedSecretHandle.cpp
+    fastrtps/rtps/security/SecurityManager.cpp
+    fastrtps/rtps/security/SecurityPluginFactory.cpp
+    fastrtps/rtps/security/timedevent/HandshakeMessageTokenResent.cpp
+    fastrtps/security/OpenSSLInit.cpp
+    fastrtps/security/authentication/PKIDH.cpp
+    fastrtps/security/accesscontrol/Permissions.cpp
+    fastrtps/security/cryptography/AESGCMGMAC.cpp
+    fastrtps/security/cryptography/AESGCMGMAC_KeyExchange.cpp
+    fastrtps/security/cryptography/AESGCMGMAC_KeyFactory.cpp
+    fastrtps/security/cryptography/AESGCMGMAC_Transform.cpp
+    fastrtps/security/cryptography/AESGCMGMAC_Types.cpp
+    fastrtps/security/authentication/PKIIdentityHandle.cpp
+    fastrtps/security/authentication/PKIHandshakeHandle.cpp
+    fastrtps/security/accesscontrol/AccessPermissionsHandle.cpp
+    fastrtps/security/accesscontrol/CommonParser.cpp
+    fastrtps/security/accesscontrol/GovernanceParser.cpp
+    fastrtps/security/accesscontrol/PermissionsParser.cpp
     )
 
 # Add sources to Makefile.am

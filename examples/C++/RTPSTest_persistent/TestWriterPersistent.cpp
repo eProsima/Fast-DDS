@@ -29,7 +29,7 @@
 
 #include <fastrtps/rtps/history/WriterHistory.h>
 
-#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/topic/attributes/TopicAttributes.h>
 #include <fastrtps/qos/WriterQos.h>
 
 #include <fastrtps/utils/eClock.h>

@@ -25,11 +25,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(THROUGHPUTCONTROLLERTESTS_SOURCE
             ThroughputControllerTests.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowController.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputController.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/ReaderLocator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/flowcontrol/FlowController.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/flowcontrol/ThroughputController.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/writer/ReaderLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/common/Time_t.cpp)
 
         add_executable(ThroughputControllerTests ${THROUGHPUTCONTROLLERTESTS_SOURCE})
         target_compile_definitions(ThroughputControllerTests PRIVATE FASTRTPS_NO_LIB)

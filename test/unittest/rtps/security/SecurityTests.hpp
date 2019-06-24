@@ -16,9 +16,9 @@
 #define __TEST_UNITTEST_RTPS_SECURITY_SECURITYTESTS_HPP__
 
 #include <fastrtps/rtps/security/common/Handle.h>
-#include <rtps/security/MockAuthenticationPlugin.h>
-#include <rtps/security/MockCryptographyPlugin.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastrtps/rtps/security/MockAuthenticationPlugin.h>
+#include <fastrtps/rtps/security/MockCryptographyPlugin.h>
+#include <fastrtps/rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/rtps/writer/StatelessWriter.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
@@ -26,8 +26,8 @@
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <rtps/security/SecurityPluginFactory.h>
-#include <rtps/security/SecurityManager.h>
+#include <fastrtps/rtps/security/SecurityPluginFactory.h>
+#include <fastrtps/rtps/security/SecurityManager.h>
 #include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 
 #include <gtest/gtest.h>

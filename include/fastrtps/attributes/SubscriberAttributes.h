@@ -24,7 +24,7 @@
 #include "../rtps/common/Time_t.h"
 #include "../rtps/common/Locator.h"
 #include "../rtps/attributes/ReaderAttributes.h"
-#include "TopicAttributes.h"
+#include "../topic/attributes/TopicAttributes.h"
 #include "../qos/ReaderQos.h"
 #include "../rtps/attributes/PropertyPolicy.h"
 

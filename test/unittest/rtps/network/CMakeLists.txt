@@ -24,12 +24,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         set(NETWORKFACTORYTESTS_SOURCE
             NetworkFactoryTests.cpp
             mock/MockTransport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/network/NetworkFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/common/Time_t.cpp
         )
 
         include_directories(mock/)
