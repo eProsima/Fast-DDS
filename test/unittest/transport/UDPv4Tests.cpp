@@ -332,7 +332,6 @@ TEST_F(UDPv4Tests, send_to_allowed_interface)
 
         if (IsAddressDefined(locator))
         {
-            // descriptor.interfaceWhiteList.emplace_back("127.0.0.1");
             descriptor.interfaceWhiteList.emplace_back(IPLocator::toIPv4string(locator));
             UDPv4Transport transportUnderTest(descriptor);
             transportUnderTest.init();

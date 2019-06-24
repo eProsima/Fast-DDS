@@ -108,8 +108,8 @@ bool UDPChannelResource::Receive(
     catch (const std::exception& error)
     {
         (void)error;
-        logWarning(RTPS_MSG_OUT, "Error receiving data: " << error.what());
-        std::cout << "+++ERROR: " << error.what() << " - " << message_receiver() << " (" << this << ")" << std::endl;
+        logWarning(RTPS_MSG_OUT, "Error receiving data: " << error.what() << " - " << message_receiver()
+            << " (" << this << ")");
         return false;
     }
 }
@@ -139,8 +139,8 @@ void UDPChannelResource::release()
             closing_ = true;
             message_receiver(nullptr);
         }
+        socket()->close();
     }
-    socket()->close();
 }
 
 } // namespace rtps
