@@ -40,8 +40,11 @@
 #include <functional>
 
 using namespace eprosima::fastrtps;
-using namespace ::rtps;
+using namespace eprosima::fastrtps::rtps;
 using namespace std::chrono;
+
+namespace eprosima {
+namespace fastdds {
 
 DataWriter::DataWriter(
         PublisherImpl* p,
@@ -620,3 +623,6 @@ bool DataWriter::assert_liveliness()
     writer_->setLivelinessAsserted(true);
     return true;
 }
+
+} // namespace fastdds
+} // namespace eprosima

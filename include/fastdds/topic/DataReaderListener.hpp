@@ -32,6 +32,9 @@ namespace fastrtps {
 namespace rtps {
 class MatchingInfo;
 } /* namespace rtps */
+} /* namespace fastrtps */
+
+namespace fastdds {
 
 class DataReader;
 
@@ -65,7 +68,7 @@ class RTPS_DllAPI DataReaderListener
          */
         virtual void on_subscription_matched(
                 DataReader* reader,
-                rtps::MatchingInfo& info)
+                fastrtps::rtps::MatchingInfo& info)
         {
             (void)reader;
             (void)info;
@@ -78,7 +81,7 @@ class RTPS_DllAPI DataReaderListener
          */
         virtual void on_requested_deadline_missed(
                 DataReader* reader,
-                const RequestedDeadlineMissedStatus& status)
+                const fastrtps::RequestedDeadlineMissedStatus& status)
         {
             (void)reader;
             (void)status;
@@ -91,7 +94,7 @@ class RTPS_DllAPI DataReaderListener
          */
         virtual void on_liveliness_changed(
                 DataReader* reader,
-                const LivelinessChangedStatus& status)
+                const fastrtps::LivelinessChangedStatus& status)
         {
             (void)reader;
             (void)status;
@@ -104,7 +107,7 @@ class RTPS_DllAPI DataReaderListener
          */
         virtual void on_sample_rejected(
                 DataReader* reader,
-                const SampleRejectedStatus& status)
+                const fastrtps::SampleRejectedStatus& status)
         {
             (void)reader;
             (void)status;
@@ -117,7 +120,7 @@ class RTPS_DllAPI DataReaderListener
          */
         virtual void on_requested_incompatible_qos(
                 DataReader* reader,
-                const RequestedIncompatibleQosStatus& status)
+                const fastrtps::RequestedIncompatibleQosStatus& status)
         {
             (void)reader;
             (void)status;
@@ -130,14 +133,14 @@ class RTPS_DllAPI DataReaderListener
          */
         virtual void on_sample_rejected(
                 DataReader* reader,
-                const SampleLostStatus& status)
+                const fastrtps::SampleLostStatus& status)
         {
             (void)reader;
             (void)status;
         }
 };
 
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* _FASTRTPS_DATAREADERLISTENER_H_ */

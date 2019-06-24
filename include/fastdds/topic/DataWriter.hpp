@@ -48,6 +48,10 @@ class PublisherListener;
 class PublisherImpl;
 class Publisher;
 
+} // namespace fastrtps
+
+namespace fastdds {
+
 /**
  * Class DataWriter, contains the actual implementation of the behaviour of the DataWriter.
  * @ingroup FASTRTPS_MODULE
@@ -61,12 +65,12 @@ class DataWriter
      * Don't use directly, create Publisher using DomainRTPSParticipant static function.
      */
     DataWriter(
-            PublisherImpl* p,
-            TopicDataType* topic,
-            const TopicAttributes& topic_att,
-            const rtps::WriterAttributes& att,
-            const WriterQos& qos,
-            PublisherHistory&& history,
+            fastrtps::PublisherImpl* p,
+            fastrtps::TopicDataType* topic,
+            const fastrtps::TopicAttributes& topic_att,
+            const fastrtps::rtps::WriterAttributes& att,
+            const fastrtps::WriterQos& qos,
+            fastrtps::PublisherHistory&& history,
             DataWriterListener* listener = nullptr);
 
 public:
@@ -93,7 +97,7 @@ public:
      */
     bool write(
             void* data,
-            rtps::WriteParams& params);
+            fastrtps::rtps::WriteParams& params);
 
     /**
      * Write data with handle.
@@ -105,7 +109,7 @@ public:
      */
     bool write(
             void* data,
-            const rtps::InstanceHandle_t& handle);
+            const fastrtps::rtps::InstanceHandle_t& handle);
 
     /**
      *
@@ -114,7 +118,7 @@ public:
      * @return
      */
     bool create_new_change(
-            rtps::ChangeKind_t kind,
+            fastrtps::rtps::ChangeKind_t kind,
             void* data);
 
     /**
@@ -125,9 +129,9 @@ public:
      * @return
      */
     bool create_new_change_with_params(
-            rtps::ChangeKind_t kind,
+            fastrtps::rtps::ChangeKind_t kind,
             void* data,
-            rtps::WriteParams& wparams);
+            fastrtps::rtps::WriteParams& wparams);
 
     /**
      *
@@ -138,10 +142,10 @@ public:
      * @return
      */
     bool create_new_change_with_params(
-            rtps::ChangeKind_t kind,
+            fastrtps::rtps::ChangeKind_t kind,
             void* data,
-            rtps::WriteParams& wparams,
-            const rtps::InstanceHandle_t& handle);
+            fastrtps::rtps::WriteParams& wparams,
+            const fastrtps::rtps::InstanceHandle_t& handle);
 
     /**
      * Removes the cache change with the minimum sequence number
@@ -161,38 +165,38 @@ public:
      *
      * @return
      */
-    const rtps::GUID_t& guid();
+    const fastrtps::rtps::GUID_t& guid();
 
     /**
      * Get topic data type
      * @return Topic data type
      */
-    const TopicDataType* get_type() const
+    const fastrtps::TopicDataType* get_type() const
     {
         return type_;
     }
 
     bool wait_for_acknowledgments(
-            const Duration_t& max_wait);
+            const fastrtps::Duration_t& max_wait);
 
     /**
      * @brief Returns the offered deadline missed status
      * @param Deadline missed status struct
      */
     void get_offered_deadline_missed_status(
-            OfferedDeadlineMissedStatus& status);
+            fastrtps::OfferedDeadlineMissedStatus& status);
 
-    bool set_attributes(const rtps::WriterAttributes& att);
+    bool set_attributes(const fastrtps::rtps::WriterAttributes& att);
 
-    const rtps::WriterAttributes& get_attributes() const;
+    const fastrtps::rtps::WriterAttributes& get_attributes() const;
 
-    bool set_qos(const WriterQos& qos);
+    bool set_qos(const fastrtps::WriterQos& qos);
 
-    const WriterQos& get_qos() const;
+    const fastrtps::WriterQos& get_qos() const;
 
-    bool set_topic(const TopicAttributes& att);
+    bool set_topic(const fastrtps::TopicAttributes& att);
 
-    const TopicAttributes& get_topic() const;
+    const fastrtps::TopicAttributes& get_topic() const;
 
     const DataWriterListener* get_listener() const;
 
@@ -200,17 +204,17 @@ public:
 
     bool get_key_value(
             void* key_holder,
-            const rtps::InstanceHandle_t& handle);
+            const fastrtps::rtps::InstanceHandle_t& handle);
 
     bool dispose(
             void* data,
-            const rtps::InstanceHandle_t& handle);
+            const fastrtps::rtps::InstanceHandle_t& handle);
 
     bool dispose(
             void* data);
 
     bool get_liveliness_lost_status(
-            LivelinessLostStatus& status)
+            fastrtps::LivelinessLostStatus& status)
     {
         // Not implemented
         (void)status;
@@ -218,40 +222,40 @@ public:
     }
 
     bool get_offered_incompatible_qos_status(
-            OfferedIncompatibleQosStatus& status)
+            fastrtps::OfferedIncompatibleQosStatus& status)
     {
         // Not implemented
         (void)status;
         return false;
     }
 
-    const Publisher* get_publisher() const;
+    const fastrtps::Publisher* get_publisher() const;
 
     bool assert_liveliness();
 
 private:
-    PublisherImpl* publisher_;
+    fastrtps::PublisherImpl* publisher_;
 
     //! Pointer to the associated Data Writer.
-    rtps::RTPSWriter* writer_;
+    fastrtps::rtps::RTPSWriter* writer_;
 
     //! Pointer to the TopicDataType object.
-    TopicDataType* type_;
+    fastrtps::TopicDataType* type_;
 
-    TopicAttributes topic_att_;
+    fastrtps::TopicAttributes topic_att_;
 
-    rtps::WriterAttributes w_att_;
+    fastrtps::rtps::WriterAttributes w_att_;
 
-    WriterQos qos_;
+    fastrtps::WriterQos qos_;
 
     //!Publisher History
-    PublisherHistory history_;
+    fastrtps::PublisherHistory history_;
 
     //! DataWriterListener
     DataWriterListener* listener_;
 
     //!Listener to capture the events of the Writer
-    class InnerDataWriterListener : public rtps::WriterListener
+    class InnerDataWriterListener : public fastrtps::rtps::WriterListener
     {
         public:
             InnerDataWriterListener(
@@ -263,12 +267,12 @@ private:
             virtual ~InnerDataWriterListener() override {}
 
             void on_writer_matched(
-                    rtps::RTPSWriter* writer,
-                    rtps::MatchingInfo& info) override;
+                    fastrtps::rtps::RTPSWriter* writer,
+                    fastrtps::rtps::MatchingInfo& info) override;
 
             void on_writer_change_received_by_all(
-                    rtps::RTPSWriter* writer,
-                    rtps::CacheChange_t* change) override;
+                    fastrtps::rtps::RTPSWriter* writer,
+                    fastrtps::rtps::CacheChange_t* change) override;
 
             DataWriter* data_writer_;
     } writer_listener_;
@@ -276,19 +280,19 @@ private:
     uint32_t high_mark_for_frag_;
 
     //! A timer used to check for deadlines
-    rtps::TimedCallback deadline_timer_;
+    fastrtps::rtps::TimedCallback deadline_timer_;
 
     //! Deadline duration in microseconds
     std::chrono::duration<double, std::ratio<1,1000000>> deadline_duration_us_;
 
     //! The current timer owner, i.e. the instance which started the deadline timer
-    rtps::InstanceHandle_t timer_owner_;
+    fastrtps::rtps::InstanceHandle_t timer_owner_;
 
     //! The offered deadline missed status
-    OfferedDeadlineMissedStatus deadline_missed_status_;
+    fastrtps::OfferedDeadlineMissedStatus deadline_missed_status_;
 
     //! A timed callback to remove expired samples for lifespan QoS
-    rtps::TimedCallback lifespan_timer_;
+    fastrtps::rtps::TimedCallback lifespan_timer_;
 
     //! The lifespan duration, in microseconds
     std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
@@ -309,17 +313,17 @@ private:
     void lifespan_expired();
 
     bool check_new_change_preconditions(
-            rtps::ChangeKind_t change_kind,
+            fastrtps::rtps::ChangeKind_t change_kind,
             void* data);
 
     bool perform_create_new_change(
-            rtps::ChangeKind_t change_kind,
+            fastrtps::rtps::ChangeKind_t change_kind,
             void* data,
-            rtps::WriteParams& wparams,
-            const rtps::InstanceHandle_t& handle);
+            fastrtps::rtps::WriteParams& wparams,
+            const fastrtps::rtps::InstanceHandle_t& handle);
 };
 
-} /* namespace  */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif //_FASTRTPS_DATAWRITER_HPP_
