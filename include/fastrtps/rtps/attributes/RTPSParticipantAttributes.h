@@ -38,7 +38,7 @@ namespace rtps {
 
 
 //!PDP subclass choice
-typedef enum PDPType
+typedef enum DiscoveryProtocol
 {
     NONE,
     /*!<
@@ -63,7 +63,7 @@ typedef enum PDPType
     BACKUP  /*!< The participant will behave as a server concerning discovery operation.
                  Discovery operation persist on a file (discovery handshake wouldn't repeat if shutdown). */
 
-} PDPType_t;
+} DiscoveryProtocol_t;
 
 //! PDP factory for EXTERNAL type
 class PDP;
@@ -136,7 +136,7 @@ class BuiltinAttributes
 {
     public:
         //! Chosen discovery protocol
-        PDPType_t discoveryProtocol;
+        DiscoveryProtocol_t discoveryProtocol;
 
         //!Indicates to use the WriterLiveliness protocol.
         bool use_WriterLivelinessProtocol;
@@ -204,7 +204,7 @@ class BuiltinAttributes
 
         BuiltinAttributes()
         {
-            discoveryProtocol = PDPType_t::SIMPLE;
+            discoveryProtocol = DiscoveryProtocol_t::SIMPLE;
             use_SIMPLE_EndpointDiscoveryProtocol = true;
             use_STATIC_EndpointDiscoveryProtocol = false;
             discoveryServer_client_syncperiod.nanosec = 450 * 1000000; // 450 milliseconds

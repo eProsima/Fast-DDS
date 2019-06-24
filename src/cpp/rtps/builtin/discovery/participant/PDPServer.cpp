@@ -258,7 +258,7 @@ void PDPServer::initializeParticipantProxyData(ParticipantProxyData* participant
 {
     PDP::initializeParticipantProxyData(participant_data); // TODO: Remember that the PDP version USES security
 
-    if (!(getRTPSParticipant()->getAttributes().builtin.discoveryProtocol != PDPType_t::CLIENT))
+    if (!(getRTPSParticipant()->getAttributes().builtin.discoveryProtocol != DiscoveryProtocol_t::CLIENT))
     {
         logError(RTPS_PDP, "Using a PDP Server object with another user's settings");
     }

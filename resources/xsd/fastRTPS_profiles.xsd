@@ -263,7 +263,7 @@
         </xs:all>
     </xs:complexType>
 
-    <xs:simpleType name="PDPType">
+    <xs:simpleType name="DiscoveryProtocol">
         <xs:restriction base="xs:string">
             <xs:enumeration value="NONE"/>
             <xs:enumeration value="SIMPLE"/>
@@ -309,7 +309,7 @@
 
     <xs:complexType name="builtinAttributesType">
         <xs:all minOccurs="0">
-            <xs:element name="discoveryProtocol" type="PDPType" minOccurs="0"/>
+            <xs:element name="discoveryProtocol" type="DiscoveryProtocol" minOccurs="0"/>
             <xs:element name="use_WriterLivelinessProtocol" type="boolType" minOccurs="0"/>
             <xs:element name="EDP" type="EDPType" minOccurs="0"/>
             <xs:element name="domainId" type="uint32Type" minOccurs="0"/>

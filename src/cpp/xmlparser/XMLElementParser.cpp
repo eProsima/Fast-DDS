@@ -29,7 +29,7 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
     /*
     <xs:complexType name="builtinAttributesType">
         <xs:all minOccurs="0">
-            <xs:element name="discoveryProtocol" type="PDPType" minOccurs="0"/>
+            <xs:element name="discoveryProtocol" type="DiscoveryProtocol" minOccurs="0"/>
             <xs:element name="use_WriterLivelinessProtocol" type="boolType" minOccurs="0"/>
             <xs:element name="EDP" type="EDPType" minOccurs="0"/>
             <xs:element name="domainId" type="uint32Type" minOccurs="0"/>
@@ -55,7 +55,7 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
         name = p_aux0->Name();
         if (strcmp(name, RTPS_PDP_TYPE) == 0)
         {
-            // discoveryProtocol - PDPType
+            // discoveryProtocol - DiscoveryProtocol
             if (XMLP_ret::XML_OK != getXMLEnum(p_aux0, &builtin.discoveryProtocol, ident))
                 return XMLP_ret::XML_ERROR;
         }
@@ -2322,10 +2322,10 @@ XMLP_ret XMLParser::getXMLBool(tinyxml2::XMLElement *elem, bool *b, uint8_t /*id
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, PDPType_t * e, uint8_t /*ident*/)
+XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, DiscoveryProtocol_t * e, uint8_t /*ident*/)
 {
     /*
-    	<xs:simpleType name="PDPType">
+    	<xs:simpleType name="DiscoveryProtocol">
             <xs:restriction base="xs:string">
                 <xs:enumeration value="NONE"/>
                 <xs:enumeration value="SIMPLE"/>
@@ -2350,23 +2350,23 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, PDPType_t * e, uint8_
     }
     else if (strcmp(text, NONE) == 0)
     {
-        *e = PDPType_t::NONE;
+        *e = DiscoveryProtocol_t::NONE;
     }
     else if (strcmp(text, SIMPLE) == 0)
     {
-        *e = PDPType_t::SIMPLE;
+        *e = DiscoveryProtocol_t::SIMPLE;
     }
     else if (strcmp(text, CLIENT) == 0)
     {
-        *e = PDPType_t::CLIENT;
+        *e = DiscoveryProtocol_t::CLIENT;
     }
     else if (strcmp(text, SERVER) == 0)
     {
-        *e = PDPType_t::SERVER;
+        *e = DiscoveryProtocol_t::SERVER;
     }
     else if (strcmp(text, BACKUP) == 0)
     {
-        *e = PDPType_t::BACKUP;
+        *e = DiscoveryProtocol_t::BACKUP;
     }
     else
     {

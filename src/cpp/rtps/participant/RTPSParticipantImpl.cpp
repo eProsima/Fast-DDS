@@ -108,9 +108,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     // Workaround TCP discovery issues when register
     switch (PParam.builtin.discoveryProtocol)
     {
-    case PDPType::CLIENT:
-    case PDPType::SERVER:
-    case PDPType::BACKUP:
+    case DiscoveryProtocol::CLIENT:
+    case DiscoveryProtocol::SERVER:
+    case DiscoveryProtocol::BACKUP:
         // Verify if listening ports are provided
         for (auto& transportDescriptor : PParam.userTransports)
         {

@@ -54,7 +54,7 @@ class ResendParticipantProxyDataPeriod;
  * It also keeps the Participant Discovery Data and provides interfaces to access it
  *@ingroup DISCOVERY_MODULE
  */
-class PDP  
+class PDP
 {
     friend class ResendRTPSParticipantProxyDataPeriod;
     friend class RemoteRTPSParticipantLeaseDuration;
@@ -236,7 +236,7 @@ class PDP
     {
         return m_participantProxies.begin();
     };
-    
+
     /**
      * Get a cons_iterator to the end RTPSParticipant Proxies.
      * @return const_iterator.

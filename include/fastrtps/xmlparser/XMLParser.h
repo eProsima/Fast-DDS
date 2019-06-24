@@ -470,7 +470,7 @@ class XMLParser
 
     RTPS_DllAPI static XMLP_ret getXMLEnum(
         tinyxml2::XMLElement* elem,
-        rtps::PDPType_t * e,
+        rtps::DiscoveryProtocol_t * e,
         uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLList(

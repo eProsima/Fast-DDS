@@ -82,27 +82,27 @@ bool BuiltinProtocols::initBuiltinProtocols(
     // PDP
     switch (m_att.discoveryProtocol)
     {
-        case PDPType_t::NONE:
+        case DiscoveryProtocol_t::NONE:
             logWarning(RTPS_PDP, "No participant discovery protocol specified");
             return false;
 
-        case PDPType_t::SIMPLE:
+        case DiscoveryProtocol_t::SIMPLE:
             mp_PDP = new PDPSimple(this);
             break;
 
-        case PDPType_t::EXTERNAL:
+        case DiscoveryProtocol_t::EXTERNAL:
             logError(RTPS_PDP, "Flag only present for debugging purposes");
             break;
 
-        case PDPType_t::CLIENT:
+        case DiscoveryProtocol_t::CLIENT:
             mp_PDP = new PDPClient(this);
             break;
 
-        case PDPType_t::SERVER:
+        case DiscoveryProtocol_t::SERVER:
             mp_PDP = new PDPServer(this, DurabilityKind_t::TRANSIENT_LOCAL);
             break;
 
-        case PDPType_t::BACKUP:
+        case DiscoveryProtocol_t::BACKUP:
             mp_PDP = new PDPServer(this, DurabilityKind_t::TRANSIENT);
             break;
     }
