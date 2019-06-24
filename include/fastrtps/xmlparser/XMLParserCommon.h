@@ -225,6 +225,7 @@ extern const char* CLIENT;
 extern const char* SERVER;
 extern const char* BACKUP;
 extern const char* WRITER_LVESS_PROTOCOL;
+extern const char* DISCOVERY_SETTINGS;
 extern const char* _EDP;
 extern const char* DOMAIN_ID;
 extern const char* LEASEDURATION;

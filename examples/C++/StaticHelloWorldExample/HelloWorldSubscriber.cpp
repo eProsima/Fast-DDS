@@ -37,9 +37,9 @@ bool HelloWorldSubscriber::init()
 {
     ParticipantAttributes PParam;
    PParam.rtps.setName("HelloWorldSubscriber");
-    PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
-    PParam.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
-    PParam.rtps.builtin.setStaticEndpointXMLFilename("HelloWorldPublisher.xml");
+    PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = false;
+    PParam.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol = true;
+    PParam.rtps.builtin.discovery_config.setStaticEndpointXMLFilename("HelloWorldPublisher.xml");
     mp_participant = Domain::createParticipant(PParam);
     if(mp_participant==nullptr)
         return false;

@@ -86,7 +86,7 @@ bool BenchMarkPublisher::init(int transport, ReliabilityQosPolicyKind reliabilit
     ParticipantAttributes PParam;
     PParam.rtps.builtin.domainId = domain;
     PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-    PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(1, 0);
+    PParam.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
     PParam.rtps.setName("Participant_pub");
 
     if (transport == 1)

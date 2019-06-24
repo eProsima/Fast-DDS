@@ -438,6 +438,11 @@ class XMLParser
         rtps::PortParameters& port,
         uint8_t ident);
 
+    RTPS_DllAPI static XMLP_ret getXMLDiscoverySettings(
+        tinyxml2::XMLElement* elem,
+        rtps::DiscoverySettings& settings,
+        uint8_t ident);
+
     RTPS_DllAPI static XMLP_ret getXMLBuiltinAttributes(
         tinyxml2::XMLElement* elem,
         rtps::BuiltinAttributes& builtin,

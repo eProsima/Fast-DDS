@@ -22,21 +22,23 @@
             <sendSocketBufferSize>32</sendSocketBufferSize>
             <listenSocketBufferSize>1000</listenSocketBufferSize>
             <builtin>
-                <discoveryProtocol>SIMPLE</discoveryProtocol>
+                <discovery_config>
+                    <discoveryProtocol>SIMPLE</discoveryProtocol>
+                    <EDP>SIMPLE</EDP>
+                    <leaseAnnouncement>
+                        <sec>10</sec>
+                        <nanosec>333</nanosec>
+                    </leaseAnnouncement>
+                    <simpleEDP>
+                        <PUBWRITER_SUBREADER>false</PUBWRITER_SUBREADER>
+                        <PUBREADER_SUBWRITER>true</PUBREADER_SUBWRITER>
+                    </simpleEDP>
+                </discovery_config>
                 <use_WriterLivelinessProtocol>false</use_WriterLivelinessProtocol>
-                <EDP>SIMPLE</EDP>
                 <domainId>2019102</domainId>
                 <leaseDuration>
                     <sec>DURATION_INFINITY</sec>
                 </leaseDuration>
-                <leaseAnnouncement>
-                    <sec>10</sec>
-                    <nanosec>333</nanosec>
-                </leaseAnnouncement>
-                <simpleEDP>
-                    <PUBWRITER_SUBREADER>false</PUBWRITER_SUBREADER>
-                    <PUBREADER_SUBWRITER>true</PUBREADER_SUBWRITER>
-                </simpleEDP>
                 <metatrafficUnicastLocatorList>
                     <locator>
                         <udpv4>

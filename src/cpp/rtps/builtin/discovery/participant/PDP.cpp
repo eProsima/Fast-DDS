@@ -208,7 +208,7 @@ bool PDP::initPDP(
     }
 
     mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this,
-        TimeConv::Duration_t2MilliSecondsDouble(m_discovery.leaseDuration_announcementperiod));
+        TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discovery_config.leaseDuration_announcementperiod));
 
     return true;
 }

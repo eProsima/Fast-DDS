@@ -86,7 +86,7 @@ bool PDPServer::initPDP(RTPSParticipantImpl* part)
         discoveryServer_client_syncperiod parameter has a context defined meaning.
     */
     mp_sync = new DServerEvent(this,
-        TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discoveryServer_client_syncperiod));
+        TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discovery_config.discoveryServer_client_syncperiod));
     awakeServerThread(); 
     // the timer is also restart from removeRemoteParticipant, remove(Publisher|Subscriber)FromHistory
     // and queueParticipantForEDPMatch
@@ -258,18 +258,18 @@ void PDPServer::initializeParticipantProxyData(ParticipantProxyData* participant
 {
     PDP::initializeParticipantProxyData(participant_data); // TODO: Remember that the PDP version USES security
 
-    if (!(getRTPSParticipant()->getAttributes().builtin.discoveryProtocol != DiscoveryProtocol_t::CLIENT))
+    if (!(getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::CLIENT))
     {
         logError(RTPS_PDP, "Using a PDP Server object with another user's settings");
     }
 
-    if (getRTPSParticipant()->getAttributes().builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
+    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
     {
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
     }
 
-    if (getRTPSParticipant()->getAttributes().builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
+    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
     {
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
@@ -841,31 +841,39 @@ bool PDPServer::removeRemoteParticipant(GUID_t& partGUID)
         return false;
     }
 
-    // Notify everybody of this demise if it's a lease Duration one
-    CacheChange_t *pC;
+    {
+        // prevent mp_PDPReaderHistory from been clean up by the PDPServerListener
+        std::lock_guard<std::recursive_timed_mutex> lock(mp_PDPReader->getMutex());
 
-    // Check if the DATA(p[UD]) is already in Reader
-    if (!mp_PDPReaderHistory->get_max_change(&pC))
-    {   // We must create the DATA(p[UD])
-        if ((pC = mp_PDPWriter->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE; },
-            NOT_ALIVE_DISPOSED_UNREGISTERED, info.m_key)))
-        {
-            // Use this server identity in order to hint clients it's a lease duration demise
-            WriteParams wp;
-            SampleIdentity local;
-            local.writer_guid(mp_PDPWriter->getGuid());
-            local.sequence_number(mp_PDPWriterHistory->next_sequence_number());
-            wp.sample_identity(local);
-            wp.related_sample_identity(local);
+        // Notify everybody of this demise if it's a lease Duration one
+        CacheChange_t *pC;
 
-            if (mp_PDPWriterHistory->add_change(pC, wp))
+        // Check if the DATA(p[UD]) is already in Reader
+        if (!mp_PDPReaderHistory->get_max_change(&pC) && 
+                pC->kind == NOT_ALIVE_DISPOSED_UNREGISTERED && // last message received is aun DATA(p[UD])
+                pC->instanceHandle == info.m_key) // from the same participant I'm going to report
+        {   // We must create the DATA(p[UD])
+            if ((pC = mp_PDPWriter->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE; },
+                NOT_ALIVE_DISPOSED_UNREGISTERED, info.m_key)))
             {
-                // Impersonate
-                pC->writerGUID = GUID_t(info.m_guid.guidPrefix, c_EntityId_SPDPWriter);
+                // Use this server identity in order to hint clients it's a lease duration demise
+                WriteParams wp;
+                SampleIdentity local;
+                local.writer_guid(mp_PDPWriter->getGuid());
+                local.sequence_number(mp_PDPWriterHistory->next_sequence_number());
+                wp.sample_identity(local);
+                wp.related_sample_identity(local);
 
-                logInfo(RTPS_PDP, "Server created a DATA(p[UD]) for a lease duration casualty.")
+                if (mp_PDPWriterHistory->add_change(pC, wp))
+                {
+                    // Impersonate
+                    pC->writerGUID = GUID_t(info.m_guid.guidPrefix, c_EntityId_SPDPWriter);
+
+                    logInfo(RTPS_PDP, "Server created a DATA(p[UD]) for a lease duration casualty.")
+                }
             }
         }
+
     }
     
     // Trigger the WriterHistory cleaning mechanism of demised participants DATA. Note that

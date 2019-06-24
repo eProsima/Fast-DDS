@@ -77,10 +77,10 @@ bool BuiltinProtocols::initBuiltinProtocols(
     m_metatrafficUnicastLocatorList = m_att.metatrafficUnicastLocatorList;
     m_metatrafficMulticastLocatorList = m_att.metatrafficMulticastLocatorList;
     m_initialPeersList = m_att.initialPeersList;
-    m_DiscoveryServers = m_att.m_DiscoveryServers;
+    m_DiscoveryServers = m_att.discovery_config.m_DiscoveryServers;
 
     // PDP
-    switch (m_att.discoveryProtocol)
+    switch (m_att.discovery_config.discoveryProtocol)
     {
         case DiscoveryProtocol_t::NONE:
             logWarning(RTPS_PDP, "No participant discovery protocol specified");

@@ -57,7 +57,7 @@ bool EDPServer::createSEDPEndpoints()
     PDPServer * pPDP = dynamic_cast<PDPServer*>(mp_PDP);
     assert(pPDP);
 
-    if(m_discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
+    if(m_discovery.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
     {
         hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
@@ -125,7 +125,7 @@ bool EDPServer::createSEDPEndpoints()
             subscriptions_reader_.second = nullptr;
         }
     }
-    if(m_discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
+    if(m_discovery.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
     {
         hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;

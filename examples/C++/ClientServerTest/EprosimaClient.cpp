@@ -59,10 +59,10 @@ bool EprosimaClient::init()
 	//CREATE RTPSParticipant
 	ParticipantAttributes PParam;
 	PParam.rtps.builtin.domainId = 80;
-	PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.rtps.builtin.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
-	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+	PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
+	PParam.rtps.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
+	PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+	PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
 	PParam.rtps.setName( "client_RTPSParticipant");
 	mp_participant = Domain::createParticipant(PParam);

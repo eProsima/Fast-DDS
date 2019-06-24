@@ -102,32 +102,32 @@ void PDPClient::initializeParticipantProxyData(ParticipantProxyData* participant
 {
     PDP::initializeParticipantProxyData(participant_data); // TODO: Remember that the PDP version USES security
 
-    if(getRTPSParticipant()->getAttributes().builtin.discoveryProtocol != DiscoveryProtocol_t::CLIENT)
+    if(getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol != DiscoveryProtocol_t::CLIENT)
     {
         logError(RTPS_PDP, "Using a PDP client object with another user's settings");
     }
 
-    if (getRTPSParticipant()->getAttributes().builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
+    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
     {
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
     }
 
-    if (getRTPSParticipant()->getAttributes().builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
+    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
     {
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
     }
 
 //#if HAVE_SECURITY
-//    if (getRTPSParticipant()->getAttributes().builtin.m_simpleEDP
+//    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP
 //    .enable_builtin_secure_publications_writer_and_subscriptions_reader)
 //    {
 //        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
 //        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
 //    }
 //
-//    if (getRTPSParticipant()->getAttributes().builtin.m_simpleEDP
+//    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP
 //    .enable_builtin_secure_subscriptions_writer_and_publications_reader)
 //    {
 //        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
@@ -156,7 +156,7 @@ bool PDPClient::initPDP(RTPSParticipantImpl* part)
         return false;
     }
 
-    mp_sync = new DSClientEvent(this, TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discoveryServer_client_syncperiod));
+    mp_sync = new DSClientEvent(this, TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discovery_config.discoveryServer_client_syncperiod));
     mp_sync->restart_timer();
 
     return true;

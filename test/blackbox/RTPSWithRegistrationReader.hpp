@@ -110,7 +110,7 @@ class RTPSWithRegistrationReader
         void init()
         {
             eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
-            pattr.builtin.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
+            pattr.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
             pattr.builtin.use_WriterLivelinessProtocol = true;
             pattr.builtin.domainId = (uint32_t)GET_PID() % 230;
             participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant(pattr);

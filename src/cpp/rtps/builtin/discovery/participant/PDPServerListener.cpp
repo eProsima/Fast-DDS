@@ -128,6 +128,8 @@ void PDPServerListener::onNewCacheChangeAdded(
                 pdata->isAlive = true;
                 lock.unlock();
 
+                // Included for symmetry with PDPListener to profit from a future updateInfoMatchesEDP override
+                // right now servers doesn't need to modify EDP on updates
                 if (mp_PDP->updateInfoMatchesEDP())
                 {
                     mp_PDP->mp_EDP->assignRemoteEndpoints(*pdata);

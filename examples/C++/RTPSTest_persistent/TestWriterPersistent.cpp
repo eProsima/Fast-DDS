@@ -57,7 +57,7 @@ bool TestWriterPersistent::init()
 {
 	//CREATE PARTICIPANT
 	RTPSParticipantAttributes PParam;
-	PParam.builtin.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
+	PParam.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
 	PParam.builtin.use_WriterLivelinessProtocol = true;
 	mp_participant = RTPSDomain::createParticipant(PParam);
 	if(mp_participant==nullptr)

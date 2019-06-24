@@ -106,7 +106,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     }
 
     // Workaround TCP discovery issues when register
-    switch (PParam.builtin.discoveryProtocol)
+    switch (PParam.builtin.discovery_config.discoveryProtocol)
     {
     case DiscoveryProtocol::CLIENT:
     case DiscoveryProtocol::SERVER:
@@ -1033,7 +1033,7 @@ void RTPSParticipantImpl::loose_next_change()
 
 bool RTPSParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId, EndpointKind_t kind)
 {
-    if (m_att.builtin.use_STATIC_EndpointDiscoveryProtocol == false)
+    if (m_att.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol == false)
     {
         logWarning(RTPS_PARTICIPANT, "Remote Endpoints can only be activated with static discovery protocol");
         return false;

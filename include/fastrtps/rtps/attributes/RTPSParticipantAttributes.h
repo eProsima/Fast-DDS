@@ -128,6 +128,88 @@ public:
 };
 
 /**
+ * Class DiscoverySettings, to define the attributes of the several discovery protocols available
+ * @ingroup RTPS_ATTRIBUTES_MODULE
+ */
+
+class DiscoverySettings
+{
+public:
+    //! Chosen discovery protocol
+    DiscoveryProtocol_t discoveryProtocol;
+
+    /**
+     * If set to true, SimpleEDP would be used.
+     */
+    bool use_SIMPLE_EndpointDiscoveryProtocol;
+
+    /**
+     * If set to true, StaticEDP based on an XML file would be implemented.
+     * The XML filename must be provided.
+     */
+    bool use_STATIC_EndpointDiscoveryProtocol;
+
+    /**
+     * The period for the RTPSParticipant to send its Discovery Message to all other discovered RTPSParticipants
+     * as well as to all Multicast ports.
+     */
+    Duration_t leaseDuration_announcementperiod;
+
+    //!Attributes of the SimpleEDP protocol
+    SimpleEDPAttributes m_simpleEDP;
+
+    //! function that returns a PDP object (only if EXTERNAL selected)
+    PDPFactory m_PDPfactory{};
+    /**
+     * The period for the RTPSParticipant to:
+     *  send its Discovery Message to its servers
+     *  check for EDP endpoints matching
+     */
+    Duration_t discoveryServer_client_syncperiod;
+
+    //! Discovery Server settings, only needed if use_CLIENT_DiscoveryProtocol=true
+    RemoteServerList_t  m_DiscoveryServers;
+
+    DiscoverySettings()
+    {
+        discoveryProtocol = DiscoveryProtocol_t::SIMPLE;
+        use_SIMPLE_EndpointDiscoveryProtocol = true;
+        use_STATIC_EndpointDiscoveryProtocol = false;
+        discoveryServer_client_syncperiod.nanosec = 450 * 1000000; // 450 milliseconds
+        m_staticEndpointXMLFilename = "";
+        leaseDuration_announcementperiod.seconds = 40;
+    }
+
+    bool operator==(const DiscoverySettings& b) const
+    {
+        return  (this->use_SIMPLE_EndpointDiscoveryProtocol == b.use_SIMPLE_EndpointDiscoveryProtocol) &&
+                (this->use_STATIC_EndpointDiscoveryProtocol == b.use_STATIC_EndpointDiscoveryProtocol) &&
+                (this->discoveryServer_client_syncperiod == b.discoveryServer_client_syncperiod) &&
+                (this->m_PDPfactory == b.m_PDPfactory) &&
+                (this->leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&
+                (this->m_simpleEDP == b.m_simpleEDP) &&
+                (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename) &&
+                (this->m_DiscoveryServers == b.m_DiscoveryServers);
+    }
+
+    /**
+     * Get the static endpoint XML filename
+     * @return Static endpoint XML filename
+     */
+    const char* getStaticEndpointXMLFilename() const { return m_staticEndpointXMLFilename.c_str(); }
+
+    /**
+     * Set the static endpoint XML filename
+     * @param str Static endpoint XML filename
+     */
+    void setStaticEndpointXMLFilename(const char* str) { m_staticEndpointXMLFilename = std::string(str); }
+
+    private:
+        //! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
+        std::string m_staticEndpointXMLFilename;
+};
+
+/**
  * Class BuiltinAttributes, to define the behavior of the RTPSParticipant builtin protocols.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
@@ -135,22 +217,12 @@ public:
 class BuiltinAttributes
 {
     public:
-        //! Chosen discovery protocol
-        DiscoveryProtocol_t discoveryProtocol;
+
+        //! Discovery protocol related attributes
+        DiscoverySettings discovery_config;
 
         //!Indicates to use the WriterLiveliness protocol.
         bool use_WriterLivelinessProtocol;
-
-        /**
-         * If set to true, SimpleEDP would be used.
-         */
-        bool use_SIMPLE_EndpointDiscoveryProtocol;
-
-        /**
-         * If set to true, StaticEDP based on an XML file would be implemented.
-         * The XML filename must be provided.
-         */
-        bool use_STATIC_EndpointDiscoveryProtocol;
 
         /**
          * DomainId to be used by the RTPSParticipant (80 by default).
@@ -163,15 +235,6 @@ class BuiltinAttributes
          */
         Duration_t leaseDuration;
 
-        /**
-         * The period for the RTPSParticipant to send its Discovery Message to all other discovered RTPSParticipants
-         * as well as to all Multicast ports.
-         */
-        Duration_t leaseDuration_announcementperiod;
-
-        //!Attributes of the SimpleEDP protocol
-        SimpleEDPAttributes m_simpleEDP;
-
         //!Metatraffic Unicast Locator List
         LocatorList_t metatrafficUnicastLocatorList;
 
@@ -180,18 +243,6 @@ class BuiltinAttributes
 
         //! Initial peers.
         LocatorList_t initialPeersList;
-
-        //! function that returns a PDP object (only if EXTERNAL selected)
-        PDPFactory m_PDPfactory{};
-        /**
-         * The period for the RTPSParticipant to:
-         *  send its Discovery Message to its servers
-         *  check for EDP endpoints matching
-         */
-        Duration_t discoveryServer_client_syncperiod;
-
-        //! Discovery Server settings, only needed if use_CLIENT_DiscoveryProtocol=true
-        RemoteServerList_t  m_DiscoveryServers;
 
         //! Memory policy for builtin readers
         MemoryManagementPolicy_t readerHistoryMemoryPolicy;
@@ -204,14 +255,8 @@ class BuiltinAttributes
 
         BuiltinAttributes()
         {
-            discoveryProtocol = DiscoveryProtocol_t::SIMPLE;
-            use_SIMPLE_EndpointDiscoveryProtocol = true;
-            use_STATIC_EndpointDiscoveryProtocol = false;
-            discoveryServer_client_syncperiod.nanosec = 450 * 1000000; // 450 milliseconds
-            m_staticEndpointXMLFilename = "";
             domainId = 0;
             leaseDuration.seconds = 130;
-            leaseDuration_announcementperiod.seconds = 40;
             use_WriterLivelinessProtocol = true;
             readerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
             writerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
@@ -221,41 +266,18 @@ class BuiltinAttributes
 
         bool operator==(const BuiltinAttributes& b) const
         {
-            return (this->discoveryProtocol == b.discoveryProtocol) &&
+            return (this->discovery_config == b.discovery_config) &&
                    (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
-                   (this->use_SIMPLE_EndpointDiscoveryProtocol == b.use_SIMPLE_EndpointDiscoveryProtocol) &&
-                   (this->use_STATIC_EndpointDiscoveryProtocol == b.use_STATIC_EndpointDiscoveryProtocol) &&
-                   (this->discoveryServer_client_syncperiod == b.discoveryServer_client_syncperiod) &&
-                   (this->m_PDPfactory == b.m_PDPfactory) &&
                    (this->domainId == b.domainId) &&
                    (this->leaseDuration == b.leaseDuration) &&
-                   (this->leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&
-                   (this->m_simpleEDP == b.m_simpleEDP) &&
                    (this->metatrafficUnicastLocatorList == b.metatrafficUnicastLocatorList) &&
                    (this->metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&
                    (this->initialPeersList == b.initialPeersList) &&
                    (this->readerHistoryMemoryPolicy == b.readerHistoryMemoryPolicy) &&
                    (this->writerHistoryMemoryPolicy == b.writerHistoryMemoryPolicy) &&
-                   (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename) &&
-                   (this->mutation_tries == b.mutation_tries) &&
-                   (this->m_DiscoveryServers == b.m_DiscoveryServers);
+                   (this->mutation_tries == b.mutation_tries);
         }
 
-        /**
-         * Get the static endpoint XML filename
-         * @return Static endpoint XML filename
-         */
-        const char* getStaticEndpointXMLFilename() const { return m_staticEndpointXMLFilename.c_str(); }
-
-        /**
-         * Set the static endpoint XML filename
-         * @param str Static endpoint XML filename
-         */
-        void setStaticEndpointXMLFilename(const char* str) { m_staticEndpointXMLFilename = std::string(str); }
-
-    private:
-        //! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
-        std::string m_staticEndpointXMLFilename;
 };
 
 /**

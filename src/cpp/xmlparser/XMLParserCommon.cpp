@@ -208,6 +208,7 @@ const char* CLIENT = "CLIENT";
 const char* SERVER = "SERVER";
 const char* BACKUP = "BACKUP";
 const char* WRITER_LVESS_PROTOCOL = "use_WriterLivelinessProtocol";
+const char* DISCOVERY_SETTINGS = "discovery_config";
 const char* _EDP = "EDP";
 const char* DOMAIN_ID = "domainId";
 const char* LEASEDURATION = "leaseDuration";

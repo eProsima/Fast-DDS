@@ -156,7 +156,7 @@ bool EDPSimple::createSEDPEndpoints()
     publications_listener_ = new EDPSimplePUBListener(this);
     subscriptions_listener_ = new EDPSimpleSUBListener(this);
 
-    if(m_discovery.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
+    if(m_discovery.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
     {
         hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
@@ -227,7 +227,7 @@ bool EDPSimple::createSEDPEndpoints()
             subscriptions_reader_.second = nullptr;
         }
     }
-    if(m_discovery.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
+    if(m_discovery.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
     {
         hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
@@ -307,7 +307,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
     auto& part_attr = mp_RTPSParticipant->security_attributes();
     security::PluginParticipantSecurityAttributes plugin_part_attr(part_attr.plugin_participant_attributes);
 
-    if(m_discovery.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader)
+    if(m_discovery.discovery_config.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader)
     {
         hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
@@ -387,7 +387,7 @@ bool EDPSimple::create_sedp_secure_endpoints()
         }
     }
 
-    if(m_discovery.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader)
+    if(m_discovery.discovery_config.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader)
     {
         hatt.initialReservedCaches = edp_initial_reserved_caches;
         hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
