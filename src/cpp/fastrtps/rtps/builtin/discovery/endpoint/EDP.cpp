@@ -33,7 +33,7 @@
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 
-#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/topic/attributes/TopicAttributes.h>
 #include <fastrtps/rtps/common/MatchingInfo.h>
 
 #include <fastrtps/utils/StringMatching.h>

@@ -26,9 +26,9 @@
 #include <fastrtps/qos/WriterQos.h>
 
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
-#include <fastrtps/topic/DataWriterListener.hpp>
+#include <fastdds/topic/DataWriterListener.hpp>
 #include <fastrtps/publisher/PublisherHistory.h>
-#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/topic/attributes/TopicAttributes.h>
 
 #include <fastrtps/rtps/writer/WriterListener.h>
 #include <fastrtps/rtps/timedevent/TimedCallback.h>

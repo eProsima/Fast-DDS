@@ -19,14 +19,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     if(GTEST_FOUND)
         set(PERSISTENCETESTS_SOURCE
             PersistenceTests.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/persistence/PersistenceFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/persistence/SQLite3PersistenceService.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/persistence/sqlite3.c
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/history/CacheChangePool.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/attributes/PropertyPolicy.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/common/Time_t.cpp)
 
         add_executable(PersistenceTests ${PERSISTENCETESTS_SOURCE})
         target_compile_definitions(PersistenceTests PRIVATE FASTRTPS_NO_LIB)

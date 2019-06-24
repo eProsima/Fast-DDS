@@ -53,130 +53,130 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         set(UDPV4TESTS_SOURCE
             UDPv4Tests.cpp
             mock/MockReceiverResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPTransportInterface.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPChannelResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/UDPv4Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/UDPTransportInterface.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/UDPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/network/NetworkFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/eClock.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/common/Time_t.cpp
         )
 
         set(UDPV6TESTS_SOURCE
             UDPv6Tests.cpp
             mock/MockReceiverResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv6Transport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPTransportInterface.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPChannelResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/UDPv6Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/UDPTransportInterface.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/UDPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/network/NetworkFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/eClock.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/common/Time_t.cpp
         )
 
         set(TCPV4TESTS_SOURCE
             TCPv4Tests.cpp
             mock/MockReceiverResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterList.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPv4Transport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPTransportInterface.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResourceBasic.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPAcceptor.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPAcceptorBasic.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/RTCPMessageManager.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/timedevent/TCPKeepAliveEvent.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/System.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/messages/RTPSMessageCreator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/qos/ParameterList.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/qos/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/eClock.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/TCPv4Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/TCPTransportInterface.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/TCPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/TCPChannelResourceBasic.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/TCPAcceptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/TCPAcceptorBasic.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/tcp/RTCPMessageManager.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/tcp/TCPControlMessage.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/timedevent/TCPKeepAliveEvent.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/network/NetworkFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/messages/RTPSMessageCreator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/resources/TimedEvent.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/resources/TimedEventImpl.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/System.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/common/Time_t.cpp
         )
 
         if(TLS_FOUND)
             set(TCPV4TESTS_SOURCE
                 ${TCPV4TESTS_SOURCE}
-                ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResourceSecure.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPAcceptorSecure.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/security/OpenSSLInit.cpp
+                ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/TCPChannelResourceSecure.cpp
+                ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/TCPAcceptorSecure.cpp
+                ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/security/OpenSSLInit.cpp
             )
         endif()
 
         set(TCPV6TESTS_SOURCE
             TCPv6Tests.cpp
             mock/MockReceiverResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterList.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPv6Transport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPTransportInterface.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResourceBasic.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPAcceptor.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPAcceptorBasic.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/RTCPMessageManager.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/tcp/TCPControlMessage.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/timedevent/TCPKeepAliveEvent.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/System.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/messages/RTPSMessageCreator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/qos/ParameterList.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/qos/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/eClock.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/TCPv6Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/TCPTransportInterface.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/TCPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/TCPChannelResourceBasic.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/TCPAcceptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/TCPAcceptorBasic.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/tcp/RTCPMessageManager.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/tcp/TCPControlMessage.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/timedevent/TCPKeepAliveEvent.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/network/NetworkFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/resources/TimedEvent.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/resources/TimedEventImpl.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/System.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/common/Time_t.cpp
         )
 
         if(TLS_FOUND)
             set(TCPV6TESTS_SOURCE
                 ${TCPV6TESTS_SOURCE}
-                ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPChannelResourceSecure.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/transport/TCPAcceptorSecure.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/security/OpenSSLInit.cpp
+                ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/TCPChannelResourceSecure.cpp
+                ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/TCPAcceptorSecure.cpp
+                ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/security/OpenSSLInit.cpp
             )
         endif()
 
         set(TEST_UDPV4TESTS_SOURCE
             test_UDPv4Tests.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterList.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/eClock.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/test_UDPv4Transport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPv4Transport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPTransportInterface.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/ChannelResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/transport/UDPChannelResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/messages/RTPSMessageCreator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/qos/ParameterList.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/qos/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/IPFinder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/IPLocator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/eClock.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/test_UDPv4Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/UDPv4Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/UDPTransportInterface.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/transport/UDPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/network/NetworkFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/common/Time_t.cpp
         )
 
         include_directories(mock/)

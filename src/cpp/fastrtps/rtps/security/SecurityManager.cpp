@@ -22,7 +22,7 @@
 #include <fastrtps/rtps/security/accesscontrol/AccessControl.h>
 #include <fastrtps/rtps/security/accesscontrol/SecurityMaskUtilities.h>
 #include <fastrtps/log/Log.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastrtps/rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 
 #include <fastrtps/rtps/writer/StatelessWriter.h>

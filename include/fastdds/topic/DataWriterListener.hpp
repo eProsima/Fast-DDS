@@ -19,10 +19,10 @@
 #ifndef _FASTRTPS_DATAWRITERLISTENER_H_
 #define _FASTRTPS_DATAWRITERLISTENER_H_
 
-#include "../rtps/common/Types.h"
-#include "../rtps/common/MatchingInfo.h"
-#include "../qos/DeadlineMissedStatus.h"
-#include "../qos/LivelinessLostStatus.h"
+#include "../../fastrtps/rtps/common/Types.h"
+#include "../../fastrtps/rtps/common/MatchingInfo.h"
+#include "../../fastrtps/qos/DeadlineMissedStatus.h"
+#include "../../fastrtps/qos/LivelinessLostStatus.h"
 
 namespace eprosima {
 namespace fastrtps {

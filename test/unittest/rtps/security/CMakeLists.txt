@@ -25,20 +25,20 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(${ASIO_INCLUDE_DIR})
 
         set(SOURCES_SECURITY_TEST_SOURCE
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Token.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/exceptions/Exception.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/SecurityManager.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/exceptions/SecurityException.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/timedevent/HandshakeMessageTokenResent.cpp
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityPluginFactory/rtps/security/SecurityPluginFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/attributes/PropertyPolicy.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/resources/TimedEvent.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/resources/TimedEventImpl.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/resources/ResourceEvent.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/common/Token.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/common/Time_t.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/exceptions/Exception.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/security/SecurityManager.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/security/exceptions/SecurityException.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/security/timedevent/HandshakeMessageTokenResent.cpp
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityPluginFactory/fastrtps/rtps/security/SecurityPluginFactory.cpp
             )
 
         add_executable(SecurityAuthentication ${SOURCES_SECURITY_TEST_SOURCE}

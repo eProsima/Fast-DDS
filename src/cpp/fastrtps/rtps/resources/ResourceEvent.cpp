@@ -22,7 +22,7 @@
 #include <asio.hpp>
 #include <thread>
 #include <functional>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastrtps/rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/log/Log.h>
 
 namespace eprosima {

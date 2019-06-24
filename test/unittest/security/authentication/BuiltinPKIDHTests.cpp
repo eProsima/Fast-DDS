@@ -14,8 +14,8 @@
 
 #include "AuthenticationPluginTests.hpp"
 
-#include "../../../../src/cpp/security/authentication/PKIIdentityHandle.h"
-#include "../../../../src/cpp/security/authentication/PKIHandshakeHandle.h"
+#include "../../../../src/cpp/fastrtps/security/authentication/PKIIdentityHandle.h"
+#include "../../../../src/cpp/fastrtps/security/authentication/PKIHandshakeHandle.h"
 #include <fastrtps/rtps/messages/CDRMessage.h>
 
 #include <openssl/opensslv.h>

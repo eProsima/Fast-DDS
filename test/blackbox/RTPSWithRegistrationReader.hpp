@@ -27,7 +27,7 @@
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/qos/ReaderQos.h>
-#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/topic/attributes/TopicAttributes.h>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>

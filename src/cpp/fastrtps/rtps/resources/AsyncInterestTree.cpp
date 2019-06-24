@@ -15,7 +15,7 @@
 #include <mutex>
 
 #include <fastrtps/rtps/resources/AsyncInterestTree.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastrtps/rtps/participant/RTPSParticipantImpl.h>
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -28,7 +28,7 @@ AsyncInterestTree::AsyncInterestTree():
 void AsyncInterestTree::RegisterInterest(const RTPSWriter* writer)
 {
    std::unique_lock<std::mutex> guard(mMutexHidden);
-   mHiddenInterest->insert(writer); 
+   mHiddenInterest->insert(writer);
 }
 
 void AsyncInterestTree::RegisterInterest(const RTPSParticipantImpl* participant)
@@ -38,7 +38,7 @@ void AsyncInterestTree::RegisterInterest(const RTPSParticipantImpl* participant)
    auto writers = participant->getAllWriters();
 
    for (auto writer : writers)
-      mHiddenInterest->insert(writer); 
+      mHiddenInterest->insert(writer);
 }
 
 void AsyncInterestTree::Swap()

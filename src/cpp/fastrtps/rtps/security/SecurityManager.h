@@ -18,7 +18,7 @@
 #ifndef _RTPS_SECURITY_SECURITYMANAGER_H_
 #define _RTPS_SECURITY_SECURITYMANAGER_H_
 
-#include <rtps/security/SecurityPluginFactory.h>
+#include <fastrtps/rtps/security/SecurityPluginFactory.h>
 
 #include <fastrtps/rtps/security/authentication/Handshake.h>
 #include <fastrtps/rtps/security/common/ParticipantGenericMessage.h>

@@ -21,7 +21,7 @@
 #define _RTPS_BUILTIN_DATA_READERPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include "../../../attributes/TopicAttributes.h"
+#include "../../../topic/attributes/TopicAttributes.h"
 #include "../../../qos/ParameterList.h"
 #include "../../../qos/ReaderQos.h"
 

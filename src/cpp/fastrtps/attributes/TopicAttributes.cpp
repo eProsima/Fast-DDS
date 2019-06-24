@@ -16,7 +16,7 @@
  * @file TopicAttributes.cpp
  */
 
-#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/topic/attributes/TopicAttributes.h>
 #include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps;
