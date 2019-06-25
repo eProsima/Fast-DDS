@@ -42,7 +42,9 @@
 #define S1(x) #x
 #define S2(x) S1(x)
 #define LOCATION " (" __FILE__ ":" S2(__LINE__) ")"
-#define _SecurityException_(ex, str) ex.set_msg(std::string(str) + LOCATION)
+#define _SecurityException_(ex, str) ex.set_msg((str)).append_msg(LOCATION)
+#define _SecurityException_with_info(ex, str, info) ex.set_msg((str)).append_msg((info)).append_msg(LOCATION)
+#define _SecurityException_with_code(ex, str, code) ex.set_msg((str), (code)).append_msg(LOCATION)
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -196,11 +198,17 @@ static X509_STORE* load_identity_ca(const std::string& identity_ca, bool& there_
                     }
                     else
                     {
-                        _SecurityException_(exception, std::string("OpenSSL library cannot read X509 info in file ") + identity_ca.substr(7));
+                        _SecurityException_with_info(
+                            exception,
+                            "OpenSSL library cannot read X509 info in file ",
+                            identity_ca.substr(7).c_str());
                     }
                 }
                 else
-                    _SecurityException_(exception, std::string("OpenSSL library cannot read file ") + identity_ca.substr(7));
+                    _SecurityException_with_info(
+                        exception,
+                        "OpenSSL library cannot read file ",
+                        identity_ca.substr(7).c_str());
 
                 BIO_free(in);
             }
@@ -231,7 +239,10 @@ static X509* load_certificate(const std::string& identity_cert, SecurityExceptio
                 returnedValue = PEM_read_bio_X509_AUX(in, NULL, NULL, NULL);
             }
             else
-                _SecurityException_(exception, std::string("OpenSSL library cannot read file ") + identity_cert.substr(7));
+                _SecurityException_with_info(
+                    exception,
+                    "OpenSSL library cannot read file ",
+                    identity_cert.substr(7).c_str());
 
             BIO_free(in);
         }
@@ -334,13 +345,13 @@ static EVP_PKEY* load_private_key(X509* certificate, const std::string& file, co
                 // Verify private key.
                 if(!X509_check_private_key(certificate, returnedValue))
                 {
-                    _SecurityException_(exception, std::string("Error verifying private key ") + file.substr(7));
+                    _SecurityException_with_info(exception, "Error verifying private key ", file.substr(7).c_str());
                     EVP_PKEY_free(returnedValue);
                     returnedValue = nullptr;
                 }
             }
             else
-                _SecurityException_(exception, std::string("OpenSSL library cannot read file ") + file.substr(7));
+                _SecurityException_with_info(exception, "OpenSSL library cannot read file ", file.substr(7).c_str());
 
             BIO_free(in);
         }
@@ -425,16 +436,16 @@ static bool sign_sha256(EVP_PKEY* private_key, const unsigned char* data, const 
                     returnedValue = true;
                 }
                 else
-                    _SecurityException_(exception, std::string("Cannot finish signature (") + std::to_string(ERR_get_error()) + std::string(")"));
+                    _SecurityException_with_code(exception, "Cannot finish signature", ERR_get_error());
             }
             else
-                _SecurityException_(exception, std::string("Cannot retrieve signature length (") + std::to_string(ERR_get_error()) + std::string(")"));
+                _SecurityException_with_code(exception, "Cannot retrieve signature length", ERR_get_error());
         }
         else
-            _SecurityException_(exception, std::string("Cannot sign data (") + std::to_string(ERR_get_error()) + std::string(")"));
+            _SecurityException_with_code(exception, "Cannot sign data", ERR_get_error());
     }
     else
-        _SecurityException_(exception, std::string("Cannot init signature (") + std::to_string(ERR_get_error()) + std::string(")"));
+        _SecurityException_with_code(exception, "Cannot init signature", ERR_get_error());
 
 #if IS_OPENSSL_1_1
     EVP_MD_CTX_free(ctx);
@@ -483,11 +494,11 @@ static bool check_sign_sha256(X509* certificate, const unsigned char* data, cons
                     logWarning(SECURITY_AUTHENTICATION, "Signature verification error (" << ERR_get_error() << ")");
             }
             else
-                _SecurityException_(exception, std::string("Cannot update signature check (") + std::to_string(ERR_get_error()) + std::string(")"));
+                _SecurityException_with_code(exception, "Cannot update signature check", ERR_get_error());
 
         }
         else
-            _SecurityException_(exception, std::string("Cannot init signature check (") + std::to_string(ERR_get_error()) + std::string(")"));
+            _SecurityException_with_code(exception, "Cannot init signature check", ERR_get_error());
 
         EVP_PKEY_free(pubkey);
     }
@@ -520,7 +531,10 @@ static X509_CRL* load_crl(const std::string& identity_crl, SecurityException& ex
                 returnedValue = PEM_read_bio_X509_CRL(in, NULL, NULL, NULL);
             }
             else
-                _SecurityException_(exception, std::string("OpenSSL library cannot read file ") + identity_crl.substr(7));
+                _SecurityException_with_info(
+                    exception,
+                    "OpenSSL library cannot read file ",
+                    identity_crl.substr(7).c_str());
 
             BIO_free(in);
         }

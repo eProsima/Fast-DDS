@@ -24,6 +24,8 @@ namespace fastrtps {
 namespace rtps {
 namespace security {
 
+constexpr std::size_t SECURITY_ERROR_MAX_LENGTH = 512;
+
 /**
  * @brief This class is thrown as an exception when there is an error in security module.
  * @ingroup EXCEPTIONMODULE
@@ -33,43 +35,65 @@ class SecurityException
 
 public:
 
-    RTPS_DllAPI SecurityException() {}
+    /**
+     * @brief Default constructor
+     */
+    RTPS_DllAPI SecurityException() throw();
 
-    /// \brief Default constructor
+    /**
+     * @brief Default destructor
+     */
     virtual RTPS_DllAPI ~SecurityException() throw() = default;
 
     /**
-     * @brief Default copy constructor.
+     * @brief Default copy constructor (deleted).
      * @param ex SecurityException that will be copied.
      */
-    SecurityException(const SecurityException &ex) = delete;
+    SecurityException(const SecurityException& ex) = delete;
 
     /**
-     * @brief Default move constructor.
+     * @brief Default move constructor (deleted).
      * @param ex SecurityException that will be moved.
      */
     SecurityException(SecurityException&& ex) = delete;
 
     /**
-     * @brief Assigment operation.
+     * @brief Assigment operation (deleted).
      * @param ex SecurityException that will be copied.
      */
-    SecurityException& operator=(const SecurityException &ex) = delete;
+    SecurityException& operator=(const SecurityException& ex) = delete;
 
     /**
-     * @brief Assigment operation.
+     * @brief Assigment operation (deleted).
      * @param ex SecurityException that will be moved.
      */
     SecurityException& operator=(SecurityException&& ex) = delete;
 
     /**
-     * @brief 
+     * @brief Set message value.
+     * @param msg String with new message value.
+     * @return own reference.
      */
-    RTPS_DllAPI void set_msg(
-            const std::string& msg)
-    {
-        msg_ = msg;
-    }
+    RTPS_DllAPI SecurityException& set_msg(
+            const char* const msg) throw();
+
+    /**
+     * @brief Set message value.
+     * @param msg String with new message value.
+     * @param code Error code.
+     * @return own reference.
+     */
+    RTPS_DllAPI SecurityException& set_msg(
+            const char* const msg,
+            unsigned long code) throw();
+
+    /**
+     * @brief Set message value.
+     * @param msg String with message to append.
+     * @return own reference.
+     */
+    RTPS_DllAPI SecurityException& append_msg(
+            const char* const msg) throw();
 
     /**
      * @brief This function returns the error message.
@@ -77,11 +101,11 @@ public:
      */
     RTPS_DllAPI const char* const what() const throw()
     {
-        return msg_.c_str();
+        return msg_;
     }
 
 private:
-    std::string msg_;
+    char msg_[SECURITY_ERROR_MAX_LENGTH + 1];
 };
 
 } // namespace security

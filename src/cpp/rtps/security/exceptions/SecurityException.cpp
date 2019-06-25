@@ -14,5 +14,39 @@
 
 #include <fastrtps/rtps/security/exceptions/SecurityException.h>
 
-using namespace eprosima::fastrtps::rtps::security;
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
+namespace security {
 
+RTPS_DllAPI SecurityException::SecurityException() throw()
+{
+    std::memset(msg_, 0, sizeof(msg_));
+}
+
+RTPS_DllAPI SecurityException& SecurityException::set_msg(
+        const char* const msg) throw()
+{
+    strncpy_s(msg_, msg, SECURITY_ERROR_MAX_LENGTH);
+    return *this;
+}
+
+RTPS_DllAPI SecurityException& SecurityException::set_msg(
+        const char* const msg,
+        unsigned long code) throw()
+{
+    snprintf(msg_, SECURITY_ERROR_MAX_LENGTH, "%s (%lu)", msg, code);
+    return *this;
+}
+
+RTPS_DllAPI SecurityException& SecurityException::append_msg(
+        const char* const msg) throw()
+{
+    snprintf(msg_, SECURITY_ERROR_MAX_LENGTH, "%s%s", msg_, msg);
+    return *this;
+}
+
+} /* namespace security */
+} /* namespace rtps */
+} /* namespace fastrtps */
+} /* namespace eprosima */

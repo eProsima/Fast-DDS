@@ -49,7 +49,8 @@
 #define S1(x) #x
 #define S2(x) S1(x)
 #define LOCATION " (" __FILE__ ":" S2(__LINE__) ")"
-#define _SecurityException_(ex, str) ex.set_msg(std::string(str) + LOCATION)
+#define _SecurityException_(ex, str) ex.set_msg((str)).append_msg(LOCATION)
+#define _SecurityException_with_info(ex, str, info) ex.set_msg((str)).append_msg((info)).append_msg(LOCATION)
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -342,12 +343,14 @@ static X509_STORE* load_permissions_ca(const std::string& permissions_ca, bool& 
                     }
                     else
                     {
-                        _SecurityException_(exception, std::string("OpenSSL library cannot read X509 info in file ") + permissions_ca.substr(7));
+                        _SecurityException_with_info(exception, "OpenSSL library cannot read X509 info in file ",
+                            permissions_ca.substr(7).c_str());
                     }
                 }
                 else
                 {
-                    _SecurityException_(exception, std::string("OpenSSL library cannot read file ") + permissions_ca.substr(7));
+                    _SecurityException_with_info(exception, "OpenSSL library cannot read file ",
+                        permissions_ca.substr(7).c_str());
                 }
 
                 BIO_free(in);
@@ -391,7 +394,7 @@ static BIO* load_signed_file(X509_STORE* store, std::string& file, SecurityExcep
                 out = BIO_new(BIO_s_mem());
                 if(!PKCS7_verify(p7, nullptr, store, indata, out, PKCS7_TEXT))
                 {
-                    _SecurityException_(exception, std::string("Failed verification of the file ") + file);
+                    _SecurityException_with_info(exception, "Failed verification of the file ", file.c_str());
                     BIO_free(out);
                     out = nullptr;
                 }
@@ -400,7 +403,7 @@ static BIO* load_signed_file(X509_STORE* store, std::string& file, SecurityExcep
             }
             else
             {
-                _SecurityException_(exception, std::string("Cannot read as PKCS7 the file ") + file);
+                _SecurityException_with_info(exception, "Cannot read as PKCS7 the file ", file.c_str());
             }
 
             if(indata != nullptr)
@@ -412,12 +415,12 @@ static BIO* load_signed_file(X509_STORE* store, std::string& file, SecurityExcep
         }
         else
         {
-            _SecurityException_(exception, std::string("Cannot read file ") + file);
+            _SecurityException_with_info(exception, "Cannot read file ", file.c_str());
         }
     }
     else
     {
-        _SecurityException_(exception, std::string("Unsupported governance file format ") + file);
+        _SecurityException_with_info(exception, "Unsupported governance file format ", file.c_str());
     }
 
     return out;
@@ -444,13 +447,13 @@ static bool load_governance_file(AccessPermissionsHandle& ah, std::string& gover
             }
             else
             {
-                _SecurityException_(exception, std::string("Malformed governance file ") + governance_file);
+                _SecurityException_with_info(exception, "Malformed governance file ", governance_file.c_str());
             }
         }
         else
         {
-            _SecurityException_(exception, std::string("OpenSSL library cannot retrieve mem ptr from file ")
-                    + governance_file);
+            _SecurityException_with_info(exception, "OpenSSL library cannot retrieve mem ptr from file ",
+                governance_file.c_str());
         }
 
         BIO_free(file_mem);
@@ -480,13 +483,13 @@ static bool load_permissions_file(AccessPermissionsHandle& ah, std::string& perm
             }
             else
             {
-                _SecurityException_(exception, std::string("Malformed permissions file ") + permissions_file);
+                _SecurityException_with_info(exception, "Malformed permissions file ", permissions_file.c_str());
             }
         }
         else
         {
-            _SecurityException_(exception, std::string("OpenSSL library cannot retrieve mem ptr from file ")
-                    + permissions_file);
+            _SecurityException_with_info(exception, "OpenSSL library cannot retrieve mem ptr from file ",
+                permissions_file.c_str());
         }
 
         BIO_free(file_mem);
@@ -527,7 +530,8 @@ static bool verify_permissions_file(const AccessPermissionsHandle& local_handle,
                         }
                         else
                         {
-                            _SecurityException_(exception, std::string("Malformed permissions file ") + permissions_file);
+                            _SecurityException_with_info(exception, "Malformed permissions file ",
+                                permissions_file.c_str());
                         }
                     }
                     else
@@ -684,8 +688,9 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
         }
         else
         {
-            _SecurityException_(exception, std::string("Not found the identity subject name in permissions file. Subject name: ") +
-                    lih->cert_sn_rfc2253_);
+            _SecurityException_with_info(exception, 
+                "Not found the identity subject name in permissions file. Subject name: ",
+                lih->cert_sn_rfc2253_.c_str());
         }
     }
     else
@@ -738,7 +743,7 @@ static bool generate_credentials_token(AccessPermissionsHandle& handle, const st
         }
         catch(std::exception&)
         {
-            _SecurityException_(exception, std::string("Cannot find file ") + file);
+            _SecurityException_with_info(exception, "Cannot find file ", file.c_str());
         }
     }
     else
@@ -1062,7 +1067,7 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
     }
     else
     {
-        _SecurityException_(exception, "Not found topic access rule for topic " + topic_name);
+        _SecurityException_with_info(exception, "Not found topic access rule for topic ", topic_name.c_str());
         return false;
     }
 
@@ -1080,26 +1085,27 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
                     if (!is_partition_in_criterias(std::string(), rule.publishes))
                     {
                         returned_value = false;
-                        _SecurityException_(exception, std::string("<empty> partition not found in rule."));
+                        _SecurityException_(exception, "<empty> partition not found in rule.");
                     }
                 }
                 else
                 {
                     // Search partitions
-                    for (auto partition_it = partitions.begin(); returned_value && partition_it != partitions.end();
-                        ++partition_it)
+                    for (const std::string& partition : partitions)
                     {
-                        if (!is_partition_in_criterias(*partition_it, rule.publishes))
+                        if (!is_partition_in_criterias(partition, rule.publishes))
                         {
                             returned_value = false;
-                            _SecurityException_(exception, *partition_it + std::string(" partition not found in rule."));
+                            _SecurityException_with_info(exception, partition.c_str(),
+                                " partition not found in rule.");
+                            break;
                         }
                     }
                 }
             }
             else
             {
-                _SecurityException_(exception, topic_name + std::string(" topic denied by deny rule."));
+                _SecurityException_with_info(exception, topic_name.c_str(), " topic denied by deny rule.");
             }
 
             break;
@@ -1108,7 +1114,7 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
 
     if(!returned_value && strlen(exception.what()) == 0)
     {
-        _SecurityException_(exception, topic_name + std::string(" topic not found in allow rule."));
+        _SecurityException_with_info(exception, topic_name.c_str(), " topic not found in allow rule.");
     }
 
     return returned_value;
@@ -1138,7 +1144,7 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
     }
     else
     {
-        _SecurityException_(exception, "Not found topic access rule for topic " + topic_name);
+        _SecurityException_with_info(exception, "Not found topic access rule for topic ", topic_name.c_str());
         return false;
     }
 
@@ -1155,26 +1161,27 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
                     if (!is_partition_in_criterias(std::string(), rule.subscribes))
                     {
                         returned_value = false;
-                        _SecurityException_(exception, std::string("<empty> partition not found in rule."));
+                        _SecurityException_(exception, "<empty> partition not found in rule.");
                     }
                 }
                 else
                 {
                     // Search partitions
-                    for (auto partition_it = partitions.begin(); returned_value && partition_it != partitions.end();
-                        ++partition_it)
+                    for (const std::string& partition : partitions)
                     {
-                        if (!is_partition_in_criterias(*partition_it, rule.subscribes))
+                        if (!is_partition_in_criterias(partition, rule.subscribes))
                         {
                             returned_value = false;
-                            _SecurityException_(exception, *partition_it + std::string(" partition not found in rule."));
+                            _SecurityException_with_info(exception, partition.c_str(),
+                                " partition not found in rule.");
+                            break;
                         }
                     }
                 }
             }
             else
             {
-                _SecurityException_(exception, topic_name + std::string(" topic denied by deny rule."));
+                _SecurityException_with_info(exception, topic_name.c_str(), " topic denied by deny rule.");
             }
 
             break;
@@ -1183,7 +1190,7 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
 
     if(!returned_value && strlen(exception.what()) == 0)
     {
-        _SecurityException_(exception, topic_name + std::string(" topic not found in allow rule."));
+        _SecurityException_with_info(exception, topic_name.c_str(), " topic not found in allow rule.");
     }
 
     return returned_value;
@@ -1214,7 +1221,8 @@ bool Permissions::check_remote_datawriter(const PermissionsHandle& remote_handle
     }
     else
     {
-        _SecurityException_(exception, "Not found topic access rule for topic " + publication_data.topicName().to_string());
+        _SecurityException_with_info(exception, "Not found topic access rule for topic ",
+            publication_data.topicName().c_str());
         return false;
     }
 
@@ -1230,8 +1238,8 @@ bool Permissions::check_remote_datawriter(const PermissionsHandle& remote_handle
                 }
                 else
                 {
-                    _SecurityException_(exception, publication_data.topicName().to_string() +
-                            std::string(" topic denied by deny rule."));
+                    _SecurityException_with_info(exception, publication_data.topicName().c_str(),
+                        " topic denied by deny rule.");
                 }
 
                 break;
@@ -1241,8 +1249,8 @@ bool Permissions::check_remote_datawriter(const PermissionsHandle& remote_handle
 
     if(!returned_value && strlen(exception.what()) == 0)
     {
-        _SecurityException_(exception, publication_data.topicName().to_string() +
-                std::string(" topic not found in allow rule."));
+        _SecurityException_with_info(exception, publication_data.topicName().c_str(),
+            " topic not found in allow rule.");
     }
 
     return returned_value;
@@ -1275,7 +1283,8 @@ bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle
     }
     else
     {
-        _SecurityException_(exception, "Not found topic access rule for topic " + subscription_data.topicName().to_string());
+        _SecurityException_with_info(exception, "Not found topic access rule for topic ",
+            subscription_data.topicName().c_str());
         return false;
     }
 
@@ -1291,8 +1300,8 @@ bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle
                 }
                 else
                 {
-                    _SecurityException_(exception, subscription_data.topicName().to_string() +
-                            std::string(" topic denied by deny rule."));
+                    _SecurityException_with_info(exception, subscription_data.topicName().c_str(),
+                        " topic denied by deny rule.");
                 }
 
                 break;
@@ -1313,8 +1322,8 @@ bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle
 
     if(!returned_value && strlen(exception.what()) == 0)
     {
-        _SecurityException_(exception, subscription_data.topicName().to_string() +
-                std::string(" topic not found in allow rule."));
+        _SecurityException_with_info(exception, subscription_data.topicName().c_str(),
+            " topic not found in allow rule.");
     }
 
     return returned_value;
@@ -1351,7 +1360,8 @@ bool Permissions::get_datawriter_sec_attributes(const PermissionsHandle& permiss
     }
     else
     {
-        _SecurityException_(exception, "Not found topic access rule for topic " + topic_name);
+        _SecurityException_with_info(exception, "Not found topic access rule for topic ",
+            topic_name.c_str());
     }
 
     return false;
@@ -1372,7 +1382,8 @@ bool Permissions::get_datareader_sec_attributes(const PermissionsHandle& permiss
     }
     else
     {
-        _SecurityException_(exception, "Not found topic access rule for topic " + topic_name);
+        _SecurityException_with_info(exception, "Not found topic access rule for topic ",
+            topic_name.c_str());
     }
 
     return false;
