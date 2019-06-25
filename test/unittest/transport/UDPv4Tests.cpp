@@ -332,7 +332,6 @@ TEST_F(UDPv4Tests, send_to_allowed_interface)
 
         if (IsAddressDefined(locator))
         {
-            descriptor.interfaceWhiteList.emplace_back("127.0.0.1");
             descriptor.interfaceWhiteList.emplace_back(IPLocator::toIPv4string(locator));
             UDPv4Transport transportUnderTest(descriptor);
             transportUnderTest.init();
@@ -351,7 +350,6 @@ TEST_F(UDPv4Tests, send_to_allowed_interface)
             IPLocator::setIPv4(remoteMulticastLocator, 239, 255, 1, 4); // Loopback
 
             // Sending through a ALLOWED IP will work
-            IPLocator::setIPv4(outputChannelLocator, 127, 0, 0, 1);
             std::vector<octet> message = { 'H','e','l','l','o' };
             ASSERT_TRUE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(),
                         remoteMulticastLocator));
@@ -520,6 +518,35 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast_to_mul
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
     senderThread->join();
     sem.wait();
+}
+
+TEST_F(UDPv4Tests, open_and_close_two_multicast_transports_with_whitelist)
+{
+    std::vector<IPFinder::info_IP> interfaces;
+    GetIP4s(interfaces);
+
+    if (interfaces.size() > 0)
+    {
+        descriptor.interfaceWhiteList.push_back(interfaces.at(0).name);
+
+        UDPv4Transport transport1(descriptor);
+        UDPv4Transport transport2(descriptor);
+        transport1.init();
+        transport2.init();
+
+        Locator_t multicastLocator;
+        multicastLocator.port = g_default_port;
+        multicastLocator.kind = LOCATOR_KIND_UDPv4;
+        IPLocator::setIPv4(multicastLocator, "239.255.1.4");
+
+        std::cout << "Opening input channels" << std::endl;
+        ASSERT_TRUE(transport1.OpenInputChannel(multicastLocator, nullptr, 65500));
+        ASSERT_TRUE(transport2.OpenInputChannel(multicastLocator, nullptr, 65500));
+        std::cout << "Closing input channel on transport 1" << std::endl;
+        ASSERT_TRUE(transport1.CloseInputChannel(multicastLocator));
+        std::cout << "Closing input channel on transport 2" << std::endl;
+        ASSERT_TRUE(transport2.CloseInputChannel(multicastLocator));
+    }
 }
 #endif
 

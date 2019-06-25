@@ -84,28 +84,12 @@ bool UDPTransportInterface::CloseInputChannel(const Locator_t& locator)
 
     }
 
-    std::map<UDPChannelResource*, asio::ip::address> addresses;
-    // It may sound redundant, but we must mark all the related channel to be killed first.
-    // Mostly in Windows, but in Linux can happen too, if we access to the endpoint
-    // of an already closed socket we get an exception. So we store the interface address to
-    // be used in the ReleaseInputChannel call later.
-    for (UDPChannelResource* channel_resource : channel_resources)
-    {
-        if (channel_resource->alive())
-        {
-            addresses[channel_resource] = channel_resource->socket()->local_endpoint().address();
-        }
-        else
-        {
-            addresses[channel_resource] = asio::ip::address();
-        }
-        channel_resource->disable();
-    }
-
-    // Then we release the channels
+    // We now disable and release the channels
     for (UDPChannelResource* channel : channel_resources)
     {
-        channel->release(locator, addresses[channel]);
+        channel->disable();
+        channel->release();
+        channel->clear();
         delete channel;
     }
 
@@ -367,69 +351,6 @@ bool UDPTransportInterface::OpenOutputChannel(
         }
         mOutputSockets.clear();
         */
-        return false;
-    }
-
-    return true;
-}
-
-bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const asio::ip::address& interface_address)
-{
-    try
-    {
-        asio::error_code ec;
-        socket_base::message_flags flags = 0;
-        uint16_t port = IPLocator::getPhysicalPort(locator);
-
-        if(is_interface_whitelist_empty())
-        {
-            Locator_t localLocator;
-            fill_local_ip(localLocator);
-
-            ip::udp::socket socket(io_service_);
-            socket.open(generate_protocol());
-            socket.bind(generate_local_endpoint(localLocator, 0));
-            socket.set_option(ip::multicast::enable_loopback(true));
-
-            // We first send directly to localhost, in case all network interfaces are disabled
-            // (which would mean that multicast traffic may not be sent)
-            // We ignore the error message because some OS don't allow this functionality like Windows (WSAENETUNREACH) or Mac (EADDRNOTAVAIL)
-            auto localEndpoint = generate_local_endpoint(localLocator, port);
-            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), localEndpoint, flags, ec);
-
-            // We then send to the address of the input locator
-            auto destinationEndpoint = generate_local_endpoint(locator, port);
-
-            // We ignore the error message because some OS don't allow this functionality like Windows (WSAENETUNREACH) or Mac (EADDRNOTAVAIL)
-            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint,flags, ec);
-
-            socket.close();
-        }
-        else if (!interface_address.is_multicast())
-        {
-            ip::udp::socket socket(io_service_);
-            socket.open(generate_protocol());
-            auto bound_endpoint = asio::ip::udp::endpoint(interface_address, 0);
-            socket.bind(bound_endpoint);
-            socket.set_option(ip::multicast::enable_loopback(true));
-            SetSocketOutboundInterface(socket, bound_endpoint.address().to_string());
-
-            // We ignore the error message because some OS don't allow this functionality like Windows (WSAENETUNREACH) or Mac (EADDRNOTAVAIL)
-            auto localEndpoint = ip::udp::endpoint(interface_address, port);
-            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), localEndpoint, flags, ec);
-
-            // We then send to the address of the input locator
-            auto destinationEndpoint = generate_local_endpoint(locator, port);
-
-            // We ignore the error message because some OS don't allow this functionality like Windows (WSAENETUNREACH) or Mac (EADDRNOTAVAIL)
-            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint, flags, ec);
-
-            socket.close();
-        }
-    }
-    catch (const std::exception& error)
-    {
-        logError(RTPS_MSG_OUT, "Error " << error.what());
         return false;
     }
 
