@@ -590,7 +590,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
         const CDRMessage_t& encoded_buffer,
         const ParticipantCryptoHandle& /*receiving_crypto*/,
         const ParticipantCryptoHandle &sending_crypto,
-        SecurityException& /*exception*/)
+        SecurityException& exception)
 {
     const AESGCMGMAC_ParticipantCryptoHandle& sending_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(sending_crypto);
 
@@ -750,8 +750,6 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
 
         decoder >> length;
         const char* const current_position = decoder.getCurrentPosition();
-
-        SecurityException exception;
 
         if(!deserialize_SecureDataTag(decoder, tag, sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).transformation_kind,
                 sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).receiver_specific_key_id,
@@ -959,7 +957,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
         CDRMessage_t& encoded_rtps_submessage,
         DatareaderCryptoHandle& /*receiving_datareader_crypto*/,
         DatawriterCryptoHandle& sending_datawriter_cryupto,
-        SecurityException& /*exception*/)
+        SecurityException& exception)
 {
     AESGCMGMAC_WriterCryptoHandle& sending_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_cryupto);
 
@@ -1093,8 +1091,6 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
         decoder >> length;
         const char* const current_position = decoder.getCurrentPosition();
 
-        SecurityException exception;
-
         if(!deserialize_SecureDataTag(decoder, tag, keyMat->transformation_kind,
                 keyMat->receiver_specific_key_id,
                 keyMat->master_receiver_specific_key,
@@ -1137,7 +1133,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
         CDRMessage_t& encoded_rtps_submessage,
         DatawriterCryptoHandle& /*receiving_datawriter_crypto*/,
         DatareaderCryptoHandle& sending_datareader_crypto,
-        SecurityException& /*exception*/)
+        SecurityException& exception)
 {
     AESGCMGMAC_ReaderCryptoHandle& sending_reader = AESGCMGMAC_ReaderCryptoHandle::narrow(sending_datareader_crypto);
 
@@ -1270,8 +1266,6 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
 
         decoder >> length;
         const char* const current_position = decoder.getCurrentPosition();
-
-        SecurityException exception;
 
         if(!deserialize_SecureDataTag(decoder, tag, keyMat->transformation_kind,
                 keyMat->receiver_specific_key_id,
