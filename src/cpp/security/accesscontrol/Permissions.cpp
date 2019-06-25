@@ -49,7 +49,7 @@
 #define S1(x) #x
 #define S2(x) S1(x)
 #define LOCATION " (" __FILE__ ":" S2(__LINE__) ")"
-#define _SecurityException_(str) SecurityException(std::string(str) + LOCATION)
+#define _SecurityException_(ex, str) ex.set_msg(std::string(str) + LOCATION)
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -199,16 +199,16 @@ static bool get_signature_algorithm(X509* certificate, std::string& signature_al
                     }
                 }
                 else
-                    exception = _SecurityException_("OpenSSL library cannot retrieve mem ptr");
+                    _SecurityException_(exception, "OpenSSL library cannot retrieve mem ptr");
             }
         }
         else
-            exception = _SecurityException_("OpenSSL library cannot write cert");
+            _SecurityException_(exception, "OpenSSL library cannot write cert");
 
         BIO_free(out);
     }
     else
-        exception = _SecurityException_("OpenSSL library cannot allocate mem");
+        _SecurityException_(exception, "OpenSSL library cannot allocate mem");
 
     return returnedValue;
 }
@@ -342,31 +342,31 @@ static X509_STORE* load_permissions_ca(const std::string& permissions_ca, bool& 
                     }
                     else
                     {
-                        exception = _SecurityException_(std::string("OpenSSL library cannot read X509 info in file ") + permissions_ca.substr(7));
+                        _SecurityException_(exception, std::string("OpenSSL library cannot read X509 info in file ") + permissions_ca.substr(7));
                     }
                 }
                 else
                 {
-                    exception = _SecurityException_(std::string("OpenSSL library cannot read file ") + permissions_ca.substr(7));
+                    _SecurityException_(exception, std::string("OpenSSL library cannot read file ") + permissions_ca.substr(7));
                 }
 
                 BIO_free(in);
             }
             else
             {
-                exception = _SecurityException_("OpenSSL library cannot allocate file");
+                _SecurityException_(exception, "OpenSSL library cannot allocate file");
             }
         }
         else
         {
-            exception = _SecurityException_("Unsupported permissions_ca format");
+            _SecurityException_(exception, "Unsupported permissions_ca format");
         }
 
         X509_STORE_free(store);
     }
     else
     {
-        exception = _SecurityException_("Creation of X509 storage");
+        _SecurityException_(exception, "Creation of X509 storage");
     }
 
     return nullptr;
@@ -391,7 +391,7 @@ static BIO* load_signed_file(X509_STORE* store, std::string& file, SecurityExcep
                 out = BIO_new(BIO_s_mem());
                 if(!PKCS7_verify(p7, nullptr, store, indata, out, PKCS7_TEXT))
                 {
-                    exception = _SecurityException_(std::string("Failed verification of the file ") + file);
+                    _SecurityException_(exception, std::string("Failed verification of the file ") + file);
                     BIO_free(out);
                     out = nullptr;
                 }
@@ -400,7 +400,7 @@ static BIO* load_signed_file(X509_STORE* store, std::string& file, SecurityExcep
             }
             else
             {
-                exception = _SecurityException_(std::string("Cannot read as PKCS7 the file ") + file);
+                _SecurityException_(exception, std::string("Cannot read as PKCS7 the file ") + file);
             }
 
             if(indata != nullptr)
@@ -412,12 +412,12 @@ static BIO* load_signed_file(X509_STORE* store, std::string& file, SecurityExcep
         }
         else
         {
-            exception = _SecurityException_(std::string("Cannot read file ") + file);
+            _SecurityException_(exception, std::string("Cannot read file ") + file);
         }
     }
     else
     {
-        exception = _SecurityException_(std::string("Unsupported governance file format ") + file);
+        _SecurityException_(exception, std::string("Unsupported governance file format ") + file);
     }
 
     return out;
@@ -444,12 +444,12 @@ static bool load_governance_file(AccessPermissionsHandle& ah, std::string& gover
             }
             else
             {
-                exception = _SecurityException_(std::string("Malformed governance file ") + governance_file);
+                _SecurityException_(exception, std::string("Malformed governance file ") + governance_file);
             }
         }
         else
         {
-            exception = _SecurityException_(std::string("OpenSSL library cannot retrieve mem ptr from file ")
+            _SecurityException_(exception, std::string("OpenSSL library cannot retrieve mem ptr from file ")
                     + governance_file);
         }
 
@@ -480,12 +480,12 @@ static bool load_permissions_file(AccessPermissionsHandle& ah, std::string& perm
             }
             else
             {
-                exception = _SecurityException_(std::string("Malformed permissions file ") + permissions_file);
+                _SecurityException_(exception, std::string("Malformed permissions file ") + permissions_file);
             }
         }
         else
         {
-            exception = _SecurityException_(std::string("OpenSSL library cannot retrieve mem ptr from file ")
+            _SecurityException_(exception, std::string("OpenSSL library cannot retrieve mem ptr from file ")
                     + permissions_file);
         }
 
@@ -527,17 +527,17 @@ static bool verify_permissions_file(const AccessPermissionsHandle& local_handle,
                         }
                         else
                         {
-                            exception = _SecurityException_(std::string("Malformed permissions file ") + permissions_file);
+                            _SecurityException_(exception, std::string("Malformed permissions file ") + permissions_file);
                         }
                     }
                     else
                     {
-                        exception = _SecurityException_("OpenSSL library cannot retrieve mem ptr from file.");
+                        _SecurityException_(exception, "OpenSSL library cannot retrieve mem ptr from file.");
                     }
                 }
                 else
                 {
-                    exception = _SecurityException_("Failed verification of the permissions file");
+                    _SecurityException_(exception, "Failed verification of the permissions file");
                 }
 
                 BIO_free(out);
@@ -545,7 +545,7 @@ static bool verify_permissions_file(const AccessPermissionsHandle& local_handle,
             }
             else
             {
-                exception = _SecurityException_("Cannot read as PKCS7 the permissions file.");
+                _SecurityException_(exception, "Cannot read as PKCS7 the permissions file.");
             }
 
             if(indata != nullptr)
@@ -684,13 +684,13 @@ static bool check_subject_name(const IdentityHandle& ih, AccessPermissionsHandle
         }
         else
         {
-            exception = _SecurityException_(std::string("Not found the identity subject name in permissions file. Subject name: ") +
+            _SecurityException_(exception, std::string("Not found the identity subject name in permissions file. Subject name: ") +
                     lih->cert_sn_rfc2253_);
         }
     }
     else
     {
-        exception = _SecurityException_("IdentityHandle is not of the type PKIIdentityHandle");
+        _SecurityException_(exception, "IdentityHandle is not of the type PKIIdentityHandle");
     }
 
     return returned_value;
@@ -738,12 +738,12 @@ static bool generate_credentials_token(AccessPermissionsHandle& handle, const st
         }
         catch(std::exception&)
         {
-            exception = _SecurityException_(std::string("Cannot find file ") + file);
+            _SecurityException_(exception, std::string("Cannot find file ") + file);
         }
     }
     else
     {
-        exception = _SecurityException_("Unsupported permissions_ca format");
+        _SecurityException_(exception, "Unsupported permissions_ca format");
     }
 
     return returned_value;
@@ -759,7 +759,7 @@ PermissionsHandle* Permissions::validate_local_permissions(Authentication&,
 
     if(PropertyPolicyHelper::length(access_properties) == 0)
     {
-        exception = _SecurityException_("Not found any dds.sec.access.builtin.Access-Permissions property");
+        _SecurityException_(exception, "Not found any dds.sec.access.builtin.Access-Permissions property");
         return nullptr;
     }
 
@@ -767,7 +767,7 @@ PermissionsHandle* Permissions::validate_local_permissions(Authentication&,
 
     if(permissions_ca == nullptr)
     {
-        exception = _SecurityException_("Not found dds.sec.access.builtin.Access-Permissions.permissions_ca property");
+        _SecurityException_(exception, "Not found dds.sec.access.builtin.Access-Permissions.permissions_ca property");
         return nullptr;
     }
 
@@ -775,7 +775,7 @@ PermissionsHandle* Permissions::validate_local_permissions(Authentication&,
 
     if(governance == nullptr)
     {
-        exception = _SecurityException_("Not found dds.sec.access.builtin.Access-Permissions.governance property");
+        _SecurityException_(exception, "Not found dds.sec.access.builtin.Access-Permissions.governance property");
         return nullptr;
     }
 
@@ -783,7 +783,7 @@ PermissionsHandle* Permissions::validate_local_permissions(Authentication&,
 
     if(permissions == nullptr)
     {
-        exception = _SecurityException_("Not found dds.sec.access.builtin.Access-Permissions.permissions property");
+        _SecurityException_(exception, "Not found dds.sec.access.builtin.Access-Permissions.permissions property");
         return nullptr;
     }
 
@@ -832,7 +832,7 @@ bool Permissions::get_permissions_token(PermissionsToken** permissions_token,
     }
     else
     {
-        exception = _SecurityException_("Invalid permissions handle");
+        _SecurityException_(exception, "Invalid permissions handle");
     }
 
     return false;
@@ -857,7 +857,7 @@ bool Permissions::get_permissions_credential_token(PermissionsCredentialToken** 
     }
     else
     {
-        exception = _SecurityException_("Invalid permissions handle");
+        _SecurityException_(exception, "Invalid permissions handle");
     }
 
     return false;
@@ -898,7 +898,7 @@ PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
 
     if(lih.nil() || lph.nil() || rih.nil())
     {
-        exception = _SecurityException_("Bad precondition");
+        _SecurityException_(exception, "Bad precondition");
         return nullptr;
     }
 
@@ -910,7 +910,7 @@ PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
     {
         if(sn->compare(lph->sn) != 0)
         {
-            exception = _SecurityException_("Remote participant PermissionsCA differs from local");
+            _SecurityException_(exception, "Remote participant PermissionsCA differs from local");
             return nullptr;
         }
     }
@@ -921,7 +921,7 @@ PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
     {
         if(algo->compare(lph->algo) != 0)
         {
-            exception = _SecurityException_("Remote participant PermissionsCA algorithm differs from local");
+            _SecurityException_(exception, "Remote participant PermissionsCA algorithm differs from local");
             return nullptr;
         }
     }
@@ -931,7 +931,7 @@ PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
 
     if(permissions_file == nullptr)
     {
-        exception = _SecurityException_("Remote participant doesn't sent the signed permissions file");
+        _SecurityException_(exception, "Remote participant doesn't sent the signed permissions file");
         return nullptr;
     }
 
@@ -957,7 +957,7 @@ PermissionsHandle* Permissions::validate_remote_permissions(Authentication&,
 
     if(remote_grant.subject_name.empty())
     {
-        exception = _SecurityException_("Remote participant doesn't found in its permissions file");
+        _SecurityException_(exception, "Remote participant doesn't found in its permissions file");
         return nullptr;
     }
 
@@ -978,7 +978,7 @@ bool Permissions::check_create_participant(const PermissionsHandle& local_handle
 
     if(lah.nil())
     {
-        exception = _SecurityException_("Bad precondition");
+        _SecurityException_(exception, "Bad precondition");
         return false;
     }
 
@@ -994,7 +994,7 @@ bool Permissions::check_create_participant(const PermissionsHandle& local_handle
 
     if(!returned_value)
     {
-        exception = _SecurityException_("Not found a rule allowing to use the domain_id");
+        _SecurityException_(exception, "Not found a rule allowing to use the domain_id");
     }
 
     return returned_value;
@@ -1008,7 +1008,7 @@ bool Permissions::check_remote_participant(const PermissionsHandle& remote_handl
 
     if(rah.nil())
     {
-        exception = _SecurityException_("Bad precondition");
+        _SecurityException_(exception, "Bad precondition");
         return false;
     }
 
@@ -1032,7 +1032,7 @@ bool Permissions::check_remote_participant(const PermissionsHandle& remote_handl
 
     if(!returned_value)
     {
-        exception = _SecurityException_("Not found a rule allowing to use the domain_id");
+        _SecurityException_(exception, "Not found a rule allowing to use the domain_id");
     }
 
     return returned_value;
@@ -1047,7 +1047,7 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
 
     if(lah.nil())
     {
-        exception = _SecurityException_("Bad precondition");
+        _SecurityException_(exception, "Bad precondition");
         return false;
     }
 
@@ -1062,7 +1062,7 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
     }
     else
     {
-        exception = _SecurityException_("Not found topic access rule for topic " + topic_name);
+        _SecurityException_(exception, "Not found topic access rule for topic " + topic_name);
         return false;
     }
 
@@ -1080,7 +1080,7 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
                     if (!is_partition_in_criterias(std::string(), rule.publishes))
                     {
                         returned_value = false;
-                        exception = _SecurityException_(std::string("<empty> partition not found in rule."));
+                        _SecurityException_(exception, std::string("<empty> partition not found in rule."));
                     }
                 }
                 else
@@ -1092,14 +1092,14 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
                         if (!is_partition_in_criterias(*partition_it, rule.publishes))
                         {
                             returned_value = false;
-                            exception = _SecurityException_(*partition_it + std::string(" partition not found in rule."));
+                            _SecurityException_(exception, *partition_it + std::string(" partition not found in rule."));
                         }
                     }
                 }
             }
             else
             {
-                exception = _SecurityException_(topic_name + std::string(" topic denied by deny rule."));
+                _SecurityException_(exception, topic_name + std::string(" topic denied by deny rule."));
             }
 
             break;
@@ -1108,7 +1108,7 @@ bool Permissions::check_create_datawriter(const PermissionsHandle& local_handle,
 
     if(!returned_value && strlen(exception.what()) == 0)
     {
-        exception = _SecurityException_(topic_name + std::string(" topic not found in allow rule."));
+        _SecurityException_(exception, topic_name + std::string(" topic not found in allow rule."));
     }
 
     return returned_value;
@@ -1123,7 +1123,7 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
 
     if(lah.nil())
     {
-        exception = _SecurityException_("Bad precondition");
+        _SecurityException_(exception, "Bad precondition");
         return false;
     }
 
@@ -1138,7 +1138,7 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
     }
     else
     {
-        exception = _SecurityException_("Not found topic access rule for topic " + topic_name);
+        _SecurityException_(exception, "Not found topic access rule for topic " + topic_name);
         return false;
     }
 
@@ -1155,7 +1155,7 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
                     if (!is_partition_in_criterias(std::string(), rule.subscribes))
                     {
                         returned_value = false;
-                        exception = _SecurityException_(std::string("<empty> partition not found in rule."));
+                        _SecurityException_(exception, std::string("<empty> partition not found in rule."));
                     }
                 }
                 else
@@ -1167,14 +1167,14 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
                         if (!is_partition_in_criterias(*partition_it, rule.subscribes))
                         {
                             returned_value = false;
-                            exception = _SecurityException_(*partition_it + std::string(" partition not found in rule."));
+                            _SecurityException_(exception, *partition_it + std::string(" partition not found in rule."));
                         }
                     }
                 }
             }
             else
             {
-                exception = _SecurityException_(topic_name + std::string(" topic denied by deny rule."));
+                _SecurityException_(exception, topic_name + std::string(" topic denied by deny rule."));
             }
 
             break;
@@ -1183,7 +1183,7 @@ bool Permissions::check_create_datareader(const PermissionsHandle& local_handle,
 
     if(!returned_value && strlen(exception.what()) == 0)
     {
-        exception = _SecurityException_(topic_name + std::string(" topic not found in allow rule."));
+        _SecurityException_(exception, topic_name + std::string(" topic not found in allow rule."));
     }
 
     return returned_value;
@@ -1198,7 +1198,7 @@ bool Permissions::check_remote_datawriter(const PermissionsHandle& remote_handle
 
     if(rah.nil())
     {
-        exception = _SecurityException_("Bad precondition");
+        _SecurityException_(exception, "Bad precondition");
         return false;
     }
 
@@ -1214,7 +1214,7 @@ bool Permissions::check_remote_datawriter(const PermissionsHandle& remote_handle
     }
     else
     {
-        exception = _SecurityException_("Not found topic access rule for topic " + publication_data.topicName().to_string());
+        _SecurityException_(exception, "Not found topic access rule for topic " + publication_data.topicName().to_string());
         return false;
     }
 
@@ -1230,7 +1230,7 @@ bool Permissions::check_remote_datawriter(const PermissionsHandle& remote_handle
                 }
                 else
                 {
-                    exception = _SecurityException_(publication_data.topicName().to_string() +
+                    _SecurityException_(exception, publication_data.topicName().to_string() +
                             std::string(" topic denied by deny rule."));
                 }
 
@@ -1241,7 +1241,7 @@ bool Permissions::check_remote_datawriter(const PermissionsHandle& remote_handle
 
     if(!returned_value && strlen(exception.what()) == 0)
     {
-        exception = _SecurityException_(publication_data.topicName().to_string() +
+        _SecurityException_(exception, publication_data.topicName().to_string() +
                 std::string(" topic not found in allow rule."));
     }
 
@@ -1259,7 +1259,7 @@ bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle
 
     if(rah.nil())
     {
-        exception = _SecurityException_("Bad precondition");
+        _SecurityException_(exception, "Bad precondition");
         return false;
     }
 
@@ -1275,7 +1275,7 @@ bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle
     }
     else
     {
-        exception = _SecurityException_("Not found topic access rule for topic " + subscription_data.topicName().to_string());
+        _SecurityException_(exception, "Not found topic access rule for topic " + subscription_data.topicName().to_string());
         return false;
     }
 
@@ -1291,7 +1291,7 @@ bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle
                 }
                 else
                 {
-                    exception = _SecurityException_(subscription_data.topicName().to_string() +
+                    _SecurityException_(exception, subscription_data.topicName().to_string() +
                             std::string(" topic denied by deny rule."));
                 }
 
@@ -1313,7 +1313,7 @@ bool Permissions::check_remote_datareader(const PermissionsHandle& remote_handle
 
     if(!returned_value && strlen(exception.what()) == 0)
     {
-        exception = _SecurityException_(subscription_data.topicName().to_string() +
+        _SecurityException_(exception, subscription_data.topicName().to_string() +
                 std::string(" topic not found in allow rule."));
     }
 
@@ -1327,7 +1327,7 @@ bool Permissions::get_participant_sec_attributes(const PermissionsHandle& local_
 
     if(lah.nil())
     {
-        exception = _SecurityException_("Bad precondition");
+        _SecurityException_(exception, "Bad precondition");
         return false;
     }
 
@@ -1351,7 +1351,7 @@ bool Permissions::get_datawriter_sec_attributes(const PermissionsHandle& permiss
     }
     else
     {
-        exception = _SecurityException_("Not found topic access rule for topic " + topic_name);
+        _SecurityException_(exception, "Not found topic access rule for topic " + topic_name);
     }
 
     return false;
@@ -1372,7 +1372,7 @@ bool Permissions::get_datareader_sec_attributes(const PermissionsHandle& permiss
     }
     else
     {
-        exception = _SecurityException_("Not found topic access rule for topic " + topic_name);
+        _SecurityException_(exception, "Not found topic access rule for topic " + topic_name);
     }
 
     return false;

@@ -187,7 +187,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
     const std::vector<uint8_t>* challenge_2 = SharedSecretHelper::find_data_value(**shared_secret,"Challenge2");
     if( (challenge_1 == nullptr) | (shared_secret_ss == nullptr) | (challenge_2 == nullptr) ){
         logWarning(SECURITY_CRYPTO,"Malformed SharedSecretHandle");
-        exception = SecurityException("Unable to read SharedSecret and Challenges");
+        exception.set_msg("Unable to read SharedSecret and Challenges");
         return nullptr;
     }
 
@@ -234,7 +234,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         if (!create_kx_key(buffer.master_salt, challenge_1, "keyexchange salt", challenge_2, shared_secret_ss))
         {
             logWarning(SECURITY_CRYPTO, "Error generating the keys to perform token transaction");
-            exception = SecurityException("Encountered an error while creating KxKeyMaterials");
+            exception.set_msg("Encountered an error while creating KxKeyMaterials");
             delete RPCrypto;
             return nullptr;
         }
@@ -242,7 +242,7 @@ ParticipantCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_partici
         if(!create_kx_key(buffer.master_sender_key, challenge_2, "key exchange key", challenge_1, shared_secret_ss))
         {
             logWarning(SECURITY_CRYPTO, "Error generating the keys to perform token transaction");
-            exception = SecurityException("Encountered an error while creating KxKeyMaterials");
+            exception.set_msg("Encountered an error while creating KxKeyMaterials");
             delete RPCrypto;
             return nullptr;
         }
@@ -699,7 +699,7 @@ bool AESGCMGMAC_KeyFactory::unregister_datawriter(
     AESGCMGMAC_WriterCryptoHandle& datawriter = AESGCMGMAC_WriterCryptoHandle::narrow(*datawriter_crypto_handle);
 
     if(datawriter.nil()){
-        exception = SecurityException("Not a valid DataWriterCryptoHandle has been passed as an argument");
+        exception.set_msg("Not a valid DataWriterCryptoHandle has been passed as an argument");
         return false;
     }
     if( (datawriter->Parent_participant) == nullptr){
@@ -709,7 +709,7 @@ bool AESGCMGMAC_KeyFactory::unregister_datawriter(
     }
     AESGCMGMAC_ParticipantCryptoHandle& parent_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow( *(datawriter->Parent_participant) );
     if(parent_participant.nil()){
-        exception = SecurityException("Malformed AESGCMGMAC_WriterCryptohandle");
+        exception.set_msg("Malformed AESGCMGMAC_WriterCryptohandle");
         return false;
     }
 
@@ -737,7 +737,7 @@ bool AESGCMGMAC_KeyFactory::unregister_datareader(
     AESGCMGMAC_ReaderCryptoHandle& datareader = AESGCMGMAC_ReaderCryptoHandle::narrow(*datareader_crypto_handle);
 
     if(datareader.nil()){
-        exception = SecurityException("Not a valid DataReaderCryptoHandle has been passed as an argument");
+        exception.set_msg("Not a valid DataReaderCryptoHandle has been passed as an argument");
         return false;
     }
     if( (datareader->Parent_participant) == nullptr){
@@ -747,7 +747,7 @@ bool AESGCMGMAC_KeyFactory::unregister_datareader(
     }
     AESGCMGMAC_ParticipantCryptoHandle& parent_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow( *(datareader->Parent_participant) );
     if(parent_participant.nil()){
-        exception = SecurityException("Malformed AESGCMGMAC_WriterCryptohandle");
+        exception.set_msg("Malformed AESGCMGMAC_WriterCryptohandle");
         return false;
     }
 

@@ -16,39 +16,3 @@
 
 using namespace eprosima::fastrtps::rtps::security;
 
-SecurityException::SecurityException(const SecurityException &ex) : Exception(ex)
-{
-}
-
-SecurityException::SecurityException(SecurityException&& ex) : Exception(std::move(ex))
-{
-}
-
-SecurityException& SecurityException::operator=(const SecurityException &ex)
-{
-    if(this != &ex)
-    {
-        Exception::operator=(ex);
-    }
-
-    return *this;
-}
-
-SecurityException& SecurityException::operator=(SecurityException&& ex)
-{
-    if(this != &ex)
-    {
-        Exception::operator=(std::move(ex));
-    }
-
-    return *this;
-}
-
-SecurityException::~SecurityException() throw()
-{
-}
-
-void SecurityException::raise() const
-{
-    throw *this;
-}

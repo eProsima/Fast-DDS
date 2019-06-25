@@ -15,7 +15,9 @@
 #ifndef _RTPS_SECURITY_EXCEPTIONS_SECURITYEXCEPTION_H_
 #define _RTPS_SECURITY_EXCEPTIONS_SECURITYEXCEPTION_H_
 
-#include "../../exceptions/Exception.h"
+#include "fastrtps/fastrtps_dll.h"
+
+#include <string>
 
 namespace eprosima {
 namespace fastrtps {
@@ -26,48 +28,62 @@ namespace security {
  * @brief This class is thrown as an exception when there is an error in security module.
  * @ingroup EXCEPTIONMODULE
  */
-class SecurityException : public Exception
+class SecurityException
 {
-    public:
 
-        RTPS_DllAPI SecurityException() {}
+public:
 
-        /**
-         * @brief Default constructor.
-         * @param message An error message. This message is copied.
-         */
-        RTPS_DllAPI SecurityException(const std::string& message) : Exception(message.c_str(), 1) {}
+    RTPS_DllAPI SecurityException() {}
 
-        /**
-         * @brief Default copy constructor.
-         * @param ex SecurityException that will be copied.
-         */
-        RTPS_DllAPI SecurityException(const SecurityException &ex);
+    /// \brief Default constructor
+    virtual RTPS_DllAPI ~SecurityException() throw() = default;
 
-        /**
-         * @brief Default move constructor.
-         * @param ex SecurityException that will be moved.
-         */
-        RTPS_DllAPI SecurityException(SecurityException&& ex);
+    /**
+     * @brief Default copy constructor.
+     * @param ex SecurityException that will be copied.
+     */
+    SecurityException(const SecurityException &ex) = delete;
 
-        /**
-         * @brief Assigment operation.
-         * @param ex SecurityException that will be copied.
-         */
-        RTPS_DllAPI SecurityException& operator=(const SecurityException &ex);
+    /**
+     * @brief Default move constructor.
+     * @param ex SecurityException that will be moved.
+     */
+    SecurityException(SecurityException&& ex) = delete;
 
-        /**
-         * @brief Assigment operation.
-         * @param ex SecurityException that will be moved.
-         */
-        RTPS_DllAPI SecurityException& operator=(SecurityException&& ex);
+    /**
+     * @brief Assigment operation.
+     * @param ex SecurityException that will be copied.
+     */
+    SecurityException& operator=(const SecurityException &ex) = delete;
 
-        /// \brief Default constructor
-        virtual RTPS_DllAPI ~SecurityException() throw();
+    /**
+     * @brief Assigment operation.
+     * @param ex SecurityException that will be moved.
+     */
+    SecurityException& operator=(SecurityException&& ex) = delete;
 
-        /// \brief This function throws the object as an exception.
-        virtual RTPS_DllAPI void raise() const;
+    /**
+     * @brief 
+     */
+    RTPS_DllAPI void set_msg(
+            const std::string& msg)
+    {
+        msg_ = msg;
+    }
+
+    /**
+     * @brief This function returns the error message.
+     * @return The error message.
+     */
+    RTPS_DllAPI const char* const what() const throw()
+    {
+        return msg_.c_str();
+    }
+
+private:
+    std::string msg_;
 };
+
 } // namespace security
 } // namespace rtps
 } // namespace fastrtps

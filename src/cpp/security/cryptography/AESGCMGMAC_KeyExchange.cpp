@@ -91,19 +91,19 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
     //As only relevant KeyMaterials are tokenized, only one Token is exchanged
     if(remote_participant_tokens.size() != 1){
         logWarning(SECURITY_CRYPTO, "Invalid CryptoTokenSeq length");
-        exception = SecurityException("Incorrect remote CryptoSequence length");
+        exception.set_msg("Incorrect remote CryptoSequence length");
         return false;
     }
     if(remote_participant_tokens.at(0).class_id() != "DDS:Crypto:AES_GCM_GMAC"){
         logWarning(SECURITY_CRYPTO, "MalformedCryptoToken");
-        exception = SecurityException("Incorrect token type received");
+        exception.set_msg("Incorrect token type received");
         return false;
     }
     if(remote_participant_tokens.at(0).binary_properties().size() !=1 || remote_participant_tokens.at(0).properties().size() != 0 ||
         remote_participant_tokens.at(0).binary_properties().at(0).name() != "dds.cryp.keymat")
     {
         logWarning(SECURITY_CRYPTO, "MalformedCryptoToken");
-        exception = SecurityException("Malformed CryptoToken");
+        exception.set_msg("Malformed CryptoToken");
         return false;
     }
     //Valid CryptoToken, we can decrypt and push the resulting KeyMaterial in as a RemoteParticipant2ParticipantKeyMaterial
@@ -215,7 +215,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
     auto nTokens = remote_datareader_tokens.size();
     if(nTokens != 1 && nTokens != 2){
         logWarning(SECURITY_CRYPTO,"Malformed CryptoTokenSequence");
-        exception = SecurityException("Incorrect remote CryptoSequence length");
+        exception.set_msg("Incorrect remote CryptoSequence length");
         return false;
     }
     for (size_t i = 0; i < nTokens; i++)
@@ -223,7 +223,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
         if (remote_datareader_tokens.at(i).class_id() != "DDS:Crypto:AES_GCM_GMAC")
         {
             logWarning(SECURITY_CRYPTO, "Malformed CryptoToken");
-            exception = SecurityException("Incorrect token type received");
+            exception.set_msg("Incorrect token type received");
             return false;
         }
 
@@ -231,7 +231,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
             remote_datareader_tokens.at(i).binary_properties().at(0).name() != "dds.cryp.keymat")
         {
             logWarning(SECURITY_CRYPTO, "Malformed CryptoToken");
-            exception = SecurityException("Malformed CryptoToken");
+            exception.set_msg("Malformed CryptoToken");
             return false;
         }
 
@@ -276,7 +276,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
     auto nTokens = remote_datawriter_tokens.size();
     if(nTokens != 1 && nTokens != 2){
         logWarning(SECURITY_CRYPTO,"Malformed CryptoTokenSequence");
-        exception = SecurityException("Incorrect remote CryptoSequence length");
+        exception.set_msg("Incorrect remote CryptoSequence length");
         return false;
     }
 
@@ -285,7 +285,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
         if (remote_datawriter_tokens.at(i).class_id() != "DDS:Crypto:AES_GCM_GMAC")
         {
             logWarning(SECURITY_CRYPTO, "Malformed CryptoToken");
-            exception = SecurityException("Incorrect token type received");
+            exception.set_msg("Incorrect token type received");
             return false;
         }
 
@@ -293,7 +293,7 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
             remote_datawriter_tokens.at(i).binary_properties().at(0).name() != "dds.cryp.keymat")
         {
             logWarning(SECURITY_CRYPTO, "Malformed CryptoToken");
-            exception = SecurityException("Malformed CryptoToken");
+            exception.set_msg("Malformed CryptoToken");
             return false;
         }
 
@@ -328,7 +328,7 @@ bool AESGCMGMAC_KeyExchange::return_crypto_tokens(
             SecurityException &exception)
 {
 
-    exception = SecurityException("Not implemented");
+    exception.set_msg("Not implemented");
     return false;
 }
 

@@ -801,14 +801,14 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
     AESGCMGMAC_ParticipantCryptoHandle& remote_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(sending_crypto);
     if(remote_participant.nil()){
         logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle");
-        exception = SecurityException("Not a valid ParticipantCryptoHandle received");
+        exception.set_msg("Not a valid ParticipantCryptoHandle received");
         return false;
     }
 
     AESGCMGMAC_ParticipantCryptoHandle& local_participant = AESGCMGMAC_ParticipantCryptoHandle::narrow(receiving_crypto);
     if(local_participant.nil()){
         logWarning(SECURITY_CRYPTO,"Invalid CryptoHandle");
-        exception = SecurityException("Not a valid ParticipantCryptoHandle received");
+        exception.set_msg("Not a valid ParticipantCryptoHandle received");
         return false;
     }
 
@@ -1322,7 +1322,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     AESGCMGMAC_WriterCryptoHandle& sending_writer = AESGCMGMAC_WriterCryptoHandle::narrow(sending_datawriter_crypto);
 
     if(sending_writer.nil()){
-        exception = SecurityException("Not a valid sending_writer handle");
+        exception.set_msg("Not a valid sending_writer handle");
         return false;
     }
 
@@ -2045,7 +2045,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataTag(eprosima::fastcdr::Cdr& dec
         if(!mac_found)
         {
             logWarning(SECURITY_CRYPTO,"Unable to authenticate the message: message does not target this Participant");
-            exception = SecurityException("Message does not contain a suitable specific MAC for the receiving Participant");
+            exception.set_msg("Message does not contain a suitable specific MAC for the receiving Participant");
             return false;
         }
 
