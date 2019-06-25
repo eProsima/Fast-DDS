@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/rtps/security/exceptions/SecurityException.h>
+#include <cstring>
 
 namespace eprosima {
 namespace fastrtps {
@@ -27,7 +28,7 @@ RTPS_DllAPI SecurityException::SecurityException() throw()
 RTPS_DllAPI SecurityException& SecurityException::set_msg(
         const char* const msg) throw()
 {
-    strncpy_s(msg_, msg, SECURITY_ERROR_MAX_LENGTH);
+    snprintf(msg_, SECURITY_ERROR_MAX_LENGTH, "%s", msg);
     return *this;
 }
 

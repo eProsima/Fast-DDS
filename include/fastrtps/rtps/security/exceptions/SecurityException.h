@@ -99,13 +99,13 @@ public:
      * @brief This function returns the error message.
      * @return The error message.
      */
-    RTPS_DllAPI const char* const what() const throw()
+    RTPS_DllAPI const char* what() const throw()
     {
         return msg_;
     }
 
 private:
-    char msg_[SECURITY_ERROR_MAX_LENGTH + 1];
+    char msg_[SECURITY_ERROR_MAX_LENGTH];
 };
 
 } // namespace security
