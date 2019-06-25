@@ -166,14 +166,6 @@ TEST_F(XMLParserTests, NoFIle)
     ASSERT_EQ(XMLParser::loadXML("missing_file.xml", root), XMLP_ret::XML_ERROR);
 }
 
-TEST_F(XMLParserTests, EmptyDefaultFile)
-{
-    std::ifstream inFile;
-    inFile.open("DEFAULT_FASTRTPS_PROFILES.xml");
-    std::unique_ptr<BaseNode> root;
-    ASSERT_EQ(XMLParser::loadDefaultXMLFile(root), XMLP_ret::XML_ERROR);
-}
-
 TEST_F(XMLParserTests, EmptyString)
 {
     std::ifstream inFile;
@@ -357,6 +349,74 @@ TEST_F(XMLParserTests, TypesBuffer)
     ASSERT_TRUE(participant_profile);
     ASSERT_TRUE(publisher_profile);
     ASSERT_TRUE(subscriber_profile);
+}
+
+TEST_F(XMLParserTests, DurationCheck)
+{
+    std::unique_ptr<BaseNode> root;
+    const std::string name_attribute{"profile_name"};
+    const std::string profile_name{"test_participant_profile"};
+    const std::string profile_name2{"test_publisher_profile"};
+    const std::string profile_name3{"test_subscriber_profile"};
+
+    ASSERT_EQ(XMLParser::loadXML("test_xml_duration.xml", root), XMLP_ret::XML_OK);
+
+    ParticipantAttributes participant_atts;
+    bool participant_profile = false;
+    PublisherAttributes publisher_atts;
+    bool publisher_profile = false;
+    SubscriberAttributes subscriber_atts;
+    bool subscriber_profile = false;
+    for (const auto& profile : root->getChildren())
+    {
+        if (profile->getType() == NodeType::PARTICIPANT)
+        {
+            auto data_node = dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get());
+            auto search    = data_node->getAttributes().find(name_attribute);
+            if ((search != data_node->getAttributes().end()) && (search->second == profile_name))
+            {
+                participant_atts    = *data_node->get();
+                participant_profile = true;
+            }
+        }
+        else if (profile->getType() == NodeType::PUBLISHER)
+        {
+            auto data_node = dynamic_cast<DataNode<PublisherAttributes>*>(profile.get());
+            auto search    = data_node->getAttributes().find(name_attribute);
+            if ((search != data_node->getAttributes().end()) && (search->second == profile_name2))
+            {
+                publisher_atts    = *data_node->get();
+                publisher_profile = true;
+            }
+        }
+        else if (profile->getType() == NodeType::SUBSCRIBER)
+        {
+            auto data_node = dynamic_cast<DataNode<SubscriberAttributes>*>(profile.get());
+            auto search    = data_node->getAttributes().find(name_attribute);
+            if ((search != data_node->getAttributes().end()) && (search->second == profile_name3))
+            {
+                subscriber_atts    = *data_node->get();
+                subscriber_profile = true;
+            }
+        }
+    }
+    ASSERT_TRUE(participant_profile);
+    EXPECT_EQ(participant_atts.rtps.builtin.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(participant_atts.rtps.builtin.leaseDuration_announcementperiod.seconds, 10);
+    EXPECT_EQ(participant_atts.rtps.builtin.leaseDuration_announcementperiod.nanosec, 333u);
+
+    ASSERT_TRUE(publisher_profile);
+    EXPECT_EQ(publisher_atts.qos.m_deadline.period.seconds, 15);
+    EXPECT_EQ(publisher_atts.qos.m_liveliness.lease_duration.seconds, 1);
+    EXPECT_EQ(publisher_atts.qos.m_liveliness.lease_duration.nanosec, 2);
+    EXPECT_EQ(publisher_atts.qos.m_liveliness.announcement_period, c_TimeInfinite);
+
+    ASSERT_TRUE(subscriber_profile);
+    EXPECT_EQ(subscriber_atts.qos.m_deadline.period.seconds, 12);
+    EXPECT_EQ(subscriber_atts.qos.m_liveliness.lease_duration.seconds, 11);
+    EXPECT_EQ(subscriber_atts.qos.m_liveliness.lease_duration.nanosec, 22);
+    EXPECT_EQ(subscriber_atts.qos.m_liveliness.announcement_period.seconds, 0);
+    EXPECT_EQ(subscriber_atts.qos.m_liveliness.announcement_period.nanosec, 0);
 }
 
 TEST_F(XMLParserTests, Data)
