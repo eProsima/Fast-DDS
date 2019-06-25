@@ -24,12 +24,12 @@ file(GLOB_RECURSE ALL_HEADERS
 	${PROJECT_SOURCE_DIR}/include/**/*.hpp
 	${PROJECT_SOURCE_DIR}/src/cpp/**/*.h
 	${PROJECT_SOURCE_DIR}/src/cpp/**/*.hpp
-	)  #TODO: remove when development process is finished
+	)  
 
 endif(WIN32)
 
 set(${PROJECT_NAME}_source_files
-	${ALL_HEADERS} #TODO: remove when development process is finished
+	${ALL_HEADERS} 
 
     log/Log.cpp
     log/StdoutConsumer.cpp

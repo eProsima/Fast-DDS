@@ -71,7 +71,7 @@ void HeartbeatResponseDelay::event(
         logInfo(RTPS_READER,"");
 
        // Protect reader
-       // std::lock_guard<std::recursive_timed_mutex> guard(mp_WP->mp_SFR->getMutex());
+       std::lock_guard<std::recursive_timed_mutex> guard(mp_WP->mp_SFR->getMutex());
        //   This generates deadlocks because on DATA(U) processing builting EDP points kill HearbeatResponseDelay objects on unmatching.
        //   HearbeatResponseDelay objects wait for this event to return while locking on the mp_SFR->getMutex().
 

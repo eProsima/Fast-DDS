@@ -30,32 +30,32 @@ namespace rtps {
 class PDPServer;
 
 /**
- * Class DSClientEvent, TimedEvent used to synchronize discover-server clients
+ * Class DServerEvent, TimedEvent used to synchronize discover-server servers
  *@ingroup DISCOVERY_MODULE
  */
 class DServerEvent : public TimedEvent {
 public:
 
-	/**
-	 * Constructor.
-	 * @param p_PDP Pointer to the PDPServer.
-	 * @param interval Interval in ms.
-	 */
+    /**
+     * Constructor.
+     * @param p_PDP Pointer to the PDPServer.
+     * @param interval Interval in ms.
+     */
     DServerEvent(PDPServer* p_PDP,
-			double interval);
-	~DServerEvent();
-	
-	/**
-	* Method invoked when the event occurs.
-	* This temporal event:
+            double interval);
+    ~DServerEvent();
+
+    /**
+    * Method invoked when the event occurs.
+    * This temporal event:
         + resends the client RTPSParticipantProxyData to all remote servers.
         + matches the EDP endpoints when the servers are all aware of this client existence
-	* @param code Code representing the status of the event
-	* @param msg Message associated to the event
-	*/
-	void event(EventCode code, const char* msg= nullptr);
-	
-	//!Pointer to the PDPServer object.
+    * @param code Code representing the status of the event
+    * @param msg Message associated to the event
+    */
+    void event(EventCode code, const char* msg= nullptr);
+
+    //!Pointer to the PDPServer object.
     PDPServer* mp_PDP;
     //!Initialize PDP reception when first run
     bool messages_enabled_;

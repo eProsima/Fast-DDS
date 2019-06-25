@@ -282,12 +282,17 @@ bool BuiltinProtocols::newRemoteEndpointStaticallyDiscovered(
         if (pEDP == nullptr)
         {
             logError(RTPS_PDP, "Trying to use Static Discovery Interface in non Static context");
+            return false;
         }
 
         if (kind == WRITER)
+        {
             pEDP->newRemoteWriter(pdata, userDefinedId);
+        }
         else
+        {
             pEDP->newRemoteReader(pdata, userDefinedId);
+        }
     }
     return false;
 }

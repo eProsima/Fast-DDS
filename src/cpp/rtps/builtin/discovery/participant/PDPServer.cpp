@@ -98,7 +98,7 @@ ParticipantProxyData* PDPServer::createParticipantProxyData(
     const ParticipantProxyData& participant_data,
     const CacheChange_t& change)
 {
-    std::unique_lock<std::recursive_mutex> lock(*getMutex());
+    std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
     // lease duration is controlled for owned clients or linked servers
     // other clients liveliness is provided through server's PDP discovery data
@@ -235,10 +235,6 @@ bool PDPServer::createPDPEndpoints()
             rratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
             rratt.endpoint.reliabilityKind = RELIABLE;
 
-            // TODO: remove the join when Reader and Writer match functions are updated
-            rratt.endpoint.remoteLocatorList.push_back(it->metatrafficMulticastLocatorList);
-            rratt.endpoint.remoteLocatorList.push_back(it->metatrafficUnicastLocatorList);
-
             mp_PDPWriter->matched_reader_add(rratt);
         }
 
@@ -279,16 +275,23 @@ void PDPServer::initializeParticipantProxyData(ParticipantProxyData* participant
 
 void PDPServer::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
-    // Verify if this participant is a server
-    for (auto & svr : mp_builtin->m_DiscoveryServers)
     {
-        if (svr.guidPrefix == pdata->m_guid.guidPrefix)
+        std::unique_lock<std::recursive_mutex> lock(*getMutex());
+
+        // Verify if this participant is a server
+        for (auto & svr : mp_builtin->m_DiscoveryServers)
         {
-            svr.proxy = pdata;
-            // servers are already match in PDPServer::createPDPEndpoints
-            // Notify another endpoints
-            notifyAboveRemoteEndpoints(*pdata);
-            return;
+            if (svr.guidPrefix == pdata->m_guid.guidPrefix)
+            {
+                svr.proxy = pdata;
+
+                lock.unlock();
+
+                // servers are already match in PDPServer::createPDPEndpoints
+                // Notify another endpoints
+                notifyAboveRemoteEndpoints(*pdata);
+                return;
+            }
         }
     }
 
@@ -330,6 +333,7 @@ void PDPServer::assignRemoteEndpoints(ParticipantProxyData* pdata)
         mp_PDPWriter->matched_reader_add(ratt);
 
         // TODO: remove when the Writer API issue is resolved
+        std::lock_guard<std::recursive_mutex> lock(*getMutex());
         clients_[ratt.guid] = ratt;
     }
 
@@ -388,6 +392,10 @@ void PDPServer::removeRemoteEndpoints(ParticipantProxyData* pdata)
 
         mp_PDPReader->matched_writer_remove(watt);
 
+        /*
+            When a server acts like a client to another server it should never
+            stop receiving meta data from him
+        */
         if (is_server)
         {
             mp_PDPReader->matched_writer_add(watt,false);
@@ -413,12 +421,18 @@ void PDPServer::removeRemoteEndpoints(ParticipantProxyData* pdata)
 
         mp_PDPWriter->matched_reader_remove(ratt);
 
+        /*
+           When a server acts like a client to another server it should never
+           stop sending meta data from him
+        */
         if (is_server)
         {
             mp_PDPWriter->matched_reader_add(ratt);
         }
         else
         {
+            std::unique_lock<std::recursive_mutex> lock(*getMutex());
+
             // TODO: remove when the Writer API issue is resolved
             clients_.erase(ratt.guid);
         }
@@ -456,6 +470,9 @@ void PDPServer::match_all_clients_EDP_endpoints()
 
 bool PDPServer::trimWriterHistory()
 {
+    assert(mp_mutex && mp_PDPWriter);
+    std::lock_guard<std::recursive_mutex> guardP(*getMutex());
+
     EDPServer * pEDP = dynamic_cast<EDPServer*>(mp_EDP);
     assert(pEDP);
 
@@ -471,15 +488,11 @@ bool PDPServer::trimWriterHistory()
 
 bool PDPServer::trimPDPWriterHistory()
 {
-    assert(mp_mutex && mp_PDPWriter);
-
     // trim demises container
     key_list disposal, aux;
 
     if (_demises.empty())
         return true;
-
-    std::lock_guard<std::recursive_mutex> guardP(*getMutex());
 
     // sweep away any resurrected participant
     std::for_each(ParticipantProxiesBegin(), ParticipantProxiesEnd(),
@@ -901,6 +914,8 @@ bool PDPServer::removeRemoteParticipant(GUID_t& partGUID)
 
 bool PDPServer::pendingHistoryCleaning()
 {
+    std::lock_guard<std::recursive_mutex> guardP(*getMutex());
+
     EDPServer * pEDP = dynamic_cast<EDPServer*>(mp_EDP);
     assert(pEDP);
 

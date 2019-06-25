@@ -57,9 +57,9 @@ void DServerEvent::event(EventCode code, const char* msg)
     {
         logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " DServerEvent Period");
 
-        std::lock_guard<std::recursive_mutex> lock(*mp_PDP->getMutex());
         bool restart = false;
 
+        // messges_enabled is only modified from this thread
         if (!messages_enabled_)
         {
             messages_enabled_ = true;

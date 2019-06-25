@@ -320,14 +320,16 @@ bool PDPClient::createPDPEndpoints()
 // the ParticipantProxyData* pdata must be the one kept in PDP database
 void PDPClient::assignRemoteEndpoints(ParticipantProxyData* pdata)
 {
-    std::unique_lock<std::recursive_mutex> lock(*getMutex());
-
-    // Verify if this participant is a server
-    for (auto & svr : mp_builtin->m_DiscoveryServers)
     {
-        if (svr.guidPrefix == pdata->m_guid.guidPrefix)
+        std::unique_lock<std::recursive_mutex> lock(*getMutex());
+
+        // Verify if this participant is a server
+        for (auto & svr : mp_builtin->m_DiscoveryServers)
         {
-            svr.proxy = pdata;
+            if (svr.guidPrefix == pdata->m_guid.guidPrefix)
+            {
+                svr.proxy = pdata;
+            }
         }
     }
 
