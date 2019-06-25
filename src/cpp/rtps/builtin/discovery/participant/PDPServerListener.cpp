@@ -167,7 +167,9 @@ void PDPServerListener::onNewCacheChangeAdded(
             return;
         }
 
-        if(this->mp_PDP->removeRemoteParticipant(guid))
+        std::unique_ptr<PDPServer::InPDPCallback> guard = mp_PDP->signalCallback();
+
+        if(mp_PDP->removeRemoteParticipant(guid))
         {
             auto listener = this->mp_PDP->getRTPSParticipant()->getListener();
             if(listener != nullptr)

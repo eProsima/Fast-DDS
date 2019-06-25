@@ -225,7 +225,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
     assert(change);
 
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> lock(mp_mutex);
 
     if(acceptMsgFrom(change->writerGUID, &pWP))
     {

@@ -57,6 +57,7 @@ PDPServer::PDPServer(
     , _durability(durability_kind)
     , _msgbuffer(DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,built->mp_participantImpl->getGuid().guidPrefix)
     , mp_sync(nullptr)
+    , PDP_callback_(false)
 {
 
 }
@@ -358,7 +359,7 @@ void PDPServer::removeRemoteEndpoints(ParticipantProxyData* pdata)
     // Verify if this participant is a server
     bool is_server = false;
     {
-        std::unique_lock<std::recursive_mutex> lock(*getMutex());
+        std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
         for (RemoteServerAttributes & svr : mp_builtin->m_DiscoveryServers)
         {
@@ -390,7 +391,7 @@ void PDPServer::removeRemoteEndpoints(ParticipantProxyData* pdata)
         watt.endpoint.durabilityKind = is_server ? TRANSIENT : TRANSIENT_LOCAL;
         watt.endpoint.topicKind = WITH_KEY;
 
-        mp_PDPReader->matched_writer_remove(watt);
+        safe_PDP_matched_writer_remove(&watt);
 
         /*
             When a server acts like a client to another server it should never
@@ -920,6 +921,50 @@ bool PDPServer::pendingHistoryCleaning()
     assert(pEDP);
 
     return !_demises.empty() || pEDP->pendingHistoryCleaning();
+}
+
+// ! returns a unique_ptr to an object that handles PDP_callback_ in a RAII fashion
+std::unique_ptr<PDPServer::InPDPCallback> PDPServer::signalCallback()
+{
+    return std::make_unique<PDPServer::InPDPCallback>(*this);
+}
+
+// ! calls PDP Reader matched_writer_remove preventing deadlocks
+bool PDPServer::safe_PDP_matched_writer_remove(const RemoteWriterAttributes* wdata)
+{
+    bool res;
+    std::lock_guard<std::recursive_mutex> guardP(*getMutex());
+
+    if(PDP_callback_)
+    {
+        // If we are in a transport callback the reader mutex is already lock
+        // and we cannot remove the writer proxies
+        std::recursive_timed_mutex & mtx = mp_PDPReader->getMutex();
+
+        mtx.unlock();
+        res = mp_PDPReader->matched_writer_remove(*wdata);
+        mtx.lock();
+    }
+    else
+    {
+        res = mp_PDPReader->matched_writer_remove(*wdata);
+    }
+
+    return res;
+}
+
+PDPServer::InPDPCallback::InPDPCallback(PDPServer & svr) : server_(svr)
+{
+    std::lock_guard<std::recursive_mutex> lock(*server_.getMutex());
+
+    server_.PDP_callback_ = true;
+}
+
+PDPServer::InPDPCallback::~InPDPCallback()
+{
+    std::lock_guard<std::recursive_mutex> lock(*server_.getMutex());
+
+    server_.PDP_callback_ = false;
 }
 
 } /* namespace rtps */

@@ -35,6 +35,7 @@ namespace rtps {
 
 class StatefulWriter;
 class StatefulReader;
+class RemoteWriterAttributes;
 
 /**
  * Class PDPServer manages server side of the discovery server mechanism
@@ -44,6 +45,8 @@ class PDPServer : public PDP
 {
     friend class DServerEvent;
     friend class PDPServerListener;
+
+    friend class InPDPCallback;
 
     typedef std::set<const ParticipantProxyData*> pending_matches_list;
     typedef std::set<InstanceHandle_t> key_list;
@@ -65,6 +68,7 @@ class PDPServer : public PDP
     std::map<GUID_t, RemoteReaderAttributes> clients_;
 
     public:
+
     /**
      * Constructor
      * @param builtin Pointer to the BuiltinProcols object.
@@ -222,6 +226,25 @@ class PDPServer : public PDP
     //! Wakes up the DServerEvent for new matching or trimming
     void awakeServerThread() { mp_sync->restart_timer(); }
 
+    // The following struct and two methods solve a callback synchronization issue
+
+    class InPDPCallback
+    {
+        friend class PDPServer;
+        PDPServer & server_;
+
+    public:
+
+        InPDPCallback(PDPServer & svr);
+        ~InPDPCallback();
+    };
+
+    // ! returns a unique_ptr to an object that handles PDP_callback_ in a RAII fashion
+    std::unique_ptr<InPDPCallback> signalCallback();
+
+    // ! calls PDP Reader matched_writer_remove preventing deadlocks
+    bool safe_PDP_matched_writer_remove(const RemoteWriterAttributes* wdata);
+
     private:
 
      /**
@@ -236,6 +259,10 @@ class PDPServer : public PDP
     *   second stage: waiting PDP info is up to date before allowing EDP matching
     */
     DServerEvent* mp_sync;
+
+    // ! on PDP DATA(p[UD]) callback. Only modified by transport threads which are
+    // serialized for PDP reader
+    volatile bool PDP_callback_;
 };
 
 }
