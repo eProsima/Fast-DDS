@@ -21,7 +21,10 @@
 #define READERLISTENER_H_
 
 #include "../common/MatchingInfo.h"
+#include <fastrtps/qos/LivelinessChangedStatus.h>
+
 #include <mutex>
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -35,40 +38,53 @@ struct CacheChange_t;
 */
 class RTPS_DllAPI ReaderListener
 {
-    public:
+public:
 
-        ReaderListener() = default;
+    ReaderListener() = default;
 
-        virtual ~ReaderListener() = default;
+    virtual ~ReaderListener() = default;
 
-        /**
-         * This method is invoked when a new reader matches
-         * @param reader Matching reader
-         * @param info Matching information of the reader
-         */
-        virtual void onReaderMatched(
-                RTPSReader* reader,
-                MatchingInfo& info)
-        {
-            (void)reader;
-            (void)info;
-        }
+    /**
+     * This method is invoked when a new reader matches
+     * @param reader Matching reader
+     * @param info Matching information of the reader
+     */
+    virtual void onReaderMatched(
+            RTPSReader* reader,
+            MatchingInfo& info)
+    {
+        (void)reader;
+        (void)info;
+    }
 
-        /**
-         * This method is called when a new CacheChange_t is added to the ReaderHistory.
-         * @param reader Pointer to the reader.
-         * @param change Pointer to the CacheChange_t. This is a const pointer to const data
-         * to indicate that the user should not dispose of this data himself.
-         * To remove the data call the remove_change method of the ReaderHistory.
-         * reader->getHistory()->remove_change((CacheChange_t*)change).
-         */
-        virtual void onNewCacheChangeAdded(
-                RTPSReader* reader,
-                const CacheChange_t* const change)
-        {
-            (void)reader;
-            (void)change;
-        }
+    /**
+     * This method is called when a new CacheChange_t is added to the ReaderHistory.
+     * @param reader Pointer to the reader.
+     * @param change Pointer to the CacheChange_t. This is a const pointer to const data
+     * to indicate that the user should not dispose of this data himself.
+     * To remove the data call the remove_change method of the ReaderHistory.
+     * reader->getHistory()->remove_change((CacheChange_t*)change).
+     */
+    virtual void onNewCacheChangeAdded(
+            RTPSReader* reader,
+            const CacheChange_t* const change)
+    {
+        (void)reader;
+        (void)change;
+    }
+
+    /**
+     * @brief Method called when the livelivess of a reader changes
+     * @param reader The reader
+     * @param status The liveliness changed status
+     */
+    virtual void on_liveliness_changed(
+            RTPSReader* reader,
+            const LivelinessChangedStatus& status)
+    {
+        (void)reader;
+        (void)status;
+    }
 };
 
 //Namespace enders

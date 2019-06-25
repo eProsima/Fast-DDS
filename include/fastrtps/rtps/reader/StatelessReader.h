@@ -169,6 +169,16 @@ private:
 
     bool thereIsUpperRecordOf(GUID_t& guid, SequenceNumber_t& seq);
 
+    /**
+     * @brief A method to find writer attributes by given guid
+     * @param guid The guid of the remote writer
+     * @param att The remote writer attributes
+     * @return True if attributes were found
+     */
+    bool find_remote_writer_attributes(
+            const GUID_t& guid,
+            RemoteWriterAttributes& att);
+
     //!List of GUID_t os matched writers.
     //!Is only used in the Discovery, to correctly notify the user using SubscriptionListener::onSubscriptionMatched();
     std::vector<RemoteWriterAttributes> m_matched_writers;

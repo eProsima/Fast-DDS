@@ -25,6 +25,7 @@
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastrtps/rtps/writer/StatelessWriter.h>
 
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/rtps/RTPSDomain.h>
@@ -33,6 +34,8 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
 #include <functional>
 
@@ -386,6 +389,20 @@ void PublisherImpl::PublisherWriterListener::onWriterChangeReceivedByAll(
     }
 }
 
+void PublisherImpl::PublisherWriterListener::on_liveliness_lost(
+        RTPSWriter *writer,
+        const LivelinessLostStatus &status)
+{
+    (void)writer;
+
+    if (mp_publisherImpl->mp_listener != nullptr)
+    {
+        mp_publisherImpl->mp_listener->on_liveliness_lost(
+                    mp_publisherImpl->mp_userPublisher,
+                    status);
+    }
+}
+
 bool PublisherImpl::wait_for_all_acked(const eprosima::fastrtps::Time_t& max_wait)
 {
     return mp_writer->wait_for_all_acked(max_wait);
@@ -480,4 +497,37 @@ void PublisherImpl::lifespan_expired()
 
     lifespan_timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
     lifespan_timer_.restart_timer();
+}
+
+void PublisherImpl::get_liveliness_lost_status(LivelinessLostStatus &status)
+{
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
+
+    status = mp_writer->liveliness_lost_status_;
+
+    mp_writer->liveliness_lost_status_.total_count_change = 0u;
+}
+
+void PublisherImpl::assert_liveliness()
+{
+    if (!mp_rtpsParticipant->wlp()->assert_liveliness(
+                mp_writer->getGuid(),
+                mp_writer->get_liveliness_kind(),
+                mp_writer->get_liveliness_lease_duration()))
+    {
+        logError(PUBLISHER, "Could not assert liveliness of writer " << mp_writer->getGuid());
+    }
+
+    if (m_att.qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+    {
+        // As described in the RTPS specification, if liveliness kind is manual a heartbeat must be sent
+        // This only applies to stateful writers, as stateless writers do not send heartbeats
+
+        StatefulWriter* stateful_writer = dynamic_cast<StatefulWriter*>(mp_writer);
+
+        if (stateful_writer != nullptr)
+        {
+            stateful_writer->send_periodic_heartbeat(true, true);
+        }
+    }
 }

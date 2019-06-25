@@ -79,6 +79,7 @@ class StatefulReader;
 class PDPSimple;
 class FlowController;
 class IPersistenceService;
+class WLP;
 
 /**
     * @brief Class RTPSParticipantImpl, it contains the private implementation of the RTPSParticipant functions and
@@ -240,6 +241,8 @@ public:
 #endif
 
     PDPSimple* pdpsimple();
+
+    WLP* wlp();
 
     bool get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo);
 

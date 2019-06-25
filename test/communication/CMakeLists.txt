@@ -50,6 +50,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.py
         ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.py COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/automatic_liveliness_assertion.py
+        ${CMAKE_CURRENT_BINARY_DIR}/automatic_liveliness_assertion.py COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_besteffort.xml
         ${CMAKE_CURRENT_BINARY_DIR}/simple_besteffort.xml COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_reliable.xml
@@ -175,6 +177,21 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         if(WIN32)
             string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
             set_property(TEST LivelinessAssertion APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
+        add_test(NAME AutomaticLivelinessAssertion
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/automatic_liveliness_assertion.py)
+
+        # Set test with label NoMemoryCheck
+        set_property(TEST AutomaticLivelinessAssertion PROPERTY LABELS "NoMemoryCheck")
+
+        set_property(TEST AutomaticLivelinessAssertion PROPERTY ENVIRONMENT
+            "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
+        set_property(TEST AutomaticLivelinessAssertion APPEND PROPERTY ENVIRONMENT
+            "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST AutomaticLivelinessAssertion APPEND PROPERTY ENVIRONMENT
                 "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
         endif()
     endif()

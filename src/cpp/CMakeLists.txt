@@ -33,6 +33,7 @@ set(${PROJECT_NAME}_source_files
     rtps/resources/AsyncWriterThread.cpp
     rtps/resources/AsyncInterestTree.cpp
     rtps/timedevent/TimedCallback.cpp
+    rtps/writer/LivelinessManager.cpp
     rtps/writer/RTPSWriter.cpp
     rtps/writer/StatefulWriter.cpp
     rtps/writer/ReaderProxy.cpp
@@ -46,7 +47,6 @@ set(${PROJECT_NAME}_source_files
     rtps/history/WriterHistory.cpp
     rtps/history/ReaderHistory.cpp
     rtps/reader/timedevent/HeartbeatResponseDelay.cpp
-    rtps/reader/timedevent/WriterProxyLiveliness.cpp
     rtps/reader/timedevent/InitialAckNack.cpp
     rtps/reader/WriterProxy.cpp
     rtps/reader/StatefulReader.cpp

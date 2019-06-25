@@ -233,6 +233,20 @@ void SubscriberImpl::SubscriberReaderListener::onReaderMatched(RTPSReader* /*rea
     }
 }
 
+void SubscriberImpl::SubscriberReaderListener::on_liveliness_changed(
+        RTPSReader *reader,
+        const LivelinessChangedStatus &status)
+{
+    (void)reader;
+
+    if (mp_subscriberImpl->mp_listener != nullptr)
+    {
+        mp_subscriberImpl->mp_listener->on_liveliness_changed(
+                    mp_subscriberImpl->mp_userSubscriber,
+                    status);
+    }
+}
+
 bool SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change_in)
 {
     if (m_att.qos.m_deadline.period != c_TimeInfinite)
@@ -400,6 +414,16 @@ void SubscriberImpl::lifespan_expired()
 
     lifespan_timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
     lifespan_timer_.restart_timer();
+}
+
+void SubscriberImpl::get_liveliness_changed_status(LivelinessChangedStatus &status)
+{
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
+
+    status = mp_reader->liveliness_changed_status_;
+
+    mp_reader->liveliness_changed_status_.alive_count_change = 0u;
+    mp_reader->liveliness_changed_status_.not_alive_count_change = 0u;
 }
 
 } /* namespace fastrtps */
