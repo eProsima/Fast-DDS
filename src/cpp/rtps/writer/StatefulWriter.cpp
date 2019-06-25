@@ -115,13 +115,6 @@ StatefulWriter::~StatefulWriter()
         nack_response_event_ = nullptr;
     }
 
-    // Destroy heartbeat event
-    if (mp_periodicHB != nullptr)
-    {
-        delete(mp_periodicHB);
-        mp_periodicHB = nullptr;
-    }
-
     // Stop all active proxies and pass them to the pool
     while (!matched_readers_.empty())
     {
@@ -129,6 +122,13 @@ StatefulWriter::~StatefulWriter()
         matched_readers_.pop_back();
         remote_reader->stop();
         matched_readers_pool_.push_back(remote_reader);
+    }
+
+    // Destroy heartbeat event
+    if (mp_periodicHB != nullptr)
+    {
+        delete(mp_periodicHB);
+        mp_periodicHB = nullptr;
     }
 
     // Delete all proxies in the pool
