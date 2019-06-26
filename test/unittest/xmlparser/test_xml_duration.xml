@@ -65,17 +65,16 @@
             </reliability>
             <deadline>
                 <period>
-                    <sec>12</sec>
+                    <sec>DURATION_INFINITY</sec>
                 </period>
             </deadline>
             <liveliness>
                 <kind>MANUAL_BY_TOPIC</kind>
                 <lease_duration>
-                    <sec>11</sec>
-                    <nanosec>22</nanosec>
+                    <sec>DURATION_INFINITY</sec>
                 </lease_duration>
                 <announcement_period>
-                    <sec>0</sec>
+                    <sec>0</sec> 
                     <nanosec>0</nanosec>
                 </announcement_period>
             </liveliness>
