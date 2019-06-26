@@ -933,7 +933,7 @@ std::unique_ptr<PDPServer::InPDPCallback> PDPServer::signalCallback()
 bool PDPServer::safe_PDP_matched_writer_remove(const RemoteWriterAttributes* wdata)
 {
     bool res;
-    std::lock_guard<std::recursive_mutex> guardP(*getMutex());
+    std::unique_lock<std::recursive_mutex> guardP(*getMutex());
 
     if(PDP_callback_)
     {
@@ -947,6 +947,9 @@ bool PDPServer::safe_PDP_matched_writer_remove(const RemoteWriterAttributes* wda
     }
     else
     {
+        // if a lease callback takes place while transport callback is going on
+        // an before it has the unmatch done we must prevent a deadlock in PDP mutex
+        guardP.unlock();
         res = mp_PDPReader->matched_writer_remove(*wdata);
     }
 
