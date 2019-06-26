@@ -857,11 +857,11 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
 
 bool PDPServer::removeRemoteParticipant(GUID_t& partGUID)
 {
-    // verify it's a known participant
     ParticipantProxyData info;
 
-    if (!lookupParticipantProxyData(partGUID, info))
-    {
+    if (partGUID == getLocalParticipantProxyData()->m_guid
+        || !lookupParticipantProxyData(partGUID, info))
+    {   // verify it's a known participant
         return false;
     }
 

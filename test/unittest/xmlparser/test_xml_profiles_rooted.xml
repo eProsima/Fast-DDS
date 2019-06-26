@@ -34,12 +34,12 @@
                             <PUBWRITER_SUBREADER>false</PUBWRITER_SUBREADER>
                             <PUBREADER_SUBWRITER>true</PUBREADER_SUBWRITER>
                         </simpleEDP>
+                        <leaseDuration>
+                            <sec>DURATION_INFINITY</sec>
+                        </leaseDuration>
                     </discovery_config>
                     <use_WriterLivelinessProtocol>false</use_WriterLivelinessProtocol>
                     <domainId>2019102</domainId>
-                    <leaseDuration>
-                        <sec>DURATION_INFINITY</sec>
-                    </leaseDuration>
                     <metatrafficUnicastLocatorList>
                         <locator>
                             <udpv4>

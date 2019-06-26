@@ -29,6 +29,9 @@
                         <sec>10</sec>
                         <nanosec>333</nanosec>
                     </leaseAnnouncement>
+                    <leaseDuration>
+                        <sec>DURATION_INFINITY</sec>
+                    </leaseDuration>
                     <simpleEDP>
                         <PUBWRITER_SUBREADER>false</PUBWRITER_SUBREADER>
                         <PUBREADER_SUBWRITER>true</PUBREADER_SUBWRITER>
@@ -36,9 +39,6 @@
                 </discovery_config>
                 <use_WriterLivelinessProtocol>false</use_WriterLivelinessProtocol>
                 <domainId>2019102</domainId>
-                <leaseDuration>
-                    <sec>DURATION_INFINITY</sec>
-                </leaseDuration>
                 <metatrafficUnicastLocatorList>
                     <locator>
                         <udpv4>

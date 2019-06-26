@@ -50,7 +50,7 @@ bool HelloWorldPublisher::init(
     ParticipantAttributes pparam;
 
     pparam.rtps.builtin.domainId = 0;
-    pparam.rtps.builtin.leaseDuration = c_TimeInfinite;
+    pparam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     pparam.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(5, 0);
     pparam.rtps.setName("Participant_pub");
 

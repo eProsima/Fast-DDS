@@ -223,7 +223,7 @@ int main(){
 
     ParticipantAttributes PparamPub;
     PparamPub.rtps.builtin.domainId = 0;
-    PparamPub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamPub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamPub.rtps.setName("PublisherParticipant");
 
     Participant *PubParticipant = Domain::createParticipant(PparamPub);

@@ -108,7 +108,7 @@ PDP::~PDP()
 
 void PDP::initializeParticipantProxyData(ParticipantProxyData* participant_data)
 {
-    participant_data->m_leaseDuration = mp_RTPSParticipant->getAttributes().builtin.leaseDuration;
+    participant_data->m_leaseDuration = mp_RTPSParticipant->getAttributes().builtin.discovery_config.leaseDuration;
     //set_VendorId_eProsima(participant_data->m_VendorId);
     participant_data->m_VendorId = c_VendorId_eProsima;
 
@@ -581,6 +581,11 @@ bool PDP::addWriterProxyData(
 
 bool PDP::removeRemoteParticipant(GUID_t& partGUID)
 {
+    if (partGUID == getLocalParticipantProxyData()->m_guid)
+    {   // avoid removing our own data
+        return false;
+    }
+
     logInfo(RTPS_PDP, partGUID);
     ParticipantProxyData* pdata = nullptr;
 

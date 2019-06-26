@@ -646,7 +646,7 @@ public:
             eprosima::fastrtps::Duration_t lease_duration,
             eprosima::fastrtps::Duration_t announce_period)
     {
-        participant_attr_.rtps.builtin.leaseDuration = lease_duration;
+        participant_attr_.rtps.builtin.discovery_config.leaseDuration = lease_duration;
         participant_attr_.rtps.builtin.discovery_config.leaseDuration_announcementperiod = announce_period;
         return *this;
     }

@@ -27,17 +27,18 @@ using namespace eprosima::fastrtps::xmlparser;
 XMLP_ret XMLParser::getXMLDiscoverySettings(tinyxml2::XMLElement* elem, rtps::DiscoverySettings& settings, uint8_t ident)
 {
     /*
-    <xs:complexType name = "discoverySettingsType">
-        <xs:all minOccurs = "0">
-        <xs:element name = "discoveryProtocol" type = "DiscoveryProtocol" minOccurs = "0" / >
-        <xs:element name = "EDP" type = "EDPType" minOccurs = "0" / >
-        <xs:element name = "leaseAnnouncement" type = "durationType" minOccurs = "0" / >
-        <xs:element name = "simpleEDP" type = "simpleEDPType" minOccurs = "0" / >
-        <xs:element name = "clientAnnouncementPeriod" type = "durationType" minOccurs = "0" / >
-        <xs:element name = "discoveryServersList" type = "DiscoveryServerList" minOccurs = "0" / >
-        <xs:element name = "staticEndpointXMLFilename" type = "stringType" minOccurs = "0" / >
-        < / xs:all>
-    < / xs:complexType>
+    <xs:complexType name="discoverySettingsType">
+        <xs:all minOccurs="0">
+            <xs:element name="discoveryProtocol" type="DiscoveryProtocol" minOccurs="0"/>
+            <xs:element name="EDP" type="EDPType" minOccurs="0"/>
+            <xs:element name="leaseDuration" type="durationType" minOccurs="0"/>
+            <xs:element name="leaseAnnouncement" type="durationType" minOccurs="0"/>
+            <xs:element name="simpleEDP" type="simpleEDPType" minOccurs="0"/>
+            <xs:element name="clientAnnouncementPeriod" type="durationType" minOccurs="0"/>
+            <xs:element name="discoveryServersList" type="DiscoveryServerList" minOccurs="0"/>
+            <xs:element name="staticEndpointXMLFilename" type="stringType" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
     */
 
     tinyxml2::XMLElement *p_aux0 = nullptr, *p_aux1 = nullptr;
@@ -82,6 +83,12 @@ XMLP_ret XMLParser::getXMLDiscoverySettings(tinyxml2::XMLElement* elem, rtps::Di
                 logError(XMLPARSER, "Node '" << _EDP << "' with bad content");
                 return XMLP_ret::XML_ERROR;
             }
+        }
+        else if (strcmp(name, LEASEDURATION) == 0)
+        {
+            // leaseDuration - durationType
+            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, settings.leaseDuration, ident))
+                return XMLP_ret::XML_ERROR;
         }
         else if (strcmp(name, LEASE_ANNOUNCE) == 0)
         {
@@ -150,19 +157,12 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
     /*
     <xs:complexType name="builtinAttributesType">
         <xs:all minOccurs="0">
-            <xs:element name="discoveryProtocol" type="DiscoveryProtocol" minOccurs="0"/>
+            <xs:element name="discovery_config" type="discoverySettingsType" minOccurs="0"/>
             <xs:element name="use_WriterLivelinessProtocol" type="boolType" minOccurs="0"/>
-            <xs:element name="EDP" type="EDPType" minOccurs="0"/>
             <xs:element name="domainId" type="uint32Type" minOccurs="0"/>
-            <xs:element name="leaseDuration" type="durationType" minOccurs="0"/>
-            <xs:element name="leaseAnnouncement" type="durationType" minOccurs="0"/>
-            <xs:element name="simpleEDP" type="simpleEDPType" minOccurs="0"/>
             <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="initialPeersList" type="locatorListType" minOccurs="0"/>
-            <xs:element name="clientAnnouncementPeriod" type="durationType" minOccurs="0"/>
-            <xs:element name="discoveryServersList" type="DiscoveryServerList" minOccurs="0"/>
-            <xs:element name="staticEndpointXMLFilename" type="stringType" minOccurs="0"/>
             <xs:element name="readerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
             <xs:element name="writerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
             <xs:element name="mutation_tries" type="uint32Type" minOccurs="0"/>
@@ -191,12 +191,6 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
         {
             // domainId - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &builtin.domainId, ident))
-                return XMLP_ret::XML_ERROR;
-        }
-        else if (strcmp(name, LEASEDURATION) == 0)
-        {
-            // leaseDuration - durationType
-            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, builtin.leaseDuration, ident))
                 return XMLP_ret::XML_ERROR;
         }
         else if (strcmp(name, META_UNI_LOC_LIST) == 0)

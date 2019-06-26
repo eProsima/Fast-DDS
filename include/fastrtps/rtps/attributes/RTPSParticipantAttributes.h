@@ -150,6 +150,12 @@ public:
     bool use_STATIC_EndpointDiscoveryProtocol;
 
     /**
+     * Lease Duration of the RTPSParticipant,
+     * indicating how much time remote RTPSParticipants should consider this RTPSParticipant alive.
+     */
+    Duration_t leaseDuration;
+
+    /**
      * The period for the RTPSParticipant to send its Discovery Message to all other discovered RTPSParticipants
      * as well as to all Multicast ports.
      */
@@ -177,6 +183,7 @@ public:
         use_STATIC_EndpointDiscoveryProtocol = false;
         discoveryServer_client_syncperiod.nanosec = 450 * 1000000; // 450 milliseconds
         m_staticEndpointXMLFilename = "";
+        leaseDuration.seconds = 130;
         leaseDuration_announcementperiod.seconds = 40;
     }
 
@@ -186,6 +193,7 @@ public:
                 (this->use_STATIC_EndpointDiscoveryProtocol == b.use_STATIC_EndpointDiscoveryProtocol) &&
                 (this->discoveryServer_client_syncperiod == b.discoveryServer_client_syncperiod) &&
                 (this->m_PDPfactory == b.m_PDPfactory) &&
+                (this->leaseDuration == b.leaseDuration) &&
                 (this->leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&
                 (this->m_simpleEDP == b.m_simpleEDP) &&
                 (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename) &&
@@ -227,13 +235,7 @@ class BuiltinAttributes
         /**
          * DomainId to be used by the RTPSParticipant (80 by default).
          */
-        uint32_t domainId;
-
-        /**
-         * Lease Duration of the RTPSParticipant,
-         * indicating how much time remote RTPSParticipants should consider this RTPSParticipant alive.
-         */
-        Duration_t leaseDuration;
+        uint32_t domainId;;
 
         //!Metatraffic Unicast Locator List
         LocatorList_t metatrafficUnicastLocatorList;
@@ -256,7 +258,6 @@ class BuiltinAttributes
         BuiltinAttributes()
         {
             domainId = 0;
-            leaseDuration.seconds = 130;
             use_WriterLivelinessProtocol = true;
             readerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
             writerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
@@ -269,7 +270,6 @@ class BuiltinAttributes
             return (this->discovery_config == b.discovery_config) &&
                    (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
                    (this->domainId == b.domainId) &&
-                   (this->leaseDuration == b.leaseDuration) &&
                    (this->metatrafficUnicastLocatorList == b.metatrafficUnicastLocatorList) &&
                    (this->metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&
                    (this->initialPeersList == b.initialPeersList) &&

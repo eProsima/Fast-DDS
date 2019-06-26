@@ -52,7 +52,7 @@ bool OwnershipStrengthPublisher::init()
 
     ParticipantAttributes PParam;
     PParam.rtps.builtin.domainId = 0;
-    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_publisher");
     mp_participant = Domain::createParticipant(PParam);
     if(mp_participant == nullptr)
