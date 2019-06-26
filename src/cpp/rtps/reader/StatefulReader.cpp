@@ -251,7 +251,6 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
             }
         }
 
-
         // Check if CacheChange was received or is framework data
         if(!pWP || !pWP->change_was_received(change->sequenceNumber))
         {
@@ -298,12 +297,11 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
             {
                 logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "<<change_to_add->sequenceNumber);
                 releaseCache(change_to_add);
-
-                if (pWP == nullptr && getGuid().entityId == c_EntityId_SPDPReader)
-                {
-                    mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change->writerGUID.guidPrefix);
-                }
             }
+        }
+        else if (pWP != nullptr && getGuid().entityId == c_EntityId_SPDPReader)
+        {
+            mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change->writerGUID.guidPrefix);
         }
     }
 
