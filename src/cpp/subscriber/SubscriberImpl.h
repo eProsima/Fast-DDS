@@ -134,6 +134,12 @@ public:
      */
     void get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status);
 
+    /**
+     * @brief Returns the liveliness changed status
+     * @param status Liveliness changed status
+     */
+    void get_liveliness_changed_status(LivelinessChangedStatus& status);
+
 private:
 
     //!Participant
@@ -161,6 +167,9 @@ private:
         void onNewCacheChangeAdded(
                 rtps::RTPSReader* reader,
                 const rtps::CacheChange_t* const change) override;
+        void on_liveliness_changed(
+                rtps::RTPSReader* reader,
+                const LivelinessChangedStatus& status) override;
         SubscriberImpl* mp_subscriberImpl;
     } m_readerListener;
 

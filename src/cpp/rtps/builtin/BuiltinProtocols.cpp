@@ -147,7 +147,7 @@ bool BuiltinProtocols::addLocalWriter(
     }
     if(mp_WLP !=nullptr)
     {
-        ok|= mp_WLP->addLocalWriter(w,wqos);
+        ok|= mp_WLP->add_local_writer(w,wqos);
     }
     else
     {
@@ -170,6 +170,10 @@ bool BuiltinProtocols::addLocalReader(
     {
         logWarning(RTPS_EDP, "EDP is not used in this Participant, register a Reader is impossible");
     }
+    if (mp_WLP != nullptr)
+    {
+        ok|= mp_WLP->add_local_reader(R, rqos);
+    }
     return ok;
 }
 
@@ -182,10 +186,6 @@ bool BuiltinProtocols::updateLocalWriter(
     if(mp_PDP!=nullptr && mp_PDP->getEDP()!=nullptr)
     {
         ok |= mp_PDP->getEDP()->updatedLocalWriter(W, topicAtt, wqos);
-    }
-    if(mp_WLP!=nullptr)
-    {
-        ok |= mp_WLP->updateLocalWriter(W, wqos);
     }
     return ok;
 }
@@ -208,11 +208,11 @@ bool BuiltinProtocols::removeLocalWriter(RTPSWriter* W)
     bool ok = false;
     if(mp_WLP !=nullptr)
     {
-        ok|= mp_WLP->removeLocalWriter(W);
+        ok |= mp_WLP->remove_local_writer(W);
     }
     if(mp_PDP!=nullptr && mp_PDP->getEDP() != nullptr)
     {
-        ok|= mp_PDP->getEDP()->removeLocalWriter(W);
+        ok |= mp_PDP->getEDP()->removeLocalWriter(W);
     }
     return ok;
 }
@@ -220,9 +220,13 @@ bool BuiltinProtocols::removeLocalWriter(RTPSWriter* W)
 bool BuiltinProtocols::removeLocalReader(RTPSReader* R)
 {
     bool ok = false;
+    if (mp_WLP != nullptr)
+    {
+        ok |= mp_WLP->remove_local_reader(R);
+    }
     if(mp_PDP!=nullptr && mp_PDP->getEDP() != nullptr)
     {
-        ok|= mp_PDP->getEDP()->removeLocalReader(R);
+        ok |= mp_PDP->getEDP()->removeLocalReader(R);
     }
     return ok;
 }
@@ -267,34 +271,6 @@ void BuiltinProtocols::resetRTPSParticipantAnnouncement()
     {
         logError(RTPS_EDP, "Trying to use BuiltinProtocols interfaces before initBuiltinProtocols call");
     }
-}
-
-bool BuiltinProtocols::newRemoteEndpointStaticallyDiscovered(
-    const GUID_t& pguid,
-    int16_t userDefinedId,
-    EndpointKind_t kind)
-{
-    ParticipantProxyData pdata;
-    if (mp_PDP->lookupParticipantProxyData(pguid, pdata))
-    {
-        EDPStatic* pEDP = dynamic_cast<EDPStatic*>(mp_PDP->getEDP());
-
-        if (pEDP == nullptr)
-        {
-            logError(RTPS_PDP, "Trying to use Static Discovery Interface in non Static context");
-            return false;
-        }
-
-        if (kind == WRITER)
-        {
-            pEDP->newRemoteWriter(pdata, userDefinedId);
-        }
-        else
-        {
-            pEDP->newRemoteReader(pdata, userDefinedId);
-        }
-    }
-    return false;
 }
 
 }

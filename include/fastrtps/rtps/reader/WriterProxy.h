@@ -125,28 +125,10 @@ namespace eprosima
                     uint32_t m_lastHeartbeatCount;
                     //!Timed event to postpone the heartbeatResponse.
                     HeartbeatResponseDelay* mp_heartbeatResponse;
-                    //!TO check the liveliness Status periodically.
-                    WriterProxyLiveliness* mp_writerProxyLiveliness;
                     //! Timed event to send initial acknack.
                     InitialAckNack* mp_initialAcknack;
                     //!Indicates if the heartbeat has the final flag set.
                     bool m_heartbeatFinalFlag;
-
-                    /**
-                     * Check if the writer is alive
-                     * @return true if the writer is alive
-                     */
-                    inline bool isAlive(){return m_isAlive;};
-
-                    /**
-                     * Set the writer as alive
-                     */
-                    void assertLiveliness();
-                    /**
-                     * Set the writer as not alive
-                     * @return
-                     */
-                    inline void setNotAlive(){m_isAlive = false;};
 
                     /**
                      * Get the mutex
@@ -185,8 +167,6 @@ namespace eprosima
 
                     void cleanup();
 
-                    //!Is the writer alive
-                    bool m_isAlive;
                     //Print Method for log purposes
                     void print_changes_fromWriter_test2();
 

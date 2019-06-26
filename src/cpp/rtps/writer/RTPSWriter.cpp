@@ -46,7 +46,6 @@ RTPSWriter::RTPSWriter(
         impl->getMaxMessageSize() > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
         impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
         impl->getMaxMessageSize(), impl->getGuid().guidPrefix)
-    , m_livelinessAsserted(false)
     , mp_history(hist)
     , mp_listener(listen)
     , is_async_(att.mode == SYNCHRONOUS_WRITER ? false : true)
@@ -55,6 +54,8 @@ RTPSWriter::RTPSWriter(
 #if HAVE_SECURITY
     , encrypt_payload_(mp_history->getTypeMaxSerialized())
 #endif
+    , liveliness_kind_(att.liveliness_kind)
+    , liveliness_lease_duration_(att.liveliness_lease_duration)
 {
     mp_history->mp_writer = this;
     mp_history->mp_mutex = &mp_mutex;
@@ -71,8 +72,10 @@ RTPSWriter::~RTPSWriter()
     mp_history->mp_mutex = nullptr;
 }
 
-CacheChange_t* RTPSWriter::new_change(const std::function<uint32_t()>& dataCdrSerializedSize,
-    ChangeKind_t changeKind, InstanceHandle_t handle)
+CacheChange_t* RTPSWriter::new_change(
+        const std::function<uint32_t()>& dataCdrSerializedSize,
+        ChangeKind_t changeKind,
+        InstanceHandle_t handle)
 {
     logInfo(RTPS_WRITER, "Creating new change");
     CacheChange_t* ch = nullptr;
@@ -232,6 +235,16 @@ bool RTPSWriter::encrypt_cachechange(CacheChange_t* change)
     return true;
 }
 #endif
+
+const LivelinessQosPolicyKind& RTPSWriter::get_liveliness_kind() const
+{
+    return liveliness_kind_;
+}
+
+const Duration_t& RTPSWriter::get_liveliness_lease_duration() const
+{
+    return liveliness_lease_duration_;
+}
 
 }  // namespace rtps
 }  // namespace fastrtps

@@ -25,6 +25,8 @@
 #include "../flowcontrol/FlowController.h"
 #include "../history/HistoryAttributesExtension.hpp"
 #include "RTPSWriterCollector.h"
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
 #include <algorithm>
 #include <mutex>
@@ -112,8 +114,6 @@ void StatelessWriter::unsent_change_added_to_history(
         {
             try
             {
-                setLivelinessAsserted(true);
-
                 if(m_separateSendingEnabled)
                 {
                     std::vector<GUID_t> guids(1);
@@ -160,6 +160,14 @@ void StatelessWriter::unsent_change_added_to_history(
         {
             unsent_changes_.push_back(ChangeForReader_t(change));
             AsyncWriterThread::wakeUp(this);
+        }
+
+        if (liveliness_lease_duration_ < c_TimeInfinite)
+        {
+            mp_RTPSParticipant->wlp()->assert_liveliness(
+                        getGuid(),
+                        liveliness_kind_,
+                        liveliness_lease_duration_);
         }
     }
     else

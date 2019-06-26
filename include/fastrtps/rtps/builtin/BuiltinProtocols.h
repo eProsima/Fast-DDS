@@ -152,17 +152,6 @@ class BuiltinProtocols
     //!Reset to timer to make periodic RTPSParticipant Announcements.
     void resetRTPSParticipantAnnouncement();
 
-    /**
-     * Activate a new Remote Endpoint that has been statically discovered.
-     * @param pguid GUID_t of the participant.
-     * @param userDefinedId User Defined ID.
-     * @param kind Kind of endpoint.
-     */
-    bool newRemoteEndpointStaticallyDiscovered(
-        const GUID_t& pguid,
-        int16_t userDefinedId,
-        EndpointKind_t kind);
-
 };
 
 }

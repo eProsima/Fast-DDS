@@ -373,6 +373,22 @@ void PDPSimple::notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata)
         mp_builtin->mp_WLP->assignRemoteEndpoints(pdata);
 }
 
+
+bool PDPSimple::newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId, EndpointKind_t kind)
+{
+    ParticipantProxyData pdata;
+
+    if (lookupParticipantProxyData(pguid, pdata))
+    {
+        if (kind == WRITER)
+            dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteWriter(pdata, userDefinedId);
+        else
+            dynamic_cast<EDPStatic*>(mp_EDP)->newRemoteReader(pdata, userDefinedId);
+    }
+
+    return false;
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

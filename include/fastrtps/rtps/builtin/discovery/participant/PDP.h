@@ -253,21 +253,6 @@ class PDP
     void assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP);
 
     /**
-     * Assert the liveliness of a Local Writer.
-     * @param kind LivilinessQosPolicyKind to be asserted.
-     */
-    void assertLocalWritersLiveliness(LivelinessQosPolicyKind kind);
-
-    /**
-     * Assert the liveliness of remote writers.
-     * @param guidP GuidPrefix_t of the participant whose writers liveliness is begin asserted.
-     * @param kind LivelinessQosPolicyKind of the writers.
-     */
-    void assertRemoteWritersLiveliness(
-        GuidPrefix_t& guidP,
-        LivelinessQosPolicyKind kind);
-
-    /**
      * Get the RTPS participant
      * @return RTPS participant
      */

@@ -1033,12 +1033,19 @@ void RTPSParticipantImpl::loose_next_change()
 
 bool RTPSParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId, EndpointKind_t kind)
 {
-    if (m_att.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol == false)
+    if (m_att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::SIMPLE ||
+        m_att.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol == false)
     {
-        logWarning(RTPS_PARTICIPANT, "Remote Endpoints can only be activated with static discovery protocol");
+        logWarning(RTPS_PARTICIPANT, "Remote Endpoints can only be activated with static discovery protocol over PDP simple protocol");
         return false;
     }
-    return mp_builtinProtocols->newRemoteEndpointStaticallyDiscovered(pguid, userDefinedId, kind);
+
+    if (PDPSimple * pS = dynamic_cast<PDPSimple*>(mp_builtinProtocols->mp_PDP))
+    {
+        return pS->newRemoteEndpointStaticallyDiscovered(pguid, userDefinedId, kind);
+    }
+
+    return false;
 }
 
 void RTPSParticipantImpl::ResourceSemaphorePost()
@@ -1133,6 +1140,11 @@ bool RTPSParticipantImpl::pairing_remote_writer_with_local_reader_after_security
 PDPSimple* RTPSParticipantImpl::pdpsimple()
 {
     return dynamic_cast<PDPSimple*>(mp_builtinProtocols->mp_PDP);
+}
+
+WLP* RTPSParticipantImpl::wlp()
+{
+    return mp_builtinProtocols->mp_WLP;
 }
 
 bool RTPSParticipantImpl::get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo)

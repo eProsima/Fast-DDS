@@ -42,6 +42,7 @@ class RTPSReader;
 class WriterProxyData;
 class ReaderProxyData;
 class ResourceEvent;
+class WLP;
 
 /**
  * @brief Class RTPSParticipant, contains the public API for a RTPSParticipant.
@@ -195,6 +196,12 @@ public:
             ReaderProxyData& returnedInfo);
 
     ResourceEvent& get_resource_event() const;
+
+    /**
+     * @brief A method to retrieve the built-in writer liveliness protocol
+     * @return Writer liveliness protocol
+     */
+    WLP* wlp() const;
 
 private:
 

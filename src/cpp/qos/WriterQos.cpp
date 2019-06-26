@@ -182,6 +182,12 @@ bool WriterQos::canQosBeUpdated(const WriterQos& qos) const
         logWarning(RTPS_QOS_CHECK,"Liveliness Kind cannot be changed after the creation of a subscriber.");
     }
 
+    if (m_liveliness.lease_duration != qos.m_liveliness.lease_duration)
+    {
+        updatable = false;
+        logWarning(RTPS_QOS_CHECK,"Liveliness lease duration cannot be changed after the creation of a subscriber.");
+    }
+
     if(m_reliability.kind != qos.m_reliability.kind)
     {
         updatable = false;
