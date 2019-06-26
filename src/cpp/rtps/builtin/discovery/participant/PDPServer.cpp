@@ -926,7 +926,9 @@ bool PDPServer::pendingHistoryCleaning()
 // ! returns a unique_ptr to an object that handles PDP_callback_ in a RAII fashion
 std::unique_ptr<PDPServer::InPDPCallback> PDPServer::signalCallback()
 {
-    return std::make_unique<PDPServer::InPDPCallback>(*this);
+    // TODO: change when C++14 available
+    //return std::make_unique<PDPServer::InPDPCallback>(*this);
+    return std::unique_ptr<InPDPCallback>(new InPDPCallback(*this));
 }
 
 // ! calls PDP Reader matched_writer_remove preventing deadlocks
