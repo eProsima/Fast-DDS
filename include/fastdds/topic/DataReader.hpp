@@ -42,26 +42,28 @@ class RTPSParticipant;
 }
 
 class TopicDataType;
-class ParticipantImpl;
 class SampleInfo_t;
-class Subscriber;
 
 } // namespace fastrtps
 
 namespace fastdds {
+
+class Subscriber;
+class SubscriberImpl;
+class ParticipantImpl;
 
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
  *  @ingroup FASTRTPS_MODULE
  */
 class DataReader {
-    friend class ParticipantImpl;
+    friend class SubscriberImpl;
 
     /**
     * Creates a DataReader. Don't use it directly, but through Subscriber.
     */
     DataReader(
-            fastrtps::SubscriberImpl* s,
+            SubscriberImpl* s,
             fastrtps::TopicDataType* topic,
             const fastrtps::TopicAttributes& topic_att,
             const fastrtps::rtps::ReaderAttributes& att,
@@ -109,6 +111,8 @@ public:
     * @return Associated GUID
     */
     const fastrtps::rtps::GUID_t& guid();
+
+    fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
 
     /**
     * Get topic data type
@@ -180,7 +184,7 @@ public:
     bool get_sample_rejected_status(
             fastrtps::SampleRejectedStatus& status) const;
 
-    const fastrtps::Subscriber* get_subscriber() const;
+    const Subscriber* get_subscriber() const;
 
     bool wait_for_historical_data(
             const fastrtps::Duration_t& max_wait) const;
@@ -188,7 +192,7 @@ public:
 private:
 
     //!Subscriber
-    fastrtps::SubscriberImpl* subscriber_;
+    SubscriberImpl* subscriber_;
 
     //!Pointer to associated RTPSReader
     fastrtps::rtps::RTPSReader* reader_;

@@ -90,6 +90,15 @@ set(${PROJECT_NAME}_source_files
     fastrtps/subscriber/SubscriberHistory.cpp
     fastdds/topic/DataReader.cpp
     fastdds/topic/DataWriter.cpp
+    fastdds/publisher/PublisherImpl.cpp
+    fastdds/publisher/qos/PublisherQos.cpp
+    fastdds/publisher/Publisher.cpp
+    fastdds/subscriber/SubscriberImpl.cpp
+    fastdds/subscriber/qos/SubscriberQos.cpp
+    fastdds/subscriber/Subscriber.cpp
+    #fastdds/domain/Domain.cpp
+    fastdds/domain/ParticipantImpl.cpp
+    fastdds/domain/Participant.cpp
     fastrtps/transport/ChannelResource.cpp
     fastrtps/transport/UDPChannelResource.cpp
     fastrtps/transport/TCPChannelResource.cpp

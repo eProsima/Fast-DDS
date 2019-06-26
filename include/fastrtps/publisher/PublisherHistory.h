@@ -30,7 +30,8 @@
 namespace eprosima {
 namespace fastrtps {
 
-class PublisherImpl;
+class PublisherAttributes;
+class TopicDataType;
 
 /**
  * Class PublisherHistory, implementing a WriterHistory with support for keyed topics and HistoryQOS.
@@ -48,8 +49,24 @@ class PublisherHistory : public rtps::WriterHistory
          * @param resource ResourceLimits for the History.
          * @param mempolicy Set wether the payloads ccan dynamically resized or not.
          */
+        //PublisherHistory(
+        //    PublisherImpl* pimpl,
+        //    uint32_t payloadMax,
+        //    const HistoryQosPolicy& history,
+        //    const ResourceLimitsQosPolicy& resource,
+        //    rtps::MemoryManagementPolicy_t mempolicy);
+
+        /**
+         * Constructor of the PublisherHistory.
+         * @param patt Reference to publisher attributes.
+         * @param payloadMax Maximum payload size.
+         * @param history QOS of the associated History.
+         * @param resource ResourceLimits for the History.
+         * @param mempolicy Set wether the payloads ccan dynamically resized or not.
+         */
         PublisherHistory(
-            PublisherImpl* pimpl,
+            PublisherAttributes& patt,
+            TopicDataType* type,
             uint32_t payloadMax,
             const HistoryQosPolicy& history,
             const ResourceLimitsQosPolicy& resource,
@@ -125,8 +142,10 @@ private:
         HistoryQosPolicy m_historyQos;
         //!ResourceLimitsQosPolicy values.
         ResourceLimitsQosPolicy m_resourceLimitsQos;
-        //!Publisher Pointer
-        PublisherImpl* mp_pubImpl;
+        //!Publisher Attributes
+        PublisherAttributes& pub_att_;
+        //!Topic Data Type
+        TopicDataType* type_;
 
         /**
          * @brief Method that finds a key in m_keyedChanges or tries to add it if not found

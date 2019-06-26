@@ -22,6 +22,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastrtps/rtps/resources/ResourceManagement.h>
+#include <fastrtps/qos/ReaderQos.h>
 #include "../rtps/history/ReaderHistory.h"
 #include "../qos/QosPolicies.h"
 #include "../common/KeyedChanges.h"
@@ -34,7 +35,8 @@ namespace rtps{
 class WriterProxy;
 }
 
-class SubscriberImpl;
+class SubscriberAttributes;
+class TopicDataType;
 
 /**
  * Class SubscriberHistory, container of the different CacheChanges of a subscriber
@@ -46,14 +48,18 @@ class SubscriberHistory: public rtps::ReaderHistory
 
         /**
          * Constructor. Requires information about the subscriber.
-         * @param pimpl Pointer to the subscriber implementation.
+         * @param satt Reference to the subscriber attributes.
+         * @param type TopicDataType.
+         * @param qos ReaderQos
          * @param payloadMax Maximum payload size per change.
          * @param history History QoS policy for the reader.
          * @param resource Resource Limit QoS policy for the reader.
          * @param mempolicy Set wether the payloads ccan dynamically resized or not.
          */
         SubscriberHistory(
-            SubscriberImpl* pimpl,
+            SubscriberAttributes& satt,
+            TopicDataType* type,
+            const ReaderQos& qos,
             uint32_t payloadMax,
             const HistoryQosPolicy& history,
             const ResourceLimitsQosPolicy& resource,
@@ -137,8 +143,12 @@ class SubscriberHistory: public rtps::ReaderHistory
         HistoryQosPolicy m_historyQos;
         //!ResourceLimitsQosPolicy values.
         ResourceLimitsQosPolicy m_resourceLimitsQos;
-        //!Publisher Pointer
-        SubscriberImpl* mp_subImpl;
+        //!Subscriber Attributes
+        SubscriberAttributes& sub_att_;
+        //!Topic Data Type
+        TopicDataType* type_;
+        //!ReaderQos
+        const ReaderQos& qos_;
 
         //!Type object to deserialize Key
         void * mp_getKeyObject;
