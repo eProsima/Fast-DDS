@@ -1,0 +1,239 @@
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @file Participant.cpp
+ *
+ */
+
+#include <fastdds/domain/Participant.hpp>
+
+#include "ParticipantImpl.hpp"
+
+using namespace eprosima;
+using namespace eprosima::fastdds;
+
+Participant::Participant()
+    : impl_(nullptr)
+{
+}
+
+Participant::~Participant()
+{
+}
+
+bool Participant::set_listener(
+        ParticipantListener* listener)
+{
+    return impl_->set_listener(listener);
+}
+
+const ParticipantListener* Participant::get_listener() const
+{
+    return impl_->get_listener();
+}
+
+Publisher* Participant::create_publisher(
+        const fastdds::PublisherQos& qos,
+        const fastrtps::PublisherAttributes& att,
+        PublisherListener* listen)
+{
+    return impl_->create_publisher(qos, att, listen);
+}
+
+bool Participant::delete_publisher(
+        Publisher* publisher)
+{
+    return impl_->delete_publisher(publisher);
+}
+
+Subscriber* Participant::create_subscriber(
+        const fastdds::SubscriberQos& qos,
+        const fastrtps::SubscriberAttributes& att,
+        SubscriberListener* listen)
+{
+    return impl_->create_subscriber(qos, att, listen);
+}
+
+bool Participant::delete_subscriber(
+        Subscriber* subscriber)
+{
+    return impl_->delete_subscriber(subscriber);
+}
+
+bool Participant::register_type(
+        fastrtps::TopicDataType* type)
+{
+    return impl_->register_type(type);
+}
+
+bool Participant::unregister_type(
+        const char* typeName)
+{
+    return impl_->unregister_type(typeName);
+}
+
+Subscriber* Participant::get_builtin_subscriber()
+{
+    return impl_->get_builtin_subscriber();
+}
+
+bool Participant::ignore_participant(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    return impl_->ignore_participant(handle);
+}
+
+bool Participant::ignore_topic(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    return impl_->ignore_topic(handle);
+}
+
+bool Participant::ignore_publication(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    return impl_->ignore_publication(handle);
+}
+
+bool Participant::ignore_subscription(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    return impl_->ignore_subscription(handle);
+}
+
+uint8_t Participant::get_domain_id() const
+{
+    return impl_->get_domain_id();
+}
+
+bool Participant::delete_contained_entities()
+{
+    return impl_->delete_contained_entities();
+}
+
+bool Participant::assert_liveliness()
+{
+    return impl_->assert_liveliness();
+}
+
+bool Participant::set_default_publisher_qos(
+        const fastdds::PublisherQos& qos)
+{
+    return impl_->set_default_publisher_qos(qos);
+}
+
+const fastdds::PublisherQos& Participant::get_default_publisher_qos() const
+{
+    return impl_->get_default_publisher_qos();
+}
+
+bool Participant::set_default_subscriber_qos(
+        const fastdds::SubscriberQos& qos)
+{
+    return impl_->set_default_subscriber_qos(qos);
+}
+
+const fastdds::SubscriberQos& Participant::get_default_subscriber_qos() const
+{
+    return impl_->get_default_subscriber_qos();
+}
+
+bool Participant::get_discovered_participants(
+        std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const
+{
+    return impl_->get_discovered_participants(participant_handles);
+}
+
+bool Participant::get_discovered_topics(
+        std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const
+{
+    return impl_->get_discovered_topics(topic_handles);
+}
+
+bool Participant::contains_entity(
+        const fastrtps::rtps::InstanceHandle_t& handle,
+        bool recursive) const
+{
+    return impl_->contains_entity(handle, recursive);
+}
+
+bool Participant::get_current_time(
+        fastrtps::Time_t& current_time) const
+{
+    return impl_->get_current_time(current_time);
+}
+
+const fastrtps::rtps::RTPSParticipant* Participant::rtps_participant() const
+{
+    return impl_->rtps_participant();
+}
+
+fastrtps::rtps::RTPSParticipant* Participant::rtps_participant()
+{
+    return impl_->rtps_participant();
+}
+
+fastrtps::TopicDataType* Participant::find_type(
+        const std::string& type_name) const
+{
+    return impl_->find_type(type_name);
+}
+
+const fastrtps::rtps::InstanceHandle_t& Participant::get_instance_handle() const
+{
+    return impl_->get_instance_handle();
+}
+
+const fastrtps::rtps::GUID_t& Participant::guid() const
+{
+    return impl_->guid();
+}
+
+const fastrtps::ParticipantAttributes& Participant::get_attributes() const
+{
+    return impl_->get_attributes();
+}
+
+std::vector<std::string> Participant::getParticipantNames() const
+{
+    return impl_->getParticipantNames();
+}
+
+bool Participant::newRemoteEndpointDiscovered(
+    const fastrtps::rtps::GUID_t& partguid,
+    uint16_t userId,
+    fastrtps::rtps::EndpointKind_t kind)
+{
+    return impl_->newRemoteEndpointDiscovered(partguid, userId, kind);
+}
+
+bool Participant::get_remote_writer_info(
+    const fastrtps::rtps::GUID_t& writerGuid,
+    fastrtps::rtps::WriterProxyData& returnedInfo)
+{
+    return impl_->get_remote_writer_info(writerGuid, returnedInfo);
+}
+
+bool Participant::get_remote_reader_info(
+    const fastrtps::rtps::GUID_t& readerGuid,
+    fastrtps::rtps::ReaderProxyData& returnedInfo)
+{
+    return impl_->get_remote_reader_info(readerGuid, returnedInfo);
+}
+
+fastrtps::rtps::ResourceEvent& Participant::get_resource_event() const
+{
+    return impl_->get_resource_event();
+}

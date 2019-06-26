@@ -44,13 +44,14 @@ class RTPSParticipant;
 }
 
 class TopicDataType;
-class PublisherListener;
-class PublisherImpl;
-class Publisher;
 
 } // namespace fastrtps
 
 namespace fastdds {
+
+class PublisherListener;
+class PublisherImpl;
+class Publisher;
 
 /**
  * Class DataWriter, contains the actual implementation of the behaviour of the DataWriter.
@@ -65,7 +66,7 @@ class DataWriter
      * Don't use directly, create Publisher using DomainRTPSParticipant static function.
      */
     DataWriter(
-            fastrtps::PublisherImpl* p,
+            PublisherImpl* p,
             fastrtps::TopicDataType* topic,
             const fastrtps::TopicAttributes& topic_att,
             const fastrtps::rtps::WriterAttributes& att,
@@ -167,6 +168,8 @@ public:
      */
     const fastrtps::rtps::GUID_t& guid();
 
+    fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
+
     /**
      * Get topic data type
      * @return Topic data type
@@ -229,12 +232,12 @@ public:
         return false;
     }
 
-    const fastrtps::Publisher* get_publisher() const;
+    const Publisher* get_publisher() const;
 
     bool assert_liveliness();
 
 private:
-    fastrtps::PublisherImpl* publisher_;
+    PublisherImpl* publisher_;
 
     //! Pointer to the associated Data Writer.
     fastrtps::rtps::RTPSWriter* writer_;

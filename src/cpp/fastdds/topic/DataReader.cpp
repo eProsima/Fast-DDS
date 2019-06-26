@@ -18,15 +18,15 @@
  */
 
 #include <fastdds/topic/DataReader.hpp>
-#include "../../fastrtps/subscriber/SubscriberImpl.h"
-#include <fastrtps/subscriber/Subscriber.h>
+#include <fastdds/subscriber/Subscriber.hpp>
+#include "../subscriber/SubscriberImpl.hpp"
 #include <fastrtps/topic/TopicDataType.h>
-#include <fastrtps/subscriber/SubscriberListener.h>
+#include <fastdds/subscriber/SubscriberListener.hpp>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
-#include <fastrtps//participant/Participant.h>
+#include <fastdds/domain/Participant.hpp>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/log/Log.h>
@@ -122,6 +122,13 @@ bool DataReader::take_next_sample(
 const GUID_t& DataReader::guid()
 {
     return reader_->getGuid();
+}
+
+InstanceHandle_t DataReader::get_instance_handle() const
+{
+    InstanceHandle_t handle;
+    handle = reader_->getGuid();
+    return handle;
 }
 
 bool DataReader::set_qos(

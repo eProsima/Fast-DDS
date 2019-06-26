@@ -20,6 +20,7 @@
 #include <mutex>
 
 #include <fastrtps/publisher/PublisherHistory.h>
+#include <fastrtps/topic/TopicDataType.h>
 
 #include "PublisherImpl.h"
 
@@ -35,7 +36,8 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 PublisherHistory::PublisherHistory(
-        PublisherImpl* pimpl,
+        PublisherAttributes& patt,
+        TopicDataType* type,
         uint32_t payloadMaxSize,
         const HistoryQosPolicy& history,
         const ResourceLimitsQosPolicy& resource,
@@ -43,17 +45,18 @@ PublisherHistory::PublisherHistory(
     : WriterHistory(HistoryAttributes(mempolicy, payloadMaxSize,
                 history.kind == KEEP_ALL_HISTORY_QOS ?
                         resource.allocated_samples :
-                        pimpl->getAttributes().topic.getTopicKind() == NO_KEY ?
+                        type->m_isGetKeyDefined ?
                             std::min(resource.allocated_samples, history.depth) :
                             std::min(resource.allocated_samples, history.depth * resource.max_instances),
                 history.kind == KEEP_ALL_HISTORY_QOS ?
                         resource.max_samples :
-                        pimpl->getAttributes().topic.getTopicKind() == NO_KEY ?
+                        type->m_isGetKeyDefined ?
                             history.depth :
                             history.depth * resource.max_instances))
     , m_historyQos(history)
     , m_resourceLimitsQos(resource)
-    , mp_pubImpl(pimpl)
+    , pub_att_(patt)
+    , type_(type)
 {
     // TODO Auto-generated constructor stub
 }
@@ -84,7 +87,7 @@ bool PublisherHistory::add_pub_change(
 
         if(!ret)
         {
-            logWarning(RTPS_HISTORY,"Attempting to add Data to Full WriterCache: "<<this->mp_pubImpl->getGuid().entityId);
+            logWarning(RTPS_HISTORY,"Attempting to add Data to Full WriterCache: "<< pub_att_.getEntityID());
             return false;
         }
     }
@@ -94,7 +97,7 @@ bool PublisherHistory::add_pub_change(
     bool returnedValue = false;
 
     //NO KEY HISTORY
-    if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
+    if (!type_->m_isGetKeyDefined)
     {
         if(this->add_change_(change, wparams, max_blocking_time))
         {
@@ -102,7 +105,7 @@ bool PublisherHistory::add_pub_change(
         }
     }
     //HISTORY WITH KEY
-    else if(mp_pubImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
+    else if (type_->m_isGetKeyDefined)
     {
         t_m_Inst_Caches::iterator vit;
         if(find_key(change,&vit))
@@ -140,7 +143,7 @@ bool PublisherHistory::add_pub_change(
                 vit->second.cache_changes.push_back(change);
                 if(this->add_change_(change, wparams, max_blocking_time))
                 {
-                    logInfo(RTPS_HISTORY,this->mp_pubImpl->getGuid().entityId <<" Change "
+                    logInfo(RTPS_HISTORY, pub_att_.getEntityID() <<" Change "
                             << change->sequenceNumber << " added with key: "<<change->instanceHandle
                             << " and "<<change->serializedPayload.length<< " bytes");
                     returnedValue =  true;
@@ -236,7 +239,7 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change)
     }
 
     std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
-    if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
+    if (!type_->m_isGetKeyDefined)
     {
         if(this->remove_change(change))
         {
@@ -287,12 +290,12 @@ bool PublisherHistory::set_next_deadline(
     }
     std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
 
-    if (mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
+    if (!type_->m_isGetKeyDefined)
     {
         next_deadline_us_ = next_deadline_us;
         return true;
     }
-    else if(mp_pubImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
+    else if (type_->m_isGetKeyDefined)
     {
         if (keyed_changes_.find(handle) == keyed_changes_.end())
         {
@@ -317,7 +320,7 @@ bool PublisherHistory::get_next_deadline(
     }
     std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
 
-    if(mp_pubImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
+    if (!type_->m_isGetKeyDefined)
     {
         auto min = std::min_element(keyed_changes_.begin(),
                                     keyed_changes_.end(),
@@ -330,7 +333,7 @@ bool PublisherHistory::get_next_deadline(
         next_deadline_us = min->second.next_deadline_us;
         return true;
     }
-    else if (mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
+    else if (type_->m_isGetKeyDefined)
     {
         next_deadline_us = next_deadline_us_;
         return true;
