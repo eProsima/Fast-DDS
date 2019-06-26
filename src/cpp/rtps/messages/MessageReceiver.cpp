@@ -164,6 +164,13 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
         return;
     }
 
+    // Assert liveliness because if it is a participant discovery info.
+    if (c_GuidPrefix_Unknown != sourceGuidPrefix)
+    {
+        participant_->assertRemoteRTPSParticipantLiveliness(sourceGuidPrefix);
+    }
+
+
 #if HAVE_SECURITY
     CDRMessage_t* auxiliary_buffer = &m_crypto_msg;
     CDRMessage::initCDRMsg(auxiliary_buffer);
