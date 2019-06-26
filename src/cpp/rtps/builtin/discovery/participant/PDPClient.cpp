@@ -451,7 +451,14 @@ void PDPClient::announceParticipantState(
     bool dispose,
     WriteParams& )
 {
-    // protect sequence number
+    /*
+    Protect writer sequence number. Make sure in order to prevent AB BA deadlock that the
+    writer mutex is systematically lock before the PDP one (if needed):
+        - transport callbacks on PDPListener
+        - initialization and removal on BuiltinProtocols::initBuiltinProtocols and ~BuiltinProtocols
+        - DSClientEvent (own thread)
+        - ResendParticipantProxyDataPeriod (participant event thread)
+    */
     std::lock_guard<std::recursive_timed_mutex> wlock(mp_PDPWriter->getMutex());
 
     WriteParams wp;
@@ -465,8 +472,8 @@ void PDPClient::announceParticipantState(
     if (dispose)
     {
         // we must assure when the server is dying that all client are send at least a DATA(p)
-            // note here we can no longer receive and DATA or ACKNACK from clients.
-            // In order to avoid that we send the message directly as in the standard stateless PDP
+        // note here we can no longer receive and DATA or ACKNACK from clients.
+        // In order to avoid that we send the message directly as in the standard stateless PDP
 
         StatefulWriter * pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
         assert(pW);

@@ -712,12 +712,19 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
     StatefulWriter * pW = dynamic_cast<StatefulWriter*>(mp_PDPWriter);
     assert(pW);
 
+    /*
+    Protect writer sequence number. Make sure in order to prevent AB BA deadlock that the
+    writer mutex is systematically lock before the PDP one (if needed):
+        - transport callbacks on PDPListener
+        - initialization and removal on BuiltinProtocols::initBuiltinProtocols and ~BuiltinProtocols
+        - DSClientEvent (own thread)
+        - ResendParticipantProxyDataPeriod (participant event thread)
+    */
+    std::lock_guard<std::recursive_timed_mutex> wlock(pW->getMutex());
+
     // Servers only send direct DATA(p) to servers in order to allow discovery
     if (new_change)
     {
-        // protect sequence number
-        std::lock_guard<std::recursive_timed_mutex> wlock(pW->getMutex());
-
         // only builtinprotocols uses new_change = true, delegate in base class
         // in order to get the ParticipantProxyData into the WriterHistory and broadcast the first DATA(p)
 
