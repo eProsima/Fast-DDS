@@ -420,6 +420,8 @@ const EntityId_t c_EntityId_WriterLivelinessSecure = ENTITYID_P2P_BUILTIN_PARTIC
 const EntityId_t c_EntityId_ReaderLivelinessSecure = ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_SECURE_READER;
 #endif
 
+struct InstanceHandle_t;
+
 //!@brief Structure GUID_t, entity identifier, unique in DDS-RTPS Domain.
 //!@ingroup COMMON_MODULE
 struct RTPS_DllAPI GUID_t{
@@ -490,6 +492,12 @@ struct RTPS_DllAPI GUID_t{
     {
         return GUID_t();
     };
+
+    // TODO Review this conversion once InstanceHandle_t is implemented as DDS standard defines
+    explicit operator const InstanceHandle_t&() const
+    {
+        return *reinterpret_cast<const InstanceHandle_t*>(this);
+    }
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

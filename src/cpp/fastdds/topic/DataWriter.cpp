@@ -20,15 +20,14 @@
 #include <fastdds/topic/DataWriter.hpp>
 #include <fastrtps/topic/TopicDataType.h>
 #include <fastrtps/topic/attributes/TopicAttributes.h>
-#include <fastrtps/publisher/PublisherListener.h>
-#include <fastrtps/publisher/Publisher.h>
-#include "../../fastrtps/publisher/PublisherImpl.h"
-#include "../../fastrtps/participant/ParticipantImpl.h"
+#include <fastdds/publisher/PublisherListener.hpp>
+#include <fastdds/publisher/Publisher.hpp>
+#include "../publisher/PublisherImpl.hpp"
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 
-#include <fastrtps/participant/Participant.h>
+#include <fastdds/domain/Participant.hpp>
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/rtps/RTPSDomain.h>
 
@@ -337,6 +336,13 @@ bool DataWriter::remove_all_change(size_t* removed)
 const GUID_t& DataWriter::guid()
 {
     return writer_->getGuid();
+}
+
+InstanceHandle_t DataWriter::get_instance_handle() const
+{
+    InstanceHandle_t handle;
+    handle = writer_->getGuid();
+    return handle;
 }
 
 bool DataWriter::set_attributes(const WriterAttributes& att)
