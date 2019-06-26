@@ -412,9 +412,8 @@ TEST_F(XMLParserTests, DurationCheck)
     EXPECT_EQ(publisher_atts.qos.m_liveliness.announcement_period, c_TimeInfinite);
 
     ASSERT_TRUE(subscriber_profile);
-    EXPECT_EQ(subscriber_atts.qos.m_deadline.period.seconds, 12);
-    EXPECT_EQ(subscriber_atts.qos.m_liveliness.lease_duration.seconds, 11);
-    EXPECT_EQ(subscriber_atts.qos.m_liveliness.lease_duration.nanosec, 22);
+    EXPECT_EQ(subscriber_atts.qos.m_deadline.period, c_TimeInfinite);
+    EXPECT_EQ(subscriber_atts.qos.m_liveliness.lease_duration, c_TimeInfinite);
     EXPECT_EQ(subscriber_atts.qos.m_liveliness.announcement_period.seconds, 0);
     EXPECT_EQ(subscriber_atts.qos.m_liveliness.announcement_period.nanosec, 0);
 }
