@@ -38,18 +38,21 @@ class WriterHistory : public History
     friend class RTPSWriter;
     friend class PersistentWriter;
 
+    WriterHistory(WriterHistory&&) = delete;
+    WriterHistory& operator=(WriterHistory&&) = delete;
+
     public:
 
     /**
      * Constructor of the WriterHistory.
      */
     RTPS_DllAPI WriterHistory(const HistoryAttributes&  att);
-    RTPS_DllAPI virtual ~WriterHistory();
+    RTPS_DllAPI virtual ~WriterHistory() override;
 
     /**
      * Update the maximum and minimum sequenceNumber cacheChanges.
      */
-    RTPS_DllAPI void updateMaxMinSeqNum();
+    RTPS_DllAPI void updateMaxMinSeqNum() override;
 
     /**
      * Add a CacheChange_t to the WriterHistory.
@@ -73,7 +76,7 @@ class WriterHistory : public History
      * @param a_change Pointer to the CacheChange_t.
      * @return True if removed.
      */
-    RTPS_DllAPI bool remove_change(CacheChange_t* a_change);
+    RTPS_DllAPI bool remove_change(CacheChange_t* a_change) override;
 
     virtual bool remove_change_g(CacheChange_t* a_change);
 

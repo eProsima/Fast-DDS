@@ -25,15 +25,9 @@
 #include "../../fastrtps/qos/SampleLostStatus.hpp"
 #include "../../fastrtps/qos/SampleRejectedStatus.hpp"
 #include "../../fastrtps/qos/IncompatibleQosStatus.hpp"
+#include "../../fastrtps/rtps/common/MatchingInfo.h"
 
 namespace eprosima {
-namespace fastrtps {
-
-namespace rtps {
-class MatchingInfo;
-} /* namespace rtps */
-} /* namespace fastrtps */
-
 namespace fastdds {
 
 class DataReader;

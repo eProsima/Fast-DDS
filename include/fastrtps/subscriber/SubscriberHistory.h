@@ -35,7 +35,6 @@ namespace rtps{
 class WriterProxy;
 }
 
-class SubscriberAttributes;
 class TopicDataType;
 
 /**
@@ -45,6 +44,9 @@ class TopicDataType;
 class SubscriberHistory: public rtps::ReaderHistory
 {
     public:
+
+        SubscriberHistory(SubscriberHistory&&) = delete;
+        SubscriberHistory& operator=(SubscriberHistory&&) = delete;
 
         /**
          * Constructor. Requires information about the subscriber.
@@ -57,7 +59,6 @@ class SubscriberHistory: public rtps::ReaderHistory
          * @param mempolicy Set wether the payloads ccan dynamically resized or not.
          */
         SubscriberHistory(
-            SubscriberAttributes& satt,
             TopicDataType* type,
             const ReaderQos& qos,
             uint32_t payloadMax,
@@ -65,7 +66,7 @@ class SubscriberHistory: public rtps::ReaderHistory
             const ResourceLimitsQosPolicy& resource,
             rtps::MemoryManagementPolicy_t mempolicy);
 
-        virtual ~SubscriberHistory();
+        virtual ~SubscriberHistory() override;
 
         /**
          * Called when a change is received by the Subscriber History. Will add the change to the history
@@ -76,7 +77,7 @@ class SubscriberHistory: public rtps::ReaderHistory
          */
         bool received_change(
             rtps::CacheChange_t* change,
-            size_t unknown_missing_changes_up_to);
+            size_t unknown_missing_changes_up_to) override;
 
         /** @name Read or take data methods.
          * Methods to read or take data from the History.
@@ -143,8 +144,6 @@ class SubscriberHistory: public rtps::ReaderHistory
         HistoryQosPolicy m_historyQos;
         //!ResourceLimitsQosPolicy values.
         ResourceLimitsQosPolicy m_resourceLimitsQos;
-        //!Subscriber Attributes
-        SubscriberAttributes& sub_att_;
         //!Topic Data Type
         TopicDataType* type_;
         //!ReaderQos
