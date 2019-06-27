@@ -112,11 +112,17 @@ bool WLP::initWL(RTPSParticipantImpl* p)
     pub_liveliness_manager_ = new LivelinessManager(
                 [&](const GUID_t& guid,
                     const LivelinessQosPolicyKind& kind,
-                    const Duration_t& lease_duration) -> void
+                    const Duration_t& lease_duration,
+                    int alive_count,
+                    int not_alive_count) -> void
                 {
-                    pub_liveliness_lost(guid, kind, lease_duration);
+                    pub_liveliness_changed(
+                                guid,
+                                kind,
+                                lease_duration,
+                                alive_count,
+                                not_alive_count);
                 },
-                nullptr,
                 mp_participant->getEventResource().getIOService(),
                 mp_participant->getEventResource().getThread(),
                 false);
@@ -124,13 +130,16 @@ bool WLP::initWL(RTPSParticipantImpl* p)
     sub_liveliness_manager_ = new LivelinessManager(
                 [&](const GUID_t& guid,
                     const LivelinessQosPolicyKind& kind,
-                    const Duration_t& lease_duration) -> void
+                    const Duration_t& lease_duration,
+                    int alive_count,
+                    int not_alive_count) -> void
                 {
-                    sub_liveliness_lost(guid, kind, lease_duration);
-                },
-                [&](const GUID_t& guid, const LivelinessQosPolicyKind& kind, const Duration_t& lease_duration) -> void
-                {
-                    sub_liveliness_recovered(guid, kind, lease_duration);
+                    sub_liveliness_changed(
+                                guid,
+                                kind,
+                                lease_duration,
+                                alive_count,
+                                not_alive_count);
                 },
                 mp_participant->getEventResource().getIOService(),
                 mp_participant->getEventResource().getThread());
@@ -813,12 +822,21 @@ bool WLP::assert_liveliness(
                 lease_duration);
 }
 
-void WLP::pub_liveliness_lost(
+void WLP::pub_liveliness_changed(
         const GUID_t& writer,
         const LivelinessQosPolicyKind& kind,
-        const Duration_t& lease_duration)
+        const Duration_t& lease_duration,
+        int32_t alive_change,
+        int32_t not_alive_change)
 {
     (void)lease_duration;
+    (void)alive_change;
+
+    // On the publishing side we only have to notify if one of our writers loses liveliness
+    if (not_alive_change != 1)
+    {
+        return;
+    }
 
     if (kind == AUTOMATIC_LIVELINESS_QOS)
     {
@@ -882,10 +900,12 @@ void WLP::pub_liveliness_lost(
     }
 }
 
-void WLP::sub_liveliness_lost(
+void WLP::sub_liveliness_changed(
         const GUID_t& writer,
         const LivelinessQosPolicyKind& kind,
-        const Duration_t& lease_duration)
+        const Duration_t& lease_duration,
+        int32_t alive_change,
+        int32_t not_alive_change)
 {
     // Writer with given guid lost liveliness, check which readers were matched and inform them
 
@@ -899,31 +919,11 @@ void WLP::sub_liveliness_lost(
         {
             if (reader->matched_writer_is_matched(ratt))
             {
-                update_liveliness_changed_status(writer, reader, true);
-            }
-        }
-    }
-}
-
-void WLP::sub_liveliness_recovered(
-        const GUID_t& writer,
-        const LivelinessQosPolicyKind& kind,
-        const Duration_t& lease_duration)
-
-{
-    // Writer with given guid lost liveliness, check which readers were matched and inform them
-
-    RemoteWriterAttributes ratt;
-    ratt.guid = writer;
-
-    for (RTPSReader* reader : readers_)
-    {
-        if (reader->liveliness_kind_ == kind &&
-                reader->liveliness_lease_duration_ == lease_duration)
-        {
-            if (reader->matched_writer_is_matched(ratt))
-            {
-                update_liveliness_changed_status(writer, reader, false);
+                update_liveliness_changed_status(
+                            writer,
+                            reader,
+                            alive_change,
+                            not_alive_change);
             }
         }
     }
@@ -932,23 +932,22 @@ void WLP::sub_liveliness_recovered(
 void WLP::update_liveliness_changed_status(
         GUID_t writer,
         RTPSReader* reader,
-        bool lost)
+        int32_t alive_change,
+        int32_t not_alive_change)
 {
-    int change = lost ? -1 : 1;
-
-    reader->liveliness_changed_status_.alive_count += change;
-    reader->liveliness_changed_status_.alive_count_change += change;
-    reader->liveliness_changed_status_.not_alive_count -= change;
-    reader->liveliness_changed_status_.not_alive_count_change -= change;
+    reader->liveliness_changed_status_.alive_count += alive_change;
+    reader->liveliness_changed_status_.alive_count_change += alive_change;
+    reader->liveliness_changed_status_.not_alive_count += not_alive_change;
+    reader->liveliness_changed_status_.not_alive_count_change += not_alive_change;
     reader->liveliness_changed_status_.last_publication_handle = writer;
 
     if (reader->getListener() != nullptr)
     {
         reader->getListener()->on_liveliness_changed(reader, reader->liveliness_changed_status_);
-    }
 
-    reader->liveliness_changed_status_.alive_count_change = 0;
-    reader->liveliness_changed_status_.not_alive_count_change = 0;
+        reader->liveliness_changed_status_.alive_count_change = 0;
+        reader->liveliness_changed_status_.not_alive_count_change = 0;
+    }
 }
 
 } /* namespace rtps */

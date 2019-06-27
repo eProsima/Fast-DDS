@@ -15,16 +15,13 @@ LivelinessManager::LivelinessManager(
         const std::function<void(
             const GUID_t&,
             const LivelinessQosPolicyKind&,
-            const Duration_t&)>& liveliness_lost_callback,
-        const std::function<void(
-            const GUID_t&,
-            const LivelinessQosPolicyKind&,
-            const Duration_t&)>& liveliness_recovered_callback,
+            const Duration_t&,
+            int32_t alive_change,
+            int32_t not_alive_change)>& callback,
         asio::io_service& service,
         const std::thread& event_thread,
         bool manage_automatic)
-    : liveliness_lost_callback_(liveliness_lost_callback)
-    , liveliness_recovered_callback_(liveliness_recovered_callback)
+    : callback_(callback)
     , manage_automatic_(manage_automatic)
     , writers_()
     , mutex_()
@@ -88,6 +85,26 @@ bool LivelinessManager::remove_writer(
             {
                 writers_.remove(writer);
 
+                if (callback_ != nullptr)
+                {
+                    if (writer.status == LivelinessData::WriterStatus::ALIVE)
+                    {
+                        callback_(writer.guid,
+                                  writer.kind,
+                                  writer.lease_duration,
+                                  -1,
+                                  0);
+                    }
+                    else if (writer.status == LivelinessData::WriterStatus::NOT_ALIVE)
+                    {
+                        callback_(writer.guid,
+                                  writer.kind,
+                                  writer.lease_duration,
+                                  0,
+                                  -1);
+                    }
+                }
+
                 if (timer_owner_ != nullptr && timer_owner_->guid == guid)
                 {
                     timer_owner_ = nullptr;
@@ -137,35 +154,13 @@ bool LivelinessManager::assert_liveliness(
         {
             if (w.kind == wit->kind)
             {
-                if (w.alive == false)
-                {
-                    if (liveliness_recovered_callback_ != nullptr)
-                    {
-                        liveliness_recovered_callback_(
-                                    w.guid,
-                                    w.kind,
-                                    w.lease_duration);
-                    }
-                }
-                w.alive = true;
-                w.time = steady_clock::now() + nanoseconds(w.lease_duration.to_ns());
+                assert_writer_liveliness(w);
             }
         }
     }
     else if (wit->kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
     {
-        if (wit->alive == false)
-        {
-            if (liveliness_recovered_callback_ != nullptr)
-            {
-                liveliness_recovered_callback_(
-                            wit->guid,
-                            wit->kind,
-                            wit->lease_duration);
-            }
-        }
-        wit->alive = true;
-        wit->time = steady_clock::now() + nanoseconds(wit->lease_duration.to_ns());
+        assert_writer_liveliness(*wit);
     }
 
     // Updates the timer owner
@@ -205,18 +200,7 @@ bool LivelinessManager::assert_liveliness(LivelinessQosPolicyKind kind)
     {
         if (writer.kind == kind)
         {
-            if (writer.alive == false)
-            {
-                if (liveliness_recovered_callback_ != nullptr)
-                {
-                    liveliness_recovered_callback_(
-                                writer.guid,
-                                writer.kind,
-                                writer.lease_duration);
-                }
-            }
-            writer.alive = true;
-            writer.time = steady_clock::now() + nanoseconds(writer.lease_duration.to_ns());
+            assert_writer_liveliness(writer);
         }
     }
 
@@ -247,7 +231,7 @@ bool LivelinessManager::calculate_next()
 
     for (LivelinessDataIterator it=writers_.begin(); it!=writers_.end(); ++it)
     {
-        if (it->alive)
+        if (it->status == LivelinessData::WriterStatus::ALIVE)
         {
             if (it->time < min_time)
             {
@@ -270,14 +254,15 @@ void LivelinessManager::timer_expired()
         return;
     }
 
-    if (liveliness_lost_callback_ != nullptr)
+    if (callback_ != nullptr)
     {
-        liveliness_lost_callback_(
-                    timer_owner_->guid,
-                    timer_owner_->kind,
-                    timer_owner_->lease_duration);
+        callback_(timer_owner_->guid,
+                  timer_owner_->kind,
+                  timer_owner_->lease_duration,
+                  -1,
+                  1);
     }
-    timer_owner_->alive = false;
+    timer_owner_->status = LivelinessData::WriterStatus::NOT_ALIVE;
 
     if (calculate_next())
     {
@@ -312,12 +297,38 @@ bool LivelinessManager::is_any_alive(LivelinessQosPolicyKind kind)
 {
     for (const auto& writer : writers_)
     {
-        if (writer.kind == kind && writer.alive == true)
+        if (writer.kind == kind && writer.status == LivelinessData::WriterStatus::ALIVE)
         {
             return true;
         }
     }
     return false;
+}
+
+void LivelinessManager::assert_writer_liveliness(LivelinessData& writer)
+{
+    if (callback_ != nullptr)
+    {
+        if (writer.status == LivelinessData::WriterStatus::NOT_ASSERTED)
+        {
+            callback_(writer.guid,
+                      writer.kind,
+                      writer.lease_duration,
+                      1,
+                      0);
+        }
+        else if (writer.status == LivelinessData::WriterStatus::NOT_ALIVE)
+        {
+            callback_(writer.guid,
+                      writer.kind,
+                      writer.lease_duration,
+                      1,
+                      -1);
+        }
+    }
+
+    writer.status = LivelinessData::WriterStatus::ALIVE;
+    writer.time = steady_clock::now() + nanoseconds(writer.lease_duration.to_ns());
 }
 
 const ResourceLimitedVector<LivelinessData>& LivelinessManager::get_liveliness_data() const

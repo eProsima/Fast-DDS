@@ -39,8 +39,7 @@ public:
 
     /**
      * @brief Constructor
-     * @param liveliness_lost_callback A callback that will be invoked when a writer loses liveliness
-     * @param liveliness_recovered_callback A callback that will be invoked when a writer recovers liveliness
+     * @param callback A callback that will be invoked when a writer changes its liveliness status
      * @param service The asio I/O service
      * @param event_thread The event thread
      * @param manage_automatic True to manage writers with automatic liveliness, false otherwise
@@ -49,11 +48,9 @@ public:
             const std::function<void(
                 const GUID_t&,
                 const LivelinessQosPolicyKind&,
-                const Duration_t&)>& liveliness_lost_callback,
-            const std::function<void(
-                const GUID_t&,
-                const LivelinessQosPolicyKind&,
-                const Duration_t&)>& liveliness_recovered_callback,
+                const Duration_t&,
+                int32_t alive_change,
+                int32_t not_alive_change)>& callback,
             asio::io_service& service,
             const std::thread& event_thread,
             bool manage_automatic = true);
@@ -128,6 +125,11 @@ public:
 
 private:
 
+    //! @brief A method responsible for invoking the callback when liveliness is asserted
+    //! @param writer The liveliness data of the writer asserting liveliness
+    //!
+    void assert_writer_liveliness(LivelinessData& writer);
+
     /**
      * @brief A method to calculate the time when the next writer is going to lose liveliness
      * @details This method is public for testing purposes but it should not be used from outside this class
@@ -151,17 +153,13 @@ private:
     //! A method called if the timer expires
     void timer_expired();
 
-    //! A callback to inform outside classes that a writer lost its liveliness
+    //! A callback to inform outside classes that a writer changed its liveliness status
     std::function<void(
             const GUID_t&,
             const LivelinessQosPolicyKind&,
-            const Duration_t&)> liveliness_lost_callback_;
-
-    //! A callback to inform outside classes that a writer recovered its liveliness
-    std::function<void(
-            const GUID_t&,
-            const LivelinessQosPolicyKind&,
-            const Duration_t&)> liveliness_recovered_callback_;
+            const Duration_t&,
+            int32_t alive_change,
+            int32_t not_alive_change)> callback_;
 
     //! A boolean indicating whether we are managing writers with automatic liveliness
     bool manage_automatic_;
