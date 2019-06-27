@@ -130,6 +130,8 @@ public:
     RTPS_DllAPI bool canQosBeUpdated(const PublisherQos& qos) const;
 };
 
+extern PublisherQos PUBLISHER_QOS_DEFAULT;
+
 } // namespace fastdds
 } // namespace eprosima
 

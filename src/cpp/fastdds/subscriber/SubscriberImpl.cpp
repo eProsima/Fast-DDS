@@ -41,7 +41,7 @@ SubscriberImpl::SubscriberImpl(
         const fastrtps::SubscriberAttributes& att,
         SubscriberListener* listen)
     : participant_(p)
-    , qos_(qos)
+    , qos_(&qos == &SUBSCRIBER_QOS_DEFAULT ? participant_->get_default_subscriber_qos() : qos)
     , att_(att)
     , listener_(listen)
     , subscriber_listener_(this)
@@ -258,7 +258,12 @@ bool SubscriberImpl::delete_contained_entities()
 bool SubscriberImpl::set_default_datareader_qos(
         const fastrtps::ReaderQos& qos)
 {
-    if (default_datareader_qos_.canQosBeUpdated(qos) && qos.checkQos())
+    if (&qos == &DATAREADER_QOS_DEFAULT)
+    {
+        fastrtps::ReaderQos def_qos;
+        default_datareader_qos_.setQos(def_qos, true);
+    }
+    else if (default_datareader_qos_.canQosBeUpdated(qos) && qos.checkQos())
     {
         default_datareader_qos_.setQos(qos, false);
         return true;

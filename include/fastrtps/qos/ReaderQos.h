@@ -132,7 +132,7 @@ public:
     RTPS_DllAPI bool canQosBeUpdated(const ReaderQos& qos) const;
 };
 
-
+extern ReaderQos DATAREADER_QOS_DEFAULT;
 
 } /* namespace  */
 } /* namespace eprosima */

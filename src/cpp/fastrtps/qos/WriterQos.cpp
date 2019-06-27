@@ -23,6 +23,8 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+WriterQos eprosima::fastrtps::DATAWRITER_QOS_DEFAULT;
+
 WriterQos::WriterQos()
 {
     this->m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -33,7 +35,6 @@ WriterQos::~WriterQos()
 {
 
 }
-
 
 void WriterQos::setQos(const WriterQos& qos, bool first_time)
 {

@@ -131,7 +131,7 @@ public:
     RTPS_DllAPI bool canQosBeUpdated(const WriterQos& qos) const;
 };
 
-
+extern WriterQos DATAWRITER_QOS_DEFAULT;
 
 } /* namespace  */
 } /* namespace eprosima */

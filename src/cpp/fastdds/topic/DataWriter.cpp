@@ -58,7 +58,7 @@ DataWriter::DataWriter(
     , type_(topic)
     , topic_att_(topic_att)
     , w_att_(att)
-    , qos_(qos)
+    , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
     , history_(type_, type_->m_typeSize
 #if HAVE_SECURITY
         // In future v2 changepool is in writer, and writer set this value to cachechagepool.
@@ -72,17 +72,17 @@ DataWriter::DataWriter(
     , writer_listener_(this)
     , high_mark_for_frag_(0)
     , deadline_timer_(std::bind(&DataWriter::deadline_missed, this),
-                      qos.m_deadline.period.to_ns() * 1e-6,
+                      qos_.m_deadline.period.to_ns() * 1e-6,
                       publisher_->get_participant()->get_resource_event().getIOService(),
                       publisher_->get_participant()->get_resource_event().getThread())
-    , deadline_duration_us_(qos.m_deadline.period.to_ns() * 1e-3)
+    , deadline_duration_us_(qos_.m_deadline.period.to_ns() * 1e-3)
     , timer_owner_()
     , deadline_missed_status_()
     , lifespan_timer_(std::bind(&DataWriter::lifespan_expired, this),
-                      qos.m_lifespan.duration.to_ns() * 1e-6,
+                      qos_.m_lifespan.duration.to_ns() * 1e-6,
                       publisher_->get_participant()->get_resource_event().getIOService(),
                       publisher_->get_participant()->get_resource_event().getThread())
-    , lifespan_duration_us_(qos.m_lifespan.duration.to_ns() * 1e-3)
+    , lifespan_duration_us_(qos_.m_lifespan.duration.to_ns() * 1e-3)
 {
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(
                 publisher_->rtps_participant(),

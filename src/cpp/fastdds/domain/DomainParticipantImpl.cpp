@@ -283,7 +283,12 @@ bool DomainParticipantImpl::assert_liveliness()
 bool DomainParticipantImpl::set_default_publisher_qos(
         const fastdds::PublisherQos& qos)
 {
-    if (qos.checkQos())
+    if (&qos == &PUBLISHER_QOS_DEFAULT)
+    {
+        fastdds::PublisherQos def_qos;
+        default_pub_qos_.setQos(def_qos, true);
+    }
+    else if (qos.checkQos())
     {
         default_pub_qos_.setQos(qos, false);
         return true;
@@ -299,7 +304,12 @@ const fastdds::PublisherQos& DomainParticipantImpl::get_default_publisher_qos() 
 bool DomainParticipantImpl::set_default_subscriber_qos(
         const fastdds::SubscriberQos& qos)
 {
-    if (qos.checkQos())
+    if (&qos == &SUBSCRIBER_QOS_DEFAULT)
+    {
+        fastdds::SubscriberQos def_qos;
+        default_sub_qos_.setQos(def_qos, true);
+    }
+    else if (qos.checkQos())
     {
         default_sub_qos_.setQos(qos, false);
         return true;
