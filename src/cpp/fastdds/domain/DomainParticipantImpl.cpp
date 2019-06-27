@@ -89,9 +89,9 @@ DomainParticipantImpl::~DomainParticipantImpl()
     {
         std::lock_guard<std::mutex> lock(mtx_pubs_);
 
-        for (auto pub_it : publishers_)
+        for (auto pub_it = publishers_.begin(); pub_it != publishers_.end(); ++pub_it)
         {
-            delete_publisher_unprotected(pub_it.first);
+            delete pub_it->second;
         }
         publishers_.clear();
         publishers_by_handle_.clear();
@@ -100,9 +100,9 @@ DomainParticipantImpl::~DomainParticipantImpl()
     {
         std::lock_guard<std::mutex> lock(mtx_subs_);
 
-        for (auto sub_it : subscribers_)
+        for (auto sub_it = subscribers_.begin(); sub_it != subscribers_.end(); ++sub_it)
         {
-            delete_subscriber_unprotected(sub_it.first);
+            delete sub_it->second;
         }
         subscribers_.clear();
         subscribers_by_handle_.clear();
@@ -121,24 +121,17 @@ bool DomainParticipantImpl::delete_publisher(
         Publisher* pub)
 {
     std::lock_guard<std::mutex> lock(mtx_pubs_);
-    return delete_publisher_unprotected(pub);
-}
-
-bool DomainParticipantImpl::delete_publisher_unprotected(
-        Publisher* pub)
-{
     auto pit = publishers_.find(pub);
-    if (pit != publishers_.end())
+    if (pub->get_instance_handle() == pit->second->get_instance_handle())
     {
-        if (pub->get_instance_handle() == pit->second->get_instance_handle())
+        if (pit != publishers_.end())
         {
-            publishers_by_handle_.erase(publishers_by_handle_.find(pub->get_instance_handle()));
+            publishers_by_handle_.erase(publishers_by_handle_.find(pit->second->get_instance_handle()));
             delete pit->second;
             publishers_.erase(pit);
             return true;
         }
     }
-
     return false;
 }
 
@@ -146,24 +139,17 @@ bool DomainParticipantImpl::delete_subscriber(
         Subscriber* sub)
 {
     std::lock_guard<std::mutex> lock(mtx_subs_);
-    return delete_subscriber_unprotected(sub);
-}
-
-bool DomainParticipantImpl::delete_subscriber_unprotected(
-        Subscriber* sub)
-{
     auto sit = subscribers_.find(sub);
-    if (sit != subscribers_.end())
+    if (sub->get_instance_handle() == sit->second->get_instance_handle())
     {
-        if (sub->get_instance_handle() == sit->second->get_instance_handle())
+        if (sit != subscribers_.end())
         {
-            subscribers_by_handle_.erase(subscribers_by_handle_.find(sub->get_instance_handle()));
+            subscribers_by_handle_.erase(subscribers_by_handle_.find(sit->second->get_instance_handle()));
             delete sit->second;
             subscribers_.erase(sit);
             return true;
         }
     }
-
     return false;
 }
 
