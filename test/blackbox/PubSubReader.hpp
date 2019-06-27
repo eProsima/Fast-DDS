@@ -430,6 +430,15 @@ public:
         return *this;
     }
 
+    bool update_deadline_period(const eprosima::fastrtps::Duration_t& deadline_period)
+    {
+        eprosima::fastrtps::SubscriberAttributes attr;
+        attr = subscriber_attr_;
+        attr.qos.m_deadline.period = deadline_period;
+
+        return subscriber_->updateAttributes(attr);
+    }
+
     PubSubReader& liveliness_kind(const eprosima::fastrtps::LivelinessQosPolicyKind& kind)
     {
         subscriber_attr_.qos.m_liveliness.kind = kind;
