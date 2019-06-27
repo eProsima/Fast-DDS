@@ -18,7 +18,7 @@
  */
 
 #include "SubscriberImpl.hpp"
-#include "../domain/ParticipantImpl.hpp"
+#include "../domain/DomainParticipantImpl.hpp"
 
 #include <fastdds/subscriber/Subscriber.hpp>
 #include <fastdds/subscriber/SubscriberListener.hpp>
@@ -36,7 +36,7 @@ namespace fastdds {
 
 
 SubscriberImpl::SubscriberImpl(
-        ParticipantImpl* p,
+        DomainParticipantImpl* p,
         const SubscriberQos& qos,
         const fastrtps::SubscriberAttributes& att,
         SubscriberListener* listen)
@@ -344,7 +344,7 @@ bool SubscriberImpl::set_attributes(
     return updated;
 }
 
-const Participant* SubscriberImpl::get_participant() const
+const DomainParticipant* SubscriberImpl::get_participant() const
 {
     return participant_->get_participant();
 }

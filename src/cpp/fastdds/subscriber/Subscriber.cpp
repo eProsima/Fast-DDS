@@ -18,7 +18,7 @@
  */
 
 #include <fastdds/subscriber/Subscriber.hpp>
-#include <fastdds/domain/Participant.hpp>
+#include <fastdds/domain/DomainParticipant.hpp>
 #include "SubscriberImpl.hpp"
 
 #include <fastrtps/log/Log.h>
@@ -123,7 +123,7 @@ const fastrtps::SubscriberAttributes& Subscriber::get_attributes() const
     return impl_->get_attributes();
 }
 
-const Participant* Subscriber::get_participant() const
+const DomainParticipant* Subscriber::get_participant() const
 {
     return impl_->get_participant();
 }

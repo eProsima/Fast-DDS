@@ -47,8 +47,8 @@ class WriterQos;
 namespace fastdds {
 
 class PublisherListener;
-class ParticipantImpl;
-class Participant;
+class DomainParticipantImpl;
+class DomainParticipant;
 class Publisher;
 
 /**
@@ -57,14 +57,14 @@ class Publisher;
  */
 class PublisherImpl
 {
-    friend class ParticipantImpl;
+    friend class DomainParticipantImpl;
 
     /**
      * Create a publisher, assigning its pointer to the associated writer.
      * Don't use directly, create Publisher using create_publisher from Participant.
      */
     PublisherImpl(
-            ParticipantImpl* p,
+            DomainParticipantImpl* p,
             const PublisherQos& qos,
             const fastrtps::PublisherAttributes& att,
             PublisherListener* p_listen = nullptr);
@@ -108,7 +108,7 @@ public:
     bool wait_for_acknowledments(
             const fastrtps::Duration_t& max_wait);
 
-    const Participant* get_participant() const;
+    const DomainParticipant* get_participant() const;
 
     bool delete_contained_entities();
 
@@ -136,7 +136,7 @@ public:
 
 private:
 
-    ParticipantImpl* participant_;
+    DomainParticipantImpl* participant_;
 
     PublisherQos qos_;
 

@@ -41,7 +41,7 @@ class ReaderQos;
 
 namespace fastdds {
 
-class Participant;
+class DomainParticipant;
 class SubscriberListener;
 class SubscriberImpl;
 class SubscriberQos;
@@ -58,7 +58,7 @@ class DataReaderListener;
 class RTPS_DllAPI Subscriber
 {
     friend class SubscriberImpl;
-    friend class ParticipantImpl;
+    friend class DomainParticipantImpl;
 
     /**
      * Constructor from a SubscriberImpl pointer
@@ -128,7 +128,7 @@ public:
      */
     const fastrtps::SubscriberAttributes& get_attributes() const;
 
-    const Participant* get_participant() const;
+    const DomainParticipant* get_participant() const;
 
     const fastrtps::rtps::RTPSParticipant* rtps_participant() const;
 

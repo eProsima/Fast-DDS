@@ -27,7 +27,7 @@
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 
-#include <fastdds/domain/Participant.hpp>
+#include <fastdds/domain/DomainParticipant.hpp>
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/rtps/RTPSDomain.h>
 

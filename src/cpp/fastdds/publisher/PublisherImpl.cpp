@@ -18,7 +18,7 @@
  */
 
 #include "PublisherImpl.hpp"
-#include "../domain/ParticipantImpl.hpp"
+#include "../domain/DomainParticipantImpl.hpp"
 
 #include <fastdds/publisher/Publisher.hpp>
 #include <fastdds/publisher/PublisherListener.hpp>
@@ -37,7 +37,7 @@ namespace eprosima {
 namespace fastdds {
 
 PublisherImpl::PublisherImpl(
-        ParticipantImpl* p,
+        DomainParticipantImpl* p,
         const PublisherQos& qos,
         const fastrtps::PublisherAttributes& att,
         PublisherListener* listen)
@@ -349,7 +349,7 @@ bool PublisherImpl::wait_for_acknowledments(
     return true;
 }
 
-const Participant* PublisherImpl::get_participant() const
+const DomainParticipant* PublisherImpl::get_participant() const
 {
     return participant_->get_participant();
 }

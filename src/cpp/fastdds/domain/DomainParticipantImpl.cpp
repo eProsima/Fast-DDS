@@ -13,13 +13,13 @@
 // limitations under the License.
 
 /**
- * @file ParticipantImpl.cpp
+ * @file DomainParticipantImpl.cpp
  *
  */
 
-#include "ParticipantImpl.hpp"
-#include <fastdds/domain/Participant.hpp>
-#include <fastdds/domain/ParticipantListener.hpp>
+#include "DomainParticipantImpl.hpp"
+#include <fastdds/domain/DomainParticipant.hpp>
+#include <fastdds/domain/DomainParticipantListener.hpp>
 #include <fastrtps/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastrtps/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastrtps/rtps/writer/WriterDiscoveryInfo.h>
@@ -70,10 +70,10 @@ using fastrtps::rtps::EndpointKind_t;
 using fastrtps::rtps::ResourceEvent;
 using fastrtps::Log;
 
-ParticipantImpl::ParticipantImpl(
+DomainParticipantImpl::DomainParticipantImpl(
         const ParticipantAttributes& patt,
-        Participant* pspart,
-        ParticipantListener* listen)
+        DomainParticipant* pspart,
+        DomainParticipantListener* listen)
     : att_(patt)
     , rtps_participant_(nullptr)
     , participant_(pspart)
@@ -84,7 +84,7 @@ ParticipantImpl::ParticipantImpl(
         participant_->impl_ = this;
     }
 
-ParticipantImpl::~ParticipantImpl()
+DomainParticipantImpl::~DomainParticipantImpl()
 {
     {
         std::lock_guard<std::mutex> lock(mtx_pubs_);
@@ -117,7 +117,7 @@ ParticipantImpl::~ParticipantImpl()
 }
 
 
-bool ParticipantImpl::delete_publisher(
+bool DomainParticipantImpl::delete_publisher(
         Publisher* pub)
 {
     std::lock_guard<std::mutex> lock(mtx_pubs_);
@@ -136,7 +136,7 @@ bool ParticipantImpl::delete_publisher(
     return false;
 }
 
-bool ParticipantImpl::delete_subscriber(
+bool DomainParticipantImpl::delete_subscriber(
         Subscriber* sub)
 {
     std::lock_guard<std::mutex> lock(mtx_subs_);
@@ -155,17 +155,17 @@ bool ParticipantImpl::delete_subscriber(
     return false;
 }
 
-const InstanceHandle_t& ParticipantImpl::get_instance_handle() const
+const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
 {
     return static_cast<const InstanceHandle_t&>(rtps_participant_->getGuid());
 }
 
-const GUID_t& ParticipantImpl::guid() const
+const GUID_t& DomainParticipantImpl::guid() const
 {
     return rtps_participant_->getGuid();
 }
 
-Publisher* ParticipantImpl::create_publisher(
+Publisher* DomainParticipantImpl::create_publisher(
         const PublisherQos& qos,
         const fastrtps::PublisherAttributes& att,
         PublisherListener* listen)
@@ -227,13 +227,13 @@ Publisher* ParticipantImpl::create_publisher(
     return pub;
 }
 
-Subscriber* ParticipantImpl::get_builtin_subscriber()
+Subscriber* DomainParticipantImpl::get_builtin_subscriber()
 {
     logError(PARTICIPANT, "Not implemented.");
     return nullptr;
 }
 
-bool ParticipantImpl::ignore_participant(
+bool DomainParticipantImpl::ignore_participant(
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
     (void)handle;
@@ -241,7 +241,7 @@ bool ParticipantImpl::ignore_participant(
     return false;
 }
 
-bool ParticipantImpl::ignore_topic(
+bool DomainParticipantImpl::ignore_topic(
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
     (void)handle;
@@ -249,7 +249,7 @@ bool ParticipantImpl::ignore_topic(
     return false;
 }
 
-bool ParticipantImpl::ignore_publication(
+bool DomainParticipantImpl::ignore_publication(
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
     (void)handle;
@@ -257,7 +257,7 @@ bool ParticipantImpl::ignore_publication(
     return false;
 }
 
-bool ParticipantImpl::ignore_subscription(
+bool DomainParticipantImpl::ignore_subscription(
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
     (void)handle;
@@ -265,24 +265,24 @@ bool ParticipantImpl::ignore_subscription(
     return false;
 }
 
-uint8_t ParticipantImpl::get_domain_id() const
+uint8_t DomainParticipantImpl::get_domain_id() const
 {
     return static_cast<uint8_t>(att_.rtps.builtin.domainId);
 }
 
-bool ParticipantImpl::delete_contained_entities()
+bool DomainParticipantImpl::delete_contained_entities()
 {
     logError(PARTICIPANT, "Not implemented.");
     return false;
 }
 
-bool ParticipantImpl::assert_liveliness()
+bool DomainParticipantImpl::assert_liveliness()
 {
     logError(PARTICIPANT, "Not implemented.");
     return false;
 }
 
-bool ParticipantImpl::set_default_publisher_qos(
+bool DomainParticipantImpl::set_default_publisher_qos(
         const fastdds::PublisherQos& qos)
 {
     if (qos.checkQos())
@@ -293,12 +293,12 @@ bool ParticipantImpl::set_default_publisher_qos(
     return false;
 }
 
-const fastdds::PublisherQos& ParticipantImpl::get_default_publisher_qos() const
+const fastdds::PublisherQos& DomainParticipantImpl::get_default_publisher_qos() const
 {
     return default_pub_qos_;
 }
 
-bool ParticipantImpl::set_default_subscriber_qos(
+bool DomainParticipantImpl::set_default_subscriber_qos(
         const fastdds::SubscriberQos& qos)
 {
     if (qos.checkQos())
@@ -309,12 +309,12 @@ bool ParticipantImpl::set_default_subscriber_qos(
     return false;
 }
 
-const fastdds::SubscriberQos& ParticipantImpl::get_default_subscriber_qos() const
+const fastdds::SubscriberQos& DomainParticipantImpl::get_default_subscriber_qos() const
 {
     return default_sub_qos_;
 }
 
-bool ParticipantImpl::get_discovered_participants(
+bool DomainParticipantImpl::get_discovered_participants(
         std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const
 {
     (void)participant_handles;
@@ -322,7 +322,7 @@ bool ParticipantImpl::get_discovered_participants(
     return false;
 }
 
-bool ParticipantImpl::get_discovered_topics(
+bool DomainParticipantImpl::get_discovered_topics(
         std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const
 {
     (void)topic_handles;
@@ -330,7 +330,7 @@ bool ParticipantImpl::get_discovered_topics(
     return false;
 }
 
-bool ParticipantImpl::contains_entity(
+bool DomainParticipantImpl::contains_entity(
         const fastrtps::rtps::InstanceHandle_t& handle,
         bool recursive) const
 {
@@ -396,7 +396,7 @@ bool ParticipantImpl::contains_entity(
     return false;
 }
 
-bool ParticipantImpl::get_current_time(
+bool DomainParticipantImpl::get_current_time(
         fastrtps::Time_t& current_time) const
 {
     auto now = std::chrono::system_clock::now();
@@ -411,17 +411,22 @@ bool ParticipantImpl::get_current_time(
     return true;
 }
 
-const Participant* ParticipantImpl::get_participant() const
+const DomainParticipant* DomainParticipantImpl::get_participant() const
 {
     return participant_;
 }
 
-std::vector<std::string> ParticipantImpl::getParticipantNames() const
+DomainParticipant* DomainParticipantImpl::get_participant()
+{
+    return participant_;
+}
+
+std::vector<std::string> DomainParticipantImpl::getParticipantNames() const
 {
     return rtps_participant_->getParticipantNames();
 }
 
-Subscriber* ParticipantImpl::create_subscriber(
+Subscriber* DomainParticipantImpl::create_subscriber(
         const SubscriberQos& qos,
         const fastrtps::SubscriberAttributes& att,
         SubscriberListener* listen)
@@ -483,7 +488,7 @@ Subscriber* ParticipantImpl::create_subscriber(
 }
 
 
-TopicDataType* ParticipantImpl::find_type(
+TopicDataType* DomainParticipantImpl::find_type(
         const std::string& type_name) const
 {
     std::lock_guard<std::mutex> lock(mtx_types_);
@@ -498,7 +503,7 @@ TopicDataType* ParticipantImpl::find_type(
     return nullptr;
 }
 
-bool ParticipantImpl::register_type(
+bool DomainParticipantImpl::register_type(
         TopicDataType* type)
 {
     TopicDataType* t = find_type(type->getName());
@@ -525,7 +530,7 @@ bool ParticipantImpl::register_type(
     return true;
 }
 
-bool ParticipantImpl::unregister_type(
+bool DomainParticipantImpl::unregister_type(
         const char* type_name)
 {
     TopicDataType* t = find_type(type_name);
@@ -576,7 +581,7 @@ bool ParticipantImpl::unregister_type(
     return true;
 }
 
-void ParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
+void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
         RTPSParticipant*,
         ParticipantDiscoveryInfo&& info)
 {
@@ -587,7 +592,7 @@ void ParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
 }
 
 #if HAVE_SECURITY
-void ParticipantImpl::MyRTPSParticipantListener::onParticipantAuthentication(
+void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthentication(
         RTPSParticipant*,
         ParticipantAuthenticationInfo&& info)
 {
@@ -598,7 +603,7 @@ void ParticipantImpl::MyRTPSParticipantListener::onParticipantAuthentication(
 }
 #endif
 
-void ParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
+void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
         RTPSParticipant*,
         ReaderDiscoveryInfo&& info)
 {
@@ -608,7 +613,7 @@ void ParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
     }
 }
 
-void ParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
+void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
         RTPSParticipant*,
         WriterDiscoveryInfo&& info)
 {
@@ -618,7 +623,7 @@ void ParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
     }
 }
 
-bool ParticipantImpl::newRemoteEndpointDiscovered(
+bool DomainParticipantImpl::newRemoteEndpointDiscovered(
         const GUID_t& partguid,
         uint16_t endpointId,
         EndpointKind_t kind)
@@ -633,26 +638,26 @@ bool ParticipantImpl::newRemoteEndpointDiscovered(
     }
 }
 
-bool ParticipantImpl::get_remote_writer_info(
+bool DomainParticipantImpl::get_remote_writer_info(
         const GUID_t& writerGuid,
         WriterProxyData& returnedInfo)
 {
     return rtps_participant_->get_remote_writer_info(writerGuid, returnedInfo);
 }
 
-bool ParticipantImpl::get_remote_reader_info(
+bool DomainParticipantImpl::get_remote_reader_info(
         const GUID_t& readerGuid,
         ReaderProxyData& returnedInfo)
 {
     return rtps_participant_->get_remote_reader_info(readerGuid, returnedInfo);
 }
 
-ResourceEvent& ParticipantImpl::get_resource_event() const
+ResourceEvent& DomainParticipantImpl::get_resource_event() const
 {
     return rtps_participant_->get_resource_event();
 }
 
-bool ParticipantImpl::exists_entity_id(
+bool DomainParticipantImpl::exists_entity_id(
         const fastrtps::rtps::EntityId_t& entity_id) const
 {
     GUID_t g = guid();

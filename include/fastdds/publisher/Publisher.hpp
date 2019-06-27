@@ -39,7 +39,7 @@ class WriterQos;
 
 namespace fastdds {
 
-class Participant;
+class DomainParticipant;
 class PublisherListener;
 class PublisherImpl;
 class PublisherQos;
@@ -53,7 +53,7 @@ class DataWriterListener;
 class RTPS_DllAPI Publisher
 {
     friend class PublisherImpl;
-    friend class ParticipantImpl;
+    friend class DomainParticipantImpl;
     virtual ~Publisher();
 
     /**
@@ -99,7 +99,7 @@ public:
     bool wait_for_acknowledments(
             const fastrtps::Duration_t& max_wait);
 
-    const Participant* get_participant() const;
+    const DomainParticipant* get_participant() const;
 
     bool delete_contained_entities();
 
