@@ -26,7 +26,7 @@
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/RTPSDomain.h>
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
-#include <fastdds/domain/Participant.hpp>
+#include <fastdds/domain/DomainParticipant.hpp>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #include <fastrtps/log/Log.h>

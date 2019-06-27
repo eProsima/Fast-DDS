@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file ParticipantImpl.h
+ * @file DomainParticipantImpl.h
  *
  */
 
@@ -46,8 +46,8 @@ class SubscriberAttributes;
 namespace fastdds {
 
 class Domain;
-class Participant;
-class ParticipantListener;
+class DomainParticipant;
+class DomainParticipantListener;
 class Publisher;
 class PublisherImpl;
 class PublisherListener;
@@ -57,32 +57,32 @@ class SubscriberListener;
 
 
 /**
- * This is the implementation class of the Participant.
+ * This is the implementation class of the DomainParticipant.
  * @ingroup FASTRTPS_MODULE
  */
-class ParticipantImpl
+class DomainParticipantImpl
 {
-    friend class Domain;
+    friend class DomainParticipantFactory;
 
 private:
 
-    ParticipantImpl(
+    DomainParticipantImpl(
             const fastrtps::ParticipantAttributes& patt,
-            Participant* pspart,
-            ParticipantListener* listen = nullptr);
+            DomainParticipant* pspart,
+            DomainParticipantListener* listen = nullptr);
 
-    virtual ~ParticipantImpl();
+    virtual ~DomainParticipantImpl();
 
 public:
 
     bool set_listener(
-            ParticipantListener* listener)
+            DomainParticipantListener* listener)
     {
         listener_ = listener;
         return true;
     }
 
-    const ParticipantListener* get_listener() const
+    const DomainParticipantListener* get_listener() const
     {
         return listener_;
     }
@@ -192,7 +192,9 @@ public:
     bool get_current_time(
             fastrtps::Time_t& current_time) const;
 
-    const Participant* get_participant() const;
+    const DomainParticipant* get_participant() const;
+
+    DomainParticipant* get_participant();
 
     const fastrtps::rtps::RTPSParticipant* rtps_participant() const
     {
@@ -260,10 +262,10 @@ private:
     fastrtps::rtps::RTPSParticipant* rtps_participant_;
 
     //!Participant*
-    Participant* participant_;
+    DomainParticipant* participant_;
 
     //!Participant Listener
-    ParticipantListener* listener_;
+    DomainParticipantListener* listener_;
 
     //!Publisher maps
     std::map<Publisher*, PublisherImpl*> publishers_;
@@ -287,7 +289,7 @@ private:
     {
         public:
 
-            MyRTPSParticipantListener(ParticipantImpl* impl)
+            MyRTPSParticipantListener(DomainParticipantImpl* impl)
                 : participant_(impl)
             {}
 
@@ -312,7 +314,7 @@ private:
                     fastrtps::rtps::RTPSParticipant* participant,
                     fastrtps::rtps::WriterDiscoveryInfo&& info) override;
 
-            ParticipantImpl* participant_;
+            DomainParticipantImpl* participant_;
 
     } rtps_listener_;
 

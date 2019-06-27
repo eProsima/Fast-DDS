@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file Participant.hpp
+ * @file DomainParticipant.hpp
  *
  */
 
-#ifndef _FASTDDS_PARTICIPANT_H_
-#define _FASTDDS_PARTICIPANT_H_
+#ifndef _FASTDDS_DOMAIN_PARTICIPANT_H_
+#define _FASTDDS_DOMAIN_PARTICIPANT_H_
 
 #include "../../fastrtps/rtps/common/Guid.h"
 #include "../../fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
@@ -44,9 +44,8 @@ class SubscriberAttributes;
 
 namespace fastdds {
 
-class Domain;
-class ParticipantImpl;
-class ParticipantListener;
+class DomainParticipantImpl;
+class DomainParticipantListener;
 class Publisher;
 class PublisherQos;
 class PublisherImpl;
@@ -57,17 +56,17 @@ class SubscriberImpl;
 class SubscriberListener;
 
 /**
- * Class Participant used to group Publishers and Subscribers into a single working unit.
+ * Class DomainParticipant used to group Publishers and Subscribers into a single working unit.
  * @ingroup FASTRTPS_MODULE
  */
-class RTPS_DllAPI Participant
+class RTPS_DllAPI DomainParticipant
 {
 public:
 
     bool set_listener(
-            ParticipantListener* listener);
+            DomainParticipantListener* listener);
 
-    const ParticipantListener* get_listener() const;
+    const DomainParticipantListener* get_listener() const;
 
     /**
      * Create a Publisher in this Participant.
@@ -222,18 +221,18 @@ public:
 
 private:
 
-    Participant();
+    DomainParticipant();
 
-    virtual ~Participant();
+    virtual ~DomainParticipant();
 
-    ParticipantImpl* impl_;
+    DomainParticipantImpl* impl_;
 
-    friend class Domain;
+    friend class DomainParticipantFactory;
 
-    friend class ParticipantImpl;
+    friend class DomainParticipantImpl;
 };
 
 } // namespace fastdds
 } /* namespace eprosima */
 
-#endif /* _FASTDDS_PARTICIPANT_H_ */
+#endif /* _FASTDDS_DOMAIN_PARTICIPANT_H_ */
