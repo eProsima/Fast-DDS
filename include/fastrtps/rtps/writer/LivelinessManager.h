@@ -28,6 +28,13 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+using LivelinessCallback = std::function<void(
+const GUID_t&,
+const LivelinessQosPolicyKind&,
+const Duration_t&,
+int32_t alive_change,
+int32_t not_alive_change)>;
+
 /**
  * @brief A class managing the liveliness of a set of writers. Writers are represented by their LivelinessData
  * @details Uses a shared timed event and informs outside classes on liveliness changes
@@ -45,12 +52,7 @@ public:
      * @param manage_automatic True to manage writers with automatic liveliness, false otherwise
      */
     LivelinessManager(
-            const std::function<void(
-                const GUID_t&,
-                const LivelinessQosPolicyKind&,
-                const Duration_t&,
-                int32_t alive_change,
-                int32_t not_alive_change)>& callback,
+            const LivelinessCallback& callback,
             asio::io_service& service,
             const std::thread& event_thread,
             bool manage_automatic = true);
@@ -154,12 +156,7 @@ private:
     void timer_expired();
 
     //! A callback to inform outside classes that a writer changed its liveliness status
-    std::function<void(
-            const GUID_t&,
-            const LivelinessQosPolicyKind&,
-            const Duration_t&,
-            int32_t alive_change,
-            int32_t not_alive_change)> callback_;
+    LivelinessCallback callback_;
 
     //! A boolean indicating whether we are managing writers with automatic liveliness
     bool manage_automatic_;

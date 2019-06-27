@@ -12,12 +12,7 @@ namespace rtps {
 using LivelinessDataIterator = ResourceLimitedVector<LivelinessData>::iterator;
 
 LivelinessManager::LivelinessManager(
-        const std::function<void(
-            const GUID_t&,
-            const LivelinessQosPolicyKind&,
-            const Duration_t&,
-            int32_t alive_change,
-            int32_t not_alive_change)>& callback,
+        const LivelinessCallback& callback,
         asio::io_service& service,
         const std::thread& event_thread,
         bool manage_automatic)
