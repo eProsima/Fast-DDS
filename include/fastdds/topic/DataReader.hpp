@@ -68,7 +68,7 @@ class DataReader {
             const fastrtps::TopicAttributes& topic_att,
             const fastrtps::rtps::ReaderAttributes& att,
             const fastrtps::ReaderQos& qos,
-            fastrtps::SubscriberHistory&& history,
+            const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
             DataReaderListener* listener = nullptr);
 
 public:

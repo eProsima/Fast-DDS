@@ -37,7 +37,6 @@ inline bool sort_ReaderHistoryCache(CacheChange_t*c1,CacheChange_t*c2)
 }
 
 SubscriberHistory::SubscriberHistory(
-        SubscriberAttributes& satt,
         TopicDataType* type,
         const ReaderQos& qos,
         uint32_t payloadMaxSize,
@@ -58,7 +57,6 @@ SubscriberHistory::SubscriberHistory(
     , m_unreadCacheCount(0)
     , m_historyQos(history)
     , m_resourceLimitsQos(resource)
-    , sub_att_(satt)
     , type_(type)
     , qos_(qos)
     , mp_getKeyObject(nullptr)
@@ -146,7 +144,7 @@ bool SubscriberHistory::received_change(
             if (m_isHistoryFull)
             {
                 // Discarting the sample.
-                logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << sub_att_.getEntityID());
+                logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << type_->getName());
                 return false;
             }
 
@@ -155,7 +153,7 @@ bool SubscriberHistory::received_change(
                 increaseUnreadCount();
                 if ((int32_t)m_changes.size() == m_resourceLimitsQos.max_samples)
                     m_isHistoryFull = true;
-                logInfo(SUBSCRIBER, sub_att_.getEntityID()
+                logInfo(SUBSCRIBER, type_->getName()
                     << ": Change " << a_change->sequenceNumber << " added from: "
                     << a_change->writerGUID;);
 
@@ -244,7 +242,7 @@ bool SubscriberHistory::received_change(
                 if (m_isHistoryFull)
                 {
                     // Discarting the sample.
-                    logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << sub_att_.getEntityID());
+                    logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << type_->getName());
                     return false;
                 }
 

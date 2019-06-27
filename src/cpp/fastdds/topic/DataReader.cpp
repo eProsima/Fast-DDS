@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ DataReader::DataReader(
         const TopicAttributes& topic_att,
         const rtps::ReaderAttributes& att,
         const ReaderQos& qos,
-        SubscriberHistory&& history,
+        const MemoryManagementPolicy_t memory_policy,
         DataReaderListener* listener)
     : subscriber_(s)
     , reader_(nullptr)
@@ -54,7 +54,13 @@ DataReader::DataReader(
     , att_(att)
     , qos_(qos)
 #pragma warning (disable : 4355 )
-    , history_(std::move(history))
+    //, history_(std::move(history))
+    , history_(type_,
+               qos_,
+               type_->m_typeSize + 3, /* Possible alignment */
+               topic_att_.historyQos,
+               topic_att_.resourceLimitsQos,
+               memory_policy)
     , listener_(listener)
     , reader_listener_(this)
     , deadline_timer_(std::bind(&DataReader::deadline_missed, this),

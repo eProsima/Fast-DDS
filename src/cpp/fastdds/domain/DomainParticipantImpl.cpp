@@ -91,7 +91,7 @@ DomainParticipantImpl::~DomainParticipantImpl()
 
         for (auto pub_it : publishers_)
         {
-            delete_publisher(pub_it.first);
+            delete_publisher_unprotected(pub_it.first);
         }
         publishers_.clear();
         publishers_by_handle_.clear();
@@ -102,7 +102,7 @@ DomainParticipantImpl::~DomainParticipantImpl()
 
         for (auto sub_it : subscribers_)
         {
-            delete_subscriber(sub_it.first);
+            delete_subscriber_unprotected(sub_it.first);
         }
         subscribers_.clear();
         subscribers_by_handle_.clear();
@@ -121,6 +121,12 @@ bool DomainParticipantImpl::delete_publisher(
         Publisher* pub)
 {
     std::lock_guard<std::mutex> lock(mtx_pubs_);
+    return delete_publisher_unprotected(pub);
+}
+
+bool DomainParticipantImpl::delete_publisher_unprotected(
+        Publisher* pub)
+{
     auto pit = publishers_.find(pub);
     if (pit != publishers_.end())
     {
@@ -140,6 +146,12 @@ bool DomainParticipantImpl::delete_subscriber(
         Subscriber* sub)
 {
     std::lock_guard<std::mutex> lock(mtx_subs_);
+    return delete_subscriber_unprotected(sub);
+}
+
+bool DomainParticipantImpl::delete_subscriber_unprotected(
+        Subscriber* sub)
+{
     auto sit = subscribers_.find(sub);
     if (sit != subscribers_.end())
     {

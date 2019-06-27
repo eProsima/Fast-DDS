@@ -57,8 +57,7 @@ PublisherImpl::PublisherImpl(
     , mp_type(pdatatype)
     , m_att(att)
 #pragma warning (disable : 4355 )
-    , m_history(m_att,
-                pdatatype,
+    , m_history(pdatatype,
                 pdatatype->m_typeSize
 #if HAVE_SECURITY
             // In future v2 changepool is in writer, and writer set this value to cachechagepool.

@@ -51,7 +51,7 @@ DataWriter::DataWriter(
         const TopicAttributes& topic_att,
         const WriterAttributes& att,
         const WriterQos& qos,
-        PublisherHistory&& history,
+        const MemoryManagementPolicy_t memory_policy,
         DataWriterListener* listen )
     : publisher_(p)
     , writer_(nullptr)
@@ -59,7 +59,14 @@ DataWriter::DataWriter(
     , topic_att_(topic_att)
     , w_att_(att)
     , qos_(qos)
-    , history_(std::move(history))
+    , history_(type_, type_->m_typeSize
+#if HAVE_SECURITY
+        // In future v2 changepool is in writer, and writer set this value to cachechagepool.
+        + 20 /*SecureDataHeader*/ + 4 + ((2* 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
+        + 16 + 4 /*SecureDataTag*/
+#endif
+               , topic_att_.historyQos, topic_att_.resourceLimitsQos, memory_policy)
+    //, history_(std::move(history))
     , listener_(listen)
 #pragma warning (disable : 4355 )
     , writer_listener_(this)
@@ -80,7 +87,7 @@ DataWriter::DataWriter(
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(
                 publisher_->rtps_participant(),
                 w_att_,
-                static_cast<WriterHistory*>(&history),
+                static_cast<WriterHistory*>(&history_),
                 static_cast<WriterListener*>(&writer_listener_));
 
     if(writer == nullptr)

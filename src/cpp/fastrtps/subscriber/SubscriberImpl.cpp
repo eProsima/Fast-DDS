@@ -47,8 +47,7 @@ SubscriberImpl::SubscriberImpl(
     , mp_type(ptype)
     , m_att(att)
 #pragma warning (disable : 4355 )
-    , m_history(m_att,
-                ptype,
+    , m_history(ptype,
                 m_att.qos,
                 ptype->m_typeSize  + 3/*Possible alignment*/,
                 att.topic.historyQos,

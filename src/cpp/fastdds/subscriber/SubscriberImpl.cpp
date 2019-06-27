@@ -166,17 +166,13 @@ DataReader* SubscriberImpl::create_datareader(
         ratt.disable_positive_acks = true;
     }
 
-    SubscriberHistory history(
-        att_, topic_data_type, reader_qos, topic_data_type->m_typeSize + 3 /*Possible alignment*/,
-        topic_att.historyQos, topic_att.resourceLimitsQos, att_.historyMemoryPolicy);
-
     DataReader* reader = new DataReader(
         this,
         topic_data_type,
         topic_att,
         ratt,
         reader_qos,
-        std::move(history),
+        att_.historyMemoryPolicy,
         listener);
 
     if(reader->reader_ == nullptr)
