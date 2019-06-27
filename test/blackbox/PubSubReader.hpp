@@ -160,7 +160,8 @@ private:
                 const eprosima::fastrtps::LivelinessChangedStatus& status) override
         {
             (void)sub;
-            (void)status;
+
+            reader_.set_liveliness_changed_status(status);
 
             if (status.alive_count_change == 1)
             {
@@ -378,6 +379,13 @@ public:
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
         liveliness_cv_.wait(lock, [&](){ return times_liveliness_recovered_ == 1; });
+    }
+
+    void wait_liveliness_lost()
+    {
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+
+        liveliness_cv_.wait(lock, [&]() { return times_liveliness_lost_ == 1; });
     }
 
 #if HAVE_SECURITY
@@ -742,6 +750,7 @@ public:
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
         times_liveliness_lost_++;
+        liveliness_cv_.notify_one();
     }
 
     void liveliness_recovered()
@@ -749,6 +758,13 @@ public:
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
         times_liveliness_recovered_++;
         liveliness_cv_.notify_one();
+    }
+
+    void set_liveliness_changed_status(const eprosima::fastrtps::LivelinessChangedStatus& status)
+    {
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+
+        liveliness_changed_status_ = status;
     }
 
     unsigned int times_liveliness_lost()
@@ -763,6 +779,13 @@ public:
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
         return times_liveliness_recovered_;
+    }
+
+    const eprosima::fastrtps::LivelinessChangedStatus& liveliness_changed_status()
+    {
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+
+        return liveliness_changed_status_;
     }
 
     bool is_matched() const
@@ -893,6 +916,8 @@ private:
     unsigned int times_liveliness_lost_;
     //! Number of times liveliness was recovered
     unsigned int times_liveliness_recovered_;
+    //! The liveliness changed status
+    eprosima::fastrtps::LivelinessChangedStatus liveliness_changed_status_;
 };
 
 #endif // _TEST_BLACKBOX_PUBSUBREADER_HPP_
