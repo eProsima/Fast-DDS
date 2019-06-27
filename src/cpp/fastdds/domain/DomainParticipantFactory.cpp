@@ -68,6 +68,7 @@ DomainParticipantFactory::~DomainParticipantFactory()
         {
             delete it.second;
         }
+        participants_.clear();
     }
 
     // Deletes DynamicTypes and TypeObject factories

@@ -321,11 +321,6 @@ private:
     bool exists_entity_id(
             const fastrtps::rtps::EntityId_t& entity_id) const;
 
-    bool delete_publisher_unprotected(
-            Publisher* publisher);
-
-    bool delete_subscriber_unprotected(
-            Subscriber* subscriber);
 };
 
 } /* namespace fastdds */
