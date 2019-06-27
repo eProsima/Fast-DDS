@@ -22,6 +22,8 @@
 
 using namespace eprosima::fastdds;
 
+PublisherQos eprosima::fastdds::PUBLISHER_QOS_DEFAULT;
+
 PublisherQos::PublisherQos()
 {
     this->m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;

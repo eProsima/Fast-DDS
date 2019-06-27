@@ -32,7 +32,7 @@ namespace fastdds {
  * Please consult each of them to check for implementation details and default values.
  * @ingroup FASTRTPS_ATTRIBUTES_MODULE
  */
-class  SubscriberQos{
+class SubscriberQos{
 public:
     RTPS_DllAPI SubscriberQos() {}
     RTPS_DllAPI virtual ~SubscriberQos() {}
@@ -131,6 +131,9 @@ public:
      */
     RTPS_DllAPI bool canQosBeUpdated(const SubscriberQos& qos) const;
 };
+
+extern SubscriberQos SUBSCRIBER_QOS_DEFAULT;
+
 
 } /* namespace fastdds */
 } /* namespace eprosima */

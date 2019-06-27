@@ -71,7 +71,7 @@ public:
     /**
      * Create a Publisher in this Participant.
      * @param qos QoS of the Publisher.
-     * @param att Attributes of the Publisher.
+     * @param att Attributes of the Publisher. TopicAttributes and WriterQos will be ignored using DDS interface.
      * @param listen Pointer to the listener.
      * @return Pointer to the created Publisher.
      */
@@ -86,7 +86,7 @@ public:
     /**
      * Create a Subscriber in this Participant.
      * @param qos QoS of the Subscriber.
-     * @param att Attributes of the Subscriber
+     * @param att Attributes of the Subscriber. TopicAttributes and ReaderQos will be ignored using DDS interface.
      * @param listen Pointer to the listener.
      * @return Pointer to the created Subscriber.
      */
