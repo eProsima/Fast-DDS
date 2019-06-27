@@ -204,22 +204,13 @@ DataWriter* PublisherImpl::create_datawriter(
         w_att.keep_duration = writer_qos.m_disablePositiveACKs.duration;
     }
 
-    PublisherHistory history(
-        att_, topic_data_type, topic_data_type->m_typeSize
-#if HAVE_SECURITY
-        // In future v2 changepool is in writer, and writer set this value to cachechagepool.
-        + 20 /*SecureDataHeader*/ + 4 + ((2* 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
-        + 16 + 4 /*SecureDataTag*/
-#endif
-        , topic_att.historyQos, topic_att.resourceLimitsQos, att_.historyMemoryPolicy);
-
     DataWriter* writer = new DataWriter(
         this,
         topic_data_type,
         topic_att,
         w_att,
         writer_qos,
-        std::move(history),
+        att_.historyMemoryPolicy,
         listener);
 
     if(writer->writer_ == nullptr)

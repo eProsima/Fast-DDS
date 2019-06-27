@@ -30,7 +30,6 @@
 namespace eprosima {
 namespace fastrtps {
 
-class PublisherAttributes;
 class TopicDataType;
 
 /**
@@ -41,6 +40,10 @@ class TopicDataType;
 class PublisherHistory : public rtps::WriterHistory
 {
     public:
+
+        PublisherHistory(PublisherHistory&&) = delete;
+        PublisherHistory& operator=(PublisherHistory&&) = delete;
+
         /**
          * Constructor of the PublisherHistory.
          * @param pimpl Pointer to the PublisherImpl.
@@ -65,14 +68,13 @@ class PublisherHistory : public rtps::WriterHistory
          * @param mempolicy Set wether the payloads ccan dynamically resized or not.
          */
         PublisherHistory(
-            PublisherAttributes& patt,
             TopicDataType* type,
             uint32_t payloadMax,
             const HistoryQosPolicy& history,
             const ResourceLimitsQosPolicy& resource,
             rtps::MemoryManagementPolicy_t mempolicy);
 
-        virtual ~PublisherHistory();
+        virtual ~PublisherHistory() override;
 
         /**
          * Add a change comming from the Publisher.
@@ -108,7 +110,7 @@ class PublisherHistory : public rtps::WriterHistory
          */
         bool remove_change_pub(rtps::CacheChange_t* change);
 
-        virtual bool remove_change_g(rtps::CacheChange_t* a_change);
+        virtual bool remove_change_g(rtps::CacheChange_t* a_change) override;
 
         /**
          * @brief Sets the next deadline for the given instance
@@ -142,8 +144,6 @@ private:
         HistoryQosPolicy m_historyQos;
         //!ResourceLimitsQosPolicy values.
         ResourceLimitsQosPolicy m_resourceLimitsQos;
-        //!Publisher Attributes
-        PublisherAttributes& pub_att_;
         //!Topic Data Type
         TopicDataType* type_;
 

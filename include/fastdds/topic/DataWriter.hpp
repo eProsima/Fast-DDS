@@ -71,7 +71,7 @@ class DataWriter
             const fastrtps::TopicAttributes& topic_att,
             const fastrtps::rtps::WriterAttributes& att,
             const fastrtps::WriterQos& qos,
-            fastrtps::PublisherHistory&& history,
+            const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
             DataWriterListener* listener = nullptr);
 
 public:

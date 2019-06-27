@@ -44,6 +44,8 @@ class History
 {
     protected:
         History(const HistoryAttributes&  att);
+        History(History&&) = delete;
+        History& operator=(History&&) = delete;
         virtual ~History();
     public:
         //!Attributes of the History
@@ -88,8 +90,8 @@ class History
          * Get the History size.
          * @return Size of the history.
          */
-        RTPS_DllAPI size_t getHistorySize() 
-        { 
+        RTPS_DllAPI size_t getHistorySize()
+        {
             std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
             return m_changes.size();
         }

@@ -36,7 +36,6 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 PublisherHistory::PublisherHistory(
-        PublisherAttributes& patt,
         TopicDataType* type,
         uint32_t payloadMaxSize,
         const HistoryQosPolicy& history,
@@ -55,7 +54,6 @@ PublisherHistory::PublisherHistory(
                             history.depth * resource.max_instances))
     , m_historyQos(history)
     , m_resourceLimitsQos(resource)
-    , pub_att_(patt)
     , type_(type)
 {
     // TODO Auto-generated constructor stub
@@ -87,7 +85,7 @@ bool PublisherHistory::add_pub_change(
 
         if(!ret)
         {
-            logWarning(RTPS_HISTORY,"Attempting to add Data to Full WriterCache: "<< pub_att_.getEntityID());
+            logWarning(RTPS_HISTORY,"Attempting to add Data to Full WriterCache: "<< type_->getName());
             return false;
         }
     }
@@ -143,7 +141,7 @@ bool PublisherHistory::add_pub_change(
                 vit->second.cache_changes.push_back(change);
                 if(this->add_change_(change, wparams, max_blocking_time))
                 {
-                    logInfo(RTPS_HISTORY, pub_att_.getEntityID() <<" Change "
+                    logInfo(RTPS_HISTORY, type_->getName() <<" Change "
                             << change->sequenceNumber << " added with key: "<<change->instanceHandle
                             << " and "<<change->serializedPayload.length<< " bytes");
                     returnedValue =  true;
