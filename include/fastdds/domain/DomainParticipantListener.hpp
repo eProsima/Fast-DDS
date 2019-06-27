@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file ParticipantListener.hpp
+ * @file DomainParticipantListener.hpp
  *
  */
 
@@ -27,19 +27,19 @@
 namespace eprosima {
 namespace fastdds {
 
-class Participant;
+class DomainParticipant;
 
 /**
- * Class ParticipantListener, overrides behaviour towards certain events.
+ * Class DomainParticipantListener, overrides behaviour towards certain events.
  * @ingroup FASTRTPS_MODULE
  */
-class ParticipantListener
+class DomainParticipantListener
 {
     public:
 
-        ParticipantListener() {}
+        DomainParticipantListener() {}
 
-        virtual ~ParticipantListener() {}
+        virtual ~DomainParticipantListener() {}
 
         /*!
          * This method is called when a new Participant is discovered, or a previously discovered participant changes
@@ -48,7 +48,7 @@ class ParticipantListener
          * @param info Remote participant information. User can take ownership of the object.
          */
         virtual void onParticipantDiscovery(
-                Participant* participant,
+                DomainParticipant* participant,
                 fastrtps::rtps::ParticipantDiscoveryInfo&& info)
         {
             (void)participant, (void)info;
@@ -56,7 +56,7 @@ class ParticipantListener
 
 #if HAVE_SECURITY
         virtual void onParticipantAuthentication(
-                Participant* participant,
+                DomainParticipant* participant,
                 fastrtps::rtps::ParticipantAuthenticationInfo&& info)
         {
             (void)participant, (void)info;
@@ -70,7 +70,7 @@ class ParticipantListener
          * @param info Remote subscriber information. User can take ownership of the object.
          */
         virtual void onSubscriberDiscovery(
-                Participant* participant,
+                DomainParticipant* participant,
                 fastrtps::rtps::ReaderDiscoveryInfo&& info)
         {
             (void)participant, (void)info;
@@ -83,11 +83,13 @@ class ParticipantListener
          * @param info Remote publisher information. User can take ownership of the object.
          */
         virtual void onPublisherDiscovery(
-                Participant* participant,
+                DomainParticipant* participant,
                 fastrtps::rtps::WriterDiscoveryInfo&& info)
         {
             (void)participant, (void)info;
         }
+
+        // TODO: Methods in DomainParticipantListener (p.33 - DDS)
 };
 
 } // namespace fastdds

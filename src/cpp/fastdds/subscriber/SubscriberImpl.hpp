@@ -45,8 +45,8 @@ class ReaderQos;
 namespace fastdds {
 
 class SubscriberListener;
-class Participant;
-class ParticipantImpl;
+class DomainParticipant;
+class DomainParticipantImpl;
 class Subscriber;
 
 /**
@@ -54,14 +54,14 @@ class Subscriber;
  *  @ingroup FASTRTPS_MODULE
  */
 class SubscriberImpl {
-    friend class ParticipantImpl;
+    friend class DomainParticipantImpl;
 
     /**
      * Create a subscriber, assigning its pointer to the associated writer.
      * Don't use directly, create Subscriber using create_subscriber from Participant.
      */
     SubscriberImpl(
-        ParticipantImpl* p,
+        DomainParticipantImpl* p,
         const SubscriberQos& qos,
         const fastrtps::SubscriberAttributes& attr,
         SubscriberListener* listen = nullptr);
@@ -135,7 +135,7 @@ public:
         return att_;
     }
 
-    const Participant* get_participant() const;
+    const DomainParticipant* get_participant() const;
 
     const fastrtps::rtps::RTPSParticipant* rtps_participant() const
     {
@@ -157,7 +157,7 @@ public:
 private:
 
     //!Participant
-    ParticipantImpl* participant_;
+    DomainParticipantImpl* participant_;
 
     SubscriberQos qos_;
 

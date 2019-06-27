@@ -96,9 +96,9 @@ set(${PROJECT_NAME}_source_files
     fastdds/subscriber/SubscriberImpl.cpp
     fastdds/subscriber/qos/SubscriberQos.cpp
     fastdds/subscriber/Subscriber.cpp
-    #fastdds/domain/Domain.cpp
-    fastdds/domain/ParticipantImpl.cpp
-    fastdds/domain/Participant.cpp
+    fastdds/domain/DomainParticipantFactory.cpp
+    fastdds/domain/DomainParticipantImpl.cpp
+    fastdds/domain/DomainParticipant.cpp
     fastrtps/transport/ChannelResource.cpp
     fastrtps/transport/UDPChannelResource.cpp
     fastrtps/transport/TCPChannelResource.cpp

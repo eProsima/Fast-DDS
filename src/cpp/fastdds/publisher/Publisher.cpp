@@ -18,7 +18,7 @@
  */
 
 #include <fastdds/publisher/Publisher.hpp>
-#include <fastdds/domain/Participant.hpp>
+#include <fastdds/domain/DomainParticipant.hpp>
 #include "PublisherImpl.hpp"
 
 #include <fastrtps/log/Log.h>
@@ -110,7 +110,7 @@ bool Publisher::wait_for_acknowledments(
     return impl_->wait_for_acknowledments(max_wait);
 }
 
-const Participant* Publisher::get_participant() const
+const DomainParticipant* Publisher::get_participant() const
 {
     return impl_->get_participant();
 }
