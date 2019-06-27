@@ -23,6 +23,7 @@
 namespace eprosima {
 namespace fastdds {
 
+SubscriberQos SUBSCRIBER_QOS_DEFAULT;
 
 void SubscriberQos::setQos(const SubscriberQos& qos, bool first_time)
 {

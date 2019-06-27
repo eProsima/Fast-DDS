@@ -42,7 +42,7 @@ PublisherImpl::PublisherImpl(
         const fastrtps::PublisherAttributes& att,
         PublisherListener* listen)
     : participant_(p)
-    , qos_(qos)
+    , qos_(&qos == &PUBLISHER_QOS_DEFAULT ? participant_->get_default_publisher_qos() : qos)
     , att_(att)
     , listener_(listen)
     , publisher_listener_(this)
@@ -295,7 +295,12 @@ bool PublisherImpl::end_coherent_changes()
 bool PublisherImpl::set_default_datawriter_qos(
         const fastrtps::WriterQos& qos)
 {
-    if (default_datawriter_qos_.canQosBeUpdated(qos) && qos.checkQos())
+    if (&qos == &DATAWRITER_QOS_DEFAULT)
+    {
+        fastrtps::WriterQos def_qos;
+        default_datawriter_qos_.setQos(def_qos, true);
+    }
+    else if (default_datawriter_qos_.canQosBeUpdated(qos) && qos.checkQos())
     {
         default_datawriter_qos_.setQos(qos, false);
         return true;

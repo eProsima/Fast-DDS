@@ -51,9 +51,10 @@ bool HelloWorldSubscriber::init()
     mp_participant->register_type(&m_type);
 
     //CREATE THE SUBSCRIBER
-    SubscriberQos qos;
+    //SubscriberQos qos;
     SubscriberAttributes att;
-    mp_subscriber = mp_participant->create_subscriber(qos, att, nullptr);
+    //mp_subscriber = mp_participant->create_subscriber(qos, att, nullptr);
+    mp_subscriber = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, att, nullptr);
 
     if(mp_subscriber == nullptr)
         return false;

@@ -52,7 +52,7 @@ DataReader::DataReader(
     , type_(ptype)
     , topic_att_(topic_att)
     , att_(att)
-    , qos_(qos)
+    , qos_(&qos == &DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
 #pragma warning (disable : 4355 )
     //, history_(std::move(history))
     , history_(type_,
@@ -64,16 +64,16 @@ DataReader::DataReader(
     , listener_(listener)
     , reader_listener_(this)
     , deadline_timer_(std::bind(&DataReader::deadline_missed, this),
-                      qos.m_deadline.period.to_ns() * 1e-6,
+                      qos_.m_deadline.period.to_ns() * 1e-6,
                       subscriber_->get_participant()->get_resource_event().getIOService(),
                       subscriber_->get_participant()->get_resource_event().getThread())
-    , deadline_duration_us_(qos.m_deadline.period.to_ns() * 1e-3)
+    , deadline_duration_us_(qos_.m_deadline.period.to_ns() * 1e-3)
     , deadline_missed_status_()
     , lifespan_timer_(std::bind(&DataReader::lifespan_expired, this),
-                      qos.m_lifespan.duration.to_ns() * 1e-6,
+                      qos_.m_lifespan.duration.to_ns() * 1e-6,
                       subscriber_->get_participant()->get_resource_event().getIOService(),
                       subscriber_->get_participant()->get_resource_event().getThread())
-    , lifespan_duration_us_(qos.m_lifespan.duration.to_ns() * 1e-3)
+    , lifespan_duration_us_(qos_.m_lifespan.duration.to_ns() * 1e-3)
 {
     RTPSReader* reader = RTPSDomain::createRTPSReader(
         subscriber_->rtps_participant(),
