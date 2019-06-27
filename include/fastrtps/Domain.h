@@ -23,6 +23,14 @@
 #include "attributes/ParticipantAttributes.h"
 #include <mutex>
 
+#if defined(__GNUC__) || defined(__clang__)
+#define DEPRECATED __attribute__ ((deprecated))
+#elif defined(_MSC_VER)
+#define DEPRECATED __declspec(deprecated)
+#else
+#define DEPRECATED /** --Deprecated-- */
+#endif
+
 namespace eprosima{
 namespace fastrtps{
 
@@ -55,7 +63,7 @@ class Domain
          * @param listen ParticipantListener Pointer.
          * @return Participant pointer. (nullptr if not created.)
          */
-        RTPS_DllAPI static Participant* createParticipant(
+        RTPS_DllAPI DEPRECATED static Participant* createParticipant(
                 const std::string& participant_profile,
                 ParticipantListener* listen = nullptr);
 
@@ -65,7 +73,7 @@ class Domain
          * @param listen ParticipantListener Pointer.
          * @return Participant pointer. (nullptr if not created.)
          */
-        RTPS_DllAPI static Participant* createParticipant(
+        RTPS_DllAPI DEPRECATED static Participant* createParticipant(
                 const ParticipantAttributes& att,
                 ParticipantListener* listen = nullptr);
 
