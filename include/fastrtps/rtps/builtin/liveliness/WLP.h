@@ -127,6 +127,12 @@ public:
             Duration_t lease_duration);
 
     /**
+     * @brief A method to assert liveliness of MANUAL_BY_PARTICIPANT writers
+     * @return True if there were any MANUAL_BY_PARTICIPANT writers
+     */
+    bool assert_liveliness_manual_by_participant();
+
+    /**
      * Get the builtin protocols
      * @return Builtin protocols
      */
