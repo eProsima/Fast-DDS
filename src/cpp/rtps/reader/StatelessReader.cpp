@@ -106,8 +106,6 @@ bool StatelessReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
         if((*it).guid == wdata.guid)
         {
             logInfo(RTPS_READER,"Writer " <<wdata.guid<< " removed from "<<m_guid.entityId);
-            m_matched_writers.erase(it);
-            remove_persistence_guid(wdata);
 
             if (liveliness_lease_duration_ < c_TimeInfinite)
             {
@@ -125,6 +123,9 @@ bool StatelessReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
                              "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
                 }
             }
+
+            m_matched_writers.erase(it);
+            remove_persistence_guid(wdata);
 
             return true;
         }

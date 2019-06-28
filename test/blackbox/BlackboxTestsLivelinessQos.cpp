@@ -1392,3 +1392,163 @@ TEST(LivelinessQos, UnmatchedWriter)
     std::this_thread::sleep_for(std::chrono::milliseconds(announcement_period_ms * 2));
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 1u);
 }
+
+//! Tests liveliness structs when a writer changes from being alive to losing liveliness
+//! Writer is reliable, and MANUAL_BY_TOPIC
+//! Reader is reliable, and MANUAL_BY_TOPIC
+TEST(LivelinessQos, LivelinessChangedStatus_Alive_NotAlive)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Liveliness lease duration and announcement period, in seconds
+    Duration_t liveliness_s(100 * 1e-3);
+    Duration_t announcement_period(100 * 1e-3 * 0.5);
+
+    reader.reliability(RELIABLE_RELIABILITY_QOS)
+        .liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS)
+        .liveliness_lease_duration(liveliness_s)
+        .init();
+    writer.reliability(RELIABLE_RELIABILITY_QOS)
+        .liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS)
+        .liveliness_announcement_period(announcement_period)
+        .liveliness_lease_duration(liveliness_s)
+        .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    LivelinessChangedStatus status = reader.liveliness_changed_status();
+    EXPECT_EQ(status.alive_count, 0);
+    EXPECT_EQ(status.alive_count_change, 0);
+    EXPECT_EQ(status.not_alive_count, 0);
+    EXPECT_EQ(status.not_alive_count_change, 0);
+
+    // Assert liveliness
+    writer.assert_liveliness();
+    reader.wait_liveliness_recovered();
+
+    status = reader.liveliness_changed_status();
+    EXPECT_EQ(status.alive_count, 1);
+    EXPECT_EQ(status.alive_count_change, 1);
+    EXPECT_EQ(status.not_alive_count, 0);
+    EXPECT_EQ(status.not_alive_count_change, 0);
+
+    // Wait until liveliness is lost
+    reader.wait_liveliness_lost();
+
+    status = reader.liveliness_changed_status();
+    EXPECT_EQ(status.alive_count, 0);
+    EXPECT_EQ(status.alive_count_change, -1);
+    EXPECT_EQ(status.not_alive_count, 1);
+    EXPECT_EQ(status.not_alive_count_change, 1);
+}
+
+//! Tests liveliness structs when an alive writer is unmatched
+//! Writer is reliable, and MANUAL_BY_TOPIC
+//! Reader is reliable, and MANUAL_BY_TOPIC
+TEST(LivelinessQos, LivelinessChangedStatus_Alive_Unmatched)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Liveliness lease duration and announcement period, in seconds
+    Duration_t liveliness_s(100 * 1e-3);
+    Duration_t announcement_period(100 * 1e-3 * 0.5);
+
+    reader.reliability(RELIABLE_RELIABILITY_QOS)
+        .liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS)
+        .liveliness_lease_duration(liveliness_s)
+        .deadline_period(0.15)
+        .init();
+    writer.reliability(RELIABLE_RELIABILITY_QOS)
+        .liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS)
+        .liveliness_announcement_period(announcement_period)
+        .liveliness_lease_duration(liveliness_s)
+        .deadline_period(0.15)
+        .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Assert liveliness
+    writer.assert_liveliness();
+    reader.wait_liveliness_recovered();
+
+    LivelinessChangedStatus status = reader.liveliness_changed_status();
+    EXPECT_EQ(status.alive_count, 1);
+    EXPECT_EQ(status.alive_count_change, 1);
+    EXPECT_EQ(status.not_alive_count, 0);
+    EXPECT_EQ(status.not_alive_count_change, 0);
+
+    // Now unmatch by changing the deadline period of the reader
+    reader.update_deadline_period(0.10);
+
+    status = reader.liveliness_changed_status();
+    EXPECT_EQ(status.alive_count, 0);
+    EXPECT_EQ(status.alive_count_change, -1);
+    EXPECT_EQ(status.not_alive_count, 0);
+    EXPECT_EQ(status.not_alive_count_change, 0);
+}
+
+//! Tests liveliness structs when a not alive writer is unmatched
+//! Writer is reliable, and MANUAL_BY_TOPIC
+//! Reader is reliable, and MANUAL_BY_TOPIC
+TEST(LivelinessQos, LivelinessChangedStatus_NotAlive_Unmatched)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Liveliness lease duration and announcement period, in seconds
+    Duration_t liveliness_s(100 * 1e-3);
+    Duration_t announcement_period(100 * 1e-3 * 0.5);
+
+    reader.reliability(RELIABLE_RELIABILITY_QOS)
+        .liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS)
+        .liveliness_lease_duration(liveliness_s)
+        .deadline_period(0.15)
+        .init();
+    writer.reliability(RELIABLE_RELIABILITY_QOS)
+        .liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS)
+        .liveliness_announcement_period(announcement_period)
+        .liveliness_lease_duration(liveliness_s)
+        .deadline_period(0.15)
+        .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Assert liveliness
+    writer.assert_liveliness();
+    reader.wait_liveliness_recovered();
+
+    LivelinessChangedStatus status = reader.liveliness_changed_status();
+    EXPECT_EQ(status.alive_count, 1);
+    EXPECT_EQ(status.alive_count_change, 1);
+    EXPECT_EQ(status.not_alive_count, 0);
+    EXPECT_EQ(status.not_alive_count_change, 0);
+
+    // Wait for liveliness lost
+    reader.wait_liveliness_lost();
+
+    // Now unmatch by changing the deadline period of the reader
+    reader.update_deadline_period(0.10);
+
+    status = reader.liveliness_changed_status();
+    EXPECT_EQ(status.alive_count, 0);
+    EXPECT_EQ(status.alive_count_change, 0);
+    EXPECT_EQ(status.not_alive_count, 0);
+    EXPECT_EQ(status.not_alive_count_change, -1);
+}

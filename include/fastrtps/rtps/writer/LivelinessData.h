@@ -33,6 +33,16 @@ namespace rtps {
  */
 struct LivelinessData
 {
+    enum WriterStatus
+    {
+        //! Writer is matched but liveliness has not been asserted yet
+        NOT_ASSERTED = 0,
+        //! Writer is alive
+        ALIVE = 1,
+        //! Writer is not alive
+        NOT_ALIVE = 2
+    };
+
     /**
      * @brief Constructor
      * @param guid_in GUID of the writer
@@ -46,12 +56,14 @@ struct LivelinessData
         : guid(guid_in)
         , kind(kind_in)
         , lease_duration(lease_duration_in)
+        , status(WriterStatus::NOT_ASSERTED)
     {}
 
     LivelinessData()
         : guid()
         , kind(AUTOMATIC_LIVELINESS_QOS)
         , lease_duration(c_TimeInfinite)
+        , status(WriterStatus::NOT_ASSERTED)
     {}
 
     ~LivelinessData()
@@ -91,8 +103,8 @@ struct LivelinessData
     //! The number of times the writer is being counted
     unsigned int count = 1;
 
-    //! True if the writer is alive, false otherwise
-    bool alive = false;
+    //! The writer status
+    WriterStatus status;
 
     //! The time when the writer will lose liveliness
     std::chrono::steady_clock::time_point time;

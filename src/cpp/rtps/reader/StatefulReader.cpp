@@ -128,6 +128,22 @@ bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
     {
         if((*it)->m_att.guid == wdata.guid)
         {
+            if (liveliness_lease_duration_ < c_TimeInfinite)
+            {
+                auto wlp = this->mp_RTPSParticipant->wlp();
+                if ( wlp != nullptr)
+                {
+                    wlp->sub_liveliness_manager_->remove_writer(
+                                wdata.guid,
+                                liveliness_kind_,
+                                liveliness_lease_duration_);
+                }
+                else
+                {
+                    logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
+                }
+            }
+
             logInfo(RTPS_READER,"Writer Proxy removed: " <<(*it)->m_att.guid);
             wproxy = *it;
             matched_writers.erase(it);
@@ -137,22 +153,6 @@ bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
     }
 
     lock.unlock();
-
-    if (liveliness_lease_duration_ < c_TimeInfinite)
-    {
-        auto wlp = this->mp_RTPSParticipant->wlp();
-        if ( wlp != nullptr)
-        {
-            wlp->sub_liveliness_manager_->remove_writer(
-                        wdata.guid,
-                        liveliness_kind_,
-                        liveliness_lease_duration_);
-        }
-        else
-        {
-            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
-        }
-    }
 
     if(wproxy != nullptr)
     {
