@@ -95,6 +95,11 @@ class RTPS_DllAPI Participant
                 const rtps::GUID_t& readerGuid,
                 rtps::ReaderProxyData& returnedInfo);
 
+        /**
+         * @brief Asserts liveliness of manual by participant publishers
+         */
+        void assert_liveliness();
+
     private:
         Participant();
 

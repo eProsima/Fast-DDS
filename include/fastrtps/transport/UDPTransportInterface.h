@@ -65,21 +65,6 @@ public:
            const Locator_t&) override;
 
    /**
-   * Blocking Receive from the specified channel.
-   * @param p_channel_resource Pointer to the channer resource that stores the socket.
-   * @param receive_buffer vector with enough capacity (not size) to accomodate a full receive buffer. That
-   * capacity must not be less than the receive_buffer_size supplied to this class during construction.
-   * @param receive_buffer_capacity Maximum size of the receive_buffer.
-   * @param[out] receive_buffer_size Size of the received buffer.
-   * @param[out] remote_locator Locator describing the remote restination we received a packet from.
-   */
-   bool Receive(UDPChannelResource* p_channel_resource, octet* receive_buffer,
-       uint32_t receive_buffer_capacity, uint32_t& receive_buffer_size, Locator_t& remote_locator);
-
-   //! Release the listening socket for the specified port.
-   bool ReleaseInputChannel(const Locator_t& locator, const asio::ip::address& interface_address);
-
-   /**
    * Converts a given remote locator (that is, a locator referring to a remote
    * destination) to the main local locator whose channel can write to that
    * destination. In this case it will return a 0.0.0.0 address on that port.
@@ -116,6 +101,8 @@ public:
     virtual bool fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const override;
 
 protected:
+
+    friend class UDPChannelResource;
 
     // For UDPv6, the notion of channel corresponds to a port + direction tuple.
     asio::io_service io_service_;
@@ -161,14 +148,6 @@ protected:
         bool is_multicast, uint32_t maxMsgSize, TransportReceiverInterface* receiver);
     virtual eProsimaUDPSocket OpenAndBindInputSocket(const std::string& sIp, uint16_t port, bool is_multicast) = 0;
     eProsimaUDPSocket OpenAndBindUnicastOutputSocket(const asio::ip::udp::endpoint& endpoint, uint16_t& port);
-
-    /**
-     * Function to be called from a new thread, which takes cares of performing a blocking receive
-     * operation on the ReceiveResource
-     * @param p_channel_resource - Associated ChannelResource
-     * @param input_locator - Locator that triggered the creation of the resource
-    */
-    void perform_listen_operation(UDPChannelResource* p_channel_resource, Locator_t input_locator);
 
     virtual void set_receive_buffer_size(uint32_t size) = 0;
     virtual void set_send_buffer_size(uint32_t size) = 0;

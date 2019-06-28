@@ -25,6 +25,7 @@
 #include "../Endpoint.h"
 #include "../attributes/ReaderAttributes.h"
 #include "../common/SequenceNumber.h"
+#include "../../qos/LivelinessChangedStatus.h"
 
 #include <map>
 
@@ -33,12 +34,14 @@ namespace fastrtps {
 namespace rtps {
 
 // Forward declarations
-class ReaderListener;
+class FragmentedChangePitStop;
+class LivelinessManager;
 class ReaderHistory;
-struct CacheChange_t;
+class ReaderListener;
 class WriterProxy;
 struct SequenceNumber_t;
 class FragmentedChangePitStop;
+struct CacheChange_t;
 
 /**
  * Class RTPSReader, manages the reception of data from its matched writers.
@@ -50,6 +53,7 @@ class RTPSReader : public Endpoint
     friend class RTPSParticipantImpl;
     friend class MessageReceiver;
     friend class EDP;
+    friend class WLP;
 
 protected:
 
@@ -225,6 +229,9 @@ public:
     */
     virtual bool isInCleanState() = 0;
 
+    //! The liveliness changed status struct as defined in the DDS
+    LivelinessChangedStatus liveliness_changed_status_;
+
 protected:
 
     void setTrustedWriter(EntityId_t writer)
@@ -294,6 +301,13 @@ protected:
 
     //TODO Select one
     FragmentedChangePitStop* fragmentedChangePitStop_;
+
+protected:
+
+    //! The liveliness kind of this reader
+    LivelinessQosPolicyKind liveliness_kind_;
+    //! The liveliness lease duration of this reader
+    Duration_t liveliness_lease_duration_;
 
 private:
 

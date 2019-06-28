@@ -20,6 +20,7 @@ add_definitions(
 add_subdirectory(rtps/common)
 add_subdirectory(rtps/reader)
 add_subdirectory(rtps/writer)
+add_subdirectory(rtps/history)
 add_subdirectory(rtps/resources/timedevent)
 add_subdirectory(rtps/network)
 add_subdirectory(rtps/flowcontrol)

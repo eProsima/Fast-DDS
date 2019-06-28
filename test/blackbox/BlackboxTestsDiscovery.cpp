@@ -14,6 +14,7 @@
 
 #include "BlackboxTests.hpp"
 
+#include "PubSubWriterReader.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
@@ -22,7 +23,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-BLACKBOXTEST(BlackBox, ParticipantRemoval)
+TEST(BlackBox, ParticipantRemoval)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -53,7 +54,7 @@ BLACKBOXTEST(BlackBox, ParticipantRemoval)
     reader.wait_participant_undiscovery();
 }
 
-BLACKBOXTEST(BlackBox, StaticDiscovery)
+TEST(BlackBox, StaticDiscovery)
 {
     //Log::SetVerbosity(Log::Info);
     char* value = nullptr;
@@ -163,7 +164,7 @@ BLACKBOXTEST(BlackBox, StaticDiscovery)
     reader.block_for_all();
 }
 
-BLACKBOXTEST(BlackBox, EDPSlaveReaderAttachment)
+TEST(BlackBox, EDPSlaveReaderAttachment)
 {
     PubSubWriter<HelloWorldType> checker(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldType>* reader = new PubSubReader<HelloWorldType>(TEST_TOPIC_NAME);
@@ -196,7 +197,7 @@ BLACKBOXTEST(BlackBox, EDPSlaveReaderAttachment)
 }
 
 // Used to detect Github issue #155
-BLACKBOXTEST(BlackBox, EndpointRediscovery)
+TEST(BlackBox, EndpointRediscovery)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -235,7 +236,7 @@ BLACKBOXTEST(BlackBox, EndpointRediscovery)
 }
 
 // Used to detect Github issue #457
-BLACKBOXTEST(BlackBox, EndpointRediscovery_2)
+TEST(BlackBox, EndpointRediscovery_2)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -267,7 +268,7 @@ BLACKBOXTEST(BlackBox, EndpointRediscovery_2)
 }
 
 // Regression test of Refs #2535, github micro-RTPS #1
-BLACKBOXTEST(BlackBox, PubXmlLoadedPartition)
+TEST(BlackBox, PubXmlLoadedPartition)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -301,7 +302,7 @@ BLACKBOXTEST(BlackBox, PubXmlLoadedPartition)
 }
 
 // Used to detect Github issue #154
-BLACKBOXTEST(BlackBox, LocalInitialPeers)
+TEST(BlackBox, LocalInitialPeers)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -351,7 +352,7 @@ BLACKBOXTEST(BlackBox, LocalInitialPeers)
 }
 
 // Test created to check bug #2010 (Github #90)
-BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldPartitions)
+TEST(BlackBox, PubSubAsReliableHelloworldPartitions)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -405,7 +406,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldPartitions)
     reader.block_for_all();
 }
 
-BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
+TEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -449,7 +450,7 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldParticipantDiscovery)
     reader.wait_discovery_result();
 }
 
-BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldUserData)
+TEST(BlackBox, PubSubAsReliableHelloworldUserData)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -480,4 +481,121 @@ BLACKBOXTEST(BlackBox, PubSubAsReliableHelloworldUserData)
     writer.wait_discovery();
 
     reader.wait_discovery_result();
+}
+
+//! Tests discovery of 20 participants, having one publisher and one subscriber each
+TEST(Discovery, TwentyParticipants)
+{
+    // Number of participants
+    constexpr size_t n_participants = 20;
+    // Wait time for discovery
+    constexpr unsigned int wait_ms = 20;
+
+    std::vector<std::shared_ptr<PubSubWriterReader<HelloWorldType>>> pubsub;
+    pubsub.reserve(n_participants);
+
+    for (unsigned int i=0; i<n_participants; i++)
+    {
+        pubsub.emplace_back(std::make_shared<PubSubWriterReader<HelloWorldType>>(TEST_TOPIC_NAME));
+    }
+
+    // Initialization of all the participants
+    for (auto& ps : pubsub)
+    {
+        ps->init();
+        ASSERT_EQ(ps->isInitialized(), true);
+    }
+
+    bool all_discovered = false;
+    while (!all_discovered)
+    {
+        all_discovered = true;
+
+        for (auto& ps : pubsub)
+        {
+            if ((ps->get_num_discovered_participants() < n_participants - 1) ||
+                (ps->get_num_discovered_publishers() < n_participants) ||
+                (ps->get_num_discovered_subscribers() < n_participants) ||
+                (ps->get_publication_matched() < n_participants) ||
+                (ps->get_subscription_matched() < n_participants))
+            {
+                all_discovered = false;
+                break;
+            }
+        }
+
+        if (!all_discovered)
+        {
+            // Give some time so that participants can discover each other
+            std::this_thread::sleep_for(std::chrono::milliseconds(wait_ms));
+        }
+    }
+
+    // Test will fail by timeout if a discovery error happens
+    std::cout << "All discovered. Closing participants..." << std::endl;
+    for (auto& ps : pubsub)
+    {
+        ps->destroy();
+    }
+}
+
+//! Regression for ROS2 #280 and #281
+TEST(Discovery, TwentyParticipantsSeveralEndpoints)
+{
+    // Number of participants
+    constexpr size_t n_participants = 20;
+    // Number of endpoints
+    constexpr size_t n_topics = 10;
+    // Total number of discovered endpoints
+    constexpr size_t n_total_endpoints = n_participants * n_topics;
+    // Wait time for discovery
+    constexpr unsigned int wait_ms = 20;
+
+    std::vector<std::shared_ptr<PubSubWriterReader<HelloWorldType>>> pubsub;
+    pubsub.reserve(n_participants);
+
+    for (unsigned int i = 0; i < n_participants; i++)
+    {
+        pubsub.emplace_back(std::make_shared<PubSubWriterReader<HelloWorldType>>(TEST_TOPIC_NAME));
+    }
+
+    // Initialization of all the participants
+    for (auto& ps : pubsub)
+    {
+        ps->init();
+        ASSERT_EQ(ps->isInitialized(), true);
+        ASSERT_TRUE(ps->create_additional_topics(n_topics - 1));
+    }
+
+    bool all_discovered = false;
+    while (!all_discovered)
+    {
+        all_discovered = true;
+
+        for (auto& ps : pubsub)
+        {
+            if ((ps->get_num_discovered_participants() < n_participants - 1) ||
+                (ps->get_num_discovered_publishers() < n_total_endpoints) ||
+                (ps->get_num_discovered_subscribers() < n_total_endpoints) ||
+                (ps->get_publication_matched() < n_total_endpoints) ||
+                (ps->get_subscription_matched() < n_total_endpoints))
+            {
+                all_discovered = false;
+                break;
+            }
+        }
+
+        if (!all_discovered)
+        {
+            // Give some time so that participants can discover each other
+            std::this_thread::sleep_for(std::chrono::milliseconds(wait_ms));
+        }
+    }
+
+    // Test will fail by timeout if a discovery error happens
+    std::cout << "All discovered. Closing participants..." << std::endl;
+    for (auto& ps : pubsub)
+    {
+        ps->destroy();
+    }
 }

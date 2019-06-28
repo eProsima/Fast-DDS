@@ -22,6 +22,8 @@
 
 #include "../common/MatchingInfo.h"
 
+#include <fastrtps/qos/LivelinessLostStatus.h>
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -35,37 +37,50 @@ struct CacheChange_t;
 */
 class RTPS_DllAPI WriterListener
 {
-    public:
-        WriterListener() = default;
+public:
+    WriterListener() = default;
 
-        virtual ~WriterListener() = default;
+    virtual ~WriterListener() = default;
 
-        /**
-         * This method is called when a new Reader is matched with this Writer by hte builtin protocols
-         * @param writer Pointer to the RTPSWriter.
-         * @param info Matching Information.
-         */
-        virtual void onWriterMatched(
-                RTPSWriter* writer,
-                MatchingInfo& info)
-        {
-            (void)writer;
-            (void)info;
-        }
+    /**
+     * This method is called when a new Reader is matched with this Writer by the builtin protocols
+     * @param writer Pointer to the RTPSWriter.
+     * @param info Matching Information.
+     */
+    virtual void onWriterMatched(
+            RTPSWriter* writer,
+            MatchingInfo& info)
+    {
+        (void)writer;
+        (void)info;
+    }
 
-        /**
-         * This method is called when all the readers matched with this Writer acknowledge that a cache 
-         * change has been received.
-         * @param writer Pointer to the RTPSWriter.
-         * @param change Pointer to the affected CacheChange_t.
-         */
-        virtual void onWriterChangeReceivedByAll(
-                RTPSWriter* writer, 
-                CacheChange_t* change)
-        {
-            (void)writer;
-            (void)change;
-        }
+    /**
+     * This method is called when all the readers matched with this Writer acknowledge that a cache
+     * change has been received.
+     * @param writer Pointer to the RTPSWriter.
+     * @param change Pointer to the affected CacheChange_t.
+     */
+    virtual void onWriterChangeReceivedByAll(
+            RTPSWriter* writer,
+            CacheChange_t* change)
+    {
+        (void)writer;
+        (void)change;
+    }
+
+    /**
+     * @brief Method called when the livelivess of a writer is lost
+     * @param writer The writer
+     * @param status The liveliness lost status
+     */
+    virtual void on_liveliness_lost(
+            RTPSWriter* writer,
+            const LivelinessLostStatus& status)
+    {
+        (void)writer;
+        (void)status;
+    }
 };
 
 } /* namespace rtps */

@@ -22,6 +22,7 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/utils/eClock.h>
 
 using namespace std;
 using namespace asio;
@@ -83,30 +84,12 @@ bool UDPTransportInterface::CloseInputChannel(const Locator_t& locator)
 
     }
 
-    std::map<UDPChannelResource*, asio::ip::address> addresses;
-    // It may sound redundant, but we must mark all the related channel to be killed first.
-    // Mostly in Windows, but in Linux can happen too, if we access to the endpoint
-    // of an already closed socket we get an exception. So we store the interface address to
-    // be used in the ReleaseInputChannel call later.
-    for (UDPChannelResource* channel_resource : channel_resources)
-    {
-        if (channel_resource->alive())
-        {
-            addresses[channel_resource] = channel_resource->socket()->local_endpoint().address();
-        }
-        else
-        {
-            addresses[channel_resource] = asio::ip::address();
-        }
-        channel_resource->disable();
-    }
-
-    // Then we release the channels
+    // We now disable and release the channels
     for (UDPChannelResource* channel : channel_resources)
     {
-        ReleaseInputChannel(locator, addresses[channel]);
-        channel->socket()->cancel();
-        channel->socket()->close();
+        channel->disable();
+        channel->release();
+        channel->clear();
         delete channel;
     }
 
@@ -136,7 +119,7 @@ bool UDPTransportInterface::init()
         {
             socket_base::send_buffer_size option;
             socket.get_option(option);
-            set_send_buffer_size(option.value());
+            set_send_buffer_size(static_cast<uint32_t>(option.value()));
 
             if (configuration()->sendBufferSize < s_minimumSocketBuffer)
             {
@@ -149,7 +132,7 @@ bool UDPTransportInterface::init()
         {
             socket_base::receive_buffer_size option;
             socket.get_option(option);
-            set_receive_buffer_size(option.value());
+            set_receive_buffer_size(static_cast<uint32_t>(option.value()));
 
             if (configuration()->receiveBufferSize < s_minimumSocketBuffer)
             {
@@ -221,15 +204,17 @@ bool UDPTransportInterface::OpenAndBindInputSockets(const Locator_t& locator, Tr
     return true;
 }
 
-UDPChannelResource* UDPTransportInterface::CreateInputChannelResource(const std::string& sInterface, const Locator_t& locator,
-    bool is_multicast, uint32_t maxMsgSize, TransportReceiverInterface* receiver)
+UDPChannelResource* UDPTransportInterface::CreateInputChannelResource(
+        const std::string& sInterface,
+        const Locator_t& locator,
+        bool is_multicast,
+        uint32_t maxMsgSize,
+        TransportReceiverInterface* receiver)
 {
-    eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(sInterface, IPLocator::getPhysicalPort(locator), is_multicast);
-    UDPChannelResource* p_channel_resource = new UDPChannelResource(unicastSocket, maxMsgSize);
-    p_channel_resource->message_receiver(receiver);
-    p_channel_resource->interface(sInterface);
-    p_channel_resource->thread(std::thread(&UDPTransportInterface::perform_listen_operation, this,
-        p_channel_resource, locator));
+    eProsimaUDPSocket unicastSocket = OpenAndBindInputSocket(sInterface,
+                                                             IPLocator::getPhysicalPort(locator), is_multicast);
+    UDPChannelResource* p_channel_resource = new UDPChannelResource(this, unicastSocket, maxMsgSize, locator,
+                                                                    sInterface, receiver);
     return p_channel_resource;
 }
 
@@ -241,7 +226,7 @@ eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(
     getSocketPtr(socket)->open(generate_protocol());
     if (mSendBufferSize != 0)
     {
-        getSocketPtr(socket)->set_option(socket_base::send_buffer_size(mSendBufferSize));
+        getSocketPtr(socket)->set_option(socket_base::send_buffer_size(static_cast<int32_t>(mSendBufferSize)));
     }
     getSocketPtr(socket)->set_option(ip::multicast::hops(configuration()->TTL));
     getSocketPtr(socket)->bind(endpoint);
@@ -366,120 +351,6 @@ bool UDPTransportInterface::OpenOutputChannel(
         }
         mOutputSockets.clear();
         */
-        return false;
-    }
-
-    return true;
-}
-
-void UDPTransportInterface::perform_listen_operation(UDPChannelResource* p_channel_resource, Locator_t input_locator)
-{
-    Locator_t remote_locator;
-
-    while (p_channel_resource->alive())
-    {
-        // Blocking receive.
-        auto& msg = p_channel_resource->message_buffer();
-        if (!Receive(p_channel_resource, msg.buffer, msg.max_size, msg.length, remote_locator))
-        {
-            continue;
-        }
-
-        // Processes the data through the CDR Message interface.
-        auto receiver = p_channel_resource->message_receiver();
-        if (receiver != nullptr)
-        {
-            receiver->OnDataReceived(msg.buffer, msg.length, input_locator, remote_locator);
-        }
-        else
-        {
-            logWarning(RTPS_MSG_IN, "Received Message, but no receiver attached");
-        }
-    }
-}
-
-bool UDPTransportInterface::Receive(UDPChannelResource* p_channel_resource, octet* receive_buffer,
-    uint32_t receive_buffer_capacity, uint32_t& receive_buffer_size, Locator_t& remote_locator)
-{
-    try
-    {
-        ip::udp::endpoint senderEndpoint;
-
-        size_t bytes = p_channel_resource->socket()->receive_from(asio::buffer(receive_buffer, receive_buffer_capacity), senderEndpoint);
-        receive_buffer_size = static_cast<uint32_t>(bytes);
-        if (receive_buffer_size > 0)
-        {
-            if (receive_buffer_size == 13 && memcmp(receive_buffer, "EPRORTPSCLOSE", 13) == 0)
-            {
-                return false;
-            }
-            endpoint_to_locator(senderEndpoint, remote_locator);
-        }
-        return (receive_buffer_size > 0);
-    }
-    catch (const std::exception& error)
-    {
-        (void)error;
-        logWarning(RTPS_MSG_OUT, "Error receiving data: " << error.what());
-        return false;
-    }
-}
-
-bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const asio::ip::address& interface_address)
-{
-    try
-    {
-        uint16_t port = IPLocator::getPhysicalPort(locator);
-
-        if(is_interface_whitelist_empty())
-        {
-            Locator_t localLocator;
-            fill_local_ip(localLocator);
-
-            ip::udp::socket socket(io_service_);
-            socket.open(generate_protocol());
-            socket.bind(generate_local_endpoint(localLocator, 0));
-
-            // We first send directly to localhost, in case all network interfaces are disabled
-            // (which would mean that multicast traffic may not be sent)
-            auto localEndpoint = generate_local_endpoint(localLocator, port);
-            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), localEndpoint);
-
-            // We then send to the address of the input locator
-            auto destinationEndpoint = generate_local_endpoint(locator, port);
-
-            asio::error_code ec;
-            socket_base::message_flags flags = 0;
-
-            // We ignore the error message because some OS don't allow this functionality like Windows (WSAENETUNREACH) or Mac (EADDRNOTAVAIL)
-            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint,flags, ec);
-
-            socket.close();
-        }
-        else
-        {
-            ip::udp::socket socket(io_service_);
-            socket.open(generate_protocol());
-            socket.bind(asio::ip::udp::endpoint(interface_address, 0));
-
-            auto localEndpoint = ip::udp::endpoint(interface_address, port);
-            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), localEndpoint);
-
-            // We then send to the address of the input locator
-            auto destinationEndpoint = generate_local_endpoint(locator, port);
-
-            asio::error_code ec;
-            socket_base::message_flags flags = 0;
-
-            // We ignore the error message because some OS don't allow this functionality like Windows (WSAENETUNREACH) or Mac (EADDRNOTAVAIL)
-            socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint, flags, ec);
-
-            socket.close();
-        }
-    }
-    catch (const std::exception& error)
-    {
-        logError(RTPS_MSG_OUT, "Error: " << error.what());
         return false;
     }
 

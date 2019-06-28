@@ -26,7 +26,7 @@ import java.util.Stack;
 public class Context extends com.eprosima.idl.context.Context implements com.eprosima.fastcdr.idl.context.Context
 {
     // TODO Remove middleware parameter. It is temporal while cdr and rest don't have async functions.
-    public Context(String filename, String file, ArrayList includePaths, boolean subscribercode, boolean publishercode,
+    public Context(String filename, String file, ArrayList<String> includePaths, boolean subscribercode, boolean publishercode,
             String appProduct, boolean generate_type_object)
     {
         super(filename, file, includePaths);

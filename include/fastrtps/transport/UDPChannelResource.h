@@ -16,6 +16,7 @@
 #define UDP_CHANNEL_RESOURCE_INFO_
 
 #include <fastrtps/transport/ChannelResource.h>
+#include <fastrtps/rtps/common/Locator.h>
 #include <asio.hpp>
 
 namespace eprosima{
@@ -23,6 +24,7 @@ namespace fastrtps{
 namespace rtps{
 
 class TransportReceiverInterface;
+class UDPTransportInterface;
 
 #if defined(ASIO_HAS_MOVE)
     // Typedefs
@@ -73,14 +75,16 @@ class TransportReceiverInterface;
 class UDPChannelResource : public ChannelResource
 {
 public:
-    UDPChannelResource(eProsimaUDPSocket& socket);
 
     UDPChannelResource(
+        UDPTransportInterface* transport,
         eProsimaUDPSocket& socket,
-        uint32_t maxMsgSize);
+        uint32_t maxMsgSize,
+        const Locator_t& locator,
+        const std::string& sInterface,
+        TransportReceiverInterface* receiver);
 
-    UDPChannelResource(UDPChannelResource&& channelResource);
-    virtual ~UDPChannelResource();
+    virtual ~UDPChannelResource() override;
 
     UDPChannelResource& operator=(UDPChannelResource&& channelResource)
     {
@@ -91,7 +95,7 @@ public:
     void only_multicast_purpose(const bool value)
     {
         only_multicast_purpose_ = value;
-    };
+    }
 
     bool& only_multicast_purpose()
     {
@@ -132,12 +136,44 @@ public:
         return message_receiver_;
     }
 
+    inline virtual void disable() override
+    {
+        ChannelResource::disable();
+    }
+
+    void release();
+
+protected:
+    /**
+     * Function to be called from a new thread, which takes cares of performing a blocking receive
+     * operation on the ReceiveResource
+     * @param input_locator - Locator that triggered the creation of the resource
+    */
+    void perform_listen_operation(
+            Locator_t input_locator);
+
+    /**
+    * Blocking Receive from the specified channel.
+    * @param receive_buffer vector with enough capacity (not size) to accomodate a full receive buffer. That
+    * capacity must not be less than the receive_buffer_size supplied to this class during construction.
+    * @param receive_buffer_capacity Maximum size of the receive_buffer.
+    * @param[out] receive_buffer_size Size of the received buffer.
+    * @param[out] remote_locator Locator describing the remote restination we received a packet from.
+    */
+    bool Receive(
+            octet* receive_buffer,
+            uint32_t receive_buffer_capacity,
+            uint32_t& receive_buffer_size,
+            Locator_t& remote_locator);
+
 private:
 
     TransportReceiverInterface* message_receiver_; //Associated Readers/Writers inside of MessageReceiver
     eProsimaUDPSocket socket_;
     bool only_multicast_purpose_;
     std::string interface_;
+    UDPTransportInterface* transport_;
+
     UDPChannelResource(const UDPChannelResource&) = delete;
     UDPChannelResource& operator=(const UDPChannelResource&) = delete;
 };

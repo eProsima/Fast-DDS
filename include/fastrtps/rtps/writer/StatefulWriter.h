@@ -204,13 +204,23 @@ public:
 
     SequenceNumber_t next_sequence_number() const;
 
-    bool send_periodic_heartbeat();
+    /**
+     * @brief Sends a periodic heartbeat
+     * @param final Final flag
+     * @param liveliness Liveliness flag
+     * @return True on success
+     */
+    bool send_periodic_heartbeat(
+            bool final = false,
+            bool liveliness = false);
 
     /*!
      * @brief Sends a heartbeat to a remote reader.
      * @remarks This function is non thread-safe.
      */
-    void send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy);
+    void send_heartbeat_to_nts(
+            ReaderProxy& remoteReaderProxy,
+            bool liveliness = false);
 
     void perform_nack_response();
 
@@ -270,7 +280,8 @@ private:
             const std::vector<GUID_t>& remote_readers,
             const LocatorList_t& locators,
             RTPSMessageGroup& message_group,
-            bool final = false);
+            bool final,
+            bool liveliness = false);
 
     void check_acked_status();
 

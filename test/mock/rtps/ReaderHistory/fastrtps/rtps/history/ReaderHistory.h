@@ -27,8 +27,12 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+class RTPSReader;
+
 class ReaderHistory
 {
+    friend class RTPSReader;
+
     public:
 
         ReaderHistory(const HistoryAttributes& /*att*/){}
@@ -41,6 +45,11 @@ class ReaderHistory
             delete change;
             return ret;
         }
+
+    protected:
+
+        RTPSReader* mp_reader;
+        std::recursive_timed_mutex* mp_mutex;
 };
 
 } // namespace rtps

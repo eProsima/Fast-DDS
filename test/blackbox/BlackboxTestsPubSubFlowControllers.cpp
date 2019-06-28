@@ -20,7 +20,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
+TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
 {
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
@@ -56,7 +56,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
     reader.block_for_all();
 }
 
-BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTransport)
+TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTransport)
 {
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
@@ -96,7 +96,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAn
     reader.block_for_all();
 }
 
-BLACKBOXTEST(BlackBox, AsyncPubSubWithFlowController64kb)
+TEST(BlackBox, AsyncPubSubWithFlowController64kb)
 {
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> slowWriter(TEST_TOPIC_NAME);
@@ -125,7 +125,7 @@ BLACKBOXTEST(BlackBox, AsyncPubSubWithFlowController64kb)
     ASSERT_EQ(reader.getReceivedCount(), 1u);
 }
 
-BLACKBOXTEST(BlackBox, FlowControllerIfNotAsync)
+TEST(BlackBox, FlowControllerIfNotAsync)
 {
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 

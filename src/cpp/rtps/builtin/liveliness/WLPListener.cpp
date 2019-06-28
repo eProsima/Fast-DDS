@@ -26,7 +26,7 @@
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 
 #include <fastrtps/rtps/reader/StatefulReader.h>
-
+#include <fastrtps/rtps/writer/LivelinessManager.h>
 #include <fastrtps/log/Log.h>
 
 #include <mutex>
@@ -38,7 +38,8 @@ namespace fastrtps{
 namespace rtps {
 
 
-WLPListener::WLPListener(WLP* plwp) : mp_WLP(plwp)
+WLPListener::WLPListener(WLP* plwp)
+    : mp_WLP(plwp)
 {
 }
 
@@ -46,85 +47,97 @@ WLPListener::~WLPListener()
 {
 }
 
-
 typedef std::vector<WriterProxy*>::iterator WPIT;
 
 void WLPListener::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const changeIN)
 {
-	std::lock_guard<std::recursive_mutex> guard2(*mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
-	logInfo(RTPS_LIVELINESS,"");
-	GuidPrefix_t guidP;
-	LivelinessQosPolicyKind livelinessKind;
-	CacheChange_t* change = (CacheChange_t*)changeIN;
-	if(!computeKey(change))
-	{
-		logWarning(RTPS_LIVELINESS,"Problem obtaining the Key");
-		return;
-	}
-	//Check the serializedPayload:
+
+    std::lock_guard<std::recursive_mutex> guard2(*mp_WLP->getBuiltinProtocols()->mp_PDP->getMutex());
+
+    GuidPrefix_t guidP;
+    LivelinessQosPolicyKind livelinessKind;
+    CacheChange_t* change = (CacheChange_t*)changeIN;
+    if(!computeKey(change))
+    {
+        logWarning(RTPS_LIVELINESS,"Problem obtaining the Key");
+        return;
+    }
+    //Check the serializedPayload:
     auto history = reader->getHistory();
-	for(auto ch = history->changesBegin(); ch!=history->changesEnd();++ch)
-	{
-		if((*ch)->instanceHandle == change->instanceHandle &&
-				(*ch)->sequenceNumber < change->sequenceNumber)
-		{
-			history->remove_change(*ch);
-			break;
-		}
-	}
-	if(change->serializedPayload.length>0)
-	{
-		for(uint8_t i =0;i<12;++i)
-		{
-			guidP.value[i] = change->serializedPayload.data[i];
-		}
-		livelinessKind = (LivelinessQosPolicyKind)(change->serializedPayload.data[15]-0x01);
+    for(auto ch = history->changesBegin(); ch!=history->changesEnd();++ch)
+    {
+        if((*ch)->instanceHandle == change->instanceHandle && (*ch)->sequenceNumber < change->sequenceNumber)
+        {
+            history->remove_change(*ch);
+            break;
+        }
+    }
+    if(change->serializedPayload.length>0)
+    {
+        for(uint8_t i =0;i<12;++i)
+        {
+            guidP.value[i] = change->serializedPayload.data[i];
+        }
+        livelinessKind = (LivelinessQosPolicyKind)(change->serializedPayload.data[15]-0x01);
 
-	}
-	else
-	{
-		if(!separateKey(change->instanceHandle,&guidP,&livelinessKind))
-			return;
-	}
-	logInfo(RTPS_LIVELINESS,"RTPSParticipant "<<guidP<< " assert liveliness of "
-			<<((livelinessKind == 0x00)?"AUTOMATIC":"")
-			<<((livelinessKind==0x01)?"MANUAL_BY_RTPSParticipant":"")<< " writers");
-	if(guidP == reader->getGuid().guidPrefix)
-	{
-		logInfo(RTPS_LIVELINESS,"Message from own RTPSParticipant, ignoring");
+    }
+    else
+    {
+        if(!separateKey(
+                    change->instanceHandle,
+                    &guidP,
+                    &livelinessKind))
+        {
+            return;
+        }
+    }
+
+    if(guidP == reader->getGuid().guidPrefix)
+    {
+        logInfo(RTPS_LIVELINESS,"Message from own RTPSParticipant, ignoring");
         history->remove_change(change);
-		return;
-	}
-	this->mp_WLP->getBuiltinProtocols()->mp_PDP->assertRemoteWritersLiveliness(guidP,livelinessKind);
+        return;
+    }
 
-	return;
+    if (mp_WLP->automatic_readers_)
+    {
+        mp_WLP->sub_liveliness_manager_->assert_liveliness(AUTOMATIC_LIVELINESS_QOS);
+    }
+    if (livelinessKind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    {
+        mp_WLP->sub_liveliness_manager_->assert_liveliness(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
+    }
+    return;
 }
 
-bool WLPListener::separateKey(InstanceHandle_t& key,GuidPrefix_t* guidP,LivelinessQosPolicyKind* liveliness)
+bool WLPListener::separateKey(
+        InstanceHandle_t& key,
+        GuidPrefix_t* guidP,
+        LivelinessQosPolicyKind* liveliness)
 {
-	for(uint8_t i=0;i<12;++i)
-	{
-		guidP->value[i] = key.value[i];
-	}
-	*liveliness = (LivelinessQosPolicyKind)key.value[15];
-	return true;
+    for(uint8_t i=0;i<12;++i)
+    {
+        guidP->value[i] = key.value[i];
+    }
+    *liveliness = (LivelinessQosPolicyKind)key.value[15];
+    return true;
 }
 
 bool WLPListener::computeKey(CacheChange_t* change)
 {
-	if(change->instanceHandle == c_InstanceHandle_Unknown)
-	{
-		SerializedPayload_t* pl = &change->serializedPayload;
-		if(pl->length >= 16)
-		{
-			memcpy(change->instanceHandle.value, pl->data, 16);
-			return true;
-		}
-		return false;
-	}
-	return true;
+    if(change->instanceHandle == c_InstanceHandle_Unknown)
+    {
+        SerializedPayload_t* pl = &change->serializedPayload;
+        if(pl->length >= 16)
+        {
+            memcpy(change->instanceHandle.value, pl->data, 16);
+            return true;
+        }
+        return false;
+    }
+    return true;
 }
 
 

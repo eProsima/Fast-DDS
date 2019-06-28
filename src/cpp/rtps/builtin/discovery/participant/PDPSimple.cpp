@@ -664,8 +664,6 @@ bool PDPSimple::addWriterProxyData(WriterProxyData* wdata, ParticipantProxyData&
                 wdata->unicastLocatorList((*pit)->m_defaultUnicastLocatorList);
                 wdata->multicastLocatorList((*pit)->m_defaultMulticastLocatorList);
             }
-            // Set as alive.
-            wdata->isAlive(true);
 
             // Copy participant data to be used outside.
             pdata.copy(**pit);
@@ -891,61 +889,6 @@ void PDPSimple::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
             {
                 (*it)->mp_leaseDurationTimer->cancel_timer();
                 (*it)->mp_leaseDurationTimer->restart_timer();
-            }
-            break;
-        }
-    }
-}
-
-void PDPSimple::assertLocalWritersLiveliness(LivelinessQosPolicyKind kind)
-{
-    logInfo(RTPS_LIVELINESS,"of type " << (kind==AUTOMATIC_LIVELINESS_QOS?"AUTOMATIC":"")
-            <<(kind==MANUAL_BY_PARTICIPANT_LIVELINESS_QOS?"MANUAL_BY_PARTICIPANT":""));
-    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
-    for(std::vector<WriterProxyData*>::iterator wit = this->m_participantProxies.front()->m_writers.begin();
-            wit!=this->m_participantProxies.front()->m_writers.end();++wit)
-    {
-        if((*wit)->m_qos.m_liveliness.kind == kind)
-        {
-            logInfo(RTPS_LIVELINESS,"Local Writer "<< (*wit)->guid().entityId << " marked as ALIVE");
-            (*wit)->isAlive(true);
-        }
-    }
-}
-
-void PDPSimple::assertRemoteWritersLiveliness(GuidPrefix_t& guidP,LivelinessQosPolicyKind kind)
-{
-    std::lock_guard<std::recursive_mutex> guardP(*mp_RTPSParticipant->getParticipantMutex());
-    std::lock_guard<std::recursive_mutex> pguard(*this->mp_mutex);
-    logInfo(RTPS_LIVELINESS,"of type " << (kind==AUTOMATIC_LIVELINESS_QOS?"AUTOMATIC":"")
-            <<(kind==MANUAL_BY_PARTICIPANT_LIVELINESS_QOS?"MANUAL_BY_PARTICIPANT":""));
-
-    for(std::vector<ParticipantProxyData*>::iterator pit=this->m_participantProxies.begin();
-            pit!=this->m_participantProxies.end();++pit)
-    {
-        if((*pit)->m_guid.guidPrefix == guidP)
-        {
-            for(std::vector<WriterProxyData*>::iterator wit = (*pit)->m_writers.begin();
-                    wit != (*pit)->m_writers.end();++wit)
-            {
-                if((*wit)->m_qos.m_liveliness.kind == kind)
-                {
-                    (*wit)->isAlive(true);
-                    for(std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
-                            rit!=mp_RTPSParticipant->userReadersListEnd();++rit)
-                    {
-                        if((*rit)->getAttributes().reliabilityKind == RELIABLE)
-                        {
-                            StatefulReader* sfr = (StatefulReader*)(*rit);
-                            WriterProxy* WP;
-                            if(sfr->matched_writer_lookup((*wit)->guid(), &WP))
-                            {
-                                WP->assertLiveliness();
-                                continue;
-                            }
-                        }
-                    }
-                }
             }
             break;
         }

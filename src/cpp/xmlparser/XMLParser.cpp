@@ -2543,8 +2543,9 @@ XMLP_ret XMLParser::loadXML(const std::string& filename, up_base_node_t& root)
     if (tinyxml2::XMLError::XML_SUCCESS != xmlDoc.LoadFile(filename.c_str()))
     {
         if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
+        {
             logError(XMLPARSER, "Error opening '" << filename << "'");
-
+        }
         return XMLP_ret::XML_ERROR;
     }
 

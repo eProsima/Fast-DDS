@@ -37,6 +37,8 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+//#define cout "Use Log instead!"
+
 uint16_t global_port = 0;
 
 uint16_t get_port()

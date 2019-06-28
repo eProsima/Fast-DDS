@@ -70,3 +70,8 @@ bool Participant::get_remote_reader_info(
 {
     return mp_impl->get_remote_reader_info(readerGuid, returnedInfo);
 }
+
+void Participant::assert_liveliness()
+{
+    mp_impl->assert_liveliness();
+}

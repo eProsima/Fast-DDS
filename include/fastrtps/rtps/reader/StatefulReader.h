@@ -43,8 +43,12 @@ class StatefulReader:public RTPSReader
 
     protected:
 
-        StatefulReader(RTPSParticipantImpl*,GUID_t& guid,
-                ReaderAttributes& att,ReaderHistory* hist,ReaderListener* listen=nullptr);
+        StatefulReader(
+                RTPSParticipantImpl*,
+                GUID_t& guid,
+                ReaderAttributes& att,
+                ReaderHistory* hist,
+                ReaderListener* listen = nullptr);
     public:
 
         /**
@@ -53,14 +57,6 @@ class StatefulReader:public RTPSReader
          * @return True if correctly added.
          */
         bool matched_writer_add(RemoteWriterAttributes& wdata) override;
-
-        /**
-         * Remove a WriterProxyData from the matached writers.
-         * @param wdata Pointer to the WPD object.
-         * @param deleteWP If the Reader has to delete the associated WP object or not.
-         * @return True if correct.
-         */
-        bool matched_writer_remove(const RemoteWriterAttributes& wdata,bool deleteWP);
 
         /**
          * Remove a WriterProxyData from the matached writers.
