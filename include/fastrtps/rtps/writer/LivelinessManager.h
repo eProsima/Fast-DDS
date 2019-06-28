@@ -29,11 +29,11 @@ namespace fastrtps {
 namespace rtps {
 
 using LivelinessCallback = std::function<void(
-const GUID_t&,
-const LivelinessQosPolicyKind&,
-const Duration_t&,
-int32_t alive_change,
-int32_t not_alive_change)>;
+        const GUID_t&,
+        const LivelinessQosPolicyKind&,
+        const Duration_t&,
+        int32_t alive_change,
+        int32_t not_alive_change)>;
 
 /**
  * @brief A class managing the liveliness of a set of writers. Writers are represented by their LivelinessData
