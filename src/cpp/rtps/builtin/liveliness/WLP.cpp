@@ -822,6 +822,15 @@ bool WLP::assert_liveliness(
                 lease_duration);
 }
 
+bool WLP::assert_liveliness_manual_by_participant()
+{
+    if (manual_by_participant_writers_.size() > 0)
+    {
+        return pub_liveliness_manager_->assert_liveliness(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
+    }
+    return false;
+}
+
 void WLP::pub_liveliness_changed(
         const GUID_t& writer,
         const LivelinessQosPolicyKind& kind,

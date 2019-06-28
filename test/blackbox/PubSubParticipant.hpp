@@ -110,6 +110,7 @@ class PubSubParticipant
         {
             (void)sub;
             (status.alive_count_change == 1) ? participant_->sub_liveliness_recovered() : participant_->sub_liveliness_lost();
+
         }
 
     private:
@@ -223,6 +224,11 @@ public:
     bool send_sample(type& msg, unsigned int index = 0)
     {
         return publishers_[index]->write((void*)&msg);
+    }
+
+    void assert_liveliness_participant()
+    {
+        participant_->assert_liveliness();
     }
 
     void assert_liveliness(unsigned int index = 0)

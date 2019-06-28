@@ -41,6 +41,7 @@
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <fastrtps/transport/UDPv6Transport.h>
 #include <fastrtps/transport/test_UDPv4Transport.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
 #include <fastrtps/log/Log.h>
 
@@ -515,4 +516,16 @@ bool ParticipantImpl::get_remote_reader_info(
 ResourceEvent& ParticipantImpl::get_resource_event() const
 {
     return mp_rtpsParticipant->get_resource_event();
+}
+
+void ParticipantImpl::assert_liveliness()
+{
+    if (mp_rtpsParticipant->wlp() != nullptr)
+    {
+        mp_rtpsParticipant->wlp()->assert_liveliness_manual_by_participant();
+    }
+    else
+    {
+        logError(PARTICIPANT, "Invalid WLP, cannot assert liveliness of participant");
+    }
 }

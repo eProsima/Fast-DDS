@@ -1552,3 +1552,45 @@ TEST(LivelinessQos, LivelinessChangedStatus_NotAlive_Unmatched)
     EXPECT_EQ(status.not_alive_count, 0);
     EXPECT_EQ(status.not_alive_count_change, -1);
 }
+
+
+//! Tests the assert_liveliness on the participant
+//! A participant with three publishers, two MANUAL_BY_PARTICIPANT liveliness, one MANUAL_BY_TOPIC
+TEST(LivelinessQos, AssertLivelinessParticipant)
+{
+    unsigned int num_pub = 3;
+    unsigned int lease_duration_ms = 100;
+    unsigned int announcement_period_ms = 10;
+
+    // Publishers
+    PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, 0u, 0u);
+    ASSERT_TRUE(publishers.init_participant());
+    publishers.pub_topic_name(TEST_TOPIC_NAME)
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
+            .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
+            .pub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
+    ASSERT_TRUE(publishers.init_publisher(0u));
+    publishers.pub_topic_name(TEST_TOPIC_NAME)
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
+            .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
+            .pub_liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
+    ASSERT_TRUE(publishers.init_publisher(1u));
+    publishers.pub_topic_name(TEST_TOPIC_NAME)
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .pub_liveliness_announcement_period(announcement_period_ms * 1e-3)
+            .pub_liveliness_lease_duration(lease_duration_ms * 1e-3)
+            .pub_liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS);
+    ASSERT_TRUE(publishers.init_publisher(1u));
+
+    // Assert liveliness
+    publishers.assert_liveliness_participant();
+
+    // Wait for alive publishers (only the two MANUAL_BY_PARTICIPANT publishers should be alive) to lose liveliness
+    std::this_thread::sleep_for(std::chrono::milliseconds(lease_duration_ms * 4));
+
+    // Only the two MANUAL_BY_PARTICIPANT publishers will have lost liveliness, as the
+    // MANUAL_BY_TOPIC was never asserted
+    EXPECT_EQ(publishers.pub_times_liveliness_lost(), 2u);
+}
