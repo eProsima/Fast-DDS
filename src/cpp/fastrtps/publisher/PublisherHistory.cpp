@@ -37,22 +37,21 @@ using namespace eprosima::fastrtps::rtps;
 PublisherHistory::PublisherHistory(
         const TopicAttributes& topic_att,
         uint32_t payloadMaxSize,
-        const HistoryQosPolicy& history,
-        const ResourceLimitsQosPolicy& resource,
         MemoryManagementPolicy_t mempolicy)
     : WriterHistory(HistoryAttributes(mempolicy, payloadMaxSize,
-                history.kind == KEEP_ALL_HISTORY_QOS ?
-                        resource.allocated_samples :
+                topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
+                        topic_att.resourceLimitsQos.allocated_samples :
                         topic_att.getTopicKind() == NO_KEY ?
-                            std::min(resource.allocated_samples, history.depth) :
-                            std::min(resource.allocated_samples, history.depth * resource.max_instances),
-                history.kind == KEEP_ALL_HISTORY_QOS ?
-                        resource.max_samples :
+                            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth) :
+                            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth
+                                     * topic_att.resourceLimitsQos.max_instances),
+                topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
+                        topic_att.resourceLimitsQos.max_samples :
                         topic_att.getTopicKind() == NO_KEY ?
-                            history.depth :
-                            history.depth * resource.max_instances))
-    , m_historyQos(history)
-    , m_resourceLimitsQos(resource)
+                            topic_att.historyQos.depth :
+                            topic_att.historyQos.depth * topic_att.resourceLimitsQos.max_instances))
+    , history_qos_(topic_att.historyQos)
+    , resource_limited_qos_(topic_att.resourceLimitsQos)
     , topic_att_(topic_att)
 {
 }
@@ -68,22 +67,22 @@ bool PublisherHistory::add_pub_change(
         std::unique_lock<std::recursive_timed_mutex>& lock,
         std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
 {
-    if(m_isHistoryFull)
+    if (m_isHistoryFull)
     {
         bool ret = false;
 
-        if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
+        if (history_qos_.kind == KEEP_ALL_HISTORY_QOS)
         {
             ret = this->mp_writer->try_remove_change(max_blocking_time, lock);
         }
-        else if(m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
+        else if (history_qos_.kind == KEEP_LAST_HISTORY_QOS)
         {
             ret = this->remove_min_change();
         }
 
-        if(!ret)
+        if (!ret)
         {
-            logWarning(RTPS_HISTORY,"Attempting to add Data to Full WriterCache: "<< topic_att_.getTopicDataType());
+            logWarning(RTPS_HISTORY, "Attempting to add Data to Full WriterCache: " << topic_att_.getTopicDataType());
             return false;
         }
     }
@@ -93,24 +92,25 @@ bool PublisherHistory::add_pub_change(
     bool returnedValue = false;
 
     //NO KEY HISTORY
-    if(topic_att_.getTopicKind() == NO_KEY)
+    if (topic_att_.getTopicKind() == NO_KEY)
     {
-        if(this->add_change_(change, wparams, max_blocking_time))
+        if (this->add_change_(change, wparams, max_blocking_time))
         {
             returnedValue = true;
         }
     }
     //HISTORY WITH KEY
-    else if(topic_att_.getTopicKind() == WITH_KEY)
+    else if (topic_att_.getTopicKind() == WITH_KEY)
     {
         t_m_Inst_Caches::iterator vit;
-        if(find_key(change,&vit))
+        if (find_key(change, &vit))
         {
-            logInfo(RTPS_HISTORY,"Found key: "<< vit->first);
+            logInfo(RTPS_HISTORY, "Found key: " << vit->first);
             bool add = false;
-            if(m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
+            if (history_qos_.kind == KEEP_ALL_HISTORY_QOS)
             {
-                if((int32_t)vit->second.cache_changes.size() < m_resourceLimitsQos.max_samples_per_instance)
+                if (static_cast<int32_t>(vit->second.cache_changes.size()) <
+                        resource_limited_qos_.max_samples_per_instance)
                 {
                     add = true;
                 }
@@ -119,29 +119,29 @@ bool PublisherHistory::add_pub_change(
                     logWarning(RTPS_HISTORY,"Change not added due to maximum number of samples per instance"<<endl;);
                 }
             }
-            else if (m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
+            else if (history_qos_.kind == KEEP_LAST_HISTORY_QOS)
             {
-                if(vit->second.cache_changes.size() < (size_t)m_historyQos.depth)
+                if (vit->second.cache_changes.size() < static_cast<size_t>(history_qos_.depth))
                 {
                     add = true;
                 }
                 else
                 {
-                    if(remove_change_pub(vit->second.cache_changes.front()))
+                    if (remove_change_pub(vit->second.cache_changes.front()))
                     {
                         add = true;
                     }
                 }
             }
 
-            if(add)
+            if (add)
             {
                 vit->second.cache_changes.push_back(change);
-                if(this->add_change_(change, wparams, max_blocking_time))
+                if (this->add_change_(change, wparams, max_blocking_time))
                 {
-                    logInfo(RTPS_HISTORY, topic_att_.getTopicDataType() <<" Change "
-                            << change->sequenceNumber << " added with key: "<<change->instanceHandle
-                            << " and "<<change->serializedPayload.length<< " bytes");
+                    logInfo(RTPS_HISTORY, topic_att_.getTopicDataType() << " Change "
+                            << change->sequenceNumber << " added with key: " << change->instanceHandle
+                            << " and " << change->serializedPayload.length << " bytes");
                     returnedValue =  true;
                 }
             }
@@ -164,7 +164,7 @@ bool PublisherHistory::find_key(
         return true;
     }
 
-    if ((int)keyed_changes_.size() < m_resourceLimitsQos.max_instances)
+    if (static_cast<int>(keyed_changes_.size()) < resource_limited_qos_.max_instances)
     {
         *vit_out = keyed_changes_.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
         return true;
@@ -192,18 +192,22 @@ bool PublisherHistory::removeAllChange(size_t* removed)
     size_t rem = 0;
     std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
 
-    while(m_changes.size()>0)
+    while (m_changes.size() > 0)
     {
-        if(remove_change_pub(m_changes.front()))
+        if (remove_change_pub(m_changes.front()))
+        {
             ++rem;
+        }
         else
+        {
             break;
+        }
     }
-    if(removed!=nullptr)
+    if (removed != nullptr)
     {
         *removed = rem;
     }
-    if (rem>0)
+    if (rem > 0)
     {
         return true;
     }
@@ -213,31 +217,33 @@ bool PublisherHistory::removeAllChange(size_t* removed)
 
 bool PublisherHistory::removeMinChange()
 {
-    if(mp_writer == nullptr || mp_mutex == nullptr)
+    if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY,"You need to create a Writer with this History before using it");
+        logError(RTPS_HISTORY, "You need to create a Writer with this History before using it");
         return false;
     }
 
     std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
-    if(m_changes.size()>0)
+    if (m_changes.size()>0)
+    {
         return remove_change_pub(m_changes.front());
+    }
     return false;
 }
 
 bool PublisherHistory::remove_change_pub(CacheChange_t* change)
 {
 
-    if(mp_writer == nullptr || mp_mutex == nullptr)
+    if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY,"You need to create a Writer with this History before using it");
+        logError(RTPS_HISTORY, "You need to create a Writer with this History before using it");
         return false;
     }
 
     std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
-    if(topic_att_.getTopicKind() == NO_KEY)
+    if (topic_att_.getTopicKind() == NO_KEY)
     {
-        if(this->remove_change(change))
+        if (this->remove_change(change))
         {
             m_isHistoryFull = false;
             return true;
@@ -248,16 +254,16 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change)
     else
     {
         t_m_Inst_Caches::iterator vit;
-        if(!this->find_key(change,&vit))
+        if (!this->find_key(change,&vit))
         {
             return false;
         }
 
         for(auto chit = vit->second.cache_changes.begin(); chit!= vit->second.cache_changes.end(); ++chit)
         {
-            if( ((*chit)->sequenceNumber == change->sequenceNumber) && ((*chit)->writerGUID == change->writerGUID) )
+            if (((*chit)->sequenceNumber == change->sequenceNumber) && ((*chit)->writerGUID == change->writerGUID))
             {
-                if(remove_change(change))
+                if (remove_change(change))
                 {
                     vit->second.cache_changes.erase(chit);
                     m_isHistoryFull = false;
@@ -265,7 +271,7 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change)
                 }
             }
         }
-        logError(PUBLISHER,"Change not found, something is wrong");
+        logError(PUBLISHER, "Change not found, something is wrong");
     }
     return false;
 }
@@ -279,9 +285,9 @@ bool PublisherHistory::set_next_deadline(
         const InstanceHandle_t& handle,
         const std::chrono::steady_clock::time_point& next_deadline_us)
 {
-    if(mp_writer == nullptr || mp_mutex == nullptr)
+    if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY,"You need to create a Writer with this History before using it");
+        logError(RTPS_HISTORY, "You need to create a Writer with this History before using it");
         return false;
     }
     std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
@@ -291,7 +297,7 @@ bool PublisherHistory::set_next_deadline(
         next_deadline_us_ = next_deadline_us;
         return true;
     }
-    else if(topic_att_.getTopicKind() == WITH_KEY)
+    else if (topic_att_.getTopicKind() == WITH_KEY)
     {
         if (keyed_changes_.find(handle) == keyed_changes_.end())
         {
@@ -309,21 +315,23 @@ bool PublisherHistory::get_next_deadline(
         InstanceHandle_t &handle,
         std::chrono::steady_clock::time_point &next_deadline_us)
 {
-    if(mp_writer == nullptr || mp_mutex == nullptr)
+    if (mp_writer == nullptr || mp_mutex == nullptr)
     {
-        logError(RTPS_HISTORY,"You need to create a Writer with this History before using it");
+        logError(RTPS_HISTORY, "You need to create a Writer with this History before using it");
         return false;
     }
     std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
 
-    if(topic_att_.getTopicKind() == WITH_KEY)
+    if (topic_att_.getTopicKind() == WITH_KEY)
     {
         auto min = std::min_element(keyed_changes_.begin(),
                                     keyed_changes_.end(),
                                     [](
-                                    const std::pair<InstanceHandle_t, KeyedChanges> &lhs,
-                                    const std::pair<InstanceHandle_t, KeyedChanges> &rhs)
-        { return lhs.second.next_deadline_us < rhs.second.next_deadline_us; });
+                                        const std::pair<InstanceHandle_t, KeyedChanges> &lhs,
+                                        const std::pair<InstanceHandle_t, KeyedChanges> &rhs)
+                                        {
+                                            return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
+                                        });
 
         handle = min->first;
         next_deadline_us = min->second.next_deadline_us;
