@@ -189,7 +189,8 @@ public:
 
     bool operator==(const DiscoverySettings& b) const
     {
-        return  (this->use_SIMPLE_EndpointDiscoveryProtocol == b.use_SIMPLE_EndpointDiscoveryProtocol) &&
+        return  (this->discoveryProtocol == b.discoveryProtocol) &&
+                (this->use_SIMPLE_EndpointDiscoveryProtocol == b.use_SIMPLE_EndpointDiscoveryProtocol) &&
                 (this->use_STATIC_EndpointDiscoveryProtocol == b.use_STATIC_EndpointDiscoveryProtocol) &&
                 (this->discoveryServer_client_syncperiod == b.discoveryServer_client_syncperiod) &&
                 (this->m_PDPfactory == b.m_PDPfactory) &&
@@ -235,7 +236,7 @@ class BuiltinAttributes
         /**
          * DomainId to be used by the RTPSParticipant (80 by default).
          */
-        uint32_t domainId;;
+        uint32_t domainId;
 
         //!Metatraffic Unicast Locator List
         LocatorList_t metatrafficUnicastLocatorList;
