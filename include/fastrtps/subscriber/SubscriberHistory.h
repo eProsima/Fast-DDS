@@ -35,6 +35,7 @@ namespace rtps{
 class WriterProxy;
 }
 
+class TopicAttributes;
 class TopicDataType;
 
 /**
@@ -45,28 +46,22 @@ class SubscriberHistory: public rtps::ReaderHistory
 {
     public:
 
-        SubscriberHistory(SubscriberHistory&&) = delete;
-        SubscriberHistory& operator=(SubscriberHistory&&) = delete;
-
         /**
          * Constructor. Requires information about the subscriber.
-         * @param satt Reference to the subscriber attributes.
-         * @param type TopicDataType.
-         * @param qos ReaderQos
+         * @param pimpl Pointer to the subscriber implementation.
          * @param payloadMax Maximum payload size per change.
          * @param history History QoS policy for the reader.
          * @param resource Resource Limit QoS policy for the reader.
          * @param mempolicy Set wether the payloads ccan dynamically resized or not.
          */
         SubscriberHistory(
+            const TopicAttributes& topic_att,
             TopicDataType* type,
-            const ReaderQos& qos,
+            const fastrtps::ReaderQos& qos,
             uint32_t payloadMax,
-            const HistoryQosPolicy& history,
-            const ResourceLimitsQosPolicy& resource,
             rtps::MemoryManagementPolicy_t mempolicy);
 
-        virtual ~SubscriberHistory() override;
+        virtual ~SubscriberHistory();
 
         /**
          * Called when a change is received by the Subscriber History. Will add the change to the history
@@ -77,7 +72,7 @@ class SubscriberHistory: public rtps::ReaderHistory
          */
         bool received_change(
             rtps::CacheChange_t* change,
-            size_t unknown_missing_changes_up_to) override;
+            size_t unknown_missing_changes_up_to);
 
         /** @name Read or take data methods.
          * Methods to read or take data from the History.
@@ -144,10 +139,12 @@ class SubscriberHistory: public rtps::ReaderHistory
         HistoryQosPolicy m_historyQos;
         //!ResourceLimitsQosPolicy values.
         ResourceLimitsQosPolicy m_resourceLimitsQos;
-        //!Topic Data Type
+        //!Topic Attributes
+        const TopicAttributes& topic_att_;
+        //!TopicDataType
         TopicDataType* type_;
         //!ReaderQos
-        const ReaderQos& qos_;
+        const fastrtps::ReaderQos& qos_;
 
         //!Type object to deserialize Key
         void * mp_getKeyObject;

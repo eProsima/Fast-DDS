@@ -55,11 +55,10 @@ DataReader::DataReader(
     , qos_(&qos == &DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
 #pragma warning (disable : 4355 )
     //, history_(std::move(history))
-    , history_(type_,
+    , history_(topic_att_,
+               type_,
                qos_,
                type_->m_typeSize + 3, /* Possible alignment */
-               topic_att_.historyQos,
-               topic_att_.resourceLimitsQos,
                memory_policy)
     , listener_(listener)
     , reader_listener_(this)
@@ -319,6 +318,16 @@ void DataReader::InnerDataReaderListener::on_reader_matched(
     }
 }
 
+void DataReader::InnerDataReaderListener::on_liveliness_changed(
+        RTPSReader* /*reader*/,
+        const fastrtps::LivelinessChangedStatus& status)
+{
+    if (data_reader_->listener_ != nullptr)
+    {
+        data_reader_->listener_->on_liveliness_changed(data_reader_, status);
+    }
+}
+
 bool DataReader::on_new_cache_change_added(
         const CacheChange_t *const change)
 {
@@ -526,9 +535,13 @@ bool DataReader::get_key_value(
 bool DataReader::get_liveliness_changed_status(
         LivelinessChangedStatus& status) const
 {
-    (void)status;
-    // TODO Implement
-    return false;
+    std::unique_lock<std::recursive_timed_mutex> lock(reader_->getMutex());
+
+    status = reader_->liveliness_changed_status_;
+
+    reader_->liveliness_changed_status_.alive_count_change = 0u;
+    reader_->liveliness_changed_status_.not_alive_count_change = 0u;
+    return true;
 }
 
 bool DataReader::get_requested_incompatible_qos_status(

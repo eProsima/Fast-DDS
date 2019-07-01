@@ -47,11 +47,10 @@ SubscriberImpl::SubscriberImpl(
     , mp_type(ptype)
     , m_att(att)
 #pragma warning (disable : 4355 )
-    , m_history(ptype,
-                m_att.qos,
+    , m_history(att.topic,
+                ptype,
+                att.qos,
                 ptype->m_typeSize  + 3/*Possible alignment*/,
-                att.topic.historyQos,
-                att.topic.resourceLimitsQos,
                 att.historyMemoryPolicy)
     , mp_listener(listen)
     , m_readerListener(this)

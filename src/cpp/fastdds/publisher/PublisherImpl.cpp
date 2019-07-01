@@ -176,6 +176,8 @@ DataWriter* PublisherImpl::create_datawriter(
     }
 
     w_att.times = att_.times;
+    w_att.liveliness_kind = writer_qos.m_liveliness.kind;
+    w_att.liveliness_lease_duration = writer_qos.m_liveliness.lease_duration;
     w_att.matched_readers_allocation = att_.matched_subscriber_allocation;
 
     // TODO(Ricardo) Remove in future
