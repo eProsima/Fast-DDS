@@ -64,7 +64,7 @@ PublisherImpl::PublisherImpl(
             + 20 /*SecureDataHeader*/ + 4 + ((2* 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
             + 16 + 4 /*SecureDataTag*/
 #endif
-            , att.topic.historyQos, att.topic.resourceLimitsQos, att.historyMemoryPolicy)
+            , att.historyMemoryPolicy)
     , mp_listener(listen)
 #pragma warning (disable : 4355 )
     , m_writerListener(this)

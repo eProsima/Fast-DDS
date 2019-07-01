@@ -31,7 +31,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-inline bool sort_ReaderHistoryCache(CacheChange_t*c1,CacheChange_t*c2)
+inline bool sort_ReaderHistoryCache(CacheChange_t* c1, CacheChange_t* c2)
 {
     return c1->sequenceNumber < c2->sequenceNumber;
 }
@@ -54,17 +54,17 @@ SubscriberHistory::SubscriberHistory(
                         topic_att.getTopicKind() == NO_KEY ?
                             topic_att.historyQos.depth :
                             topic_att.historyQos.depth * topic_att.resourceLimitsQos.max_instances))
-    , m_unreadCacheCount(0)
-    , m_historyQos(topic_att.historyQos)
-    , m_resourceLimitsQos(topic_att.resourceLimitsQos)
+    , unread_cache_count_(0)
+    , history_qos_(topic_att.historyQos)
+    , resource_limited_qos_(topic_att.resourceLimitsQos)
     , topic_att_(topic_att)
     , type_(type)
     , qos_(qos)
-    , mp_getKeyObject(nullptr)
+    , get_key_object_(nullptr)
 {
     if (type_->m_isGetKeyDefined)
     {
-        mp_getKeyObject = type_->createData();
+        get_key_object_ = type_->createData();
     }
 }
 
@@ -72,7 +72,7 @@ SubscriberHistory::~SubscriberHistory()
 {
     if (type_->m_isGetKeyDefined)
     {
-        type_->deleteData(mp_getKeyObject);
+        type_->deleteData(get_key_object_);
     }
 }
 
@@ -93,17 +93,18 @@ bool SubscriberHistory::received_change(
     if (topic_att_.getTopicKind() == NO_KEY)
     {
         bool add = false;
-        if (m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
+        if (history_qos_.kind == KEEP_ALL_HISTORY_QOS)
         {
             // TODO(Ricardo) Check
-            if (m_changes.size() + unknown_missing_changes_up_to < (size_t)m_resourceLimitsQos.max_samples)
+            if (m_changes.size() + unknown_missing_changes_up_to <
+                    static_cast<size_t>(resource_limited_qos_.max_samples))
             {
                 add = true;
             }
         }
-        else if (m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
+        else if (history_qos_.kind == KEEP_LAST_HISTORY_QOS)
         {
-            if (m_changes.size() < (size_t)m_historyQos.depth)
+            if (m_changes.size() < static_cast<size_t>(history_qos_.depth))
             {
                 add = true;
             }
@@ -152,7 +153,7 @@ bool SubscriberHistory::received_change(
             if (this->add_change(a_change))
             {
                 increaseUnreadCount();
-                if ((int32_t)m_changes.size() == m_resourceLimitsQos.max_samples)
+                if (static_cast<int32_t>(m_changes.size()) == resource_limited_qos_.max_samples)
                     m_isHistoryFull = true;
                 logInfo(SUBSCRIBER, topic_att_.getTopicDataType()
                     << ": Change " << a_change->sequenceNumber << " added from: "
@@ -168,14 +169,15 @@ bool SubscriberHistory::received_change(
         if (!a_change->instanceHandle.isDefined() && type_ != nullptr)
         {
             logInfo(RTPS_HISTORY, "Getting Key of change with no Key transmitted")
-                type_->deserialize(&a_change->serializedPayload, mp_getKeyObject);
+                type_->deserialize(&a_change->serializedPayload, get_key_object_);
             bool is_key_protected = false;
 #if HAVE_SECURITY
             is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
 #endif
-            if(!type_->getKey(mp_getKeyObject, &a_change->instanceHandle, is_key_protected))
+            if(!type_->getKey(get_key_object_, &a_change->instanceHandle, is_key_protected))
+            {
                 return false;
-
+            }
         }
         else if (!a_change->instanceHandle.isDefined())
         {
@@ -187,9 +189,10 @@ bool SubscriberHistory::received_change(
         if (find_key(a_change, &vit))
         {
             bool add = false;
-            if (m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
+            if (history_qos_.kind == KEEP_ALL_HISTORY_QOS)
             {
-                if ((int32_t)vit->second.cache_changes.size() < m_resourceLimitsQos.max_samples_per_instance)
+                if (static_cast<int32_t>(vit->second.cache_changes.size())
+                        < resource_limited_qos_.max_samples_per_instance)
                 {
                     add = true;
                 }
@@ -199,9 +202,9 @@ bool SubscriberHistory::received_change(
                     return false;
                 }
             }
-            else if (m_historyQos.kind == KEEP_LAST_HISTORY_QOS)
+            else if (history_qos_.kind == KEEP_LAST_HISTORY_QOS)
             {
-                if (vit->second.cache_changes.size() < (size_t)m_historyQos.depth)
+                if (vit->second.cache_changes.size() < static_cast<size_t>(history_qos_.depth))
                 {
                     add = true;
                 }
@@ -215,10 +218,14 @@ bool SubscriberHistory::received_change(
                         if ((*it)->writerGUID == a_change->writerGUID)
                         {
                             if ((*it)->sequenceNumber < a_change->sequenceNumber)
+                            {
                                 older_sample = it;
+                            }
                             // Already received
                             else if ((*it)->sequenceNumber == a_change->sequenceNumber)
+                            {
                                 return false;
+                            }
                         }
                     }
 
@@ -250,8 +257,10 @@ bool SubscriberHistory::received_change(
                 if (this->add_change(a_change))
                 {
                     increaseUnreadCount();
-                    if ((int32_t)m_changes.size() == m_resourceLimitsQos.max_samples)
+                    if (static_cast<int32_t>(m_changes.size()) == resource_limited_qos_.max_samples)
+                    {
                         m_isHistoryFull = true;
+                    }
                     //ADD TO KEY VECTOR
                     if (vit->second.cache_changes.size() == 0)
                     {
@@ -489,7 +498,7 @@ bool SubscriberHistory::find_key(
         return true;
     }
 
-    if ((int)keyed_changes_.size() < m_resourceLimitsQos.max_instances)
+    if (static_cast<int>(keyed_changes_.size()) < resource_limited_qos_.max_instances)
     {
         *vit_out = keyed_changes_.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
         return true;
@@ -605,9 +614,11 @@ bool SubscriberHistory::get_next_deadline(
         auto min = std::min_element(keyed_changes_.begin(),
                                     keyed_changes_.end(),
                                     [](
-                                    const std::pair<InstanceHandle_t, KeyedChanges> &lhs,
-                                    const std::pair<InstanceHandle_t, KeyedChanges> &rhs)
-        { return lhs.second.next_deadline_us < rhs.second.next_deadline_us; });
+                                        const std::pair<InstanceHandle_t, KeyedChanges> &lhs,
+                                        const std::pair<InstanceHandle_t, KeyedChanges> &rhs)
+                                        {
+                                            return lhs.second.next_deadline_us < rhs.second.next_deadline_us;
+                                        });
         handle = min->first;
         next_deadline_us = min->second.next_deadline_us;
         return true;
