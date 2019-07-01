@@ -31,7 +31,7 @@
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/topic/attributes/TopicAttributes.h>
 #include <fastrtps/rtps/timedevent/TimedCallback.h>
-#include <fastrtps/qos/DeadlineMissedStatus.h>
+#include <fastrtps/qos/LivelinessChangedStatus.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -231,6 +231,10 @@ private:
         void on_new_cache_change_added(
                 fastrtps::rtps::RTPSReader* reader,
                 const fastrtps::rtps::CacheChange_t* const change) override;
+
+        void on_liveliness_changed(
+                fastrtps::rtps::RTPSReader* reader,
+                const fastrtps::LivelinessChangedStatus& status) override;
 
         DataReader* data_reader_;
     } reader_listener_;

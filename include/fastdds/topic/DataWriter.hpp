@@ -34,6 +34,7 @@
 #include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/IncompatibleQosStatus.hpp>
+#include <fastrtps/qos/LivelinessLostStatus.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -217,12 +218,7 @@ public:
             void* data);
 
     bool get_liveliness_lost_status(
-            fastrtps::LivelinessLostStatus& status)
-    {
-        // Not implemented
-        (void)status;
-        return false;
-    }
+            fastrtps::LivelinessLostStatus& status);
 
     bool get_offered_incompatible_qos_status(
             fastrtps::OfferedIncompatibleQosStatus& status)
@@ -276,6 +272,10 @@ private:
             void on_writer_change_received_by_all(
                     fastrtps::rtps::RTPSWriter* writer,
                     fastrtps::rtps::CacheChange_t* change) override;
+
+            void on_liveliness_lost(
+                    fastrtps::rtps::RTPSWriter* writer,
+                    const fastrtps::LivelinessLostStatus& status) override;
 
             DataWriter* data_writer_;
     } writer_listener_;

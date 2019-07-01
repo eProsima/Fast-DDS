@@ -35,6 +35,7 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
 #include <functional>
 
@@ -59,7 +60,7 @@ DataWriter::DataWriter(
     , topic_att_(topic_att)
     , w_att_(att)
     , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
-    , history_(type_, type_->m_typeSize
+    , history_(topic_att_, type_->m_typeSize
 #if HAVE_SECURITY
         // In future v2 changepool is in writer, and writer set this value to cachechagepool.
         + 20 /*SecureDataHeader*/ + 4 + ((2* 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
@@ -534,6 +535,16 @@ void DataWriter::InnerDataWriterListener::on_writer_change_received_by_all(
     }
 }
 
+void DataWriter::InnerDataWriterListener::on_liveliness_lost(
+        fastrtps::rtps::RTPSWriter* /*writer*/,
+        const fastrtps::LivelinessLostStatus& status)
+{
+    if (data_writer_->listener_ != nullptr)
+    {
+        data_writer_->listener_->on_liveliness_lost(data_writer_, status);
+    }
+}
+
 bool DataWriter::wait_for_acknowledgments(
         const Duration_t &max_wait)
 {
@@ -631,9 +642,40 @@ void DataWriter::lifespan_expired()
     lifespan_timer_.restart_timer();
 }
 
+bool DataWriter::get_liveliness_lost_status(
+        fastrtps::LivelinessLostStatus& status)
+{
+    std::unique_lock<std::recursive_timed_mutex> lock(writer_->getMutex());
+
+    status = writer_->liveliness_lost_status_;
+
+    writer_->liveliness_lost_status_.total_count_change = 0u;
+
+    return true;
+}
+
 bool DataWriter::assert_liveliness()
 {
-    writer_->setLivelinessAsserted(true);
+    if (!publisher_->rtps_participant()->wlp()->assert_liveliness(
+            writer_->getGuid(),
+            writer_->get_liveliness_kind(),
+            writer_->get_liveliness_lease_duration()))
+    {
+        logError(DATAWRITER, "Could not assert liveliness of writer " << writer_->getGuid());
+    }
+
+    if (qos_.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+    {
+        // As described in the RTPS specification, if liveliness kind is manual a heartbeat must be sent
+        // This only applies to stateful writers, as stateless writers do not send heartbeats
+
+        StatefulWriter* stateful_writer = dynamic_cast<StatefulWriter*>(writer_);
+
+        if (stateful_writer != nullptr)
+        {
+            stateful_writer->send_periodic_heartbeat(true, true);
+        }
+    }
     return true;
 }
 
