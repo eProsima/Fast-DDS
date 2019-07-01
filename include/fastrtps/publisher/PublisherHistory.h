@@ -39,104 +39,102 @@ class TopicAttributes;
  */
 class PublisherHistory : public rtps::WriterHistory
 {
-    public:
-        /**
-         * Constructor of the PublisherHistory.
-         * @param pimpl Pointer to the PublisherImpl.
-         * @param payloadMax Maximum payload size.
-         * @param history QOS of the associated History.
-         * @param resource ResourceLimits for the History.
-         * @param mempolicy Set wether the payloads ccan dynamically resized or not.
-         */
-        PublisherHistory(
+public:
+    /**
+     * Constructor of the PublisherHistory.
+     * @param pimpl Pointer to the PublisherImpl.
+     * @param payloadMax Maximum payload size.
+     * @param history QOS of the associated History.
+     * @param resource ResourceLimits for the History.
+     * @param mempolicy Set wether the payloads ccan dynamically resized or not.
+     */
+    PublisherHistory(
             const TopicAttributes& topic_att,
             uint32_t payloadMax,
-            const HistoryQosPolicy& history,
-            const ResourceLimitsQosPolicy& resource,
             rtps::MemoryManagementPolicy_t mempolicy);
 
-        virtual ~PublisherHistory();
+    virtual ~PublisherHistory();
 
-        /**
-         * Add a change comming from the Publisher.
-         * @param change Pointer to the change
-         * @param wparams Extra write parameters.
-         * @param lock
-         * @param max_blocking_time
-         * @return True if added.
-         */
-        bool add_pub_change(
-                rtps::CacheChange_t* change,
-                rtps::WriteParams &wparams,
-                std::unique_lock<std::recursive_timed_mutex>& lock,
-                std::chrono::time_point<std::chrono::steady_clock> max_blocking_time);
+    /**
+     * Add a change comming from the Publisher.
+     * @param change Pointer to the change
+     * @param wparams Extra write parameters.
+     * @param lock
+     * @param max_blocking_time
+     * @return True if added.
+     */
+    bool add_pub_change(
+            rtps::CacheChange_t* change,
+            rtps::WriteParams& wparams,
+            std::unique_lock<std::recursive_timed_mutex>& lock,
+            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time);
 
-        /**
-         * Remove all change from the associated history.
-         * @param removed Number of elements removed.
-         * @return True if all elements were removed.
-         */
-        bool removeAllChange(size_t* removed);
+    /**
+     * Remove all change from the associated history.
+     * @param removed Number of elements removed.
+     * @return True if all elements were removed.
+     */
+    bool removeAllChange(size_t* removed);
 
-        /**
-         * Remove the change with the minimum sequence Number.
-         * @return True if removed.
-         */
-        bool removeMinChange();
+    /**
+     * Remove the change with the minimum sequence Number.
+     * @return True if removed.
+     */
+    bool removeMinChange();
 
-        /**
-         * Remove a change by the publisher History.
-         * @param change Pointer to the CacheChange_t.
-         * @return True if removed.
-         */
-        bool remove_change_pub(rtps::CacheChange_t* change);
+    /**
+     * Remove a change by the publisher History.
+     * @param change Pointer to the CacheChange_t.
+     * @return True if removed.
+     */
+    bool remove_change_pub(rtps::CacheChange_t* change);
 
-        virtual bool remove_change_g(rtps::CacheChange_t* a_change);
+    virtual bool remove_change_g(rtps::CacheChange_t* a_change);
 
-        /**
-         * @brief Sets the next deadline for the given instance
-         * @param handle The instance handle
-         * @param next_deadline_us The time point when the deadline will occur
-         * @return True if deadline was set successfully
-         */
-        bool set_next_deadline(
-                const rtps::InstanceHandle_t& handle,
-                const std::chrono::steady_clock::time_point& next_deadline_us);
+    /**
+     * @brief Sets the next deadline for the given instance
+     * @param handle The instance handle
+     * @param next_deadline_us The time point when the deadline will occur
+     * @return True if deadline was set successfully
+     */
+    bool set_next_deadline(
+            const rtps::InstanceHandle_t& handle,
+            const std::chrono::steady_clock::time_point& next_deadline_us);
 
-        /**
-         * @brief Returns the deadline for the instance that is next going to 'expire'
-         * @param handle The handle for the instance that will next miss the deadline
-         * @param next_deadline_us The time point when the deadline will occur
-         * @return True if deadline could be retrieved for the given instance
-         */
-        bool get_next_deadline(
-                rtps::InstanceHandle_t& handle,
-                std::chrono::steady_clock::time_point& next_deadline_us);
+    /**
+     * @brief Returns the deadline for the instance that is next going to 'expire'
+     * @param handle The handle for the instance that will next miss the deadline
+     * @param next_deadline_us The time point when the deadline will occur
+     * @return True if deadline could be retrieved for the given instance
+     */
+    bool get_next_deadline(
+            rtps::InstanceHandle_t& handle,
+            std::chrono::steady_clock::time_point& next_deadline_us);
 
 private:
 
-        typedef std::map<rtps::InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;
+    typedef std::map<rtps::InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;
 
-        //!Map where keys are instance handles and values are vectors of cache changes associated
-        t_m_Inst_Caches keyed_changes_;
-        //!Time point when the next deadline will occur (only used for topics with no key)
-        std::chrono::steady_clock::time_point next_deadline_us_;
-        //!HistoryQosPolicy values.
-        HistoryQosPolicy m_historyQos;
-        //!ResourceLimitsQosPolicy values.
-        ResourceLimitsQosPolicy m_resourceLimitsQos;
-        //!Topic Attributes
-        const TopicAttributes& topic_att_;
+    //!Map where keys are instance handles and values are vectors of cache changes associated
+    t_m_Inst_Caches keyed_changes_;
+    //!Time point when the next deadline will occur (only used for topics with no key)
+    std::chrono::steady_clock::time_point next_deadline_us_;
+    //!HistoryQosPolicy values.
+    HistoryQosPolicy history_qos_;
+    //!ResourceLimitsQosPolicy values.
+    ResourceLimitsQosPolicy resource_limited_qos_;
+    //!Topic Attributes
+    const TopicAttributes& topic_att_;
 
-        /**
-         * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
-         * @param a_change The change to get the key from
-         * @param map_it A map iterator to the given key
-         * @return True if the key was found or could be added to the map
-         */
-        bool find_key(
-                rtps::CacheChange_t* a_change,
-                t_m_Inst_Caches::iterator* map_it);
+    /**
+     * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
+     * @param a_change The change to get the key from
+     * @param map_it A map iterator to the given key
+     * @return True if the key was found or could be added to the map
+     */
+    bool find_key(
+            rtps::CacheChange_t* a_change,
+            t_m_Inst_Caches::iterator* map_it);
 };
 
 } /* namespace fastrtps */

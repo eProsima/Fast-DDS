@@ -102,7 +102,7 @@ class SubscriberHistory: public rtps::ReaderHistory
         inline uint64_t getUnreadCount() const
         {
             std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
-            return m_unreadCacheCount;
+            return unread_cache_count_;
         }
 
         /**
@@ -130,15 +130,15 @@ class SubscriberHistory: public rtps::ReaderHistory
         typedef std::map<rtps::InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;
 
         //!Number of unread CacheChange_t.
-        uint64_t m_unreadCacheCount;
+        uint64_t unread_cache_count_;
         //!Map where keys are instance handles and values vectors of cache changes
         t_m_Inst_Caches keyed_changes_;
         //!Time point when the next deadline will occur (only used for topics with no key)
         std::chrono::steady_clock::time_point next_deadline_us_;
         //!HistoryQosPolicy values.
-        HistoryQosPolicy m_historyQos;
+        HistoryQosPolicy history_qos_;
         //!ResourceLimitsQosPolicy values.
-        ResourceLimitsQosPolicy m_resourceLimitsQos;
+        ResourceLimitsQosPolicy resource_limited_qos_;
         //!Topic Attributes
         const TopicAttributes& topic_att_;
         //!TopicDataType
@@ -147,7 +147,7 @@ class SubscriberHistory: public rtps::ReaderHistory
         const fastrtps::ReaderQos& qos_;
 
         //!Type object to deserialize Key
-        void * mp_getKeyObject;
+        void* get_key_object_;
 
         /**
          * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
@@ -162,14 +162,16 @@ class SubscriberHistory: public rtps::ReaderHistory
         //!Increase the unread count.
         inline void increaseUnreadCount()
         {
-            ++m_unreadCacheCount;
+            ++unread_cache_count_;
         }
 
         //!Decrease the unread count.
         inline void decreaseUnreadCount()
         {
-            if (m_unreadCacheCount > 0)
-                --m_unreadCacheCount;
+            if (unread_cache_count_ > 0)
+            {
+                --unread_cache_count_;
+            }
         }
 };
 

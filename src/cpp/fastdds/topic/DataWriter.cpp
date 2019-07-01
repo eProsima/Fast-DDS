@@ -66,7 +66,7 @@ DataWriter::DataWriter(
         + 20 /*SecureDataHeader*/ + 4 + ((2* 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
         + 16 + 4 /*SecureDataTag*/
 #endif
-               , topic_att_.historyQos, topic_att_.resourceLimitsQos, memory_policy)
+               , memory_policy)
     //, history_(std::move(history))
     , listener_(listen)
 #pragma warning (disable : 4355 )
