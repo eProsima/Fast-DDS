@@ -37,26 +37,27 @@ inline bool sort_ReaderHistoryCache(CacheChange_t*c1,CacheChange_t*c2)
 }
 
 SubscriberHistory::SubscriberHistory(
+        const TopicAttributes& topic_att,
         TopicDataType* type,
         const ReaderQos& qos,
         uint32_t payloadMaxSize,
-        const HistoryQosPolicy& history,
-        const ResourceLimitsQosPolicy& resource,
         MemoryManagementPolicy_t mempolicy)
     : ReaderHistory(HistoryAttributes(mempolicy, payloadMaxSize,
-                history.kind == KEEP_ALL_HISTORY_QOS ?
-                        resource.allocated_samples :
-                        type->m_isGetKeyDefined ?
-                            std::min(resource.allocated_samples, history.depth) :
-                            std::min(resource.allocated_samples, history.depth * resource.max_instances),
-                history.kind == KEEP_ALL_HISTORY_QOS ?
-                        resource.max_samples :
-                        type->m_isGetKeyDefined ?
-                            history.depth :
-                            history.depth * resource.max_instances))
+                topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
+                        topic_att.resourceLimitsQos.allocated_samples :
+                        topic_att.getTopicKind() == NO_KEY ?
+                            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth) :
+                            std::min(topic_att.resourceLimitsQos.allocated_samples, topic_att.historyQos.depth
+                                     * topic_att.resourceLimitsQos.max_instances),
+                topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
+                        topic_att.resourceLimitsQos.max_samples :
+                        topic_att.getTopicKind() == NO_KEY ?
+                            topic_att.historyQos.depth :
+                            topic_att.historyQos.depth * topic_att.resourceLimitsQos.max_instances))
     , m_unreadCacheCount(0)
-    , m_historyQos(history)
-    , m_resourceLimitsQos(resource)
+    , m_historyQos(topic_att.historyQos)
+    , m_resourceLimitsQos(topic_att.resourceLimitsQos)
+    , topic_att_(topic_att)
     , type_(type)
     , qos_(qos)
     , mp_getKeyObject(nullptr)
@@ -89,7 +90,7 @@ bool SubscriberHistory::received_change(
     std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
 
     //NO KEY HISTORY
-    if (!type_->m_isGetKeyDefined)
+    if (topic_att_.getTopicKind() == NO_KEY)
     {
         bool add = false;
         if (m_historyQos.kind == KEEP_ALL_HISTORY_QOS)
@@ -144,7 +145,7 @@ bool SubscriberHistory::received_change(
             if (m_isHistoryFull)
             {
                 // Discarting the sample.
-                logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << type_->getName());
+                logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
                 return false;
             }
 
@@ -153,7 +154,7 @@ bool SubscriberHistory::received_change(
                 increaseUnreadCount();
                 if ((int32_t)m_changes.size() == m_resourceLimitsQos.max_samples)
                     m_isHistoryFull = true;
-                logInfo(SUBSCRIBER, type_->getName()
+                logInfo(SUBSCRIBER, topic_att_.getTopicDataType()
                     << ": Change " << a_change->sequenceNumber << " added from: "
                     << a_change->writerGUID;);
 
@@ -162,9 +163,9 @@ bool SubscriberHistory::received_change(
         }
     }
     //HISTORY WITH KEY
-    else if (type_->m_isGetKeyDefined)
+    else if (topic_att_.getTopicKind() == WITH_KEY)
     {
-        if (!a_change->instanceHandle.isDefined())
+        if (!a_change->instanceHandle.isDefined() && type_ != nullptr)
         {
             logInfo(RTPS_HISTORY, "Getting Key of change with no Key transmitted")
                 type_->deserialize(&a_change->serializedPayload, mp_getKeyObject);
@@ -178,7 +179,7 @@ bool SubscriberHistory::received_change(
         }
         else if (!a_change->instanceHandle.isDefined())
         {
-            logWarning(RTPS_HISTORY, "NO KEY in type: " << type_->getName()
+            logWarning(RTPS_HISTORY, "NO KEY in topic: " << this->topic_att_.topicName
                 << " and no method to obtain it";);
             return false;
         }
@@ -242,7 +243,7 @@ bool SubscriberHistory::received_change(
                 if (m_isHistoryFull)
                 {
                     // Discarting the sample.
-                    logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << type_->getName());
+                    logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
                     return false;
                 }
 
@@ -312,11 +313,10 @@ bool SubscriberHistory::readNextBuffer(SerializedPayload_t* data, SampleInfo_t* 
             {
                 info->ownershipStrength = wp->m_att.ownershipStrength;
             }
-
-            if (type_->m_isGetKeyDefined &&
+            if (this->topic_att_.topicKind == WITH_KEY &&
                 change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
             {
-                type_->getKey(data, &change->instanceHandle);
+                this->type_->getKey(data, &change->instanceHandle);
             }
             info->iHandle = change->instanceHandle;
             info->related_sample_identity = change->write_params.sample_identity();
@@ -348,7 +348,7 @@ bool SubscriberHistory::takeNextBuffer(SerializedPayload_t* data, SampleInfo_t* 
             " from writer: " << change->writerGUID);
         if (change->kind == ALIVE)
         {
-            type_->deserialize(&change->serializedPayload, data);
+            this->type_->deserialize(&change->serializedPayload, data);
         }
         if (info != nullptr)
         {
@@ -360,7 +360,7 @@ bool SubscriberHistory::takeNextBuffer(SerializedPayload_t* data, SampleInfo_t* 
             {
                 info->ownershipStrength = wp->m_att.ownershipStrength;
             }
-            if (type_->m_isGetKeyDefined &&
+            if (this->topic_att_.topicKind == WITH_KEY &&
                 change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
             {
                 data->reserve(change->serializedPayload.length);
@@ -394,7 +394,7 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
         logInfo(SUBSCRIBER, this->mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
         if (change->kind == ALIVE)
         {
-            type_->deserialize(&change->serializedPayload, data);
+            this->type_->deserialize(&change->serializedPayload, data);
         }
         if (info != nullptr)
         {
@@ -406,14 +406,14 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
             {
                 info->ownershipStrength = wp->m_att.ownershipStrength;
             }
-            if (type_->m_isGetKeyDefined &&
+            if (this->topic_att_.topicKind == WITH_KEY &&
                 change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
             {
                 bool is_key_protected = false;
 #if HAVE_SECURITY
                 is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
 #endif
-                type_->getKey(data, &change->instanceHandle, is_key_protected);
+                this->type_->getKey(data, &change->instanceHandle, is_key_protected);
             }
             info->iHandle = change->instanceHandle;
             info->related_sample_identity = change->write_params.sample_identity();
@@ -446,7 +446,7 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
             " from writer: " << change->writerGUID);
         if (change->kind == ALIVE)
         {
-            type_->deserialize(&change->serializedPayload, data);
+            this->type_->deserialize(&change->serializedPayload, data);
         }
         if (info != nullptr)
         {
@@ -458,14 +458,14 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
             {
                 info->ownershipStrength = wp->m_att.ownershipStrength;
             }
-            if (type_->m_isGetKeyDefined &&
+            if (this->topic_att_.topicKind == WITH_KEY &&
                 change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
             {
                 bool is_key_protected = false;
 #if HAVE_SECURITY
                 is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
 #endif
-                type_->getKey(data, &change->instanceHandle, is_key_protected);
+                this->type_->getKey(data, &change->instanceHandle, is_key_protected);
             }
             info->iHandle = change->instanceHandle;
             info->related_sample_identity = change->write_params.sample_identity();
@@ -520,7 +520,7 @@ bool SubscriberHistory::remove_change_sub(CacheChange_t* change)
     }
 
     std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
-    if (!type_->m_isGetKeyDefined)
+    if (topic_att_.getTopicKind() == NO_KEY)
     {
         if (this->remove_change(change))
         {
@@ -565,12 +565,12 @@ bool SubscriberHistory::set_next_deadline(
     }
     std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
 
-    if (!type_->m_isGetKeyDefined)
+    if (topic_att_.getTopicKind() == NO_KEY)
     {
         next_deadline_us_ = next_deadline_us;
         return true;
     }
-    else if (type_->m_isGetKeyDefined)
+    else if (topic_att_.getTopicKind() == WITH_KEY)
     {
         if (keyed_changes_.find(handle) == keyed_changes_.end())
         {
@@ -595,12 +595,12 @@ bool SubscriberHistory::get_next_deadline(
     }
     std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
 
-    if (!type_->m_isGetKeyDefined)
+    if (topic_att_.getTopicKind() == NO_KEY)
     {
         next_deadline_us = next_deadline_us_;
         return true;
     }
-    else if (type_->m_isGetKeyDefined)
+    else if (topic_att_.getTopicKind() == WITH_KEY)
     {
         auto min = std::min_element(keyed_changes_.begin(),
                                     keyed_changes_.end(),
