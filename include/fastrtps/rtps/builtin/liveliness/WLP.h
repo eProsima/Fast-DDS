@@ -127,6 +127,12 @@ public:
             Duration_t lease_duration);
 
     /**
+     * @brief A method to assert liveliness of MANUAL_BY_PARTICIPANT writers
+     * @return True if there were any MANUAL_BY_PARTICIPANT writers
+     */
+    bool assert_liveliness_manual_by_participant();
+
+    /**
      * Get the builtin protocols
      * @return Builtin protocols
      */
@@ -205,49 +211,47 @@ private:
     LivelinessManager* sub_liveliness_manager_;
 
     /**
-     * @brief A method invoked by pub_liveliness_manager_ to inform that a writer lost liveliness
+     * @brief A method invoked by pub_liveliness_manager_ to inform that a writer changed its liveliness
      * @param writer The writer losing liveliness
      * @param kind The liveliness kind
      * @param lease_duration The liveliness lease duration
+     * @param alive_change The change in the alive count
+     * @param not_alive_change The change in the not alive count
      */
-    void pub_liveliness_lost(
+    void pub_liveliness_changed(
             const GUID_t& writer,
             const LivelinessQosPolicyKind& kind,
-            const Duration_t& lease_duration);
+            const Duration_t& lease_duration,
+            int32_t alive_change,
+            int32_t not_alive_change);
 
     /**
-     * @brief A method invoked by sub_liveliness_manager_ to inform that a writer lost liveliness
+     * @brief A method invoked by sub_liveliness_manager_ to inform that a writer changed its liveliness
      * @param writer The writer losing liveliness
      * @param kind The liveliness kind of the writer losing liveliness
      * @param lease_duration The liveliness lease duration of the writer losing liveliness
+     * @param alive_change The change in the alive count
+     * @param not_alive_change The change in the not alive count
      */
-    void sub_liveliness_lost(
+    void sub_liveliness_changed(
             const GUID_t& writer,
             const LivelinessQosPolicyKind& kind,
-            const Duration_t& lease_duration);
-
-    /**
-     * @brief A method invoked by sub_liveliness_manager_ to inform that a writer recovered liveliness
-     * @param writer The writer recovering liveliness
-     * @param kind The liveliness kind of the writer recovering liveliness
-     * @param lease_duration The liveliness lease duration of the writer recovering liveliness
-     */
-    void sub_liveliness_recovered(
-            const GUID_t& writer,
-            const LivelinessQosPolicyKind& kind,
-            const Duration_t& lease_duration);
-
+            const Duration_t& lease_duration,
+            int32_t alive_change,
+            int32_t not_alive_change);
 
     /**
      * @brief A method to update the liveliness changed status of a given reader
      * @param writer The writer changing liveliness, specified by its guid
      * @param reader The reader whose liveliness needs to be updated
-     * @param lost True to indicate that liveliness of the writer was lost. False to indicate it was recovered
+     * @param alive_change The change requested for alive count. Should be -1, 0 or +1
+     * @param not_alive_change The change requested for not alive count. Should be -1, 0 or +1
      */
     void update_liveliness_changed_status(
             GUID_t writer,
             RTPSReader* reader,
-            bool lost);
+            int32_t alive_change,
+            int32_t not_alive_change);
 
 #if HAVE_SECURITY
     //!Pointer to the builtinRTPSParticipantMEssageWriter.

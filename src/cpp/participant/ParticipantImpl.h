@@ -160,6 +160,11 @@ class ParticipantImpl
 
     rtps::ResourceEvent& get_resource_event() const;
 
+    /**
+     * @brief Asserts liveliness of manual by participant readers
+     */
+    void assert_liveliness();
+
     private:
     //!Participant Attributes
     ParticipantAttributes m_att;
