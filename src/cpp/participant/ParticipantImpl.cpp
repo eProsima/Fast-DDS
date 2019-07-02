@@ -138,7 +138,7 @@ Publisher* ParticipantImpl::createPublisher(
         return nullptr;
     }
 
-    if(m_att.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol)
+    if(m_att.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
         if(att.getUserDefinedID() <= 0)
         {
@@ -265,7 +265,7 @@ Subscriber* ParticipantImpl::createSubscriber(
         logError(PARTICIPANT,"Keyed Topic needs getKey function");
         return nullptr;
     }
-    if(m_att.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol)
+    if(m_att.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
         if(att.getUserDefinedID() <= 0)
         {

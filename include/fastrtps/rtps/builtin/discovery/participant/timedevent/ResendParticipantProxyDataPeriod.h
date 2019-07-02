@@ -28,7 +28,7 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-class PDPSimple;
+class PDP;
 
 /**
  * Class ResendParticipantProxyDataPeriod, TimedEvent used to periodically send the RTPSParticipantDiscovery Data.
@@ -42,7 +42,7 @@ public:
 	 * @param p_SPDP Pointer to the PDPSimple.
 	 * @param interval Interval in ms.
 	 */
-	ResendParticipantProxyDataPeriod(PDPSimple* p_SPDP,
+	ResendParticipantProxyDataPeriod(PDP* p_SPDP,
 			double interval);
 	virtual ~ResendParticipantProxyDataPeriod();
 	
@@ -57,7 +57,7 @@ public:
 	//!Auxiliar data message.
 	CDRMessage_t m_data_msg;
 	//!Pointer to the PDPSimple object.
-	PDPSimple* mp_PDP;
+	PDP* mp_PDP;
 };
 }
 } /* namespace rtps */

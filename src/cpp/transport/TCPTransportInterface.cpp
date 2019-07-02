@@ -129,26 +129,32 @@ void TCPTransportInterface::clean()
     }
 
     {
-        std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);
-        std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
+        std::vector<std::shared_ptr<TCPChannelResource>> channels;
 
-        for (auto& unbound_channel_resource : unbound_channel_resources_)
         {
-            unbound_channel_resource->disable();
-        }
+            std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+            std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
 
-        for (auto& channel_resource : channel_resources_)
-        {
-            if (channel_resource.second->connection_established())
+            channels = unbound_channel_resources_;
+
+            for (auto& channel : channel_resources_)
             {
-                rtcp_message_manager_->sendUnbindConnectionRequest(channel_resource.second);
+                channels.push_back(channel.second);
+            }
+        }
+        
+        for (auto& channel : channels)
+        {
+            if (channel->connection_established())
+            {
+                rtcp_message_manager_->sendUnbindConnectionRequest(channel);
             }
 
-            channel_resource.second->disable();
+            channel->disconnect();
+            channel->clear();
         }
-        scopedLock.unlock();
 
+        std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);
         rtcp_message_manager_cv_.wait(lock, [&]()
         {
             return 1 >= rtcp_message_manager_.use_count();
@@ -161,29 +167,12 @@ void TCPTransportInterface::clean()
         }
     }
 
-    {
-        std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
-        for (auto& unbound_channel_resource : unbound_channel_resources_)
-        {
-            unbound_channel_resource->thread(std::thread());
-        }
-
-        for (auto& channel_resource : channel_resources_)
-        {
-            channel_resource.second->thread(std::thread());
-        }
-    }
-
     if (io_service_thread_)
     {
         io_service_.stop();
         io_service_thread_->join();
         io_service_thread_ = nullptr;
     }
-
-    channel_resources_.clear();
-    unbound_channel_resources_.clear();
 }
 
 void TCPTransportInterface::bind_socket(
@@ -196,6 +185,7 @@ void TCPTransportInterface::bind_socket(
     assert(it_remove != unbound_channel_resources_.end());
     unbound_channel_resources_.erase(it_remove);
     channel_resources_[channel->locator()] = channel;
+
 }
 
 bool TCPTransportInterface::check_crc(
@@ -502,7 +492,7 @@ void TCPTransportInterface::close_tcp_socket(
         std::shared_ptr<TCPChannelResource>& channel)
 {
     channel->disable();
-    channel.reset();
+    // channel.reset(); lead to race conditions because TransportInterface functions used in the callbacks doesn't check validity.
 }
 
 

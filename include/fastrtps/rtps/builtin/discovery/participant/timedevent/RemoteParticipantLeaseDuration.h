@@ -27,7 +27,7 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-class PDPSimple;
+class PDP;
 class ParticipantProxyData;
 
 /**
@@ -36,7 +36,7 @@ class ParticipantProxyData;
  * announce its liveliness each leaseDuration period.
  *@ingroup DISCOVERY_MODULE
  */
-class RemoteParticipantLeaseDuration:public TimedEvent
+class RemoteParticipantLeaseDuration : public TimedEvent
 {
 public:
 	/**
@@ -45,7 +45,7 @@ public:
 	 * @param pdata Pointer to the ParticipantProxyData associated with this TimedEvent.
 	 * @param interval Interval in ms.
 	 */
-	RemoteParticipantLeaseDuration(PDPSimple* p_SPDP,
+	RemoteParticipantLeaseDuration(PDP* p_PDP,
 			ParticipantProxyData* pdata,
 			double interval);
 	virtual ~RemoteParticipantLeaseDuration();
@@ -57,7 +57,7 @@ public:
 	*/
 	void event(EventCode code, const char* msg= nullptr);
 	//!Pointer to the PDPSimple object.
-	PDPSimple* mp_PDP;
+	PDP* mp_PDP;
 	//!Pointer to the RTPSParticipantProxyData object that contains this temporal event.
 	ParticipantProxyData* mp_participantProxyData;
 

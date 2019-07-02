@@ -78,7 +78,7 @@ public:
 	* @param p Pointer to the PDPSimple.
 	* @param part Pointer to the RTPSParticipantImpl.
 	*/
-	EDPStatic(PDPSimple* p,RTPSParticipantImpl* part);
+	EDPStatic(PDP* p,RTPSParticipantImpl* part);
 	virtual ~EDPStatic();
 	/**
 	 * Abstract method to initialize the EDP.

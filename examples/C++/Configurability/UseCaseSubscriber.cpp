@@ -226,7 +226,7 @@ int main(){
     ParticipantAttributes PparamSub;
 
     PparamSub.rtps.builtin.domainId = 0;
-    PparamSub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamSub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamSub.rtps.setName("SubscriberParticipant");
 
     Participant *SubParticipant = Domain::createParticipant(PparamSub);

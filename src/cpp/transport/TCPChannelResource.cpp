@@ -63,13 +63,11 @@ TCPChannelResource::TCPChannelResource(
 {
 }
 
-TCPChannelResource::~TCPChannelResource()
-{
-    alive_ = false;
-}
 
 void TCPChannelResource::disable()
 {
+    ChannelResource::disable(); // prevent asio callback workings on this channel.
+
     disconnect();
 }
 

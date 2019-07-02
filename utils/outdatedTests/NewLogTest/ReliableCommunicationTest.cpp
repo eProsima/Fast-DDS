@@ -199,7 +199,7 @@ int main(int argc, char** argv)
 //	RTPSParticipantAttributes PParam;
 //	PParam.defaultSendPort = 10042;
 //	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-//	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+//	PParam.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
 //	PParam.builtin.domainId = 80;
 //
 //
@@ -209,8 +209,8 @@ int main(int argc, char** argv)
 //	{
 //		PParam.name = "RTPSParticipant1";
 //		//In this side we only have a Publisher so we don't need all discovery endpoints
-//		PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-//		PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = false;
+//		PParam.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+//		PParam.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = false;
 //		RTPSParticipant* p = DomainRTPSParticipant::createRTPSParticipant(PParam);
 //		PublisherAttributes Wparam;
 //		Wparam.topic.topicKind = WITH_KEY;
@@ -265,8 +265,8 @@ int main(int argc, char** argv)
 //	{
 //		PParam.name = "RTPSParticipant2";
 //		//In this side we only have a subscriber so we dont need all discovery endpoints
-//		PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = false;
-//		PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+//		PParam.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = false;
+//		PParam.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
 //		RTPSParticipant* p = DomainRTPSParticipant::createRTPSParticipant(PParam);
 //		SubscriberAttributes Rparam;
 //		Rparam.topic.topicDataType = "TestType";

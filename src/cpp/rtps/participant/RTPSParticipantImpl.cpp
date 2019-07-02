@@ -39,6 +39,7 @@
 
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/transport/TCPv4TransportDescriptor.h>
 
 #include <fastrtps/rtps/RTPSDomain.h>
 
@@ -51,6 +52,7 @@
 #include <fastrtps/utils/eClock.h>
 
 #include <fastrtps/utils/Semaphore.h>
+#include <fastrtps/utils/System.h>
 
 #include <mutex>
 #include <algorithm>
@@ -103,6 +105,26 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         m_network_Factory.RegisterTransport(&descriptor);
     }
 
+    // Workaround TCP discovery issues when register
+    switch (PParam.builtin.discovery_config.discoveryProtocol)
+    {
+    case DiscoveryProtocol::CLIENT:
+    case DiscoveryProtocol::SERVER:
+    case DiscoveryProtocol::BACKUP:
+        // Verify if listening ports are provided
+        for (auto& transportDescriptor : PParam.userTransports)
+        {
+            TCPTransportDescriptor * pT = dynamic_cast<TCPTransportDescriptor *>(transportDescriptor.get());
+            if (pT && pT->listening_ports.empty())
+            {
+                logError(RTPS_PARTICIPANT, "Participant " << m_att.getName() << " with GUID " << m_guid 
+                    << " tries to use discovery server over TCP without providing a proper listening port");
+            }
+        }
+    default:
+        break;
+    }
+
     // User defined transports
     for (const auto& transportDescriptor : PParam.userTransports)
     {
@@ -120,13 +142,13 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         m_controllers.push_back(std::move(controller));
     }
 
-    /// Creation of metatraffic locator and receiver resources
-    uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(m_att.builtin.domainId);
-    uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(m_att.builtin.domainId,
-                                                                  static_cast<uint32_t>(m_att.participantID));
-
     /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
        Else -> Take them */
+
+    // Creation of metatraffic locator and receiver resources
+    uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(m_att.builtin.domainId);
+    uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(m_att.builtin.domainId,
+        static_cast<uint32_t>(m_att.participantID));
 
     /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
     if(m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
@@ -720,9 +742,9 @@ bool RTPSParticipantImpl::assignEndpoint2LocatorList(Endpoint* endp, LocatorList
 {
     /* Note:
        The previous version of this function associated (or created) ListenResources and added the endpoint to them.
-       It then requested the list of Locators the Listener is listening to and appended to the LocatorList_t from the paremeters.
+       It then requested the list of Locators the Listener is listening to and appended to the LocatorList_t from the parameters.
 
-       This has been removed becuase it is considered redundant. For ReceiveResources that listen on multiple interfaces, only
+       This has been removed because it is considered redundant. For ReceiveResources that listen on multiple interfaces, only
        one of the supported Locators is needed to make the match, and the case of new ListenResources being created has been removed
        since its the NetworkFactory the one that takes care of Resource creation.
        */
@@ -1011,12 +1033,19 @@ void RTPSParticipantImpl::loose_next_change()
 
 bool RTPSParticipantImpl::newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId, EndpointKind_t kind)
 {
-    if (m_att.builtin.use_STATIC_EndpointDiscoveryProtocol == false)
+    if (m_att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::SIMPLE ||
+        m_att.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol == false)
     {
-        logWarning(RTPS_PARTICIPANT, "Remote Endpoints can only be activated with static discovery protocol");
+        logWarning(RTPS_PARTICIPANT, "Remote Endpoints can only be activated with static discovery protocol over PDP simple protocol");
         return false;
     }
-    return mp_builtinProtocols->mp_PDP->newRemoteEndpointStaticallyDiscovered(pguid, userDefinedId, kind);
+
+    if (PDPSimple * pS = dynamic_cast<PDPSimple*>(mp_builtinProtocols->mp_PDP))
+    {
+        return pS->newRemoteEndpointStaticallyDiscovered(pguid, userDefinedId, kind);
+    }
+
+    return false;
 }
 
 void RTPSParticipantImpl::ResourceSemaphorePost()
@@ -1110,7 +1139,7 @@ bool RTPSParticipantImpl::pairing_remote_writer_with_local_reader_after_security
 
 PDPSimple* RTPSParticipantImpl::pdpsimple()
 {
-    return mp_builtinProtocols->mp_PDP;
+    return dynamic_cast<PDPSimple*>(mp_builtinProtocols->mp_PDP);
 }
 
 WLP* RTPSParticipantImpl::wlp()

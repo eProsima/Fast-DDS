@@ -625,9 +625,9 @@ class PubSubWriter
 
     PubSubWriter& static_discovery(const char* filename)
     {
-        participant_attr_.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
-        participant_attr_.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
-        participant_attr_.rtps.builtin.setStaticEndpointXMLFilename(filename);
+        participant_attr_.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = false;
+        participant_attr_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol = true;
+        participant_attr_.rtps.builtin.discovery_config.setStaticEndpointXMLFilename(filename);
         return *this;
     }
 
@@ -686,8 +686,8 @@ class PubSubWriter
 
     PubSubWriter& lease_duration(eprosima::fastrtps::Duration_t lease_duration, eprosima::fastrtps::Duration_t announce_period)
     {
-        participant_attr_.rtps.builtin.leaseDuration = lease_duration;
-        participant_attr_.rtps.builtin.leaseDuration_announcementperiod = announce_period;
+        participant_attr_.rtps.builtin.discovery_config.leaseDuration = lease_duration;
+        participant_attr_.rtps.builtin.discovery_config.leaseDuration_announcementperiod = announce_period;
         return *this;
     }
 

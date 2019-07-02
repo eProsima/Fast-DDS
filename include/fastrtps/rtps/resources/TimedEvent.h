@@ -35,7 +35,7 @@ class TimedEventImpl;
  * Timed Event class used to define any timed events.
  * @ingroup MANAGEMENT_MODULE
  */
-class TimedEvent {
+class TimedEvent { 
 public:
 
 	/**

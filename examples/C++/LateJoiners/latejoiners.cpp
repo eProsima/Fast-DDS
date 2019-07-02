@@ -32,7 +32,7 @@ void latejoiners(){
 
     ParticipantAttributes PparamPub;
     PparamPub.rtps.builtin.domainId = 0;
-    PparamPub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamPub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamPub.rtps.setName("PublisherParticipant");
 
     Participant *PubParticipant = Domain::createParticipant(PparamPub);
@@ -71,7 +71,7 @@ void latejoiners(){
 
     ParticipantAttributes PparamSub;
     PparamSub.rtps.builtin.domainId = 0;
-    PparamSub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamSub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamSub.rtps.setName("SubscriberParticipant");
 
     Participant *SubParticipant = Domain::createParticipant(PparamSub);

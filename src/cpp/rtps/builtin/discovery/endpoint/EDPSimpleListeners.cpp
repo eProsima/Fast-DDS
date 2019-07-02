@@ -109,12 +109,7 @@ void EDPSimplePUBListener::onNewCacheChangeAdded(
     return;
 }
 
-bool EDPSimplePUBListener::computeKey(CacheChange_t* change)
-{
-    return ParameterList::readInstanceHandleFromCDRMsg(change, PID_ENDPOINT_GUID);
-}
-
-bool EDPSimpleSUBListener::computeKey(CacheChange_t* change)
+bool EDPListener::computeKey(CacheChange_t* change)
 {
     return ParameterList::readInstanceHandleFromCDRMsg(change, PID_ENDPOINT_GUID);
 }

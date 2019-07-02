@@ -592,7 +592,6 @@ void StatefulWriter::send_any_unsent_changes()
     logInfo(RTPS_WRITER, "Finish sending unsent changes");
 }
 
-
 /*
  * MATCHED_READER-RELATED METHODS
  */
@@ -842,6 +841,21 @@ bool StatefulWriter::is_acked_by_all(const CacheChange_t* change) const
         {
             return reader->change_is_acked(change->sequenceNumber);
         });
+}
+
+bool StatefulWriter::all_readers_updated()
+{
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+
+    for (auto it = matched_readers_.begin(); it != matched_readers_.end(); ++it)
+    {
+        if ((*it)->has_changes())
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 bool StatefulWriter::wait_for_all_acked(const Duration_t& max_wait)

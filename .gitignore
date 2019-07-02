@@ -93,6 +93,7 @@ Session.vim
 x64/
 x86/
 build/
+build64/
 bld/
 [Bb]in/
 [Oo]bj/

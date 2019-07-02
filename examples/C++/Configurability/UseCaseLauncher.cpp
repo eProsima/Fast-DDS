@@ -119,7 +119,7 @@ void latejoiners(){
 
     ParticipantAttributes PparamPub;
     PparamPub.rtps.builtin.domainId = 0;
-    PparamPub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamPub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamPub.rtps.setName("PublisherParticipant");
 
     Participant *PubParticipant = Domain::createParticipant(PparamPub);
@@ -164,7 +164,7 @@ void latejoiners(){
 
     ParticipantAttributes PparamSub;
     PparamSub.rtps.builtin.domainId = 0;
-    PparamSub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamSub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamSub.rtps.setName("SubscriberParticipant");
 
     Participant *SubParticipant = Domain::createParticipant(PparamSub);
@@ -249,7 +249,7 @@ void pastsamples(){
 
     ParticipantAttributes PparamPub;
     PparamPub.rtps.builtin.domainId = 0;
-    PparamPub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamPub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamPub.rtps.setName("PublisherParticipant");
 
     Participant *PubParticipant = Domain::createParticipant(PparamPub);
@@ -285,7 +285,7 @@ void pastsamples(){
 
     ParticipantAttributes PparamSub;
     PparamSub.rtps.builtin.domainId = 0;
-    PparamSub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamSub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamSub.rtps.setName("SubscriberParticipant");
 
     Participant *SubParticipant = Domain::createParticipant(PparamSub);
@@ -371,7 +371,7 @@ void keys(){
 
     ParticipantAttributes PparamPub;
     PparamPub.rtps.builtin.domainId = 0;
-    PparamPub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamPub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamPub.rtps.setName("PublisherParticipant");
 
     Participant *PubParticipant = Domain::createParticipant(PparamPub);
@@ -407,7 +407,7 @@ void keys(){
 
     ParticipantAttributes PparamSub;
     PparamSub.rtps.builtin.domainId = 0;
-    PparamSub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamSub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamSub.rtps.setName("SubscriberParticipant");
 
     Participant *SubParticipant = Domain::createParticipant(PparamSub);
@@ -485,7 +485,7 @@ void incompatible(){
 
     ParticipantAttributes PparamPub;
     PparamPub.rtps.builtin.domainId = 0;
-    PparamPub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamPub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamPub.rtps.setName("PublisherParticipant");
 
     Participant *PubParticipant = Domain::createParticipant(PparamPub);
@@ -521,7 +521,7 @@ void incompatible(){
 
     ParticipantAttributes PparamSub;
     PparamSub.rtps.builtin.domainId = 0;
-    PparamSub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamSub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamSub.rtps.setName("SubscriberParticipant");
 
     Participant *SubParticipant = Domain::createParticipant(PparamSub);
@@ -606,7 +606,7 @@ void safest(){
 
     ParticipantAttributes PparamPub;
     PparamPub.rtps.builtin.domainId = 0;
-    PparamPub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamPub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamPub.rtps.setName("PublisherParticipant");
 
     Participant *PubParticipant = Domain::createParticipant(PparamPub);
@@ -642,7 +642,7 @@ void safest(){
 
     ParticipantAttributes PparamSub;
     PparamSub.rtps.builtin.domainId = 0;
-    PparamSub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamSub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamSub.rtps.setName("SubscriberParticipant");
 
     Participant *SubParticipant = Domain::createParticipant(PparamSub);
@@ -701,7 +701,7 @@ void fastest(){
 
     ParticipantAttributes PparamPub;
     PparamPub.rtps.builtin.domainId = 0;
-    PparamPub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamPub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamPub.rtps.setName("PublisherParticipant");
 
     Participant *PubParticipant = Domain::createParticipant(PparamPub);
@@ -737,7 +737,7 @@ void fastest(){
 
     ParticipantAttributes PparamSub;
     PparamSub.rtps.builtin.domainId = 0;
-    PparamSub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamSub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamSub.rtps.setName("SubscriberParticipant");
 
     Participant *SubParticipant = Domain::createParticipant(PparamSub);
@@ -798,7 +798,7 @@ void triggers(){
 
     ParticipantAttributes PparamPub;
     PparamPub.rtps.builtin.domainId = 0;
-    PparamPub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamPub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamPub.rtps.setName("PublisherParticipant");
 
     Participant *PubParticipant = Domain::createParticipant(PparamPub);
@@ -834,7 +834,7 @@ void triggers(){
 
     ParticipantAttributes PparamSub;
     PparamSub.rtps.builtin.domainId = 0;
-    PparamSub.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PparamSub.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PparamSub.rtps.setName("SubscriberParticipant");
 
     Participant *SubParticipant = Domain::createParticipant(PparamSub);

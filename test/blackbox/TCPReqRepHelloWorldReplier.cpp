@@ -57,10 +57,10 @@ void TCPReqRepHelloWorldReplier::init(int participantId, int domainId, uint16_t 
     ParticipantAttributes pattr;
     pattr.rtps.builtin.domainId = domainId;
     pattr.rtps.participantID = participantId;
-    pattr.rtps.builtin.leaseDuration = c_TimeInfinite;
-    //pattr.rtps.builtin.leaseDuration_announcementperiod = Duration_t(1, 0);
-    //pattr.rtps.builtin.leaseDuration_announcementperiod = Duration_t(0, 2147483648);
-    pattr.rtps.builtin.leaseDuration_announcementperiod = Duration_t(1, 0);
+    pattr.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    //pattr.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
+    //pattr.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(0, 2147483648);
+    pattr.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
 
     // TCP CONNECTION PEER.
     //uint32_t kind = LOCATOR_KIND_TCPv4;

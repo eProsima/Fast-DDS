@@ -70,7 +70,7 @@ StatefulReader::StatefulReader(
 {
 }
 
-bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
+bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata, bool persist /*=true*/)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
@@ -92,8 +92,12 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata)
 
     wp->mp_initialAcknack->restart_timer();
 
-    add_persistence_guid(wdata);
-    wp->loaded_from_storage_nts(get_last_notified(wdata.guid));
+    if (persist)
+    {
+        add_persistence_guid(wdata);
+        wp->loaded_from_storage_nts(get_last_notified(wdata.guid));
+    }
+
     matched_writers.push_back(wp);
 
     if (liveliness_lease_duration_ < c_TimeInfinite)
@@ -223,22 +227,22 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
     assert(change);
 
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> lock(mp_mutex);
 
     if(acceptMsgFrom(change->writerGUID, &pWP))
     {
         if (liveliness_lease_duration_ < c_TimeInfinite)
         {
             if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
-                    pWP->m_att.liveliness_kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+                pWP->m_att.liveliness_kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
                 auto wlp = this->mp_RTPSParticipant->wlp();
-                if ( wlp != nullptr)
+                if (wlp != nullptr)
                 {
                     wlp->sub_liveliness_manager_->assert_liveliness(
-                                change->writerGUID,
-                                liveliness_kind_,
-                                liveliness_lease_duration_);
+                        change->writerGUID,
+                        liveliness_kind_,
+                        liveliness_lease_duration_);
                 }
                 else
                 {
@@ -247,9 +251,10 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
             }
         }
 
-        // Check if CacheChange was received.
-        if(!pWP->change_was_received(change->sequenceNumber))
+        // Check if CacheChange was received or is framework data
+        if(!pWP || !pWP->change_was_received(change->sequenceNumber))
         {
+            
             logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
 
             CacheChange_t* change_to_add;
@@ -292,12 +297,11 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
             {
                 logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "<<change_to_add->sequenceNumber);
                 releaseCache(change_to_add);
-
-                if(pWP == nullptr && getGuid().entityId == c_EntityId_SPDPReader)
-                {
-                    mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change->writerGUID.guidPrefix);
-                }
             }
+        }
+        else if (pWP != nullptr && getGuid().entityId == c_EntityId_SPDPReader)
+        {
+            mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change->writerGUID.guidPrefix);
         }
     }
 
@@ -315,7 +319,8 @@ bool StatefulReader::processDataFragMsg(
 
     std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
-    if(acceptMsgFrom(incomingChange->writerGUID, &pWP))
+    // TODO: see if we need manage framework fragmented DATA message
+    if(acceptMsgFrom(incomingChange->writerGUID, &pWP) && pWP)
     {
         if (liveliness_lease_duration_ < c_TimeInfinite)
         {
@@ -404,7 +409,7 @@ bool StatefulReader::processHeartbeatMsg(
 
     std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
-    if(acceptMsgFrom(writerGUID, &pWP))
+    if(acceptMsgFrom(writerGUID, &pWP) && pWP)
     {
         std::unique_lock<std::recursive_mutex> wpLock(*pWP->getMutex());
 
@@ -487,7 +492,7 @@ bool StatefulReader::processGapMsg(
 
     std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
 
-    if(acceptMsgFrom(writerGUID, &pWP))
+    if(acceptMsgFrom(writerGUID, &pWP) && pWP)
     {
         std::unique_lock<std::recursive_mutex> wpLock(*pWP->getMutex());
         SequenceNumber_t auxSN;
@@ -533,6 +538,14 @@ bool StatefulReader::acceptMsgFrom(
         }
     }
 
+    // Check if it's a framework's one
+    if (m_acceptMessagesFromUnkownWriters 
+        && (writerId.entityId == m_trustedWriterEntityId))
+    {
+        *wp = nullptr;
+        return true;
+    }
+
     return false;
 }
 
@@ -547,8 +560,9 @@ bool StatefulReader::change_removed_by_history(
         wp->setNotValid(a_change->sequenceNumber);
         return true;
     }
-    else
+    else if( a_change->writerGUID.entityId != this->m_trustedWriterEntityId )
     {
+        // trusted entities messages mean no havoc
         logError(RTPS_READER," You should always find the WP associated with a change, something is very wrong");
     }
     return false;
@@ -563,8 +577,33 @@ bool StatefulReader::change_received(
     {
         if(!findWriterProxy(a_change->writerGUID, &prox))
         {
-            logInfo(RTPS_READER, "Writer Proxy " << a_change->writerGUID <<" not matched to this Reader "<< m_guid.entityId);
-            return false;
+            // discard non framework messages from unknown writer
+            if (a_change->writerGUID.entityId != m_trustedWriterEntityId)
+            {
+                logInfo(RTPS_READER, "Writer Proxy " << a_change->writerGUID << " not matched to this Reader " << m_guid.entityId);
+                return false;
+            }
+            else
+            {
+                // handle framework messages in a stateless fashion
+                // Only make visible the change if there is not other with bigger sequence number.
+                if (get_last_notified(a_change->writerGUID) < a_change->sequenceNumber)
+                {
+                    if (mp_history->received_change(a_change, 0))
+                    {
+                        update_last_notified(a_change->writerGUID, a_change->sequenceNumber);
+                        if (getListener() != nullptr)
+                        {
+                            getListener()->onNewCacheChangeAdded((RTPSReader*)this, a_change);
+                        }
+
+                        mp_history->postSemaphore();
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
     }
 

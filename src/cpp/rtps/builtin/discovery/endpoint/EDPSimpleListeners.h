@@ -33,10 +33,24 @@ class RTPSReader;
 struct CacheChange_t;
 
 /*!
+ * Placeholder class EDPListener 
+ * @ingroup DISCOVERY_MODULE
+ */
+
+class RTPS_DllAPI  EDPListener : public ReaderListener, public WriterListener // TODO: remove RTPS_DllAPI when discovery server incorporated to the library
+{
+public:
+    /**
+     * @param change
+     */
+        bool computeKey(CacheChange_t* change);
+};
+
+/*!
  * Class EDPSimplePUBReaderListener, used to define the behavior when a new WriterProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPSimplePUBListener : public ReaderListener, public WriterListener
+class EDPSimplePUBListener : public EDPListener
 {
     public:
 
@@ -68,12 +82,6 @@ class EDPSimplePUBListener : public ReaderListener, public WriterListener
                 RTPSWriter* writer,
                 CacheChange_t* change) override;
 
-        /**
-         * Compute the Key from a CacheChange_t
-         * @param change Pointer to the change.
-         */
-        bool computeKey(CacheChange_t* change);
-
     private:
 
         //!Pointer to the EDPSimple
@@ -84,7 +92,7 @@ class EDPSimplePUBListener : public ReaderListener, public WriterListener
  * Class EDPSimpleSUBReaderListener, used to define the behavior when a new ReaderProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPSimpleSUBListener : public ReaderListener, public WriterListener
+class EDPSimpleSUBListener : public EDPListener
 {
     public:
 
@@ -112,11 +120,6 @@ class EDPSimpleSUBListener : public ReaderListener, public WriterListener
         void onWriterChangeReceivedByAll(
                 RTPSWriter* writer,
                 CacheChange_t* change) override;
-
-        /**
-         * @param change
-         */
-        bool computeKey(CacheChange_t* change);
 
     private:
 

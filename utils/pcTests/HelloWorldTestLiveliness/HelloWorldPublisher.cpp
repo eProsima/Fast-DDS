@@ -42,9 +42,9 @@ bool HelloWorldPublisher::init()
 	PParam.rtps.defaultSendPort = 11511;
 	PParam.rtps.use_IP6_to_send = true;
 	PParam.rtps.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-	PParam.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
-	PParam.rtps.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-	PParam.rtps.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+	PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
+	PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+	PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	PParam.rtps.builtin.domainId = 80;
 	PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
 	PParam.rtps.sendSocketBufferSize = 8712;
