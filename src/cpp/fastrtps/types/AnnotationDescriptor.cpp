@@ -41,7 +41,7 @@ AnnotationDescriptor::AnnotationDescriptor(DynamicType_ptr pType)
     type_ = pType;
 }
 
-ResponseCode AnnotationDescriptor::copy_from(const AnnotationDescriptor* descriptor)
+ReturnCode_t AnnotationDescriptor::copy_from(const AnnotationDescriptor* descriptor)
 {
     if (descriptor != nullptr)
     {
@@ -52,15 +52,15 @@ ResponseCode AnnotationDescriptor::copy_from(const AnnotationDescriptor* descrip
         }
         catch(std::exception& /*e*/)
         {
-            return ResponseCode::RETCODE_ERROR;
+            return ReturnCode_t::RETCODE_ERROR;
         }
     }
     else
     {
         logError(DYN_TYPES, "Error copying AnnotationDescriptor, invalid input descriptor");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
-    return ResponseCode::RETCODE_OK;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 bool AnnotationDescriptor::equals(const AnnotationDescriptor* other) const
@@ -94,12 +94,12 @@ bool AnnotationDescriptor::key_annotation() const
     return (it != value_.end() && it->second == CONST_TRUE);
 }
 
-ResponseCode AnnotationDescriptor::get_value(std::string& value)
+ReturnCode_t AnnotationDescriptor::get_value(std::string& value)
 {
     return get_value(value, "value");
 }
 
-ResponseCode AnnotationDescriptor::get_value(
+ReturnCode_t AnnotationDescriptor::get_value(
         std::string& value,
         const std::string& key)
 {
@@ -107,15 +107,15 @@ ResponseCode AnnotationDescriptor::get_value(
     if (it != value_.end())
     {
         value = it->second;
-        return ResponseCode::RETCODE_OK;
+        return ReturnCode_t::RETCODE_OK;
     }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-ResponseCode AnnotationDescriptor::get_all_value(std::map<std::string, std::string>& value) const
+ReturnCode_t AnnotationDescriptor::get_all_value(std::map<std::string, std::string>& value) const
 {
     value = value_;
-    return ResponseCode::RETCODE_OK;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 bool AnnotationDescriptor::is_consistent() const
@@ -134,12 +134,12 @@ void AnnotationDescriptor::set_type(DynamicType_ptr pType)
     type_ = pType;
 }
 
-ResponseCode AnnotationDescriptor::set_value(
+ReturnCode_t AnnotationDescriptor::set_value(
         const std::string& key,
         const std::string& value)
 {
     value_[key] = value;
-    return ResponseCode::RETCODE_OK;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 } // namespace types

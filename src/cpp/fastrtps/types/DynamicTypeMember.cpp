@@ -51,13 +51,13 @@ DynamicTypeMember::~DynamicTypeMember()
     parent_ = nullptr;
 }
 
-ResponseCode DynamicTypeMember::apply_annotation(AnnotationDescriptor& descriptor)
+ReturnCode_t DynamicTypeMember::apply_annotation(AnnotationDescriptor& descriptor)
 {
     // Update the annotations on the member Dynamic Type.
     return descriptor_.apply_annotation(descriptor);
 }
 
-ResponseCode DynamicTypeMember::apply_annotation(
+ReturnCode_t DynamicTypeMember::apply_annotation(
         const std::string& annotation_name,
         const std::string& key,
         const std::string& value)
@@ -87,16 +87,16 @@ bool DynamicTypeMember::equals(const DynamicTypeMember* other) const
     }
 }
 
-ResponseCode DynamicTypeMember::get_annotation(
+ReturnCode_t DynamicTypeMember::get_annotation(
         AnnotationDescriptor& descriptor,
         uint32_t idx)
 {
     if (idx < descriptor_.annotation_.size())
     {
         descriptor.copy_from(descriptor_.annotation_[idx]);
-        return ResponseCode::RETCODE_OK;
+        return ReturnCode_t::RETCODE_OK;
     }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
 uint32_t DynamicTypeMember::get_annotation_count()
@@ -114,17 +114,17 @@ std::vector<uint64_t> DynamicTypeMember::get_union_labels() const
     return descriptor_.get_union_labels();
 }
 
-ResponseCode DynamicTypeMember::get_descriptor(MemberDescriptor* descriptor) const
+ReturnCode_t DynamicTypeMember::get_descriptor(MemberDescriptor* descriptor) const
 {
     if (descriptor != nullptr)
     {
         descriptor->copy_from(&descriptor_);
-        return ResponseCode::RETCODE_OK;
+        return ReturnCode_t::RETCODE_OK;
     }
     else
     {
         logError(DYN_TYPES, "Error getting MemberDescriptor, invalid input descriptor");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
 

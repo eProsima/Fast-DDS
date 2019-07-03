@@ -53,16 +53,16 @@ public:
 
     ~DynamicTypeMember();
 
-    ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
+    ReturnCode_t apply_annotation(AnnotationDescriptor& descriptor);
 
-    ResponseCode apply_annotation(
+    ReturnCode_t apply_annotation(
             const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 
     bool equals(const DynamicTypeMember*) const;
 
-    ResponseCode get_annotation(
+    ReturnCode_t get_annotation(
             AnnotationDescriptor& descriptor,
             uint32_t idx);
 
@@ -72,7 +72,7 @@ public:
 
     std::vector<uint64_t> get_union_labels() const;
 
-    ResponseCode get_descriptor(MemberDescriptor* descriptor) const;
+    ReturnCode_t get_descriptor(MemberDescriptor* descriptor) const;
 
     MemberId get_id() const;
 

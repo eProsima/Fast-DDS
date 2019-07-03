@@ -22,7 +22,7 @@
 
 #include "../../fastrtps/rtps/common/Guid.h"
 #include "../../fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
-
+ 
 #include <utility>
 
 namespace eprosima{
