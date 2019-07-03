@@ -107,6 +107,9 @@ class Log
         //! Returns the logging engine to configuration defaults.
         RTPS_DllAPI static void Reset();
 
+        //! Waits until no more log info is availabel
+        RTPS_DllAPI static void Flush();
+
         //! Stops the logging thread. It will re-launch on the next call to a successful log macro.
         RTPS_DllAPI static void KillThread();
 
