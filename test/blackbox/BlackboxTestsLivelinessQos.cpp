@@ -32,7 +32,7 @@ TEST(LivelinessQos, Liveliness_Automatic_Reliable)
     // Liveliness lease duration and announcement period
     uint32_t liveliness_ms = 200;
     Duration_t liveliness_s(liveliness_ms * 1e-3);
-    Duration_t announcement_period(liveliness_ms * 1e-3 * 0.5);
+    Duration_t announcement_period(liveliness_ms * 1e-3 * 0.01);
 
     reader.reliability(RELIABLE_RELIABILITY_QOS)
             .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
@@ -69,7 +69,7 @@ TEST(LivelinessQos, Liveliness_Automatic_BestEffort)
     // Liveliness lease duration and announcement period
     uint32_t liveliness_ms = 200;
     Duration_t liveliness_s(liveliness_ms * 1e-3);
-    Duration_t announcement_period(liveliness_ms * 1e-3 * 0.5);
+    Duration_t announcement_period(liveliness_ms * 1e-3 * 0.01);
 
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
             .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
@@ -107,12 +107,12 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 200;
+    uint32_t writer_sleep_ms = 1000;
     uint32_t num_samples = 2;
 
     // Liveliness lease duration and announcement period, in seconds
-    Duration_t liveliness_s(writer_sleep_ms * 0.05 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 0.05 * 1e-3 * 0.9);
+    Duration_t liveliness_s(writer_sleep_ms * 0.01 * 1e-3);
+    Duration_t announcement_period(writer_sleep_ms * 0.01 * 1e-3 * 0.1);
 
     reader.reliability(RELIABLE_RELIABILITY_QOS)
             .liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
@@ -168,12 +168,12 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_BestEffort)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 200;
-    uint32_t num_samples = 3;
+    uint32_t writer_sleep_ms = 1000;
+    uint32_t num_samples = 2;
 
     // Liveliness lease duration and announcement period, in seconds
-    Duration_t liveliness_s(writer_sleep_ms * 0.05 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 0.05 * 1e-3 * 0.9);
+    Duration_t liveliness_s(writer_sleep_ms * 0.01 * 1e-3);
+    Duration_t announcement_period(writer_sleep_ms * 0.01 * 1e-3 * 0.1);
 
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
             .liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
@@ -349,8 +349,8 @@ TEST(LivelinessQos, ShortLiveliness_ManualByTopic_Reliable)
     uint32_t num_samples = 3;
 
     // Liveliness lease duration and announcement period, in seconds
-    Duration_t liveliness_s(writer_sleep_ms * 0.1 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 0.1 * 1e-3 * 0.9);
+    Duration_t liveliness_s(writer_sleep_ms * 0.05 * 1e-3);
+    Duration_t announcement_period(writer_sleep_ms * 0.05 * 1e-3 * 0.9);
 
     reader.reliability(RELIABLE_RELIABILITY_QOS)
             .liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS)
@@ -643,12 +643,12 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 50;
-    uint32_t num_samples = 3;
+    uint32_t writer_sleep_ms = 500;
+    uint32_t num_samples = 2;
 
     // Liveliness lease duration and announcement period, in seconds
-    Duration_t liveliness_s(writer_sleep_ms * 0.1 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 0.1 * 1e-3 * 0.1);
+    Duration_t liveliness_s(writer_sleep_ms * 0.01 * 1e-3);
+    Duration_t announcement_period(writer_sleep_ms * 0.01 * 1e-3 * 0.2);
 
     reader.reliability(RELIABLE_RELIABILITY_QOS)
             .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
@@ -759,12 +759,12 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 100;
-    uint32_t num_samples = 3;
+    uint32_t writer_sleep_ms = 500;
+    uint32_t num_samples = 2;
 
     // Liveliness lease duration and announcement period, in seconds
-    Duration_t liveliness_s(writer_sleep_ms * 0.1 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 0.1 * 1e-3 * 0.9);
+    Duration_t liveliness_s(writer_sleep_ms * 0.01 * 1e-3);
+    Duration_t announcement_period(writer_sleep_ms * 0.01 * 1e-3 * 0.2);
 
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
             .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
@@ -937,12 +937,12 @@ TEST(LivelinessQos, ManualByTopic_ManualByParticipant_Reliable)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 100;
-    uint32_t num_samples = 3;
+    uint32_t writer_sleep_ms = 500;
+    uint32_t num_samples = 2;
 
     // Liveliness lease duration and announcement period, in seconds
-    Duration_t liveliness_s(writer_sleep_ms * 0.1 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 0.1 * 1e-3 * 0.9);
+    Duration_t liveliness_s(writer_sleep_ms * 0.01 * 1e-3);
+    Duration_t announcement_period(writer_sleep_ms * 0.01 * 1e-3 * 0.2);
 
     reader.reliability(RELIABLE_RELIABILITY_QOS)
             .liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
@@ -996,12 +996,12 @@ TEST(LivelinessQos, ManualByTopic_ManualByParticipant_BestEffort)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 100;
-    uint32_t num_samples = 3;
+    uint32_t writer_sleep_ms = 500;
+    uint32_t num_samples = 2;
 
     // Liveliness lease duration and announcement period, in seconds
-    Duration_t liveliness_s(writer_sleep_ms * 0.1 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 0.1 * 1e-3 * 0.9);
+    Duration_t liveliness_s(writer_sleep_ms * 0.01 * 1e-3);
+    Duration_t announcement_period(writer_sleep_ms * 0.01 * 1e-3 * 0.2);
 
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
             .liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
@@ -1223,8 +1223,8 @@ TEST(LivelinessQos, TwoWriters_TwoReaders)
 {
     unsigned int num_pub = 2;
     unsigned int num_sub = 2;
-    unsigned int lease_duration_ms = 500;
-    unsigned int announcement_period_ms = 250;
+    unsigned int lease_duration_ms = 250;
+    unsigned int announcement_period_ms = 5;
 
     // Publishers
     PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, 3u, 0u);
@@ -1260,12 +1260,12 @@ TEST(LivelinessQos, TwoWriters_TwoReaders)
     subscribers.sub_wait_discovery();
 
     publishers.assert_liveliness(1u);
-    std::this_thread::sleep_for(std::chrono::milliseconds(announcement_period_ms * 2));
+    std::this_thread::sleep_for(std::chrono::milliseconds(announcement_period_ms * 10));
 
-    // All three subscribers are notified that liveliness was recovered
+    // Both subscribers are notified that liveliness was recovered
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 3u);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(lease_duration_ms * 2));
+    std::this_thread::sleep_for(std::chrono::milliseconds(lease_duration_ms * 4));
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 1u);
     EXPECT_EQ(subscribers.sub_times_liveliness_lost(), 1u);
 }
