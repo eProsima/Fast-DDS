@@ -58,7 +58,7 @@ bool StatelessReader::matched_writer_add(
         const WriterProxyData& wdata,
         bool persist /*=true*/ )
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     for (const RemoteWriterInfo_t& writer : matched_writers_)
     {
         if (writer.guid == wdata.guid())
@@ -107,7 +107,7 @@ bool StatelessReader::matched_writer_add(
 
 bool StatelessReader::matched_writer_remove(const GUID_t& writer_guid)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     ResourceLimitedVector<RemoteWriterInfo_t>::iterator it;
     for (it = matched_writers_.begin(); it != matched_writers_.end(); ++it)
@@ -145,7 +145,7 @@ bool StatelessReader::matched_writer_remove(const GUID_t& writer_guid)
 
 bool StatelessReader::matched_writer_is_matched(const GUID_t& writer_guid)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     return std::any_of(matched_writers_.begin(), matched_writers_.end(), 
         [writer_guid](const RemoteWriterInfo_t& item)
         {
@@ -182,7 +182,7 @@ bool StatelessReader::nextUntakenCache(
         CacheChange_t** change, 
         WriterProxy** /*wpout*/)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     bool ret = mp_history->get_min_change(change);
 
     if(ret)
@@ -206,7 +206,7 @@ bool StatelessReader::nextUnreadCache(
         CacheChange_t** change,
         WriterProxy** /*wpout*/)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     bool found = false;
     std::vector<CacheChange_t*>::iterator it;
 
@@ -256,7 +256,7 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
 {
     assert(change);
 
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
     if(acceptMsgFrom(change->writerGUID))
     {
@@ -343,7 +343,7 @@ bool StatelessReader::processDataFragMsg(
 {
     assert(incomingChange);
 
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
     if (acceptMsgFrom(incomingChange->writerGUID))
     {

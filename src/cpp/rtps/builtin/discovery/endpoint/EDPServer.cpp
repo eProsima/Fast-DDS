@@ -172,7 +172,7 @@ bool EDPServer::trimWriterHistory(
 
     // traverse the WriterHistory searching CacheChanges_t with demised keys
     std::forward_list<CacheChange_t*> removal;
-    std::lock_guard<std::recursive_timed_mutex> guardW(writer.getMutex());
+    std::lock_guard<RecursiveTimedMutex> guardW(writer.getMutex());
 
     std::copy_if(history.changesBegin(), history.changesBegin(), std::front_inserter(removal),
         [_demises](const CacheChange_t* chan) 
@@ -207,7 +207,7 @@ bool EDPServer::addEndpointFromHistory(
     WriterHistory& history,
     CacheChange_t& c)
 {
-    std::lock_guard<std::recursive_timed_mutex> guardW(writer.getMutex());
+    std::lock_guard<RecursiveTimedMutex> guardW(writer.getMutex());
     CacheChange_t * pCh = nullptr;
 
     // validate the sample, if no sample data update it

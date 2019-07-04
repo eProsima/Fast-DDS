@@ -105,7 +105,7 @@ bool StatefulReader::matched_writer_add(
 {
     assert(wdata.guid() != c_Guid_Unknown);
 
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     if (!is_alive_)
     {
@@ -186,7 +186,7 @@ bool StatefulReader::matched_writer_add(
 
 bool StatefulReader::matched_writer_remove(const GUID_t& writer_guid)
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     if (is_alive_)
     {
         WriterProxy* wproxy = nullptr;
@@ -237,7 +237,7 @@ bool StatefulReader::matched_writer_remove(const GUID_t& writer_guid)
 
 bool StatefulReader::matched_writer_is_matched(const GUID_t& writer_guid)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     if (is_alive_)
     {
         for(WriterProxy* it : matched_writers_)
@@ -257,7 +257,7 @@ bool StatefulReader::matched_writer_lookup(
 {
     assert(WP);
 
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     if (!is_alive_)
     {
         return false;
@@ -302,7 +302,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
     assert(change);
 
-    std::lock_guard<std::recursive_timed_mutex> lock(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> lock(mp_mutex);
     if (!is_alive_)
     {
         return false;
@@ -395,7 +395,7 @@ bool StatefulReader::processDataFragMsg(
 
     assert(incomingChange);
 
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     if (!is_alive_)
     {
         return false;
@@ -489,7 +489,7 @@ bool StatefulReader::processHeartbeatMsg(
 {
     WriterProxy *writer = nullptr;
 
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     if (!is_alive_)
     {
         return false;
@@ -542,7 +542,7 @@ bool StatefulReader::processGapMsg(
 {
     WriterProxy *pWP = nullptr;
 
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     if (!is_alive_)
     {
         return false;
@@ -606,7 +606,7 @@ bool StatefulReader::change_removed_by_history(
         CacheChange_t* a_change,
         WriterProxy* wp)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     if (is_alive_)
     {
@@ -732,7 +732,7 @@ bool StatefulReader::nextUntakenCache(
         CacheChange_t** change,
         WriterProxy** wpout)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     if (!is_alive_)
     {
         return false;
@@ -789,7 +789,7 @@ bool StatefulReader::nextUnreadCache(
         CacheChange_t** change,
         WriterProxy** wpout)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     if (!is_alive_)
     {
         return false;
@@ -844,7 +844,7 @@ bool StatefulReader::nextUnreadCache(
 
 bool StatefulReader::updateTimes(const ReaderTimes& ti)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     if (is_alive_)
     {
         if(times_.heartbeatResponseDelay != ti.heartbeatResponseDelay)
@@ -862,7 +862,7 @@ bool StatefulReader::updateTimes(const ReaderTimes& ti)
 bool StatefulReader::isInCleanState()
 {
     bool cleanState = true;
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
     if (is_alive_)
     {
@@ -886,7 +886,7 @@ void StatefulReader::send_acknack(
         bool is_final)
 {
 
-    std::lock_guard<std::recursive_timed_mutex> guard_reader(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard_reader(mp_mutex);
 
     if (!writer->is_alive())
     {
@@ -908,7 +908,7 @@ void StatefulReader::send_acknack(
         bool heartbeat_was_final)
 {
     // Protect reader
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     if (!writer->is_alive())
     {

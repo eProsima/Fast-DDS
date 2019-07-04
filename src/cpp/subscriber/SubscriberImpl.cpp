@@ -267,7 +267,7 @@ bool SubscriberImpl::onNewCacheChangeAdded(const CacheChange_t* const change_in)
 {
     if (m_att.qos.m_deadline.period != c_TimeInfinite)
     {
-        std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
+        std::unique_lock<RecursiveTimedMutex> lock(mp_reader->getMutex());
 
         if (!m_history.set_next_deadline(
                     change_in->instanceHandle,
@@ -348,7 +348,7 @@ bool SubscriberImpl::deadline_timer_reschedule()
 {
     assert(m_att.qos.m_deadline.period != c_TimeInfinite);
 
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(mp_reader->getMutex());
 
     steady_clock::time_point next_deadline_us;
     if (!m_history.get_next_deadline(timer_owner_, next_deadline_us))
@@ -365,7 +365,7 @@ bool SubscriberImpl::deadline_missed()
 {
     assert(m_att.qos.m_deadline.period != c_TimeInfinite);
 
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(mp_reader->getMutex());
 
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
@@ -386,7 +386,7 @@ bool SubscriberImpl::deadline_missed()
 
 void SubscriberImpl::get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status)
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(mp_reader->getMutex());
 
     status = deadline_missed_status_;
     deadline_missed_status_.total_count_change = 0;
@@ -394,7 +394,7 @@ void SubscriberImpl::get_requested_deadline_missed_status(RequestedDeadlineMisse
 
 bool SubscriberImpl::lifespan_expired()
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(mp_reader->getMutex());
 
     CacheChange_t* earliest_change;
     if (!m_history.get_earliest_change(&earliest_change))
@@ -435,7 +435,7 @@ bool SubscriberImpl::lifespan_expired()
 
 void SubscriberImpl::get_liveliness_changed_status(LivelinessChangedStatus &status)
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_reader->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(mp_reader->getMutex());
 
     status = mp_reader->liveliness_changed_status_;
 

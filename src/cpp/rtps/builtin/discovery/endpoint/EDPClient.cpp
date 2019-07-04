@@ -73,7 +73,7 @@ bool EDPClient::processLocalReaderProxyData(
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
             {
-                std::unique_lock<std::recursive_timed_mutex> lock(*writer->second->getMutex());
+                std::unique_lock<RecursiveTimedMutex> lock(*writer->second->getMutex());
                 for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
                     if((*ch)->instanceHandle == change->instanceHandle)
@@ -142,7 +142,7 @@ bool EDPClient::processLocalWriterProxyData(
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
             {
-                std::unique_lock<std::recursive_timed_mutex> lock(*writer->second->getMutex());
+                std::unique_lock<RecursiveTimedMutex> lock(*writer->second->getMutex());
                 for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
                     if((*ch)->instanceHandle == change->instanceHandle)
@@ -193,7 +193,7 @@ bool EDPClient::removeLocalWriter(RTPSWriter* W)
         if(change != nullptr)
         {
             {
-                std::lock_guard<std::recursive_timed_mutex> guard(*writer->second->getMutex());
+                std::lock_guard<RecursiveTimedMutex> guard(*writer->second->getMutex());
                 for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
                     if((*ch)->instanceHandle == change->instanceHandle)
@@ -242,7 +242,7 @@ bool EDPClient::removeLocalReader(RTPSReader* R)
         if(change != nullptr)
         {
             {
-                std::lock_guard<std::recursive_timed_mutex> guard(*writer->second->getMutex());
+                std::lock_guard<RecursiveTimedMutex> guard(*writer->second->getMutex());
                 for(auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
                 {
                     if((*ch)->instanceHandle == change->instanceHandle)

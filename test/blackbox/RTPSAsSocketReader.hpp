@@ -32,6 +32,7 @@
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/common/SequenceNumber.h>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/utils/TimedMutex.hpp>
 
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
@@ -175,7 +176,7 @@ class RTPSAsSocketReader
             receiving_ = true;
             mutex_.unlock();
 
-            std::unique_lock<std::recursive_timed_mutex> lock(*history_->getMutex());
+            std::unique_lock<eprosima::fastrtps::RecursiveTimedMutex> lock(*history_->getMutex());
             while(history_->changesBegin() != history_->changesEnd())
             {
                 eprosima::fastrtps::rtps::CacheChange_t* change = *history_->changesBegin();

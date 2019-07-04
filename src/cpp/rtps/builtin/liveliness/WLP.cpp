@@ -802,7 +802,7 @@ bool WLP::send_liveliness_message(const InstanceHandle_t& instance)
     StatefulWriter* writer = builtin_writer();
     WriterHistory* history = builtin_writer_history();
 
-    std::lock_guard<std::recursive_timed_mutex> wguard(writer->getMutex());
+    std::lock_guard<RecursiveTimedMutex> wguard(writer->getMutex());
 
     CacheChange_t* change = writer->new_change(
         []() -> uint32_t { return BUILTIN_PARTICIPANT_DATA_MAX_SIZE; },
@@ -911,7 +911,7 @@ void WLP::pub_liveliness_changed(
         {
             if (w->getGuid() == writer)
             {
-                std::unique_lock<std::recursive_timed_mutex> lock(w->getMutex());
+                std::unique_lock<RecursiveTimedMutex> lock(w->getMutex());
 
                 w->liveliness_lost_status_.total_count++;
                 w->liveliness_lost_status_.total_count_change++;
@@ -931,7 +931,7 @@ void WLP::pub_liveliness_changed(
         {
             if (w->getGuid() == writer)
             {
-                std::unique_lock<std::recursive_timed_mutex> lock(w->getMutex());
+                std::unique_lock<RecursiveTimedMutex> lock(w->getMutex());
 
                 w->liveliness_lost_status_.total_count++;
                 w->liveliness_lost_status_.total_count_change++;
@@ -951,7 +951,7 @@ void WLP::pub_liveliness_changed(
         {
             if (w->getGuid() == writer)
             {
-                std::unique_lock<std::recursive_timed_mutex> lock(w->getMutex());
+                std::unique_lock<RecursiveTimedMutex> lock(w->getMutex());
 
                 w->liveliness_lost_status_.total_count++;
                 w->liveliness_lost_status_.total_count_change++;

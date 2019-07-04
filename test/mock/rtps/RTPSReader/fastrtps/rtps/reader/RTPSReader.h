@@ -38,7 +38,7 @@ class RTPSReader : public Endpoint
 
         RTPSReader() {}
 
-        RTPSReader(ReaderHistory* history, std::recursive_timed_mutex* mutex)
+        RTPSReader(ReaderHistory* history, RecursiveTimedMutex* mutex)
         {
             history->mp_reader = this;
             history->mp_mutex = mutex;

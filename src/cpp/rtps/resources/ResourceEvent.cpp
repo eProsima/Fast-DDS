@@ -89,7 +89,7 @@ void ResourceEvent::unregister_timer(TimedEventImpl* event)
 {
     assert(!stop_);
 
-    std::unique_lock<std::timed_mutex> lock(mutex_);
+    std::unique_lock<TimedMutex> lock(mutex_);
 
     cv_.wait(lock, [&]()
     {
@@ -128,7 +128,7 @@ void ResourceEvent::unregister_timer(TimedEventImpl* event)
 
 void ResourceEvent::notify(TimedEventImpl* event)
 {
-    std::unique_lock<std::timed_mutex> lock(mutex_);
+    std::unique_lock<TimedMutex> lock(mutex_);
 
     if(register_timer_nts(event))
     {
@@ -138,7 +138,7 @@ void ResourceEvent::notify(TimedEventImpl* event)
 
 void ResourceEvent::notify(TimedEventImpl* event, const std::chrono::steady_clock::time_point& timeout)
 {
-    std::unique_lock<std::timed_mutex> lock(mutex_, std::defer_lock);
+    std::unique_lock<TimedMutex> lock(mutex_, std::defer_lock);
 
     if (lock.try_lock_until(timeout))
     {
@@ -156,7 +156,7 @@ void ResourceEvent::run_io_service()
         io_service_.restart();
         io_service_.poll();
 
-        std::unique_lock<std::timed_mutex> lock(mutex_);
+        std::unique_lock<TimedMutex> lock(mutex_);
 
         allow_to_delete_ = true;
         cv_.notify_one();

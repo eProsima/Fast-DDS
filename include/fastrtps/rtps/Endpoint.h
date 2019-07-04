@@ -21,13 +21,11 @@
 #ifndef _RTPS_ENDPOINT_H_
 #define _RTPS_ENDPOINT_H_
 
-#include <mutex>
 #include "common/Types.h"
 #include "common/Locator.h"
 #include "common/Guid.h"
 #include "attributes/EndpointAttributes.h"
-
-#include <mutex>
+#include "../utils/TimedMutex.hpp"
 
 namespace eprosima {
 namespace fastrtps{
@@ -76,7 +74,7 @@ class Endpoint
      * Get mutex
      * @return Associated Mutex
      */
-    RTPS_DllAPI inline std::recursive_timed_mutex& getMutex() { return mp_mutex; }
+    RTPS_DllAPI inline RecursiveTimedMutex& getMutex() { return mp_mutex; }
 
     /**
      * Get associated attributes
@@ -100,7 +98,7 @@ class Endpoint
     EndpointAttributes m_att;
 
     //!Endpoint Mutex
-    mutable std::recursive_timed_mutex mp_mutex;
+    mutable RecursiveTimedMutex mp_mutex;
 
     private:
 

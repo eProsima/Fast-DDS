@@ -139,7 +139,7 @@ uint32_t RTPSWriter::getTypeMaxSerialized()
 bool RTPSWriter::remove_older_changes(unsigned int max)
 {
     logInfo(RTPS_WRITER, "Starting process clean_history for writer " << getGuid());
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     bool limit = (max != 0);
 
     bool remove_ret = mp_history->remove_min_change();

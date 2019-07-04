@@ -181,7 +181,7 @@ public:
      */
     virtual bool try_remove_change(
             std::chrono::steady_clock::time_point& max_blocking_time_point,
-            std::unique_lock<std::recursive_timed_mutex>& lock) = 0;
+            std::unique_lock<RecursiveTimedMutex>& lock) = 0;
 
     /*
      * Adds a flow controller that will apply to this writer exclusively.

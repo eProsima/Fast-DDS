@@ -177,7 +177,7 @@ void StatefulWriter::unsent_change_added_to_history(
         CacheChange_t* change,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
 #if HAVE_SECURITY
     encrypt_cachechange(change);
@@ -323,7 +323,7 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 {
     SequenceNumber_t sequence_number = a_change->sequenceNumber;
 
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     logInfo(RTPS_WRITER,"Change "<< sequence_number << " to be removed.");
 
     // Invalidate CacheChange pointer in ReaderProxies.
@@ -340,7 +340,7 @@ bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 
 void StatefulWriter::send_any_unsent_changes()
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     bool activateHeartbeatPeriod = false;
     SequenceNumber_t max_sequence = mp_history->next_sequence_number();
@@ -630,7 +630,7 @@ bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
         return false;
     }
 
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     // Check if it is already matched.
     for(ReaderProxy* it : matched_readers_)
@@ -763,7 +763,7 @@ bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
 bool StatefulWriter::matched_reader_remove(const GUID_t& reader_guid)
 {
     ReaderProxy *rproxy = nullptr;
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
     ReaderProxyIterator it = matched_readers_.begin();
     while(it != matched_readers_.end())
@@ -806,7 +806,7 @@ bool StatefulWriter::matched_reader_remove(const GUID_t& reader_guid)
 
 bool StatefulWriter::matched_reader_is_matched(const GUID_t& reader_guid)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     for(ReaderProxy* it : matched_readers_)
     {
         if(it->guid() == reader_guid)
@@ -819,7 +819,7 @@ bool StatefulWriter::matched_reader_is_matched(const GUID_t& reader_guid)
 
 bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     for(ReaderProxy* it : matched_readers_)
     {
         if(it->guid() == readerGuid)
@@ -833,7 +833,7 @@ bool StatefulWriter::matched_reader_lookup(GUID_t& readerGuid,ReaderProxy** RP)
 
 bool StatefulWriter::is_acked_by_all(const CacheChange_t* change) const
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     if(change->writerGUID != this->getGuid())
     {
@@ -851,7 +851,7 @@ bool StatefulWriter::is_acked_by_all(const CacheChange_t* change) const
 
 bool StatefulWriter::all_readers_updated()
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     for (auto it = matched_readers_.begin(); it != matched_readers_.end(); ++it)
     {
@@ -866,7 +866,7 @@ bool StatefulWriter::all_readers_updated()
 
 bool StatefulWriter::wait_for_all_acked(const Duration_t& max_wait)
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     std::unique_lock<std::mutex> all_acked_lock(all_acked_mutex_);
 
     all_acked_ = std::none_of(matched_readers_.begin(), matched_readers_.end(),
@@ -887,7 +887,7 @@ bool StatefulWriter::wait_for_all_acked(const Duration_t& max_wait)
 
 void StatefulWriter::check_acked_status()
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
     bool all_acked = true;
     SequenceNumber_t min_low_mark;
@@ -947,7 +947,7 @@ void StatefulWriter::check_acked_status()
 
 bool StatefulWriter::try_remove_change(
         std::chrono::steady_clock::time_point& max_blocking_time_point,
-        std::unique_lock<std::recursive_timed_mutex>& lock)
+        std::unique_lock<RecursiveTimedMutex>& lock)
 {
     logInfo(RTPS_WRITER, "Starting process try remove change for writer " << getGuid());
 
@@ -998,7 +998,7 @@ void StatefulWriter::updateAttributes(const WriterAttributes& att)
 
 void StatefulWriter::updateTimes(const WriterTimes& times)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     if(m_times.heartbeatPeriod != times.heartbeatPeriod)
     {
         periodic_hb_event_->update_interval(times.heartbeatPeriod);
@@ -1038,7 +1038,7 @@ bool StatefulWriter::send_periodic_heartbeat(
         bool final,
         bool liveliness)
 {
-    std::lock_guard<std::recursive_timed_mutex> guardW(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guardW(mp_mutex);
 
     bool unacked_changes = false;
     if (m_separateSendingEnabled)
@@ -1193,7 +1193,7 @@ void StatefulWriter::send_heartbeat_piggyback_nts_(
 
 void StatefulWriter::perform_nack_response()
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     bool must_wake_up_async_thread = false;
 
     for (ReaderProxy* remote_reader : matched_readers_)
@@ -1212,7 +1212,7 @@ void StatefulWriter::perform_nack_response()
 
 void StatefulWriter::perform_nack_supression(const GUID_t& reader_guid)
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
     for (ReaderProxy* remote_reader : matched_readers_)
     {
@@ -1233,7 +1233,7 @@ bool StatefulWriter::process_acknack(
         bool final_flag,
         bool &result)
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     result = (m_guid == writer_guid);
     if (result)
     {
@@ -1282,7 +1282,7 @@ bool StatefulWriter::process_nack_frag(
         const FragmentNumberSet_t fragments_state,
         bool& result)
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     result = false;
     if (m_guid == writer_guid)
     {
@@ -1305,7 +1305,7 @@ bool StatefulWriter::process_nack_frag(
 
 bool StatefulWriter::ack_timer_expired()
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
     // The timer has expired so the earliest non-acked change must be marked as acknowledged
     // This will be done in the first while iteration, as we start with a negative interval

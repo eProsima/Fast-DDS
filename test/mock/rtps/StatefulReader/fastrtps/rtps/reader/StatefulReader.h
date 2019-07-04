@@ -35,7 +35,7 @@ class StatefulReader : public RTPSReader
 
         StatefulReader() {}
 
-        StatefulReader(ReaderHistory* history, std::recursive_timed_mutex* mutex) : RTPSReader(history, mutex) {}
+        StatefulReader(ReaderHistory* history, RecursiveTimedMutex* mutex) : RTPSReader(history, mutex) {}
 
         virtual ~StatefulReader() {}
 

@@ -83,7 +83,7 @@ bool SubscriberHistory::received_change(
         return false;
     }
 
-    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
     //NO KEY HISTORY
     if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
@@ -272,7 +272,7 @@ bool SubscriberHistory::readNextBuffer(SerializedPayload_t* data, SampleInfo_t* 
         return false;
     }
 
-    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
     CacheChange_t* change;
     WriterProxy * wp;
     if (this->mp_reader->nextUnreadCache(&change, &wp))
@@ -314,7 +314,7 @@ bool SubscriberHistory::takeNextBuffer(SerializedPayload_t* data, SampleInfo_t* 
         return false;
     }
 
-    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
     CacheChange_t* change;
     WriterProxy * wp;
     if (this->mp_reader->nextUntakenCache(&change, &wp))
@@ -362,7 +362,7 @@ bool SubscriberHistory::readNextData(
         return false;
     }
 
-    std::unique_lock<std::recursive_timed_mutex> lock(*mp_mutex, std::defer_lock);
+    std::unique_lock<RecursiveTimedMutex> lock(*mp_mutex, std::defer_lock);
 
     if(lock.try_lock_until(max_blocking_time))
     {
@@ -415,7 +415,7 @@ bool SubscriberHistory::takeNextData(
         return false;
     }
 
-    std::unique_lock<std::recursive_timed_mutex> lock(*mp_mutex, std::defer_lock);
+    std::unique_lock<RecursiveTimedMutex> lock(*mp_mutex, std::defer_lock);
 
     if(lock.try_lock_until(max_blocking_time))
     {
@@ -501,7 +501,7 @@ bool SubscriberHistory::remove_change_sub(CacheChange_t* change)
         return false;
     }
 
-    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
     if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
         if (this->remove_change(change))
@@ -545,7 +545,7 @@ bool SubscriberHistory::set_next_deadline(
         logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
         return false;
     }
-    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
     if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
@@ -575,7 +575,7 @@ bool SubscriberHistory::get_next_deadline(
         logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
         return false;
     }
-    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
     if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {

@@ -114,7 +114,7 @@ void RTPSReader::add_persistence_guid(
         const GUID_t& guid,
         const GUID_t& persistence_guid)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     history_state_->persistence_guid_map[guid] = persistence_guid;
     history_state_->persistence_guid_count[persistence_guid]++;
 }
@@ -123,7 +123,7 @@ void RTPSReader::remove_persistence_guid(
         const GUID_t& guid,
         const GUID_t& persistence_guid)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     history_state_->persistence_guid_map.erase(guid);
     auto count = --history_state_->persistence_guid_count[persistence_guid];
     if (count == 0)
@@ -140,7 +140,7 @@ SequenceNumber_t RTPSReader::update_last_notified(
         const SequenceNumber_t& seq)
 {
     SequenceNumber_t ret_val;
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     GUID_t guid_to_look = guid;
     auto p_guid = history_state_->persistence_guid_map.find(guid);
     if (p_guid != history_state_->persistence_guid_map.end())
@@ -166,7 +166,7 @@ SequenceNumber_t RTPSReader::update_last_notified(
 SequenceNumber_t RTPSReader::get_last_notified(const GUID_t& guid)
 {
     SequenceNumber_t ret_val;
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     GUID_t guid_to_look = guid;
     auto p_guid = history_state_->persistence_guid_map.find(guid);
     if (p_guid != history_state_->persistence_guid_map.end())
@@ -197,7 +197,7 @@ bool RTPSReader::wait_for_unread_cache(
     auto time_out = std::chrono::steady_clock::now() + std::chrono::seconds(timeout.seconds) +
         std::chrono::nanoseconds(timeout.nanosec);
 
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex, std::defer_lock);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex, std::defer_lock);
 
     if(lock.try_lock_until(time_out))
     {
@@ -215,7 +215,7 @@ bool RTPSReader::wait_for_unread_cache(
 
 uint64_t RTPSReader::get_unread_count() const
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     return total_unread_;
 }
 

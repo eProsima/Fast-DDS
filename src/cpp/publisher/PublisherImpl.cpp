@@ -160,7 +160,7 @@ bool PublisherImpl::create_new_change_with_params(
     // Block lowlevel writer
     auto max_blocking_time = std::chrono::steady_clock::now() +
         std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex(), std::defer_lock);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex(), std::defer_lock);
 
     if(lock.try_lock_until(max_blocking_time))
     {
@@ -434,7 +434,7 @@ bool PublisherImpl::deadline_timer_reschedule()
 {
     assert(m_att.qos.m_deadline.period != c_TimeInfinite);
 
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex());
 
     steady_clock::time_point next_deadline_us;
     if (!m_history.get_next_deadline(timer_owner_, next_deadline_us))
@@ -453,7 +453,7 @@ bool PublisherImpl::deadline_missed()
 {
     assert(m_att.qos.m_deadline.period != c_TimeInfinite);
 
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex());
 
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
@@ -474,7 +474,7 @@ bool PublisherImpl::deadline_missed()
 
 void PublisherImpl::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &status)
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex());
 
     status = deadline_missed_status_;
     deadline_missed_status_.total_count_change = 0;
@@ -482,7 +482,7 @@ void PublisherImpl::get_offered_deadline_missed_status(OfferedDeadlineMissedStat
 
 bool PublisherImpl::lifespan_expired()
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex());
 
     CacheChange_t* earliest_change;
     if (!m_history.get_earliest_change(&earliest_change))
@@ -523,7 +523,7 @@ bool PublisherImpl::lifespan_expired()
 
 void PublisherImpl::get_liveliness_lost_status(LivelinessLostStatus &status)
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex());
 
     status = mp_writer->liveliness_lost_status_;
 

@@ -19,104 +19,116 @@
 #ifndef _UTILS_TIMEDCONDITIONVARIABLE_HPP_
 #define _UTILS_TIMEDCONDITIONVARIABLE_HPP_
 
+#if defined(_WIN32)
+#include <thr/xthreads.h>
+
+#define CLOCK_REALTIME 0
+#define CV_INIT_(x) _Cnd_init(x)
+#define CV_WAIT_(cv, x) _Cnd_wait(cv, (_Mtx_t)x)
+#define CV_TIMEDWAIT_(cv, x, y) _Cnd_timedwait(cv, (_Mtx_t)x, (xtime*)y)
+#define CV_SIGNAL_(cv) _Cnd_signal(cv)
+#define CV_BROADCAST_(cv) _Cnd_broadcast(cv)
+#define CV_T_ _Cnd_t
+
+extern int clock_gettime(int, struct timespec* tv);
+#else
+#include <pthread.h>
+
+#define CV_INIT_(x) pthread_cond_init(x, NULL);
+#define CV_WAIT_(cv, x) pthread_cond_wait(&cv, x)
+#define CV_TIMEDWAIT_(cv, x, y) pthread_cond_timedwait(&cv, x, y)
+#define CV_SIGNAL_(cv) pthread_cond_signal(&cv)
+#define CV_BROADCAST_(cv) pthread_cond_broadcast(&cv)
+#define CV_T_ pthread_cond_t
+#endif
+
 #include <mutex>
 #include <chrono>
 #include <functional>
 
-#if !defined(__linux__)
-#include <condition_variable>
-#else
-#include <pthread.h>
-#endif
-
 namespace eprosima {
 namespace fastrtps {
-
-#if !defined(__linux__)
-using TimedConditionVariable = std::condition_variable_any;
-#else
 
 class TimedConditionVariable
 {
     public:
 
-    TimedConditionVariable()
-    {
-        pthread_cond_init(&cv_, NULL);
-    }
-
-    template<typename Mutex>
-    void wait(
-            std::unique_lock<Mutex>& lock,
-            std::function<bool()> predicate)
-    {
-        while (!predicate())
+        TimedConditionVariable()
         {
-            pthread_cond_wait(&cv_, lock.mutex()->native_handle());
+            CV_INIT_(&cv_);
         }
-    }
 
-    template<typename Mutex>
-    bool wait_for(
+        template<typename Mutex>
+        void wait(
+                std::unique_lock<Mutex>& lock,
+                std::function<bool()> predicate)
+        {
+            while (!predicate())
+            {
+                CV_WAIT_(cv_, lock.mutex()->native_handle());
+            }
+        }
+
+        template<typename Mutex>
+        bool wait_for(
             std::unique_lock<Mutex>& lock,
             const std::chrono::nanoseconds& max_blocking_time,
             std::function<bool()> predicate)
-    {
-        bool ret_value = true;
-        auto nsecs = max_blocking_time;
-        struct timespec max_wait = {0, 0};
-        clock_gettime(CLOCK_REALTIME, &max_wait);
-        nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
-        auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
-        nsecs -= secs;
-        max_wait.tv_sec += secs.count();
-        max_wait.tv_nsec = nsecs.count();
-        while (ret_value && !(ret_value = predicate()))
         {
-            ret_value = (pthread_cond_timedwait(&cv_, lock.mutex()->native_handle(), &max_wait) == 0);
+            bool ret_value = true;
+            auto nsecs = max_blocking_time;
+            struct timespec max_wait = { 0, 0 };
+            clock_gettime(CLOCK_REALTIME, &max_wait);
+            nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
+            auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
+            nsecs -= secs;
+            max_wait.tv_sec += secs.count();
+            max_wait.tv_nsec = (long)nsecs.count();
+            while (ret_value && false == (ret_value = predicate()))
+            {
+                ret_value = (0 == CV_TIMEDWAIT_(cv_, lock.mutex()->native_handle(), &max_wait));
+            }
+
+            return ret_value;
         }
 
-        return ret_value;
-    }
-
-    template<typename Mutex>
-    bool wait_until(
+        template<typename Mutex>
+        bool wait_until(
             std::unique_lock<Mutex>& lock,
             const std::chrono::steady_clock::time_point& max_blocking_time,
             std::function<bool()> predicate)
-    {
-        bool ret_value = true;
-        std::chrono::nanoseconds nsecs = max_blocking_time - std::chrono::steady_clock::now();
-        struct timespec max_wait = {0, 0};
-        clock_gettime(CLOCK_REALTIME, &max_wait);
-        nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
-        auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
-        nsecs -= secs;
-        max_wait.tv_sec += secs.count();
-        max_wait.tv_nsec = nsecs.count();
-        while (ret_value && !(ret_value = predicate()))
         {
-            ret_value = (pthread_cond_timedwait(&cv_, lock.mutex()->native_handle(), &max_wait) == 0);
+            bool ret_value = true;
+            std::chrono::nanoseconds nsecs = max_blocking_time - std::chrono::steady_clock::now();
+            struct timespec max_wait = { 0, 0 };
+            clock_gettime(CLOCK_REALTIME, &max_wait);
+            nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
+            auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
+            nsecs -= secs;
+            max_wait.tv_sec += secs.count();
+            max_wait.tv_nsec = (long)nsecs.count();
+            while (ret_value && false == (ret_value = predicate()))
+            {
+                ret_value = (CV_TIMEDWAIT_(cv_, lock.mutex()->native_handle(), &max_wait) == 0);
+            }
+
+            return ret_value;
         }
 
-        return ret_value;
-    }
+        void notify_one()
+        {
+            CV_SIGNAL_(cv_);
+        }
 
-    void notify_one()
-    {
-        pthread_cond_signal(&cv_);
-    }
-
-    void notify_all()
-    {
-        pthread_cond_broadcast(&cv_);
-    }
+        void notify_all()
+        {
+            CV_BROADCAST_(cv_);
+        }
 
     private:
 
-    pthread_cond_t cv_;
+        CV_T_ cv_;
 };
-#endif
 
 }
 }

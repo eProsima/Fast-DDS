@@ -167,6 +167,7 @@ set(${PROJECT_NAME}_source_files
     rtps/persistence/PersistenceFactory.cpp
     rtps/persistence/SQLite3PersistenceService.cpp
     rtps/persistence/sqlite3.c
+    utils/TimedConditionVariable.cpp
     )
 
 # TLS Support

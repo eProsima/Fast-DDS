@@ -489,7 +489,7 @@ bool PDPServer::trimPDPWriterHistory()
 
     // traverse the WriterHistory searching CacheChanges_t with demised keys
     std::forward_list<CacheChange_t*> removal;
-    std::lock_guard<std::recursive_timed_mutex> guardW(mp_PDPWriter->getMutex());
+    std::lock_guard<RecursiveTimedMutex> guardW(mp_PDPWriter->getMutex());
 
     std::copy_if(mp_PDPWriterHistory->changesBegin(),
         mp_PDPWriterHistory->changesBegin(), std::front_inserter(removal),
@@ -524,7 +524,7 @@ bool PDPServer::addRelayedChangeToHistory( CacheChange_t& c)
 {
     assert(mp_PDPWriter && c.serializedPayload.max_size);
 
-    std::lock_guard<std::recursive_timed_mutex> lock(mp_PDPWriter->getMutex());
+    std::lock_guard<RecursiveTimedMutex> lock(mp_PDPWriter->getMutex());
     CacheChange_t * pCh = nullptr;
 
     // validate the sample, if no sample data update it
@@ -700,7 +700,7 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
         - DSClientEvent (own thread)
         - ResendParticipantProxyDataPeriod (participant event thread)
     */
-    std::lock_guard<std::recursive_timed_mutex> wlock(pW->getMutex());
+    std::lock_guard<RecursiveTimedMutex> wlock(pW->getMutex());
 
     // Servers only send direct DATA(p) to servers in order to allow discovery
     if (new_change)
@@ -789,7 +789,7 @@ bool PDPServer::remove_remote_participant(
 
     {
         // prevent mp_PDPReaderHistory from been clean up by the PDPServerListener
-        std::lock_guard<std::recursive_timed_mutex> lock(mp_PDPReader->getMutex());
+        std::lock_guard<RecursiveTimedMutex> lock(mp_PDPReader->getMutex());
 
         // Notify everybody of this demise if it's a lease Duration one
         CacheChange_t *pC;
@@ -870,7 +870,7 @@ bool PDPServer::safe_PDP_matched_writer_remove(const GUID_t& wguid)
     {
         // If we are in a transport callback the reader mutex is already lock
         // and we cannot remove the writer proxies
-        std::recursive_timed_mutex & mtx = mp_PDPReader->getMutex();
+        RecursiveTimedMutex & mtx = mp_PDPReader->getMutex();
 
         mtx.unlock();
         res = mp_PDPReader->matched_writer_remove(wguid);

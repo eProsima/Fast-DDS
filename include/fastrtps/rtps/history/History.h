@@ -20,8 +20,6 @@
 #ifndef HISTORY_H_
 #define HISTORY_H_
 
-#include <mutex>
-
 #include "../../fastrtps_dll.h"
 
 #include "CacheChangePool.h"
@@ -29,6 +27,7 @@
 #include "../common/SequenceNumber.h"
 #include "../common/Guid.h"
 #include "../attributes/HistoryAttributes.h"
+#include "../../utils/TimedMutex.hpp"
 
 #include <cassert>
 
@@ -58,13 +57,13 @@ class History
                 CacheChange_t** change,
                 const std::function<uint32_t()>& calculateSizeFunc)
         {
-            std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+            std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
             return m_changePool.reserve_Cache(change, calculateSizeFunc);
         }
 
         RTPS_DllAPI inline bool reserve_Cache(CacheChange_t** change, uint32_t dataSize)
         {
-            std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+            std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
             return m_changePool.reserve_Cache(change, dataSize);
         }
 
@@ -74,7 +73,7 @@ class History
          */
         RTPS_DllAPI inline void release_Cache(CacheChange_t* ch)
         {
-            std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+            std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
             return m_changePool.release_Cache(ch);
         }
 
@@ -90,7 +89,7 @@ class History
          */
         RTPS_DllAPI size_t getHistorySize() 
         { 
-            std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+            std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
             return m_changes.size();
         }
 
@@ -148,7 +147,7 @@ class History
          * Get the mutex
          * @return Mutex
          */
-        RTPS_DllAPI inline std::recursive_timed_mutex* getMutex() { assert(mp_mutex != nullptr); return mp_mutex; }
+        RTPS_DllAPI inline RecursiveTimedMutex* getMutex() { assert(mp_mutex != nullptr); return mp_mutex; }
 
         RTPS_DllAPI bool get_change(
                 const SequenceNumber_t& seq,
@@ -182,11 +181,11 @@ class History
         //!Pointer to the maximum sequeceNumber CacheChange.
         CacheChange_t* mp_maxSeqCacheChange;
 
-        //!Print the seqNum of the changes in the History (for debugging purposes).
+        //!Print the seqNum of the changes in the History (for debuggisi, mng purposes).
         void print_changes_seqNum2();
 
         //!Mutex for the History.
-        std::recursive_timed_mutex* mp_mutex;
+        RecursiveTimedMutex* mp_mutex;
 
 };
 

@@ -180,7 +180,7 @@ class RTPSWithRegistrationReader
             receiving_ = true;
             mutex_.unlock();
 
-            std::unique_lock<std::recursive_timed_mutex> lock(*history_->getMutex());
+            std::unique_lock<RecursiveTimedMutex> lock(*history_->getMutex());
             while(history_->changesBegin() != history_->changesEnd())
             {
                 eprosima::fastrtps::rtps::CacheChange_t* change = *history_->changesBegin();

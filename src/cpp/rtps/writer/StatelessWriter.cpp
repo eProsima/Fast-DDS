@@ -138,7 +138,7 @@ void StatelessWriter::unsent_change_added_to_history(
         CacheChange_t* change,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     if (!fixed_locators_.empty() || locator_selector_.selected_size() > 0)
     {
@@ -209,7 +209,7 @@ void StatelessWriter::unsent_change_added_to_history(
 
 bool StatelessWriter::change_removed_by_history(CacheChange_t* change)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     unsent_changes_.remove_if(
         [change](ChangeForReader_t& cptr)
@@ -226,7 +226,7 @@ bool StatelessWriter::is_acked_by_all(const CacheChange_t* change) const
     // Only asynchronous writers may have unacked (i.e. unsent changes)
     if (isAsync())
     {
-        std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
         // Return false if change is pending to be sent
         auto it = std::find_if(unsent_changes_.begin(),
@@ -272,7 +272,7 @@ void StatelessWriter::update_unsent_changes(
 void StatelessWriter::send_any_unsent_changes()
 {
     //TODO(Mcc) Separate sending for asynchronous writers
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     RTPSWriterCollector<ReaderLocator*> changesToSend;
 
@@ -346,7 +346,7 @@ void StatelessWriter::send_any_unsent_changes()
  */
 bool StatelessWriter::matched_reader_add(const ReaderProxyData& data)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     assert(data.guid() != c_Guid_Unknown);
 
@@ -430,7 +430,7 @@ bool StatelessWriter::set_fixed_locators(const LocatorList_t& locator_list)
     }
 #endif
 
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     fixed_locators_.push_back(locator_list);
     mp_RTPSParticipant->createSenderResources(fixed_locators_);
@@ -440,7 +440,7 @@ bool StatelessWriter::set_fixed_locators(const LocatorList_t& locator_list)
 
 bool StatelessWriter::matched_reader_remove(const GUID_t& reader_guid)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     bool found = locator_selector_.remove_entry(reader_guid); 
     if(found)
@@ -465,7 +465,7 @@ bool StatelessWriter::matched_reader_remove(const GUID_t& reader_guid)
 
 bool StatelessWriter::matched_reader_is_matched(const GUID_t& reader_guid)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     return std::any_of(matched_readers_.begin(), matched_readers_.end(), 
         [reader_guid](const ReaderLocator& item)
         {
@@ -475,7 +475,7 @@ bool StatelessWriter::matched_reader_is_matched(const GUID_t& reader_guid)
 
 void StatelessWriter::unsent_changes_reset()
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
     unsent_changes_.assign(mp_history->changesBegin(), mp_history->changesEnd());
     AsyncWriterThread::wakeUp(this);

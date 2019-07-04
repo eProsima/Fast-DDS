@@ -452,7 +452,7 @@ void PDPClient::announceParticipantState(
         - DSClientEvent (own thread)
         - ResendParticipantProxyDataPeriod (participant event thread)
     */
-    std::lock_guard<std::recursive_timed_mutex> wlock(mp_PDPWriter->getMutex());
+    std::lock_guard<RecursiveTimedMutex> wlock(mp_PDPWriter->getMutex());
 
     WriteParams wp;
     SampleIdentity local;

@@ -21,10 +21,10 @@
 #define _RTPS_RESOURCES_RESOURCEEVENT_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include "../../utils/TimedMutex.hpp"
 #include "../../utils/TimedConditionVariable.hpp"
 
 #include <thread>
-#include <mutex>
 #include <atomic>
 #include <vector>
 #include <asio.hpp>
@@ -94,7 +94,7 @@ class ResourceEvent
         std::atomic<bool> stop_;
 
         //! Protects internal data.
-        std::timed_mutex mutex_;
+        TimedMutex mutex_;
 
         //! Used to warn there are new TimedEventImpl objects to be processed.
         TimedConditionVariable cv_;
