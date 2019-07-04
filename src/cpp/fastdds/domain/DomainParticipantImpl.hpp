@@ -314,6 +314,13 @@ private:
                     fastrtps::rtps::RTPSParticipant* participant,
                     fastrtps::rtps::WriterDiscoveryInfo&& info) override;
 
+            void on_type_discovery(
+                    fastrtps::rtps::RTPSParticipant* participant,
+                    const fastrtps::string_255& topic,
+                    const fastrtps::types::TypeIdentifier* identifier,
+                    const fastrtps::types::TypeObject* object,
+                    fastrtps::types::DynamicType_ptr dyn_type) override;
+
             DomainParticipantImpl* participant_;
 
     } rtps_listener_;

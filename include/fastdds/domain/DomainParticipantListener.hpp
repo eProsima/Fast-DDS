@@ -24,6 +24,10 @@
 #include "../../fastrtps/rtps/reader/ReaderDiscoveryInfo.h"
 #include "../../fastrtps/rtps/writer/WriterDiscoveryInfo.h"
 
+#include <fastrtps/types/TypeIdentifier.h>
+#include <fastrtps/types/TypeObject.h>
+#include <fastrtps/types/DynamicTypePtr.h>
+
 namespace eprosima {
 namespace fastdds {
 
@@ -87,6 +91,23 @@ class DomainParticipantListener
                 fastrtps::rtps::WriterDiscoveryInfo&& info)
         {
             (void)participant, (void)info;
+        }
+
+        /*!
+         * This method is called when a participant discovers a new Type
+         * The ownership of all object belongs to the caller so if needs to be used after the
+         * method ends, a full copy should be perform (except for dyn_type due to its shared_ptr nature.
+         * For example:
+         * fastrtps::types::TypeIdentifier new_type_id = *identifier;
+         */
+        virtual void on_type_discovery(
+                DomainParticipant* participant,
+                const fastrtps::string_255& topic,
+                const fastrtps::types::TypeIdentifier* identifier,
+                const fastrtps::types::TypeObject* object,
+                fastrtps::types::DynamicType_ptr dyn_type)
+        {
+            (void)participant, (void)topic, (void)identifier, (void)object, (void)dyn_type;
         }
 
         // TODO: Methods in DomainParticipantListener (p.33 - DDS)

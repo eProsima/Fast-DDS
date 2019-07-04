@@ -631,6 +631,19 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
     }
 }
 
+void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
+        RTPSParticipant*,
+        const fastrtps::string_255& topic,
+        const fastrtps::types::TypeIdentifier* identifier,
+        const fastrtps::types::TypeObject* object,
+        fastrtps::types::DynamicType_ptr dyn_type)
+{
+    if (participant_->listener_ != nullptr)
+    {
+        participant_->listener_->on_type_discovery(participant_->participant_, topic, identifier, object, dyn_type);
+    }
+}
+
 bool DomainParticipantImpl::newRemoteEndpointDiscovered(
         const GUID_t& partguid,
         uint16_t endpointId,
