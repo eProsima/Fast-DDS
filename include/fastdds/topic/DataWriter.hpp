@@ -35,6 +35,9 @@
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/IncompatibleQosStatus.hpp>
 #include <fastrtps/qos/LivelinessLostStatus.h>
+#include "../../fastrtps/types/TypesBase.h"
+
+using namespace eprosima::fastrtps::types;
 
 namespace eprosima {
 namespace fastrtps{
@@ -71,7 +74,7 @@ class DataWriter
             fastrtps::TopicDataType* topic,
             const fastrtps::TopicAttributes& topic_att,
             const fastrtps::rtps::WriterAttributes& att,
-            const fastrtps::WriterQos& qos,
+            fastrtps::WriterQos& qos,
             const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
             DataWriterListener* listener = nullptr);
 
@@ -109,7 +112,7 @@ public:
      * @par Calling example:
      * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
-    bool write(
+    ReturnCode_t write(
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle);
 
@@ -180,23 +183,23 @@ public:
         return type_;
     }
 
-    bool wait_for_acknowledgments(
+    ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
     /**
      * @brief Returns the offered deadline missed status
      * @param Deadline missed status struct
      */
-    void get_offered_deadline_missed_status(
+    ReturnCode_t get_offered_deadline_missed_status(
             fastrtps::OfferedDeadlineMissedStatus& status);
 
     bool set_attributes(const fastrtps::rtps::WriterAttributes& att);
 
     const fastrtps::rtps::WriterAttributes& get_attributes() const;
 
-    bool set_qos(const fastrtps::WriterQos& qos);
+    ReturnCode_t set_qos(const fastrtps::WriterQos& qos);
 
-    const fastrtps::WriterQos& get_qos() const;
+    ReturnCode_t get_qos(fastrtps::WriterQos& qos) const;
 
     bool set_topic(const fastrtps::TopicAttributes& att);
 
@@ -204,33 +207,33 @@ public:
 
     const DataWriterListener* get_listener() const;
 
-    bool set_listener(DataWriterListener* listener);
+    ReturnCode_t set_listener(DataWriterListener* listener);
 
-    bool get_key_value(
+    ReturnCode_t get_key_value(
             void* key_holder,
             const fastrtps::rtps::InstanceHandle_t& handle);
 
-    bool dispose(
+    ReturnCode_t dispose(
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle);
 
     bool dispose(
             void* data);
 
-    bool get_liveliness_lost_status(
+    ReturnCode_t get_liveliness_lost_status(
             fastrtps::LivelinessLostStatus& status);
 
-    bool get_offered_incompatible_qos_status(
+    ReturnCode_t get_offered_incompatible_qos_status(
             fastrtps::OfferedIncompatibleQosStatus& status)
     {
         // Not implemented
         (void)status;
-        return false;
+        return ReturnCode_t::RETCODE_UNSUPPORTED;
     }
 
     const Publisher* get_publisher() const;
 
-    bool assert_liveliness();
+    ReturnCode_t assert_liveliness();
 
 private:
     PublisherImpl* publisher_;

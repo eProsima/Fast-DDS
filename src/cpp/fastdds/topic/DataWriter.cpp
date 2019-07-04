@@ -51,7 +51,7 @@ DataWriter::DataWriter(
         TopicDataType* topic,
         const TopicAttributes& topic_att,
         const WriterAttributes& att,
-        const WriterQos& qos,
+        WriterQos& qos,
         const MemoryManagementPolicy_t memory_policy,
         DataWriterListener* listen )
     : publisher_(p)
@@ -59,7 +59,7 @@ DataWriter::DataWriter(
     , type_(topic)
     , topic_att_(topic_att)
     , w_att_(att)
-    , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
+    , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? ((void) publisher_->get_default_datawriter_qos(qos), qos) : qos)
     , history_(topic_att_, type_->m_typeSize
 #if HAVE_SECURITY
         // In future v2 changepool is in writer, and writer set this value to cachechagepool.
@@ -124,22 +124,68 @@ bool DataWriter::write(
     return create_new_change_with_params(ALIVE, data, params);
 }
 
-bool DataWriter::write(
+ReturnCode_t DataWriter::write(
             void* data,
             const rtps::InstanceHandle_t& handle)
 {
+    PublisherAttributes pub_attr = publisher_->get_attributes();
+    Duration_t current = pub_attr.qos.m_reliability.max_blocking_time;
+    Duration_t begin, end;
+    const DomainParticipant* participant = publisher_->get_participant();
+    participant->get_current_time(begin);
+    if(!handle.isDefined()){
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+    if(pub_attr.topic.resourceLimitsQos.max_samples < pub_attr.topic.resourceLimitsQos.max_instances ||
+        pub_attr.topic.resourceLimitsQos.max_samples < pub_attr.topic.resourceLimitsQos.max_instances * pub_attr.topic.historyQos.depth)
+    {
+        return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+    }
     logInfo(DATA_WRITER, "Writing new data with Handle");
     WriteParams wparams;
-    return create_new_change_with_params(ALIVE, data, wparams, handle);
+    participant->get_current_time(end);
+    current = current - (end - begin);
+    if (current < c_TimeZero)
+    {
+        return ReturnCode_t::RETCODE_TIMEOUT;
+    }
+    if(create_new_change_with_params(ALIVE, data, wparams, handle))
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
-bool DataWriter::dispose(
+ReturnCode_t DataWriter::dispose(
         void* data,
         const rtps::InstanceHandle_t& handle)
 {
+    PublisherAttributes pub_attr = publisher_->get_attributes();
+    Duration_t current = pub_attr.qos.m_reliability.max_blocking_time;
+    Duration_t begin, end;
+    const DomainParticipant* participant = publisher_->get_participant();
+    participant->get_current_time(begin);
+    if(!handle.isDefined()){
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+    if(pub_attr.topic.resourceLimitsQos.max_samples < pub_attr.topic.resourceLimitsQos.max_instances ||
+        pub_attr.topic.resourceLimitsQos.max_samples < pub_attr.topic.resourceLimitsQos.max_instances * pub_attr.topic.historyQos.depth)
+    {
+        return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+    }
     logInfo(DATA_WRITER, "Disposing of data");
     WriteParams wparams;
-    return create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams, handle);
+    participant->get_current_time(end);
+    current = current - (end - begin);
+    if (current < c_TimeZero)
+    {
+        return ReturnCode_t::RETCODE_TIMEOUT;
+    }
+    if(create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams, handle))
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
 bool DataWriter::dispose(
@@ -429,13 +475,13 @@ const WriterAttributes& DataWriter::get_attributes() const
     return w_att_;
 }
 
-bool DataWriter::set_qos(const WriterQos& qos)
+ReturnCode_t DataWriter::set_qos(const WriterQos& qos)
 {
     //QOS:
     //CHECK IF THE QOS CAN BE SET
     if(!qos_.canQosBeUpdated(qos))
     {
-        return false;
+        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
 
     qos_.setQos(qos,false);
@@ -467,23 +513,24 @@ bool DataWriter::set_qos(const WriterQos& qos)
         lifespan_timer_.cancel_timer();
     }
 
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
-const WriterQos& DataWriter::get_qos() const
+ReturnCode_t DataWriter::get_qos(WriterQos& qos) const
 {
-    return qos_;
+    qos = qos_;
+    return ReturnCode_t::RETCODE_OK;
 }
 
-bool DataWriter::set_listener(DataWriterListener* listener)
+ReturnCode_t DataWriter::set_listener(DataWriterListener* listener)
 {
     if (listener_ == listener)
     {
-        return false;
+        return ReturnCode_t::RETCODE_ERROR;
     }
 
     listener_ = listener;
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const DataWriterListener* DataWriter::get_listener() const
@@ -545,10 +592,18 @@ void DataWriter::InnerDataWriterListener::on_liveliness_lost(
     }
 }
 
-bool DataWriter::wait_for_acknowledgments(
+ReturnCode_t DataWriter::wait_for_acknowledgments(
         const Duration_t &max_wait)
 {
-    return writer_->wait_for_all_acked(max_wait);
+    if(qos_.m_reliability.kind != RELIABLE_RELIABILITY_QOS)
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+    if(writer_->wait_for_all_acked(max_wait))
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_TIMEOUT;
 }
 
 void DataWriter::deadline_timer_reschedule()
@@ -592,12 +647,13 @@ void DataWriter::deadline_missed()
     deadline_timer_reschedule();
 }
 
-void DataWriter::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &status)
+ReturnCode_t DataWriter::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &status)
 {
     std::unique_lock<std::recursive_timed_mutex> lock(writer_->getMutex());
 
     status = deadline_missed_status_;
     deadline_missed_status_.total_count_change = 0;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 void DataWriter::lifespan_expired()
@@ -642,7 +698,7 @@ void DataWriter::lifespan_expired()
     lifespan_timer_.restart_timer();
 }
 
-bool DataWriter::get_liveliness_lost_status(
+ReturnCode_t DataWriter::get_liveliness_lost_status(
         fastrtps::LivelinessLostStatus& status)
 {
     std::unique_lock<std::recursive_timed_mutex> lock(writer_->getMutex());
@@ -651,10 +707,10 @@ bool DataWriter::get_liveliness_lost_status(
 
     writer_->liveliness_lost_status_.total_count_change = 0u;
 
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
-bool DataWriter::assert_liveliness()
+ReturnCode_t DataWriter::assert_liveliness()
 {
     if (!publisher_->rtps_participant()->wlp()->assert_liveliness(
             writer_->getGuid(),
@@ -662,6 +718,7 @@ bool DataWriter::assert_liveliness()
             writer_->get_liveliness_lease_duration()))
     {
         logError(DATAWRITER, "Could not assert liveliness of writer " << writer_->getGuid());
+        return ReturnCode_t::RETCODE_ERROR;
     }
 
     if (qos_.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
@@ -676,7 +733,7 @@ bool DataWriter::assert_liveliness()
             stateful_writer->send_periodic_heartbeat(true, true);
         }
     }
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 } // namespace fastdds

@@ -37,11 +37,11 @@ namespace fastdds {
 
 SubscriberImpl::SubscriberImpl(
         DomainParticipantImpl* p,
-        const SubscriberQos& qos,
+        SubscriberQos& qos,
         const fastrtps::SubscriberAttributes& att,
         SubscriberListener* listen)
     : participant_(p)
-    , qos_(&qos == &SUBSCRIBER_QOS_DEFAULT ? participant_->get_default_subscriber_qos() : qos)
+    , qos_(&qos == &SUBSCRIBER_QOS_DEFAULT ? ((void) participant_->get_default_subscriber_qos(qos), qos) : qos)
     , att_(att)
     , listener_(listen)
     , subscriber_listener_(this)

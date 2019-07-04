@@ -38,11 +38,11 @@ namespace fastdds {
 
 PublisherImpl::PublisherImpl(
         DomainParticipantImpl* p,
-        const PublisherQos& qos,
+        PublisherQos& qos,
         const fastrtps::PublisherAttributes& att,
         PublisherListener* listen)
     : participant_(p)
-    , qos_(&qos == &PUBLISHER_QOS_DEFAULT ? participant_->get_default_publisher_qos() : qos)
+    , qos_(&qos == &PUBLISHER_QOS_DEFAULT ? ((void) participant_->get_default_publisher_qos(qos), qos) : qos)
     , att_(att)
     , listener_(listen)
     , publisher_listener_(this)
@@ -62,20 +62,25 @@ PublisherImpl::~PublisherImpl()
     delete user_publisher_;
 }
 
-const PublisherQos& PublisherImpl::get_qos() const
+ReturnCode_t PublisherImpl::get_qos(PublisherQos& qos) const
 {
-    return qos_;
+    qos = qos_;
+    return ReturnCode_t::RETCODE_OK;
 }
 
-bool PublisherImpl::set_qos(
+ReturnCode_t PublisherImpl::set_qos(
         const PublisherQos& qos)
 {
     if(qos_.canQosBeUpdated(qos))
     {
         qos_.setQos(qos, false);
-        return true;
+        return ReturnCode_t::RETCODE_OK;
     }
-    return false;
+    else if(!qos.checkQos())
+    {
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
+    return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
 }
 
 const PublisherListener* PublisherImpl::get_listener() const
@@ -83,15 +88,15 @@ const PublisherListener* PublisherImpl::get_listener() const
     return listener_;
 }
 
-bool PublisherImpl::set_listener(
+ReturnCode_t PublisherImpl::set_listener(
         PublisherListener* listener)
 {
     if (listener_ == listener)
     {
-        return false;
+        return ReturnCode_t::RETCODE_ERROR;
     }
     listener_ = listener;
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 void PublisherImpl::PublisherWriterListener::on_publication_matched(
@@ -126,7 +131,7 @@ void PublisherImpl::PublisherWriterListener::on_offered_deadline_missed(
 
 DataWriter* PublisherImpl::create_datawriter(
         const fastrtps::TopicAttributes& topic_att,
-        const fastrtps::WriterQos& writer_qos,
+        fastrtps::WriterQos& writer_qos,
         DataWriterListener* listener)
 {
     logInfo(PUBLISHER, "CREATING WRITER IN TOPIC: " << topic_att.getTopicName());
@@ -233,17 +238,21 @@ DataWriter* PublisherImpl::create_datawriter(
     return writer;
 }
 
-bool PublisherImpl::delete_datawriter(
+ReturnCode_t PublisherImpl::delete_datawriter(
         DataWriter* writer)
 {
+    if(user_publisher_ != writer->get_publisher())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
     std::lock_guard<std::mutex> lock(mtx_writers_);
     auto it = writers_.find(writer->get_topic().getTopicName().to_string());
     if (it != writers_.end() && it->second == writer)
     {
         writers_.erase(it);
-        return true;
+        return ReturnCode_t::RETCODE_OK;
     }
-    return false;
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
 DataWriter* PublisherImpl::lookup_datawriter(
@@ -269,61 +278,67 @@ bool PublisherImpl::get_datawriters(
     return true;
 }
 
-bool PublisherImpl::suspend_publications()
+ReturnCode_t PublisherImpl::suspend_publications()
 {
     logError(PUBLISHER, "Operation not implemented");
-    return false;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-bool PublisherImpl::resume_publications()
+ReturnCode_t PublisherImpl::resume_publications()
 {
     logError(PUBLISHER, "Operation not implemented");
-    return false;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-bool PublisherImpl::begin_coherent_changes()
+ReturnCode_t PublisherImpl::begin_coherent_changes()
 {
     logError(PUBLISHER, "Operation not implemented");
-    return false;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-bool PublisherImpl::end_coherent_changes()
+ReturnCode_t PublisherImpl::end_coherent_changes()
 {
     logError(PUBLISHER, "Operation not implemented");
-    return false;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
 
-bool PublisherImpl::set_default_datawriter_qos(
+ReturnCode_t PublisherImpl::set_default_datawriter_qos(
         const fastrtps::WriterQos& qos)
 {
     if (&qos == &DATAWRITER_QOS_DEFAULT)
     {
         fastrtps::WriterQos def_qos;
         default_datawriter_qos_.setQos(def_qos, true);
+        return ReturnCode_t::RETCODE_OK;
     }
-    else if (default_datawriter_qos_.canQosBeUpdated(qos) && qos.checkQos())
+    else if (default_datawriter_qos_.canQosBeUpdated(qos))
     {
+        if(!qos.checkQos())
+        {
+            return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+        }
         default_datawriter_qos_.setQos(qos, false);
-        return true;
+        return ReturnCode_t::RETCODE_OK;
     }
-    return false;
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
-const fastrtps::WriterQos& PublisherImpl::get_default_datawriter_qos() const
+ReturnCode_t PublisherImpl::get_default_datawriter_qos(fastrtps::WriterQos& qos) const
 {
-    return default_datawriter_qos_;
+    qos = default_datawriter_qos_;
+    return ReturnCode_t::RETCODE_OK;
 }
 
-bool PublisherImpl::copy_from_topic_qos(
+ReturnCode_t PublisherImpl::copy_from_topic_qos(
         fastrtps::WriterQos&,
         const fastrtps::TopicAttributes&) const
 {
     logError(PUBLISHER, "Operation not implemented");
-    return false;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-bool PublisherImpl::wait_for_acknowledments(
+ReturnCode_t PublisherImpl::wait_for_acknowledgments(
         const Duration_t& max_wait)
 {
     Duration_t current = max_wait;
@@ -334,17 +349,17 @@ bool PublisherImpl::wait_for_acknowledments(
         participant_->get_current_time(begin);
         if (!it.second->wait_for_acknowledgments(current))
         {
-            return false;
+            return ReturnCode_t::RETCODE_ERROR;
         }
         // Check ellapsed time and decrement
         participant_->get_current_time(end);
         current = current - (end - begin);
         if (current < c_TimeZero)
         {
-            return false;
+            return ReturnCode_t::RETCODE_TIMEOUT;
         }
     }
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const DomainParticipant* PublisherImpl::get_participant() const
@@ -357,10 +372,10 @@ const Publisher* PublisherImpl::get_publisher() const
     return user_publisher_;
 }
 
-bool PublisherImpl::delete_contained_entities()
+ReturnCode_t PublisherImpl::delete_contained_entities()
 {
     logError(PUBLISHER, "Operation not implemented");
-    return false;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
 const fastrtps::PublisherAttributes& PublisherImpl::get_attributes() const

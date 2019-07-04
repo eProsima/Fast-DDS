@@ -62,7 +62,7 @@ class SubscriberImpl {
      */
     SubscriberImpl(
         DomainParticipantImpl* p,
-        const SubscriberQos& qos,
+        SubscriberQos& qos,
         const fastrtps::SubscriberAttributes& attr,
         SubscriberListener* listen = nullptr);
 

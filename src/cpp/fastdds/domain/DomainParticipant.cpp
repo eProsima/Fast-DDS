@@ -33,7 +33,7 @@ DomainParticipant::~DomainParticipant()
 {
 }
 
-bool DomainParticipant::set_listener(
+ReturnCode_t DomainParticipant::set_listener(
         DomainParticipantListener* listener)
 {
     return impl_->set_listener(listener);
@@ -45,28 +45,28 @@ const DomainParticipantListener* DomainParticipant::get_listener() const
 }
 
 Publisher* DomainParticipant::create_publisher(
-        const fastdds::PublisherQos& qos,
+        fastdds::PublisherQos& qos,
         const fastrtps::PublisherAttributes& att,
         PublisherListener* listen)
 {
     return impl_->create_publisher(qos, att, listen);
 }
 
-bool DomainParticipant::delete_publisher(
+ReturnCode_t DomainParticipant::delete_publisher(
         Publisher* publisher)
 {
     return impl_->delete_publisher(publisher);
 }
 
 Subscriber* DomainParticipant::create_subscriber(
-        const fastdds::SubscriberQos& qos,
+        fastdds::SubscriberQos& qos,
         const fastrtps::SubscriberAttributes& att,
         SubscriberListener* listen)
 {
     return impl_->create_subscriber(qos, att, listen);
 }
 
-bool DomainParticipant::delete_subscriber(
+ReturnCode_t DomainParticipant::delete_subscriber(
         Subscriber* subscriber)
 {
     return impl_->delete_subscriber(subscriber);
@@ -89,25 +89,25 @@ Subscriber* DomainParticipant::get_builtin_subscriber()
     return impl_->get_builtin_subscriber();
 }
 
-bool DomainParticipant::ignore_participant(
+ReturnCode_t DomainParticipant::ignore_participant(
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
     return impl_->ignore_participant(handle);
 }
 
-bool DomainParticipant::ignore_topic(
+ReturnCode_t DomainParticipant::ignore_topic(
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
     return impl_->ignore_topic(handle);
 }
 
-bool DomainParticipant::ignore_publication(
+ReturnCode_t DomainParticipant::ignore_publication(
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
     return impl_->ignore_publication(handle);
 }
 
-bool DomainParticipant::ignore_subscription(
+ReturnCode_t DomainParticipant::ignore_subscription(
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
     return impl_->ignore_subscription(handle);
@@ -118,45 +118,47 @@ uint8_t DomainParticipant::get_domain_id() const
     return impl_->get_domain_id();
 }
 
-bool DomainParticipant::delete_contained_entities()
+ReturnCode_t DomainParticipant::delete_contained_entities()
 {
     return impl_->delete_contained_entities();
 }
 
-bool DomainParticipant::assert_liveliness()
+ReturnCode_t DomainParticipant::assert_liveliness()
 {
     return impl_->assert_liveliness();
 }
 
-bool DomainParticipant::set_default_publisher_qos(
+ReturnCode_t DomainParticipant::set_default_publisher_qos(
         const fastdds::PublisherQos& qos)
 {
     return impl_->set_default_publisher_qos(qos);
 }
 
-const fastdds::PublisherQos& DomainParticipant::get_default_publisher_qos() const
+ReturnCode_t DomainParticipant::get_default_publisher_qos(
+        fastdds::PublisherQos& qos) const
 {
-    return impl_->get_default_publisher_qos();
+    return impl_->get_default_publisher_qos(qos);
 }
 
-bool DomainParticipant::set_default_subscriber_qos(
+ReturnCode_t DomainParticipant::set_default_subscriber_qos(
         const fastdds::SubscriberQos& qos)
 {
     return impl_->set_default_subscriber_qos(qos);
 }
 
-const fastdds::SubscriberQos& DomainParticipant::get_default_subscriber_qos() const
+ReturnCode_t DomainParticipant::get_default_subscriber_qos(
+        fastdds::SubscriberQos& qos) const
 {
-    return impl_->get_default_subscriber_qos();
+    return impl_->get_default_subscriber_qos(qos);
 }
 
-bool DomainParticipant::get_discovered_participants(
+ReturnCode_t DomainParticipant::get_discovered_participants(
         std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const
 {
     return impl_->get_discovered_participants(participant_handles);
 }
 
-bool DomainParticipant::get_discovered_topics(
+ReturnCode_t DomainParticipant::get_discovered_topics(
         std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const
 {
     return impl_->get_discovered_topics(topic_handles);
@@ -169,7 +171,7 @@ bool DomainParticipant::contains_entity(
     return impl_->contains_entity(handle, recursive);
 }
 
-bool DomainParticipant::get_current_time(
+ReturnCode_t DomainParticipant::get_current_time(
         fastrtps::Time_t& current_time) const
 {
     return impl_->get_current_time(current_time);
