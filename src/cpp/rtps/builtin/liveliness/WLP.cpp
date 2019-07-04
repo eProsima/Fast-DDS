@@ -524,6 +524,13 @@ bool WLP::add_local_writer(RTPSWriter* W, const WriterQos& wqos)
 
     double wAnnouncementPeriodMilliSec(TimeConv::Duration_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));
 
+    if (wqos.m_liveliness.lease_duration < c_TimeInfinite &&
+            wqos.m_liveliness.announcement_period == c_TimeInfinite)
+    {
+        wAnnouncementPeriodMilliSec = TimeConv::Duration_t2MilliSecondsDouble(wqos.m_liveliness.lease_duration) * 0.25;
+        logInfo(RTPS_LIVELINESS, "Setting liveliness announcement period to " << wAnnouncementPeriodMilliSec << " ms");
+    }
+
     if (wqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
     {
         if (automatic_liveliness_assertion_ == nullptr)

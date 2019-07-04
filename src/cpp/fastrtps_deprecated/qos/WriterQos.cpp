@@ -151,14 +151,6 @@ bool WriterQos::checkQos() const
         logError(RTPS_QOS_CHECK,"BEST_EFFORT incompatible with EXCLUSIVE ownership");
         return false;
     }
-    if(m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS || m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-    {
-        if(m_liveliness.lease_duration < c_TimeInfinite && m_liveliness.lease_duration <= m_liveliness.announcement_period)
-        {
-            logError(RTPS_QOS_CHECK,"WRITERQOS: LeaseDuration <= announcement period.");
-            return false;
-        }
-    }
     return true;
 }
 

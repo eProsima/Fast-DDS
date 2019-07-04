@@ -1539,7 +1539,6 @@ TEST(LivelinessQos, LivelinessChangedStatus_NotAlive_Unmatched)
     EXPECT_EQ(status.not_alive_count_change, -1);
 }
 
-
 //! Tests the assert_liveliness on the participant
 //! A participant with three publishers, two MANUAL_BY_PARTICIPANT liveliness, one MANUAL_BY_TOPIC
 TEST(LivelinessQos, AssertLivelinessParticipant)
@@ -1579,4 +1578,15 @@ TEST(LivelinessQos, AssertLivelinessParticipant)
     // Only the two MANUAL_BY_PARTICIPANT publishers will have lost liveliness, as the
     // MANUAL_BY_TOPIC one was never asserted
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 2u);
+}
+
+//! Tests that publisher can be created without providing an announcement period
+TEST(LivelinessQos, DefaultAnnouncementPeriod)
+{
+    unsigned int lease_duration_ms = 100;
+
+    // Publisher
+    PubSubWriter<HelloWorldType> pub(TEST_TOPIC_NAME);
+    pub.liveliness_lease_duration(lease_duration_ms * 1e-3).init();
+    EXPECT_NE(pub.getParticipant(), nullptr);
 }
