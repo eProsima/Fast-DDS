@@ -28,6 +28,8 @@
 #include <fastdds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/subscriber/qos/SubscriberQos.hpp>
 
+using namespace eprosima::fastrtps::types;
+
 namespace eprosima{
 namespace fastrtps{
 
@@ -75,11 +77,11 @@ private:
 
 public:
 
-    bool set_listener(
+    ReturnCode_t set_listener(
             DomainParticipantListener* listener)
     {
         listener_ = listener;
-        return true;
+        return ReturnCode_t::RETCODE_OK;
     }
 
     const DomainParticipantListener* get_listener() const
@@ -95,11 +97,11 @@ public:
      * @return Pointer to the created Publisher.
      */
     Publisher* create_publisher(
-            const fastdds::PublisherQos& qos,
+            fastdds::PublisherQos& qos,
             const fastrtps::PublisherAttributes& att,
             PublisherListener* listen = nullptr);
 
-    bool delete_publisher(
+    ReturnCode_t delete_publisher(
             Publisher* publisher);
 
     /**
@@ -110,11 +112,11 @@ public:
      * @return Pointer to the created Subscriber.
      */
     Subscriber* create_subscriber(
-            const fastdds::SubscriberQos& qos,
+            fastdds::SubscriberQos& qos,
             const fastrtps::SubscriberAttributes& att,
             SubscriberListener* listen = nullptr);
 
-    bool delete_subscriber(
+    ReturnCode_t delete_subscriber(
             Subscriber* subscriber);
 
     /**
@@ -137,37 +139,39 @@ public:
 
     Subscriber* get_builtin_subscriber();
 
-    bool ignore_participant(
+    ReturnCode_t ignore_participant(
             const fastrtps::rtps::InstanceHandle_t& handle);
 
-    bool ignore_topic(
+    ReturnCode_t ignore_topic(
             const fastrtps::rtps::InstanceHandle_t& handle);
 
-    bool ignore_publication(
+    ReturnCode_t ignore_publication(
             const fastrtps::rtps::InstanceHandle_t& handle);
 
-    bool ignore_subscription(
+    ReturnCode_t ignore_subscription(
             const fastrtps::rtps::InstanceHandle_t& handle);
 
     uint8_t get_domain_id() const;
 
-    bool delete_contained_entities();
+    ReturnCode_t delete_contained_entities();
 
-    bool assert_liveliness();
+    ReturnCode_t assert_liveliness();
 
-    bool set_default_publisher_qos(
+    ReturnCode_t set_default_publisher_qos(
             const fastdds::PublisherQos& qos);
 
-    const fastdds::PublisherQos& get_default_publisher_qos() const;
+    ReturnCode_t get_default_publisher_qos(
+            fastdds::PublisherQos& qos) const;
 
-    bool set_default_subscriber_qos(
+    ReturnCode_t set_default_subscriber_qos(
             const fastdds::SubscriberQos& qos);
 
-    const fastdds::SubscriberQos& get_default_subscriber_qos() const;
+    ReturnCode_t get_default_subscriber_qos(
+            fastdds::SubscriberQos& qos) const;
 
     // TODO Get/Set default Topic Qos
 
-    bool get_discovered_participants(
+    ReturnCode_t get_discovered_participants(
             std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const;
 
     /* TODO
@@ -176,7 +180,7 @@ public:
             const fastrtps::rtps::InstanceHandle_t& participant_handle) const;
     */
 
-    bool get_discovered_topics(
+    ReturnCode_t get_discovered_topics(
             std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const;
 
     /* TODO
@@ -189,7 +193,7 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle,
             bool recursive = true) const;
 
-    bool get_current_time(
+    ReturnCode_t get_current_time(
             fastrtps::Time_t& current_time) const;
 
     const DomainParticipant* get_participant() const;

@@ -23,12 +23,15 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastrtps/attributes/PublisherAttributes.h>
+#include "../../../../include/fastrtps/types/TypesBase.h"
 
 #include <fastdds/topic/DataWriterListener.hpp>
 #include <fastdds/publisher/qos/PublisherQos.hpp>
 
 #include <mutex>
 #include <map>
+
+using namespace eprosima::fastrtps::types;
 
 namespace eprosima {
 namespace fastrtps{
@@ -65,7 +68,7 @@ class PublisherImpl
      */
     PublisherImpl(
             DomainParticipantImpl* p,
-            const PublisherQos& qos,
+            PublisherQos& qos,
             const fastrtps::PublisherAttributes& att,
             PublisherListener* p_listen = nullptr);
 
@@ -73,22 +76,22 @@ public:
 
     virtual ~PublisherImpl();
 
-    const PublisherQos& get_qos() const;
+    ReturnCode_t get_qos(PublisherQos& qos) const;
 
-    bool set_qos(
+    ReturnCode_t set_qos(
             const PublisherQos& qos);
 
     const PublisherListener* get_listener() const;
 
-    bool set_listener(
+    ReturnCode_t set_listener(
             PublisherListener* listener);
 
     DataWriter* create_datawriter(
             const fastrtps::TopicAttributes& topic_attr,
-            const fastrtps::WriterQos& writer_qos,
+            fastrtps::WriterQos& writer_qos,
             DataWriterListener* listener);
 
-    bool delete_datawriter(
+    ReturnCode_t delete_datawriter(
             DataWriter* writer);
 
     DataWriter* lookup_datawriter(
@@ -97,27 +100,27 @@ public:
     bool get_datawriters(
         std::vector<DataWriter*>& writers) const;
 
-    bool suspend_publications();
+    ReturnCode_t suspend_publications();
 
-    bool resume_publications();
+    ReturnCode_t resume_publications();
 
-    bool begin_coherent_changes();
+    ReturnCode_t begin_coherent_changes();
 
-    bool end_coherent_changes();
+    ReturnCode_t end_coherent_changes();
 
-    bool wait_for_acknowledments(
+    ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
     const DomainParticipant* get_participant() const;
 
-    bool delete_contained_entities();
+    ReturnCode_t delete_contained_entities();
 
-    bool set_default_datawriter_qos(
+    ReturnCode_t set_default_datawriter_qos(
             const fastrtps::WriterQos& qos);
 
-    const fastrtps::WriterQos& get_default_datawriter_qos() const;
+    ReturnCode_t get_default_datawriter_qos(fastrtps::WriterQos& qos) const;
 
-    bool copy_from_topic_qos(
+    ReturnCode_t copy_from_topic_qos(
             fastrtps::WriterQos& writer_qos,
             const fastrtps::TopicAttributes& topic_qos) const;
 

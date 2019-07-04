@@ -36,12 +36,12 @@ Publisher::~Publisher()
 {
 }
 
-const PublisherQos& Publisher::get_qos() const
+ReturnCode_t Publisher::get_qos(PublisherQos& qos) const
 {
-    return impl_->get_qos();
+    return impl_->get_qos(qos);
 }
 
-bool Publisher::set_qos(
+ReturnCode_t Publisher::set_qos(
         const PublisherQos& qos)
 {
     return impl_->set_qos(qos);
@@ -52,7 +52,7 @@ const PublisherListener* Publisher::get_listener() const
     return impl_->get_listener();
 }
 
-bool Publisher::set_listener(
+ReturnCode_t Publisher::set_listener(
         PublisherListener* listener)
 {
     return impl_->set_listener(listener);
@@ -60,13 +60,13 @@ bool Publisher::set_listener(
 
 DataWriter* Publisher::create_datawriter(
         const fastrtps::TopicAttributes& topic_attr,
-        const fastrtps::WriterQos& writer_qos,
+        fastrtps::WriterQos& writer_qos,
         DataWriterListener* listener)
 {
     return impl_->create_datawriter(topic_attr, writer_qos, listener);
 }
 
-bool Publisher::delete_datawriter(
+ReturnCode_t Publisher::delete_datawriter(
         DataWriter* writer)
 {
     return impl_->delete_datawriter(writer);
@@ -84,30 +84,30 @@ bool Publisher::get_datawriters(
     return impl_->get_datawriters(writers);
 }
 
-bool Publisher::suspend_publications()
+ReturnCode_t Publisher::suspend_publications()
 {
     return impl_->suspend_publications();
 }
 
-bool Publisher::resume_publications()
+ReturnCode_t Publisher::resume_publications()
 {
     return impl_->resume_publications();
 }
 
-bool Publisher::begin_coherent_changes()
+ReturnCode_t Publisher::begin_coherent_changes()
 {
     return impl_->begin_coherent_changes();
 }
 
-bool Publisher::end_coherent_changes()
+ReturnCode_t Publisher::end_coherent_changes()
 {
     return impl_->end_coherent_changes();
 }
 
-bool Publisher::wait_for_acknowledments(
+ReturnCode_t Publisher::wait_for_acknowledgments(
         const fastrtps::Duration_t& max_wait)
 {
-    return impl_->wait_for_acknowledments(max_wait);
+    return impl_->wait_for_acknowledgments(max_wait);
 }
 
 const DomainParticipant* Publisher::get_participant() const
@@ -115,23 +115,23 @@ const DomainParticipant* Publisher::get_participant() const
     return impl_->get_participant();
 }
 
-bool Publisher::delete_contained_entities()
+ReturnCode_t Publisher::delete_contained_entities()
 {
     return impl_->delete_contained_entities();
 }
 
-bool Publisher::set_default_datawriter_qos(
+ReturnCode_t Publisher::set_default_datawriter_qos(
         const fastrtps::WriterQos& qos)
 {
     return impl_->set_default_datawriter_qos(qos);
 }
 
-const fastrtps::WriterQos& Publisher::get_default_datawriter_qos() const
+ReturnCode_t Publisher::get_default_datawriter_qos(fastrtps::WriterQos& qos) const
 {
-    return impl_->get_default_datawriter_qos();
+    return impl_->get_default_datawriter_qos(qos);
 }
 
-bool Publisher::copy_from_topic_qos(
+ReturnCode_t Publisher::copy_from_topic_qos(
         fastrtps::WriterQos& writer_qos,
         const fastrtps::TopicAttributes& topic_qos) const
 {

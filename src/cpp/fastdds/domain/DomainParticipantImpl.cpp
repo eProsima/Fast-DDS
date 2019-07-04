@@ -117,40 +117,60 @@ DomainParticipantImpl::~DomainParticipantImpl()
 }
 
 
-bool DomainParticipantImpl::delete_publisher(
+ReturnCode_t DomainParticipantImpl::delete_publisher(
         Publisher* pub)
 {
+    if(participant_ != pub->get_participant())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
     std::lock_guard<std::mutex> lock(mtx_pubs_);
     auto pit = publishers_.find(pub);
     if (pub->get_instance_handle() == pit->second->get_instance_handle())
     {
         if (pit != publishers_.end())
         {
+            std::vector<DataWriter*> writers;
+            pub->get_datawriters(writers);
+            if(!writers.empty())
+            {
+                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            }
             publishers_by_handle_.erase(publishers_by_handle_.find(pit->second->get_instance_handle()));
             delete pit->second;
             publishers_.erase(pit);
-            return true;
+            return ReturnCode_t::RETCODE_OK;
         }
     }
-    return false;
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
-bool DomainParticipantImpl::delete_subscriber(
+ReturnCode_t DomainParticipantImpl::delete_subscriber(
         Subscriber* sub)
 {
+    if(participant_ != sub->get_participant())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
     std::lock_guard<std::mutex> lock(mtx_subs_);
     auto sit = subscribers_.find(sub);
     if (sub->get_instance_handle() == sit->second->get_instance_handle())
     {
         if (sit != subscribers_.end())
         {
+            std::vector<DataReader*> readers;
+            sub->get_datareaders(readers);
+            if(!readers.empty())
+            {
+                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            }
             subscribers_by_handle_.erase(subscribers_by_handle_.find(sit->second->get_instance_handle()));
             delete sit->second;
             subscribers_.erase(sit);
-            return true;
+            return ReturnCode_t::RETCODE_OK;
         }
     }
-    return false;
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
 const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
@@ -164,7 +184,7 @@ const GUID_t& DomainParticipantImpl::guid() const
 }
 
 Publisher* DomainParticipantImpl::create_publisher(
-        const PublisherQos& qos,
+        PublisherQos& qos,
         const fastrtps::PublisherAttributes& att,
         PublisherListener* listen)
 {
@@ -231,36 +251,36 @@ Subscriber* DomainParticipantImpl::get_builtin_subscriber()
     return nullptr;
 }
 
-bool DomainParticipantImpl::ignore_participant(
+ReturnCode_t DomainParticipantImpl::ignore_participant(
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
     (void)handle;
     logError(PARTICIPANT, "Not implemented.");
-    return false;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-bool DomainParticipantImpl::ignore_topic(
+ReturnCode_t DomainParticipantImpl::ignore_topic(
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
     (void)handle;
     logError(PARTICIPANT, "Not implemented.");
-    return false;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-bool DomainParticipantImpl::ignore_publication(
+ReturnCode_t DomainParticipantImpl::ignore_publication(
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
     (void)handle;
     logError(PARTICIPANT, "Not implemented.");
-    return false;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-bool DomainParticipantImpl::ignore_subscription(
+ReturnCode_t DomainParticipantImpl::ignore_subscription(
         const fastrtps::rtps::InstanceHandle_t& handle)
 {
     (void)handle;
     logError(PARTICIPANT, "Not implemented.");
-    return false;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
 uint8_t DomainParticipantImpl::get_domain_id() const
@@ -268,74 +288,80 @@ uint8_t DomainParticipantImpl::get_domain_id() const
     return static_cast<uint8_t>(att_.rtps.builtin.domainId);
 }
 
-bool DomainParticipantImpl::delete_contained_entities()
+ReturnCode_t DomainParticipantImpl::delete_contained_entities()
 {
     logError(PARTICIPANT, "Not implemented.");
-    return false;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-bool DomainParticipantImpl::assert_liveliness()
+ReturnCode_t DomainParticipantImpl::assert_liveliness()
 {
     logError(PARTICIPANT, "Not implemented.");
-    return false;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-bool DomainParticipantImpl::set_default_publisher_qos(
+ReturnCode_t DomainParticipantImpl::set_default_publisher_qos(
         const fastdds::PublisherQos& qos)
 {
     if (&qos == &PUBLISHER_QOS_DEFAULT)
     {
         fastdds::PublisherQos def_qos;
         default_pub_qos_.setQos(def_qos, true);
+        return ReturnCode_t::RETCODE_OK;
     }
     else if (qos.checkQos())
     {
         default_pub_qos_.setQos(qos, false);
-        return true;
+        return ReturnCode_t::RETCODE_OK;
     }
-    return false;
+    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
 }
 
-const fastdds::PublisherQos& DomainParticipantImpl::get_default_publisher_qos() const
+ReturnCode_t DomainParticipantImpl::get_default_publisher_qos(
+        fastdds::PublisherQos& qos) const
 {
-    return default_pub_qos_;
+    qos = default_pub_qos_;
+    return ReturnCode_t::RETCODE_OK;
 }
 
-bool DomainParticipantImpl::set_default_subscriber_qos(
+ReturnCode_t DomainParticipantImpl::set_default_subscriber_qos(
         const fastdds::SubscriberQos& qos)
 {
     if (&qos == &SUBSCRIBER_QOS_DEFAULT)
     {
         fastdds::SubscriberQos def_qos;
         default_sub_qos_.setQos(def_qos, true);
+        return ReturnCode_t::RETCODE_OK;
     }
     else if (qos.checkQos())
     {
         default_sub_qos_.setQos(qos, false);
-        return true;
+        return ReturnCode_t::RETCODE_OK;
     }
-    return false;
+    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
 }
 
-const fastdds::SubscriberQos& DomainParticipantImpl::get_default_subscriber_qos() const
+ReturnCode_t DomainParticipantImpl::get_default_subscriber_qos(
+        fastdds::SubscriberQos& qos) const
 {
-    return default_sub_qos_;
+    qos = default_sub_qos_;
+    return ReturnCode_t::RETCODE_OK;
 }
 
-bool DomainParticipantImpl::get_discovered_participants(
+ReturnCode_t DomainParticipantImpl::get_discovered_participants(
         std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const
 {
     (void)participant_handles;
     logError(PARTICIPANT, "Not implemented.");
-    return false;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-bool DomainParticipantImpl::get_discovered_topics(
+ReturnCode_t DomainParticipantImpl::get_discovered_topics(
         std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const
 {
     (void)topic_handles;
     logError(PARTICIPANT, "Not implemented.");
-    return false;
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
 bool DomainParticipantImpl::contains_entity(
@@ -404,7 +430,7 @@ bool DomainParticipantImpl::contains_entity(
     return false;
 }
 
-bool DomainParticipantImpl::get_current_time(
+ReturnCode_t DomainParticipantImpl::get_current_time(
         fastrtps::Time_t& current_time) const
 {
     auto now = std::chrono::system_clock::now();
@@ -416,7 +442,7 @@ bool DomainParticipantImpl::get_current_time(
     current_time.seconds = static_cast<int32_t>(seconds.count());
     current_time.nanosec = static_cast<uint32_t>(nanos.count());
 
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const DomainParticipant* DomainParticipantImpl::get_participant() const
@@ -435,7 +461,7 @@ std::vector<std::string> DomainParticipantImpl::getParticipantNames() const
 }
 
 Subscriber* DomainParticipantImpl::create_subscriber(
-        const SubscriberQos& qos,
+        SubscriberQos& qos,
         const fastrtps::SubscriberAttributes& att,
         SubscriberListener* listen)
 {
