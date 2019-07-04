@@ -67,10 +67,10 @@ void Log::Flush()
         return;
     }
 
-    // Wait till the background thread signals
+    // Wait till the background thread signals and...
     mResources.mCv.wait(guard, [&]()
-    {
-        return mResources.mLogs.BothEmpty();
+    {   // ... either the logging has ended or the queue is flushed
+        return !mResources.mLogging || mResources.mLogs.BothEmpty();
     });
 
 }
@@ -102,7 +102,7 @@ void Log::Run()
             }
             guard.lock();
         }
-        mResources.mCv.notify_one();
+        mResources.mCv.notify_all();
         if (mResources.mLogging)
             mResources.mCv.wait(guard);
     }
