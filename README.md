@@ -8,9 +8,9 @@
 
 <a href="http://www.eprosima.com"><img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSd0PDlVz1U_7MgdTe0FRIWD0Jc9_YH-gGi0ZpLkr-qgCI6ZEoJZ5GBqQ" align="left" hspace="8" vspace="2" width="100" height="100" ></a>
 
-*eprosima Fast RTPS* is a C++ implementation of the RTPS (Real Time Publish Subscribe) protocol, which provides publisher-subscriber communications over unreliable transports such as UDP, 
+*eprosima Fast RTPS* is a C++ implementation of the RTPS (Real Time Publish Subscribe) protocol, which provides publisher-subscriber communications over unreliable transports such as UDP,
 as defined and maintained by the Object Management Group (OMG) consortium. RTPS is also the wire interoperability protocol defined for the Data Distribution
-Service (DDS) standard, again by the OMG. *eProsima Fast RTPS* holds the benefit of being standalone and up-to-date, as most vendor solutions either implement RTPS as a tool to implement 
+Service (DDS) standard, again by the OMG. *eProsima Fast RTPS* holds the benefit of being standalone and up-to-date, as most vendor solutions either implement RTPS as a tool to implement
 DDS or use past versions of the specification.
 
 Some of the main features of this library are:
@@ -61,7 +61,7 @@ If you are on Windows, choose your version of Visual Studio:
 
     > cmake ../  -G "Visual Studio 14 2015 Win64" -DTHIRDPARTY=ON
     > cmake --build . --target install
-	
+
 If you want to compile the performance tests, you will need to add the argument `-DPERFORMANCE_TESTS=ON` when calling Cmake.
 
 ## Documentation
@@ -78,11 +78,11 @@ You can access the documentation online, which is hosted on [Read the Docs](http
 
 For those who want to try a quick demonstration of Fast-RTPS libraries, here is a way to launch an example application.
 
-For that, it is necessary to download **docker** application. In ubuntu open a terminal and type the following command
+For that, it is necessary to download **docker** application. In Ubuntu, open a terminal and type the following command
 
 	$ sudo apt-get install docker.io
 
-Then you have to download the docker image file from https://eprosima.com/index.php/downloads-all
+Then, you have to download the docker image file from https://eprosima.com/index.php/downloads-all
 
 Load the image and run it
 
