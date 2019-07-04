@@ -74,6 +74,24 @@ You can access the documentation online, which is hosted on [Read the Docs](http
 * [FastRTPSGen manual](http://eprosima-fast-rtps.readthedocs.io/en/latest/geninfo.html)
 * [Release notes](http://eprosima-fast-rtps.readthedocs.io/en/latest/notes.html)
 
+## Quick Demo
+
+For those who want to try a quick demonstration of Fast-RTPS libraries, here is a way to launch an example application.
+
+For that, it is necessary to download **docker** application. In ubuntu open a terminal and type the following command
+
+	$ sudo apt-get install docker.io
+
+Then you have to download the docker image file from https://eprosima.com/index.php/downloads-all
+
+Load the image and run it (first you must allow root to use graphical interface)
+
+	$ xhost local:root
+	$ docker load -i ubuntu-fast-rtps.tar
+	$ docker run -it --privileged -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix ubuntu-fast-rtps
+
+You can run as many images as you want and check the communication between them
+
 ## Getting Help
 
 If you need support you can reach us by mail at `support@eProsima.com` or by phone at `+34 91 804 34 48`.
