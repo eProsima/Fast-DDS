@@ -84,11 +84,10 @@ For that, it is necessary to download **docker** application. In ubuntu open a t
 
 Then you have to download the docker image file from https://eprosima.com/index.php/downloads-all
 
-Load the image and run it (first you must allow root to use graphical interface)
+Load the image and run it
 
-	$ xhost local:root
 	$ docker load -i ubuntu-fast-rtps.tar
-	$ docker run -it --privileged -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix ubuntu-fast-rtps
+	$ docker run -it ubuntu-fast-rtps
 
 You can run as many images as you want and check the communication between them
 
