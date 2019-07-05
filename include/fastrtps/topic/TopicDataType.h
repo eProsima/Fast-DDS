@@ -27,6 +27,11 @@
 #include <functional>
 
 namespace eprosima {
+
+namespace fastdds {
+class TypeSupport;
+}
+
 namespace fastrtps {
 
 /**
@@ -103,6 +108,7 @@ class  TopicDataType {
         //! Data Type Name.
         std::string m_topicDataTypeName;
 
+        friend class fastdds::TypeSupport;
 
 
 };

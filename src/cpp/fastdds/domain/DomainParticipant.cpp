@@ -73,9 +73,16 @@ bool DomainParticipant::delete_subscriber(
 }
 
 bool DomainParticipant::register_type(
-        fastrtps::TopicDataType* type)
+        TypeSupport type,
+        const std::string& type_name)
 {
-    return impl_->register_type(type);
+    return impl_->register_type(type, type_name);
+}
+
+bool DomainParticipant::register_type(
+        TypeSupport type)
+{
+    return impl_->register_type(type, type.get_type_name());
 }
 
 bool DomainParticipant::unregister_type(
@@ -185,7 +192,7 @@ fastrtps::rtps::RTPSParticipant* DomainParticipant::rtps_participant()
     return impl_->rtps_participant();
 }
 
-fastrtps::TopicDataType* DomainParticipant::find_type(
+TypeSupport DomainParticipant::find_type(
         const std::string& type_name) const
 {
     return impl_->find_type(type_name);

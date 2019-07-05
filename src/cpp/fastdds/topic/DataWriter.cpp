@@ -18,7 +18,7 @@
  */
 
 #include <fastdds/topic/DataWriter.hpp>
-#include <fastrtps/topic/TopicDataType.h>
+#include <fastdds/topic/TypeSupport.hpp>
 #include <fastrtps/topic/attributes/TopicAttributes.h>
 #include <fastdds/publisher/PublisherListener.hpp>
 #include <fastdds/publisher/Publisher.hpp>
@@ -48,7 +48,7 @@ namespace fastdds {
 
 DataWriter::DataWriter(
         PublisherImpl* p,
-        TopicDataType* topic,
+        TypeSupport type,
         const TopicAttributes& topic_att,
         const WriterAttributes& att,
         const WriterQos& qos,
@@ -56,7 +56,7 @@ DataWriter::DataWriter(
         DataWriterListener* listen )
     : publisher_(p)
     , writer_(nullptr)
-    , type_(topic)
+    , type_(type)
     , topic_att_(topic_att)
     , w_att_(att)
     , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)

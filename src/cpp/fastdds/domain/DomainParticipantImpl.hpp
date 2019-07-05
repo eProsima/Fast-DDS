@@ -28,6 +28,8 @@
 #include <fastdds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/subscriber/qos/SubscriberQos.hpp>
 
+#include <fastdds/topic/TypeSupport.hpp>
+
 namespace eprosima{
 namespace fastrtps{
 
@@ -37,7 +39,6 @@ class WriterProxyData;
 class ReaderProxyData;
 }
 
-class TopicDataType;
 class PublisherAttributes;
 class SubscriberAttributes;
 
@@ -119,11 +120,13 @@ public:
 
     /**
      * Register a type in this participant.
-     * @param type Pointer to the TopicDatType.
+     * @param type The TypeSupport to register. A copy will be kept by the participant until removed.
+     * @param type_name The name that will be used to identify the Type.
      * @return True if registered.
      */
     bool register_type(
-            fastrtps::TopicDataType* type);
+            TypeSupport type,
+            const std::string& type_name);
 
     /**
      * Unregister a type in this participant.
@@ -206,7 +209,7 @@ public:
         return rtps_participant_;
     }
 
-    fastrtps::TopicDataType* find_type(
+    const TypeSupport find_type(
             const std::string& type_name) const;
 
     const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
@@ -282,7 +285,7 @@ private:
     SubscriberQos default_sub_qos_;
 
     //!TopicDataType map
-    std::map<std::string, fastrtps::TopicDataType*> types_;
+    std::map<std::string, TypeSupport> types_;
     mutable std::mutex mtx_types_;
 
     class MyRTPSParticipantListener : public fastrtps::rtps::RTPSParticipantListener

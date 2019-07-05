@@ -23,9 +23,9 @@
 #include <fastdds/publisher/Publisher.hpp>
 #include <fastdds/publisher/PublisherListener.hpp>
 #include <fastdds/topic/DataWriter.hpp>
+#include <fastdds/topic/TypeSupport.hpp>
 
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
-#include <fastrtps/topic/TopicDataType.h>
 #include <fastrtps/log/Log.h>
 
 #include <functional>
@@ -131,18 +131,18 @@ DataWriter* PublisherImpl::create_datawriter(
 {
     logInfo(PUBLISHER, "CREATING WRITER IN TOPIC: " << topic_att.getTopicName());
     //Look for the correct type registration
-    TopicDataType* topic_data_type = participant_->find_type(topic_att.getTopicDataType().to_string());
+    TypeSupport type_support = participant_->find_type(topic_att.getTopicDataType().to_string());
 
     /// Preconditions
     // Check the type was registered.
-    if(topic_data_type == nullptr)
+    if(type_support.empty())
     {
         logError(PUBLISHER, "Type: "<< topic_att.getTopicDataType() << " Not Registered");
         return nullptr;
     }
 
     // Check the type supports keys.
-    if(topic_att.topicKind == WITH_KEY && !topic_data_type->m_isGetKeyDefined)
+    if(topic_att.topicKind == WITH_KEY && !type_support->m_isGetKeyDefined)
     {
         logError(PUBLISHER, "Keyed Topic " << topic_att.getTopicName() << " needs getKey function");
         return nullptr;
@@ -208,7 +208,7 @@ DataWriter* PublisherImpl::create_datawriter(
 
     DataWriter* writer = new DataWriter(
         this,
-        topic_data_type,
+        type_support,
         topic_att,
         w_att,
         writer_qos,

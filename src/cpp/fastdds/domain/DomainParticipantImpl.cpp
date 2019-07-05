@@ -113,6 +113,11 @@ DomainParticipantImpl::~DomainParticipantImpl()
         RTPSDomain::removeRTPSParticipant(rtps_participant_);
     }
 
+    {
+        std::lock_guard<std::mutex> lock(mtx_types_);
+        types_.clear();
+    }
+
     delete participant_;
 }
 
@@ -496,7 +501,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
 }
 
 
-TopicDataType* DomainParticipantImpl::find_type(
+const TypeSupport DomainParticipantImpl::find_type(
         const std::string& type_name) const
 {
     std::lock_guard<std::mutex> lock(mtx_types_);
@@ -512,9 +517,10 @@ TopicDataType* DomainParticipantImpl::find_type(
 }
 
 bool DomainParticipantImpl::register_type(
-        TopicDataType* type)
+        const TypeSupport type,
+        const std::string& type_name)
 {
-    TopicDataType* t = find_type(type->getName());
+    TypeSupport t = find_type(type_name);
 
     if (t != nullptr)
     {
@@ -523,27 +529,27 @@ bool DomainParticipantImpl::register_type(
             return true;
         }
 
-        logError(PARTICIPANT, "Another type with the same name '" << type->getName() << "' is already registered.");
+        logError(PARTICIPANT, "Another type with the same name '" << type_name << "' is already registered.");
     }
 
-    if (strlen(type->getName()) <= 0)
+    if (type_name.size() <= 0)
     {
         logError(PARTICIPANT, "Registered Type must have a name");
         return false;
     }
 
-    logInfo(PARTICIPANT, "Type " << type->getName() << " registered.");
+    logInfo(PARTICIPANT, "Type " << type_name << " registered.");
     std::lock_guard<std::mutex> lock(mtx_types_);
-    types_[type->getName()] = type;
+    types_.insert(std::make_pair(type_name, type));
     return true;
 }
 
 bool DomainParticipantImpl::unregister_type(
         const char* type_name)
 {
-    TopicDataType* t = find_type(type_name);
+    TypeSupport t = find_type(type_name);
 
-    if (t == nullptr)
+    if (t.empty())
     {
         return true; // Not registered, so unregistering complete.
     }

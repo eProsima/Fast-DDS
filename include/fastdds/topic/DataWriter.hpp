@@ -27,6 +27,7 @@
 
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
 #include <fastdds/topic/DataWriterListener.hpp>
+#include <fastdds/topic/TypeSupport.hpp>
 #include <fastrtps/publisher/PublisherHistory.h>
 #include <fastrtps/topic/attributes/TopicAttributes.h>
 
@@ -43,8 +44,6 @@ namespace rtps
 class RTPSWriter;
 class RTPSParticipant;
 }
-
-class TopicDataType;
 
 } // namespace fastrtps
 
@@ -68,7 +67,7 @@ class DataWriter
      */
     DataWriter(
             PublisherImpl* p,
-            fastrtps::TopicDataType* topic,
+            TypeSupport type,
             const fastrtps::TopicAttributes& topic_att,
             const fastrtps::rtps::WriterAttributes& att,
             const fastrtps::WriterQos& qos,
@@ -175,7 +174,7 @@ public:
      * Get topic data type
      * @return Topic data type
      */
-    const fastrtps::TopicDataType* get_type() const
+    TypeSupport get_type() const
     {
         return type_;
     }
@@ -239,7 +238,7 @@ private:
     fastrtps::rtps::RTPSWriter* writer_;
 
     //! Pointer to the TopicDataType object.
-    fastrtps::TopicDataType* type_;
+    TypeSupport type_;
 
     fastrtps::TopicAttributes topic_att_;
 

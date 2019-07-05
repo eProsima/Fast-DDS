@@ -20,7 +20,7 @@
 #include <fastdds/topic/DataReader.hpp>
 #include <fastdds/subscriber/Subscriber.hpp>
 #include "../subscriber/SubscriberImpl.hpp"
-#include <fastrtps/topic/TopicDataType.h>
+#include <fastdds/topic/TypeSupport.hpp>
 #include <fastdds/subscriber/SubscriberListener.hpp>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
@@ -41,7 +41,7 @@ namespace fastdds {
 
 DataReader::DataReader(
         SubscriberImpl* s,
-        TopicDataType* ptype,
+        TypeSupport type,
         const TopicAttributes& topic_att,
         const rtps::ReaderAttributes& att,
         const ReaderQos& qos,
@@ -49,14 +49,14 @@ DataReader::DataReader(
         DataReaderListener* listener)
     : subscriber_(s)
     , reader_(nullptr)
-    , type_(ptype)
+    , type_(type)
     , topic_att_(topic_att)
     , att_(att)
     , qos_(&qos == &DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
 #pragma warning (disable : 4355 )
     //, history_(std::move(history))
     , history_(topic_att_,
-               type_,
+               type_.get(),
                qos_,
                type_->m_typeSize + 3, /* Possible alignment */
                memory_policy)
@@ -579,6 +579,11 @@ bool DataReader::wait_for_historical_data(
     (void)max_wait;
     // TODO Implement
     return false;
+}
+
+TypeSupport DataReader::type()
+{
+    return type_;
 }
 
 } /* namespace fastdds */

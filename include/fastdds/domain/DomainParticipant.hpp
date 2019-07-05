@@ -20,6 +20,8 @@
 #ifndef _FASTDDS_DOMAIN_PARTICIPANT_H_
 #define _FASTDDS_DOMAIN_PARTICIPANT_H_
 
+#include <fastdds/topic/TypeSupport.hpp>
+
 #include "../../fastrtps/rtps/common/Guid.h"
 #include "../../fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
 
@@ -35,7 +37,6 @@ class ReaderProxyData;
 class ResourceEvent;
 }
 
-class TopicDataType;
 class ParticipantAttributes;
 class PublisherAttributes;
 class SubscriberAttributes;
@@ -100,11 +101,21 @@ public:
 
     /**
      * Register a type in this participant.
-     * @param type Pointer to the TopicDatType.
+     * @param type TypeSupport.
+     * @param type_name The name that will be used to identify the Type.
      * @return True if registered.
      */
     bool register_type(
-            fastrtps::TopicDataType* type);
+            TypeSupport type,
+            const std::string& type_name);
+
+    /**
+     * Register a type in this participant.
+     * @param type TypeSupport.
+     * @return True if registered.
+     */
+    bool register_type(
+            TypeSupport type);
 
     /**
      * Unregister a type in this participant.
@@ -177,7 +188,7 @@ public:
 
     fastrtps::rtps::RTPSParticipant* rtps_participant();
 
-    fastrtps::TopicDataType* find_type(
+    TypeSupport find_type(
             const std::string& type_name) const;
 
     const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;

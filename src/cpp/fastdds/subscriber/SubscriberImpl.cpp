@@ -23,9 +23,9 @@
 #include <fastdds/subscriber/Subscriber.hpp>
 #include <fastdds/subscriber/SubscriberListener.hpp>
 #include <fastdds/topic/DataReader.hpp>
+#include <fastdds/topic/TypeSupport.hpp>
 
 #include <fastrtps/rtps/participant/RTPSParticipant.h>
-#include <fastrtps/topic/TopicDataType.h>
 #include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps;
@@ -101,16 +101,16 @@ DataReader* SubscriberImpl::create_datareader(
 {
     logInfo(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic_att.getTopicName())
     //Look for the correct type registration
-    TopicDataType* topic_data_type = participant_->find_type(topic_att.getTopicDataType().to_string());
+    TypeSupport type_support = participant_->find_type(topic_att.getTopicDataType().to_string());
 
     /// Preconditions
     // Check the type was registered.
-    if(topic_data_type == nullptr)
+    if(type_support.empty())
     {
         logError(SUBSCRIBER, "Type : "<< topic_att.getTopicDataType() << " Not Registered");
         return nullptr;
     }
-    if(topic_att.topicKind == WITH_KEY && !topic_data_type->m_isGetKeyDefined)
+    if(topic_att.topicKind == WITH_KEY && !type_support->m_isGetKeyDefined)
     {
         logError(SUBSCRIBER, "Keyed Topic needs getKey function");
         return nullptr;
@@ -168,7 +168,7 @@ DataReader* SubscriberImpl::create_datareader(
 
     DataReader* reader = new DataReader(
         this,
-        topic_data_type,
+        type_support,
         topic_att,
         ratt,
         reader_qos,

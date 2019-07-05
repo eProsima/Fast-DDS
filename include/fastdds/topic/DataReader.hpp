@@ -28,6 +28,7 @@
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/subscriber/SubscriberHistory.h>
 #include <fastdds/topic/DataReaderListener.hpp>
+#include <fastdds/topic/TypeSupport.hpp>
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/topic/attributes/TopicAttributes.h>
 #include <fastrtps/rtps/timedevent/TimedCallback.h>
@@ -41,7 +42,6 @@ class RTPSReader;
 class RTPSParticipant;
 }
 
-class TopicDataType;
 class SampleInfo_t;
 
 } // namespace fastrtps
@@ -64,7 +64,7 @@ class DataReader {
     */
     DataReader(
             SubscriberImpl* s,
-            fastrtps::TopicDataType* topic,
+            TypeSupport type,
             const fastrtps::TopicAttributes& topic_att,
             const fastrtps::rtps::ReaderAttributes& att,
             const fastrtps::ReaderQos& qos,
@@ -118,10 +118,7 @@ public:
     * Get topic data type
     * @return Topic data type
     */
-    fastrtps::TopicDataType* type()
-    {
-        return type_;
-    }
+    TypeSupport type();
 
     /*!
     * @brief Returns there is a clean state with all Publishers.
@@ -198,7 +195,7 @@ private:
     fastrtps::rtps::RTPSReader* reader_;
 
     //! Pointer to the TopicDataType object.
-    fastrtps::TopicDataType* type_;
+    TypeSupport type_;
 
     fastrtps::TopicAttributes topic_att_;
 
