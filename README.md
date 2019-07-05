@@ -76,20 +76,20 @@ You can access the documentation online, which is hosted on [Read the Docs](http
 
 ## Quick Demo
 
-For those who want to try a quick demonstration of Fast-RTPS libraries, here is a way to launch an example application.
+For those who want to try a quick demonstration of Fast-RTPS libraries on Ubuntu, here is a way to launch an example application.
 
-For that, it is necessary to download **docker** application. In Ubuntu, open a terminal and type the following command
+First, download and install **docker** application. Open a terminal and type the following command
 
 	$ sudo apt-get install docker.io
 
-Then, you have to download the docker image file from https://eprosima.com/index.php/downloads-all
+Then, download the docker image file from https://eprosima.com/index.php/downloads-all
 
-Load the image and run it
+Load the image and run it:
 
 	$ docker load -i ubuntu-fast-rtps.tar
 	$ docker run -it ubuntu-fast-rtps
 
-You can run as many images as you want and check the communication between them
+You can run as many images as you want and check the communication between them.
 
 ## Getting Help
 
