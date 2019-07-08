@@ -31,6 +31,7 @@ namespace fastdds {
 class DomainParticipant;
 
 /**
+ * NOTE: This class inherits from std::shared_ptr<TopicDataType>.
  * Class TypeSupport used to provide the DomainRTPSParticipant with the methods to serialize,
  * deserialize and get the key of a specific data type.
  * The user should created a class that inherits from this one,
@@ -55,18 +56,26 @@ public:
         : std::shared_ptr<fastrtps::TopicDataType>(type)
     {}
 
+    /*!
+     * \brief TypeSupport constructor that receives a TopicDataType pointer.
+     * The passed pointer will be managed by the TypeSupport object, so creating two TypeSupport
+     * from the same pointer or deleting the passed pointer will produce a runtime error.
+     * \param ptr
+     */
     RTPS_DllAPI TypeSupport(
             fastrtps::TopicDataType* ptr)
         : std::shared_ptr<fastrtps::TopicDataType>(ptr)
     {}
 
+    /*!
+     * \brief TypeSupport constructor that receives a DynamicPubSubType.
+     * It will copy the instance so the user will keep the ownership of his object.
+     * \param ptr
+     */
     RTPS_DllAPI TypeSupport(
             fastrtps::types::DynamicPubSubType ptr)
-        : std::shared_ptr<fastrtps::TopicDataType>(std::make_shared<fastrtps::types::DynamicPubSubType>(ptr))
-    {
-        //auto aux_p = std::make_shared<fastrtps::TopicDataType>(std::move(pst));
-        //*this = aux_p;
-    }
+        : std::shared_ptr<fastrtps::TopicDataType>(std::make_shared<fastrtps::types::DynamicPubSubType>(std::move(ptr)))
+    {}
 
     RTPS_DllAPI bool register_type(
         DomainParticipant* participant,
