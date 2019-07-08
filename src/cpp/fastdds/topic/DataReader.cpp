@@ -522,6 +522,18 @@ bool DataReader::take(
     return false;
 }
 
+
+bool DataReader::set_listener(DataReaderListener* listener)
+{
+    listener_ = listener;
+    return true;
+}
+
+const DataReaderListener* DataReader::get_listener() const
+{
+    return listener_;
+}
+
 bool DataReader::get_key_value(
         void* data,
         const rtps::InstanceHandle_t& handle)
