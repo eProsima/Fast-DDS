@@ -20,6 +20,7 @@
 #define _FASTDDS_TYPE_SUPPORT_HPP_
 
 #include <fastrtps/topic/TopicDataType.h>
+#include <fastrtps/types/DynamicPubSubType.h>
 #include <string>
 #include <functional>
 #include <memory>
@@ -43,18 +44,29 @@ public:
     using Base::operator->;
     using Base::operator*;
     using Base::operator bool;
+    using Base::operator=;
 
     RTPS_DllAPI TypeSupport()
         : std::shared_ptr<fastrtps::TopicDataType>(nullptr)
     {}
 
-    RTPS_DllAPI TypeSupport(const TypeSupport& type)
+    RTPS_DllAPI TypeSupport(
+            const TypeSupport& type)
         : std::shared_ptr<fastrtps::TopicDataType>(type)
     {}
 
-    RTPS_DllAPI TypeSupport(fastrtps::TopicDataType* ptr)
+    RTPS_DllAPI TypeSupport(
+            fastrtps::TopicDataType* ptr)
         : std::shared_ptr<fastrtps::TopicDataType>(ptr)
     {}
+
+    RTPS_DllAPI TypeSupport(
+            fastrtps::types::DynamicPubSubType ptr)
+        : std::shared_ptr<fastrtps::TopicDataType>(std::make_shared<fastrtps::types::DynamicPubSubType>(ptr))
+    {
+        //auto aux_p = std::make_shared<fastrtps::TopicDataType>(std::move(pst));
+        //*this = aux_p;
+    }
 
     RTPS_DllAPI bool register_type(
         DomainParticipant* participant,
