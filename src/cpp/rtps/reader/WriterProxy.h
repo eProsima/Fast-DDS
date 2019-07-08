@@ -200,11 +200,6 @@ public:
         return is_alive_;
     };
 
-    /**
-     * Set the writer as alive
-     */
-    void assert_liveliness();
-
     /*!
      * @brief Returns number of ChangeFromWriter_t managed currently by the WriterProxy.
      * @return Number of ChangeFromWriter_t managed currently by the WriterProxy.
@@ -243,6 +238,7 @@ public:
      * @param final_flag Final flag of the heartbeat message.
      * @param liveliness_flag Liveliness flag of the heartbeat message.
      * @param disable_positive True if positive ACKs are disabled.
+     * @param [out] assert_liveliness Returns true when liveliness shoud be asserted on this writer
      * @return true if the message is processed, false if the message is ignored.
      */
     bool process_heartbeat(
@@ -251,7 +247,8 @@ public:
             const SequenceNumber_t& last_seq,
             bool final_flag,
             bool liveliness_flag,
-            bool disable_positive);
+            bool disable_positive,
+            bool& assert_liveliness);
 
     /**
      * Set a new value for the interval of the heartbeat response event.
@@ -339,8 +336,6 @@ private:
     WriterProxyData attributes_;
     //!Timed event to postpone the heartbeatResponse.
     TimedEvent* heartbeat_response_;
-    //!To check the liveliness Status periodically.
-    TimedEvent* writer_proxy_liveliness_;
     //! Timed event to send initial acknack.
     TimedEvent* initial_acknack_;
     //! Last Heartbeatcount.

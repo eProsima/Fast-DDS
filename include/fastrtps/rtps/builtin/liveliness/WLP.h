@@ -27,6 +27,7 @@
 #include "../../common/Time_t.h"
 #include "../../common/Locator.h"
 #include "../../common/Guid.h"
+#include "../../../qos/QosPolicies.h"
 
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
@@ -34,22 +35,24 @@
 namespace eprosima {
 namespace fastrtps {
 
+class ReaderQos;
 class WriterQos;
-
 
 namespace rtps {
 
-class RTPSParticipantImpl;
-class StatefulWriter;
-class StatefulReader;
-class RTPSWriter;
 class BuiltinProtocols;
+class LivelinessManager;
+class ReaderHistory;
+class ReaderProxyData;
+class RTPSParticipantImpl;
+class RTPSReader;
+class RTPSWriter;
+class StatefulReader;
+class StatefulWriter;
 class ParticipantProxyData;
 class TimedEvent;
 class WLPListener;
 class WriterHistory;
-class ReaderHistory;
-class ReaderProxyData;
 class WriterProxyData;
 
 /**
@@ -59,12 +62,14 @@ class WriterProxyData;
 class WLP
 {
     friend class WLPListener;
+    friend class StatefulReader;
+    friend class StatelessReader;
 
-    public:
+public:
     /**
-     * Constructor
-     * @param prot Pointer to the BuiltinProtocols object.
-     */
+    * Constructor
+    * @param prot Pointer to the BuiltinProtocols object.
+    */
     WLP(BuiltinProtocols* prot);
     virtual ~WLP();
     /**
@@ -73,11 +78,6 @@ class WLP
      * @return true if the initialziacion was succesful.
      */
     bool initWL(RTPSParticipantImpl* p);
-    /**
-     * Create the endpoitns used in the WLP.
-     * @return true if correct.
-     */
-    bool createEndpoints();
     /**
      * Assign the remote endpoints for a newly discovered RTPSParticipant.
      * @param pdata Pointer to the RTPSParticipantProxyData object.
@@ -93,49 +93,68 @@ class WLP
      * Add a local writer to the liveliness protocol.
      * @param W Pointer to the RTPSWriter.
      * @param wqos Quality of service policies for the writer.
-     * @return True if correct.
+    * @return True if correct.
      */
-    bool addLocalWriter(RTPSWriter* W, const WriterQos& wqos);
+    bool add_local_writer(RTPSWriter* W, const WriterQos& wqos);
     /**
      * Remove a local writer from the liveliness protocol.
      * @param W Pointer to the RTPSWriter.
      * @return True if removed.
      */
-    bool removeLocalWriter(RTPSWriter* W);
-
-    //!MInimum time of the automatic writers liveliness period.
-    double m_minAutomatic_MilliSec;
-    //!Minimum time of the manual by participant writers liveliness period.
-    double m_minManRTPSParticipant_MilliSec;
+    bool remove_local_writer(RTPSWriter* W);
 
     /**
-     * Update local writer.
-     * @param W Writer to update
-     * @param wqos New writer QoS
-     * @return True on success
+     * @brief Adds a local reader to the liveliness protocol
+     * @param reader Pointer to the RTPS reader
+     * @param rqos Quality of service policies for the reader
+     * @return True if added successfully
      */
-    bool updateLocalWriter(RTPSWriter* W, const WriterQos& wqos);
+    bool add_local_reader(RTPSReader* reader, const ReaderQos& rqos);
 
     /**
-     * Get the RTPS participant
-     * @return RTPS participant
+     * @brief Removes a local reader from the livliness protocol
+     * @param reader Pointer to the reader to remove
+     * @return True if removed successfully
      */
-    inline RTPSParticipantImpl* getRTPSParticipant(){return mp_participant;}
+    bool remove_local_reader(RTPSReader* reader);
+
+    /**
+     * @brief A method to assert liveliness of a given writer
+     * @param writer The writer, specified via its id
+     * @param kind The writer liveliness kind
+     * @param lease_duration The writer lease duration
+     * @return True if liveliness was asserted
+     */
+    bool assert_liveliness(
+            GUID_t writer,
+            LivelinessQosPolicyKind kind,
+            Duration_t lease_duration);
+
+    /**
+     * @brief A method to assert liveliness of MANUAL_BY_PARTICIPANT writers
+     * @return True if there were any MANUAL_BY_PARTICIPANT writers
+     */
+    bool assert_liveliness_manual_by_participant();
 
 #if HAVE_SECURITY
     bool pairing_remote_reader_with_local_writer_after_security(const GUID_t& local_writer,
-            const ReaderProxyData& remote_reader_data);
+        const ReaderProxyData& remote_reader_data);
 
     bool pairing_remote_writer_with_local_reader_after_security(const GUID_t& local_reader,
-            const WriterProxyData& remote_writer_data);
+        const WriterProxyData& remote_writer_data);
 #endif
 
-    private:
+private:
+    /**
+     * Create the endpoints used in the WLP.
+     * @return true if correct.
+     */
+    bool createEndpoints();
 
-    bool automatic_liveliness_assertion();
-
-    bool participant_liveliness_assertion();
-
+    //! Minimum time among liveliness periods of automatic writers, in milliseconds
+    double min_automatic_ms_;
+    //! Minimum time among liveliness periods of manual by participant writers, in milliseconds
+    double min_manual_by_participant_ms_;
     //!Pointer to the local RTPSParticipant.
     RTPSParticipantImpl* mp_participant;
     //!Pointer to the builtinprotocol class.
@@ -150,14 +169,69 @@ class WLP
     ReaderHistory* mp_builtinReaderHistory;
     //!Listener object.
     WLPListener* mp_listener;
-    //!Pointer to the periodic assertion timer object for the automatic liveliness writers.
-    TimedEvent* liveliness_automatic_event_;
-    //!Pointer to the periodic assertion timer object for the manual by RTPSParticipant liveliness writers.
-    TimedEvent* livelines_participant_event_;
-    //!List of the writers using automatic liveliness.
-    std::vector<RTPSWriter*> m_livAutomaticWriters;
-    //!List of the writers using manual by RTPSParticipant liveliness.
-    std::vector<RTPSWriter*> m_livManRTPSParticipantWriters;
+    //!Pointer to the periodic assertion timer object for automatic liveliness writers
+    TimedEvent* automatic_liveliness_assertion_;
+    //!Pointer to the periodic assertion timer object for manual by participant liveliness writers
+    TimedEvent* manual_liveliness_assertion_;
+    //! List of the writers using automatic liveliness.
+    std::vector<RTPSWriter*> automatic_writers_;
+    //! List of the writers using manual by participant liveliness.
+    std::vector<RTPSWriter*> manual_by_participant_writers_;
+    //! List of writers using manual by topic liveliness
+    std::vector<RTPSWriter*> manual_by_topic_writers_;
+
+    //! List of readers
+    std::vector<RTPSReader*> readers_;
+    //! A boolean indicating that there is at least one reader requesting automatic liveliness
+    bool automatic_readers_;
+
+    //! A class used by writers in this participant to keep track of their liveliness
+    LivelinessManager* pub_liveliness_manager_;
+    //! A class used by readers in this participant to keep track of liveliness of matched writers
+    LivelinessManager* sub_liveliness_manager_;
+
+    /**
+     * @brief A method invoked by pub_liveliness_manager_ to inform that a writer changed its liveliness
+     * @param writer The writer losing liveliness
+     * @param kind The liveliness kind
+     * @param lease_duration The liveliness lease duration
+     * @param alive_change The change in the alive count
+     * @param not_alive_change The change in the not alive count
+     */
+    void pub_liveliness_changed(
+            const GUID_t& writer,
+            const LivelinessQosPolicyKind& kind,
+            const Duration_t& lease_duration,
+            int32_t alive_change,
+            int32_t not_alive_change);
+
+    /**
+     * @brief A method invoked by sub_liveliness_manager_ to inform that a writer changed its liveliness
+     * @param writer The writer losing liveliness
+     * @param kind The liveliness kind of the writer losing liveliness
+     * @param lease_duration The liveliness lease duration of the writer losing liveliness
+     * @param alive_change The change in the alive count
+     * @param not_alive_change The change in the not alive count
+     */
+    void sub_liveliness_changed(
+            const GUID_t& writer,
+            const LivelinessQosPolicyKind& kind,
+            const Duration_t& lease_duration,
+            int32_t alive_change,
+            int32_t not_alive_change);
+
+    /**
+     * @brief A method to update the liveliness changed status of a given reader
+     * @param writer The writer changing liveliness, specified by its guid
+     * @param reader The reader whose liveliness needs to be updated
+     * @param alive_change The change requested for alive count. Should be -1, 0 or +1
+     * @param not_alive_change The change requested for not alive count. Should be -1, 0 or +1
+     */
+    void update_liveliness_changed_status(
+            GUID_t writer,
+            RTPSReader* reader,
+            int32_t alive_change,
+            int32_t not_alive_change);
 
 #if HAVE_SECURITY
     //!Pointer to the builtinRTPSParticipantMEssageWriter.
@@ -181,8 +255,9 @@ class WLP
     WriterProxyData temp_writer_proxy_data_;
 };
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
+
 #endif
 #endif /* WLP_H_ */

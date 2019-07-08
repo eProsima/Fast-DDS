@@ -24,6 +24,7 @@
 #include "../Endpoint.h"
 #include "../attributes/ReaderAttributes.h"
 #include "../common/SequenceNumber.h"
+#include "../../qos/LivelinessChangedStatus.h"
 #include "../common/Time_t.h"
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include "../../utils/TimedConditionVariable.hpp"
@@ -33,11 +34,12 @@ namespace fastrtps {
 namespace rtps {
 
 // Forward declarations
-class ReaderListener;
+class LivelinessManager;
 class ReaderHistory;
-struct CacheChange_t;
+class ReaderListener;
 class WriterProxy;
 class FragmentedChangePitStop;
+struct CacheChange_t;
 struct ReaderHistoryState;
 class WriterProxyData;
 
@@ -51,6 +53,7 @@ class RTPSReader : public Endpoint
     friend class RTPSParticipantImpl;
     friend class MessageReceiver;
     friend class EDP;
+    friend class WLP;
 
 protected:
 
@@ -68,9 +71,10 @@ public:
     /**
      * Add a matched writer represented by its attributes.
      * @param wdata Attributes of the writer to add.
+     * @param persist If the Reader must try to recover Writer formered registered state
      * @return True if correctly added.
      */
-    RTPS_DllAPI virtual bool matched_writer_add(const WriterProxyData& wdata) = 0;
+    RTPS_DllAPI virtual bool matched_writer_add(const WriterProxyData& wdata, bool persist = true) = 0;
 
     /**
      * Remove a writer represented by its attributes from the matched writers.
@@ -244,13 +248,21 @@ public:
      */
     virtual bool isInCleanState() = 0;
 
-protected:
+    //! The liveliness changed status struct as defined in the DDS
+    LivelinessChangedStatus liveliness_changed_status_;
+
+    inline void enableMessagesFromUnkownWriters(bool enable)
+    {
+        m_acceptMessagesFromUnkownWriters = enable;
+    }
 
     void setTrustedWriter(const EntityId_t& writer)
     {
         m_acceptMessagesFromUnkownWriters = false;
         m_trustedWriterEntityId = writer;
     }
+
+protected:
 
     /*!
      * @brief Add a remote writer to the persistence_guid map
@@ -320,6 +332,11 @@ protected:
     uint64_t total_unread_ = 0;
 
     TimedConditionVariable new_notification_cv_;
+
+    //! The liveliness kind of this reader
+    LivelinessQosPolicyKind liveliness_kind_;
+    //! The liveliness lease duration of this reader
+    Duration_t liveliness_lease_duration_;
 
 private:
 

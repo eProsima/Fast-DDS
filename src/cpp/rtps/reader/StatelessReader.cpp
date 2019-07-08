@@ -22,6 +22,9 @@
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/common/CacheChange.h>
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
+#include <fastrtps/rtps/writer/LivelinessManager.h>
 #include "../participant/RTPSParticipantImpl.h"
 #include "FragmentedChangePitStop.h"
 
@@ -51,10 +54,12 @@ StatelessReader::StatelessReader(
 {
 }
 
-bool StatelessReader::matched_writer_add(const WriterProxyData& wdata)
+bool StatelessReader::matched_writer_add(
+        const WriterProxyData& wdata,
+        bool persist /*=true*/ )
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
-    for (const RemoteWriterGuids_t& writer : matched_writers_)
+    for (const RemoteWriterInfo_t& writer : matched_writers_)
     {
         if (writer.guid == wdata.guid())
         {
@@ -63,15 +68,36 @@ bool StatelessReader::matched_writer_add(const WriterProxyData& wdata)
         }
     }
 
-    RemoteWriterGuids_t guids;
-    guids.guid = wdata.guid();
-    guids.persistence_guid = wdata.persistence_guid();
-    RemoteWriterGuids_t* att = matched_writers_.emplace_back(guids);
+    RemoteWriterInfo_t info;
+    info.guid = wdata.guid();
+    info.persistence_guid = wdata.persistence_guid();
+    info.has_manual_topic_liveliness = (MANUAL_BY_TOPIC_LIVELINESS_QOS == wdata.m_qos.m_liveliness.kind);
+    RemoteWriterInfo_t* att = matched_writers_.emplace_back(info);
     if (att != nullptr)
     {
-        add_persistence_guid(guids.guid, guids.persistence_guid);
+        if(persist)
+        {
+            add_persistence_guid(info.guid, info.persistence_guid);
+        }
         m_acceptMessagesFromUnkownWriters = false;
-        logInfo(RTPS_READER, "Writer " << guids.guid << " added to " << m_guid.entityId);
+        logInfo(RTPS_READER, "Writer " << info.guid << " added to " << m_guid.entityId);
+
+        if (liveliness_lease_duration_ < c_TimeInfinite)
+        {
+            auto wlp = this->mp_RTPSParticipant->wlp();
+            if ( wlp != nullptr)
+            {
+                wlp->sub_liveliness_manager_->add_writer(
+                            wdata.guid(),
+                            liveliness_kind_,
+                            liveliness_lease_duration_);
+            }
+            else
+            {
+                logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+            }
+        }
+        
         return true;
     }
 
@@ -83,14 +109,33 @@ bool StatelessReader::matched_writer_remove(const GUID_t& writer_guid)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
 
-    ResourceLimitedVector<RemoteWriterGuids_t>::iterator it;
+    ResourceLimitedVector<RemoteWriterInfo_t>::iterator it;
     for (it = matched_writers_.begin(); it != matched_writers_.end(); ++it)
     {
         if (it->guid == writer_guid)
         {
             logInfo(RTPS_READER, "Writer " << writer_guid << " removed from " << m_guid.entityId);
+
+            if (liveliness_lease_duration_ < c_TimeInfinite)
+            {
+                auto wlp = this->mp_RTPSParticipant->wlp();
+                if ( wlp != nullptr)
+                {
+                    wlp->sub_liveliness_manager_->remove_writer(
+                                writer_guid,
+                                liveliness_kind_,
+                                liveliness_lease_duration_);
+                }
+                else
+                {
+                    logError(RTPS_LIVELINESS,
+                             "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
+                }
+            }
+
             remove_persistence_guid(it->guid, it->persistence_guid);
             matched_writers_.erase(it);
+
             return true;
         }
     }
@@ -102,7 +147,7 @@ bool StatelessReader::matched_writer_is_matched(const GUID_t& writer_guid)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     return std::any_of(matched_writers_.begin(), matched_writers_.end(), 
-        [writer_guid](const RemoteWriterGuids_t& item)
+        [writer_guid](const RemoteWriterInfo_t& item)
         {
             return item.guid == writer_guid;
         });
@@ -218,6 +263,26 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
         logInfo(RTPS_MSG_IN, IDSTRING "Trying to add change " << change->sequenceNumber << " TO reader: "
             << getGuid().entityId);
 
+        if (liveliness_lease_duration_ < c_TimeInfinite)
+        {
+            if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
+                writer_has_manual_liveliness(change->writerGUID))
+            {
+                auto wlp = this->mp_RTPSParticipant->wlp();
+                if ( wlp != nullptr)
+                {
+                    wlp->sub_liveliness_manager_->assert_liveliness(
+                                change->writerGUID,
+                                liveliness_kind_,
+                                liveliness_lease_duration_);
+                }
+                else
+                {
+                    logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                }
+            }
+        }
+
         CacheChange_t* change_to_add;
 
         //Reserve a new cache from the corresponding cache pool
@@ -282,6 +347,26 @@ bool StatelessReader::processDataFragMsg(
 
     if (acceptMsgFrom(incomingChange->writerGUID))
     {
+        if (liveliness_lease_duration_ < c_TimeInfinite)
+        {
+            if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
+                writer_has_manual_liveliness(incomingChange->writerGUID))
+            {
+                auto wlp = this->mp_RTPSParticipant->wlp();
+                if ( wlp != nullptr)
+                {
+                    wlp->sub_liveliness_manager_->assert_liveliness(
+                                incomingChange->writerGUID,
+                                liveliness_kind_,
+                                liveliness_lease_duration_);
+                }
+                else
+                {
+                    logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                }
+            }
+        }
+
         // Check if CacheChange was received.
         if(!thereIsUpperRecordOf(incomingChange->writerGUID, incomingChange->sequenceNumber))
         {
@@ -372,7 +457,7 @@ bool StatelessReader::acceptMsgFrom(const GUID_t& writerId)
     }
 
     return std::any_of(matched_writers_.begin(), matched_writers_.end(), 
-        [& writerId](const RemoteWriterGuids_t& writer)
+        [& writerId](const RemoteWriterInfo_t& writer)
         {
             return writer.guid == writerId;
         });
@@ -383,4 +468,16 @@ bool StatelessReader::thereIsUpperRecordOf(
         const SequenceNumber_t& seq)
 {
     return get_last_notified(guid) >= seq;
+}
+
+bool StatelessReader::writer_has_manual_liveliness(const GUID_t& guid)
+{
+    for (const RemoteWriterInfo_t& writer : matched_writers_)
+    {
+        if (writer.guid == guid)
+        {
+            return writer.has_manual_topic_liveliness;
+        }
+    }
+    return false;
 }

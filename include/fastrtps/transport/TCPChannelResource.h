@@ -140,8 +140,6 @@ public:
 
     TCPConnectionType tcp_connection_type() const { return tcp_connection_type_; }
 
-    virtual ~TCPChannelResource();
-
 protected:
 
     // Constructor called when trying to connect to a remote server

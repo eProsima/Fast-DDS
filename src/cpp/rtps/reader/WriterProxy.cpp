@@ -100,7 +100,6 @@ void WriterProxy::for_each_set_status_from_and_maybe_remove(
 WriterProxy::~WriterProxy()
 {
     delete(initial_acknack_);
-    delete(writer_proxy_liveliness_);
     delete(heartbeat_response_);
 }
 
@@ -113,7 +112,6 @@ WriterProxy::WriterProxy(
     : reader_(reader)
     , attributes_(loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
     , heartbeat_response_(nullptr)
-    , writer_proxy_liveliness_(nullptr)
     , initial_acknack_(nullptr)
     , last_heartbeat_count_(0)
     , heartbeat_final_flag_(false)
@@ -126,17 +124,6 @@ WriterProxy::WriterProxy(
     , guid_prefix_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
 {
     //Create Events
-    writer_proxy_liveliness_ = new TimedEvent(reader->getRTPSParticipant()->getEventResource(),
-            [&](TimedEvent::EventCode code) -> bool
-            {
-                if (TimedEvent::EVENT_SUCCESS == code)
-                {
-                    reader_->liveliness_expired(attributes_.guid());
-                }
-
-                return false;
-            }, 0);
-
     heartbeat_response_ = new TimedEvent(reader_->getRTPSParticipant()->getEventResource(),
             [&](TimedEvent::EventCode code) -> bool
             {
@@ -172,12 +159,6 @@ void WriterProxy::start(const WriterProxyData& attributes)
     guid_as_vector_.push_back(attributes_.guid());
     guid_prefix_as_vector_.push_back(attributes_.guid().guidPrefix);
     is_alive_ = true;
-    if (attributes_.m_qos.m_liveliness.lease_duration < c_TimeInfinite)
-    {
-        writer_proxy_liveliness_->cancel_timer();
-        writer_proxy_liveliness_->update_interval(attributes_.m_qos.m_liveliness.lease_duration);
-        writer_proxy_liveliness_->restart_timer();
-    }
     initial_acknack_->restart_timer();
 }
 
@@ -193,7 +174,6 @@ void WriterProxy::update(const WriterProxyData& attributes)
 
 void WriterProxy::stop()
 {
-    writer_proxy_liveliness_->cancel_timer();
     initial_acknack_->cancel_timer();
     heartbeat_response_->cancel_timer();
 
@@ -452,19 +432,6 @@ const SequenceNumber_t WriterProxy::available_changes_max() const
     return changes_from_writer_low_mark_;
 }
 
-void WriterProxy::assert_liveliness()
-{
-    logInfo(RTPS_READER,attributes_.guid().entityId << " Liveliness asserted");
-
-    is_alive_ = true;
-
-    if (attributes_.m_qos.m_liveliness.lease_duration < c_TimeInfinite)
-    {
-        writer_proxy_liveliness_->cancel_timer();
-        writer_proxy_liveliness_->restart_timer();
-    }
-}
-
 void WriterProxy::change_removed_from_history(const SequenceNumber_t& seq_num)
 {
 #if defined(__DEBUG) && defined(__linux__)
@@ -588,12 +555,14 @@ bool WriterProxy::process_heartbeat(
         const SequenceNumber_t& last_seq,
         bool final_flag,
         bool liveliness_flag,
-        bool disable_positive)
+        bool disable_positive,
+        bool& assert_liveliness)
 {
 #if defined(__DEBUG) && defined(__linux__)
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
+    assert_liveliness = false;
     if (last_heartbeat_count_ < count)
     {
         // If it is the first heartbeat message, we can try to cancel initial ack.
@@ -622,11 +591,9 @@ bool WriterProxy::process_heartbeat(
                 heartbeat_response_->restart_timer();
             }
         }
-
-        //TODO: liveliness implementation details
-        if (liveliness_flag)
+        else
         {
-            assert_liveliness();
+            assert_liveliness = liveliness_flag;
         }
 
         return true;

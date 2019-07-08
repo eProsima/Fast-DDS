@@ -40,7 +40,7 @@ class WriterQos;
 
 namespace rtps {
 
-class PDPSimple;
+class PDP;
 class ParticipantProxyData;
 class RTPSWriter;
 class RTPSReader;
@@ -52,7 +52,7 @@ class RTPSParticipantImpl;
  * definitions required by the specific implementations.
  * @ingroup DISCOVERY_MODULE
  */
-class EDP
+class EDP 
 {
     public:
         /**
@@ -60,7 +60,7 @@ class EDP
          * @param p Pointer to the PDPSimple
          * @param part Pointer to the RTPSParticipantImpl
          */
-        EDP(PDPSimple* p,RTPSParticipantImpl* part);
+        EDP(PDP* p,RTPSParticipantImpl* part);
         virtual ~EDP();
 
         /**
@@ -79,6 +79,9 @@ class EDP
          * @param pdata Pointer to the ParticipantProxyData to remove
          */
         virtual void removeRemoteEndpoints(ParticipantProxyData* pdata){(void) pdata;};
+
+        //! Verify if the given participant EDP enpoints are matched with us
+        virtual bool areRemoteEndpointsMatched(const ParticipantProxyData* ) { return false; };
 
         /**
          * Abstract method that removes a local Reader from the discovery method
@@ -147,14 +150,14 @@ class EDP
          * @param rdata Pointer to the ReaderProxyData object.
          * @return True if the two can be matched.
          */
-        bool validMatching(const WriterProxyData* wdata, const ReaderProxyData* rdata);
+        static bool validMatching(const WriterProxyData* wdata, const ReaderProxyData* rdata);
         /**
          * Check the validity of a matching between a RTPSReader and a WriterProxyData object.
          * @param rdata Pointer to the ReaderProxyData object.
          * @param wdata Pointer to the WriterProxyData object.
          * @return True if the two can be matched.
          */
-        bool validMatching(const ReaderProxyData* rdata, const WriterProxyData* wdata);
+        static bool validMatching(const ReaderProxyData* rdata, const WriterProxyData* wdata);
 
         /**
          * Unpair a WriterProxyData object from all local readers.
@@ -210,8 +213,8 @@ class EDP
                 const ReaderProxyData& /*remote_reader_data*/) { return false; }
 #endif
 
-        //! Pointer to the PDPSimple object that contains the endpoint discovery protocol.
-        PDPSimple* mp_PDP;
+        //! Pointer to the PDP object that contains the endpoint discovery protocol.
+        PDP* mp_PDP;
         //! Pointer to the RTPSParticipant.
         RTPSParticipantImpl* mp_RTPSParticipant;
 
@@ -230,17 +233,18 @@ class EDP
          */
         bool pairingWriter(RTPSWriter* W, const GUID_t& participant_guid, const WriterProxyData& wdata);
 
-        bool checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
+        static bool checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata);
 
-        bool checkTypeIdentifier(const eprosima::fastrtps::types::TypeIdentifier * wti,
-                const eprosima::fastrtps::types::TypeIdentifier * rti) const;
+        static bool checkTypeIdentifier(const eprosima::fastrtps::types::TypeIdentifier * wti,
+                const eprosima::fastrtps::types::TypeIdentifier * rti);
 
         ReaderProxyData temp_reader_proxy_data_;
         WriterProxyData temp_writer_proxy_data_;
 };
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
+
 #endif
 #endif /* EDP_H_ */

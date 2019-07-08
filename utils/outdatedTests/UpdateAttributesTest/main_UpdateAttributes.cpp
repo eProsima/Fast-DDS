@@ -88,7 +88,7 @@ int main(int argc, char** argv){
 	//Create RTPSParticipant
 	RTPSParticipantAttributes PParam;
 	PParam.builtin.domainId = 80;
-	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+	PParam.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
 	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
 	TIME_INFINITE(PParam.builtin.leaseDuration);
 	PParam.name = "RTPSParticipant_pub";

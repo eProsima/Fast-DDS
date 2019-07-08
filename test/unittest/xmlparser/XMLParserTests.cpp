@@ -166,6 +166,14 @@ TEST_F(XMLParserTests, NoFIle)
     ASSERT_EQ(XMLParser::loadXML("missing_file.xml", root), XMLP_ret::XML_ERROR);
 }
 
+TEST_F(XMLParserTests, EmptyDefaultFile)
+{
+    std::ifstream inFile;
+    inFile.open("DEFAULT_FASTRTPS_PROFILES.xml");
+    std::unique_ptr<BaseNode> root;
+    ASSERT_EQ(XMLParser::loadDefaultXMLFile(root), XMLP_ret::XML_ERROR);
+}
+
 TEST_F(XMLParserTests, EmptyString)
 {
     std::ifstream inFile;
@@ -285,12 +293,16 @@ TEST_F(XMLParserTests, Types)
 {
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
+   
+    BaseNode * profiles(root->getChild(0));
+    ASSERT_TRUE(profiles);
+    ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
 
     ParticipantAttributes participant_atts;
     bool participant_profile = false;
     bool publisher_profile   = false;
     bool subscriber_profile  = false;
-    for (const auto& profile : root->getChildren())
+    for (const auto& profile : profiles->getChildren())
     {
         if (profile->getType() == NodeType::PARTICIPANT)
         {
@@ -319,11 +331,15 @@ TEST_F(XMLParserTests, TypesBuffer)
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML(strStream.str().data(), strStream.str().size(), root), XMLP_ret::XML_OK);
 
+    BaseNode * profiles(root->getChild(0));
+    ASSERT_TRUE(profiles);
+    ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
+
     ParticipantAttributes participant_atts;
     bool participant_profile = false;
     bool publisher_profile   = false;
     bool subscriber_profile  = false;
-    for (const auto& profile : root->getChildren())
+    for (const auto& profile : profiles->getChildren())
     {
         if (profile->getType() == NodeType::PARTICIPANT)
         {
@@ -351,9 +367,13 @@ TEST_F(XMLParserTests, Data)
 
     ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
 
+    BaseNode * profiles(root->getChild(0));
+    ASSERT_TRUE(profiles);
+    ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
+
     ParticipantAttributes participant_atts;
     bool participant_profile = false;
-    for (const auto& profile : root->getChildren())
+    for (const auto& profile : profiles->getChildren())
     {
         if (profile->getType() == NodeType::PARTICIPANT)
         {
@@ -383,16 +403,16 @@ TEST_F(XMLParserTests, Data)
     locator.port = 1979;
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32u);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
-    EXPECT_EQ(builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE);
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
-    EXPECT_EQ(builtin.use_SIMPLE_EndpointDiscoveryProtocol, true);
-    EXPECT_EQ(builtin.use_STATIC_EndpointDiscoveryProtocol, false);
+    EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
     EXPECT_EQ(builtin.domainId, 2019102u);
-    EXPECT_EQ(builtin.leaseDuration, c_TimeInfinite);
-    EXPECT_EQ(builtin.leaseDuration_announcementperiod.seconds, 10);
-    EXPECT_EQ(builtin.leaseDuration_announcementperiod.nanosec, 333u);
-    EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
-    EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
+    EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
+    EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
     IPLocator::setIPv4(locator, 192, 168, 1, 5);
     locator.port = 9999;
     EXPECT_EQ(*(loc_list_it = builtin.metatrafficUnicastLocatorList.begin()), locator);
@@ -438,9 +458,13 @@ TEST_F(XMLParserTests, DataBuffer)
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML(strStream.str().data(), strStream.str().size(), root), XMLP_ret::XML_OK);
 
+    BaseNode * profiles(root->getChild(0));
+    ASSERT_TRUE(profiles);
+    ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
+
     ParticipantAttributes participant_atts;
     bool participant_profile = false;
-    for (const auto& profile : root->getChildren())
+    for (const auto& profile : profiles->getChildren())
     {
         if (profile->getType() == NodeType::PARTICIPANT)
         {
@@ -470,16 +494,16 @@ TEST_F(XMLParserTests, DataBuffer)
     locator.port = 1979;
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32u);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
-    EXPECT_EQ(builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE);
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
-    EXPECT_EQ(builtin.use_SIMPLE_EndpointDiscoveryProtocol, true);
-    EXPECT_EQ(builtin.use_STATIC_EndpointDiscoveryProtocol, false);
+    EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
     EXPECT_EQ(builtin.domainId, 2019102u);
-    EXPECT_EQ(builtin.leaseDuration, c_TimeInfinite);
-    EXPECT_EQ(builtin.leaseDuration_announcementperiod.seconds, 10);
-    EXPECT_EQ(builtin.leaseDuration_announcementperiod.nanosec, 333u);
-    EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
-    EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
+    EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
+    EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
     IPLocator::setIPv4(locator, 192, 168, 1, 5);
     locator.port = 9999;
     EXPECT_EQ(*(loc_list_it = builtin.metatrafficUnicastLocatorList.begin()), locator);

@@ -26,6 +26,7 @@
 #include <condition_variable>
 #include <mutex>
 
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -144,6 +145,8 @@ public:
 
     bool wait_for_all_acked(const Duration_t& max_wait) override;
 
+    bool all_readers_updated();
+
     /**
      * Remove the change with the minimum SequenceNumber
      * @return True if removed.
@@ -208,13 +211,23 @@ public:
 
     SequenceNumber_t next_sequence_number() const;
 
-    bool send_periodic_heartbeat();
+    /**
+     * @brief Sends a periodic heartbeat
+     * @param final Final flag
+     * @param liveliness Liveliness flag
+     * @return True on success
+     */
+    bool send_periodic_heartbeat(
+            bool final = false,
+            bool liveliness = false);
 
     /*!
      * @brief Sends a heartbeat to a remote reader.
      * @remarks This function is non thread-safe.
      */
-    void send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy);
+    void send_heartbeat_to_nts(
+            ReaderProxy& remoteReaderProxy,
+            bool liveliness = false);
 
     void perform_nack_response();
 
@@ -270,7 +283,8 @@ private:
     void send_heartbeat_nts_(
             size_t number_of_readers,
             RTPSMessageGroup& message_group,
-            bool final = false);
+            bool final,
+            bool liveliness = false);
 
     void check_acked_status();
 

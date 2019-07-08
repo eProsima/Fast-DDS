@@ -141,9 +141,7 @@ public:
         ChannelResource::disable();
     }
 
-    void release(
-            const Locator_t& locator,
-            const asio::ip::address& address);
+    void release();
 
 protected:
     /**
@@ -175,9 +173,6 @@ private:
     bool only_multicast_purpose_;
     std::string interface_;
     UDPTransportInterface* transport_;
-    bool closing_;
-    std::mutex mtx_closing_;
-    std::condition_variable cv_closing_;
 
     UDPChannelResource(const UDPChannelResource&) = delete;
     UDPChannelResource& operator=(const UDPChannelResource&) = delete;

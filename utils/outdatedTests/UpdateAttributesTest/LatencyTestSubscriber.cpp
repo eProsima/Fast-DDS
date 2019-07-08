@@ -57,10 +57,10 @@ bool LatencyTestSubscriber::init(bool echo,int nsam)
 	RTPSParticipantAttributes PParam;
 	PParam.defaultSendPort = 10042;
 	PParam.builtin.domainId = 80;
-	PParam.builtin.use_SIMPLE_EndpointDiscoveryProtocol = true;
+	PParam.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
 	PParam.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
-	PParam.builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-	PParam.builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+	PParam.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+	PParam.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
 	TIME_INFINITE(PParam.builtin.leaseDuration);
 	PParam.sendSocketBufferSize = 65536;
 	PParam.listenSocketBufferSize = 2*65536;

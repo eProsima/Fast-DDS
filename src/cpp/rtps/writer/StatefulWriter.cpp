@@ -37,6 +37,9 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
 
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
+
 #include "RTPSWriterCollector.h"
 #include "StatefulWriterOrganizer.h"
 
@@ -142,29 +145,20 @@ StatefulWriter::~StatefulWriter()
         nack_response_event_ = nullptr;
     }
 
+    // Stop all active proxies and pass them to the pool
+    while (!matched_readers_.empty())
+    {
+        ReaderProxy* remote_reader = matched_readers_.back();
+        matched_readers_.pop_back();
+        remote_reader->stop();
+        matched_readers_pool_.push_back(remote_reader);
+    }
+
     // Destroy heartbeat event
     if (periodic_hb_event_ != nullptr)
     {
         delete(periodic_hb_event_);
         periodic_hb_event_ = nullptr;
-    }
-
-    // Stop all active proxies and pass them to the pool
-    while (!matched_readers_.empty())
-    {
-        ReaderProxy* remote_reader = matched_readers_.back();
-        matched_readers_.pop_back();
-        remote_reader->stop();
-        matched_readers_pool_.push_back(remote_reader);
-    }
-
-    // Stop all active proxies and pass them to the pool
-    while (!matched_readers_.empty())
-    {
-        ReaderProxy* remote_reader = matched_readers_.back();
-        matched_readers_.pop_back();
-        remote_reader->stop();
-        matched_readers_pool_.push_back(remote_reader);
     }
 
     // Delete all proxies in the pool
@@ -188,9 +182,6 @@ void StatefulWriter::unsent_change_added_to_history(
 #if HAVE_SECURITY
     encrypt_cachechange(change);
 #endif
-
-    //TODO Think about when set liveliness assertion when writer is asynchronous.
-    this->setLivelinessAsserted(true);
 
     if(!matched_readers_.empty())
     {
@@ -307,6 +298,14 @@ void StatefulWriter::unsent_change_added_to_history(
 
             ack_event_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
             ack_event_->restart_timer(max_blocking_time);
+        }
+
+        if (liveliness_lease_duration_ < c_TimeInfinite)
+        {
+            mp_RTPSParticipant->wlp()->assert_liveliness(
+                        getGuid(),
+                        liveliness_kind_,
+                        liveliness_lease_duration_);
         }
     }
     else
@@ -850,6 +849,21 @@ bool StatefulWriter::is_acked_by_all(const CacheChange_t* change) const
         });
 }
 
+bool StatefulWriter::all_readers_updated()
+{
+    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+
+    for (auto it = matched_readers_.begin(); it != matched_readers_.end(); ++it)
+    {
+        if ((*it)->has_changes())
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool StatefulWriter::wait_for_all_acked(const Duration_t& max_wait)
 {
     std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
@@ -1020,7 +1034,9 @@ SequenceNumber_t StatefulWriter::next_sequence_number() const
     return mp_history->next_sequence_number();
 }
 
-bool StatefulWriter::send_periodic_heartbeat()
+bool StatefulWriter::send_periodic_heartbeat(
+        bool final,
+        bool liveliness)
 {
     std::lock_guard<std::recursive_timed_mutex> guardW(mp_mutex);
 
@@ -1031,13 +1047,12 @@ bool StatefulWriter::send_periodic_heartbeat()
         {
             if (it->has_unacknowledged())
             {
-                // FinalFlag is always false because this class is used only by StatefulWriter in Reliable.
-                send_heartbeat_to_nts(*it);
+                send_heartbeat_to_nts(*it, liveliness);
                 unacked_changes = true;
             }
         }
     }
-    else
+    else if (!liveliness)
     {
         SequenceNumber_t firstSeq, lastSeq;
 
@@ -1063,7 +1078,7 @@ bool StatefulWriter::send_periodic_heartbeat()
                 try
                 {
                     RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, *this);
-                    send_heartbeat_nts_(all_remote_readers_.size(), group, disable_positive_acks_);
+                    send_heartbeat_nts_(all_remote_readers_.size(), group, disable_positive_acks_, liveliness);
                 }
                 catch(const RTPSMessageGroup::timeout&)
                 {
@@ -1072,16 +1087,42 @@ bool StatefulWriter::send_periodic_heartbeat()
             }
         }
     }
+    else
+    {
+        // This is a liveliness heartbeat, we don't care about checking sequence numbers
+        try
+        {
+            RTPSMessageGroup group(
+                        mp_RTPSParticipant,
+                        this,
+                        RTPSMessageGroup::WRITER,
+                        m_cdrmessages,
+                        mAllShrinkedLocatorList,
+                        all_remote_readers_);
+            send_heartbeat_nts_(
+                        all_remote_readers_,
+                        mAllShrinkedLocatorList,
+                        group,
+                        final,
+                        liveliness);
+        }
+        catch(const RTPSMessageGroup::timeout&)
+        {
+            logError(RTPS_WRITER, "Max blocking time reached");
+        }
+    }
 
     return unacked_changes;
 }
 
-void StatefulWriter::send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy)
+void StatefulWriter::send_heartbeat_to_nts(
+        ReaderProxy& remoteReaderProxy,
+        bool liveliness)
 {
     try
     {
         RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, remoteReaderProxy.message_sender());
-        send_heartbeat_nts_(1u, group, disable_positive_acks_);
+        send_heartbeat_nts_(1u, group, disable_positive_acks_, liveliness);
     }
     catch(const RTPSMessageGroup::timeout&)
     {
@@ -1092,7 +1133,8 @@ void StatefulWriter::send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy)
 void StatefulWriter::send_heartbeat_nts_(
         size_t number_of_readers,
         RTPSMessageGroup& message_group, 
-        bool final)
+        bool final,
+        bool liveliness)
 {
 
     SequenceNumber_t firstSeq = get_seq_num_min();
@@ -1102,7 +1144,7 @@ void StatefulWriter::send_heartbeat_nts_(
     {
         assert(firstSeq == c_SequenceNumber_Unknown && lastSeq == c_SequenceNumber_Unknown);
 
-        if(number_of_readers == 1)
+        if(number_of_readers == 1 || liveliness)
         {
             firstSeq = next_sequence_number();
             lastSeq = firstSeq - 1;
@@ -1118,9 +1160,7 @@ void StatefulWriter::send_heartbeat_nts_(
     }
 
     incrementHBCount();
-
-    // FinalFlag is always false because this class is used only by StatefulWriter in Reliable.
-    message_group.add_heartbeat(firstSeq, lastSeq, m_heartbeatCount, final, false);
+    message_group.add_heartbeat(firstSeq, lastSeq, m_heartbeatCount, final, liveliness);
     // Update calculate of heartbeat piggyback.
     currentUsageSendBufferSize_ = static_cast<int32_t>(sendBufferSize_);
 

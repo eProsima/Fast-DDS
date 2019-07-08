@@ -39,6 +39,8 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+bool run = true;
+
 class ParListener : public ParticipantListener
 {
     public:
@@ -130,6 +132,22 @@ class SubListener : public SubscriberListener
                         << sample.message() << ")" << std::endl;
                     cv_.notify_all();
                 }
+            }
+        }
+
+        void on_liveliness_changed(
+                Subscriber* sub,
+                const LivelinessChangedStatus& status) override
+        {
+            (void)sub;
+            if (status.alive_count_change == 1)
+            {
+                std::cout << "Publisher recovered liveliness" << std::endl;
+            }
+            else if (status.not_alive_count_change == 1)
+            {
+                std::cout << "Publisher lost liveliness" << std::endl;
+                run = false;
             }
         }
 
@@ -227,6 +245,8 @@ int main(int argc, char** argv)
     subscriber_attributes.topic.topicKind = NO_KEY;
     subscriber_attributes.topic.topicDataType = type.getName();
     subscriber_attributes.topic.topicName = topic.str();
+    subscriber_attributes.qos.m_liveliness.lease_duration = 3;
+    subscriber_attributes.qos.m_liveliness.kind = AUTOMATIC_LIVELINESS_QOS;
     Subscriber* subscriber = Domain::createSubscriber(participant, subscriber_attributes, &listener);
 
     if(subscriber == nullptr)
@@ -235,11 +255,12 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    while(notexit)
+    while(notexit && run)
     {
         eClock::my_sleep(250);
     }
 
+    if (run)
     {
         std::unique_lock<std::mutex> lock(listener.mutex_);
         listener.cv_.wait(lock, [&]{ return listener.number_samples_ >= samples; });

@@ -2543,8 +2543,9 @@ XMLP_ret XMLParser::loadXML(const std::string& filename, up_base_node_t& root)
     if (tinyxml2::XMLError::XML_SUCCESS != xmlDoc.LoadFile(filename.c_str()))
     {
         if (filename != std::string(DEFAULT_FASTRTPS_PROFILES))
+        {
             logError(XMLPARSER, "Error opening '" << filename << "'");
-
+        }
         return XMLP_ret::XML_ERROR;
     }
 
@@ -2613,6 +2614,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
         <xs:complexType name="rtpsParticipantAttributesType">
             <xs:all minOccurs="0">
                 <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType" minOccurs="0"/>
+                <xs:element name="prefix" type="guid" minOccurs="0"/>
                 <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="sendSocketBufferSize" type="uint32Type" minOccurs="0"/>
@@ -2651,11 +2653,21 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
     for (p_aux0 = p_element->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
     {
         name = p_aux0->Name();
+
         if (strcmp(name, ALLOCATION) == 0)
         {
             // allocation
             if (XMLP_ret::XML_OK != 
                     getXMLParticipantAllocationAttributes(p_aux0, participant_node.get()->rtps.allocation, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, PREFIX) == 0)
+        {
+            // prefix
+            if (XMLP_ret::XML_OK !=
+                getXMLguidPrefix(p_aux0, participant_node.get()->rtps.prefix, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }

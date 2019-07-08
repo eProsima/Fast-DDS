@@ -46,7 +46,7 @@ public:
  * @brief Class RTPSMessageCreator, allows the generation of serialized CDR RTPS Messages.
  * @ingroup MANAGEMENT_MODULE
  */
-class RTPSMessageCreator
+class RTPSMessageCreator 
 {
     public:
 

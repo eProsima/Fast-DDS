@@ -62,8 +62,6 @@ TEST_F(XMLProfileParserTests, XMLoadProfiles)
                 xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
                 xmlparser::XMLProfileManager::loadXMLFile("test_xml_security_profiles.xml"));
-    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-                xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_ERROR,
                 xmlparser::XMLProfileManager::loadXMLFile("missing_file.xml"));
 
@@ -102,16 +100,16 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     locator.port = 1979;
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32u);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
-    EXPECT_EQ(builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE);
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
-    EXPECT_EQ(builtin.use_SIMPLE_EndpointDiscoveryProtocol, true);
-    EXPECT_EQ(builtin.use_STATIC_EndpointDiscoveryProtocol, false);
+    EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
     EXPECT_EQ(builtin.domainId, 2019102u);
-    EXPECT_EQ(builtin.leaseDuration, c_TimeInfinite);
-    EXPECT_EQ(builtin.leaseDuration_announcementperiod.seconds, 10);
-    EXPECT_EQ(builtin.leaseDuration_announcementperiod.nanosec, 333u);
-    EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
-    EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
+    EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
+    EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
     IPLocator::setIPv4(locator, 192, 168, 1, 5);
     locator.port = 9999;
     EXPECT_EQ(*(loc_list_it = builtin.metatrafficUnicastLocatorList.begin()), locator);
@@ -171,16 +169,16 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
     locator.port = 1979;
     EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32u);
     EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
-    EXPECT_EQ(builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE);
     EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
-    EXPECT_EQ(builtin.use_SIMPLE_EndpointDiscoveryProtocol, true);
-    EXPECT_EQ(builtin.use_STATIC_EndpointDiscoveryProtocol, false);
+    EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
     EXPECT_EQ(builtin.domainId, 2019102u);
-    EXPECT_EQ(builtin.leaseDuration, c_TimeInfinite);
-    EXPECT_EQ(builtin.leaseDuration_announcementperiod.seconds, 10);
-    EXPECT_EQ(builtin.leaseDuration_announcementperiod.nanosec, 333u);
-    EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
-    EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
+    EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
+    EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
     IPLocator::setIPv4(locator, 192, 168, 1, 5);
     locator.port = 9999;
     EXPECT_EQ(*(loc_list_it = builtin.metatrafficUnicastLocatorList.begin()), locator);

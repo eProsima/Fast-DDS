@@ -137,7 +137,8 @@ class PubSubWriter
             Listener(PubSubWriter &writer)
                 : writer_(writer)
                 , times_deadline_missed_(0)
-            {};
+                , times_liveliness_lost_(0)
+            {}
 
             ~Listener(){};
 
@@ -165,9 +166,22 @@ class PubSubWriter
                 times_deadline_missed_ = status.total_count;
             }
 
+            void on_liveliness_lost(
+                    eprosima::fastrtps::Publisher* pub,
+                    const eprosima::fastrtps::LivelinessLostStatus& status) override
+            {
+                (void)pub;
+                times_liveliness_lost_ = status.total_count;
+            }
+
             unsigned int missed_deadlines() const
             {
                 return times_deadline_missed_;
+            }
+
+            unsigned int times_liveliness_lost() const
+            {
+                return times_liveliness_lost_;
             }
 
         private:
@@ -176,7 +190,10 @@ class PubSubWriter
 
             PubSubWriter &writer_;
 
+            //! The number of times deadline was missed
             unsigned int times_deadline_missed_;
+            //! The number of times liveliness was lost
+            unsigned int times_liveliness_lost_;
 
     } listener_;
 
@@ -219,7 +236,9 @@ class PubSubWriter
     ~PubSubWriter()
     {
         if(participant_ != nullptr)
+        {
             eprosima::fastrtps::Domain::removeParticipant(participant_);
+        }
     }
 
     void init()
@@ -287,6 +306,11 @@ class PubSubWriter
     bool send_sample(type& msg)
     {
         return publisher_->write((void*)&msg);
+    }
+
+    void assert_liveliness()
+    {
+        publisher_->assert_liveliness();
     }
 
     void wait_discovery(std::chrono::seconds timeout = std::chrono::seconds::zero())
@@ -393,6 +417,24 @@ class PubSubWriter
     PubSubWriter& deadline_period(const eprosima::fastrtps::Duration_t deadline_period)
     {
         publisher_attr_.qos.m_deadline.period = deadline_period;
+        return *this;
+    }
+
+    PubSubWriter& liveliness_kind(const eprosima::fastrtps::LivelinessQosPolicyKind kind)
+    {
+        publisher_attr_.qos.m_liveliness.kind = kind;
+        return *this;
+    }
+
+    PubSubWriter& liveliness_lease_duration(const eprosima::fastrtps::Duration_t lease_duration)
+    {
+        publisher_attr_.qos.m_liveliness.lease_duration = lease_duration;
+        return *this;
+    }
+
+    PubSubWriter& liveliness_announcement_period(const eprosima::fastrtps::Duration_t announcement_period)
+    {
+        publisher_attr_.qos.m_liveliness.announcement_period = announcement_period;
         return *this;
     }
 
@@ -583,9 +625,9 @@ class PubSubWriter
 
     PubSubWriter& static_discovery(const char* filename)
     {
-        participant_attr_.rtps.builtin.use_SIMPLE_EndpointDiscoveryProtocol = false;
-        participant_attr_.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol = true;
-        participant_attr_.rtps.builtin.setStaticEndpointXMLFilename(filename);
+        participant_attr_.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = false;
+        participant_attr_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol = true;
+        participant_attr_.rtps.builtin.discovery_config.setStaticEndpointXMLFilename(filename);
         return *this;
     }
 
@@ -644,8 +686,8 @@ class PubSubWriter
 
     PubSubWriter& lease_duration(eprosima::fastrtps::Duration_t lease_duration, eprosima::fastrtps::Duration_t announce_period)
     {
-        participant_attr_.rtps.builtin.leaseDuration = lease_duration;
-        participant_attr_.rtps.builtin.leaseDuration_announcementperiod = announce_period;
+        participant_attr_.rtps.builtin.discovery_config.leaseDuration = lease_duration;
+        participant_attr_.rtps.builtin.discovery_config.leaseDuration_announcementperiod = announce_period;
         return *this;
     }
 
@@ -723,6 +765,11 @@ class PubSubWriter
     unsigned int missed_deadlines() const
     {
         return listener_.missed_deadlines();
+    }
+
+    unsigned int times_liveliness_lost() const
+    {
+        return listener_.times_liveliness_lost();
     }
 
     private:

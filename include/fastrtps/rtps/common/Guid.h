@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file Guid.h 	
+ * @file Guid.h
  */
 
 #ifndef RTPS_GUID_H_
@@ -132,6 +132,48 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
     return output<<std::dec;
 }
 
+inline std::istream& operator>>(std::istream& input, GuidPrefix_t& guiP)
+{
+    std::istream::sentry s(input);
+
+    if (s)
+    {
+        char point;
+        unsigned short hex;
+        std::ios_base::iostate excp_mask = input.exceptions();
+
+        try
+        {
+            input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
+            input >> std::hex >> hex;
+
+            if (hex > 255)
+            {
+                input.setstate(std::ios_base::failbit);
+            }
+
+            guiP.value[0] = static_cast<octet>(hex);
+
+            for (int i = 1; i < 12; ++i)
+            {
+                input >> point >> hex;
+                if ( point != '.' || hex > 255 )
+                {
+                    input.setstate(std::ios_base::failbit);
+                }
+                guiP.value[i] = static_cast<octet>(hex);
+            }
+
+            input >> std::dec;
+        }
+        catch (std::ios_base::failure & ) {}
+
+        input.exceptions(excp_mask);
+    }
+
+    return input;
+}
+
 #define ENTITYID_UNKNOWN 0x00000000
 #define ENTITYID_RTPSParticipant  0x000001c1
 #define ENTITYID_SEDP_BUILTIN_TOPIC_WRITER  0x000002c2
@@ -224,7 +266,7 @@ struct RTPS_DllAPI EntityId_t{
         //return id;
     }
 #if !__BIG_ENDIAN__
-    //! 
+    //!
     void reverse(){
         octet oaux;
         oaux = value[3];
@@ -306,6 +348,47 @@ inline std::ostream& operator<<(std::ostream& output,const EntityId_t& enI){
     return output << std::dec;
 }
 
+inline std::istream& operator>>(std::istream& input, EntityId_t& enP)
+{
+    std::istream::sentry s(input);
+
+    if (s)
+    {
+        char point;
+        unsigned short hex;
+        std::ios_base::iostate excp_mask = input.exceptions();
+
+        try
+        {
+            input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
+            input >> std::hex >> hex;
+
+            if (hex > 255)
+            {
+                input.setstate(std::ios_base::failbit);
+            }
+
+            enP.value[0] = static_cast<octet>(hex);
+
+            for (int i = 1; i < 4; ++i)
+            {
+                input >> point >> hex;
+                if ( point != '.' || hex > 255 )
+                {
+                    input.setstate(std::ios_base::failbit);
+                }
+                enP.value[i] = static_cast<octet>(hex);
+            }
+
+            input >> std::dec;
+        }
+        catch (std::ios_base::failure & ) {}
+
+        input.exceptions(excp_mask);
+    }
+
+    return input;
+}
 
 const EntityId_t c_EntityId_Unknown = ENTITYID_UNKNOWN;
 const EntityId_t c_EntityId_SPDPReader = ENTITYID_SPDP_BUILTIN_RTPSParticipant_READER;
@@ -392,14 +475,14 @@ struct RTPS_DllAPI GUID_t{
     /**
      * @param guidP Guid prefix
      * @param id Entity id
-     */	
+     */
     GUID_t(const GuidPrefix_t& guidP,uint32_t id):
         guidPrefix(guidP),entityId(id) {}
 
     /**
      * @param guidP Guid prefix
      * @param entId Entity id
-     */	
+     */
     GUID_t(const GuidPrefix_t& guidP,const EntityId_t& entId):
         guidPrefix(guidP),entityId(entId) {}
 

@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file PDPSimpleListener.h
+ * @file PDPListener.h
  *
  */
 
-#ifndef PDPSIMPLELISTENER_H_
-#define PDPSIMPLELISTENER_H_
+#ifndef PDPLISTENER_H_
+#define PDPLISTENER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "../../../reader/ReaderListener.h"
@@ -30,29 +30,29 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class PDPSimple;
+class PDP;
 
 /**
- * Class PDPSimpleListener, specification of SubscriberListener used by the SPDP to perform the History check when a new message is received.
+ * Class PDPListener, specification used by the PDP to perform the History check when a new message is received.
  * This class is implemented in order to use the same structure than with any other RTPSReader.
  * @ingroup DISCOVERY_MODULE
  */
-class PDPSimpleListener: public ReaderListener
+class PDPListener: public ReaderListener
 {
 
 public:
     /**
      * @param parent Pointer to object creating this object
      */
-    PDPSimpleListener(PDPSimple* parent);
+    PDPListener(PDP* parent);
 
-    virtual ~PDPSimpleListener() = default;
+    virtual ~PDPListener() override = default;
 
     /**
-     * New added cache
-     * @param reader
-     * @param change
-     */
+    * New added cache
+    * @param reader
+    * @param change
+    */
     void onNewCacheChangeAdded(
             RTPSReader* reader,
             const CacheChange_t* const change) override;
@@ -67,7 +67,7 @@ private:
     bool get_key(CacheChange_t* change);
 
     //!Pointer to the associated mp_SPDP;
-    PDPSimple* parent_pdp_;
+    PDP* parent_pdp_;
     //!Temporary data to avoid reallocations.
     ParticipantProxyData temp_participant_data_;
     //!Mutex to protect temp_participant_data.
@@ -80,4 +80,4 @@ private:
 } /* namespace eprosima */
 
 #endif
-#endif /* PDPSIMPLELISTENER_H_ */
+#endif /* PDPLISTENER_H_ */

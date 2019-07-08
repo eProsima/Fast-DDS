@@ -64,9 +64,6 @@ public:
            SendResourceList& sender_resource_list,
            const Locator_t&) override;
 
-   //! Release the listening socket for the specified port.
-   bool ReleaseInputChannel(const Locator_t& locator, const asio::ip::address& interface_address);
-
    /**
    * Converts a given remote locator (that is, a locator referring to a remote
    * destination) to the main local locator whose channel can write to that

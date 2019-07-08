@@ -28,6 +28,9 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include "../history/HistoryAttributesExtension.hpp"
 
+#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
+#include <fastrtps/rtps/writer/LivelinessManager.h>
 
 #include <mutex>
 #include <thread>
@@ -96,7 +99,9 @@ StatefulReader::StatefulReader(
     }
 }
 
-bool StatefulReader::matched_writer_add(const WriterProxyData& wdata)
+bool StatefulReader::matched_writer_add(
+        const WriterProxyData& wdata,
+        bool persist /*=true*/)
 {
     assert(wdata.guid() != c_Guid_Unknown);
 
@@ -151,9 +156,30 @@ bool StatefulReader::matched_writer_add(const WriterProxyData& wdata)
         getRTPSParticipant()->createSenderResources(locator);
     }
 
-    add_persistence_guid(wdata.guid(), wdata.persistence_guid());
-    wp->loaded_from_storage(get_last_notified(wdata.guid()));
+    if (persist)
+    {
+        add_persistence_guid(wdata.guid(), wdata.persistence_guid());
+        wp->loaded_from_storage(get_last_notified(wdata.guid()));
+    }
+    
     matched_writers_.push_back(wp);
+
+    if (liveliness_lease_duration_ < c_TimeInfinite)
+    {
+        auto wlp = this->mp_RTPSParticipant->wlp();
+        if ( wlp != nullptr)
+        {
+            wlp->sub_liveliness_manager_->add_writer(
+                        wdata.guid(),
+                        liveliness_kind_,
+                        liveliness_lease_duration_);
+        }
+        else
+        {
+            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled, cannot add writer");
+        }
+    }
+
     logInfo(RTPS_READER, "Writer Proxy " << wp->guid() << " added to " << m_guid.entityId);
     return true;
 }
@@ -163,7 +189,7 @@ bool StatefulReader::matched_writer_remove(const GUID_t& writer_guid)
     std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
     if (is_alive_)
     {
-        WriterProxy *wproxy = nullptr;
+        WriterProxy* wproxy = nullptr;
 
         //Remove cachechanges belonging to the unmatched writer
         mp_history->remove_changes_with_guid(writer_guid);
@@ -180,6 +206,22 @@ bool StatefulReader::matched_writer_remove(const GUID_t& writer_guid)
             }
         }
 
+        if (liveliness_lease_duration_ < c_TimeInfinite)
+        {
+            auto wlp = this->mp_RTPSParticipant->wlp();
+            if ( wlp != nullptr)
+            {
+                wlp->sub_liveliness_manager_->remove_writer(
+                            writer_guid,
+                            liveliness_kind_,
+                            liveliness_lease_duration_);
+            }
+            else
+            {
+                logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
+            }
+        }
+
         if (wproxy != nullptr)
         {
             wproxy->stop();
@@ -188,52 +230,6 @@ bool StatefulReader::matched_writer_remove(const GUID_t& writer_guid)
         }
 
         logInfo(RTPS_READER, "Writer Proxy " << writer_guid << " doesn't exist in reader " << this->getGuid().entityId);
-    }
-    return false;
-}
-
-bool StatefulReader::liveliness_expired(const GUID_t& writer_guid)
-{
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
-    if (is_alive_)
-    {
-        WriterProxy *wproxy = nullptr;
-
-        //Remove cachechanges belonging to the unmatched writer
-        mp_history->remove_changes_with_guid(writer_guid);
-
-        for (ResourceLimitedVector<WriterProxy*>::iterator it = matched_writers_.begin(); it != matched_writers_.end(); ++it)
-        {
-            if ((*it)->guid() == writer_guid)
-            {
-                logInfo(RTPS_READER, "Writer Proxy removed: " << (*it)->guid());
-                wproxy = *it;
-                matched_writers_.erase(it);
-                remove_persistence_guid(wproxy->guid(), wproxy->attributes().persistence_guid());
-                if (mp_listener != nullptr)
-                {
-                    MatchingInfo info(REMOVED_MATCHING, writer_guid);
-                    mp_listener->onReaderMatched(this, info);
-                }
-
-                wproxy->stop();
-                matched_writers_pool_.push_back(wproxy);
-                return true;
-            }
-        }
-
-        logInfo(RTPS_READER, "Writer Proxy " << writer_guid << " doesn't exist in reader " << this->getGuid().entityId);
-    }
-    return false;
-}
-
-bool StatefulReader::assert_liveliness(const GUID_t& writer_guid)
-{
-    WriterProxy* WP;
-    if (matched_writer_lookup(writer_guid, &WP))
-    {
-        WP->assert_liveliness();
-        return true;
     }
     return false;
 }
@@ -305,7 +301,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
     assert(change);
 
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::lock_guard<std::recursive_timed_mutex> lock(mp_mutex);
     if (!is_alive_)
     {
         return false;
@@ -313,9 +309,29 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
     if(acceptMsgFrom(change->writerGUID, &pWP))
     {
-        // Check if CacheChange was received.
-        if(!pWP->change_was_received(change->sequenceNumber))
+        if (liveliness_lease_duration_ < c_TimeInfinite)
         {
+            if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
+                pWP->attributes().m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+            {
+                auto wlp = this->mp_RTPSParticipant->wlp();
+                if (wlp != nullptr)
+                {
+                    wlp->sub_liveliness_manager_->assert_liveliness(
+                        change->writerGUID,
+                        liveliness_kind_,
+                        liveliness_lease_duration_);
+                }
+                else
+                {
+                    logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                }
+            }
+        }
+
+        // Check if CacheChange was received or is framework data
+        if(!pWP || !pWP->change_was_received(change->sequenceNumber))
+        {            
             logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
 
             CacheChange_t* change_to_add;
@@ -354,23 +370,15 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
                 return false;
             }
 
-            // Assertion has to be done before call change_received,
-            // because this function can unlock the StatefulReader timed_mutex.
-            if(pWP != nullptr)
-            {
-                pWP->assert_liveliness(); //Asser liveliness since you have received a DATA MESSAGE.
-            }
-
             if(!change_received(change_to_add, pWP))
             {
                 logInfo(RTPS_MSG_IN,IDSTRING"MessageReceiver not add change "<<change_to_add->sequenceNumber);
                 releaseCache(change_to_add);
-
-                if(pWP == nullptr && getGuid().entityId == c_EntityId_SPDPReader)
-                {
-                    mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change->writerGUID.guidPrefix);
-                }
             }
+        }
+        else if (pWP != nullptr && getGuid().entityId == c_EntityId_SPDPReader)
+        {
+            mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change->writerGUID.guidPrefix);
         }
     }
 
@@ -392,8 +400,29 @@ bool StatefulReader::processDataFragMsg(
         return false;
     }
 
-    if(acceptMsgFrom(incomingChange->writerGUID, &pWP))
+    // TODO: see if we need manage framework fragmented DATA message
+    if(acceptMsgFrom(incomingChange->writerGUID, &pWP) && pWP)
     {
+        if (liveliness_lease_duration_ < c_TimeInfinite)
+        {
+            if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
+                    pWP->attributes().m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+            {
+                auto wlp = this->mp_RTPSParticipant->wlp();
+                if ( wlp != nullptr)
+                {
+                    wlp->sub_liveliness_manager_->assert_liveliness(
+                                incomingChange->writerGUID,
+                                liveliness_kind_,
+                                liveliness_lease_duration_);
+                }
+                else
+                {
+                    logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                }
+            }
+        }
+
         // Check if CacheChange was received.
         if(!pWP->change_was_received(incomingChange->sequenceNumber))
         {
@@ -427,17 +456,11 @@ bool StatefulReader::processDataFragMsg(
                 releaseCache(change_to_add);
 #endif
 
-            // Assertion has to be done before call change_received,
-            // because this function can unlock the StatefulReader mutex.
-            if(pWP != nullptr)
-            {
-                pWP->assert_liveliness(); //Asser liveliness since you have received a DATA MESSAGE.
-            }
-
             if(change_completed != nullptr)
             {
                 if(!change_received(change_completed, pWP))
                 {
+
                     logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long());
 
                     // Assert liveliness because it is a participant discovery info.
@@ -471,11 +494,37 @@ bool StatefulReader::processHeartbeatMsg(
         return false;
     }
 
-    if(acceptMsgFrom(writerGUID, &writer))
+    if(acceptMsgFrom(writerGUID, &writer) && writer)
     {
-        if (writer->process_heartbeat(hbCount, firstSN, lastSN, finalFlag, livelinessFlag, disable_positive_acks_))
+        bool assert_liveliness = false;
+        if (writer->process_heartbeat(
+                hbCount, firstSN, lastSN, finalFlag, livelinessFlag, disable_positive_acks_, assert_liveliness))
         {
             fragmentedChangePitStop_->try_to_remove_until(firstSN, writerGUID);
+            
+            // Try to assert liveliness if requested by proxy's logic
+            if (assert_liveliness)
+            {
+                if (liveliness_lease_duration_ < c_TimeInfinite)
+                {
+                    if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
+                            writer->attributes().m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+                    {
+                        auto wlp = this->mp_RTPSParticipant->wlp();
+                        if ( wlp != nullptr)
+                        {
+                            wlp->sub_liveliness_manager_->assert_liveliness(
+                                        writerGUID,
+                                        liveliness_kind_,
+                                        liveliness_lease_duration_);
+                        }
+                        else
+                        {
+                            logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+                        }
+                    }
+                }
+            }
 
             // Maybe now we have to notify user from new CacheChanges.
             NotifyChanges(writer);
@@ -498,7 +547,7 @@ bool StatefulReader::processGapMsg(
         return false;
     }
 
-    if(acceptMsgFrom(writerGUID, &pWP))
+    if(acceptMsgFrom(writerGUID, &pWP) && pWP)
     {
         // TODO (Miguel C): Refactor this inside WriterProxy
         SequenceNumber_t auxSN;
@@ -541,6 +590,14 @@ bool StatefulReader::acceptMsgFrom(
         }
     }
 
+    // Check if it's a framework's one
+    if (m_acceptMessagesFromUnkownWriters 
+        && (writerId.entityId == m_trustedWriterEntityId))
+    {
+        *wp = nullptr;
+        return true;
+    }
+
     return false;
 }
 
@@ -565,8 +622,9 @@ bool StatefulReader::change_removed_by_history(
             wp->change_removed_from_history(a_change->sequenceNumber);
             return true;
         }
-        else
+        else if(a_change->writerGUID.entityId != this->m_trustedWriterEntityId)
         {
+            // trusted entities messages mean no havoc
             logError(RTPS_READER," You should always find the WP associated with a change, something is very wrong");
         }
     }
@@ -583,8 +641,32 @@ bool StatefulReader::change_received(
     {
         if(!findWriterProxy(a_change->writerGUID, &prox))
         {
-            logInfo(RTPS_READER, "Writer Proxy " << a_change->writerGUID <<" not matched to this Reader "<< m_guid.entityId);
-            return false;
+            // discard non framework messages from unknown writer
+            if (a_change->writerGUID.entityId != m_trustedWriterEntityId)
+            {
+                logInfo(RTPS_READER, "Writer Proxy " << a_change->writerGUID << " not matched to this Reader " << m_guid.entityId);
+                return false;
+            }
+            else
+            {
+                // handle framework messages in a stateless fashion
+                // Only make visible the change if there is not other with bigger sequence number.
+                if (get_last_notified(a_change->writerGUID) < a_change->sequenceNumber)
+                {
+                    if (mp_history->received_change(a_change, 0))
+                    {
+                        update_last_notified(a_change->writerGUID, a_change->sequenceNumber);
+                        if (getListener() != nullptr)
+                        {
+                            getListener()->onNewCacheChangeAdded((RTPSReader*)this, a_change);
+                        }
+
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
     }
 

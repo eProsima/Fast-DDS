@@ -23,6 +23,7 @@
 #include "../common/Time_t.h"
 #include "../common/Guid.h"
 #include "EndpointAttributes.h"
+#include "../../qos/QosPolicies.h"
 #include "../../utils/collections/ResourceLimitedContainerConfig.hpp"
 
 #include <functional>
@@ -67,7 +68,9 @@ class ReaderAttributes
     public:
 
         ReaderAttributes()
-            : expectsInlineQos(false)
+            : liveliness_kind_(AUTOMATIC_LIVELINESS_QOS)
+            , liveliness_lease_duration(c_TimeInfinite)
+            , expectsInlineQos(false)
             , disable_positive_acks(false)
         {
             endpoint.endpointKind = READER;
@@ -80,8 +83,14 @@ class ReaderAttributes
         //!Attributes of the associated endpoint.
         EndpointAttributes endpoint;
 
-        //!Times associated with this reader.
+        //!Times associated with this reader (only for stateful readers)
         ReaderTimes times;
+
+        //! Liveliness kind
+        LivelinessQosPolicyKind liveliness_kind_;
+
+        //! Liveliness lease duration
+        Duration_t liveliness_lease_duration;
 
         //!Indicates if the reader expects Inline qos, default value 0.
         bool expectsInlineQos;

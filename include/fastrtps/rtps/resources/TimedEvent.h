@@ -183,8 +183,9 @@ class TimedEvent
 
         TimedEventImpl* impl_;
 };
-}
+
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif

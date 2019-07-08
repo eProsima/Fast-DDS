@@ -34,20 +34,19 @@ class StatefulReader;
 class StatefulWriter;
 class RTPSWriter;
 class RTPSReader;
-class EDPSimplePUBListener;
-class EDPSimpleSUBListener;
 class ReaderHistory;
 class WriterHistory;
 class HistoryAttributes;
 class ReaderAttributes;
 class WriterAttributes;
+class EDPListener;
 
 /**
  * Class EDPSimple, implements the Simple Endpoint Discovery Protocol defined in the RTPS specification.
  * Inherits from EDP class.
  *@ingroup DISCOVERY_MODULE
  */
-class EDPSimple : public EDP
+class EDPSimple : public EDP  
 {
     typedef std::pair<StatefulWriter*,WriterHistory*> t_p_StatefulWriter;
     typedef std::pair<StatefulReader*,ReaderHistory*> t_p_StatefulReader;
@@ -56,10 +55,10 @@ class EDPSimple : public EDP
 
     /**
      * Constructor.
-     * @param p Pointer to the PDPSimple
+     * @param p Pointer to the PDP
      * @param part Pointer to the RTPSParticipantImpl
      */
-    EDPSimple(PDPSimple* p,RTPSParticipantImpl* part);
+    EDPSimple(PDP* p,RTPSParticipantImpl* part);
     virtual ~EDPSimple();
     //!Discovery attributes.
     BuiltinAttributes m_discovery;
@@ -83,10 +82,10 @@ class EDPSimple : public EDP
 #endif
 
     //!Pointer to the listener associated with PubReader and PubWriter.
-    EDPSimplePUBListener* publications_listener_;
+    EDPListener* publications_listener_;
 
     //!Pointer to the listener associated with SubReader and SubWriter.
-    EDPSimpleSUBListener* subscriptions_listener_;
+    EDPListener* subscriptions_listener_;
 
     /**
      * Initialization method.
@@ -104,6 +103,9 @@ class EDPSimple : public EDP
      * @param pdata Pointer to the ParticipantProxyData to remove
      */
     void removeRemoteEndpoints(ParticipantProxyData* pdata) override;
+
+    //! Verify if the given participant EDP enpoints are matched with us
+    bool areRemoteEndpointsMatched(const ParticipantProxyData* pdata) override;
 
     /**
      * This method generates the corresponding change in the subscription writer and send it to all known remote endpoints.
@@ -166,7 +168,7 @@ class EDPSimple : public EDP
      * Create local SEDP Endpoints based on the DiscoveryAttributes.
      * @return True if correct.
      */
-    bool createSEDPEndpoints();
+    virtual bool createSEDPEndpoints();
 
 #if HAVE_SECURITY
     bool create_sedp_secure_endpoints();

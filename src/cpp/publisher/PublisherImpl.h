@@ -135,6 +135,17 @@ class PublisherImpl
      */
     void get_offered_deadline_missed_status(OfferedDeadlineMissedStatus& status);
 
+    /**
+     * @brief Returns the liveliness lost status
+     * @param status Liveliness lost status
+     */
+    void get_liveliness_lost_status(LivelinessLostStatus& status);
+
+    /**
+     * @brief Asserts liveliness
+     */
+    void assert_liveliness();
+
     private:
     ParticipantImpl* mp_participant;
     //! Pointer to the associated Data Writer.
@@ -153,8 +164,16 @@ class PublisherImpl
         public:
             PublisherWriterListener(PublisherImpl* p):mp_publisherImpl(p){};
             virtual ~PublisherWriterListener(){};
-            void onWriterMatched(rtps::RTPSWriter* writer, rtps::MatchingInfo& info);
-            void onWriterChangeReceivedByAll(rtps::RTPSWriter* writer, rtps::CacheChange_t* change);
+            void onWriterMatched(
+                    rtps::RTPSWriter* writer,
+                    rtps::MatchingInfo& info) override;
+            void onWriterChangeReceivedByAll(
+                    rtps::RTPSWriter* writer,
+                    rtps::CacheChange_t* change) override;
+            void on_liveliness_lost(
+                    rtps::RTPSWriter* writer,
+                    const LivelinessLostStatus& status) override;
+
             PublisherImpl* mp_publisherImpl;
     }m_writerListener;
 

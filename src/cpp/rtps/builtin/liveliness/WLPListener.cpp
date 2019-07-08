@@ -26,7 +26,7 @@
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 
 #include <fastrtps/rtps/reader/StatefulReader.h>
-
+#include <fastrtps/rtps/writer/LivelinessManager.h>
 #include <fastrtps/log/Log.h>
 
 #include <mutex>
@@ -38,14 +38,14 @@ namespace fastrtps{
 namespace rtps {
 
 
-WLPListener::WLPListener(WLP* plwp) : mp_WLP(plwp)
+WLPListener::WLPListener(WLP* plwp)
+    : mp_WLP(plwp)
 {
 }
 
 WLPListener::~WLPListener()
 {
 }
-
 
 typedef std::vector<WriterProxy*>::iterator WPIT;
 
@@ -54,7 +54,7 @@ void WLPListener::onNewCacheChangeAdded(
         const CacheChange_t* const changeIN)
 {
     std::lock_guard<std::recursive_mutex> guard2(*mp_WLP->mp_builtinProtocols->mp_PDP->getMutex());
-    logInfo(RTPS_LIVELINESS,"");
+
     GuidPrefix_t guidP;
     LivelinessQosPolicyKind livelinessKind;
     CacheChange_t* change = (CacheChange_t*)changeIN;
@@ -67,8 +67,7 @@ void WLPListener::onNewCacheChangeAdded(
     auto history = reader->getHistory();
     for(auto ch = history->changesBegin(); ch!=history->changesEnd();++ch)
     {
-        if((*ch)->instanceHandle == change->instanceHandle &&
-                (*ch)->sequenceNumber < change->sequenceNumber)
+        if((*ch)->instanceHandle == change->instanceHandle && (*ch)->sequenceNumber < change->sequenceNumber)
         {
             history->remove_change(*ch);
             break;
@@ -85,24 +84,37 @@ void WLPListener::onNewCacheChangeAdded(
     }
     else
     {
-        if(!separateKey(change->instanceHandle,&guidP,&livelinessKind))
+        if(!separateKey(
+                    change->instanceHandle,
+                    &guidP,
+                    &livelinessKind))
+        {
             return;
+        }
     }
-    logInfo(RTPS_LIVELINESS,"RTPSParticipant "<<guidP<< " assert liveliness of "
-            <<((livelinessKind == 0x00)?"AUTOMATIC":"")
-            <<((livelinessKind==0x01)?"MANUAL_BY_RTPSParticipant":"")<< " writers");
+
     if(guidP == reader->getGuid().guidPrefix)
     {
         logInfo(RTPS_LIVELINESS,"Message from own RTPSParticipant, ignoring");
         history->remove_change(change);
         return;
     }
-    this->mp_WLP->mp_builtinProtocols->mp_PDP->assertRemoteWritersLiveliness(guidP,livelinessKind);
 
+    if (mp_WLP->automatic_readers_)
+    {
+        mp_WLP->sub_liveliness_manager_->assert_liveliness(AUTOMATIC_LIVELINESS_QOS);
+    }
+    if (livelinessKind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    {
+        mp_WLP->sub_liveliness_manager_->assert_liveliness(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
+    }
     return;
 }
 
-bool WLPListener::separateKey(InstanceHandle_t& key,GuidPrefix_t* guidP,LivelinessQosPolicyKind* liveliness)
+bool WLPListener::separateKey(
+        InstanceHandle_t& key,
+        GuidPrefix_t* guidP,
+        LivelinessQosPolicyKind* liveliness)
 {
     for(uint8_t i=0;i<12;++i)
     {

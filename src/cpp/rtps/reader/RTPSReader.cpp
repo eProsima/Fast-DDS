@@ -24,6 +24,8 @@
 #include "ReaderHistoryState.hpp"
 
 #include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
+#include "../participant/RTPSParticipantImpl.h"
 
 #include <foonathan/memory/namespace_alias.hpp>
 
@@ -32,7 +34,7 @@
 #include <chrono>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 RTPSReader::RTPSReader(
@@ -41,7 +43,7 @@ RTPSReader::RTPSReader(
         const ReaderAttributes& att,
         ReaderHistory* hist,
         ReaderListener* rlisten)
-    : Endpoint(pimpl,guid,att.endpoint)
+    : Endpoint(pimpl, guid, att.endpoint)
     , mp_history(hist)
     , mp_listener(rlisten)
     , m_acceptMessagesToUnknownReaders(true)
@@ -49,10 +51,13 @@ RTPSReader::RTPSReader(
     , m_expectsInlineQos(att.expectsInlineQos)
     , history_state_(new ReaderHistoryState(att.matched_writers_allocation.initial))
     , fragmentedChangePitStop_(nullptr)
+    , liveliness_kind_(att.liveliness_kind_)
+    , liveliness_lease_duration_(att.liveliness_lease_duration)
 {
     mp_history->mp_reader = this;
     mp_history->mp_mutex = &mp_mutex;
     fragmentedChangePitStop_ = new FragmentedChangePitStop(this);
+
     logInfo(RTPS_READER,"RTPSReader created correctly");
 }
 
@@ -106,8 +111,8 @@ CacheChange_t* RTPSReader::findCacheInFragmentedCachePitStop(
 }
 
 void RTPSReader::add_persistence_guid(
-         const GUID_t& guid,
-         const GUID_t& persistence_guid)
+        const GUID_t& guid,
+        const GUID_t& persistence_guid)
 {
     std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
     history_state_->persistence_guid_map[guid] = persistence_guid;

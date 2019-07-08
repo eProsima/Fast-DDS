@@ -41,7 +41,7 @@ namespace fastrtps{
 namespace rtps {
 
 
-EDPStatic::EDPStatic(PDPSimple* p,RTPSParticipantImpl* part):
+EDPStatic::EDPStatic(PDP* p,RTPSParticipantImpl* part):
     EDP(p,part),
     mp_edpXML(nullptr)
 {
@@ -58,7 +58,7 @@ bool EDPStatic::initEDP(BuiltinAttributes& attributes)
     logInfo(RTPS_EDP,"Beginning STATIC EndpointDiscoveryProtocol");
     m_attributes = attributes;
     mp_edpXML = new xmlparser::XMLEndpointParser();
-    std::string filename(m_attributes.getStaticEndpointXMLFilename());
+    std::string filename(m_attributes.discovery_config.getStaticEndpointXMLFilename());
     return (this->mp_edpXML->loadXMLFile(filename) == xmlparser::XMLP_ret::XML_OK);
 }
 

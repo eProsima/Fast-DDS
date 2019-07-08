@@ -38,7 +38,7 @@ bool LifespanSubscriber::init(uint32_t lifespan_ms)
 {
     ParticipantAttributes PParam;
     PParam.rtps.builtin.domainId = 0;
-    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
+    PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_sub");
     participant_ = Domain::createParticipant(PParam);
     if( participant_ == nullptr )

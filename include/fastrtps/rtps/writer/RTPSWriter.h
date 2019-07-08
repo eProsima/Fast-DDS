@@ -22,6 +22,7 @@
 #include "../Endpoint.h"
 #include "../messages/RTPSMessageGroup.h"
 #include "../attributes/WriterAttributes.h"
+#include "../../qos/LivelinessLostStatus.h"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
 #include "../common/LocatorSelector.hpp"
 #include "../messages/RTPSMessageSenderInterface.hpp"
@@ -32,7 +33,7 @@
 #include <chrono>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class WriterListener;
@@ -78,8 +79,10 @@ public:
     }
 
 
-    RTPS_DllAPI CacheChange_t* new_change(const std::function<uint32_t()>& dataCdrSerializedSize,
-            ChangeKind_t changeKind, InstanceHandle_t handle = c_InstanceHandle_Unknown);
+    RTPS_DllAPI CacheChange_t* new_change(
+            const std::function<uint32_t()>& dataCdrSerializedSize,
+            ChangeKind_t changeKind,
+            InstanceHandle_t handle = c_InstanceHandle_Unknown);
 
     /**
      * Add a matched reader.
@@ -156,19 +159,6 @@ public:
      * @return Listener
      */
     RTPS_DllAPI inline WriterListener* getListener() { return mp_listener; }
-
-    /**
-     * Get the asserted liveliness
-     * @return Asserted liveliness
-     */
-    RTPS_DllAPI inline bool getLivelinessAsserted() { return m_livelinessAsserted; }
-
-    /**
-     * Set the asserted liveliness
-     * @param l asserted liveliness
-     * @return asserted liveliness
-     */
-    RTPS_DllAPI inline void setLivelinessAsserted(bool l) { m_livelinessAsserted = l; }
 
     /**
      * Get the publication mode
@@ -269,6 +259,21 @@ public:
     }
 
     /**
+     * @brief A method to retrieve the liveliness kind
+     * @return Liveliness kind
+     */
+    const LivelinessQosPolicyKind& get_liveliness_kind() const;
+
+    /**
+     * @brief A method to retrieve the liveliness lease duration
+     * @return Lease durtation
+     */
+    const Duration_t& get_liveliness_lease_duration() const;
+
+    //! Liveliness lost status of this writer
+    LivelinessLostStatus liveliness_lost_status_;
+
+    /**
      * Check if the destinations managed by this sender interface have changed.
      *
      * @return true if destinations have changed, false otherwise.
@@ -314,8 +319,6 @@ protected:
     bool m_pushMode;
     //!Group created to send messages more efficiently
     RTPSMessageGroup_t m_cdrmessages;
-    //!INdicates if the liveliness has been asserted
-    bool m_livelinessAsserted;
     //!WriterHistory
     WriterHistory* mp_history;
     //!Listener
@@ -362,6 +365,11 @@ protected:
 
     bool encrypt_cachechange(CacheChange_t* change);
 #endif
+
+    //! The liveliness kind of this reader
+    LivelinessQosPolicyKind liveliness_kind_;
+    //! The liveliness lease duration of this reader
+    Duration_t liveliness_lease_duration_;
 
 private:
 

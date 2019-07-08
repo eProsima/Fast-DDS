@@ -137,7 +137,13 @@ class SubscriberImpl
      */
     void get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status);
 
-    private:
+    /**
+     * @brief Returns the liveliness changed status
+     * @param status Liveliness changed status
+     */
+    void get_liveliness_changed_status(LivelinessChangedStatus& status);
+
+private:
 
     //!Participant
     ParticipantImpl* mp_participant;
@@ -155,16 +161,19 @@ class SubscriberImpl
 
     class SubscriberReaderListener : public rtps::ReaderListener
     {
-        public:
-            SubscriberReaderListener(SubscriberImpl* s): mp_subscriberImpl(s) {}
-            virtual ~SubscriberReaderListener() {}
-            void onReaderMatched(
-                    rtps::RTPSReader* reader,
-                    rtps::MatchingInfo& info) override;
-            void onNewCacheChangeAdded(
-                    rtps::RTPSReader* reader,
-                    const rtps::CacheChange_t* const change) override;
-            SubscriberImpl* mp_subscriberImpl;
+    public:
+        SubscriberReaderListener(SubscriberImpl* s): mp_subscriberImpl(s) {}
+        virtual ~SubscriberReaderListener() {}
+        void onReaderMatched(
+                rtps::RTPSReader* reader,
+                rtps::MatchingInfo& info) override;
+        void onNewCacheChangeAdded(
+                rtps::RTPSReader* reader,
+                const rtps::CacheChange_t* const change) override;
+        void on_liveliness_changed(
+                rtps::RTPSReader* reader,
+                const LivelinessChangedStatus& status) override;
+        SubscriberImpl* mp_subscriberImpl;
     } m_readerListener;
 
     Subscriber* mp_userSubscriber;

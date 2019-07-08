@@ -110,7 +110,7 @@ class RTPSWithRegistrationReader
         void init()
         {
             eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
-            pattr.builtin.use_SIMPLE_RTPSParticipantDiscoveryProtocol = true;
+            pattr.builtin.discovery_config.discoveryProtocol = eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE;
             pattr.builtin.use_WriterLivelinessProtocol = true;
             pattr.builtin.domainId = (uint32_t)GET_PID() % 230;
             participant_ = eprosima::fastrtps::rtps::RTPSDomain::createParticipant(pattr);
@@ -223,6 +223,10 @@ class RTPSWithRegistrationReader
             });
         }
 
+        eprosima::fastrtps::rtps::SequenceNumber_t get_last_received_sequence_number() const
+        {
+            return last_seq_;
+        }
 
         void wait_discovery()
         {
@@ -304,7 +308,7 @@ class RTPSWithRegistrationReader
 
             std::cout << "Initializing persistent READER " << reader_attr_.endpoint.persistence_guid << " with file " << filename << std::endl;
 
-            return durability(eprosima::fastrtps::rtps::DurabilityKind_t::PERSISTENT)
+            return durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT)
                 .add_property("dds.persistence.plugin", "builtin.SQLITE3")
                 .add_property("dds.persistence.sqlite3.filename", filename);
         }

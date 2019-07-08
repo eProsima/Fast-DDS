@@ -57,9 +57,10 @@ public:
     /**
      * Add a matched writer represented by a WriterProxyData object.
      * @param wdata Pointer to the WPD object to add.
+     * @param persist If the Reader must try to recover Writer formered registered state
      * @return True if correctly added.
      */
-    bool matched_writer_add(const WriterProxyData& wdata) override;
+    bool matched_writer_add(const WriterProxyData& wdata, bool persist = true) override;
 
     /**
      * Remove a WriterProxyData from the matached writers.
@@ -177,10 +178,11 @@ public:
 
 private:
 
-    struct RemoteWriterGuids_t
+    struct RemoteWriterInfo_t
     {
         GUID_t guid;
         GUID_t persistence_guid;
+        bool has_manual_topic_liveliness;
     };
 
     bool acceptMsgFrom(const GUID_t& entityId);
@@ -189,7 +191,16 @@ private:
             const GUID_t& guid, 
             const SequenceNumber_t& seq);
 
-    ResourceLimitedVector<RemoteWriterGuids_t> matched_writers_;
+    /**
+     * @brief A method to check if a matched writer has manual_by_topic liveliness
+     * @param guid The guid of the remote writer
+     * @return True if writer has manual_by_topic livelinesss
+     */
+    bool writer_has_manual_liveliness(const GUID_t& guid);
+
+    //!List of GUID_t os matched writers.
+    //!Is only used in the Discovery, to correctly notify the user using SubscriptionListener::onSubscriptionMatched();
+    ResourceLimitedVector<RemoteWriterInfo_t> matched_writers_;
 };
 
 } /* namespace rtps */

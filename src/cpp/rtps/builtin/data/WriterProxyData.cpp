@@ -42,7 +42,6 @@ WriterProxyData::WriterProxyData(
 #endif
     , m_userDefinedId(0)
     , m_typeMaxSerialized(0)
-    , m_isAlive(true)
     , m_topicKind(NO_KEY)
     , m_topicDiscoveryKind(NO_CHECK)
     {
@@ -64,7 +63,6 @@ WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo)
     , m_topicName(writerInfo.m_topicName)
     , m_userDefinedId(writerInfo.m_userDefinedId)
     , m_typeMaxSerialized(writerInfo.m_typeMaxSerialized)
-    , m_isAlive(writerInfo.m_isAlive)
     , m_topicKind(writerInfo.m_topicKind)
     , persistence_guid_(writerInfo.persistence_guid_)
     , m_topicDiscoveryKind(writerInfo.m_topicDiscoveryKind)
@@ -93,7 +91,6 @@ WriterProxyData& WriterProxyData::operator=(const WriterProxyData& writerInfo)
     m_topicName = writerInfo.m_topicName;
     m_userDefinedId = writerInfo.m_userDefinedId;
     m_typeMaxSerialized = writerInfo.m_typeMaxSerialized;
-    m_isAlive = writerInfo.m_isAlive;
     m_topicKind = writerInfo.m_topicKind;
     persistence_guid_ = writerInfo.persistence_guid_;
     m_qos.setQos(writerInfo.m_qos, true);
@@ -533,7 +530,6 @@ void WriterProxyData::clear()
     m_userDefinedId = 0;
     m_qos = WriterQos();
     m_typeMaxSerialized = 0;
-    m_isAlive = true;
     m_topicKind = NO_KEY;
     persistence_guid_ = c_Guid_Unknown;
 }
@@ -549,7 +545,6 @@ void WriterProxyData::copy(WriterProxyData* wdata)
     m_userDefinedId = wdata->m_userDefinedId;
     m_qos = wdata->m_qos;
     m_typeMaxSerialized = wdata->m_typeMaxSerialized;
-    m_isAlive = wdata->m_isAlive;
     m_topicKind = wdata->m_topicKind;
     persistence_guid_ = wdata->persistence_guid_;
     m_topicDiscoveryKind = wdata->m_topicDiscoveryKind;
@@ -581,7 +576,6 @@ void WriterProxyData::update(WriterProxyData* wdata)
 {
     remote_locators_ = wdata->remote_locators_;
     m_qos.setQos(wdata->m_qos,false);
-    m_isAlive = wdata->m_isAlive;
 }
 
 void WriterProxyData::add_unicast_locator(const Locator_t& locator)

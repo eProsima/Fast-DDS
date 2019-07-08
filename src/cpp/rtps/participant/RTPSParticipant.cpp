@@ -120,6 +120,11 @@ ResourceEvent& RTPSParticipant::get_resource_event() const
     return mp_impl->getEventResource();
 }
 
+WLP* RTPSParticipant::wlp() const
+{
+    return mp_impl->wlp();
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

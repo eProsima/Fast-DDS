@@ -71,6 +71,5 @@ void Subscriber::get_requested_deadline_missed_status(RequestedDeadlineMissedSta
 
 void Subscriber::get_liveliness_changed_status(LivelinessChangedStatus &status)
 {
-    (void)status;
-    logWarning(SUBSCRIBER, "get_liveliness_changed_status is not implemented yet");
+    mp_impl->get_liveliness_changed_status(status);
 }

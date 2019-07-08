@@ -131,7 +131,7 @@ void TCPChannelResourceSecure::connect(
 
 void TCPChannelResourceSecure::disconnect()
 {
-    if (eConnecting < change_status(eConnectionStatus::eDisconnected))
+    if (eConnecting < change_status(eConnectionStatus::eDisconnected) && alive() )
     {
         auto socket = secure_socket_;
 
