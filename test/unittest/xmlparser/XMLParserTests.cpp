@@ -409,9 +409,9 @@ TEST_F(XMLParserTests, DurationCheck)
         }
     }
     ASSERT_TRUE(participant_profile);
-    EXPECT_EQ(participant_atts.rtps.builtin.leaseDuration, c_TimeInfinite);
-    EXPECT_EQ(participant_atts.rtps.builtin.leaseDuration_announcementperiod.seconds, 10);
-    EXPECT_EQ(participant_atts.rtps.builtin.leaseDuration_announcementperiod.nanosec, 333u);
+    EXPECT_EQ(participant_atts.rtps.builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(participant_atts.rtps.builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
+    EXPECT_EQ(participant_atts.rtps.builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
 
     ASSERT_TRUE(publisher_profile);
     EXPECT_EQ(publisher_atts.qos.m_deadline.period.seconds, 15);

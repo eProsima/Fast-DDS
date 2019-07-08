@@ -5,13 +5,15 @@
         <rtps>
             <builtin>
                 <domainId>80</domainId>
-                <leaseDuration>
-                    <sec>DURATION_INFINITY</sec>
-                </leaseDuration>
-                <leaseAnnouncement>
-                    <sec>10</sec>
-                    <nanosec>333</nanosec>
-                </leaseAnnouncement>
+                <discovery_config>
+                    <leaseDuration>
+                        <sec>DURATION_INFINITY</sec>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <sec>10</sec>
+                        <nanosec>333</nanosec>
+                    </leaseAnnouncement>
+                </discovery_config>
             </builtin>
         </rtps>
     </participant>
