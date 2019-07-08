@@ -64,7 +64,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 	  ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LivelinessManager.cpp
           ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
           ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
-	  ${PROJECT_SOURCE_DIR}/src/cpp/rtps/timedevent/TimedCallback.cpp
           ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
 	add_executable(LivelinessManagerTests ${LIVELINESSMANAGERTESTS_SOURCE})
         target_compile_definitions(LivelinessManagerTests PRIVATE FASTRTPS_NO_LIB)
