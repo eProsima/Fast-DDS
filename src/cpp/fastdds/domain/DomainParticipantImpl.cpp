@@ -23,6 +23,7 @@
 #include <fastrtps/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastrtps/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastrtps/rtps/writer/WriterDiscoveryInfo.h>
+#include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
 #include <fastrtps/topic/TopicDataType.h>
 
@@ -281,7 +282,14 @@ bool DomainParticipantImpl::delete_contained_entities()
 
 bool DomainParticipantImpl::assert_liveliness()
 {
-    logError(PARTICIPANT, "Not implemented.");
+    if (rtps_participant_->wlp() != nullptr)
+    {
+        return rtps_participant_->wlp()->assert_liveliness_manual_by_participant();
+    }
+    else
+    {
+        logError(PARTICIPANT, "Invalid WLP, cannot assert liveliness of participant");
+    }
     return false;
 }
 
