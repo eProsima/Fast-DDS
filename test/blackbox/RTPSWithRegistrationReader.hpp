@@ -33,6 +33,7 @@
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastrtps/utils/TimedMutex.hpp>
 
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
@@ -180,7 +181,7 @@ class RTPSWithRegistrationReader
             receiving_ = true;
             mutex_.unlock();
 
-            std::unique_lock<RecursiveTimedMutex> lock(*history_->getMutex());
+            std::unique_lock<eprosima::fastrtps::RecursiveTimedMutex> lock(*history_->getMutex());
             while(history_->changesBegin() != history_->changesEnd())
             {
                 eprosima::fastrtps::rtps::CacheChange_t* change = *history_->changesBegin();
