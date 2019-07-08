@@ -43,7 +43,6 @@ public:
     using Base::operator->;
     using Base::operator*;
     using Base::operator bool;
-    using Base::operator=;
 
     RTPS_DllAPI TypeSupport()
         : std::shared_ptr<fastrtps::TopicDataType>(nullptr)
