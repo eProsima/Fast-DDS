@@ -260,16 +260,19 @@ void PDPServer::initializeParticipantProxyData(ParticipantProxyData* participant
         logError(RTPS_PDP, "Using a PDP Server object with another user's settings");
     }
 
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
-    {
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
-    }
+    // A PDP server should always be provided with all EDP endpoints
+    // because it must relay all clients EDP info
+    participant_data->m_availableBuiltinEndpoints 
+        |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER
+        | DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR
+        | DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR
+        | DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
 
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
+    const SimpleEDPAttributes & se = getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP;
+
+    if (!(se.use_PublicationWriterANDSubscriptionReader && se.use_PublicationReaderANDSubscriptionWriter))
     {
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
-        participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+        logWarning(RTPS_PDP, "SERVER or BACKUP PDP requires always all EDP endpoints creation.");
     }
 }
 
