@@ -107,12 +107,12 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 1000;
+    uint32_t writer_sleep_ms = 500;
     uint32_t num_samples = 2;
 
     // Liveliness lease duration and announcement period, in seconds
     Duration_t liveliness_s(writer_sleep_ms * 0.01 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 0.01 * 1e-3 * 0.1);
+    Duration_t announcement_period(writer_sleep_ms * 0.01 * 1e-3 * 0.2);
 
     reader.reliability(RELIABLE_RELIABILITY_QOS)
             .liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
@@ -134,13 +134,13 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
     auto data = default_helloworld_data_generator(num_samples);
     reader.startReception(data);
 
-    size_t count = 0;
+    unsigned int count = 0;
     for (auto data_sample : data)
     {
         writer.send_sample(data_sample);
-        ++count;
-        reader.block_for_at_least(count);
-        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+        reader.wait_liveliness_recovered(count + 1);
+        reader.wait_liveliness_lost(count + 1);
+        count++;
     }
 
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples);
@@ -150,7 +150,8 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
     for (count = 0; count < num_samples; count++)
     {
         writer.assert_liveliness();
-        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+        reader.wait_liveliness_recovered(count + num_samples + 1);
+        reader.wait_liveliness_lost(count + num_samples + 1);
     }
 
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
@@ -168,12 +169,12 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_BestEffort)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 1000;
+    uint32_t writer_sleep_ms = 500;
     uint32_t num_samples = 2;
 
     // Liveliness lease duration and announcement period, in seconds
     Duration_t liveliness_s(writer_sleep_ms * 0.01 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 0.01 * 1e-3 * 0.1);
+    Duration_t announcement_period(writer_sleep_ms * 0.01 * 1e-3 * 0.2);
 
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
             .liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
@@ -195,13 +196,13 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_BestEffort)
     auto data = default_helloworld_data_generator(num_samples);
     reader.startReception(data);
 
-    size_t count = 0;
+    unsigned int count = 0;
     for (auto data_sample : data)
     {
         writer.send_sample(data_sample);
-        ++count;
-        reader.block_for_at_least(count);
-        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+        reader.wait_liveliness_recovered(count + 1);
+        reader.wait_liveliness_lost(count + 1);
+        count++;
     }
 
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples);
@@ -211,7 +212,8 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_BestEffort)
     for (count = 0; count<num_samples; count++)
     {
         writer.assert_liveliness();
-        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+        reader.wait_liveliness_recovered(count + num_samples + 1);
+        reader.wait_liveliness_lost(count + num_samples + 1);
     }
 
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
@@ -670,13 +672,13 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
     auto data = default_helloworld_data_generator(num_samples);
     reader.startReception(data);
 
-    size_t count = 0;
+    unsigned int count = 0;
     for (auto data_sample : data)
     {
         writer.send_sample(data_sample);
-        ++count;
-        reader.block_for_at_least(count);
-        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+        reader.wait_liveliness_recovered(count + 1);
+        reader.wait_liveliness_lost(count + 1);
+        count++;
     }
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples);
     EXPECT_EQ(reader.times_liveliness_lost(), num_samples);
@@ -685,7 +687,8 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
     for (count = 0; count < num_samples; count++)
     {
         writer.assert_liveliness();
-        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+        reader.wait_liveliness_recovered(num_samples + count + 1);
+        reader.wait_liveliness_lost(num_samples + count + 1);
     }
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
     EXPECT_EQ(reader.times_liveliness_lost(), num_samples * 2);
@@ -786,13 +789,13 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
     auto data = default_helloworld_data_generator(num_samples);
     reader.startReception(data);
 
-    size_t count = 0;
+    unsigned int count = 0;
     for (auto data_sample : data)
     {
         writer.send_sample(data_sample);
-        ++count;
-        reader.block_for_at_least(count);
-        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+        reader.wait_liveliness_recovered(count + 1);
+        reader.wait_liveliness_lost(count + 1);
+        count++;
     }
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples);
     EXPECT_EQ(reader.times_liveliness_lost(), num_samples);
@@ -801,7 +804,8 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
     for (count = 0; count < num_samples; count++)
     {
         writer.assert_liveliness();
-        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+        reader.wait_liveliness_recovered(num_samples + count + 1);
+        reader.wait_liveliness_lost(num_samples + count + 1);
     }
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
     EXPECT_EQ(reader.times_liveliness_lost(), num_samples * 2);

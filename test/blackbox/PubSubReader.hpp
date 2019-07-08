@@ -374,18 +374,18 @@ public:
         std::cout << "Reader removal finished..." << std::endl;
     }
 
-    void wait_liveliness_recovered()
+    void wait_liveliness_recovered(unsigned int times = 1)
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
-        liveliness_cv_.wait(lock, [&](){ return times_liveliness_recovered_ == 1; });
+        liveliness_cv_.wait(lock, [&](){ return times_liveliness_recovered_ == times; });
     }
 
-    void wait_liveliness_lost()
+    void wait_liveliness_lost(unsigned int times = 1)
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
-        liveliness_cv_.wait(lock, [&]() { return times_liveliness_lost_ == 1; });
+        liveliness_cv_.wait(lock, [&](){ return times_liveliness_lost_ == times; });
     }
 
 #if HAVE_SECURITY
