@@ -20,7 +20,7 @@
 #include "EDPServerListeners.h"
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPServer.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPServer.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastrtps/rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
@@ -236,8 +236,8 @@ bool EDPServer::trimWriterHistory(
     std::lock_guard<std::recursive_timed_mutex> guardW(writer.getMutex());
 
     std::copy_if(history.changesBegin(), history.changesBegin(), std::front_inserter(removal),
-        [_demises](const CacheChange_t* chan) 
-        { 
+        [_demises](const CacheChange_t* chan)
+        {
             return _demises.find(chan->instanceHandle) != _demises.cend();
         });
 
@@ -344,7 +344,7 @@ bool EDPServer::removeLocalReader(RTPSReader* R)
     {
         InstanceHandle_t iH;
         iH = (R->getGuid());
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+        CacheChange_t* change = writer->first->new_change([]() -> uint32_t
             {
                 return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
             },
@@ -379,7 +379,7 @@ bool EDPServer::removeLocalWriter(RTPSWriter* W)
     {
         InstanceHandle_t iH;
         iH = W->getGuid();
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+        CacheChange_t* change = writer->first->new_change([]() -> uint32_t
             {
                 return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
             },
@@ -415,7 +415,7 @@ bool EDPServer::processLocalWriterProxyData(
 
     if (writer->first != nullptr)
     {
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+        CacheChange_t* change = writer->first->new_change([]() -> uint32_t
             {
                 return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
             },
@@ -468,7 +468,7 @@ bool EDPServer::processLocalReaderProxyData(
     if (writer->first != nullptr)
     {
         // TODO(Ricardo) Write a getCdrSerializedPayload for ReaderProxyData.
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+        CacheChange_t* change = writer->first->new_change([]() -> uint32_t
             {
                 return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
             },

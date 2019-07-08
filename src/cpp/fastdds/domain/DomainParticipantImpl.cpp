@@ -173,7 +173,7 @@ Publisher* DomainParticipantImpl::create_publisher(
         const fastrtps::PublisherAttributes& att,
         PublisherListener* listen)
 {
-    if(att_.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol)
+    if(att_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
         if(att.getUserDefinedID() <= 0)
         {
@@ -444,7 +444,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
         const fastrtps::SubscriberAttributes& att,
         SubscriberListener* listen)
 {
-    if(att_.rtps.builtin.use_STATIC_EndpointDiscoveryProtocol)
+    if(att_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
         if(att.getUserDefinedID() <= 0)
         {

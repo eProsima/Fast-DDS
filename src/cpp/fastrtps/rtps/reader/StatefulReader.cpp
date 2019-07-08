@@ -254,7 +254,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
         // Check if CacheChange was received or is framework data
         if(!pWP || !pWP->change_was_received(change->sequenceNumber))
         {
-            
+
             logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
 
             CacheChange_t* change_to_add;
@@ -539,7 +539,7 @@ bool StatefulReader::acceptMsgFrom(
     }
 
     // Check if it's a framework's one
-    if (m_acceptMessagesFromUnkownWriters 
+    if (m_acceptMessagesFromUnkownWriters
         && (writerId.entityId == m_trustedWriterEntityId))
     {
         *wp = nullptr;
@@ -594,7 +594,7 @@ bool StatefulReader::change_received(
                         update_last_notified(a_change->writerGUID, a_change->sequenceNumber);
                         if (getListener() != nullptr)
                         {
-                            getListener()->onNewCacheChangeAdded((RTPSReader*)this, a_change);
+                            getListener()->on_new_cache_change_added((RTPSReader*)this, a_change);
                         }
 
                         mp_history->postSemaphore();

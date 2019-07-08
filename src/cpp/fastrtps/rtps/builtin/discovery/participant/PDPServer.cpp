@@ -88,10 +88,10 @@ bool PDPServer::initPDP(RTPSParticipantImpl* part)
     */
     mp_sync = new DServerEvent(this,
         TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discovery_config.discoveryServer_client_syncperiod));
-    awakeServerThread(); 
+    awakeServerThread();
     // the timer is also restart from removeRemoteParticipant, remove(Publisher|Subscriber)FromHistory
     // and queueParticipantForEDPMatch
-    
+
     return true;
 }
 
@@ -511,8 +511,8 @@ bool PDPServer::trimPDPWriterHistory()
 
     std::copy_if(mp_PDPWriterHistory->changesBegin(),
         mp_PDPWriterHistory->changesBegin(), std::front_inserter(removal),
-        [this](const CacheChange_t* chan) 
-        { 
+        [this](const CacheChange_t* chan)
+        {
             return _demises.find(chan->instanceHandle) != _demises.cend();
         });
 
@@ -624,7 +624,7 @@ void PDPServer::removeParticipantForEDPMatch(const ParticipantProxyData * pdata)
             return;
         }
     }
-    
+
 }
 
 std::string PDPServer::GetPersistenceFileName()
@@ -873,7 +873,7 @@ bool PDPServer::removeRemoteParticipant(GUID_t& partGUID)
         CacheChange_t *pC;
 
         // Check if the DATA(p[UD]) is already in Reader
-        if (! (mp_PDPReaderHistory->get_max_change(&pC) && 
+        if (! (mp_PDPReaderHistory->get_max_change(&pC) &&
                 pC->kind == NOT_ALIVE_DISPOSED_UNREGISTERED && // last message received is aun DATA(p[UD])
                 pC->instanceHandle == info.m_key )) // from the same participant I'm going to report
         {   // We must create the DATA(p[UD])
@@ -899,10 +899,10 @@ bool PDPServer::removeRemoteParticipant(GUID_t& partGUID)
         }
 
     }
-    
+
     // Trigger the WriterHistory cleaning mechanism of demised participants DATA. Note that
     // only DATA acknowledge by all clients would be actually removed
-    {   
+    {
         std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
         InstanceHandle_t ih;

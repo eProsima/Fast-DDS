@@ -53,7 +53,7 @@ class EDPServerPUBListener : public EDPListener
          * @param reader
          * @param change
          */
-        void onNewCacheChangeAdded(
+        void on_new_cache_change_added(
                 RTPSReader* reader,
                 const CacheChange_t* const  change) override;
 
@@ -64,7 +64,7 @@ class EDPServerPUBListener : public EDPListener
          * @param writer Pointer to the RTPSWriter.
          * @param change Pointer to the affected CacheChange_t.
          */
-        void onWriterChangeReceivedByAll(
+        void on_writer_change_received_by_all(
                 RTPSWriter* writer,
                 CacheChange_t* change) override;
 
@@ -93,7 +93,7 @@ class EDPServerSUBListener : public EDPListener
          * @param reader
          * @param change
          */
-        void onNewCacheChangeAdded(
+        void on_new_cache_change_added(
                 RTPSReader* reader,
                 const CacheChange_t* const change) override;
 
@@ -103,7 +103,7 @@ class EDPServerSUBListener : public EDPListener
          * @param writer Pointer to the RTPSWriter.
          * @param change Pointer to the affected CacheChange_t.
          */
-        void onWriterChangeReceivedByAll(
+        void on_writer_change_received_by_all(
                 RTPSWriter* writer,
                 CacheChange_t* change) override;
 

@@ -39,7 +39,9 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-void EDPServerPUBListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in)
+void EDPServerPUBListener::on_new_cache_change_added(
+        RTPSReader *reader,
+        const CacheChange_t *const change_in)
 {
     CacheChange_t* change = (CacheChange_t*)change_in;
     //std::lock_guard<std::recursive_mutex> guard(*this->sedp_->publications_reader_.first->getMutex());
@@ -108,7 +110,9 @@ void EDPServerPUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
     return;
 }
 
-void EDPServerPUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change)
+void EDPServerPUBListener::on_writer_change_received_by_all(
+        RTPSWriter *writer,
+        CacheChange_t *change)
 {
     (void)writer;
 
@@ -125,7 +129,9 @@ void EDPServerPUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, Cache
     }
 }
 
-void EDPServerSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in)
+void EDPServerSUBListener::on_new_cache_change_added(
+        RTPSReader* reader,
+        const CacheChange_t* const change_in)
 {
     CacheChange_t* change = (CacheChange_t*)change_in;
     //std::lock_guard<std::recursive_mutex> guard(*this->sedp_->subscriptions_reader_.first->getMutex());
@@ -195,7 +201,9 @@ void EDPServerSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
 }
 
 
-void EDPServerSUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change)
+void EDPServerSUBListener::on_writer_change_received_by_all(
+        RTPSWriter* writer,
+        CacheChange_t* change)
 {
     (void)writer;
 
