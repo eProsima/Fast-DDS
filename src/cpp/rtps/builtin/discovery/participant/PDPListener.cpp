@@ -41,7 +41,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-PDPListener::PDPListener(PDPSimple* parent)
+PDPListener::PDPListener(PDP* parent)
     : parent_pdp_(parent)
     , temp_participant_data_(parent->getRTPSParticipant()->getRTPSParticipantAttributes().allocation)
 {
