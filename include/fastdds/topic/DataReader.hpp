@@ -186,6 +186,9 @@ public:
     bool wait_for_historical_data(
             const fastrtps::Duration_t& max_wait) const;
 
+    //! Remove all listeners in the hierarchy to allow a quiet destruction
+    void disable();
+
 private:
 
     //!Subscriber

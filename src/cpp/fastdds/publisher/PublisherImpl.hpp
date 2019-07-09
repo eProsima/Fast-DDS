@@ -134,6 +134,9 @@ public:
 
     const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
 
+    //! Remove all listeners in the hierarchy to allow a quiet destruction
+    void disable();
+
 private:
 
     DomainParticipantImpl* participant_;

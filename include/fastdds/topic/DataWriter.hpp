@@ -231,6 +231,9 @@ public:
 
     bool assert_liveliness();
 
+    //! Remove all listeners in the hierarchy to allow a quiet destruction
+    void disable();
+
 private:
     PublisherImpl* publisher_;
 

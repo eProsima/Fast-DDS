@@ -99,6 +99,15 @@ DataWriter::DataWriter(
     writer_ = writer;
 }
 
+void DataWriter::disable()
+{
+    set_listener(nullptr);
+    if(writer_ != nullptr)
+    {
+        writer_->set_listener(nullptr);
+    }
+}
+
 DataWriter::~DataWriter()
 {
     if(writer_ != nullptr)

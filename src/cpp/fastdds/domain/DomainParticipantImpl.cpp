@@ -81,15 +81,34 @@ DomainParticipantImpl::DomainParticipantImpl(
     , listener_(listen)
 #pragma warning (disable : 4355 )
     , rtps_listener_(this)
+{
+    participant_->impl_ = this;
+}
+
+void DomainParticipantImpl::disable()
+{
+    participant_->set_listener(nullptr);
     {
-        participant_->impl_ = this;
+        std::lock_guard<std::mutex> lock(mtx_pubs_);
+        for (auto pub_it = publishers_.begin(); pub_it != publishers_.end(); ++pub_it)
+        {
+            pub_it->second->disable();
+        }
     }
+
+    {
+        std::lock_guard<std::mutex> lock(mtx_subs_);
+        for (auto sub_it = subscribers_.begin(); sub_it != subscribers_.end(); ++sub_it)
+        {
+            sub_it->second->disable();
+        }
+    }
+}
 
 DomainParticipantImpl::~DomainParticipantImpl()
 {
     {
         std::lock_guard<std::mutex> lock(mtx_pubs_);
-
         for (auto pub_it = publishers_.begin(); pub_it != publishers_.end(); ++pub_it)
         {
             delete pub_it->second;

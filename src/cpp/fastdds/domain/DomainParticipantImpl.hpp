@@ -256,6 +256,15 @@ public:
 
     fastrtps::rtps::ResourceEvent& get_resource_event() const;
 
+    Subscriber* lookup_subscriber(
+            const fastrtps::rtps::InstanceHandle_t& handle);
+
+    Publisher* lookup_publisher(
+            const fastrtps::rtps::InstanceHandle_t& handle);
+
+    //! Remove all listeners in the hierarchy to allow a quiet destruction
+    void disable();
+
 private:
 
     //!Participant Attributes

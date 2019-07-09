@@ -50,12 +50,28 @@ SubscriberImpl::SubscriberImpl(
 {
 }
 
+void SubscriberImpl::disable()
+{
+    set_listener(nullptr);
+    user_subscriber_->set_listener(nullptr);
+    {
+        std::lock_guard<std::mutex> lock(mtx_readers_);
+        for (auto it = readers_.begin(); it != readers_.end(); ++it)
+        {
+            it->second->disable();
+        }
+    }
+}
+
 SubscriberImpl::~SubscriberImpl()
 {
-    for (auto& reader_it : readers_)
     {
-        delete_datareader(reader_it.second);
-        delete reader_it.second;
+        std::lock_guard<std::mutex> lock(mtx_readers_);
+        for (auto it = readers_.begin(); it != readers_.end(); ++it)
+        {
+            delete it->second;
+        }
+        readers_.clear();
     }
 
     delete user_subscriber_;

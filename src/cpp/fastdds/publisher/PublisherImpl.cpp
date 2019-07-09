@@ -51,12 +51,28 @@ PublisherImpl::PublisherImpl(
 {
 }
 
+void PublisherImpl::disable()
+{
+    set_listener(nullptr);
+    user_publisher_->set_listener(nullptr);
+    {
+        std::lock_guard<std::mutex> lock(mtx_writers_);
+        for (auto it = writers_.begin(); it != writers_.end(); ++it)
+        {
+            it->second->disable();
+        }
+    }
+}
+
 PublisherImpl::~PublisherImpl()
 {
-    for (auto& writer_it : writers_)
     {
-        delete_datawriter(writer_it.second);
-        delete writer_it.second;
+        std::lock_guard<std::mutex> lock(mtx_writers_);
+        for (auto it = writers_.begin(); it != writers_.end(); ++it)
+        {
+            delete it->second;
+        }
+        writers_.clear();
     }
 
     delete user_publisher_;

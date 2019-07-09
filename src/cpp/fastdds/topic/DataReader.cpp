@@ -88,6 +88,15 @@ DataReader::DataReader(
     reader_ = reader;
 }
 
+void DataReader::disable()
+{
+    set_listener(nullptr);
+    if(reader_ != nullptr)
+    {
+        reader_->setListener(nullptr);
+    }
+}
+
 DataReader::~DataReader()
 {
     if(reader_ != nullptr)
