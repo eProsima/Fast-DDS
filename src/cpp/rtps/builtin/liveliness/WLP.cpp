@@ -79,6 +79,12 @@ WLP::WLP(BuiltinProtocols* p)
             p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
             p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
 {
+    automatic_instance_handle_ = p->mp_participantImpl->getGuid();
+    automatic_instance_handle_.value[12] = automatic_instance_handle_.value[13] = automatic_instance_handle_.value[14] = 0;
+    manual_by_participant_instance_handle_ = automatic_instance_handle_;
+
+    automatic_instance_handle_.value[15] = AUTOMATIC_LIVELINESS_QOS + 0x01;
+    manual_by_participant_instance_handle_.value[15] = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS + 0x01;
 }
 
 WLP::~WLP()
@@ -130,8 +136,7 @@ bool WLP::initWL(RTPSParticipantImpl* p)
                                 alive_count,
                                 not_alive_count);
                 },
-                mp_participant->getEventResource().get_io_service(),
-                mp_participant->getEventResource().getThread(),
+                mp_participant->getEventResource(),
                 false);
 
     sub_liveliness_manager_ = new LivelinessManager(
@@ -148,8 +153,7 @@ bool WLP::initWL(RTPSParticipantImpl* p)
                                 alive_count,
                                 not_alive_count);
                 },
-                mp_participant->getEventResource().get_io_service(),
-                mp_participant->getEventResource().getThread());
+                mp_participant->getEventResource());
 
     bool retVal = createEndpoints();
 #if HAVE_SECURITY
@@ -693,13 +697,13 @@ bool WLP::remove_local_writer(RTPSWriter* W)
 
             if (!pub_liveliness_manager_->remove_writer(
                         W->getGuid(),
-                        wdata.m_qos.m_liveliness.kind,
-                        wdata.m_qos.m_liveliness.lease_duration))
+                        W->get_liveliness_kind(),
+                        W->get_liveliness_lease_duration()))
             {
                 logError(RTPS_LIVELINESS, "Could not remove writer " << W->getGuid() << " from liveliness manager");
             }
         }
-        else if (wdata.m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+        else if (W->get_liveliness_kind() == MANUAL_BY_TOPIC_LIVELINESS_QOS)
         {
             for (auto it=manual_by_topic_writers_.begin(); it!=manual_by_topic_writers_.end(); ++it)
             {
@@ -716,8 +720,8 @@ bool WLP::remove_local_writer(RTPSWriter* W)
 
             if (!pub_liveliness_manager_->remove_writer(
                         W->getGuid(),
-                        wdata.m_qos.m_liveliness.kind,
-                        wdata.m_qos.m_liveliness.lease_duration))
+                        W->get_liveliness_kind(),
+                        W->get_liveliness_lease_duration()))
             {
                 logError(RTPS_LIVELINESS, "Could not remove writer " << W->getGuid() << " from liveliness manager");
             }
@@ -770,44 +774,9 @@ bool WLP::automatic_liveliness_assertion()
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 
-    if (0 < m_livAutomaticWriters.size())
+    if (0 < automatic_writers_.size())
     {
-        InstanceHandle_t handle;
-        for(uint8_t i =0;i<12;++i)
-        {
-            handle.value[i] = mp_participant->getGuid().guidPrefix.value[i];
-        }
-        handle.value[15] = AUTOMATIC_LIVELINESS_QOS + 0x01;
-
-        std::lock_guard<std::recursive_timed_mutex> wguard(mp_builtinWriter->getMutex());
-        CacheChange_t* change = mp_builtinWriter->new_change([]() -> uint32_t {return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE, handle);
-
-        if (change != nullptr)
-        {
-#if __BIG_ENDIAN__
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
-#else
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
-#endif
-            memcpy(change->serializedPayload.data, mp_participant->getGuid().guidPrefix.value, 12);
-            for(uint8_t i =12;i<24;++i)
-                change->serializedPayload.data[i] = 0;
-            change->serializedPayload.data[15] = AUTOMATIC_LIVELINESS_QOS + 1;
-            change->serializedPayload.length = 12+4+4+4;
-            if (mp_builtinWriterHistory->getHistorySize() > 0)
-            {
-                for(std::vector<CacheChange_t*>::iterator chit = mp_builtinWriterHistory->changesBegin();
-                        chit != mp_builtinWriterHistory->changesEnd();++chit)
-                {
-                    if((*chit)->instanceHandle == change->instanceHandle)
-                    {
-                        mp_builtinWriterHistory->remove_change(*chit);
-                        break;
-                    }
-                }
-            }
-            mp_builtinWriterHistory->add_change(change);
-        }
+        return send_liveliness_message(automatic_instance_handle_);
     }
 
     return true;
@@ -816,55 +785,88 @@ bool WLP::automatic_liveliness_assertion()
 bool WLP::participant_liveliness_assertion()
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
-    bool livelinessAsserted = false;
 
-    for(std::vector<RTPSWriter*>::iterator wit = m_livManRTPSParticipantWriters.begin();
-            wit != m_livManRTPSParticipantWriters.end(); ++wit)
+    if (0 < manual_by_participant_writers_.size())
     {
-        if((*wit)->getLivelinessAsserted())
+        if (pub_liveliness_manager_->is_any_alive(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS))
         {
-            livelinessAsserted = true;
-        }
-        (*wit)->setLivelinessAsserted(false);
-    }
-
-    if (livelinessAsserted)
-    {
-        InstanceHandle_t handle;
-        for(uint8_t i =0;i<12;++i)
-        {
-            handle.value[i] = mp_participant->getGuid().guidPrefix.value[i];
-        }
-        handle.value[15] = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS + 0x01;
-
-        std::lock_guard<std::recursive_timed_mutex> wguard(mp_builtinWriter->getMutex());
-        CacheChange_t* change = mp_builtinWriter->new_change([]() -> uint32_t {return BUILTIN_PARTICIPANT_DATA_MAX_SIZE;}, ALIVE, handle);
-        if (change != nullptr)
-        {
-#if __BIG_ENDIAN__
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
-#else
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
-#endif
-            memcpy(change->serializedPayload.data, mp_participant->getGuid().guidPrefix.value, 12);
-
-            for(uint8_t i =12;i<24;++i)
-                change->serializedPayload.data[i] = 0;
-            change->serializedPayload.data[15] = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS + 1;
-            change->serializedPayload.length = 12+4+4+4;
-            for(auto ch = mp_builtinWriterHistory->changesBegin();
-                    ch != mp_builtinWriterHistory->changesEnd();++ch)
-            {
-                if((*ch)->instanceHandle == change->instanceHandle)
-                {
-                    mp_builtinWriterHistory->remove_change(*ch);
-                }
-            }
-            mp_builtinWriterHistory->add_change(change);
+            return send_liveliness_message(manual_by_participant_instance_handle_);
         }
     }
 
     return false;
+}
+
+bool WLP::send_liveliness_message(const InstanceHandle_t& instance)
+{
+    StatefulWriter* writer = builtin_writer();
+    WriterHistory* history = builtin_writer_history();
+
+    std::lock_guard<std::recursive_timed_mutex> wguard(writer->getMutex());
+
+    CacheChange_t* change = writer->new_change(
+        []() -> uint32_t { return BUILTIN_PARTICIPANT_DATA_MAX_SIZE; },
+        ALIVE,
+        instance);
+
+    if (change != nullptr)
+    {
+#if __BIG_ENDIAN__
+        change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+#else
+        change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+#endif
+        memcpy(change->serializedPayload.data, instance.value, 16);
+
+        for (uint8_t i = 16; i < 24; ++i)
+        {
+            change->serializedPayload.data[i] = 0;
+        }
+        change->serializedPayload.length = 12 + 4 + 4 + 4;
+
+        if (history->getHistorySize() > 0)
+        {
+            for (auto chit = history->changesBegin(); chit != history->changesEnd(); ++chit)
+            {
+                if ((*chit)->instanceHandle == change->instanceHandle)
+                {
+                    history->remove_change(*chit);
+                    break;
+                }
+            }
+        }
+        history->add_change(change);
+        return true;
+    }
+    return false;
+}
+
+StatefulWriter* WLP::builtin_writer()
+{
+    StatefulWriter* ret_val = mp_builtinWriter;
+
+#if HAVE_SECURITY
+    if (mp_participant->security_attributes().is_liveliness_protected)
+    {
+        ret_val = mp_builtinWriterSecure;
+    }
+#endif
+
+    return ret_val;
+}
+
+WriterHistory* WLP::builtin_writer_history()
+{
+    WriterHistory* ret_val = mp_builtinWriterHistory;
+
+#if HAVE_SECURITY
+    if (mp_participant->security_attributes().is_liveliness_protected)
+    {
+        ret_val = mp_builtinWriterSecureHistory;
+    }
+#endif
+
+    return ret_val;
 }
 
 bool WLP::assert_liveliness(

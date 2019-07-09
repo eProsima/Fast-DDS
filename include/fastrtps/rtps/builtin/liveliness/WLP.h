@@ -136,6 +136,18 @@ public:
      */
     bool assert_liveliness_manual_by_participant();
 
+    /**
+     * Get the livelines builtin writer
+     * @return stateful writer
+     */
+    StatefulWriter* builtin_writer();
+
+    /**
+     * Get the livelines builtin writer's history
+     * @return writer history
+     */
+    WriterHistory* builtin_writer_history();
+
 #if HAVE_SECURITY
     bool pairing_remote_reader_with_local_writer_after_security(const GUID_t& local_writer,
         const ReaderProxyData& remote_reader_data);
@@ -190,6 +202,9 @@ private:
     //! A class used by readers in this participant to keep track of liveliness of matched writers
     LivelinessManager* sub_liveliness_manager_;
 
+    InstanceHandle_t automatic_instance_handle_;
+    InstanceHandle_t manual_by_participant_instance_handle_;
+
     /**
      * @brief A method invoked by pub_liveliness_manager_ to inform that a writer changed its liveliness
      * @param writer The writer losing liveliness
@@ -232,6 +247,23 @@ private:
             RTPSReader* reader,
             int32_t alive_change,
             int32_t not_alive_change);
+
+    /**
+     * Implements the automatic liveliness timed event
+     */
+    bool automatic_liveliness_assertion();
+
+    /**
+     * Implements the manual by participant liveliness timed event
+     */
+    bool participant_liveliness_assertion();
+
+    /**
+     * Adds a cache change to the WLP writer
+     * @param instance key of the change to add
+     * @return true if change is correctly added
+     */
+    bool send_liveliness_message(const InstanceHandle_t& instance);
 
 #if HAVE_SECURITY
     //!Pointer to the builtinRTPSParticipantMEssageWriter.
