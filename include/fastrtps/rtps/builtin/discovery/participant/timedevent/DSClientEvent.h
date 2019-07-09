@@ -51,9 +51,8 @@ public:
         + resends the client RTPSParticipantProxyData to all remote servers.
         + matches the EDP endpoints when the servers are all aware of this client existence
 	* @param code Code representing the status of the event
-	* @param msg Message associated to the event
 	*/
-	void event(EventCode code, const char* msg= nullptr);
+	bool event(EventCode code);
 	
 	//!Pointer to the PDPServer object.
     PDPClient* mp_PDP;
