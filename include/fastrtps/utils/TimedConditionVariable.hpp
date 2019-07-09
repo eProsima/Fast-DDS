@@ -31,7 +31,7 @@
 #define CV_T_ _Cnd_t
 
 extern int clock_gettime(int, struct timespec* tv);
-#else
+#elif defined(__linux__)
 #include <pthread.h>
 
 #define CV_INIT_(x) pthread_cond_init(x, NULL);
@@ -40,6 +40,8 @@ extern int clock_gettime(int, struct timespec* tv);
 #define CV_SIGNAL_(cv) pthread_cond_signal(&cv)
 #define CV_BROADCAST_(cv) pthread_cond_broadcast(&cv)
 #define CV_T_ pthread_cond_t
+#else
+#include <condition_variable>
 #endif
 
 #include <mutex>
@@ -49,6 +51,7 @@ extern int clock_gettime(int, struct timespec* tv);
 namespace eprosima {
 namespace fastrtps {
 
+#if defined(_WIN32) || defined(__linux__)
 class TimedConditionVariable
 {
     public:
@@ -129,6 +132,9 @@ class TimedConditionVariable
 
         CV_T_ cv_;
 };
+#else
+using TimedConditionVariable = std::condition_variable_any;
+#endif // defined(_WIN32) || defined(__linux__)
 
 }
 }

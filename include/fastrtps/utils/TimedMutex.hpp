@@ -153,7 +153,7 @@ private:
 
     _Mtx_t mutex_;
 };
-#elif _GTHREAD_USE_MUTEX_TIMEDLOCK
+#elif _GTHREAD_USE_MUTEX_TIMEDLOCK || !defined(__linux__)
 using TimedMutex = std::timed_mutex;
 using RecursiveTimedMutex = std::recursive_timed_mutex;
 #else
