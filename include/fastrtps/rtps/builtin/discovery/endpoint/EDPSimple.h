@@ -51,7 +51,7 @@ class EDPSimple : public EDP
     typedef std::pair<StatefulWriter*,WriterHistory*> t_p_StatefulWriter;
     typedef std::pair<StatefulReader*,ReaderHistory*> t_p_StatefulReader;
 
-    public:
+public:
 
     /**
      * Constructor.
@@ -134,41 +134,43 @@ class EDPSimple : public EDP
      */
     bool removeLocalWriter(RTPSWriter*W) override;
 
-    private:
+protected:
 
     /**
      * Initialization of history attributes for EDP built-in readers
      *
      * @param [out] attributes History attributes to initialize
      */
-    void set_builtin_reader_history_attributes(HistoryAttributes& attributes);
+    virtual void set_builtin_reader_history_attributes(HistoryAttributes& attributes);
 
     /**
      * Initialization of history attributes for EDP built-in writers
      *
      * @param [out] attributes History attributes to initialize
      */
-    void set_builtin_writer_history_attributes(HistoryAttributes& attributes);
+    virtual void set_builtin_writer_history_attributes(HistoryAttributes& attributes);
 
     /**
      * Initialization of reader attributes for EDP built-in readers
      *
      * @param [out] attributes Reader attributes to initialize
      */
-    void set_builtin_reader_attributes(ReaderAttributes& attributes);
+    virtual void set_builtin_reader_attributes(ReaderAttributes& attributes);
 
     /**
      * Initialization of writer attributes for EDP built-in writers
      *
      * @param [out] attributes Writer attributes to initialize
      */
-    void set_builtin_writer_attributes(WriterAttributes& attributes);
+    virtual void set_builtin_writer_attributes(WriterAttributes& attributes);
 
     /**
      * Create local SEDP Endpoints based on the DiscoveryAttributes.
      * @return True if correct.
      */
     virtual bool createSEDPEndpoints();
+
+private:
 
 #if HAVE_SECURITY
     bool create_sedp_secure_endpoints();
