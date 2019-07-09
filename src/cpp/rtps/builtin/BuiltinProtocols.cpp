@@ -97,7 +97,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
             break;
 
         case DiscoveryProtocol_t::CLIENT:
-            mp_PDP = new PDPClient(this);
+            mp_PDP = new PDPClient(this, allocation);
             break;
 
         case DiscoveryProtocol_t::SERVER:
