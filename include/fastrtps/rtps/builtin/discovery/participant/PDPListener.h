@@ -57,7 +57,7 @@ public:
             RTPSReader* reader,
             const CacheChange_t* const change) override;
 
-private:
+protected:
 
     /**
      * Get the key of a CacheChange_t
