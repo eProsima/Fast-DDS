@@ -127,6 +127,8 @@ class ParticipantProxyData
         //!
         TimedEvent* lease_duration_event;
         //!
+        bool should_check_lease_duration;
+        //!
         ResourceLimitedVector<ReaderProxyData*> m_readers;
         //!
         ResourceLimitedVector<WriterProxyData*> m_writers;

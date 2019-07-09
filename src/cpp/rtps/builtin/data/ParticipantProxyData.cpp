@@ -50,6 +50,7 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
 #endif
     , isAlive(false)
     , lease_duration_event(nullptr)
+    , should_check_lease_duration(false)
     , m_readers(allocation.readers)
     , m_writers(allocation.writers)
     {
@@ -77,6 +78,7 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
     , m_properties(pdata.m_properties)
     , m_userData(pdata.m_userData)
     , lease_duration_event(nullptr)
+    , should_check_lease_duration(false)
     {
     }
 
@@ -436,9 +438,7 @@ bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
 #endif
     if (this->lease_duration_event != nullptr)
     {
-        lease_duration_event->cancel_timer();
         lease_duration_event->update_interval(m_leaseDuration);
-        lease_duration_event->restart_timer();
     }
     return true;
 }

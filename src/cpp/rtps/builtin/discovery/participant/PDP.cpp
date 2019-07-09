@@ -162,7 +162,6 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
             ret_val = new ParticipantProxyData(mp_RTPSParticipant->getRTPSParticipantAttributes().allocation);
             if (participant_guid != mp_RTPSParticipant->getGuid())
             {
-                // TODO: Take lease_duration_event from pool depending on with_lease_duration
                 ret_val->lease_duration_event = new TimedEvent(mp_RTPSParticipant->getEventResource(),
                         [this, ret_val](TimedEvent::EventCode code) -> bool
                         {
@@ -190,6 +189,7 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
     }
 
     // Add returned entry to the collection
+    ret_val->should_check_lease_duration = with_lease_duration;
     ret_val->m_guid = participant_guid;
     participant_proxies_.push_back(ret_val);
 
@@ -954,7 +954,7 @@ void PDP::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
             logInfo(RTPS_LIVELINESS,"RTPSParticipant " << it->m_guid << " is Alive");
             // TODO Ricardo: Study if isAlive attribute is necessary.
             it->isAlive = true;
-            if(it->lease_duration_event != nullptr)
+            if(it->lease_duration_event != nullptr && it->should_check_lease_duration)
             {
                 it->lease_duration_event->cancel_timer();
                 it->lease_duration_event->restart_timer();
