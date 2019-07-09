@@ -410,19 +410,19 @@ TEST_F(XMLParserTests, DurationCheck)
     }
     ASSERT_TRUE(participant_profile);
     EXPECT_EQ(participant_atts.rtps.builtin.discovery_config.leaseDuration, c_TimeInfinite);
-    EXPECT_EQ(participant_atts.rtps.builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10u);
+    EXPECT_EQ(participant_atts.rtps.builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(participant_atts.rtps.builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
 
     ASSERT_TRUE(publisher_profile);
-    EXPECT_EQ(publisher_atts.qos.m_deadline.period.seconds, 15u);
-    EXPECT_EQ(publisher_atts.qos.m_liveliness.lease_duration.seconds, 1u);
+    EXPECT_EQ(publisher_atts.qos.m_deadline.period.seconds, 15);
+    EXPECT_EQ(publisher_atts.qos.m_liveliness.lease_duration.seconds, 1);
     EXPECT_EQ(publisher_atts.qos.m_liveliness.lease_duration.nanosec, 2u);
     EXPECT_EQ(publisher_atts.qos.m_liveliness.announcement_period, c_TimeInfinite);
 
     ASSERT_TRUE(subscriber_profile);
     EXPECT_EQ(subscriber_atts.qos.m_deadline.period, c_TimeInfinite);
     EXPECT_EQ(subscriber_atts.qos.m_liveliness.lease_duration, c_TimeInfinite);
-    EXPECT_EQ(subscriber_atts.qos.m_liveliness.announcement_period.seconds, 0u);
+    EXPECT_EQ(subscriber_atts.qos.m_liveliness.announcement_period.seconds, 0);
     EXPECT_EQ(subscriber_atts.qos.m_liveliness.announcement_period.nanosec, 0u);
 }
 
