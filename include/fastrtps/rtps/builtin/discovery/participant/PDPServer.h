@@ -63,10 +63,6 @@ class PDPServer : public PDP
     //! Messages announcement ancillary
     RTPSMessageGroup_t _msgbuffer;
 
-    //! Temporary locator list to solve new Writer API issue
-    // TODO: remove when the Writer API issue is resolved
-    std::map<GUID_t, RemoteReaderAttributes> clients_;
-
     public:
 
     /**
@@ -74,8 +70,9 @@ class PDPServer : public PDP
      * @param builtin Pointer to the BuiltinProcols object.
      */
     PDPServer(
-        BuiltinProtocols* builtin,
-        DurabilityKind_t durability_kind = TRANSIENT_LOCAL);
+            BuiltinProtocols* builtin,
+            const RTPSParticipantAllocationAttributes& allocation,
+            DurabilityKind_t durability_kind = TRANSIENT_LOCAL);
     ~PDPServer();
 
     void initializeParticipantProxyData(ParticipantProxyData* participant_data) override;
@@ -105,10 +102,13 @@ class PDPServer : public PDP
 
     /**
      * This method removes a remote RTPSParticipant and all its writers and readers.
-     * @param partGUID GUID_t of the remote RTPSParticipant.
+     * @param participant_guid GUID_t of the remote RTPSParticipant.
+     * @param reason Why the participant is being removed (dropped vs removed)
      * @return true if correct.
      */
-    bool removeRemoteParticipant(GUID_t& partGUID) override;
+    bool remove_remote_participant(
+            const GUID_t& participant_guid,
+            ParticipantDiscoveryInfo::DISCOVERY_STATUS reason) override;
 
     /**
      * Methods to update WriterHistory with reader information
@@ -153,9 +153,9 @@ class PDPServer : public PDP
 
     /**
      * Remove a participant from the queue of pending participants to EDP matching
-     * @param ParticipantProxyData associated with the new participant
+     * @param GUID associated with the new participant
      */
-    void removeParticipantForEDPMatch(const ParticipantProxyData*);
+    void removeParticipantForEDPMatch(const GUID_t& guid);
 
     /**
      * Check if all client have acknowledge the server PDP data
@@ -243,7 +243,7 @@ class PDPServer : public PDP
     std::unique_ptr<InPDPCallback> signalCallback();
 
     // ! calls PDP Reader matched_writer_remove preventing deadlocks
-    bool safe_PDP_matched_writer_remove(const RemoteWriterAttributes* wdata);
+    bool safe_PDP_matched_writer_remove(const GUID_t& wguid);
 
     private:
 

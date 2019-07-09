@@ -622,6 +622,22 @@ bool PDP::lookup_participant_name(
     return false;
 }
 
+bool PDP::lookup_participant_key(
+        const GUID_t& participant_guid,
+        InstanceHandle_t& key)
+{
+    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    for (ParticipantProxyData* pit : participant_proxies_)
+    {
+        if (pit->m_guid == participant_guid)
+        {
+            key = pit->m_key;
+            return true;
+        }
+    }
+    return false;
+}
+
 ReaderProxyData* PDP::addReaderProxyData(
         const GUID_t& reader_guid, 
         GUID_t& participant_guid,

@@ -362,6 +362,18 @@ protected:
             const GUID_t& participant_guid,
             bool with_lease_duration);
 
+    /**
+     * Gets the key of a participant proxy data.
+     *
+     * @param [in] participant_guid GUID of the participant to look for.
+     * @param [out] key of the corresponding proxy object.
+     *
+     * @return true when input GUID is found.
+     */
+    bool lookup_participant_key(
+            const GUID_t& participant_guid,
+            InstanceHandle_t& key);
+
 };
 
 
