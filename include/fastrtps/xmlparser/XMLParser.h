@@ -446,6 +446,7 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret getXMLRemoteLocatorsAllocationAttributes(
         tinyxml2::XMLElement* elem,
         rtps::RemoteLocatorsAllocationAttributes& allocation,
+        uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLDiscoverySettings(
         tinyxml2::XMLElement* elem,
