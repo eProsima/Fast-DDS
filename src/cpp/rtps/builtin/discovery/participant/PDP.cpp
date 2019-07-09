@@ -303,7 +303,7 @@ bool PDP::initPDP(
     }
     //UPDATE METATRAFFIC.
     mp_builtin->updateMetatrafficLocators(this->mp_PDPReader->getAttributes().unicastLocatorList);
-    ParticipantProxyData* pdata = add_participant_proxy_data(part->getGuid());
+    ParticipantProxyData* pdata = add_participant_proxy_data(part->getGuid(), true);
     if (pdata == nullptr)
     {
         return false;
@@ -345,7 +345,7 @@ bool PDP::initPDP(
 
                 return false;
             },
-            TimeConv::Duration_t2MilliSecondsDouble(m_discovery.leaseDuration_announcementperiod));
+            TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discovery_config.leaseDuration_announcementperiod));
 
     return true;
 }
@@ -938,10 +938,10 @@ void PDP::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
             logInfo(RTPS_LIVELINESS,"RTPSParticipant " << it->m_guid << " is Alive");
             // TODO Ricardo: Study if isAlive attribute is necessary.
             it->isAlive = true;
-            if(it->mp_leaseDurationTimer != nullptr)
+            if(it->lease_duration_event != nullptr)
             {
-                it->mp_leaseDurationTimer->cancel_timer();
-                it->mp_leaseDurationTimer->restart_timer();
+                it->lease_duration_event->cancel_timer();
+                it->lease_duration_event->restart_timer();
             }
             break;
         }
