@@ -395,7 +395,7 @@ void ParticipantProxyData::clear()
     m_userData.clear();
 }
 
-void ParticipantProxyData::copy(ParticipantProxyData& pdata)
+void ParticipantProxyData::copy(const ParticipantProxyData& pdata)
 {
     m_protocolVersion = pdata.m_protocolVersion;
     m_guid = pdata.m_guid;

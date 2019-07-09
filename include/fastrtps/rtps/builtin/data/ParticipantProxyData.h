@@ -157,7 +157,7 @@ class ParticipantProxyData
          * Copy the data from another object.
          * @param pdata Object to copy the data from
          */
-        void copy(ParticipantProxyData& pdata);
+        void copy(const ParticipantProxyData& pdata);
 };
 
 } /* namespace rtps */
