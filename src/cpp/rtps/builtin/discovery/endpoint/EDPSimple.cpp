@@ -895,7 +895,7 @@ bool EDPSimple::areRemoteEndpointsMatched(const ParticipantProxyData* pdata)
     auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
     if (auxendp != 0 && publications_reader_.first != nullptr) //Exist Pub Writer and I have Pub Reader
     {
-        GUID_t wguid(pdata->m_VendorId);
+        GUID_t wguid;
         wguid.guidPrefix = pdata->m_guid.guidPrefix;
         wguid.entityId = c_EntityId_SEDPPubWriter;
 
@@ -907,14 +907,11 @@ bool EDPSimple::areRemoteEndpointsMatched(const ParticipantProxyData* pdata)
     auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
     if (auxendp != 0 && publications_writer_.first != nullptr) //Exist Pub Detector
     {
-        RemoteReaderAttributes ratt(pdata->m_VendorId);
-        ratt.expectsInlineQos = false;
-        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
-        ratt.guid.entityId = c_EntityId_SEDPPubReader;
-        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        ratt.endpoint.reliabilityKind = RELIABLE;
+        GUID_t rguid;
+        rguid.guidPrefix = pdata->m_guid.guidPrefix;
+        rguid.entityId = c_EntityId_SEDPPubReader;
 
-        if (!publications_writer_.first->matched_reader_is_matched(ratt))
+        if (!publications_writer_.first->matched_reader_is_matched(rguid))
             return false;
     }
 
@@ -934,14 +931,11 @@ bool EDPSimple::areRemoteEndpointsMatched(const ParticipantProxyData* pdata)
     auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR;
     if (auxendp != 0 && subscriptions_writer_.first != nullptr) //Exist Pub Announcer
     {
-        RemoteReaderAttributes ratt(pdata->m_VendorId);
-        ratt.expectsInlineQos = false;
-        ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
-        ratt.guid.entityId = c_EntityId_SEDPSubReader;
-        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        ratt.endpoint.reliabilityKind = RELIABLE;
+        GUID_t rguid;
+        rguid.guidPrefix = pdata->m_guid.guidPrefix;
+        rguid.entityId = c_EntityId_SEDPSubReader;
 
-        if (!subscriptions_writer_.first->matched_reader_is_matched(ratt))
+        if (!subscriptions_writer_.first->matched_reader_is_matched(rguid))
             return false;
     }
 
