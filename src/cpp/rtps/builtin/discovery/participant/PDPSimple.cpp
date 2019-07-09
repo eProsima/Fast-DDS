@@ -231,6 +231,7 @@ bool PDPSimple::createPDPEndpoints()
         
         if (rout != nullptr)
         {
+            std::lock_guard<std::mutex> data_guard(temp_data_lock_);
             temp_writer_data_.clear();
             temp_writer_data_.guid().guidPrefix = mp_RTPSParticipant->getGuid().guidPrefix;
             temp_writer_data_.guid().entityId = c_EntityId_SPDPWriter;
@@ -283,6 +284,7 @@ bool PDPSimple::createPDPEndpoints()
 
             const NetworkFactory& network = mp_RTPSParticipant->network_factory();
             Locator_t local_locator;
+            std::lock_guard<std::mutex> data_guard(temp_data_lock_);
             temp_reader_data_.clear();
             temp_reader_data_.guid().guidPrefix = mp_RTPSParticipant->getGuid().guidPrefix;
             temp_reader_data_.guid().entityId = c_EntityId_SPDPReader;
