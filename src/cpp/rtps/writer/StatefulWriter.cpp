@@ -1092,19 +1092,8 @@ bool StatefulWriter::send_periodic_heartbeat(
         // This is a liveliness heartbeat, we don't care about checking sequence numbers
         try
         {
-            RTPSMessageGroup group(
-                        mp_RTPSParticipant,
-                        this,
-                        RTPSMessageGroup::WRITER,
-                        m_cdrmessages,
-                        mAllShrinkedLocatorList,
-                        all_remote_readers_);
-            send_heartbeat_nts_(
-                        all_remote_readers_,
-                        mAllShrinkedLocatorList,
-                        group,
-                        final,
-                        liveliness);
+            RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, *this);
+            send_heartbeat_nts_(all_remote_readers_.size(), group, final, liveliness);
         }
         catch(const RTPSMessageGroup::timeout&)
         {
