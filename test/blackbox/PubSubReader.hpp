@@ -483,6 +483,17 @@ public:
         return *this;
     }
 
+    PubSubReader& latency_budget_duration(const eprosima::fastrtps::Duration_t latency_duration)
+    {
+        subscriber_attr_.qos.m_latencyBudget.duration = latency_duration;
+        return *this;
+    }
+
+    eprosima::fastrtps::Duration_t get_latency_budget_duration()
+    {
+        return subscriber_attr_.qos.m_latencyBudget.duration;
+    }
+
     PubSubReader& key(bool keyed)
     {
         subscriber_attr_.topic.topicKind = keyed
