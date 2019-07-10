@@ -137,10 +137,10 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
     unsigned int count = 0;
     for (auto data_sample : data)
     {
+        ++count;
         writer.send_sample(data_sample);
-        reader.wait_liveliness_recovered(count + 1);
-        reader.wait_liveliness_lost(count + 1);
-        count++;
+        reader.wait_liveliness_recovered(count);
+        reader.wait_liveliness_lost(count);
     }
 
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples);
@@ -199,10 +199,10 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_BestEffort)
     unsigned int count = 0;
     for (auto data_sample : data)
     {
+        ++count;
         writer.send_sample(data_sample);
-        reader.wait_liveliness_recovered(count + 1);
-        reader.wait_liveliness_lost(count + 1);
-        count++;
+        reader.wait_liveliness_recovered(count);
+        reader.wait_liveliness_lost(count);
     }
 
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples);
@@ -675,10 +675,10 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
     unsigned int count = 0;
     for (auto data_sample : data)
     {
+        ++count;
         writer.send_sample(data_sample);
-        reader.wait_liveliness_recovered(count + 1);
-        reader.wait_liveliness_lost(count + 1);
-        count++;
+        reader.wait_liveliness_recovered(count);
+        reader.wait_liveliness_lost(count);
     }
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples);
     EXPECT_EQ(reader.times_liveliness_lost(), num_samples);
@@ -792,10 +792,10 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
     unsigned int count = 0;
     for (auto data_sample : data)
     {
+        ++count;
         writer.send_sample(data_sample);
-        reader.wait_liveliness_recovered(count + 1);
-        reader.wait_liveliness_lost(count + 1);
-        count++;
+        reader.wait_liveliness_recovered(count);
+        reader.wait_liveliness_lost(count);
     }
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples);
     EXPECT_EQ(reader.times_liveliness_lost(), num_samples);
