@@ -23,6 +23,7 @@
 #include <iostream>
 
 #if defined(_WIN32)
+#include <thr/xthreads.h>
 extern int clock_gettime(int, struct timespec* tv);
 #elif _GTHREAD_USE_MUTEX_TIMEDLOCK
 #include <mutex>

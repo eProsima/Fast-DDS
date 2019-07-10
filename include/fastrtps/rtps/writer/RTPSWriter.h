@@ -31,6 +31,7 @@
 #include <memory>
 #include <functional>
 #include <chrono>
+#include <mutex>
 
 namespace eprosima {
 namespace fastrtps {
