@@ -33,7 +33,6 @@
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
-
 #include <string>
 #include <list>
 #include <atomic>

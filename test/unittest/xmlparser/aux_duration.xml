@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <profiles>
-<<<<<<< HEAD
 
-=======
->>>>>>> Unit test XML
     <participant profile_name="test_participant_profile" is_default_profile="true">
         <rtps>
             <builtin>
@@ -32,11 +29,6 @@
             </historyQos>
         </topic>
         <qos>
-            <latencyBudget>
-                <duration>
-                      <sec>10</sec>
-                </duration>
-            </latencyBudget>
             <reliability>
                 <kind>RELIABLE</kind>
             </reliability>
@@ -70,11 +62,6 @@
             </historyQos>
         </topic>
         <qos>
-            <latencyBudget>
-                <duration>
-                    <sec>20</sec>
-                </duration>
-            </latencyBudget>
             <reliability>
                 <kind>RELIABLE</kind>
             </reliability>
@@ -89,11 +76,12 @@
                     <sec>DURATION_INFINITY</sec>
                 </lease_duration>
                 <announcement_period>
-                    <sec>0</sec>
+                    <sec>0</sec> 
                     <nanosec>0</nanosec>
                 </announcement_period>
             </liveliness>
         </qos>
         <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
     </subscriber>
+
 </profiles>
