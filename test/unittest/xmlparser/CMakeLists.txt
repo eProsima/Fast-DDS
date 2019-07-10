@@ -25,6 +25,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 )
         endif()
 
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_duration.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/test_xml_duration.xml
+            COPYONLY)
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_profiles.xml
             ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles.xml
             COPYONLY)
