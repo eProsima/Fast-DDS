@@ -49,6 +49,7 @@ public:
     //!Pointer to the associated mp_SPDP;
     PDP* mp_PDP;
     /**
+<<<<<<< HEAD:include/fastrtps/rtps/builtin/discovery/participant/PDPListener.h
     * New added cache
     * @param reader
     * @param change
@@ -56,7 +57,15 @@ public:
     void onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const change) override;
-    
+=======
+     * New added cache
+     * @param reader
+     * @param change
+     */
+    void on_new_cache_change_added(
+            RTPSReader* reader,
+            const CacheChange_t* const change) override;
+>>>>>>> 81523b38b11155a9ce53a9e14cb800f33e92bcbb:include/fastrtps/rtps/builtin/discovery/participant/PDPSimpleListener.h
     /**
     * Get the key of a CacheChange_t
     * @param change Pointer to the CacheChange_t

@@ -29,6 +29,7 @@ file(GLOB_RECURSE ALL_HEADERS
 endif(WIN32)
 
 set(${PROJECT_NAME}_source_files
+<<<<<<< HEAD
 	${ALL_HEADERS} 
 
     log/Log.cpp
@@ -179,6 +180,156 @@ set(${PROJECT_NAME}_source_files
     rtps/persistence/PersistenceFactory.cpp
     rtps/persistence/SQLite3PersistenceService.cpp
     rtps/persistence/sqlite3.c
+=======
+    fastrtps/log/Log.cpp
+    fastrtps/log/StdoutConsumer.cpp
+    fastrtps/log/FileConsumer.cpp
+    fastrtps/utils/eClock.cpp
+    fastrtps/utils/IPFinder.cpp
+    fastrtps/utils/md5.cpp
+    fastrtps/utils/StringMatching.cpp
+    fastrtps/utils/IPLocator.cpp
+    fastrtps/utils/System.cpp
+    fastrtps/rtps/common/Time_t.cpp
+    fastrtps/rtps/resources/ResourceEvent.cpp
+    fastrtps/rtps/resources/TimedEvent.cpp
+    fastrtps/rtps/resources/TimedEventImpl.cpp
+    fastrtps/rtps/resources/AsyncWriterThread.cpp
+    fastrtps/rtps/resources/AsyncInterestTree.cpp
+    fastrtps/rtps/timedevent/TimedCallback.cpp
+    fastrtps/rtps/writer/LivelinessManager.cpp
+    fastrtps/rtps/writer/RTPSWriter.cpp
+    fastrtps/rtps/writer/StatefulWriter.cpp
+    fastrtps/rtps/writer/ReaderProxy.cpp
+    fastrtps/rtps/writer/StatelessWriter.cpp
+    fastrtps/rtps/writer/ReaderLocator.cpp
+    fastrtps/rtps/writer/timedevent/PeriodicHeartbeat.cpp
+    fastrtps/rtps/writer/timedevent/NackResponseDelay.cpp
+    fastrtps/rtps/writer/timedevent/NackSupressionDuration.cpp
+    fastrtps/rtps/history/CacheChangePool.cpp
+    fastrtps/rtps/history/History.cpp
+    fastrtps/rtps/history/WriterHistory.cpp
+    fastrtps/rtps/history/ReaderHistory.cpp
+    fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.cpp
+    fastrtps/rtps/reader/timedevent/InitialAckNack.cpp
+    fastrtps/rtps/reader/WriterProxy.cpp
+    fastrtps/rtps/reader/StatefulReader.cpp
+    fastrtps/rtps/reader/StatelessReader.cpp
+    fastrtps/rtps/reader/RTPSReader.cpp
+    fastrtps/rtps/reader/FragmentedChangePitStop.cpp
+    fastrtps/rtps/messages/RTPSMessageCreator.cpp
+    fastrtps/rtps/messages/RTPSMessageGroup.cpp
+    fastrtps/rtps/messages/MessageReceiver.cpp
+    fastrtps/rtps/messages/submessages/AckNackMsg.hpp
+    fastrtps/rtps/messages/submessages/DataMsg.hpp
+    fastrtps/rtps/messages/submessages/GapMsg.hpp
+    fastrtps/rtps/messages/submessages/HeartbeatMsg.hpp
+    fastrtps/rtps/network/NetworkFactory.cpp
+    fastrtps/rtps/network/ReceiverResource.cpp
+    fastrtps/rtps/participant/RTPSParticipant.cpp
+    fastrtps/rtps/participant/RTPSParticipantImpl.cpp
+    fastrtps/rtps/RTPSDomain.cpp
+    fastrtps/Domain.cpp
+    fastrtps/participant/Participant.cpp
+    fastrtps/participant/ParticipantImpl.cpp
+    fastrtps/publisher/Publisher.cpp
+    fastrtps/publisher/PublisherImpl.cpp
+    fastrtps/publisher/PublisherHistory.cpp
+    fastrtps/subscriber/Subscriber.cpp
+    fastrtps/subscriber/SubscriberImpl.cpp
+    fastrtps/subscriber/SubscriberHistory.cpp
+    fastdds/topic/DataReader.cpp
+    fastdds/topic/DataWriter.cpp
+    fastdds/publisher/PublisherImpl.cpp
+    fastdds/publisher/qos/PublisherQos.cpp
+    fastdds/publisher/Publisher.cpp
+    fastdds/subscriber/SubscriberImpl.cpp
+    fastdds/subscriber/qos/SubscriberQos.cpp
+    fastdds/subscriber/Subscriber.cpp
+    fastdds/domain/DomainParticipantFactory.cpp
+    fastdds/domain/DomainParticipantImpl.cpp
+    fastdds/domain/DomainParticipant.cpp
+    fastrtps/transport/ChannelResource.cpp
+    fastrtps/transport/UDPChannelResource.cpp
+    fastrtps/transport/TCPChannelResource.cpp
+    fastrtps/transport/TCPChannelResourceBasic.cpp
+    fastrtps/transport/TCPAcceptor.cpp
+    fastrtps/transport/TCPAcceptorBasic.cpp
+    fastrtps/transport/UDPv4Transport.cpp
+    fastrtps/transport/TCPTransportInterface.cpp
+    fastrtps/transport/UDPTransportInterface.cpp
+    fastrtps/transport/TCPv4Transport.cpp
+    fastrtps/transport/UDPv6Transport.cpp
+    fastrtps/transport/TCPv6Transport.cpp
+    fastrtps/transport/test_UDPv4Transport.cpp
+    fastrtps/transport/tcp/TCPControlMessage.cpp
+    fastrtps/transport/tcp/RTCPMessageManager.cpp
+    fastrtps/transport/timedevent/TCPKeepAliveEvent.cpp
+
+    fastrtps/types/AnnotationDescriptor.cpp
+    fastrtps/types/AnnotationParameterValue.cpp
+    fastrtps/types/DynamicData.cpp
+    fastrtps/types/DynamicDataFactory.cpp
+    fastrtps/types/DynamicType.cpp
+    fastrtps/types/DynamicPubSubType.cpp
+    fastrtps/types/DynamicTypePtr.cpp
+    fastrtps/types/DynamicDataPtr.cpp
+    fastrtps/types/DynamicTypeBuilder.cpp
+    fastrtps/types/DynamicTypeBuilderPtr.cpp
+    fastrtps/types/DynamicTypeBuilderFactory.cpp
+    fastrtps/types/DynamicTypeMember.cpp
+    fastrtps/types/MemberDescriptor.cpp
+    fastrtps/types/TypeDescriptor.cpp
+    fastrtps/types/TypeIdentifier.cpp
+    fastrtps/types/TypeIdentifierTypes.cpp
+    fastrtps/types/TypeObject.cpp
+    fastrtps/types/TypeObjectHashId.cpp
+    fastrtps/types/TypeObjectFactory.cpp
+    fastrtps/types/TypeNamesGenerator.cpp
+    fastrtps/types/TypesBase.cpp
+    fastrtps/types/BuiltinAnnotationsTypeObject.cpp
+
+    fastrtps/attributes/TopicAttributes.cpp
+    fastrtps/qos/ParameterList.cpp
+    fastrtps/qos/ParameterTypes.cpp
+    fastrtps/qos/QosPolicies.cpp
+    fastrtps/qos/WriterQos.cpp
+    fastrtps/qos/ReaderQos.cpp
+    fastrtps/rtps/builtin/BuiltinProtocols.cpp
+    fastrtps/rtps/builtin/discovery/participant/PDPSimple.cpp
+    fastrtps/rtps/builtin/discovery/participant/PDPSimpleListener.cpp
+    fastrtps/rtps/builtin/discovery/participant/timedevent/RemoteParticipantLeaseDuration.cpp
+    fastrtps/rtps/builtin/discovery/participant/timedevent/ResendParticipantProxyDataPeriod.cpp
+    fastrtps/rtps/builtin/discovery/endpoint/EDP.cpp
+    fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.cpp
+    fastrtps/rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp
+    fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.cpp
+    fastrtps/rtps/builtin/liveliness/WLP.cpp
+    fastrtps/rtps/builtin/liveliness/WLPListener.cpp
+    fastrtps/rtps/builtin/liveliness/timedevent/WLivelinessPeriodicAssertion.cpp
+    fastrtps/rtps/builtin/data/ParticipantProxyData.cpp
+    fastrtps/rtps/builtin/data/WriterProxyData.cpp
+    fastrtps/rtps/builtin/data/ReaderProxyData.cpp
+    fastrtps/rtps/flowcontrol/ThroughputController.cpp
+    fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
+    fastrtps/rtps/flowcontrol/FlowController.cpp
+    fastrtps/rtps/exceptions/Exception.cpp
+    fastrtps/rtps/attributes/PropertyPolicy.cpp
+    fastrtps/rtps/common/Token.cpp
+    fastrtps/xmlparser/XMLParserCommon.cpp
+    fastrtps/xmlparser/XMLElementParser.cpp
+    fastrtps/xmlparser/XMLEndpointParser.cpp
+    fastrtps/xmlparser/XMLParser.cpp
+    fastrtps/xmlparser/XMLProfileManager.cpp
+    fastrtps/rtps/writer/PersistentWriter.cpp
+    fastrtps/rtps/writer/StatelessPersistentWriter.cpp
+    fastrtps/rtps/writer/StatefulPersistentWriter.cpp
+    fastrtps/rtps/reader/StatelessPersistentReader.cpp
+    fastrtps/rtps/reader/StatefulPersistentReader.cpp
+    fastrtps/rtps/persistence/PersistenceFactory.cpp
+    fastrtps/rtps/persistence/SQLite3PersistenceService.cpp
+    fastrtps/rtps/persistence/sqlite3.c
+>>>>>>> 81523b38b11155a9ce53a9e14cb800f33e92bcbb
     )
 
 # TLS Support

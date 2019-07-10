@@ -100,6 +100,12 @@ class RTPS_DllAPI Participant
          */
         void assert_liveliness();
 
+        rtps::ResourceEvent& get_resource_event() const;
+
+        const rtps::RTPSParticipant* rtps_participant() const;
+
+        rtps::RTPSParticipant* rtps_participant();
+
     private:
         Participant();
 
