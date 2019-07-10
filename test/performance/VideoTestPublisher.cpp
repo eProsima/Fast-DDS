@@ -370,44 +370,60 @@ void VideoTestPublisher::run()
 
 bool VideoTestPublisher::test(uint32_t datasize)
 {
-    //cout << "Beginning test of size: "<<datasize+4 <<endl;
     m_status = 0;
     n_received = 0;
+    // Create video sample with size <datasize>
     mp_video_out = new VideoType(datasize);
 
+    // Send READY command
     TestCommandType command;
     command.m_command = READY;
     mp_commandpub->write(&command);
 
     std::unique_lock<std::mutex> lock(mutex_);
-    comm_cond_.wait(lock, [&]() { return comm_count_ >= n_subscribers; });
+    // Wait for all the subscribers
+    comm_cond_.wait(lock, [&]() {
+        return comm_count_ >= n_subscribers;
+    });
     --comm_count_;
 
-    //BEGIN THE TEST:
-
+    // BEGIN THE TEST
+    // --------------------------------------------------------------
+    // Get new sample
     mp_video_out = new VideoType();
+    // Start "playing" on the pipeline
     gst_element_set_state(pipeline, GST_STATE_PLAYING);
 
+    // Get start time
     send_start_ = std::chrono::steady_clock::now();
+    // Wait until timer returns "finished"
+    timer_cond_.wait(lock, [&]() {
+        return timer_on_;
+    });
 
-    timer_cond_.wait(lock, [&]() { return timer_on_; });
-
+    // Paused the sending
     gst_element_set_state(pipeline, GST_STATE_PAUSED);
 
+    // Send STOP command to subscriber
     command.m_command = STOP;
     mp_commandpub->write(&command);
 
-    eClock::my_sleep(500);
+    // Wait until all subscribers unmatch
+    disc_cond_.wait(lock, [&]() {
+        return disc_count_ == 0;
+    });
 
     if(m_status !=0)
     {
         cout << "Error in test "<<endl;
         return false;
     }
-    //TEST FINISHED:
-    size_t removed=0;
+    // --------------------------------------------------------------
+    //TEST FINISHED
+
+    // Clean up
+    size_t removed = 0;
     mp_datapub->removeAllChange(&removed);
-    //cout << "   REMOVED: "<< removed<<endl;
     delete(mp_video_out);
 
     return true;
