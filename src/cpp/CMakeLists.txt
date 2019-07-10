@@ -475,6 +475,12 @@ elseif(NOT EPROSIMA_INSTALLER)
     ###############################################################################
     include(CMakePackageConfigHelpers)
 
+    if(BUILD_SHARED_LIBS)
+        set(FASTRTPS_PACKAGE_OPT_BIN_DIR_CONDITION "if(MSVC OR MSVC_IDE)")
+    else()
+        set(FASTRTPS_PACKAGE_OPT_BIN_DIR_CONDITION "if(0)")
+    endif()
+
     # Add fastrtps dependencies in its CMake config file.
     if(LINK_SSL AND NOT EPROSIMA_INSTALLER_MINION)
         set(FASTRTPS_PACKAGE_OPT_DEPS "find_package(OpenSSL REQUIRED)")
