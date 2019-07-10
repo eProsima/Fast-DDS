@@ -66,18 +66,12 @@ DomainParticipantFactory::~DomainParticipantFactory()
         std::lock_guard<std::mutex> guard(mtx_participants_);
         for (auto it : participants_)
         {
-            for (auto pit : vit.second)
-            {
-                pit->disable();
-            }
+            it.second->disable();
         }
         // Delete participants
-        for (auto vit : participants_)
+        for (auto it : participants_)
         {
-            for (auto pit : vit.second)
-            {
-                delete pit;
-            }
+            delete it.second;
         }
         participants_.clear();
     }
