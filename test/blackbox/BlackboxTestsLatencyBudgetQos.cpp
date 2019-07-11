@@ -14,30 +14,26 @@
 
 #include "BlackboxTests.hpp"
 
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
+#include "LatencyBudgetReqRepHelloWorldRequester.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 TEST(LatencyBudgetQos, DurationCheck)
 {
-	PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
-	Duration_t latency_budget_s(10);
+	LatencyBudgetReqRepHelloWorldRequester requester;
 
-	reader.reliability(RELIABLE_RELIABILITY_QOS)
-	.latency_budget_duration(latency_budget_s)
-	.init();
+	Duration_t latency_budget_pub(10);
+	Duration_t latency_budget_sub(20);
 
-	writer.reliability(RELIABLE_RELIABILITY_QOS)
-	.latency_budget_duration(latency_budget_s)
-	.init();
+	requester.init(latency_budget_pub, latency_budget_sub);
 
-	ASSERT_TRUE(reader.isInitialized());
-    ASSERT_TRUE(writer.isInitialized());
+	ASSERT_TRUE(requester.isInitialized());
 
-    EXPECT_EQ(reader.get_latency_budget_duration(), latency_budget_s);
-    EXPECT_EQ(writer.get_latency_budget_duration(), latency_budget_s);
+	const Publisher* publisher = requester.get_publisher();
+	const Subscriber* subscriber = requester.get_subscriber();
+    
+    EXPECT_EQ(publisher->getAttributes().qos.m_latencyBudget.duration, latency_budget_pub);
+    EXPECT_EQ(subscriber->getAttributes().qos.m_latencyBudget.duration, latency_budget_sub);
 }

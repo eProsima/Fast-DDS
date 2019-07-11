@@ -57,6 +57,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             ReqRepHelloWorldReplier.cpp
             TCPReqRepHelloWorldRequester.cpp
             TCPReqRepHelloWorldReplier.cpp
+            LatencyBudgetReqRepHelloWorldRequester.cpp
             )
 
         # Prepare static discovery xml file for blackbox tests.
