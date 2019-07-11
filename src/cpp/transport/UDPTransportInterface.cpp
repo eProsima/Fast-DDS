@@ -435,22 +435,11 @@ bool UDPTransportInterface::send(
         try
         {
 #ifndef _WIN32
-            if(timeout.count() > 0)
-            {
-                struct timeval timeStruct;
-                timeStruct.tv_sec = 0;
-                timeStruct.tv_usec = timeout.count();
-                setsockopt(getSocketPtr(socket)->native_handle(), SOL_SOCKET, SO_SNDTIMEO,
-                        reinterpret_cast<const char*>(&timeStruct), sizeof(timeStruct));
-            }
-            else
-            {
-                struct timeval timeStruct;
-                timeStruct.tv_sec = 0;
-                timeStruct.tv_usec = 0;
-                setsockopt(getSocketPtr(socket)->native_handle(), SOL_SOCKET, SO_SNDTIMEO,
-                        reinterpret_cast<const char*>(&timeStruct), sizeof(timeStruct));
-            }
+            struct timeval timeStruct;
+            timeStruct.tv_sec = 0;
+            timeStruct.tv_usec = timeout.count() > 0 ? timeout.count() : 0;
+            setsockopt(getSocketPtr(socket)->native_handle(), SOL_SOCKET, SO_SNDTIMEO,
+                    reinterpret_cast<const char*>(&timeStruct), sizeof(timeStruct));
 #endif
 
             asio::error_code ec;
