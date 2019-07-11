@@ -26,6 +26,7 @@
 #include <fastrtps/transport/tcp/RTCPHeader.h>
 
 #include<memory>
+#include <atomic>
 
 namespace eprosima {
 namespace fastrtps{

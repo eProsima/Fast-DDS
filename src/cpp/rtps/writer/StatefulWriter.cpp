@@ -1222,7 +1222,7 @@ void StatefulWriter::perform_nack_response()
 
     for (ReaderProxy* remote_reader : matched_readers_)
     {
-        if (remote_reader->perform_acknack_response())
+        if (remote_reader->perform_acknack_response() || remote_reader->are_there_gaps())
         {
             must_wake_up_async_thread = true;
         }
@@ -1271,7 +1271,7 @@ bool StatefulWriter::process_acknack(
                     remote_reader->acked_changes_set(sn_set.base());
                     if (sn_set.base() > SequenceNumber_t(0, 0))
                     {
-                        if (remote_reader->requested_changes_set(sn_set))
+                        if (remote_reader->requested_changes_set(sn_set) || remote_reader->are_there_gaps())
                         {
                             nack_response_event_->restart_timer();
                         }

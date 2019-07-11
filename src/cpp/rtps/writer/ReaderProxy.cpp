@@ -455,6 +455,12 @@ ReaderProxy::ChangeConstIterator ReaderProxy::find_change(const SequenceNumber_t
         : it->getSequenceNumber() == seq_num ? it : end;
 }
 
+bool ReaderProxy::are_there_gaps()
+{
+    return (0 < changes_for_reader_.size() &&
+            changes_low_mark_ + uint32_t(changes_for_reader_.size()) != changes_for_reader_.rbegin()->getSequenceNumber());
+}
+
 }   // namespace rtps
 }   // namespace fastrtps
 }   // namespace eprosima
