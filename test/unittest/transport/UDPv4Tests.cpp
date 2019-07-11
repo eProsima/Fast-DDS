@@ -165,7 +165,7 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
 
     auto sendThreadFunction = [&]()
     {
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, multicastLocator));
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, multicastLocator, std::chrono::microseconds(100)));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
@@ -209,7 +209,7 @@ TEST_F(UDPv4Tests, send_to_loopback)
 
     auto sendThreadFunction = [&]()
     {
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, multicastLocator));
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, multicastLocator, std::chrono::microseconds(100)));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
@@ -239,7 +239,7 @@ TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
     // Then
     std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
     ASSERT_FALSE(send_resource_list.at(0)->send(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size(),
-                destinationLocator));
+                destinationLocator, std::chrono::microseconds(100)));
 }
 
 TEST_F(UDPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
@@ -297,7 +297,7 @@ TEST_F(UDPv4Tests, send_to_wrong_interface)
     //Sending through a different IP will NOT work, except 0.0.0.0
     IPLocator::setIPv4(outputChannelLocator, 111, 111, 111, 111);
     std::vector<octet> message = { 'H','e','l','l','o' };
-    ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), Locator_t()));
+    ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), Locator_t(), std::chrono::microseconds(100)));
 }
 
 TEST_F(UDPv4Tests, send_to_blocked_interface)
@@ -352,7 +352,7 @@ TEST_F(UDPv4Tests, send_to_allowed_interface)
             // Sending through a ALLOWED IP will work
             std::vector<octet> message = { 'H','e','l','l','o' };
             ASSERT_TRUE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(),
-                        remoteMulticastLocator));
+                        remoteMulticastLocator, std::chrono::microseconds(100)));
         }
     }
 }
@@ -409,7 +409,7 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_localhost)
 
     auto sendThreadFunction = [&]()
     {
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, unicastLocator));
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, unicastLocator, std::chrono::microseconds(100)));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
@@ -460,7 +460,7 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast)
 
     auto sendThreadFunction = [&]()
     {
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, unicastLocator));
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, unicastLocator, std::chrono::microseconds(100)));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
@@ -511,7 +511,7 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast_to_mul
 
     auto sendThreadFunction = [&]()
     {
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, unicastLocator));
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, unicastLocator, std::chrono::microseconds(100)));
     };
 
     senderThread.reset(new std::thread(sendThreadFunction));
