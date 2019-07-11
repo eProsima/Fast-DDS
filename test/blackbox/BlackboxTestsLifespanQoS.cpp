@@ -38,7 +38,7 @@ TEST(LifespanQos, LongLifespan)
     // Number of samples written by writer
     uint32_t writer_samples = 3;
     // Lifespan period in seconds
-    eprosima::fastrtps::Duration_t lifespan_s(writer_sleep_ms * 1000 * 1e-3);
+    eprosima::fastrtps::Duration_t lifespan_s(writer_sleep_ms * 1e4 * 1e-3);
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
     writer.lifespan_period(lifespan_s);
