@@ -457,8 +457,8 @@ ReaderProxy::ChangeConstIterator ReaderProxy::find_change(const SequenceNumber_t
 
 bool ReaderProxy::are_there_gaps()
 {
-    return (changes_for_reader_.size() > 0 &&
-            changes_low_mark_ + changes_for_reader_.size() != changes_for_reader_.rbegin()->getSequenceNumber());
+    return (0 < changes_for_reader_.size() &&
+            changes_low_mark_ + uint32_t(changes_for_reader_.size()) != changes_for_reader_.rbegin()->getSequenceNumber());
 }
 
 }   // namespace rtps
