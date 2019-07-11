@@ -56,8 +56,16 @@ struct fixed_string
         // We don't need to define copy/move constructors/assignment operators as the default ones would be enough
 
         // Construct / assign from a C string
-        fixed_string (const char* c_string) noexcept : fixed_string() { set(c_string); }
-        fixed_string& operator = (const char* c_string) noexcept { set(c_string); return *this; }
+        fixed_string (const char* c_string) noexcept : fixed_string() 
+        { 
+            set(c_string != nullptr ? c_string : ""); 
+        }
+    
+        fixed_string& operator = (const char* c_string) noexcept 
+        { 
+            set(c_string != nullptr ? c_string : "");
+            return *this; 
+        }
 
         // Construct / assign from a std::string
         fixed_string (const std::string& str) noexcept : fixed_string() { set(str.c_str()); }

@@ -320,6 +320,12 @@ public:
      */
     void update_nack_supression_interval(const Duration_t& interval);
 
+    /**
+     * Check if there are gaps in the list of ChangeForReader_t.
+     * @return True if there are gaps, else false.
+     */
+    bool are_there_gaps();
+
     LocatorSelectorEntry* locator_selector_entry()
     {
         return locator_info_.locator_selector_entry();
