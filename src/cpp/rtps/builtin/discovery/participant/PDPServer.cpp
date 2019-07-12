@@ -331,7 +331,13 @@ void PDPServer::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
         // TODO: remove when the Writer API issue is resolved
         std::lock_guard<std::recursive_mutex> lock(*getMutex());
-        clients_.insert_or_assign(temp_reader_data_.guid(), temp_reader_data_);
+        // Waiting till we remove C++11 restriction: 
+        // clients_.insert_or_assign(temp_reader_data_.guid(), temp_reader_data_);
+        auto emplace_result = clients_.emplace(temp_reader_data_.guid(), temp_reader_data_);
+        if (!emplace_result.second)
+        {
+            emplace_result.first->second = temp_reader_data_;
+        }
     }
 
     // Notify another endpoints
