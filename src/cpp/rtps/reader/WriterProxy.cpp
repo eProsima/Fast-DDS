@@ -189,6 +189,8 @@ void WriterProxy::clear()
     guid_as_vector_.clear();
     guid_prefix_as_vector_.clear();
     changes_from_writer_.clear();
+    last_notified_ = SequenceNumber_t();
+    changes_from_writer_low_mark_ = last_notified_;
 }
 
 void WriterProxy::loaded_from_storage(const SequenceNumber_t& seq_num)
