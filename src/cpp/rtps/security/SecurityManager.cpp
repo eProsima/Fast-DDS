@@ -3516,7 +3516,7 @@ void SecurityManager::resend_handshake_message_token(const GUID_t& remote_partic
                 if(p_change != nullptr)
                 {
                     logInfo(SECURITY, "Authentication handshake resent to participant " <<
-                            remote_participant_key_);
+                            remote_participant_key);
                     if(participant_stateless_message_writer_history_->add_change(p_change))
                     {
                         remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;
