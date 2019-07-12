@@ -1159,6 +1159,11 @@ WLP* RTPSParticipantImpl::wlp()
     return mp_builtinProtocols->mp_WLP;
 }
 
+fastdds::dds::builtin::TypeLookupManager* RTPSParticipantImpl::typelookup_manager() const
+{
+    return mp_builtinProtocols->tlm_;
+}
+
 IPersistenceService* RTPSParticipantImpl::get_persistence_service(const EndpointAttributes& param)
 {
     IPersistenceService* ret_val;

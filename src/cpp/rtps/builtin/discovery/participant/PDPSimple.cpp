@@ -38,6 +38,8 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 
+#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
+
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/utils/IPLocator.h>
 
@@ -84,18 +86,6 @@ void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant
     {
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
-    }
-
-    if (getRTPSParticipant()->getAttributes().builtin.use_TypeLookupServiceServer)
-    {
-        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
-        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
-    }
-
-    if (mp_RTPSParticipant->getAttributes().builtin.use_TypeLookupServiceClient)
-    {
-        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
-        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
     }
 
 #if HAVE_SECURITY
@@ -397,9 +387,19 @@ void PDPSimple::notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata)
 {
     //Inform EDP of new RTPSParticipant data:
     if (mp_EDP != nullptr)
+    {
         mp_EDP->assignRemoteEndpoints(pdata);
+    }
+
     if (mp_builtin->mp_WLP != nullptr)
+    {
         mp_builtin->mp_WLP->assignRemoteEndpoints(pdata);
+    }
+
+    if (mp_builtin->tlm_ != nullptr)
+    {
+        mp_builtin->tlm_->assign_remote_endpoints(pdata);
+    }
 }
 
 bool PDPSimple::newRemoteEndpointStaticallyDiscovered(

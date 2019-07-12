@@ -54,6 +54,17 @@
 #endif
 
 namespace eprosima {
+
+namespace fastdds {
+namespace dds {
+namespace builtin {
+
+class TypeLookupManager;
+
+} // namespace builtin
+} // namespace dds
+} // namespace fastdds
+
 namespace fastrtps {
 
 class TopicAttributes;
@@ -280,6 +291,8 @@ public:
     PDPSimple* pdpsimple();
 
     WLP* wlp();
+
+    fastdds::dds::builtin::TypeLookupManager* typelookup_manager() const;
 
     NetworkFactory& network_factory() { return m_network_Factory; }
 

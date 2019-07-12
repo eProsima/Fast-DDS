@@ -30,6 +30,8 @@
 
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
+#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
+
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <fastrtps/log/Log.h>
@@ -50,8 +52,9 @@ BuiltinProtocols::BuiltinProtocols()
     : mp_participantImpl(nullptr)
     , mp_PDP(nullptr)
     , mp_WLP(nullptr)
-    {
-    }
+    , tlm_(nullptr)
+{
+}
 
 BuiltinProtocols::~BuiltinProtocols()
 {
@@ -62,8 +65,9 @@ BuiltinProtocols::~BuiltinProtocols()
     }
 
     // TODO Auto-generated destructor stub
-    delete(mp_WLP);
-    delete(mp_PDP);
+    delete mp_WLP;
+    delete tlm_;
+    delete mp_PDP;
 
 }
 
@@ -123,6 +127,13 @@ bool BuiltinProtocols::initBuiltinProtocols(
     {
         mp_WLP = new WLP(this);
         mp_WLP->initWL(mp_participantImpl);
+    }
+
+    // TypeLookupManager
+    if (m_att.typelookup_config.use_client || m_att.typelookup_config.use_server)
+    {
+        tlm_ = new fastdds::dds::builtin::TypeLookupManager(this);
+        tlm_->init_typelookup_service(mp_participantImpl);
     }
 
     if(m_att.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SIMPLE ||

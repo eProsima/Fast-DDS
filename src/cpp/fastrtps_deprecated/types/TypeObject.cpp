@@ -8861,8 +8861,92 @@ void TypeInformation::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_complete;
 }
 
+OctetSeq& operator++(OctetSeq& s)
+{
+    if (s.empty())
+    {
+        // If empty, adds a new octet with value 1.
+        s.push_back(1);
+    }
+    else
+    {
+        // If not empty, iterate...
+        for (size_t i = 0; i < s.size(); ++i)
+        {
+            octet& o = s[i];
+            if (o < 255)
+            {
+                // ...until find an octet lesser than 255, then increment it.
+                ++o;
+                break;
+            }
+            else
+            {
+                // ...while value 255 found,
+                if (i < s.size() - 1)
+                {
+                    // if not the last octet, reset to 0.
+                    o = 0;
+                }
 
+                if (i == s.size() - 1)
+                {
+                    // once last octet reached being all previos octets 255,
+                    if (s.size() < 32)
+                    {
+                        // if not maximum sequence size reached, add a new octet with value 1.
+                        s.push_back(1);
+                        break;
+                    }
+                    else
+                    {
+                        // if no more space available, set every octet to 0 (the only way to detect this situation).
+                        for (octet& oc : s)
+                        {
+                            oc = 0;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    return s;
+}
 
+OctetSeq operator++(OctetSeq& s, int)
+{
+    OctetSeq r = s;
+    ++s;
+    return r;
+}
+
+size_t to_size_t(const OctetSeq& s)
+{
+    if (s.size() > 4)
+    {
+        // If doesn't fit in a size_t, return size_t::max
+        size_t aux = 0;
+        for (size_t i = 3; i < s.size(); ++i)
+        {
+            aux += s[i];
+        }
+        if (aux > 0)
+        {
+            return std::numeric_limits<size_t>::max();
+        }
+    }
+
+    size_t result = 0;
+
+    // result = s[0] + (s[1] * 255) + (s[2] * 255²) + (s[3] * 255³);
+    for (size_t i = 0; i < s.size() && i < 4; ++i)
+    {
+        result += (std::pow(255, i) * s[i]);
+    }
+
+    return result;
+}
 
 } // namespace types
 } // namespace fastrtps

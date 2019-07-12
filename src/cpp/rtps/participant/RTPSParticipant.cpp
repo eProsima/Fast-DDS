@@ -115,6 +115,11 @@ WLP* RTPSParticipant::wlp() const
     return mp_impl->wlp();
 }
 
+fastdds::dds::builtin::TypeLookupManager* RTPSParticipant::typelookup_manager() const
+{
+    return mp_impl->typelookup_manager();
+}
+
 bool RTPSParticipant::get_new_entity_id(
         EntityId_t& entityId)
 {
