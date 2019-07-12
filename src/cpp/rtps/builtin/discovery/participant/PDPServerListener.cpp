@@ -86,8 +86,7 @@ void PDPServerListener::onNewCacheChangeAdded(
             return;
         }
 
-        // Protecting access to temp_participant_data_
-        std::unique_lock<std::mutex> data_lock(mutex_);
+        // Access to temp_participant_data_ is protected by reader lock
 
         // Load information on temp_participant_data_
         CDRMessage_t msg(change->serializedPayload);

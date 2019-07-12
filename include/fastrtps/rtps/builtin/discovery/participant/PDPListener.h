@@ -68,10 +68,13 @@ protected:
 
     //!Pointer to the associated mp_SPDP;
     PDP* parent_pdp_;
-    //!Temporary data to avoid reallocations.
+    
+    /**
+     * @brief Temporary data to avoid reallocations.
+     * 
+     * @remarks This should be always accessed with the pdp_reader lock taken
+     */
     ParticipantProxyData temp_participant_data_;
-    //!Mutex to protect temp_participant_data.
-    std::mutex mutex_;
 };
 
 
