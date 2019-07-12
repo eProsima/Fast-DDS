@@ -220,10 +220,24 @@ public:
 };
 
 /**
+ * TypeLookupService settings.
+ */
+class TypeLookupSettings
+{
+public:
+
+    //!Indicates to use the TypeLookup Service client endpoints
+    bool use_client;
+
+    //!Indicates to use the TypeLookup Service server endpoints
+    bool use_server;
+
+};
+
+/**
  * Class BuiltinAttributes, to define the behavior of the RTPSParticipant builtin protocols.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
-
 class BuiltinAttributes
 {
     public:
@@ -234,11 +248,8 @@ class BuiltinAttributes
         //!Indicates to use the WriterLiveliness protocol.
         bool use_WriterLivelinessProtocol;
 
-        //!Indicates to use the TypeLookup Service client endpoints
-        bool use_TypeLookupServiceClient;
-
-        //!Indicates to use the TypeLookup Service server endpoints
-        bool use_TypeLookupServiceServer;
+        //!TypeLookup Service settings
+        TypeLookupSettings typelookup_config;
 
         /**
          * DomainId to be used by the RTPSParticipant (80 by default).
@@ -267,8 +278,8 @@ class BuiltinAttributes
         {
             domainId = 0;
             use_WriterLivelinessProtocol = true;
-            use_TypeLookupServiceClient = false;
-            use_TypeLookupServiceServer = false;
+            typelookup_config.use_client = false;
+            typelookup_config.use_server = false;
             readerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
             writerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
             mutation_tries = 100u;
@@ -279,8 +290,8 @@ class BuiltinAttributes
         {
             return (this->discovery_config == b.discovery_config) &&
                    (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
-                   (use_TypeLookupServiceClient == b.use_TypeLookupServiceClient) &&
-                   (use_TypeLookupServiceServer == b.use_TypeLookupServiceServer) &&
+                   (typelookup_config.use_client == b.typelookup_config.use_client) &&
+                   (typelookup_config.use_server == b.typelookup_config.use_server) &&
                    (this->domainId == b.domainId) &&
                    (this->metatrafficUnicastLocatorList == b.metatrafficUnicastLocatorList) &&
                    (this->metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&

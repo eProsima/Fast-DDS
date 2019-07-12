@@ -197,6 +197,11 @@ inline std::istream& operator >>(
 #define ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_WRITER  0x000201C3
 #define ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_READER  0x000201C4
 
+#define ENTITYID_TL_SVC_REQ_WRITER  0x000300C3
+#define ENTITYID_TL_SVC_REQ_READER  0x000300C4
+#define ENTITYID_TL_SVC_REPLY_WRITER  0x000301C3
+#define ENTITYID_TL_SVC_REPLY_READER  0x000301C4
+
 #if HAVE_SECURITY
 #define ENTITYID_SEDP_BUILTIN_PUBLICATIONS_SECURE_WRITER  0xff0003c2
 #define ENTITYID_SEDP_BUILTIN_PUBLICATIONS_SECURE_READER  0xff0003c7
@@ -434,6 +439,11 @@ const EntityId_t c_EntityId_ReaderLiveliness = ENTITYID_P2P_BUILTIN_RTPSParticip
 
 const EntityId_t participant_stateless_message_writer_entity_id = ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_WRITER;
 const EntityId_t participant_stateless_message_reader_entity_id = ENTITYID_P2P_BUILTIN_PARTICIPANT_STATELESS_READER;
+
+const EntityId_t c_EntityId_TypeLookup_request_writer = ENTITYID_TL_SVC_REQ_WRITER;
+const EntityId_t c_EntityId_TypeLookup_request_reader = ENTITYID_TL_SVC_REQ_READER;
+const EntityId_t c_EntityId_TypeLookup_reply_writer = ENTITYID_TL_SVC_REPLY_WRITER;
+const EntityId_t c_EntityId_TypeLookup_reply_reader = ENTITYID_TL_SVC_REPLY_READER;
 
 #if HAVE_SECURITY
 const EntityId_t sedp_builtin_publications_secure_writer = ENTITYID_SEDP_BUILTIN_PUBLICATIONS_SECURE_WRITER;

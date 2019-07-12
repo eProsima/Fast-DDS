@@ -97,6 +97,11 @@ set(${PROJECT_NAME}_source_files
     dds/domain/DomainParticipantFactory.cpp
     dds/domain/DomainParticipantImpl.cpp
     dds/domain/DomainParticipant.cpp
+    dds/builtin/typelookup/common/TypeLookupTypes.cpp
+    dds/builtin/common/RPCHeadersImpl.cpp
+    dds/builtin/typelookup/TypeLookupManager.cpp
+    dds/builtin/typelookup/TypeLookupRequestListener.cpp
+    dds/builtin/typelookup/TypeLookupReplyListener.cpp
     fastrtps_deprecated/transport/ChannelResource.cpp
     fastrtps_deprecated/transport/UDPChannelResource.cpp
     fastrtps_deprecated/transport/TCPChannelResource.cpp

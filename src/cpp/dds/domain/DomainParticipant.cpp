@@ -250,3 +250,15 @@ fastrtps::rtps::ResourceEvent& DomainParticipant::get_resource_event() const
 {
     return impl_->get_resource_event();
 }
+
+bool DomainParticipant::get_type_dependencies(
+        const builtin::TypeLookup_getTypeDependencies_In& in) const
+{
+    return impl_->get_type_dependencies(in);
+}
+
+bool DomainParticipant::get_types(
+        const builtin::TypeLookup_getTypes_In& in) const
+{
+    return impl_->get_types(in);
+}

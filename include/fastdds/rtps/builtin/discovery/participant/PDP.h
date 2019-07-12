@@ -394,7 +394,8 @@ private:
             const string_255& topic_name,
             const string_255& type_name,
             const types::TypeIdentifier& type_id,
-            const types::TypeObject& type_obj) const;
+            const types::TypeObject& type_obj,
+            const XTypes::TypeInformation& type_info) const;
 
 };
 

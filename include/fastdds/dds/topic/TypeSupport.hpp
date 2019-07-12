@@ -78,47 +78,47 @@ public:
         : std::shared_ptr<fastdds::dds::TopicDataType>(std::make_shared<fastrtps::types::DynamicPubSubType>(std::move(ptr)))
     {}
 
-    RTPS_DllAPI bool register_type(
+    RTPS_DllAPI virtual bool register_type(
         DomainParticipant* participant,
         std::string type_name) const;
 
-    RTPS_DllAPI const std::string& get_type_name() const
+    RTPS_DllAPI virtual const std::string& get_type_name() const
     {
         return get()->m_topicDataTypeName;
     }
 
-    RTPS_DllAPI bool serialize(
+    RTPS_DllAPI virtual bool serialize(
             void* data,
             fastrtps::rtps::SerializedPayload_t* payload)
     {
         return get()->serialize(data, payload);
     }
 
-    RTPS_DllAPI bool deserialize(
+    RTPS_DllAPI virtual bool deserialize(
             fastrtps::rtps::SerializedPayload_t* payload,
             void* data)
     {
         return get()->deserialize(payload, data);
     }
 
-    RTPS_DllAPI std::function<uint32_t()> get_serialized_size_provider(
+    RTPS_DllAPI virtual std::function<uint32_t()> get_serialized_size_provider(
             void* data)
     {
         return get()->getSerializedSizeProvider(data);
     }
 
-    RTPS_DllAPI void* create_data()
+    RTPS_DllAPI virtual void* create_data()
     {
         return get()->createData();
     }
 
-    RTPS_DllAPI void delete_data(
+    RTPS_DllAPI virtual void delete_data(
             void * data)
     {
         return get()->deleteData(data);
     }
 
-    RTPS_DllAPI bool get_key(
+    RTPS_DllAPI virtual bool get_key(
             void* data,
             fastrtps::rtps::InstanceHandle_t* i_handle,
             bool force_md5 = false)
@@ -126,7 +126,7 @@ public:
         return get()->getKey(data, i_handle, force_md5);
     }
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI virtual bool operator==(
             const TypeSupport& type_support)
     {
         return get()->m_typeSize == type_support->m_typeSize

@@ -38,6 +38,8 @@
 #include <fastdds/dds/topic/DataReader.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
 
+#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
+
 #include <fastdds/rtps/RTPSDomain.h>
 
 #include <fastrtps/types/TypeObjectFactory.h>
@@ -728,6 +730,31 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
     }
 }
 
+void DomainParticipantImpl::MyRTPSParticipantListener::on_type_dependencies_reply(
+        RTPSParticipant*,
+        const fastrtps::rtps::SampleIdentity& request_sample_id,
+        const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies)
+{
+    if (participant_->listener_ != nullptr)
+    {
+        participant_->listener_->on_type_dependencies_reply(
+            participant_->participant_, request_sample_id, dependencies);
+    }
+}
+
+void DomainParticipantImpl::MyRTPSParticipantListener::on_type_information_received(
+        RTPSParticipant*,
+        const fastrtps::string_255& topic_name,
+        const fastrtps::string_255& type_name,
+        const fastrtps::types::TypeInformation& type_information)
+{
+    if (participant_->listener_ != nullptr)
+    {
+        participant_->listener_->on_type_information_received(
+            participant_->participant_, topic_name, type_name, type_information);
+    }
+}
+
 bool DomainParticipantImpl::new_remote_endpoint_discovered(
         const GUID_t& partguid,
         uint16_t endpointId,
@@ -756,4 +783,16 @@ bool DomainParticipantImpl::exists_entity_id(
     InstanceHandle_t instance(g);
 
     return contains_entity(instance, false);
+}
+
+bool DomainParticipantImpl::get_type_dependencies(
+        const builtin::TypeLookup_getTypeDependencies_In& in) const
+{
+    return rtps_participant_->typelookup_manager()->get_type_dependencies(in);
+}
+
+bool DomainParticipantImpl::get_types(
+        const builtin::TypeLookup_getTypes_In& in) const
+{
+    return rtps_participant_->typelookup_manager()->get_types(in);
 }

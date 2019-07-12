@@ -56,6 +56,10 @@ class Subscriber;
 class SubscriberImpl;
 class SubscriberListener;
 
+namespace builtin {
+class TypeLookup_getTypeDependencies_In;
+class TypeLookup_getTypes_In;
+} // namespace builtin
 
 /**
  * This is the implementation class of the DomainParticipant.
@@ -267,6 +271,12 @@ public:
 
     fastrtps::rtps::ResourceEvent& get_resource_event() const;
 
+    bool get_type_dependencies(
+            const builtin::TypeLookup_getTypeDependencies_In& in) const;
+
+    bool get_types(
+            const builtin::TypeLookup_getTypes_In& in) const;
+
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
 
@@ -332,11 +342,22 @@ private:
                     fastrtps::rtps::WriterDiscoveryInfo&& info) override;
 
             void on_type_discovery(
-                fastrtps::rtps::RTPSParticipant* participant,
-                const fastrtps::string_255& topic,
-                const fastrtps::types::TypeIdentifier* identifier,
-                const fastrtps::types::TypeObject* object,
-                fastrtps::types::DynamicType_ptr dyn_type) override;
+                    fastrtps::rtps::RTPSParticipant* participant,
+                    const fastrtps::string_255& topic,
+                    const fastrtps::types::TypeIdentifier* identifier,
+                    const fastrtps::types::TypeObject* object,
+                    fastrtps::types::DynamicType_ptr dyn_type) override;
+
+            void on_type_dependencies_reply(
+                    fastrtps::rtps::RTPSParticipant* participant,
+                    const fastrtps::rtps::SampleIdentity& request_sample_id,
+                    const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies) override;
+
+            void on_type_information_received(
+                    fastrtps::rtps::RTPSParticipant* participant,
+                    const fastrtps::string_255& topic_name,
+                    const fastrtps::string_255& type_name,
+                    const fastrtps::types::TypeInformation& type_information) override;
 
             DomainParticipantImpl* participant_;
 
