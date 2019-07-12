@@ -86,7 +86,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
     {
         case DiscoveryProtocol_t::NONE:
             logWarning(RTPS_PDP, "No participant discovery protocol specified");
-            return false;
+            return true;
 
         case DiscoveryProtocol_t::SIMPLE:
             mp_PDP = new PDPSimple(this, allocation);
@@ -94,7 +94,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
 
         case DiscoveryProtocol_t::EXTERNAL:
             logError(RTPS_PDP, "Flag only present for debugging purposes");
-            break;
+            return false;
 
         case DiscoveryProtocol_t::CLIENT:
             mp_PDP = new PDPClient(this, allocation);
@@ -107,6 +107,10 @@ bool BuiltinProtocols::initBuiltinProtocols(
         case DiscoveryProtocol_t::BACKUP:
             mp_PDP = new PDPServer(this, allocation, DurabilityKind_t::TRANSIENT);
             break;
+
+        default:
+            logError(RTPS_PDP, "Unknown DiscoveryProtocol_t specified.");
+            return false;
     }
 
     if (!mp_PDP->initPDP(mp_participantImpl)) {
