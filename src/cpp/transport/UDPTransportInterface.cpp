@@ -434,6 +434,7 @@ bool UDPTransportInterface::send(
 
         try
         {
+            (void)timeout;
 #ifndef _WIN32
             struct timeval timeStruct;
             timeStruct.tv_sec = 0;
