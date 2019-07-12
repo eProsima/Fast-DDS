@@ -115,7 +115,8 @@ TEST(ReaderProxyTests, are_there_gaps)
 {
     StatefulWriter writerMock;
     WriterTimes wTimes;
-    ReaderProxy rproxy(wTimes, &writerMock);
+    RemoteLocatorsAllocationAttributes alloc;
+    ReaderProxy rproxy(wTimes, alloc, &writerMock);
 
     ASSERT_FALSE(rproxy.are_there_gaps());
     rproxy.add_change(ChangeForReader_t(SequenceNumber_t(0, 1)), false);
