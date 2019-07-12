@@ -38,6 +38,7 @@
 
 #include <fastrtps/utils/TimeConversion.h>
 
+#include "DirectMessageSender.hpp"
 #include "../../../participant/RTPSParticipantImpl.h"
 
 #include <fastrtps/log/Log.h>
@@ -480,8 +481,6 @@ void PDPClient::announceParticipantState(
             change->sequenceNumber = mp_PDPWriterHistory->next_sequence_number();
             change->write_params = wp;
 
-            RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, _msgbuffer, *mp_PDPWriter);
-
             std::vector<GUID_t> remote_readers;
             LocatorList_t locators;
 
@@ -511,6 +510,8 @@ void PDPClient::announceParticipantState(
                 }
             }
 
+            DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
+            RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, _msgbuffer, sender);
             if (!group.add_data(*change, false))
             {
                 logError(RTPS_PDP, "Error sending announcement from client to servers");
@@ -532,8 +533,6 @@ void PDPClient::announceParticipantState(
             {
                 std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
-                RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, _msgbuffer, *mp_PDPWriter);
-
                 std::vector<GUID_t> remote_readers;
                 LocatorList_t locators;
 
@@ -548,6 +547,9 @@ void PDPClient::announceParticipantState(
                         locators.push_back(svr.metatrafficUnicastLocatorList);
                     }
                 }
+
+                DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
+                RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, _msgbuffer, sender);
 
                 if (!group.add_data(*pPD, false))
                 {

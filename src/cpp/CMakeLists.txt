@@ -128,6 +128,7 @@ set(${PROJECT_NAME}_source_files
     qos/WriterQos.cpp
     qos/ReaderQos.cpp
     rtps/builtin/BuiltinProtocols.cpp
+	rtps/builtin/discovery/participant/DirectMessageSender.cpp
 	rtps/builtin/discovery/participant/PDP.cpp
     rtps/builtin/discovery/participant/PDPSimple.cpp
     rtps/builtin/discovery/participant/PDPListener.cpp

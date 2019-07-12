@@ -30,6 +30,7 @@
 
 #include <fastrtps/utils/TimeConversion.h>
 
+#include "DirectMessageSender.hpp"
 #include "../../../participant/RTPSParticipantImpl.h"
 
 #include <fastrtps/log/Log.h>
@@ -327,6 +328,10 @@ void PDPServer::assignRemoteEndpoints(ParticipantProxyData* pdata)
         temp_reader_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
         mp_PDPWriter->matched_reader_add(temp_reader_data_);
+
+        // TODO: remove when the Writer API issue is resolved
+        std::lock_guard<std::recursive_mutex> lock(*getMutex());
+        clients_.insert_or_assign(temp_reader_data_.guid(), temp_reader_data_);
     }
 
     // Notify another endpoints
@@ -421,6 +426,13 @@ void PDPServer::removeRemoteEndpoints(ParticipantProxyData* pdata)
             temp_reader_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
             temp_reader_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
             mp_PDPWriter->matched_reader_add(temp_reader_data_);
+        }
+        else
+        {
+            std::unique_lock<std::recursive_mutex> lock(*getMutex());
+
+            // TODO: remove when the Writer API issue is resolved
+            clients_.erase(rguid);
         }
     }
 
@@ -727,7 +739,6 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
             // note here we can no longer receive and DATA or ACKNACK from clients.
             // In order to avoid that we send the message directly as in the standard stateless PDP
 
-            //TODO: Force synchronous sending on writer
             CacheChange_t* change = nullptr;
 
             if ((change = pW->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE; },
@@ -737,7 +748,44 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
                 change->sequenceNumber = mp_PDPWriterHistory->next_sequence_number();
                 change->write_params = wp;
 
-                RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, _msgbuffer, *mp_PDPWriter);
+                std::vector<GUID_t> remote_readers;
+                LocatorList_t locators;
+
+                // TODO: modify announcement mechanism to allow direct message sending
+                //for (auto it = pW->matchedReadersBegin(); it != pW->matchedReadersEnd(); ++it)
+                //{
+                //    RemoteReaderAttributes & att = (*it)->m_att;
+                //    remote_readers.push_back(att.guid);
+
+                //    EndpointAttributes & ep = att.endpoint;
+                //    locators.push_back(ep.unicastLocatorList);
+                //    //locators.push_back(ep.multicastLocatorList);
+                //}
+
+                // TODO: remove when the Writer API issue is resolved
+                std::lock_guard<std::recursive_mutex> lock(*getMutex());
+
+                for (auto client : clients_)
+                {
+                    ReaderProxyData& rat = client.second;
+                    remote_readers.push_back(rat.guid());
+                    for(const Locator_t& loc : rat.remote_locators().unicast)
+                        locators.push_back(loc);
+                    // locators.push_back(rat.endpoint.multicastLocatorList);
+                }
+
+                for (auto & svr : mp_builtin->m_DiscoveryServers)
+                {
+                    if (svr.proxy != nullptr)
+                    {
+                        remote_readers.push_back(svr.GetPDPReader());
+                        // locators.push_back(svr.metatrafficMulticastLocatorList);
+                        locators.push_back(svr.metatrafficUnicastLocatorList);
+                    }
+                }
+
+                DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
+                RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, _msgbuffer, sender);
 
                 if (!group.add_data(*change, false))
                 {
@@ -758,7 +806,43 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
         {
             std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
-            RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, _msgbuffer, *mp_PDPWriter);
+            std::vector<GUID_t> remote_readers;
+            LocatorList_t locators;
+
+            // TODO: modify announcement mechanism to allow direct message sending
+            //for (auto it = pW->matchedReadersBegin(); it != pW->matchedReadersEnd(); ++it)
+            //{
+            //    RemoteReaderAttributes & att = (*it)->m_att;
+            //    remote_readers.push_back(att.guid);
+
+            //    EndpointAttributes & ep = att.endpoint;
+            //    locators.push_back(ep.unicastLocatorList);
+            //    locators.push_back(ep.multicastLocatorList);
+            //}
+
+            // TODO: remove when the Writer API issue is resolved
+            for (auto client : clients_)
+            {
+                ReaderProxyData& rat = client.second;
+                remote_readers.push_back(rat.guid());
+                for (const Locator_t& loc : rat.remote_locators().unicast)
+                    locators.push_back(loc);
+                for (const Locator_t& loc : rat.remote_locators().multicast)
+                    locators.push_back(loc);
+            }
+
+            for (auto & svr : mp_builtin->m_DiscoveryServers)
+            {
+                if (svr.proxy == nullptr)
+                {
+                    remote_readers.push_back(svr.GetPDPReader());
+                    locators.push_back(svr.metatrafficMulticastLocatorList);
+                    locators.push_back(svr.metatrafficUnicastLocatorList);
+                }
+            }
+
+            DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
+            RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, _msgbuffer, sender);
 
             if (!group.add_data(*pPD, false))
             {

@@ -63,7 +63,11 @@ class PDPServer : public PDP
     //! Messages announcement ancillary
     RTPSMessageGroup_t _msgbuffer;
 
-    public:
+    //! Temporary locator list to solve new Writer API issue
+    // TODO: remove when the Writer API issue is resolved
+    std::map<GUID_t, ReaderProxyData> clients_;
+
+public:
 
     /**
      * Constructor
