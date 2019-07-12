@@ -822,6 +822,11 @@ bool PDP::remove_remote_participant(
         const GUID_t& partGUID,
         ParticipantDiscoveryInfo::DISCOVERY_STATUS reason)
 {
+    if (partGUID == getLocalParticipantProxyData()->m_guid)
+    {   // avoid removing our own data
+        return false;
+    }
+
     logInfo(RTPS_PDP,partGUID );
     ParticipantProxyData* pdata = nullptr;
 
