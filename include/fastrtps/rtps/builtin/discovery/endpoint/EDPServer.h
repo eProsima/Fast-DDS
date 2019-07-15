@@ -177,16 +177,8 @@ class EDPServer : public EDPSimple
 
 };
 
-// Default configuration values for EDP entities.
- extern const Duration_t edp_heartbeat_period;
- extern const Duration_t edp_nack_response_delay;
- extern const Duration_t edp_nack_supression_duration;
- extern const Duration_t edp_heartbeat_response_delay;
-
- extern const int32_t edp_initial_reserved_caches;
-
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif
