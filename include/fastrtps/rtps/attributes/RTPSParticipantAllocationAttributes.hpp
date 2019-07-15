@@ -58,9 +58,9 @@ struct RTPSParticipantAllocationAttributes
     RemoteLocatorsAllocationAttributes locators;
     //! Defines the allocation behaviour for collections dependent on the total number of participants.
     ResourceLimitedContainerConfig participants;
-    //! Defines the allocation behaviour for collections dependent on the total number of readers.
+    //! Defines the allocation behaviour for collections dependent on the total number of readers per participant.
     ResourceLimitedContainerConfig readers;
-    //! Defines the allocation behaviour for collections dependent on the total number of writers.
+    //! Defines the allocation behaviour for collections dependent on the total number of writers per participant.
     ResourceLimitedContainerConfig writers;
 
     //! @return the allocation config for the total of readers in the system (participants * readers)
