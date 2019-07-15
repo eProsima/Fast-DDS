@@ -65,13 +65,13 @@ class PDPClient : public PDP
 
     /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info
-     * @param ParticipantProxyData from DATA msg deserialization
-     * @param CacheChange_t from DATA msg
+     * @param p from DATA msg deserialization
+     * @param c from DATA msg
      * @return new ParticipantProxyData * or nullptr on failure
      */
     ParticipantProxyData* createParticipantProxyData(
-        const ParticipantProxyData&,
-        const CacheChange_t&) override;
+        const ParticipantProxyData& p,
+        const CacheChange_t& c) override;
 
     /**
      * Create the SPDP Writer and Reader
@@ -98,6 +98,7 @@ class PDPClient : public PDP
      * @param new_change If true a new change (with new seqNum) is created and sent;
      * if false the last change is re-sent
      * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED
+     * @param wparams allows to identify the change
      */
     void announceParticipantState(
         bool new_change,
