@@ -27,10 +27,9 @@
 #include "../messages/RTPSMessageGroup.h"
 
 #include <mutex>
-#include <atomic>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class WriterProxy;

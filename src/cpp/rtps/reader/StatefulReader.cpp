@@ -44,7 +44,14 @@ using namespace eprosima::fastrtps::rtps;
 StatefulReader::~StatefulReader()
 {
     logInfo(RTPS_READER,"StatefulReader destructor.");
-    is_alive_ = false;
+
+    // Only is_alive_ assignment needs to be protected, as
+    // matched_writers_ and matched_writers_pool_ are only used
+    // when is_alive_ is true
+    {
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+        is_alive_ = false;
+    }
 
     for(WriterProxy* writer : matched_writers_)
     {
