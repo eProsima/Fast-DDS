@@ -67,20 +67,6 @@ class StatefulReader : public RTPSReader
         bool matched_writer_add(const WriterProxyData& wdata, bool persist = true) override;
 
         /**
-         * Remove a WriterProxyData from the matached writers due to liveliness expiration.
-         * @param writer_guid GUID of the writer proxy for which livelines expired.
-         * @return True if correct.
-         */
-        bool liveliness_expired(const GUID_t& writer_guid);
-
-        /**
-         * Manually asserts liveliness on a matched writer.
-         * @param writer_guid GUID of the writer proxy for which livelines is asserted.
-         * @return True if correct.
-         */
-        bool assert_liveliness(const GUID_t& writer_guid);
-
-        /**
          * Remove a WriterProxyData from the matached writers.
          * @param writer_guid GUID of the writer to remove.
          * @return True if correct.
