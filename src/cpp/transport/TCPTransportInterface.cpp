@@ -138,7 +138,7 @@ void TCPTransportInterface::clean()
                 channels.push_back(channel.second);
             }
         }
-        
+
         for (auto& channel : channels)
         {
             if (channel->connection_established())
@@ -506,7 +506,7 @@ bool TCPTransportInterface::OpenOutputChannel(
         SendResourceList& send_resource_list,
         const Locator_t& locator)
 {
-    if (!IsLocatorSupported(locator))
+    if (!is_locator_allowed(locator))
     {
         return false;
     }
