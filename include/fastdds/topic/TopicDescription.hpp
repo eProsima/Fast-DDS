@@ -31,25 +31,19 @@ class DomainParticipant;
  * and subscriptions are tied to a single data-type
  * @ingroup FASTDDS_MODULE
  */
-class TopicDescription /* : public DomainEntity */
+class TopicDescription
 {
-public:
+protected:
     TopicDescription(
-            DomainParticipant* domain_participant,
             const std::string& name, 
             const std::string& type_name)
-        : domain_participant_(domain_participant)
-        , name_(name)
+        : name_(name)
         , type_name_(type_name)
-        //, DomainEntity()
     {}
 
     ~TopicDescription(){}
 
-    DomainParticipant* get_participant() const 
-    {
-        return domain_participant_;
-    }
+   virtual DomainParticipant* get_participant() const = 0;
 
     std::string get_name() const
     {
@@ -63,12 +57,11 @@ public:
 
 protected:
 
-    DomainParticipant* domain_participant_;
-
+    //! Name that allows the TopicDescription to be retrieved locally
     std::string name_;
 
+    //! Name that defines a unique resulting type for the publication or the subscription 
     std::string type_name_;
-
 };
 
 } /* namespace fastdds */
