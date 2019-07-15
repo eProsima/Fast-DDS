@@ -41,7 +41,7 @@ class RemoteParticipantLeaseDuration : public TimedEvent
 public:
 	/**
 	 * Constructor
-	 * @param p_SPDP Pointer to the PDPSimple object.
+	 * @param p_PDP Pointer to the PDPSimple object.
 	 * @param pdata Pointer to the ParticipantProxyData associated with this TimedEvent.
 	 * @param interval Interval in ms.
 	 */

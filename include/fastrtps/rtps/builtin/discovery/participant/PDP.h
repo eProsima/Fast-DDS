@@ -77,26 +77,25 @@ class PDP
      * @param enableReader bool that indicates if DATA(p) reception should be activated
      * @return True on success
      */
-    virtual bool initPDP(RTPSParticipantImpl* part) = 0;
     bool initPDP(
         RTPSParticipantImpl* part,
         bool enableReader);
+    virtual bool initPDP(RTPSParticipantImpl* part) = 0;
 
     /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info
-     * @param ParticipantProxyData from DATA msg deserialization
-     * @param CacheChange_t from DATA msg
+     * @param p from DATA msg deserialization
+     * @param c from DATA msg
      * @return new ParticipantProxyData * or nullptr on failure
      */
     virtual ParticipantProxyData* createParticipantProxyData(
-        const ParticipantProxyData&,
-        const CacheChange_t&) = 0;
+        const ParticipantProxyData& p,
+        const CacheChange_t& c) = 0;
 
     /**
      * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
-     * @param new_change If true a new change (with new seqNum) is created and sent;
-     *    if false the last change is re-sent
-     * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED 
+     * @param new_change If true a new change (with new seqNum) is created and sent;If false the last change is re-sent
+     * @param dispose sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED 
      * @param wparams allows to identify the change
      */
     virtual void announceParticipantState(
@@ -113,7 +112,7 @@ class PDP
     /**
      * Add a ReaderProxyData to the correct ParticipantProxyData.
      * @param rdata Pointer to the ReaderProxyData objectr to add.
-     * @param pdata
+     * @param pdata_out
      * @return True if correct.
      */
     bool addReaderProxyData(
