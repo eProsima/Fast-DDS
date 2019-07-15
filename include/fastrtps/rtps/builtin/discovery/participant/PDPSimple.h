@@ -58,13 +58,13 @@ public:
 
     /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info
-     * @param ParticipantProxyData from DATA msg deserialization
-     * @param CacheChange_t from DATA msg
+     * @param p ParticipantProxyData from DATA msg deserialization
+     * @param c CacheChange_t from DATA msg
      * @return new ParticipantProxyData * or nullptr on failure
      */
     ParticipantProxyData* createParticipantProxyData(
-        const ParticipantProxyData&,
-        const CacheChange_t&) override;
+        const ParticipantProxyData& p,
+        const CacheChange_t& c) override;
 
     /**
      * Some PDP classes require EDP matching with update PDP DATAs like EDPStatic
@@ -76,6 +76,7 @@ public:
      * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
      * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
      * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED
+     * @param wparams allows to identify the change
      */
     void announceParticipantState(
         bool new_change,

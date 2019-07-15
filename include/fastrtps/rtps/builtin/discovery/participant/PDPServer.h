@@ -72,6 +72,7 @@ public:
     /**
      * Constructor
      * @param builtin Pointer to the BuiltinProcols object.
+     * @param durability_kind the kind of persistence we want for the discovery data
      */
     PDPServer(
             BuiltinProtocols* builtin,
@@ -90,13 +91,13 @@ public:
 
     /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info
-     * @param ParticipantProxyData from DATA msg deserialization
-     * @param CacheChange_t from DATA msg
+     * @param p ParticipantProxyData from DATA msg deserialization
+     * @param c CacheChange_t from DATA msg
      * @return new ParticipantProxyData * or nullptr on failure
      */
     ParticipantProxyData* createParticipantProxyData(
-        const ParticipantProxyData&,
-        const CacheChange_t&) override;
+        const ParticipantProxyData& p,
+        const CacheChange_t& c) override;
 
     /**
      * Create the SPDP Writer and Reader
@@ -133,17 +134,17 @@ public:
 
     /**
      * Add participant CacheChange_ts from reader to writer
-     * @param metatraffic CacheChange_t
+     * @param c metatraffic CacheChange_t
      * @return True if successfully modified WriterHistory
      */
-    bool addRelayedChangeToHistory(CacheChange_t&);
+    bool addRelayedChangeToHistory(CacheChange_t& c);
 
     /**
      * Trigger the participant CacheChange_t removal system
-     * @param instanceHandle associated with participants CacheChange_ts
+     * @param h instanceHandle associated with participants CacheChange_ts
      * @return True if successfully modified WriterHistory
      */
-    void removeParticipantFromHistory(const InstanceHandle_t&);
+    void removeParticipantFromHistory(const InstanceHandle_t& h);
 
     /**
      * Methods to synchronize EDP matching
@@ -151,9 +152,9 @@ public:
 
     /**
      * Add a participant to the queue of pending participants to EDP matching
-     * @param ParticipantProxyData associated with the new participant
+     * @param p ParticipantProxyData associated with the new participant
      */
-    void queueParticipantForEDPMatch(const ParticipantProxyData*);
+    void queueParticipantForEDPMatch(const ParticipantProxyData* p);
 
     /**
      * Remove a participant from the queue of pending participants to EDP matching
@@ -209,6 +210,7 @@ public:
      * Force the sending of our local PDP to all servers
      * @param new_change If true a new change (with new seqNum) is created and sent; if false the last change is re-sent
      * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED
+     * @param wparams allows to identify the change
      */
     void announceParticipantState(
         bool new_change,
