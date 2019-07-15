@@ -36,14 +36,19 @@ TopicQos::~TopicQos()
 void TopicQos::setQos(const TopicQos& qos, bool first_time)
 {
     //TODO: Implement this function
+    (void)qos;
+    (void)first_time;
 }
 
 bool TopicQos::checkQos() const
 {
     //TODO: Implement this function
+    return true;
 }
 
 bool TopicQos::canQosBeUpdated(const TopicQos& qos) const
 {
     //TODO: Implement this function
+    (void)qos;
+    return true;
 }

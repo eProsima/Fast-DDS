@@ -784,6 +784,16 @@ public:
 
     virtual RTPS_DllAPI ~ResourceLimitsQosPolicy() { }
 
+    bool operator==(const ResourceLimitsQosPolicy& b) const
+    {
+        return (this->max_samples == b.max_samples) &&
+               (this->max_instances == b.max_instances) &&
+               (this->max_samples_per_instance == b.max_samples_per_instance) &&
+               (this->allocated_samples == b.allocated_samples) &&
+               Parameter_t::operator==(b) &&
+               QosPolicy::operator==(b);
+    }
+
     /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
@@ -930,6 +940,14 @@ public:
         uint32_t value;
         RTPS_DllAPI TransportPriorityQosPolicy():Parameter_t(PID_TRANSPORT_PRIORITY,4),QosPolicy(false),value(0){};
         virtual RTPS_DllAPI ~TransportPriorityQosPolicy(){};
+
+        bool operator==(const TransportPriorityQosPolicy& b) const
+        {
+            return (this->value == b.value) &&
+                Parameter_t::operator==(b) &&
+                QosPolicy::operator==(b);
+        }
+
         /**
          * Appends QoS to the specified CDR message.
          * @param msg Message to append the QoS Policy to.
