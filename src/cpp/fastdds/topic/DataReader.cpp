@@ -319,7 +319,7 @@ void DataReader::InnerDataReaderListener::on_new_cache_change_added(
 
 void DataReader::InnerDataReaderListener::on_reader_matched(
         RTPSReader* /*reader*/,
-        MatchingInfo& info)
+        SubscriptionMatchedStatus& info)
 {
     if (data_reader_->listener_ != nullptr)
     {

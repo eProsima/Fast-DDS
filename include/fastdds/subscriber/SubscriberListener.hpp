@@ -22,16 +22,9 @@
 #include "../../fastrtps/fastrtps_dll.h"
 #include "../../fastrtps/qos/DeadlineMissedStatus.h"
 #include "../../fastrtps/qos/LivelinessChangedStatus.h"
+#include "../../fastrtps/qos/SubscriptionMatchedStatus.h"
 
 namespace eprosima {
-namespace fastrtps {
-
-namespace rtps {
-class MatchingInfo;
-} /* namespace rtps */
-
-} // namespace fastrtps
-
 namespace fastdds {
 
 class Subscriber;
@@ -66,7 +59,7 @@ class RTPS_DllAPI SubscriberListener
          */
         virtual void on_subscription_matched(
                 Subscriber* sub,
-                fastrtps::rtps::MatchingInfo& info)
+                fastrtps::SubscriptionMatchedStatus& info)
         {
             (void)sub;
             (void)info;

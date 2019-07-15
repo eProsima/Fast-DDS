@@ -377,7 +377,7 @@ void SubscriberImpl::SubscriberReaderListener::on_data_available(
 
 void SubscriberImpl::SubscriberReaderListener::on_subscription_matched(
         DataReader* /*reader*/,
-        fastrtps::rtps::MatchingInfo& info)
+        fastrtps::SubscriptionMatchedStatus& info)
 {
     if (subscriber_->listener_ != nullptr)
     {
