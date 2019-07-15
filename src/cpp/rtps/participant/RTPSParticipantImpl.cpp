@@ -985,7 +985,8 @@ bool RTPSParticipantImpl::sendSync(
         {
             // Calculate next timeout.
             std::chrono::microseconds timeout =
-                std::chrono::duration_cast<std::chrono::microseconds>(max_blocking_time_point - std::chrono::steady_clock::now());
+                std::chrono::duration_cast<std::chrono::microseconds>(
+                        max_blocking_time_point - std::chrono::steady_clock::now());
 
             send_resource->send(msg->buffer, msg->length, destination_loc, timeout);
         }
