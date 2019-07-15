@@ -131,6 +131,11 @@ StatefulWriter::~StatefulWriter()
 {
     logInfo(RTPS_WRITER,"StatefulWriter destructor");
 
+    for (std::unique_ptr<FlowController>& controller : m_controllers)
+    {
+        controller->disable();
+    }
+
     mp_RTPSParticipant->async_thread().unregister_writer(this);
 
     // After unregistering writer from AsyncWriterThread, delete all flow_controllers because they register the writer in

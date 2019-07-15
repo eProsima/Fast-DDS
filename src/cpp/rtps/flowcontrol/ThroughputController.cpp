@@ -77,6 +77,14 @@ void ThroughputController::operator()(RTPSWriterCollector<ReaderProxy*>& changes
     changesToSend.items().erase(it, changesToSend.items().end());
 }
 
+
+void ThroughputController::disable()
+{
+    std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
+    mAssociatedWriter = nullptr;
+    mAssociatedParticipant = nullptr;
+}
+
 bool ThroughputController::process_change_nts_(CacheChange_t* change, const SequenceNumber_t& /*seqNum*/,
         const FragmentNumber_t fragNum)
 {
