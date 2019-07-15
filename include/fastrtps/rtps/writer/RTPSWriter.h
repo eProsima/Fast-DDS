@@ -24,14 +24,17 @@
 #include "../attributes/WriterAttributes.h"
 #include "../../qos/LivelinessLostStatus.h"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
+#include "../common/LocatorSelector.hpp"
+#include "../messages/RTPSMessageSenderInterface.hpp"
 
 #include <vector>
 #include <memory>
 #include <functional>
 #include <chrono>
+#include <mutex>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class WriterListener;
@@ -44,7 +47,7 @@ struct CacheChange_t;
  * Class RTPSWriter, manages the sending of data to the readers. Is always associated with a HistoryCache.
  * @ingroup WRITER_MODULE
  */
-class RTPSWriter : public Endpoint
+class RTPSWriter : public Endpoint, public RTPSMessageSenderInterface
 {
     friend class WriterHistory;
     friend class RTPSParticipantImpl;
@@ -84,24 +87,24 @@ public:
 
     /**
      * Add a matched reader.
-     * @param ratt Pointer to the ReaderProxyData object added.
+     * @param data Pointer to the ReaderProxyData object added.
      * @return True if added.
      */
-    RTPS_DllAPI virtual bool matched_reader_add(RemoteReaderAttributes& ratt) = 0;
+    RTPS_DllAPI virtual bool matched_reader_add(const ReaderProxyData& data) = 0;
 
     /**
      * Remove a matched reader.
-     * @param ratt Pointer to the object to remove.
+     * @param reader_guid GUID of the reader to remove.
      * @return True if removed.
      */
-    RTPS_DllAPI virtual bool matched_reader_remove(const RemoteReaderAttributes& ratt) = 0;
+    RTPS_DllAPI virtual bool matched_reader_remove(const GUID_t& reader_guid) = 0;
 
     /**
-     * Tells us if a specific Reader is matched against this writer
-     * @param ratt Pointer to the ReaderProxyData object
+     * Tells us if a specific Reader is matched against this writer.
+     * @param reader_guid GUID of the reader to check.
      * @return True if it was matched.
      */
-    RTPS_DllAPI virtual bool matched_reader_is_matched(const RemoteReaderAttributes& ratt) = 0;
+    RTPS_DllAPI virtual bool matched_reader_is_matched(const GUID_t& reader_guid) = 0;
 
     /**
     * Check if a specific change has been acknowledged by all Readers.
@@ -179,7 +182,7 @@ public:
      */
     virtual bool try_remove_change(
             std::chrono::steady_clock::time_point& max_blocking_time_point,
-            std::unique_lock<std::recursive_timed_mutex>& lock) = 0;
+            std::unique_lock<RecursiveTimedMutex>& lock) = 0;
 
     /*
      * Adds a flow controller that will apply to this writer exclusively.
@@ -271,6 +274,46 @@ public:
     //! Liveliness lost status of this writer
     LivelinessLostStatus liveliness_lost_status_;
 
+    /**
+     * Check if the destinations managed by this sender interface have changed.
+     *
+     * @return true if destinations have changed, false otherwise.
+     */
+    bool destinations_have_changed() const override;
+
+    /**
+     * Get a GUID prefix representing all destinations.
+     *
+     * @return When all the destinations share the same prefix (i.e. belong to the same participant)
+     * that prefix is returned. When there are no destinations, or they belong to different
+     * participants, c_GuidPrefix_Unknown is returned.
+     */
+    GuidPrefix_t destination_guid_prefix() const override;
+
+    /**
+     * Get the GUID prefix of all the destination participants.
+     *
+     * @return a const reference to a vector with the GUID prefix of all destination participants.
+     */
+    const std::vector<GuidPrefix_t>& remote_participants() const override;
+
+    /**
+     * Get the GUID of all destinations.
+     *
+     * @return a const reference to a vector with the GUID of all destinations.
+     */
+    const std::vector<GUID_t>& remote_guids() const override;
+
+    /**
+     * Send a message through this interface.
+     *
+     * @param message Pointer to the buffer with the message already serialized.
+     * @param max_blocking_time_point Future timepoint where blocking send should end.
+     */
+    bool send(
+            CDRMessage_t* message,
+            std::chrono::steady_clock::time_point& max_blocking_time_point) const override;
+
 protected:
 
     //!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
@@ -286,11 +329,16 @@ protected:
     //!Separate sending activated
     bool m_separateSendingEnabled;
 
-    LocatorList_t mAllShrinkedLocatorList;
+    LocatorSelector locator_selector_;
 
     ResourceLimitedVector<GUID_t> all_remote_readers_;
+    ResourceLimitedVector<GuidPrefix_t> all_remote_participants_;
 
-    void update_cached_info_nts(std::vector<LocatorList_t>& allLocatorLists);
+    void add_guid(const GUID_t& remote_guid);
+
+    void compute_selected_guids();
+
+    void update_cached_info_nts();
 
     /**
      * Initialize the header of hte CDRMessages.
@@ -304,7 +352,7 @@ protected:
      */
     virtual void unsent_change_added_to_history(
             CacheChange_t* change,
-            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time) = 0;
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) = 0;
 
     /**
      * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.

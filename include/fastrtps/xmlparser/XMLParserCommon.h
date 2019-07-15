@@ -78,6 +78,7 @@ extern const char* DATA_WRITER;
 extern const char* DATA_READER;
 
 /// RTPS Participant attributes
+extern const char* ALLOCATION;
 extern const char* PREFIX;
 extern const char* DEF_UNI_LOC_LIST;
 extern const char* DEF_MULTI_LOC_LIST;
@@ -97,6 +98,12 @@ extern const char* USER_TRANS;
 extern const char* USE_BUILTIN_TRANS;
 extern const char* PROPERTIES_POLICY;
 extern const char* NAME;
+extern const char* REMOTE_LOCATORS;
+extern const char* MAX_UNICAST_LOCATORS;
+extern const char* MAX_MULTICAST_LOCATORS;
+extern const char* TOTAL_PARTICIPANTS;
+extern const char* TOTAL_READERS;
+extern const char* TOTAL_WRITERS;
 
 /// Publisher-subscriber attributes
 extern const char* TOPIC;
@@ -112,6 +119,7 @@ extern const char* HIST_MEM_POLICY;
 extern const char* USER_DEF_ID;
 extern const char* ENTITY_ID;
 extern const char* MATCHED_SUBSCRIBERS_ALLOCATION;
+extern const char* MATCHED_PUBLISHERS_ALLOCATION;
 
 ///
 extern const char* PROPERTIES;

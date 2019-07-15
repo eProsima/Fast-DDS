@@ -21,7 +21,7 @@
 #include "SubscriberImpl.h"
 
 #include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/reader/WriterProxy.h>
+#include "../rtps/reader/WriterProxy.h"
 
 #include <fastrtps/TopicDataType.h>
 #include <fastrtps/log/Log.h>
@@ -53,7 +53,6 @@ SubscriberHistory::SubscriberHistory(
                         simpl->getAttributes().topic.getTopicKind() == NO_KEY ?
                             history.depth :
                             history.depth * resource.max_instances))
-    , m_unreadCacheCount(0)
     , m_historyQos(history)
     , m_resourceLimitsQos(resource)
     , mp_subImpl(simpl)
@@ -84,7 +83,7 @@ bool SubscriberHistory::received_change(
         return false;
     }
 
-    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
     //NO KEY HISTORY
     if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
@@ -123,14 +122,8 @@ bool SubscriberHistory::received_change(
 
                 if (older != nullptr)
                 {
-                    bool read = older->isRead;
-
                     if (this->remove_change_sub(older))
                     {
-                        if (!read)
-                        {
-                            this->decreaseUnreadCount();
-                        }
                         add = true;
                     }
                 }
@@ -148,7 +141,6 @@ bool SubscriberHistory::received_change(
 
             if (this->add_change(a_change))
             {
-                increaseUnreadCount();
                 if ((int32_t)m_changes.size() == m_resourceLimitsQos.max_samples)
                     m_isHistoryFull = true;
                 logInfo(SUBSCRIBER, this->mp_subImpl->getGuid().entityId
@@ -221,14 +213,8 @@ bool SubscriberHistory::received_change(
 
                     if (older_sample != vit->second.cache_changes.rend())
                     {
-                        bool read = (*older_sample)->isRead;
-
                         if (this->remove_change_sub(*older_sample))
                         {
-                            if (!read)
-                            {
-                                this->decreaseUnreadCount();
-                            }
                             add = true;
                         }
                     }
@@ -246,7 +232,6 @@ bool SubscriberHistory::received_change(
 
                 if (this->add_change(a_change))
                 {
-                    increaseUnreadCount();
                     if ((int32_t)m_changes.size() == m_resourceLimitsQos.max_samples)
                         m_isHistoryFull = true;
                     //ADD TO KEY VECTOR
@@ -287,13 +272,11 @@ bool SubscriberHistory::readNextBuffer(SerializedPayload_t* data, SampleInfo_t* 
         return false;
     }
 
-    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
     CacheChange_t* change;
     WriterProxy * wp;
     if (this->mp_reader->nextUnreadCache(&change, &wp))
     {
-        change->isRead = true;
-        this->decreaseUnreadCount();
         logInfo(SUBSCRIBER, this->mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
         if (change->kind == ALIVE)
         {
@@ -308,7 +291,7 @@ bool SubscriberHistory::readNextBuffer(SerializedPayload_t* data, SampleInfo_t* 
             info->sourceTimestamp = change->sourceTimestamp;
             if (this->mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
             {
-                info->ownershipStrength = wp->m_att.ownershipStrength;
+                info->ownershipStrength = wp->ownership_strength();
             }
             if (this->mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
                 change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
@@ -331,16 +314,11 @@ bool SubscriberHistory::takeNextBuffer(SerializedPayload_t* data, SampleInfo_t* 
         return false;
     }
 
-    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
     CacheChange_t* change;
     WriterProxy * wp;
     if (this->mp_reader->nextUntakenCache(&change, &wp))
     {
-        if (!change->isRead)
-        {
-            this->decreaseUnreadCount();
-        }
-        change->isRead = true;
         logInfo(SUBSCRIBER, this->mp_reader->getGuid().entityId << ": taking seqNum" << change->sequenceNumber <<
             " from writer: " << change->writerGUID);
         if (change->kind == ALIVE)
@@ -355,7 +333,7 @@ bool SubscriberHistory::takeNextBuffer(SerializedPayload_t* data, SampleInfo_t* 
             info->sourceTimestamp = change->sourceTimestamp;
             if (this->mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
             {
-                info->ownershipStrength = wp->m_att.ownershipStrength;
+                info->ownershipStrength = wp->ownership_strength();
             }
             if (this->mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
                 change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
@@ -373,7 +351,10 @@ bool SubscriberHistory::takeNextBuffer(SerializedPayload_t* data, SampleInfo_t* 
     return false;
 }
 
-bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
+bool SubscriberHistory::readNextData(
+        void* data,
+        SampleInfo_t* info,
+        std::chrono::steady_clock::time_point& max_blocking_time)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
@@ -381,47 +362,52 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
         return false;
     }
 
-    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
-    CacheChange_t* change;
-    WriterProxy * wp;
-    if (this->mp_reader->nextUnreadCache(&change, &wp))
+    std::unique_lock<RecursiveTimedMutex> lock(*mp_mutex, std::defer_lock);
+
+    if(lock.try_lock_until(max_blocking_time))
     {
-        change->isRead = true;
-        this->decreaseUnreadCount();
-        logInfo(SUBSCRIBER, this->mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
-        if (change->kind == ALIVE)
+        CacheChange_t* change;
+        WriterProxy * wp;
+        if (this->mp_reader->nextUnreadCache(&change, &wp))
         {
-            this->mp_subImpl->getType()->deserialize(&change->serializedPayload, data);
-        }
-        if (info != nullptr)
-        {
-            info->sampleKind = change->kind;
-            info->sample_identity.writer_guid(change->writerGUID);
-            info->sample_identity.sequence_number(change->sequenceNumber);
-            info->sourceTimestamp = change->sourceTimestamp;
-            if (this->mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+            logInfo(SUBSCRIBER, this->mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
+            if (change->kind == ALIVE)
             {
-                info->ownershipStrength = wp->m_att.ownershipStrength;
+                this->mp_subImpl->getType()->deserialize(&change->serializedPayload, data);
             }
-            if (this->mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
-                change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
+            if (info != nullptr)
             {
-                bool is_key_protected = false;
+                info->sampleKind = change->kind;
+                info->sample_identity.writer_guid(change->writerGUID);
+                info->sample_identity.sequence_number(change->sequenceNumber);
+                info->sourceTimestamp = change->sourceTimestamp;
+                if (this->mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+                {
+                    info->ownershipStrength = wp->ownership_strength();
+                }
+                if (this->mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
+                    change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
+                {
+                    bool is_key_protected = false;
 #if HAVE_SECURITY
-                is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
+                    is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
 #endif
-                this->mp_subImpl->getType()->getKey(data, &change->instanceHandle, is_key_protected);
+                    this->mp_subImpl->getType()->getKey(data, &change->instanceHandle, is_key_protected);
+                }
+                info->iHandle = change->instanceHandle;
+                info->related_sample_identity = change->write_params.sample_identity();
             }
-            info->iHandle = change->instanceHandle;
-            info->related_sample_identity = change->write_params.sample_identity();
+            return true;
         }
-        return true;
     }
     return false;
 }
 
 
-bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
+bool SubscriberHistory::takeNextData(
+        void* data,
+        SampleInfo_t* info,
+        std::chrono::steady_clock::time_point& max_blocking_time)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
@@ -429,46 +415,45 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
         return false;
     }
 
-    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
-    CacheChange_t* change;
-    WriterProxy * wp;
-    if (this->mp_reader->nextUntakenCache(&change, &wp))
+    std::unique_lock<RecursiveTimedMutex> lock(*mp_mutex, std::defer_lock);
+
+    if(lock.try_lock_until(max_blocking_time))
     {
-        if (!change->isRead)
+        CacheChange_t* change;
+        WriterProxy * wp;
+        if (this->mp_reader->nextUntakenCache(&change, &wp))
         {
-            this->decreaseUnreadCount();
-        }
-        change->isRead = true;
-        logInfo(SUBSCRIBER, this->mp_reader->getGuid().entityId << ": taking seqNum" << change->sequenceNumber <<
-            " from writer: " << change->writerGUID);
-        if (change->kind == ALIVE)
-        {
-            this->mp_subImpl->getType()->deserialize(&change->serializedPayload, data);
-        }
-        if (info != nullptr)
-        {
-            info->sampleKind = change->kind;
-            info->sample_identity.writer_guid(change->writerGUID);
-            info->sample_identity.sequence_number(change->sequenceNumber);
-            info->sourceTimestamp = change->sourceTimestamp;
-            if (this->mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+            logInfo(SUBSCRIBER, this->mp_reader->getGuid().entityId << ": taking seqNum" << change->sequenceNumber <<
+                    " from writer: " << change->writerGUID);
+            if (change->kind == ALIVE)
             {
-                info->ownershipStrength = wp->m_att.ownershipStrength;
+                this->mp_subImpl->getType()->deserialize(&change->serializedPayload, data);
             }
-            if (this->mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
-                change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
+            if (info != nullptr)
             {
-                bool is_key_protected = false;
+                info->sampleKind = change->kind;
+                info->sample_identity.writer_guid(change->writerGUID);
+                info->sample_identity.sequence_number(change->sequenceNumber);
+                info->sourceTimestamp = change->sourceTimestamp;
+                if (this->mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+                {
+                    info->ownershipStrength = wp->ownership_strength();
+                }
+                if (this->mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
+                        change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
+                {
+                    bool is_key_protected = false;
 #if HAVE_SECURITY
-                is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
+                    is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
 #endif
-                this->mp_subImpl->getType()->getKey(data, &change->instanceHandle, is_key_protected);
+                    this->mp_subImpl->getType()->getKey(data, &change->instanceHandle, is_key_protected);
+                }
+                info->iHandle = change->instanceHandle;
+                info->related_sample_identity = change->write_params.sample_identity();
             }
-            info->iHandle = change->instanceHandle;
-            info->related_sample_identity = change->write_params.sample_identity();
+            this->remove_change_sub(change);
+            return true;
         }
-        this->remove_change_sub(change);
-        return true;
     }
 
     return false;
@@ -516,7 +501,7 @@ bool SubscriberHistory::remove_change_sub(CacheChange_t* change)
         return false;
     }
 
-    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
     if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
         if (this->remove_change(change))
@@ -560,7 +545,7 @@ bool SubscriberHistory::set_next_deadline(
         logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
         return false;
     }
-    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
     if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
@@ -590,7 +575,7 @@ bool SubscriberHistory::get_next_deadline(
         logError(RTPS_HISTORY, "You need to create a Reader with this History before using it");
         return false;
     }
-    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
     if (mp_subImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {

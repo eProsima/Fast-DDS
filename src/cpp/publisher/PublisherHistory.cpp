@@ -66,7 +66,7 @@ PublisherHistory::~PublisherHistory()
 bool PublisherHistory::add_pub_change(
         CacheChange_t* change,
         WriteParams &wparams,
-        std::unique_lock<std::recursive_timed_mutex>& lock,
+        std::unique_lock<RecursiveTimedMutex>& lock,
         std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
 {
     if(m_isHistoryFull)
@@ -191,7 +191,7 @@ bool PublisherHistory::removeAllChange(size_t* removed)
 {
 
     size_t rem = 0;
-    std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
 
     while(m_changes.size()>0)
     {
@@ -220,7 +220,7 @@ bool PublisherHistory::removeMinChange()
         return false;
     }
 
-    std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
     if(m_changes.size()>0)
         return remove_change_pub(m_changes.front());
     return false;
@@ -235,7 +235,7 @@ bool PublisherHistory::remove_change_pub(CacheChange_t* change)
         return false;
     }
 
-    std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
     if(mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
         if(this->remove_change(change))
@@ -285,7 +285,7 @@ bool PublisherHistory::set_next_deadline(
         logError(RTPS_HISTORY,"You need to create a Writer with this History before using it");
         return false;
     }
-    std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
 
     if (mp_pubImpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
@@ -315,7 +315,7 @@ bool PublisherHistory::get_next_deadline(
         logError(RTPS_HISTORY,"You need to create a Writer with this History before using it");
         return false;
     }
-    std::lock_guard<std::recursive_timed_mutex> guard(*this->mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
 
     if(mp_pubImpl->getAttributes().topic.getTopicKind() == WITH_KEY)
     {

@@ -193,7 +193,7 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
 
     eprosima::fastrtps::rtps::security::HandshakeHandle* handshake_handle = nullptr;
     eprosima::fastrtps::rtps::security::HandshakeMessageToken *handshake_message = nullptr;
-    eprosima::fastrtps::rtps::ParticipantProxyData participant_data1;
+    eprosima::fastrtps::rtps::ParticipantProxyData participant_data1(eprosima::fastrtps::rtps::c_default_RTPSParticipantAllocationAttributes);
     participant_data1.m_guid = adjusted_participant_key1;
     eprosima::fastrtps::rtps::CDRMessage_t auxMsg;
     auxMsg.msg_endian = eprosima::fastrtps::rtps::BIGEND;
@@ -213,7 +213,7 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
 
     eprosima::fastrtps::rtps::security::HandshakeHandle* handshake_handle_reply = nullptr;
     eprosima::fastrtps::rtps::security::HandshakeMessageToken* handshake_message_reply = nullptr;
-    eprosima::fastrtps::rtps::ParticipantProxyData participant_data2;
+    eprosima::fastrtps::rtps::ParticipantProxyData participant_data2(eprosima::fastrtps::rtps::c_default_RTPSParticipantAllocationAttributes);
     participant_data2.m_guid = adjusted_participant_key2;
 
     auxMsg.length = 0;

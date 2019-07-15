@@ -33,6 +33,7 @@
 
 #include <map>
 #include <fstream>
+#include <chrono>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -329,7 +330,7 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
             //cout << "SEND COMMAND "<< command.m_command << endl;
             mp_commandpub->write((void*)&command);
             command.m_command = DEFAULT;
-            mp_commandsub->waitForUnreadMessage();
+            mp_commandsub->wait_for_unread_samples({20, 0});
             mp_commandsub->takeNextData((void*)&command, &info);
             //cout << "RECI COMMAND "<< command.m_command << endl;
             //cout << "Received command of type: "<< command << endl;
@@ -493,7 +494,7 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
         delete latency_t;
     }
 
-    mp_commandsub->waitForUnreadMessage();
+    mp_commandsub->wait_for_unread_samples({20, 0});
     if (mp_commandsub->takeNextData((void*)&command, &info))
     {
         //cout << "RECI COMMAND "<< command.m_command << endl;

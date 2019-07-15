@@ -20,6 +20,8 @@
 #define _RTPS_BUILTIN_DATA_READERPROXYDATA_H_
 
 #include <fastrtps/rtps/common/Guid.h>
+#include <fastrtps/rtps/common/RemoteLocators.hpp>
+#include <fastrtps/qos/ReaderQos.h>
 
 #if HAVE_SECURITY
 #include <fastrtps/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
@@ -29,16 +31,48 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+class NetworkFactory;
+
 class ReaderProxyData
 {
     public:
 
-        GUID_t guid() { return m_guid; }
+        ReaderProxyData(
+                size_t max_unicast_locators,
+                size_t max_multicast_locators)
+            : remote_locators_(max_unicast_locators, max_multicast_locators)
+        { }
+
+        const GUID_t& guid() const { return m_guid; }
+
+        GUID_t& guid() { return m_guid; }
+
+        void guid(const GUID_t& guid) { m_guid = guid; }
+
+        const RemoteLocatorList& remote_locators() const
+        {
+            return remote_locators_;
+        }
+
+        void clear () { }
+
+        void set_unicast_locators(const LocatorList_t& /*locators*/, const NetworkFactory& /*network*/) { }
+
+        void set_locators(
+                const RemoteLocatorList& /*locators*/,
+                const NetworkFactory& /*network*/,
+                bool /*use_multicast*/) { }
+
+        void topicKind(int /*kind*/) { }
 
 #if HAVE_SECURITY
         security::EndpointSecurityAttributesMask security_attributes_ = 0UL;
         security::PluginEndpointSecurityAttributesMask plugin_security_attributes_ = 0UL;
 #endif
+
+        bool m_expectsInlineQos;
+        ReaderQos m_qos;
+        RemoteLocatorList remote_locators_;
 
     private:
 

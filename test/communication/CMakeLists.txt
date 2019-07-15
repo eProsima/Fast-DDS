@@ -34,14 +34,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         )
     add_executable(SimpleCommunicationPublisher ${PUBLISHER_SOURCE})
     target_include_directories(SimpleCommunicationPublisher PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
-    target_link_libraries(SimpleCommunicationPublisher fastrtps fastcdr ${CMAKE_DL_LIBS})
+    target_link_libraries(SimpleCommunicationPublisher fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
     set(SUBSCRIBER_SOURCE ${COMMON_SOURCE}
         Subscriber.cpp
         )
     add_executable(SimpleCommunicationSubscriber ${SUBSCRIBER_SOURCE})
     target_include_directories(SimpleCommunicationSubscriber PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
-    target_link_libraries(SimpleCommunicationSubscriber fastrtps fastcdr ${CMAKE_DL_LIBS})
+    target_link_libraries(SimpleCommunicationSubscriber fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
     ###############################################################################
     # Necessary files

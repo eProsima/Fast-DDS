@@ -28,6 +28,10 @@ class Endpoint
     public:
 
         virtual ~Endpoint() = default;
+
+#if HAVE_SECURITY
+        bool supports_rtps_protection_;
+#endif
 };
 
 } // namespace rtps

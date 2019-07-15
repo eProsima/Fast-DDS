@@ -25,6 +25,7 @@
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include "../../../participant/RTPSParticipantImpl.h"
 #include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastrtps/rtps/writer/StatefulWriter.h>
 
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/rtps/history/WriterHistory.h>
@@ -38,6 +39,12 @@
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
+
+EDPServerPUBListener::EDPServerPUBListener(EDPServer* sedp) 
+    : EDPBasePUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators)
+    , sedp_(sedp) 
+{
+}
 
 void EDPServerPUBListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in)
 {
@@ -60,37 +67,7 @@ void EDPServerPUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
 
     if(change->kind == ALIVE)
     {
-        //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
-        WriterProxyData writerProxyData;
-        CDRMessage_t tempMsg(change_in->serializedPayload);
-
-        if(writerProxyData.readFromCDRMessage(&tempMsg))
-        {
-            change->instanceHandle = writerProxyData.key();
-            if(writerProxyData.guid().guidPrefix == sedp_->mp_RTPSParticipant->getGuid().guidPrefix)
-            {
-                logInfo(RTPS_EDP,"Message from own RTPSParticipant, ignoring");
-                reader_history->remove_change(change);
-                return;
-            }
-
-            //LOOK IF IS AN UPDATED INFORMATION
-            ParticipantProxyData pdata;
-            if(this->sedp_->mp_PDP->addWriterProxyData(&writerProxyData, pdata)) //ADDED NEW DATA
-            {
-                // At this point we can release reader lock, cause change is not used
-                reader->getMutex().unlock();
-
-                sedp_->pairing_writer_proxy_with_any_local_reader(&pdata, &writerProxyData);
-
-                // Take again the reader lock.
-                reader->getMutex().lock();
-            }
-            else //NOT ADDED BECAUSE IT WAS ALREADY THERE
-            {
-                logWarning(RTPS_EDP,"Received message from UNKNOWN RTPSParticipant, removing");
-            }
-        }
+        add_writer_from_change(reader, change, sedp_);
     }
     else
     {
@@ -125,6 +102,12 @@ void EDPServerPUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, Cache
     }
 }
 
+EDPServerSUBListener::EDPServerSUBListener(EDPServer* sedp)
+    : EDPBaseSUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators)
+    , sedp_(sedp)
+{
+}
+
 void EDPServerSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const CacheChange_t* const change_in)
 {
     CacheChange_t* change = (CacheChange_t*)change_in;
@@ -146,37 +129,7 @@ void EDPServerSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
 
     if(change->kind == ALIVE)
     {
-        //LOAD INFORMATION IN TEMPORAL WRITER PROXY DATA
-        ReaderProxyData readerProxyData;
-        CDRMessage_t tempMsg(change_in->serializedPayload);
-
-        if(readerProxyData.readFromCDRMessage(&tempMsg))
-        {
-            change->instanceHandle = readerProxyData.key();
-            if(readerProxyData.guid().guidPrefix == sedp_->mp_RTPSParticipant->getGuid().guidPrefix)
-            {
-                logInfo(RTPS_EDP,"From own RTPSParticipant, ignoring");
-                reader_history->remove_change(change);
-                return;
-            }
-
-            //LOOK IF IS AN UPDATED INFORMATION
-            ParticipantProxyData pdata;
-            if(this->sedp_->mp_PDP->addReaderProxyData(&readerProxyData, pdata)) //ADDED NEW DATA
-            {
-                // At this point we can release reader lock, cause change is not used
-                reader->getMutex().unlock();
-
-                sedp_->pairing_reader_proxy_with_any_local_writer(&pdata, &readerProxyData);
-
-                // Take again the reader lock.
-                reader->getMutex().lock();
-            }
-            else
-            {
-                logWarning(RTPS_EDP,"From UNKNOWN RTPSParticipant, removing");
-            }
-        }
+        add_reader_from_change(reader, change, sedp_);
     }
     else
     {

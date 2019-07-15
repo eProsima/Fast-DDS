@@ -16,8 +16,8 @@
  * @file PDPSimple.h
  */
 
-#ifndef RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
-#define RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
+#ifndef _RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
+#define _RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
 
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
@@ -49,4 +49,4 @@ class PDPSimple
 } //namespace fastrtps
 } //namespace eprosima
 
-#endif // RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
+#endif // _RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_

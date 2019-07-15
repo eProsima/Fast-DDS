@@ -22,6 +22,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "../../../attributes/RTPSParticipantAttributes.h"
+#include "../../../builtin/data/ReaderProxyData.h"
+#include "../../../builtin/data/WriterProxyData.h"
 #include "../../../common/Guid.h"
 
 namespace eprosima {
@@ -42,7 +44,6 @@ class PDP;
 class ParticipantProxyData;
 class RTPSWriter;
 class RTPSReader;
-class ReaderProxyData;
 class WriterProxyData;
 class RTPSParticipantImpl;
 
@@ -176,11 +177,11 @@ class EDP
 
         /**
          * Try to pair/unpair ReaderProxyData.
-         * @param pdata Pointer to the participant proxy data.
+         * @param participant_guid Identifier of the participant.
          * @param rdata Pointer to the ReaderProxyData object.
          * @return True.
          */
-        bool pairing_reader_proxy_with_any_local_writer(ParticipantProxyData* pdata, ReaderProxyData* rdata);
+        bool pairing_reader_proxy_with_any_local_writer(const GUID_t& participant_guid, ReaderProxyData* rdata);
 
 #if HAVE_SECURITY
         bool pairing_reader_proxy_with_local_writer(const GUID_t& local_writer, const GUID_t& remote_participant_guid,
@@ -192,11 +193,11 @@ class EDP
 
         /**
          * Try to pair/unpair WriterProxyData.
-         * @param pdata Pointer to the participant proxy data.
+         * @param participant_guid Identifier of the participant.
          * @param wdata Pointer to the WriterProxyData.
          * @return True.
          */
-        bool pairing_writer_proxy_with_any_local_reader(ParticipantProxyData* pdata, WriterProxyData* wdata);
+        bool pairing_writer_proxy_with_any_local_reader(const GUID_t& participant_guid, WriterProxyData* wdata);
 
 #if HAVE_SECURITY
         bool pairing_writer_proxy_with_local_reader(const GUID_t& local_reader, const GUID_t& remote_participant_guid,
@@ -224,22 +225,26 @@ class EDP
          * @param R Pointer to the Reader
          * @return True
          */
-        bool pairingReader(RTPSReader* R, const ParticipantProxyData& pdata, const ReaderProxyData& rdata);
+        bool pairingReader(RTPSReader* R, const GUID_t& participant_guid, const ReaderProxyData& rdata);
         /**l
          * Try to pair/unpair a local Writer against all possible readerProxy Data.
          * @param W Pointer to the Writer
          * @return True
          */
-        bool pairingWriter(RTPSWriter* W, const ParticipantProxyData& pdata, const WriterProxyData& wdata);
+        bool pairingWriter(RTPSWriter* W, const GUID_t& participant_guid, const WriterProxyData& wdata);
 
         static bool checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata);
 
         static bool checkTypeIdentifier(const eprosima::fastrtps::types::TypeIdentifier * wti,
                 const eprosima::fastrtps::types::TypeIdentifier * rti);
+
+        ReaderProxyData temp_reader_proxy_data_;
+        WriterProxyData temp_writer_proxy_data_;
 };
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
+
 #endif
 #endif /* EDP_H_ */

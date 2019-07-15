@@ -4,6 +4,27 @@
 
         <participant profile_name="test_participant_profile" is_default_profile="true">
             <rtps>
+                <allocation>
+                    <remote_locators>
+                        <max_unicast_locators>4</max_unicast_locators>
+                        <max_multicast_locators>1</max_multicast_locators>
+                    </remote_locators>
+                    <total_participants>
+                        <initial>10</initial>
+                        <maximum>20</maximum>
+                        <increment>2</increment>
+                    </total_participants>
+                    <total_readers>
+                        <initial>10</initial>
+                        <maximum>20</maximum>
+                        <increment>2</increment>
+                    </total_readers>
+                    <total_writers>
+                        <initial>10</initial>
+                        <maximum>20</maximum>
+                        <increment>2</increment>
+                    </total_writers>
+                </allocation>
                 <defaultUnicastLocatorList>
                     <locator>
                         <udpv4>
@@ -297,6 +318,11 @@
             <historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>
             <userDefinedID>13</userDefinedID>
             <entityID>31</entityID>
+            <matchedPublishersAllocation>
+                <initial>10</initial>
+                <maximum>20</maximum>
+                <increment>2</increment>
+            </matchedPublishersAllocation>
         </subscriber>
 
     </profiles>

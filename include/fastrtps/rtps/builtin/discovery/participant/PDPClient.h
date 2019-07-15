@@ -46,12 +46,16 @@ class PDPClient : public PDP
     //! Messages announcement ancillary
     RTPSMessageGroup_t _msgbuffer;
 
-    public:
+public:
+
     /**
      * Constructor
      * @param builtin Pointer to the BuiltinProcols object.
+     * @param allocation Participant allocation parameters.
      */
-    PDPClient(BuiltinProtocols* builtin);
+    PDPClient(
+            BuiltinProtocols* builtin,
+            const RTPSParticipantAllocationAttributes& allocation);
     ~PDPClient();
 
     void initializeParticipantProxyData(ParticipantProxyData* participant_data) override;

@@ -18,6 +18,7 @@
 #include <memory>
 #include <vector>
 #include "../rtps/common/Locator.h"
+#include "../rtps/common/LocatorSelector.hpp"
 #include "../rtps/common/PortParameters.h"
 #include "TransportDescriptorInterface.h"
 #include "TransportReceiverInterface.h"
@@ -81,6 +82,26 @@ public:
     //! Returns the locator describing the main (most general) channel that can write to the provided remote locator.
     virtual Locator_t RemoteToMainLocal(const Locator_t& remote) const = 0;
 
+    /**
+     * Transforms a remote locator into a locator optimized for local communications.
+     * 
+     * If the remote locator corresponds to one of the local interfaces, it is converted
+     * to the corresponding local address.
+     *
+     * @param [in]  remote_locator Locator to be converted.
+     * @param [out] result_locator Converted locator.
+     *
+     * @return false if the input locator is not supported/allowed by this transport, true otherwise.
+     */
+    virtual bool transform_remote_locator(
+            const Locator_t& remote_locator,
+            Locator_t& result_locator) const
+    {
+        (void)remote_locator;
+        (void)result_locator;
+        return false;
+    }
+
     //! Must open the channel that maps to/from the given locator. This method must allocate, reserve and mark
     //! any resources that are needed for said channel.
     virtual bool OpenOutputChannel(
@@ -103,7 +124,17 @@ public:
 
     virtual LocatorList_t NormalizeLocator(const Locator_t& locator) = 0;
 
-    virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) = 0;
+    /**
+     * Performs the locator selection algorithm for this transport.
+     *
+     * It basically consists of the following steps
+     *   - selector.transport_starts is called
+     *   - transport handles the selection state of each locator
+     *   - if a locator from an entry is selected, selector.select is called for that entry
+     *
+     * @param [in, out] selector Locator selector.
+     */
+    virtual void select_locators(LocatorSelector& selector) const = 0;
 
     virtual bool is_local_locator(const Locator_t& locator) const = 0;
 

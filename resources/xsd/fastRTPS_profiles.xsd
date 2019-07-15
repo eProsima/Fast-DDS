@@ -358,6 +358,22 @@
             <xs:element name="increment" type="uint32Type" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
+    
+    <xs:complexType name="remoteLocatorsAllocationConfigType">
+        <xs:all minOccurs="0">
+            <xs:element name="max_unicast_locators" type="uint32Type" minOccurs="0"/>
+            <xs:element name="max_multicast_locators" type="uint32Type" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="rtpsParticipantAllocationAttributesType">
+        <xs:all minOccurs="0">
+            <xs:element name="remote_locators" type="remoteLocatorsAllocationConfigType" minOccurs="0"/>
+            <xs:element name="total_participants" type="containerAllocationConfigType" minOccurs="0"/>
+            <xs:element name="total_readers" type="containerAllocationConfigType" minOccurs="0"/>
+            <xs:element name="total_writers" type="containerAllocationConfigType" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
 
     <xs:simpleType name="historyQosKindType">
         <xs:restriction base="xs:string">
@@ -614,6 +630,7 @@
 
     <xs:complexType name="rtpsParticipantAttributesType">
         <xs:all minOccurs="0">
+            <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType" minOccurs="0"/>
             <xs:element name="prefix" type="guid" minOccurs="0"/>
             <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0"/>
@@ -669,6 +686,7 @@
             <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
             <xs:element name="userDefinedID" type="int16Type" minOccurs="0"/>
             <xs:element name="entityID" type="int16Type" minOccurs="0"/>
+            <xs:element name="matchedPublishersAllocation" type="containerAllocationConfigType" minOccurs="0"/>
         </xs:all>
         <xs:attribute name="profile_name" type="stringType" use="required"/>
         <xs:attribute name="is_default_profile" type="boolean" use="optional"/>

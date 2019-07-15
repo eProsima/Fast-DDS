@@ -370,6 +370,44 @@ Locator_t UDPTransportInterface::RemoteToMainLocal(const Locator_t& remote) cons
     return mainLocal;
 }
 
+bool UDPTransportInterface::transform_remote_locator(
+        const Locator_t& remote_locator,
+        Locator_t& result_locator) const
+{
+    if (IsLocatorSupported(remote_locator) &&
+        is_locator_allowed(remote_locator))
+    {
+        result_locator = remote_locator;
+        if (IPLocator::isMulticast(result_locator))
+        {
+            return true;
+        }
+        else
+        {
+            Locator_t loopbackLocator;
+            fill_local_ip(loopbackLocator);
+            bool loopback_allowed = is_locator_allowed(loopbackLocator);
+
+            // Check is local interface.
+            auto localInterface = currentInterfaces.begin();
+            for (; localInterface != currentInterfaces.end(); ++localInterface)
+            {
+                if (compare_locator_ip(localInterface->locator, result_locator))
+                {
+                    if (loopback_allowed)
+                    {
+                        // Loopback locator
+                        fill_local_ip(result_locator);
+                    }
+                    break;
+                }
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
 bool UDPTransportInterface::send(
         const octet* send_buffer,
         uint32_t send_buffer_size,
@@ -423,123 +461,96 @@ bool UDPTransportInterface::send(
     return success;
 }
 
-LocatorList_t UDPTransportInterface::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)
+/**
+ * Invalidate all selector entries containing certain multicast locator.
+ *
+ * This function will process all entries from 'index' onwards and, if any
+ * of them has 'locator' on its multicast list, will invalidate them
+ * (i.e. their 'transport_should_process' flag will be changed to false).
+ *
+ * If this function returns true, the locator received should be selected.
+ * 
+ * @param entries   Selector entries collection to process
+ * @param index     Starting index to process
+ * @param locator   Locator to be searched
+ *
+ * @return true when at least one entry was invalidated, false otherwise
+ */
+static bool check_and_invalidate(
+        ResourceLimitedVector<LocatorSelectorEntry*>& entries,
+        size_t index,
+        const Locator_t& locator)
 {
-    LocatorList_t multicastResult, unicastResult;
-    std::vector<MultiUniLocatorsLinkage> pendingLocators;
-
-    for (auto& locatorList : locatorLists)
+    bool ret_val = false;
+    for (; index < entries.size(); ++index)
     {
-        LocatorListConstIterator it = locatorList.begin();
-        bool multicastDefined = false;
-        LocatorList_t pendingMulticast, pendingUnicast;
-
-        while (it != locatorList.end())
+        LocatorSelectorEntry* entry = entries[index];
+        if (entry->transport_should_process)
         {
-            assert((*it).kind == transport_kind_);
-
-            if (IPLocator::isMulticast(*it))
+            for (const Locator_t& loc : entry->multicast)
             {
-                // If the multicast locator is already chosen, not choose any unicast locator.
-                if (multicastResult.contains(*it))
+                if (loc == locator)
                 {
-                    multicastDefined = true;
-                    pendingUnicast.clear();
-                }
-                else
-                {
-                    // Search the multicast locator in pending locators.
-                    auto pending_it = pendingLocators.begin();
-                    bool found = false;
-
-                    while (pending_it != pendingLocators.end())
-                    {
-                        if ((*pending_it).multicast.contains(*it))
-                        {
-                            // Multicast locator was found, add it to final locators.
-                            multicastResult.push_back((*pending_it).multicast);
-                            pendingLocators.erase(pending_it);
-
-                            // Not choose any unicast
-                            multicastDefined = true;
-                            pendingUnicast.clear();
-                            found = true;
-
-                            break;
-                        }
-
-                        ++pending_it;
-                    };
-
-                    // If not found, store as pending multicast.
-                    if (!found)
-                        pendingMulticast.push_back(*it);
+                    entry->transport_should_process = false;
+                    ret_val = true;
+                    break;
                 }
             }
-            else
-            {
-                if (!multicastDefined)
-                {
-                    // Check is local interface.
-                    auto localInterface = currentInterfaces.begin();
-                    for (; localInterface != currentInterfaces.end(); ++localInterface)
-                    {
-                        if (compare_locator_ip(localInterface->locator, *it))
-                        {
-                            // Check 127.0.0.1 in the whitelist
-                            Locator_t loopbackLocator;
-                            fill_local_ip(loopbackLocator);
-                            if (is_locator_allowed(loopbackLocator))
-                            {
-                                // Loopback locator
-                                IPLocator::setPhysicalPort(loopbackLocator, IPLocator::getPhysicalPort(*it));
-                                pendingUnicast.push_back(loopbackLocator);
-                            }
-                            else
-                            {
-                                // Check interface in whitelist
-                                if (is_locator_allowed(*it))
-                                {
-                                    // Custom Loopback locator
-                                    pendingUnicast.push_back(*it);
-                                }
-                            }
-                            break;
-                        }
-                    }
-
-                    if (localInterface == currentInterfaces.end())
-                    {
-                        pendingUnicast.push_back(*it);
-                    }
-                }
-            }
-
-            ++it;
-        }
-
-        if (pendingMulticast.size() == 0)
-        {
-            unicastResult.push_back(pendingUnicast);
-        }
-        else if (pendingUnicast.size() == 0)
-        {
-            multicastResult.push_back(pendingMulticast);
-        }
-        else
-        {
-            pendingLocators.push_back(MultiUniLocatorsLinkage(std::move(pendingMulticast), std::move(pendingUnicast)));
         }
     }
 
-    LocatorList_t result(std::move(unicastResult));
-    result.push_back(multicastResult);
+    return ret_val;
+}
 
-    // Store pending unicast locators
-    for (auto link : pendingLocators)
-        result.push_back(link.unicast);
+void UDPTransportInterface::select_locators(LocatorSelector& selector) const
+{
+    ResourceLimitedVector<LocatorSelectorEntry*>& entries = selector.transport_starts();
 
-    return result;
+    for (size_t i = 0; i < entries.size(); ++i)
+    {
+        LocatorSelectorEntry* entry = entries[i];
+        if (entry->transport_should_process)
+        {
+            bool selected = false;
+
+            // First try to find a multicast locator which is at least on another list.
+            for (size_t j = 0; j < entry->multicast.size() && !selected; ++j)
+            {
+                if (IsLocatorSupported(entry->multicast[j]))
+                {
+                    if (check_and_invalidate(entries, i + 1, entry->multicast[j]))
+                    {
+                        entry->state.multicast.push_back(j);
+                        selected = true;
+                    }
+                    else if (entry->unicast.size() == 0)
+                    {
+                        entry->state.multicast.push_back(j);
+                        selected = true;
+                    }
+                }
+            }
+
+            // If we couldn't find a multicast locator, select all unicast locators
+            if (!selected)
+            {
+                for (size_t j = 0; j < entry->unicast.size(); ++j)
+                {
+                    if (IsLocatorSupported(entry->unicast[j].kind) && !selector.is_selected(entry->unicast[j]))
+                    {
+                        entry->state.unicast.push_back(j);
+                        selected = true;
+                    }
+                }
+            }
+
+            // Select this entry if necessary
+            if (selected)
+            {
+                selector.select(i);
+            }
+        }
+    }
 }
 
 bool UDPTransportInterface::fillMetatrafficMulticastLocator(Locator_t &locator,

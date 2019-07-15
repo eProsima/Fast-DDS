@@ -71,6 +71,21 @@ public:
    */
    virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
 
+    /**
+     * Transforms a remote locator into a locator optimized for local communications.
+     * 
+     * If the remote locator corresponds to one of the local interfaces, it is converted
+     * to the corresponding local address.
+     *
+     * @param [in]  remote_locator Locator to be converted.
+     * @param [out] result_locator Converted locator.
+     *
+     * @return false if the input locator is not supported/allowed by this transport, true otherwise.
+     */
+    virtual bool transform_remote_locator(
+            const Locator_t& remote_locator,
+            Locator_t& result_locator) const override;
+
    /**
    * Blocking Send through the specified channel. In both modes, using a localLocator of 0.0.0.0 will
    * send through all whitelisted interfaces provided the channel is open.
@@ -88,7 +103,20 @@ public:
            const Locator_t& remote_locator,
            bool only_multicast_purpose);
 
-   virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
+    /**
+     * Performs the locator selection algorithm for this transport.
+     *
+     * It basically consists of the following steps
+     *   - selector.transport_starts is called
+     *   - transport handles the selection state of each locator
+     *   - if a locator from an entry is selected, selector.select is called for that entry
+     *
+     * In the case of UDP, multicast locators are selected when present in more than one entry,
+     * otherwise unicast locators are selected.
+     * 
+     * @param [in, out] selector Locator selector.
+     */
+    virtual void select_locators(LocatorSelector& selector) const override;
 
     virtual bool fillMetatrafficMulticastLocator(Locator_t &locator,
         uint32_t metatraffic_multicast_port) const override;
@@ -120,7 +148,7 @@ protected:
     virtual bool compare_locator_ip_and_port(const Locator_t& lh, const Locator_t& rh) const = 0;
 
     virtual void endpoint_to_locator(asio::ip::udp::endpoint& endpoint, Locator_t& locator) = 0;
-    virtual void fill_local_ip(Locator_t& loc) = 0;
+    virtual void fill_local_ip(Locator_t& loc) const = 0;
 
     virtual asio::ip::udp::endpoint GenerateAnyAddressEndpoint(uint16_t port) = 0;
     virtual asio::ip::udp::endpoint generate_endpoint(uint16_t port) = 0;

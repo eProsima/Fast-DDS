@@ -16,11 +16,11 @@
  * @file RTPSParticipantImpl.h
  */
 
-#ifndef RTPSParticipantIMPL_H_
-#define RTPSParticipantIMPL_H_
+#ifndef _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
+#define _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <list>
 #include <sys/types.h>
 #include <mutex>
@@ -44,8 +44,10 @@
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
+#include <fastrtps/rtps/resources/ResourceEvent.h>
 
 #if HAVE_SECURITY
+#include <fastrtps/rtps/Endpoint.h>
 #include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include "../security/SecurityManager.h"
 #endif
@@ -62,7 +64,6 @@ namespace rtps
 {
 class RTPSParticipant;
 class RTPSParticipantListener;
-class ResourceEvent;
 class AsyncWriterThread;
 class BuiltinProtocols;
 struct CDRMessage_t;
@@ -179,12 +180,11 @@ public:
     void ResourceSemaphoreWait();
 
     //!Get Pointer to the Event Resource.
-    ResourceEvent& getEventResource();
+    ResourceEvent& getEventResource() { return mp_event_thr; }
 
     //!Send Method - Deprecated - Stays here for reference purposes
     bool sendSync(
             CDRMessage_t* msg,
-            Endpoint *pend,
             const Locator_t& destination_loc,
             std::chrono::steady_clock::time_point& max_blocking_time_point);
 
@@ -260,7 +260,7 @@ private:
     //! Sending resources. - DEPRECATED -Stays commented for reference purposes
     // ResourceSend* mp_send_thr;
     //! Event Resource
-    ResourceEvent* mp_event_thr;
+    ResourceEvent mp_event_thr;
     //! BuiltinProtocols of this RTPSParticipant
     BuiltinProtocols* mp_builtinProtocols;
     //!Semaphore to wait for the listen thread creation.
@@ -483,7 +483,8 @@ private:
           @param ApplyMutation - True if we want to create a Resource with a "similar" locator if the one we provide is unavailable
           */
         void createReceiverResources(LocatorList_t& Locator_list, bool ApplyMutation);
-        void createSenderResources(LocatorList_t& Locator_list, bool ApplyMutation);
+        void createSenderResources(const LocatorList_t& locator_list);
+        void createSenderResources(const Locator_t& locator);
 
         bool networkFactoryHasRegisteredTransports() const;
 
@@ -499,4 +500,4 @@ private:
 } /* namespace rtps */
 } /* namespace eprosima */
 #endif
-#endif /* RTPSParticipant_H_ */
+#endif //_RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_

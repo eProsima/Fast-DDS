@@ -21,22 +21,27 @@
 #include <algorithm>
 #include <mutex>
 #include <set>
-#include <memory>
 #include <atomic>
+
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+#include <fastrtps/rtps/writer/ReaderLocator.h>
+
 #include "../common/Types.h"
 #include "../common/Locator.h"
 #include "../common/SequenceNumber.h"
 #include "../common/CacheChange.h"
 #include "../common/FragmentNumber.h"
 #include "../attributes/WriterAttributes.h"
+#include "../attributes/RTPSParticipantAllocationAttributes.hpp"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
+
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
 class StatefulWriter;
-class NackSupressionDuration;
+class TimedEvent;
 
 /**
  * ReaderProxy class that helps to keep the state of a specific Reader with respect to the RTPSWriter.
@@ -50,17 +55,26 @@ public:
     /**
      * Constructor.
      * @param times WriterTimes to use in the ReaderProxy.
+     * @param loc_alloc Maximum number of remote locators to keep in the ReaderProxy.
      * @param writer Pointer to the StatefulWriter creating the reader proxy.
      */
     ReaderProxy(
             const WriterTimes& times,
+            const RemoteLocatorsAllocationAttributes& loc_alloc,
             StatefulWriter* writer);
 
     /**
      * Activate this proxy associating it to a remote reader.
-     * @param reader_attributes RemoteReaderAttributes of the reader for which to keep state.
+     * @param reader_attributes ReaderProxyData of the reader for which to keep state.
      */
-    void start(const RemoteReaderAttributes& reader_attributes);
+    void start(const ReaderProxyData& reader_attributes);
+
+    /**
+     * Update information about the remote reader.
+     * @param reader_attributes ReaderProxyData with updated information of the reader.
+     * @return true if data was modified, false otherwise.
+     */
+    bool update(const ReaderProxyData& reader_attributes);
 
     /**
      * Disable this proxy.
@@ -75,6 +89,11 @@ public:
     void add_change(
             const ChangeForReader_t& change,
             bool restart_nack_supression);
+
+    void add_change(
+            const ChangeForReader_t& change,
+            bool restart_nack_supression,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
     /**
      * Check if there are changes pending for this reader.
@@ -207,7 +226,7 @@ public:
      */
     inline const GUID_t& guid() const
     {
-        return reader_attributes_.guid;
+        return reader_attributes_.guid();
     }
 
     /**
@@ -216,7 +235,7 @@ public:
      */
     inline DurabilityKind_t durability_kind() const
     {
-        return reader_attributes_.endpoint.durabilityKind;
+        return reader_attributes_.m_qos.m_durability.durabilityKind();
     }
 
     /**
@@ -225,7 +244,7 @@ public:
      */
     inline bool expects_inline_qos() const
     {
-        return reader_attributes_.expectsInlineQos;
+        return reader_attributes_.m_expectsInlineQos;
     }
 
     /**
@@ -234,46 +253,16 @@ public:
      */
     inline bool is_reliable() const
     {
-        return reader_attributes_.endpoint.reliabilityKind == RELIABLE;
+        return reader_attributes_.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS;
     }
 
     /**
      * Get the attributes of the reader represented by this proxy.
      * @return the attributes of the reader represented by this proxy.
      */
-    inline const RemoteReaderAttributes& reader_attributes() const
+    inline const ReaderProxyData& reader_attributes() const
     {
         return reader_attributes_;
-    }
-
-    /**
-     * Get the locators that should be used to send data to the reader represented by this proxy.
-     * @return the locators that should be used to send data to the reader represented by this proxy.
-     */
-    inline const LocatorList_t& remote_locators() const
-    {
-        return reader_attributes_.endpoint.remoteLocatorList;
-    }
-
-    /**
-     * Get the locators that should be used to send data to the reader represented by this proxy.
-     * @return the locators that should be used to send data to the reader represented by this proxy.
-     */
-    inline const LocatorList_t& remote_locators_shrinked() const
-    {
-        return reader_attributes_.endpoint.unicastLocatorList.empty() ?
-            reader_attributes_.endpoint.multicastLocatorList :
-            reader_attributes_.endpoint.unicastLocatorList;
-    }
-
-    /**
-     * Get the GUID of the reader represented to this proxy as a const reference to a vector
-     * of GUID_t object containing just that single GUID. It is used as a temporary workaround
-     * before the API of RTPSMessageGroup is changed.
-     */
-    inline const std::vector<GUID_t>& guid_as_vector() const
-    {
-        return guid_as_vector_;
     }
 
     /**
@@ -333,24 +322,34 @@ public:
 
     /**
      * Check if there are gaps in the list of ChangeForReader_t.
-     * return True if there are gaps, else false.
+     * @return True if there are gaps, else false.
      */
     bool are_there_gaps();
+
+    LocatorSelectorEntry* locator_selector_entry()
+    {
+        return locator_info_.locator_selector_entry();
+    }
+
+    const RTPSMessageSenderInterface& message_sender() const
+    {
+        return locator_info_;
+    }
 
 private:
 
     //!Is this proxy active? I.e. does it have a remote reader associated?
     bool is_active_;
+    //!Reader locator information
+    ReaderLocator locator_info_;
     //!Attributes of the Remote Reader
-    RemoteReaderAttributes reader_attributes_;
+    ReaderProxyData reader_attributes_;
     //!Pointer to the associated StatefulWriter.
     StatefulWriter* writer_;
-    //!To fool RTPSMessageGroup when using this proxy as single destination
-    ResourceLimitedVector<GUID_t> guid_as_vector_;
     //!Set of the changes and its state.
     ResourceLimitedVector<ChangeForReader_t, std::true_type> changes_for_reader_;
     //! Timed Event to manage the delay to mark a change as UNACKED after sending it.
-    std::shared_ptr<NackSupressionDuration> nack_supression_event_;
+    TimedEvent* nack_supression_event_;
     //! Are timed events enabled?
     std::atomic_bool timers_enabled_;
     //! Last ack/nack count
@@ -384,6 +383,9 @@ private:
     bool requested_fragment_set(
             const SequenceNumber_t& seq_num,
             const FragmentNumberSet_t& frag_set);
+
+    void add_change(
+            const ChangeForReader_t& change);
 
     /**
      * @brief Find a change with the specified sequence number.

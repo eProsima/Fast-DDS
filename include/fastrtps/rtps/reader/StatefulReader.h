@@ -16,24 +16,30 @@
  * @file StatefulReader.h
  */
 
-#ifndef STATEFULREADER_H_
-#define STATEFULREADER_H_
+#ifndef _RTPS_READER_STATEFULREADER_H_
+#define _RTPS_READER_STATEFULREADER_H_
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "RTPSReader.h"
+#include "../../utils/collections/ResourceLimitedVector.hpp"
+#include "../common/CDRMessage_t.h"
+#include "../messages/RTPSMessageGroup.h"
+
 #include <mutex>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class WriterProxy;
+class RTPSMessageSenderInterface;
 
 /**
  * Class StatefulReader, specialization of RTPSReader than stores the state of the matched writers.
  * @ingroup READER_MODULE
  */
-class StatefulReader:public RTPSReader
+class StatefulReader : public RTPSReader
 {
     public:
 
@@ -45,33 +51,34 @@ class StatefulReader:public RTPSReader
 
         StatefulReader(
                 RTPSParticipantImpl*,
-                GUID_t& guid,
-                ReaderAttributes& att,
+                const GUID_t& guid,
+                const ReaderAttributes& att,
                 ReaderHistory* hist,
                 ReaderListener* listen = nullptr);
     public:
 
+
         /**
-         * Add a matched writer represented by a WriterProxyData object.
-         * @param wdata Pointer to the WPD object to add.
+         * Add a matched writer represented by its attributes.
+         * @param wdata Attributes of the writer to add.
          * @param persist If the Reader must try to recover Writer formered registered state
          * @return True if correctly added.
          */
-        bool matched_writer_add(RemoteWriterAttributes& wdata, bool persist = true) override;
+        bool matched_writer_add(const WriterProxyData& wdata, bool persist = true) override;
 
         /**
          * Remove a WriterProxyData from the matached writers.
-         * @param wdata Pointer to the WPD object.
+         * @param writer_guid GUID of the writer to remove.
          * @return True if correct.
          */
-        bool matched_writer_remove(const RemoteWriterAttributes& wdata) override;
+        bool matched_writer_remove(const GUID_t& writer_guid) override;
 
         /**
-         * Tells us if a specific Writer is matched against this reader
-         * @param wdata Pointer to the WriterProxyData object
+         * Tells us if a specific Writer is matched against this reader.
+         * @param writer_guid GUID of the writer to check.
          * @return True if it is matched.
          */
-        bool matched_writer_is_matched(const RemoteWriterAttributes& wdata) override;
+        bool matched_writer_is_matched(const GUID_t& writer_guid) override;
 
         /**
          * Look for a specific WriterProxy.
@@ -79,14 +86,16 @@ class StatefulReader:public RTPSReader
          * @param WP Pointer to pointer to a WriterProxy.
          * @return True if found.
          */
-        bool matched_writer_lookup(const GUID_t& writerGUID, WriterProxy** WP);
+        bool matched_writer_lookup(
+                const GUID_t& writerGUID,
+                WriterProxy** WP);
 
         /**
          * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
          * @param change Pointer to the CacheChange_t.
          * @return true if the reader accepts messages.
          */
-        bool processDataMsg(CacheChange_t *change) override;
+        bool processDataMsg(CacheChange_t* change) override;
 
         /**
          * Processes a new DATA FRAG message. Previously the message must have been accepted by function acceptMsgDirectedTo.
@@ -96,7 +105,7 @@ class StatefulReader:public RTPSReader
          * @return true if the reader accepts messages.
          */
         bool processDataFragMsg(
-                CacheChange_t *change,
+                CacheChange_t* change,
                 uint32_t sampleSize,
                 uint32_t fragmentStartingNum) override;
 
@@ -106,17 +115,17 @@ class StatefulReader:public RTPSReader
          * @return true if the reader accepts messages.
          */
         bool processHeartbeatMsg(
-                GUID_t &writerGUID,
+                const GUID_t& writerGUID,
                 uint32_t hbCount,
-                SequenceNumber_t &firstSN,
-                SequenceNumber_t &lastSN,
+                const SequenceNumber_t& firstSN,
+                const SequenceNumber_t& lastSN,
                 bool finalFlag,
                 bool livelinessFlag) override;
 
         bool processGapMsg(
-                GUID_t &writerGUID,
-                SequenceNumber_t &gapStart,
-                SequenceNumberSet_t &gapList) override;
+                const GUID_t& writerGUID,
+                const SequenceNumber_t& gapStart,
+                const SequenceNumberSet_t& gapList) override;
 
         /**
          * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
@@ -135,13 +144,18 @@ class StatefulReader:public RTPSReader
          * @param prox Pointer to the WriterProxy that adds the Change.
          * @return True if added.
          */
-        bool change_received(CacheChange_t* a_change, WriterProxy* prox);
+        bool change_received(
+                CacheChange_t* a_change,
+                WriterProxy* prox);
 
         /**
          * Get the RTPS participant
          * @return Associated RTPS participant
          */
-        inline RTPSParticipantImpl* getRTPSParticipant() const {return mp_RTPSParticipant;}
+        inline RTPSParticipantImpl* getRTPSParticipant() const
+        {
+            return mp_RTPSParticipant;
+        }
 
         /**
          * Read the next unread CacheChange_t from the history
@@ -151,7 +165,7 @@ class StatefulReader:public RTPSReader
          */
         bool nextUnreadCache(
                 CacheChange_t** change,
-                WriterProxy** wpout=nullptr) override;
+                WriterProxy** wpout = nullptr) override;
 
         /**
          * Take the next CacheChange_t from the history;
@@ -161,8 +175,7 @@ class StatefulReader:public RTPSReader
          */
         bool nextUntakenCache(
                 CacheChange_t** change,
-                WriterProxy** wpout=nullptr) override;
-
+                WriterProxy** wpout = nullptr) override;
 
         /**
          * Update the times parameters of the Reader.
@@ -170,17 +183,24 @@ class StatefulReader:public RTPSReader
          * @return True if correctly updated.
          */
         bool updateTimes(const ReaderTimes& times);
+
         /**
          *
          * @return Reference to the ReaderTimes.
          */
-        inline ReaderTimes& getTimes(){return m_times;};
+        inline ReaderTimes& getTimes()
+        {
+            return times_;
+        }
 
         /**
          * Get the number of matched writers
          * @return Number of matched writers
          */
-        inline size_t getMatchedWritersSize() const { return matched_writers.size(); }
+        inline size_t getMatchedWritersSize() const
+        {
+            return matched_writers_.size();
+        }
 
         /*!
          * @brief Returns there is a clean state with all Writers.
@@ -190,32 +210,80 @@ class StatefulReader:public RTPSReader
          */
         bool isInCleanState() override;
 
-        //! Acknack Count
-        uint32_t m_acknackCount;
-        //! NACKFRAG Count
-        uint32_t m_nackfragCount;
+        /**
+         * Sends an acknack message from this reader.
+         * @param writer Pointer to the info of the remote writer.
+         * @param sns Sequence number bitmap with the acknack information.
+         * @param sender Message sender interface.
+         * @param is_final Value for final flag.
+         */
+        void send_acknack(
+                const WriterProxy* writer,
+                const SequenceNumberSet_t& sns,
+                const RTPSMessageSenderInterface& sender,
+                bool is_final);
+
+        /**
+         * Sends an acknack message from this reader in response to a heartbeat.
+         * @param writer Pointer to the proxy representing the writer to send the acknack to.
+         * @param sender Message sender interface.
+         * @param heartbeat_was_final Final flag of the last received heartbeat.
+         */
+        void send_acknack(
+                const WriterProxy* writer,
+                const RTPSMessageSenderInterface& sender,
+                bool heartbeat_was_final);
+
+        /**
+         * Use the participant of this reader to send a message to certain locator.
+         * @param message Message to be sent.
+         * @param locator Destination locator.
+         * @param max_blocking_time_point Future time point where any blocking should end.
+         */
+        bool send_sync_nts(
+                CDRMessage_t* message,
+                const Locator_t& locator,
+                std::chrono::steady_clock::time_point& max_blocking_time_point);
 
     private:
 
-        bool acceptMsgFrom(GUID_t &entityGUID ,WriterProxy **wp);
+        bool acceptMsgFrom(
+                const GUID_t& entityGUID,
+                WriterProxy** wp) const;
 
         /*!
          * @remarks Nn thread-safe.
          */
-        bool findWriterProxy(const GUID_t& writerGUID, WriterProxy** wp);
+        bool findWriterProxy(
+                const GUID_t& writerGUID,
+                WriterProxy** wp) const;
 
         void NotifyChanges(WriterProxy* wp);
 
+        //! Acknack Count
+        uint32_t acknack_count_;
+        //! NACKFRAG Count
+        uint32_t nackfrag_count_;
         //!ReaderTimes of the StatefulReader.
-        ReaderTimes m_times;
-        //! Vector containing pointers to the matched writers.
-        std::vector<WriterProxy*> matched_writers;
+        ReaderTimes times_;
+        //! Vector containing pointers to all the active WriterProxies.
+        ResourceLimitedVector<WriterProxy*> matched_writers_;
+        //! Vector containing pointers to all the inactive, ready for reuse, WriterProxies.
+        ResourceLimitedVector<WriterProxy*> matched_writers_pool_;
+        //!
+        ResourceLimitedContainerConfig proxy_changes_config_;
         //! True to disable positive ACKs
         bool disable_positive_acks_;
+        //! False when being destroyed
+        bool is_alive_;
+        //! Message buffer used in the response.
+        RTPSMessageGroup_t message_buffer_;
 };
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
+
 #endif
-#endif /* STATEFULREADER_H_ */
+
+#endif //_RTPS_READER_STATEFULREADER_H_

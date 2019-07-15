@@ -24,11 +24,11 @@
 #include <fastrtps/rtps/security/common/ParticipantGenericMessage.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/common/SequenceNumber.h>
-#include "timedevent/HandshakeMessageTokenResent.h"
 #include <fastrtps/rtps/common/SerializedPayload.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastrtps/rtps/resources/TimedEvent.h>
 
 #include <map>
 #include <mutex>
@@ -58,8 +58,6 @@ struct EndpointSecurityAttributes;
 
 class SecurityManager
 {
-    friend class HandshakeMessageTokenResent;
-
     public:
 
         SecurityManager(RTPSParticipantImpl* participant);
@@ -189,7 +187,7 @@ class SecurityManager
 
                     SequenceNumber_t change_sequence_number_;
 
-                    HandshakeMessageTokenResent* event_;
+                    TimedEvent* event_;
 
                 private:
 
@@ -396,6 +394,8 @@ class SecurityManager
                 const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
                 SharedSecretHandle* shared_secret_handle);
 
+        void resend_handshake_message_token(const GUID_t& remote_participant_key);
+
         RTPSParticipantImpl* participant_;
         StatelessWriter* participant_stateless_message_writer_;
         WriterHistory* participant_stateless_message_writer_history_;
@@ -458,6 +458,10 @@ class SecurityManager
         std::map<GUID_t, DataHolderSeq> remote_reader_pending_messages_;
         std::list<std::tuple<ReaderProxyData, GUID_t, GUID_t>> remote_reader_pending_discovery_messages_;
         std::list<std::tuple<WriterProxyData, GUID_t, GUID_t>> remote_writer_pending_discovery_messages_;
+
+        std::mutex temp_data_lock_;
+        ReaderProxyData temp_reader_proxy_data_;
+        WriterProxyData temp_writer_proxy_data_;
 };
 
 } //namespace security

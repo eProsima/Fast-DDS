@@ -21,6 +21,8 @@
 #include <fastrtps/transport/tcp/RTCPMessageManager.h>
 #include <fastrtps/rtps/common/Locator.h>
 
+#include <asio.hpp>
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{

@@ -438,6 +438,16 @@ class XMLParser
         rtps::PortParameters& port,
         uint8_t ident);
 
+    RTPS_DllAPI static XMLP_ret getXMLParticipantAllocationAttributes(
+        tinyxml2::XMLElement* elem,
+        rtps::RTPSParticipantAllocationAttributes& allocation,
+        uint8_t ident);
+
+    RTPS_DllAPI static XMLP_ret getXMLRemoteLocatorsAllocationAttributes(
+        tinyxml2::XMLElement* elem,
+        rtps::RemoteLocatorsAllocationAttributes& allocation,
+        uint8_t ident);
+
     RTPS_DllAPI static XMLP_ret getXMLDiscoverySettings(
         tinyxml2::XMLElement* elem,
         rtps::DiscoverySettings& settings,

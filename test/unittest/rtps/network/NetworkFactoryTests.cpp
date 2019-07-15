@@ -12,12 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastrtps/rtps/network/NetworkFactory.h>
+
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastrtps/transport/UDPv6TransportDescriptor.h>
+#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+
+#include <fastrtps/rtps/network/NetworkFactory.h>
+
+#include <fastrtps/utils/IPLocator.h>
+
 #include <MockTransport.h>
 #include <gtest/gtest.h>
 #include <vector>
 
 using namespace std;
+using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 class NetworkTests: public ::testing::Test
@@ -356,6 +368,264 @@ void NetworkTests::HELPER_RegisterTransportWithKindAndChannels(int kind, unsigne
    networkFactoryUnderTest.RegisterTransport<MockTransport>(mockTransportDescriptor);
 }
 
+#define SHRINK_TEST_MAX_ENTRIES 4u
+#define SHRINK_TEST_MAX_UNICAST_LOCATORS 4u
+#define SHRINK_TEST_MAX_MULTICAST_LOCATORS 1u
+
+struct ShrinkLocatorCase_t
+{
+    ShrinkLocatorCase_t()
+    {
+    }
+
+    std::string name;
+    std::vector<LocatorList_t> input;
+    LocatorList_t output;
+
+    std::vector<LocatorSelectorEntry> temp_entries;
+
+    void clear(const char* case_name)
+    {
+        name = case_name;
+        input.clear();
+        output.clear();
+    }
+
+    void prepare_selector(LocatorSelector& selector)
+    {
+        uint32_t id = 1;
+        selector.clear();
+        temp_entries.clear();
+        temp_entries.reserve(input.size());
+        for (const LocatorList_t& loc_list : input)
+        {
+            temp_entries.emplace_back(SHRINK_TEST_MAX_UNICAST_LOCATORS, SHRINK_TEST_MAX_MULTICAST_LOCATORS);
+            LocatorSelectorEntry& entry = temp_entries.back();
+            entry.remote_guid.entityId = id++;
+            for (const Locator_t& loc : loc_list)
+            {
+                if (IPLocator::isMulticast(loc))
+                {
+                    entry.multicast.push_back(loc);
+                }
+                else
+                {
+                    entry.unicast.push_back(loc);
+                }
+            }
+
+            selector.add_entry(&entry);
+        }
+    }
+
+    void perform_selector_test(const NetworkFactory& network)
+    {
+        LocatorSelector selector(ResourceLimitedContainerConfig::fixed_size_configuration(SHRINK_TEST_MAX_ENTRIES));
+        prepare_selector(selector);
+        selector.reset(true);
+        network.select_locators(selector);
+        ASSERT_EQ(selector.selected_size(), output.size()) << "on test " << name;
+        selector.for_each(
+            [this](const Locator_t& locator)
+            {
+                ASSERT_TRUE(output.contains(locator));
+            });
+    }
+};
+
+void add_test_three_lists(
+    const char* case_name,
+    const LocatorList_t& list1,
+    const LocatorList_t& list2,
+    const LocatorList_t& list3,
+    LocatorList_t result,
+    std::vector<ShrinkLocatorCase_t>& cases)
+{
+    ShrinkLocatorCase_t test;
+
+    test.clear(case_name);
+    test.output = result;
+
+    test.input = { list1, list2, list3 };
+    cases.push_back(test);
+
+    test.input = { list1, list3, list2 };
+    cases.push_back(test);
+
+    test.input = { list2, list1, list3 };
+    cases.push_back(test);
+
+    test.input = { list2, list3, list1 };
+    cases.push_back(test);
+
+    test.input = { list3, list1, list2 };
+    cases.push_back(test);
+
+    test.input = { list3, list2, list1 };
+    cases.push_back(test);
+}
+
+void fill_blackbox_locators_test_cases(std::vector<ShrinkLocatorCase_t>& cases)
+{
+    ShrinkLocatorCase_t test;
+
+    Locator_t unicast1;
+    Locator_t unicast1_2;
+    Locator_t unicast2;
+    Locator_t unicast3;
+
+    Locator_t multicast1;
+    Locator_t multicast2;
+    Locator_t multicast3;
+
+    LocatorList_t list1;
+    LocatorList_t list2;
+    LocatorList_t list3;
+    LocatorList_t result;
+
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "1.1.1.1", 7400, unicast1);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "1.1.1.2", 7400, unicast1_2);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "1.1.2.1", 7400, unicast2);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "1.1.3.1", 7400, unicast3);
+
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "239.255.1.1", 7400, multicast1);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "239.255.1.2", 7400, multicast2);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "239.255.1.3", 7400, multicast3);
+
+    // Empty input should produce empty output
+    test.clear("Empty input");
+    cases.push_back(test);
+
+    // Single locator should be output as-is.
+    test.clear("Single UDP unicast");
+    test.output.push_back(unicast1);
+    test.input.push_back(test.output);
+    cases.push_back(test);
+
+    // Single locator should be output as-is.
+    test.clear("Single UDP multicast");
+    test.output.push_back(multicast1);
+    test.input.push_back(test.output);
+    cases.push_back(test);
+
+    // Single pair should select unicast.
+    test.clear("Single UDP list with {multicast, unicast}");
+    list1.clear();
+    list1.push_back(multicast1);
+    list1.push_back(unicast1);
+    test.input.push_back(list1);
+    test.output.push_back(unicast1);
+    cases.push_back(test);
+
+    // Check shrink of only one locator list unicast.
+    test.clear("Single UDP list with unicast");
+    list1.clear();
+    test.output.push_back(unicast1);
+    test.output.push_back(unicast1_2);
+    test.input.push_back(test.output);
+    cases.push_back(test);
+
+    // Check shrink of only one locator list with multicast and unicast.
+    test.clear("Single UDP list with multicast and unicast");
+    list1.clear();
+    list1.push_back(unicast1);
+    list1.push_back(multicast1);
+    list1.push_back(unicast1_2);
+    test.input.push_back(list1);
+    test.output.push_back(unicast1);
+    test.output.push_back(unicast1_2);
+    cases.push_back(test);
+
+    // Two sharing unicast.
+    test.clear("Two UDP lists sharing unicast");
+    list1.clear();
+    list2.clear();
+    list1.push_back(unicast1);
+    list1.push_back(unicast1_2);
+    list2.push_back(unicast1);
+    list2.push_back(unicast2);
+    test.input.push_back(list1);
+    test.input.push_back(list2);
+    test.output.push_back(unicast1);
+    test.output.push_back(unicast1_2);
+    test.output.push_back(unicast2);
+    cases.push_back(test);
+
+    // Three. Two use same multicast, the other unicast.
+    list1.clear();
+    list2.clear();
+    list3.clear();
+    result.clear();
+    list1.push_back(unicast1);
+    list1.push_back(multicast1);
+    list2.push_back(multicast1);
+    list2.push_back(unicast2);
+    list3.push_back(unicast3);
+    result.push_back(multicast1);
+    result.push_back(unicast3);
+    add_test_three_lists("Three UDP lists with shared multicast and unicast",
+        list1, list2, list3, result, cases);
+
+    // Three. Two use same multicast, the other another multicast.
+    list1.clear();
+    list2.clear();
+    list3.clear();
+    result.clear();
+    list1.push_back(unicast1);
+    list1.push_back(multicast1);
+    list2.push_back(multicast1);
+    list2.push_back(unicast2);
+    list3.push_back(unicast3);
+    list3.push_back(multicast3);
+    result.push_back(multicast1);
+    result.push_back(unicast3);
+    add_test_three_lists("Three UDP lists with shared multicast x2",
+        list1, list2, list3, result, cases);
+
+    // Three. One uses multicast, the others unicast
+    list1.clear();
+    list2.clear();
+    list3.clear();
+    result.clear();
+    list1.push_back(unicast1);
+    list1.push_back(multicast1);
+    list2.push_back(unicast2);
+    list3.push_back(unicast3);
+    result.push_back(unicast1);
+    result.push_back(unicast2);
+    result.push_back(unicast3);
+    add_test_three_lists("Three UDP lists with only one multicast",
+        list1, list2, list3, result, cases);
+
+    // Three using same multicast
+    list1.clear();
+    list2.clear();
+    list3.clear();
+    result.clear();
+    list1.push_back(multicast2);
+    list2.push_back(multicast2);
+    list3.push_back(multicast2);
+    list3.push_back(unicast3);
+    result.push_back(multicast2);
+    add_test_three_lists("Three UDP lists with same shared multicast",
+        list1, list2, list3, result, cases);
+}
+
+TEST_F(NetworkTests, LocatorShrink)
+{
+    std::vector<ShrinkLocatorCase_t> test_cases;
+    fill_blackbox_locators_test_cases(test_cases);
+
+    NetworkFactory f;
+    UDPv4TransportDescriptor udpv4;
+    f.RegisterTransport(&udpv4);
+    // TODO: Register more transports
+
+    for (ShrinkLocatorCase_t& test : test_cases)
+    {
+        test.perform_selector_test(f);
+    }
+}
 
 int main(int argc, char **argv)
 {

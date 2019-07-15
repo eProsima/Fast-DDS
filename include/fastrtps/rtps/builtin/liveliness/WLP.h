@@ -20,15 +20,20 @@
 #ifndef WLP_H_
 #define WLP_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include <vector>
+#include <mutex>
 
 #include "../../common/Time_t.h"
 #include "../../common/Locator.h"
 #include "../../common/Guid.h"
 #include "../../../qos/QosPolicies.h"
 
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 
 class ReaderQos;
 class WriterQos;
@@ -45,7 +50,7 @@ class RTPSWriter;
 class StatefulReader;
 class StatefulWriter;
 class ParticipantProxyData;
-class WLivelinessPeriodicAssertion;
+class TimedEvent;
 class WLPListener;
 class WriterHistory;
 class WriterProxyData;
@@ -57,7 +62,6 @@ class WriterProxyData;
 class WLP
 {
     friend class WLPListener;
-    friend class WLivelinessPeriodicAssertion;
     friend class StatefulReader;
     friend class StatelessReader;
 
@@ -133,22 +137,16 @@ public:
     bool assert_liveliness_manual_by_participant();
 
     /**
-     * Get the builtin protocols
-     * @return Builtin protocols
-     */
-    BuiltinProtocols* getBuiltinProtocols(){return mp_builtinProtocols;};
-
-    /**
      * Get the livelines builtin writer
      * @return stateful writer
      */
-    StatefulWriter* getBuiltinWriter();
+    StatefulWriter* builtin_writer();
 
     /**
-    * Get the livelines builtin writer's history
-    * @return writer history
-    */
-    WriterHistory* getBuiltinWriterHistory();
+     * Get the livelines builtin writer's history
+     * @return writer history
+     */
+    WriterHistory* builtin_writer_history();
 
 #if HAVE_SECURITY
     bool pairing_remote_reader_with_local_writer_after_security(const GUID_t& local_writer,
@@ -164,12 +162,6 @@ private:
      * @return true if correct.
      */
     bool createEndpoints();
-
-    /**
-     * Get the RTPS participant
-     * @return RTPS participant
-     */
-    inline RTPSParticipantImpl* getRTPSParticipant(){return mp_participant;}
 
     //! Minimum time among liveliness periods of automatic writers, in milliseconds
     double min_automatic_ms_;
@@ -190,9 +182,9 @@ private:
     //!Listener object.
     WLPListener* mp_listener;
     //!Pointer to the periodic assertion timer object for automatic liveliness writers
-    WLivelinessPeriodicAssertion* automatic_liveliness_assertion_;
+    TimedEvent* automatic_liveliness_assertion_;
     //!Pointer to the periodic assertion timer object for manual by participant liveliness writers
-    WLivelinessPeriodicAssertion* manual_liveliness_assertion_;
+    TimedEvent* manual_liveliness_assertion_;
     //! List of the writers using automatic liveliness.
     std::vector<RTPSWriter*> automatic_writers_;
     //! List of the writers using manual by participant liveliness.
@@ -209,6 +201,9 @@ private:
     LivelinessManager* pub_liveliness_manager_;
     //! A class used by readers in this participant to keep track of liveliness of matched writers
     LivelinessManager* sub_liveliness_manager_;
+
+    InstanceHandle_t automatic_instance_handle_;
+    InstanceHandle_t manual_by_participant_instance_handle_;
 
     /**
      * @brief A method invoked by pub_liveliness_manager_ to inform that a writer changed its liveliness
@@ -253,6 +248,23 @@ private:
             int32_t alive_change,
             int32_t not_alive_change);
 
+    /**
+     * Implements the automatic liveliness timed event
+     */
+    bool automatic_liveliness_assertion();
+
+    /**
+     * Implements the manual by participant liveliness timed event
+     */
+    bool participant_liveliness_assertion();
+
+    /**
+     * Adds a cache change to the WLP writer
+     * @param instance key of the change to add
+     * @return true if change is correctly added
+     */
+    bool send_liveliness_message(const InstanceHandle_t& instance);
+
 #if HAVE_SECURITY
     //!Pointer to the builtinRTPSParticipantMEssageWriter.
     StatefulWriter* mp_builtinWriterSecure;
@@ -269,10 +281,15 @@ private:
      */
     bool createSecureEndpoints();
 #endif
+
+    std::mutex temp_data_lock_;
+    ReaderProxyData temp_reader_proxy_data_;
+    WriterProxyData temp_writer_proxy_data_;
 };
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
+
 #endif
 #endif /* WLP_H_ */

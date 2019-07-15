@@ -22,7 +22,6 @@
 #include "../flowcontrol/ThroughputController.h"
 #include "../persistence/PersistenceService.h"
 
-#include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 #include <fastrtps/rtps/messages/MessageReceiver.h>
@@ -85,7 +84,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
         RTPSParticipant* par, RTPSParticipantListener* plisten)
     : m_att(PParam)
     , m_guid(guidP ,c_EntityId_RTPSParticipant)
-    , mp_event_thr(nullptr)
     , mp_builtinProtocols(nullptr)
     , mp_ResourceSemaphore(new Semaphore(0))
     , IdCounter(0)
@@ -132,8 +130,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     }
 
     mp_userParticipant->mp_impl = this;
-    mp_event_thr = new ResourceEvent();
-    mp_event_thr->init_thread(this);
+    mp_event_thr.init_thread();
 
     // Throughput controller, if the descriptor has valid values
     if (PParam.throughputController.bytesPerPeriod != UINT32_MAX && PParam.throughputController.periodMillisecs != 0)
@@ -302,7 +299,6 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
     delete(this->mp_userParticipant);
     send_resource_list_.clear();
 
-    delete(this->mp_event_thr);
     delete(this->mp_mutex);
 }
 
@@ -829,26 +825,21 @@ void RTPSParticipantImpl::createReceiverResources(LocatorList_t& Locator_list, b
     }
 }
 
-void RTPSParticipantImpl::createSenderResources(LocatorList_t& Locator_list, bool ApplyMutation)
+void RTPSParticipantImpl::createSenderResources(const LocatorList_t& locator_list)
 {
     std::unique_lock<std::timed_mutex> lock(m_send_resources_mutex_);
 
-    for (auto it_loc = Locator_list.begin(); it_loc != Locator_list.end(); ++it_loc)
+    for (auto it_loc = locator_list.begin(); it_loc != locator_list.end(); ++it_loc)
     {
-        //TODO With two transports mutation not work.
-        bool were_created = false;
-        uint32_t tries = 0;
-
-        do
-        {
-            if(tries > 0)
-            {
-                *it_loc = applyLocatorAdaptRule(*it_loc);
-            }
-            were_created = m_network_Factory.build_send_resources(send_resource_list_, *it_loc);
-            ++tries;
-        } while (!were_created && ApplyMutation && (tries <= m_att.builtin.mutation_tries));
+        m_network_Factory.build_send_resources(send_resource_list_, *it_loc);
     }
+}
+
+void RTPSParticipantImpl::createSenderResources(const Locator_t& locator)
+{
+    std::unique_lock<std::timed_mutex> lock(m_send_resources_mutex_);
+    
+    m_network_Factory.build_send_resources(send_resource_list_, locator);
 }
 
 bool RTPSParticipantImpl::deleteUserEndpoint(Endpoint* p_endpoint)
@@ -967,11 +958,6 @@ void RTPSParticipantImpl::normalize_endpoint_locators(EndpointAttributes& endpoi
     }
 }
 
-ResourceEvent& RTPSParticipantImpl::getEventResource()
-{
-    return *this->mp_event_thr;
-}
-
 std::vector<std::string> RTPSParticipantImpl::getParticipantNames() const
 {
     std::vector<std::string> participant_names;
@@ -985,7 +971,6 @@ std::vector<std::string> RTPSParticipantImpl::getParticipantNames() const
 
 bool RTPSParticipantImpl::sendSync(
         CDRMessage_t* msg,
-        Endpoint* /*pend*/,
         const Locator_t& destination_loc,
         std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
@@ -1149,8 +1134,7 @@ WLP* RTPSParticipantImpl::wlp()
 
 bool RTPSParticipantImpl::get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo)
 {
-    ParticipantProxyData pdata;
-    if (this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(writerGuid, returnedInfo, pdata))
+    if (this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(writerGuid, returnedInfo))
     {
         return true;
     }
@@ -1159,8 +1143,7 @@ bool RTPSParticipantImpl::get_remote_writer_info(const GUID_t& writerGuid, Write
 
 bool RTPSParticipantImpl::get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo)
 {
-    ParticipantProxyData pdata;
-    if (this->mp_builtinProtocols->mp_PDP->lookupReaderProxyData(readerGuid, returnedInfo, pdata))
+    if (this->mp_builtinProtocols->mp_PDP->lookupReaderProxyData(readerGuid, returnedInfo))
     {
         return true;
     }

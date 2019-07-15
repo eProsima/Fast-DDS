@@ -1,0 +1,5 @@
+{
+    "name": "fastrtps",
+    "type": "cmake",
+    "dependencies" : ["fastcdr", "FOONATHAN_MEMORY", "foonathan_memory_vendor"]
+}

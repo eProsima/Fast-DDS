@@ -46,42 +46,31 @@ bool EDPServer::createSEDPEndpoints()
 {
     WriterAttributes watt;
     ReaderAttributes ratt;
-    HistoryAttributes hatt;
+    HistoryAttributes reader_history_att;
+    HistoryAttributes writer_history_att;
     bool created = true;
     RTPSReader* raux = nullptr;
     RTPSWriter* waux = nullptr;
 
+    PDPServer* pPDP = dynamic_cast<PDPServer*>(mp_PDP);
+    assert(pPDP);
+
+    set_builtin_reader_history_attributes(reader_history_att);
+    set_builtin_writer_history_attributes(writer_history_att);
+    set_builtin_reader_attributes(ratt);
+    set_builtin_writer_attributes(watt);
+
+    watt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
+    watt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
+        pPDP->GetPersistenceFileName()));
+    watt.endpoint.durabilityKind = _durability;
+
     publications_listener_ = new EDPServerPUBListener(this);
     subscriptions_listener_ = new EDPServerSUBListener(this);
 
-    PDPServer * pPDP = dynamic_cast<PDPServer*>(mp_PDP);
-    assert(pPDP);
-
     if(m_discovery.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader)
     {
-        hatt.initialReservedCaches = edp_initial_reserved_caches;
-        hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
-        hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.writerHistoryMemoryPolicy;
-        publications_writer_.second = new WriterHistory(hatt);
-        //Wparam.pushMode = true;
-        watt.endpoint.reliabilityKind = RELIABLE;
-        watt.endpoint.topicKind = WITH_KEY;
-        watt.endpoint.unicastLocatorList = mp_PDP->getLocalParticipantProxyData()
-            ->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = mp_PDP->getLocalParticipantProxyData()
-            ->m_metatrafficMulticastLocatorList;
-        //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
-        watt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
-        watt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
-            pPDP->GetPersistenceFileName()));
-        watt.endpoint.durabilityKind = _durability;
-        watt.times.heartbeatPeriod = edp_heartbeat_period;
-        watt.times.nackResponseDelay = edp_nack_response_delay;
-        watt.times.nackSupressionDuration = edp_nack_supression_duration;
-        if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
-                mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
-            watt.mode = ASYNCHRONOUS_WRITER;
-
+        publications_writer_.second = new WriterHistory(writer_history_att);
         created &=this->mp_RTPSParticipant->createWriter(&waux, watt, publications_writer_.second,
                 publications_listener_, c_EntityId_SEDPPubWriter, true);
 
@@ -96,21 +85,7 @@ bool EDPServer::createSEDPEndpoints()
             publications_writer_.second = nullptr;
         }
 
-        hatt.initialReservedCaches = edp_initial_reserved_caches;
-        hatt.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
-        hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.readerHistoryMemoryPolicy;
-        subscriptions_reader_.second = new ReaderHistory(hatt);
-        ratt.expectsInlineQos = false;
-        ratt.endpoint.reliabilityKind = RELIABLE;
-        ratt.endpoint.topicKind = WITH_KEY;
-        ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()
-            ->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()
-            ->m_metatrafficMulticastLocatorList;
-        //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
-        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        ratt.times.heartbeatResponseDelay = edp_heartbeat_response_delay;
-
+        subscriptions_reader_.second = new ReaderHistory(reader_history_att);
         created &=this->mp_RTPSParticipant->createReader(&raux, ratt, subscriptions_reader_.second,
                 subscriptions_listener_, c_EntityId_SEDPSubReader, true);
 
@@ -127,21 +102,7 @@ bool EDPServer::createSEDPEndpoints()
     }
     if(m_discovery.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter)
     {
-        hatt.initialReservedCaches = edp_initial_reserved_caches;
-        hatt.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
-        hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.readerHistoryMemoryPolicy;
-        publications_reader_.second = new ReaderHistory(hatt);
-        ratt.expectsInlineQos = false;
-        ratt.endpoint.reliabilityKind = RELIABLE;
-        ratt.endpoint.topicKind = WITH_KEY;
-        ratt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()
-            ->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()
-            ->m_metatrafficMulticastLocatorList;
-        //ratt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
-        ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-        ratt.times.heartbeatResponseDelay = edp_heartbeat_response_delay;
-
+        publications_reader_.second = new ReaderHistory(writer_history_att);
         created &=this->mp_RTPSParticipant->createReader(&raux, ratt, publications_reader_.second,
                 publications_listener_, c_EntityId_SEDPPubReader, true);
 
@@ -157,29 +118,7 @@ bool EDPServer::createSEDPEndpoints()
             publications_reader_.second = nullptr;
         }
 
-        hatt.initialReservedCaches = edp_initial_reserved_caches;
-        hatt.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
-        hatt.memoryPolicy = mp_PDP->mp_builtin->m_att.writerHistoryMemoryPolicy;
-        subscriptions_writer_.second = new WriterHistory(hatt);
-        //Wparam.pushMode = true;
-        watt.endpoint.reliabilityKind = RELIABLE;
-        watt.endpoint.topicKind = WITH_KEY;
-        watt.endpoint.unicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()
-            ->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = this->mp_PDP->getLocalParticipantProxyData()
-            ->m_metatrafficMulticastLocatorList;
-        //watt.endpoint.remoteLocatorList = m_discovery.initialPeersList;
-        watt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
-        watt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
-            pPDP->GetPersistenceFileName()));
-        watt.endpoint.durabilityKind = _durability;
-        watt.times.heartbeatPeriod= edp_heartbeat_period;
-        watt.times.nackResponseDelay = edp_nack_response_delay;
-        watt.times.nackSupressionDuration = edp_nack_supression_duration;
-        if(mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
-                mp_RTPSParticipant->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
-            watt.mode = ASYNCHRONOUS_WRITER;
-
+        subscriptions_writer_.second = new WriterHistory(writer_history_att);
         created &=this->mp_RTPSParticipant->createWriter(&waux, watt, subscriptions_writer_.second,
                 subscriptions_listener_, c_EntityId_SEDPSubWriter, true);
 
@@ -233,7 +172,7 @@ bool EDPServer::trimWriterHistory(
 
     // traverse the WriterHistory searching CacheChanges_t with demised keys
     std::forward_list<CacheChange_t*> removal;
-    std::lock_guard<std::recursive_timed_mutex> guardW(writer.getMutex());
+    std::lock_guard<RecursiveTimedMutex> guardW(writer.getMutex());
 
     std::copy_if(history.changesBegin(), history.changesBegin(), std::front_inserter(removal),
         [_demises](const CacheChange_t* chan) 
@@ -268,7 +207,7 @@ bool EDPServer::addEndpointFromHistory(
     WriterHistory& history,
     CacheChange_t& c)
 {
-    std::lock_guard<std::recursive_timed_mutex> guardW(writer.getMutex());
+    std::lock_guard<RecursiveTimedMutex> guardW(writer.getMutex());
     CacheChange_t * pCh = nullptr;
 
     // validate the sample, if no sample data update it

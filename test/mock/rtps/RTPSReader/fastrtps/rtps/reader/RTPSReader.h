@@ -24,6 +24,7 @@
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/attributes/WriterAttributes.h>
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
 #include <gmock/gmock.h>
 
@@ -37,7 +38,7 @@ class RTPSReader : public Endpoint
 
         RTPSReader() {}
 
-        RTPSReader(ReaderHistory* history, std::recursive_timed_mutex* mutex)
+        RTPSReader(ReaderHistory* history, RecursiveTimedMutex* mutex)
         {
             history->mp_reader = this;
             history->mp_mutex = mutex;
@@ -45,9 +46,10 @@ class RTPSReader : public Endpoint
 
         virtual ~RTPSReader() = default;
 
-        virtual bool matched_writer_add(RemoteWriterAttributes& wdata) = 0;
 
-        virtual bool matched_writer_remove(RemoteWriterAttributes& wdata) = 0;
+        virtual bool matched_writer_add(const WriterProxyData& wdata) = 0;
+
+        virtual bool matched_writer_remove(const GUID_t& wdata) = 0;
 
         MOCK_METHOD1(change_removed_by_history, bool(CacheChange_t* change));
 

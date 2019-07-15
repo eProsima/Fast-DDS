@@ -20,6 +20,8 @@
 #define _RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
 
 #include <fastrtps/rtps/common/Guid.h>
+#include <fastrtps/rtps/common/RemoteLocators.hpp>
+#include <fastrtps/qos/WriterQos.h>
 
 #if HAVE_SECURITY
 #include <fastrtps/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
@@ -29,20 +31,53 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+class NetworkFactory;
+
 class WriterProxyData
 {
     public:
 
-        GUID_t guid() { return m_guid; }
+        WriterProxyData(
+                size_t max_unicast_locators,
+                size_t max_multicast_locators) 
+            : remote_locators_(max_unicast_locators, max_multicast_locators)
+        { }
+
+        const GUID_t& guid() const { return m_guid; }
+
+        GUID_t& guid() { return m_guid; }
+
+        void guid (const GUID_t& guid) { m_guid = guid; }
+
+        void clear() { }
+
+        void persistence_guid(const GUID_t& /*guid*/) { }
+
+        void set_unicast_locators(const LocatorList_t& /*locators*/, const NetworkFactory& /*network*/) { }
+
+        void set_locators(
+                const RemoteLocatorList& /*locators*/,
+                const NetworkFactory& /*network*/,
+                bool /*use_multicast*/) { }
+
+        void topicKind (int /*kind*/) { }
+
+        const RemoteLocatorList& remote_locators() const
+        {
+            return remote_locators_;
+        }
 
 #if HAVE_SECURITY
         security::EndpointSecurityAttributesMask security_attributes_ = 0UL;
         security::PluginEndpointSecurityAttributesMask plugin_security_attributes_ = 0UL;
 #endif
 
+        WriterQos m_qos;
+
     private:
 
         GUID_t m_guid;
+        RemoteLocatorList remote_locators_;
 };
 
 } // namespace rtps

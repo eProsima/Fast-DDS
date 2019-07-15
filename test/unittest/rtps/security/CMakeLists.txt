@@ -34,14 +34,17 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Token.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ReaderQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/qos/WriterQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/exceptions/Exception.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/SecurityManager.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/exceptions/SecurityException.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/timedevent/HandshakeMessageTokenResent.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityPluginFactory/rtps/security/SecurityPluginFactory.cpp
             )
 
         add_executable(SecurityAuthentication ${SOURCES_SECURITY_TEST_SOURCE}
+            ${CMAKE_CURRENT_SOURCE_DIR}/SecurityTests.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/SecurityInitializationTests.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/SecurityValidationRemoteTests.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/SecurityHandshakeProcessTests.cpp)
@@ -70,10 +73,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderProxyData
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyData
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/NetworkFactory
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(SecurityAuthentication ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES})
+        target_link_libraries(SecurityAuthentication fastcdr ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES})
         add_gtest(SecurityAuthentication
             SOURCES
             ${CMAKE_CURRENT_SOURCE_DIR}/SecurityInitializationTests.cpp

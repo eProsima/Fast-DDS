@@ -20,7 +20,9 @@
 
 #include <fastrtps/rtps/common/Guid.h>
 #include <fastrtps/rtps/common/Locator.h>
+#include <fastrtps/rtps/common/RemoteLocators.hpp>
 #include <fastrtps/rtps/common/Token.h>
+#include <fastrtps/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastrtps/qos/ParameterList.h>
 
 #if HAVE_SECURITY
@@ -35,7 +37,12 @@ class ParticipantProxyData
 {
     public:
 
-        ParticipantProxyData() : m_availableBuiltinEndpoints(0), m_VendorId(c_VendorId_Unknown) {}
+        ParticipantProxyData(const RTPSParticipantAllocationAttributes& allocation = c_default_RTPSParticipantAllocationAttributes)
+            : m_availableBuiltinEndpoints(0)
+            , metatraffic_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
+            , m_VendorId(c_VendorId_Unknown) 
+        {}
+
         ~ParticipantProxyData()
         {
         }
@@ -45,8 +52,7 @@ class ParticipantProxyData
 
         GUID_t m_guid;
         uint32_t m_availableBuiltinEndpoints;
-        LocatorList_t m_metatrafficUnicastLocatorList;
-        LocatorList_t m_metatrafficMulticastLocatorList;
+        RemoteLocatorList metatraffic_locators;
         VendorId_t m_VendorId;
 #if HAVE_SECURITY
         IdentityToken identity_token_;

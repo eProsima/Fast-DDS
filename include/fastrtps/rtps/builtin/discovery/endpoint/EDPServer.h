@@ -117,13 +117,13 @@ class EDPServer : public EDPSimple
     //! Callback to remove unnecesary WriterHistory info
     bool trimPUBWriterHistory()
     {
-        return trimWriterHistory<std::vector<WriterProxyData*>>(_PUBdemises,
+        return trimWriterHistory<ResourceLimitedVector<WriterProxyData*>>(_PUBdemises,
             *publications_writer_.first, *publications_writer_.second, &ParticipantProxyData::m_writers);
     }
 
     bool trimSUBWriterHistory()
     {
-        return trimWriterHistory<std::vector<ReaderProxyData*>>(_SUBdemises,
+        return trimWriterHistory<ResourceLimitedVector<ReaderProxyData*>>(_SUBdemises,
             *subscriptions_writer_.first, *subscriptions_writer_.second, &ParticipantProxyData::m_readers);
     }
 
@@ -177,16 +177,8 @@ class EDPServer : public EDPSimple
 
 };
 
-// Default configuration values for EDP entities.
- extern const Duration_t edp_heartbeat_period;
- extern const Duration_t edp_nack_response_delay;
- extern const Duration_t edp_nack_supression_duration;
- extern const Duration_t edp_heartbeat_response_delay;
-
- extern const int32_t edp_initial_reserved_caches;
-
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif

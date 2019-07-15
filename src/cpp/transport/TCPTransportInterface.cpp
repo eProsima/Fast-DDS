@@ -24,7 +24,6 @@
 #include <fastrtps/transport/TCPChannelResourceSecure.h>
 #include <fastrtps/transport/TCPAcceptorSecure.h>
 #endif
-#include "timedevent/TCPKeepAliveEvent.hpp"
 
 #include <asio/steady_timer.hpp>
 #include <utility>
@@ -107,7 +106,7 @@ TCPTransportInterface::TCPTransportInterface(int32_t transport_kind)
 #if TLS_FOUND
     , ssl_context_(asio::ssl::context::sslv23)
 #endif
-    , keep_alive_event_(nullptr)
+    , keep_alive_event_(io_service_timers_)
 {
 }
 
@@ -120,13 +119,10 @@ void TCPTransportInterface::clean()
     assert(receiver_resources_.size() == 0);
     alive_.store(false);
 
-    if(keep_alive_event_ != nullptr)
-    {
-        delete keep_alive_event_;
-        io_service_timers_.stop();
-        io_service_timers_thread_->join();
-        io_service_timers_thread_ = nullptr;
-    }
+    keep_alive_event_.cancel();
+    io_service_timers_.stop();
+    io_service_timers_thread_->join();
+    io_service_timers_thread_ = nullptr;
 
     {
         std::vector<std::shared_ptr<TCPChannelResource>> channels;
@@ -391,9 +387,6 @@ bool TCPTransportInterface::init()
 #endif
             io_service_timers_.run();
         });
-        keep_alive_event_ = new TCPKeepAliveEvent(*this, io_service_timers_, *io_service_timers_thread_.get(),
-            configuration()->keep_alive_frequency_ms);
-        keep_alive_event_->restart_timer();
     }
 
     return true;
@@ -446,6 +439,19 @@ Locator_t TCPTransportInterface::RemoteToMainLocal(const Locator_t& remote) cons
     return mainLocal;
 }
 
+bool TCPTransportInterface::transform_remote_locator(
+    const Locator_t& remote_locator,
+    Locator_t& result_locator) const
+{
+    if (IsLocatorSupported(remote_locator) &&
+        is_locator_allowed(remote_locator))
+    {
+        result_locator = remote_locator;
+        return true;
+    }
+
+    return false;
+}
 
 void TCPTransportInterface::CloseOutputChannel(std::shared_ptr<TCPChannelResource>& channel)
 {
@@ -1042,45 +1048,31 @@ bool TCPTransportInterface::send(
     return success;
 }
 
-LocatorList_t TCPTransportInterface::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)
+void TCPTransportInterface::select_locators(LocatorSelector& selector) const
 {
-    LocatorList_t unicastResult;
-    for (const LocatorList_t& locatorList : locatorLists)
+    ResourceLimitedVector<LocatorSelectorEntry*>& entries =  selector.transport_starts();
+
+    for (size_t i = 0; i < entries.size(); ++i)
     {
-        LocatorListConstIterator it = locatorList.begin();
-        LocatorList_t pendingUnicast;
-
-        while (it != locatorList.end())
+        LocatorSelectorEntry* entry = entries[i];
+        if (entry->transport_should_process)
         {
-            assert((*it).kind == transport_kind_);
-
-            // Check is local interface.
-            auto localInterface = current_interfaces_.begin();
-            for (; localInterface != current_interfaces_.end(); ++localInterface)
+            bool selected = false;
+            for (size_t j = 0; j < entry->unicast.size(); ++j)
             {
-                if (compare_locator_ip(localInterface->locator, *it))
+                if (IsLocatorSupported(entry->unicast[j]) && !selector.is_selected(entry->unicast[j]))
                 {
-                    // Loopback locator
-                    Locator_t loopbackLocator;
-                    fill_local_ip(loopbackLocator);
-                    IPLocator::setPhysicalPort(loopbackLocator, IPLocator::getPhysicalPort(*it));
-                    IPLocator::setLogicalPort(loopbackLocator, IPLocator::getLogicalPort(*it));
-                    pendingUnicast.push_back(loopbackLocator);
-                    break;
+                    entry->state.unicast.push_back(j);
+                    selected = true;
                 }
             }
 
-            if (localInterface == current_interfaces_.end())
-                pendingUnicast.push_back(*it);
-
-            ++it;
+            if (selected)
+            {
+                selector.select(i);
+            }
         }
-
-        unicastResult.push_back(pendingUnicast);
     }
-
-    LocatorList_t result(std::move(unicastResult));
-    return result;
 }
 
 void TCPTransportInterface::SocketAccepted(

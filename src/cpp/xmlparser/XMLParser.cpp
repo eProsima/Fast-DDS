@@ -2613,6 +2613,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
     /*
         <xs:complexType name="rtpsParticipantAttributesType">
             <xs:all minOccurs="0">
+                <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType" minOccurs="0"/>
                 <xs:element name="prefix" type="guid" minOccurs="0"/>
                 <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0"/>
@@ -2653,94 +2654,131 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
     {
         name = p_aux0->Name();
 
-        if (strcmp(name, PREFIX) == 0)
+        if (strcmp(name, ALLOCATION) == 0)
+        {
+            // allocation
+            if (XMLP_ret::XML_OK != 
+                    getXMLParticipantAllocationAttributes(p_aux0, participant_node.get()->rtps.allocation, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, PREFIX) == 0)
         {
             // prefix
             if (XMLP_ret::XML_OK !=
                 getXMLguidPrefix(p_aux0, participant_node.get()->rtps.prefix, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, DEF_UNI_LOC_LIST) == 0)
         {
             // defaultUnicastLocatorList
             if (XMLP_ret::XML_OK !=
                 getXMLLocatorList(p_aux0, participant_node.get()->rtps.defaultUnicastLocatorList, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, DEF_MULTI_LOC_LIST) == 0)
         {
             // defaultMulticastLocatorList
             if (XMLP_ret::XML_OK !=
                 getXMLLocatorList(p_aux0, participant_node.get()->rtps.defaultMulticastLocatorList, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, SEND_SOCK_BUF_SIZE) == 0)
         {
             // sendSocketBufferSize - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &participant_node.get()->rtps.sendSocketBufferSize, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, LIST_SOCK_BUF_SIZE) == 0)
         {
             // listenSocketBufferSize - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &participant_node.get()->rtps.listenSocketBufferSize, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, BUILTIN) == 0)
         {
             // builtin
             if (XMLP_ret::XML_OK != getXMLBuiltinAttributes(p_aux0, participant_node.get()->rtps.builtin, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, PORT) == 0)
         {
             // port
             if (XMLP_ret::XML_OK != getXMLPortParameters(p_aux0, participant_node.get()->rtps.port, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, USER_DATA) == 0)
         {
-            // TODO: userData
+            // userData
             if (XMLP_ret::XML_OK != getXMLOctetVector(p_aux0, participant_node.get()->rtps.userData, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, PART_ID) == 0)
         {
             // participantID - int32Type
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &participant_node.get()->rtps.participantID, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, THROUGHPUT_CONT) == 0)
         {
             // throughputController
             if (XMLP_ret::XML_OK !=
                 getXMLThroughputController(p_aux0, participant_node.get()->rtps.throughputController, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, USER_TRANS) == 0)
         {
             // userTransports
             if (XMLP_ret::XML_OK != getXMLTransports(p_aux0, participant_node.get()->rtps.userTransports, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, USE_BUILTIN_TRANS) == 0)
         {
             // useBuiltinTransports - boolType
             if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &participant_node.get()->rtps.useBuiltinTransports, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, PROPERTIES_POLICY) == 0)
         {
             // propertiesPolicy
             if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux0, participant_node.get()->rtps.properties, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, NAME) == 0)
         {
             // name - stringType
             std::string s;
             if (XMLP_ret::XML_OK != getXMLString(p_aux0, &s, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             participant_node.get()->rtps.setName(s.c_str());
         }
         else
@@ -2910,62 +2948,85 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Subsc
         {
             // topic
             if (XMLP_ret::XML_OK != getXMLTopicAttributes(p_aux0, subscriber_node.get()->topic, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, QOS) == 0)
         {
             // qos
             if (XMLP_ret::XML_OK != getXMLReaderQosPolicies(p_aux0, subscriber_node.get()->qos, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, TIMES) == 0)
         {
             // times
             if (XMLP_ret::XML_OK != getXMLReaderTimes(p_aux0, subscriber_node.get()->times, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, UNI_LOC_LIST) == 0)
         {
             // unicastLocatorList
             if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, subscriber_node.get()->unicastLocatorList, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, MULTI_LOC_LIST) == 0)
         {
             // multicastLocatorList
             if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, subscriber_node.get()->multicastLocatorList, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, REM_LOC_LIST) == 0)
         {
             // remote LocatorList
             if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, subscriber_node.get()->remoteLocatorList, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, EXP_INLINE_QOS) == 0)
         {
             // expectsInlineQos - boolType
             if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &subscriber_node.get()->expectsInlineQos, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, HIST_MEM_POLICY) == 0)
         {
             // historyMemoryPolicy
-            if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(p_aux0, subscriber_node.get()->historyMemoryPolicy, ident))
+            if (XMLP_ret::XML_OK != getXMLHistoryMemoryPolicy(
+                    p_aux0,
+                    subscriber_node.get()->historyMemoryPolicy,
+                    ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, PROPERTIES_POLICY) == 0)
         {
             // propertiesPolicy
             if (XMLP_ret::XML_OK != getXMLPropertiesPolicy(p_aux0, subscriber_node.get()->properties, ident))
+            {
                 return XMLP_ret::XML_ERROR;
+            }
         }
         else if (strcmp(name, USER_DEF_ID) == 0)
         {
             // userDefinedID - int16Type
             int i = 0;
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             subscriber_node.get()->setUserDefinedID(static_cast<uint8_t>(i));
         }
         else if (strcmp(name, ENTITY_ID) == 0)
@@ -2973,8 +3034,21 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Subsc
             // entityID - int16Type
             int i = 0;
             if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+            {
                 return XMLP_ret::XML_ERROR;
+            }
             subscriber_node.get()->setEntityID(static_cast<uint8_t>(i));
+        }
+        else if (strcmp(name, MATCHED_PUBLISHERS_ALLOCATION) == 0)
+        {
+            // matchedPublishersAllocation - containerAllocationConfigType
+            if (XMLP_ret::XML_OK != getXMLContainerAllocationConfig(
+                    p_aux0,
+                    subscriber_node.get()->matched_publisher_allocation,
+                    ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {

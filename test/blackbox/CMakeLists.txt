@@ -77,7 +77,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         add_executable(BlackboxTests ${BLACKBOXTESTS_SOURCE})
         target_compile_definitions(BlackboxTests PRIVATE)
         target_include_directories(BlackboxTests PRIVATE ${GTEST_INCLUDE_DIRS})
-        target_link_libraries(BlackboxTests fastrtps fastcdr ${GTEST_LIBRARIES})
+        target_link_libraries(BlackboxTests fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
         add_gtest(BlackboxTests SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
             ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
             "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"

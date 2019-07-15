@@ -34,25 +34,24 @@ namespace fastrtps{
 namespace rtps {
 
 
- DSClientEvent::DSClientEvent(PDPClient* p_PDP,
-        double interval):
-    TimedEvent(p_PDP->getRTPSParticipant()->getEventResource().getIOService(),
-            p_PDP->getRTPSParticipant()->getEventResource().getThread(), interval),
-    mp_PDP(p_PDP)
-    {
-
-    }
+DSClientEvent::DSClientEvent(
+        PDPClient* p_PDP,
+        double interval)
+    : TimedEvent(p_PDP->getRTPSParticipant()->getEventResource(), 
+        [this](EventCode code)
+        {
+            return event(code);
+        }, interval)
+    , mp_PDP(p_PDP)
+{
+}
 
  DSClientEvent::~DSClientEvent()
 {
-    destroy();
 }
 
-void DSClientEvent::event(EventCode code, const char* msg)
+bool DSClientEvent::event(EventCode code)
 {
-    // Unused in release mode.
-    (void)msg;
-
     if(code == EVENT_SUCCESS)
     {
         logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " DSClientEvent Period");
@@ -82,19 +81,14 @@ void DSClientEvent::event(EventCode code, const char* msg)
             logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " PDP announcement")
         }
 
-        if (restart)
-        {
-            restart_timer();
-        } 
+        return restart;
     }
     else if(code == EVENT_ABORT)
     {
         logInfo(RTPS_PDP,"DSClientEvent aborted");
     }
-    else
-    {
-        logInfo(RTPS_PDP,"message: " <<msg);
-    }
+
+    return false;
 }
 
 }

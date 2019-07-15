@@ -16,6 +16,7 @@
 #define NETWORK_FACTORY_HPP
 
 #include <fastrtps/transport/TransportInterface.h>
+#include <fastrtps/rtps/common/LocatorSelector.hpp>
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
@@ -83,7 +84,32 @@ class NetworkFactory
 
         void NormalizeLocators(LocatorList_t& locators);
 
-        LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists);
+        /**
+         * Transforms a remote locator into a locator optimized for local communications.
+         * 
+         * If the remote locator corresponds to one of the local interfaces, it is converted
+         * to the corresponding local address.
+         *
+         * @param [in]  remote_locator Locator to be converted.
+         * @param [out] result_locator Converted locator.
+         *
+         * @return false if the input locator is not supported/allowed by any of the registered transports,
+         *         true otherwise.
+         */
+        bool transform_remote_locator(
+                const Locator_t& remote_locator,
+                Locator_t& result_locator) const;
+
+        /**
+         * Performs the locator selection algorithm.
+         *
+         * It basically consists of the following steps
+         *   - selector.selection_start is called
+         *   - the transport selection algorithm is called for each registered transport
+         *
+         * @param [in, out] selector Locator selector.
+         */
+        void select_locators(LocatorSelector& selector) const;
 
         bool is_local_locator(const Locator_t& locator) const;
 

@@ -32,6 +32,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
+class ReaderProxyData;
 
 typedef enum RTPSWriterPublishMode : octet
 {
@@ -129,60 +130,8 @@ class WriterAttributes
         Duration_t keep_duration;
 };
 
-/**
- * Class RemoteReaderAttributes, to define the attributes of a Remote Reader.
- * @ingroup RTPS_ATTRIBUTES_MODULE
- */
-class  RemoteReaderAttributes
-{
-    public:
-
-        RemoteReaderAttributes()
-            : expectsInlineQos(false)
-            , is_eprosima_endpoint(true)
-            , disable_positive_acks(false)
-        {
-            endpoint.endpointKind = READER;
-        }
-
-        RemoteReaderAttributes(const VendorId_t& vendor_id)
-            : expectsInlineQos(false)
-            , is_eprosima_endpoint(vendor_id == c_VendorId_eProsima)
-            , disable_positive_acks(false)
-        {
-            endpoint.endpointKind = READER;
-        }
-
-        virtual ~RemoteReaderAttributes()
-        {
-
-        }
-
-        std::function<bool(const RemoteReaderAttributes&)> compare_guid_function() const
-        {
-            return [this](const RemoteReaderAttributes& rhs)
-            {
-                return this->guid == rhs.guid;
-            };
-        }
-
-        //!Attributes of the associated endpoint.
-        EndpointAttributes endpoint;
-
-        //!GUID_t of the reader.
-        GUID_t guid;
-
-        //!Expects inline QOS.
-        bool expectsInlineQos;
-
-        bool is_eprosima_endpoint;
-
-        bool disable_positive_acks;
-};
-
-}
-}
-}
-
+} /* namespace rtps */
+} /* namespace fastrtps */
+} /* namespace eprosima */
 
 #endif /* WRITERATTRIBUTES_H_ */

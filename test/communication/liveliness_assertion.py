@@ -39,7 +39,7 @@ publisher_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid())
 
 while True:
     line = publisher_proc.stdout.readline()
-    if line.strip().decode('utf-8') == 'Subscriber matched':
+    if line.strip().decode('utf-8').startswith('Publisher matched with subscriber '):
         print("Subscriber matched.")
         break
 

@@ -22,11 +22,6 @@
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 
 #include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/reader/WriterProxy.h>
-
-#include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
-
-#include <fastrtps/rtps/writer/timedevent/NackResponseDelay.h>
 
 #include <fastrtps/rtps/reader/ReaderListener.h>
 

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <rtps/flowcontrol/ThroughputController.h>
-#include <fastrtps/rtps/writer/ReaderLocator.h>
 
 #include <gtest/gtest.h>
 
@@ -31,25 +30,24 @@ class ThroughputControllerTests: public ::testing::Test
 {
    public:
 
-   ThroughputControllerTests():
-      sController(testDescriptor, (const RTPSWriter*)nullptr)
+   ThroughputControllerTests()
+       : sController(testDescriptor, (const RTPSWriter*)nullptr)
    {
       for (unsigned int i = 0; i < numberOfTestChanges; i++)
       {
          testChanges.emplace_back(new CacheChange_t(testPayloadSize));
          testChanges.back()->sequenceNumber = {0, i+1};
          testChanges.back()->serializedPayload.length = testPayloadSize;
-         testChangesForUse.add_change(testChanges.back().get(), &mock, FragmentNumberSet_t());
+         testChangesForUse.add_change(testChanges.back().get(), nullptr, FragmentNumberSet_t());
 
          otherChanges.emplace_back(new CacheChange_t(testPayloadSize));
          otherChanges.back()->sequenceNumber = {0, i+1};
          otherChanges.back()->serializedPayload.length = testPayloadSize;
-         otherChangesForUse.add_change(otherChanges.back().get(), &mock, FragmentNumberSet_t());
+         otherChangesForUse.add_change(otherChanges.back().get(), nullptr, FragmentNumberSet_t());
       }
    }
 
    ThroughputController sController;
-   ReaderLocator mock;
    std::vector<std::unique_ptr<CacheChange_t>> testChanges;
    std::vector<std::unique_ptr<CacheChange_t>> otherChanges;
    RTPSWriterCollector<ReaderLocator*> testChangesForUse;
@@ -79,7 +77,7 @@ TEST_F(ThroughputControllerTests, if_changes_are_fragmented_throughput_controlle
     for(auto& change : testChanges)
     {
         change->setFragmentSize(100);
-        testChangesForUse.add_change(change.get(), &mock, fragmentSet);
+        testChangesForUse.add_change(change.get(), nullptr, fragmentSet);
     }
 
     // When

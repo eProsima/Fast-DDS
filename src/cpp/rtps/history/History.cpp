@@ -65,7 +65,7 @@ bool History::remove_all_changes()
         return false;
     }
 
-    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
     if(!m_changes.empty())
     {
         while(!m_changes.empty())
@@ -112,7 +112,7 @@ bool History::get_change(
         return false;
     }
 
-    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
     for (std::vector<CacheChange_t*>::iterator it = m_changes.begin(); it != m_changes.end(); ++it)
     {
@@ -141,7 +141,7 @@ bool History::get_earliest_change(CacheChange_t **change)
         return false;
     }
 
-    std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
     if (m_changes.empty())
     {

@@ -24,6 +24,7 @@
 #include <fastrtps/log/Log.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
+#include <fastrtps/rtps/network/NetworkFactory.h>
 
 #include <fastrtps/rtps/writer/StatelessWriter.h>
 #include <fastrtps/rtps/reader/StatelessReader.h>
@@ -68,27 +69,33 @@ bool usleep_bool()
     return true;
 }
 
-SecurityManager::SecurityManager(RTPSParticipantImpl *participant) :
-    participant_stateless_message_listener_(*this),
-    participant_volatile_message_secure_listener_(*this),
-    participant_(participant),
-    participant_stateless_message_writer_(nullptr),
-    participant_stateless_message_writer_history_(nullptr),
-    participant_stateless_message_reader_(nullptr),
-    participant_stateless_message_reader_history_(nullptr),
-    participant_volatile_message_secure_writer_(nullptr),
-    participant_volatile_message_secure_writer_history_(nullptr),
-    participant_volatile_message_secure_reader_(nullptr),
-    participant_volatile_message_secure_reader_history_(nullptr),
-    authentication_plugin_(nullptr),
-    access_plugin_(nullptr),
-    crypto_plugin_(nullptr),
-    domain_id_(0),
-    local_identity_handle_(nullptr),
-    local_permissions_handle_(nullptr),
-    local_participant_crypto_handle_(nullptr),
-    auth_last_sequence_number_(1),
-    crypto_last_sequence_number_(1)
+SecurityManager::SecurityManager(RTPSParticipantImpl *participant) 
+    : participant_stateless_message_listener_(*this)
+    , participant_volatile_message_secure_listener_(*this)
+    , participant_(participant)
+    , participant_stateless_message_writer_(nullptr)
+    , participant_stateless_message_writer_history_(nullptr)
+    , participant_stateless_message_reader_(nullptr)
+    , participant_stateless_message_reader_history_(nullptr)
+    , participant_volatile_message_secure_writer_(nullptr)
+    , participant_volatile_message_secure_writer_history_(nullptr)
+    , participant_volatile_message_secure_reader_(nullptr)
+    , participant_volatile_message_secure_reader_history_(nullptr)
+    , authentication_plugin_(nullptr)
+    , access_plugin_(nullptr)
+    , crypto_plugin_(nullptr)
+    , domain_id_(0)
+    , local_identity_handle_(nullptr)
+    , local_permissions_handle_(nullptr)
+    , local_participant_crypto_handle_(nullptr)
+    , auth_last_sequence_number_(1)
+    , crypto_last_sequence_number_(1)
+    , temp_reader_proxy_data_(
+            participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+            participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
+    , temp_writer_proxy_data_(
+            participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+            participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
 {
     assert(participant != nullptr);
 }
@@ -246,14 +253,19 @@ bool SecurityManager::init(ParticipantSecurityAttributes& attributes, const Prop
             if((access_plugin_ == nullptr || local_permissions_handle_ != nullptr) &&
                     (crypto_plugin_ == nullptr || local_participant_crypto_handle_ != nullptr))
             {
-                // Create RTPS entities
+				// Should be activated here, to enable encription buffer on created entities
+				security_activated = true;
+				
+				// Create RTPS entities
                 if(create_entities())
                 {
                     logInfo(SECURITY, "Initialized security manager for participant " << participant_->getGuid());
-                    security_activated = true;
                     return true;
                 }
-            }
+
+				// Deactivate security if there is an error while creating entities
+				security_activated = false;
+			}
 
             if(local_participant_crypto_handle_ != nullptr)
             {
@@ -791,8 +803,18 @@ bool SecurityManager::on_process_handshake(const ParticipantProxyData& participa
                     if(ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE)
                     {
                         remote_participant_info->expected_sequence_number_ = expected_sequence_number;
-                        remote_participant_info->event_ = new HandshakeMessageTokenResent(*this,
-                                participant_data.m_guid, 500); // TODO (Ricardo) Configurable
+                        const GUID_t guid = participant_data.m_guid;
+                        remote_participant_info->event_ = new TimedEvent(participant_->getEventResource(),
+                                [&, guid](TimedEvent::EventCode code) -> bool
+                                {
+                                    if (TimedEvent::EVENT_SUCCESS == code)
+                                    {
+                                        resend_handshake_message_token(guid);
+                                    }
+
+                                    return true;
+                                },
+                                500); // TODO (Ricardo) Configurable
                         remote_participant_info->event_->restart_timer();
                     }
 
@@ -861,6 +883,7 @@ bool SecurityManager::create_participant_stateless_message_writer()
     watt.endpoint.endpointKind = WRITER;
     watt.endpoint.reliabilityKind = BEST_EFFORT;
     watt.endpoint.topicKind = NO_KEY;
+    watt.matched_readers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
 
     if(participant_->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
             participant_->getRTPSParticipantAttributes().throughputController.periodMillisecs != 0)
@@ -912,6 +935,7 @@ bool SecurityManager::create_participant_stateless_message_reader()
     ratt.endpoint.multicastLocatorList = participant_->getRTPSParticipantAttributes().builtin.metatrafficMulticastLocatorList;
     ratt.endpoint.unicastLocatorList = participant_->getRTPSParticipantAttributes().builtin.metatrafficUnicastLocatorList;
     ratt.endpoint.remoteLocatorList = participant_->getRTPSParticipantAttributes().builtin.initialPeersList;
+    ratt.matched_writers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
 
     RTPSReader* rout = nullptr;
     if(participant_->createReader(&rout, ratt, participant_stateless_message_reader_history_, &participant_stateless_message_listener_,
@@ -981,6 +1005,7 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     watt.endpoint.remoteLocatorList = participant_->getRTPSParticipantAttributes().builtin.initialPeersList;
     watt.endpoint.security_attributes().is_submessage_protected = true;
     watt.endpoint.security_attributes().plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+    watt.matched_readers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
     // TODO(Ricardo) Study keep_all
 
     if(participant_->getRTPSParticipantAttributes().throughputController.bytesPerPeriod != UINT32_MAX &&
@@ -1033,6 +1058,7 @@ bool SecurityManager::create_participant_volatile_message_secure_reader()
     ratt.endpoint.remoteLocatorList = participant_->getRTPSParticipantAttributes().builtin.initialPeersList;
     ratt.endpoint.security_attributes().is_submessage_protected = true;
     ratt.endpoint.security_attributes().plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+    ratt.matched_writers_allocation = participant_->getRTPSParticipantAttributes().allocation.participants;
 
     RTPSReader* rout = nullptr;
     if(participant_->createReader(&rout, ratt, participant_volatile_message_secure_reader_history_, &participant_volatile_message_secure_listener_,
@@ -1180,7 +1206,7 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
 
         const GUID_t remote_participant_key(message.message_identity().source_guid().guidPrefix, c_EntityId_RTPSParticipant);
         DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info;
-        ParticipantProxyData participant_data;
+        const ParticipantProxyData* participant_data = nullptr;
 
         mutex_.lock();
         auto dp_it = discovered_participants_.find(remote_participant_key);
@@ -1188,7 +1214,7 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
         if(dp_it != discovered_participants_.end())
         {
             remote_participant_info = dp_it->second.get_auth();
-            participant_data = dp_it->second.participant_data();
+            participant_data = &(dp_it->second.participant_data());
         }
         else
         {
@@ -1315,7 +1341,7 @@ void SecurityManager::process_participant_stateless_message(const CacheChange_t*
                 return;
             }
 
-            on_process_handshake(participant_data, remote_participant_info,
+            on_process_handshake(*participant_data, remote_participant_info,
                     std::move(message.message_identity()), std::move(message.message_data().at(0)));
 
             restore_discovered_participant_info(remote_participant_key, remote_participant_info);
@@ -1437,7 +1463,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
         // Search remote writer handle.
         mutex_.lock();
         GUID_t writer_guid;
-        ReaderProxyData reader_data;
+        ReaderProxyData* reader_data = nullptr;
         auto wr_it = writer_handles_.find(message.destination_endpoint_key());
 
         if(wr_it != writer_handles_.end())
@@ -1454,7 +1480,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
                             exception))
                 {
                     writer_guid = wr_it->first;
-                    reader_data = std::get<0>(rd_it->second);
+                    reader_data = &(std::get<0>(rd_it->second));
                 }
                 else
                 {
@@ -1476,7 +1502,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
         if(writer_guid != GUID_t::unknown())
         {
             participant_->pairing_remote_reader_with_local_writer_after_security(writer_guid,
-                    reader_data);
+                    *reader_data);
         }
     }
     else if(message.message_class_id().compare(GMCLASSID_SECURITY_WRITER_CRYPTO_TOKENS) == 0)
@@ -1505,7 +1531,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
         // Search remote writer handle.
         mutex_.lock();
         GUID_t reader_guid;
-        WriterProxyData writer_data;
+        WriterProxyData* writer_data = nullptr;
         auto rd_it = reader_handles_.find(message.destination_endpoint_key());
 
         if(rd_it != reader_handles_.end())
@@ -1522,7 +1548,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
                             exception))
                 {
                     reader_guid = rd_it->first;
-                    writer_data = std::get<0>(wr_it->second);
+                    writer_data = &(std::get<0>(wr_it->second));
                 }
                 else
                 {
@@ -1543,8 +1569,7 @@ void SecurityManager::process_participant_volatile_message_secure(const CacheCha
         // If reader was found and setting of crypto tokens works, then tell core to match reader and writer.
         if(reader_guid != GUID_t::unknown())
         {
-            participant_->pairing_remote_writer_with_local_reader_after_security(reader_guid,
-                    writer_data);
+            participant_->pairing_remote_writer_with_local_reader_after_security(reader_guid, *writer_data);
         }
     }
     else
@@ -1652,115 +1677,107 @@ uint32_t SecurityManager::builtin_endpoints()
 void SecurityManager::match_builtin_endpoints(const ParticipantProxyData& participant_data)
 {
     uint32_t builtin_endpoints = participant_data.m_availableBuiltinEndpoints;
+    const NetworkFactory& network = participant_->network_factory();
 
     if (participant_stateless_message_reader_ != nullptr &&
         builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_WRITER)
     {
-        RemoteWriterAttributes watt(participant_data.m_VendorId);
-        watt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
-        watt.guid.entityId = participant_stateless_message_writer_entity_id;
-        watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
-        watt.endpoint.reliabilityKind = BEST_EFFORT;
-        participant_stateless_message_reader_->matched_writer_add(watt);
+        std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+        temp_writer_proxy_data_.clear();
+        temp_writer_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
+        temp_writer_proxy_data_.guid().entityId = participant_stateless_message_writer_entity_id;
+        temp_writer_proxy_data_.persistence_guid(temp_writer_proxy_data_.guid());
+        temp_writer_proxy_data_.set_locators(participant_data.metatraffic_locators, network, false);
+        temp_writer_proxy_data_.topicKind(NO_KEY);
+        temp_writer_proxy_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        temp_writer_proxy_data_.m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
+        participant_stateless_message_reader_->matched_writer_add(temp_writer_proxy_data_);
     }
 
     if (participant_stateless_message_writer_ != nullptr &&
         builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_READER)
     {
-        RemoteReaderAttributes ratt(participant_data.m_VendorId);
-        ratt.expectsInlineQos = false;
-        ratt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
-        ratt.guid.entityId = participant_stateless_message_reader_entity_id;
-        ratt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
-        ratt.endpoint.reliabilityKind = BEST_EFFORT;
-        participant_stateless_message_writer_->matched_reader_add(ratt);
+        std::lock_guard<std::mutex> data_guard(temp_data_lock_);
+        temp_reader_proxy_data_.clear();
+        temp_reader_proxy_data_.m_expectsInlineQos = false;
+        temp_reader_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
+        temp_reader_proxy_data_.guid().entityId = participant_stateless_message_reader_entity_id;
+        temp_reader_proxy_data_.set_locators(participant_data.metatraffic_locators, network, false);
+        temp_reader_proxy_data_.topicKind(NO_KEY);
+        temp_reader_proxy_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        temp_reader_proxy_data_.m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
+        participant_stateless_message_writer_->matched_reader_add(temp_reader_proxy_data_);
     }
 }
 
 void SecurityManager::match_builtin_key_exchange_endpoints(const ParticipantProxyData& participant_data)
 {
     uint32_t builtin_endpoints = participant_data.m_availableBuiltinEndpoints;
+    const NetworkFactory& network = participant_->network_factory();
 
     if(participant_volatile_message_secure_reader_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_WRITER)
     {
-        RemoteWriterAttributes watt(participant_data.m_VendorId);
-        watt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
-        watt.guid.entityId = participant_volatile_message_secure_writer_entity_id;
-        watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
-        watt.endpoint.reliabilityKind = RELIABLE;
-        watt.endpoint.durabilityKind = VOLATILE;
-        participant_volatile_message_secure_reader_->matched_writer_add(watt);
+        std::lock_guard<std::mutex> guardPDP(temp_data_lock_);
+        temp_writer_proxy_data_.clear();
+        temp_writer_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
+        temp_writer_proxy_data_.guid().entityId = participant_volatile_message_secure_writer_entity_id;
+        temp_writer_proxy_data_.persistence_guid(temp_writer_proxy_data_.guid());
+        temp_writer_proxy_data_.set_locators(participant_data.metatraffic_locators, network, false);
+        temp_writer_proxy_data_.topicKind(NO_KEY);
+        temp_writer_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        temp_writer_proxy_data_.m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
+        participant_volatile_message_secure_reader_->matched_writer_add(temp_writer_proxy_data_);
     }
 
     if(participant_volatile_message_secure_writer_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_READER)
     {
-        RemoteReaderAttributes ratt(participant_data.m_VendorId);
-        ratt.expectsInlineQos = false;
-        ratt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
-        ratt.guid.entityId = participant_volatile_message_secure_reader_entity_id;
-        ratt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
-        ratt.endpoint.reliabilityKind = RELIABLE;
-        ratt.endpoint.durabilityKind = VOLATILE;
-        participant_volatile_message_secure_writer_->matched_reader_add(ratt);
+        std::lock_guard<std::mutex> guardPDP(temp_data_lock_);
+        temp_reader_proxy_data_.clear();
+        temp_reader_proxy_data_.m_expectsInlineQos = false;
+        temp_reader_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
+        temp_reader_proxy_data_.guid().entityId = participant_volatile_message_secure_reader_entity_id;
+        temp_reader_proxy_data_.set_locators(participant_data.metatraffic_locators, network, false);
+        temp_reader_proxy_data_.topicKind(NO_KEY);
+        temp_reader_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        temp_reader_proxy_data_.m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
+        participant_volatile_message_secure_writer_->matched_reader_add(temp_reader_proxy_data_);
     }
 }
 
 void SecurityManager::unmatch_builtin_endpoints(const ParticipantProxyData& participant_data)
 {
     uint32_t builtin_endpoints = participant_data.m_availableBuiltinEndpoints;
+    GUID_t tmp_guid;
+    tmp_guid.guidPrefix = participant_data.m_guid.guidPrefix;
 
     if(participant_stateless_message_reader_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_WRITER)
     {
-        RemoteWriterAttributes watt;
-        watt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
-        watt.guid.entityId = participant_stateless_message_writer_entity_id;
-        watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
-        watt.endpoint.reliabilityKind = BEST_EFFORT;
-        participant_stateless_message_reader_->matched_writer_remove(watt);
+        tmp_guid.entityId = participant_stateless_message_writer_entity_id;
+        participant_stateless_message_reader_->matched_writer_remove(tmp_guid);
     }
 
     if(participant_stateless_message_writer_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_READER)
     {
-        RemoteReaderAttributes ratt;
-        ratt.expectsInlineQos = false;
-        ratt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
-        ratt.guid.entityId = participant_stateless_message_reader_entity_id;
-        ratt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
-        ratt.endpoint.reliabilityKind = BEST_EFFORT;
-        participant_stateless_message_writer_->matched_reader_remove(ratt);
+        tmp_guid.entityId = participant_stateless_message_reader_entity_id;
+        participant_stateless_message_writer_->matched_reader_remove(tmp_guid);
     }
 
     if(participant_volatile_message_secure_reader_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_WRITER)
     {
-        RemoteWriterAttributes watt;
-        watt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
-        watt.guid.entityId = participant_volatile_message_secure_writer_entity_id;
-        watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
-        watt.endpoint.reliabilityKind = RELIABLE;
-        watt.endpoint.durabilityKind = VOLATILE;
-        participant_volatile_message_secure_reader_->matched_writer_remove(watt);
+        tmp_guid.entityId = participant_volatile_message_secure_writer_entity_id;
+        participant_volatile_message_secure_reader_->matched_writer_remove(tmp_guid);
     }
 
     if(participant_volatile_message_secure_writer_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_READER)
     {
-        RemoteReaderAttributes ratt;
-        ratt.expectsInlineQos = false;
-        ratt.guid.guidPrefix = participant_data.m_guid.guidPrefix;
-        ratt.guid.entityId = participant_volatile_message_secure_reader_entity_id;
-        ratt.endpoint.unicastLocatorList = participant_data.m_metatrafficUnicastLocatorList;
-        ratt.endpoint.reliabilityKind = RELIABLE;
-        ratt.endpoint.durabilityKind = VOLATILE;
-        participant_volatile_message_secure_writer_->matched_reader_remove(ratt);
+        tmp_guid.entityId = participant_volatile_message_secure_reader_entity_id;
+        participant_volatile_message_secure_writer_->matched_reader_remove(tmp_guid);
     }
 }
 
@@ -2433,7 +2450,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                         }
 
                         GUID_t local_reader_guid;
-                        WriterProxyData writer_data;
+                        WriterProxyData* writer_data = nullptr;
 
                         // Get local writer crypto tokens.
                         DatawriterCryptoTokenSeq local_writer_crypto_tokens;
@@ -2463,7 +2480,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                                             exception))
                                         {
                                             local_reader_guid = local_reader->first;
-                                            writer_data = std::get<0>(remote_writer->second);
+                                            writer_data = &(std::get<0>(remote_writer->second));
                                         }
                                         else
                                         {
@@ -2564,7 +2581,7 @@ bool SecurityManager::discovered_reader(const GUID_t& writer_guid, const GUID_t&
                         if (local_reader_guid != GUID_t::unknown())
                         {
                             participant_->pairing_remote_writer_with_local_reader_after_security(
-                                    local_reader_guid, writer_data);
+                                    local_reader_guid, *writer_data);
                         }
 
                         // If writer was found and setting of crypto tokens works, then tell core to match writer and reader.
@@ -2741,7 +2758,7 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
                         }
 
                         GUID_t local_writer_guid;
-                        ReaderProxyData reader_data;
+                        ReaderProxyData* reader_data = nullptr;
 
                         // Get local reader crypto tokens.
                         DatareaderCryptoTokenSeq local_reader_crypto_tokens;
@@ -2771,7 +2788,7 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
                                             exception))
                                         {
                                             local_writer_guid = local_writer->first;
-                                            reader_data = std::get<0>(remote_reader->second);
+                                            reader_data = &(std::get<0>(remote_reader->second));
                                         }
                                         else
                                         {
@@ -2873,7 +2890,7 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
                         if (local_writer_guid != GUID_t::unknown())
                         {
                             participant_->pairing_remote_reader_with_local_writer_after_security(
-                                    local_writer_guid, reader_data);
+                                    local_writer_guid, *reader_data);
                         }
 
                         // If reader was found and setting of crypto tokens works, then tell core to match reader and writer.
@@ -3477,4 +3494,38 @@ uint32_t SecurityManager::calculate_extra_size_for_encoded_payload(const GUID_t&
     }
 
     return 0;
+}
+
+void SecurityManager::resend_handshake_message_token(const GUID_t& remote_participant_key)
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+    auto dp_it = discovered_participants_.find(remote_participant_key);
+
+    if(dp_it != discovered_participants_.end())
+    {
+        SecurityManager::DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info = dp_it->second.get_auth();
+
+        if(remote_participant_info)
+        {
+            if(remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
+            {
+                CacheChange_t* p_change = participant_stateless_message_writer_history_->remove_change_and_reuse(
+                        remote_participant_info->change_sequence_number_);
+                remote_participant_info->change_sequence_number_ = SequenceNumber_t::unknown();
+
+                if(p_change != nullptr)
+                {
+                    logInfo(SECURITY, "Authentication handshake resent to participant " <<
+                            remote_participant_key);
+                    if(participant_stateless_message_writer_history_->add_change(p_change))
+                    {
+                        remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;
+                    }
+                    //TODO (Ricardo) What to do if not added?
+                }
+            }
+
+            dp_it->second.set_auth(remote_participant_info);
+        }
+    }
 }

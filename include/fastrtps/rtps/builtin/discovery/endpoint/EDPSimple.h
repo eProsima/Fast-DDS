@@ -23,6 +23,9 @@
 
 #include "EDP.h"
 
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
@@ -33,6 +36,9 @@ class RTPSWriter;
 class RTPSReader;
 class ReaderHistory;
 class WriterHistory;
+class HistoryAttributes;
+class ReaderAttributes;
+class WriterAttributes;
 class EDPListener;
 
 /**
@@ -45,7 +51,7 @@ class EDPSimple : public EDP
     typedef std::pair<StatefulWriter*,WriterHistory*> t_p_StatefulWriter;
     typedef std::pair<StatefulReader*,ReaderHistory*> t_p_StatefulReader;
 
-    public:
+public:
 
     /**
      * Constructor.
@@ -128,13 +134,43 @@ class EDPSimple : public EDP
      */
     bool removeLocalWriter(RTPSWriter*W) override;
 
-    private:
+protected:
+
+    /**
+     * Initialization of history attributes for EDP built-in readers
+     *
+     * @param [out] attributes History attributes to initialize
+     */
+    virtual void set_builtin_reader_history_attributes(HistoryAttributes& attributes);
+
+    /**
+     * Initialization of history attributes for EDP built-in writers
+     *
+     * @param [out] attributes History attributes to initialize
+     */
+    virtual void set_builtin_writer_history_attributes(HistoryAttributes& attributes);
+
+    /**
+     * Initialization of reader attributes for EDP built-in readers
+     *
+     * @param [out] attributes Reader attributes to initialize
+     */
+    virtual void set_builtin_reader_attributes(ReaderAttributes& attributes);
+
+    /**
+     * Initialization of writer attributes for EDP built-in writers
+     *
+     * @param [out] attributes Writer attributes to initialize
+     */
+    virtual void set_builtin_writer_attributes(WriterAttributes& attributes);
 
     /**
      * Create local SEDP Endpoints based on the DiscoveryAttributes.
      * @return True if correct.
      */
     virtual bool createSEDPEndpoints();
+
+private:
 
 #if HAVE_SECURITY
     bool create_sedp_secure_endpoints();
@@ -146,20 +182,13 @@ class EDPSimple : public EDP
                 const ReaderProxyData& remote_reader_data) override;
 #endif
 
+    std::mutex temp_data_lock_;
+    ReaderProxyData temp_reader_proxy_data_;
+    WriterProxyData temp_writer_proxy_data_;
 };
 
-
-// Default configuration values for EDP entities.
- extern const Duration_t edp_heartbeat_period;
- extern const Duration_t edp_nack_response_delay;
- extern const Duration_t edp_nack_supression_duration;
- extern const Duration_t edp_heartbeat_response_delay;
-
- extern const int32_t edp_initial_reserved_caches;
-
-
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
 #endif

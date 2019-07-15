@@ -41,7 +41,6 @@ namespace rtps{
 
 class RTCPMessageManager;
 class TCPChannelResource;
-class TCPKeepAliveEvent;
 
 /**
  * This is a default TCP Interface implementation.
@@ -94,7 +93,7 @@ protected:
     std::vector<std::pair<TCPChannelResource*, uint64_t>> sockets_timestamp_;
     eClock my_clock_;
 
-    TCPKeepAliveEvent* keep_alive_event_;
+    asio::steady_timer keep_alive_event_;
 
     std::map<Locator_t, std::shared_ptr<TCPAcceptor>> acceptors_;
 
@@ -257,6 +256,21 @@ public:
     virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
 
     /**
+     * Transforms a remote locator into a locator optimized for local communications.
+     * 
+     * If the remote locator corresponds to one of the local interfaces, it is converted
+     * to the corresponding local address.
+     *
+     * @param [in]  remote_locator Locator to be converted.
+     * @param [out] result_locator Converted locator.
+     *
+     * @return false if the input locator is not supported/allowed by this transport, true otherwise.
+     */
+    virtual bool transform_remote_locator(
+            const Locator_t& remote_locator,
+            Locator_t& result_locator) const override;
+
+    /**
     * Blocking Receive from the specified channel.
     * @param rtcp_manager pointer to the RTCP Manager.
     * @param channel pointer to the socket where the method is going to read the messages.
@@ -288,7 +302,21 @@ public:
         std::shared_ptr<TCPChannelResource>& channel,
         const Locator_t& remote_locator);
 
-    virtual LocatorList_t ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists) override;
+    /**
+     * Performs the locator selection algorithm for this transport.
+     *
+     * It basically consists of the following steps
+     *   - selector.transport_starts is called
+     *   - transport handles the selection state of each locator
+     *   - if a locator from an entry is selected, selector.select is called for that entry
+     *
+     * In the case of TCP, multicast locators are never selected. All TCPv6 unicast locators 
+     * are selected. For TCPv4, only locators on the same WAN as the transport or with the
+     * WAN address of a connected channel are selected.
+     *
+     * @param [in, out] selector Locator selector.
+     */
+    virtual void select_locators(LocatorSelector& selector) const override;
 
     //! Callback called each time that an incomming connection is accepted.
     void SocketAccepted(

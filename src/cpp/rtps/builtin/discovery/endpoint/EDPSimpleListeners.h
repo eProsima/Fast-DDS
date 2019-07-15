@@ -24,6 +24,11 @@
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/writer/WriterListener.h>
 
+#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+
+#include "rtps/participant/RTPSParticipantImpl.h"
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -37,20 +42,74 @@ struct CacheChange_t;
  * @ingroup DISCOVERY_MODULE
  */
 
-class RTPS_DllAPI  EDPListener : public ReaderListener, public WriterListener // TODO: remove RTPS_DllAPI when discovery server incorporated to the library
+class EDPListener : public ReaderListener, public WriterListener
 {
 public:
     /**
      * @param change
      */
-        bool computeKey(CacheChange_t* change);
+    bool computeKey(CacheChange_t* change);
+};
+
+/**
+ * Placeholder class used to define the behavior when a new WriterProxyData is received.
+ * @ingroup DISCOVERY_MODULE
+ */
+class EDPBasePUBListener : public EDPListener
+{
+public:
+    EDPBasePUBListener(const RemoteLocatorsAllocationAttributes& locators_allocation)
+        : temp_writer_data_(
+            locators_allocation.max_unicast_locators,
+            locators_allocation.max_multicast_locators)
+    {
+    }
+
+    virtual ~EDPBasePUBListener() = default;
+
+protected:
+
+    void add_writer_from_change(
+            RTPSReader* reader,
+            CacheChange_t* change,
+            EDP* edp);
+
+    //!Temporary structure to avoid allocations
+    WriterProxyData temp_writer_data_;
+};
+
+/**
+ * Placeholder class used to define the behavior when a new ReaderProxyData is received.
+ * @ingroup DISCOVERY_MODULE
+ */
+class EDPBaseSUBListener : public EDPListener
+{
+public:
+    EDPBaseSUBListener(const RemoteLocatorsAllocationAttributes& locators_allocation)
+        : temp_reader_data_(
+            locators_allocation.max_unicast_locators,
+            locators_allocation.max_multicast_locators)
+    {
+    }
+
+    virtual ~EDPBaseSUBListener() = default;
+
+protected:
+
+    void add_reader_from_change(
+        RTPSReader* reader,
+        CacheChange_t* change,
+        EDP* edp);
+
+    //!Temporary structure to avoid allocations
+    ReaderProxyData temp_reader_data_;
 };
 
 /*!
  * Class EDPSimplePUBReaderListener, used to define the behavior when a new WriterProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPSimplePUBListener : public EDPListener
+class EDPSimplePUBListener : public EDPBasePUBListener
 {
     public:
 
@@ -58,9 +117,12 @@ class EDPSimplePUBListener : public EDPListener
           Constructor
          * @param sedp Pointer to the EDPSimple associated with this listener.
          */
-        EDPSimplePUBListener(EDPSimple* sedp) : sedp_(sedp) {}
+        EDPSimplePUBListener(EDPSimple* sedp)
+            : EDPBasePUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators)
+            , sedp_(sedp) 
+        {}
 
-        virtual ~EDPSimplePUBListener() {}
+        virtual ~EDPSimplePUBListener() = default;
 
         /**
          * Virtual method, 
@@ -82,7 +144,7 @@ class EDPSimplePUBListener : public EDPListener
                 RTPSWriter* writer,
                 CacheChange_t* change) override;
 
-    private:
+    protected:
 
         //!Pointer to the EDPSimple
         EDPSimple* sedp_;
@@ -92,7 +154,7 @@ class EDPSimplePUBListener : public EDPListener
  * Class EDPSimpleSUBReaderListener, used to define the behavior when a new ReaderProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPSimpleSUBListener : public EDPListener
+class EDPSimpleSUBListener : public EDPBaseSUBListener
 {
     public:
 
@@ -100,9 +162,14 @@ class EDPSimpleSUBListener : public EDPListener
           Constructor
          * @param sedp Pointer to the EDPSimple associated with this listener.
          */
-        EDPSimpleSUBListener(EDPSimple* sedp) : sedp_(sedp){}
+        EDPSimpleSUBListener(EDPSimple* sedp) 
+            : EDPBaseSUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators)
+            , sedp_(sedp)
+        {
+        }
 
-        virtual ~EDPSimpleSUBListener(){}
+        virtual ~EDPSimpleSUBListener() = default;
+
         /**
          * @param reader
          * @param change
@@ -128,7 +195,8 @@ class EDPSimpleSUBListener : public EDPListener
 };
 
 } /* namespace rtps */
-}
+} /* namespace fastrtps */
 } /* namespace eprosima */
+
 #endif
 #endif /* EDPSIMPLELISTENER_H_ */

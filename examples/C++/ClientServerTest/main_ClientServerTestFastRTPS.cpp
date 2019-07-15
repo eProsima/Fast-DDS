@@ -30,11 +30,6 @@
 #include "EprosimaServer.h"
 #include "EprosimaClientTest.h"
 
-
-#include "fastrtps/log/Log.h"
-
-#include "fastrtps/Domain.h"
-
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using std::cout;

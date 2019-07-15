@@ -36,7 +36,7 @@ struct CacheChange_t;
  * Class EDPServerPUBListener, used to define the behavior when a new WriterProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPServerPUBListener : public EDPListener
+class EDPServerPUBListener : public EDPBasePUBListener
 {
     public:
 
@@ -44,7 +44,7 @@ class EDPServerPUBListener : public EDPListener
           Constructor
          * @param sedp Pointer to the EDPServer associated with this listener.
          */
-        EDPServerPUBListener(EDPServer* sedp) : sedp_(sedp) {}
+        EDPServerPUBListener(EDPServer* sedp);
 
         virtual ~EDPServerPUBListener() {}
 
@@ -78,17 +78,17 @@ class EDPServerPUBListener : public EDPListener
  * Class EDPServerSUBListener, used to define the behavior when a new ReaderProxyData is received.
  * @ingroup DISCOVERY_MODULE
  */
-class EDPServerSUBListener : public EDPListener
+class EDPServerSUBListener : public EDPBaseSUBListener
 {
     public:
 
         /*!
           Constructor
-         * @param sedp Pointer to the EDPSimple associated with this listener.
+         * @param sedp Pointer to the EDPServer associated with this listener.
          */
-        EDPServerSUBListener(EDPServer* sedp) : sedp_(sedp){}
+        EDPServerSUBListener(EDPServer* sedp);
 
-        virtual ~EDPServerSUBListener(){}
+        virtual ~EDPServerSUBListener() = default;
         /**
          * @param reader
          * @param change

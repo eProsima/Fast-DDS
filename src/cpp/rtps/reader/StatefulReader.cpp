@@ -18,16 +18,16 @@
  */
 
 #include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/reader/WriterProxy.h>
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/rtps/reader/timedevent/HeartbeatResponseDelay.h>
-#include <fastrtps/rtps/reader/timedevent/InitialAckNack.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include "../participant/RTPSParticipantImpl.h"
 #include "FragmentedChangePitStop.h"
+#include "WriterProxy.h"
 #include <fastrtps/utils/TimeConversion.h>
+#include "../history/HistoryAttributesExtension.hpp"
+
 #include <fastrtps/rtps/builtin/BuiltinProtocols.h>
 #include <fastrtps/rtps/builtin/liveliness/WLP.h>
 #include <fastrtps/rtps/writer/LivelinessManager.h>
@@ -43,62 +43,133 @@ using namespace eprosima::fastrtps::rtps;
 
 StatefulReader::~StatefulReader()
 {
-    logInfo(RTPS_READER,"StatefulReader destructor.";);
-    for(std::vector<WriterProxy*>::iterator it = matched_writers.begin();
-            it!=matched_writers.end();++it)
+    logInfo(RTPS_READER,"StatefulReader destructor.");
+
+    // Only is_alive_ assignment needs to be protected, as
+    // matched_writers_ and matched_writers_pool_ are only used
+    // when is_alive_ is true
     {
-        delete(*it);
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+        is_alive_ = false;
+    }
+
+    for(WriterProxy* writer : matched_writers_)
+    {
+        delete(writer);
+    }
+    for (WriterProxy* writer : matched_writers_pool_)
+    {
+        delete(writer);
     }
 }
 
 StatefulReader::StatefulReader(
         RTPSParticipantImpl* pimpl,
-        GUID_t& guid,
-        ReaderAttributes& att,
+        const GUID_t& guid,
+        const ReaderAttributes& att,
         ReaderHistory* hist,
         ReaderListener* listen)
-    : RTPSReader(
-          pimpl,
-          guid,
-          att,
-          hist,
-          listen)
-    , m_acknackCount(0)
-    , m_nackfragCount(0)
-    , m_times(att.times)
+    : RTPSReader(pimpl,guid,att,hist, listen)
+    , acknack_count_(0)
+    , nackfrag_count_(0)
+    , times_(att.times)
+    , matched_writers_(att.matched_writers_allocation)
+    , matched_writers_pool_(att.matched_writers_allocation)
+    , proxy_changes_config_(resource_limits_from_history(hist->m_att, 0))
     , disable_positive_acks_(att.disable_positive_acks)
+    , is_alive_(true)
+    , message_buffer_(
+            pimpl->getMaxMessageSize(),
+            pimpl->getGuid().guidPrefix,
+#if HAVE_SECURITY
+            pimpl->is_secure()
+#else
+            false
+#endif
+            )
 {
+    // Update resource limits on proxy changes set adding 256 possibly missing changes
+    proxy_changes_config_.initial += 256u;
+    if (proxy_changes_config_.increment == 0)
+    {
+        proxy_changes_config_.maximum += 256u;
+    }
+    else
+    {
+        proxy_changes_config_.maximum = std::max(proxy_changes_config_.maximum, proxy_changes_config_.initial);
+    }
+
+    const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
+    for (size_t n = 0; n < att.matched_writers_allocation.initial; ++n)
+    {
+        matched_writers_pool_.push_back(new WriterProxy(this, part_att.allocation.locators, proxy_changes_config_));
+    }
 }
 
-bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata, bool persist /*=true*/)
+bool StatefulReader::matched_writer_add(
+        const WriterProxyData& wdata,
+        bool persist /*=true*/)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
-    for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();
-            it!=matched_writers.end();++it)
+    assert(wdata.guid() != c_Guid_Unknown);
+
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+
+    if (!is_alive_)
     {
-        if((*it)->m_att.guid == wdata.guid)
+        return false;
+    }
+
+    for (WriterProxy* it : matched_writers_)
+    {
+        if (it->guid() == wdata.guid())
         {
-            logInfo(RTPS_READER,"Attempting to add existing writer");
+            logInfo(RTPS_READER, "Attempting to add existing writer, updating information");
+            it->update(wdata);
+            for (const Locator_t& locator : it->remote_locators_shrinked())
+            {
+                getRTPSParticipant()->createSenderResources(locator);
+            }
             return false;
         }
     }
 
-    getRTPSParticipant()->createSenderResources(wdata.endpoint.remoteLocatorList, false);
+    // Get a writer proxy from the inactive pool (or create a new one if necessary and allowed)
+    WriterProxy* wp = nullptr;
+    if (matched_writers_pool_.empty())
+    {
+        size_t max_readers = matched_writers_pool_.max_size();
+        if (matched_writers_.size() + matched_writers_pool_.size() < max_readers)
+        {
+            const RTPSParticipantAttributes& part_att = mp_RTPSParticipant->getRTPSParticipantAttributes();
+            wp = new WriterProxy(this, part_att.allocation.locators, proxy_changes_config_);
+        }
+        else
+        {
+            logWarning(RTPS_WRITER, "Maximum number of reader proxies (" << max_readers << \
+                ") reached for writer " << m_guid << endl);
+            return false;
+        }
+    }
+    else
+    {
+        wp = matched_writers_pool_.back();
+        matched_writers_pool_.pop_back();
+    }
 
+    wp->start(wdata);
 
-    wdata.endpoint.unicastLocatorList =
-        mp_RTPSParticipant->network_factory().ShrinkLocatorLists({wdata.endpoint.unicastLocatorList});
-    WriterProxy* wp = new WriterProxy(wdata, this);
-
-    wp->mp_initialAcknack->restart_timer();
+    for (const Locator_t& locator : wp->remote_locators_shrinked())
+    {
+        getRTPSParticipant()->createSenderResources(locator);
+    }
 
     if (persist)
     {
-        add_persistence_guid(wdata);
-        wp->loaded_from_storage_nts(get_last_notified(wdata.guid));
+        add_persistence_guid(wdata.guid(), wdata.persistence_guid());
+        wp->loaded_from_storage(get_last_notified(wdata.guid()));
     }
-
-    matched_writers.push_back(wp);
+    
+    matched_writers_.push_back(wp);
 
     if (liveliness_lease_duration_ < c_TimeInfinite)
     {
@@ -106,7 +177,7 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata, bool pers
         if ( wlp != nullptr)
         {
             wlp->sub_liveliness_manager_->add_writer(
-                        wdata.guid,
+                        wdata.guid(),
                         liveliness_kind_,
                         liveliness_lease_duration_);
         }
@@ -116,71 +187,76 @@ bool StatefulReader::matched_writer_add(RemoteWriterAttributes& wdata, bool pers
         }
     }
 
-    logInfo(RTPS_READER,"Writer Proxy " <<wp->m_att.guid <<" added to " <<m_guid.entityId);
+    logInfo(RTPS_READER, "Writer Proxy " << wp->guid() << " added to " << m_guid.entityId);
     return true;
 }
 
-bool StatefulReader::matched_writer_remove(const RemoteWriterAttributes& wdata)
+bool StatefulReader::matched_writer_remove(const GUID_t& writer_guid)
 {
-    WriterProxy *wproxy = nullptr;
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
-
-    //Remove cachechanges belonging to the unmatched writer
-    mp_history->remove_changes_with_guid(wdata.guid);
-
-    for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
+    if (is_alive_)
     {
-        if((*it)->m_att.guid == wdata.guid)
+        WriterProxy* wproxy = nullptr;
+
+        //Remove cachechanges belonging to the unmatched writer
+        mp_history->remove_changes_with_guid(writer_guid);
+
+        for (ResourceLimitedVector<WriterProxy*>::iterator it = matched_writers_.begin(); it != matched_writers_.end(); ++it)
         {
-            if (liveliness_lease_duration_ < c_TimeInfinite)
+            if ((*it)->guid() == writer_guid)
             {
-                auto wlp = this->mp_RTPSParticipant->wlp();
-                if ( wlp != nullptr)
+                logInfo(RTPS_READER, "Writer proxy " << writer_guid << " removed from " << m_guid.entityId);
+
+                if (liveliness_lease_duration_ < c_TimeInfinite)
                 {
-                    wlp->sub_liveliness_manager_->remove_writer(
-                                wdata.guid,
-                                liveliness_kind_,
-                                liveliness_lease_duration_);
+                    auto wlp = this->mp_RTPSParticipant->wlp();
+                    if ( wlp != nullptr)
+                    {
+                        wlp->sub_liveliness_manager_->remove_writer(
+                                    writer_guid,
+                                    liveliness_kind_,
+                                    liveliness_lease_duration_);
+                    }
+                    else
+                    {
+                        logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
+                    }
                 }
-                else
-                {
-                    logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled, cannot remove writer");
-                }
+
+                wproxy = *it;
+                matched_writers_.erase(it);
+                remove_persistence_guid(wproxy->guid(), wproxy->attributes().persistence_guid());
+                break;
             }
-
-            logInfo(RTPS_READER,"Writer Proxy removed: " <<(*it)->m_att.guid);
-            wproxy = *it;
-            matched_writers.erase(it);
-            remove_persistence_guid(wdata);
-            break;
         }
-    }
 
-    lock.unlock();
-
-    if(wproxy != nullptr)
-    {
-        delete wproxy;
-        return true;
-    }
-
-    logInfo(RTPS_READER,"Writer Proxy " << wdata.guid << " doesn't exist in reader "<<this->getGuid().entityId);
-    return false;
-}
-
-bool StatefulReader::matched_writer_is_matched(const RemoteWriterAttributes& wdata)
-{
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
-    for(std::vector<WriterProxy*>::iterator it=matched_writers.begin();it!=matched_writers.end();++it)
-    {
-        if((*it)->m_att.guid == wdata.guid)
+        if (wproxy != nullptr)
         {
+            wproxy->stop();
+            matched_writers_pool_.push_back(wproxy);
             return true;
         }
+
+        logInfo(RTPS_READER, "Writer Proxy " << writer_guid << " doesn't exist in reader " << this->getGuid().entityId);
     }
     return false;
 }
 
+bool StatefulReader::matched_writer_is_matched(const GUID_t& writer_guid)
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    if (is_alive_)
+    {
+        for(WriterProxy* it : matched_writers_)
+        {
+            if(it->guid() == writer_guid && it->is_alive())
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 bool StatefulReader::matched_writer_lookup(
         const GUID_t& writerGUID,
@@ -188,17 +264,23 @@ bool StatefulReader::matched_writer_lookup(
 {
     assert(WP);
 
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    if (!is_alive_)
+    {
+        return false;
+    }
 
     bool returnedValue = findWriterProxy(writerGUID, WP);
 
     if(returnedValue)
     {
-        logInfo(RTPS_READER,this->getGuid().entityId<<" FINDS writerProxy "<< writerGUID<<" from "<< matched_writers.size());
+        logInfo(RTPS_READER, this->getGuid().entityId << " FINDS writerProxy " << writerGUID << " from "
+            << matched_writers_.size());
     }
     else
     {
-        logInfo(RTPS_READER,this->getGuid().entityId<<" NOT FINDS writerProxy "<< writerGUID<<" from "<< matched_writers.size());
+        logInfo(RTPS_READER, this->getGuid().entityId << " NOT FINDS writerProxy " << writerGUID << " from "
+            << matched_writers_.size());
     }
 
     return returnedValue;
@@ -206,15 +288,15 @@ bool StatefulReader::matched_writer_lookup(
 
 bool StatefulReader::findWriterProxy(
         const GUID_t& writerGUID,
-        WriterProxy** WP)
+        WriterProxy** WP) const
 {
     assert(WP);
 
-    for(std::vector<WriterProxy*>::iterator it = matched_writers.begin(); it != matched_writers.end(); ++it)
+    for(WriterProxy* it : matched_writers_)
     {
-        if((*it)->m_att.guid == writerGUID)
+        if(it->guid() == writerGUID && it->is_alive())
         {
-            *WP = *it;
+            *WP = it;
             return true;
         }
     }
@@ -227,14 +309,18 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
     assert(change);
 
-    std::lock_guard<std::recursive_timed_mutex> lock(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> lock(mp_mutex);
+    if (!is_alive_)
+    {
+        return false;
+    }
 
     if(acceptMsgFrom(change->writerGUID, &pWP))
     {
         if (liveliness_lease_duration_ < c_TimeInfinite)
         {
             if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
-                pWP->m_att.liveliness_kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+                pWP->attributes().m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
                 auto wlp = this->mp_RTPSParticipant->wlp();
                 if (wlp != nullptr)
@@ -253,8 +339,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
         // Check if CacheChange was received or is framework data
         if(!pWP || !pWP->change_was_received(change->sequenceNumber))
-        {
-            
+        {            
             logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
 
             CacheChange_t* change_to_add;
@@ -309,7 +394,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 }
 
 bool StatefulReader::processDataFragMsg(
-        CacheChange_t *incomingChange,
+        CacheChange_t* incomingChange,
         uint32_t sampleSize,
         uint32_t fragmentStartingNum)
 {
@@ -317,7 +402,11 @@ bool StatefulReader::processDataFragMsg(
 
     assert(incomingChange);
 
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
+    if (!is_alive_)
+    {
+        return false;
+    }
 
     // TODO: see if we need manage framework fragmented DATA message
     if(acceptMsgFrom(incomingChange->writerGUID, &pWP) && pWP)
@@ -325,7 +414,7 @@ bool StatefulReader::processDataFragMsg(
         if (liveliness_lease_duration_ < c_TimeInfinite)
         {
             if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
-                    pWP->m_att.liveliness_kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+                    pWP->attributes().m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
                 auto wlp = this->mp_RTPSParticipant->wlp();
                 if ( wlp != nullptr)
@@ -398,64 +487,36 @@ bool StatefulReader::processDataFragMsg(
 }
 
 bool StatefulReader::processHeartbeatMsg(
-        GUID_t &writerGUID,
+        const GUID_t& writerGUID,
         uint32_t hbCount,
-        SequenceNumber_t &firstSN,
-        SequenceNumber_t &lastSN,
+        const SequenceNumber_t& firstSN,
+        const SequenceNumber_t& lastSN,
         bool finalFlag,
         bool livelinessFlag)
 {
-    WriterProxy *pWP = nullptr;
+    WriterProxy *writer = nullptr;
 
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
-
-    if(acceptMsgFrom(writerGUID, &pWP) && pWP)
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
+    if (!is_alive_)
     {
-        std::unique_lock<std::recursive_mutex> wpLock(*pWP->getMutex());
+        return false;
+    }
 
-
-        if(pWP->m_lastHeartbeatCount < hbCount)
+    if(acceptMsgFrom(writerGUID, &writer) && writer)
+    {
+        bool assert_liveliness = false;
+        if (writer->process_heartbeat(
+                hbCount, firstSN, lastSN, finalFlag, livelinessFlag, disable_positive_acks_, assert_liveliness))
         {
-            // If it is the first heartbeat message, we can try to cancel initial ack.
-            // TODO: This timer cancelling should be checked if needed with the liveliness implementation.
-            // To keep PARTICIPANT_DROPPED event we should add an explicit participant_liveliness QoS.
-            // This is now commented to avoid issues #457 and #155
-            // pWP->mp_initialAcknack->cancel_timer();
-
-            pWP->m_lastHeartbeatCount = hbCount;
-            pWP->lost_changes_update(firstSN);
-            fragmentedChangePitStop_->try_to_remove_until(firstSN, pWP->m_att.guid);
-            pWP->missing_changes_update(lastSN);
-            pWP->m_heartbeatFinalFlag = finalFlag;
-
-            //Analyze wheter a acknack message is needed
-            if(!finalFlag)
-            {
-                if (disable_positive_acks_)
-                {
-                    if(pWP->areThereMissing())
-                    {
-                        pWP->mp_heartbeatResponse->restart_timer();
-                    }
-                }
-                else
-                {
-                    pWP->mp_heartbeatResponse->restart_timer();
-                }
-            }
-            else if(finalFlag && !livelinessFlag)
-            {
-                if(pWP->areThereMissing())
-                {
-                    pWP->mp_heartbeatResponse->restart_timer();
-                }
-            }
-            else if (livelinessFlag)
+            fragmentedChangePitStop_->try_to_remove_until(firstSN, writerGUID);
+            
+            // Try to assert liveliness if requested by proxy's logic
+            if (assert_liveliness)
             {
                 if (liveliness_lease_duration_ < c_TimeInfinite)
                 {
                     if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
-                            pWP->m_att.liveliness_kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+                            writer->attributes().m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
                     {
                         auto wlp = this->mp_RTPSParticipant->wlp();
                         if ( wlp != nullptr)
@@ -473,10 +534,8 @@ bool StatefulReader::processHeartbeatMsg(
                 }
             }
 
-            wpLock.unlock();
-
             // Maybe now we have to notify user from new CacheChanges.
-            NotifyChanges(pWP);
+            NotifyChanges(writer);
         }
     }
 
@@ -484,24 +543,28 @@ bool StatefulReader::processHeartbeatMsg(
 }
 
 bool StatefulReader::processGapMsg(
-        GUID_t &writerGUID,
-        SequenceNumber_t &gapStart,
-        SequenceNumberSet_t &gapList)
+        const GUID_t& writerGUID,
+        const SequenceNumber_t& gapStart,
+        const SequenceNumberSet_t& gapList)
 {
     WriterProxy *pWP = nullptr;
 
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
+    if (!is_alive_)
+    {
+        return false;
+    }
 
     if(acceptMsgFrom(writerGUID, &pWP) && pWP)
     {
-        std::unique_lock<std::recursive_mutex> wpLock(*pWP->getMutex());
+        // TODO (Miguel C): Refactor this inside WriterProxy
         SequenceNumber_t auxSN;
         SequenceNumber_t finalSN = gapList.base() - 1;
         for(auxSN = gapStart; auxSN<=finalSN;auxSN++)
         {
             if(pWP->irrelevant_change_set(auxSN))
             {
-                fragmentedChangePitStop_->try_to_remove(auxSN, pWP->m_att.guid);
+                fragmentedChangePitStop_->try_to_remove(auxSN, pWP->guid());
             }
         }
 
@@ -509,11 +572,9 @@ bool StatefulReader::processGapMsg(
         {
             if(pWP->irrelevant_change_set(it))
             {
-                fragmentedChangePitStop_->try_to_remove(it, pWP->m_att.guid);
+                fragmentedChangePitStop_->try_to_remove(it, pWP->guid());
             }
         });
-
-        wpLock.unlock();
 
         // Maybe now we have to notify user from new CacheChanges.
         NotifyChanges(pWP);
@@ -523,17 +584,16 @@ bool StatefulReader::processGapMsg(
 }
 
 bool StatefulReader::acceptMsgFrom(
-        GUID_t &writerId,
-        WriterProxy **wp)
+        const GUID_t& writerId,
+        WriterProxy **wp) const
 {
     assert(wp != nullptr);
 
-    for(std::vector<WriterProxy*>::iterator it = this->matched_writers.begin();
-            it!=matched_writers.end();++it)
+    for(WriterProxy* it : matched_writers_)
     {
-        if((*it)->m_att.guid == writerId)
+        if(it->guid() == writerId && it->is_alive())
         {
-            *wp = *it;
+            *wp = it;
             return true;
         }
     }
@@ -553,18 +613,30 @@ bool StatefulReader::change_removed_by_history(
         CacheChange_t* a_change,
         WriterProxy* wp)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    if(wp != nullptr || matched_writer_lookup(a_change->writerGUID,&wp))
+    if (is_alive_)
     {
-        wp->setNotValid(a_change->sequenceNumber);
-        return true;
+        if(wp != nullptr || matched_writer_lookup(a_change->writerGUID,&wp))
+        {
+            if(!a_change->isRead && wp->available_changes_max() >= a_change->sequenceNumber)
+            {
+                if (0 < total_unread_)
+                {
+                    --total_unread_;
+                }
+            }
+
+            wp->change_removed_from_history(a_change->sequenceNumber);
+            return true;
+        }
+        else if(a_change->writerGUID.entityId != this->m_trustedWriterEntityId)
+        {
+            // trusted entities messages mean no havoc
+            logError(RTPS_READER," You should always find the WP associated with a change, something is very wrong");
+        }
     }
-    else if( a_change->writerGUID.entityId != this->m_trustedWriterEntityId )
-    {
-        // trusted entities messages mean no havoc
-        logError(RTPS_READER," You should always find the WP associated with a change, something is very wrong");
-    }
+
     return false;
 }
 
@@ -597,7 +669,6 @@ bool StatefulReader::change_received(
                             getListener()->onNewCacheChangeAdded((RTPSReader*)this, a_change);
                         }
 
-                        mp_history->postSemaphore();
                         return true;
                     }
                 }
@@ -607,15 +678,14 @@ bool StatefulReader::change_received(
         }
     }
 
-    std::unique_lock<std::recursive_mutex> writerProxyLock(*prox->getMutex());
-
+    // TODO (Miguel C): Refactor this inside WriterProxy
     size_t unknown_missing_changes_up_to = prox->unknown_missing_changes_up_to(a_change->sequenceNumber);
 
     if(this->mp_history->received_change(a_change, unknown_missing_changes_up_to))
     {
         bool ret = prox->received_change_set(a_change->sequenceNumber);
 
-        GUID_t proxGUID = prox->m_att.guid;
+        GUID_t proxGUID = prox->guid();
 
         // If KEEP_LAST and history full, make older changes as lost.
         CacheChange_t* aux_change = nullptr;
@@ -624,8 +694,6 @@ bool StatefulReader::change_received(
             prox->lost_changes_update(aux_change->sequenceNumber);
             fragmentedChangePitStop_->try_to_remove_until(aux_change->sequenceNumber, proxGUID);
         }
-
-        writerProxyLock.unlock();
 
         NotifyChanges(prox);
 
@@ -637,31 +705,33 @@ bool StatefulReader::change_received(
 
 void StatefulReader::NotifyChanges(WriterProxy* prox)
 {
-    GUID_t proxGUID = prox->m_att.guid;
+    GUID_t proxGUID = prox->guid();
     update_last_notified(proxGUID, prox->available_changes_max());
-    SequenceNumber_t nextChangeToNotify = prox->nextCacheChangeToBeNotified();
+    SequenceNumber_t nextChangeToNotify = prox->next_cache_change_to_be_notified();
     while (nextChangeToNotify != SequenceNumber_t::unknown())
     {
-        mp_history->postSemaphore();
+        CacheChange_t* ch_to_give = nullptr;
 
-        if (getListener() != nullptr)
+        if (mp_history->get_change(nextChangeToNotify, proxGUID, &ch_to_give))
         {
-            CacheChange_t* ch_to_give = nullptr;
-
-            if (mp_history->get_change(nextChangeToNotify, proxGUID, &ch_to_give))
+            if (!ch_to_give->isRead)
             {
-                if (!ch_to_give->isRead)
+                ++total_unread_;
+
+                if (getListener() != nullptr)
                 {
                     getListener()->onNewCacheChangeAdded((RTPSReader*)this, ch_to_give);
                 }
-            }
 
-            // Search again the WriterProxy because could be removed after the unlock.
-            if (!findWriterProxy(proxGUID, &prox))
-                break;
+                new_notification_cv_.notify_all();
+            }
         }
 
-        nextChangeToNotify = prox->nextCacheChangeToBeNotified();
+        // Search again the WriterProxy because could be removed after the unlock.
+        if (!findWriterProxy(proxGUID, &prox))
+            break;
+
+        nextChangeToNotify = prox->next_cache_change_to_be_notified();
     }
 }
 
@@ -669,7 +739,12 @@ bool StatefulReader::nextUntakenCache(
         CacheChange_t** change,
         WriterProxy** wpout)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    if (!is_alive_)
+    {
+        return false;
+    }
+
     std::vector<CacheChange_t*> toremove;
     bool takeok = false;
     for(std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
@@ -683,6 +758,17 @@ bool StatefulReader::nextUntakenCache(
             if(seq >= (*it)->sequenceNumber)
             {
                 *change = *it;
+
+                if(!(*change)->isRead)
+                {
+                    if (0 < total_unread_)
+                    {
+                        --total_unread_;
+                    }
+                }
+
+                (*change)->isRead = true;
+
                 if(wpout !=nullptr)
                     *wpout = wp;
 
@@ -710,7 +796,12 @@ bool StatefulReader::nextUnreadCache(
         CacheChange_t** change,
         WriterProxy** wpout)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    if (!is_alive_)
+    {
+        return false;
+    }
+
     std::vector<CacheChange_t*> toremove;
     bool readok = false;
     for(std::vector<CacheChange_t*>::iterator it = mp_history->changesBegin();
@@ -718,6 +809,7 @@ bool StatefulReader::nextUnreadCache(
     {
         if((*it)->isRead)
             continue;
+
         WriterProxy* wp;
         if(this->matched_writer_lookup((*it)->writerGUID,&wp))
         {
@@ -726,29 +818,19 @@ bool StatefulReader::nextUnreadCache(
             if(seq >= (*it)->sequenceNumber)
             {
                 *change = *it;
+
+                if (0 < total_unread_)
+                {
+                    --total_unread_;
+                }
+
+                (*change)->isRead = true;
+
                 if(wpout !=nullptr)
                     *wpout = wp;
 
                 readok = true;
                 break;
-                //				if((*it)->kind == ALIVE)
-                //				{
-                //					this->mp_type->deserialize(&(*it)->serializedPayload,data);
-                //				}
-                //				(*it)->isRead = true;
-                //				if(info!=NULL)
-                //				{
-                //					info->sampleKind = (*it)->kind;
-                //					info->writerGUID = (*it)->writerGUID;
-                //					info->sourceTimestamp = (*it)->sourceTimestamp;
-                //					info->iHandle = (*it)->instanceHandle;
-                //					if(this->m_qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
-                //						info->ownershipStrength = wp->m_data->m_qos.m_ownershipStrength.value;
-                //				}
-                //				m_reader_cache.decreaseUnreadCount();
-                //				logInfo(RTPS_READER,this->getGuid().entityId<<": reading change "<< (*it)->sequenceNumber.to64long());
-                //				readok = true;
-                //				break;
             }
         }
         else
@@ -769,14 +851,16 @@ bool StatefulReader::nextUnreadCache(
 
 bool StatefulReader::updateTimes(const ReaderTimes& ti)
 {
-    std::lock_guard<std::recursive_timed_mutex> guard(mp_mutex);
-    if(m_times.heartbeatResponseDelay != ti.heartbeatResponseDelay)
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    if (is_alive_)
     {
-        m_times = ti;
-        for(std::vector<WriterProxy*>::iterator wit = this->matched_writers.begin();
-                wit!=this->matched_writers.end();++wit)
+        if(times_.heartbeatResponseDelay != ti.heartbeatResponseDelay)
         {
-            (*wit)->mp_heartbeatResponse->update_interval(m_times.heartbeatResponseDelay);
+            times_ = ti;
+            for(WriterProxy* writer : matched_writers_)
+            {
+                writer->update_heartbeat_response_interval(times_.heartbeatResponseDelay);
+            }
         }
     }
     return true;
@@ -785,16 +869,148 @@ bool StatefulReader::updateTimes(const ReaderTimes& ti)
 bool StatefulReader::isInCleanState()
 {
     bool cleanState = true;
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
-    for (WriterProxy* wp : matched_writers)
+    if (is_alive_)
     {
-        if (wp->numberOfChangeFromWriter() != 0)
+        for (WriterProxy* wp : matched_writers_)
         {
-            cleanState = false;
-            break;
+            if (wp->number_of_changes_from_writer() != 0)
+            {
+                cleanState = false;
+                break;
+            }
         }
     }
 
     return cleanState;
+}
+
+void StatefulReader::send_acknack(
+        const WriterProxy* writer,
+        const SequenceNumberSet_t& sns,
+        const RTPSMessageSenderInterface& sender,
+        bool is_final)
+{
+
+    std::lock_guard<RecursiveTimedMutex> guard_reader(mp_mutex);
+
+    if (!writer->is_alive())
+    {
+        return;
+    }
+
+    acknack_count_++;
+
+
+    logInfo(RTPS_READER, "Sending ACKNACK: " << sns);
+
+    RTPSMessageGroup group(getRTPSParticipant(), this, message_buffer_, sender);
+    group.add_acknack(sns, acknack_count_, is_final);
+}
+
+void StatefulReader::send_acknack(
+        const WriterProxy* writer,
+        const RTPSMessageSenderInterface& sender,
+        bool heartbeat_was_final)
+{
+    // Protect reader
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+
+    if (!writer->is_alive())
+    {
+        return;
+    }
+
+    SequenceNumberSet_t missing_changes = writer->missing_changes();
+    // Stores missing changes but there is some fragments received.
+    std::vector<CacheChange_t*> uncompleted_changes;
+
+    try
+    {
+        RTPSMessageGroup group(getRTPSParticipant(), this, message_buffer_, sender);
+        if (!missing_changes.empty() || !heartbeat_was_final)
+        {
+            GUID_t guid = sender.remote_guids().at(0);
+            SequenceNumberSet_t sns(writer->available_changes_max() + 1);
+
+            missing_changes.for_each(
+                [&](const SequenceNumber_t& seq)
+                {
+                    // Check if the CacheChange_t is uncompleted.
+                    CacheChange_t* uncomplete_change = findCacheInFragmentedCachePitStop(seq, guid);
+                    if (uncomplete_change == nullptr)
+                    {
+                        if (!sns.add(seq))
+                        {
+                            logInfo(RTPS_READER, "Sequence number " << seq
+                                << " exceeded bitmap limit of AckNack. SeqNumSet Base: " << sns.base());
+                        }
+                    }
+                    else
+                    {
+                        uncompleted_changes.push_back(uncomplete_change);
+                    }
+
+                });
+
+            acknack_count_++;
+            logInfo(RTPS_READER, "Sending ACKNACK: " << sns;);
+
+            bool final = sns.empty();
+            group.add_acknack(sns, acknack_count_, final);
+        }
+
+        // Now generage NACK_FRAGS
+        if (!uncompleted_changes.empty())
+        {
+            for (auto cit : uncompleted_changes)
+            {
+                FragmentNumberSet_t frag_sns;
+
+                //  Search first fragment not present.
+                uint32_t frag_num = 0;
+                auto fit = cit->getDataFragments()->begin();
+                for (; fit != cit->getDataFragments()->end(); ++fit)
+                {
+                    ++frag_num;
+                    if (*fit == ChangeFragmentStatus_t::NOT_PRESENT)
+                        break;
+                }
+
+                // Never should happend.
+                assert(frag_num != 0);
+                assert(fit != cit->getDataFragments()->end());
+
+                // Store FragmentNumberSet_t base.
+                frag_sns.base(frag_num);
+
+                // Fill the FragmentNumberSet_t bitmap.
+                for (; fit != cit->getDataFragments()->end(); ++fit)
+                {
+                    if (*fit == ChangeFragmentStatus_t::NOT_PRESENT)
+                        frag_sns.add(frag_num);
+
+                    ++frag_num;
+                }
+
+                ++nackfrag_count_;
+                logInfo(RTPS_READER, "Sending NACKFRAG for sample" << cit->sequenceNumber << ": " << frag_sns;);
+
+                group.add_nackfrag(cit->sequenceNumber, frag_sns, nackfrag_count_);
+            }
+        }
+    }
+    catch(const RTPSMessageGroup::timeout&)
+    {
+        logError(RTPS_WRITER, "Max blocking time reached");
+    }
+}
+
+bool StatefulReader::send_sync_nts(
+        CDRMessage_t* message,
+        const Locator_t& locator,
+        std::chrono::steady_clock::time_point& max_blocking_time_point)
+{
+    return mp_RTPSParticipant->sendSync(message, locator, max_blocking_time_point);
 }

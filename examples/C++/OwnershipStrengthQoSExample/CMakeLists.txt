@@ -25,6 +25,10 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr REQUIRED)
 endif()
 
+if(NOT foonathan_memory_FOUND)
+    find_package(foonathan_memory REQUIRED)
+endif()
+
 if(NOT fastrtps_FOUND)
     find_package(fastrtps REQUIRED)
 endif()
@@ -45,7 +49,7 @@ message(STATUS "Configuring OwnershipStrengthQoS example...")
 file(GLOB OWNERSHIPSTRENGTH_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(OwnershipStrengthQoSExample ${OWNERSHIPSTRENGTH_EXAMPLE_SOURCES})
-target_link_libraries(OwnershipStrengthQoSExample fastrtps fastcdr)
+target_link_libraries(OwnershipStrengthQoSExample fastrtps fastcdr foonathan_memory)
 install(TARGETS OwnershipStrengthQoSExample
     RUNTIME DESTINATION examples/C++/OwnershipStrengthQoSExample/${BIN_INSTALL_DIR}
     )

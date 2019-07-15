@@ -22,8 +22,10 @@
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/writer/ReaderProxy.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/writer/timedevent/NackSupressionDuration.h>
+#include <fastrtps/rtps/resources/TimedEvent.h>
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/rtps/common/LocatorListComparisons.hpp>
+#include "../participant/RTPSParticipantImpl.h"
 
 #include <mutex>
 #include <cassert>
@@ -37,53 +39,88 @@ namespace rtps {
 
 ReaderProxy::ReaderProxy(
         const WriterTimes& times,
+        const RemoteLocatorsAllocationAttributes& loc_alloc,
         StatefulWriter* writer)
     : is_active_(false)
-    , reader_attributes_()
+    , locator_info_(writer->getRTPSParticipant(), loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
+    , reader_attributes_(loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
     , writer_(writer)
-    , guid_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
     , changes_for_reader_(resource_limits_from_history(writer->mp_history->m_att, 0))
     , nack_supression_event_(nullptr)
     , timers_enabled_(false)
     , last_acknack_count_(0)
     , last_nackfrag_count_(0)
 {
-    nack_supression_event_ = std::make_shared <NackSupressionDuration>(writer_,
-        TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
+    nack_supression_event_ = new TimedEvent(writer_->getRTPSParticipant()->getEventResource(),
+            [&](TimedEvent::EventCode code) -> bool
+            {
+                if (TimedEvent::EVENT_SUCCESS == code)
+                {
+                    writer_->perform_nack_supression(reader_attributes_.guid());
+                }
+
+                return false;
+            },
+            TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
 
     stop();
 }
 
 ReaderProxy::~ReaderProxy()
 {
+    if (nack_supression_event_)
+    {
+        delete(nack_supression_event_);
+        nack_supression_event_ = nullptr;
+    }
 }
 
-void ReaderProxy::start(const RemoteReaderAttributes& reader_attributes)
+void ReaderProxy::start(const ReaderProxyData& reader_attributes)
 {
+    locator_info_.start(
+        reader_attributes.guid(),
+        reader_attributes.remote_locators().unicast,
+        reader_attributes.remote_locators().multicast,
+        reader_attributes.m_expectsInlineQos);
+
     is_active_ = true;
     reader_attributes_ = reader_attributes;
-    guid_as_vector_.push_back(reader_attributes_.guid);
 
-    reader_attributes_.endpoint.remoteLocatorList.assign(reader_attributes_.endpoint.unicastLocatorList);
-    reader_attributes_.endpoint.remoteLocatorList.push_back(reader_attributes_.endpoint.multicastLocatorList);
-
-    nack_supression_event_->reader_guid(reader_attributes_.guid);
-    timers_enabled_.store(reader_attributes_.endpoint.reliabilityKind == RELIABLE);
+    timers_enabled_.store(reader_attributes_.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS);
 
     logInfo(RTPS_WRITER, "Reader Proxy started");
 }
 
+bool ReaderProxy::update(const ReaderProxyData& reader_attributes)
+{
+    if ((reader_attributes_.m_qos == reader_attributes.m_qos) &&
+        (reader_attributes_.remote_locators().unicast == reader_attributes.remote_locators().unicast) &&
+        (reader_attributes_.remote_locators().multicast == reader_attributes.remote_locators().multicast) &&
+        (reader_attributes_.m_expectsInlineQos == reader_attributes.m_expectsInlineQos))
+    {
+        return false;
+    }
+
+    reader_attributes_ = reader_attributes;
+    locator_info_.update(
+        reader_attributes.remote_locators().unicast,
+        reader_attributes.remote_locators().multicast,
+        reader_attributes.m_expectsInlineQos);
+
+    return true;
+}
+
 void ReaderProxy::stop()
 {
+    locator_info_.stop(reader_attributes_.guid());
     is_active_ = false;
-    reader_attributes_.guid = c_Guid_Unknown;
+    reader_attributes_.guid(c_Guid_Unknown);
     disable_timers();
 
     changes_for_reader_.clear();
     last_acknack_count_ = 0;
     last_nackfrag_count_ = 0;
     changes_low_mark_ = SequenceNumber_t();
-    guid_as_vector_.clear();
 }
 
 void ReaderProxy::disable_timers()
@@ -103,14 +140,33 @@ void ReaderProxy::add_change(
         const ChangeForReader_t& change,
         bool restart_nack_supression)
 {
-    assert(change.getSequenceNumber() > changes_low_mark_);
-    assert(changes_for_reader_.empty() ? true :
-        change.getSequenceNumber() > changes_for_reader_.back().getSequenceNumber());
-
     if (restart_nack_supression && timers_enabled_.load())
     {
         nack_supression_event_->restart_timer();
     }
+
+    add_change(change);
+}
+
+void ReaderProxy::add_change(
+        const ChangeForReader_t& change,
+        bool restart_nack_supression,
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+{
+    if (restart_nack_supression && timers_enabled_)
+    {
+        nack_supression_event_->restart_timer(max_blocking_time);
+    }
+
+    add_change(change);
+}
+
+void ReaderProxy::add_change(
+        const ChangeForReader_t& change)
+{
+    assert(change.getSequenceNumber() > changes_low_mark_);
+    assert(changes_for_reader_.empty() ? true :
+        change.getSequenceNumber() > changes_for_reader_.back().getSequenceNumber());
 
     // For best effort readers, changes are acked when being sent
     if (changes_for_reader_.empty() && change.getStatus() == ACKNOWLEDGED)
@@ -130,7 +186,7 @@ void ReaderProxy::add_change(
         // This should never happen
         assert(false);
         logError(RTPS_WRITER, "Error adding change " << change.getSequenceNumber() << " to reader proxy " << \
-            reader_attributes_.guid);
+            reader_attributes_.guid());
     }
 }
 
@@ -407,7 +463,7 @@ bool ReaderProxy::process_nack_frag(
         const SequenceNumber_t& seq_num,
         const FragmentNumberSet_t& fragments_state)
 {
-    if (reader_attributes_.guid == reader_guid)
+    if (reader_attributes_.guid() == reader_guid)
     {
         if (last_nackfrag_count_ < nack_count)
         {

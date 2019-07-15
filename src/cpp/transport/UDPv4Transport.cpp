@@ -200,7 +200,7 @@ void UDPv4Transport::endpoint_to_locator(
     IPLocator::setIPv4(locator, ipBytes.data());
 }
 
-void UDPv4Transport::fill_local_ip(Locator_t& loc)
+void UDPv4Transport::fill_local_ip(Locator_t& loc) const
 {
     IPLocator::setIPv4(loc, "127.0.0.1");
     loc.kind = LOCATOR_KIND_UDPv4;

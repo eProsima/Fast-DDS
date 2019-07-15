@@ -33,26 +33,26 @@ namespace fastrtps{
 namespace rtps {
 
 
-DServerEvent::DServerEvent(PDPServer* p_PDP,
-        double interval):
-    TimedEvent(p_PDP->getRTPSParticipant()->getEventResource().getIOService(),
-            p_PDP->getRTPSParticipant()->getEventResource().getThread(), interval),
-    mp_PDP(p_PDP),
-    messages_enabled_(false)
+DServerEvent::DServerEvent(
+        PDPServer* p_PDP,
+        double interval)
+    : TimedEvent(p_PDP->getRTPSParticipant()->getEventResource(), 
+        [this](EventCode code)
+        {
+            return event(code);
+        }, interval)
+    , mp_PDP(p_PDP)
+    , messages_enabled_(false)
     {
 
     }
 
 DServerEvent::~DServerEvent()
 {
-    destroy();
 }
 
-void DServerEvent::event(EventCode code, const char* msg)
+bool DServerEvent::event(EventCode code)
 {
-    // Unused in release mode.
-    (void)msg;
-
     if(code == EVENT_SUCCESS)
     {
         logInfo(SERVER_PDP_THREAD, "Server " << mp_PDP->getRTPSParticipant()->getGuid() << " DServerEvent Period");
@@ -115,22 +115,17 @@ void DServerEvent::event(EventCode code, const char* msg)
             logInfo(SERVER_PDP_THREAD, "trimming PDP history from removed endpoints")
         }
 
-        if (restart)
-        {
-            restart_timer();
-        }
+        return restart;
 
     }
     else if(code == EVENT_ABORT)
     {
         logInfo(SERVER_PDP_THREAD,"DServerEvent aborted");
     }
-    else
-    {
-        logInfo(SERVER_PDP_THREAD,"message: " <<msg);
-    }
+
+    return false;
 }
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */

@@ -17,16 +17,14 @@
  *
  */
 
-#ifndef PDPSIMPLE_H_
-#define PDPSIMPLE_H_
+#ifndef _RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
+#define _RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
 
 #include "PDP.h"
 
-
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class StatelessWriter;
@@ -34,19 +32,22 @@ class StatelessReader;
 
 /**
  * Class PDPSimple that implements the SimpleRTPSParticipantDiscoveryProtocol as defined in the RTPS specification.
- *@ingroup DISCOVERY_MODULE
+ * @ingroup DISCOVERY_MODULE
  */
 class PDPSimple : public PDP
 {
-    public:
+public:
+
     /**
      * Constructor
      * @param builtin Pointer to the BuiltinProcols object.
+     * @param allocation Participant allocation parameters.
      */
-    PDPSimple(BuiltinProtocols* builtin);
-    ~PDPSimple();
+    PDPSimple(
+            BuiltinProtocols* builtin,
+            const RTPSParticipantAllocationAttributes& allocation);
 
-    void initializeParticipantProxyData(ParticipantProxyData* participant_data) override;
+    virtual ~PDPSimple();
 
     /**
      * Initialize the PDP.
@@ -83,13 +84,22 @@ class PDPSimple : public PDP
         WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
 
     /**
-     * This method assigns remote endpoints to the builtin endpoints defined in this protocol. It also calls the corresponding methods in EDP and WLP.
-     * @param pdata Pointer to the RTPSParticipantProxyData object.
+     * This method assigns remote endpoints to the builtin endpoints defined in this protocol. It also calls
+     * the corresponding methods in EDP and WLP.
+     * @param pdata Pointer to the ParticipantProxyData object.
      */
     void assignRemoteEndpoints(ParticipantProxyData* pdata) override;
 
+    /**
+     * Remove remote endpoints from the participant discovery protocol
+     * @param pdata Pointer to the ParticipantProxyData to remove
+     */
     void removeRemoteEndpoints(ParticipantProxyData * pdata) override;
 
+    /**
+     * This method notifies EDP and WLP of the existence of a new participant.
+     * @param pdata 
+     */
     void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata) override;
 
     /**
@@ -99,11 +109,14 @@ class PDPSimple : public PDP
      * @param kind Kind of endpoint.
      */
     bool newRemoteEndpointStaticallyDiscovered(
-        const GUID_t& pguid,
-        int16_t userDefinedId,
-        EndpointKind_t kind);
+            const GUID_t& pguid,
+            int16_t userDefinedId,
+            EndpointKind_t kind);
 
-    private:
+
+private:
+
+    void initializeParticipantProxyData(ParticipantProxyData* participant_data) override;
 
     /**
      * Create the SPDP Writer and Reader
@@ -113,8 +126,9 @@ class PDPSimple : public PDP
 
 };
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
+
 #endif
-#endif /* PDPSIMPLE_H_ */
+#endif //_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_

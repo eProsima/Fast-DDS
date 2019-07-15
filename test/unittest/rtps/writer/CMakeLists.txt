@@ -24,8 +24,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 	
         set(WRITERPROXYTESTS_SOURCE ReaderProxyTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/ReaderProxy.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp 
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
@@ -45,11 +43,14 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterHistory
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulWriter
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/HeartbeatResponseDelay
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyLiveliness
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/InitialAckNack
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/NackSupressionDuration
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessWriter
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderProxyData
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderLocator
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/TimedEvent
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            )
         target_link_libraries(ReaderProxyTests
             ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
@@ -57,24 +58,26 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
 	# LivelinessManager
 	
-	set(LIVELINESSMANAGERTESTS_SOURCE LivelinessManagerTests.cpp
-          ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-          ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-	  ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LivelinessManager.cpp
-          ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
-          ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
-	  ${PROJECT_SOURCE_DIR}/src/cpp/rtps/timedevent/TimedCallback.cpp
-          ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
-	add_executable(LivelinessManagerTests ${LIVELINESSMANAGERTESTS_SOURCE})
+	    set(LIVELINESSMANAGERTESTS_SOURCE LivelinessManagerTests.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
+	        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LivelinessManager.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
+			)
+	    add_executable(LivelinessManagerTests ${LIVELINESSMANAGERTESTS_SOURCE})
         target_compile_definitions(LivelinessManagerTests PRIVATE FASTRTPS_NO_LIB)
         target_include_directories(LivelinessManagerTests PRIVATE
-          ${GTEST_INCLUDE_DIRS}
-	  ${GMOCK_INCLUDE_DIRS}
-          ${PROJECT_SOURCE_DIR}/include
-	  ${PROJECT_BINARY_DIR}/include)
-	target_link_libraries(LivelinessManagerTests PRIVATE
-	    ${GTEST_LIBRARIES}
-	    ${GMOCK_LIBRARIES})
-	add_gtest(LivelinessManagerTests SOURCES ${LIVELINESSMANAGERTESTS_SOURCE})
+            ${GTEST_INCLUDE_DIRS}
+	        ${GMOCK_INCLUDE_DIRS}
+            ${PROJECT_SOURCE_DIR}/include
+	        ${PROJECT_BINARY_DIR}/include)
+	    target_link_libraries(LivelinessManagerTests PRIVATE
+	        ${GTEST_LIBRARIES}
+	        ${GMOCK_LIBRARIES})
+	    add_gtest(LivelinessManagerTests SOURCES ${LIVELINESSMANAGERTESTS_SOURCE})
     endif()
 endif()

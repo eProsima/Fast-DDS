@@ -63,6 +63,7 @@ const char* DATA_WRITER = "data_writer";
 const char* DATA_READER = "data_reader";
 
 /// RTPS Participant attributes
+const char* ALLOCATION = "allocation";
 const char* PREFIX = "prefix";
 const char* DEF_UNI_LOC_LIST = "defaultUnicastLocatorList";
 const char* DEF_MULTI_LOC_LIST = "defaultMulticastLocatorList";
@@ -80,6 +81,12 @@ const char* USER_TRANS = "userTransports";
 const char* USE_BUILTIN_TRANS = "useBuiltinTransports";
 const char* PROPERTIES_POLICY = "propertiesPolicy";
 const char* NAME = "name";
+const char* REMOTE_LOCATORS = "remote_locators";
+const char* MAX_UNICAST_LOCATORS = "max_unicast_locators";
+const char* MAX_MULTICAST_LOCATORS = "max_multicast_locators";
+const char* TOTAL_PARTICIPANTS = "total_participants";
+const char* TOTAL_READERS = "total_readers";
+const char* TOTAL_WRITERS = "total_writers";
 
 /// Publisher-subscriber attributes
 const char* TOPIC = "topic";
@@ -95,6 +102,7 @@ const char* HIST_MEM_POLICY = "historyMemoryPolicy";
 const char* USER_DEF_ID = "userDefinedID";
 const char* ENTITY_ID = "entityID";
 const char* MATCHED_SUBSCRIBERS_ALLOCATION = "matchedSubscribersAllocation";
+const char* MATCHED_PUBLISHERS_ALLOCATION = "matchedPublishersAllocation";
 
 ///
 const char* PROPERTIES = "properties";

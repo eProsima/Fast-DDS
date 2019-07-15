@@ -159,31 +159,70 @@ void XMLEndpointParser::loadXMLParticipantEndpoint(tinyxml2::XMLElement* xml_end
 
 XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endpoint, StaticRTPSParticipantInfo* pdata)
 {
-    ReaderProxyData* rdata = new ReaderProxyData();
+    LocatorList_t unicast_locators;
+    LocatorList_t multicast_locators;
 
     tinyxml2::XMLNode* xml_endpoint_child = xml_endpoint;
     tinyxml2::XMLElement* element = xml_endpoint_child->FirstChildElement();
 
-    while(element != nullptr)
+    // Parse locators first
+    while (element != nullptr)
     {
         std::string key(element->Name());
-        if(key == USER_ID)
+        if (key == UNICAST_LOCATOR)
+        {
+            Locator_t loc;
+            loc.kind = 1;
+            const char *address = element->Attribute(ADDRESS);
+            std::string auxString(address ? address : "");
+            IPLocator::setIPv4(loc, auxString);
+            int port = 0;
+            element->QueryIntAttribute(PORT, &port);
+            loc.port = static_cast<uint16_t>(port);
+            unicast_locators.push_back(loc);
+        }
+        else if (key == MULTICAST_LOCATOR)
+        {
+            Locator_t loc;
+            loc.kind = 1;
+            const char *address = element->Attribute(ADDRESS);
+            std::string auxString(address ? address : "");
+            IPLocator::setIPv4(loc, auxString);
+            int port = 0;
+            element->QueryIntAttribute(PORT, &port);
+            loc.port = static_cast<uint16_t>(port);
+            multicast_locators.push_back(loc);
+        }
+
+        element = element->NextSiblingElement();
+    }
+
+
+    ReaderProxyData* rdata = new ReaderProxyData(unicast_locators.size(), multicast_locators.size());
+
+    xml_endpoint_child = xml_endpoint;
+    element = xml_endpoint_child->FirstChildElement();
+
+    while (element != nullptr)
+    {
+        std::string key(element->Name());
+        if (key == USER_ID)
         {
             int16_t id = static_cast<int16_t>(std::strtol(element->GetText(), nullptr, 10));
-            if(id<=0 || m_endpointIds.insert(id).second == false)
+            if (id <= 0 || m_endpointIds.insert(id).second == false)
             {
-                logError(RTPS_EDP,"Repeated or negative ID in XML file");
+                logError(RTPS_EDP, "Repeated or negative ID in XML file");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
             rdata->userDefinedId(id);
         }
-        else if(key == ENTITY_ID)
+        else if (key == ENTITY_ID)
         {
             int32_t id = std::strtol(element->GetText(), nullptr, 10);
-            if(id<=0 || m_entityIds.insert(id).second == false)
+            if (id <= 0 || m_entityIds.insert(id).second == false)
             {
-                logError(RTPS_EDP,"Repeated or negative entityId in XML file");
+                logError(RTPS_EDP, "Repeated or negative entityId in XML file");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -192,10 +231,10 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
             rdata->guid().entityId.value[1] = c[1];
             rdata->guid().entityId.value[0] = c[2];
         }
-        else if(key == EXPECT_INLINE_QOS)
+        else if (key == EXPECT_INLINE_QOS)
         {
             std::string auxString(element->GetText());
-            if(auxString == "true")
+            if (auxString == "true")
             {
                 rdata->m_expectsInlineQos = true;
             }
@@ -205,23 +244,23 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
             }
             else
             {
-                logError(RTPS_EDP,"Bad XML file, endpoint of expectsInlineQos: " << auxString << " is not valid");
+                logError(RTPS_EDP, "Bad XML file, endpoint of expectsInlineQos: " << auxString << " is not valid");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if(key == TOPIC_NAME)
+        else if (key == TOPIC_NAME)
         {
             rdata->topicName() = element->GetText();
         }
-        else if(key == TOPIC_DATA_TYPE)
+        else if (key == TOPIC_DATA_TYPE)
         {
             rdata->typeName() = element->GetText();
         }
-        else if(key == TOPIC_KIND)
+        else if (key == TOPIC_KIND)
         {
             std::string auxString(element->GetText());
-            if(auxString == _NO_KEY)
+            if (auxString == _NO_KEY)
             {
                 rdata->topicKind() = NO_KEY;
                 rdata->guid().entityId.value[3] = 0x04;
@@ -233,50 +272,34 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
             }
             else
             {
-                logError(RTPS_EDP,"Bad XML file, topic of kind: " << auxString << " is not valid");
+                logError(RTPS_EDP, "Bad XML file, topic of kind: " << auxString << " is not valid");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if(key == RELIABILITY_QOS)
+        else if (key == RELIABILITY_QOS)
         {
             std::string auxString(element->GetText());
-            if(auxString == _RELIABLE_RELIABILITY_QOS)
+            if (auxString == _RELIABLE_RELIABILITY_QOS)
                 rdata->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
             else if (auxString == _BEST_EFFORT_RELIABILITY_QOS)
                 rdata->m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
             else
             {
-                logError(RTPS_EDP,"Bad XML file, endpoint of stateKind: " << auxString << " is not valid");
+                logError(RTPS_EDP, "Bad XML file, endpoint of stateKind: " << auxString << " is not valid");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if(key == UNICAST_LOCATOR)
+        else if (key == UNICAST_LOCATOR)
         {
-            Locator_t loc;
-            loc.kind = 1;
-            const char *address = element->Attribute(ADDRESS);
-            std::string auxString(address ? address : "");
-            IPLocator::setIPv4(loc, auxString);
-            int port = 0;
-            element->QueryIntAttribute(PORT, &port);
-            loc.port = static_cast<uint16_t>(port);
-            rdata->unicastLocatorList().push_back(loc);
+            // Empty but necessary to avoid warning on last else
         }
-        else if(key == MULTICAST_LOCATOR)
+        else if (key == MULTICAST_LOCATOR)
         {
-            Locator_t loc;
-            loc.kind = 1;
-            const char *address = element->Attribute(ADDRESS);
-            std::string auxString(address ? address : "");
-            IPLocator::setIPv4(loc, auxString);
-            int port = 0;
-            element->QueryIntAttribute(PORT, &port);
-            loc.port = static_cast<uint16_t>(port);
-            rdata->multicastLocatorList().push_back(loc);
+            // Empty but necessary to avoid warning on last else
         }
-        else if(key == TOPIC)
+        else if (key == TOPIC)
         {
             const char *topicName = element->Attribute(NAME);
             const char *typeName = element->Attribute(DATA_TYPE);
@@ -285,7 +308,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
             rdata->topicName() = topicName ? std::string(topicName) : std::string("");
             rdata->typeName() = typeName ? std::string(typeName) : std::string("");
             std::string auxString(kind ? kind : "");
-            if(auxString == _NO_KEY)
+            if (auxString == _NO_KEY)
             {
                 rdata->topicKind() = NO_KEY;
                 rdata->guid().entityId.value[3] = 0x04;
@@ -297,93 +320,106 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
             }
             else
             {
-                logError(RTPS_EDP,"Bad XML file, topic of kind: " << auxString << " is not valid");
+                logError(RTPS_EDP, "Bad XML file, topic of kind: " << auxString << " is not valid");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
-            if(rdata->topicName() == EPROSIMA_UNKNOWN_STRING || rdata->typeName() == EPROSIMA_UNKNOWN_STRING)
+            if (rdata->topicName() == EPROSIMA_UNKNOWN_STRING || rdata->typeName() == EPROSIMA_UNKNOWN_STRING)
             {
-                logError(RTPS_EDP,"Bad XML file, topic: " << rdata->topicName() << " or typeName: " << rdata->typeName() << " undefined");
+                logError(RTPS_EDP, "Bad XML file, topic: " << rdata->topicName() << " or typeName: " << rdata->typeName() << " undefined");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if(key == DURABILITY_QOS)
+        else if (key == DURABILITY_QOS)
         {
             std::string auxstring(element->GetText());
-            if(auxstring == _TRANSIENT_LOCAL_DURABILITY_QOS)
+            if (auxstring == _TRANSIENT_LOCAL_DURABILITY_QOS)
                 rdata->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-            else if(auxstring == _VOLATILE_DURABILITY_QOS)
+            else if (auxstring == _VOLATILE_DURABILITY_QOS)
                 rdata->m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
             else
             {
-                logError(RTPS_EDP,"Bad XML file, durability of kind: " << auxstring << " is not valid");
+                logError(RTPS_EDP, "Bad XML file, durability of kind: " << auxstring << " is not valid");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if(key == OWNERSHIP_QOS)
+        else if (key == OWNERSHIP_QOS)
         {
             const char *ownership = element->Attribute(KIND);
             std::string auxstring(ownership ? ownership : OWNERSHIP_KIND_NOT_PRESENT);
-            if(auxstring == _SHARED_OWNERSHIP_QOS)
+            if (auxstring == _SHARED_OWNERSHIP_QOS)
                 rdata->m_qos.m_ownership.kind = SHARED_OWNERSHIP_QOS;
-            else if(auxstring == _EXCLUSIVE_OWNERSHIP_QOS)
+            else if (auxstring == _EXCLUSIVE_OWNERSHIP_QOS)
                 rdata->m_qos.m_ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
             else
             {
-                logError(RTPS_EDP,"Bad XML file, ownership of kind: " << auxstring << " is not valid");
+                logError(RTPS_EDP, "Bad XML file, ownership of kind: " << auxstring << " is not valid");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if(key == PARTITION_QOS)
+        else if (key == PARTITION_QOS)
         {
             rdata->m_qos.m_partition.push_back(element->GetText());
         }
-        else if(key == LIVELINESS_QOS)
+        else if (key == LIVELINESS_QOS)
         {
             const char *kind = element->Attribute(KIND);
             std::string auxstring(kind ? kind : LIVELINESS_KIND_NOT_PRESENT);
-            if(auxstring == _AUTOMATIC_LIVELINESS_QOS)
+            if (auxstring == _AUTOMATIC_LIVELINESS_QOS)
                 rdata->m_qos.m_liveliness.kind = AUTOMATIC_LIVELINESS_QOS;
-            else if(auxstring == _MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+            else if (auxstring == _MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
                 rdata->m_qos.m_liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
-            else if(auxstring == _MANUAL_BY_TOPIC_LIVELINESS_QOS)
+            else if (auxstring == _MANUAL_BY_TOPIC_LIVELINESS_QOS)
                 rdata->m_qos.m_liveliness.kind = MANUAL_BY_TOPIC_LIVELINESS_QOS;
             else
             {
-                logError(RTPS_EDP,"Bad XML file, liveliness of kind: " << auxstring << " is not valid");
+                logError(RTPS_EDP, "Bad XML file, liveliness of kind: " << auxstring << " is not valid");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
             const char *leaseDuration_ms = element->Attribute(LEASE_DURATION_MS);
             auxstring = std::string(leaseDuration_ms ? leaseDuration_ms : _INF);
-            if(auxstring == _INF)
+            if (auxstring == _INF)
                 rdata->m_qos.m_liveliness.lease_duration = c_TimeInfinite;
             else
             {
                 uint32_t milliseclease = std::strtoul(auxstring.c_str(), nullptr, 10);
                 rdata->m_qos.m_liveliness.lease_duration =
                     TimeConv::MilliSeconds2Time_t((double)milliseclease).to_duration_t();
-                if(milliseclease == 0){
+                if(milliseclease == 0)
+                {
                     logWarning(RTPS_EDP,"BAD XML:livelinessQos leaseDuration is 0");
                 }
             }
         }
         else
         {
-            logWarning(RTPS_EDP,"Unkown Endpoint-XML tag, ignoring "<< key)
+            logWarning(RTPS_EDP, "Unkown Endpoint-XML tag, ignoring " << key)
         }
 
         element = element->NextSiblingElement();
-        }
+    }
+
     if(rdata->userDefinedId() == 0)
     {
         logError(RTPS_EDP,"Reader XML endpoint with NO ID defined");
         delete(rdata);
         return XMLP_ret::XML_ERROR;
     }
+
+    for (const Locator_t& loc : unicast_locators)
+    {
+        rdata->add_unicast_locator(loc);
+    }
+
+    for (const Locator_t& loc : multicast_locators)
+    {
+        rdata->add_multicast_locator(loc);
+    }
+
     pdata->m_readers.push_back(rdata);
     return XMLP_ret::XML_OK;
 }
@@ -391,11 +427,46 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
 
 XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endpoint, StaticRTPSParticipantInfo* pdata)
 {
-    WriterProxyData* wdata = new WriterProxyData();
+    LocatorList_t unicast_locators;
+    LocatorList_t multicast_locators;
 
     tinyxml2::XMLNode* xml_endpoint_child = xml_endpoint;
     tinyxml2::XMLElement* element = xml_endpoint_child->FirstChildElement();
 
+    while(element != nullptr)
+    {
+        std::string key(element->Name());
+        if (key == UNICAST_LOCATOR)
+        {
+            Locator_t loc;
+            loc.kind = 1;
+            const char *address = element->Attribute(ADDRESS);
+            std::string auxString(address ? address : "");
+            IPLocator::setIPv4(loc, auxString);
+            int port = 0;
+            element->QueryIntAttribute(PORT, &port);
+            loc.port = static_cast<uint16_t>(port);
+            unicast_locators.push_back(loc);
+        }
+        else if (key == MULTICAST_LOCATOR)
+        {
+            Locator_t loc;
+            loc.kind = 1;
+            const char *address = element->Attribute(ADDRESS);
+            std::string auxString(address ? address : "");
+            IPLocator::setIPv4(loc, auxString);
+            int port = 0;
+            element->QueryIntAttribute(PORT, &port);
+            loc.port = static_cast<uint16_t>(port);
+            multicast_locators.push_back(loc);
+        }
+        element = element->NextSiblingElement();
+    }
+
+    WriterProxyData* wdata = new WriterProxyData(unicast_locators.size(), multicast_locators.size());
+
+    xml_endpoint_child = xml_endpoint;
+    element = xml_endpoint_child->FirstChildElement();
     while(element != nullptr)
     {
         std::string key(element->Name());
@@ -472,27 +543,11 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
         }
         else if(key == UNICAST_LOCATOR)
         {
-            Locator_t loc;
-            loc.kind = 1;
-            const char *address = element->Attribute(ADDRESS);
-            std::string auxString(address ? address : "");
-            IPLocator::setIPv4(loc, auxString);
-            int port = 0;
-            element->QueryIntAttribute(PORT, &port);
-            loc.port = static_cast<uint16_t>(port);
-            wdata->unicastLocatorList().push_back(loc);
+            // Empty but necessary to avoid warning on last else
         }
         else if(key == MULTICAST_LOCATOR)
         {
-            Locator_t loc;
-            loc.kind = 1;
-            const char *address = element->Attribute(ADDRESS);
-            std::string auxString(address ? address : "");
-            IPLocator::setIPv4(loc, auxString);
-            int port = 0;
-            element->QueryIntAttribute(PORT, &port);
-            loc.port = static_cast<uint16_t>(port);
-            wdata->multicastLocatorList().push_back(loc);
+            // Empty but necessary to avoid warning on last else
         }
         else if(key == TOPIC)
         {
@@ -598,12 +653,24 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
 
         element = element->NextSiblingElement();
     }
+
     if(wdata->userDefinedId() == 0)
     {
         logError(RTPS_EDP,"Writer XML endpoint with NO ID defined");
         delete(wdata);
         return XMLP_ret::XML_ERROR;
     }
+
+    for (const Locator_t& loc : unicast_locators)
+    {
+        wdata->add_unicast_locator(loc);
+    }
+
+    for (const Locator_t& loc : multicast_locators)
+    {
+        wdata->add_multicast_locator(loc);
+    }
+
     pdata->m_writers.push_back(wdata);
     return XMLP_ret::XML_OK;
 }

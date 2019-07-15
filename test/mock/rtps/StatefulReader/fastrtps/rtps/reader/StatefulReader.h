@@ -21,33 +21,64 @@
 
 namespace eprosima {
 namespace fastrtps {
-namespace rtps{
+namespace rtps {
+
+class RTPSMessageGroup_t;
+class WriterProxy;
+class RTPSMessageSenderInterface;
+class RTPSParticipantImpl;
+struct CDRMessage_t;
 
 class StatefulReader : public RTPSReader
-    {
-        public:
+{
+    public:
 
-            StatefulReader() {}
+        StatefulReader() {}
 
-            StatefulReader(ReaderHistory* history, std::recursive_timed_mutex* mutex) : RTPSReader(history, mutex) {}
+        StatefulReader(ReaderHistory* history, RecursiveTimedMutex* mutex) : RTPSReader(history, mutex) {}
 
-            virtual ~StatefulReader() {}
+        virtual ~StatefulReader() {}
 
-            MOCK_METHOD1(matched_writer_add, bool(RemoteWriterAttributes&));
+        MOCK_METHOD1(matched_writer_add, bool(const WriterProxyData&));
 
-            MOCK_METHOD1(matched_writer_remove, bool(RemoteWriterAttributes&));
+        MOCK_METHOD1(matched_writer_remove, bool(const GUID_t&));
 
-            // In real class, inherited from Endpoint base class.
-            inline const GUID_t& getGuid() const { return guid_; };
+        MOCK_METHOD1(liveliness_expired, bool(const GUID_t&));
 
-            inline ReaderTimes& getTimes(){return times_;};
+        // In real class, inherited from Endpoint base class.
+        inline const GUID_t& getGuid() const { return guid_; };
 
-        private:
+        inline ReaderTimes& getTimes() { return times_; }
 
-            GUID_t guid_;
+        void send_acknack(
+                const WriterProxy* /*writer*/,
+                const SequenceNumberSet_t& /*sns*/,
+                const RTPSMessageSenderInterface& /*sender*/,
+                bool /*is_final*/)
+        {}
 
-            ReaderTimes times_;
-    };
+        void send_acknack(
+                const WriterProxy* /*writer*/,
+                const RTPSMessageSenderInterface& /*sender*/,
+                bool /*heartbeat_was_final*/)
+        {}
+
+        RTPSParticipantImpl* getRTPSParticipant() const { return nullptr; }
+
+        bool send_sync_nts(
+                CDRMessage_t* /*message*/,
+                const Locator_t& /*locator*/,
+                std::chrono::steady_clock::time_point& /*max_blocking_time_point*/)
+        {
+            return true;
+        }
+
+    private:
+
+        GUID_t guid_;
+
+        ReaderTimes times_;
+};
 
 } // namespace rtps
 } // namespace fastrtps

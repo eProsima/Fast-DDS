@@ -31,11 +31,14 @@
 #include "../../security/accesscontrol/EndpointSecurityAttributes.h"
 #endif
 
+#include "../../common/RemoteLocators.hpp"
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
 struct CDRMessage_t;
+class NetworkFactory;
 
 /**
  * Class ReaderProxyData, used to represent all the information on a Reader (both local and remote) with the purpose of
@@ -46,7 +49,9 @@ class ReaderProxyData
 {
     public:
 
-        RTPS_DllAPI ReaderProxyData();
+        RTPS_DllAPI ReaderProxyData(
+                const size_t max_unicast_locators,
+                const size_t max_multicast_locators);
 
         RTPS_DllAPI virtual ~ReaderProxyData();
 
@@ -64,7 +69,7 @@ class ReaderProxyData
             m_guid = std::move(guid);
         }
 
-        RTPS_DllAPI GUID_t guid() const
+        RTPS_DllAPI const GUID_t& guid() const
         {
             return m_guid;
         }
@@ -74,45 +79,32 @@ class ReaderProxyData
             return m_guid;
         }
 
-        RTPS_DllAPI void unicastLocatorList(const LocatorList_t& unicastLocatorList)
+        RTPS_DllAPI bool has_locators() const
         {
-            m_unicastLocatorList = unicastLocatorList;
+            return !remote_locators_.unicast.empty() || !remote_locators_.multicast.empty();
         }
 
-        RTPS_DllAPI void unicastLocatorList(LocatorList_t&& unicastLocatorList)
-        {
-            m_unicastLocatorList = std::move(unicastLocatorList);
+        RTPS_DllAPI const RemoteLocatorList& remote_locators() const
+        { 
+            return remote_locators_;
         }
 
-        RTPS_DllAPI LocatorList_t unicastLocatorList() const
-        {
-            return m_unicastLocatorList;
-        }
+        RTPS_DllAPI void add_unicast_locator(const Locator_t& locator);
 
-        RTPS_DllAPI LocatorList_t& unicastLocatorList()
-        {
-            return m_unicastLocatorList;
-        }
+        void set_unicast_locators(
+                const LocatorList_t& locators,
+                const NetworkFactory& network);
 
-        RTPS_DllAPI void multicastLocatorList(const LocatorList_t& multicastLocatorList)
-        {
-            m_multicastLocatorList = multicastLocatorList;
-        }
+        RTPS_DllAPI void add_multicast_locator(const Locator_t& locator);
 
-        RTPS_DllAPI void multicastLocatorList(LocatorList_t&& multicastLocatorList)
-        {
-            m_multicastLocatorList = std::move(multicastLocatorList);
-        }
+        void set_multicast_locators(
+                const LocatorList_t& locators,
+                const NetworkFactory& network);
 
-        RTPS_DllAPI LocatorList_t multicastLocatorList() const
-        {
-            return m_multicastLocatorList;
-        }
-
-        RTPS_DllAPI LocatorList_t& multicastLocatorList()
-        {
-            return m_multicastLocatorList;
-        }
+        void set_locators(
+                const RemoteLocatorList& locators,
+                const NetworkFactory& network,
+                bool use_multicast_locators);
 
         RTPS_DllAPI void key(const InstanceHandle_t& key)
         {
@@ -284,6 +276,11 @@ class ReaderProxyData
             return m_topicDiscoveryKind;
         }
 
+        inline bool disable_positive_acks() const
+        {
+            return m_qos.m_disablePositiveACKs.enabled;
+        }
+
         /**
          * Write as a parameter list on a CDRMessage_t
          * @return True on success
@@ -293,9 +290,12 @@ class ReaderProxyData
         /**
          *  Read the information from a CDRMessage_t. The position of hte message must be in the beggining on the parameter list.
          * @param msg Pointer to the message.
+         * @param network Reference to network factory for locator validation and transformation
          * @return true on success
          */
-        RTPS_DllAPI bool readFromCDRMessage(CDRMessage_t* msg);
+        RTPS_DllAPI bool readFromCDRMessage(
+                CDRMessage_t* msg,
+                const NetworkFactory& network);
 
         //!
         bool m_expectsInlineQos;
@@ -314,31 +314,32 @@ class ReaderProxyData
          * Clear (put to default) the information.
          */
         void clear();
+
         /**
-         * Update the information (only certain fields can be updated).
+         * Check if this object can be updated with the information on another object.
+         * @param rdata ReaderProxyData object to be checked.
+         * @return true if this object can be updated with the information on rdata.
+         */
+        bool is_update_allowed(const ReaderProxyData& rdata) const;
+
+        /**
+         * Update the information (only certain fields will be updated).
          * @param rdata Poitner to the object from which we are going to update.
          */
         void update(ReaderProxyData* rdata);
+
         /**
          * Copy ALL the information from another object.
          * @param rdata Pointer to the object from where the information must be copied.
          */
         void copy(ReaderProxyData* rdata);
 
-        /**
-         * Convert the ProxyData information to RemoteReaderAttributes object.
-         * @return Reference to the RemoteReaderAttributes object.
-         */
-        RemoteReaderAttributes toRemoteReaderAttributes() const;
-
     private:
 
         //!GUID
         GUID_t m_guid;
-        //!Unicast locator list
-        LocatorList_t m_unicastLocatorList;
-        //!Multicast locator list
-        LocatorList_t m_multicastLocatorList;
+        //!Holds locator information
+        RemoteLocatorList remote_locators_;
         //!GUID_t of the Reader converted to InstanceHandle_t
         InstanceHandle_t m_key;
         //!GUID_t of the participant converted to InstanceHandle

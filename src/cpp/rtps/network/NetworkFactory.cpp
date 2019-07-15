@@ -124,31 +124,34 @@ void NetworkFactory::NormalizeLocators(LocatorList_t& locators)
     locators.swap(normalizedLocators);
 }
 
-LocatorList_t NetworkFactory::ShrinkLocatorLists(const std::vector<LocatorList_t>& locatorLists)
+bool NetworkFactory::transform_remote_locator(
+        const Locator_t& remote_locator,
+        Locator_t& result_locator) const
 {
-    LocatorList_t returnedList;
-
-    for(auto& transport : mRegisteredTransports)
+    for (auto& transport : mRegisteredTransports)
     {
-        std::vector<LocatorList_t> transportLocatorLists;
-
-        for(auto& locatorList : locatorLists)
+        if (transport->transform_remote_locator(remote_locator, result_locator))
         {
-            LocatorList_t resultList;
-
-            for(auto it = locatorList.begin(); it != locatorList.end(); ++it)
-            {
-                if(transport->IsLocatorSupported(*it))
-                {
-                    resultList.push_back(*it);
-                }
-            }
-            transportLocatorLists.push_back(resultList);
+            return true;
         }
-        returnedList.push_back(transport->ShrinkLocatorLists(transportLocatorLists));
     }
 
-    return returnedList;
+    return false;
+}
+
+void NetworkFactory::select_locators(LocatorSelector& selector) const
+{
+    selector.selection_start();
+
+    /* - for each transport:
+     *   - transport_starts is called
+     *   - transport handles the selection state of each entry
+     *   - select may be called
+     */
+    for (auto& transport : mRegisteredTransports)
+    {
+        transport->select_locators(selector);
+    }
 }
 
 bool NetworkFactory::is_local_locator(const Locator_t& locator) const

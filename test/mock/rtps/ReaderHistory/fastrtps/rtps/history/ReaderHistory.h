@@ -20,6 +20,7 @@
 #define _RTPS_HISTORY_READERHISTORY_H_
 
 #include <fastrtps/rtps/attributes/HistoryAttributes.h>
+#include <fastrtps/utils/TimedMutex.hpp>
 
 #include <gmock/gmock.h>
 
@@ -49,7 +50,7 @@ class ReaderHistory
     protected:
 
         RTPSReader* mp_reader;
-        std::recursive_timed_mutex* mp_mutex;
+        RecursiveTimedMutex* mp_mutex;
 };
 
 } // namespace rtps
