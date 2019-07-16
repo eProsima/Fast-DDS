@@ -206,8 +206,6 @@ class RTPSWriter;
 
         const RTPSMessageSenderInterface& sender_;
             
-        RTPSParticipantImpl* participant_;
-
         Endpoint* endpoint_;
 
         CDRMessage_t* full_msg_;
@@ -219,6 +217,8 @@ class RTPSWriter;
         GuidPrefix_t current_dst_;
 
 #if HAVE_SECURITY
+        RTPSParticipantImpl* participant_;
+
         CDRMessage_t* encrypt_msg_;
 #endif
 
