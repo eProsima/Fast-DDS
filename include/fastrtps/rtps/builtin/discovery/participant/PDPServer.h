@@ -72,6 +72,7 @@ public:
     /**
      * Constructor
      * @param builtin Pointer to the BuiltinProcols object.
+     * @param allocation participant's allocation settings
      * @param durability_kind the kind of persistence we want for the discovery data
      */
     PDPServer(
