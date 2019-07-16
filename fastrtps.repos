@@ -10,4 +10,4 @@ repositories:
     fastrtps:
         type: git
         url: https://github.com/eProsima/Fast-RTPS.git
-        version: v1.8.1
+        version: v1.9.0
