@@ -125,7 +125,7 @@ class RTPS_DllAPI DataReaderListener
          * @param reader The DataReader
          * @param status The SampleLost status
          */
-        virtual void on_sample_rejected(
+        virtual void on_sample_lost(
                 DataReader* reader,
                 const fastrtps::SampleLostStatus& status)
         {

@@ -207,7 +207,7 @@ private:
                 DataReader* reader,
                 const fastrtps::RequestedIncompatibleQosStatus& status) override;
 
-        void on_sample_rejected(
+        void on_sample_lost(
                 DataReader* reader,
                 const fastrtps::SampleLostStatus& status) override;
 

@@ -429,7 +429,7 @@ void SubscriberImpl::SubscriberReaderListener::on_requested_incompatible_qos(
     */
 }
 
-void SubscriberImpl::SubscriberReaderListener::on_sample_rejected(
+void SubscriberImpl::SubscriberReaderListener::on_sample_lost(
         DataReader* /*reader*/,
         const fastrtps::SampleLostStatus& /*status*/)
 {
