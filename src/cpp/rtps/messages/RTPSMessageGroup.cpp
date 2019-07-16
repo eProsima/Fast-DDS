@@ -155,6 +155,9 @@ RTPSMessageGroup::RTPSMessageGroup(
 #endif
     , max_blocking_time_point_(max_blocking_time_point)
 {
+    // Avoid warning when neither SECURITY nor DEBUG is used
+    (void)participant;
+
     assert(participant);
     assert(endpoint);
 
