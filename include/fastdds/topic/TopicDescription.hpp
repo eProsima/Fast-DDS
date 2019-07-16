@@ -27,7 +27,7 @@ namespace fastdds {
 class DomainParticipant;
 
 /**
- * Class TopicDescription, represents the fact that both publications 
+ * Class TopicDescription, represents the fact that both publications
  * and subscriptions are tied to a single data-type
  * @ingroup FASTDDS_MODULE
  */
@@ -35,7 +35,7 @@ class TopicDescription
 {
 protected:
     TopicDescription(
-            const std::string& name, 
+            const std::string& name,
             const std::string& type_name)
         : name_(name)
         , type_name_(type_name)
@@ -60,7 +60,7 @@ protected:
     //! Name that allows the TopicDescription to be retrieved locally
     std::string name_;
 
-    //! Name that defines a unique resulting type for the publication or the subscription 
+    //! Name that defines a unique resulting type for the publication or the subscription
     std::string type_name_;
 };
 
