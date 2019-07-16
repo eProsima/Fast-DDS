@@ -19,6 +19,8 @@
 #ifndef FASTRTPS_RTPS_COMMON_LOCATORSELECTORENTRY_HPP_
 #define FASTRTPS_RTPS_COMMON_LOCATORSELECTORENTRY_HPP_
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include "./Guid.h"
 #include "./Locator.h"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
@@ -114,4 +116,5 @@ struct LocatorSelectorEntry
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
+#endif /* DOXYGEN_SHOULD_SKIP_THIS_PUBLIC */
 #endif /* FASTRTPS_RTPS_COMMON_LOCATORSELECTORENTRY_HPP_ */
