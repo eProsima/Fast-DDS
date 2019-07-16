@@ -22,7 +22,7 @@
 #include "../../fastrtps/fastrtps_dll.h"
 #include "../../fastrtps/qos/DeadlineMissedStatus.h"
 #include "../../fastrtps/qos/LivelinessChangedStatus.h"
-#include "../../fastrtps/qos/SampleLostStatus.hpp"
+#include "../../fastrtps/qos/BaseQosStatus.hpp"
 #include "../../fastrtps/qos/SampleRejectedStatus.hpp"
 #include "../../fastrtps/qos/IncompatibleQosStatus.hpp"
 #include "../../fastrtps/qos/SubscriptionMatchedStatus.h"

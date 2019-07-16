@@ -35,7 +35,7 @@
 #include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/IncompatibleQosStatus.hpp>
-#include <fastrtps/qos/LivelinessLostStatus.h>
+#include <fastrtps/qos/BaseQosStatus.hpp>
 
 namespace eprosima {
 namespace fastrtps{

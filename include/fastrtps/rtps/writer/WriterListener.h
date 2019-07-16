@@ -22,7 +22,7 @@
 
 #include "../common/MatchingInfo.h"
 
-#include <fastrtps/qos/LivelinessLostStatus.h>
+#include <fastrtps/qos/BaseQosStatus.hpp>
 
 namespace eprosima{
 namespace fastrtps{

@@ -25,7 +25,7 @@
 #include "../rtps/common/Time_t.h"
 #include "../attributes/PublisherAttributes.h"
 #include "../qos/DeadlineMissedStatus.h"
-#include "../qos/LivelinessLostStatus.h"
+#include "../qos/BaseQosStatus.hpp"
 
 namespace eprosima {
 namespace fastrtps {

@@ -22,7 +22,7 @@
 #include "../Endpoint.h"
 #include "../messages/RTPSMessageGroup.h"
 #include "../attributes/WriterAttributes.h"
-#include "../../qos/LivelinessLostStatus.h"
+#include "../../qos/BaseQosStatus.hpp"
 #include "../../utils/collections/ResourceLimitedVector.hpp"
 
 #include <vector>
