@@ -143,6 +143,72 @@ TEST_F(LogTests, multiple_verbosity_levels)
     ASSERT_EQ(3u, consumedEntries.size());
 }
 
+TEST_F(LogTests, logless_flush_call)
+{
+    logWarning(flush_ckecks, "This should be logged too!");
+
+    HELPER_WaitForEntries(1); // retrieve one
+
+    Log::Flush();
+}
+
+TEST_F(LogTests, validate_single_flush_call)
+{
+    const int threads_number = 5;
+    const int per_thread_entries_number = 100000;
+    const int wait_milliseconds = 200;
+    const int thread_wait_milliseconds = 100;
+
+    /* note that:
+        + wait_milliseconds should be larger that thread_wait_milliseconds in order allow some logs to be done
+          in each main thread loop.
+        + thread_wait_milliseconds should share order of magnitude with the consumer retrieval delay. If not the back
+          queue will grow so large while the front one is clear that the test will probably timeout.
+    */
+
+    volatile bool done = false;
+    std::atomic<int> committed = 0;
+    int commited_before_flush = 0;
+
+    // Populate the consumer from multiple threads
+    vector<unique_ptr<thread>> threads;
+    for (int i = 0; i < threads_number; i++)
+    {
+        threads.emplace_back(new thread([&done, &committed, &thread_wait_milliseconds] {
+            while (!done)
+            {
+                logWarning(flush_ckecks, "I'm thread " << this_thread::get_id() << " logging sample " << committed);
+                // incremented after log
+                ++committed;
+                // wait before add a new log entry
+                this_thread::sleep_for(chrono::milliseconds(thread_wait_milliseconds));
+            }
+        }));
+    }
+
+    // allow some logs to be done but not all
+    while( commited_before_flush < threads_number)
+    {
+        this_thread::sleep_for(chrono::milliseconds(wait_milliseconds));
+
+        // committed value before the Flush
+        commited_before_flush = committed;
+    } 
+
+    // Wait till the queues are empty
+    Log::Flush();
+
+    // Flush doesn't wait for all log entries to finish but for the logged till its called
+    // We must assert that at least commited_before_flush have been delivered
+    ASSERT_GE(mockConsumer->ConsumedEntries().size(), commited_before_flush);
+
+    done = true; // direct threads to shut-down 
+
+    for (auto& thread : threads) {
+        thread->join();
+    }
+}
+
 std::vector<Log::Entry> LogTests::HELPER_WaitForEntries(uint32_t amount)
 {
     size_t entries = 0;
