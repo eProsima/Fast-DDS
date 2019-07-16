@@ -21,10 +21,10 @@
 
 #include <thread>
 #include <atomic>
-#include <mutex>
 #include <list>
 
 #include <fastrtps/rtps/resources/AsyncInterestTree.h>
+#include <fastrtps/utils/TimedMutex.hpp>
 #include <fastrtps/utils/TimedConditionVariable.hpp>
 
 namespace eprosima{
@@ -82,7 +82,7 @@ private:
     void run();
 
     std::thread* thread_ = nullptr;
-    std::timed_mutex condition_variable_mutex_;
+    RecursiveTimedMutex condition_variable_mutex_;
 
     //! List of asynchronous writers.
     AsyncInterestTree interestTree_;

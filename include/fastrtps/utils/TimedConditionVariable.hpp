@@ -76,7 +76,7 @@ class TimedConditionVariable
         void wait(
                 std::unique_lock<Mutex>& lock)
         {
-            pthread_cond_wait(&cv_, lock.mutex()->native_handle());
+            CV_WAIT_(cv_, lock.mutex()->native_handle());
         }
 
         template<typename Mutex>

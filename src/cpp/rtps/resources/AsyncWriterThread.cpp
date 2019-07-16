@@ -24,7 +24,7 @@ using namespace eprosima::fastrtps::rtps;
 
 AsyncWriterThread::~AsyncWriterThread()
 {
-    std::unique_lock<std::timed_mutex> lock(condition_variable_mutex_);
+    std::unique_lock<RecursiveTimedMutex> lock(condition_variable_mutex_);
     running_ = false;
     run_scheduled_ = false;
     cv_.notify_all();
@@ -47,7 +47,7 @@ void AsyncWriterThread::unregister_writer(RTPSWriter* writer)
 {
     if(interestTree_.unregister_interest(writer))
     {
-        std::unique_lock<std::timed_mutex> lock(condition_variable_mutex_);
+        std::unique_lock<RecursiveTimedMutex> lock(condition_variable_mutex_);
         running_ = false;
         run_scheduled_ = false;
         cv_.notify_all();
@@ -66,7 +66,7 @@ void AsyncWriterThread::wake_up(
         RTPSWriter* interested_writer)
 {
     interestTree_.register_interest(interested_writer);
-    std::unique_lock<std::timed_mutex> lock(condition_variable_mutex_);
+    std::unique_lock<RecursiveTimedMutex> lock(condition_variable_mutex_);
     run_scheduled_ = true;
     // If thread not running, start it.
     if(thread_ == nullptr)
@@ -87,7 +87,7 @@ void AsyncWriterThread::wake_up(
 {
     if(interestTree_.register_interest(interested_writer, max_blocking_time))
     {
-        std::unique_lock<std::timed_mutex> lock(condition_variable_mutex_, std::defer_lock);
+        std::unique_lock<RecursiveTimedMutex> lock(condition_variable_mutex_, std::defer_lock);
 
         if(lock.try_lock_until(max_blocking_time))
         {
@@ -109,7 +109,7 @@ void AsyncWriterThread::wake_up(
 
 void AsyncWriterThread::run()
 {
-    std::unique_lock<std::timed_mutex> cond_guard(condition_variable_mutex_);
+    std::unique_lock<RecursiveTimedMutex> cond_guard(condition_variable_mutex_);
     while(running_)
     {
         if(run_scheduled_)
