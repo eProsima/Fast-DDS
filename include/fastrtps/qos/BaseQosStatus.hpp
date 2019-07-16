@@ -27,9 +27,9 @@ namespace fastrtps {
 //! @brief A struct storing the sample lost status
 struct BaseQosStatus
 {
-    uint32_t total_count = 0;
+    int32_t total_count = 0;
 
-    uint32_t total_count_change = 0;
+    int32_t total_count_change = 0;
 };
 
 using SampleLostStatus = BaseQosStatus;
