@@ -226,6 +226,10 @@ private:
 
         void on_reader_matched(
                 fastrtps::rtps::RTPSReader* reader,
+                fastrtps::rtps::MatchingInfo& info) override;
+
+        void on_reader_matched(
+                fastrtps::rtps::RTPSReader* reader,
                 fastrtps::SubscriptionMatchedStatus& info);
 
         void on_new_cache_change_added(

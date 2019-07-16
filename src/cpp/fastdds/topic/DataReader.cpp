@@ -319,6 +319,17 @@ void DataReader::InnerDataReaderListener::on_new_cache_change_added(
 
 void DataReader::InnerDataReaderListener::on_reader_matched(
         RTPSReader* /*reader*/,
+        MatchingInfo& info)
+{
+    SubscriptionMatchedStatus* sub_info = new SubscriptionMatchedStatus();
+    sub_info->status = info.status;
+    sub_info->last_publication_handle = info.remoteEndpointGuid;
+
+    on_reader_matched(data_reader_->reader_, *sub_info);
+}
+
+void DataReader::InnerDataReaderListener::on_reader_matched(
+        RTPSReader* /*reader*/,
         SubscriptionMatchedStatus& info)
 {
     if (data_reader_->listener_ != nullptr)
