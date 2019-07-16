@@ -30,84 +30,86 @@ namespace fastdds {
  * Although these values can be set and are transmitted
  * during the Endpoint Discovery Protocol, not all of the behaviour associated with them has been implemented in the library.
  * Please consult each of them to check for implementation details and default values.
- * @ingroup FASTRTPS_ATTRIBUTES_MODULE
+ * @ingroup FASTDDS_QOS_MODULE
  */
 class TopicQos
 {
 public:
-    RTPS_DllAPI TopicQos();
-    RTPS_DllAPI virtual ~TopicQos();
+    //!Topic Data Qos, NOT implemented in the library.
+    fastrtps::TopicDataQosPolicy topic_data;
+
+    //!Durability Qos, implemented in the library.
+    fastrtps::DurabilityQosPolicy durability;
+
+    //!Durability Service Qos, NOT implemented in the library.
+    fastrtps::DurabilityServiceQosPolicy durability_service;
+
+    //!Deadline Qos, implemented in the library.
+    fastrtps::DeadlineQosPolicy deadline;
+
+    //!Latency Budget Qos, NOT implemented in the library.
+    fastrtps::LatencyBudgetQosPolicy latency_budget;
+
+    //!Liveliness Qos, implemented in the library.
+    fastrtps::LivelinessQosPolicy liveliness;
+
+    //!Reliability Qos, implemented in the library.
+    fastrtps::ReliabilityQosPolicy reliability;
+
+    //!Destination Order Qos, NOT implemented in the library.
+    fastrtps::DestinationOrderQosPolicy destination_order;
+
+    //!History Qos, implemented in the library.
+    fastrtps::HistoryQosPolicy history;
+
+    //!Resource Limits Qos, implemented in the library.
+    fastrtps::ResourceLimitsQosPolicy resource_limits;
+
+    //!Transport Priority Qos, NOT implemented in the library.
+    fastrtps::TransportPriorityQosPolicy transport_priority;
+
+    //!Lifespan Qos, implemented in the library.
+    fastrtps::LifespanQosPolicy lifespan;
+
+    //!Ownership Qos, NOT implemented in the library.
+    fastrtps::OwnershipQosPolicy ownership;
 
     bool operator==(const TopicQos& b) const
     {
-        return (this->m_topicData == b.m_topicData) &&
-               (this->m_durability == b.m_durability) &&
-               (this->m_durabilityService == b.m_durabilityService) &&        
-               (this->m_deadline == b.m_deadline) &&        
-               (this->m_latencyBudget == b.m_latencyBudget) &&        
-               (this->m_liveliness == b.m_liveliness) &&        
-               (this->m_reliability == b.m_reliability) &&        
-               (this->m_destinationOrder == b.m_destinationOrder) &&        
-               (this->m_history == b.m_history) &&        
-               (this->m_resourceLimits == b.m_resourceLimits) &&        
-               (this->m_transportPriority == b.m_transportPriority) &&        
-               (this->m_lifespan == b.m_lifespan) &&        
-               (this->m_ownership == b.m_ownership);
+        return (this->topic_data == b.topic_data) &&
+               (this->durability == b.durability) &&
+               (this->durability_service == b.durability_service) &&
+               (this->deadline == b.deadline) &&
+               (this->latency_budget == b.latency_budget) &&
+               (this->liveliness == b.liveliness) &&
+               (this->reliability == b.reliability) &&
+               (this->destination_order == b.destination_order) &&
+               (this->history == b.history) &&
+               (this->resource_limits == b.resource_limits) &&
+               (this->transport_priority == b.transport_priority) &&
+               (this->lifespan == b.lifespan) &&
+               (this->ownership == b.ownership);
     }
 
-    //!Topic Data Qos, NOT implemented in the library.
-    fastrtps::TopicDataQosPolicy m_topicData;
-
-    //!Durability Qos, implemented in the library.
-    fastrtps::DurabilityQosPolicy m_durability;
-
-    //!Durability Service Qos, NOT implemented in the library.
-    fastrtps::DurabilityServiceQosPolicy m_durabilityService;
-
-    //!Deadline Qos, implemented in the library.
-    fastrtps::DeadlineQosPolicy m_deadline;
-
-    //!Latency Budget Qos, NOT implemented in the library.
-    fastrtps::LatencyBudgetQosPolicy m_latencyBudget;
-
-    //!Liveliness Qos, implemented in the library.
-    fastrtps::LivelinessQosPolicy m_liveliness;
-
-    //!Reliability Qos, implemented in the library.
-    fastrtps::ReliabilityQosPolicy m_reliability;
-
-    //!Destination Order Qos, NOT implemented in the library.
-    fastrtps::DestinationOrderQosPolicy m_destinationOrder;
-
-    //!History Qos
-    fastrtps::HistoryQosPolicy m_history;
-
-    //!Resource Limits Qos
-    fastrtps::ResourceLimitsQosPolicy m_resourceLimits;
-
-    //!Transport Priority Qos
-    fastrtps::TransportPriorityQosPolicy m_transportPriority;
-
-    //!Lifespan Qos, NOT implemented in the library.
-    fastrtps::LifespanQosPolicy m_lifespan;
-
-    //!Ownership Qos, NOT implemented in the library.
-    fastrtps::OwnershipQosPolicy m_ownership;
-
-    /**
+    /* TODO: Implement this method
      * Set Qos from another class
      * @param qos Reference from a TopicQos object.
      * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
-     */
     RTPS_DllAPI void setQos(const TopicQos& qos, bool first_time);
+    */
 
-    /**
+    /* TODO: Implement this method
      * Check if the Qos values are compatible between each other.
      * @return True if correct.
-     */
     RTPS_DllAPI bool checkQos() const;
+    */
 
+    /* TODO: Implement this method
+     * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
+     * @param qos Reference to the new qos.
+     * @return True if they can be updated.
     RTPS_DllAPI bool canQosBeUpdated(const TopicQos& qos) const;
+    */
 };
 
 extern TopicQos TOPIC_QOS_DEFAULT;

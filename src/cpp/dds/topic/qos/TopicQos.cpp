@@ -23,32 +23,28 @@ using namespace eprosima::fastdds;
 
 TopicQos eprosima::fastdds::TOPIC_QOS_DEFAULT;
 
-TopicQos::TopicQos()
-{
-
-}
-
-TopicQos::~TopicQos()
-{
-
-}
-
+/* TODO: Implement this method
 void TopicQos::setQos(const TopicQos& qos, bool first_time)
 {
     //TODO: Implement this function
     (void)qos;
     (void)first_time;
 }
+*/
 
+/* TODO: Implement this method
 bool TopicQos::checkQos() const
 {
     //TODO: Implement this function
     return true;
 }
+*/
 
+/* TODO: Implement this method
 bool TopicQos::canQosBeUpdated(const TopicQos& qos) const
 {
     //TODO: Implement this function
     (void)qos;
     return true;
 }
+*/
