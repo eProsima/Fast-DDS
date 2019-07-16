@@ -23,6 +23,7 @@
 #include <asio.hpp>
 #include <thread>
 #include <functional>
+#include <future>
 #include <fastrtps/log/Log.h>
 #include <asio/steady_timer.hpp>
 
@@ -36,7 +37,13 @@ ResourceEvent::ResourceEvent()
     , allow_to_delete_(false)
     , front_(nullptr)
     , back_(nullptr)
-    , io_service_(ASIO_CONCURRENCY_HINT_UNSAFE_IO)
+    , io_service_(
+#if ASIO_VERSION >= 101200
+            ASIO_CONCURRENCY_HINT_UNSAFE_IO
+#else
+            1
+#endif
+            )
 {
 }
 
@@ -153,7 +160,11 @@ void ResourceEvent::run_io_service()
 {
     while (!stop_)
     {
+#if ASIO_VERSION >= 101200
         io_service_.restart();
+#else
+        io_service_.reset();
+#endif
         io_service_.poll();
 
         std::unique_lock<TimedMutex> lock(mutex_);
