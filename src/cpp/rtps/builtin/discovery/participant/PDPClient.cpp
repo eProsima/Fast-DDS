@@ -92,7 +92,11 @@ PDPClient::PDPClient(
     , _msgbuffer(
         DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,
         builtin->mp_participantImpl->getGuid().guidPrefix,
+#if HAVE_SECURITY
         builtin->mp_participantImpl->is_secure())
+#else
+        false)
+#endif
     , mp_sync(nullptr)
     , _serverPing(false)
 {

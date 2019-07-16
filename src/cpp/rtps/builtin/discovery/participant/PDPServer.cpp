@@ -53,15 +53,19 @@ namespace fastrtps{
 namespace rtps {
 
 PDPServer::PDPServer(
-        BuiltinProtocols* built,
+        BuiltinProtocols* builtin,
         const RTPSParticipantAllocationAttributes& allocation,
         DurabilityKind_t durability_kind)
-    : PDP(built, allocation)
+    : PDP(builtin, allocation)
     , _durability(durability_kind)
     , _msgbuffer(
         DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,
-        built->mp_participantImpl->getGuid().guidPrefix,
-        built->mp_participantImpl->is_secure())
+        builtin->mp_participantImpl->getGuid().guidPrefix,
+#if HAVE_SECURITY
+        builtin->mp_participantImpl->is_secure())
+#else
+        false)
+#endif
     , mp_sync(nullptr)
     , PDP_callback_(false)
 {

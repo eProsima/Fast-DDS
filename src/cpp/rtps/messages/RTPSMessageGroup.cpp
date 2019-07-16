@@ -145,16 +145,19 @@ RTPSMessageGroup::RTPSMessageGroup(
         const RTPSMessageSenderInterface& msg_sender,
         std::chrono::steady_clock::time_point max_blocking_time_point)
     : sender_(msg_sender)
-    , participant_(participant)
     , endpoint_(endpoint)
     , full_msg_(&msg_group.rtpsmsg_fullmsg_)
     , submessage_msg_(&msg_group.rtpsmsg_submessage_)
     , currentBytesSent_(0)
 #if HAVE_SECURITY
+    , participant_(participant)
     , encrypt_msg_(&msg_group.rtpsmsg_encrypt_)
 #endif
     , max_blocking_time_point_(max_blocking_time_point)
 {
+    // Avoid warning when neither SECURITY nor DEBUG is used
+    (void)participant;
+
     assert(participant);
     assert(endpoint);
 
