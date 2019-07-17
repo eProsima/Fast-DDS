@@ -33,7 +33,8 @@ class RTPSReader;
 struct CacheChange_t;
 
 /**
-* Class ReaderListener, to be used by the user to override some of is virtual method to program actions to certain events.
+* Class ReaderListener, to be used by the user to override some of is virtual method to program actions to
+* certain events.
 *  @ingroup READER_MODULE
 */
 class RTPS_DllAPI ReaderListener

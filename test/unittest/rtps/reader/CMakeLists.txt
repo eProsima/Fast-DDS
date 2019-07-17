@@ -21,9 +21,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         find_package(Threads REQUIRED)
 
         set(WRITERPROXYTESTS_SOURCE WriterProxyTests.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/qos/WriterQos.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/qos/WriterQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
             )
 

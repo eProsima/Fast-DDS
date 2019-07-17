@@ -16,8 +16,8 @@
  * @file EDP.h
  */
 
-#ifndef RTPS_BUILTIN_DISCOVERY_PARTICIPANT_EDP_H_
-#define RTPS_BUILTIN_DISCOVERY_PARTICIPANT_EDP_H_
+#ifndef EDP_H_
+#define EDP_H_
 
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
@@ -55,5 +55,5 @@ class EDP
 } //namespace fastrtps
 } //namespace eprosima
 
-#endif // RTPS_BUILTIN_DISCOVERY_PARTICIPANT_EDP_H_
+#endif // EDP_H_
 

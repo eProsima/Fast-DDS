@@ -18,7 +18,7 @@
 #ifndef _RTPS_SECURITY_SECURITYMANAGER_H_
 #define _RTPS_SECURITY_SECURITYMANAGER_H_
 
-#include <rtps/security/SecurityPluginFactory.h>
+#include "SecurityPluginFactory.h"
 
 #include <fastrtps/rtps/security/authentication/Handshake.h>
 #include <fastrtps/rtps/security/common/ParticipantGenericMessage.h>
@@ -64,7 +64,7 @@ class SecurityManager
 
         ~SecurityManager();
 
-        bool init(ParticipantSecurityAttributes& attributes, const PropertyPolicy& participant_properties, 
+        bool init(ParticipantSecurityAttributes& attributes, const PropertyPolicy& participant_properties,
             bool& security_activated);
 
         void destroy();

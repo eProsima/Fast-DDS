@@ -1121,7 +1121,7 @@ void StatefulWriter::send_heartbeat_to_nts(
 
 void StatefulWriter::send_heartbeat_nts_(
         size_t number_of_readers,
-        RTPSMessageGroup& message_group, 
+        RTPSMessageGroup& message_group,
         bool final,
         bool liveliness)
 {

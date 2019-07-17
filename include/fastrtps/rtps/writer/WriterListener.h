@@ -38,6 +38,7 @@ struct CacheChange_t;
 class RTPS_DllAPI WriterListener
 {
 public:
+
     WriterListener() = default;
 
     virtual ~WriterListener() = default;

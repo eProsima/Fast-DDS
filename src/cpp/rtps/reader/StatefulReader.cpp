@@ -168,7 +168,7 @@ bool StatefulReader::matched_writer_add(
         add_persistence_guid(wdata.guid(), wdata.persistence_guid());
         wp->loaded_from_storage(get_last_notified(wdata.guid()));
     }
-    
+
     matched_writers_.push_back(wp);
 
     if (liveliness_lease_duration_ < c_TimeInfinite)
@@ -339,7 +339,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
         // Check if CacheChange was received or is framework data
         if(!pWP || !pWP->change_was_received(change->sequenceNumber))
-        {            
+        {
             logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
 
             CacheChange_t* change_to_add;
@@ -509,7 +509,7 @@ bool StatefulReader::processHeartbeatMsg(
                 hbCount, firstSN, lastSN, finalFlag, livelinessFlag, disable_positive_acks_, assert_liveliness))
         {
             fragmentedChangePitStop_->try_to_remove_until(firstSN, writerGUID);
-            
+
             // Try to assert liveliness if requested by proxy's logic
             if (assert_liveliness)
             {
@@ -599,7 +599,7 @@ bool StatefulReader::acceptMsgFrom(
     }
 
     // Check if it's a framework's one
-    if (m_acceptMessagesFromUnkownWriters 
+    if (m_acceptMessagesFromUnkownWriters
         && (writerId.entityId == m_trustedWriterEntityId))
     {
         *wp = nullptr;

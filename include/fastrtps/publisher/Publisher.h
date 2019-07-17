@@ -34,8 +34,10 @@ namespace rtps
 {
     struct GUID_t;
     class WriteParams;
+    class RTPSParticipant;
 }
 
+class Participant;
 class PublisherImpl;
 
 /**
@@ -148,6 +150,8 @@ public:
      * @param status Liveliness lost status
      */
     void get_liveliness_lost_status(LivelinessLostStatus& status);
+
+    const Participant* get_participant() const;
 
 private:
 

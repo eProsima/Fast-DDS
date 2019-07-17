@@ -252,6 +252,15 @@ public:
 
     uint32_t get_min_network_send_buffer_size() { return m_network_Factory.get_min_send_buffer_size(); }
 
+    /**
+     * @brief Fills a new entityId if set to unknown, or checks if a entity already exists with that
+     * entityId in other case.
+     * @param entityId to check of fill. If filled, EntityKind will be "vendor-specific" (0x01)
+     * @return True if filled or the entityId is available.
+     */
+    bool get_new_entity_id(
+            EntityId_t& entityId);
+
 private:
     //!Attributes of the RTPSParticipant
     RTPSParticipantAttributes m_att;

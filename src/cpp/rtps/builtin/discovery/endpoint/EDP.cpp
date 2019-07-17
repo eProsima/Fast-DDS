@@ -485,7 +485,7 @@ bool EDP::validMatching(
         return false;
     }
     if( wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS
-            && rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS) 
+            && rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
         //Means our writer is BE but the reader wants RE
     {
         logWarning(RTPS_EDP,"INCOMPATIBLE QOS (topic: "<< rdata->topicName() <<"):Remote Reader "
@@ -600,7 +600,7 @@ bool EDP::validMatching(
     }
     if(rdata->topicKind() != wdata->topicKind())
     {
-        logWarning(RTPS_EDP, "INCOMPATIBLE QOS:Remote Writer " << wdata->guid() << 
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS:Remote Writer " << wdata->guid() <<
             " is publishing in topic " << wdata->topicName() << "(keyed:" << wdata->topicKind() <<
                 "), local reader subscribes as keyed: " << rdata->topicKind())
             return false;
@@ -611,17 +611,17 @@ bool EDP::validMatching(
         return false;
     }
     if(rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS
-            && wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS) 
+            && wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
         //Means our reader is reliable but hte writer is not
     {
-        logWarning(RTPS_EDP,"INCOMPATIBLE QOS (topic: "<< wdata->topicName() << "): Remote Writer " 
+        logWarning(RTPS_EDP,"INCOMPATIBLE QOS (topic: "<< wdata->topicName() << "): Remote Writer "
             << wdata->guid() << " is Best Effort and local reader is RELIABLE " << endl;);
         return false;
     }
     if(rdata->m_qos.m_durability.kind > wdata->m_qos.m_durability.kind)
     {
         // TODO (MCC) Change log message
-        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):RemoteWriter " 
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):RemoteWriter "
             << wdata->guid() << " has VOLATILE DURABILITY and we want TRANSIENT_LOCAL" << endl;);
         return false;
     }
@@ -815,7 +815,7 @@ bool EDP::pairingWriter(
                     logError(RTPS_EDP, "Security manager returns an error for writer " << W->getGuid());
                 }
 #else
-				if(W->matched_reader_add(*rdatait))
+                if(W->matched_reader_add(*rdatait))
                 {
                     logInfo(RTPS_EDP,"Valid Matching to readerProxy: " << reader_guid);
                     //MATCHED AND ADDED CORRECTLY:
@@ -1258,7 +1258,7 @@ bool EDP::checkTypeIdentifier(const TypeIdentifier * wti, const TypeIdentifier *
 */
 bool EDP::checkTypeIdentifier(
     const WriterProxyData* wdata,
-    const ReaderProxyData* rdata) 
+    const ReaderProxyData* rdata)
 {
     if (wdata->topicDiscoveryKind() == NO_CHECK || rdata->topicDiscoveryKind() == NO_CHECK)
     {

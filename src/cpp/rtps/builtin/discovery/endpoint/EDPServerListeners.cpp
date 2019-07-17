@@ -40,9 +40,9 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-EDPServerPUBListener::EDPServerPUBListener(EDPServer* sedp) 
+EDPServerPUBListener::EDPServerPUBListener(EDPServer* sedp)
     : EDPBasePUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators)
-    , sedp_(sedp) 
+    , sedp_(sedp)
 {
 }
 
@@ -85,7 +85,9 @@ void EDPServerPUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
     return;
 }
 
-void EDPServerPUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change)
+void EDPServerPUBListener::onWriterChangeReceivedByAll(
+        RTPSWriter *writer,
+        CacheChange_t *change)
 {
     (void)writer;
 
@@ -148,7 +150,9 @@ void EDPServerSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
 }
 
 
-void EDPServerSUBListener::onWriterChangeReceivedByAll(RTPSWriter* writer, CacheChange_t* change)
+void EDPServerSUBListener::onWriterChangeReceivedByAll(
+        RTPSWriter* writer,
+        CacheChange_t* change)
 {
     (void)writer;
 
