@@ -68,9 +68,12 @@ void Log::Flush()
         return;
     }
 
-    /* + First, I must assure Log::Run swaps the queues because only swapping the queues the background content
-         will be consumed
-       + Then, I must assure the new front queue content is consumed
+    /*   Flush() two steps strategy:
+
+         I must assure Log::Run swaps the queues because only swapping the queues the background content
+         will be consumed (first Run() loop).
+
+         Then, I must assure the new front queue content is consumed (second Run() loop).
      */
 
     int last_loop = -1;
@@ -80,8 +83,8 @@ void Log::Flush()
         mResources.mCv.wait(guard, [&]()
         {
             /* I must avoid:
-                + the two calls be processed without an intermediate Run() loop
-                + deadlock by absence of Run() loop activity -> TO BE DONE!!!!!
+                + the two calls be processed without an intermediate Run() loop (by using last_loop sequence number)
+                + deadlock by absence of Run() loop activity (by using BothEmpty() call)
             */
             return !mResources.mLogging ||
                 ( mResources.mLogs.Empty() &&
