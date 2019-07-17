@@ -125,6 +125,12 @@ WLP* RTPSParticipant::wlp() const
     return mp_impl->wlp();
 }
 
+bool RTPSParticipant::get_new_entity_id(
+        EntityId_t& entityId)
+{
+    return mp_impl->get_new_entity_id(entityId);
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

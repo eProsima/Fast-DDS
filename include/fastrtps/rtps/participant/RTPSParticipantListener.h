@@ -24,6 +24,10 @@
 #include "../reader/ReaderDiscoveryInfo.h"
 #include "../writer/WriterDiscoveryInfo.h"
 
+#include <fastrtps/types/DynamicTypePtr.h>
+#include <fastrtps/types/TypeIdentifier.h>
+#include <fastrtps/types/TypeObject.h>
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
@@ -81,6 +85,7 @@ class RTPS_DllAPI RTPSParticipantListener
         {
             (void)participant, (void)info;
         }
+
 };
 
 } // namespace rtps

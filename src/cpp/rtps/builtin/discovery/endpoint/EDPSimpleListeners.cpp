@@ -196,7 +196,7 @@ void EDPBaseSUBListener::add_reader_from_change(
         }
     }
 }
-    
+
 void EDPSimpleSUBListener::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t * const change_in)

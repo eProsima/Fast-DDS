@@ -163,6 +163,13 @@ public:
      */
     RTPS_DllAPI inline WriterListener* getListener() { return mp_listener; }
 
+    RTPS_DllAPI inline bool set_listener(
+            WriterListener* listener)
+    {
+        mp_listener = listener;
+        return true;
+    }
+
     /**
      * Get the publication mode
      * @return publication mode

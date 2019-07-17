@@ -38,6 +38,7 @@ add_subdirectory(C++/Configurability)
 add_subdirectory(C++/StaticHelloWorldExample)
 add_subdirectory(C++/XMLProfiles)
 add_subdirectory(C++/Benchmark)
+add_subdirectory(C++/DDS)
 
 if(SECURITY)
     add_subdirectory(C++/SecureHelloWorldExample)

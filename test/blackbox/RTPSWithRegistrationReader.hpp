@@ -62,7 +62,7 @@ class RTPSWithRegistrationReader
 
                 ~Listener(){};
 
-                void onNewCacheChangeAdded(eprosima::fastrtps::rtps::RTPSReader* reader, const eprosima::fastrtps::rtps::CacheChange_t* const change)
+                void on_new_cache_change_added(eprosima::fastrtps::rtps::RTPSReader* reader, const eprosima::fastrtps::rtps::CacheChange_t* const change)
                 {
                     ASSERT_NE(reader, nullptr);
                     ASSERT_NE(change, nullptr);
@@ -70,7 +70,7 @@ class RTPSWithRegistrationReader
                     reader_.receive_one(reader, change);
                 }
 
-                void onReaderMatched(eprosima::fastrtps::rtps::RTPSReader* /*reader*/, eprosima::fastrtps::rtps::MatchingInfo& info)
+                void on_reader_matched(eprosima::fastrtps::rtps::RTPSReader* /*reader*/, eprosima::fastrtps::rtps::MatchingInfo& info)
                 {
                     if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
                         reader_.matched();

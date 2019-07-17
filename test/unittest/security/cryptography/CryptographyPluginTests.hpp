@@ -15,9 +15,9 @@
 #ifndef _UNITTEST_SECURITY_CRYPTOGRAPHY_CRYPTOGRAPHYPLUGINTESTS_HPP_
 #define _UNITTEST_SECURITY_CRYPTOGRAPHY_CRYPTOGRAPHYPLUGINTESTS_HPP_
 
-#include "../../../../src/cpp/security/cryptography/AESGCMGMAC.h"
-#include "../../../../src/cpp/security/authentication/PKIIdentityHandle.h"
-#include "../../../../src/cpp/security/accesscontrol/AccessPermissionsHandle.h"
+#include "../../../../src/cpp/fastrtps_deprecated/security/cryptography/AESGCMGMAC.h"
+#include "../../../../src/cpp/fastrtps_deprecated/security/authentication/PKIIdentityHandle.h"
+#include "../../../../src/cpp/fastrtps_deprecated/security/accesscontrol/AccessPermissionsHandle.h"
 #include <fastrtps/rtps/common/CDRMessage_t.h>
 
 #include <gtest/gtest.h>
@@ -1212,7 +1212,7 @@ TEST_F(CryptographyPluginTest, transform_Reader_Submessage)
     CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception);
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
 
-    //Test the GCM256 version    
+    //Test the GCM256 version
     eprosima::fastrtps::rtps::Property prop1;
     prop1.name("dds.sec.crypto.keysize");
     prop1.value("256");

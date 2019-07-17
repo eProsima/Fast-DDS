@@ -38,12 +38,15 @@ class ReaderHistory : public History
 {
     friend class RTPSReader;
 
+    ReaderHistory(ReaderHistory&&) = delete;
+    ReaderHistory& operator=(ReaderHistory&&) = delete;
+
 public:
     /**
      * Constructor of the ReaderHistory. It needs a HistoryAttributes.
      */
     RTPS_DllAPI ReaderHistory(const HistoryAttributes& att);
-    RTPS_DllAPI virtual ~ReaderHistory();
+    RTPS_DllAPI virtual ~ReaderHistory() override;
 
     /**
      * Virtual method that is called when a new change is received.

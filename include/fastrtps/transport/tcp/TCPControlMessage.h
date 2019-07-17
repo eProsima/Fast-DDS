@@ -22,10 +22,8 @@
 #ifndef _TCP_CONTROL_MESSAGE_H_
 #define _TCP_CONTROL_MESSAGE_H_
 
-// TODO Poner en el contexto.
-
 #include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/rtps/common/SerializedPayload.h>
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)

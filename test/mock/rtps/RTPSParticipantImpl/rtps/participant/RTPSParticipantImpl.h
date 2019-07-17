@@ -23,6 +23,11 @@
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+#include <fastrtps/rtps/network/NetworkFactory.h>
+
+#if HAVE_SECURITY
+#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#endif
 
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
@@ -30,11 +35,6 @@
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
-#include <fastrtps/rtps/network/NetworkFactory.h>
-
-#if HAVE_SECURITY
-#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#endif
 
 #include <gmock/gmock.h>
 

@@ -40,7 +40,7 @@ public:
 	public:
 		MyListener():n_matched(0){};
 		~MyListener(){};
-		void onWriterMatched(RTPSWriter* writer, MatchingInfo& info)
+		void on_writer_matched(RTPSWriter* writer, MatchingInfo& info)
 		{
 			if (info.status == MATCHED_MATCHING)
 				++n_matched;

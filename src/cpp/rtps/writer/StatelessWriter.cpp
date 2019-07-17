@@ -56,13 +56,13 @@ StatelessWriter::StatelessWriter(
 {
     get_builtin_guid();
 
-    const RemoteLocatorsAllocationAttributes& loc_alloc = 
+    const RemoteLocatorsAllocationAttributes& loc_alloc =
         participant->getRTPSParticipantAttributes().allocation.locators;
     for (size_t i = 0; i < attributes.matched_readers_allocation.initial; ++i)
     {
         matched_readers_.emplace_back(
             mp_RTPSParticipant,
-            loc_alloc.max_unicast_locators, 
+            loc_alloc.max_unicast_locators,
             loc_alloc.max_multicast_locators);
     }
 }
@@ -452,7 +452,7 @@ bool StatelessWriter::matched_reader_remove(const GUID_t& reader_guid)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    bool found = locator_selector_.remove_entry(reader_guid); 
+    bool found = locator_selector_.remove_entry(reader_guid);
     if(found)
     {
         found = false;
@@ -476,7 +476,7 @@ bool StatelessWriter::matched_reader_remove(const GUID_t& reader_guid)
 bool StatelessWriter::matched_reader_is_matched(const GUID_t& reader_guid)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    return std::any_of(matched_readers_.begin(), matched_readers_.end(), 
+    return std::any_of(matched_readers_.begin(), matched_readers_.end(),
         [reader_guid](const ReaderLocator& item)
         {
             return item.remote_guid() == reader_guid;

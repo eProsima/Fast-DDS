@@ -29,7 +29,7 @@ void my_ReaderListener::onNewDataMessage(RTPSReader*, const CacheChange_t* const
 	std::cout << "Received " << n_received << " samples so far" << std::endl;
 }
 
-void my_ReaderListener::onReaderMatched(RTPSReader*, MatchingInfo&)
+void my_ReaderListener::on_reader_matched(RTPSReader*, MatchingInfo&)
 {
 	std::cout << "Matched with a Writer" << std::endl;
 }

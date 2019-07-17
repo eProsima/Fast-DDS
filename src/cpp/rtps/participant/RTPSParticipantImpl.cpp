@@ -1159,6 +1159,27 @@ IPersistenceService* RTPSParticipantImpl::get_persistence_service(const Endpoint
         PersistenceFactory::create_persistence_service(m_att.properties);
 }
 
+bool RTPSParticipantImpl::get_new_entity_id(
+        EntityId_t& entityId)
+{
+    if (entityId == c_EntityId_Unknown)
+    {
+        EntityId_t entId;
+        uint32_t idnum = ++IdCounter;
+        octet* c = reinterpret_cast<octet*>(&idnum);
+        entId.value[2] = c[0];
+        entId.value[1] = c[1];
+        entId.value[0] = c[2];
+        entId.value[3] = 0x01; // Vendor specific
+    }
+    else
+    {
+        return !existsEntityId(entityId, READER) && !existsEntityId(entityId, WRITER);
+    }
+
+    return true;
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
