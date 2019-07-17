@@ -590,7 +590,7 @@ bool DataReader::get_sample_rejected_status(
 }
 
 bool DataReader::get_subscription_matched_status(
-        SubscriptionMatchedStatus& status)
+        SubscriptionMatchedStatus& status) const
 {
     (void) status;
     //TODO Implement

@@ -13,37 +13,21 @@
 // limitations under the License.
 
 /**
- * @file Condition.hpp
+ * @file ConditionImpl.cpp
+ *
  */
 
-#ifndef _FASTDDS_CONDITION_HPP_
-#define _FASTDDS_CONDITION_HPP_
+#include "ConditionImpl.hpp"
 
 namespace eprosima {
 namespace fastdds {
 
-class ConditionImpl;
 
-/**
- * Condition is a root class for all conditions
- * that may be attached to a Waitset
- * @ingroup FASTDDS_MODULE
- */
-class Condition
+bool ConditionImpl::get_trigger_value() const
 {
-    friend class ConditionImpl;
-
-public:
-
-    //! @brief Retrieves the trigger_value of the condition
-    bool get_trigger_value () const;
-
-private:
-        ConditionImpl* impl_;
-
-};
+    //TODO Implement
+    return false;
+}
 
 } // end of namespace fastdds
 } // end of namespace eprosima
-
-#endif // _FASTDDS_CONDITION_HPP_

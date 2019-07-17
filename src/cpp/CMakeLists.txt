@@ -100,6 +100,8 @@ set(${PROJECT_NAME}_source_files
     fastdds/domain/DomainParticipantFactory.cpp
     fastdds/domain/DomainParticipantImpl.cpp
     fastdds/domain/DomainParticipant.cpp
+    fastdds/conditions/ConditionImpl.cpp
+    fastdds/conditions/Condition.cpp
     fastrtps/transport/ChannelResource.cpp
     fastrtps/transport/UDPChannelResource.cpp
     fastrtps/transport/TCPChannelResource.cpp
