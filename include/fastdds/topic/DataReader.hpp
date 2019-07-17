@@ -230,7 +230,7 @@ private:
 
         void on_reader_matched(
                 fastrtps::rtps::RTPSReader* reader,
-                fastrtps::SubscriptionMatchedStatus& info);
+                fastdds::SubscriptionMatchedStatus& info);
 
         void on_new_cache_change_added(
                 fastrtps::rtps::RTPSReader* reader,

@@ -25,7 +25,7 @@
 #include <fastrtps/rtps/common/MatchingInfo.h>
 
 namespace eprosima{
-namespace fastrtps{
+namespace fastdds{
 
 //! @brief A structure storing the subscription status
 struct SubscriptionMatchedStatus
@@ -37,7 +37,7 @@ struct SubscriptionMatchedStatus
         , current_count()
         , current_count_change()
         , last_publication_handle()
-        , status(rtps::MATCHED_MATCHING)
+        , status(eprosima::fastrtps::rtps::MATCHED_MATCHING)
     {} 
 
     //! @brief Destructor
@@ -58,10 +58,10 @@ struct SubscriptionMatchedStatus
 	int32_t current_count_change = 0;
 
 	//! @brief Handle to the last writer that matched the reader causing the status change
-	rtps::InstanceHandle_t last_publication_handle;
+	eprosima::fastrtps::rtps::InstanceHandle_t last_publication_handle;
 
 	//!Status
-	rtps::MatchingStatus status;
+	eprosima::fastrtps::rtps::MatchingStatus status;
 };
 
 } //end of namespace fastrtps

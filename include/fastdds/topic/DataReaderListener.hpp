@@ -62,7 +62,7 @@ class RTPS_DllAPI DataReaderListener
          */
         virtual void on_subscription_matched(
                 DataReader* reader,
-                fastrtps::SubscriptionMatchedStatus& info)
+                fastdds::SubscriptionMatchedStatus& info)
         {
             (void)reader;
             (void)info;

@@ -59,7 +59,7 @@ class RTPS_DllAPI SubscriberListener
          */
         virtual void on_subscription_matched(
                 Subscriber* sub,
-                fastrtps::SubscriptionMatchedStatus& info)
+                fastdds::SubscriptionMatchedStatus& info)
         {
             (void)sub;
             (void)info;

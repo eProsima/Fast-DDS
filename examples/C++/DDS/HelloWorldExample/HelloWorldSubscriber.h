@@ -50,7 +50,7 @@ public:
         ~SubListener() override {}
         void on_data_available(eprosima::fastdds::DataReader* reader) override;
         void on_subscription_matched(eprosima::fastdds::DataReader* reaer,
-                                     eprosima::fastrtps::SubscriptionMatchedStatus& info) override;
+                                     eprosima::fastdds::SubscriptionMatchedStatus& info) override;
         HelloWorld m_Hello;
         eprosima::fastrtps::SampleInfo_t m_info;
         int n_matched;
