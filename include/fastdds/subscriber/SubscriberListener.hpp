@@ -22,7 +22,7 @@
 #include "../../fastrtps/fastrtps_dll.h"
 #include "../../fastrtps/qos/DeadlineMissedStatus.h"
 #include "../../fastrtps/qos/LivelinessChangedStatus.h"
-#include "../../fastrtps/qos/SubscriptionMatchedStatus.h"
+#include "../../fastdds/qos/SubscriptionMatchedStatus.h"
 
 namespace eprosima {
 namespace fastdds {
