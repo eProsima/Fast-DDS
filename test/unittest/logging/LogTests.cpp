@@ -179,9 +179,11 @@ TEST_F(LogTests, validate_single_flush_call)
     */
 
     volatile bool done = false;
-    std::atomic<int> committed = 0;
     int commited_before_flush = 0;
-
+    // std::atomic<int> committed = 0; // only works on msvc and icc
+    std::atomic<int> committed;
+    committed = 0;
+    
     // Populate the consumer from multiple threads
     vector<unique_ptr<thread>> threads;
     for (int i = 0; i < threads_number; i++)
@@ -247,7 +249,9 @@ TEST_F(LogTests, validate_multithread_flush_calls)
     */
 
     volatile bool done = false;
-    std::atomic<int> committed = 0;
+    // std::atomic<int> committed = 0; // only works on msvc and icc
+    std::atomic<int> committed;
+    committed = 0;
 
     // Populate the consumer from multiple threads
     vector<unique_ptr<thread>> threads;
