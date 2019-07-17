@@ -72,7 +72,6 @@ void AsyncWriterThread::wake_up(
     if(thread_ == nullptr)
     {
         running_ = true;
-        run_scheduled_ = true;
         thread_ = new std::thread(&AsyncWriterThread::run, this);
     }
     else
@@ -96,7 +95,6 @@ void AsyncWriterThread::wake_up(
             if(thread_ == nullptr)
             {
                 running_ = true;
-                run_scheduled_ = true;
                 thread_ = new std::thread(&AsyncWriterThread::run, this);
             }
             else
