@@ -663,6 +663,20 @@ bool DataWriter::get_liveliness_lost_status(
     return true;
 }
 
+bool get_offered_incompatible_qos_status(
+        fastrtps::OfferedIncompatibleQosStatus& status)
+{
+    // TODO Implement
+    return false;
+}
+
+bool get_publication_matched_status(
+        fastdds::PublicationMatchedStatus& status)
+{
+    //TODO Implement
+    return false;
+}
+
 bool DataWriter::assert_liveliness()
 {
     if (!publisher_->rtps_participant()->wlp()->assert_liveliness(

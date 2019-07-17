@@ -36,6 +36,7 @@
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/IncompatibleQosStatus.hpp>
 #include <fastrtps/qos/LivelinessLostStatus.h>
+#include <fastdds/qos/PublicationMatchedStatus.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -220,12 +221,10 @@ public:
             fastrtps::LivelinessLostStatus& status);
 
     bool get_offered_incompatible_qos_status(
-            fastrtps::OfferedIncompatibleQosStatus& status)
-    {
-        // Not implemented
-        (void)status;
-        return false;
-    }
+            fastrtps::OfferedIncompatibleQosStatus& status);
+
+    bool get_publication_matched_status(
+            fastdds::PublicationMatchedStatus& status);
 
     const Publisher* get_publisher() const;
 
