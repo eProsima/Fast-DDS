@@ -33,6 +33,7 @@
 #include <fastrtps/topic/attributes/TopicAttributes.h>
 #include <fastrtps/rtps/timedevent/TimedCallback.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
+#include <fastdds/qos/SubscriptionMatchedStatus.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -180,6 +181,9 @@ public:
 
     bool get_sample_rejected_status(
             fastrtps::SampleRejectedStatus& status) const;
+
+    bool get_subscription_matched_status(
+            fastdds::SubscriptionMatchedStatus& status) const;
 
     const Subscriber* get_subscriber() const;
 

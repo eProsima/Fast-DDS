@@ -589,6 +589,14 @@ bool DataReader::get_sample_rejected_status(
     return false;
 }
 
+bool DataReader::get_subscription_matched_status(
+        SubscriptionMatchedStatus& status)
+{
+    (void) status;
+    //TODO Implement
+    return false;
+}
+
 const Subscriber* DataReader::get_subscriber() const
 {
     return subscriber_->get_subscriber();
