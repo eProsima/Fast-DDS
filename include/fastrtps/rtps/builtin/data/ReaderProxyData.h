@@ -91,7 +91,10 @@ class ReaderProxyData
 
         RTPS_DllAPI void add_unicast_locator(const Locator_t& locator);
 
-        void set_unicast_locators(
+        void set_announced_unicast_locators(
+                const LocatorList_t& locators);
+
+        void set_remote_unicast_locators(
                 const LocatorList_t& locators,
                 const NetworkFactory& network);
 
@@ -102,6 +105,9 @@ class ReaderProxyData
                 const NetworkFactory& network);
 
         void set_locators(
+                const RemoteLocatorList& locators);
+
+        void set_remote_locators(
                 const RemoteLocatorList& locators,
                 const NetworkFactory& network,
                 bool use_multicast_locators);

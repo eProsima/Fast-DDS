@@ -68,7 +68,7 @@ void EDPBasePUBListener::add_writer_from_change(
         {
             if (!temp_writer_data_.has_locators())
             {
-                temp_writer_data_.set_locators(participant_data.default_locators, network, true);
+                temp_writer_data_.set_remote_locators(participant_data.default_locators, network, true);
             }
 
             if (updating && !data->is_update_allowed(temp_writer_data_))
@@ -165,7 +165,7 @@ void EDPBaseSUBListener::add_reader_from_change(
         {
             if (!temp_reader_data_.has_locators())
             {
-                temp_reader_data_.set_locators(participant_data.default_locators, network, true);
+                temp_reader_data_.set_remote_locators(participant_data.default_locators, network, true);
             }
 
             if (updating && !data->is_update_allowed(temp_reader_data_))

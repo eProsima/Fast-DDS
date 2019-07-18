@@ -583,7 +583,17 @@ void WriterProxyData::add_unicast_locator(const Locator_t& locator)
     remote_locators_.add_unicast_locator(locator);
 }
 
-void WriterProxyData::set_unicast_locators(
+void WriterProxyData::set_announced_unicast_locators(
+        const LocatorList_t& locators)
+{
+    remote_locators_.unicast.clear();
+    for (const Locator_t& locator : locators)
+    {
+        remote_locators_.add_unicast_locator(locator);
+    }
+}
+
+void WriterProxyData::set_remote_unicast_locators(
         const LocatorList_t& locators,
         const NetworkFactory& network)
 {
@@ -619,6 +629,12 @@ void WriterProxyData::set_multicast_locators(
 }
 
 void WriterProxyData::set_locators(
+        const RemoteLocatorList& locators)
+{
+    remote_locators_ = locators;
+}
+
+void WriterProxyData::set_remote_locators(
         const RemoteLocatorList& locators,
         const NetworkFactory& network,
         bool use_multicast_locators)

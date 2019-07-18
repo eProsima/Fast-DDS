@@ -374,36 +374,32 @@ bool UDPTransportInterface::transform_remote_locator(
         const Locator_t& remote_locator,
         Locator_t& result_locator) const
 {
-    if (IsLocatorSupported(remote_locator) &&
-        is_locator_allowed(remote_locator))
+    if (IsLocatorSupported(remote_locator))
     {
         result_locator = remote_locator;
-        if (IPLocator::isMulticast(result_locator))
+        if (!is_local_locator(result_locator))
         {
+            // is_local_locator will return false for multicast addresses as well as
+            // remote unicast ones.
             return true;
         }
-        else
-        {
-            Locator_t loopbackLocator;
-            fill_local_ip(loopbackLocator);
-            bool loopback_allowed = is_locator_allowed(loopbackLocator);
 
-            // Check is local interface.
-            auto localInterface = currentInterfaces.begin();
-            for (; localInterface != currentInterfaces.end(); ++localInterface)
-            {
-                if (compare_locator_ip(localInterface->locator, result_locator))
-                {
-                    if (loopback_allowed)
-                    {
-                        // Loopback locator
-                        fill_local_ip(result_locator);
-                    }
-                    break;
-                }
-            }
-            return true;
+        // If we get here, the locator is a local unicast address
+        if (!is_locator_allowed(result_locator))
+        {
+            return false;
         }
+
+        // The locator is in the whitelist (or the whitelist is empty)
+        Locator_t loopbackLocator;
+        fill_local_ip(loopbackLocator);
+        if (is_locator_allowed(loopbackLocator))
+        {
+            // Loopback locator
+            fill_local_ip(result_locator);
+        }
+
+        return true;
     }
     return false;
 }
