@@ -598,30 +598,30 @@ bool EDP::pairingReader(RTPSReader* R, const ParticipantProxyData& pdata, const 
     for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
             pit!=mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
-        for(std::vector<WriterProxyData*>::iterator wdatait = (*pit)->m_writers.begin();
+        for(auto wdatait = (*pit)->m_writers.begin();
                 wdatait != (*pit)->m_writers.end(); ++wdatait)
         {
-            bool valid = validMatching(&rdata, *wdatait);
+            bool valid = validMatching(&rdata, wdatait->second);
 
             if(valid)
             {
 #if HAVE_SECURITY
                 if(!mp_RTPSParticipant->security_manager().discovered_writer(R->m_guid, (*pit)->m_guid,
-                            **wdatait, R->getAttributes().security_attributes()))
+                            *wdatait->second, R->getAttributes().security_attributes()))
                 {
                     logError(RTPS_EDP, "Security manager returns an error for reader " << R->getGuid());
                 }
 #else
-				RemoteWriterAttributes rwatt = (*wdatait)->toRemoteWriterAttributes();
+				RemoteWriterAttributes rwatt = (wdatait->second)->toRemoteWriterAttributes();
                 if(R->matched_writer_add(rwatt))
                 {
-                    logInfo(RTPS_EDP, "Valid Matching to writerProxy: " << (*wdatait)->guid());
+                    logInfo(RTPS_EDP, "Valid Matching to writerProxy: " << (wdatait->second)->guid());
                     //MATCHED AND ADDED CORRECTLY:
                     if(R->getListener()!=nullptr)
                     {
                         MatchingInfo info;
                         info.status = MATCHED_MATCHING;
-                        info.remoteEndpointGuid = (*wdatait)->guid();
+                        info.remoteEndpointGuid = (wdatait->second)->guid();
                         R->getListener()->onReaderMatched(R,info);
                     }
                 }
@@ -629,12 +629,12 @@ bool EDP::pairingReader(RTPSReader* R, const ParticipantProxyData& pdata, const 
             }
             else
             {
-                //logInfo(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<(*wdatait)->m_guid<<RTPS_DEF<<endl);
-                if(R->matched_writer_is_matched((*wdatait)->toRemoteWriterAttributes())
-                        && R->matched_writer_remove((*wdatait)->toRemoteWriterAttributes()))
+                //logInfo(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<(wdatait->second)->m_guid<<RTPS_DEF<<endl);
+                if(R->matched_writer_is_matched((wdatait->second)->toRemoteWriterAttributes())
+                        && R->matched_writer_remove((wdatait->second)->toRemoteWriterAttributes()))
                 {
 #if HAVE_SECURITY
-                    mp_RTPSParticipant->security_manager().remove_writer(R->getGuid(), pdata.m_guid, (*wdatait)->guid());
+                    mp_RTPSParticipant->security_manager().remove_writer(R->getGuid(), pdata.m_guid, (wdatait->second)->guid());
 #endif
 
                     //MATCHED AND ADDED CORRECTLY:
@@ -642,7 +642,7 @@ bool EDP::pairingReader(RTPSReader* R, const ParticipantProxyData& pdata, const 
                     {
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
-                        info.remoteEndpointGuid = (*wdatait)->guid();
+                        info.remoteEndpointGuid = (wdatait->second)->guid();
                         R->getListener()->onReaderMatched(R,info);
                     }
                 }
@@ -663,30 +663,30 @@ bool EDP::pairingWriter(RTPSWriter* W, const ParticipantProxyData& pdata, const 
     for(std::vector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
             pit!=mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
-        for(std::vector<ReaderProxyData*>::iterator rdatait = (*pit)->m_readers.begin();
+        for(auto rdatait = (*pit)->m_readers.begin();
                 rdatait!=(*pit)->m_readers.end(); ++rdatait)
         {
-            bool valid = validMatching(&wdata, *rdatait);
+            bool valid = validMatching(&wdata, rdatait->second);
 
             if(valid)
             {
 #if HAVE_SECURITY
                 if(!mp_RTPSParticipant->security_manager().discovered_reader(W->getGuid(), (*pit)->m_guid,
-                            **rdatait, W->getAttributes().security_attributes()))
+                            *rdatait->second, W->getAttributes().security_attributes()))
                 {
                     logError(RTPS_EDP, "Security manager returns an error for writer " << W->getGuid());
                 }
 #else
-				RemoteReaderAttributes rratt = (*rdatait)->toRemoteReaderAttributes();
+				RemoteReaderAttributes rratt = rdatait->second->toRemoteReaderAttributes();
 				if(W->matched_reader_add(rratt))
                 {
-                    logInfo(RTPS_EDP,"Valid Matching to readerProxy: " << (*rdatait)->guid());
+                    logInfo(RTPS_EDP,"Valid Matching to readerProxy: " << rdatait->second->guid());
                     //MATCHED AND ADDED CORRECTLY:
                     if(W->getListener()!=nullptr)
                     {
                         MatchingInfo info;
                         info.status = MATCHED_MATCHING;
-                        info.remoteEndpointGuid = (*rdatait)->guid();
+                        info.remoteEndpointGuid = rdatait->second->guid();
                         W->getListener()->onWriterMatched(W,info);
                     }
                 }
@@ -694,19 +694,19 @@ bool EDP::pairingWriter(RTPSWriter* W, const ParticipantProxyData& pdata, const 
             }
             else
             {
-                //logInfo(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<(*wdatait)->m_guid<<RTPS_DEF<<endl);
-                if(W->matched_reader_is_matched((*rdatait)->toRemoteReaderAttributes()) &&
-                        W->matched_reader_remove((*rdatait)->toRemoteReaderAttributes()))
+                //logInfo(RTPS_EDP,RTPS_CYAN<<"Valid Matching to writerProxy: "<<(wdatait->second)->m_guid<<RTPS_DEF<<endl);
+                if(W->matched_reader_is_matched(rdatait->second->toRemoteReaderAttributes()) &&
+                        W->matched_reader_remove(rdatait->second->toRemoteReaderAttributes()))
                 {
 #if HAVE_SECURITY
-                    mp_RTPSParticipant->security_manager().remove_reader(W->getGuid(), pdata.m_guid, (*rdatait)->guid());
+                    mp_RTPSParticipant->security_manager().remove_reader(W->getGuid(), pdata.m_guid, rdatait->second->guid());
 #endif
                     //MATCHED AND ADDED CORRECTLY:
                     if(W->getListener()!=nullptr)
                     {
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
-                        info.remoteEndpointGuid = (*rdatait)->guid();
+                        info.remoteEndpointGuid = rdatait->second->guid();
                         W->getListener()->onWriterMatched(W,info);
                     }
                 }

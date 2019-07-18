@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file Guid.h 	
+ * @file Guid.h
  */
 
 #ifndef RTPS_GUID_H_
@@ -24,6 +24,7 @@
 
 #include <cstdint>
 #include <cstring>
+#include <sstream>
 
 namespace eprosima{
 namespace fastrtps{
@@ -224,7 +225,7 @@ struct RTPS_DllAPI EntityId_t{
         //return id;
     }
 #if !__BIG_ENDIAN__
-    //! 
+    //!
     void reverse(){
         octet oaux;
         oaux = value[3];
@@ -392,14 +393,14 @@ struct RTPS_DllAPI GUID_t{
     /**
      * @param guidP Guid prefix
      * @param id Entity id
-     */	
+     */
     GUID_t(const GuidPrefix_t& guidP,uint32_t id):
         guidPrefix(guidP),entityId(id) {}
 
     /**
      * @param guidP Guid prefix
      * @param entId Entity id
-     */	
+     */
     GUID_t(const GuidPrefix_t& guidP,const EntityId_t& entId):
         guidPrefix(guidP),entityId(entId) {}
 
@@ -481,5 +482,19 @@ inline std::ostream& operator<<(std::ostream& output,const GUID_t& guid)
 }
 }
 
+namespace std {
+
+  template <>
+      struct hash<eprosima::fastrtps::rtps::GUID_t>
+  {
+    std::size_t operator()(const eprosima::fastrtps::rtps::GUID_t& k) const
+    {
+      std::stringstream ss_guid;
+      ss_guid << k;
+      std::hash<std::string> hash_fn;
+      return hash_fn(ss_guid.str());
+    }
+  };
+}
 
 #endif /* RTPS_GUID_H_ */

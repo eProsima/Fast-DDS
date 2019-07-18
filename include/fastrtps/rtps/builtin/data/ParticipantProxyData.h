@@ -21,6 +21,7 @@
 #define _RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <mutex>
+#include <unordered_map>
 #include "../../../qos/ParameterList.h"
 
 #include "../../attributes/WriterAttributes.h"
@@ -128,9 +129,9 @@ class ParticipantProxyData
         //!
         RemoteParticipantLeaseDuration* mp_leaseDurationTimer;
         //!
-        std::vector<ReaderProxyData*> m_readers;
+        std::unordered_map<GUID_t, ReaderProxyData*> m_readers;
         //!
-        std::vector<WriterProxyData*> m_writers;
+        std::unordered_map<GUID_t, WriterProxyData*> m_writers;
 
         /**
          * Update the data.
