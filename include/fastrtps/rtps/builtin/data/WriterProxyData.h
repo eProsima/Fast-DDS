@@ -110,17 +110,23 @@ class WriterProxyData
 
         RTPS_DllAPI void add_unicast_locator(const Locator_t& locator);
 
-        void set_unicast_locators(
-            const LocatorList_t& locators,
-            const NetworkFactory& network);
+        void set_announced_unicast_locators(
+                const LocatorList_t& locators);
+
+        void set_remote_unicast_locators(
+                const LocatorList_t& locators,
+                const NetworkFactory& network);
 
         RTPS_DllAPI void add_multicast_locator(const Locator_t& locator);
 
         void set_multicast_locators(
-            const LocatorList_t& locators,
-            const NetworkFactory& network);
+                const LocatorList_t& locators,
+                const NetworkFactory& network);
 
         void set_locators(
+                const RemoteLocatorList& locators);
+
+        void set_remote_locators(
                 const RemoteLocatorList& remote_locators,
                 const NetworkFactory& network,
                 bool use_multicast_locators);

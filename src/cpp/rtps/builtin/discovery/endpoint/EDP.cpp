@@ -97,12 +97,12 @@ bool EDP::newLocalReaderProxyData(
         if (reader->getAttributes().multicastLocatorList.empty() &&
             reader->getAttributes().unicastLocatorList.empty())
         {
-            rpd->set_locators(participant_data.default_locators, network, true);
+            rpd->set_locators(participant_data.default_locators);
         }
         else
         {
             rpd->set_multicast_locators(reader->getAttributes().multicastLocatorList, network);
-            rpd->set_unicast_locators(reader->getAttributes().unicastLocatorList, network);
+            rpd->set_announced_unicast_locators(reader->getAttributes().unicastLocatorList);
         }
         rpd->RTPSParticipantKey() = mp_RTPSParticipant->getGuid();
         rpd->topicName(att.getTopicName());
@@ -212,12 +212,12 @@ bool EDP::newLocalWriterProxyData(
         if (writer->getAttributes().multicastLocatorList.empty() &&
             writer->getAttributes().unicastLocatorList.empty())
         {
-            wpd->set_locators(participant_data.default_locators, network, true);
+            wpd->set_locators(participant_data.default_locators);
         }
         else
         {
             wpd->set_multicast_locators(writer->getAttributes().multicastLocatorList, network);
-            wpd->set_unicast_locators(writer->getAttributes().unicastLocatorList, network);
+            wpd->set_announced_unicast_locators(writer->getAttributes().unicastLocatorList);
         }
         wpd->RTPSParticipantKey() = mp_RTPSParticipant->getGuid();
         wpd->topicName(att.getTopicName());
@@ -323,12 +323,12 @@ bool EDP::updatedLocalReader(
         if (reader->getAttributes().multicastLocatorList.empty() &&
             reader->getAttributes().unicastLocatorList.empty())
         {
-            rdata->set_locators(participant_data.default_locators, network, true);
+            rdata->set_locators(participant_data.default_locators);
         }
         else
         {
             rdata->set_multicast_locators(reader->getAttributes().multicastLocatorList, network);
-            rdata->set_unicast_locators(reader->getAttributes().unicastLocatorList, network);
+            rdata->set_announced_unicast_locators(reader->getAttributes().unicastLocatorList);
         }
         rdata->m_qos.setQos(rqos, false);
         rdata->isAlive(true);
@@ -368,12 +368,12 @@ bool EDP::updatedLocalWriter(
         if (writer->getAttributes().multicastLocatorList.empty() &&
             writer->getAttributes().unicastLocatorList.empty())
         {
-            wdata->set_locators(participant_data.default_locators, network, true);
+            wdata->set_locators(participant_data.default_locators);
         }
         else
         {
             wdata->set_multicast_locators(writer->getAttributes().multicastLocatorList, network);
-            wdata->set_unicast_locators(writer->getAttributes().unicastLocatorList, network);
+            wdata->set_announced_unicast_locators(writer->getAttributes().unicastLocatorList);
         }
         wdata->m_qos.setQos(wqos, false);
         return true;

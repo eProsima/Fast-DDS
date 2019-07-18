@@ -590,7 +590,17 @@ void ReaderProxyData::add_unicast_locator(const Locator_t& locator)
     remote_locators_.add_unicast_locator(locator);
 }
 
-void ReaderProxyData::set_unicast_locators(
+void ReaderProxyData::set_announced_unicast_locators(
+        const LocatorList_t& locators)
+{
+    remote_locators_.unicast.clear();
+    for (const Locator_t& locator : locators)
+    {
+        remote_locators_.add_unicast_locator(locator);
+    }
+}
+
+void ReaderProxyData::set_remote_unicast_locators(
         const LocatorList_t& locators,
         const NetworkFactory& network)
 {
@@ -626,6 +636,12 @@ void ReaderProxyData::set_multicast_locators(
 }
 
 void ReaderProxyData::set_locators(
+        const RemoteLocatorList& locators)
+{
+    remote_locators_ = locators;
+}
+
+void ReaderProxyData::set_remote_locators(
         const RemoteLocatorList& locators,
         const NetworkFactory& network,
         bool use_multicast_locators)

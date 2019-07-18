@@ -389,7 +389,7 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
 
     temp_writer_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
     temp_writer_proxy_data_.persistence_guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_writer_proxy_data_.set_locators(pdata.metatraffic_locators, network, true);
+    temp_writer_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, true);
     temp_writer_proxy_data_.topicKind(WITH_KEY);
     temp_writer_proxy_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     temp_writer_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -397,7 +397,7 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     temp_reader_proxy_data_.clear();
     temp_reader_proxy_data_.m_expectsInlineQos = false;
     temp_reader_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_reader_proxy_data_.set_locators(pdata.metatraffic_locators, network, true);
+    temp_reader_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, true);
     temp_reader_proxy_data_.topicKind(WITH_KEY);
     temp_reader_proxy_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     temp_reader_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;

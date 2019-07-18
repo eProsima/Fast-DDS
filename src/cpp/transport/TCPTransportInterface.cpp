@@ -444,7 +444,7 @@ bool TCPTransportInterface::transform_remote_locator(
     Locator_t& result_locator) const
 {
     if (IsLocatorSupported(remote_locator) &&
-        is_locator_allowed(remote_locator))
+        (!is_local_locator(remote_locator) || is_locator_allowed(remote_locator)))
     {
         result_locator = remote_locator;
         return true;

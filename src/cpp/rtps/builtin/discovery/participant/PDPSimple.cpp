@@ -334,7 +334,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         temp_writer_data_.guid().guidPrefix = pdata->m_guid.guidPrefix;
         temp_writer_data_.guid().entityId = c_EntityId_SPDPWriter;
         temp_writer_data_.persistence_guid(temp_writer_data_.guid());
-        temp_writer_data_.set_locators(pdata->metatraffic_locators, network, true);
+        temp_writer_data_.set_remote_locators(pdata->metatraffic_locators, network, true);
         temp_writer_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
         temp_writer_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_PDPReader->matched_writer_add(temp_writer_data_);
@@ -348,7 +348,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         temp_reader_data_.m_expectsInlineQos = false;
         temp_reader_data_.guid().guidPrefix = pdata->m_guid.guidPrefix;
         temp_reader_data_.guid().entityId = c_EntityId_SPDPReader;
-        temp_reader_data_.set_locators(pdata->metatraffic_locators, network, true);
+        temp_reader_data_.set_remote_locators(pdata->metatraffic_locators, network, true);
         temp_reader_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
         temp_reader_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_PDPWriter->matched_reader_add(temp_reader_data_);
