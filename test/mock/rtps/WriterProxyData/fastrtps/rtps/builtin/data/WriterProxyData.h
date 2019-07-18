@@ -53,9 +53,11 @@ class WriterProxyData
 
         void persistence_guid(const GUID_t& /*guid*/) { }
 
-        void set_unicast_locators(const LocatorList_t& /*locators*/, const NetworkFactory& /*network*/) { }
+        void set_announced_unicast_locators(const LocatorList_t& /*locators*/) { }
 
-        void set_locators(
+        void set_remote_unicast_locators(const LocatorList_t& /*locators*/, const NetworkFactory& /*network*/) { }
+
+        void set_remote_locators(
                 const RemoteLocatorList& /*locators*/,
                 const NetworkFactory& /*network*/,
                 bool /*use_multicast*/) { }
