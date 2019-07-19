@@ -40,10 +40,6 @@
 
 #include <fastdds/rtps/RTPSDomain.h>
 
-#include <fastrtps/transport/UDPv4Transport.h>
-#include <fastrtps/transport/UDPv6Transport.h>
-#include <fastrtps/transport/test_UDPv4Transport.h>
-
 #include <fastrtps/log/Log.h>
 
 #include <chrono>
@@ -144,16 +140,15 @@ bool DomainParticipantImpl::delete_publisher(
 {
     std::lock_guard<std::mutex> lock(mtx_pubs_);
     auto pit = publishers_.find(pub);
-    if (pub->get_instance_handle() == pit->second->get_instance_handle())
+
+    if (pit != publishers_.end() && pub->get_instance_handle() == pit->second->get_instance_handle())
     {
-        if (pit != publishers_.end())
-        {
-            publishers_by_handle_.erase(publishers_by_handle_.find(pit->second->get_instance_handle()));
-            delete pit->second;
-            publishers_.erase(pit);
-            return true;
-        }
+        publishers_by_handle_.erase(publishers_by_handle_.find(pit->second->get_instance_handle()));
+        delete pit->second;
+        publishers_.erase(pit);
+        return true;
     }
+
     return false;
 }
 
@@ -162,16 +157,15 @@ bool DomainParticipantImpl::delete_subscriber(
 {
     std::lock_guard<std::mutex> lock(mtx_subs_);
     auto sit = subscribers_.find(sub);
-    if (sub->get_instance_handle() == sit->second->get_instance_handle())
+
+    if (sit != subscribers_.end() && sub->get_instance_handle() == sit->second->get_instance_handle())
     {
-        if (sit != subscribers_.end())
-        {
-            subscribers_by_handle_.erase(subscribers_by_handle_.find(sit->second->get_instance_handle()));
-            delete sit->second;
-            subscribers_.erase(sit);
-            return true;
-        }
+        subscribers_by_handle_.erase(subscribers_by_handle_.find(sit->second->get_instance_handle()));
+        delete sit->second;
+        subscribers_.erase(sit);
+        return true;
     }
+
     return false;
 }
 
@@ -326,8 +320,7 @@ bool DomainParticipantImpl::set_default_publisher_qos(
 {
     if (&qos == &PUBLISHER_QOS_DEFAULT)
     {
-        fastdds::dds::PublisherQos def_qos;
-        default_pub_qos_.set_qos(def_qos, true);
+        default_pub_qos_.set_qos(PUBLISHER_QOS_DEFAULT, true);
     }
     else if (qos.check_qos())
     {
@@ -347,8 +340,7 @@ bool DomainParticipantImpl::set_default_subscriber_qos(
 {
     if (&qos == &SUBSCRIBER_QOS_DEFAULT)
     {
-        fastdds::dds::SubscriberQos def_qos;
-        default_sub_qos_.set_qos(def_qos, true);
+        default_sub_qos_.set_qos(SUBSCRIBER_QOS_DEFAULT, true);
     }
     else if (qos.check_qos())
     {
@@ -474,7 +466,7 @@ DomainParticipant* DomainParticipantImpl::get_participant()
     return participant_;
 }
 
-std::vector<std::string> DomainParticipantImpl::getParticipantNames() const
+std::vector<std::string> DomainParticipantImpl::get_participant_names() const
 {
     return rtps_participant_->getParticipantNames();
 }
@@ -677,7 +669,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
     }
 }
 
-bool DomainParticipantImpl::newRemoteEndpointDiscovered(
+bool DomainParticipantImpl::new_remote_endpoint_discovered(
         const GUID_t& partguid,
         uint16_t endpointId,
         EndpointKind_t kind)

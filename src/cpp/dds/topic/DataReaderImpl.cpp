@@ -19,10 +19,8 @@
 
 #include <dds/topic/DataReaderImpl.hpp>
 #include <fastdds/dds/topic/DataReader.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <dds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/RTPSDomain.h>
@@ -214,7 +212,7 @@ bool DataReaderImpl::set_topic(
     }
     //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
     //subscriber_->update_reader(this, topic_att_, qos_);
-    subscriber_->rtps_participant()->updateReader(reader_, topic_att_, qos_);
+    //subscriber_->rtps_participant()->updateReader(reader_, topic_att_, qos_);
     return true;
 }
 
@@ -327,9 +325,10 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
     {
         if(data_reader_->listener_ != nullptr)
         {
-            //cout << "FIRST BYTE: "<< (int)change->serializedPayload.data[0] << endl;
             data_reader_->listener_->on_data_available(data_reader_->user_datareader_);
         }
+
+        data_reader_->subscriber_->subscriber_listener_.on_data_available(data_reader_->user_datareader_);
     }
 }
 
@@ -341,6 +340,8 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
     {
         data_reader_->listener_->on_subscription_matched(data_reader_->user_datareader_, info);
     }
+
+    data_reader_->subscriber_->subscriber_listener_.on_subscription_matched(data_reader_->user_datareader_, info);
 }
 
 void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
@@ -351,6 +352,8 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
     {
         data_reader_->listener_->on_liveliness_changed(data_reader_->user_datareader_, status);
     }
+
+    data_reader_->subscriber_->subscriber_listener_.on_liveliness_changed(data_reader_->user_datareader_, status);
 }
 
 bool DataReaderImpl::on_new_cache_change_added(
@@ -447,6 +450,7 @@ bool DataReaderImpl::deadline_missed()
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
     listener_->on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
+    subscriber_->subscriber_listener_.on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
     deadline_missed_status_.total_count_change = 0;
 
     if (!history_.set_next_deadline(
@@ -567,6 +571,7 @@ bool DataReaderImpl::get_liveliness_changed_status(
 
     reader_->liveliness_changed_status_.alive_count_change = 0u;
     reader_->liveliness_changed_status_.not_alive_count_change = 0u;
+    // TODO add callback call subscriber_->subscriber_listener_->on_liveliness_changed
     return true;
 }
 
@@ -576,6 +581,7 @@ bool DataReaderImpl::get_requested_incompatible_qos_status(
 {
     (void)status;
     // TODO Implement
+    // TODO add callback call subscriber_->subscriber_listener_->on_requested_incompatibe_qos
     return false;
 }
 */
@@ -586,6 +592,7 @@ bool DataReaderImpl::get_sample_lost_status(
 {
     (void)status;
     // TODO Implement
+    // TODO add callback call subscriber_->subscriber_listener_->on_sample_lost
     return false;
 }
 */
@@ -596,6 +603,7 @@ bool DataReaderImpl::get_sample_rejected_status(
 {
     (void)status;
     // TODO Implement
+    // TODO add callback call subscriber_->subscriber_listener_->on_sample_rejected
     return false;
 }
 */

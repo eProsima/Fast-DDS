@@ -145,18 +145,6 @@ class SubscriberImpl
      */
     void get_liveliness_changed_status(LivelinessChangedStatus& status);
 
-    const Participant* get_participant() const;
-
-    rtps::RTPSParticipant* rtps_participant() const
-    {
-        return mp_rtpsParticipant;
-    }
-
-    const Subscriber* get_subscriber() const
-    {
-        return mp_userSubscriber;
-    }
-
 private:
 
     //!Participant

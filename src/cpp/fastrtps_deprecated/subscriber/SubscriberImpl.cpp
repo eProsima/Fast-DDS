@@ -449,10 +449,5 @@ void SubscriberImpl::get_liveliness_changed_status(LivelinessChangedStatus &stat
     mp_reader->liveliness_changed_status_.not_alive_count_change = 0u;
 }
 
-const Participant* SubscriberImpl::get_participant() const
-{
-    return mp_participant->get_participant();
-}
-
 } /* namespace fastrtps */
 } /* namespace eprosima */

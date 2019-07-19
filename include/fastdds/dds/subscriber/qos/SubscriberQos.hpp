@@ -141,7 +141,7 @@ public:
             const SubscriberQos& qos) const;
 };
 
-extern SubscriberQos SUBSCRIBER_QOS_DEFAULT;
+extern const SubscriberQos SUBSCRIBER_QOS_DEFAULT;
 
 
 } /* namespace dds */

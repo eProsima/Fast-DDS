@@ -556,14 +556,3 @@ void PublisherImpl::assert_liveliness()
         }
     }
 }
-
-const Participant* PublisherImpl::get_participant() const
-{
-    return mp_participant->get_participant();
-}
-
-const Publisher* PublisherImpl::get_publisher() const
-{
-    return mp_userPublisher;
-}
-

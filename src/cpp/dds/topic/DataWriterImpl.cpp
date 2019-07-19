@@ -20,8 +20,6 @@
 #include <dds/topic/DataWriterImpl.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastdds/dds/publisher/PublisherListener.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
 #include <dds/publisher/PublisherImpl.hpp>
 
 #include <fastdds/rtps/writer/RTPSWriter.h>
@@ -530,7 +528,7 @@ bool DataWriterImpl::set_topic(const TopicAttributes& att)
         return false;
     }
     //publisher_->update_writer(this, topic_att_, qos_);
-    publisher_->rtps_participant()->updateWriter(writer_, topic_att_, qos_);
+    //publisher_->rtps_participant()->updateWriter(writer_, topic_att_, qos_);
     return true;
 }
 
@@ -548,11 +546,13 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         RTPSWriter* /*writer*/,
         MatchingInfo& info)
 {
-    if( data_writer_->listener_ != nullptr )
+    if (data_writer_->listener_ != nullptr )
     {
         data_writer_->listener_->on_publication_matched(
             data_writer_->user_datawriter_, info);
     }
+
+    data_writer_->publisher_->publisher_listener_.on_publication_matched(data_writer_->user_datawriter_, info);
 }
 
 void DataWriterImpl::InnerDataWriterListener::onWriterChangeReceivedByAll(
@@ -573,6 +573,8 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
     {
         data_writer_->listener_->on_liveliness_lost(data_writer_->user_datawriter_, status);
     }
+
+    data_writer_->publisher_->publisher_listener_.on_liveliness_lost(data_writer_->user_datawriter_, status);
 }
 
 bool DataWriterImpl::wait_for_acknowledgments(
@@ -609,6 +611,7 @@ bool DataWriterImpl::deadline_missed()
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
     listener_->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
+    publisher_->publisher_listener_.on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
     deadline_missed_status_.total_count_change = 0;
 
     if (!history_.set_next_deadline(

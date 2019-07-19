@@ -148,15 +148,6 @@ class PublisherImpl
      */
     void assert_liveliness();
 
-    const Participant* get_participant() const;
-
-    rtps::RTPSParticipant* rtps_participant() const
-    {
-        return mp_rtpsParticipant;
-    }
-
-    const Publisher* get_publisher() const;
-
     private:
     ParticipantImpl* mp_participant;
     //! Pointer to the associated Data Writer.

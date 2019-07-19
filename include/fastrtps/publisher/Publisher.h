@@ -151,8 +151,6 @@ public:
      */
     void get_liveliness_lost_status(LivelinessLostStatus& status);
 
-    const Participant* get_participant() const;
-
 private:
 
     PublisherImpl* mp_impl;
