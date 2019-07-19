@@ -17,20 +17,20 @@
  *
  */
 
-#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
-#include <fastrtps/rtps/common/Locator.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/common/Locator.h>
 
-#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPClient.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPServer.h>
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPClient.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPServer.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
 
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 
-#include <fastrtps/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
 
-#include "../participant/RTPSParticipantImpl.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/IPFinder.h>

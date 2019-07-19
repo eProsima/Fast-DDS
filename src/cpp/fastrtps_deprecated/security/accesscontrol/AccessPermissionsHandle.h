@@ -18,11 +18,11 @@
 #ifndef __SECURITY_ACCESSCONTROL_ACCESSPERMISSIONSHANDLE_H__
 #define __SECURITY_ACCESSCONTROL_ACCESSPERMISSIONSHANDLE_H__
 
-#include <fastrtps/rtps/security/common/Handle.h>
-#include <fastrtps/rtps/common/Token.h>
-#include "PermissionsTypes.h"
-#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#include <fastrtps/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#include <fastdds/rtps/security/common/Handle.h>
+#include <fastdds/rtps/common/Token.h>
+#include <fastrtps_deprecated/security/accesscontrol/PermissionsTypes.h>
+#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 
 #include <openssl/x509.h>
 #include <string>

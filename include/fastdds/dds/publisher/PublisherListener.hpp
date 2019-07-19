@@ -19,10 +19,10 @@
 #ifndef _FASTDDS_PUBLISHERLISTENER_H_
 #define _FASTDDS_PUBLISHERLISTENER_H_
 
-#include "../../../fastrtps/rtps/common/Types.h"
-#include "../../../fastrtps/rtps/common/MatchingInfo.h"
-#include "../../../fastrtps/qos/DeadlineMissedStatus.h"
-#include "../../../fastrtps/qos/LivelinessLostStatus.h"
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/MatchingInfo.h>
+#include <fastrtps/qos/DeadlineMissedStatus.h>
+#include <fastrtps/qos/LivelinessLostStatus.h>
 
 namespace eprosima {
 namespace fastdds {

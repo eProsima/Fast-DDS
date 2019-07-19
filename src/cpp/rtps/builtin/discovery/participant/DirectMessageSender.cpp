@@ -17,16 +17,16 @@
  *
  */
 
-#include "DirectMessageSender.hpp"
+#include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
 
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/rtps/writer/RTPSWriter.h>
-#include "../../../participant/RTPSParticipantImpl.h"
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-    
+
 
 DirectMessageSender::DirectMessageSender(
         RTPSParticipantImpl* participant,

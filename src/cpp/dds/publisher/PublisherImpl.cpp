@@ -17,16 +17,16 @@
  *
  */
 
-#include "PublisherImpl.hpp"
-#include "../topic/DataWriterImpl.hpp"
-#include "../domain/DomainParticipantImpl.hpp"
+#include <dds/publisher/PublisherImpl.hpp>
+#include <dds/topic/DataWriterImpl.hpp>
+#include <dds/domain/DomainParticipantImpl.hpp>
 
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include <fastrtps/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/log/Log.h>
 
 #include <functional>

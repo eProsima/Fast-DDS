@@ -19,7 +19,7 @@
 
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/participant/Participant.h>
-#include "PublisherImpl.h"
+#include <fastrtps_deprecated/publisher/PublisherImpl.h>
 
 #include <fastrtps/log/Log.h>
 

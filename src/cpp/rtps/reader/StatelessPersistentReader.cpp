@@ -17,11 +17,11 @@
  *
  */
 
-#include <fastrtps/rtps/reader/StatelessPersistentReader.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
-#include "../persistence/PersistenceService.h"
-#include "../participant/RTPSParticipantImpl.h"
-#include "ReaderHistoryState.hpp"
+#include <fastdds/rtps/reader/StatelessPersistentReader.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <rtps/persistence/PersistenceService.h>
+#include <fastrtps_deprecated/participant/ParticipantImpl.h>
+#include <rtps/reader/ReaderHistoryState.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -29,12 +29,12 @@ namespace rtps {
 
 
 StatelessPersistentReader::StatelessPersistentReader(
-        RTPSParticipantImpl* impl, 
+        RTPSParticipantImpl* impl,
         GUID_t& guid,
-        ReaderAttributes& att, 
-        ReaderHistory* hist, 
+        ReaderAttributes& att,
+        ReaderHistory* hist,
         ReaderListener* listen,
-        IPersistenceService* persistence) 
+        IPersistenceService* persistence)
      : StatelessReader(impl, guid, att, hist,listen)
      , persistence_(persistence)
      , persistence_guid_()

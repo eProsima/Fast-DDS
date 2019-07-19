@@ -17,25 +17,25 @@
  *
  */
 
-#include "DataWriterImpl.hpp"
+#include <dds/topic/DataWriterImpl.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/attributes/TopicAttributes.h>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
-#include "../publisher/PublisherImpl.hpp"
+#include <dds/publisher/PublisherImpl.hpp>
 
-#include <fastrtps/rtps/writer/RTPSWriter.h>
-#include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastrtps/rtps/participant/RTPSParticipant.h>
-#include <fastrtps/rtps/RTPSDomain.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/RTPSDomain.h>
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/rtps/resources/ResourceEvent.h>
-#include <fastrtps/rtps/resources/TimedEvent.h>
-#include <fastrtps/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
 
 #include <functional>
 

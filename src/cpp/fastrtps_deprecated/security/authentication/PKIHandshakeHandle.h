@@ -18,9 +18,9 @@
 #ifndef _SECURITY_AUTHENTICATION_PKIHANDSHAKEHANDLE_H_
 #define _SECURITY_AUTHENTICATION_PKIHANDSHAKEHANDLE_H_
 
-#include "PKIIdentityHandle.h"
-#include <fastrtps/rtps/security/authentication/Handshake.h>
-#include <fastrtps/rtps/security/common/SharedSecretHandle.h>
+#include <fastrtps_deprecated/security/authentication/PKIIdentityHandle.h>
+#include <fastdds/rtps/security/authentication/Handshake.h>
+#include <fastdds/rtps/security/common/SharedSecretHandle.h>
 #include <openssl/evp.h>
 #include <string>
 

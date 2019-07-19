@@ -17,21 +17,21 @@
  *
  */
 
-#include <fastrtps/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
 
-#include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
 
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <fastrtps/rtps/builtin/discovery/participant/PDP.h>
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPListener.h>
-#include <fastrtps/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
 
-#include <fastrtps/rtps/participant/ParticipantDiscoveryInfo.h>
-#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
 
-#include "../../../participant/RTPSParticipantImpl.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <mutex>
 
@@ -78,7 +78,7 @@ void PDPListener::onNewCacheChangeAdded(
             parent_pdp_->mp_PDPReaderHistory->remove_change(change);
             return;
         }
-        
+
         // Access to temp_participant_data_ is protected by reader lock
 
         // Load information on temp_participant_data_

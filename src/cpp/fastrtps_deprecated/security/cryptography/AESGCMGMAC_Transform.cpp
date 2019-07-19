@@ -16,10 +16,10 @@
  * @file AESGCMGMAC_Transform.cpp
  */
 
-#include "AESGCMGMAC_Transform.h"
+#include <fastrtps_deprecated/security/cryptography/AESGCMGMAC_Transform.h>
 
 #include <fastrtps/log/Log.h>
-#include <fastrtps/rtps/messages/CDRMessage.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
 
 #include <openssl/aes.h>
 #include <openssl/evp.h>

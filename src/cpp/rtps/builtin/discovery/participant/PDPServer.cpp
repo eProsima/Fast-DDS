@@ -17,31 +17,31 @@
  *
  */
 
-#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
-#include <fastrtps/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
 
-#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
 
-#include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
 
-#include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
 
 #include <fastrtps/utils/TimeConversion.h>
 
-#include "DirectMessageSender.hpp"
-#include "../../../participant/RTPSParticipantImpl.h"
+#include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <fastrtps/log/Log.h>
 
-#include <fastrtps/rtps/builtin/discovery/participant/timedevent/DServerEvent.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPServerListener.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPServer.h>
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDPServer.h>
+#include <fastdds/rtps/builtin/discovery/participant/timedevent/DServerEvent.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPServerListener.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPServer.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPServer.h>
 
 
-#include <fastrtps/rtps/writer/ReaderProxy.h>
+#include <fastdds/rtps/writer/ReaderProxy.h>
 
 #include <algorithm>
 #include <forward_list>
@@ -261,7 +261,7 @@ void PDPServer::initializeParticipantProxyData(ParticipantProxyData* participant
 
     // A PDP server should always be provided with all EDP endpoints
     // because it must relay all clients EDP info
-    participant_data->m_availableBuiltinEndpoints 
+    participant_data->m_availableBuiltinEndpoints
         |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER
         | DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR
         | DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR
@@ -335,7 +335,7 @@ void PDPServer::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
         // TODO: remove when the Writer API issue is resolved
         std::lock_guard<std::recursive_mutex> lock(*getMutex());
-        // Waiting till we remove C++11 restriction: 
+        // Waiting till we remove C++11 restriction:
         // clients_.insert_or_assign(temp_reader_data_.guid(), temp_reader_data_);
         auto emplace_result = clients_.emplace(temp_reader_data_.guid(), temp_reader_data_);
         if (!emplace_result.second)

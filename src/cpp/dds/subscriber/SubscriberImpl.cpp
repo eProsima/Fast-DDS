@@ -17,16 +17,16 @@
  *
  */
 
-#include "SubscriberImpl.hpp"
-#include "../topic/DataReaderImpl.hpp"
-#include "../domain/DomainParticipantImpl.hpp"
+#include <dds/subscriber/SubscriberImpl.hpp>
+#include <dds/topic/DataReaderImpl.hpp>
+#include <dds/domain/DomainParticipantImpl.hpp>
 
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/topic/DataReader.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include <fastrtps/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps;

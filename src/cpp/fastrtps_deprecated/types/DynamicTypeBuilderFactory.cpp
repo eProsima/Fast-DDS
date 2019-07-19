@@ -25,7 +25,7 @@
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/log/Log.h>
 
-#include <fastrtps/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>

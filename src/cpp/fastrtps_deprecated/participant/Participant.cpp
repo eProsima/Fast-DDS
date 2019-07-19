@@ -19,7 +19,7 @@
 
 #include <fastrtps/participant/Participant.h>
 
-#include "ParticipantImpl.h"
+#include <fastrtps_deprecated/participant/ParticipantImpl.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

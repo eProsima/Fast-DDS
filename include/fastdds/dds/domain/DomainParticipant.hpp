@@ -22,8 +22,8 @@
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include "../../../fastrtps/rtps/common/Guid.h"
-#include "../../../fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 
 #include <utility>
 

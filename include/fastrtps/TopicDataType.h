@@ -19,10 +19,10 @@
 #ifndef TOPICDATATYPE_H_
 #define TOPICDATATYPE_H_
 
-#include "../fastdds/dds/topic/TopicDataType.hpp"
-#include "rtps/common/SerializedPayload.h"
-#include "rtps/common/InstanceHandle.h"
-#include "utils/md5.h"
+#include <fastdds/dds/topic/TopicDataType.hpp>
+#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastrtps/utils/md5.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -33,4 +33,4 @@ using TopicDataType = fastdds::dds::TopicDataType;
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif /* RTPSTOPICDATATYPE_H_ */
+#endif /* TOPICDATATYPE_H_ */

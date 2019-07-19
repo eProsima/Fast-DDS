@@ -19,7 +19,7 @@
 #ifndef _FASTRTPS_DATAWRITER_HPP_
 #define _FASTRTPS_DATAWRITER_HPP_
 
-#include <fastrtps/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/IncompatibleQosStatus.hpp>
 

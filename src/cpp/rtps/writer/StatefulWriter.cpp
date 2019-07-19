@@ -17,31 +17,31 @@
  *
  */
 
-#include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/writer/WriterListener.h>
-#include <fastrtps/rtps/writer/ReaderProxy.h>
-#include <fastrtps/rtps/resources/AsyncWriterThread.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
+#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/writer/ReaderProxy.h>
+#include <fastdds/rtps/resources/AsyncWriterThread.h>
 
-#include "../participant/RTPSParticipantImpl.h"
-#include "../flowcontrol/FlowController.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/flowcontrol/FlowController.h>
 
-#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
-#include <fastrtps/rtps/messages/RTPSMessageGroup.h>
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <fastdds/rtps/messages/RTPSMessageGroup.h>
 
-#include <fastrtps/rtps/participant/RTPSParticipant.h>
-#include <fastrtps/rtps/resources/ResourceEvent.h>
-#include <fastrtps/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
 
-#include <fastrtps/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/WriterHistory.h>
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
-#include <fastrtps/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
 
-#include "RTPSWriterCollector.h"
-#include "StatefulWriterOrganizer.h"
+#include <rtps/writer/RTPSWriterCollector.h>
+#include <rtps/writer/StatefulWriterOrganizer.h>
 
 #include <mutex>
 #include <vector>

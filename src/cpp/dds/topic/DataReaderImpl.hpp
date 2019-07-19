@@ -20,16 +20,16 @@
 #ifndef _FASTRTPS_DATAREADERIMPL_HPP_
 #define _FASTRTPS_DATAREADERIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Guid.h>
 
 #include <fastrtps/qos/ReaderQos.h>
 
-#include <fastrtps/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/subscriber/SubscriberHistory.h>
 #include <fastdds/dds/topic/DataReaderListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastrtps/attributes/TopicAttributes.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 

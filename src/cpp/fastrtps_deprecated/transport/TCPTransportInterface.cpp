@@ -14,7 +14,8 @@
 
 #include <fastrtps/transport/TCPTransportInterface.h>
 #include <fastrtps/transport/tcp/RTCPMessageManager.h>
-#include "TCPSenderResource.hpp"
+#include <fastrtps_deprecated/transport/TCPSenderResource.hpp>
+//#include "TCPSenderResource.hpp"
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
@@ -138,7 +139,7 @@ void TCPTransportInterface::clean()
                 channels.push_back(channel.second);
             }
         }
-        
+
         for (auto& channel : channels)
         {
             if (channel->connection_established())

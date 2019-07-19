@@ -19,7 +19,7 @@
 
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include "PublisherImpl.hpp"
+#include <dds/publisher/PublisherImpl.hpp>
 
 #include <fastrtps/log/Log.h>
 

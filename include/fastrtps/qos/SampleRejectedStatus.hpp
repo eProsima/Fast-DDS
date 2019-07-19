@@ -20,7 +20,7 @@
 #define _FASTRTPS_SAMPLE_REJECTED_STATUS_HPP_
 
 #include <cstdint>
-#include <fastrtps/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/InstanceHandle.h>
 
 namespace eprosima {
 namespace fastrtps {

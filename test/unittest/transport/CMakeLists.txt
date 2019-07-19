@@ -189,7 +189,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            )
         target_link_libraries(UDPv4Tests ${GTEST_LIBRARIES} ${MOCKS})
         if(MSVC OR MSVC_IDE)
             target_link_libraries(UDPv4Tests ${PRIVACY} iphlpapi Shlwapi )
@@ -205,7 +207,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
                 ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
                 ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-                ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+                ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+                ${PROJECT_SOURCE_DIR}/src/cpp
+                )
             target_link_libraries(UDPv6Tests ${GTEST_LIBRARIES} ${MOCKS})
             if(MSVC OR MSVC_IDE)
                 target_link_libraries(UDPv6Tests ${PRIVACY} iphlpapi Shlwapi )
@@ -220,7 +224,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
                 ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies
                 ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
                 ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-                ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+                ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+                ${PROJECT_SOURCE_DIR}/src/cpp
+                )
             target_link_libraries(TCPv6Tests ${GTEST_LIBRARIES} ${MOCKS}
                 $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
             if(MSVC OR MSVC_IDE)
@@ -239,7 +245,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            )
         target_link_libraries(test_UDPv4Tests ${GTEST_LIBRARIES} ${MOCKS})
         if(MSVC OR MSVC_IDE)
             target_link_libraries(test_UDPv4Tests ${PRIVACY} iphlpapi Shlwapi)
@@ -256,7 +264,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            )
         target_link_libraries(TCPv4Tests ${GTEST_LIBRARIES} ${MOCKS}
             $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
         if(MSVC OR MSVC_IDE)

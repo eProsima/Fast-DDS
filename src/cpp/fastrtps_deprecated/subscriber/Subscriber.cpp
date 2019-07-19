@@ -20,7 +20,7 @@
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/log/Log.h>
 
-#include "SubscriberImpl.h"
+#include <fastrtps_deprecated/subscriber/SubscriberImpl.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

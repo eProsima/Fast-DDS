@@ -18,7 +18,7 @@
  */
 
 #include <fastdds/dds/topic/DataWriter.hpp>
-#include "DataWriterImpl.hpp"
+#include <dds/topic/DataWriterImpl.hpp>
 
 namespace eprosima {
 

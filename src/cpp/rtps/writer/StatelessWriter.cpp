@@ -17,16 +17,16 @@
  *
  */
 
-#include <fastrtps/rtps/writer/StatelessWriter.h>
-#include <fastrtps/rtps/writer/WriterListener.h>
-#include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/resources/AsyncWriterThread.h>
-#include "../participant/RTPSParticipantImpl.h"
-#include "../flowcontrol/FlowController.h"
-#include "../history/HistoryAttributesExtension.hpp"
-#include "RTPSWriterCollector.h"
-#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
-#include <fastrtps/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/writer/StatelessWriter.h>
+#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/resources/AsyncWriterThread.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/flowcontrol/FlowController.h>
+#include <rtps/history/HistoryAttributesExtension.hpp>
+#include <rtps/writer/RTPSWriterCollector.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
 
 #include <algorithm>
 #include <mutex>

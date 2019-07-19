@@ -17,19 +17,19 @@
  *
  */
 
-#include "DataReaderImpl.hpp"
+#include <dds/topic/DataReaderImpl.hpp>
 #include <fastdds/dds/topic/DataReader.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
-#include "../subscriber/SubscriberImpl.hpp"
+#include <dds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
-#include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/RTPSDomain.h>
-#include <fastrtps/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastrtps/rtps/resources/ResourceEvent.h>
-#include <fastrtps/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <fastrtps/log/Log.h>

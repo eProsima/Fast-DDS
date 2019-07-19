@@ -19,46 +19,7 @@
 
 #ifndef DSCLIENTEVENT_H_
 #define DSCLIENTEVENT_H_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include "../../../../resources/TimedEvent.h"
+#include <fastdds/rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 
-namespace eprosima {
-namespace fastrtps{
-namespace rtps {
-
-class PDPClient;
-
-/**
- * Class DSClientEvent, TimedEvent used to synchronize discover-server clients
- *@ingroup DISCOVERY_MODULE
- */
-class DSClientEvent : public TimedEvent {
-public:
-
-	/**
-	 * Constructor.
-	 * @param p_PDP Pointer to the PDPClient.
-	 * @param interval Interval in ms.
-	 */
-    DSClientEvent(PDPClient* p_PDP,
-			double interval);
-	~DSClientEvent();
-	
-	/**
-	* Method invoked when the event occurs.
-	* This temporal event:
-        + resends the client RTPSParticipantProxyData to all remote servers.
-        + matches the EDP endpoints when the servers are all aware of this client existence
-	* @param code Code representing the status of the event
-	*/
-	bool event(EventCode code);
-	
-	//!Pointer to the PDPServer object.
-    PDPClient* mp_PDP;
-};
-}
-} /* namespace rtps */
-} /* namespace eprosima */
-#endif
 #endif /* DSCLIENTEVENT_H_ */

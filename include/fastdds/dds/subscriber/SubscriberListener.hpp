@@ -19,9 +19,9 @@
 #ifndef _FASTDDS_SUBLISTENER_H_
 #define _FASTDDS_SUBLISTENER_H_
 
-#include "../../../fastrtps/fastrtps_dll.h"
-#include "../../../fastrtps/qos/DeadlineMissedStatus.h"
-#include "../../../fastrtps/qos/LivelinessChangedStatus.h"
+#include <fastrtps/fastrtps_dll.h>
+#include <fastrtps/qos/DeadlineMissedStatus.h>
+#include <fastrtps/qos/LivelinessChangedStatus.h>
 
 namespace eprosima {
 namespace fastrtps {

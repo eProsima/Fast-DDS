@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_DOMAINPARTICIPANT_HPP_
 #define _FASTDDS_DOMAINPARTICIPANT_HPP_
 
-#include "../../../fastrtps/attributes/ParticipantAttributes.h"
+#include <fastrtps/attributes/ParticipantAttributes.h>
 #include <mutex>
 #include <map>
 

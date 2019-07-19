@@ -18,10 +18,10 @@
  */
 
 #include <fastrtps/Domain.h>
-#include <fastrtps/rtps/RTPSDomain.h>
+#include <fastdds/rtps/RTPSDomain.h>
 
 #include <fastrtps/participant/Participant.h>
-#include "participant/ParticipantImpl.h"
+#include <fastrtps_deprecated/participant/ParticipantImpl.h>
 
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/subscriber/Subscriber.h>

@@ -16,33 +16,33 @@
  * @file SecurityManager.h
  */
 
-#include "SecurityManager.h"
+#include <rtps/security/SecurityManager.h>
 
 // TODO Include relative path and fix SecurityTest
-//#include "../participant/RTPSParticipantImpl.h"
+//#include <fastrtps_deprecated/participant/ParticipantImpl.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
-#include <fastrtps/rtps/security/authentication/Authentication.h>
-#include <fastrtps/rtps/security/accesscontrol/AccessControl.h>
-#include <fastrtps/rtps/security/accesscontrol/SecurityMaskUtilities.h>
+#include <fastdds/rtps/security/authentication/Authentication.h>
+#include <fastdds/rtps/security/accesscontrol/AccessControl.h>
+#include <fastdds/rtps/security/accesscontrol/SecurityMaskUtilities.h>
 #include <fastrtps/log/Log.h>
-#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
-#include <fastrtps/rtps/network/NetworkFactory.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/network/NetworkFactory.h>
 
-#include <fastrtps/rtps/writer/StatelessWriter.h>
-#include <fastrtps/rtps/reader/StatelessReader.h>
-#include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/rtps/attributes/HistoryAttributes.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastrtps/rtps/messages/CDRMessage.h>
-#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#include <fastrtps/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#include <fastdds/rtps/writer/StatelessWriter.h>
+#include <fastdds/rtps/reader/StatelessReader.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
+#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 
 #include <cassert>
 #include <thread>

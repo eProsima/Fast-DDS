@@ -14,8 +14,8 @@
 
 #include <fastrtps/transport/TransportInterface.h>
 #include <fastrtps/transport/UDPTransportInterface.h>
-#include <fastrtps/rtps/messages/CDRMessage.h>
-#include "UDPSenderResource.hpp"
+#include <fastdds/rtps/messages/CDRMessage.h>
+#include <fastrtps_deprecated/transport/UDPSenderResource.hpp>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -477,7 +477,7 @@ bool UDPTransportInterface::send(
  * (i.e. their 'transport_should_process' flag will be changed to false).
  *
  * If this function returns true, the locator received should be selected.
- * 
+ *
  * @param entries   Selector entries collection to process
  * @param index     Starting index to process
  * @param locator   Locator to be searched

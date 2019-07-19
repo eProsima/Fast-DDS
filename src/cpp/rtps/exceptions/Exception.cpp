@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/rtps/exceptions/Exception.h>
+#include <fastdds/rtps/exceptions/Exception.h>
 
 using namespace eprosima::fastrtps::rtps;
 

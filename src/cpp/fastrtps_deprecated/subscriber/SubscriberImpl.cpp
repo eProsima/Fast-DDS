@@ -17,17 +17,17 @@
  *
  */
 
-#include "SubscriberImpl.h"
-#include "../participant/ParticipantImpl.h"
+#include <fastrtps_deprecated/subscriber/SubscriberImpl.h>
+#include <fastrtps_deprecated/participant/ParticipantImpl.h>
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/subscriber/SubscriberListener.h>
-#include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/RTPSDomain.h>
-#include <fastrtps/rtps/participant/RTPSParticipant.h>
-#include <fastrtps/rtps/resources/ResourceEvent.h>
-#include <fastrtps/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/log/Log.h>
 

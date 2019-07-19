@@ -17,19 +17,19 @@
  *
  */
 
-#include "EDPServerListeners.h"
-#include "../../../participant/RTPSParticipantImpl.h"
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDPServer.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPServer.h>
-#include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/attributes/HistoryAttributes.h>
-#include <fastrtps/rtps/attributes/WriterAttributes.h>
-#include <fastrtps/rtps/attributes/ReaderAttributes.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/discovery/endpoint/EDPServerListeners.h>
+#include <fastrtps_deprecated/participant/ParticipantImpl.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPServer.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPServer.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
 
 
 #include <fastrtps/log/Log.h>

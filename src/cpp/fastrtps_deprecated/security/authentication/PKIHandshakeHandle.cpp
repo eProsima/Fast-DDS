@@ -16,7 +16,7 @@
  * @file PKIHandshakeHandle.cpp
  */
 
-#include "PKIHandshakeHandle.h"
+#include <fastrtps_deprecated/security/authentication/PKIHandshakeHandle.h>
 
 using namespace eprosima::fastrtps::rtps::security;
 

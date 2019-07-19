@@ -17,20 +17,20 @@
  *
  */
 
-#include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/reader/ReaderListener.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastrtps/log/Log.h>
-#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
-#include "../participant/RTPSParticipantImpl.h"
-#include "FragmentedChangePitStop.h"
-#include "WriterProxy.h"
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/FragmentedChangePitStop.h>
+#include <rtps/reader/WriterProxy.h>
 #include <fastrtps/utils/TimeConversion.h>
-#include "../history/HistoryAttributesExtension.hpp"
+#include <rtps/history/HistoryAttributesExtension.hpp>
 
-#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
-#include <fastrtps/rtps/builtin/liveliness/WLP.h>
-#include <fastrtps/rtps/writer/LivelinessManager.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/writer/LivelinessManager.h>
 
 #include <mutex>
 #include <thread>

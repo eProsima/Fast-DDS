@@ -16,11 +16,11 @@
  * @file PKIDH.cpp
  */
 
-#include "PKIDH.h"
-#include "PKIIdentityHandle.h"
+#include <fastrtps_deprecated/security/authentication/PKIDH.h>
+#include <fastrtps_deprecated/security/authentication/PKIIdentityHandle.h>
 #include <fastrtps/log/Log.h>
-#include <fastrtps/rtps/messages/CDRMessage.h>
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 
 #include <openssl/opensslv.h>
 
@@ -666,14 +666,14 @@ static EVP_PKEY* generate_dh_key(int type, SecurityException& exception)
         {
             exception = _SecurityException_("Cannot init EVP key");
         }
-        
+
         EVP_PKEY_CTX_free(kctx);
     }
     else
     {
         exception = _SecurityException_("Cannot create EVP context");
     }
-    
+
     ERR_clear_error();
     EVP_PKEY_free(params);
     if (pctx != nullptr) EVP_PKEY_CTX_free(pctx);
@@ -735,7 +735,7 @@ static bool store_dh_public_key(EVP_PKEY* dhkey, std::vector<uint8_t>& buffer,
             else
                 exception = _SecurityException_("Cannot serialize public key");
         }
-        else 
+        else
             exception = _SecurityException_("OpenSSL library doesn't retrieve DH");
     }
 

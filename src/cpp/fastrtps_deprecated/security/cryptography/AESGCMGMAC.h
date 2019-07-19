@@ -19,12 +19,12 @@
 #ifndef _SECURITY_AUTHENTICATION_AESGCMGMAC_H_
 #define _SECURITY_AUTHENTICATION_AESGCMGMAC_H_
 
-#include <fastrtps/rtps/security/cryptography/Cryptography.h>
-#include <fastrtps/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/security/cryptography/Cryptography.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 
-#include "AESGCMGMAC_KeyExchange.h"
-#include "AESGCMGMAC_KeyFactory.h"
-#include "AESGCMGMAC_Transform.h"
+#include <fastrtps_deprecated/security/cryptography/AESGCMGMAC_KeyExchange.h>
+#include <fastrtps_deprecated/security/cryptography/AESGCMGMAC_KeyFactory.h>
+#include <fastrtps_deprecated/security/cryptography/AESGCMGMAC_Transform.h>
 
 
 namespace eprosima {

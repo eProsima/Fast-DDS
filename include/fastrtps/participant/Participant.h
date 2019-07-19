@@ -20,8 +20,8 @@
 #ifndef PARTICIPANT_H_
 #define PARTICIPANT_H_
 
-#include "../rtps/common/Guid.h"
-#include "../rtps/attributes/RTPSParticipantAttributes.h"
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 
 #include <utility>
 

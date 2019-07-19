@@ -27,7 +27,7 @@ namespace { char dummy; }
 #include <fastrtps/types/BuiltinAnnotationsTypeObject.h>
 #include <utility>
 #include <sstream>
-#include <fastrtps/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
 #include <fastrtps/types/AnnotationParameterValue.h>

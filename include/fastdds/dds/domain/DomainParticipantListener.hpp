@@ -20,9 +20,9 @@
 #ifndef __FASTDDS__PARTICIPANT_PARTICIPANTLISTENER_H__
 #define __FASTDDS__PARTICIPANT_PARTICIPANTLISTENER_H__
 
-#include "../../../fastrtps/rtps/participant/ParticipantDiscoveryInfo.h"
-#include "../../../fastrtps/rtps/reader/ReaderDiscoveryInfo.h"
-#include "../../../fastrtps/rtps/writer/WriterDiscoveryInfo.h"
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
+#include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
 
 #include <fastrtps/types/TypeIdentifier.h>
 #include <fastrtps/types/TypeObject.h>
