@@ -48,7 +48,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_include_directories(BuiltinAESGCMGMAC PRIVATE
             ${GTEST_INCLUDE_DIRS}
             ${OPENSSL_INCLUDE_DIR}
-            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+            ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+            ${PROJECT_SOURCE_DIR}/src/cpp
+            )
         target_link_libraries(BuiltinAESGCMGMAC fastcdr ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES})
         add_gtest(BuiltinAESGCMGMAC SOURCES ${COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE}
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/security/cryptography/AESGCMGMAC.cpp

@@ -19,8 +19,8 @@
 #ifndef SQLITE3PERSISTENCESERVICE_H_
 #define SQLITE3PERSISTENCESERVICE_H_
 
-#include "PersistenceService.h"
-#include "sqlite3.h"
+#include <rtps/persistence/PersistenceService.h>
+#include <rtps/persistence/sqlite3.h>
 
 namespace eprosima {
 namespace fastrtps {

@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_READERQOS_H_
 #define _FASTDDS_READERQOS_H_
 
-#include "../../../../fastrtps/qos/QosPolicies.h"
+#include <fastrtps/qos/QosPolicies.h>
 
 namespace eprosima {
 namespace fastdds {

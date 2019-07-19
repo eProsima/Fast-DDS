@@ -15,7 +15,7 @@
 #ifndef __TRANSPORT_TCPSENDERRESOURCE_HPP__
 #define __TRANSPORT_TCPSENDERRESOURCE_HPP__
 
-#include <fastrtps/rtps/network/SenderResource.h>
+#include <fastdds/rtps/network/SenderResource.h>
 #include <fastrtps/transport/TCPTransportInterface.h>
 #include <fastrtps/transport/TCPChannelResource.h>
 

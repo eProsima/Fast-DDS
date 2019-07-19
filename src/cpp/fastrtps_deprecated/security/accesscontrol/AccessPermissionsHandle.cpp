@@ -16,7 +16,7 @@
  * @file AccessPermissionsHandle.cpp
  */
 
-#include "AccessPermissionsHandle.h"
+#include <fastrtps_deprecated/security/accesscontrol/AccessPermissionsHandle.h>
 
 using namespace eprosima::fastrtps::rtps::security;
 

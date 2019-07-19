@@ -17,31 +17,31 @@
  *
  */
 
-#include "ParticipantImpl.h"
+#include <fastrtps_deprecated/participant/ParticipantImpl.h>
 #include <fastrtps/participant/Participant.h>
-#include <fastrtps/rtps/participant/ParticipantDiscoveryInfo.h>
-#include <fastrtps/rtps/reader/ReaderDiscoveryInfo.h>
-#include <fastrtps/rtps/writer/WriterDiscoveryInfo.h>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
+#include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
 #include <fastrtps/participant/ParticipantListener.h>
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 
-#include <fastrtps/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
 
 #include <fastrtps/attributes/PublisherAttributes.h>
-#include "../publisher/PublisherImpl.h"
+#include <fastrtps_deprecated/publisher/PublisherImpl.h>
 #include <fastrtps/publisher/Publisher.h>
 
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include "../subscriber/SubscriberImpl.h"
+#include <fastrtps_deprecated/subscriber/SubscriberImpl.h>
 #include <fastrtps/subscriber/Subscriber.h>
 
-#include <fastrtps/rtps/RTPSDomain.h>
+#include <fastdds/rtps/RTPSDomain.h>
 
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <fastrtps/transport/UDPv6Transport.h>
 #include <fastrtps/transport/test_UDPv4Transport.h>
-#include <fastrtps/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
 
 #include <fastrtps/log/Log.h>
 

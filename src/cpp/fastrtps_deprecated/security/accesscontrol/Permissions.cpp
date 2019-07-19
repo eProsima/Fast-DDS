@@ -16,18 +16,18 @@
  * @file Permissions.cpp
  */
 
-#include "Permissions.h"
-#include "AccessPermissionsHandle.h"
-#include "GovernanceParser.h"
-#include "PermissionsParser.h"
-#include "../authentication/PKIIdentityHandle.h"
+#include <fastrtps_deprecated/security/accesscontrol/Permissions.h>
+#include <fastrtps_deprecated/security/accesscontrol/AccessPermissionsHandle.h>
+#include <fastrtps_deprecated/security/accesscontrol/GovernanceParser.h>
+#include <fastrtps_deprecated/security/accesscontrol/PermissionsParser.h>
+#include <fastrtps_deprecated/security/authentication/PKIIdentityHandle.h>
 #include <fastrtps/log/Log.h>
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastrtps/rtps/security/exceptions/SecurityException.h>
-#include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/security/exceptions/SecurityException.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/utils/StringMatching.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 
 #include <openssl/opensslv.h>
 

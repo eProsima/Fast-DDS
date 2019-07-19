@@ -22,7 +22,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastrtps/qos/DeadlineMissedStatus.h>
-#include <fastrtps/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Time_t.h>
 
 #include <vector>
 #include <cstdint>

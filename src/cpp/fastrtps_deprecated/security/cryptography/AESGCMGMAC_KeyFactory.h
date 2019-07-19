@@ -19,10 +19,10 @@
 #ifndef _SECURITY_AUTHENTICATION_AESGCMGMAC_KEYFACTORY_H_
 #define _SECURITY_AUTHENTICATION_AESGCMGMAC_KEYFACTORY_H_
 
-#include <fastrtps/rtps/security/cryptography/CryptoKeyFactory.h>
-#include <fastrtps/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/security/cryptography/CryptoKeyFactory.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 
-#include "AESGCMGMAC_Types.h"
+#include <fastrtps_deprecated/security/cryptography/AESGCMGMAC_Types.h>
 
 namespace eprosima {
 namespace fastrtps {

@@ -18,9 +18,9 @@
 #ifndef _SECURITY_AUTHENTICATION_PKIIDENTITYHANDLE_H_
 #define _SECURITY_AUTHENTICATION_PKIIDENTITYHANDLE_H_
 
-#include <fastrtps/rtps/security/common/Handle.h>
-#include <fastrtps/rtps/common/Guid.h>
-#include <fastrtps/rtps/common/Token.h>
+#include <fastdds/rtps/security/common/Handle.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Token.h>
 
 #include <openssl/x509.h>
 #include <string>

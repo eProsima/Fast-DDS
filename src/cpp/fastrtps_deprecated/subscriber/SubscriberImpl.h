@@ -20,13 +20,13 @@
 #ifndef SUBSCRIBERIMPL_H_
 #define SUBSCRIBERIMPL_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/rtps/common/Guid.h>
-#include <fastrtps/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Time_t.h>
 
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/SubscriberHistory.h>
-#include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 
 #include <fastdds/dds/topic/TopicDataType.hpp>

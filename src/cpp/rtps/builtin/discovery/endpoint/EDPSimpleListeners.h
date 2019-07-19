@@ -21,13 +21,13 @@
 #define EDPSIMPLELISTENER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/rtps/reader/ReaderListener.h>
-#include <fastrtps/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/writer/WriterListener.h>
 
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
-#include "rtps/participant/RTPSParticipantImpl.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 namespace eprosima {
 namespace fastrtps {

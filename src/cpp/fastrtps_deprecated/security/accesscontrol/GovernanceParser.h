@@ -15,7 +15,7 @@
 #ifndef __SECURITY_ACCESSCONTROL_GOVERNANCEPARSER_H__
 #define __SECURITY_ACCESSCONTROL_GOVERNANCEPARSER_H__
 
-#include "CommonParser.h"
+#include <fastrtps_deprecated/security/accesscontrol/CommonParser.h>
 
 #include <string>
 

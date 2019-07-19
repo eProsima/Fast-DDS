@@ -22,7 +22,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/rtps/messages/RTPSMessageSenderInterface.hpp>
+#include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 
 namespace eprosima {
 namespace fastrtps {

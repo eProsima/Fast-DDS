@@ -18,10 +18,10 @@
  */
 
 #include <fastrtps/subscriber/SubscriberHistory.h>
-#include "SubscriberImpl.h"
+#include <fastrtps_deprecated/subscriber/SubscriberImpl.h>
 
-#include <fastrtps/rtps/reader/RTPSReader.h>
-#include "../../rtps/reader/WriterProxy.h"
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <rtps/reader/WriterProxy.h>
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/log/Log.h>

@@ -21,11 +21,11 @@
 #define PUBLISHERHISTORY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/rtps/resources/ResourceManagement.h>
+#include <fastdds/rtps/resources/ResourceManagement.h>
 
-#include "../rtps/history/WriterHistory.h"
-#include "../qos/QosPolicies.h"
-#include "../common/KeyedChanges.h"
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastrtps/qos/QosPolicies.h>
+#include <fastrtps/common/KeyedChanges.h>
 
 namespace eprosima {
 namespace fastrtps {

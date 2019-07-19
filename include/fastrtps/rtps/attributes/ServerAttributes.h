@@ -19,64 +19,7 @@
 
 #ifndef SERVERATTRIBUTES_H_
 #define SERVERATTRIBUTES_H_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <fastdds/rtps/attributes/ServerAttributes.h>
 
-#include "../common/Guid.h"
-#include "../common/Locator.h"
-
-#include <list>
-
-
-namespace eprosima {
-namespace fastrtps{
-namespace rtps {
-
-    class ParticipantProxyData;
-
-    /**
-     * Class RemoteServerAttributes, to define the attributes of the Discovery Server Protocol.
-     * @ingroup RTPS_ATTRIBUTES_MODULE
-     */
-
-    class RemoteServerAttributes 
-    {
-    public:
-        RTPS_DllAPI inline bool operator==(const RemoteServerAttributes& r) const
-        { return guidPrefix == r.guidPrefix; }
-
-        RTPS_DllAPI GUID_t GetParticipant() const;
-
-        RTPS_DllAPI GUID_t GetPDPReader() const;
-        RTPS_DllAPI GUID_t GetPDPWriter() const;
-
-        RTPS_DllAPI GUID_t GetEDPPublicationsReader() const;
-        RTPS_DllAPI GUID_t GetEDPSubscriptionsWriter() const;
-
-        RTPS_DllAPI GUID_t GetEDPPublicationsWriter() const;
-        RTPS_DllAPI GUID_t GetEDPSubscriptionsReader() const;
-
-        RTPS_DllAPI inline bool ReadguidPrefix(const char * pfx)
-        {
-            return bool(std::istringstream(pfx) >> guidPrefix);
-        }
-
-        //!Metatraffic Unicast Locator List
-        LocatorList_t metatrafficUnicastLocatorList;
-        //!Metatraffic Multicast Locator List.
-        LocatorList_t metatrafficMulticastLocatorList;
-
-        //!Guid prefix
-        GuidPrefix_t guidPrefix;
-
-        // Live participant proxy reference
-        const ParticipantProxyData * proxy{};
-    };
-
-    typedef std::list<RemoteServerAttributes> RemoteServerList_t;
-
-}
-} /* namespace rtps */
-} /* namespace eprosima */
-#endif
 #endif /* SERVERATTRIBUTES_H_ */

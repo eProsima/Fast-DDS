@@ -21,9 +21,9 @@
 
 #include <fastrtps/publisher/PublisherHistory.h>
 
-#include "PublisherImpl.h"
+#include <fastrtps_deprecated/publisher/PublisherImpl.h>
 
-#include <fastrtps/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 
 #include <fastrtps/log/Log.h>
 

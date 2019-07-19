@@ -19,7 +19,7 @@
 
 #include <fastrtps/qos/QosPolicies.h>
 
-#include <fastrtps/rtps/messages/CDRMessage.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastrtps/log/Log.h>
 #include <fastcdr/Cdr.h>
 

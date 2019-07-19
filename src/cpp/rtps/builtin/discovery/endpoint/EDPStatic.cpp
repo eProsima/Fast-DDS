@@ -17,20 +17,20 @@
  *
  */
 
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastrtps/xmlparser/XMLEndpointParser.h>
 
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 
-#include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 
 #include <fastrtps/log/Log.h>
 
-#include "../../../participant/RTPSParticipantImpl.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <mutex>
 
@@ -182,7 +182,7 @@ void EDPStatic::assignRemoteEndpoints(const ParticipantProxyData& pdata)
                 GUID_t guid(pdata.m_guid.guidPrefix,staticproperty.m_entityId);
                 if(!this->mp_PDP->has_reader_proxy_data(guid))//IF NOT FOUND, we CREATE AND PAIR IT
                 {
-                    newRemoteReader(pdata.m_guid, pdata.m_participantName, 
+                    newRemoteReader(pdata.m_guid, pdata.m_participantName,
                         staticproperty.m_userId, staticproperty.m_entityId);
                 }
             }

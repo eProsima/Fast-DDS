@@ -22,14 +22,14 @@
 #define PUBLISHERIMPL_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Guid.h>
 
 #include <fastrtps/attributes/PublisherAttributes.h>
 
 #include <fastrtps/publisher/PublisherHistory.h>
 
-#include <fastrtps/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/writer/WriterListener.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 
 #include <fastdds/dds/topic/TopicDataType.hpp>

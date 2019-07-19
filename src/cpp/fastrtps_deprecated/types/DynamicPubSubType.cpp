@@ -17,8 +17,8 @@
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicData.h>
-#include <fastrtps/rtps/common/SerializedPayload.h>
-#include <fastrtps/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastrtps/log/Log.h>
 #include <fastcdr/Cdr.h>
 

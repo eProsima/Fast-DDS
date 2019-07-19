@@ -20,10 +20,10 @@
 #ifndef PARTICIPANTIMPL_H_
 #define PARTICIPANTIMPL_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include <fastrtps/rtps/common/Guid.h>
-#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 
 namespace eprosima{

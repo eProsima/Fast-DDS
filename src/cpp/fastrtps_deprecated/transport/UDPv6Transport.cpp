@@ -20,8 +20,8 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/rtps/network/SenderResource.h>
-#include <fastrtps/rtps/messages/MessageReceiver.h>
+#include <fastdds/rtps/network/SenderResource.h>
+#include <fastdds/rtps/messages/MessageReceiver.h>
 
 using namespace std;
 using namespace asio;

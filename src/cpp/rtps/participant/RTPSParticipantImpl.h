@@ -34,22 +34,22 @@
 #include <unistd.h>
 #endif
 
-#include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastrtps/rtps/common/Guid.h>
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
-#include <fastrtps/rtps/network/NetworkFactory.h>
-#include <fastrtps/rtps/network/ReceiverResource.h>
-#include <fastrtps/rtps/network/SenderResource.h>
-#include <fastrtps/rtps/messages/MessageReceiver.h>
-#include <fastrtps/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/network/NetworkFactory.h>
+#include <fastdds/rtps/network/ReceiverResource.h>
+#include <fastdds/rtps/network/SenderResource.h>
+#include <fastdds/rtps/messages/MessageReceiver.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
 
 #if HAVE_SECURITY
-#include <fastrtps/rtps/Endpoint.h>
-#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#include "../security/SecurityManager.h"
+#include <fastdds/rtps/Endpoint.h>
+#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <rtps/security/SecurityManager.h>
 #endif
 
 namespace eprosima {

@@ -18,7 +18,7 @@
  */
 
 #include <fastdds/dds/topic/DataReader.hpp>
-#include "DataReaderImpl.hpp"
+#include <dds/topic/DataReaderImpl.hpp>
 
 
 namespace eprosima {

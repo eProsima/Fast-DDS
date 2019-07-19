@@ -14,8 +14,8 @@
 
 #include <mutex>
 
-#include <fastrtps/rtps/resources/AsyncInterestTree.h>
-#include "../participant/RTPSParticipantImpl.h"
+#include <fastdds/rtps/resources/AsyncInterestTree.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 using namespace eprosima::fastrtps::rtps;
 

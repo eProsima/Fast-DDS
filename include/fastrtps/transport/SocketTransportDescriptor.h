@@ -15,7 +15,7 @@
 #ifndef SOCKET_TRANSPORT_DESCRIPTOR_H
 #define SOCKET_TRANSPORT_DESCRIPTOR_H
 
-#include "./TransportDescriptorInterface.h"
+#include <fastrtps/transport/TransportDescriptorInterface.h>
 
 #ifdef _WIN32
 #include <cstdint>

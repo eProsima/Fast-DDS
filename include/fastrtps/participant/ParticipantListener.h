@@ -20,9 +20,9 @@
 #ifndef __PARTICIPANT_PARTICIPANTLISTENER_H__
 #define __PARTICIPANT_PARTICIPANTLISTENER_H__
 
-#include "../rtps/participant/ParticipantDiscoveryInfo.h"
-#include "../rtps/reader/ReaderDiscoveryInfo.h"
-#include "../rtps/writer/WriterDiscoveryInfo.h"
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
+#include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
 
 namespace eprosima {
 namespace fastrtps {

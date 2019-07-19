@@ -2,7 +2,7 @@
 #ifndef RTCP_HEADER_H
 #define RTCP_HEADER_H
 
-#include <fastrtps/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.h>
 #include <cstring>
 #include <fastcdr/FastCdr.h>
 #include <fastcdr/Cdr.h>

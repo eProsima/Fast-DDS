@@ -18,10 +18,10 @@
  */
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastrtps/rtps/RTPSDomain.h>
+#include <fastdds/rtps/RTPSDomain.h>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include "DomainParticipantImpl.hpp"
+#include <dds/domain/DomainParticipantImpl.hpp>
 
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/log/Log.h>

@@ -19,7 +19,7 @@
 
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include "SubscriberImpl.hpp"
+#include <dds/subscriber/SubscriberImpl.hpp>
 
 #include <fastrtps/log/Log.h>
 

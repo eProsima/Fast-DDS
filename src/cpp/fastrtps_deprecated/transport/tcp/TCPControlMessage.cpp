@@ -25,7 +25,7 @@ namespace { char dummy; }
 #endif
 
 #include <fastrtps/transport/tcp/TCPControlMessage.h>
-#include <fastrtps/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.h>
 
 #include <fastcdr/FastCdr.h>
 #include <fastcdr/Cdr.h>

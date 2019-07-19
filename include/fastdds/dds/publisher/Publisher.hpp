@@ -20,9 +20,9 @@
 #ifndef _FASTDDS_PUBLISHER_H_
 #define _FASTDDS_PUBLISHER_H_
 
-#include "../../../fastrtps/fastrtps_dll.h"
-#include "../../../fastrtps/rtps/common/Time_t.h"
-#include "../../../fastrtps/attributes/PublisherAttributes.h"
+#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
 
 namespace eprosima {
 namespace fastrtps {

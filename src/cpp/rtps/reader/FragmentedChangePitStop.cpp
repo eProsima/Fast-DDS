@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "FragmentedChangePitStop.h"
-#include <fastrtps/rtps/common/CacheChange.h>
-#include <fastrtps/rtps/reader/RTPSReader.h>
+#include <rtps/reader/FragmentedChangePitStop.h>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
 
 using namespace eprosima::fastrtps::rtps;
 

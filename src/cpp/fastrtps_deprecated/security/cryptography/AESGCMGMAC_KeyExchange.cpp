@@ -17,9 +17,9 @@
  */
 
 #include <sstream>
-#include <fastrtps/rtps/common/Token.h>
-#include <fastrtps/rtps/common/BinaryProperty.h>
-#include "AESGCMGMAC_KeyExchange.h"
+#include <fastdds/rtps/common/Token.h>
+#include <fastdds/rtps/common/BinaryProperty.h>
+#include <fastrtps_deprecated/security/cryptography/AESGCMGMAC_KeyExchange.h>
 #include <fastrtps/log/Log.h>
 
 #include <openssl/aes.h>

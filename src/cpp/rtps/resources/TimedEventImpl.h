@@ -22,8 +22,8 @@
 #ifndef _RTPS_RESOURCES_TIMEDEVENTIMPL_H_
 #define _RTPS_RESOURCES_TIMEDEVENTIMPL_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC 
-#include <fastrtps/rtps/common/Time_t.h>
-#include <fastrtps/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
 
 #include <asio.hpp>
 

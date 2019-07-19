@@ -17,28 +17,28 @@
  *
  */
 
-#include "DomainParticipantImpl.hpp"
+#include <dds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
-#include <fastrtps/rtps/participant/ParticipantDiscoveryInfo.h>
-#include <fastrtps/rtps/reader/ReaderDiscoveryInfo.h>
-#include <fastrtps/rtps/writer/WriterDiscoveryInfo.h>
-#include <fastrtps/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
+#include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
 
-#include <fastrtps/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
 
 #include <fastrtps/attributes/PublisherAttributes.h>
-#include "../publisher/PublisherImpl.hpp"
+#include <dds/publisher/PublisherImpl.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include "../subscriber/SubscriberImpl.hpp"
+#include <dds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 
 #include <fastdds/dds/topic/DataReader.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
 
-#include <fastrtps/rtps/RTPSDomain.h>
+#include <fastdds/rtps/RTPSDomain.h>
 
 #include <fastrtps/transport/UDPv4Transport.h>
 #include <fastrtps/transport/UDPv6Transport.h>

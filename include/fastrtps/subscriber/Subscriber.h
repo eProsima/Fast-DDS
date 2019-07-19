@@ -20,11 +20,11 @@
 #ifndef SUBSCRIBER_H_
 #define SUBSCRIBER_H_
 
-#include "../rtps/common/Guid.h"
-#include "../rtps/common/Time_t.h"
-#include "../attributes/SubscriberAttributes.h"
-#include "../qos/DeadlineMissedStatus.h"
-#include "../qos/LivelinessChangedStatus.h"
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/qos/DeadlineMissedStatus.h>
+#include <fastrtps/qos/LivelinessChangedStatus.h>
 
 namespace eprosima {
 namespace fastrtps {

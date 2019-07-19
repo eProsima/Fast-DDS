@@ -19,9 +19,9 @@
 #ifndef _SECURITY_AUTHENTICATION_PKIDH_H_
 #define _SECURITY_AUTHENTICATION_PKIDH_H_
 
-#include <fastrtps/rtps/security/authentication/Authentication.h>
-#include <fastrtps/rtps/attributes/PropertyPolicy.h>
-#include "PKIHandshakeHandle.h"
+#include <fastdds/rtps/security/authentication/Authentication.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastrtps_deprecated/security/authentication/PKIHandshakeHandle.h>
 
 namespace eprosima {
 namespace fastrtps {

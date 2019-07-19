@@ -20,12 +20,12 @@
 #ifndef PUBLISHER_H_
 #define PUBLISHER_H_
 
-#include "../fastrtps_dll.h"
-#include "../rtps/common/Guid.h"
-#include "../rtps/common/Time_t.h"
-#include "../attributes/PublisherAttributes.h"
-#include "../qos/DeadlineMissedStatus.h"
-#include "../qos/LivelinessLostStatus.h"
+#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/qos/DeadlineMissedStatus.h>
+#include <fastrtps/qos/LivelinessLostStatus.h>
 
 namespace eprosima {
 namespace fastrtps {

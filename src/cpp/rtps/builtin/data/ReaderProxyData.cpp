@@ -17,13 +17,13 @@
  *
  */
 
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 
-#include <fastrtps/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/CDRMessage_t.h>
 
 #include <fastrtps/log/Log.h>
 
-#include <fastrtps/rtps/network/NetworkFactory.h>
+#include <fastdds/rtps/network/NetworkFactory.h>
 
 namespace eprosima {
 namespace fastrtps{

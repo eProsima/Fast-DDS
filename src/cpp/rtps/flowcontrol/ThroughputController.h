@@ -15,8 +15,8 @@
 #ifndef THROUGHPUT_CONTROLLER_H
 #define THROUGHPUT_CONTROLLER_H
 
-#include "FlowController.h"
-#include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
+#include <rtps/flowcontrol/FlowController.h>
+#include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 
 #include <thread>
 

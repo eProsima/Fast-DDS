@@ -15,7 +15,7 @@
 #ifndef __TRANSPORT_UDPSENDERRESOURCE_HPP__
 #define __TRANSPORT_UDPSENDERRESOURCE_HPP__
 
-#include <fastrtps/rtps/network/SenderResource.h>
+#include <fastdds/rtps/network/SenderResource.h>
 #include <fastrtps/transport/UDPTransportInterface.h>
 
 namespace eprosima {

@@ -17,24 +17,22 @@
  *
  */
 
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 
-#include <fastrtps/rtps/builtin/discovery/participant/PDP.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
-#include "../../../participant/RTPSParticipantImpl.h"
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
 
-
-#include <fastrtps/rtps/writer/RTPSWriter.h>
-#include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/writer/WriterListener.h>
-#include <fastrtps/rtps/reader/ReaderListener.h>
-
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/rtps/common/MatchingInfo.h>
+#include <fastdds/rtps/common/MatchingInfo.h>
 
 #include <fastrtps/utils/StringMatching.h>
 #include <fastrtps/log/Log.h>

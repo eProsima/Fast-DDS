@@ -19,7 +19,7 @@
 
 #include <fastrtps/qos/ParameterTypes.h>
 
-#include <fastrtps/rtps/messages/CDRMessage.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

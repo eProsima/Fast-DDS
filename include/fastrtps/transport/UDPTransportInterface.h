@@ -18,10 +18,10 @@
 #include <asio.hpp>
 #include <thread>
 
-#include "TransportInterface.h"
-#include "UDPChannelResource.h"
-#include "UDPTransportDescriptor.h"
-#include "../utils/IPFinder.h"
+#include <fastrtps/transport/TransportInterface.h>
+#include <fastrtps/transport/UDPChannelResource.h>
+#include <fastrtps/transport/UDPTransportDescriptor.h>
+#include <fastrtps/utils/IPFinder.h>
 
 #include <vector>
 #include <memory>
@@ -73,7 +73,7 @@ public:
 
     /**
      * Transforms a remote locator into a locator optimized for local communications.
-     * 
+     *
      * If the remote locator corresponds to one of the local interfaces, it is converted
      * to the corresponding local address.
      *
@@ -113,7 +113,7 @@ public:
      *
      * In the case of UDP, multicast locators are selected when present in more than one entry,
      * otherwise unicast locators are selected.
-     * 
+     *
      * @param [in, out] selector Locator selector.
      */
     virtual void select_locators(LocatorSelector& selector) const override;

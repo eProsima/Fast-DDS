@@ -19,19 +19,19 @@
 #ifndef _FASTRTPS_DATAWRITERIMPL_HPP_
 #define _FASTRTPS_DATAWRITERIMPL_HPP_
 
-#include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/rtps/common/Guid.h>
-#include <fastrtps/rtps/common/WriteParams.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/WriteParams.h>
 
 #include <fastrtps/qos/WriterQos.h>
 
-#include <fastrtps/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/dds/topic/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/publisher/PublisherHistory.h>
 #include <fastrtps/attributes/TopicAttributes.h>
 
-#include <fastrtps/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/writer/WriterListener.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/IncompatibleQosStatus.hpp>
 #include <fastrtps/qos/LivelinessLostStatus.h>

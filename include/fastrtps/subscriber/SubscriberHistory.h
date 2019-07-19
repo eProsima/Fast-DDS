@@ -22,12 +22,12 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
-#include <fastrtps/rtps/resources/ResourceManagement.h>
+#include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastrtps/qos/ReaderQos.h>
-#include "../rtps/history/ReaderHistory.h"
-#include "../qos/QosPolicies.h"
-#include "../common/KeyedChanges.h"
-#include "SampleInfo.h"
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastrtps/qos/QosPolicies.h>
+#include <fastrtps/common/KeyedChanges.h>
+#include <fastrtps/subscriber/SampleInfo.h>
 
 #include <chrono>
 

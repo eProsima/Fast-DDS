@@ -21,7 +21,7 @@
 #define DOMAIN_H_
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
-#include "attributes/ParticipantAttributes.h"
+#include <fastrtps/attributes/ParticipantAttributes.h>
 #include <mutex>
 
 #if defined(__GNUC__) || defined(__clang__)

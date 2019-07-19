@@ -23,7 +23,7 @@
 #include <vector>
 #include <string>
 
-#include "../rtps/common/Locator.h"
+#include <fastdds/rtps/common/Locator.h>
 
 namespace eprosima {
 namespace fastrtps {

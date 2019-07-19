@@ -19,12 +19,12 @@
 #ifndef _SECURITY_AUTHENTICATION_AESGCMGMAC_TRANSFORM_H_
 #define _SECURITY_AUTHENTICATION_AESGCMGMAC_TRANSFORM_H_
 
-#include <fastrtps/rtps/security/cryptography/CryptoTransform.h>
-#include <fastrtps/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/security/cryptography/CryptoTransform.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastcdr/Cdr.h>
 
 #include <map>
-#include "AESGCMGMAC_Types.h"
+#include <fastrtps_deprecated/security/cryptography/AESGCMGMAC_Types.h>
 
 namespace eprosima {
 namespace fastrtps {
