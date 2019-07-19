@@ -119,10 +119,10 @@ bool Publisher::end_coherent_changes()
 }
 */
 
-bool Publisher::wait_for_acknowledments(
+bool Publisher::wait_for_acknowledgments(
         const fastrtps::Duration_t& max_wait)
 {
-    return impl_->wait_for_acknowledments(max_wait);
+    return impl_->wait_for_acknowledgments(max_wait);
 }
 
 const DomainParticipant* Publisher::get_participant() const

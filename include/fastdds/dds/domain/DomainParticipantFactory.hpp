@@ -109,7 +109,7 @@ private:
 
     friend class DomainParticipantFactoryReleaser;
 
-    std::map<uint8_t, DomainParticipantImpl*> participants_;
+    std::map<uint8_t, std::vector<DomainParticipantImpl*>> participants_;
 
     DomainParticipantFactory();
 

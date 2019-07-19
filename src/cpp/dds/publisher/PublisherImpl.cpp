@@ -61,7 +61,10 @@ void PublisherImpl::disable()
         std::lock_guard<std::mutex> lock(mtx_writers_);
         for (auto it = writers_.begin(); it != writers_.end(); ++it)
         {
-            it->second->disable();
+            for (DataWriter* dw : it->second)
+            {
+                dw->disable();
+            }
         }
     }
 }
@@ -72,7 +75,10 @@ PublisherImpl::~PublisherImpl()
         std::lock_guard<std::mutex> lock(mtx_writers_);
         for (auto it = writers_.begin(); it != writers_.end(); ++it)
         {
-            delete it->second;
+            for (DataWriter* dw : it->second)
+            {
+                delete dw;
+            }
         }
         writers_.clear();
     }
@@ -248,7 +254,7 @@ DataWriter* PublisherImpl::create_datawriter(
 
     {
         std::lock_guard<std::mutex> lock(mtx_writers_);
-        writers_[topic_att.getTopicDataType().to_string()] = writer;
+        writers_[topic_att.getTopicDataType().to_string()].push_back(writer);
     }
 
     return writer;
@@ -258,11 +264,15 @@ bool PublisherImpl::delete_datawriter(
         DataWriter* writer)
 {
     std::lock_guard<std::mutex> lock(mtx_writers_);
-    auto it = writers_.find(writer->get_topic().getTopicName().to_string());
-    if (it != writers_.end() && it->second == writer)
+    auto vit = writers_.find(writer->get_topic().getTopicName().to_string());
+    if (vit != writers_.end())
     {
-        writers_.erase(it);
-        return true;
+        auto dw_it = std::find(vit->second.begin(), vit->second.end(), writer);
+        if (dw_it != vit->second.end())
+        {
+            vit->second.erase(dw_it);
+            return true;
+        }
     }
     return false;
 }
@@ -272,9 +282,9 @@ DataWriter* PublisherImpl::lookup_datawriter(
 {
     std::lock_guard<std::mutex> lock(mtx_writers_);
     auto it = writers_.find(topic_name);
-    if (it != writers_.end())
+    if (it != writers_.end() && it->second.size() > 0)
     {
-        return it->second;
+        return it->second.front();
     }
     return nullptr;
 }
@@ -283,9 +293,12 @@ bool PublisherImpl::get_datawriters(
         std::vector<DataWriter*>& writers) const
 {
     std::lock_guard<std::mutex> lock(mtx_writers_);
-    for (auto it : writers_)
+    for (auto vit : writers_)
     {
-        writers.push_back(it.second);
+        for (DataWriter* dw : vit.second)
+        {
+            writers.push_back(dw);
+        }
     }
     return true;
 }
@@ -354,25 +367,28 @@ bool PublisherImpl::copy_from_topic_qos(
 }
 */
 
-bool PublisherImpl::wait_for_acknowledments(
+bool PublisherImpl::wait_for_acknowledgments(
         const Duration_t& max_wait)
 {
     Duration_t current = max_wait;
     Duration_t begin, end;
     std::lock_guard<std::mutex> lock(mtx_writers_);
-    for (auto& it : writers_)
+    for (auto& vit : writers_)
     {
-        participant_->get_current_time(begin);
-        if (!it.second->wait_for_acknowledgments(current))
+        for (DataWriter* dw : vit.second)
         {
-            return false;
-        }
-        // Check ellapsed time and decrement
-        participant_->get_current_time(end);
-        current = current - (end - begin);
-        if (current < c_TimeZero)
-        {
-            return false;
+            participant_->get_current_time(begin);
+            if (!dw->wait_for_acknowledgments(current))
+            {
+                return false;
+            }
+            // Check ellapsed time and decrement
+            participant_->get_current_time(end);
+            current = current - (end - begin);
+            if (current < c_TimeZero)
+            {
+                return false;
+            }
         }
     }
     return true;

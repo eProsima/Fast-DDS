@@ -34,7 +34,6 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
-class RTPSWriter;
 class RTPSParticipant;
 
 }
@@ -59,6 +58,7 @@ class Publisher;
 class PublisherImpl
 {
     friend class DomainParticipantImpl;
+    friend class DataWriterImpl;
 
     /**
      * Create a publisher, assigning its pointer to the associated writer.
@@ -114,7 +114,7 @@ public:
     bool end_coherent_changes();
     */
 
-    bool wait_for_acknowledments(
+    bool wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
     const DomainParticipant* get_participant() const;
@@ -159,7 +159,7 @@ private:
     fastrtps::PublisherAttributes att_;
 
     //! Map of Pointers to the associated Data Writers. Topic name is the key.
-    std::map<std::string, DataWriter*> writers_;
+    std::map<std::string, std::vector<DataWriter*>> writers_;
 
     mutable std::mutex mtx_writers_;
 

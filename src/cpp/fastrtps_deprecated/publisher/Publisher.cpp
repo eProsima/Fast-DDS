@@ -105,8 +105,3 @@ void Publisher::assert_liveliness()
 {
     mp_impl->assert_liveliness();
 }
-
-const Participant* Publisher::get_participant() const
-{
-    return mp_impl->get_participant();
-}

@@ -59,7 +59,10 @@ void SubscriberImpl::disable()
         std::lock_guard<std::mutex> lock(mtx_readers_);
         for (auto it = readers_.begin(); it != readers_.end(); ++it)
         {
-            it->second->disable();
+            for (DataReader* dr : it->second)
+            {
+                dr->disable();
+            }
         }
     }
 }
@@ -70,7 +73,10 @@ SubscriberImpl::~SubscriberImpl()
         std::lock_guard<std::mutex> lock(mtx_readers_);
         for (auto it = readers_.begin(); it != readers_.end(); ++it)
         {
-            delete it->second;
+            for (DataReader* dr : it->second)
+            {
+                delete dr;
+            }
         }
         readers_.clear();
     }
@@ -206,7 +212,7 @@ DataReader* SubscriberImpl::create_datareader(
 
     {
         std::lock_guard<std::mutex> lock(mtx_readers_);
-        readers_[topic_att.getTopicDataType().to_string()] = reader;
+        readers_[topic_att.getTopicDataType().to_string()].push_back(reader);
     }
 
     return reader;
@@ -217,10 +223,14 @@ bool SubscriberImpl::delete_datareader(
 {
     std::lock_guard<std::mutex> lock(mtx_readers_);
     auto it = readers_.find(reader->get_topic().getTopicName().to_string());
-    if (it != readers_.end() && it->second == reader)
+    if (it != readers_.end())
     {
-        readers_.erase(it);
-        return true;
+        auto dr_it = std::find(it->second.begin(), it->second.end(), reader);
+        if (dr_it != it->second.end())
+        {
+            it->second.erase(dr_it);
+            return true;
+        }
     }
     return false;
 }
@@ -230,9 +240,9 @@ DataReader* SubscriberImpl::lookup_datareader(
 {
     std::lock_guard<std::mutex> lock(mtx_readers_);
     auto it = readers_.find(topic_name);
-    if (it != readers_.end())
+    if (it != readers_.end() && it->second.size() > 0)
     {
-        return it->second;
+        return it->second.front();
     }
     return nullptr;
 }
@@ -243,7 +253,10 @@ bool SubscriberImpl::get_datareaders(
     std::lock_guard<std::mutex> lock(mtx_readers_);
     for (auto it : readers_)
     {
-        readers.push_back(it.second);
+        for (DataReader* dr : it.second)
+        {
+            readers.push_back(dr);
+        }
     }
     return true;
 }
@@ -268,7 +281,10 @@ bool SubscriberImpl::notify_datareaders() const
 {
     for (auto it : readers_)
     {
-        it.second->impl_->listener_->on_data_available(it.second);
+        for (DataReader* dr : it.second)
+        {
+            dr->impl_->listener_->on_data_available(dr);
+        }
     }
     return true;
 }

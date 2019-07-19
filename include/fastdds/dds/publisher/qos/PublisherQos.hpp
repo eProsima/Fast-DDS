@@ -138,7 +138,7 @@ public:
             const PublisherQos& qos) const;
 };
 
-extern PublisherQos PUBLISHER_QOS_DEFAULT;
+extern const PublisherQos PUBLISHER_QOS_DEFAULT;
 
 } // namespace dds
 } // namespace fastdds

@@ -33,7 +33,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps
 {
-class RTPSReader;
 class RTPSParticipant;
 }
 
@@ -56,6 +55,7 @@ class Subscriber;
  */
 class SubscriberImpl {
     friend class DomainParticipantImpl;
+    friend class DataReaderImpl;
 
     /**
      * Create a subscriber, assigning its pointer to the associated writer.
@@ -177,7 +177,7 @@ private:
     fastrtps::SubscriberAttributes att_;
 
     //!Map of Pointer to associated DataReaders
-    std::map<std::string, DataReader*> readers_;
+    std::map<std::string, std::vector<DataReader*>> readers_;
 
     mutable std::mutex mtx_readers_;
 

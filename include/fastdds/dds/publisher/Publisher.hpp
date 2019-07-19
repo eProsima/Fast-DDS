@@ -175,7 +175,7 @@ public:
      * @param max_wait
      * @return False if timedout. True otherwise.
      */
-    bool wait_for_acknowledments(
+    bool wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
     /**

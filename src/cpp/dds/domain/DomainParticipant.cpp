@@ -233,17 +233,17 @@ const fastrtps::ParticipantAttributes& DomainParticipant::get_attributes() const
     return impl_->get_attributes();
 }
 
-std::vector<std::string> DomainParticipant::getParticipantNames() const
+std::vector<std::string> DomainParticipant::get_participant_names() const
 {
-    return impl_->getParticipantNames();
+    return impl_->get_participant_names();
 }
 
-bool DomainParticipant::newRemoteEndpointDiscovered(
+bool DomainParticipant::new_remote_endpoint_discovered(
     const fastrtps::rtps::GUID_t& partguid,
     uint16_t userId,
     fastrtps::rtps::EndpointKind_t kind)
 {
-    return impl_->newRemoteEndpointDiscovered(partguid, userId, kind);
+    return impl_->new_remote_endpoint_discovered(partguid, userId, kind);
 }
 
 fastrtps::rtps::ResourceEvent& DomainParticipant::get_resource_event() const

@@ -348,7 +348,7 @@ public:
      */
     const fastrtps::ParticipantAttributes& get_attributes() const;
 
-    std::vector<std::string> getParticipantNames() const;
+    std::vector<std::string> get_participant_names() const;
 
     /**
      * This method can be used when using a StaticEndpointDiscovery mechanism differnet that the one
@@ -360,7 +360,7 @@ public:
      * @param kind EndpointKind (WRITER or READER)
      * @return True if correctly found and activated.
      */
-    bool newRemoteEndpointDiscovered(
+    bool new_remote_endpoint_discovered(
         const fastrtps::rtps::GUID_t& partguid,
         uint16_t userId,
         fastrtps::rtps::EndpointKind_t kind);
