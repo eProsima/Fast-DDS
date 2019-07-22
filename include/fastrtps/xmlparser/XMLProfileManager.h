@@ -168,11 +168,13 @@ class XMLProfileManager
             m_xml_files.clear();
             m_transport_profiles.clear();
 
+            /*
             for (auto pair : m_dynamictypes)
             {
                 types::DynamicTypeBuilderFactory::get_instance()->delete_builder(pair.second);
             }
             m_dynamictypes.clear();
+            */
         }
 
         /**

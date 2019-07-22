@@ -137,6 +137,15 @@ TypeObjectFactory::TypeObjectFactory()
 TypeObjectFactory::~TypeObjectFactory()
 {
     {
+        std::unique_lock<std::recursive_mutex> scoped(m_MutexInformations);
+        for (TypeInformation* inf : informations_created_)
+        {
+            delete inf;
+        }
+        informations_.clear();
+        informations_created_.clear();
+    }
+    {
         std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
         auto id_it = identifiers_.begin();
         while (id_it != identifiers_.end())
@@ -215,6 +224,7 @@ const TypeInformation* TypeObjectFactory::get_type_information(
     TypeInformation *information = nullptr;
     if (min_identifier != nullptr)
     {
+        std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
         auto innerInfo = informations_.find(min_identifier);
         if (innerInfo != informations_.end())
         {
@@ -223,6 +233,8 @@ const TypeInformation* TypeObjectFactory::get_type_information(
         else
         {
             information = new TypeInformation();
+            informations_[min_identifier] = information;
+            informations_created_.push_back(information);
         }
 
         fill_minimal_information(information, min_identifier);
@@ -232,6 +244,7 @@ const TypeInformation* TypeObjectFactory::get_type_information(
     {
         if (information == nullptr)
         {
+            std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
             auto innerInfo = informations_.find(comp_identifier);
             if (innerInfo != informations_.end())
             {
@@ -240,6 +253,8 @@ const TypeInformation* TypeObjectFactory::get_type_information(
             else
             {
                 information = new TypeInformation();
+                informations_[comp_identifier] = information;
+                informations_created_.push_back(information);
             }
         }
 
@@ -294,6 +309,7 @@ void TypeObjectFactory::fill_minimal_information(
             info->minimal().dependent_typeid_count(1);
             const TypeIdentifier *innerId = get_stored_type_identifier(
                 &obj->minimal().sequence_type().element().common().type());
+            std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
             auto innerInfo = informations_.find(innerId);
             if (innerInfo != informations_.end())
             {
@@ -303,6 +319,8 @@ void TypeObjectFactory::fill_minimal_information(
             {
                 TypeInformation *information = new TypeInformation();
                 fill_complete_information(information, innerId);
+                informations_[innerId] = information;
+                informations_created_.push_back(information);
             }
             break;
         }
@@ -311,6 +329,7 @@ void TypeObjectFactory::fill_minimal_information(
             info->minimal().dependent_typeid_count(1);
             const TypeIdentifier *innerId = get_stored_type_identifier(
                 &obj->minimal().array_type().element().common().type());
+            std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
             auto innerInfo = informations_.find(innerId);
             if (innerInfo != informations_.end())
             {
@@ -320,6 +339,8 @@ void TypeObjectFactory::fill_minimal_information(
             {
                 TypeInformation *information = new TypeInformation();
                 fill_complete_information(information, innerId);
+                informations_[innerId] = information;
+                informations_created_.push_back(information);
             }
             break;
         }
@@ -328,6 +349,7 @@ void TypeObjectFactory::fill_minimal_information(
             info->minimal().dependent_typeid_count(2);
             const TypeIdentifier *innerId = get_stored_type_identifier(
                 &obj->minimal().map_type().element().common().type());
+            std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
             auto innerInfo = informations_.find(innerId);
             if (innerInfo != informations_.end())
             {
@@ -337,6 +359,8 @@ void TypeObjectFactory::fill_minimal_information(
             {
                 TypeInformation *information = new TypeInformation();
                 fill_complete_information(information, innerId);
+                informations_[innerId] = information;
+                informations_created_.push_back(information);
             }
             const TypeIdentifier *keyId = get_stored_type_identifier(
                 &obj->minimal().map_type().key().common().type());
@@ -349,6 +373,8 @@ void TypeObjectFactory::fill_minimal_information(
             {
                 TypeInformation *information = new TypeInformation();
                 fill_complete_information(information, keyId);
+                informations_[keyId] = information;
+                informations_created_.push_back(information);
             }
             break;
         }
@@ -360,6 +386,7 @@ void TypeObjectFactory::fill_minimal_information(
                     info->minimal().dependent_typeid_count(1);
                     const TypeIdentifier *innerId = get_stored_type_identifier(
                         &obj->minimal().alias_type().body().common().related_type());
+                    std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
                     auto keyInfo = informations_.find(innerId);
                     if (keyInfo != informations_.end())
                     {
@@ -369,6 +396,8 @@ void TypeObjectFactory::fill_minimal_information(
                     {
                         TypeInformation *information = new TypeInformation();
                         fill_complete_information(information, innerId);
+                        informations_[innerId] = information;
+                        informations_created_.push_back(information);
                     }
                     break;
                 }
@@ -379,6 +408,7 @@ void TypeObjectFactory::fill_minimal_information(
                     {
                         const TypeIdentifier *innerId = get_stored_type_identifier(
                             &member->common().member_type_id());
+                        std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
                         auto memberType = informations_.find(innerId);
                         if (memberType != informations_.end())
                         {
@@ -389,6 +419,8 @@ void TypeObjectFactory::fill_minimal_information(
                         {
                             TypeInformation *information = new TypeInformation();
                             fill_complete_information(information, innerId);
+                            informations_[innerId] = information;
+                            informations_created_.push_back(information);
                         }
                     }
                     info->minimal().dependent_typeid_count(members.size());
@@ -410,6 +442,7 @@ void TypeObjectFactory::fill_minimal_information(
                     {
                         const TypeIdentifier *innerId = get_stored_type_identifier(
                             &member->common().type_id());
+                        std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
                         auto memberType = informations_.find(innerId);
                         if (memberType != informations_.end())
                         {
@@ -420,10 +453,13 @@ void TypeObjectFactory::fill_minimal_information(
                         {
                             TypeInformation *information = new TypeInformation();
                             fill_complete_information(information, innerId);
+                            informations_[innerId] = information;
+                            informations_created_.push_back(information);
                         }
                     }
                     const TypeIdentifier *descId = get_stored_type_identifier(
                         &obj->minimal().union_type().discriminator().common().type_id());
+                    std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
                     auto descInfo = informations_.find(descId);
                     if (descInfo != informations_.end())
                     {
@@ -433,6 +469,8 @@ void TypeObjectFactory::fill_minimal_information(
                     {
                         TypeInformation *information = new TypeInformation();
                         fill_complete_information(information, descId);
+                        informations_[descId] = information;
+                        informations_created_.push_back(information);
                     }
                     info->minimal().dependent_typeid_count(members.size() + 1);
                     break;
@@ -446,6 +484,7 @@ void TypeObjectFactory::fill_minimal_information(
             // Cannot happen
             break;
     }
+    std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
     informations_[ident] = info;
 }
 
@@ -494,6 +533,7 @@ void TypeObjectFactory::fill_complete_information(
             info->complete().dependent_typeid_count(1);
             const TypeIdentifier *innerId = get_stored_type_identifier(
                 &obj->complete().sequence_type().element().common().type());
+            std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
             auto innerInfo = informations_.find(innerId);
             if (innerInfo != informations_.end())
             {
@@ -503,6 +543,8 @@ void TypeObjectFactory::fill_complete_information(
             {
                 TypeInformation *information = new TypeInformation();
                 fill_complete_information(information, innerId);
+                informations_[innerId] = information;
+                informations_created_.push_back(information);
             }
             break;
         }
@@ -511,6 +553,7 @@ void TypeObjectFactory::fill_complete_information(
             info->complete().dependent_typeid_count(1);
             const TypeIdentifier *innerId = get_stored_type_identifier(
                 &obj->complete().array_type().element().common().type());
+            std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
             auto innerInfo = informations_.find(innerId);
             if (innerInfo != informations_.end())
             {
@@ -520,6 +563,8 @@ void TypeObjectFactory::fill_complete_information(
             {
                 TypeInformation *information = new TypeInformation();
                 fill_complete_information(information, innerId);
+                informations_[innerId] = information;
+                informations_created_.push_back(information);
             }
             break;
         }
@@ -528,6 +573,7 @@ void TypeObjectFactory::fill_complete_information(
             info->complete().dependent_typeid_count(2);
             const TypeIdentifier *innerId = get_stored_type_identifier(
                 &obj->complete().map_type().element().common().type());
+            std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
             auto innerInfo = informations_.find(innerId);
             if (innerInfo != informations_.end())
             {
@@ -537,18 +583,25 @@ void TypeObjectFactory::fill_complete_information(
             {
                 TypeInformation *information = new TypeInformation();
                 fill_complete_information(information, innerId);
+                informations_[innerId] = information;
+                informations_created_.push_back(information);
             }
             const TypeIdentifier *keyId = get_stored_type_identifier(
                 &obj->complete().map_type().key().common().type());
-            auto keyInfo = informations_.find(keyId);
-            if (keyInfo != informations_.end())
             {
-                info->complete().dependent_typeids().push_back(keyInfo->second->complete().typeid_with_size());
-            }
-            else
-            {
-                TypeInformation *information = new TypeInformation();
-                fill_complete_information(information, keyId);
+                std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+                auto keyInfo = informations_.find(keyId);
+                if (keyInfo != informations_.end())
+                {
+                    info->complete().dependent_typeids().push_back(keyInfo->second->complete().typeid_with_size());
+                }
+                else
+                {
+                    TypeInformation *information = new TypeInformation();
+                    fill_complete_information(information, keyId);
+                    informations_[innerId] = information;
+                    informations_created_.push_back(information);
+                }
             }
             break;
         }
@@ -560,6 +613,7 @@ void TypeObjectFactory::fill_complete_information(
                     info->minimal().dependent_typeid_count(1);
                     const TypeIdentifier *innerId = get_stored_type_identifier(
                         &obj->minimal().alias_type().body().common().related_type());
+                    std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
                     auto keyInfo = informations_.find(innerId);
                     if (keyInfo != informations_.end())
                     {
@@ -569,6 +623,8 @@ void TypeObjectFactory::fill_complete_information(
                     {
                         TypeInformation *information = new TypeInformation();
                         fill_complete_information(information, innerId);
+                        informations_[innerId] = information;
+                        informations_created_.push_back(information);
                     }
                     break;
                 }
@@ -579,6 +635,7 @@ void TypeObjectFactory::fill_complete_information(
                     {
                         const TypeIdentifier *innerId = get_stored_type_identifier(
                             &member->common().member_type_id());
+                        std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
                         auto memberType = informations_.find(innerId);
                         if (memberType != informations_.end())
                         {
@@ -589,6 +646,8 @@ void TypeObjectFactory::fill_complete_information(
                         {
                             TypeInformation *information = new TypeInformation();
                             fill_complete_information(information, innerId);
+                            informations_[innerId] = information;
+                            informations_created_.push_back(information);
                         }
                     }
                     info->minimal().dependent_typeid_count(members.size());
@@ -610,6 +669,7 @@ void TypeObjectFactory::fill_complete_information(
                     {
                         const TypeIdentifier *innerId = get_stored_type_identifier(
                             &member->common().type_id());
+                        std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
                         auto memberType = informations_.find(innerId);
                         if (memberType != informations_.end())
                         {
@@ -620,10 +680,13 @@ void TypeObjectFactory::fill_complete_information(
                         {
                             TypeInformation *information = new TypeInformation();
                             fill_complete_information(information, innerId);
+                            informations_[innerId] = information;
+                            informations_created_.push_back(information);
                         }
                     }
                     const TypeIdentifier *descId = get_stored_type_identifier(
                         &obj->minimal().union_type().discriminator().common().type_id());
+                    std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
                     auto descInfo = informations_.find(descId);
                     if (descInfo != informations_.end())
                     {
@@ -633,6 +696,8 @@ void TypeObjectFactory::fill_complete_information(
                     {
                         TypeInformation *information = new TypeInformation();
                         fill_complete_information(information, descId);
+                        informations_[descId] = information;
+                        informations_created_.push_back(information);
                     }
                     info->minimal().dependent_typeid_count(members.size() + 1);
                     break;
@@ -650,6 +715,7 @@ void TypeObjectFactory::fill_complete_information(
                     info->complete().dependent_typeid_count(1);
                     const TypeIdentifier *innerId = get_stored_type_identifier(
                         &obj->complete().alias_type().body().common().related_type());
+                    std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
                     auto keyInfo = informations_.find(innerId);
                     if (keyInfo != informations_.end())
                     {
@@ -659,6 +725,8 @@ void TypeObjectFactory::fill_complete_information(
                     {
                         TypeInformation *information = new TypeInformation();
                         fill_complete_information(information, innerId);
+                        informations_[innerId] = information;
+                        informations_created_.push_back(information);
                     }
                     break;
                 }
@@ -669,6 +737,7 @@ void TypeObjectFactory::fill_complete_information(
                     {
                         const TypeIdentifier *innerId = get_stored_type_identifier(
                             &member->common().member_type_id());
+                        std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
                         auto memberType = informations_.find(innerId);
                         if (memberType != informations_.end())
                         {
@@ -679,6 +748,8 @@ void TypeObjectFactory::fill_complete_information(
                         {
                             TypeInformation *information = new TypeInformation();
                             fill_complete_information(information, innerId);
+                            informations_[innerId] = information;
+                            informations_created_.push_back(information);
                         }
                     }
                     info->complete().dependent_typeid_count(members.size());
@@ -700,6 +771,7 @@ void TypeObjectFactory::fill_complete_information(
                     {
                         const TypeIdentifier *innerId = get_stored_type_identifier(
                             &member->common().type_id());
+                        std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
                         auto memberType = informations_.find(innerId);
                         if (memberType != informations_.end())
                         {
@@ -710,10 +782,13 @@ void TypeObjectFactory::fill_complete_information(
                         {
                             TypeInformation *information = new TypeInformation();
                             fill_complete_information(information, innerId);
+                            informations_[innerId] = information;
+                            informations_created_.push_back(information);
                         }
                     }
                     const TypeIdentifier *descId = get_stored_type_identifier(
                         &obj->complete().union_type().discriminator().common().type_id());
+                    std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
                     auto descInfo = informations_.find(descId);
                     if (descInfo != informations_.end())
                     {
@@ -723,6 +798,8 @@ void TypeObjectFactory::fill_complete_information(
                     {
                         TypeInformation *information = new TypeInformation();
                         fill_complete_information(information, descId);
+                        informations_[descId] = information;
+                        informations_created_.push_back(information);
                     }
                     info->complete().dependent_typeid_count(members.size() + 1);
                     break;
@@ -733,6 +810,7 @@ void TypeObjectFactory::fill_complete_information(
             }
             break;
     }
+    std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
     informations_[ident] = info;
 }
 
