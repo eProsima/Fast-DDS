@@ -61,7 +61,7 @@ void PublisherImpl::disable()
         std::lock_guard<std::mutex> lock(mtx_writers_);
         for (auto it = writers_.begin(); it != writers_.end(); ++it)
         {
-            for (DataWriter* dw : it->second)
+            for (DataWriterImpl* dw : it->second)
             {
                 dw->disable();
             }
@@ -75,8 +75,9 @@ PublisherImpl::~PublisherImpl()
         std::lock_guard<std::mutex> lock(mtx_writers_);
         for (auto it = writers_.begin(); it != writers_.end(); ++it)
         {
-            for (DataWriter* dw : it->second)
+            for (DataWriterImpl* dw : it->second)
             {
+
                 delete dw;
             }
         }
@@ -254,7 +255,7 @@ DataWriter* PublisherImpl::create_datawriter(
 
     {
         std::lock_guard<std::mutex> lock(mtx_writers_);
-        writers_[topic_att.getTopicDataType().to_string()].push_back(writer);
+        writers_[topic_att.getTopicDataType().to_string()].push_back(impl);
     }
 
     return writer;
@@ -267,7 +268,7 @@ bool PublisherImpl::delete_datawriter(
     auto vit = writers_.find(writer->get_topic().getTopicName().to_string());
     if (vit != writers_.end())
     {
-        auto dw_it = std::find(vit->second.begin(), vit->second.end(), writer);
+        auto dw_it = std::find(vit->second.begin(), vit->second.end(), writer->impl_);
         if (dw_it != vit->second.end())
         {
             vit->second.erase(dw_it);
@@ -284,7 +285,7 @@ DataWriter* PublisherImpl::lookup_datawriter(
     auto it = writers_.find(topic_name);
     if (it != writers_.end() && it->second.size() > 0)
     {
-        return it->second.front();
+        return it->second.front()->user_datawriter_;
     }
     return nullptr;
 }
@@ -295,9 +296,9 @@ bool PublisherImpl::get_datawriters(
     std::lock_guard<std::mutex> lock(mtx_writers_);
     for (auto vit : writers_)
     {
-        for (DataWriter* dw : vit.second)
+        for (DataWriterImpl* dw : vit.second)
         {
-            writers.push_back(dw);
+            writers.push_back(dw->user_datawriter_);
         }
     }
     return true;
@@ -375,7 +376,7 @@ bool PublisherImpl::wait_for_acknowledgments(
     std::lock_guard<std::mutex> lock(mtx_writers_);
     for (auto& vit : writers_)
     {
-        for (DataWriter* dw : vit.second)
+        for (DataWriterImpl* dw : vit.second)
         {
             participant_->get_current_time(begin);
             if (!dw->wait_for_acknowledgments(current))

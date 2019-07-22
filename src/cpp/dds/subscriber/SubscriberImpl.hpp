@@ -48,6 +48,7 @@ class SubscriberListener;
 class DomainParticipant;
 class DomainParticipantImpl;
 class Subscriber;
+class DataReaderImpl;
 
 /**
  * Class SubscriberImpl, contains the actual implementation of the behaviour of the Subscriber.
@@ -177,7 +178,7 @@ private:
     fastrtps::SubscriberAttributes att_;
 
     //!Map of Pointer to associated DataReaders
-    std::map<std::string, std::vector<DataReader*>> readers_;
+    std::map<std::string, std::vector<DataReaderImpl*>> readers_;
 
     mutable std::mutex mtx_readers_;
 

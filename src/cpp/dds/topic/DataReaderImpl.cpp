@@ -116,12 +116,16 @@ void DataReaderImpl::disable()
 
 DataReaderImpl::~DataReaderImpl()
 {
+    delete lifespan_timer_;
+    delete deadline_timer_;
+
     if(reader_ != nullptr)
     {
         logInfo(DATA_READER, guid().entityId << " in topic: " << topic_att_.topicName);
     }
 
     RTPSDomain::removeRTPSReader(reader_);
+    delete user_datareader_;
 }
 
 bool DataReaderImpl::wait_for_unread_message(const fastrtps::Duration_t& timeout)

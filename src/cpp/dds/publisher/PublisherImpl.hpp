@@ -50,6 +50,7 @@ class PublisherListener;
 class DomainParticipantImpl;
 class DomainParticipant;
 class Publisher;
+class DataWriterImpl;
 
 /**
  * Class PublisherImpl, contains the actual implementation of the behaviour of the Publisher.
@@ -159,7 +160,7 @@ private:
     fastrtps::PublisherAttributes att_;
 
     //! Map of Pointers to the associated Data Writers. Topic name is the key.
-    std::map<std::string, std::vector<DataWriter*>> writers_;
+    std::map<std::string, std::vector<DataWriterImpl*>> writers_;
 
     mutable std::mutex mtx_writers_;
 
