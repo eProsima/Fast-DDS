@@ -86,10 +86,10 @@ DomainParticipantFactory::~DomainParticipantFactory()
     }
 
     // Deletes DynamicTypes and TypeObject factories
+    XMLProfileManager::DeleteInstance();
     fastrtps::types::DynamicTypeBuilderFactory::delete_instance();
     fastrtps::types::DynamicDataFactory::delete_instance();
     fastrtps::types::TypeObjectFactory::delete_instance();
-    XMLProfileManager::DeleteInstance();
 
     fastrtps::eClock::my_sleep(100);
     fastrtps::Log::KillThread();

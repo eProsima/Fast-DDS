@@ -30,6 +30,7 @@ class TypeObjectFactory
 private:
     mutable std::recursive_mutex m_MutexIdentifiers;
     mutable std::recursive_mutex m_MutexObjects;
+    mutable std::recursive_mutex m_MutexInformations;
 
 protected:
     TypeObjectFactory();
@@ -38,6 +39,7 @@ protected:
     std::map<const TypeIdentifier*, const TypeObject*> objects_; // EK_MINIMAL
     std::map<const TypeIdentifier*, const TypeObject*> complete_objects_; // EK_COMPLETE
     mutable std::map<const TypeIdentifier*, TypeInformation*> informations_;
+    mutable std::vector<TypeInformation*> informations_created_;
     std::map<std::string, std::string> aliases_; // Aliases
 
     DynamicType_ptr build_dynamic_type(
