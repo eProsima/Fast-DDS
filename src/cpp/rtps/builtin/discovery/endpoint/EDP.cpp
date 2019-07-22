@@ -295,9 +295,7 @@ bool EDP::updatedLocalReader(
     const TopicAttributes& att,
     const ReaderQos& rqos)
 {
-    (void)att;
-
-    auto init_fun = [this, reader, &rqos](
+    auto init_fun = [this, reader, &rqos, &att](
             ReaderProxyData* rdata,
             bool updating,
             const ParticipantProxyData& participant_data)
@@ -320,6 +318,43 @@ bool EDP::updatedLocalReader(
         rdata->m_qos.setQos(rqos, false);
         rdata->isAlive(true);
         rdata->m_expectsInlineQos = reader->expectsInlineQos();
+
+        if (att.auto_fill_xtypes)
+        {
+            // TypeInformation, TypeObject and TypeIdentifier
+            if (!rdata->type_information().assigned())
+            {
+                const types::TypeInformation* type_info =
+                    types::TypeObjectFactory::get_instance()->get_type_information(rdata->typeName().c_str());
+                if (type_info != nullptr)
+                {
+                    rdata->type_information() = *type_info;
+                }
+            }
+
+            if (rdata->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
+            {
+                const types::TypeIdentifier* type_id =
+                    types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                        rdata->typeName().c_str());
+                if (type_id != nullptr)
+                {
+                    rdata->type_id().m_type_identifier = *type_id;
+                }
+            }
+
+            if (rdata->type().m_type_object._d() == static_cast<uint8_t>(0x00))
+            {
+                const types::TypeObject* type_obj =
+                    types::TypeObjectFactory::get_instance()->get_type_object(
+                        rdata->typeName().c_str(), rdata->type_id().m_type_identifier._d() == types::EK_COMPLETE);
+                if (type_obj != nullptr)
+                {
+                    rdata->type().m_type_object = *type_obj;
+                }
+            }
+        }
+
         return true;
     };
 
@@ -340,9 +375,7 @@ bool EDP::updatedLocalWriter(
     const TopicAttributes& att,
     const WriterQos& wqos)
 {
-    (void)att;
-
-    auto init_fun = [this, writer, &wqos](
+    auto init_fun = [this, writer, &wqos, &att](
         WriterProxyData* wdata,
         bool updating,
         const ParticipantProxyData& participant_data)
@@ -363,6 +396,43 @@ bool EDP::updatedLocalWriter(
             wdata->set_unicast_locators(writer->getAttributes().unicastLocatorList, network);
         }
         wdata->m_qos.setQos(wqos, false);
+
+        if (att.auto_fill_xtypes)
+        {
+            // TypeInformation, TypeObject and TypeIdentifier
+            if (!wdata->type_information().assigned())
+            {
+                const types::TypeInformation* type_info =
+                    types::TypeObjectFactory::get_instance()->get_type_information(wdata->typeName().c_str());
+                if (type_info != nullptr)
+                {
+                    wdata->type_information() = *type_info;
+                }
+            }
+
+            if (wdata->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
+            {
+                const types::TypeIdentifier* type_id =
+                    types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                        wdata->typeName().c_str());
+                if (type_id != nullptr)
+                {
+                    wdata->type_id().m_type_identifier = *type_id;
+                }
+            }
+
+            if (wdata->type().m_type_object._d() == static_cast<uint8_t>(0x00))
+            {
+                const types::TypeObject* type_obj =
+                    types::TypeObjectFactory::get_instance()->get_type_object(
+                        wdata->typeName().c_str(), wdata->type_id().m_type_identifier._d() == types::EK_COMPLETE);
+                if (type_obj != nullptr)
+                {
+                    wdata->type().m_type_object = *type_obj;
+                }
+            }
+        }
+
         return true;
     };
 
