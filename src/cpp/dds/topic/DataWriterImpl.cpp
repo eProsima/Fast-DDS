@@ -19,6 +19,7 @@
 
 #include <dds/topic/DataWriterImpl.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/topic/DataWriter.hpp>
 #include <fastrtps/attributes/TopicAttributes.h>
 #include <dds/publisher/PublisherImpl.hpp>
 
@@ -126,12 +127,16 @@ void DataWriterImpl::disable()
 
 DataWriterImpl::~DataWriterImpl()
 {
+    delete lifespan_timer_;
+    delete deadline_timer_;
+
     if(writer_ != nullptr)
     {
         logInfo(PUBLISHER, guid().entityId << " in topic: " << type_->getName());
     }
 
     RTPSDomain::removeRTPSWriter(writer_);
+    delete user_datawriter_;
 }
 
 bool DataWriterImpl::write(

@@ -59,7 +59,7 @@ void SubscriberImpl::disable()
         std::lock_guard<std::mutex> lock(mtx_readers_);
         for (auto it = readers_.begin(); it != readers_.end(); ++it)
         {
-            for (DataReader* dr : it->second)
+            for (DataReaderImpl* dr : it->second)
             {
                 dr->disable();
             }
@@ -73,7 +73,7 @@ SubscriberImpl::~SubscriberImpl()
         std::lock_guard<std::mutex> lock(mtx_readers_);
         for (auto it = readers_.begin(); it != readers_.end(); ++it)
         {
-            for (DataReader* dr : it->second)
+            for (DataReaderImpl* dr : it->second)
             {
                 delete dr;
             }
@@ -212,7 +212,7 @@ DataReader* SubscriberImpl::create_datareader(
 
     {
         std::lock_guard<std::mutex> lock(mtx_readers_);
-        readers_[topic_att.getTopicDataType().to_string()].push_back(reader);
+        readers_[topic_att.getTopicDataType().to_string()].push_back(impl);
     }
 
     return reader;
@@ -225,7 +225,7 @@ bool SubscriberImpl::delete_datareader(
     auto it = readers_.find(reader->get_topic().getTopicName().to_string());
     if (it != readers_.end())
     {
-        auto dr_it = std::find(it->second.begin(), it->second.end(), reader);
+        auto dr_it = std::find(it->second.begin(), it->second.end(), reader->impl_);
         if (dr_it != it->second.end())
         {
             it->second.erase(dr_it);
@@ -242,7 +242,7 @@ DataReader* SubscriberImpl::lookup_datareader(
     auto it = readers_.find(topic_name);
     if (it != readers_.end() && it->second.size() > 0)
     {
-        return it->second.front();
+        return it->second.front()->user_datareader_;
     }
     return nullptr;
 }
@@ -253,9 +253,9 @@ bool SubscriberImpl::get_datareaders(
     std::lock_guard<std::mutex> lock(mtx_readers_);
     for (auto it : readers_)
     {
-        for (DataReader* dr : it.second)
+        for (DataReaderImpl* dr : it.second)
         {
-            readers.push_back(dr);
+            readers.push_back(dr->user_datareader_);
         }
     }
     return true;
@@ -281,9 +281,9 @@ bool SubscriberImpl::notify_datareaders() const
 {
     for (auto it : readers_)
     {
-        for (DataReader* dr : it.second)
+        for (DataReaderImpl* dr : it.second)
         {
-            dr->impl_->listener_->on_data_available(dr);
+            dr->listener_->on_data_available(dr->user_datareader_);
         }
     }
     return true;
