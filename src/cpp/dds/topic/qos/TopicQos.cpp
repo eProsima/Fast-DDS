@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastdds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 
 using namespace eprosima::fastdds;
 
