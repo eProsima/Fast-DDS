@@ -76,11 +76,11 @@ private:
 
 public:
 
-    bool set_listener(
+    ReturnCode_t set_listener(
             DomainParticipantListener* listener)
     {
         listener_ = listener;
-        return true;
+        return ReturnCode_t::RETCODE_OK;
     }
 
     const DomainParticipantListener* get_listener() const
@@ -100,7 +100,7 @@ public:
             const fastrtps::PublisherAttributes& att,
             PublisherListener* listen = nullptr);
 
-    bool delete_publisher(
+    ReturnCode_t delete_publisher(
             Publisher* publisher);
 
     /**
@@ -115,7 +115,7 @@ public:
             const fastrtps::SubscriberAttributes& att,
             SubscriberListener* listen = nullptr);
 
-    bool delete_subscriber(
+    ReturnCode_t delete_subscriber(
             Subscriber* subscriber);
 
     /**
@@ -164,14 +164,14 @@ public:
 
     // TODO bool delete_contained_entities();
 
-    bool assert_liveliness();
+    ReturnCode_t assert_liveliness();
 
-    bool set_default_publisher_qos(
+    ReturnCode_t set_default_publisher_qos(
             const fastdds::dds::PublisherQos& qos);
 
     const fastdds::dds::PublisherQos& get_default_publisher_qos() const;
 
-    bool set_default_subscriber_qos(
+    ReturnCode_t set_default_subscriber_qos(
             const fastdds::dds::SubscriberQos& qos);
 
     const fastdds::dds::SubscriberQos& get_default_subscriber_qos() const;
@@ -204,7 +204,7 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle,
             bool recursive = true) const;
 
-    bool get_current_time(
+    ReturnCode_t get_current_time(
             fastrtps::Time_t& current_time) const;
 
     const DomainParticipant* get_participant() const;
