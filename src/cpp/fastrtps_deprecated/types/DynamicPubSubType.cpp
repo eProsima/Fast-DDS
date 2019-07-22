@@ -63,12 +63,12 @@ ResponseCode DynamicPubSubType::SetDynamicType(DynamicData_ptr pData)
     {
         dynamic_type_ = pData->type_;
         UpdateDynamicTypeInfo();
-        return ResponseCode::RETCODE_OK;
+        return ResponseCode::OK;
     }
     else
     {
         logError(DYN_TYPES, "Error Setting the dynamic type. There is already a registered type");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
+        return ResponseCode::BAD_PARAMETER;
     }
 }
 
@@ -78,12 +78,12 @@ ResponseCode DynamicPubSubType::SetDynamicType(DynamicType_ptr pType)
     {
         dynamic_type_ = pType;
         UpdateDynamicTypeInfo();
-        return ResponseCode::RETCODE_OK;
+        return ResponseCode::OK;
     }
     else
     {
         logError(DYN_TYPES, "Error Setting the dynamic type. There is already a registered type");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
+        return ResponseCode::BAD_PARAMETER;
     }
 }
 

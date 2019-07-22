@@ -163,6 +163,18 @@ typedef std::array<uint8_t, 4> NameHash;
 const uint16_t MemberFlagMinimalMask = 0x003f;
 
 /*!
+ * @brief This class represents the enumeration ResponseCode.
+ */
+enum ResponseCode : uint32_t
+{
+    ERROR = (uint32_t)(-1),
+    OK = 0,
+    BAD_PARAMETER,
+    PRECONDITION_NOT_MET,
+    ALREADY_DELETED
+};
+
+/*!
  * @brief This class represents the enumeration ReturnCode_t.
  */
 enum ReturnCode_t : uint32_t

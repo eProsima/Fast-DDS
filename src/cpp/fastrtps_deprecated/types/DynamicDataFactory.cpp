@@ -48,9 +48,9 @@ ResponseCode DynamicDataFactory::delete_instance()
     {
         delete s_instance;
         s_instance = nullptr;
-        return ResponseCode::RETCODE_OK;
+        return ResponseCode::OK;
     }
-    return ResponseCode::RETCODE_ERROR;
+    return ResponseCode::ERROR;
 }
 
 DynamicDataFactory::DynamicDataFactory()
@@ -184,9 +184,9 @@ ResponseCode DynamicDataFactory::create_members(
         {
             create_members(pData, pType->get_base_type());
         }
-        return ResponseCode::RETCODE_OK;
+        return ResponseCode::OK;
     }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
+    return ResponseCode::BAD_PARAMETER;
 }
 
 ResponseCode DynamicDataFactory::delete_data(DynamicData* pData)
@@ -203,12 +203,12 @@ ResponseCode DynamicDataFactory::delete_data(DynamicData* pData)
         else
         {
             logError(DYN_TYPES, "Error deleting DynamicData. It isn't registered in the factory");
-            return ResponseCode::RETCODE_ALREADY_DELETED;
+            return ResponseCode::ALREADY_DELETED;
         }
 #endif
         delete pData;
     }
-    return ResponseCode::RETCODE_OK;
+    return ResponseCode::OK;
 }
 
 bool DynamicDataFactory::is_empty() const

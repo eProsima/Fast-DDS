@@ -110,9 +110,9 @@ ResponseCode DynamicTypeBuilderFactory::delete_instance()
     {
         delete g_instance;
         g_instance = nullptr;
-        return ResponseCode::RETCODE_OK;
+        return ResponseCode::OK;
     }
-    return ResponseCode::RETCODE_ERROR;
+    return ResponseCode::ERROR;
 }
 
 DynamicTypeBuilderFactory::DynamicTypeBuilderFactory()
@@ -788,13 +788,13 @@ ResponseCode DynamicTypeBuilderFactory::delete_builder(DynamicTypeBuilder* build
         else
         {
             logWarning(DYN_TYPES, "The given type has been deleted previously.");
-            return ResponseCode::RETCODE_ALREADY_DELETED;
+            return ResponseCode::ALREADY_DELETED;
         }
 #else
         delete builder;
 #endif
     }
-    return ResponseCode::RETCODE_OK;
+    return ResponseCode::OK;
 }
 
 ResponseCode DynamicTypeBuilderFactory::delete_type(DynamicType* type)
@@ -803,7 +803,7 @@ ResponseCode DynamicTypeBuilderFactory::delete_type(DynamicType* type)
     {
         delete type;
     }
-    return ResponseCode::RETCODE_OK;
+    return ResponseCode::OK;
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::get_primitive_type(TypeKind kind)

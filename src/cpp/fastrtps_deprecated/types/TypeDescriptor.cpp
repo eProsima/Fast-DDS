@@ -94,17 +94,17 @@ ResponseCode TypeDescriptor::copy_from(const TypeDescriptor* descriptor)
             bound_ = descriptor->bound_;
             element_type_ = descriptor->element_type_;
             key_element_type_ = descriptor->key_element_type_;
-            return ResponseCode::RETCODE_OK;
+            return ResponseCode::OK;
         }
         catch (std::exception& /*e*/)
         {
-            return ResponseCode::RETCODE_ERROR;
+            return ResponseCode::ERROR;
         }
     }
     else
     {
         logError(DYN_TYPES, "Error copying TypeDescriptor, invalid input descriptor");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
+        return ResponseCode::BAD_PARAMETER;
     }
 }
 
@@ -274,12 +274,12 @@ ResponseCode TypeDescriptor::apply_annotation(AnnotationDescriptor& descriptor)
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
         pNewDescriptor->copy_from(&descriptor);
         annotation_.push_back(pNewDescriptor);
-        return ResponseCode::RETCODE_OK;
+        return ResponseCode::OK;
     }
     else
     {
         logError(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
+        return ResponseCode::BAD_PARAMETER;
     }
 }
 
@@ -301,7 +301,7 @@ ResponseCode TypeDescriptor::apply_annotation(
         pNewDescriptor->set_value(key, value);
         annotation_.push_back(pNewDescriptor);
     }
-    return ResponseCode::RETCODE_OK;
+    return ResponseCode::OK;
 }
 
 AnnotationDescriptor* TypeDescriptor::get_annotation(const std::string& name) const
@@ -337,7 +337,7 @@ bool TypeDescriptor::annotation_is_mutable() const
         if (ann != nullptr)
         {
             std::string value;
-            if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+            if (ann->get_value(value) == ResponseCode::OK)
             {
                 return value.compare(EXTENSIBILITY_MUTABLE) == 0;
             }
@@ -358,7 +358,7 @@ bool TypeDescriptor::annotation_is_final() const
         if (ann != nullptr)
         {
             std::string value;
-            if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+            if (ann->get_value(value) == ResponseCode::OK)
             {
                 return value.compare(EXTENSIBILITY_FINAL) == 0;
             }
@@ -379,7 +379,7 @@ bool TypeDescriptor::annotation_is_appendable() const
         if (ann != nullptr)
         {
             std::string value;
-            if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+            if (ann->get_value(value) == ResponseCode::OK)
             {
                 return value.compare(EXTENSIBILITY_APPENDABLE) == 0;
             }
@@ -409,7 +409,7 @@ bool TypeDescriptor::annotation_is_non_serialized() const
     if(ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ResponseCode::OK)
         {
             return value == CONST_TRUE;
         }
@@ -424,7 +424,7 @@ std::string TypeDescriptor::annotation_get_extensibility() const
     if(ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ResponseCode::OK)
         {
             return value;
         }
@@ -438,7 +438,7 @@ bool TypeDescriptor::annotation_get_nested() const
     if(ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ResponseCode::OK)
         {
             return value == CONST_TRUE;
         }
@@ -456,7 +456,7 @@ bool TypeDescriptor::annotation_get_key() const
     if(ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ResponseCode::OK)
         {
             return value == CONST_TRUE;
         }
@@ -470,7 +470,7 @@ uint16_t TypeDescriptor::annotation_get_bit_bound() const
     if(ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ResponseCode::OK)
         {
             return static_cast<uint16_t>(std::stoi(value));
         }

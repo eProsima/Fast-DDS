@@ -52,15 +52,15 @@ ResponseCode AnnotationDescriptor::copy_from(const AnnotationDescriptor* descrip
         }
         catch(std::exception& /*e*/)
         {
-            return ResponseCode::RETCODE_ERROR;
+            return ResponseCode::ERROR;
         }
     }
     else
     {
         logError(DYN_TYPES, "Error copying AnnotationDescriptor, invalid input descriptor");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
+        return ResponseCode::BAD_PARAMETER;
     }
-    return ResponseCode::RETCODE_OK;
+    return ResponseCode::OK;
 }
 
 bool AnnotationDescriptor::equals(const AnnotationDescriptor* other) const
@@ -107,15 +107,15 @@ ResponseCode AnnotationDescriptor::get_value(
     if (it != value_.end())
     {
         value = it->second;
-        return ResponseCode::RETCODE_OK;
+        return ResponseCode::OK;
     }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
+    return ResponseCode::BAD_PARAMETER;
 }
 
 ResponseCode AnnotationDescriptor::get_all_value(std::map<std::string, std::string>& value) const
 {
     value = value_;
-    return ResponseCode::RETCODE_OK;
+    return ResponseCode::OK;
 }
 
 bool AnnotationDescriptor::is_consistent() const
@@ -139,7 +139,7 @@ ResponseCode AnnotationDescriptor::set_value(
         const std::string& value)
 {
     value_[key] = value;
-    return ResponseCode::RETCODE_OK;
+    return ResponseCode::OK;
 }
 
 } // namespace types

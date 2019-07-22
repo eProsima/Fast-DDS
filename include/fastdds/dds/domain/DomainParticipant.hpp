@@ -24,7 +24,7 @@
 
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-#include "../../fastrtps/types/TypesBase.h"
+#include "../../../fastrtps/types/TypesBase.h"
 
 #include <utility>
 

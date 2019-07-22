@@ -155,17 +155,17 @@ ResponseCode MemberDescriptor::copy_from(const MemberDescriptor* other)
             index_ = other->index_;
             default_label_ = other->default_label_;
             labels_ = other->labels_;
-            return ResponseCode::RETCODE_OK;
+            return ResponseCode::OK;
         }
         catch (std::exception& /*e*/)
         {
-            return ResponseCode::RETCODE_ERROR;
+            return ResponseCode::ERROR;
         }
     }
     else
     {
         logError(DYN_TYPES, "Error copying MemberDescriptor, invalid input descriptor");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
+        return ResponseCode::BAD_PARAMETER;
     }
 }
 
@@ -430,7 +430,7 @@ bool MemberDescriptor::annotation_is_optional() const
     if(ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ResponseCode::OK)
         {
             return value == CONST_TRUE;
         }
@@ -453,7 +453,7 @@ bool MemberDescriptor::annotation_get_key() const
     if(ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ResponseCode::OK)
         {
             return value == CONST_TRUE;
         }
@@ -467,7 +467,7 @@ bool MemberDescriptor::annotation_is_must_understand() const
     if(ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ResponseCode::OK)
         {
             return value == CONST_TRUE;
         }
@@ -481,7 +481,7 @@ bool MemberDescriptor::annotation_is_non_serialized() const
     if(ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ResponseCode::OK)
         {
             return value == CONST_TRUE;
         }
@@ -511,7 +511,7 @@ std::string MemberDescriptor::annotation_get_value() const
     if(ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ResponseCode::OK)
         {
             return value;
         }
@@ -525,7 +525,7 @@ std::string MemberDescriptor::annotation_get_default() const
     if(ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ResponseCode::OK)
         {
             return value;
         }
@@ -539,7 +539,7 @@ uint16_t MemberDescriptor::annotation_get_position() const
     if(ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ResponseCode::OK)
         {
             return static_cast<uint16_t>(std::stoi(value));
         }
@@ -674,7 +674,7 @@ uint16_t MemberDescriptor::annotation_get_bit_bound() const
     if(ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ResponseCode::OK)
         {
             return static_cast<uint16_t>(std::stoi(value));
         }
@@ -703,12 +703,12 @@ ResponseCode MemberDescriptor::apply_annotation(AnnotationDescriptor& descriptor
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
         pNewDescriptor->copy_from(&descriptor);
         annotation_.push_back(pNewDescriptor);
-        return ResponseCode::RETCODE_OK;
+        return ResponseCode::OK;
     }
     else
     {
         logError(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
+        return ResponseCode::BAD_PARAMETER;
     }
 }
 
@@ -730,7 +730,7 @@ ResponseCode MemberDescriptor::apply_annotation(
         pNewDescriptor->set_value(key, value);
         annotation_.push_back(pNewDescriptor);
     }
-    return ResponseCode::RETCODE_OK;
+    return ResponseCode::OK;
 }
 
 AnnotationDescriptor* MemberDescriptor::get_annotation(const std::string& name) const

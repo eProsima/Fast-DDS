@@ -29,6 +29,9 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include "../../../../include/fastrtps/types/TypesBase.h"
+
+using namespace eprosima::fastrtps::types;
 
 namespace eprosima{
 namespace fastrtps{

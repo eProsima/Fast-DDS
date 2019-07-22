@@ -326,7 +326,9 @@ ReturnCode_t DomainParticipantImpl::assert_liveliness()
 {
     if (rtps_participant_->wlp() != nullptr)
     {
-        return rtps_participant_->wlp()->assert_liveliness_manual_by_participant();
+        if(rtps_participant_->wlp()->assert_liveliness_manual_by_participant()){
+            return RETCODE_OK;
+        }
     }
     else
     {

@@ -94,9 +94,9 @@ ResponseCode DynamicTypeMember::get_annotation(
     if (idx < descriptor_.annotation_.size())
     {
         descriptor.copy_from(descriptor_.annotation_[idx]);
-        return ResponseCode::RETCODE_OK;
+        return ResponseCode::OK;
     }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
+    return ResponseCode::BAD_PARAMETER;
 }
 
 uint32_t DynamicTypeMember::get_annotation_count()
@@ -119,12 +119,12 @@ ResponseCode DynamicTypeMember::get_descriptor(MemberDescriptor* descriptor) con
     if (descriptor != nullptr)
     {
         descriptor->copy_from(&descriptor_);
-        return ResponseCode::RETCODE_OK;
+        return ResponseCode::OK;
     }
     else
     {
         logError(DYN_TYPES, "Error getting MemberDescriptor, invalid input descriptor");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
+        return ResponseCode::BAD_PARAMETER;
     }
 }
 

@@ -58,9 +58,9 @@ ResponseCode TypeObjectFactory::delete_instance()
     {
         delete g_instance;
         g_instance = nullptr;
-        return ResponseCode::RETCODE_OK;
+        return ResponseCode::OK;
     }
-    return ResponseCode::RETCODE_ERROR;
+    return ResponseCode::ERROR;
 }
 
 TypeObjectFactory::TypeObjectFactory()
