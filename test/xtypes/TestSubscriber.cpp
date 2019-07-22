@@ -265,6 +265,7 @@ void TestSubscriber::delete_datareader(eprosima::fastdds::dds::DataReader* reade
 bool TestSubscriber::register_discovered_type()
 {
     TypeSupport type(disc_type_);
+    topic_att.auto_fill_xtypes = true;
     return mp_participant->register_type(type, disc_type_->get_name());
 }
 
