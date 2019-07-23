@@ -713,7 +713,7 @@ bool EDP::validMatching(
     }
 
     // Type Consistency Enforcement QosPolicy
-    if(!checkTypeIdentifier(wdata, rdata))
+    if (!checkTypeValidation(wdata, rdata))
     {
         // TODO Trigger INCONSISTENT_TOPIC status change
         return false;
