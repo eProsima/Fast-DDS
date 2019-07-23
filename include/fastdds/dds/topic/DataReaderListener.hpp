@@ -114,7 +114,7 @@ class RTPS_DllAPI DataReaderListener
          */
         virtual void on_requested_incompatible_qos(
                 DataReader* reader,
-                const fastrtps::RequestedIncompatibleQosStatus& status)
+                const RequestedIncompatibleQosStatus& status)
         {
             (void)reader;
             (void)status;

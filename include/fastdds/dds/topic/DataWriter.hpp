@@ -21,7 +21,7 @@
 
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
-#include <fastrtps/qos/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/qos/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/qos/BaseStatus.h>
 
 namespace eprosima {
@@ -198,7 +198,7 @@ public:
 
     /* TODO
     bool get_offered_incompatible_qos_status(
-            fastrtps::OfferedIncompatibleQosStatus& status)
+            OfferedIncompatibleQosStatus& status)
     {
         // Not implemented
         (void)status;

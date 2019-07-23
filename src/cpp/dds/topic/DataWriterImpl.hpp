@@ -33,7 +33,7 @@
 
 #include <fastdds/rtps/writer/WriterListener.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
-#include <fastrtps/qos/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/qos/IncompatibleQosStatus.hpp>
 #include <fastrtps/qos/LivelinessLostStatus.h>
 #include <fastdds/dds/qos/BaseStatus.h>
 
@@ -177,8 +177,8 @@ public:
             LivelinessLostStatus& status);
 
     /* TODO
-    bool get_offered_incompatible_qos_status(
-            fastrtps::OfferedIncompatibleQosStatus& status)
+    ReturnCode_t get_offered_incompatible_qos_status(
+            OfferedIncompatibleQosStatus& status)
     {
         // Not implemented
         (void)status;
