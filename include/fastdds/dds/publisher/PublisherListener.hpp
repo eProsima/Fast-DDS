@@ -22,7 +22,7 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
-#include <fastrtps/qos/LivelinessLostStatus.h>
+#include <fastdds/dds/qos/BaseStatus.h>
 #include <fastdds/dds/qos/PublicationMatchedStatus.h>
 
 namespace eprosima {
@@ -48,7 +48,7 @@ public:
      */
     virtual void on_publication_matched(
             Publisher* pub,
-            fastdds::dds::PublicationMatchedStatus& info)
+            PublicationMatchedStatus& info)
     {
         (void)pub;
         (void)info;
@@ -74,7 +74,7 @@ public:
      */
     virtual void on_liveliness_lost(
             Publisher* pub,
-            const fastrtps::LivelinessLostStatus& status)
+            const LivelinessLostStatus& status)
     {
         (void)pub;
         (void)status;

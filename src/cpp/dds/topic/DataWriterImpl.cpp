@@ -591,12 +591,15 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
         fastrtps::rtps::RTPSWriter* /*writer*/,
         const fastrtps::LivelinessLostStatus& status)
 {
+    LivelinessLostStatus liveliness_status;
+    liveliness_status.total_count = status.total_count;
+    liveliness_status.total_count_change = status.total_count_change;
     if (data_writer_->listener_ != nullptr)
     {
-        data_writer_->listener_->on_liveliness_lost(data_writer_->user_datawriter_, status);
+        data_writer_->listener_->on_liveliness_lost(data_writer_->user_datawriter_, liveliness_status);
     }
 
-    data_writer_->publisher_->publisher_listener_.on_liveliness_lost(data_writer_->user_datawriter_, status);
+    data_writer_->publisher_->publisher_listener_.on_liveliness_lost(data_writer_->user_datawriter_, liveliness_status);
 }
 
 bool DataWriterImpl::wait_for_acknowledgments(
@@ -697,11 +700,12 @@ bool DataWriterImpl::lifespan_expired()
 }
 
 bool DataWriterImpl::get_liveliness_lost_status(
-        fastrtps::LivelinessLostStatus& status)
+        LivelinessLostStatus& status)
 {
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
-    status = writer_->liveliness_lost_status_;
+    status.total_count = writer_->liveliness_lost_status_.total_count;
+    status.total_count_change = writer_->liveliness_lost_status_.total_count_change;
 
     writer_->liveliness_lost_status_.total_count_change = 0u;
 
