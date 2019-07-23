@@ -13,32 +13,32 @@
 // limitations under the License.
 
 /**
- * @file SampleLostStatus.hpp
+ * @file BaseStatus.h
 */
 
-#ifndef _FASTRTPS_SAMPLE_LOST_STATUS_HPP_
-#define _FASTRTPS_SAMPLE_LOST_STATUS_HPP_
+#ifndef _FASTRTPS_BASE_STATUS_H_
+#define _FASTRTPS_BASE_STATUS_H_
 
 #include <cstdint>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds{
 
-//! @brief A struct storing the sample lost status
-struct SampleLostStatus
+//! @brief A struct storing the base status
+struct BaseStatus
 {
-    /**
-     * Total cumulative count of all samples lost across of instances of data published under the Topic.
-     */
-    uint32_t total_count = 0;
+    int32_t total_count = 0;
 
-    /**
-     * The incremental number of samples lost since the last time the listener was called or the status was read.
-     */
-    uint32_t total_count_change = 0;
+    int32_t total_count_change = 0;
 };
 
-} //end of namespace fastrtps
+using SampleLostStatus = BaseStatus;
+using LivelinessLostStatus = BaseStatus;
+using InconsistentTopicStatus = BaseStatus;
+
+} //end of anamespace dds
+} //end of namespace fastdds
 } //end of namespace eprosima
 
-#endif // _FASTRTPS_SAMPLE_LOST_STATUS_HPP_
+#endif // _FASTRTPS_BASE_STATUS_H_

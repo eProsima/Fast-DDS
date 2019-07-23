@@ -582,10 +582,10 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
 {
     if (data_writer_->listener_ != nullptr)
     {
-        data_writer_->listener_->on_liveliness_lost(data_writer_->user_datawriter_, status);
+        data_writer_->listener_->on_liveliness_lost(data_writer_->user_datawriter_, liveliness_status);
     }
 
-    data_writer_->publisher_->publisher_listener_.on_liveliness_lost(data_writer_->user_datawriter_, status);
+    data_writer_->publisher_->publisher_listener_.on_liveliness_lost(data_writer_->user_datawriter_, liveliness_status);
 }
 
 bool DataWriterImpl::wait_for_acknowledgments(
@@ -685,8 +685,8 @@ bool DataWriterImpl::lifespan_expired()
     return true;
 }
 
-bool DataWriterImpl::get_liveliness_lost_status(
-        fastrtps::LivelinessLostStatus& status)
+ReturnCode_t DataWriterImpl::get_liveliness_lost_status(
+        LivelinessLostStatus& status)
 {
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 

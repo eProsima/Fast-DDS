@@ -22,7 +22,7 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
-#include <fastrtps/qos/LivelinessLostStatus.h>
+#include <fastdds/dds/qos/BaseStatus.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -73,7 +73,7 @@ public:
      */
     virtual void on_liveliness_lost(
             DataWriter* writer,
-            const fastrtps::LivelinessLostStatus& status)
+            const LivelinessLostStatus& status)
     {
         (void)writer;
         (void)status;
