@@ -75,6 +75,7 @@ struct LocatorSelectorEntry
         , unicast(ResourceLimitedContainerConfig::fixed_size_configuration(max_unicast_locators))
         , multicast(ResourceLimitedContainerConfig::fixed_size_configuration(max_multicast_locators))
         , state(max_unicast_locators, max_multicast_locators)
+        , enabled(false)
         , transport_should_process(false)
     {
     }
