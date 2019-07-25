@@ -161,6 +161,12 @@ public:
         publisher_attr_.times.heartbeatPeriod.nanosec = 100000000;
         publisher_attr_.times.nackResponseDelay.seconds = 0;
         publisher_attr_.times.nackResponseDelay.nanosec = 100000000;
+
+        // Increase default max_blocking_time to 1 second, as our CI infrastructure shows some
+        // big CPU overhead sometimes
+        publisher_attr_.qos.m_reliability.max_blocking_time.seconds = 1;
+        publisher_attr_.qos.m_reliability.max_blocking_time.nanosec = 0;
+
         // By default, heartbeat period delay is 100 milliseconds.
         subscriber_attr_.times.heartbeatResponseDelay = 0.1;
     }

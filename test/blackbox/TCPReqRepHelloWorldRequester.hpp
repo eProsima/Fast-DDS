@@ -116,6 +116,11 @@ class TCPReqRepHelloWorldRequester
         {
             puattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
 
+            // Increase default max_blocking_time to 1 second, as our CI infrastructure shows some
+            // big CPU overhead sometimes
+            puattr.qos.m_reliability.max_blocking_time.seconds = 1;
+            puattr.qos.m_reliability.max_blocking_time.nanosec = 0;
+
             std::ostringstream t;
 
             t << "TCPReqRepHelloworld_" << asio::ip::host_name() << "_" << GET_PID() << "_" << suffix;
