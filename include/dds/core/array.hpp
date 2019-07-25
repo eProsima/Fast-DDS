@@ -30,4 +30,4 @@ using dds::core::detail::array;
 }
 }
 
-#endif /* ORG_OMG_DDS_CORE_ARRAY_HPP_  */
+#endif //ORG_OMG_DDS_CORE_ARRAY_HPP_

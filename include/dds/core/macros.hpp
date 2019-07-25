@@ -53,4 +53,4 @@
 #define OMG_DDS_API OMG_DDS_API_DETAIL
 // ==========================================================================
 
-#endif // OMG_DDS_CORE_MACROS_HPP_
+#endif //OMG_DDS_CORE_MACROS_HPP_

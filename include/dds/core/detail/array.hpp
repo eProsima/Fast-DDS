@@ -30,5 +30,5 @@ using ::std::array;
 }
 }
 
-#endif // EPROSIMA_DDS_CORE_DETAIL_ARRAY_HPP_
+#endif //EPROSIMA_DDS_CORE_DETAIL_ARRAY_HPP_
 

@@ -44,4 +44,4 @@
 // ==========================================================================
 
 
-#endif // EPROSIMA_DDS_CORE_DETAIL_MACROS_HPP_
+#endif //EPROSIMA_DDS_CORE_DETAIL_MACROS_HPP_
