@@ -68,17 +68,22 @@ CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, 
     {
         if(original_change_cit->getChange()->getDataFragments()->at(count) == ChangeFragmentStatus_t::NOT_PRESENT)
         {
+            size_t original_offset = size_t(count) * original_change_cit->getChange()->getFragmentSize();
+            size_t incoming_offset = size_t(count - (fragmentStartingNum - 1)) * incoming_change->getFragmentSize();
+
             // All cases minus last fragment.
             if (count + 1 != original_change_cit->getChange()->getFragmentCount())
             {
-                memcpy(original_change_cit->getChange()->serializedPayload.data + count * original_change_cit->getChange()->getFragmentSize(),
-                        incoming_change->serializedPayload.data + (count - (fragmentStartingNum - 1)) * incoming_change->getFragmentSize(), incoming_change->getFragmentSize());
+                memcpy(original_change_cit->getChange()->serializedPayload.data + original_offset,
+                        incoming_change->serializedPayload.data + incoming_offset,
+                        incoming_change->getFragmentSize());
             }
             // Last fragment is a special case when copying.
             else
             {
-                memcpy(original_change_cit->getChange()->serializedPayload.data + count * original_change_cit->getChange()->getFragmentSize(),
-                        incoming_change->serializedPayload.data + (count - (fragmentStartingNum - 1)) * incoming_change->getFragmentSize(), original_change_cit->getChange()->serializedPayload.length - (count * original_change_cit->getChange()->getFragmentSize()));
+                memcpy(original_change_cit->getChange()->serializedPayload.data + original_offset,
+                        incoming_change->serializedPayload.data + incoming_offset,
+                        original_change_cit->getChange()->serializedPayload.length - original_offset);
             }
 
             original_change_cit->getChange()->getDataFragments()->at(count) = ChangeFragmentStatus_t::PRESENT;
