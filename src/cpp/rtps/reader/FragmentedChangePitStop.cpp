@@ -83,8 +83,7 @@ CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, 
             {
                 memcpy(original_change_cit->getChange()->serializedPayload.data + original_offset,
                         incoming_change->serializedPayload.data + incoming_offset,
-                        original_change_cit->getChange()->serializedPayload.length - 
-                            (size_t(count) * original_change_cit->getChange()->getFragmentSize()));
+                        original_change_cit->getChange()->serializedPayload.length - original_offset);
             }
 
             original_change_cit->getChange()->getDataFragments()->at(count) = ChangeFragmentStatus_t::PRESENT;
