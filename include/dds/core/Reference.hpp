@@ -26,7 +26,6 @@
 namespace dds {
 namespace core {
 
-
 /**
  * @brief
  * Base class for reference-counted objects.
@@ -314,8 +313,8 @@ protected:
 };
 
 
-}
-}
+} //namespace core
+} //namespace dds
 
 
 /**

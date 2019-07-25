@@ -27,7 +27,7 @@ namespace core {
 
 using dds::core::detail::array;
 
-}
-}
+} //namespace core
+} //namespace dds
 
 #endif //ORG_OMG_DDS_CORE_ARRAY_HPP_

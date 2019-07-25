@@ -59,7 +59,7 @@ class OMG_DDS_API null_type { };
  */
 extern const null_type OMG_DDS_API null;
 
-}
-}
+} //namespace core
+} //namespace dds
 
 #endif // OMG_DDS_CORE_TYPES_HPP_

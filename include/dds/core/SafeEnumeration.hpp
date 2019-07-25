@@ -87,8 +87,8 @@ public:
 
 };
 
-}
-}
+} //namespace core
+} //namespace dds
 
 #endif //OMG_DDS_CORE_SAFEENUMERATION_HPP_
 

@@ -26,9 +26,9 @@ namespace detail {
 
 using ::std::array;
 
-}
-}
-}
+} //namespace detail
+} //namespace core
+} //namespace dds
 
 #endif //EPROSIMA_DDS_CORE_DETAIL_ARRAY_HPP_
 

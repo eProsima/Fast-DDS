@@ -360,8 +360,8 @@ public:
 /** @endcond */
 };
 
-}
-}
+} //namespace core
+} //namespace dds
 
 #if defined _MSC_VER
 #   pragma warning (pop)

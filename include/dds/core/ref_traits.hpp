@@ -42,8 +42,8 @@ TO  polymorphic_cast(FROM& from);
 
 /** @endcond */
 
-}
-}
+} //namespace core
+} //namespace dds
 
 // This include should stay here as it provides implementations
 // for the declaration immediately above.

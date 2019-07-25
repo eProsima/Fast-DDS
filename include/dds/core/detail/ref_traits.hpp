@@ -53,7 +53,7 @@ TO polymorphic_cast(FROM& from) {
     return to;
 }
 
-}
-}
+} //namespace core
+} //namespace dds
 
 #endif //EPROSIMA_DDS_CORE_DETAIL_REF_TRAITS_HPP_
