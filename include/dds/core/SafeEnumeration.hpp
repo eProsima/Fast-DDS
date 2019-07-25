@@ -1,8 +1,8 @@
-/* Copyright 2010, Object Management Group, Inc.
+/*
+ * Copyright 2010, Object Management Group, Inc.
  * Copyright 2010, PrismTech, Corp.
  * Copyright 2010, Real-Time Innovations, Inc.
  * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
- * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,8 @@
 #ifndef OMG_DDS_CORE_SAFEENUMERATION_HPP_
 #define OMG_DDS_CORE_SAFEENUMERATION_HPP_
 
-namespace dds
-{
-namespace core
-{
+namespace dds {
+namespace core {
 
 /**
  * safe_enum provides a wrapper for enumerated types in a typesafe
@@ -40,42 +38,57 @@ class safe_enum : public def
 
 public:
 
-    safe_enum(type v) : val(v) {}
+    safe_enum(
+            type v)
+        : val(v)
+    {
+    }
+
     inner underlying() const
     {
         return val;
     }
 
-    bool operator == (const safe_enum& s) const
+    bool operator == (
+            const safe_enum& s) const
     {
         return this->val == s.val;
     }
-    bool operator != (const safe_enum& s) const
+
+    bool operator != (
+            const safe_enum& s) const
     {
         return this->val != s.val;
     }
-    bool operator < (const safe_enum& s) const
+
+    bool operator < (
+            const safe_enum& s) const
     {
         return this->val <  s.val;
     }
-    bool operator <= (const safe_enum& s) const
+
+    bool operator <= (
+            const safe_enum& s) const
     {
         return this->val <= s.val;
     }
-    bool operator > (const safe_enum& s) const
+
+    bool operator > (
+            const safe_enum& s) const
     {
         return this->val >  s.val;
     }
-    bool operator >= (const safe_enum& s) const
+
+    bool operator >= (
+            const safe_enum& s) const
     {
         return this->val >= s.val;
     }
+
 };
 
-
 }
 }
 
+#endif //OMG_DDS_CORE_SAFEENUMERATION_HPP_
 
-
-#endif /* OMG_DDS_CORE_SAFEENUMERATION_HPP_ */

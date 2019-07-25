@@ -1,8 +1,8 @@
-/* Copyright 2010, Object Management Group, Inc.
+/*
+ * Copyright 2010, Object Management Group, Inc.
  * Copyright 2010, PrismTech, Corp.
  * Copyright 2010, Real-Time Innovations, Inc.
  * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
- * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,6 @@
 
 #ifndef OMG_DDS_CORE_REFMACROS_HPP_
 #define OMG_DDS_CORE_REFMACROS_HPP_
-
-#include <dds/core/macros.hpp>
-#include <dds/core/ref_traits.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Macros
@@ -181,4 +178,4 @@ public:                                                                     \
     public:                                                                 \
     TYPE(DELEGATE_T *impl) : dds::core::Reference< DELEGATE_T >(impl) { }
 
-#endif /* OMG_DDS_CORE_REFMACROS_HPP_ */
+#endif // OMG_DDS_CORE_REFMACROS_HPP_
