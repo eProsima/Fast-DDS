@@ -304,17 +304,14 @@ std::string IPFinder::getIPv4Address(const std::string &name)
 
     int s = getaddrinfo(name.c_str(), nullptr, &hints, &result);
 
-    if (s != 0)
+    if ( (s == 0) && (inet_ntop(AF_INET, result[0].ai_addr, str, INET_ADDRSTRLEN) != nullptr) )
     {
-        return "";
+        freeaddrinfo(result);
+        return str;
     }
 
-    if (inet_ntop(AF_INET, result[0].ai_addr, str, INET_ADDRSTRLEN) == nullptr)
-    {
-        return "";
-    }
-
-    return str;
+    freeaddrinfo(result);
+    return "";
 }
 
 std::string IPFinder::getIPv6Address(const std::string &name)
@@ -334,15 +331,12 @@ std::string IPFinder::getIPv6Address(const std::string &name)
 
     int s = getaddrinfo(name.c_str(), nullptr, &hints, &result);
 
-    if (s != 0)
+    if ( (s == 0) && (inet_ntop(AF_INET6, result[0].ai_addr, str, INET6_ADDRSTRLEN) != nullptr) )
     {
-        return "";
+        freeaddrinfo(result);
+        return str;
     }
 
-    if (inet_ntop(AF_INET6, result[0].ai_addr, str, INET6_ADDRSTRLEN) == nullptr)
-    {
-        return "";
-    }
-
-    return str;
+    freeaddrinfo(result);
+    return "";
 }

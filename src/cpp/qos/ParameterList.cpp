@@ -824,6 +824,8 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
 
 bool ParameterList::readInstanceHandleFromCDRMsg(CacheChange_t* change, const uint16_t search_pid)
 {
+    assert(change != nullptr);
+
     // Only process data when change does not already have a handle
     if (change->instanceHandle.isDefined())
     {
@@ -849,10 +851,9 @@ bool ParameterList::readInstanceHandleFromCDRMsg(CacheChange_t* change, const ui
     {
         return false;
     }
-    if (change != NULL)
-    {
-        change->serializedPayload.encapsulation = (uint16_t)encapsulation;
-    }
+
+    change->serializedPayload.encapsulation = (uint16_t)encapsulation;
+
     // Skip encapsulation options
     msg.pos += 2;
 

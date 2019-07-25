@@ -223,8 +223,6 @@ bool WriterProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
     }
     if(m_qos.m_groupData.sendAlways() ||  m_qos.m_groupData.hasChanged)
     {
-        GroupDataQosPolicy*p = new GroupDataQosPolicy();
-        *p = m_qos.m_groupData;
         if (!m_qos.m_groupData.addToCDRMessage(msg)) return false;
     }
 

@@ -86,7 +86,7 @@ inline bool CDRMessage::readData(CDRMessage_t* msg, octet* o, uint32_t length) {
 }
 
 inline bool CDRMessage::readDataReversed(CDRMessage_t* msg, octet* o, uint32_t length) {
-    for(uint16_t i=0;i<length;i++)
+    for(uint32_t i=0;i<length;i++)
     {
         *(o+i)=*(msg->buffer+msg->pos+length-1-i);
     }
