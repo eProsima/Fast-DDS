@@ -272,6 +272,10 @@ class RTPSAsSocketReader
                 wattr.guid.entityId.value[3] = 3;
                 reader_->matched_writer_add(wattr);
             }
+            else
+            {
+                reader_->enableMessagesFromUnkownWriters(true);
+            }
         }
 
     private:

@@ -45,7 +45,7 @@ RTPSReader::RTPSReader(
     , mp_history(hist)
     , mp_listener(rlisten)
     , m_acceptMessagesToUnknownReaders(true)
-    , m_acceptMessagesFromUnkownWriters(true)
+    , m_acceptMessagesFromUnkownWriters(false)
     , m_expectsInlineQos(att.expectsInlineQos)
     , fragmentedChangePitStop_(nullptr)
     , liveliness_kind_(att.liveliness_kind_)
