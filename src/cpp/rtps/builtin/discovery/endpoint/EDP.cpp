@@ -179,7 +179,6 @@ bool EDP::newLocalReaderProxyData(
     }
 
     //PAIRING
-    reader->m_acceptMessagesFromUnkownWriters = false;
     pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
     pairingReader(reader, participant_guid, *reader_data);
     //DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
