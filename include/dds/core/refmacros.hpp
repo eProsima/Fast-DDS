@@ -165,7 +165,7 @@ protected:                                                                  \
 public:                                                                     \
     typedef DELEGATE<T_PARAM>   DELEGATE_T;                                 \
     OMG_DDS_REF_TYPE_BASE(TYPE, BASE, DELEGATE_T)                           \
-    protected:                                                              \
+protected:                                                                  \
     TYPE() { }
 
 #define OMG_DDS_REF_TYPE_NO_DC(TYPE, BASE, DELEGATE)                        \
@@ -175,7 +175,7 @@ public:                                                                     \
 
 #define OMG_DDS_REF_TYPE_DELEGATE_C(TYPE, BASE, DELEGATE)                   \
     OMG_DDS_REF_TYPE_PROTECTED_DC(TYPE, BASE, DELEGATE)                     \
-    public:                                                                 \
+public:                                                                     \
     TYPE(DELEGATE_T *impl) : dds::core::Reference< DELEGATE_T >(impl) { }
 
 #endif // OMG_DDS_CORE_REFMACROS_HPP_

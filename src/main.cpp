@@ -26,6 +26,8 @@
 #include <dds/core/xtypes/detail/TypeProvider.hpp>
 
 #include <dds/core/xtypes/TypeKind.hpp>
+//#include <dds/core/xtypes/Annotations.hpp> // problems to solve
+//#include <dds/core/xtypes/TAnnotation.hpp> // problems to solve
 
 int main()
 {
