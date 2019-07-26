@@ -40,7 +40,6 @@ struct smart_ptr_traits {
     typedef ::std::weak_ptr<T>    weak_ref_type;
 };
 
-
 template <typename TO, typename FROM>
 TO polymorphic_cast(FROM& from) {
     typename TO::DELEGATE_REF_T dr = ::std::dynamic_pointer_cast<typename TO::DELEGATE_T>(from.delegate());
