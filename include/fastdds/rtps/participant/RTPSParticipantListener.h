@@ -90,19 +90,22 @@ class RTPS_DllAPI RTPSParticipantListener
          * This method is called when a participant discovers a new Type
          * The ownership of all object belongs to the caller so if needs to be used after the
          * method ends, a full copy should be perform (except for dyn_type due to its shared_ptr nature.
-         * The field "topic" it is only available if the type was discovered using "Discovery-Time Data Typing".
-         * If the type was discovered using TypeLookup Service then "topic" will be empty.
+         * The field "topic" it is only available if the type was discovered using "Discovery-Time Data Typing",
+         * in which case the field request_sample_id will contain INVALID_SAMPLE_IDENTITY.
+         * If the type was discovered using TypeLookup Service then "topic" will be empty, but will have
+         * the request_sample_id of the petition that caused the discovery.
          * For example:
          * fastrtps::types::TypeIdentifier new_type_id = *identifier;
          */
         virtual void on_type_discovery(
                 RTPSParticipant* participant,
+                const SampleIdentity& request_sample_id,
                 const string_255& topic,
                 const types::TypeIdentifier* identifier,
                 const types::TypeObject* object,
                 types::DynamicType_ptr dyn_type)
         {
-            (void)participant, (void)topic, (void)identifier, (void)object, (void)dyn_type;
+            (void)participant, (void)request_sample_id, (void)topic, (void)identifier, (void)object, (void)dyn_type;
         }
 
         /*!

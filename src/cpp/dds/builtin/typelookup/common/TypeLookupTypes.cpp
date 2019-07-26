@@ -1242,6 +1242,47 @@ bool TypeLookup_RequestTypeSupport::deserialize(
     return true;
 }
 
+void* TypeLookup_RequestTypeSupport::create_data()
+{
+    return new TypeLookup_Request();
+}
+
+void TypeLookup_RequestTypeSupport::delete_data(
+        void* data)
+{
+    delete static_cast<TypeLookup_Request*>(data);
+}
+
+/*
+TypeLookup_ReplyPubSubType::TypeLookup_ReplyPubSubType()
+{
+
+}
+
+TypeLookup_ReplyPubSubType::~TypeLookup_ReplyPubSubType()
+{
+
+}
+
+bool TypeLookup_ReplyPubSubType::serialize(
+        void* data,
+        fastrtps::rtps::SerializedPayload_t* payload)
+{
+
+}
+
+bool TypeLookup_ReplyPubSubType::deserialize(
+        fastrtps::rtps::SerializedPayload_t *payload,
+        void *data)
+{
+
+}
+
+TypeLookup_ReplyTypeSupport::TypeLookup_ReplyTypeSupport()
+    : TypeSupport(new TypeLookup_Reply())
+{
+}
+*/
 bool TypeLookup_ReplyTypeSupport::serialize(
         void* data,
         fastrtps::rtps::SerializedPayload_t* payload)
@@ -1289,4 +1330,15 @@ bool TypeLookup_ReplyTypeSupport::deserialize(
     }
 
     return true;
+}
+
+void* TypeLookup_ReplyTypeSupport::create_data()
+{
+    return new TypeLookup_Reply();
+}
+
+void TypeLookup_ReplyTypeSupport::delete_data(
+        void* data)
+{
+    delete static_cast<TypeLookup_Reply*>(data);
 }

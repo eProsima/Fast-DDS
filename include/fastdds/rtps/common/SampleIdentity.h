@@ -94,6 +94,18 @@ namespace eprosima
                         return !(*this == sample_id);
                     }
 
+                    /**
+                     * @brief To allow using SampleIdentity as map key.
+                     * @param sample
+                     * @return
+                     */
+                    bool operator<(const SampleIdentity& sample) const
+                    {
+                        return writer_guid_ < sample.writer_guid_
+                            || (writer_guid_ == sample.writer_guid_
+                                   && sequence_number_ < sample.sequence_number_);
+                    }
+
                     SampleIdentity& writer_guid(const GUID_t &guid)
                     {
                         writer_guid_ = guid;

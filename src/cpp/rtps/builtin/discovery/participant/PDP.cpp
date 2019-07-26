@@ -1115,6 +1115,7 @@ void PDP::check_and_notify_type_discovery(
             // Discovering a type
             listener->on_type_discovery(
                 mp_RTPSParticipant->getUserRTPSParticipant(),
+                fastdds::dds::builtin::INVALID_SAMPLE_IDENTITY,
                 topic_name,
                 &type_id,
                 &type_obj,

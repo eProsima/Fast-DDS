@@ -51,6 +51,8 @@ namespace fastdds {
 namespace dds {
 namespace builtin {
 
+extern const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
+
 /**
  * Class TypeLookupManager that implements the TypeLookup Service described in the DDS-XTYPES 1.2 specification.
  * @ingroup XTYPES
@@ -162,11 +164,11 @@ public:
 #endif
 */
 
-    bool get_type_dependencies(
-            const TypeLookup_getTypeDependencies_In& in) const;
+    fastrtps::rtps::SampleIdentity get_type_dependencies(
+            const fastrtps::types::TypeIdentifierSeq& in) const;
 
-    bool get_types(
-            const TypeLookup_getTypes_In& in) const;
+    fastrtps::rtps::SampleIdentity get_types(
+            const fastrtps::types::TypeIdentifierSeq& in) const;
 
 private:
     /**
@@ -242,6 +244,7 @@ private:
     mutable TypeLookup_RequestTypeSupport request_type_;
 
     mutable TypeLookup_ReplyTypeSupport reply_type_;
+
 /*
 #if HAVE_SECURITY
     //!Pointer to the builtinRTPSParticipantMEssageWriter.
