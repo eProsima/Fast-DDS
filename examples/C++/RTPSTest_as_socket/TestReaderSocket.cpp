@@ -69,6 +69,7 @@ bool TestReaderSocket::init(std::string ip, uint32_t port)
 	loc.port = static_cast<uint16_t>(port);
 	ratt.endpoint.multicastLocatorList.push_back(loc);
 	mp_reader = RTPSDomain::createRTPSReader(mp_participant,ratt,mp_history,&m_listener);
+    mp_reader->enableMessagesFromUnkownWriters(true);
 	if(mp_reader == nullptr)
 		return false;
 
