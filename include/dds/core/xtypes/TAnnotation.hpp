@@ -85,12 +85,9 @@ class TBitsetAnnotation;
 template<typename DELEGATE>
 class TBitBoundAnnotation;
 
-} //namespace xtypes
-} //namespace core
-} //namespace dds
 
 template <typename DELEGATE>
-class dds::core::xtypes::TAnnotation : public dds::core::Reference<DELEGATE>
+class TAnnotation : public Reference<DELEGATE>
 {
 public:
 
@@ -99,7 +96,7 @@ public:
             dds::core::Reference,
             DELEGATE)
 
-    TAnnotation();
+    //TAnnotation();
 
     TypeKind kind() const;
 
@@ -109,7 +106,7 @@ protected:
 };
 
 template<typename DELEGATE>
-class dds::core::xtypes::TIdAnnotation : public dds::core::xtypes::TAnnotation<DELEGATE>
+class TIdAnnotation : public TAnnotation<DELEGATE>
 {
 public:
     TIdAnnotation(
@@ -119,28 +116,29 @@ public:
 };
 
 template<typename DELEGATE>
-class dds::core::xtypes::TKeyAnnotation : public dds::core::xtypes::TAnnotation<DELEGATE>
+class TKeyAnnotation : public TAnnotation<DELEGATE>
+
 {
 public:
     TKeyAnnotation();
 };
 
 template<typename DELEGATE>
-class dds::core::xtypes::TSharedAnnotation : public dds::core::xtypes::TAnnotation<DELEGATE>
+class TSharedAnnotation : public TAnnotation<DELEGATE>
 {
 public:
     TSharedAnnotation();
 };
 
 template<typename DELEGATE>
-class dds::core::xtypes::TNestedAnnotation : public dds::core::xtypes::TAnnotation<DELEGATE>
+class TNestedAnnotation : public TAnnotation<DELEGATE>
 {
 public:
     TNestedAnnotation();
 };
 
 template<typename DELEGATE>
-class dds::core::xtypes::TExtensibilityAnnotation : public dds::core::xtypes::TAnnotation<DELEGATE>
+class TExtensibilityAnnotation : public TAnnotation<DELEGATE>
 {
 public:
     TExtensibilityAnnotation(
@@ -150,14 +148,14 @@ public:
 };
 
 template<typename DELEGATE>
-class dds::core::xtypes::TMustUnderstandAnnotation : public dds::core::xtypes::TAnnotation<DELEGATE>
+class TMustUnderstandAnnotation : public TAnnotation<DELEGATE>
 {
 public:
     TMustUnderstandAnnotation();
 };
 
 template<typename DELEGATE>
-class dds::core::xtypes::TVerbatimAnnotation : public dds::core::xtypes::TAnnotation<DELEGATE>
+class TVerbatimAnnotation : public TAnnotation<DELEGATE>
 {
 public:
     TVerbatimAnnotation(
@@ -167,7 +165,7 @@ public:
 };
 
 template<typename DELEGATE>
-class dds::core::xtypes::TBitsetAnnotation : public dds::core::xtypes::TAnnotation<DELEGATE>
+class TBitsetAnnotation : public TAnnotation<DELEGATE>
 {
 public:
     TBitsetAnnotation();
@@ -175,11 +173,17 @@ public:
 };
 
 template<typename DELEGATE>
-class  dds::core::xtypes::TBitBoundAnnotation : public dds::core::xtypes::TAnnotation<DELEGATE>
+class  TBitBoundAnnotation : public TAnnotation<DELEGATE>
 {
 public:
     TBitBoundAnnotation(
             uint32_t bound);
 };
 
+} //namespace xtypes
+} //namespace core
+} //namespace dds
+
+
 #endif //OMG_DDS_CORE_XTYPES_TANNOTATION_HPP_
+
