@@ -598,11 +598,9 @@ bool StatefulReader::acceptMsgFrom(
         }
     }
 
-    // Check if it's a framework's one
-    // We deliberately ignore m_acceptMessagesFromUnkownWriters, as it
-    // doesn't make sense within a stateful reader to accept messages
-    // from generic unknown writers
-    if ((m_trustedWriterEntityId != c_EntityId_Unknown)
+    // Check if it's a framework's one. In this case, m_acceptMessagesFromUnkownWriters
+    // is an enabler for the trusted entity comparison
+    if (m_acceptMessagesFromUnkownWriters 
         && (writerId.entityId == m_trustedWriterEntityId))
     {
         *wp = nullptr;
