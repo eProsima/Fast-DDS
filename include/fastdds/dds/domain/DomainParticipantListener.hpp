@@ -103,12 +103,13 @@ public:
      */
     virtual void on_type_discovery(
             DomainParticipant* participant,
+            const fastrtps::rtps::SampleIdentity& request_sample_id,
             const fastrtps::string_255& topic,
             const fastrtps::types::TypeIdentifier* identifier,
             const fastrtps::types::TypeObject* object,
             fastrtps::types::DynamicType_ptr dyn_type)
     {
-        (void)participant, (void)topic, (void)identifier, (void)object, (void)dyn_type;
+        (void)participant, (void)request_sample_id, (void)topic, (void)identifier, (void)object, (void)dyn_type;
     }
 
     /*!

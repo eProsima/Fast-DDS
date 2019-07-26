@@ -203,6 +203,7 @@ void TestPublisher::PubListener::on_publication_matched(
 
 void TestPublisher::PartListener::on_type_discovery(
         eprosima::fastdds::dds::DomainParticipant*,
+        const rtps::SampleIdentity&,
         const eprosima::fastrtps::string_255& topic,
         const eprosima::fastrtps::types::TypeIdentifier*,
         const eprosima::fastrtps::types::TypeObject*,

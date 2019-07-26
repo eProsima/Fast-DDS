@@ -96,6 +96,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
                         // If build_dynamic_type failed, just sent the nullptr already contained on it.
                         tlm_->participant_->getListener()->on_type_discovery(
                             tlm_->participant_->getUserRTPSParticipant(),
+                            reply.header.requestId,
                             "", // No topic_name available
                             &pair.type_identifier(),
                             &pair.type_object(),

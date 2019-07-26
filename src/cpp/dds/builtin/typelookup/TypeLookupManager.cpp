@@ -33,6 +33,8 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastrtps/types/TypeObjectFactory.h>
 //#include <fastdds/rtps/common/Guid.h>
 //#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 
@@ -50,6 +52,8 @@ using fastrtps::Log;
 namespace fastdds {
 namespace dds {
 namespace builtin {
+
+const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
 
 TypeLookupManager::TypeLookupManager(
         BuiltinProtocols* prot)
@@ -100,10 +104,22 @@ TypeLookupManager::~TypeLookupManager()
     delete builtin_reply_reader_secure_history_;
 #endif
 */
-    participant_->deleteUserEndpoint(builtin_reply_reader_);
-    participant_->deleteUserEndpoint(builtin_reply_writer_);
-    participant_->deleteUserEndpoint(builtin_request_reader_);
-    participant_->deleteUserEndpoint(builtin_request_writer_);
+    if (nullptr != builtin_reply_reader_)
+    {
+        participant_->deleteUserEndpoint(builtin_reply_reader_);
+    }
+    if (nullptr != builtin_reply_writer_)
+    {
+        participant_->deleteUserEndpoint(builtin_reply_writer_);
+    }
+    if (nullptr != builtin_request_reader_)
+    {
+        participant_->deleteUserEndpoint(builtin_request_reader_);
+    }
+    if (nullptr != builtin_request_writer_)
+    {
+        participant_->deleteUserEndpoint(builtin_request_writer_);
+    }
     delete builtin_request_writer_history_;
     delete builtin_reply_writer_history_;
     delete builtin_request_reader_history_;
@@ -443,36 +459,46 @@ bool TypeLookupManager::create_secure_endpoints()
 #endif
 */
 
-bool TypeLookupManager::get_type_dependencies(
-        const TypeLookup_getTypeDependencies_In& in) const
+SampleIdentity TypeLookupManager::get_type_dependencies(
+        const fastrtps::types::TypeIdentifierSeq& id_seq) const
 {
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
+        TypeLookup_getTypeDependencies_In in;
+        in.type_ids = id_seq;
         TypeLookup_RequestTypeSupport type;
         TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.create_data());
         request->data.getTypeDependencies(in);
 
         bool result = send_request(*request);
         type.delete_data(request);
-        return result;
+        if (result)
+        {
+            return request->header.requestId;
+        }
     }
-    return false;
+    return INVALID_SAMPLE_IDENTITY;
 }
 
-bool TypeLookupManager::get_types(
-        const TypeLookup_getTypes_In& in) const
+SampleIdentity TypeLookupManager::get_types(
+        const fastrtps::types::TypeIdentifierSeq& id_seq) const
 {
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
+        TypeLookup_getTypes_In in;
+        in.type_ids = id_seq;
         TypeLookup_RequestTypeSupport type;
         TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.create_data());
         request->data.getTypes(in);
 
         bool result = send_request(*request);
         type.delete_data(request);
-        return result;
+        if (result)
+        {
+            return request->header.requestId;
+        }
     }
-    return false;
+    return INVALID_SAMPLE_IDENTITY;
 }
 
 std::string TypeLookupManager::get_instanceName() const

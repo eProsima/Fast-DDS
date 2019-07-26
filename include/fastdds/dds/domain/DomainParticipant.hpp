@@ -21,8 +21,10 @@
 #define _FASTDDS_DOMAIN_PARTICIPANT_HPP_
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastrtps/types/TypeIdentifier.h>
 
 #include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 
 #include <utility>
@@ -30,12 +32,16 @@
 namespace eprosima{
 namespace fastrtps{
 
-namespace rtps{
+namespace rtps {
 class RTPSParticipant;
 class WriterProxyData;
 class ReaderProxyData;
 class ResourceEvent;
-}
+} // namespace rtps
+
+namespace types {
+class TypeInformation;
+} // namespace types
 
 class ParticipantAttributes;
 class PublisherAttributes;
@@ -56,11 +62,6 @@ class Subscriber;
 class SubscriberQos;
 class SubscriberImpl;
 class SubscriberListener;
-
-namespace builtin {
-class TypeLookup_getTypeDependencies_In;
-class TypeLookup_getTypes_In;
-} // namespace builtin
 
 /**
  * Class DomainParticipant used to group Publishers and Subscribers into a single working unit.
@@ -380,8 +381,8 @@ public:
      * @param out
      * @return
      */
-    bool get_type_dependencies(
-            const builtin::TypeLookup_getTypeDependencies_In& in) const;
+    fastrtps::rtps::SampleIdentity get_type_dependencies(
+            const fastrtps::types::TypeIdentifierSeq& in) const;
 
     /**
      * A DomainParticipant may invoke the operation getTypes to retrieve the TypeObjects associated with a
@@ -390,8 +391,23 @@ public:
      * @param out
      * @return
      */
-    bool get_types(
-            const builtin::TypeLookup_getTypes_In& in) const;
+    fastrtps::rtps::SampleIdentity get_types(
+            const fastrtps::types::TypeIdentifierSeq& in) const;
+
+    /**
+     * Helps the user to solve all dependencies calling internally to the typelookup service
+     * and registers the resulting dynamic type.
+     * The registration will be perform asynchronously and the user will be notified through the
+     * given callback, which receives the type_name as unique argument.
+     * @param type_information
+     * @param type_name
+     * @param callback
+     * @return
+     */
+    bool register_remote_type(
+            const fastrtps::types::TypeInformation& type_information,
+            const std::string& type_name,
+            std::function<void(const std::string& name)>& callback);
 
 private:
 

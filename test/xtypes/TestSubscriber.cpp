@@ -228,6 +228,7 @@ void TestSubscriber::SubListener::on_data_available(
 
 void TestSubscriber::PartListener::on_type_discovery(
         eprosima::fastdds::dds::DomainParticipant*,
+        const rtps::SampleIdentity&,
         const eprosima::fastrtps::string_255& topic,
         const eprosima::fastrtps::types::TypeIdentifier*,
         const eprosima::fastrtps::types::TypeObject*,

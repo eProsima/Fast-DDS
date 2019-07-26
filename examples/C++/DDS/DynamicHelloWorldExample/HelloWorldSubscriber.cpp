@@ -97,6 +97,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(eprosima::fastdds::dds
 
 void HelloWorldSubscriber::SubListener::on_type_discovery(
         DomainParticipant*,
+        const rtps::SampleIdentity&,
         const string_255& topic,
         const types::TypeIdentifier*,
         const types::TypeObject*,
