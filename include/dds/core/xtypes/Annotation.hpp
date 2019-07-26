@@ -17,10 +17,10 @@
  * limitations under the License.
  */
 
-#ifndef OMG_DDS_CORE_XTYPES_TANNOTATION_HPP_
-#define OMG_DDS_CORE_XTYPES_TANNOTATION_HPP_
+#ifndef OMG_DDS_CORE_XTYPES_ANNOTATION_HPP_
+#define OMG_DDS_CORE_XTYPES_ANNOTATION_HPP_
 
-#include <dds/core/Reference.hpp>
+#include <dds/core/xtypes/detail/Annotation.hpp>
 
 namespace dds {
 namespace core {
@@ -55,6 +55,7 @@ struct ExtensibilityKind_def
 };
 typedef dds::core::SafeEnum<ExtensibilityKind_def> ExtensibilityKind;
 
+<<<<<<< HEAD:include/dds/core/xtypes/TAnnotation.hpp
 template<typename DELEGATE>
 class TAnnotation;
 
@@ -85,6 +86,8 @@ class TBitsetAnnotation;
 template<typename DELEGATE>
 class TBitBoundAnnotation;
 
+=======
+>>>>>>> Added annotations to MemberType and DynamicType. Style fixes.:include/dds/core/xtypes/Annotation.hpp
 
 template <typename DELEGATE>
 class TAnnotation : public Reference<DELEGATE>
@@ -180,10 +183,46 @@ public:
             uint32_t bound);
 };
 
+<<<<<<< HEAD:include/dds/core/xtypes/TAnnotation.hpp
+=======
+typedef TAnnotation<detail::Annotation> Annotation;
+typedef TIdAnnotation<detail::IdAnnotation> IdAnnotation;
+typedef TKeyAnnotation<detail::KeyAnnotation> KeyAnnotation;
+typedef TSharedAnnotation<detail::SharedAnnotation> SharedAnnotation;
+typedef TNestedAnnotation<detail::NestedAnnotation> NestedAnnotation;
+typedef TExtensibilityAnnotation<detail::ExtensibilityAnnotation> ExtensibilityAnnotation;
+typedef TMustUnderstandAnnotation<detail::MustUnderstandAnnotation> MustUnderstandAnnotation;
+typedef TVerbatimAnnotation<detail::VerbatimAnnotation> VerbatimAnnotation;
+typedef TBitsetAnnotation<detail::BitsetAnnotation> BitsetAnnotation;
+typedef TBitBoundAnnotation<detail::BitBoundAnnotation> BitBoundAnnotation;
+
+namespace annotation
+{
+    // These functions can be used to get cached instances,
+    // to avoid the proliferation of small annotation objects.
+    IdAnnotation id(uint32_t);
+    KeyAnnotation key();
+    SharedAnnotation shared();
+    NestedAnnotation nested();
+    ExtensibilityAnnotation extensibility(ExtensibilityKind kind);
+    ExtensibilityAnnotation get_final();
+    ExtensibilityAnnotation extensible();
+    ExtensibilityAnnotation get_mutable();
+    MustUnderstandAnnotation must_understand();
+    VerbatimAnnotation verbatim(const std::string& text);
+    BitsetAnnotation bitset();
+    BitsetAnnotation bit_bound(uint32_t bound);
+
+} //namespace annotation
+>>>>>>> Added annotations to MemberType and DynamicType. Style fixes.:include/dds/core/xtypes/Annotation.hpp
 } //namespace xtypes
 } //namespace core
 } //namespace dds
 
+<<<<<<< HEAD:include/dds/core/xtypes/TAnnotation.hpp
 
 #endif //OMG_DDS_CORE_XTYPES_TANNOTATION_HPP_
 
+=======
+#endif // OMG_DDS_CORE_XTYPES_ANNOTATION_HPP_
+>>>>>>> Added annotations to MemberType and DynamicType. Style fixes.:include/dds/core/xtypes/Annotation.hpp

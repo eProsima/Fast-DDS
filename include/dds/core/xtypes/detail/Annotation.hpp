@@ -26,14 +26,13 @@ namespace detail {
 class Annotation { };
 class IdAnnotation : public  Annotation { };
 class KeyAnnotation : public  Annotation { };
-class SharedAnnotation : public  Annotation  { };
-class NestedAnnotation : public  Annotation  { };
-class ExtensibilityAnnotation : public  Annotation  { };
+class SharedAnnotation : public  Annotation { };
+class NestedAnnotation : public  Annotation { };
+class ExtensibilityAnnotation : public  Annotation { };
 class MustUnderstandAnnotation : public  Annotation { };
 class VerbatimAnnotation : public  Annotation { };
 class BitsetAnnotation : public  Annotation { };
-class BitBoundAnnotation : public  Annotation  { };
-
+class BitBoundAnnotation : public  Annotation { };
 } //namespace detail
 } //namespace xtypes
 } //namespace core

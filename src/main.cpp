@@ -26,8 +26,7 @@
 #include <dds/core/xtypes/detail/TypeProvider.hpp>
 
 #include <dds/core/xtypes/TypeKind.hpp>
-#include <dds/core/xtypes/Annotations.hpp>
-#include <dds/core/xtypes/TAnnotation.hpp>
+#include <dds/core/xtypes/Annotation.hpp>
 #include <dds/core/xtypes/DynamicType.hpp>
 #include <dds/core/xtypes/MemberType.hpp>
 #include <dds/core/xtypes/PrimitiveTypes.hpp>

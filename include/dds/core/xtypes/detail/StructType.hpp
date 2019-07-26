@@ -27,29 +27,29 @@ template<typename T>
 class TStructType; //[EPROSIMA CHECK]: changes StructType by TStructType with a template
 
 template<typename T>
-bool isFinal(
+bool is_final(
         const TStructType<T>& s)
 {
     return false;
 }
 
 template<typename T>
-bool isExtensible(
+bool is_extensible(
         const TStructType<T>& s)
 {
     return false;
 }
 
 template<typename T>
-bool isMutable(
+bool is_mutable(
         const TStructType<T>& s)
 {
     return false;
 }
 
 template<typename T>
-bool isNested(
-        const TStructType<T>& s)
+bool is_nested(
+const TStructType<T>& s)
 {
     return false;
 }

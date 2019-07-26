@@ -23,7 +23,10 @@
 #include <dds/core/Reference.hpp>
 #include <dds/core/detail/inttypes.hpp>
 #include <dds/core/xtypes/DynamicType.hpp>
+#include <dds/core/xtypes/Annotation.hpp>
 #include <dds/core/xtypes/detail/MemberType.hpp>
+
+#include <vector>
 
 namespace dds {
 namespace core {
@@ -42,9 +45,24 @@ public:
             const std::string& name,
             const DynamicType& type);
 
+    TMemberType(
+            const std::string& name,
+            const DynamicType& type,
+            const std::vector<Annotation>& annotations);
+
+    template <typename AnnotationIter>
+    TMemberType(
+            const std::string& name,
+            const DynamicType& type,
+            const AnnotationIter& begin,
+            const AnnotationIter& end);
+
     const std::string& name() const;
 
     const dds::core::xtypes::DynamicType& type() const;
+
+    TMemberType add_annotation(const Annotation& annotation);
+    TMemberType remove_annotation(const Annotation& annotation);
 
     bool is_optional() const;
 

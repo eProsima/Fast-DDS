@@ -41,6 +41,7 @@ public:
 
     TypeKind kind() const;
 
+<<<<<<< HEAD
     bool operator ==(
             const TDynamicType& that) const;
 
@@ -49,6 +50,12 @@ public:
     {
         return !(*this == that);
     }
+=======
+    const std::vector<Annotation>& annotations() const;
+
+    bool operator == (const TDynamicType& that) const;
+    bool operator != (const TDynamicType& that) const { return !(*this == that); }
+>>>>>>> Added annotations to MemberType and DynamicType. Style fixes.
 
 protected:
     TDynamicType(
@@ -56,9 +63,29 @@ protected:
             TypeKind kind);
 
     TDynamicType(
+<<<<<<< HEAD
             const TDynamicType& other) = default;
 
     virtual ~TDynamicType() = default;
+=======
+            const std::string& name,
+            TypeKind kind,
+            const Annotation& annotation);
+
+    TDynamicType(
+            const std::string& name,
+            TypeKind kind,
+            const std::vector<Annotation>& annotations);
+
+    template <typename AnnotationIter>
+    TDynamicType(
+            const std::string& name,
+            TypeKind kind,
+            const AnnotationIter& begin,
+            const AnnotationIter& end);
+
+    TDynamicType(const TDynamicType& other) = default;
+>>>>>>> Added annotations to MemberType and DynamicType. Style fixes.
 };
 
 template<typename T>
