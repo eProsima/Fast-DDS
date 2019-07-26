@@ -42,7 +42,7 @@ struct AnnotationKind_def
     };
 };
 
-typedef dds::core::safe_enum<AnnotationKind_def> AnnotationKind;
+typedef dds::core::SafeEnum<AnnotationKind_def> AnnotationKind;
 
 struct ExtensibilityKind_def
 {
@@ -53,7 +53,7 @@ struct ExtensibilityKind_def
         MUTABLE
     };
 };
-typedef dds::core::safe_enum<ExtensibilityKind_def> ExtensibilityKind;
+typedef dds::core::SafeEnum<ExtensibilityKind_def> ExtensibilityKind;
 
 template<typename DELEGATE>
 class TAnnotation;

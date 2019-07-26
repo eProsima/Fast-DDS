@@ -27,42 +27,45 @@
 namespace dds {
 namespace core {
 namespace xtypes {
-//namespace detail { //[EPROSIMA CHECK]: We need this header?
 
-      // Notice that const char* const is used instead of std::string
-      // to limit initialization issues with ctors.
+// Notice that const char* const is used instead of std::string
+// to limit initialization issues with ctors.
 
 template<>
-struct dynamic_type_traits<uint8_t> {
-    static const TypeKind TYPE_ID = TypeKind::UINT_8_TYPE;
-    static const  char* const NAME; // "uint8_t"
+struct dynamic_type_traits<uint8_t>
+{
+    static constexpr TypeKind TYPE_ID = TypeKind::UINT_8_TYPE;
+    static constexpr const char* NAME = "uint8_t";
 };
 
 template<>
-struct dynamic_type_traits<int16_t> {
-    static const TypeKind TYPE_ID = TypeKind::INT_16_TYPE;
-    static const  char* const NAME; // "uint16_t"
+struct dynamic_type_traits<int16_t>
+{
+    static constexpr TypeKind TYPE_ID = TypeKind::INT_16_TYPE;
+    static constexpr const char* NAME = "uint16_t";
 };
 
 template<>
-struct dynamic_type_traits<uint16_t> {
-    static const TypeKind TYPE_ID = TypeKind::UINT_16_TYPE;
-    static const  char* const NAME; // "int16_t"
+struct dynamic_type_traits<uint16_t>
+{
+    static constexpr TypeKind TYPE_ID = TypeKind::UINT_16_TYPE;
+    static constexpr const char* NAME = "int16_t";
 };
 
 template<>
-struct dynamic_type_traits<int32_t> {
-    static const TypeKind TYPE_ID = TypeKind::INT_32_TYPE;
-    static const  char* const NAME; // "int16_t"
+struct dynamic_type_traits<int32_t>
+{
+    static constexpr TypeKind TYPE_ID = TypeKind::INT_32_TYPE;
+    static constexpr const char* NAME = "int16_t";
 };
 
 template<>
-struct dynamic_type_traits<uint32_t> {
-    static const TypeKind TYPE_ID = TypeKind::UINT_32_TYPE;
-    static const  char* const NAME; // "uint32_t"
+struct dynamic_type_traits<uint32_t>
+{
+    static constexpr TypeKind TYPE_ID = TypeKind::UINT_32_TYPE;
+    static constexpr const char* NAME = "uint32_t";
 };
 
-//} //namespace detail
 } //namespace xtypes
 } //namespace core
 } //namespace dds

@@ -70,7 +70,7 @@ struct TypeKind_def {
     };
 };
 
-typedef dds::core::safe_enum<TypeKind_def> TypeKind;
+typedef dds::core::SafeEnum<TypeKind_def> TypeKind;
 
 } //namespace xtypes
 } //namespace core
