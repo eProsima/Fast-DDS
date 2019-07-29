@@ -274,7 +274,7 @@ class RTPSAsSocketReader
             }
             else
             {
-                reader_->enableMessagesFromUnkownWriters(true);
+                reader_->enableMessagesFromUnknownWriters(true);
             }
         }
 

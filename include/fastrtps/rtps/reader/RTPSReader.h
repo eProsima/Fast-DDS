@@ -52,7 +52,6 @@ class RTPSReader : public Endpoint
     friend class ReaderHistory;
     friend class RTPSParticipantImpl;
     friend class MessageReceiver;
-    friend class EDP;
     friend class WLP;
 
 protected:
@@ -232,11 +231,16 @@ public:
     //! The liveliness changed status struct as defined in the DDS
     LivelinessChangedStatus liveliness_changed_status_;
 
+    inline void enableMessagesFromUnknownWriters(bool enable)
+    {
+        m_acceptMessagesFromUnknownWriters = enable;
+    }
+
 protected:
 
     void setTrustedWriter(EntityId_t writer)
     {
-        m_acceptMessagesFromUnkownWriters=false;
+        m_acceptMessagesFromUnknownWriters = false;
         m_trustedWriterEntityId = writer;
     }
 
@@ -286,7 +290,7 @@ protected:
     //!Accept msg to unknwon readers (default=true)
     bool m_acceptMessagesToUnknownReaders;
     //!Accept msg from unknwon writers (BE-true,RE-false)
-    bool m_acceptMessagesFromUnkownWriters;
+    bool m_acceptMessagesFromUnknownWriters;
     //!Trusted writer (for Builtin)
     EntityId_t m_trustedWriterEntityId;
     //!Expects Inline Qos.

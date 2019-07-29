@@ -88,7 +88,6 @@ bool EDP::newLocalReaderProxyData(RTPSReader* reader, const TopicAttributes& att
         rpd.plugin_security_attributes_ = 0UL;
     }
 #endif
-    reader->m_acceptMessagesFromUnkownWriters = false;
 
     if (att.getTopicDiscoveryKind() != NO_CHECK)
     {
@@ -650,7 +649,7 @@ bool EDP::pairingReader(RTPSReader* R, const ParticipantProxyData& pdata, const 
             if(valid)
             {
 #if HAVE_SECURITY
-                if(!mp_RTPSParticipant->security_manager().discovered_writer(R->m_guid, (*pit)->m_guid,
+                if(!mp_RTPSParticipant->security_manager().discovered_writer(R->getGuid(), (*pit)->m_guid,
                             **wdatait, R->getAttributes().security_attributes()))
                 {
                     logError(RTPS_EDP, "Security manager returns an error for reader " << R->getGuid());
