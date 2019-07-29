@@ -57,7 +57,9 @@ class RTPSWithRegistrationWriter
 
             ~Listener(){};
 
-            void on_writer_matched(eprosima::fastrtps::rtps::RTPSWriter* /*writer*/, eprosima::fastrtps::rtps::MatchingInfo& info)
+            void onWriterMatched(
+                    eprosima::fastrtps::rtps::RTPSWriter* /*writer*/,
+                    eprosima::fastrtps::rtps::MatchingInfo& info) override
             {
                 if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
                     writer_.matched();
@@ -142,9 +144,9 @@ class RTPSWithRegistrationWriter
 
         while(it != msgs.end())
         {
-	    eprosima::fastrtps::rtps::CacheChange_t * ch = writer_->new_change(*it,eprosima::fastrtps::rtps::ALIVE);
+        eprosima::fastrtps::rtps::CacheChange_t * ch = writer_->new_change(*it,eprosima::fastrtps::rtps::ALIVE);
 
-	    eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
+        eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
             eprosima::fastcdr::Cdr cdr(buffer);
 
             cdr << *it;
@@ -180,8 +182,8 @@ class RTPSWithRegistrationWriter
     /*** Function to change QoS ***/
     RTPSWithRegistrationWriter& memoryMode(const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryPolicy)
     {
-	hattr_.memoryPolicy = memoryPolicy;
-	return *this;
+    hattr_.memoryPolicy = memoryPolicy;
+    return *this;
     }
 
 

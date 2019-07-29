@@ -38,12 +38,11 @@
 
 namespace eprosima {
 namespace fastrtps{
-namespace rtps
-{
+namespace rtps {
 class RTPSWriter;
 class RTPSParticipant;
 class TimedEvent;
-}
+} // namespace rtps
 
 } // namespace fastrtps
 
@@ -140,25 +139,31 @@ public:
     void get_offered_deadline_missed_status(
             fastrtps::OfferedDeadlineMissedStatus& status);
 
-    bool set_attributes(const fastrtps::rtps::WriterAttributes& att);
+    bool set_attributes(
+            const fastrtps::rtps::WriterAttributes& att);
 
     const fastrtps::rtps::WriterAttributes& get_attributes() const;
 
-    bool set_qos(const fastrtps::WriterQos& qos);
+    bool set_qos(
+            const fastrtps::WriterQos& qos);
 
     const fastrtps::WriterQos& get_qos() const;
 
-    bool set_topic(const fastrtps::TopicAttributes& att);
+    bool set_topic(
+            const fastrtps::TopicAttributes& att);
 
     const fastrtps::TopicAttributes& get_topic() const;
 
     const DataWriterListener* get_listener() const;
 
-    bool set_listener(DataWriterListener* listener);
+    bool set_listener(
+            DataWriterListener* listener);
 
+    /* TODO
     bool get_key_value(
             void* key_holder,
             const fastrtps::rtps::InstanceHandle_t& handle);
+    */
 
     bool dispose(
             void* data,
@@ -170,6 +175,7 @@ public:
     bool get_liveliness_lost_status(
             fastrtps::LivelinessLostStatus& status);
 
+    /* TODO
     bool get_offered_incompatible_qos_status(
             fastrtps::OfferedIncompatibleQosStatus& status)
     {
@@ -177,6 +183,7 @@ public:
         (void)status;
         return false;
     }
+    */
 
     const Publisher* get_publisher() const;
 

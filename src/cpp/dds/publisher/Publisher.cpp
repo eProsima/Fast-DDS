@@ -169,7 +169,8 @@ const fastrtps::PublisherAttributes& Publisher::get_attributes() const
     return impl_->get_attributes();
 }
 
-bool Publisher::set_attributes(const fastrtps::PublisherAttributes& att)
+bool Publisher::set_attributes(
+        const fastrtps::PublisherAttributes& att)
 {
     return impl_->set_attributes(att);
 }

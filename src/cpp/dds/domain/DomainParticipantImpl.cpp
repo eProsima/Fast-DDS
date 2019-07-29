@@ -211,7 +211,7 @@ Publisher* DomainParticipantImpl::create_publisher(
         return nullptr;
     }
 
-    if(!att.qos.checkQos() || !att.topic.checkQos())
+    if(!qos.check_qos() || !att.qos.checkQos() || !att.topic.checkQos())
     {
         return nullptr;
     }
@@ -321,10 +321,11 @@ bool DomainParticipantImpl::set_default_publisher_qos(
     if (&qos == &PUBLISHER_QOS_DEFAULT)
     {
         default_pub_qos_.set_qos(PUBLISHER_QOS_DEFAULT, true);
+        return true;
     }
     else if (qos.check_qos())
     {
-        default_pub_qos_.set_qos(qos, false);
+        default_pub_qos_.set_qos(qos, true);
         return true;
     }
     return false;
@@ -341,10 +342,11 @@ bool DomainParticipantImpl::set_default_subscriber_qos(
     if (&qos == &SUBSCRIBER_QOS_DEFAULT)
     {
         default_sub_qos_.set_qos(SUBSCRIBER_QOS_DEFAULT, true);
+        return true;
     }
     else if (qos.check_qos())
     {
-        default_sub_qos_.set_qos(qos, false);
+        default_sub_qos_.set_qos(qos, true);
         return true;
     }
     return false;
@@ -400,40 +402,26 @@ bool DomainParticipantImpl::contains_entity(
     if (recursive)
     {
         // Look into publishers
-        std::vector<DataWriter*> writers;
         {
             std::lock_guard<std::mutex> lock(mtx_pubs_);
             for (auto pit : publishers_)
             {
-                pit.second->get_datawriters(writers);
-            }
-        }
-
-        for (DataWriter* writer : writers)
-        {
-            InstanceHandle_t h(writer->guid());
-            if (h == handle)
-            {
-                return true;
+                if (pit.second->contains_entity(handle))
+                {
+                    return true;
+                }
             }
         }
 
         // Look into subscribers
         std::vector<DataReader*> readers;
         {
-            std::lock_guard<std::mutex> lock(mtx_pubs_);
-            for (auto pit : subscribers_)
+            for (auto sit : subscribers_)
             {
-                pit.second->get_datareaders(readers);
-            }
-        }
-
-        for (DataReader* reader : readers)
-        {
-            InstanceHandle_t h(reader->guid());
-            if (h == handle)
-            {
-                return true;
+                if (sit.second->contains_entity(handle))
+                {
+                    return true;
+                }
             }
         }
     }
@@ -503,11 +491,12 @@ Subscriber* DomainParticipantImpl::create_subscriber(
         return nullptr;
     }
 
-    if(!att.qos.checkQos() || !att.topic.checkQos())
+    if(!qos.check_qos() || !att.qos.checkQos() || !att.topic.checkQos())
     {
         return nullptr;
     }
 
+    //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
     SubscriberImpl* subimpl = new SubscriberImpl(this, qos, att, listen);
     Subscriber* sub = new Subscriber(subimpl);
     subimpl->user_subscriber_ = sub;
@@ -592,14 +581,9 @@ bool DomainParticipantImpl::unregister_type(
 
         for (auto sit : subscribers_)
         {
-            std::vector<DataReader*> readers;
-            sit.second->get_datareaders(readers);
-            for (DataReader* reader : readers)
+            if (sit.second->type_in_use(type_name))
             {
-                if (reader->get_topic().getTopicDataType() == type_name)
-                {
-                    return false; // Is in use
-                }
+                return false; // Is in use
             }
         }
     }
@@ -610,18 +594,14 @@ bool DomainParticipantImpl::unregister_type(
 
         for (auto pit : publishers_)
         {
-            std::vector<DataWriter*> writers;
-            pit.second->get_datawriters(writers);
-            for (DataWriter* writer : writers)
+            if (pit.second->type_in_use(type_name))
             {
-                if (writer->get_topic().getTopicDataType() == type_name)
-                {
-                    return false; // Is in use
-                }
+                return false; // Is in use
             }
         }
     }
 
+    std::lock_guard<std::mutex> lock(mtx_types_);
     types_.erase(type_name);
 
     return true;

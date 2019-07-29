@@ -118,7 +118,7 @@ public:
         return get()->deleteData(data);
     }
 
-    RTPS_DllAPI bool getKey(
+    RTPS_DllAPI bool get_key(
             void* data,
             fastrtps::rtps::InstanceHandle_t* i_handle,
             bool force_md5 = false)

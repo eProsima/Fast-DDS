@@ -18,8 +18,8 @@
 
 
 
-#ifndef _FASTDDS_PUBLISHERIMPL_H_
-#define _FASTDDS_PUBLISHERIMPL_H_
+#ifndef _FASTDDS_PUBLISHERIMPL_HPP_
+#define _FASTDDS_PUBLISHERIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastrtps/attributes/PublisherAttributes.h>
@@ -96,6 +96,9 @@ public:
     DataWriter* lookup_datawriter(
             const std::string& topic_name) const;
 
+    bool contains_entity(
+            const fastrtps::rtps::InstanceHandle_t& handle) const;
+
     bool get_datawriters(
         std::vector<DataWriter*>& writers) const;
 
@@ -150,6 +153,9 @@ public:
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
+
+    //! Check if any writer uses the given type name
+    bool type_in_use(const std::string& type_name) const;
 
 private:
 
@@ -207,4 +213,4 @@ private:
 } /* namespace fastdds */
 } /* namespace eprosima */
 #endif
-#endif /* _FASTDDS_PUBLISHER_H_ */
+#endif /* _FASTDDS_PUBLISHER_HPP_ */

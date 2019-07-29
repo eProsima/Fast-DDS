@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_PUBLISHER_H_
-#define _FASTDDS_PUBLISHER_H_
+#ifndef _FASTDDS_PUBLISHER_HPP_
+#define _FASTDDS_PUBLISHER_HPP_
 
 #include <fastrtps/fastrtps_dll.h>
 #include <fastdds/rtps/common/Time_t.h>
@@ -26,11 +26,6 @@
 
 namespace eprosima {
 namespace fastrtps {
-
-namespace rtps
-{
-class RTPSParticipant;
-}
 
 class TopicAttributes;
 class WriterQos;
@@ -68,7 +63,6 @@ public:
 
     /**
      * Allows accessing the Publisher Qos.
-     * @return
      */
     const PublisherQos& get_qos() const;
 
@@ -90,14 +84,13 @@ public:
 
     /**
      * Retrieves the attached PublisherListener.
-     * @return
      */
     const PublisherListener* get_listener() const;
 
     /**
      * Modifies the PublisherListener.
      * @param listener
-     * @return
+     * @return true
      */
     bool set_listener(
             PublisherListener* listener);
@@ -107,7 +100,7 @@ public:
      * @param topic_attr
      * @param writer_qos
      * @param listener
-     * @return
+     * @return Pointer to the created DataWriter. nullptr if failed.
      */
     DataWriter* create_datawriter(
             const fastrtps::TopicAttributes& topic_attr,
@@ -125,7 +118,6 @@ public:
      * Depending on the settings of the WRITER_DATA_LIFECYCLE QosPolicy, the deletion of the DataWriter
      * may also dispose all instances.
      * @param writer
-     * @return
      */
     bool delete_datawriter(
             DataWriter* writer);
@@ -137,7 +129,6 @@ public:
      * If multiple DataWriter attached to the Publisher satisfy this condition, then the operation will return
      * one of them. It is not specified which one.
      * @param topic_name
-     * @return
      */
     DataWriter* lookup_datawriter(
             const std::string& topic_name) const;
@@ -145,7 +136,7 @@ public:
     /**
      * Fills the given vector with all the datawriters of this publisher.
      * @param writers
-     * @return
+     * @return true
      */
     bool get_datawriters(
         std::vector<DataWriter*>& writers) const;
@@ -180,7 +171,6 @@ public:
 
     /**
      * This operation returns the DomainParticipant to which the Publisher belongs.
-     * @return
      */
     const DomainParticipant* get_participant() const;
 
@@ -199,7 +189,6 @@ public:
      * should be reset back to the initial values the factory would use, that is the values that would be used
      * if the set_default_datawriter_qos operation had never been called.
      * @param qos
-     * @return
      */
     bool set_default_datawriter_qos(
             const fastrtps::WriterQos& qos);
@@ -245,7 +234,8 @@ public:
      * @param att Reference to a PublisherAttributes object to update the parameters.
      * @return True if correctly updated, false if ANY of the updated parameters cannot be updated.
      */
-    bool set_attributes(const fastrtps::PublisherAttributes& att);
+    bool set_attributes(
+            const fastrtps::PublisherAttributes& att);
 
     /**
      * Returns the Publisher's handle.
@@ -262,4 +252,4 @@ private:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif /* _FASTDDS_PUBLISHER_H_ */
+#endif /* _FASTDDS_PUBLISHER_HPP_ */

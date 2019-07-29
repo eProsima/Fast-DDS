@@ -34,13 +34,11 @@ class TopicAttributes;
 class ReaderQos;
 class LivelinessChangedStatus;
 
-namespace rtps
-{
-class RTPSReader;
+namespace rtps {
 class ReaderAttributes;
 class GUID_t;
 class InstanceHandle_t;
-}
+} // namespace rtps
 
 class SampleInfo_t;
 
@@ -59,7 +57,8 @@ class TypeSupport;
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
  *  @ingroup FASTDDS_MODULE
  */
-class DataReader {
+class DataReader
+{
     friend class SubscriberImpl;
 
     /**
@@ -129,19 +128,26 @@ public:
     void get_requested_deadline_missed_status(
             fastrtps::RequestedDeadlineMissedStatus& status);
 
-    bool set_attributes(const fastrtps::rtps::ReaderAttributes& att);
+    bool set_attributes(
+            const fastrtps::rtps::ReaderAttributes& att);
 
     const fastrtps::rtps::ReaderAttributes& get_attributes() const;
 
-    bool set_qos(const fastrtps::ReaderQos& qos);
+    bool set_qos(
+            const fastrtps::ReaderQos& qos);
 
     const fastrtps::ReaderQos& get_qos() const;
 
-    bool set_topic(const fastrtps::TopicAttributes& att);
+    bool get_qos(
+            fastrtps::ReaderQos& qos) const;
+
+    bool set_topic(
+            const fastrtps::TopicAttributes& att);
 
     const fastrtps::TopicAttributes& get_topic() const;
 
-    bool set_listener(DataReaderListener* listener);
+    bool set_listener(
+            DataReaderListener* listener);
 
     const DataReaderListener* get_listener() const;
 
@@ -175,9 +181,6 @@ public:
     bool wait_for_historical_data(
             const fastrtps::Duration_t& max_wait) const;
     */
-
-    //! Remove all listeners in the hierarchy to allow a quiet destruction
-    void disable();
 
 private:
     DataReaderImpl* impl_;

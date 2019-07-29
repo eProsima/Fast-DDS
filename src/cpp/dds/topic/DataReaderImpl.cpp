@@ -128,7 +128,8 @@ DataReaderImpl::~DataReaderImpl()
     delete user_datareader_;
 }
 
-bool DataReaderImpl::wait_for_unread_message(const fastrtps::Duration_t& timeout)
+bool DataReaderImpl::wait_for_unread_message(
+        const fastrtps::Duration_t& timeout)
 {
     return reader_->wait_for_unread_cache(timeout);
 }
@@ -168,7 +169,7 @@ bool DataReaderImpl::set_qos(
 {
     //QOS:
     //CHECK IF THE QOS CAN BE SET
-    if(!qos_.canQosBeUpdated(qos))
+    if(!qos.checkQos() || !qos_.canQosBeUpdated(qos))
     {
         return false;
     }
@@ -203,6 +204,11 @@ bool DataReaderImpl::set_qos(
     }
 
     return true;
+}
+
+const ReaderQos& DataReaderImpl::get_qos() const
+{
+    return qos_;
 }
 
 bool DataReaderImpl::set_topic(
@@ -281,36 +287,6 @@ bool DataReaderImpl::set_attributes(
     if(updated)
     {
         att_.expectsInlineQos = att.expectsInlineQos;
-        if(qos_.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
-        {
-            //UPDATE TIMES:
-            StatefulReader* sfr = static_cast<StatefulReader*>(reader_);
-            sfr->updateTimes(att.times);
-        }
-
-        // Deadline
-        if (qos_.m_deadline.period != c_TimeInfinite)
-        {
-            deadline_duration_us_ =
-                    duration<double, std::ratio<1, 1000000>>(qos_.m_deadline.period.to_ns() * 1e-3);
-            deadline_timer_->update_interval_millisec(qos_.m_deadline.period.to_ns() * 1e-6);
-        }
-        else
-        {
-            deadline_timer_->cancel_timer();
-        }
-
-        // Lifespan
-        if (qos_.m_lifespan.duration != c_TimeInfinite)
-        {
-            lifespan_duration_us_ =
-                    std::chrono::duration<double, std::ratio<1, 1000000>>(qos_.m_lifespan.duration.to_ns() * 1e-3);
-            lifespan_timer_->update_interval_millisec(qos_.m_lifespan.duration.to_ns() * 1e-6);
-        }
-        else
-        {
-            lifespan_timer_->cancel_timer();
-        }
     }
 
     return updated;
@@ -543,7 +519,8 @@ bool DataReaderImpl::take(
 }
 */
 
-bool DataReaderImpl::set_listener(DataReaderListener* listener)
+bool DataReaderImpl::set_listener(
+        DataReaderListener* listener)
 {
     listener_ = listener;
     return true;

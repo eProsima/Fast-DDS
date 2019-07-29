@@ -32,11 +32,6 @@ DataWriter::DataWriter(
     : impl_(impl)
 {}
 
-void DataWriter::disable()
-{
-    impl_->disable();
-}
-
 DataWriter::~DataWriter()
 {}
 
@@ -103,6 +98,13 @@ bool DataWriter::set_qos(
 const WriterQos& DataWriter::get_qos() const
 {
     return impl_->get_qos();
+}
+
+bool DataWriter::get_qos(
+        WriterQos& qos) const
+{
+    qos = impl_->get_qos();
+    return true;
 }
 
 bool DataWriter::set_listener(

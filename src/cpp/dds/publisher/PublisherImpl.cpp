@@ -77,7 +77,6 @@ PublisherImpl::~PublisherImpl()
         {
             for (DataWriterImpl* dw : it->second)
             {
-
                 delete dw;
             }
         }
@@ -95,7 +94,7 @@ const PublisherQos& PublisherImpl::get_qos() const
 bool PublisherImpl::set_qos(
         const PublisherQos& qos)
 {
-    if(qos_.can_qos_be_updated(qos))
+    if(!qos.check_qos() || qos_.can_qos_be_updated(qos))
     {
         qos_.set_qos(qos, false);
         return true;
@@ -279,7 +278,7 @@ bool PublisherImpl::delete_datawriter(
 }
 
 DataWriter* PublisherImpl::lookup_datawriter(
-    const std::string& topic_name) const
+        const std::string& topic_name) const
 {
     std::lock_guard<std::mutex> lock(mtx_writers_);
     auto it = writers_.find(topic_name);
@@ -302,6 +301,24 @@ bool PublisherImpl::get_datawriters(
         }
     }
     return true;
+}
+
+bool PublisherImpl::contains_entity(
+        const fastrtps::rtps::InstanceHandle_t& handle) const
+{
+    std::lock_guard<std::mutex> lock(mtx_writers_);
+    for (auto vit : writers_)
+    {
+        for (DataWriterImpl* dw : vit.second)
+        {
+            InstanceHandle_t h(dw->guid());
+            if (h == handle)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 /* TODO
@@ -342,12 +359,12 @@ bool PublisherImpl::set_default_datawriter_qos(
 {
     if (&qos == &DATAWRITER_QOS_DEFAULT)
     {
-        fastrtps::WriterQos def_qos;
-        default_datawriter_qos_.setQos(def_qos, true);
+        default_datawriter_qos_.setQos(DATAWRITER_QOS_DEFAULT, true);
+        return true;
     }
-    else if (default_datawriter_qos_.canQosBeUpdated(qos) && qos.checkQos())
+    else if (qos.checkQos())
     {
-        default_datawriter_qos_.setQos(qos, false);
+        default_datawriter_qos_.setQos(qos, true);
         return true;
     }
     return false;
@@ -485,6 +502,22 @@ bool PublisherImpl::set_attributes(
 const InstanceHandle_t& PublisherImpl::get_instance_handle() const
 {
     return handle_;
+}
+
+bool PublisherImpl::type_in_use(
+        const std::string& type_name) const
+{
+    for (auto it : writers_)
+    {
+        for (DataWriterImpl* writer : it.second)
+        {
+            if (writer->get_topic().getTopicDataType() == type_name)
+            {
+                return true; // Is in use
+            }
+        }
+    }
+    return false;
 }
 
 } // dds

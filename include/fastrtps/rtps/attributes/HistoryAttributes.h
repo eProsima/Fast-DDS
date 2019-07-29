@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 /**
  * @file HistoryAttributes.h
  *
@@ -23,3 +25,5 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 
 #endif /* HISTORYATTRIBUTES_H_ */
+
+#endif

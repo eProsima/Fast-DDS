@@ -222,7 +222,7 @@ bool SubscriberImpl::delete_datareader(
         DataReader* reader)
 {
     std::lock_guard<std::mutex> lock(mtx_readers_);
-    auto it = readers_.find(reader->get_topic().getTopicName().to_string());
+    auto it = readers_.find(reader->get_topic().getTopicDataType().to_string());
     if (it != readers_.end())
     {
         auto dr_it = std::find(it->second.begin(), it->second.end(), reader->impl_);
@@ -302,12 +302,12 @@ bool SubscriberImpl::set_default_datareader_qos(
 {
     if (&qos == &DATAREADER_QOS_DEFAULT)
     {
-        fastrtps::ReaderQos def_qos;
-        default_datareader_qos_.setQos(def_qos, true);
+        default_datareader_qos_.setQos(DATAREADER_QOS_DEFAULT, true);
+        return true;
     }
     else if (default_datareader_qos_.canQosBeUpdated(qos) && qos.checkQos())
     {
-        default_datareader_qos_.setQos(qos, false);
+        default_datareader_qos_.setQos(qos, true);
         return true;
     }
     return false;
@@ -316,6 +316,24 @@ bool SubscriberImpl::set_default_datareader_qos(
 const fastrtps::ReaderQos& SubscriberImpl::get_default_datareader_qos() const
 {
     return default_datareader_qos_;
+}
+
+bool SubscriberImpl::contains_entity(
+        const fastrtps::rtps::InstanceHandle_t& handle) const
+{
+    std::lock_guard<std::mutex> lock(mtx_readers_);
+    for (auto vit : readers_)
+    {
+        for (DataReaderImpl* dw : vit.second)
+        {
+            InstanceHandle_t h(dw->guid());
+            if (h == handle)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 /* TODO
@@ -472,6 +490,22 @@ void SubscriberImpl::SubscriberReaderListener::on_sample_lost(
 const InstanceHandle_t& SubscriberImpl::get_instance_handle() const
 {
     return handle_;
+}
+
+bool SubscriberImpl::type_in_use(
+        const std::string& type_name) const
+{
+    for (auto it : readers_)
+    {
+        for (DataReaderImpl* reader : it.second)
+        {
+            if (reader->get_topic().getTopicDataType() == type_name)
+            {
+                return true; // Is in use
+            }
+        }
+    }
+    return false;
 }
 
 } /* namespace dds */

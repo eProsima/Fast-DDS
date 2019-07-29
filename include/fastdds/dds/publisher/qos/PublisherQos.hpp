@@ -17,8 +17,8 @@
  */
 
 
-#ifndef _FASTDDS_PUBLISHERQOS_HPP
-#define _FASTDDS_PUBLISHERQOS_HPP
+#ifndef _FASTDDS_PUBLISHERQOS_HPP_
+#define _FASTDDS_PUBLISHERQOS_HPP_
 
 #include <fastrtps/qos/QosPolicies.h>
 
@@ -144,4 +144,4 @@ extern const PublisherQos PUBLISHER_QOS_DEFAULT;
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_PUBLISHERQOS_HPP
+#endif // _FASTDDS_PUBLISHERQOS_HPP_

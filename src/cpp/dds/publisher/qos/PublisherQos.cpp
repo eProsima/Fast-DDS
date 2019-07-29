@@ -38,42 +38,42 @@ PublisherQos::~PublisherQos()
 
 void PublisherQos::set_qos(const PublisherQos& qos, bool first_time)
 {
-    if(first_time)
+    if (first_time)
     {
         durability = qos.durability;
         durability.hasChanged = true;
     }
-    if(first_time || deadline.period != qos.deadline.period)
+    if (first_time || deadline.period != qos.deadline.period)
     {
         deadline = qos.deadline;
         deadline.hasChanged = true;
     }
-    if(latency_budget.duration != qos.latency_budget.duration)
+    if (latency_budget.duration != qos.latency_budget.duration)
     {
         latency_budget = qos.latency_budget;
         latency_budget.hasChanged = true;
     }
-    if(liveliness.lease_duration != qos.liveliness.lease_duration)
+    if (liveliness.lease_duration != qos.liveliness.lease_duration)
     {
         liveliness.lease_duration = qos.liveliness.lease_duration;
         liveliness.hasChanged = true;
     }
-    if(first_time)
+    if (first_time)
     {
         liveliness = qos.liveliness;
         liveliness.hasChanged = true;
     }
-    if(first_time)
+    if (first_time)
     {
         reliability = qos.reliability;
         reliability.hasChanged = true;
     }
-    if(first_time)
+    if (first_time)
     {
         ownership = qos.ownership;
         ownership.hasChanged = true;
     }
-    if(destination_order.kind != qos.destination_order.kind )
+    if (destination_order.kind != qos.destination_order.kind )
     {
         destination_order = qos.destination_order;
         destination_order.hasChanged = true;
@@ -83,19 +83,19 @@ void PublisherQos::set_qos(const PublisherQos& qos, bool first_time)
         user_data = qos.user_data;
         user_data.hasChanged = true;
     }
-    if(first_time || time_based_filter.minimum_separation != qos.time_based_filter.minimum_separation )
+    if (first_time || time_based_filter.minimum_separation != qos.time_based_filter.minimum_separation )
     {
         time_based_filter = qos.time_based_filter;
         time_based_filter.hasChanged = true;
     }
-    if(first_time || presentation.access_scope != qos.presentation.access_scope ||
+    if (first_time || presentation.access_scope != qos.presentation.access_scope ||
             presentation.coherent_access != qos.presentation.coherent_access ||
             presentation.ordered_access != qos.presentation.ordered_access)
     {
         presentation = qos.presentation;
         presentation.hasChanged = true;
     }
-    if(qos.partition.getNames().size()>0)
+    if (qos.partition.getNames().size()>0)
     {
         partition = qos.partition;
         partition.hasChanged = true;
@@ -111,7 +111,7 @@ void PublisherQos::set_qos(const PublisherQos& qos, bool first_time)
         group_data = qos.group_data;
         group_data.hasChanged = true;
     }
-    if(first_time || durability_service.history_kind != qos.durability_service.history_kind ||
+    if (first_time || durability_service.history_kind != qos.durability_service.history_kind ||
             durability_service.history_depth != qos.durability_service.history_depth ||
             durability_service.max_instances != qos.durability_service.max_instances ||
             durability_service.max_samples != qos.durability_service.max_samples||
@@ -122,12 +122,12 @@ void PublisherQos::set_qos(const PublisherQos& qos, bool first_time)
         durability_service = qos.durability_service;
         durability_service.hasChanged = true;
     }
-    if(lifespan.duration != qos.lifespan.duration )
+    if (lifespan.duration != qos.lifespan.duration )
     {
         lifespan = qos.lifespan;
         lifespan.hasChanged = true;
     }
-    if(qos.ownership_strength.value !=ownership_strength.value)
+    if (qos.ownership_strength.value !=ownership_strength.value)
     {
         ownership_strength = qos.ownership_strength;
         ownership_strength.hasChanged = true;
@@ -142,24 +142,24 @@ void PublisherQos::set_qos(const PublisherQos& qos, bool first_time)
 bool PublisherQos::check_qos() const
 {
     using namespace fastrtps;
-    if(durability.kind == PERSISTENT_DURABILITY_QOS)
+    if (durability.kind == PERSISTENT_DURABILITY_QOS)
     {
         logError(RTPS_QOS_CHECK,"PERSISTENT Durability not supported");
         return false;
     }
-    if(destination_order.kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
+    if (destination_order.kind == BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS)
     {
         logError(RTPS_QOS_CHECK,"BY SOURCE TIMESTAMP DestinationOrder not supported");
         return false;
     }
-    if(reliability.kind == BEST_EFFORT_RELIABILITY_QOS && ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+    if (reliability.kind == BEST_EFFORT_RELIABILITY_QOS && ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
     {
         logError(RTPS_QOS_CHECK,"BEST_EFFORT incompatible with EXCLUSIVE ownership");
         return false;
     }
-    if(liveliness.kind == AUTOMATIC_LIVELINESS_QOS || liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    if (liveliness.kind == AUTOMATIC_LIVELINESS_QOS || liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
     {
-        if(liveliness.lease_duration < c_TimeInfinite && liveliness.lease_duration <= liveliness.announcement_period)
+        if (liveliness.lease_duration < c_TimeInfinite && liveliness.lease_duration <= liveliness.announcement_period)
         {
             logError(RTPS_QOS_CHECK,"WRITERQOS: LeaseDuration <= announcement period.");
             return false;
@@ -173,29 +173,29 @@ bool PublisherQos::can_qos_be_updated(const PublisherQos& qos) const
 {
     using namespace fastrtps;
     bool updatable = true;
-    if(	durability.kind != qos.durability.kind)
+    if (durability.kind != qos.durability.kind)
     {
         updatable = false;
         logWarning(RTPS_QOS_CHECK,"Durability kind cannot be changed after the creation of a subscriber.");
     }
 
-    if(liveliness.kind !=  qos.liveliness.kind)
+    if (liveliness.kind !=  qos.liveliness.kind)
     {
         updatable = false;
         logWarning(RTPS_QOS_CHECK,"Liveliness Kind cannot be changed after the creation of a subscriber.");
     }
 
-    if(reliability.kind != qos.reliability.kind)
+    if (reliability.kind != qos.reliability.kind)
     {
         updatable = false;
         logWarning(RTPS_QOS_CHECK,"Reliability Kind cannot be changed after the creation of a subscriber.");
     }
-    if(ownership.kind != qos.ownership.kind)
+    if (ownership.kind != qos.ownership.kind)
     {
         updatable = false;
         logWarning(RTPS_QOS_CHECK,"Ownership Kind cannot be changed after the creation of a subscriber.");
     }
-    if(destination_order.kind != qos.destination_order.kind)
+    if (destination_order.kind != qos.destination_order.kind)
     {
         updatable = false;
         logWarning(RTPS_QOS_CHECK,"Destination order Kind cannot be changed after the creation of a subscriber.");
