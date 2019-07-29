@@ -44,8 +44,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyData
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDPSimple
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ResourceEvent
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp

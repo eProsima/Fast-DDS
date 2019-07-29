@@ -39,12 +39,12 @@
 #include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-
 #include <fastrtps/rtps/network/NetworkFactory.h>
 #include <fastrtps/rtps/network/ReceiverResource.h>
 #include <fastrtps/rtps/network/SenderResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
+#include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 #if HAVE_SECURITY
 #include <fastrtps/rtps/Endpoint.h>
@@ -61,10 +61,8 @@ class TopicAttributes;
 class MessageReceiver;
 
 namespace rtps
-{
-class RTPSParticipant;
+{ class RTPSParticipant;
 class RTPSParticipantListener;
-class AsyncWriterThread;
 class BuiltinProtocols;
 struct CDRMessage_t;
 class Endpoint;
@@ -252,6 +250,8 @@ public:
 
     uint32_t get_min_network_send_buffer_size() { return m_network_Factory.get_min_send_buffer_size(); }
 
+    AsyncWriterThread& async_thread() { return async_thread_; }
+
 private:
     //!Attributes of the RTPSParticipant
     RTPSParticipantAttributes m_att;
@@ -278,6 +278,8 @@ private:
     std::vector<RTPSReader*> m_userReaderList;
     //!Network Factory
     NetworkFactory m_network_Factory;
+    //!Async writer thread
+    AsyncWriterThread async_thread_;
 
 #if HAVE_SECURITY
         // Security manager

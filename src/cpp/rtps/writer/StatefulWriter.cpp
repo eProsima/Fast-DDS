@@ -131,7 +131,16 @@ StatefulWriter::~StatefulWriter()
 {
     logInfo(RTPS_WRITER,"StatefulWriter destructor");
 
-    AsyncWriterThread::removeWriter(*this);
+    for (std::unique_ptr<FlowController>& controller : m_controllers)
+    {
+        controller->disable();
+    }
+
+    mp_RTPSParticipant->async_thread().unregister_writer(this);
+
+    // After unregistering writer from AsyncWriterThread, delete all flow_controllers because they register the writer in
+    // the AsyncWriterThread.
+    m_controllers.clear();
 
     if (disable_positive_acks_)
     {
@@ -285,7 +294,7 @@ void StatefulWriter::unsent_change_added_to_history(
 
             if (m_pushMode)
             {
-                AsyncWriterThread::wakeUp(this);
+                mp_RTPSParticipant->async_thread().wake_up(this, max_blocking_time);
             }
         }
 
@@ -520,7 +529,7 @@ void StatefulWriter::send_any_unsent_changes()
 
                             if (must_wake_up_async_thread)
                             {
-                                AsyncWriterThread::wakeUp(this);
+                                mp_RTPSParticipant->async_thread().wake_up(this);
                             }
                         }
                         else
@@ -1206,7 +1215,7 @@ void StatefulWriter::perform_nack_response()
 
     if (must_wake_up_async_thread)
     {
-        AsyncWriterThread::wakeUp(this);
+        mp_RTPSParticipant->async_thread().wake_up(this);
     }
 }
 

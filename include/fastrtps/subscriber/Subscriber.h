@@ -72,7 +72,7 @@ public:
      * @param info Pointer to a SampleInfo_t structure that informs you about your sample.
      * @return True if a sample was read.
      * @note This method is blocked for a period of time.
-     * ReliabilityQosPolicy.max_blocking_time on PublisherAttributes defines this period of time.
+     * ReliabilityQosPolicy.max_blocking_time on SubscriberAttributes defines this period of time.
      */
     bool readNextData(
             void* sample,
@@ -84,7 +84,7 @@ public:
      * @param info Pointer to a SampleInfo_t structure that informs you about your sample.
      * @return True if a sample was taken.
      * @note This method is blocked for a period of time.
-     * ReliabilityQosPolicy.max_blocking_time on PublisherAttributes defines this period of time.
+     * ReliabilityQosPolicy.max_blocking_time on SubscriberAttributes defines this period of time.
      */
     bool takeNextData(
             void* sample,

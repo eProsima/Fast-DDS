@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <rtps/flowcontrol/ThroughputController.h>
 
 #include <gtest/gtest.h>
@@ -31,7 +33,7 @@ class ThroughputControllerTests: public ::testing::Test
    public:
 
    ThroughputControllerTests()
-       : sController(testDescriptor, (const RTPSWriter*)nullptr)
+       : sController(testDescriptor, (RTPSWriter*)nullptr)
    {
       for (unsigned int i = 0; i < numberOfTestChanges; i++)
       {

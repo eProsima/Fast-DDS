@@ -23,38 +23,69 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
+/*!
+ * Used by AsyncWriterThread to manage a double queue.
+ * One queue is being processed by AsyncWriterThread's internal thread while in the other one other threads can register
+ * RTPSWriter pointers that need to send samples asynchronously.
+ */
 class AsyncInterestTree
 {
-public:
+    friend class AsyncWriterThread;
 
-   AsyncInterestTree();
-   /**
-    * Registers a writer in a hidden set.
-    * Threadsafe thanks to set swap.
-    */
-   void RegisterInterest(const RTPSWriter*);
+    public:
 
-   /**
-    * Registers all writers from  participant in a hidden set.
-    * Threadsafe thanks to set swap.
-    */
-   void RegisterInterest(const RTPSParticipantImpl*);
+    /*!
+     * @brief Registers a writer in a hidden queue.
+     * @param writer Pointer to the writer.
+     * @return true if the writer was queued or false if it already is queued.
+     */
+    bool register_interest(
+            RTPSWriter* writer);
 
-   /**
-    * Clears the visible set and swaps
-    * with the hidden set.
-    */
-   void Swap();
+    /*!
+     * @brief Registers a writer in a hidden queue.
+     * @param writer Pointer to the writer.
+     * @param max_blocking_time Time point until the function must be blocked.
+     * @return true if the writer was queued or false if it already is queued.
+     * @note This method is blocked for a period of time.
+     */
+    bool register_interest(
+            RTPSWriter* writer,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
-   //! Extracts from the visible set 
-   std::set<const RTPSWriter*> GetInterestedWriters() const;
+    /*!
+     * @brief Unregister a writer from both queues.
+     * @param writer Pointer to the writer.
+     * @return true if both queues remain empty.
+     */
+    bool unregister_interest(
+            RTPSWriter* writer);
 
-private:
-   std::set<const RTPSWriter*> mInterestAlpha, mInterestBeta;
-   mutable std::mutex mMutexActive, mMutexHidden;
-   
-   std::set<const RTPSWriter*>* mActiveInterest;
-   std::set<const RTPSWriter*>* mHiddenInterest;
+    /*!
+     * @brief Clears the visible queue and swaps with the hidden set.
+     */
+    void swap();
+
+    /*!
+     * @brief Remove next writer from visible queue and returns it.
+     * @return Next writer.
+     */
+    RTPSWriter* next_active_nts();
+
+    private:
+
+    bool register_interest_nts(
+            RTPSWriter* writer);
+
+    mutable std::timed_mutex mMutexActive, mMutexHidden;
+
+    RTPSWriter* active_front_ = nullptr;
+
+    RTPSWriter* hidden_front_ = nullptr;
+
+    int active_pos_ = 0;
+
+    int hidden_pos_ = 1;
 };
 
 } /* namespace rtps */

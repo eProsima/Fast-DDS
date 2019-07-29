@@ -22,8 +22,6 @@
 #include "../flowcontrol/ThroughputController.h"
 #include "../persistence/PersistenceService.h"
 
-#include <fastrtps/rtps/resources/AsyncWriterThread.h>
-
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 
 #include <fastrtps/rtps/writer/StatelessWriter.h>
@@ -440,10 +438,6 @@ bool RTPSParticipantImpl::createWriter(
             return false;
         }
     }
-
-    // Asynchronous thread runs regardless of mode because of
-    // nack response duties.
-    AsyncWriterThread::addWriter(*SWriter);
 
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     m_allWriterList.push_back(SWriter);

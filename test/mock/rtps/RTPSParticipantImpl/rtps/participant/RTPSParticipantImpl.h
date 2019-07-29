@@ -28,7 +28,6 @@
 #include <fastrtps/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/network/NetworkFactory.h>
@@ -49,6 +48,7 @@ class WriterHistory;
 class ReaderHistory;
 class WriterListener;
 class ReaderListener;
+class PDPSimple;
 struct EntityId_t;
 
 class MockParticipantListener : public RTPSParticipantListener
@@ -128,7 +128,7 @@ class RTPSParticipantImpl
 
         void deleteUserEndpoint(Endpoint* endpoint) { delete endpoint; }
 
-        PDPSimple* pdpsimple() { return &pdpsimple_; }
+        MOCK_METHOD0(pdpsimple, PDPSimple*());
 
         MockParticipantListener* getListener() { return &listener_; }
 
@@ -144,8 +144,6 @@ class RTPSParticipantImpl
         uint32_t getMaxMessageSize() const { return 65536; }
 
     private:
-
-        PDPSimple pdpsimple_;
 
         MockParticipantListener listener_;
 

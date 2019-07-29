@@ -47,7 +47,8 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_ok)
         WillOnce(Return(true));
     EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
+    EXPECT_CALL(participant_, pdpsimple()).Times(1).WillOnce(Return(&pdpsimple_));
+    EXPECT_CALL(pdpsimple_, notifyAboveRemoteEndpoints(_)).Times(1);
 
     ParticipantAuthenticationInfo info;
     info.status = ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT;
@@ -90,7 +91,8 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
         WillOnce(Return(true));
     EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle,_)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
+    EXPECT_CALL(participant_, pdpsimple()).Times(1).WillOnce(Return(&pdpsimple_));
+    EXPECT_CALL(pdpsimple_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
@@ -125,8 +127,9 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
         WillRepeatedly(Return(true));
     EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillRepeatedly(Return(true));
-    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
-    EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
+    EXPECT_CALL(participant_, pdpsimple()).Times(2).WillRepeatedly(Return(&pdpsimple_));
+    EXPECT_CALL(pdpsimple_, notifyAboveRemoteEndpoints(_)).Times(1);
+    EXPECT_CALL(pdpsimple_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
     EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle),_)).Times(1).
         WillOnce(Return(&shared_secret_handle));
     EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(&shared_secret_handle,_)).Times(1).
@@ -170,7 +173,8 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_new_chang
         WillRepeatedly(Return(true));
     EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
+    EXPECT_CALL(participant_, pdpsimple()).Times(1).WillOnce(Return(&pdpsimple_));
+    EXPECT_CALL(pdpsimple_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
@@ -202,7 +206,8 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_add_chang
         WillRepeatedly(Return(true));
     EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
+    EXPECT_CALL(participant_, pdpsimple()).Times(1).WillOnce(Return(&pdpsimple_));
+    EXPECT_CALL(pdpsimple_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
@@ -273,8 +278,9 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
         WillRepeatedly(Return(true));
     EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*participant_.pdpsimple(), notifyAboveRemoteEndpoints(_)).Times(1);
-    EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
+    EXPECT_CALL(participant_, pdpsimple()).Times(2).WillRepeatedly(Return(&pdpsimple_));
+    EXPECT_CALL(pdpsimple_, notifyAboveRemoteEndpoints(_)).Times(1);
+    EXPECT_CALL(pdpsimple_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
     EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle),_)).Times(1).
         WillOnce(Return(&shared_secret_handle));
     EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(&shared_secret_handle,_)).Times(1).
@@ -323,7 +329,8 @@ TEST_F(SecurityTest, discovered_participant_ok)
         WillRepeatedly(Return(true));
     EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
+    EXPECT_CALL(participant_, pdpsimple()).Times(1).WillOnce(Return(&pdpsimple_));
+    EXPECT_CALL(pdpsimple_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
@@ -369,7 +376,8 @@ TEST_F(SecurityTest, discovered_participant_validate_remote_fail_and_then_ok)
         WillRepeatedly(Return(true));
     EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle,_)).Times(1).
         WillOnce(Return(true));
-    EXPECT_CALL(*participant_.pdpsimple(), get_participant_proxy_data_serialized(BIGEND)).Times(1);
+    EXPECT_CALL(participant_, pdpsimple()).Times(1).WillOnce(Return(&pdpsimple_));
+    EXPECT_CALL(pdpsimple_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
 
     ASSERT_TRUE(manager_.discovered_participant(participant_data));
 
