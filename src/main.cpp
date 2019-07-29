@@ -30,6 +30,9 @@
 #include <dds/core/xtypes/DynamicType.hpp>
 #include <dds/core/xtypes/MemberType.hpp>
 #include <dds/core/xtypes/PrimitiveTypes.hpp>
+#include <dds/core/xtypes/UnionCase.hpp>
+#include <dds/core/xtypes/UnionType.hpp>
+#include <dds/core/xtypes/CollectionTypes.hpp>
 
 int main()
 {
