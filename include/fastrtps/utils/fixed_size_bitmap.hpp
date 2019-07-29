@@ -54,9 +54,10 @@ struct DiffFunction
 template<class T, class Diff = DiffFunction<T>, uint32_t NBITS = 256>
 class BitmapRange
 {
+    #define NITEMS ((NBITS + 31ul) / 32ul)
 public:
     // Alias to improve readability.
-    using bitmap_type = std::array<uint32_t, (NBITS + 31) / 32>;
+    using bitmap_type = std::array<uint32_t, NITEMS>;
 
     /**
      * Default constructor.
@@ -95,7 +96,40 @@ public:
     }
 
     /**
-     * Returns whether the range is empty (i.e. has at least one bit set).
+     * Set a new base for the range, keeping old values where possible.
+     * This method implements a sliding window mechanism for changing the base of the range.
+     *
+     * @param base   New base value to set.
+     */
+    void base_update(T base) noexcept
+    {
+        // Do nothing if base is not changing
+        if (base == base_)
+        {
+            return;
+        }
+
+        Diff d_func;
+        if (base > base_)
+        {
+            // Current content should move left
+            uint32_t n_bits = d_func(base, base_);
+            shift_map_left(n_bits);
+        }
+        else
+        {
+            // Current content should move right
+            uint32_t n_bits = d_func(base_, base);
+            shift_map_right(n_bits);
+        }
+
+        // Update base and range
+        base_ = base;
+        range_max_ = base_ + (NBITS - 1);
+    }
+
+    /**
+     * Returns whether the range is empty (i.e. has all bits unset).
      * 
      * @return true if the range is empty, false otherwise.
      */
@@ -212,6 +246,123 @@ protected:
     T range_max_;          ///< Holds maximum allowed value of the range.
     bitmap_type bitmap_;   ///< Holds the bitmap values.
     uint32_t num_bits_;    ///< Holds the highest bit set in the bitmap.
+
+private:
+
+    void shift_map_left(uint32_t n_bits)
+    {
+        if (n_bits >= num_bits_)
+        {
+            // Shifting more than most significant. Clear whole bitmap.
+            num_bits_ = 0;
+            bitmap_.fill(0UL);
+        }
+        else
+        {
+            // Significant bit will move left by n_bits
+            num_bits_ -= n_bits;
+
+            // Div and mod by 32
+            uint32_t n_items = n_bits >> 5;
+            n_bits &= 31UL;
+            if (n_bits == 0)
+            {
+                // Shifting a multiple of 32 bits, just move the bitmap integers
+                std::copy(bitmap_.begin() + n_items, bitmap_.end(), bitmap_.begin());
+                std::fill_n(bitmap_.rbegin(), n_items, 0);
+            }
+            else
+            {
+                // Example. Shifting 44 bits. Should shift one complete word and 12 bits.
+                // Need to iterate forward and take 12 bits from next word (shifting it 20 bits).
+                // aaaaaaaa bbbbbbbb cccccccc dddddddd
+                // bbbbbccc bbbbbbbb cccccccc dddddddd
+                // bbbbbccc cccccddd ddddd000 dddddddd
+                // bbbbbccc cccccddd ddddd000 00000000
+                uint32_t overflow_bits = 32UL - n_bits;
+                size_t last_index = NITEMS - 1u;
+                for (size_t i = 0, n = n_items; n < last_index; i++, n++)
+                {
+                    bitmap_[i] = (bitmap_[n] << n_bits) | (bitmap_[n + 1] >> overflow_bits);
+                }
+                // Last one does not have next word
+                bitmap_[last_index - n_items] = bitmap_[last_index] << n_bits;
+                // Last n_items will become 0
+                std::fill_n(bitmap_.rbegin(), n_items, 0);
+            }
+        }
+    }
+
+    void shift_map_right(uint32_t n_bits)
+    {
+        if (n_bits >= NBITS)
+        {
+            // Shifting more than total bitmap size. Clear whole bitmap.
+            num_bits_ = 0;
+            bitmap_.fill(0UL);
+        }
+        else
+        {
+            // Detect if highest bit will be dropped and take note, as we will need
+            // to find new maximum bit in that case
+            uint32_t new_num_bits = num_bits_ + n_bits;
+            bool find_new_max = new_num_bits > NBITS;
+
+            // Div and mod by 32
+            uint32_t n_items = n_bits >> 5;
+            n_bits &= 31UL;
+            if (n_bits == 0)
+            {
+                // Shifting a multiple of 32 bits, just move the bitmap integers
+                std::copy(bitmap_.rbegin() + n_items, bitmap_.rend(), bitmap_.rbegin());
+                std::fill_n(bitmap_.begin(), n_items, 0);
+            }
+            else
+            {
+                // Example. Shifting 44 bits. Should shift one complete word and 12 bits.
+                // Need to iterate backwards and take 12 bits from previous word (shifting it 20 bits).
+                // aaaaaaaa bbbbbbbb cccccccc dddddddd
+                // aaaaaaaa bbbbbbbb cccccccc bbbccccc
+                // aaaaaaaa bbbbbbbb aaabbbbb bbbccccc
+                // aaaaaaaa 000aaaaa aaabbbbb bbbccccc
+                // 00000000 000aaaaa aaabbbbb bbbccccc
+                uint32_t overflow_bits = 32UL - n_bits;
+                size_t last_index = NITEMS - 1u;
+                for (size_t i = last_index, n = last_index - n_items; n > 0; i--, n--)
+                {
+                    bitmap_[i] = (bitmap_[n] >> n_bits) | (bitmap_[n - 1] << overflow_bits);
+                }
+                // First item does not have previous word
+                bitmap_[n_items] = bitmap_[0] >> n_bits;
+                // First n_items will become 0
+                std::fill_n(bitmap_.begin(), n_items, 0);
+            }
+
+            if (find_new_max)
+            {
+                new_num_bits = 0;
+                for (uint32_t i = NITEMS; i > n_items;)
+                {
+                    --i;
+                    uint32_t bits = bitmap_[i];
+                    if (bits != 0)
+                    {
+                        bits = (bits & ~(bits - 1));
+#if _MSC_VER
+                        unsigned long bit;
+                        _BitScanReverse(&bit, bits);
+                        uint32_t offset = 32UL - bit;
+#else
+                        uint32_t offset = __builtin_clz(bits) + 1;
+#endif
+                        new_num_bits = (i << 5UL) + offset;
+                        break;
+                    }
+                }
+            }
+            num_bits_ = new_num_bits;
+        }
+    }
 }; 
     
 }   // namespace fastrtps

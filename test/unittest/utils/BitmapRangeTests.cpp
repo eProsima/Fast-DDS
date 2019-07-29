@@ -75,6 +75,7 @@ class BitmapRangeTests: public ::testing::Test
 {
     public:
         const ValueType explicit_base = 123UL;
+        const ValueType sliding_base = 513UL;
 
         const TestCase test0 =
         {
@@ -239,6 +240,37 @@ TEST_F(BitmapRangeTests, traversal)
 
     // All items should have been processed
     ASSERT_TRUE(items.empty());
+}
+
+TEST_F(BitmapRangeTests, sliding_window)
+{
+    TestType uut(sliding_base);
+    uut.add(sliding_base);
+
+    // Check shifting right and then left
+    for (ValueType i = 0; i < 256UL; i++)
+    {
+        uut.base_update(sliding_base - i);
+        ASSERT_EQ(uut.max(), sliding_base);
+        uut.base_update(sliding_base);
+        ASSERT_EQ(uut.max(), sliding_base);
+    }
+
+    // Check shifting left and then right
+    for (ValueType i = 0; i < 256UL; i++)
+    {
+        uut.base_update(sliding_base - i);
+        ASSERT_EQ(uut.max(), sliding_base);
+        uut.base_update(sliding_base - 255UL);
+        ASSERT_EQ(uut.max(), sliding_base);
+    }
+
+    // Check cases dropping the most significant bit
+    uut.add(sliding_base - 100UL);
+    uut.base_update(sliding_base - 256UL);
+    ASSERT_EQ(uut.max(), sliding_base - 100UL);
+    uut.base_update(0);
+    ASSERT_TRUE(uut.empty());
 }
 
 int main(int argc, char **argv)
