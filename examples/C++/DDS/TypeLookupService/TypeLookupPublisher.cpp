@@ -79,7 +79,8 @@ bool TypeLookupPublisher::init()
     Wparam.topic.historyQos.depth = 30;
     Wparam.topic.resourceLimitsQos.max_samples = 50;
     Wparam.topic.resourceLimitsQos.allocated_samples = 20;
-    Wparam.topic.auto_fill_xtypes = true; // Share the type with readers.
+    Wparam.topic.auto_fill_type_object = false;
+    Wparam.topic.auto_fill_type_information = true; // Share the type with readers.
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.nanosec = 200*1000*1000;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;

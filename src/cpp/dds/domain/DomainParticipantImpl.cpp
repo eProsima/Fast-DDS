@@ -265,7 +265,7 @@ Publisher* DomainParticipantImpl::create_publisher(
     publishers_by_handle_[pub_handle] = pub;
     publishers_[pub] = pubimpl;
 
-    if (att.topic.auto_fill_xtypes)
+    if (att.topic.auto_fill_type_object || att.topic.auto_fill_type_information)
     {
         register_dynamic_type_to_factories(att.topic.getTopicDataType().to_string());
     }
@@ -553,7 +553,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     subscribers_by_handle_[sub_handle] = sub;
     subscribers_[sub] = subimpl;
 
-    if (att.topic.auto_fill_xtypes)
+    if (att.topic.auto_fill_type_object || att.topic.auto_fill_type_information)
     {
         register_dynamic_type_to_factories(att.topic.getTopicDataType().to_string());
     }
