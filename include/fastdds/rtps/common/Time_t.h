@@ -23,6 +23,10 @@
 #include <cstdint>
 #include <iostream>
 
+// defines to avoid the "static initialization order fiasco"
+#define TIME_T_INFINITE_SECONDS 0x7fffffff
+#define TIME_T_INFINITE_NANOSECONDS 0xffffffff
+
 namespace eprosima{
 namespace fastrtps{
 
@@ -596,9 +600,12 @@ static inline Time_t operator-(
 
 #endif
 
-const Time_t c_TimeInfinite(0x7fffffff,0xffffffff);
+//! Time_t (Duration_t) representing an infinite time. DONT USE IT IN CONSTRUCTORS
+const Time_t c_TimeInfinite(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS);
+//! Time_t (Duration_t) representing a zero time. DONT USE IT IN CONSTRUCTORS
 const Time_t c_TimeZero(0,0);
-const Time_t c_TimeInvalid(-1,0xffffffff);
+//! Time_t (Duration_t) representing an invalid time. DONT USE IT IN CONSTRUCTORS
+const Time_t c_TimeInvalid(-1, TIME_T_INFINITE_NANOSECONDS);
 
 } // namespace fastrtps
 } // namespace eprosima

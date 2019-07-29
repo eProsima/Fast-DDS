@@ -69,7 +69,7 @@ class ReaderAttributes
 
         ReaderAttributes()
             : liveliness_kind_(AUTOMATIC_LIVELINESS_QOS)
-            , liveliness_lease_duration(c_TimeInfinite)
+            , liveliness_lease_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
             , expectsInlineQos(false)
             , disable_positive_acks(false)
         {

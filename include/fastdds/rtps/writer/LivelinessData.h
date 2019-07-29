@@ -62,7 +62,7 @@ struct LivelinessData
     LivelinessData()
         : guid()
         , kind(AUTOMATIC_LIVELINESS_QOS)
-        , lease_duration(c_TimeInfinite)
+        , lease_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
         , status(WriterStatus::NOT_ASSERTED)
     {}
 

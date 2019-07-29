@@ -86,11 +86,11 @@ class WriterAttributes
 
         WriterAttributes()
             : liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
-            , liveliness_lease_duration(c_TimeInfinite)
+            , liveliness_lease_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
             , mode(SYNCHRONOUS_WRITER)
             , disable_heartbeat_piggyback(false)
             , disable_positive_acks(false)
-            , keep_duration(c_TimeInfinite)
+            , keep_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
         {
             endpoint.endpointKind = WRITER;
             endpoint.durabilityKind = TRANSIENT_LOCAL;
