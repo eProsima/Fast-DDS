@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_PARTICIPANTIMPL_H_
-#define _FASTDDS_PARTICIPANTIMPL_H_
+#ifndef _FASTDDS_PARTICIPANTIMPL_HPP_
+#define _FASTDDS_PARTICIPANTIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
@@ -252,25 +252,19 @@ public:
      * @return True if correctly found and activated.
      */
     bool new_remote_endpoint_discovered(
-        const fastrtps::rtps::GUID_t& partguid,
-        uint16_t userId,
-        fastrtps::rtps::EndpointKind_t kind);
+            const fastrtps::rtps::GUID_t& partguid,
+            uint16_t userId,
+            fastrtps::rtps::EndpointKind_t kind);
 
     bool get_remote_writer_info(
-        const fastrtps::rtps::GUID_t& writerGuid,
-        fastrtps::rtps::WriterProxyData& returnedInfo);
+            const fastrtps::rtps::GUID_t& writerGuid,
+            fastrtps::rtps::WriterProxyData& returnedInfo);
 
     bool get_remote_reader_info(
-        const fastrtps::rtps::GUID_t& readerGuid,
-        fastrtps::rtps::ReaderProxyData& returnedInfo);
+            const fastrtps::rtps::GUID_t& readerGuid,
+            fastrtps::rtps::ReaderProxyData& returnedInfo);
 
     fastrtps::rtps::ResourceEvent& get_resource_event() const;
-
-    Subscriber* lookup_subscriber(
-            const fastrtps::rtps::InstanceHandle_t& handle);
-
-    Publisher* lookup_publisher(
-            const fastrtps::rtps::InstanceHandle_t& handle);
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
@@ -349,4 +343,4 @@ private:
 } /* namespace fastdds */
 } /* namespace eprosima */
 #endif
-#endif /* _FASTDDS_PARTICIPANTIMPL_H_ */
+#endif /* _FASTDDS_PARTICIPANTIMPL_HPP_ */

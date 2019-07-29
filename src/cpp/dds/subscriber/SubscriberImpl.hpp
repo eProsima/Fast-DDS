@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_SUBSCRIBERIMPL_H_
-#define _FASTDDS_SUBSCRIBERIMPL_H_
+#ifndef _FASTDDS_SUBSCRIBERIMPL_HPP_
+#define _FASTDDS_SUBSCRIBERIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastrtps/attributes/SubscriberAttributes.h>
@@ -93,6 +93,8 @@ public:
     DataReader* lookup_datareader(
             const std::string& topic_name) const;
 
+    bool contains_entity(
+            const fastrtps::rtps::InstanceHandle_t& handle) const;
     /* TODO
     bool begin_access();
     */
@@ -167,6 +169,10 @@ public:
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
 
+    //! Check if any reader uses the given type name
+    bool type_in_use(
+            const std::string& type_name) const;
+
 private:
 
     //!Participant
@@ -239,4 +245,4 @@ private:
 } /* namespace fastdds */
 } /* namespace eprosima */
 #endif
-#endif /* _FASTDDS_SUBSCRIBERIMPL_H_ */
+#endif /* _FASTDDS_SUBSCRIBERIMPL_HPP_ */

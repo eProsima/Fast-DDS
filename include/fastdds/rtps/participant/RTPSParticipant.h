@@ -202,7 +202,7 @@ public:
      */
     WLP* wlp() const;
 
-    /*
+    /**
      * @brief Fills a new entityId if set to unknown, or checks if a entity already exists with that
      * entityId in other case.
      * @param entityId to check of fill. If filled, EntityKind will be "vendor-specific" (0x01)

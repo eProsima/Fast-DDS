@@ -34,11 +34,6 @@ DataReader::DataReader(
     : impl_(impl)
 {}
 
-void DataReader::disable()
-{
-    impl_->disable();
-}
-
 DataReader::~DataReader()
 {}
 
@@ -82,6 +77,18 @@ bool DataReader::set_topic(
         const TopicAttributes& topic_att)
 {
     return impl_->set_topic(topic_att);
+}
+
+const ReaderQos& DataReader::get_qos() const
+{
+    return impl_->get_qos();
+}
+
+bool DataReader::get_qos(
+        ReaderQos& qos) const
+{
+    qos = impl_->get_qos();
+    return true;
 }
 
 const TopicAttributes& DataReader::get_topic() const

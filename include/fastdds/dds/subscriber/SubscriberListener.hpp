@@ -16,8 +16,8 @@
  * @file SubscriberListener.hpp
  */
 
-#ifndef _FASTDDS_SUBLISTENER_H_
-#define _FASTDDS_SUBLISTENER_H_
+#ifndef _FASTDDS_SUBLISTENER_HPP_
+#define _FASTDDS_SUBLISTENER_HPP_
 
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
@@ -106,4 +106,4 @@ class RTPS_DllAPI SubscriberListener
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif /* _FASTDDS_SUBLISTENER_H_ */
+#endif /* _FASTDDS_SUBLISTENER_HPP_ */

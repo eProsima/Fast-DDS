@@ -30,15 +30,12 @@ class WriterQos;
 class LivelinessLostStatus;
 class TopicAttributes;
 
-namespace rtps
-{
-class RTPSWriter;
-class RTPSParticipant;
+namespace rtps {
 class WriteParams;
 class WriterAttributes;
 class InstanceHandle_t;
 class GUID_t;
-}
+} // namespace rtps
 
 } // namespace fastrtps
 
@@ -109,11 +106,13 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle);
 
     /**
-     *
-     * @return
+     * Returns the DataWriter's GUID
      */
     const fastrtps::rtps::GUID_t& guid();
 
+    /**
+     * Returns the DataWriter's InstanceHandle
+     */
     fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
 
     /**
@@ -122,35 +121,69 @@ public:
      */
     TypeSupport get_type() const;
 
+    /**
+     * Waits the current thread until all writers have received their acknowledgments.
+     */
     bool wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
     /**
      * @brief Returns the offered deadline missed status
-     * @param Deadline missed status struct
+     * @param status Deadline missed status struct
      */
     void get_offered_deadline_missed_status(
             fastrtps::OfferedDeadlineMissedStatus& status);
 
-    bool set_attributes(const fastrtps::rtps::WriterAttributes& att);
+    bool set_attributes(
+            const fastrtps::rtps::WriterAttributes& att);
 
     const fastrtps::rtps::WriterAttributes& get_attributes() const;
 
-    bool set_qos(const fastrtps::WriterQos& qos);
+    /**
+     * Establishes the WriterQos for this DataWriter.
+     */
+    bool set_qos(
+            const fastrtps::WriterQos& qos);
 
+    /**
+     * Retrieves the WriterQos for this DataWriter.
+     */
     const fastrtps::WriterQos& get_qos() const;
 
-    bool set_topic(const fastrtps::TopicAttributes& att);
+    /**
+     * Fills the WriterQos with the values of this DataWriter.
+     * @return true
+     */
+    bool get_qos(
+            fastrtps::WriterQos& qos) const;
 
+    /**
+     * Establishes the topic for this DataWriter.
+     */
+    bool set_topic(
+            const fastrtps::TopicAttributes& att);
+
+    /**
+     * Retrieves the topic for this DataWriter.
+     */
     const fastrtps::TopicAttributes& get_topic() const;
 
+    /**
+     * Retrieves the listener for this DataWriter.
+     */
     const DataWriterListener* get_listener() const;
 
-    bool set_listener(DataWriterListener* listener);
+    /**
+     * Establishes the listener for this DataWriter.
+     */
+    bool set_listener(
+            DataWriterListener* listener);
 
+    /* TODO
     bool get_key_value(
             void* key_holder,
             const fastrtps::rtps::InstanceHandle_t& handle);
+    */
 
     bool dispose(
             void* data,
@@ -162,6 +195,7 @@ public:
     bool get_liveliness_lost_status(
             fastrtps::LivelinessLostStatus& status);
 
+    /* TODO
     bool get_offered_incompatible_qos_status(
             fastrtps::OfferedIncompatibleQosStatus& status)
     {
@@ -169,13 +203,11 @@ public:
         (void)status;
         return false;
     }
+    */
 
     const Publisher* get_publisher() const;
 
     bool assert_liveliness();
-
-    //! Remove all listeners in the hierarchy to allow a quiet destruction
-    void disable();
 
 private:
     DataWriterImpl* impl_;

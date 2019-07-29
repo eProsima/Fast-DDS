@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_DOMAIN_PARTICIPANT_H_
-#define _FASTDDS_DOMAIN_PARTICIPANT_H_
+#ifndef _FASTDDS_DOMAIN_PARTICIPANT_HPP_
+#define _FASTDDS_DOMAIN_PARTICIPANT_HPP_
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
@@ -209,7 +209,7 @@ public:
      * should be reset back to the initial values the factory would use, that is the values that would be used
      * if the set_default_publisher_qos operation had never been called.
      * @param qos
-     * @return
+     * @return if given qos was applied as default.
      */
     bool set_default_publisher_qos(
             const fastdds::dds::PublisherQos& qos);
@@ -249,7 +249,7 @@ public:
      * should be reset back to the initial values the factory would use, that is the values that would be used
      * if the set_default_subscriber_qos operation had never been called.
      * @param qos
-     * @return
+     * @return if given qos was applied as default.
      */
     bool set_default_subscriber_qos(
             const fastdds::dds::SubscriberQos& qos);
@@ -361,9 +361,9 @@ public:
      * @return True if correctly found and activated.
      */
     bool new_remote_endpoint_discovered(
-        const fastrtps::rtps::GUID_t& partguid,
-        uint16_t userId,
-        fastrtps::rtps::EndpointKind_t kind);
+            const fastrtps::rtps::GUID_t& partguid,
+            uint16_t userId,
+            fastrtps::rtps::EndpointKind_t kind);
 
     fastrtps::rtps::ResourceEvent& get_resource_event() const;
 
@@ -384,4 +384,4 @@ private:
 } // namespace fastdds
 } /* namespace eprosima */
 
-#endif /* _FASTDDS_DOMAIN_PARTICIPANT_H_ */
+#endif /* _FASTDDS_DOMAIN_PARTICIPANT_HPP_ */

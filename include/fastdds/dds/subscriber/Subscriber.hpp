@@ -17,8 +17,8 @@
  */
 
 
-#ifndef _FASTDDS_SUBSCRIBER_H_
-#define _FASTDDS_SUBSCRIBER_H_
+#ifndef _FASTDDS_SUBSCRIBER_HPP_
+#define _FASTDDS_SUBSCRIBER_HPP_
 
 #include <fastrtps/attributes/SubscriberAttributes.h>
 
@@ -27,12 +27,6 @@
 
 namespace eprosima {
 namespace fastrtps {
-
-namespace rtps
-{
-class RTPSReader;
-class RTPSParticipant;
-}
 
 class TopicAttributes;
 class ReaderQos;
@@ -64,7 +58,8 @@ class RTPS_DllAPI Subscriber
      * Constructor from a SubscriberImpl pointer
      * @param pimpl Actual implementation of the subscriber
      */
-    Subscriber(SubscriberImpl* pimpl)
+    Subscriber(
+            SubscriberImpl* pimpl)
         : impl_(pimpl)
     {}
 
@@ -75,7 +70,6 @@ public:
 
     /**
      * Allows accessing the Subscriber Qos.
-     * @return
      */
     const SubscriberQos& get_qos() const;
 
@@ -97,14 +91,13 @@ public:
 
     /**
      * Retrieves the attached SubscriberListener.
-     * @return
      */
     const SubscriberListener* get_listener() const;
 
     /**
      * Modifies the SubscriberListener.
      * @param listener
-     * @return
+     * @return if successfully set.
      */
     bool set_listener(
             SubscriberListener* listener);
@@ -114,7 +107,7 @@ public:
      * @param topic_attr
      * @param reader_qos
      * @param listener
-     * @return
+     * @return Pointer to the created DataReader. nullptr if failed.
      */
     DataReader* create_datareader(
             const fastrtps::TopicAttributes& topic_attr,
@@ -128,7 +121,6 @@ public:
      * If delete_datareader is called on a different Subscriber, the operation will have no effect and it will
      * return false.
      * @param reader
-     * @return
      */
     bool delete_datareader(
             DataReader* reader);
@@ -140,7 +132,6 @@ public:
      * If multiple DataReaders attached to the Subscriber satisfy this condition, then the operation will return
      * one of them. It is not specified which one.
      * @param topic_name
-     * @return
      */
     DataReader* lookup_datareader(
             const std::string& topic_name) const;
@@ -148,7 +139,7 @@ public:
     /**
      * This operation allows the application to access the DataReader objects.
      * @param readers
-     * @return
+     * @return true
      */
     bool get_datareaders(
         std::vector<DataReader*>& readers) const;
@@ -186,7 +177,6 @@ public:
      * should be reset back to the initial values the factory would use, that is the values that would be used
      * if the set_default_datareader_qos operation had never been called.
      * @param qos
-     * @return
      */
     bool set_default_datareader_qos(
             const fastrtps::ReaderQos& qos);
@@ -237,10 +227,13 @@ public:
 
     /**
      * This operation returns the DomainParticipant to which the Subscriber belongs.
-     * @return
      */
     const DomainParticipant* get_participant() const;
 
+    /**
+     * Returns the Subscriber's handle.
+     * @return InstanceHandle of this Subscriber.
+     */
     const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
 
 private:
@@ -251,4 +244,4 @@ private:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif /* _FASTDDS_SUBSCRIBER_H_ */
+#endif /* _FASTDDS_SUBSCRIBER_HPP_ */

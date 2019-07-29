@@ -20,6 +20,7 @@
 #ifndef _FASTRTPS_DATAREADERIMPL_HPP_
 #define _FASTRTPS_DATAREADERIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Guid.h>
 
@@ -35,11 +36,10 @@
 
 namespace eprosima {
 namespace fastrtps {
-namespace rtps
-{
+namespace rtps {
 class RTPSReader;
 class TimedEvent;
-}
+} // namespace rtps
 
 class SampleInfo_t;
 
@@ -77,7 +77,7 @@ public:
      * Method to block the current thread until an unread message is available
      */
     bool wait_for_unread_message(
-        const fastrtps::Duration_t& timeout);
+            const fastrtps::Duration_t& timeout);
 
 
     /** @name Read or take data methods.
@@ -131,19 +131,23 @@ public:
     void get_requested_deadline_missed_status(
             fastrtps::RequestedDeadlineMissedStatus& status);
 
-    bool set_attributes(const fastrtps::rtps::ReaderAttributes& att);
+    bool set_attributes(
+            const fastrtps::rtps::ReaderAttributes& att);
 
     const fastrtps::rtps::ReaderAttributes& get_attributes() const;
 
-    bool set_qos(const fastrtps::ReaderQos& qos);
+    bool set_qos(
+            const fastrtps::ReaderQos& qos);
 
     const fastrtps::ReaderQos& get_qos() const;
 
-    bool set_topic(const fastrtps::TopicAttributes& att);
+    bool set_topic(
+            const fastrtps::TopicAttributes& att);
 
     const fastrtps::TopicAttributes& get_topic() const;
 
-    bool set_listener(DataReaderListener* listener);
+    bool set_listener(
+            DataReaderListener* listener);
 
     const DataReaderListener* get_listener() const;
 

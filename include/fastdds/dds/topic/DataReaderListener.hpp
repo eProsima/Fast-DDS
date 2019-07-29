@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file DataReaderListener.h
+ * @file DataReaderListener.hpp
  */
 
-#ifndef _FASTRTPS_DATAREADERLISTENER_H_
-#define _FASTRTPS_DATAREADERLISTENER_H_
+#ifndef _FASTRTPS_DATAREADERLISTENER_HPP_
+#define _FASTRTPS_DATAREADERLISTENER_HPP_
 
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
@@ -138,4 +138,4 @@ class RTPS_DllAPI DataReaderListener
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif /* _FASTRTPS_DATAREADERLISTENER_H_ */
+#endif /* _FASTRTPS_DATAREADERLISTENER_HPP_ */

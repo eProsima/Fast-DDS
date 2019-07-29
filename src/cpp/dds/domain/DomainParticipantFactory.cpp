@@ -156,7 +156,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
     }
 
     ParticipantAttributes participant_att;
-    if ( XMLP_ret::XML_ERROR == XMLProfileManager::fillParticipantAttributes(participant_profile, participant_att))
+    if (XMLP_ret::XML_ERROR == XMLProfileManager::fillParticipantAttributes(participant_profile, participant_att))
     {
         logError(DOMAIN_PARTICIPANT_FACTORY, "Problem loading profile '" << participant_profile << "'");
         return nullptr;
@@ -170,24 +170,24 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         DomainParticipantListener* listen)
 {
     uint8_t domain_id = static_cast<uint8_t>(att.rtps.builtin.domainId);
-    DomainParticipant* pubsubpar = new DomainParticipant();
-    DomainParticipantImpl* pspartimpl = new DomainParticipantImpl(att, pubsubpar, listen);
-    RTPSParticipant* part = RTPSDomain::createParticipant(att.rtps, &pspartimpl->rtps_listener_);
+    DomainParticipant* dom_part = new DomainParticipant();
+    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(att, dom_part, listen);
+    RTPSParticipant* part = RTPSDomain::createParticipant(att.rtps, &dom_part_impl->rtps_listener_);
 
     if (part == nullptr)
     {
         logError(DOMAIN_PARTICIPANT_FACTORY, "Problem creating RTPSParticipant");
-        delete pspartimpl;
+        delete dom_part_impl;
         return nullptr;
     }
 
-    pspartimpl->rtps_participant_ = part;
+    dom_part_impl->rtps_participant_ = part;
 
     {
         std::lock_guard<std::mutex> guard(mtx_participants_);
-        participants_[domain_id].push_back(pspartimpl);
+        participants_[domain_id].push_back(dom_part_impl);
     }
-    return pubsubpar;
+    return dom_part;
 }
 
 DomainParticipant* DomainParticipantFactory::lookup_participant(
@@ -237,7 +237,7 @@ bool DomainParticipantFactory::load_XML_profiles_file(
         default_xml_profiles_loaded = true;
     }
 
-    if ( XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLFile(xml_profile_file))
+    if (XMLP_ret::XML_ERROR == XMLProfileManager::loadXMLFile(xml_profile_file))
     {
         logError(DOMAIN, "Problem loading XML file '" << xml_profile_file << "'");
         return false;

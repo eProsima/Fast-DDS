@@ -88,7 +88,8 @@ class  TopicDataType
          * Remove a previously created object.
          * @param data Pointer to the created Data.
          */
-        RTPS_DllAPI virtual void deleteData(void * data) = 0;
+        RTPS_DllAPI virtual void deleteData(
+                void * data) = 0;
 
         /**
          * Get the key associated with the data.

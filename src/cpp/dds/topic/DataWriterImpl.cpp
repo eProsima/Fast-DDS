@@ -108,7 +108,7 @@ DataWriterImpl::DataWriterImpl(
                 static_cast<WriterHistory*>(&history_),
                 static_cast<WriterListener*>(&writer_listener_));
 
-    if(writer == nullptr)
+    if (writer == nullptr)
     {
         logError(DATA_WRITER, "Problem creating associated Writer");
     }
@@ -119,7 +119,7 @@ DataWriterImpl::DataWriterImpl(
 void DataWriterImpl::disable()
 {
     set_listener(nullptr);
-    if(writer_ != nullptr)
+    if (writer_ != nullptr)
     {
         writer_->set_listener(nullptr);
     }
@@ -130,7 +130,7 @@ DataWriterImpl::~DataWriterImpl()
     delete lifespan_timer_;
     delete deadline_timer_;
 
-    if(writer_ != nullptr)
+    if (writer_ != nullptr)
     {
         logInfo(PUBLISHER, guid().entityId << " in topic: " << type_->getName());
     }
@@ -200,10 +200,11 @@ bool DataWriterImpl::check_new_change_preconditions(
         return false;
     }
 
-    if(change_kind == NOT_ALIVE_UNREGISTERED || change_kind == NOT_ALIVE_DISPOSED ||
-            change_kind == NOT_ALIVE_DISPOSED_UNREGISTERED)
+    if (change_kind == NOT_ALIVE_UNREGISTERED
+        || change_kind == NOT_ALIVE_DISPOSED
+        || change_kind == NOT_ALIVE_DISPOSED_UNREGISTERED)
     {
-        if(!type_->m_isGetKeyDefined)
+        if (!type_->m_isGetKeyDefined)
         {
             logError(PUBLISHER,"Topic is NO_KEY, operation not permitted");
             return false;
@@ -222,17 +223,17 @@ bool DataWriterImpl::perform_create_new_change(
     // Block lowlevel writer
     auto max_blocking_time = std::chrono::steady_clock::now() +
         std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.m_reliability.max_blocking_time));
-    std::unique_lock<std::recursive_timed_mutex> lock(writer_->getMutex(), std::defer_lock);
 
-    if(lock.try_lock_until(max_blocking_time))
+    std::unique_lock<std::recursive_timed_mutex> lock(writer_->getMutex(), std::defer_lock);
+    if (lock.try_lock_until(max_blocking_time))
     {
         CacheChange_t* ch = writer_->new_change(type_->getSerializedSizeProvider(data), change_kind, handle);
-        if(ch != nullptr)
+        if (ch != nullptr)
         {
-            if(change_kind == ALIVE)
+            if (change_kind == ALIVE)
             {
                 //If these two checks are correct, we asume the cachechange is valid and thwn we can write to it.
-                if(!type_->serialize(data, &ch->serializedPayload))
+                if (!type_->serialize(data, &ch->serializedPayload))
                 {
                     logWarning(RTPS_WRITER,"RTPSWriter:Serialization returns false";);
                     history_.release_Cache(ch);
@@ -241,7 +242,7 @@ bool DataWriterImpl::perform_create_new_change(
             }
 
             //TODO(Ricardo) This logic in a class. Then a user of rtps layer can use it.
-            if(high_mark_for_frag_ == 0)
+            if (high_mark_for_frag_ == 0)
             {
                 RTPSParticipant* part = publisher_->rtps_participant();
                 uint32_t max_data_size = writer_->getMaxDataSize();
@@ -262,16 +263,16 @@ bool DataWriterImpl::perform_create_new_change(
             uint32_t final_high_mark_for_frag = high_mark_for_frag_;
 
             // If needed inlineqos for related_sample_identity, then remove the inlinqos size from final fragment size.
-            if(wparams.related_sample_identity() != SampleIdentity::unknown())
+            if (wparams.related_sample_identity() != SampleIdentity::unknown())
             {
                 final_high_mark_for_frag -= 32;
             }
 
             // If it is big data, fragment it.
-            if(ch->serializedPayload.length > final_high_mark_for_frag)
+            if (ch->serializedPayload.length > final_high_mark_for_frag)
             {
                 // Check ASYNCHRONOUS_PUBLISH_MODE is being used, but it is an error case.
-                if( qos_.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
+                if (qos_.m_publishMode.kind != ASYNCHRONOUS_PUBLISH_MODE)
                 {
                     logError(PUBLISHER, "Data cannot be sent. It's serialized size is " <<
                             ch->serializedPayload.length << "' which exceeds the maximum payload size of '" <<
@@ -286,7 +287,7 @@ bool DataWriterImpl::perform_create_new_change(
                 ch->setFragmentSize(static_cast<uint16_t>(final_high_mark_for_frag));
             }
 
-            if(!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
+            if (!this->history_.add_pub_change(ch, wparams, lock, max_blocking_time))
             {
                 history_.release_Cache(ch);
                 return false;
@@ -337,7 +338,7 @@ bool DataWriterImpl::create_new_change_with_params(
     }
 
     InstanceHandle_t handle;
-    if(type_->m_isGetKeyDefined)
+    if (type_->m_isGetKeyDefined)
     {
         bool is_key_protected = false;
 #if HAVE_SECURITY
@@ -369,7 +370,8 @@ bool DataWriterImpl::remove_min_seq_change()
     return history_.removeMinChange();
 }
 
-bool DataWriterImpl::remove_all_change(size_t* removed)
+bool DataWriterImpl::remove_all_change(
+        size_t* removed)
 {
     return history_.removeAllChange(removed);
 }
@@ -386,14 +388,15 @@ InstanceHandle_t DataWriterImpl::get_instance_handle() const
     return handle;
 }
 
-bool DataWriterImpl::set_attributes(const WriterAttributes& att)
+bool DataWriterImpl::set_attributes(
+        const WriterAttributes& att)
 {
     bool updated = true;
     bool missing = false;
 
-    if(qos_.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+    if (qos_.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
     {
-        if(att.endpoint.unicastLocatorList.size() != w_att_.endpoint.unicastLocatorList.size() ||
+        if (att.endpoint.unicastLocatorList.size() != w_att_.endpoint.unicastLocatorList.size() ||
                 att.endpoint.multicastLocatorList.size() != w_att_.endpoint.multicastLocatorList.size())
         {
             logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
@@ -408,13 +411,13 @@ bool DataWriterImpl::set_attributes(const WriterAttributes& att)
                 for(LocatorListConstIterator lit2 = att.endpoint.unicastLocatorList.begin();
                         lit2!= att.endpoint.unicastLocatorList.end();++lit2)
                 {
-                    if(*lit1 == *lit2)
+                    if (*lit1 == *lit2)
                     {
                         missing = false;
                         break;
                     }
                 }
-                if(missing)
+                if (missing)
                 {
                     logWarning(PUBLISHER,"Locator: "<< *lit1 << " not present in new list");
                     logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
@@ -427,13 +430,13 @@ bool DataWriterImpl::set_attributes(const WriterAttributes& att)
                 for(LocatorListConstIterator lit2 = att.endpoint.multicastLocatorList.begin();
                         lit2!= att.endpoint.multicastLocatorList.end();++lit2)
                 {
-                    if(*lit1 == *lit2)
+                    if (*lit1 == *lit2)
                     {
                         missing = false;
                         break;
                     }
                 }
-                if(missing)
+                if (missing)
                 {
                     logWarning(PUBLISHER,"Locator: "<< *lit1<< " not present in new list");
                     logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
@@ -442,9 +445,9 @@ bool DataWriterImpl::set_attributes(const WriterAttributes& att)
         }
     }
 
-    if(updated)
+    if (updated)
     {
-        if(qos_.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+        if (qos_.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
         {
             //UPDATE TIMES:
             StatefulWriter* sfw = static_cast<StatefulWriter*>(writer_);
@@ -462,11 +465,12 @@ const WriterAttributes& DataWriterImpl::get_attributes() const
     return w_att_;
 }
 
-bool DataWriterImpl::set_qos(const WriterQos& qos)
+bool DataWriterImpl::set_qos(
+        const WriterQos& qos)
 {
     //QOS:
     //CHECK IF THE QOS CAN BE SET
-    if(!qos_.canQosBeUpdated(qos))
+    if (!qos.checkQos() || !qos_.canQosBeUpdated(qos))
     {
         return false;
     }
@@ -508,7 +512,8 @@ const WriterQos& DataWriterImpl::get_qos() const
     return qos_;
 }
 
-bool DataWriterImpl::set_listener(DataWriterListener* listener)
+bool DataWriterImpl::set_listener(
+        DataWriterListener* listener)
 {
     if (listener_ == listener)
     {
@@ -524,10 +529,11 @@ const DataWriterListener* DataWriterImpl::get_listener() const
     return listener_;
 }
 
-bool DataWriterImpl::set_topic(const TopicAttributes& att)
+bool DataWriterImpl::set_topic(
+        const TopicAttributes& att)
 {
     //TOPIC ATTRIBUTES
-    if(topic_att_ != att)
+    if (topic_att_ != att)
     {
         logWarning(DATA_WRITER, "Topic Attributes cannot be updated");
         return false;

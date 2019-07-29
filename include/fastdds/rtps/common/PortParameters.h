@@ -16,8 +16,8 @@
  * @file PortParameters.h
  */
 
-#ifndef _FASTDDS_RTPS__PORT_PARAMETERS_H_
-#define _FASTDDS_RTPS__PORT_PARAMETERS_H_
+#ifndef _FASTDDS_RTPS_PORT_PARAMETERS_H_
+#define _FASTDDS_RTPS_PORT_PARAMETERS_H_
 
 #include <fastdds/rtps/common/Types.h>
 #include <fastrtps/log/Log.h>
@@ -123,4 +123,4 @@ public:
 } /* namespace rtps */
 } /* namespace eprosima */
 
-#endif /* _FASTDDS_RTPS__PORT_PARAMETERS_H_ */
+#endif /* _FASTDDS_RTPS_PORT_PARAMETERS_H_ */

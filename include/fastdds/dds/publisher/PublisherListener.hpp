@@ -16,8 +16,8 @@
  * @file PublisherListener.hpp
  */
 
-#ifndef _FASTDDS_PUBLISHERLISTENER_H_
-#define _FASTDDS_PUBLISHERLISTENER_H_
+#ifndef _FASTDDS_PUBLISHERLISTENER_HPP_
+#define _FASTDDS_PUBLISHERLISTENER_HPP_
 
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/MatchingInfo.h>
@@ -84,4 +84,4 @@ public:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif /* _FASTDDS_PUBLISHERLISTENER_H_ */
+#endif /* _FASTDDS_PUBLISHERLISTENER_HPP_ */

@@ -21,8 +21,6 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <dds/subscriber/SubscriberImpl.hpp>
 
-#include <fastrtps/log/Log.h>
-
 using namespace eprosima;
 using namespace eprosima::fastdds::dds;
 

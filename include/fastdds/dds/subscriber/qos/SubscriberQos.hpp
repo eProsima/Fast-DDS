@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_READERQOS_H_
-#define _FASTDDS_READERQOS_H_
+#ifndef _FASTDDS_SUBSCRIBERQOS_HPP_
+#define _FASTDDS_SUBSCRIBERQOS_HPP_
 
 #include <fastrtps/qos/QosPolicies.h>
 
@@ -119,11 +119,11 @@ public:
 
     /**
      * Set Qos from another class
-     * @param readerqos Reference from a SubscriberQos object.
+     * @param subscriberqos Reference from a SubscriberQos object.
      * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
      */
     RTPS_DllAPI void set_qos(
-            const SubscriberQos& readerqos,
+            const SubscriberQos& subscriberqos,
             bool first_time);
 
     /**
@@ -148,4 +148,4 @@ extern const SubscriberQos SUBSCRIBER_QOS_DEFAULT;
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif /* _FASTDDS_READERQOS_H_ */
+#endif /* _FASTDDS_SUBSCRIBERQOS_HPP_ */

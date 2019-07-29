@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef __FASTDDS__PARTICIPANT_PARTICIPANTLISTENER_H__
-#define __FASTDDS__PARTICIPANT_PARTICIPANTLISTENER_H__
+#ifndef __FASTDDS__PARTICIPANT_PARTICIPANTLISTENER_HPP__
+#define __FASTDDS__PARTICIPANT_PARTICIPANTLISTENER_HPP__
 
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
@@ -40,82 +40,82 @@ class DomainParticipant;
  */
 class DomainParticipantListener
 {
-    public:
+public:
 
-        DomainParticipantListener() {}
+    DomainParticipantListener() {}
 
-        virtual ~DomainParticipantListener() {}
+    virtual ~DomainParticipantListener() {}
 
-        /*!
-         * This method is called when a new Participant is discovered, or a previously discovered participant changes
-         * its QOS or is removed.
-         * @param participant Pointer to the Participant which discovered the remote participant.
-         * @param info Remote participant information. User can take ownership of the object.
-         */
-        virtual void on_participant_discovery(
-                DomainParticipant* participant,
-                fastrtps::rtps::ParticipantDiscoveryInfo&& info)
-        {
-            (void)participant, (void)info;
-        }
+    /*!
+     * This method is called when a new Participant is discovered, or a previously discovered participant changes
+     * its QOS or is removed.
+     * @param participant Pointer to the Participant which discovered the remote participant.
+     * @param info Remote participant information. User can take ownership of the object.
+     */
+    virtual void on_participant_discovery(
+            DomainParticipant* participant,
+            fastrtps::rtps::ParticipantDiscoveryInfo&& info)
+    {
+        (void)participant, (void)info;
+    }
 
 #if HAVE_SECURITY
-        virtual void onParticipantAuthentication(
-                DomainParticipant* participant,
-                fastrtps::rtps::ParticipantAuthenticationInfo&& info)
-        {
-            (void)participant, (void)info;
-        }
+    virtual void onParticipantAuthentication(
+            DomainParticipant* participant,
+            fastrtps::rtps::ParticipantAuthenticationInfo&& info)
+    {
+        (void)participant, (void)info;
+    }
 #endif
 
-        /*!
-         * This method is called when a new Subscriber is discovered, or a previously discovered subscriber changes
-         * its QOS or is removed.
-         * @param participant Pointer to the Participant which discovered the remote subscriber.
-         * @param info Remote subscriber information. User can take ownership of the object.
-         */
-        virtual void on_subscriber_discovery(
-                DomainParticipant* participant,
-                fastrtps::rtps::ReaderDiscoveryInfo&& info)
-        {
-            (void)participant, (void)info;
-        }
+    /*!
+     * This method is called when a new Subscriber is discovered, or a previously discovered subscriber changes
+     * its QOS or is removed.
+     * @param participant Pointer to the Participant which discovered the remote subscriber.
+     * @param info Remote subscriber information. User can take ownership of the object.
+     */
+    virtual void on_subscriber_discovery(
+            DomainParticipant* participant,
+            fastrtps::rtps::ReaderDiscoveryInfo&& info)
+    {
+        (void)participant, (void)info;
+    }
 
-        /*!
-         * This method is called when a new Publisher is discovered, or a previously discovered publisher changes
-         * its QOS or is removed.
-         * @param participant Pointer to the Participant which discovered the remote publisher.
-         * @param info Remote publisher information. User can take ownership of the object.
-         */
-        virtual void on_publisher_discovery(
-                DomainParticipant* participant,
-                fastrtps::rtps::WriterDiscoveryInfo&& info)
-        {
-            (void)participant, (void)info;
-        }
+    /*!
+     * This method is called when a new Publisher is discovered, or a previously discovered publisher changes
+     * its QOS or is removed.
+     * @param participant Pointer to the Participant which discovered the remote publisher.
+     * @param info Remote publisher information. User can take ownership of the object.
+     */
+    virtual void on_publisher_discovery(
+            DomainParticipant* participant,
+            fastrtps::rtps::WriterDiscoveryInfo&& info)
+    {
+        (void)participant, (void)info;
+    }
 
-        /*!
-         * This method is called when a participant discovers a new Type
-         * The ownership of all object belongs to the caller so if needs to be used after the
-         * method ends, a full copy should be perform (except for dyn_type due to its shared_ptr nature.
-         * For example:
-         * fastrtps::types::TypeIdentifier new_type_id = *identifier;
-         */
-        virtual void on_type_discovery(
-                DomainParticipant* participant,
-                const fastrtps::string_255& topic,
-                const fastrtps::types::TypeIdentifier* identifier,
-                const fastrtps::types::TypeObject* object,
-                fastrtps::types::DynamicType_ptr dyn_type)
-        {
-            (void)participant, (void)topic, (void)identifier, (void)object, (void)dyn_type;
-        }
+    /*!
+     * This method is called when a participant discovers a new Type
+     * The ownership of all object belongs to the caller so if needs to be used after the
+     * method ends, a full copy should be perform (except for dyn_type due to its shared_ptr nature.
+     * For example:
+     * fastrtps::types::TypeIdentifier new_type_id = *identifier;
+     */
+    virtual void on_type_discovery(
+            DomainParticipant* participant,
+            const fastrtps::string_255& topic,
+            const fastrtps::types::TypeIdentifier* identifier,
+            const fastrtps::types::TypeObject* object,
+            fastrtps::types::DynamicType_ptr dyn_type)
+    {
+        (void)participant, (void)topic, (void)identifier, (void)object, (void)dyn_type;
+    }
 
-        // TODO: Methods in DomainParticipantListener (p.33 - DDS)
+    // TODO: Methods in DomainParticipantListener (p.33 - DDS)
 };
 
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // __FASTDDS__PARTICIPANT_PARTICIPANTLISTENER_H__
+#endif // __FASTDDS__PARTICIPANT_PARTICIPANTLISTENER_HPP__
