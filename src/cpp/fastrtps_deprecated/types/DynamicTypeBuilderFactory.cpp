@@ -1776,7 +1776,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
             }
 
             TypeObject memObj;
-            build_type_object(member->type_->descriptor_, memObj, &innerMembers);
+            build_type_object(member->type_->descriptor_, memObj, &innerMembers, false);
             const TypeIdentifier* typeId =
                 TypeObjectFactory::get_instance()->get_type_identifier(member->type_->get_name());
             if (typeId == nullptr)
@@ -1801,7 +1801,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         if (descriptor->get_base_type().get() != nullptr)
         {
             TypeIdentifier parent;
-            build_type_identifier(descriptor->get_base_type(), parent);
+            build_type_identifier(descriptor->get_base_type(), parent, false);
             object.minimal().struct_type().header().base_type(parent);
         }
 

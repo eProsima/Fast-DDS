@@ -79,7 +79,8 @@ bool TestPublisher::init(
 
     // CREATE THE PUBLISHER
     PublisherAttributes Wparam;
-    Wparam.topic.auto_fill_xtypes = false;
+    Wparam.topic.auto_fill_type_object = false;
+    Wparam.topic.auto_fill_type_information = false;
     Wparam.topic.topicKind = topic_kind;
     Wparam.topic.topicDataType = m_Type != nullptr ? m_Type->getName() : nullptr;
 

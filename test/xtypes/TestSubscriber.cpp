@@ -79,7 +79,8 @@ bool TestSubscriber::init(
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = topic_kind;
     Rparam.topic.topicDataType = m_Type != nullptr ? m_Type->getName() : nullptr;
-    Rparam.topic.auto_fill_xtypes = false;
+    Rparam.topic.auto_fill_type_object = false;
+    Rparam.topic.auto_fill_type_information = false;
 
     //REGISTER THE TYPE
     if (m_Type != nullptr)
@@ -267,7 +268,8 @@ void TestSubscriber::delete_datareader(eprosima::fastdds::dds::DataReader* reade
 bool TestSubscriber::register_discovered_type()
 {
     TypeSupport type(disc_type_);
-    topic_att.auto_fill_xtypes = true;
+    topic_att.auto_fill_type_object = true;
+    topic_att.auto_fill_type_information = true;
     return mp_participant->register_type(type, disc_type_->get_name());
 }
 

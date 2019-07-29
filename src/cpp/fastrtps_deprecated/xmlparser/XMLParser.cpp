@@ -1063,7 +1063,10 @@ static p_dynamictypebuilder_t getDiscriminatorTypeBuilder(const std::string &dis
     {
         return factory->create_bool_builder();
     }
-    else if (disc.compare(TBYTE) == 0)
+    else if (disc.compare(TBYTE) == 0
+             || disc.compare(OCTET) == 0
+             || disc.compare(INT8) == 0
+             || disc.compare(UINT8) == 0)
     {
         return factory->create_byte_builder();
     }
@@ -1358,7 +1361,10 @@ p_dynamictypebuilder_t XMLParser::parseXMLBitfieldDynamicType(
     {
         memberBuilder = factory->create_char16_builder();
     }
-    else if (strncmp(memberType, TBYTE, 6) == 0)
+    else if (strncmp(memberType, TBYTE, 6) == 0
+             || strncmp(memberType, OCTET, 6) == 0
+             || strncmp(memberType, UINT8, 6) == 0
+             || strncmp(memberType, INT8, 5) == 0)
     {
         memberBuilder = factory->create_byte_builder();
     }
@@ -1979,7 +1985,10 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
             //factory->DeleteBuilder(innerBuilder);
         }
     }
-    else if (strncmp(memberType, TBYTE, 6) == 0)
+    else if (strncmp(memberType, TBYTE, 6) == 0
+             || strncmp(memberType, OCTET, 6) == 0
+             || strncmp(memberType, UINT8, 6) == 0
+             || strncmp(memberType, INT8, 5) == 0)
     {
         if (!isArray)
         {
@@ -2657,7 +2666,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
         if (strcmp(name, ALLOCATION) == 0)
         {
             // allocation
-            if (XMLP_ret::XML_OK != 
+            if (XMLP_ret::XML_OK !=
                     getXMLParticipantAllocationAttributes(p_aux0, participant_node.get()->rtps.allocation, ident))
             {
                 return XMLP_ret::XML_ERROR;

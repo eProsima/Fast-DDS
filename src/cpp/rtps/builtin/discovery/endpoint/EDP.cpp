@@ -123,7 +123,7 @@ bool EDP::newLocalReaderProxyData(
             rpd->plugin_security_attributes_ = 0UL;
         }
 #endif
-        if (att.auto_fill_xtypes)
+        if (att.auto_fill_type_information)
         {
             // TypeInformation, TypeObject and TypeIdentifier
             if (!rpd->type_information().assigned())
@@ -135,7 +135,10 @@ bool EDP::newLocalReaderProxyData(
                     rpd->type_information() = *type_info;
                 }
             }
+        }
 
+        if (att.auto_fill_type_object)
+        {
             if (rpd->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
             {
                 const types::TypeIdentifier* type_id =
@@ -234,7 +237,7 @@ bool EDP::newLocalWriterProxyData(
         }
 #endif
 
-        if (att.auto_fill_xtypes)
+        if (att.auto_fill_type_information)
         {
             // TypeInformation, TypeObject and TypeIdentifier
             if (!wpd->type_information().assigned())
@@ -246,7 +249,10 @@ bool EDP::newLocalWriterProxyData(
                     wpd->type_information() = *type_info;
                 }
             }
+        }
 
+        if (att.auto_fill_type_object)
+        {
             if (wpd->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
             {
                 const types::TypeIdentifier* type_id =
@@ -318,7 +324,7 @@ bool EDP::updatedLocalReader(
         rdata->isAlive(true);
         rdata->m_expectsInlineQos = reader->expectsInlineQos();
 
-        if (att.auto_fill_xtypes)
+        if (att.auto_fill_type_information)
         {
             // TypeInformation, TypeObject and TypeIdentifier
             if (!rdata->type_information().assigned())
@@ -330,7 +336,10 @@ bool EDP::updatedLocalReader(
                     rdata->type_information() = *type_info;
                 }
             }
+        }
 
+        if (att.auto_fill_type_object)
+        {
             if (rdata->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
             {
                 const types::TypeIdentifier* type_id =
@@ -396,7 +405,7 @@ bool EDP::updatedLocalWriter(
         }
         wdata->m_qos.setQos(wqos, false);
 
-        if (att.auto_fill_xtypes)
+        if (att.auto_fill_type_information)
         {
             // TypeInformation, TypeObject and TypeIdentifier
             if (!wdata->type_information().assigned())
@@ -408,6 +417,10 @@ bool EDP::updatedLocalWriter(
                     wdata->type_information() = *type_info;
                 }
             }
+        }
+
+        if (att.auto_fill_type_object)
+        {
 
             if (wdata->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
             {

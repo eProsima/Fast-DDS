@@ -1,7 +1,7 @@
 <types>
     <type>
         <struct name="InnerStruct">
-            <member name="inner_count" type="uint8"/>
+            <member name="inner_count" type="byte"/>
         </struct>
     </type>
     <type>
