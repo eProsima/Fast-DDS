@@ -41,7 +41,8 @@ public:
            uint32_t send_buffer_size,
            eProsimaUDPSocket& socket,
            const Locator_t& remote_locator,
-           bool only_multicast_purpose) override;
+           bool only_multicast_purpose,
+           const std::chrono::microseconds& timeout) override;
 
     RTPS_DllAPI static bool test_UDPv4Transport_ShutdownAllNetwork;
     // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.

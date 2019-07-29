@@ -101,7 +101,8 @@ public:
            uint32_t send_buffer_size,
            eProsimaUDPSocket& socket,
            const Locator_t& remote_locator,
-           bool only_multicast_purpose);
+           bool only_multicast_purpose,
+           const std::chrono::microseconds& timeout);
 
     /**
      * Performs the locator selection algorithm for this transport.

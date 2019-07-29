@@ -17,6 +17,7 @@
 
 #include <functional>
 #include <vector>
+#include <chrono>
 
 namespace eprosima{
 namespace fastrtps{
@@ -45,15 +46,19 @@ public:
      * @param dataLength Length of the data to be sent. Will be used as a boundary for
      * the previous parameter.
      * @param destination_locator Locator describing the destination endpoint.
+     * @param timeout If transport supports it then it will use it as maximum blocking time.
      * @return Success of the send operation.
      */
-    bool send(const octet* data, uint32_t dataLength, const Locator_t& destination_locator)
+    bool send(const octet* data,
+            uint32_t dataLength,
+            const Locator_t& destination_locator,
+            const std::chrono::microseconds& timeout)
     {
         bool returned_value = false;
 
         if (send_lambda_)
         {
-            returned_value = send_lambda_(data, dataLength, destination_locator);
+            returned_value = send_lambda_(data, dataLength, destination_locator, timeout);
         }
 
         return returned_value;
@@ -80,7 +85,7 @@ protected:
     int32_t transport_kind_;
 
     std::function<void()> clean_up;
-    std::function<bool(const octet*, uint32_t, const Locator_t&)> send_lambda_;
+    std::function<bool(const octet*, uint32_t, const Locator_t&, const std::chrono::microseconds&)> send_lambda_;
 
 private:
 
