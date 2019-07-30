@@ -88,17 +88,6 @@ StatefulReader::StatefulReader(
 #endif
             )
 {
-    // Update resource limits on proxy changes set adding 256 possibly missing changes
-    proxy_changes_config_.initial += 256u;
-    if (proxy_changes_config_.increment == 0)
-    {
-        proxy_changes_config_.maximum += 256u;
-    }
-    else
-    {
-        proxy_changes_config_.maximum = std::max(proxy_changes_config_.maximum, proxy_changes_config_.initial);
-    }
-
     const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
     for (size_t n = 0; n < att.matched_writers_allocation.initial; ++n)
     {
