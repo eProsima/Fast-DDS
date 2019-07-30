@@ -143,6 +143,32 @@ public:
     T max() const noexcept { return base_ + (num_bits_ - 1); }
 
     /**
+     * Checks if an element is present in the bitmap.
+     *
+     * @param item   Value to be checked.
+     *
+     * @return true if the item is present in the bitmap, false otherwise.
+     */
+    bool is_set(const T& item) const noexcept
+    {
+        // Check item is inside the allowed range.
+        if ((item >= base_) && (range_max_ >= item))
+        {
+            // Calc distance from base to item, and check the corresponding bit.
+            Diff d_func;
+            uint32_t diff = d_func(item, base_);
+            if (diff < num_bits_)
+            {
+                uint32_t pos = diff >> 5;
+                diff &= 31UL;
+                return (bitmap_[pos] & (1UL << (31UL - diff))) != 0;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Adds an element to the range.
      * Adds an element to the bitmap if it is in the allowed range.
      *
