@@ -1,5 +1,3 @@
-#include <dds/core/xtypes/StructType.hpp>
-
 #include <dds/core/detail/macros.hpp>
 #include <dds/core/detail/conformance.hpp>
 //#include <dds/core/detail/ref_traits.hpp>  // private include of dds/core/ref_traits
@@ -35,6 +33,8 @@
 #include <dds/core/xtypes/CollectionTypes.hpp>
 #include <dds/core/xtypes/UnionCase.hpp>
 #include <dds/core/xtypes/UnionType.hpp>
+#include <dds/core/xtypes/StructType.hpp>
+#include <dds/core/xtypes/TypeProvider.hpp>
 
 int main()
 {
