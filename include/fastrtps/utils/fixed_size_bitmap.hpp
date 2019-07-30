@@ -193,9 +193,11 @@ public:
     void bitmap_set(uint32_t num_bits, const uint32_t* bitmap) noexcept
     {
         num_bits_ = std::min(num_bits, NBITS);
-        uint32_t num_bytes = ( (num_bits_ + 31UL) / 32UL) * sizeof(uint32_t);
+        uint32_t num_items = ((num_bits_ + 31UL) / 32UL);
+        uint32_t num_bytes = num_items * sizeof(uint32_t);
         bitmap_.fill(0UL);
         memcpy(bitmap_.data(), bitmap, num_bytes);
+        calc_maximum_bit_set(num_items, 0);
     }
 
     /**
@@ -338,29 +340,36 @@ private:
                 std::fill_n(bitmap_.begin(), n_items, 0);
             }
 
+            num_bits_ = new_num_bits;
             if (find_new_max)
             {
-                new_num_bits = 0;
-                for (uint32_t i = NITEMS; i > n_items;)
-                {
-                    --i;
-                    uint32_t bits = bitmap_[i];
-                    if (bits != 0)
-                    {
-                        bits = (bits & ~(bits - 1));
-#if _MSC_VER
-                        unsigned long bit;
-                        _BitScanReverse(&bit, bits);
-                        uint32_t offset = 32UL - bit;
-#else
-                        uint32_t offset = __builtin_clz(bits) + 1;
-#endif
-                        new_num_bits = (i << 5UL) + offset;
-                        break;
-                    }
-                }
+                calc_maximum_bit_set(NITEMS, n_items);
             }
-            num_bits_ = new_num_bits;
+        }
+    }
+
+    void calc_maximum_bit_set(
+            uint32_t starting_index,
+            uint32_t min_index)
+    {
+        num_bits_ = 0;
+        for (uint32_t i = starting_index; i > min_index;)
+        {
+            --i;
+            uint32_t bits = bitmap_[i];
+            if (bits != 0)
+            {
+                bits = (bits & ~(bits - 1));
+#if _MSC_VER
+                unsigned long bit;
+                _BitScanReverse(&bit, bits);
+                uint32_t offset = 32UL - bit;
+#else
+                uint32_t offset = __builtin_clz(bits) + 1;
+#endif
+                num_bits_ = (i << 5UL) + offset;
+                break;
+            }
         }
     }
 }; 
