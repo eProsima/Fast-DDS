@@ -136,12 +136,6 @@ StatefulWriter::~StatefulWriter()
         controller->disable();
     }
 
-    mp_RTPSParticipant->async_thread().unregister_writer(this);
-
-    // After unregistering writer from AsyncWriterThread, delete all flow_controllers because they register the writer in
-    // the AsyncWriterThread.
-    m_controllers.clear();
-
     if (disable_positive_acks_)
     {
         delete(ack_event_);
@@ -153,6 +147,12 @@ StatefulWriter::~StatefulWriter()
         delete(nack_response_event_);
         nack_response_event_ = nullptr;
     }
+
+    mp_RTPSParticipant->async_thread().unregister_writer(this);
+
+    // After unregistering writer from AsyncWriterThread, delete all flow_controllers because they register the writer in
+    // the AsyncWriterThread.
+    m_controllers.clear();
 
     // Stop all active proxies and pass them to the pool
     while (!matched_readers_.empty())

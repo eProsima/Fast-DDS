@@ -73,14 +73,22 @@ public:
         const std::chrono::time_point<Clock, Duration>& abs_time)
     {
         std::chrono::nanoseconds nsecs = abs_time - std::chrono::steady_clock::now();
-        struct timespec max_wait = { 0, 0 };
-        clock_gettime(1, &max_wait);
-        nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
-        auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
-        nsecs -= secs;
-        max_wait.tv_sec += secs.count();
-        max_wait.tv_nsec = (long)nsecs.count();
-        return (_Thrd_success == _Mtx_timedlock(mutex_, (xtime*)&max_wait));
+
+        if (0 < nsecs.count())
+        {
+            struct timespec max_wait = { 0, 0 };
+            clock_gettime(1, &max_wait);
+            nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
+            auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
+            nsecs -= secs;
+            max_wait.tv_sec += secs.count();
+            max_wait.tv_nsec = (long)nsecs.count();
+            return (_Thrd_success == _Mtx_timedlock(mutex_, (xtime*)&max_wait));
+        }
+        else
+        {
+            return (_Thrd_success == _Mtx_trylock(mutex_));
+        }
     }
 
     void* native_handle() noexcept
@@ -131,18 +139,21 @@ public:
         const std::chrono::time_point<Clock, Duration>& abs_time)
     {
         std::chrono::nanoseconds nsecs = abs_time - std::chrono::steady_clock::now();
-        if (0 > nsecs.count())
+        if (0 < nsecs.count())
         {
-            nsecs = std::chrono::nanoseconds(1000000);
+            struct timespec max_wait = { 0, 0 };
+            clock_gettime(1, &max_wait);
+            nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
+            auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
+            nsecs -= secs;
+            max_wait.tv_sec += secs.count();
+            max_wait.tv_nsec = (long)nsecs.count();
+            return (_Thrd_success == _Mtx_timedlock(mutex_, (xtime*)& max_wait));
         }
-        struct timespec max_wait = { 0, 0 };
-        clock_gettime(1, &max_wait);
-        nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
-        auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
-        nsecs -= secs;
-        max_wait.tv_sec += secs.count();
-        max_wait.tv_nsec = (long)nsecs.count();
-        return (_Thrd_success == _Mtx_timedlock(mutex_, (xtime*)& max_wait));
+        else
+        {
+            return (_Thrd_success == _Mtx_trylock(mutex_));
+        }
     }
 
     void* native_handle() noexcept
