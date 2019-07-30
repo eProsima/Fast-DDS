@@ -35,6 +35,7 @@
 #include <dds/core/xtypes/UnionType.hpp>
 #include <dds/core/xtypes/StructType.hpp>
 #include <dds/core/xtypes/TypeProvider.hpp>
+#include <dds/core/xtypes/DynamicData.hpp>
 
 int main()
 {
