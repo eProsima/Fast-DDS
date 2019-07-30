@@ -169,6 +169,61 @@ public:
     }
 
     /**
+     * Adds a range of elements to the range.
+     *
+     * Add all elements in [from, to) to the range.
+     * Equivalent to for(T i = from; i < to; i++) add(i);
+     *
+     * @param from   Starting value of the range to add.
+     * @param to     Ending value of the range to add.
+     */
+    void add_range(
+            const T& from,
+            const T& to)
+    {
+        constexpr uint32_t full_mask = 0xFFFFFFFF;
+
+        // Adapt incoming range to range limits
+        T min = (base_ >= from) ? base_ : from;
+        T max = (to >= base_ + NBITS) ? base_ + NBITS : to;
+
+        // Check precondition. Max should be explicitly above min.
+        if (min >= max)
+        {
+            return;
+        }
+
+        // Calc offset (distance from base) and num_bits (bits to be set)
+        Diff d_func;
+        uint32_t offset = d_func(min, base_);   // Bit position from base
+        uint32_t n_bits = d_func(max, min);     // Number of bits pending
+
+        num_bits_ = std::max(num_bits_, offset + n_bits);
+
+        uint32_t pos = offset >> 5;             // Item position
+        offset &= 31UL;                         // Bit position inside item
+        uint32_t mask = full_mask;              // Mask with all bits set
+        mask >>= offset;                        // Remove first 'offset' bits from mask
+        uint32_t bits_in_mask = 32UL - offset;  // Take note of number of set bits in mask
+
+        // This loop enters whenever the whole mask should be added
+        while (n_bits >= bits_in_mask)
+        {
+            bitmap_[pos] |= mask;               // Set whole mask of bits
+            pos++;                              // Go to next position in the array
+            n_bits -= bits_in_mask;             // Decrease number of pending bits
+            mask = full_mask;                   // Mask with all bits set
+            bits_in_mask = 32UL;                // All bits set in mask (32)
+        }
+
+        // This condition will be true if the last bits of the mask should not be used
+        if (n_bits > 0)
+        {
+            bitmap_[pos] |= mask & (full_mask << (bits_in_mask - n_bits));
+        }
+    }
+
+    /**
      * Gets the current value of the bitmap.
      * This method is designed to be used when performing serialization of a bitmap range.
      * 
