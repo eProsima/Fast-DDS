@@ -20,9 +20,10 @@
 #ifndef OMG_DDS_CORE_EXCEPTION_HPP_
 #define OMG_DDS_CORE_EXCEPTION_HPP_
 
+#include <dds/core/macros.hpp>
+
 #include <stdexcept>
 #include <string>
-#include <dds/core/macros.hpp>
 
 #if defined _MSC_VER
 #   pragma warning (push)

@@ -18,12 +18,11 @@
 #ifndef EPROSIMA_DDS_CORE_DETAIL_REF_TRAITS_HPP_
 #define EPROSIMA_DDS_CORE_DETAIL_REF_TRAITS_HPP_
 
-#include <memory>
-#include <type_traits>
-
 #include <dds/core/types.hpp>     //null
 #include <dds/core/Exception.hpp> //InvalidDowncastError
 
+#include <memory>
+#include <type_traits>
 
 namespace dds {
 namespace core {

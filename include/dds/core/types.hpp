@@ -20,12 +20,12 @@
 #ifndef OMG_DDS_CORE_TYPES_HPP_
 #define OMG_DDS_CORE_TYPES_HPP_
 
-#include <string>
-#include <vector>
-
 #include <dds/core/detail/inttypes.hpp>
 #include <dds/core/macros.hpp>
 #include <dds/core/detail/conformance.hpp>
+
+#include <string>
+#include <vector>
 
 namespace dds {
 namespace core {

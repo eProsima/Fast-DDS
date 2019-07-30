@@ -20,10 +20,12 @@
 #ifndef OMG_DDS_CORE_XTYPES_T_UNION_TYPE_HPP_
 #define OMG_DDS_CORE_XTYPES_T_UNION_TYPE_HPP_
 
+#include <dds/core/xtypes/detail/UnionType.hpp>
+
 #include <dds/core/xtypes/DynamicType.hpp>
 #include <dds/core/xtypes/UnionCase.hpp>
 #include <dds/core/xtypes/PrimitiveTypes.hpp>
-#include <dds/core/xtypes/detail/UnionType.hpp>
+
 #include <vector>
 
 namespace dds{
@@ -47,22 +49,21 @@ template<
 class TUnionType  : public TDynamicType< DELEGATE >
 {
 public:
+    TUnionType(
+        const std::string& name,
+        const PrimitiveType<T>& discriminator_type,
+        const std::vector<UnionCase<T>>& cases);
 
     TUnionType(
         const std::string& name,
         const PrimitiveType<T>& discriminator_type,
-        const std::vector<UnionCase<T> >& cases);
-
-    TUnionType(
-        const std::string& name,
-        const PrimitiveType<T>& discriminator_type,
-        const std::vector<UnionCase<T> >& cases,
+        const std::vector<UnionCase<T>>& cases,
         const Annotation& annotation);
 
     TUnionType(
         const std::string& name,
         const PrimitiveType<T>& discriminator_type,
-        const std::vector<UnionCase<T> >& cases,
+        const std::vector<UnionCase<T>>& cases,
         const std::vector<Annotation>& annotations);
 
     const std::vector<UnionCase<T> >& members() const;
@@ -86,13 +87,13 @@ public:
 
     TUnionType remove_annotation(
             const Annotation& annotation) const;
-
 };
 
-typedef TUnionType <TypeKind_def::Type, DynamicType> UnionType ;
+template<typename T>
+class UnionType : public TUnionType<T, detail::UnionType> {};
 
-}//namespace xtypes
-}//namespace core
-}//namespace dds
+} //namespace xtypes
+} //namespace core
+} //namespace dds
 
 #endif //OMG_DDS_CORE_XTYPES_T_STRUCT_TYPE_HPP_

@@ -20,9 +20,11 @@
 #ifndef OMG_DDS_CORE_XTYPES_DYNAMIC_TYPE_HPP_
 #define OMG_DDS_CORE_XTYPES_DYNAMIC_TYPE_HPP_
 
+#include <dds/core/xtypes/detail/DynamicType.hpp>
+
 #include <dds/core/Reference.hpp>
 #include <dds/core/xtypes/TypeKind.hpp>
-#include <dds/core/xtypes/detail/DynamicType.hpp>
+#include <dds/core/xtypes/Annotation.hpp>
 
 namespace dds {
 namespace core {

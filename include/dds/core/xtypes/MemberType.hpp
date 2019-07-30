@@ -20,11 +20,12 @@
 #ifndef OMG_DDS_CORE_XTYPES_MEMBER_TYPE_HPP
 #define OMG_DDS_CORE_XTYPES_MEMBER_TYPE_HPP
 
-#include <dds/core/Reference.hpp>
+#include <dds/core/xtypes/detail/MemberType.hpp>
 #include <dds/core/detail/inttypes.hpp>
+
 #include <dds/core/xtypes/DynamicType.hpp>
 #include <dds/core/xtypes/Annotation.hpp>
-#include <dds/core/xtypes/detail/MemberType.hpp>
+#include <dds/core/Reference.hpp>
 
 #include <vector>
 

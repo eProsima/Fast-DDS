@@ -20,9 +20,10 @@
 #ifndef OMG_DDS_XTYPES_TYPE_KIND_
 #define OMG_DDS_XTYPES_TYPE_KIND_
 
-#include <bitset>
-#include <dds/core/SafeEnumeration.hpp>
 #include <dds/core/detail/conformance.hpp>
+#include <dds/core/SafeEnumeration.hpp>
+
+#include <bitset>
 
 #if defined(OMG_DDS_X_TYPES_DYNANIC_TYPE_SUPPORT)
 

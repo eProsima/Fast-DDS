@@ -22,6 +22,7 @@
 
 #include <dds/core/types.hpp>
 #include <dds/core/refmacros.hpp>
+#include <dds/core/ref_traits.hpp>
 
 namespace dds {
 namespace core {
