@@ -383,7 +383,10 @@ size_t WriterProxy::unknown_missing_changes_up_to(const SequenceNumber_t& seq_nu
         for (SequenceNumber_t seq : changes_received_)
         {
             seq = std::min(seq, max_missing);
-            returnedValue += d_fun(seq, first_missing);
+            if (first_missing < seq)
+            {
+                returnedValue += d_fun(seq, first_missing);
+            }
             first_missing = seq + 1;
             if (first_missing >= max_missing)
             {
@@ -406,8 +409,13 @@ size_t WriterProxy::number_of_changes_from_writer() const
     assert(get_mutex_owner() == get_thread_id());
 #endif
 
-    SequenceNumberDiff d_fun;
-    return d_fun(max_sequence_number_, changes_from_writer_low_mark_);
+    if (max_sequence_number_ > changes_from_writer_low_mark_)
+    {
+        SequenceNumberDiff d_fun;
+        return d_fun(max_sequence_number_, changes_from_writer_low_mark_);
+    }
+
+    return 0;
 }
 
 SequenceNumber_t WriterProxy::next_cache_change_to_be_notified()
