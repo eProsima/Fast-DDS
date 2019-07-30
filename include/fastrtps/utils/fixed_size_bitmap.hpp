@@ -306,10 +306,10 @@ public:
 #if _MSC_VER
                 unsigned long bit;
                 _BitScanReverse(&bit, bits);
-                uint32_t offset = 31UL - bit;
+                uint32_t offset = 31UL ^ bit;
 #else
                 uint32_t offset = __builtin_clz(bits);
-                uint32_t bit = 31UL - offset;
+                uint32_t bit = 31UL ^ offset;
 #endif
 
                 // Call the function for the corresponding item
@@ -444,7 +444,7 @@ private:
 #if _MSC_VER
                 unsigned long bit;
                 _BitScanReverse(&bit, bits);
-                uint32_t offset = 32UL - bit;
+                uint32_t offset = (31UL ^ bit) + 1;
 #else
                 uint32_t offset = __builtin_clz(bits) + 1;
 #endif
