@@ -63,7 +63,13 @@ public:
      * Default constructor.
      * Constructs an empty range with default base.
      */
-    BitmapRange() noexcept : base_(), range_max_(base_ + (NBITS - 1)), bitmap_(), num_bits_(0u) {}
+    BitmapRange() noexcept
+        : base_()
+        , range_max_(base_ + (NBITS - 1))
+        , bitmap_()
+        , num_bits_(0u)
+    {
+    }
 
     /**
      * Base-specific constructor.
@@ -71,7 +77,14 @@ public:
      * 
      * @param base   Specific base value for the created range.
      */
-    explicit BitmapRange(T base) noexcept : base_(base), range_max_(base + (NBITS - 1)), bitmap_(), num_bits_(0u) {}
+    explicit BitmapRange(
+            T base) noexcept
+        : base_(base)
+        , range_max_(base + (NBITS - 1))
+        , bitmap_()
+        , num_bits_(0u)
+    {
+    }
 
     // We don't need to define copy/move constructors/assignment operators as the default ones would be enough
 
@@ -79,7 +92,10 @@ public:
      * Get base of the range.
      * @return a copy of the range base.
      */
-    T base() const noexcept { return base_; }
+    T base() const noexcept 
+    {
+        return base_;
+    }
 
     /**
      * Set a new base for the range.
@@ -87,7 +103,8 @@ public:
      *
      * @param base   New base value to set.
      */
-    void base(T base) noexcept
+    void base(
+            T base) noexcept
     {
         base_ = base;
         range_max_ = base_ + (NBITS - 1);
@@ -101,7 +118,8 @@ public:
      *
      * @param base   New base value to set.
      */
-    void base_update(T base) noexcept
+    void base_update(
+            T base) noexcept
     {
         // Do nothing if base is not changing
         if (base == base_)
@@ -133,14 +151,20 @@ public:
      * 
      * @return true if the range is empty, false otherwise.
      */
-    bool empty() const noexcept { return num_bits_ == 0u; }
+    bool empty() const noexcept
+    {
+        return num_bits_ == 0u;
+    }
 
     /**
      * Returns the highest value set in the range.
      * 
      * @return the highest value set in the range. If the range is empty, the result is undetermined.
      */
-    T max() const noexcept { return base_ + (num_bits_ - 1); }
+    T max() const noexcept
+    {
+        return base_ + (num_bits_ - 1);
+    }
 
     /**
      * Checks if an element is present in the bitmap.
@@ -149,7 +173,8 @@ public:
      *
      * @return true if the item is present in the bitmap, false otherwise.
      */
-    bool is_set(const T& item) const noexcept
+    bool is_set(
+            const T& item) const noexcept
     {
         // Check item is inside the allowed range.
         if ((item >= base_) && (range_max_ >= item))
@@ -176,7 +201,8 @@ public:
      *
      * @return true if the item has been added (i.e. is in the allowed range), false otherwise.
      */
-    bool add(const T& item) noexcept
+    bool add(
+            const T& item) noexcept
     {
         // Check item is inside the allowed range.
         if ((item >= base_) && (range_max_ >= item))
@@ -257,7 +283,10 @@ public:
      * @param bitmap           Upon return, it will contain the current value of the bitmap.
      * @param num_longs_used   Upon return, it will contain the number of valid elements on the returned bitmap.
      */
-    void bitmap_get(uint32_t& num_bits, bitmap_type& bitmap, uint32_t& num_longs_used) const noexcept
+    void bitmap_get(
+            uint32_t& num_bits,
+            bitmap_type& bitmap,
+            uint32_t& num_longs_used) const noexcept
     {
         num_bits = num_bits_;
         num_longs_used = (num_bits_ + 31UL) / 32UL;
@@ -271,7 +300,9 @@ public:
      * @param num_bits   Number of significant bits in the input bitmap.
      * @param bitmap     Points to the begining of a uint32_t array holding the input bitmap.
      */
-    void bitmap_set(uint32_t num_bits, const uint32_t* bitmap) noexcept
+    void bitmap_set(
+            uint32_t num_bits,
+            const uint32_t* bitmap) noexcept
     {
         num_bits_ = std::min(num_bits, NBITS);
         uint32_t num_items = ((num_bits_ + 31UL) / 32UL);
@@ -287,7 +318,8 @@ public:
      * @param f   Function to apply on each item.
      */
     template<class UnaryFunc>
-    void for_each(UnaryFunc f) const
+    void for_each(
+            UnaryFunc f) const
     {
         T item = base_;
 
@@ -332,7 +364,8 @@ protected:
 
 private:
 
-    void shift_map_left(uint32_t n_bits)
+    void shift_map_left(
+            uint32_t n_bits)
     {
         if (n_bits >= num_bits_)
         {
@@ -376,7 +409,8 @@ private:
         }
     }
 
-    void shift_map_right(uint32_t n_bits)
+    void shift_map_right(
+            uint32_t n_bits)
     {
         if (n_bits >= NBITS)
         {
