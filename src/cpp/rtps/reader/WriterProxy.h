@@ -74,13 +74,15 @@ public:
      * Activate this proxy associating it to a remote writer.
      * @param attributes WriterProxyData of the writer for which to keep state.
      */
-    void start(const WriterProxyData& attributes);
+    void start(
+            const WriterProxyData& attributes);
 
     /**
      * Update information on the remote writer.
      * @param attributes WriterProxyData with updated information of the writer.
      */
-    void update(const WriterProxyData& attributes);
+    void update(
+            const WriterProxyData& attributes);
 
     /**
      * Disable this proxy.
@@ -91,7 +93,8 @@ public:
      * Set initial value for last acked sequence number.
      * @param[in] seq_num last acked sequence number.
      */
-    void loaded_from_storage(const SequenceNumber_t& seq_num);
+    void loaded_from_storage(
+            const SequenceNumber_t& seq_num);
 
     /**
      * Get the maximum sequenceNumber received from this Writer.
@@ -104,34 +107,39 @@ public:
      * All changes with status UNKNOWN with seq_num <= input seq_num are marked MISSING.
      * @param[in] seq_num Pointer to the SequenceNumber.
      */
-    void missing_changes_update(const SequenceNumber_t& seq_num);
+    void missing_changes_update(
+            const SequenceNumber_t& seq_num);
 
     /**
      * Update the lost changes up to the provided sequenceNumber.
      * All changes with status UNKNOWN or MISSING with seq_num < input seq_num are marked LOST.
      * @param[in] seq_num Pointer to the SequenceNumber.
      */
-    void lost_changes_update(const SequenceNumber_t& seq_num);
+    void lost_changes_update(
+            const SequenceNumber_t& seq_num);
 
     /**
      * The provided change is marked as RECEIVED.
      * @param seq_num Sequence number of the change
      * @return True if correct.
      */
-    bool received_change_set(const SequenceNumber_t& seq_num);
+    bool received_change_set(
+            const SequenceNumber_t& seq_num);
 
     /**
      * Set a change as RECEIVED and NOT RELEVANT.
      * @param seq_num Sequence number of the change
      * @return true on success
      */
-    bool irrelevant_change_set(const SequenceNumber_t& seq_num);
+    bool irrelevant_change_set(
+            const SequenceNumber_t& seq_num);
 
     /**
      * Called when a change has been removed from the reader's history.
      * @param seq_num Sequence number of the removed change.
      */
-    void change_removed_from_history(const SequenceNumber_t& seq_num);
+    void change_removed_from_history(
+            const SequenceNumber_t& seq_num);
 
     /**
      * Check if this proxy has any missing change.
@@ -151,7 +159,8 @@ public:
      *                Only changes with a sequence number less than this one will be considered.
      * @return the number of missing changes with a sequence number less than seq_num.
      */
-    size_t unknown_missing_changes_up_to(const SequenceNumber_t& seq_num) const;
+    size_t unknown_missing_changes_up_to(
+            const SequenceNumber_t& seq_num) const;
 
     /**
      * Get the attributes of the writer represented by this proxy.
@@ -218,7 +227,8 @@ public:
      * @param[in] seq_num Sequence number of the cache change to check.
      * @return true if the cache change was received, false otherwise.
      */
-    bool change_was_received(const SequenceNumber_t& seq_num) const;
+    bool change_was_received(
+            const SequenceNumber_t& seq_num) const;
 
     /**
      * Sends a preemptive acknack to the writer represented by this proxy.
@@ -254,7 +264,8 @@ public:
      * Set a new value for the interval of the heartbeat response event.
      * @param interval New interval value.
      */
-    void update_heartbeat_response_interval(const Duration_t& interval);
+    void update_heartbeat_response_interval(
+            const Duration_t& interval);
 
     /**
      * Check if the destinations managed by this sender interface have changed.
@@ -310,18 +321,6 @@ public:
 
 private:
 
-    /*!
-     * @brief Add ChangeFromWriter_t up to the sequenceNumber passed, but not including this.
-     * Ex: If you have seqNums 1,2,3 and you receive seq_num 6, you need to add 4 and 5.
-     * @param sequence_number
-     * @param default_status ChangeFromWriter_t added will be created with this ChangeFromWriterStatus_t.
-     * @return True if sequence_number will be the next after last element in the changes_from_writer_ container.
-     * @remarks No thread-safe.
-     */
-    bool maybe_add_changes_from_writer_up_to(
-            const SequenceNumber_t& sequence_number, 
-            const ChangeFromWriterStatus_t default_status = ChangeFromWriterStatus_t::UNKNOWN);
-
     bool received_change_set(
             const SequenceNumber_t& seq_num, 
             bool is_relevance);
@@ -348,11 +347,14 @@ private:
     using pool_allocator_t =
         foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
 
-    //!Memory pool allocator for changes_from_writer_
+    //! Memory pool allocator for changes_received_
     pool_allocator_t changes_pool_;
-    //!Vector containing the ChangeFromWriter_t objects.
-    foonathan::memory::set<ChangeFromWriter_t, pool_allocator_t> changes_from_writer_;
+    //! Vector containing the sequence number of the received ChangeFromWriter_t objects.
+    foonathan::memory::set<SequenceNumber_t, pool_allocator_t> changes_received_;
+    //! Sequence number of the highest available change
     SequenceNumber_t changes_from_writer_low_mark_;
+    //! Highest sequence number informed by writer
+    SequenceNumber_t max_sequence_number_;
     //! Store last ChacheChange_t notified.
     SequenceNumber_t last_notified_;
     //!To fool RTPSMessageGroup when using this proxy as single destination
@@ -360,20 +362,7 @@ private:
     //!To fool RTPSMessageGroup when using this proxy as single destination
     ResourceLimitedVector<GuidPrefix_t> guid_prefix_as_vector_;
 
-    using ChangeIterator = decltype(changes_from_writer_)::iterator;
-
-    void for_each_set_status_from(
-            ChangeIterator first,
-            ChangeIterator last,
-            ChangeFromWriterStatus_t status,
-            ChangeFromWriterStatus_t new_status);
-
-    void for_each_set_status_from_and_maybe_remove(
-            ChangeIterator first,
-            ChangeIterator last,
-            ChangeFromWriterStatus_t status,
-            ChangeFromWriterStatus_t or_status,
-            ChangeFromWriterStatus_t new_status);
+    using ChangeIterator = decltype(changes_received_)::iterator;
 
 #if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
     int get_mutex_owner() const;
