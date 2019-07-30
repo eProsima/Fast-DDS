@@ -15,6 +15,8 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#if 0
+
 #define TEST_FRIENDS \
     FRIEND_TEST(WriterProxyTests, MissingChangesUpdate); \
     FRIEND_TEST(WriterProxyTests, LostChangesUpdate); \
@@ -343,6 +345,8 @@ TEST(WriterProxyTests, IrrelevantChangeSet)
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
+
+#endif
 
 int main(int argc, char **argv)
 {
