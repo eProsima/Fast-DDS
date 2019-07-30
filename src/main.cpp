@@ -1,3 +1,5 @@
+#include <dds/core/xtypes/StructType.hpp>
+
 #include <dds/core/detail/macros.hpp>
 #include <dds/core/detail/conformance.hpp>
 //#include <dds/core/detail/ref_traits.hpp>  // private include of dds/core/ref_traits

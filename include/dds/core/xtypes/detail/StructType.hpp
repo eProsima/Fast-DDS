@@ -23,36 +23,7 @@ namespace core {
 namespace xtypes {
 namespace detail {
 
-template<typename T>
-class TStructType; //[EPROSIMA CHECK]: changes StructType by TStructType with a template
-
-template<typename T>
-bool is_final(
-        const TStructType<T>& s)
-{
-    return false;
-}
-
-template<typename T>
-bool is_extensible(
-        const TStructType<T>& s)
-{
-    return false;
-}
-
-template<typename T>
-bool is_mutable(
-        const TStructType<T>& s)
-{
-    return false;
-}
-
-template<typename T>
-bool is_nested(
-const TStructType<T>& s)
-{
-    return false;
-}
+class StructType;
 
 } //namespace detail
 } //namespace xtypes
