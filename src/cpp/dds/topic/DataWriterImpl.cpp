@@ -635,7 +635,8 @@ bool DataWriterImpl::deadline_missed()
     return deadline_timer_reschedule();
 }
 
-void DataWriterImpl::get_offered_deadline_missed_status(OfferedDeadlineMissedStatus &status)
+void DataWriterImpl::get_offered_deadline_missed_status(
+        OfferedDeadlineMissedStatus &status)
 {
     std::unique_lock<std::recursive_timed_mutex> lock(writer_->getMutex());
 

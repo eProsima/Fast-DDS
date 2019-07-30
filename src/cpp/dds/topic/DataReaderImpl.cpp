@@ -444,7 +444,8 @@ bool DataReaderImpl::deadline_missed()
 }
 
 
-void DataReaderImpl::get_requested_deadline_missed_status(RequestedDeadlineMissedStatus& status)
+void DataReaderImpl::get_requested_deadline_missed_status(
+        RequestedDeadlineMissedStatus& status)
 {
     std::unique_lock<std::recursive_timed_mutex> lock(reader_->getMutex());
 

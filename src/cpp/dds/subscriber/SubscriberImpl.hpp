@@ -183,7 +183,7 @@ private:
     //!Attributes of the Subscriber
     fastrtps::SubscriberAttributes att_;
 
-    //!Map of Pointer to associated DataReaders
+    //!Map of Pointer to associated DataReaders. Topic name is the key.
     std::map<std::string, std::vector<DataReaderImpl*>> readers_;
 
     mutable std::mutex mtx_readers_;

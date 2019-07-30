@@ -212,7 +212,7 @@ DataReader* SubscriberImpl::create_datareader(
 
     {
         std::lock_guard<std::mutex> lock(mtx_readers_);
-        readers_[topic_att.getTopicDataType().to_string()].push_back(impl);
+        readers_[topic_att.getTopicName().to_string()].push_back(impl);
     }
 
     return reader;
@@ -222,7 +222,7 @@ bool SubscriberImpl::delete_datareader(
         DataReader* reader)
 {
     std::lock_guard<std::mutex> lock(mtx_readers_);
-    auto it = readers_.find(reader->get_topic().getTopicDataType().to_string());
+    auto it = readers_.find(reader->get_topic().getTopicName().to_string());
     if (it != readers_.end())
     {
         auto dr_it = std::find(it->second.begin(), it->second.end(), reader->impl_);

@@ -254,7 +254,7 @@ DataWriter* PublisherImpl::create_datawriter(
 
     {
         std::lock_guard<std::mutex> lock(mtx_writers_);
-        writers_[topic_att.getTopicDataType().to_string()].push_back(impl);
+        writers_[topic_att.getTopicName().to_string()].push_back(impl);
     }
 
     return writer;
