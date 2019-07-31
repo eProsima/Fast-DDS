@@ -225,19 +225,17 @@ bool WriterProxy::received_change_set(
     // If will be the last element, insert it at the end.
     if(seq_num > max_sequence_number_)
     {
-        // There are others.
-        if (max_sequence_number_ > changes_from_writer_low_mark_)
-        {
-            changes_received_.insert(changes_received_.end(), seq_num);
-        }
-        // Else not insert
-        else
+        // If it is the next to be acknowledeg, not insert
+        if (seq_num == changes_from_writer_low_mark_ + 1)
         {
             changes_from_writer_low_mark_ = seq_num;
         }
+        else
+        {
+            changes_received_.insert(changes_received_.end(), seq_num);
+        }
         max_sequence_number_ = seq_num;
     }
-    // Else it has to be found and change state.
     else
     {
         // Check if it is next to the last acknowledged
@@ -261,7 +259,6 @@ bool WriterProxy::received_change_set(
 
     return true;
 }
-
 
 SequenceNumberSet_t WriterProxy::missing_changes() const
 {
