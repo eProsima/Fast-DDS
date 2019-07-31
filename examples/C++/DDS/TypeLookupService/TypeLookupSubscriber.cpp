@@ -153,7 +153,7 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                         if (nullptr != dyn_type)
                         {
                             subscriber_->readers_[reader] = dyn_type;
-                            types::DynamicData_ptr data = types::DynamicDataFactory::get_instance()->create_data(dyn_type);
+                            types::DynamicData_ptr data(types::DynamicDataFactory::get_instance()->create_data(dyn_type));
                             subscriber_->datas_[reader] = data;
                         }
                         else
@@ -169,7 +169,7 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                 else
                 {
                     subscriber_->readers_[reader] = type;
-                    types::DynamicData_ptr data = types::DynamicDataFactory::get_instance()->create_data(type);
+                    types::DynamicData_ptr data(types::DynamicDataFactory::get_instance()->create_data(type));
                     subscriber_->datas_[reader] = data;
                 }
             };

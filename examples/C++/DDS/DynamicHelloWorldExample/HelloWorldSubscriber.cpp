@@ -130,7 +130,7 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
         &subscriber_->m_listener);
 
     subscriber_->readers_[reader] = dyn_type;
-    types::DynamicData_ptr data = types::DynamicDataFactory::get_instance()->create_data(dyn_type);
+    types::DynamicData_ptr data(types::DynamicDataFactory::get_instance()->create_data(dyn_type));
     subscriber_->datas_[reader] = data;
 }
 
