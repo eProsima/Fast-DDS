@@ -63,7 +63,7 @@ public:
      * from the same pointer or deleting the passed pointer will produce a runtime error.
      * \param ptr
      */
-    RTPS_DllAPI TypeSupport(
+    RTPS_DllAPI explicit TypeSupport(
             fastdds::dds::TopicDataType* ptr)
         : std::shared_ptr<fastdds::dds::TopicDataType>(ptr)
     {}

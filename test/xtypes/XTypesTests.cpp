@@ -207,7 +207,7 @@ TEST_F(xtypestests, TypeDiscoverySubs)
     pub.init("TypeDiscoverySubs", DOMAIN_ID_, type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeDiscoverySubs", DOMAIN_ID_, NO_KEY, nullptr, nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeDiscoverySubs", DOMAIN_ID_, NO_KEY, TypeSupport(nullptr), nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -254,7 +254,7 @@ TEST_F(xtypestests, TypeDiscoveryPubs)
     //typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("TypeDiscoveryPubs", DOMAIN_ID_, nullptr, nullptr, nullptr, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeDiscoveryPubs", DOMAIN_ID_, TypeSupport(nullptr), nullptr, nullptr, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
     sub.init("TypeDiscoveryPubs", DOMAIN_ID_, NO_KEY, type, type_obj, type_id, nullptr, "Sub1", &dataRepQos, nullptr);

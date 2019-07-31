@@ -555,7 +555,7 @@ const TypeSupport DomainParticipantImpl::find_type(
         return type_it->second;
     }
 
-    return nullptr;
+    return TypeSupport(nullptr);
 }
 
 bool DomainParticipantImpl::register_type(
