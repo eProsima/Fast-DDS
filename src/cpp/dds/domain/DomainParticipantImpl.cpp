@@ -664,20 +664,6 @@ bool DomainParticipantImpl::new_remote_endpoint_discovered(
     }
 }
 
-bool DomainParticipantImpl::get_remote_writer_info(
-        const GUID_t& writerGuid,
-        WriterProxyData& returnedInfo)
-{
-    return rtps_participant_->get_remote_writer_info(writerGuid, returnedInfo);
-}
-
-bool DomainParticipantImpl::get_remote_reader_info(
-        const GUID_t& readerGuid,
-        ReaderProxyData& returnedInfo)
-{
-    return rtps_participant_->get_remote_reader_info(readerGuid, returnedInfo);
-}
-
 ResourceEvent& DomainParticipantImpl::get_resource_event() const
 {
     return rtps_participant_->get_resource_event();

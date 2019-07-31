@@ -33,8 +33,8 @@ class TopicAttributes;
 namespace rtps {
 class WriteParams;
 class WriterAttributes;
-class InstanceHandle_t;
-class GUID_t;
+struct InstanceHandle_t;
+struct GUID_t;
 } // namespace rtps
 
 } // namespace fastrtps

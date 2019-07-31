@@ -256,14 +256,6 @@ public:
             uint16_t userId,
             fastrtps::rtps::EndpointKind_t kind);
 
-    bool get_remote_writer_info(
-            const fastrtps::rtps::GUID_t& writerGuid,
-            fastrtps::rtps::WriterProxyData& returnedInfo);
-
-    bool get_remote_reader_info(
-            const fastrtps::rtps::GUID_t& readerGuid,
-            fastrtps::rtps::ReaderProxyData& returnedInfo);
-
     fastrtps::rtps::ResourceEvent& get_resource_event() const;
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction

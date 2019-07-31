@@ -105,16 +105,6 @@ uint32_t RTPSParticipant::getMaxDataSize() const
     return mp_impl->getMaxDataSize();
 }
 
-bool RTPSParticipant::get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo)
-{
-    return mp_impl->get_remote_writer_info(writerGuid, returnedInfo);
-}
-
-bool RTPSParticipant::get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo)
-{
-    return mp_impl->get_remote_reader_info(readerGuid, returnedInfo);
-}
-
 ResourceEvent& RTPSParticipant::get_resource_event() const
 {
     return mp_impl->getEventResource();

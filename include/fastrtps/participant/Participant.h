@@ -80,23 +80,6 @@ class RTPS_DllAPI Participant
         std::vector<std::string> getParticipantNames() const;
 
         /**
-         * Retrieves remote write information.
-         * @param writerGuid GUID of the writer.
-         * @param returnedInfo WriterProxyData to be filled.
-         */
-        bool get_remote_writer_info(
-                const rtps::GUID_t& writerGuid,
-                rtps::WriterProxyData& returnedInfo);
-        /**
-         * Retrieves remote reader information.
-         * @param readerGuid GUID of the reader.
-         * @param returnedInfo ReaderProxyData to be filled.
-         */
-        bool get_remote_reader_info(
-                const rtps::GUID_t& readerGuid,
-                rtps::ReaderProxyData& returnedInfo);
-
-        /**
          * @brief Asserts liveliness of manual by participant publishers
          */
         void assert_liveliness();

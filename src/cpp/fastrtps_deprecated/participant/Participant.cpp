@@ -57,20 +57,6 @@ std::vector<std::string> Participant::getParticipantNames() const
     return mp_impl->getParticipantNames();
 }
 
-bool Participant::get_remote_writer_info(
-        const GUID_t& writerGuid,
-        WriterProxyData& returnedInfo)
-{
-    return mp_impl->get_remote_writer_info(writerGuid, returnedInfo);
-}
-
-bool Participant::get_remote_reader_info(
-        const GUID_t& readerGuid,
-        ReaderProxyData& returnedInfo)
-{
-    return mp_impl->get_remote_reader_info(readerGuid, returnedInfo);
-}
-
 void Participant::assert_liveliness()
 {
     mp_impl->assert_liveliness();

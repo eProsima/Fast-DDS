@@ -502,20 +502,6 @@ bool ParticipantImpl::newRemoteEndpointDiscovered(
         return this->mp_rtpsParticipant->newRemoteReaderDiscovered(partguid, endpointId);
 }
 
-bool ParticipantImpl::get_remote_writer_info(
-        const GUID_t& writerGuid,
-        WriterProxyData& returnedInfo)
-{
-    return mp_rtpsParticipant->get_remote_writer_info(writerGuid, returnedInfo);
-}
-
-bool ParticipantImpl::get_remote_reader_info(
-        const GUID_t& readerGuid,
-        ReaderProxyData& returnedInfo)
-{
-    return mp_rtpsParticipant->get_remote_reader_info(readerGuid, returnedInfo);
-}
-
 ResourceEvent& ParticipantImpl::get_resource_event() const
 {
     return mp_rtpsParticipant->get_resource_event();

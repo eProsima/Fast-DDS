@@ -24,12 +24,16 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <mutex>
 
+#ifdef USE_DEPRECATION
 #if defined(__GNUC__) || defined(__clang__)
 #define DEPRECATED __attribute__ ((deprecated))
 #elif defined(_MSC_VER)
 #define DEPRECATED __declspec(deprecated)
 #else
 #define DEPRECATED /** --Deprecated-- */
+#endif
+#else
+#define DEPRECATED
 #endif
 
 namespace eprosima{

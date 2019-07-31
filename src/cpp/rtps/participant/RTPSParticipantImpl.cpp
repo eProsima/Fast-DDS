@@ -1131,24 +1131,6 @@ WLP* RTPSParticipantImpl::wlp()
     return mp_builtinProtocols->mp_WLP;
 }
 
-bool RTPSParticipantImpl::get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo)
-{
-    if (this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(writerGuid, returnedInfo))
-    {
-        return true;
-    }
-    return false;
-}
-
-bool RTPSParticipantImpl::get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo)
-{
-    if (this->mp_builtinProtocols->mp_PDP->lookupReaderProxyData(readerGuid, returnedInfo))
-    {
-        return true;
-    }
-    return false;
-}
-
 IPersistenceService* RTPSParticipantImpl::get_persistence_service(const EndpointAttributes& param)
 {
     IPersistenceService* ret_val;

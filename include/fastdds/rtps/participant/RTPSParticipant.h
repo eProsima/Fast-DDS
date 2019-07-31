@@ -176,24 +176,6 @@ public:
      */
     uint32_t getMaxDataSize() const;
 
-    /**
-     * Retrieves remote write information.
-     * @param writerGuid GUID of the writer.
-     * @param returnedInfo WriterProxyData to be filled.
-     */
-    bool get_remote_writer_info(
-            const GUID_t& writerGuid,
-            WriterProxyData& returnedInfo);
-
-    /**
-     * Retrieves remote reader information.
-     * @param readerGuid GUID of the reader.
-     * @param returnedInfo ReaderProxyData to be filled.
-     */
-    bool get_remote_reader_info(
-            const GUID_t& readerGuid,
-            ReaderProxyData& returnedInfo);
-
     ResourceEvent& get_resource_event() const;
 
     /**

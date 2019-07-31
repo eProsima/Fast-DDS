@@ -151,14 +151,6 @@ class ParticipantImpl
         uint16_t userId,
         rtps::EndpointKind_t kind);
 
-    bool get_remote_writer_info(
-        const rtps::GUID_t& writerGuid,
-        rtps::WriterProxyData& returnedInfo);
-
-    bool get_remote_reader_info(
-        const rtps::GUID_t& readerGuid,
-        rtps::ReaderProxyData& returnedInfo);
-
     rtps::ResourceEvent& get_resource_event() const;
 
     /**
