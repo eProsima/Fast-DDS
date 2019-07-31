@@ -167,12 +167,14 @@ bool TypeLookupManager::assign_remote_endpoints(
     temp_reader_proxy_data_.m_expectsInlineQos = false;
     temp_reader_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
     temp_reader_proxy_data_.set_locators(pdata.metatraffic_locators, network, true);
-    temp_reader_proxy_data_.topicKind(WITH_KEY);
+    temp_reader_proxy_data_.topicKind(NO_KEY);
     temp_reader_proxy_data_.m_qos.m_durability.kind = fastrtps::VOLATILE_DURABILITY_QOS;
     temp_reader_proxy_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
 
+    logInfo(TYPELOOKUP_SERVICE, "for RTPSParticipant: " << pdata.m_guid);
+
     partdet &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
-    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
+    auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
 
     if ((auxendp!=0 || partdet!=0) && builtin_request_reader_ != nullptr)
     {
@@ -181,6 +183,9 @@ bool TypeLookupManager::assign_remote_endpoints(
         temp_writer_proxy_data_.persistence_guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
         builtin_request_reader_->matched_writer_add(temp_writer_proxy_data_);
     }
+
+    auxendp = endp;
+    auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
 
     if ((auxendp!=0 || partdet!=0) && builtin_reply_reader_ != nullptr)
     {
@@ -191,7 +196,7 @@ bool TypeLookupManager::assign_remote_endpoints(
     }
 
     auxendp = endp;
-    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+    auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
 
     if ((auxendp!=0 || partdet!=0) && builtin_request_writer_ != nullptr)
     {
@@ -199,6 +204,9 @@ bool TypeLookupManager::assign_remote_endpoints(
         temp_reader_proxy_data_.guid().entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_reader;
         builtin_request_writer_->matched_reader_add(temp_reader_proxy_data_);
     }
+
+    auxendp = endp;
+    auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
 
     if ((auxendp!=0 || partdet!=0) && builtin_reply_writer_ != nullptr)
     {
@@ -462,6 +470,7 @@ bool TypeLookupManager::create_secure_endpoints()
 SampleIdentity TypeLookupManager::get_type_dependencies(
         const fastrtps::types::TypeIdentifierSeq& id_seq) const
 {
+    SampleIdentity id = INVALID_SAMPLE_IDENTITY;
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
         TypeLookup_getTypeDependencies_In in;
@@ -470,19 +479,19 @@ SampleIdentity TypeLookupManager::get_type_dependencies(
         TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.create_data());
         request->data.getTypeDependencies(in);
 
-        bool result = send_request(*request);
-        type.delete_data(request);
-        if (result)
+        if (send_request(*request))
         {
-            return request->header.requestId;
+            id = request->header.requestId;
         }
+        type.delete_data(request);
     }
-    return INVALID_SAMPLE_IDENTITY;
+    return id;
 }
 
 SampleIdentity TypeLookupManager::get_types(
         const fastrtps::types::TypeIdentifierSeq& id_seq) const
 {
+    SampleIdentity id = INVALID_SAMPLE_IDENTITY;
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
         TypeLookup_getTypes_In in;
@@ -491,14 +500,13 @@ SampleIdentity TypeLookupManager::get_types(
         TypeLookup_Request* request = static_cast<TypeLookup_Request*>(type.create_data());
         request->data.getTypes(in);
 
-        bool result = send_request(*request);
-        type.delete_data(request);
-        if (result)
+        if (send_request(*request))
         {
-            return request->header.requestId;
+            id = request->header.requestId;
         }
+        type.delete_data(request);
     }
-    return INVALID_SAMPLE_IDENTITY;
+    return id;
 }
 
 std::string TypeLookupManager::get_instanceName() const
@@ -523,11 +531,48 @@ bool TypeLookupManager::send_request(
     req.header.requestId.sequence_number(request_seq_number_);
     ++request_seq_number_;
 
-    SerializedPayload_t payload(static_cast<uint32_t>(TypeLookup_Request::getCdrSerializedSize(req)) + 4);
-    request_type_.serialize(&req, &payload);
-    CDRMessage_t message(payload);
-    std::chrono::steady_clock::time_point max_time = std::chrono::steady_clock::time_point::max();
-    return builtin_request_writer_->send(&message, max_time);
+    //SerializedPayload_t payload(static_cast<uint32_t>(TypeLookup_Request::getCdrSerializedSize(req)) + 4);
+
+    CacheChange_t* change = builtin_request_writer_->new_change(
+        [&req]()
+        {
+            return TypeLookup_Request::getCdrSerializedSize(req) + 4;
+        },
+        ALIVE);
+
+    if (change != nullptr)
+    {
+        CDRMessage_t msg(change->serializedPayload);
+
+        bool valid = CDRMessage::addOctet(&msg, 0);
+#if __BIG_ENDIAN__
+        change->serializedPayload.encapsulation = static_cast<uint16_t>(PL_CDR_BE);
+        msg.msg_endian = BIGEND;
+        valid &= CDRMessage::addOctet(&msg, PL_CDR_BE);
+#else
+        change->serializedPayload.encapsulation = static_cast<uint16_t>(PL_CDR_LE);
+        msg.msg_endian = LITTLEEND;
+        valid &= CDRMessage::addOctet(&msg, PL_CDR_LE);
+#endif
+        valid &= CDRMessage::addUInt16(&msg, 0);
+
+        change->serializedPayload.pos = msg.pos;
+        change->serializedPayload.length = msg.length;
+
+        SerializedPayload_t payload;
+        payload.max_size = change->serializedPayload.max_size - 4;
+        payload.data = change->serializedPayload.data + 4;
+        if (valid && request_type_.serialize(&req, &payload))
+        {
+            change->serializedPayload.length += payload.length;
+            change->serializedPayload.pos += payload.pos;
+            payload.data = nullptr;
+            return builtin_request_writer_history_->add_change(change);
+        }
+    }
+    builtin_request_writer_history_->remove_change(change);
+    return false;
+
 }
 
 bool TypeLookupManager::send_reply(
@@ -535,16 +580,118 @@ bool TypeLookupManager::send_reply(
 {
     rep.header.instanceName = get_instanceName();
 
-    SerializedPayload_t payload(static_cast<uint32_t>(TypeLookup_Reply::getCdrSerializedSize(rep)) + 4);
-    reply_type_.serialize(&rep, &payload);
-    CDRMessage_t message(payload);
-    std::chrono::steady_clock::time_point max_time = std::chrono::steady_clock::time_point::max();
-    return builtin_request_writer_->send(&message, max_time);
+    CacheChange_t* change = builtin_reply_writer_->new_change(
+        [&rep]()
+        {
+            return TypeLookup_Reply::getCdrSerializedSize(rep) + 4;
+        },
+        ALIVE);
+
+    if (change != nullptr)
+    {
+        CDRMessage_t msg(change->serializedPayload);
+
+        bool valid = CDRMessage::addOctet(&msg, 0);
+#if __BIG_ENDIAN__
+        change->serializedPayload.encapsulation = static_cast<uint16_t>(PL_CDR_BE);
+        msg.msg_endian = BIGEND;
+        valid &= CDRMessage::addOctet(&msg, PL_CDR_BE);
+#else
+        change->serializedPayload.encapsulation = static_cast<uint16_t>(PL_CDR_LE);
+        msg.msg_endian = LITTLEEND;
+        valid &= CDRMessage::addOctet(&msg, PL_CDR_LE);
+#endif
+        valid &= CDRMessage::addUInt16(&msg, 0);
+
+        change->serializedPayload.pos = msg.pos;
+        change->serializedPayload.length = msg.length;
+
+        SerializedPayload_t payload;
+        payload.max_size = change->serializedPayload.max_size - 4;
+        payload.data = change->serializedPayload.data + 4;
+        if (valid && reply_type_.serialize(&rep, &payload))
+        {
+            change->serializedPayload.length += payload.length;
+            change->serializedPayload.pos += payload.pos;
+            payload.data = nullptr;
+            return builtin_reply_writer_history_->add_change(change);
+        }
+    }
+    builtin_request_writer_history_->remove_change(change);
+    return false;
+}
+
+bool TypeLookupManager::recv_request(
+        fastrtps::rtps::CacheChange_t& change,
+        TypeLookup_Request& req) const
+{
+    CDRMessage_t msg(change.serializedPayload);
+    msg.pos += 1;
+    octet encapsulation = 0;
+    CDRMessage::readOctet(&msg, &encapsulation);
+    if (encapsulation == PL_CDR_BE)
+    {
+        msg.msg_endian = BIGEND;
+    }
+    else if (encapsulation == PL_CDR_LE)
+    {
+        msg.msg_endian = LITTLEEND;
+    }
+    else
+    {
+        return false;
+    }
+    change.serializedPayload.encapsulation = static_cast<uint16_t>(encapsulation);
+    msg.pos += 2; // Skip encapsulation options.
+
+    SerializedPayload_t payload;
+    payload.max_size = change.serializedPayload.max_size - 4;
+    payload.length = change.serializedPayload.length - 4;
+    payload.data = change.serializedPayload.data + 4;
+    bool result = request_type_.deserialize(&payload, &req);
+    payload.data = nullptr;
+    return result;
+}
+
+bool TypeLookupManager::recv_reply(
+        fastrtps::rtps::CacheChange_t& change,
+        TypeLookup_Reply& rep) const
+{
+    CDRMessage_t msg(change.serializedPayload);
+    msg.pos += 1;
+    octet encapsulation = 0;
+    CDRMessage::readOctet(&msg, &encapsulation);
+    if (encapsulation == PL_CDR_BE)
+    {
+        msg.msg_endian = BIGEND;
+    }
+    else if (encapsulation == PL_CDR_LE)
+    {
+        msg.msg_endian = LITTLEEND;
+    }
+    else
+    {
+        return false;
+    }
+    change.serializedPayload.encapsulation = static_cast<uint16_t>(encapsulation);
+    msg.pos += 2; // Skip encapsulation options.
+
+    SerializedPayload_t payload;
+    payload.max_size = change.serializedPayload.max_size - 4;
+    payload.length = change.serializedPayload.length - 4;
+    payload.data = change.serializedPayload.data + 4;
+    bool result = reply_type_.deserialize(&payload, &rep);
+    payload.data = nullptr;
+    return result;
 }
 
 const fastrtps::rtps::GUID_t& TypeLookupManager::get_builtin_request_writer_guid() const
 {
-    return builtin_request_writer_->getGuid();
+    if (nullptr != builtin_request_writer_)
+    {
+        return builtin_request_writer_->getGuid();
+    }
+    return c_Guid_Unknown;
 }
 
 } // namespace builtin

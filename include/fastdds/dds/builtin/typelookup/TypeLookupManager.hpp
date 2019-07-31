@@ -197,6 +197,16 @@ private:
     bool send_reply(
             TypeLookup_Reply& rep) const;
 
+    //! Aux method to received requests
+    bool recv_request(
+            fastrtps::rtps::CacheChange_t& change,
+            TypeLookup_Request& req) const;
+
+    //! Aux method to received replies
+    bool recv_reply(
+            fastrtps::rtps::CacheChange_t& change,
+            TypeLookup_Reply& rep) const;
+
     const fastrtps::rtps::GUID_t& get_builtin_request_writer_guid() const;
 
     //!Pointer to the local RTPSParticipant.

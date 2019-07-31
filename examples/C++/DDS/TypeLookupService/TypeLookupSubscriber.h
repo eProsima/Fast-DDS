@@ -61,7 +61,7 @@ private:
     eprosima::fastrtps::ReaderQos qos_;
     eprosima::fastrtps::TopicAttributes topic_;
     void print_member_data(
-            eprosima::fastrtps::types::DynamicData_ptr data,
+            eprosima::fastrtps::types::DynamicData* data,
             eprosima::fastrtps::types::DynamicTypeMember*,
             const std::string& tab = "\t") const;
 public:

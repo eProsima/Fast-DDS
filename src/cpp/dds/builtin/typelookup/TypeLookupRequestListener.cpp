@@ -70,9 +70,9 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
         reader->getHistory()->remove_change(change);
     }
 
+    logInfo(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "Received new cache change");
     TypeLookup_Request request;
-    TypeLookup_RequestTypeSupport type_support;
-    if (type_support->deserialize(&change->serializedPayload, &request))
+    if (tlm_->recv_request(*change, request))
     {
         // TODO checks?
         if (request.header.requestId.writer_guid() == tlm_->get_builtin_request_writer_guid())
@@ -94,20 +94,41 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
                     TypeObject obj;
                     const TypeIdentifier* obj_ident = factory_->typelookup_get_type(type_id, obj);
 
+                    if (obj_ident != nullptr)
+                    {
+                        std::cout << "Received request for known type: " << std::hex << (uint32_t)obj_ident->_d();
+                        if (obj_ident->_d() >= fastrtps::types::EK_MINIMAL)
+                        {
+                            std::cout << " - " << obj_ident->equivalence_hash_to_string();
+                        }
+                        std::cout << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << "Received request for an unknown type: " << std::hex << (uint32_t)type_id._d();
+                        if (type_id._d() >= fastrtps::types::EK_MINIMAL)
+                        {
+                            std::cout << " - " << type_id.equivalence_hash_to_string();
+                        }
+                        std::cout << std::endl;
+                    }
+
                     if (obj_ident != nullptr && obj._d() != 0)
                     {
                         TypeIdentifierTypeObjectPair pair;
                         pair.type_identifier(type_id);
                         pair.type_object(obj);
                         out.types.push_back(std::move(pair));
+                        std::cout << "Added to types pair" << std::endl;
                     }
 
-                    if (&type_id != obj_ident)
+                    if (obj_ident != nullptr && !(type_id == *obj_ident))
                     {
                         TypeIdentifierPair pair;
                         pair.type_identifier1(*obj_ident);
                         pair.type_identifier2(type_id);
                         out.complete_to_minimal.push_back(std::move(pair));
+                        std::cout << "Added to identifiers pair" << std::endl;
                     }
                 }
 
@@ -126,8 +147,10 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
             {
                 const TypeLookup_getTypeDependencies_In in = request.data.getTypeDependencies();
                 TypeLookup_getTypeDependencies_Out out;
-                for (size_t index = 0; index < in.type_ids.size(); ++index)
+                //for (size_t index = 0; index < in.type_ids.size(); ++index)
                 {
+                    std::cout << "Received request for dependencies... " << std::endl;
+
                     out.dependent_typeids = factory_->typelookup_get_type_dependencies(
                         in.type_ids, in.continuation_point, out.continuation_point, 255); // TODO: Make configurable?
                 }
@@ -147,6 +170,7 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
                 break;
         }
     }
+    reader->getHistory()->remove_change(change);
 }
 
 } // namespace builtin

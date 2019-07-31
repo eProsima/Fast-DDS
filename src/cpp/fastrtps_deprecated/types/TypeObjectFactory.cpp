@@ -2195,6 +2195,13 @@ TypeIdentifierWithSizeSeq TypeObjectFactory::typelookup_get_type_dependencies(
         // Check it is known
         if (local_id != nullptr)
         {
+            std::cout << "Retrieving dependencies for identifier: " << std::hex << (uint32_t)local_id->_d();
+            if (local_id->_d() >= fastrtps::types::EK_MINIMAL)
+            {
+                std::cout << " - " << local_id->equivalence_hash_to_string();
+            }
+            std::cout << std::endl;
+
             // Create or retrieve its TypeInformation
             if (get_type_information(local_id) == nullptr)
             {
@@ -2217,6 +2224,8 @@ TypeIdentifierWithSizeSeq TypeObjectFactory::typelookup_get_type_dependencies(
                     ? local_info->complete().dependent_typeids()
                     : local_info->minimal().dependent_typeids();
 
+                std::cout << ">> Identified " << full_results.size() << " dependencies:" << std::endl;
+
                 // Check the start_index
                 if (skip + full_results.size() < start_index)
                 {
@@ -2231,6 +2240,12 @@ TypeIdentifierWithSizeSeq TypeObjectFactory::typelookup_get_type_dependencies(
                     for (size_t i = local_start; i < local_start + max_size && i < full_results.size(); ++i)
                     {
                         result.push_back(full_results[i]);
+                        std::cout << "- Identified dependency: " << std::hex << (uint32_t)full_results[i].type_id()._d();
+                        if (full_results[i].type_id()._d() >= fastrtps::types::EK_MINIMAL)
+                        {
+                            std::cout << " - " << full_results[i].type_id().equivalence_hash_to_string();
+                        }
+                        std::cout << std::endl;
                         ++added;
                     }
                     skip = 0;
@@ -2243,6 +2258,15 @@ TypeIdentifierWithSizeSeq TypeObjectFactory::typelookup_get_type_dependencies(
                     }
                 }
             }
+        }
+        else
+        {
+            std::cout << "Unknown dependencies for identifier: " << std::hex << (uint32_t)identifier._d();
+            if (identifier._d() >= fastrtps::types::EK_MINIMAL)
+            {
+                std::cout << " - " << identifier.equivalence_hash_to_string();
+            }
+            std::cout << std::endl;
         }
     }
 

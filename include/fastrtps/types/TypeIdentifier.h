@@ -407,6 +407,8 @@ public:
             const TypeIdentifier& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
+    RTPS_DllAPI std::string equivalence_hash_to_string() const;
+
 private:
 
     octet m__d;
