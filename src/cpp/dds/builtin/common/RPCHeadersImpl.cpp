@@ -28,8 +28,9 @@ size_t ReplyHeader::getCdrSerializedSize(const ReplyHeader& data, size_t current
     (void)data;
     size_t initial_alignment = current_alignment;
 
-    current_alignment += eprosima::fastcdr::Cdr::alignment(current_alignment, 16); // SampleIdentity
-    current_alignment += eprosima::fastcdr::Cdr::alignment(current_alignment, 4); // RemoteException
+    current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16); // SampleIdentity.GUID_t
+    current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8); // SampleIdentity.SequenceNumber_t
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4); // RemoteException
 
     return current_alignment - initial_alignment;
 }
@@ -74,8 +75,9 @@ size_t RequestHeader::getCdrSerializedSize(const RequestHeader& data, size_t cur
     (void)data;
     size_t initial_alignment = current_alignment;
 
-    current_alignment += eprosima::fastcdr::Cdr::alignment(current_alignment, 16); // SampleIdentity
-    current_alignment += eprosima::fastcdr::Cdr::alignment(current_alignment, data.instanceName.size() + 1);
+    current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16); // SampleIdentity.GUID_t
+    current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8); // SampleIdentity.SequenceNumber_t
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.instanceName.size() + 1;
 
     return current_alignment - initial_alignment;
 }

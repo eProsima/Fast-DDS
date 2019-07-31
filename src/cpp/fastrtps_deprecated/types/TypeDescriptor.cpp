@@ -311,7 +311,12 @@ AnnotationDescriptor* TypeDescriptor::get_annotation(const std::string& name) co
     for(; it != annotation_.end(); ++it)
     {
         AnnotationDescriptor* ann = *it;
-        if (ann->type()->get_name().compare(name) == 0)
+        //if (ann->type()->get_name().compare(name) == 0)
+        if (ann != nullptr
+            && ann->type() != nullptr
+            && ann->type()->kind_ > 0
+            && !ann->type()->get_name().empty()
+            && ann->type()->get_name().compare(name) == 0)
         {
             return ann;
         }

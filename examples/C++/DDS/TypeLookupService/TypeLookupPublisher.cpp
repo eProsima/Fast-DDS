@@ -51,6 +51,9 @@ bool TypeLookupPublisher::init()
 
     m_Hello->set_string_value("Hello DDS Dynamic World", 0);
     m_Hello->set_uint32_value(0, 1);
+    types::DynamicData* inner = m_Hello->loan_value(2);
+    inner->set_byte_value(10, 0);
+    m_Hello->return_loaned_value(inner);
 
     ParticipantAttributes PParam;
     PParam.rtps.builtin.discovery_config.discoveryProtocol = SIMPLE;
@@ -58,6 +61,7 @@ bool TypeLookupPublisher::init()
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     PParam.rtps.builtin.typelookup_config.use_server = true;
+    PParam.rtps.builtin.use_WriterLivelinessProtocol = false;
     PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_pub");
@@ -183,7 +187,12 @@ bool TypeLookupPublisher::publish(bool waitForListener)
     {
         uint32_t index;
         m_Hello->get_uint32_value(index, 1);
-        m_Hello->set_uint32_value(index+1, 1);
+        m_Hello->set_uint32_value(index + 1, 1);
+        types::DynamicData* inner = m_Hello->loan_value(2);
+        octet inner_count;
+        inner->get_byte_value(inner_count, 0);
+        inner->set_byte_value(inner_count + 1, 0);
+        m_Hello->return_loaned_value(inner);
         writer_->write(m_Hello.get());
         return true;
     }

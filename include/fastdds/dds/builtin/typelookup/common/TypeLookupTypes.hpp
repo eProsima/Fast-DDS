@@ -388,6 +388,10 @@ public:
             fastrtps::rtps::SerializedPayload_t* payload,
             void* data) override;
 
+    static size_t getCdrSerializedSize(
+            const TypeLookup_Request& data,
+            size_t current_alignment = 0);
+
     RTPS_DllAPI void* create_data() override;
 
     RTPS_DllAPI void delete_data(void* data) override;
@@ -403,6 +407,10 @@ public:
     RTPS_DllAPI bool deserialize(
             fastrtps::rtps::SerializedPayload_t* payload,
             void* data) override;
+
+    static size_t getCdrSerializedSize(
+            const TypeLookup_Reply& data,
+            size_t current_alignment = 0);
 
     RTPS_DllAPI void* create_data() override;
 

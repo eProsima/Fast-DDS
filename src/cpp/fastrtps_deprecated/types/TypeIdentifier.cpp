@@ -862,6 +862,20 @@ octet* TypeIdentifier::equivalence_hash()
     return (octet*)&m_equivalence_hash;
 }
 
+std::string TypeIdentifier::equivalence_hash_to_string() const
+{
+    std::stringstream ss;
+    if (m__d >= EK_MINIMAL)
+    {
+        ss << std::hex << m_equivalence_hash[0];
+        for (uint8_t i = 1; i < 14; ++i)
+        {
+            ss << std::hex << ":" << (uint32_t)m_equivalence_hash[i];
+        }
+    }
+    return ss.str();
+}
+
 void TypeIdentifier::extended_defn(ExtendedTypeDefn _extended_defn)
 {
     m_extended_defn = _extended_defn;

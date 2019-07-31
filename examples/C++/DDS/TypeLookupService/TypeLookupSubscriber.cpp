@@ -44,6 +44,7 @@ bool TypeLookupSubscriber::init()
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     PParam.rtps.builtin.typelookup_config.use_client = true;
+    PParam.rtps.builtin.use_WriterLivelinessProtocol = false;
     PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_sub");
@@ -112,8 +113,8 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
         const eprosima::fastrtps::string_255 type_name,
         const eprosima::fastrtps::types::TypeInformation& type_information)
 {
-    std::function<void(const std::string&)> callback =
-        [this, topic_name](const std::string& name)
+    std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
+        [this, topic_name](const std::string& name, const types::DynamicType_ptr type)
             {
                 std::cout << "Discovered type: " << name << " from topic " << topic_name << std::endl;
 
@@ -137,32 +138,40 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                     subscriber_->qos_,
                     &subscriber_->m_listener);
 
-                const types::TypeIdentifier* ident =
-                    types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(name);
-                const types::TypeObject* obj =
-                    types::TypeObjectFactory::get_instance()->get_type_object(ident);
-
-                if (nullptr != ident)
+                if (type == nullptr)
                 {
-                    types::DynamicType_ptr dyn_type =
-                        types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
+                    const types::TypeIdentifier* ident =
+                        types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(name);
+                    const types::TypeObject* obj =
+                        types::TypeObjectFactory::get_instance()->get_type_object(ident);
 
-                    if (nullptr != dyn_type)
+                    if (nullptr != ident)
                     {
-                        subscriber_->readers_[reader] = dyn_type;
-                        types::DynamicData_ptr data = types::DynamicDataFactory::get_instance()->create_data(dyn_type);
-                        subscriber_->datas_[reader] = data;
+                        types::DynamicType_ptr dyn_type =
+                            types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
+
+                        if (nullptr != dyn_type)
+                        {
+                            subscriber_->readers_[reader] = dyn_type;
+                            types::DynamicData_ptr data = types::DynamicDataFactory::get_instance()->create_data(dyn_type);
+                            subscriber_->datas_[reader] = data;
+                        }
+                        else
+                        {
+                            std::cout << "ERROR: DynamicType cannot be created for type: " << name << std::endl;
+                        }
                     }
                     else
                     {
-                        std::cout << "ERROR: DynamicType cannot be created for type: " << name << std::endl;
+                        std::cout << "ERROR: TypeIdentifier cannot be retrieved for type: " << name << std::endl;
                     }
                 }
                 else
                 {
-                    std::cout << "ERROR: TypeIdentifier cannot be retrieved for type: " << name << std::endl;
+                    subscriber_->readers_[reader] = type;
+                    types::DynamicData_ptr data = types::DynamicDataFactory::get_instance()->create_data(type);
+                    subscriber_->datas_[reader] = data;
                 }
-
             };
 
     subscriber_->mp_participant->register_remote_type(
@@ -184,7 +193,7 @@ void TypeLookupSubscriber::print_dynamic_data(
             type->get_all_members(members);
             for (auto it : members)
             {
-                print_member_data(data, it.second);
+                print_member_data(data.get(), it.second);
             }
             break;
         }
@@ -196,7 +205,7 @@ void TypeLookupSubscriber::print_dynamic_data(
 }
 
 void TypeLookupSubscriber::print_member_data(
-        types::DynamicData_ptr data,
+        types::DynamicData* data,
         types::DynamicTypeMember* type,
         const std::string& tab) const
 {
@@ -217,7 +226,7 @@ void TypeLookupSubscriber::print_member_data(
         }
         case TK_BYTE:
         {
-            std::cout << data->get_byte_value(type->get_id()) << std::endl;
+            std::cout << (uint32_t)data->get_byte_value(type->get_id()) << std::endl;
             break;
         }
         case TK_INT16:

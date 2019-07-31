@@ -385,6 +385,8 @@ public:
     RTPS_DllAPI bool consistent(const TypeIdentifier &x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
+    RTPS_DllAPI std::string equivalence_hash_to_string() const;
+
 private:
     octet m__d;
 

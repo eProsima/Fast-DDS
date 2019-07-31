@@ -407,7 +407,7 @@ public:
     bool register_remote_type(
             const fastrtps::types::TypeInformation& type_information,
             const std::string& type_name,
-            std::function<void(const std::string& name)>& callback);
+            std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
 
 private:
 

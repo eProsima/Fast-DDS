@@ -275,7 +275,7 @@ public:
     bool register_remote_type(
             const fastrtps::types::TypeInformation& type_information,
             const std::string& type_name,
-            std::function<void(const std::string& name)>& callback);
+            std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
@@ -317,7 +317,9 @@ private:
 
     // register_remote_type parent request, type_name, callback relationship.
     std::map<fastrtps::rtps::SampleIdentity,
-        std::pair<std::string, std::function<void(const std::string& name)>>> register_callbacks_;
+             std::pair<std::string, std::function<void(
+                                        const std::string& name,
+                                        const fastrtps::types::DynamicType_ptr)>>> register_callbacks_;
 
     // Relationship between child and parent request
     std::map<fastrtps::rtps::SampleIdentity, fastrtps::rtps::SampleIdentity> child_requests_;
@@ -395,20 +397,23 @@ private:
 
     // Always call it with the mutex already taken
     void remove_parent_request(
-            const fastrtps::rtps::SampleIdentity request);
+            const fastrtps::rtps::SampleIdentity& request);
 
     // Always call it with the mutex already taken
     void remove_child_request(
-            const fastrtps::rtps::SampleIdentity request);
+            const fastrtps::rtps::SampleIdentity& request);
 
     // Always call it with the mutex already taken
     void on_child_requests_finished(
-            const fastrtps::rtps::SampleIdentity parent);
+            const fastrtps::rtps::SampleIdentity& parent);
 
     void fill_pending_dependencies(
             const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies,
             fastrtps::types::TypeIdentifierSeq& pending_identifiers,
             fastrtps::types::TypeIdentifierSeq& pending_objects) const;
+
+    std::string get_inner_type_name(
+            const fastrtps::rtps::SampleIdentity& id) const;
 };
 
 } /* namespace dds */

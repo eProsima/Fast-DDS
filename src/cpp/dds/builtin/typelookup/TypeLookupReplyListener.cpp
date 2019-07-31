@@ -68,10 +68,10 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
         logWarning(TL_REPLY_READER, "Received data from a bad endpoint.");
         reader->getHistory()->remove_change(change);
     }
+    logInfo(TYPELOOKUP_SERVICE_REPLY_LISTENER, "Received new cache change");
 
     TypeLookup_Reply reply;
-    TypeLookup_ReplyTypeSupport type_support;
-    if (type_support->deserialize(&change->serializedPayload, &reply))
+    if (tlm_->recv_reply(*change, reply))
     {
         if (reply.header.requestId.writer_guid() != tlm_->get_builtin_request_writer_guid())
         {
@@ -88,11 +88,6 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
                 {
                     if (pair.type_object()._d() == EK_COMPLETE) // Just in case
                     {
-                        DynamicType_ptr dyn_type = factory_->build_dynamic_type(
-                            "", // No type name available
-                            &pair.type_identifier(),
-                            &pair.type_object());
-
                         // If build_dynamic_type failed, just sent the nullptr already contained on it.
                         tlm_->participant_->getListener()->on_type_discovery(
                             tlm_->participant_->getUserRTPSParticipant(),
@@ -100,7 +95,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
                             "", // No topic_name available
                             &pair.type_identifier(),
                             &pair.type_object(),
-                            dyn_type);
+                            nullptr);
                     }
                 }
                 // TODO Call a callback once the job is done
@@ -108,8 +103,8 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
             }
             case TypeLookup_getDependencies_Hash:
             {
-                const TypeLookup_getTypeDependencies_Out dependencies =
-                    reply.return_value.getTypeDependencies().result();
+                //const TypeLookup_getTypeDependencies_Out dependencies =
+                //    reply.return_value.getTypeDependencies().result();
 
                 tlm_->get_RTPS_participant()->getListener()->on_type_dependencies_reply(
                     tlm_->builtin_protocols_->mp_participantImpl->getUserRTPSParticipant(),
@@ -121,6 +116,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
                 break;
         }
     }
+    reader->getHistory()->remove_change(change);
 }
 
 } // namespace builtin
