@@ -434,8 +434,8 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparison)
 {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
-    types::DynamicData_ptr dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
-    types::DynamicData_ptr dynData2 = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
+    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    types::DynamicData_ptr dynData2(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
     ASSERT_TRUE(dynData2->equals(dynData.get()));
 
     uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(dynData.get())());
@@ -468,7 +468,7 @@ TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
 {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubtype(m_DynAutoType);
-    types::DynamicData_ptr dynData = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
+    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     uint32_t payloadSize = static_cast<uint32_t>(pubsubtype.getSerializedSizeProvider(dynData.get())());
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubtype.serialize(dynData.get(), &payload));
@@ -482,7 +482,7 @@ TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
     ASSERT_TRUE(m_StaticType.serialize(&staticData, &payload2));
     ASSERT_TRUE(payloadSize2 == payload2.length);
 
-    types::DynamicData_ptr dynData2 = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
+    types::DynamicData_ptr dynData2(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     ASSERT_TRUE(pubsubtype.deserialize(&payload2, dynData2.get()));
 
     ASSERT_TRUE(dynData2->equals(dynData.get()));
@@ -512,18 +512,18 @@ TEST_F(DynamicComplexTypesTests, DynamicDiscoveryTest)
     DynamicTypeBuilder_ptr type1, type2, type3;
     {
         type1 = DynamicTypeBuilderFactory::get_instance()->create_uint16_builder();
-        //types::DynamicData_ptr data = DynamicDataFactory::get_instance()->create_data(type1);
+        //types::DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(type1));
         DynamicTypeBuilderFactory::get_instance()->build_type_object(type1->get_type_descriptor(), typeObject1);
     }
     {
         type2 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
-        //types::DynamicData_ptr data2 = DynamicDataFactory::get_instance()->create_data(type2);
+        //types::DynamicData_ptr data2(DynamicDataFactory::get_instance()->create_data(type2));
         DynamicTypeBuilderFactory::get_instance()->build_type_object(type2->get_type_descriptor(), typeObject2);
     }
 
     {
         type3 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
-        //types::DynamicData_ptr data2 = DynamicDataFactory::get_instance()->create_data(type3);
+        //types::DynamicData_ptr data2(DynamicDataFactory::get_instance()->create_data(type3));
         DynamicTypeBuilderFactory::get_instance()->build_type_object(type3->get_type_descriptor(), typeObject3);
     }
 
@@ -539,8 +539,8 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_A)
 {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
-    types::DynamicData_ptr dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
-    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
+    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
 
     CompleteStruct staticData;
     staticData.my_union()._d(A);
@@ -608,8 +608,8 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_B)
 {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
-    types::DynamicData_ptr dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
-    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
+    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
 
     CompleteStruct staticData;
     staticData.my_union()._d(A);
@@ -677,8 +677,8 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_C)
 {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
-    types::DynamicData_ptr dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
-    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
+    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
 
     CompleteStruct staticData;
     staticData.my_union()._d(A);
@@ -743,7 +743,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_C)
 
 TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
 {
-    types::DynamicData_ptr dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
+    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
 
     CompleteStruct staticData;
     staticData.my_union()._d() = B;
@@ -921,7 +921,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     complex->return_loaned_value(my_array_struct);
 
     DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
-    DynamicData_ptr key_oct = DynamicDataFactory::get_instance()->create_data(octet_builder->build());
+    DynamicData_ptr key_oct(DynamicDataFactory::get_instance()->create_data(octet_builder->build()));
     MemberId kId;
     MemberId vId;
     MemberId ssId;
@@ -939,7 +939,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     complex->return_loaned_value(my_map_octet_short);
 
     DynamicTypeBuilder_ptr long_builder = m_factory->create_int32_builder();
-    DynamicData_ptr key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    DynamicData_ptr key(DynamicDataFactory::get_instance()->create_data(long_builder->build()));
     DynamicData *my_map_long_struct = complex->loan_value(complex->get_member_id_by_name("my_map_long_struct"));
 
     //DynamicData *mas3 = my_array_struct->loan_value(3);
@@ -1215,10 +1215,10 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     }
     std::cout << "END" << std::endl;
     */
-    types::DynamicData_ptr dynDataFromDynamic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
+    types::DynamicData_ptr dynDataFromDynamic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic.get()));
 
-    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
+    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic.get()));
 
     ASSERT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic.get()));
@@ -1226,7 +1226,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
 
 TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
 {
-    types::DynamicData_ptr dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
+    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
 
     CompleteStruct staticData;
     staticData.my_union()._d() = B;
@@ -1404,7 +1404,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     complex->return_loaned_value(my_array_struct);
 
     DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
-    DynamicData_ptr key_oct = DynamicDataFactory::get_instance()->create_data(octet_builder->build());
+    DynamicData_ptr key_oct(DynamicDataFactory::get_instance()->create_data(octet_builder->build()));
     MemberId kId;
     MemberId vId;
     MemberId ssId;
@@ -1422,7 +1422,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     complex->return_loaned_value(my_map_octet_short);
 
     DynamicTypeBuilder_ptr long_builder = m_factory->create_int32_builder();
-    DynamicData_ptr key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    DynamicData_ptr key(DynamicDataFactory::get_instance()->create_data(long_builder->build()));
     DynamicData *my_map_long_struct = complex->loan_value(complex->get_member_id_by_name("my_map_long_struct"));
 
     //DynamicData *mas3 = my_array_struct->loan_value(3);
@@ -1656,10 +1656,10 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     ASSERT_TRUE(pbComplete.serialize(&staticData, &stPayload));
     ASSERT_TRUE(stPayload.length == payloadSize2);
 
-    types::DynamicData_ptr dynDataFromDynamic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
+    types::DynamicData_ptr dynDataFromDynamic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic.get()));
 
-    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
+    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic.get()));
 
     ASSERT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic.get()));
@@ -1667,7 +1667,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
 
 TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
 {
-    types::DynamicData_ptr dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
+    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
 
     CompleteStruct staticData;
     staticData.my_union()._d() = B;
@@ -1844,7 +1844,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     complex->return_loaned_value(my_array_struct);
 
     DynamicTypeBuilder_ptr octet_builder = m_factory->create_byte_builder();
-    DynamicData_ptr key_oct = DynamicDataFactory::get_instance()->create_data(octet_builder->build());
+    DynamicData_ptr key_oct(DynamicDataFactory::get_instance()->create_data(octet_builder->build()));
     MemberId kId;
     MemberId vId;
     MemberId ssId;
@@ -1862,7 +1862,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     complex->return_loaned_value(my_map_octet_short);
 
     DynamicTypeBuilder_ptr long_builder = m_factory->create_int32_builder();
-    DynamicData_ptr key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
+    DynamicData_ptr key(DynamicDataFactory::get_instance()->create_data(long_builder->build()));
     DynamicData *my_map_long_struct = complex->loan_value(complex->get_member_id_by_name("my_map_long_struct"));
 
     //DynamicData *mas3 = my_array_struct->loan_value(3);
@@ -2138,10 +2138,10 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     }
     std::cout << "END" << std::endl;
     */
-    types::DynamicData_ptr dynDataFromDynamic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
+    types::DynamicData_ptr dynDataFromDynamic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic.get()));
 
-    types::DynamicData_ptr dynDataFromStatic = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
+    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic.get()));
 
     ASSERT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic.get()));

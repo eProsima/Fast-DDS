@@ -28,6 +28,11 @@ DynamicData_ptr::DynamicData_ptr(DynamicData* pData)
 {
 }
 
+DynamicData_ptr& DynamicData_ptr::operator=(DynamicData* ptr)
+{
+    return operator=(DynamicData_ptr(ptr));
+}
+
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
