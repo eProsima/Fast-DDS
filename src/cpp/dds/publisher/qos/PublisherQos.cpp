@@ -53,11 +53,6 @@ void PublisherQos::set_qos(const PublisherQos& qos, bool first_time)
         latency_budget = qos.latency_budget;
         latency_budget.hasChanged = true;
     }
-    if (liveliness.lease_duration != qos.liveliness.lease_duration)
-    {
-        liveliness.lease_duration = qos.liveliness.lease_duration;
-        liveliness.hasChanged = true;
-    }
     if (first_time)
     {
         liveliness = qos.liveliness;
@@ -156,14 +151,6 @@ bool PublisherQos::check_qos() const
     {
         logError(RTPS_QOS_CHECK,"BEST_EFFORT incompatible with EXCLUSIVE ownership");
         return false;
-    }
-    if (liveliness.kind == AUTOMATIC_LIVELINESS_QOS || liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-    {
-        if (liveliness.lease_duration < c_TimeInfinite && liveliness.lease_duration <= liveliness.announcement_period)
-        {
-            logError(RTPS_QOS_CHECK,"WRITERQOS: LeaseDuration <= announcement period.");
-            return false;
-        }
     }
     return true;
 }

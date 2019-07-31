@@ -45,11 +45,6 @@ void SubscriberQos::set_qos(
         latency_budget = qos.latency_budget;
         latency_budget.hasChanged = true;
     }
-    if (liveliness.lease_duration != qos.liveliness.lease_duration)
-    {
-        liveliness.lease_duration = qos.liveliness.lease_duration;
-        liveliness.hasChanged = true;
-    }
     if (first_time)
     {
         liveliness = qos.liveliness;
