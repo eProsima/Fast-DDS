@@ -80,17 +80,17 @@ class ParListener : public ParticipantListener
 
 #if HAVE_SECURITY
         void onParticipantAuthentication(
-                Participant* participant,
+                Participant* /*participant*/,
                 rtps::ParticipantAuthenticationInfo&& info) override
         {
             if (rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
             {
-                std::cout << "Subscriber participant " << participant->getGuid() <<
+                std::cout << "Subscriber participant " << //participant->getGuid() <<
                     " authorized participant " << info.guid << std::endl;
             }
             else
             {
-                std::cout << "Subscriber participant " << participant->getGuid() <<
+                std::cout << "Subscriber participant " << //participant->getGuid() <<
                     " unauthorized participant " << info.guid << std::endl;
             }
         }

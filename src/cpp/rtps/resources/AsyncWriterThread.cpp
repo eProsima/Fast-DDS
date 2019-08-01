@@ -65,18 +65,20 @@ void AsyncWriterThread::unregister_writer(RTPSWriter* writer)
 void AsyncWriterThread::wake_up(
         RTPSWriter* interested_writer)
 {
-    interestTree_.register_interest(interested_writer);
-    std::unique_lock<RecursiveTimedMutex> lock(condition_variable_mutex_);
-    run_scheduled_ = true;
-    // If thread not running, start it.
-    if(thread_ == nullptr)
+    if (interestTree_.register_interest(interested_writer))
     {
-        running_ = true;
-        thread_ = new std::thread(&AsyncWriterThread::run, this);
-    }
-    else
-    {
-        cv_.notify_all();
+        std::unique_lock<RecursiveTimedMutex> lock(condition_variable_mutex_);
+        run_scheduled_ = true;
+        // If thread not running, start it.
+        if (thread_ == nullptr)
+        {
+            running_ = true;
+            thread_ = new std::thread(&AsyncWriterThread::run, this);
+        }
+        else
+        {
+            cv_.notify_all();
+        }
     }
 }
 
@@ -84,15 +86,15 @@ void AsyncWriterThread::wake_up(
         RTPSWriter* interested_writer,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
-    if(interestTree_.register_interest(interested_writer, max_blocking_time))
+    if (interestTree_.register_interest(interested_writer, max_blocking_time))
     {
         std::unique_lock<RecursiveTimedMutex> lock(condition_variable_mutex_, std::defer_lock);
 
-        if(lock.try_lock_until(max_blocking_time))
+        if (lock.try_lock_until(max_blocking_time))
         {
             run_scheduled_ = true;
             // If thread not running, start it.
-            if(thread_ == nullptr)
+            if (thread_ == nullptr)
             {
                 running_ = true;
                 thread_ = new std::thread(&AsyncWriterThread::run, this);
