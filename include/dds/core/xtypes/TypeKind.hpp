@@ -25,7 +25,7 @@
 
 #include <bitset>
 
-#if defined(OMG_DDS_X_TYPES_DYNANIC_TYPE_SUPPORT)
+#if defined(OMG_DDS_X_TYPES_DYNAMIC_TYPE_SUPPORT)
 
 namespace dds {
 namespace core {
