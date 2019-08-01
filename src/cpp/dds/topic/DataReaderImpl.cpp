@@ -341,7 +341,7 @@ bool DataReaderImpl::on_new_cache_change_added(
 {
     if (qos_.m_deadline.period != c_TimeInfinite)
     {
-        std::unique_lock<std::recursive_timed_mutex> lock(reader_->getMutex());
+        std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
         if (!history_.set_next_deadline(
                     change->instanceHandle,
@@ -406,7 +406,7 @@ bool DataReaderImpl::deadline_timer_reschedule()
 {
     assert(qos_.m_deadline.period != c_TimeInfinite);
 
-    std::unique_lock<std::recursive_timed_mutex> lock(reader_->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
     steady_clock::time_point next_deadline_us;
     if (!history_.get_next_deadline(timer_owner_, next_deadline_us))
@@ -424,7 +424,7 @@ bool DataReaderImpl::deadline_missed()
 {
     assert(qos_.m_deadline.period != c_TimeInfinite);
 
-    std::unique_lock<std::recursive_timed_mutex> lock(reader_->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
@@ -447,7 +447,7 @@ bool DataReaderImpl::deadline_missed()
 void DataReaderImpl::get_requested_deadline_missed_status(
         RequestedDeadlineMissedStatus& status)
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(reader_->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
     status = deadline_missed_status_;
     deadline_missed_status_.total_count_change = 0;
@@ -455,7 +455,7 @@ void DataReaderImpl::get_requested_deadline_missed_status(
 
 bool DataReaderImpl::lifespan_expired()
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(reader_->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
     CacheChange_t* earliest_change;
     if (!history_.get_earliest_change(&earliest_change))
@@ -547,7 +547,7 @@ bool DataReaderImpl::get_key_value(
 bool DataReaderImpl::get_liveliness_changed_status(
         LivelinessChangedStatus& status) const
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(reader_->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
     status = reader_->liveliness_changed_status_;
 

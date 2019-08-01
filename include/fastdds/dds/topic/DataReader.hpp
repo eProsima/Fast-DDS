@@ -32,12 +32,12 @@ namespace fastrtps {
 
 class TopicAttributes;
 class ReaderQos;
-class LivelinessChangedStatus;
+struct LivelinessChangedStatus;
 
 namespace rtps {
 class ReaderAttributes;
-class GUID_t;
-class InstanceHandle_t;
+struct GUID_t;
+struct InstanceHandle_t;
 } // namespace rtps
 
 class SampleInfo_t;

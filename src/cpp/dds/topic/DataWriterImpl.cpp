@@ -224,7 +224,7 @@ bool DataWriterImpl::perform_create_new_change(
     auto max_blocking_time = std::chrono::steady_clock::now() +
         std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.m_reliability.max_blocking_time));
 
-    std::unique_lock<std::recursive_timed_mutex> lock(writer_->getMutex(), std::defer_lock);
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex(), std::defer_lock);
     if (lock.try_lock_until(max_blocking_time))
     {
         CacheChange_t* ch = writer_->new_change(type_->getSerializedSizeProvider(data), change_kind, handle);
@@ -598,7 +598,7 @@ bool DataWriterImpl::deadline_timer_reschedule()
 {
     assert(qos_.m_deadline.period != c_TimeInfinite);
 
-    std::unique_lock<std::recursive_timed_mutex> lock(writer_->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
     steady_clock::time_point next_deadline_us;
     if (!history_.get_next_deadline(timer_owner_, next_deadline_us))
@@ -616,7 +616,7 @@ bool DataWriterImpl::deadline_missed()
 {
     assert(qos_.m_deadline.period != c_TimeInfinite);
 
-    std::unique_lock<std::recursive_timed_mutex> lock(writer_->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;

@@ -27,7 +27,7 @@ namespace eprosima {
 namespace fastrtps{
 
 class WriterQos;
-class LivelinessLostStatus;
+struct LivelinessLostStatus;
 class TopicAttributes;
 
 namespace rtps {
