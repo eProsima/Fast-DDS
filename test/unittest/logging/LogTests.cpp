@@ -201,7 +201,7 @@ TEST_F(LogTests, validate_single_flush_call)
     }
 
     // allow some logs to be done but not all
-    while( commited_before_flush < threads_number)
+    while (commited_before_flush < threads_number)
     {
         this_thread::sleep_for(chrono::milliseconds(wait_milliseconds));
 
