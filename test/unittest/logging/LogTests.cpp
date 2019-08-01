@@ -257,7 +257,8 @@ TEST_F(LogTests, validate_multithread_flush_calls)
     vector<unique_ptr<thread>> threads;
     for (int i = 0; i < working_threads_number; i++)
     {
-        threads.emplace_back(new thread([&done, &committed, &thread_wait_milliseconds] {
+        threads.emplace_back(new thread([&done, &committed, &thread_wait_milliseconds]
+        {
             while (!done)
             {
                 logWarning(flush_ckecks, "I'm thread " << this_thread::get_id() << " logging sample " << committed);
@@ -283,7 +284,8 @@ TEST_F(LogTests, validate_multithread_flush_calls)
     // Populate the consumer from multiple threads
     for (int i = 0; i < flushing_threads_number; i++)
     {
-        threads.emplace_back(new thread([this, &committed] {
+        threads.emplace_back(new thread([this, &committed]
+        {
 
             logWarning(flush_ckecks, "I'm thread " << this_thread::get_id() << " Flushing " << committed);
 
