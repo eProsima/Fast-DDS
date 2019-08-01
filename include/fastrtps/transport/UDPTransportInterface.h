@@ -95,7 +95,7 @@ public:
    * @param socket channel we're sending from.
    * @param remote_locator Locator describing the remote destination we're sending to.
    * @param only_multicast_purpose
-   * @param timeout Max time this funciton will block
+   * @param timeout Maximum time this function will block
    */
    virtual bool send(
            const octet* send_buffer,
