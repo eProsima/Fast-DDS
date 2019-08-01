@@ -100,7 +100,7 @@ public:
     RTPS_DllAPI ResponseCode add_member(
             MemberId id,
             const std::string& name,
-            DynamicType_ptr type_ = nullptr);
+        DynamicType_ptr type_ = DynamicType_ptr(nullptr));
 
     RTPS_DllAPI ResponseCode add_member(
             MemberId id,

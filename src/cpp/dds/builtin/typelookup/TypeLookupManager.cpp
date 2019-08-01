@@ -229,7 +229,7 @@ void TypeLookupManager::remove_remote_endpoints(
     uint32_t partdet = endp;
     uint32_t auxendp = endp;
     partdet &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR; //Habria que quitar esta linea que comprueba si tiene PDP.
-    auxendp &= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_WRITER;
+    auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
 
     if ((auxendp!=0 || partdet!=0) && builtin_request_reader_ != nullptr)
     {
@@ -237,6 +237,9 @@ void TypeLookupManager::remove_remote_endpoints(
         tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_writer;
         builtin_request_reader_->matched_writer_remove(tmp_guid);
     }
+
+    auxendp = endp;
+    auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
 
     if ((auxendp!=0 || partdet!=0) && builtin_reply_reader_ != nullptr)
     {
@@ -246,7 +249,7 @@ void TypeLookupManager::remove_remote_endpoints(
     }
 
     auxendp = endp;
-    auxendp &=BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_DATA_READER;
+    auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
 
     if ((auxendp!=0 || partdet!=0) && builtin_request_writer_ != nullptr)
     {
@@ -254,6 +257,9 @@ void TypeLookupManager::remove_remote_endpoints(
         tmp_guid.entityId = fastrtps::rtps::c_EntityId_TypeLookup_request_reader;
         builtin_request_writer_->matched_reader_remove(tmp_guid);
     }
+
+    auxendp = endp;
+    auxendp &= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
 
     if ((auxendp!=0 || partdet!=0) && builtin_reply_writer_ != nullptr)
     {

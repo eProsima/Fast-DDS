@@ -151,7 +151,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_type(
 {
     if (descriptor != nullptr)
     {
-        DynamicType_ptr pNewType = new DynamicType(descriptor);
+        DynamicType_ptr pNewType(new DynamicType(descriptor));
         if (name.length() > 0)
         {
             pNewType->set_name(name);
@@ -161,7 +161,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_type(
     else
     {
         logError(DYN_TYPES, "Error building type, invalid input descriptor");
-        return nullptr;
+        return DynamicType_ptr(nullptr);
     }
 }
 
@@ -169,13 +169,13 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_type(const DynamicTypeBuilder*
 {
     if (other != nullptr)
     {
-        DynamicType_ptr pNewType = new DynamicType(other);
+        DynamicType_ptr pNewType(new DynamicType(other));
         return pNewType;
     }
     else
     {
         logError(DYN_TYPES, "Error building type, invalid input parameter");
-        return nullptr;
+        return DynamicType_ptr(nullptr);
     }
 }
 
@@ -377,8 +377,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_annotation_primitive(const std
     //pEnumDescriptor.name_ = GenerateTypeName(get_type_name(TK_ANNOTATION));
     pEnumDescriptor.name_ = name;
 
-    DynamicType_ptr pNewType = new DynamicType(&pEnumDescriptor);
-    return pNewType;
+    return DynamicType_ptr(new DynamicType(&pEnumDescriptor));
 }
 
 DynamicTypeBuilder* DynamicTypeBuilderFactory::create_enum_builder()
@@ -2559,7 +2558,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_alias_type(
     {
         logError(DYN_TYPES, "Error creating alias type, base_type must be valid");
     }
-    return nullptr;
+    return DynamicType_ptr(nullptr);
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_alias_type(
@@ -2586,86 +2585,86 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_alias_type(
     {
         logError(DYN_TYPES, "Error creating alias type, base_type must be valid");
     }
-    return nullptr;
+    return DynamicType_ptr(nullptr);
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_int32_type()
 {
     TypeDescriptor pInt32Descriptor(GenerateTypeName(get_type_name(TK_INT32)), TK_INT32);
-    return new DynamicType(&pInt32Descriptor);
+    return DynamicType_ptr(new DynamicType(&pInt32Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_uint32_type()
 {
     TypeDescriptor pUint32Descriptor(GenerateTypeName(get_type_name(TK_UINT32)), TK_UINT32);
-    return new DynamicType(&pUint32Descriptor);
+    return DynamicType_ptr(new DynamicType(&pUint32Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_int16_type()
 {
     TypeDescriptor pInt16Descriptor(GenerateTypeName(get_type_name(TK_INT16)), TK_INT16);
-    return new DynamicType(&pInt16Descriptor);
+    return DynamicType_ptr(new DynamicType(&pInt16Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_uint16_type()
 {
     TypeDescriptor pUint16Descriptor(GenerateTypeName(get_type_name(TK_UINT16)), TK_UINT16);
-    return new DynamicType(&pUint16Descriptor);
+    return DynamicType_ptr(new DynamicType(&pUint16Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_int64_type()
 {
     TypeDescriptor pInt64Descriptor(GenerateTypeName(get_type_name(TK_INT64)), TK_INT64);
-    return new DynamicType(&pInt64Descriptor);
+    return DynamicType_ptr(new DynamicType(&pInt64Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_uint64_type()
 {
     TypeDescriptor pUint64Descriptor(GenerateTypeName(get_type_name(TK_UINT64)), TK_UINT64);
-    return new DynamicType(&pUint64Descriptor);
+    return DynamicType_ptr(new DynamicType(&pUint64Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_float32_type()
 {
     TypeDescriptor pFloat32Descriptor(GenerateTypeName(get_type_name(TK_FLOAT32)), TK_FLOAT32);
-    return new DynamicType(&pFloat32Descriptor);
+    return DynamicType_ptr(new DynamicType(&pFloat32Descriptor));
 }
 
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_float64_type()
 {
     TypeDescriptor pFloat64Descriptor(GenerateTypeName(get_type_name(TK_FLOAT64)), TK_FLOAT64);
-    return new DynamicType(&pFloat64Descriptor);
+    return DynamicType_ptr(new DynamicType(&pFloat64Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_float128_type()
 {
     TypeDescriptor pFloat128Descriptor(GenerateTypeName(get_type_name(TK_FLOAT128)), TK_FLOAT128);
-    return new DynamicType(&pFloat128Descriptor);
+    return DynamicType_ptr(new DynamicType(&pFloat128Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_char8_type()
 {
     TypeDescriptor pChar8Descriptor(GenerateTypeName(get_type_name(TK_CHAR8)), TK_CHAR8);
-    return new DynamicType(&pChar8Descriptor);
+    return DynamicType_ptr(new DynamicType(&pChar8Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_char16_type()
 {
     TypeDescriptor pChar16Descriptor(GenerateTypeName(get_type_name(TK_CHAR16)), TK_CHAR16);
-    return new DynamicType(&pChar16Descriptor);
+    return DynamicType_ptr(new DynamicType(&pChar16Descriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_bool_type()
 {
     TypeDescriptor pBoolDescriptor(GenerateTypeName(get_type_name(TK_BOOLEAN)), TK_BOOLEAN);
-    return new DynamicType(&pBoolDescriptor);
+    return DynamicType_ptr(new DynamicType(&pBoolDescriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_byte_type()
 {
     TypeDescriptor pByteDescriptor(GenerateTypeName(get_type_name(TK_BYTE)), TK_BYTE);
-    return new DynamicType(&pByteDescriptor);
+    return DynamicType_ptr(new DynamicType(&pByteDescriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_string_type(uint32_t bound /*= MAX_STRING_LENGTH*/)
@@ -2679,7 +2678,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_string_type(uint32_t bound /*=
     pStringDescriptor.element_type_ = create_char8_type();
     pStringDescriptor.bound_.push_back(bound);
 
-    return new DynamicType(&pStringDescriptor);
+    return DynamicType_ptr(new DynamicType(&pStringDescriptor));
 }
 
 
@@ -2695,7 +2694,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_wstring_type(uint32_t bound /*
     pStringDescriptor.element_type_ = create_char16_type();
     pStringDescriptor.bound_.push_back(bound);
 
-    return new DynamicType(&pStringDescriptor);
+    return DynamicType_ptr(new DynamicType(&pStringDescriptor));
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_bitset_type(uint32_t bound)
@@ -2712,7 +2711,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_bitset_type(uint32_t bound)
     {
         logError(DYN_TYPES, "Error creating bitmask, length exceeds the maximum value '" << MAX_BITMASK_LENGTH << "'");
     }
-    return nullptr;
+    return DynamicType_ptr(nullptr);
 }
 
 void DynamicTypeBuilderFactory::apply_type_annotations(

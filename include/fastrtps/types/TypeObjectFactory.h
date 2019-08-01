@@ -46,7 +46,7 @@ protected:
     DynamicType_ptr build_dynamic_type(
             TypeDescriptor& descriptor,
             const TypeObject* object,
-            const DynamicType_ptr annotation_member_type = nullptr) const;
+            const DynamicType_ptr annotation_member_type = DynamicType_ptr(nullptr)) const;
 
     const TypeIdentifier* try_get_complete(
             const TypeIdentifier* identifier) const;

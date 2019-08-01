@@ -37,13 +37,14 @@ public:
     {
     }
 
-    RTPS_DllAPI DynamicType_ptr(DynamicType* pType);
+    RTPS_DllAPI explicit DynamicType_ptr(DynamicType* pType);
 
     RTPS_DllAPI DynamicType_ptr(const DynamicType_ptr& other) = default;
     RTPS_DllAPI DynamicType_ptr(DynamicType_ptr&& other) = default;
 
     RTPS_DllAPI DynamicType_ptr& operator=(const DynamicType_ptr&) = default;
     RTPS_DllAPI DynamicType_ptr& operator=(DynamicType_ptr&&) = default;
+    RTPS_DllAPI DynamicType_ptr& operator=(DynamicType*);
 };
 
 } // namespace types

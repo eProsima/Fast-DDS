@@ -202,7 +202,7 @@ ResponseCode DynamicTypeBuilder::add_member(
     }
     else
     {
-        MemberDescriptor descriptor(id, name, nullptr);
+        MemberDescriptor descriptor(id, name, DynamicType_ptr(nullptr));
         return add_member(&descriptor);
     }
 }
@@ -299,7 +299,7 @@ DynamicType_ptr DynamicTypeBuilder::build()
     else
     {
         logError(DYN_TYPES, "Error building type. The current descriptor isn't consistent.");
-        return nullptr;
+        return DynamicType_ptr(nullptr);
     }
 }
 

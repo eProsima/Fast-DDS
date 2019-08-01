@@ -39,7 +39,7 @@ using namespace eprosima::fastrtps::types;
 HelloWorldPublisher::HelloWorldPublisher()
     : mp_participant(nullptr)
     , mp_publisher(nullptr)
-    , m_DynType(nullptr)
+    , m_DynType(DynamicType_ptr(nullptr))
 {
 }
 

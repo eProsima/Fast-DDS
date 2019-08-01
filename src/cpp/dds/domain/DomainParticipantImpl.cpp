@@ -1230,7 +1230,7 @@ void DomainParticipantImpl::on_child_requests_finished(
             {
                 parent_requests_.erase(pending_requests_it);
             }
-            cb_it->second.second(cb_it->second.first, nullptr); // Everything should be already registered
+            cb_it->second.second(cb_it->second.first, fastrtps::types::DynamicType_ptr(nullptr)); // Everything should be already registered
             register_callbacks_.erase(cb_it);
         }
     }
