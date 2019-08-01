@@ -73,7 +73,7 @@ TypeLookupSubscriber::~TypeLookupSubscriber() {
 }
 
 void TypeLookupSubscriber::SubListener::on_subscription_matched(
-        eprosima::fastdds::dds::DataReader*,
+        eprosima::fastdds::dds::DataReader* reader,
         eprosima::fastrtps::rtps::MatchingInfo& info)
 {
     if(info.status == MATCHED_MATCHING)
@@ -85,12 +85,29 @@ void TypeLookupSubscriber::SubListener::on_subscription_matched(
     {
         n_matched--;
         std::cout << "Subscriber unmatched"<<std::endl;
+        auto itr = subscriber_->readers_.find(reader);
+        if (itr != subscriber_->readers_.end())
+        {
+            subscriber_->readers_.erase(itr);
+        }
+
+        auto itd = subscriber_->datas_.find(reader);
+        if (itd != subscriber_->datas_.end())
+        {
+            subscriber_->datas_.erase(itd);
+        }
+
+        if (subscriber_->mp_subscriber != nullptr)
+        {
+            subscriber_->mp_subscriber->delete_datareader(reader);
+        }
     }
 }
 
 void TypeLookupSubscriber::SubListener::on_data_available(eprosima::fastdds::dds::DataReader* reader)
 {
     auto dit = subscriber_->datas_.find(reader);
+    std::cout << "oda: " << reader->guid() << std::endl;
 
     if (dit != subscriber_->datas_.end())
     {
