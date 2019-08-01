@@ -21,9 +21,11 @@
 #define OMG_DDS_CORE_XTYPES_ANNOTATION_HPP_
 
 #include <dds/core/xtypes/detail/Annotation.hpp>
+
 #include <dds/core/Reference.hpp>
 #include <dds/core/SafeEnumeration.hpp>
 #include <dds/core/xtypes/TypeKind.hpp>
+
 namespace dds {
 namespace core {
 namespace xtypes {
