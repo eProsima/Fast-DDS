@@ -51,15 +51,15 @@ class TDynamicData <DELEGATE, DELEGATE_TYPE> {
 + TDynamicType<DELEGATE_TYPE> type() const
 + MemberType member_type(uint32_t id) const
 + MemberType member_type(const std::string& name) const
-}	
+}
 
 class TDynamicType <DELEGATE>{
 
 + const std::string& name() const
 + TypeKind kind() const
 + const std::vector< Annotation >& annotations() const
-+ bool operator == (const TDynamicType& that) const 
-+ bool operator != (const TDynamicType& that) const 
++ bool operator == (const TDynamicType& that) const
++ bool operator != (const TDynamicType& that) const
 
 __Protected Constructors__
 # TDynamicType(const std::string& name, TypeKind kind)
@@ -75,8 +75,7 @@ __Privately Instantiated Macro__
 
 
 
-class TMemberType <DELEGATE, OTHER_DELEGATE>
-{
+class TMemberType <DELEGATE, OTHER_DELEGATE> {
 
 + TMemberType(const std::string& name,const TDynamicType<OTHER_DELEGATE>& type)
 + TMemberType(const std::string& name, const TDynamicType<OTHER_DELEGATE>& type,const std::vector<Annotation>& annotations)
@@ -89,7 +88,7 @@ class TMemberType <DELEGATE, OTHER_DELEGATE>
 + bool is_shared() const
 + bool is_key() const
 + bool is_must_understand() const
-+ bool is_bitset() const 
++ bool is_bitset() const
 + bool has_bitbound() const
 + int32_t get_bitbound() const
 + bool has_id() const
@@ -100,12 +99,12 @@ __Privately Instantiated Macro__
 }
 
 class dynamic_type_traits <T> << (S, #ff7000) Struct>> {
-+ static constexpr TypeKind TYPE_ID = TypeKind::NO_TYPE 
-+ static constexpr const char* const NAME = "no_type" 
++ static constexpr TypeKind TYPE_ID = TypeKind::NO_TYPE
++ static constexpr const char* const NAME = "no_type"
 }
 
 class PrimitiveType <T>{
-+ PrimitiveType()  
++ PrimitiveType()
 }
 
 class TCollectionType <DELEGATE> {
@@ -117,8 +116,7 @@ class TCollectionType <DELEGATE> {
 
 }
 
-class TMapType <DELEGATE, DELEGATE_K, DELEGATE_V> 
-{
+class TMapType <DELEGATE, DELEGATE_K, DELEGATE_V> {
 + TMapType(const TDynamicType<DELEGATE_K>& key_type, const TDynamicType<DELEGATE_V>& value_type)
 + TMapType(const TDynamicType<DELEGATE_K>& key_type,const TDynamicType<DELEGATE_V>& value_type, uint32_t bounds)
 + const TDynamicType<DELEGATE_K>& key_type()
@@ -173,14 +171,13 @@ const AnnotationIter& annotation_end)
 + const MemberType& member(uint32_t id) const
 + const MemberType& member(const std::string& name) const
 + const std::vector<Annotation>& annotations() const
-+ TStructType add_member(const MemberType& member) const 
++ TStructType add_member(const MemberType& member) const
 + TStructType remove_member(const MemberType& member) const
 + TStructType add_annotation(const Annotation& annotation) const
 + TStructType remove_annotation(const Annotation& annotation) const
 }
 
-class TUnionCase <T,DELEGATE<Q>>
-{
+class TUnionCase <T,DELEGATE<Q>> {
 + TUnionCase()
 + TUnionCase(\
 T discriminator,\
@@ -245,15 +242,15 @@ class TTypeProvider<typename DELEGATE> {
 
 }
 }
-dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TIdAnnotation 
-dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TKeyAnnotation 
-dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TSharedAnnotation 
-dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TNestedAnnotation 
-dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TExtensibilityAnnotation 
-dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TMustUnderstandAnnotation 
-dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TVerbatimAnnotation 
-dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TBitsetAnnotation 
-dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TBitBoundAnnotation 
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TIdAnnotation
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TKeyAnnotation
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TSharedAnnotation
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TNestedAnnotation
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TExtensibilityAnnotation
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TMustUnderstandAnnotation
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TVerbatimAnnotation
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TBitsetAnnotation
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TBitBoundAnnotation
 
 
 dds::core::Reference <|-- dds::core::xtypes::TDynamicData
@@ -262,10 +259,10 @@ dds::core::Reference <|-- dds::core::xtypes::TMemberType
 dds::core::Reference <|-- dds::core::xtypes::TUnionCase
 dds::core::Reference <|-- dds::core::xtypes::TAnnotation
 
-dds::core::xtypes::TDynamicType <|-- dds::core::xtypes::PrimitiveType 
-dds::core::xtypes::TDynamicType <|-- dds::core::xtypes::TCollectionType 
-dds::core::xtypes::TDynamicType <|-- dds::core::xtypes::TStructType 
-dds::core::xtypes::TDynamicType <|-- dds::core::xtypes::TStructForwardDeclaration 
+dds::core::xtypes::TDynamicType <|-- dds::core::xtypes::PrimitiveType
+dds::core::xtypes::TDynamicType <|-- dds::core::xtypes::TCollectionType
+dds::core::xtypes::TDynamicType <|-- dds::core::xtypes::TStructType
+dds::core::xtypes::TDynamicType <|-- dds::core::xtypes::TStructForwardDeclaration
 
 dds::core::xtypes::TCollectionType <|-- dds::core::xtypes::TMapType
 dds::core::xtypes::TCollectionType <|-- dds::core::xtypes::TSequenceType
@@ -279,6 +276,7 @@ dds::core::xtypes::TSequenceType --> dds::core::xtypes::TDynamicType
 dds::core::xtypes::TMapType --> dds::core::xtypes::TDynamicType
 dds::core::xtypes::TTypeProvider --> dds::core::xtypes::TDynamicType
 dds::core::xtypes::TMemberType --> dds::core::xtypes::TDynamicType
+dds::core::xtypes::TDynamicType --> dds::core::xtypes::TAnnotation
 
 dds::core::xtypes::TDynamicData --> dds::core::xtypes::TMemberType
 dds::core::xtypes::TStructType --> dds::core::xtypes::TMemberType
