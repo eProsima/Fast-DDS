@@ -73,9 +73,11 @@ public:
     /**
      * Activate this proxy associating it to a remote writer.
      * @param attributes WriterProxyData of the writer for which to keep state.
+     * @param initial_sequence Sequence number of last acknowledged change.
      */
     void start(
-            const WriterProxyData& attributes);
+            const WriterProxyData& attributes,
+            const SequenceNumber_t& initial_sequence);
 
     /**
      * Update information on the remote writer.
@@ -88,13 +90,6 @@ public:
      * Disable this proxy.
      */
     void stop();
-
-    /**
-     * Set initial value for last acked sequence number.
-     * @param[in] seq_num last acked sequence number.
-     */
-    void loaded_from_storage(
-            const SequenceNumber_t& seq_num);
 
     /**
      * Get the maximum sequenceNumber received from this Writer.
@@ -320,6 +315,13 @@ public:
             std::chrono::steady_clock::time_point& max_blocking_time_point) const override;
 
 private:
+
+    /**
+     * Set initial value for last acked sequence number.
+     * @param[in] seq_num last acked sequence number.
+     */
+    void loaded_from_storage(
+            const SequenceNumber_t& seq_num);
 
     bool received_change_set(
             const SequenceNumber_t& seq_num, 

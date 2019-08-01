@@ -97,8 +97,14 @@ WriterProxy::WriterProxy(
     logInfo(RTPS_READER, "Writer Proxy created in reader: " << reader_->getGuid().entityId);
 }
 
-void WriterProxy::start(const WriterProxyData& attributes)
+void WriterProxy::start(
+        const WriterProxyData& attributes,
+        const SequenceNumber_t& initial_sequence)
 {
+#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
+    assert(get_mutex_owner() == get_thread_id());
+#endif
+
     heartbeat_response_->update_interval(reader_->getTimes().heartbeatResponseDelay);
     initial_acknack_->update_interval(reader_->getTimes().initialAcknackDelay);
 
@@ -107,6 +113,7 @@ void WriterProxy::start(const WriterProxyData& attributes)
     guid_prefix_as_vector_.push_back(attributes_.guid().guidPrefix);
     is_alive_ = true;
     initial_acknack_->restart_timer();
+    loaded_from_storage(initial_sequence);
 }
 
 void WriterProxy::update(const WriterProxyData& attributes)
@@ -141,10 +148,6 @@ void WriterProxy::clear()
 
 void WriterProxy::loaded_from_storage(const SequenceNumber_t& seq_num)
 {
-#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__linux__)
-    assert(get_mutex_owner() == get_thread_id());
-#endif
-
     last_notified_ = seq_num;
     changes_from_writer_low_mark_ = seq_num;
     max_sequence_number_ = seq_num;
