@@ -211,7 +211,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
             vector_it = pair_it.first;
         }
 
-        vector_it->second.push_back(pspartimpl);
+        vector_it->second.push_back(dom_part_impl);
     }
     return dom_part;
 }
