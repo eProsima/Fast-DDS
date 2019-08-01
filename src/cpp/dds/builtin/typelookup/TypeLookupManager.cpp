@@ -158,7 +158,7 @@ bool TypeLookupManager::assign_remote_endpoints(
 
     temp_writer_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
     temp_writer_proxy_data_.persistence_guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_writer_proxy_data_.set_locators(pdata.metatraffic_locators, network, true);
+    temp_writer_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, true);
     temp_writer_proxy_data_.topicKind(NO_KEY);
     temp_writer_proxy_data_.m_qos.m_durability.kind = fastrtps::VOLATILE_DURABILITY_QOS;
     temp_writer_proxy_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
@@ -166,7 +166,7 @@ bool TypeLookupManager::assign_remote_endpoints(
     temp_reader_proxy_data_.clear();
     temp_reader_proxy_data_.m_expectsInlineQos = false;
     temp_reader_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_reader_proxy_data_.set_locators(pdata.metatraffic_locators, network, true);
+    temp_reader_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, true);
     temp_reader_proxy_data_.topicKind(NO_KEY);
     temp_reader_proxy_data_.m_qos.m_durability.kind = fastrtps::VOLATILE_DURABILITY_QOS;
     temp_reader_proxy_data_.m_qos.m_reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
