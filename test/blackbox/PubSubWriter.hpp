@@ -53,28 +53,41 @@ class PubSubWriter
     {
         public:
 
-            ParticipantListener(PubSubWriter &writer) : writer_(writer) {}
+            ParticipantListener(
+                    PubSubWriter &writer,
+                    bool debug = false)
+                : writer_(writer)
+                , debug_(debug)
+            {}
 
             ~ParticipantListener() {}
 
-            void onParticipantDiscovery(eprosima::fastrtps::Participant*,
+            void onParticipantDiscovery(eprosima::fastrtps::Participant* participant,
                     eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
             {
                 if(writer_.onDiscovery_!=nullptr)
                 {
                     writer_.discovery_result_ = writer_.onDiscovery_(info);
-
                 }
 
                 if(info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
                 {
                     writer_.participant_matched();
+
+                    if (debug_)
+                    {
+                        std::cout << "Participant " << participant->getGuid() << " discovered participant " << info.info.m_guid << std::endl;
+                    }
                 }
                 else if(info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
                         info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
                 {
                     writer_.participant_unmatched();
-                }
+
+                    if (debug_)
+                    {
+                        std::cout << "Participant " << participant->getGuid() << " removed/dropped participant " << info.info.m_guid << std::endl;
+                    }                }
             }
 
 #if HAVE_SECURITY
@@ -91,35 +104,67 @@ class PubSubWriter
             }
 #endif
 
-            void onSubscriberDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info) override
+            void onSubscriberDiscovery(eprosima::fastrtps::Participant* participant,
+                                       eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info) override
             {
                 if(info.status == eprosima::fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERED_READER)
                 {
                     writer_.add_reader_info(info.info);
+
+                    if (debug_)
+                    {
+                        std::cout << "Participant " << participant->getGuid() << " discovered subscriber " << info.info.guid() << std::endl;
+                    }
                 }
                 else if(info.status == eprosima::fastrtps::rtps::ReaderDiscoveryInfo::CHANGED_QOS_READER)
                 {
                     writer_.change_reader_info(info.info);
+
+                    if (debug_)
+                    {
+                        std::cout << "Participant " << participant->getGuid() << " detected qos change of subscriber " << info.info.guid() << std::endl;
+                    }
                 }
                 else if(info.status == eprosima::fastrtps::rtps::ReaderDiscoveryInfo::REMOVED_READER)
                 {
                     writer_.remove_reader_info(info.info);
+
+                    if (debug_)
+                    {
+                        std::cout << "Participant " << participant->getGuid() << " removed subscriber " << info.info.guid() << std::endl;
+                    }
                 }
             }
 
-            void onPublisherDiscovery(eprosima::fastrtps::Participant*, eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info) override
+            void onPublisherDiscovery(eprosima::fastrtps::Participant* participant,
+                                      eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info) override
             {
                 if(info.status == eprosima::fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER)
                 {
                     writer_.add_writer_info(info.info);
+
+                    if (debug_)
+                    {
+                        std::cout << "Participant " << participant->getGuid() << " discovered publisher " << info.info.guid() << std::endl;
+                    }
                 }
                 else if(info.status == eprosima::fastrtps::rtps::WriterDiscoveryInfo::CHANGED_QOS_WRITER)
                 {
                     writer_.change_writer_info(info.info);
+
+                    if (debug_)
+                    {
+                        std::cout << "Participant " << participant->getGuid() << " detected qos change of publisher " << info.info.guid() << std::endl;
+                    }
                 }
                 else if(info.status == eprosima::fastrtps::rtps::WriterDiscoveryInfo::REMOVED_WRITER)
                 {
                     writer_.remove_writer_info(info.info);
+
+                    if (debug_)
+                    {
+                        std::cout << "Participant " << participant->getGuid() << " removed publisher " << info.info.guid() << std::endl;
+                    }
                 }
             }
 
@@ -128,32 +173,45 @@ class PubSubWriter
             ParticipantListener& operator=(const ParticipantListener&) = delete;
 
             PubSubWriter& writer_;
+
+            //! A flag to print additional debug information
+            bool debug_;
+
     } participant_listener_;
 
     class Listener : public eprosima::fastrtps::PublisherListener
     {
         public:
 
-            Listener(PubSubWriter &writer)
+            Listener(
+                    PubSubWriter &writer,
+                    bool debug = false)
                 : writer_(writer)
                 , times_deadline_missed_(0)
                 , times_liveliness_lost_(0)
+                , debug_(debug)
             {}
 
             ~Listener(){};
 
             void onPublicationMatched(
-                    eprosima::fastrtps::Publisher* /*pub*/,
+                    eprosima::fastrtps::Publisher* pub,
                     eprosima::fastrtps::rtps::MatchingInfo &info) override
             {
                 if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
                 {
-                    std::cout << "Matched subscriber " << info.remoteEndpointGuid << std::endl;
+                    if (debug_)
+                    {
+                        std::cout << "Publisher " << pub->getGuid() << " matched subscriber " << info.remoteEndpointGuid << std::endl;
+                    }
                     writer_.matched();
                 }
                 else
                 {
-                    std::cout << "Unmatched subscriber " << info.remoteEndpointGuid << std::endl;
+                    if (debug_)
+                    {
+                        std::cout << "Publisher " << pub->getGuid() << " unmatched subscriber " << info.remoteEndpointGuid << std::endl;
+                    }
                     writer_.unmatched();
                 }
             }
@@ -172,6 +230,11 @@ class PubSubWriter
             {
                 (void)pub;
                 times_liveliness_lost_ = status.total_count;
+
+                if (debug_)
+                {
+                    std::cout << "Publisher " << pub->getGuid() << " lost liveliness" << std::endl;
+                }
             }
 
             unsigned int missed_deadlines() const
@@ -195,6 +258,9 @@ class PubSubWriter
             //! The number of times liveliness was lost
             unsigned int times_liveliness_lost_;
 
+            //! A flag to print additional debug information
+            bool debug_;
+
     } listener_;
 
     public:
@@ -202,9 +268,11 @@ class PubSubWriter
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
 
-    PubSubWriter(const std::string &topic_name)
-        : participant_listener_(*this)
-        , listener_(*this)
+    PubSubWriter(
+            const std::string &topic_name,
+            bool debug = false)
+        : participant_listener_(*this, debug)
+        , listener_(*this, debug)
         , participant_(nullptr)
         , publisher_(nullptr)
         , initialized_(false)

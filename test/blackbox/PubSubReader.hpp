@@ -58,12 +58,17 @@ private:
     {
     public:
 
-        ParticipantListener(PubSubReader &reader) : reader_(reader) {}
+        ParticipantListener(
+                PubSubReader &reader,
+                bool debug = false)
+            : reader_(reader)
+            , debug_(debug)
+        {}
 
         ~ParticipantListener() {}
 
         void onParticipantDiscovery(
-                eprosima::fastrtps::Participant*,
+                eprosima::fastrtps::Participant* participant,
                 eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
         {
             if(reader_.onDiscovery_!= nullptr)
@@ -76,11 +81,21 @@ private:
             if(info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
             {
                 reader_.participant_matched();
+
+                if (debug_)
+                {
+                    std::cout << "Participant " << participant->getGuid() << " discovered participant " << info.info.m_guid << std::endl;
+                }
             }
             else if(info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
                     info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
             {
                 reader_.participant_unmatched();
+
+                if (debug_)
+                {
+                    std::cout << "Participant " << participant->getGuid() << " removed/dropped participant " << info.info.m_guid << std::endl;
+                }
             }
         }
 
@@ -105,15 +120,21 @@ private:
         ParticipantListener& operator=(const ParticipantListener&) = delete;
         PubSubReader& reader_;
 
+        //! A flag to log additional debug information
+        bool debug_;
+
     } participant_listener_;
 
     class Listener: public eprosima::fastrtps::SubscriberListener
     {
     public:
 
-        Listener(PubSubReader &reader)
+        Listener(
+                PubSubReader &reader,
+                bool debug = false)
             : reader_(reader)
             , times_deadline_missed_(0)
+            , debug_(debug)
         {}
 
         ~Listener(){}
@@ -132,16 +153,24 @@ private:
             }
         }
 
-        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, eprosima::fastrtps::rtps::MatchingInfo& info) override
+        void onSubscriptionMatched(
+                eprosima::fastrtps::Subscriber* sub,
+                eprosima::fastrtps::rtps::MatchingInfo& info) override
         {
             if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
             {
-                std::cout << "Matched publisher " << info.remoteEndpointGuid << std::endl;
+                if (debug_)
+                {
+                    std::cout << "Subscriber " << sub->getGuid() << " matched publisher " << info.remoteEndpointGuid << std::endl;
+                }
                 reader_.matched();
             }
             else
             {
-                std::cout << "Unmatched publisher " << info.remoteEndpointGuid << std::endl;
+                if (debug_)
+                {
+                    std::cout << "Subscriber " << sub->getGuid() << " unmatched publisher " << info.remoteEndpointGuid << std::endl;
+                }
                 reader_.unmatched();
             }
         }
@@ -166,10 +195,20 @@ private:
             if (status.alive_count_change == 1)
             {
                 reader_.liveliness_recovered();
+
+                if (debug_)
+                {
+                    std::cout << "Subscriber detected liveliness recovery of publisher " << status.last_publication_handle << std::endl;
+                }
             }
             else if (status.not_alive_count_change == 1)
             {
                 reader_.liveliness_lost();
+
+                if (debug_)
+                {
+                    std::cout << "Subscriber detected liveliness loss of publisher " << status.last_publication_handle << std::endl;
+                }
             }
         }
 
@@ -187,15 +226,20 @@ private:
         //! Number of times deadline was missed
         unsigned int times_deadline_missed_;
 
+        //! A flag to print debug information
+        bool debug_;
+
     } listener_;
 
     friend class Listener;
 
 public:
 
-    PubSubReader(const std::string& topic_name)
-        : participant_listener_(*this)
-        , listener_(*this)
+    PubSubReader(
+            const std::string& topic_name,
+            bool debug = false)
+        : participant_listener_(*this, debug)
+        , listener_(*this, debug)
         , participant_(nullptr)
         , subscriber_(nullptr)
         , topic_name_(topic_name)

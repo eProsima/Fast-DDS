@@ -103,8 +103,8 @@ TEST(LivelinessQos, Liveliness_Automatic_BestEffort)
 //! Liveliness lease duration is short in comparison to writer write/assert rate
 TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME, true);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME, true);
 
     // Write rate in milliseconds and number of samples to write
     uint32_t writer_sleep_ms = 500;
@@ -165,8 +165,8 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
 //! Liveliness lease duration is short in comparison to writer write/assert rate
 TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_BestEffort)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME, true);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME, true);
 
     // Write rate in milliseconds and number of samples to write
     uint32_t writer_sleep_ms = 500;
@@ -343,8 +343,8 @@ TEST(LivelinessQos, LongLiveliness_ManualByParticipant_BestEffort)
 //! Liveliness lease duration is short in comparison to writer write/assert rate
 TEST(LivelinessQos, ShortLiveliness_ManualByTopic_Reliable)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME, true);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME, true);
 
     // Write rate in milliseconds and number of samples to write
     uint32_t writer_sleep_ms = 100;
@@ -403,8 +403,8 @@ TEST(LivelinessQos, ShortLiveliness_ManualByTopic_Reliable)
 //! Liveliness lease duration is short in comparison to writer write/assert rate
 TEST(LivelinessQos, ShortLiveliness_ManualByTopic_BestEffort)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME, true);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME, true);
 
     // Write rate in milliseconds and number of samples to write
     uint32_t writer_sleep_ms = 100;
@@ -641,8 +641,8 @@ TEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliable)
 //! Liveliness is short in comparison to the writer write/assert rate
 TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME, true);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME, true);
 
     // Write rate in milliseconds and number of samples to write
     uint32_t writer_sleep_ms = 1000;
@@ -758,8 +758,8 @@ TEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEffort)
 //! Liveliness is short in comparison to the writer write/assert rate
 TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME, true);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME, true);
 
     // Write rate in milliseconds and number of samples to write
     uint32_t writer_sleep_ms = 1000;
