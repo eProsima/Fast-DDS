@@ -30,9 +30,7 @@ class AsyncWriterThread
 {
     public:
 
-        static void wake_up(const RTPSParticipantImpl*) {}
-
-        static void wake_up(const RTPSWriter*) {}
+        void wake_up(RTPSWriter*) {}
 };
 
 } // namespace rtps
