@@ -77,7 +77,5 @@ typedef dds::core::SafeEnum<TypeKind_def> TypeKind;
 } //namespace core
 } //namespace dds
 
-#endif //OMG_DDS_X_TYPES_DYNANIC_TYPE_SUPPORT
-
-#endif //OMG_DDS_X_TYPES_TYPE_KIND_HPP_
+#endif // OMG_DDS_X_TYPES_DYNAMIC_TYPE_SUPPORT
 
