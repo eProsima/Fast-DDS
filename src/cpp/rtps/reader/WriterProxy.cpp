@@ -241,7 +241,6 @@ bool WriterProxy::received_change_set(
         // Check if it is next to the last acknowledged
         if (changes_from_writer_low_mark_ + 1 == seq_num)
         {
-            changes_received_.erase(seq_num);
             changes_from_writer_low_mark_ = seq_num;
             cleanup();
         }
