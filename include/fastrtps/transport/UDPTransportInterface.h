@@ -73,7 +73,7 @@ public:
 
     /**
      * Transforms a remote locator into a locator optimized for local communications.
-     * 
+     *
      * If the remote locator corresponds to one of the local interfaces, it is converted
      * to the corresponding local address.
      *
@@ -95,6 +95,7 @@ public:
    * @param socket channel we're sending from.
    * @param remote_locator Locator describing the remote destination we're sending to.
    * @param only_multicast_purpose
+   * @param timeout Max time this funciton will block
    */
    virtual bool send(
            const octet* send_buffer,
@@ -114,7 +115,7 @@ public:
      *
      * In the case of UDP, multicast locators are selected when present in more than one entry,
      * otherwise unicast locators are selected.
-     * 
+     *
      * @param [in, out] selector Locator selector.
      */
     virtual void select_locators(LocatorSelector& selector) const override;

@@ -159,7 +159,7 @@ public:
 
     /**
      * Remove a participant from the queue of pending participants to EDP matching
-     * @param GUID associated with the new participant
+     * @param guid associated with the new participant
      */
     void removeParticipantForEDPMatch(const GUID_t& guid);
 
