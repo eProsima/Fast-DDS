@@ -76,7 +76,7 @@ bool StatelessReader::matched_writer_add(RemoteWriterAttributes& wdata)
 
     m_matched_writers.push_back(wdata);
     add_persistence_guid(wdata);
-    m_acceptMessagesFromUnkownWriters = false;
+    m_acceptMessagesFromUnknownWriters = false;
 
     if (liveliness_lease_duration_ < c_TimeInfinite)
     {
@@ -445,7 +445,7 @@ bool StatelessReader::processGapMsg(
 
 bool StatelessReader::acceptMsgFrom(GUID_t& writerId)
 {
-    if(this->m_acceptMessagesFromUnkownWriters)
+    if(this->m_acceptMessagesFromUnknownWriters)
     {
         return true;
     }
