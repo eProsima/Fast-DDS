@@ -51,18 +51,18 @@ class TUnionType  : public TDynamicType< DELEGATE >
 public:
     TUnionType(
         const std::string& name,
-        const PrimitiveType<T>& discriminator_type,
+        const TPrimitiveType<T, DELEGATE<T>>& discriminator_type,
         const std::vector<UnionCase<T>>& cases);
 
     TUnionType(
         const std::string& name,
-        const PrimitiveType<T>& discriminator_type,
+        const TPrimitiveType<T, DELEGATE<T> >& discriminator_type,
         const std::vector<UnionCase<T>>& cases,
         const Annotation& annotation);
 
     TUnionType(
         const std::string& name,
-        const PrimitiveType<T>& discriminator_type,
+        const TPrimitiveType<T, DELEGATE<T>>& discriminator_type,
         const std::vector<UnionCase<T>>& cases,
         const std::vector<Annotation>& annotations);
 

@@ -46,6 +46,7 @@ public:
     }
 };
 
+
 /**
  * Primitive type constructor. This function can be used
  * as follows:
@@ -53,9 +54,9 @@ public:
  * DynamicType int16Type = primitive_type<int16_t>();
  */
 template<typename T>
-PrimitiveType<T> primitive_type()
+TPrimitiveType<T, detail::DynamicType> primitive_type()
 {
-    static dds::core::xtypes::PrimitiveType<T> t;
+    static dds::core::xtypes::TPrimitiveType<T, detail::DynamicType> t;
     return t;
 }
 
