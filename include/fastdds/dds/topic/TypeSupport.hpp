@@ -79,8 +79,8 @@ public:
     {}
 
     RTPS_DllAPI virtual bool register_type(
-        DomainParticipant* participant,
-        std::string type_name) const;
+            DomainParticipant* participant,
+            std::string type_name) const;
 
     RTPS_DllAPI virtual const std::string& get_type_name() const
     {

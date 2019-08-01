@@ -1821,7 +1821,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(const std::string& name, c
     {
         return outputType->build();
     }
-    return nullptr;
+    return DynamicType_ptr(nullptr);
 }
 
 // TODO annotations
@@ -1832,7 +1832,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
 {
     if (object == nullptr || object->_d() != EK_COMPLETE)
     {
-        return nullptr;
+        return DynamicType_ptr(nullptr);
     }
 
     // Change descriptor's kind
@@ -2089,7 +2089,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
         default:
             break;
     }
-    return nullptr;
+    return DynamicType_ptr(nullptr);
 }
 
 void TypeObjectFactory::apply_type_annotations(

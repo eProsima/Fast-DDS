@@ -95,7 +95,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
                             "", // No topic_name available
                             &pair.type_identifier(),
                             &pair.type_object(),
-                            nullptr);
+                            DynamicType_ptr(nullptr));
                     }
                 }
                 // TODO Call a callback once the job is done

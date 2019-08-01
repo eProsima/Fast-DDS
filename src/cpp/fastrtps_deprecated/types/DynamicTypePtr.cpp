@@ -28,6 +28,11 @@ DynamicType_ptr::DynamicType_ptr(DynamicType* pType)
 {
 }
 
+DynamicType_ptr& DynamicType_ptr::operator=(DynamicType* ptr)
+{
+    return operator=(DynamicType_ptr(ptr));
+}
+
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
