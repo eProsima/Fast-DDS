@@ -75,7 +75,9 @@ class RTPSAsSocketWriter : public eprosima::fastrtps::rtps::WriterListener
                 delete(history_);
         }
 
-        void on_writer_change_received_by_all(eprosima::fastrtps::rtps::RTPSWriter* /*writer*/, eprosima::fastrtps::rtps::CacheChange_t* change)
+        void onWriterChangeReceivedByAll(
+                eprosima::fastrtps::rtps::RTPSWriter* /*writer*/,
+                eprosima::fastrtps::rtps::CacheChange_t* change) override
         {
             if(writer_attr_.endpoint.durabilityKind == eprosima::fastrtps::rtps::VOLATILE)
             {
