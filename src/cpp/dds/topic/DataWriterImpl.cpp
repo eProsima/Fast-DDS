@@ -638,7 +638,7 @@ bool DataWriterImpl::deadline_missed()
 void DataWriterImpl::get_offered_deadline_missed_status(
         OfferedDeadlineMissedStatus &status)
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(writer_->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
     status = deadline_missed_status_;
     deadline_missed_status_.total_count_change = 0;
@@ -646,7 +646,7 @@ void DataWriterImpl::get_offered_deadline_missed_status(
 
 bool DataWriterImpl::lifespan_expired()
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(writer_->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
     CacheChange_t* earliest_change;
     if (!history_.get_earliest_change(&earliest_change))
@@ -688,7 +688,7 @@ bool DataWriterImpl::lifespan_expired()
 bool DataWriterImpl::get_liveliness_lost_status(
         fastrtps::LivelinessLostStatus& status)
 {
-    std::unique_lock<std::recursive_timed_mutex> lock(writer_->getMutex());
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
     status = writer_->liveliness_lost_status_;
 
