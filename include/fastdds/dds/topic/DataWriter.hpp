@@ -55,7 +55,7 @@ class DataWriterListener;
  * Class DataWriter, contains the actual implementation of the behaviour of the DataWriter.
  * @ingroup FASTDDS_MODULE
  */
-class DataWriter
+class RTPS_DllAPI DataWriter
 {
     friend class PublisherImpl;
     friend class DataWriterImpl;

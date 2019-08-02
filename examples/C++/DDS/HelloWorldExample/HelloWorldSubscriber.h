@@ -56,8 +56,8 @@ private:
     {
     public:
         SubListener()
-            : matched(0)
-            , samples(0)
+            : matched_(0)
+            , samples_(0)
         {}
 
         ~SubListener() override
@@ -70,13 +70,13 @@ private:
                 eprosima::fastdds::dds::DataReader* reader,
                 eprosima::fastrtps::rtps::MatchingInfo& info) override;
 
-        HelloWorld hello;
+        HelloWorld hello_;
 
-        eprosima::fastrtps::SampleInfo_t info;
+        eprosima::fastrtps::SampleInfo_t info_;
 
-        int matched;
+        int matched_;
 
-        uint32_t samples;
+        uint32_t samples_;
     }listener_;
 };
 

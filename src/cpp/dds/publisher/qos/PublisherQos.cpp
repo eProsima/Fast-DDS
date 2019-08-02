@@ -22,7 +22,7 @@
 
 using namespace eprosima::fastdds::dds;
 
-const PublisherQos eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT;
+RTPS_DllAPI const PublisherQos eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT;
 
 PublisherQos::PublisherQos()
 {

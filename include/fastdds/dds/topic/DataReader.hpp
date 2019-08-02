@@ -57,7 +57,7 @@ class TypeSupport;
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
  *  @ingroup FASTDDS_MODULE
  */
-class DataReader
+class RTPS_DllAPI DataReader
 {
     friend class SubscriberImpl;
 

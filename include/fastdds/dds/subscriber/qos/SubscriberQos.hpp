@@ -141,7 +141,7 @@ public:
             const SubscriberQos& qos) const;
 };
 
-extern const SubscriberQos SUBSCRIBER_QOS_DEFAULT;
+RTPS_DllAPI extern const SubscriberQos SUBSCRIBER_QOS_DEFAULT;
 
 
 } /* namespace dds */

@@ -23,7 +23,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-WriterQos eprosima::fastrtps::DATAWRITER_QOS_DEFAULT;
+RTPS_DllAPI const WriterQos eprosima::fastrtps::DATAWRITER_QOS_DEFAULT;
 
 WriterQos::WriterQos()
 {

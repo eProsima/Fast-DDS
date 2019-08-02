@@ -60,8 +60,8 @@ private:
     {
     public:
         PubListener()
-            : matched(0)
-            , firstConnected(false)
+            : matched_(0)
+            , firstConnected_(false)
         {}
 
         ~PubListener() override
@@ -71,9 +71,9 @@ private:
                 eprosima::fastdds::dds::DataWriter* writer,
                 eprosima::fastrtps::rtps::MatchingInfo& info) override;
 
-        int matched;
+        int matched_;
 
-        bool firstConnected;
+        bool firstConnected_;
     }listener_;
 
     void runThread(

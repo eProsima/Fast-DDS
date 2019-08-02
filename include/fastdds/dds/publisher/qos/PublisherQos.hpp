@@ -138,7 +138,7 @@ public:
             const PublisherQos& qos) const;
 };
 
-extern const PublisherQos PUBLISHER_QOS_DEFAULT;
+RTPS_DllAPI extern const PublisherQos PUBLISHER_QOS_DEFAULT;
 
 } // namespace dds
 } // namespace fastdds

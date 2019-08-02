@@ -23,7 +23,7 @@
 namespace eprosima {
 namespace fastrtps {
 
-ReaderQos DATAREADER_QOS_DEFAULT;
+RTPS_DllAPI const ReaderQos DATAREADER_QOS_DEFAULT;
 
 void ReaderQos::setQos(const ReaderQos& qos, bool first_time)
 {

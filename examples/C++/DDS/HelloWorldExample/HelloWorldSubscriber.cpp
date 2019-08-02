@@ -92,12 +92,12 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
 {
     if (info.status == MATCHED_MATCHING)
     {
-        matched++;
+        matched_++;
         std::cout << "Subscriber matched." << std::endl;
     }
     else
     {
-        matched--;
+        matched_--;
         std::cout << "Subscriber unmatched." << std::endl;
     }
 }
@@ -105,13 +105,13 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
 void HelloWorldSubscriber::SubListener::on_data_available(
         eprosima::fastdds::dds::DataReader* reader)
 {
-    if (reader->take_next_sample(&hello, &info))
+    if (reader->take_next_sample(&hello_, &info_))
     {
-        if (info.sampleKind == ALIVE)
+        if (info_.sampleKind == ALIVE)
         {
-            samples++;
+            samples_++;
             // Print your structure data here.
-            std::cout << "Message " << hello.message() << " " << hello.index() << " RECEIVED" << std::endl;
+            std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
         }
     }
 }
@@ -126,7 +126,7 @@ void HelloWorldSubscriber::run(
         uint32_t number)
 {
     std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
-    while (number > listener_.samples)
+    while (number > listener_.samples_)
     {
         eClock::my_sleep(500);
     }

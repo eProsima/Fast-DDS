@@ -96,13 +96,13 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
 {
     if(info.status == MATCHED_MATCHING)
     {
-        matched++;
-        firstConnected = true;
+        matched_++;
+        firstConnected_ = true;
         std::cout << "Publisher matched." << std::endl;
     }
     else
     {
-        matched--;
+        matched_--;
         std::cout << "Publisher unmatched." << std::endl;
     }
 }
@@ -162,7 +162,7 @@ void HelloWorldPublisher::run(
 
 bool HelloWorldPublisher::publish(bool waitForListener)
 {
-    if(listener_.firstConnected || !waitForListener || listener_.matched>0)
+    if(listener_.firstConnected_ || !waitForListener || listener_.matched_>0)
     {
         hello_.index(hello_.index()+1);
         writer_->write(&hello_);

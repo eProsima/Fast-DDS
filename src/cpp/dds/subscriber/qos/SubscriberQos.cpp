@@ -24,7 +24,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-const SubscriberQos SUBSCRIBER_QOS_DEFAULT;
+RTPS_DllAPI const SubscriberQos SUBSCRIBER_QOS_DEFAULT;
 
 void SubscriberQos::set_qos(
         const SubscriberQos& qos,
