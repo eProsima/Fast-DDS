@@ -43,6 +43,7 @@
 #include "RTPSWriterCollector.h"
 #include "StatefulWriterOrganizer.h"
 #include "rtps/RTPSDomainImpl.hpp"
+#include "../messages/RTPSGapBuilder.hpp"
 
 #include <mutex>
 #include <vector>
@@ -503,11 +504,9 @@ void StatefulWriter::send_any_unsent_changes()
             {
                 try
                 {
-                    // For possible GAP
-                    std::set<SequenceNumber_t> irrelevant;
-
                     // Specific destination message group
                     RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReader->message_sender());
+                    RTPSGapBuilder gaps(group);
 
                     // Loop all changes
                     bool is_remote_and_reliable = remoteReader->is_remote_and_reliable();
@@ -564,7 +563,7 @@ void StatefulWriter::send_any_unsent_changes()
                                     {
                                         if (is_remote_and_reliable)
                                         {
-                                            irrelevant.emplace(seqNum);
+                                            gaps.add(seqNum);
                                         }
                                         remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
                                     }
@@ -923,7 +922,11 @@ bool StatefulWriter::matched_reader_add(
     matched_readers_.push_back(rp);
     update_reader_info(true);
 
-    std::set<SequenceNumber_t> not_relevant_changes;
+    RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, rp->message_sender());
+    RTPSGapBuilder gap_builder(group);
+
+    // Add initial heartbeat to message group
+    send_heartbeat_nts_(1u, group, disable_positive_acks_);
 
     SequenceNumber_t current_seq = get_seq_num_min();
     SequenceNumber_t last_seq = get_seq_num_max();
@@ -946,38 +949,40 @@ bool StatefulWriter::matched_reader_add(
                 }
                 else
                 {
-                    not_relevant_changes.insert(current_seq);
+                    try
+                    {
+                        gap_builder.add(current_seq);
+                    }
+                    catch (const RTPSMessageGroup::timeout&)
+                    {
+                        logError(RTPS_WRITER, "Max blocking time reached");
+                    }
                 }
                 ++current_seq;
             }
 
             ChangeForReader_t changeForReader(*cit);
-
-            if (rp->durability_kind() >= TRANSIENT_LOCAL && this->getAttributes().durabilityKind >= TRANSIENT_LOCAL)
+            bool relevance = 
+                rp->durability_kind() >= TRANSIENT_LOCAL &&
+                m_att.durabilityKind >= TRANSIENT_LOCAL &&
+                rp->rtps_is_relevant(*cit);
+            changeForReader.setRelevance(relevance);
+            if (!relevance)
             {
-                changeForReader.setRelevance(rp->rtps_is_relevant(*cit));
-                if (!rp->rtps_is_relevant(*cit))
-                {
-                    if (rp->is_local_reader())
-                    {
-                        intraprocess_gap(rp, current_seq);
-                    }
-                    else
-                    {
-                        not_relevant_changes.insert(current_seq);
-                    }
-                }
-            }
-            else
-            {
-                changeForReader.setRelevance(false);
                 if (rp->is_local_reader())
                 {
                     intraprocess_gap(rp, current_seq);
                 }
                 else
                 {
-                    not_relevant_changes.insert(current_seq);
+                    try
+                    {
+                        gap_builder.add(current_seq);
+                    }
+                    catch (const RTPSMessageGroup::timeout&)
+                    {
+                        logError(RTPS_WRITER, "Max blocking time reached");
+                    }
                 }
             }
 
@@ -999,7 +1004,14 @@ bool StatefulWriter::matched_reader_add(
             }
             else
             {
-                not_relevant_changes.insert(current_seq);
+                try
+                {
+                    gap_builder.add(current_seq);
+                }
+                catch (const RTPSMessageGroup::timeout&)
+                {
+                    logError(RTPS_WRITER, "Max blocking time reached");
+                }
             }
             ++current_seq;
         }
@@ -1012,16 +1024,11 @@ bool StatefulWriter::matched_reader_add(
             }
             else
             {
-                RTPSMessageGroup group(mp_RTPSParticipant, this, rp->message_sender());
-
-                // Send initial heartbeat
-                send_heartbeat_nts_(1u, group, disable_positive_acks_);
-
                 // Send Gap
-                if (!not_relevant_changes.empty())
-                {
-                    group.add_gap(not_relevant_changes);
-                }
+                gap_builder.flush();
+
+                // Send all messages
+                group.flush_and_reset();
             }
         }
         catch (const RTPSMessageGroup::timeout&)
