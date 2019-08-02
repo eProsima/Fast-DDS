@@ -167,9 +167,9 @@ TEST_F(LogTests, logless_flush_call)
 */
 TEST_F(LogTests, validate_single_flush_call)
 {
-    const int threads_number = 5;
-    const int wait_milliseconds = 100;
-    const int thread_wait_milliseconds = 50;
+    constexpr int threads_number = 5;
+    constexpr int wait_milliseconds = 100;
+    constexpr int thread_wait_milliseconds = 50;
 
     /* note that:
         + wait_milliseconds should be larger than thread_wait_milliseconds in order allow some logs to be done
@@ -213,7 +213,7 @@ TEST_F(LogTests, validate_single_flush_call)
     // Wait till the queues are empty
     Log::Flush();
 
-    size_t consumed = mockConsumer->ConsumedEntries().size();
+    int consumed = static_cast<int>(mockConsumer->ConsumedEntries().size());
     // Flush doesn't wait for all log entries to finish but for the logged till its called
     // We must assert that at least commited_before_flush have been delivered
     ASSERT_GE(consumed, commited_before_flush);
@@ -237,10 +237,10 @@ TEST_F(LogTests, validate_single_flush_call)
 */
 TEST_F(LogTests, validate_multithread_flush_calls)
 {
-    const int working_threads_number = 5;
-    const int flushing_threads_number = 3;
-    const int wait_milliseconds = 100;
-    const int thread_wait_milliseconds = 50;
+    constexpr int working_threads_number = 5;
+    constexpr int flushing_threads_number = 3;
+    constexpr int wait_milliseconds = 100;
+    constexpr int thread_wait_milliseconds = 50;
 
     /* note that:
         + wait_milliseconds should be larger than thread_wait_milliseconds in order allow some logs to be done
@@ -294,7 +294,7 @@ TEST_F(LogTests, validate_multithread_flush_calls)
             // Wait till the queues are empty
             Log::Flush();
 
-            size_t consumed = mockConsumer->ConsumedEntries().size();
+            int consumed = static_cast<int>(mockConsumer->ConsumedEntries().size());
 
             // Flush doesn't wait for all log entries to finish but for the logged till its called
             // We must assert that at least commited_before_flush have been delivered
