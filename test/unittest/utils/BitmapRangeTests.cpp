@@ -46,16 +46,42 @@ struct TestResult
     }
 };
 
+struct TestInputAdd
+{
+    uint32_t offset;
+
+    bool perform_input(ValueType base, TestType& uut) const
+    {
+        return uut.add(base + offset);
+    }
+};
+
+struct TestInputAddRange
+{
+    uint32_t offset_from;
+    uint32_t offset_to;
+
+    bool perform_input(ValueType base, TestType& uut) const
+    {
+        uut.add_range(base + offset_from, base + offset_to);
+        return true;
+    }
+};
+
+template<
+        typename InputType>
 struct TestStep
 {
-    uint32_t input_offset;
+    InputType input;
     TestResult expected_result;
 };
 
+template<
+        typename InputType>
 struct TestCase
 {
     TestResult initialization;
-    std::vector<TestStep> steps;
+    std::vector<TestStep<InputType>> steps;
 
     void Test(ValueType base, TestType& uut) const
     {
@@ -64,7 +90,7 @@ struct TestCase
         
         for (auto step : steps)
         {
-            bool result = uut.add(base + step.input_offset);
+            bool result = step.input.perform_input(base, uut);
             ASSERT_TRUE(step.expected_result.Check(result, uut));
             ASSERT_EQ(base + step.expected_result.num_bits - 1, uut.max());
         }
@@ -77,7 +103,7 @@ class BitmapRangeTests: public ::testing::Test
         const ValueType explicit_base = 123UL;
         const ValueType sliding_base = 513UL;
 
-        const TestCase test0 =
+        const TestCase<TestInputAdd> test0 =
         {
             // initialization
             {
@@ -87,63 +113,63 @@ class BitmapRangeTests: public ::testing::Test
             {
                 // Adding base
                 {
-                    0,
+                    {0},
                     {
                         true, 1, 1, {0x80000000UL,0,0,0,0,0,0,0}
                     }
                 },
                 // Adding base again
                 {
-                    0,
+                    {0},
                     {
                         true, 1, 1, {0x80000000UL,0,0,0,0,0,0,0}
                     }
                 },
                 // Adding out of range
                 {
-                    256,
+                    {256},
                     {
                         false, 1, 1, {0x80000000UL,0,0,0,0,0,0,0}
                     }
                 },
                 // Middle of first word
                 {
-                    16,
+                    {16},
                     {
                         true, 17, 1, {0x80008000UL,0,0,0,0,0,0,0}
                     }
                 },
                 // Before previous one
                 {
-                    15,
+                    {15},
                     {
                         true, 17, 1, {0x80018000UL,0,0,0,0,0,0,0}
                     }
                 },
                 // On third word
                 {
-                    67,
+                    {67},
                     {
                         true, 68, 3, {0x80018000UL,0,0x10000000UL,0,0,0,0,0}
                     }
                 },
-                // Last on third word
+                // Before last on third word
                 {
-                    94,
+                    {94},
                     {
                         true, 95, 3, {0x80018000UL,0,0x10000002UL,0,0,0,0,0}
                     }
                 },
                 // Last on third word
                 {
-                    95,
+                    {95},
                     {
                         true, 96, 3, {0x80018000UL,0,0x10000003UL,0,0,0,0,0}
                     }
                 },
                 // Last possible item
                 {
-                    255,
+                    {255},
                     {
                         true, 256, 8, {0x80018000UL,0,0x10000003UL,0,0,0,0,0x00000001UL}
                     }
@@ -158,6 +184,86 @@ class BitmapRangeTests: public ::testing::Test
             8UL,
             { 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL }
         };
+
+        const TestCase<TestInputAddRange> test_range0 =
+        {
+            // initialization
+            {
+                true, 0, 0, {0,0,0,0,0,0,0,0}
+            },
+            // steps
+            {
+                // Empty input
+                {
+                    {0, 0},
+                    {
+                        true, 0, 0, {0,0,0,0,0,0,0,0}
+                    }
+                },
+                // Adding base
+                {
+                    {0, 1},
+                    {
+                        true, 1, 1, {0x80000000UL,0,0,0,0,0,0,0}
+                    }
+                },
+                // Wrong order params
+                {
+                    {10, 1},
+                    {
+                        true, 1, 1, {0x80000000UL,0,0,0,0,0,0,0}
+                    }
+                },
+                // Adding out of range
+                {
+                    {256, 257},
+                    {
+                        true, 1, 1, {0x80000000UL,0,0,0,0,0,0,0}
+                    }
+                },
+                // Middle of first word
+                {
+                    {15, 17},
+                    {
+                        true, 17, 1, {0x80018000UL,0,0,0,0,0,0,0}
+                    }
+                },
+                // On second and third word
+                {
+                    {35, 68},
+                    {
+                        true, 68, 3, {0x80018000UL,0x1FFFFFFF,0xF0000000,0,0,0,0,0}
+                    }
+                },
+                // Crossing more than one word
+                {
+                    {94, 133},
+                    {
+                        true, 133, 5, {0x80018000UL,0x1FFFFFFF,0xF0000003,0xFFFFFFFF,0xF8000000,0,0,0}
+                    }
+                },
+                // Exactly one word
+                {
+                    {64, 96},
+                    {
+                        true, 133, 5, {0x80018000UL,0x1FFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xF8000000,0,0,0}
+                    }
+                },
+                // Exactly two words
+                {
+                    {128, 192},
+                    {
+                        true, 192, 6, {0x80018000UL,0x1FFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0,0}
+                    }
+                },
+                // Full range
+                {
+                    {0, 512},
+                    all_ones
+                }
+            }
+        };
+
 };
 
 TEST_F(BitmapRangeTests, default_constructor)
@@ -170,6 +276,18 @@ TEST_F(BitmapRangeTests, explicit_constructor)
 {
     TestType uut(explicit_base);
     test0.Test(explicit_base, uut);
+}
+
+TEST_F(BitmapRangeTests, range_default_constructor)
+{
+    TestType uut;
+    test_range0.Test(ValueType(), uut);
+}
+
+TEST_F(BitmapRangeTests, range_explicit_constructor)
+{
+    TestType uut(explicit_base);
+    test_range0.Test(explicit_base, uut);
 }
 
 TEST_F(BitmapRangeTests, change_base)
@@ -227,7 +345,7 @@ TEST_F(BitmapRangeTests, traversal)
     {
         if (step.expected_result.result)
         {
-            items.insert(explicit_base + step.input_offset);
+            items.insert(explicit_base + step.input.offset);
         }
     }
 

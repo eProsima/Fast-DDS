@@ -63,7 +63,13 @@ public:
      * Default constructor.
      * Constructs an empty range with default base.
      */
-    BitmapRange() noexcept : base_(), range_max_(base_ + (NBITS - 1)), bitmap_(), num_bits_(0u) {}
+    BitmapRange() noexcept
+        : base_()
+        , range_max_(base_ + (NBITS - 1))
+        , bitmap_()
+        , num_bits_(0u)
+    {
+    }
 
     /**
      * Base-specific constructor.
@@ -71,7 +77,14 @@ public:
      * 
      * @param base   Specific base value for the created range.
      */
-    explicit BitmapRange(T base) noexcept : base_(base), range_max_(base + (NBITS - 1)), bitmap_(), num_bits_(0u) {}
+    explicit BitmapRange(
+            T base) noexcept
+        : base_(base)
+        , range_max_(base + (NBITS - 1))
+        , bitmap_()
+        , num_bits_(0u)
+    {
+    }
 
     // We don't need to define copy/move constructors/assignment operators as the default ones would be enough
 
@@ -79,7 +92,10 @@ public:
      * Get base of the range.
      * @return a copy of the range base.
      */
-    T base() const noexcept { return base_; }
+    T base() const noexcept 
+    {
+        return base_;
+    }
 
     /**
      * Set a new base for the range.
@@ -87,7 +103,8 @@ public:
      *
      * @param base   New base value to set.
      */
-    void base(T base) noexcept
+    void base(
+            T base) noexcept
     {
         base_ = base;
         range_max_ = base_ + (NBITS - 1);
@@ -101,7 +118,8 @@ public:
      *
      * @param base   New base value to set.
      */
-    void base_update(T base) noexcept
+    void base_update(
+            T base) noexcept
     {
         // Do nothing if base is not changing
         if (base == base_)
@@ -133,14 +151,47 @@ public:
      * 
      * @return true if the range is empty, false otherwise.
      */
-    bool empty() const noexcept { return num_bits_ == 0u; }
+    bool empty() const noexcept
+    {
+        return num_bits_ == 0u;
+    }
 
     /**
      * Returns the highest value set in the range.
      * 
      * @return the highest value set in the range. If the range is empty, the result is undetermined.
      */
-    T max() const noexcept { return base_ + (num_bits_ - 1); }
+    T max() const noexcept
+    {
+        return base_ + (num_bits_ - 1);
+    }
+
+    /**
+     * Checks if an element is present in the bitmap.
+     *
+     * @param item   Value to be checked.
+     *
+     * @return true if the item is present in the bitmap, false otherwise.
+     */
+    bool is_set(
+            const T& item) const noexcept
+    {
+        // Check item is inside the allowed range.
+        if ((item >= base_) && (range_max_ >= item))
+        {
+            // Calc distance from base to item, and check the corresponding bit.
+            Diff d_func;
+            uint32_t diff = d_func(item, base_);
+            if (diff < num_bits_)
+            {
+                uint32_t pos = diff >> 5;
+                diff &= 31UL;
+                return (bitmap_[pos] & (1UL << (31UL - diff))) != 0;
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Adds an element to the range.
@@ -150,7 +201,8 @@ public:
      *
      * @return true if the item has been added (i.e. is in the allowed range), false otherwise.
      */
-    bool add(const T& item) noexcept
+    bool add(
+            const T& item) noexcept
     {
         // Check item is inside the allowed range.
         if ((item >= base_) && (range_max_ >= item))
@@ -169,6 +221,61 @@ public:
     }
 
     /**
+     * Adds a range of elements to the range.
+     *
+     * Add all elements in [from, to) to the range.
+     * Equivalent to for(T i = from; i < to; i++) add(i);
+     *
+     * @param from   Starting value of the range to add.
+     * @param to     Ending value of the range to add.
+     */
+    void add_range(
+            const T& from,
+            const T& to)
+    {
+        constexpr uint32_t full_mask = 0xFFFFFFFF;
+
+        // Adapt incoming range to range limits
+        T min = (base_ >= from) ? base_ : from;
+        T max = (to >= base_ + NBITS) ? base_ + NBITS : to;
+
+        // Check precondition. Max should be explicitly above min.
+        if (min >= max)
+        {
+            return;
+        }
+
+        // Calc offset (distance from base) and num_bits (bits to be set)
+        Diff d_func;
+        uint32_t offset = d_func(min, base_);   // Bit position from base
+        uint32_t n_bits = d_func(max, min);     // Number of bits pending
+
+        num_bits_ = std::max(num_bits_, offset + n_bits);
+
+        uint32_t pos = offset >> 5;             // Item position
+        offset &= 31UL;                         // Bit position inside item
+        uint32_t mask = full_mask;              // Mask with all bits set
+        mask >>= offset;                        // Remove first 'offset' bits from mask
+        uint32_t bits_in_mask = 32UL - offset;  // Take note of number of set bits in mask
+
+        // This loop enters whenever the whole mask should be added
+        while (n_bits >= bits_in_mask)
+        {
+            bitmap_[pos] |= mask;               // Set whole mask of bits
+            pos++;                              // Go to next position in the array
+            n_bits -= bits_in_mask;             // Decrease number of pending bits
+            mask = full_mask;                   // Mask with all bits set
+            bits_in_mask = 32UL;                // All bits set in mask (32)
+        }
+
+        // This condition will be true if the last bits of the mask should not be used
+        if (n_bits > 0)
+        {
+            bitmap_[pos] |= mask & (full_mask << (bits_in_mask - n_bits));
+        }
+    }
+
+    /**
      * Gets the current value of the bitmap.
      * This method is designed to be used when performing serialization of a bitmap range.
      * 
@@ -176,7 +283,10 @@ public:
      * @param bitmap           Upon return, it will contain the current value of the bitmap.
      * @param num_longs_used   Upon return, it will contain the number of valid elements on the returned bitmap.
      */
-    void bitmap_get(uint32_t& num_bits, bitmap_type& bitmap, uint32_t& num_longs_used) const noexcept
+    void bitmap_get(
+            uint32_t& num_bits,
+            bitmap_type& bitmap,
+            uint32_t& num_longs_used) const noexcept
     {
         num_bits = num_bits_;
         num_longs_used = (num_bits_ + 31UL) / 32UL;
@@ -190,12 +300,16 @@ public:
      * @param num_bits   Number of significant bits in the input bitmap.
      * @param bitmap     Points to the begining of a uint32_t array holding the input bitmap.
      */
-    void bitmap_set(uint32_t num_bits, const uint32_t* bitmap) noexcept
+    void bitmap_set(
+            uint32_t num_bits,
+            const uint32_t* bitmap) noexcept
     {
         num_bits_ = std::min(num_bits, NBITS);
-        uint32_t num_bytes = ( (num_bits_ + 31UL) / 32UL) * sizeof(uint32_t);
+        uint32_t num_items = ((num_bits_ + 31UL) / 32UL);
+        uint32_t num_bytes = num_items * sizeof(uint32_t);
         bitmap_.fill(0UL);
         memcpy(bitmap_.data(), bitmap, num_bytes);
+        calc_maximum_bit_set(num_items, 0);
     }
 
     /**
@@ -204,7 +318,8 @@ public:
      * @param f   Function to apply on each item.
      */
     template<class UnaryFunc>
-    void for_each(UnaryFunc f) const
+    void for_each(
+            UnaryFunc f) const
     {
         T item = base_;
 
@@ -223,10 +338,10 @@ public:
 #if _MSC_VER
                 unsigned long bit;
                 _BitScanReverse(&bit, bits);
-                uint32_t offset = 31UL - bit;
+                uint32_t offset = 31UL ^ bit;
 #else
                 uint32_t offset = __builtin_clz(bits);
-                uint32_t bit = 31UL - offset;
+                uint32_t bit = 31UL ^ offset;
 #endif
 
                 // Call the function for the corresponding item
@@ -249,7 +364,8 @@ protected:
 
 private:
 
-    void shift_map_left(uint32_t n_bits)
+    void shift_map_left(
+            uint32_t n_bits)
     {
         if (n_bits >= num_bits_)
         {
@@ -293,7 +409,8 @@ private:
         }
     }
 
-    void shift_map_right(uint32_t n_bits)
+    void shift_map_right(
+            uint32_t n_bits)
     {
         if (n_bits >= NBITS)
         {
@@ -338,29 +455,36 @@ private:
                 std::fill_n(bitmap_.begin(), n_items, 0);
             }
 
+            num_bits_ = new_num_bits;
             if (find_new_max)
             {
-                new_num_bits = 0;
-                for (uint32_t i = NITEMS; i > n_items;)
-                {
-                    --i;
-                    uint32_t bits = bitmap_[i];
-                    if (bits != 0)
-                    {
-                        bits = (bits & ~(bits - 1));
-#if _MSC_VER
-                        unsigned long bit;
-                        _BitScanReverse(&bit, bits);
-                        uint32_t offset = 32UL - bit;
-#else
-                        uint32_t offset = __builtin_clz(bits) + 1;
-#endif
-                        new_num_bits = (i << 5UL) + offset;
-                        break;
-                    }
-                }
+                calc_maximum_bit_set(NITEMS, n_items);
             }
-            num_bits_ = new_num_bits;
+        }
+    }
+
+    void calc_maximum_bit_set(
+            uint32_t starting_index,
+            uint32_t min_index)
+    {
+        num_bits_ = 0;
+        for (uint32_t i = starting_index; i > min_index;)
+        {
+            --i;
+            uint32_t bits = bitmap_[i];
+            if (bits != 0)
+            {
+                bits = (bits & ~(bits - 1));
+#if _MSC_VER
+                unsigned long bit;
+                _BitScanReverse(&bit, bits);
+                uint32_t offset = (31UL ^ bit) + 1;
+#else
+                uint32_t offset = __builtin_clz(bits) + 1;
+#endif
+                num_bits_ = (i << 5UL) + offset;
+                break;
+            }
         }
     }
 }; 
