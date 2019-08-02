@@ -178,7 +178,7 @@ TEST_F(LogTests, validate_single_flush_call)
           the back queue will grow so large while the front one is cleared, that the test will probably timeout.
     */
 
-    volatile bool done = false;
+    bool done = false;
     int commited_before_flush = 0;
     // std::atomic<int> committed = 0; // only works on msvc and icc
     std::atomic<int> committed;
@@ -188,7 +188,8 @@ TEST_F(LogTests, validate_single_flush_call)
     vector<unique_ptr<thread>> threads;
     for (int i = 0; i < threads_number; i++)
     {
-        threads.emplace_back(new thread([&done, &committed, &thread_wait_milliseconds] {
+        threads.emplace_back(new thread([&done, &committed, &thread_wait_milliseconds]
+        {
             while (!done)
             {
                 logWarning(flush_ckecks, "I'm thread " << this_thread::get_id() << " logging sample " << committed);
@@ -201,7 +202,7 @@ TEST_F(LogTests, validate_single_flush_call)
     }
 
     // allow some logs to be done but not all
-    while( commited_before_flush < threads_number)
+    while(commited_before_flush < threads_number)
     {
         this_thread::sleep_for(chrono::milliseconds(wait_milliseconds));
 
@@ -248,7 +249,7 @@ TEST_F(LogTests, validate_multithread_flush_calls)
           the back queue will grow so large while the front one is cleared, that the test will probably timeout.
     */
 
-    volatile bool done = false;
+    bool done = false;
     // std::atomic<int> committed = 0; // only works on msvc and icc
     std::atomic<int> committed;
     committed = 0;
@@ -257,7 +258,8 @@ TEST_F(LogTests, validate_multithread_flush_calls)
     vector<unique_ptr<thread>> threads;
     for (int i = 0; i < working_threads_number; i++)
     {
-        threads.emplace_back(new thread([&done, &committed, &thread_wait_milliseconds] {
+        threads.emplace_back(new thread([&done, &committed, &thread_wait_milliseconds]
+        {
             while (!done)
             {
                 logWarning(flush_ckecks, "I'm thread " << this_thread::get_id() << " logging sample " << committed);
@@ -283,8 +285,8 @@ TEST_F(LogTests, validate_multithread_flush_calls)
     // Populate the consumer from multiple threads
     for (int i = 0; i < flushing_threads_number; i++)
     {
-        threads.emplace_back(new thread([this, &committed] {
-
+        threads.emplace_back(new thread([this, &committed]
+        {
             logWarning(flush_ckecks, "I'm thread " << this_thread::get_id() << " Flushing " << committed);
 
             int commited_before_flush = ++committed;
