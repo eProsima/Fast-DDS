@@ -603,66 +603,107 @@ void StatefulWriter::send_any_unsent_changes()
         network.select_locators(locator_selector_);
         compute_selected_guids();
 
+        RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, *this);
+
+        // Add holes in history and send them to all readers
+        if (there_are_remote_readers_)
+        {
+            try
+            {
+                RTPSGapBuilder gap_builder(group);
+                SequenceNumber_t seq = next_all_acked_notify_sequence_;
+                SequenceNumber_t last_sequence = mp_history->next_sequence_number();
+
+                for (auto cit = mp_history->changesBegin(); cit != mp_history->changesEnd(); cit++)
+                {
+                    // Add all sequence numbers until the change's sequence number
+                    while (seq < (*cit)->sequenceNumber)
+                    {
+                        gap_builder.add(seq);
+                        seq++;
+                    }
+
+                    // Skip change's sequence number
+                    seq++;
+                }
+
+                // Add all sequence numbers above last change
+                while (seq < last_sequence)
+                {
+                    gap_builder.add(seq);
+                    seq++;
+                }
+            }
+            catch (const RTPSMessageGroup::timeout&)
+            {
+                logError(RTPS_WRITER, "Max blocking time reached");
+            }
+        }
+
         for (ReaderProxy* remoteReader : matched_readers_)
         {
             SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
             SequenceNumber_t min_history_seq = get_seq_num_min();
             auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
+                {
+                    if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
                     {
-                        if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
+                        if (remoteReader->is_local_reader())
                         {
-                            if (remoteReader->is_local_reader())
+                            if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
                             {
-                                if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
-                                {
-                                    max_ack_seq = seq_num;
-                                }
-                                else
-                                {
-                                    remoteReader->set_change_to_status(seq_num, UNDERWAY, false);
-                                }
+                                max_ack_seq = seq_num;
                             }
                             else
                             {
-                                if (m_pushMode)
-                                {
-                                    relevantChanges.add_change(
-                                        unsentChange->getChange(), remoteReader, unsentChange->getUnsentFragments());
-                                }
-                                else // Change status to UNACKNOWLEDGED
-                                {
-                                    remoteReader->set_change_to_status(seq_num, UNACKNOWLEDGED, false);
-                                }
+                                remoteReader->set_change_to_status(seq_num, UNDERWAY, false);
                             }
                         }
                         else
                         {
-                            if (remoteReader->is_local_reader())
+                            if (m_pushMode)
                             {
-                                if (intraprocess_gap(remoteReader, seq_num))
+                                relevantChanges.add_change(
+                                    unsentChange->getChange(), remoteReader, unsentChange->getUnsentFragments());
+                            }
+                            else // Change status to UNACKNOWLEDGED
+                            {
+                                remoteReader->set_change_to_status(seq_num, UNACKNOWLEDGED, false);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (remoteReader->is_local_reader())
+                        {
+                            if (intraprocess_gap(remoteReader, seq_num))
+                            {
+                                max_ack_seq = seq_num;
+                            }
+                            else
+                            {
+                                remoteReader->set_change_to_status(seq_num, UNDERWAY, true);
+                            }
+                        }
+                        else
+                        {
+                            if (seq_num >= min_history_seq)
+                            {
+                                // Skip holes in history, as they were added before
+                                if (unsentChange != nullptr)
                                 {
-                                    max_ack_seq = seq_num;
-                                }
-                                else
-                                {
-                                    remoteReader->set_change_to_status(seq_num, UNDERWAY, true);
+                                    notRelevantChanges.add_sequence_number(seq_num, remoteReader);
                                 }
                             }
                             else
                             {
-                                if (seq_num >= min_history_seq)
-                                {
-                                    notRelevantChanges.add_sequence_number(seq_num, remoteReader);
-                                }
-                                else
-                                {
-                                    force_piggyback_hb = true;
-                                }
-
-                                remoteReader->set_change_to_status(seq_num, UNDERWAY, true);
+                                force_piggyback_hb = true;
                             }
+
+                            remoteReader->set_change_to_status(seq_num, UNDERWAY, true);
                         }
-                    };
+                    }
+                };
 
             remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
             if (remoteReader->is_local_reader() && max_ack_seq != SequenceNumber_t::unknown())
@@ -689,7 +730,6 @@ void StatefulWriter::send_any_unsent_changes()
 
                 try
                 {
-                    RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
                     uint32_t lastBytesProcessed = 0;
 
                     while (!relevantChanges.empty())
@@ -803,6 +843,8 @@ void StatefulWriter::send_any_unsent_changes()
                         }
                         group.add_gap(pair.second);
                     }
+                    
+                    group.flush_and_reset();
                 }
                 catch (const RTPSMessageGroup::timeout&)
                 {
