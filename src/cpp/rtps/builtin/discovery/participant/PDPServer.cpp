@@ -77,9 +77,9 @@ PDPServer::~PDPServer()
     delete(mp_sync);
 }
 
-bool PDPServer::initPDP(RTPSParticipantImpl* part)
+bool PDPServer::init(RTPSParticipantImpl* part)
 {
-    if (!PDP::initPDP(part,false))
+    if (!PDP::initPDP(part))
     {
         return false;
     }

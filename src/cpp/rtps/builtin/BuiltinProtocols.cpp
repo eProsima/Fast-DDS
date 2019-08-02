@@ -113,7 +113,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
             return false;
     }
 
-    if (!mp_PDP->initPDP(mp_participantImpl)) {
+    if (!mp_PDP->init(mp_participantImpl)) {
         logError(RTPS_PDP, "Participant discovery configuration failed");
         return false;
     }
@@ -123,6 +123,11 @@ bool BuiltinProtocols::initBuiltinProtocols(
     {
         mp_WLP = new WLP(this);
         mp_WLP->initWL(mp_participantImpl);
+    }
+
+    if(m_att.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SIMPLE)
+    {
+        mp_PDP->enable();
     }
 
     mp_PDP->announceParticipantState(true);

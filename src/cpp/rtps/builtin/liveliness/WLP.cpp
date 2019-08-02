@@ -791,18 +791,24 @@ bool WLP::send_liveliness_message(const InstanceHandle_t& instance)
 
     if (change != nullptr)
     {
+        change->serializedPayload.data[0] = 0;
 #if __BIG_ENDIAN__
         change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+        change->serializedPayload.data[1] = PL_CDR_BE;
 #else
         change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+        change->serializedPayload.data[1] = PL_CDR_LE;
 #endif
-        memcpy(change->serializedPayload.data, instance.value, 16);
+        change->serializedPayload.data[2] = 0;
+        change->serializedPayload.data[3] = 0;
 
-        for (uint8_t i = 16; i < 24; ++i)
+        memcpy(change->serializedPayload.data + 4, instance.value, 16);
+
+        for (uint8_t i = 20; i < 28; ++i)
         {
             change->serializedPayload.data[i] = 0;
         }
-        change->serializedPayload.length = 12 + 4 + 4 + 4;
+        change->serializedPayload.length = 4 + 12 + 4 + 4 + 4;
 
         if (history->getHistorySize() > 0)
         {

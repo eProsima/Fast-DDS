@@ -149,9 +149,9 @@ void PDPClient::initializeParticipantProxyData(ParticipantProxyData* participant
 
 }
 
-bool PDPClient::initPDP(RTPSParticipantImpl* part)
+bool PDPClient::init(RTPSParticipantImpl* part)
 {
-    if (!PDP::initPDP(part,true))
+    if (!PDP::initPDP(part))
     {
         return false;
     }
@@ -167,6 +167,8 @@ bool PDPClient::initPDP(RTPSParticipantImpl* part)
         logError(RTPS_PDP,"Endpoint discovery configuration failed");
         return false;
     }
+
+    enable();
 
     mp_sync = new DSClientEvent(this, TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discovery_config.discoveryServer_client_syncperiod));
     mp_sync->restart_timer();
