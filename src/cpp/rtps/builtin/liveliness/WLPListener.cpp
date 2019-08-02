@@ -84,9 +84,9 @@ void WLPListener::onNewCacheChangeAdded(
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
         }
 
-        for(uint8_t i =4;i<16;++i)
+        for(size_t i = 0; i<12; ++i)
         {
-            guidP.value[i] = change->serializedPayload.data[i];
+            guidP.value[i] = change->serializedPayload.data[i + 4];
         }
         livelinessKind = (LivelinessQosPolicyKind)(change->serializedPayload.data[19]-0x01);
 

@@ -804,7 +804,7 @@ bool WLP::send_liveliness_message(const InstanceHandle_t& instance)
 
         memcpy(change->serializedPayload.data + 4, instance.value, 16);
 
-        for (uint8_t i = 20; i < 28; ++i)
+        for (size_t i = 20; i < 28; ++i)
         {
             change->serializedPayload.data[i] = 0;
         }
