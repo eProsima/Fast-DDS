@@ -234,7 +234,7 @@ public class Context extends com.eprosima.idl.context.Context implements com.epr
             if(m_lastStructure.getHasScope())
             {
                 return m_lastStructure.getScope().replaceAll("::", "_").toUpperCase() +
-                    "_" + m_fileNameUpper;
+                    "_" + m_fileNameUpper.replaceAll("\\.", "_");
             }
         }
         return m_fileNameUpper;

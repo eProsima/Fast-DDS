@@ -105,6 +105,8 @@ public class fastrtpsgen {
     // Generate TypeObject files?
     private boolean m_type_object_files = false;
 
+    private boolean m_case_sensitive = false;
+
     // Testing
     private boolean m_test = false;
 
@@ -229,6 +231,10 @@ public class fastrtpsgen {
                 } else {
                     throw new BadArgumentException("No include directory specified after -I argument");
                 }
+            }
+            else if(arg.equals("-cs"))
+            {
+                m_case_sensitive = true;
             }
             else { // TODO: More options: -rpm, -debug
                 throw new BadArgumentException("Unknown argument " + arg);
@@ -445,6 +451,7 @@ public class fastrtpsgen {
         System.out.println("\t\t-t <temp dir>: sets a specific directory as a temporary directory.");
         System.out.print("\t\t-typeobject: generates TypeObject files to automatically register the types as");
         System.out.println(" dynamic.");
+        System.out.println("\t\t-cs: IDL grammar apply case sensitive matching.");
         System.out.println("\t\t-test: executes FastRTPSGen tests.");
         System.out.println("\tand the supported input files are:");
         System.out.println("\t* IDL files.");
@@ -510,6 +517,11 @@ public class fastrtpsgen {
 
         if (idlParseFileName != null) {
             Context ctx = new Context(onlyFileName, idlFilename, m_includePaths, m_subscribercode, m_publishercode, m_localAppProduct, m_type_object_files);
+
+            if(m_case_sensitive)
+            {
+                ctx.ignore_case(false);
+            }
 
             if(fusion_) ctx.setActivateFusion(true);
 
