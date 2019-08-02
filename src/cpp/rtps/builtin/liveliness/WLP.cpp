@@ -159,7 +159,7 @@ bool WLP::initWL(RTPSParticipantImpl* p)
 #if HAVE_SECURITY
     if (retVal)
     {
-        retVal = retVal && createSecureEndpoints();
+        retVal = createSecureEndpoints();
     }
 #endif
     return retVal;
@@ -626,6 +626,7 @@ bool WLP::remove_local_writer(RTPSWriter* W)
 
         if (it == automatic_writers_.end())
         {
+            logWarning(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
             return false;
         }
 
@@ -659,6 +660,7 @@ bool WLP::remove_local_writer(RTPSWriter* W)
 
         if (it == manual_by_participant_writers_.end())
         {
+            logWarning(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
             return false;
         }
 
@@ -701,6 +703,7 @@ bool WLP::remove_local_writer(RTPSWriter* W)
 
         if (it == manual_by_topic_writers_.end())
         {
+            logWarning(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
             return false;
         }
 

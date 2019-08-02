@@ -77,7 +77,7 @@ void WLPListener::onNewCacheChangeAdded(
     {
         if (PL_CDR_BE == change->serializedPayload.data[1])
         {
-        change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
         }
         else
         {
@@ -138,7 +138,7 @@ bool WLPListener::computeKey(CacheChange_t* change)
     if(change->instanceHandle == c_InstanceHandle_Unknown)
     {
         SerializedPayload_t* pl = &change->serializedPayload;
-        if(pl->length >= 16)
+        if(pl->length >= 20)
         {
             memcpy(change->instanceHandle.value, pl->data + 4, 16);
             return true;
