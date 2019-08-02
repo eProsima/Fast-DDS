@@ -9,7 +9,7 @@ set(${CORE_STANDALONE}_source_files
     core.cpp
     )
 
-add_library(${CORE_STANDALONE} ${CORE_STANDALONE}_source_files)
+add_library(${CORE_STANDALONE} ${${CORE_STANDALONE}_source_files})
 
 target_include_directories(${CORE_STANDALONE}
     PUBLIC
