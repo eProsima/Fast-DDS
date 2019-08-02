@@ -235,6 +235,7 @@ class PubSubWriter
                 {
                     std::cout << "Publisher " << pub->getGuid() << " lost liveliness" << std::endl;
                 }
+                writer_.liveliness_lost();
             }
 
             unsigned int missed_deadlines() const
@@ -280,6 +281,7 @@ class PubSubWriter
         , participant_matched_(0)
         , discovery_result_(false)
         , onDiscovery_(nullptr)
+        , times_liveliness_lost_(0)
 #if HAVE_SECURITY
     , authorized_(0), unauthorized_(0)
 #endif
@@ -424,6 +426,19 @@ class PubSubWriter
         cv_.wait(lock, [&](){return matched_ == 0;});
 
         std::cout << "Writer removal finished..." << std::endl;
+    }
+
+    void wait_liveliness_lost(unsigned int times = 1)
+    {
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+        liveliness_cv_.wait(lock, [&](){ return times_liveliness_lost_ == times; });
+    }
+
+    void liveliness_lost()
+    {
+        std::unique_lock<std::mutex> lock(liveliness_mutex_);
+        times_liveliness_lost_++;
+        liveliness_cv_.notify_one();
     }
 
 #if HAVE_SECURITY
@@ -1107,6 +1122,13 @@ void change_reader_info(const eprosima::fastrtps::rtps::ReaderProxyData& reader_
     bool discovery_result_;
 
     std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
+
+    //! A mutex for liveliness
+    std::mutex liveliness_mutex_;
+    //! A condition variable for liveliness
+    std::condition_variable liveliness_cv_;
+    //! The number of times liveliness was lost
+    unsigned int times_liveliness_lost_;
 
 #if HAVE_SECURITY
     std::mutex mutexAuthentication_;
