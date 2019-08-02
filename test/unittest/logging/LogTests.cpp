@@ -188,7 +188,8 @@ TEST_F(LogTests, validate_single_flush_call)
     vector<unique_ptr<thread>> threads;
     for (int i = 0; i < threads_number; i++)
     {
-        threads.emplace_back(new thread([&done, &committed, &thread_wait_milliseconds] {
+        threads.emplace_back(new thread([&done, &committed, &thread_wait_milliseconds]
+        {
             while (!done)
             {
                 logWarning(flush_ckecks, "I'm thread " << this_thread::get_id() << " logging sample " << committed);
