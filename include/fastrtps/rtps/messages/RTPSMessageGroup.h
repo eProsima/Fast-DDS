@@ -110,11 +110,22 @@ class Endpoint;
                 bool liveliness_flag);
 
         /**
-         * Adds a GAP message to the group.
+         * Adds one or more GAP messages to the group.
          * @param changes_seq_numbers Set of missed sequence numbers.
+         * @return True when messages were added to the group.
+         */
+        bool add_gap(
+                std::set<SequenceNumber_t>& changes_seq_numbers);
+
+        /**
+         * Adds one GAP message to the group.
+         * @param gap_initial_sequence Start of consecutive sequence numbers.
+         * @param gap_bitmap Bitmap of non-consecutive sequence numbers.
          * @return True when message was added to the group.
          */
-        bool add_gap(std::set<SequenceNumber_t>& changes_seq_numbers);
+        bool add_gap(
+                const SequenceNumber_t& gap_initial_sequence,
+                const SequenceNumberSet_t& gap_bitmap);
 
         /**
          * Adds a ACKNACK message to the group.
