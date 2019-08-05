@@ -1,8 +1,8 @@
-/* Copyright 2010, Object Management Group, Inc.
+/*
+ * Copyright 2010, Object Management Group, Inc.
  * Copyright 2010, PrismTech, Corp.
  * Copyright 2010, Real-Time Innovations, Inc.
  * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
- * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,62 +20,75 @@
 #ifndef OMG_DDS_CORE_SAFEENUMERATION_HPP_
 #define OMG_DDS_CORE_SAFEENUMERATION_HPP_
 
-namespace dds
-{
-namespace core
-{
+namespace dds {
+namespace core {
 
 /**
- * safe_enum provides a wrapper for enumerated types in a typesafe
+ * SafeEnum provides a wrapper for enumerated types in a typesafe
  * manner.
  *
- * safe_enums allow specification of the underlying type,
+ * SafeEnums allow specification of the underlying type,
  * do not implictly convert to integers, and resolve scoping issues.
  */
-template<typename def, typename inner = typename def::Type>
-class safe_enum : public def
+template<typename Def, typename Inner = typename Def::Type>
+class SafeEnum : public Def
 {
-    typedef typename def::Type type;
-    inner val;
-
 public:
 
-    safe_enum(type v) : val(v) {}
+    constexpr SafeEnum(
+            Inner v)
+        : val(v)
+    {
+    }
+
     inner underlying() const
     {
         return val;
     }
 
-    bool operator == (const safe_enum& s) const
+    bool operator == (
+            const SafeEnum& s) const
     {
         return this->val == s.val;
     }
-    bool operator != (const safe_enum& s) const
+
+    bool operator != (
+            const SafeEnum& s) const
     {
         return this->val != s.val;
     }
-    bool operator < (const safe_enum& s) const
+
+    bool operator < (
+            const SafeEnum& s) const
     {
         return this->val <  s.val;
     }
-    bool operator <= (const safe_enum& s) const
+
+    bool operator <= (
+            const SafeEnum& s) const
     {
         return this->val <= s.val;
     }
-    bool operator > (const safe_enum& s) const
+
+    bool operator > (
+            const SafeEnum& s) const
     {
         return this->val >  s.val;
     }
-    bool operator >= (const safe_enum& s) const
+
+    bool operator >= (
+            const SafeEnum& s) const
     {
         return this->val >= s.val;
     }
+
+private:
+    Inner val;
+
 };
 
+} //namespace core
+} //namespace dds
 
-}
-}
+#endif //OMG_DDS_CORE_SAFEENUMERATION_HPP_
 
-
-
-#endif /* OMG_DDS_CORE_SAFEENUMERATION_HPP_ */
