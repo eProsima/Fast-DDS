@@ -192,6 +192,7 @@ Publisher* ParticipantImpl::createPublisher(
     watt.times = att.times;
     watt.liveliness_kind = att.qos.m_liveliness.kind;
     watt.liveliness_lease_duration = att.qos.m_liveliness.lease_duration;
+    watt.liveliness_announcement_period = att.qos.m_liveliness.announcement_period;
     watt.matched_readers_allocation = att.matched_subscriber_allocation;
 
     // TODO(Ricardo) Remove in future

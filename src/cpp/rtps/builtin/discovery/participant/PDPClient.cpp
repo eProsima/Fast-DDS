@@ -149,9 +149,9 @@ void PDPClient::initializeParticipantProxyData(ParticipantProxyData* participant
 
 }
 
-bool PDPClient::initPDP(RTPSParticipantImpl* part)
+bool PDPClient::init(RTPSParticipantImpl* part)
 {
-    if (!PDP::initPDP(part,true))
+    if (!PDP::initPDP(part))
     {
         return false;
     }

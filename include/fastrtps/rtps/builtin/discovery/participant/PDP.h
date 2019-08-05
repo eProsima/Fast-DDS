@@ -84,10 +84,11 @@ public:
      * @return True on success
      */
     bool initPDP(
-            RTPSParticipantImpl* part,
-            bool enableReader);
+            RTPSParticipantImpl* part);
 
-    virtual bool initPDP(RTPSParticipantImpl* part) = 0;
+    bool enable();
+
+    virtual bool init(RTPSParticipantImpl* part) = 0;
 
     /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info

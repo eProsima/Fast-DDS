@@ -273,6 +273,12 @@ public:
      */
     const Duration_t& get_liveliness_lease_duration() const;
 
+    /**
+     * @brief A method to return the liveliness announcement period
+     * @return The announcement period
+     */
+    const Duration_t& get_liveliness_announcement_period() const;
+
     //! Liveliness lost status of this writer
     LivelinessLostStatus liveliness_lost_status_;
 
@@ -373,6 +379,8 @@ protected:
     LivelinessQosPolicyKind liveliness_kind_;
     //! The liveliness lease duration of this reader
     Duration_t liveliness_lease_duration_;
+    //! The liveliness announcement period
+    Duration_t liveliness_announcement_period_;
 
 private:
 

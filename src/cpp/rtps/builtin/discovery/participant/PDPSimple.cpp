@@ -102,10 +102,10 @@ void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant
 
 }
 
-bool PDPSimple::initPDP(RTPSParticipantImpl* part)
+bool PDPSimple::init(RTPSParticipantImpl* part)
 {
     // The DATA(p) must be processed after EDP endpoint creation
-    if (!PDP::initPDP(part, false))
+    if (!PDP::initPDP(part))
     {
         return false;
     }
@@ -132,12 +132,6 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
     else
     {
         logWarning(RTPS_PDP,"No EndpointDiscoveryProtocol defined");
-        return false;
-    }
-
-    // Enable DATA(p) processing
-    if (!mp_RTPSParticipant->enableReader(mp_PDPReader))
-    {
         return false;
     }
 

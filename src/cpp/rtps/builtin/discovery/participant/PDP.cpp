@@ -290,8 +290,7 @@ void PDP::initializeParticipantProxyData(ParticipantProxyData* participant_data)
 }
 
 bool PDP::initPDP(
-    RTPSParticipantImpl* part,
-    bool enableReader)
+    RTPSParticipantImpl* part)
 {
     logInfo(RTPS_PDP,"Beginning");
     mp_RTPSParticipant = part;
@@ -325,11 +324,6 @@ bool PDP::initPDP(
                 }, 0.0);
     }
 
-    if (enableReader && !mp_RTPSParticipant->enableReader(mp_PDPReader))
-    {
-        return false;
-    }
-
     resend_participant_info_event_ = new TimedEvent(mp_RTPSParticipant->getEventResource(),
             [&](TimedEvent::EventCode code) -> bool
             {
@@ -350,6 +344,10 @@ bool PDP::initPDP(
     return true;
 }
 
+bool PDP::enable()
+{
+    return mp_RTPSParticipant->enableReader(mp_PDPReader);
+}
 
 void PDP::announceParticipantState(
     bool new_change,
