@@ -1,9 +1,7 @@
-#ifndef OMG_DDS_CORE_POLICY_DETAIL_QOS_POLICY_COUNT_HPP_
-#define OMG_DDS_CORE_POLICY_DETAIL_QOS_POLICY_COUNT_HPP_
-
 /* Copyright 2010, Object Management Group, Inc.
  * Copyright 2010, PrismTech, Corp.
  * Copyright 2010, Real-Time Innovations, Inc.
+ * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,18 +17,32 @@
  * limitations under the License.
  */
 
-#include <dds/core/policy/detail/TQosPolicyCountImpl.hpp>
-#include <org/opensplice/core/policy/QosPolicyCountDelegate.hpp>
+#ifndef OMG_DDS_CORE_POLICY_DETAIL_QOS_POLICY_COUNT_HPP_
+#define OMG_DDS_CORE_POLICY_DETAIL_QOS_POLICY_COUNT_HPP_
+
+//TODO: Fix when QosPolicyCountDelegate is implemented
+//#include <dds/core/policy/detail/TQosPolicyCountImpl.hpp>
+//#include <org/opensplice/core/policy/QosPolicyCountDelegate.hpp>
 
 /**
  * @cond
  * Ignore this file in the API
  */
 
-namespace dds { namespace core { namespace policy { namespace detail {
-	typedef dds::core::policy::TQosPolicyCount<org::opensplice::core::policy::QosPolicyCountDelegate> QosPolicyCount;
-} } } }
+namespace dds {
+namespace core {
+namespace policy {
+namespace detail {
+
+//TODO: Fix when QosPolicyCountDelegate is implemented
+//typedef dds::core::policy::TQosPolicyCount<org::opensplice::core::policy::QosPolicyCountDelegate> QosPolicyCount;
+class QosPolicyCount { };
+
+} //namespace detail
+} //namespace policy
+} //namespace core
+} //namespace dds
 
 /** @endcond */
 
-#endif /* !defined(OMG_DDS_CORE_POLICY_DETAIL_QOS_POLICY_COUNT_HPP_) */
+#endif //OMG_DDS_CORE_POLICY_DETAIL_QOS_POLICY_COUNT_HPP_

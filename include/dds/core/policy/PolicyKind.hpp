@@ -20,18 +20,14 @@
 #ifndef OMG_DDS_CORE_POLICY_POLICYKIND_HPP_
 #define OMG_DDS_CORE_POLICY_POLICYKIND_HPP_
 
-#include <dds/core/detail/conformance.hpp>
 #include <dds/core/SafeEnumeration.hpp>
 
-namespace dds
-{
-namespace core
-{
-namespace policy
-{
+namespace dds {
+namespace core {
+namespace policy {
 
 #if defined (__SUNPRO_CC) && defined(SHARED)
-#   undef SHARED
+#undef SHARED
 #endif
 struct OwnershipKind_def
 {
@@ -47,11 +43,11 @@ struct OwnershipKind_def
                    *   DataWriter which is the only one whose modifications will be visible to the
                    *   DataReader objects.
                    */
-        #endif  // OMG_DDS_OWNERSHIP_SUPPORT
+        #endif  //OMG_DDS_OWNERSHIP_SUPPORT
     };
 };
 
-typedef dds::core::safe_enum<OwnershipKind_def> OwnershipKind;
+typedef dds::core::SafeEnum<OwnershipKind_def> OwnershipKind;
 
 struct DurabilityKind_def
 {
@@ -99,10 +95,10 @@ struct DurabilityKind_def
                          *   DurabilityServiceQosPolicy settings are relevant for the behaviour of the
                          *   Data Distribution Service.
                          */
-        #endif  // #ifdef  OMG_DDS_PERSISTENCE_SUPPORT
+        #endif  //OMG_DDS_PERSISTENCE_SUPPORT
     };
 };
-typedef dds::core::safe_enum<DurabilityKind_def> DurabilityKind;
+typedef dds::core::SafeEnum<DurabilityKind_def> DurabilityKind;
 
 struct PresentationAccessScopeKind_def
 {
@@ -117,7 +113,7 @@ struct PresentationAccessScopeKind_def
         #endif  // OMG_DDS_OBJECT_MODEL_SUPPORT
     };
 };
-typedef dds::core::safe_enum<PresentationAccessScopeKind_def> PresentationAccessScopeKind;
+typedef dds::core::SafeEnum<PresentationAccessScopeKind_def> PresentationAccessScopeKind;
 
 
 struct ReliabilityKind_def
@@ -142,7 +138,7 @@ struct ReliabilityKind_def
                       */
     };
 };
-typedef dds::core::safe_enum<ReliabilityKind_def> ReliabilityKind;
+typedef dds::core::SafeEnum<ReliabilityKind_def> ReliabilityKind;
 
 
 struct DestinationOrderKind_def
@@ -158,7 +154,7 @@ struct DestinationOrderKind_def
     };
 };
 
-typedef dds::core::safe_enum<DestinationOrderKind_def> DestinationOrderKind;
+typedef dds::core::SafeEnum<DestinationOrderKind_def> DestinationOrderKind;
 
 struct HistoryKind_def
 {
@@ -202,7 +198,7 @@ struct HistoryKind_def
     };
 };
 
-typedef dds::core::safe_enum<HistoryKind_def> HistoryKind;
+typedef dds::core::SafeEnum<HistoryKind_def> HistoryKind;
 
 struct LivelinessKind_def
 {
@@ -227,7 +223,7 @@ struct LivelinessKind_def
                                 */
     };
 };
-typedef dds::core::safe_enum<LivelinessKind_def> LivelinessKind;
+typedef dds::core::SafeEnum<LivelinessKind_def> LivelinessKind;
 
 struct TypeConsistencyEnforcementKind_def
 {
@@ -240,9 +236,10 @@ struct TypeConsistencyEnforcementKind_def
     };
 };
 
-typedef dds::core::safe_enum<TypeConsistencyEnforcementKind_def> TypeConsistencyEnforcementKind;
+typedef dds::core::SafeEnum<TypeConsistencyEnforcementKind_def> TypeConsistencyEnforcementKind;
 
-}
-}
-}
-#endif /* OMG_DDS_CORE_POLICY_POLICYKIND_HPP_ */
+} //namespace policy
+} //namespace core
+} //namespace dds
+
+#endif //OMG_DDS_CORE_POLICY_POLICYKIND_HPP_

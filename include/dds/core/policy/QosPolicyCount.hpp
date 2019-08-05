@@ -22,15 +22,61 @@
 
 #include <dds/core/policy/detail/QosPolicyCount.hpp>
 
-namespace dds
-{
-namespace core
-{
-namespace policy
-{
-typedef dds::core::policy::detail::QosPolicyCount QosPolicyCount;
-}
-}
-}
+#include <dds/core/Value.hpp>
+#include <dds/core/policy/CorePolicy.hpp>
 
-#endif /* !defined(OMG_DDS_CORE_POLICY_QOS_POLICY_COUNT_HPP_) */
+namespace dds {
+namespace core {
+namespace policy {
+
+/**
+ * The QosPolicyCount object shows, for a QosPolicy, the total number of
+ * times that the concerned DataWriter discovered a DataReader for the
+ * same Topic and a requested DataReaderQos that is incompatible with
+ * the one offered by the DataWriter.
+ */
+template<typename D>
+class TQosPolicyCount : public dds::core::Value<D>
+{
+public:
+    /**
+     * Creates a QosPolicyCount instance
+     *
+     * @param policy_id the policy_id
+     * @param count the count
+     */
+    TQosPolicyCount(
+            QosPolicyId policy_id,
+            int32_t count);
+
+    /**
+     * Copies a QosPolicyCount instance
+     *
+     * @param other the QosPolicyCount instance to copy
+     */
+    TQosPolicyCount(
+            const TQosPolicyCount& other);
+
+    /**
+     * Gets the policy_id
+     *
+     * @return the policy_id
+     */
+    QosPolicyId policy_id() const;
+
+    /**
+     * Gets the count
+     *
+     * @return the count
+     */
+    int32_t count() const;
+};
+
+
+typedef dds::core::policy::detail::QosPolicyCount QosPolicyCount;
+
+} //namespace policy
+} //namespace core
+} //namespace dds
+
+#endif //OMG_DDS_CORE_POLICY_QOS_POLICY_COUNT_HPP_

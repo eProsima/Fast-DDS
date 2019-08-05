@@ -24,16 +24,18 @@
 #include <dds/core/detail/InstanceHandle.hpp>
 
 
-namespace dds
-{
-namespace core
-{
+namespace dds {
+namespace core {
+
 typedef dds::core::detail::InstanceHandle InstanceHandle;
 typedef std::vector<InstanceHandle> InstanceHandleSeq;
-}
-}
 
-inline std::ostream& operator << (std::ostream& os, const dds::core::InstanceHandle& h);
+} //namespace core
+} //namespace dds
+
+inline std::ostream& operator <<(
+        std::ostream& os,
+        const dds::core::InstanceHandle& h);
 
 
-#endif /* !defined(OMG_DDS_CORE_INSTANCE_HANDLE_HPP_) */
+#endif //OMG_DDS_CORE_INSTANCE_HANDLE_HPP_
