@@ -17,12 +17,12 @@
 
 #include <memory>
 #include <vector>
-#include "../rtps/common/Locator.h"
-#include "../rtps/common/LocatorSelector.hpp"
-#include "../rtps/common/PortParameters.h"
-#include "TransportDescriptorInterface.h"
-#include "TransportReceiverInterface.h"
-#include "../rtps/network/SenderResource.h"
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorSelector.hpp>
+#include <fastdds/rtps/common/PortParameters.h>
+#include <fastrtps/transport/TransportDescriptorInterface.h>
+#include <fastrtps/transport/TransportReceiverInterface.h>
+#include <fastdds/rtps/network/SenderResource.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -84,7 +84,7 @@ public:
 
     /**
      * Transforms a remote locator into a locator optimized for local communications.
-     * 
+     *
      * If the remote locator corresponds to one of the local interfaces, it is converted
      * to the corresponding local address.
      *

@@ -21,11 +21,13 @@
 #define SUBSCRIBERHISTORY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/rtps/resources/ResourceManagement.h>
-#include "../rtps/history/ReaderHistory.h"
-#include "../qos/QosPolicies.h"
-#include "../common/KeyedChanges.h"
-#include "SampleInfo.h"
+#include <fastdds/dds/topic/TopicDataType.hpp>
+#include <fastdds/rtps/resources/ResourceManagement.h>
+#include <fastrtps/qos/ReaderQos.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastrtps/qos/QosPolicies.h>
+#include <fastrtps/common/KeyedChanges.h>
+#include <fastrtps/subscriber/SampleInfo.h>
 
 #include <chrono>
 
@@ -36,7 +38,7 @@ namespace rtps{
 class WriterProxy;
 }
 
-class SubscriberImpl;
+class TopicAttributes;
 
 /**
  * Class SubscriberHistory, container of the different CacheChanges of a subscriber
@@ -48,17 +50,17 @@ class SubscriberHistory: public rtps::ReaderHistory
 
         /**
          * Constructor. Requires information about the subscriber.
-         * @param pimpl Pointer to the subscriber implementation.
+         * @param topic_att TopicAttributes.
+         * @param type TopicDataType.
+         * @param qos ReaderQoS policy.
          * @param payloadMax Maximum payload size per change.
-         * @param history History QoS policy for the reader.
-         * @param resource Resource Limit QoS policy for the reader.
          * @param mempolicy Set wether the payloads ccan dynamically resized or not.
          */
         SubscriberHistory(
-            SubscriberImpl* pimpl,
+            const TopicAttributes& topic_att,
+            fastdds::dds::TopicDataType* type,
+            const fastrtps::ReaderQos& qos,
             uint32_t payloadMax,
-            const HistoryQosPolicy& history,
-            const ResourceLimitsQosPolicy& resource,
             rtps::MemoryManagementPolicy_t mempolicy);
 
         virtual ~SubscriberHistory();
@@ -133,14 +135,18 @@ class SubscriberHistory: public rtps::ReaderHistory
         //!Time point when the next deadline will occur (only used for topics with no key)
         std::chrono::steady_clock::time_point next_deadline_us_;
         //!HistoryQosPolicy values.
-        HistoryQosPolicy m_historyQos;
+        HistoryQosPolicy history_qos_;
         //!ResourceLimitsQosPolicy values.
-        ResourceLimitsQosPolicy m_resourceLimitsQos;
-        //!Publisher Pointer
-        SubscriberImpl* mp_subImpl;
+        ResourceLimitsQosPolicy resource_limited_qos_;
+        //!Topic Attributes
+        const TopicAttributes& topic_att_;
+        //!TopicDataType
+        fastdds::dds::TopicDataType* type_;
+        //!ReaderQos
+        const fastrtps::ReaderQos& qos_;
 
         //!Type object to deserialize Key
-        void * mp_getKeyObject;
+        void* get_key_object_;
 
         /**
          * @brief Method that finds a key in m_keyedChanges or tries to add it if not found

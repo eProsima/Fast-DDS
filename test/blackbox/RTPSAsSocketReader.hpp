@@ -70,7 +70,9 @@ class RTPSAsSocketReader
 
             ~Listener(){};
 
-            void onNewCacheChangeAdded(eprosima::fastrtps::rtps::RTPSReader* reader, const eprosima::fastrtps::rtps::CacheChange_t* const change)
+            void onNewCacheChangeAdded(
+                    eprosima::fastrtps::rtps::RTPSReader* reader,
+                    const eprosima::fastrtps::rtps::CacheChange_t* const change) override
             {
                 ASSERT_NE(reader, nullptr);
                 ASSERT_NE(change, nullptr);

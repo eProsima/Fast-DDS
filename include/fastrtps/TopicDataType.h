@@ -19,95 +19,18 @@
 #ifndef TOPICDATATYPE_H_
 #define TOPICDATATYPE_H_
 
-#include "rtps/common/Types.h"
-#include "rtps/common/SerializedPayload.h"
-#include "rtps/common/InstanceHandle.h"
-#include "utils/md5.h"
-#include <string>
-#include <functional>
+#include <fastdds/dds/topic/TopicDataType.hpp>
+#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastrtps/utils/md5.h>
 
 namespace eprosima {
 namespace fastrtps {
 
-/**
- * Class TopicDataType used to provide the DomainRTPSParticipant with the methods to serialize, deserialize and get the key of a specific data type.
- * The user should created a class that inherits from this one, where Serialize and deserialize methods MUST be implemented.
- * @ingroup FASTRTPS_MODULE
- * @snippet fastrtps_example.cpp ex_TopicDataType
- */
-class  TopicDataType {
-    public:
-        RTPS_DllAPI TopicDataType()
-            : m_typeSize(0), m_isGetKeyDefined(false)
-        {}
+// Adding an alias to fastrtps namespace for legacy usage.
+using TopicDataType = fastdds::dds::TopicDataType;
 
-        RTPS_DllAPI virtual ~TopicDataType() {}
-        /**
-         * Serialize method, it should be implemented by the user, since it is abstract.
-         * It is VERY IMPORTANT that the user sets the serializedPaylaod length correctly.
-         * @param[in] data Pointer to the data
-         * @param[out] payload Pointer to the payload
-         * @return True if correct.
-         */
-        RTPS_DllAPI virtual bool serialize(void* data, rtps::SerializedPayload_t* payload) = 0;
-
-        /**
-         * Deserialize method, it should be implemented by the user, since it is abstract.
-         * @param[in] payload Pointer to the payload
-         * @param[out] data Pointer to the data
-         * @return True if correct.
-         */
-        RTPS_DllAPI virtual bool deserialize(rtps::SerializedPayload_t* payload, void* data) = 0;
-
-        RTPS_DllAPI virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) = 0;
-
-        /**
-         * Create a Data Type.
-         * @return Void pointer to the created object.
-         */
-        RTPS_DllAPI virtual void * createData() = 0;
-        /**
-         * Remove a previously created object.
-         * @param data Pointer to the created Data.
-         */
-        RTPS_DllAPI virtual void deleteData(void * data) = 0;
-
-        /**
-         * Get the key associated with the data.
-         * @param[in] data Pointer to the data.
-         * @param[out] ihandle Pointer to the Handle.
-         * @param[in] force_md5 Force MD5 checking.
-         * @return True if correct.
-         */
-        RTPS_DllAPI virtual bool getKey(void* data, rtps::InstanceHandle_t* ihandle, bool force_md5 = false) = 0;
-
-        /**
-         * Set topic data type name
-         * @param nam Topic data type name
-         */
-        RTPS_DllAPI inline void setName(const char* nam) { m_topicDataTypeName = std::string(nam); }
-
-        /**
-         * Get topic data type name
-         * @return Topic data type name
-         */
-        RTPS_DllAPI inline const char* getName() const { return m_topicDataTypeName.c_str(); }
-
-        //! Maximum serialized size of the type in bytes.
-        //! If the type has unbounded fields, and therefore cannot have a maximum size, use 0.
-        uint32_t m_typeSize;
-
-        //! Indicates whether the method to obtain the key has been implemented.
-        bool m_isGetKeyDefined;
-    private:
-        //! Data Type Name.
-        std::string m_topicDataTypeName;
-
-
-
-};
-
-} /* namespace pubsub */
+} /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif /* RTPSTOPICDATATYPE_H_ */
+#endif /* TOPICDATATYPE_H_ */

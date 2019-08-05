@@ -27,26 +27,28 @@
 
 class TestWriterPersistent {
 public:
-	TestWriterPersistent();
-	virtual ~TestWriterPersistent();
-	eprosima::fastrtps::rtps::RTPSParticipant* mp_participant;
-	eprosima::fastrtps::rtps::RTPSWriter* mp_writer;
-	eprosima::fastrtps::rtps::WriterHistory* mp_history;
-	bool init(); //Initialize writer
-	bool reg(); //Register the Writer
-	void run(uint16_t samples); //Run the Writer
-	class MyListener :public eprosima::fastrtps::rtps::WriterListener
-	{
-	public:
-		MyListener():n_matched(0){};
-		~MyListener(){};
-		void onWriterMatched(eprosima::fastrtps::rtps::RTPSWriter*, eprosima::fastrtps::rtps::MatchingInfo& info)
-		{
-			if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
-				++n_matched;
-		}
-		int n_matched;
-	}m_listener;
+    TestWriterPersistent();
+    virtual ~TestWriterPersistent();
+    eprosima::fastrtps::rtps::RTPSParticipant* mp_participant;
+    eprosima::fastrtps::rtps::RTPSWriter* mp_writer;
+    eprosima::fastrtps::rtps::WriterHistory* mp_history;
+    bool init(); //Initialize writer
+    bool reg(); //Register the Writer
+    void run(uint16_t samples); //Run the Writer
+    class MyListener :public eprosima::fastrtps::rtps::WriterListener
+    {
+    public:
+        MyListener():n_matched(0){};
+        ~MyListener(){};
+        void onWriterMatched(
+                eprosima::fastrtps::rtps::RTPSWriter*,
+                eprosima::fastrtps::rtps::MatchingInfo& info) override
+        {
+            if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
+                ++n_matched;
+        }
+        int n_matched;
+    }m_listener;
 };
 
 #endif /* TESTWRITERPERSISTENT_H_ */

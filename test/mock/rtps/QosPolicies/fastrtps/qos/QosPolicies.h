@@ -125,7 +125,10 @@ class DeadlineQosPolicy : public Parameter_t, public QosPolicy
         friend class ParameterList;
     public:
         RTPS_DllAPI DeadlineQosPolicy()
-            : Parameter_t(PID_DEADLINE,PARAMETER_TIME_LENGTH),QosPolicy(true),period(c_TimeInfinite) {}
+            : Parameter_t(PID_DEADLINE, PARAMETER_TIME_LENGTH)
+            , QosPolicy(true)
+            , period(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
+        {}
 
         virtual RTPS_DllAPI ~DeadlineQosPolicy(){}
 
@@ -151,7 +154,9 @@ class LatencyBudgetQosPolicy : public Parameter_t, public QosPolicy
         friend class ParameterList;
     public:
         RTPS_DllAPI LatencyBudgetQosPolicy()
-            : Parameter_t(PID_LATENCY_BUDGET,PARAMETER_TIME_LENGTH),QosPolicy(true),duration(c_TimeZero) {}
+            : Parameter_t(PID_LATENCY_BUDGET,PARAMETER_TIME_LENGTH)
+            , QosPolicy(true)
+            , duration(0, 0) {}
 
         virtual RTPS_DllAPI ~LatencyBudgetQosPolicy(){}
 
@@ -368,7 +373,7 @@ class TimeBasedFilterQosPolicy : public Parameter_t, public QosPolicy
         RTPS_DllAPI TimeBasedFilterQosPolicy()
             : Parameter_t(PID_TIME_BASED_FILTER,PARAMETER_TIME_LENGTH)
             , QosPolicy(false)
-            , minimum_separation(c_TimeZero) {}
+            , minimum_separation(0, 0) {}
 
         virtual RTPS_DllAPI ~TimeBasedFilterQosPolicy(){}
 

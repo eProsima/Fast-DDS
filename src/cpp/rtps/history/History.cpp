@@ -18,9 +18,9 @@
  */
 
 
-#include <fastrtps/rtps/history/History.h>
+#include <fastdds/rtps/history/History.h>
 
-#include <fastrtps/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.h>
 
 
 #include <fastrtps/log/Log.h>

@@ -19,7 +19,7 @@
 #define _RTPS_READER_FRAGMENTEDCHANGEPITSTOP_H_
 
 #include <fastrtps/fastrtps_dll.h>
-#include <fastrtps/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CacheChange.h>
 
 #include <unordered_set>
 

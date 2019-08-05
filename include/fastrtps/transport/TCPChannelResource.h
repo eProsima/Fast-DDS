@@ -19,7 +19,7 @@
 #include <fastrtps/transport/TransportReceiverInterface.h>
 #include <fastrtps/transport/ChannelResource.h>
 #include <fastrtps/transport/tcp/RTCPMessageManager.h>
-#include <fastrtps/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.h>
 
 #include <asio.hpp>
 

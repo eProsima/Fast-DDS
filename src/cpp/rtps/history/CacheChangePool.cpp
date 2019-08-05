@@ -17,8 +17,8 @@
  *
  */
 
-#include <fastrtps/rtps/history/CacheChangePool.h>
-#include <fastrtps/rtps/common/CacheChange.h>
+#include <fastdds/rtps/history/CacheChangePool.h>
+#include <fastdds/rtps/common/CacheChange.h>
 #include <fastrtps/log/Log.h>
 
 #include <mutex>

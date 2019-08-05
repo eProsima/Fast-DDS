@@ -17,13 +17,13 @@
  *
  */
 
-#include <fastrtps/rtps/writer/ReaderLocator.h>
-#include <fastrtps/rtps/common/CacheChange.h>
-#include <fastrtps/rtps/resources/AsyncWriterThread.h>
-#include <fastrtps/rtps/writer/StatelessWriter.h>
-#include <fastrtps/rtps/common/LocatorListComparisons.hpp>
+#include <fastdds/rtps/writer/ReaderLocator.h>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/resources/AsyncWriterThread.h>
+#include <fastdds/rtps/writer/StatelessWriter.h>
+#include <fastdds/rtps/common/LocatorListComparisons.hpp>
 
-#include "../participant/RTPSParticipantImpl.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 namespace eprosima {
 namespace fastrtps {

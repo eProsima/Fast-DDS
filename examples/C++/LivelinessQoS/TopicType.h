@@ -40,7 +40,7 @@ public:
 
     bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload);
     bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data);
-	bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle, bool force_md5);
+    bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle, bool force_md5);
 
     void* createData();
     void deleteData(void * data);
@@ -48,7 +48,7 @@ public:
     std::function<uint32_t()> getSerializedSizeProvider(void* data);
 
     MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    unsigned char* m_keyBuffer;
 };
 
 #endif

@@ -18,26 +18,26 @@
  */
 #include <limits>
 
-#include <fastrtps/rtps/builtin/liveliness/WLP.h>
-#include <fastrtps/rtps/builtin/liveliness/WLPListener.h>
-#include "../../participant/RTPSParticipantImpl.h"
-#include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/writer/LivelinessManager.h>
-#include <fastrtps/rtps/writer/WriterListener.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/builtin/liveliness/WLPListener.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
+#include <fastdds/rtps/writer/LivelinessManager.h>
+#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
 
-#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
 
 
 #include <mutex>
