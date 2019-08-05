@@ -1018,8 +1018,8 @@ void PDP::check_and_notify_type_discovery(
 
 void PDP::check_and_notify_type_discovery(
     RTPSParticipantListener* listener,
-    const string_255 topic_name,
-    const string_255 type_name,
+    const string_255& topic_name,
+    const string_255& type_name,
     const types::TypeIdentifier& type_id,
     const types::TypeObject& type_obj) const
 {
@@ -1041,23 +1041,7 @@ void PDP::check_and_notify_type_discovery(
     {
         types::DynamicPubSubType type_support(dyn_type);
 
-        std::vector<fastdds::dds::DomainParticipant*> participants =
-            fastdds::dds::DomainParticipantFactory::get_instance()->lookup_participants(
-                static_cast<uint8_t>(mp_RTPSParticipant->getAttributes().builtin.domainId));
-
-        // Get current DomainParticipant
-        fastdds::dds::DomainParticipant* domain_participant = nullptr;
-        for (fastdds::dds::DomainParticipant* part : participants)
-        {
-            if (part->rtps_participant() == mp_RTPSParticipant->getUserRTPSParticipant())
-            {
-                domain_participant = part;
-                break;
-            }
-        }
-
-        fastdds::dds::TypeSupport data_type = domain_participant->find_type(type_name.to_string());
-        if (data_type.get() == nullptr)
+        if (!mp_RTPSParticipant->check_type(type_name.to_string()))
         {
             // Discovering a type
             listener->on_type_discovery(

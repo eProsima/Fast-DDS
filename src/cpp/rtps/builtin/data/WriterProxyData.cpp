@@ -478,7 +478,7 @@ bool WriterProxyData::readFromCDRMessage(
             }
             case PID_TYPE_INFORMATION:
             {
-                const XTypes::TypeInformation* p = dynamic_cast<const XTypes::TypeInformation*>(param);
+                const xtypes::TypeInformation* p = dynamic_cast<const xtypes::TypeInformation*>(param);
                 assert(p != nullptr);
                 m_type_information = *p;
                 break;

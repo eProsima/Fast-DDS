@@ -1247,9 +1247,9 @@ public:
 };
 
 /**
-* Class XTypes::TypeInformation
+* Class xtypes::TypeInformation
 */
-namespace XTypes
+namespace xtypes
 {
 
 class TypeInformation : public Parameter_t, public QosPolicy
@@ -1331,7 +1331,7 @@ private:
     bool assigned_;
 };
 
-} // namespace XTypes
+} // namespace xtypes
 
 }
 }

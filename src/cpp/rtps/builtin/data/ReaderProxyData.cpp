@@ -490,7 +490,7 @@ bool ReaderProxyData::readFromCDRMessage(
             }
             case PID_TYPE_INFORMATION:
             {
-                const XTypes::TypeInformation* p = dynamic_cast<const XTypes::TypeInformation*>(param);
+                const xtypes::TypeInformation* p = dynamic_cast<const xtypes::TypeInformation*>(param);
                 assert(p != nullptr);
                 m_type_information = *p;
                 break;
@@ -556,7 +556,7 @@ void ReaderProxyData::clear()
     m_qos = ReaderQos();
     m_type_id = TypeIdV1();
     m_type = TypeObjectV1();
-    m_type_information = XTypes::TypeInformation();
+    m_type_information = xtypes::TypeInformation();
 }
 
 bool ReaderProxyData::is_update_allowed(const ReaderProxyData& rdata) const

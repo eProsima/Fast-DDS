@@ -248,7 +248,7 @@ public:
     uint32_t get_min_network_send_buffer_size() { return m_network_Factory.get_min_send_buffer_size(); }
 
     AsyncWriterThread& async_thread() { return async_thread_; }
-    
+
     /**
      * @brief Fills a new entityId if set to unknown, or checks if a entity already exists with that
      * entityId in other case.
@@ -257,6 +257,18 @@ public:
      */
     bool get_new_entity_id(
             EntityId_t& entityId);
+
+    void set_check_type_function(
+            std::function<bool(const std::string&)>&& check_type);
+
+    bool check_type(const std::string& type_name)
+    {
+        if (type_check_fn_ != nullptr)
+        {
+            return type_check_fn_(type_name);
+        }
+        return false;
+    }
 
 private:
     //!Attributes of the RTPSParticipant
@@ -286,6 +298,8 @@ private:
     NetworkFactory m_network_Factory;
     //!Async writer thread
     AsyncWriterThread async_thread_;
+    //! Type cheking function
+    std::function<bool(const std::string&)> type_check_fn_;
 
 #if HAVE_SECURITY
         // Security manager

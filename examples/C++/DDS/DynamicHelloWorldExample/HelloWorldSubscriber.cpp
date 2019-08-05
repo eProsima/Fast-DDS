@@ -38,27 +38,17 @@ HelloWorldSubscriber::HelloWorldSubscriber():mp_participant(nullptr),
 bool HelloWorldSubscriber::init()
 {
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.discovery_config.discoveryProtocol = SIMPLE;
-    PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     PParam.rtps.builtin.domainId = 0;
-    PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_sub");
     mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &m_listener);
     if(mp_participant==nullptr)
         return false;
 
     // CREATE THE COMMON READER ATTRIBUTES
-    qos_.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     qos_.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     topic_.topicKind = NO_KEY;
     topic_.topicDataType = "HelloWorld";
     topic_.topicName = "HelloWorldTopic";
-    topic_.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    topic_.historyQos.depth = 30;
-    topic_.resourceLimitsQos.max_samples = 50;
-    topic_.resourceLimitsQos.allocated_samples = 20;
 
     return true;
 }

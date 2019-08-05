@@ -193,6 +193,12 @@ public:
     bool get_new_entity_id(
             EntityId_t& entityId);
 
+    /**
+     * Allows setting a function to check if a type is already known by the top level API participant.
+     */
+    void set_check_type_function(
+            std::function<bool(const std::string&)>&& check_type);
+
 private:
 
     //!Pointer to the implementation.

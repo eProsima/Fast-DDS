@@ -60,12 +60,6 @@ bool HelloWorldPublisher::init()
     PublisherAttributes pub_att;
     pub_att.topic.topicDataType = "HelloWorld";
     pub_att.topic.topicName = "HelloWorldTopic";
-    pub_att.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    pub_att.topic.historyQos.depth = 30;
-    pub_att.topic.resourceLimitsQos.max_samples = 50;
-    pub_att.topic.resourceLimitsQos.allocated_samples = 20;
-    pub_att.times.heartbeatPeriod.seconds = 2;
-    pub_att.times.heartbeatPeriod.nanosec = 200*1000*1000;
     pub_att.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, pub_att, nullptr);
 
