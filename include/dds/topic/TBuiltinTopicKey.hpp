@@ -17,36 +17,41 @@
  * limitations under the License.
  */
 
-#ifndef OMG_DDS_SUB_QOS_DATA_READER_QOS_HPP_
-#define OMG_DDS_SUB_QOS_DATA_READER_QOS_HPP_
+#ifndef OMG_DDS_TOPIC_TBUILTIN_TOPIC_KEY_HPP_
+#define OMG_DDS_TOPIC_TBUILTIN_TOPIC_KEY_HPP_
 
-#include <dds/sub/qos/detail/DataReaderQos.hpp>
+#include <dds/core/Value.hpp>
 
-<<<<<<< HEAD
-namespace dds {
-namespace sub {
-namespace qos {
-
-typedef dds::sub::qos::detail::DataReaderQos DataReaderQos;
-
-} //namespace qos
-} //namespace sub
-} //namespace dds
-
-
-#endif //OMG_DDS_SUB_QOS_DATA_READER_QOS_HPP_
-=======
 namespace dds
 {
-namespace sub
+namespace topic
 {
-namespace qos
-{
-typedef dds::sub::qos::detail::DataReaderQos DataReaderQos;
-}
+template <typename D>
+class TBuiltinTopicKey;
 }
 }
 
+/**
+ * @brief
+ * Global unique identifier of the Topic.
+ */
+template <typename D>
+class dds::topic::TBuiltinTopicKey : public ::dds::core::Value<D>
+{
+public:
+    /**
+     * Gets the BuiltinTopicKey.
+     *
+     * @return the BuiltinTopicKey
+     */
+    const int32_t* value() const;
 
-#endif /* OMG_DDS_SUB_QOS_DATA_READER_QOS_HPP_ */
->>>>>>> Copyright modified in non-detail classes
+    /**
+     * Sets the BuiltinTopicKey.
+     *
+     * @param v the value to set
+     */
+    void value(const int32_t v[]);
+};
+
+#endif /* OMG_DDS_TOPIC_TBUILTIN_TOPIC_KEY_HPP_ */
