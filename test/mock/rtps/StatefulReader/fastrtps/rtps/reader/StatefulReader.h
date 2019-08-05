@@ -33,7 +33,7 @@ class StatefulReader : public RTPSReader
 {
     public:
 
-        StatefulReader() {}
+        StatefulReader() { }
 
         StatefulReader(ReaderHistory* history, RecursiveTimedMutex* mutex) : RTPSReader(history, mutex) {}
 
@@ -48,14 +48,20 @@ class StatefulReader : public RTPSReader
         // In real class, inherited from Endpoint base class.
         inline const GUID_t& getGuid() const { return guid_; };
 
-        inline ReaderTimes& getTimes() { return times_; }
+        ReaderTimes& getTimes() {  return times_;  };
 
         void send_acknack(
                 const WriterProxy* /*writer*/,
-                const SequenceNumberSet_t& /*sns*/,
+                const SequenceNumberSet_t& sns,
                 const RTPSMessageSenderInterface& /*sender*/,
                 bool /*is_final*/)
-        {}
+        {
+            // only insterested in SequenceNumberSet_t.
+            simp_send_acknack( sns );
+        }
+
+        // See gmock cookbook #SimplerInterfaces
+        MOCK_METHOD1(simp_send_acknack, void( const SequenceNumberSet_t& ));
 
         void send_acknack(
                 const WriterProxy* /*writer*/,

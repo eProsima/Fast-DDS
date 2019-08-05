@@ -379,6 +379,12 @@ size_t WriterProxy::unknown_missing_changes_up_to(const SequenceNumber_t& seq_nu
         SequenceNumberSet_t sns(first_missing);
         SequenceNumberDiff d_fun;
 
+        if (first_missing == max_missing)
+        {
+            returnedValue += 1;
+            return returnedValue;
+        }
+
         for (SequenceNumber_t seq : changes_received_)
         {
             seq = std::min(seq, max_missing);
