@@ -93,7 +93,7 @@ class PubSubWriter
             }
 #endif
 
-            void onSubscriberDiscovery(eprosima::fastrtps::Participant* participant,
+            void onSubscriberDiscovery(eprosima::fastrtps::Participant*,
                                        eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info) override
             {
                 if(info.status == eprosima::fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERED_READER)
@@ -111,7 +111,7 @@ class PubSubWriter
                 }
             }
 
-            void onPublisherDiscovery(eprosima::fastrtps::Participant* participant,
+            void onPublisherDiscovery(eprosima::fastrtps::Participant*,
                                       eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info) override
             {
                 if(info.status == eprosima::fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER)
