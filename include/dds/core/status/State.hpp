@@ -22,15 +22,11 @@
 
 #include <bitset>
 #include <dds/core/macros.hpp>
-#include <dds/core/types.hpp>
 
 
-namespace dds
-{
-namespace core
-{
-namespace status
-{
+namespace dds {
+namespace core {
+namespace status {
 
 /**
  * @brief
@@ -46,7 +42,6 @@ public:
      */
     typedef std::bitset<OMG_DDS_STATE_BIT_COUNT> MaskType;
 
-public:
     /**
      * Construct an empty SampleRejectedState.
      */
@@ -59,16 +54,17 @@ public:
      *
      * @param src the SampleRejectedState to copy from
      */
-    SampleRejectedState(const SampleRejectedState& src);
+    SampleRejectedState(
+            const SampleRejectedState& src);
 
     /**
      * Construct a SampleRejectedState with existing MaskType.
      *
      * @param src the MaskType to copy from
      */
-    SampleRejectedState(const MaskType& src);
+    SampleRejectedState(
+            const MaskType& src);
 
-public:
     /**
      * Get the NOT_REJECTED.
      *
@@ -128,7 +124,8 @@ public:
     }
 
 private:
-    SampleRejectedState(uint32_t s);
+    SampleRejectedState(
+            uint32_t s);
 };
 
 /**
@@ -150,7 +147,6 @@ public:
      */
     typedef std::bitset<OMG_DDS_STATUS_COUNT> MaskType;
 
-public:
     /**
      * Construct an StatusMask with no flags set.
      */
@@ -161,7 +157,8 @@ public:
      *
      * @param mask the bit array to initialize the bitset with
      */
-    explicit StatusMask(uint32_t mask);
+    explicit StatusMask(
+            uint32_t mask);
 
     /**
      * Copy constructor.
@@ -170,19 +167,20 @@ public:
      *
      * @param other the StatusMask to copy from
      */
-    StatusMask(const StatusMask& other);
+    StatusMask(
+            const StatusMask& other);
 
     /** @cond */
     ~StatusMask();
     /** @endcond */
 
-public:
     /**
      * Shift (merge) given StatusMask bits into this StatusMask bitset.
      *
      * @return StatusMask this
      */
-    inline StatusMask& operator << (const dds::core::status::StatusMask& mask)
+    inline StatusMask& operator <<(
+            const dds::core::status::StatusMask& mask)
     {
         *this |= mask;
         return *this;
@@ -353,9 +351,9 @@ public:
 
 };
 
-}
-}
-} /* namespace dds / core / status*/
+} //namespace status
+} //namespace core
+} //namespace dds
 
 
-#endif /* OMG_DDS_CORE_STATUS_STATE_HPP_ */
+#endif //OMG_DDS_CORE_STATUS_STATE_HPP_
