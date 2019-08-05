@@ -749,7 +749,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                 }
                 case PID_TYPE_INFORMATION:
                 {
-                    XTypes::TypeInformation p;
+                    xtypes::TypeInformation p;
                     valid &= p.readFromCDRMessage(&msg, plength);
                     IF_VALID_CALL
                 }

@@ -982,7 +982,7 @@ namespace types
 class TypeInformation;
 }
 
-namespace XTypes {
+namespace xtypes {
 
 class TypeInformation : public Parameter_t, public QosPolicy
 {

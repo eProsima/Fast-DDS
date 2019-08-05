@@ -53,10 +53,6 @@ bool HelloWorldPublisher::init()
     m_Hello->set_uint32_value(0, 1);
 
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.discovery_config.discoveryProtocol = SIMPLE;
-    PParam.rtps.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    PParam.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     PParam.rtps.builtin.domainId = 0;
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_pub");
@@ -74,13 +70,7 @@ bool HelloWorldPublisher::init()
     Wparam.topic.topicKind = NO_KEY;
     Wparam.topic.topicDataType = "HelloWorld";
     Wparam.topic.topicName = "HelloWorldTopic";
-    Wparam.topic.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    Wparam.topic.historyQos.depth = 30;
-    Wparam.topic.resourceLimitsQos.max_samples = 50;
-    Wparam.topic.resourceLimitsQos.allocated_samples = 20;
     Wparam.topic.auto_fill_xtypes = true; // Share the type with readers.
-    Wparam.times.heartbeatPeriod.seconds = 2;
-    Wparam.times.heartbeatPeriod.nanosec = 200*1000*1000;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     //mp_publisher = mp_participant->create_publisher(qos, Wparam, nullptr);
     mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, Wparam, nullptr);

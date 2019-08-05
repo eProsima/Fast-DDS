@@ -121,6 +121,12 @@ bool RTPSParticipant::get_new_entity_id(
     return mp_impl->get_new_entity_id(entityId);
 }
 
+void RTPSParticipant::set_check_type_function(
+        std::function<bool(const std::string&)>&& check_type)
+{
+    mp_impl->set_check_type_function(std::move(check_type));
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

@@ -108,7 +108,7 @@ public:
         //!Type Object XTYPES 1.1
         TypeObjectV1 type;
         //!XTYPES 1.2
-        XTypes::TypeInformation type_information;
+        xtypes::TypeInformation type_information;
         //!Tries to complete type information
         bool auto_fill_xtypes;
 

@@ -861,7 +861,7 @@ bool CompleteStructType::consistent(const CompleteStructType &x,
                     ++local_it;
                     ++remote_it;
                 }
-                return true; // Same size, all members consistent
+                return true; // Compatible size, all members consistent
             }
             return false; // different sizes (coercion disallowed or type widening prevented)
         }
@@ -1008,7 +1008,7 @@ bool MinimalStructType::consistent(const MinimalStructType &x,
                     ++local_it;
                     ++remote_it;
                 }
-                return true; // Same size, all members consistent
+                return true; // Compatible size, all members consistent
             }
             return false; // different sizes (coercion disallowed or type widening prevented)
         }
@@ -1782,7 +1782,7 @@ bool CompleteUnionType::consistent(const CompleteUnionType &x,
                     ++local_it;
                     ++remote_it;
                 }
-                return true; // Same size, all members consistent
+                return true; // Compatible size, all members consistent
             }
             return false; // different sizes (coercion disallowed or type widening prevented)
         }
@@ -1939,7 +1939,7 @@ bool MinimalUnionType::consistent(const MinimalUnionType &x,
                     ++local_it;
                     ++remote_it;
                 }
-                return true; // Same size, all members consistent
+                return true; // Compatible size, all members consistent
             }
             return false; // different sizes (coercion disallowed or type widening prevented)
         }
@@ -4766,7 +4766,7 @@ bool CompleteEnumeratedType::consistent(const CompleteEnumeratedType &x,
                     ++local_it;
                     ++remote_it;
                 }
-                return true; // Same size, all literals consistent
+                return true; // Compatible size, all literals consistent
             }
             return false; // different sizes (coercion disallowed or type widening prevented)
         }
@@ -4914,7 +4914,7 @@ bool MinimalEnumeratedType::consistent(const MinimalEnumeratedType &x,
                     ++local_it;
                     ++remote_it;
                 }
-                return true; // Same size, all literals consistent
+                return true; // Compatible size, all literals consistent
             }
             return false; // different sizes (coercion disallowed or type widening prevented)
         }
@@ -5346,7 +5346,7 @@ bool CompleteBitmaskType::consistent(const CompleteBitmaskType &x,
                     ++local_it;
                     ++remote_it;
                 }
-                return true; // Same size, all flags consistent
+                return true; // Compatible size, all flags consistent
             }
             return false; // different sizes (coercion disallowed or type widening prevented)
         }
@@ -5494,7 +5494,7 @@ bool MinimalBitmaskType::consistent(const MinimalBitmaskType &x,
                     ++local_it;
                     ++remote_it;
                 }
-                return true; // Same size, all flags consistent
+                return true; // Compatible size, all flags consistent
             }
             return false; // different sizes (coercion disallowed or type widening prevented)
         }
@@ -6015,7 +6015,7 @@ bool CompleteBitsetType::consistent(const CompleteBitsetType &x,
                     ++local_it;
                     ++remote_it;
                 }
-                return true; // Same size, all fields consistent
+                return true; // Compatible size, all fields consistent
             }
             return false; // different sizes (coercion disallowed or type widening prevented)
         }
@@ -6163,7 +6163,7 @@ bool MinimalBitsetType::consistent(const MinimalBitsetType &x,
                     ++local_it;
                     ++remote_it;
                 }
-                return true; // Same size, all fields consistent
+                return true; // Compatible size, all fields consistent
             }
             return false; // different sizes (coercion disallowed or type widening prevented)
         }

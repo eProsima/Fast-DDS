@@ -267,17 +267,17 @@ public:
         return m_type;
     }
 
-    RTPS_DllAPI void type_information(const XTypes::TypeInformation& type_information)
+    RTPS_DllAPI void type_information(const xtypes::TypeInformation& type_information)
     {
         m_type_information = type_information;
     }
 
-    RTPS_DllAPI const XTypes::TypeInformation& type_information() const
+    RTPS_DllAPI const xtypes::TypeInformation& type_information() const
     {
         return m_type_information;
     }
 
-    RTPS_DllAPI XTypes::TypeInformation& type_information()
+    RTPS_DllAPI xtypes::TypeInformation& type_information()
     {
         return m_type_information;
     }
@@ -365,7 +365,7 @@ private:
     //!Type Object
     TypeObjectV1 m_type;
     //!Type Information
-    XTypes::TypeInformation m_type_information;
+    xtypes::TypeInformation m_type_information;
 };
 
 }

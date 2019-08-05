@@ -371,7 +371,7 @@ bool TypeObjectV1::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
     return true;
 }
 
-bool XTypes::TypeInformation::addToCDRMessage(CDRMessage_t* msg)
+bool xtypes::TypeInformation::addToCDRMessage(CDRMessage_t* msg)
 {
     size_t size = types::TypeInformation::getCdrSerializedSize(type_information) + 4;
     SerializedPayload_t payload(static_cast<uint32_t>(size));
@@ -393,7 +393,7 @@ bool XTypes::TypeInformation::addToCDRMessage(CDRMessage_t* msg)
     return valid & CDRMessage::addData(msg, payload.data, payload.length);
 }
 
-bool XTypes::TypeInformation::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+bool xtypes::TypeInformation::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
 {
     SerializedPayload_t payload(size);
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload.data, size);

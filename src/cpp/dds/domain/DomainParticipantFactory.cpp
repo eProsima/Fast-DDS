@@ -19,6 +19,7 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <dds/domain/DomainParticipantImpl.hpp>
@@ -213,6 +214,13 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 
         vector_it->second.push_back(dom_part_impl);
     }
+
+    part->set_check_type_function(
+        [dom_part](const std::string& type_name) -> bool
+        {
+            return dom_part->find_type(type_name).get() != nullptr;
+        });
+
     return dom_part;
 }
 
