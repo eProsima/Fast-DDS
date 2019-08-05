@@ -1,8 +1,8 @@
-/* Copyright 2010, Object Management Group, Inc.
+/*
+ * Copyright 2010, Object Management Group, Inc.
  * Copyright 2010, PrismTech, Corp.
  * Copyright 2010, Real-Time Innovations, Inc.
  * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
- * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,8 @@
 #ifndef OMG_DDS_CORE_REF_TRAITS_H_
 #define OMG_DDS_CORE_REF_TRAITS_H_
 
-namespace  dds
-{
-namespace core
-{
+namespace  dds {
+namespace core {
 
 /** @cond
  * These traits must be provided by compliant implementations
@@ -44,12 +42,11 @@ TO  polymorphic_cast(FROM& from);
 
 /** @endcond */
 
-}
-} /* namespace dds / namespace core */
-
+} //namespace core
+} //namespace dds
 
 // This include should stay here as it provides implementations
 // for the declaration immediately above.
 #include <dds/core/detail/ref_traits.hpp>
 
-#endif /* OMG_DDS_CORE_REF_TRAITS_H_ */
+#endif //OMG_DDS_CORE_REF_TRAITS_H
