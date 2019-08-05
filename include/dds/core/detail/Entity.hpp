@@ -19,18 +19,27 @@
  * limitations under the License.
  */
 
-#include <dds/core/detail/TEntityImpl.hpp>
-#include <org/opensplice/core/EntityDelegate.hpp>
+//TODO: Fix when EntityDelegate is implemented
+//#include <dds/core/detail/TEntityImpl.hpp>
+//#include <org/opensplice/core/EntityDelegate.hpp>
 
 /**
  * @cond
  * Ignore this file in the API
  */
 
-namespace dds { namespace core { namespace detail {
-    typedef dds::core::TEntity<org::opensplice::core::EntityDelegate> Entity;
-} } }
+namespace dds {
+namespace core {
+namespace detail {
+
+//TODO: Fix when EntityDelegate is implemented
+//typedef dds::core::TEntity<org::opensplice::core::EntityDelegate> Entity;
+class Entity { };
+
+} //namespace detail
+} //namespace core
+} //namespace dds
 
 /** @endcond */
 
-#endif /* OMG_DDS_CORE_DETAIL_ENTITY_IMPL_HPP_ */
+#endif //OMG_DDS_CORE_DETAIL_ENTITY_IMPL_HPP_

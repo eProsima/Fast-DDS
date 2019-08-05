@@ -1,9 +1,7 @@
-#ifndef OMG_DDS_CORE_DETAIL_INSTANCE_HANDLE_HPP_
-#define OMG_DDS_CORE_DETAIL_INSTANCE_HANDLE_HPP_
-
 /* Copyright 2010, Object Management Group, Inc.
  * Copyright 2010, PrismTech, Corp.
  * Copyright 2010, Real-Time Innovations, Inc.
+ * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,18 +17,30 @@
  * limitations under the License.
  */
 
-#include <dds/core/detail/TInstanceHandleImpl.hpp>
-#include <org/opensplice/core/InstanceHandleDelegate.hpp>
+#ifndef OMG_DDS_CORE_DETAIL_INSTANCE_HANDLE_HPP_
+#define OMG_DDS_CORE_DETAIL_INSTANCE_HANDLE_HPP_
+
+//TODO: Fix when InstanceHandleDelegate is implemented
+//#include <dds/core/detail/TInstanceHandleImpl.hpp>
+//#include <org/opensplice/core/InstanceHandleDelegate.hpp>
 
 /**
  * @cond
  * Ignore this file in the API
  */
 
-namespace dds { namespace core { namespace detail {
-      typedef dds::core::TInstanceHandle<org::opensplice::core::InstanceHandleDelegate> InstanceHandle;
-} } }
+namespace dds {
+namespace core {
+namespace detail {
+
+//TODO: Fix when InstanceHandleDelegate is implemented
+//typedef dds::core::TInstanceHandle<org::opensplice::core::InstanceHandleDelegate> InstanceHandle;
+class InstanceHandle { };
+
+} //namespace detail
+} //namespace core
+} //namespace dds
 
 /** @endcond */
 
-#endif /* !defined(OMG_DDS_CORE_DETAIL_INSTANCE_HANDLE_HPP_) */
+#endif //OMG_DDS_CORE_DETAIL_INSTANCE_HANDLE_HPP_

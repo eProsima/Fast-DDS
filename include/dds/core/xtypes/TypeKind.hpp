@@ -17,8 +17,8 @@
  * limitations under the License.
  */
 
-#ifndef OMG_DDS_XTYPES_TYPE_KIND_
-#define OMG_DDS_XTYPES_TYPE_KIND_
+#ifndef OMG_DDS_XTYPES_TYPE_KIND_HPP_
+#define OMG_DDS_XTYPES_TYPE_KIND_HPP_
 
 #include <dds/core/detail/conformance.hpp>
 #include <dds/core/SafeEnumeration.hpp>
@@ -77,5 +77,7 @@ typedef dds::core::SafeEnum<TypeKind_def> TypeKind;
 } //namespace core
 } //namespace dds
 
-#endif // OMG_DDS_X_TYPES_DYNAMIC_TYPE_SUPPORT
+#endif //OMG_DDS_X_TYPES_DYNAMIC_TYPE_SUPPORT
+
+#endif //OMG_DDS_XTYPES_TYPE_KIND_HPP_
 
