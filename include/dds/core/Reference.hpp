@@ -1,8 +1,8 @@
-/* Copyright 2010, Object Management Group, Inc.
+/*
+ * Copyright 2010, Object Management Group, Inc.
  * Copyright 2010, PrismTech, Corp.
  * Copyright 2010, Real-Time Innovations, Inc.
  * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
- * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,10 @@
 
 #include <dds/core/types.hpp>
 #include <dds/core/refmacros.hpp>
-#include <dds/core/Exception.hpp>
+#include <dds/core/ref_traits.hpp> //used when macros of refmacros.hpp expand
 
-
-namespace dds
-{
-namespace core
-{
-
+namespace dds {
+namespace core {
 
 /**
  * @brief
@@ -91,7 +87,7 @@ namespace core
  * * The creator of any object that is still in use is itself still in use.
  *
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 class Reference
 {
 public:
@@ -102,23 +98,25 @@ public:
      *
      * @param null
      */
-    explicit Reference(dds::core::null_type&);
+    explicit Reference(
+            dds::core::null_type&);
 
-public:
     /**
      * Creates a Reference from another.
      *
      * @param ref the other reference
      */
-    explicit Reference(const Reference& ref);
+    explicit Reference(
+            const Reference& ref);
 
     /**
      * Creates a Reference from other Reference type safely.
      *
      * @param ref the other reference
      */
-    template <typename D>
-    explicit Reference(const Reference<D>& ref);
+    template<typename D>
+    explicit Reference(
+            const Reference<D>& ref);
 
     /** @cond
      * The following two constructors create a dds Reference from a vendor
@@ -130,11 +128,13 @@ public:
      * However, it shouldn't actually be part of the API. So, leave it from
      * the doxygen generated API documentation.
      */
-    explicit Reference(DELEGATE_T* p);
-    explicit Reference(const DELEGATE_REF_T& p);
+    explicit Reference(
+            DELEGATE_T* p);
+
+    explicit Reference(
+            const DELEGATE_REF_T& p);
     /** @endcond */
 
-public:
     /**
      * Destroys a Reference.
      *
@@ -145,7 +145,6 @@ public:
      */
     ~Reference();
 
-public:
     /** @cond
      * Function possibly needed for delegate implementation, but not recommended
      * for application usage: exclude from the API documentation for clarity.
@@ -164,8 +163,9 @@ public:
      * @param ref the other Reference object
      * @return true when equal
      */
-    template <typename R>
-    bool operator==(const R& ref) const;
+    template<typename R>
+    bool operator==(
+            const R& ref) const;
 
     /**
      * Compares two Reference objects and returns true if they are not
@@ -177,8 +177,9 @@ public:
      * @param ref the other Reference object
      * @return true when <i>not</i> equal
      */
-    template <typename R>
-    bool operator!=(const R& ref) const;
+    template<typename R>
+    bool operator!=(
+            const R& ref) const;
 
     /**
      * Assign new referenced object to this dds reference.
@@ -188,12 +189,14 @@ public:
      *
      * @return reference pointing to the new object.
      */
-    template <typename D>
-    Reference& operator=(const Reference<D>& that);
+    template<typename D>
+    Reference& operator=(
+            const Reference<D>& that);
 
     /** @copydoc dds::core::Reference::operator=(const Reference<D>& that) */
-    template <typename R>
-    Reference& operator=(const R& rhs);
+    template<typename R>
+    Reference& operator=(
+            const R& rhs);
 
     /**
      * Special assignment operators that takes care of assigning
@@ -204,8 +207,9 @@ public:
      *
      * @return reference pointing to a null object.
      */
-    Reference&
-    operator=(const null_type);
+
+    Reference& operator=(
+            const null_type);
 
     /**
      * Check if the referenced object is nil.
@@ -229,8 +233,8 @@ public:
      *
      * @return true if this reference is null.
      */
-    bool
-    operator==(const null_type) const;
+    bool operator==(
+            const null_type) const;
 
     /**
      * Special operator!= used to check if this reference object
@@ -245,13 +249,13 @@ public:
      *
      * @return true if this reference is not null.
      */
-    bool operator!=(const null_type nil) const;
+    bool operator!=(
+            const null_type nil) const;
 
 private:
     // -- disallow dynamic allocation for reference types
-    void* operator new(size_t);
-
-
+    void* operator new(
+            size_t);
 
 public:
     /** @cond
@@ -260,8 +264,10 @@ public:
      *
      * Returns an object to the underlying delegate.
      */
-    const DELEGATE_REF_T& delegate() const;
     DELEGATE_REF_T& delegate();
+
+    const DELEGATE_REF_T& delegate() const;
+
     /** @endcond */
 
     /**
@@ -293,21 +299,23 @@ public:
      * Returns an object to the underlying delegate.
      */
     operator DELEGATE_REF_T& ();
+
     operator const DELEGATE_REF_T& () const;
     /** @endcond */
 
 protected:
     Reference() {}
 
-    void set_ref(DELEGATE_T* p);
+    void set_ref(
+            DELEGATE_T* p);
 
 protected:
     DELEGATE_REF_T impl_;
 };
 
 
-}
-} /* namespace dds / namespace core */
+} //namespace core
+} //namespace dds
 
 
 /**
@@ -323,7 +331,10 @@ protected:
  *
  * @return true if this reference is not null.
  */
-template <class D> bool operator == (dds::core::null_type, const dds::core::Reference<D>& r);
+template<class D>
+bool operator ==(
+        dds::core::null_type,
+        const dds::core::Reference<D>& r);
 
 /**
  * Special operator!= used to check if this reference object
@@ -338,6 +349,9 @@ template <class D> bool operator == (dds::core::null_type, const dds::core::Refe
  *
  * @return true if this reference is not null.
  */
-template <class D> bool operator != (dds::core::null_type, const dds::core::Reference<D>& r);
+template<class D>
+bool operator !=(
+        dds::core::null_type,
+        const dds::core::Reference<D>& r);
 
-#endif /* OMG_DDS_CORE_REFERENCE_HPP_ */
+#endif // OMG_DDS_CORE_REFERENCE_HPP_
