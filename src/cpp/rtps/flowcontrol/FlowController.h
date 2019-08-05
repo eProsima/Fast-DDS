@@ -15,8 +15,8 @@
 #ifndef FLOW_CONTROLLER_H
 #define FLOW_CONTROLLER_H
 
-#include <fastrtps/rtps/common/CacheChange.h>
-#include "../writer/RTPSWriterCollector.h"
+#include <fastdds/rtps/common/CacheChange.h>
+#include <rtps/writer/RTPSWriterCollector.h>
 
 #include <vector>
 #include <mutex>

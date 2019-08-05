@@ -19,36 +19,6 @@
 #ifndef FASTRTPS_RTPS_COMMON_LOCATORLISTCOMPARISONS_HPP_
 #define FASTRTPS_RTPS_COMMON_LOCATORLISTCOMPARISONS_HPP_
 
-#include "./Locator.h"
-#include "../../utils/collections/ResourceLimitedVector.hpp"
-#include <algorithm>
-
-namespace eprosima {
-namespace fastrtps {
-namespace rtps {
-
-static inline bool operator == (
-        const ResourceLimitedVector<Locator_t>& lhs,
-        const ResourceLimitedVector<Locator_t>& rhs)
-{
-    if (lhs.size() == rhs.size())
-    {
-        for (const Locator_t& locator : lhs)
-        {
-            if (std::find(rhs.begin(), rhs.end(), locator) == rhs.end())
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    return false;
-}
-
-} /* namespace rtps */
-} /* namespace fastrtps */
-} /* namespace eprosima */
+#include <fastdds/rtps/common/LocatorListComparisons.hpp>
 
 #endif /* FASTRTPS_RTPS_COMMON_LOCATORLISTCOMPARISONS_HPP_ */

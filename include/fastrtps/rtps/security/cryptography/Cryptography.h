@@ -19,42 +19,6 @@
 #ifndef _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOGRAPHY_H_
 #define _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOGRAPHY_H_
 
-#include "CryptoKeyExchange.h"
-#include "CryptoKeyFactory.h"
-#include "CryptoTransform.h"
-#include "CryptoTypes.h"
-
-namespace eprosima {
-namespace fastrtps {
-namespace rtps {
-namespace security {
-
-class Cryptography
-{
-public:
-
-    Cryptography(): m_cryptokeyexchange(nullptr), m_cryptokeyfactory(nullptr),
-    m_cryptotransform(nullptr) {}
-
-    virtual ~Cryptography() {}
-
-    /* Specializations should add functions to access the private members */
-    CryptoKeyExchange* cryptkeyexchange() { return m_cryptokeyexchange; }
-
-    CryptoKeyFactory* cryptokeyfactory() { return m_cryptokeyfactory; }
-
-    CryptoTransform* cryptotransform() { return m_cryptotransform; }
-
-protected:
-
-    CryptoKeyExchange *m_cryptokeyexchange;
-    CryptoKeyFactory *m_cryptokeyfactory;
-    CryptoTransform *m_cryptotransform;
-};
-
-} //namespace security
-} //namespace rtps
-} //namespace fastrtps
-} //namespace eprosima
+#include <fastdds/rtps/security/cryptography/Cryptography.h>
 
 #endif //_RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOGRAPHY_H_

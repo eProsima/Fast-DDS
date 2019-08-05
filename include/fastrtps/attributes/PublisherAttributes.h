@@ -19,15 +19,15 @@
 #ifndef PUBLISHERATTRIBUTES_H_
 #define PUBLISHERATTRIBUTES_H_
 
-#include <fastrtps/rtps/resources/ResourceManagement.h>
+#include <fastdds/rtps/resources/ResourceManagement.h>
 
-#include "../rtps/common/Locator.h"
-#include "../rtps/common/Time_t.h"
-#include "../rtps/attributes/WriterAttributes.h"
-#include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
-#include "TopicAttributes.h"
-#include "../qos/WriterQos.h"
-#include "../rtps/attributes/PropertyPolicy.h"
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
+#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/qos/WriterQos.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 
 namespace eprosima {
 namespace fastrtps{

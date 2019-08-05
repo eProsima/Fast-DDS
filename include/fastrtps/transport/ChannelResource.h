@@ -19,7 +19,7 @@
 #include <map>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/log/Log.h>
-#include <fastrtps/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/CDRMessage_t.h>
 
 namespace eprosima{
 namespace fastrtps{

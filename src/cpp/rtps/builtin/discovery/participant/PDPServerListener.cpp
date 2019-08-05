@@ -17,25 +17,25 @@
  *
  */
 
-#include <fastrtps/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
 
-#include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
 
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <fastrtps/rtps/participant/ParticipantDiscoveryInfo.h>
-#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
 
-#include "../../../participant/RTPSParticipantImpl.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <mutex>
 
 #include <fastrtps/log/Log.h>
 
-#include <fastrtps/rtps/builtin/discovery/participant/PDPServerListener.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPServer.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPServerListener.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPServer.h>
 
 
 namespace eprosima {

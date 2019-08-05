@@ -19,19 +19,19 @@
 
 
 #include <fastrtps/log/Log.h>
-#include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/writer/ReaderProxy.h>
-#include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/writer/ReaderProxy.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/rtps/common/LocatorListComparisons.hpp>
-#include "../participant/RTPSParticipantImpl.h"
+#include <fastdds/rtps/common/LocatorListComparisons.hpp>
+
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/history/HistoryAttributesExtension.hpp>
 
 #include <mutex>
 #include <cassert>
 #include <algorithm>
-
-#include "../history/HistoryAttributesExtension.hpp"
 
 namespace eprosima {
 namespace fastrtps {

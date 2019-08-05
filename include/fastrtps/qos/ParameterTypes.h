@@ -19,14 +19,14 @@
 #ifndef PARAMETERTYPES_H_
 #define PARAMETERTYPES_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "../rtps/common/all_common.h"
-#include "../rtps/common/Token.h"
+#include <fastdds/rtps/common/all_common.h>
+#include <fastdds/rtps/common/Token.h>
 
-#include "../utils/fixed_size_string.hpp"
+#include <fastrtps/utils/fixed_size_string.hpp>
 
 #if HAVE_SECURITY
-#include "../rtps/security/accesscontrol/ParticipantSecurityAttributes.h"
-#include "../rtps/security/accesscontrol/EndpointSecurityAttributes.h"
+#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 #endif
 
 #include <string>
@@ -358,7 +358,7 @@ class ParameterVendorId_t:public Parameter_t{
  */
 class ParameterIP4Address_t :public Parameter_t{
     public:
-		rtps::octet address[4];
+        rtps::octet address[4];
         ParameterIP4Address_t(){this->setIP4Address(0,0,0,0);};
         /**
          * Constructor using a parameter PID and the parameter length
@@ -432,7 +432,7 @@ public:
  */
 class ParameterCount_t:public Parameter_t{
     public:
-		rtps::Count_t count;
+        rtps::Count_t count;
         ParameterCount_t():count(0){};
         /**
          * Constructor using a parameter PID and the parameter length
@@ -455,7 +455,7 @@ class ParameterCount_t:public Parameter_t{
  */
 class ParameterEntityId_t:public Parameter_t{
     public:
-		rtps::EntityId_t entityId;
+        rtps::EntityId_t entityId;
         ParameterEntityId_t():entityId(ENTITYID_UNKNOWN){};
         /**
          * Constructor using a parameter PID and the parameter length
@@ -478,7 +478,7 @@ class ParameterEntityId_t:public Parameter_t{
  */
 class ParameterTime_t:public Parameter_t{
     public:
-		rtps::Time_t time;
+        rtps::Time_t time;
         ParameterTime_t(){};
         /**
          * Constructor using a parameter PID and the parameter length
@@ -501,7 +501,7 @@ class ParameterTime_t:public Parameter_t{
  */
 class ParameterBuiltinEndpointSet_t : public Parameter_t{
     public:
-		rtps::BuiltinEndpointSet_t endpointSet;
+        rtps::BuiltinEndpointSet_t endpointSet;
         ParameterBuiltinEndpointSet_t():endpointSet(0){};
         /**
          * Constructor using a parameter PID and the parameter length
@@ -559,7 +559,7 @@ class ParameterPropertyList_t : public Parameter_t {
 class ParameterSampleIdentity_t : public Parameter_t
 {
     public:
-		rtps::SampleIdentity sample_id;
+        rtps::SampleIdentity sample_id;
 
         ParameterSampleIdentity_t() : sample_id(rtps::SampleIdentity::unknown()) {}
 
@@ -586,7 +586,7 @@ class ParameterSampleIdentity_t : public Parameter_t
 class ParameterToken_t : public Parameter_t
 {
     public:
-		rtps::Token token;
+        rtps::Token token;
 
         ParameterToken_t() {}
 

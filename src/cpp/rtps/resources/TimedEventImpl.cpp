@@ -18,9 +18,9 @@
  */
 
 
-#include "TimedEventImpl.h"
-#include <fastrtps/rtps/resources/ResourceEvent.h>
-#include <fastrtps/rtps/resources/TimedEvent.h>
+#include <rtps/resources/TimedEventImpl.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <cassert>

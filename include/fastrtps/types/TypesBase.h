@@ -15,7 +15,7 @@
 #ifndef TYPES_BASE_H
 #define TYPES_BASE_H
 
-#include <fastrtps/rtps/common/Types.h>
+#include <fastdds/rtps/common/Types.h>
 #include <bitset>
 #include <string>
 #include <map>

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/rtps/resources/AsyncWriterThread.h>
-#include <fastrtps/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/resources/AsyncWriterThread.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 
 #include <mutex>
 #include <algorithm>

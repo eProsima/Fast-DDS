@@ -63,7 +63,7 @@ private:
 
             void onWriterMatched(
                     eprosima::fastrtps::rtps::RTPSWriter* /*writer*/,
-                    eprosima::fastrtps::rtps::MatchingInfo& info)
+                    eprosima::fastrtps::rtps::MatchingInfo& info) override
             {
                 if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
                 {

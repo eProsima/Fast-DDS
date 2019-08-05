@@ -1,4 +1,4 @@
-# Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,27 +19,27 @@ include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 
 if(WIN32)
 
-file(GLOB_RECURSE ALL_HEADERS 
-	${PROJECT_SOURCE_DIR}/include/**/*.h
-	${PROJECT_SOURCE_DIR}/include/**/*.hpp
-	${PROJECT_SOURCE_DIR}/src/cpp/**/*.h
-	${PROJECT_SOURCE_DIR}/src/cpp/**/*.hpp
-	)  
+file(GLOB_RECURSE ALL_HEADERS
+    ${PROJECT_SOURCE_DIR}/include/**/*.h
+    ${PROJECT_SOURCE_DIR}/include/**/*.hpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/**/*.h
+    ${PROJECT_SOURCE_DIR}/src/cpp/**/*.hpp
+    )
 
 endif(WIN32)
 
 set(${PROJECT_NAME}_source_files
-	${ALL_HEADERS} 
+    ${ALL_HEADERS}
 
-    log/Log.cpp
-    log/StdoutConsumer.cpp
-    log/FileConsumer.cpp
-    utils/eClock.cpp
-    utils/IPFinder.cpp
-    utils/md5.cpp
-    utils/StringMatching.cpp
-    utils/IPLocator.cpp
-    utils/System.cpp
+    fastrtps_deprecated/log/Log.cpp
+    fastrtps_deprecated/log/StdoutConsumer.cpp
+    fastrtps_deprecated/log/FileConsumer.cpp
+    fastrtps_deprecated/utils/eClock.cpp
+    fastrtps_deprecated/utils/IPFinder.cpp
+    fastrtps_deprecated/utils/md5.cpp
+    fastrtps_deprecated/utils/StringMatching.cpp
+    fastrtps_deprecated/utils/IPLocator.cpp
+    fastrtps_deprecated/utils/System.cpp
     rtps/common/Time_t.cpp
     rtps/resources/ResourceEvent.cpp
     rtps/resources/TimedEvent.cpp
@@ -73,76 +73,91 @@ set(${PROJECT_NAME}_source_files
     rtps/participant/RTPSParticipant.cpp
     rtps/participant/RTPSParticipantImpl.cpp
     rtps/RTPSDomain.cpp
-    Domain.cpp
-    participant/Participant.cpp
-    participant/ParticipantImpl.cpp
-    publisher/Publisher.cpp
-    publisher/PublisherImpl.cpp
-    publisher/PublisherHistory.cpp
-    subscriber/Subscriber.cpp
-    subscriber/SubscriberImpl.cpp
-    subscriber/SubscriberHistory.cpp
-    transport/ChannelResource.cpp
-    transport/UDPChannelResource.cpp
-    transport/TCPChannelResource.cpp
-    transport/TCPChannelResourceBasic.cpp
-    transport/TCPAcceptor.cpp
-    transport/TCPAcceptorBasic.cpp
-    transport/UDPv4Transport.cpp
-    transport/TCPTransportInterface.cpp
-    transport/UDPTransportInterface.cpp
-    transport/TCPv4Transport.cpp
-    transport/UDPv6Transport.cpp
-    transport/TCPv6Transport.cpp
-    transport/test_UDPv4Transport.cpp
-    transport/tcp/TCPControlMessage.cpp
-    transport/tcp/RTCPMessageManager.cpp
+    fastrtps_deprecated/Domain.cpp
+    fastrtps_deprecated/participant/Participant.cpp
+    fastrtps_deprecated/participant/ParticipantImpl.cpp
+    fastrtps_deprecated/publisher/Publisher.cpp
+    fastrtps_deprecated/publisher/PublisherImpl.cpp
+    fastrtps_deprecated/publisher/PublisherHistory.cpp
+    fastrtps_deprecated/subscriber/Subscriber.cpp
+    fastrtps_deprecated/subscriber/SubscriberImpl.cpp
+    fastrtps_deprecated/subscriber/SubscriberHistory.cpp
+    dds/topic/DataReader.cpp
+    dds/topic/DataWriter.cpp
+    dds/topic/DataReaderImpl.cpp
+    dds/topic/DataWriterImpl.cpp
+    dds/topic/TypeSupport.cpp
+    dds/topic/TypeSupport.cpp
+    dds/publisher/PublisherImpl.cpp
+    dds/publisher/qos/PublisherQos.cpp
+    dds/publisher/Publisher.cpp
+    dds/subscriber/SubscriberImpl.cpp
+    dds/subscriber/qos/SubscriberQos.cpp
+    dds/subscriber/Subscriber.cpp
+    dds/domain/DomainParticipantFactory.cpp
+    dds/domain/DomainParticipantImpl.cpp
+    dds/domain/DomainParticipant.cpp
+    fastrtps_deprecated/transport/ChannelResource.cpp
+    fastrtps_deprecated/transport/UDPChannelResource.cpp
+    fastrtps_deprecated/transport/TCPChannelResource.cpp
+    fastrtps_deprecated/transport/TCPChannelResourceBasic.cpp
+    fastrtps_deprecated/transport/TCPAcceptor.cpp
+    fastrtps_deprecated/transport/TCPAcceptorBasic.cpp
+    fastrtps_deprecated/transport/UDPv4Transport.cpp
+    fastrtps_deprecated/transport/TCPTransportInterface.cpp
+    fastrtps_deprecated/transport/UDPTransportInterface.cpp
+    fastrtps_deprecated/transport/TCPv4Transport.cpp
+    fastrtps_deprecated/transport/UDPv6Transport.cpp
+    fastrtps_deprecated/transport/TCPv6Transport.cpp
+    fastrtps_deprecated/transport/test_UDPv4Transport.cpp
+    fastrtps_deprecated/transport/tcp/TCPControlMessage.cpp
+    fastrtps_deprecated/transport/tcp/RTCPMessageManager.cpp
 
-    types/AnnotationDescriptor.cpp
-    types/AnnotationParameterValue.cpp
-    types/DynamicData.cpp
-    types/DynamicDataFactory.cpp
-    types/DynamicType.cpp
-    types/DynamicPubSubType.cpp
-    types/DynamicTypePtr.cpp
-    types/DynamicDataPtr.cpp
-    types/DynamicTypeBuilder.cpp
-    types/DynamicTypeBuilderPtr.cpp
-    types/DynamicTypeBuilderFactory.cpp
-    types/DynamicTypeMember.cpp
-    types/MemberDescriptor.cpp
-    types/TypeDescriptor.cpp
-    types/TypeIdentifier.cpp
-    types/TypeIdentifierTypes.cpp
-    types/TypeObject.cpp
-    types/TypeObjectHashId.cpp
-    types/TypeObjectFactory.cpp
-    types/TypeNamesGenerator.cpp
-    types/TypesBase.cpp
-    types/BuiltinAnnotationsTypeObject.cpp
+    fastrtps_deprecated/types/AnnotationDescriptor.cpp
+    fastrtps_deprecated/types/AnnotationParameterValue.cpp
+    fastrtps_deprecated/types/DynamicData.cpp
+    fastrtps_deprecated/types/DynamicDataFactory.cpp
+    fastrtps_deprecated/types/DynamicType.cpp
+    fastrtps_deprecated/types/DynamicPubSubType.cpp
+    fastrtps_deprecated/types/DynamicTypePtr.cpp
+    fastrtps_deprecated/types/DynamicDataPtr.cpp
+    fastrtps_deprecated/types/DynamicTypeBuilder.cpp
+    fastrtps_deprecated/types/DynamicTypeBuilderPtr.cpp
+    fastrtps_deprecated/types/DynamicTypeBuilderFactory.cpp
+    fastrtps_deprecated/types/DynamicTypeMember.cpp
+    fastrtps_deprecated/types/MemberDescriptor.cpp
+    fastrtps_deprecated/types/TypeDescriptor.cpp
+    fastrtps_deprecated/types/TypeIdentifier.cpp
+    fastrtps_deprecated/types/TypeIdentifierTypes.cpp
+    fastrtps_deprecated/types/TypeObject.cpp
+    fastrtps_deprecated/types/TypeObjectHashId.cpp
+    fastrtps_deprecated/types/TypeObjectFactory.cpp
+    fastrtps_deprecated/types/TypeNamesGenerator.cpp
+    fastrtps_deprecated/types/TypesBase.cpp
+    fastrtps_deprecated/types/BuiltinAnnotationsTypeObject.cpp
 
-    attributes/TopicAttributes.cpp
-    qos/ParameterList.cpp
-    qos/ParameterTypes.cpp
-    qos/QosPolicies.cpp
-    qos/WriterQos.cpp
-    qos/ReaderQos.cpp
+    fastrtps_deprecated/attributes/TopicAttributes.cpp
+    fastrtps_deprecated/qos/ParameterList.cpp
+    fastrtps_deprecated/qos/ParameterTypes.cpp
+    fastrtps_deprecated/qos/QosPolicies.cpp
+    fastrtps_deprecated/qos/WriterQos.cpp
+    fastrtps_deprecated/qos/ReaderQos.cpp
     rtps/builtin/BuiltinProtocols.cpp
-	rtps/builtin/discovery/participant/DirectMessageSender.cpp
-	rtps/builtin/discovery/participant/PDP.cpp
+    rtps/builtin/discovery/participant/DirectMessageSender.cpp
+    rtps/builtin/discovery/participant/PDP.cpp
     rtps/builtin/discovery/participant/PDPSimple.cpp
     rtps/builtin/discovery/participant/PDPListener.cpp
-	rtps/builtin/discovery/participant/PDPServerListener.cpp
-	rtps/builtin/discovery/participant/PDPClient.cpp
-	rtps/builtin/discovery/participant/PDPServer.cpp
-	rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
-	rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
+    rtps/builtin/discovery/participant/PDPServerListener.cpp
+    rtps/builtin/discovery/participant/PDPClient.cpp
+    rtps/builtin/discovery/participant/PDPServer.cpp
+    rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
+    rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
     rtps/builtin/discovery/endpoint/EDP.cpp
     rtps/builtin/discovery/endpoint/EDPSimple.cpp
-	rtps/builtin/discovery/endpoint/EDPClient.cpp
-	rtps/builtin/discovery/endpoint/EDPServer.cpp
+    rtps/builtin/discovery/endpoint/EDPClient.cpp
+    rtps/builtin/discovery/endpoint/EDPServer.cpp
     rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp
-	rtps/builtin/discovery/endpoint/EDPServerListeners.cpp
+    rtps/builtin/discovery/endpoint/EDPServerListeners.cpp
     rtps/builtin/discovery/endpoint/EDPStatic.cpp
     rtps/builtin/liveliness/WLP.cpp
     rtps/builtin/liveliness/WLPListener.cpp
@@ -155,11 +170,11 @@ set(${PROJECT_NAME}_source_files
     rtps/exceptions/Exception.cpp
     rtps/attributes/PropertyPolicy.cpp
     rtps/common/Token.cpp
-    xmlparser/XMLParserCommon.cpp
-    xmlparser/XMLElementParser.cpp
-    xmlparser/XMLEndpointParser.cpp
-    xmlparser/XMLParser.cpp
-    xmlparser/XMLProfileManager.cpp
+    fastrtps_deprecated/xmlparser/XMLParserCommon.cpp
+    fastrtps_deprecated/xmlparser/XMLElementParser.cpp
+    fastrtps_deprecated/xmlparser/XMLEndpointParser.cpp
+    fastrtps_deprecated/xmlparser/XMLParser.cpp
+    fastrtps_deprecated/xmlparser/XMLProfileManager.cpp
     rtps/writer/PersistentWriter.cpp
     rtps/writer/StatelessPersistentWriter.cpp
     rtps/writer/StatefulPersistentWriter.cpp
@@ -168,14 +183,14 @@ set(${PROJECT_NAME}_source_files
     rtps/persistence/PersistenceFactory.cpp
     rtps/persistence/SQLite3PersistenceService.cpp
     rtps/persistence/sqlite3.c
-    utils/TimedConditionVariable.cpp
+    fastrtps_deprecated/utils/TimedConditionVariable.cpp
     )
 
 # TLS Support
 if(TLS_FOUND)
     list(APPEND ${PROJECT_NAME}_source_files
-        transport/TCPChannelResourceSecure.cpp
-        transport/TCPAcceptorSecure.cpp
+        fastrtps_deprecated/transport/TCPChannelResourceSecure.cpp
+        fastrtps_deprecated/transport/TCPAcceptorSecure.cpp
         )
 endif()
 
@@ -189,20 +204,20 @@ set(${PROJECT_NAME}_security_source_files
     rtps/security/common/SharedSecretHandle.cpp
     rtps/security/SecurityManager.cpp
     rtps/security/SecurityPluginFactory.cpp
-    security/OpenSSLInit.cpp
-    security/authentication/PKIDH.cpp
-    security/accesscontrol/Permissions.cpp
-    security/cryptography/AESGCMGMAC.cpp
-    security/cryptography/AESGCMGMAC_KeyExchange.cpp
-    security/cryptography/AESGCMGMAC_KeyFactory.cpp
-    security/cryptography/AESGCMGMAC_Transform.cpp
-    security/cryptography/AESGCMGMAC_Types.cpp
-    security/authentication/PKIIdentityHandle.cpp
-    security/authentication/PKIHandshakeHandle.cpp
-    security/accesscontrol/AccessPermissionsHandle.cpp
-    security/accesscontrol/CommonParser.cpp
-    security/accesscontrol/GovernanceParser.cpp
-    security/accesscontrol/PermissionsParser.cpp
+    fastrtps_deprecated/security/OpenSSLInit.cpp
+    fastrtps_deprecated/security/authentication/PKIDH.cpp
+    fastrtps_deprecated/security/accesscontrol/Permissions.cpp
+    fastrtps_deprecated/security/cryptography/AESGCMGMAC.cpp
+    fastrtps_deprecated/security/cryptography/AESGCMGMAC_KeyExchange.cpp
+    fastrtps_deprecated/security/cryptography/AESGCMGMAC_KeyFactory.cpp
+    fastrtps_deprecated/security/cryptography/AESGCMGMAC_Transform.cpp
+    fastrtps_deprecated/security/cryptography/AESGCMGMAC_Types.cpp
+    fastrtps_deprecated/security/authentication/PKIIdentityHandle.cpp
+    fastrtps_deprecated/security/authentication/PKIHandshakeHandle.cpp
+    fastrtps_deprecated/security/accesscontrol/AccessPermissionsHandle.cpp
+    fastrtps_deprecated/security/accesscontrol/CommonParser.cpp
+    fastrtps_deprecated/security/accesscontrol/GovernanceParser.cpp
+    fastrtps_deprecated/security/accesscontrol/PermissionsParser.cpp
     )
 
 # Add sources to Makefile.am

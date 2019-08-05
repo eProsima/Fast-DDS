@@ -21,7 +21,7 @@
 #define EDPSERVERLISTENER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include "EDPSimpleListeners.h"
+#include <rtps/builtin/discovery/endpoint/EDPSimpleListeners.h>
 
 
 namespace eprosima {

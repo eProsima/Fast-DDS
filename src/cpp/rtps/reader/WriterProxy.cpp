@@ -17,17 +17,17 @@
  *
  */
 
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
-#include "WriterProxy.h"
-#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <rtps/reader/WriterProxy.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <fastrtps/rtps/resources/TimedEvent.h>
-#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
-#include "../participant/RTPSParticipantImpl.h"
+#include <fastdds/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <foonathan/memory/namespace_alias.hpp>
 #include <fastrtps/utils/collections/foonathan_memory_helpers.hpp>

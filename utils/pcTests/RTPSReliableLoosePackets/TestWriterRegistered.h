@@ -27,26 +27,28 @@
 
 class TestWriterRegistered {
 public:
-	TestWriterRegistered();
-	virtual ~TestWriterRegistered();
-	RTPSParticipant* mp_participant;
-	RTPSWriter* mp_writer;
-	WriterHistory* mp_history;
-	bool init(); //Initialize writer
-	bool reg(); //Register the Writer
-	void run(uint16_t samples); //Run the Writer
-	class MyListener :public WriterListener
-	{
-	public:
-		MyListener():n_matched(0){};
-		~MyListener(){};
-		void onWriterMatched(RTPSWriter* writer, MatchingInfo& info)
-		{
-			if (info.status == MATCHED_MATCHING)
-				++n_matched;
-		}
-		int n_matched;
-	}m_listener;
+    TestWriterRegistered();
+    virtual ~TestWriterRegistered();
+    RTPSParticipant* mp_participant;
+    RTPSWriter* mp_writer;
+    WriterHistory* mp_history;
+    bool init(); //Initialize writer
+    bool reg(); //Register the Writer
+    void run(uint16_t samples); //Run the Writer
+    class MyListener :public WriterListener
+    {
+    public:
+        MyListener():n_matched(0){};
+        ~MyListener(){};
+        void onWriterMatched(
+                RTPSWriter* writer,
+                MatchingInfo& info) override
+        {
+            if (info.status == MATCHED_MATCHING)
+                ++n_matched;
+        }
+        int n_matched;
+    }m_listener;
 };
 
 #endif /* TESTWRITER_H_ */

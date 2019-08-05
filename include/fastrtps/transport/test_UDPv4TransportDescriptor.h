@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TEST_UDPV4_TRANSPORT_DESCRIPTOR 
+#ifndef TEST_UDPV4_TRANSPORT_DESCRIPTOR
 #define TEST_UDPV4_TRANSPORT_DESCRIPTOR
 
-#include "./SocketTransportDescriptor.h"
+#include <fastrtps/transport/SocketTransportDescriptor.h>
 
 namespace eprosima{
 namespace fastrtps{

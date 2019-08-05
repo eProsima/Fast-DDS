@@ -63,7 +63,7 @@
 #define EPROSIMA_DYN_LINK
 #endif
 
-#include "eProsima_auto_link.h"
+#include <fastrtps/eProsima_auto_link.h>
 #endif // auto-linking disabled
 
 #endif // _fastrtps_fastrtps_DLL_H_
