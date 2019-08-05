@@ -19,49 +19,7 @@
 
 #ifndef PDPSERVERLISTENER_H_
 #define PDPSERVERLISTENER_H_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <fastdds/rtps/builtin/discovery/participant/PDPServerListener.h>
 
-#include "PDPListener.h"
-
-namespace eprosima {
-namespace fastrtps {
-namespace rtps {
-
-class PDPServer;
-
-/**
- * Class PDPServerListener, specification used by the PDP to perform the History check when a new message is received.
- * This class is implemented in order to use the same structure than with any other RTPSReader.
- *@ingroup DISCOVERY_MODULE
- */
-class PDPServerListener: public PDPListener
-{
-public:
-    /**
-     * @param in_PDP
-     */
-    PDPServerListener(PDPServer* in_PDP);
-
-    ~PDPServerListener() override = default;
-
-    //!Pointer to the associated mp_SPDP;
-    PDPServer* parent_server_pdp_;
-
-    /**
-     * New added cache
-     * @param reader
-     * @param change
-     */
-    void onNewCacheChangeAdded(
-            RTPSReader* reader,
-            const CacheChange_t* const change) override;
-};
-
-
-} /* namespace rtps */
-} /* namespace fastrtps */
-} /* namespace eprosima */
-
-#endif
 #endif /* PDPSERVERLISTENER_H_ */

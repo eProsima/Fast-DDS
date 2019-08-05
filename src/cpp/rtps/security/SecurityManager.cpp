@@ -16,30 +16,33 @@
  * @file SecurityManager.h
  */
 
-#include "SecurityManager.h"
+#include <rtps/security/SecurityManager.h>
 
-#include <fastrtps/rtps/security/authentication/Authentication.h>
-#include <fastrtps/rtps/security/accesscontrol/AccessControl.h>
-#include <fastrtps/rtps/security/accesscontrol/SecurityMaskUtilities.h>
-#include <fastrtps/log/Log.h>
+// TODO Include relative path and fix SecurityTest
+//#include <fastrtps_deprecated/participant/ParticipantImpl.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
-#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
-#include <fastrtps/rtps/network/NetworkFactory.h>
 
-#include <fastrtps/rtps/writer/StatelessWriter.h>
-#include <fastrtps/rtps/reader/StatelessReader.h>
-#include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/rtps/attributes/HistoryAttributes.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastrtps/rtps/messages/CDRMessage.h>
-#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#include <fastrtps/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#include <fastdds/rtps/security/authentication/Authentication.h>
+#include <fastdds/rtps/security/accesscontrol/AccessControl.h>
+#include <fastdds/rtps/security/accesscontrol/SecurityMaskUtilities.h>
+#include <fastrtps/log/Log.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/network/NetworkFactory.h>
+
+#include <fastdds/rtps/writer/StatelessWriter.h>
+#include <fastdds/rtps/reader/StatelessReader.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
+#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 
 #include <cassert>
 #include <thread>
@@ -69,7 +72,7 @@ bool usleep_bool()
     return true;
 }
 
-SecurityManager::SecurityManager(RTPSParticipantImpl *participant) 
+SecurityManager::SecurityManager(RTPSParticipantImpl *participant)
     : participant_stateless_message_listener_(*this)
     , participant_volatile_message_secure_listener_(*this)
     , participant_(participant)
@@ -253,19 +256,19 @@ bool SecurityManager::init(ParticipantSecurityAttributes& attributes, const Prop
             if((access_plugin_ == nullptr || local_permissions_handle_ != nullptr) &&
                     (crypto_plugin_ == nullptr || local_participant_crypto_handle_ != nullptr))
             {
-				// Should be activated here, to enable encription buffer on created entities
-				security_activated = true;
-				
-				// Create RTPS entities
+                // Should be activated here, to enable encription buffer on created entities
+                security_activated = true;
+
+                // Create RTPS entities
                 if(create_entities())
                 {
                     logInfo(SECURITY, "Initialized security manager for participant " << participant_->getGuid());
                     return true;
                 }
 
-				// Deactivate security if there is an error while creating entities
-				security_activated = false;
-			}
+                // Deactivate security if there is an error while creating entities
+                security_activated = false;
+            }
 
             if(local_participant_crypto_handle_ != nullptr)
             {
@@ -2816,7 +2819,7 @@ bool SecurityManager::discovered_writer(const GUID_t& reader_guid, const GUID_t&
                                 local_reader->second.associated_writers.emplace(remote_writer_data.guid(),
                                     std::make_tuple(remote_writer_data, remote_writer_handle));
                                 lock.unlock();
-                                
+
                                 CacheChange_t* change = participant_volatile_message_secure_writer_->new_change([&message]() -> uint32_t
                                 {
                                     return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
@@ -3317,7 +3320,7 @@ bool SecurityManager::participant_authorized(const ParticipantProxyData& partici
             }
 
             // Starts cryptography mechanism
-            ParticipantCryptoHandle* participant_crypto_handle = 
+            ParticipantCryptoHandle* participant_crypto_handle =
                 register_and_match_crypto_endpoint(*remote_participant_info->identity_handle_,
                     *shared_secret_handle);
 

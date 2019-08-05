@@ -17,20 +17,20 @@
  *
  */
 
-#include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/reader/ReaderListener.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastrtps/log/Log.h>
-#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
-#include "../participant/RTPSParticipantImpl.h"
-#include "FragmentedChangePitStop.h"
-#include "WriterProxy.h"
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/FragmentedChangePitStop.h>
+#include <rtps/reader/WriterProxy.h>
 #include <fastrtps/utils/TimeConversion.h>
-#include "../history/HistoryAttributesExtension.hpp"
+#include <rtps/history/HistoryAttributesExtension.hpp>
 
-#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
-#include <fastrtps/rtps/builtin/liveliness/WLP.h>
-#include <fastrtps/rtps/writer/LivelinessManager.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/writer/LivelinessManager.h>
 
 #include <mutex>
 #include <thread>
@@ -156,7 +156,7 @@ bool StatefulReader::matched_writer_add(
         add_persistence_guid(wdata.guid(), wdata.persistence_guid());
         initial_sequence = get_last_notified(wdata.guid());
     }
-    
+
     wp->start(wdata, initial_sequence);
 
     matched_writers_.push_back(wp);
@@ -329,7 +329,7 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 
         // Check if CacheChange was received or is framework data
         if(!pWP || !pWP->change_was_received(change->sequenceNumber))
-        {            
+        {
             logInfo(RTPS_MSG_IN,IDSTRING"Trying to add change " << change->sequenceNumber <<" TO reader: "<< getGuid().entityId);
 
             CacheChange_t* change_to_add;
@@ -499,7 +499,7 @@ bool StatefulReader::processHeartbeatMsg(
                 hbCount, firstSN, lastSN, finalFlag, livelinessFlag, disable_positive_acks_, assert_liveliness))
         {
             fragmentedChangePitStop_->try_to_remove_until(firstSN, writerGUID);
-            
+
             // Try to assert liveliness if requested by proxy's logic
             if (assert_liveliness)
             {
@@ -590,7 +590,7 @@ bool StatefulReader::acceptMsgFrom(
 
     // Check if it's a framework's one. In this case, m_acceptMessagesFromUnkownWriters
     // is an enabler for the trusted entity comparison
-    if (m_acceptMessagesFromUnkownWriters 
+    if (m_acceptMessagesFromUnkownWriters
         && (writerId.entityId == m_trustedWriterEntityId))
     {
         *wp = nullptr;

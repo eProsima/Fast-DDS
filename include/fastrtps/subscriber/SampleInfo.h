@@ -21,11 +21,11 @@
 
 #include <cstdint>
 
-#include "../fastrtps_dll.h"
+#include <fastrtps/fastrtps_dll.h>
 
-#include "../rtps/common/Time_t.h"
-#include "../rtps/common/InstanceHandle.h"
-#include "../rtps/common/CacheChange.h"
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/CacheChange.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -36,18 +36,18 @@ namespace fastrtps {
  */
 class RTPS_DllAPI SampleInfo_t {
 public:
-	SampleInfo_t():sampleKind(rtps::ALIVE), ownershipStrength(0),
+    SampleInfo_t():sampleKind(rtps::ALIVE), ownershipStrength(0),
     sample_identity(rtps::SampleIdentity::unknown()), related_sample_identity(rtps::SampleIdentity::unknown()) {}
 
-	virtual ~SampleInfo_t(){};
-	//!Sample kind.
-	rtps::ChangeKind_t sampleKind;
-	//!Ownership Strength of the writer of the sample (0 if the ownership kind is set to SHARED_OWNERSHIP_QOS).
-	uint32_t ownershipStrength;
-	//!Source timestamp of the sample.
-	rtps::Time_t sourceTimestamp;
-	//!InstanceHandle of the data
-	rtps::InstanceHandle_t iHandle;
+    virtual ~SampleInfo_t(){};
+    //!Sample kind.
+    rtps::ChangeKind_t sampleKind;
+    //!Ownership Strength of the writer of the sample (0 if the ownership kind is set to SHARED_OWNERSHIP_QOS).
+    uint32_t ownershipStrength;
+    //!Source timestamp of the sample.
+    rtps::Time_t sourceTimestamp;
+    //!InstanceHandle of the data
+    rtps::InstanceHandle_t iHandle;
 
     rtps::SampleIdentity sample_identity;
 

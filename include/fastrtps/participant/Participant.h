@@ -20,8 +20,8 @@
 #ifndef PARTICIPANT_H_
 #define PARTICIPANT_H_
 
-#include "../rtps/common/Guid.h"
-#include "../rtps/attributes/RTPSParticipantAttributes.h"
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 
 #include <utility>
 
@@ -36,6 +36,7 @@ namespace rtps
     class WriterProxyData;
     class ReaderProxyData;
     class ResourceEvent;
+    class RTPSParticipant;
 }
 
 /**
@@ -79,26 +80,11 @@ class RTPS_DllAPI Participant
         std::vector<std::string> getParticipantNames() const;
 
         /**
-         * Retrieves remote write information.
-         * @param writerGuid GUID of the writer.
-         * @param returnedInfo WriterProxyData to be filled.
-         */
-        bool get_remote_writer_info(
-                const rtps::GUID_t& writerGuid,
-                rtps::WriterProxyData& returnedInfo);
-        /**
-         * Retrieves remote reader information.
-         * @param readerGuid GUID of the reader.
-         * @param returnedInfo ReaderProxyData to be filled.
-         */
-        bool get_remote_reader_info(
-                const rtps::GUID_t& readerGuid,
-                rtps::ReaderProxyData& returnedInfo);
-
-        /**
          * @brief Asserts liveliness of manual by participant publishers
          */
         void assert_liveliness();
+
+        rtps::ResourceEvent& get_resource_event() const;
 
     private:
         Participant();

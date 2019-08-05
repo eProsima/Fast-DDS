@@ -17,10 +17,10 @@
  *
  */
 
-#include <fastrtps/rtps/RTPSDomain.h>
+#include <fastdds/rtps/RTPSDomain.h>
 
-#include <fastrtps/rtps/participant/RTPSParticipant.h>
-#include "participant/RTPSParticipantImpl.h"
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <fastrtps/log/Log.h>
 
@@ -34,8 +34,8 @@
 #include <fastrtps/utils/System.h>
 #include <fastrtps/utils/md5.h>
 
-#include <fastrtps/rtps/writer/RTPSWriter.h>
-#include <fastrtps/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -153,7 +153,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
         guidP.value[10] = octet(ID >> 16);
         guidP.value[11] = octet(ID >> 24);
     }
-    
+
     RTPSParticipant* p = new RTPSParticipant(nullptr);
     RTPSParticipantImpl* pimpl = new RTPSParticipantImpl(PParam,guidP,p,listen);
 

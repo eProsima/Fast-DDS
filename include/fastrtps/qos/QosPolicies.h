@@ -21,9 +21,9 @@
 #define QOS_POLICIES_H_
 
 #include <vector>
-#include <fastrtps/rtps/common/Types.h>
-#include <fastrtps/rtps/common/Time_t.h>
-#include "ParameterTypes.h"
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastrtps/qos/ParameterTypes.h>
 #include <fastrtps/types/TypeObject.h>
 
 namespace eprosima{
@@ -157,7 +157,7 @@ public:
     RTPS_DllAPI DeadlineQosPolicy()
         : Parameter_t(PID_DEADLINE, PARAMETER_TIME_LENGTH),
           QosPolicy(true),
-          period(c_TimeInfinite)
+          period(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
     {}
 
     virtual RTPS_DllAPI ~DeadlineQosPolicy(){}
@@ -191,7 +191,7 @@ public:
     RTPS_DllAPI LatencyBudgetQosPolicy()
         : Parameter_t(PID_LATENCY_BUDGET,PARAMETER_TIME_LENGTH),
           QosPolicy(true),
-          duration(c_TimeZero)
+          duration(0, 0)
     {}
     virtual RTPS_DllAPI ~LatencyBudgetQosPolicy() {}
 
@@ -240,8 +240,8 @@ public:
         : Parameter_t(PID_LIVELINESS,PARAMETER_KIND_LENGTH+PARAMETER_TIME_LENGTH),
           QosPolicy(true),
           kind(AUTOMATIC_LIVELINESS_QOS),
-          lease_duration(c_TimeInfinite),
-          announcement_period(c_TimeInfinite)
+          lease_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS),
+          announcement_period(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
     {}
 
     virtual RTPS_DllAPI ~LivelinessQosPolicy() {}
@@ -475,7 +475,7 @@ public:
     RTPS_DllAPI TimeBasedFilterQosPolicy()
         : Parameter_t(PID_TIME_BASED_FILTER,PARAMETER_TIME_LENGTH),
           QosPolicy(false),
-          minimum_separation(c_TimeZero)
+          minimum_separation(0, 0)
     {}
 
     virtual RTPS_DllAPI ~TimeBasedFilterQosPolicy() {}
@@ -857,7 +857,7 @@ public:
     RTPS_DllAPI LifespanQosPolicy()
         : Parameter_t(PID_LIFESPAN,PARAMETER_TIME_LENGTH),
           QosPolicy(true),
-          duration(c_TimeInfinite)
+          duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
     {}
 
     virtual RTPS_DllAPI ~LifespanQosPolicy() {}
@@ -1026,7 +1026,7 @@ public:
         : Parameter_t(PID_DISABLE_POSITIVE_ACKS, PARAMETER_BOOL_LENGTH)
         , QosPolicy(true)
         , enabled(false)
-        , duration(c_TimeInfinite)
+        , duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
     {}
 
     virtual RTPS_DllAPI ~DisablePositiveACKsQosPolicy()

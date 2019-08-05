@@ -15,12 +15,12 @@
 #ifndef XML_PARSER_H_
 #define XML_PARSER_H_
 
-#include "stdio.h"
-#include "../transport/TransportDescriptorInterface.h"
-#include "../attributes/ParticipantAttributes.h"
-#include "../attributes/PublisherAttributes.h"
-#include "../attributes/SubscriberAttributes.h"
-#include "./XMLParserCommon.h"
+#include <stdio.h>
+#include <fastrtps/transport/TransportDescriptorInterface.h>
+#include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>

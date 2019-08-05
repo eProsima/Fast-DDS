@@ -17,8 +17,8 @@
  *
  */
 
-#include <fastrtps/rtps/resources/ResourceEvent.h>
-#include "TimedEventImpl.h"
+#include <fastdds/rtps/resources/ResourceEvent.h>
+#include <rtps/resources/TimedEventImpl.h>
 
 #include <asio.hpp>
 #include <thread>

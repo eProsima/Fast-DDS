@@ -17,12 +17,12 @@
  *
  */
 
-#include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
-#include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
 
 #include <mutex>
 

@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "ThroughputController.h"
-#include <fastrtps/rtps/resources/AsyncWriterThread.h>
-#include "../participant/RTPSParticipantImpl.h"
-#include <fastrtps/rtps/writer/RTPSWriter.h>
+#include <rtps/flowcontrol/ThroughputController.h>
+
+#include <fastdds/rtps/resources/AsyncWriterThread.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 #include <asio.hpp>
 #include <asio/steady_timer.hpp>
 #include <cassert>

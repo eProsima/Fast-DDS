@@ -18,10 +18,10 @@
 #include <asio.hpp>
 #include <thread>
 
-#include "TransportInterface.h"
-#include "UDPChannelResource.h"
-#include "UDPTransportDescriptor.h"
-#include "../utils/IPFinder.h"
+#include <fastrtps/transport/TransportInterface.h>
+#include <fastrtps/transport/UDPChannelResource.h>
+#include <fastrtps/transport/UDPTransportDescriptor.h>
+#include <fastrtps/utils/IPFinder.h>
 
 #include <vector>
 #include <memory>

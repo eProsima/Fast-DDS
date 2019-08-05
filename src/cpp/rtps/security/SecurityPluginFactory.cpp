@@ -16,10 +16,10 @@
  * @file SecurityPluginFactory.cpp
  */
 
-#include "SecurityPluginFactory.h"
-#include "../../security/authentication/PKIDH.h"
-#include "../../security/accesscontrol/Permissions.h"
-#include "../../security/cryptography/AESGCMGMAC.h"
+#include <rtps/security/SecurityPluginFactory.h>
+#include <fastrtps_deprecated/security/authentication/PKIDH.h>
+#include <fastrtps_deprecated/security/accesscontrol/Permissions.h>
+#include <fastrtps_deprecated/security/cryptography/AESGCMGMAC.h>
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;

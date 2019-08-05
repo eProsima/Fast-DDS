@@ -18,21 +18,6 @@
 #ifndef _RTPS_SECURITY_AUTHENTICATION_HANDSHAKE_H_
 #define _RTPS_SECURITY_AUTHENTICATION_HANDSHAKE_H_
 
-#include "../common/Handle.h"
-#include "../../common/Token.h"
-
-namespace eprosima {
-namespace fastrtps {
-namespace rtps {
-namespace security {
-
-typedef Handle HandshakeHandle;
-
-typedef Token HandshakeMessageToken;
-
-} //namespace eprosima
-} //namespace fastrtps
-} //namespace rtps
-} //namespace security
+#include <fastdds/rtps/security/authentication/Handshake.h>
 
 #endif // _RTPS_SECURITY_AUTHENTICATION_HANDSHAKE_H_

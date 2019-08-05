@@ -17,11 +17,11 @@
  *
  */
 
-#include <fastrtps/rtps/messages/RTPSMessageGroup.h>
-#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
-#include <fastrtps/rtps/writer/RTPSWriter.h>
-#include "../participant/RTPSParticipantImpl.h"
-#include "../flowcontrol/FlowController.h"
+#include <fastdds/rtps/messages/RTPSMessageGroup.h>
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/flowcontrol/FlowController.h>
 
 #include <fastrtps/log/Log.h>
 
@@ -404,7 +404,7 @@ bool RTPSMessageGroup::add_data_frag(
     check_and_maybe_flush();
     add_info_ts_in_buffer(change.sourceTimestamp);
 
-    InlineQosWriter* inlineQos = NULL;
+    InlineQosWriter* inlineQos = nullptr;
     if(expectsInlineQos)
     {
         //TODOG INLINEQOS
@@ -456,10 +456,10 @@ bool RTPSMessageGroup::add_data_frag(
                 expectsInlineQos, inlineQos))
     {
         logError(RTPS_WRITER, "Cannot add DATA_FRAG submsg to the CDRMessage. Buffer too small");
-        change_to_add.serializedPayload.data = NULL;
+        change_to_add.serializedPayload.data = nullptr;
         return false;
     }
-    change_to_add.serializedPayload.data = NULL;
+    change_to_add.serializedPayload.data = nullptr;
 
 #if HAVE_SECURITY
     if(endpoint_->getAttributes().security_attributes().is_submessage_protected)
@@ -494,7 +494,7 @@ bool RTPSMessageGroup::add_heartbeat(
         const SequenceNumber_t& firstSN,
         const SequenceNumber_t& lastSN,
         const Count_t count,
-        bool isFinal, 
+        bool isFinal,
         bool livelinessFlag)
 {
     check_and_maybe_flush();
@@ -611,7 +611,7 @@ bool RTPSMessageGroup::add_acknack(
 {
     // A vector is used to avoid dynamic allocations, but only first item is used
     size_t n_guids = sender_.remote_guids().size();
-    if (n_guids == 0) 
+    if (n_guids == 0)
     {
         return false;
     }

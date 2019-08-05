@@ -20,21 +20,6 @@
 #ifndef RTPS_FWD_H_
 #define RTPS_FWD_H_
 
-namespace eprosima
-{
-namespace fastrtps
-{
-namespace rtps
-{
-class RTPSWriter;
-class RTPSReader;
-class WriterHistory;
-class ReaderHistory;
-class RTPSParticipant;
-}
-}
-}
-
-
+#include <fastdds/rtps/rtps_fwd.h>
 
 #endif /* RTPS_FWD_H_ */
