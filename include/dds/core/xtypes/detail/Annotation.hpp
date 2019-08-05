@@ -33,6 +33,7 @@ class MustUnderstandAnnotation : public  Annotation { };
 class VerbatimAnnotation : public  Annotation { };
 class BitsetAnnotation : public  Annotation { };
 class BitBoundAnnotation : public  Annotation { };
+
 } //namespace detail
 } //namespace xtypes
 } //namespace core
