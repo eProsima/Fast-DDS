@@ -17,35 +17,24 @@
  * limitations under the License.
  */
 
-#ifndef OMG_DDS_SUB_SAMPLE_INFO_HPP_
-#define OMG_DDS_SUB_SAMPLE_INFO_HPP_
+#ifndef OMG_DDS_SUB_TSAMPLE_INFO_HPP_
+#define OMG_DDS_SUB_TSAMPLE_INFO_HPP_
 
-#include <dds/sub/detail/SampleInfo.hpp>
-
-<<<<<<< HEAD
-#include <dds/sub/Rank.hpp>
+#include <dds/core/Time.hpp>
+#include <dds/core/Value.hpp>
+#include <dds/core/InstanceHandle.hpp>
 #include <dds/sub/GenerationCount.hpp>
+#include <dds/sub/Rank.hpp>
+#include <dds/sub/status/DataState.hpp>
 
-
-namespace dds {
-namespace core {
-
-class Time;
-class InstanceHandle;
-
-template<typename D>
-class Value;
-
-} //namespace core
-} //namespace dds
-
-namespace dds {
-namespace sub {
-namespace status {
-
-class DataState;
-
-} //namespace status
+namespace dds
+{
+namespace sub
+{
+template <typename DELEGATE>
+class TSampleInfo;
+}
+}
 
 /**
  * @brief
@@ -70,8 +59,8 @@ class DataState;
  *
  * @see @ref DCPS_Modules_Subscription_SampleInfo "SampleInfo" for more information
  */
-template<typename DELEGATE>
-class TSampleInfo : public dds::core::Value<DELEGATE>
+template <typename DELEGATE>
+class dds::sub::TSampleInfo : public dds::core::Value<DELEGATE>
 {
 
 public:
@@ -84,6 +73,7 @@ public:
     TSampleInfo();
     /** @endcond */
 
+public:
     /**
      * Gets the timestamp of the sample.
      *
@@ -103,7 +93,7 @@ public:
      *
      * @return the DataState
      */
-    const status::DataState state() const;
+    const dds::sub::status::DataState state() const;
 
     /**
      * Gets the GenerationCount of the sample.
@@ -115,7 +105,7 @@ public:
      *
      * @return the GenerationCount
      */
-    GenerationCount generation_count() const;
+    dds::sub::GenerationCount generation_count() const;
 
     /**
      * Gets the Rank of the sample.
@@ -127,7 +117,7 @@ public:
      *
      * @return the Rank
      */
-    Rank rank() const;
+    dds::sub::Rank rank() const;
 
     /**
      * Gets the valid_data flag.
@@ -155,22 +145,4 @@ public:
     dds::core::InstanceHandle publication_handle() const;
 };
 
-typedef dds::sub::detail::SampleInfo SampleInfo;
-
-} //namespace sub
-} //namespace dds
-
-
-#endif //OMG_DDS_SUB_SAMPLE_INFO_HPP_
-=======
-namespace dds
-{
-namespace sub
-{
-typedef detail::SampleInfo SampleInfo;
-}
-}
-
-
-#endif /* OMG_DDS_SUB_SAMPLE_INFO_HPP_ */
->>>>>>> Copyright modified in non-detail classes
+#endif /* OMG_DDS_SUB_TSAMPLE_INFO_HPP_ */

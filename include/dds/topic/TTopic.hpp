@@ -17,16 +17,30 @@
  * limitations under the License.
  */
 
-#ifndef OMG_DDS_TOPIC_TOPIC_HPP_
-#define OMG_DDS_TOPIC_TOPIC_HPP_
+#ifndef OMG_DDS_TTOPIC_TOPIC_HPP_
+#define OMG_DDS_TTOPIC_TOPIC_HPP_
 
-#include <dds/topic/detail/Topic.hpp>
-<<<<<<< HEAD
-#include <dds/topic/AnyTopic.hpp>
+#include <dds/core/conformance.hpp>
+#include <dds/core/types.hpp>
+#include <dds/core/ref_traits.hpp>
 #include <dds/domain/DomainParticipant.hpp>
+#include <dds/topic/qos/TopicQos.hpp>
+#include <dds/topic/TopicDescription.hpp>
+#include <dds/topic/AnyTopic.hpp>
 
-namespace dds {
-namespace topic {
+
+namespace dds
+{
+namespace topic
+{
+template <typename T, template <typename Q> class DELEGATE>
+class Topic;
+
+template <typename T>
+class TopicListener;
+}
+}
+
 
 /**
  * @brief
@@ -58,33 +72,27 @@ namespace topic {
  *
  * @see @ref DCPS_Modules_TopicDefinition "Topic Definition"
  */
-template<
-        typename T,
-        template<typename Q> class DELEGATE>
-class TTopic : public TAnyTopic<DELEGATE<T>>
+template <typename T, template <typename Q> class DELEGATE>
+class dds::topic::Topic : public dds::topic::TAnyTopic< DELEGATE<T> >
 {
 public:
     /**
      * Convenience typedef for the type of the data sample.
      */
-    typedef T DataType;
+    typedef T                               DataType;
 
     /**
      * Local convenience typedef for dds::topic::TopicListener.
      */
-    typedef TopicListener<T> Listener;
+    typedef TopicListener<T>                Listener;
 
-    OMG_DDS_REF_TYPE_PROTECTED_DC_T(
-            TTopic,
-            TAnyTopic,
-            T,
-            DELEGATE)
+public:
+    OMG_DDS_REF_TYPE_PROTECTED_DC_T(Topic, ::dds::topic::TAnyTopic, T, DELEGATE)
+    OMG_DDS_IMPLICIT_REF_BASE(Topic)
 
-    OMG_DDS_IMPLICIT_REF_BASE(
-            TTopic)
-
+public:
     /** @cond */
-    virtual ~TTopic();
+    virtual ~Topic();
     /** @endcond */
 
     /**
@@ -95,7 +103,7 @@ public:
      *
      * <i>QoS</i><br>
      * The Topic will be created with the QoS values specified on the last
-     * successful call to @link dds::domain::DomainParticipant::default_topic_qos(const dds::topic::qos::TopicQos& qos)
+     * successful call to @link dds::domain::DomainParticipant::default_topic_qos(const ::dds::topic::qos::TopicQos& qos)
      * dp.default_topic_qos(qos) @endlink or, if the call was never made, the
      * @ref anchor_dds_topic_qos_defaults "default" values.
      *
@@ -130,9 +138,8 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TTopic(
-            const dds::domain::DomainParticipant& dp,
-            const std::string& topic_name);
+    Topic(const dds::domain::DomainParticipant& dp,
+          const std::string& topic_name);
 
     /**
      * Create a new Topic.
@@ -142,7 +149,7 @@ public:
      *
      * <i>QoS</i><br>
      * The Topic will be created with the QoS values specified on the last
-     * successful call to @link dds::domain::DomainParticipant::default_topic_qos(const dds::topic::qos::TopicQos& qos)
+     * successful call to @link dds::domain::DomainParticipant::default_topic_qos(const ::dds::topic::qos::TopicQos& qos)
      * dp.default_topic_qos(qos) @endlink or, if the call was never made, the
      * @ref anchor_dds_topic_qos_defaults "default" values.
      *
@@ -178,10 +185,9 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TTopic(
-            const dds::domain::DomainParticipant& dp,
-            const std::string& topic_name,
-            const std::string& type_name);
+    Topic(const dds::domain::DomainParticipant& dp,
+          const std::string& topic_name,
+          const std::string& type_name);
 
     /**
      * Create a new Topic.
@@ -245,12 +251,11 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TTopic(
-            const dds::domain::DomainParticipant& dp,
-            const std::string& topic_name,
-            const dds::topic::qos::TopicQos& qos,
-            dds::topic::TopicListener<T>* listener = NULL,
-            const dds::core::status::StatusMask& mask = dds::core::status::StatusMask::none());
+    Topic(const dds::domain::DomainParticipant& dp,
+          const std::string& topic_name,
+          const dds::topic::qos::TopicQos& qos,
+          dds::topic::TopicListener<T>* listener = NULL,
+          const dds::core::status::StatusMask& mask = dds::core::status::StatusMask::none());
 
     /**
      * Create a new Topic.
@@ -315,13 +320,12 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TTopic(
-            const dds::domain::DomainParticipant& dp,
-            const std::string& topic_name,
-            const std::string& type_name,
-            const dds::topic::qos::TopicQos& qos,
-            dds::topic::TopicListener<T>* listener = NULL,
-            const dds::core::status::StatusMask& mask = dds::core::status::StatusMask::none());
+    Topic(const dds::domain::DomainParticipant& dp,
+          const std::string& topic_name,
+          const std::string& type_name,
+          const dds::topic::qos::TopicQos& qos,
+          dds::topic::TopicListener<T>* listener = NULL,
+          const dds::core::status::StatusMask& mask = dds::core::status::StatusMask::none());
 
     #if defined (OMG_DDS_X_TYPE_DYNAMIC_TYPES_SUPPORT)
     /**
@@ -340,10 +344,9 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TTopic(
-            const dds::domain::DomainParticipant& dp,
-            const std::string& topic_name,
-            const dds::core::xtypes::DynamicType type);
+    Topic(const dds::domain::DomainParticipant& dp,
+          const std::string& topic_name,
+          const dds::core::xtypes::DynamicType type);
 
     /**
      * Create a new topic with a dynamic type description. Notice that in this
@@ -363,16 +366,16 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TTopic(
-            const dds::domain::DomainParticipant& dp,
-            const std::string& topic_name,
-            const dds::core::xtypes::DynamicType type
-            const dds::topic::qos::TopicQos& qos,
-            dds::topic::TopicListener<T>* listener = NULL,
-            const dds::core::status::StatusMask& mask = dds::core::status::StatusMask::none());
+    Topic(const dds::domain::DomainParticipant& dp,
+          const std::string& topic_name,
+          const dds::core::xtypes::DynamicType type
+          const dds::topic::qos::TopicQos& qos,
+          dds::topic::TopicListener<T>* listener = NULL,
+          const dds::core::status::StatusMask& mask = dds::core::status::StatusMask::none());
 
-    #endif //OMG_DDS_X_TYPE_DYNAMIC_TYPES_SUPPORT
+    #endif /* OMG_DDS_X_TYPE_DYNAMIC_TYPES_SUPPORT */
 
+public:
     /**
      * Register a listener with the Topic.
      *
@@ -436,9 +439,8 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    void listener(
-            Listener* listener,
-            const dds::core::status::StatusMask& event_mask);
+    void listener(Listener* listener,
+                  const ::dds::core::status::StatusMask& event_mask);
 
     /**
      * Get the listener of this Topic.
@@ -453,32 +455,5 @@ public:
 
 };
 
-template<typename T>
-class Topic : public TTopic<T, detail::Topic> { };
 
-} //namespace topic
-} //namespace dds
-
-#endif //OMG_DDS_TOPIC_TOPIC_HPP_
-=======
-
-namespace dds
-{
-namespace topic
-{
-template <typename T, template <typename Q> class DELEGATE = dds::topic::detail::Topic>
-class Topic;
-}
-}
-
-/**
- * @todo RTF Issue - moved include
- * @note This include was moved here as MSVC appears to ignore any
- * attempt to 're-declare' a template class with a default argument like:
- * dds/pub/detail/DataWriter.hpp(54): error C2976: 'dds::topic::Topic' : too few template arguments
- * dds/topic/TTopic.hpp(50) : see declaration of 'dds::topic::Topic'
- */
-#include <dds/topic/TTopic.hpp>
-
-#endif /* OMG_DDS_TOPIC_TOPIC_HPP_ */
->>>>>>> Copyright modified in non-detail classes
+#endif /* OMG_DDS_TTOPIC_TOPIC_HPP_ */
