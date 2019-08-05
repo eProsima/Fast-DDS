@@ -41,7 +41,7 @@ public:
     {
     }
 
-    inner underlying() const
+    Inner underlying() const
     {
         return val;
     }
