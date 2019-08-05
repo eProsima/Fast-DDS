@@ -256,7 +256,12 @@ endif()
 ###############################################################################
 # Compile library.
 ###############################################################################
-add_subdirectory(src/cpp)
+option(EPROSIMA_BUILD_CORE_STANDALONE "Only compiles dds-core part" OFF)
+if(NOT EPROSIMA_BUILD_CORE_STANDALONE)
+    add_subdirectory(src/cpp)
+else()
+    add_subdirectory(src/cpp/dds/core)
+endif()
 
 ###############################################################################
 # Testing options
