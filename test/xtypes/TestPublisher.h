@@ -49,7 +49,8 @@ public:
         const eprosima::fastrtps::types::TypeInformation* type_info,
         const std::string& name,
         const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
-        eprosima::fastrtps::rtps::TopicKind_t topic_kind = eprosima::fastrtps::rtps::NO_KEY);
+        eprosima::fastrtps::rtps::TopicKind_t topic_kind = eprosima::fastrtps::rtps::NO_KEY,
+        bool use_typelookup = false);
 
     //!Publish a sample
     bool publish();
@@ -90,6 +91,10 @@ private:
 
     bool m_bInitialized;
 
+    bool using_typelookup_;
+
+    bool tls_callback_called_;
+
     std::mutex m_mDiscovery;
 
     std::mutex mtx_type_discovery_;
@@ -119,6 +124,12 @@ private:
                 const eprosima::fastrtps::types::TypeIdentifier* identifier,
                 const eprosima::fastrtps::types::TypeObject* object,
                 eprosima::fastrtps::types::DynamicType_ptr dyn_type) override;
+
+        void on_type_information_received(
+                eprosima::fastdds::dds::DomainParticipant* participant,
+                const eprosima::fastrtps::string_255 topic_name,
+                const eprosima::fastrtps::string_255 type_name,
+                const eprosima::fastrtps::types::TypeInformation& type_information) override;
 
         TestPublisher* parent_;
         std::atomic<bool> discovered_;

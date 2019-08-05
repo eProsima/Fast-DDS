@@ -862,7 +862,7 @@ bool DomainParticipantImpl::register_remote_type(
             return false;
         }
     }
-    else
+    else if (rtps_participant_->typelookup_manager() != nullptr)
     {
         TypeIdentifierSeq dependencies;
         TypeIdentifierSeq retrieve_objects;
@@ -896,20 +896,17 @@ bool DomainParticipantImpl::register_remote_type(
         register_callbacks_.emplace(std::make_pair(requestId, std::make_pair(type_name, callback)));
         std::vector<fastrtps::rtps::SampleIdentity> vector;
         vector.push_back(requestId); // Add itself
-        std::cout << "add_parent_request " << requestId.sequence_number() << std::endl;
 
         if (builtin::INVALID_SAMPLE_IDENTITY != request_dependencies)
         {
             vector.push_back(request_dependencies);
             child_requests_.emplace(std::make_pair(request_dependencies, requestId));
-            std::cout << "add_child_dep_request " << request_dependencies.sequence_number() << std::endl;
         }
 
         if (builtin::INVALID_SAMPLE_IDENTITY != request_objects)
         {
             vector.push_back(request_objects);
             child_requests_.emplace(std::make_pair(request_objects, requestId));
-            std::cout << "add_child_obj_request " << request_objects.sequence_number() << std::endl;
         }
 
         // Move the filled vector to the map
@@ -931,7 +928,6 @@ bool DomainParticipantImpl::check_get_type_request(
     {
         // First level request?
         std::lock_guard<std::mutex> lock(mtx_request_cb_);
-        std::cout << "check_get_type_request " << requestId.sequence_number() << std::endl;
 
         auto cb_it = register_callbacks_.find(requestId);
 
@@ -1001,12 +997,6 @@ void DomainParticipantImpl::fill_pending_dependencies(
         if (!TypeObjectFactory::get_instance()->typelookup_check_type_identifier(tiws.type_id()))
         {
             pending_identifiers.push_back(tiws.type_id());
-            std::cout << "Pending identifiers: " << std::hex << (uint32_t)tiws.type_id()._d();
-            if (tiws.type_id()._d() >= fastrtps::types::EK_MINIMAL)
-            {
-                std::cout << " - " << tiws.type_id().equivalence_hash_to_string();
-            }
-            std::cout << std::endl;
         }
         // Check if we need to retrieve the TypeObject
         if (tiws.type_id()._d() >= EK_MINIMAL)
@@ -1017,12 +1007,6 @@ void DomainParticipantImpl::fill_pending_dependencies(
             {
                 // Failed, so we must retrieve it.
                 pending_objects.push_back(tiws.type_id());
-                std::cout << "Pending TypeObject (?): " << std::hex << (uint32_t)tiws.type_id()._d();
-                if (tiws.type_id()._d() >= fastrtps::types::EK_MINIMAL)
-                {
-                    std::cout << " - " << tiws.type_id().equivalence_hash_to_string();
-                }
-                std::cout << std::endl;
             }
         }
     }
@@ -1042,7 +1026,6 @@ bool DomainParticipantImpl::check_get_dependencies_request(
 
         // First level request?
         std::lock_guard<std::mutex> lock(mtx_request_cb_);
-        std::cout << "check_get_dependencies_request " << requestId.sequence_number() << std::endl;
 
         auto cb_it = register_callbacks_.find(requestId);
 
@@ -1163,8 +1146,6 @@ void DomainParticipantImpl::remove_parent_request(
     auto cb_it = register_callbacks_.find(request);
     auto parent_it = parent_requests_.find(request);
 
-    std::cout << "remove_parent_request " << request.sequence_number() << std::endl;
-
     if (parent_requests_.end() != parent_it)
     {
         for (const fastrtps::rtps::SampleIdentity& child_id : parent_it->second)
@@ -1187,7 +1168,6 @@ void DomainParticipantImpl::remove_parent_request(
 void DomainParticipantImpl::remove_child_request(
         const fastrtps::rtps::SampleIdentity& request)
 {
-    std::cout << "remove_child_request " << request.sequence_number() << std::endl;
     auto child_it = child_requests_.find(request);
     if (child_requests_.end() != child_it)
     {

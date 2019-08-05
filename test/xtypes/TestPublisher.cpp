@@ -43,6 +43,8 @@ TestPublisher::TestPublisher()
     , m_sentSamples(0)
     , m_iWaitTime(1000)
     , m_bInitialized(false)
+    , using_typelookup_(false)
+    , tls_callback_called_(false)
     , mp_participant(nullptr)
     , mp_publisher(nullptr)
     , part_listener_(this)
@@ -59,15 +61,19 @@ bool TestPublisher::init(
         const eprosima::fastrtps::types::TypeInformation* type_info,
         const std::string& name,
         const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
-        eprosima::fastrtps::rtps::TopicKind_t topic_kind)
+        eprosima::fastrtps::rtps::TopicKind_t topic_kind,
+        bool use_typelookup)
 {
     m_Name = name;
     m_Type.swap(type);
+    using_typelookup_ = use_typelookup;
 
     ParticipantAttributes PParam;
     PParam.rtps.builtin.domainId = domain;
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
+    PParam.rtps.builtin.typelookup_config.use_client = using_typelookup_;
+    PParam.rtps.builtin.typelookup_config.use_server = using_typelookup_;
     PParam.rtps.setName(m_Name.c_str());
 
     mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &part_listener_);
@@ -210,11 +216,33 @@ void TestPublisher::PartListener::on_type_discovery(
         const eprosima::fastrtps::types::TypeObject*,
         eprosima::fastrtps::types::DynamicType_ptr dyn_type)
 {
-    std::cout << "Discovered type: " << dyn_type->get_name() << " on topic: " << topic << std::endl;
-    std::lock_guard<std::mutex> lock(parent_->mtx_type_discovery_);
-    discovered_ = true;
-    parent_->disc_type_ = dyn_type;
-    parent_->cv_type_discovery_.notify_one();
+    if (!parent_->using_typelookup_ || parent_->tls_callback_called_)
+    {
+        std::cout << "Discovered type: " << dyn_type->get_name() << " on topic: " << topic << std::endl;
+        std::lock_guard<std::mutex> lock(parent_->mtx_type_discovery_);
+        discovered_ = true;
+        parent_->disc_type_ = dyn_type;
+        parent_->cv_type_discovery_.notify_one();
+    }
+}
+
+void TestPublisher::PartListener::on_type_information_received(
+        eprosima::fastdds::dds::DomainParticipant*,
+        const eprosima::fastrtps::string_255 topic_name,
+        const eprosima::fastrtps::string_255 type_name,
+        const eprosima::fastrtps::types::TypeInformation& type_information)
+{
+    std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
+        [this, topic_name](const std::string&, const types::DynamicType_ptr type)
+    {
+        std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
+        parent_->tls_callback_called_ = true;
+        on_type_discovery(nullptr, rtps::SampleIdentity(), topic_name, nullptr, nullptr, type);
+        parent_->tls_callback_called_ = false;
+    };
+
+    std::cout << "Received type information: " << type_name << " on topic: " << topic_name << std::endl;
+    parent_->mp_participant->register_remote_type(type_information, type_name.to_string(), callback);
 }
 
 void TestPublisher::runThread()

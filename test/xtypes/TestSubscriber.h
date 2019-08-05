@@ -52,7 +52,8 @@ public:
         const eprosima::fastrtps::types::TypeInformation* type_info,
         const std::string& name,
         const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
-        const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos);
+        const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos,
+        bool use_typelookup = false);
 
     //!RUN the subscriber
     void run();
@@ -107,6 +108,8 @@ private:
     eprosima::fastrtps::types::DynamicType_ptr disc_type_;
     eprosima::fastrtps::TopicAttributes topic_att;
     eprosima::fastrtps::ReaderQos reader_qos;
+    bool using_typelookup_;
+    bool tls_callback_called_;
 
 public:
     class PartListener : public eprosima::fastdds::dds::DomainParticipantListener
@@ -122,6 +125,12 @@ public:
                 const eprosima::fastrtps::types::TypeIdentifier* identifier,
                 const eprosima::fastrtps::types::TypeObject* object,
                 eprosima::fastrtps::types::DynamicType_ptr dyn_type) override;
+
+        void on_type_information_received(
+                eprosima::fastdds::dds::DomainParticipant* participant,
+                const eprosima::fastrtps::string_255 topic_name,
+                const eprosima::fastrtps::string_255 type_name,
+                const eprosima::fastrtps::types::TypeInformation& type_information) override;
 
         TestSubscriber* parent_;
         std::atomic<bool> discovered_;

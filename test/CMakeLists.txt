@@ -35,6 +35,7 @@ if(EPROSIMA_BUILD_TESTS AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER)
     add_subdirectory(communication)
     add_subdirectory(unittest)
     add_subdirectory(xtypes)
+    add_subdirectory(dds/communication)
 
     if(UNIX AND NOT APPLE AND STRICT_REALTIME)
         add_subdirectory(realtime)

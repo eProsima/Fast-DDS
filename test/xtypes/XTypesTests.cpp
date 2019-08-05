@@ -1620,6 +1620,99 @@ TEST_F(xtypestests, DISABLED_DataRepQoSXX)
     pub.waitDiscovery(false, 3);
 }
 
+
+/***** TypeLookup Service *****/
+
+/*
+ * Type discovery using TypeLookup Service (BasicStruct)
+*/
+TEST_F(XTypes, TypeLookupBasic)
+{
+    TypeSupport type(new BasicStructPubSubType());
+    const TypeInformation* type_info = TypeObjectFactory::get_instance()->get_type_information("BasicStruct");
+    TestPublisher pub;
+    TestSubscriber sub;
+
+    DataRepresentationQosPolicy dataRepQos;
+    dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+
+    pub.init("TypeLookupBasic", DOMAIN, type, nullptr, nullptr, type_info, "Pub1", &dataRepQos, NO_KEY, true);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeLookupBasic", DOMAIN, NO_KEY, TypeSupport(nullptr), nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr, true);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitTypeDiscovery(true, 3);
+
+    types::DynamicType_ptr disc_type = sub.discovered_type();
+    ASSERT_TRUE(disc_type != nullptr);
+
+    sub.register_discovered_type();
+    sub.create_datareader();
+
+    pub.waitDiscovery(true, 3);
+    sub.waitDiscovery(true, 3);
+}
+
+/*
+ * Type discovery using TypeLookup Service (MapMapBoundsStruct)
+*/
+TEST_F(XTypes, TypeLookupMapMapBounds)
+{
+    TypeSupport type(new MapMapBoundsStructPubSubType());
+    const TypeInformation* type_info = TypeObjectFactory::get_instance()->get_type_information("MapMapBoundsStruct");
+    TestPublisher pub;
+    TestSubscriber sub;
+
+    DataRepresentationQosPolicy dataRepQos;
+    dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+
+    pub.init("TypeLookupMapMapBoundsStruct", DOMAIN, type, nullptr, nullptr, type_info, "Pub1", &dataRepQos, NO_KEY, true);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeLookupMapMapBoundsStruct", DOMAIN, NO_KEY, TypeSupport(nullptr), nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr, true);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitTypeDiscovery(true, 3);
+
+    types::DynamicType_ptr disc_type = sub.discovered_type();
+    ASSERT_TRUE(disc_type != nullptr);
+
+    sub.register_discovered_type();
+    sub.create_datareader();
+
+    pub.waitDiscovery(true, 3);
+    sub.waitDiscovery(true, 3);
+}
+
+/*
+ * Type discovery using TypeLookup Service (MapMapBoundsStruct), but subscriber offers the type
+*/
+TEST_F(XTypes, TypeLookupMapMapBoundsSub)
+{
+    TypeSupport type(new MapMapBoundsStructPubSubType());
+    const TypeInformation* type_info = TypeObjectFactory::get_instance()->get_type_information("MapMapBoundsStruct");
+    TestPublisher pub;
+    TestSubscriber sub;
+
+    DataRepresentationQosPolicy dataRepQos;
+    dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+
+    pub.init("TypeLookupMapMapBoundsStructSub", DOMAIN, TypeSupport(nullptr), nullptr, nullptr, nullptr, "Pub1", &dataRepQos, NO_KEY, true);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeLookupMapMapBoundsStructSub", DOMAIN, NO_KEY, type, nullptr, nullptr, type_info, "Sub1", &dataRepQos, nullptr, true);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    pub.waitTypeDiscovery(true, 3);
+
+    types::DynamicType_ptr disc_type = pub.discovered_type();
+    ASSERT_TRUE(disc_type != nullptr);
+}
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
