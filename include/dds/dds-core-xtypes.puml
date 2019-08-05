@@ -1,0 +1,285 @@
+@startuml
+
+set namespaceSeparator ::
+
+namespace dds::core #DDDDDD {
+
+class Reference < DELEGATE > {
+
+# DELEGATE_REF_T impl_
+
++ DECLARE_TYPE_TRAITS(TYPE)
++ Reference(dds::core::null_type&)
++ Reference(const Reference& ref)
++ Reference <D> (const Reference<D>& ref)
++ explicit Reference(DELEGATE_T* p)
++ explicit Reference(const DELEGATE_REF_T& p)
++ ~Reference()
++ operator DELEGATE_REF_T() const
++ bool operator== <R>(const R& ref) const
++ bool operator!= <R>(const R& ref) const
++ Reference& operator=<D>(const Reference<D>& that)
++ Reference& operator=<R>(const R& rhs)
++ Reference& operator=(const null_type)
++ bool is_nil() const
++ bool operator==(const null_type) const
++ bool operator!=(const null_type nil) const
++ DELEGATE_REF_T& delegate()
++ const DELEGATE_REF_T& delegate() const
++ DELEGATE* operator->()
++ const DELEGATE* operator->() const
++ operator DELEGATE_REF_T& ()
++ operator const DELEGATE_REF_T& () const
+
+# Reference() {}
+# void set_ref(DELEGATE_T* p)
+
+- void* operator new(size_t)
+
+}
+
+
+namespace dds::core::xtypes #CCCCCC{
+
+class TDynamicData <DELEGATE, DELEGATE_TYPE> {
+
++ TDynamicData(const TDynamicType<DELEGATE_TYPE>& type)
++ void value<T>(uint32_t mid, const T& v) const
++ T value<T>(const std::string& mid, const T& v) const
++ T value<T>(uint32_t mid) const
++ T value<T>(const std::string& mid) const
++ TDynamicType<DELEGATE_TYPE> type() const
++ MemberType member_type(uint32_t id) const
++ MemberType member_type(const std::string& name) const
+}
+
+class TDynamicType <DELEGATE>{
+
++ const std::string& name() const
++ TypeKind kind() const
++ const std::vector< Annotation >& annotations() const
++ bool operator == (const TDynamicType& that) const
++ bool operator != (const TDynamicType& that) const
+
+__Protected Constructors__
+# TDynamicType(const std::string& name, TypeKind kind)
+# TDynamicType(const std::string& name,TypeKind kind,const Annotation& annotation)
+# TDynamicType(const std::string& name, TypeKind kind, const std::vector<Annotation>& annotations)
+# TDynamicType<AnnotationIter> (const std::string& name,TypeKind kind,const AnnotationIter& begin, const AnnotationIter& end)
+# TDynamicType(const TDynamicType& other) = default
+
+__Privately Instantiated Macro__
+- OMG_DDS_REF_TYPE_PROTECTED_DC(TDynamicType, Reference, DELEGATE)
+
+}
+
+
+
+class TMemberType <DELEGATE, OTHER_DELEGATE> {
+
++ TMemberType(const std::string& name,const TDynamicType<OTHER_DELEGATE>& type)
++ TMemberType(const std::string& name, const TDynamicType<OTHER_DELEGATE>& type,const std::vector<Annotation>& annotations)
++ TMemberType<AnnotationIter>(const std::string& name,const TDynamicType<OTHER_DELEGATE>& type,const AnnotationIter& begin,const AnnotationIter& end)
++ const std::string& name() const
++ const dds::core::xtypes::TDynamicType<OTHER_DELEGATE>& type() const
++ TMemberType add_annotation(const Annotation& annotation)
++ TMemberType remove_annotation(const Annotation& annotation)
++ bool is_optional() const
++ bool is_shared() const
++ bool is_key() const
++ bool is_must_understand() const
++ bool is_bitset() const
++ bool has_bitbound() const
++ int32_t get_bitbound() const
++ bool has_id() const
++ int32_t get_id() const
+
+__Privately Instantiated Macro__
+- OMG_DDS_REF_TYPE_PROTECTED_DC(TMemberType, Reference, DELEGATE)
+}
+
+class dynamic_type_traits <T> << (S, #ff7000) Struct>> {
++ static constexpr TypeKind TYPE_ID = TypeKind::NO_TYPE
++ static constexpr const char* const NAME = "no_type"
+}
+
+class PrimitiveType <T>{
++ PrimitiveType()
+}
+
+class TCollectionType <DELEGATE> {
+
++ constexpr static uint32_t UNBOUNDED = 0xFFFFFFFF
++ uint32_t bounds() const
+
+# TCollectionType(const std::string& name, TypeKind kind)
+
+}
+
+class TMapType <DELEGATE, DELEGATE_K, DELEGATE_V> {
++ TMapType(const TDynamicType<DELEGATE_K>& key_type, const TDynamicType<DELEGATE_V>& value_type)
++ TMapType(const TDynamicType<DELEGATE_K>& key_type,const TDynamicType<DELEGATE_V>& value_type, uint32_t bounds)
++ const TDynamicType<DELEGATE_K>& key_type()
++ const TDynamicType<DELEGATE_V>& value_type()
+}
+
+
+class TSequenceType < DELEGATE, DELEGATE_T>{
++ TSequenceType( const TDynamicType<DELEGATE_T>& type )
+
++ TSequenceType(const TDynamicType<DELEGATE_T>& type, uint32_t bounds)
++ const TDynamicType<DELEGATE_T>& key_type() const
+}
+
+
+class TStringType <DELEGATE> {
++ TStringType(uint32_t bounds)
+}
+
+class TStructType <DELEGATE> {
+
++ TStructType(const std::string& name)
+
++ TStructType(\
+const std::string& name,\
+const TStructType& parent,\
+const std::vector<MemberType>& members)
++ TStructType<typename MemberIter>(\
+const std::string& name,\
+const TStructType& parent,\
+const MemberIter& begin,\
+const MemberIter& end)
++ TStructType(\
+const std::string& name,\
+const TStructType& parent,\
+const std::vector<MemberType>& members,\
+const Annotation& annotation)
++ TStructType(\
+const std::string& name,\
+const TStructType& parent,\
+const std::vector<MemberType>& members,\
+const std::vector<Annotation>& annotations)
++ TStructType <typename AnnotationIter, typename MemberIter>(\
+const std::string& name,\
+const TStructType& parent,\
+const MemberIter& member_begin,\
+const MemberIter& member_end,\
+const AnnotationIter& annotation_begin,\
+const AnnotationIter& annotation_end)
++ TStructType parent() const
++ const std::vector<MemberType>& members() const
++ const MemberType& member(uint32_t id) const
++ const MemberType& member(const std::string& name) const
++ const std::vector<Annotation>& annotations() const
++ TStructType add_member(const MemberType& member) const
++ TStructType remove_member(const MemberType& member) const
++ TStructType add_annotation(const Annotation& annotation) const
++ TStructType remove_annotation(const Annotation& annotation) const
+}
+
+class TUnionCase <T,DELEGATE<Q>> {
++ TUnionCase()
++ TUnionCase(\
+T discriminator,\
+const MemberType& member)
++ T discriminator()
++ const MemberType& member()
+}
+
+class TAnnotation <typename DELEGATE>{
++ OMG_DDS_REF_TYPE_PROTECTED_DC(TAnnotation, Reference, DELEGATE)
++ TypeKind kind() const;
+# TAnnotation(const TypeKind& kind);
+}
+
+
+class TIdAnnotation <typename DELEGATE> {
++ TIdAnnotation(uint32_t id);
++ uint32_t id() const;
+}
+
+
+class TKeyAnnotation <DELEGATE>{
++ TKeyAnnotation();
+}
+
+class TSharedAnnotation <DELEGATE>{
++ TSharedAnnotation();
+}
+
+class TNestedAnnotation<DELEGATE>{
++ TNestedAnnotation();
+}
+
+class TExtensibilityAnnotation <DELEGATE>{
++ TExtensibilityAnnotation(ExtensibilityKind xkind);
++ ExtensibilityKind extensibility_kind() const;
+}
+
+class TMustUnderstandAnnotation <DELEGATE>{
++ TMustUnderstandAnnotation();
+}
+
+class TVerbatimAnnotation <DELEGATE>{
++ TVerbatimAnnotation(const std::string& text);
++ const std::string& verbatim_text() const;
+}
+
+class TBitsetAnnotation <DELEGATE>{
+ +TBitsetAnnotation();
+}
+
+class  TBitBoundAnnotation <DELEGATE>{
++ TBitBoundAnnotation(uint32_t bound)
+}
+
+class TTypeProvider<typename DELEGATE> {
++ static TDynamicType<DELEGATE> load_type(const std::string& uri);
++ static std::vector<TDynamicType<DELEGATE>> load_types(const std::string& uri);
++ static TDynamicType<DELEGATE> load_type(const std::string& uri, const std::string& name);
+}
+
+
+}
+}
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TIdAnnotation
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TKeyAnnotation
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TSharedAnnotation
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TNestedAnnotation
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TExtensibilityAnnotation
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TMustUnderstandAnnotation
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TVerbatimAnnotation
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TBitsetAnnotation
+dds::core::xtypes::TAnnotation <|-- dds::core::xtypes::TBitBoundAnnotation
+
+
+dds::core::Reference <|-- dds::core::xtypes::TDynamicData
+dds::core::Reference <|-- dds::core::xtypes::TDynamicType
+dds::core::Reference <|-- dds::core::xtypes::TMemberType
+dds::core::Reference <|-- dds::core::xtypes::TUnionCase
+dds::core::Reference <|-- dds::core::xtypes::TAnnotation
+
+dds::core::xtypes::TDynamicType <|-- dds::core::xtypes::PrimitiveType
+dds::core::xtypes::TDynamicType <|-- dds::core::xtypes::TCollectionType
+dds::core::xtypes::TDynamicType <|-- dds::core::xtypes::TStructType
+dds::core::xtypes::TDynamicType <|-- dds::core::xtypes::TStructForwardDeclaration
+
+dds::core::xtypes::TCollectionType <|-- dds::core::xtypes::TMapType
+dds::core::xtypes::TCollectionType <|-- dds::core::xtypes::TSequenceType
+dds::core::xtypes::TCollectionType <|-- dds::core::xtypes::TStringType
+
+
+dds::core::xtypes::PrimitiveType --> dds::core::xtypes::dynamic_type_traits
+
+dds::core::xtypes::TDynamicData --> dds::core::xtypes::TDynamicType
+dds::core::xtypes::TSequenceType --> dds::core::xtypes::TDynamicType
+dds::core::xtypes::TMapType --> dds::core::xtypes::TDynamicType
+dds::core::xtypes::TTypeProvider --> dds::core::xtypes::TDynamicType
+dds::core::xtypes::TMemberType --> dds::core::xtypes::TDynamicType
+dds::core::xtypes::TDynamicType --> dds::core::xtypes::TAnnotation
+
+dds::core::xtypes::TDynamicData --> dds::core::xtypes::TMemberType
+dds::core::xtypes::TStructType --> dds::core::xtypes::TMemberType
+dds::core::xtypes::TUnionCase --> dds::core::xtypes::TMemberType
+
+@enduml

@@ -1,8 +1,8 @@
-/* Copyright 2010, Object Management Group, Inc.
+/*
+ * Copyright 2010, Object Management Group, Inc.
  * Copyright 2010, PrismTech, Corp.
  * Copyright 2010, Real-Time Innovations, Inc.
  * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
- * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,19 +20,18 @@
 #ifndef OMG_DDS_CORE_EXCEPTION_HPP_
 #define OMG_DDS_CORE_EXCEPTION_HPP_
 
+#include <dds/core/macros.hpp>
+
 #include <stdexcept>
 #include <string>
-#include <dds/core/macros.hpp>
 
 #if defined _MSC_VER
 #   pragma warning (push)
 #   pragma warning (disable:4275) // non dll-interface class 'std::foo_error' used as base for dll-interface class 'dds::core::BarError'
 #endif
 
-namespace dds
-{
-namespace core
-{
+namespace dds {
+namespace core {
 
 /**
  * @brief
@@ -362,12 +361,12 @@ public:
 /** @endcond */
 };
 
-}
-}
+} //namespace core
+} //namespace dds
 
 #if defined _MSC_VER
 #   pragma warning (pop)
 #endif
 
+#endif //OMG_DDS_CORE_EXCEPTION_HPP_
 
-#endif /* OMG_DDS_CORE_EXCEPTION_HPP_ */
