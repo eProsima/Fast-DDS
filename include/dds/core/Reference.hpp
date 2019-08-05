@@ -23,6 +23,7 @@
 #include <dds/core/types.hpp>
 #include <dds/core/refmacros.hpp>
 #include <dds/core/ref_traits.hpp> //used when macros of refmacros.hpp expand
+
 namespace dds {
 namespace core {
 
