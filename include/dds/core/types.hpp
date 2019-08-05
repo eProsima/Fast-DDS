@@ -1,8 +1,8 @@
-/* Copyright 2010, Object Management Group, Inc.
+/*
+ * Copyright 2010, Object Management Group, Inc.
  * Copyright 2010, PrismTech, Corp.
  * Copyright 2010, Real-Time Innovations, Inc.
  * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
- * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,19 +20,16 @@
 #ifndef OMG_DDS_CORE_TYPES_HPP_
 #define OMG_DDS_CORE_TYPES_HPP_
 
-// ISO C++ Includes
-#include <string>
-#include <vector>
-
-// DDS Includes
 #include <dds/core/detail/inttypes.hpp>
 #include <dds/core/macros.hpp>
 #include <dds/core/detail/conformance.hpp>
 
-namespace dds
-{
-namespace core
-{
+#include <string>
+#include <vector>
+
+namespace dds {
+namespace core {
+
 /**
  * Use a std::vector<uint8_t> to hold a sequence of bytes.
  */
@@ -43,11 +40,11 @@ typedef std::vector<uint8_t> ByteSeq;
  */
 typedef std::vector<std::string> StringSeq;
 
-// DDS Null-Reference
 /**
  * @brief This class is used to create dds::core::null objects.
  */
 class OMG_DDS_API null_type { };
+
 /**
  * This is the DDS Null-Reference.<br>
  * A dds reference object that doesn't reference to anything can be compared with this object.
@@ -62,15 +59,7 @@ class OMG_DDS_API null_type { };
  */
 extern const null_type OMG_DDS_API null;
 
-/** @cond
- * Duplicate in CorePolicy.hpp. Why?
- */
-namespace policy
-{
-typedef uint32_t QosPolicyId;
-}
-/** @endcond */
-}
-}
+} //namespace core
+} //namespace dds
 
-#endif /* OMG_DDS_CORE_TYPES_HPP_ */
+#endif // OMG_DDS_CORE_TYPES_HPP_
