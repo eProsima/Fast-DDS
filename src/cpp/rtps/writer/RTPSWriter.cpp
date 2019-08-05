@@ -56,6 +56,7 @@ RTPSWriter::RTPSWriter(
 #endif
     , liveliness_kind_(att.liveliness_kind)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
+    , liveliness_announcement_period_(att.liveliness_announcement_period)
 {
     mp_history->mp_writer = this;
     mp_history->mp_mutex = &mp_mutex;
@@ -244,6 +245,11 @@ const LivelinessQosPolicyKind& RTPSWriter::get_liveliness_kind() const
 const Duration_t& RTPSWriter::get_liveliness_lease_duration() const
 {
     return liveliness_lease_duration_;
+}
+
+const Duration_t& RTPSWriter::get_liveliness_announcement_period() const
+{
+    return liveliness_announcement_period_;
 }
 
 }  // namespace rtps

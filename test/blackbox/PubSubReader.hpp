@@ -58,7 +58,10 @@ private:
     {
     public:
 
-        ParticipantListener(PubSubReader &reader) : reader_(reader) {}
+        ParticipantListener(
+                PubSubReader &reader)
+            : reader_(reader)
+        {}
 
         ~ParticipantListener() {}
 
@@ -76,6 +79,7 @@ private:
             if(info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
             {
                 reader_.participant_matched();
+
             }
             else if(info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
                     info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
@@ -111,7 +115,8 @@ private:
     {
     public:
 
-        Listener(PubSubReader &reader)
+        Listener(
+                PubSubReader &reader)
             : reader_(reader)
             , times_deadline_missed_(0)
         {}
@@ -132,16 +137,18 @@ private:
             }
         }
 
-        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, eprosima::fastrtps::rtps::MatchingInfo& info) override
+        void onSubscriptionMatched(
+                eprosima::fastrtps::Subscriber* /*sub*/,
+                eprosima::fastrtps::rtps::MatchingInfo& info) override
         {
             if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
             {
-                std::cout << "Matched publisher " << info.remoteEndpointGuid << std::endl;
+                std::cout << "Subscriber matched publisher " << info.remoteEndpointGuid << std::endl;
                 reader_.matched();
             }
             else
             {
-                std::cout << "Unmatched publisher " << info.remoteEndpointGuid << std::endl;
+                std::cout << "Subscriber unmatched publisher " << info.remoteEndpointGuid << std::endl;
                 reader_.unmatched();
             }
         }
@@ -166,10 +173,12 @@ private:
             if (status.alive_count_change == 1)
             {
                 reader_.liveliness_recovered();
+
             }
             else if (status.not_alive_count_change == 1)
             {
                 reader_.liveliness_lost();
+
             }
         }
 
@@ -193,7 +202,8 @@ private:
 
 public:
 
-    PubSubReader(const std::string& topic_name)
+    PubSubReader(
+            const std::string& topic_name)
         : participant_listener_(*this)
         , listener_(*this)
         , participant_(nullptr)
@@ -394,18 +404,18 @@ public:
         std::cout << "Reader removal finished..." << std::endl;
     }
 
-    void wait_liveliness_recovered()
+    void wait_liveliness_recovered(unsigned int times = 1)
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
-        liveliness_cv_.wait(lock, [&](){ return times_liveliness_recovered_ == 1; });
+        liveliness_cv_.wait(lock, [&](){ return times_liveliness_recovered_ == times; });
     }
 
-    void wait_liveliness_lost()
+    void wait_liveliness_lost(unsigned int times = 1)
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
-        liveliness_cv_.wait(lock, [&]() { return times_liveliness_lost_ == 1; });
+        liveliness_cv_.wait(lock, [&]() { return times_liveliness_lost_ == times; });
     }
 
 #if HAVE_SECURITY

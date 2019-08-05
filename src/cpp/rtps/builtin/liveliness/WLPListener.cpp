@@ -66,7 +66,7 @@ void WLPListener::onNewCacheChangeAdded(
     }
     //Check the serializedPayload:
     auto history = reader->getHistory();
-    for(auto ch = history->changesBegin(); ch!=history->changesEnd();++ch)
+    for(auto ch = history->changesBegin(); ch!=history->changesEnd(); ++ch)
     {
         if((*ch)->instanceHandle == change->instanceHandle && (*ch)->sequenceNumber < change->sequenceNumber)
         {
@@ -74,13 +74,22 @@ void WLPListener::onNewCacheChangeAdded(
             break;
         }
     }
-    if(change->serializedPayload.length>0)
+    if (change->serializedPayload.length > 0)
     {
-        for(uint8_t i =0;i<12;++i)
+        if (PL_CDR_BE == change->serializedPayload.data[1])
         {
-            guidP.value[i] = change->serializedPayload.data[i];
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
         }
-        livelinessKind = (LivelinessQosPolicyKind)(change->serializedPayload.data[15]-0x01);
+        else
+        {
+            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+        }
+
+        for(size_t i = 0; i<12; ++i)
+        {
+            guidP.value[i] = change->serializedPayload.data[i + 4];
+        }
+        livelinessKind = (LivelinessQosPolicyKind)(change->serializedPayload.data[19]-0x01);
 
     }
     else
@@ -130,9 +139,9 @@ bool WLPListener::computeKey(CacheChange_t* change)
     if(change->instanceHandle == c_InstanceHandle_Unknown)
     {
         SerializedPayload_t* pl = &change->serializedPayload;
-        if(pl->length >= 16)
+        if(pl->length >= 20)
         {
-            memcpy(change->instanceHandle.value, pl->data, 16);
+            memcpy(change->instanceHandle.value, pl->data + 4, 16);
             return true;
         }
         return false;
