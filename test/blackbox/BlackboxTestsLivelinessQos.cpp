@@ -103,8 +103,8 @@ TEST(LivelinessQos, Liveliness_Automatic_BestEffort)
 //! Liveliness lease duration is short in comparison to writer write/assert rate
 TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME, true);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME, true);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
     uint32_t writer_sleep_ms = 500;
@@ -167,8 +167,8 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
 //! Liveliness lease duration is short in comparison to writer write/assert rate
 TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_BestEffort)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME, true);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME, true);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
     uint32_t writer_sleep_ms = 500;
@@ -347,8 +347,8 @@ TEST(LivelinessQos, LongLiveliness_ManualByParticipant_BestEffort)
 //! Liveliness lease duration is short in comparison to writer write/assert rate
 TEST(LivelinessQos, ShortLiveliness_ManualByTopic_Reliable)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME, true);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME, true);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
     uint32_t writer_sleep_ms = 100;
@@ -409,8 +409,8 @@ TEST(LivelinessQos, ShortLiveliness_ManualByTopic_Reliable)
 //! Liveliness lease duration is short in comparison to writer write/assert rate
 TEST(LivelinessQos, ShortLiveliness_ManualByTopic_BestEffort)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME, true);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME, true);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
     uint32_t writer_sleep_ms = 100;
@@ -647,8 +647,8 @@ TEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliable)
 //! Liveliness is short in comparison to the writer write/assert rate
 TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME, true);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME, true);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
     uint32_t writer_sleep_ms = 1000;
@@ -766,8 +766,8 @@ TEST(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEffort)
 //! Liveliness is short in comparison to the writer write/assert rate
 TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
 {
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME, true);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME, true);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds and number of samples to write
     uint32_t writer_sleep_ms = 1000;
@@ -1098,8 +1098,7 @@ TEST(LivelinessQos, TwoWriters_OneReader_ManualByTopic)
 
     publishers.pub_wait_discovery();
     subscribers.sub_wait_discovery();
-    // Just sleep a bit to give the subscriber the chance to detect that writers are alive
-    std::this_thread::sleep_for(std::chrono::milliseconds(lease_duration_ms));
+    subscribers.sub_wait_liveliness_recovered(2u);
 
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 0u);
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 2u);
@@ -1274,7 +1273,7 @@ TEST(LivelinessQos, TwoWriters_TwoReaders)
     subscribers.sub_wait_discovery();
 
     publishers.assert_liveliness(1u);
-    std::this_thread::sleep_for(std::chrono::milliseconds(announcement_period_ms * 10));
+    subscribers.sub_wait_liveliness_recovered(3u);
 
     // Both subscribers are notified that liveliness was recovered
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 3u);
