@@ -51,6 +51,7 @@ add_library(${CORE_STANDALONE} ${${CORE_STANDALONE}_source_files})
 target_include_directories(${CORE_STANDALONE}
     PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include/fastrtps>
     )
 
 set_target_properties(${CORE_STANDALONE}
