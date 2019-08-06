@@ -17,7 +17,9 @@
 
 #ifndef EPROSIMA_DDS_CORE_XTYPES_DETAIL_COLLECTION_TYPES_HPP_
 #define EPROSIMA_DDS_CORE_XTYPES_DETAIL_COLLECTION_TYPES_HPP_
+
 #include <dds/core/xtypes/detail/DynamicType.hpp>
+
 namespace dds {
 namespace core {
 namespace xtypes {

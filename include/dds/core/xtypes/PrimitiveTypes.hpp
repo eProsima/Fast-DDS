@@ -34,11 +34,11 @@ struct dynamic_type_traits
     static constexpr const char* const NAME = "no_type";
 };
 
-template<typename T>
-class PrimitiveType : public DynamicType
+template<typename T, typename DELEGATE>
+class TPrimitiveType : public TDynamicType<DELEGATE>
 {
 public:
-    PrimitiveType()
+    TPrimitiveType()
         : DynamicType(
                 dynamic_type_traits<T>::TYPE_ID,
                 dynamic_type_traits<T>::NAME)
