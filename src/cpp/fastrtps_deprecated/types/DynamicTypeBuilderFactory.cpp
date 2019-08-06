@@ -1047,14 +1047,36 @@ void DynamicTypeBuilderFactory::build_type_object(
             case TK_FLOAT128:
             case TK_CHAR8:
             case TK_CHAR16:
+            {
+                break;
+            }
             // String TKs
             case TK_STRING8:
+                {
+                    build_string8_type_code(descriptor);
+                    break;
+                }
             case TK_STRING16:
+                {
+                    build_string16_type_code(descriptor);
+                    break;
+                }
             // Collection TKs
             case TK_SEQUENCE:
+                {
+                    build_sequence_type_code(descriptor, object, complete);
+                    break;
+                }
             case TK_ARRAY:
+                {
+                    build_array_type_code(descriptor, object, complete);
+                    break;
+                }
             case TK_MAP:
-                break;
+                {
+                    build_map_type_code(descriptor, object, complete);
+                    break;
+                }
 
             // Constructed/Named types
             case TK_ALIAS:
@@ -1095,6 +1117,305 @@ void DynamicTypeBuilderFactory::build_type_object(
                 }
                 break;
         }
+    }
+}
+
+void DynamicTypeBuilderFactory::build_string8_type_code(
+        const TypeDescriptor* descriptor) const
+{
+    const TypeIdentifier* identifier =
+        TypeObjectFactory::get_instance()->get_string_identifier(
+            descriptor->get_bounds(),
+            false);
+
+    TypeObjectFactory::get_instance()->add_type_identifier(descriptor->get_name(), identifier);
+}
+
+void DynamicTypeBuilderFactory::build_string16_type_code(
+        const TypeDescriptor* descriptor) const
+{
+    const TypeIdentifier* identifier =
+        TypeObjectFactory::get_instance()->get_string_identifier(
+            descriptor->get_bounds(),
+            true);
+
+    TypeObjectFactory::get_instance()->add_type_identifier(descriptor->get_name(), identifier);
+}
+
+void DynamicTypeBuilderFactory::build_sequence_type_code(
+        const TypeDescriptor* descriptor,
+        TypeObject& object,
+        bool complete) const
+{
+    if (complete)
+    {
+        object._d(EK_COMPLETE);
+        object.complete()._d(TK_SEQUENCE);
+        object.complete().sequence_type().collection_flag().IS_FINAL(false);
+        object.complete().sequence_type().collection_flag().IS_APPENDABLE(false);
+        object.complete().sequence_type().collection_flag().IS_MUTABLE(false);
+        object.complete().sequence_type().collection_flag().IS_NESTED(false);
+        object.complete().sequence_type().collection_flag().IS_AUTOID_HASH(false);
+
+        // Apply annotations
+        apply_type_annotations(object.complete().sequence_type().header().detail().ann_custom(), descriptor);
+
+        object.complete().sequence_type().header().detail().type_name(descriptor->get_name());
+        object.complete().sequence_type().header().common().bound(descriptor->get_bounds());
+        object.complete().sequence_type().element().common().element_flags().TRY_CONSTRUCT1(false);
+        object.complete().sequence_type().element().common().element_flags().TRY_CONSTRUCT2(false);
+        object.complete().sequence_type().element().common().element_flags().IS_EXTERNAL(false);
+        object.complete().sequence_type().element().common().element_flags().IS_OPTIONAL(false);
+        object.complete().sequence_type().element().common().element_flags().IS_MUST_UNDERSTAND(false);
+        object.complete().sequence_type().element().common().element_flags().IS_KEY(false);
+        object.complete().sequence_type().element().common().element_flags().IS_DEFAULT(false);
+
+        //TypeIdentifier ident;
+        //build_type_identifier(descriptor->get_base_type()->descriptor_, ident);
+        TypeObject obj;
+        build_type_object(descriptor->get_element_type(), obj, complete);
+        TypeIdentifier ident = *TypeObjectFactory::get_instance()->get_type_identifier(
+                                    descriptor->get_element_type()->get_name());
+
+        object.complete().sequence_type().element().common().type(ident);
+
+        const TypeIdentifier* identifier =
+            TypeObjectFactory::get_instance()->get_sequence_identifier(
+                descriptor->get_element_type()->get_name(),
+                descriptor->get_bounds(),
+                true);
+
+        TypeObjectFactory::get_instance()->add_type_object(descriptor->get_name(), identifier, &object);
+    }
+    else
+    {
+        object._d(EK_MINIMAL);
+        object.minimal()._d(TK_SEQUENCE);
+        object.minimal().sequence_type().collection_flag().IS_FINAL(false);
+        object.minimal().sequence_type().collection_flag().IS_APPENDABLE(false);
+        object.minimal().sequence_type().collection_flag().IS_MUTABLE(false);
+        object.minimal().sequence_type().collection_flag().IS_NESTED(false);
+        object.minimal().sequence_type().collection_flag().IS_AUTOID_HASH(false);
+
+        // Apply annotations
+        object.minimal().sequence_type().header().common().bound(descriptor->get_bounds());
+        object.minimal().sequence_type().element().common().element_flags().TRY_CONSTRUCT1(false);
+        object.minimal().sequence_type().element().common().element_flags().TRY_CONSTRUCT2(false);
+        object.minimal().sequence_type().element().common().element_flags().IS_EXTERNAL(false);
+        object.minimal().sequence_type().element().common().element_flags().IS_OPTIONAL(false);
+        object.minimal().sequence_type().element().common().element_flags().IS_MUST_UNDERSTAND(false);
+        object.minimal().sequence_type().element().common().element_flags().IS_KEY(false);
+        object.minimal().sequence_type().element().common().element_flags().IS_DEFAULT(false);
+
+        //TypeIdentifier ident;
+        //build_type_identifier(descriptor->get_base_type()->descriptor_, ident);
+        TypeObject obj;
+        build_type_object(descriptor->get_element_type(), obj);
+        TypeIdentifier ident = *TypeObjectFactory::get_instance()->get_type_identifier(
+                                    descriptor->get_element_type()->get_name());
+
+        object.minimal().sequence_type().element().common().type(ident);
+
+        const TypeIdentifier* identifier =
+            TypeObjectFactory::get_instance()->get_sequence_identifier(
+                descriptor->get_element_type()->get_name(),
+                descriptor->get_bounds(),
+                false);
+
+        TypeObjectFactory::get_instance()->add_type_object(descriptor->get_name(), identifier, &object);
+    }
+}
+
+void DynamicTypeBuilderFactory::build_array_type_code(
+        const TypeDescriptor* descriptor,
+        TypeObject& object,
+        bool complete) const
+{
+    if (complete)
+    {
+        object._d(EK_COMPLETE);
+        object.complete()._d(TK_ARRAY);
+        object.complete().array_type().collection_flag().IS_FINAL(false);
+        object.complete().array_type().collection_flag().IS_APPENDABLE(false);
+        object.complete().array_type().collection_flag().IS_MUTABLE(false);
+        object.complete().array_type().collection_flag().IS_NESTED(false);
+        object.complete().array_type().collection_flag().IS_AUTOID_HASH(false);
+
+        // Apply annotations
+        apply_type_annotations(object.complete().array_type().header().detail().ann_custom(), descriptor);
+
+        object.complete().array_type().header().detail().type_name(descriptor->get_name());
+        for (uint32_t i = 0; i < descriptor->get_bounds_size(); ++i)
+        {
+            object.complete().array_type().header().common().bound_seq().push_back(descriptor->get_bounds(i));
+        }
+        object.complete().array_type().element().common().element_flags().TRY_CONSTRUCT1(false);
+        object.complete().array_type().element().common().element_flags().TRY_CONSTRUCT2(false);
+        object.complete().array_type().element().common().element_flags().IS_EXTERNAL(false);
+        object.complete().array_type().element().common().element_flags().IS_OPTIONAL(false);
+        object.complete().array_type().element().common().element_flags().IS_MUST_UNDERSTAND(false);
+        object.complete().array_type().element().common().element_flags().IS_KEY(false);
+        object.complete().array_type().element().common().element_flags().IS_DEFAULT(false);
+
+        //TypeIdentifier ident;
+        //build_type_identifier(descriptor->get_base_type()->descriptor_, ident);
+        TypeObject obj;
+        build_type_object(descriptor->get_element_type(), obj, complete);
+        TypeIdentifier ident = *TypeObjectFactory::get_instance()->get_type_identifier(
+                                    descriptor->get_element_type()->get_name());
+
+        object.complete().array_type().element().common().type(ident);
+
+        const TypeIdentifier* identifier =
+            TypeObjectFactory::get_instance()->get_array_identifier(
+                descriptor->get_element_type()->get_name(),
+                object.complete().array_type().header().common().bound_seq(),
+                true);
+
+        TypeObjectFactory::get_instance()->add_type_object(descriptor->get_name(), identifier, &object);
+    }
+    else
+    {
+        object._d(EK_MINIMAL);
+        object.minimal()._d(TK_ARRAY);
+        object.minimal().array_type().collection_flag().IS_FINAL(false);
+        object.minimal().array_type().collection_flag().IS_APPENDABLE(false);
+        object.minimal().array_type().collection_flag().IS_MUTABLE(false);
+        object.minimal().array_type().collection_flag().IS_NESTED(false);
+        object.minimal().array_type().collection_flag().IS_AUTOID_HASH(false);
+
+        // Apply annotations
+        for (uint32_t i = 0; i < descriptor->get_bounds_size(); ++i)
+        {
+            object.minimal().array_type().header().common().bound_seq().push_back(descriptor->get_bounds(i));
+        }
+        object.minimal().array_type().element().common().element_flags().TRY_CONSTRUCT1(false);
+        object.minimal().array_type().element().common().element_flags().TRY_CONSTRUCT2(false);
+        object.minimal().array_type().element().common().element_flags().IS_EXTERNAL(false);
+        object.minimal().array_type().element().common().element_flags().IS_OPTIONAL(false);
+        object.minimal().array_type().element().common().element_flags().IS_MUST_UNDERSTAND(false);
+        object.minimal().array_type().element().common().element_flags().IS_KEY(false);
+        object.minimal().array_type().element().common().element_flags().IS_DEFAULT(false);
+
+        //TypeIdentifier ident;
+        //build_type_identifier(descriptor->get_base_type()->descriptor_, ident);
+        TypeObject obj;
+        build_type_object(descriptor->get_element_type(), obj);
+        TypeIdentifier ident = *TypeObjectFactory::get_instance()->get_type_identifier(
+                                    descriptor->get_element_type()->get_name());
+
+        object.minimal().array_type().element().common().type(ident);
+
+        const TypeIdentifier* identifier =
+            TypeObjectFactory::get_instance()->get_array_identifier(
+                descriptor->get_element_type()->get_name(),
+                object.minimal().array_type().header().common().bound_seq(),
+                false);
+
+        TypeObjectFactory::get_instance()->add_type_object(descriptor->get_name(), identifier, &object);
+    }
+}
+
+void DynamicTypeBuilderFactory::build_map_type_code(
+        const TypeDescriptor* descriptor,
+        TypeObject& object,
+        bool complete) const
+{
+    if (complete)
+    {
+        object._d(EK_COMPLETE);
+        object.complete()._d(TK_MAP);
+        object.complete().map_type().collection_flag().IS_FINAL(false);
+        object.complete().map_type().collection_flag().IS_APPENDABLE(false);
+        object.complete().map_type().collection_flag().IS_MUTABLE(false);
+        object.complete().map_type().collection_flag().IS_NESTED(false);
+        object.complete().map_type().collection_flag().IS_AUTOID_HASH(false);
+
+        // Apply annotations
+        apply_type_annotations(object.complete().map_type().header().detail().ann_custom(), descriptor);
+
+        object.complete().map_type().header().detail().type_name(descriptor->get_name());
+        object.complete().map_type().header().common().bound(descriptor->get_bounds());
+        object.complete().map_type().element().common().element_flags().TRY_CONSTRUCT1(false);
+        object.complete().map_type().element().common().element_flags().TRY_CONSTRUCT2(false);
+        object.complete().map_type().element().common().element_flags().IS_EXTERNAL(false);
+        object.complete().map_type().element().common().element_flags().IS_OPTIONAL(false);
+        object.complete().map_type().element().common().element_flags().IS_MUST_UNDERSTAND(false);
+        object.complete().map_type().element().common().element_flags().IS_KEY(false);
+        object.complete().map_type().element().common().element_flags().IS_DEFAULT(false);
+        object.complete().map_type().key().common().element_flags().TRY_CONSTRUCT1(false);
+        object.complete().map_type().key().common().element_flags().TRY_CONSTRUCT2(false);
+        object.complete().map_type().key().common().element_flags().IS_EXTERNAL(false);
+        object.complete().map_type().key().common().element_flags().IS_OPTIONAL(false);
+        object.complete().map_type().key().common().element_flags().IS_MUST_UNDERSTAND(false);
+        object.complete().map_type().key().common().element_flags().IS_KEY(false);
+        object.complete().map_type().key().common().element_flags().IS_DEFAULT(false);
+
+        //TypeIdentifier ident;
+        //build_type_identifier(descriptor->get_base_type()->descriptor_, ident);
+        TypeObject obj;
+        build_type_object(descriptor->get_element_type(), obj, complete);
+        TypeIdentifier ident = *TypeObjectFactory::get_instance()->get_type_identifier(
+                                    descriptor->get_element_type()->get_name());
+
+        build_type_object(descriptor->get_key_element_type(), obj, complete);
+        TypeIdentifier ident_key = *TypeObjectFactory::get_instance()->get_type_identifier(
+                                    descriptor->get_key_element_type()->get_name());
+
+        object.complete().map_type().element().common().type(ident);
+        object.complete().map_type().key().common().type(ident_key);
+
+        const TypeIdentifier* identifier =
+            TypeObjectFactory::get_instance()->get_map_identifier(
+                descriptor->get_key_element_type()->get_name(),
+                descriptor->get_element_type()->get_name(),
+                descriptor->get_bounds(),
+                true);
+
+        TypeObjectFactory::get_instance()->add_type_object(descriptor->get_name(), identifier, &object);
+    }
+    else
+    {
+        object._d(EK_MINIMAL);
+        object.minimal()._d(TK_MAP);
+        object.minimal().map_type().collection_flag().IS_FINAL(false);
+        object.minimal().map_type().collection_flag().IS_APPENDABLE(false);
+        object.minimal().map_type().collection_flag().IS_MUTABLE(false);
+        object.minimal().map_type().collection_flag().IS_NESTED(false);
+        object.minimal().map_type().collection_flag().IS_AUTOID_HASH(false);
+
+        // Apply annotations
+        object.minimal().map_type().header().common().bound(descriptor->get_bounds());
+        object.minimal().map_type().element().common().element_flags().TRY_CONSTRUCT1(false);
+        object.minimal().map_type().element().common().element_flags().TRY_CONSTRUCT2(false);
+        object.minimal().map_type().element().common().element_flags().IS_EXTERNAL(false);
+        object.minimal().map_type().element().common().element_flags().IS_OPTIONAL(false);
+        object.minimal().map_type().element().common().element_flags().IS_MUST_UNDERSTAND(false);
+        object.minimal().map_type().element().common().element_flags().IS_KEY(false);
+        object.minimal().map_type().element().common().element_flags().IS_DEFAULT(false);
+
+        //TypeIdentifier ident;
+        //build_type_identifier(descriptor->get_base_type()->descriptor_, ident);
+        TypeObject obj;
+        build_type_object(descriptor->get_element_type(), obj);
+        TypeIdentifier ident = *TypeObjectFactory::get_instance()->get_type_identifier(
+                                    descriptor->get_element_type()->get_name());
+
+        build_type_object(descriptor->get_key_element_type(), obj, complete);
+        TypeIdentifier ident_key = *TypeObjectFactory::get_instance()->get_type_identifier(
+                                    descriptor->get_key_element_type()->get_name());
+
+        object.minimal().map_type().element().common().type(ident);
+        object.minimal().map_type().key().common().type(ident_key);
+
+        const TypeIdentifier* identifier =
+            TypeObjectFactory::get_instance()->get_map_identifier(
+                descriptor->get_key_element_type()->get_name(),
+                descriptor->get_element_type()->get_name(),
+                descriptor->get_bounds(),
+                false);
+
+        TypeObjectFactory::get_instance()->add_type_object(descriptor->get_name(), identifier, &object);
     }
 }
 

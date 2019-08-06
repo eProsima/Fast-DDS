@@ -39,6 +39,7 @@ protected:
     friend class AnnotationDescriptor;
     friend class TypeObjectFactory;
     friend class DynamicTypeMember;
+    friend class DynamicDataHelper;
 
     DynamicType();
 
