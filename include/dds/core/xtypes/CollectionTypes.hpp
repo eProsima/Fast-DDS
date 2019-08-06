@@ -23,9 +23,9 @@
 #include <dds/core/xtypes/detail/CollectionTypes.hpp>
 #include <dds/core/xtypes/DynamicType.hpp>
 
-namespace dds{
-namespace core{
-namespace xtypes{
+namespace dds {
+namespace core {
+namespace xtypes {
 
 
 template<typename DELEGATE>
@@ -34,18 +34,12 @@ class TCollectionType : public TDynamicType<DELEGATE>
 public:
     constexpr static uint32_t UNBOUNDED = 0xFFFFFFFF;
 
-protected:
-    TCollectionType(
-            const std::string& name,
-            TypeKind kind);
-
-public:
     uint32_t bounds() const;
 
 protected:
     TCollectionType(
             const std::string& name,
-            TypeKind kind);
+            TypeKind kind); 
 };
 
 template<
