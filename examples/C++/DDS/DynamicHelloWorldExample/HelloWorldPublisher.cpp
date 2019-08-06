@@ -60,8 +60,6 @@ bool HelloWorldPublisher::init()
     m_Hello->return_loaned_value(array);
 
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = 0;
-    PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_pub");
     mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam);
 

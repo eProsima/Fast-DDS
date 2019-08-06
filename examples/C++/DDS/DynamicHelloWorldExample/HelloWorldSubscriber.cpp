@@ -39,7 +39,6 @@ HelloWorldSubscriber::HelloWorldSubscriber():mp_participant(nullptr),
 bool HelloWorldSubscriber::init()
 {
     ParticipantAttributes PParam;
-    PParam.rtps.builtin.domainId = 0;
     PParam.rtps.setName("Participant_sub");
     mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &m_listener);
     if(mp_participant==nullptr)
