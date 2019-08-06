@@ -88,17 +88,6 @@ StatefulReader::StatefulReader(
 #endif
             )
 {
-    // Update resource limits on proxy changes set adding 256 possibly missing changes
-    proxy_changes_config_.initial += 256u;
-    if (proxy_changes_config_.increment == 0)
-    {
-        proxy_changes_config_.maximum += 256u;
-    }
-    else
-    {
-        proxy_changes_config_.maximum = std::max(proxy_changes_config_.maximum, proxy_changes_config_.initial);
-    }
-
     const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
     for (size_t n = 0; n < att.matched_writers_allocation.initial; ++n)
     {
@@ -156,19 +145,20 @@ bool StatefulReader::matched_writer_add(
         matched_writers_pool_.pop_back();
     }
 
-    wp->start(wdata);
-
     for (const Locator_t& locator : wp->remote_locators_shrinked())
     {
         getRTPSParticipant()->createSenderResources(locator);
     }
 
+    SequenceNumber_t initial_sequence;
     if (persist)
     {
         add_persistence_guid(wdata.guid(), wdata.persistence_guid());
-        wp->loaded_from_storage(get_last_notified(wdata.guid()));
+        initial_sequence = get_last_notified(wdata.guid());
     }
     
+    wp->start(wdata, initial_sequence);
+
     matched_writers_.push_back(wp);
 
     if (liveliness_lease_duration_ < c_TimeInfinite)
