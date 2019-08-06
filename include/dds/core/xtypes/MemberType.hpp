@@ -48,6 +48,10 @@ public:
             const std::string& name,
             const TDynamicType<OTHER_DELEGATE>& type);
 
+    TMemberType(const std::string& name,
+                const dds::core::xtypes::DynamicType& type,
+                const Annotation& annotation);
+
     TMemberType(
             const std::string& name,
             const TDynamicType<OTHER_DELEGATE>& type,
