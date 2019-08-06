@@ -57,11 +57,11 @@ else:
 
 subscriber1_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid()), "--publishers", "2", "--samples", "10"]
         + (["--xmlfile", real_xml_file_sub] if real_xml_file_sub else []))
-publisher1_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid())]
+publisher1_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid()), "--samples", "10"]
         + (["--xmlfile", real_xml_file_pub] if real_xml_file_pub else [])
         + extra_pub_args)
 time.sleep(1)
-publisher2_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid())]
+publisher2_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid()), "--samples", "10"]
         + (["--xmlfile", real_xml_file_pub] if real_xml_file_pub else [])
         + extra_pub_args)
 subscriber2_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid()), "--publishers", "2", "--samples", "10"]
