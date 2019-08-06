@@ -45,8 +45,8 @@ public:
 
 template<
         typename T,
-        typename DELEGATE>
-class TUnionType  : public TDynamicType< DELEGATE >
+        template<typename> class DELEGATE>
+class TUnionType  : public TDynamicType<DELEGATE<T>>
 {
 public:
     TUnionType(
@@ -66,7 +66,7 @@ public:
         const std::vector<UnionCase<T>>& cases,
         const std::vector<Annotation>& annotations);
 
-    const std::vector<UnionCase<T> >& members() const;
+    const std::vector<UnionCase<T>>& members() const;
 
     const MemberType& member(
             uint32_t id) const;

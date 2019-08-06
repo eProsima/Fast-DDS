@@ -31,7 +31,6 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
-
 /**
  * This class is used to read/write data for DynamicTypes. It allows reading and
  * writing of samples in a type-safe manner but without any compile-time knowledge
