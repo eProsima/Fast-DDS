@@ -104,6 +104,8 @@ TEST(WriterProxyTests, MissingChangesUpdate)
     t2.add(SequenceNumber_t(0,1));
     ASSERT_THAT(t2, wproxy.missing_changes());
     ASSERT_EQ(SequenceNumber_t(), wproxy.available_changes_max());
+    ASSERT_EQ(0u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 1)));
+    ASSERT_EQ(1u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 2)));
 
     // 3. Simulate reception of a HEARTBEAT after two more samples are added to the writer's history
     EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
@@ -120,6 +122,10 @@ TEST(WriterProxyTests, MissingChangesUpdate)
     t2.add(SequenceNumber_t(0,3));
     ASSERT_THAT(t2, wproxy.missing_changes());
     ASSERT_EQ(SequenceNumber_t(), wproxy.available_changes_max() );
+    ASSERT_EQ(0u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 1)));
+    ASSERT_EQ(1u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 2)));
+    ASSERT_EQ(2u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 3)));
+    ASSERT_EQ(3u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 4)));
 
     // 4. Simulate reception of a DATA(6).
     wproxy.received_change_set(SequenceNumber_t(0,6));
@@ -130,6 +136,9 @@ TEST(WriterProxyTests, MissingChangesUpdate)
     t2.add(SequenceNumber_t(0, 5));
     ASSERT_THAT(t2, wproxy.missing_changes());
     ASSERT_EQ(SequenceNumber_t(), wproxy.available_changes_max());
+    ASSERT_EQ(4u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 5)));
+    ASSERT_EQ(5u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 6)));
+    ASSERT_EQ(5u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 7)));
 
     // 5. Simulate reception of a HEARTBEAT(1,6)
     EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
@@ -142,10 +151,30 @@ TEST(WriterProxyTests, MissingChangesUpdate)
                 false,
                 assert_liveliness);
 
-    t2.add(SequenceNumber_t(0,4));
-    t2.add(SequenceNumber_t(0,5));
     ASSERT_THAT(t2, wproxy.missing_changes());
     ASSERT_EQ(SequenceNumber_t(), wproxy.available_changes_max());
+    ASSERT_EQ(4u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 5)));
+    ASSERT_EQ(5u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 6)));
+    ASSERT_EQ(5u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 7)));
+
+    // 5. Simulate reception of a HEARTBEAT(1,7)
+    EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
+    wproxy.process_heartbeat(
+                heartbeat_count++,
+                SequenceNumber_t(0,1),
+                SequenceNumber_t(0,7),
+                false,
+                false,
+                false,
+                assert_liveliness);
+
+    t2.add(SequenceNumber_t(0, 7));
+    ASSERT_THAT(t2, wproxy.missing_changes());
+    ASSERT_EQ(SequenceNumber_t(), wproxy.available_changes_max());
+    ASSERT_EQ(4u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 5)));
+    ASSERT_EQ(5u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 6)));
+    ASSERT_EQ(5u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 7)));
+    ASSERT_EQ(6u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 8)));
 
     // 6. Simulate reception of all missing DATA
     wproxy.received_change_set(SequenceNumber_t(0,1));
@@ -155,8 +184,11 @@ TEST(WriterProxyTests, MissingChangesUpdate)
     wproxy.received_change_set(SequenceNumber_t(0,5));
 
     SequenceNumberSet_t t6(SequenceNumber_t(0,7));
+    t6.add(SequenceNumber_t(0,7));
     ASSERT_THAT(t6, wproxy.missing_changes());
     ASSERT_EQ(SequenceNumber_t(0,6), wproxy.available_changes_max());
+    ASSERT_EQ(0u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 7)));
+    ASSERT_EQ(1u, wproxy.unknown_missing_changes_up_to(SequenceNumber_t(0, 8)));
 
     // 7. Simulate reception of a faulty HEARTBEAT with a lower last sequence number (4)
     EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(1u);
