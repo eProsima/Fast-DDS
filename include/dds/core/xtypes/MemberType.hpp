@@ -60,6 +60,10 @@ public:
         impl()->annotation(annotation);
     }
 
+    TMemberType(const std::string& name,
+                const dds::core::xtypes::DynamicType& type,
+                const Annotation& annotation);
+
     TMemberType(
             const std::string& name,
             const TDynamicType<OTHER_DELEGATE>& type,
