@@ -80,7 +80,6 @@ public:
     /**
      * Initialize the PDP.
      * @param part Pointer to the RTPSParticipant.
-     * @param enableReader bool that indicates if DATA(p) reception should be activated
      * @return True on success
      */
     bool initPDP(
