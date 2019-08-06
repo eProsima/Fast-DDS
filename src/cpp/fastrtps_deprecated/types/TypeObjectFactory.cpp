@@ -189,7 +189,7 @@ TypeObjectFactory::~TypeObjectFactory()
 
 void TypeObjectFactory::create_builtin_annotations()
 {
-    register_builtin_annotations_types(g_instance);
+    //register_builtin_annotations_types(g_instance);
 }
 
 void TypeObjectFactory::nullify_all_entries(const TypeIdentifier* identifier)
@@ -1073,6 +1073,11 @@ const TypeIdentifier* TypeObjectFactory::get_stored_type_identifier(const TypeId
             if (*(it.second) == *identifier) return it.second;
         }
     }
+    // If isn't minimal, return directly
+    if (identifier->_d() < EK_MINIMAL)
+    {
+        return identifier;
+    }
     return nullptr;
 }
 
@@ -1097,11 +1102,109 @@ std::string TypeObjectFactory::get_type_name(const TypeIdentifier* identifier) c
 
     // Maybe they are using an external TypeIdentifier?
     const TypeIdentifier* internalId = get_stored_type_identifier(identifier);
-    if (internalId != nullptr)
+    if (internalId == identifier)
+    {
+        // If the execution reached this point, a lesser than minimal no stored identifier was provided.
+        // Calculate the name and store it.
+        return generate_name_and_store_type_identifier(identifier);
+    }
+    else if (internalId != nullptr)
     {
         return get_type_name(internalId);
     }
 
+    return "UNDEF";
+}
+
+std::string TypeObjectFactory::generate_name_and_store_type_identifier(
+        const TypeIdentifier* identifier) const
+{
+    if (identifier->_d() < EK_MINIMAL)
+    {
+        switch (identifier->_d())
+        {
+            case TI_PLAIN_ARRAY_SMALL:
+            {
+                std::vector<uint32_t> bounds;
+                for (SBound sb : identifier->array_sdefn().array_bound_seq())
+                {
+                    bounds.push_back(sb);
+                }
+                return TypeNamesGenerator::get_array_type_name(
+                    get_type_name(identifier->array_sdefn().element_identifier()),
+                    bounds,
+                    true);
+            }
+            case TI_PLAIN_ARRAY_LARGE:
+            {
+                return TypeNamesGenerator::get_array_type_name(
+                    get_type_name(identifier->array_ldefn().element_identifier()),
+                    identifier->array_ldefn().array_bound_seq(),
+                    true);
+            }
+            case TI_PLAIN_SEQUENCE_SMALL:
+            {
+                return TypeNamesGenerator::get_sequence_type_name(
+                    get_type_name(identifier->seq_sdefn().element_identifier()),
+                    identifier->seq_sdefn().bound(),
+                    true);
+            }
+            case TI_PLAIN_SEQUENCE_LARGE:
+            {
+                return TypeNamesGenerator::get_sequence_type_name(
+                    get_type_name(identifier->seq_ldefn().element_identifier()),
+                    identifier->seq_ldefn().bound(),
+                    true);
+            }
+            case TI_STRING8_SMALL:
+            {
+                return TypeNamesGenerator::get_string_type_name(
+                    identifier->string_sdefn().bound(),
+                    false,
+                    true);
+            }
+            case TI_STRING8_LARGE:
+            {
+                return TypeNamesGenerator::get_string_type_name(
+                    identifier->string_ldefn().bound(),
+                    false,
+                    true);
+            }
+            case TI_STRING16_SMALL:
+            {
+                return TypeNamesGenerator::get_string_type_name(
+                    identifier->string_sdefn().bound(),
+                    true,
+                    true);
+            }
+            case TI_STRING16_LARGE:
+            {
+                return TypeNamesGenerator::get_string_type_name(
+                    identifier->string_ldefn().bound(),
+                    true,
+                    true);
+            }
+            case TI_PLAIN_MAP_SMALL:
+            {
+                return TypeNamesGenerator::get_map_type_name(
+                    get_type_name(identifier->map_sdefn().key_identifier()),
+                    get_type_name(identifier->map_sdefn().element_identifier()),
+                    identifier->map_sdefn().bound(),
+                    true);
+            }
+            case TI_PLAIN_MAP_LARGE:
+            {
+                return TypeNamesGenerator::get_map_type_name(
+                    get_type_name(identifier->map_ldefn().key_identifier()),
+                    get_type_name(identifier->map_ldefn().element_identifier()),
+                    identifier->map_ldefn().bound(),
+                    true);
+            }
+            case TI_STRONGLY_CONNECTED_COMPONENT: // TODO: Not yet supported.
+            default:
+                return "UNDEF";
+        }
+    }
     return "UNDEF";
 }
 
@@ -1120,7 +1223,7 @@ const TypeIdentifier* TypeObjectFactory::try_get_complete(const TypeIdentifier* 
 void TypeObjectFactory::add_type_identifier(const std::string& type_name, const TypeIdentifier* identifier)
 {
     const TypeIdentifier* alreadyExists = get_stored_type_identifier(identifier);
-    if (alreadyExists != nullptr)
+    if (alreadyExists != nullptr && alreadyExists != identifier)
     {
         // Don't copy
         if (alreadyExists->_d() == EK_COMPLETE)
@@ -1165,24 +1268,49 @@ void TypeObjectFactory::add_type_object(const std::string& type_name, const Type
 
     if (object != nullptr)
     {
-        if (object->_d() == EK_MINIMAL)
+        if (identifier->_d() >= EK_MINIMAL)
         {
-            const TypeIdentifier* typeId = identifiers_[type_name];
-            if (objects_.find(typeId) == objects_.end())
+            if (object->_d() == EK_MINIMAL)
             {
-                TypeObject* obj = new TypeObject;
-                *obj = *object;
-                objects_[typeId] = obj;
+                const TypeIdentifier* typeId = identifiers_[type_name];
+                if (objects_.find(typeId) == objects_.end())
+                {
+                    TypeObject* obj = new TypeObject;
+                    *obj = *object;
+                    objects_[typeId] = obj;
+                }
+            }
+            else if (object->_d() == EK_COMPLETE)
+            {
+                const TypeIdentifier* typeId = complete_identifiers_[type_name];
+                if (complete_objects_.find(typeId) == complete_objects_.end())
+                {
+                    TypeObject* obj = new TypeObject;
+                    *obj = *object;
+                    complete_objects_[typeId] = obj;
+                }
             }
         }
-        else if (object->_d() == EK_COMPLETE)
+        else
         {
-            const TypeIdentifier* typeId = complete_identifiers_[type_name];
-            if (complete_objects_.find(typeId) == complete_objects_.end())
+            const TypeIdentifier* typeId = identifiers_[type_name];
+            if (object->_d() == EK_MINIMAL)
             {
-                TypeObject* obj = new TypeObject;
-                *obj = *object;
-                complete_objects_[typeId] = obj;
+                if (objects_.find(typeId) == objects_.end())
+                {
+                    TypeObject* obj = new TypeObject;
+                    *obj = *object;
+                    objects_[typeId] = obj;
+                }
+            }
+            else if (object->_d() == EK_COMPLETE)
+            {
+                if (complete_objects_.find(typeId) == complete_objects_.end())
+                {
+                    TypeObject* obj = new TypeObject;
+                    *obj = *object;
+                    complete_objects_[typeId] = obj;
+                }
             }
         }
     }

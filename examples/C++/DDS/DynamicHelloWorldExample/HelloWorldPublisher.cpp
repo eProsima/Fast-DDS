@@ -51,6 +51,13 @@ bool HelloWorldPublisher::init()
 
     m_Hello->set_string_value("Hello DDS Dynamic World", 0);
     m_Hello->set_uint32_value(0, 1);
+    types::DynamicData* array = m_Hello->loan_value(2);
+    array->set_uint32_value(10, array->get_array_index({0}));
+    array->set_uint32_value(20, array->get_array_index({1}));
+    array->set_uint32_value(30, array->get_array_index({2}));
+    array->set_uint32_value(40, array->get_array_index({3}));
+    array->set_uint32_value(50, array->get_array_index({4}));
+    m_Hello->return_loaned_value(array);
 
     ParticipantAttributes PParam;
     PParam.rtps.builtin.domainId = 0;
@@ -124,7 +131,17 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
                 m_Hello->get_string_value(message, 0);
                 uint32_t index;
                 m_Hello->get_uint32_value(index, 1);
-                std::cout << "Message: " << message << " with index: " << index << " SENT" << std::endl;
+                std::string aux_array = "[";
+                types::DynamicData* array = m_Hello->loan_value(2);
+                for (uint32_t i = 0; i < 5; ++i)
+                {
+                    uint32_t elem;
+                    array->get_uint32_value(elem, array->get_array_index({i}));
+                    aux_array += std::to_string(elem) + (i == 4 ? "]" : ", ");
+                }
+                m_Hello->return_loaned_value(array);
+                std::cout << "Message: " << message << " with index: " << index
+                          << " array: " << aux_array << " SENT" << std::endl;
             }
             eClock::my_sleep(sleep);
         }
@@ -141,7 +158,17 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
                 m_Hello->get_string_value(message, 0);
                 uint32_t index;
                 m_Hello->get_uint32_value(index, 1);
-                std::cout << "Message: " << message << " with index: " << index << " SENT" << std::endl;
+                std::string aux_array = "[";
+                types::DynamicData* array = m_Hello->loan_value(2);
+                for (uint32_t i = 0; i < 5; ++i)
+                {
+                    uint32_t elem;
+                    array->get_uint32_value(elem, array->get_array_index({i}));
+                    aux_array += std::to_string(elem) + (i == 4 ? "]" : ", ");
+                }
+                m_Hello->return_loaned_value(array);
+                std::cout << "Message: " << message << " with index: " << index
+                          << " array: " << aux_array << " SENT" << std::endl;
             }
             eClock::my_sleep(sleep);
         }
@@ -172,6 +199,15 @@ bool HelloWorldPublisher::publish(bool waitForListener)
         uint32_t index;
         m_Hello->get_uint32_value(index, 1);
         m_Hello->set_uint32_value(index+1, 1);
+
+        types::DynamicData* array = m_Hello->loan_value(2);
+        array->set_uint32_value(10 + index, array->get_array_index({0}));
+        array->set_uint32_value(20 + index, array->get_array_index({1}));
+        array->set_uint32_value(30 + index, array->get_array_index({2}));
+        array->set_uint32_value(40 + index, array->get_array_index({3}));
+        array->set_uint32_value(50 + index, array->get_array_index({4}));
+        m_Hello->return_loaned_value(array);
+
         writer_->write(m_Hello.get());
         return true;
     }

@@ -45,7 +45,31 @@ protected:
 
     DynamicType_ptr build_type(DynamicType_ptr other);
 
-    void build_alias_type_code(const TypeDescriptor* descriptor, TypeObject& object, bool complete = true) const;
+    void build_alias_type_code(
+            const TypeDescriptor* descriptor,
+            TypeObject& object,
+            bool complete = true) const;
+
+    void build_string8_type_code(
+            const TypeDescriptor* descriptor) const;
+
+    void build_string16_type_code(
+            const TypeDescriptor* descriptor) const;
+
+    void build_sequence_type_code(
+            const TypeDescriptor* descriptor,
+            TypeObject& object,
+            bool complete = true) const;
+
+    void build_array_type_code(
+            const TypeDescriptor* descriptor,
+            TypeObject& object,
+            bool complete = true) const;
+
+    void build_map_type_code(
+            const TypeDescriptor* descriptor,
+            TypeObject& object,
+            bool complete = true) const;
 
     void build_enum_type_code(
             const TypeDescriptor* descriptor,

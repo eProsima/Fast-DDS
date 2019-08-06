@@ -34,7 +34,7 @@ private:
 
 protected:
     TypeObjectFactory();
-    std::map<const std::string, const TypeIdentifier*> identifiers_; // Basic, builtin and EK_MINIMAL
+    mutable std::map<const std::string, const TypeIdentifier*> identifiers_; // Basic, builtin and EK_MINIMAL
     std::map<const std::string, const TypeIdentifier*> complete_identifiers_; // Only EK_COMPLETE
     std::map<const TypeIdentifier*, const TypeObject*> objects_; // EK_MINIMAL
     std::map<const TypeIdentifier*, const TypeObject*> complete_objects_; // EK_COMPLETE
@@ -47,11 +47,17 @@ protected:
             const TypeObject* object,
             const DynamicType_ptr annotation_member_type = nullptr) const;
 
-    const TypeIdentifier* try_get_complete(const TypeIdentifier* identifier) const;
+    const TypeIdentifier* try_get_complete(
+            const TypeIdentifier* identifier) const;
 
-    const TypeIdentifier* get_stored_type_identifier(const TypeIdentifier* identifier) const;
+    const TypeIdentifier* get_stored_type_identifier(
+            const TypeIdentifier* identifier) const;
 
-    void nullify_all_entries(const TypeIdentifier* identifier);
+    std::string generate_name_and_store_type_identifier(
+            const TypeIdentifier* identifier) const;
+
+    void nullify_all_entries(
+            const TypeIdentifier* identifier);
 
     void create_builtin_annotations();
 
@@ -90,21 +96,27 @@ public:
             const std::string& type_name,
             bool complete = false) const;
 
-    RTPS_DllAPI const TypeObject* get_type_object(const TypeIdentifier* identifier) const;
+    RTPS_DllAPI const TypeObject* get_type_object(
+            const TypeIdentifier* identifier) const;
 
-    RTPS_DllAPI TypeKind get_type_kind(const std::string& type_name) const;
+    RTPS_DllAPI TypeKind get_type_kind(
+            const std::string& type_name) const;
 
-    RTPS_DllAPI std::string get_type_name(const TypeKind kind) const;
+    RTPS_DllAPI std::string get_type_name(
+            const TypeKind kind) const;
 
-    RTPS_DllAPI std::string get_type_name(const TypeIdentifier* identifier) const;
+    RTPS_DllAPI std::string get_type_name(
+            const TypeIdentifier* identifier) const;
 
-    RTPS_DllAPI const TypeIdentifier* get_primitive_type_identifier(TypeKind kind) const;
+    RTPS_DllAPI const TypeIdentifier* get_primitive_type_identifier(
+            TypeKind kind) const;
 
     RTPS_DllAPI const TypeIdentifier* get_type_identifier(
             const std::string& type_name,
             bool complete = false) const;
 
-    RTPS_DllAPI const TypeIdentifier* get_type_identifier_trying_complete(const std::string& type_name) const;
+    RTPS_DllAPI const TypeIdentifier* get_type_identifier_trying_complete(
+            const std::string& type_name) const;
 
     RTPS_DllAPI const TypeIdentifier* get_string_identifier(
             uint32_t bound,

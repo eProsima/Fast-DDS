@@ -24,6 +24,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastrtps/utils/eClock.h>
 
+#include <fastrtps/types/DynamicDataHelper.hpp>
 #include <fastrtps/types/DynamicDataFactory.h>
 
 using namespace eprosima::fastdds::dds;
@@ -88,7 +89,8 @@ void HelloWorldSubscriber::SubListener::on_data_available(eprosima::fastdds::dds
             {
                 types::DynamicType_ptr type = subscriber_->readers_[reader];
                 this->n_samples++;
-                subscriber_->print_dynamic_data(data, type);
+                std::cout << "Received data of type " << type->get_name() << std::endl;
+                types::DynamicDataHelper::print(data);
             }
         }
     }
@@ -129,152 +131,6 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
     subscriber_->readers_[reader] = dyn_type;
     types::DynamicData_ptr data = types::DynamicDataFactory::get_instance()->create_data(dyn_type);
     subscriber_->datas_[reader] = data;
-}
-
-void HelloWorldSubscriber::print_dynamic_data(
-        types::DynamicData_ptr data,
-        types::DynamicType_ptr type) const
-{
-    std::cout << "Received data of type " << type->get_name() << std::endl;
-    switch(type->get_kind())
-    {
-        case types::TK_STRUCTURE:
-        {
-            std::map<types::MemberId, types::DynamicTypeMember*> members;
-            type->get_all_members(members);
-            for (auto it : members)
-            {
-                print_member_data(data, it.second);
-            }
-            break;
-        }
-        default:
-        {
-            std::cout << "Only structs are supported as base type." << std::endl;
-        }
-    }
-}
-
-void HelloWorldSubscriber::print_member_data(
-        types::DynamicData_ptr data,
-        types::DynamicTypeMember* type,
-        const std::string& tab) const
-{
-    using namespace types;
-    std::cout << tab << type->get_name() << ": ";
-    const MemberDescriptor* desc = type->get_descriptor();
-    switch(desc->get_kind())
-    {
-        case TK_NONE:
-        {
-            std::cout << " <type not defined!>" << std::endl;
-            break;
-        }
-        case TK_BOOLEAN:
-        {
-            std::cout << (data->get_bool_value(type->get_id()) ? "true" : "false") << std::endl;
-            break;
-        }
-        case TK_BYTE:
-        {
-            std::cout << data->get_byte_value(type->get_id()) << std::endl;
-            break;
-        }
-        case TK_INT16:
-        {
-            std::cout << data->get_int16_value(type->get_id()) << std::endl;
-            break;
-        }
-        case TK_INT32:
-        {
-            std::cout << data->get_int32_value(type->get_id()) << std::endl;
-            break;
-        }
-        case TK_INT64:
-        {
-            std::cout << data->get_int64_value(type->get_id()) << std::endl;
-            break;
-        }
-        case TK_UINT16:
-        {
-            std::cout << data->get_uint16_value(type->get_id()) << std::endl;
-            break;
-        }
-        case TK_UINT32:
-        {
-            std::cout << data->get_uint32_value(type->get_id()) << std::endl;
-            break;
-        }
-        case TK_UINT64:
-        {
-            std::cout << data->get_uint64_value(type->get_id()) << std::endl;
-            break;
-        }
-        case TK_FLOAT32:
-        {
-            std::cout << data->get_float32_value(type->get_id()) << std::endl;
-            break;
-        }
-        case TK_FLOAT64:
-        {
-            std::cout << data->get_float64_value(type->get_id()) << std::endl;
-            break;
-        }
-        case TK_FLOAT128:
-        {
-            std::cout << data->get_float128_value(type->get_id()) << std::endl;
-            break;
-        }
-        case TK_CHAR8:
-        {
-            std::cout << data->get_char8_value(type->get_id()) << std::endl;
-            break;
-        }
-        case TK_CHAR16:
-        {
-            std::cout << data->get_char16_value(type->get_id()) << std::endl;
-            break;
-        }
-        case TK_STRING8:
-        {
-            std::cout << data->get_string_value(type->get_id()) << std::endl;
-            break;
-        }
-        case TK_STRING16:
-        {
-            std::cout << "wstring print not supported in the example, use string instead." << std::endl;
-            break;
-        }
-        case TK_STRUCTURE:
-        {
-            DynamicData* st_data = data->loan_value(type->get_id());
-            std::map<types::MemberId, types::DynamicTypeMember*> members;
-            desc->get_type()->get_all_members(members);
-            for (auto it : members)
-            {
-                print_member_data(st_data, it.second, tab + "\t");
-            }
-            data->return_loaned_value(st_data);
-            break;
-        }
-        case TK_UNION:
-        {
-            std::cout << "union print not supported in the example." << std::endl;
-            break;
-        }
-        case TK_SEQUENCE:
-        {
-            std::cout << "sequence print not supported in the example." << std::endl;
-            break;
-        }
-        case TK_ARRAY:
-        {
-            std::cout << "array print not supported in the example." << std::endl;
-            break;
-        }
-        default:
-            break;
-    }
 }
 
 void HelloWorldSubscriber::run()

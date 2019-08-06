@@ -144,6 +144,7 @@ protected:
 
     friend class DynamicDataFactory;
     friend class DynamicPubSubType;
+    friend class DynamicDataHelper;
 
 public:
 
