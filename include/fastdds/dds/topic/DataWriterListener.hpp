@@ -23,6 +23,7 @@
 #include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/LivelinessLostStatus.h>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -64,6 +65,19 @@ public:
     {
         (void)writer;
         (void)status;
+    }
+
+    /**
+     * Method called when the qos is incompatible
+     * @param writer Pointer to the associated Publisher
+     * @param status The offered incompatible qos status
+     */
+    virtual void on_offered_incompatible_qos(
+            DataWriter* writer,
+            const OfferedIncompatibleQosStatus& status)
+    {
+        (void) writer;
+        (void) status;
     }
 
     /**
