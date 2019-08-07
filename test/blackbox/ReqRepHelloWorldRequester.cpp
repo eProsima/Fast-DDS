@@ -76,6 +76,34 @@ void ReqRepHelloWorldRequester::init()
     initialized_ = true;
 }
 
+void ReqRepHelloWorldRequester::init_with_latency(
+        eprosima::fastrtps::Duration_t latency_budget_duration_pub,
+        eprosima::fastrtps::Duration_t latency_budget_duration_sub)
+{
+    ParticipantAttributes pattr;
+    participant_ = Domain::createParticipant(pattr);
+    ASSERT_NE(participant_, nullptr);
+
+    // Register type
+    ASSERT_EQ(Domain::registerType(participant_,&type_), true);
+
+    //Create subscriber
+    sattr.topic.topicKind = NO_KEY;
+    sattr.topic.topicDataType = "HelloWorldType";
+    sattr.qos.m_latencyBudget.duration = latency_budget_duration_sub;
+    reply_subscriber_ = Domain::createSubscriber(participant_, sattr, &reply_listener_);
+    ASSERT_NE(reply_subscriber_, nullptr);
+
+    //Create publisher
+    puattr.topic.topicKind = NO_KEY;
+    puattr.topic.topicDataType = "HelloWorldType";
+    puattr.qos.m_latencyBudget.duration = latency_budget_duration_pub;
+    request_publisher_ = Domain::createPublisher(participant_, puattr, &request_listener_);
+    ASSERT_NE(request_publisher_, nullptr);
+
+    initialized_ = true;
+}
+
 void ReqRepHelloWorldRequester::newNumber(SampleIdentity related_sample_identity, uint16_t number)
 {
     std::unique_lock<std::mutex> lock(mutex_);

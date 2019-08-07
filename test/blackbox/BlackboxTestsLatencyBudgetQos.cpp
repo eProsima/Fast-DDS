@@ -14,26 +14,25 @@
 
 #include "BlackboxTests.hpp"
 
-#include "LatencyBudgetReqRepHelloWorldRequester.hpp"
+#include "ReqRepHelloWorldRequester.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
 TEST(LatencyBudgetQos, DurationCheck)
 {
-
-	LatencyBudgetReqRepHelloWorldRequester requester;
+	ReqRepHelloWorldRequester requester;
 
 	Duration_t latency_budget_pub(10);
 	Duration_t latency_budget_sub(20);
 
-	requester.init(latency_budget_pub, latency_budget_sub);
+	requester.init_with_latency(latency_budget_pub, latency_budget_sub);
 
 	ASSERT_TRUE(requester.isInitialized());
 
 	const Publisher* publisher = requester.get_publisher();
 	const Subscriber* subscriber = requester.get_subscriber();
-    
+
     EXPECT_EQ(publisher->getAttributes().qos.m_latencyBudget.duration, latency_budget_pub);
     EXPECT_EQ(subscriber->getAttributes().qos.m_latencyBudget.duration, latency_budget_sub);
 }

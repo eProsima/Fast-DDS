@@ -23,8 +23,10 @@
 #include "types/HelloWorldType.h"
 
 #include <fastrtps/fastrtps_fwd.h>
+#include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 
@@ -87,14 +89,32 @@ class ReqRepHelloWorldRequester
         ReqRepHelloWorldRequester();
         virtual ~ReqRepHelloWorldRequester();
         void init();
+        void init_with_latency(
+                eprosima::fastrtps::Duration_t latency_budget_duration_pub,
+                eprosima::fastrtps::Duration_t latency_budget_duration_sub);
         bool isInitialized() const { return initialized_; }
         void newNumber(eprosima::fastrtps::rtps::SampleIdentity related_sample_identity, uint16_t number);
         void block(const std::chrono::seconds &seconds);
         void wait_discovery();
         void matched();
         void send(const uint16_t number);
-        virtual void configSubscriber(const std::string& suffix) = 0;
-        virtual void configPublisher(const std::string& suffix) = 0;
+        const eprosima::fastrtps::Publisher* get_publisher()
+        {
+            return request_publisher_;
+        }
+        const eprosima::fastrtps::Subscriber* get_subscriber()
+        {
+            return reply_subscriber_;
+        }
+        virtual void configSubscriber(const std::string& suffix)
+        {
+            (void) suffix;
+        }
+
+        virtual void configPublisher(const std::string& suffix)
+        {
+            (void) suffix;
+        }
 
     protected:
         eprosima::fastrtps::PublisherAttributes puattr;
