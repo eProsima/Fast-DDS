@@ -1079,11 +1079,11 @@ void PDP::check_and_notify_type_discovery(
 
 void PDP::check_and_notify_type_discovery(
         RTPSParticipantListener* listener,
-        const string_255 topic_name,
-        const string_255 type_name,
+        const string_255& topic_name,
+        const string_255& type_name,
         const types::TypeIdentifier& type_id,
         const types::TypeObject& type_obj,
-        const XTypes::TypeInformation& type_info) const
+        const xtypes::TypeInformation& type_info) const
 {
     // Notify about type_info
     if (type_info.assigned())

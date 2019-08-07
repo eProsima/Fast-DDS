@@ -1669,7 +1669,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoSXX)
 /*
  * Type discovery using TypeLookup Service (BasicStruct)
 */
-TEST_F(XTypes, TypeLookupBasic)
+TEST_F(XTypesTest, TypeLookupBasic)
 {
     TypeSupport type(new BasicStructPubSubType());
     const TypeInformation* type_info = TypeObjectFactory::get_instance()->get_type_information("BasicStruct");
@@ -1701,7 +1701,7 @@ TEST_F(XTypes, TypeLookupBasic)
 /*
  * Type discovery using TypeLookup Service (MapMapBoundsStruct)
 */
-TEST_F(XTypes, TypeLookupMapMapBounds)
+TEST_F(XTypesTest, TypeLookupMapMapBounds)
 {
     TypeSupport type(new MapMapBoundsStructPubSubType());
     const TypeInformation* type_info = TypeObjectFactory::get_instance()->get_type_information("MapMapBoundsStruct");
@@ -1733,7 +1733,7 @@ TEST_F(XTypes, TypeLookupMapMapBounds)
 /*
  * Type discovery using TypeLookup Service (MapMapBoundsStruct), but subscriber offers the type
 */
-TEST_F(XTypes, TypeLookupMapMapBoundsSub)
+TEST_F(XTypesTest, TypeLookupMapMapBoundsSub)
 {
     TypeSupport type(new MapMapBoundsStructPubSubType());
     const TypeInformation* type_info = TypeObjectFactory::get_instance()->get_type_information("MapMapBoundsStruct");
