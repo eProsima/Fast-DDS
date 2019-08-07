@@ -316,6 +316,17 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         RTPSReader* /*reader*/,
         MatchingInfo& info)
 {
+    SubscriptionMatchedStatus sub_info;
+    sub_info.status = info.status;
+    sub_info.last_publication_handle = info.remoteEndpointGuid;
+
+    onReaderMatched(data_reader_->reader_, sub_info);
+}
+
+void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
+        RTPSReader* /*reader*/,
+        SubscriptionMatchedStatus& info)
+{
     if (data_reader_->listener_ != nullptr)
     {
         data_reader_->listener_->on_subscription_matched(data_reader_->user_datareader_, info);

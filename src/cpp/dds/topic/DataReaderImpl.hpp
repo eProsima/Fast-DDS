@@ -224,6 +224,10 @@ private:
                 fastrtps::rtps::RTPSReader* reader,
                 fastrtps::rtps::MatchingInfo& info) override;
 
+        void onReaderMatched(
+                fastrtps::rtps::RTPSReader* reader,
+                fastdds::dds::SubscriptionMatchedStatus& info);
+
         void onNewCacheChangeAdded(
                 fastrtps::rtps::RTPSReader* reader,
                 const fastrtps::rtps::CacheChange_t* const change) override;
