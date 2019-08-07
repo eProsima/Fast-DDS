@@ -21,6 +21,7 @@
 
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
+#include <fastdds/dds/core/status/PublicationMatchedStatus.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -45,7 +46,7 @@ public:
      */
     virtual void on_publication_matched(
             Publisher* pub,
-            fastrtps::rtps::MatchingInfo& info)
+            fastdds::dds::PublicationMatchedStatus& info)
     {
         (void)pub;
         (void)info;

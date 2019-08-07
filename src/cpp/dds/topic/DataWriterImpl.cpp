@@ -557,6 +557,17 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         RTPSWriter* /*writer*/,
         MatchingInfo& info)
 {
+    PublicationMatchedStatus pub_info;
+    pub_info.status = info.status;
+    pub_info.last_subscription_handle = info.remoteEndpointGuid;
+
+    onWriterMatched(data_writer_->writer_, pub_info);
+}
+
+void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
+        RTPSWriter* /*writer*/,
+        PublicationMatchedStatus& info)
+{
     if (data_writer_->listener_ != nullptr )
     {
         data_writer_->listener_->on_publication_matched(
