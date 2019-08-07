@@ -26,9 +26,12 @@
 
 #include <fastdds/dds/topic/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastrtps/types/TypesBase.h>
 
 #include <mutex>
 #include <map>
+
+using namespace eprosima::fastrtps::types;
 
 namespace eprosima {
 namespace fastrtps{
@@ -77,12 +80,12 @@ public:
 
     const PublisherQos& get_qos() const;
 
-    bool set_qos(
+    ReturnCode_t set_qos(
             const PublisherQos& qos);
 
     const PublisherListener* get_listener() const;
 
-    bool set_listener(
+    ReturnCode_t set_listener(
             PublisherListener* listener);
 
     DataWriter* create_datawriter(
@@ -90,7 +93,7 @@ public:
             const fastrtps::WriterQos& writer_qos,
             DataWriterListener* listener);
 
-    bool delete_datawriter(
+    ReturnCode_t delete_datawriter(
             DataWriter* writer);
 
     DataWriter* lookup_datawriter(
@@ -118,7 +121,7 @@ public:
     bool end_coherent_changes();
     */
 
-    bool wait_for_acknowledgments(
+    ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
     const DomainParticipant* get_participant() const;
@@ -127,7 +130,7 @@ public:
     bool delete_contained_entities();
     */
 
-    bool set_default_datawriter_qos(
+    ReturnCode_t set_default_datawriter_qos(
             const fastrtps::WriterQos& qos);
 
     const fastrtps::WriterQos& get_default_datawriter_qos() const;

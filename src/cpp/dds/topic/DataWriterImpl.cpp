@@ -154,22 +154,38 @@ bool DataWriterImpl::write(
     return create_new_change_with_params(ALIVE, data, params);
 }
 
-bool DataWriterImpl::write(
+ReturnCode_t DataWriterImpl::write(
             void* data,
             const rtps::InstanceHandle_t& handle)
 {
+    if(!handle.isDefined())
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
     logInfo(DATA_WRITER, "Writing new data with Handle");
     WriteParams wparams;
-    return create_new_change_with_params(ALIVE, data, wparams, handle);
+    if(create_new_change_with_params(ALIVE, data, wparams, handle))
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
-bool DataWriterImpl::dispose(
+ReturnCode_t DataWriterImpl::dispose(
         void* data,
         const rtps::InstanceHandle_t& handle)
 {
+    if(!handle.isDefined())
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
     logInfo(DATA_WRITER, "Disposing of data");
     WriteParams wparams;
-    return create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams, handle);
+    if(create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams, handle))
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
 bool DataWriterImpl::dispose(
@@ -465,14 +481,18 @@ const WriterAttributes& DataWriterImpl::get_attributes() const
     return w_att_;
 }
 
-bool DataWriterImpl::set_qos(
+ReturnCode_t DataWriterImpl::set_qos(
         const WriterQos& qos)
 {
     //QOS:
     //CHECK IF THE QOS CAN BE SET
-    if (!qos.checkQos() || !qos_.canQosBeUpdated(qos))
+    if (!qos.checkQos())
     {
-        return false;
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
+    else if(!qos_.canQosBeUpdated(qos))
+    {
+        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
 
     qos_.setQos(qos,false);
@@ -504,7 +524,7 @@ bool DataWriterImpl::set_qos(
         lifespan_timer_->cancel_timer();
     }
 
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const WriterQos& DataWriterImpl::get_qos() const
@@ -512,16 +532,16 @@ const WriterQos& DataWriterImpl::get_qos() const
     return qos_;
 }
 
-bool DataWriterImpl::set_listener(
+ReturnCode_t DataWriterImpl::set_listener(
         DataWriterListener* listener)
 {
     if (listener_ == listener)
     {
-        return false;
+        return ReturnCode_t::RETCODE_ERROR;
     }
 
     listener_ = listener;
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const DataWriterListener* DataWriterImpl::get_listener() const
@@ -588,10 +608,14 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
     data_writer_->publisher_->publisher_listener_.on_liveliness_lost(data_writer_->user_datawriter_, status);
 }
 
-bool DataWriterImpl::wait_for_acknowledgments(
+ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
         const Duration_t &max_wait)
 {
-    return writer_->wait_for_all_acked(max_wait);
+    if(writer_->wait_for_all_acked(max_wait))
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return RETCODE_ERROR;
 }
 
 bool DataWriterImpl::deadline_timer_reschedule()
@@ -635,13 +659,14 @@ bool DataWriterImpl::deadline_missed()
     return deadline_timer_reschedule();
 }
 
-void DataWriterImpl::get_offered_deadline_missed_status(
+ReturnCode_t DataWriterImpl::get_offered_deadline_missed_status(
         OfferedDeadlineMissedStatus &status)
 {
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
     status = deadline_missed_status_;
     deadline_missed_status_.total_count_change = 0;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 bool DataWriterImpl::lifespan_expired()
@@ -685,7 +710,7 @@ bool DataWriterImpl::lifespan_expired()
     return true;
 }
 
-bool DataWriterImpl::get_liveliness_lost_status(
+ReturnCode_t DataWriterImpl::get_liveliness_lost_status(
         LivelinessLostStatus& status)
 {
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
@@ -695,10 +720,10 @@ bool DataWriterImpl::get_liveliness_lost_status(
 
     writer_->liveliness_lost_status_.total_count_change = 0u;
 
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
-bool DataWriterImpl::assert_liveliness()
+ReturnCode_t DataWriterImpl::assert_liveliness()
 {
     if (!publisher_->rtps_participant()->wlp()->assert_liveliness(
             writer_->getGuid(),
@@ -706,6 +731,7 @@ bool DataWriterImpl::assert_liveliness()
             writer_->get_liveliness_lease_duration()))
     {
         logError(DATAWRITER, "Could not assert liveliness of writer " << writer_->getGuid());
+        return ReturnCode_t::RETCODE_ERROR;
     }
 
     if (qos_.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
@@ -720,7 +746,7 @@ bool DataWriterImpl::assert_liveliness()
             stateful_writer->send_periodic_heartbeat(true, true);
         }
     }
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 } // namespace dds

@@ -86,7 +86,7 @@ protected:
 public:
     RTPS_DllAPI static TypeObjectFactory* get_instance();
 
-    RTPS_DllAPI static ResponseCode delete_instance();
+    RTPS_DllAPI static ReturnCode_t delete_instance();
 
     ~TypeObjectFactory();
 

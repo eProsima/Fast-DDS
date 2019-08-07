@@ -33,6 +33,9 @@
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastrtps/attributes/TopicAttributes.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
+#include <fastrtps/types/TypesBase.h>
+
+using namespace eprosima::fastrtps::types;
 
 namespace eprosima {
 namespace fastrtps {
@@ -93,7 +96,7 @@ public:
             uint32_t max_samples);
     */
 
-    bool read_next_sample(
+    ReturnCode_t read_next_sample(
             void* data,
             fastrtps::SampleInfo_t* info);
 
@@ -104,7 +107,7 @@ public:
             uint32_t max_samples);
     */
 
-    bool take_next_sample(
+    ReturnCode_t take_next_sample(
             void* data,
             fastrtps::SampleInfo_t* info);
 
@@ -128,7 +131,7 @@ public:
      * @brief Get the requested deadline missed status
      * @return The deadline missed status
      */
-    void get_requested_deadline_missed_status(
+    ReturnCode_t get_requested_deadline_missed_status(
             fastrtps::RequestedDeadlineMissedStatus& status);
 
     bool set_attributes(
@@ -136,7 +139,7 @@ public:
 
     const fastrtps::rtps::ReaderAttributes& get_attributes() const;
 
-    bool set_qos(
+    ReturnCode_t set_qos(
             const fastrtps::ReaderQos& qos);
 
     const fastrtps::ReaderQos& get_qos() const;
@@ -146,7 +149,7 @@ public:
 
     const fastrtps::TopicAttributes& get_topic() const;
 
-    bool set_listener(
+    ReturnCode_t set_listener(
             DataReaderListener* listener);
 
     const DataReaderListener* get_listener() const;
@@ -157,7 +160,7 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle);
     */
 
-    bool get_liveliness_changed_status(
+    ReturnCode_t get_liveliness_changed_status(
             fastrtps::LivelinessChangedStatus& status) const;
 
     /* TODO

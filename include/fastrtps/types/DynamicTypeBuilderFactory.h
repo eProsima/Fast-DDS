@@ -123,15 +123,15 @@ protected:
 public:
     RTPS_DllAPI static DynamicTypeBuilderFactory* get_instance();
 
-    RTPS_DllAPI static ResponseCode delete_instance();
+    RTPS_DllAPI static ReturnCode_t delete_instance();
 
     ~DynamicTypeBuilderFactory();
 
     RTPS_DllAPI DynamicType_ptr get_primitive_type(TypeKind kind);
 
-    RTPS_DllAPI ResponseCode delete_builder(DynamicTypeBuilder* builder);
+    RTPS_DllAPI ReturnCode_t delete_builder(DynamicTypeBuilder* builder);
 
-    RTPS_DllAPI ResponseCode delete_type(DynamicType* type);
+    RTPS_DllAPI ReturnCode_t delete_type(DynamicType* type);
 
     RTPS_DllAPI DynamicTypeBuilder* create_custom_builder(
             const TypeDescriptor* descriptor,

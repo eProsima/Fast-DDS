@@ -25,9 +25,12 @@
 
 #include <fastdds/dds/topic/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastrtps/types/TypesBase.h>
 
 #include <mutex>
 #include <map>
+
+using namespace eprosima::fastrtps::types;
 
 namespace eprosima {
 namespace fastrtps {
@@ -74,12 +77,12 @@ public:
 
     const SubscriberQos& get_qos() const;
 
-    bool set_qos(
+    ReturnCode_t set_qos(
             const SubscriberQos& qos);
 
     const SubscriberListener* get_listener() const;
 
-    bool set_listener(
+    ReturnCode_t set_listener(
             SubscriberListener* listener);
 
     DataReader* create_datareader(
@@ -87,7 +90,7 @@ public:
             const fastrtps::ReaderQos& reader_qos,
             DataReaderListener* listener);
 
-    bool delete_datareader(
+    ReturnCode_t delete_datareader(
             DataReader* reader);
 
     DataReader* lookup_datareader(
@@ -110,16 +113,16 @@ public:
         std::vector<ViewStateKind> view_states,
         std::vector<InstanceStateKind> instance_states) const;
     */
-    bool get_datareaders(
+    ReturnCode_t get_datareaders(
         std::vector<DataReader*>& readers) const;
 
-    bool notify_datareaders() const;
+    ReturnCode_t notify_datareaders() const;
 
     /* TODO
     bool delete_contained_entities();
     */
 
-    bool set_default_datareader_qos(
+    ReturnCode_t set_default_datareader_qos(
             const fastrtps::ReaderQos& qos);
 
     const fastrtps::ReaderQos& get_default_datareader_qos() const;

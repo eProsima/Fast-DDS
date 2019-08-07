@@ -86,7 +86,7 @@ DynamicTypeBuilder::~DynamicTypeBuilder()
     member_by_name_.clear();
 }
 
-ResponseCode DynamicTypeBuilder::add_empty_member(
+ReturnCode_t DynamicTypeBuilder::add_empty_member(
         uint32_t index,
         const std::string& name)
 {
@@ -96,14 +96,14 @@ ResponseCode DynamicTypeBuilder::add_empty_member(
         if (index >= descriptor_->get_bounds(0))
         {
             logWarning(DYN_TYPES, "Error adding member, out of bounds.");
-            return ResponseCode::RETCODE_BAD_PARAMETER;
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
         descriptor.annotation_set_position(static_cast<uint16_t>(descriptor.get_index()));
     }
     return add_member(&descriptor);
 }
 
-ResponseCode DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
+ReturnCode_t DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
 {
     if (descriptor_ != nullptr && descriptor != nullptr && descriptor->is_consistent(descriptor_->get_kind()))
     {
@@ -145,25 +145,25 @@ ResponseCode DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
                         delete newMember;
                     }
                     ++current_member_id_;
-                    return ResponseCode::RETCODE_OK;
+                    return ReturnCode_t::RETCODE_OK;
                 }
                 else
                 {
                     logWarning(DYN_TYPES, "Error adding member, invalid union parameters.");
-                    return ResponseCode::RETCODE_BAD_PARAMETER;
+                    return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
             }
             else
             {
                 logWarning(DYN_TYPES, "Error adding member, there is other member with the same name.");
-                return ResponseCode::RETCODE_BAD_PARAMETER;
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
         }
         else
         {
             logWarning(DYN_TYPES, "Error adding member, the current type " << descriptor_->get_kind()
                 << " doesn't support members.");
-            return ResponseCode::RETCODE_PRECONDITION_NOT_MET;
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
     }
     else
@@ -176,7 +176,7 @@ ResponseCode DynamicTypeBuilder::add_member(const MemberDescriptor* descriptor)
         {
             logWarning(DYN_TYPES, "Error adding member, The input descriptor isn't consistent.");
         }
-        return ResponseCode::RETCODE_BAD_PARAMETER;
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -190,7 +190,7 @@ RTPS_DllAPI MemberId DynamicTypeBuilder::get_member_id_by_name(const std::string
     return MEMBER_ID_INVALID;
 }
 
-ResponseCode DynamicTypeBuilder::add_member(
+ReturnCode_t DynamicTypeBuilder::add_member(
         MemberId id,
         const std::string& name,
         DynamicTypeBuilder* type)
@@ -207,7 +207,7 @@ ResponseCode DynamicTypeBuilder::add_member(
     }
 }
 
-ResponseCode DynamicTypeBuilder::add_member(
+ReturnCode_t DynamicTypeBuilder::add_member(
         MemberId id,
         const std::string& name,
         DynamicTypeBuilder* type,
@@ -217,7 +217,7 @@ ResponseCode DynamicTypeBuilder::add_member(
     return add_member(&descriptor);
 }
 
-ResponseCode DynamicTypeBuilder::add_member(
+ReturnCode_t DynamicTypeBuilder::add_member(
         MemberId id,
         const std::string& name,
         DynamicTypeBuilder* type,
@@ -230,7 +230,7 @@ ResponseCode DynamicTypeBuilder::add_member(
     return add_member(&descriptor);
 }
 
-ResponseCode DynamicTypeBuilder::add_member(
+ReturnCode_t DynamicTypeBuilder::add_member(
         MemberId id,
         const std::string& name,
         DynamicType_ptr type)
@@ -239,7 +239,7 @@ ResponseCode DynamicTypeBuilder::add_member(
     return add_member(&descriptor);
 }
 
-ResponseCode DynamicTypeBuilder::add_member(
+ReturnCode_t DynamicTypeBuilder::add_member(
         MemberId id,
         const std::string& name,
         DynamicType_ptr type,
@@ -249,7 +249,7 @@ ResponseCode DynamicTypeBuilder::add_member(
     return add_member(&descriptor);
 }
 
-ResponseCode DynamicTypeBuilder::add_member(
+ReturnCode_t DynamicTypeBuilder::add_member(
         MemberId id,
         const std::string& name,
         DynamicType_ptr type_,
@@ -261,12 +261,12 @@ ResponseCode DynamicTypeBuilder::add_member(
     return add_member(&descriptor);
 }
 
-ResponseCode DynamicTypeBuilder::apply_annotation(AnnotationDescriptor& descriptor)
+ReturnCode_t DynamicTypeBuilder::apply_annotation(AnnotationDescriptor& descriptor)
 {
     return descriptor_->apply_annotation(descriptor);
 }
 
-ResponseCode DynamicTypeBuilder::apply_annotation(
+ReturnCode_t DynamicTypeBuilder::apply_annotation(
         const std::string& annotation_name,
         const std::string& key,
         const std::string& value)
@@ -274,14 +274,14 @@ ResponseCode DynamicTypeBuilder::apply_annotation(
     return descriptor_->apply_annotation(annotation_name, key, value);
 }
 
-ResponseCode DynamicTypeBuilder::apply_annotation_to_member(
+ReturnCode_t DynamicTypeBuilder::apply_annotation_to_member(
         MemberId id,
         AnnotationDescriptor& descriptor)
 {
     return _apply_annotation_to_member(id, descriptor);
 }
 
-ResponseCode DynamicTypeBuilder::apply_annotation_to_member(
+ReturnCode_t DynamicTypeBuilder::apply_annotation_to_member(
         MemberId id,
         const std::string& annotation_name,
         const std::string& key,
@@ -324,14 +324,14 @@ bool DynamicTypeBuilder::check_union_configuration(const MemberDescriptor* descr
     return true;
 }
 
-ResponseCode DynamicTypeBuilder::copy_from(const DynamicTypeBuilder* other)
+ReturnCode_t DynamicTypeBuilder::copy_from(const DynamicTypeBuilder* other)
 {
     if (other != nullptr)
     {
         clear();
 
-        ResponseCode res = copy_from_builder(other);
-        if (res == ResponseCode::RETCODE_OK)
+        ReturnCode_t res = copy_from_builder(other);
+        if (res == ReturnCode_t::RETCODE_OK)
         {
             current_member_id_ = other->current_member_id_;
         }
@@ -340,12 +340,12 @@ ResponseCode DynamicTypeBuilder::copy_from(const DynamicTypeBuilder* other)
     else
     {
         logError(DYN_TYPES, "Error copying DynamicTypeBuilder. Invalid input parameter.");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
 
 
-ResponseCode DynamicTypeBuilder::copy_from_builder(const DynamicTypeBuilder* other)
+ReturnCode_t DynamicTypeBuilder::copy_from_builder(const DynamicTypeBuilder* other)
 {
     if (other != nullptr)
     {
@@ -362,12 +362,12 @@ ResponseCode DynamicTypeBuilder::copy_from_builder(const DynamicTypeBuilder* oth
             member_by_name_.insert(std::make_pair(newMember->get_name(), newMember));
         }
 
-        return ResponseCode::RETCODE_OK;
+        return ReturnCode_t::RETCODE_OK;
     }
     else
     {
         logError(DYN_TYPES, "Error copying DynamicType, invalid input type");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -402,10 +402,10 @@ bool DynamicTypeBuilder::exists_member_by_name(const std::string& name) const
     return member_by_name_.find(name) != member_by_name_.end();
 }
 
-ResponseCode DynamicTypeBuilder::get_all_members(std::map<MemberId, DynamicTypeMember*>& members)
+ReturnCode_t DynamicTypeBuilder::get_all_members(std::map<MemberId, DynamicTypeMember*>& members)
 {
     members = member_by_id_;
-    return ResponseCode::RETCODE_OK;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 std::string DynamicTypeBuilder::get_name() const
@@ -439,17 +439,17 @@ void DynamicTypeBuilder::refresh_member_ids()
     }
 }
 
-ResponseCode DynamicTypeBuilder::set_name(const std::string& name)
+ReturnCode_t DynamicTypeBuilder::set_name(const std::string& name)
 {
     if (descriptor_ != nullptr)
     {
         descriptor_->set_name(name);
     }
     name_ = name;
-    return ResponseCode::RETCODE_OK;
+    return ReturnCode_t::RETCODE_OK;
 }
 
-ResponseCode DynamicTypeBuilder::_apply_annotation_to_member(
+ReturnCode_t DynamicTypeBuilder::_apply_annotation_to_member(
         MemberId id,
         AnnotationDescriptor& descriptor)
 {
@@ -459,22 +459,22 @@ ResponseCode DynamicTypeBuilder::_apply_annotation_to_member(
         if (it != member_by_id_.end())
         {
             it->second->apply_annotation(descriptor);
-            return ResponseCode::RETCODE_OK;
+            return ReturnCode_t::RETCODE_OK;
         }
         else
         {
             logError(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
-            return ResponseCode::RETCODE_BAD_PARAMETER;
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
     }
     else
     {
         logError(DYN_TYPES, "Error applying annotation to member. The input descriptor isn't consistent.");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
 
-ResponseCode DynamicTypeBuilder::_apply_annotation_to_member(
+ReturnCode_t DynamicTypeBuilder::_apply_annotation_to_member(
         MemberId id,
         const std::string& annotation_name,
         const std::string& key,
@@ -484,12 +484,12 @@ ResponseCode DynamicTypeBuilder::_apply_annotation_to_member(
     if (it != member_by_id_.end())
     {
         it->second->apply_annotation(annotation_name, key, value);
-        return ResponseCode::RETCODE_OK;
+        return ReturnCode_t::RETCODE_OK;
     }
     else
     {
         logError(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
 

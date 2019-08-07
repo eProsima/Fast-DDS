@@ -122,12 +122,16 @@ bool DomainParticipantFactory::delete_instance()
     return false;
 }
 
-bool DomainParticipantFactory::delete_participant(
+ReturnCode_t DomainParticipantFactory::delete_participant(
         DomainParticipant* part)
 {
     using PartVectorIt = std::vector<DomainParticipantImpl*>::iterator;
     using VectorIt = std::map<uint8_t, std::vector<DomainParticipantImpl*>>::iterator;
 
+    if (part->contains_entity(part->get_instance_handle()))
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
     if (part != nullptr)
     {
         std::lock_guard<std::mutex> guard(mtx_participants_);
@@ -154,10 +158,10 @@ bool DomainParticipantFactory::delete_participant(
             {
                 participants_.erase(vit);
             }
-            return true;
+            return ReturnCode_t::RETCODE_OK;
         }
     }
-    return false;
+    return RETCODE_ERROR;
 }
 
 DomainParticipant* DomainParticipantFactory::create_participant(
@@ -256,7 +260,7 @@ std::vector<DomainParticipant*> DomainParticipantFactory::lookup_participants(
     return result;
 }
 
-bool DomainParticipantFactory::get_default_participant_qos(
+ReturnCode_t DomainParticipantFactory::get_default_participant_qos(
         ParticipantAttributes& participant_attributes) const
 {
     if (false == default_xml_profiles_loaded)
@@ -266,7 +270,7 @@ bool DomainParticipantFactory::get_default_participant_qos(
     }
 
     XMLProfileManager::getDefaultParticipantAttributes(participant_attributes);
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 /* TODO

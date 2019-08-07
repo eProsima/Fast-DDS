@@ -79,7 +79,7 @@ public:
 
     bool check_union_labels(const std::vector<uint64_t>& labels) const;
 
-    RTPS_DllAPI ResponseCode copy_from(const MemberDescriptor* other);
+    RTPS_DllAPI ReturnCode_t copy_from(const MemberDescriptor* other);
 
     RTPS_DllAPI bool equals(const MemberDescriptor* other) const;
 
@@ -130,9 +130,9 @@ public:
     }
 
     // Annotations
-    ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
+    ReturnCode_t apply_annotation(AnnotationDescriptor& descriptor);
 
-    ResponseCode apply_annotation(
+    ReturnCode_t apply_annotation(
             const std::string& annotation_name,
             const std::string& key,
             const std::string& value);

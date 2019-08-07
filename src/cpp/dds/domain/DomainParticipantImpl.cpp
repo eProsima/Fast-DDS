@@ -142,40 +142,60 @@ DomainParticipantImpl::~DomainParticipantImpl()
 }
 
 
-bool DomainParticipantImpl::delete_publisher(
+ReturnCode_t DomainParticipantImpl::delete_publisher(
         Publisher* pub)
 {
+    if(participant_ != pub->get_participant())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
     std::lock_guard<std::mutex> lock(mtx_pubs_);
     auto pit = publishers_.find(pub);
 
     if (pit != publishers_.end() && pub->get_instance_handle() == pit->second->get_instance_handle())
     {
+        std::vector<DataWriter*> writers;
+        pub->get_datawriters(writers);
+        if(!writers.empty())
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
         pit->second->set_listener(nullptr);
         publishers_by_handle_.erase(publishers_by_handle_.find(pit->second->get_instance_handle()));
         delete pit->second;
         publishers_.erase(pit);
-        return true;
+        return ReturnCode_t::RETCODE_OK;
     }
 
-    return false;
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
-bool DomainParticipantImpl::delete_subscriber(
+ReturnCode_t DomainParticipantImpl::delete_subscriber(
         Subscriber* sub)
 {
+    if(participant_ != sub->get_participant())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
     std::lock_guard<std::mutex> lock(mtx_subs_);
     auto sit = subscribers_.find(sub);
 
     if (sit != subscribers_.end() && sub->get_instance_handle() == sit->second->get_instance_handle())
     {
+        std::vector<DataReader*> readers;
+        sub->get_datareaders(readers);
+        if(!readers.empty())
+        {
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
         sit->second->set_listener(nullptr);
         subscribers_by_handle_.erase(subscribers_by_handle_.find(sit->second->get_instance_handle()));
         delete sit->second;
         subscribers_.erase(sit);
-        return true;
+        return ReturnCode_t::RETCODE_OK;
     }
 
-    return false;
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
 const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
@@ -316,33 +336,35 @@ bool DomainParticipantImpl::delete_contained_entities()
 }
 */
 
-bool DomainParticipantImpl::assert_liveliness()
+ReturnCode_t DomainParticipantImpl::assert_liveliness()
 {
     if (rtps_participant_->wlp() != nullptr)
     {
-        return rtps_participant_->wlp()->assert_liveliness_manual_by_participant();
+        if(rtps_participant_->wlp()->assert_liveliness_manual_by_participant()){
+            return RETCODE_OK;
+        }
     }
     else
     {
         logError(PARTICIPANT, "Invalid WLP, cannot assert liveliness of participant");
     }
-    return false;
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
-bool DomainParticipantImpl::set_default_publisher_qos(
+ReturnCode_t DomainParticipantImpl::set_default_publisher_qos(
         const fastdds::dds::PublisherQos& qos)
 {
     if (&qos == &PUBLISHER_QOS_DEFAULT)
     {
         default_pub_qos_.set_qos(PUBLISHER_QOS_DEFAULT, true);
-        return true;
+        return ReturnCode_t::RETCODE_OK;
     }
     else if (qos.check_qos())
     {
         default_pub_qos_.set_qos(qos, true);
-        return true;
+        return ReturnCode_t::RETCODE_OK;
     }
-    return false;
+    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
 }
 
 const fastdds::dds::PublisherQos& DomainParticipantImpl::get_default_publisher_qos() const
@@ -350,20 +372,20 @@ const fastdds::dds::PublisherQos& DomainParticipantImpl::get_default_publisher_q
     return default_pub_qos_;
 }
 
-bool DomainParticipantImpl::set_default_subscriber_qos(
+ReturnCode_t DomainParticipantImpl::set_default_subscriber_qos(
         const fastdds::dds::SubscriberQos& qos)
 {
     if (&qos == &SUBSCRIBER_QOS_DEFAULT)
     {
         default_sub_qos_.set_qos(SUBSCRIBER_QOS_DEFAULT, true);
-        return true;
+        return ReturnCode_t::RETCODE_OK;
     }
     else if (qos.check_qos())
     {
-        default_sub_qos_.set_qos(qos, true);
-        return true;
+        default_sub_qos_.set_qos(qos, false);
+        return ReturnCode_t::RETCODE_OK;
     }
-    return false;
+    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
 }
 
 const fastdds::dds::SubscriberQos& DomainParticipantImpl::get_default_subscriber_qos() const
@@ -443,7 +465,7 @@ bool DomainParticipantImpl::contains_entity(
     return false;
 }
 
-bool DomainParticipantImpl::get_current_time(
+ReturnCode_t DomainParticipantImpl::get_current_time(
         fastrtps::Time_t& current_time) const
 {
     auto now = std::chrono::system_clock::now();
@@ -455,7 +477,7 @@ bool DomainParticipantImpl::get_current_time(
     current_time.seconds = static_cast<int32_t>(seconds.count());
     current_time.nanosec = static_cast<uint32_t>(nanos.count());
 
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const DomainParticipant* DomainParticipantImpl::get_participant() const

@@ -33,7 +33,7 @@ DomainParticipant::~DomainParticipant()
 {
 }
 
-bool DomainParticipant::set_listener(
+ReturnCode_t DomainParticipant::set_listener(
         DomainParticipantListener* listener)
 {
     return impl_->set_listener(listener);
@@ -52,7 +52,7 @@ Publisher* DomainParticipant::create_publisher(
     return impl_->create_publisher(qos, att, listen);
 }
 
-bool DomainParticipant::delete_publisher(
+ReturnCode_t DomainParticipant::delete_publisher(
         Publisher* publisher)
 {
     return impl_->delete_publisher(publisher);
@@ -66,7 +66,7 @@ Subscriber* DomainParticipant::create_subscriber(
     return impl_->create_subscriber(qos, att, listen);
 }
 
-bool DomainParticipant::delete_subscriber(
+ReturnCode_t DomainParticipant::delete_subscriber(
         Subscriber* subscriber)
 {
     return impl_->delete_subscriber(subscriber);
@@ -142,12 +142,12 @@ bool DomainParticipant::delete_contained_entities()
 }
 */
 
-bool DomainParticipant::assert_liveliness()
+ReturnCode_t DomainParticipant::assert_liveliness()
 {
     return impl_->assert_liveliness();
 }
 
-bool DomainParticipant::set_default_publisher_qos(
+ReturnCode_t DomainParticipant::set_default_publisher_qos(
         const fastdds::dds::PublisherQos& qos)
 {
     return impl_->set_default_publisher_qos(qos);
@@ -158,14 +158,14 @@ const fastdds::dds::PublisherQos& DomainParticipant::get_default_publisher_qos()
     return impl_->get_default_publisher_qos();
 }
 
-bool DomainParticipant::get_default_publisher_qos(
+ReturnCode_t DomainParticipant::get_default_publisher_qos(
         fastdds::dds::PublisherQos& qos) const
 {
     qos = impl_->get_default_publisher_qos();
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
-bool DomainParticipant::set_default_subscriber_qos(
+ReturnCode_t DomainParticipant::set_default_subscriber_qos(
         const fastdds::dds::SubscriberQos& qos)
 {
     return impl_->set_default_subscriber_qos(qos);
@@ -176,11 +176,11 @@ const fastdds::dds::SubscriberQos& DomainParticipant::get_default_subscriber_qos
     return impl_->get_default_subscriber_qos();
 }
 
-bool DomainParticipant::get_default_subscriber_qos(
+ReturnCode_t DomainParticipant::get_default_subscriber_qos(
         fastdds::dds::SubscriberQos& qos) const
 {
     qos = impl_->get_default_subscriber_qos();
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 /* TODO
@@ -206,7 +206,7 @@ bool DomainParticipant::contains_entity(
     return impl_->contains_entity(handle, recursive);
 }
 
-bool DomainParticipant::get_current_time(
+ReturnCode_t DomainParticipant::get_current_time(
         fastrtps::Time_t& current_time) const
 {
     return impl_->get_current_time(current_time);

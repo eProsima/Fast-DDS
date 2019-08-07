@@ -42,15 +42,15 @@ DynamicDataFactory* DynamicDataFactory::get_instance()
     return s_instance;
 }
 
-ResponseCode DynamicDataFactory::delete_instance()
+ReturnCode_t DynamicDataFactory::delete_instance()
 {
     if (s_instance != nullptr)
     {
         delete s_instance;
         s_instance = nullptr;
-        return ResponseCode::RETCODE_OK;
+        return ReturnCode_t::RETCODE_OK;
     }
-    return ResponseCode::RETCODE_ERROR;
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
 DynamicDataFactory::DynamicDataFactory()
@@ -173,7 +173,7 @@ DynamicData* DynamicDataFactory::create_data(DynamicType_ptr pType)
     }
 }
 
-ResponseCode DynamicDataFactory::create_members(
+ReturnCode_t DynamicDataFactory::create_members(
         DynamicData* pData,
         DynamicType_ptr pType)
 {
@@ -184,12 +184,12 @@ ResponseCode DynamicDataFactory::create_members(
         {
             create_members(pData, pType->get_base_type());
         }
-        return ResponseCode::RETCODE_OK;
+        return ReturnCode_t::RETCODE_OK;
     }
-    return ResponseCode::RETCODE_BAD_PARAMETER;
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-ResponseCode DynamicDataFactory::delete_data(DynamicData* pData)
+ReturnCode_t DynamicDataFactory::delete_data(DynamicData* pData)
 {
     if (pData != nullptr)
     {
@@ -203,12 +203,12 @@ ResponseCode DynamicDataFactory::delete_data(DynamicData* pData)
         else
         {
             logError(DYN_TYPES, "Error deleting DynamicData. It isn't registered in the factory");
-            return ResponseCode::RETCODE_ALREADY_DELETED;
+            return ReturnCode_t::RETCODE_ALREADY_DELETED;
         }
 #endif
         delete pData;
     }
-    return ResponseCode::RETCODE_OK;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 bool DynamicDataFactory::is_empty() const

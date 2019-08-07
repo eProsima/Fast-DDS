@@ -134,22 +134,30 @@ bool DataReaderImpl::wait_for_unread_message(
     return reader_->wait_for_unread_cache(timeout);
 }
 
-bool DataReaderImpl::read_next_sample(
+ReturnCode_t DataReaderImpl::read_next_sample(
         void *data,
         SampleInfo_t *info)
 {
     auto max_blocking_time = std::chrono::steady_clock::now() +
         std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.m_reliability.max_blocking_time));
-    return history_.readNextData(data, info, max_blocking_time);
+    if (history_.readNextData(data, info, max_blocking_time))
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
-bool DataReaderImpl::take_next_sample(
+ReturnCode_t DataReaderImpl::take_next_sample(
         void *data,
         SampleInfo_t *info)
 {
     auto max_blocking_time = std::chrono::steady_clock::now() +
         std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.m_reliability.max_blocking_time));
-    return history_.takeNextData(data, info, max_blocking_time);
+    if (history_.takeNextData(data, info, max_blocking_time))
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
 const GUID_t& DataReaderImpl::guid()
@@ -164,14 +172,18 @@ InstanceHandle_t DataReaderImpl::get_instance_handle() const
     return handle;
 }
 
-bool DataReaderImpl::set_qos(
+ReturnCode_t DataReaderImpl::set_qos(
         const ReaderQos& qos)
 {
     //QOS:
     //CHECK IF THE QOS CAN BE SET
-    if(!qos.checkQos() || !qos_.canQosBeUpdated(qos))
+    if(!qos.checkQos())
     {
-        return false;
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
+    else if (!qos_.canQosBeUpdated(qos))
+    {
+        return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
 
     qos_.setQos(qos,false);
@@ -203,7 +215,7 @@ bool DataReaderImpl::set_qos(
         lifespan_timer_->cancel_timer();
     }
 
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const ReaderQos& DataReaderImpl::get_qos() const
@@ -444,13 +456,14 @@ bool DataReaderImpl::deadline_missed()
 }
 
 
-void DataReaderImpl::get_requested_deadline_missed_status(
+ReturnCode_t DataReaderImpl::get_requested_deadline_missed_status(
         RequestedDeadlineMissedStatus& status)
 {
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
     status = deadline_missed_status_;
     deadline_missed_status_.total_count_change = 0;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 bool DataReaderImpl::lifespan_expired()
@@ -520,11 +533,11 @@ bool DataReaderImpl::take(
 }
 */
 
-bool DataReaderImpl::set_listener(
+ReturnCode_t DataReaderImpl::set_listener(
         DataReaderListener* listener)
 {
     listener_ = listener;
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 const DataReaderListener* DataReaderImpl::get_listener() const
@@ -544,7 +557,7 @@ bool DataReaderImpl::get_key_value(
 }
 */
 
-bool DataReaderImpl::get_liveliness_changed_status(
+ReturnCode_t DataReaderImpl::get_liveliness_changed_status(
         LivelinessChangedStatus& status) const
 {
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
@@ -554,7 +567,7 @@ bool DataReaderImpl::get_liveliness_changed_status(
     reader_->liveliness_changed_status_.alive_count_change = 0u;
     reader_->liveliness_changed_status_.not_alive_count_change = 0u;
     // TODO add callback call subscriber_->subscriber_listener_->on_liveliness_changed
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 /* TODO

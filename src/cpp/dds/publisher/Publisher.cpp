@@ -41,14 +41,14 @@ const PublisherQos& Publisher::get_qos() const
     return impl_->get_qos();
 }
 
-bool Publisher::get_qos(
+ReturnCode_t Publisher::get_qos(
         PublisherQos& qos) const
 {
     qos = impl_->get_qos();
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
-bool Publisher::set_qos(
+ReturnCode_t Publisher::set_qos(
         const PublisherQos& qos)
 {
     return impl_->set_qos(qos);
@@ -59,7 +59,7 @@ const PublisherListener* Publisher::get_listener() const
     return impl_->get_listener();
 }
 
-bool Publisher::set_listener(
+ReturnCode_t Publisher::set_listener(
         PublisherListener* listener)
 {
     return impl_->set_listener(listener);
@@ -73,7 +73,7 @@ DataWriter* Publisher::create_datawriter(
     return impl_->create_datawriter(topic_attr, writer_qos, listener);
 }
 
-bool Publisher::delete_datawriter(
+ReturnCode_t Publisher::delete_datawriter(
         DataWriter* writer)
 {
     return impl_->delete_datawriter(writer);
@@ -119,7 +119,7 @@ bool Publisher::end_coherent_changes()
 }
 */
 
-bool Publisher::wait_for_acknowledgments(
+ReturnCode_t Publisher::wait_for_acknowledgments(
         const fastrtps::Duration_t& max_wait)
 {
     return impl_->wait_for_acknowledgments(max_wait);
@@ -137,7 +137,7 @@ bool Publisher::delete_contained_entities()
 }
 */
 
-bool Publisher::set_default_datawriter_qos(
+ReturnCode_t Publisher::set_default_datawriter_qos(
         const fastrtps::WriterQos& qos)
 {
     return impl_->set_default_datawriter_qos(qos);
@@ -148,11 +148,11 @@ const fastrtps::WriterQos& Publisher::get_default_datawriter_qos() const
     return impl_->get_default_datawriter_qos();
 }
 
-bool Publisher::get_default_datawriter_qos(
+ReturnCode_t Publisher::get_default_datawriter_qos(
         fastrtps::WriterQos& qos) const
 {
     qos = impl_->get_default_datawriter_qos();
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 /* TODO

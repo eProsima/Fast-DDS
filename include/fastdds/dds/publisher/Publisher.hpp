@@ -23,6 +23,9 @@
 #include <fastrtps/fastrtps_dll.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/types/TypesBase.h>
+
+using namespace eprosima::fastrtps::types;
 
 namespace eprosima {
 namespace fastrtps {
@@ -70,7 +73,7 @@ public:
      * Retrieves the Publisher Qos.
      * @return true
      */
-    bool get_qos(
+    ReturnCode_t get_qos(
             PublisherQos& qos) const;
 
     /**
@@ -79,7 +82,7 @@ public:
      * @param qos
      * @return False if IMMUTABLE_POLICY or INCONSISTENT_POLICY occurs. True if updated.
      */
-    bool set_qos(
+    ReturnCode_t set_qos(
             const PublisherQos& qos);
 
     /**
@@ -92,7 +95,7 @@ public:
      * @param listener
      * @return true
      */
-    bool set_listener(
+    ReturnCode_t set_listener(
             PublisherListener* listener);
 
     /**
@@ -119,7 +122,7 @@ public:
      * may also dispose all instances.
      * @param writer
      */
-    bool delete_datawriter(
+    ReturnCode_t delete_datawriter(
             DataWriter* writer);
 
     /**
@@ -166,7 +169,7 @@ public:
      * @param max_wait
      * @return False if timedout. True otherwise.
      */
-    bool wait_for_acknowledgments(
+    ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
     /**
@@ -190,7 +193,7 @@ public:
      * if the set_default_datawriter_qos operation had never been called.
      * @param qos
      */
-    bool set_default_datawriter_qos(
+    ReturnCode_t set_default_datawriter_qos(
             const fastrtps::WriterQos& qos);
 
     /**
@@ -214,7 +217,7 @@ public:
      * @param qos Copy of the current default WriterQos.
      * @return Always true.
      */
-    bool get_default_datawriter_qos(
+    ReturnCode_t get_default_datawriter_qos(
             fastrtps::WriterQos& qos) const;
 
     /* TODO
