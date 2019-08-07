@@ -143,7 +143,7 @@ ReturnCode_t DataWriter::wait_for_acknowledgments(
 ReturnCode_t DataWriter::get_offered_deadline_missed_status(
         OfferedDeadlineMissedStatus &status)
 {
-    impl_->get_offered_deadline_missed_status(status);
+    return impl_->get_offered_deadline_missed_status(status);
 }
 
 ReturnCode_t DataWriter::get_liveliness_lost_status(
