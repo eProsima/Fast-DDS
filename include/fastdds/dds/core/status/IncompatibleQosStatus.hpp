@@ -25,26 +25,40 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+typedef uint32_t QosPolicyId_t;
+
+struct QosPolicyCount
+{
+
+    //! @brief The id of the policy
+    QosPolicyId_t policy_id;
+
+    //! @brief Total number of times that the concerned writer discovered a reader for the same topic
+    //! @details The requested QoS is incompatible with the one offered by the writer
+    int32_t count;
+};
+
+typedef std::vector<QosPolicyCount> QosPolicyCountSeq;
+
 //! @brief A struct storing the requested incompatible QoS status
 struct IncompatibleQosStatus
 {
-    /**
-     * Total cumulative number of times the concerned endpoint
-     * discovered another endpoint for the same Topic with a requested QoS that
-     * is incompatible with that offered by the concerned endpoint.
-     */
-    uint32_t total_count = 0;
+    //! @brief Total cumulative number of times the concerned writer discovered a reader for the same topic
+    //! @details The requested QoS is incompatible with the one offered by the writer
+    int32_t total_count = 0;
 
-    /**
-     * The change in total_count since the last time the listener was called or the status was read.
-     */
-    uint32_t total_count_change = 0;
+    //! @brief The change in total_count since the last time the listener was called or the status was read
+    int32_t total_count_change = 0;
 
-    // TODO QosPolicyId_t and QosPolicyCountSeq
+    //! @brief The id of the policy that was found to be incompatible the last time an incompatibility is detected
+    QosPolicyId_t last_policy_id;
+
+    //! @brief A list of QosPolicyCount
+    QosPolicyCountSeq policies;
 };
 
-typedef IncompatibleQosStatus RequestedIncompatibleQosStatus;
-typedef IncompatibleQosStatus OfferedIncompatibleQosStatus;
+using RequestedIncompatibleQosStatus = IncompatibleQosStatus;
+using OfferedIncompatibleQosStatus = IncompatibleQosStatus;
 
 } //end of namespace dds
 } //end of namespace fastdds
