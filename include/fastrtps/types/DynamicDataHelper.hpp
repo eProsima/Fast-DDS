@@ -223,7 +223,7 @@ protected:
             std::vector<std::vector<uint32_t>>& positions)
     {
         uint32_t total_size = 1;
-        for (uint32_t i = 0; i < bounds.size(); ++i)
+        for (size_t i = 0; i < bounds.size(); ++i)
         {
             total_size *= bounds[i];
         }
@@ -270,7 +270,7 @@ protected:
         fill_array_positions(bounds, positions);
 
         std::cout << "[";
-        for (uint32_t i = 0; i < positions.size(); ++i)
+        for (size_t i = 0; i < positions.size(); ++i)
         {
             print_basic_element(data, data->get_array_index(positions[i]), data->type_->get_element_type()->get_kind());
             std::cout << (i == positions.size() - 1 ? "]" : ", ");
@@ -286,7 +286,7 @@ protected:
         std::vector<std::vector<uint32_t>> positions;
         fill_array_positions(bounds, positions);
 
-        for (uint32_t i = 0; i < positions.size(); ++i)
+        for (size_t i = 0; i < positions.size(); ++i)
         {
             std::cout << tabs << "[" << i << "] = ";
             print_complex_element(data, data->get_array_index(positions[i]), tabs);
