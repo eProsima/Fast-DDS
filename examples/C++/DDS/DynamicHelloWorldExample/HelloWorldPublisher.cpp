@@ -52,11 +52,16 @@ bool HelloWorldPublisher::init()
     m_Hello->set_string_value("Hello DDS Dynamic World", 0);
     m_Hello->set_uint32_value(0, 1);
     types::DynamicData* array = m_Hello->loan_value(2);
-    array->set_uint32_value(10, array->get_array_index({0}));
-    array->set_uint32_value(20, array->get_array_index({1}));
-    array->set_uint32_value(30, array->get_array_index({2}));
-    array->set_uint32_value(40, array->get_array_index({3}));
-    array->set_uint32_value(50, array->get_array_index({4}));
+    array->set_uint32_value(10, array->get_array_index({0,0}));
+    array->set_uint32_value(20, array->get_array_index({1,0}));
+    array->set_uint32_value(30, array->get_array_index({2,0}));
+    array->set_uint32_value(40, array->get_array_index({3,0}));
+    array->set_uint32_value(50, array->get_array_index({4,0}));
+    array->set_uint32_value(60, array->get_array_index({0,1}));
+    array->set_uint32_value(70, array->get_array_index({1,1}));
+    array->set_uint32_value(80, array->get_array_index({2,1}));
+    array->set_uint32_value(90, array->get_array_index({3,1}));
+    array->set_uint32_value(100, array->get_array_index({4,1}));
     m_Hello->return_loaned_value(array);
 
     ParticipantAttributes PParam;
@@ -133,9 +138,14 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
                 types::DynamicData* array = m_Hello->loan_value(2);
                 for (uint32_t i = 0; i < 5; ++i)
                 {
-                    uint32_t elem;
-                    array->get_uint32_value(elem, array->get_array_index({i}));
-                    aux_array += std::to_string(elem) + (i == 4 ? "]" : ", ");
+                    aux_array += "[";
+                    for (uint32_t j = 0; j < 2; ++j)
+                    {
+                        uint32_t elem;
+                        array->get_uint32_value(elem, array->get_array_index({i, j}));
+                        aux_array += std::to_string(elem) + (j == 1 ? "]" : ", ");
+                    }
+                    aux_array += (i == 4 ? "]" : "], ");
                 }
                 m_Hello->return_loaned_value(array);
                 std::cout << "Message: " << message << " with index: " << index
@@ -160,9 +170,14 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
                 types::DynamicData* array = m_Hello->loan_value(2);
                 for (uint32_t i = 0; i < 5; ++i)
                 {
-                    uint32_t elem;
-                    array->get_uint32_value(elem, array->get_array_index({i}));
-                    aux_array += std::to_string(elem) + (i == 4 ? "]" : ", ");
+                    aux_array += "[";
+                    for (uint32_t j = 0; j < 2; ++j)
+                    {
+                        uint32_t elem;
+                        array->get_uint32_value(elem, array->get_array_index({i, j}));
+                        aux_array += std::to_string(elem) + (j == 1 ? "]" : ", ");
+                    }
+                    aux_array += (i == 4 ? "]" : "], ");
                 }
                 m_Hello->return_loaned_value(array);
                 std::cout << "Message: " << message << " with index: " << index
@@ -199,11 +214,16 @@ bool HelloWorldPublisher::publish(bool waitForListener)
         m_Hello->set_uint32_value(index+1, 1);
 
         types::DynamicData* array = m_Hello->loan_value(2);
-        array->set_uint32_value(10 + index, array->get_array_index({0}));
-        array->set_uint32_value(20 + index, array->get_array_index({1}));
-        array->set_uint32_value(30 + index, array->get_array_index({2}));
-        array->set_uint32_value(40 + index, array->get_array_index({3}));
-        array->set_uint32_value(50 + index, array->get_array_index({4}));
+        array->set_uint32_value(10 + index, array->get_array_index({0,0}));
+        array->set_uint32_value(20 + index, array->get_array_index({1,0}));
+        array->set_uint32_value(30 + index, array->get_array_index({2,0}));
+        array->set_uint32_value(40 + index, array->get_array_index({3,0}));
+        array->set_uint32_value(50 + index, array->get_array_index({4,0}));
+        array->set_uint32_value(60 + index, array->get_array_index({0,1}));
+        array->set_uint32_value(70 + index, array->get_array_index({1,1}));
+        array->set_uint32_value(80 + index, array->get_array_index({2,1}));
+        array->set_uint32_value(90 + index, array->get_array_index({3,1}));
+        array->set_uint32_value(100 + index, array->get_array_index({4,1}));
         m_Hello->return_loaned_value(array);
 
         writer_->write(m_Hello.get());
