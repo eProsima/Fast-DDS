@@ -218,31 +218,80 @@ protected:
         }
     }
 
+    static void fill_array_positions(
+            const std::vector<uint32_t>& bounds,
+            std::vector<std::vector<uint32_t>>& positions)
+    {
+        uint32_t total_size = 1;
+        for (uint32_t i = 0; i < bounds.size(); ++i)
+        {
+            total_size *= bounds[i];
+        }
+
+        for (uint32_t idx = 0; idx < total_size; ++idx)
+        {
+            positions.push_back({});
+            get_index_position(idx, bounds, positions[idx]);
+        }
+    }
+
+    static void get_index_position(
+            uint32_t index,
+            const std::vector<uint32_t>& bounds,
+            std::vector<uint32_t>& position)
+    {
+        position.resize(bounds.size());
+        if (bounds.size() > 0)
+        {
+            aux_index_position(index, static_cast<uint32_t>(bounds.size() - 1), bounds, position);
+        }
+    }
+
+    static void aux_index_position(
+            uint32_t index,
+            uint32_t inner_index,
+            const std::vector<uint32_t>& bounds,
+            std::vector<uint32_t>& position)
+    {
+        uint32_t remainder = index % bounds[inner_index];
+        position[inner_index] = remainder;
+        if (inner_index > 0)
+        {
+            aux_index_position(index / bounds[inner_index], inner_index - 1, bounds, position);
+        }
+    }
+
     static void print_basic_collection(
             DynamicData* data)
     {
+        const std::vector<uint32_t>& bounds = data->type_->descriptor_->bound_;
+
+        std::vector<std::vector<uint32_t>> positions;
+        fill_array_positions(bounds, positions);
+
         std::cout << "[";
-        for (uint32_t i = 0; i < data->get_item_count(); ++i)
+        for (uint32_t i = 0; i < positions.size(); ++i)
         {
-            print_basic_element(data, data->get_array_index({i}), data->type_->get_element_type()->get_kind());
-            std::cout << (i == data->get_item_count() - 1 ? "]" : ", ");
+            print_basic_element(data, data->get_array_index(positions[i]), data->type_->get_element_type()->get_kind());
+            std::cout << (i == positions.size() - 1 ? "]" : ", ");
         }
-        // TODO multidimensional arrays?
-        // data->type_->descriptor_->bound_...
     }
 
     static void print_complex_collection(
             DynamicData* data,
             const std::string& tabs = "")
     {
-        for (uint32_t i = 0; i < data->get_item_count(); ++i)
+        const std::vector<uint32_t>& bounds = data->type_->descriptor_->bound_;
+
+        std::vector<std::vector<uint32_t>> positions;
+        fill_array_positions(bounds, positions);
+
+        for (uint32_t i = 0; i < positions.size(); ++i)
         {
             std::cout << tabs << "[" << i << "] = ";
-            print_complex_element(data, data->get_array_index({i}), tabs);
+            print_complex_element(data, data->get_array_index(positions[i]), tabs);
             std::cout << std::endl;
         }
-        // TODO multidimensional arrays?
-        // data->type_->descriptor_->bound_...
     }
 
     static void print_complex_element(
