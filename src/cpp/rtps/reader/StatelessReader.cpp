@@ -55,8 +55,7 @@ StatelessReader::StatelessReader(
 }
 
 bool StatelessReader::matched_writer_add(
-        const WriterProxyData& wdata,
-        bool persist /*=true*/ )
+        const WriterProxyData& wdata)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     for (const RemoteWriterInfo_t& writer : matched_writers_)
@@ -75,10 +74,8 @@ bool StatelessReader::matched_writer_add(
     RemoteWriterInfo_t* att = matched_writers_.emplace_back(info);
     if (att != nullptr)
     {
-        if(persist)
-        {
-            add_persistence_guid(info.guid, info.persistence_guid);
-        }
+        add_persistence_guid(info.guid, info.persistence_guid);
+
         m_acceptMessagesFromUnkownWriters = false;
         logInfo(RTPS_READER, "Writer " << info.guid << " added to " << m_guid.entityId);
 

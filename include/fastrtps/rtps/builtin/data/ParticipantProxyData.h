@@ -159,6 +159,18 @@ class ParticipantProxyData
          * @param pdata Object to copy the data from
          */
         void copy(const ParticipantProxyData& pdata);
+
+        /**
+         * Set participant persistent GUID_t
+         * @param guid valid GUID_t
+         */
+        void set_persistence_guid(const GUID_t & guid);
+
+        /**
+         * Retrieve participant persistent GUID_t
+         * @return guid persistent GUID_t or c_Guid_Unknown
+         */
+        GUID_t get_persistence_guid() const;
 };
 
 } /* namespace rtps */

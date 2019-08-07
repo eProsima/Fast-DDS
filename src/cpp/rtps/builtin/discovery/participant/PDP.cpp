@@ -243,7 +243,19 @@ void PDP::initializeParticipantProxyData(ParticipantProxyData* participant_data)
             participant_data->m_key.value[i] = participant_data->m_guid.entityId.value[i - 12];
     }
 
+    // Keep persistence Guid_Prefix_t in a specific property. This info must be propagated to all builtin endpoints
+    {
+        GuidPrefix_t persistent = mp_RTPSParticipant->getAttributes().prefix;
 
+        if(persistent != c_GuidPrefix_Unknown)
+        {
+            participant_data->set_persistence_guid(
+                GUID_t(
+                    persistent,
+                    c_EntityId_RTPSParticipant));
+        }
+    }
+ 
     participant_data->metatraffic_locators.multicast.clear();
     for(const Locator_t& loc: this->mp_builtin->m_metatrafficMulticastLocatorList)
     { 

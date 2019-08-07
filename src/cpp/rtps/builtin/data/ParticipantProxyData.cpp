@@ -452,6 +452,68 @@ bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
     return true;
 }
 
+void ParticipantProxyData::set_persistence_guid(const GUID_t & guid)
+{
+    // only valid values
+    if(guid == c_Guid_Unknown)
+    {
+        return;
+    }
+
+    // generate pair
+    std::pair<std::string, std::string> persistent_guid;
+    persistent_guid.first = "PID_PERSISTENCE_GUID";
+
+    std::ostringstream data;
+    data << guid;
+    persistent_guid.second = data.str();
+
+    // if exists replace
+    std::vector<std::pair<std::string, std::string>> & props = m_properties.properties;
+
+    std::vector<std::pair<std::string, std::string>>::iterator it =
+        std::find_if(
+            props.begin(),
+            props.end(),
+            [&persistent_guid](const std::pair<std::string, std::string> & p) {
+        return persistent_guid.first == p.first;
+    });
+
+    if(it != props.end())
+    {
+        *it = std::move(persistent_guid);
+    }
+    else
+    {
+        // if not exists add
+        m_properties.properties.push_back(std::move(persistent_guid));
+    }
+}
+
+GUID_t ParticipantProxyData::get_persistence_guid() const
+{
+    GUID_t persistent(c_Guid_Unknown);
+
+    const std::vector<std::pair<std::string, std::string>> & props = m_properties.properties;
+
+    std::vector<std::pair<std::string, std::string>>::const_iterator it =
+        std::find_if(
+            props.cbegin(),
+            props.cend(),
+            [](const std::pair<std::string, std::string> & p) {
+        return "PID_PERSISTENCE_GUID" == p.first;
+    });
+
+    if(it != props.end())
+    {
+        std::istringstream in(it->second);
+        in >> persistent;
+    }
+
+    return persistent;
+}
+
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

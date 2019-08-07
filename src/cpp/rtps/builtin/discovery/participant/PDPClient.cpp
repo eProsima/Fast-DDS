@@ -383,15 +383,16 @@ void PDPClient::removeRemoteEndpoints(ParticipantProxyData* pdata)
             mp_PDPReader->matched_writer_remove(wguid);
 
             // rematch but discarding any previous state of the server
-            // because we know the server shutdown intencionally (sent a DATA(p[UD]))
+            // because we know the server shutdown intencionally
             std::lock_guard<std::mutex> data_guard(temp_data_lock_);
             temp_writer_data_.clear();
             temp_writer_data_.guid(wguid);
-            temp_writer_data_.persistence_guid(temp_writer_data_.guid());
+            temp_writer_data_.persistence_guid(pdata->get_persistence_guid());
+            temp_writer_data_.persistence_guid().entityId = temp_writer_data_.persistence_guid().guidPrefix != c_GuidPrefix_Unknown ? c_EntityId_SPDPWriter : c_EntityId_Unknown;
             temp_writer_data_.set_remote_locators(pdata->metatraffic_locators, network, true);
             temp_writer_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
             temp_writer_data_.m_qos.m_durability.kind = TRANSIENT_DURABILITY_QOS;
-            mp_PDPReader->matched_writer_add(temp_writer_data_, false);
+            mp_PDPReader->matched_writer_add(temp_writer_data_);
         }
 
         auxendp = endp;

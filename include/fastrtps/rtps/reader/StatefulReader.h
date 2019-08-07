@@ -61,10 +61,9 @@ class StatefulReader : public RTPSReader
         /**
          * Add a matched writer represented by its attributes.
          * @param wdata Attributes of the writer to add.
-         * @param persist If the Reader must try to recover Writer formered registered state
          * @return True if correctly added.
          */
-        bool matched_writer_add(const WriterProxyData& wdata, bool persist = true) override;
+        bool matched_writer_add(const WriterProxyData& wdata) override;
 
         /**
          * Remove a WriterProxyData from the matached writers.

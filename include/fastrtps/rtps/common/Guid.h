@@ -558,6 +558,39 @@ inline std::ostream& operator<<(std::ostream& output,const GUID_t& guid)
     return output;
 }
 
+/**
+ * Stream operator, retrieves a GUID.
+ * @param output Output stream.
+ * @param guid GUID_t to print.
+ * @return Stream operator.
+ */
+inline std::istream& operator>>(std::istream& input, GUID_t& guid)
+{
+    std::istream::sentry s(input);
+
+    if(s)
+    {
+        std::ios_base::iostate excp_mask = input.exceptions();
+
+        try
+        {
+            input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
+
+            input >> guid.guidPrefix;
+            input >> guid.entityId;
+        }
+        catch(std::ios_base::failure &)
+        {
+            // maybe is unknown or just invalid
+            guid = c_Guid_Unknown;
+        }
+
+        input.exceptions(excp_mask);
+    }
+
+    return input;
+}
+
 #endif
 
 }

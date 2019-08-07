@@ -113,9 +113,10 @@ RTPSParticipant* RTPSDomain::createParticipant(
         PParam.builtin.initialPeersList.push_back(local);
     }
 
-    GuidPrefix_t guidP(PParam.prefix);
+    // Generate a new GuidPrefix_t
 
-    if (guidP == c_GuidPrefix_Unknown)
+    GuidPrefix_t guidP;
+
     {
         // Make a new participant GuidPrefix_t up
         int pid = System::GetPID();
@@ -152,6 +153,14 @@ RTPSParticipant* RTPSDomain::createParticipant(
         guidP.value[9] = octet(ID >> 8);
         guidP.value[10] = octet(ID >> 16);
         guidP.value[11] = octet(ID >> 24);
+    }
+
+    // If we force the participant to have a specific prefix we must define a different persistence GuidPrefix_t for 
+    // its endpoint. This instance-bounded persitence GuidPrefix_t will be kept in the participant instance local copy
+    // of the attributes (prefix member).
+    if(PParam.prefix != c_GuidPrefix_Unknown)
+    {
+        std::swap(guidP, PParam.prefix);
     }
     
     RTPSParticipant* p = new RTPSParticipant(nullptr);

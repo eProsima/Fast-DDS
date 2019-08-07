@@ -374,6 +374,14 @@ bool RTPSParticipantImpl::createWriter(
         return false;
     }
 
+    // Update persistence guidPrefix
+    if(param.endpoint.persistence_guid == c_Guid_Unknown)
+    {
+        param.endpoint.persistence_guid = GUID_t(
+                                                m_att.prefix,
+                                                c_EntityId_RTPSParticipant);
+    }
+
     // Get persistence service
     IPersistenceService* persistence = nullptr;
     if (param.endpoint.durabilityKind >= TRANSIENT)
