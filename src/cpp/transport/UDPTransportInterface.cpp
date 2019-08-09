@@ -424,7 +424,7 @@ bool UDPTransportInterface::Receive(UDPChannelResource* pChannelResource, octet*
     catch (const std::exception& error)
     {
         (void)error;
-        logWarning(RTPS_MSG_OUT, "Error receiving data: " << error.what());
+        logError(RTPS_MSG_OUT, "Error receiving data: " << error.what());
         return false;
     }
 }
@@ -457,7 +457,7 @@ bool UDPTransportInterface::ReleaseInputChannel(const Locator_t& locator, const 
 
             // We ignore the error message because some OS don't allow this functionality like Windows (WSAENETUNREACH) or Mac (EADDRNOTAVAIL)
             socket.send_to(asio::buffer("EPRORTPSCLOSE", 13), destinationEndpoint,flags, ec);
-            
+
             socket.close();
         }
         else
@@ -533,7 +533,7 @@ bool UDPTransportInterface::SendThroughSocket(const octet* sendBuffer, uint32_t 
     }
     catch (const std::exception& error)
     {
-        logWarning(RTPS_MSG_OUT, "Error: " << error.what());
+        logError(RTPS_MSG_OUT, "Error: " << error.what() << ": " << sendBufferSize);
         return false;
     }
 

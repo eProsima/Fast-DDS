@@ -60,8 +60,6 @@ class HeartbeatResponseDelay:public TimedEvent
 
             //!Pointer to the WriterProxy associated with this specific event.
             WriterProxy* mp_WP;
-            //!CDRMessage_t used in the response.
-            RTPSMessageGroup_t m_cdrmessages;
             //!List of destination locators
             LocatorList_t m_destination_locators;
             //!List of destination endpoints

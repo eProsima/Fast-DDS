@@ -18,11 +18,12 @@
 #ifndef CDRMESSAGECREATOR_H_
 #define CDRMESSAGECREATOR_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "../common/CDRMessage_t.h"
-#include "../common/Guid.h"
-#include "../common/SequenceNumber.h"
-#include "../common/FragmentNumber.h"
-#include "../common/CacheChange.h"
+#include <fastrtps/rtps/common/CDRMessage_t.h>
+#include <fastrtps/rtps/common/Guid.h>
+#include <fastrtps/rtps/common/SequenceNumber.h>
+#include <fastrtps/rtps/common/FragmentNumber.h>
+#include <fastrtps/rtps/common/CacheChange.h>
+#include <fastrtps/rtps/messages/CDRMessagePool.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -47,7 +48,11 @@ class RTPSMessageCreator
         //!
         CDRMessage_t rtpsmc_submsgHeader;
 
-
+        /**
+         * Retrieve a reference to the global CDRMessagePool used by the message creator class
+         * @return An instance of the CDRMessagePool class
+         */
+        static CDRMessagePool& getCDRMessagePool();
 
         /**
          * Create a Header to the serialized message.

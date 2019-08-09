@@ -21,7 +21,6 @@
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/qos/ParameterList.h>
 #include <fastrtps/utils/eClock.h>
-#include <fastrtps/rtps/messages/CDRMessagePool.h>
 
 #include <fastrtps/log/Log.h>
 
@@ -32,9 +31,12 @@ namespace fastrtps{
 namespace rtps{
 
 // Auxiliary message to avoid creation of new messages each time.
-CDRMessagePool g_pool_submsg(100);
-eClock g_clock;
+static CDRMessagePool g_pool_submsg(100);
+static eClock g_clock;
 
+CDRMessagePool& RTPSMessageCreator::getCDRMessagePool() {
+  return g_pool_submsg;
+}
 
 RTPSMessageCreator::RTPSMessageCreator() {
 
@@ -74,7 +76,7 @@ bool RTPSMessageCreator::addCustomContent(CDRMessage_t*msg, const octet* content
 {
     CDRMessage::addData(msg, content, static_cast<uint32_t>(contentSize));
     msg->length = msg->pos;
-	
+
     return true;
 }
 
@@ -117,7 +119,7 @@ bool RTPSMessageCreator::addSubmessageInfoTS(CDRMessage_t* msg,Time_t& time,bool
     return true;
 }
 
-bool RTPSMessageCreator::addSubmessageInfoSRC(CDRMessage_t* msg, const ProtocolVersion_t& version, 
+bool RTPSMessageCreator::addSubmessageInfoSRC(CDRMessage_t* msg, const ProtocolVersion_t& version,
     const VendorId_t& vendorId, const GuidPrefix_t& guidPrefix)
 {
     octet flags = 0x0;

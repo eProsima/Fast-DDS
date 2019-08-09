@@ -30,15 +30,8 @@ using namespace eprosima::fastrtps::rtps;
 
 
 RTPSWriter::RTPSWriter(RTPSParticipantImpl* impl, GUID_t& guid, WriterAttributes& att, WriterHistory* hist, WriterListener* listen):
-    Endpoint(impl,guid,att.endpoint),
+    Endpoint(impl, guid, att.endpoint),
     m_pushMode(true),
-    m_cdrmessages(impl->getMaxMessageSize() > att.throughputController.bytesPerPeriod ?
-            att.throughputController.bytesPerPeriod > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
-            impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
-            att.throughputController.bytesPerPeriod :
-            impl->getMaxMessageSize() > impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod ?
-            impl->getRTPSParticipantAttributes().throughputController.bytesPerPeriod :
-            impl->getMaxMessageSize(), impl->getGuid().guidPrefix),
     m_livelinessAsserted(false),
     mp_history(hist),
     mp_listener(listen),

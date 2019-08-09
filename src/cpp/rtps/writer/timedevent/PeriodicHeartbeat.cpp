@@ -47,8 +47,6 @@ PeriodicHeartbeat::PeriodicHeartbeat(
         double interval)
     : TimedEvent(p_SFW->getRTPSParticipant()->getEventResource().getIOService(),
             p_SFW->getRTPSParticipant()->getEventResource().getThread(), interval)
-    , m_cdrmessages(p_SFW->getRTPSParticipant()->getMaxMessageSize(),
-            p_SFW->getRTPSParticipant()->getGuid().guidPrefix)
     , mp_SFW(p_SFW)
 {
 
@@ -127,7 +125,7 @@ void PeriodicHeartbeat::event(
 
             if (unacked_changes)
             {
-                RTPSMessageGroup group(mp_SFW->getRTPSParticipant(), mp_SFW, RTPSMessageGroup::WRITER, m_cdrmessages);
+                RTPSMessageGroup group(mp_SFW->getRTPSParticipant(), mp_SFW, RTPSMessageGroup::WRITER);
 
                 // FinalFlag is always false because this class is used only by StatefulWriter in Reliable.
                 group.add_heartbeat(remote_readers, firstSeq, lastSeq, heartbeatCount, false, false,

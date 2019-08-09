@@ -35,33 +35,6 @@ namespace rtps {
 class RTPSParticipantImpl;
 class Endpoint;
 
-/**
- * Class RTPSMessageGroup_t that contains the messages used to send multiples changes as one message.
- * @ingroup WRITER_MODULE
- */
-class RTPSMessageGroup_t
-{
-    public:
-
-        RTPSMessageGroup_t(uint32_t payload, GuidPrefix_t participant_guid):
-            rtpsmsg_submessage_(payload),
-            rtpsmsg_fullmsg_(payload)
-#if HAVE_SECURITY
-            , rtpsmsg_encrypt_(payload)
-#endif
-        {
-            CDRMessage::initCDRMsg(&rtpsmsg_fullmsg_);
-            RTPSMessageCreator::addHeader(&rtpsmsg_fullmsg_, participant_guid);
-        }
-
-        CDRMessage_t rtpsmsg_submessage_;
-
-        CDRMessage_t rtpsmsg_fullmsg_;
-
-#if HAVE_SECURITY
-        CDRMessage_t rtpsmsg_encrypt_;
-#endif
-};
 
 class RTPSWriter;
 
@@ -85,10 +58,8 @@ class RTPSMessageGroup
          * @param participant Pointer to the participant sending data.
          * @param endpoint Pointer to the endpoint sending data.
          * @param type Type of endpoint (reader / writer).
-         * @param msg_group Reference to data buffer for messages.
          */
-        RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type,
-            RTPSMessageGroup_t& msg_group);
+        RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type);
 
         /**
          * Fixed destination constructor.
@@ -96,12 +67,11 @@ class RTPSMessageGroup
          * @param participant Pointer to the participant sending data.
          * @param endpoint Pointer to the endpoint sending data.
          * @param type Type of endpoint (reader / writer).
-         * @param msg_group Reference to data buffer for messages.
          * @param locator_list List of locators where messages will be sent
          * @param remote_endpoints List of destination GUIDs
          */
         RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type,
-            RTPSMessageGroup_t& msg_group, const LocatorList_t& locator_list,
+            const LocatorList_t& locator_list,
             const std::vector<GUID_t>& remote_endpoints);
 
         ~RTPSMessageGroup();

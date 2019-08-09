@@ -59,9 +59,6 @@ class PeriodicHeartbeat: public TimedEvent
                 EventCode code,
                 const char* msg= nullptr);
 
-        //!
-        RTPSMessageGroup_t m_cdrmessages;
-        //!
         StatefulWriter* mp_SFW;
 };
 

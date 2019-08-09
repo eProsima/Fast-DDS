@@ -48,8 +48,6 @@ InitialAckNack::InitialAckNack(
         double interval)
     : TimedEvent(wp->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
             wp->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval)
-    , m_cdrmessages(wp->mp_SFR->getRTPSParticipant()->getMaxMessageSize(),
-            wp->mp_SFR->getRTPSParticipant()->getGuid().guidPrefix)
     , wp_(wp)
     , m_destination_locators(wp->mp_SFR->getRTPSParticipant()->network_factory().
             ShrinkLocatorLists({wp->m_att.endpoint.unicastLocatorList}))
@@ -85,7 +83,7 @@ void InitialAckNack::event(
 
         logInfo(RTPS_READER,"Sending ACKNACK: "<< sns);
 
-        RTPSMessageGroup group(wp_->mp_SFR->getRTPSParticipant(), wp_->mp_SFR, RTPSMessageGroup::READER, m_cdrmessages,
+        RTPSMessageGroup group(wp_->mp_SFR->getRTPSParticipant(), wp_->mp_SFR, RTPSMessageGroup::READER,
             m_destination_locators, m_remote_endpoints);
 
         group.add_acknack(m_remote_endpoints, sns, acknackCount, false, m_destination_locators);

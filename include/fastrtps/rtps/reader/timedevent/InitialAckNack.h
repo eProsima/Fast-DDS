@@ -63,9 +63,6 @@ class InitialAckNack: public TimedEvent
                 EventCode code,
                 const char* msg= nullptr);
 
-        //!
-        RTPSMessageGroup_t m_cdrmessages;
-        //!
         WriterProxy* wp_;
         //!List of destination locators
         LocatorList_t m_destination_locators;

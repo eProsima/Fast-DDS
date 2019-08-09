@@ -46,8 +46,6 @@ HeartbeatResponseDelay::HeartbeatResponseDelay(
     : TimedEvent(p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getIOService(),
             p_WP->mp_SFR->getRTPSParticipant()->getEventResource().getThread(), interval)
     , mp_WP(p_WP)
-    , m_cdrmessages(p_WP->mp_SFR->getRTPSParticipant()->getMaxMessageSize(),
-            p_WP->mp_SFR->getRTPSParticipant()->getGuid().guidPrefix)
     , m_destination_locators(mp_WP->mp_SFR->getRTPSParticipant()->network_factory().
             ShrinkLocatorLists({p_WP->m_att.endpoint.unicastLocatorList}))
     , m_remote_endpoints(1, p_WP->m_att.guid)
@@ -78,7 +76,7 @@ void HeartbeatResponseDelay::event(
         std::vector<CacheChange_t*> uncompleted_changes;
 
         RTPSMessageGroup group(mp_WP->mp_SFR->getRTPSParticipant(), mp_WP->mp_SFR, RTPSMessageGroup::READER,
-                m_cdrmessages, m_destination_locators, m_remote_endpoints);
+                               m_destination_locators, m_remote_endpoints);
 
         if(!missing_changes.empty() || !mp_WP->m_heartbeatFinalFlag)
         {

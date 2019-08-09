@@ -16,7 +16,7 @@
  * @file RTPSMessageGroup.cpp
  *
  */
-
+#include <fastrtps/rtps/messages/CDRMessagePool.h>
 #include <fastrtps/rtps/messages/RTPSMessageGroup.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
@@ -30,6 +30,7 @@
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
 
 bool sort_changes_group (CacheChange_t* c1,CacheChange_t* c2)
 {
@@ -139,33 +140,56 @@ const EntityId_t& get_entity_id(const std::vector<GUID_t>& endpoints)
     return entityid;
 }
 
-RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type,
-        RTPSMessageGroup_t& msg_group) :
-    participant_(participant), endpoint_(endpoint), full_msg_(&msg_group.rtpsmsg_fullmsg_),
-    submessage_msg_(&msg_group.rtpsmsg_submessage_), currentBytesSent_(0),
-    fixed_destination_(false), fixed_destination_locators_(nullptr), 
-    fixed_destination_guids_(nullptr), fixed_destination_prefix_()
+RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type)
+    : participant_(participant)
+    , endpoint_(endpoint)
+    , full_msg_(nullptr)
+    , submessage_msg_(nullptr)
+    , currentBytesSent_(0)
+    , fixed_destination_(false)
+    , fixed_destination_locators_(nullptr)
+    , fixed_destination_guids_(nullptr)
+    , fixed_destination_prefix_()
 #if HAVE_SECURITY
-    , encrypt_msg_(&msg_group.rtpsmsg_encrypt_)
+    , encrypt_msg_(nullptr)
 #endif
 {
     assert(participant);
     assert(endpoint);
     (void)type;
 
+    /** The payload size should be the smallest of:
+     *  - the transport max PDU size
+     *  - the participant throughput controller setting
+     *  - the endpoint throughput controller setting
+     * From here, we can only access the first two but not the last one (endpoint throughput controller)
+     * That's ok though as a bigger buffer is safe.
+     * We do subtract the RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE as this is added into the buffer itself
+     */
+    uint16_t max_payload_size = std::min(
+      participant->getMaxMessageSize(),
+      participant->getRTPSParticipantAttributes().throughputController.bytesPerPeriod) - RTPSMESSAGE_COMMON_RTPS_PAYLOAD_SIZE;
+
     // Init RTPS message.
+    full_msg_ = &RTPSMessageCreator::getCDRMessagePool().reserve_CDRMsg(max_payload_size);
+    CDRMessage::initCDRMsg(full_msg_);
+    RTPSMessageCreator::addHeader(full_msg_, participant_->getGuid().guidPrefix);
     reset_to_header();
 
+    submessage_msg_ = &RTPSMessageCreator::getCDRMessagePool().reserve_CDRMsg(max_payload_size);
     CDRMessage::initCDRMsg(submessage_msg_);
+    RTPSMessageCreator::addHeader(submessage_msg_, participant_->getGuid().guidPrefix);
 
 #if HAVE_SECURITY
+    encrypt_msg_ = &RTPSMessageCreator::getCDRMessagePool().reserve_CDRMsg(max_payload_size);
     CDRMessage::initCDRMsg(encrypt_msg_);
+    RTPSMessageCreator::addHeader(encrypt_msg_, participant_->getGuid().guidPrefix);
 #endif
 }
 
 RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type,
-    RTPSMessageGroup_t& msg_group, const LocatorList_t& locator_list,
-    const std::vector<GUID_t>& remote_endpoints) : RTPSMessageGroup(participant, endpoint, type, msg_group)
+                                   const LocatorList_t& locator_list,
+    const std::vector<GUID_t>& remote_endpoints) : RTPSMessageGroup(participant, endpoint, type)
 {
 #if HAVE_SECURITY
     if (participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
@@ -192,28 +216,16 @@ RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* e
     fixed_destination_ = true;
 }
 
-/*
-RTPSMessageGroup::RTPSMessageGroup(RTPSParticipantImpl* participant, Endpoint* endpoint, ENDPOINT_TYPE type,
-    RTPSMessageGroup_t& msg_group, const LocatorList_t& locator_list,
-    const GUID_t& remote_endpoint) : RTPSMessageGroup(participant, endpoint, type, msg_group)
-{
-#if HAVE_SECURITY
-    if (participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
-    {
-        get_participant_from_endpoint(remote_endpoint, current_remote_participants_);
-    }
-#endif
-
-    fixed_destination_prefix_ = remote_endpoint.guidPrefix;
-    fixed_destination_locators_ = &locator_list;
-    fixed_destination_vector_.push_back(remote_endpoint);
-    fixed_destination_ = true;
-}
-*/
-
 RTPSMessageGroup::~RTPSMessageGroup()
 {
     send();
+
+    RTPSMessageCreator::getCDRMessagePool().release_CDRMsg(*full_msg_);
+    RTPSMessageCreator::getCDRMessagePool().release_CDRMsg(*submessage_msg_);
+#if HAVE_SECURITY
+    RTPSMessageCreator::getCDRMessagePool().release_CDRMsg(*encrypt_msg_);
+#endif
+
 }
 
 void RTPSMessageGroup::reset_to_header()

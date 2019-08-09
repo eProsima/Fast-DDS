@@ -163,7 +163,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
                     LocatorList_t remote_locators_shrinked{mp_RTPSParticipant->network_factory().ShrinkLocatorLists(
                             {(*it)->m_att.endpoint.remoteLocatorList})};
 
-                    RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
+                    RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER,
                         remote_locators_shrinked, guids);
                     if (!group.add_data(*change, guids, remote_locators_shrinked, (*it)->m_att.expectsInlineQos))
                     {
@@ -175,7 +175,7 @@ void StatefulWriter::unsent_change_added_to_history(CacheChange_t* change)
 
             if (!m_separateSendingEnabled)
             {
-                RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
+                RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER);
                 if (!group.add_data(*change, mAllRemoteReaders, mAllShrinkedLocatorList, expectsInlineQos))
                 {
                     logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
@@ -265,7 +265,7 @@ void StatefulWriter::send_any_unsent_changes()
             guids.at(0) = remoteReader->m_att.guid;
             const LocatorList_t remote_locators_shrinked{mp_RTPSParticipant->network_factory().ShrinkLocatorLists(
                     {remoteReader->m_att.endpoint.remoteLocatorList})};
-            RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
+            RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER,
                    remote_locators_shrinked, guids);
 
             // Loop all changes
@@ -356,7 +356,7 @@ void StatefulWriter::send_any_unsent_changes()
             for (auto& controller : mp_RTPSParticipant->getFlowControllers())
                 (*controller)(relevantChanges);
 
-            RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
+            RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER);
             uint32_t lastBytesProcessed = 0;
 
             while (!relevantChanges.empty())
@@ -477,7 +477,7 @@ void StatefulWriter::send_any_unsent_changes()
         }
         else
         {
-            RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages);
+            RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER);
             send_heartbeat_nts_(mAllRemoteReaders, mAllShrinkedLocatorList, group, true);
         }
     }
@@ -584,7 +584,7 @@ bool StatefulWriter::matched_reader_add(RemoteReaderAttributes& rdata)
         std::vector<GUID_t> guids(1, rp->m_att.guid);
         const LocatorList_t remote_locators_shrinked{mp_RTPSParticipant->network_factory().ShrinkLocatorLists(
                 {rp->m_att.endpoint.remoteLocatorList})};
-        RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
+        RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER,
                 remote_locators_shrinked, guids);
 
         // Send initial heartbeat
@@ -901,7 +901,7 @@ void StatefulWriter::send_heartbeat_to_nts(ReaderProxy& remoteReaderProxy, bool 
     std::vector<GUID_t> tmp_guids(1, remoteReaderProxy.m_att.guid);
     const LocatorList_t remote_locators_shrinked{mp_RTPSParticipant->network_factory().ShrinkLocatorLists(
             {remoteReaderProxy.m_att.endpoint.remoteLocatorList})};
-    RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER, m_cdrmessages,
+    RTPSMessageGroup group(mp_RTPSParticipant, this, RTPSMessageGroup::WRITER,
         remote_locators_shrinked, tmp_guids);
 
     send_heartbeat_nts_(tmp_guids, remote_locators_shrinked, group, final);
@@ -943,7 +943,7 @@ void StatefulWriter::send_heartbeat_nts_(const std::vector<GUID_t>& remote_reade
     logInfo(RTPS_WRITER, getGuid().entityId << " Sending Heartbeat (" << firstSeq << " - " << lastSeq <<")" );
 }
 
-void StatefulWriter::send_heartbeat_piggyback_nts_(const std::vector<GUID_t>& remote_readers, 
+void StatefulWriter::send_heartbeat_piggyback_nts_(const std::vector<GUID_t>& remote_readers,
     const LocatorList_t &locators,
     RTPSMessageGroup& message_group)
 {

@@ -188,8 +188,6 @@ class RTPSWriter : public Endpoint
 
     //!Is the data sent directly or announced by HB and THEN send to the ones who ask for it?.
     bool m_pushMode;
-    //!Group created to send messages more efficiently
-    RTPSMessageGroup_t m_cdrmessages;
     //!INdicates if the liveliness has been asserted
     bool m_livelinessAsserted;
     //!WriterHistory
