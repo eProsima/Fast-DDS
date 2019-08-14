@@ -375,11 +375,11 @@ bool RTPSParticipantImpl::createWriter(
     }
 
     // Update persistence guidPrefix
-    if(param.endpoint.persistence_guid == c_Guid_Unknown)
+    if(param.endpoint.persistence_guid == c_Guid_Unknown && m_att.prefix != c_GuidPrefix_Unknown)
     {
         param.endpoint.persistence_guid = GUID_t(
                                                 m_att.prefix,
-                                                c_EntityId_RTPSParticipant);
+                                                entityId);
     }
 
     // Get persistence service
