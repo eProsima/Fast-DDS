@@ -1796,9 +1796,10 @@ ResponseCode DynamicData::set_int32_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() == TK_BITSET && it->second->annotation_is_bit_bound()))
+            DynamicData* data = it->second;
+            if (get_kind() == TK_BITSET && data->type_->get_descriptor()->annotation_get_bit_bound())
             {
-                uint16_t bit_bound = it->second->annotation_get_bit_bound();
+                uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 int32_t mask = 0x00;
                 for (uint16_t i = 0; i < bit_bound; ++i)
                 {
@@ -1940,9 +1941,10 @@ ResponseCode DynamicData::set_uint32_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() == TK_BITSET && it->second->annotation_is_bit_bound()))
+            DynamicData* data = it->second;
+            if (get_kind() == TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
             {
-                uint16_t bit_bound = it->second->annotation_get_bit_bound();
+                uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 uint32_t mask = 0x00;
                 for (uint16_t i = 0; i < bit_bound; ++i)
                 {
@@ -2084,9 +2086,10 @@ ResponseCode DynamicData::set_int16_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() == TK_BITSET && it->second->annotation_is_bit_bound()))
+            DynamicData* data = it->second;
+            if (get_kind() == TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
             {
-                uint16_t bit_bound = it->second->annotation_get_bit_bound();
+                uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 int16_t mask = 0x00;
                 for (uint16_t i = 0; i < bit_bound; ++i)
                 {
@@ -2228,9 +2231,10 @@ ResponseCode DynamicData::set_uint16_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() == TK_BITSET && it->second->annotation_is_bit_bound()))
+            DynamicData* data = it->second;
+            if (get_kind() == TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
             {
-                uint16_t bit_bound = it->second->annotation_get_bit_bound();
+                uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 uint16_t mask = 0x00;
                 for (uint16_t i = 0; i < bit_bound; ++i)
                 {
@@ -2371,9 +2375,10 @@ ResponseCode DynamicData::set_int64_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() == TK_BITSET && it->second->annotation_is_bit_bound()))
+            DynamicData* data = it->second;
+            if (get_kind() == TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
             {
-                uint16_t bit_bound = it->second->annotation_get_bit_bound();
+                uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 int64_t mask = 0x00;
                 for (uint16_t i = 0; i < bit_bound; ++i)
                 {
@@ -2515,9 +2520,10 @@ ResponseCode DynamicData::set_uint64_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() == TK_BITSET && it->second->annotation_is_bit_bound()))
+            DynamicData* data = it->second;
+            if (get_kind() == TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
             {
-                uint16_t bit_bound = it->second->annotation_get_bit_bound();
+                uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 uint64_t mask = 0x00;
                 for (uint16_t i = 0; i < bit_bound; ++i)
                 {
@@ -3242,9 +3248,10 @@ ResponseCode DynamicData::set_byte_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() == TK_BITSET && it->second->annotation_is_bit_bound()))
+            DynamicData* data = it->second;
+            if (get_kind() == TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
             {
-                uint16_t bit_bound = it->second->annotation_get_bit_bound();
+                uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 octet mask = 0x00;
                 for (uint16_t i = 0; i < bit_bound; ++i)
                 {
@@ -5353,9 +5360,27 @@ bool DynamicData::deserialize(eprosima::fastcdr::Cdr& cdr)
 #ifdef DYNAMIC_TYPES_CHECKING
         switch (type_size)
         {
-            case 1: cdr >> (uint8_t)uint64_value_; break;
-            case 2: cdr >> (uint16_t)uint64_value_; break;
-            case 3: cdr >> (uint64_t)uint64_value_; break;
+            case 1:
+            {
+                uint8_t temp;
+                cdr >> temp;
+                uint64_value_ = temp;
+                break;
+            }
+            case 2:
+            {
+                uint16_t temp;
+                cdr >> temp;
+                uint64_value_ = temp;
+                break;
+            }
+            case 3:
+            {
+                uint32_t temp;
+                cdr >> temp;
+                uint64_value_ = temp;
+                break;
+            }
             case 4: cdr >> uint64_value_; break;
             default: logError(DYN_TYPES, "Cannot deserialize bitmask of size " << type_size);
         }
@@ -6310,7 +6335,7 @@ void DynamicData::serialize(eprosima::fastcdr::Cdr& cdr) const
             }
             else
             {
-                logError(DYN_TYPES, "Missing MemberDescriptor " << i);
+                logError(DYN_TYPES, "Missing MemberDescriptor " << idx);
             }
         }
 #else
