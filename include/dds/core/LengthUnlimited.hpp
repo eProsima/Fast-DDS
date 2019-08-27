@@ -20,12 +20,14 @@
 #ifndef OMG_DDS_CORE_LENGTH_UNLIMITED_HPP_
 #define OMG_DDS_CORE_LENGTH_UNLIMITED_HPP_
 
-namespace dds
-{
-namespace core
-{
-const int32_t LENGTH_UNLIMITED = -1;
-}
-}
+#include <dds/core/detail/inttypes.hpp>
 
-#endif  // !defined(OMG_DDS_CORE_LENGTH_UNLIMITED_HPP_)
+namespace dds {
+namespace core {
+
+const int32_t LENGTH_UNLIMITED = -1;
+
+} //namespace core
+} //namespace dds
+
+#endif  //OMG_DDS_CORE_LENGTH_UNLIMITED_HPP_
