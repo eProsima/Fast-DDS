@@ -490,6 +490,7 @@ bool WriterProxyData::readFromCDRMessage(
                 assert(p != nullptr);
                 security_attributes_ = p->security_attributes;
                 plugin_security_attributes_ = p->plugin_security_attributes;
+                break;
             }
 #endif
             default:
