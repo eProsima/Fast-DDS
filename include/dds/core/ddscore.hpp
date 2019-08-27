@@ -34,4 +34,4 @@
 
 #include <dds/core/detail/ddscore.hpp>
 
-#endif /* OMG_DDS_CORE_PACKAGE_INCLUDE_HPP_ */
+#endif //OMG_DDS_CORE_PACKAGE_INCLUDE_HPP_
