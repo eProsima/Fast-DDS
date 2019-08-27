@@ -22,14 +22,9 @@
 
 #include <dds/core/Reference.hpp>
 
-namespace dds
-{
-namespace core
-{
-template <typename T>
-class WeakReference;
-}
-}
+namespace dds {
+namespace core {
+
 /**
  * @brief
  * The WeakReference class enables you to maintain a weak
@@ -38,8 +33,8 @@ class WeakReference;
  * The existence of a weak link will not prevent the garbage
  * collection of the reference type.
  */
-template <typename T>
-class dds::core::WeakReference
+template<typename T>
+class WeakReference
 {
 public:
     typedef T ReferenceType;
@@ -55,7 +50,8 @@ public:
      *
      * @tparam t dds object the new weak reference will refer to
      */
-    WeakReference(const T& t);
+    WeakReference(
+            const T& t);
 
     /** @cond */
     ~WeakReference();
@@ -81,4 +77,7 @@ private:
     typename T::DELEGATE_WEAK_REF_T impl_;
 };
 
-#endif /* OMG_DDS_CORE_WEAK_REFERENCE_HPP_ */
+} //namespace core
+} //namespace dds
+
+#endif //OMG_DDS_CORE_WEAK_REFERENCE_HPP_

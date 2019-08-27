@@ -20,14 +20,8 @@
 #ifndef OMG_DDS_CORE_VALUE_HPP_
 #define OMG_DDS_CORE_VALUE_HPP_
 
-namespace dds
-{
-namespace core
-{
-template <typename D>
-class Value;
-}
-}
+namespace dds {
+namespace core {
 
 /**
  * @brief
@@ -45,12 +39,13 @@ class Value;
  * (note that for immutable value-types the only form of change is to create a new
  * value-type).
  */
-template <typename D>
-class dds::core::Value
+template<typename D>
+class Value
 {
 protected:
     Value();
-    Value(const Value& p);
+    Value(
+            const Value& p);
 
 public:
     /** @cond
@@ -63,8 +58,9 @@ public:
      *
      * @param arg VALUETYPE value
      */
-    template <typename ARG>
-    Value(const ARG& arg);
+    template<typename ARG>
+    Value(
+            const ARG& arg);
 
     /**
      * Create a value-type object of two internal value
@@ -72,8 +68,12 @@ public:
      * @param arg1 VALUETYPES value
      * @param arg2 VALUETYPES value
      */
-    template <typename ARG1, typename ARG2>
-    Value(const ARG1& arg1, const ARG2& arg2);
+    template<
+            typename ARG1,
+            typename ARG2>
+    Value(
+            const ARG1& arg1,
+            const ARG2& arg2);
 
     /**
      * Create a value-type object of three internal value
@@ -82,8 +82,14 @@ public:
      * @param arg2 VALUETYPES value
      * @param arg3 VALUETYPES value
      */
-    template <typename ARG1, typename ARG2, typename ARG3>
-    Value(const ARG1& arg1, const ARG2& arg2, const ARG3& arg3);
+    template<
+            typename ARG1,
+            typename ARG2,
+            typename ARG3>
+    Value(
+            const ARG1& arg1,
+            const ARG2& arg2,
+            const ARG3& arg3);
 
     /**
      * Create a value-type object of four internal value
@@ -93,8 +99,16 @@ public:
      * @param arg3 VALUETYPES value
      * @param arg4 VALUETYPES value
      */
-    template <typename ARG1, typename ARG2, typename ARG3, typename ARG4>
-    Value(const ARG1& arg1, const ARG2& arg2, const ARG3& arg3, const ARG4& arg4);
+    template<
+            typename ARG1,
+            typename ARG2,
+            typename ARG3,
+            typename ARG4>
+    Value(
+            const ARG1& arg1,
+            const ARG2& arg2,
+            const ARG3& arg3,
+            const ARG4& arg4);
 
     /**
      * Create a value-type object of five internal value
@@ -105,8 +119,18 @@ public:
      * @param arg4 VALUETYPES value
      * @param arg5 VALUETYPES value
      */
-    template <typename ARG1, typename ARG2, typename ARG3, typename ARG4, typename ARG5>
-    Value(const ARG1& arg1, const ARG2& arg2, const ARG3& arg3, const ARG4& arg4, const ARG5& arg5);
+    template<
+            typename ARG1,
+            typename ARG2,
+            typename ARG3,
+            typename ARG4,
+            typename ARG5>
+    Value(
+            const ARG1& arg1,
+            const ARG2& arg2,
+            const ARG3& arg3,
+            const ARG4& arg4,
+            const ARG5& arg5);
 
     /**
      * Create a value-type object of six internal value
@@ -118,8 +142,20 @@ public:
      * @param arg5 VALUETYPES value
      * @param arg6 VALUETYPES value
      */
-    template <typename ARG1, typename ARG2, typename ARG3, typename ARG4, typename ARG5, typename ARG6>
-    Value(const ARG1& arg1, const ARG2& arg2, const ARG3& arg3, const ARG4& arg4, const ARG5& arg5, const ARG6& arg6);
+    template<
+            typename ARG1,
+            typename ARG2,
+            typename ARG3,
+            typename ARG4,
+            typename ARG5,
+            typename ARG6>
+    Value(
+            const ARG1& arg1,
+            const ARG2& arg2,
+            const ARG3& arg3,
+            const ARG4& arg4,
+            const ARG5& arg5,
+            const ARG6& arg6);
     /** @endcond */
 
 public:
@@ -132,7 +168,8 @@ public:
      * Assigns new delegate to this Value
      * @param other Value
      */
-    Value& operator=(const Value& other);
+    Value& operator =(
+            const Value& other);
 
     /**
      * Compare this Value with another Value
@@ -140,7 +177,8 @@ public:
      * @param other Value
      * @return true if equal
      */
-    bool operator==(const Value& other) const;
+    bool operator ==(
+            const Value& other) const;
 
     /**
      * Compare this Value with another Value
@@ -148,7 +186,8 @@ public:
      * @param other Value
      * @return true if not equal
      */
-    bool operator !=(const Value& other) const;
+    bool operator !=(
+            const Value& other) const;
 
 public:
     /**
@@ -189,5 +228,7 @@ protected:
     D d_;
 };
 
+} //namespace core
+} //namespace dds
 
-#endif /* OMG_DDS_CORE_VALUE_HPP_ */
+#endif //OMG_DDS_CORE_VALUE_HPP_
