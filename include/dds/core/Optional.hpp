@@ -1,4 +1,5 @@
-/* Copyright 2010, Object Management Group, Inc.
+/*
+ * Copyright 2010, Object Management Group, Inc.
  * Copyright 2010, PrismTech, Corp.
  * Copyright 2010, Real-Time Innovations, Inc.
  * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
@@ -20,10 +21,10 @@
 #ifndef OMG_DDS_CORE_OPTIONAL_HPP_
 #define OMG_DDS_CORE_OPTIONAL_HPP_
 
-namespace dds
-{
-namespace core
-{
+#include <dds/core/Value.hpp>
+
+namespace dds {
+namespace core {
 
 /**
  * The optional class is used to wrap attributes annotated in the idl with the
@@ -65,11 +66,14 @@ namespace core
  * };
  * @endcode
  */
-template <typename T, template <typename Q> class DELEGATE>
+template<
+        typename T,
+        template <typename Q> class DELEGATE>
 class optional : public dds::core::Value< DELEGATE<T> >
 {
 public:
-    optional(const T& t);
+    optional(
+            const T& t);
 
 public:
     /**
@@ -93,6 +97,7 @@ public:
     T& get();
 };
 
-}
-}
-#endif /* OMG_DDS_CORE_OPTIONAL_HPP_ */
+} //namespace core
+} //namespace dds
+
+#endif //OMG_DDS_CORE_OPTIONAL_HPP_

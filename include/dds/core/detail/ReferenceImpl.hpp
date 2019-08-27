@@ -121,21 +121,21 @@ Reference<DELEGATE>& Reference<DELEGATE>::operator=(
 template<typename DELEGATE>
 bool Reference<DELEGATE>::is_nil() const
 {
-    return impl_.get() == 0;
+    //To implement
 }
 
 template<typename DELEGATE>
 bool Reference<DELEGATE>::operator==(
         const null_type) const
 {
-    return this->is_nil();
+    //To implement
 }
 
 template<typename DELEGATE>
 bool Reference<DELEGATE>::operator!=(
         const null_type) const
 {
-    return !(this->is_nil());
+    //To implement
 }
 
 template<typename DELEGATE>
@@ -178,7 +178,7 @@ template<typename DELEGATE>
 void Reference<DELEGATE>::set_ref(
         DELEGATE_T* p)
 {
-    impl_.reset(p);
+    //To implement
 }
 
 
@@ -186,19 +186,17 @@ template<class D>
 bool operator == (
         null_type, const Reference<D>& r)
 {
-    return r.is_nil();
+    //To implement
 }
 
 template<class D>
 bool operator != (
         null_type, const Reference<D>& r)
 {
-    return !r.is_nil();
+    //To implement
 }
 
 } //namespace core
 } //namespace dds
-
-// End of implementation
 
 #endif //EPROSIMA_DDS_CORE_REFERENCE_IMPL_HPP_

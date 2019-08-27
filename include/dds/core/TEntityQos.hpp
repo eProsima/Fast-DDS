@@ -23,14 +23,10 @@
 #include <dds/core/Value.hpp>
 
 
-namespace dds
-{
-namespace core
-{
+namespace dds {
+namespace core {
 template <typename DELEGATE>
 class TEntityQos;
-}
-}
 
 /**
  * @brief
@@ -43,7 +39,7 @@ class TEntityQos;
  * and \ref DCPS_QoS "Supported Quality of Service"
  */
 template <typename DELEGATE>
-class dds::core::TEntityQos : public dds::core::Value<DELEGATE>
+class TEntityQos : public Value<DELEGATE>
 {
 public:
     /**
@@ -56,15 +52,17 @@ public:
      *
      * @param other the QoS to copy.
      */
-    TEntityQos(const TEntityQos& other);
+    TEntityQos(
+            const TEntityQos& other);
 
     /**
      * Create/copy QoS from different QoS type.
      *
      * @param qos the QoS to copy policies from.
      */
-    template <typename T>
-    TEntityQos(const TEntityQos<T>& qos);
+    template<typename T>
+    TEntityQos(
+            const TEntityQos<T>& qos);
 
 public:
     /** @cond */
@@ -79,8 +77,9 @@ public:
      *
      * @param p the policy to be set for this QoS instance.
      */
-    template <typename POLICY>
-    TEntityQos& policy(const POLICY& p);
+    template<typename POLICY>
+    TEntityQos& policy(
+            const POLICY& p);
 
     /**
      * Generic function for obtaining the value of a specific policy
@@ -88,7 +87,7 @@ public:
      *
      * @return policy
      */
-    template <typename POLICY>
+    template<typename POLICY>
     const POLICY& policy() const;
 
     /**
@@ -97,7 +96,7 @@ public:
      *
      * @return policy
      */
-    template <typename POLICY>
+    template<typename POLICY>
     POLICY& policy();
 
     /**
@@ -107,8 +106,9 @@ public:
      *
      * @param p the policy to be set for this QoS instance.
      */
-    template <typename POLICY>
-    TEntityQos& operator << (const POLICY& p);
+    template<typename POLICY>
+    TEntityQos& operator <<(
+            const POLICY& p);
 
     /**
      * Generic function for obtaining the value of a specific policy
@@ -116,8 +116,9 @@ public:
      *
      * @return policy
      */
-    template <typename POLICY>
-    const TEntityQos& operator >> (POLICY& p) const;
+    template<typename POLICY>
+    const TEntityQos& operator >>(
+            POLICY& p) const;
 
     /**
      * Generic function for setting a policy applicable to this QoS object.
@@ -126,10 +127,13 @@ public:
      *
      * @param TEntityQos the TEntityQos to set
      */
-    template <typename T>
-    TEntityQos<DELEGATE>& operator = (const TEntityQos<T>& other);
+    template<typename T>
+    TEntityQos<DELEGATE>& operator =(
+            const TEntityQos<T>& other);
 
 };
-/* namespace tdds / namespace core / namespace qos */
 
-#endif /* OMG_TDDS_CORE_QOS_ENTITY_QOS_HPP_ */
+} //namespace core
+} //namespace dds
+
+#endif //OMG_TDDS_CORE_QOS_ENTITY_QOS_HPP_
