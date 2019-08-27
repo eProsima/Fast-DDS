@@ -24,6 +24,8 @@
 #include <dds/core/InstanceHandle.hpp>
 #include <dds/core/status/Status.hpp>
 
+#include <dds/core/Reference.hpp>
+
 
 namespace dds {
 namespace core {
