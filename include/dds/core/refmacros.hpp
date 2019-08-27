@@ -56,7 +56,7 @@
     TYPE(const dds::core::null_type&) : dds::core::Reference< DELEGATE >(static_cast<DELEGATE*>(NULL)) { } \
     \
     TYPE& operator=(const dds::core::null_type& rhs) {\
-        *this = TYPE(dds::core::null); \
+        *this = TYPE(rhs); \
         return *this; \
     } \
     \

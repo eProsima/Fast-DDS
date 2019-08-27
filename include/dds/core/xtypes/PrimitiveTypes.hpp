@@ -34,7 +34,9 @@ struct dynamic_type_traits
     static constexpr const char* const NAME = "no_type";
 };
 
-template<typename T, typename DELEGATE>
+template<
+        typename T,
+        typename DELEGATE>
 class TPrimitiveType : public TDynamicType<DELEGATE>
 {
 public:
