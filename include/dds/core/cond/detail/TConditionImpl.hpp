@@ -28,7 +28,6 @@
 #include <dds/core/detail/ReferenceImpl.hpp>
 #include <dds/core/cond/Condition.hpp>
 
-// Implementation
 namespace dds {
 namespace core {
 namespace cond {
@@ -43,7 +42,8 @@ TCondition<DELEGATE>::~TCondition()
  */
 template<typename DELEGATE>
 template<typename Functor>
-void TCondition<DELEGATE>::handler(Functor& func)
+void TCondition<DELEGATE>::handler(
+        Functor& func)
 {
     //To implement
 }
@@ -78,6 +78,5 @@ bool TCondition<DELEGATE>::trigger_value() const
 } //namespace cond
 } //namespace core
 } //namespace dds
-// End of implementation
 
 #endif //EPROSIMA_DDS_CORE_COND_TCONDITION_IMPL_HPP_
