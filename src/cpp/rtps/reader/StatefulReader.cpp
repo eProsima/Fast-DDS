@@ -672,19 +672,21 @@ bool StatefulReader::change_received(
     // TODO (Miguel C): Refactor this inside WriterProxy
     size_t unknown_missing_changes_up_to = prox->unknown_missing_changes_up_to(a_change->sequenceNumber);
 
-    if(this->mp_history->received_change(a_change, unknown_missing_changes_up_to))
+    // NOTE: Depending on QoS settings, one change can be removed from history
+    // inside the call to mp_history->received_change
+    if(mp_history->received_change(a_change, unknown_missing_changes_up_to))
     {
-        bool ret = prox->received_change_set(a_change->sequenceNumber);
-
         GUID_t proxGUID = prox->guid();
 
         // If KEEP_LAST and history full, make older changes as lost.
         CacheChange_t* aux_change = nullptr;
-        if(this->mp_history->isFull() && mp_history->get_min_change_from(&aux_change, proxGUID))
+        if(mp_history->isFull() && mp_history->get_min_change_from(&aux_change, proxGUID))
         {
             prox->lost_changes_update(aux_change->sequenceNumber);
             fragmentedChangePitStop_->try_to_remove_until(aux_change->sequenceNumber, proxGUID);
         }
+
+        bool ret = prox->received_change_set(a_change->sequenceNumber);
 
         NotifyChanges(prox);
 
