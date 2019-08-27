@@ -22,10 +22,8 @@
 
 #include <dds/core/types.hpp>
 
-namespace dds
-{
-namespace core
-{
+namespace dds {
+namespace core {
 
 /**
  * @file
@@ -65,10 +63,15 @@ public:
      * @param sec     Amount of seconds for the Duration.
      * @param nanosec Amount of nanoseconds for the Duration.
      */
-    explicit Duration(int32_t sec, uint32_t nanosec = 0);
+    explicit Duration(
+            int32_t sec,
+            uint32_t nanosec = 0);
+
 #if __cplusplus >= 199711L
     /** @copydoc dds::core::Duration::Duration(int32_t sec, uint32_t nanosec = 0) */
-    explicit Duration(int64_t sec, uint32_t nanosec = 0);
+    explicit Duration(
+            int64_t sec,
+            uint32_t nanosec = 0);
 #endif
 
     /** @cond */
@@ -80,19 +83,22 @@ public:
      * Create a Duration from a number of microseconds
      * @param microseconds number of microseconds
      */
-    static const Duration from_microsecs(int64_t microseconds);
+    static const Duration from_microsecs(
+            int64_t microseconds);
 
     /**
      * Create a Duration from a number of milliseconds
      * @param miliseconds number of milliseconds
      */
-    static const Duration from_millisecs(int64_t milliseconds);
+    static const Duration from_millisecs(
+            int64_t milliseconds);
 
     /**
      * Create a Duration from a number of seconds
      * @param seconds number of seconds
      */
-    static const Duration from_secs(double seconds);
+    static const Duration from_secs(
+            double seconds);
 
 public:
     /**
@@ -115,7 +121,8 @@ public:
      * Set number of nanoseconds
      * @param ns number of nanoseconds
      */
-    void nanosec(uint32_t ns);
+    void nanosec(
+            uint32_t ns);
 
 public:
     /**
@@ -128,7 +135,8 @@ public:
      *
      * @return comparison result
      */
-    int compare(const Duration& that) const;
+    int compare(
+            const Duration& that) const;
 
     /**
      * Returns true if the Duration is greater than the comparator
@@ -136,13 +144,15 @@ public:
      * @param that Duration to compare
      * @return comparison result
      */
-    bool operator >(const Duration& that) const;
+    bool operator >(
+            const Duration& that) const;
 
     /**
      * Returns true if the Duration is greater than or equal to the comparator
      * @param Duration &that
      */
-    bool operator >=(const Duration& that) const;
+    bool operator >=(
+            const Duration& that) const;
 
     /**
      * Returns true if the Duration is not equal to the comparator
@@ -150,7 +160,8 @@ public:
      * @param that Duration to compare
      * @return comparison result
      */
-    bool operator !=(const Duration& that) const;
+    bool operator !=(
+            const Duration& that) const;
 
     /**
      * Returns true if the Duration is equal to the comparator
@@ -158,7 +169,8 @@ public:
      * @param that Duration to compare
      * @return comparison result
      */
-    bool operator ==(const Duration& that) const;
+    bool operator ==(
+            const Duration& that) const;
 
     /**
      * Returns true if the Duration is less than or equal to the comparator
@@ -166,7 +178,8 @@ public:
      * @param that Duration to compare
      * @return comparison result
      */
-    bool operator <=(const Duration& that) const;
+    bool operator <=(
+            const Duration& that) const;
 
     /**
      * Returns true if the Duration is less than the comparator
@@ -174,7 +187,8 @@ public:
      * @param that Duration to compare
      * @return comparison result
      */
-    bool operator <(const Duration& that) const;
+    bool operator <(
+            const Duration& that) const;
 
 public:
     /**
@@ -183,7 +197,8 @@ public:
      * @param a_ti Duration to add
      * @return this Duration + a_ti
      */
-    Duration& operator+=(const Duration& a_ti);
+    Duration& operator +=(
+            const Duration& a_ti);
 
     /**
      * Subtract a Duration from this Duration
@@ -191,7 +206,8 @@ public:
      * @param a_ti Duration to subtract
      * @return this Duration - a_ti
      */
-    Duration& operator-=(const Duration& a_ti);
+    Duration& operator -=(
+            const Duration& a_ti);
 
     /**
      * Multiply this Duration by a factor
@@ -199,7 +215,8 @@ public:
      * @param factor the factor to multiply this Duration by
      * @return this Duration * factor
      */
-    Duration& operator*=(uint64_t factor);
+    Duration& operator *=(
+            uint64_t factor);
 
     /**
      * Add a Duration to Duration
@@ -207,7 +224,8 @@ public:
      * @param other a Duration
      * @return Duration + other
      */
-    const Duration operator +(const Duration& other) const;
+    const Duration operator +(
+            const Duration& other) const;
 
     /**
      * Subtract a Duration from Duration
@@ -215,7 +233,8 @@ public:
      * @param other a Duration
      * @return the Duration - other
      */
-    const Duration operator -(const Duration& other) const;
+    const Duration operator -(
+            const Duration& other) const;
 public:
     /**
      * Returns this Duration in milliseconds.
@@ -251,8 +270,9 @@ private:
  *
  * @return factor * Duration
  */
-const Duration OMG_DDS_API operator *(uint64_t lhs,
-                                      const Duration& rhs);
+const Duration OMG_DDS_API operator *(
+        uint64_t lhs,
+        const Duration& rhs);
 
 /**
  * Multiply Duration by a factor
@@ -262,8 +282,9 @@ const Duration OMG_DDS_API operator *(uint64_t lhs,
  *
  * @return Duration * factor
  */
-const Duration OMG_DDS_API operator *(const Duration& lhs,
-                                      uint64_t rhs);
+const Duration OMG_DDS_API operator *(
+        const Duration& lhs,
+        uint64_t rhs);
 
 /**
  * Divide Duration by a factor
@@ -271,9 +292,11 @@ const Duration OMG_DDS_API operator *(const Duration& lhs,
  * @param lhs Duration to divide
  * @param rhs factor by which to divide
  */
-const Duration OMG_DDS_API operator /(const Duration& lhs,
-                                      uint64_t rhs);
+const Duration OMG_DDS_API operator /(
+        const Duration& lhs,
+        uint64_t rhs);
 
-}
-} /* namespace dds / namespace core  */
-#endif /* OMG_DDS_CORE_DURATION_HPP_ */
+} //namespace core
+} //namespace dds
+
+#endif //OMG_DDS_CORE_DURATION_HPP_

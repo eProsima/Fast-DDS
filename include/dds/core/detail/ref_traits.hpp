@@ -27,20 +27,28 @@
 namespace dds {
 namespace core {
 
-template <typename T1, typename T2>
+template<
+        typename T1,
+        typename T2>
 struct is_base_of : public ::std::is_base_of<T1, T2> { };
 
-template <typename T1, typename T2>
+template<
+        typename T1,
+        typename T2>
 struct is_same : public ::std::is_same<T1, T2> { };
 
-template <typename T>
+template<typename T>
 struct smart_ptr_traits {
     typedef ::std::shared_ptr<T>  ref_type;
     typedef ::std::weak_ptr<T>    weak_ref_type;
 };
 
-template <typename TO, typename FROM>
-TO polymorphic_cast(FROM& from) {
+template<
+        typename TO,
+        typename FROM>
+TO polymorphic_cast(
+        FROM& from) {
+
     typename TO::DELEGATE_REF_T dr = ::std::dynamic_pointer_cast<typename TO::DELEGATE_T>(from.delegate());
 
     TO to(dr);
