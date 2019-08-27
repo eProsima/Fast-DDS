@@ -7,12 +7,6 @@
 [submodule "thirdparty/fastcdr"]
 	path = thirdparty/fastcdr
 	url = https://github.com/eProsima/Fast-CDR.git
-[submodule "thirdparty/idl"]
-	path = thirdparty/idl
-	url = https://github.com/eProsima/IDL-Parser.git
 [submodule "thirdparty/tinyxml2"]
 	path = thirdparty/tinyxml2
 	url = https://github.com/leethomason/tinyxml2.git
-[submodule "thirdparty/idl"]
-	path = thirdparty/idl
-	url = https://github.com/eProsima/IDL-Parser.git

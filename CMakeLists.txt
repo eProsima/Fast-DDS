@@ -265,10 +265,18 @@ if(BUILD_JAVA)
         set(CMD_JAVA "assemble")
     endif()
 
-    gradle_build(${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen ${CMD_JAVA}
-        THIRDPARTY_DEPENDENCY idl
-        THIRDPARTY_DEPENDENCY fastcdr
-        )
+    include(${PROJECT_SOURCE_DIR}/cmake/common/GitUtils.cmake)
+
+    # Need to be downloaded at configuration time to be available at build time.
+    # Using ExternalProject fails because the source isn't yet downloaded when gradle is called.
+    git_clone(
+        PROJECT_NAME fastrtpsgen
+        GIT_URL https://github.com/eProsima/Fast-RTPS-Gen
+        DIRECTORY ${PROJECT_SOURCE_DIR})
+
+    file(RENAME ${PROJECT_SOURCE_DIR}/Fast-RTPS-Gen ${PROJECT_SOURCE_DIR}/fastrtpsgen)
+
+    gradle_build(${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen ${CMD_JAVA})
 endif()
 
 ###############################################################################
