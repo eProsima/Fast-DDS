@@ -1,4 +1,5 @@
-/* Copyright 2010, Object Management Group, Inc.
+/*
+ * Copyright 2010, Object Management Group, Inc.
  * Copyright 2010, PrismTech, Corp.
  * Copyright 2010, Real-Time Innovations, Inc.
  * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
@@ -69,6 +70,8 @@ public:
     /**
      * Local representation of the dds::domain::DomainParticipantListener
      */
+    typedef DomainParticipantListener Listener;
+
     typedef dds::domain::DomainParticipantListener Listener;
 
 public:
@@ -181,7 +184,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    const dds::domain::qos::DomainParticipantQos& qos() const;
+    const qos::DomainParticipantQos& qos() const;
 
     /**
      * Sets the DomainParticipantQos setting for this instance.
@@ -309,7 +312,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    static dds::domain::qos::DomainParticipantQos default_participant_qos();
+    static qos::DomainParticipantQos default_participant_qos();
 
     /**
      * Sets the default DomainParticipantQos.

@@ -18,18 +18,21 @@
 #ifndef EPROSIMA_DDS_DOMAIN_DETAIL_DOMAINPARTICIPANT_HPP_
 #define EPROSIMA_DDS_DOMAIN_DETAIL_DOMAINPARTICIPANT_HPP_
 
-#include <dds/domain/detail/TDomainParticipantImpl.hpp>
-#include <fastdds/dds/domain/DomainParticipant.hpp>
+//#include <dds/domain/detail/TDomainParticipantImpl.hpp>
+//TODO: Fix when DomainParticipantDelegate is implemented
+//#include <fastdds/dds/domain/DomainParticipantDelegate.hpp>
 
 namespace dds {
 namespace domain {
 namespace detail {
 
-//typedef dds::domain::TDomainParticipant< org::opensplice::domain::DomainParticipantDelegate > DomainParticipant;
+//TODO: Fix when DomainParticipantDelegate is implemented
+//typedef dds::domain::TDomainParticipant<eprosima::fastdds::domain::DomainParticipant> DomainParticipant;
+class DomainParticipant { };
 
-}
-}
-}
+} //namespace detail
+} //namespace domain
+} //namespace dds
 
 
 #endif //EPROSIMA_DDS_DOMAIN_DETAIL_DOMAINPARTICIPANT_HPP_

@@ -1,4 +1,5 @@
-/* Copyright 2010, Object Management Group, Inc.
+/*
+ * Copyright 2010, Object Management Group, Inc.
  * Copyright 2010, PrismTech, Corp.
  * Copyright 2010, Real-Time Innovations, Inc.
  * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
@@ -22,15 +23,14 @@
 
 #include <dds/domain/qos/detail/DomainParticipantQos.hpp>
 
-namespace dds
-{
-namespace domain
-{
-namespace qos
-{
-typedef dds::domain::qos::detail::DomainParticipantQos DomainParticipantQos;
-}
-}
-}
+namespace dds {
+namespace domain {
+namespace qos {
 
-#endif /* OMG_DDS_DOMAIN_QOS_DOMAINPARTICIPANTQOS_HPP_ */
+typedef dds::domain::qos::detail::DomainParticipantQos DomainParticipantQos;
+
+} //namespace qos
+} //namespace domain
+} //namespace dds
+
+#endif //OMG_DDS_DOMAIN_QOS_DOMAINPARTICIPANTQOS_HPP_

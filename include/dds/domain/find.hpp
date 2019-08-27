@@ -39,7 +39,7 @@ namespace domain
 OMG_DDS_API
 DomainParticipant find(uint32_t id);
 
-}
-}
+} //namespace domain
+} //namespace dds
 
 #endif //OMG_DDS_DOMAIN_FIND_HPP_
