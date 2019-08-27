@@ -1,8 +1,0 @@
-struct MYSTRUCT
-{
-	@Key long value;
-	string message;
-	float value2;
-	@Key string message2;
-
-};
