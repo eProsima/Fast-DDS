@@ -344,15 +344,13 @@ void WriterProxy::change_removed_from_history(const SequenceNumber_t& seq_num)
     // b) lifespan timer expired for seq_num
     // Previously, change was marked as irrelevant.
 
-    // TODO: As this may imply that all changes with a lower sequence number will also be dropped,
-    // now that history is full, should we act as if a heartbeat with an initial sequence of seq_num
-    // has been received?
-    // --> lost_changes_update(seq_num);
+    // As this may imply that all changes with a lower sequence number will also be dropped,
+    // now that history is full, it may be interesting to act as if a heartbeat with an initial
+    // sequence of seq_num has been received, i.e. calling lost_changes_update(seq_num).
+    // If we don't do it, changes_received_ may grow above the limits stablished for it,
+    // thus causing undesired dynamic allocations.
 
-    // If we leave the code as it is now, changes_received_ may grow above the limits stablished for it,
-    // thus causing undesired dynamic allocations
-
-    // For case a) this is done inside StatefulReader::change_received.
+    // For case a) a call to lost_changes_update is done inside StatefulReader::change_received.
     // For case b) it does not imply a dynamic allocation problem.
 }
 
