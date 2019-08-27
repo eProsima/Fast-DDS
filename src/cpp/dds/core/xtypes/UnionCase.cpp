@@ -15,19 +15,44 @@
  *
 */
 
-#ifndef EPROSIMA_DDS_CORE_XTYPES_DETAIL_MEMBER_TYPE_HPP_
-#define EPROSIMA_DDS_CORE_XTYPES_DETAIL_MEMBER_TYPE_HPP_
+#include <dds/core/xtypes/UnionCase.hpp>
 
-namespace dds {
-namespace core {
-namespace xtypes {
-namespace detail {
+namespace dds{
+namespace core{
+namespace xtypes{
 
-class MemberType { };
+template<
+        typename T,
+        template <typename Q> class DELEGATE>
+TUnionCase<T, DELEGATE>::TUnionCase()
+{
+}
 
-} //namespace detail
+template<
+        typename T,
+        template <typename Q> class DELEGATE>
+TUnionCase<T, DELEGATE>::TUnionCase(
+        T discriminator,
+        const MemberType& member)
+{
+	(void) discriminator;
+	(void) member;
+}
+
+template<
+        typename T,
+        template <typename Q> class DELEGATE>
+T TUnionCase<T, DELEGATE>::discriminator()
+{
+}
+
+template<
+        typename T,
+        template <typename Q> class DELEGATE>
+const MemberType& TUnionCase<T, DELEGATE>::member()
+{
+}
+
 } //namespace xtypes
 } //namespace core
 } //namespace dds
-
-#endif //EPROSIMA_DDS_CORE_XTYPES_DETAIL_MEMBER_TYPE_HPP_

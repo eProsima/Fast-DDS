@@ -7,6 +7,15 @@ set(CORE_STANDALONE ${PROJECT_NAME}_core_standalone)
 set(${CORE_STANDALONE}_source_files
     ${ALL_HEADERS}
     core.cpp
+    xtypes/Annotation.cpp
+    xtypes/CollectionTypes.cpp
+    xtypes/DynamicData.cpp
+    xtypes/DynamicType.cpp
+    xtypes/MemberType.cpp
+    xtypes/StructType.cpp
+    xtypes/TypeProvider.cpp
+    xtypes/UnionCase.cpp
+    xtypes/UnionType.cpp
     )
 
 add_library(${CORE_STANDALONE} ${${CORE_STANDALONE}_source_files})
