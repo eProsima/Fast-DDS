@@ -21,11 +21,112 @@
 #define OMG_DDS_CORE_INSTANCE_HANDLE_HPP_
 
 #include <vector>
+#include <iostream>
+
+#include <dds/core/types.hpp>
+#include <dds/core/Value.hpp>
+
 #include <dds/core/detail/InstanceHandle.hpp>
 
 
 namespace dds {
 namespace core {
+
+/**
+ * @brief
+ * Class to hold the handle associated with in sample instance.
+ */
+template<typename DELEGATE>
+class TInstanceHandle : public Value<DELEGATE>
+{
+public:
+    /**
+     * Create an nil instance handle.
+     */
+    TInstanceHandle();
+
+    /**
+     * Create an nil instance handle.
+     *
+     * @param nullHandle placeholder
+     */
+    TInstanceHandle(
+            const null_type& nullHandle);
+
+    /**
+     * Copy an existing InstancHandle
+     *
+     * @param other InstanceHandle to copy
+     */
+    TInstanceHandle(
+            const TInstanceHandle& other);
+
+    /** @cond */
+    ~TInstanceHandle();
+    /** @endcond */
+
+    /**
+     * @cond
+     * Parametric constructor for creating an instance-handle
+     * from some other type. This function is intended for internal
+     * usage.
+     */
+    template<typename ARG0>
+    TInstanceHandle(
+            const ARG0& arg0);
+    /** @endcond */
+
+public:
+    /**
+     * Assign an existing InstancHandle to this InstancHandle
+     *
+     * @param that The TInstanceHandle to assign to this
+     */
+    TInstanceHandle& operator =(
+            const TInstanceHandle& that);
+
+    /**
+     * Compare this InstanceHandle to another InstanceHandle
+     *
+     * @param that The TInstanceHandle to compare
+     * @return true if they match
+     */
+    bool operator ==(
+            const TInstanceHandle& that) const;
+
+    /**
+     * Compare this InstanceHandle to another InstanceHandle
+     *
+     * @param that The TInstanceHandle to compare
+     * @return true if this is less than that
+     */
+    bool operator <(
+            const TInstanceHandle& that) const;
+
+    /**
+     * Compare this InstanceHandle to another InstanceHandle
+     *
+     * @param that The TInstanceHandle to compare
+     * @return true if this is greater than that
+     */
+    bool operator >(
+            const TInstanceHandle& that) const;
+
+public:
+    /**
+     * Create an nil instance handle.
+     *
+     * @return a nil InstanceHandle
+     */
+    static const TInstanceHandle nil();
+
+    /**
+     * Check if the InstanceHandle is nil.
+     *
+     * @return true if the InstanceHandle is nil
+     */
+    bool is_nil() const;
+};
 
 typedef dds::core::detail::InstanceHandle InstanceHandle;
 typedef std::vector<InstanceHandle> InstanceHandleSeq;
