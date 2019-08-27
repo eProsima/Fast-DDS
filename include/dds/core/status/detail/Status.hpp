@@ -1,10 +1,5 @@
-#ifndef OMG_DDS_CORE_STATUS_DETAIL_STATUS_HPP_
-#define OMG_DDS_CORE_STATUS_DETAIL_STATUS_HPP_
-
-/* Copyright 2010, Object Management Group, Inc.
- * Copyright 2010, PrismTech, Corp.
- * Copyright 2010, Real-Time Innovations, Inc.
- * All rights reserved.
+/*
+ * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *
+*/
+
+#ifndef EPROSIMA_DDS_CORE_STATUS_DETAIL_STATUS_HPP_
+#define EPROSIMA_DDS_CORE_STATUS_DETAIL_STATUS_HPP_
 
 //TODO: Fix when StatusDelegate is implemented
 //#include <dds/core/status/detail/TStatusImpl.hpp>
@@ -84,4 +83,4 @@ class SubscriptionMatchedStatus { };
 
 /** @endcond */
 
-#endif //OMG_DDS_CORE_STATUS_DETAIL_STATUS_HPP_
+#endif //EPROSIMA_DDS_CORE_STATUS_DETAIL_STATUS_HPP_
