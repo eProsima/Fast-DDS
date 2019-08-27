@@ -22,14 +22,11 @@
 
 #include <dds/core/types.hpp>
 
-namespace dds
-{
-namespace core
-{
+namespace dds {
+namespace core {
+
 class Duration;
 class Time;
-}
-}
 
 /**
 * Time represents a time value and can:
@@ -40,7 +37,7 @@ class Time;
 * * Be converted to and from Times expressed in
 *   milliseconds (or other units) as integer types.
 */
-class OMG_DDS_API dds::core::Time
+class OMG_DDS_API Time
 {
 public:
     static const Time invalid();       // {-1, 0xffffffff}
@@ -51,19 +48,22 @@ public:
      *
      * @param microseconds number of microseconds
      */
-    static const Time from_microsecs(int64_t microseconds);
+    static const Time from_microsecs(
+            int64_t microseconds);
     /**
      * Create a Time from a number of milliseconds
      *
      * @param milliseconds number of miliseconds
      */
-    static const Time from_millisecs(int64_t milliseconds);
+    static const Time from_millisecs(
+            int64_t milliseconds);
     /**
      * Create a Time from a number of seconds
      *
      * @param seconds number of seconds
      */
-    static const Time from_secs(double seconds);
+    static const Time from_secs(
+            double seconds);
 
 public:
     /**
@@ -73,7 +73,9 @@ public:
     /**
      * Create a Time elapsing a specific amount of time.
      */
-    explicit Time(int64_t sec, uint32_t nanosec = 0);
+    explicit Time(
+            int64_t sec,
+            uint32_t nanosec = 0);
 
 public:
     /**
@@ -109,19 +111,22 @@ public:
      * @param that Time to compare
      * @return comparison result
      */
-    int compare(const Time& that) const;
+    int compare(
+            const Time& that) const;
 
     /**
      * @param that Time to compare
      * @return true if the Time is greater than the comparator
      */
-    bool operator >(const Time& that) const;
+    bool operator >(
+            const Time& that) const;
 
     /**
      * @param that Time to compare
      * @return true if the Time is greater than or equal to the comparator
      */
-    bool operator >=(const Time& that) const;
+    bool operator >=(
+            const Time& that) const;
 
     /**
      * @param that Time to compare
@@ -133,29 +138,34 @@ public:
      * @param that Time to compare
      * @return true if the Time is equal to the comparator
      */
-    bool operator ==(const Time& that) const;
+    bool operator ==(
+            const Time& that) const;
     /**
      * @param that Time to compare
      * @return true if the Time is less than or equal to the comparator
      */
-    bool operator <=(const Time& that) const;
+    bool operator <=(
+            const Time& that) const;
     /**
      * @param that Time to compare
      * @return true if the Time is less than the comparator
      */
-    bool operator <(const Time& that) const;
+    bool operator <(
+            const Time& that) const;
 
 public:
     /**
      * @param a_ti Duration to add
      * @return Time value + Duration
      */
-    Time& operator+=(const Duration& a_ti);
+    Time& operator +=(
+            const Duration& a_ti);
     /**
      * @param a_ti Duration to subtract
      * @return Time value - Duration
      */
-    Time& operator-=(const Duration& a_ti);
+    Time& operator -=(
+            const Duration& a_ti);
 
 public:
     /**
@@ -191,7 +201,9 @@ private:
  * @param rhs Duration
  * @return Time * Duration
  */
-const dds::core::Time OMG_DDS_API operator +(const dds::core::Time& lhs,      const dds::core::Duration& rhs);
+const Time OMG_DDS_API operator +(
+        const Time& lhs,
+        const Duration& rhs);
 
 /**
  * Add a Duration to a Time value
@@ -199,7 +211,9 @@ const dds::core::Time OMG_DDS_API operator +(const dds::core::Time& lhs,      co
  * @param rhs Time
  * @return Duration + Time
  */
-const dds::core::Time OMG_DDS_API operator +(const dds::core::Duration& lhs,  const dds::core::Time& rhs);
+const Time OMG_DDS_API operator +(
+        const Duration& lhs,
+        const Time& rhs);
 
 /**
  * Subtract a Duration from a Time value
@@ -207,7 +221,11 @@ const dds::core::Time OMG_DDS_API operator +(const dds::core::Duration& lhs,  co
  * @param rhs Duration
  * @return Time - Duration
  */
-const dds::core::Time OMG_DDS_API operator -(const dds::core::Time& lhs,      const dds::core::Duration& rhs);
+const Time OMG_DDS_API operator -(
+        const Time& lhs,
+        const Duration& rhs);
 
+} //namespace core
+} //namespace dds
 
-#endif /* OMG_DDS_CORE_TIME_HPP_ */
+#endif //OMG_DDS_CORE_TIME_HPP_

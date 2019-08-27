@@ -1,11 +1,5 @@
-#ifndef OMG_DDS_CORE_DETAIL_QOS_PROVIDER_HPP_
-#define OMG_DDS_CORE_DETAIL_QOS_PROVIDER_HPP_
-
-
-/* Copyright 2010, Object Management Group, Inc.
- * Copyright 2010, PrismTech, Inc.
- * Copyright 2010, Real-Time Innovations, Inc.
- * All rights reserved.
+/*
+ * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *
+*/
 
-#include <dds/core/detail/TQosProviderImpl.hpp>
-#include <org/opensplice/core/QosProviderDelegate.hpp>
+#ifndef EPROSIMA_DDS_CORE_DETAIL_QOS_PROVIDER_HPP_
+#define EPROSIMA_DDS_CORE_DETAIL_QOS_PROVIDER_HPP_
+
+//#include <dds/core/detail/TQosProviderImpl.hpp>
+//#include <org/opensplice/core/QosProviderDelegate.hpp>
 
 /**
  * @cond
@@ -29,13 +27,17 @@
  */
 
 namespace dds {
-   namespace core {
-      namespace detail {
-         typedef dds::core::TQosProvider<org::opensplice::core::QosProviderDelegate> QosProvider;
-      }
-   }
-}
+namespace core {
+namespace detail {
+
+//TODO: Fix when QosProviderDelegate is implemented
+//typedef dds::core::TQosProvider<org::opensplice::core::QosProviderDelegate> QosProvider;
+class QosProvider { };
+
+} //namespace detail
+} //namespace core
+} //namespace dds
 
 /** @endcond */
 
-#endif /* OMG_DDS_CORE_DETAIL_QOS_PROVIDER_HPP_ */
+#endif //EPROSIMA_DDS_CORE_DETAIL_QOS_PROVIDER_HPP_

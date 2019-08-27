@@ -91,7 +91,8 @@ template<typename DELEGATE>
 class Reference
 {
 public:
-    DECLARE_TYPE_TRAITS(DELEGATE)
+    DECLARE_TYPE_TRAITS(
+            DELEGATE)
 
     /**
      * Creates a "null" Reference.

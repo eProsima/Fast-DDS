@@ -1,27 +1,22 @@
 /*
- *                         Vortex OpenSplice
+ * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
  *
- *   This software and documentation are Copyright 2006 to TO_YEAR ADLINK
- *   Technology Limited, its affiliated companies and licensors. All rights
- *   reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- *
- */
-#ifndef OSPL_DDS_CORE_DETAIL_MODULE_DOCS_HPP_
-#define OSPL_DDS_CORE_DETAIL_MODULE_DOCS_HPP_
+*/
 
-// Implementation
+#ifndef EPROSIMA_DDS_CORE_DETAIL_MODULE_DOCS_HPP_
+#define EPROSIMA_DDS_CORE_DETAIL_MODULE_DOCS_HPP_
 
 /**
  * @file
@@ -86,101 +81,85 @@
 /**
  * @ingroup isocpp2_dcps
  */
-namespace dds
-{
+namespace dds {
 /**
  * @ingroup isocpp2_dcps_domain
  * @ingroup isocpp2_dcps */
-namespace domain
-{
+namespace domain {
 /** @ingroup isocpp2_dcps_domain
  * @ingroup isocpp2_dcps */
-namespace qos
-{
+namespace qos {
 namespace detail {}
-}
+} //namespace qos
 namespace detail {}
-}
+} //namespace domain
 /**
  * @ingroup isocpp2_dcps_topic
  * @ingroup isocpp2_dcps */
-namespace topic
-{
+namespace topic {
 /** @ingroup isocpp2_dcps_topic
  * @ingroup isocpp2_dcps */
-namespace qos
-{
+namespace qos {
 namespace detail {}
-}
+} //namespace qos
 namespace detail {}
-}
+} //namespace topic
 /**
  * @ingroup isocpp2_dcps_pub
  * @ingroup isocpp2_dcps */
-namespace pub
-{
+namespace pub {
 /** @ingroup isocpp2_dcps_pub
  * @ingroup isocpp2_dcps */
-namespace qos
-{
+namespace qos {
 namespace detail {}
-}
+} //namespace qos
 namespace detail {}
-}
+} //namespace pub
 /**
  * @ingroup isocpp2_dcps_sub
  * @ingroup isocpp2_dcps */
-namespace sub
-{
+namespace sub {
 /** @ingroup isocpp2_dcps_sub
  * @ingroup isocpp2_dcps */
-namespace cond
-{
+namespace cond {
 namespace detail {}
-}
+} //namespace cond
 /** @ingroup isocpp2_dcps_sub
  * @ingroup isocpp2_dcps */
-namespace functors
-{
+namespace functors {
 namespace detail {}
-}
+} //namespace functors
 /** @ingroup isocpp2_dcps_sub
  * @ingroup isocpp2_dcps */
 namespace status {}
 /** @ingroup isocpp2_dcps_sub
  * @ingroup isocpp2_dcps */
-namespace qos
-{
+namespace qos {
 namespace detail {}
-}
-}
+} //namespace qos
+} //namespace sub
 /**
  * @ingroup isocpp2_dcps_core
  * @ingroup isocpp2_dcps */
-namespace core
-{
+namespace core {
 /** @ingroup isocpp2_dcps_core
  * @ingroup isocpp2_dcps */
-namespace policy
-{
+namespace policy {
 namespace detail {}
-}
+} //namespace policy
 /** @ingroup isocpp2_dcps_core
  * @ingroup isocpp2_dcps */
-namespace cond
-{
+namespace cond {
 namespace detail {}
-}
+} //namespace cond
 /** @ingroup isocpp2_dcps_core
  * @ingroup isocpp2_dcps */
-namespace status
-{
+namespace status {
 namespace detail {}
-}
+} //namespace status
 namespace detail {}
-}
-}
+} //namespace core
+} //namespace dds
 
-// End of implementation
 
-#endif /* OSPL_DDS_CORE_DETAIL_MODULE_DOCS_HPP_ */
+#endif //EPROSIMA_DDS_CORE_DETAIL_MODULE_DOCS_HPP_

@@ -1,25 +1,22 @@
 /*
- *                         Vortex OpenSplice
+ * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
  *
- *   This software and documentation are Copyright 2006 to TO_YEAR ADLINK
- *   Technology Limited, its affiliated companies and licensors. All rights
- *   reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- *
- */
-#ifndef OSPL_DDS_CORE_TENTITY_IMPL_HPP_
-#define OSPL_DDS_CORE_TENTITY_IMPL_HPP_
+*/
+
+#ifndef EPROSIMA_DDS_CORE_TENTITY_IMPL_HPP_
+#define EPROSIMA_DDS_CORE_TENTITY_IMPL_HPP_
 
 /**
  * @file
@@ -29,56 +26,48 @@
  * OMG PSM class declaration
  */
 #include <dds/core/detail/ReferenceImpl.hpp>
-#include <dds/core/TEntity.hpp>
-#include <org/opensplice/core/ReportUtils.hpp>
+#include <dds/core/Entity.hpp>
+//#include <org/opensplice/core/ReportUtils.hpp>
 
-// Implementation
+namespace dds {
+namespace core {
 
-template <typename DELEGATE>
-dds::core::TEntity<DELEGATE>::~TEntity()
+template<typename DELEGATE>
+TEntity<DELEGATE>::~TEntity()
 {
 }
 
-template <typename DELEGATE>
-void
-dds::core::TEntity<DELEGATE>::enable()
+template<typename DELEGATE>
+void TEntity<DELEGATE>::enable()
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    this->delegate()->enable();
+    //To implement
 }
 
-template <typename DELEGATE>
-const dds::core::status::StatusMask
-dds::core::TEntity<DELEGATE>::status_changes()
+template<typename DELEGATE>
+const status::StatusMask TEntity<DELEGATE>::status_changes()
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    return this->delegate()->status_changes();
+    //To implement
 }
 
-template <typename DELEGATE>
-const dds::core::InstanceHandle
-dds::core::TEntity<DELEGATE>::instance_handle() const
+template<typename DELEGATE>
+const InstanceHandle TEntity<DELEGATE>::instance_handle() const
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    return this->delegate()->instance_handle();
+    //To implement
 }
 
-template <typename DELEGATE>
-void
-dds::core::TEntity<DELEGATE>::close()
+template<typename DELEGATE>
+void TEntity<DELEGATE>::close()
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    this->delegate()->close();
+    //To implement
 }
 
-template <typename DELEGATE>
-void
-dds::core::TEntity<DELEGATE>::retain()
+template<typename DELEGATE>
+void TEntity<DELEGATE>::retain()
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    this->delegate()->retain();
+    //To implement
 }
 
-// End of implementation
+} //namespace core
+} //namespace dds
 
-#endif /* OSPL_DDS_CORE_TENTITY_IMPL_HPP_ */
+#endif //EPROSIMA_DDS_CORE_TENTITY_IMPL_HPP_

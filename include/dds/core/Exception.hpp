@@ -112,8 +112,12 @@ class OMG_DDS_API Error : public Exception, public std::logic_error
 {
 /** @cond */
 public:
-    explicit Error(const std::string& msg);
-    Error(const Error& src);
+    explicit Error(
+            const std::string& msg);
+
+    Error(
+            const Error& src);
+
     virtual ~Error() throw();
 
 public:
@@ -129,8 +133,12 @@ class OMG_DDS_API AlreadyClosedError : public Exception, public std::logic_error
 {
 /** @cond */
 public:
-    explicit AlreadyClosedError(const std::string& msg);
-    AlreadyClosedError(const AlreadyClosedError& src);
+    explicit AlreadyClosedError(
+            const std::string& msg);
+
+    AlreadyClosedError(
+            const AlreadyClosedError& src);
+
     virtual ~AlreadyClosedError() throw();
 
 public:
@@ -150,8 +158,12 @@ class OMG_DDS_API IllegalOperationError : public Exception, public std::logic_er
 {
 /** @cond */
 public:
-    explicit IllegalOperationError(const std::string& msg);
-    IllegalOperationError(const IllegalOperationError& src);
+    explicit IllegalOperationError(
+            const std::string& msg);
+
+    IllegalOperationError(
+            const IllegalOperationError& src);
+
     virtual ~IllegalOperationError() throw();
 
 public:
@@ -167,8 +179,12 @@ class OMG_DDS_API ImmutablePolicyError : public Exception, public std::logic_err
 {
 /** @cond */
 public:
-    explicit ImmutablePolicyError(const std::string& msg);
-    ImmutablePolicyError(const ImmutablePolicyError& src);
+    explicit ImmutablePolicyError(
+            const std::string& msg);
+
+    ImmutablePolicyError(
+            const ImmutablePolicyError& src);
+
     virtual ~ImmutablePolicyError() throw();
 
 public:
@@ -185,8 +201,12 @@ class OMG_DDS_API InconsistentPolicyError : public Exception, public std::logic_
 {
 /** @cond */
 public:
-    explicit InconsistentPolicyError(const std::string& msg);
-    InconsistentPolicyError(const InconsistentPolicyError& src);
+    explicit InconsistentPolicyError(
+            const std::string& msg);
+
+    InconsistentPolicyError(
+            const InconsistentPolicyError& src);
+
     virtual ~InconsistentPolicyError() throw();
 
 public:
@@ -202,8 +222,12 @@ class OMG_DDS_API InvalidArgumentError : public Exception, public std::invalid_a
 {
 /** @cond */
 public:
-    explicit InvalidArgumentError(const std::string& msg);
-    InvalidArgumentError(const InvalidArgumentError& src);
+    explicit InvalidArgumentError(
+            const std::string& msg);
+
+    InvalidArgumentError(
+            const InvalidArgumentError& src);
+
     virtual ~InvalidArgumentError() throw();
 
 public:
@@ -219,8 +243,12 @@ class OMG_DDS_API NotEnabledError : public Exception, public std::logic_error
 {
 /** @cond */
 public:
-    explicit NotEnabledError(const std::string& msg);
-    NotEnabledError(const NotEnabledError& src);
+    explicit NotEnabledError(
+            const std::string& msg);
+
+    NotEnabledError(
+            const NotEnabledError& src);
+
     virtual ~NotEnabledError() throw();
 
 public:
@@ -237,8 +265,12 @@ class OMG_DDS_API OutOfResourcesError : public Exception, public std::runtime_er
 {
 /** @cond */
 public:
-    explicit OutOfResourcesError(const std::string& msg);
-    OutOfResourcesError(const OutOfResourcesError& src);
+    explicit OutOfResourcesError(
+            const std::string& msg);
+
+    OutOfResourcesError(
+            const OutOfResourcesError& src);
+
     virtual ~OutOfResourcesError() throw();
 
 public:
@@ -255,8 +287,12 @@ class OMG_DDS_API PreconditionNotMetError : public Exception, public std::logic_
 {
 /** @cond */
 public:
-    explicit PreconditionNotMetError(const std::string& msg);
-    PreconditionNotMetError(const PreconditionNotMetError& src);
+    explicit PreconditionNotMetError(
+            const std::string& msg);
+
+    PreconditionNotMetError(
+            const PreconditionNotMetError& src);
+
     virtual ~PreconditionNotMetError() throw();
 
 public:
@@ -272,8 +308,12 @@ class OMG_DDS_API TimeoutError : public Exception, public std::runtime_error
 {
 /** @cond */
 public:
-    explicit TimeoutError(const std::string& msg);
-    TimeoutError(const TimeoutError& src);
+    explicit TimeoutError(
+            const std::string& msg);
+
+    TimeoutError(
+            const TimeoutError& src);
+
     virtual ~TimeoutError() throw();
 
 public:
@@ -291,8 +331,12 @@ class OMG_DDS_API UnsupportedError : public Exception, public std::logic_error
 {
 /** @cond */
 public:
-    explicit UnsupportedError(const std::string& msg);
-    UnsupportedError(const UnsupportedError& src);
+    explicit UnsupportedError(
+            const std::string& msg);
+
+    UnsupportedError(
+            const UnsupportedError& src);
+
     virtual ~UnsupportedError() throw();
 
 public:
@@ -308,8 +352,12 @@ class OMG_DDS_API InvalidDowncastError : public Exception, public std::runtime_e
 {
 /** @cond */
 public:
-    explicit InvalidDowncastError(const std::string& msg);
-    InvalidDowncastError(const InvalidDowncastError& src);
+    explicit InvalidDowncastError(
+            const std::string& msg);
+
+    InvalidDowncastError(
+            const InvalidDowncastError& src);
+
     virtual ~InvalidDowncastError() throw();
 
 public:
@@ -335,8 +383,12 @@ class OMG_DDS_API NullReferenceError : public Exception, public std::runtime_err
 {
 /** @cond */
 public:
-    explicit NullReferenceError(const std::string& msg);
-    NullReferenceError(const NullReferenceError& src);
+    explicit NullReferenceError(
+            const std::string& msg);
+
+    NullReferenceError(
+            const NullReferenceError& src);
+
     virtual ~NullReferenceError() throw();
 
 public:
@@ -352,8 +404,12 @@ class OMG_DDS_API InvalidDataError : public Exception, public std::logic_error
 {
 /** @cond */
 public:
-    explicit InvalidDataError(const std::string& msg);
-    InvalidDataError(const InvalidDataError& src);
+    explicit InvalidDataError(
+            const std::string& msg);
+
+    InvalidDataError(
+            const InvalidDataError& src);
+
     virtual ~InvalidDataError() throw();
 
 public:
