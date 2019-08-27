@@ -32,9 +32,6 @@ namespace dds {
 namespace core {
 namespace cond {
 
-template<typename DELEGATE>
-class TCondition;
-
 /**
  * @brief
  * This class is the base class for all the conditions that may be attached to a dds::core::cond::WaitSet.
