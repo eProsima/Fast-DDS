@@ -48,36 +48,64 @@ public:
             DELEGATE)
 
     TDynamicData(
-            const TDynamicType<DELEGATE_TYPE>& type);
+            const TDynamicType<DELEGATE_TYPE>& type)
+    {
+        (void) type;
+    }
 
     template<typename T>
     void value(
             uint32_t mid,
-            const T& v) const;
+            const T& v) const
+    {
+        (void) mid;
+        (void) v;
+    }
 
     template<typename T>
     T value(
             const std::string& mid,
-            const T& v) const;
+            const T& v) const
+    {
+        (void) mid;
+        (void) v;
+    }
 
     template<typename T>
     T value(
-            uint32_t mid) const;
+            uint32_t mid) const
+    {
+        (void) mid;
+    }
 
     template<typename T>
     T value(
-            const std::string& mid) const;
+            const std::string& mid) const
+    {
+        (void) mid;
+    }
 
-    TDynamicType<DELEGATE_TYPE> type() const;
+    TDynamicType<DELEGATE_TYPE> type() const
+    {
+    }
 
     MemberType member_type(
-            uint32_t id) const;
+            uint32_t id) const
+    {
+        (void) id;
+    }
 
     MemberType member_type(
-            const std::string& name) const;
+            const std::string& name) const
+    {
+        (void) name;
+    }
 
     uint32_t member_id(
-            const std::string& name) const;
+            const std::string& name) const
+    {
+        (void) name;
+    }
 };
 
 typedef TDynamicData<detail::DynamicData, detail::DynamicType> DynamicData;

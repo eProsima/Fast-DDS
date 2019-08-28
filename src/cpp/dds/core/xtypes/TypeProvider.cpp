@@ -16,34 +16,3 @@
 */
 
 #include <dds/core/xtypes/TypeProvider.hpp>
-
-namespace dds {
-namespace core {
-namespace xtypes {
-
-template<typename DELEGATE>
-TDynamicType<DELEGATE> TTypeProvider<DELEGATE>::load_type(
-        const std::string& uri)
-{
-    (void) uri;
-}
-
-template<typename DELEGATE>
-std::vector<TDynamicType<DELEGATE>> TTypeProvider<DELEGATE>::load_types(
-        const std::string& uri)
-{
-    (void) uri;
-}
-
-template<typename DELEGATE>
-TDynamicType<DELEGATE> TTypeProvider<DELEGATE>::load_type(
-        const std::string& uri,
-        const std::string& name)
-{
-    (void) uri;
-    (void) name;
-}
-
-} //namespace xtypes
-} //namespace core
-} //namespace dds

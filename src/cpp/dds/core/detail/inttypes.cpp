@@ -16,4 +16,3 @@
 */
 
 #include <dds/core/detail/inttypes.hpp>
-

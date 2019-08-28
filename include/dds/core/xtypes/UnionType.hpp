@@ -40,7 +40,10 @@ class TUnionForwardDeclaration : public TDynamicType<DELEGATE>
 {
 public:
     TUnionForwardDeclaration(
-            const std::string& name);
+            const std::string& name)
+    {
+        (void) name;
+    }
 };
 
 template<
@@ -52,41 +55,80 @@ public:
     TUnionType(
         const std::string& name,
         const TPrimitiveType<T, DELEGATE<T>>& discriminator_type,
-        const std::vector<UnionCase<T>>& cases);
+        const std::vector<UnionCase<T>>& cases)
+    {
+        (void) name;
+        (void) discriminator_type;
+        (void) cases;
+    }
 
     TUnionType(
         const std::string& name,
         const TPrimitiveType<T, DELEGATE<T> >& discriminator_type,
         const std::vector<UnionCase<T>>& cases,
-        const Annotation& annotation);
+        const Annotation& annotation)
+    {
+        (void) name;
+        (void) discriminator_type;
+        (void) cases;
+        (void) annotation;
+    }
 
     TUnionType(
         const std::string& name,
         const TPrimitiveType<T, DELEGATE<T>>& discriminator_type,
         const std::vector<UnionCase<T>>& cases,
-        const std::vector<Annotation>& annotations);
+        const std::vector<Annotation>& annotations)
+    {
+        (void) name;
+        (void) discriminator_type;
+        (void) cases;
+        (void) annotations;
+    }
 
-    const std::vector<UnionCase<T>>& members() const;
+    const std::vector<UnionCase<T>>& members() const
+    {
+    }
 
     const MemberType& member(
-            uint32_t id) const;
+            uint32_t id) const
+    {
+        (void) id;
+    }
 
     const MemberType& member(
-            const std::string& name) const;
+            const std::string& name) const
+    {
+    (void) name;
+    }
 
-    const std::vector<Annotation>& annotations() const;
+    const std::vector<Annotation>& annotations() const
+    {
+    }
 
     TUnionType add_member(
-            const UnionCase<T>& member) const;
+            const UnionCase<T>& member) const
+    {
+    (void) member;
+    }
 
     TUnionType remove_member(
-            const UnionCase<T>& member) const;
+            const UnionCase<T>& member) const
+    {
+    (void) member;
+    }
 
     TUnionType add_annotation(
-            const Annotation& annotation) const;
+            const Annotation& annotation) const
+    {
+    (void) annotation;
+    }
 
     TUnionType remove_annotation(
-            const Annotation& annotation) const;
+            const Annotation& annotation) const
+    {
+    (void) annotation;
+    }
 };
 
 template<typename T>

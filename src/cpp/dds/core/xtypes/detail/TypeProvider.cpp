@@ -16,15 +16,3 @@
 */
 
 #include <dds/core/xtypes/detail/TypeProvider.hpp>
-
-namespace dds {
-namespace core {
-namespace xtypes {
-namespace detail {
-
-
-
-} //namespace detail
-} //namespace xtypes
-} //namespace core
-} //namespace dds
