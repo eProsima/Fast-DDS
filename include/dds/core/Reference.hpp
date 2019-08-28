@@ -100,7 +100,9 @@ public:
      * @param null
      */
     explicit Reference(
-            dds::core::null_type&);
+            dds::core::null_type&)
+    {
+    }
 
     /**
      * Creates a Reference from another.
@@ -108,7 +110,10 @@ public:
      * @param ref the other reference
      */
     explicit Reference(
-            const Reference& ref);
+            const Reference& ref)
+    {
+        (void) ref;
+    }
 
     /**
      * Creates a Reference from other Reference type safely.
@@ -117,7 +122,10 @@ public:
      */
     template<typename D>
     explicit Reference(
-            const Reference<D>& ref);
+            const Reference<D>& ref)
+    {
+        (void) ref;
+    }
 
     /** @cond
      * The following two constructors create a dds Reference from a vendor
@@ -130,10 +138,16 @@ public:
      * the doxygen generated API documentation.
      */
     explicit Reference(
-            DELEGATE_T* p);
+            DELEGATE_T* p)
+    {
+        (void) p;
+    }
 
     explicit Reference(
-            const DELEGATE_REF_T& p);
+            const DELEGATE_REF_T& p)
+    {
+        (void) p;
+    }
     /** @endcond */
 
     /**
@@ -144,7 +158,9 @@ public:
      * is referenced by another Reference object as well, then that
      * delegate will not be destroyed.
      */
-    ~Reference();
+    ~Reference()
+    {
+    }
 
     /** @cond
      * Function possibly needed for delegate implementation, but not recommended
@@ -152,7 +168,9 @@ public:
      *
      * Returns an object to the underlying delegate.
      */
-    operator DELEGATE_REF_T() const;
+    operator DELEGATE_REF_T() const
+    {
+    }
     /** @endcond */
 
     /**
@@ -166,7 +184,10 @@ public:
      */
     template<typename R>
     bool operator==(
-            const R& ref) const;
+            const R& ref) const
+    {
+        (void) ref;
+    }
 
     /**
      * Compares two Reference objects and returns true if they are not
@@ -180,7 +201,10 @@ public:
      */
     template<typename R>
     bool operator!=(
-            const R& ref) const;
+            const R& ref) const
+    {
+        (void) ref;
+    }
 
     /**
      * Assign new referenced object to this dds reference.
@@ -192,12 +216,18 @@ public:
      */
     template<typename D>
     Reference& operator=(
-            const Reference<D>& that);
+            const Reference<D>& that)
+    {
+        (void) that;
+    }
 
     /** @copydoc dds::core::Reference::operator=(const Reference<D>& that) */
     template<typename R>
     Reference& operator=(
-            const R& rhs);
+            const R& rhs)
+    {
+        (void) rhs;
+    }
 
     /**
      * Special assignment operators that takes care of assigning
@@ -210,7 +240,9 @@ public:
      */
 
     Reference& operator=(
-            const null_type);
+            const null_type)
+    {
+    }
 
     /**
      * Check if the referenced object is nil.
@@ -219,7 +251,9 @@ public:
      *
      * @return true if the referenced object is null.
      */
-    bool is_nil() const;
+    bool is_nil() const
+    {
+    }
 
     /**
      * Special operator== used to check if this reference object
@@ -235,7 +269,9 @@ public:
      * @return true if this reference is null.
      */
     bool operator==(
-            const null_type) const;
+            const null_type) const
+    {
+    }
 
     /**
      * Special operator!= used to check if this reference object
@@ -251,12 +287,17 @@ public:
      * @return true if this reference is not null.
      */
     bool operator!=(
-            const null_type nil) const;
+            const null_type nil) const
+    {
+        (void) nil;
+    }
 
 private:
     // -- disallow dynamic allocation for reference types
     void* operator new(
-            size_t);
+            size_t)
+    {
+    }
 
 public:
     /** @cond
@@ -265,9 +306,13 @@ public:
      *
      * Returns an object to the underlying delegate.
      */
-    DELEGATE_REF_T& delegate();
+    DELEGATE_REF_T& delegate()
+    {
+    }
 
-    const DELEGATE_REF_T& delegate() const;
+    const DELEGATE_REF_T& delegate() const
+    {
+    }
 
     /** @endcond */
 
@@ -288,10 +333,14 @@ public:
      *
      * @return a reference to delegate.
      */
-    DELEGATE* operator->();
+    DELEGATE* operator->()
+    {
+    }
 
     /** @copydoc dds::core::Reference::operator->() */
-    const DELEGATE* operator->() const;
+    const DELEGATE* operator->() const
+    {
+    }
 
     /** @cond
      * Functions possibly needed for delegate implementation, but not recommended
@@ -299,16 +348,25 @@ public:
      *
      * Returns an object to the underlying delegate.
      */
-    operator DELEGATE_REF_T& ();
+    operator DELEGATE_REF_T& ()
+    {
+    }
 
-    operator const DELEGATE_REF_T& () const;
+    operator const DELEGATE_REF_T& () const
+    {
+    }
     /** @endcond */
 
 protected:
-    Reference() {}
+    Reference()
+    {
+    }
 
     void set_ref(
-            DELEGATE_T* p);
+            DELEGATE_T* p)
+    {
+        (void) p;
+    }
 
 protected:
     DELEGATE_REF_T impl_;
@@ -335,7 +393,10 @@ protected:
 template<class D>
 bool operator ==(
         dds::core::null_type,
-        const dds::core::Reference<D>& r);
+        const dds::core::Reference<D>& r)
+{
+    (void) r;
+}
 
 /**
  * Special operator!= used to check if this reference object
@@ -353,6 +414,9 @@ bool operator ==(
 template<class D>
 bool operator !=(
         dds::core::null_type,
-        const dds::core::Reference<D>& r);
+        const dds::core::Reference<D>& r)
+{
+    (void) r;
+}
 
 #endif // OMG_DDS_CORE_REFERENCE_HPP_
