@@ -21,16 +21,10 @@
 #define OMG_DDS_PUB_ANY_DATA_WRITER_LISTENER_HPP_
 
 #include <dds/pub/AnyDataWriter.hpp>
+#include <dds/core/status/Status.hpp>
 
-namespace dds
-{
-namespace pub
-{
-class AnyDataWriterListener;
-class NoOpAnyDataWriterListener;
-}
-}
-
+namespace dds {
+namespace pub {
 
 /**
  * @brief
@@ -49,7 +43,7 @@ class NoOpAnyDataWriterListener;
  * @see dds::pub::PublisherListener
  * @see dds::domain::DomainParticipantListener
  */
-class OMG_DDS_API dds::pub::AnyDataWriterListener
+class AnyDataWriterListener
 {
 public:
     /** @cond */
@@ -58,20 +52,24 @@ public:
 
 public:
     /** @copydoc dds::pub::DataWriterListener::on_offered_deadline_missed() */
-    virtual void on_offered_deadline_missed(dds::pub::AnyDataWriter& writer,
-                                            const ::dds::core::status::OfferedDeadlineMissedStatus& status) = 0;
+    virtual void on_offered_deadline_missed(
+            AnyDataWriter& writer,
+            const ::dds::core::status::OfferedDeadlineMissedStatus& status) = 0;
 
     /** @copydoc dds::pub::DataWriterListener::on_offered_incompatible_qos() */
-    virtual void on_offered_incompatible_qos(dds::pub::AnyDataWriter& writer,
+    virtual void on_offered_incompatible_qos(
+            AnyDataWriter& writer,
             const ::dds::core::status::OfferedIncompatibleQosStatus& status) = 0;
 
     /** @copydoc dds::pub::DataWriterListener::on_liveliness_lost() */
-    virtual void on_liveliness_lost(dds::pub::AnyDataWriter& writer,
-                                    const ::dds::core::status::LivelinessLostStatus& status) = 0;
+    virtual void on_liveliness_lost(
+            AnyDataWriter& writer,
+            const ::dds::core::status::LivelinessLostStatus& status) = 0;
 
     /** @copydoc dds::pub::DataWriterListener::on_publication_matched() */
-    virtual void on_publication_matched(dds::pub::AnyDataWriter& writer,
-                                        const ::dds::core::status::PublicationMatchedStatus& status) = 0;
+    virtual void on_publication_matched(
+            AnyDataWriter& writer,
+            const ::dds::core::status::PublicationMatchedStatus& status) = 0;
 
 };
 
@@ -89,7 +87,7 @@ public:
  * @see dds::pub::NoOpPublisherListener
  * @see dds::domain::NoOpDomainParticipantListener
  */
-class OMG_DDS_API dds::pub::NoOpAnyDataWriterListener : public virtual dds::pub::AnyDataWriterListener
+class NoOpAnyDataWriterListener : public virtual AnyDataWriterListener
 {
 /** @cond
  * All these functions have already been documented in the non-NoOp listener.
@@ -99,19 +97,25 @@ public:
     virtual ~NoOpAnyDataWriterListener() { }
 
 public:
-    virtual void on_offered_deadline_missed(dds::pub::AnyDataWriter& writer,
-                                            const ::dds::core::status::OfferedDeadlineMissedStatus& status) { }
+    virtual void on_offered_deadline_missed(
+            AnyDataWriter& writer,
+            const ::dds::core::status::OfferedDeadlineMissedStatus& status) { }
 
-    virtual void on_offered_incompatible_qos(dds::pub::AnyDataWriter& writer,
+    virtual void on_offered_incompatible_qos(
+            AnyDataWriter& writer,
             const ::dds::core::status::OfferedIncompatibleQosStatus& status) { }
 
-    virtual void on_liveliness_lost(dds::pub::AnyDataWriter& writer,
-                                    const ::dds::core::status::LivelinessLostStatus& status) { }
+    virtual void on_liveliness_lost(
+            AnyDataWriter& writer,
+            const ::dds::core::status::LivelinessLostStatus& status) { }
 
-    virtual void on_publication_matched(dds::pub::AnyDataWriter& writer,
-                                        const ::dds::core::status::PublicationMatchedStatus& status) { }
+    virtual void on_publication_matched(
+            AnyDataWriter& writer,
+            const ::dds::core::status::PublicationMatchedStatus& status) { }
 /** @endcond */
 };
 
+} //namespace pub
+} //namespace dds
 
-#endif /* OMG_DDS_PUB_ANY_DATA_WRITER_LISTENER_HPP_ */
+#endif //OMG_DDS_PUB_ANY_DATA_WRITER_LISTENER_HPP_
