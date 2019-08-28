@@ -19,17 +19,24 @@
  * limitations under the License.
  */
 
-#include <org/opensplice/topic/BuiltinTopicKeyDelegate.hpp>
-#include <dds/topic/detail/TBuiltinTopicKeyImpl.hpp>
+//#include <org/opensplice/topic/BuiltinTopicKeyDelegate.hpp>
+//#include <dds/topic/detail/TBuiltinTopicKeyImpl.hpp>
 
 /**
  * @cond
  * Ignore this file in the API
  */
 
-namespace dds { namespace topic { namespace detail {
-      typedef dds::topic::TBuiltinTopicKey<org::opensplice::topic::BuiltinTopicKeyDelegate> BuiltinTopicKey;
-} } }
+namespace dds {
+namespace topic {
+namespace detail {
+
+//typedef dds::topic::TBuiltinTopicKey<org::opensplice::topic::BuiltinTopicKeyDelegate> BuiltinTopicKey;
+class BuiltinTopicKey { };
+
+} //namespace detail
+} //namespace topic
+} //namespace dds
 
 /** @endcond */
 

@@ -21,12 +21,12 @@
 #ifndef OMG_DDS_TOPIC_PACKAGE_DETAIL_INCLUDE_HPP_
 #define OMG_DDS_TOPIC_PACKAGE_DETAIL_INCLUDE_HPP_
 
-#include "dds/topic/detail/TTopicDescriptionImpl.hpp"
-#include "dds/topic/detail/TTopicImpl.hpp"
-#include "dds/topic/detail/TopicInstanceImpl.hpp"
-#include "dds/topic/detail/TContentFilteredTopicImpl.hpp"
-#include "org/opensplice/topic/qos/TopicQosConst.hpp"
-#include "org/opensplice/topic/BuiltinTopicTraits.hpp"
+//#include "dds/topic/detail/TTopicDescriptionImpl.hpp"
+//#include "dds/topic/detail/TTopicImpl.hpp"
+//#include "dds/topic/detail/TopicInstanceImpl.hpp"
+//#include "dds/topic/detail/TContentFilteredTopicImpl.hpp"
+//#include "org/opensplice/topic/qos/TopicQosConst.hpp"
+//#include "org/opensplice/topic/BuiltinTopicTraits.hpp"
 #include "dds/core/BuiltinTopicTypes.hpp"
 
 #endif /* OMG_DDS_TOPIC_PACKAGE_DETAIL_INCLUDE_HPP_ */
