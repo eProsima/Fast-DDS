@@ -22,10 +22,8 @@
 
 #include <dds/topic/AnyTopic.hpp>
 
-namespace dds
-{
-namespace topic
-{
+namespace dds {
+namespace topic {
 
 
 /**
@@ -90,4 +88,4 @@ public:
 }
 }
 
-#endif /* OMG_DDS_TOPIC_ANY_TOPIC_LISTENER_HPP_ */
+#endif //OMG_DDS_TOPIC_ANY_TOPIC_LISTENER_HPP_

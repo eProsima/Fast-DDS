@@ -53,7 +53,7 @@ class TAnyTopic;
 template <typename DELEGATE>
 class dds::topic::TAnyTopic :
     public ::dds::core::TEntity< DELEGATE >,
-    public ::dds::topic::TTopicDescription< DELEGATE >
+    public ::dds::topic::TTopicDescription<DELEGATE>
 {
     OMG_DDS_REF_TYPE_PROTECTED_DC(TAnyTopic, ::dds::topic::TTopicDescription, DELEGATE)
     OMG_DDS_IMPLICIT_REF_BASE(TAnyTopic)
