@@ -21,8 +21,6 @@
 #define OMG_DDS_TOPIC_TOPIC_HPP_
 
 #include <dds/topic/detail/Topic.hpp>
-<<<<<<< HEAD
-#include <dds/topic/AnyTopic.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 
 namespace dds {
@@ -460,25 +458,3 @@ class Topic : public TTopic<T, detail::Topic> { };
 } //namespace dds
 
 #endif //OMG_DDS_TOPIC_TOPIC_HPP_
-=======
-
-namespace dds
-{
-namespace topic
-{
-template <typename T, template <typename Q> class DELEGATE = dds::topic::detail::Topic>
-class Topic;
-}
-}
-
-/**
- * @todo RTF Issue - moved include
- * @note This include was moved here as MSVC appears to ignore any
- * attempt to 're-declare' a template class with a default argument like:
- * dds/pub/detail/DataWriter.hpp(54): error C2976: 'dds::topic::Topic' : too few template arguments
- * dds/topic/TTopic.hpp(50) : see declaration of 'dds::topic::Topic'
- */
-#include <dds/topic/TTopic.hpp>
-
-#endif /* OMG_DDS_TOPIC_TOPIC_HPP_ */
->>>>>>> Copyright modified in non-detail classes
