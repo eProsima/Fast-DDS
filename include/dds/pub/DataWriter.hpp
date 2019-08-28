@@ -29,17 +29,17 @@
 #include <dds/pub/detail/DataWriter.hpp>
 
 /** @cond */
-namespace dds
-{
-namespace pub
-{
-template <typename T,
-          template <typename Q> class DELEGATE = dds::pub::detail::DataWriter >
+namespace dds {
+namespace pub {
+
+template<
+        typename T,
+        template <typename Q> class DELEGATE = dds::pub::detail::DataWriter >
 class DataWriter;
 
-template <typename T> class DataWriterListener;
-}
-}
+template<typename T>
+class DataWriterListener;
+
 /** @endcond */
 
 /**
@@ -85,21 +85,26 @@ template <typename T> class DataWriterListener;
  * @see @ref DCPS_Modules_Publication "Publication concept"
  * @see @ref DCPS_Modules_Publication_DataWriter "DataWriter concept"
  */
-template <typename T, template <typename Q> class DELEGATE>
-class dds::pub::DataWriter : public ::dds::pub::TAnyDataWriter< DELEGATE<T> >
+template<
+        typename T,
+        template <typename Q> class DELEGATE>
+class DataWriter : public TAnyDataWriter< DELEGATE<T> >
 {
 
 public:
     /**
      * Local convenience typedef for dds::pub::DataWriterListener.
      */
-    typedef dds::pub::DataWriterListener<T>              Listener;
+    typedef DataWriterListener<T> Listener;
 
-public:
-    OMG_DDS_REF_TYPE_PROTECTED_DC_T(DataWriter, dds::pub::TAnyDataWriter, T, DELEGATE)
-    OMG_DDS_IMPLICIT_REF_BASE(DataWriter)
+    OMG_DDS_REF_TYPE_PROTECTED_DC_T(
+            DataWriter,
+            dds::pub::TAnyDataWriter,
+            T,
+            DELEGATE)
 
-public:
+    OMG_DDS_IMPLICIT_REF_BASE(
+            DataWriter)
 
     /**
      * Create a new DataWriter for the desired Topic, using the given Publisher.
@@ -124,8 +129,9 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    DataWriter(const dds::pub::Publisher& pub,
-               const ::dds::topic::Topic<T>& topic);
+    DataWriter(
+            const Publisher& pub,
+            const ::dds::topic::Topic<T>& topic);
 
     /**
      * Create a new DataWriter for the desired Topic, using the given Publisher and
@@ -191,19 +197,17 @@ public:
      * @throws dds::core::PreconditionNotMetError
      *                  The History QosPolicy is not KEEP_ALL when applied to a coherent writer.
      */
-    DataWriter(const dds::pub::Publisher& pub,
-               const ::dds::topic::Topic<T>& topic,
-               const dds::pub::qos::DataWriterQos& qos,
-               dds::pub::DataWriterListener<T>* listener = NULL,
-               const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+    DataWriter(
+            const Publisher& pub,
+            const ::dds::topic::Topic<T>& topic,
+            const qos::DataWriterQos& qos,
+            DataWriterListener<T>* listener = NULL,
+            const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
 
-public:
     /** @cond */
     virtual ~DataWriter();
     /** @endcond */
 
-
-public:
     //==========================================================================
     //== Write API
 
@@ -256,7 +260,8 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    void write(const T& sample);
+    void write(
+            const T& sample);
 
     /**
      * This operation modifies the value of a data instance and provides a value for the
@@ -296,7 +301,9 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    void write(const T& sample, const dds::core::Time& timestamp);
+    void write(
+            const T& sample,
+            const dds::core::Time& timestamp);
 
     /**
      * This operation modifies the value of a data instance.
@@ -360,7 +367,9 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    void write(const T& sample, const ::dds::core::InstanceHandle& instance);
+    void write(
+            const T& sample,
+            const ::dds::core::InstanceHandle& instance);
 
     /**
      * This operation modifies the value of a data instance and provides a value for the
@@ -406,9 +415,10 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    void write(const T& data,
-               const ::dds::core::InstanceHandle& instance,
-               const dds::core::Time& timestamp);
+    void write(
+            const T& data,
+            const ::dds::core::InstanceHandle& instance,
+            const dds::core::Time& timestamp);
 
 
     /**
@@ -451,7 +461,8 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    void write(const dds::topic::TopicInstance<T>& i);
+    void write(
+            const dds::topic::TopicInstance<T>& i);
 
     /**
      * This operation modifies the value of a data instance and provides a value for the
@@ -497,8 +508,9 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    void write(const dds::topic::TopicInstance<T>& i,
-               const dds::core::Time& timestamp);
+    void write(
+            const dds::topic::TopicInstance<T>& i,
+            const dds::core::Time& timestamp);
 
     /**
      * This operation writes a series of typed Samples or TopicInstances.
@@ -548,8 +560,10 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    template <typename FWIterator>
-    void write(const FWIterator& begin, const FWIterator& end);
+    template<typename FWIterator>
+    void write(
+            const FWIterator& begin,
+            const FWIterator& end);
 
     /**
      * This operation writes a series of typed Samples or TopicInstances and provides
@@ -601,9 +615,11 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    template <typename FWIterator>
-    void write(const FWIterator& begin, const FWIterator& end,
-               const dds::core::Time& timestamp);
+    template<typename FWIterator>
+    void write(
+            const FWIterator& begin,
+            const FWIterator& end,
+            const dds::core::Time& timestamp);
 
     /**
      * This operation writes a series of typed Samples and their parallel instance handles.
@@ -649,11 +665,14 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    template <typename SamplesFWIterator, typename HandlesFWIterator>
-    void write(const SamplesFWIterator& data_begin,
-               const SamplesFWIterator& data_end,
-               const HandlesFWIterator& handle_begin,
-               const HandlesFWIterator& handle_end);
+    template<
+            typename SamplesFWIterator,
+            typename HandlesFWIterator>
+    void write(
+            const SamplesFWIterator& data_begin,
+            const SamplesFWIterator& data_end,
+            const HandlesFWIterator& handle_begin,
+            const HandlesFWIterator& handle_end);
 
     /**
      * This operation writes a series of typed Samples or TopicInstances and provides
@@ -701,28 +720,35 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    template <typename SamplesFWIterator, typename HandlesFWIterator>
-    void write(const SamplesFWIterator& data_begin,
-               const SamplesFWIterator& data_end,
-               const HandlesFWIterator& handle_begin,
-               const HandlesFWIterator& handle_end,
-               const dds::core::Time& timestamp);
+    template<
+            typename SamplesFWIterator,
+            typename HandlesFWIterator>
+    void write(
+            const SamplesFWIterator& data_begin,
+            const SamplesFWIterator& data_end,
+            const HandlesFWIterator& handle_begin,
+            const HandlesFWIterator& handle_end,
+            const dds::core::Time& timestamp);
 
 
     /** @copydoc dds::pub::DataWriter::write(const T& data) */
-    DataWriter& operator << (const T& data);
+    DataWriter& operator <<(
+            const T& data);
 
     /** @copydoc dds::pub::DataWriter::write(const T& sample, const dds::core::Time& timestamp) */
-    DataWriter& operator << (const std::pair<T, dds::core::Time>& data);
+    DataWriter& operator <<(
+            const std::pair<T, dds::core::Time>& data);
 
     /** @copydoc dds::pub::DataWriter::write(const T& sample, const ::dds::core::InstanceHandle& instance) */
-    DataWriter& operator << (const std::pair<T, ::dds::core::InstanceHandle>& data);
+    DataWriter& operator <<(
+            const std::pair<T, ::dds::core::InstanceHandle>& data);
 
     /** @cond
      * This can be useful for the DataReader (see fi MaxSamplesManipulatorFunctor), but not
      * really for the DataWriter. Leave it from the API documentation for clarity.
      */
-    DataWriter& operator <<(DataWriter & (*manipulator)(DataWriter&));
+    DataWriter& operator <<(
+            DataWriter & (*manipulator)(DataWriter&));
     /** @endcond */
 
     //==========================================================================
@@ -792,7 +818,8 @@ public:
      * @throws dds::core::PreconditionNotMetError
      *                  The handle has not been registered with this DataWriter.
      */
-    const ::dds::core::InstanceHandle register_instance(const T& key);
+    const ::dds::core::InstanceHandle register_instance(
+            const T& key);
 
     /**
      * This operation will inform the Data Distribution Service that the application will be
@@ -845,7 +872,8 @@ public:
      * @throws dds::core::PreconditionNotMetError
      *                  The handle has not been registered with this DataWriter.
      */
-    const ::dds::core::InstanceHandle register_instance(const T& key,
+    const ::dds::core::InstanceHandle register_instance(
+            const T& key,
             const dds::core::Time& timestamp);
 
     /**
@@ -928,7 +956,8 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    DataWriter& unregister_instance(const ::dds::core::InstanceHandle& i);
+    DataWriter& unregister_instance(
+            const ::dds::core::InstanceHandle& i);
 
     /**
      * This operation will inform the Data Distribution Service that the application will not
@@ -979,8 +1008,9 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    DataWriter& unregister_instance(const ::dds::core::InstanceHandle& i,
-                                    const dds::core::Time& timestamp);
+    DataWriter& unregister_instance(
+            const ::dds::core::InstanceHandle& i,
+            const dds::core::Time& timestamp);
 
     /**
      * This operation informs the Data Distribution Service that the application will not be
@@ -1033,7 +1063,8 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    DataWriter& unregister_instance(const T& key);
+    DataWriter& unregister_instance(
+            const T& key);
 
     /**
      * This operation will inform the Data Distribution Service that the application will not
@@ -1088,8 +1119,9 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    DataWriter& unregister_instance(const T& key,
-                                    const dds::core::Time& timestamp);
+    DataWriter& unregister_instance(
+            const T& key,
+            const dds::core::Time& timestamp);
 
     /**
      * This operation requests the Data Distribution Service to mark the instance for
@@ -1194,7 +1226,8 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    DataWriter& dispose_instance(const ::dds::core::InstanceHandle& i);
+    DataWriter& dispose_instance(
+            const ::dds::core::InstanceHandle& i);
 
     /**
      * This operation requests the Data Distribution Service to mark the instance for
@@ -1248,8 +1281,9 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    DataWriter& dispose_instance(const ::dds::core::InstanceHandle& i,
-                                 const dds::core::Time& timestamp);
+    DataWriter& dispose_instance(
+            const ::dds::core::InstanceHandle& i,
+            const dds::core::Time& timestamp);
 
     /**
      * This operation requests the Data Distribution Service to mark the instance for
@@ -1298,7 +1332,8 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    DataWriter& dispose_instance(const T& key);
+    DataWriter& dispose_instance(
+            const T& key);
 
     /**
      * This operation requests the Data Distribution Service to mark the instance for
@@ -1348,649 +1383,9 @@ public:
      *                  This caused blocking of the write operation, which could not be resolved before
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
-    DataWriter& dispose_instance(const T& key,
-                                 const dds::core::Time& timestamp);
-
-#ifdef DOXYGEN_FOR_ISOCPP2
-    /*
-     * The above macro is never (and must never) be defined in normal compilation.
-     *
-     * The following code is for documenting proprietary API only.
-     */
-
-    /**
-     * This operation modifies and disposes a data instance.
-     *
-     * @note This is a proprietary OpenSplice extension.
-     *
-     * <b>Detailed Description</b><br>
-     * This operation requests the Data Distribution Service to modify the instance and
-     * mark it for deletion. Copies of the instance and its corresponding samples, which are
-     * stored in every connected DataReader and, dependent on the QoSPolicy settings,
-     * also in the Transient and Persistent stores, will be modified and marked for deletion
-     * dds::sub::status::InstanceState to not_alive_disposed state.
-     *
-     * When this operation is used, the application explicitly supplies
-     * the value of the source_timestamp that is made available to connected
-     * DataReader objects. This timestamp is important for the interpretation of the
-     * dds::core::policy::DestinationOrder QosPolicy.
-     *
-     * As a side effect, this operation asserts liveliness on the DataWriter itself and on
-     * the containing DomainParticipant.
-     *
-     * <i>Effects</i><br>
-     * This operation @ref anchor_dds_pub_datawriter_dispose_effect_readers "effects DataReaders"
-     * and @ref anchor_dds_pub_datawriter_dispose_effect_stores "effects Transient/Persistent Stores".
-     *
-     * <i>Blocking</i><br>
-     * This operation can be blocked (see @ref anchor_dds_pub_datawriter_dispose_blocking "dispose blocking").
-     *
-     * <i>Call</i><br>
-     * This is a proprietary operation and can be called by using the operator->.
-     * @code{.cpp}
-     * dds::pub::DataWriter<Foo::Bar> writer(publisher);
-     * writer->writedispose(...);
-     * @endcode
-     *
-     * @param sample the sample to be written and disposed
-     * @throws dds::core::Error
-     *                  An internal error has occurred.
-     * @throws dds::core::NullReferenceError
-     *                  The entity was not properly created and references to dds::core::null.
-     * @throws dds::core::AlreadyClosedError
-     *                  The entity has already been closed.
-     * @throws dds::core::OutOfResourcesError
-     *                  The Data Distribution Service ran out of resources to
-     *                  complete this operation.
-     * @throws dds::core::NotEnabledError
-     *                  The DataWriter has not yet been enabled.
-     * @throws dds::core::TimeoutError
-     *                  Either the current action overflowed the available resources
-     *                  as specified by the combination of the Reliability QosPolicy,
-     *                  History QosPolicy and ResourceLimits QosPolicy, or the current action
-     *                  was waiting for data delivery acknowledgement by synchronous DataReaders.
-     *                  This caused blocking of the write operation, which could not be resolved before
-     *                  max_blocking_time of the Reliability QosPolicy elapsed.
-     */
-    void writedispose(const T& sample);
-
-    /**
-     * This operation modifies and disposes a data instance.
-     *
-     * @note This is a proprietary OpenSplice extension.
-     *
-     * <b>Detailed Description</b><br>
-     * This operation requests the Data Distribution Service to modify the instance and
-     * mark it for deletion. Copies of the instance and its corresponding samples, which are
-     * stored in every connected DataReader and, dependent on the QoSPolicy settings,
-     * also in the Transient and Persistent stores, will be modified and marked for deletion
-     * dds::sub::status::InstanceState to not_alive_disposed state.
-     *
-     * When this operation is used, the application explicitly supplies
-     * the value of the source_timestamp that is made available to connected
-     * DataReader objects. This timestamp is important for the interpretation of the
-     * dds::core::policy::DestinationOrder QosPolicy.
-     *
-     * As a side effect, this operation asserts liveliness on the DataWriter itself and on
-     * the containing DomainParticipant.
-     *
-     * <i>Effects</i><br>
-     * This operation @ref anchor_dds_pub_datawriter_dispose_effect_readers "effects DataReaders"
-     * and @ref anchor_dds_pub_datawriter_dispose_effect_stores "effects Transient/Persistent Stores".
-     *
-     * <i>Blocking</i><br>
-     * This operation can be blocked (see @ref anchor_dds_pub_datawriter_dispose_blocking "dispose blocking").
-     *
-     * <i>Call</i><br>
-     * This is a proprietary operation and can be called by using the operator->.
-     * @code{.cpp}
-     * dds::pub::DataWriter<Foo::Bar> writer(publisher);
-     * writer->writedispose(...);
-     * @endcode
-     *
-     * @param sample the sample to be written
-     * @param timestamp the timestamp used for this sample
-     * @throws dds::core::Error
-     *                  An internal error has occurred.
-     * @throws dds::core::NullReferenceError
-     *                  The entity was not properly created and references to dds::core::null.
-     * @throws dds::core::AlreadyClosedError
-     *                  The entity has already been closed.
-     * @throws dds::core::OutOfResourcesError
-     *                  The Data Distribution Service ran out of resources to
-     *                  complete this operation.
-     * @throws dds::core::NotEnabledError
-     *                  The DataWriter has not yet been enabled.
-     * @throws dds::core::TimeoutError
-     *                  Either the current action overflowed the available resources
-     *                  as specified by the combination of the Reliability QosPolicy,
-     *                  History QosPolicy and ResourceLimits QosPolicy, or the current action
-     *                  was waiting for data delivery acknowledgement by synchronous DataReaders.
-     *                  This caused blocking of the write operation, which could not be resolved before
-     *                  max_blocking_time of the Reliability QosPolicy elapsed.
-     */
-    void writedispose(const T& sample,
-                      const dds::core::Time& timestamp);
-
-    /**
-     * This operation modifies and disposes a data instance.
-     *
-     * @note This is a proprietary OpenSplice extension.
-     *
-     * <b>Detailed Description</b><br>
-     * This operation requests the Data Distribution Service to modify the instance and
-     * mark it for deletion. Copies of the instance and its corresponding samples, which are
-     * stored in every connected DataReader and, dependent on the QoSPolicy settings,
-     * also in the Transient and Persistent stores, will be modified and marked for deletion
-     * dds::sub::status::InstanceState to not_alive_disposed state.
-     *
-     * When this operation is used, the application explicitly supplies
-     * the value of the source_timestamp that is made available to connected
-     * DataReader objects. This timestamp is important for the interpretation of the
-     * dds::core::policy::DestinationOrder QosPolicy.
-     *
-     * As a side effect, this operation asserts liveliness on the DataWriter itself and on
-     * the containing DomainParticipant.
-     *
-     * <i>Effects</i><br>
-     * This operation @ref anchor_dds_pub_datawriter_dispose_effect_readers "effects DataReaders"
-     * and @ref anchor_dds_pub_datawriter_dispose_effect_stores "effects Transient/Persistent Stores".
-     *
-     * <i>Blocking</i><br>
-     * This operation can be blocked (see @ref anchor_dds_pub_datawriter_dispose_blocking "dispose blocking").
-     *
-     * <i>Instance Handle</i><br>
-     * See @ref anchor_dds_pub_datawriter_write_instance_handle "write instance handle".
-     *
-     * <i>Call</i><br>
-     * This is a proprietary operation and can be called by using the operator->.
-     * @code{.cpp}
-     * dds::pub::DataWriter<Foo::Bar> writer(publisher);
-     * writer->writedispose(...);
-     * @endcode
-     *
-     * @param sample the sample to be written
-     * @param instance the handle representing the instance written
-     * @throws dds::core::Error
-     *                  An internal error has occurred.
-     * @throws dds::core::NullReferenceError
-     *                  The entity was not properly created and references to dds::core::null.
-     * @throws dds::core::AlreadyClosedError
-     *                  The entity has already been closed.
-     * @throws dds::core::OutOfResourcesError
-     *                  The Data Distribution Service ran out of resources to
-     *                  complete this operation.
-     * @throws dds::core::NotEnabledError
-     *                  The DataWriter has not yet been enabled.
-     * @throws dds::core::PreconditionNotMetError
-     *                  The handle has not been registered with this DataWriter.
-     * @throws dds::core::TimeoutError
-     *                  Either the current action overflowed the available resources
-     *                  as specified by the combination of the Reliability QosPolicy,
-     *                  History QosPolicy and ResourceLimits QosPolicy, or the current action
-     *                  was waiting for data delivery acknowledgement by synchronous DataReaders.
-     *                  This caused blocking of the write operation, which could not be resolved before
-     *                  max_blocking_time of the Reliability QosPolicy elapsed.
-     */
-    void writedispose(const T& sample,
-                      const dds::core::InstanceHandle& instance);
-
-    /**
-     * This operation modifies and disposes a data instance and provides a value for the
-     * source_timestamp explicitly.
-     *
-     * @note This is a proprietary OpenSplice extension.
-     *
-     * <b>Detailed Description</b><br>
-     * This operation requests the Data Distribution Service to modify the instance and
-     * mark it for deletion. Copies of the instance and its corresponding samples, which are
-     * stored in every connected DataReader and, dependent on the QoSPolicy settings,
-     * also in the Transient and Persistent stores, will be modified and marked for deletion
-     * dds::sub::status::InstanceState to not_alive_disposed state.
-     *
-     * When this operation is used, the application explicitly supplies
-     * the value of the source_timestamp that is made available to connected
-     * DataReader objects. This timestamp is important for the interpretation of the
-     * dds::core::policy::DestinationOrder QosPolicy.
-     *
-     * As a side effect, this operation asserts liveliness on the DataWriter itself and on
-     * the containing DomainParticipant.
-     *
-     * <i>Effects</i><br>
-     * This operation @ref anchor_dds_pub_datawriter_dispose_effect_readers "effects DataReaders"
-     * and @ref anchor_dds_pub_datawriter_dispose_effect_stores "effects Transient/Persistent Stores".
-     *
-     * <i>Blocking</i><br>
-     * This operation can be blocked (see @ref anchor_dds_pub_datawriter_dispose_blocking "dispose blocking").
-     *
-     * <i>Instance Handle</i><br>
-     * See @ref anchor_dds_pub_datawriter_write_instance_handle "write instance handle".
-     *
-     * <i>Call</i><br>
-     * This is a proprietary operation and can be called by using the operator->.
-     * @code{.cpp}
-     * dds::pub::DataWriter<Foo::Bar> writer(publisher);
-     * writer->writedispose(...);
-     * @endcode
-     *
-     * @param sample the sample to be written
-     * @param instance the handle representing the instance written
-     * @param timestamp the timestamp to use for this sample
-     * @throws dds::core::Error
-     *                  An internal error has occurred.
-     * @throws dds::core::NullReferenceError
-     *                  The entity was not properly created and references to dds::core::null.
-     * @throws dds::core::AlreadyClosedError
-     *                  The entity has already been closed.
-     * @throws dds::core::OutOfResourcesError
-     *                  The Data Distribution Service ran out of resources to
-     *                  complete this operation.
-     * @throws dds::core::NotEnabledError
-     *                  The DataWriter has not yet been enabled.
-     * @throws dds::core::PreconditionNotMetError
-     *                  The handle has not been registered with this DataWriter.
-     * @throws dds::core::TimeoutError
-     *                  Either the current action overflowed the available resources
-     *                  as specified by the combination of the Reliability QosPolicy,
-     *                  History QosPolicy and ResourceLimits QosPolicy, or the current action
-     *                  was waiting for data delivery acknowledgement by synchronous DataReaders.
-     *                  This caused blocking of the write operation, which could not be resolved before
-     *                  max_blocking_time of the Reliability QosPolicy elapsed.
-     */
-    void writedispose(const T& sample,
-                      const dds::core::InstanceHandle& instance,
-                      const dds::core::Time& timestamp);
-
-    /**
-     * This operation modifies and disposes a data instance.
-     *
-     * @note This is a proprietary OpenSplice extension.
-     *
-     * <b>Detailed Description</b><br>
-     * This operation requests the Data Distribution Service to modify the instance and
-     * mark it for deletion. Copies of the instance and its corresponding samples, which are
-     * stored in every connected DataReader and, dependent on the QoSPolicy settings,
-     * also in the Transient and Persistent stores, will be modified and marked for deletion
-     * dds::sub::status::InstanceState to not_alive_disposed state.
-     *
-     * When this operation is used, the application explicitly supplies
-     * the value of the source_timestamp that is made available to connected
-     * DataReader objects. This timestamp is important for the interpretation of the
-     * dds::core::policy::DestinationOrder QosPolicy.
-     *
-     * As a side effect, this operation asserts liveliness on the DataWriter itself and on
-     * the containing DomainParticipant.
-     *
-     * <i>Effects</i><br>
-     * This operation @ref anchor_dds_pub_datawriter_dispose_effect_readers "effects DataReaders"
-     * and @ref anchor_dds_pub_datawriter_dispose_effect_stores "effects Transient/Persistent Stores".
-     *
-     * <i>Blocking</i><br>
-     * This operation can be blocked (see @ref anchor_dds_pub_datawriter_dispose_blocking "dispose blocking").
-     *
-     * <i>Topic Instance</i><br>
-     * A TopicInstance encapsulates a sample and its associated
-     * @ref anchor_dds_pub_datawriter_write_instance_handle "instance handle".
-     *
-     * <i>Call</i><br>
-     * This is a proprietary operation and can be called by using the operator->.
-     * @code{.cpp}
-     * dds::pub::DataWriter<Foo::Bar> writer(publisher);
-     * writer->writedispose(...);
-     * @endcode
-     *
-     * @param i the instance to write
-     * @throws dds::core::Error
-     *                  An internal error has occurred.
-     * @throws dds::core::NullReferenceError
-     *                  The entity was not properly created and references to dds::core::null.
-     * @throws dds::core::AlreadyClosedError
-     *                  The entity has already been closed.
-     * @throws dds::core::OutOfResourcesError
-     *                  The Data Distribution Service ran out of resources to
-     *                  complete this operation.
-     * @throws dds::core::NotEnabledError
-     *                  The DataWriter has not yet been enabled.
-     * @throws dds::core::PreconditionNotMetError
-     *                  The handle has not been registered with this DataWriter.
-     * @throws dds::core::TimeoutError
-     *                  Either the current action overflowed the available resources
-     *                  as specified by the combination of the Reliability QosPolicy,
-     *                  History QosPolicy and ResourceLimits QosPolicy, or the current action
-     *                  was waiting for data delivery acknowledgement by synchronous DataReaders.
-     *                  This caused blocking of the write operation, which could not be resolved before
-     *                  max_blocking_time of the Reliability QosPolicy elapsed.
-     */
-    void writedispose(const dds::topic::TopicInstance<T>& i);
-
-    /**
-     * This operation modifies and disposes a data instance and provides a value for the
-     * source_timestamp explicitly.
-     *
-     * @note This is a proprietary OpenSplice extension.
-     *
-     * <b>Detailed Description</b><br>
-     * This operation requests the Data Distribution Service to modify the instance and
-     * mark it for deletion. Copies of the instance and its corresponding samples, which are
-     * stored in every connected DataReader and, dependent on the QoSPolicy settings,
-     * also in the Transient and Persistent stores, will be modified and marked for deletion
-     * dds::sub::status::InstanceState to not_alive_disposed state.
-     *
-     * When this operation is used, the application explicitly supplies
-     * the value of the source_timestamp that is made available to connected
-     * DataReader objects. This timestamp is important for the interpretation of the
-     * dds::core::policy::DestinationOrder QosPolicy.
-     *
-     * As a side effect, this operation asserts liveliness on the DataWriter itself and on
-     * the containing DomainParticipant.
-     *
-     * <i>Effects</i><br>
-     * This operation @ref anchor_dds_pub_datawriter_dispose_effect_readers "effects DataReaders"
-     * and @ref anchor_dds_pub_datawriter_dispose_effect_stores "effects Transient/Persistent Stores".
-     *
-     * <i>Blocking</i><br>
-     * This operation can be blocked (see @ref anchor_dds_pub_datawriter_dispose_blocking "dispose blocking").
-     *
-     * <i>Topic Instance</i><br>
-     * A TopicInstance encapsulates a sample and its associated
-     * @ref anchor_dds_pub_datawriter_write_instance_handle "instance handle".
-     *
-     * <i>Call</i><br>
-     * This is a proprietary operation and can be called by using the operator->.
-     * @code{.cpp}
-     * dds::pub::DataWriter<Foo::Bar> writer(publisher);
-     * writer->writedispose(...);
-     * @endcode
-     *
-     * @param i the instance to write
-     * @param timestamp the timestamp for this sample
-     * @throws dds::core::Error
-     *                  An internal error has occurred.
-     * @throws dds::core::NullReferenceError
-     *                  The entity was not properly created and references to dds::core::null.
-     * @throws dds::core::AlreadyClosedError
-     *                  The entity has already been closed.
-     * @throws dds::core::OutOfResourcesError
-     *                  The Data Distribution Service ran out of resources to
-     *                  complete this operation.
-     * @throws dds::core::NotEnabledError
-     *                  The DataWriter has not yet been enabled.
-     * @throws dds::core::PreconditionNotMetError
-     *                  The handle has not been registered with this DataWriter.
-     * @throws dds::core::TimeoutError
-     *                  Either the current action overflowed the available resources
-     *                  as specified by the combination of the Reliability QosPolicy,
-     *                  History QosPolicy and ResourceLimits QosPolicy, or the current action
-     *                  was waiting for data delivery acknowledgement by synchronous DataReaders.
-     *                  This caused blocking of the write operation, which could not be resolved before
-     *                  max_blocking_time of the Reliability QosPolicy elapsed.
-     */
-    void writedispose(const dds::topic::TopicInstance<T>& i,
-                      const dds::core::Time& timestamp);
-
-    /**
-     * This operation modifies and disposes data instances.
-     *
-     * @note This is a proprietary OpenSplice extension.
-     *
-     * <b>Detailed Description</b><br>
-     * This operation requests the Data Distribution Service to modify the instance and
-     * mark it for deletion. Copies of the instance and its corresponding samples, which are
-     * stored in every connected DataReader and, dependent on the QoSPolicy settings,
-     * also in the Transient and Persistent stores, will be modified and marked for deletion
-     * dds::sub::status::InstanceState to not_alive_disposed state.
-     *
-     * When this operation is used, the application explicitly supplies
-     * the value of the source_timestamp that is made available to connected
-     * DataReader objects. This timestamp is important for the interpretation of the
-     * dds::core::policy::DestinationOrder QosPolicy.
-     *
-     * As a side effect, this operation asserts liveliness on the DataWriter itself and on
-     * the containing DomainParticipant.
-     *
-     * <i>Effects</i><br>
-     * This operation @ref anchor_dds_pub_datawriter_dispose_effect_readers "effects DataReaders"
-     * and @ref anchor_dds_pub_datawriter_dispose_effect_stores "effects Transient/Persistent Stores".
-     *
-     * <i>Blocking</i><br>
-     * This operation can be blocked (see @ref anchor_dds_pub_datawriter_dispose_blocking "dispose blocking").
-     *
-     * <i>Call</i><br>
-     * This is a proprietary operation and can be called by using the operator->.
-     * @code{.cpp}
-     * dds::pub::DataWriter<Foo::Bar> writer(publisher);
-     * writer->writedispose(...);
-     * @endcode
-     *
-     * @param begin An iterator pointing to the beginning of a sequence of
-     *              Samples or a sequence of TopicInstances
-     * @param end   An iterator pointing to the end of a sequence of
-     *              Samples or a sequence of TopicInstances
-     * @throws dds::core::Error
-     *                  An internal error has occurred.
-     * @throws dds::core::NullReferenceError
-     *                  The entity was not properly created and references to dds::core::null.
-     * @throws dds::core::AlreadyClosedError
-     *                  The entity has already been closed.
-     * @throws dds::core::OutOfResourcesError
-     *                  The Data Distribution Service ran out of resources to
-     *                  complete this operation.
-     * @throws dds::core::NotEnabledError
-     *                  The DataWriter has not yet been enabled.
-     * @throws dds::core::PreconditionNotMetError
-     *                  The handle has not been registered with this DataWriter.
-     * @throws dds::core::TimeoutError
-     *                  Either the current action overflowed the available resources
-     *                  as specified by the combination of the Reliability QosPolicy,
-     *                  History QosPolicy and ResourceLimits QosPolicy, or the current action
-     *                  was waiting for data delivery acknowledgement by synchronous DataReaders.
-     *                  This caused blocking of the write operation, which could not be resolved before
-     *                  max_blocking_time of the Reliability QosPolicy elapsed.
-     */
-    template <typename FWIterator>
-    void writedispose(const FWIterator& begin,
-                      const FWIterator& end);
-
-    /**
-     * This operation modifies and disposes data instances and provides a value for the
-     * source_timestamp explicitly.
-     *
-     * @note This is a proprietary OpenSplice extension.
-     *
-     * <b>Detailed Description</b><br>
-     * This operation requests the Data Distribution Service to modify the instance and
-     * mark it for deletion. Copies of the instance and its corresponding samples, which are
-     * stored in every connected DataReader and, dependent on the QoSPolicy settings,
-     * also in the Transient and Persistent stores, will be modified and marked for deletion
-     * dds::sub::status::InstanceState to not_alive_disposed state.
-     *
-     * When this operation is used, the application explicitly supplies
-     * the value of the source_timestamp that is made available to connected
-     * DataReader objects. This timestamp is important for the interpretation of the
-     * dds::core::policy::DestinationOrder QosPolicy.
-     *
-     * As a side effect, this operation asserts liveliness on the DataWriter itself and on
-     * the containing DomainParticipant.
-     *
-     * <i>Effects</i><br>
-     * This operation @ref anchor_dds_pub_datawriter_dispose_effect_readers "effects DataReaders"
-     * and @ref anchor_dds_pub_datawriter_dispose_effect_stores "effects Transient/Persistent Stores".
-     *
-     * <i>Blocking</i><br>
-     * This operation can be blocked (see @ref anchor_dds_pub_datawriter_dispose_blocking "dispose blocking").
-     *
-     * <i>Call</i><br>
-     * This is a proprietary operation and can be called by using the operator->.
-     * @code{.cpp}
-     * dds::pub::DataWriter<Foo::Bar> writer(publisher);
-     * writer->writedispose(...);
-     * @endcode
-     *
-     * @param begin an iterator pointing to the beginning of a sequence of
-     * TopicInstances
-     * @param end an iterator pointing to the end of a sequence of
-     * TopicInstances
-     * @param timestamp the time stamp
-     * @throws dds::core::Error
-     *                  An internal error has occurred.
-     * @throws dds::core::NullReferenceError
-     *                  The entity was not properly created and references to dds::core::null.
-     * @throws dds::core::AlreadyClosedError
-     *                  The entity has already been closed.
-     * @throws dds::core::OutOfResourcesError
-     *                  The Data Distribution Service ran out of resources to
-     *                  complete this operation.
-     * @throws dds::core::NotEnabledError
-     *                  The DataWriter has not yet been enabled.
-     * @throws dds::core::PreconditionNotMetError
-     *                  The handle has not been registered with this DataWriter.
-     * @throws dds::core::TimeoutError
-     *                  Either the current action overflowed the available resources
-     *                  as specified by the combination of the Reliability QosPolicy,
-     *                  History QosPolicy and ResourceLimits QosPolicy, or the current action
-     *                  was waiting for data delivery acknowledgement by synchronous DataReaders.
-     *                  This caused blocking of the write operation, which could not be resolved before
-     *                  max_blocking_time of the Reliability QosPolicy elapsed.
-     */
-    template <typename FWIterator>
-    void writedispose(const FWIterator& begin,
-                      const FWIterator& end,
-                      const dds::core::Time& timestamp);
-
-    /**
-     * This operation modifies and disposes data instances.
-     *
-     * @note This is a proprietary OpenSplice extension.
-     *
-     * <b>Detailed Description</b><br>
-     * This operation requests the Data Distribution Service to modify the instance and
-     * mark it for deletion. Copies of the instance and its corresponding samples, which are
-     * stored in every connected DataReader and, dependent on the QoSPolicy settings,
-     * also in the Transient and Persistent stores, will be modified and marked for deletion
-     * dds::sub::status::InstanceState to not_alive_disposed state.
-     *
-     * When this operation is used, the application explicitly supplies
-     * the value of the source_timestamp that is made available to connected
-     * DataReader objects. This timestamp is important for the interpretation of the
-     * dds::core::policy::DestinationOrder QosPolicy.
-     *
-     * As a side effect, this operation asserts liveliness on the DataWriter itself and on
-     * the containing DomainParticipant.
-     *
-     * <i>Effects</i><br>
-     * This operation @ref anchor_dds_pub_datawriter_dispose_effect_readers "effects DataReaders"
-     * and @ref anchor_dds_pub_datawriter_dispose_effect_stores "effects Transient/Persistent Stores".
-     *
-     * <i>Blocking</i><br>
-     * This operation can be blocked (see @ref anchor_dds_pub_datawriter_dispose_blocking "dispose blocking").
-     *
-     * <i>Call</i><br>
-     * This is a proprietary operation and can be called by using the operator->.
-     * @code{.cpp}
-     * dds::pub::DataWriter<Foo::Bar> writer(publisher);
-     * writer->writedispose(...);
-     * @endcode
-     *
-     * @param data_begin    an iterator pointing to the beginning of a sequence of samples
-     * @param data_end      an iterator pointing to the end of a sequence of samples
-     * @param handle_begin  an iterator pointing to the beginning of a sequence of InstanceHandles
-     * @param handle_end    an iterator pointing to the end of a sequence of InstanceHandles
-     * @throws dds::core::Error
-     *                  An internal error has occurred.
-     * @throws dds::core::NullReferenceError
-     *                  The entity was not properly created and references to dds::core::null.
-     * @throws dds::core::AlreadyClosedError
-     *                  The entity has already been closed.
-     * @throws dds::core::OutOfResourcesError
-     *                  The Data Distribution Service ran out of resources to
-     *                  complete this operation.
-     * @throws dds::core::NotEnabledError
-     *                  The DataWriter has not yet been enabled.
-     * @throws dds::core::PreconditionNotMetError
-     *                  The handle has not been registered with this DataWriter.
-     * @throws dds::core::TimeoutError
-     *                  Either the current action overflowed the available resources
-     *                  as specified by the combination of the Reliability QosPolicy,
-     *                  History QosPolicy and ResourceLimits QosPolicy, or the current action
-     *                  was waiting for data delivery acknowledgement by synchronous DataReaders.
-     *                  This caused blocking of the write operation, which could not be resolved before
-     *                  max_blocking_time of the Reliability QosPolicy elapsed.
-     */
-    template <typename SamplesFWIterator, typename HandlesFWIterator>
-    void writedispose(const SamplesFWIterator& data_begin,
-                      const SamplesFWIterator& data_end,
-                      const HandlesFWIterator& handle_begin,
-                      const HandlesFWIterator& handle_end);
-
-    /**
-     * This operation modifies and disposes data instances and provides a value for the
-     * source_timestamp explicitly.
-     *
-     * @note This is a proprietary OpenSplice extension.
-     *
-     * <b>Detailed Description</b><br>
-     * This operation requests the Data Distribution Service to modify the instance and
-     * mark it for deletion. Copies of the instance and its corresponding samples, which are
-     * stored in every connected DataReader and, dependent on the QoSPolicy settings,
-     * also in the Transient and Persistent stores, will be modified and marked for deletion
-     * dds::sub::status::InstanceState to not_alive_disposed state.
-     *
-     * When this operation is used, the application explicitly supplies
-     * the value of the source_timestamp that is made available to connected
-     * DataReader objects. This timestamp is important for the interpretation of the
-     * dds::core::policy::DestinationOrder QosPolicy.
-     *
-     * As a side effect, this operation asserts liveliness on the DataWriter itself and on
-     * the containing DomainParticipant.
-     *
-     * <i>Effects</i><br>
-     * This operation @ref anchor_dds_pub_datawriter_dispose_effect_readers "effects DataReaders"
-     * and @ref anchor_dds_pub_datawriter_dispose_effect_stores "effects Transient/Persistent Stores".
-     *
-     * <i>Blocking</i><br>
-     * This operation can be blocked (see @ref anchor_dds_pub_datawriter_dispose_blocking "dispose blocking").
-     *
-     * <i>Call</i><br>
-     * This is a proprietary operation and can be called by using the operator->.
-     * @code{.cpp}
-     * dds::pub::DataWriter<Foo::Bar> writer(publisher);
-     * writer->writedispose(...);
-     * @endcode
-     *
-     * @param data_begin    an iterator pointing to the beginning of a sequence of samples
-     * @param data_end      an iterator pointing to the end of a sequence of samples
-     * @param handle_begin  an iterator pointing to the beginning of a sequence of InstanceHandles
-     * @param handle_end    an iterator pointing to the end of a sequence of InstanceHandles
-     * @param timestamp     the time stamp
-     * @throws dds::core::Error
-     *                  An internal error has occurred.
-     * @throws dds::core::NullReferenceError
-     *                  The entity was not properly created and references to dds::core::null.
-     * @throws dds::core::AlreadyClosedError
-     *                  The entity has already been closed.
-     * @throws dds::core::OutOfResourcesError
-     *                  The Data Distribution Service ran out of resources to
-     *                  complete this operation.
-     * @throws dds::core::NotEnabledError
-     *                  The DataWriter has not yet been enabled.
-     * @throws dds::core::PreconditionNotMetError
-     *                  The handle has not been registered with this DataWriter.
-     * @throws dds::core::TimeoutError
-     *                  Either the current action overflowed the available resources
-     *                  as specified by the combination of the Reliability QosPolicy,
-     *                  History QosPolicy and ResourceLimits QosPolicy, or the current action
-     *                  was waiting for data delivery acknowledgement by synchronous DataReaders.
-     *                  This caused blocking of the write operation, which could not be resolved before
-     *                  max_blocking_time of the Reliability QosPolicy elapsed.
-     */
-    template <typename SamplesFWIterator, typename HandlesFWIterator>
-    void writedispose(const SamplesFWIterator& data_begin,
-                      const SamplesFWIterator& data_end,
-                      const HandlesFWIterator& handle_begin,
-                      const HandlesFWIterator& handle_end,
-                      const dds::core::Time& timestamp);
-
-#endif /* DOXYGEN_FOR_ISOCPP2 */
+    DataWriter& dispose_instance(
+            const T& key,
+            const dds::core::Time& timestamp);
 
     /**
      * This operation retrieves the key value of a specific instance.
@@ -2023,8 +1418,9 @@ public:
      * @throws dds::core::PreconditionNotMetError
      *                  The handle has not been registered with this DataWriter.
      */
-    dds::topic::TopicInstance<T>& key_value(dds::topic::TopicInstance<T>& i,
-                                            const ::dds::core::InstanceHandle& h);
+    dds::topic::TopicInstance<T>& key_value(
+            dds::topic::TopicInstance<T>& i,
+            const ::dds::core::InstanceHandle& h);
 
     /**
      * This operation retrieves the key value of a specific instance.
@@ -2057,7 +1453,9 @@ public:
      * @throws dds::core::PreconditionNotMetError
      *                  The handle has not been registered with this DataWriter.
      */
-    T& key_value(T& sample, const ::dds::core::InstanceHandle& h);
+    T& key_value(
+            T& sample,
+            const ::dds::core::InstanceHandle& h);
 
     /**
      * This operation returns the value of the instance handle which corresponds
@@ -2082,13 +1480,15 @@ public:
      * @throws dds::core::AlreadyClosedError
      *                  The entity has already been closed.
      */
-    dds::core::InstanceHandle lookup_instance(const T& key);
+    dds::core::InstanceHandle lookup_instance(
+            const T& key);
 
     //==========================================================================
     //== QoS Management
 
     /** @copydoc dds::pub::TAnyDataWriter::qos(const dds::pub::qos::DataWriterQos& qos) */
-    DataWriter& operator <<(const ::dds::pub::qos::DataWriterQos& qos);
+    DataWriter& operator <<(
+            const qos::DataWriterQos& qos);
 
 
     //==========================================================================
@@ -2186,8 +1586,9 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    void listener(DataWriterListener<T>* listener,
-                  const ::dds::core::status::StatusMask& mask);
+    void listener(
+            DataWriterListener<T>* listener,
+            const ::dds::core::status::StatusMask& mask);
 
     /**
      * Get the listener of this DataWriter.
@@ -2201,4 +1602,7 @@ public:
     DataWriterListener<T>* listener() const;
 };
 
-#endif /* OMG_DDS_PUB_DATA_WRITER_HPP_ */
+} //namespace pub
+} //namespace dds
+
+#endif //OMG_DDS_PUB_DATA_WRITER_HPP_
