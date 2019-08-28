@@ -29,4 +29,4 @@
 
 #include <dds/pub/detail/ddspub.hpp>
 
-#endif /* OMG_DDS_PUB_PACKAGE_INCLUDE_HPP_ */
+#endif //OMG_DDS_PUB_PACKAGE_INCLUDE_HPP_
