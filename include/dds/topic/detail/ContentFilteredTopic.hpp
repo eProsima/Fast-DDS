@@ -203,7 +203,7 @@ class ContentFilteredTopic { };
 
 } //namespace detail
 } //namespace topic
-} //namespace dds)
+} //namespace dds
 
 /** @endcond */
 
