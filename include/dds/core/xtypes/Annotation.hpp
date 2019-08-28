@@ -83,9 +83,14 @@ class TIdAnnotation : public TAnnotation<DELEGATE>
 {
 public:
     TIdAnnotation(
-            uint32_t id);
+            uint32_t id)
+    {
+        (void) id;
+    }
 
-    uint32_t id() const;
+    uint32_t id() const
+    {
+    }
 };
 
 template<typename DELEGATE>
@@ -93,21 +98,27 @@ class TKeyAnnotation : public TAnnotation<DELEGATE>
 
 {
 public:
-    TKeyAnnotation();
+    TKeyAnnotation()
+    {
+    }
 };
 
 template<typename DELEGATE>
 class TSharedAnnotation : public TAnnotation<DELEGATE>
 {
 public:
-    TSharedAnnotation();
+    TSharedAnnotation()
+    {
+    }
 };
 
 template<typename DELEGATE>
 class TNestedAnnotation : public TAnnotation<DELEGATE>
 {
 public:
-    TNestedAnnotation();
+    TNestedAnnotation()
+    {
+    }
 };
 
 template<typename DELEGATE>
@@ -115,16 +126,23 @@ class TExtensibilityAnnotation : public TAnnotation<DELEGATE>
 {
 public:
     TExtensibilityAnnotation(
-            ExtensibilityKind xkind);
+            ExtensibilityKind xkind)
+    {
+        (void) xkind;
+    }
 
-    ExtensibilityKind extensibility_kind() const;
+    ExtensibilityKind extensibility_kind() const
+    {
+    }
 };
 
 template<typename DELEGATE>
 class TMustUnderstandAnnotation : public TAnnotation<DELEGATE>
 {
 public:
-    TMustUnderstandAnnotation();
+    TMustUnderstandAnnotation()
+    {
+    }
 };
 
 template<typename DELEGATE>
@@ -132,16 +150,23 @@ class TVerbatimAnnotation : public TAnnotation<DELEGATE>
 {
 public:
     TVerbatimAnnotation(
-            const std::string& text);
+            const std::string& text)
+    {
+        (void) text;
+    }
 
-    const std::string& verbatim_text() const;
+    const std::string& verbatim_text() const
+    {
+    }
 };
 
 template<typename DELEGATE>
 class TBitsetAnnotation : public TAnnotation<DELEGATE>
 {
 public:
-    TBitsetAnnotation();
+    TBitsetAnnotation()
+    {
+    }
 
 };
 
@@ -150,7 +175,10 @@ class  TBitBoundAnnotation : public TAnnotation<DELEGATE>
 {
 public:
     TBitBoundAnnotation(
-            uint32_t bound);
+            uint32_t bound)
+    {
+        (void) bound;
+    }
 };
 
 typedef TAnnotation<detail::Annotation> Annotation;
