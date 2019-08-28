@@ -26,17 +26,22 @@
  * Ignore this file in the API
  */
 
-// Implementation
+//#include <dds/topic/detail/TAnyTopicImpl.hpp>
+//TODO: Fix when AnyTopicDelegate is implemented
+//#include <org/opensplice/topic/AnyTopicDelegate.hpp>
 
-#include <dds/topic/detail/TAnyTopicImpl.hpp>
-#include <org/opensplice/topic/AnyTopicDelegate.hpp>
+namespace dds {
+namespace topic {
+namespace detail {
 
-namespace dds { namespace topic { namespace detail {
-  typedef dds::topic::TAnyTopic<org::opensplice::topic::AnyTopicDelegate> AnyTopic;
-} } }
+//TODO: Fix when AnyTopicDelegate is implemented
+//typedef dds::topic::TAnyTopic<org::opensplice::topic::AnyTopicDelegate> AnyTopic;
+class AnyTopic { };
 
-// End of implementation
+} //namespace detail
+} //namespace topic
+} //namespace dds
 
 /** @endcond */
 
-#endif /* OMG_DDS_TOPIC_DETAIL_ANY_TOPIC_HPP_ */
+#endif //OMG_DDS_TOPIC_DETAIL_ANY_TOPIC_HPP_

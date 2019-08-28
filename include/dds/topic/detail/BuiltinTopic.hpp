@@ -20,31 +20,35 @@
  */
 
 #include <dds/topic/Topic.hpp>
-#include <dds/topic/detail/TTopicImpl.hpp>
-#include <dds/topic/detail/TBuiltinTopicImpl.hpp>
-#include <org/opensplice/topic/BuiltinTopicDelegate.hpp>
-#include <org/opensplice/topic/BuiltinTopic.hpp>
+//#include <dds/topic/detail/TTopicImpl.hpp>
+//#include <dds/topic/detail/TBuiltinTopicImpl.hpp>
+//#include <org/opensplice/topic/BuiltinTopicDelegate.hpp>
+//#include <org/opensplice/topic/BuiltinTopic.hpp>
 
 /**
  * @cond
  * Ignore this file in the API
  */
 
-namespace dds { namespace topic { namespace detail {
+namespace dds {
+namespace topic {
+namespace detail {
 
-    typedef dds::topic::TParticipantBuiltinTopicData<org::opensplice::topic::ParticipantBuiltinTopicDataDelegate>
-    ParticipantBuiltinTopicData;
+//typedef dds::topic::TParticipantBuiltinTopicData<org::opensplice::topic::ParticipantBuiltinTopicDataDelegate> ParticipantBuiltinTopicData;
+class ParticipantBuiltinTopicData { };
 
-    typedef dds::topic::TTopicBuiltinTopicData<org::opensplice::topic::TopicBuiltinTopicDataDelegate>
-    TopicBuiltinTopicData;
+//typedef dds::topic::TTopicBuiltinTopicData<org::opensplice::topic::TopicBuiltinTopicDataDelegate> TopicBuiltinTopicData;
+class TopicBuiltinTopicData { };
 
-    typedef dds::topic::TPublicationBuiltinTopicData<org::opensplice::topic::PublicationBuiltinTopicDataDelegate>
-    PublicationBuiltinTopicData;
+//typedef dds::topic::TPublicationBuiltinTopicData<org::opensplice::topic::PublicationBuiltinTopicDataDelegate> PublicationBuiltinTopicData;
+class PublicationBuiltinTopicData { };
 
-    typedef dds::topic::TSubscriptionBuiltinTopicData<org::opensplice::topic::SubscriptionBuiltinTopicDataDelegate>
-    SubscriptionBuiltinTopicData;
+//typedef dds::topic::TSubscriptionBuiltinTopicData<org::opensplice::topic::SubscriptionBuiltinTopicDataDelegate> SubscriptionBuiltinTopicData;
+class SubscriptionBuiltinTopicData { };
 
-} } }
+} //namespace detail
+} //namespace topic
+} //namespace dds
 
 /** @endcond */
 
