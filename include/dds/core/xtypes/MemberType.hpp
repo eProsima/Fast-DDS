@@ -46,51 +46,99 @@ class TMemberType : public Reference<DELEGATE>
 public:
     TMemberType(
             const std::string& name,
-            const TDynamicType<OTHER_DELEGATE>& type);
+            const TDynamicType<OTHER_DELEGATE>& type)
+    {
+        (void) name;
+        (void) type;
+    }
 
     TMemberType(const std::string& name,
                 const dds::core::xtypes::DynamicType& type,
-                const Annotation& annotation);
+                const Annotation& annotation)
+    {
+        (void) name;
+        (void) type;
+        (void) annotation;
+    }
 
     TMemberType(
             const std::string& name,
             const TDynamicType<OTHER_DELEGATE>& type,
-            const std::vector<Annotation>& annotations);
+            const std::vector<Annotation>& annotations)
+    {
+        (void) name;
+        (void) type;
+        (void) annotations;
+    }
 
     template <typename AnnotationIter>
     TMemberType(
             const std::string& name,
             const TDynamicType<OTHER_DELEGATE>& type,
             const AnnotationIter& begin,
-            const AnnotationIter& end);
+            const AnnotationIter& end)
+    {
+        (void) name;
+        (void) type;
+        (void) begin;
+        (void) end;
+    }
 
-    const std::string& name() const;
+    const std::string& name() const
+    {
+    }
 
-    const dds::core::xtypes::TDynamicType<OTHER_DELEGATE>& type() const;
+    const dds::core::xtypes::TDynamicType<OTHER_DELEGATE>& type() const
+    {
+    }
 
     TMemberType add_annotation(
-            const Annotation& annotation);
+            const Annotation& annotation)
+    {
+        (void) annotation;
+    }
 
     TMemberType remove_annotation(
-            const Annotation& annotation);
+            const Annotation& annotation)
+    {
+        (void) annotation;
+    }
 
-    bool is_optional() const;
+    bool is_optional() const
+    {
+    }
 
-    bool is_shared() const;
+    bool is_shared() const
+    {
+    }
 
-    bool is_key() const;
+    bool is_key() const
+    {
+    }
 
-    bool is_must_understand() const;
+    bool is_must_understand() const
+    {
+    }
 
-    bool is_bitset() const ;
+    bool is_bitset() const
+    {
+    }
 
-    bool has_bitbound() const;
+    bool has_bitbound() const
+    {
+    }
 
-    int32_t get_bitbound() const;
+    int32_t get_bitbound() const
+    {
+    }
 
-    bool has_id() const;
+    bool has_id() const
+    {
+    }
 
-    int32_t get_id() const;
+    int32_t get_id() const
+    {
+    }
 };
 
 typedef TMemberType<detail::MemberType, detail::DynamicType> MemberType;

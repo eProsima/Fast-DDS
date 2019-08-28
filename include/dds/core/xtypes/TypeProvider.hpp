@@ -40,21 +40,31 @@ public:
      * only the first one is returned.
      */
     static TDynamicType<DELEGATE> load_type(
-            const std::string& uri);
+            const std::string& uri)
+    {
+        (void) uri;
+    }
 
     /**
      * Load a type from the specified URI. If multiple types are defined
      * only the first one is returned.
      */
     static std::vector<TDynamicType<DELEGATE>> load_types(
-            const std::string& uri);
+            const std::string& uri)
+    {
+        (void) uri;
+    }
 
     /**
      * Load a named type from the specified URI.
      */
     static TDynamicType<DELEGATE> load_type(
             const std::string& uri,
-            const std::string& name);
+            const std::string& name)
+    {
+        (void) uri;
+        (void) name;
+    }
 };
 
 typedef TTypeProvider<detail::TypeProvider> TypeProvider;
