@@ -24,10 +24,8 @@
 
 #include <dds/pub/detail/find.hpp>
 
-namespace dds
-{
-namespace pub
-{
+namespace dds {
+namespace pub {
 
 /**
  * This function retrieves previously-created DataWriters
@@ -44,10 +42,14 @@ namespace pub
  *        at most max_size will be copied using the provided iterator
  *
  */
-template <typename WRITER, typename FwdIterator>
-uint32_t
-find(const dds::pub::Publisher& pub, const std::string& topic_name,
-     FwdIterator begin, uint32_t max_size);
+template<
+        typename WRITER,
+        typename FwdIterator>
+uint32_t find(
+        const Publisher& pub,
+        const std::string& topic_name,
+        FwdIterator begin,
+        uint32_t max_size);
 
 /**
  * This function retrieves previously-created DataWriters
@@ -63,13 +65,15 @@ find(const dds::pub::Publisher& pub, const std::string& topic_name,
  *        at most max_size will be copied using the provided iterator.
  *
  */
-template <typename WRITER, typename BinIterator>
-uint32_t
-find(const dds::pub::Publisher& pub, const std::string& topic_name,
-     BinIterator begin);
+template<
+        typename WRITER,
+        typename BinIterator>
+uint32_t find(
+        const Publisher& pub,
+        const std::string& topic_name,
+        BinIterator begin);
 
+} //namespace pub
+} //namespace dds
 
-}
-}
-
-#endif /* OMG_DDS_PUB_FIND_HPP_ */
+#endif //OMG_DDS_PUB_FIND_HPP_

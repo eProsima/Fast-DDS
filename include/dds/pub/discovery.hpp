@@ -25,10 +25,8 @@
 #include <dds/topic/BuiltinTopic.hpp>
 #include <dds/pub/detail/discovery.hpp>
 
-namespace dds
-{
-namespace pub
-{
+namespace dds {
+namespace pub {
 
 /**
  * Ignore publications.
@@ -40,8 +38,9 @@ namespace pub
  * @param handle  the InstanceHandle of the remote entity that
  *                has to be ignored
  */
-void OMG_DDS_API ignore(const dds::domain::DomainParticipant& dp,
-                        const dds::core::InstanceHandle& handle);
+void OMG_DDS_API ignore(
+        const dds::domain::DomainParticipant& dp,
+        const dds::core::InstanceHandle& handle);
 
 /**
  * Ignore publications.
@@ -57,8 +56,11 @@ void OMG_DDS_API ignore(const dds::domain::DomainParticipant& dp,
  *                sequence of InstanceHandles of the remote
  *                Entity that has to be ignored
  */
-template <typename FwdIterator>
-void ignore(const dds::domain::DomainParticipant& dp, FwdIterator begin, FwdIterator end);
+template<typename FwdIterator>
+void ignore(
+        const dds::domain::DomainParticipant& dp,
+        FwdIterator begin,
+        FwdIterator end);
 
 /**
  * This operation retrieves the list of subscriptions currently “associated” with the
@@ -110,9 +112,9 @@ void ignore(const dds::domain::DomainParticipant& dp, FwdIterator begin, FwdIter
  *                  The Data Distribution Service ran out of resources to
  *                  complete this operation.
  */
-template <typename T>
-::dds::core::InstanceHandleSeq
-matched_subscriptions(const dds::pub::DataWriter<T>& dw);
+template<typename T>
+::dds::core::InstanceHandleSeq matched_subscriptions(
+        const DataWriter<T>& dw);
 
 /**
  * This operation retrieves the list of subscriptions currently “associated” with the
@@ -167,10 +169,13 @@ matched_subscriptions(const dds::pub::DataWriter<T>& dw);
  *                  The Data Distribution Service ran out of resources to
  *                  complete this operation.
  */
-template <typename T, typename FwdIterator>
-uint32_t
-matched_subscriptions(const dds::pub::DataWriter<T>& dw,
-                      FwdIterator begin, uint32_t max_size);
+template<
+        typename T,
+        typename FwdIterator>
+uint32_t matched_subscriptions(
+        const DataWriter<T>& dw,
+        FwdIterator begin,
+        uint32_t max_size);
 
 /**
  * This operation retrieves information on the specified subscription that is currently
@@ -213,11 +218,12 @@ matched_subscriptions(const dds::pub::DataWriter<T>& dw,
  *                  The Data Distribution Service ran out of resources to
  *                  complete this operation.
  */
-template <typename T>
-const dds::topic::SubscriptionBuiltinTopicData
-matched_subscription_data(const dds::pub::DataWriter<T>& dw,
-                          const ::dds::core::InstanceHandle& h);
+template<typename T>
+const dds::topic::SubscriptionBuiltinTopicData matched_subscription_data(
+        const DataWriter<T>& dw,
+        const ::dds::core::InstanceHandle& h);
 
-}
-}
-#endif /* OMG_DDS_PUB_DISCOVERY_HPP_ */
+} //namespace pub
+} //namespace dds
+
+#endif //OMG_DDS_PUB_DISCOVERY_HPP_

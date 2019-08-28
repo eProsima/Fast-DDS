@@ -23,15 +23,11 @@
 #include <dds/pub/AnyDataWriterListener.hpp>
 
 
-namespace dds
-{
-namespace pub
-{
+namespace dds {
+namespace pub {
+
 class PublisherListener;
 class NoOpPublisherListener;
-}
-}
-
 
 /**
  * @brief
@@ -101,7 +97,7 @@ class NoOpPublisherListener;
  * @see @ref DCPS_Modules_Publisher "Publisher"
  * @see @ref DCPS_Modules_Infrastructure_Listener "Listener information"
  */
-class OMG_DDS_API dds::pub::PublisherListener : public virtual dds::pub::AnyDataWriterListener
+class OMG_DDS_API PublisherListener : public virtual AnyDataWriterListener
 {
 public:
     /** @cond */
@@ -126,9 +122,9 @@ public:
  *
  * @see dds::pub::PublisherListener
  */
-class OMG_DDS_API dds::pub::NoOpPublisherListener :
-    public virtual dds::pub::PublisherListener,
-    public virtual dds::pub::NoOpAnyDataWriterListener
+class OMG_DDS_API NoOpPublisherListener :
+    public virtual PublisherListener,
+    public virtual NoOpAnyDataWriterListener
 {
 public:
     /** @cond */
@@ -137,5 +133,7 @@ public:
 };
 
 
+} //namespace pub
+} //namespace dds
 
-#endif /* OMG_DDS_PUB_PUBLISHER_LISTENER_HPP_ */
+#endif //OMG_DDS_PUB_PUBLISHER_LISTENER_HPP_

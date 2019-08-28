@@ -1,10 +1,5 @@
-#ifndef OMG_DDS_PUB_DETAIL_PUBLISHER_HPP_
-#define OMG_DDS_PUB_DETAIL_PUBLISHER_HPP_
-
-/* Copyright 2010, Object Management Group, Inc.
- * Copyright 2010, PrismTech, Corp.
- * Copyright 2010, Real-Time Innovations, Inc.
- * All rights reserved.
+/*
+ * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +12,33 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *
+*/
 
-#include <dds/pub/detail/TPublisherImpl.hpp>
-#include <org/opensplice/pub/PublisherDelegate.hpp>
+//#include <dds/pub/detail/TPublisherImpl.hpp>
+//TODO: Fix when PublisherDelegate is implemented
+//#include <org/opensplice/pub/PublisherDelegate.hpp>
+
+#ifndef EPROSIMA_DDS_PUB_DETAIL_PUBLISHER_HPP_
+#define EPROSIMA_DDS_PUB_DETAIL_PUBLISHER_HPP_
 
 /**
  * @cond
  * Ignore this file in the API
  */
 
-namespace dds { namespace pub { namespace detail {
-    typedef dds::pub::TPublisher<org::opensplice::pub::PublisherDelegate> Publisher;
-} } }
+namespace dds {
+namespace pub {
+namespace detail {
+
+//TODO: Fix when PublisherDelegate is implemented
+//typedef dds::pub::TPublisher<org::opensplice::pub::PublisherDelegate> Publisher;
+class Publisher { };
+
+} //namespace detail
+} //namespace pub
+} //namespace dds
 
 /** @endcond */
 
-#endif /*  OMG_DDS_PUB_DETAIL_PUBLISHER_HPP_ */
+#endif //EPROSIMA_DDS_PUB_DETAIL_PUBLISHER_HPP_
