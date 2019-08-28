@@ -23,7 +23,7 @@ namespace core {
 namespace xtypes {
 namespace detail {
 
-class StructType;
+class StructType {};
 
 } //namespace detail
 } //namespace xtypes

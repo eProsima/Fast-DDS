@@ -35,15 +35,25 @@ template<
 class TUnionCase : public Reference< DELEGATE<T> >
 {
 public:
-    TUnionCase();
+    TUnionCase()
+    {
+    }
 
     TUnionCase(
             T discriminator,
-            const MemberType& member);
+            const MemberType& member)
+    {
+    	(void) discriminator;
+    	(void) member;
+    }
 
-    T discriminator();
+    T discriminator()
+    {
+    }
 
-    const MemberType& member();
+    const MemberType& member()
+    {
+    }
 };
 
 template<typename T>
