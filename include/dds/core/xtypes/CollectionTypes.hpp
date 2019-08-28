@@ -34,12 +34,18 @@ class TCollectionType : public TDynamicType<DELEGATE>
 public:
     constexpr static uint32_t UNBOUNDED = 0xFFFFFFFF;
 
-    uint32_t bounds() const;
+    uint32_t bounds() const
+    {
+    }
 
 protected:
     TCollectionType(
             const std::string& name,
-            TypeKind kind); 
+            TypeKind kind)
+    {
+        (void) name;
+        (void) kind;
+    }
 };
 
 template<
@@ -51,16 +57,29 @@ class TMapType : public TCollectionType<DELEGATE>
 public:
     TMapType(
             const TDynamicType<DELEGATE_K>& key_type,
-            const TDynamicType<DELEGATE_V>& value_type);
+            const TDynamicType<DELEGATE_V>& value_type)
+    {
+        (void) key_type;
+        (void) value_type;
+    }
 
     TMapType(
             const TDynamicType<DELEGATE_K>& key_type,
             const TDynamicType<DELEGATE_V>& value_type,
-            uint32_t bounds);
+            uint32_t bounds)
+    {
+        (void) key_type;
+        (void) value_type;
+        (void) bounds;
+    }
 
-    const TDynamicType<DELEGATE_K>& key_type();
+    const TDynamicType<DELEGATE_K>& key_type()
+    {
+    }
 
-    const TDynamicType<DELEGATE_V>& value_type();
+    const TDynamicType<DELEGATE_V>& value_type()
+    {
+    }
 };
 
 
@@ -71,13 +90,22 @@ class TSequenceType : public TCollectionType<DELEGATE>
 {
 public:
     TSequenceType(
-        const TDynamicType<DELEGATE_T>& type);
+        const TDynamicType<DELEGATE_T>& type)
+    {
+        (void) type;
+    }
 
     TSequenceType(
         const TDynamicType<DELEGATE_T>& type,
-        uint32_t bounds);
+        uint32_t bounds)
+    {
+        (void) type;
+        (void) bounds;
+    }
 public:
-    const TDynamicType<DELEGATE_T>& key_type() const;
+    const TDynamicType<DELEGATE_T>& key_type() const
+    {
+    }
 };
 
 
@@ -86,7 +114,10 @@ class TStringType : public TCollectionType<DELEGATE>
 {
 public:
     TStringType(
-            uint32_t bounds);
+            uint32_t bounds)
+    {
+        (void) bounds;
+    }
 };
 
 typedef TCollectionType<detail::CollectionType> CollectionType;

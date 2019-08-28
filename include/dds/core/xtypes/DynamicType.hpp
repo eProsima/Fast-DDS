@@ -39,14 +39,23 @@ class TDynamicType : public Reference<DELEGATE>
             DELEGATE)
 
 public:
-    const std::string& name() const;
+    const std::string& name() const
+    {
+    }
 
-    TypeKind kind() const;
+    TypeKind kind() const
+    {
+    }
 
-    const std::vector<Annotation>& annotations() const;
+    const std::vector<Annotation>& annotations() const
+    {
+    }
 
     bool operator ==(
-            const TDynamicType& that) const;
+            const TDynamicType& that) const
+    {
+        (void) that;
+    }
 
     bool operator !=(
             const TDynamicType& that) const
@@ -57,43 +66,79 @@ public:
 protected:
     TDynamicType(
             const std::string& name,
-            TypeKind kind);
+            TypeKind kind)
+    {
+        (void) name;
+        (void) kind;
+    }
 
     TDynamicType(
             const std::string& name,
             TypeKind kind,
-            const Annotation& annotation);
+            const Annotation& annotation)
+    {
+        (void) name;
+        (void) kind;
+        (void) annotation;
+    }
 
     TDynamicType(
             const std::string& name,
             TypeKind kind,
-            const std::vector<Annotation>& annotations);
+            const std::vector<Annotation>& annotations)
+    {
+        (void) name;
+        (void) kind;
+        (void) annotations;
+    }
 
     template <typename AnnotationIter>
     TDynamicType(
             const std::string& name,
             TypeKind kind,
             const AnnotationIter& begin,
-            const AnnotationIter& end);
+            const AnnotationIter& end)
+    {
+        (void) name;
+        (void) kind;
+        (void) begin;
+        (void) end;
+    }
 
     TDynamicType(const TDynamicType& other) = default;
 };
 
 template<typename T>
 bool is_primitive_type(
-        const TDynamicType<T>& t);
+        const TDynamicType<T>& t)
+{
+    (void) t;
+    return false;
+}
 
 template<typename T>
 bool is_constructed_type(
-        const TDynamicType<T>& t);
+        const TDynamicType<T>& t)
+{
+    (void) t;
+    return false;
+}
 
 template<typename T>
 bool is_collection_type(
-        const TDynamicType<T>& t);
+        const TDynamicType<T>& t)
+{
+    (void) t;
+    return false;
+}
 
 template<typename T>
 bool is_aggregation_type(
-        const TDynamicType<T>& t);
+        const TDynamicType<T>& t)
+{
+    (void) t;
+    return false;
+}
 
 typedef TDynamicType<detail::DynamicType> DynamicType;
 

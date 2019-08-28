@@ -35,7 +35,10 @@ class TStructForwardDeclaration : public TDynamicType<DELEGATE>
 {
 public:
     TStructForwardDeclaration(
-            const std::string& name);
+            const std::string& name)
+    {
+        (void) name;
+    }
 };
 
 /**
@@ -49,31 +52,57 @@ class TStructType : public TDynamicType<DELEGATE>
 public:
 
     TStructType(
-            const std::string& name);
+            const std::string& name)
+    {
+        (void) name;
+    }
 
     TStructType(
         const std::string& name,
         const TStructType& parent,
-        const std::vector<MemberType>& members);
+        const std::vector<MemberType>& members)
+    {
+        (void) name;
+        (void) parent;
+        (void) members;
+    }
 
     template<typename MemberIter>
     TStructType(
         const std::string& name,
         const TStructType& parent,
         const MemberIter& begin,
-        const MemberIter& end);
+        const MemberIter& end)
+    {
+        (void) name;
+        (void) parent;
+        (void) begin;
+        (void) end;
+    }
 
     TStructType(
         const std::string& name,
         const TStructType& parent,
         const std::vector<MemberType>& members,
-        const Annotation& annotation);
+        const Annotation& annotation)
+    {
+        (void) name;
+        (void) parent;
+        (void) members;
+        (void) annotation;
+    }
 
     TStructType(
         const std::string& name,
         const TStructType& parent,
         const std::vector<MemberType>& members,
-        const std::vector<Annotation>& annotations);
+        const std::vector<Annotation>& annotations)
+    {
+        (void) name;
+        (void) parent;
+        (void) members;
+        (void) annotations;
+    }
 
     template<
             typename AnnotationIter,
@@ -84,32 +113,64 @@ public:
         const MemberIter& member_begin,
         const MemberIter& member_end,
         const AnnotationIter& annotation_begin,
-        const AnnotationIter& annotation_end);
+        const AnnotationIter& annotation_end)
+    {
+        (void) name;
+        (void) parent;
+        (void) member_begin;
+        (void) member_end;
+        (void) annotation_begin;
+        (void) annotation_end;
+    }
 
 public:
-    TStructType parent() const;
+    TStructType parent() const
+    {
+    }
 
-    const std::vector<MemberType>& members() const;
+    const std::vector<MemberType>& members() const
+    {
+    }
 
     const MemberType& member(
-            uint32_t id) const;
+            uint32_t id) const
+    {
+        (void) id;
+    }
 
     const MemberType& member(
-            const std::string& name) const;
+            const std::string& name) const
+    {
+        (void) name;
+    }
 
-    const std::vector<Annotation>& annotations() const;
+    const std::vector<Annotation>& annotations() const
+    {
+    }
 
     TStructType add_member(
-            const MemberType& member) const ;
+            const MemberType& member) const
+    {
+        (void) member;
+    }
 
     TStructType remove_member(
-            const MemberType& member) const;
+            const MemberType& member) const
+    {
+        (void) member;
+    }
 
     TStructType add_annotation(
-            const Annotation& annotation) const;
+            const Annotation& annotation) const
+    {
+        (void) annotation;
+    }
 
     TStructType remove_annotation(
-            const Annotation& annotation) const;
+            const Annotation& annotation) const
+    {
+        (void) annotation;
+    }
 };
 
 typedef TStructType<detail::StructType> StructType;
