@@ -189,7 +189,7 @@ TypeObjectFactory::~TypeObjectFactory()
 
 void TypeObjectFactory::create_builtin_annotations()
 {
-    //register_builtin_annotations_types(g_instance);
+    register_builtin_annotations_types(g_instance);
 }
 
 void TypeObjectFactory::nullify_all_entries(const TypeIdentifier* identifier)
@@ -1220,13 +1220,48 @@ const TypeIdentifier* TypeObjectFactory::try_get_complete(const TypeIdentifier* 
     return get_type_identifier_trying_complete(name);
 }
 
+bool TypeObjectFactory::is_type_identifier_complete(
+        const TypeIdentifier* identifier) const
+{
+    switch(identifier->_d())
+    {
+        case TI_STRING8_SMALL:
+        case TI_STRING8_LARGE:
+        case TI_STRING16_SMALL:
+        case TI_STRING16_LARGE:
+            return false;
+        case TI_PLAIN_SEQUENCE_SMALL:
+            return is_type_identifier_complete(identifier->seq_sdefn().element_identifier());
+        case TI_PLAIN_SEQUENCE_LARGE:
+            return is_type_identifier_complete(identifier->seq_ldefn().element_identifier());
+        case TI_PLAIN_ARRAY_SMALL:
+            return is_type_identifier_complete(identifier->array_sdefn().element_identifier());
+        case TI_PLAIN_ARRAY_LARGE:
+            return is_type_identifier_complete(identifier->array_ldefn().element_identifier());
+        case TI_PLAIN_MAP_SMALL:
+            return is_type_identifier_complete(identifier->map_sdefn().element_identifier())
+                   && is_type_identifier_complete(identifier->map_sdefn().key_identifier());
+        case TI_PLAIN_MAP_LARGE:
+            return is_type_identifier_complete(identifier->map_ldefn().element_identifier())
+                   && is_type_identifier_complete(identifier->map_ldefn().key_identifier());
+        case TI_STRONGLY_CONNECTED_COMPONENT:
+            return false;
+        case EK_COMPLETE:
+            return true;
+        case EK_MINIMAL:
+            return false;
+        default:
+            return false;
+    }
+}
+
 void TypeObjectFactory::add_type_identifier(const std::string& type_name, const TypeIdentifier* identifier)
 {
     const TypeIdentifier* alreadyExists = get_stored_type_identifier(identifier);
     if (alreadyExists != nullptr && alreadyExists != identifier)
     {
         // Don't copy
-        if (alreadyExists->_d() == EK_COMPLETE)
+        if (is_type_identifier_complete(alreadyExists))
         {
             complete_identifiers_[type_name] = alreadyExists;
         }
@@ -1239,7 +1274,7 @@ void TypeObjectFactory::add_type_identifier(const std::string& type_name, const 
 
     std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
     //identifiers_.insert(std::pair<const std::string, const TypeIdentifier*>(type_name, identifier));
-    if (identifier->_d() == EK_COMPLETE)
+    if (is_type_identifier_complete(identifier))
     {
         if (complete_identifiers_.find(type_name) == complete_identifiers_.end())
         {
@@ -1398,9 +1433,15 @@ const TypeIdentifier* TypeObjectFactory::get_sequence_identifier(const std::stri
         //identifiers_.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
         //identifiers_[auxType] = auxIdent;
         add_type_identifier(auxType, &auxIdent);
-        return get_type_identifier(auxType);
+        if (complete)
+        {
+            return get_type_identifier_trying_complete(auxType);
+        }
+        else
+        {
+            return get_type_identifier(auxType);
+        }
     }
-    return nullptr;
 }
 
 const TypeIdentifier* TypeObjectFactory::get_array_identifier(const std::string& type_name,
@@ -1459,9 +1500,15 @@ const TypeIdentifier* TypeObjectFactory::get_array_identifier(const std::string&
         //identifiers_.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
         //identifiers_[auxType] = auxIdent;
         add_type_identifier(auxType, &auxIdent);
-        return get_type_identifier(auxType);
+        if (complete)
+        {
+            return get_type_identifier_trying_complete(auxType);
+        }
+        else
+        {
+            return get_type_identifier(auxType);
+        }
     }
-    return nullptr;
 }
 
 const TypeIdentifier* TypeObjectFactory::get_map_identifier(const std::string& key_type_name,
@@ -1532,9 +1579,15 @@ const TypeIdentifier* TypeObjectFactory::get_map_identifier(const std::string& k
         //identifiers_.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
         //identifiers_[auxType] = auxIdent;
         add_type_identifier(auxType, &auxIdent);
-        return get_type_identifier(auxType);
+        if (complete)
+        {
+            return get_type_identifier_trying_complete(auxType);
+        }
+        else
+        {
+            return get_type_identifier(auxType);
+        }
     }
-    return nullptr;
 }
 
 static TypeKind GetTypeKindFromIdentifier(const TypeIdentifier* identifier)

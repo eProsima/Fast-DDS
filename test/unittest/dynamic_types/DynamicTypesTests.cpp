@@ -4931,6 +4931,7 @@ TEST(TypeIdentifierTests, MinimalTypeIdentifierComparision)
     TypeIdentifier largeStringStruct1 = *GetLargeStringStructIdentifier(false);
     TypeIdentifier largeWStringStruct1 = *GetLargeWStringStructIdentifier(false);
     TypeIdentifier arrayStruct1 = *GetArraytStructIdentifier(false);
+    GetMyArrayIdentifier(false); // We need to generate it before arrayArrayStruct
     TypeIdentifier arrayArrayStruct1 = *GetArrayArrayStructIdentifier(false);
     TypeIdentifier sequenceStruct1 = *GetSequenceStructIdentifier(false);
     TypeIdentifier sequenceSequenceStruct1 = *GetSequenceSequenceStructIdentifier(false);
@@ -4979,8 +4980,8 @@ TEST(TypeIdentifierTests, MinimalTypeIdentifierComparision)
 
     // Compare equals
     ASSERT_TRUE(enum1 == enum2);
-    ASSERT_TRUE(aliasEnum1 == aliasEnum2);
-    ASSERT_TRUE(aliasAliasEnum1 == aliasAliasEnum2);
+    ASSERT_TRUE(aliasEnum1 == aliasEnum2 || aliasEnum2 == enum1);
+    ASSERT_TRUE(aliasAliasEnum1 == aliasAliasEnum2 || aliasAliasEnum2 == enum1);
     ASSERT_TRUE(boolStruct1 == boolStruct2);
     ASSERT_TRUE(octetStruct1 == octetStruct2);
     ASSERT_TRUE(shortStruct1 == shortStruct2);
@@ -5010,7 +5011,7 @@ TEST(TypeIdentifierTests, MinimalTypeIdentifierComparision)
     ASSERT_TRUE(unionUnion1 == unionUnion2);
     ASSERT_TRUE(wCharUnion1 == wCharUnion2);
     ASSERT_TRUE(unionUnionStruct1 == unionUnionStruct2);
-    ASSERT_TRUE(enum1 == aliasEnum1);
+    ASSERT_TRUE(enum2 == aliasEnum2);
 
     // Compare some not equals
     ASSERT_FALSE(aliasAliasEnum1 == boolStruct1);

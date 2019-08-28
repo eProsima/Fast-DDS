@@ -143,6 +143,9 @@ public:
             const TypeIdentifier* identifier,
             const TypeObject* object = nullptr) const;
 
+    RTPS_DllAPI bool is_type_identifier_complete(
+            const TypeIdentifier* identifier) const;
+
     RTPS_DllAPI void add_type_identifier(
             const std::string& type_name,
             const TypeIdentifier* identifier);

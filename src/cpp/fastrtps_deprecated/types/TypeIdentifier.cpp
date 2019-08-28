@@ -1111,6 +1111,8 @@ void TypeIdentifier::serialize(eprosima::fastcdr::Cdr &scdr) const
 
     switch(m__d)
     {
+        case TK_NONE:
+        break;
         case TI_STRING8_SMALL:
         case TI_STRING16_SMALL:
         scdr << m_string_sdefn;
@@ -1159,6 +1161,8 @@ void TypeIdentifier::deserialize(eprosima::fastcdr::Cdr &dcdr)
 
     switch(m__d)
     {
+        case TK_NONE:
+        break;
         case TI_STRING8_SMALL:
         case TI_STRING16_SMALL:
         dcdr >> m_string_sdefn;
