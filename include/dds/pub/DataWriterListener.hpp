@@ -23,10 +23,8 @@
 
 #include <dds/pub/DataWriter.hpp>
 
-namespace dds
-{
-namespace pub
-{
+namespace dds {
+namespace pub {
 
 /**
  *  * @brief
@@ -99,7 +97,7 @@ namespace pub
  * @see @ref DCPS_Modules_Publication_DataWriter "Data Writer"
  * @see @ref DCPS_Modules_Infrastructure_Listener "Listener information"
  */
-template <typename T>
+template<typename T>
 class DataWriterListener
 {
 public:
@@ -107,7 +105,6 @@ public:
     virtual ~DataWriterListener() { }
     /** @endcond */
 
-public:
     /**
      * This operation is called by the Data Distribution Service when the
      * OfferedDeadlineMissedStatus changes.
@@ -127,7 +124,7 @@ public:
      *               the application).
      */
     virtual void on_offered_deadline_missed(
-        dds::pub::DataWriter<T>& writer,
+        DataWriter<T>& writer,
         const dds::core::status::OfferedDeadlineMissedStatus& status) = 0;
 
     /**
@@ -148,7 +145,7 @@ public:
      *               an input to the application).
      */
     virtual void on_offered_incompatible_qos(
-        dds::pub::DataWriter<T>& writer,
+        DataWriter<T>& writer,
         const dds::core::status::OfferedIncompatibleQosStatus&  status) = 0;
 
     /**
@@ -171,7 +168,7 @@ public:
      *               to the application).
      */
     virtual void on_liveliness_lost(
-        dds::pub::DataWriter<T>& writer,
+        DataWriter<T>& writer,
         const dds::core::status::LivelinessLostStatus& status) = 0;
 
     /**
@@ -199,7 +196,7 @@ public:
      *               provided by the Data Distribution Service).
      */
     virtual void on_publication_matched(
-        dds::pub::DataWriter<T>& writer,
+        DataWriter<T>& writer,
         const dds::core::status::PublicationMatchedStatus& status) = 0;
 };
 
@@ -220,7 +217,7 @@ public:
  *
  * @see dds::pub::DataWriterListener
  */
-template <typename T>
+template<typename T>
 class NoOpDataWriterListener : public virtual DataWriterListener<T>
 {
 /** @cond
@@ -230,26 +227,25 @@ class NoOpDataWriterListener : public virtual DataWriterListener<T>
 public:
     virtual ~NoOpDataWriterListener() { }
 
-public:
-    virtual void
-    on_offered_deadline_missed(dds::pub::DataWriter<T>& writer,
-                               const dds::core::status::OfferedDeadlineMissedStatus& status) { }
+    virtual void on_offered_deadline_missed(
+            DataWriter<T>& writer,
+            const dds::core::status::OfferedDeadlineMissedStatus& status) { }
 
-    virtual void
-    on_offered_incompatible_qos(dds::pub::DataWriter<T>& writer,
-                                const dds::core::status::OfferedIncompatibleQosStatus&  status) { }
+    virtual void on_offered_incompatible_qos(
+            DataWriter<T>& writer,
+            const dds::core::status::OfferedIncompatibleQosStatus&  status) { }
 
-    virtual void
-    on_liveliness_lost(dds::pub::DataWriter<T>& writer,
-                       const dds::core::status::LivelinessLostStatus& status) { }
+    virtual void on_liveliness_lost(
+            DataWriter<T>& writer,
+            const dds::core::status::LivelinessLostStatus& status) { }
 
-    virtual void
-    on_publication_matched(dds::pub::DataWriter<T>& writer,
-                           const dds::core::status::PublicationMatchedStatus& status) { }
+    virtual void on_publication_matched(
+            DataWriter<T>& writer,
+            const dds::core::status::PublicationMatchedStatus& status) { }
 /** @endcond */
 };
 
-}
-}
+} //namespace pub
+} //namespace dds
 
-#endif /* OMG_DDS_PUB_DATA_WRITER_LISTENER_HPP_ */
+#endif //OMG_DDS_PUB_DATA_WRITER_LISTENER_HPP_
