@@ -29,7 +29,7 @@ namespace detail {
 
 #include <dds/sub/SampleInfo.hpp>
 
-template <typename T>
+template<typename T>
 class Sample
 {
 public:

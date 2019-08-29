@@ -28,7 +28,7 @@
 // Implementation
 #include <dds/sub/Query.hpp>
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 dds::sub::TQuery<DELEGATE>::TQuery(
     const dds::sub::AnyDataReader& dr,
     const std::string& expression) :
@@ -39,7 +39,7 @@ dds::sub::TQuery<DELEGATE>::TQuery(
 /** @cond
  * Somehow, these cause functions duplicates in doxygen documentation.
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 template<typename FWIterator>
 dds::sub::TQuery<DELEGATE>::TQuery(
     const dds::sub::AnyDataReader& dr,
@@ -56,7 +56,7 @@ dds::sub::TQuery<DELEGATE>::TQuery(
 }
 /** @endcond */
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 dds::sub::TQuery<DELEGATE>::TQuery(
     const dds::sub::AnyDataReader& dr,
     const std::string& expression,
@@ -66,7 +66,7 @@ dds::sub::TQuery<DELEGATE>::TQuery(
 
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 const std::string& dds::sub::TQuery<DELEGATE>::expression() const
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -74,7 +74,7 @@ const std::string& dds::sub::TQuery<DELEGATE>::expression() const
     return this->delegate()->expression();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 void dds::sub::TQuery<DELEGATE>::expression(const std::string& expr)
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -85,7 +85,7 @@ void dds::sub::TQuery<DELEGATE>::expression(const std::string& expr)
 /**
  * Provides the begin iterator to the parameter list.
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 typename dds::sub::TQuery<DELEGATE>::const_iterator dds::sub::TQuery<DELEGATE>::begin() const
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -96,7 +96,7 @@ typename dds::sub::TQuery<DELEGATE>::const_iterator dds::sub::TQuery<DELEGATE>::
 /**
  * The end iterator to the parameter list.
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 typename dds::sub::TQuery<DELEGATE>::const_iterator dds::sub::TQuery<DELEGATE>::end() const
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -107,7 +107,7 @@ typename dds::sub::TQuery<DELEGATE>::const_iterator dds::sub::TQuery<DELEGATE>::
 /**
  * Provides the begin iterator to the parameter list.
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 typename dds::sub::TQuery<DELEGATE>::iterator dds::sub::TQuery<DELEGATE>::begin()
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -118,7 +118,7 @@ typename dds::sub::TQuery<DELEGATE>::iterator dds::sub::TQuery<DELEGATE>::begin(
 /**
  * The end iterator to the parameter list.
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 typename dds::sub::TQuery<DELEGATE>::iterator dds::sub::TQuery<DELEGATE>::end()
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -126,7 +126,7 @@ typename dds::sub::TQuery<DELEGATE>::iterator dds::sub::TQuery<DELEGATE>::end()
     return this->delegate()->end();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 template<typename FWIterator>
 void dds::sub::TQuery<DELEGATE>::parameters(
     const FWIterator& begin,
@@ -139,7 +139,7 @@ void dds::sub::TQuery<DELEGATE>::parameters(
     }
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 void dds::sub::TQuery<DELEGATE>::add_parameter(
     const std::string& param)
 {
@@ -148,7 +148,7 @@ void dds::sub::TQuery<DELEGATE>::add_parameter(
     this->delegate()->add_parameter(param);
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 uint32_t dds::sub::TQuery<DELEGATE>::parameters_length() const
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -156,7 +156,7 @@ uint32_t dds::sub::TQuery<DELEGATE>::parameters_length() const
     return this->delegate()->parameters_length();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 const dds::sub::AnyDataReader&
 dds::sub::TQuery<DELEGATE>::data_reader() const
 {
