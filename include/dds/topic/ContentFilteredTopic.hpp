@@ -69,9 +69,9 @@ namespace topic {
  *
  * @see @ref DCPS_Modules_TopicDefinition "Topic Definition"
  */
-template <
+template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 class TContentFilteredTopic : public TTopicDescription< DELEGATE<T> >
 {
 public:

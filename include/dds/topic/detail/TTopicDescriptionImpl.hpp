@@ -18,8 +18,8 @@
  *   limitations under the License.
  *
  */
-#ifndef OSPL_DDS_TOPIC_TTOPICDESCRIPTION_HPP_
-#define OSPL_DDS_TOPIC_TTOPICDESCRIPTION_HPP_
+#ifndef EPROSIMA_DDS_TOPIC_TTOPICDESCRIPTION_HPP_
+#define EPROSIMA_DDS_TOPIC_TTOPICDESCRIPTION_HPP_
 
 /**
  * @file
@@ -28,7 +28,7 @@
 /*
  * OMG PSM class declaration
  */
-#include <dds/topic/TTopicDescription.hpp>
+#include <dds/topic/TopicDescription.hpp>
 
 // Implementation
 
@@ -37,12 +37,12 @@ namespace dds
 namespace topic
 {
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 TTopicDescription<DELEGATE>::~TTopicDescription()
 {
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 const std::string& TTopicDescription<DELEGATE>::name() const
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -50,7 +50,7 @@ const std::string& TTopicDescription<DELEGATE>::name() const
     return this->delegate()->name();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 const std::string& TTopicDescription<DELEGATE>::type_name() const
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -58,7 +58,7 @@ const std::string& TTopicDescription<DELEGATE>::type_name() const
     return this->delegate()->type_name();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 const dds::domain::DomainParticipant& TTopicDescription<DELEGATE>::domain_participant() const
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -71,4 +71,4 @@ const dds::domain::DomainParticipant& TTopicDescription<DELEGATE>::domain_partic
 
 // End of implementation
 
-#endif /* OSPL_DDS_TOPIC_TTOPICDESCRIPTION_HPP_ */
+#endif /* EPROSIMA_DDS_TOPIC_TTOPICDESCRIPTION_HPP_ */

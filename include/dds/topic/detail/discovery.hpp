@@ -40,7 +40,7 @@ namespace dds
 namespace topic
 {
 
-template <typename TOPIC>
+template<typename TOPIC>
 TOPIC
 discover(
     const dds::domain::DomainParticipant& dp,
@@ -55,7 +55,7 @@ discover(
 }
 
 
-template <typename ANYTOPIC, typename FwdIterator>
+template<typename ANYTOPIC, typename FwdIterator>
 uint32_t
 discover(
     const dds::domain::DomainParticipant& dp,
@@ -76,7 +76,7 @@ discover(
 //    return list.size();
 }
 
-template <typename ANYTOPIC, typename BinIterator>
+template<typename ANYTOPIC, typename BinIterator>
 uint32_t
 discover_all(
     const dds::domain::DomainParticipant& dp,
@@ -97,7 +97,7 @@ discover_all(
 }
 
 
-template <typename FwdIterator>
+template<typename FwdIterator>
 void
 ignore(
     const dds::domain::DomainParticipant& dp,
