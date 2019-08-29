@@ -1,10 +1,5 @@
-#ifndef OMG_DDS_PUB_DETAIL_SAMPLE_HPP_
-#define OMG_DDS_PUB_DETAIL_SAMPLE_HPP_
-
-/* Copyright 2010, Object Management Group, Inc.
- * Copyright 2010, PrismTech, Corp.
- * Copyright 2010, Real-Time Innovations, Inc.
- * All rights reserved.
+/*
+ * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,106 +12,102 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *
+*/
 
+#ifndef EPROSIMA_DDS_PUB_DETAIL_SAMPLE_HPP_
+#define EPROSIMA_DDS_PUB_DETAIL_SAMPLE_HPP_
 
 /**
  * @cond
  * Ignore this file in the API
  */
 
-namespace dds
-{
-namespace sub
-{
-namespace detail
-{
-template <typename T>
-class Sample;
-}}}
+namespace dds {
+namespace sub {
+namespace detail {
 
 #include <dds/sub/SampleInfo.hpp>
 
-namespace dds
-{
-namespace sub
-{
-namespace detail
-{
 template <typename T>
 class Sample
 {
 public:
-    Sample() { }
-
-    Sample(const T& d, const dds::sub::SampleInfo& i)
+    Sample()
     {
-        this->data_ = d;
-        this->info_ = i;
     }
 
-    Sample(const Sample& other)
+    Sample(
+            const T& d,
+            const dds::sub::SampleInfo& i)
     {
-        copy(other);
+        //To implement
     }
 
-    Sample& operator=(const Sample& other)
+    Sample(
+            const Sample& other)
     {
-        return copy(other);
+        //To implement
     }
 
-    Sample& copy(const Sample& other)
+    Sample& operator=(
+            const Sample& other)
     {
-        this->data_ = other.data_;
-        this->info_ = other.info_;
-
-        return *this;
+        //To implement
     }
 
-public:
+    Sample& copy(
+            const Sample& other)
+    {
+        //To implement
+    }
+
     const T& data() const
     {
-        return data_;
+        //To implement
     }
 
     T& data()
     {
-        return data_;
+        //To implement
     }
 
-    void data(const T& d)
+    void data(
+            const T& d)
     {
-        data_ = d;
+        //To implement
     }
 
     const dds::sub::SampleInfo& info() const
     {
-        return info_;
+        //To implement
     }
 
     dds::sub::SampleInfo& info()
     {
-        return info_;
+        //To implement
     }
 
-    void info(const dds::sub::SampleInfo& i)
+    void info(
+            const dds::sub::SampleInfo& i)
     {
-        info_ = i;
+        //To implement
     }
 
-    bool operator ==(const Sample& other) const
+    bool operator ==(
+            const Sample& other) const
     {
-        return false;
+        //To implement
     }
 
     T* data_ptr()
     {
-        return &this->data_;
+        //To implement
     }
 
     dds::sub::SampleInfo *info_ptr()
     {
-        return &this->info_;
+        //To implement
     }
 
 
@@ -125,10 +116,10 @@ private:
     dds::sub::SampleInfo info_;
 };
 
-}
-}
-}
+} //namespace detail
+} //namespace sub
+} //namespace dds
 
 /** @endcond */
 
-#endif /* OMG_DDS_PUB_DETAIL_SAMPLE_HPP_ */
+#endif //EPROSIMA_DDS_PUB_DETAIL_SAMPLE_HPP_

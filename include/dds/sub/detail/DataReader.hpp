@@ -1,40 +1,39 @@
 /*
- *                         Vortex OpenSplice
+ * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
  *
- *   This software and documentation are Copyright 2006 to TO_YEAR ADLINK
- *   Technology Limited, its affiliated companies and licensors. All rights
- *   reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
-#ifndef OMG_DDS_SUB_DETAIL_DATA_READER_HPP_
-#define OMG_DDS_SUB_DETAIL_DATA_READER_HPP_
+*/
+
+#ifndef EPROSIMA_DDS_SUB_DETAIL_DATA_READER_HPP_
+#define EPROSIMA_DDS_SUB_DETAIL_DATA_READER_HPP_
 
 #include <dds/topic/Topic.hpp>
 #include <dds/topic/TopicInstance.hpp>
 
 #include <dds/core/status/Status.hpp>
-#include <dds/sub/status/detail/DataStateImpl.hpp>
+//TODO: Fix when DataStateImpl is implemented
+//#include <dds/sub/status/detail/DataStateImpl.hpp>
 #include <dds/sub/detail/Manipulators.hpp>
 #include <dds/sub/LoanedSamples.hpp>
 #include <dds/sub/Subscriber.hpp>
 #include <dds/sub/Query.hpp>
 
-#include <org/opensplice/core/EntityDelegate.hpp>
-#include <org/opensplice/sub/AnyDataReaderDelegate.hpp>
+//#include <org/opensplice/core/EntityDelegate.hpp>
+//#include <org/opensplice/sub/AnyDataReaderDelegate.hpp>
 
-#include <org/opensplice/core/ScopedLock.hpp>
-#include <org/opensplice/ForwardDeclarations.hpp>
+//#include <org/opensplice/core/ScopedLock.hpp>
+//#include <org/opensplice/ForwardDeclarations.hpp>
 
 
 /**
@@ -42,183 +41,192 @@
  * Ignore this file in the API
  */
 
-
 /***************************************************************************
  *
  * dds/sub/detail/DataReader<> DELEGATE declaration.
  * Implementation can be found in dds/sub/detail/TDataReaderImpl.hpp
  *
  ***************************************************************************/
-template <typename T>
-class dds::sub::detail::DataReader : public ::org::opensplice::sub::AnyDataReaderDelegate
-{
-public:
 
-    typedef typename ::dds::core::smart_ptr_traits< DataReader<T> >::ref_type ref_type;
-    typedef typename ::dds::core::smart_ptr_traits< DataReader<T> >::weak_ref_type weak_ref_type;
+namespace dds {
+namespace sub {
+namespace detail {
 
-    DataReader(const dds::sub::Subscriber& sub,
-               const dds::topic::Topic<T>& topic,
-               const dds::sub::qos::DataReaderQos& qos,
-               dds::sub::DataReaderListener<T>* listener = NULL,
-               const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+template<typename T>
+//class dds::sub::detail::DataReader : public ::org::opensplice::sub::AnyDataReaderDelegate
+//{
+//public:
 
-    DataReader(const dds::sub::Subscriber& sub,
-               const dds::topic::ContentFilteredTopic<T, dds::topic::detail::ContentFilteredTopic>& topic,
-               const dds::sub::qos::DataReaderQos& qos,
-               dds::sub::DataReaderListener<T>* listener = NULL,
-               const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+//    typedef typename ::dds::core::smart_ptr_traits< DataReader<T> >::ref_type ref_type;
+//    typedef typename ::dds::core::smart_ptr_traits< DataReader<T> >::weak_ref_type weak_ref_type;
 
-    void common_constructor(dds::sub::DataReaderListener<T>* listener,
-                            const dds::core::status::StatusMask& mask);
+//    DataReader(const dds::sub::Subscriber& sub,
+//               const dds::topic::Topic<T>& topic,
+//               const dds::sub::qos::DataReaderQos& qos,
+//               dds::sub::DataReaderListener<T>* listener = NULL,
+//               const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
 
-    virtual ~DataReader();
+//    DataReader(const dds::sub::Subscriber& sub,
+//               const dds::topic::ContentFilteredTopic<T, dds::topic::detail::ContentFilteredTopic>& topic,
+//               const dds::sub::qos::DataReaderQos& qos,
+//               dds::sub::DataReaderListener<T>* listener = NULL,
+//               const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
 
-    void init(ObjectDelegate::weak_ref_type weak_ref);
+//    void common_constructor(dds::sub::DataReaderListener<T>* listener,
+//                            const dds::core::status::StatusMask& mask);
 
-    dds::sub::status::DataState default_filter_state();
-    void default_filter_state(const dds::sub::status::DataState& state);
+//    virtual ~DataReader();
 
-    dds::sub::LoanedSamples<T> read();
-    dds::sub::LoanedSamples<T> take();
+//    void init(ObjectDelegate::weak_ref_type weak_ref);
 
-    template<typename SamplesFWIterator>
-    uint32_t read(SamplesFWIterator samples, uint32_t max_samples);
-    template<typename SamplesFWIterator>
-    uint32_t take(SamplesFWIterator samples, uint32_t max_samples);
+//    dds::sub::status::DataState default_filter_state();
+//    void default_filter_state(const dds::sub::status::DataState& state);
 
-    template<typename SamplesBIIterator>
-    uint32_t read(SamplesBIIterator samples);
-    template<typename SamplesBIIterator>
-    uint32_t take(SamplesBIIterator samples);
+//    dds::sub::LoanedSamples<T> read();
+//    dds::sub::LoanedSamples<T> take();
 
-    dds::topic::TopicInstance<T> key_value(const dds::core::InstanceHandle& h);
-    T& key_value(T& key, const dds::core::InstanceHandle& h);
+//    template<typename SamplesFWIterator>
+//    uint32_t read(SamplesFWIterator samples, uint32_t max_samples);
+//    template<typename SamplesFWIterator>
+//    uint32_t take(SamplesFWIterator samples, uint32_t max_samples);
 
-    const dds::core::InstanceHandle lookup_instance(const T& key) const;
+//    template<typename SamplesBIIterator>
+//    uint32_t read(SamplesBIIterator samples);
+//    template<typename SamplesBIIterator>
+//    uint32_t take(SamplesBIIterator samples);
 
-    virtual const dds::sub::Subscriber& subscriber() const;
+//    dds::topic::TopicInstance<T> key_value(const dds::core::InstanceHandle& h);
+//    T& key_value(T& key, const dds::core::InstanceHandle& h);
 
-    void close();
+//    const dds::core::InstanceHandle lookup_instance(const T& key) const;
 
-    dds::sub::DataReaderListener<T>* listener();
-    void listener(dds::sub::DataReaderListener<T>* l,
-                  const dds::core::status::StatusMask& event_mask);
+//    virtual const dds::sub::Subscriber& subscriber() const;
 
-    dds::sub::DataReader<T, dds::sub::detail::DataReader> wrapper();
+//    void close();
 
-    virtual void listener_notify(ObjectDelegate::ref_type source,
-                                 uint32_t       triggerMask,
-                                 void           *eventData,
-                                 void           *listener);
+//    dds::sub::DataReaderListener<T>* listener();
+//    void listener(dds::sub::DataReaderListener<T>* l,
+//                  const dds::core::status::StatusMask& event_mask);
 
-private:
-    dds::sub::Subscriber sub_;
-    dds::sub::status::DataState status_filter_;
+//    dds::sub::DataReader<T, dds::sub::detail::DataReader> wrapper();
 
+//    virtual void listener_notify(ObjectDelegate::ref_type source,
+//                                 uint32_t       triggerMask,
+//                                 void           *eventData,
+//                                 void           *listener);
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-private:
-    enum SelectMode {
-        SELECT_MODE_READ,
-        SELECT_MODE_READ_INSTANCE,
-        SELECT_MODE_READ_NEXT_INSTANCE,
-        SELECT_MODE_READ_WITH_CONDITION,
-        SELECT_MODE_READ_INSTANCE_WITH_CONDITION,
-        SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION
-    };
+//private:
+//    dds::sub::Subscriber sub_;
+//    dds::sub::status::DataState status_filter_;
 
 
-public:
-
-    class Selector
-    {
-    public:
-        Selector(typename DataReader<T>::ref_type dr);
-
-        Selector& instance(const dds::core::InstanceHandle& h);
-        Selector& next_instance(const dds::core::InstanceHandle& h);
-        Selector& filter_state(const dds::sub::status::DataState& s);
-        Selector& max_samples(uint32_t n);
-        Selector& filter_content(const dds::sub::Query& query);
-
-        dds::sub::LoanedSamples<T> read();
-        dds::sub::LoanedSamples<T> take();
-
-        // --- Forward Iterators: --- //
-        template<typename SamplesFWIterator>
-        uint32_t read(SamplesFWIterator sfit, uint32_t max_samples);
-        template<typename SamplesFWIterator>
-        uint32_t take(SamplesFWIterator sfit, uint32_t max_samples);
-
-        // --- Back-Inserting Iterators: --- //
-        template<typename SamplesBIIterator>
-        uint32_t read(SamplesBIIterator sbit);
-        template<typename SamplesBIIterator>
-        uint32_t take(SamplesBIIterator sbit);
-
-        SelectMode get_mode() const;
-
-        DataReader<T> * get_reader() const {
-            return this->reader.get();
-        }
-
-    private:
-        friend class DataReader;
-        SelectMode mode;
-        typename DataReader<T>::ref_type reader;
-        dds::sub::status::DataState state_filter_;
-        bool state_filter_is_set_;
-        dds::core::InstanceHandle handle;
-        uint32_t max_samples_;
-        dds::sub::Query query_;
-    };
+////++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//private:
+//    enum SelectMode {
+//        SELECT_MODE_READ,
+//        SELECT_MODE_READ_INSTANCE,
+//        SELECT_MODE_READ_NEXT_INSTANCE,
+//        SELECT_MODE_READ_WITH_CONDITION,
+//        SELECT_MODE_READ_INSTANCE_WITH_CONDITION,
+//        SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION
+//    };
 
 
-    class ManipulatorSelector: public Selector
-    {
-    public:
-        //ManipulatorSelector(DataReader<T>* dr);
-        ManipulatorSelector(typename DataReader<T>::ref_type dr);
+//public:
 
-        bool read_mode();
-        void read_mode(bool b);
+//    class Selector
+//    {
+//    public:
+//        Selector(typename DataReader<T>::ref_type dr);
 
-        ManipulatorSelector&
-        operator >>(dds::sub::LoanedSamples<T>& samples);
+//        Selector& instance(const dds::core::InstanceHandle& h);
+//        Selector& next_instance(const dds::core::InstanceHandle& h);
+//        Selector& filter_state(const dds::sub::status::DataState& s);
+//        Selector& max_samples(uint32_t n);
+//        Selector& filter_content(const dds::sub::Query& query);
 
-    private:
-        bool read_mode_;
-    };
+//        dds::sub::LoanedSamples<T> read();
+//        dds::sub::LoanedSamples<T> take();
+
+//        // --- Forward Iterators: --- //
+//        template<typename SamplesFWIterator>
+//        uint32_t read(SamplesFWIterator sfit, uint32_t max_samples);
+//        template<typename SamplesFWIterator>
+//        uint32_t take(SamplesFWIterator sfit, uint32_t max_samples);
+
+//        // --- Back-Inserting Iterators: --- //
+//        template<typename SamplesBIIterator>
+//        uint32_t read(SamplesBIIterator sbit);
+//        template<typename SamplesBIIterator>
+//        uint32_t take(SamplesBIIterator sbit);
+
+//        SelectMode get_mode() const;
+
+//        DataReader<T> * get_reader() const {
+//            return this->reader.get();
+//        }
+
+//    private:
+//        friend class DataReader;
+//        SelectMode mode;
+//        typename DataReader<T>::ref_type reader;
+//        dds::sub::status::DataState state_filter_;
+//        bool state_filter_is_set_;
+//        dds::core::InstanceHandle handle;
+//        uint32_t max_samples_;
+//        dds::sub::Query query_;
+//    };
 
 
-private:
-    // ==============================================================
-    // == Selector Read/Take API
+//    class ManipulatorSelector: public Selector
+//    {
+//    public:
+//        //ManipulatorSelector(DataReader<T>* dr);
+//        ManipulatorSelector(typename DataReader<T>::ref_type dr);
 
-    dds::sub::LoanedSamples<T> read(const Selector& selector);
+//        bool read_mode();
+//        void read_mode(bool b);
 
-    dds::sub::LoanedSamples<T> take(const Selector& selector);
+//        ManipulatorSelector&
+//        operator >>(dds::sub::LoanedSamples<T>& samples);
 
-    // --- Forward Iterators: --- //
-    template<typename SamplesFWIterator>
-    uint32_t read(SamplesFWIterator samples,
-                  uint32_t max_samples, const Selector& selector);
+//    private:
+//        bool read_mode_;
+//    };
 
-    template<typename SamplesFWIterator>
-    uint32_t take(SamplesFWIterator samples,
-                  uint32_t max_samples, const Selector& selector);
 
-    // --- Back-Inserting Iterators: --- //
-    template<typename SamplesBIIterator>
-    uint32_t read(SamplesBIIterator samples, const Selector& selector);
+//private:
+//    // ==============================================================
+//    // == Selector Read/Take API
 
-    template<typename SamplesBIIterator>
-    uint32_t take(SamplesBIIterator samples, const Selector& selector);
+//    dds::sub::LoanedSamples<T> read(const Selector& selector);
 
-};
+//    dds::sub::LoanedSamples<T> take(const Selector& selector);
+
+//    // --- Forward Iterators: --- //
+//    template<typename SamplesFWIterator>
+//    uint32_t read(SamplesFWIterator samples,
+//                  uint32_t max_samples, const Selector& selector);
+
+//    template<typename SamplesFWIterator>
+//    uint32_t take(SamplesFWIterator samples,
+//                  uint32_t max_samples, const Selector& selector);
+
+//    // --- Back-Inserting Iterators: --- //
+//    template<typename SamplesBIIterator>
+//    uint32_t read(SamplesBIIterator samples, const Selector& selector);
+
+//    template<typename SamplesBIIterator>
+//    uint32_t take(SamplesBIIterator samples, const Selector& selector);
+
+//};
+class DataReader { };
+
+} //namespace detail
+} //namespace sub
+} //namespace dds
 
 /** @endcond */
 
-#endif /* OMG_TDDS_SUB_DETAIL_DATA_READER_HPP_ */
+#endif //EPROSIMA_TDDS_SUB_DETAIL_DATA_READER_HPP_
 

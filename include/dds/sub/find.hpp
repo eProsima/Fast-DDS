@@ -24,10 +24,8 @@
 
 #include <dds/sub/detail/find.hpp>
 
-namespace dds
-{
-namespace sub
-{
+namespace dds {
+namespace sub {
 
 /**
  * This operation returns the built-in Subscriber associated with the given
@@ -44,8 +42,8 @@ namespace sub
  * @param dp the domain participant
  * @return the built-in Subscriber
  */
-const dds::sub::Subscriber OMG_DDS_API
-builtin_subscriber(const dds::domain::DomainParticipant& dp);
+const Subscriber OMG_DDS_API builtin_subscriber(
+        const dds::domain::DomainParticipant& dp);
 
 /**
  * This function retrieves a previously-created DataReader
@@ -67,11 +65,14 @@ builtin_subscriber(const dds::domain::DomainParticipant& dp);
  *        at most max_size will be copied using the provided iterator
  *
  */
-template <typename READER, typename FwdIterator>
-uint32_t
-find(const dds::sub::Subscriber& sub,
-     const std::string &topic_name,
-     FwdIterator begin, uint32_t max_size);
+template<
+        typename READER,
+        typename FwdIterator>
+uint32_t find(
+        const Subscriber& sub,
+        const std::string &topic_name,
+        FwdIterator begin,
+        uint32_t max_size);
 
 /**
  * This function retrieves a previously-created DataReader
@@ -90,11 +91,13 @@ find(const dds::sub::Subscriber& sub,
  *        container in which to put the DataReaders
  * @return the total number of elements returned
  */
-template <typename READER, typename BinIterator>
-uint32_t
-find(const dds::sub::Subscriber& sub,
-     const std::string &topic_name,
-     BinIterator begin);
+template<
+        typename READER,
+        typename BinIterator>
+uint32_t find(
+        const dds::sub::Subscriber& sub,
+        const std::string &topic_name,
+        BinIterator begin);
 
 /**
  * This function retrieves a previously-created DataReader
@@ -115,11 +118,15 @@ find(const dds::sub::Subscriber& sub,
  * @return the total number of elements returned. Notice that
  *        at most max_size will be copied using the provided iterator
  */
-template <typename READER, typename T, typename FwdIterator>
-uint32_t
-find(const dds::sub::Subscriber& sub,
-     const dds::topic::TopicDescription& topic_description,
-     FwdIterator begin, uint32_t max_size);
+template<
+        typename READER,
+        typename T,
+        typename FwdIterator>
+uint32_t find(
+        const Subscriber& sub,
+        const dds::topic::TopicDescription& topic_description,
+        FwdIterator begin,
+        uint32_t max_size);
 
 /**
  * This function retrieves a previously-created DataReader
@@ -138,11 +145,14 @@ find(const dds::sub::Subscriber& sub,
  *        container in which to put the DataReaders
  * @return the total number of elements returned
  */
-template <typename READER, typename T, typename BinIterator>
-uint32_t
-find(const dds::sub::Subscriber& sub,
-     const dds::topic::TopicDescription& topic_description,
-     BinIterator begin);
+template<
+        typename READER,
+        typename T,
+        typename BinIterator>
+uint32_t find(
+        const Subscriber& sub,
+        const dds::topic::TopicDescription& topic_description,
+        BinIterator begin);
 
 /**
  * This operation allows the application to access the DataReader objects that contain
@@ -173,11 +183,14 @@ find(const dds::sub::Subscriber& sub,
  * @return the total number of elements returned. Notice that
  *        at most max_size will be copied using the provided iterator
  */
-template <typename READER, typename FwdIterator>
-uint32_t
-find(const dds::sub::Subscriber& sub,
-     const dds::sub::status::DataState& data_state,
-     FwdIterator begin, uint32_t max_size);
+template<
+        typename READER,
+        typename FwdIterator>
+uint32_t find(
+        const Subscriber& sub,
+        const dds::sub::status::DataState& data_state,
+        FwdIterator begin,
+        uint32_t max_size);
 
 /**
  * This operation allows the application to access the DataReader objects that contain
@@ -206,13 +219,15 @@ find(const dds::sub::Subscriber& sub,
  *        of a container in which to put the DataReaders
  * @return the total number of elements returned
  */
-template <typename READER, typename BinIterator>
-uint32_t
-find(const dds::sub::Subscriber& sub,
-     const dds::sub::status::DataState& rs,
-     BinIterator begin);
+template<
+        typename READER,
+        typename BinIterator>
+uint32_t find(
+        const Subscriber& sub,
+        const status::DataState& rs,
+        BinIterator begin);
 
-}
-}
+} //namespace sub
+} //namespace dds
 
-#endif /* OMG_DDS_SUB_FIND_HPP_ */
+#endif //OMG_DDS_SUB_FIND_HPP_
