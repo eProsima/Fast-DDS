@@ -36,7 +36,7 @@ namespace topic {
  * @see @ref dds::core::InstanceHandle
  */
 template<typename T>
-class dds::topic::TopicInstance
+class TopicInstance
 {
 public:
     /**
@@ -49,7 +49,7 @@ public:
      *
      * @param h the InstanceHandle
      */
-    TopicInstance(const ::dds::core::InstanceHandle& h);
+    TopicInstance(const dds::core::InstanceHandle& h);
 
     /**
      * Construct a TopicInstance with an InstanceHandle and a sample type.
@@ -57,7 +57,7 @@ public:
      * @param h the InstanceHandle
      * @param sample the <Type>
      */
-    TopicInstance(const ::dds::core::InstanceHandle& h, const T& sample);
+    TopicInstance(const dds::core::InstanceHandle& h, const T& sample);
 
 public:
     /**
@@ -65,21 +65,21 @@ public:
      *
      * @return the InstanceHandle for the TopicInstance
      */
-    operator const ::dds::core::InstanceHandle() const;
+    operator const dds::core::InstanceHandle() const;
 
     /**
      * Get the InstanceHandle.
      *
      * @return the InstanceHandle for the TopicInstance
      */
-    const ::dds::core::InstanceHandle handle() const;
+    const dds::core::InstanceHandle handle() const;
 
     /**
      * Set the InstanceHandle.
      *
      * @param h the InstanceHandle to set to the TopicInstance
      */
-    void handle(const ::dds::core::InstanceHandle& h);
+    void handle(const dds::core::InstanceHandle& h);
 
     /**
      * Get the data sample
@@ -103,7 +103,7 @@ public:
     void sample(const T& sample);
 
 private:
-    ::dds::core::InstanceHandle h_;
+    dds::core::InstanceHandle h_;
     T sample_;
 };
 

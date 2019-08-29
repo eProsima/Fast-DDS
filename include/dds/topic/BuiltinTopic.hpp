@@ -65,7 +65,7 @@ namespace topic {
  * @see @ref DCPS_Builtin_Topics_ParticipantData
  */
 template<typename D>
-class dds::topic::TParticipantBuiltinTopicData : public ::dds::core::Value<D>
+class TParticipantBuiltinTopicData : public dds::core::Value<D>
 {
 public:
     /**
@@ -76,7 +76,7 @@ public:
     /**
      * User-defined data attached to the participant via a QosPolicy
      */
-    const ::dds::core::policy::UserData& user_data() const;
+    const dds::core::policy::UserData& user_data() const;
 };
 
 /**
@@ -116,7 +116,7 @@ public:
  * @see @ref DCPS_Builtin_Topics_TopicData
  */
 template<typename D>
-class dds::topic::TTopicBuiltinTopicData : public ::dds::core::Value<D>
+class TTopicBuiltinTopicData : public dds::core::Value<D>
 {
 public:
     /**
@@ -137,69 +137,69 @@ public:
     /**
      * QosPolicy attached to the Topic
      */
-    const ::dds::core::policy::Durability& durability() const;
+    const dds::core::policy::Durability& durability() const;
 
     #ifdef OMG_DDS_PERSISTENCE_SUPPORT
     /**
      * QosPolicy attached to the Topic
      */
-    const ::dds::core::policy::DurabilityService&  durability_service() const;
+    const dds::core::policy::DurabilityService&  durability_service() const;
     #endif  // OMG_DDS_PERSISTENCE_SUPPORT
 
     /**
      * QosPolicy attached to the Topic
      */
-    const ::dds::core::policy::Deadline& deadline() const;
+    const dds::core::policy::Deadline& deadline() const;
 
     /**
      * QosPolicy attached to the Topic
      */
-    const ::dds::core::policy::LatencyBudget& latency_budget() const;
+    const dds::core::policy::LatencyBudget& latency_budget() const;
 
     /**
      * QosPolicy attached to the Topic
      */
-    const ::dds::core::policy::Liveliness& liveliness() const;
+    const dds::core::policy::Liveliness& liveliness() const;
 
     /**
      * QosPolicy attached to the Topic
      */
-    const ::dds::core::policy::Reliability& reliability() const;
+    const dds::core::policy::Reliability& reliability() const;
 
     /**
      * QosPolicy attached to the Topic
      */
-    const ::dds::core::policy::TransportPriority& transport_priority() const;
+    const dds::core::policy::TransportPriority& transport_priority() const;
 
     /**
      * QosPolicy attached to the Topic
      */
-    const ::dds::core::policy::Lifespan& lifespan() const;
+    const dds::core::policy::Lifespan& lifespan() const;
 
     /**
      * QosPolicy attached to the Topic
      */
-    const ::dds::core::policy::DestinationOrder& destination_order() const;
+    const dds::core::policy::DestinationOrder& destination_order() const;
 
     /**
      * QosPolicy attached to the Topic
      */
-    const ::dds::core::policy::History& history() const;
+    const dds::core::policy::History& history() const;
 
     /**
      * QosPolicy attached to the Topic
      */
-    const ::dds::core::policy::ResourceLimits& resource_limits() const;
+    const dds::core::policy::ResourceLimits& resource_limits() const;
 
     /**
      * QosPolicy attached to the Topic
      */
-    const ::dds::core::policy::Ownership& ownership() const;
+    const dds::core::policy::Ownership& ownership() const;
 
     /**
      * QosPolicy attached to the Topic
      */
-    const ::dds::core::policy::TopicData& topic_data() const;
+    const dds::core::policy::TopicData& topic_data() const;
 };
 
 /**
@@ -240,7 +240,7 @@ public:
  * @see @ref DCPS_Builtin_Topics_PublicationData
  */
 template<typename D>
-class dds::topic::TPublicationBuiltinTopicData : public ::dds::core::Value<D>
+class TPublicationBuiltinTopicData : public dds::core::Value<D>
 {
 public:
     /**
@@ -266,81 +266,81 @@ public:
     /**
      * QosPolicy attached to the DataWriter
      */
-    const ::dds::core::policy::Durability& durability() const;
+    const dds::core::policy::Durability& durability() const;
 
     #ifdef OMG_DDS_PERSISTENCE_SUPPORT
     /**
      * QosPolicy attached to the DataWriter
      */
-    const ::dds::core::policy::DurabilityService&  durability_service() const;
+    const dds::core::policy::DurabilityService&  durability_service() const;
     #endif  // OMG_DDS_PERSISTENCE_SUPPORT
 
     /**
      * QosPolicy attached to the DataWriter
      */
-    const ::dds::core::policy::Deadline& deadline() const;
+    const dds::core::policy::Deadline& deadline() const;
 
     /**
      * QosPolicy attached to the DataWriter
      */
-    const ::dds::core::policy::LatencyBudget& latency_budget() const;
+    const dds::core::policy::LatencyBudget& latency_budget() const;
 
     /**
      * QosPolicy attached to the DataWriter
      */
-    const ::dds::core::policy::Liveliness& liveliness() const;
+    const dds::core::policy::Liveliness& liveliness() const;
 
     /**
      * QosPolicy attached to the DataWriter
      */
-    const ::dds::core::policy::Reliability& reliability() const;
+    const dds::core::policy::Reliability& reliability() const;
 
     /**
      * QosPolicy attached to the DataWriter
      */
-    const ::dds::core::policy::Lifespan& lifespan() const;
+    const dds::core::policy::Lifespan& lifespan() const;
 
     /**
      * QosPolicy attached to the DataWriter
      */
-    const ::dds::core::policy::UserData& user_data() const;
+    const dds::core::policy::UserData& user_data() const;
 
     /**
      * QosPolicy attached to the DataWriter
      */
-    const ::dds::core::policy::Ownership& ownership() const;
+    const dds::core::policy::Ownership& ownership() const;
 
     #ifdef OMG_DDS_OWNERSHIP_SUPPORT
     /**
      * QosPolicy attached to the DataWriter
      */
-    const ::dds::core::policy::OwnershipStrength&  ownership_strength() const;
+    const dds::core::policy::OwnershipStrength&  ownership_strength() const;
     #endif  // OMG_DDS_OWNERSHIP_SUPPORT
 
     /**
      * QosPolicy attached to the DataWriter
      */
-    const ::dds::core::policy::DestinationOrder& destination_order() const;
+    const dds::core::policy::DestinationOrder& destination_order() const;
 
     /**
      * QosPolicy attached to the Publisher to which the DataWriter belongs
      */
-    const ::dds::core::policy::Presentation& presentation() const;
+    const dds::core::policy::Presentation& presentation() const;
 
     /**
      * QosPolicy attached to the Publisher to which the DataWriter belongs
      */
-    const ::dds::core::policy::Partition& partition() const;
+    const dds::core::policy::Partition& partition() const;
 
     /**
      * QosPolicy attached to the Publisher to which the DataWriter belongs
      */
-    const ::dds::core::policy::TopicData& topic_data() const;
+    const dds::core::policy::TopicData& topic_data() const;
 
     /**
      * QosPolicy attached to the Publisher to which the DataWriter belongs
      */
-    const ::dds::core::policy::GroupData& group_data() const;
+    const dds::core::policy::GroupData& group_data() const;
 
 };
 
@@ -381,7 +381,7 @@ public:
  * @see @ref DCPS_Builtin_Topics_SubscriptionData
  */
 template<typename D>
-class dds::topic::TSubscriptionBuiltinTopicData  : public ::dds::core::Value<D>
+class TSubscriptionBuiltinTopicData  : public dds::core::Value<D>
 {
 public:
     /**
@@ -407,67 +407,67 @@ public:
     /**
      * QosPolicy attached to the DataReader
      */
-    const ::dds::core::policy::Durability& durability() const;
+    const dds::core::policy::Durability& durability() const;
 
     /**
      * QosPolicy attached to the DataReader
      */
-    const ::dds::core::policy::Deadline& deadline() const;
+    const dds::core::policy::Deadline& deadline() const;
 
     /**
      * QosPolicy attached to the DataReader
      */
-    const ::dds::core::policy::LatencyBudget& latency_budget() const;
+    const dds::core::policy::LatencyBudget& latency_budget() const;
 
     /**
      * QosPolicy attached to the DataReader
      */
-    const ::dds::core::policy::Liveliness& liveliness() const;
+    const dds::core::policy::Liveliness& liveliness() const;
 
     /**
      * QosPolicy attached to the DataReader
      */
-    const ::dds::core::policy::Reliability& reliability() const;
+    const dds::core::policy::Reliability& reliability() const;
 
     /**
      * QosPolicy attached to the DataReader
      */
-    const ::dds::core::policy::Ownership& ownership() const;
+    const dds::core::policy::Ownership& ownership() const;
 
     /**
      * QosPolicy attached to the DataReader
      */
-    const ::dds::core::policy::DestinationOrder& destination_order() const;
+    const dds::core::policy::DestinationOrder& destination_order() const;
 
     /**
      * QosPolicy attached to the DataReader
      */
-    const ::dds::core::policy::UserData& user_data() const;
+    const dds::core::policy::UserData& user_data() const;
 
     /**
      * QosPolicy attached to the DataReader
      */
-    const ::dds::core::policy::TimeBasedFilter& time_based_filter() const;
+    const dds::core::policy::TimeBasedFilter& time_based_filter() const;
 
     /**
      * QosPolicy attached to the Subscriber to which the DataReader belongs
      */
-    const ::dds::core::policy::Presentation& presentation() const;
+    const dds::core::policy::Presentation& presentation() const;
 
     /**
      * QosPolicy attached to the Subscriber to which the DataReader belongs
      */
-    const ::dds::core::policy::Partition& partition() const;
+    const dds::core::policy::Partition& partition() const;
 
     /**
      * QosPolicy attached to the Subscriber to which the DataReader belongs
      */
-    const ::dds::core::policy::TopicData& topic_data() const;
+    const dds::core::policy::TopicData& topic_data() const;
 
     /**
      * QosPolicy attached to the Subscriber to which the DataReader belongs
      */
-    const ::dds::core::policy::GroupData& group_data() const;
+    const dds::core::policy::GroupData& group_data() const;
 
 };
 

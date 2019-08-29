@@ -30,7 +30,7 @@ namespace qos {
 namespace detail {
 
 //TODO: Fix when TopicQosDelegate is implemented
-//typedef ::dds::core::TEntityQos< ::org::opensplice::topic::qos::TopicQosDelegate > TopicQos;
+//typedef dds::core::TEntityQos< ::org::opensplice::topic::qos::TopicQosDelegate > TopicQos;
 class TopicQos { };
 
 }

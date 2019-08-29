@@ -43,7 +43,7 @@ public:
         const std::string expression,
         const FWDIterator& params_begin,
         const FWDIterator& params_end)
-        : ::dds::core::Reference< DELEGATE<T> >(
+        : dds::core::Reference< DELEGATE<T> >(
                 new dds::topic::detail::MultiTopic<T>(dp, name, expression, params_begin, params_end))
     {
         ISOCPP_REPORT_STACK_DELEGATE_BEGIN();
