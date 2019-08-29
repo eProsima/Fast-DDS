@@ -340,12 +340,12 @@ protected:
                 for (size_t i = 0; i < size; ++i)
                 {
                     size_t index = i * 2;
-                    MemberId id = data->get_member_id_at_index(static_cast<uint32_t>(index));
+                    MemberId member_id = data->get_member_id_at_index(static_cast<uint32_t>(index));
                     std::cout << "Key: ";
-                    print_member(st_data, members[id], tabs + "\t");
-                    id = data->get_member_id_at_index(static_cast<uint32_t>(index + 1));
+                    print_member(st_data, members[member_id], tabs + "\t");
+                    member_id = data->get_member_id_at_index(static_cast<uint32_t>(index + 1));
                     std::cout << "Value: ";
-                    print_member(st_data, members[id], tabs + "\t");
+                    print_member(st_data, members[member_id], tabs + "\t");
                 }
                 data->return_loaned_value(st_data);
                 break;
@@ -355,6 +355,7 @@ protected:
         }
         std::cout << std::endl;
     }
+
     static void print_member(
             DynamicData* data,
             const DynamicTypeMember* type,
