@@ -21,18 +21,15 @@
 #define OMG_DDS_SUB_DATA_READER_LISTENER_HPP_
 
 #include <dds/core/status/Status.hpp>
+#include <dds/core/ref_traits.hpp>
 
-namespace dds
-{
-namespace sub
-{
-template <typename T>
-class DataReaderListener;
+namespace dds {
+namespace sub {
 
-template <typename T>
-class NoOpDataReaderListener;
-}
-}
+template<
+        typename T,
+        template <typename Q> class DELEGATE>
+class DataReader;
 
 /**
  * @brief
@@ -125,20 +122,21 @@ class NoOpDataReaderListener;
  * @see @ref DCPS_Modules_Subscription_DataReader "Data Reader"
  * @see @ref DCPS_Modules_Infrastructure_Listener "Listener information"
  */
-template <typename T>
-class dds::sub::DataReaderListener
+template<
+        typename T,
+        template <typename Q> class DELEGATE>
+class DataReaderListener
 {
 public:
+
     /** @cond */
     typedef typename ::dds::core::smart_ptr_traits<DataReaderListener>::ref_type ref_type;
     /** @endcond */
 
-public:
     /** @cond */
     virtual ~DataReaderListener() { }
     /** @endcond */
 
-public:
     /**
      * This operation called by the Data Distribution Service when the deadline
      * that the DataReader was expecting through its DeadlineQosPolicy was not
@@ -157,8 +155,8 @@ public:
      *               provided by the Data Distribution Service).
      */
     virtual void on_requested_deadline_missed(
-        DataReader<T>& reader,
-        const dds::core::status::RequestedDeadlineMissedStatus& status) = 0;
+            DataReader<T, DELEGATE>& reader,
+            const dds::core::status::RequestedDeadlineMissedStatus& status) = 0;
 
     /**
      * This operation is called by the Data Distribution Service when the
@@ -184,8 +182,8 @@ public:
      *               Data Distribution Service.
      */
     virtual void on_requested_incompatible_qos(
-        DataReader<T>& reader,
-        const dds::core::status::RequestedIncompatibleQosStatus& status) = 0;
+            DataReader<T, DELEGATE>& reader,
+            const dds::core::status::RequestedIncompatibleQosStatus& status) = 0;
 
     /**
      * This operation called by the Data Distribution Service when a (received)
@@ -208,8 +206,8 @@ public:
      *               the Data Distribution Service).
      */
     virtual void on_sample_rejected(
-        DataReader<T>& reader,
-        const dds::core::status::SampleRejectedStatus& status) = 0;
+            DataReader<T, DELEGATE>& reader,
+            const dds::core::status::SampleRejectedStatus& status) = 0;
 
     /**
      * This operation is called by the Data Distribution Service when the liveliness of
@@ -230,8 +228,8 @@ public:
      *               provided by the Data Distribution Service).
      */
     virtual void on_liveliness_changed(
-        DataReader<T>& reader,
-        const dds::core::status::LivelinessChangedStatus& status) = 0;
+            DataReader<T, DELEGATE>& reader,
+            const dds::core::status::LivelinessChangedStatus& status) = 0;
 
     /**
      * This operation is called by the Data Distribution Service when new data is
@@ -263,7 +261,8 @@ public:
      *               data is available (this is an input to the application provided by the Data
      *               Distribution Service).
      */
-    virtual void on_data_available(DataReader<T>& reader) = 0;
+    virtual void on_data_available(
+            DataReader<T, DELEGATE>& reader) = 0;
 
     /**
      * This operation  is called by the Data
@@ -292,8 +291,8 @@ public:
      *               provided by the Data Distribution Service).
      */
     virtual void on_subscription_matched(
-        DataReader<T>& reader,
-        const dds::core::status::SubscriptionMatchedStatus& status) = 0;
+            DataReader<T, DELEGATE>& reader,
+            const dds::core::status::SubscriptionMatchedStatus& status) = 0;
 
     /**
      * <b><i>
@@ -304,8 +303,8 @@ public:
      * @param status the SampleLostStatus status
      */
     virtual void on_sample_lost(
-        DataReader<T>& reader,
-        const dds::core::status::SampleLostStatus& status) = 0;
+            DataReader<T, DELEGATE>& reader,
+            const dds::core::status::SampleLostStatus& status) = 0;
 };
 
 
@@ -325,8 +324,10 @@ public:
  *
  * @see dds::sub::DataReaderListener
  */
-template <typename T>
-class dds::sub::NoOpDataReaderListener : public virtual DataReaderListener<T>
+template<
+        typename T,
+        template <typename Q> class DELEGATE>
+class NoOpDataReaderListener : public virtual DataReaderListener<T, DELEGATE>
 {
 /** @cond
  * All these functions have already been documented in the non-NoOp listener.
@@ -335,36 +336,37 @@ class dds::sub::NoOpDataReaderListener : public virtual DataReaderListener<T>
 public:
     typedef typename ::dds::core::smart_ptr_traits<NoOpDataReaderListener>::ref_type ref_type;
 
-public:
     virtual ~NoOpDataReaderListener() { }
 
-public:
     virtual void on_requested_deadline_missed(
-        DataReader<T>& reader,
-        const dds::core::status::RequestedDeadlineMissedStatus& status) { }
+            DataReader<T, DELEGATE>& reader,
+            const dds::core::status::RequestedDeadlineMissedStatus& status) { }
 
     virtual void on_requested_incompatible_qos(
-        DataReader<T>& reader,
-        const dds::core::status::RequestedIncompatibleQosStatus& status) { }
+            DataReader<T, DELEGATE>& reader,
+            const dds::core::status::RequestedIncompatibleQosStatus& status) { }
 
     virtual void on_sample_rejected(
-        DataReader<T>& reader,
+        DataReader<T, DELEGATE>& reader,
         const dds::core::status::SampleRejectedStatus& status) { }
 
     virtual void on_liveliness_changed(
-        DataReader<T>& reader,
-        const dds::core::status::LivelinessChangedStatus& status) { }
+            DataReader<T, DELEGATE>& reader,
+            const dds::core::status::LivelinessChangedStatus& status) { }
 
-    virtual void on_data_available(DataReader<T>& reader) { }
+    virtual void on_data_available(DataReader<T, DELEGATE>& reader) { }
 
     virtual void on_subscription_matched(
-        DataReader<T>& reader,
-        const dds::core::status::SubscriptionMatchedStatus& status) { }
+            DataReader<T, DELEGATE>& reader,
+            const dds::core::status::SubscriptionMatchedStatus& status) { }
 
     virtual void on_sample_lost(
-        DataReader<T>& reader,
-        const dds::core::status::SampleLostStatus& status) { }
+            DataReader<T, DELEGATE>& reader,
+            const dds::core::status::SampleLostStatus& status) { }
 /** @endcond */
 };
+
+} //namespace sub
+} //namespace dds
 
 #endif /* OMG_DDS_SUB_DATA_READER_LISTENER_HPP_ */
