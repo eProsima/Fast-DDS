@@ -25,15 +25,16 @@
 #include <dds/core/types.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/topic/detail/TopicDescription.hpp>
-#include <dds/core/Query.hpp>
+#include <dds/sub/Query.hpp>
 
 #ifdef OMG_DDS_MULTI_TOPIC_SUPPORT
 
-namespace dds { namespace topic { namespace detail {
+namespace dds {
+namespace topic {
+namespace detail {
 
-
-template <typename T>
-class MultiTopic  : public org::opensplice::topic::TopicDescriptionDelegate
+template<typename T>
+class MultiTopic : public org::opensplice::topic::TopicDescriptionDelegate
 {
 public:
     MultiTopic(
@@ -117,7 +118,7 @@ public:
         return myFilter.expression();
     }
 
-    template <typename FWIterator>
+    template<typename FWIterator>
     void expression_parameters(const FWIterator& params_begin, const FWIterator& params_end)
     {
         ISOCPP_REPORT_STACK_DELEGATE_BEGIN();
