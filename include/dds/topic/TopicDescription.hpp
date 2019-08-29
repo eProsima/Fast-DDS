@@ -82,7 +82,7 @@ public:
 
 };
 
-typedef ::dds::topic::detail::TopicDescription TopicDescription;
+typedef dds::topic::detail::TopicDescription TopicDescription;
 
 } //namespace topic
 } //namespace dds
