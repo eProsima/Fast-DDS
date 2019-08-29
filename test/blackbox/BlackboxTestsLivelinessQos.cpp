@@ -1402,7 +1402,7 @@ TEST(LivelinessQos, UnmatchedWriter)
     subscribers.sub_update_deadline_period(0.10, 0u);
 
     publishers.assert_liveliness(0u);
-    std::this_thread::sleep_for(std::chrono::milliseconds(announcement_period_ms * 2));
+    subscribers.sub_wait_liveliness_recovered(1u);
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 1u);
 }
 
