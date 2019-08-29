@@ -24,7 +24,6 @@
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/core/Reference.hpp>
 
-
 namespace dds {
 namespace topic {
 

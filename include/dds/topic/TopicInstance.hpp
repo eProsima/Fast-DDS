@@ -23,14 +23,8 @@
 #include <dds/core/Time.hpp>
 #include <dds/core/InstanceHandle.hpp>
 
-namespace dds
-{
-namespace topic
-{
-template <typename T>
-class TopicInstance;
-}
-}
+namespace dds {
+namespace topic {
 
 /**
  * @brief
@@ -41,7 +35,7 @@ class TopicInstance;
  * @see @ref dds::sub::Sample
  * @see @ref dds::core::InstanceHandle
  */
-template <typename T>
+template<typename T>
 class dds::topic::TopicInstance
 {
 public:
@@ -113,5 +107,7 @@ private:
     T sample_;
 };
 
+}
+}
 
 #endif /* OMG_DDS_TOPIC_TOPIC_INSTANCE_HPP_ */
