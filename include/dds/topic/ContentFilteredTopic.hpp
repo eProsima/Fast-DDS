@@ -32,7 +32,7 @@
 namespace dds {
 namespace topic {
 
-#ifdef OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
+//#ifdef OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
 
 /**
  * @brief
@@ -111,7 +111,7 @@ public:
             const dds::topic::Filter& filter);
 
     /** @cond */
-    virtual ~ContentFilteredTopic();
+    virtual ~TContentFilteredTopic();
     /** @endcond */
 
     /**
@@ -167,11 +167,9 @@ public:
 template<typename T>
 class ContentFilteredTopic : public TContentFilteredTopic <T, detail::ContentFilteredTopic> { };
 
-#endif  // OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
+//#endif  // OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
 
 } //namespace topic
 } //namespace dds
-
-#include <dds/topic/TContentFilteredTopic.hpp>
 
 #endif //OMG_DDS_TOPIC_CONTENT_FILTERED_TOPIC_HPP_

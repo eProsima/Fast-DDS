@@ -33,7 +33,7 @@
 //#include "u_topic.h"
 //#include "v_kernelParser.h"
 
-#ifdef OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
+//#ifdef OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
 
 /**
  * @cond
@@ -208,6 +208,6 @@ class ContentFilteredTopic { };
 
 /** @endcond */
 
-#endif /* OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT */
+//#endif /* OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT */
 
 #endif /* OMG_DDS_TOPIC_DETAIL_CONTENTFILTEREDTOPIC_HPP_ */
