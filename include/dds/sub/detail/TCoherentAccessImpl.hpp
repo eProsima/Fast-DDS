@@ -28,7 +28,7 @@
 /*
  * OMG PSM class declaration
  */
-#include <dds/sub/TCoherentAccess.hpp>
+#include <dds/sub/CoherentAccess.hpp>
 
 // Implementation
 
