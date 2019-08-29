@@ -61,40 +61,30 @@ TFilter<D>::TFilter(
 template<typename D>
 const std::string& TFilter<D>::expression() const
 {
-    ISOCPP_REPORT_STACK_NC_BEGIN();
-
     return this->delegate().expression();
 }
 
 template<typename D>
 typename TFilter<D>::const_iterator TFilter<D>::begin() const
 {
-    ISOCPP_REPORT_STACK_NC_BEGIN();
-
     return this->delegate().begin();
 }
 
 template<typename D>
 typename TFilter<D>::const_iterator TFilter<D>::end() const
 {
-    ISOCPP_REPORT_STACK_NC_BEGIN();
-
     return this->delegate().end();
 }
 
 template<typename D>
 typename TFilter<D>::iterator TFilter<D>::begin()
 {
-    ISOCPP_REPORT_STACK_NC_BEGIN();
-
     return this->delegate().begin();
 }
 
 template<typename D>
 typename TFilter<D>::iterator TFilter<D>::end()
 {
-    ISOCPP_REPORT_STACK_NC_BEGIN();
-
     return this->delegate().end();
 }
 
@@ -104,8 +94,6 @@ void TFilter<D>::parameters(
         const FWIterator& begin,
         const FWIterator end)
 {
-    ISOCPP_REPORT_STACK_NC_BEGIN();
-
     this->delegate().parameters(begin, end);
 }
 
@@ -113,16 +101,12 @@ template<typename D>
 void TFilter<D>::add_parameter(
         const std::string& param)
 {
-    ISOCPP_REPORT_STACK_NC_BEGIN();
-
     this->delegate().add_parameter(param);
 }
 
 template<typename D>
 uint32_t TFilter<D>::parameters_length() const
 {
-    ISOCPP_REPORT_STACK_NC_BEGIN();
-
     return this->delegate().parameters_length();
 }
 
