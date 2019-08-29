@@ -21,6 +21,7 @@
 #define OMG_DDS_TOPIC_TOPIC_HPP_
 
 #include <dds/topic/detail/Topic.hpp>
+#include <dds/topic/AnyTopic.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 
 namespace dds {
