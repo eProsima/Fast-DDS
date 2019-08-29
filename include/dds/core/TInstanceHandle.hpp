@@ -28,7 +28,7 @@ namespace dds
 {
 namespace core
 {
-template <typename DELEGATE>
+template<typename DELEGATE>
 class TInstanceHandle;
 }
 }
@@ -37,7 +37,7 @@ class TInstanceHandle;
  * @brief
  * Class to hold the handle associated with in sample instance.
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 class dds::core::TInstanceHandle : public dds::core::Value<DELEGATE>
 {
 public:
@@ -70,7 +70,7 @@ public:
      * from some other type. This function is intended for internal
      * usage.
      */
-    template <typename ARG0>
+    template<typename ARG0>
     TInstanceHandle(const ARG0& arg0);
     /** @endcond */
 
