@@ -34,7 +34,7 @@
 namespace dds {
 namespace topic {
 
-template <typename TOPIC>
+template<typename TOPIC>
 TOPIC find(const dds::domain::DomainParticipant& dp, const std::string& topic_name)
 {
     //TODO: Fix when find is implemented
