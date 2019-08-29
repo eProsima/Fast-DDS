@@ -35,17 +35,17 @@
 namespace dds {
 namespace pub {
 
-template <typename T>
+template<typename T>
 class DataWriterListener;
 
 namespace detail {
 
-template <typename T>
+template<typename T>
 class DataWriter { };
 
 } //namespace detail
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 class DataWriter;
 
 } //namespace pub
@@ -59,7 +59,7 @@ class DataWriter;
  * Implementation can be found in dds/pub/detail/DataWriterImpl.hpp
  *
  ***************************************************************************/
-//template <typename T>
+//template<typename T>
 //class dds::pub::detail::DataWriter : public ::org::opensplice::pub::AnyDataWriterDelegate  {
 //public:
 
@@ -106,20 +106,20 @@ class DataWriter;
 //    void writedispose(const dds::topic::TopicInstance<T>& i,
 //                      const dds::core::Time& timestamp);
 
-//    template <typename FWIterator>
+//    template<typename FWIterator>
 //    void writedispose(const FWIterator& begin, const FWIterator& end);
 
-//    template <typename FWIterator>
+//    template<typename FWIterator>
 //    void writedispose(const FWIterator& begin, const FWIterator& end,
 //                      const dds::core::Time& timestamp);
 
-//    template <typename SamplesFWIterator, typename HandlesFWIterator>
+//    template<typename SamplesFWIterator, typename HandlesFWIterator>
 //    void writedispose(const SamplesFWIterator& data_begin,
 //                      const SamplesFWIterator& data_end,
 //                      const HandlesFWIterator& handle_begin,
 //                      const HandlesFWIterator& handle_end);
 
-//    template <typename SamplesFWIterator, typename HandlesFWIterator>
+//    template<typename SamplesFWIterator, typename HandlesFWIterator>
 //    void writedispose(const SamplesFWIterator& data_begin,
 //                      const SamplesFWIterator& data_end,
 //                      const HandlesFWIterator& handle_begin,

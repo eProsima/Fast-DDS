@@ -25,7 +25,7 @@
 
 namespace dds {
 namespace core {
-template <typename DELEGATE>
+template<typename DELEGATE>
 class TEntityQos;
 
 /**
@@ -38,7 +38,7 @@ class TEntityQos;
  * For more information see \ref DCPS_Modules_Infrastructure "Infrastructure Module"
  * and \ref DCPS_QoS "Supported Quality of Service"
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 class TEntityQos : public Value<DELEGATE>
 {
 public:

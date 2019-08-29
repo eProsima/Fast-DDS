@@ -33,7 +33,7 @@ namespace sub {
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 SharedSamples<T, DELEGATE>::SharedSamples()
     : delegate_(new DELEGATE<T>())
 {
@@ -41,7 +41,7 @@ SharedSamples<T, DELEGATE>::SharedSamples()
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 SharedSamples<T, DELEGATE>::SharedSamples(
         dds::sub::LoanedSamples<T> ls)
     : delegate_(new DELEGATE<T>(ls))
@@ -50,14 +50,14 @@ SharedSamples<T, DELEGATE>::SharedSamples(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 SharedSamples<T, DELEGATE>::~SharedSamples()
 {
 }
 
-template <
+template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 SharedSamples<T, DELEGATE>::SharedSamples(
         const SharedSamples& other)
 {
@@ -66,7 +66,7 @@ SharedSamples<T, DELEGATE>::SharedSamples(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 typename SharedSamples<T, DELEGATE>::const_iterator SharedSamples<T, DELEGATE>::begin() const
 {
     //To implement
@@ -74,7 +74,7 @@ typename SharedSamples<T, DELEGATE>::const_iterator SharedSamples<T, DELEGATE>::
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 typename SharedSamples<T, DELEGATE>::const_iterator SharedSamples<T, DELEGATE>::end() const
 {
     //To implement
@@ -82,7 +82,7 @@ typename SharedSamples<T, DELEGATE>::const_iterator SharedSamples<T, DELEGATE>::
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 const typename SharedSamples<T, DELEGATE>::DELEGATE_REF_T& SharedSamples<T, DELEGATE>::delegate() const
 {
     //To implement
@@ -90,7 +90,7 @@ const typename SharedSamples<T, DELEGATE>::DELEGATE_REF_T& SharedSamples<T, DELE
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 typename SharedSamples<T, DELEGATE>::DELEGATE_REF_T& SharedSamples<T, DELEGATE>::delegate()
 {
     //To implement
@@ -98,7 +98,7 @@ typename SharedSamples<T, DELEGATE>::DELEGATE_REF_T& SharedSamples<T, DELEGATE>:
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 uint32_t SharedSamples<T, DELEGATE>::length() const
 {
     //To implement

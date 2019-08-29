@@ -325,7 +325,7 @@ int32_t TSubscriptionMatchedStatus<D>::total_count_change() const
     //To implement
 }
 
-template <typename D>
+template<typename D>
 int32_t TSubscriptionMatchedStatus<D>::current_count() const
 {
     //To implement

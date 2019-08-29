@@ -40,7 +40,7 @@ namespace dds {
 namespace sub {
 namespace cond {
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 class TReadCondition;
 
 namespace detail {

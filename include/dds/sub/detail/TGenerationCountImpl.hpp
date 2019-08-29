@@ -37,20 +37,20 @@ namespace dds
 namespace sub
 {
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 TGenerationCount<DELEGATE>::TGenerationCount() { }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 TGenerationCount<DELEGATE>::TGenerationCount(int32_t dgc, int32_t nwgc)
     : dds::core::Value<DELEGATE>(dgc, nwgc) { }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 int32_t TGenerationCount<DELEGATE>::disposed() const
 {
     return this->delegate().disposed();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 inline int32_t TGenerationCount<DELEGATE>::no_writers() const
 {
     return this->delegate().no_writers();

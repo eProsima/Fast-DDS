@@ -31,7 +31,7 @@ namespace dds {
 namespace sub {
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 class Sample;
 
 namespace detail {

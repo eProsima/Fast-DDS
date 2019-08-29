@@ -39,10 +39,10 @@ namespace dds
 namespace sub
 {
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 TAnyDataReader<DELEGATE>::~TAnyDataReader() {}
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 const dds::sub::Subscriber&
 TAnyDataReader<DELEGATE>::subscriber() const
 {
@@ -50,7 +50,7 @@ TAnyDataReader<DELEGATE>::subscriber() const
     return this->delegate()->subscriber();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 const dds::topic::TopicDescription&
 TAnyDataReader<DELEGATE>::topic_description() const
 {
@@ -59,7 +59,7 @@ TAnyDataReader<DELEGATE>::topic_description() const
     return this->delegate()->topic_description();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 void
 TAnyDataReader<DELEGATE>::wait_for_historical_data(const dds::core::Duration& timeout)
 {
@@ -68,7 +68,7 @@ TAnyDataReader<DELEGATE>::wait_for_historical_data(const dds::core::Duration& ti
 }
 
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 dds::sub::qos::DataReaderQos
 TAnyDataReader<DELEGATE>::qos() const
 {
@@ -76,7 +76,7 @@ TAnyDataReader<DELEGATE>::qos() const
     return this->delegate()->qos();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 void
 TAnyDataReader<DELEGATE>::qos(const dds::sub::qos::DataReaderQos& qos)
 {
@@ -84,7 +84,7 @@ TAnyDataReader<DELEGATE>::qos(const dds::sub::qos::DataReaderQos& qos)
     this->delegate()->qos(qos);
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 TAnyDataReader<DELEGATE>&
 TAnyDataReader<DELEGATE>::operator << (const dds::sub::qos::DataReaderQos& qos)
 {
@@ -93,7 +93,7 @@ TAnyDataReader<DELEGATE>::operator << (const dds::sub::qos::DataReaderQos& qos)
     return *this;
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 const TAnyDataReader<DELEGATE>&
 TAnyDataReader<DELEGATE>::operator >> (dds::sub::qos::DataReaderQos& qos) const
 {
@@ -103,7 +103,7 @@ TAnyDataReader<DELEGATE>::operator >> (dds::sub::qos::DataReaderQos& qos) const
 }
 
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 dds::core::status::LivelinessChangedStatus
 TAnyDataReader<DELEGATE>::liveliness_changed_status()
 {
@@ -111,7 +111,7 @@ TAnyDataReader<DELEGATE>::liveliness_changed_status()
     return this->delegate()->liveliness_changed_status();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 dds::core::status::SampleRejectedStatus
 TAnyDataReader<DELEGATE>::sample_rejected_status()
 {
@@ -119,7 +119,7 @@ TAnyDataReader<DELEGATE>::sample_rejected_status()
     return this->delegate()->sample_rejected_status();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 dds::core::status::SampleLostStatus
 TAnyDataReader<DELEGATE>::sample_lost_status()
 {
@@ -127,7 +127,7 @@ TAnyDataReader<DELEGATE>::sample_lost_status()
     return this->delegate()->sample_lost_status();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 dds::core::status::RequestedDeadlineMissedStatus
 TAnyDataReader<DELEGATE>::requested_deadline_missed_status()
 {
@@ -135,7 +135,7 @@ TAnyDataReader<DELEGATE>::requested_deadline_missed_status()
     return this->delegate()->requested_deadline_missed_status();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 dds::core::status::RequestedIncompatibleQosStatus
 TAnyDataReader<DELEGATE>::requested_incompatible_qos_status()
 {
@@ -143,7 +143,7 @@ TAnyDataReader<DELEGATE>::requested_incompatible_qos_status()
     return this->delegate()->requested_incompatible_qos_status();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 dds::core::status::SubscriptionMatchedStatus
 TAnyDataReader<DELEGATE>::subscription_matched_status()
 {

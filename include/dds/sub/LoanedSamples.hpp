@@ -30,7 +30,7 @@ namespace dds {
 namespace sub {
 template<
         typename T,
-        template <typename Q> class DELEGATE = dds::sub::detail::LoanedSamples>
+        template<typename Q> class DELEGATE = dds::sub::detail::LoanedSamples>
 class LoanedSamples;
 
 // Used by C++11 compilers to allow for using LoanedSamples
@@ -89,7 +89,7 @@ typename T::const_iterator cend(
  */
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 class LoanedSamples
 {
 public:
@@ -182,7 +182,7 @@ private:
  */
 template<
         typename T,
-        template <typename Q> class D>
+        template<typename Q> class D>
 LoanedSamples<T, D > move(
         LoanedSamples<T, D >& a);
 

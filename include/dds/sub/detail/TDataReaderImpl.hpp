@@ -53,12 +53,12 @@ namespace sub
 //  DATAREADER
 //--------------------------------------------------------------------------------
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 DataReader<T, DELEGATE>::Selector::Selector(DataReader& dr) : impl_(dr.delegate())
 {
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 typename DataReader<T, DELEGATE>::Selector&
 DataReader<T, DELEGATE>::Selector::instance(const dds::core::InstanceHandle& h)
 {
@@ -69,7 +69,7 @@ DataReader<T, DELEGATE>::Selector::instance(const dds::core::InstanceHandle& h)
 }
 
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 typename DataReader<T, DELEGATE>::Selector&
 DataReader<T, DELEGATE>::Selector::next_instance(const dds::core::InstanceHandle& h)
 {
@@ -80,7 +80,7 @@ DataReader<T, DELEGATE>::Selector::next_instance(const dds::core::InstanceHandle
 }
 
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 typename DataReader<T, DELEGATE>::Selector&
 DataReader<T, DELEGATE>::Selector::state(const dds::sub::status::DataState& s)
 {
@@ -90,7 +90,7 @@ DataReader<T, DELEGATE>::Selector::state(const dds::sub::status::DataState& s)
     return *this;
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 typename DataReader<T, DELEGATE>::Selector&
 DataReader<T, DELEGATE>::Selector::content(const dds::sub::Query& query)
 {
@@ -100,7 +100,7 @@ DataReader<T, DELEGATE>::Selector::content(const dds::sub::Query& query)
     return *this;
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 typename DataReader<T, DELEGATE>::Selector&
 DataReader<T, DELEGATE>::Selector::max_samples(uint32_t n)
 {
@@ -110,7 +110,7 @@ DataReader<T, DELEGATE>::Selector::max_samples(uint32_t n)
     return *this;
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 dds::sub::LoanedSamples<T>
 DataReader<T, DELEGATE>::Selector::read()
 {
@@ -119,7 +119,7 @@ DataReader<T, DELEGATE>::Selector::read()
     return impl_.read();
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 dds::sub::LoanedSamples<T>
 DataReader<T, DELEGATE>::Selector::take()
 {
@@ -128,8 +128,8 @@ DataReader<T, DELEGATE>::Selector::take()
     return impl_.take();
 }
 
-template <typename T, template <typename Q> class DELEGATE>
-template <typename SamplesFWIterator>
+template<typename T, template<typename Q> class DELEGATE>
+template<typename SamplesFWIterator>
 uint32_t
 DataReader<T, DELEGATE>::Selector::read(SamplesFWIterator sfit, uint32_t max_samples)
 {
@@ -138,8 +138,8 @@ DataReader<T, DELEGATE>::Selector::read(SamplesFWIterator sfit, uint32_t max_sam
     return impl_.read(sfit, max_samples);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
-template <typename SamplesFWIterator>
+template<typename T, template<typename Q> class DELEGATE>
+template<typename SamplesFWIterator>
 uint32_t
 DataReader<T, DELEGATE>::Selector::take(SamplesFWIterator sfit,    uint32_t max_samples)
 {
@@ -148,8 +148,8 @@ DataReader<T, DELEGATE>::Selector::take(SamplesFWIterator sfit,    uint32_t max_
     return impl_.take(sfit, max_samples);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
-template <typename SamplesBIIterator>
+template<typename T, template<typename Q> class DELEGATE>
+template<typename SamplesBIIterator>
 uint32_t
 DataReader<T, DELEGATE>::Selector::read(SamplesBIIterator sbit)
 {
@@ -158,8 +158,8 @@ DataReader<T, DELEGATE>::Selector::read(SamplesBIIterator sbit)
     return impl_.read(sbit);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
-template <typename SamplesBIIterator>
+template<typename T, template<typename Q> class DELEGATE>
+template<typename SamplesBIIterator>
 uint32_t
 DataReader<T, DELEGATE>::Selector::take(SamplesBIIterator sbit)
 {
@@ -171,11 +171,11 @@ DataReader<T, DELEGATE>::Selector::take(SamplesBIIterator sbit)
 //--------------------------------------------------------------------------------
 //  DATAREADER::MANIPULATORSELECTOR
 //--------------------------------------------------------------------------------
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 DataReader<T, DELEGATE>::ManipulatorSelector::
 ManipulatorSelector(DataReader& dr) : impl_(dr.delegate()) {}
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 bool
 DataReader<T, DELEGATE>::ManipulatorSelector::read_mode()
 {
@@ -184,7 +184,7 @@ DataReader<T, DELEGATE>::ManipulatorSelector::read_mode()
     return impl_.read_mode();
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 void
 DataReader<T, DELEGATE>::ManipulatorSelector::read_mode(bool b)
 {
@@ -193,7 +193,7 @@ DataReader<T, DELEGATE>::ManipulatorSelector::read_mode(bool b)
     impl_.read_mode(b);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 typename DataReader<T, DELEGATE>::ManipulatorSelector&
 DataReader<T, DELEGATE>::ManipulatorSelector::instance(const dds::core::InstanceHandle& h)
 {
@@ -203,7 +203,7 @@ DataReader<T, DELEGATE>::ManipulatorSelector::instance(const dds::core::Instance
     return *this;
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 typename DataReader<T, DELEGATE>::ManipulatorSelector&
 DataReader<T, DELEGATE>::ManipulatorSelector::next_instance(const dds::core::InstanceHandle& h)
 {
@@ -213,7 +213,7 @@ DataReader<T, DELEGATE>::ManipulatorSelector::next_instance(const dds::core::Ins
     return *this;
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 typename DataReader<T, DELEGATE>::ManipulatorSelector&
 DataReader<T, DELEGATE>::ManipulatorSelector::operator >>(dds::sub::LoanedSamples<T>& samples)
 {
@@ -223,7 +223,7 @@ DataReader<T, DELEGATE>::ManipulatorSelector::operator >>(dds::sub::LoanedSample
     return *this;
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 typename DataReader<T, DELEGATE>::ManipulatorSelector&
 DataReader<T, DELEGATE>::ManipulatorSelector::operator >> (ManipulatorSelector & (manipulator)(ManipulatorSelector&))
 {
@@ -234,8 +234,8 @@ DataReader<T, DELEGATE>::ManipulatorSelector::operator >> (ManipulatorSelector &
 }
 
 /** @cond */
-template <typename T, template <typename Q> class DELEGATE>
-template <typename Functor>
+template<typename T, template<typename Q> class DELEGATE>
+template<typename Functor>
 typename DataReader<T, DELEGATE>::ManipulatorSelector
 DataReader<T, DELEGATE>::ManipulatorSelector::operator >> (Functor f)
 {
@@ -246,7 +246,7 @@ DataReader<T, DELEGATE>::ManipulatorSelector::operator >> (Functor f)
 }
 /** @endcond */
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 typename DataReader<T, DELEGATE>::ManipulatorSelector&
 DataReader<T, DELEGATE>::ManipulatorSelector::state(const dds::sub::status::DataState& s)
 {
@@ -256,7 +256,7 @@ DataReader<T, DELEGATE>::ManipulatorSelector::state(const dds::sub::status::Data
     return *this;
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 typename DataReader<T, DELEGATE>::ManipulatorSelector&
 DataReader<T, DELEGATE>::ManipulatorSelector::content(const dds::sub::Query& query)
 {
@@ -266,7 +266,7 @@ DataReader<T, DELEGATE>::ManipulatorSelector::content(const dds::sub::Query& que
     return *this;
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 typename DataReader<T, DELEGATE>::ManipulatorSelector&
 DataReader<T, DELEGATE>::ManipulatorSelector::max_samples(uint32_t n)
 {
@@ -276,7 +276,7 @@ DataReader<T, DELEGATE>::ManipulatorSelector::max_samples(uint32_t n)
     return *this;
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 DataReader<T, DELEGATE>::DataReader(
     const dds::sub::Subscriber& sub,
     const dds::topic::Topic<T>& topic):
@@ -287,7 +287,7 @@ DataReader<T, DELEGATE>::DataReader(
     this->delegate()->init(this->impl_);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 DataReader<T, DELEGATE>::DataReader(
     const dds::sub::Subscriber& sub,
     const ::dds::topic::Topic<T>& topic,
@@ -302,7 +302,7 @@ DataReader<T, DELEGATE>::DataReader(
 }
 
 #ifdef OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 DataReader<T, DELEGATE>::DataReader(
     const dds::sub::Subscriber& sub,
     const dds::topic::ContentFilteredTopic<T>& topic) :
@@ -313,7 +313,7 @@ DataReader<T, DELEGATE>::DataReader(
     this->delegate()->init(this->impl_);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 DataReader<T, DELEGATE>::DataReader(
     const dds::sub::Subscriber& sub,
     const ::dds::topic::ContentFilteredTopic<T>& topic,
@@ -329,7 +329,7 @@ DataReader<T, DELEGATE>::DataReader(
 #endif /* OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT */
 
 #ifdef OMG_DDS_MULTI_TOPIC_SUPPORT
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 DataReader<T, DELEGATE>::DataReader(
     const dds::sub::Subscriber& sub,
     const dds::topic::MultiTopic<T>& topic) :
@@ -338,7 +338,7 @@ DataReader<T, DELEGATE>::DataReader(
     this->delegate()->init(this->impl_);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 DataReader<T, DELEGATE>::DataReader(
     const dds::sub::Subscriber& sub,
     const ::dds::topic::MultiTopic<T>& topic,
@@ -351,10 +351,10 @@ DataReader<T, DELEGATE>::DataReader(
 }
 #endif /* OMG_DDS_MULTI_TOPIC_SUPPORT */
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 DataReader<T, DELEGATE>::~DataReader() { }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 dds::sub::status::DataState
 DataReader<T, DELEGATE>::default_filter_state()
 {
@@ -363,7 +363,7 @@ DataReader<T, DELEGATE>::default_filter_state()
     return this->delegate()->default_filter_state();
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 DataReader<T, DELEGATE>& DataReader<T, DELEGATE>::default_filter_state(const dds::sub::status::DataState& status)
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -372,7 +372,7 @@ DataReader<T, DELEGATE>& DataReader<T, DELEGATE>::default_filter_state(const dds
     return *this;
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 DataReader<T, DELEGATE>& DataReader<T, DELEGATE>::operator >>(dds::sub::LoanedSamples<T>& ls)
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -381,7 +381,7 @@ DataReader<T, DELEGATE>& DataReader<T, DELEGATE>::operator >>(dds::sub::LoanedSa
     return *this;
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 typename DataReader<T, DELEGATE>::ManipulatorSelector
 DataReader<T, DELEGATE>::operator >> (ManipulatorSelector& (manipulator)(ManipulatorSelector&))
 {
@@ -393,8 +393,8 @@ DataReader<T, DELEGATE>::operator >> (ManipulatorSelector& (manipulator)(Manipul
 }
 
 /** @cond */
-template <typename T, template <typename Q> class DELEGATE>
-template <typename Functor>
+template<typename T, template<typename Q> class DELEGATE>
+template<typename Functor>
 typename DataReader<T, DELEGATE>::ManipulatorSelector
 DataReader<T, DELEGATE>::operator >> (Functor f)
 {
@@ -406,7 +406,7 @@ DataReader<T, DELEGATE>::operator >> (Functor f)
 }
 /** @endcond */
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 LoanedSamples<T>
 DataReader<T, DELEGATE>::read()
 {
@@ -415,7 +415,7 @@ DataReader<T, DELEGATE>::read()
     return this->delegate()->read();
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 LoanedSamples<T>
 DataReader<T, DELEGATE>::take()
 {
@@ -425,8 +425,8 @@ DataReader<T, DELEGATE>::take()
 }
 
 
-template <typename T, template <typename Q> class DELEGATE>
-template <typename SamplesFWIterator>
+template<typename T, template<typename Q> class DELEGATE>
+template<typename SamplesFWIterator>
 uint32_t
 DataReader<T, DELEGATE>::read(SamplesFWIterator sfit, uint32_t max_samples)
 {
@@ -435,8 +435,8 @@ DataReader<T, DELEGATE>::read(SamplesFWIterator sfit, uint32_t max_samples)
     return this->delegate()->read(sfit, max_samples);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
-template <typename SamplesFWIterator>
+template<typename T, template<typename Q> class DELEGATE>
+template<typename SamplesFWIterator>
 uint32_t
 DataReader<T, DELEGATE>::take(SamplesFWIterator sfit, uint32_t max_samples)
 {
@@ -445,8 +445,8 @@ DataReader<T, DELEGATE>::take(SamplesFWIterator sfit, uint32_t max_samples)
     return this->delegate()->take(sfit, max_samples);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
-template <typename SamplesBIIterator>
+template<typename T, template<typename Q> class DELEGATE>
+template<typename SamplesBIIterator>
 uint32_t
 DataReader<T, DELEGATE>::read(SamplesBIIterator sbit)
 {
@@ -455,8 +455,8 @@ DataReader<T, DELEGATE>::read(SamplesBIIterator sbit)
     return this->delegate()->read(sbit);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
-template <typename SamplesBIIterator>
+template<typename T, template<typename Q> class DELEGATE>
+template<typename SamplesBIIterator>
 uint32_t
 DataReader<T, DELEGATE>::take(SamplesBIIterator sbit)
 {
@@ -465,7 +465,7 @@ DataReader<T, DELEGATE>::take(SamplesBIIterator sbit)
     return this->delegate()->take(sbit);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 typename DataReader<T, DELEGATE>::Selector
 DataReader<T, DELEGATE>::select()
 {
@@ -475,7 +475,7 @@ DataReader<T, DELEGATE>::select()
     return selector;
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 dds::topic::TopicInstance<T>
 DataReader<T, DELEGATE>::key_value(const dds::core::InstanceHandle& h)
 {
@@ -484,7 +484,7 @@ DataReader<T, DELEGATE>::key_value(const dds::core::InstanceHandle& h)
     return this->delegate()->key_value(h);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 T&
 DataReader<T, DELEGATE>::key_value(T& sample, const dds::core::InstanceHandle& h)
 {
@@ -493,7 +493,7 @@ DataReader<T, DELEGATE>::key_value(T& sample, const dds::core::InstanceHandle& h
     return this->delegate()->key_value(sample, h);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 const dds::core::InstanceHandle
 DataReader<T, DELEGATE>::lookup_instance(const T& key) const
 {
@@ -502,7 +502,7 @@ DataReader<T, DELEGATE>::lookup_instance(const T& key) const
     return this->delegate()->lookup_instance(key);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 void
 DataReader<T, DELEGATE>::listener(
     Listener* listener,
@@ -513,7 +513,7 @@ DataReader<T, DELEGATE>::listener(
     this->delegate()->listener(listener, event_mask);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 typename DataReader<T, DELEGATE>::Listener*
 DataReader<T, DELEGATE>::listener() const
 {
@@ -545,7 +545,7 @@ DataReader<T, DELEGATE>::listener() const
 #include <org/opensplice/sub/AnyDataReaderDelegate.hpp>
 
 
-template <typename T>
+template<typename T>
 dds::sub::detail::DataReader<T>::DataReader(const dds::sub::Subscriber& sub,
            const dds::topic::Topic<T>& topic,
            const dds::sub::qos::DataReaderQos& qos,
@@ -568,7 +568,7 @@ dds::sub::detail::DataReader<T>::DataReader(const dds::sub::Subscriber& sub,
     common_constructor(listener, mask);
 }
 
-template <typename T>
+template<typename T>
 dds::sub::detail::DataReader<T>::DataReader(const dds::sub::Subscriber& sub,
            const dds::topic::ContentFilteredTopic<T, dds::topic::detail::ContentFilteredTopic>& topic,
            const dds::sub::qos::DataReaderQos& qos,
@@ -591,7 +591,7 @@ dds::sub::detail::DataReader<T>::DataReader(const dds::sub::Subscriber& sub,
     common_constructor(listener, mask);
 }
 
-template <typename T>
+template<typename T>
 void
 dds::sub::detail::DataReader<T>::common_constructor(
             dds::sub::DataReaderListener<T>* listener,
@@ -631,7 +631,7 @@ dds::sub::detail::DataReader<T>::common_constructor(
     this->set_domain_id(this->sub_.delegate()->get_domain_id());
 }
 
-template <typename T>
+template<typename T>
 dds::sub::detail::DataReader<T>::~DataReader()
 {
     if (!this->closed) {
@@ -643,7 +643,7 @@ dds::sub::detail::DataReader<T>::~DataReader()
     }
 }
 
-template <typename T>
+template<typename T>
 void
 dds::sub::detail::DataReader<T>::init(ObjectDelegate::weak_ref_type weak_ref)
 {
@@ -661,7 +661,7 @@ dds::sub::detail::DataReader<T>::init(ObjectDelegate::weak_ref_type weak_ref)
     }
 }
 
-template <typename T>
+template<typename T>
 dds::sub::status::DataState
 dds::sub::detail::DataReader<T>::default_filter_state()
 {
@@ -674,7 +674,7 @@ dds::sub::detail::DataReader<T>::default_filter_state()
     return state;
 }
 
-template <typename T>
+template<typename T>
 void
 dds::sub::detail::DataReader<T>::default_filter_state(const dds::sub::status::DataState& state)
 {
@@ -686,7 +686,7 @@ dds::sub::detail::DataReader<T>::default_filter_state(const dds::sub::status::Da
 }
 
 
-template <typename T>
+template<typename T>
 dds::sub::LoanedSamples<T>
 dds::sub::detail::DataReader<T>::read()
 {
@@ -698,7 +698,7 @@ dds::sub::detail::DataReader<T>::read()
     return samples;
 }
 
-template <typename T>
+template<typename T>
 dds::sub::LoanedSamples<T>
 dds::sub::detail::DataReader<T>::take()
 {
@@ -710,7 +710,7 @@ dds::sub::detail::DataReader<T>::take()
     return samples;
 }
 
-template <typename T>
+template<typename T>
 template<typename SamplesFWIterator>
 uint32_t
 dds::sub::detail::DataReader<T>::read(SamplesFWIterator samples, uint32_t max_samples)
@@ -722,7 +722,7 @@ dds::sub::detail::DataReader<T>::read(SamplesFWIterator samples, uint32_t max_sa
     return holder.get_length();
 }
 
-template <typename T>
+template<typename T>
 template<typename SamplesFWIterator>
 uint32_t
 dds::sub::detail::DataReader<T>::take(SamplesFWIterator samples, uint32_t max_samples)
@@ -734,7 +734,7 @@ dds::sub::detail::DataReader<T>::take(SamplesFWIterator samples, uint32_t max_sa
     return holder.get_length();
 }
 
-template <typename T>
+template<typename T>
 template<typename SamplesBIIterator>
 uint32_t
 dds::sub::detail::DataReader<T>::read(SamplesBIIterator samples)
@@ -746,7 +746,7 @@ dds::sub::detail::DataReader<T>::read(SamplesBIIterator samples)
     return holder.get_length();
 }
 
-template <typename T>
+template<typename T>
 template<typename SamplesBIIterator>
 uint32_t
 dds::sub::detail::DataReader<T>::take(SamplesBIIterator samples)
@@ -758,7 +758,7 @@ dds::sub::detail::DataReader<T>::take(SamplesBIIterator samples)
     return holder.get_length();
 }
 
-template <typename T>
+template<typename T>
 dds::topic::TopicInstance<T>
 dds::sub::detail::DataReader<T>::key_value(const dds::core::InstanceHandle& h)
 {
@@ -769,7 +769,7 @@ dds::sub::detail::DataReader<T>::key_value(const dds::core::InstanceHandle& h)
     return dds::topic::TopicInstance<T>(h, key_holder);
 }
 
-template <typename T>
+template<typename T>
 T&
 dds::sub::detail::DataReader<T>::key_value(T& key, const dds::core::InstanceHandle& h)
 {
@@ -778,7 +778,7 @@ dds::sub::detail::DataReader<T>::key_value(T& key, const dds::core::InstanceHand
     return key;
 }
 
-template <typename T>
+template<typename T>
 const dds::core::InstanceHandle
 dds::sub::detail::DataReader<T>::lookup_instance(const T& key) const
 {
@@ -787,7 +787,7 @@ dds::sub::detail::DataReader<T>::lookup_instance(const T& key) const
     return handle;
 }
 
-template <typename T>
+template<typename T>
 const dds::sub::Subscriber&
 dds::sub::detail::DataReader<T>::subscriber() const
 {
@@ -796,7 +796,7 @@ dds::sub::detail::DataReader<T>::subscriber() const
     return sub_;
 }
 
-template <typename T>
+template<typename T>
 void
 dds::sub::detail::DataReader<T>::close()
 {
@@ -821,14 +821,14 @@ dds::sub::detail::DataReader<T>::close()
 }
 
 
-template <typename T>
+template<typename T>
 dds::sub::DataReaderListener<T>*
 dds::sub::detail::DataReader<T>::listener()
 {
     return reinterpret_cast<dds::sub::DataReaderListener<T>*>(this->listener_get());
 }
 
-template <typename T>
+template<typename T>
 void
 dds::sub::detail::DataReader<T>::listener(
         dds::sub::DataReaderListener<T>* l,
@@ -839,7 +839,7 @@ dds::sub::detail::DataReader<T>::listener(
     this->listener_enable();
 }
 
-template <typename T>
+template<typename T>
 dds::sub::DataReader<T, dds::sub::detail::DataReader>
 dds::sub::detail::DataReader<T>::wrapper()
 {
@@ -850,7 +850,7 @@ dds::sub::detail::DataReader<T>::wrapper()
     return reader;
 }
 
-template <typename T>
+template<typename T>
 void
 dds::sub::detail::DataReader<T>::listener_notify(
         ObjectDelegate::ref_type source,
@@ -912,14 +912,14 @@ dds::sub::detail::DataReader<T>::listener_notify(
     }
 }
 
-template <typename T>
+template<typename T>
 dds::sub::detail::DataReader<T>::Selector::Selector(typename DataReader<T>::ref_type dr)
     : mode(SELECT_MODE_READ), reader(dr), state_filter_is_set_(false),
       max_samples_((uint32_t)-1), query_(dds::core::null)
 {
 }
 
-template <typename T>
+template<typename T>
 typename dds::sub::detail::DataReader<T>::Selector&
 dds::sub::detail::DataReader<T>::Selector::instance(const dds::core::InstanceHandle& h)
 {
@@ -940,7 +940,7 @@ dds::sub::detail::DataReader<T>::Selector::instance(const dds::core::InstanceHan
     return *this;
 }
 
-template <typename T>
+template<typename T>
 typename dds::sub::detail::DataReader<T>::Selector&
 dds::sub::detail::DataReader<T>::Selector::next_instance(const dds::core::InstanceHandle& h)
 {
@@ -961,7 +961,7 @@ dds::sub::detail::DataReader<T>::Selector::next_instance(const dds::core::Instan
     return *this;
 }
 
-template <typename T>
+template<typename T>
 typename dds::sub::detail::DataReader<T>::Selector&
 dds::sub::detail::DataReader<T>::Selector::filter_state(const dds::sub::status::DataState& s)
 {
@@ -979,7 +979,7 @@ dds::sub::detail::DataReader<T>::Selector::filter_state(const dds::sub::status::
     return *this;
 }
 
-template <typename T>
+template<typename T>
 typename dds::sub::detail::DataReader<T>::Selector&
 dds::sub::detail::DataReader<T>::Selector::max_samples(uint32_t n)
 {
@@ -987,7 +987,7 @@ dds::sub::detail::DataReader<T>::Selector::max_samples(uint32_t n)
     return *this;
 }
 
-template <typename T>
+template<typename T>
 typename dds::sub::detail::DataReader<T>::Selector&
 dds::sub::detail::DataReader<T>::Selector::filter_content(
     const dds::sub::Query& query)
@@ -1025,14 +1025,14 @@ dds::sub::detail::DataReader<T>::Selector::filter_content(
     return *this;
 }
 
-template <typename T>
+template<typename T>
 dds::sub::LoanedSamples<T>
 dds::sub::detail::DataReader<T>::Selector::read()
 {
     return this->reader->read(*this);
 }
 
-template <typename T>
+template<typename T>
 dds::sub::LoanedSamples<T>
 dds::sub::detail::DataReader<T>::Selector::take()
 {
@@ -1041,7 +1041,7 @@ dds::sub::detail::DataReader<T>::Selector::take()
 
 // --- Forward Iterators: --- //
 
-template <typename T>
+template<typename T>
 template<typename SamplesFWIterator>
 uint32_t
 dds::sub::detail::DataReader<T>::Selector::read(SamplesFWIterator sfit, uint32_t max_samples)
@@ -1049,7 +1049,7 @@ dds::sub::detail::DataReader<T>::Selector::read(SamplesFWIterator sfit, uint32_t
     return this->reader->read(sfit, max_samples, *this);
 }
 
-template <typename T>
+template<typename T>
 template<typename SamplesFWIterator>
 uint32_t
 dds::sub::detail::DataReader<T>::Selector::take(SamplesFWIterator sfit, uint32_t max_samples)
@@ -1059,7 +1059,7 @@ dds::sub::detail::DataReader<T>::Selector::take(SamplesFWIterator sfit, uint32_t
 
 // --- Back-Inserting Iterators: --- //
 
-template <typename T>
+template<typename T>
 template<typename SamplesBIIterator>
 uint32_t
 dds::sub::detail::DataReader<T>::Selector::read(SamplesBIIterator sbit)
@@ -1067,7 +1067,7 @@ dds::sub::detail::DataReader<T>::Selector::read(SamplesBIIterator sbit)
     return this->reader->read(sbit, *this);
 }
 
-template <typename T>
+template<typename T>
 template<typename SamplesBIIterator>
 uint32_t
 dds::sub::detail::DataReader<T>::Selector::take(SamplesBIIterator sbit)
@@ -1075,34 +1075,34 @@ dds::sub::detail::DataReader<T>::Selector::take(SamplesBIIterator sbit)
     return this->reader->take(sbit, *this);
 }
 
-template <typename T>
+template<typename T>
 typename dds::sub::detail::DataReader<T>::SelectMode
 dds::sub::detail::DataReader<T>::Selector::get_mode() const
 {
     return this->mode;
 }
 
-template <typename T>
+template<typename T>
 dds::sub::detail::DataReader<T>::ManipulatorSelector::ManipulatorSelector(typename DataReader<T>::ref_type dr) :
       Selector(dr), read_mode_(true)
 {
 }
 
-template <typename T>
+template<typename T>
 bool
 dds::sub::detail::DataReader<T>::ManipulatorSelector::read_mode()
 {
     return read_mode_;
 }
 
-template <typename T>
+template<typename T>
 void
 dds::sub::detail::DataReader<T>::ManipulatorSelector::read_mode(bool b)
 {
     read_mode_ = b;
 }
 
-template <typename T>
+template<typename T>
 typename dds::sub::detail::DataReader<T>::ManipulatorSelector&
 dds::sub::detail::DataReader<T>::ManipulatorSelector::operator >>(dds::sub::LoanedSamples<T>& samples)
 {
@@ -1118,7 +1118,7 @@ dds::sub::detail::DataReader<T>::ManipulatorSelector::operator >>(dds::sub::Loan
 }
 
 
-template <typename T>
+template<typename T>
 dds::sub::LoanedSamples<T>
 dds::sub::detail::DataReader<T>::read(const Selector& selector)
 {
@@ -1154,7 +1154,7 @@ dds::sub::detail::DataReader<T>::read(const Selector& selector)
     return samples;
 }
 
-template <typename T>
+template<typename T>
 dds::sub::LoanedSamples<T>
 dds::sub::detail::DataReader<T>::take(const Selector& selector)
 {
@@ -1192,7 +1192,7 @@ dds::sub::detail::DataReader<T>::take(const Selector& selector)
 
 // --- Forward Iterators: --- //
 
-template <typename T>
+template<typename T>
 template<typename SamplesFWIterator>
 uint32_t
 dds::sub::detail::DataReader<T>::read(SamplesFWIterator samples,
@@ -1229,7 +1229,7 @@ dds::sub::detail::DataReader<T>::read(SamplesFWIterator samples,
     return holder.get_length();
 }
 
-template <typename T>
+template<typename T>
 template<typename SamplesFWIterator>
 uint32_t
 dds::sub::detail::DataReader<T>::take(SamplesFWIterator samples,
@@ -1268,7 +1268,7 @@ dds::sub::detail::DataReader<T>::take(SamplesFWIterator samples,
 
 // --- Back-Inserting Iterators: --- //
 
-template <typename T>
+template<typename T>
 template<typename SamplesBIIterator>
 uint32_t
 dds::sub::detail::DataReader<T>::read(SamplesBIIterator samples, const Selector& selector)
@@ -1304,7 +1304,7 @@ dds::sub::detail::DataReader<T>::read(SamplesBIIterator samples, const Selector&
     return holder.get_length();
 }
 
-template <typename T>
+template<typename T>
 template<typename SamplesBIIterator>
 uint32_t
 dds::sub::detail::DataReader<T>::take(SamplesBIIterator samples, const Selector& selector)
@@ -1367,7 +1367,7 @@ namespace sub
  *
  * @see @link dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls) DataReader stream operator>> @endlink
  */
-template <typename SELECTOR>
+template<typename SELECTOR>
 SELECTOR& read(SELECTOR& selector)
 {
     selector.read_mode(true);
@@ -1395,7 +1395,7 @@ SELECTOR& read(SELECTOR& selector)
  *
  * @see @link dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls) DataReader stream operator>> @endlink
  */
-template <typename SELECTOR>
+template<typename SELECTOR>
 SELECTOR& take(SELECTOR& selector)
 {
     selector.read_mode(false);

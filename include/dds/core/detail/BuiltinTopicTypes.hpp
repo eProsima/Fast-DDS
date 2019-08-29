@@ -120,7 +120,7 @@ const std::string& TStringTopicType<DELEGATE>::data() const
     return this->delegate().value();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 void TStringTopicType<DELEGATE>::data(
         const std::string& data)
 {

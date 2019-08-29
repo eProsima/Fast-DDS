@@ -29,7 +29,7 @@ namespace dds
 {
 namespace core
 {
-template <typename DELEGATE>
+template<typename DELEGATE>
 class TEntity;
 }
 }
@@ -52,7 +52,7 @@ class TEntity;
  * safely assigned up and down the DDS Entity type hierarchy.
  *
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 class dds::core::TEntity : public virtual dds::core::Reference<DELEGATE>
 {
 public:
