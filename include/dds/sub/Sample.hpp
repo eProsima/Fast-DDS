@@ -36,7 +36,7 @@ class SampleInfo;
 
 template<
         typename T,
-        template <typename Q> class DELEGATE = dds::sub::detail::Sample>
+        template<typename Q> class DELEGATE = dds::sub::detail::Sample>
 class Sample;
 
 /**
@@ -72,7 +72,7 @@ class Sample;
  */
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 class Sample : public dds::core::Value<DELEGATE<T>>
 {
 public:
