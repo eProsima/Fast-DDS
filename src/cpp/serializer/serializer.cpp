@@ -16,49 +16,7 @@ namespace serializer{
 
 using namespace eprosima::fastrtps::types ;
 
-void Serializer::serialize(eprosima::fastcdr::Cdr& cdr) 
-{
-    switch (t_){
-        case theType::DynamicData :
-            serializeDynData(p_.dd(), cdr) ;
-            break ;
-        case theType::MemberFlag :
-            serializeMemberFlag(p_.mf(), cdr) ;
-            break ;
-        case theType::TypeFlag :
-            serializeTypeFlag(p_.tf(), cdr) ;
-            break ;
-        case theType::TypeObjectHashId :
-            serializeTypeObjectHashId(p_.tohi(), cdr) ;
-            break ;
-
-        default:
-            break ;
-    }
-}
-
-void Serializer::deserialize(eprosima::fastcdr::Cdr& cdr) 
-{
-    switch (t_){
-        case theType::DynamicData :
-            deserializeDynData(p_.dd(), cdr) ;
-            break ;
-        case theType::MemberFlag :
-            deserializeMemberFlag(p_.mf(), cdr) ;
-            break ;
-        case theType::TypeFlag :
-            deserializeTypeFlag(p_.tf(), cdr) ;
-            break ;
-        case theType::TypeObjectHashId :
-            deserializeTypeObjectHashId(p_.tohi(), cdr) ;
-            break ;
-
-        default:
-            break ;
-    }
-}
-
-void Serializer::serializeDynData(DynamicData *dd, eprosima::fastcdr::Cdr& cdr) const
+void Serializer::serialize(DynamicData *dd, eprosima::fastcdr::Cdr& cdr) const
 {
     if ( dd->type() != nullptr && dd->type()->get_descriptor()->annotation_is_non_serialized())
     {
@@ -265,7 +223,7 @@ void Serializer::serializeDynData(DynamicData *dd, eprosima::fastcdr::Cdr& cdr) 
 #else
             auto it = (DynamicData*) dd->values().at(dd->get_union_id());
 #endif
-            serializeDynData(&(*it), cdr);
+            serialize(&(*it), cdr);
             //FRANAVA: it->serialize(cdr);
         }
         break;
@@ -277,7 +235,7 @@ void Serializer::serializeDynData(DynamicData *dd, eprosima::fastcdr::Cdr& cdr) 
         for (uint32_t idx = 0; idx < static_cast<uint32_t>(dd->get_complex_t().size()); ++idx)
         {
             auto it = dd->get_complex_t().at(idx);
-            serializeDynData(&(*it), cdr);
+            serialize(&(*it), cdr);
             //FRANAVA: it->serialize(cdr);
         }
 #else
@@ -285,7 +243,7 @@ void Serializer::serializeDynData(DynamicData *dd, eprosima::fastcdr::Cdr& cdr) 
         for (uint32_t idx = 0; idx < static_cast<uint32_t>(dd->values().size()); ++idx)
         {
             auto it = dd->values().at(idx);
-            serializeDynData(((DynamicData*)it), cdr);
+            serialize(((DynamicData*)it), cdr);
             //FRANAVA: ((DynamicData*)it)->serialize(cdr);
         }
 #endif
@@ -323,7 +281,7 @@ void Serializer::serializeDynData(DynamicData *dd, eprosima::fastcdr::Cdr& cdr) 
                 if (!member_desc->annotation_is_non_serialized())
                 {
                     auto it = dd->values().at(idx);
-                    serializeDynData(((DynamicData*)it), cdr);
+                    serialize(((DynamicData*)it), cdr);
                     //FRANAVA: ((DynamicData*)it)->serialize(cdr);
                 }
             }
@@ -348,7 +306,7 @@ void Serializer::serializeDynData(DynamicData *dd, eprosima::fastcdr::Cdr& cdr) 
             if (it != dd->values().end())
 #endif
             {
-                serializeDynData(((DynamicData*)it->second), cdr);
+                serialize(((DynamicData*)it->second), cdr);
                 //FRANAVA: ((DynamicData*)it->second)->serialize(cdr);
             }
             else
@@ -371,7 +329,7 @@ void Serializer::serializeDynData(DynamicData *dd, eprosima::fastcdr::Cdr& cdr) 
         cdr << static_cast<uint32_t>(dd->values().size() / 2);
         for (auto it = dd->values().begin(); it != dd->values().end(); ++it)
         {
-            serializeDynData(((DynamicData*)it->second), cdr);
+            serialize(((DynamicData*)it->second), cdr);
             //FRANAVA: ((DynamicData*)it->second)->serialize(cdr);
         }
 #endif
@@ -621,8 +579,9 @@ void Serializer::serialize_empty_data(DynamicType *dt, eprosima::fastcdr::Cdr& c
     }
 }
 
+//deserialize_dyn_data
 
-bool Serializer::deserializeDynData(DynamicData *dd, eprosima::fastcdr::Cdr& cdr)const
+bool Serializer::deserialize(DynamicData *dd, eprosima::fastcdr::Cdr& cdr)const
 {
     if (dd->type() != nullptr && dd->type()->get_descriptor()->annotation_is_non_serialized())
     {
@@ -1168,27 +1127,27 @@ bool Serializer::deserialize_discriminator(eprosima::fastcdr::Cdr& cdr)
     return true;
 }
 
-void Serializer::serializeKeyDynData(eprosima::fastcdr::Cdr& cdr) const
+void Serializer::serializeKey(DynamicData *dd,eprosima::fastcdr::Cdr& cdr) const
 {
     // Structures check the the size of the key for their children
-    if (p_.dd()->type()->get_kind() == TK_STRUCTURE || p_.dd()->type()->get_kind() == TK_BITSET)
+    if (dd->type()->get_kind() == TK_STRUCTURE || dd->type()->get_kind() == TK_BITSET)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-        for (auto it = p_.dd()->get_complex_t().begin(); it != p_.dd()->get_complex_t().end(); ++it)
+        for (auto it = dd->get_complex_t().begin(); it != dd->get_complex_t().end(); ++it)
         {
-            Serializer(it->second).serializeKeyDynData(cdr);
+            Serializer(it->second).serializeKey(it->second, cdr);
         }
 #else
-        for (auto it = p_.dd()->values().begin(); it != p_.dd()->values().end(); ++it)
+        for (auto it = dd->values().begin(); it != dd->values().end(); ++it)
         {
-            Serializer((DynamicData*)it->second).serializeKeyDynData(cdr);
+            Serializer((DynamicData*)it->second).serializeKey((DynamicData*)it->second, cdr);
         }
 #endif
     }
-    else if (p_.dd()->type()->is_key_defined())
+    else if (dd->type()->is_key_defined())
     {
 				    //New Serialize instance to avoid Const/this issues
-        Serializer(p_.dd()).serialize(cdr);
+        Serializer(dd).serialize(cdr);
     }
 }
 
@@ -1673,14 +1632,14 @@ size_t Serializer::getMaxCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void Serializer::serializeMemberFlag(MemberFlag *mf, eprosima::fastcdr::Cdr &cdr) const 
+void Serializer::serialize(MemberFlag *mf, eprosima::fastcdr::Cdr &cdr) const 
 {
     //cdr << m_MemberFlag;
     uint16_t bits = static_cast<uint16_t>(mf->getM_memFlag().to_ulong());
     cdr << bits;
 }
 
-void Serializer::deserializeMemberFlag(MemberFlag *mf, eprosima::fastcdr::Cdr &cdr)
+void Serializer::deserialize(MemberFlag *mf, eprosima::fastcdr::Cdr &cdr)
 {
     //cdr >> (uint16_t)m_MemberFlag;
     uint16_t bits;
@@ -1693,14 +1652,14 @@ size_t Serializer::getCdrSerializedSize(const MemberFlag &mf, size_t current_ali
     return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 }
 
-void Serializer::serializeTypeFlag(TypeFlag *tf, eprosima::fastcdr::Cdr &cdr) const
+void Serializer::serialize(TypeFlag *tf, eprosima::fastcdr::Cdr &cdr) const
 {
     //cdr << m_TypeFlag;
     uint16_t bits = static_cast<uint16_t>(tf->getM_typeFlag().to_ulong());
     cdr << bits;
 }
 
-void Serializer::deserializeTypeFlag(TypeFlag *tf, eprosima::fastcdr::Cdr &cdr)
+void Serializer::deserialize(TypeFlag *tf, eprosima::fastcdr::Cdr &cdr)
 {
     //cdr >> (uint16_t)m_TypeFlag;
     uint16_t bits;
@@ -1732,7 +1691,7 @@ size_t Serializer::getCdrSerializedSize(const TypeObjectHashId& data, size_t cur
     return current_alignment - initial_alignment;
 }
 
-void Serializer::serializeTypeObjectHashId(TypeObjectHashId *tohi, eprosima::fastcdr::Cdr &scdr) const
+void Serializer::serialize(TypeObjectHashId *tohi, eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << tohi->get_m_d() ;
     switch (tohi->get_m_d())
@@ -1750,7 +1709,7 @@ void Serializer::serializeTypeObjectHashId(TypeObjectHashId *tohi, eprosima::fas
 }
 
 
-void Serializer::deserializeTypeObjectHashId(eprosima::fastrtps::types::TypeObjectHashId *tohi, eprosima::fastcdr::Cdr &cdr)
+void Serializer::deserialize(TypeObjectHashId *tohi, eprosima::fastcdr::Cdr &cdr)
 {
     uint8_t m_d;
     cdr >> m_d;
@@ -1768,6 +1727,184 @@ void Serializer::deserializeTypeObjectHashId(eprosima::fastrtps::types::TypeObje
         default:
             break;
     }
+}
+//CommonStructMember
+size_t Serializer::getCdrSerializedSize(const CommonStructMember& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    current_alignment += StructMemberFlag::getCdrSerializedSize(data.member_flags(), current_alignment);
+    current_alignment += TypeIdentifier::getCdrSerializedSize(data.member_type_id(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+  
+void Serializer::serialize(CommonStructMember *csm, eprosima::fastcdr::Cdr &scdr) const
+{
+    scdr << csm->member_id();
+    scdr << csm->member_flags();
+    scdr << csm->member_type_id();
+}
+
+void Serializer::deserialize(CommonStructMember *csm, eprosima::fastcdr::Cdr &cdr)
+{
+    MemberId m_member_id;
+    cdr >> m_member_id;
+    csm->member_id(m_member_id) ;
+				
+    StructMemberFlag m_member_flags;
+    cdr >> m_member_flags;
+    csm->member_flags(m_member_flags) ;
+
+				TypeIdentifier m_member_type_id;
+    cdr >> m_member_type_id;
+    csm->member_type_id(m_member_type_id) ;
+}
+//CompleteMemberDetail
+
+size_t Serializer::getCdrSerializedSize(const CompleteMemberDetail& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.name().size()  + 1;
+    current_alignment += AppliedBuiltinMemberAnnotations::getCdrSerializedSize(data.ann_builtin(), current_alignment);
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    for(size_t a = 0; a < data.ann_custom().size(); ++a)
+    {
+        current_alignment += AppliedAnnotation::getCdrSerializedSize(data.ann_custom().at(a), current_alignment);
+    }
+
+    return current_alignment - initial_alignment;
+}
+
+void Serializer::serialize(CompleteMemberDetail *cmd,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << cmd->name() ;
+    cdr << cmd->ann_builtin() ;
+    cdr << cmd->ann_custom() ;
+}
+
+void Serializer::deserialize(CompleteMemberDetail *cmd,eprosima::fastcdr::Cdr &cdr)
+{
+    MemberName m_name;
+    cdr >> m_name;
+				cmd->name(m_name);
+    
+				AppliedBuiltinMemberAnnotations m_ann_builtin;
+    cdr >> m_ann_builtin;
+				cmd->ann_builtin(m_ann_builtin) ;
+				
+    AppliedAnnotationSeq m_ann_custom;
+    cdr >> m_ann_custom;
+    cmd->ann_custom(m_ann_custom) ;
+}
+//MinimalMemberDetai
+
+size_t Serializer::getCdrSerializedSize(const MinimalMemberDetail& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    return current_alignment - initial_alignment;
+}
+
+void Serializer::serialize(MinimalMemberDetail *v, eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->name_hash();
+}
+
+void Serializer::deserialize(MinimalMemberDetail *v,eprosima::fastcdr::Cdr &cdr)
+{
+    NameHash m_name_hash;
+				cdr >> m_name_hash;
+				v->name_hash(m_name_hash);
+}
+
+//CompleteStructMember
+size_t Serializer::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteStructMember& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonStructMember::getCdrSerializedSize(data.common(), current_alignment);
+    current_alignment += CompleteMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+void Serializer::serialize(eprosima::fastrtps::types::CompleteStructMember *v, eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+    cdr << v->detail();
+}
+void Serializer::deserialize(eprosima::fastrtps::types::CompleteStructMember *v,eprosima::fastcdr::Cdr &cdr)
+{
+    CommonStructMember m_common;
+    cdr >> m_common;
+				v->common(m_common) ;
+
+    CompleteMemberDetail m_detail;
+    cdr >> m_detail;
+				v->detail(m_detail) ;
+}
+//MinimalStructMember
+size_t Serializer::getCdrSerializedSize(const MinimalStructMember& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonStructMember::getCdrSerializedSize(data.common(), current_alignment);
+    current_alignment += MinimalMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+void Serializer::serialize(MinimalStructMember *v, eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+    cdr << v->detail();
+}
+void Serializer::deserialize(MinimalStructMember *v, eprosima::fastcdr::Cdr &cdr)
+{
+    CommonStructMember m_common;
+    cdr >> m_common;
+				v->common(m_common);
+				
+				MinimalMemberDetail m_detail ;
+    cdr >> m_detail;
+				v->detail(m_detail);
+}
+size_t Serializer::getCdrSerializedSize(const  AppliedBuiltinTypeAnnotations& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += AppliedVerbatimAnnotation::getCdrSerializedSize(data.verbatim(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+void Serializer::serialize(AppliedBuiltinTypeAnnotations *v, eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->verbatim();
+}
+
+void Serializer::deserialize(AppliedBuiltinTypeAnnotations *v, eprosima::fastcdr::Cdr &cdr)
+{   
+    AppliedVerbatimAnnotation m_verbatim;
+    cdr >> m_verbatim;
+				v->verbatim(m_verbatim) ;
+}
+// DA QUI IN POI E' WORK IN PROGRESS, BABY
+//====================================================================================================
+size_t Serializer::getCdrSerializedSize(const MinimalTypeDetail& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+    return current_alignment - initial_alignment;
+}
+void Serializer::serialize(MinimalTypeDetail *v, eprosima::fastcdr::Cdr &cdr) const
+{
+}
+void Serializer::deserialize(MinimalTypeDetail *v, eprosima::fastcdr::Cdr &cdr)
+{
 }
 
 
