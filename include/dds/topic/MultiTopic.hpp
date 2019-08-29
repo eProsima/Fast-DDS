@@ -22,8 +22,6 @@
 
 #include <dds/core/detail/conformance.hpp>
 #include <dds/topic/detail/MultiTopic.hpp>
-#include <dds/topic/TMultiTopic.hpp>
-
 
 namespace dds {
 namespace topic {
