@@ -18,8 +18,8 @@
  *   limitations under the License.
  *
  */
-#ifndef OSPL_DDS_TOPIC_TANYTOPIC_IMPL_HPP_
-#define OSPL_DDS_TOPIC_TANYTOPIC_IMPL_HPP_
+#ifndef EPROSIMA_DDS_TOPIC_TANYTOPIC_IMPL_HPP_
+#define EPROSIMA_DDS_TOPIC_TANYTOPIC_IMPL_HPP_
 
 /**
  * @file
@@ -28,21 +28,18 @@
 /*
  * OMG PSM class declaration
  */
-#include <dds/topic/TAnyTopic.hpp>
+#include <dds/topic/AnyTopic.hpp>
 
 // Implementation
-namespace dds
-{
-namespace topic
-{
+namespace dds {
+namespace topic {
 
-
-template <typename DELEGATE>
+template<typename DELEGATE>
 TAnyTopic<DELEGATE>::~TAnyTopic()
 {
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 dds::topic::qos::TopicQos
 TAnyTopic<DELEGATE>::qos() const
 {
@@ -50,44 +47,42 @@ TAnyTopic<DELEGATE>::qos() const
     return this->delegate()->qos();
 }
 
-template <typename DELEGATE>
-void
-TAnyTopic<DELEGATE>::qos(const dds::topic::qos::TopicQos& qos)
+template<typename DELEGATE>
+void TAnyTopic<DELEGATE>::qos(
+        const dds::topic::qos::TopicQos& qos)
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
     this->delegate()->qos(qos);
 }
 
-template <typename DELEGATE>
-TAnyTopic<DELEGATE>&
-TAnyTopic<DELEGATE>::operator << (const dds::topic::qos::TopicQos& qos)
+template<typename DELEGATE>
+TAnyTopic<DELEGATE>& TAnyTopic<DELEGATE>::operator<<(
+        const dds::topic::qos::TopicQos& qos)
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
     this->delegate()->qos(qos);
     return *this;
 }
 
-template <typename DELEGATE>
-const TAnyTopic<DELEGATE>&
-TAnyTopic<DELEGATE>::operator >> (dds::topic::qos::TopicQos& qos) const
+template<typename DELEGATE>
+const TAnyTopic<DELEGATE>& TAnyTopic<DELEGATE>::operator>>(
+        dds::topic::qos::TopicQos& qos) const
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
     qos = this->delegate()->qos();
     return *this;
 }
 
-template <typename DELEGATE>
-dds::core::status::InconsistentTopicStatus
-TAnyTopic<DELEGATE>::inconsistent_topic_status() const
+template<typename DELEGATE>
+dds::core::status::InconsistentTopicStatus TAnyTopic<DELEGATE>::inconsistent_topic_status() const
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
     return this->delegate()->inconsistent_topic_status();
 }
-
 
 }
 }
 
 // End of implementation
 
-#endif /* OSPL_DDS_TOPIC_TANYTOPIC_IMPL_HPP_ */
+#endif /* EPROSIMA_DDS_TOPIC_TANYTOPIC_IMPL_HPP_ */

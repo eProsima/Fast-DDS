@@ -18,8 +18,8 @@
  *   limitations under the License.
  *
  */
-#ifndef OSPL_DDS_TOPIC_TTOPIC_HPP_
-#define OSPL_DDS_TOPIC_TTOPIC_HPP_
+#ifndef EPROSIMA_DDS_TOPIC_TTOPIC_HPP_
+#define EPROSIMA_DDS_TOPIC_TTOPIC_HPP_
 
 /**
  * @file
@@ -28,16 +28,14 @@
 /*
  * OMG PSM class declaration
  */
-#include <dds/topic/TTopic.hpp>
-#include "org/opensplice/topic/TopicTraits.hpp"
-#include "org/opensplice/topic/TopicListener.hpp"
+#include <dds/topic/Topic.hpp>
+//#include "org/opensplice/topic/TopicTraits.hpp"
+//#include "org/opensplice/topic/TopicListener.hpp"
 
 // Implementation
 
-namespace dds
-{
-namespace topic
-{
+namespace dds {
+namespace topic {
 
 
 /***************************************************************************
@@ -48,7 +46,7 @@ namespace topic
  ***************************************************************************/
 
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 Topic<T, DELEGATE>::Topic(const dds::domain::DomainParticipant& dp,
                           const std::string& topic_name) :
       ::dds::core::Reference< DELEGATE<T> >(new DELEGATE<T>(
@@ -64,7 +62,7 @@ Topic<T, DELEGATE>::Topic(const dds::domain::DomainParticipant& dp,
     this->delegate()->init(this->impl_);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 Topic<T, DELEGATE>::Topic(const dds::domain::DomainParticipant& dp,
                           const std::string& topic_name,
                           const std::string& type_name) :
@@ -82,7 +80,7 @@ Topic<T, DELEGATE>::Topic(const dds::domain::DomainParticipant& dp,
     this->delegate()->init(this->impl_);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 Topic<T, DELEGATE>::Topic(const dds::domain::DomainParticipant& dp,
                           const std::string& topic_name,
                           const dds::topic::qos::TopicQos& qos,
@@ -102,7 +100,7 @@ Topic<T, DELEGATE>::Topic(const dds::domain::DomainParticipant& dp,
     this->delegate()->init(this->impl_);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 Topic<T, DELEGATE>::Topic(const dds::domain::DomainParticipant& dp,
                           const std::string& topic_name,
                           const std::string& type_name,
@@ -123,10 +121,10 @@ Topic<T, DELEGATE>::Topic(const dds::domain::DomainParticipant& dp,
     this->delegate()->init(this->impl_);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 Topic<T, DELEGATE>::~Topic() { }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 void Topic<T, DELEGATE>::listener(Listener* listener,
                                   const ::dds::core::status::StatusMask& event_mask)
 {
@@ -135,7 +133,7 @@ void Topic<T, DELEGATE>::listener(Listener* listener,
     this->delegate()->listener(listener, event_mask);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 typename Topic<T, DELEGATE>::Listener* Topic<T, DELEGATE>::listener() const
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -146,9 +144,6 @@ typename Topic<T, DELEGATE>::Listener* Topic<T, DELEGATE>::listener() const
 
 }
 }
-
-
-
 
 /***************************************************************************
  *
@@ -163,9 +158,9 @@ typename Topic<T, DELEGATE>::Listener* Topic<T, DELEGATE>::listener() const
 #include <dds/topic/detail/Topic.hpp>
 #include <dds/topic/AnyTopic.hpp>
 #include <dds/topic/TopicListener.hpp>
-#include <org/opensplice/core/ScopedLock.hpp>
+//#include <org/opensplice/core/ScopedLock.hpp>
 
-template <typename T>
+template<typename T>
 dds::topic::detail::Topic<T>::Topic(const dds::domain::DomainParticipant& dp,
       const std::string& name,
       const std::string& type_name,
@@ -215,7 +210,7 @@ dds::topic::detail::Topic<T>::Topic(const dds::domain::DomainParticipant& dp,
     this->listener_set((void*)listener, mask);
 }
 
-template <typename T>
+template<typename T>
 dds::topic::detail::Topic<T>::Topic(const dds::domain::DomainParticipant& dp,
       const std::string& name,
       const std::string& type_name,
@@ -230,7 +225,7 @@ dds::topic::detail::Topic<T>::Topic(const dds::domain::DomainParticipant& dp,
 }
 
 
-template <typename T>
+template<typename T>
 dds::topic::detail::Topic<T>::~Topic()
 {
     if (!closed) {
@@ -242,7 +237,7 @@ dds::topic::detail::Topic<T>::~Topic()
     }
 }
 
-template <typename T>
+template<typename T>
 void
 dds::topic::detail::Topic<T>::close()
 {
@@ -260,7 +255,7 @@ dds::topic::detail::Topic<T>::close()
     org::opensplice::core::EntityDelegate::close();
 }
 
-template <typename T>
+template<typename T>
 void
 dds::topic::detail::Topic<T>::init(ObjectDelegate::weak_ref_type weak_ref)
 {
@@ -278,7 +273,7 @@ dds::topic::detail::Topic<T>::init(ObjectDelegate::weak_ref_type weak_ref)
     }
 }
 
-template <typename T>
+template<typename T>
 void
 dds::topic::detail::Topic<T>::listener(TopicListener<T>* listener,
                                        const ::dds::core::status::StatusMask& mask)
@@ -288,14 +283,14 @@ dds::topic::detail::Topic<T>::listener(TopicListener<T>* listener,
     this->listener_enable();
 }
 
-template <typename T>
+template<typename T>
 dds::topic::TopicListener<T>*
 dds::topic::detail::Topic<T>::listener()
 {
     return reinterpret_cast<dds::topic::TopicListener<T>*>(this->listener_get());
 }
 
-template <typename T>
+template<typename T>
 dds::topic::Topic<T, dds::topic::detail::Topic>
 dds::topic::detail::Topic<T>::wrapper()
 {
@@ -307,7 +302,7 @@ dds::topic::detail::Topic<T>::wrapper()
     return topic;
 }
 
-template <typename T>
+template<typename T>
 void
 dds::topic::detail::Topic<T>::listener_notify(
         ObjectDelegate::ref_type source,
@@ -343,7 +338,7 @@ dds::topic::detail::Topic<T>::listener_notify(
     }
 }
 
-template <typename T>
+template<typename T>
 dds::topic::Topic<T, dds::topic::detail::Topic>
 dds::topic::detail::Topic<T>::discover_topic(
         const dds::domain::DomainParticipant& dp,
@@ -374,7 +369,7 @@ dds::topic::detail::Topic<T>::discover_topic(
     return dds::topic::Topic<T>(ref);
 }
 
-template <typename T>
+template<typename T>
 void
 dds::topic::detail::Topic<T>::discover_topics(
         const dds::domain::DomainParticipant& dp,
@@ -413,4 +408,4 @@ dds::topic::detail::Topic<T>::discover_topics(
 
 // End of implementation
 
-#endif /* OSPL_DDS_TOPIC_TTOPIC_HPP_ */
+#endif /* EPROSIMA_DDS_TOPIC_TTOPIC_HPP_ */
