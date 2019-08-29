@@ -29,7 +29,7 @@
  * OMG PSM class declaration
  */
 
-#include <dds/sub/TAnyDataReader.hpp>
+#include <dds/sub/AnyDataReader.hpp>
 #include <dds/topic/TopicDescription.hpp>
 
 // Implementation

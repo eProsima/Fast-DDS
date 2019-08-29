@@ -28,7 +28,7 @@
 /*
  * OMG PSM class declaration
  */
-#include <dds/sub/TSample.hpp>
+#include <dds/sub/Sample.hpp>
 
 // Implementation
 namespace dds
