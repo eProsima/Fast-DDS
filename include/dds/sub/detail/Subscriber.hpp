@@ -1,10 +1,5 @@
-#ifndef OMG_DDS_SUB_DETAIL_SUBSCRIBER_HPP_
-#define OMG_DDS_SUB_DETAIL_SUBSCRIBER_HPP_
-
-/* Copyright 2010, Object Management Group, Inc.
- * Copyright 2010, PrismTech, Corp.
- * Copyright 2010, Real-Time Innovations, Inc.
- * All rights reserved.
+/*
+ * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +12,33 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *
+*/
 
-#include <dds/sub/detail/TSubscriberImpl.hpp>
-#include <org/opensplice/sub/SubscriberDelegate.hpp>
+#ifndef EPROSIMA_DDS_SUB_DETAIL_SUBSCRIBER_HPP_
+#define EPROSIMA_DDS_SUB_DETAIL_SUBSCRIBER_HPP_
+
+//#include <dds/sub/detail/TSubscriberImpl.hpp>
+//TODO: Fix when SubscriberDelegate is implemented
+//#include <org/opensplice/sub/SubscriberDelegate.hpp>
 
 /**
  * @cond
  * Ignore this file in the API
  */
 
-namespace dds { namespace sub { namespace detail {
-  typedef dds::sub::TSubscriber<org::opensplice::sub::SubscriberDelegate> Subscriber;
-} } }
+namespace dds {
+namespace sub {
+namespace detail {
+
+//TODO: Fix when SubscriberDelegate is implemented
+//typedef dds::sub::TSubscriber<org::opensplice::sub::SubscriberDelegate> Subscriber;
+class Subscriber { };
+
+} //namespace detail
+} //namespace sub
+} //namespace dds
 
 /** @endcond */
 
-#endif /* OMG_DDS_SUB_DETAIL_SUBSCRIBER_HPP_ */
+#endif //EPROSIMA_DDS_SUB_DETAIL_SUBSCRIBER_HPP_

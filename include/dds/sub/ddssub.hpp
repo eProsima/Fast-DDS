@@ -119,12 +119,20 @@
 // Pretty Print Utilities
 //
 // #if (OMG_DDS_HAS_PRETTY_PRINT_COUT == 1)
-std::ostream& operator << (std::ostream& os, const dds::sub::status::DataState& s);
-std::ostream& operator << (std::ostream& os, const dds::sub::Rank& r);
-std::ostream& operator << (std::ostream& os, const dds::sub::SampleInfo& si);
+std::ostream& operator <<(
+        std::ostream& os,
+        const dds::sub::status::DataState& s);
+
+std::ostream& operator <<(
+        std::ostream& os,
+        const dds::sub::Rank& r);
+
+std::ostream& operator <<(
+        std::ostream& os,
+        const dds::sub::SampleInfo& si);
 
 #include <dds/sub/detail/ddssub.hpp>
 
 // #endif
 
-#endif /* OMG_DDS_SUB_PACKAGE_INCLUDE_HPP_ */
+#endif //OMG_DDS_SUB_PACKAGE_INCLUDE_HPP_

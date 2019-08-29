@@ -25,10 +25,8 @@
 #include <dds/topic/BuiltinTopic.hpp>
 #include <dds/sub/detail/discovery.hpp>
 
-namespace dds
-{
-namespace sub
-{
+namespace dds {
+namespace sub {
 
 /**
  * Ignore subscriptions.
@@ -41,8 +39,9 @@ namespace sub
  * @param handle  the InstanceHandle of the remote entity that
  *                has to be ignored
  */
-void OMG_DDS_API ignore(const dds::domain::DomainParticipant& dp,
-                        const dds::core::InstanceHandle& handle);
+void OMG_DDS_API ignore(
+        const dds::domain::DomainParticipant& dp,
+        const dds::core::InstanceHandle& handle);
 
 /**
  * Ignore subscriptions.
@@ -55,8 +54,11 @@ void OMG_DDS_API ignore(const dds::domain::DomainParticipant& dp,
  * @param handle  the InstanceHandle of the remote entity that
  *                has to be ignored
  */
-template <typename FwdIterator>
-void ignore(const dds::domain::DomainParticipant& dp, FwdIterator begin, FwdIterator end);
+template<typename FwdIterator>
+void ignore(
+        const dds::domain::DomainParticipant& dp,
+        FwdIterator begin,
+        FwdIterator end);
 
 
 //==========================================================================
@@ -111,9 +113,11 @@ void ignore(const dds::domain::DomainParticipant& dp, FwdIterator begin, FwdIter
  *                  The Data Distribution Service ran out of resources to
  *                  complete this operation.
  */
-template <typename T>
-::dds::core::InstanceHandleSeq
-matched_publications(const dds::sub::DataReader<T>& dr);
+template<
+        typename T,
+         template<typename Q> class DELEGATE>
+::dds::core::InstanceHandleSeq matched_publications(
+        const DataReader<T, DELEGATE>& dr);
 
 /**
  * This operation retrieves the list of publications currently "associated" with the
@@ -168,10 +172,14 @@ matched_publications(const dds::sub::DataReader<T>& dr);
  *                  The Data Distribution Service ran out of resources to
  *                  complete this operation.
  */
-template <typename T, typename FwdIterator>
-uint32_t
-matched_publications(const dds::sub::DataReader<T>& dr,
-                     FwdIterator begin, uint32_t max_size);
+template<
+        typename T,
+        typename FwdIterator,
+        template<typename Q> class DELEGATE>
+uint32_t matched_publications(
+        const dds::sub::DataReader<T, DELEGATE>& dr,
+        FwdIterator begin,
+        uint32_t max_size);
 
 /**
  * This operation retrieves information on the specified publication that is currently
@@ -212,11 +220,14 @@ matched_publications(const dds::sub::DataReader<T>& dr,
  *                  The Data Distribution Service ran out of resources to
  *                  complete this operation.
  */
-template <typename T>
-const dds::topic::PublicationBuiltinTopicData
-matched_publication_data(const dds::sub::DataReader<T>& dr,
-                          const ::dds::core::InstanceHandle& h);
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+const dds::topic::PublicationBuiltinTopicData matched_publication_data(
+        const dds::sub::DataReader<T, DELEGATE>& dr,
+        const ::dds::core::InstanceHandle& h);
 
-}
-}
-#endif /* OMG_DDS_SUB_DISCOVERY_HPP_ */
+} //namespace sub
+} //namespace dds
+
+#endif //OMG_DDS_SUB_DISCOVERY_HPP_
