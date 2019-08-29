@@ -26,7 +26,7 @@
  */
 
 // Implementation
-#include <dds/sub/TQuery.hpp>
+#include <dds/sub/Query.hpp>
 
 template <typename DELEGATE>
 dds::sub::TQuery<DELEGATE>::TQuery(

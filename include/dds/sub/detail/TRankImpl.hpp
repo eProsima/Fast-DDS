@@ -28,7 +28,7 @@
 /*
  * OMG PSM class declaration
  */
-#include <dds/sub/TRank.hpp>
+#include <dds/sub/Rank.hpp>
 
 // Implementation
 namespace dds

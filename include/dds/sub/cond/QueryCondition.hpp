@@ -317,6 +317,6 @@ typedef dds::sub::cond::detail::QueryCondition QueryCondition;
 } //namespace sub
 } //namespace dds
 
-#endif  // OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
+#endif  //OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
 
 #endif //OMG_DDS_SUB_COND_QUERY_CONDITION_HPP_

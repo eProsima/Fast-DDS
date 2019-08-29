@@ -28,7 +28,7 @@
 /*
  * OMG PSM class declaration
  */
-#include <dds/sub/TGenerationCount.hpp>
+#include <dds/sub/GenerationCount.hpp>
 
 // Implementation
 

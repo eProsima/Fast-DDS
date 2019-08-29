@@ -28,9 +28,9 @@ namespace qos {
 
 typedef dds::sub::qos::detail::SubscriberQos SubscriberQos;
 
-}
-}
-}
+} //namespace qos
+} //namespace sub
+} //namespace dds
 
 
 #endif //OMG_DDS_SUB_QOS_SUBSCRIBER_QOS_HPP_
