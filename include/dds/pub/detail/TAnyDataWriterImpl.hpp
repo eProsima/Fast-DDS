@@ -96,7 +96,7 @@ const dds::core::status::OfferedDeadlineMissedStatus TAnyDataWriter<DELEGATE>::o
     //To implement
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 const dds::core::status::OfferedIncompatibleQosStatus TAnyDataWriter<DELEGATE>::offered_incompatible_qos_status()
 {
     //To implement

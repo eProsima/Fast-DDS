@@ -31,7 +31,7 @@ namespace xtypes{
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 class TUnionCase : public Reference< DELEGATE<T> >
 {
 public:

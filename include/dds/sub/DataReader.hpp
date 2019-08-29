@@ -32,7 +32,7 @@ class DataReader;
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 class DataReaderListener;
 
 }
@@ -116,7 +116,7 @@ typedef dds::sub::functors::detail::NextInstanceManipulatorFunctor   NextInstanc
  */
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 class DataReader : public TAnyDataReader< DELEGATE<T> >
 {
 public:

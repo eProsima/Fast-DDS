@@ -92,7 +92,7 @@ protected:
         (void) annotations;
     }
 
-    template <typename AnnotationIter>
+    template<typename AnnotationIter>
     TDynamicType(
             const std::string& name,
             TypeKind kind,
