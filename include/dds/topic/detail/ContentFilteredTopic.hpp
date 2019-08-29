@@ -44,7 +44,7 @@ namespace dds {
 namespace topic {
 namespace detail {
 
-//template <typename T>
+//template<typename T>
 //class ContentFilteredTopic  : public virtual org::opensplice::topic::TopicDescriptionDelegate
 //{
 //public:
@@ -170,7 +170,7 @@ namespace detail {
 //     * @param begin The iterator holding the first string param
 //     * @param end The last item in the string iteration
 //     */
-//    template <typename FWIterator>
+//    template<typename FWIterator>
 //    void filter_parameters(const FWIterator& begin, const FWIterator& end)
 //    {
 //        ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this);

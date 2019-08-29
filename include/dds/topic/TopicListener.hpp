@@ -75,7 +75,7 @@ namespace topic
  * @see @ref DCPS_Modules_Topic "Topic"
  * @see @ref DCPS_Modules_Infrastructure_Listener "Listener information"
  */
-template <typename T>
+template<typename T>
 class TopicListener
 {
 public:
@@ -122,7 +122,7 @@ public:
  *
  * @see dds::topic::TopicListener
  */
-template <typename T>
+template<typename T>
 class NoOpTopicListener : public virtual TopicListener<T>
 {
 /** @cond
