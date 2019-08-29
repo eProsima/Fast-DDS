@@ -22,7 +22,6 @@
 
 #include <dds/sub/qos/detail/DataReaderQos.hpp>
 
-<<<<<<< HEAD
 namespace dds {
 namespace sub {
 namespace qos {
@@ -35,18 +34,3 @@ typedef dds::sub::qos::detail::DataReaderQos DataReaderQos;
 
 
 #endif //OMG_DDS_SUB_QOS_DATA_READER_QOS_HPP_
-=======
-namespace dds
-{
-namespace sub
-{
-namespace qos
-{
-typedef dds::sub::qos::detail::DataReaderQos DataReaderQos;
-}
-}
-}
-
-
-#endif /* OMG_DDS_SUB_QOS_DATA_READER_QOS_HPP_ */
->>>>>>> Copyright modified in non-detail classes

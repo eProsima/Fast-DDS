@@ -22,7 +22,6 @@
 
 #include <dds/sub/detail/SampleInfo.hpp>
 
-<<<<<<< HEAD
 #include <dds/sub/Rank.hpp>
 #include <dds/sub/GenerationCount.hpp>
 
@@ -162,15 +161,3 @@ typedef dds::sub::detail::SampleInfo SampleInfo;
 
 
 #endif //OMG_DDS_SUB_SAMPLE_INFO_HPP_
-=======
-namespace dds
-{
-namespace sub
-{
-typedef detail::SampleInfo SampleInfo;
-}
-}
-
-
-#endif /* OMG_DDS_SUB_SAMPLE_INFO_HPP_ */
->>>>>>> Copyright modified in non-detail classes
