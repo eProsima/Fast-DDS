@@ -28,7 +28,7 @@
 /*
  * OMG PSM class declaration
  */
-#include <dds/sub/TSubscriber.hpp>
+#include <dds/sub/Subscriber.hpp>
 
 // Implementation
 
