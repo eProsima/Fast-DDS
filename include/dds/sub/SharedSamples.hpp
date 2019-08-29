@@ -24,18 +24,18 @@
 #include <dds/core/Reference.hpp>
 #include <dds/sub/Sample.hpp>
 #include <dds/sub/LoanedSamples.hpp>
+
 #include <dds/sub/detail/SharedSamples.hpp>
 
 /** @cond */
-namespace dds
-{
-namespace sub
-{
-template <typename T,
-          template <typename Q> class DELEGATE = detail::SharedSamples>
+namespace dds {
+namespace sub {
+
+template<
+        typename T,
+        template <typename Q> class DELEGATE = detail::SharedSamples>
 class SharedSamples;
-}
-}
+
 /** @endcond */
 
 /**
@@ -47,16 +47,16 @@ class SharedSamples;
  *       when considering its functionality. So, anything you would want to do with this
  *       class can also be done by the LoanedSamples.
  */
-template <typename T, template <typename Q> class DELEGATE>
-class dds::sub::SharedSamples
+template<
+        typename T,
+        template <typename Q> class DELEGATE>
+class SharedSamples
 {
 public:
-    typedef T                     DataType;
-    typedef typename DELEGATE<T>::const_iterator        const_iterator;
-
+    typedef T DataType;
+    typedef typename DELEGATE<T>::const_iterator const_iterator;
     typedef typename dds::core::smart_ptr_traits< DELEGATE<T> >::ref_type DELEGATE_REF_T;
 
-public:
     /**
      * Constructs a SharedSamples instance.
      */
@@ -73,17 +73,17 @@ public:
      * @param ls the loaned samples
      *
      */
-    SharedSamples(dds::sub::LoanedSamples<T> ls);
+    SharedSamples(
+            LoanedSamples<T> ls);
 
     /**
      * Copies a SharedSamples instance.
      */
-    SharedSamples(const SharedSamples& other);
+    SharedSamples(
+            const SharedSamples& other);
 
     ~SharedSamples();
 
-
-public:
     /**
      * Gets an iterator pointing to the beginning of the samples.
      *
@@ -123,6 +123,11 @@ private:
     DELEGATE_REF_T delegate_;
 };
 
-#include <dds/sub/detail/SharedSamplesImpl.hpp>
 
-#endif /* OMG_DDS_SUB_SHARED_SAMPLES_HPP_ */
+} //namespace sub
+} //namespace dds
+
+//TODO: Fix when SharedSamplesImpl is implemented
+//#include <dds/sub/detail/SharedSamplesImpl.hpp>
+
+#endif //OMG_DDS_SUB_SHARED_SAMPLES_HPP_
