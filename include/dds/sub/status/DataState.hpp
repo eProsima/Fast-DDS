@@ -25,19 +25,15 @@
 #include <dds/core/types.hpp>
 
 
-namespace dds
-{
-namespace sub
-{
-namespace status
-{
+namespace dds {
+namespace sub {
+namespace status {
+
 class SampleState;
 class ViewState;
 class InstanceState;
 class DataState;
-}
-}
-}
+
 
 /**
  * @brief
@@ -55,7 +51,7 @@ class DataState;
  *
  * @see @ref DCPS_Modules_Subscription_SampleInfo "SampleInfo" for more information
  */
-class OMG_DDS_API dds::sub::status::SampleState : public std::bitset<OMG_DDS_STATE_BIT_COUNT>
+class OMG_DDS_API SampleState : public std::bitset<OMG_DDS_STATE_BIT_COUNT>
 {
 public:
     /**
@@ -63,7 +59,6 @@ public:
      */
     typedef std::bitset<OMG_DDS_STATE_BIT_COUNT> MaskType;
 
-public:
     /**
      * Construct a SampleState with default MaskType.
      */
@@ -74,7 +69,8 @@ public:
      *
      * @param i MaskType
      */
-    explicit SampleState(uint32_t i);
+    explicit SampleState(
+            uint32_t i);
 
     /**
      * Copy constructor.
@@ -82,16 +78,17 @@ public:
      *
      * @param src the SampleState to copy from
      */
-    SampleState(const SampleState& src);
+    SampleState(
+            const SampleState& src);
 
     /**
      * Construct a SampleState with existing MaskType.
      *
      * @param src the MaskType to copy from
      */
-    SampleState(const MaskType& src);
+    SampleState(
+            const MaskType& src);
 
-public:
     /**
      * Get the READ_SAMPLE_STATE.
      *
@@ -124,8 +121,6 @@ public:
     inline static const SampleState any();
 };
 
-
-
 /**
  * @brief
  * Class to hold sample ViewState information.
@@ -144,7 +139,7 @@ public:
  *
  * @see @ref DCPS_Modules_Subscription_SampleInfo "SampleInfo" for more information
  */
-class OMG_DDS_API dds::sub::status::ViewState : public std::bitset<OMG_DDS_STATE_BIT_COUNT>
+class OMG_DDS_API ViewState : public std::bitset<OMG_DDS_STATE_BIT_COUNT>
 {
 public:
     /**
@@ -152,7 +147,6 @@ public:
      */
     typedef std::bitset<OMG_DDS_STATE_BIT_COUNT> MaskType;
 
-public:
     /**
      * Construct a ViewState with default MaskType.
      */
@@ -163,7 +157,8 @@ public:
      *
      * @param m the MaskType
      */
-    explicit ViewState(uint32_t m);
+    explicit ViewState(
+            uint32_t m);
 
     /**
      * Copy constructor.
@@ -172,16 +167,17 @@ public:
      *
      * @param src the ViewState to copy from
      */
-    ViewState(const ViewState& src);
+    ViewState(
+            const ViewState& src);
 
     /**
      * Construct a ViewState with existing MaskType.
      *
      * @param src the MaskType to copy from
      */
-    ViewState(const MaskType& src);
+    ViewState(
+            const MaskType& src);
 
-public:
     /**
      * Get the NEW_VIEW_STATE.
      *
@@ -217,8 +213,6 @@ public:
 
 };
 
-
-
 /**
  * @brief
  * Class to hold sample InstanceState information.
@@ -244,7 +238,7 @@ public:
  *
  * @see @ref DCPS_Modules_Subscription_SampleInfo "SampleInfo" for more information
  */
-class OMG_DDS_API dds::sub::status::InstanceState : public std::bitset<OMG_DDS_STATE_BIT_COUNT>
+class OMG_DDS_API InstanceState : public std::bitset<OMG_DDS_STATE_BIT_COUNT>
 {
 public:
     /**
@@ -263,7 +257,8 @@ public:
      *
      * @param m the bit array to initialize the bitset with
      */
-    explicit InstanceState(uint32_t m);
+    explicit InstanceState(
+            uint32_t m);
 
     /**
      * Copy constructor.
@@ -272,16 +267,17 @@ public:
      *
      * @param src the InstanceState to copy from
      */
-    InstanceState(const InstanceState& src);
+    InstanceState(
+            const InstanceState& src);
 
     /**
      * Construct an InstanceState with existing MaskType.
      *
      * @param src the bitset to copy from
      */
-    InstanceState(const MaskType& src);
+    InstanceState(
+            const MaskType& src);
 
-public:
     /**
      * Get ALIVE_INSTANCE_STATE.
      *
@@ -353,8 +349,6 @@ public:
 
 };
 
-
-
 /**
  * @brief
  * Class to hold sample DataState information.
@@ -369,7 +363,7 @@ public:
  *
  * @see @ref DCPS_Modules_Subscription_SampleInfo "SampleInfo" for more information
  */
-class dds::sub::status::DataState
+class DataState
 {
 public:
     /**
@@ -382,10 +376,11 @@ public:
      *
      */
     DataState()
-        : ss_(dds::sub::status::SampleState::any()),
-          vs_(dds::sub::status::ViewState::any()),
-          is_(dds::sub::status::InstanceState::any())
-    { }
+//        : ss_(SampleState::any()),
+//          vs_(ViewState::any()),
+//          is_(InstanceState::any())
+    {
+    }
 
     /**
      * Create a DataState instance.
@@ -397,11 +392,13 @@ public:
      *
      * @param ss the SampleState to construct DataState from
      */
-    /* implicit */ DataState(const dds::sub::status::SampleState& ss)
-        : ss_(ss),
-          vs_(dds::sub::status::ViewState::any()),
-          is_(dds::sub::status::InstanceState::any())
-    { }
+    /* implicit */ DataState(
+            const SampleState& ss)
+        : ss_(ss)
+//          vs_(ViewState::any()),
+//          is_(InstanceState::any())
+    {
+    }
 
     /**
      * Create a DataState instance.
@@ -413,11 +410,13 @@ public:
      *
      * @param vs the ViewState to construct DataState from
      */
-    /* implicit */ DataState(const dds::sub::status::ViewState& vs)
-        : ss_(dds::sub::status::SampleState::any()),
-          vs_(vs),
-          is_(dds::sub::status::InstanceState::any())
-    { }
+    /* implicit */ DataState(
+            const ViewState& vs)
+        : /*ss_(SampleState::any()),*/
+          vs_(vs)
+//          is_(InstanceState::any())
+    {
+    }
 
     /**
      * Create a DataState instance.
@@ -429,11 +428,13 @@ public:
      *
      * @param is InstanceState to construct DataState from
      */
-    /* implicit */ DataState(const dds::sub::status::InstanceState& is)
-        : ss_(dds::sub::status::SampleState::any()),
-          vs_(dds::sub::status::ViewState::any()),
+    /* implicit */ DataState(
+            const InstanceState& is)
+        : /*ss_(SampleState::any()),
+          vs_(ViewState::any()),*/
           is_(is)
-    { }
+    {
+    }
 
     /**
      * Create a DataState instance.
@@ -447,18 +448,20 @@ public:
      * @param vs ViewState
      * @param is InstanceState
      */
-    DataState(const dds::sub::status::SampleState& ss,
-              const dds::sub::status::ViewState& vs,
-              const dds::sub::status::InstanceState& is)
+    DataState(const SampleState& ss,
+              const ViewState& vs,
+              const InstanceState& is)
         : ss_(ss), vs_(vs), is_(is)
-    { }
+    {
+    }
 
     /**
      * Set SampleState.
      *
      * @param ss SampleState
      */
-    DataState& operator << (const dds::sub::status::SampleState& ss)
+    DataState& operator <<(
+            const SampleState& ss)
     {
         ss_ = ss;
         return *this;
@@ -469,7 +472,8 @@ public:
      *
      * @param is InstanceState
      */
-    DataState& operator << (const dds::sub::status::InstanceState& is)
+    DataState& operator <<(
+            const InstanceState& is)
     {
         is_ = is;
         return *this;
@@ -480,7 +484,8 @@ public:
      *
      * @param vs ViewState
      */
-    DataState& operator << (const dds::sub::status::ViewState& vs)
+    DataState& operator <<(
+            const ViewState& vs)
     {
         vs_ = vs;
         return *this;
@@ -492,7 +497,8 @@ public:
      * @param ss SampleState
      * @return the DataState
      */
-    const DataState& operator >> (dds::sub::status::SampleState& ss) const
+    const DataState& operator >>(
+            SampleState& ss) const
     {
         ss = ss_;
         return *this;
@@ -504,7 +510,8 @@ public:
      * @param is InstanceState
      * @return the DataState
      */
-    const DataState& operator >> (dds::sub::status::InstanceState& is) const
+    const DataState& operator >>(
+            InstanceState& is) const
     {
         is = is_;
         return *this;
@@ -516,7 +523,8 @@ public:
      * @param vs ViewState
      * @return the DataState
      */
-    const DataState& operator >> (dds::sub::status::ViewState& vs) const
+    const DataState& operator >>(
+            ViewState& vs) const
     {
         vs = vs_;
         return *this;
@@ -527,7 +535,8 @@ public:
      *
      * @return true if equal
      */
-     bool operator ==(const DataState& o) const
+     bool operator ==(
+             const DataState& o) const
      {
          return ((ss_ == o.ss_) && (vs_ == o.vs_) && (is_ == o.is_));
      }
@@ -537,7 +546,8 @@ public:
       *
       * @return true if not equal
       */
-     bool operator !=(const DataState& o) const
+     bool operator !=(
+             const DataState& o) const
      {
          return !operator==(o);
      }
@@ -547,7 +557,7 @@ public:
      *
      * @return the SampleState
      */
-    const dds::sub::status::SampleState& sample_state() const
+    const SampleState& sample_state() const
     {
         return ss_;
     }
@@ -557,7 +567,8 @@ public:
      *
      * @param ss SampleState
      */
-    void sample_state(const dds::sub::status::SampleState& ss)
+    void sample_state(
+            const SampleState& ss)
     {
         *this << ss;
     }
@@ -567,7 +578,7 @@ public:
      *
      * @return the InstanceState
      */
-    const dds::sub::status::InstanceState& instance_state() const
+    const InstanceState& instance_state() const
     {
         return is_;
     }
@@ -577,7 +588,8 @@ public:
      *
      * @param is InstanceState
      */
-    void instance_state(const dds::sub::status::InstanceState& is)
+    void instance_state(
+            const InstanceState& is)
     {
         *this << is;
     }
@@ -587,7 +599,7 @@ public:
      *
      * @return the ViewState
      */
-    const dds::sub::status::ViewState& view_state() const
+    const ViewState& view_state() const
     {
         return vs_;
     }
@@ -597,7 +609,8 @@ public:
      *
      * @param vs ViewState
      */
-    void view_state(const dds::sub::status::ViewState& vs)
+    void view_state(
+            const ViewState& vs)
     {
         *this << vs;
     }
@@ -612,12 +625,12 @@ public:
      *
      * @return the any DataState
      */
-    static DataState any()
-    {
-        return DataState(dds::sub::status::SampleState::any(),
-                         dds::sub::status::ViewState::any(),
-                         dds::sub::status::InstanceState::any());
-    }
+    static DataState any();
+//    {
+//        return DataState(SampleState::any(),
+//                         ViewState::any(),
+//                         InstanceState::any());
+//    }
 
     /**
      * Create a DataState instance.
@@ -629,12 +642,12 @@ public:
      *
      * @return the new_data DataState
      */
-    static DataState new_data()
-    {
-        return DataState(dds::sub::status::SampleState::not_read(),
-                         dds::sub::status::ViewState::any(),
-                         dds::sub::status::InstanceState::alive());
-    }
+    static DataState new_data();
+//    {
+//        return DataState(SampleState::not_read(),
+//                         ViewState::any(),
+//                         InstanceState::alive());
+//    }
 
     /**
      * Create a DataState instance.
@@ -646,12 +659,12 @@ public:
      *
      * @return the any_data DataState
      */
-    static DataState any_data()
-    {
-        return DataState(dds::sub::status::SampleState::any(),
-                         dds::sub::status::ViewState::any(),
-                         dds::sub::status::InstanceState::alive());
-    }
+    static DataState any_data();
+//    {
+//        return DataState(SampleState::any(),
+//                         ViewState::any(),
+//                         InstanceState::alive());
+//    }
 
     /**
      * Create a DataState instance.
@@ -663,17 +676,21 @@ public:
      *
      * @return the new_instance DataState
      */
-    static DataState new_instance()
-    {
-        return DataState(dds::sub::status::SampleState::any(),
-                         dds::sub::status::ViewState::new_view(),
-                         dds::sub::status::InstanceState::alive());
-    }
+    static DataState new_instance();
+//    {
+//        return DataState(SampleState::any(),
+//                         ViewState::new_view(),
+//                         InstanceState::alive());
+//    }
 private:
-    dds::sub::status::SampleState ss_;
-    dds::sub::status::ViewState vs_;
-    dds::sub::status::InstanceState is_;
+    SampleState ss_;
+    ViewState vs_;
+    InstanceState is_;
 
 };
 
-#endif /* OMG_DDS_SUB_DATA_STATE_HPP_ */
+} //namespace status
+} //namespace sub
+} //namespace dds
+
+#endif //OMG_DDS_SUB_DATA_STATE_HPP_
