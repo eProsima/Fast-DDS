@@ -23,10 +23,8 @@
 #include <dds/sub/AnyDataReaderListener.hpp>
 #include <dds/sub/Subscriber.hpp>
 
-namespace dds
-{
-namespace sub
-{
+namespace dds {
+namespace sub {
 
 /**
  * @brief
@@ -129,12 +127,12 @@ public:
     typedef ::dds::core::smart_ptr_traits<SubscriberListener>::ref_type ref_type;
     /** @endcond */
 
-public:
     /** @cond */
-    virtual ~SubscriberListener() { }
+    virtual ~SubscriberListener()
+    {
+    }
     /** @endcond */
 
-public:
     /**
      * This operation called by the Data Distribution Service when new data is
      * available for this Subscriber.
@@ -162,7 +160,8 @@ public:
      * @param sub contain a pointer to the Subscriber for which data is available (this is
      *            an input to the application provided by the Data Distribution Service).
      */
-    virtual void on_data_on_readers(Subscriber& sub) = 0;
+    virtual void on_data_on_readers(
+            Subscriber& sub) = 0;
 };
 
 
@@ -183,22 +182,26 @@ public:
  * @see dds::sub::SubscriberListener
  */
 class OMG_DDS_API NoOpSubscriberListener :
-    public virtual SubscriberListener,
-    public virtual NoOpAnyDataReaderListener
+        public virtual SubscriberListener,
+        public virtual NoOpAnyDataReaderListener
 {
 /** @cond
  * All these functions have already been documented in the non-NoOp listener.
  * Ignore these functions for the doxygen API documentation for clarity.
  */
 public:
-    virtual ~NoOpSubscriberListener() { }
+    virtual ~NoOpSubscriberListener()
+    {
+    }
 
-public:
-    virtual void on_data_on_readers(Subscriber&) { }
+    virtual void on_data_on_readers(
+            Subscriber&)
+    {
+    }
 /** @endcond */
 };
 
-}
-}
+} //namespace sub
+} //namespace dds
 
-#endif /* OMG_DDS_SUB_SUBSCRIBER_LISTENER_HPP_ */
+#endif //OMG_DDS_SUB_SUBSCRIBER_LISTENER_HPP_
