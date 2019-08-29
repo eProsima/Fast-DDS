@@ -22,6 +22,9 @@
 
 #include <dds/topic/detail/BuiltinTopicKey.hpp>
 
+#include <dds/core/Value.hpp>
+#include <dds/core/detail/inttypes.hpp>
+
 namespace dds {
 namespace topic {
 
@@ -30,7 +33,7 @@ namespace topic {
  * Global unique identifier of the Topic.
  */
 template<typename D>
-class dds::topic::TBuiltinTopicKey : public ::dds::core::Value<D>
+class TBuiltinTopicKey : public ::dds::core::Value<D>
 {
 public:
     /**
@@ -45,12 +48,13 @@ public:
      *
      * @param v the value to set
      */
-    void value(const int32_t v[]);
+    void value(
+            const int32_t v[]);
 };
 
-typedef dds::topic::detail::BuiltinTopicKey BuiltinTopicKey;
+typedef detail::BuiltinTopicKey BuiltinTopicKey;
 
-}
-}
+} //namespace topic
+} //namespace dds
 
-#endif /* OMG_DDS_TOPIC_BUILTIN_TOPIC_KEY_HPP_ */
+#endif //OMG_DDS_TOPIC_BUILTIN_TOPIC_KEY_HPP_

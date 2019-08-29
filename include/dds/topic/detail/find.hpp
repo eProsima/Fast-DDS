@@ -26,6 +26,7 @@
 
 //TODO: Fix when find is implemented
 //#include <org/opensplice/topic/find.hpp>
+#include <dds/domain/DomainParticipant.hpp>
 
 
 #include <string>
@@ -35,15 +36,12 @@ namespace dds {
 namespace topic {
 
 template<typename TOPIC>
-TOPIC find(const dds::domain::DomainParticipant& dp, const std::string& topic_name)
+TOPIC find(
+        const dds::domain::DomainParticipant& dp,
+        const std::string& topic_name)
 {
-    //TODO: Fix when find is implemented
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-//    TOPIC t = org::opensplice::topic::finder<TOPIC, typename TOPIC::DELEGATE_T>::find(dp, topic_name);
-
-//    return t;
+    //To implement
 }
-
 
 } //namespace topic
 } //namespace dds

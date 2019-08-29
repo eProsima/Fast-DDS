@@ -65,7 +65,7 @@ namespace topic {
  * @see @ref DCPS_Builtin_Topics_ParticipantData
  */
 template<typename D>
-class dds::topic::TParticipantBuiltinTopicData : public ::dds::core::Value<D>
+class TParticipantBuiltinTopicData : public ::dds::core::Value<D>
 {
 public:
     /**
@@ -116,7 +116,7 @@ public:
  * @see @ref DCPS_Builtin_Topics_TopicData
  */
 template<typename D>
-class dds::topic::TTopicBuiltinTopicData : public ::dds::core::Value<D>
+class TTopicBuiltinTopicData : public ::dds::core::Value<D>
 {
 public:
     /**
@@ -240,7 +240,7 @@ public:
  * @see @ref DCPS_Builtin_Topics_PublicationData
  */
 template<typename D>
-class dds::topic::TPublicationBuiltinTopicData : public ::dds::core::Value<D>
+class TPublicationBuiltinTopicData : public ::dds::core::Value<D>
 {
 public:
     /**
@@ -381,7 +381,7 @@ public:
  * @see @ref DCPS_Builtin_Topics_SubscriptionData
  */
 template<typename D>
-class dds::topic::TSubscriptionBuiltinTopicData  : public ::dds::core::Value<D>
+class TSubscriptionBuiltinTopicData  : public ::dds::core::Value<D>
 {
 public:
     /**
@@ -476,8 +476,8 @@ typedef dds::topic::detail::TopicBuiltinTopicData TopicBuiltinTopicData;
 typedef dds::topic::detail::PublicationBuiltinTopicData PublicationBuiltinTopicData;
 typedef dds::topic::detail::SubscriptionBuiltinTopicData SubscriptionBuiltinTopicData;
 
-}
-}
+} //namespace topic
+} //namespace dds
 
 
-#endif /* OMG_DDS_TOPIC_BUILTIN_TOPIC_HPP_ */
+#endif //OMG_DDS_TOPIC_BUILTIN_TOPIC_HPP_
