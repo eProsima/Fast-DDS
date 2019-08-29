@@ -28,7 +28,7 @@ namespace sub {
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 class DataReader;
 
 /**
@@ -124,7 +124,7 @@ class DataReader;
  */
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 class DataReaderListener
 {
 public:
@@ -326,7 +326,7 @@ public:
  */
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 class NoOpDataReaderListener : public virtual DataReaderListener<T, DELEGATE>
 {
 /** @cond

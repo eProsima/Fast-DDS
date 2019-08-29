@@ -31,7 +31,7 @@ namespace sub {
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 LoanedSamples<T, DELEGATE>::LoanedSamples()
     : delegate_(new DELEGATE<T>())
 {
@@ -39,14 +39,14 @@ LoanedSamples<T, DELEGATE>::LoanedSamples()
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 LoanedSamples<T, DELEGATE>::~LoanedSamples()
 {
 }
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 LoanedSamples<T, DELEGATE>::LoanedSamples(
         const LoanedSamples& other)
 {
@@ -55,7 +55,7 @@ LoanedSamples<T, DELEGATE>::LoanedSamples(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 typename LoanedSamples<T, DELEGATE>::const_iterator LoanedSamples<T, DELEGATE>::begin() const
 {
     //To implement
@@ -63,7 +63,7 @@ typename LoanedSamples<T, DELEGATE>::const_iterator LoanedSamples<T, DELEGATE>::
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 typename LoanedSamples<T, DELEGATE>::const_iterator LoanedSamples<T, DELEGATE>::end() const
 {
     //To implement
@@ -71,7 +71,7 @@ typename LoanedSamples<T, DELEGATE>::const_iterator LoanedSamples<T, DELEGATE>::
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 const typename LoanedSamples<T, DELEGATE>::DELEGATE_REF_T& LoanedSamples<T, DELEGATE>::delegate() const
 {
     //To implement
@@ -79,7 +79,7 @@ const typename LoanedSamples<T, DELEGATE>::DELEGATE_REF_T& LoanedSamples<T, DELE
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 typename LoanedSamples<T, DELEGATE>::DELEGATE_REF_T& LoanedSamples<T, DELEGATE>::delegate()
 {
     //To implement
@@ -87,7 +87,7 @@ typename LoanedSamples<T, DELEGATE>::DELEGATE_REF_T& LoanedSamples<T, DELEGATE>:
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 uint32_t LoanedSamples<T, DELEGATE>::length() const
 {
     //To implement
@@ -95,7 +95,7 @@ uint32_t LoanedSamples<T, DELEGATE>::length() const
 
 template<
         typename T,
-        template <typename Q> class D>
+        template<typename Q> class D>
 LoanedSamples<T, D> move(
         LoanedSamples<T, D>& a)
 {

@@ -42,7 +42,7 @@ namespace sub {
  *
  * @see dds::sub::DataReader
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 class TAnyDataReader : public dds::core::TEntity<DELEGATE>
 {
 public:

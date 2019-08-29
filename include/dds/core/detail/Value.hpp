@@ -115,7 +115,7 @@ Value<D>::Value(
         const ARG6& arg6)
     : d_(arg1, arg2, arg3, arg4, arg5, arg6) { }
 
-template <typename D>
+template<typename D>
 Value<D>::~Value() { }
 
 template<typename D>
@@ -169,7 +169,7 @@ Value<D>::operator D& ()
     //To implement
 }
 
-template <typename D>
+template<typename D>
 Value<D>::operator const D& () const
 {
     //To implement
