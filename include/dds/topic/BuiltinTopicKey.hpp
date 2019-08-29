@@ -24,6 +24,9 @@
 #include <dds/core/Value.hpp>
 #include <dds/core/types.hpp>
 
+#include <dds/core/Value.hpp>
+#include <dds/core/detail/inttypes.hpp>
+
 namespace dds {
 namespace topic {
 
@@ -47,12 +50,13 @@ public:
      *
      * @param v the value to set
      */
-    void value(const int32_t v[]);
+    void value(
+            const int32_t v[]);
 };
 
-typedef dds::topic::detail::BuiltinTopicKey BuiltinTopicKey;
+typedef detail::BuiltinTopicKey BuiltinTopicKey;
 
-}
-}
+} //namespace topic
+} //namespace dds
 
-#endif /* OMG_DDS_TOPIC_BUILTIN_TOPIC_KEY_HPP_ */
+#endif //OMG_DDS_TOPIC_BUILTIN_TOPIC_KEY_HPP_
