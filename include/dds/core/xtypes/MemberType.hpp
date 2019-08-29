@@ -71,7 +71,7 @@ public:
         (void) annotations;
     }
 
-    template <typename AnnotationIter>
+    template<typename AnnotationIter>
     TMemberType(
             const std::string& name,
             const TDynamicType<OTHER_DELEGATE>& type,

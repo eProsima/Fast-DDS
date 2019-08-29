@@ -32,7 +32,7 @@ namespace pub {
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 DataWriter<T, DELEGATE>::DataWriter(
         const dds::pub::Publisher& pub,
         const dds::topic::Topic<T>& topic)
@@ -48,7 +48,7 @@ DataWriter<T, DELEGATE>::DataWriter(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 DataWriter<T, DELEGATE>::DataWriter(
         const dds::pub::Publisher& pub,
         const ::dds::topic::Topic<T>& topic,
@@ -63,14 +63,14 @@ DataWriter<T, DELEGATE>::DataWriter(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 DataWriter<T, DELEGATE>::~DataWriter()
 {
 }
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 void DataWriter<T, DELEGATE>::write(
         const T& sample)
 {
@@ -79,7 +79,7 @@ void DataWriter<T, DELEGATE>::write(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 void DataWriter<T, DELEGATE>::write(
         const T& sample,
         const dds::core::Time& timestamp)
@@ -89,7 +89,7 @@ void DataWriter<T, DELEGATE>::write(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 void DataWriter<T, DELEGATE>::write(
         const T& sample,
         const ::dds::core::InstanceHandle& instance)
@@ -99,7 +99,7 @@ void DataWriter<T, DELEGATE>::write(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 void DataWriter<T, DELEGATE>::write(
         const T& sample,
         const ::dds::core::InstanceHandle& instance,
@@ -110,7 +110,7 @@ void DataWriter<T, DELEGATE>::write(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 void DataWriter<T, DELEGATE>::write(
         const dds::topic::TopicInstance<T>& i)
 {
@@ -119,7 +119,7 @@ void DataWriter<T, DELEGATE>::write(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 void DataWriter<T, DELEGATE>::write(
         const dds::topic::TopicInstance<T>& i,
         const dds::core::Time& timestamp)
@@ -129,7 +129,7 @@ void DataWriter<T, DELEGATE>::write(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 template<typename FWIterator>
 void DataWriter<T, DELEGATE>::write(
         const FWIterator& begin,
@@ -140,7 +140,7 @@ void DataWriter<T, DELEGATE>::write(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 template<typename FWIterator>
 void DataWriter<T, DELEGATE>::write(
         const FWIterator& begin,
@@ -152,7 +152,7 @@ void DataWriter<T, DELEGATE>::write(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 template<
         typename SamplesFWIterator,
         typename HandlesFWIterator>
@@ -167,7 +167,7 @@ void DataWriter<T, DELEGATE>::write(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 template<
         typename SamplesFWIterator,
         typename HandlesFWIterator>
@@ -183,7 +183,7 @@ void DataWriter<T, DELEGATE>::write(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::operator <<(
         const ::dds::pub::qos::DataWriterQos& qos)
 {
@@ -192,7 +192,7 @@ DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::operator <<(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::operator <<(
         const T& data)
 {
@@ -201,7 +201,7 @@ DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::operator <<(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::operator <<(
         const std::pair<T, dds::core::Time>& data)
 {
@@ -210,7 +210,7 @@ DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::operator <<(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::operator <<(
         const std::pair<T, ::dds::core::InstanceHandle>& data)
 {
@@ -219,7 +219,7 @@ DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::operator <<(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::operator <<(
         DataWriter & (*manipulator)(DataWriter&))
 {
@@ -228,7 +228,7 @@ DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::operator <<(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 const dds::core::InstanceHandle DataWriter<T, DELEGATE>::register_instance(
         const T& key)
 {
@@ -237,7 +237,7 @@ const dds::core::InstanceHandle DataWriter<T, DELEGATE>::register_instance(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 const dds::core::InstanceHandle DataWriter<T, DELEGATE>::register_instance(
         const T& key,
         const dds::core::Time& timestamp)
@@ -247,7 +247,7 @@ const dds::core::InstanceHandle DataWriter<T, DELEGATE>::register_instance(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::unregister_instance(
         const ::dds::core::InstanceHandle& i)
 {
@@ -256,7 +256,7 @@ DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::unregister_instance(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::unregister_instance(
         const ::dds::core::InstanceHandle& i,
         const dds::core::Time& timestamp)
@@ -266,7 +266,7 @@ DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::unregister_instance(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::unregister_instance(
         const T& key)
 {
@@ -275,7 +275,7 @@ DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::unregister_instance(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::unregister_instance(const T& key,
         const dds::core::Time& timestamp)
 {
@@ -284,7 +284,7 @@ DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::unregister_instance(const T& k
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::dispose_instance(
         const ::dds::core::InstanceHandle& i)
 {
@@ -293,7 +293,7 @@ DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::dispose_instance(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::dispose_instance(
         const ::dds::core::InstanceHandle& i,
         const dds::core::Time& timestamp)
@@ -303,7 +303,7 @@ DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::dispose_instance(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::dispose_instance(
         const T& key)
 {
@@ -312,7 +312,7 @@ DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::dispose_instance(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::dispose_instance(
         const T& key,
         const dds::core::Time& timestamp)
@@ -322,7 +322,7 @@ DataWriter<T, DELEGATE>& DataWriter<T, DELEGATE>::dispose_instance(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 dds::topic::TopicInstance<T>& DataWriter<T, DELEGATE>::key_value(
         dds::topic::TopicInstance<T>& i,
         const ::dds::core::InstanceHandle& h)
@@ -332,7 +332,7 @@ dds::topic::TopicInstance<T>& DataWriter<T, DELEGATE>::key_value(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 T& DataWriter<T, DELEGATE>::key_value(
         T& sample,
         const ::dds::core::InstanceHandle& h)
@@ -342,7 +342,7 @@ T& DataWriter<T, DELEGATE>::key_value(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 dds::core::InstanceHandle DataWriter<T, DELEGATE>::lookup_instance(
         const T& key)
 {
@@ -351,7 +351,7 @@ dds::core::InstanceHandle DataWriter<T, DELEGATE>::lookup_instance(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 const dds::topic::Topic<T>& DataWriter<T, DELEGATE>::topic() const
 {
     //To implement
@@ -359,7 +359,7 @@ const dds::topic::Topic<T>& DataWriter<T, DELEGATE>::topic() const
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 void DataWriter<T, DELEGATE>::listener(
         DataWriterListener<T>* listener,
         const ::dds::core::status::StatusMask& mask)
@@ -369,7 +369,7 @@ void DataWriter<T, DELEGATE>::listener(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 DataWriterListener<T>* DataWriter<T, DELEGATE>::listener() const
 {
     //To implement

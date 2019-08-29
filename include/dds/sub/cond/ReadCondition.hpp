@@ -53,7 +53,7 @@ namespace cond {
  * @see @ref DCPS_Modules_Infrastructure_Waitset "Subscription concept"
  * @see @ref anchor_dds_core_cond_waitset_examples "WaitSet examples"
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 class TReadCondition : public dds::core::cond::TCondition<DELEGATE>
 {
 public:

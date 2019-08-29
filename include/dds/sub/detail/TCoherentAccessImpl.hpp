@@ -37,10 +37,10 @@ namespace dds
 namespace sub
 {
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 TCoherentAccess<DELEGATE>::TCoherentAccess(const dds::sub::Subscriber& sub) : dds::core::Value<DELEGATE>(sub)  {  }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 void TCoherentAccess<DELEGATE>::end()
 {
     ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->delegate().get_subscriber().delegate().get());
@@ -48,7 +48,7 @@ void TCoherentAccess<DELEGATE>::end()
     this->delegate().end();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 TCoherentAccess<DELEGATE>::~TCoherentAccess()
 {
     ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->delegate().get_subscriber().delegate().get());

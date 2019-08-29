@@ -34,12 +34,12 @@
 // MACROS
 //
 #define OMG_DDS_POLICY_TRAITS(POLICY, ID) \
-    template <> \
+    template<> \
     class policy_id<POLICY> { \
     public: \
         static const dds::core::policy::QosPolicyId value = ID; \
     }; \
-    template <> \
+    template<> \
     class policy_name<POLICY> { \
     public:\
         static const std::string& name(); \
@@ -1381,7 +1381,7 @@ public:
 /**
  * \copydoc DCPS_QoS_DurabilityService
  */
-template <typename D>
+template<typename D>
 class TDurabilityService : public dds::core::Value<D>
 {
 public:
@@ -1534,7 +1534,7 @@ public:
 
 #ifdef OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
 
-template <typename D>
+template<typename D>
 class TTypeConsistencyEnforcement : public dds::core::Value<D>
 {
 public:

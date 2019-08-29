@@ -36,13 +36,8 @@
 
 #include <dds/domain/detail/DomainParticipant.hpp>
 
-namespace dds
-{
-namespace domain
-{
-
-template <typename DELEGATE>
-class TDomainParticipant;
+namespace dds {
+namespace domain {
 
 class DomainParticipantListener;
 }
@@ -63,8 +58,8 @@ class DomainParticipantListener;
  *
  * @see @ref DCPS_Modules_DomainParticipant "Domain Participant"
  */
-template <typename DELEGATE>
-class dds::domain::TDomainParticipant : public ::dds::core::TEntity<DELEGATE>
+template<typename DELEGATE>
+class TDomainParticipant : public ::dds::core::TEntity<DELEGATE>
 {
 public:
     /**
@@ -72,13 +67,15 @@ public:
      */
     typedef DomainParticipantListener Listener;
 
-    typedef dds::domain::DomainParticipantListener Listener;
-
 public:
-    OMG_DDS_REF_TYPE_PROTECTED_DC(TDomainParticipant, dds::core::TEntity, DELEGATE)
-    OMG_DDS_EXPLICIT_REF_BASE(TDomainParticipant, dds::core::Entity)
+    OMG_DDS_REF_TYPE_PROTECTED_DC(
+            TDomainParticipant,
+            dds::core::TEntity,
+            DELEGATE)
+    OMG_DDS_EXPLICIT_REF_BASE_DECL(
+            TDomainParticipant,
+            dds::core::Entity)
 
-public:
     /**
      * Creates a new DomainParticipant object. The DomainParticipant signifies
      * that the calling application intends to join the Domain identified by
@@ -118,17 +115,15 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TDomainParticipant(uint32_t                                        id,
-                       const dds::domain::qos::DomainParticipantQos&   qos,
-                       dds::domain::DomainParticipantListener*         listener = NULL,
-                       const dds::core::status::StatusMask&            event_mask = dds::core::status::StatusMask::none());
+    TDomainParticipant(
+            uint32_t id,
+            const dds::domain::qos::DomainParticipantQos& qos,
+            dds::domain::DomainParticipantListener* listener = NULL,
+            const dds::core::status::StatusMask& event_mask = dds::core::status::StatusMask::none());
 
-public:
     /** @cond */
     virtual ~TDomainParticipant();
     /** @endcond */
-
-public:
 
     /**
      * Register a listener with the DomainParticipant.
@@ -156,8 +151,9 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    void listener(Listener* listener,
-                  const ::dds::core::status::StatusMask& event_mask);
+    void listener(
+            Listener* listener,
+            const ::dds::core::status::StatusMask& event_mask);
 
     /**
      * Get the listener of this DomainParticipant.
@@ -200,7 +196,8 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    void qos(const dds::domain::qos::DomainParticipantQos& qos);
+    void qos(
+            const qos::DomainParticipantQos& qos);
 
     /**
      * This operation retrieves the domain_id used to create the
@@ -265,7 +262,8 @@ public:
      * @throws dds::core::AlreadyClosedError
      *                  The entity has already been closed.
      */
-    bool contains_entity(const ::dds::core::InstanceHandle& handle);
+    bool contains_entity(
+            const ::dds::core::InstanceHandle& handle);
 
     /**
      * This operation returns the current value of the time that the service
@@ -283,12 +281,13 @@ public:
     dds::core::Time current_time() const;
 
     /** @copydoc dds::domain::DomainParticipant::qos(const dds::domain::qos::DomainParticipantQos& qos) */
-    TDomainParticipant& operator << (const dds::domain::qos::DomainParticipantQos& qos);
+    TDomainParticipant& operator <<(
+            const qos::DomainParticipantQos& qos);
 
     /** @copydoc dds::domain::DomainParticipant::qos() */
-    const TDomainParticipant& operator >> (dds::domain::qos::DomainParticipantQos& qos) const;
+    const TDomainParticipant& operator >>(
+            qos::DomainParticipantQos& qos) const;
 
-public:
     /**
      * Gets the default DomainParticipantQos.
      *
@@ -436,7 +435,8 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TDomainParticipant& default_subscriber_qos(const ::dds::sub::qos::SubscriberQos& qos);
+    TDomainParticipant& default_subscriber_qos(
+            const ::dds::sub::qos::SubscriberQos& qos);
 
     /**
      * Gets the default TopicQos of the DomainParticipant.
@@ -491,251 +491,16 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TDomainParticipant& default_topic_qos(const dds::topic::qos::TopicQos& qos);
-
-#ifdef DOXYGEN_FOR_ISOCPP2
-     /*
-      * The above macro is never (and must never) be defined in normal compilation.
-      *
-      * The following code is for documenting proprietary API only.
-      */
-
-    /**
-      * This operation will create a snapshot of all persistent data matching the provided
-      * partition and topic expressions and store the snapshot at the location indicated by
-      * the URI. Only persistent data available on the local node is considered.
-      *
-      * @note This is a proprietary OpenSplice extension.
-      *
-      *<b>Detailed Description</b><br>
-      *
-      * This operation will create a snapshot of all persistent data matching the provided
-      * partition and topic expressions and store the snapshot at the location indicated by
-      * the URI. Only persistent data available on the local node is considered. This
-      * operation will fire an event to trigger the snapshot creation by the durability service
-      * and then return while the durability service fulfills the snapshot request.
-      * The created snapshot can then be used as the persistent store for the durability
-      * service next time it starts up by configuring the location of the snapshot as the
-      * persistent store in the configuration file. The durability service will then use the
-      * snapshot as the regular store (and can thus also alter its contents).
-      *
-      * <i>Call</i><br>
-      * This is a proprietary operation and can be called by using the operator->.
-      * @code{.cpp}
-      * dds::domain::DomainParticipant dp(domainId);
-      * dp->create_persistent_snapshot(...);
-      * @endcode
-      *
-      * @param partition_expression The expression of all partitions involved in
-      *                             the snapshot; this may contain wildcards.
-      * @param topic_expression     The expression of all topics involved in
-      *                             the snapshot; this may contain wildcards.
-      * @param uri                  The location where to store the snapshot.
-      *                             Currently only directories are supported.
-      */
-    void create_persistent_snapshot(const std::string& partition_expression, const std::string& topic_expression, const std::string& uri);
-
-#endif
-
-#ifdef DOXYGEN_FOR_ISOCPP2
-     /*
-      * The above macro is never (and must never) be defined in normal compilation.
-      *
-      * The following code is for documenting proprietary API only.
-      */
-
-    /**
-      * This operation safely detaches the application from all domains it is currently
-      * participating in.
-      *
-      * @note This is a proprietary OpenSplice extension.
-      *
-      *<b>Detailed Description</b><br>
-      *
-      * This operation safely detaches the application from all domains it is currently
-      * participating in. When this operation has been performed successfully,
-      * the application is no longer connected to any Domain.
-      * For Federated domains finishing this operation successfully means that all shared
-      * memory segments have been safely un-mapped from the application process.
-      * For SingleProcess mode domains this means all services for all domains have been
-      * stopped. This allows graceful termination of the OSPL services that run as threads
-      * within the application. Graceful termination of services in this mode would for
-      * instance allow durability flushing of persistent data and networking termination
-      * announcement over the network.
-      * When this call returns further access to all domains will be denied and it will
-      * not be possible for the application to open or re-open any DDS domain.
-      * <p>
-      * The behavior of the detach_all_domains operation is determined by the block_operations
-      * and delete_entities parameters:<br>
-      * <dl>
-      * <dt>block_operations:</dt>
-      * <dd>This parameter specifies if the application wants any DDS operation to be blocked
-      *     or not while detaching. When true, any DDS operation called during this operation
-      *     will be blocked and remain blocked forever (so also after the detach operation has
-      *     completed and returns to the caller). When false, any DDS operation called during
-      *     this operation may return RETCODE_ALREADY_DELETED. Please note that a listener
-      *     callback is not considered an operation in progress. Of course, if a DDS operation
-      *     is called from within the listener callback, that operation will be blocked
-      *     during the detaching if this attribute is set to TRUE.
-      * </dd>
-      * <dt>delete_entities:</dt>
-      * <dd>This parameter specifies if the application wants the DDS entities created by
-      *     the application to be deleted (synchronously) while detaching from the domain or
-      *     not. If true, all application entities are guaranteed to be deleted when the call
-      *     returns. If false, application entities will not explicitly be deleted by this
-      *     operation. In case of federated mode, the splice-daemon will delete them
-      *     asynchronously after this operation has returned. In case of SingleProcess mode
-      *     this attribute is ignored and clean up will always be performed, as this cannot
-      *     be delegated to a different process.
-      * </dd>
-      * </dl>
-      * </p>
-      * @note In federated mode when the detach_all_domain operation is called with
-      * block_operations is false and delete_entities is false then the DDS operations
-      * which are in progress and which are waiting for some condition to become true
-      * or waiting for an event to occur while the detach operation is performed may be
-      * blocked.
-      * <br>
-      *
-      * <i>Call</i><br>
-      * This is a proprietary operation and can be called by using the operator->.
-      * @code{.cpp}
-      * dds::domain::DomainParticipant dp(domainId);
-      * dp->detach_all_domains(...);
-      *
-      * or use
-      *
-      * org::opensplice::domain::DomainParticipant::detach_all_domains(...)
-      * @endcode
-      *
-      * @param block_operations Indicates whether the application wants any operations that
-      *                         are called while detaching to be blocked or not.
-      * @param delete_entities  Indicates whether the application DDS entities in the 'connected'
-      *                         domains must be deleted synchronously during detaching.
-      */
-    static void detach_all_domains(bool block_operations, bool delete_entities);
-
-
-#endif
-
-#ifdef DOXYGEN_FOR_ISOCPP2
-     /*
-      * The above macro is never (and must never) be defined in normal compilation.
-      *
-      * The following code is for documenting proprietary API only.
-      */
-    /**
-      * This operation set a property in the domainparticipant
-      *
-      * @note This is a proprietary OpenSplice extension.
-      *
-      *<b>Detailed Description</b><br>
-      *
-      * This operation sets a property in the domain participant to the specified value.
-      * <p>
-      * Currently, the following properties are defined:
-      * <i>isolateNode</i> : The isolateNode property allows applications to isolate the federation from the
-      *                  rest of the Domain, i.e. at network level disconnect the node from the rest of the
-      *                  system. Additionally, they also need to be able to issue a request to reconnect
-      *                  their federation to the domain again after which the durability merge-policy
-      *                  that is configured needs to be applied.
-      *                  To isolate a federation, the application needs to set the isolateNode property
-      *                  value to ‘true’ and to (de)isolate the federation the same property needs to set to ‘false’.
-      *                  The default value of the isolateNode property is ‘false’.
-      *                  All data that is published after isolateNode is set to true will not be sent to the network and
-      *                  any data received from the network will be ignored.
-      *                  Be aware that data being processed by the network service at time of isolating a node may still
-      *                  be sent to the network due to asynchronous nature of network service internals.
-      *                  The value is interpreted as a boolean (i.e., it must be either ‘true’ or ‘false’).
-      *                  <i>false</i> (default): The federation is connected to the domain.
-      *                  <i>true</i>: The federation is disconnected from the domain meaning that data is not published
-      *                   on the network and data from the network is ignored.
-      * </p>
-      * <br>
-      *
-      * <i>Call</i><br>
-      * This is a proprietary operation and can be called by using the operator->.
-      * @code{.cpp}
-      * dds::domain::DomainParticipant dp(domainId);
-      * dp->set_property(...);
-      * @endcode
-      *
-      * @param name  Indicates the name of the property to be set
-      * @param value Indicates the value to set
-      * @throws dds::core::Error
-      *                  An internal error has occurred.
-      * @throws dds::core::InvalidArgumentError
-      *                  an invalid value has been specified.
-      * @throws dds::core::AlreadyClosedError
-      *                  The entity has already been closed.
-      * @throws dds::core::OutOfResourcesError
-      *                  The Data Distribution Service ran out of resources to
-      *                  complete this operation.
-      * @throws dds::core::UnsupportedError
-      *                  The name specifies an undefined property or the operation is not supported in this version.
-      */
-    void set_property(std::string property, std::string value);
-#endif
-
-#ifdef DOXYGEN_FOR_ISOCPP2
-     /*
-      * The above macro is never (and must never) be defined in normal compilation.
-      *
-      * The following code is for documenting proprietary API only.
-      */
-    /**
-      * This operation get a property from the domainparticipant
-      *
-      * @note This is a proprietary OpenSplice extension.
-      *
-      *<b>Detailed Description</b><br>
-      *
-      * This operation gets a property from the domain participant.
-      * <p>
-      * Currently, the following properties are defined:
-      * <i>isolateNode</i> : The isolateNode property allows applications to isolate the federation from the
-      *                  rest of the Domain, i.e. at network level disconnect the node from the rest of the
-      *                  system. Additionally, they also need to be able to issue a request to reconnect
-      *                  their federation to the domain again after which the durability merge-policy
-      *                  that is configured needs to be applied.
-      *                  To isolate a federation, the application needs to set the isolateNode property
-      *                  value to ‘true’ and to (de)isolate the federation the same property needs to set to ‘false’.
-      *                  The default value of the isolateNode property is ‘false’.
-      *                  All data that is published after isolateNode is set to true will not be sent to the network and
-      *                  any data received from the network will be ignored.
-      *                  Be aware that data being processed by the network service at time of isolating a node may still
-      *                  be sent to the network due to asynchronous nature of network service internals.
-      * </p>
-      * <br>
-      *
-      * <i>Call</i><br>
-      * This is a proprietary operation and can be called by using the operator->.
-      * @code{.cpp}
-      * dds::domain::DomainParticipant dp(domainId);
-      * dp->get_property(...);
-      * @endcode
-      *
-      * @param name  Indicates the name of the property to get
-      *
-      * @return the value of the property
-      *
-      * @throws dds::core::Error
-      *                  An internal error has occurred.
-      * @throws dds::core::AlreadyClosedError
-      *                  The entity has already been closed.
-      * @throws dds::core::OutOfResourcesError
-      *                  The Data Distribution Service ran out of resources to
-      *                  complete this operation.
-      * @throws dds::core::UnsupportedError
-      *                  The name specifies an undefined property or the operation is not supported in this version.
-      */
-    std::string get_property(std::string property);
-
-#endif
-
+    TDomainParticipant& default_topic_qos(
+            const dds::topic::qos::TopicQos& qos);
 
     //=============================================================================
 };
 
+
+typedef dds::domain::detail::DomainParticipant DomainParticipant;
+
+}
+}
 
 #endif //OMG_DDS_DOMAIN_DOMAINPARTICIPANT_HPP_

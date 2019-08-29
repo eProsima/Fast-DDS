@@ -36,46 +36,46 @@ namespace dds
 namespace sub
 {
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 TSampleInfo<DELEGATE>::TSampleInfo() { }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 const dds::core::Time TSampleInfo<DELEGATE>::timestamp() const
 {
     return this->delegate().timestamp();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 const dds::sub::status::DataState TSampleInfo<DELEGATE>::state() const
 {
     return this->delegate().state();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 dds::sub::GenerationCount TSampleInfo<DELEGATE>::generation_count() const
 {
     return this->delegate().generation_count();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 dds::sub::Rank TSampleInfo<DELEGATE>::rank() const
 {
     return this->delegate().rank();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 bool TSampleInfo<DELEGATE>::valid() const
 {
     return this->delegate().valid();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 dds::core::InstanceHandle TSampleInfo<DELEGATE>::instance_handle() const
 {
     return this->delegate().instance_handle();
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 dds::core::InstanceHandle TSampleInfo<DELEGATE>::publication_handle() const
 {
     return this->delegate().publication_handle();
