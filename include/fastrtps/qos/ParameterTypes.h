@@ -146,7 +146,7 @@ public:
      * @param[in,out] msg Pointer to the message where the parameter should be added.
      * @return True if the parameter was correctly added.
      */
-    virtual bool RTPS_DllAPI addToCDRMessage(rtps::CDRMessage_t* msg) = 0;
+    RTPS_DllAPI virtual bool addToCDRMessage(rtps::CDRMessage_t* msg) = 0;
 
 public:
     //!Parameter ID
