@@ -40,7 +40,7 @@ namespace topic {
  *
  * @see dds::topic::Topic
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 class TAnyTopic :
     public ::dds::core::TEntity<DELEGATE>,
     public TTopicDescription<DELEGATE>
