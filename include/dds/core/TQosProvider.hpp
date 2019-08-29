@@ -36,7 +36,7 @@ namespace dds
 {
 namespace core
 {
-template <typename DELEGATE>
+template<typename DELEGATE>
 class TQosProvider;
 }
 }
@@ -50,7 +50,7 @@ class TQosProvider;
  *
  * @see @ref DCPS_QoS_Provider "QoS Provider extensive information."
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 class dds::core::TQosProvider : public dds::core::Reference<DELEGATE>
 {
 public:
