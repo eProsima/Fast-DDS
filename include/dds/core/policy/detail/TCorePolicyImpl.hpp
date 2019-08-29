@@ -254,7 +254,7 @@ TEntityFactory<D> TEntityFactory<D>::ManuallyEnable()
 
 //TTransportPriority
 
-template <typename D>
+template<typename D>
 TTransportPriority<D>::TTransportPriority(
         int32_t priority)
     : dds::core::Value<D>(priority) { }
