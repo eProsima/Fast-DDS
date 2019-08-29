@@ -95,7 +95,8 @@ public:
         collection_.reserve(cfg.initial);
     }
 
-    ResourceLimitedVector(const ResourceLimitedVector& other)
+    ResourceLimitedVector(
+            const ResourceLimitedVector& other)
         : configuration_(other.configuration_)
         , collection_(other.collection_.get_allocator())
     {
