@@ -23,15 +23,14 @@
 #include <string>
 
 //==============================================================================
-namespace dds
-{
-namespace topic
-{
-template <typename T>
+namespace dds {
+namespace topic {
+
+template<typename T>
 struct is_topic_type;
 
 /** @cond */
-template <typename T>
+template<typename T>
 struct topic_type_support;
 /** @endcond */
 
@@ -43,7 +42,7 @@ struct topic_type_support;
  * std::string typeName = dds::topic::topic_type_name<Foo::Bar>::value();
  * @endcode
  */
-template <typename T>
+template<typename T>
 struct topic_type_name
 {
     static std::string value()
@@ -68,7 +67,7 @@ struct topic_type_name
  * }
  * @endcode
  */
-template <typename T>
+template<typename T>
 struct dds::topic::is_topic_type
 {
     enum {value = 0 };
@@ -79,7 +78,7 @@ struct dds::topic::is_topic_type
  * IsoCpp doesn't know the TypeSupport concept. The type is automatically
  * registered when an Topic is created. So, what does this function do?
  */
-template <typename T>
+template<typename T>
 struct dds::topic::topic_type_support { };
 /** @endcond */
 

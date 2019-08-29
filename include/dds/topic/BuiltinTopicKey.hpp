@@ -22,13 +22,35 @@
 
 #include <dds/topic/detail/BuiltinTopicKey.hpp>
 
-namespace dds
-{
-namespace topic
-{
-typedef dds::topic::detail::BuiltinTopicKey BuiltinTopicKey;
-}
-}
+namespace dds {
+namespace topic {
 
+/**
+ * @brief
+ * Global unique identifier of the Topic.
+ */
+template<typename D>
+class dds::topic::TBuiltinTopicKey : public ::dds::core::Value<D>
+{
+public:
+    /**
+     * Gets the BuiltinTopicKey.
+     *
+     * @return the BuiltinTopicKey
+     */
+    const int32_t* value() const;
+
+    /**
+     * Sets the BuiltinTopicKey.
+     *
+     * @param v the value to set
+     */
+    void value(const int32_t v[]);
+};
+
+typedef dds::topic::detail::BuiltinTopicKey BuiltinTopicKey;
+
+}
+}
 
 #endif /* OMG_DDS_TOPIC_BUILTIN_TOPIC_KEY_HPP_ */

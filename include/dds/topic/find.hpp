@@ -24,10 +24,8 @@
 
 #include <dds/topic/detail/find.hpp>
 
-namespace dds
-{
-namespace topic
-{
+namespace dds {
+namespace topic {
 
 /**
  * This operation gives access to a locally-created Topic, ContentFilteredTopic,
@@ -44,9 +42,10 @@ namespace topic
  * @param dp the DomainParticipant to find the topic on
  * @param topic_name the topic name to find
  */
-template <typename TOPIC>
-TOPIC
-find(const dds::domain::DomainParticipant& dp, const std::string& topic_name);
+template<typename TOPIC>
+TOPIC find(
+        const dds::domain::DomainParticipant& dp,
+        const std::string& topic_name);
 
 }
 }
