@@ -135,8 +135,8 @@ std::ostream& operator <<(
         std::ostream& os,
         const dds::sub::SampleInfo& si);
 
-}
-}
+} //namespace sub
+} //namespace dds
 
 #include <dds/sub/detail/ddssub.hpp>
 
