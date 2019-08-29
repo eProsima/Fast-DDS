@@ -67,8 +67,8 @@ class Topic { };
 //{
 //public:
 
-//    typedef typename ::dds::core::smart_ptr_traits<Topic<T>>::ref_type ref_type;
-//    typedef typename ::dds::core::smart_ptr_traits<Topic<T>>::weak_ref_type weak_ref_type;
+//    typedef typename dds::core::smart_ptr_traits<Topic<T>>::ref_type ref_type;
+//    typedef typename dds::core::smart_ptr_traits<Topic<T>>::weak_ref_type weak_ref_type;
 
 //    Topic(
 //            const dds::domain::DomainParticipant& dp,
@@ -89,7 +89,7 @@ class Topic { };
 
 //    void listener(
 //            dds::topic::TopicListener<T>* listener,
-//            const ::dds::core::status::StatusMask& mask);
+//            const dds::core::status::StatusMask& mask);
 
 //    dds::topic::TopicListener<T>* listener();
 

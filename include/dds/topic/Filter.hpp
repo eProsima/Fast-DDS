@@ -21,6 +21,9 @@
 #define DDS_TOPIC_FILTER_HPP_
 
 #include <dds/topic/detail/Filter.hpp>
+#include <dds/core/Value.hpp>
+#include <string>
+#include <vector>
 
 namespace dds {
 namespace topic {
@@ -48,7 +51,7 @@ namespace topic {
  * @see @ref DCPS_Modules_TopicDefinition "Topic Definition"
  */
 template<typename D>
-class dds::topic::TFilter: public dds::core::Value<D>
+class TFilter: public dds::core::Value<D>
 {
 public:
     /**
