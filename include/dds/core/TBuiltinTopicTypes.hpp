@@ -27,16 +27,16 @@ namespace dds
 namespace core
 {
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 class TBytesTopicType;
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 class TStringTopicType;
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 class TKeyedBytesTopicType;
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 class TKeyedStringTopicType;
 }
 }
@@ -49,7 +49,7 @@ class TKeyedStringTopicType;
  *
  * This built-in type allows for easy transfer of vectors of bytes.
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 class dds::core::TBytesTopicType : public ::dds::core::Value<DELEGATE>
 {
 public:
@@ -87,7 +87,7 @@ public:
  *
  * This built-in type allows for easy transfer of strings.
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 class dds::core::TStringTopicType : public ::dds::core::Value<DELEGATE>
 {
 public:
@@ -125,7 +125,7 @@ public:
  *
  * This built-in type allows for easy transfer of keyed strings.
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 class dds::core::TKeyedStringTopicType : public ::dds::core::Value<DELEGATE>
 {
 public:
@@ -168,7 +168,7 @@ public:
  *
  * This built-in type allows for easy transfer of keyed vectors of bytes.
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 class dds::core::TKeyedBytesTopicType : public ::dds::core::Value<DELEGATE>
 {
 public:
