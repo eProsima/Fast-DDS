@@ -16,18 +16,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #ifndef OMG_DDS_SUB_ANY_DATA_READER_LISTENER_HPP_
 #define OMG_DDS_SUB_ANY_DATA_READER_LISTENER_HPP_
 
 #include <dds/core/refmacros.hpp>
+#include <dds/core/ref_traits.hpp>
 #include <dds/core/status/Status.hpp>
 #include <dds/sub/AnyDataReader.hpp>
 
-namespace dds
-{
-namespace sub
-{
-
+namespace dds {
+namespace sub {
 
 /**
  * @brief
@@ -147,4 +146,4 @@ public:
 }
 }
 
-#endif /* OMG_DDS_SUB_ANY_DATA_READER_LISTENER_HPP_ */
+#endif //OMG_DDS_SUB_ANY_DATA_READER_LISTENER_HPP_

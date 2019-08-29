@@ -22,12 +22,92 @@
 
 #include <dds/sub/detail/GenerationCount.hpp>
 
-namespace dds
-{
-namespace sub
-{
-typedef detail::GenerationCount GenerationCount;
-}
-}
+#include <dds/core/Value.hpp>
+#include <dds/core/detail/inttypes.hpp>
 
-#endif /* OMG_DDS_SUB_GENERATION_COUNT_HPP_ */
+namespace dds {
+namespace sub {
+
+/**
+ * @brief
+ * Class to hold sample GenerationCount information and is part of dds::sub::SampleInfo.
+ *
+ * Generations
+ * A generation is defined as: ‘the number of times an instance has become alive (with
+ * instance_state==ALIVE) at the time the sample was
+ * received’. Note that the generation counters are initialized to zero when a
+ * DataReader first detects a never-seen-before instance.
+ *
+ * For each instance the middleware internally maintains two counts: the
+ * disposed_generation_count and no_writers_generation_count, relative to
+ * each DataReader:
+ *
+ * Two types of generations are distinguished: disposed_generation_count and
+ * no_writers_generation_count.<br>
+ * - The disposed_generation_count and no_writers_generation_count are
+ *   initialized to zero when the DataReader first detects the presence of
+ *   a never-seen-before instance.
+ * - The disposed_generation_count is incremented each time the instance_state
+ *   of the corresponding instance changes from not_alive_disposed to alive.
+ * - The no_writers_generation_count is incremented each time the instance_state
+ *   of the corresponding instance changes from not_alive_no_writers to alive.
+ *
+ * The disposed_generation_count and no_writers_generation_count associated with
+ * the SampleInfo capture a snapshot of the corresponding counters at the time
+ * the sample was received.
+ *
+ * @see @ref DCPS_Modules_Subscription_SampleInfo "SampleInfo" for more information
+ */
+template<typename DELEGATE>
+class TGenerationCount : public core::Value<DELEGATE>
+{
+public:
+    /** @cond
+     * Create an empty GenerationCount.
+     * This constructor is required for containers.
+     * An application would normally not create a GenerationCount itself.
+     * So, do not put the creation in the API documentation for clarity.
+     */
+    TGenerationCount();
+
+    /**
+     * Create a GenerationCount instance.
+     * An application would normally not create a GenerationCount itself.
+     * So, do not put the creation in the API documentation for clarity.
+     */
+    TGenerationCount(
+            int32_t disposed_generation_count,
+            int32_t no_writers_generation_count);
+    /** @endcond */
+
+    /**
+     * Gets the disposed_generation_count.
+     *
+     * The disposed_generation_count is initialized at zero and is incremented
+     * each time the instance_state, of the corresponding instance, changes from
+     * not_alive_disposed to alive.
+     *
+     * @return the disposed_generation_count
+     */
+    int32_t disposed() const;
+
+    /**
+     * Gets the no_writers_generation_count.
+     *
+     * The no_writers_generation_count is initialized at zero and is incremented
+     * each time the instance_state, of the corresponding instance, changes from
+     * not_alive_no_writers to alive.
+     *
+     * @return the no_writers_generation_count
+     */
+    inline int32_t no_writers() const;
+
+};
+
+
+typedef detail::GenerationCount GenerationCount;
+
+} //namespace sub
+} //namespace dds
+
+#endif //OMG_DDS_SUB_GENERATION_COUNT_HPP_
