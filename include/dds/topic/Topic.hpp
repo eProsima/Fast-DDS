@@ -21,6 +21,7 @@
 #define OMG_DDS_TOPIC_TOPIC_HPP_
 
 #include <dds/topic/detail/Topic.hpp>
+#include <dds/topic/AnyTopic.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 
 namespace dds {
@@ -58,7 +59,7 @@ namespace topic {
  */
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 class TTopic : public TAnyTopic<DELEGATE<T>>
 {
 public:

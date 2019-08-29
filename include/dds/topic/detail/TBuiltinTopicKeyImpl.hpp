@@ -18,8 +18,8 @@
  *   limitations under the License.
  *
  */
-#ifndef OSPL_DDS_TOPIC_DETAIL_TBUILTINTOPICKEY_IMPL_HPP_
-#define OSPL_DDS_TOPIC_DETAIL_TBUILTINTOPICKEY_IMPL_HPP_
+#ifndef EPROSIMA_DDS_TOPIC_DETAIL_TBUILTINTOPICKEY_IMPL_HPP_
+#define EPROSIMA_DDS_TOPIC_DETAIL_TBUILTINTOPICKEY_IMPL_HPP_
 
 /**
  * @file
@@ -28,25 +28,23 @@
 /*
  * OMG PSM class declaration
  */
-#include <dds/topic/TBuiltinTopicKey.hpp>
+#include <dds/topic/BuiltinTopicKey.hpp>
 
 // Implementation
 
-namespace dds
-{
-namespace topic
-{
+namespace dds {
+namespace topic {
 
-template <typename D>
+template<typename D>
 const int32_t* TBuiltinTopicKey<D>::value() const
 {
     return this->delegate().value();
 }
 
-template <typename D>
+template<typename D>
 void TBuiltinTopicKey<D>::value(const int32_t v[])
 {
-    return this->delegate().value(v);
+    this->delegate().value(v);
 }
 
 }
@@ -54,4 +52,4 @@ void TBuiltinTopicKey<D>::value(const int32_t v[])
 
 // End of implementation
 
-#endif /* OSPL_DDS_TOPIC_DETAIL_TBUILTINTOPICKEY_IMPL_HPP_ */
+#endif /* EPROSIMA_DDS_TOPIC_DETAIL_TBUILTINTOPICKEY_IMPL_HPP_ */
