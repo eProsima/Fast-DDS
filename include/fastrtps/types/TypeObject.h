@@ -3316,7 +3316,7 @@ public:
     /*!
      * @brief This function check type consistency enforcement with the given TypeObject x.
      * @param x TypeObject to check if can be assigned to the current instance.
-     * @param typeConsistency TypeConsistencyEnforcementQoSPolicy to apply.
+     * @param consistency TypeConsistencyEnforcementQoSPolicy to apply.
      */
     RTPS_DllAPI bool consistent(const TypeObject &x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const;
