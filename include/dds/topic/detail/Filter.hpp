@@ -32,7 +32,7 @@ namespace topic {
 namespace detail {
 
 //TODO: Fix when FilterDelegate is implemented
-//typedef ::dds::topic::TFilter< ::org::opensplice::topic::FilterDelegate > Filter;
+//typedef dds::topic::TFilter< ::org::opensplice::topic::FilterDelegate > Filter;
 class Filter { };
 
 } //namespace detail

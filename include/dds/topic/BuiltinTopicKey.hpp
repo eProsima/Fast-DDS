@@ -21,6 +21,8 @@
 #define OMG_DDS_TOPIC_BUILTIN_TOPIC_KEY_HPP_
 
 #include <dds/topic/detail/BuiltinTopicKey.hpp>
+#include <dds/core/Value.hpp>
+#include <dds/core/types.hpp>
 
 namespace dds {
 namespace topic {
@@ -30,7 +32,7 @@ namespace topic {
  * Global unique identifier of the Topic.
  */
 template<typename D>
-class dds::topic::TBuiltinTopicKey : public ::dds::core::Value<D>
+class TBuiltinTopicKey : public dds::core::Value<D>
 {
 public:
     /**

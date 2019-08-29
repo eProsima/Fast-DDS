@@ -23,13 +23,11 @@
 #ifndef EPROSIMA_DDS_TOPIC_DETAIL_FIND_HPP_
 #define EPROSIMA_DDS_TOPIC_DETAIL_FIND_HPP_
 
-
 //TODO: Fix when find is implemented
 //#include <org/opensplice/topic/find.hpp>
 
-
 #include <string>
-
+#include <dds/domain/DomainParticipant.hpp>
 
 namespace dds {
 namespace topic {

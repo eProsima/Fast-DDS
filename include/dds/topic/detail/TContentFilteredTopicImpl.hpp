@@ -38,24 +38,25 @@ namespace topic {
 template<
     typename T,
     template<typename Q> class DELEGATE>
-ContentFilteredTopic<T, DELEGATE>::ContentFilteredTopic(
+TContentFilteredTopic<T, DELEGATE>::TContentFilteredTopic(
         const Topic<T>& topic,
         const std::string& name,
         const dds::topic::Filter& filter)
-    : ::dds::core::Reference<DELEGATE<T>>(new dds::topic::detail::ContentFilteredTopic<T>(topic, name, filter))
+    //: dds::core::Reference<DELEGATE<T>>(new dds::topic::detail::ContentFilteredTopic<T>(topic, name, filter))
+    : dds::core::Reference<DELEGATE<T>>()
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(topic);
-    this->delegate()->init(::dds::core::Reference< DELEGATE<T> >::impl_);
+    this->delegate()->init(dds::core::Reference< DELEGATE<T> >::impl_);
 }
 
 template<typename T, template<typename Q> class DELEGATE>
-ContentFilteredTopic<T, DELEGATE>::~ContentFilteredTopic()
+TContentFilteredTopic<T, DELEGATE>::~TContentFilteredTopic()
 {
     // Nothing to be done yet....
 }
 
 template<typename T, template<typename Q> class DELEGATE>
-const std::string& ContentFilteredTopic<T, DELEGATE>::filter_expression() const
+const std::string& TContentFilteredTopic<T, DELEGATE>::filter_expression() const
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 
@@ -63,7 +64,7 @@ const std::string& ContentFilteredTopic<T, DELEGATE>::filter_expression() const
 }
 
 template<typename T, template<typename Q> class DELEGATE>
-const dds::core::StringSeq ContentFilteredTopic<T, DELEGATE>::filter_parameters() const
+const dds::core::StringSeq TContentFilteredTopic<T, DELEGATE>::filter_parameters() const
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 
@@ -72,7 +73,7 @@ const dds::core::StringSeq ContentFilteredTopic<T, DELEGATE>::filter_parameters(
 
 template<typename T, template<typename Q> class DELEGATE>
 template<typename FWDIterator>
-void ContentFilteredTopic<T, DELEGATE>::filter_parameters(const FWDIterator& begin, const FWDIterator& end)
+void TContentFilteredTopic<T, DELEGATE>::filter_parameters(const FWDIterator& begin, const FWDIterator& end)
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 
@@ -80,7 +81,7 @@ void ContentFilteredTopic<T, DELEGATE>::filter_parameters(const FWDIterator& beg
 }
 
 template<typename T, template<typename Q> class DELEGATE>
-const dds::topic::Topic<T>& ContentFilteredTopic<T, DELEGATE>::topic() const
+const dds::topic::Topic<T>& TContentFilteredTopic<T, DELEGATE>::topic() const
 {
     ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 

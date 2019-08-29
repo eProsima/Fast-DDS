@@ -42,7 +42,7 @@ namespace topic {
  */
 template<typename DELEGATE>
 class TAnyTopic :
-    public ::dds::core::TEntity<DELEGATE>,
+    public dds::core::TEntity<DELEGATE>,
     public TTopicDescription<DELEGATE>
 {
     OMG_DDS_REF_TYPE_PROTECTED_DC(
@@ -136,11 +136,11 @@ class TAnyTopic :
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    ::dds::core::status::InconsistentTopicStatus inconsistent_topic_status() const;
+    dds::core::status::InconsistentTopicStatus inconsistent_topic_status() const;
 
 };
 
-typedef ::dds::topic::detail::AnyTopic AnyTopic;
+typedef dds::topic::detail::AnyTopic AnyTopic;
 
 } //namespace topic
 } //namespace dds

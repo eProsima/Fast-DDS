@@ -94,7 +94,7 @@ public:
      *
      * <i>QoS</i><br>
      * The Topic will be created with the QoS values specified on the last
-     * successful call to @link dds::domain::DomainParticipant::default_topic_qos(const ::dds::topic::qos::TopicQos& qos)
+     * successful call to @link dds::domain::DomainParticipant::default_topic_qos(const dds::topic::qos::TopicQos& qos)
      * dp.default_topic_qos(qos) @endlink or, if the call was never made, the
      * @ref anchor_dds_topic_qos_defaults "default" values.
      *
@@ -141,7 +141,7 @@ public:
      *
      * <i>QoS</i><br>
      * The Topic will be created with the QoS values specified on the last
-     * successful call to @link dds::domain::DomainParticipant::default_topic_qos(const ::dds::topic::qos::TopicQos& qos)
+     * successful call to @link dds::domain::DomainParticipant::default_topic_qos(const dds::topic::qos::TopicQos& qos)
      * dp.default_topic_qos(qos) @endlink or, if the call was never made, the
      * @ref anchor_dds_topic_qos_defaults "default" values.
      *
@@ -437,7 +437,7 @@ public:
      */
     void listener(
             Listener* listener,
-            const ::dds::core::status::StatusMask& event_mask);
+            const dds::core::status::StatusMask& event_mask);
 
     /**
      * Get the listener of this Topic.
