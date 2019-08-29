@@ -1,31 +1,27 @@
 /*
- *                         Vortex OpenSplice
+ * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
  *
- *   This software and documentation are Copyright 2006 to TO_YEAR ADLINK
- *   Technology Limited, its affiliated companies and licensors. All rights
- *   reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- *
- */
-#ifndef OSPL_DDS_SUB_DETAIL_FIND_HPP_
-#define OSPL_DDS_SUB_DETAIL_FIND_HPP_
+*/
+
+#ifndef EPROSIMA_DDS_SUB_DETAIL_FIND_HPP_
+#define EPROSIMA_DDS_SUB_DETAIL_FIND_HPP_
 
 /**
  * @file
  */
 
-// Implementation
 #include <string>
 #include <vector>
 
@@ -34,24 +30,18 @@
 #include <dds/sub/status/DataState.hpp>
 #include <dds/topic/TopicDescription.hpp>
 
-#include <org/opensplice/sub/SubscriberDelegate.hpp>
-#include <org/opensplice/sub/BuiltinSubscriberDelegate.hpp>
-#include <org/opensplice/sub/AnyDataReaderDelegate.hpp>
+//#include <org/opensplice/sub/SubscriberDelegate.hpp>
+//#include <org/opensplice/sub/BuiltinSubscriberDelegate.hpp>
+//#include <org/opensplice/sub/AnyDataReaderDelegate.hpp>
 
 /**
  * @cond
  * Ignore this file in the API
  */
 
-namespace dds
-{
-namespace sub
-{
-
-
-
-namespace detail
-{
+namespace dds {
+namespace sub {
+namespace detail {
 
 
 /*********************************************************************
@@ -62,48 +52,37 @@ namespace detail
  * we have to use these helper classes to get the specialization.
  *********************************************************************/
 
-typedef std::vector<org::opensplice::sub::AnyDataReaderDelegate::ref_type> base_readers_vector;
-typedef std::vector<org::opensplice::sub::AnyDataReaderDelegate::ref_type>::iterator base_readers_iterator;
+//TODO: Fix when AnyDataReaderDelegate is implemented
+//typedef std::vector<org::opensplice::sub::AnyDataReaderDelegate::ref_type> base_readers_vector;
+//typedef std::vector<org::opensplice::sub::AnyDataReaderDelegate::ref_type>::iterator base_readers_iterator;
 
 /*
  * Copy helper class for typed readers.
  */
-template <typename READER, typename ITERATOR>
+template<
+        typename READER,
+        typename ITERATOR>
 class ReadersCopySpecialization
 {
 public:
     static
-    bool copy(base_readers_iterator base_iter, ITERATOR typed_iter) {
-        bool copied = false;
-        try {
-            /* Cast base reader to typed delegate: */
-            typename READER::DELEGATE_REF_T reader_typed =
-                    OSPL_CXX11_STD_MODULE::dynamic_pointer_cast<typename READER::DELEGATE_T>(*base_iter);
-            READER dr(reader_typed);
-            if(dr != dds::core::null)
-            {
-                *typed_iter = dr;
-                copied = true;
-            }
-        } catch (...) {
-            /* Ignore, because subscriber can have returned readers that are of
-             * different types. */
-        }
-        return copied;
+    bool copy(/*base_readers_iterator base_iter,*/
+              ITERATOR typed_iter) {
+        //To implement
     }
 };
 
 /*
  * Copy helper class for any readers.
  */
-template <typename ITERATOR>
-class ReadersCopySpecialization<dds::sub::AnyDataReader, ITERATOR>
+template<typename ITERATOR>
+class ReadersCopySpecialization<::dds::sub::AnyDataReader, ITERATOR>
 {
 public:
     static
-    bool copy(base_readers_iterator base_iter, ITERATOR any_iter) {
-        *any_iter = (*base_iter)->wrapper_to_any();
-        return true;
+    bool copy(/*base_readers_iterator base_iter,*/
+              ITERATOR any_iter) {
+        //To implement
     }
 };
 
@@ -111,130 +90,107 @@ public:
 /*
  * Copy helper class for list of readers.
  */
-template <typename READER, typename ITERATOR>
+template<
+        typename READER,
+        typename ITERATOR>
 class ReadersCopy
 {
 public:
     static
-    uint32_t copy(base_readers_vector base_readers,
+    uint32_t copy(/*base_readers_vector base_readers,*/
                   ITERATOR begin,
                   uint32_t max_size)
     {
-        uint32_t size = 0;
-        base_readers_iterator iter;
-        for (iter = base_readers.begin(); (size < max_size) && (iter != base_readers.end()); ++iter) {
-            if (ReadersCopySpecialization<READER, ITERATOR>::copy(iter, begin)) {
-                begin++;
-                size++;
-            }
-        }
-        return size;
+        //To implement
     }
 
     static
-    uint32_t copy(base_readers_vector base_readers,
+    uint32_t copy(/*base_readers_vector base_readers,*/
                   ITERATOR begin)
     {
-        uint32_t size = 0;
-        base_readers_iterator iter;
-        for (iter = base_readers.begin(); iter != base_readers.end(); ++iter) {
-            if (ReadersCopySpecialization<READER, ITERATOR>::copy(iter, begin)) {
-                begin++;
-                size++;
-            }
-        }
-        return size;
+        //To implement
     }
 };
 
-} /* namespace detail */
+} //namespace detail
 
 
 
-template <typename READER, typename FwdIterator>
-uint32_t
-find(const dds::sub::Subscriber& sub,
-     const std::string &topic_name,
-     FwdIterator begin, uint32_t max_size)
+template<
+        typename READER,
+        typename FwdIterator>
+uint32_t find(
+        const Subscriber& sub,
+         const std::string &topic_name,
+         FwdIterator begin,
+        uint32_t max_size)
 {
-    uint32_t size = 0;
-    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
-    if (max_size > 0) {
-        detail::base_readers_vector base_readers;
-        base_readers = sub.delegate()->find_datareaders(topic_name);
-        size = detail::ReadersCopy<READER, FwdIterator>::copy(base_readers, begin, max_size);
-    }
-    return size;
+    //To implement
 }
 
-template <typename READER, typename BinIterator>
-uint32_t
-find(const dds::sub::Subscriber& sub,
-     const std::string &topic_name,
-     BinIterator begin)
+template<
+        typename READER,
+        typename BinIterator>
+uint32_t find(
+        const Subscriber& sub,
+        const std::string &topic_name,
+        BinIterator begin)
 {
-	ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
-    uint32_t size = 0;
-    detail::base_readers_vector base_readers;
-    base_readers = sub.delegate()->find_datareaders(topic_name);
-    size = detail::ReadersCopy<READER, BinIterator>::copy(base_readers, begin);
-    return size;
+    //To implement
 }
 
-template <typename READER, typename T, typename FwdIterator>
-uint32_t
-find(const dds::sub::Subscriber& sub,
-     const dds::topic::TopicDescription& topic_description,
-     FwdIterator begin, uint32_t max_size)
+template<
+        typename READER,
+        typename T,
+        typename FwdIterator>
+uint32_t find(
+        const Subscriber& sub,
+        const dds::topic::TopicDescription& topic_description,
+        FwdIterator begin,
+        uint32_t max_size)
 {
-	ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
-    return find<READER, T, FwdIterator>(sub, topic_description.name(), begin, max_size);
+    //To implement
 }
 
-template <typename READER, typename T, typename BinIterator>
-uint32_t
-find(const dds::sub::Subscriber& sub,
-     const dds::topic::TopicDescription& topic_description,
-     BinIterator begin)
+template<
+        typename READER,
+        typename T,
+        typename BinIterator>
+uint32_t find(
+        const Subscriber& sub,
+        const dds::topic::TopicDescription& topic_description,
+        BinIterator begin)
 {
-	ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
-    return find<READER, T, BinIterator>(sub, topic_description.name(), begin);
+    //To implement
 }
 
-template <typename READER, typename FwdIterator>
-uint32_t
-find(const dds::sub::Subscriber& sub,
-     const dds::sub::status::DataState& rs,
-     FwdIterator begin, uint32_t max_size)
+template<
+        typename READER,
+        typename FwdIterator>
+uint32_t find(
+        const Subscriber& sub,
+        const status::DataState& rs,
+        FwdIterator begin,
+        uint32_t max_size)
 {
-	ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
-    uint32_t size = 0;
-    if (max_size > 0) {
-        detail::base_readers_vector base_readers;
-        base_readers = sub.delegate()->get_datareaders(rs);
-        size = detail::ReadersCopy<READER, FwdIterator>::copy(base_readers, begin, max_size);
-    }
-    return size;
+    //To implement
 }
 
-template <typename READER, typename BinIterator>
-uint32_t
-find(const dds::sub::Subscriber& sub,
-     const dds::sub::status::DataState& rs,
-     BinIterator begin)
+template<
+        typename READER,
+        typename BinIterator>
+uint32_t find(
+        const Subscriber& sub,
+        const status::DataState& rs,
+        BinIterator begin)
 {
-	ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
-    uint32_t size = 0;
-    detail::base_readers_vector base_readers;
-    base_readers = sub.delegate()->get_datareaders(rs);
-    size = detail::ReadersCopy<READER, BinIterator>::copy(base_readers, begin);
-    return size;
+    //To implement
 }
 
-}
-}
+} //namespace sub
+} //namespace dds
 
 /** @endcond */
 
-#endif /* OSPL_DDS_SUB_DETAIL_FIND_HPP_ */
+#endif //EPROSIMA_DDS_SUB_DETAIL_FIND_HPP_
 

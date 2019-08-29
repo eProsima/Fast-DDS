@@ -26,21 +26,23 @@
 #include <dds/sub/detail/LoanedSamples.hpp>
 
 /** @cond */
-namespace dds
-{
-namespace sub
-{
-template <typename T,
-          template <typename Q> class DELEGATE = dds::sub::detail::LoanedSamples>
+namespace dds {
+namespace sub {
+template<
+        typename T,
+        template <typename Q> class DELEGATE = dds::sub::detail::LoanedSamples>
 class LoanedSamples;
 
 // Used by C++11 compilers to allow for using LoanedSamples
 // and SharedSamples in a range-based for-loop.
-template <typename T> typename T::const_iterator cbegin(const T& t);
-template <typename T> typename T::const_iterator cend(const T& t);
-}
+template<typename T>
+typename T::const_iterator cbegin(
+        const T& t);
 
-}
+template<typename T>
+typename T::const_iterator cend(
+        const T& t);
+
 /** @endcond */
 
 /**
@@ -85,8 +87,10 @@ template <typename T> typename T::const_iterator cend(const T& t);
  * @see @ref DCPS_Modules_Subscription_SampleInfo "SampleInfo" for more information
  * @see @ref DCPS_Modules_Subscription "Subscription" for more information
  */
-template <typename T, template <typename Q> class DELEGATE>
-class dds::sub::LoanedSamples
+template<
+        typename T,
+        template <typename Q> class DELEGATE>
+class LoanedSamples
 {
 public:
     /**
@@ -103,7 +107,6 @@ public:
     typedef typename dds::core::smart_ptr_traits< DELEGATE<T> >::ref_type DELEGATE_REF_T;
     /** @endcond */
 
-public:
     /**
      * Constructs a LoanedSamples instance.
      */
@@ -121,10 +124,9 @@ public:
      * No actual data samples are copied.<br>
      * Just references and reference counts are updated.
      */
-    LoanedSamples(const LoanedSamples& other);
+    LoanedSamples(
+            const LoanedSamples& other);
 
-
-public:
     /**
      * Gets an iterator pointing to the first sample in the LoanedSamples container.
      *
@@ -173,21 +175,21 @@ private:
     DELEGATE_REF_T delegate_;
 };
 
-namespace dds
-{
-namespace sub
-{
 /**
  * Move loan and its ownership to a new LoanedSamples object.
  *
  * @return LoanedSampless
  */
-template <typename T, template <typename Q> class D>
-LoanedSamples<T, D >
-move(LoanedSamples<T, D >& a);
-}
-}
+template<
+        typename T,
+        template <typename Q> class D>
+LoanedSamples<T, D > move(
+        LoanedSamples<T, D >& a);
 
-#include <dds/sub/detail/LoanedSamplesImpl.hpp>
+} //namespace sub
+} //namespace dds
 
-#endif /* OMG_DDS_SUB_TLOANED_SAMPLES_HPP_ */
+//TODO: Fix when LoanedSamplesImpl is implemented
+//#include <dds/sub/detail/LoanedSamplesImpl.hpp>
+
+#endif //OMG_DDS_SUB_TLOANED_SAMPLES_HPP_
