@@ -22,6 +22,15 @@ void Serializer::serialize(eprosima::fastcdr::Cdr& cdr)
         case theType::DynamicData :
             serializeDynData(p_.dd(), cdr) ;
             break ;
+        case theType::MemberFlag :
+            serializeMemberFlag(p_.mf(), cdr) ;
+            break ;
+        case theType::TypeFlag :
+            serializeTypeFlag(p_.tf(), cdr) ;
+            break ;
+        case theType::TypeObjectHashId :
+            serializeTypeObjectHashId(p_.tohi(), cdr) ;
+            break ;
 
         default:
             break ;
@@ -33,6 +42,15 @@ void Serializer::deserialize(eprosima::fastcdr::Cdr& cdr)
     switch (t_){
         case theType::DynamicData :
             deserializeDynData(p_.dd(), cdr) ;
+            break ;
+        case theType::MemberFlag :
+            deserializeMemberFlag(p_.mf(), cdr) ;
+            break ;
+        case theType::TypeFlag :
+            deserializeTypeFlag(p_.tf(), cdr) ;
+            break ;
+        case theType::TypeObjectHashId :
+            deserializeTypeObjectHashId(p_.tohi(), cdr) ;
             break ;
 
         default:
