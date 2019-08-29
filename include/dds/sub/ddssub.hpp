@@ -119,6 +119,10 @@
 // Pretty Print Utilities
 //
 // #if (OMG_DDS_HAS_PRETTY_PRINT_COUT == 1)
+namespace dds {
+namespace sub {
+class Rank;
+
 std::ostream& operator <<(
         std::ostream& os,
         const dds::sub::status::DataState& s);
@@ -130,6 +134,9 @@ std::ostream& operator <<(
 std::ostream& operator <<(
         std::ostream& os,
         const dds::sub::SampleInfo& si);
+
+} //namespace sub
+} //namespace dds
 
 #include <dds/sub/detail/ddssub.hpp>
 

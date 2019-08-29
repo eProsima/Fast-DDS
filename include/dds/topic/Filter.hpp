@@ -17,13 +17,19 @@
  * limitations under the License.
  */
 
-#ifndef DDS_TOPIC_FILTER_HPP_
-#define DDS_TOPIC_FILTER_HPP_
+#ifndef OMG_DDS_TOPIC_FILTER_HPP_
+#define OMG_DDS_TOPIC_FILTER_HPP_
 
 #include <dds/topic/detail/Filter.hpp>
 #include <dds/core/Value.hpp>
 #include <string>
 #include <vector>
+
+#include <dds/core/Value.hpp>
+#include <dds/core/detail/inttypes.hpp>
+
+#include <vector>
+#include <string>
 
 namespace dds {
 namespace topic {
@@ -64,7 +70,6 @@ public:
      */
     typedef typename D::const_iterator const_iterator;
 
-public:
     /**
      * Create a Filter based on a query expression.
      *
@@ -189,8 +194,8 @@ public:
 
 typedef dds::topic::detail::Filter Filter;
 
-}
-}
+} //namespace topic
+} //namespace dds
 
 
-#endif /* DDS_TOPIC_FILTER_HPP_ */
+#endif //OMG_DDS_TOPIC_FILTER_HPP_

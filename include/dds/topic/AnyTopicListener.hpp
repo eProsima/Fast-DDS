@@ -85,7 +85,7 @@ public:
 /** @endcond */
 };
 
-}
-}
+} //namespace topic
+} //namespace dds
 
 #endif //OMG_DDS_TOPIC_ANY_TOPIC_LISTENER_HPP_

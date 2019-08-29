@@ -39,8 +39,14 @@ template<
 class MultiTopic : public TTopicDescription< DELEGATE<T> >
 {
 public:
-    OMG_DDS_REF_TYPE_PROTECTED_DC_T(MultiTopic, dds::topic::TTopicDescription, T, DELEGATE)
-    OMG_DDS_IMPLICIT_REF_BASE(MultiTopic)
+    OMG_DDS_REF_TYPE_PROTECTED_DC_T(
+            MultiTopic,
+            dds::topic::TTopicDescription,
+            T,
+            DELEGATE)
+
+    OMG_DDS_IMPLICIT_REF_BASE(
+            MultiTopic)
 
 public:
     template<typename FWDIterator>
@@ -70,9 +76,9 @@ template<
     template<typename Q> class DELEGATE = dds::topic::detail::MultiTopic>
 class MultiTopic;
 
-#endif  // OMG_DDS_MULTI_TOPIC_SUPPORT
+#endif  //OMG_DDS_MULTI_TOPIC_SUPPORT
 
-}
-}
+} //namespace topic
+} //namespace dds
 
-#endif /* OMG_DDS_TOPIC_MULTI_TOPIC_HPP_ */
+#endif //OMG_DDS_TOPIC_MULTI_TOPIC_HPP_
