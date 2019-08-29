@@ -22,10 +22,8 @@
 
 #include <dds/domain/DomainParticipant.hpp>
 
-namespace dds
-{
-namespace topic
-{
+namespace dds {
+namespace topic {
 
 /**
  * This operation gives access to an specific existing (or ready to exist) enabled
@@ -69,10 +67,11 @@ namespace topic
  * @throws dds::core::TimeoutError
  *                  No Topics of the given name found within the timeout.
  */
-template <typename TOPIC>
-TOPIC discover(const dds::domain::DomainParticipant& dp,
-               const std::string& name,
-               const dds::core::Duration& timeout = dds::core::Duration::infinite());
+template<typename TOPIC>
+TOPIC discover(
+        const dds::domain::DomainParticipant& dp,
+        const std::string& name,
+        const dds::core::Duration& timeout = dds::core::Duration::infinite());
 
 /**
  * This operation retrieves a list of Topics that have been discovered in the domain.
@@ -94,8 +93,12 @@ TOPIC discover(const dds::domain::DomainParticipant& dp,
  *        in which to insert the topics
  * @param max_size the maximum number of topics to return
  */
-template <typename ANYTOPIC, typename FwdIterator>
-uint32_t discover(const dds::domain::DomainParticipant& dp, FwdIterator begin, uint32_t max_size);
+template<
+    typename ANYTOPIC,
+    typename FwdIterator>
+uint32_t discover(
+        const dds::domain::DomainParticipant& dp,
+        FwdIterator begin, uint32_t max_size);
 
 /**
  * This operation retrieves a list of all Topics that have been discovered in the domain.
@@ -113,8 +116,12 @@ uint32_t discover(const dds::domain::DomainParticipant& dp, FwdIterator begin, u
  * @param begin a back inserting iterator pointing to the beginning of a container
  *        in which to insert the topics
  */
-template <typename ANYTOPIC, typename BinIterator>
-uint32_t discover_all(const dds::domain::DomainParticipant& dp, BinIterator begin);
+template<
+    typename ANYTOPIC,
+    typename BinIterator>
+uint32_t discover_all(
+        const dds::domain::DomainParticipant& dp,
+        BinIterator begin);
 
 /**
  * This operation allows an application to instruct the Service to locally ignore
@@ -127,7 +134,9 @@ uint32_t discover_all(const dds::domain::DomainParticipant& dp, BinIterator begi
  * @param dp the DomainParticipant
  * @param handle the handle of the DomainParticipant to ignore
  */
-void OMG_DDS_API ignore(const dds::domain::DomainParticipant& dp, const dds::core::InstanceHandle& handle);
+void OMG_DDS_API ignore(
+        const dds::domain::DomainParticipant& dp,
+        const dds::core::InstanceHandle& handle);
 
 /**
  * This operation allows an application to instruct the Service to locally ignore
@@ -143,8 +152,10 @@ void OMG_DDS_API ignore(const dds::domain::DomainParticipant& dp, const dds::cor
  * @param end a forward iterator pointing to the end of a sequence of
  *        InstanceHandles to ignore
  */
-template <typename FwdIterator>
-void ignore(const dds::domain::DomainParticipant& dp, FwdIterator begin, FwdIterator end);
+template<typename FwdIterator>
+void ignore(
+        const dds::domain::DomainParticipant& dp,
+        FwdIterator begin, FwdIterator end);
 
 }
 }

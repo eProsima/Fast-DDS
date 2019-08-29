@@ -62,7 +62,7 @@ class Topic { };
  ***************************************************************************/
 
 //TODO: Fix when TopicTraits, AnyTopicDelegate and TopicDescriptionDelegate are implemented
-//template <typename T>
+//template<typename T>
 //class Topic : public org::opensplice::topic::AnyTopicDelegate
 //{
 //public:
