@@ -44,7 +44,7 @@ void ignore(
 
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 ::dds::core::InstanceHandleSeq matched_publications(
         const DataReader<T, DELEGATE>& dr)
 {
@@ -54,7 +54,7 @@ template<
 template<
         typename T,
         typename FwdIterator,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 uint32_t matched_publications(
         const DataReader<T, DELEGATE>& dr,
         FwdIterator begin,

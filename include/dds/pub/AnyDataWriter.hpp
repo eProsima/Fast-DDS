@@ -43,7 +43,7 @@ namespace pub {
  * and DomainParticipantListener.
  *
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 class TAnyDataWriter : public dds::core::TEntity<DELEGATE>
 {
 public:

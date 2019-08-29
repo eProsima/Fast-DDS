@@ -34,7 +34,7 @@ namespace pub {
 
 template<
         typename T,
-        template <typename Q> class DELEGATE = dds::pub::detail::DataWriter >
+        template<typename Q> class DELEGATE = dds::pub::detail::DataWriter >
 class DataWriter;
 
 template<typename T>
@@ -87,7 +87,7 @@ class DataWriterListener;
  */
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 class DataWriter : public TAnyDataWriter< DELEGATE<T> >
 {
 

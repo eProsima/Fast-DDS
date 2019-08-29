@@ -36,34 +36,34 @@ namespace dds
 namespace sub
 {
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 Sample<T, DELEGATE>::Sample() : dds::core::Value< DELEGATE<T> >() {}
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 Sample<T, DELEGATE>::Sample(const T& data, const SampleInfo& info) : dds::core::Value< DELEGATE<T> >(data, info) { }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 Sample<T, DELEGATE>::Sample(const Sample& other) : dds::core::Value< DELEGATE<T> >(other.delegate()) { }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 const typename Sample<T, DELEGATE>::DataType& Sample<T, DELEGATE>::data() const
 {
     return this->delegate().data();
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 void Sample<T, DELEGATE>::data(const DataType& d)
 {
     this->delegate().data(d);
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 const SampleInfo& Sample<T, DELEGATE>::info() const
 {
     return this->delegate().info();
 }
 
-template <typename T, template <typename Q> class DELEGATE>
+template<typename T, template<typename Q> class DELEGATE>
 void Sample<T, DELEGATE>::info(const SampleInfo& i)
 {
     this->delegate().info(i);

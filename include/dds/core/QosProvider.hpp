@@ -47,7 +47,7 @@ namespace core {
  *
  * @see @ref DCPS_QoS_Provider "QoS Provider extensive information."
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 class TQosProvider : public Reference<DELEGATE>
 {
 public:
