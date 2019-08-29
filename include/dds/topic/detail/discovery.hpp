@@ -15,7 +15,6 @@
  *
 */
 
-
 /**
  * @file
  */
@@ -35,80 +34,51 @@
  * Ignore this file in the API
  */
 
-namespace dds
-{
-namespace topic
-{
+namespace dds {
+namespace topic {
 
 template<typename TOPIC>
-TOPIC
-discover(
+TOPIC discover(
     const dds::domain::DomainParticipant& dp,
     const std::string& topic_name,
     const dds::core::Duration& timeout)
 {
-    //TODO: Fix when discovery is implmented
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-//    TOPIC t = org::opensplice::topic::lookup_topic<TOPIC, typename TOPIC::DELEGATE_T>::discover(dp, topic_name, timeout);
-
-//    return t;
+    //To implement
 }
 
 
-template<typename ANYTOPIC, typename FwdIterator>
-uint32_t
-discover(
+template<
+        typename ANYTOPIC,
+        typename FwdIterator>
+uint32_t discover(
     const dds::domain::DomainParticipant& dp,
     FwdIterator begin,
     uint32_t max_size)
 {
-    //TODO: Fix when discovery is implmented
-//	ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-//    std::vector<ANYTOPIC> list;
-
-//    org::opensplice::topic::lookup_topic<ANYTOPIC, typename ANYTOPIC::DELEGATE_T>::discover(dp, list, max_size);
-
-//    FwdIterator fit = begin;
-//    for (typename std::vector<ANYTOPIC>::const_iterator it = list.begin(); it != list.end(); ++it) {
-//       *fit++ = *it;
-//    }
-
-//    return list.size();
+    //To implement
 }
 
-template<typename ANYTOPIC, typename BinIterator>
-uint32_t
-discover_all(
+template<
+        typename ANYTOPIC,
+        typename BinIterator>
+uint32_t discover_all(
     const dds::domain::DomainParticipant& dp,
     BinIterator begin)
 {
-    //TODO: Fix when discovery is implmented
-//	ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-//    std::vector<ANYTOPIC> list;
-
-//    org::opensplice::topic::lookup_topic<ANYTOPIC, typename ANYTOPIC::DELEGATE_T>::discover(dp, list, (uint32_t)dds::core::LENGTH_UNLIMITED);
-
-//    BinIterator bit = begin;
-//    for (typename std::vector<ANYTOPIC>::const_iterator it = list.begin(); it != list.end(); ++it) {
-//       *bit++ = *it;
-//    }
-
-//    return list.size();
+    //To implement
 }
 
 
 template<typename FwdIterator>
-void
-ignore(
+void ignore(
     const dds::domain::DomainParticipant& dp,
     FwdIterator begin, FwdIterator end)
 {
-    //TODO: Fix when discovery is implmented
-//    ISOCPP_THROW_EXCEPTION(ISOCPP_UNSUPPORTED_ERROR, "Function not currently supported");
+    //To implement
 }
 
-}
-}
+} //namespace topic
+} //namespace dds)
 
 /** @endcond */
 

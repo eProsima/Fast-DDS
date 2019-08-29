@@ -41,4 +41,4 @@ class Filter { };
 
 /** @endcond */
 
-#endif //EPORSIMA_DDS_TOPIC_DETAIL_QUERY_HPP_
+#endif //EPROSIMA_DDS_TOPIC_DETAIL_QUERY_HPP_

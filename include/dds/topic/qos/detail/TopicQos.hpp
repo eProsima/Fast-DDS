@@ -1,8 +1,5 @@
-/* Copyright 2010, Object Management Group, Inc.
- * Copyright 2010, PrismTech, Corp.
- * Copyright 2010, Real-Time Innovations, Inc.
+/*
  * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
- * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *
+*/
 
-#ifndef OMG_DDS_TOPIC_QOS_DETAIL_TOPIC_QOS_HPP_
-#define OMG_DDS_TOPIC_QOS_DETAIL_TOPIC_QOS_HPP_
+#ifndef EPROSIMA_DDS_TOPIC_QOS_DETAIL_TOPIC_QOS_HPP_
+#define EPROSIMA_DDS_TOPIC_QOS_DETAIL_TOPIC_QOS_HPP_
 
 //#include <dds/core/detail/TEntityQosImpl.hpp>
 //TODO: Fix when TopicQosDelegate is implemented
@@ -33,9 +31,9 @@ namespace detail {
 //typedef dds::core::TEntityQos< ::org::opensplice::topic::qos::TopicQosDelegate > TopicQos;
 class TopicQos { };
 
-}
-}
-}
-}
+} //namespace detail
+} //namespace qos
+} //namespace topic
+} //namespace dds
 
-#endif //OMG_DDS_TOPIC_QOS_DETAIL_TOPIC_QOS_HPP_
+#endif //EPROSIMA_DDS_TOPIC_QOS_DETAIL_TOPIC_QOS_HPP_

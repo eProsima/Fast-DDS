@@ -476,8 +476,8 @@ typedef dds::topic::detail::TopicBuiltinTopicData TopicBuiltinTopicData;
 typedef dds::topic::detail::PublicationBuiltinTopicData PublicationBuiltinTopicData;
 typedef dds::topic::detail::SubscriptionBuiltinTopicData SubscriptionBuiltinTopicData;
 
-}
-}
+} //namespace topic
+} //namespace dds
 
 
-#endif /* OMG_DDS_TOPIC_BUILTIN_TOPIC_HPP_ */
+#endif //OMG_DDS_TOPIC_BUILTIN_TOPIC_HPP_

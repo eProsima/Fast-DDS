@@ -157,9 +157,9 @@ void ignore(
         const dds::domain::DomainParticipant& dp,
         FwdIterator begin, FwdIterator end);
 
-}
-}
+} //namespace topic
+} //namespace dds
 
 #include <dds/topic/detail/discovery.hpp>
 
-#endif /* OMG_DDS_TOPIC_DISCOVER_HPP_ */
+#endif //OMG_DDS_TOPIC_DISCOVER_HPP_
