@@ -97,8 +97,9 @@ public:
 
     ResourceLimitedVector(const ResourceLimitedVector& other)
         : configuration_(other.configuration_)
-        , collection_(other.collection_.capacity(), other.collection_.get_allocator())
+        , collection_(other.collection_.get_allocator())
     {
+        collection_.reserve(other.collection_.capacity());
         collection_.assign(other.collection_.begin(), other.collection_.end());
     }
 
