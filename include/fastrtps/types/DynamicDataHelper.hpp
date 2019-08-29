@@ -340,10 +340,10 @@ protected:
                 for (size_t i = 0; i < size; ++i)
                 {
                     size_t index = i * 2;
-                    MemberId id = data->get_member_id_at_index(index);
+                    MemberId id = data->get_member_id_at_index(static_cast<uint32_t>(index));
                     std::cout << "Key: ";
                     print_member(st_data, members[id], tabs + "\t");
-                    id = data->get_member_id_at_index(index + 1);
+                    id = data->get_member_id_at_index(static_cast<uint32_t>(index + 1));
                     std::cout << "Value: ";
                     print_member(st_data, members[id], tabs + "\t");
                 }
@@ -424,10 +424,10 @@ protected:
                 for (size_t i = 0; i < size; ++i)
                 {
                     size_t index = i * 2;
-                    MemberId id = data->get_member_id_at_index(index);
+                    MemberId id = data->get_member_id_at_index(static_cast<uint32_t>(index));
                     std::cout << "Key: ";
                     print_member(st_data, members[id], tabs + "\t");
-                    id = data->get_member_id_at_index(index + 1);
+                    id = data->get_member_id_at_index(static_cast<uint32_t>(index + 1));
                     std::cout << "Value: ";
                     print_member(st_data, members[id], tabs + "\t");
                 }

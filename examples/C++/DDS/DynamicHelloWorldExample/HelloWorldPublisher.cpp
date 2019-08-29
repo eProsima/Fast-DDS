@@ -156,10 +156,12 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
     }
     else
     {
-        for(uint32_t i = 0;i<samples;++i)
+        for(uint32_t s = 0; s < samples; ++s)
         {
             if(!publish())
-                --i;
+            {
+                --s;
+            }
             else
             {
                 std::string message;

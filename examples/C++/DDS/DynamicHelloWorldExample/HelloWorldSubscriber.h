@@ -81,8 +81,6 @@ public:
         HelloWorldSubscriber* subscriber_;
     }m_listener;
 
-private:
-    eprosima::fastrtps::types::DynamicPubSubType m_type;
 };
 
 #endif /* HELLOWORLDSUBSCRIBER_H_ */

@@ -280,7 +280,8 @@ void TypeObjectFactory::fill_minimal_information(
     }
     else
     {
-        info->minimal().typeid_with_size().typeobject_serialized_size(TypeObject::getCdrSerializedSize(*obj));
+        info->minimal().typeid_with_size().typeobject_serialized_size(
+            static_cast<uint32_t>(TypeObject::getCdrSerializedSize(*obj)));
     }
 
     switch(ident->_d())
@@ -423,7 +424,7 @@ void TypeObjectFactory::fill_minimal_information(
                             informations_created_.push_back(information);
                         }
                     }
-                    info->minimal().dependent_typeid_count(members.size());
+                    info->minimal().dependent_typeid_count(static_cast<int32_t>(members.size()));
                     break;
                 }
                 case TK_ENUM:
@@ -472,7 +473,7 @@ void TypeObjectFactory::fill_minimal_information(
                         informations_[descId] = information;
                         informations_created_.push_back(information);
                     }
-                    info->minimal().dependent_typeid_count(members.size() + 1);
+                    info->minimal().dependent_typeid_count(static_cast<int32_t>(members.size() + 1));
                     break;
                 }
                 case TK_ANNOTATION:
@@ -504,7 +505,8 @@ void TypeObjectFactory::fill_complete_information(
     }
     else
     {
-        info->complete().typeid_with_size().typeobject_serialized_size(TypeObject::getCdrSerializedSize(*obj));
+        info->complete().typeid_with_size().typeobject_serialized_size(
+            static_cast<uint32_t>(TypeObject::getCdrSerializedSize(*obj)));
     }
 
     switch(ident->_d())
@@ -589,7 +591,6 @@ void TypeObjectFactory::fill_complete_information(
             const TypeIdentifier *keyId = get_stored_type_identifier(
                 &obj->complete().map_type().key().common().type());
             {
-                std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
                 auto keyInfo = informations_.find(keyId);
                 if (keyInfo != informations_.end())
                 {
@@ -650,7 +651,7 @@ void TypeObjectFactory::fill_complete_information(
                             informations_created_.push_back(information);
                         }
                     }
-                    info->minimal().dependent_typeid_count(members.size());
+                    info->minimal().dependent_typeid_count(static_cast<int32_t>(members.size()));
                     break;
                 }
                 case TK_ENUM:
@@ -699,7 +700,7 @@ void TypeObjectFactory::fill_complete_information(
                         informations_[descId] = information;
                         informations_created_.push_back(information);
                     }
-                    info->minimal().dependent_typeid_count(members.size() + 1);
+                    info->minimal().dependent_typeid_count(static_cast<int32_t>(members.size() + 1));
                     break;
                 }
                 case TK_ANNOTATION:
@@ -752,7 +753,7 @@ void TypeObjectFactory::fill_complete_information(
                             informations_created_.push_back(information);
                         }
                     }
-                    info->complete().dependent_typeid_count(members.size());
+                    info->complete().dependent_typeid_count(static_cast<int32_t>(members.size()));
                     break;
                 }
                 case TK_ENUM:
@@ -801,7 +802,7 @@ void TypeObjectFactory::fill_complete_information(
                         informations_[descId] = information;
                         informations_created_.push_back(information);
                     }
-                    info->complete().dependent_typeid_count(members.size() + 1);
+                    info->complete().dependent_typeid_count(static_cast<int32_t>(members.size() + 1));
                     break;
                 }
                 case TK_ANNOTATION:

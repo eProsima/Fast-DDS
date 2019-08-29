@@ -1238,7 +1238,7 @@ size_t PlainMapSTypeDefn::getCdrSerializedSize(const PlainMapSTypeDefn& data, si
     else
     {
         TypeIdentifier emptyId;
-        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
         current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
     }
 
@@ -1253,7 +1253,7 @@ size_t PlainMapSTypeDefn::getCdrSerializedSize(const PlainMapSTypeDefn& data, si
     else
     {
         TypeIdentifier emptyId;
-        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
         current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
     }
 
@@ -1553,7 +1553,7 @@ size_t PlainMapLTypeDefn::getCdrSerializedSize(const PlainMapLTypeDefn& data, si
     else
     {
         TypeIdentifier emptyId;
-        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
         current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
     }
 
@@ -1568,7 +1568,7 @@ size_t PlainMapLTypeDefn::getCdrSerializedSize(const PlainMapLTypeDefn& data, si
     else
     {
         TypeIdentifier emptyId;
-        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
         current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
     }
 
