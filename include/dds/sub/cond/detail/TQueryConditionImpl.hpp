@@ -147,7 +147,7 @@ typename TQueryCondition<DELEGATE>::iterator TQueryCondition<DELEGATE>::begin()
     //To implement;
 }
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 typename TQueryCondition<DELEGATE>::iterator TQueryCondition<DELEGATE>::end()
 {
     //To implement
