@@ -67,7 +67,7 @@
 
 #define OMG_DDS_IMPLICIT_REF_BASE(TYPE)         \
     public:\
-    template <typename H__> \
+    template<typename H__> \
     TYPE(const H__& h)    \
     { \
         if (h.is_nil()) { \
@@ -83,7 +83,7 @@
         } \
     }\
     \
-    template <typename T__> \
+    template<typename T__> \
     TYPE& \
     operator=(const T__& rhs) {\
         if (this != (TYPE*)&rhs) { \

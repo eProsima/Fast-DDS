@@ -68,7 +68,7 @@ namespace core {
  */
 template<
         typename T,
-        template <typename Q> class DELEGATE>
+        template<typename Q> class DELEGATE>
 class optional : public dds::core::Value< DELEGATE<T> >
 {
 public:

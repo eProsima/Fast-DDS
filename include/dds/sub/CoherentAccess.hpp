@@ -87,7 +87,7 @@ namespace sub {
  * @see @ref DCPS_Modules_Subscription "Subscription"
  * @see dds::sub::Subscriber
  */
-template <typename DELEGATE>
+template<typename DELEGATE>
 class TCoherentAccess : public dds::core::Value<DELEGATE>
 {
 public:
