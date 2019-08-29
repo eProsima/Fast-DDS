@@ -34,7 +34,7 @@ namespace dds {
 namespace core {
 namespace cond {
 
-template <typename DELEGATE>
+template<typename DELEGATE>
 TStatusCondition<DELEGATE>::TStatusCondition(
         const dds::core::Entity& e)
 {
