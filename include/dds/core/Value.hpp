@@ -1,4 +1,5 @@
-/* Copyright 2010, Object Management Group, Inc.
+/*
+ * Copyright 2010, Object Management Group, Inc.
  * Copyright 2010, PrismTech, Corp.
  * Copyright 2010, Real-Time Innovations, Inc.
  * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
@@ -158,12 +159,10 @@ public:
             const ARG6& arg6);
     /** @endcond */
 
-public:
     /** @cond */
     ~Value();
     /** @endcond */
 
-public:
     /**
      * Assigns new delegate to this Value
      * @param other Value
@@ -189,7 +188,6 @@ public:
     bool operator !=(
             const Value& other) const;
 
-public:
     /**
      * The operator->() is provided to be able to directly invoke
      * functions on the delegate.
@@ -219,8 +217,11 @@ public:
      * Returns an object to the underlying delegate.
      */
     const D& delegate() const;
+
     D& delegate();
+
     operator D& ();
+
     operator const D& () const;
     /** @endcond */
 

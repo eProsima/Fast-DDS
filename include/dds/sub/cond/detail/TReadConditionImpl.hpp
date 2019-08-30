@@ -39,6 +39,9 @@ TReadCondition<DELEGATE>::TReadCondition(
         const dds::sub::status::DataState& status)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
+//    this->set_ref(new DELEGATE(dr, status));
+//	this->delegate()->init(this->impl_);
 }
 
 /** @cond
@@ -52,6 +55,10 @@ TReadCondition<DELEGATE>::TReadCondition(
             FUN& functor)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
+//    this->set_ref(new DELEGATE(dr, status));
+//	this->delegate()->init(this->impl_);
+//    this->delegate()->set_handler(functor);
 }
 
 template<typename DELEGATE>
@@ -62,22 +69,32 @@ TReadCondition<DELEGATE>::TReadCondition(
             const FUN& functor)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
+//    this->set_ref(new DELEGATE(dr, status));
+//    this->delegate()->init(this->impl_);
+//    this->delegate()->set_handler(functor);
 }
 /** @endcond */
 
 template<typename DELEGATE>
-TReadCondition<DELEGATE>::~TReadCondition() { }
+TReadCondition<DELEGATE>::~TReadCondition()
+{
+}
 
 template<typename DELEGATE>
 const dds::sub::status::DataState TReadCondition<DELEGATE>::state_filter() const
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->state_filter();
 }
 
 template<typename DELEGATE>
 const AnyDataReader& TReadCondition<DELEGATE>::data_reader() const
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->data_reader();
 }
 
 } //namespace cond
@@ -91,6 +108,16 @@ TCondition<DELEGATE>::TCondition(
         /*const dds::sub::cond::TReadCondition<org::opensplice::sub::cond::ReadConditionDelegate>& h*/)
 {
     //To implement
+//    if (h.is_nil()) {
+//        /* We got a null object and are not really able to do a typecheck here. */
+//        /* So, just set a null object. */
+//        *this = dds::core::null;
+//    } else {
+//        this->::dds::core::Reference<DELEGATE>::impl_ = OSPL_CXX11_STD_MODULE::dynamic_pointer_cast<DELEGATE_T>(h.delegate());
+//        if (h.delegate() != this->::dds::core::Reference<DELEGATE>::impl_) {
+//            throw dds::core::IllegalOperationError(std::string("Attempted invalid cast: ") + typeid(h).name() + " to " + typeid(*this).name());
+//        }
+//    }
 }
 
 template<typename DELEGATE>
@@ -98,6 +125,20 @@ TCondition<DELEGATE>& TCondition<DELEGATE>::operator=(
         /*const dds::sub::cond::TReadCondition<org::opensplice::sub::cond::ReadConditionDelegate>& rhs*/)
 {
     //To implement
+//    if (this != (TCondition*)&rhs) {
+//        if (rhs.is_nil()) {
+//            /* We got a null object and are not really able to do a typecheck here. */
+//            /* So, just set a null object. */
+//            *this = dds::core::null;
+//        } else {
+//            TCondition other(rhs);
+//            /* Dont have to copy when the delegate is the same. */
+//            if (other.delegate() != this->::dds::core::Reference<DELEGATE>::impl_) {
+//                *this = other;
+//            }
+//        }
+//    }
+//    return *this;
 }
 
 } //namespace cond

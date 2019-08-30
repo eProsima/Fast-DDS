@@ -25,7 +25,6 @@
 // Implementation
 
 #include <dds/core/ref_traits.hpp>
-#include <dds/topic/TopicTraits.hpp>
 #include <dds/core/status/Status.hpp>
 #include <dds/core/status/State.hpp>
 #include <dds/domain/DomainParticipant.hpp>

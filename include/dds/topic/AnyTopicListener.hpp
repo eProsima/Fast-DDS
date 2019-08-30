@@ -46,10 +46,11 @@ class OMG_DDS_API AnyTopicListener
 {
 public:
     /** @cond */
-    virtual ~AnyTopicListener() { }
+    virtual ~AnyTopicListener()
+    {
+    }
     /** @endcond */
 
-public:
     /** @copydoc dds::topic::TopicListener::on_inconsistent_topic() */
     virtual void on_inconsistent_topic(
         AnyTopic& topic,
@@ -76,12 +77,16 @@ class OMG_DDS_API NoOpAnyTopicListener : public virtual AnyTopicListener
  * Ignore these functions for the doxygen API documentation for clarity.
  */
 public:
-    virtual ~NoOpAnyTopicListener() { }
+    virtual ~NoOpAnyTopicListener()
+    {
+    }
 
 public:
     virtual void on_inconsistent_topic(
         AnyTopic& topic,
-        const dds::core::status::InconsistentTopicStatus& status) { }
+        const dds::core::status::InconsistentTopicStatus& status)
+    {
+    }
 /** @endcond */
 };
 

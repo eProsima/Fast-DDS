@@ -50,27 +50,33 @@ public:
             uint32_t len)
     {
         //To implement
+//        this->samples_.delegate()->resize(len);
     }
 
     uint32_t get_length() const
     {
         //To implement
+//        return this->index;
     }
 
 //    SamplesHolder& operator ++(
 //            int)
 //    {
 //        //To implement
+//        this->index++;
+//        return *this;
 //    }
 
     void *data()
     {
         //To implement
+//        return (*this->samples_.delegate())[this->index].delegate().data_ptr();
     }
 
     detail::SampleInfo* info()
     {
         //To implement
+//        return (*this->samples_.delegate())[this->index].delegate().info_ptr();
     }
 
 private:
@@ -96,28 +102,34 @@ public:
             uint32_t len)
     {
         //To implement
+//        this->length = len;
 
     }
 
     uint32_t get_length() const
     {
         //To implement
+//        return this->length;
     }
 
 //    SamplesHolder& operator ++(
 //            int)
 //    {
 //        //To implement
+//        ++this->iterator;
+//        return *this;
 //    }
 
     void *data()
     {
         //To implement
+//        return (*iterator).delegate().data_ptr();
     }
 
     detail::SampleInfo* info()
     {
         //To implement
+//        return (*iterator).delegate().info_ptr();
     }
 
 private:
@@ -142,27 +154,34 @@ public:
             uint32_t len)
     {
         //To implement
+//        this->length = len;
     }
 
     uint32_t get_length() const
     {
         //To implement
+//        return this->length;
     }
 
 //    SamplesHolder& operator ++(
 //            int)
 //    {
 //        //To implement
+//        *this->iterator = this->sample;
+//        ++this->iterator;
+//        return *this;
 //    }
 
     void *data()
     {
         //To implement
+//        return this->sample.delegate().data_ptr();
     }
 
     detail::SampleInfo* info()
     {
         //To implement
+//        return this->sample.delegate().info_ptr();
     }
 
 private:

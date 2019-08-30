@@ -134,7 +134,9 @@ public:
     /** @endcond */
 
     /** @cond */
-    virtual ~DataReaderListener() { }
+    virtual ~DataReaderListener()
+    {
+    }
     /** @endcond */
 
     /**
@@ -336,37 +338,53 @@ class NoOpDataReaderListener : public virtual DataReaderListener<T, DELEGATE>
 public:
     typedef typename ::dds::core::smart_ptr_traits<NoOpDataReaderListener>::ref_type ref_type;
 
-    virtual ~NoOpDataReaderListener() { }
+    virtual ~NoOpDataReaderListener()
+    {
+    }
 
     virtual void on_requested_deadline_missed(
             DataReader<T, DELEGATE>& reader,
-            const dds::core::status::RequestedDeadlineMissedStatus& status) { }
+            const dds::core::status::RequestedDeadlineMissedStatus& status)
+    {
+    }
 
     virtual void on_requested_incompatible_qos(
             DataReader<T, DELEGATE>& reader,
-            const dds::core::status::RequestedIncompatibleQosStatus& status) { }
+            const dds::core::status::RequestedIncompatibleQosStatus& status)
+    {
+    }
 
     virtual void on_sample_rejected(
         DataReader<T, DELEGATE>& reader,
-        const dds::core::status::SampleRejectedStatus& status) { }
+        const dds::core::status::SampleRejectedStatus& status)
+    {
+    }
 
     virtual void on_liveliness_changed(
             DataReader<T, DELEGATE>& reader,
-            const dds::core::status::LivelinessChangedStatus& status) { }
+            const dds::core::status::LivelinessChangedStatus& status)
+    {
+    }
 
-    virtual void on_data_available(DataReader<T, DELEGATE>& reader) { }
+    virtual void on_data_available(DataReader<T, DELEGATE>& reader)
+    {
+    }
 
     virtual void on_subscription_matched(
             DataReader<T, DELEGATE>& reader,
-            const dds::core::status::SubscriptionMatchedStatus& status) { }
+            const dds::core::status::SubscriptionMatchedStatus& status)
+    {
+    }
 
     virtual void on_sample_lost(
             DataReader<T, DELEGATE>& reader,
-            const dds::core::status::SampleLostStatus& status) { }
+            const dds::core::status::SampleLostStatus& status)
+    {
+    }
 /** @endcond */
 };
 
 } //namespace sub
 } //namespace dds
 
-#endif /* OMG_DDS_SUB_DATA_READER_LISTENER_HPP_ */
+#endif //OMG_DDS_SUB_DATA_READER_LISTENER_HPP_

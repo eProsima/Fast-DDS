@@ -28,17 +28,22 @@
 
 namespace dds {
 namespace core {
+
 class Time;
 class InstanceHandle;
+
 template<typename D>
 class Value;
-}
-}
+
+} //namespace core
+} //namespace dds
 
 namespace dds {
 namespace sub {
 namespace status {
+
 class DataState;
+
 } //namespace status
 
 /**

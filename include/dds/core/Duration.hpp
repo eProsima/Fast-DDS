@@ -1,4 +1,5 @@
-/* Copyright 2010, Object Management Group, Inc.
+/*
+ * Copyright 2010, Object Management Group, Inc.
  * Copyright 2010, PrismTech, Corp.
  * Copyright 2010, Real-Time Innovations, Inc.
  * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
@@ -51,7 +52,6 @@ public:
      */
     static const Duration infinite();   // {0x7fffffff, 0x7fffffff}
 
-public:
     /**
      * Create a Duration elapsing the default amount of time (zero seconds).
      */
@@ -78,7 +78,6 @@ public:
     ~Duration();
     /** @endcond */
 
-public:
     /**
      * Create a Duration from a number of microseconds
      * @param microseconds number of microseconds
@@ -100,7 +99,6 @@ public:
     static const Duration from_secs(
             double seconds);
 
-public:
     /**
      * Get seconds part of the Duration.
      * @return number of seconds
@@ -124,7 +122,6 @@ public:
     void nanosec(
             uint32_t ns);
 
-public:
     /**
      * Returns an integer value for a comparison of two Durations:
      * 1 if this Duration is greater than the comparator (that)
@@ -190,7 +187,6 @@ public:
     bool operator <(
             const Duration& that) const;
 
-public:
     /**
      * Add a Duration to this Duration
      *
@@ -235,7 +231,6 @@ public:
      */
     const Duration operator -(
             const Duration& other) const;
-public:
     /**
      * Returns this Duration in milliseconds.
      *

@@ -27,6 +27,7 @@
 
 namespace dds {
 namespace sub {
+
 template<
         typename T,
         template<typename Q> class DELEGATE>
@@ -60,26 +61,32 @@ public:
     iterator mbegin()
     {
         //To implement
+//        return samples_->begin();
     }
 
     const_iterator begin() const
     {
         //To implement
+//        return samples_.begin();
     }
 
     const_iterator end() const
     {
         //To implement
+//        return samples_.end();
     }
 
     uint32_t length() const
     {
         //To implement
+//        return static_cast<uint32_t>(samples_.length());
     }
 
-    void resize(uint32_t s)
+    void resize(
+            uint32_t s)
     {
         //To implement
+//        samples_.resize(s);
     }
 
 private:

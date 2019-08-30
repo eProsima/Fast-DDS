@@ -42,12 +42,20 @@ template<typename DELEGATE>
 void TSuspendedPublication<DELEGATE>::resume()
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->get_publisher().delegate().get());
+//    this->delegate().resume();
 }
 
 template<typename DELEGATE>
 TSuspendedPublication<DELEGATE>::~TSuspendedPublication()
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->get_publisher().delegate().get());
+//    try {
+//        this->delegate().resume();
+//    } catch (...) {
+//        /* Empty: the exception throw should have already traced an error. */
+//    }
 }
 
 } //namespace pub
