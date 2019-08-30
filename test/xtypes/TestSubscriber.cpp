@@ -137,6 +137,7 @@ TestSubscriber::~TestSubscriber()
     {
         m_Type->deleteData(m_Data);
     }
+    DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
 }
 
 TestSubscriber::SubListener::SubListener(TestSubscriber* parent)

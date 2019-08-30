@@ -163,24 +163,7 @@ TypeObjectFactory::~TypeObjectFactory()
     }
     {
         std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
-        auto id_it = identifiers_.begin();
-        while (id_it != identifiers_.end())
-        {
-            const TypeIdentifier* id = id_it->second;
-            nullify_all_entries(id);
-            delete (id);
-            ++id_it;
-        }
         identifiers_.clear();
-
-        auto idc_it = complete_identifiers_.begin();
-        while (idc_it != complete_identifiers_.end())
-        {
-            const TypeIdentifier* id = idc_it->second;
-            nullify_all_entries(id);
-            delete (id);
-            ++idc_it;
-        }
         complete_identifiers_.clear();
 
         for (TypeIdentifier* id : identifiers_created_)

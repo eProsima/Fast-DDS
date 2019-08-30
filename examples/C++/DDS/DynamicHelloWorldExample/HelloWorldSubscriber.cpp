@@ -109,7 +109,8 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
 
     if (subscriber_->mp_subscriber == nullptr)
     {
-        SubscriberAttributes Rparam = subscriber_->att_;
+        SubscriberAttributes Rparam;
+        Rparam = subscriber_->att_;
         Rparam.topic = subscriber_->topic_;
         Rparam.topic.topicName = topic;
         Rparam.qos = subscriber_->qos_;

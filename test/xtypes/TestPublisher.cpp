@@ -135,6 +135,7 @@ TestPublisher::~TestPublisher()
     {
         m_Type->deleteData(m_Data);
     }
+    DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
 }
 
 void TestPublisher::waitDiscovery(bool expectMatch, int maxWait)

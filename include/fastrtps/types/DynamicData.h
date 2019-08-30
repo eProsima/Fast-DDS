@@ -148,11 +148,11 @@ protected:
 
 public:
 
-    ResponseCode get_descriptor(
+    RTPS_DllAPI ResponseCode get_descriptor(
             MemberDescriptor& value,
             MemberId id);
 
-    ResponseCode set_descriptor(
+    RTPS_DllAPI ResponseCode set_descriptor(
             MemberId id,
             const MemberDescriptor* value);
 
