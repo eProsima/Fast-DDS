@@ -33,31 +33,46 @@ namespace dds {
 namespace core {
 
 template<typename DELEGATE>
-TInstanceHandle<DELEGATE>::TInstanceHandle() { }
+TInstanceHandle<DELEGATE>::TInstanceHandle()
+{
+}
 
 template<typename DELEGATE>
 template<typename ARG0>
 TInstanceHandle<DELEGATE>::TInstanceHandle(
         const ARG0& arg0)
-    : dds::core::Value<DELEGATE>(arg0) { }
+    : dds::core::Value<DELEGATE>(arg0)
+{
+}
 
 template<typename DELEGATE>
 TInstanceHandle<DELEGATE>::TInstanceHandle(
         const dds::core::null_type& nullHandle)
-    : dds::core::Value<DELEGATE>(nullHandle) { }
+    : dds::core::Value<DELEGATE>(nullHandle)
+{
+}
 
 template<typename DELEGATE>
 TInstanceHandle<DELEGATE>::TInstanceHandle(
         const TInstanceHandle& other)
-    : dds::core::Value<DELEGATE>(other.delegate()) { }
+    : dds::core::Value<DELEGATE>(other.delegate())
+{
+}
 
 template<typename DELEGATE>
-TInstanceHandle<DELEGATE>::~TInstanceHandle() { }
+TInstanceHandle<DELEGATE>::~TInstanceHandle()
+{
+}
 
 template<typename DELEGATE>
 TInstanceHandle<DELEGATE>& TInstanceHandle<DELEGATE>::operator=(const TInstanceHandle& that)
 {
     //To implement
+//    if(this != &that)
+//        {
+//            this->delegate() = that.delegate();
+//        }
+//        return *this;
 }
 
 template<typename DELEGATE>
@@ -65,6 +80,7 @@ bool TInstanceHandle<DELEGATE>::operator ==(
         const TInstanceHandle& that) const
 {
     //To implement
+//    return this->delegate() == that.delegate();
 }
 
 template<typename DELEGATE>
@@ -72,6 +88,7 @@ bool TInstanceHandle<DELEGATE>::operator <(
         const TInstanceHandle& that) const
 {
     //To implement
+//    return this->delegate() < that.delegate();
 }
 
 template<typename DELEGATE>
@@ -79,30 +96,35 @@ bool TInstanceHandle<DELEGATE>::operator >(
         const TInstanceHandle& that) const
 {
     //To implement
+//    return this->delegate() > that.delegate();
 }
 
 template<typename DELEGATE>
 const TInstanceHandle<DELEGATE> TInstanceHandle<DELEGATE>::nil()
 {
     //To implement
+//    dds::core::null_type nt;
+//    static TInstanceHandle nil_handle(nt);
+//    return nil_handle;
 }
 
 template<typename DELEGATE>
 bool TInstanceHandle<DELEGATE>::is_nil() const
 {
     //To implement
+//    return this->delegate().is_nil();
 }
 
 } //namespace core
 } //namespace dds
 
-//TODO: Fix when InstanceHandleDelegate is implemented
-//inline std::ostream& operator <<(
-//        std::ostream& os,
-//        const dds::core::TInstanceHandle<org::opensplice::core::InstanceHandleDelegate>& h)
-//{
+
+inline std::ostream& operator <<(
+        std::ostream& os,
+        /*const dds::core::TInstanceHandle<org::opensplice::core::InstanceHandleDelegate>& h*/)
+{
 //    os << h.delegate();
 //    return os;
-//}
+}
 
 #endif //EPROSIMA_DDS_CORE_TINSTANCEHANDLE_IMPL_HPP_

@@ -1,23 +1,20 @@
 /*
- *                         Vortex OpenSplice
+ * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
  *
- *   This software and documentation are Copyright 2006 to TO_YEAR ADLINK
- *   Technology Limited, its affiliated companies and licensors. All rights
- *   reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- *
- */
+*/
+
 #ifndef EPROSIMA_DDS_TOPIC_TTOPICDESCRIPTION_HPP_
 #define EPROSIMA_DDS_TOPIC_TTOPICDESCRIPTION_HPP_
 
@@ -30,12 +27,8 @@
  */
 #include <dds/topic/TopicDescription.hpp>
 
-// Implementation
-
-namespace dds
-{
-namespace topic
-{
+namespace dds {
+namespace topic {
 
 template<typename DELEGATE>
 TTopicDescription<DELEGATE>::~TTopicDescription()
@@ -45,30 +38,28 @@ TTopicDescription<DELEGATE>::~TTopicDescription()
 template<typename DELEGATE>
 const std::string& TTopicDescription<DELEGATE>::name() const
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-    return this->delegate()->name();
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->name();
 }
 
 template<typename DELEGATE>
 const std::string& TTopicDescription<DELEGATE>::type_name() const
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-    return this->delegate()->type_name();
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->type_name();
 }
 
 template<typename DELEGATE>
 const dds::domain::DomainParticipant& TTopicDescription<DELEGATE>::domain_participant() const
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-    return this->delegate()->domain_participant();
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->domain_participant();
 }
 
-}
-}
+} //namespace topic
+} //namespace dds
 
-// End of implementation
-
-#endif /* EPROSIMA_DDS_TOPIC_TTOPICDESCRIPTION_HPP_ */
+#endif //EPROSIMA_DDS_TOPIC_TTOPICDESCRIPTION_HPP_
