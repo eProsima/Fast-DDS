@@ -32,12 +32,16 @@ namespace core {
 
 template<typename DELEGATE>
 TEntityQos<DELEGATE>::TEntityQos()
-    : dds::core::Value<DELEGATE>() { }
+    : dds::core::Value<DELEGATE>()
+{
+}
 
 template<typename DELEGATE>
 TEntityQos<DELEGATE>::TEntityQos(
         const TEntityQos& other)
-    : dds::core::Value<DELEGATE>(other.delegate()) { }
+    : dds::core::Value<DELEGATE>(other.delegate())
+{
+}
 
 
 /** @cond
@@ -47,7 +51,9 @@ template<typename DELEGATE>
 template<typename T>
 TEntityQos<DELEGATE>::TEntityQos(
         const TEntityQos<T>& qos)
-    : dds::core::Value<DELEGATE>(qos.delegate()) { }
+    : dds::core::Value<DELEGATE>(qos.delegate())
+{
+}
 /** @endcond */
 
 template<typename DELEGATE>
@@ -63,6 +69,8 @@ TEntityQos<DELEGATE>& TEntityQos<DELEGATE>::policy(
         const POLICY& p)
 {
     //To implement
+//    this->dds::core::Value<DELEGATE>::delegate().policy(p);
+//    return *this;
 }
 
 template<typename DELEGATE>
@@ -70,6 +78,7 @@ template<typename POLICY>
 const POLICY& TEntityQos<DELEGATE>::policy() const
 {
     //To implement
+//    return this->delegate().template policy<POLICY>();
 }
 
 template<typename DELEGATE>
@@ -77,6 +86,7 @@ template<typename POLICY>
 POLICY& TEntityQos<DELEGATE>::policy()
 {
     //To implement
+//    return this->delegate().template policy<POLICY>();
 }
 
 template<typename DELEGATE>
@@ -85,6 +95,8 @@ TEntityQos<DELEGATE>& TEntityQos<DELEGATE>::operator <<(
         const POLICY& p)
 {
     //To implement
+//    this->policy(p);
+//    return *this;
 }
 
 template<typename DELEGATE>
@@ -93,6 +105,8 @@ const TEntityQos<DELEGATE>& TEntityQos<DELEGATE>::operator >>(
         POLICY& p) const
 {
     //To implement
+//    p = this->policy<POLICY>();
+//    return *this;
 }
 
 template<typename DELEGATE>
@@ -101,6 +115,11 @@ TEntityQos<DELEGATE>& TEntityQos<DELEGATE>::operator =(
         const TEntityQos<T>& other)
 {
     //To implement
+//    if(this != (TEntityQos<DELEGATE>*)&other)
+//    {
+//        this->d_ = other.delegate();
+//    }
+//    return *this;
 }
 /** @endcond */
 

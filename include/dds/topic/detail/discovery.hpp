@@ -44,6 +44,10 @@ TOPIC discover(
     const dds::core::Duration& timeout)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
+//    TOPIC t = org::opensplice::topic::lookup_topic<TOPIC, typename TOPIC::DELEGATE_T>::discover(dp, topic_name, timeout);
+
+//    return t;
 }
 
 
@@ -56,6 +60,17 @@ uint32_t discover(
     uint32_t max_size)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
+//    std::vector<ANYTOPIC> list;
+
+//    org::opensplice::topic::lookup_topic<ANYTOPIC, typename ANYTOPIC::DELEGATE_T>::discover(dp, list, max_size);
+
+//    FwdIterator fit = begin;
+//    for (typename std::vector<ANYTOPIC>::const_iterator it = list.begin(); it != list.end(); ++it) {
+//       *fit++ = *it;
+//    }
+
+//    return list.size();
 }
 
 template<
@@ -66,6 +81,17 @@ uint32_t discover_all(
     BinIterator begin)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
+//    std::vector<ANYTOPIC> list;
+
+//    org::opensplice::topic::lookup_topic<ANYTOPIC, typename ANYTOPIC::DELEGATE_T>::discover(dp, list, (uint32_t)dds::core::LENGTH_UNLIMITED);
+
+//    BinIterator bit = begin;
+//    for (typename std::vector<ANYTOPIC>::const_iterator it = list.begin(); it != list.end(); ++it) {
+//       *bit++ = *it;
+//    }
+
+//    return list.size();
 }
 
 
@@ -75,6 +101,7 @@ void ignore(
     FwdIterator begin, FwdIterator end)
 {
     //To implement
+//    ISOCPP_THROW_EXCEPTION(ISOCPP_UNSUPPORTED_ERROR, "Function not currently supported");
 }
 
 } //namespace topic

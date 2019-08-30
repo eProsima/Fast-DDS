@@ -101,7 +101,9 @@ class OMG_DDS_API PublisherListener : public virtual AnyDataWriterListener
 {
 public:
     /** @cond */
-    virtual ~PublisherListener()  { }
+    virtual ~PublisherListener()
+    {
+    }
     /** @endcond */
 };
 
@@ -123,12 +125,14 @@ public:
  * @see dds::pub::PublisherListener
  */
 class OMG_DDS_API NoOpPublisherListener :
-    public virtual PublisherListener,
-    public virtual NoOpAnyDataWriterListener
+        public virtual PublisherListener,
+        public virtual NoOpAnyDataWriterListener
 {
 public:
     /** @cond */
-    virtual ~NoOpPublisherListener() { }
+    virtual ~NoOpPublisherListener()
+    {
+    }
     /** @endcond */
 };
 

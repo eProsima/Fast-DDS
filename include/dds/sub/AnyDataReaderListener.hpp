@@ -52,12 +52,12 @@ public:
     typedef ::dds::core::smart_ptr_traits<AnyDataReaderListener>::ref_type ref_type;
     /** @endcond */
 
-public:
     /** @cond */
-    virtual ~AnyDataReaderListener() { }
+    virtual ~AnyDataReaderListener()
+    {
+    }
     /** @endcond */
 
-public:
     /** @copydoc dds::sub::DataReaderListener::on_requested_deadline_missed() */
     virtual void on_requested_deadline_missed(
         AnyDataReader& reader,
@@ -113,37 +113,53 @@ class OMG_DDS_API NoOpAnyDataReaderListener : public virtual AnyDataReaderListen
  * Ignore these functions for the doxygen API documentation for clarity.
  */
 public:
-    virtual ~NoOpAnyDataReaderListener() { }
+    virtual ~NoOpAnyDataReaderListener()
+    {
+    }
 
-public:
     virtual void on_requested_deadline_missed(
         AnyDataReader&,
-        const dds::core::status::RequestedDeadlineMissedStatus&) { }
+        const dds::core::status::RequestedDeadlineMissedStatus&)
+    {
+    }
 
     virtual void on_requested_incompatible_qos(
         AnyDataReader&,
-        const dds::core::status::RequestedIncompatibleQosStatus&) { }
+        const dds::core::status::RequestedIncompatibleQosStatus&)
+    {
+    }
 
     virtual void on_sample_rejected(
         AnyDataReader&,
-        const dds::core::status::SampleRejectedStatus&) { }
+        const dds::core::status::SampleRejectedStatus&)
+    {
+    }
 
     virtual void on_liveliness_changed(
         AnyDataReader&,
-        const dds::core::status::LivelinessChangedStatus&) { }
+        const dds::core::status::LivelinessChangedStatus&)
+    {
+    }
 
-    virtual void on_data_available(AnyDataReader&) { }
+    virtual void on_data_available(AnyDataReader&)
+    {
+    }
 
     virtual void on_subscription_matched(
         AnyDataReader&,
-        const dds::core::status::SubscriptionMatchedStatus&) { }
+        const dds::core::status::SubscriptionMatchedStatus&)
+    {
+    }
 
     virtual void on_sample_lost(
         AnyDataReader&,
-        const dds::core::status::SampleLostStatus&) { }
+        const dds::core::status::SampleLostStatus&)
+    {
+    }
 /** @endcond */
 };
-}
-}
+
+} //namespace sub
+} //namespace dds
 
 #endif //OMG_DDS_SUB_ANY_DATA_READER_LISTENER_HPP_

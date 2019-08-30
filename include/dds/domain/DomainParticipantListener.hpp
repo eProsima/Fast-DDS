@@ -164,7 +164,9 @@ class OMG_DDS_API DomainParticipantListener :
 {
 public:
 
-    virtual ~DomainParticipantListener() { }
+    virtual ~DomainParticipantListener()
+    {
+    }
 
 };
 
@@ -194,11 +196,13 @@ class OMG_DDS_API NoOpDomainParticipantListener :
 {
 public:
 
-    virtual ~NoOpDomainParticipantListener()  { }
+    virtual ~NoOpDomainParticipantListener()
+    {
+    }
 
 };
 
-}
-}
+} //namespace domain
+} //namespace dds
 
 #endif //OMG_DDS_DOMAIN_DOMAINPARTICIPANT_LISTENER_HPP_

@@ -28,6 +28,7 @@
 /** @cond */
 namespace dds {
 namespace sub {
+
 template<
         typename T,
         template<typename Q> class DELEGATE = dds::sub::detail::LoanedSamples>

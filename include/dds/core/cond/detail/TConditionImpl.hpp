@@ -46,6 +46,9 @@ void TCondition<DELEGATE>::handler(
         Functor& func)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    this->delegate()->set_handler(func);
+
 }
 
 template<typename DELEGATE>
@@ -54,6 +57,8 @@ void TCondition<DELEGATE>::handler(
         const Functor& func)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//        this->delegate()->set_handler(func);
 }
 /** @endcond */
 
@@ -61,18 +66,24 @@ template<typename DELEGATE>
 void TCondition<DELEGATE>::reset_handler()
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    this->delegate()->reset_handler();
 }
 
 template<typename DELEGATE>
 void TCondition<DELEGATE>::dispatch()
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    this->delegate()->dispatch();
 }
 
 template<typename DELEGATE>
 bool TCondition<DELEGATE>::trigger_value() const
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->trigger_value();
 }
 
 } //namespace cond
