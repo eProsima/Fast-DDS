@@ -2470,6 +2470,1518 @@ void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalAnn
     cdr << v->member_seq();
 }
 
+/*CommonAliasBody Methods*/
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CommonAliasBody& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += AliasMemberFlag::getCdrSerializedSize(data.related_flags(), current_alignment);
+    current_alignment += TypeIdentifier::getCdrSerializedSize(data.related_type(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CommonAliasBody *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->related_flags();
+    cdr << v->related_type();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CommonAliasBody *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->related_flags();
+    cdr >> v->related_type();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteAliasBody& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonAliasBody::getCdrSerializedSize(data.common(), current_alignment);
+    current_alignment += AppliedBuiltinMemberAnnotations::getCdrSerializedSize(data.ann_builtin(), current_alignment);
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    for(size_t a = 0; a < data.ann_custom().size(); ++a)
+    {
+        current_alignment += AppliedAnnotation::getCdrSerializedSize(data.ann_custom().at(a), current_alignment);
+    }
+
+    return current_alignment - initial_alignment;
+}template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteAliasBody *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+    cdr << v->ann_builtin();
+    cdr << v->ann_custom();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteAliasBody *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->common();
+    cdr >> v->ann_builtin();
+    cdr >> v->ann_custom();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalAliasBody& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonAliasBody::getCdrSerializedSize(data.common(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalAliasBody *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalAliasBody *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->common();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteAliasHeader& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteAliasHeader *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->detail();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteAliasHeader *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->detail();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalAliasHeader& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalAliasHeader *v,eprosima::fastcdr::Cdr &cdr) const
+{}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalAliasHeader *v,eprosima::fastcdr::Cdr &cdr)
+{}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteAliasType& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += AliasTypeFlag::getCdrSerializedSize(data.alias_flags(), current_alignment);
+    current_alignment += CompleteAliasHeader::getCdrSerializedSize(data.header(), current_alignment);
+    current_alignment += CompleteAliasBody::getCdrSerializedSize(data.body(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteAliasType *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->alias_flags();
+    cdr << v->header();
+    cdr << v->body();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteAliasType *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->alias_flags();
+    cdr >> v->header();
+    cdr >> v->body();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalAliasType& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += AliasTypeFlag::getCdrSerializedSize(data.alias_flags(), current_alignment);
+    current_alignment += MinimalAliasHeader::getCdrSerializedSize(data.header(), current_alignment);
+    current_alignment += MinimalAliasBody::getCdrSerializedSize(data.body(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalAliasType *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->alias_flags();
+    cdr << v->header();
+    cdr << v->body();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalAliasType *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->alias_flags();
+    cdr >> v->header();
+    cdr >> v->body();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteElementDetail& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += AppliedBuiltinMemberAnnotations::getCdrSerializedSize(data.ann_builtin(), current_alignment);
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    for(size_t a = 0; a < data.ann_custom().size(); ++a)
+    {
+        current_alignment += AppliedAnnotation::getCdrSerializedSize(data.ann_custom().at(a), current_alignment);
+    }
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteElementDetail *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->ann_builtin();
+    cdr << v->ann_custom();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteElementDetail *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->ann_builtin();
+    cdr >> v->ann_custom();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CommonCollectionElement& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CollectionElementFlag::getCdrSerializedSize(data.element_flags(), current_alignment);
+    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CommonCollectionElement *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->element_flags();
+    cdr << v->type();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CommonCollectionElement *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->element_flags();
+    cdr >> v->type();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteCollectionElement& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonCollectionElement::getCdrSerializedSize(data.common(), current_alignment);
+    current_alignment += CompleteElementDetail::getCdrSerializedSize(data.detail(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteCollectionElement *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+    cdr << v->detail();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteCollectionElement *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->common();
+    cdr >> v->detail();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalCollectionElement& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonCollectionElement::getCdrSerializedSize(data.common(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>   
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalCollectionElement *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalCollectionElement *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->common();
+}
+
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CommonCollectionHeader& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255  + 1;
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CommonCollectionHeader *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->bound();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CommonCollectionHeader *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->bound();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteCollectionHeader& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonCollectionHeader::getCdrSerializedSize(data.common(), current_alignment);
+    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteCollectionHeader *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+    cdr << v->detail();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteCollectionHeader *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->common();
+    cdr >> v->detail();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalCollectionHeader& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonCollectionHeader::getCdrSerializedSize(data.common(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalCollectionHeader *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalCollectionHeader *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->common();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteSequenceType& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    // FIXED_SIXE current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
+    current_alignment += CompleteCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
+    current_alignment += CompleteCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
+
+    // STRING current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.str().size() + 1;
+    // SEQUENCE
+    /*
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    for(size_t a = 0; a < data.param_seq().size(); ++a)
+    {
+        current_alignment += AppliedAnnotationParameter::getCdrSerializedSize(data.param_seq().at(a), current_alignment);
+    }
+    */
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteSequenceType *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->collection_flag();
+    cdr << v->header();
+    cdr << v->element();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteSequenceType *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->collection_flag();
+    cdr >> v->header();
+    cdr >> v->element();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalSequenceType& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    // FIXED_SIXE current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
+    current_alignment += MinimalCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
+    current_alignment += MinimalCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
+
+    // STRING current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.str().size() + 1;
+    // SEQUENCE
+    /*
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    for(size_t a = 0; a < data.param_seq().size(); ++a)
+    {
+        current_alignment += AppliedAnnotationParameter::getCdrSerializedSize(data.param_seq().at(a), current_alignment);
+    }
+    */
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalSequenceType *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->collection_flag();
+    cdr << v->header();
+    cdr << v->element();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalSequenceType *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->collection_flag();
+    cdr >> v->header();
+    cdr >> v->element();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CommonArrayHeader& data, size_t current_alignment /*= 0*/)
+ {
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    for(size_t a = 0; a < data.bound_seq().size(); ++a)
+    {
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    }
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CommonArrayHeader *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->bound_seq();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CommonArrayHeader *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->bound_seq();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteArrayHeader& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonArrayHeader::getCdrSerializedSize(data.common(), current_alignment);
+    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteArrayHeader *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+    cdr << v->detail();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteArrayHeader *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->common();
+    cdr >> v->detail();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalArrayHeader& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonArrayHeader::getCdrSerializedSize(data.common(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalArrayHeader *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalArrayHeader *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->common();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteArrayType& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
+    current_alignment += CompleteArrayHeader::getCdrSerializedSize(data.header(), current_alignment);
+    current_alignment += CompleteCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteArrayType *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->collection_flag();
+    cdr << v->header();
+    cdr << v->element();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteArrayType *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->collection_flag();
+    cdr >> v->header();
+    cdr >> v->element();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalArrayType& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
+    current_alignment += MinimalArrayHeader::getCdrSerializedSize(data.header(), current_alignment);
+    current_alignment += MinimalCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalArrayType *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->collection_flag();
+    cdr << v->header();
+    cdr << v->element();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalArrayType *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->collection_flag();
+    cdr >> v->header();
+    cdr >> v->element();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteMapType& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
+    current_alignment += CompleteCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
+    current_alignment += CompleteCollectionElement::getCdrSerializedSize(data.key(), current_alignment);
+    current_alignment += CompleteCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteMapType *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->collection_flag();
+    cdr << v->header();
+    cdr << v->key();
+    cdr << v->element();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteMapType *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->collection_flag();
+    cdr >> v->header();
+    cdr >> v->key();
+    cdr >> v->element();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalMapType& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
+    current_alignment += MinimalCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
+    current_alignment += MinimalCollectionElement::getCdrSerializedSize(data.key(), current_alignment);
+    current_alignment += MinimalCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalMapType *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->collection_flag();
+    cdr << v->header();
+    cdr << v->key();
+    cdr << v->element();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalMapType *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->collection_flag();
+    cdr >> v->header();
+    cdr >> v->key();
+    cdr >> v->element();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CommonEnumeratedLiteral& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    current_alignment += EnumeratedLiteralFlag::getCdrSerializedSize(data.flags(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CommonEnumeratedLiteral *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->value();
+    cdr << v->flags();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CommonEnumeratedLiteral *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->value();
+    cdr >> v->flags();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteEnumeratedLiteral& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonEnumeratedLiteral::getCdrSerializedSize(data.common(), current_alignment);
+    current_alignment += CompleteMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>   
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteEnumeratedLiteral *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+    cdr << v->detail();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteEnumeratedLiteral *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->common();
+    cdr >> v->detail();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalEnumeratedLiteral& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonEnumeratedLiteral::getCdrSerializedSize(data.common(), current_alignment);
+    current_alignment += MinimalMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalEnumeratedLiteral *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+    cdr << v->detail();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalEnumeratedLiteral *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->common();
+    cdr >> v->detail();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CommonEnumeratedHeader& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CommonEnumeratedHeader *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->bit_bound();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CommonEnumeratedHeader *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->bit_bound();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteEnumeratedHeader& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonEnumeratedHeader::getCdrSerializedSize(data.common(), current_alignment);
+    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteEnumeratedHeader *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+    cdr << v->detail();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteEnumeratedHeader *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->common();
+    cdr >> v->detail();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalEnumeratedHeader& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonEnumeratedHeader::getCdrSerializedSize(data.common(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalEnumeratedHeader *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalEnumeratedHeader *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->common();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteEnumeratedType& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += EnumTypeFlag::getCdrSerializedSize(data.enum_flags(), current_alignment);
+    current_alignment += CompleteEnumeratedHeader::getCdrSerializedSize(data.header(), current_alignment);
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    for(size_t a = 0; a < data.literal_seq().size(); ++a)
+    {
+        current_alignment += CompleteEnumeratedLiteral::getCdrSerializedSize(data.literal_seq().at(a), current_alignment);
+    }
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteEnumeratedType *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->enum_flags();
+    cdr << v->header();
+    cdr << v->literal_seq();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteEnumeratedType *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->enum_flags();
+    cdr >> v->header();
+    cdr >> v->literal_seq();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalEnumeratedType& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += EnumTypeFlag::getCdrSerializedSize(data.enum_flags(), current_alignment);
+    current_alignment += MinimalEnumeratedHeader::getCdrSerializedSize(data.header(), current_alignment);
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    for(size_t a = 0; a < data.literal_seq().size(); ++a)
+    {
+        current_alignment += MinimalEnumeratedLiteral::getCdrSerializedSize(data.literal_seq().at(a), current_alignment);
+    }
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalEnumeratedType *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->enum_flags();
+    cdr << v->header();
+    cdr << v->literal_seq();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalEnumeratedType *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->enum_flags();
+    cdr >> v->header();
+    cdr >> v->literal_seq();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CommonBitflag& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    current_alignment += BitflagFlag::getCdrSerializedSize(data.flags(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CommonBitflag *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->position();
+    cdr << v->flags();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CommonBitflag *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->position();
+    cdr >> v->flags();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteBitflag& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonBitflag::getCdrSerializedSize(data.common(), current_alignment);
+    current_alignment += CompleteMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteBitflag *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+    cdr << v->detail();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteBitflag *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->common();
+    cdr >> v->detail();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalBitflag& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonBitflag::getCdrSerializedSize(data.common(), current_alignment);
+    current_alignment += MinimalMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalBitflag *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+    cdr << v->detail();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalBitflag *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->common();
+    cdr >> v->detail();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CommonBitmaskHeader& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CommonBitmaskHeader *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->bit_bound();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CommonBitmaskHeader *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->bit_bound();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteBitmaskType& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += BitmaskTypeFlag::getCdrSerializedSize(data.bitmask_flags(), current_alignment);
+    current_alignment += CompleteBitmaskHeader::getCdrSerializedSize(data.header(), current_alignment);
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    for(size_t a = 0; a < data.flag_seq().size(); ++a)
+    {
+        current_alignment += CompleteBitflag::getCdrSerializedSize(data.flag_seq().at(a), current_alignment);
+    }
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteBitmaskType *v, eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->bitmask_flags();
+    cdr << v->header();
+    cdr << v->flag_seq();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteBitmaskType *v, eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->bitmask_flags();
+    cdr >> v->header();
+    cdr >> v->flag_seq();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalBitmaskType& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += BitmaskTypeFlag::getCdrSerializedSize(data.bitmask_flags(), current_alignment);
+    current_alignment += MinimalBitmaskHeader::getCdrSerializedSize(data.header(), current_alignment);
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    for(size_t a = 0; a < data.flag_seq().size(); ++a)
+    {
+        current_alignment += MinimalBitflag::getCdrSerializedSize(data.flag_seq().at(a), current_alignment);
+    }
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalBitmaskType *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->bitmask_flags();
+    cdr << v->header();
+    cdr << v->flag_seq();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalBitmaskType *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->bitmask_flags();
+    cdr >> v->header();
+    cdr >> v->flag_seq();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CommonBitfield& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    current_alignment += BitsetMemberFlag::getCdrSerializedSize(data.flags(), current_alignment);
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CommonBitfield *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->position();
+    cdr << v->flags();
+    cdr << v->bitcount();
+    cdr << v->holder_type();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CommonBitfield *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->position();
+    cdr >> v->flags();
+    cdr >> v->bitcount();
+    cdr >> v->holder_type();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteBitfield& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonBitfield::getCdrSerializedSize(data.common(), current_alignment);
+    current_alignment += CompleteMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteBitfield *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+    cdr << v->detail();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteBitfield *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->common();
+    cdr >> v->detail();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalBitfield& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += CommonBitfield::getCdrSerializedSize(data.common(), current_alignment);
+    current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalBitfield *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->common();
+    cdr << v->name_hash();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalBitfield *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->common();
+    cdr >> v->name_hash();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteBitsetHeader& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += TypeIdentifier::getCdrSerializedSize(data.base_type(), current_alignment);
+    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteBitsetHeader *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->base_type();
+    cdr << v->detail();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteBitsetHeader *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->base_type();
+    cdr >> v->detail();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalBitsetHeader& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += TypeIdentifier::getCdrSerializedSize(data.base_type(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalBitsetHeader *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->base_type();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalBitsetHeader *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->base_type();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteBitsetType& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += BitsetTypeFlag::getCdrSerializedSize(data.bitset_flags(), current_alignment);
+    current_alignment += CompleteBitsetHeader::getCdrSerializedSize(data.header(), current_alignment);
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    for(size_t a = 0; a < data.field_seq().size(); ++a)
+    {
+        current_alignment += CompleteBitfield::getCdrSerializedSize(data.field_seq().at(a), current_alignment);
+    }
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteBitsetType *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->bitset_flags();
+    cdr << v->header();
+    cdr << v->field_seq();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteBitsetType *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->bitset_flags();
+    cdr >> v->header();
+    cdr >> v->field_seq();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalBitsetType& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += BitsetTypeFlag::getCdrSerializedSize(data.bitset_flags(), current_alignment);
+    current_alignment += MinimalBitsetHeader::getCdrSerializedSize(data.header(), current_alignment);
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    for(size_t a = 0; a < data.field_seq().size(); ++a)
+    {
+        current_alignment += MinimalBitfield::getCdrSerializedSize(data.field_seq().at(a), current_alignment);
+    }
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalBitsetType *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->bitset_flags();
+    cdr << v->header();
+    cdr << v->field_seq();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalBitsetType *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->bitset_flags();
+    cdr >> v->header();
+    cdr >> v->field_seq();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteExtendedType& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteExtendedType *v,eprosima::fastcdr::Cdr &cdr) const
+{}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteExtendedType *v,eprosima::fastcdr::Cdr &cdr)
+{}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalExtendedType& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalExtendedType *v,eprosima::fastcdr::Cdr &cdr) const
+{}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalExtendedType *v,eprosima::fastcdr::Cdr &cdr)
+{}
+
+/*CompleteTypeObject Methods*/
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::CompleteTypeObject& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    switch(data.m__d)
+    {
+        case TK_ALIAS:
+        current_alignment += Serializer(data.alias_type()).getCdrSerializedSize(current_alignment);
+        break;
+        case TK_ANNOTATION:
+        current_alignment += Serializer(data.annotation_type()).getCdrSerializedSize(current_alignment);
+        break;
+        case TK_STRUCTURE:
+        current_alignment += Serializer(data.struct_type()).getCdrSerializedSize(current_alignment);
+        break;
+        case TK_UNION:
+        current_alignment += Serializer(data.union_type()).getCdrSerializedSize(current_alignment);
+        break;
+        case TK_BITSET:
+        current_alignment += Serializer(data.bitset_type()).getCdrSerializedSize(current_alignment);
+        break;
+        case TK_SEQUENCE:
+        current_alignment += Serializer(data.sequence_type()).getCdrSerializedSize(current_alignment);
+        break;
+        case TK_ARRAY:
+        current_alignment += Serializer(data.array_type()).getCdrSerializedSize(current_alignment);
+        break;
+        case TK_MAP:
+        current_alignment += Serializer(data.map_type()).getCdrSerializedSize(current_alignment);
+        break;
+        case TK_ENUM:
+        current_alignment += Serializer(data.enumerated_type()).getCdrSerializedSize(current_alignment);
+        break;
+        case TK_BITMASK:
+        current_alignment += Serializer(data.bitmask_type()).getCdrSerializedSize(current_alignment);
+        break;
+        default:
+        current_alignment += Serializer(data.extended_type()).getCdrSerializedSize(current_alignment);
+        break;
+    }
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::CompleteTypeObject *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->_d();
+
+    switch(v->_d)
+    {
+        case TK_ALIAS:
+        cdr << v->alias_type();
+        break;
+        case TK_ANNOTATION:
+        cdr << v->annotation_type();
+        break;
+        case TK_STRUCTURE:
+        cdr << v->struct_type();
+        break;
+        case TK_UNION:
+        cdr << v->union_type();
+        break;
+        case TK_BITSET:
+        cdr << v->bitset_type();
+        break;
+        case TK_SEQUENCE:
+        cdr << v->sequence_type();
+        break;
+        case TK_ARRAY:
+        cdr << v->array_type();
+        break;
+        case TK_MAP:
+        cdr << v->map_type();
+        break;
+        case TK_ENUM:
+        cdr << v->enumerated_type();
+        break;
+        case TK_BITMASK:
+        cdr << v->bitmask_type();
+        break;
+        default:
+        cdr << v->extended_type();
+        break;
+    }
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::CompleteTypeObject *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->_d();
+
+    switch(v->_d())
+    {
+        case TK_ALIAS:
+        cdr >> v->alias_type();
+        break;
+        case TK_ANNOTATION:
+        cdr >> v->annotation_type();
+        break;
+        case TK_STRUCTURE:
+        cdr >> v->struct_type();
+        break;
+        case TK_UNION:
+        cdr >> v->union_type();
+        break;
+        case TK_BITSET:
+        cdr >> v->bitset_type();
+        break;
+        case TK_SEQUENCE:
+        cdr >> v->sequence_type();
+        break;
+        case TK_ARRAY:
+        cdr >> v->array_type();
+        break;
+        case TK_MAP:
+        cdr >> v->map_type();
+        break;
+        case TK_ENUM:
+        cdr >> v->enumerated_type();
+        break;
+        case TK_BITMASK:
+        cdr >> v->bitmask_type();
+        break;
+        default:
+        cdr >> v->extended_type();
+        break;
+    }
+}
+
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::MinimalTypeObject& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    switch(data._d())
+    {
+        case TK_ALIAS:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.alias_type(), current_alignment);
+        break;
+        case TK_ANNOTATION:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.annotation_type(), current_alignment);
+        break;
+        case TK_STRUCTURE:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.struct_type(), current_alignment);
+        break;
+        case TK_UNION:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.union_type(), current_alignment);
+        break;
+        case TK_BITSET:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.bitset_type(), current_alignment);
+        break;
+        case TK_SEQUENCE:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.sequence_type(), current_alignment);
+        break;
+        case TK_ARRAY:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.array_type(), current_alignment);
+        break;
+        case TK_MAP:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.map_type(), current_alignment);
+        break;
+        case TK_ENUM:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.enumerated_type(), current_alignment);
+        break;
+        case TK_BITMASK:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.bitmask_type(), current_alignment);
+        break;
+        default:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.extended_type(), current_alignment);
+        break;
+    }
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::MinimalTypeObject *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->_d();
+
+    switch(v->_d())
+    {
+        case TK_ALIAS:
+        cdr << v->alias_type();
+        break;
+        case TK_ANNOTATION:
+        cdr << v->annotation_type();
+        break;
+        case TK_STRUCTURE:
+        cdr << v->struct_type();
+        break;
+        case TK_UNION:
+        cdr << v->union_type();
+        break;
+        case TK_BITSET:
+        cdr << v->bitset_type();
+        break;
+        case TK_SEQUENCE:
+        cdr << v->sequence_type();
+        break;
+        case TK_ARRAY:
+        cdr << v->array_type();
+        break;
+        case TK_MAP:
+        cdr << v->map_type();
+        break;
+        case TK_ENUM:
+        cdr << v->enumerated_type();
+        break;
+        case TK_BITMASK:
+        cdr << v->bitmask_type();
+        break;
+        default:
+        cdr << v->extended_type();
+        break;
+    }
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::MinimalTypeObject *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->_d();
+
+    switch(v->_d())
+    {
+        case TK_ALIAS:
+        cdr >> v->alias_type();
+        break;
+        case TK_ANNOTATION:
+        cdr >> v->annotation_type();
+        break;
+        case TK_STRUCTURE:
+        cdr >> v->struct_type();
+        break;
+        case TK_UNION:
+        cdr >> v->union_type();
+        break;
+        case TK_BITSET:
+        cdr >> v->bitset_type();
+        break;
+        case TK_SEQUENCE:
+        cdr >> v->sequence_type();
+        break;
+        case TK_ARRAY:
+        cdr >> v->array_type();
+        break;
+        case TK_MAP:
+        cdr >> v->map_type();
+        break;
+        case TK_ENUM:
+        cdr >> v->enumerated_type();
+        break;
+        case TK_BITMASK:
+        cdr >> v->bitmask_type();
+        break;
+        default:
+        cdr >> v->extended_type();
+        break;
+    }
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::TypeObject& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    switch(data.m__d)
+    {
+        case EK_COMPLETE:
+        current_alignment += CompleteTypeObject::getCdrSerializedSize(data.complete(), current_alignment);
+        break;
+        case EK_MINIMAL:
+        current_alignment += MinimalTypeObject::getCdrSerializedSize(data.minimal(), current_alignment);
+        break;
+        default:
+        break;
+    }
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::TypeObject *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->_d();
+
+    switch(v->_d())
+    {
+        case EK_COMPLETE:
+        cdr << v->complete();
+        break;
+        case EK_MINIMAL:
+        cdr << v->minimal();
+        break;
+        default:
+        break;
+    }
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::TypeObject *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->_d();
+
+    switch(v->_d())
+    {
+        case EK_COMPLETE:
+        cdr >> v->complete();
+        break;
+        case EK_MINIMAL:
+        cdr >> v->minimal();
+        break;
+        default:
+        break;
+    }
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::TypeIdentifierTypeObjectPair& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_identifier(), current_alignment);
+    current_alignment += TypeObject::getCdrSerializedSize(data.type_object(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}    
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::TypeIdentifierTypeObjectPair *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->type_identifier();
+    cdr << v->type_object();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::TypeIdentifierTypeObjectPair *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->type_identifier();
+    cdr >> v->type_object();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::TypeIdentifierPair& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_identifier1(), current_alignment);
+    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_identifier2(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::TypeIdentifierPair *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->type_identifier1();
+    cdr << v->type_identifier2();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::TypeIdentifierPair *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->type_identifier1();
+    cdr >> v->type_identifier2();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::TypeIdentifierWithSize& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_id(), current_alignment);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::TypeIdentifierWithSize *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->type_id();
+    cdr << v->typeobject_serialized_size();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::TypeIdentifierWithSize *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->type_id();
+    cdr >> v->typeobject_serialized_size();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::TypeIdentifierWithDependencies& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += TypeIdentifierWithSize::getCdrSerializedSize(data.typeid_with_size(), current_alignment);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    for(size_t a = 0; a < data.dependent_typeids().size(); ++a)
+    {
+        current_alignment += TypeIdentifierWithSize::getCdrSerializedSize(data.dependent_typeids().at(a), current_alignment);
+    }
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::TypeIdentifierWithDependencies *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->typeid_with_size();
+    cdr << v->dependent_typeid_count();
+    cdr << v->dependent_typeids();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::TypeIdentifierWithDependencies *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->typeid_with_size();
+    cdr >> v->dependent_typeid_count();
+    cdr >> v->dependent_typeids();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::TypeInformation& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += TypeIdentifierWithDependencies::getCdrSerializedSize(data.minimal(), current_alignment);
+    current_alignment += TypeIdentifierWithDependencies::getCdrSerializedSize(data.complete(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::TypeInformation *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->minimal();
+    cdr << v->complete();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::TypeInformation *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->minimal();
+    cdr >> v->complete();
+}
+
+
 
 } //namespace serializer
 } //namespace types
