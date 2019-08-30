@@ -24,9 +24,6 @@
 
 #include <dds/domain/DomainParticipant.hpp>
 
-
-// Implementation
-
 namespace dds {
 namespace domain {
 
@@ -41,6 +38,8 @@ TDomainParticipant<DELEGATE>::TDomainParticipant(
                     dds::core::status::StatusMask::none()))
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    this->delegate()->init(this->impl_);
 }
 
 template<typename DELEGATE>
@@ -57,10 +56,14 @@ TDomainParticipant<DELEGATE>::TDomainParticipant(
                     mask))
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    this->delegate()->init(this->impl_);
 }
 
 template<typename DELEGATE>
-TDomainParticipant<DELEGATE>::~TDomainParticipant() { }
+TDomainParticipant<DELEGATE>::~TDomainParticipant()
+{
+}
 
 template<typename DELEGATE>
 void TDomainParticipant<DELEGATE>::listener(
@@ -68,18 +71,24 @@ void TDomainParticipant<DELEGATE>::listener(
         const ::dds::core::status::StatusMask& event_mask)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    this->delegate()->listener(listener, event_mask);
 }
 
 template<typename DELEGATE>
 typename TDomainParticipant<DELEGATE>::Listener* TDomainParticipant<DELEGATE>::listener() const
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->listener();
 }
 
 template<typename DELEGATE>
 const dds::domain::qos::DomainParticipantQos& TDomainParticipant<DELEGATE>::qos() const
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->qos();
 }
 
 template<typename DELEGATE>
@@ -87,18 +96,24 @@ void TDomainParticipant<DELEGATE>::qos(
         const dds::domain::qos::DomainParticipantQos& qos)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    this->delegate()->qos(qos);
 }
 
 template<typename DELEGATE>
 uint32_t TDomainParticipant<DELEGATE>::domain_id() const
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->domain_id();
 }
 
 template<typename DELEGATE>
 void TDomainParticipant<DELEGATE>::assert_liveliness()
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    this->delegate()->assert_liveliness();
 }
 
 template<typename DELEGATE>
@@ -106,18 +121,24 @@ bool TDomainParticipant<DELEGATE>::contains_entity(
         const ::dds::core::InstanceHandle& handle)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->contains_entity(handle);
 }
 
 template<typename DELEGATE>
 dds::core::Time TDomainParticipant<DELEGATE>::current_time() const
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->current_time();
 }
 
 template<typename DELEGATE>
 dds::domain::qos::DomainParticipantQos TDomainParticipant<DELEGATE>::default_participant_qos()
 {
     //To implement
+//    ISOCPP_REPORT_STACK_NC_BEGIN();
+//    return DELEGATE::default_participant_qos();
 }
 
 template<typename DELEGATE>
@@ -125,12 +146,16 @@ void TDomainParticipant<DELEGATE>::default_participant_qos(
         const ::dds::domain::qos::DomainParticipantQos& qos)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_NC_BEGIN();
+//    DELEGATE::default_participant_qos(qos);
 }
 
 template<typename DELEGATE>
 dds::pub::qos::PublisherQos TDomainParticipant<DELEGATE>::default_publisher_qos() const
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->default_publisher_qos();
 }
 
 template<typename DELEGATE>
@@ -138,12 +163,17 @@ TDomainParticipant<DELEGATE>& TDomainParticipant<DELEGATE>::default_publisher_qo
         const ::dds::pub::qos::PublisherQos& qos)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    this->delegate()->default_publisher_qos(qos);
+//    return *this;
 }
 
 template<typename DELEGATE>
 dds::sub::qos::SubscriberQos TDomainParticipant<DELEGATE>::default_subscriber_qos() const
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->default_subscriber_qos();
 }
 
 template<typename DELEGATE>
@@ -151,12 +181,17 @@ TDomainParticipant<DELEGATE>& TDomainParticipant<DELEGATE>::default_subscriber_q
         const ::dds::sub::qos::SubscriberQos& qos)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    this->delegate()->default_subscriber_qos(qos);
+//    return *this;
 }
 
 template<typename DELEGATE>
 dds::topic::qos::TopicQos TDomainParticipant<DELEGATE>::default_topic_qos() const
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->default_topic_qos();
 }
 
 template<typename DELEGATE>
@@ -164,6 +199,9 @@ TDomainParticipant<DELEGATE>& TDomainParticipant<DELEGATE>::default_topic_qos(
         const dds::topic::qos::TopicQos& qos)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    this->delegate()->default_topic_qos(qos);
+//    return *this;
 }
 
 template<typename DELEGATE>
@@ -171,6 +209,9 @@ TDomainParticipant<DELEGATE>& TDomainParticipant<DELEGATE>::operator <<(
         const dds::domain::qos::DomainParticipantQos& qos)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    this->qos(qos);
+//    return *this;
 }
 
 template<typename DELEGATE>
@@ -178,6 +219,9 @@ const TDomainParticipant<DELEGATE>& TDomainParticipant<DELEGATE>::operator >>(
         dds::domain::qos::DomainParticipantQos& qos) const
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    qos = this->qos();
+//    return *this;
 }
 
 } //namespace domain

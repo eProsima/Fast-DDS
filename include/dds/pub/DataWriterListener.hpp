@@ -102,7 +102,9 @@ class DataWriterListener
 {
 public:
     /** @cond */
-    virtual ~DataWriterListener() { }
+    virtual ~DataWriterListener()
+    {
+    }
     /** @endcond */
 
     /**
@@ -225,23 +227,33 @@ class NoOpDataWriterListener : public virtual DataWriterListener<T>
  * Ignore these functions for the doxygen API documentation for clarity.
  */
 public:
-    virtual ~NoOpDataWriterListener() { }
+    virtual ~NoOpDataWriterListener()
+    {
+    }
 
     virtual void on_offered_deadline_missed(
             DataWriter<T>& writer,
-            const dds::core::status::OfferedDeadlineMissedStatus& status) { }
+            const dds::core::status::OfferedDeadlineMissedStatus& status)
+    {
+    }
 
     virtual void on_offered_incompatible_qos(
             DataWriter<T>& writer,
-            const dds::core::status::OfferedIncompatibleQosStatus&  status) { }
+            const dds::core::status::OfferedIncompatibleQosStatus&  status)
+    {
+    }
 
     virtual void on_liveliness_lost(
             DataWriter<T>& writer,
-            const dds::core::status::LivelinessLostStatus& status) { }
+            const dds::core::status::LivelinessLostStatus& status)
+    {
+    }
 
     virtual void on_publication_matched(
             DataWriter<T>& writer,
-            const dds::core::status::PublicationMatchedStatus& status) { }
+            const dds::core::status::PublicationMatchedStatus& status)
+    {
+    }
 /** @endcond */
 };
 
