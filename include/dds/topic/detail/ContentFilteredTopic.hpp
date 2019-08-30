@@ -43,7 +43,7 @@ namespace dds {
 namespace topic {
 namespace detail {
 
-//template<typename T>
+template<typename T>
 //class ContentFilteredTopic  : public virtual org::opensplice::topic::TopicDescriptionDelegate
 //{
 //public:
@@ -207,6 +207,6 @@ class ContentFilteredTopic { };
 
 /** @endcond */
 
-//#endif /* OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT */
+//#endif //OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
 
 #endif //EPROSIMA_DDS_TOPIC_DETAIL_CONTENTFILTEREDTOPIC_HPP_

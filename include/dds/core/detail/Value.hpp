@@ -37,18 +37,24 @@ namespace core {
  */
 
 template<typename D>
-Value<D>::Value() { }
+Value<D>::Value()
+{
+}
 
 template<typename D>
 Value<D>::Value(
         const Value& p)
-    : d_(p.d_) { }
+    : d_(p.d_)
+{
+}
 
 template<typename D>
 template<typename ARG>
 Value<D>::Value(
         const ARG& arg)
-    : d_(arg) { }
+    : d_(arg)
+{
+}
 
 template<typename D>
 template<
@@ -57,7 +63,9 @@ template<
 Value<D>::Value(
         const ARG1& arg1,
         const ARG2& arg2)
-    : d_(arg1, arg2) { }
+    : d_(arg1, arg2)
+{
+}
 
 template<typename D>
 template<
@@ -68,7 +76,9 @@ Value<D>::Value(
         const ARG1& arg1,
         const ARG2& arg2,
         const ARG3& arg3)
-    : d_(arg1, arg2, arg3) { }
+    : d_(arg1, arg2, arg3)
+{
+}
 
 template<typename D>
 template<
@@ -81,7 +91,9 @@ Value<D>::Value(
         const ARG2& arg2,
         const ARG3& arg3,
         const ARG4& arg4)
-    : d_(arg1, arg2, arg3, arg4) { }
+    : d_(arg1, arg2, arg3, arg4)
+{
+}
 
 template<typename D>
 template<
@@ -96,7 +108,9 @@ Value<D>::Value(
         const ARG3& arg3,
         const ARG4& arg4,
         const ARG5& arg5)
-    : d_(arg1, arg2, arg3, arg4, arg5) { }
+    : d_(arg1, arg2, arg3, arg4, arg5)
+{
+}
 
 template<typename D>
 template<
@@ -113,16 +127,25 @@ Value<D>::Value(
         const ARG4& arg4,
         const ARG5& arg5,
         const ARG6& arg6)
-    : d_(arg1, arg2, arg3, arg4, arg5, arg6) { }
+    : d_(arg1, arg2, arg3, arg4, arg5, arg6)
+{
+}
 
 template<typename D>
-Value<D>::~Value() { }
+Value<D>::~Value()
+{
+}
 
 template<typename D>
 Value<D>& Value<D>::operator =(
         const Value& other)
 {
     //To implement
+//    if(this != &other)
+//    {
+//        d_ = other.d_;
+//    }
+//    return *this;
 }
 
 template<typename D>
@@ -130,6 +153,7 @@ bool Value<D>::operator ==(
         const Value& other) const
 {
     //To implement
+//    return (d_ == other.d_);
 }
 
 template<typename D>
@@ -137,42 +161,49 @@ bool Value<D>::operator !=(
         const Value& other) const
 {
     //To implement
+//    return !(d_ == other.d_);
 }
 
 template<typename D>
 const D* Value<D>::operator->() const
 {
     //To implement
+//    return &d_;
 }
 
 template<typename D>
 D* Value<D>::operator->()
 {
     //To implement
+//    return &d_;
 }
 
 template<typename D>
 const D& Value<D>::delegate() const
 {
     //To implement
+//    return d_;
 }
 
 template<typename D>
 D& Value<D>::delegate()
 {
     //To implement
+//    return d_;
 }
 
 template<typename D>
 Value<D>::operator D& ()
 {
     //To implement
+//    return d_;
 }
 
 template<typename D>
 Value<D>::operator const D& () const
 {
     //To implement
+//    return d_;
 }
 
 } //namespace core
