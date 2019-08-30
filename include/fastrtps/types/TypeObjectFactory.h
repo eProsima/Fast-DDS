@@ -38,6 +38,7 @@ protected:
     std::map<const std::string, const TypeIdentifier*> complete_identifiers_; // Only EK_COMPLETE
     std::map<const TypeIdentifier*, const TypeObject*> objects_; // EK_MINIMAL
     std::map<const TypeIdentifier*, const TypeObject*> complete_objects_; // EK_COMPLETE
+    mutable std::vector<TypeIdentifier*> identifiers_created_;
     mutable std::map<const TypeIdentifier*, TypeInformation*> informations_;
     mutable std::vector<TypeInformation*> informations_created_;
     std::map<std::string, std::string> aliases_; // Aliases

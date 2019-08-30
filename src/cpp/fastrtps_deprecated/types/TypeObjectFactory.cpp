@@ -69,67 +69,83 @@ TypeObjectFactory::TypeObjectFactory()
     // Generate basic TypeIdentifiers
     TypeIdentifier* auxIdent;
     // TK_BOOLEAN:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_BOOLEAN);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_BOOLEAN, auxIdent));
     // TK_BYTE:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_BYTE);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_BYTE, auxIdent));
     // TK_BYTE:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_BYTE);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT8, auxIdent));
     // TK_BYTE:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_BYTE);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT8, auxIdent));
     // TK_INT16:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_INT16);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT16, auxIdent));
     // TK_INT32:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_INT32);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT32, auxIdent));
     // TK_INT64:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_INT64);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT64, auxIdent));
     // TK_UINT16:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_UINT16);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT16, auxIdent));
     // TK_UINT32:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_UINT32);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT32, auxIdent));
     // TK_UINT64:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_UINT64);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT64, auxIdent));
     // TK_FLOAT32:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_FLOAT32);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_FLOAT32, auxIdent));
     // TK_FLOAT64:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_FLOAT64);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_FLOAT64, auxIdent));
     // TK_FLOAT128:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_FLOAT128);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_FLOAT128, auxIdent));
     // TK_CHAR8:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_CHAR8);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR8, auxIdent));
     // TK_CHAR16:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_CHAR16);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR16, auxIdent));
     // TK_CHAR16:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_CHAR16);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR16T, auxIdent));
 }
@@ -166,6 +182,12 @@ TypeObjectFactory::~TypeObjectFactory()
             ++idc_it;
         }
         complete_identifiers_.clear();
+
+        for (TypeIdentifier* id : identifiers_created_)
+        {
+            delete id;
+        }
+        identifiers_created_.clear();
     }
     {
         std::unique_lock<std::recursive_mutex> scoped(m_MutexObjects);
@@ -208,6 +230,12 @@ void TypeObjectFactory::nullify_all_entries(const TypeIdentifier* identifier)
         {
             it->second = nullptr;
         }
+    }
+
+    auto it = std::find(identifiers_created_.begin(), identifiers_created_.end(), identifier);
+    if (it != identifiers_created_.end())
+    {
+        identifiers_created_.erase(it);
     }
 }
 
@@ -1279,7 +1307,8 @@ void TypeObjectFactory::add_type_identifier(const std::string& type_name, const 
     {
         if (complete_identifiers_.find(type_name) == complete_identifiers_.end())
         {
-            TypeIdentifier* id = new TypeIdentifier;
+            TypeIdentifier* id = new TypeIdentifier();
+            identifiers_created_.push_back(id);
             *id = *identifier;
             complete_identifiers_[type_name] = id;
         }
@@ -1288,7 +1317,8 @@ void TypeObjectFactory::add_type_identifier(const std::string& type_name, const 
     {
         if (identifiers_.find(type_name) == identifiers_.end())
         {
-            TypeIdentifier* id = new TypeIdentifier;
+            TypeIdentifier* id = new TypeIdentifier();
+            identifiers_created_.push_back(id);
             *id = *identifier;
             identifiers_[type_name] = id;
         }
@@ -1311,7 +1341,7 @@ void TypeObjectFactory::add_type_object(const std::string& type_name, const Type
                 const TypeIdentifier* typeId = identifiers_[type_name];
                 if (objects_.find(typeId) == objects_.end())
                 {
-                    TypeObject* obj = new TypeObject;
+                    TypeObject* obj = new TypeObject();
                     *obj = *object;
                     objects_[typeId] = obj;
                 }
@@ -1321,7 +1351,7 @@ void TypeObjectFactory::add_type_object(const std::string& type_name, const Type
                 const TypeIdentifier* typeId = complete_identifiers_[type_name];
                 if (complete_objects_.find(typeId) == complete_objects_.end())
                 {
-                    TypeObject* obj = new TypeObject;
+                    TypeObject* obj = new TypeObject();
                     *obj = *object;
                     complete_objects_[typeId] = obj;
                 }
@@ -1334,7 +1364,7 @@ void TypeObjectFactory::add_type_object(const std::string& type_name, const Type
             {
                 if (objects_.find(typeId) == objects_.end())
                 {
-                    TypeObject* obj = new TypeObject;
+                    TypeObject* obj = new TypeObject();
                     *obj = *object;
                     objects_[typeId] = obj;
                 }
@@ -1343,7 +1373,7 @@ void TypeObjectFactory::add_type_object(const std::string& type_name, const Type
             {
                 if (complete_objects_.find(typeId) == complete_objects_.end())
                 {
-                    TypeObject* obj = new TypeObject;
+                    TypeObject* obj = new TypeObject();
                     *obj = *object;
                     complete_objects_[typeId] = obj;
                 }
