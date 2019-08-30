@@ -47,7 +47,9 @@ class AnyDataWriterListener
 {
 public:
     /** @cond */
-    virtual ~AnyDataWriterListener()  { }
+    virtual ~AnyDataWriterListener()
+    {
+    }
     /** @endcond */
 
 public:
@@ -94,24 +96,34 @@ class NoOpAnyDataWriterListener : public virtual AnyDataWriterListener
  * Ignore these functions for the doxygen API documentation for clarity.
  */
 public:
-    virtual ~NoOpAnyDataWriterListener() { }
+    virtual ~NoOpAnyDataWriterListener()
+    {
+    }
 
 public:
     virtual void on_offered_deadline_missed(
             AnyDataWriter& writer,
-            const ::dds::core::status::OfferedDeadlineMissedStatus& status) { }
+            const ::dds::core::status::OfferedDeadlineMissedStatus& status)
+    {
+    }
 
     virtual void on_offered_incompatible_qos(
             AnyDataWriter& writer,
-            const ::dds::core::status::OfferedIncompatibleQosStatus& status) { }
+            const ::dds::core::status::OfferedIncompatibleQosStatus& status)
+    {
+    }
 
     virtual void on_liveliness_lost(
             AnyDataWriter& writer,
-            const ::dds::core::status::LivelinessLostStatus& status) { }
+            const ::dds::core::status::LivelinessLostStatus& status)
+    {
+    }
 
     virtual void on_publication_matched(
             AnyDataWriter& writer,
-            const ::dds::core::status::PublicationMatchedStatus& status) { }
+            const ::dds::core::status::PublicationMatchedStatus& status)
+    {
+    }
 /** @endcond */
 };
 

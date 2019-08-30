@@ -167,7 +167,7 @@ public:
 template<typename T>
 class ContentFilteredTopic : public TContentFilteredTopic <T, detail::ContentFilteredTopic> { };
 
-//#endif  // OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
+//#endif  //OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
 
 } //namespace topic
 } //namespace dds

@@ -69,6 +69,22 @@ public:
     bool copy(/*base_readers_iterator base_iter,*/
               ITERATOR typed_iter) {
         //To implement
+//        bool copied = false;
+//        try {
+//            /* Cast base reader to typed delegate: */
+//            typename READER::DELEGATE_REF_T reader_typed =
+//                    OSPL_CXX11_STD_MODULE::dynamic_pointer_cast<typename READER::DELEGATE_T>(*base_iter);
+//            READER dr(reader_typed);
+//            if(dr != dds::core::null)
+//            {
+//                *typed_iter = dr;
+//                copied = true;
+//            }
+//        } catch (...) {
+//            /* Ignore, because subscriber can have returned readers that are of
+//                     * different types. */
+//        }
+//        return copied;
     }
 };
 
@@ -83,6 +99,9 @@ public:
     bool copy(/*base_readers_iterator base_iter,*/
               ITERATOR any_iter) {
         //To implement
+//        *any_iter = (*base_iter)->wrapper_to_any();
+//        return true;
+
     }
 };
 
@@ -102,6 +121,15 @@ public:
                   uint32_t max_size)
     {
         //To implement
+//        uint32_t size = 0;
+//        base_readers_iterator iter;
+//        for (iter = base_readers.begin(); (size < max_size) && (iter != base_readers.end()); ++iter) {
+//            if (ReadersCopySpecialization<READER, ITERATOR>::copy(iter, begin)) {
+//                begin++;
+//                size++;
+//            }
+//        }
+//        return size;
     }
 
     static
@@ -109,6 +137,15 @@ public:
                   ITERATOR begin)
     {
         //To implement
+//        uint32_t size = 0;
+//        base_readers_iterator iter;
+//        for (iter = base_readers.begin(); iter != base_readers.end(); ++iter) {
+//            if (ReadersCopySpecialization<READER, ITERATOR>::copy(iter, begin)) {
+//                begin++;
+//                size++;
+//            }
+//        }
+//        return size;
     }
 };
 
@@ -126,6 +163,14 @@ uint32_t find(
         uint32_t max_size)
 {
     //To implement
+//    uint32_t size = 0;
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
+//    if (max_size > 0) {
+//        detail::base_readers_vector base_readers;
+//        base_readers = sub.delegate()->find_datareaders(topic_name);
+//        size = detail::ReadersCopy<READER, FwdIterator>::copy(base_readers, begin, max_size);
+//    }
+//    return size;
 }
 
 template<
@@ -137,6 +182,12 @@ uint32_t find(
         BinIterator begin)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
+//    uint32_t size = 0;
+//    detail::base_readers_vector base_readers;
+//    base_readers = sub.delegate()->find_datareaders(topic_name);
+//    size = detail::ReadersCopy<READER, BinIterator>::copy(base_readers, begin);
+//    return size;
 }
 
 template<
@@ -150,6 +201,8 @@ uint32_t find(
         uint32_t max_size)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
+//    return find<READER, T, FwdIterator>(sub, topic_description.name(), begin, max_size);
 }
 
 template<
@@ -162,6 +215,8 @@ uint32_t find(
         BinIterator begin)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
+//    return find<READER, T, BinIterator>(sub, topic_description.name(), begin);
 }
 
 template<
@@ -174,6 +229,15 @@ uint32_t find(
         uint32_t max_size)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
+//    uint32_t size = 0;
+//    if (max_size > 0) {
+//        detail::base_readers_vector base_readers;
+//        base_readers = sub.delegate()->get_datareaders(rs);
+//        size = detail::ReadersCopy<READER, FwdIterator>::copy(base_readers, begin, max_size);
+//    }
+//    return size;
+
 }
 
 template<
@@ -185,6 +249,12 @@ uint32_t find(
         BinIterator begin)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
+//    uint32_t size = 0;
+//    detail::base_readers_vector base_readers;
+//    base_readers = sub.delegate()->get_datareaders(rs);
+//    size = detail::ReadersCopy<READER, BinIterator>::copy(base_readers, begin);
+//    return size;
 }
 
 } //namespace sub

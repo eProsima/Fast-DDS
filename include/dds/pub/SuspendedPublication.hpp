@@ -128,7 +128,8 @@ public:
 };
 
 typedef dds::pub::detail::SuspendedPublication SuspendedPublication;
-}
-}
+
+} //namespace pub
+} //namespace dds
 
 #endif //OMG_DDS_PUB_SUSPENDED_PUBLICATION_HPP_

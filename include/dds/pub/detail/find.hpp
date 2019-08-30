@@ -47,6 +47,22 @@ uint32_t find(
         int32_t max_size)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(pub);
+//    if(max_size > 0) {
+//        org::opensplice::pub::AnyDataWriterDelegate::ref_type writer_base = pub.delegate()->find_datawriter(topic_name);
+//        if (writer_base) {
+//            /* Cast base writer to typed delegate: */
+//            typename WRITER::DELEGATE_REF_T writer_typed =
+//                    OSPL_CXX11_STD_MODULE::dynamic_pointer_cast<typename WRITER::DELEGATE_T>(writer_base);
+//            WRITER dw(writer_typed);
+//            if(dw != dds::core::null)
+//            {
+//                *begin = dw;
+//                return 1;
+//            }
+//        }
+//    }
+//    return 0;
 }
 
 
@@ -59,6 +75,20 @@ uint32_t find(
         BinIterator begin)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(pub);
+//    org::opensplice::pub::AnyDataWriterDelegate::ref_type writer_base = pub.delegate()->find_datawriter(topic_name);
+//    if (writer_base) {
+//        /* Cast base writer to typed delegate: */
+//        typename WRITER::DELEGATE_REF_T writer_typed =
+//                OSPL_CXX11_STD_MODULE::dynamic_pointer_cast<typename WRITER::DELEGATE_T>(writer_base);
+//        WRITER dw(writer_typed);
+//        if(dw != dds::core::null)
+//        {
+//            *begin = dw;
+//            return 1;
+//        }
+//    }
+//    return 0;
 }
 
 
