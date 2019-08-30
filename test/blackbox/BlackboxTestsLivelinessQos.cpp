@@ -30,9 +30,9 @@ TEST(LivelinessQos, Liveliness_Automatic_Reliable)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Liveliness lease duration and announcement period
-    uint32_t liveliness_ms = 200;
+    uint32_t liveliness_ms = 1000;
     Duration_t liveliness_s(liveliness_ms * 1e-3);
-    Duration_t announcement_period(liveliness_ms * 1e-3 * 0.01);
+    Duration_t announcement_period(liveliness_ms * 1e-3 * 0.002);
 
     reader.reliability(RELIABLE_RELIABILITY_QOS)
             .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
@@ -51,7 +51,7 @@ TEST(LivelinessQos, Liveliness_Automatic_Reliable)
     writer.wait_discovery();
     reader.wait_discovery();
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(liveliness_ms * 10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(liveliness_ms * 2));
 
     // When using automatic kind, liveliness on both publisher and subscriber should never be lost
     // It would only be lost if the publishing application crashed, which can't be reproduced in the tests
@@ -67,9 +67,9 @@ TEST(LivelinessQos, Liveliness_Automatic_BestEffort)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Liveliness lease duration and announcement period
-    uint32_t liveliness_ms = 200;
+    uint32_t liveliness_ms = 1000;
     Duration_t liveliness_s(liveliness_ms * 1e-3);
-    Duration_t announcement_period(liveliness_ms * 1e-3 * 0.01);
+    Duration_t announcement_period(liveliness_ms * 1e-3 * 0.002);
 
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
             .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
@@ -88,7 +88,7 @@ TEST(LivelinessQos, Liveliness_Automatic_BestEffort)
     writer.wait_discovery();
     reader.wait_discovery();
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(liveliness_ms * 10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(liveliness_ms * 2));
 
     // When using automatic kind, liveliness on both publisher and subscriber should never be lost
     // It would only be lost if the publishing application crashed, which can't be reproduced in the tests
@@ -1236,8 +1236,8 @@ TEST(LivelinessQos, TwoWriters_TwoReaders)
 {
     unsigned int num_pub = 2;
     unsigned int num_sub = 2;
-    unsigned int lease_duration_ms = 250;
-    unsigned int announcement_period_ms = 5;
+    unsigned int lease_duration_ms = 100;
+    unsigned int announcement_period_ms = 1;
 
     // Publishers
     PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, 3u, 0u);
@@ -1275,7 +1275,6 @@ TEST(LivelinessQos, TwoWriters_TwoReaders)
     publishers.assert_liveliness(1u);
     subscribers.sub_wait_liveliness_recovered(3u);
 
-    // Both subscribers are notified that liveliness was recovered
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 3u);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(lease_duration_ms * 4));
