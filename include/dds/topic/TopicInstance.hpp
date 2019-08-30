@@ -49,7 +49,8 @@ public:
      *
      * @param h the InstanceHandle
      */
-    TopicInstance(const dds::core::InstanceHandle& h);
+    TopicInstance(
+            const dds::core::InstanceHandle& h);
 
     /**
      * Construct a TopicInstance with an InstanceHandle and a sample type.
@@ -57,9 +58,10 @@ public:
      * @param h the InstanceHandle
      * @param sample the <Type>
      */
-    TopicInstance(const dds::core::InstanceHandle& h, const T& sample);
+    TopicInstance(
+            const dds::core::InstanceHandle& h,
+            const T& sample);
 
-public:
     /**
      * Conversion operator to get the InstanceHandle.
      *
@@ -79,7 +81,8 @@ public:
      *
      * @param h the InstanceHandle to set to the TopicInstance
      */
-    void handle(const dds::core::InstanceHandle& h);
+    void handle(
+            const dds::core::InstanceHandle& h);
 
     /**
      * Get the data sample
@@ -100,14 +103,15 @@ public:
      *
      * @param sample send a sample for this TopicInstance
      */
-    void sample(const T& sample);
+    void sample(
+            const T& sample);
 
 private:
     dds::core::InstanceHandle h_;
     T sample_;
 };
 
-}
-}
+} //namespace topic
+} //namespace dds
 
-#endif /* OMG_DDS_TOPIC_TOPIC_INSTANCE_HPP_ */
+#endif //OMG_DDS_TOPIC_TOPIC_INSTANCE_HPP_

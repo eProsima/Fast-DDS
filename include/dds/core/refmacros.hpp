@@ -180,4 +180,4 @@ public:                                                                     \
 public:                                                                     \
     TYPE(DELEGATE_T *impl) : dds::core::Reference< DELEGATE_T >(impl) { }
 
-#endif // OMG_DDS_CORE_REFMACROS_HPP_
+#endif //OMG_DDS_CORE_REFMACROS_HPP_

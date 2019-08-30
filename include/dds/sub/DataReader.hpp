@@ -35,12 +35,7 @@ template<
         template<typename Q> class DELEGATE>
 class DataReaderListener;
 
-}
-}
-
 // = Manipulators
-namespace dds {
-namespace sub {
 namespace functors {
 
 typedef dds::sub::functors::detail::MaxSamplesManipulatorFunctor      MaxSamplesManipulatorFunctor;
@@ -903,10 +898,10 @@ public:
      */
     DataReader(
             const Subscriber& sub,
-           const ::dds::topic::Topic<T>& topic,
-           const qos::DataReaderQos& qos,
-           DataReaderListener<T, DELEGATE>* listener = NULL,
-           const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+            const ::dds::topic::Topic<T>& topic,
+            const qos::DataReaderQos& qos,
+            DataReaderListener<T, DELEGATE>* listener = NULL,
+            const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
 
     #ifdef OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
 
@@ -918,10 +913,10 @@ public:
     /** @copydoc dds::sub::DataReader::DataReader(const dds::sub::Subscriber& sub, const ::dds::topic::Topic<T>& topic, const dds::sub::qos::DataReaderQos& qos, dds::sub::DataReaderListener<T>* listener, const dds::core::status::StatusMask& mask) */
     DataReader(
             const dds::sub::Subscriber& sub,
-           const ::dds::topic::ContentFilteredTopic<T>& topic,
-           const qos::DataReaderQos& qos,
-           DataReaderListener<T>* listener = NULL,
-           const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+            const ::dds::topic::ContentFilteredTopic<T>& topic,
+            const qos::DataReaderQos& qos,
+            DataReaderListener<T>* listener = NULL,
+            const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
 
     #endif //OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
 

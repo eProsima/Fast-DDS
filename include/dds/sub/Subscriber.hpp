@@ -61,7 +61,7 @@ public:
     /**
      * Local convenience typedef for dds::sub::SubscriberListener.
      */
-    typedef dds::sub::SubscriberListener                 Listener;
+    typedef dds::sub::SubscriberListener Listener;
 
     /**
      * Create a new Subscriber.

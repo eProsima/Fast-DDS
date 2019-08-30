@@ -43,12 +43,16 @@ template<typename DELEGATE>
 void TCoherentSet<DELEGATE>::end()
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->delegate().get_publisher().delegate().get());
+//    this->delegate().end();
 }
 
 template<typename DELEGATE>
 TCoherentSet<DELEGATE>::~TCoherentSet()
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->delegate().get_publisher().delegate().get());
+//    this->delegate().end();
 }
 
 } //namespace pub

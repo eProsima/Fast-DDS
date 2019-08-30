@@ -34,11 +34,14 @@ namespace cond {
 template<typename FUN>
 QueryCondition::QueryCondition(
         const dds::sub::Query& query,
-        const dds::sub::status::DataState& status, const FUN& functor)
+        const dds::sub::status::DataState& status,
+        const FUN& functor)
     : dds::sub::cond::TReadCondition<DELEGATE>(
           new DELEGATE(query.delegate().data_reader(), query.delegate(), status, functor))
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(query);
+//	this->delegate()->init(this->impl_);
 }
 
 template<typename T>
@@ -51,6 +54,8 @@ QueryCondition::QueryCondition(
           new DELEGATE(dds::sub::AnyDataReader(dr), expression, params, status))
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
+//	this->delegate()->init(this->impl_);
 }
 
 
@@ -65,6 +70,8 @@ QueryCondition::QueryCondition(
           new DELEGATE(dds::sub::AnyDataReader(dr), expression, params, status, functor))
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
+//	this->delegate()->init(this->impl_);
 }
 
 template<typename FWIterator>
@@ -73,6 +80,10 @@ void QueryCondition::parameters(
         const FWIterator end)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+
+//    std::vector<std::string> params(begin, end);
+//    this->delegate()->parameters(params);
 }
 
 } //namespace cond

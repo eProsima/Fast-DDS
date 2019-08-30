@@ -1,25 +1,22 @@
 /*
- *                         Vortex OpenSplice
+ * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
  *
- *   This software and documentation are Copyright 2006 to TO_YEAR ADLINK
- *   Technology Limited, its affiliated companies and licensors. All rights
- *   reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- *
- */
-#ifndef OSPL_DDS_SUB_TDATAREADER_IMPL_HPP_
-#define OSPL_DDS_SUB_TDATAREADER_IMPL_HPP_
+*/
+
+#ifndef EPROSIMA_DDS_SUB_TDATAREADER_IMPL_HPP_
+#define EPROSIMA_DDS_SUB_TDATAREADER_IMPL_HPP_
 
 /**
  * @file
@@ -32,9 +29,6 @@
 #include <dds/sub/Query.hpp>
 #include <dds/sub/detail/SamplesHolder.hpp>
 
-
-
-
 /***************************************************************************
  *
  * dds/sub/DataReader<> WRAPPER implementation.
@@ -44,250 +38,320 @@
 
 // Implementation
 
-namespace dds
-{
-namespace sub
-{
+namespace dds {
+namespace sub {
 
 //--------------------------------------------------------------------------------
 //  DATAREADER
 //--------------------------------------------------------------------------------
 
-template<typename T, template<typename Q> class DELEGATE>
-DataReader<T, DELEGATE>::Selector::Selector(DataReader& dr) : impl_(dr.delegate())
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+DataReader<T, DELEGATE>::Selector::Selector(
+        DataReader& dr)
+    : impl_(dr.delegate())
 {
 }
 
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 typename DataReader<T, DELEGATE>::Selector&
-DataReader<T, DELEGATE>::Selector::instance(const dds::core::InstanceHandle& h)
+DataReader<T, DELEGATE>::Selector::instance(
+        const dds::core::InstanceHandle& h)
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
-    impl_.instance(h);
-    return *this;
+//    impl_.instance(h);
+//    return *this;
 }
 
 
-template<typename T, template<typename Q> class DELEGATE>
-typename DataReader<T, DELEGATE>::Selector&
-DataReader<T, DELEGATE>::Selector::next_instance(const dds::core::InstanceHandle& h)
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+typename DataReader<T, DELEGATE>::Selector& DataReader<T, DELEGATE>::Selector::next_instance(
+        const dds::core::InstanceHandle& h)
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
-    impl_.next_instance(h);
-    return *this;
+//    impl_.next_instance(h);
+//    return *this;
 }
 
 
-template<typename T, template<typename Q> class DELEGATE>
-typename DataReader<T, DELEGATE>::Selector&
-DataReader<T, DELEGATE>::Selector::state(const dds::sub::status::DataState& s)
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+typename DataReader<T, DELEGATE>::Selector& DataReader<T, DELEGATE>::Selector::state(
+        const dds::sub::status::DataState& s)
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
-    impl_.filter_state(s);
-    return *this;
+//    impl_.filter_state(s);
+//    return *this;
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-typename DataReader<T, DELEGATE>::Selector&
-DataReader<T, DELEGATE>::Selector::content(const dds::sub::Query& query)
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+typename DataReader<T, DELEGATE>::Selector& DataReader<T, DELEGATE>::Selector::content(
+        const dds::sub::Query& query)
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
-    impl_.filter_content(query);
-    return *this;
+//    impl_.filter_content(query);
+//    return *this;
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-typename DataReader<T, DELEGATE>::Selector&
-DataReader<T, DELEGATE>::Selector::max_samples(uint32_t n)
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+typename DataReader<T, DELEGATE>::Selector& DataReader<T, DELEGATE>::Selector::max_samples(
+        uint32_t n)
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
-    impl_.max_samples(n);
-    return *this;
+//    impl_.max_samples(n);
+//    return *this;
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-dds::sub::LoanedSamples<T>
-DataReader<T, DELEGATE>::Selector::read()
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+dds::sub::LoanedSamples<T> DataReader<T, DELEGATE>::Selector::read()
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
-    return impl_.read();
+//    return impl_.read();
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-dds::sub::LoanedSamples<T>
-DataReader<T, DELEGATE>::Selector::take()
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+dds::sub::LoanedSamples<T> DataReader<T, DELEGATE>::Selector::take()
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
-    return impl_.take();
+//    return impl_.take();
 }
 
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 template<typename SamplesFWIterator>
-uint32_t
-DataReader<T, DELEGATE>::Selector::read(SamplesFWIterator sfit, uint32_t max_samples)
+uint32_t DataReader<T, DELEGATE>::Selector::read(
+        SamplesFWIterator sfit,
+        uint32_t max_samples)
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
-    return impl_.read(sfit, max_samples);
+//    return impl_.read(sfit, max_samples);
 }
 
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 template<typename SamplesFWIterator>
-uint32_t
-DataReader<T, DELEGATE>::Selector::take(SamplesFWIterator sfit,    uint32_t max_samples)
+uint32_t DataReader<T, DELEGATE>::Selector::take(
+        SamplesFWIterator sfit,
+        uint32_t max_samples)
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
-
-    return impl_.take(sfit, max_samples);
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+//    return impl_.take(sfit, max_samples);
 }
 
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 template<typename SamplesBIIterator>
-uint32_t
-DataReader<T, DELEGATE>::Selector::read(SamplesBIIterator sbit)
+uint32_t DataReader<T, DELEGATE>::Selector::read(
+        SamplesBIIterator sbit)
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
-
-    return impl_.read(sbit);
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+//    return impl_.read(sbit);
 }
 
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 template<typename SamplesBIIterator>
-uint32_t
-DataReader<T, DELEGATE>::Selector::take(SamplesBIIterator sbit)
+uint32_t DataReader<T, DELEGATE>::Selector::take(
+        SamplesBIIterator sbit)
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
-
-    return impl_.take(sbit);
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+//    return impl_.take(sbit);
 }
 
 //--------------------------------------------------------------------------------
 //  DATAREADER::MANIPULATORSELECTOR
 //--------------------------------------------------------------------------------
-template<typename T, template<typename Q> class DELEGATE>
-DataReader<T, DELEGATE>::ManipulatorSelector::
-ManipulatorSelector(DataReader& dr) : impl_(dr.delegate()) {}
-
-template<typename T, template<typename Q> class DELEGATE>
-bool
-DataReader<T, DELEGATE>::ManipulatorSelector::read_mode()
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+DataReader<T, DELEGATE>::ManipulatorSelector::ManipulatorSelector(
+        DataReader& dr)
+    : impl_(dr.delegate())
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
-
-    return impl_.read_mode();
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-void
-DataReader<T, DELEGATE>::ManipulatorSelector::read_mode(bool b)
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+bool DataReader<T, DELEGATE>::ManipulatorSelector::read_mode()
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
-
-    impl_.read_mode(b);
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+//    return impl_.read_mode();
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-typename DataReader<T, DELEGATE>::ManipulatorSelector&
-DataReader<T, DELEGATE>::ManipulatorSelector::instance(const dds::core::InstanceHandle& h)
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+void DataReader<T, DELEGATE>::ManipulatorSelector::read_mode(
+        bool b)
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
-
-    impl_.instance(h);
-    return *this;
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+//    impl_.read_mode(b);
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-typename DataReader<T, DELEGATE>::ManipulatorSelector&
-DataReader<T, DELEGATE>::ManipulatorSelector::next_instance(const dds::core::InstanceHandle& h)
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+typename DataReader<T, DELEGATE>::ManipulatorSelector& DataReader<T, DELEGATE>::ManipulatorSelector::instance(
+        const dds::core::InstanceHandle& h)
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
-    impl_.next_instance(h);
-    return *this;
+//    impl_.instance(h);
+//    return *this;
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-typename DataReader<T, DELEGATE>::ManipulatorSelector&
-DataReader<T, DELEGATE>::ManipulatorSelector::operator >>(dds::sub::LoanedSamples<T>& samples)
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+typename DataReader<T, DELEGATE>::ManipulatorSelector& DataReader<T, DELEGATE>::ManipulatorSelector::next_instance(
+        const dds::core::InstanceHandle& h)
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
-    impl_ >> samples;
-    return *this;
+//    impl_.next_instance(h);
+//    return *this;
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-typename DataReader<T, DELEGATE>::ManipulatorSelector&
-DataReader<T, DELEGATE>::ManipulatorSelector::operator >> (ManipulatorSelector & (manipulator)(ManipulatorSelector&))
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+typename DataReader<T, DELEGATE>::ManipulatorSelector& DataReader<T, DELEGATE>::ManipulatorSelector::operator >>(
+        dds::sub::LoanedSamples<T>& samples)
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
-    manipulator(*this);
-    return *this;
+//    impl_ >> samples;
+//    return *this;
+}
+
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+typename DataReader<T, DELEGATE>::ManipulatorSelector& DataReader<T, DELEGATE>::ManipulatorSelector::operator >>(
+        ManipulatorSelector & (manipulator)(ManipulatorSelector&))
+{
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+
+//    manipulator(*this);
+//    return *this;
 }
 
 /** @cond */
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 template<typename Functor>
-typename DataReader<T, DELEGATE>::ManipulatorSelector
-DataReader<T, DELEGATE>::ManipulatorSelector::operator >> (Functor f)
+typename DataReader<T, DELEGATE>::ManipulatorSelector DataReader<T, DELEGATE>::ManipulatorSelector::operator >>(
+        Functor f)
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
-    f(*this);
-    return *this;
+//    f(*this);
+//    return *this;
 }
 /** @endcond */
 
-template<typename T, template<typename Q> class DELEGATE>
-typename DataReader<T, DELEGATE>::ManipulatorSelector&
-DataReader<T, DELEGATE>::ManipulatorSelector::state(const dds::sub::status::DataState& s)
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+typename DataReader<T, DELEGATE>::ManipulatorSelector& DataReader<T, DELEGATE>::ManipulatorSelector::state(
+        const dds::sub::status::DataState& s)
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
-    impl_.filter_state(s);
-    return *this;
+//    impl_.filter_state(s);
+//    return *this;
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-typename DataReader<T, DELEGATE>::ManipulatorSelector&
-DataReader<T, DELEGATE>::ManipulatorSelector::content(const dds::sub::Query& query)
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+typename DataReader<T, DELEGATE>::ManipulatorSelector& DataReader<T, DELEGATE>::ManipulatorSelector::content(
+        const dds::sub::Query& query)
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
-    impl_.filter_content(query);
-    return *this;
+//    impl_.filter_content(query);
+//    return *this;
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-typename DataReader<T, DELEGATE>::ManipulatorSelector&
-DataReader<T, DELEGATE>::ManipulatorSelector::max_samples(uint32_t n)
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+typename DataReader<T, DELEGATE>::ManipulatorSelector& DataReader<T, DELEGATE>::ManipulatorSelector::max_samples(
+        uint32_t n)
 {
-    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
+    //To implement
+//    ISOCPP_REPORT_STACK_DELEGATE_BEGIN(this->impl_.get_reader());
 
-    impl_.max_samples(n);
-    return *this;
+//    impl_.max_samples(n);
+//    return *this;
 }
 
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 DataReader<T, DELEGATE>::DataReader(
     const dds::sub::Subscriber& sub,
     const dds::topic::Topic<T>& topic):
-        ::dds::core::Reference< DELEGATE<T> >(new DELEGATE<T>(sub, topic, sub.is_nil() ? dds::sub::qos::DataReaderQos() : sub->default_datareader_qos()))
+        ::dds::core::Reference< DELEGATE<T> >(
+              new DELEGATE<T>(sub, topic, sub.is_nil() ? dds::sub::qos::DataReaderQos() : sub->default_datareader_qos()))
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
-
-    this->delegate()->init(this->impl_);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
+//    this->delegate()->init(this->impl_);
 }
 
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 DataReader<T, DELEGATE>::DataReader(
     const dds::sub::Subscriber& sub,
     const ::dds::topic::Topic<T>& topic,
@@ -296,24 +360,28 @@ DataReader<T, DELEGATE>::DataReader(
     const dds::core::status::StatusMask& mask) :
         ::dds::core::Reference< DELEGATE<T> >(new DELEGATE<T>(sub, topic, qos, listener, mask))
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
-
-    this->delegate()->init(this->impl_);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
+//    this->delegate()->init(this->impl_);
 }
 
 #ifdef OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 DataReader<T, DELEGATE>::DataReader(
     const dds::sub::Subscriber& sub,
     const dds::topic::ContentFilteredTopic<T>& topic) :
         ::dds::core::Reference< DELEGATE<T> >(new DELEGATE<T>(sub, topic, sub.default_datareader_qos()))
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
-
-    this->delegate()->init(this->impl_);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
+//    this->delegate()->init(this->impl_);
 }
 
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 DataReader<T, DELEGATE>::DataReader(
     const dds::sub::Subscriber& sub,
     const ::dds::topic::ContentFilteredTopic<T>& topic,
@@ -322,23 +390,28 @@ DataReader<T, DELEGATE>::DataReader(
     const dds::core::status::StatusMask& mask) :
         ::dds::core::Reference< DELEGATE<T> >(new DELEGATE<T>(sub, topic, qos, listener, mask))
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
-
-    this->delegate()->init(this->impl_);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(sub);
+//    this->delegate()->init(this->impl_);
 }
-#endif /* OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT */
+#endif //OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
 
 #ifdef OMG_DDS_MULTI_TOPIC_SUPPORT
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 DataReader<T, DELEGATE>::DataReader(
     const dds::sub::Subscriber& sub,
     const dds::topic::MultiTopic<T>& topic) :
         ::dds::core::Reference< DELEGATE<T> >(new DELEGATE<T>(sub, topic))
 {
-    this->delegate()->init(this->impl_);
+    //To implement
+//    this->delegate()->init(this->impl_);
 }
 
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 DataReader<T, DELEGATE>::DataReader(
     const dds::sub::Subscriber& sub,
     const ::dds::topic::MultiTopic<T>& topic,
@@ -347,179 +420,223 @@ DataReader<T, DELEGATE>::DataReader(
     const dds::core::status::StatusMask& mask) :
     ::dds::core::Reference< DELEGATE<T> >(new DELEGATE<T>(sub, topic, qos, listener, mask))
 {
-    this->delegate()->init(this->impl_);
+    //To implement
+//    this->delegate()->init(this->impl_);
 }
-#endif /* OMG_DDS_MULTI_TOPIC_SUPPORT */
+#endif //OMG_DDS_MULTI_TOPIC_SUPPORT
 
-template<typename T, template<typename Q> class DELEGATE>
-DataReader<T, DELEGATE>::~DataReader() { }
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+DataReader<T, DELEGATE>::~DataReader()
+{
+}
 
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 dds::sub::status::DataState
 DataReader<T, DELEGATE>::default_filter_state()
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-    return this->delegate()->default_filter_state();
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->default_filter_state();
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-DataReader<T, DELEGATE>& DataReader<T, DELEGATE>::default_filter_state(const dds::sub::status::DataState& status)
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+DataReader<T, DELEGATE>& DataReader<T, DELEGATE>::default_filter_state(
+        const dds::sub::status::DataState& status)
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-    this->delegate()->default_filter_state(status);
-    return *this;
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    this->delegate()->default_filter_state(status);
+//    return *this;
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-DataReader<T, DELEGATE>& DataReader<T, DELEGATE>::operator >>(dds::sub::LoanedSamples<T>& ls)
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+DataReader<T, DELEGATE>& DataReader<T, DELEGATE>::operator >>(
+        dds::sub::LoanedSamples<T>& ls)
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 
-    ls = this->read();
-    return *this;
+//    ls = this->read();
+//    return *this;
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-typename DataReader<T, DELEGATE>::ManipulatorSelector
-DataReader<T, DELEGATE>::operator >> (ManipulatorSelector& (manipulator)(ManipulatorSelector&))
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+typename DataReader<T, DELEGATE>::ManipulatorSelector DataReader<T, DELEGATE>::operator >>(
+        ManipulatorSelector& (manipulator)(ManipulatorSelector&))
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 
-    ManipulatorSelector selector(*this);
-    manipulator(selector);
-    return selector;
+//    ManipulatorSelector selector(*this);
+//    manipulator(selector);
+//    return selector;
 }
 
 /** @cond */
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 template<typename Functor>
-typename DataReader<T, DELEGATE>::ManipulatorSelector
-DataReader<T, DELEGATE>::operator >> (Functor f)
+typename DataReader<T, DELEGATE>::ManipulatorSelector DataReader<T, DELEGATE>::operator >>(
+        Functor f)
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 
-    ManipulatorSelector selector(*this);
-    f(selector);
-    return selector;
+//    ManipulatorSelector selector(*this);
+//    f(selector);
+//    return selector;
 }
 /** @endcond */
 
-template<typename T, template<typename Q> class DELEGATE>
-LoanedSamples<T>
-DataReader<T, DELEGATE>::read()
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+LoanedSamples<T> DataReader<T, DELEGATE>::read()
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-    return this->delegate()->read();
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->read();
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-LoanedSamples<T>
-DataReader<T, DELEGATE>::take()
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+LoanedSamples<T> DataReader<T, DELEGATE>::take()
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-    return this->delegate()->take();
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->take();
 }
 
 
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 template<typename SamplesFWIterator>
-uint32_t
-DataReader<T, DELEGATE>::read(SamplesFWIterator sfit, uint32_t max_samples)
+uint32_t DataReader<T, DELEGATE>::read(
+        SamplesFWIterator sfit,
+        uint32_t max_samples)
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-    return this->delegate()->read(sfit, max_samples);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->read(sfit, max_samples);
 }
 
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 template<typename SamplesFWIterator>
-uint32_t
-DataReader<T, DELEGATE>::take(SamplesFWIterator sfit, uint32_t max_samples)
+uint32_t DataReader<T, DELEGATE>::take(
+        SamplesFWIterator sfit,
+        uint32_t max_samples)
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-    return this->delegate()->take(sfit, max_samples);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->take(sfit, max_samples);
 }
 
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 template<typename SamplesBIIterator>
-uint32_t
-DataReader<T, DELEGATE>::read(SamplesBIIterator sbit)
+uint32_t DataReader<T, DELEGATE>::read(
+        SamplesBIIterator sbit)
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-    return this->delegate()->read(sbit);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->read(sbit);
 }
 
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 template<typename SamplesBIIterator>
-uint32_t
-DataReader<T, DELEGATE>::take(SamplesBIIterator sbit)
+uint32_t DataReader<T, DELEGATE>::take(
+        SamplesBIIterator sbit)
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-    return this->delegate()->take(sbit);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->take(sbit);
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-typename DataReader<T, DELEGATE>::Selector
-DataReader<T, DELEGATE>::select()
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+typename DataReader<T, DELEGATE>::Selector DataReader<T, DELEGATE>::select()
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 
-    Selector selector(*this);
-    return selector;
+//    Selector selector(*this);
+//    return selector;
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-dds::topic::TopicInstance<T>
-DataReader<T, DELEGATE>::key_value(const dds::core::InstanceHandle& h)
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+dds::topic::TopicInstance<T> DataReader<T, DELEGATE>::key_value(
+        const dds::core::InstanceHandle& h)
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-    return this->delegate()->key_value(h);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->key_value(h);
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-T&
-DataReader<T, DELEGATE>::key_value(T& sample, const dds::core::InstanceHandle& h)
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+T& DataReader<T, DELEGATE>::key_value(
+        T& sample,
+        const dds::core::InstanceHandle& h)
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-    return this->delegate()->key_value(sample, h);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->key_value(sample, h);
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-const dds::core::InstanceHandle
-DataReader<T, DELEGATE>::lookup_instance(const T& key) const
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+const dds::core::InstanceHandle DataReader<T, DELEGATE>::lookup_instance(
+        const T& key) const
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-    return this->delegate()->lookup_instance(key);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->lookup_instance(key);
 }
 
-template<typename T, template<typename Q> class DELEGATE>
-void
-DataReader<T, DELEGATE>::listener(
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
+void DataReader<T, DELEGATE>::listener(
     Listener* listener,
     const dds::core::status::StatusMask& event_mask)
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-    this->delegate()->listener(listener, event_mask);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    this->delegate()->listener(listener, event_mask);
 }
 
-template<typename T, template<typename Q> class DELEGATE>
+template<
+        typename T,
+        template<typename Q> class DELEGATE>
 typename DataReader<T, DELEGATE>::Listener*
 DataReader<T, DELEGATE>::listener() const
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-    return this->delegate()->listener();
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
+//    return this->delegate()->listener();
 }
 
 }
@@ -542,147 +659,155 @@ DataReader<T, DELEGATE>::listener() const
 #include <dds/sub/DataReaderListener.hpp>
 #include <dds/topic/Topic.hpp>
 #include <dds/topic/ContentFilteredTopic.hpp>
-#include <org/opensplice/sub/AnyDataReaderDelegate.hpp>
+//#include <org/opensplice/sub/AnyDataReaderDelegate.hpp>
 
 
 template<typename T>
-dds::sub::detail::DataReader<T>::DataReader(const dds::sub::Subscriber& sub,
-           const dds::topic::Topic<T>& topic,
-           const dds::sub::qos::DataReaderQos& qos,
-           dds::sub::DataReaderListener<T>* listener,
-           const dds::core::status::StatusMask& mask)
+dds::sub::detail::DataReader<T>::DataReader(
+        const dds::sub::Subscriber& sub,
+        const dds::topic::Topic<T>& topic,
+        const dds::sub::qos::DataReaderQos& qos,
+        dds::sub::DataReaderListener<T>* listener,
+        const dds::core::status::StatusMask& mask)
     : ::org::opensplice::sub::AnyDataReaderDelegate(qos, topic), sub_(sub)
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(topic);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(topic);
 
-    /* Create a implicit subscriber with the topic participant when needed. */
-    if (sub_.is_nil()) {
-        sub_ = dds::sub::Subscriber(topic->domain_participant());
-    }
+//    /* Create a implicit subscriber with the topic participant when needed. */
+//    if (sub_.is_nil()) {
+//        sub_ = dds::sub::Subscriber(topic->domain_participant());
+//    }
 
-    /* Merge the topic QoS implicitly when needed. */
-    if (topic.qos()->force_merge()) {
-        qos_ = topic.qos();
-    }
+//    /* Merge the topic QoS implicitly when needed. */
+//    if (topic.qos()->force_merge()) {
+//        qos_ = topic.qos();
+//    }
 
-    common_constructor(listener, mask);
+//    common_constructor(listener, mask);
 }
 
 template<typename T>
-dds::sub::detail::DataReader<T>::DataReader(const dds::sub::Subscriber& sub,
-           const dds::topic::ContentFilteredTopic<T, dds::topic::detail::ContentFilteredTopic>& topic,
-           const dds::sub::qos::DataReaderQos& qos,
-           dds::sub::DataReaderListener<T>* listener,
-           const dds::core::status::StatusMask& mask)
+dds::sub::detail::DataReader<T>::DataReader(
+        const dds::sub::Subscriber& sub,
+        const dds::topic::ContentFilteredTopic<T, dds::topic::detail::ContentFilteredTopic>& topic,
+        const dds::sub::qos::DataReaderQos& qos,
+        dds::sub::DataReaderListener<T>* listener,
+        const dds::core::status::StatusMask& mask)
     : ::org::opensplice::sub::AnyDataReaderDelegate(qos, topic), sub_(sub)
 {
-    ISOCPP_REPORT_STACK_DDS_BEGIN(topic);
+    //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(topic);
 
-    /* Create a implicit subscriber with the topic participant when needed. */
-    if (sub_.is_nil()) {
-        sub_ = dds::sub::Subscriber(topic->domain_participant());
-    }
+//    /* Create a implicit subscriber with the topic participant when needed. */
+//    if (sub_.is_nil()) {
+//        sub_ = dds::sub::Subscriber(topic->domain_participant());
+//    }
 
-    /* Merge the topic QoS implicitly when needed. */
-    if (topic.topic().qos()->force_merge()) {
-        qos_ = topic.topic().qos();
-    }
+//    /* Merge the topic QoS implicitly when needed. */
+//    if (topic.topic().qos()->force_merge()) {
+//        qos_ = topic.topic().qos();
+//    }
 
-    common_constructor(listener, mask);
+//    common_constructor(listener, mask);
 }
 
 template<typename T>
-void
-dds::sub::detail::DataReader<T>::common_constructor(
+void dds::sub::detail::DataReader<T>::common_constructor(
             dds::sub::DataReaderListener<T>* listener,
             const dds::core::status::StatusMask& mask)
 {
-    if (dds::topic::is_topic_type<T>::value == 0) {
-        ISOCPP_THROW_EXCEPTION(ISOCPP_PRECONDITION_NOT_MET_ERROR, "DataReader cannot be created, topic information not found");
-    }
+    //To implement
+//    if (dds::topic::is_topic_type<T>::value == 0) {
+//        ISOCPP_THROW_EXCEPTION(ISOCPP_PRECONDITION_NOT_MET_ERROR, "DataReader cannot be created, topic information not found");
+//    }
 
-    org::opensplice::sub::qos::DataReaderQosDelegate drQos = qos_.delegate();
+//    org::opensplice::sub::qos::DataReaderQosDelegate drQos = qos_.delegate();
 
-    // get and validate the kernel qos
-    drQos.check();
-    u_readerQos uQos = drQos.u_qos();
+//    // get and validate the kernel qos
+//    drQos.check();
+//    u_readerQos uQos = drQos.u_qos();
 
-    u_subscriber uSubscriber = (u_subscriber)(sub_.delegate()->get_user_handle());
+//    u_subscriber uSubscriber = (u_subscriber)(sub_.delegate()->get_user_handle());
 
-    std::string expression = this->AnyDataReaderDelegate::td_.delegate()->reader_expression();
-    std::vector<c_value> params = this->AnyDataReaderDelegate::td_.delegate()->reader_parameters();
+//    std::string expression = this->AnyDataReaderDelegate::td_.delegate()->reader_expression();
+//    std::vector<c_value> params = this->AnyDataReaderDelegate::td_.delegate()->reader_parameters();
 
-    std::string name = "reader <" + this->AnyDataReaderDelegate::td_.name() + ">";
-    u_dataReader uReader = u_dataReaderNew(uSubscriber, name.c_str(), expression.c_str(),
-            params.empty() ? NULL : &params[0], params.size(), uQos);
-    u_readerQosFree(uQos);
+//    std::string name = "reader <" + this->AnyDataReaderDelegate::td_.name() + ">";
+//    u_dataReader uReader = u_dataReaderNew(uSubscriber, name.c_str(), expression.c_str(),
+//            params.empty() ? NULL : &params[0], params.size(), uQos);
+//    u_readerQosFree(uQos);
 
-    if (!uReader) {
-        ISOCPP_THROW_EXCEPTION(ISOCPP_ERROR, "Failed to create DataReader");
-    } else {
-        this->AnyDataReaderDelegate::td_.delegate()->incrNrDependents();
-    }
+//    if (!uReader) {
+//        ISOCPP_THROW_EXCEPTION(ISOCPP_ERROR, "Failed to create DataReader");
+//    } else {
+//        this->AnyDataReaderDelegate::td_.delegate()->incrNrDependents();
+//    }
 
-    this->AnyDataReaderDelegate::setCopyOut(org::opensplice::topic::TopicTraits<T>::getCopyOut());
-    this->AnyDataReaderDelegate::setCopyIn(org::opensplice::topic::TopicTraits<T>::getCopyIn());
+//    this->AnyDataReaderDelegate::setCopyOut(org::opensplice::topic::TopicTraits<T>::getCopyOut());
+//    this->AnyDataReaderDelegate::setCopyIn(org::opensplice::topic::TopicTraits<T>::getCopyIn());
 
-    this->userHandle = u_object(uReader);
-    this->listener_set((void*)listener, mask);
-    this->set_domain_id(this->sub_.delegate()->get_domain_id());
+//    this->userHandle = u_object(uReader);
+//    this->listener_set((void*)listener, mask);
+//    this->set_domain_id(this->sub_.delegate()->get_domain_id());
 }
 
 template<typename T>
 dds::sub::detail::DataReader<T>::~DataReader()
 {
-    if (!this->closed) {
-        try {
-            close();
-        } catch (...) {
+    //To implement
+//    if (!this->closed) {
+//        try {
+//            close();
+//        } catch (...) {
 
-        }
-    }
+//        }
+//    }
 }
 
 template<typename T>
 void
-dds::sub::detail::DataReader<T>::init(ObjectDelegate::weak_ref_type weak_ref)
+dds::sub::detail::DataReader<T>::init(
+        ObjectDelegate::weak_ref_type weak_ref)
 {
-    /* Set weak_ref before passing ourselves to other isocpp objects. */
-    this->set_weak_ref(weak_ref);
-    /* Register writer at publisher. */
-    this->sub_.delegate()->add_datareader(*this);
-    /* Use listener dispatcher from the publisher. */
-    this->listener_dispatcher_set(this->sub_.delegate()->listener_dispatcher_get());
-    /* This only starts listening when the status mask shows interest. */
-    this->listener_enable();
-    /* Enable when needed. */
-    if (this->sub_.delegate()->is_enabled() && this->sub_.delegate()->is_auto_enable()) {
-        this->enable();
-    }
+    //To implement
+//    /* Set weak_ref before passing ourselves to other isocpp objects. */
+//    this->set_weak_ref(weak_ref);
+//    /* Register writer at publisher. */
+//    this->sub_.delegate()->add_datareader(*this);
+//    /* Use listener dispatcher from the publisher. */
+//    this->listener_dispatcher_set(this->sub_.delegate()->listener_dispatcher_get());
+//    /* This only starts listening when the status mask shows interest. */
+//    this->listener_enable();
+//    /* Enable when needed. */
+//    if (this->sub_.delegate()->is_enabled() && this->sub_.delegate()->is_auto_enable()) {
+//        this->enable();
+//    }
 }
 
 template<typename T>
-dds::sub::status::DataState
-dds::sub::detail::DataReader<T>::default_filter_state()
+dds::sub::status::DataState dds::sub::detail::DataReader<T>::default_filter_state()
 {
-    org::opensplice::core::ScopedObjectLock scopedLock(*this);
+    //To implement
+//    org::opensplice::core::ScopedObjectLock scopedLock(*this);
 
-    dds::sub::status::DataState state = this->status_filter_;
+//    dds::sub::status::DataState state = this->status_filter_;
 
-    scopedLock.unlock();
+//    scopedLock.unlock();
 
-    return state;
+//    return state;
 }
 
 template<typename T>
-void
-dds::sub::detail::DataReader<T>::default_filter_state(const dds::sub::status::DataState& state)
+void dds::sub::detail::DataReader<T>::default_filter_state(
+        const dds::sub::status::DataState& state)
 {
-    org::opensplice::core::ScopedObjectLock scopedLock(*this);
+    //To implement
+//    org::opensplice::core::ScopedObjectLock scopedLock(*this);
 
-    this->status_filter_ = state;
+//    this->status_filter_ = state;
 
-    scopedLock.unlock();
+//    scopedLock.unlock();
 }
 
 
@@ -690,661 +815,696 @@ template<typename T>
 dds::sub::LoanedSamples<T>
 dds::sub::detail::DataReader<T>::read()
 {
-    dds::sub::LoanedSamples<T> samples;
-    dds::sub::detail::LoanedSamplesHolder<T> holder(samples);
+    //To implement
+//    dds::sub::LoanedSamples<T> samples;
+//    dds::sub::detail::LoanedSamplesHolder<T> holder(samples);
 
-    this->AnyDataReaderDelegate::read((u_dataReader)(this->userHandle), this->status_filter_, holder, -1);
+//    this->AnyDataReaderDelegate::read((u_dataReader)(this->userHandle), this->status_filter_, holder, -1);
 
-    return samples;
+//    return samples;
 }
 
 template<typename T>
-dds::sub::LoanedSamples<T>
-dds::sub::detail::DataReader<T>::take()
+dds::sub::LoanedSamples<T> dds::sub::detail::DataReader<T>::take()
 {
-    dds::sub::LoanedSamples<T> samples;
-    dds::sub::detail::LoanedSamplesHolder<T> holder(samples);
+    //To implement
+//    dds::sub::LoanedSamples<T> samples;
+//    dds::sub::detail::LoanedSamplesHolder<T> holder(samples);
 
-    this->AnyDataReaderDelegate::take((u_dataReader)(this->userHandle), this->status_filter_, holder, -1);
+//    this->AnyDataReaderDelegate::take((u_dataReader)(this->userHandle), this->status_filter_, holder, -1);
 
-    return samples;
-}
-
-template<typename T>
-template<typename SamplesFWIterator>
-uint32_t
-dds::sub::detail::DataReader<T>::read(SamplesFWIterator samples, uint32_t max_samples)
-{
-    dds::sub::detail::SamplesFWInteratorHolder<T, SamplesFWIterator> holder(samples);
-
-    this->AnyDataReaderDelegate::read((u_dataReader)(this->userHandle), this->status_filter_, holder, max_samples);
-
-    return holder.get_length();
+//    return samples;
 }
 
 template<typename T>
 template<typename SamplesFWIterator>
-uint32_t
-dds::sub::detail::DataReader<T>::take(SamplesFWIterator samples, uint32_t max_samples)
+uint32_t dds::sub::detail::DataReader<T>::read(
+        SamplesFWIterator samples,
+        uint32_t max_samples)
 {
-    dds::sub::detail::SamplesFWInteratorHolder<T, SamplesFWIterator> holder(samples);
+    //To implement
+//    dds::sub::detail::SamplesFWInteratorHolder<T, SamplesFWIterator> holder(samples);
 
-    this->AnyDataReaderDelegate::take((u_dataReader)(this->userHandle), this->status_filter_, holder, max_samples);
+//    this->AnyDataReaderDelegate::read((u_dataReader)(this->userHandle), this->status_filter_, holder, max_samples);
 
-    return holder.get_length();
+//    return holder.get_length();
+}
+
+template<typename T>
+template<typename SamplesFWIterator>
+uint32_t dds::sub::detail::DataReader<T>::take(
+        SamplesFWIterator samples,
+        uint32_t max_samples)
+{
+    //To implement
+//    dds::sub::detail::SamplesFWInteratorHolder<T, SamplesFWIterator> holder(samples);
+
+//    this->AnyDataReaderDelegate::take((u_dataReader)(this->userHandle), this->status_filter_, holder, max_samples);
+
+//    return holder.get_length();
 }
 
 template<typename T>
 template<typename SamplesBIIterator>
-uint32_t
-dds::sub::detail::DataReader<T>::read(SamplesBIIterator samples)
+uint32_t dds::sub::detail::DataReader<T>::read(
+        SamplesBIIterator samples)
 {
-    dds::sub::detail::SamplesBIIteratorHolder<T, SamplesBIIterator> holder(samples);
+    //To implement
+//    dds::sub::detail::SamplesBIIteratorHolder<T, SamplesBIIterator> holder(samples);
 
-    this->AnyDataReaderDelegate::read((u_dataReader)(this->userHandle), this->status_filter_, holder, -1);
+//    this->AnyDataReaderDelegate::read((u_dataReader)(this->userHandle), this->status_filter_, holder, -1);
 
-    return holder.get_length();
+//    return holder.get_length();
 }
 
 template<typename T>
 template<typename SamplesBIIterator>
-uint32_t
-dds::sub::detail::DataReader<T>::take(SamplesBIIterator samples)
+uint32_t dds::sub::detail::DataReader<T>::take(
+        SamplesBIIterator samples)
 {
-    dds::sub::detail::SamplesBIIteratorHolder<T, SamplesBIIterator> holder(samples);
+    //To implement
+//    dds::sub::detail::SamplesBIIteratorHolder<T, SamplesBIIterator> holder(samples);
 
-    this->AnyDataReaderDelegate::take((u_dataReader)(this->userHandle), this->status_filter_, holder, -1);
+//    this->AnyDataReaderDelegate::take((u_dataReader)(this->userHandle), this->status_filter_, holder, -1);
 
-    return holder.get_length();
+//    return holder.get_length();
 }
 
 template<typename T>
 dds::topic::TopicInstance<T>
-dds::sub::detail::DataReader<T>::key_value(const dds::core::InstanceHandle& h)
+dds::sub::detail::DataReader<T>::key_value(
+        const dds::core::InstanceHandle& h)
 {
-    T key_holder;
+    //To implement
+//    T key_holder;
 
-    this->AnyDataReaderDelegate::get_key_value((u_dataReader)(this->userHandle), h, &key_holder);
+//    this->AnyDataReaderDelegate::get_key_value((u_dataReader)(this->userHandle), h, &key_holder);
 
-    return dds::topic::TopicInstance<T>(h, key_holder);
+//    return dds::topic::TopicInstance<T>(h, key_holder);
 }
 
 template<typename T>
 T&
-dds::sub::detail::DataReader<T>::key_value(T& key, const dds::core::InstanceHandle& h)
+dds::sub::detail::DataReader<T>::key_value(
+        T& key,
+        const dds::core::InstanceHandle& h)
 {
-    this->AnyDataReaderDelegate::get_key_value((u_dataReader)(this->userHandle), h, &key);
+    //To implement
+//    this->AnyDataReaderDelegate::get_key_value((u_dataReader)(this->userHandle), h, &key);
 
-    return key;
+//    return key;
 }
 
 template<typename T>
-const dds::core::InstanceHandle
-dds::sub::detail::DataReader<T>::lookup_instance(const T& key) const
+const dds::core::InstanceHandle dds::sub::detail::DataReader<T>::lookup_instance(
+        const T& key) const
 {
-    dds::core::InstanceHandle handle(this->AnyDataReaderDelegate::lookup_instance((u_dataReader)(this->userHandle), &key));
+    //To implement
+//    dds::core::InstanceHandle handle(this->AnyDataReaderDelegate::lookup_instance((u_dataReader)(this->userHandle), &key));
 
-    return handle;
+//    return handle;
 }
 
 template<typename T>
 const dds::sub::Subscriber&
 dds::sub::detail::DataReader<T>::subscriber() const
 {
-    this->check();
+    //To implement
+//    this->check();
 
-    return sub_;
+//    return sub_;
 }
 
 template<typename T>
-void
-dds::sub::detail::DataReader<T>::close()
+void dds::sub::detail::DataReader<T>::close()
 {
-    this->listener(NULL, dds::core::status::StatusMask::none());
-    this->listener_dispatcher_reset();
+    //To implement
+//    this->listener(NULL, dds::core::status::StatusMask::none());
+//    this->listener_dispatcher_reset();
 
-    org::opensplice::core::ScopedObjectLock scopedLock(*this);
+//    org::opensplice::core::ScopedObjectLock scopedLock(*this);
 
-    this->sub_.delegate()->remove_datareader(*this);
+//    this->sub_.delegate()->remove_datareader(*this);
 
-    // Remove our dependency on the topicdescription, and drop our reference to it,
-    // so that it can become garbage collected.
-    // It is important that we also drop our reference to the topicdescription, since
-    // subsequent dependencies between for example ContentFilteredTopic to Topic can
-    // only be dropped by the destructor of the ContentFilteredTopic.
-    this->AnyDataReaderDelegate::td_.delegate()->decrNrDependents();
-    this->AnyDataReaderDelegate::td_ = dds::topic::TopicDescription(dds::core::null);
+//    // Remove our dependency on the topicdescription, and drop our reference to it,
+//    // so that it can become garbage collected.
+//    // It is important that we also drop our reference to the topicdescription, since
+//    // subsequent dependencies between for example ContentFilteredTopic to Topic can
+//    // only be dropped by the destructor of the ContentFilteredTopic.
+//    this->AnyDataReaderDelegate::td_.delegate()->decrNrDependents();
+//    this->AnyDataReaderDelegate::td_ = dds::topic::TopicDescription(dds::core::null);
 
-    org::opensplice::sub::AnyDataReaderDelegate::close();
+//    org::opensplice::sub::AnyDataReaderDelegate::close();
 
-    scopedLock.unlock();
+//    scopedLock.unlock();
 }
 
 
 template<typename T>
-dds::sub::DataReaderListener<T>*
-dds::sub::detail::DataReader<T>::listener()
+dds::sub::DataReaderListener<T>* dds::sub::detail::DataReader<T>::listener()
 {
-    return reinterpret_cast<dds::sub::DataReaderListener<T>*>(this->listener_get());
+//    return reinterpret_cast<dds::sub::DataReaderListener<T>*>(this->listener_get());
 }
 
 template<typename T>
-void
-dds::sub::detail::DataReader<T>::listener(
+void dds::sub::detail::DataReader<T>::listener(
         dds::sub::DataReaderListener<T>* l,
         const dds::core::status::StatusMask& event_mask)
 {
-    /* EntityDelegate takes care of thread safety. */
-    this->listener_set((void*)l, event_mask);
-    this->listener_enable();
+    //To implement
+//    /* EntityDelegate takes care of thread safety. */
+//    this->listener_set((void*)l, event_mask);
+//    this->listener_enable();
 }
 
 template<typename T>
-dds::sub::DataReader<T, dds::sub::detail::DataReader>
-dds::sub::detail::DataReader<T>::wrapper()
+dds::sub::DataReader<T, dds::sub::detail::DataReader> dds::sub::detail::DataReader<T>::wrapper()
 {
-    typename DataReader::ref_type ref =
-            OSPL_CXX11_STD_MODULE::dynamic_pointer_cast<DataReader<T> >(this->get_strong_ref());
-    dds::sub::DataReader<T, dds::sub::detail::DataReader> reader(ref);
+    //To implement
+//    typename DataReader::ref_type ref =
+//            OSPL_CXX11_STD_MODULE::dynamic_pointer_cast<DataReader<T> >(this->get_strong_ref());
+//    dds::sub::DataReader<T, dds::sub::detail::DataReader> reader(ref);
 
-    return reader;
+//    return reader;
 }
 
 template<typename T>
-void
-dds::sub::detail::DataReader<T>::listener_notify(
+void dds::sub::detail::DataReader<T>::listener_notify(
         ObjectDelegate::ref_type source,
-        uint32_t                 triggerMask,
-        void                    *eventData,
-        void                    *l)
+        uint32_t triggerMask,
+        void *eventData,
+        void *l)
 {
-    /* The EntityDelegate takes care of the thread safety and always
-     * provides a listener and source. */
-    dds::sub::DataReaderListener<T>* listener =
-            reinterpret_cast<dds::sub::DataReaderListener<T>*>(l);
-    assert(listener);
+    //To implement
+//    /* The EntityDelegate takes care of the thread safety and always
+//     * provides a listener and source. */
+//    dds::sub::DataReaderListener<T>* listener =
+//            reinterpret_cast<dds::sub::DataReaderListener<T>*>(l);
+//    assert(listener);
 
-    /* Get DataWriter wrapper from given source EntityDelegate. */
-    typename DataReader::ref_type ref =
-            OSPL_CXX11_STD_MODULE::dynamic_pointer_cast<DataReader<T> >(source);
-    dds::sub::DataReader<T, dds::sub::detail::DataReader> reader(ref->wrapper());
+//    /* Get DataWriter wrapper from given source EntityDelegate. */
+//    typename DataReader::ref_type ref =
+//            OSPL_CXX11_STD_MODULE::dynamic_pointer_cast<DataReader<T> >(source);
+//    dds::sub::DataReader<T, dds::sub::detail::DataReader> reader(ref->wrapper());
 
 
-    if (triggerMask & V_EVENT_DATA_AVAILABLE) {
-        ref->reset_data_available();
-        listener->on_data_available(reader);
-    }
+//    if (triggerMask & V_EVENT_DATA_AVAILABLE) {
+//        ref->reset_data_available();
+//        listener->on_data_available(reader);
+//    }
 
-    if (triggerMask & V_EVENT_SAMPLE_REJECTED) {
-        dds::core::status::SampleRejectedStatus status;
-        status.delegate().v_status(v_readerStatus(eventData)->sampleRejected);
-        listener->on_sample_rejected(reader, status);
-    }
+//    if (triggerMask & V_EVENT_SAMPLE_REJECTED) {
+//        dds::core::status::SampleRejectedStatus status;
+//        status.delegate().v_status(v_readerStatus(eventData)->sampleRejected);
+//        listener->on_sample_rejected(reader, status);
+//    }
 
-    if (triggerMask & V_EVENT_LIVELINESS_CHANGED) {
-        dds::core::status::LivelinessChangedStatus status;
-        status.delegate().v_status(v_readerStatus(eventData)->livelinessChanged);
-        listener->on_liveliness_changed(reader, status);
-    }
+//    if (triggerMask & V_EVENT_LIVELINESS_CHANGED) {
+//        dds::core::status::LivelinessChangedStatus status;
+//        status.delegate().v_status(v_readerStatus(eventData)->livelinessChanged);
+//        listener->on_liveliness_changed(reader, status);
+//    }
 
-    if (triggerMask & V_EVENT_REQUESTED_DEADLINE_MISSED) {
-        dds::core::status::RequestedDeadlineMissedStatus status;
-        status.delegate().v_status(v_readerStatus(eventData)->deadlineMissed);
-        listener->on_requested_deadline_missed(reader, status);
-    }
+//    if (triggerMask & V_EVENT_REQUESTED_DEADLINE_MISSED) {
+//        dds::core::status::RequestedDeadlineMissedStatus status;
+//        status.delegate().v_status(v_readerStatus(eventData)->deadlineMissed);
+//        listener->on_requested_deadline_missed(reader, status);
+//    }
 
-    if (triggerMask & V_EVENT_REQUESTED_INCOMPATIBLE_QOS) {
-        dds::core::status::RequestedIncompatibleQosStatus status;
-        status.delegate().v_status(v_readerStatus(eventData)->incompatibleQos);
-        listener->on_requested_incompatible_qos(reader, status);
-    }
+//    if (triggerMask & V_EVENT_REQUESTED_INCOMPATIBLE_QOS) {
+//        dds::core::status::RequestedIncompatibleQosStatus status;
+//        status.delegate().v_status(v_readerStatus(eventData)->incompatibleQos);
+//        listener->on_requested_incompatible_qos(reader, status);
+//    }
 
-    if (triggerMask & V_EVENT_SAMPLE_LOST) {
-        dds::core::status::SampleLostStatus status;
-        status.delegate().v_status(v_readerStatus(eventData)->sampleLost);
-        listener->on_sample_lost(reader, status);
-    }
+//    if (triggerMask & V_EVENT_SAMPLE_LOST) {
+//        dds::core::status::SampleLostStatus status;
+//        status.delegate().v_status(v_readerStatus(eventData)->sampleLost);
+//        listener->on_sample_lost(reader, status);
+//    }
 
-    if (triggerMask & V_EVENT_SUBSCRIPTION_MATCHED) {
-        dds::core::status::SubscriptionMatchedStatus status;
-        status.delegate().v_status(v_readerStatus(eventData)->subscriptionMatch);
-        listener->on_subscription_matched(reader, status);
-    }
+//    if (triggerMask & V_EVENT_SUBSCRIPTION_MATCHED) {
+//        dds::core::status::SubscriptionMatchedStatus status;
+//        status.delegate().v_status(v_readerStatus(eventData)->subscriptionMatch);
+//        listener->on_subscription_matched(reader, status);
+//    }
 }
 
 template<typename T>
-dds::sub::detail::DataReader<T>::Selector::Selector(typename DataReader<T>::ref_type dr)
+dds::sub::detail::DataReader<T>::Selector::Selector(
+        typename DataReader<T>::ref_type dr)
     : mode(SELECT_MODE_READ), reader(dr), state_filter_is_set_(false),
       max_samples_((uint32_t)-1), query_(dds::core::null)
 {
 }
 
 template<typename T>
-typename dds::sub::detail::DataReader<T>::Selector&
-dds::sub::detail::DataReader<T>::Selector::instance(const dds::core::InstanceHandle& h)
+typename dds::sub::detail::DataReader<T>::Selector& dds::sub::detail::DataReader<T>::Selector::instance(
+        const dds::core::InstanceHandle& h)
 {
-    this->handle = h;
-    switch (this->mode) {
-    case SELECT_MODE_READ:
-    case SELECT_MODE_READ_INSTANCE:
-    case SELECT_MODE_READ_NEXT_INSTANCE:
-        this->mode = SELECT_MODE_READ_INSTANCE;
-        break;
-    case SELECT_MODE_READ_WITH_CONDITION:
-    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
-    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
-        this->mode = SELECT_MODE_READ_INSTANCE_WITH_CONDITION;
-        break;
-    }
+    //To implement
+//    this->handle = h;
+//    switch (this->mode) {
+//    case SELECT_MODE_READ:
+//    case SELECT_MODE_READ_INSTANCE:
+//    case SELECT_MODE_READ_NEXT_INSTANCE:
+//        this->mode = SELECT_MODE_READ_INSTANCE;
+//        break;
+//    case SELECT_MODE_READ_WITH_CONDITION:
+//    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
+//    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
+//        this->mode = SELECT_MODE_READ_INSTANCE_WITH_CONDITION;
+//        break;
+//    }
 
-    return *this;
+//    return *this;
 }
 
 template<typename T>
-typename dds::sub::detail::DataReader<T>::Selector&
-dds::sub::detail::DataReader<T>::Selector::next_instance(const dds::core::InstanceHandle& h)
+typename dds::sub::detail::DataReader<T>::Selector& dds::sub::detail::DataReader<T>::Selector::next_instance(
+        const dds::core::InstanceHandle& h)
 {
-    this->handle = h;
-    switch (this->mode) {
-    case SELECT_MODE_READ:
-    case SELECT_MODE_READ_INSTANCE:
-    case SELECT_MODE_READ_NEXT_INSTANCE:
-        this->mode = SELECT_MODE_READ_NEXT_INSTANCE;
-        break;
-    case SELECT_MODE_READ_WITH_CONDITION:
-    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
-    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
-        this->mode = SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION;
-        break;
-    }
+    //To implement
+//    this->handle = h;
+//    switch (this->mode) {
+//    case SELECT_MODE_READ:
+//    case SELECT_MODE_READ_INSTANCE:
+//    case SELECT_MODE_READ_NEXT_INSTANCE:
+//        this->mode = SELECT_MODE_READ_NEXT_INSTANCE;
+//        break;
+//    case SELECT_MODE_READ_WITH_CONDITION:
+//    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
+//    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
+//        this->mode = SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION;
+//        break;
+//    }
 
-    return *this;
+//    return *this;
 }
 
 template<typename T>
-typename dds::sub::detail::DataReader<T>::Selector&
-dds::sub::detail::DataReader<T>::Selector::filter_state(const dds::sub::status::DataState& s)
+typename dds::sub::detail::DataReader<T>::Selector& dds::sub::detail::DataReader<T>::Selector::filter_state(
+        const dds::sub::status::DataState& s)
 {
-    this->state_filter_ = s;
-    this->state_filter_is_set_ = true;
-    if ((this->mode == SELECT_MODE_READ_WITH_CONDITION) ||
-        (this->mode == SELECT_MODE_READ_INSTANCE_WITH_CONDITION) ||
-        (this->mode == SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION)) {
-        if (!this->query_.delegate()->modify_state_filter(this->state_filter_)) {
-            dds::sub::Query q(this->query_.data_reader(), this->query_.expression(), this->query_.delegate()->parameters());
-            q.delegate()->state_filter(this->state_filter_);
-            this->query_ = q;
-        }
-    }
-    return *this;
+    //To implement
+//    this->state_filter_ = s;
+//    this->state_filter_is_set_ = true;
+//    if ((this->mode == SELECT_MODE_READ_WITH_CONDITION) ||
+//        (this->mode == SELECT_MODE_READ_INSTANCE_WITH_CONDITION) ||
+//        (this->mode == SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION)) {
+//        if (!this->query_.delegate()->modify_state_filter(this->state_filter_)) {
+//            dds::sub::Query q(this->query_.data_reader(), this->query_.expression(), this->query_.delegate()->parameters());
+//            q.delegate()->state_filter(this->state_filter_);
+//            this->query_ = q;
+//        }
+//    }
+//    return *this;
 }
 
 template<typename T>
-typename dds::sub::detail::DataReader<T>::Selector&
-dds::sub::detail::DataReader<T>::Selector::max_samples(uint32_t n)
+typename dds::sub::detail::DataReader<T>::Selector& dds::sub::detail::DataReader<T>::Selector::max_samples(
+        uint32_t n)
 {
-    this->max_samples_ = n;
-    return *this;
+    //To implement
+//    this->max_samples_ = n;
+//    return *this;
 }
 
 template<typename T>
-typename dds::sub::detail::DataReader<T>::Selector&
-dds::sub::detail::DataReader<T>::Selector::filter_content(
+typename dds::sub::detail::DataReader<T>::Selector& dds::sub::detail::DataReader<T>::Selector::filter_content(
     const dds::sub::Query& query)
 {
-    if (this->state_filter_is_set_) {
-        if (!query.delegate()->modify_state_filter(this->state_filter_)) {
-            dds::sub::Query q(query.data_reader(), query.expression(), query.delegate()->parameters());
-            q.delegate()->state_filter(this->state_filter_);
-            this->query_ = q;
-        } else {
-            this->query_ = query;
-        }
-    } else {
-        this->query_ = query;
-    }
+    //To implement
+//    if (this->state_filter_is_set_) {
+//        if (!query.delegate()->modify_state_filter(this->state_filter_)) {
+//            dds::sub::Query q(query.data_reader(), query.expression(), query.delegate()->parameters());
+//            q.delegate()->state_filter(this->state_filter_);
+//            this->query_ = q;
+//        } else {
+//            this->query_ = query;
+//        }
+//    } else {
+//        this->query_ = query;
+//    }
 
-    switch (mode) {
-    case SELECT_MODE_READ:
-        mode = SELECT_MODE_READ_WITH_CONDITION;
-        break;
-    case SELECT_MODE_READ_INSTANCE:
-        mode = SELECT_MODE_READ_INSTANCE_WITH_CONDITION;
-        break;
-    case SELECT_MODE_READ_NEXT_INSTANCE:
-        mode = SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION;
-        break;
-    case SELECT_MODE_READ_WITH_CONDITION:
-    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
-    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
-        break;
-    default:
-        break;
-    }
+//    switch (mode) {
+//    case SELECT_MODE_READ:
+//        mode = SELECT_MODE_READ_WITH_CONDITION;
+//        break;
+//    case SELECT_MODE_READ_INSTANCE:
+//        mode = SELECT_MODE_READ_INSTANCE_WITH_CONDITION;
+//        break;
+//    case SELECT_MODE_READ_NEXT_INSTANCE:
+//        mode = SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION;
+//        break;
+//    case SELECT_MODE_READ_WITH_CONDITION:
+//    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
+//    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
+//        break;
+//    default:
+//        break;
+//    }
 
-    return *this;
+//    return *this;
 }
 
 template<typename T>
-dds::sub::LoanedSamples<T>
-dds::sub::detail::DataReader<T>::Selector::read()
+dds::sub::LoanedSamples<T> dds::sub::detail::DataReader<T>::Selector::read()
 {
-    return this->reader->read(*this);
+    //To implement
+//    return this->reader->read(*this);
 }
 
 template<typename T>
-dds::sub::LoanedSamples<T>
-dds::sub::detail::DataReader<T>::Selector::take()
+dds::sub::LoanedSamples<T> dds::sub::detail::DataReader<T>::Selector::take()
 {
-    return this->reader->take(*this);
+    //To implement
+//    return this->reader->take(*this);
 }
 
 // --- Forward Iterators: --- //
 
 template<typename T>
 template<typename SamplesFWIterator>
-uint32_t
-dds::sub::detail::DataReader<T>::Selector::read(SamplesFWIterator sfit, uint32_t max_samples)
+uint32_t dds::sub::detail::DataReader<T>::Selector::read(
+        SamplesFWIterator sfit,
+        uint32_t max_samples)
 {
-    return this->reader->read(sfit, max_samples, *this);
+    //To implement
+//    return this->reader->read(sfit, max_samples, *this);
 }
 
 template<typename T>
 template<typename SamplesFWIterator>
-uint32_t
-dds::sub::detail::DataReader<T>::Selector::take(SamplesFWIterator sfit, uint32_t max_samples)
+uint32_t dds::sub::detail::DataReader<T>::Selector::take(
+        SamplesFWIterator sfit,
+        uint32_t max_samples)
 {
-    return this->reader->take(sfit, max_samples, *this);
+    //To implement
+//    return this->reader->take(sfit, max_samples, *this);
 }
 
 // --- Back-Inserting Iterators: --- //
 
 template<typename T>
 template<typename SamplesBIIterator>
-uint32_t
-dds::sub::detail::DataReader<T>::Selector::read(SamplesBIIterator sbit)
+uint32_t dds::sub::detail::DataReader<T>::Selector::read(
+        SamplesBIIterator sbit)
 {
-    return this->reader->read(sbit, *this);
+    //To implement
+//    return this->reader->read(sbit, *this);
 }
 
 template<typename T>
 template<typename SamplesBIIterator>
-uint32_t
-dds::sub::detail::DataReader<T>::Selector::take(SamplesBIIterator sbit)
+uint32_t dds::sub::detail::DataReader<T>::Selector::take(
+        SamplesBIIterator sbit)
 {
-    return this->reader->take(sbit, *this);
+    //To implement
+//    return this->reader->take(sbit, *this);
 }
 
 template<typename T>
-typename dds::sub::detail::DataReader<T>::SelectMode
-dds::sub::detail::DataReader<T>::Selector::get_mode() const
+typename dds::sub::detail::DataReader<T>::SelectMode dds::sub::detail::DataReader<T>::Selector::get_mode() const
 {
-    return this->mode;
+    //To implement
+//    return this->mode;
 }
 
 template<typename T>
-dds::sub::detail::DataReader<T>::ManipulatorSelector::ManipulatorSelector(typename DataReader<T>::ref_type dr) :
-      Selector(dr), read_mode_(true)
+dds::sub::detail::DataReader<T>::ManipulatorSelector::ManipulatorSelector(
+        typename DataReader<T>::ref_type dr)
+    : Selector(dr), read_mode_(true)
 {
 }
 
 template<typename T>
-bool
-dds::sub::detail::DataReader<T>::ManipulatorSelector::read_mode()
+bool dds::sub::detail::DataReader<T>::ManipulatorSelector::read_mode()
 {
-    return read_mode_;
+    //To implement
+//    return read_mode_;
 }
 
 template<typename T>
-void
-dds::sub::detail::DataReader<T>::ManipulatorSelector::read_mode(bool b)
+void dds::sub::detail::DataReader<T>::ManipulatorSelector::read_mode(
+        bool b)
 {
-    read_mode_ = b;
+    //To implement
+//    read_mode_ = b;
 }
 
 template<typename T>
-typename dds::sub::detail::DataReader<T>::ManipulatorSelector&
-dds::sub::detail::DataReader<T>::ManipulatorSelector::operator >>(dds::sub::LoanedSamples<T>& samples)
+typename dds::sub::detail::DataReader<T>::ManipulatorSelector& dds::sub::detail::DataReader<T>::ManipulatorSelector::operator >>(
+        dds::sub::LoanedSamples<T>& samples)
 {
-    if(read_mode_)
-    {
-        samples = this->Selector::read();
-    }
-    else
-    {
-        samples = this->Selector::take();
-    }
-    return *this;
+    //To implement
+//    if(read_mode_)
+//    {
+//        samples = this->Selector::read();
+//    }
+//    else
+//    {
+//        samples = this->Selector::take();
+//    }
+//    return *this;
 }
 
 
 template<typename T>
-dds::sub::LoanedSamples<T>
-dds::sub::detail::DataReader<T>::read(const Selector& selector)
+dds::sub::LoanedSamples<T> dds::sub::detail::DataReader<T>::read(
+        const Selector& selector)
 {
-    u_query uQuery;
+    //To implement
+//    u_query uQuery;
 
-    dds::sub::LoanedSamples<T> samples;
-    dds::sub::detail::LoanedSamplesHolder<T> holder(samples);
+//    dds::sub::LoanedSamples<T> samples;
+//    dds::sub::detail::LoanedSamplesHolder<T> holder(samples);
 
-    switch(selector.mode) {
-    case SELECT_MODE_READ:
-        this->AnyDataReaderDelegate::read((u_dataReader)(userHandle), selector.state_filter_, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_INSTANCE:
-        this->AnyDataReaderDelegate::read_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_NEXT_INSTANCE:
-        this->AnyDataReaderDelegate::read_next_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::read_w_condition(uQuery, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::read_instance_w_condition(uQuery, selector.handle, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::read_next_instance_w_condition(uQuery, selector.handle, holder, selector.max_samples_);
-        break;
-    }
+//    switch(selector.mode) {
+//    case SELECT_MODE_READ:
+//        this->AnyDataReaderDelegate::read((u_dataReader)(userHandle), selector.state_filter_, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_INSTANCE:
+//        this->AnyDataReaderDelegate::read_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_NEXT_INSTANCE:
+//        this->AnyDataReaderDelegate::read_next_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::read_w_condition(uQuery, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::read_instance_w_condition(uQuery, selector.handle, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::read_next_instance_w_condition(uQuery, selector.handle, holder, selector.max_samples_);
+//        break;
+//    }
 
-    return samples;
+//    return samples;
 }
 
 template<typename T>
-dds::sub::LoanedSamples<T>
-dds::sub::detail::DataReader<T>::take(const Selector& selector)
+dds::sub::LoanedSamples<T> dds::sub::detail::DataReader<T>::take(
+        const Selector& selector)
 {
-    u_query uQuery;
+    //To implement
+//    u_query uQuery;
 
-    dds::sub::LoanedSamples<T> samples;
-    dds::sub::detail::LoanedSamplesHolder<T> holder(samples);
+//    dds::sub::LoanedSamples<T> samples;
+//    dds::sub::detail::LoanedSamplesHolder<T> holder(samples);
 
-    switch(selector.mode) {
-    case SELECT_MODE_READ:
-        this->AnyDataReaderDelegate::take((u_dataReader)(userHandle), selector.state_filter_, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_INSTANCE:
-        this->AnyDataReaderDelegate::take_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_NEXT_INSTANCE:
-        this->AnyDataReaderDelegate::take_next_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::take_w_condition(uQuery, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::take_instance_w_condition(uQuery, selector.handle, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::take_next_instance_w_condition(uQuery, selector.handle, holder, selector.max_samples_);
-        break;
-    }
+//    switch(selector.mode) {
+//    case SELECT_MODE_READ:
+//        this->AnyDataReaderDelegate::take((u_dataReader)(userHandle), selector.state_filter_, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_INSTANCE:
+//        this->AnyDataReaderDelegate::take_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_NEXT_INSTANCE:
+//        this->AnyDataReaderDelegate::take_next_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::take_w_condition(uQuery, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::take_instance_w_condition(uQuery, selector.handle, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::take_next_instance_w_condition(uQuery, selector.handle, holder, selector.max_samples_);
+//        break;
+//    }
 
-    return samples;
+//    return samples;
 }
 
 // --- Forward Iterators: --- //
 
 template<typename T>
 template<typename SamplesFWIterator>
-uint32_t
-dds::sub::detail::DataReader<T>::read(SamplesFWIterator samples,
-              uint32_t max_samples, const Selector& selector)
+uint32_t dds::sub::detail::DataReader<T>::read(
+        SamplesFWIterator samples,
+        uint32_t max_samples,
+        const Selector& selector)
 {
-    u_query uQuery;
+    //To implement
+//    u_query uQuery;
 
-    dds::sub::detail::SamplesFWInteratorHolder<T, SamplesFWIterator> holder(samples);
+//    dds::sub::detail::SamplesFWInteratorHolder<T, SamplesFWIterator> holder(samples);
 
-    switch(selector.mode) {
-    case SELECT_MODE_READ:
-        this->AnyDataReaderDelegate::read((u_dataReader)(userHandle), selector.state_filter_, holder, max_samples);
-        break;
-    case SELECT_MODE_READ_INSTANCE:
-        this->AnyDataReaderDelegate::read_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, max_samples);
-        break;
-    case SELECT_MODE_READ_NEXT_INSTANCE:
-        this->AnyDataReaderDelegate::read_next_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, max_samples);
-        break;
-    case SELECT_MODE_READ_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::read_w_condition(uQuery, holder, max_samples);
-        break;
-    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::read_instance_w_condition(uQuery, selector.handle, holder, max_samples);
-        break;
-    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::read_next_instance_w_condition(uQuery, selector.handle, holder, max_samples);
-        break;
-    }
+//    switch(selector.mode) {
+//    case SELECT_MODE_READ:
+//        this->AnyDataReaderDelegate::read((u_dataReader)(userHandle), selector.state_filter_, holder, max_samples);
+//        break;
+//    case SELECT_MODE_READ_INSTANCE:
+//        this->AnyDataReaderDelegate::read_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, max_samples);
+//        break;
+//    case SELECT_MODE_READ_NEXT_INSTANCE:
+//        this->AnyDataReaderDelegate::read_next_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, max_samples);
+//        break;
+//    case SELECT_MODE_READ_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::read_w_condition(uQuery, holder, max_samples);
+//        break;
+//    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::read_instance_w_condition(uQuery, selector.handle, holder, max_samples);
+//        break;
+//    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::read_next_instance_w_condition(uQuery, selector.handle, holder, max_samples);
+//        break;
+//    }
 
-    return holder.get_length();
+//    return holder.get_length();
 }
 
 template<typename T>
 template<typename SamplesFWIterator>
-uint32_t
-dds::sub::detail::DataReader<T>::take(SamplesFWIterator samples,
-              uint32_t max_samples, const Selector& selector)
+uint32_t dds::sub::detail::DataReader<T>::take(
+        SamplesFWIterator samples,
+        uint32_t max_samples,
+        const Selector& selector)
 {
-    u_query uQuery;
+    //To implement
+//    u_query uQuery;
 
-    dds::sub::detail::SamplesFWInteratorHolder<T, SamplesFWIterator> holder(samples);
+//    dds::sub::detail::SamplesFWInteratorHolder<T, SamplesFWIterator> holder(samples);
 
-    switch(selector.mode) {
-    case SELECT_MODE_READ:
-        this->AnyDataReaderDelegate::take((u_dataReader)(userHandle), selector.state_filter_, holder, max_samples);
-        break;
-    case SELECT_MODE_READ_INSTANCE:
-        this->AnyDataReaderDelegate::take_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, max_samples);
-        break;
-    case SELECT_MODE_READ_NEXT_INSTANCE:
-        this->AnyDataReaderDelegate::take_next_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, max_samples);
-        break;
-    case SELECT_MODE_READ_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::take_w_condition(uQuery, holder, max_samples);
-        break;
-    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::take_instance_w_condition(uQuery, selector.handle, holder, max_samples);
-        break;
-    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::take_next_instance_w_condition(uQuery, selector.handle, holder, max_samples);
-        break;
-    }
+//    switch(selector.mode) {
+//    case SELECT_MODE_READ:
+//        this->AnyDataReaderDelegate::take((u_dataReader)(userHandle), selector.state_filter_, holder, max_samples);
+//        break;
+//    case SELECT_MODE_READ_INSTANCE:
+//        this->AnyDataReaderDelegate::take_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, max_samples);
+//        break;
+//    case SELECT_MODE_READ_NEXT_INSTANCE:
+//        this->AnyDataReaderDelegate::take_next_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, max_samples);
+//        break;
+//    case SELECT_MODE_READ_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::take_w_condition(uQuery, holder, max_samples);
+//        break;
+//    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::take_instance_w_condition(uQuery, selector.handle, holder, max_samples);
+//        break;
+//    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::take_next_instance_w_condition(uQuery, selector.handle, holder, max_samples);
+//        break;
+//    }
 
-    return holder.get_length();
+//    return holder.get_length();
 }
 
 // --- Back-Inserting Iterators: --- //
 
 template<typename T>
 template<typename SamplesBIIterator>
-uint32_t
-dds::sub::detail::DataReader<T>::read(SamplesBIIterator samples, const Selector& selector)
+uint32_t dds::sub::detail::DataReader<T>::read(
+        SamplesBIIterator samples,
+        const Selector& selector)
 {
-    u_query uQuery;
+    //To implement
+//    u_query uQuery;
 
-    dds::sub::detail::SamplesBIIteratorHolder<T, SamplesBIIterator> holder(samples);
+//    dds::sub::detail::SamplesBIIteratorHolder<T, SamplesBIIterator> holder(samples);
 
-    switch(selector.mode) {
-    case SELECT_MODE_READ:
-        this->AnyDataReaderDelegate::read((u_dataReader)(userHandle), selector.state_filter_, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_INSTANCE:
-        this->AnyDataReaderDelegate::read_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_NEXT_INSTANCE:
-        this->AnyDataReaderDelegate::read_next_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::read_w_condition(uQuery, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::read_instance_w_condition(uQuery, selector.handle, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::read_next_instance_w_condition(uQuery, selector.handle, holder, selector.max_samples_);
-        break;
-    }
+//    switch(selector.mode) {
+//    case SELECT_MODE_READ:
+//        this->AnyDataReaderDelegate::read((u_dataReader)(userHandle), selector.state_filter_, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_INSTANCE:
+//        this->AnyDataReaderDelegate::read_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_NEXT_INSTANCE:
+//        this->AnyDataReaderDelegate::read_next_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::read_w_condition(uQuery, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::read_instance_w_condition(uQuery, selector.handle, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::read_next_instance_w_condition(uQuery, selector.handle, holder, selector.max_samples_);
+//        break;
+//    }
 
-    return holder.get_length();
+//    return holder.get_length();
 }
 
 template<typename T>
 template<typename SamplesBIIterator>
-uint32_t
-dds::sub::detail::DataReader<T>::take(SamplesBIIterator samples, const Selector& selector)
+uint32_t dds::sub::detail::DataReader<T>::take(
+        SamplesBIIterator samples,
+        const Selector& selector)
 {
-    u_query uQuery;
+    //To implement
+//    u_query uQuery;
 
-    dds::sub::detail::SamplesBIIteratorHolder<T, SamplesBIIterator> holder(samples);
+//    dds::sub::detail::SamplesBIIteratorHolder<T, SamplesBIIterator> holder(samples);
 
-    switch(selector.mode) {
-    case SELECT_MODE_READ:
-        this->AnyDataReaderDelegate::take((u_dataReader)(userHandle), selector.state_filter_, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_INSTANCE:
-        this->AnyDataReaderDelegate::take_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_NEXT_INSTANCE:
-        this->AnyDataReaderDelegate::take_next_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::take_w_condition(uQuery, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::take_instance_w_condition(uQuery, selector.handle, holder, selector.max_samples_);
-        break;
-    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
-        uQuery = selector.query_.delegate()->get_user_query();
-        this->AnyDataReaderDelegate::take_next_instance_w_condition(uQuery, selector.handle, holder, selector.max_samples_);
-        break;
-    }
+//    switch(selector.mode) {
+//    case SELECT_MODE_READ:
+//        this->AnyDataReaderDelegate::take((u_dataReader)(userHandle), selector.state_filter_, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_INSTANCE:
+//        this->AnyDataReaderDelegate::take_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_NEXT_INSTANCE:
+//        this->AnyDataReaderDelegate::take_next_instance((u_dataReader)(userHandle), selector.handle, selector.state_filter_, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::take_w_condition(uQuery, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_INSTANCE_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::take_instance_w_condition(uQuery, selector.handle, holder, selector.max_samples_);
+//        break;
+//    case SELECT_MODE_READ_NEXT_INSTANCE_WITH_CONDITION:
+//        uQuery = selector.query_.delegate()->get_user_query();
+//        this->AnyDataReaderDelegate::take_next_instance_w_condition(uQuery, selector.handle, holder, selector.max_samples_);
+//        break;
+//    }
 
-    return holder.get_length();
+//    return holder.get_length();
 }
 
 
-namespace dds
-{
-namespace sub
-{
+namespace dds {
+namespace sub {
 
 /**
  * Indicate to do a read when using the DataReader stream operator>>.
@@ -1368,10 +1528,12 @@ namespace sub
  * @see @link dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls) DataReader stream operator>> @endlink
  */
 template<typename SELECTOR>
-SELECTOR& read(SELECTOR& selector)
+SELECTOR& read(
+        SELECTOR& selector)
 {
-    selector.read_mode(true);
-    return selector;
+    //To implement
+//    selector.read_mode(true);
+//    return selector;
 }
 
 /**
@@ -1396,10 +1558,12 @@ SELECTOR& read(SELECTOR& selector)
  * @see @link dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls) DataReader stream operator>> @endlink
  */
 template<typename SELECTOR>
-SELECTOR& take(SELECTOR& selector)
+SELECTOR& take(
+        SELECTOR& selector)
 {
-    selector.read_mode(false);
-    return selector;
+    //To implement
+//    selector.read_mode(false);
+//    return selector;
 }
 
 /**
@@ -1421,10 +1585,11 @@ SELECTOR& take(SELECTOR& selector)
  *
  * @see @link dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls) DataReader stream operator>> @endlink
  */
-inline dds::sub::functors::MaxSamplesManipulatorFunctor
-max_samples(uint32_t n)
+inline dds::sub::functors::MaxSamplesManipulatorFunctor max_samples(
+        uint32_t n)
 {
-    return dds::sub::functors::MaxSamplesManipulatorFunctor(n);
+    //To implement
+//    return dds::sub::functors::MaxSamplesManipulatorFunctor(n);
 }
 
 /**
@@ -1451,10 +1616,11 @@ max_samples(uint32_t n)
  * @see @link dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls) DataReader stream operator>> @endlink
  * @see @ref dds::sub::Query "Query"
  */
-inline dds::sub::functors::ContentFilterManipulatorFunctor
-content(const dds::sub::Query& query)
+inline dds::sub::functors::ContentFilterManipulatorFunctor content(
+        const dds::sub::Query& query)
 {
-    return dds::sub::functors::ContentFilterManipulatorFunctor(query);
+    //To implement
+//    return dds::sub::functors::ContentFilterManipulatorFunctor(query);
 }
 
 
@@ -1483,10 +1649,11 @@ content(const dds::sub::Query& query)
  * @see @link dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls) DataReader stream operator>> @endlink
  * @see @ref dds::sub::Query "Query"
  */
-inline dds::sub::functors::StateFilterManipulatorFunctor
-state(const dds::sub::status::DataState& s)
+inline dds::sub::functors::StateFilterManipulatorFunctor state(
+        const dds::sub::status::DataState& s)
 {
-    return dds::sub::functors::StateFilterManipulatorFunctor(s);
+    //To implement
+//    return dds::sub::functors::StateFilterManipulatorFunctor(s);
 }
 
 /**
@@ -1512,10 +1679,11 @@ state(const dds::sub::status::DataState& s)
  * @see @link dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls) DataReader stream operator>> @endlink
  * @see @ref dds::core::InstanceHandle "Instance Handle"
  */
-inline dds::sub::functors::InstanceManipulatorFunctor
-instance(const dds::core::InstanceHandle& h)
+inline dds::sub::functors::InstanceManipulatorFunctor instance(
+        const dds::core::InstanceHandle& h)
 {
-    return dds::sub::functors::InstanceManipulatorFunctor(h);
+    //To implement
+//    return dds::sub::functors::InstanceManipulatorFunctor(h);
 }
 
 /**
@@ -1552,15 +1720,14 @@ instance(const dds::core::InstanceHandle& h)
  * @see @link dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls) DataReader stream operator>> @endlink
  * @see @ref dds::core::InstanceHandle "Instance Handle"
  */
-inline dds::sub::functors::NextInstanceManipulatorFunctor
-next_instance(const dds::core::InstanceHandle& h)
+inline dds::sub::functors::NextInstanceManipulatorFunctor next_instance(
+        const dds::core::InstanceHandle& h)
 {
-    return dds::sub::functors::NextInstanceManipulatorFunctor(h);
+    //To implement
+//    return dds::sub::functors::NextInstanceManipulatorFunctor(h);
 }
 
-}
-}
+} //namespace sub
+} //namespace dds
 
-// End of implementation
-
-#endif /* OSPL_DDS_SUB_TDATAREADER_IMPL_HPP_ */
+#endif //EPROSIMA_DDS_SUB_TDATAREADER_IMPL_HPP_

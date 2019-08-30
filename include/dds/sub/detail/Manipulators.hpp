@@ -54,7 +54,8 @@ public:
     void operator()(
             S& s)
     {
-        s.max_samples(n_);
+        //To implement
+//        s.max_samples(n_);
     }
     /** @endcond */
 
@@ -86,7 +87,8 @@ public:
     void operator()(
             S& s)
     {
-        s.content(query_);
+        //To implement
+//        s.content(query_);
     }
     /** @endcond */
 
@@ -118,7 +120,8 @@ public:
     void operator()(
             S& s)
     {
-        s.state(state_);
+        //To implement
+//        s.state(state_);
     }
     /** @endcond */
 
@@ -150,7 +153,8 @@ public:
     void operator()(
             S& s)
     {
-        s.instance(handle_);
+        //To implement
+//        s.instance(handle_);
     }
     /** @endcond */
 
@@ -182,7 +186,8 @@ public:
     void operator()(
             S& s)
     {
-        s.next_instance(handle_);
+        //To implement
+//        s.next_instance(handle_);
     }
     /** @endcond */
 
@@ -195,7 +200,5 @@ private:
 } //namespace functors
 } //namespace sub
 } //namespace dds
-
-
 
 #endif //EPROSIMA_DDS_SUB_DETAIL_MANIPULATOR_HPP_

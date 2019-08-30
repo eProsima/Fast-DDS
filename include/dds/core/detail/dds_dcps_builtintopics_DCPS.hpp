@@ -15,10 +15,10 @@
  *
 */
 
-#ifndef EPROSIMA_DDS_DCPS_BUILTINTOPICS_DCPS_H_
-#define EPROSIMA_DDS_DCPS_BUILTINTOPICS_DCPS_H_
+#ifndef EPROSIMA_DDS_DCPS_BUILTINTOPICS_DCPS_HPP_
+#define EPROSIMA_DDS_DCPS_BUILTINTOPICS_DCPS_HPP_
 
 #include "dds/core/detail/dds_dcps_builtintopics.h"
 #include "dds/core/detail/dds_dcps_builtintopicsSplDcps.h"
 
-#endif //EPROSIMA_DDS_DCPS_BUILTINTOPICS_DCPS_H_
+#endif //EPROSIMA_DDS_DCPS_BUILTINTOPICS_DCPS_HPP_

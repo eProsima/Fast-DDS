@@ -500,7 +500,7 @@ public:
 
 typedef dds::domain::detail::DomainParticipant DomainParticipant;
 
-}
-}
+} //namespace domain
+} //namespace dds
 
 #endif //OMG_DDS_DOMAIN_DOMAINPARTICIPANT_HPP_

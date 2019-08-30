@@ -24,10 +24,12 @@
 
 namespace dds {
 namespace core {
+
 template<typename D>
 class Value;
-}
-}
+
+} //namespace core
+} //namespace dds
 
 namespace dds {
 namespace sub {

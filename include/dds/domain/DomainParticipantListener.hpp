@@ -26,10 +26,8 @@
 #include <dds/topic/AnyTopicListener.hpp>
 
 
-namespace dds
-{
-namespace domain
-{
+namespace dds {
+namespace domain {
 
 /**
  * @brief
@@ -160,14 +158,16 @@ namespace domain
  * @see @ref DCPS_Modules_Infrastructure_Listener "Listener information"
  */
 class OMG_DDS_API DomainParticipantListener :
-    public virtual dds::pub::PublisherListener,
-    public virtual dds::sub::SubscriberListener,
-    public virtual dds::topic::AnyTopicListener
+        public virtual dds::pub::PublisherListener,
+        public virtual dds::sub::SubscriberListener,
+        public virtual dds::topic::AnyTopicListener
 {
 public:
-    /** @cond */
-    virtual ~DomainParticipantListener() { }
-    /** @endcond */
+
+    virtual ~DomainParticipantListener()
+    {
+    }
+
 };
 
 
@@ -189,18 +189,20 @@ public:
  * @see dds::domain::DomainParticipantListener
  */
 class OMG_DDS_API NoOpDomainParticipantListener :
-    public virtual DomainParticipantListener,
-    public virtual dds::pub::NoOpPublisherListener,
-    public virtual dds::sub::NoOpSubscriberListener,
-    public virtual dds::topic::NoOpAnyTopicListener
+        public virtual DomainParticipantListener,
+        public virtual dds::pub::NoOpPublisherListener,
+        public virtual dds::sub::NoOpSubscriberListener,
+        public virtual dds::topic::NoOpAnyTopicListener
 {
 public:
-    /** @cond */
-    virtual ~NoOpDomainParticipantListener()  { }
-    /** @endcond */
+
+    virtual ~NoOpDomainParticipantListener()
+    {
+    }
+
 };
 
-}
-}
+} //namespace domain
+} //namespace dds
 
 #endif //OMG_DDS_DOMAIN_DOMAINPARTICIPANT_LISTENER_HPP_

@@ -33,9 +33,9 @@ namespace detail {
 //typedef dds::sub::TSampleInfo<org::opensplice::sub::SampleInfoImpl> SampleInfo;
 class SampleInfo { };
 
-}
-}
-}
+} //namespace detail
+} //namespace sub
+} //namespace dds
 
 /** @endcond */
 

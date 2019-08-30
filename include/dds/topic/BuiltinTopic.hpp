@@ -273,7 +273,7 @@ public:
      * QosPolicy attached to the DataWriter
      */
     const dds::core::policy::DurabilityService&  durability_service() const;
-    #endif  // OMG_DDS_PERSISTENCE_SUPPORT
+    #endif  //OMG_DDS_PERSISTENCE_SUPPORT
 
     /**
      * QosPolicy attached to the DataWriter
@@ -315,7 +315,7 @@ public:
      * QosPolicy attached to the DataWriter
      */
     const dds::core::policy::OwnershipStrength&  ownership_strength() const;
-    #endif  // OMG_DDS_OWNERSHIP_SUPPORT
+    #endif  //OMG_DDS_OWNERSHIP_SUPPORT
 
     /**
      * QosPolicy attached to the DataWriter

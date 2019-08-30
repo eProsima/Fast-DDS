@@ -42,72 +42,89 @@ public:
             const dds::sub::SampleInfo& i)
     {
         //To implement
+//        this->data_ = d;
+//        this->info_ = i;
     }
 
     Sample(
             const Sample& other)
     {
         //To implement
+//        copy(other);
     }
 
     Sample& operator=(
             const Sample& other)
     {
         //To implement
+//        return copy(other);
     }
 
     Sample& copy(
             const Sample& other)
     {
         //To implement
+//        this->data_ = other.data_;
+//        this->info_ = other.info_;
+
+//        return *this;
     }
 
     const T& data() const
     {
         //To implement
+//        return data_;
     }
 
     T& data()
     {
         //To implement
+//        return data_;
     }
 
     void data(
             const T& d)
     {
         //To implement
+//        data_ = d;
     }
 
     const dds::sub::SampleInfo& info() const
     {
         //To implement
+//        return info_;
     }
 
     dds::sub::SampleInfo& info()
     {
         //To implement
+//        return info_;
     }
 
     void info(
             const dds::sub::SampleInfo& i)
     {
         //To implement
+//        info_ = i;
     }
 
     bool operator ==(
             const Sample& other) const
     {
         //To implement
+//        return false;
     }
 
     T* data_ptr()
     {
         //To implement
+//        return &this->data_;
     }
 
     dds::sub::SampleInfo *info_ptr()
     {
         //To implement
+//        return &this->info_;
     }
 
 
