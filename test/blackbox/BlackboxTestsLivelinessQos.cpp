@@ -1236,7 +1236,7 @@ TEST(LivelinessQos, TwoWriters_TwoReaders)
 {
     unsigned int num_pub = 2;
     unsigned int num_sub = 2;
-    unsigned int lease_duration_ms = 100;
+    unsigned int lease_duration_ms = 1000;
     unsigned int announcement_period_ms = 1;
 
     // Publishers
@@ -1277,7 +1277,7 @@ TEST(LivelinessQos, TwoWriters_TwoReaders)
 
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 3u);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(lease_duration_ms * 4));
+    std::this_thread::sleep_for(std::chrono::milliseconds(lease_duration_ms * 2));
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 1u);
     EXPECT_EQ(subscribers.sub_times_liveliness_lost(), 1u);
 }
