@@ -51,6 +51,7 @@ LoanedSamples<T, DELEGATE>::LoanedSamples(
         const LoanedSamples& other)
 {
     //To implement
+//    delegate_ = other.delegate_;
 }
 
 template<
@@ -59,6 +60,7 @@ template<
 typename LoanedSamples<T, DELEGATE>::const_iterator LoanedSamples<T, DELEGATE>::begin() const
 {
     //To implement
+//    return delegate()->begin();
 }
 
 template<
@@ -67,6 +69,7 @@ template<
 typename LoanedSamples<T, DELEGATE>::const_iterator LoanedSamples<T, DELEGATE>::end() const
 {
     //To implement
+//    return delegate()->end();
 }
 
 template<
@@ -75,6 +78,7 @@ template<
 const typename LoanedSamples<T, DELEGATE>::DELEGATE_REF_T& LoanedSamples<T, DELEGATE>::delegate() const
 {
     //To implement
+//    return delegate_;
 }
 
 template<
@@ -83,6 +87,7 @@ template<
 typename LoanedSamples<T, DELEGATE>::DELEGATE_REF_T& LoanedSamples<T, DELEGATE>::delegate()
 {
     //To implement
+//    return delegate_;
 }
 
 template<
@@ -91,6 +96,7 @@ template<
 uint32_t LoanedSamples<T, DELEGATE>::length() const
 {
     //To implement
+//    return delegate_->length();
 }
 
 template<
@@ -100,6 +106,12 @@ LoanedSamples<T, D> move(
         LoanedSamples<T, D>& a)
 {
     //To implement
+//    /* Copy reference (not the data) into new LoanedSamples. */
+//    LoanedSamples<T, D> samples(a);
+//    /* Reset reference of the old LoanedSamples. */
+//    a.delegate() = NULL;
+//    /* Move is completed. */
+//    return samples;
 }
 
 } //namespace sub

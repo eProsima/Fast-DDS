@@ -1,4 +1,5 @@
-/* Copyright 2010, Object Management Group, Inc.
+/*
+ * Copyright 2010, Object Management Group, Inc.
  * Copyright 2010, PrismTech, Corp.
  * Copyright 2010, Real-Time Innovations, Inc.
  * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
@@ -42,7 +43,6 @@ class OMG_DDS_API Time
 public:
     static const Time invalid();       // {-1, 0xffffffff}
 
-public:
     /**
      * Create a Time from a number of microseconds
      *
@@ -65,7 +65,6 @@ public:
     static const Time from_secs(
             double seconds);
 
-public:
     /**
      * Create a Time of zero seconds.
      */
@@ -77,7 +76,6 @@ public:
             int64_t sec,
             uint32_t nanosec = 0);
 
-public:
     /**
      * @return number of seconds
      */
@@ -87,7 +85,8 @@ public:
      * Set number of seconds
      * @param s number of seconds
      */
-    void    sec(int64_t s);
+    void sec(
+            int64_t s);
 
     /**
      * @return number of nanoseconds
@@ -98,9 +97,9 @@ public:
      * Set number of nanoseconds
      * @param ns number of nanoseconds
      */
-    void    nanosec(uint32_t ns);
+    void nanosec(
+            uint32_t ns);
 
-public:
     /**
      * Returns an integer indicating the result of a comparison
       * of two Times:

@@ -40,6 +40,7 @@ void ignore(
         FwdIterator end)
 {
     //To implement
+//    ISOCPP_THROW_EXCEPTION(ISOCPP_UNSUPPORTED_ERROR, "Function not currently supported");
 }
 
 template<
@@ -49,6 +50,8 @@ template<
         const DataReader<T, DELEGATE>& dr)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
+//    return dr.delegate()->matched_publications();
 }
 
 template<
@@ -61,6 +64,8 @@ uint32_t matched_publications(
         uint32_t max_size)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
+//    return dr.delegate()->matched_publications(begin, max_size);
 }
 
 template<typename T,
@@ -70,6 +75,8 @@ const dds::topic::PublicationBuiltinTopicData matched_publication_data(
         const ::dds::core::InstanceHandle& h)
 {
     //To implement
+//    ISOCPP_REPORT_STACK_DDS_BEGIN(dr);
+//    return dr.delegate()->matched_publication_data(h);
 }
 
 } //namespace sub
