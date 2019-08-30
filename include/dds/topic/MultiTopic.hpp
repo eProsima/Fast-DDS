@@ -48,7 +48,6 @@ public:
     OMG_DDS_IMPLICIT_REF_BASE(
             MultiTopic)
 
-public:
     template<typename FWDIterator>
     MultiTopic(
             const dds::domain::DomainParticipant& dp,
@@ -59,7 +58,6 @@ public:
 
     virtual ~MultiTopic();
 
-public:
     const std::string expression() const;
 
     template<typename FWDIterator>

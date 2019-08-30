@@ -52,8 +52,8 @@ namespace cond {
  */
 template<typename DELEGATE>
 class TQueryCondition :
-    public TReadCondition<DELEGATE>,
-    public dds::sub::TQuery<DELEGATE>
+        public TReadCondition<DELEGATE>,
+        public dds::sub::TQuery<DELEGATE>
 {
 public:
 

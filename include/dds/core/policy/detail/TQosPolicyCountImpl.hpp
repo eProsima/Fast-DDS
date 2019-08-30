@@ -37,23 +37,29 @@ template<typename D>
 TQosPolicyCount<D>::TQosPolicyCount(
         QosPolicyId policy_id,
         int32_t count)
-    : dds::core::Value<D>(policy_id, count) { }
+    : dds::core::Value<D>(policy_id, count)
+{
+}
 
 template<typename D>
 TQosPolicyCount<D>::TQosPolicyCount(
         const TQosPolicyCount& other)
-    : dds::core::Value<D>(other.policy_id(), other.count()) { }
+    : dds::core::Value<D>(other.policy_id(), other.count())
+{
+}
 
 template<typename D>
 QosPolicyId TQosPolicyCount<D>::policy_id() const
 {
     //To implement
+//    return this->delegate().policy_id();
 }
 
 template<typename D>
 int32_t TQosPolicyCount<D>::count() const
 {
     //To implement
+//    return this->delegate().count();
 }
 
 } //namespace policy

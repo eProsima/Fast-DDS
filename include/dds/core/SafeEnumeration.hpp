@@ -30,7 +30,9 @@ namespace core {
  * SafeEnums allow specification of the underlying type,
  * do not implictly convert to integers, and resolve scoping issues.
  */
-template<typename Def, typename Inner = typename Def::Type>
+template<
+        typename Def,
+        typename Inner = typename Def::Type>
 class SafeEnum : public Def
 {
 public:
@@ -46,37 +48,37 @@ public:
         return val;
     }
 
-    bool operator == (
+    bool operator ==(
             const SafeEnum& s) const
     {
         return this->val == s.val;
     }
 
-    bool operator != (
+    bool operator !=(
             const SafeEnum& s) const
     {
         return this->val != s.val;
     }
 
-    bool operator < (
+    bool operator <(
             const SafeEnum& s) const
     {
         return this->val <  s.val;
     }
 
-    bool operator <= (
+    bool operator <=(
             const SafeEnum& s) const
     {
         return this->val <= s.val;
     }
 
-    bool operator > (
+    bool operator >(
             const SafeEnum& s) const
     {
         return this->val >  s.val;
     }
 
-    bool operator >= (
+    bool operator >=(
             const SafeEnum& s) const
     {
         return this->val >= s.val;

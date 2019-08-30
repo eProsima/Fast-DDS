@@ -98,7 +98,8 @@ template<
     typename FwdIterator>
 uint32_t discover(
         const dds::domain::DomainParticipant& dp,
-        FwdIterator begin, uint32_t max_size);
+        FwdIterator begin,
+        uint32_t max_size);
 
 /**
  * This operation retrieves a list of all Topics that have been discovered in the domain.

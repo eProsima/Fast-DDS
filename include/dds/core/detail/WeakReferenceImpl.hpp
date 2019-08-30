@@ -32,28 +32,37 @@ namespace dds {
 namespace core {
 
 template<typename T>
-WeakReference<T>::WeakReference() { }
+WeakReference<T>::WeakReference()
+{
+}
 
 template<typename T>
 WeakReference<T>::WeakReference(const T& t)
 {
     //To implement
+//    if (!t.is_nil()) {
+//        impl_ = t.delegate();
+//    }
 }
 
 
 template<typename T>
-WeakReference<T>::~WeakReference() { }
+WeakReference<T>::~WeakReference()
+{
+}
 
 template<typename T>
 bool WeakReference<T>::expired()
 {
     //To implement
+//    return impl_.expired();
 }
 
 template<typename T>
 T WeakReference<T>::lock()
 {
     //To implement
+//    return T(impl_.lock());
 }
 
 } //namespace core

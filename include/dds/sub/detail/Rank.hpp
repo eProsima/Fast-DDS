@@ -33,9 +33,9 @@ namespace detail {
 //typedef dds::sub::TRank< org::opensplice::sub::RankImpl > Rank;
 class Rank { };
 
-}
-}
-}
+} //namespace detail
+} //namespace sub
+} //namespace dds
 
 /** @endcond */
 
