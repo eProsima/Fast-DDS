@@ -280,9 +280,8 @@ public:
 
     void pub_wait_liveliness_lost(unsigned int times = 1)
     {
-        std::unique_lock<std::mutex> lock(pub_sub_liveliness_mutex_);
-
-        pub_liveliness_cv_.wait(lock, [&](){return pub_times_liveliness_lost_ == times;});
+        std::unique_lock<std::mutex> lock(pub_liveliness_mutex_);
+        pub_liveliness_cv_.wait(lock, [&]() { return pub_times_liveliness_lost_ == times; });
     }
 
     void sub_wait_liveliness_recovered(unsigned int num_recovered)
@@ -382,8 +381,9 @@ public:
 
     void pub_liveliness_lost()
     {
-        std::unique_lock<std::mutex> lock(sub_liveliness_mutex_);
+        std::unique_lock<std::mutex> lock(pub_liveliness_mutex_);
         pub_times_liveliness_lost_++;
+        pub_liveliness_cv_.notify_one();
     }
 
     void sub_liveliness_lost()
@@ -402,7 +402,7 @@ public:
 
     unsigned int pub_times_liveliness_lost()
     {
-        std::unique_lock<std::mutex> lock(sub_liveliness_mutex_);
+        std::unique_lock<std::mutex> lock(pub_liveliness_mutex_);
         return pub_times_liveliness_lost_;
     }
 
@@ -493,7 +493,7 @@ private:
     //! A condition variable for liveliness data
     std::condition_variable sub_liveliness_cv_;
     //! A mutex protecting liveliness of publisher
-    std::mutex pub_sub_liveliness_mutex_;
+    std::mutex pub_liveliness_mutex_;
     //! A condition variable for liveliness of publisher
     std::condition_variable pub_liveliness_cv_;
 

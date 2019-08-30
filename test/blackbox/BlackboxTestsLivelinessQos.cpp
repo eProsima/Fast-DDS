@@ -1176,8 +1176,8 @@ TEST(LivelinessQos, TwoWriters_TwoReaders_ManualByTopic)
 {
     unsigned int num_pub = 2;
     unsigned int num_sub = 2;
-    unsigned int lease_duration_ms = 500;
-    unsigned int announcement_period_ms = 250;
+    unsigned int lease_duration_ms = 100;
+    unsigned int announcement_period_ms = 1;
 
     // Publishers
     PubSubParticipant<HelloWorldType> publishers(num_pub, 0u, num_sub, 0u);
@@ -1212,18 +1212,19 @@ TEST(LivelinessQos, TwoWriters_TwoReaders_ManualByTopic)
     publishers.pub_wait_discovery();
     subscribers.sub_wait_discovery();
 
-    unsigned int num_assertions = 4;
-    unsigned int assert_rate_ms = 10;
-    for (unsigned int count = 0; count < num_assertions; count++)
-    {
-        publishers.assert_liveliness(0u);
-        std::this_thread::sleep_for(std::chrono::milliseconds(assert_rate_ms));
-    }
+    // Make first publisher assert its liveliness and check that only tne
+    // first subscriber detected liveliness recovery
+    publishers.assert_liveliness(0u);
+    subscribers.sub_wait_liveliness_recovered(1u);
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 0u);
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 1u);
     EXPECT_EQ(subscribers.sub_times_liveliness_lost(), 0u);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(lease_duration_ms * 2));
+    // Wait until the liveliness is lost and check that:
+    // liveliness was recovered only once, i.e. the second subscriber never detects a liveliness recovery
+    // liveliness was lost only once, i.e. only the first subscriber detects a liveliness loss
+    subscribers.sub_wait_liveliness_lost(1u);
+    publishers.pub_wait_liveliness_lost(1u);
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 1u);
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 1u);
     EXPECT_EQ(subscribers.sub_times_liveliness_lost(), 1u);
