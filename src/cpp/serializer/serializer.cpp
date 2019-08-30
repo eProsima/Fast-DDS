@@ -1694,16 +1694,16 @@ size_t Serializer<Serializable>::getCdrSerializedSize(const TypeObjectHashId& da
     return current_alignment - initial_alignment;
 }
 template<class Serializable>
-void Serializer<Serializable>::serialize(TypeObjectHashId *tohi, eprosima::fastcdr::Cdr &scdr) const
+void Serializer<Serializable>::serialize(TypeObjectHashId *tohi, eprosima::fastcdr::Cdr &cdr) const
 {
-    scdr << tohi->get_m_d() ;
+    cdr << tohi->get_m_d() ;
     switch (tohi->get_m_d())
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
             for (int i = 0; i < 14; ++i)
             {
-                scdr << tohi->get_m_hash()[i];
+                cdr << tohi->get_m_hash()[i];
             }
             break;
         default:
@@ -3980,6 +3980,494 @@ void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::TypeInform
     cdr >> v->minimal();
     cdr >> v->complete();
 }
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::StringSTypeDefn& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::StringSTypeDefn *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->bound();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::StringSTypeDefn *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->bound();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::StringLTypeDefn& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>   
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::StringLTypeDefn *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->bound();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::StringLTypeDefn *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->bound();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::PlainCollectionHeader& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::PlainCollectionHeader *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->equiv_kind();
+    cdr << v->element_flags();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::PlainCollectionHeader *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->equiv_kind();
+    cdr >> v->element_flags();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::PlainSequenceSElemDefn& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += PlainCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if (data.element_identifier() != nullptr)
+    {
+        size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::PlainSequenceSElemDefn *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->header();
+    cdr << v->bound();
+    if (v->element_identifier() == nullptr)
+    {
+        TypeIdentifier emptyId();
+        cdr << emptyId;
+    }
+    else
+    {
+        cdr << *v->element_identifier();
+    }
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::PlainSequenceSElemDefn *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->header();
+    cdr >> v->bound();
+    if (v->element_identifier() == nullptr)
+    {
+        TypeIdentifier emptyId();
+        cdr >> emptyId;
+    }
+    else
+    {
+        cdr >> *v->element_identifier();
+    }
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::PlainSequenceLElemDefn& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += PlainCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if (data.element_identifier() != nullptr)
+    {
+        size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::PlainSequenceLElemDefn *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->header();
+    cdr << v->bound();
+    if (v->element_identifier() != nullptr)
+    {
+        cdr << *v->element_identifier();
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        cdr << emptyId;
+    }
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::PlainSequenceLElemDefn *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->header();
+    cdr >> v->bound();
+    if (v->element_identifier() != nullptr)
+    {
+        cdr >> *v->element_identifier();
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        cdr >> emptyId;
+    }
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::PlainArraySElemDefn& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += PlainCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    current_alignment += (data.array_bound_seq().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+
+    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if (data.element_identifier() != nullptr)
+    {
+        size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::PlainArraySElemDefn *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->header();
+    cdr << v->array_bound_seq();
+
+    if (v->element_identifier() != nullptr)
+    {
+        cdr << *v->element_identifier();
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        cdr << emptyId;
+    }
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::PlainArraySElemDefn *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->header();
+    cdr >> v->array_bound_seq();
+
+    if (v->element_identifier() != nullptr)
+    {
+        cdr >> *v->element_identifier();
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        cdr >> emptyId;
+    }
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::PlainArrayLElemDefn& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += PlainCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    current_alignment += (data.array_bound_seq().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if (data.element_identifier() != nullptr)
+    {
+        size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::PlainArrayLElemDefn *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->header();
+    cdr << v->array_bound_seq();
+    if (v->element_identifier() != nullptr)
+    {
+        cdr << *v->element_identifier();
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        cdr << emptyId;
+    }
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::PlainArrayLElemDefn *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->header();
+    cdr >> v->array_bound_seq();
+    if (v->element_identifier() != nullptr)
+    {
+        cdr >> *v->element_identifier();
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        cdr >> emptyId;
+    }
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::PlainMapSTypeDefn& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += PlainCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    size_t size = 0;
+    if (data.element_identifier() != nullptr)
+    {
+        size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if (data.key_identifier() != nullptr)
+    {
+        size = TypeIdentifier::getCdrSerializedSize(*data.key_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::PlainMapSTypeDefn *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->header();
+    cdr << v->bound();
+    if (v->element_identifier() != nullptr)
+    {
+        cdr << *v->element_identifier();
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        cdr << emptyId;
+    }
+    cdr << v->key_flags();
+    if (v->key_identifier() != nullptr)
+    {
+        cdr << *v->key_identifier();
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        cdr << emptyId;
+    }
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::PlainMapSTypeDefn *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->header();
+    cdr >> v->bound();
+    if (v->element_identifier() == nullptr)
+    {
+        v->element_identifier() = new TypeIdentifier();
+    }
+    cdr >> *v->element_identifier();
+    cdr >> v->key_flags();
+    if (v->key_identifier() == nullptr)
+    {
+        v->key_identifier() = new TypeIdentifier();
+    }
+    cdr >> *v->key_identifier();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::PlainMapLTypeDefn& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += PlainCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    size_t size = 0;
+    if (data.element_identifier() != nullptr)
+    {
+        size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+
+    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if (data.key_identifier() != nullptr)
+    {
+        size = TypeIdentifier::getCdrSerializedSize(*data.key_identifier(), current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
+        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+    }
+
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::PlainMapLTypeDefn *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->header();
+    cdr << v->bound();
+    if (v->element_identifier() != nullptr)
+    {
+        cdr << *v->element_identifier();
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        cdr << emptyId;
+    }
+    cdr << v->key_flags();
+    if (v->key_identifier() != nullptr)
+    {
+        cdr << *v->key_identifier();
+    }
+    else
+    {
+        TypeIdentifier emptyId;
+        cdr << emptyId;
+    }
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::PlainMapLTypeDefn *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->header();
+    cdr >> v->bound();
+    if (v->element_identifier() == nullptr)
+    {
+        v->element_identifier() = new TypeIdentifier();
+    }
+    cdr >> *v->element_identifier();
+    cdr >> v->key_flags();
+    if (v->key_identifier() == nullptr)
+    {
+        v->key_identifier() = new TypeIdentifier();
+    }
+    cdr >> *v->key_identifier();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::StronglyConnectedComponentId& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    //current_alignment += ((14) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    size_t size = TypeObjectHashId::getCdrSerializedSize(data.sc_component_id(), current_alignment);
+    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::StronglyConnectedComponentId *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->sc_component_id();
+    cdr << v->scc_length();
+    cdr << v->scc_index();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::StronglyConnectedComponentId *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->sc_component_id();
+    cdr >> v->scc_length();
+    cdr >> v->scc_index();
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::ExtendedTypeDefn& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::ExtendedTypeDefn *v,eprosima::fastcdr::Cdr &cdr) const
+{}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::ExtendedTypeDefn *v,eprosima::fastcdr::Cdr &cdr)
+{}
 
 
 

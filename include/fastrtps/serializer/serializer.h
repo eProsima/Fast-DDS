@@ -411,6 +411,50 @@ private:
     RTPS_DllAPI void serialize(eprosima::fastrtps::types::TypeInformation *v,eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastrtps::types::TypeInformation *v,eprosima::fastcdr::Cdr &cdr);
 
+/*StringSTypeDefn Methods*/
+    RTPS_DllAPI static size_t getCdrSerializedSize(const eprosima::fastrtps::types::StringSTypeDefn& data, size_t current_alignment = 0);
+    RTPS_DllAPI void serialize(eprosima::fastrtps::types::StringSTypeDefn *v,eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void deserialize(eprosima::fastrtps::types::StringSTypeDefn *v,eprosima::fastcdr::Cdr &cdr);
+/*StringLTypeDefn Methods*/
+    RTPS_DllAPI static size_t getCdrSerializedSize(const eprosima::fastrtps::types::StringLTypeDefn& data, size_t current_alignment = 0);
+    RTPS_DllAPI void serialize(eprosima::fastrtps::types::StringLTypeDefn *v,eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void deserialize(eprosima::fastrtps::types::StringLTypeDefn *v,eprosima::fastcdr::Cdr &cdr);
+/*PlainCollectionHeader Methods*/
+    RTPS_DllAPI static size_t getCdrSerializedSize(const eprosima::fastrtps::types::PlainCollectionHeader& data, size_t current_alignment = 0);
+    RTPS_DllAPI void serialize(eprosima::fastrtps::types::PlainCollectionHeader *v,eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void deserialize(eprosima::fastrtps::types::PlainCollectionHeader *v,eprosima::fastcdr::Cdr &cdr);
+/*PlainSequenceSElemDefn Methods*/
+    RTPS_DllAPI static size_t getCdrSerializedSize(const eprosima::fastrtps::types::PlainSequenceSElemDefn& data, size_t current_alignment = 0);
+    RTPS_DllAPI void serialize(eprosima::fastrtps::types::PlainSequenceSElemDefn *v,eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void deserialize(eprosima::fastrtps::types::PlainSequenceSElemDefn *v,eprosima::fastcdr::Cdr &cdr);
+/*PlainSequenceLElemDefn Methods*/
+    RTPS_DllAPI static size_t getCdrSerializedSize(const eprosima::fastrtps::types::PlainSequenceLElemDefn& data, size_t current_alignment = 0);
+    RTPS_DllAPI void serialize(eprosima::fastrtps::types::PlainSequenceLElemDefn *v,eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void deserialize(eprosima::fastrtps::types::PlainSequenceLElemDefn *v,eprosima::fastcdr::Cdr &cdr);
+/*PlainArraySElemDefn Methods*/
+    RTPS_DllAPI static size_t getCdrSerializedSize(const eprosima::fastrtps::types::PlainArraySElemDefn& data, size_t current_alignment = 0);
+    RTPS_DllAPI void serialize(eprosima::fastrtps::types::PlainArraySElemDefn *v,eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void deserialize(eprosima::fastrtps::types::PlainArraySElemDefn *v,eprosima::fastcdr::Cdr &cdr);
+/*PlainArrayLElemDefn Methods*/
+    RTPS_DllAPI static size_t getCdrSerializedSize(const eprosima::fastrtps::types::PlainArrayLElemDefn& data, size_t current_alignment = 0);
+    RTPS_DllAPI void serialize(eprosima::fastrtps::types::PlainArrayLElemDefn *v,eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void deserialize(eprosima::fastrtps::types::PlainArrayLElemDefn *v,eprosima::fastcdr::Cdr &cdr);
+/*PlainMapSTypeDefn Methods*/
+    RTPS_DllAPI static size_t getCdrSerializedSize(const eprosima::fastrtps::types::PlainMapSTypeDefn& data, size_t current_alignment = 0);
+    RTPS_DllAPI void serialize(eprosima::fastrtps::types::PlainMapSTypeDefn *v,eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void deserialize(eprosima::fastrtps::types::PlainMapSTypeDefn *v,eprosima::fastcdr::Cdr &cdr);
+/*PlainMapLTypeDefn Methods*/
+    RTPS_DllAPI static size_t getCdrSerializedSize(const eprosima::fastrtps::types::PlainMapLTypeDefn& data, size_t current_alignment = 0);
+    RTPS_DllAPI void serialize(eprosima::fastrtps::types::PlainMapLTypeDefn *v,eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void deserialize(eprosima::fastrtps::types::PlainMapLTypeDefn *v,eprosima::fastcdr::Cdr &cdr);
+/*StronglyConnectedComponentId Methods*/
+    RTPS_DllAPI static size_t getCdrSerializedSize(const eprosima::fastrtps::types::StronglyConnectedComponentId& data, size_t current_alignment = 0);
+    RTPS_DllAPI void serialize(eprosima::fastrtps::types::StronglyConnectedComponentId *v,eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void deserialize(eprosima::fastrtps::types::StronglyConnectedComponentId *v,eprosima::fastcdr::Cdr &cdr);
+/*ExtendedTypeDefn Methods*/
+    RTPS_DllAPI static size_t getCdrSerializedSize(const eprosima::fastrtps::types::ExtendedTypeDefn& data, size_t current_alignment = 0);
+    RTPS_DllAPI void serialize(eprosima::fastrtps::types::ExtendedTypeDefn *v,eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void deserialize(eprosima::fastrtps::types::ExtendedTypeDefn *v,eprosima::fastcdr::Cdr &cdr);
 
 private: //just for readibility: above methods are private as well
     Serializable p_ ;
