@@ -455,6 +455,24 @@ private:
     RTPS_DllAPI static size_t getCdrSerializedSize(const eprosima::fastrtps::types::ExtendedTypeDefn& data, size_t current_alignment = 0);
     RTPS_DllAPI void serialize(eprosima::fastrtps::types::ExtendedTypeDefn *v,eprosima::fastcdr::Cdr &cdr) const;
     RTPS_DllAPI void deserialize(eprosima::fastrtps::types::ExtendedTypeDefn *v,eprosima::fastcdr::Cdr &cdr);
+/*TypeIdentifier Methods*/
+    RTPS_DllAPI static size_t getCdrSerializedSize(const eprosima::fastrtps::types::TypeIdentifier& data, size_t current_alignment = 0);
+    RTPS_DllAPI void serialize(eprosima::fastrtps::types::TypeIdentifier *v,eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void deserialize(eprosima::fastrtps::types::TypeIdentifier *v,eprosima::fastcdr::Cdr &cdr);
+/*ExtendedAnnotationParameterValue Methods*/
+    RTPS_DllAPI static size_t getCdrSerializedSize(const eprosima::fastrtps::types::ExtendedAnnotationParameterValue& data, size_t current_alignment = 0);
+    RTPS_DllAPI void serialize(eprosima::fastrtps::types::ExtendedAnnotationParameterValue *v,eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void deserialize(eprosima::fastrtps::types::ExtendedAnnotationParameterValue *v,eprosima::fastcdr::Cdr &cdr);
+/*AnnotationParameterValue Methods*/
+    RTPS_DllAPI static size_t getCdrSerializedSize(const eprosima::fastrtps::types::AnnotationParameterValue& data, size_t current_alignment = 0);
+    RTPS_DllAPI void serialize(eprosima::fastrtps::types::AnnotationParameterValue *v,eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void deserialize(eprosima::fastrtps::types::AnnotationParameterValue *v,eprosima::fastcdr::Cdr &cdr);
+/*AppliedAnnotationParameter Methods*/
+    RTPS_DllAPI static size_t getCdrSerializedSize(const eprosima::fastrtps::types::AppliedAnnotationParameter& data, size_t current_alignment = 0);
+    RTPS_DllAPI void serialize(eprosima::fastrtps::types::AppliedAnnotationParameter *v,eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void deserialize(eprosima::fastrtps::types::AppliedAnnotationParameter *v,eprosima::fastcdr::Cdr &cdr);
+
+
 
 private: //just for readibility: above methods are private as well
     Serializable p_ ;

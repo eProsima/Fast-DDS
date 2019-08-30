@@ -4468,7 +4468,395 @@ void Serializer<Serializable>::serialize(eprosima::fastrtps::types::ExtendedType
 template<class Serializable>
 void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::ExtendedTypeDefn *v,eprosima::fastcdr::Cdr &cdr)
 {}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::TypeIdentifier& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
 
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    switch(data._d())
+    {
+        case TI_STRING8_SMALL:
+        case TI_STRING16_SMALL:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.string_sdefn(), current_alignment);
+
+        break;
+        case TI_STRING8_LARGE:
+        case TI_STRING16_LARGE:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.string_ldefn(), current_alignment);
+
+        break;
+        case TI_PLAIN_SEQUENCE_SMALL:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.seq_sdefn(), current_alignment);
+
+        break;
+        case TI_PLAIN_SEQUENCE_LARGE:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.seq_ldefn(), current_alignment);
+
+        break;
+        case TI_PLAIN_ARRAY_SMALL:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.array_sdefn(), current_alignment);
+
+        break;
+        case TI_PLAIN_ARRAY_LARGE:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.array_ldefn(), current_alignment);
+
+        break;
+        case TI_PLAIN_MAP_SMALL:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.map_sdefn(), current_alignment);
+
+        break;
+        case TI_PLAIN_MAP_LARGE:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.map_ldefn(), current_alignment);
+
+        break;
+        case TI_STRONGLY_CONNECTED_COMPONENT:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.sc_component_id(), current_alignment);
+
+        break;
+        case EK_COMPLETE:
+        case EK_MINIMAL:
+        current_alignment += 14 + eprosima::fastcdr::Cdr::alignment(current_alignment, 14);
+
+        break;
+        default:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.extended_defn(), current_alignment);
+        break;
+    }
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::TypeIdentifier *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->_d();
+
+    switch(v->_d())
+    {
+        case TI_STRING8_SMALL:
+        case TI_STRING16_SMALL:
+        cdr << v->string_sdefn();
+        break;
+        case TI_STRING8_LARGE:
+        case TI_STRING16_LARGE:
+        cdr << v->string_ldefn();
+        break;
+        case TI_PLAIN_SEQUENCE_SMALL:
+        cdr << v->seq_sdefn();
+        break;
+        case TI_PLAIN_SEQUENCE_LARGE:
+        cdr << v->seq_ldefn();
+        break;
+        case TI_PLAIN_ARRAY_SMALL:
+        cdr << v->array_sdefn();
+        break;
+        case TI_PLAIN_ARRAY_LARGE:
+        cdr << v->array_ldefn();
+        break;
+        case TI_PLAIN_MAP_SMALL:
+        cdr << v->map_sdefn();
+        break;
+        case TI_PLAIN_MAP_LARGE:
+        cdr << v->map_ldefn();
+        break;
+        case TI_STRONGLY_CONNECTED_COMPONENT:
+        cdr << v->sc_component_id();
+        break;
+        case EK_COMPLETE:
+        case EK_MINIMAL:
+        for (int i = 0; i < 14; ++i)
+        {
+            cdr << v->equivalence_hash()[i];
+        }
+        break;
+        default:
+        cdr << v->extended_defn();
+        break;
+    }
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::TypeIdentifier *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->_d();
+
+    switch(v->_d())
+    {
+        case TI_STRING8_SMALL:
+        case TI_STRING16_SMALL:
+        cdr >> v->string_sdefn();
+        break;
+        case TI_STRING8_LARGE:
+        case TI_STRING16_LARGE:
+        cdr >> v->string_ldefn();
+        break;
+        case TI_PLAIN_SEQUENCE_SMALL:
+        cdr >> v->seq_sdefn();
+        break;
+        case TI_PLAIN_SEQUENCE_LARGE:
+        cdr >> v->seq_ldefn();
+        break;
+        case TI_PLAIN_ARRAY_SMALL:
+        cdr >> v->array_sdefn();
+        break;
+        case TI_PLAIN_ARRAY_LARGE:
+        cdr >> v->array_ldefn();
+        break;
+        case TI_PLAIN_MAP_SMALL:
+        cdr >> v->map_sdefn();
+        break;
+        case TI_PLAIN_MAP_LARGE:
+        cdr >> v->map_ldefn();
+        break;
+        case TI_STRONGLY_CONNECTED_COMPONENT:
+        cdr >> v->sc_component_id();
+        break;
+        case EK_COMPLETE:
+        case EK_MINIMAL:
+        for (int i = 0; i < 14; ++i)
+        {
+            cdr >> v->equivalence_hash()[i];
+        }
+        break;
+        default:
+        cdr >> v->extended_defn();
+        break;
+    }
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::ExtendedAnnotationParameterValue& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::ExtendedAnnotationParameterValue *v,eprosima::fastcdr::Cdr &cdr) const
+{}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::ExtendedAnnotationParameterValue *v,eprosima::fastcdr::Cdr &cdr)
+{}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::AnnotationParameterValue& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+    switch(data.m__d)
+    {
+        case TK_BOOLEAN:
+        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+        break;
+        case TK_BYTE:
+        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+        break;
+        case TK_INT16:
+        current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+        break;
+        case TK_UINT16:
+        current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
+        break;
+        case TK_INT32:
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+        break;
+        case TK_UINT32:
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+        break;
+        case TK_INT64:
+        current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+        break;
+        case TK_UINT64:
+        current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+        break;
+        case TK_FLOAT32:
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+        break;
+        case TK_FLOAT64:
+        current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+
+        break;
+        case TK_FLOAT128:
+        current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
+
+        break;
+        case TK_CHAR8:
+        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
+        break;
+        case TK_CHAR16:
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+        break;
+        case TK_ENUM:
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+        break;
+        case TK_STRING8:
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.string8_value().size() + 1;
+        break;
+        case TK_STRING16:
+        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.string16_value().size() + 1;
+        break;
+        default:
+        current_alignment += Serializer<Serializable>::getCdrSerializedSize(data.extended_value(), current_alignment);
+        break;
+    }
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::AnnotationParameterValue *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->_d();
+
+    switch(v->_d())
+    {
+        case TK_BOOLEAN:
+        cdr << v->boolean_value();
+        break;
+        case TK_BYTE:
+        cdr << v->byte_value();
+        break;
+        case TK_INT16:
+        cdr << v->int16_value();
+        break;
+        case TK_UINT16:
+        cdr << v->uint_16_value();
+        break;
+        case TK_INT32:
+        cdr << v->int32_value();
+        break;
+        case TK_UINT32:
+        cdr << v->uint32_value();
+        break;
+        case TK_INT64:
+        cdr << v->int64_value();
+        break;
+        case TK_UINT64:
+        cdr << v->uint64_value();
+        break;
+        case TK_FLOAT32:
+        cdr << v->float32_value();
+        break;
+        case TK_FLOAT64:
+        cdr << v->float64_value();
+        break;
+        case TK_FLOAT128:
+        cdr << v->float128_value();
+        break;
+        case TK_CHAR8:
+        cdr << v->char_value();
+        break;
+        case TK_CHAR16:
+        cdr << v->wchar_value();
+        break;
+        case TK_ENUM:
+        cdr << v->enumerated_value();
+        break;
+        case TK_STRING8:
+        cdr << v->string8_value();
+        break;
+        case TK_STRING16:
+        cdr << v->string16_value();
+        break;
+        default:
+        cdr << v->extended_value();
+        break;
+    }
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::AnnotationParameterValue *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->_d();
+
+    switch(v->_d())
+    {
+        case TK_BOOLEAN:
+        cdr >> v->boolean_value();
+        break;
+        case TK_BYTE:
+        cdr >> v->byte_value();
+        break;
+        case TK_INT16:
+        cdr >> v->int16_value();
+        break;
+        case TK_UINT16:
+        cdr >> v->uint_16_value();
+        break;
+        case TK_INT32:
+        cdr >> v->int32_value();
+        break;
+        case TK_UINT32:
+        cdr >> v->uint32_value();
+        break;
+        case TK_INT64:
+        cdr >> v->int64_value();
+        break;
+        case TK_UINT64:
+        cdr >> v->uint64_value();
+        break;
+        case TK_FLOAT32:
+        cdr >> v->float32_value();
+        break;
+        case TK_FLOAT64:
+        cdr >> v->float64_value();
+        break;
+        case TK_FLOAT128:
+        cdr >> v->float128_value();
+        break;
+        case TK_CHAR8:
+        cdr >> v->char_value();
+        break;
+        case TK_CHAR16:
+        cdr >> v->wchar_value();
+        break;
+        case TK_ENUM:
+        cdr >> v->enumerated_value();
+        break;
+        case TK_STRING8:
+        cdr >> v->string8_value();
+        break;
+        case TK_STRING16:
+        cdr >> v->string16_value();
+        break;
+        default:
+        cdr >> v->extended_value();
+        break;
+    }
+}
+template<class Serializable>
+size_t Serializer<Serializable>::getCdrSerializedSize(const eprosima::fastrtps::types::AppliedAnnotationParameter& data, size_t current_alignment /*= 0*/)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    current_alignment += AnnotationParameterValue::getCdrSerializedSize(data.value(), current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+template<class Serializable>
+void Serializer<Serializable>::serialize(eprosima::fastrtps::types::AppliedAnnotationParameter *v,eprosima::fastcdr::Cdr &cdr) const
+{
+    cdr << v->paramname_hash();
+    cdr << v->value();
+}
+template<class Serializable>
+void Serializer<Serializable>::deserialize(eprosima::fastrtps::types::AppliedAnnotationParameter *v,eprosima::fastcdr::Cdr &cdr)
+{
+    cdr >> v->paramname_hash();
+    cdr >> v->value();
+}
 
 
 } //namespace serializer
