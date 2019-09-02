@@ -37,6 +37,7 @@
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
 #include <functional>
+#include <iostream>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -558,7 +559,7 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         MatchingInfo& info)
 {
     PublicationMatchedStatus pub_info;
-    pub_info.status = info.status;
+//    pub_info.status = info.status;
     pub_info.last_subscription_handle = info.remoteEndpointGuid;
 
     onWriterMatched(data_writer_->writer_, pub_info);

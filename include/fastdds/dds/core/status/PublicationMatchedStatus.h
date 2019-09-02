@@ -47,8 +47,8 @@ struct PublicationMatchedStatus
 	//! @brief Handle to the last reader that matched the writer causing the status to change
 	eprosima::fastrtps::rtps::InstanceHandle_t last_subscription_handle;
 
-	//!Status
-	eprosima::fastrtps::rtps::MatchingStatus status;
+//	//!Status
+//	eprosima::fastrtps::rtps::MatchingStatus status;
 
 };
 
