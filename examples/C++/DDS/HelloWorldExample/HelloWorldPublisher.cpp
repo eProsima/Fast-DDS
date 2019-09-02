@@ -87,15 +87,26 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
         eprosima::fastdds::dds::DataWriter*,
         eprosima::fastdds::dds::PublicationMatchedStatus &info)
 {
-    if(info.status == MATCHED_MATCHING)
+//    if (info.status == MATCHED_MATCHING)
+//    {
+//        matched_++;
+//        firstConnected_ = true;
+//        std::cout << "Publisher matched." << std::endl;
+//    }
+//    else
+//    {
+//        matched_--;
+//        std::cout << "Publisher unmatched." << std::endl;
+//    }
+    if (info.current_count_change > 0)
     {
-        matched_++;
+        matched_ = info.current_count;
         firstConnected_ = true;
         std::cout << "Publisher matched." << std::endl;
     }
-    else
+    else if (info.current_count_change < 0)
     {
-        matched_--;
+        matched_ = info.current_count;
         std::cout << "Publisher unmatched." << std::endl;
     }
 }
@@ -155,7 +166,7 @@ void HelloWorldPublisher::run(
 
 bool HelloWorldPublisher::publish(bool waitForListener)
 {
-    if(listener_.firstConnected_ || !waitForListener || listener_.matched_>0)
+    if (listener_.firstConnected_ || !waitForListener || listener_.matched_>0)
     {
         hello_.index(hello_.index()+1);
         writer_->write(&hello_);
