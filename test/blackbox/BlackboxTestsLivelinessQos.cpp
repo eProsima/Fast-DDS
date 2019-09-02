@@ -831,22 +831,21 @@ TEST(LivelinessQos, ManualByTopic_Automatic_Reliable)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
-    // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 100;
-    uint32_t num_samples = 3;
+    // Number of samples to write
+    unsigned int num_samples = 2;
 
-    // Liveliness lease duration and announcement period, in seconds
-    Duration_t liveliness_s(writer_sleep_ms * 0.1 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 0.1 * 1e-3 * 0.9);
+    // Liveliness lease duration and announcement period, in milliseconds
+    unsigned int lease_duration_ms = 10;
+    unsigned int announcement_period_ms = 1;
 
     reader.reliability(RELIABLE_RELIABILITY_QOS)
             .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
-            .liveliness_lease_duration(liveliness_s)
+            .liveliness_lease_duration(lease_duration_ms * 1e-3)
             .init();
     writer.reliability(RELIABLE_RELIABILITY_QOS)
             .liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS)
-            .liveliness_announcement_period(announcement_period)
-            .liveliness_lease_duration(liveliness_s)
+            .liveliness_announcement_period(announcement_period_ms * 1e-3)
+            .liveliness_lease_duration(lease_duration_ms * 1e-3)
             .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -860,20 +859,22 @@ TEST(LivelinessQos, ManualByTopic_Automatic_Reliable)
     reader.startReception(data);
 
     // Write some samples
-    size_t count = 0;
+    unsigned int count = 0;
     for (auto data_sample : data)
     {
-        // Send data
-        writer.send_sample(data_sample);
         ++count;
-        reader.block_for_at_least(count);
-        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+        writer.send_sample(data_sample);
+        reader.wait_liveliness_recovered(count);
+        reader.wait_liveliness_lost(count);
+        writer.wait_liveliness_lost(count);
     }
     // Now use assert_liveliness() method
     for (count = 0; count < num_samples; count++)
     {
         writer.assert_liveliness();
-        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+        reader.wait_liveliness_recovered(count + num_samples + 1);
+        reader.wait_liveliness_lost(count + num_samples + 1);
+        writer.wait_liveliness_lost(count + num_samples + 1);
     }
 
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
@@ -890,22 +891,21 @@ TEST(LivelinessQos, ManualByTopic_Automatic_BestEffort)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
-    // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 100;
-    uint32_t num_samples = 3;
+    // Number of times to assert liveliness
+    unsigned int num_samples = 2;
 
-    // Liveliness lease duration and announcement period, in seconds
-    Duration_t liveliness_s(writer_sleep_ms * 0.1 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 0.1 * 1e-3 * 0.9);
+    // Liveliness lease duration and announcement period, in milliseconds
+    unsigned int lease_duration_ms = 10;
+    unsigned int announcement_period_ms = 1;
 
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
             .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
-            .liveliness_lease_duration(liveliness_s)
+            .liveliness_lease_duration(lease_duration_ms * 1e-3)
             .init();
     writer.reliability(BEST_EFFORT_RELIABILITY_QOS)
             .liveliness_kind(MANUAL_BY_TOPIC_LIVELINESS_QOS)
-            .liveliness_announcement_period(announcement_period)
-            .liveliness_lease_duration(liveliness_s)
+            .liveliness_announcement_period(announcement_period_ms * 1e-3)
+            .liveliness_lease_duration(lease_duration_ms * 1e-3)
             .init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -919,19 +919,20 @@ TEST(LivelinessQos, ManualByTopic_Automatic_BestEffort)
     reader.startReception(data);
 
     // Write some samples
-    size_t count = 0;
+    unsigned int count = 0;
     for (auto data_sample : data)
     {
-        writer.send_sample(data_sample);
         ++count;
-        reader.block_for_at_least(count);
-        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+        writer.send_sample(data_sample);
+        reader.wait_liveliness_recovered(count);
+        reader.wait_liveliness_lost(count);
+        writer.wait_liveliness_lost(count);
     }
     // Now use assert_liveliness() method
     for (count = 0; count < num_samples; count++)
     {
         writer.assert_liveliness();
-        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+        writer.wait_liveliness_lost(count + num_samples + 1);
     }
 
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
