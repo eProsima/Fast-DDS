@@ -33,7 +33,7 @@
 
 #include <fastrtps/attributes/TopicAttributes.h>
 #include <fastdds/rtps/common/MatchingInfo.h>
-#include <fastdds/dds/core/status/PublicationMatchedStatus.h>
+#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 
 #include <fastrtps/utils/StringMatching.h>
 #include <fastrtps/log/Log.h>

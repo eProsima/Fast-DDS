@@ -21,7 +21,7 @@
 
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
-#include <fastdds/dds/core/status/PublicationMatchedStatus.h>
+#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 
 namespace eprosima {
 namespace fastdds {
