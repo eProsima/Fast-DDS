@@ -13,24 +13,22 @@
 // limitations under the License.
 
 /**
- * @file PublicationMatchedStatus.h
+ * @file PublicationMatchedStatus.hpp
 */
 
-#ifndef _PUBLICATION_MATCHED_STATUS_H_
-#define _PUBLICATION_MATCHED_STATUS_H_
+#ifndef _PUBLICATION_MATCHED_STATUS_HPP_
+#define _PUBLICATION_MATCHED_STATUS_HPP_
 
 #include <cstdint>
 #include <fastrtps/rtps/common/InstanceHandle.h>
-#include <fastrtps/rtps/common/MatchingInfo.h>
 
-namespace eprosima{
-namespace fastdds{
-namespace dds{
+namespace eprosima {
+namespace fastdds {
+namespace dds {
 
 //! @brief A structure storing the publication status
 struct PublicationMatchedStatus
 {
-
 	//! @brief Total cumulative count the concerned writer discovered a match with a reader
 	//! @details It found a reader for the same topic with a requested Qos that is compatible with that offered by the writer
     int32_t total_count = 0;
@@ -46,7 +44,6 @@ struct PublicationMatchedStatus
 
 	//! @brief Handle to the last reader that matched the writer causing the status to change
 	eprosima::fastrtps::rtps::InstanceHandle_t last_subscription_handle;
-
 };
 
 } //end of namespace dds

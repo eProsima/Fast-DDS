@@ -19,8 +19,6 @@
 #ifndef PUBLISHERLISTENER_H_
 #define PUBLISHERLISTENER_H_
 
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/LivelinessLostStatus.h>
 
