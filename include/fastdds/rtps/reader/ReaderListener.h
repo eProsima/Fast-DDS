@@ -22,6 +22,7 @@
 
 #include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 
 #include <mutex>
 
@@ -53,6 +54,19 @@ public:
     virtual void onReaderMatched(
             RTPSReader* reader,
             MatchingInfo& info)
+    {
+        (void)reader;
+        (void)info;
+    }
+
+    /**
+     * This method is invoked when a new reader matches
+     * @param reader Matching reader
+     * @param info Subscription matching information
+     */
+    virtual void onReaderMatched(
+            RTPSReader* reader,
+            fastdds::dds::SubscriptionMatchedStatus& info)
     {
         (void)reader;
         (void)info;

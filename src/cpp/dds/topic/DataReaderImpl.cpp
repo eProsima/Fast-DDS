@@ -312,16 +312,6 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
     }
 }
 
-void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
-        RTPSReader* /*reader*/,
-        MatchingInfo& info)
-{
-    SubscriptionMatchedStatus sub_info;
-    sub_info.status = info.status;
-    sub_info.last_publication_handle = info.remoteEndpointGuid;
-
-    onReaderMatched(data_reader_->reader_, sub_info);
-}
 
 void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         RTPSReader* /*reader*/,

@@ -25,7 +25,7 @@
 #include <fastrtps/qos/SampleRejectedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
-#include <fastdds/dds/core/status/SubscriptionMatchedStatus.h>
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 
 namespace eprosima {
 namespace fastdds {

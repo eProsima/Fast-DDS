@@ -13,20 +13,19 @@
 // limitations under the License.
 
 /**
- * @file SubscriptionMatchedStatus.h
+ * @file SubscriptionMatchedStatus.hpp
 */
 
-#ifndef _SUBSCRIPTION_MATCHED_STATUS_H_
-#define _SUBSCRIPTION_MATCHED_STATUS_H_
+#ifndef _SUBSCRIPTION_MATCHED_STATUS_HPP_
+#define _SUBSCRIPTION_MATCHED_STATUS_HPP_
 
 #include <cstdint>
 
 #include <fastrtps/rtps/common/InstanceHandle.h>
-#include <fastrtps/rtps/common/MatchingInfo.h>
 
-namespace eprosima{
-namespace fastdds{
-namespace dds{
+namespace eprosima {
+namespace fastdds {
+namespace dds {
 
 //! @brief A structure storing the subscription status
 struct SubscriptionMatchedStatus
@@ -38,7 +37,6 @@ struct SubscriptionMatchedStatus
         , current_count()
         , current_count_change()
         , last_publication_handle()
-        , status(eprosima::fastrtps::rtps::MATCHED_MATCHING)
     {}
 
     //! @brief Destructor
@@ -60,9 +58,6 @@ struct SubscriptionMatchedStatus
 
 	//! @brief Handle to the last writer that matched the reader causing the status change
 	eprosima::fastrtps::rtps::InstanceHandle_t last_publication_handle;
-
-	//!Status
-	eprosima::fastrtps::rtps::MatchingStatus status;
 };
 
 } //end of namespace dds

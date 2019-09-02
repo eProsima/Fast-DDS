@@ -25,6 +25,7 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/topic/DataReaderListener.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 
 class HelloWorldSubscriber
 {

@@ -222,11 +222,7 @@ private:
 
         void onReaderMatched(
                 fastrtps::rtps::RTPSReader* reader,
-                fastrtps::rtps::MatchingInfo& info) override;
-
-        void onReaderMatched(
-                fastrtps::rtps::RTPSReader* reader,
-                fastdds::dds::SubscriptionMatchedStatus& info);
+                fastdds::dds::SubscriptionMatchedStatus& info) override;
 
         void onNewCacheChangeAdded(
                 fastrtps::rtps::RTPSReader* reader,
