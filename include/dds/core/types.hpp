@@ -55,7 +55,7 @@ class OMG_DDS_API null_type { };
  *     // The participant is not yet properly created.
  *     // Using it now will trigger the dds::core::NullReferenceError exception.
  * }
- * @encode
+ * @endcode
  */
 extern const null_type OMG_DDS_API null;
 
