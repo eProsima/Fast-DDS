@@ -43,18 +43,17 @@ public:
             T discriminator,
             const MemberType& member)
     {
-    	(void) discriminator;
-    	(void) member;
+        throw "Not implemented";
     }
 
     T discriminator()
     {
+        throw "Not implemented";
     }
 
     const MemberType& member()
     {
-        const MemberType m;
-        return m;
+        throw "Not implemented";
     }
 };
 

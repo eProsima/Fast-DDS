@@ -102,6 +102,7 @@ public:
     explicit Reference(
             dds::core::null_type&)
     {
+        throw "Not implemented";
     }
 
     /**
@@ -112,7 +113,7 @@ public:
     explicit Reference(
             const Reference& ref)
     {
-        (void) ref;
+        throw "Not implemented";
     }
 
     /**
@@ -124,7 +125,7 @@ public:
     explicit Reference(
             const Reference<D>& ref)
     {
-        (void) ref;
+        throw "Not implemented";
     }
 
     /** @cond
@@ -140,13 +141,13 @@ public:
     explicit Reference(
             DELEGATE_T* p)
     {
-        (void) p;
+        throw "Not implemented";
     }
 
     explicit Reference(
             const DELEGATE_REF_T& p)
     {
-        (void) p;
+        throw "Not implemented";
     }
     /** @endcond */
 
@@ -170,6 +171,7 @@ public:
      */
     operator DELEGATE_REF_T() const
     {
+        throw "Not implemented";
     }
     /** @endcond */
 
@@ -186,8 +188,7 @@ public:
     bool operator==(
             const R& ref) const
     {
-        (void) ref;
-        return false;
+        throw "Not implemented";
     }
 
     /**
@@ -204,8 +205,7 @@ public:
     bool operator!=(
             const R& ref) const
     {
-        (void) ref;
-        return false;
+        throw "Not implemented";
     }
 
     /**
@@ -220,7 +220,7 @@ public:
     Reference& operator=(
             const Reference<D>& that)
     {
-        (void) that;
+        throw "Not implemented";
     }
 
     /** @copydoc dds::core::Reference::operator=(const Reference<D>& that) */
@@ -228,7 +228,7 @@ public:
     Reference& operator=(
             const R& rhs)
     {
-        (void) rhs;
+        throw "Not implemented";
     }
 
     /**
@@ -244,6 +244,7 @@ public:
     Reference& operator=(
             const null_type)
     {
+        throw "Not implemented";
     }
 
     /**
@@ -255,7 +256,7 @@ public:
      */
     bool is_nil() const
     {
-        return false;
+        throw "Not implemented";
     }
 
     /**
@@ -274,7 +275,7 @@ public:
     bool operator==(
             const null_type) const
     {
-        return false;
+        throw "Not implemented";
     }
 
     /**
@@ -293,8 +294,7 @@ public:
     bool operator!=(
             const null_type nil) const
     {
-        (void) nil;
-        return false;
+        throw "Not implemented";
     }
 
 private:
@@ -302,8 +302,7 @@ private:
     void* operator new(
             size_t)
     {
-        int* ret;
-        return (void*) ret;
+        throw "Not implemented";
     }
 
 public:
@@ -315,10 +314,12 @@ public:
      */
     DELEGATE_REF_T& delegate()
     {
+        throw "Not implemented";
     }
 
     const DELEGATE_REF_T& delegate() const
     {
+        throw "Not implemented";
     }
 
     /** @endcond */
@@ -342,11 +343,13 @@ public:
      */
     DELEGATE* operator->()
     {
+        throw "Not implemented";
     }
 
     /** @copydoc dds::core::Reference::operator->() */
     const DELEGATE* operator->() const
     {
+        throw "Not implemented";
     }
 
     /** @cond
@@ -357,10 +360,12 @@ public:
      */
     operator DELEGATE_REF_T& ()
     {
+        throw "Not implemented";
     }
 
     operator const DELEGATE_REF_T& () const
     {
+        throw "Not implemented";
     }
     /** @endcond */
 
@@ -372,7 +377,7 @@ protected:
     void set_ref(
             DELEGATE_T* p)
     {
-        (void) p;
+        throw "Not implemented";
     }
 
 protected:

@@ -30,7 +30,7 @@ Exception::~Exception() throw()
 
 const char* Exception::what() const throw()
 {
-    return nullptr;
+   throw "Not implemented";
 }
 
 
@@ -38,14 +38,14 @@ Error::Error(
         const std::string& msg)
     : std::logic_error (msg)
 {
-    (void) msg;
+    throw "Not implemented";
 }
 
 Error::Error(
         const Error& src)
     : std::logic_error (src)
 {
-    (void) src;
+    throw "Not implemented";
 }
 
 Error::~Error() throw()
@@ -54,7 +54,7 @@ Error::~Error() throw()
 
 const char* Error::what() const throw()
 {
-    return nullptr;
+    throw "Not implemented";
 }
 
 
@@ -62,14 +62,14 @@ AlreadyClosedError::AlreadyClosedError(
         const std::string& msg)
     : std::logic_error (msg)
 {
-    (void) msg;
+    throw "Not implemented";
 }
 
 AlreadyClosedError::AlreadyClosedError(
         const AlreadyClosedError& src)
     : std::logic_error (src)
 {
-    (void) src;
+    throw "Not implemented";
 }
 
 AlreadyClosedError::~AlreadyClosedError() throw()
@@ -79,7 +79,7 @@ AlreadyClosedError::~AlreadyClosedError() throw()
 
 const char* AlreadyClosedError::what() const throw()
 {
-    return nullptr;
+    throw "Not implemented";
 }
 
 
@@ -87,14 +87,14 @@ IllegalOperationError::IllegalOperationError(
         const std::string& msg)
     : std::logic_error (msg)
 {
-    (void) msg;
+    throw "Not implemented";
 }
 
 IllegalOperationError::IllegalOperationError(
         const IllegalOperationError& src)
     : std::logic_error (src)
 {
-    (void) src;
+    throw "Not implemented";
 }
 
 IllegalOperationError::~IllegalOperationError() throw()
@@ -103,21 +103,21 @@ IllegalOperationError::~IllegalOperationError() throw()
 
 const char* IllegalOperationError::what() const throw()
 {
-    return nullptr;
+    throw "Not implemented";
 }
 
 ImmutablePolicyError::ImmutablePolicyError(
         const std::string& msg)
     : std::logic_error (msg)
 {
-    (void) msg;
+    throw "Not implemented";
 }
 
 ImmutablePolicyError::ImmutablePolicyError(
         const ImmutablePolicyError& src)
     : std::logic_error (src)
 {
-    (void) src;
+    throw "Not implemented";
 }
 
 ImmutablePolicyError::~ImmutablePolicyError() throw()
@@ -126,21 +126,21 @@ ImmutablePolicyError::~ImmutablePolicyError() throw()
 
 const char* ImmutablePolicyError::what() const throw()
 {
-    return nullptr;
+    throw "Not implemented";
 }
 
 InconsistentPolicyError::InconsistentPolicyError(
         const std::string& msg)
     : std::logic_error (msg)
 {
-    (void) msg;
+    throw "Not implemented";
 }
 
 InconsistentPolicyError::InconsistentPolicyError(
         const InconsistentPolicyError& src)
     : std::logic_error (src)
 {
-    (void) src;
+    throw "Not implemented";
 }
 
 InconsistentPolicyError::~InconsistentPolicyError() throw()
@@ -149,21 +149,21 @@ InconsistentPolicyError::~InconsistentPolicyError() throw()
 
 const char* InconsistentPolicyError::what() const throw()
 {
-    return nullptr;
+    throw "Not implemented";
 }
 
 InvalidArgumentError::InvalidArgumentError(
         const std::string& msg)
     : std::invalid_argument (msg)
 {
-    (void) msg;
+    throw "Not implemented";
 }
 
 InvalidArgumentError::InvalidArgumentError(
         const InvalidArgumentError& src)
     : std::invalid_argument (src)
 {
-    (void) src;
+    throw "Not implemented";
 }
 
 InvalidArgumentError::~InvalidArgumentError() throw()
@@ -172,21 +172,21 @@ InvalidArgumentError::~InvalidArgumentError() throw()
 
 const char* InvalidArgumentError::what() const throw()
 {
-    return nullptr;
+    throw "Not implemented";
 }
 
 NotEnabledError::NotEnabledError(
         const std::string& msg)
     : std::logic_error (msg)
 {
-    (void) msg;
+    throw "Not implemented";
 }
 
 NotEnabledError::NotEnabledError(
         const NotEnabledError& src)
     : std::logic_error (src)
 {
-    (void) src;
+    throw "Not implemented";
 }
 
 NotEnabledError::~NotEnabledError() throw()
@@ -195,21 +195,21 @@ NotEnabledError::~NotEnabledError() throw()
 
 const char* NotEnabledError::what() const throw()
 {
-    return nullptr;
+    throw "Not implemented";
 }
 
 OutOfResourcesError::OutOfResourcesError(
         const std::string& msg)
     : std::runtime_error (msg)
 {
-    (void) msg;
+    throw "Not implemented";
 }
 
 OutOfResourcesError::OutOfResourcesError(
         const OutOfResourcesError& src)
     : std::runtime_error (src)
 {
-    (void) src;
+    throw "Not implemented";
 }
 
 OutOfResourcesError::~OutOfResourcesError() throw()
@@ -218,21 +218,21 @@ OutOfResourcesError::~OutOfResourcesError() throw()
 
 const char* OutOfResourcesError::what() const throw()
 {
-    return nullptr;
+   throw "Not implemented";
 }
 
 PreconditionNotMetError::PreconditionNotMetError(
         const std::string& msg)
     : std::logic_error (msg)
 {
-    (void) msg;
+    throw "Not implemented";
 }
 
 PreconditionNotMetError::PreconditionNotMetError(
         const PreconditionNotMetError& src)
     : std::logic_error (src)
 {
-    (void) src;
+    throw "Not implemented";
 }
 
 PreconditionNotMetError::~PreconditionNotMetError() throw()
@@ -241,21 +241,21 @@ PreconditionNotMetError::~PreconditionNotMetError() throw()
 
 const char* PreconditionNotMetError::what() const throw()
 {
-    return nullptr;
+    throw "Not implemented";
 }
 
 TimeoutError::TimeoutError(
         const std::string& msg)
     : std::runtime_error (msg)
 {
-    (void) msg;
+    throw "Not implemented";
 }
 
 TimeoutError::TimeoutError(
         const TimeoutError& src)
     : std::runtime_error (src)
 {
-    (void) src;
+    throw "Not implemented";
 }
 
 TimeoutError::~TimeoutError() throw()
@@ -264,21 +264,21 @@ TimeoutError::~TimeoutError() throw()
 
 const char* TimeoutError::what() const throw()
 {
-    return nullptr;
+    throw "Not implemented";
 }
 
 UnsupportedError::UnsupportedError(
         const std::string& msg)
     : std::logic_error (msg)
 {
-    (void) msg;
+    throw "Not implemented";
 }
 
 UnsupportedError::UnsupportedError(
         const UnsupportedError& src)
     : std::logic_error (src)
 {
-    (void) src;
+    throw "Not implemented";
 }
 
 UnsupportedError::~UnsupportedError() throw()
@@ -287,21 +287,21 @@ UnsupportedError::~UnsupportedError() throw()
 
 const char* UnsupportedError::what() const throw()
 {
-    return nullptr;
+    throw "Not implemented";
 }
 
 InvalidDowncastError::InvalidDowncastError(
         const std::string& msg)
     : std::runtime_error (msg)
 {
-    (void) msg;
+    throw "Not implemented";
 }
 
 InvalidDowncastError::InvalidDowncastError(
         const InvalidDowncastError& src)
     : std::runtime_error (src)
 {
-    (void) src;
+    throw "Not implemented";
 }
 
 InvalidDowncastError::~InvalidDowncastError() throw()
@@ -310,7 +310,7 @@ InvalidDowncastError::~InvalidDowncastError() throw()
 
 const char* InvalidDowncastError::what() const throw()
 {
-    return nullptr;
+    throw "Not implemented";
 }
 
 
@@ -318,14 +318,14 @@ NullReferenceError::NullReferenceError(
         const std::string& msg)
     : std::runtime_error (msg)
 {
-    (void) msg;
+    throw "Not implemented";
 }
 
 NullReferenceError::NullReferenceError(
         const NullReferenceError& src)
     : std::runtime_error (src)
 {
-    (void) src;
+    throw "Not implemented";
 }
 
 NullReferenceError::~NullReferenceError() throw()
@@ -334,21 +334,21 @@ NullReferenceError::~NullReferenceError() throw()
 
 const char* NullReferenceError::what() const throw()
 {
-    return nullptr;
+    throw "Not implemented";
 }
 
 InvalidDataError::InvalidDataError(
         const std::string& msg)
     : std::logic_error (msg)
 {
-    (void) msg;
+    throw "Not implemented";
 }
 
 InvalidDataError::InvalidDataError(
         const InvalidDataError& src)
     : std::logic_error (src)
 {
-    (void) src;
+    throw "Not implemented";
 }
 
 InvalidDataError::~InvalidDataError() throw()
@@ -357,7 +357,7 @@ InvalidDataError::~InvalidDataError() throw()
 
 const char* InvalidDataError::what() const throw()
 {
-    return nullptr;
+    throw "Not implemented";
 }
 
 
