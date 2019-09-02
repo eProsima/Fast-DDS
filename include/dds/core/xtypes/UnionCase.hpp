@@ -53,6 +53,8 @@ public:
 
     const MemberType& member()
     {
+        const MemberType m;
+        return m;
     }
 };
 

@@ -126,26 +126,36 @@ public:
 public:
     TStructType parent() const
     {
+        TStructType p;
+        return p;
     }
 
     const std::vector<MemberType>& members() const
     {
+        const std::vector<MemberType> v;
+        return v;
     }
 
     const MemberType& member(
             uint32_t id) const
     {
         (void) id;
+        const MemberType m;
+        return m;
     }
 
     const MemberType& member(
             const std::string& name) const
     {
         (void) name;
+        const MemberType m;
+        return m;
     }
 
     const std::vector<Annotation>& annotations() const
     {
+        const std::vector<Annotation> v;
+        return v;
     }
 
     TStructType add_member(

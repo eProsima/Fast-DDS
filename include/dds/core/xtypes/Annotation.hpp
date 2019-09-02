@@ -90,6 +90,7 @@ public:
 
     uint32_t id() const
     {
+        return 0;
     }
 };
 
@@ -133,6 +134,8 @@ public:
 
     ExtensibilityKind extensibility_kind() const
     {
+        ExtensibilityKind ret;
+        return ret;
     }
 };
 
@@ -157,6 +160,8 @@ public:
 
     const std::string& verbatim_text() const
     {
+        const std::string txt;
+        return txt;
     }
 };
 
