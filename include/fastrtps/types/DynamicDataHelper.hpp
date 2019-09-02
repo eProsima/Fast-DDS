@@ -29,7 +29,7 @@ class DynamicDataHelper
 {
 public:
     RTPS_DllAPI static void print(
-            const DynamicData_ptr data)
+            const DynamicData_ptr& data)
     {
         print(data.get());
     }
