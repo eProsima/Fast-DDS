@@ -42,7 +42,7 @@ public:
     static TDynamicType<DELEGATE> load_type(
             const std::string& uri)
     {
-        (void) uri;
+        throw "Not implemented";
     }
 
     /**
@@ -52,7 +52,7 @@ public:
     static std::vector<TDynamicType<DELEGATE>> load_types(
             const std::string& uri)
     {
-        (void) uri;
+        throw "Not implemented";
     }
 
     /**
@@ -62,8 +62,7 @@ public:
             const std::string& uri,
             const std::string& name)
     {
-        (void) uri;
-        (void) name;
+        throw "Not implemented";
     }
 };
 
