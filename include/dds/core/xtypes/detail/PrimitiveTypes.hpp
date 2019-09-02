@@ -66,6 +66,8 @@ struct dynamic_type_traits<uint32_t>
     static constexpr const char* NAME = "uint32_t";
 };
 
+struct AAAAA : public dynamic_type_traits<uint32_t> {};
+
 } //namespace xtypes
 } //namespace core
 } //namespace dds

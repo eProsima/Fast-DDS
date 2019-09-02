@@ -24,7 +24,6 @@
 
 #include <dds/core/xtypes/DynamicType.hpp>
 #include <dds/core/xtypes/MemberType.hpp>
-#include <dds/core/xtypes/PrimitiveTypes.hpp>
 
 namespace dds {
 namespace core {
@@ -50,11 +49,18 @@ template<typename DELEGATE>
 class TStructType : public TDynamicType<DELEGATE>
 {
 public:
-
     TStructType(
             const std::string& name)
     {
         throw "Not implemented";
+    }
+
+    TStructType(
+        const std::string& name,
+        const std::vector<MemberType>& members)
+    {
+        (void) name;
+        (void) members;
     }
 
     TStructType(
@@ -107,7 +113,11 @@ public:
         throw "Not implemented";
     }
 
-public:
+    template<typename BASE_DELEGATE>
+    operator TDynamicType<BASE_DELEGATE>() const
+    {
+    }
+
     TStructType parent() const
     {
         throw "Not implemented";
