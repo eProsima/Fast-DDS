@@ -49,7 +49,7 @@ template<typename DELEGATE>
 class TStructType : public TDynamicType<DELEGATE>
 {
 public:
-    TStructType(
+    explicit TStructType(
             const std::string& name)
     {
         throw "Not implemented";
@@ -59,8 +59,7 @@ public:
         const std::string& name,
         const std::vector<MemberType>& members)
     {
-        (void) name;
-        (void) members;
+        throw "Not implemented";
     }
 
     TStructType(
@@ -116,6 +115,7 @@ public:
     template<typename BASE_DELEGATE>
     operator TDynamicType<BASE_DELEGATE>() const
     {
+        throw "Not implemented";
     }
 
     TStructType parent() const
