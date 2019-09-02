@@ -1148,20 +1148,16 @@ TEST(LivelinessQos, TwoWriters_TwoReaders_ManualByParticipant)
     publishers.pub_wait_discovery();
     subscribers.sub_wait_discovery();
 
-    unsigned int num_assertions = 4;
-    unsigned int assert_rate_ms = 50;
-    for (unsigned int count = 0; count < num_assertions; count++)
-    {
-        publishers.assert_liveliness(0u);
-        std::this_thread::sleep_for(std::chrono::milliseconds(assert_rate_ms));
-    }
-    // Only one publisher asserts liveliness but the other should be asserted by the QoS, as
-    // liveliness kind is manual by participant
+    // Make the first publisher assert its liveliness, the other should be asserted too by the QoS
+    // as liveliness kind is manual by participant
+    publishers.assert_liveliness(0u);
+    subscribers.sub_wait_liveliness_recovered(num_pub);
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 0u);
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), num_pub);
     EXPECT_EQ(subscribers.sub_times_liveliness_lost(), 0u);
 
     subscribers.sub_wait_liveliness_lost(num_pub);
+    publishers.pub_wait_liveliness_lost(num_pub);
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), num_pub);
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), num_pub);
     EXPECT_EQ(subscribers.sub_times_liveliness_lost(), num_pub);
