@@ -36,7 +36,7 @@ public:
 
     uint32_t bounds() const
     {
-        return 0;
+        throw "Not implemented";
     }
 
 protected:
@@ -44,8 +44,7 @@ protected:
             const std::string& name,
             TypeKind kind)
     {
-        (void) name;
-        (void) kind;
+        throw "Not implemented";
     }
 };
 
@@ -60,8 +59,7 @@ public:
             const TDynamicType<DELEGATE_K>& key_type,
             const TDynamicType<DELEGATE_V>& value_type)
     {
-        (void) key_type;
-        (void) value_type;
+        throw "Not implemented";
     }
 
     TMapType(
@@ -69,17 +67,17 @@ public:
             const TDynamicType<DELEGATE_V>& value_type,
             uint32_t bounds)
     {
-        (void) key_type;
-        (void) value_type;
-        (void) bounds;
+        throw "Not implemented";
     }
 
     const TDynamicType<DELEGATE_K>& key_type()
     {
+        throw "Not implemented";
     }
 
     const TDynamicType<DELEGATE_V>& value_type()
     {
+        throw "Not implemented";
     }
 };
 
@@ -93,19 +91,19 @@ public:
     TSequenceType(
         const TDynamicType<DELEGATE_T>& type)
     {
-        (void) type;
+        throw "Not implemented";
     }
 
     TSequenceType(
         const TDynamicType<DELEGATE_T>& type,
         uint32_t bounds)
     {
-        (void) type;
-        (void) bounds;
+        throw "Not implemented";
     }
 public:
     const TDynamicType<DELEGATE_T>& key_type() const
     {
+        throw "Not implemented";
     }
 };
 
@@ -117,7 +115,7 @@ public:
     TStringType(
             uint32_t bounds)
     {
-        (void) bounds;
+        throw "Not implemented";
     }
 };
 

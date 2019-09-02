@@ -37,7 +37,7 @@ public:
     TStructForwardDeclaration(
             const std::string& name)
     {
-        (void) name;
+        throw "Not implemented";
     }
 };
 
@@ -54,7 +54,7 @@ public:
     TStructType(
             const std::string& name)
     {
-        (void) name;
+        throw "Not implemented";
     }
 
     TStructType(
@@ -62,9 +62,7 @@ public:
         const TStructType& parent,
         const std::vector<MemberType>& members)
     {
-        (void) name;
-        (void) parent;
-        (void) members;
+        throw "Not implemented";
     }
 
     template<typename MemberIter>
@@ -74,10 +72,7 @@ public:
         const MemberIter& begin,
         const MemberIter& end)
     {
-        (void) name;
-        (void) parent;
-        (void) begin;
-        (void) end;
+        throw "Not implemented";
     }
 
     TStructType(
@@ -86,10 +81,7 @@ public:
         const std::vector<MemberType>& members,
         const Annotation& annotation)
     {
-        (void) name;
-        (void) parent;
-        (void) members;
-        (void) annotation;
+        throw "Not implemented";
     }
 
     TStructType(
@@ -98,10 +90,7 @@ public:
         const std::vector<MemberType>& members,
         const std::vector<Annotation>& annotations)
     {
-        (void) name;
-        (void) parent;
-        (void) members;
-        (void) annotations;
+        throw "Not implemented";
     }
 
     template<
@@ -115,71 +104,59 @@ public:
         const AnnotationIter& annotation_begin,
         const AnnotationIter& annotation_end)
     {
-        (void) name;
-        (void) parent;
-        (void) member_begin;
-        (void) member_end;
-        (void) annotation_begin;
-        (void) annotation_end;
+        throw "Not implemented";
     }
 
 public:
     TStructType parent() const
     {
-        TStructType p;
-        return p;
+        throw "Not implemented";
     }
 
     const std::vector<MemberType>& members() const
     {
-        const std::vector<MemberType> v;
-        return v;
+        throw "Not implemented";
     }
 
     const MemberType& member(
             uint32_t id) const
     {
-        (void) id;
-        const MemberType m;
-        return m;
+        throw "Not implemented";
     }
 
     const MemberType& member(
             const std::string& name) const
     {
-        (void) name;
-        const MemberType m;
-        return m;
+        throw "Not implemented";
     }
 
     const std::vector<Annotation>& annotations() const
     {
-        const std::vector<Annotation> v;
-        return v;
+        throw "Not implemented";
     }
 
     TStructType add_member(
             const MemberType& member) const
     {
-        (void) member;
+        throw "Not implemented";
     }
 
     TStructType remove_member(
             const MemberType& member) const
     {
-        (void) member;
+        throw "Not implemented";
     }
 
     TStructType add_annotation(
             const Annotation& annotation) const
     {
-        (void) annotation;
+        throw "Not implemented";
     }
 
     TStructType remove_annotation(
             const Annotation& annotation) const
     {
-        (void) annotation;
+        throw "Not implemented";
     }
 };
 

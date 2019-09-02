@@ -42,7 +42,7 @@ public:
     TUnionForwardDeclaration(
             const std::string& name)
     {
-        (void) name;
+        throw "Not implemented";
     }
 };
 
@@ -57,9 +57,7 @@ public:
         const TPrimitiveType<T, DELEGATE<T>>& discriminator_type,
         const std::vector<UnionCase<T>>& cases)
     {
-        (void) name;
-        (void) discriminator_type;
-        (void) cases;
+        throw "Not implemented";
     }
 
     TUnionType(
@@ -68,10 +66,7 @@ public:
         const std::vector<UnionCase<T>>& cases,
         const Annotation& annotation)
     {
-        (void) name;
-        (void) discriminator_type;
-        (void) cases;
-        (void) annotation;
+        throw "Not implemented";
     }
 
     TUnionType(
@@ -80,62 +75,53 @@ public:
         const std::vector<UnionCase<T>>& cases,
         const std::vector<Annotation>& annotations)
     {
-        (void) name;
-        (void) discriminator_type;
-        (void) cases;
-        (void) annotations;
+        throw "Not implemented";
     }
 
     const std::vector<UnionCase<T>>& members() const
     {
-        const std::vector<UnionCase<T>> m;
-        return m;
+        throw "Not implemented";
     }
 
     const MemberType& member(
             uint32_t id) const
     {
-        (void) id;
-        const MemberType m;
-        return m;
+        throw "Not implemented";
     }
 
     const MemberType& member(
             const std::string& name) const
     {
-        (void) name;
-        const MemberType m;
-        return m;
+        throw "Not implemented";
     }
 
     const std::vector<Annotation>& annotations() const
     {
-        const std::vector<Annotation> v;
-        return v;
+        throw "Not implemented";
     }
 
     TUnionType add_member(
             const UnionCase<T>& member) const
     {
-    (void) member;
+        throw "Not implemented";
     }
 
     TUnionType remove_member(
             const UnionCase<T>& member) const
     {
-    (void) member;
+        throw "Not implemented";
     }
 
     TUnionType add_annotation(
             const Annotation& annotation) const
     {
-    (void) annotation;
+        throw "Not implemented";
     }
 
     TUnionType remove_annotation(
             const Annotation& annotation) const
     {
-    (void) annotation;
+        throw "Not implemented";
     }
 };
 
