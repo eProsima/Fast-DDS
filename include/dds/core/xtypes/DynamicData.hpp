@@ -50,7 +50,7 @@ public:
     TDynamicData(
             const TDynamicType<DELEGATE_TYPE>& type)
     {
-        (void) type;
+        throw "Not implemented";
     }
 
     template<typename T>
@@ -58,8 +58,7 @@ public:
             uint32_t mid,
             const T& v) const
     {
-        (void) mid;
-        (void) v;
+        throw "Not implemented";
     }
 
     template<typename T>
@@ -67,51 +66,44 @@ public:
             const std::string& mid,
             const T& v) const
     {
-        (void) mid;
-        (void) v;
+        throw "Not implemented";
     }
 
     template<typename T>
     T value(
             uint32_t mid) const
     {
-        (void) mid;
+        throw "Not implemented";
     }
 
     template<typename T>
     T value(
             const std::string& mid) const
     {
-        (void) mid;
+        throw "Not implemented";
     }
 
     TDynamicType<DELEGATE_TYPE> type() const
     {
-        TDynamicType<DELEGATE_TYPE> t;
-        return t;
+        throw "Not implemented";
     }
 
     MemberType member_type(
             uint32_t id) const
     {
-        (void) id;
-        MemberType m;
-        return m;
+        throw "Not implemented";
     }
 
     MemberType member_type(
             const std::string& name) const
     {
-        (void) name;
-        MemberType m;
-        return m;
+        throw "Not implemented";
     }
 
     uint32_t member_id(
             const std::string& name) const
     {
-        (void) name;
-        return 0;
+        throw "Not implemented";
     }
 };
 
