@@ -187,6 +187,7 @@ public:
             const R& ref) const
     {
         (void) ref;
+        return false;
     }
 
     /**
@@ -204,6 +205,7 @@ public:
             const R& ref) const
     {
         (void) ref;
+        return false;
     }
 
     /**
@@ -253,6 +255,7 @@ public:
      */
     bool is_nil() const
     {
+        return false;
     }
 
     /**
@@ -271,6 +274,7 @@ public:
     bool operator==(
             const null_type) const
     {
+        return false;
     }
 
     /**
@@ -290,6 +294,7 @@ public:
             const null_type nil) const
     {
         (void) nil;
+        return false;
     }
 
 private:
@@ -297,6 +302,8 @@ private:
     void* operator new(
             size_t)
     {
+        int* ret;
+        return (void*) ret;
     }
 
 public:
@@ -396,6 +403,7 @@ bool operator ==(
         const dds::core::Reference<D>& r)
 {
     (void) r;
+    return false;
 }
 
 /**
@@ -417,6 +425,7 @@ bool operator !=(
         const dds::core::Reference<D>& r)
 {
     (void) r;
+    return false;
 }
 
 #endif // OMG_DDS_CORE_REFERENCE_HPP_
