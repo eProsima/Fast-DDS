@@ -41,20 +41,27 @@ class TDynamicType : public Reference<DELEGATE>
 public:
     const std::string& name() const
     {
+        const std::string n;
+        return n;
     }
 
     TypeKind kind() const
     {
+        TypeKind k;
+        return k;
     }
 
     const std::vector<Annotation>& annotations() const
     {
+        const std::vector<Annotation> v;
+        return v;
     }
 
     bool operator ==(
             const TDynamicType& that) const
     {
         (void) that;
+        return false;
     }
 
     bool operator !=(
