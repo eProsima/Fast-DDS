@@ -20,6 +20,7 @@
 
 #include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastrtps/qos/LivelinessLostStatus.h>
+#include <fastdds/dds/core/status/PublicationMatchedStatus.h>
 
 namespace eprosima{
 namespace fastrtps{
@@ -48,6 +49,19 @@ public:
     virtual void onWriterMatched(
             RTPSWriter* writer,
             MatchingInfo& info)
+    {
+        (void)writer;
+        (void)info;
+    }
+
+    /**
+     * This method is called when a new Reader is matched with this Writer by the builtin protocols
+     * @param writer Pointer to the RTPSWriter.
+     * @param info Publication matching information.
+     */
+    virtual void onWriterMatched(
+            RTPSWriter* writer,
+            eprosima::fastdds::dds::PublicationMatchedStatus& info)
     {
         (void)writer;
         (void)info;

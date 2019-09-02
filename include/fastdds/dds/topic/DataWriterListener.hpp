@@ -20,7 +20,6 @@
 #define _FASTRTPS_DATAWRITERLISTENER_HPP_
 
 #include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/LivelinessLostStatus.h>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.h>
