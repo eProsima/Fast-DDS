@@ -88,22 +88,30 @@ public:
 
     const std::vector<UnionCase<T>>& members() const
     {
+        const std::vector<UnionCase<T>> m;
+        return m;
     }
 
     const MemberType& member(
             uint32_t id) const
     {
         (void) id;
+        const MemberType m;
+        return m;
     }
 
     const MemberType& member(
             const std::string& name) const
     {
-    (void) name;
+        (void) name;
+        const MemberType m;
+        return m;
     }
 
     const std::vector<Annotation>& annotations() const
     {
+        const std::vector<Annotation> v;
+        return v;
     }
 
     TUnionType add_member(

@@ -36,6 +36,7 @@ public:
 
     uint32_t bounds() const
     {
+        return 0;
     }
 
 protected:
