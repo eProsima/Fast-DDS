@@ -87,24 +87,31 @@ public:
 
     TDynamicType<DELEGATE_TYPE> type() const
     {
+        TDynamicType<DELEGATE_TYPE> t;
+        return t;
     }
 
     MemberType member_type(
             uint32_t id) const
     {
         (void) id;
+        MemberType m;
+        return m;
     }
 
     MemberType member_type(
             const std::string& name) const
     {
         (void) name;
+        MemberType m;
+        return m;
     }
 
     uint32_t member_id(
             const std::string& name) const
     {
         (void) name;
+        return 0;
     }
 };
 

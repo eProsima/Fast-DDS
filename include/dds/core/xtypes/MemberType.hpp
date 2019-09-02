@@ -86,10 +86,14 @@ public:
 
     const std::string& name() const
     {
+        const std::string n;
+        return n;
     }
 
     const dds::core::xtypes::TDynamicType<OTHER_DELEGATE>& type() const
     {
+        const TDynamicType<OTHER_DELEGATE> t;
+        return t;
     }
 
     TMemberType add_annotation(
@@ -106,38 +110,47 @@ public:
 
     bool is_optional() const
     {
+        return false;
     }
 
     bool is_shared() const
     {
+        return false;
     }
 
     bool is_key() const
     {
+        return false;
     }
 
     bool is_must_understand() const
     {
+        return false;
     }
 
     bool is_bitset() const
     {
+        return false;
     }
 
     bool has_bitbound() const
     {
+        return false;
     }
 
     int32_t get_bitbound() const
     {
+        return 0;
     }
 
     bool has_id() const
     {
+        return false;
     }
 
     int32_t get_id() const
     {
+        return 0;
     }
 };
 
