@@ -48,17 +48,14 @@ public:
             const std::string& name,
             const TDynamicType<OTHER_DELEGATE>& type)
     {
-        (void) name;
-        (void) type;
+        throw "Not implemented";
     }
 
     TMemberType(const std::string& name,
                 const dds::core::xtypes::DynamicType& type,
                 const Annotation& annotation)
     {
-        (void) name;
-        (void) type;
-        (void) annotation;
+        throw "Not implemented";
     }
 
     TMemberType(
@@ -66,9 +63,7 @@ public:
             const TDynamicType<OTHER_DELEGATE>& type,
             const std::vector<Annotation>& annotations)
     {
-        (void) name;
-        (void) type;
-        (void) annotations;
+        throw "Not implemented";
     }
 
     template<typename AnnotationIter>
@@ -78,79 +73,74 @@ public:
             const AnnotationIter& begin,
             const AnnotationIter& end)
     {
-        (void) name;
-        (void) type;
-        (void) begin;
-        (void) end;
+        throw "Not implemented";
     }
 
     const std::string& name() const
     {
-        const std::string n;
-        return n;
+        throw "Not implemented";
     }
 
     const dds::core::xtypes::TDynamicType<OTHER_DELEGATE>& type() const
     {
-        const TDynamicType<OTHER_DELEGATE> t;
-        return t;
+        throw "Not implemented";
     }
 
     TMemberType add_annotation(
             const Annotation& annotation)
     {
-        (void) annotation;
+        throw "Not implemented";
     }
 
     TMemberType remove_annotation(
             const Annotation& annotation)
     {
-        (void) annotation;
+        throw "Not implemented";
     }
 
     bool is_optional() const
     {
-        return false;
+        throw "Not implemented";
     }
 
     bool is_shared() const
     {
-        return false;
+        throw "Not implemented";
     }
 
     bool is_key() const
     {
-        return false;
+        throw "Not implemented";
     }
 
     bool is_must_understand() const
     {
-        return false;
+        throw "Not implemented";
     }
 
     bool is_bitset() const
     {
-        return false;
+        throw "Not implemented";
     }
 
     bool has_bitbound() const
     {
-        return false;
+        throw "Not implemented";
     }
 
     int32_t get_bitbound() const
     {
-        return 0;
+        throw "Not implemented";
     }
 
     bool has_id() const
     {
-        return false;
+        throw "Not implemented";
     }
 
     int32_t get_id() const
     {
-        return 0;
+        throw "Not implemented";
     }
 };
 
