@@ -58,8 +58,7 @@ public:
 template<typename T>
 TPrimitiveType<T, detail::DynamicType> primitive_type()
 {
-    static TPrimitiveType<T, detail::DynamicType> t;
-    return t;
+    throw "Not implemented";
 }
 
 
