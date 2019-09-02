@@ -15,4 +15,4 @@
  *
 */
 
-#include <dds/core/detail/inttypes.hpp>
+#include <dds/core/types.hpp>
