@@ -41,27 +41,23 @@ class TDynamicType : public Reference<DELEGATE>
 public:
     const std::string& name() const
     {
-        const std::string n;
-        return n;
+        throw "Not implemented";
     }
 
     TypeKind kind() const
     {
-        TypeKind k;
-        return k;
+        throw "Not implemented";
     }
 
     const std::vector<Annotation>& annotations() const
     {
-        const std::vector<Annotation> v;
-        return v;
+        throw "Not implemented";
     }
 
     bool operator ==(
             const TDynamicType& that) const
     {
-        (void) that;
-        return false;
+        throw "Not implemented";
     }
 
     bool operator !=(
@@ -75,8 +71,7 @@ protected:
             const std::string& name,
             TypeKind kind)
     {
-        (void) name;
-        (void) kind;
+        throw "Not implemented";
     }
 
     TDynamicType(
@@ -84,9 +79,7 @@ protected:
             TypeKind kind,
             const Annotation& annotation)
     {
-        (void) name;
-        (void) kind;
-        (void) annotation;
+        throw "Not implemented";
     }
 
     TDynamicType(
@@ -94,9 +87,7 @@ protected:
             TypeKind kind,
             const std::vector<Annotation>& annotations)
     {
-        (void) name;
-        (void) kind;
-        (void) annotations;
+        throw "Not implemented";
     }
 
     template<typename AnnotationIter>
@@ -106,45 +97,39 @@ protected:
             const AnnotationIter& begin,
             const AnnotationIter& end)
     {
-        (void) name;
-        (void) kind;
-        (void) begin;
-        (void) end;
+        throw "Not implemented";
     }
 
-    TDynamicType(const TDynamicType& other) = default;
+    TDynamicType(
+            const TDynamicType& other) = default;
 };
 
 template<typename T>
 bool is_primitive_type(
         const TDynamicType<T>& t)
 {
-    (void) t;
-    return false;
+    throw "Not implemented";
 }
 
 template<typename T>
 bool is_constructed_type(
         const TDynamicType<T>& t)
 {
-    (void) t;
-    return false;
+    throw "Not implemented";
 }
 
 template<typename T>
 bool is_collection_type(
         const TDynamicType<T>& t)
 {
-    (void) t;
-    return false;
+    throw "Not implemented";
 }
 
 template<typename T>
 bool is_aggregation_type(
         const TDynamicType<T>& t)
 {
-    (void) t;
-    return false;
+    throw "Not implemented";
 }
 
 typedef TDynamicType<detail::DynamicType> DynamicType;
