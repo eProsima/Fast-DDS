@@ -1597,9 +1597,9 @@ TEST(LivelinessQos, AssertLivelinessParticipant)
     publishers.assert_liveliness_participant();
 
     // Wait for alive publishers (only the two MANUAL_BY_PARTICIPANT publishers should be alive) to lose liveliness
-    std::this_thread::sleep_for(std::chrono::milliseconds(lease_duration_ms * 4));
+    publishers.pub_wait_liveliness_lost(2u);
 
     // Only the two MANUAL_BY_PARTICIPANT publishers will have lost liveliness, as the
-    // MANUAL_BY_TOPIC was never asserted
+    // MANUAL_BY_TOPIC one was never asserted
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 2u);
 }
