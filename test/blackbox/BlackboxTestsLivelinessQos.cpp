@@ -769,22 +769,21 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
-    // Write rate in milliseconds and number of samples to write
-    uint32_t writer_sleep_ms = 1000;
-    uint32_t num_samples = 2;
+    // Number of samples to write
+    unsigned int num_samples = 2;
 
-    // Liveliness lease duration and announcement period, in seconds
-    Duration_t liveliness_s(writer_sleep_ms * 0.01 * 1e-3);
-    Duration_t announcement_period(writer_sleep_ms * 0.01 * 1e-3 * 0.2);
+    // Liveliness lease duration and announcement period, in milliseconds
+    unsigned int lease_duration_ms = 100;
+    unsigned int announcement_period_ms = 1;
 
     reader.reliability(BEST_EFFORT_RELIABILITY_QOS)
             .liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
-            .liveliness_lease_duration(liveliness_s)
+            .liveliness_lease_duration(lease_duration_ms * 1e-3)
             .init();
     writer.reliability(BEST_EFFORT_RELIABILITY_QOS)
             .liveliness_kind(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
-            .liveliness_announcement_period(announcement_period)
-            .liveliness_lease_duration(liveliness_s)
+            .liveliness_announcement_period(announcement_period_ms * 1e-3)
+            .liveliness_lease_duration(lease_duration_ms * 1e-3)
             .init();
 
     ASSERT_TRUE(reader.isInitialized());
