@@ -1020,7 +1020,7 @@ public:
     bool m_force_type_validation;
 
     RTPS_DllAPI TypeConsistencyEnforcementQosPolicy()
-        : Parameter_t(PID_TYPE_CONSISTENCY_ENFORCEMENT, 9) // 4 + 5 bytes
+        : Parameter_t(PID_TYPE_CONSISTENCY_ENFORCEMENT, 12) // 4 + 5 + alignment bytes
         , QosPolicy(true)
     {
         m_kind = ALLOW_TYPE_COERCION;

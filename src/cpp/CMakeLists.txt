@@ -511,7 +511,7 @@ elseif(NOT EPROSIMA_INSTALLER)
 
     configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/packaging/Config.cmake.in
         ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config.cmake
-    INSTALL_DESTINATION ${INSTALL_DESTINATION_PATH}
+        INSTALL_DESTINATION ${INSTALL_DESTINATION_PATH}
         PATH_VARS BIN_INSTALL_DIR INCLUDE_INSTALL_DIR LIB_INSTALL_DIR
         )
     write_basic_package_version_file(${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config-version.cmake
@@ -520,7 +520,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         )
     install(FILES ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config.cmake
         ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config-version.cmake
-    DESTINATION ${INSTALL_DESTINATION_PATH}
+        DESTINATION ${INSTALL_DESTINATION_PATH}
         COMPONENT cmake
         )
 

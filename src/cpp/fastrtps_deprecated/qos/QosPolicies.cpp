@@ -243,6 +243,10 @@ bool DataRepresentationQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
     valid &= CDRMessage::addUInt32(msg, static_cast<uint32_t>(m_value.size()));
     for (DataRepresentationId_t id : m_value)
         valid &= CDRMessage::addUInt16(msg, static_cast<uint16_t>(id));
+    if (m_value.size() % 2 == 1) // Odd, we must align
+    {
+        valid &= CDRMessage::addUInt16(msg, uint16_t(0));
+    }
     return valid;
 }
 
@@ -256,6 +260,9 @@ bool TypeConsistencyEnforcementQosPolicy::addToCDRMessage(CDRMessage_t* msg)
     valid &= CDRMessage::addOctet(msg, static_cast<octet>(m_ignore_member_names));
     valid &= CDRMessage::addOctet(msg, static_cast<octet>(m_prevent_type_widening));
     valid &= CDRMessage::addOctet(msg, static_cast<octet>(m_force_type_validation));
+    valid &= CDRMessage::addOctet(msg, octet(0x00)); // 10th byte
+    valid &= CDRMessage::addOctet(msg, octet(0x00)); // 11th byte
+    valid &= CDRMessage::addOctet(msg, octet(0x00)); // 12th byte, aligned
     return valid;
 }
 

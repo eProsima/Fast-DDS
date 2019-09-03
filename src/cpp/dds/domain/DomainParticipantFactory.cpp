@@ -142,8 +142,8 @@ bool DomainParticipantFactory::delete_participant(
                 if ((*pit)->get_participant() == part
                     || (*pit) ->get_participant()->guid() == part->guid())
                 {
-                    PartVectorIt next_it = vit->second.erase(pit);
                     delete (*pit);
+                    PartVectorIt next_it = vit->second.erase(pit);
                     pit = next_it;
                 }
                 else

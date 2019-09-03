@@ -623,6 +623,7 @@ bool DomainParticipantImpl::register_dynamic_type_to_factories(
                 const TypeIdentifier *type_id_complete = objectFactory->get_type_identifier(dpst->getName(), true);
                 const TypeObject *type_obj_complete = objectFactory->get_type_object(dpst->getName(), true);
                 objectFactory->add_type_object(dpst->getName(), type_id_complete, type_obj_complete); // Add complete
+                return true;
             }
         }
     }
