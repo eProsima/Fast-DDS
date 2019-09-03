@@ -24,6 +24,7 @@
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 
+namespace eprosima {
 namespace fastdds {
 namespace dds {
 
