@@ -28,23 +28,25 @@
 
 #include <utility>
 
-using namespace eprosima::fastrtps::types;
+using eprosima::fastrtps::types::ReturnCode_t;
 
-namespace eprosima{
-namespace fastrtps{
+namespace eprosima {
+namespace fastrtps {
 
-namespace rtps{
+namespace rtps {
+
 class RTPSParticipant;
 class WriterProxyData;
 class ReaderProxyData;
 class ResourceEvent;
-}
+
+}  //namespace rtps
 
 class ParticipantAttributes;
 class PublisherAttributes;
 class SubscriberAttributes;
 
-} // namespace fastrtps
+} //namespace fastrtps
 
 namespace fastdds {
 namespace dds {

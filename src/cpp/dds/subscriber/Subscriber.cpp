@@ -79,6 +79,11 @@ ReturnCode_t Subscriber::get_datareaders(
     return impl_->get_datareaders(readers);
 }
 
+bool Subscriber::has_datareaders() const
+{
+    return impl_->has_datareaders();
+}
+
 /* TODO
 bool Subscriber::begin_access()
 {

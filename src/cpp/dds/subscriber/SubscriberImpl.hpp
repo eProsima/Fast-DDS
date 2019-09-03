@@ -34,10 +34,11 @@ using namespace eprosima::fastrtps::types;
 
 namespace eprosima {
 namespace fastrtps {
-namespace rtps
-{
+namespace rtps {
+
 class RTPSParticipant;
-}
+
+} //namespace rtps
 
 class TopicAttributes;
 class ReaderQos;
@@ -115,6 +116,8 @@ public:
     */
     ReturnCode_t get_datareaders(
         std::vector<DataReader*>& readers) const;
+
+    bool has_datareaders() const;
 
     ReturnCode_t notify_datareaders() const;
 

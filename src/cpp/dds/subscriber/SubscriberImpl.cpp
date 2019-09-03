@@ -270,6 +270,15 @@ ReturnCode_t SubscriberImpl::get_datareaders(
     return ReturnCode_t::RETCODE_OK;
 }
 
+bool SubscriberImpl::has_datareaders() const
+{
+    if(readers_.empty())
+    {
+        return false;
+    }
+    return true;
+}
+
 /* TODO
 bool SubscriberImpl::begin_access()
 {

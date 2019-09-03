@@ -312,6 +312,15 @@ bool PublisherImpl::get_datawriters(
     return true;
 }
 
+bool PublisherImpl::has_datawriters() const
+{
+    if(writers_.empty())
+    {
+        return false;
+    }
+    return true;
+}
+
 bool PublisherImpl::contains_entity(
         const fastrtps::rtps::InstanceHandle_t& handle) const
 {

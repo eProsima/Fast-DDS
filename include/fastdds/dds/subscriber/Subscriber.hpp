@@ -26,7 +26,7 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 
-using namespace eprosima::fastrtps::types;
+using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastrtps {
@@ -146,6 +146,8 @@ public:
      */
     ReturnCode_t get_datareaders(
         std::vector<DataReader*>& readers) const;
+
+    bool has_datareaders() const;
 
     /* TODO
     bool begin_access();

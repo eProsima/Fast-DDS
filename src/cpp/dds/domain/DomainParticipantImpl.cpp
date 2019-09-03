@@ -127,7 +127,7 @@ DomainParticipantImpl::~DomainParticipantImpl()
         subscribers_by_handle_.clear();
     }
 
-    if(rtps_participant_ != nullptr)
+    if (rtps_participant_ != nullptr)
     {
         RTPSDomain::removeRTPSParticipant(rtps_participant_);
     }
@@ -145,7 +145,7 @@ DomainParticipantImpl::~DomainParticipantImpl()
 ReturnCode_t DomainParticipantImpl::delete_publisher(
         Publisher* pub)
 {
-    if(participant_ != pub->get_participant())
+    if (participant_ != pub->get_participant())
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
@@ -154,9 +154,7 @@ ReturnCode_t DomainParticipantImpl::delete_publisher(
 
     if (pit != publishers_.end() && pub->get_instance_handle() == pit->second->get_instance_handle())
     {
-        std::vector<DataWriter*> writers;
-        pub->get_datawriters(writers);
-        if(!writers.empty())
+        if (!pub->has_datawriters())
         {
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
@@ -173,7 +171,7 @@ ReturnCode_t DomainParticipantImpl::delete_publisher(
 ReturnCode_t DomainParticipantImpl::delete_subscriber(
         Subscriber* sub)
 {
-    if(participant_ != sub->get_participant())
+    if (participant_ != sub->get_participant())
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
@@ -182,9 +180,7 @@ ReturnCode_t DomainParticipantImpl::delete_subscriber(
 
     if (sit != subscribers_.end() && sub->get_instance_handle() == sit->second->get_instance_handle())
     {
-        std::vector<DataReader*> readers;
-        sub->get_datareaders(readers);
-        if(!readers.empty())
+        if (!sub->has_datareaders())
         {
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
@@ -213,34 +209,34 @@ Publisher* DomainParticipantImpl::create_publisher(
         const fastrtps::PublisherAttributes& att,
         PublisherListener* listen)
 {
-    if(att_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
+    if (att_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
-        if(att.getUserDefinedID() <= 0)
+        if (att.getUserDefinedID() <= 0)
         {
             logError(PARTICIPANT,"Static EDP requires user defined Id");
             return nullptr;
         }
     }
 
-    if(!att.unicastLocatorList.isValid())
+    if (!att.unicastLocatorList.isValid())
     {
         logError(PARTICIPANT,"Unicast Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
 
-    if(!att.multicastLocatorList.isValid())
+    if (!att.multicastLocatorList.isValid())
     {
         logError(PARTICIPANT," Multicast Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
 
-    if(!att.remoteLocatorList.isValid())
+    if (!att.remoteLocatorList.isValid())
     {
         logError(PARTICIPANT,"Remote Locator List for Publisher contains invalid Locator");
         return nullptr;
     }
 
-    if(!qos.check_qos() || !att.qos.checkQos() || !att.topic.checkQos())
+    if (!qos.check_qos() || !att.qos.checkQos() || !att.topic.checkQos())
     {
         return nullptr;
     }
@@ -340,7 +336,7 @@ ReturnCode_t DomainParticipantImpl::assert_liveliness()
 {
     if (rtps_participant_->wlp() != nullptr)
     {
-        if(rtps_participant_->wlp()->assert_liveliness_manual_by_participant()){
+        if (rtps_participant_->wlp()->assert_liveliness_manual_by_participant()){
             return RETCODE_OK;
         }
     }
@@ -500,34 +496,34 @@ Subscriber* DomainParticipantImpl::create_subscriber(
         const fastrtps::SubscriberAttributes& att,
         SubscriberListener* listen)
 {
-    if(att_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
+    if (att_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
-        if(att.getUserDefinedID() <= 0)
+        if (att.getUserDefinedID() <= 0)
         {
             logError(PARTICIPANT,"Static EDP requires user defined Id");
             return nullptr;
         }
     }
 
-    if(!att.unicastLocatorList.isValid())
+    if (!att.unicastLocatorList.isValid())
     {
         logError(PARTICIPANT,"Unicast Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
-    if(!att.multicastLocatorList.isValid())
+    if (!att.multicastLocatorList.isValid())
     {
         logError(PARTICIPANT," Multicast Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
-    if(!att.remoteLocatorList.isValid())
+    if (!att.remoteLocatorList.isValid())
     {
         logError(PARTICIPANT,"Output Locator List for Subscriber contains invalid Locator");
         return nullptr;
     }
 
-    if(!qos.check_qos() || !att.qos.checkQos() || !att.topic.checkQos())
+    if (!qos.check_qos() || !att.qos.checkQos() || !att.topic.checkQos())
     {
         return nullptr;
     }

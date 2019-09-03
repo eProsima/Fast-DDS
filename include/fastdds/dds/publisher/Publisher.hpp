@@ -25,7 +25,7 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/types/TypesBase.h>
 
-using namespace eprosima::fastrtps::types;
+using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastrtps {
@@ -143,6 +143,12 @@ public:
      */
     bool get_datawriters(
         std::vector<DataWriter*>& writers) const;
+
+    /**
+     * This operation checks if the publisher has DataWriters
+     * @return true if the publisher has one or several DataWriters, false in other case
+     */
+    bool has_datawriters() const;
 
     /* TODO
     bool suspend_publications();

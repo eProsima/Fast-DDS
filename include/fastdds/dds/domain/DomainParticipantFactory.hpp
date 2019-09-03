@@ -26,11 +26,11 @@
 #include <mutex>
 #include <map>
 
-using namespace eprosima::fastrtps::types;
+using eprosima::fastrtps::types::ReturnCode_t;
 
-namespace eprosima{
-namespace fastdds{
-namespace dds{
+namespace eprosima {
+namespace fastdds {
+namespace dds {
 
 class DomainParticipantListener;
 class DomainParticipant;

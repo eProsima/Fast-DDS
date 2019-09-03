@@ -91,6 +91,11 @@ bool Publisher::get_datawriters(
     return impl_->get_datawriters(writers);
 }
 
+bool Publisher::has_datawriters() const
+{
+    return impl_->has_datawriters();
+}
+
 /* TODO
 bool Publisher::suspend_publications()
 {

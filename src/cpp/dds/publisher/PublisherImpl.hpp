@@ -105,6 +105,8 @@ public:
     bool get_datawriters(
         std::vector<DataWriter*>& writers) const;
 
+    bool has_datawriters() const;
+
     /* TODO
     bool suspend_publications();
     */
