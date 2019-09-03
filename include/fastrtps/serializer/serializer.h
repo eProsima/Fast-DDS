@@ -17,26 +17,24 @@ namespace serializer{
 /*********************
  *     SERIALIZER    *
  *********************/
-	
 template<class Serializable>
 class Serializer{
-private:
-    Serializer() = delete ;
 public:
-    Serializer<Serializable>(Serializable *p):p_(p){}
-    
+//    Serializer(Serializable *p):p_(p), r_(*p){}
+//    Serializer(Serializable &r):p_(&r), r_(r){}
+    Serializer(Serializable &r):r_(r){}
     void serialize(eprosima::fastcdr::Cdr& cdr)
 				{
-        serialize(p_, cdr) ;
+        serialize(&r_, cdr) ;
     }
     void deserialize(eprosima::fastcdr::Cdr& cdr)
 				{
-        deserialize(p_, cdr) ;
+        deserialize(&r_, cdr) ;
     }
     size_t getCdrSerializedSize(size_t current_alignment)
-				{
-				    return getCdrSerializedSize( *p_,current_alignment) ;
-				}
+    {
+	return getCdrSerializedSize( r_,current_alignment) ;
+    }
 
 private:
 // FATTI PER ORA
@@ -67,13 +65,13 @@ private:
     void serializeKey(eprosima::fastrtps::types::DynamicData *dd, eprosima::fastcdr::Cdr& cdr) const;
 
 /*MemberFlag Methods*/
-				void serialize(eprosima::fastrtps::types::MemberFlag *mf, eprosima::fastcdr::Cdr &cdr) const ;
-				void deserialize(eprosima::fastrtps::types::MemberFlag *mf, eprosima::fastcdr::Cdr &cdr);
-				size_t getCdrSerializedSize(const eprosima::fastrtps::types::MemberFlag&, size_t current_alignment);
+    void serialize(eprosima::fastrtps::types::MemberFlag *mf, eprosima::fastcdr::Cdr &cdr) const ;
+    void deserialize(eprosima::fastrtps::types::MemberFlag *mf, eprosima::fastcdr::Cdr &cdr);
+    size_t getCdrSerializedSize(const eprosima::fastrtps::types::MemberFlag&, size_t current_alignment);
 /*TypeFlag Methods*/
-				void serialize(eprosima::fastrtps::types::TypeFlag *tf, eprosima::fastcdr::Cdr &cdr) const;
-				void deserialize(eprosima::fastrtps::types::TypeFlag *tf, eprosima::fastcdr::Cdr &cdr);
-				size_t getCdrSerializedSize(const eprosima::fastrtps::types::TypeFlag&, size_t current_alignment);
+    void serialize(eprosima::fastrtps::types::TypeFlag *tf, eprosima::fastcdr::Cdr &cdr) const;
+    void deserialize(eprosima::fastrtps::types::TypeFlag *tf, eprosima::fastcdr::Cdr &cdr);
+    size_t getCdrSerializedSize(const eprosima::fastrtps::types::TypeFlag&, size_t current_alignment);
 /*TypeObjectHashId Methods*/
     static size_t getCdrSerializedSize(const eprosima::fastrtps::types::TypeObjectHashId& data, size_t current_alignment = 0);
     void serialize(eprosima::fastrtps::types::TypeObjectHashId *tohi, eprosima::fastcdr::Cdr &cdr) const;
@@ -475,7 +473,8 @@ private:
 
 
 private: //just for readibility: above methods are private as well
-    Serializable p_ ;
+    
+	Serializable &r_ ;
 };
 
 /*********************

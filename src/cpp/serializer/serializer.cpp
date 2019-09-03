@@ -22,7 +22,6 @@ void Serializer<Serializable>::serialize(DynamicData *dd, eprosima::fastcdr::Cdr
     {
         return;
     }
-
     switch (dd->get_kind())
     {
     default:
@@ -1029,83 +1028,83 @@ bool Serializer<Serializable>::deserialize(DynamicData *dd, eprosima::fastcdr::C
 template<class Serializable>
 bool Serializer<Serializable>::deserialize_discriminator(eprosima::fastcdr::Cdr& cdr)
 {
-    switch (p_.dd()->get_kind())
+    switch (r_->get_kind())
     {
     case TK_INT32:
     {
         int32_t aux;
         cdr >> aux;
-        p_.dd()->set_discriminator_value(static_cast<int32_t>(aux));
+        r_->set_discriminator_value(static_cast<int32_t>(aux));
         break;
     }
     case TK_UINT32:
     {
         uint32_t aux;
         cdr >> aux;
-        p_.dd()->set_discriminator_value(static_cast<uint32_t>(aux));
+        r_->set_discriminator_value(static_cast<uint32_t>(aux));
         break;
     }
     case TK_INT16:
     {
         int16_t aux;
         cdr >> aux;
-        p_.dd()->set_discriminator_value(static_cast<int16_t>(aux));
+        r_->set_discriminator_value(static_cast<int16_t>(aux));
         break;
     }
     case TK_UINT16:
     {
         uint16_t aux;
         cdr >> aux;
-        p_.dd()->set_discriminator_value(static_cast<uint16_t>(aux));
+        r_->set_discriminator_value(static_cast<uint16_t>(aux));
         break;
     }
     case TK_INT64:
     {
         int64_t aux;
         cdr >> aux;
-        p_.dd()->set_discriminator_value(static_cast<int64_t>(aux));
+        r_->set_discriminator_value(static_cast<int64_t>(aux));
         break;
     }
     case TK_UINT64:
     {
         uint64_t aux;
         cdr >> aux;
-        p_.dd()->set_discriminator_value(static_cast<uint64_t>(aux));
+        r_->set_discriminator_value(static_cast<uint64_t>(aux));
         break;
     }
     case TK_CHAR8:
     {
         char aux;
         cdr >> aux;
-        p_.dd()->set_discriminator_value(static_cast<char>(aux));
+        r_->set_discriminator_value(static_cast<char>(aux));
         break;
     }
     case TK_CHAR16:
     {
         wchar_t aux;
         cdr >> aux;
-        p_.dd()->set_discriminator_value(static_cast<wchar_t>(aux));
+        r_->set_discriminator_value(static_cast<wchar_t>(aux));
         break;
     }
     case TK_BOOLEAN:
     {
         bool aux;
         cdr >> aux;
-        p_.dd()->set_discriminator_value(static_cast<bool>(aux));
+        r_->set_discriminator_value(static_cast<bool>(aux));
         break;
     }
     case TK_BYTE:
     {
         octet aux;
         cdr >> aux;
-        p_.dd()->set_discriminator_value(static_cast<octet>(aux));
+        r_->set_discriminator_value(static_cast<octet>(aux));
         break;
     }
     case TK_ENUM:
     {
         uint32_t aux;
         cdr >> aux;
-        p_.dd()->set_discriminator_value(static_cast<uint32_t>(aux));
+        r_->set_discriminator_value(static_cast<uint32_t>(aux));
         break;
     }
     case TK_FLOAT32:
