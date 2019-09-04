@@ -63,8 +63,6 @@ struct RTPS_DllAPI SequenceNumber_t
     {
     }
 
-    // Check the target support 64bits.
-#ifdef LLONG_MAX
     /*! Convert the number to 64 bit.
      * @return 64 bit representation of the SequenceNumber
      */
@@ -72,7 +70,6 @@ struct RTPS_DllAPI SequenceNumber_t
     {
         return (((uint64_t)high) << 32) + low;
     }
-#endif
 
     /*!
      * Assignment operator
@@ -343,10 +340,10 @@ inline bool sort_seqNum(const SequenceNumber_t& s1, const SequenceNumber_t& s2) 
 }
 
 /**
- * 
+ *
  * @param output
  * @param seqNum
- * @return 
+ * @return
  */
 inline std::ostream& operator<<(std::ostream& output, const SequenceNumber_t& seqNum)
 {
