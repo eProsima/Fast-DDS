@@ -1286,7 +1286,6 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
 bool EDP::checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const
 {
     // TODO - Remove once XCDR or XCDR2 is implemented.
-    // TODO - Think about consistency on applied annotations behavior.
     TypeConsistencyEnforcementQosPolicy coercion;
     coercion.m_kind = DISALLOW_TYPE_COERCION;
     coercion.m_ignore_member_names = false;
@@ -1333,7 +1332,14 @@ bool EDP::checkTypeObject(const WriterProxyData* wdata, const ReaderProxyData* r
         if (wtype != nullptr)
         {
             // TODO - Remove once XCDR or XCDR2 is implemented.
-            // TODO - Think about consistency on applied annotations behavior.
+            /*
+             * Currently consistency checks are applied to type structure and compatibility,
+             * but doesn't check about annotations behavior.
+             * This may cause false matching cases with annotations @key or @non_serialize,
+             * for example.
+             * Once XCDR or XCDR2 is implemented, is it doesn't solve this cases, we must
+             * think about this problem and how consistency could solve it.
+             */
             TypeConsistencyEnforcementQosPolicy coercion;
             coercion.m_kind = DISALLOW_TYPE_COERCION;
             coercion.m_ignore_member_names = false;
@@ -1352,7 +1358,14 @@ bool EDP::checkTypeObject(const WriterProxyData* wdata, const ReaderProxyData* r
         rdata->type().m_type_object._d() != static_cast<uint8_t>(0x00))
     {
         // TODO - Remove once XCDR or XCDR2 is implemented.
-        // TODO - Think about consistency on applied annotations behavior.
+        /*
+         * Currently consistency checks are applied to type structure and compatibility,
+         * but doesn't check about annotations behavior.
+         * This may cause false matching cases with annotations @key or @non_serialize,
+         * for example.
+         * Once XCDR or XCDR2 is implemented, is it doesn't solve this cases, we must
+         * think about this problem and how consistency could solve it.
+         */
         TypeConsistencyEnforcementQosPolicy coercion;
         coercion.m_kind = DISALLOW_TYPE_COERCION;
         coercion.m_ignore_member_names = false;
