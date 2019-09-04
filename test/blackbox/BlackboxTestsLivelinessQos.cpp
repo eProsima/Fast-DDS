@@ -1013,7 +1013,7 @@ TEST(LivelinessQos, ShortLiveliness_ManualByTopic_ManualByParticipant_BestEffort
     reader.startReception(data);
 
     // Write some samples
-    size_t count = 0;
+    unsigned int count = 0;
     for (auto data_sample : data)
     {
         ++count;
