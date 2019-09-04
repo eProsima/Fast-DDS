@@ -23,6 +23,7 @@
 
 namespace eprosima {
 namespace fastdds {
+namespace dds {
 
 class DomainParticipant;
 
@@ -41,16 +42,17 @@ protected:
         , type_name_(type_name)
     {}
 
-    ~TopicDescription(){}
+    ~TopicDescription()
+    {}
 
    virtual DomainParticipant* get_participant() const = 0;
 
-    std::string get_name() const
+    std::string& get_name() const
     {
         return name_;
     }
 
-    std::string get_type_name() const
+    std::string& get_type_name() const
     {
         return type_name_;
     }
@@ -64,6 +66,7 @@ protected:
     std::string type_name_;
 };
 
+} /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
 
