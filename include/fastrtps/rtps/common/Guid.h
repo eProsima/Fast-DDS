@@ -560,7 +560,7 @@ inline std::ostream& operator<<(std::ostream& output,const GUID_t& guid)
 
 /**
  * Stream operator, retrieves a GUID.
- * @param output Output stream.
+ * @param input Input stream.
  * @param guid GUID_t to print.
  * @return Stream operator.
  */
