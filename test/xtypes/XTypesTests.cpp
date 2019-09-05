@@ -1626,7 +1626,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoSXX)
 /*
  * Type discovery using TypeLookup Service (BasicStruct)
 */
-TEST_F(XTypesTest, TypeLookupBasic)
+TEST_F(xtypestests, TypeLookupBasic)
 {
     TypeSupport type(new BasicStructPubSubType());
     const TypeInformation* type_info = TypeObjectFactory::get_instance()->get_type_information("BasicStruct");
@@ -1636,10 +1636,10 @@ TEST_F(XTypesTest, TypeLookupBasic)
     DataRepresentationQosPolicy dataRepQos;
     dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
 
-    pub.init("TypeLookupBasic", DOMAIN, type, nullptr, nullptr, type_info, "Pub1", &dataRepQos, NO_KEY, true);
+    pub.init("TypeLookupBasic", DOMAIN_ID_, type, nullptr, nullptr, type_info, "Pub1", &dataRepQos, NO_KEY, true);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeLookupBasic", DOMAIN, NO_KEY, TypeSupport(nullptr), nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr, true);
+    sub.init("TypeLookupBasic", DOMAIN_ID_, NO_KEY, TypeSupport(nullptr), nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr, true);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1658,7 +1658,7 @@ TEST_F(XTypesTest, TypeLookupBasic)
 /*
  * Type discovery using TypeLookup Service (MapMapBoundsStruct)
 */
-TEST_F(XTypesTest, TypeLookupMapMapBounds)
+TEST_F(xtypestests, TypeLookupMapMapBounds)
 {
     TypeSupport type(new MapMapBoundsStructPubSubType());
     const TypeInformation* type_info = TypeObjectFactory::get_instance()->get_type_information("MapMapBoundsStruct");
@@ -1668,10 +1668,10 @@ TEST_F(XTypesTest, TypeLookupMapMapBounds)
     DataRepresentationQosPolicy dataRepQos;
     dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
 
-    pub.init("TypeLookupMapMapBoundsStruct", DOMAIN, type, nullptr, nullptr, type_info, "Pub1", &dataRepQos, NO_KEY, true);
+    pub.init("TypeLookupMapMapBoundsStruct", DOMAIN_ID_, type, nullptr, nullptr, type_info, "Pub1", &dataRepQos, NO_KEY, true);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeLookupMapMapBoundsStruct", DOMAIN, NO_KEY, TypeSupport(nullptr), nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr, true);
+    sub.init("TypeLookupMapMapBoundsStruct", DOMAIN_ID_, NO_KEY, TypeSupport(nullptr), nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr, true);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1690,7 +1690,7 @@ TEST_F(XTypesTest, TypeLookupMapMapBounds)
 /*
  * Type discovery using TypeLookup Service (MapMapBoundsStruct), but subscriber offers the type
 */
-TEST_F(XTypesTest, TypeLookupMapMapBoundsSub)
+TEST_F(xtypestests, TypeLookupMapMapBoundsSub)
 {
     TypeSupport type(new MapMapBoundsStructPubSubType());
     const TypeInformation* type_info = TypeObjectFactory::get_instance()->get_type_information("MapMapBoundsStruct");
@@ -1700,10 +1700,10 @@ TEST_F(XTypesTest, TypeLookupMapMapBoundsSub)
     DataRepresentationQosPolicy dataRepQos;
     dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
 
-    pub.init("TypeLookupMapMapBoundsStructSub", DOMAIN, TypeSupport(nullptr), nullptr, nullptr, nullptr, "Pub1", &dataRepQos, NO_KEY, true);
+    pub.init("TypeLookupMapMapBoundsStructSub", DOMAIN_ID_, TypeSupport(nullptr), nullptr, nullptr, nullptr, "Pub1", &dataRepQos, NO_KEY, true);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeLookupMapMapBoundsStructSub", DOMAIN, NO_KEY, type, nullptr, nullptr, type_info, "Sub1", &dataRepQos, nullptr, true);
+    sub.init("TypeLookupMapMapBoundsStructSub", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, type_info, "Sub1", &dataRepQos, nullptr, true);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.

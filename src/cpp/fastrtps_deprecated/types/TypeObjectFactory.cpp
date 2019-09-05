@@ -240,15 +240,15 @@ const TypeInformation* TypeObjectFactory::get_type_information(
         if (innerInfo != informations_.end())
         {
             information = innerInfo->second;
+            fill_minimal_information(information, min_identifier);
         }
         else
         {
             information = new TypeInformation();
+            fill_minimal_information(information, min_identifier);
             informations_[min_identifier] = information;
             informations_created_.push_back(information);
         }
-
-        fill_minimal_information(information, min_identifier);
     }
 
     if (comp_identifier != nullptr)
@@ -264,12 +264,15 @@ const TypeInformation* TypeObjectFactory::get_type_information(
             else
             {
                 information = new TypeInformation();
+                fill_complete_information(information, comp_identifier);
                 informations_[comp_identifier] = information;
                 informations_created_.push_back(information);
             }
         }
-
-        fill_complete_information(information, comp_identifier);
+        else
+        {
+            fill_complete_information(information, comp_identifier);
+        }
     }
 
     return information;
@@ -285,7 +288,11 @@ void TypeObjectFactory::fill_minimal_information(
         auto it = informations_.find(ident);
         if (it != informations_.end())
         {
-            *info = *it->second;
+            if (info == it->second)
+            {
+                return;
+            }
+            info->minimal(it->second->minimal());
             return;
         }
     }
@@ -341,7 +348,7 @@ void TypeObjectFactory::fill_minimal_information(
             else
             {
                 TypeInformation *information = new TypeInformation();
-                fill_complete_information(information, innerId);
+                fill_minimal_information(information, innerId);
                 informations_[innerId] = information;
                 informations_created_.push_back(information);
                 info->minimal().dependent_typeids().push_back(information->minimal().typeid_with_size());
@@ -362,7 +369,7 @@ void TypeObjectFactory::fill_minimal_information(
             else
             {
                 TypeInformation *information = new TypeInformation();
-                fill_complete_information(information, innerId);
+                fill_minimal_information(information, innerId);
                 informations_[innerId] = information;
                 informations_created_.push_back(information);
                 info->minimal().dependent_typeids().push_back(information->minimal().typeid_with_size());
@@ -383,7 +390,7 @@ void TypeObjectFactory::fill_minimal_information(
             else
             {
                 TypeInformation *information = new TypeInformation();
-                fill_complete_information(information, innerId);
+                fill_minimal_information(information, innerId);
                 informations_[innerId] = information;
                 informations_created_.push_back(information);
                 info->minimal().dependent_typeids().push_back(information->minimal().typeid_with_size());
@@ -398,7 +405,7 @@ void TypeObjectFactory::fill_minimal_information(
             else
             {
                 TypeInformation *information = new TypeInformation();
-                fill_complete_information(information, keyId);
+                fill_minimal_information(information, keyId);
                 informations_[keyId] = information;
                 informations_created_.push_back(information);
                 info->minimal().dependent_typeids().push_back(information->minimal().typeid_with_size());
@@ -422,7 +429,7 @@ void TypeObjectFactory::fill_minimal_information(
                     else
                     {
                         TypeInformation *information = new TypeInformation();
-                        fill_complete_information(information, innerId);
+                        fill_minimal_information(information, innerId);
                         informations_[innerId] = information;
                         informations_created_.push_back(information);
                         info->minimal().dependent_typeids().push_back(information->minimal().typeid_with_size());
@@ -446,7 +453,7 @@ void TypeObjectFactory::fill_minimal_information(
                         else
                         {
                             TypeInformation *information = new TypeInformation();
-                            fill_complete_information(information, innerId);
+                            fill_minimal_information(information, innerId);
                             informations_[innerId] = information;
                             informations_created_.push_back(information);
                             info->minimal().dependent_typeids().push_back(information->minimal().typeid_with_size());
@@ -481,7 +488,7 @@ void TypeObjectFactory::fill_minimal_information(
                         else
                         {
                             TypeInformation *information = new TypeInformation();
-                            fill_complete_information(information, innerId);
+                            fill_minimal_information(information, innerId);
                             informations_[innerId] = information;
                             informations_created_.push_back(information);
                             info->minimal().dependent_typeids().push_back(information->minimal().typeid_with_size());
@@ -498,7 +505,7 @@ void TypeObjectFactory::fill_minimal_information(
                     else
                     {
                         TypeInformation *information = new TypeInformation();
-                        fill_complete_information(information, descId);
+                        fill_minimal_information(information, descId);
                         informations_[descId] = information;
                         informations_created_.push_back(information);
                         info->minimal().dependent_typeids().push_back(information->minimal().typeid_with_size());
@@ -548,7 +555,11 @@ void TypeObjectFactory::fill_complete_information(
         auto it = informations_.find(ident);
         if (it != informations_.end())
         {
-            *info = *it->second;
+            if (info == it->second)
+            {
+                return;
+            }
+            info->complete(it->second->complete());
             return;
         }
     }
