@@ -24,6 +24,7 @@
 
 namespace eprosima {
 namespace fastdds {
+namespace dds {
 
 /**
  * Class TopicQos, containing all the possible Qos that can be set for a determined Topic.
@@ -112,8 +113,9 @@ public:
     */
 };
 
-extern TopicQos TOPIC_QOS_DEFAULT;
+extern const TopicQos TOPIC_QOS_DEFAULT;
 
+} // namespace dds
 } // namespace fastdds
 } // namespace eprosima
 

@@ -19,9 +19,9 @@
 
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 
-using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::dds;
 
-TopicQos eprosima::fastdds::TOPIC_QOS_DEFAULT;
+const TopicQos eprosima::fastdds::dds::TOPIC_QOS_DEFAULT;
 
 /* TODO: Implement this method
 void TopicQos::setQos(const TopicQos& qos, bool first_time)
