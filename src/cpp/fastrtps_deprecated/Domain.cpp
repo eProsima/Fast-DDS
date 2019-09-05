@@ -42,6 +42,7 @@
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::xmlparser;
+using namespace eprosima::fastrtps::types;
 
 namespace eprosima {
 namespace fastrtps {

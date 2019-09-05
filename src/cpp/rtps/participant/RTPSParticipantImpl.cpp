@@ -89,6 +89,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , mp_builtinProtocols(nullptr)
     , mp_ResourceSemaphore(new Semaphore(0))
     , IdCounter(0)
+    , type_check_fn_(nullptr)
 #if HAVE_SECURITY
     , m_security_manager(this)
 #endif
@@ -1186,6 +1187,12 @@ bool RTPSParticipantImpl::get_new_entity_id(
     }
 
     return true;
+}
+
+void RTPSParticipantImpl::set_check_type_function(
+        std::function<bool(const std::string&)>&& check_type)
+{
+    type_check_fn_ = std::move(check_type);
 }
 
 } /* namespace rtps */

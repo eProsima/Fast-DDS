@@ -291,19 +291,19 @@ public:
         return m_type;
     }
 
-    RTPS_DllAPI void topicDiscoveryKind(TopicDiscoveryKind_t topicDiscoveryKind)
+    RTPS_DllAPI void type_information(const xtypes::TypeInformation& type_information)
     {
-        m_topicDiscoveryKind = topicDiscoveryKind;
+        m_type_information = type_information;
     }
 
-    RTPS_DllAPI TopicDiscoveryKind_t topicDiscoveryKind() const
+    RTPS_DllAPI const xtypes::TypeInformation& type_information() const
     {
-        return m_topicDiscoveryKind;
+        return m_type_information;
     }
 
-    RTPS_DllAPI TopicDiscoveryKind_t& topicDiscoveryKind()
+    RTPS_DllAPI xtypes::TypeInformation& type_information()
     {
-        return m_topicDiscoveryKind;
+        return m_type_information;
     }
 
     //!WriterQOS
@@ -378,14 +378,14 @@ private:
     //!Persistence GUID
     GUID_t persistence_guid_;
 
-    //!Topic Discovery Kind
-    TopicDiscoveryKind_t m_topicDiscoveryKind;
-
     //!Type Identifier
     TypeIdV1 m_type_id;
 
     //!Type Object
     TypeObjectV1 m_type;
+
+    //!Type Information
+    xtypes::TypeInformation m_type_information;
 };
 
 } /* namespace rtps */

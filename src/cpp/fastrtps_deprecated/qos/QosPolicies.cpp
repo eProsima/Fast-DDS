@@ -236,20 +236,33 @@ bool TransportPriorityQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
 }
 
 bool DataRepresentationQosPolicy::addToCDRMessage(CDRMessage_t* msg) {
-    bool valid = CDRMessage::addUInt32(msg, (uint32_t)m_value.size());
-    for (std::vector<DataRepresentationId_t>::iterator it = m_value.begin(); it != m_value.end(); ++it)
-        valid &= CDRMessage::addUInt16(msg, *it);
+    bool valid = CDRMessage::addUInt16(msg, this->Pid);
+    this->length = 4;
+    this->length += static_cast<uint16_t>(m_value.size() * sizeof(uint16_t));
+    valid &= CDRMessage::addUInt16(msg, this->length);
+    valid &= CDRMessage::addUInt32(msg, static_cast<uint32_t>(m_value.size()));
+    for (DataRepresentationId_t id : m_value)
+        valid &= CDRMessage::addUInt16(msg, static_cast<uint16_t>(id));
+    if (m_value.size() % 2 == 1) // Odd, we must align
+    {
+        valid &= CDRMessage::addUInt16(msg, uint16_t(0));
+    }
     return valid;
 }
 
 bool TypeConsistencyEnforcementQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 {
-    bool valid = CDRMessage::addUInt32(msg, this->m_kind);
-    valid &= CDRMessage::addOctet(msg, (octet)m_ignore_sequence_bounds);
-    valid &= CDRMessage::addOctet(msg, (octet)m_ignore_string_bounds);
-    valid &= CDRMessage::addOctet(msg, (octet)m_ignore_member_names);
-    valid &= CDRMessage::addOctet(msg, (octet)m_prevent_type_widening);
-    valid &= CDRMessage::addOctet(msg, (octet)m_force_type_validation);
+    bool valid = CDRMessage::addUInt16(msg, this->Pid);
+    valid &= CDRMessage::addUInt16(msg, this->length);
+    valid &= CDRMessage::addUInt32(msg, this->m_kind);
+    valid &= CDRMessage::addOctet(msg, static_cast<octet>(m_ignore_sequence_bounds));
+    valid &= CDRMessage::addOctet(msg, static_cast<octet>(m_ignore_string_bounds));
+    valid &= CDRMessage::addOctet(msg, static_cast<octet>(m_ignore_member_names));
+    valid &= CDRMessage::addOctet(msg, static_cast<octet>(m_prevent_type_widening));
+    valid &= CDRMessage::addOctet(msg, static_cast<octet>(m_force_type_validation));
+    valid &= CDRMessage::addOctet(msg, octet(0x00)); // 10th byte
+    valid &= CDRMessage::addOctet(msg, octet(0x00)); // 11th byte
+    valid &= CDRMessage::addOctet(msg, octet(0x00)); // 12th byte, aligned
     return valid;
 }
 
@@ -361,6 +374,56 @@ bool TypeObjectV1::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
     {
         return false;
     }
+
+    return true;
+}
+
+bool xtypes::TypeInformation::addToCDRMessage(CDRMessage_t* msg)
+{
+    size_t size = types::TypeInformation::getCdrSerializedSize(type_information) + 4;
+    SerializedPayload_t payload(static_cast<uint32_t>(size));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+    ser.serialize_encapsulation();
+
+    type_information.serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+
+    bool valid = CDRMessage::addUInt16(msg, this->Pid);
+    this->length = static_cast<uint16_t>(payload.length);
+    valid &= CDRMessage::addUInt16(msg, this->length);
+
+    return valid & CDRMessage::addData(msg, payload.data, payload.length);
+}
+
+bool xtypes::TypeInformation::readFromCDRMessage(CDRMessage_t* msg, uint32_t size)
+{
+    SerializedPayload_t payload(size);
+    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload.data, size);
+
+    CDRMessage::readData(msg, payload.data, size); // Object that manages the raw buffer.
+
+    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
+
+    // Deserialize encapsulation.
+    deser.read_encapsulation();
+    payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+    try
+    {
+        type_information.deserialize(deser);
+    }
+    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    {
+        return false;
+    }
+
+    this->assigned_ = true;
 
     return true;
 }

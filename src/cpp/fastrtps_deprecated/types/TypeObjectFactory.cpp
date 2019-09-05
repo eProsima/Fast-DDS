@@ -69,67 +69,83 @@ TypeObjectFactory::TypeObjectFactory()
     // Generate basic TypeIdentifiers
     TypeIdentifier* auxIdent;
     // TK_BOOLEAN:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_BOOLEAN);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_BOOLEAN, auxIdent));
     // TK_BYTE:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_BYTE);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_BYTE, auxIdent));
     // TK_BYTE:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_BYTE);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT8, auxIdent));
     // TK_BYTE:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_BYTE);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT8, auxIdent));
     // TK_INT16:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_INT16);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT16, auxIdent));
     // TK_INT32:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_INT32);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT32, auxIdent));
     // TK_INT64:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_INT64);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT64, auxIdent));
     // TK_UINT16:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_UINT16);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT16, auxIdent));
     // TK_UINT32:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_UINT32);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT32, auxIdent));
     // TK_UINT64:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_UINT64);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT64, auxIdent));
     // TK_FLOAT32:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_FLOAT32);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_FLOAT32, auxIdent));
     // TK_FLOAT64:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_FLOAT64);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_FLOAT64, auxIdent));
     // TK_FLOAT128:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_FLOAT128);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_FLOAT128, auxIdent));
     // TK_CHAR8:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_CHAR8);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR8, auxIdent));
     // TK_CHAR16:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_CHAR16);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR16, auxIdent));
     // TK_CHAR16:
-    auxIdent = new TypeIdentifier;
+    auxIdent = new TypeIdentifier();
+    identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TK_CHAR16);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR16T, auxIdent));
 }
@@ -137,26 +153,24 @@ TypeObjectFactory::TypeObjectFactory()
 TypeObjectFactory::~TypeObjectFactory()
 {
     {
+        std::unique_lock<std::recursive_mutex> scoped(m_MutexInformations);
+        for (TypeInformation* inf : informations_created_)
+        {
+            delete inf;
+        }
+        informations_.clear();
+        informations_created_.clear();
+    }
+    {
         std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
-        auto id_it = identifiers_.begin();
-        while (id_it != identifiers_.end())
-        {
-            const TypeIdentifier* id = id_it->second;
-            nullify_all_entries(id);
-            delete (id);
-            ++id_it;
-        }
         identifiers_.clear();
-
-        auto idc_it = complete_identifiers_.begin();
-        while (idc_it != complete_identifiers_.end())
-        {
-            const TypeIdentifier* id = idc_it->second;
-            nullify_all_entries(id);
-            delete (id);
-            ++idc_it;
-        }
         complete_identifiers_.clear();
+
+        for (TypeIdentifier* id : identifiers_created_)
+        {
+            delete id;
+        }
+        identifiers_created_.clear();
     }
     {
         std::unique_lock<std::recursive_mutex> scoped(m_MutexObjects);
@@ -200,6 +214,616 @@ void TypeObjectFactory::nullify_all_entries(const TypeIdentifier* identifier)
             it->second = nullptr;
         }
     }
+
+    auto it = std::find(identifiers_created_.begin(), identifiers_created_.end(), identifier);
+    if (it != identifiers_created_.end())
+    {
+        identifiers_created_.erase(it);
+    }
+}
+
+const TypeInformation* TypeObjectFactory::get_type_information(
+        const std::string &type_name) const
+{
+    const TypeIdentifier* comp_identifier = get_type_identifier(type_name, true);
+    const TypeIdentifier* min_identifier = get_type_identifier(type_name, false);
+    if (comp_identifier == nullptr && min_identifier == nullptr)
+    {
+        return nullptr;
+    }
+
+    TypeInformation *information = nullptr;
+    if (min_identifier != nullptr)
+    {
+        std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+        auto innerInfo = informations_.find(min_identifier);
+        if (innerInfo != informations_.end())
+        {
+            information = innerInfo->second;
+        }
+        else
+        {
+            information = new TypeInformation();
+            informations_[min_identifier] = information;
+            informations_created_.push_back(information);
+        }
+
+        fill_minimal_information(information, min_identifier);
+    }
+
+    if (comp_identifier != nullptr)
+    {
+        if (information == nullptr)
+        {
+            std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+            auto innerInfo = informations_.find(comp_identifier);
+            if (innerInfo != informations_.end())
+            {
+                information = innerInfo->second;
+            }
+            else
+            {
+                information = new TypeInformation();
+                informations_[comp_identifier] = information;
+                informations_created_.push_back(information);
+            }
+        }
+
+        fill_complete_information(information, comp_identifier);
+    }
+
+    return information;
+}
+
+void TypeObjectFactory::fill_minimal_information(
+        TypeInformation *info,
+        const TypeIdentifier* ident) const
+{
+    info->minimal().typeid_with_size().type_id(*ident);
+    const TypeObject* obj = get_type_object(ident);
+
+    if (obj == nullptr)
+    {
+        info->minimal().dependent_typeid_count(0);
+        info->minimal().typeid_with_size().typeobject_serialized_size(0);
+        // TODO Size in this case should be zero or the size of the identifier?
+        // info->minimal().typeid_with_size().typeobject_serialized_size(TypeIdentifier::getCdrSerializedSize(*ident));
+    }
+    else
+    {
+        info->minimal().typeid_with_size().typeobject_serialized_size(
+            static_cast<uint32_t>(TypeObject::getCdrSerializedSize(*obj)));
+    }
+
+    switch(ident->_d())
+    {
+        /*
+        case TK_BOOLEAN:
+        case TK_BYTE:
+        case TK_INT16:
+        case TK_INT32:
+        case TK_INT64:
+        case TK_UINT16:
+        case TK_UINT32:
+        case TK_UINT64:
+        case TK_FLOAT32:
+        case TK_FLOAT64:
+        case TK_FLOAT128:
+        case TK_CHAR8:
+        case TK_CHAR16:
+        case TK_STRING8:
+        case TK_STRING16:
+            info->minimal().dependent_typeid_count(0);
+            break;
+        */
+        case TK_SEQUENCE:
+        {
+            info->minimal().dependent_typeid_count(1);
+            const TypeIdentifier *innerId = get_stored_type_identifier(
+                &obj->minimal().sequence_type().element().common().type());
+            std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
+            {
+                info->minimal().dependent_typeids().push_back(innerInfo->second->minimal().typeid_with_size());
+            }
+            else
+            {
+                TypeInformation *information = new TypeInformation();
+                fill_complete_information(information, innerId);
+                informations_[innerId] = information;
+                informations_created_.push_back(information);
+            }
+            break;
+        }
+        case TK_ARRAY:
+        {
+            info->minimal().dependent_typeid_count(1);
+            const TypeIdentifier *innerId = get_stored_type_identifier(
+                &obj->minimal().array_type().element().common().type());
+            std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
+            {
+                info->minimal().dependent_typeids().push_back(innerInfo->second->minimal().typeid_with_size());
+            }
+            else
+            {
+                TypeInformation *information = new TypeInformation();
+                fill_complete_information(information, innerId);
+                informations_[innerId] = information;
+                informations_created_.push_back(information);
+            }
+            break;
+        }
+        case TK_MAP:
+        {
+            info->minimal().dependent_typeid_count(2);
+            const TypeIdentifier *innerId = get_stored_type_identifier(
+                &obj->minimal().map_type().element().common().type());
+            std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
+            {
+                info->minimal().dependent_typeids().push_back(innerInfo->second->minimal().typeid_with_size());
+            }
+            else
+            {
+                TypeInformation *information = new TypeInformation();
+                fill_complete_information(information, innerId);
+                informations_[innerId] = information;
+                informations_created_.push_back(information);
+            }
+            const TypeIdentifier *keyId = get_stored_type_identifier(
+                &obj->minimal().map_type().key().common().type());
+            auto keyInfo = informations_.find(keyId);
+            if (keyInfo != informations_.end())
+            {
+                info->minimal().dependent_typeids().push_back(keyInfo->second->minimal().typeid_with_size());
+            }
+            else
+            {
+                TypeInformation *information = new TypeInformation();
+                fill_complete_information(information, keyId);
+                informations_[keyId] = information;
+                informations_created_.push_back(information);
+            }
+            break;
+        }
+        case EK_MINIMAL:
+            switch(obj->minimal()._d())
+            {
+                case TK_ALIAS:
+                {
+                    info->minimal().dependent_typeid_count(1);
+                    const TypeIdentifier *innerId = get_stored_type_identifier(
+                        &obj->minimal().alias_type().body().common().related_type());
+                    std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+                    auto keyInfo = informations_.find(innerId);
+                    if (keyInfo != informations_.end())
+                    {
+                        info->minimal().dependent_typeids().push_back(keyInfo->second->minimal().typeid_with_size());
+                    }
+                    else
+                    {
+                        TypeInformation *information = new TypeInformation();
+                        fill_complete_information(information, innerId);
+                        informations_[innerId] = information;
+                        informations_created_.push_back(information);
+                    }
+                    break;
+                }
+                case TK_STRUCTURE:
+                {
+                    const MinimalStructMemberSeq& members = obj->minimal().struct_type().member_seq();
+                    for (auto member = members.begin(); member != members.end(); ++member)
+                    {
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
+                            &member->common().member_type_id());
+                        std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
+                        {
+                            info->minimal().dependent_typeids().push_back(
+                                memberType->second->minimal().typeid_with_size());
+                        }
+                        else
+                        {
+                            TypeInformation *information = new TypeInformation();
+                            fill_complete_information(information, innerId);
+                            informations_[innerId] = information;
+                            informations_created_.push_back(information);
+                        }
+                    }
+                    info->minimal().dependent_typeid_count(static_cast<int32_t>(members.size()));
+                    break;
+                }
+                case TK_ENUM:
+                    // Already fully defined by obj
+                    break;
+                case TK_BITMASK:
+                    // TODO To implement
+                    break;
+                case TK_BITSET:
+                    // TODO To implement
+                    break;
+                case TK_UNION:
+                {
+                    const MinimalUnionMemberSeq& members = obj->minimal().union_type().member_seq();
+                    for (auto member = members.begin(); member != members.end(); ++member)
+                    {
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
+                            &member->common().type_id());
+                        std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
+                        {
+                            info->minimal().dependent_typeids().push_back(
+                                memberType->second->minimal().typeid_with_size());
+                        }
+                        else
+                        {
+                            TypeInformation *information = new TypeInformation();
+                            fill_complete_information(information, innerId);
+                            informations_[innerId] = information;
+                            informations_created_.push_back(information);
+                        }
+                    }
+                    const TypeIdentifier *descId = get_stored_type_identifier(
+                        &obj->minimal().union_type().discriminator().common().type_id());
+                    std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+                    auto descInfo = informations_.find(descId);
+                    if (descInfo != informations_.end())
+                    {
+                        info->minimal().dependent_typeids().push_back(descInfo->second->minimal().typeid_with_size());
+                    }
+                    else
+                    {
+                        TypeInformation *information = new TypeInformation();
+                        fill_complete_information(information, descId);
+                        informations_[descId] = information;
+                        informations_created_.push_back(information);
+                    }
+                    info->minimal().dependent_typeid_count(static_cast<int32_t>(members.size() + 1));
+                    break;
+                }
+                case TK_ANNOTATION:
+                    // TODO To implement
+                    break;
+            }
+            break;
+        case EK_COMPLETE:
+            // Cannot happen
+            break;
+    }
+    std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+    informations_[ident] = info;
+}
+
+void TypeObjectFactory::fill_complete_information(
+        TypeInformation *info,
+        const TypeIdentifier* ident) const
+{
+    info->complete().typeid_with_size().type_id(*ident);
+    const TypeObject* obj = get_type_object(ident);
+
+    if (obj == nullptr)
+    {
+        info->complete().dependent_typeid_count(0);
+        info->complete().typeid_with_size().typeobject_serialized_size(0);
+        // TODO Size in this case should be zero or the size of the identifier?
+        // info->complete().typeid_with_size().typeobject_serialized_size(TypeIdentifier::getCdrSerializedSize(*ident));
+    }
+    else
+    {
+        info->complete().typeid_with_size().typeobject_serialized_size(
+            static_cast<uint32_t>(TypeObject::getCdrSerializedSize(*obj)));
+    }
+
+    switch(ident->_d())
+    {
+        /*
+        case TK_BOOLEAN:
+        case TK_BYTE:
+        case TK_INT16:
+        case TK_INT32:
+        case TK_INT64:
+        case TK_UINT16:
+        case TK_UINT32:
+        case TK_UINT64:
+        case TK_FLOAT32:
+        case TK_FLOAT64:
+        case TK_FLOAT128:
+        case TK_CHAR8:
+        case TK_CHAR16:
+        case TK_STRING8:
+        case TK_STRING16:
+            info->complete().dependent_typeid_count(0);
+            break;
+        */
+        case TK_SEQUENCE:
+        {
+            info->complete().dependent_typeid_count(1);
+            const TypeIdentifier *innerId = get_stored_type_identifier(
+                &obj->complete().sequence_type().element().common().type());
+            std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
+            {
+                info->complete().dependent_typeids().push_back(innerInfo->second->complete().typeid_with_size());
+            }
+            else
+            {
+                TypeInformation *information = new TypeInformation();
+                fill_complete_information(information, innerId);
+                informations_[innerId] = information;
+                informations_created_.push_back(information);
+            }
+            break;
+        }
+        case TK_ARRAY:
+        {
+            info->complete().dependent_typeid_count(1);
+            const TypeIdentifier *innerId = get_stored_type_identifier(
+                &obj->complete().array_type().element().common().type());
+            std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
+            {
+                info->complete().dependent_typeids().push_back(innerInfo->second->complete().typeid_with_size());
+            }
+            else
+            {
+                TypeInformation *information = new TypeInformation();
+                fill_complete_information(information, innerId);
+                informations_[innerId] = information;
+                informations_created_.push_back(information);
+            }
+            break;
+        }
+        case TK_MAP:
+        {
+            info->complete().dependent_typeid_count(2);
+            const TypeIdentifier *innerId = get_stored_type_identifier(
+                &obj->complete().map_type().element().common().type());
+            std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+            auto innerInfo = informations_.find(innerId);
+            if (innerInfo != informations_.end())
+            {
+                info->complete().dependent_typeids().push_back(innerInfo->second->complete().typeid_with_size());
+            }
+            else
+            {
+                TypeInformation *information = new TypeInformation();
+                fill_complete_information(information, innerId);
+                informations_[innerId] = information;
+                informations_created_.push_back(information);
+            }
+            const TypeIdentifier *keyId = get_stored_type_identifier(
+                &obj->complete().map_type().key().common().type());
+            {
+                auto keyInfo = informations_.find(keyId);
+                if (keyInfo != informations_.end())
+                {
+                    info->complete().dependent_typeids().push_back(keyInfo->second->complete().typeid_with_size());
+                }
+                else
+                {
+                    TypeInformation *information = new TypeInformation();
+                    fill_complete_information(information, keyId);
+                    informations_[innerId] = information;
+                    informations_created_.push_back(information);
+                }
+            }
+            break;
+        }
+        case EK_MINIMAL:
+            switch(obj->minimal()._d())
+            {
+                case TK_ALIAS:
+                {
+                    info->minimal().dependent_typeid_count(1);
+                    const TypeIdentifier *innerId = get_stored_type_identifier(
+                        &obj->minimal().alias_type().body().common().related_type());
+                    std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+                    auto keyInfo = informations_.find(innerId);
+                    if (keyInfo != informations_.end())
+                    {
+                        info->minimal().dependent_typeids().push_back(keyInfo->second->minimal().typeid_with_size());
+                    }
+                    else
+                    {
+                        TypeInformation *information = new TypeInformation();
+                        fill_complete_information(information, innerId);
+                        informations_[innerId] = information;
+                        informations_created_.push_back(information);
+                    }
+                    break;
+                }
+                case TK_STRUCTURE:
+                {
+                    const MinimalStructMemberSeq& members = obj->minimal().struct_type().member_seq();
+                    for (auto member = members.begin(); member != members.end(); ++member)
+                    {
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
+                            &member->common().member_type_id());
+                        std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
+                        {
+                            info->minimal().dependent_typeids().push_back(
+                                memberType->second->minimal().typeid_with_size());
+                        }
+                        else
+                        {
+                            TypeInformation *information = new TypeInformation();
+                            fill_complete_information(information, innerId);
+                            informations_[innerId] = information;
+                            informations_created_.push_back(information);
+                        }
+                    }
+                    info->minimal().dependent_typeid_count(static_cast<int32_t>(members.size()));
+                    break;
+                }
+                case TK_ENUM:
+                    // Already fully defined by obj
+                    break;
+                case TK_BITMASK:
+                    // TODO To implement (already fully defined?)
+                    break;
+                case TK_BITSET:
+                    // TODO To implement (already fully defined? Fields are primitives.)
+                    break;
+                case TK_UNION:
+                {
+                    const MinimalUnionMemberSeq& members = obj->minimal().union_type().member_seq();
+                    for (auto member = members.begin(); member != members.end(); ++member)
+                    {
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
+                            &member->common().type_id());
+                        std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
+                        {
+                            info->minimal().dependent_typeids().push_back(
+                                memberType->second->minimal().typeid_with_size());
+                        }
+                        else
+                        {
+                            TypeInformation *information = new TypeInformation();
+                            fill_complete_information(information, innerId);
+                            informations_[innerId] = information;
+                            informations_created_.push_back(information);
+                        }
+                    }
+                    const TypeIdentifier *descId = get_stored_type_identifier(
+                        &obj->minimal().union_type().discriminator().common().type_id());
+                    std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+                    auto descInfo = informations_.find(descId);
+                    if (descInfo != informations_.end())
+                    {
+                        info->minimal().dependent_typeids().push_back(descInfo->second->minimal().typeid_with_size());
+                    }
+                    else
+                    {
+                        TypeInformation *information = new TypeInformation();
+                        fill_complete_information(information, descId);
+                        informations_[descId] = information;
+                        informations_created_.push_back(information);
+                    }
+                    info->minimal().dependent_typeid_count(static_cast<int32_t>(members.size() + 1));
+                    break;
+                }
+                case TK_ANNOTATION:
+                    // TODO To implement (already fully defined? Fields are primitives.)
+                    break;
+            }
+            break;
+        case EK_COMPLETE:
+            switch(obj->complete()._d())
+            {
+                case TK_ALIAS:
+                {
+                    info->complete().dependent_typeid_count(1);
+                    const TypeIdentifier *innerId = get_stored_type_identifier(
+                        &obj->complete().alias_type().body().common().related_type());
+                    std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+                    auto keyInfo = informations_.find(innerId);
+                    if (keyInfo != informations_.end())
+                    {
+                        info->complete().dependent_typeids().push_back(keyInfo->second->complete().typeid_with_size());
+                    }
+                    else
+                    {
+                        TypeInformation *information = new TypeInformation();
+                        fill_complete_information(information, innerId);
+                        informations_[innerId] = information;
+                        informations_created_.push_back(information);
+                    }
+                    break;
+                }
+                case TK_STRUCTURE:
+                {
+                    const CompleteStructMemberSeq& members = obj->complete().struct_type().member_seq();
+                    for (auto member = members.begin(); member != members.end(); ++member)
+                    {
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
+                            &member->common().member_type_id());
+                        std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
+                        {
+                            info->complete().dependent_typeids().push_back(
+                                memberType->second->complete().typeid_with_size());
+                        }
+                        else
+                        {
+                            TypeInformation *information = new TypeInformation();
+                            fill_complete_information(information, innerId);
+                            informations_[innerId] = information;
+                            informations_created_.push_back(information);
+                        }
+                    }
+                    info->complete().dependent_typeid_count(static_cast<int32_t>(members.size()));
+                    break;
+                }
+                case TK_ENUM:
+                    // Already fully defined by obj
+                    break;
+                case TK_BITMASK:
+                    // TODO To implement
+                    break;
+                case TK_BITSET:
+                    // TODO To implement (already fully defined? Fields are primitives.)
+                    break;
+                case TK_UNION:
+                {
+                    const CompleteUnionMemberSeq& members = obj->complete().union_type().member_seq();
+                    for (auto member = members.begin(); member != members.end(); ++member)
+                    {
+                        const TypeIdentifier *innerId = get_stored_type_identifier(
+                            &member->common().type_id());
+                        std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+                        auto memberType = informations_.find(innerId);
+                        if (memberType != informations_.end())
+                        {
+                            info->complete().dependent_typeids().push_back(
+                                memberType->second->complete().typeid_with_size());
+                        }
+                        else
+                        {
+                            TypeInformation *information = new TypeInformation();
+                            fill_complete_information(information, innerId);
+                            informations_[innerId] = information;
+                            informations_created_.push_back(information);
+                        }
+                    }
+                    const TypeIdentifier *descId = get_stored_type_identifier(
+                        &obj->complete().union_type().discriminator().common().type_id());
+                    std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+                    auto descInfo = informations_.find(descId);
+                    if (descInfo != informations_.end())
+                    {
+                        info->complete().dependent_typeids().push_back(descInfo->second->complete().typeid_with_size());
+                    }
+                    else
+                    {
+                        TypeInformation *information = new TypeInformation();
+                        fill_complete_information(information, descId);
+                        informations_[descId] = information;
+                        informations_created_.push_back(information);
+                    }
+                    info->complete().dependent_typeid_count(static_cast<int32_t>(members.size() + 1));
+                    break;
+                }
+                case TK_ANNOTATION:
+                    // TODO To implement (already fully defined? Fields are primitives.)
+                    break;
+            }
+            break;
+    }
+    std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+    informations_[ident] = info;
 }
 
 const TypeObject* TypeObjectFactory::get_type_object(const std::string& type_name, bool complete) const
@@ -461,6 +1085,11 @@ const TypeIdentifier* TypeObjectFactory::get_stored_type_identifier(const TypeId
             if (*(it.second) == *identifier) return it.second;
         }
     }
+    // If isn't minimal, return directly
+    if (identifier->_d() < EK_MINIMAL)
+    {
+        return identifier;
+    }
     return nullptr;
 }
 
@@ -485,11 +1114,109 @@ std::string TypeObjectFactory::get_type_name(const TypeIdentifier* identifier) c
 
     // Maybe they are using an external TypeIdentifier?
     const TypeIdentifier* internalId = get_stored_type_identifier(identifier);
-    if (internalId != nullptr)
+    if (internalId == identifier)
+    {
+        // If the execution reached this point, a lesser than minimal no stored identifier was provided.
+        // Calculate the name and store it.
+        return generate_name_and_store_type_identifier(identifier);
+    }
+    else if (internalId != nullptr)
     {
         return get_type_name(internalId);
     }
 
+    return "UNDEF";
+}
+
+std::string TypeObjectFactory::generate_name_and_store_type_identifier(
+        const TypeIdentifier* identifier) const
+{
+    if (identifier->_d() < EK_MINIMAL)
+    {
+        switch (identifier->_d())
+        {
+            case TI_PLAIN_ARRAY_SMALL:
+            {
+                std::vector<uint32_t> bounds;
+                for (SBound sb : identifier->array_sdefn().array_bound_seq())
+                {
+                    bounds.push_back(sb);
+                }
+                return TypeNamesGenerator::get_array_type_name(
+                    get_type_name(identifier->array_sdefn().element_identifier()),
+                    bounds,
+                    true);
+            }
+            case TI_PLAIN_ARRAY_LARGE:
+            {
+                return TypeNamesGenerator::get_array_type_name(
+                    get_type_name(identifier->array_ldefn().element_identifier()),
+                    identifier->array_ldefn().array_bound_seq(),
+                    true);
+            }
+            case TI_PLAIN_SEQUENCE_SMALL:
+            {
+                return TypeNamesGenerator::get_sequence_type_name(
+                    get_type_name(identifier->seq_sdefn().element_identifier()),
+                    identifier->seq_sdefn().bound(),
+                    true);
+            }
+            case TI_PLAIN_SEQUENCE_LARGE:
+            {
+                return TypeNamesGenerator::get_sequence_type_name(
+                    get_type_name(identifier->seq_ldefn().element_identifier()),
+                    identifier->seq_ldefn().bound(),
+                    true);
+            }
+            case TI_STRING8_SMALL:
+            {
+                return TypeNamesGenerator::get_string_type_name(
+                    identifier->string_sdefn().bound(),
+                    false,
+                    true);
+            }
+            case TI_STRING8_LARGE:
+            {
+                return TypeNamesGenerator::get_string_type_name(
+                    identifier->string_ldefn().bound(),
+                    false,
+                    true);
+            }
+            case TI_STRING16_SMALL:
+            {
+                return TypeNamesGenerator::get_string_type_name(
+                    identifier->string_sdefn().bound(),
+                    true,
+                    true);
+            }
+            case TI_STRING16_LARGE:
+            {
+                return TypeNamesGenerator::get_string_type_name(
+                    identifier->string_ldefn().bound(),
+                    true,
+                    true);
+            }
+            case TI_PLAIN_MAP_SMALL:
+            {
+                return TypeNamesGenerator::get_map_type_name(
+                    get_type_name(identifier->map_sdefn().key_identifier()),
+                    get_type_name(identifier->map_sdefn().element_identifier()),
+                    identifier->map_sdefn().bound(),
+                    true);
+            }
+            case TI_PLAIN_MAP_LARGE:
+            {
+                return TypeNamesGenerator::get_map_type_name(
+                    get_type_name(identifier->map_ldefn().key_identifier()),
+                    get_type_name(identifier->map_ldefn().element_identifier()),
+                    identifier->map_ldefn().bound(),
+                    true);
+            }
+            case TI_STRONGLY_CONNECTED_COMPONENT: // TODO: Not yet supported.
+            default:
+                return "UNDEF";
+        }
+    }
     return "UNDEF";
 }
 
@@ -505,13 +1232,48 @@ const TypeIdentifier* TypeObjectFactory::try_get_complete(const TypeIdentifier* 
     return get_type_identifier_trying_complete(name);
 }
 
+bool TypeObjectFactory::is_type_identifier_complete(
+        const TypeIdentifier* identifier) const
+{
+    switch(identifier->_d())
+    {
+        case TI_STRING8_SMALL:
+        case TI_STRING8_LARGE:
+        case TI_STRING16_SMALL:
+        case TI_STRING16_LARGE:
+            return false;
+        case TI_PLAIN_SEQUENCE_SMALL:
+            return is_type_identifier_complete(identifier->seq_sdefn().element_identifier());
+        case TI_PLAIN_SEQUENCE_LARGE:
+            return is_type_identifier_complete(identifier->seq_ldefn().element_identifier());
+        case TI_PLAIN_ARRAY_SMALL:
+            return is_type_identifier_complete(identifier->array_sdefn().element_identifier());
+        case TI_PLAIN_ARRAY_LARGE:
+            return is_type_identifier_complete(identifier->array_ldefn().element_identifier());
+        case TI_PLAIN_MAP_SMALL:
+            return is_type_identifier_complete(identifier->map_sdefn().element_identifier())
+                   && is_type_identifier_complete(identifier->map_sdefn().key_identifier());
+        case TI_PLAIN_MAP_LARGE:
+            return is_type_identifier_complete(identifier->map_ldefn().element_identifier())
+                   && is_type_identifier_complete(identifier->map_ldefn().key_identifier());
+        case TI_STRONGLY_CONNECTED_COMPONENT:
+            return false;
+        case EK_COMPLETE:
+            return true;
+        case EK_MINIMAL:
+            return false;
+        default:
+            return false;
+    }
+}
+
 void TypeObjectFactory::add_type_identifier(const std::string& type_name, const TypeIdentifier* identifier)
 {
     const TypeIdentifier* alreadyExists = get_stored_type_identifier(identifier);
-    if (alreadyExists != nullptr)
+    if (alreadyExists != nullptr && alreadyExists != identifier)
     {
         // Don't copy
-        if (alreadyExists->_d() == EK_COMPLETE)
+        if (is_type_identifier_complete(alreadyExists))
         {
             complete_identifiers_[type_name] = alreadyExists;
         }
@@ -524,11 +1286,12 @@ void TypeObjectFactory::add_type_identifier(const std::string& type_name, const 
 
     std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
     //identifiers_.insert(std::pair<const std::string, const TypeIdentifier*>(type_name, identifier));
-    if (identifier->_d() == EK_COMPLETE)
+    if (is_type_identifier_complete(identifier))
     {
         if (complete_identifiers_.find(type_name) == complete_identifiers_.end())
         {
-            TypeIdentifier* id = new TypeIdentifier;
+            TypeIdentifier* id = new TypeIdentifier();
+            identifiers_created_.push_back(id);
             *id = *identifier;
             complete_identifiers_[type_name] = id;
         }
@@ -537,7 +1300,8 @@ void TypeObjectFactory::add_type_identifier(const std::string& type_name, const 
     {
         if (identifiers_.find(type_name) == identifiers_.end())
         {
-            TypeIdentifier* id = new TypeIdentifier;
+            TypeIdentifier* id = new TypeIdentifier();
+            identifiers_created_.push_back(id);
             *id = *identifier;
             identifiers_[type_name] = id;
         }
@@ -553,24 +1317,49 @@ void TypeObjectFactory::add_type_object(const std::string& type_name, const Type
 
     if (object != nullptr)
     {
-        if (object->_d() == EK_MINIMAL)
+        if (identifier->_d() >= EK_MINIMAL)
         {
-            const TypeIdentifier* typeId = identifiers_[type_name];
-            if (objects_.find(typeId) == objects_.end())
+            if (object->_d() == EK_MINIMAL)
             {
-                TypeObject* obj = new TypeObject;
-                *obj = *object;
-                objects_[typeId] = obj;
+                const TypeIdentifier* typeId = identifiers_[type_name];
+                if (objects_.find(typeId) == objects_.end())
+                {
+                    TypeObject* obj = new TypeObject();
+                    *obj = *object;
+                    objects_[typeId] = obj;
+                }
+            }
+            else if (object->_d() == EK_COMPLETE)
+            {
+                const TypeIdentifier* typeId = complete_identifiers_[type_name];
+                if (complete_objects_.find(typeId) == complete_objects_.end())
+                {
+                    TypeObject* obj = new TypeObject();
+                    *obj = *object;
+                    complete_objects_[typeId] = obj;
+                }
             }
         }
-        else if (object->_d() == EK_COMPLETE)
+        else
         {
-            const TypeIdentifier* typeId = complete_identifiers_[type_name];
-            if (complete_objects_.find(typeId) == complete_objects_.end())
+            const TypeIdentifier* typeId = identifiers_[type_name];
+            if (object->_d() == EK_MINIMAL)
             {
-                TypeObject* obj = new TypeObject;
-                *obj = *object;
-                complete_objects_[typeId] = obj;
+                if (objects_.find(typeId) == objects_.end())
+                {
+                    TypeObject* obj = new TypeObject();
+                    *obj = *object;
+                    objects_[typeId] = obj;
+                }
+            }
+            else if (object->_d() == EK_COMPLETE)
+            {
+                if (complete_objects_.find(typeId) == complete_objects_.end())
+                {
+                    TypeObject* obj = new TypeObject();
+                    *obj = *object;
+                    complete_objects_[typeId] = obj;
+                }
             }
         }
     }
@@ -658,9 +1447,15 @@ const TypeIdentifier* TypeObjectFactory::get_sequence_identifier(const std::stri
         //identifiers_.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
         //identifiers_[auxType] = auxIdent;
         add_type_identifier(auxType, &auxIdent);
-        return get_type_identifier(auxType);
+        if (complete)
+        {
+            return get_type_identifier_trying_complete(auxType);
+        }
+        else
+        {
+            return get_type_identifier(auxType);
+        }
     }
-    return nullptr;
 }
 
 const TypeIdentifier* TypeObjectFactory::get_array_identifier(const std::string& type_name,
@@ -719,9 +1514,15 @@ const TypeIdentifier* TypeObjectFactory::get_array_identifier(const std::string&
         //identifiers_.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
         //identifiers_[auxType] = auxIdent;
         add_type_identifier(auxType, &auxIdent);
-        return get_type_identifier(auxType);
+        if (complete)
+        {
+            return get_type_identifier_trying_complete(auxType);
+        }
+        else
+        {
+            return get_type_identifier(auxType);
+        }
     }
-    return nullptr;
 }
 
 const TypeIdentifier* TypeObjectFactory::get_map_identifier(const std::string& key_type_name,
@@ -792,9 +1593,15 @@ const TypeIdentifier* TypeObjectFactory::get_map_identifier(const std::string& k
         //identifiers_.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
         //identifiers_[auxType] = auxIdent;
         add_type_identifier(auxType, &auxIdent);
-        return get_type_identifier(auxType);
+        if (complete)
+        {
+            return get_type_identifier_trying_complete(auxType);
+        }
+        else
+        {
+            return get_type_identifier(auxType);
+        }
     }
-    return nullptr;
 }
 
 static TypeKind GetTypeKindFromIdentifier(const TypeIdentifier* identifier)
@@ -946,7 +1753,11 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(const std::string& name, c
 
     DynamicTypeBuilder_ptr outputType = DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
     //outputType->set_name(name);
-    return outputType->build();
+    if (outputType != nullptr)
+    {
+        return outputType->build();
+    }
+    return nullptr;
 }
 
 // TODO annotations

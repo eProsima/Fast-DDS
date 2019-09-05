@@ -54,7 +54,9 @@ public:
                (this->m_groupData == b.m_groupData) &&
                (this->m_durabilityService == b.m_durabilityService) &&
                (this->m_lifespan == b.m_lifespan) &&
-               (this->m_disablePositiveACKs == b.m_disablePositiveACKs);
+               (this->m_disablePositiveACKs == b.m_disablePositiveACKs) &&
+               (this->type_consistency == b.type_consistency) &&
+               (this->representation == b.representation);
     }
 
     //!Durability Qos, implemented in the library.

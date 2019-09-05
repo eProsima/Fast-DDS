@@ -234,6 +234,12 @@ class BuiltinAttributes
         //!Indicates to use the WriterLiveliness protocol.
         bool use_WriterLivelinessProtocol;
 
+        //!Indicates to use the TypeLookup Service client endpoints
+        bool use_TypeLookupServiceClient;
+
+        //!Indicates to use the TypeLookup Service server endpoints
+        bool use_TypeLookupServiceServer;
+
         /**
          * DomainId to be used by the RTPSParticipant (80 by default).
          */
@@ -261,6 +267,8 @@ class BuiltinAttributes
         {
             domainId = 0;
             use_WriterLivelinessProtocol = true;
+            use_TypeLookupServiceClient = false;
+            use_TypeLookupServiceServer = false;
             readerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
             writerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
             mutation_tries = 100u;
@@ -271,6 +279,8 @@ class BuiltinAttributes
         {
             return (this->discovery_config == b.discovery_config) &&
                    (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
+                   (use_TypeLookupServiceClient == b.use_TypeLookupServiceClient) &&
+                   (use_TypeLookupServiceServer == b.use_TypeLookupServiceServer) &&
                    (this->domainId == b.domainId) &&
                    (this->metatrafficUnicastLocatorList == b.metatrafficUnicastLocatorList) &&
                    (this->metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&

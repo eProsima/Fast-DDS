@@ -689,11 +689,16 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                         p.m_value.push_back(static_cast<DataRepresentationId_t>(temp));
 
                     }
+                    if (size % 2 == 1) // Odd, we must read the alignment
+                    {
+                        valid &= CDRMessage::readInt16(&msg, &temp);
+                        std::cout << "Leido odd: " << temp << std::endl;
+                    }
                     IF_VALID_CALL
                 }
                 case PID_TYPE_CONSISTENCY_ENFORCEMENT:
                 {
-                    uint16_t uKind(0);
+                    uint32_t uKind(0);
                     octet temp(0);
                     TypeConsistencyEnforcementQosPolicy p;
                     p.m_ignore_sequence_bounds = false;
@@ -702,36 +707,40 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     p.m_prevent_type_widening = false;
                     p.m_force_type_validation = false;
 
-                    valid &= plength >= 2;
+                    valid &= plength >= 3;
                     if (valid)
                     {
-                        valid &= CDRMessage::readUInt16(&msg, &uKind);
+                        valid &= CDRMessage::readUInt32(&msg, &uKind);
                         p.m_kind = static_cast<TypeConsistencyKind>(uKind);
-                    }
-                    if (valid && plength >= 3)
-                    {
-                        valid &= CDRMessage::readOctet(&msg, &temp);
-                        p.m_ignore_sequence_bounds = temp == 0 ? false : true;
                     }
                     if (valid && plength >= 4)
                     {
                         valid &= CDRMessage::readOctet(&msg, &temp);
-                        p.m_ignore_string_bounds = temp == 0 ? false : true;
+                        p.m_ignore_sequence_bounds = temp == 0 ? false : true;
                     }
                     if (valid && plength >= 5)
                     {
                         valid &= CDRMessage::readOctet(&msg, &temp);
-                        p.m_ignore_member_names = temp == 0 ? false : true;
+                        p.m_ignore_string_bounds = temp == 0 ? false : true;
                     }
                     if (valid && plength >= 6)
                     {
                         valid &= CDRMessage::readOctet(&msg, &temp);
-                        p.m_prevent_type_widening = temp == 0 ? false : true;
+                        p.m_ignore_member_names = temp == 0 ? false : true;
                     }
                     if (valid && plength >= 7)
                     {
                         valid &= CDRMessage::readOctet(&msg, &temp);
+                        p.m_prevent_type_widening = temp == 0 ? false : true;
+                    }
+                    if (valid && plength >= 8)
+                    {
+                        valid &= CDRMessage::readOctet(&msg, &temp);
                         p.m_force_type_validation = temp == 0 ? false : true;
+                    }
+                    for (int i = 9; valid && i < plength; ++i) // Consume the alignment
+                    {
+                        valid &= CDRMessage::readOctet(&msg, &temp);
                     }
                     IF_VALID_CALL
                 }
@@ -744,6 +753,12 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                 case PID_TYPE_OBJECTV1:
                 {
                     TypeObjectV1 p;
+                    valid &= p.readFromCDRMessage(&msg, plength);
+                    IF_VALID_CALL
+                }
+                case PID_TYPE_INFORMATION:
+                {
+                    xtypes::TypeInformation p;
                     valid &= p.readFromCDRMessage(&msg, plength);
                     IF_VALID_CALL
                 }

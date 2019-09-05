@@ -62,15 +62,10 @@ bool HelloWorldSubscriber::init()
 
     // CREATE THE READER
     ReaderQos rqos;
-    rqos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     rqos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     TopicAttributes topic_att;
     topic_att.topicDataType = "HelloWorld";
     topic_att.topicName = "HelloWorldTopic";
-    topic_att.historyQos.kind = KEEP_LAST_HISTORY_QOS;
-    topic_att.historyQos.depth = 30;
-    topic_att.resourceLimitsQos.max_samples = 50;
-    topic_att.resourceLimitsQos.allocated_samples = 20;
     reader_ = subscriber_->create_datareader(topic_att, rqos, &listener_);
 
     if (reader_ == nullptr)

@@ -40,6 +40,12 @@
 
 #include <fastdds/rtps/RTPSDomain.h>
 
+#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeMember.h>
+
 #include <fastrtps/log/Log.h>
 
 #include <chrono>
@@ -132,6 +138,7 @@ DomainParticipantImpl::~DomainParticipantImpl()
     }
 
     delete participant_;
+    participant_ = nullptr;
 }
 
 
@@ -143,6 +150,7 @@ bool DomainParticipantImpl::delete_publisher(
 
     if (pit != publishers_.end() && pub->get_instance_handle() == pit->second->get_instance_handle())
     {
+        pit->second->set_listener(nullptr);
         publishers_by_handle_.erase(publishers_by_handle_.find(pit->second->get_instance_handle()));
         delete pit->second;
         publishers_.erase(pit);
@@ -160,6 +168,7 @@ bool DomainParticipantImpl::delete_subscriber(
 
     if (sit != subscribers_.end() && sub->get_instance_handle() == sit->second->get_instance_handle())
     {
+        sit->second->set_listener(nullptr);
         subscribers_by_handle_.erase(subscribers_by_handle_.find(sit->second->get_instance_handle()));
         delete sit->second;
         subscribers_.erase(sit);
@@ -237,6 +246,11 @@ Publisher* DomainParticipantImpl::create_publisher(
     std::lock_guard<std::mutex> lock(mtx_pubs_);
     publishers_by_handle_[pub_handle] = pub;
     publishers_[pub] = pubimpl;
+
+    if (att.topic.auto_fill_xtypes)
+    {
+        register_dynamic_type_to_factories(att.topic.getTopicDataType().to_string());
+    }
 
     return pub;
 }
@@ -518,6 +532,11 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     subscribers_by_handle_[sub_handle] = sub;
     subscribers_[sub] = subimpl;
 
+    if (att.topic.auto_fill_xtypes)
+    {
+        register_dynamic_type_to_factories(att.topic.getTopicDataType().to_string());
+    }
+
     return sub;
 }
 
@@ -562,7 +581,54 @@ bool DomainParticipantImpl::register_type(
     logInfo(PARTICIPANT, "Type " << type_name << " registered.");
     std::lock_guard<std::mutex> lock(mtx_types_);
     types_.insert(std::make_pair(type_name, type));
+
     return true;
+}
+
+bool DomainParticipantImpl::register_dynamic_type_to_factories(
+    const std::string& type_name) const
+{
+    using namespace  eprosima::fastrtps::types;
+    TypeSupport t = find_type(type_name);
+    DynamicPubSubType* dpst = dynamic_cast<DynamicPubSubType*>(t.get());
+    if (dpst != nullptr) // Registering a dynamic type.
+    {
+        TypeObjectFactory* objectFactory = TypeObjectFactory::get_instance();
+        DynamicTypeBuilderFactory* dynFactory = DynamicTypeBuilderFactory::get_instance();
+        const TypeIdentifier* id = objectFactory->get_type_identifier_trying_complete(type_name);
+        if (id == nullptr)
+        {
+            std::map<MemberId, DynamicTypeMember*> membersMap;
+            dpst->GetDynamicType()->get_all_members(membersMap);
+            std::vector<const MemberDescriptor*> members;
+            for (auto it : membersMap)
+            {
+                members.push_back(it.second->get_descriptor());
+            }
+            TypeObject typeObj;
+            dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, &members);
+            // Minimal too
+            dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, &members, false);
+            const TypeIdentifier *type_id2 = objectFactory->get_type_identifier(dpst->getName());
+            const TypeObject *type_obj = objectFactory->get_type_object(dpst->getName());
+            if (type_id2 == nullptr)
+            {
+                logError(DOMAIN_PARTICIPANT, "Cannot register dynamic type " << dpst->getName());
+            }
+            else
+            {
+                objectFactory->add_type_object(dpst->getName(), type_id2, type_obj);
+
+                // Complete, just to make sure it is generated
+                const TypeIdentifier *type_id_complete = objectFactory->get_type_identifier(dpst->getName(), true);
+                const TypeObject *type_obj_complete = objectFactory->get_type_object(dpst->getName(), true);
+                objectFactory->add_type_object(dpst->getName(), type_id_complete, type_obj_complete); // Add complete
+                return true;
+            }
+        }
+    }
+
+    return false; // Isn't a registered dynamic type.
 }
 
 bool DomainParticipantImpl::unregister_type(
@@ -646,6 +712,19 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
     if (participant_->listener_ != nullptr)
     {
         participant_->listener_->on_publisher_discovery(participant_->participant_, std::move(info));
+    }
+}
+
+void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
+       RTPSParticipant*,
+       const fastrtps::string_255& topic,
+       const fastrtps::types::TypeIdentifier* identifier,
+       const fastrtps::types::TypeObject* object,
+       fastrtps::types::DynamicType_ptr dyn_type)
+{
+    if (participant_->listener_ != nullptr)
+    {
+        participant_->listener_->on_type_discovery(participant_->participant_, topic, identifier, object, dyn_type);
     }
 }
 

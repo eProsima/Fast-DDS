@@ -39,15 +39,20 @@ class EDP;
 class QosPolicy
 {
 public:
+    bool hasChanged;
+
     QosPolicy()
-        : hasChanged(false),
-          m_sendAlways(false)
+        : hasChanged(false)
+        , m_sendAlways(false)
     {}
+
     QosPolicy(bool b_sendAlways)
-        : hasChanged(false),
-          m_sendAlways(b_sendAlways)
+        : hasChanged(false)
+        , m_sendAlways(b_sendAlways)
     {}
-    virtual ~ QosPolicy(){}
+
+    virtual ~QosPolicy()
+    {}
 
     bool operator==(const QosPolicy& b) const
     {
@@ -60,9 +65,6 @@ public:
      * @return True if it should always be sent.
      */
     virtual bool sendAlways() const {return m_sendAlways;}
-
-public:
-    bool hasChanged;
 
 protected:
     bool m_sendAlways;
@@ -588,7 +590,7 @@ public:
      * Appends a name to the list of partition names.
      * @param name Name to append.
      */
-    RTPS_DllAPI inline void push_back(const char* name){ names.push_back(std::string(name)); hasChanged=true; }
+    RTPS_DllAPI inline void push_back(const char* name){ names.push_back(std::string(name)); hasChanged = true; }
     /**
      * Clears list of partition names
      */
@@ -602,7 +604,7 @@ public:
      * Overrides partition names
      * @param nam Vector of partition name strings.
      */
-    RTPS_DllAPI inline void setNames(std::vector<std::string>& nam){ names = nam; hasChanged=true; }
+    RTPS_DllAPI inline void setNames(std::vector<std::string>& nam){ names = nam; hasChanged = true; }
 
 private:
     std::vector<std::string> names;
@@ -959,21 +961,36 @@ class PublishModeQosPolicy : public QosPolicy {
 * Enum DataRepresentationId, different kinds of topic data representation
 */
 typedef enum DataRepresentationId : int16_t {
-    XCDR_DATA_REPRESENTATION,    //!<
-    XML_DATA_REPRESENTATION,    //!<
-    XCDR2_DATA_REPRESENTATION    //!<
+    XCDR_DATA_REPRESENTATION = 0,   //!< Extended CDR Encoding version 1
+    XML_DATA_REPRESENTATION = 1,    //!< XML Data Representation (Unsupported)
+    XCDR2_DATA_REPRESENTATION= 2    //!< Extended CDR Encoding version 2
 }DataRepresentationId_t;
 
 /**
 * Class DataRepresentationQosPolicy,
 */
-class DataRepresentationQosPolicy :public Parameter_t, public QosPolicy
+class DataRepresentationQosPolicy : public Parameter_t, public QosPolicy
 {
     friend class ParameterList;
 public:
     std::vector<DataRepresentationId_t> m_value;
-    RTPS_DllAPI DataRepresentationQosPolicy() {};
-    virtual RTPS_DllAPI ~DataRepresentationQosPolicy() {};
+    RTPS_DllAPI DataRepresentationQosPolicy()
+        : Parameter_t(PID_DATA_REPRESENTATION, 0)
+        , QosPolicy(true) {}
+    virtual RTPS_DllAPI ~DataRepresentationQosPolicy() override {}
+
+    /**
+    * Compares the given policy to check if it's equal.
+    * @param b QoS Policy.
+    * @return True if the policy is equal.
+    */
+    bool operator==(const DataRepresentationQosPolicy& b) const
+    {
+        return (this->m_value == b.m_value) &&
+            Parameter_t::operator==(b) &&
+            QosPolicy::operator==(b);
+    }
+
     /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
@@ -1002,8 +1019,32 @@ public:
     bool m_prevent_type_widening;
     bool m_force_type_validation;
 
-    RTPS_DllAPI TypeConsistencyEnforcementQosPolicy() {};
-    virtual RTPS_DllAPI ~TypeConsistencyEnforcementQosPolicy() {};
+    RTPS_DllAPI TypeConsistencyEnforcementQosPolicy()
+        : Parameter_t(PID_TYPE_CONSISTENCY_ENFORCEMENT, 12) // 4 + 5 + alignment bytes
+        , QosPolicy(true)
+    {
+        m_kind = ALLOW_TYPE_COERCION;
+        m_ignore_sequence_bounds = true;
+        m_ignore_string_bounds = true;
+        m_ignore_member_names = false;
+        m_prevent_type_widening = false;
+        m_force_type_validation = false;
+    }
+
+    virtual RTPS_DllAPI ~TypeConsistencyEnforcementQosPolicy() override {}
+
+    bool operator==(const TypeConsistencyEnforcementQosPolicy& b) const
+    {
+        return m_kind == b.m_kind &&
+                m_ignore_sequence_bounds == b.m_ignore_sequence_bounds &&
+                m_ignore_string_bounds == b.m_ignore_string_bounds &&
+                m_ignore_member_names == b.m_ignore_member_names &&
+                m_prevent_type_widening == b.m_prevent_type_widening &&
+                m_force_type_validation == b.m_force_type_validation &&
+                Parameter_t::operator==(b) &&
+                QosPolicy::operator==(b);
+    }
+
     /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.
@@ -1062,6 +1103,7 @@ class TypeIdV1 : public Parameter_t, public QosPolicy
 public:
     types::TypeIdentifier m_type_identifier;
 
+
     RTPS_DllAPI TypeIdV1()
             : Parameter_t(PID_TYPE_IDV1, 0)
             , QosPolicy(false)
@@ -1105,7 +1147,7 @@ public:
         return *this;
     }
 
-    virtual RTPS_DllAPI ~TypeIdV1()
+    virtual RTPS_DllAPI ~TypeIdV1() override
     {
     }
 
@@ -1116,6 +1158,17 @@ public:
     */
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
     bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size);
+
+    RTPS_DllAPI TypeIdV1& operator=(const types::TypeIdentifier& type_id)
+    {
+        m_type_identifier = type_id;
+        return *this;
+    }
+
+    RTPS_DllAPI const types::TypeIdentifier& get() const
+    {
+        return m_type_identifier;
+    }
 };
 
 /**
@@ -1170,7 +1223,7 @@ public:
         return *this;
     }
 
-    virtual RTPS_DllAPI ~TypeObjectV1()
+    virtual RTPS_DllAPI ~TypeObjectV1() override
     {
     }
     /**
@@ -1180,7 +1233,105 @@ public:
     */
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
     bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size);
+
+    RTPS_DllAPI TypeObjectV1& operator=(const types::TypeObject& type_object)
+    {
+        m_type_object = type_object;
+        return *this;
+    }
+
+    RTPS_DllAPI const types::TypeObject& get() const
+    {
+        return m_type_object;
+    }
 };
+
+/**
+* Class xtypes::TypeInformation
+*/
+namespace xtypes
+{
+
+class TypeInformation : public Parameter_t, public QosPolicy
+{
+public:
+    types::TypeInformation type_information;
+
+    RTPS_DllAPI TypeInformation()
+        : Parameter_t(PID_TYPE_INFORMATION, 0)
+        , QosPolicy(false)
+        , type_information()
+        , assigned_(false)
+    {
+    }
+
+    RTPS_DllAPI TypeInformation(const TypeInformation& type)
+         : Parameter_t(type.Pid, type.length)
+         , QosPolicy(type.m_sendAlways)
+         , type_information(type.type_information)
+         , assigned_(type.assigned_)
+    {
+    }
+
+    RTPS_DllAPI TypeInformation(TypeInformation&& type)
+         : Parameter_t(type.Pid, type.length)
+         , QosPolicy(type.m_sendAlways)
+         , type_information(std::move(type.type_information))
+         , assigned_(type.assigned_)
+    {
+    }
+
+    RTPS_DllAPI TypeInformation& operator=(const TypeInformation& type)
+    {
+        Pid = type.Pid;
+        length = type.length;
+        m_sendAlways = type.m_sendAlways;
+
+        type_information = type.type_information;
+        assigned_ = type.assigned_;
+
+        return *this;
+    }
+
+    RTPS_DllAPI TypeInformation& operator=(TypeInformation&& type)
+    {
+        Pid = type.Pid;
+        length = type.length;
+        m_sendAlways = type.m_sendAlways;
+
+        type_information = std::move(type.type_information);
+        assigned_ = type.assigned_;
+
+        return *this;
+    }
+
+    virtual RTPS_DllAPI ~TypeInformation() override
+    {
+    }
+
+    /**
+    * Appends QoS to the specified CDR message.
+    * @param msg Message to append the QoS Policy to.
+    * @return True if the modified CDRMessage is valid.
+    */
+    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+    bool readFromCDRMessage(rtps::CDRMessage_t* msg, uint32_t size);
+
+    RTPS_DllAPI bool assigned() const { return assigned_; }
+
+    RTPS_DllAPI TypeInformation& operator=(const types::TypeInformation& type_info)
+    {
+        type_information = type_info;
+        assigned_ = true;
+        return *this;
+    }
+
+private:
+    bool assigned_;
+};
+
+} // namespace xtypes
 
 }
 }

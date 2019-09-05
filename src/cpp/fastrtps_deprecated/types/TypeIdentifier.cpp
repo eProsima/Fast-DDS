@@ -20,6 +20,8 @@
  */
 
 #include <fastrtps/types/TypeIdentifier.h>
+#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/log/Log.h>
 
 #include <fastcdr/Cdr.h>
 
@@ -1109,6 +1111,8 @@ void TypeIdentifier::serialize(eprosima::fastcdr::Cdr &scdr) const
 
     switch(m__d)
     {
+        case TK_NONE:
+        break;
         case TI_STRING8_SMALL:
         case TI_STRING16_SMALL:
         scdr << m_string_sdefn;
@@ -1157,6 +1161,8 @@ void TypeIdentifier::deserialize(eprosima::fastcdr::Cdr &dcdr)
 
     switch(m__d)
     {
+        case TK_NONE:
+        break;
         case TI_STRING8_SMALL:
         case TI_STRING16_SMALL:
         dcdr >> m_string_sdefn;
@@ -1240,7 +1246,7 @@ bool TypeIdentifier::operator==(const TypeIdentifier &other) const
                 && *this->seq_sdefn().element_identifier() == *other.seq_sdefn().element_identifier();
 
         case TI_PLAIN_SEQUENCE_LARGE:
-            return this->seq_ldefn().bound() == this->seq_ldefn().bound()
+            return this->seq_ldefn().bound() == other.seq_ldefn().bound()
                 && *this->seq_ldefn().element_identifier() == *other.seq_ldefn().element_identifier();
 
         case TI_PLAIN_ARRAY_SMALL:
@@ -1276,12 +1282,12 @@ bool TypeIdentifier::operator==(const TypeIdentifier &other) const
             }
 
         case TI_PLAIN_MAP_SMALL:
-            return this->map_sdefn().bound() == this->map_sdefn().bound()
+            return this->map_sdefn().bound() == other.map_sdefn().bound()
                 && *this->map_sdefn().key_identifier() == *other.map_sdefn().key_identifier()
                 && *this->map_sdefn().element_identifier() == *other.map_sdefn().element_identifier();
 
         case TI_PLAIN_MAP_LARGE:
-            return this->map_ldefn().bound() == this->map_ldefn().bound()
+            return this->map_ldefn().bound() == other.map_ldefn().bound()
                 && *this->map_ldefn().key_identifier() == *other.map_ldefn().key_identifier()
                 && *this->map_ldefn().element_identifier() == *other.map_ldefn().element_identifier();
 
@@ -1297,6 +1303,119 @@ bool TypeIdentifier::operator==(const TypeIdentifier &other) const
                 }
             }
             return true;
+        }
+        default:
+            break;
+    }
+    return false;
+}
+
+bool TypeIdentifier::consistent(const TypeIdentifier &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const
+{
+    if (this == &x) return true; // Same memory!
+
+    switch (this->_d())
+    {
+        case TK_NONE:
+        case TK_BOOLEAN:
+        case TK_BYTE:
+        case TK_INT16:
+        case TK_INT32:
+        case TK_INT64:
+        case TK_UINT16:
+        case TK_UINT32:
+        case TK_UINT64:
+        case TK_FLOAT32:
+        case TK_FLOAT64:
+        case TK_FLOAT128:
+        case TK_CHAR8:
+        case TK_CHAR16:
+            if (this->_d() != x._d())
+            {
+                return false;
+            }
+            return true;
+        case TI_STRING8_SMALL:
+        case TI_STRING16_SMALL:
+        case TI_STRING8_LARGE:
+        case TI_STRING16_LARGE:
+            if (_d() == TI_STRING8_SMALL && x._d() == TI_STRING8_SMALL)
+            {
+                return this->string_sdefn().consistent(x.string_sdefn(), consistency);
+            }
+            else if (_d() == TI_STRING8_SMALL && x._d() == TI_STRING8_LARGE)
+            {
+                return this->string_sdefn().consistent(x.string_ldefn(), consistency);
+            }
+            else if (_d() == TI_STRING16_SMALL && x._d() == TI_STRING16_SMALL)
+            {
+                return this->string_sdefn().consistent(x.string_sdefn(), consistency);
+            }
+            else if (_d() == TI_STRING16_SMALL && x._d() == TI_STRING16_LARGE)
+            {
+                return this->string_sdefn().consistent(x.string_ldefn(), consistency);
+            }
+            else if (_d() == TI_STRING8_LARGE && x._d() == TI_STRING8_SMALL)
+            {
+                return this->string_ldefn().consistent(x.string_sdefn(), consistency);
+            }
+            else if (_d() == TI_STRING8_LARGE && x._d() == TI_STRING8_LARGE)
+            {
+                return this->string_ldefn().consistent(x.string_ldefn(), consistency);
+            }
+            else if (_d() == TI_STRING16_LARGE && x._d() == TI_STRING16_SMALL)
+            {
+                return this->string_ldefn().consistent(x.string_sdefn(), consistency);
+            }
+            else if (_d() == TI_STRING16_LARGE && x._d() == TI_STRING16_LARGE)
+            {
+                return this->string_ldefn().consistent(x.string_ldefn(), consistency);
+            }
+            else
+            {
+                return false;
+            }
+
+        case TI_PLAIN_SEQUENCE_SMALL:
+            return this->seq_sdefn().consistent(x.seq_sdefn(), consistency);
+
+        case TI_PLAIN_SEQUENCE_LARGE:
+            return this->seq_ldefn().consistent(x.seq_ldefn(), consistency);
+
+        case TI_PLAIN_ARRAY_SMALL:
+            return this->array_sdefn().consistent(x.array_sdefn(), consistency);
+
+        case TI_PLAIN_ARRAY_LARGE:
+            return this->array_ldefn().consistent(x.array_ldefn(), consistency);
+
+        case TI_PLAIN_MAP_SMALL:
+            return this->map_sdefn().consistent(x.map_sdefn(), consistency);
+
+        case TI_PLAIN_MAP_LARGE:
+            return this->map_ldefn().consistent(x.map_ldefn(), consistency);
+
+        case EK_MINIMAL:
+        case EK_COMPLETE:
+        {
+            if (this->_d() != x._d())
+            {
+                return false;
+            }
+
+            const TypeObject* localObj = TypeObjectFactory::get_instance()->get_type_object(this);
+            const TypeObject* remoteObj = TypeObjectFactory::get_instance()->get_type_object(&x);
+            if (localObj == nullptr)
+            {
+                logWarning(XTYPES, "Local TypeIdentifier doesn't have a related TypeObject");
+                return false;
+            }
+            if (remoteObj == nullptr)
+            {
+                logWarning(XTYPES, "Remote TypeIdentifier doesn't have a related TypeObject");
+                return false;
+            }
+            return localObj->consistent(*remoteObj, consistency);
         }
         default:
             break;

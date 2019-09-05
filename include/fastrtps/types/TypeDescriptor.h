@@ -45,6 +45,7 @@ protected:
     friend class TypeObjectFactory;
     friend class DynamicType;
     friend class MemberDescriptor;
+    friend class DynamicDataHelper;
 
 public:
     TypeDescriptor();
