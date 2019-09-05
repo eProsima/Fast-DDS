@@ -98,6 +98,11 @@ class WriterProxyData
             return persistence_guid_;
         }
 
+        RTPS_DllAPI void set_persistence_entity_id(const EntityId_t & nid)
+        {
+            persistence_guid_.entityId = persistence_guid_.guidPrefix != c_GuidPrefix_Unknown ? nid : c_EntityId_Unknown;
+        }
+
         RTPS_DllAPI bool has_locators() const
         {
             return !remote_locators_.unicast.empty() || !remote_locators_.multicast.empty();

@@ -675,7 +675,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     {
         logInfo(RTPS_EDP,"Adding SEDP Pub Writer to my Pub Reader");
         temp_writer_proxy_data_.guid().entityId = c_EntityId_SEDPPubWriter;
-        temp_writer_proxy_data_.persistence_guid().entityId = temp_writer_proxy_data_.persistence_guid().guidPrefix != c_GuidPrefix_Unknown ? c_EntityId_SEDPPubWriter : c_EntityId_Unknown;
+        temp_writer_proxy_data_.set_persistence_entity_id(c_EntityId_SEDPPubWriter);
         publications_reader_.first->matched_writer_add(temp_writer_proxy_data_);
     }
     auxendp = endp;
@@ -718,8 +718,8 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     if(auxendp != 0 && publications_secure_reader_.first != nullptr)
     {
         temp_writer_proxy_data_.guid().entityId = sedp_builtin_publications_secure_writer;
-        temp_writer_proxy_data_.persistence_guid().entityId = temp_writer_proxy_data_.persistence_guid().guidPrefix != c_GuidPrefix_Unknown ? sedp_builtin_publications_secure_writer : c_EntityId_Unknown;
-
+        temp_writer_proxy_data_.set_persistence_entity_id(sedp_builtin_publications_secure_writer);
+ 
         if(!mp_RTPSParticipant->security_manager().discovered_builtin_writer(
                     publications_secure_reader_.first->getGuid(), pdata.m_guid, temp_writer_proxy_data_,
                     publications_secure_reader_.first->getAttributes().security_attributes()))
@@ -752,7 +752,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     if(auxendp != 0 && subscriptions_secure_reader_.first != nullptr)
     {
         temp_writer_proxy_data_.guid().entityId = sedp_builtin_subscriptions_secure_writer;
-        temp_writer_proxy_data_.persistence_guid().entityId = temp_writer_proxy_data_.persistence_guid().guidPrefix != c_GuidPrefix_Unknown ? sedp_builtin_subscriptions_secure_writer : c_EntityId_Unknown;
+        temp_writer_proxy_data_.set_persistence_entity_id(sedp_builtin_subscriptions_secure_writer);
 
         if(!mp_RTPSParticipant->security_manager().discovered_builtin_writer(
                     subscriptions_secure_reader_.first->getGuid(), pdata.m_guid, temp_writer_proxy_data_,

@@ -328,7 +328,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         temp_writer_data_.guid().guidPrefix = pdata->m_guid.guidPrefix;
         temp_writer_data_.guid().entityId = c_EntityId_SPDPWriter;
         temp_writer_data_.persistence_guid(pdata->get_persistence_guid());
-        temp_writer_data_.persistence_guid().entityId = temp_writer_data_.persistence_guid().guidPrefix != c_GuidPrefix_Unknown ? c_EntityId_SPDPWriter : c_EntityId_Unknown;
+        temp_writer_data_.set_persistence_entity_id(c_EntityId_SPDPWriter);
         temp_writer_data_.set_remote_locators(pdata->metatraffic_locators, network, true);
         temp_writer_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
         temp_writer_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;

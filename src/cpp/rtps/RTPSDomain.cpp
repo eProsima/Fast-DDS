@@ -114,7 +114,6 @@ RTPSParticipant* RTPSDomain::createParticipant(
     }
 
     // Generate a new GuidPrefix_t
-
     GuidPrefix_t guidP;
 
     {

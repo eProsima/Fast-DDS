@@ -412,7 +412,7 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     {
         logInfo(RTPS_LIVELINESS,"Adding remote writer to my local Builtin Reader");
         temp_writer_proxy_data_.guid().entityId = c_EntityId_WriterLiveliness;
-        temp_writer_proxy_data_.persistence_guid().entityId = temp_writer_proxy_data_.persistence_guid().guidPrefix != c_GuidPrefix_Unknown ? c_EntityId_WriterLiveliness : c_EntityId_Unknown;
+        temp_writer_proxy_data_.set_persistence_entity_id(c_EntityId_WriterLiveliness);
         mp_builtinReader->matched_writer_add(temp_writer_proxy_data_);
     }
     auxendp = endp;
@@ -431,7 +431,7 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     {
         logInfo(RTPS_LIVELINESS, "Adding remote writer to my local Builtin Secure Reader");
         temp_writer_proxy_data_.guid().entityId = c_EntityId_WriterLivelinessSecure;
-        temp_writer_proxy_data_.persistence_guid().entityId = temp_writer_proxy_data_.persistence_guid().guidPrefix != c_GuidPrefix_Unknown ? c_EntityId_WriterLivelinessSecure : c_EntityId_Unknown;
+        temp_writer_proxy_data_.set_persistence_entity_id(c_EntityId_WriterLivelinessSecure);
 
         if (!mp_participant->security_manager().discovered_builtin_writer(
             mp_builtinReaderSecure->getGuid(), pdata.m_guid, temp_writer_proxy_data_,
