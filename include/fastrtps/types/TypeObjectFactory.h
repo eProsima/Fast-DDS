@@ -172,7 +172,9 @@ public:
      * given identifiers. If continuation_point isn't empty, then it will skip the first
      * (max_size * continuation_point) dependencies.
      * @param identifiers
-     * @param continuation_points
+     * @param in_continuation_point
+     * @param out_continuation_point
+     * @param max_size
      * @return
      */
     RTPS_DllAPI TypeIdentifierWithSizeSeq typelookup_get_type_dependencies(
