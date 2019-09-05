@@ -75,7 +75,8 @@ public:
     //!Ownership Qos, NOT implemented in the library.
     fastrtps::OwnershipQosPolicy ownership;
 
-    bool operator==(const TopicQos& b) const
+    bool operator ==(
+            const TopicQos& b) const
     {
         return (this->topic_data == b.topic_data) &&
                (this->durability == b.durability) &&
