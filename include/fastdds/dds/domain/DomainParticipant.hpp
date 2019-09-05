@@ -399,10 +399,14 @@ public:
      * and registers the resulting dynamic type.
      * The registration will be perform asynchronously and the user will be notified through the
      * given callback, which receives the type_name as unique argument.
+     * If the type is already registered, the function will return true, but the callback will not be called.
+     * If the given type_information is enought to build the type without using the typelookup service,
+     * it will return true and the callback will be never called.
      * @param type_information
      * @param type_name
      * @param callback
-     * @return
+     * @return true if type is already available (callback will not be called). false if type isn't available yet
+     * (the callback will be called if negotiation is success, and ignored in other case).
      */
     bool register_remote_type(
             const fastrtps::types::TypeInformation& type_information,

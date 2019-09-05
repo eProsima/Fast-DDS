@@ -830,7 +830,7 @@ bool DomainParticipantImpl::register_remote_type(
         {
             if (register_dynamic_type(dyn))
             {
-                callback(type_name, dyn);
+                //callback(type_name, dyn); // For plain types, don't call the callback
                 return true;
             }
             return false;
@@ -856,7 +856,7 @@ bool DomainParticipantImpl::register_remote_type(
         {
             if (register_dynamic_type(dyn))
             {
-                callback(type_name, dyn);
+                //callback(type_name, dyn); // If the type is already registered, don't call the callback.
                 return true;
             }
             return false;
