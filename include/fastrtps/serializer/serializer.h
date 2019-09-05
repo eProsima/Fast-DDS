@@ -25,7 +25,8 @@ private:
 public:
     Serializer<Serializable>(Serializable *p):p_(p){}
     
-    void serialize(eprosima::fastcdr::Cdr& cdr)
+    void serialize(
+            eprosima::fastcdr::Cdr& cdr)
 				{
         serialize(p_, cdr) ;
     }
