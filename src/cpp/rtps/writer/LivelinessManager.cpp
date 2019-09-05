@@ -290,6 +290,8 @@ bool LivelinessManager::find_writer(
 
 bool LivelinessManager::is_any_alive(LivelinessQosPolicyKind kind)
 {
+    std::unique_lock<std::mutex> lock(mutex_);
+
     for (const auto& writer : writers_)
     {
         if (writer.kind == kind && writer.status == LivelinessData::WriterStatus::ALIVE)
