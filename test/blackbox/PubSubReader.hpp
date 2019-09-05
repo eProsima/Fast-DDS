@@ -203,7 +203,8 @@ private:
 public:
 
     PubSubReader(
-            const std::string& topic_name)
+            const std::string& topic_name,
+            bool take = true)
         : participant_listener_(*this)
         , listener_(*this)
         , participant_(nullptr)
@@ -217,6 +218,7 @@ public:
         , number_samples_expected_(0)
         , discovery_result_(false)
         , onDiscovery_(nullptr)
+        , take_(take)
 #if HAVE_SECURITY
         , authorized_(0)
         , unauthorized_(0)
@@ -840,24 +842,50 @@ private:
         type data;
         eprosima::fastrtps::SampleInfo_t info;
 
-        if(subscriber->takeNextData((void*)&data, &info))
+        if (take_)
         {
-            returnedValue = true;
-
-            std::unique_lock<std::mutex> lock(mutex_);
-
-            // Check order of changes.
-            ASSERT_LT(last_seq, info.sample_identity.sequence_number());
-            last_seq = info.sample_identity.sequence_number();
-
-            if(info.sampleKind == eprosima::fastrtps::rtps::ALIVE)
+            if(subscriber->takeNextData((void*)&data, &info))
             {
-                auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
-                ASSERT_NE(it, total_msgs_.end());
-                total_msgs_.erase(it);
-                ++current_received_count_;
-                default_receive_print<type>(data);
-                cv_.notify_one();
+                returnedValue = true;
+
+                std::unique_lock<std::mutex> lock(mutex_);
+
+                // Check order of changes.
+                ASSERT_LT(last_seq, info.sample_identity.sequence_number());
+                last_seq = info.sample_identity.sequence_number();
+
+                if(info.sampleKind == eprosima::fastrtps::rtps::ALIVE)
+                {
+                    auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
+                    ASSERT_NE(it, total_msgs_.end());
+                    total_msgs_.erase(it);
+                    ++current_received_count_;
+                    default_receive_print<type>(data);
+                    cv_.notify_one();
+                }
+            }
+        }
+        else
+        {
+            if(subscriber->readNextData((void*)&data, &info))
+            {
+                returnedValue = true;
+
+                std::unique_lock<std::mutex> lock(mutex_);
+
+                // Check order of changes.
+                ASSERT_LT(last_seq, info.sample_identity.sequence_number());
+                last_seq = info.sample_identity.sequence_number();
+
+                if(info.sampleKind == eprosima::fastrtps::rtps::ALIVE)
+                {
+                    auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
+                    ASSERT_NE(it, total_msgs_.end());
+                    total_msgs_.erase(it);
+                    ++current_received_count_;
+                    default_receive_print<type>(data);
+                    cv_.notify_one();
+                }
             }
         }
     }
@@ -932,6 +960,9 @@ private:
     bool discovery_result_;
 
     std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
+
+    //! True to take data from history. False to read
+    bool take_;
 
 #if HAVE_SECURITY
     std::mutex mutexAuthentication_;
