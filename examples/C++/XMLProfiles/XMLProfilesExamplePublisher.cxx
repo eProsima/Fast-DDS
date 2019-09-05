@@ -36,73 +36,91 @@ using namespace eprosima::fastrtps::rtps;
 
 XMLProfilesExamplePublisher::XMLProfilesExamplePublisher() : mp_participant(nullptr), mp_publisher(nullptr) {}
 
-XMLProfilesExamplePublisher::~XMLProfilesExamplePublisher() {	Domain::removeParticipant(mp_participant);}
+XMLProfilesExamplePublisher::~XMLProfilesExamplePublisher() {    Domain::removeParticipant(mp_participant);}
 
 bool XMLProfilesExamplePublisher::init()
 {
-	// Create RTPSParticipant
-	std::string participant_profile_name = "participant_profile";
-	mp_participant = Domain::createParticipant(participant_profile_name);
-	if(mp_participant == nullptr)
-		return false;
+    // Create RTPSParticipant
+    std::string participant_profile_name = "participant_profile";
+    mp_participant = Domain::createParticipant(participant_profile_name);
+    if(mp_participant == nullptr)
+        return false;
 
-	// Register the type
-	Domain::registerType(mp_participant,(TopicDataType*) &myType);
+    // Register the type
+    Domain::registerType(mp_participant,(TopicDataType*) &myType);
 
-	// Create Publisher
-	std::string profile_name = "publisher_profile";
-	mp_publisher = Domain::createPublisher(mp_participant,profile_name,(PublisherListener*)&m_listener);
-	if(mp_publisher == nullptr)
-		return false;
+    // Create Publisher
+    std::string profile_name = "publisher_profile";
+    mp_publisher = Domain::createPublisher(mp_participant,profile_name,(PublisherListener*)&m_listener);
+    if(mp_publisher == nullptr)
+        return false;
 
-	std::cout << "Publisher created, waiting for Subscribers." << std::endl;
-	return true;
+    std::cout << "Publisher created, waiting for Subscribers." << std::endl;
+    return true;
 }
 
 void XMLProfilesExamplePublisher::PubListener::onPublicationMatched(Publisher*, MatchingInfo& info)
 {
-	if (info.status == MATCHED_MATCHING)
-	{
-		n_matched++;
-		std::cout << "Publisher matched" << std::endl;
-	}
-	else
-	{
-		n_matched--;
-		std::cout << "Publisher unmatched" << std::endl;
-	}
+    if (info.status == MATCHED_MATCHING)
+    {
+        n_matched++;
+        std::cout << "Publisher matched" << std::endl;
+    }
+    else
+    {
+        n_matched--;
+        std::cout << "Publisher unmatched" << std::endl;
+    }
 }
 
 void XMLProfilesExamplePublisher::run()
 {
-	while(m_listener.n_matched == 0)
-	{
-		eClock::my_sleep(250); // Sleep 250 ms
-	}
+    // Publication code
 
-	// Publication code
+    XMLProfilesExample st;
 
-	XMLProfilesExample st;
+    /* Initialize your structure here */
 
-	/* Initialize your structure here */
+    int msgsent = 0;
+    char ch = 'y';
+    bool continuous = false;
 
-	int msgsent = 0;
-	char ch = 'y';
-	do
-	{
-		if(ch == 'y')
-		{
-			mp_publisher->write(&st);  ++msgsent;
-			std::cout << "Sending sample, count=" << msgsent << ", send another sample?(y-yes,n-stop): ";
-		}
-		else if(ch == 'n')
-		{
-			std::cout << "Stopping execution " << std::endl;
-			break;
-		}
-		else
-		{
-			std::cout << "Command " << ch << " not recognized, please enter \"y/n\":";
-		}
-	}while(std::cin >> ch);
+    do
+    {
+        ch = 'y';
+        std::cout << "Waiting for Subscribers." << std::endl;
+        while(m_listener.n_matched == 0)
+        {
+            eClock::my_sleep(250); // Sleep 250 ms
+        }
+
+        do
+        {
+            if(ch == 'y')
+            {
+                mp_publisher->write(&st);  ++msgsent;
+                std::cout << "Sending sample, count=" << msgsent << ", send another sample?(y-yes,n-stop,c-continuous): ";
+            }
+            else if(ch == 'n')
+            {
+                std::cout << "Stopping execution " << std::endl;
+                break;
+            }
+            else if(ch == 'c')
+            {
+                if(!continuous)
+                {
+                    continuous = true;
+                    std::cout << "Starting continuous publishing" << std::endl;
+                }
+                mp_publisher->write(&st);  ++msgsent;
+                std::cout << "Sending sample, count=" << msgsent << std::endl;
+                eClock::my_sleep(100); // Sleep 100 ms
+            }
+            else
+            {
+                std::cout << "Command " << ch << " not recognized, please enter \"y/n/c\":";
+            }
+        } while((m_listener.n_matched > 0) && (continuous || (std::cin >> ch)));
+    } while(ch != 'n');
 }
