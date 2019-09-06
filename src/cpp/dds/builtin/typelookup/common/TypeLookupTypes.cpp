@@ -22,6 +22,7 @@
 #include <fastcdr/Cdr.h>
 #include <fastcdr/exceptions/BadParamException.h>
 
+using namespace eprosima;
 using namespace eprosima::fastcdr;
 using namespace eprosima::fastcdr::exception;
 using namespace eprosima::fastdds::dds::builtin;

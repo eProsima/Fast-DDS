@@ -1225,7 +1225,7 @@ std::string DomainParticipantImpl::get_inner_type_name(
     std::transform(str.begin(), str.end(), str.begin(),
        [](unsigned char c)
        {
-           return std::tolower(c);
+           return static_cast<char>(std::tolower(c));
        });
     str.erase(std::remove(str.begin(), str.end(), '.'), str.end());
     std::replace(str.begin(), str.end(), '|' ,'_');
