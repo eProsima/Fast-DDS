@@ -107,7 +107,7 @@ TEST(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
     unsigned int num_samples = 2;
 
     // Liveliness lease duration and announcement period, in milliseconds
-    unsigned int lease_duration_ms = 1000;
+    unsigned int lease_duration_ms = 1500;
     unsigned int announcement_period_ms = 1;
 
     reader.reliability(RELIABLE_RELIABILITY_QOS)
