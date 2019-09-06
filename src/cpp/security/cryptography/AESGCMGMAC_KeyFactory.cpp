@@ -39,7 +39,7 @@
 #undef max
 #endif
 
-static bool create_kx_key(std::array<uint8_t, 32>& out_data, const std::vector<uint8_t>* first_data, 
+static bool create_kx_key(std::array<uint8_t, 32>& out_data, const std::vector<uint8_t>* first_data,
     const char* cookie, const std::vector<uint8_t>* second_data, const std::vector<uint8_t>* shared_secret)
 {
     uint8_t tmp_data[32 + 16 + 32];
@@ -122,7 +122,7 @@ ParticipantCryptoHandle* AESGCMGMAC_KeyFactory::register_local_participant(
         for(auto it=participant_properties.begin(); it!=participant_properties.end(); ++it){
             if( (it)->name().compare("dds.sec.crypto.keysize") == 0)
             {
-                if (it->value().compare("128") == 0) 
+                if (it->value().compare("128") == 0)
                 {
                     use_256_bits = false;
                 }
@@ -369,10 +369,11 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_local_datawriter(
             RAND_bytes((unsigned char *)(&(session->session_id)), sizeof(uint32_t));
         }
     }
-        
+
     (*WCrypto)->max_blocks_per_session = maxblockspersession;
 
-    std::unique_lock<std::mutex>(participant_handle->mutex_);
+    // Issue #697 by DavidLoftus, who catched an unnamed lock, causing the mutex being freed inmediatly.
+    std::unique_lock<std::mutex> david_loftus_lock(participant_handle->mutex_);
 
     (*WCrypto)->Participant_master_key_id = participant_handle->ParticipantKeyMaterial.sender_key_id;
 
@@ -416,7 +417,7 @@ DatareaderCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_dataread
         (*RRCrypto)->Entity2RemoteKeyMaterial.push_back(remote_participant->Participant2ParticipantKxKeyMaterial.at(0));
     }
     else
-    { 
+    {
         /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
         KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Writer2ReaderKeyMaterial
 
@@ -599,7 +600,7 @@ DatawriterCryptoHandle * AESGCMGMAC_KeyFactory::register_matched_remote_datawrit
         (*RWCrypto)->Entity2RemoteKeyMaterial.push_back(remote_participant->Participant2ParticipantKxKeyMaterial.at(0));
     }
     else
-    { 
+    {
         /*Fill values for Writer2ReaderKeyMaterial - Used to encrypt outgoing data */
         KeyMaterial_AES_GCM_GMAC buffer;  //Buffer = Writer2ReaderKeyMaterial
 
