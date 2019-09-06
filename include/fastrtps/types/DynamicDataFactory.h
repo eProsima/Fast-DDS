@@ -21,6 +21,7 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicData.h>
 #include <mutex>
+
 //#define DISABLE_DYNAMIC_MEMORY_CHECK
 
 namespace eprosima {
