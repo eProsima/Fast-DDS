@@ -169,7 +169,7 @@ public:
 
     SubListener() : number_samples_(0) {}
 
-    ~SubListener() {}
+    ~SubListener() override {}
 
     void on_subscription_matched(
             Subscriber* /*subscriber*/,
@@ -246,7 +246,7 @@ int main(
     bool notexit = false;
     uint32_t seed = 7800;
     uint32_t samples = 4;
-    char* xml_file = nullptr;
+    //char* xml_file = nullptr;
     std::string magic;
 
     while(arg_count < argc)
@@ -287,22 +287,25 @@ int main(
         }
         else if(strcmp(argv[arg_count], "--xmlfile") == 0)
         {
+            std::cout << "--xmlfile option isn't implemented yet." << std::endl;
             if(++arg_count >= argc)
             {
                 std::cout << "--xmlfile expects a parameter" << std::endl;
                 return -1;
             }
 
-            xml_file = argv[arg_count];
+            //xml_file = argv[arg_count];
         }
 
         ++arg_count;
     }
 
+    /* TODO - XMLProfileManager doesn't support DDS yet
     if(xml_file)
     {
         DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
     }
+    */
 
     ParticipantAttributes participant_attributes;
     DomainParticipantFactory::get_instance()->get_default_participant_qos(participant_attributes);
