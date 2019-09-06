@@ -192,6 +192,7 @@ public:
      */
     inline size_t getMatchedReadersSize() const
     {
+		std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
         return matched_readers_.size();
     }
 
