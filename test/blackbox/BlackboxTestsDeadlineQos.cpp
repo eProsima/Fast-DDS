@@ -35,16 +35,14 @@ TEST(DeadlineQos, NoKeyTopicLongDeadline)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds
-    uint32_t writer_sleep_ms = 100;
+    uint32_t writer_sleep_ms = 10;
     // Number of samples written by writer
     uint32_t writer_samples = 3;
-    // Deadline period in seconds
-    eprosima::fastrtps::Duration_t deadline_s(writer_sleep_ms * 1000 * 1e-3);
+    // Deadline period in milliseconds
+    uint32_t deadline_period_ms = 100000;
 
-    reader.deadline_period(deadline_s);
-    writer.deadline_period(deadline_s);
-    reader.init();
-    writer.init();
+    reader.deadline_period(deadline_period_ms * 1e-3).init();
+    writer.deadline_period(deadline_period_ms * 1e-3).init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -81,16 +79,14 @@ TEST(DeadlineQos, NoKeyTopicShortDeadline)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds
-    uint32_t writer_sleep_ms = 100;
+    uint32_t writer_sleep_ms = 1000;
     // Number of samples written by writer
     uint32_t writer_samples = 3;
-    // Deadline period in seconds
-    eprosima::fastrtps::Duration_t deadline_s(writer_sleep_ms * 0.1 * 1e-3);
+    // Deadline period in milliseconds
+    uint32_t deadline_period_ms = 10;
 
-    reader.deadline_period(deadline_s);
-    writer.deadline_period(deadline_s);
-    reader.init();
-    writer.init();
+    reader.deadline_period(deadline_period_ms * 1e-3).init();
+    writer.deadline_period(deadline_period_ms * 1e-3).init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -128,18 +124,14 @@ TEST(DeadlineQos, KeyedTopicLongDeadline)
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds
-    uint32_t writer_sleep_ms = 100;
+    uint32_t writer_sleep_ms = 10;
     // Number of samples written by writer
     uint32_t writer_samples = 4;
-    // Deadline period in seconds
-    eprosima::fastrtps::Duration_t deadline_s(writer_sleep_ms * 1000 * 1e-3);
+    // Deadline period in milliseconds
+    uint32_t deadline_period_ms = 100000;
 
-    reader.deadline_period(deadline_s);
-    writer.deadline_period(deadline_s);
-    reader.key(true);
-    writer.key(true);
-    reader.init();
-    writer.init();
+    reader.deadline_period(deadline_period_ms * 1e-3).key(true).init();
+    writer.deadline_period(deadline_period_ms * 1e-3).key(true).init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -176,19 +168,15 @@ TEST(DeadlineQos, KeyedTopicShortDeadline)
     PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
 
-    // Only one sample sent by the writer
+    // Number of samples to send
     uint32_t writer_samples = 4;
     // Time to wait before sending the sample
-    uint32_t writer_sleep_ms = 100;
+    uint32_t writer_sleep_ms = 1000;
     // Deadline period in ms
-    eprosima::fastrtps::Duration_t deadline_s(writer_sleep_ms * 0.1 * 1e-3);
+    uint32_t deadline_period_ms = 10;
 
-    reader.deadline_period(deadline_s);
-    writer.deadline_period(deadline_s);
-    reader.key(true);
-    writer.key(true);
-    reader.init();
-    writer.init();
+    reader.deadline_period(deadline_period_ms * 1e-3).key(true).init();
+    writer.deadline_period(deadline_period_ms * 1e-3).key(true).init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());

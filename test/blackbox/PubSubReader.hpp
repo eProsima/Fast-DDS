@@ -203,7 +203,8 @@ private:
 public:
 
     PubSubReader(
-            const std::string& topic_name)
+            const std::string& topic_name,
+            bool take = true)
         : participant_listener_(*this)
         , listener_(*this)
         , participant_(nullptr)
@@ -217,6 +218,7 @@ public:
         , number_samples_expected_(0)
         , discovery_result_(false)
         , onDiscovery_(nullptr)
+        , take_(take)
 #if HAVE_SECURITY
         , authorized_(0)
         , unauthorized_(0)
@@ -840,7 +842,10 @@ private:
         type data;
         eprosima::fastrtps::SampleInfo_t info;
 
-        if(subscriber->takeNextData((void*)&data, &info))
+        bool success = take_ ?
+                    subscriber->takeNextData((void*)&data, &info) :
+                    subscriber->readNextData((void*)&data, &info);
+        if (success)
         {
             returnedValue = true;
 
@@ -932,6 +937,9 @@ private:
     bool discovery_result_;
 
     std::function<bool(const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)> onDiscovery_;
+
+    //! True to take data from history. False to read
+    bool take_;
 
 #if HAVE_SECURITY
     std::mutex mutexAuthentication_;

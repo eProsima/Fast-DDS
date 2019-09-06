@@ -30,23 +30,22 @@ TEST(LifespanQos, LongLifespan)
     // and checks that those changes can be removed from the history
     // as they should not have been removed due to lifespan QoS
 
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME, false);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds
     uint32_t writer_sleep_ms = 1;
     // Number of samples written by writer
     uint32_t writer_samples = 3;
-    // Lifespan period in seconds
-    eprosima::fastrtps::Duration_t lifespan_s(writer_sleep_ms * 1e4 * 1e-3);
+    // Lifespan period in milliseconds
+    uint32_t lifespan_ms = 10000;
 
-    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
-    writer.lifespan_period(lifespan_s);
-    writer.init();
-
-    reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
-    reader.lifespan_period(lifespan_s);
-    reader.init();
+    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .lifespan_period(lifespan_ms * 1e-3)
+            .init();
+    reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -56,8 +55,12 @@ TEST(LifespanQos, LongLifespan)
     reader.wait_discovery();
 
     auto data = default_helloworld_data_generator(writer_samples);
+    auto expected_data = data;
     writer.send(data, writer_sleep_ms);
     ASSERT_TRUE(data.empty());
+
+    reader.startReception(expected_data);
+    reader.block_for_at_least(writer_samples);
 
     // Changes should not have been removed due to lifespan
     // therefore they should still exist in the history and
@@ -84,19 +87,18 @@ TEST(LifespanQos, ShortLifespan)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     // Write rate in milliseconds
-    uint32_t writer_sleep_ms = 100;
+    uint32_t writer_sleep_ms = 200;
     // Number of samples written by writer
     uint32_t writer_samples = 3;
-    // Lifespan period in seconds
-    eprosima::fastrtps::Duration_t lifespan_s(writer_sleep_ms * 0.1 * 1e-3);
+    // Lifespan period in milliseconds
+    uint32_t lifespan_ms = 1;
 
-    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
-    writer.lifespan_period(lifespan_s);
-    writer.init();
-
-    reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
-    reader.lifespan_period(lifespan_s);
-    reader.init();
+    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .lifespan_period(lifespan_ms * 1e-3)
+            .init();
+    reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .lifespan_period(lifespan_ms * 1e-3)
+            .init();
 
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
