@@ -314,6 +314,28 @@ bool UDPTransportInterface::OpenOutputChannel(
                 sender_resource_list.emplace_back(
                         static_cast<SenderResource*>(new UDPSenderResource(*this, unicastSocket)));
             }
+
+            if (!locNames.empty())
+            {
+                // We add localhost output for multicast, so in case the network cable is unplugged, local
+                // participants keep receiving DATA(p) announcements
+                uint16_t new_port = 0;
+                try
+                {
+                    eProsimaUDPSocket multicastSocket =
+                        OpenAndBindUnicastOutputSocket(generate_endpoint("127.0.0.1", new_port), new_port);
+                    SetSocketOutboundInterface(multicastSocket, "127.0.0.1");
+
+                    sender_resource_list.emplace_back(
+                        static_cast<SenderResource*>(new UDPSenderResource(*this, multicastSocket, true)));
+                }
+                catch (asio::system_error const& e)
+                {
+                    (void)e;
+                    logWarning(RTPS_MSG_OUT, "UDPTransport Error binding interface 127.0.0.1"
+                        << " (skipping) with msg: " << e.what());
+                }
+            }
         }
         else
         {
