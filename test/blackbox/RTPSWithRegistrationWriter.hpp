@@ -142,9 +142,9 @@ class RTPSWithRegistrationWriter
 
         while(it != msgs.end())
         {
-	    eprosima::fastrtps::rtps::CacheChange_t * ch = writer_->new_change(*it,eprosima::fastrtps::rtps::ALIVE);
+        eprosima::fastrtps::rtps::CacheChange_t * ch = writer_->new_change(*it,eprosima::fastrtps::rtps::ALIVE);
 
-	    eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
+        eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
             eprosima::fastcdr::Cdr cdr(buffer);
 
             cdr << *it;
@@ -180,8 +180,8 @@ class RTPSWithRegistrationWriter
     /*** Function to change QoS ***/
     RTPSWithRegistrationWriter& memoryMode(const eprosima::fastrtps::rtps::MemoryManagementPolicy_t memoryPolicy)
     {
-	hattr_.memoryPolicy = memoryPolicy;
-	return *this;
+    hattr_.memoryPolicy = memoryPolicy;
+    return *this;
     }
 
 
@@ -248,6 +248,12 @@ class RTPSWithRegistrationWriter
         return durability(eprosima::fastrtps::rtps::DurabilityKind_t::PERSISTENT)
             .add_property("dds.persistence.plugin", "builtin.SQLITE3")
             .add_property("dds.persistence.sqlite3.filename", filename);
+    }
+
+    RTPSWithRegistrationWriter& history_depth(const int32_t depth)
+    {
+        topic_attr_.historyQos.depth = depth;
+        return *this;
     }
 
     private:

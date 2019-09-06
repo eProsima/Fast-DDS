@@ -238,7 +238,7 @@ TEST_F(BlackBoxPersistence, AsyncRTPSAsReliableWithPersistence)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.make_persistent(db_file_name(), guid_prefix()).asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
+    writer.make_persistent(db_file_name(), guid_prefix()).history_depth(10).asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
