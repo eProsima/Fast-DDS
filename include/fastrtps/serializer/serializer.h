@@ -20,8 +20,6 @@ namespace serializer{
 template<class Serializable>
 class Serializer{
 public:
-//    Serializer(Serializable *p):p_(p), r_(*p){}
-//    Serializer(Serializable &r):p_(&r), r_(r){}
     Serializer(Serializable &r):r_(r){}
     void serialize(
             eprosima::fastcdr::Cdr& cdr
@@ -1720,39 +1718,6 @@ private: //just for readibility: above methods are private as well
 
     Serializable &r_ ;
 };
-
-/*********************
- *Serialize Operator *
- *********************/
-/*
-   template <class Serializable>
-   eprosima::fastcdr::Cdr & operator<<(
-   eprosima::fastcdr::Cdr &cdr, 
-   Serializable &S
-   )
-   {
-   Serializer<Serializable>(
-   S
-   ).serialize(
-   cdr
-   ) ;
-   return cdr ;
-   }
-
-   template <class Serializable>
-   eprosima::fastcdr::Cdr & operator>>(
-   eprosima::fastcdr::Cdr &cdr, 
-   Serializable &S
-   )
-   {
-   Serializer<Serializable>(
-   S
-   ).deserialize(
-   cdr
-   ) ;
-   return cdr ;
-   }
-   */
 
 } //namespace serializer
 } //namespace fastrtps
