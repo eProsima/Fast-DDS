@@ -1,4 +1,4 @@
-# Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,26 +42,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     ###############################################################################
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_communication.py
         ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.py
-        ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.py COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/automatic_liveliness_assertion.py
-        ${CMAKE_CURRENT_BINARY_DIR}/automatic_liveliness_assertion.py COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_besteffort.xml
-        ${CMAKE_CURRENT_BINARY_DIR}/simple_besteffort.xml COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_reliable.xml
-        ${CMAKE_CURRENT_BINARY_DIR}/simple_reliable.xml COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_reliable_besteffort.xml
-        ${CMAKE_CURRENT_BINARY_DIR}/simple_reliable_besteffort.xml COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_secure_besteffort_pub.xml
-        ${CMAKE_CURRENT_BINARY_DIR}/simple_secure_besteffort_pub.xml COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_secure_besteffort_sub.xml
-        ${CMAKE_CURRENT_BINARY_DIR}/simple_secure_besteffort_sub.xml COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.xml
-        ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.xml COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.120.xml
-        ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.120.xml COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.360.xml
-        ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.360.xml COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/example_type.xml
         ${CMAKE_CURRENT_BINARY_DIR}/example_type.xml COPYONLY)
     if(SECURITY)
@@ -82,112 +62,20 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     endif()
 
     if(PYTHONINTERP_FOUND)
-        add_test(NAME SimpleCommunicationBestEffort
+        add_test(NAME DDSSimpleCommunicationTypeDiscovery
             COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
 
         # Set test with label NoMemoryCheck
-        set_property(TEST SimpleCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
+        set_property(TEST DDSSimpleCommunicationTypeDiscovery PROPERTY LABELS "NoMemoryCheck")
 
-        set_property(TEST SimpleCommunicationBestEffort PROPERTY ENVIRONMENT
-            "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-        set_property(TEST SimpleCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
-            "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
-        set_property(TEST SimpleCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
-            "XML_FILE=simple_besteffort.xml")
+        set_property(TEST DDSSimpleCommunicationTypeDiscovery PROPERTY ENVIRONMENT
+            "DDS_SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:DDSSimpleCommunicationPublisher>")
+        set_property(TEST DDSSimpleCommunicationTypeDiscovery APPEND PROPERTY ENVIRONMENT
+            "DDS_SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:DDSSimpleCommunicationSubscriber>")
+        set_property(TEST DDSSimpleCommunicationTypeDiscovery APPEND PROPERTY ENVIRONMENT)
         if(WIN32)
             string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-            set_property(TEST SimpleCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-        endif()
-
-        add_test(NAME SimpleCommunicationReliable
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
-
-        # Set test with label NoMemoryCheck
-        set_property(TEST SimpleCommunicationReliable PROPERTY LABELS "NoMemoryCheck")
-
-        set_property(TEST SimpleCommunicationReliable PROPERTY ENVIRONMENT
-            "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-        set_property(TEST SimpleCommunicationReliable APPEND PROPERTY ENVIRONMENT
-            "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
-        set_property(TEST SimpleCommunicationReliable APPEND PROPERTY ENVIRONMENT
-            "XML_FILE=simple_reliable.xml")
-        if(WIN32)
-            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-            set_property(TEST SimpleCommunicationReliable APPEND PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-        endif()
-
-        add_test(NAME SimpleCommunicationReliableBestEffort
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
-
-        # Set test with label NoMemoryCheck
-        set_property(TEST SimpleCommunicationReliableBestEffort PROPERTY LABELS "NoMemoryCheck")
-
-        set_property(TEST SimpleCommunicationReliableBestEffort PROPERTY ENVIRONMENT
-            "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-        set_property(TEST SimpleCommunicationReliableBestEffort APPEND PROPERTY ENVIRONMENT
-            "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
-        set_property(TEST SimpleCommunicationReliableBestEffort APPEND PROPERTY ENVIRONMENT
-            "XML_FILE=simple_reliable_besteffort.xml")
-        if(WIN32)
-            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-            set_property(TEST SimpleCommunicationReliableBestEffort APPEND PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-        endif()
-
-        if(SECURITY)
-            add_test(NAME SimpleCommunicationSecureBestEffort
-                COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
-
-            # Set test with label NoMemoryCheck
-            set_property(TEST SimpleCommunicationSecureBestEffort PROPERTY LABELS "NoMemoryCheck")
-
-            set_property(TEST SimpleCommunicationSecureBestEffort PROPERTY ENVIRONMENT
-                "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-            set_property(TEST SimpleCommunicationSecureBestEffort APPEND PROPERTY ENVIRONMENT
-                "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
-            set_property(TEST SimpleCommunicationSecureBestEffort APPEND PROPERTY ENVIRONMENT
-                "XML_FILE_PUB=simple_secure_besteffort_pub.xml")
-            set_property(TEST SimpleCommunicationSecureBestEffort APPEND PROPERTY ENVIRONMENT
-                "XML_FILE_SUB=simple_secure_besteffort_sub.xml")
-            set_property(TEST SimpleCommunicationSecureBestEffort APPEND PROPERTY ENVIRONMENT
-                "EXTRA_PUB_ARG=--wait 2")
-            if(WIN32)
-                string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-                set_property(TEST SimpleCommunicationSecureBestEffort APPEND PROPERTY ENVIRONMENT
-                    "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-            endif()
-        endif()
-
-        add_test(NAME LivelinessAssertion
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.py)
-
-        # Set test with label NoMemoryCheck
-        set_property(TEST LivelinessAssertion PROPERTY LABELS "NoMemoryCheck")
-
-        set_property(TEST LivelinessAssertion PROPERTY ENVIRONMENT
-            "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-        set_property(TEST LivelinessAssertion APPEND PROPERTY ENVIRONMENT
-            "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
-        if(WIN32)
-            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-            set_property(TEST LivelinessAssertion APPEND PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-        endif()
-        add_test(NAME AutomaticLivelinessAssertion
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/automatic_liveliness_assertion.py)
-
-        # Set test with label NoMemoryCheck
-        set_property(TEST AutomaticLivelinessAssertion PROPERTY LABELS "NoMemoryCheck")
-
-        set_property(TEST AutomaticLivelinessAssertion PROPERTY ENVIRONMENT
-            "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-        set_property(TEST AutomaticLivelinessAssertion APPEND PROPERTY ENVIRONMENT
-            "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
-        if(WIN32)
-            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-            set_property(TEST AutomaticLivelinessAssertion APPEND PROPERTY ENVIRONMENT
+            set_property(TEST DDSSimpleCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
                 "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
         endif()
     endif()

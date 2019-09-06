@@ -155,7 +155,7 @@ int main(
     int arg_count = 1;
     bool exit_on_lost_liveliness = false;
     uint32_t seed = 7800, wait = 0;
-    char* xml_file = nullptr;
+    //char* xml_file = nullptr;
     uint32_t samples = 4;
     std::string magic;
 
@@ -207,22 +207,25 @@ int main(
         }
         else if(strcmp(argv[arg_count], "--xmlfile") == 0)
         {
+            std::cout << "--xmlfile option isn't implemented yet." << std::endl;
             if(++arg_count >= argc)
             {
                 std::cout << "--xmlfile expects a parameter" << std::endl;
                 return -1;
             }
 
-            xml_file = argv[arg_count];
+            //xml_file = argv[arg_count];
         }
 
         ++arg_count;
     }
 
+    /* TODO - XMLProfileManager doesn't support DDS yet
     if(xml_file)
     {
         DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
     }
+    */
 
     xmlparser::XMLProfileManager::loadXMLFile("example_type.xml");
 
