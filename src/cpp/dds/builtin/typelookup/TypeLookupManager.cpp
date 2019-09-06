@@ -542,7 +542,7 @@ bool TypeLookupManager::send_request(
     CacheChange_t* change = builtin_request_writer_->new_change(
         [&req]()
         {
-            return TypeLookup_Request::getCdrSerializedSize(req) + 4;
+            return static_cast<uint32_t>(TypeLookup_Request::getCdrSerializedSize(req) + 4);
         },
         ALIVE);
 
@@ -589,7 +589,7 @@ bool TypeLookupManager::send_reply(
     CacheChange_t* change = builtin_reply_writer_->new_change(
         [&rep]()
         {
-            return TypeLookup_Reply::getCdrSerializedSize(rep) + 4;
+            return static_cast<uint32_t>(TypeLookup_Reply::getCdrSerializedSize(rep) + 4);
         },
         ALIVE);
 
