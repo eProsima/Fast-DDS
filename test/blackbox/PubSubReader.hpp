@@ -842,50 +842,27 @@ private:
         type data;
         eprosima::fastrtps::SampleInfo_t info;
 
-        if (take_)
+        bool success = take_ ?
+                    subscriber->takeNextData((void*)&data, &info) :
+                    subscriber->readNextData((void*)&data, &info);
+        if (success)
         {
-            if(subscriber->takeNextData((void*)&data, &info))
+            returnedValue = true;
+
+            std::unique_lock<std::mutex> lock(mutex_);
+
+            // Check order of changes.
+            ASSERT_LT(last_seq, info.sample_identity.sequence_number());
+            last_seq = info.sample_identity.sequence_number();
+
+            if(info.sampleKind == eprosima::fastrtps::rtps::ALIVE)
             {
-                returnedValue = true;
-
-                std::unique_lock<std::mutex> lock(mutex_);
-
-                // Check order of changes.
-                ASSERT_LT(last_seq, info.sample_identity.sequence_number());
-                last_seq = info.sample_identity.sequence_number();
-
-                if(info.sampleKind == eprosima::fastrtps::rtps::ALIVE)
-                {
-                    auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
-                    ASSERT_NE(it, total_msgs_.end());
-                    total_msgs_.erase(it);
-                    ++current_received_count_;
-                    default_receive_print<type>(data);
-                    cv_.notify_one();
-                }
-            }
-        }
-        else
-        {
-            if(subscriber->readNextData((void*)&data, &info))
-            {
-                returnedValue = true;
-
-                std::unique_lock<std::mutex> lock(mutex_);
-
-                // Check order of changes.
-                ASSERT_LT(last_seq, info.sample_identity.sequence_number());
-                last_seq = info.sample_identity.sequence_number();
-
-                if(info.sampleKind == eprosima::fastrtps::rtps::ALIVE)
-                {
-                    auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
-                    ASSERT_NE(it, total_msgs_.end());
-                    total_msgs_.erase(it);
-                    ++current_received_count_;
-                    default_receive_print<type>(data);
-                    cv_.notify_one();
-                }
+                auto it = std::find(total_msgs_.begin(), total_msgs_.end(), data);
+                ASSERT_NE(it, total_msgs_.end());
+                total_msgs_.erase(it);
+                ++current_received_count_;
+                default_receive_print<type>(data);
+                cv_.notify_one();
             }
         }
     }
