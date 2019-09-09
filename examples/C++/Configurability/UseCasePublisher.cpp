@@ -18,8 +18,6 @@
 #include <fastrtps/Domain.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 
-#include <fastrtps/utils/eClock.h>
-
 #include "samplePubSubTypes.h"
 
 using namespace eprosima::fastrtps;
