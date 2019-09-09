@@ -46,7 +46,6 @@
 #include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
 #include <fastrtps/utils/IPFinder.h>
-#include <fastrtps/utils/eClock.h>
 
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/System.h>

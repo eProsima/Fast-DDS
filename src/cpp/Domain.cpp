@@ -26,8 +26,6 @@
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/subscriber/Subscriber.h>
 
-#include <fastrtps/utils/eClock.h>
-
 #include <fastrtps/log/Log.h>
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
@@ -62,6 +60,8 @@ Domain::~Domain()
 
 void Domain::stopAll()
 {
+    using namespace std::literals::chrono_literals;
+
     {
         std::lock_guard<std::mutex> guard(m_mutex);
         while (m_participants.size() > 0)
@@ -77,7 +77,7 @@ void Domain::stopAll()
     types::TypeObjectFactory::delete_instance();
     XMLProfileManager::DeleteInstance();
 
-    eClock::my_sleep(100);
+    std::this_thread::sleep_for(100ms);
     Log::KillThread();
 }
 

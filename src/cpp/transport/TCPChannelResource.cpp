@@ -15,7 +15,11 @@
 #include <fastrtps/transport/TCPChannelResource.h>
 #include <fastrtps/transport/TCPTransportInterface.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/utils/eClock.h>
+
+#include <chrono>
+#include <thread>
+
+using namespace std::literals::chrono_literals;
 
 namespace eprosima {
 namespace fastrtps {
@@ -147,7 +151,7 @@ void TCPChannelResource::send_pending_open_logical_ports(RTCPMessageManager* rtc
         {
             TCPTransactionId id = rtcp_manager->sendOpenLogicalPortRequest(this, port);
             negotiating_logical_ports_[id] = port;
-            eClock::my_sleep(100);
+            std::this_thread::sleep_for(100ms);
         }
     }
 }

@@ -16,7 +16,6 @@
 #include <fastrtps/transport/TCPChannelResource.h>
 #include <fastrtps/transport/TCPTransportInterface.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/utils/eClock.h>
 
 #include <future>
 

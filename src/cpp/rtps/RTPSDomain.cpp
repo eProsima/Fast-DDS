@@ -30,7 +30,6 @@
 
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/System.h>
 #include <fastrtps/utils/md5.h>
 
@@ -48,6 +47,8 @@ std::set<uint32_t> RTPSDomain::m_RTPSParticipantIDs;
 
 void RTPSDomain::stopAll()
 {
+    using namespace std::literals::chrono_literals;
+
     std::lock_guard<std::mutex> guard(m_mutex);
     logInfo(RTPS_PARTICIPANT,"DELETING ALL ENDPOINTS IN THIS DOMAIN");
 
@@ -56,7 +57,7 @@ void RTPSDomain::stopAll()
         RTPSDomain::removeRTPSParticipant_nts(m_RTPSParticipants.begin());
     }
     logInfo(RTPS_PARTICIPANT,"RTPSParticipants deleted correctly ");
-    eClock::my_sleep(100);
+    std::this_thread::sleep_for(100ms);
 }
 
 RTPSParticipant* RTPSDomain::createParticipant(

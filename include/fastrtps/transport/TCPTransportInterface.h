@@ -33,7 +33,6 @@
 #include <map>
 #include <memory>
 #include <mutex>
-#include <fastrtps/utils/eClock.h> // Includes <windows.h> and may produce problems when included before asio.
 
 namespace eprosima{
 namespace fastrtps{
@@ -91,7 +90,6 @@ protected:
     std::map<uint16_t, std::pair<TransportReceiverInterface*, ReceiverInUseCV*>> receiver_resources_;
 
     std::vector<std::pair<TCPChannelResource*, uint64_t>> sockets_timestamp_;
-    eClock my_clock_;
 
     asio::steady_timer keep_alive_event_;
 

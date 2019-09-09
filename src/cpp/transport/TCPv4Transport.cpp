@@ -18,7 +18,6 @@
 #include <algorithm>
 #include <fastrtps/log/Log.h>
 #include "asio.hpp"
-#include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 
