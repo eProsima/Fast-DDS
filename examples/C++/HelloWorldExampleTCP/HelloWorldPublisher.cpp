@@ -24,7 +24,6 @@
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/Domain.h>
-#include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/IPLocator.h>
 
 #include <thread>
@@ -157,7 +156,7 @@ void HelloWorldPublisher::runThread(
                 std::cout << "[RTCP] Message: " << hello_.message() << " with index: "
                     << hello_.index() << " SENT" << std::endl;
             }
-            eClock::my_sleep(sleep_ms);
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
         }
     }
     else
@@ -173,7 +172,7 @@ void HelloWorldPublisher::runThread(
                 std::cout << "[RTCP] Message: " << hello_.message() << " with index: "
                     << hello_.index() << " SENT" << std::endl;
             }
-            eClock::my_sleep(sleep_ms);
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
         }
     }
 }

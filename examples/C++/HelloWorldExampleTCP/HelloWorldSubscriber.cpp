@@ -24,7 +24,6 @@
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/Domain.h>
-#include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/IPLocator.h>
 
 using namespace eprosima::fastrtps;
@@ -166,6 +165,6 @@ void HelloWorldSubscriber::run(uint32_t number)
     std::cout << "[RTCP] Subscriber running until " << number << "samples have been received" << std::endl;
     while (number < this->listener.n_samples)
     {
-        eClock::my_sleep(500);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 }
