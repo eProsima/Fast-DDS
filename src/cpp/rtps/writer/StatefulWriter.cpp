@@ -155,12 +155,15 @@ StatefulWriter::~StatefulWriter()
     m_controllers.clear();
 
     // Stop all active proxies and pass them to the pool
-    while (!matched_readers_.empty())
     {
-        ReaderProxy* remote_reader = matched_readers_.back();
-        matched_readers_.pop_back();
-        remote_reader->stop();
-        matched_readers_pool_.push_back(remote_reader);
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+        while (!matched_readers_.empty())
+        {
+            ReaderProxy* remote_reader = matched_readers_.back();
+            matched_readers_.pop_back();
+            remote_reader->stop();
+            matched_readers_pool_.push_back(remote_reader);
+        }
     }
 
     // Destroy heartbeat event
@@ -962,12 +965,15 @@ bool StatefulWriter::try_remove_change(
 
     SequenceNumber_t min_low_mark;
 
-    for(ReaderProxy* it : matched_readers_)
     {
-        SequenceNumber_t reader_low_mark = it->changes_low_mark();
-        if (min_low_mark == SequenceNumber_t() || reader_low_mark < min_low_mark)
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+        for (ReaderProxy* it : matched_readers_)
         {
-            min_low_mark = reader_low_mark;
+            SequenceNumber_t reader_low_mark = it->changes_low_mark();
+            if (min_low_mark == SequenceNumber_t() || reader_low_mark < min_low_mark)
+            {
+                min_low_mark = reader_low_mark;
+            }
         }
     }
 
@@ -1130,7 +1136,7 @@ void StatefulWriter::send_heartbeat_to_nts(
 
 void StatefulWriter::send_heartbeat_nts_(
         size_t number_of_readers,
-        RTPSMessageGroup& message_group, 
+        RTPSMessageGroup& message_group,
         bool final,
         bool liveliness)
 {
