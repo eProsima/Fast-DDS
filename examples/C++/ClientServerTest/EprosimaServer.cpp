@@ -63,7 +63,9 @@ void EprosimaServer::serve()
 void EprosimaServer::serve(uint32_t samples)
 {
 	while(m_n_served < samples)
-		eClock::my_sleep(100);
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
 }
 
 bool EprosimaServer::init()
@@ -152,27 +154,18 @@ Result::RESULTTYPE EprosimaServer::calculate(Operation::OPERATIONTYPE type,
 
 void EprosimaServer::OperationListener::onNewDataMessage(Subscriber*)
 {
-	mp_up->mp_operation_sub->takeNextData((void*)&m_operation,&m_sampleInfo);
-	if(m_sampleInfo.sampleKind == ALIVE)
-	{
-		++mp_up->m_n_served;
-		m_result.m_guid = m_operation.m_guid;
-		m_result.m_operationId = m_operation.m_operationId;
-		m_result.m_result = 0;
-		m_result.m_resultType = mp_up->calculate(m_operation.m_operationType,
-				m_operation.m_num1,m_operation.m_num2,&m_result.m_result);
-		mp_up->mp_result_pub->write((void*)&m_result);
-	}
-}
-
-void EprosimaServer::OperationListener::onSubscriptionMatched(Subscriber*, MatchingInfo&)
-{
-
-}
-
-
-
-void EprosimaServer::ResultListener::onPublicationMatched(Publisher*, MatchingInfo&)
-{
-
+    mp_up->mp_operation_sub->takeNextData((void*)&m_operation,&m_sampleInfo);
+    if(m_sampleInfo.sampleKind == ALIVE)
+    {
+        ++mp_up->m_n_served;
+        m_result.m_guid = m_operation.m_guid;
+        m_result.m_operationId = m_operation.m_operationId;
+        m_result.m_result = 0;
+        m_result.m_resultType = mp_up->calculate(
+                    m_operation.m_operationType,
+                    m_operation.m_num1,
+                    m_operation.m_num2,
+                    &m_result.m_result);
+        mp_up->mp_result_pub->write((void*)&m_result);
+    }
 }
