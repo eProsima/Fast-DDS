@@ -18,9 +18,6 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 
 #include <fastrtps/Domain.h>
-
-#include <fastrtps/utils/eClock.h>
-
 #include "deadlinepayloadPublisher.h"
 
 using namespace eprosima::fastrtps;
@@ -96,7 +93,7 @@ void deadlinepayloadPublisher::run(uint32_t sleep_ms, int samples)
 {
     while(m_listener.n_matched == 0)
     {
-        eClock::my_sleep(250); // Sleep 250 ms
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 
     // Publication code
@@ -110,7 +107,7 @@ void deadlinepayloadPublisher::run(uint32_t sleep_ms, int samples)
     int sample = 0;
     while(true)
     {
-        eClock::my_sleep(sleep_ms);
+        std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
 
         if (samples > 0)
         {
