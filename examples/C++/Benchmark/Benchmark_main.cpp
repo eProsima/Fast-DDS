@@ -21,21 +21,14 @@
 #include "BenchmarkSubscriber.h"
 
 #include <fastrtps/Domain.h>
-
-#include <fastrtps/utils/eClock.h>
 #include <fastrtps/log/Log.h>
 
 using namespace eprosima;
 using namespace fastrtps;
 using namespace rtps;
+
 int main(int argc, char** argv)
 {
-    //Log::SetVerbosity(Log::Kind::Info);
-    //std::regex filter("RTCP(?!_SEQ)");
-    //std::regex filter("RTPS_HISTORY");
-    //std::regex filter("RTPS_READER");
-    //Log::SetCategoryFilter(filter);
-
     int type = 1;
     int transport = 1;
     bool paramsOk = true;
