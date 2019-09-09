@@ -19,7 +19,7 @@
 #include <fastrtps/types/DynamicDataPtr.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 
-#define DYNAMIC_TYPES_CHECKING
+//#define DYNAMIC_TYPES_CHECKING
 
 namespace eprosima {
 namespace fastrtps {
