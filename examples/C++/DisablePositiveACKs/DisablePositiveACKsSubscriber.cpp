@@ -23,7 +23,6 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/Subscriber.h>
 #include <fastrtps/Domain.h>
-#include <fastrtps/utils/eClock.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -102,6 +101,6 @@ void DisablePositiveACKsSubscriber::run(uint32_t number)
     std::cout << "Subscriber running until "<< number << " samples have been received"<<std::endl;
     while( number > this->listener.n_samples )
     {
-        eClock::my_sleep(500);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 }
