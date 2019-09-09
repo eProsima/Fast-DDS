@@ -24,7 +24,6 @@
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/Domain.h>
-#include <fastrtps/utils/eClock.h>
 #include <sstream>
 
 #include "OwnershipStrengthPublisher.h"
@@ -93,7 +92,7 @@ void OwnershipStrengthPublisher::run()
 {
     while(m_listener.n_matched == 0)
     {
-        eClock::my_sleep(250); // Sleep 250 ms
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 
     char ch = 'y';
