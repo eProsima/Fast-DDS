@@ -294,7 +294,6 @@ void MemoryTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subs
             std::cout << "Something is wrong" << std::endl;
         }
     }
-    //cout << "SAMPLE INFO: "<< mp_up->m_sampleinfo.writerGUID << mp_up->m_sampleinfo.sampleKind << endl;
 }
 
 void MemoryTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscriber)
@@ -312,9 +311,6 @@ void MemoryTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscri
     else
     {
         subscriber->takeNextData((void*)mp_up->mp_memory,&mp_up->m_sampleinfo);
-        //	cout << "R: "<< mp_up->mp_memory->seqnum << "|"<<mp_up->m_echo<<std::flush;
-        //	//	eClock::my_sleep(50);
-        //		cout << "NSAMPLES: " << (uint32_t)mp_up->n_samples<< endl;
         ++mp_up->n_received;
         if (mp_up->m_echo)
         {
@@ -402,8 +398,7 @@ bool MemoryTestSubscriber::test(uint32_t datasize)
     lock.unlock();
 
     cout << "TEST OF SIZE: " << datasize + 4 << " ENDS" << endl;
-    eClock::my_sleep(50);
-    //cout << "REMOVED: "<< removed<<endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
     if (dynamic_data)
     {
         DynamicTypeBuilderFactory::delete_instance();

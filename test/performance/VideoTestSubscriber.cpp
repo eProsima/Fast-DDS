@@ -398,7 +398,7 @@ bool VideoTestSubscriber::test()
     lock.unlock();
 
     cout << "TEST FINISHED" << endl;
-    eClock::my_sleep(50);
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
     analyzeTimes();
     if (m_stats.size() > 0)
