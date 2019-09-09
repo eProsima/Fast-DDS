@@ -27,9 +27,6 @@
 #include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 
 #include <fastrtps/Domain.h>
-
-#include <fastrtps/utils/eClock.h>
-
 #include "FlowControlExamplePublisher.h"
 
 using namespace eprosima::fastrtps;
@@ -106,7 +103,7 @@ void FlowControlExamplePublisher::run()
 {
     while(m_listener.n_matched == 0)
     {
-        eClock::my_sleep(250); // Sleep 250 ms
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 
     // Publication code
