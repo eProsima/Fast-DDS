@@ -31,7 +31,7 @@
 #include <mutex>
 #include <map>
 
-using namespace eprosima::fastrtps::types;
+using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastrtps{
@@ -39,7 +39,7 @@ namespace rtps {
 
 class RTPSParticipant;
 
-}
+} //namespace rtps
 
 class TopicAttributes;
 class WriterQos;

@@ -33,10 +33,12 @@ class WriterQos;
 class TopicAttributes;
 
 namespace rtps {
+
 class WriteParams;
 class WriterAttributes;
 struct InstanceHandle_t;
 struct GUID_t;
+
 } // namespace rtps
 
 } // namespace fastrtps

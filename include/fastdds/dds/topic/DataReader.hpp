@@ -28,7 +28,7 @@
 #include <vector>
 #include <cstdint>
 
-using namespace eprosima::fastrtps::types;
+using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastrtps {

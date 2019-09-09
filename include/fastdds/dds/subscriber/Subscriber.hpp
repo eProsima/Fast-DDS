@@ -147,6 +147,10 @@ public:
     ReturnCode_t get_datareaders(
         std::vector<DataReader*>& readers) const;
 
+    /**
+     * This operation checks if the subscriber has DataReaders
+     * @return true if the subscriber has one or several DataReaders, false in other case
+     */
     bool has_datareaders() const;
 
     /* TODO

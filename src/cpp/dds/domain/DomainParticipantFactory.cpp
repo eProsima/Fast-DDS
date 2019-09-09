@@ -161,7 +161,7 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
             return ReturnCode_t::RETCODE_OK;
         }
     }
-    return RETCODE_ERROR;
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
 DomainParticipant* DomainParticipantFactory::create_participant(

@@ -31,16 +31,18 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/types/TypesBase.h>
 
-using namespace eprosima::fastrtps::types;
+using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima{
 namespace fastrtps{
 
 namespace rtps{
+
 class RTPSParticipant;
 class WriterProxyData;
 class ReaderProxyData;
-}
+
+} //namespace rtps
 
 class PublisherAttributes;
 class SubscriberAttributes;

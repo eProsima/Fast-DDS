@@ -427,7 +427,7 @@ void MemberDescriptor::set_default_union_value(bool bDefault)
 bool MemberDescriptor::annotation_is_optional() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_OPTIONAL_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
         if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
@@ -450,7 +450,7 @@ bool MemberDescriptor::annotation_get_key() const
     {
         ann = get_annotation(ANNOTATION_EPKEY_ID);
     }
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
         if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
@@ -464,7 +464,7 @@ bool MemberDescriptor::annotation_get_key() const
 bool MemberDescriptor::annotation_is_must_understand() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_MUST_UNDERSTAND_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
         if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
@@ -478,7 +478,7 @@ bool MemberDescriptor::annotation_is_must_understand() const
 bool MemberDescriptor::annotation_is_non_serialized() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
         if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
@@ -508,7 +508,7 @@ bool MemberDescriptor::annotation_is_position() const
 std::string MemberDescriptor::annotation_get_value() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_VALUE_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
         if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
@@ -522,7 +522,7 @@ std::string MemberDescriptor::annotation_get_value() const
 std::string MemberDescriptor::annotation_get_default() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_DEFAULT_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
         if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
@@ -536,7 +536,7 @@ std::string MemberDescriptor::annotation_get_default() const
 uint16_t MemberDescriptor::annotation_get_position() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_POSITION_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
         if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
@@ -671,7 +671,7 @@ bool MemberDescriptor::annotation_is_bit_bound() const
 uint16_t MemberDescriptor::annotation_get_bit_bound() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
         if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)

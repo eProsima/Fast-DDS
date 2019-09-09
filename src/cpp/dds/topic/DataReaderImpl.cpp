@@ -97,7 +97,7 @@ DataReaderImpl::DataReaderImpl(
         static_cast<ReaderHistory*>(&history_),
         static_cast<ReaderListener*>(&reader_listener_));
 
-    if(reader == nullptr)
+    if (reader == nullptr)
     {
         logError(DATA_READER, "Problem creating associated Reader");
     }
@@ -108,7 +108,7 @@ DataReaderImpl::DataReaderImpl(
 void DataReaderImpl::disable()
 {
     set_listener(nullptr);
-    if(reader_ != nullptr)
+    if (reader_ != nullptr)
     {
         reader_->setListener(nullptr);
     }
@@ -119,7 +119,7 @@ DataReaderImpl::~DataReaderImpl()
     delete lifespan_timer_;
     delete deadline_timer_;
 
-    if(reader_ != nullptr)
+    if (reader_ != nullptr)
     {
         logInfo(DATA_READER, guid().entityId << " in topic: " << topic_att_.topicName);
     }
@@ -177,7 +177,7 @@ ReturnCode_t DataReaderImpl::set_qos(
 {
     //QOS:
     //CHECK IF THE QOS CAN BE SET
-    if(!qos.checkQos())
+    if (!qos.checkQos())
     {
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
@@ -227,7 +227,7 @@ bool DataReaderImpl::set_topic(
         const TopicAttributes& topic_att)
 {
     //TOPIC ATTRIBUTES
-    if(topic_att_ != topic_att)
+    if (topic_att_ != topic_att)
     {
         logWarning(RTPS_READER,"Topic Attributes cannot be updated");
         return false;
@@ -248,7 +248,7 @@ bool DataReaderImpl::set_attributes(
 {
     bool updated = true;
     bool missing = false;
-    if(att.endpoint.unicastLocatorList.size() != att_.endpoint.unicastLocatorList.size() ||
+    if (att.endpoint.unicastLocatorList.size() != att_.endpoint.unicastLocatorList.size() ||
             att.endpoint.multicastLocatorList.size() != att_.endpoint.multicastLocatorList.size())
     {
         logWarning(RTPS_READER,"Locator Lists cannot be changed or updated in this version");
@@ -263,13 +263,13 @@ bool DataReaderImpl::set_attributes(
             for(LocatorListConstIterator lit2 = att.endpoint.unicastLocatorList.begin();
                     lit2!= att.endpoint.unicastLocatorList.end();++lit2)
             {
-                if(*lit1 == *lit2)
+                if (*lit1 == *lit2)
                 {
                     missing = false;
                     break;
                 }
             }
-            if(missing)
+            if (missing)
             {
                 logWarning(RTPS_READER,"Locator: "<< *lit1 << " not present in new list");
                 logWarning(RTPS_READER,"Locator Lists cannot be changed or updated in this version");
@@ -282,13 +282,13 @@ bool DataReaderImpl::set_attributes(
             for(LocatorListConstIterator lit2 = att.endpoint.multicastLocatorList.begin();
                     lit2!= att.endpoint.multicastLocatorList.end();++lit2)
             {
-                if(*lit1 == *lit2)
+                if (*lit1 == *lit2)
                 {
                     missing = false;
                     break;
                 }
             }
-            if(missing)
+            if (missing)
             {
                 logWarning(RTPS_READER,"Locator: "<< *lit1<< " not present in new list");
                 logWarning(RTPS_READER,"Locator Lists cannot be changed or updated in this version");
@@ -296,7 +296,7 @@ bool DataReaderImpl::set_attributes(
         }
     }
 
-    if(updated)
+    if (updated)
     {
         att_.expectsInlineQos = att.expectsInlineQos;
     }
@@ -315,7 +315,7 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
 {
     if (data_reader_->on_new_cache_change_added(change_in))
     {
-        if(data_reader_->listener_ != nullptr)
+        if (data_reader_->listener_ != nullptr)
         {
             data_reader_->listener_->on_data_available(data_reader_->user_datareader_);
         }
@@ -363,7 +363,7 @@ bool DataReaderImpl::on_new_cache_change_added(
         }
         else if (timer_owner_ == change->instanceHandle || timer_owner_ == InstanceHandle_t())
         {
-            if(deadline_timer_reschedule())
+            if (deadline_timer_reschedule())
             {
                 deadline_timer_->cancel_timer();
                 deadline_timer_->restart_timer();

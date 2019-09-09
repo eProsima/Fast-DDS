@@ -406,7 +406,7 @@ bool TypeDescriptor::annotation_is_key() const
 bool TypeDescriptor::annotation_is_non_serialized() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
         if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
@@ -421,7 +421,7 @@ bool TypeDescriptor::annotation_is_non_serialized() const
 std::string TypeDescriptor::annotation_get_extensibility() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
         if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
@@ -435,7 +435,7 @@ std::string TypeDescriptor::annotation_get_extensibility() const
 bool TypeDescriptor::annotation_get_nested() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_NESTED_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
         if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
@@ -453,7 +453,7 @@ bool TypeDescriptor::annotation_get_key() const
     {
         ann = get_annotation(ANNOTATION_EPKEY_ID);
     }
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
         if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
@@ -467,7 +467,7 @@ bool TypeDescriptor::annotation_get_key() const
 uint16_t TypeDescriptor::annotation_get_bit_bound() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
         if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)

@@ -92,9 +92,9 @@ const SubscriberQos& SubscriberImpl::get_qos() const
 ReturnCode_t SubscriberImpl::set_qos(
         const SubscriberQos& qos)
 {
-     if(!qos.check_qos())
+     if (!qos.check_qos())
     {
-        if(!qos_.can_qos_be_updated(qos))
+        if (!qos_.can_qos_be_updated(qos))
         {
             return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
         }
@@ -132,18 +132,18 @@ DataReader* SubscriberImpl::create_datareader(
 
     /// Preconditions
     // Check the type was registered.
-    if(type_support.empty())
+    if (type_support.empty())
     {
         logError(SUBSCRIBER, "Type : "<< topic_att.getTopicDataType() << " Not Registered");
         return nullptr;
     }
-    if(topic_att.topicKind == WITH_KEY && !type_support->m_isGetKeyDefined)
+    if (topic_att.topicKind == WITH_KEY && !type_support->m_isGetKeyDefined)
     {
         logError(SUBSCRIBER, "Keyed Topic needs getKey function");
         return nullptr;
     }
 
-    if(!reader_qos.checkQos() || !topic_att.checkQos())
+    if (!reader_qos.checkQos() || !topic_att.checkQos())
     {
         return nullptr;
     }
@@ -159,12 +159,12 @@ DataReader* SubscriberImpl::create_datareader(
     ratt.expectsInlineQos = att_.expectsInlineQos;
     ratt.endpoint.properties = att_.properties;
 
-    if(att_.getEntityID()>0)
+    if (att_.getEntityID()>0)
     {
         ratt.endpoint.setEntityID(static_cast<uint8_t>(att_.getEntityID()));
     }
 
-    if(att_.getUserDefinedID()>0)
+    if (att_.getUserDefinedID()>0)
     {
         ratt.endpoint.setUserDefinedID(static_cast<uint8_t>(att_.getUserDefinedID()));
     }
@@ -177,7 +177,7 @@ DataReader* SubscriberImpl::create_datareader(
     property.name("topic_name");
     property.value(topic_att.getTopicName().c_str());
     ratt.endpoint.properties.properties().push_back(std::move(property));
-    if(reader_qos.m_partition.getNames().size() > 0)
+    if (reader_qos.m_partition.getNames().size() > 0)
     {
         property.name("partitions");
         std::string partitions;
@@ -202,7 +202,7 @@ DataReader* SubscriberImpl::create_datareader(
         att_.historyMemoryPolicy,
         listener);
 
-    if(impl->reader_ == nullptr)
+    if (impl->reader_ == nullptr)
     {
         logError(SUBSCRIBER, "Problem creating associated Reader");
         delete impl;
@@ -225,7 +225,7 @@ DataReader* SubscriberImpl::create_datareader(
 ReturnCode_t SubscriberImpl::delete_datareader(
         DataReader* reader)
 {
-    if(user_subscriber_ != reader->get_subscriber())
+    if (user_subscriber_ != reader->get_subscriber())
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
@@ -272,7 +272,7 @@ ReturnCode_t SubscriberImpl::get_datareaders(
 
 bool SubscriberImpl::has_datareaders() const
 {
-    if(readers_.empty())
+    if (readers_.empty())
     {
         return false;
     }
@@ -369,7 +369,7 @@ bool SubscriberImpl::set_attributes(
 {
     bool updated = true;
     bool missing = false;
-    if(att.unicastLocatorList.size() != att_.unicastLocatorList.size() ||
+    if (att.unicastLocatorList.size() != att_.unicastLocatorList.size() ||
             att.multicastLocatorList.size() != att_.multicastLocatorList.size())
     {
         logWarning(RTPS_READER,"Locator Lists cannot be changed or updated in this version");
@@ -384,13 +384,13 @@ bool SubscriberImpl::set_attributes(
             for(LocatorListConstIterator lit2 = att.unicastLocatorList.begin();
                     lit2!= att.unicastLocatorList.end();++lit2)
             {
-                if(*lit1 == *lit2)
+                if (*lit1 == *lit2)
                 {
                     missing = false;
                     break;
                 }
             }
-            if(missing)
+            if (missing)
             {
                 logWarning(RTPS_READER,"Locator: "<< *lit1 << " not present in new list");
                 logWarning(RTPS_READER,"Locator Lists cannot be changed or updated in this version");
@@ -403,13 +403,13 @@ bool SubscriberImpl::set_attributes(
             for(LocatorListConstIterator lit2 = att.multicastLocatorList.begin();
                     lit2!= att.multicastLocatorList.end();++lit2)
             {
-                if(*lit1 == *lit2)
+                if (*lit1 == *lit2)
                 {
                     missing = false;
                     break;
                 }
             }
-            if(missing)
+            if (missing)
             {
                 logWarning(RTPS_READER,"Locator: "<< *lit1<< " not present in new list");
                 logWarning(RTPS_READER,"Locator Lists cannot be changed or updated in this version");
@@ -417,7 +417,7 @@ bool SubscriberImpl::set_attributes(
         }
     }
 
-    if(updated)
+    if (updated)
     {
         att_ = att;
     }

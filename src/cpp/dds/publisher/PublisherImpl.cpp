@@ -94,9 +94,9 @@ const PublisherQos& PublisherImpl::get_qos() const
 ReturnCode_t PublisherImpl::set_qos(
         const PublisherQos& qos)
 {
-    if(!qos.check_qos())
+    if (!qos.check_qos())
     {
-        if(!qos_.can_qos_be_updated(qos))
+        if (!qos_.can_qos_be_updated(qos))
         {
             return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
         }
@@ -163,20 +163,20 @@ DataWriter* PublisherImpl::create_datawriter(
 
     /// Preconditions
     // Check the type was registered.
-    if(type_support.empty())
+    if (type_support.empty())
     {
         logError(PUBLISHER, "Type: "<< topic_att.getTopicDataType() << " Not Registered");
         return nullptr;
     }
 
     // Check the type supports keys.
-    if(topic_att.topicKind == WITH_KEY && !type_support->m_isGetKeyDefined)
+    if (topic_att.topicKind == WITH_KEY && !type_support->m_isGetKeyDefined)
     {
         logError(PUBLISHER, "Keyed Topic " << topic_att.getTopicName() << " needs getKey function");
         return nullptr;
     }
 
-    if(!topic_att.checkQos() || !writer_qos.checkQos())
+    if (!topic_att.checkQos() || !writer_qos.checkQos())
     {
         return nullptr;
     }
@@ -215,7 +215,7 @@ DataWriter* PublisherImpl::create_datawriter(
     property.value(topic_att.getTopicName().c_str());
     w_att.endpoint.properties.properties().push_back(std::move(property));
 
-    if(writer_qos.m_partition.getNames().size() > 0)
+    if (writer_qos.m_partition.getNames().size() > 0)
     {
         property.name("partitions");
         std::string partitions;
@@ -243,7 +243,7 @@ DataWriter* PublisherImpl::create_datawriter(
         att_.historyMemoryPolicy,
         listener);
 
-    if(impl->writer_ == nullptr)
+    if (impl->writer_ == nullptr)
     {
         logError(PUBLISHER, "Problem creating associated Writer");
         delete impl;
@@ -267,7 +267,7 @@ DataWriter* PublisherImpl::create_datawriter(
 ReturnCode_t PublisherImpl::delete_datawriter(
         DataWriter* writer)
 {
-    if(user_publisher_ != writer->get_publisher())
+    if (user_publisher_ != writer->get_publisher())
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
@@ -314,7 +314,7 @@ bool PublisherImpl::get_datawriters(
 
 bool PublisherImpl::has_datawriters() const
 {
-    if(writers_.empty())
+    if (writers_.empty())
     {
         return false;
     }
@@ -458,9 +458,9 @@ bool PublisherImpl::set_attributes(
 {
     bool updated = true;
     bool missing = false;
-    if(att_.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+    if (att_.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
     {
-        if(att.unicastLocatorList.size() != att_.unicastLocatorList.size() ||
+        if (att.unicastLocatorList.size() != att_.unicastLocatorList.size() ||
             att.multicastLocatorList.size() != att_.multicastLocatorList.size())
         {
             logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
@@ -475,13 +475,13 @@ bool PublisherImpl::set_attributes(
                 for(LocatorListConstIterator lit2 = att.unicastLocatorList.begin();
                      lit2!= att.unicastLocatorList.end();++lit2)
                 {
-                    if(*lit1 == *lit2)
+                    if (*lit1 == *lit2)
                     {
                         missing = false;
                         break;
                     }
                 }
-                if(missing)
+                if (missing)
                 {
                     logWarning(PUBLISHER,"Locator: "<< *lit1 << " not present in new list");
                     logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
@@ -494,13 +494,13 @@ bool PublisherImpl::set_attributes(
                 for(LocatorListConstIterator lit2 = att.multicastLocatorList.begin();
                      lit2!= att.multicastLocatorList.end();++lit2)
                 {
-                    if(*lit1 == *lit2)
+                    if (*lit1 == *lit2)
                     {
                         missing = false;
                         break;
                     }
                 }
-                if(missing)
+                if (missing)
                 {
                     logWarning(PUBLISHER,"Locator: "<< *lit1<< " not present in new list");
                     logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
@@ -509,7 +509,7 @@ bool PublisherImpl::set_attributes(
         }
     }
 
-    if(updated)
+    if (updated)
     {
         att_ = att;
     }

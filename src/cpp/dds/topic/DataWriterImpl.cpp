@@ -158,13 +158,13 @@ ReturnCode_t DataWriterImpl::write(
             void* data,
             const rtps::InstanceHandle_t& handle)
 {
-    if(!handle.isDefined())
+    if (!handle.isDefined())
     {
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
     logInfo(DATA_WRITER, "Writing new data with Handle");
     WriteParams wparams;
-    if(create_new_change_with_params(ALIVE, data, wparams, handle))
+    if (create_new_change_with_params(ALIVE, data, wparams, handle))
     {
         return ReturnCode_t::RETCODE_OK;
     }
@@ -175,13 +175,13 @@ ReturnCode_t DataWriterImpl::dispose(
         void* data,
         const rtps::InstanceHandle_t& handle)
 {
-    if(!handle.isDefined())
+    if (!handle.isDefined())
     {
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
     logInfo(DATA_WRITER, "Disposing of data");
     WriteParams wparams;
-    if(create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams, handle))
+    if (create_new_change_with_params(NOT_ALIVE_DISPOSED, data, wparams, handle))
     {
         return ReturnCode_t::RETCODE_OK;
     }
@@ -490,7 +490,7 @@ ReturnCode_t DataWriterImpl::set_qos(
     {
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
-    else if(!qos_.canQosBeUpdated(qos))
+    else if (!qos_.canQosBeUpdated(qos))
     {
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
@@ -611,11 +611,11 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
 ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
         const Duration_t &max_wait)
 {
-    if(writer_->wait_for_all_acked(max_wait))
+    if (writer_->wait_for_all_acked(max_wait))
     {
         return ReturnCode_t::RETCODE_OK;
     }
-    return RETCODE_ERROR;
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
 bool DataWriterImpl::deadline_timer_reschedule()
