@@ -18,9 +18,6 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 
 #include <fastrtps/Domain.h>
-
-#include <fastrtps/utils/eClock.h>
-
 #include "FilteringExamplePublisher.h"
 
 using namespace eprosima::fastrtps;
@@ -92,7 +89,7 @@ void FilteringExamplePublisher::run()
 {
     while(m_listener.n_matched == 0)
     {
-        eClock::my_sleep(250); // Sleep 250 ms
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 
     // Publication code
@@ -105,10 +102,10 @@ void FilteringExamplePublisher::run()
         sampleNumber++;
         st.sampleNumber(sampleNumber);
         mp_fast_publisher->write(&st);
-        if (sampleNumber % 5 == 0) { // slow publisher writes every 5 secs.
+        if (sampleNumber % 5 == 0)
+        { // slow publisher writes every 5 secs.
             mp_slow_publisher->write(&st);
         }
-        eClock::my_sleep(1000);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
-
 }
