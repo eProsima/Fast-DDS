@@ -111,31 +111,29 @@ bool BenchMarkSubscriber::init(
     Wparam.topic.topicKind = NO_KEY;
 
     //REGISTER THE TYPE
+    switch (m_iSize)
     {
-        switch (m_iSize)
-        {
-        default:
-        case 0:
-            Rparam.topic.topicDataType = "BenchMark";
-            Wparam.topic.topicDataType = "BenchMark";
-            Domain::registerType(mp_participant, &m_type);
-            break;
-        case 1:
-            Rparam.topic.topicDataType = "BenchMarkSmall";
-            Wparam.topic.topicDataType = "BenchMarkSmall";
-            Domain::registerType(mp_participant, &m_typeSmall);
-            break;
-        case 2:
-            Rparam.topic.topicDataType = "BenchMarkMedium";
-            Wparam.topic.topicDataType = "BenchMarkMedium";
-            Domain::registerType(mp_participant, &m_typeMedium);
-            break;
-        case 3:
-            Rparam.topic.topicDataType = "BenchMarkBig";
-            Wparam.topic.topicDataType = "BenchMarkBig";
-            Domain::registerType(mp_participant, &m_typeBig);
-            break;
-        }
+    default:
+    case 0:
+        Rparam.topic.topicDataType = "BenchMark";
+        Wparam.topic.topicDataType = "BenchMark";
+        Domain::registerType(mp_participant, &m_type);
+        break;
+    case 1:
+        Rparam.topic.topicDataType = "BenchMarkSmall";
+        Wparam.topic.topicDataType = "BenchMarkSmall";
+        Domain::registerType(mp_participant, &m_typeSmall);
+        break;
+    case 2:
+        Rparam.topic.topicDataType = "BenchMarkMedium";
+        Wparam.topic.topicDataType = "BenchMarkMedium";
+        Domain::registerType(mp_participant, &m_typeMedium);
+        break;
+    case 3:
+        Rparam.topic.topicDataType = "BenchMarkBig";
+        Wparam.topic.topicDataType = "BenchMarkBig";
+        Domain::registerType(mp_participant, &m_typeBig);
+        break;
     }
 
 	Rparam.topic.topicName = topicName + "_1";
