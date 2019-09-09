@@ -28,6 +28,10 @@ namespace fastrtps {
 /**
  * Class eClock used to obtain the time and to sleep some processes.
  * Time measured since 1970.
+ *
+ * @deprecated This will be removed on v2.0 and has been deprecated since v1.9.1 as C++11 features
+ *             in <chrono> and <thread>, as long as Time_t::now(() can be used instead.
+ *
  * @ingroup UTILITIES_MODULE
  */
 class RTPS_DllAPI eClock
@@ -44,6 +48,7 @@ public:
 	* @param now Pointer to a RTPS Time_t instance to fill with the current time
 	* @return true on success
 	*/
+    FASTRTPS_DEPRECATED("Use rtps::Time_t::now() instead")
 	bool setTimeNow(rtps::Time_t* now);
 
 	/**
@@ -51,23 +56,27 @@ public:
 	* @param now Pointer to a Time_t instance to fill with the current time
 	* @return true on success
 	*/
+    FASTRTPS_DEPRECATED("Use Time_t::now() instead")
 	bool setTimeNow(fastrtps::Time_t* now);
 
 	/**
 	* Method to start measuring an interval in us.
 	*/
+    FASTRTPS_DEPRECATED("Use methods from <chrono> instead")
 	void intervalStart();
 
 	/**
 	* Method to finish measuring an interval in us.
 	* @return Time of the interval in us
 	*/
+    FASTRTPS_DEPRECATED("Use methods from <chrono> instead")
 	uint64_t intervalEnd();
 
 	/**
 	* Put the current thread to sleep.
 	* @param milliseconds Time to sleep
 	*/
+    FASTRTPS_DEPRECATED("Use std::this_thread::sleep_for instead")
 	static void my_sleep(uint32_t milliseconds);
 
 private:
