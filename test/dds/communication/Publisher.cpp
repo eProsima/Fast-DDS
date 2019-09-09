@@ -305,7 +305,7 @@ int main(
             data->set_uint32_value(index + 1, 1);
         }
 
-        types::DynamicData* inner = data->loan_value(2);
+        inner = data->loan_value(2);
         octet inner_count;
         inner->get_byte_value(inner_count, 0);
         inner->set_byte_value(inner_count + 1, 0);
