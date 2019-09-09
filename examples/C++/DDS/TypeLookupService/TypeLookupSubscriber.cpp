@@ -137,7 +137,8 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
 
                 if (subscriber_->mp_subscriber == nullptr)
                 {
-                    SubscriberAttributes Rparam = subscriber_->att_;
+                    SubscriberAttributes Rparam;
+                    Rparam = subscriber_->att_;
                     Rparam.topic = subscriber_->topic_;
                     Rparam.topic.topicName = topic_name;
                     Rparam.qos = subscriber_->qos_;
