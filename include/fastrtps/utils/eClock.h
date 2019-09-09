@@ -20,47 +20,24 @@
 #ifndef ECLOCK_H_
 #define ECLOCK_H_
 
-#if defined(_WIN32)
-#include <time.h>
-#include <windows.h>
-#if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
-  #define DELTA_EPOCH_IN_MICROSECS  11644473600000000Ui64
-
-struct timezone
-{
-    int  tz_minuteswest; /* minutes W of Greenwich */
-    int  tz_dsttime;     /* type of dst correction */
-};
-#else
-  #define DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
-#endif
-
-
-#else
-#include <sys/time.h>
-#include <chrono>
-
-#endif
-
 #include "../rtps/common/Time_t.h"
 
-
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 
 /**
  * Class eClock used to obtain the time and to sleep some processes.
  * Time measured since 1970.
  * @ingroup UTILITIES_MODULE
  */
-class RTPS_DllAPI eClock {
+class RTPS_DllAPI eClock
+{
+
 public:
-	eClock();
+
+    eClock();
+
 	virtual ~eClock();
-	//!Seconds from 1900 to 1970, initialized to 0 to comply with RTPS 2.2
-	int32_t m_seconds_from_1900_to_1970;
-	//!Difference from UTC in seconds
-	int32_t m_utc_seconds_diff;
 
 	/**
 	* Fill a Time_t with the current time
@@ -93,16 +70,9 @@ public:
 	*/
 	static void my_sleep(uint32_t milliseconds);
 
-#if defined(_WIN32)
-	FILETIME ft;
-	unsigned long long ftlong;
-	FILETIME ft1,ft2;
-	LARGE_INTEGER freq;
-	LARGE_INTEGER li1,li2;
-#else
-	timeval m_now;
-	timeval m_interval1,m_interval2;
-#endif
+private:
+    
+    uint64_t interval_start;
 };
 
 } /* namespace rtps */
