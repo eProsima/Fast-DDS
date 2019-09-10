@@ -419,24 +419,38 @@ bool MessageReceiver::readSubmessageHeader(CDRMessage_t* msg, SubmessageHeader_t
     return true;
 }
 
-bool MessageReceiver::willAReaderAcceptMsgDirectedTo(const EntityId_t & readerID)
+bool MessageReceiver::willAReaderAcceptMsgDirectedTo(
+        const EntityId_t& readerID)
 {
-    if(AssociatedReaders.empty()) {
+    if(AssociatedReaders.empty())
+    {
         logWarning(RTPS_MSG_IN,IDSTRING"Data received when NO readers are listening");
         return false;
     }
 
-    if (readerID != c_EntityId_Unknown) {
+    if (readerID != c_EntityId_Unknown)
+    {
         const auto readers = AssociatedReaders.find(readerID);
-        if (readers != AssociatedReaders.end() && !readers->second.empty()) {
+        if (readers != AssociatedReaders.end())
+        {
             return true;
         }
     }
-    else {
-        for(const auto & readers : AssociatedReaders) {
-            if (readers.second.empty()) continue;
-            for (const auto & it : readers.second) {
-                if (it->m_acceptMessagesToUnknownReaders) return true;
+    else
+    {
+        for(const auto& readers : AssociatedReaders)
+        {
+            if (readers.second.empty())
+            {
+                continue;
+            }
+
+            for (const auto& it : readers.second)
+            {
+                if (it->m_acceptMessagesToUnknownReaders)
+                {
+                    return true;
+                }
             }
         }
     }
@@ -445,16 +459,31 @@ bool MessageReceiver::willAReaderAcceptMsgDirectedTo(const EntityId_t & readerID
     return false;
 }
 
-void MessageReceiver::findAllReaders(const EntityId_t & readerID, std::function<void(RTPSReader*)> callback)
+void MessageReceiver::findAllReaders(
+        const EntityId_t& readerID,
+        std::function<void(RTPSReader*)> callback)
 {
-    if (readerID != c_EntityId_Unknown) {
+    if (readerID != c_EntityId_Unknown)
+    {
         const auto readers = AssociatedReaders.find(readerID);
-        for (const auto & it : readers->second) callback(it);
+        if (readers != AssociatedReaders.end())
+        {
+            for (const auto& it : readers->second)
+            {
+                callback(it);
+            }
+        }
     }
-    else {
-        for (const auto & readers : AssociatedReaders) {
-            for (const auto & it : readers.second) {
-                if (it->m_acceptMessagesToUnknownReaders) callback(it);
+    else
+    {
+        for (const auto& readers : AssociatedReaders)
+        {
+            for (const auto& it : readers.second)
+            {
+                if (it->m_acceptMessagesToUnknownReaders)
+                {
+                    callback(it);
+                }
             }
         }
     }
