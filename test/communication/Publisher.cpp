@@ -25,7 +25,6 @@
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/Domain.h>
-#include <fastrtps/utils/eClock.h>
 
 #include <types/HelloWorldType.h>
 
@@ -266,7 +265,7 @@ int main(int argc, char** argv)
             ++data.index();
         }
 
-        eClock::my_sleep(250);
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
     };
 
     Domain::removeParticipant(participant);

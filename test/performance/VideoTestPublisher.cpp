@@ -481,7 +481,7 @@ GstFlowReturn VideoTestPublisher::new_sample(GstElement *sink, VideoTestPublishe
     {
         if (sub->m_sendSleepTime != 0)
         {
-            eClock::my_sleep(rand() % sub->m_sendSleepTime);
+            std::this_thread::sleep_for(std::chrono::milliseconds(rand() % sub->m_sendSleepTime));
         }
 
         GstSample* sample = gst_app_sink_pull_sample(GST_APP_SINK(sink));

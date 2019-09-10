@@ -24,7 +24,6 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/Domain.h>
-#include <fastrtps/utils/eClock.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps;
@@ -125,7 +124,7 @@ void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
     eprosima_profiling::discovery_finished();
 
     std::cout << "Publisher matched. Sending samples" << std::endl;
-    eClock::my_sleep(500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     for(uint32_t i = 0;i<samples;++i)
     {
@@ -135,7 +134,7 @@ void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
         {
             std::cout << "Message with index: "<< m_data.index() << " SENT" << std::endl;
         }
-        eClock::my_sleep(500);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
         if (i == 0)
         {
@@ -144,7 +143,7 @@ void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
             eprosima_profiling::first_sample_exchanged();
 
             std::cout << "First message has been sent" << std::endl;
-            eClock::my_sleep(500);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
     }
 
@@ -160,7 +159,7 @@ void AllocTestPublisher::run(uint32_t samples, bool wait_unmatch)
     else
     {
         std::cout << "All messages have been sent. Waiting a bit to let subscriber receive samples." << std::endl;
-        eClock::my_sleep(500);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 
     // Flush callgrind graph

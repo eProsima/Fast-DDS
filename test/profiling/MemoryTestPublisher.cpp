@@ -337,7 +337,7 @@ void MemoryTestPublisher::run(uint32_t test_time)
     disc_lock.unlock();
 
     test(test_time, m_data_size);
-    eClock::my_sleep(100);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     cout << "REMOVING PUBLISHER"<<endl;
     Domain::removePublisher(this->mp_commandpub);

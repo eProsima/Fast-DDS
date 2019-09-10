@@ -27,7 +27,6 @@
 #include <fastrtps/subscriber/SubscriberListener.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/subscriber/SampleInfo.h>
-#include <fastrtps/utils/eClock.h>
 
 #include <types/HelloWorldType.h>
 
@@ -274,7 +273,7 @@ int main(int argc, char** argv)
 
     while(notexit && run)
     {
-        eClock::my_sleep(250);
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 
     if (run)

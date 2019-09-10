@@ -404,9 +404,6 @@ void LatencyTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscr
     else
     {
         subscriber->takeNextData((void*)mp_up->mp_latency,&mp_up->m_sampleinfo);
-        //	cout << "R: "<< mp_up->mp_latency->seqnum << "|"<<mp_up->m_echo<<std::flush;
-        //	//	eClock::my_sleep(50);
-        //		cout << "NSAMPLES: " << (uint32_t)mp_up->n_samples<< endl;
         if (mp_up->m_echo)
         {
             mp_up->mp_datapub->write((void*)mp_up->mp_latency);
@@ -476,7 +473,7 @@ bool LatencyTestSubscriber::test(uint32_t datasize)
     lock.unlock();
 
     cout << "TEST OF SIZE: " << datasize + 4 << " ENDS" << endl;
-    eClock::my_sleep(50);
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
     size_t removed;
     this->mp_datapub->removeAllChange(&removed);
     //cout << "REMOVED: "<< removed<<endl;
