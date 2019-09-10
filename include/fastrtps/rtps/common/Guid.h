@@ -572,21 +572,8 @@ struct hash<eprosima::fastrtps::rtps::EntityId_t>
     std::size_t operator()(
             const eprosima::fastrtps::rtps::EntityId_t& k) const
     {
-        using eprosima::fastrtps::rtps::octet;
-#if __BIG_ENDIAN__
-        uint32_t* aux = reinterpret_cast<uint32_t*>(k.value);
-        uint32_t result = *aux;
-#else
-        const octet* aux = k.value;
-        uint32_t result;
-        octet* aux_reverse = reinterpret_cast<octet*>(&result);
-        aux_reverse[0] = aux[3];
-        aux_reverse[1] = aux[2];
-        aux_reverse[2] = aux[1];
-        aux_reverse[3] = aux[0];
-#endif
-        std::hash<uint32_t> hash_fn;
-        return hash_fn(result);
+        const uint32_t* aux = reinterpret_cast<const uint32_t*>(k.value);
+        return static_cast<std::size_t>(*aux);
     }
 };
 
