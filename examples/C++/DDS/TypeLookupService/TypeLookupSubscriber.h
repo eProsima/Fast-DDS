@@ -49,9 +49,6 @@ public:
     //!Run the subscriber until number samples have been recevied.
     void run(uint32_t number);
 
-    void print_dynamic_data(
-            eprosima::fastrtps::types::DynamicData_ptr data,
-            eprosima::fastrtps::types::DynamicType_ptr type) const;
 private:
     eprosima::fastdds::dds::DomainParticipant* mp_participant;
     eprosima::fastdds::dds::Subscriber* mp_subscriber;
@@ -60,10 +57,7 @@ private:
     eprosima::fastrtps::SubscriberAttributes att_;
     eprosima::fastrtps::ReaderQos qos_;
     eprosima::fastrtps::TopicAttributes topic_;
-    void print_member_data(
-            eprosima::fastrtps::types::DynamicData* data,
-            eprosima::fastrtps::types::DynamicTypeMember*,
-            const std::string& tab = "\t") const;
+
 public:
     class SubListener
         : public eprosima::fastdds::dds::DataReaderListener
