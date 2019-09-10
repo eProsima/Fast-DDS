@@ -21,7 +21,6 @@
 #include "LivelinessSubscriber.h"
 
 #include <fastrtps/Domain.h>
-#include <fastrtps/utils/eClock.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/qos/QosPolicies.h>
 

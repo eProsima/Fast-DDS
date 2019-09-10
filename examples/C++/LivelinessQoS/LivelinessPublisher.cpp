@@ -23,7 +23,6 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/Domain.h>
-#include <fastrtps/utils/eClock.h>
 
 #include <thread>
 
@@ -125,7 +124,7 @@ void LivelinessPublisher::runThread(
         {
             std::cout << "Message with index: " << topic_.index()<< " SENT by publisher " << pub->getGuid() << std::endl;
         }
-        eClock::my_sleep(sleep);
+        std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
     }
 
     std::cin.ignore();

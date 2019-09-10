@@ -26,9 +26,6 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 
 #include <fastrtps/Domain.h>
-
-#include <fastrtps/utils/eClock.h>
-
 #include "XMLProfilesExamplePublisher.h"
 
 using namespace eprosima::fastrtps;
@@ -91,7 +88,7 @@ void XMLProfilesExamplePublisher::run()
         std::cout << "Waiting for Subscribers." << std::endl;
         while(m_listener.n_matched == 0)
         {
-            eClock::my_sleep(250); // Sleep 250 ms
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
         }
 
         do
@@ -115,7 +112,7 @@ void XMLProfilesExamplePublisher::run()
                 }
                 mp_publisher->write(&st);  ++msgsent;
                 std::cout << "Sending sample, count=" << msgsent << std::endl;
-                eClock::my_sleep(100); // Sleep 100 ms
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             else
             {

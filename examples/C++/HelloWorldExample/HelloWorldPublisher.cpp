@@ -23,18 +23,16 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/Domain.h>
-#include <fastrtps/utils/eClock.h>
 
 #include <thread>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-HelloWorldPublisher::HelloWorldPublisher():mp_participant(nullptr),
-mp_publisher(nullptr)
+HelloWorldPublisher::HelloWorldPublisher()
+    : mp_participant(nullptr)
+    , mp_publisher(nullptr)
 {
-
-
 }
 
 bool HelloWorldPublisher::init()
@@ -108,7 +106,7 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
             {
                 std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
             }
-            eClock::my_sleep(sleep);
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
     }
     else
@@ -121,7 +119,7 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
             {
                 std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
             }
-            eClock::my_sleep(sleep);
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
     }
 }

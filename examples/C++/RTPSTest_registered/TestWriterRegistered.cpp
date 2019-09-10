@@ -32,8 +32,6 @@
 #include "fastrtps/attributes/TopicAttributes.h"
 #include "fastrtps/qos/WriterQos.h"
 
-#include "fastrtps/utils/eClock.h"
-
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
@@ -93,29 +91,29 @@ bool TestWriterRegistered::reg()
 
 void TestWriterRegistered::run(uint16_t samples)
 {
-	cout << "Waiting for matched Readers" << endl;
-	while (m_listener.n_matched==0)
-	{
-		eClock::my_sleep(250);
-	}
+    cout << "Waiting for matched Readers" << endl;
+    while (m_listener.n_matched==0)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    }
 
-	for(int i = 0;i<samples;++i )
-	{
-		CacheChange_t * ch = mp_writer->new_change([]() -> uint32_t { return 255;}, ALIVE);
-		if(!ch){	// In the case history is full, remove some old changes
-			std::cout << "cleaning history...";
-			mp_writer->remove_older_changes(20);
-			ch = mp_writer->new_change([]() -> uint32_t { return 255;}, ALIVE);
-		}
+    for(int i = 0;i<samples;++i )
+    {
+        CacheChange_t * ch = mp_writer->new_change([]() -> uint32_t { return 255;}, ALIVE);
+        if(!ch){	// In the case history is full, remove some old changes
+            std::cout << "cleaning history...";
+            mp_writer->remove_older_changes(20);
+            ch = mp_writer->new_change([]() -> uint32_t { return 255;}, ALIVE);
+        }
 
 #if defined(_WIN32)
-		ch->serializedPayload.length =
-			sprintf_s((char*)ch->serializedPayload.data,255, "My example string %d", i)+1;
+        ch->serializedPayload.length =
+            sprintf_s((char*)ch->serializedPayload.data,255, "My example string %d", i)+1;
 #else
-	ch->serializedPayload.length =
-		sprintf((char*)ch->serializedPayload.data,"My example string %d",i)+1;
+    ch->serializedPayload.length =
+        sprintf((char*)ch->serializedPayload.data,"My example string %d",i)+1;
 #endif
-		printf("Sending: %s\n",(char*)ch->serializedPayload.data);
-		mp_history->add_change(ch);
-	}
+        printf("Sending: %s\n",(char*)ch->serializedPayload.data);
+        mp_history->add_change(ch);
+    }
 }

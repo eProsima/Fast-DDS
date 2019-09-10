@@ -12,8 +12,6 @@
 #include <fastrtps/Domain.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 
-#include <fastrtps/utils/eClock.h>
-
 #include "samplePubSubTypes.h"
 
 using namespace eprosima::fastrtps;
@@ -221,7 +219,7 @@ void keys()
         }
     }
 
-    eClock::my_sleep(1500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     std::cout << "Publishing 10 more samples on a key 3..." << std::endl;
     for (uint8_t j = 0; j < 10; j++)
@@ -231,7 +229,7 @@ void keys()
         myPub->write(&my_sample);
     }
 
-    eClock::my_sleep(1500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     //Read the contents of both histories:
     std::vector< std::pair<int, int> > sampleList;
@@ -277,7 +275,7 @@ void publisherKeys()
         }
     }
 
-    eClock::my_sleep(1500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     std::cout << "Publishing 10 more samples on a key 3..." << std::endl;
     for (uint8_t j = 0; j < 10; j++)
@@ -287,7 +285,7 @@ void publisherKeys()
         myPub->write(&my_sample);
     }
 
-    eClock::my_sleep(1500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     Domain::stopAll();
 }
@@ -304,7 +302,7 @@ void subscriberKeys()
     // wait for the connection
     while (subListener.n_matched == 0)
     {
-        eClock::my_sleep(100);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     std::cin.ignore();

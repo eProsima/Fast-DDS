@@ -23,7 +23,6 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/Domain.h>
-#include <fastrtps/utils/eClock.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -98,7 +97,7 @@ void HelloWorldPublisher::run(uint32_t samples)
         {
             std::cout << "Message: "<<m_Hello.message()<< " with index: "<< m_Hello.index()<< " SENT"<<std::endl;
         }
-        eClock::my_sleep(25);
+        std::this_thread::sleep_for(std::chrono::milliseconds(25));
     }
 }
 

@@ -54,19 +54,18 @@ public:
 		OperationListener(EprosimaServer* up):mp_up(up){}
 		~OperationListener(){}
 		EprosimaServer* mp_up;
-		void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
-		void onNewDataMessage(eprosima::fastrtps::Subscriber*sub);
-		clientserver::Operation m_operation;
+        void onNewDataMessage(eprosima::fastrtps::Subscriber*sub);
+        clientserver::Operation m_operation;
 		eprosima::fastrtps::SampleInfo_t m_sampleInfo;
 		clientserver::Result m_result;
 	}m_operationsListener;
-	class ResultListener:public eprosima::fastrtps::PublisherListener
+
+    class ResultListener: public eprosima::fastrtps::PublisherListener
 	{
 	public:
-		ResultListener(EprosimaServer* up):mp_up(up){}
+        ResultListener(EprosimaServer* up):mp_up(up){}
 		~ResultListener(){}
 		EprosimaServer* mp_up;
-		void onPublicationMatched(eprosima::fastrtps::Publisher* pub,eprosima::fastrtps::rtps::MatchingInfo& info);
 	}m_resultsListener;
 };
 

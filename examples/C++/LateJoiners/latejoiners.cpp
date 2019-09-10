@@ -9,9 +9,6 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/subscriber/SampleInfo.h>
-
-#include <fastrtps/utils/eClock.h>
-
 #include "samplePubSubTypes.h"
 
 using namespace eprosima::fastrtps;
@@ -67,7 +64,7 @@ void latejoiners(){
         myPub->write(&my_sample);
     }
 
-    eClock::my_sleep(1500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     ParticipantAttributes PparamSub;
     PparamSub.rtps.builtin.domainId = 0;
@@ -121,7 +118,7 @@ void latejoiners(){
         myPub->write(&my_sample);
     }
 
-    eClock::my_sleep(1500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     //Read the contents of both histories:
     std::cout << "The Transient Local Subscriber holds: " << std::endl;
