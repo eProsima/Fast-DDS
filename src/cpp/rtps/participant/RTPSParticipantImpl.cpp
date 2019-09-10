@@ -78,10 +78,15 @@ Locator_t& RTPSParticipantImpl::applyLocatorAdaptRule(Locator_t& loc)
     return loc;
 }
 
-RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam, const GuidPrefix_t& guidP,
-        RTPSParticipant* par, RTPSParticipantListener* plisten)
+RTPSParticipantImpl::RTPSParticipantImpl(
+        const RTPSParticipantAttributes& PParam,
+        const GuidPrefix_t& guidP,
+        const GuidPrefix_t& persistence_guid,
+        RTPSParticipant* par,
+        RTPSParticipantListener* plisten)
     : m_att(PParam)
-    , m_guid(guidP ,c_EntityId_RTPSParticipant)
+    , m_guid(guidP, c_EntityId_RTPSParticipant)
+    , m_persistence_guid(persistence_guid, c_EntityId_RTPSParticipant)
     , mp_builtinProtocols(nullptr)
     , mp_ResourceSemaphore(new Semaphore(0))
     , IdCounter(0)
@@ -108,12 +113,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     case DiscoveryProtocol::SERVER:
     case DiscoveryProtocol::BACKUP:
         // Verify if listening ports are provided
-        for (auto& transportDescriptor : PParam.userTransports)
+        for(auto& transportDescriptor : PParam.userTransports)
         {
             TCPTransportDescriptor * pT = dynamic_cast<TCPTransportDescriptor *>(transportDescriptor.get());
-            if (pT && pT->listening_ports.empty())
+            if(pT && pT->listening_ports.empty())
             {
-                logError(RTPS_PARTICIPANT, "Participant " << m_att.getName() << " with GUID " << m_guid 
+                logError(RTPS_PARTICIPANT, "Participant " << m_att.getName() << " with GUID " << m_guid
                     << " tries to use discovery server over TCP without providing a proper listening port");
             }
         }
@@ -140,13 +145,13 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
        Else -> Take them */
 
-    // Creation of metatraffic locator and receiver resources
+       // Creation of metatraffic locator and receiver resources
     uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(m_att.builtin.domainId);
     uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(m_att.builtin.domainId,
         static_cast<uint32_t>(m_att.participantID));
 
     /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
-    if(m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
+    if (m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
     {
         m_network_Factory.getDefaultMetatrafficMulticastLocators(m_att.builtin.metatrafficMulticastLocatorList,
             metatraffic_multicast_port);
@@ -177,7 +182,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
     createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
 
     // Initial peers
-    if(m_att.builtin.initialPeersList.empty())
+    if (m_att.builtin.initialPeersList.empty())
     {
         m_att.builtin.initialPeersList = m_att.builtin.metatrafficMulticastLocatorList;
     }
@@ -188,8 +193,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
         std::for_each(initial_peers.begin(), initial_peers.end(),
             [&](Locator_t& locator) {
-                m_network_Factory.configureInitialPeerLocator(locator, m_att);
-            });
+            m_network_Factory.configureInitialPeerLocator(locator, m_att);
+        });
     }
 
     // Creation of user locator and receiver resources
@@ -241,11 +246,20 @@ RTPSParticipantImpl::RTPSParticipantImpl(const RTPSParticipantAttributes& PParam
 
     //START BUILTIN PROTOCOLS
     mp_builtinProtocols = new BuiltinProtocols();
-    if(!mp_builtinProtocols->initBuiltinProtocols(this,m_att.builtin))
+    if (!mp_builtinProtocols->initBuiltinProtocols(this, m_att.builtin))
     {
         logError(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
     }
-    logInfo(RTPS_PARTICIPANT,"RTPSParticipant \"" <<  m_att.getName() << "\" with guidPrefix: " <<m_guid.guidPrefix);
+    logInfo(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
+}
+
+RTPSParticipantImpl::RTPSParticipantImpl(
+        const RTPSParticipantAttributes& PParam,
+        const GuidPrefix_t& guidP,
+        RTPSParticipant* par,
+        RTPSParticipantListener* plisten)
+    : RTPSParticipantImpl(PParam, guidP, c_GuidPrefix_Unknown, par, plisten)
+{
 }
 
 const std::vector<RTPSWriter*>& RTPSParticipantImpl::getAllWriters() const
@@ -375,10 +389,10 @@ bool RTPSParticipantImpl::createWriter(
     }
 
     // Update persistence guidPrefix
-    if(param.endpoint.persistence_guid == c_Guid_Unknown && m_att.prefix != c_GuidPrefix_Unknown)
+    if(param.endpoint.persistence_guid == c_Guid_Unknown && m_persistence_guid != c_Guid_Unknown)
     {
         param.endpoint.persistence_guid = GUID_t(
-                                                m_att.prefix,
+                                                m_persistence_guid.guidPrefix,
                                                 entityId);
     }
 

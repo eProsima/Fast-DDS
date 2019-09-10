@@ -154,16 +154,19 @@ RTPSParticipant* RTPSDomain::createParticipant(
         guidP.value[11] = octet(ID >> 24);
     }
 
-    // If we force the participant to have a specific prefix we must define a different persistence GuidPrefix_t for 
-    // its endpoint. This instance-bounded persitence GuidPrefix_t will be kept in the participant instance local copy
-    // of the attributes (prefix member).
+    RTPSParticipant* p = new RTPSParticipant(nullptr);
+    RTPSParticipantImpl* pimpl = nullptr;
+
+    // If we force the participant to have a specific prefix we must define a different persistence GuidPrefix_t that
+    // would ensure builtin endpoints are able to differentiate between a communication loss and a participant recovery
     if(PParam.prefix != c_GuidPrefix_Unknown)
     {
-        std::swap(guidP, PParam.prefix);
+        pimpl = new RTPSParticipantImpl(PParam, PParam.prefix, guidP, p, listen);
     }
-    
-    RTPSParticipant* p = new RTPSParticipant(nullptr);
-    RTPSParticipantImpl* pimpl = new RTPSParticipantImpl(PParam,guidP,p,listen);
+    else
+    {
+        pimpl = new RTPSParticipantImpl(PParam, guidP, p, listen);
+    }
 
 #if HAVE_SECURITY
     // Check security was correctly initialized

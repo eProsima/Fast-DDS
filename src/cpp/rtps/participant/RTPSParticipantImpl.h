@@ -126,7 +126,24 @@ public:
         * @param part
         * @param plisten
         */
-    RTPSParticipantImpl(const RTPSParticipantAttributes &param, const GuidPrefix_t& guidP, RTPSParticipant* part,
+    RTPSParticipantImpl(
+        const RTPSParticipantAttributes &param,
+        const GuidPrefix_t& guidP,
+        RTPSParticipant* part,
+        RTPSParticipantListener* plisten = nullptr);
+
+    /**
+        * @param param
+        * @param guidP
+        * @param persistence_guid
+        * @param part
+        * @param plisten
+        */
+    RTPSParticipantImpl(
+        const RTPSParticipantAttributes &param,
+        const GuidPrefix_t& guidP,
+        const GuidPrefix_t& persistence_guid,
+        RTPSParticipant* part,
         RTPSParticipantListener* plisten = nullptr);
 
     virtual ~RTPSParticipantImpl();
@@ -257,6 +274,8 @@ private:
     RTPSParticipantAttributes m_att;
     //!Guid of the RTPSParticipant.
     GUID_t m_guid;
+    //!Persistence guid of the RTPSParticipant
+    GUID_t m_persistence_guid;
     //! Sending resources. - DEPRECATED -Stays commented for reference purposes
     // ResourceSend* mp_send_thr;
     //! Event Resource

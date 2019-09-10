@@ -341,11 +341,7 @@ class RTPSParticipantAttributes
          */
         uint32_t listenSocketBufferSize;
 
-        /**
-         * Allows user to define a specific GuidPrefix_t. After participant initialization the local copy of
-         * RTPSParticipantAttributes would keep here the persistent GuidPrefix_t linked with the participant instance.
-         * Default value: c_GuidPrefix_Unknown.
-         */
+        //! Optionally allows user to define the GuidPrefix_t
         GuidPrefix_t prefix;
 
         RTPS_DllAPI inline bool ReadguidPrefix(const char * pfx)
