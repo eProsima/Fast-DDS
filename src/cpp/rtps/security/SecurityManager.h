@@ -58,410 +58,533 @@ struct EndpointSecurityAttributes;
 
 class SecurityManager
 {
-    public:
+public:
 
-        SecurityManager(RTPSParticipantImpl* participant);
+    SecurityManager(
+            RTPSParticipantImpl* participant);
 
-        ~SecurityManager();
+    ~SecurityManager();
 
-        bool init(ParticipantSecurityAttributes& attributes, const PropertyPolicy& participant_properties, 
+    bool init(
+            ParticipantSecurityAttributes& attributes,
+            const PropertyPolicy& participant_properties,
             bool& security_activated);
 
-        void destroy();
+    void destroy();
 
-        bool discovered_participant(const ParticipantProxyData& participant_data);
+    bool discovered_participant(
+            const ParticipantProxyData& participant_data);
 
-        void remove_participant(const ParticipantProxyData& participant_data);
+    void remove_participant(
+            const ParticipantProxyData& participant_data);
 
-        bool register_local_writer(const GUID_t& writer_guid, const PropertyPolicy& writer_properties,
-                EndpointSecurityAttributes& security_attributes);
+    bool register_local_writer(
+            const GUID_t& writer_guid,
+            const PropertyPolicy& writer_properties,
+            EndpointSecurityAttributes& security_attributes);
 
-        bool register_local_builtin_writer(const GUID_t& writer_guid, EndpointSecurityAttributes& security_attributes);
+    bool register_local_builtin_writer(
+            const GUID_t& writer_guid,
+            EndpointSecurityAttributes& security_attributes);
 
-        bool unregister_local_writer(const GUID_t& writer_guid);
+    bool unregister_local_writer(
+            const GUID_t& writer_guid);
 
-        bool register_local_reader(const GUID_t& reader_guid, const PropertyPolicy& reader_properties,
-                EndpointSecurityAttributes& security_attributes);
+    bool register_local_reader(
+            const GUID_t& reader_guid,
+            const PropertyPolicy& reader_properties,
+            EndpointSecurityAttributes& security_attributes);
 
-        bool register_local_builtin_reader(const GUID_t& reader_guid, EndpointSecurityAttributes& security_attributes);
+    bool register_local_builtin_reader(
+            const GUID_t& reader_guid,
+            EndpointSecurityAttributes& security_attributes);
 
-        bool unregister_local_reader(const GUID_t& reader_guid);
+    bool unregister_local_reader(
+            const GUID_t& reader_guid);
 
-        bool discovered_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
-                ReaderProxyData& remote_reader_data, const EndpointSecurityAttributes& security_attributes);
+    bool discovered_reader(
+            const GUID_t& writer_guid,
+            const GUID_t& remote_participant,
+            ReaderProxyData& remote_reader_data,
+            const EndpointSecurityAttributes& security_attributes);
 
-        void remove_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
-                const GUID_t& remote_reader_guid);
+    void remove_reader(
+            const GUID_t& writer_guid,
+            const GUID_t& remote_participant,
+            const GUID_t& remote_reader_guid);
 
-        bool discovered_builtin_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
-                ReaderProxyData& remote_reader_data, const EndpointSecurityAttributes& security_attributes);
+    bool discovered_builtin_reader(
+            const GUID_t& writer_guid,
+            const GUID_t& remote_participant,
+            ReaderProxyData& remote_reader_data,
+            const EndpointSecurityAttributes& security_attributes);
 
-        bool discovered_writer(const GUID_t& reader_guid, const GUID_t& remote_participant,
-                WriterProxyData& remote_writer_guid, const EndpointSecurityAttributes& security_attributes);
+    bool discovered_writer(
+            const GUID_t& reader_guid,
+            const GUID_t& remote_participant,
+            WriterProxyData& remote_writer_guid,
+            const EndpointSecurityAttributes& security_attributes);
 
-        void remove_writer(const GUID_t& reader_guid, const GUID_t& remote_participant,
-                const GUID_t& remote_writer_guid);
+    void remove_writer(
+            const GUID_t& reader_guid,
+            const GUID_t& remote_participant,
+            const GUID_t& remote_writer_guid);
 
-        bool discovered_builtin_writer(const GUID_t& reader_guid, const GUID_t& remote_participant,
-                WriterProxyData& remote_writer_guid, const EndpointSecurityAttributes& security_attributes);
+    bool discovered_builtin_writer(
+            const GUID_t& reader_guid,
+            const GUID_t& remote_participant,
+            WriterProxyData& remote_writer_guid,
+            const EndpointSecurityAttributes& security_attributes);
 
-        bool get_identity_token(IdentityToken** identity_token);
+    bool get_identity_token(
+            IdentityToken** identity_token);
 
-        bool return_identity_token(IdentityToken* identity_token);
+    bool return_identity_token(
+            IdentityToken* identity_token);
 
-        bool get_permissions_token(PermissionsToken** permissions_token);
+    bool get_permissions_token(
+            PermissionsToken** permissions_token);
 
-        bool return_permissions_token(PermissionsToken* permissions_token);
+    bool return_permissions_token(
+            PermissionsToken* permissions_token);
 
-        uint32_t builtin_endpoints();
+    uint32_t builtin_endpoints();
 
-        RTPSParticipantImpl* participant() { return participant_; }
+    RTPSParticipantImpl* participant()
+    {
+        return participant_;
+    }
 
-        bool encode_rtps_message(const CDRMessage_t& input_message, CDRMessage_t& output_message,
-                const std::vector<GuidPrefix_t>& receiving_list);
+    bool encode_rtps_message(
+            const CDRMessage_t& input_message,
+            CDRMessage_t& output_message,
+            const std::vector<GuidPrefix_t>& receiving_list);
 
-        int decode_rtps_message(const CDRMessage_t& message, CDRMessage_t& out_message,
-                const GuidPrefix_t& sending_participant);
+    int decode_rtps_message(
+            const CDRMessage_t& message,
+            CDRMessage_t& out_message,
+            const GuidPrefix_t& sending_participant);
 
-        bool encode_writer_submessage(const CDRMessage_t& input_message, CDRMessage_t& output_message,
-                const GUID_t& writer_guid, const std::vector<GUID_t>& receiving_list);
+    bool encode_writer_submessage(
+            const CDRMessage_t& input_message,
+            CDRMessage_t& output_message,
+            const GUID_t& writer_guid,
+            const std::vector<GUID_t>& receiving_list);
 
-        bool encode_reader_submessage(const CDRMessage_t& input_message, CDRMessage_t& output_message,
-                const GUID_t& reader_guid, const std::vector<GUID_t>& receiving_list);
+    bool encode_reader_submessage(
+            const CDRMessage_t& input_message,
+            CDRMessage_t& output_message,
+            const GUID_t& reader_guid,
+            const std::vector<GUID_t>& receiving_list);
 
-        int decode_rtps_submessage(CDRMessage_t& message, CDRMessage_t& out_message,
-                const GuidPrefix_t& sending_participant);
+    int decode_rtps_submessage(
+            CDRMessage_t& message,
+            CDRMessage_t& out_message,
+            const GuidPrefix_t& sending_participant);
 
-        bool encode_serialized_payload(const SerializedPayload_t& payload, SerializedPayload_t& output_payload,
-                const GUID_t& writer_guid);
+    bool encode_serialized_payload(
+            const SerializedPayload_t& payload,
+            SerializedPayload_t& output_payload,
+            const GUID_t& writer_guid);
 
-        bool decode_serialized_payload(const SerializedPayload_t& secure_payload,
-                SerializedPayload_t& payload, const GUID_t& reader_guid, const GUID_t& writer_guid);
+    bool decode_serialized_payload(
+            const SerializedPayload_t& secure_payload,
+            SerializedPayload_t& payload,
+            const GUID_t& reader_guid,
+            const GUID_t& writer_guid);
 
-        uint32_t calculate_extra_size_for_rtps_message();
+    uint32_t calculate_extra_size_for_rtps_message();
 
-        uint32_t calculate_extra_size_for_rtps_submessage(const GUID_t& writer_guid);
+    uint32_t calculate_extra_size_for_rtps_submessage(
+            const GUID_t& writer_guid);
 
-        uint32_t calculate_extra_size_for_encoded_payload(const GUID_t& writer_guid);
+    uint32_t calculate_extra_size_for_encoded_payload(
+            const GUID_t& writer_guid);
 
-    private:
+private:
 
-        enum AuthenticationStatus : uint32_t
+    enum AuthenticationStatus : uint32_t
+    {
+        AUTHENTICATION_OK = 0,
+        AUTHENTICATION_FAILED,
+        AUTHENTICATION_INIT,
+        AUTHENTICATION_REQUEST_NOT_SEND,
+        AUTHENTICATION_WAITING_REQUEST,
+        AUTHENTICATION_WAITING_REPLY,
+        AUTHENTICATION_WAITING_FINAL
+    };
+
+    class DiscoveredParticipantInfo
+    {
+        struct AuthenticationInfo
         {
-            AUTHENTICATION_OK = 0,
-            AUTHENTICATION_FAILED,
-            AUTHENTICATION_INIT,
-            AUTHENTICATION_REQUEST_NOT_SEND,
-            AUTHENTICATION_WAITING_REQUEST,
-            AUTHENTICATION_WAITING_REPLY,
-            AUTHENTICATION_WAITING_FINAL
+            public:
+
+                AuthenticationInfo(
+                        AuthenticationStatus auth_status)
+                    : identity_handle_(nullptr)
+                    , handshake_handle_(nullptr)
+                    , auth_status_(auth_status)
+                    , expected_sequence_number_(0)
+                    , change_sequence_number_(SequenceNumber_t::unknown())
+                    , event_(nullptr)
+                {}
+
+                AuthenticationInfo(
+                        AuthenticationInfo&& auth)
+                    : identity_handle_(std::move(auth.identity_handle_))
+                    , handshake_handle_(std::move(auth.handshake_handle_))
+                    , auth_status_(auth.auth_status_)
+                    , expected_sequence_number_(auth.expected_sequence_number_)
+                    , change_sequence_number_(std::move(auth.change_sequence_number_))
+                    , event_(std::move(auth.event_))
+                {}
+
+                IdentityHandle* identity_handle_;
+
+                HandshakeHandle* handshake_handle_;
+
+                AuthenticationStatus auth_status_;
+
+                int64_t expected_sequence_number_;
+
+                SequenceNumber_t change_sequence_number_;
+
+                TimedEvent* event_;
+
+            private:
+
+                AuthenticationInfo(
+                        const AuthenticationInfo& auth) = delete;
         };
 
-        class DiscoveredParticipantInfo
+        struct EmptyDelete
         {
-            struct AuthenticationInfo
+            void operator()(
+                    AuthenticationInfo*)
+            {}
+        };
+
+        public:
+
+            typedef std::unique_ptr<AuthenticationInfo, EmptyDelete> AuthUniquePtr;
+
+            DiscoveredParticipantInfo(
+                    AuthenticationStatus auth_status,
+                    const ParticipantProxyData& participant_data)
+                : auth_(auth_status), auth_ptr_(&auth_)
+                , shared_secret_handle_(nullptr)
+                , permissions_handle_(nullptr)
+                , participant_crypto_(nullptr)
+                , participant_data_(participant_data)
+            {}
+
+            DiscoveredParticipantInfo(
+                    DiscoveredParticipantInfo&& info)
+                : auth_(std::move(info.auth_))
+                , auth_ptr_(&auth_)
+                , shared_secret_handle_(std::move(info.shared_secret_handle_))
+                , permissions_handle_(std::move(info.permissions_handle_))
+                , participant_crypto_(info.participant_crypto_)
+                , participant_data_(std::move(info.participant_data_))
+            {}
+
+            AuthUniquePtr get_auth()
             {
-                public:
+                return std::move(auth_ptr_);
+            }
 
-                    AuthenticationInfo(AuthenticationStatus auth_status) :
-                        identity_handle_(nullptr), handshake_handle_(nullptr),
-                        auth_status_(auth_status), expected_sequence_number_(0),
-                        change_sequence_number_(SequenceNumber_t::unknown()),
-                        event_(nullptr) {}
-
-                    AuthenticationInfo(AuthenticationInfo&& auth) :
-                        identity_handle_(std::move(auth.identity_handle_)),
-                        handshake_handle_(std::move(auth.handshake_handle_)),
-                        auth_status_(auth.auth_status_),
-                        expected_sequence_number_(auth.expected_sequence_number_),
-                        change_sequence_number_(std::move(auth.change_sequence_number_)),
-                        event_(std::move(auth.event_)) {}
-
-                    IdentityHandle* identity_handle_;
-
-                    HandshakeHandle* handshake_handle_;
-
-                    AuthenticationStatus auth_status_;
-
-                    int64_t expected_sequence_number_;
-
-                    SequenceNumber_t change_sequence_number_;
-
-                    TimedEvent* event_;
-
-                private:
-
-                    AuthenticationInfo(const AuthenticationInfo& auth) = delete;
-            };
-
-            struct EmptyDelete
+            void set_auth(
+                    AuthUniquePtr& auth)
             {
-                void operator()(AuthenticationInfo*) {};
-            };
+                assert(auth.get() == &auth_);
+                auth_ptr_ = std::move(auth);
+            }
 
-            public:
+            void set_shared_secret(
+                    SharedSecretHandle* shared_secret)
+            {
+                shared_secret_handle_ = shared_secret;
+            }
 
-                typedef std::unique_ptr<AuthenticationInfo, EmptyDelete> AuthUniquePtr;
+            SharedSecretHandle* get_shared_secret()
+            {
+                return shared_secret_handle_;
+            }
 
-                DiscoveredParticipantInfo(AuthenticationStatus auth_status,
-                        const ParticipantProxyData& participant_data) :
-                    auth_(auth_status), auth_ptr_(&auth_),
-                    shared_secret_handle_(nullptr),
-                    permissions_handle_(nullptr),
-                    participant_crypto_(nullptr),
-                    participant_data_(participant_data) {}
+            void set_permissions_handle(
+                    PermissionsHandle* handle)
+            {
+                permissions_handle_ = handle;
+            }
 
-                DiscoveredParticipantInfo(DiscoveredParticipantInfo&& info) :
-                    auth_(std::move(info.auth_)),  auth_ptr_(&auth_),
-                    shared_secret_handle_(std::move(info.shared_secret_handle_)),
-                    permissions_handle_(std::move(info.permissions_handle_)),
-                    participant_crypto_(info.participant_crypto_),
-                    participant_data_(std::move(info.participant_data_)) {}
+            PermissionsHandle* get_permissions_handle()
+            {
+                return permissions_handle_;
+            }
 
-                AuthUniquePtr get_auth() { return std::move(auth_ptr_); }
+            const PermissionsHandle* get_permissions_handle() const
+            {
+                return permissions_handle_;
+            }
 
-                void set_auth(AuthUniquePtr& auth)
+            void set_participant_crypto(
+                    ParticipantCryptoHandle* participant_crypto)
+            {
+                participant_crypto_ = participant_crypto;
+            }
+
+            ParticipantCryptoHandle* get_participant_crypto()
+            {
+                return participant_crypto_;
+            }
+
+            void stop_event()
+            {
+                if(auth_.event_ != nullptr)
                 {
-                    assert(auth.get() == &auth_);
-                    auth_ptr_ = std::move(auth);
+                    auth_.event_->cancel_timer();
                 }
+            }
 
-                void set_shared_secret(SharedSecretHandle* shared_secret)
-                {
-                    shared_secret_handle_ = shared_secret;
-                }
+            const ParticipantProxyData& participant_data() const
+            {
+                return participant_data_;
+            }
 
-                SharedSecretHandle* get_shared_secret()
-                {
-                    return shared_secret_handle_;
-                }
+        private:
 
-                void set_permissions_handle(PermissionsHandle* handle)
-                {
-                    permissions_handle_ = handle;
-                }
+            DiscoveredParticipantInfo(const DiscoveredParticipantInfo& info) = delete;
 
-                PermissionsHandle* get_permissions_handle()
-                {
-                    return permissions_handle_;
-                }
+            AuthenticationInfo auth_;
 
-                const PermissionsHandle* get_permissions_handle() const
-                {
-                    return permissions_handle_;
-                }
+            AuthUniquePtr auth_ptr_;
 
-                void set_participant_crypto(ParticipantCryptoHandle* participant_crypto)
-                {
-                    participant_crypto_ = participant_crypto;
-                }
+            SharedSecretHandle* shared_secret_handle_;
 
-                ParticipantCryptoHandle* get_participant_crypto()
-                {
-                    return participant_crypto_;
-                }
+            PermissionsHandle* permissions_handle_;
 
-                void stop_event()
-                {
-                    if(auth_.event_ != nullptr)
-                    {
-                        auth_.event_->cancel_timer();
-                    }
-                }
+            ParticipantCryptoHandle* participant_crypto_;
 
-                const ParticipantProxyData& participant_data() const
-                {
-                    return participant_data_;
-                }
+            ParticipantProxyData participant_data_;
 
-            private:
+    };
 
-                DiscoveredParticipantInfo(const DiscoveredParticipantInfo& info) = delete;
+    class ParticipantStatelessMessageListener: public eprosima::fastrtps::rtps::ReaderListener
+    {
+        public:
+            ParticipantStatelessMessageListener(
+                    SecurityManager& manager)
+                : manager_(manager)
+            {}
 
-                AuthenticationInfo auth_;
+            ~ParticipantStatelessMessageListener()
+            {}
 
-                AuthUniquePtr auth_ptr_;
+            void onNewCacheChangeAdded(
+                    RTPSReader* reader,
+                    const CacheChange_t* const change) override;
 
-                SharedSecretHandle* shared_secret_handle_;
+        private:
 
-                PermissionsHandle* permissions_handle_;
+            ParticipantStatelessMessageListener& operator=(
+                    const ParticipantStatelessMessageListener&) = delete;
 
-                ParticipantCryptoHandle* participant_crypto_;
+            SecurityManager &manager_;
+    } participant_stateless_message_listener_;
 
-                ParticipantProxyData participant_data_;
+    class ParticipantVolatileMessageListener: public eprosima::fastrtps::rtps::ReaderListener
+    {
+        public:
+            ParticipantVolatileMessageListener(
+                    SecurityManager &manager)
+                : manager_(manager)
+            {}
 
-        };
+            ~ParticipantVolatileMessageListener()
+            {}
 
-        class ParticipantStatelessMessageListener: public eprosima::fastrtps::rtps::ReaderListener
-        {
-            public:
-                ParticipantStatelessMessageListener(SecurityManager &manager) : manager_(manager) {};
+            void onNewCacheChangeAdded(
+                    RTPSReader* reader,
+                    const CacheChange_t* const change) override;
 
-                ~ParticipantStatelessMessageListener(){};
+        private:
 
-                void onNewCacheChangeAdded(
-                        RTPSReader* reader,
-                        const CacheChange_t* const change) override;
+            ParticipantVolatileMessageListener& operator=(
+                    const ParticipantVolatileMessageListener&) = delete;
 
-            private:
+            SecurityManager &manager_;
+    } participant_volatile_message_secure_listener_;
+
+    void remove_discovered_participant_info(
+            DiscoveredParticipantInfo::AuthUniquePtr& auth_ptr);
+
+    bool restore_discovered_participant_info(
+            const GUID_t& remote_participant_key,
+            DiscoveredParticipantInfo::AuthUniquePtr& auth_ptr);
+
+    bool create_entities();
+    void delete_entities();
+    bool create_participant_stateless_message_entities();
+    void delete_participant_stateless_message_entities();
+    bool create_participant_stateless_message_writer();
+    void delete_participant_stateless_message_writer();
+    bool create_participant_stateless_message_reader();
+    void delete_participant_stateless_message_reader();
+    bool create_participant_volatile_message_secure_entities();
+    void delete_participant_volatile_message_secure_entities();
+    bool create_participant_volatile_message_secure_writer();
+    void delete_participant_volatile_message_secure_writer();
+    bool create_participant_volatile_message_secure_reader();
+    void delete_participant_volatile_message_secure_reader();
 
-                ParticipantStatelessMessageListener& operator=(const ParticipantStatelessMessageListener&) = delete;
+    bool discovered_reader(
+            const GUID_t& writer_guid,
+            const GUID_t& remote_participant,
+            ReaderProxyData& remote_reader_data,
+            const EndpointSecurityAttributes& security_attributes,
+            bool is_builtin);
 
-                SecurityManager &manager_;
-        } participant_stateless_message_listener_;
+    bool discovered_writer(
+            const GUID_t& reader_guid,
+            const GUID_t& remote_participant,
+            WriterProxyData& remote_writer_guid,
+            const EndpointSecurityAttributes& security_attributes,
+            bool is_builtin);
 
-        class ParticipantVolatileMessageListener: public eprosima::fastrtps::rtps::ReaderListener
-        {
-            public:
-                ParticipantVolatileMessageListener(SecurityManager &manager) : manager_(manager) {};
+    void match_builtin_endpoints(
+            const ParticipantProxyData& participant_data);
 
-                ~ParticipantVolatileMessageListener(){};
+    void match_builtin_key_exchange_endpoints(
+            const ParticipantProxyData& participant_data);
 
-                void onNewCacheChangeAdded(
-                        RTPSReader* reader,
-                        const CacheChange_t* const change) override;
+    void unmatch_builtin_endpoints(
+            const ParticipantProxyData& participant_data);
 
-            private:
+    ParticipantCryptoHandle* register_and_match_crypto_endpoint(
+            IdentityHandle& remote_participant_identity,
+            SharedSecretHandle& shared_secret);
 
-                ParticipantVolatileMessageListener& operator=(const ParticipantVolatileMessageListener&) = delete;
+    void exchange_participant_crypto(
+            ParticipantCryptoHandle* remote_participant_crypto,
+            const GUID_t& remote_participant_guid);
 
-                SecurityManager &manager_;
-        } participant_volatile_message_secure_listener_;
+    void process_participant_stateless_message(
+            const CacheChange_t* const change);
 
-        void remove_discovered_participant_info(DiscoveredParticipantInfo::AuthUniquePtr& auth_ptr);
-        bool restore_discovered_participant_info(const GUID_t& remote_participant_key,
-                DiscoveredParticipantInfo::AuthUniquePtr& auth_ptr);
+    void process_participant_volatile_message_secure(
+            const CacheChange_t* const change);
 
-        bool create_entities();
-        void delete_entities();
-        bool create_participant_stateless_message_entities();
-        void delete_participant_stateless_message_entities();
-        bool create_participant_stateless_message_writer();
-        void delete_participant_stateless_message_writer();
-        bool create_participant_stateless_message_reader();
-        void delete_participant_stateless_message_reader();
-        bool create_participant_volatile_message_secure_entities();
-        void delete_participant_volatile_message_secure_entities();
-        bool create_participant_volatile_message_secure_writer();
-        void delete_participant_volatile_message_secure_writer();
-        bool create_participant_volatile_message_secure_reader();
-        void delete_participant_volatile_message_secure_reader();
+    bool on_process_handshake(
+            const ParticipantProxyData& participant_data,
+            DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
+            MessageIdentity&& message_identity,
+            HandshakeMessageToken&& message);
 
-        bool discovered_reader(const GUID_t& writer_guid, const GUID_t& remote_participant,
-                ReaderProxyData& remote_reader_data, const EndpointSecurityAttributes& security_attributes,
-                bool is_builtin);
+    ParticipantGenericMessage generate_authentication_message(
+            const MessageIdentity& related_message_identity,
+            const GUID_t& destination_participant_key,
+            HandshakeMessageToken& handshake_message);
 
-        bool discovered_writer(const GUID_t& reader_guid, const GUID_t& remote_participant,
-                WriterProxyData& remote_writer_guid, const EndpointSecurityAttributes& security_attributes,
-                bool is_builtin);
+    ParticipantGenericMessage generate_participant_crypto_token_message(
+            const GUID_t& destination_participant_key,
+            ParticipantCryptoTokenSeq& crypto_tokens);
 
-        void match_builtin_endpoints(const ParticipantProxyData& participant_data);
+    ParticipantGenericMessage generate_writer_crypto_token_message(
+            const GUID_t& destination_participant_key,
+            const GUID_t& destination_endpoint_key,
+            const GUID_t& source_endpoint_key,
+            ParticipantCryptoTokenSeq& crypto_tokens);
 
-        void match_builtin_key_exchange_endpoints(const ParticipantProxyData& participant_data);
+    ParticipantGenericMessage generate_reader_crypto_token_message(
+            const GUID_t& destination_participant_key,
+            const GUID_t& destination_endpoint_key,
+            const GUID_t& source_endpoint_key,
+            ParticipantCryptoTokenSeq& crypto_tokens);
 
-        void unmatch_builtin_endpoints(const ParticipantProxyData& participant_data);
+    bool participant_authorized(
+            const ParticipantProxyData& participant_data,
+            const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
+            SharedSecretHandle* shared_secret_handle);
 
-        ParticipantCryptoHandle* register_and_match_crypto_endpoint(IdentityHandle& remote_participant_identity,
-                SharedSecretHandle& shared_secret);
+    void resend_handshake_message_token(
+            const GUID_t& remote_participant_key);
 
-        void exchange_participant_crypto(ParticipantCryptoHandle* remote_participant_crypto, const GUID_t& remote_participant_guid);
+    RTPSParticipantImpl* participant_;
+    StatelessWriter* participant_stateless_message_writer_;
+    WriterHistory* participant_stateless_message_writer_history_;
+    StatelessReader* participant_stateless_message_reader_;
+    ReaderHistory* participant_stateless_message_reader_history_;
+    StatefulWriter* participant_volatile_message_secure_writer_;
+    WriterHistory* participant_volatile_message_secure_writer_history_;
+    StatefulReader* participant_volatile_message_secure_reader_;
+    ReaderHistory* participant_volatile_message_secure_reader_history_;
+    SecurityPluginFactory factory_;
 
-        void process_participant_stateless_message(const CacheChange_t* const change);
+    Authentication* authentication_plugin_;
 
-        void process_participant_volatile_message_secure(const CacheChange_t* const change);
+    AccessControl* access_plugin_;
 
-        bool on_process_handshake(const ParticipantProxyData& participant_data,
-                DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
-                MessageIdentity&& message_identity,
-                HandshakeMessageToken&& message);
+    Cryptography* crypto_plugin_;
 
-        ParticipantGenericMessage generate_authentication_message(const MessageIdentity& related_message_identity,
-                const GUID_t& destination_participant_key,
-                HandshakeMessageToken& handshake_message);
+    uint32_t domain_id_;
 
-        ParticipantGenericMessage generate_participant_crypto_token_message(const GUID_t& destination_participant_key,
-                ParticipantCryptoTokenSeq& crypto_tokens);
+    IdentityHandle* local_identity_handle_;
 
-        ParticipantGenericMessage generate_writer_crypto_token_message(const GUID_t& destination_participant_key,
-                const GUID_t& destination_endpoint_key, const GUID_t& source_endpoint_key,
-                ParticipantCryptoTokenSeq& crypto_tokens);
+    PermissionsHandle* local_permissions_handle_;
 
-        ParticipantGenericMessage generate_reader_crypto_token_message(const GUID_t& destination_participant_key,
-                const GUID_t& destination_endpoint_key, const GUID_t& source_endpoint_key,
-                ParticipantCryptoTokenSeq& crypto_tokens);
+    ParticipantCryptoHandle* local_participant_crypto_handle_;
 
-        bool participant_authorized(const ParticipantProxyData& participant_data,
-                const DiscoveredParticipantInfo::AuthUniquePtr& remote_participant_info,
-                SharedSecretHandle* shared_secret_handle);
+    std::map<GUID_t, DiscoveredParticipantInfo> discovered_participants_;
 
-        void resend_handshake_message_token(const GUID_t& remote_participant_key);
+    GUID_t auth_source_guid;
 
-        RTPSParticipantImpl* participant_;
-        StatelessWriter* participant_stateless_message_writer_;
-        WriterHistory* participant_stateless_message_writer_history_;
-        StatelessReader* participant_stateless_message_reader_;
-        ReaderHistory* participant_stateless_message_reader_history_;
-        StatefulWriter* participant_volatile_message_secure_writer_;
-        WriterHistory* participant_volatile_message_secure_writer_history_;
-        StatefulReader* participant_volatile_message_secure_reader_;
-        ReaderHistory* participant_volatile_message_secure_reader_history_;
-        SecurityPluginFactory factory_;
+    std::mutex mutex_;
 
-        Authentication* authentication_plugin_;
+    std::atomic<int64_t> auth_last_sequence_number_;
 
-        AccessControl* access_plugin_;
+    std::atomic<int64_t> crypto_last_sequence_number_;
 
-        Cryptography* crypto_plugin_;
+    struct DatawriterAssociations
+    {
+        DatawriterAssociations(
+                DatawriterCryptoHandle* wh)
+            : writer_handle(wh)
+        {}
 
-        uint32_t domain_id_;
+        DatawriterCryptoHandle* writer_handle;
 
-        IdentityHandle* local_identity_handle_;
+        std::map<GUID_t, std::tuple<ReaderProxyData, DatareaderCryptoHandle*>> associated_readers;
+    };
 
-        PermissionsHandle* local_permissions_handle_;
+    struct DatareaderAssociations
+    {
+        DatareaderAssociations(
+                DatareaderCryptoHandle* rh)
+            : reader_handle(rh)
+        {}
 
-        ParticipantCryptoHandle* local_participant_crypto_handle_;
+        DatareaderCryptoHandle* reader_handle;
 
-        std::map<GUID_t, DiscoveredParticipantInfo> discovered_participants_;
+        std::map<GUID_t, std::tuple<WriterProxyData, DatawriterCryptoHandle*>> associated_writers;
+    };
 
-        GUID_t auth_source_guid;
+    // TODO(Ricardo) Temporal. Store individual in FastRTPS code.
+    std::map<GUID_t, DatawriterAssociations> writer_handles_;
+    std::map<GUID_t, DatareaderAssociations> reader_handles_;
 
-        std::mutex mutex_;
+    std::map<GUID_t, DataHolderSeq> remote_participant_pending_messages_;
+    std::map<GUID_t, DataHolderSeq> remote_writer_pending_messages_;
+    std::map<GUID_t, DataHolderSeq> remote_reader_pending_messages_;
+    std::list<std::tuple<ReaderProxyData, GUID_t, GUID_t>> remote_reader_pending_discovery_messages_;
+    std::list<std::tuple<WriterProxyData, GUID_t, GUID_t>> remote_writer_pending_discovery_messages_;
 
-        std::atomic<int64_t> auth_last_sequence_number_;
-
-        std::atomic<int64_t> crypto_last_sequence_number_;
-
-        struct DatawriterAssociations
-        {
-            DatawriterAssociations(DatawriterCryptoHandle* wh) : writer_handle(wh) {}
-
-            DatawriterCryptoHandle* writer_handle;
-
-            std::map<GUID_t, std::tuple<ReaderProxyData, DatareaderCryptoHandle*>> associated_readers;
-        };
-
-        struct DatareaderAssociations
-        {
-            DatareaderAssociations(DatareaderCryptoHandle* rh) : reader_handle(rh) {}
-
-            DatareaderCryptoHandle* reader_handle;
-
-            std::map<GUID_t, std::tuple<WriterProxyData, DatawriterCryptoHandle*>> associated_writers;
-        };
-
-        // TODO(Ricardo) Temporal. Store individual in FastRTPS code.
-        std::map<GUID_t, DatawriterAssociations> writer_handles_;
-        std::map<GUID_t, DatareaderAssociations> reader_handles_;
-
-        std::map<GUID_t, DataHolderSeq> remote_participant_pending_messages_;
-        std::map<GUID_t, DataHolderSeq> remote_writer_pending_messages_;
-        std::map<GUID_t, DataHolderSeq> remote_reader_pending_messages_;
-        std::list<std::tuple<ReaderProxyData, GUID_t, GUID_t>> remote_reader_pending_discovery_messages_;
-        std::list<std::tuple<WriterProxyData, GUID_t, GUID_t>> remote_writer_pending_discovery_messages_;
-
-        std::mutex temp_data_lock_;
-        ReaderProxyData temp_reader_proxy_data_;
-        WriterProxyData temp_writer_proxy_data_;
+    std::mutex temp_stateless_data_lock_;
+    ReaderProxyData temp_stateless_reader_proxy_data_;
+    WriterProxyData temp_stateless_writer_proxy_data_;
+    std::mutex temp_volatile_data_lock_;
+    ReaderProxyData temp_volatile_reader_proxy_data_;
+    WriterProxyData temp_volatile_writer_proxy_data_;
 };
 
 } //namespace security
