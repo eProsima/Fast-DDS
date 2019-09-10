@@ -72,7 +72,7 @@ void DynamicDataHelper::print_basic_element(
         }
         case TK_BYTE:
         {
-            std::cout << data->get_byte_value(id);
+            std::cout << static_cast<uint32_t>(data->get_byte_value(id));
             break;
         }
         case TK_INT16:
