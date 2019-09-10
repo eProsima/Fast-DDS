@@ -812,9 +812,13 @@ bool SecurityManager::on_process_handshake(
                     if (ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE)
                     {
                         if (pre_auth_status == AUTHENTICATION_REQUEST_NOT_SEND)
+                        {
                             remote_participant_info->auth_status_ = AUTHENTICATION_WAITING_REPLY;
+                        }
                         else if (pre_auth_status == AUTHENTICATION_WAITING_REQUEST)
+                        {
                             remote_participant_info->auth_status_ = AUTHENTICATION_WAITING_FINAL;
+                        }
                     }
 
                     // if authentication was finished, starts encryption.
@@ -1219,11 +1223,18 @@ void SecurityManager::process_participant_stateless_message(
     octet encapsulation = 0;
     CDRMessage::readOctet(&aux_msg, &encapsulation);
     if (encapsulation == CDR_BE)
+    {
         aux_msg.msg_endian = BIGEND;
+    }
     else if (encapsulation == CDR_LE)
+    {
         aux_msg.msg_endian = LITTLEEND;
+    }
     else
+    {
         return;
+    }
+
     aux_msg.pos +=2;
 
     CDRMessage::readParticipantGenericMessage(&aux_msg, message);
@@ -1429,11 +1440,18 @@ void SecurityManager::process_participant_volatile_message_secure(
     octet encapsulation = 0;
     CDRMessage::readOctet(&aux_msg, &encapsulation);
     if (encapsulation == CDR_BE)
+    {
         aux_msg.msg_endian = BIGEND;
+    }
     else if (encapsulation == CDR_LE)
+    {
         aux_msg.msg_endian = LITTLEEND;
+    }
     else
+    {
         return;
+    }
+
     aux_msg.pos +=2;
 
     CDRMessage::readParticipantGenericMessage(&aux_msg, message);
