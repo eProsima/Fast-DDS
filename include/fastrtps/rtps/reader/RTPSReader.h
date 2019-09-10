@@ -89,12 +89,7 @@ public:
     RTPS_DllAPI virtual bool matched_writer_is_matched(const RemoteWriterAttributes& wdata) = 0;
 
     /**
-     * Returns true if the reader accepts a message directed to entityId.
-     */
-    RTPS_DllAPI bool acceptMsgDirectedTo(EntityId_t& entityId);
-
-    /**
-     * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
+     * Processes a new DATA message.
      *
      * @param change Pointer to the CacheChange_t.
      * @return true if the reader accepts messages from the.
@@ -102,8 +97,7 @@ public:
     RTPS_DllAPI virtual bool processDataMsg(CacheChange_t *change) = 0;
 
     /**
-     * Processes a new DATA FRAG message. Previously the message must have been accepted by function
-     * acceptMsgDirectedTo.
+     * Processes a new DATA FRAG message.
      *
      * @param change Pointer to the CacheChange_t.
      * @param sampleSize Size of the complete, assembled message.
@@ -113,8 +107,7 @@ public:
     RTPS_DllAPI virtual bool processDataFragMsg(CacheChange_t *change, uint32_t sampleSize, uint32_t fragmentStartingNum) = 0;
 
     /**
-     * Processes a new HEARTBEAT message. Previously the message must have been accepted by function
-     * acceptMsgDirectedTo.
+     * Processes a new HEARTBEAT message.
      * @param writerGUID
      * @param hbCount
      * @param firstSN
@@ -132,8 +125,7 @@ public:
             bool livelinessFlag) = 0;
 
     /**
-     * Processes a new GAP message. Previously the message must have been accepted by function
-     * acceptMsgDirectedTo.
+     * Processes a new GAP message.
      * @param writerGUID
      * @param gapStart
      * @param gapList

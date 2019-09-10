@@ -24,6 +24,7 @@
 
 #include <cstdint>
 #include <cstring>
+#include <sstream>
 
 namespace eprosima{
 namespace fastrtps{
@@ -481,5 +482,18 @@ inline std::ostream& operator<<(std::ostream& output,const GUID_t& guid)
 }
 }
 
+namespace std {
+template <>
+struct hash<eprosima::fastrtps::rtps::EntityId_t>
+{
+    std::size_t operator()(
+            const eprosima::fastrtps::rtps::EntityId_t& k) const
+    {
+        const uint32_t* aux = reinterpret_cast<const uint32_t*>(k.value);
+        return static_cast<std::size_t>(*aux);
+    }
+};
+
+} // namespace std
 
 #endif /* RTPS_GUID_H_ */

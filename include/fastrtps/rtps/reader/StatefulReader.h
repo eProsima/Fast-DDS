@@ -81,14 +81,14 @@ class StatefulReader:public RTPSReader
         bool matched_writer_lookup(const GUID_t& writerGUID, WriterProxy** WP);
 
         /**
-         * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
+         * Processes a new DATA message.
          * @param change Pointer to the CacheChange_t.
          * @return true if the reader accepts messages.
          */
         bool processDataMsg(CacheChange_t *change) override;
 
         /**
-         * Processes a new DATA FRAG message. Previously the message must have been accepted by function acceptMsgDirectedTo.
+         * Processes a new DATA FRAG message.
          * @param change Pointer to the CacheChange_t.
          * @param sampleSize Size of the complete assembled message.
          * @param fragmentStartingNum fragment number of this particular fragment.
@@ -100,7 +100,7 @@ class StatefulReader:public RTPSReader
                 uint32_t fragmentStartingNum) override;
 
         /**
-         * Processes a new HEARTBEAT message. Previously the message must have been accepted by function acceptMsgDirectedTo.
+         * Processes a new HEARTBEAT message.
          *
          * @return true if the reader accepts messages.
          */
