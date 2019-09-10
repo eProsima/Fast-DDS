@@ -38,7 +38,11 @@ public:
     }
     std::list<HelloWorld> not_received_data;
 
-    void run_one_send_recv_test(RTPSWithRegistrationReader<HelloWorldType>& reader, RTPSWithRegistrationWriter<HelloWorldType>& writer, uint32_t seq_check = 0, bool reliable = false)
+    void run_one_send_recv_test(
+            RTPSWithRegistrationReader<HelloWorldType>& reader,
+            RTPSWithRegistrationWriter<HelloWorldType>& writer,
+            uint32_t seq_check = 0,
+            bool reliable = false)
     {
         // Wait for discovery.
         writer.wait_discovery();
@@ -140,7 +144,8 @@ TEST_F(BlackBoxPersistence, RTPSAsNonReliableWithPersistence)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.make_persistent(db_file_name(), guid_prefix()).reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).init();
+    writer.make_persistent(db_file_name(), guid_prefix()).
+        reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -173,7 +178,8 @@ TEST_F(BlackBoxPersistence, AsyncRTPSAsNonReliableWithPersistence)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.make_persistent(db_file_name(), guid_prefix()).reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
+    writer.make_persistent(db_file_name(), guid_prefix()).
+        reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
         asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -238,7 +244,8 @@ TEST_F(BlackBoxPersistence, AsyncRTPSAsReliableWithPersistence)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.make_persistent(db_file_name(), guid_prefix()).asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
+    writer.make_persistent(db_file_name(), guid_prefix()).history_depth(10).
+        asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
