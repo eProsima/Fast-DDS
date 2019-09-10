@@ -1052,9 +1052,9 @@ bool MessageReceiver::proc_Submsg_HeartbeatFrag(CDRMessage_t*msg, SubmessageHead
 
     // XXX TODO VALIDATE DATA?
 
-    std::lock_guard<std::mutex> guard(mtx);
     //Look for the correct reader and writers:
     /* XXX TODO
+    std::lock_guard<std::mutex> guard(mtx);
     for (std::vector<RTPSReader*>::iterator it = AssociatedReaders.begin();
             it != AssociatedReaders.end(); ++it)
     {

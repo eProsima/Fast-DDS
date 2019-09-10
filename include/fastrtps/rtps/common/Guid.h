@@ -566,17 +566,30 @@ inline std::ostream& operator<<(std::ostream& output,const GUID_t& guid)
 }
 
 namespace std {
-  template <>
-    struct hash<eprosima::fastrtps::rtps::EntityId_t>
-  {
-    std::size_t operator()(const eprosima::fastrtps::rtps::EntityId_t& k) const
+template <>
+struct hash<eprosima::fastrtps::rtps::EntityId_t>
+{
+    std::size_t operator()(
+            const eprosima::fastrtps::rtps::EntityId_t& k) const
     {
-      std::stringstream ss_guid;
-      ss_guid << k;
-      std::hash<std::string> hash_fn;
-      return hash_fn(ss_guid.str());
+        using eprosima::fastrtps::rtps::octet;
+#if __BIG_ENDIAN__
+        uint32_t* aux = reinterpret_cast<uint32_t*>(k.value);
+        uint32_t result = *aux;
+#else
+        const octet* aux = k.value;
+        uint32_t result;
+        octet* aux_reverse = reinterpret_cast<octet*>(&result);
+        aux_reverse[0] = aux[3];
+        aux_reverse[1] = aux[2];
+        aux_reverse[2] = aux[1];
+        aux_reverse[3] = aux[0];
+#endif
+        std::hash<uint32_t> hash_fn;
+        return hash_fn(result);
     }
-  };
-}
+};
+
+} // namespace std
 
 #endif /* RTPS_GUID_H_ */
