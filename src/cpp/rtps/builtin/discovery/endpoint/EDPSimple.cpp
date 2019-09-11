@@ -696,7 +696,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     {
         logInfo(RTPS_EDP,"Adding SEDP Sub Writer to my Sub Reader");
         temp_writer_proxy_data_.guid().entityId = c_EntityId_SEDPSubWriter;
-        temp_writer_proxy_data_.persistence_guid().entityId = temp_writer_proxy_data_.persistence_guid().guidPrefix != c_GuidPrefix_Unknown ? c_EntityId_SEDPSubWriter : c_EntityId_Unknown;
+        temp_writer_proxy_data_.set_persistence_entity_id(c_EntityId_SEDPSubWriter);
         subscriptions_reader_.first->matched_writer_add(temp_writer_proxy_data_);
     }
     auxendp = endp;

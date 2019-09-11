@@ -475,9 +475,10 @@ void ParticipantProxyData::set_persistence_guid(const GUID_t& guid)
         std::find_if(
             props.begin(),
             props.end(),
-            [&persistent_guid](const std::pair<std::string, std::string> & p) {
-        return persistent_guid.first == p.first;
-    });
+            [&persistent_guid](const std::pair<std::string, std::string> & p)
+            {
+                return persistent_guid.first == p.first;
+            });
 
     if (it != props.end())
     {
@@ -500,9 +501,10 @@ GUID_t ParticipantProxyData::get_persistence_guid() const
         std::find_if(
             props.cbegin(),
             props.cend(),
-            [](const std::pair<std::string, std::string> & p) {
-        return "PID_PERSISTENCE_GUID" == p.first;
-    });
+            [](const std::pair<std::string, std::string> & p)
+            {
+                return "PID_PERSISTENCE_GUID" == p.first;
+            });
 
     if (it != props.end())
     {

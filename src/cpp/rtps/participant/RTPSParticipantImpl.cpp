@@ -192,9 +192,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         initial_peers.swap(m_att.builtin.initialPeersList);
 
         std::for_each(initial_peers.begin(), initial_peers.end(),
-            [&](Locator_t& locator) {
-            m_network_Factory.configureInitialPeerLocator(locator, m_att);
-        });
+            [&](Locator_t& locator)
+            {
+               m_network_Factory.configureInitialPeerLocator(locator, m_att);
+            });
     }
 
     // Creation of user locator and receiver resources
