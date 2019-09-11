@@ -35,41 +35,22 @@ eClock::~eClock()
 {
 }
 
-static void current_time_since_unix_epoch(
-        int32_t& secs,
-        uint32_t& nanosecs)
-{
-    // Get time since epoch
-    auto t_since_epoch = system_clock::now().time_since_epoch();
-    // Get seconds
-    auto secs_t = duration_cast<seconds>(t_since_epoch);
-    // Remove seconds from time
-    t_since_epoch -= secs_t;
-
-    // Get seconds and nanoseconds
-    secs = static_cast<int32_t>(secs_t.count());
-    nanosecs = static_cast<uint32_t>(duration_cast<nanoseconds>(t_since_epoch).count());
-}
-
 bool eClock::setTimeNow(
         Time_t* tnow)
 {
-    current_time_since_unix_epoch(tnow->seconds, tnow->nanosec);
+    Time_t::now(*tnow);
     return true;
 }
 
 bool eClock::setTimeNow(
         rtps::Time_t* tnow)
 {
-    int32_t secs;
-    uint32_t nanosecs;
-    current_time_since_unix_epoch(secs, nanosecs);
-    tnow->seconds(secs);
-    tnow->nanosec(nanosecs);
+    rtps::Time_t::now(*tnow);
     return true;
 }
 
-void eClock::my_sleep(uint32_t ms)
+void eClock::my_sleep(
+    uint32_t ms)
 {
     std::this_thread::sleep_for(milliseconds(ms));
 }
