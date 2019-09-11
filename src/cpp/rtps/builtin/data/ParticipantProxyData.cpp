@@ -452,10 +452,10 @@ bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
     return true;
 }
 
-void ParticipantProxyData::set_persistence_guid(const GUID_t & guid)
+void ParticipantProxyData::set_persistence_guid(const GUID_t& guid)
 {
     // only valid values
-    if(guid == c_Guid_Unknown)
+    if (guid == c_Guid_Unknown)
     {
         return;
     }
@@ -479,7 +479,7 @@ void ParticipantProxyData::set_persistence_guid(const GUID_t & guid)
         return persistent_guid.first == p.first;
     });
 
-    if(it != props.end())
+    if (it != props.end())
     {
         *it = std::move(persistent_guid);
     }
@@ -504,7 +504,7 @@ GUID_t ParticipantProxyData::get_persistence_guid() const
         return "PID_PERSISTENCE_GUID" == p.first;
     });
 
-    if(it != props.end())
+    if (it != props.end())
     {
         std::istringstream in(it->second);
         in >> persistent;

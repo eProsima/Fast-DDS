@@ -454,16 +454,16 @@ struct RTPS_DllAPI GUID_t{
     /*!
      * Copy constructor.
      */
-    GUID_t(const GUID_t &g)
+    GUID_t(const GUID_t& g)
         : guidPrefix(g.guidPrefix)
-        ,entityId(g.entityId)
+        , entityId(g.entityId)
     {
     }
 
     /*!
      * Move constructor.
      */
-    GUID_t(GUID_t &&g)
+    GUID_t(GUID_t&& g)
         : guidPrefix(std::move(g.guidPrefix))
         , entityId(std::move(g.entityId))
     {
@@ -496,8 +496,8 @@ struct RTPS_DllAPI GUID_t{
      * @param id Entity id
      */
     GUID_t(
-        const GuidPrefix_t& guidP,
-        uint32_t id)
+            const GuidPrefix_t& guidP,
+            uint32_t id)
         : guidPrefix(guidP)
         , entityId(id)
     {

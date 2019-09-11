@@ -113,10 +113,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     case DiscoveryProtocol::SERVER:
     case DiscoveryProtocol::BACKUP:
         // Verify if listening ports are provided
-        for(auto& transportDescriptor : PParam.userTransports)
+        for (auto& transportDescriptor : PParam.userTransports)
         {
             TCPTransportDescriptor * pT = dynamic_cast<TCPTransportDescriptor *>(transportDescriptor.get());
-            if(pT && pT->listening_ports.empty())
+            if (pT && pT->listening_ports.empty())
             {
                 logError(RTPS_PARTICIPANT, "Participant " << m_att.getName() << " with GUID " << m_guid
                     << " tries to use discovery server over TCP without providing a proper listening port");
@@ -145,7 +145,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
        Else -> Take them */
 
-       // Creation of metatraffic locator and receiver resources
+    // Creation of metatraffic locator and receiver resources
     uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(m_att.builtin.domainId);
     uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(m_att.builtin.domainId,
         static_cast<uint32_t>(m_att.participantID));
@@ -389,7 +389,7 @@ bool RTPSParticipantImpl::createWriter(
     }
 
     // Update persistence guidPrefix
-    if(param.endpoint.persistence_guid == c_Guid_Unknown && m_persistence_guid != c_Guid_Unknown)
+    if (param.endpoint.persistence_guid == c_Guid_Unknown && m_persistence_guid != c_Guid_Unknown)
     {
         param.endpoint.persistence_guid = GUID_t(
                                                 m_persistence_guid.guidPrefix,
