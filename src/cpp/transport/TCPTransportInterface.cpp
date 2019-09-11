@@ -36,8 +36,8 @@
 using namespace std;
 using namespace asio;
 
-namespace eprosima{
-namespace fastrtps{
+namespace eprosima {
+namespace fastrtps {
 namespace rtps {
 
 static const int s_default_keep_alive_frequency = 5000; // 5 SECONDS

@@ -51,20 +51,22 @@ static void current_time_since_unix_epoch(
     nanosecs = static_cast<uint32_t>(duration_cast<nanoseconds>(t_since_epoch).count());
 }
 
-bool eClock::setTimeNow(fastrtps::Time_t* tnow)
+bool eClock::setTimeNow(
+        Time_t* tnow)
 {
     current_time_since_unix_epoch(tnow->seconds, tnow->nanosec);
     return true;
 }
 
-bool eClock::setTimeNow(rtps::Time_t* tnow)
+bool eClock::setTimeNow(
+        rtps::Time_t* tnow)
 {
     int32_t secs;
     uint32_t nanosecs;
     current_time_since_unix_epoch(secs, nanosecs);
     tnow->seconds(secs);
     tnow->nanosec(nanosecs);
-	return true;
+    return true;
 }
 
 void eClock::my_sleep(uint32_t ms)
@@ -83,5 +85,5 @@ uint64_t eClock::intervalEnd()
     return static_cast<uint64_t>(duration_cast<microseconds>(now).count()) - interval_start;
 }
 
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace fastrtps
+} // namespace eprosima

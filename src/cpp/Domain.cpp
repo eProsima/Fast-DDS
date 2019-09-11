@@ -388,5 +388,5 @@ bool Domain::loadXMLProfilesFile(const std::string& xml_profile_file)
     return true;
 }
 
-} /* namespace fastrtps */
-} /* namespace eprosima */
+} // namespace fastrtps
+} // namespace eprosima

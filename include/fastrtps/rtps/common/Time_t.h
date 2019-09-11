@@ -23,8 +23,8 @@
 #include <cstdint>
 #include <iostream>
 
-namespace eprosima{
-namespace fastrtps{
+namespace eprosima {
+namespace fastrtps {
 
 /**
  * Structure Time_t, used to describe times.
@@ -67,12 +67,13 @@ struct RTPS_DllAPI Time_t
      *
      * @param ret Reference to the structure to be filled in.
      */
-    static void now(Time_t& ret);
+    static void now(
+            Time_t& ret);
 };
 
-typedef Time_t Duration_t;
+using Duration_t = Time_t;
 
-namespace rtps{
+namespace rtps {
 
 /**
  * Structure Time_t, used to describe times at RTPS protocol.
@@ -157,7 +158,8 @@ public:
      *
      * @param ret Reference to the structure to be filled in.
      */
-    static void now(Time_t& ret);
+    static void now(
+            Time_t& ret);
 
 private:
     //!Seconds

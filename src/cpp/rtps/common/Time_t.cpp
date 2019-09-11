@@ -205,7 +205,8 @@ Duration_t Time_t::to_duration_t() const
     return Duration_t(seconds_, nanosec_);
 }
 
-void Time_t::from_duration_t(const Duration_t& duration)
+void Time_t::from_duration_t(
+        const Duration_t& duration)
 {
     seconds_ = duration.seconds;
     set_nanosec(duration.nanosec);
@@ -247,6 +248,5 @@ void Time_t::now(
 }
 
 } // namsepace rtps
-
 } // namespace fastrtps
 } // namespace eprosima

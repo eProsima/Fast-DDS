@@ -41,50 +41,50 @@ public:
 
     eClock();
 
-	virtual ~eClock();
+    virtual ~eClock();
 
-	/**
-	* Fill a Time_t with the current time
-	* @param now Pointer to a RTPS Time_t instance to fill with the current time
-	* @return true on success
-	*/
+    /**
+     * Fill a Time_t with the current time
+     * @param now Pointer to a RTPS Time_t instance to fill with the current time
+     * @return true on success
+     */
     FASTRTPS_DEPRECATED("Use rtps::Time_t::now() instead")
-	bool setTimeNow(rtps::Time_t* now);
+    bool setTimeNow(rtps::Time_t* now);
 
-	/**
-	* Fill a Time_t with the current time
-	* @param now Pointer to a Time_t instance to fill with the current time
-	* @return true on success
-	*/
+    /**
+     * Fill a Time_t with the current time
+     * @param now Pointer to a Time_t instance to fill with the current time
+     * @return true on success
+     */
     FASTRTPS_DEPRECATED("Use Time_t::now() instead")
-	bool setTimeNow(fastrtps::Time_t* now);
+    bool setTimeNow(fastrtps::Time_t* now);
 
-	/**
-	* Method to start measuring an interval in us.
-	*/
+    /**
+     * Method to start measuring an interval in us.
+     */
     FASTRTPS_DEPRECATED("Use methods from <chrono> instead")
-	void intervalStart();
+    void intervalStart();
 
-	/**
-	* Method to finish measuring an interval in us.
-	* @return Time of the interval in us
-	*/
+    /**
+     * Method to finish measuring an interval in us.
+     * @return Time of the interval in us
+     */
     FASTRTPS_DEPRECATED("Use methods from <chrono> instead")
-	uint64_t intervalEnd();
+    uint64_t intervalEnd();
 
-	/**
-	* Put the current thread to sleep.
-	* @param milliseconds Time to sleep
-	*/
+    /**
+     * Put the current thread to sleep.
+     * @param milliseconds Time to sleep
+     */
     FASTRTPS_DEPRECATED("Use std::this_thread::sleep_for instead")
-	static void my_sleep(uint32_t milliseconds);
+    static void my_sleep(uint32_t milliseconds);
 
 private:
     
     uint64_t interval_start;
 };
 
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace fastrtps
+} // namespace eprosima
 
-#endif /* CLOCK_H_ */
+#endif /* ECLOCK_H_ */

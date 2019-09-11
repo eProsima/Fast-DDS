@@ -37,7 +37,7 @@
 #include <fastrtps/rtps/reader/RTPSReader.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 std::mutex RTPSDomain::m_mutex;
@@ -282,6 +282,6 @@ bool RTPSDomain::removeRTPSReader(RTPSReader* reader)
     return false;
 }
 
-} /* namespace  rtps */
-} /* namespace  fastrtps */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
