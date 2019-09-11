@@ -1106,7 +1106,7 @@ void TCPTransportInterface::SocketAccepted(
         else
         {
             logInfo(RTCP, " Accepting connection (" << error.message() << ")");
-            std::this_thread::sleep_for(200ms); // Wait a little to accept again.
+            std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Wait a little to accept again.
         }
 
         if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted

@@ -36,6 +36,9 @@
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 
+#include <chrono>
+#include <thread>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -47,8 +50,6 @@ std::set<uint32_t> RTPSDomain::m_RTPSParticipantIDs;
 
 void RTPSDomain::stopAll()
 {
-    using namespace std::literals::chrono_literals;
-
     std::lock_guard<std::mutex> guard(m_mutex);
     logInfo(RTPS_PARTICIPANT,"DELETING ALL ENDPOINTS IN THIS DOMAIN");
 
@@ -57,7 +58,7 @@ void RTPSDomain::stopAll()
         RTPSDomain::removeRTPSParticipant_nts(m_RTPSParticipants.begin());
     }
     logInfo(RTPS_PARTICIPANT,"RTPSParticipants deleted correctly ");
-    std::this_thread::sleep_for(100ms);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
 RTPSParticipant* RTPSDomain::createParticipant(

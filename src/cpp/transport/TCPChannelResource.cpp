@@ -19,8 +19,6 @@
 #include <chrono>
 #include <thread>
 
-using namespace std::literals::chrono_literals;
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -151,7 +149,7 @@ void TCPChannelResource::send_pending_open_logical_ports(RTCPMessageManager* rtc
         {
             TCPTransactionId id = rtcp_manager->sendOpenLogicalPortRequest(this, port);
             negotiating_logical_ports_[id] = port;
-            std::this_thread::sleep_for(100ms);
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     }
 }

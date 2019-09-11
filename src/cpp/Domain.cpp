@@ -37,6 +37,9 @@
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 
+#include <chrono>
+#include <thread>
+
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::xmlparser;
 
@@ -60,8 +63,6 @@ Domain::~Domain()
 
 void Domain::stopAll()
 {
-    using namespace std::literals::chrono_literals;
-
     {
         std::lock_guard<std::mutex> guard(m_mutex);
         while (m_participants.size() > 0)
@@ -77,7 +78,7 @@ void Domain::stopAll()
     types::TypeObjectFactory::delete_instance();
     XMLProfileManager::DeleteInstance();
 
-    std::this_thread::sleep_for(100ms);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     Log::KillThread();
 }
 
