@@ -30,7 +30,7 @@ namespace fastrtps {
  * Time measured since 1970.
  *
  * @deprecated This will be removed on v2.0 and has been deprecated since v1.9.1 as C++11 features
- *             in <chrono> and <thread>, as long as Time_t::now(() can be used instead.
+ *             in \<chrono\> and \<thread\>, as long as Time_t::now(() can be used instead.
  *
  * @ingroup UTILITIES_MODULE
  */
