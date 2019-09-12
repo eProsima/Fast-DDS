@@ -44,7 +44,6 @@
 #include "TopicDataType.h"
 
 #include "utils/IPFinder.h"
-#include "utils/eClock.h"
 #include "utils/TimeConversion.h"
 
 #include "qos/ParameterList.h"

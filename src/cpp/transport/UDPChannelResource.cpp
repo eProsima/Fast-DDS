@@ -16,7 +16,6 @@
 #include <fastrtps/transport/UDPTransportInterface.h>
 #include <fastrtps/transport/UDPChannelResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
-#include <fastrtps/utils/eClock.h>
 
 namespace eprosima {
 namespace fastrtps {

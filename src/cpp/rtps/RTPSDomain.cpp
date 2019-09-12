@@ -30,15 +30,17 @@
 
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/System.h>
 #include <fastrtps/utils/md5.h>
 
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 
+#include <chrono>
+#include <thread>
+
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 std::mutex RTPSDomain::m_mutex;
@@ -56,7 +58,7 @@ void RTPSDomain::stopAll()
         RTPSDomain::removeRTPSParticipant_nts(m_RTPSParticipants.begin());
     }
     logInfo(RTPS_PARTICIPANT,"RTPSParticipants deleted correctly ");
-    eClock::my_sleep(100);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
 RTPSParticipant* RTPSDomain::createParticipant(
@@ -281,6 +283,6 @@ bool RTPSDomain::removeRTPSReader(RTPSReader* reader)
     return false;
 }
 
-} /* namespace  rtps */
-} /* namespace  fastrtps */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima

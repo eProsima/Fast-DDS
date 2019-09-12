@@ -19,7 +19,6 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/utils/eClock.h>
 
 #include <utility>
 #include <cstring>

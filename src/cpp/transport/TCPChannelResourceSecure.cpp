@@ -15,9 +15,9 @@
 #include <fastrtps/transport/TCPChannelResourceSecure.h>
 #include <fastrtps/transport/TCPTransportInterface.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/utils/eClock.h>
 
 #include <future>
+#include <chrono>
 
 namespace eprosima {
 namespace fastrtps {
@@ -110,7 +110,7 @@ void TCPChannelResourceSecure::connect(
                         else
                         {
                             logError(RTCP_TLS, "Handshake failed: " << error.message());
-                            eClock::my_sleep(5000); // Retry, but after a big while
+                            std::this_thread::sleep_for(std::chrono::seconds(5)); // Retry, but after a big while
                             parent->SocketConnected(channel_weak_ptr, error);
                         }
                     });

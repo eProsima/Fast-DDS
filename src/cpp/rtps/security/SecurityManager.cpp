@@ -42,6 +42,7 @@
 #include <fastrtps/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 
 #include <cassert>
+#include <chrono>
 #include <thread>
 #include <mutex>
 

@@ -68,4 +68,15 @@
 #define TLS_FOUND @TLS_FOUND@
 #endif
 
+// Deprecated macro
+#if __cplusplus >= 201402L
+#define FASTRTPS_DEPRECATED(msg) [[ deprecated(msg) ]]
+#elif defined(__GNUC__) || defined(__clang__)
+#define FASTRTPS_DEPRECATED(msg) __attribute__ ((deprecated(msg)))
+#elif defined(_MSC_VER)
+#define FASTRTPS_DEPRECATED(msg) __declspec(deprecated(msg))
+#else
+#define FASTRTPS_DEPRECATED(msg)
+#endif
+
 #endif // _FASTRTPS_CONFIG_H_

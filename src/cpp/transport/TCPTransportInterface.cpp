@@ -30,11 +30,14 @@
 #include <cstring>
 #include <algorithm>
 
+#include <chrono>
+#include <thread>
+
 using namespace std;
 using namespace asio;
 
-namespace eprosima{
-namespace fastrtps{
+namespace eprosima {
+namespace fastrtps {
 namespace rtps {
 
 static const int s_default_keep_alive_frequency = 5000; // 5 SECONDS
@@ -676,9 +679,6 @@ void TCPTransportInterface::keep_alive()
                 }
             }
         }
-
-        //TODO Remove
-        eClock::my_sleep(100);
     }
     logInfo(RTCP, "End perform_rtcp_management_thread " << channel->locator());
     */
@@ -1106,7 +1106,7 @@ void TCPTransportInterface::SocketAccepted(
         else
         {
             logInfo(RTCP, " Accepting connection (" << error.message() << ")");
-            eClock::my_sleep(200); // Wait a little to accept again.
+            std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Wait a little to accept again.
         }
 
         if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
@@ -1152,7 +1152,7 @@ void TCPTransportInterface::SecureSocketAccepted(
         else
         {
             logInfo(RTCP, " Accepting connection (" << error.message() << ")");
-            eClock::my_sleep(200); // Wait a little to accept again.
+            std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Wait a little to accept again.
         }
 
         if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted

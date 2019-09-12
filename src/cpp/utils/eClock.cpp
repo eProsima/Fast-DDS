@@ -16,126 +16,55 @@
  * @file eClock.cpp
  *
  */
-#include <cmath>
-#include <iostream>
+
 #include <fastrtps/utils/eClock.h>
+
+#include <chrono>
+#include <thread>
+
+using namespace std::chrono;
 
 namespace eprosima {
 namespace fastrtps {
 
-//FIXME: UTC SECONDS AUTOMATICALLY
 eClock::eClock()
-    : m_seconds_from_1900_to_1970(0)
-    , m_utc_seconds_diff(0)
 {
-#if defined(_WIN32)
-    QueryPerformanceFrequency(&freq);
-#endif
 }
 
-eClock::~eClock() {
-
+eClock::~eClock()
+{
 }
 
-
-#if defined(_WIN32)
-#include <cstdint>
-
-bool eClock::setTimeNow(fastrtps::Time_t* tnow)
+bool eClock::setTimeNow(
+        Time_t* tnow)
 {
-
-    GetSystemTimeAsFileTime(&ft);
-    ftlong = ft.dwHighDateTime;
-    ftlong <<=32;
-    ftlong |= ft.dwLowDateTime;
-    ftlong /=10;
-    ftlong -= 11644473600000000ULL;
-
-    //std::cout << "ftlong: " << ftlong << std::endl;
-	//std::cout << "sec from 1900 " << m_seconds_from_1900_to_1970<<std::endl;
-	tnow->seconds = (int32_t)((long)(ftlong/1000000UL)+(long)m_seconds_from_1900_to_1970+(long)m_utc_seconds_diff);
-	//std::cout << "seconds: " << tnow->seconds << " seconds " << std::endl;
-	tnow->nanosec = (uint32_t)((long)(ftlong%1000000UL));
-	return true;
+    Time_t::now(*tnow);
+    return true;
 }
 
-bool eClock::setTimeNow(rtps::Time_t* tnow)
+bool eClock::setTimeNow(
+        rtps::Time_t* tnow)
 {
-
-    GetSystemTimeAsFileTime(&ft);
-    ftlong = ft.dwHighDateTime;
-    ftlong <<=32;
-    ftlong |= ft.dwLowDateTime;
-    ftlong /=10;
-    ftlong -= 11644473600000000ULL;
-
-//	std::cout << "ftlong: " << ftlong << std::endl;
-	//std::cout << "sec from 1900 " << m_seconds_from_1900_to_1970<<std::endl;
-	tnow->seconds((int32_t)((long)(ftlong/1000000UL)+(long)m_seconds_from_1900_to_1970+(long)m_utc_seconds_diff));
-	//std::cout << "seconds: " << tnow->seconds << " seconds " << std::endl;
-	tnow->nanosec((uint32_t)((long)(ftlong%1000000UL)));
-	return true;
+    rtps::Time_t::now(*tnow);
+    return true;
 }
 
-
-void eClock::my_sleep(uint32_t milliseconds)
+void eClock::my_sleep(
+    uint32_t ms)
 {
-#pragma warning(disable: 4430)
-    Sleep(milliseconds);
-    return;
-}
-
-
-void eClock::intervalStart()
-{
-    GetSystemTimeAsFileTime(&ft1);
-    QueryPerformanceCounter(&li1);
-}
-uint64_t eClock::intervalEnd()
-{
-    GetSystemTimeAsFileTime(&ft2);
-    QueryPerformanceCounter(&li2);
-    return 0;
-
-}
-
-#else //UNIX VERSION
-#include <unistd.h>
-
-bool eClock::setTimeNow(fastrtps::Time_t* tnow)
-{
-	gettimeofday(&m_now,NULL);
-	tnow->seconds = m_now.tv_sec+m_seconds_from_1900_to_1970+m_utc_seconds_diff;
-	tnow->nanosec = (uint32_t)(m_now.tv_usec);
-	return true;
-}
-
-bool eClock::setTimeNow(rtps::Time_t* tnow)
-{
-	gettimeofday(&m_now,NULL);
-	tnow->seconds(m_now.tv_sec+m_seconds_from_1900_to_1970+m_utc_seconds_diff);
-	tnow->nanosec((uint32_t)(m_now.tv_usec));
-	return true;
-}
-
-void eClock::my_sleep(uint32_t milliseconds)
-{
-    usleep(milliseconds*1000);
-    return;
+    std::this_thread::sleep_for(milliseconds(ms));
 }
 
 void eClock::intervalStart()
 {
-    gettimeofday(&m_interval1,NULL);
+    auto now = high_resolution_clock::now().time_since_epoch();
+    interval_start = static_cast<uint64_t>(duration_cast<microseconds>(now).count());
 }
-
 uint64_t eClock::intervalEnd()
 {
-    gettimeofday(&m_interval2,NULL);
-    return (m_interval2.tv_sec-m_interval1.tv_sec)*1000000+m_interval2.tv_usec-m_interval1.tv_usec;
+    auto now = high_resolution_clock::now().time_since_epoch();
+    return static_cast<uint64_t>(duration_cast<microseconds>(now).count()) - interval_start;
 }
 
-#endif
-
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace fastrtps
+} // namespace eprosima

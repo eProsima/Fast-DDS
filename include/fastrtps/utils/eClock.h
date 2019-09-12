@@ -20,92 +20,71 @@
 #ifndef ECLOCK_H_
 #define ECLOCK_H_
 
-#if defined(_WIN32)
-#include <time.h>
-#include <windows.h>
-#if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
-  #define DELTA_EPOCH_IN_MICROSECS  11644473600000000Ui64
-
-struct timezone
-{
-    int  tz_minuteswest; /* minutes W of Greenwich */
-    int  tz_dsttime;     /* type of dst correction */
-};
-#else
-  #define DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
-#endif
-
-
-#else
-#include <sys/time.h>
-#include <chrono>
-
-#endif
-
 #include "../rtps/common/Time_t.h"
 
-
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 
 /**
  * Class eClock used to obtain the time and to sleep some processes.
  * Time measured since 1970.
+ *
+ * @deprecated This will be removed on v2.0 and has been deprecated since v1.9.1 as C++11 features
+ *             in \<chrono\> and \<thread\>, as long as Time_t::now(() can be used instead.
+ *
  * @ingroup UTILITIES_MODULE
  */
-class RTPS_DllAPI eClock {
+class RTPS_DllAPI eClock
+{
+
 public:
-	eClock();
-	virtual ~eClock();
-	//!Seconds from 1900 to 1970, initialized to 0 to comply with RTPS 2.2
-	int32_t m_seconds_from_1900_to_1970;
-	//!Difference from UTC in seconds
-	int32_t m_utc_seconds_diff;
 
-	/**
-	* Fill a Time_t with the current time
-	* @param now Pointer to a RTPS Time_t instance to fill with the current time
-	* @return true on success
-	*/
-	bool setTimeNow(rtps::Time_t* now);
+    eClock();
 
-	/**
-	* Fill a Time_t with the current time
-	* @param now Pointer to a Time_t instance to fill with the current time
-	* @return true on success
-	*/
-	bool setTimeNow(fastrtps::Time_t* now);
+    virtual ~eClock();
 
-	/**
-	* Method to start measuring an interval in us.
-	*/
-	void intervalStart();
+    /**
+     * Fill a Time_t with the current time
+     * @param now Pointer to a RTPS Time_t instance to fill with the current time
+     * @return true on success
+     */
+    FASTRTPS_DEPRECATED("Use rtps::Time_t::now() instead")
+    bool setTimeNow(rtps::Time_t* now);
 
-	/**
-	* Method to finish measuring an interval in us.
-	* @return Time of the interval in us
-	*/
-	uint64_t intervalEnd();
+    /**
+     * Fill a Time_t with the current time
+     * @param now Pointer to a Time_t instance to fill with the current time
+     * @return true on success
+     */
+    FASTRTPS_DEPRECATED("Use Time_t::now() instead")
+    bool setTimeNow(fastrtps::Time_t* now);
 
-	/**
-	* Put the current thread to sleep.
-	* @param milliseconds Time to sleep
-	*/
-	static void my_sleep(uint32_t milliseconds);
+    /**
+     * Method to start measuring an interval in us.
+     */
+    FASTRTPS_DEPRECATED("Use methods from <chrono> instead")
+    void intervalStart();
 
-#if defined(_WIN32)
-	FILETIME ft;
-	unsigned long long ftlong;
-	FILETIME ft1,ft2;
-	LARGE_INTEGER freq;
-	LARGE_INTEGER li1,li2;
-#else
-	timeval m_now;
-	timeval m_interval1,m_interval2;
-#endif
+    /**
+     * Method to finish measuring an interval in us.
+     * @return Time of the interval in us
+     */
+    FASTRTPS_DEPRECATED("Use methods from <chrono> instead")
+    uint64_t intervalEnd();
+
+    /**
+     * Put the current thread to sleep.
+     * @param milliseconds Time to sleep
+     */
+    FASTRTPS_DEPRECATED("Use std::this_thread::sleep_for instead")
+    static void my_sleep(uint32_t milliseconds);
+
+private:
+    
+    uint64_t interval_start;
 };
 
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace fastrtps
+} // namespace eprosima
 
-#endif /* CLOCK_H_ */
+#endif /* ECLOCK_H_ */
