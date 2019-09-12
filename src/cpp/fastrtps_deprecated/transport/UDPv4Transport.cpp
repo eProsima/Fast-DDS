@@ -25,6 +25,10 @@
 #include <fastdds/rtps/network/SenderResource.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
 
+#ifdef _WIN32
+#include <Winsock2.h>
+#endif
+
 using namespace std;
 using namespace asio;
 
@@ -276,6 +280,13 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(
             ASIO_OS_DEF(SOL_SOCKET), SO_REUSEPORT>(true));
 #endif
     }
+#if defined _WIN32
+    else
+    {
+        getSocketPtr(socket)->set_option(asio::detail::socket_option::boolean <
+            ASIO_OS_DEF(SOL_SOCKET), SO_EXCLUSIVEADDRUSE>(true));
+    }
+#endif
 
     getSocketPtr(socket)->bind(generate_endpoint(sIp, port));
     return socket;
