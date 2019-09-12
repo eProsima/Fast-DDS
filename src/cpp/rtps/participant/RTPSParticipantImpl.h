@@ -181,7 +181,10 @@ public:
         * @param kind kind of endpoint
         * @return True if correct.
         */
-    bool newRemoteEndpointDiscovered(const GUID_t& pguid, int16_t userDefinedId, EndpointKind_t kind);
+    bool newRemoteEndpointDiscovered(
+            const GUID_t& pguid,
+            int16_t userDefinedId,
+            EndpointKind_t kind);
 
     /**
         * Assert the liveliness of a remote participant
@@ -338,7 +341,9 @@ private:
         * @param kind Endpoint Kind.
         * @return True if exists.
         */
-    bool existsEntityId(const EntityId_t& ent, EndpointKind_t kind) const;
+    bool existsEntityId(
+            const EntityId_t& ent,
+            EndpointKind_t kind) const;
 
     /**
         * Assign an endpoint to the ReceiverResources, based on its LocatorLists.
@@ -354,7 +359,9 @@ private:
         * @param isFixed Boolean indicating that is a fixed listenresource.
         * @return True if assigned.
         */
-    bool assignEndpoint2LocatorList(Endpoint* pend, LocatorList_t& list);
+    bool assignEndpoint2LocatorList(
+            Endpoint* pend,
+            LocatorList_t& list);
 
     /** Create the new ReceiverResources needed for a new Locator, contains the calls to assignEndpointListenResources
         and consequently assignEndpoint2LocatorList
@@ -430,7 +437,8 @@ private:
      * @param isBuiltin Bool value indicating if the Reader is builtin (Discovery or Liveliness protocol) or is created for the end user.
      * @return True if the Reader was correctly created.
      */
-    bool createReader(RTPSReader** Reader,
+    bool createReader(
+            RTPSReader** Reader,
             ReaderAttributes& param,
             ReaderHistory* hist,
             ReaderListener* listen,
@@ -449,7 +457,8 @@ private:
      * @param wqos WriterQos.
      * @return True if correctly registered.
      */
-    bool registerWriter(RTPSWriter* Writer,
+    bool registerWriter(
+            RTPSWriter* Writer,
             const TopicAttributes& topicAtt,
             const WriterQos& wqos);
 
@@ -460,7 +469,8 @@ private:
      * @param rqos ReaderQos.
      * @return  True if correctly registered.
      */
-    bool registerReader(RTPSReader* Reader,
+    bool registerReader(
+            RTPSReader* Reader,
             const TopicAttributes& topicAtt,
             const ReaderQos& rqos);
 
@@ -470,7 +480,8 @@ private:
      * @param wqos New QoS for the writer
      * @return True on success
      */
-    bool updateLocalWriter(RTPSWriter* Writer,
+    bool updateLocalWriter(
+            RTPSWriter* Writer,
             const TopicAttributes& topicAtt,
             const WriterQos& wqos);
 
@@ -480,7 +491,8 @@ private:
      * @param rqos New QoS for the reader
      * @return True on success
      */
-    bool updateLocalReader(RTPSReader* Reader,
+    bool updateLocalReader(
+            RTPSReader* Reader,
             const TopicAttributes& topicAtt,
             const ReaderQos& rqos);
 
