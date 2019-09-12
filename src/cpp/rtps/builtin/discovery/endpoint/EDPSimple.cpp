@@ -664,7 +664,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
 
     temp_writer_proxy_data_.clear();
     temp_writer_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_writer_proxy_data_.persistence_guid().guidPrefix = pdata.m_guid.guidPrefix;
+    temp_writer_proxy_data_.persistence_guid(pdata.get_persistence_guid());
     temp_writer_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, true);
     temp_writer_proxy_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     temp_writer_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -675,7 +675,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     {
         logInfo(RTPS_EDP,"Adding SEDP Pub Writer to my Pub Reader");
         temp_writer_proxy_data_.guid().entityId = c_EntityId_SEDPPubWriter;
-        temp_writer_proxy_data_.persistence_guid().entityId = c_EntityId_SEDPPubWriter;
+        temp_writer_proxy_data_.set_persistence_entity_id(c_EntityId_SEDPPubWriter);
         publications_reader_.first->matched_writer_add(temp_writer_proxy_data_);
     }
     auxendp = endp;
@@ -696,7 +696,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     {
         logInfo(RTPS_EDP,"Adding SEDP Sub Writer to my Sub Reader");
         temp_writer_proxy_data_.guid().entityId = c_EntityId_SEDPSubWriter;
-        temp_writer_proxy_data_.persistence_guid().entityId = c_EntityId_SEDPSubWriter;
+        temp_writer_proxy_data_.set_persistence_entity_id(c_EntityId_SEDPSubWriter);
         subscriptions_reader_.first->matched_writer_add(temp_writer_proxy_data_);
     }
     auxendp = endp;
@@ -718,7 +718,8 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     if(auxendp != 0 && publications_secure_reader_.first != nullptr)
     {
         temp_writer_proxy_data_.guid().entityId = sedp_builtin_publications_secure_writer;
-        temp_writer_proxy_data_.persistence_guid().entityId = sedp_builtin_publications_secure_writer;
+        temp_writer_proxy_data_.set_persistence_entity_id(sedp_builtin_publications_secure_writer);
+ 
         if(!mp_RTPSParticipant->security_manager().discovered_builtin_writer(
                     publications_secure_reader_.first->getGuid(), pdata.m_guid, temp_writer_proxy_data_,
                     publications_secure_reader_.first->getAttributes().security_attributes()))
@@ -751,7 +752,8 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     if(auxendp != 0 && subscriptions_secure_reader_.first != nullptr)
     {
         temp_writer_proxy_data_.guid().entityId = sedp_builtin_subscriptions_secure_writer;
-        temp_writer_proxy_data_.persistence_guid().entityId = sedp_builtin_subscriptions_secure_writer;
+        temp_writer_proxy_data_.set_persistence_entity_id(sedp_builtin_subscriptions_secure_writer);
+
         if(!mp_RTPSParticipant->security_manager().discovered_builtin_writer(
                     subscriptions_secure_reader_.first->getGuid(), pdata.m_guid, temp_writer_proxy_data_,
                     subscriptions_secure_reader_.first->getAttributes().security_attributes()))

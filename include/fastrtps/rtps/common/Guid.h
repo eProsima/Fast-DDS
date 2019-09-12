@@ -125,7 +125,10 @@ struct RTPS_DllAPI GuidPrefix_t
 const GuidPrefix_t c_GuidPrefix_Unknown;
 
 
-inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
+inline std::ostream& operator<<(
+        std::ostream& output,
+        const GuidPrefix_t& guiP)
+{
     output << std::hex;
     for(uint8_t i =0;i<11;++i)
         output<<(int)guiP.value[i]<<".";
@@ -133,7 +136,9 @@ inline std::ostream& operator<<(std::ostream& output,const GuidPrefix_t& guiP){
     return output<<std::dec;
 }
 
-inline std::istream& operator>>(std::istream& input, GuidPrefix_t& guiP)
+inline std::istream& operator>>(
+        std::istream& input,
+        GuidPrefix_t& guiP)
 {
     std::istream::sentry s(input);
 
@@ -257,7 +262,8 @@ struct RTPS_DllAPI EntityId_t{
      * Assignment operator.
      * @param id Entity id to copy
      */
-    EntityId_t& operator=(uint32_t id){
+    EntityId_t& operator=(uint32_t id)
+    {
         uint32_t* aux = (uint32_t*)(value);
         *aux = id;
 #if !__BIG_ENDIAN__
@@ -293,7 +299,9 @@ struct RTPS_DllAPI EntityId_t{
  * @param id2 ID prefix to compare
  * @return True if equal
  */
-inline bool operator==(EntityId_t& id1,const uint32_t id2)
+inline bool operator==(
+        EntityId_t& id1,
+        const uint32_t id2)
 {
 #if !__BIG_ENDIAN__
     id1.reverse();
@@ -315,7 +323,9 @@ inline bool operator==(EntityId_t& id1,const uint32_t id2)
  * @param id2 Second EntityId to compare
  * @return True if equal
  */
-inline bool operator==(const EntityId_t& id1,const EntityId_t& id2)
+inline bool operator==(
+        const EntityId_t& id1,
+        const EntityId_t& id2)
 {
     for(uint8_t i =0;i<4;++i)
     {
@@ -331,7 +341,9 @@ inline bool operator==(const EntityId_t& id1,const EntityId_t& id2)
  * @param id2 Second EntityId to compare
  * @return True if not equal
  */
-inline bool operator!=(const EntityId_t& id1,const EntityId_t& id2)
+inline bool operator!=(
+        const EntityId_t& id1,
+        const EntityId_t& id2)
 {
     for(uint8_t i =0;i<4;++i)
     {
@@ -343,13 +355,18 @@ inline bool operator!=(const EntityId_t& id1,const EntityId_t& id2)
 
 #endif
 
-inline std::ostream& operator<<(std::ostream& output,const EntityId_t& enI){
+inline std::ostream& operator<<(
+        std::ostream& output,
+        const EntityId_t& enI)
+{
     output << std::hex;
     output<<(int)enI.value[0]<<"."<<(int)enI.value[1]<<"."<<(int)enI.value[2]<<"."<<(int)enI.value[3];
     return output << std::dec;
 }
 
-inline std::istream& operator>>(std::istream& input, EntityId_t& enP)
+inline std::istream& operator>>(
+        std::istream& input,
+        EntityId_t& enP)
 {
     std::istream::sentry s(input);
 
@@ -438,16 +455,18 @@ struct RTPS_DllAPI GUID_t{
     /*!
      * Copy constructor.
      */
-    GUID_t(const GUID_t &g) : guidPrefix(g.guidPrefix),
-    entityId(g.entityId)
+    GUID_t(const GUID_t& g)
+        : guidPrefix(g.guidPrefix)
+        , entityId(g.entityId)
     {
     }
 
     /*!
      * Move constructor.
      */
-    GUID_t(GUID_t &&g) : guidPrefix(std::move(g.guidPrefix)),
-    entityId(std::move(g.entityId))
+    GUID_t(GUID_t&& g)
+        : guidPrefix(std::move(g.guidPrefix))
+        , entityId(std::move(g.entityId))
     {
     }
 
@@ -477,15 +496,25 @@ struct RTPS_DllAPI GUID_t{
      * @param guidP Guid prefix
      * @param id Entity id
      */
-    GUID_t(const GuidPrefix_t& guidP,uint32_t id):
-        guidPrefix(guidP),entityId(id) {}
+    GUID_t(
+            const GuidPrefix_t& guidP,
+            uint32_t id)
+        : guidPrefix(guidP)
+        , entityId(id)
+    {
+    }
 
     /**
      * @param guidP Guid prefix
      * @param entId Entity id
      */
-    GUID_t(const GuidPrefix_t& guidP,const EntityId_t& entId):
-        guidPrefix(guidP),entityId(entId) {}
+    GUID_t(
+            const GuidPrefix_t& guidP,
+            const EntityId_t& entId)
+        : guidPrefix(guidP)
+        , entityId(entId)
+    {
+    }
 
     static GUID_t unknown()
     {
@@ -501,7 +530,10 @@ struct RTPS_DllAPI GUID_t{
  * @param g2 Second GUID to compare
  * @return True if equal
  */
-inline bool operator==(const GUID_t& g1,const GUID_t& g2){
+inline bool operator==(
+        const GUID_t& g1,
+        const GUID_t& g2)
+{
     if(g1.guidPrefix == g2.guidPrefix && g1.entityId==g2.entityId)
         return true;
     else
@@ -514,14 +546,20 @@ inline bool operator==(const GUID_t& g1,const GUID_t& g2){
  * @param g2 Second GUID to compare
  * @return True if not equal
  */
-inline bool operator!=(const GUID_t& g1,const GUID_t& g2){
+inline bool operator!=(
+        const GUID_t& g1,
+        const GUID_t& g2)
+{
     if(g1.guidPrefix != g2.guidPrefix || g1.entityId!=g2.entityId)
         return true;
     else
         return false;
 }
 
-inline bool operator<(const GUID_t& g1, const GUID_t& g2){
+inline bool operator<(
+        const GUID_t& g1,
+        const GUID_t& g2)
+{
     for (uint8_t i = 0; i < 12; ++i)
     {
         if(g1.guidPrefix.value[i] < g2.guidPrefix.value[i])
@@ -550,13 +588,50 @@ const GUID_t c_Guid_Unknown;
  * @param guid GUID_t to print.
  * @return Stream operator.
  */
-inline std::ostream& operator<<(std::ostream& output,const GUID_t& guid)
+inline std::ostream& operator<<(
+        std::ostream& output,
+        const GUID_t& guid)
 {
     if(guid !=c_Guid_Unknown)
         output<<guid.guidPrefix<<"|"<<guid.entityId;
     else
         output << "|GUID UNKNOWN|";
     return output;
+}
+
+/**
+ * Stream operator, retrieves a GUID.
+ * @param input Input stream.
+ * @param guid GUID_t to print.
+ * @return Stream operator.
+ */
+inline std::istream& operator>>(
+        std::istream& input,
+        GUID_t& guid)
+{
+    std::istream::sentry s(input);
+
+    if(s)
+    {
+        std::ios_base::iostate excp_mask = input.exceptions();
+
+        try
+        {
+            input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
+
+            input >> guid.guidPrefix;
+            input >> guid.entityId;
+        }
+        catch(std::ios_base::failure &)
+        {
+            // maybe is unknown or just invalid
+            guid = c_Guid_Unknown;
+        }
+
+        input.exceptions(excp_mask);
+    }
+
+    return input;
 }
 
 #endif

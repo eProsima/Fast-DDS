@@ -341,7 +341,7 @@ class RTPSParticipantAttributes
          */
         uint32_t listenSocketBufferSize;
 
-        //! Optionally allow user defined GuidPrefix_t
+        //! Optionally allows user to define the GuidPrefix_t
         GuidPrefix_t prefix;
 
         RTPS_DllAPI inline bool ReadguidPrefix(const char * pfx)

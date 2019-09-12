@@ -96,8 +96,7 @@ StatefulReader::StatefulReader(
 }
 
 bool StatefulReader::matched_writer_add(
-        const WriterProxyData& wdata,
-        bool persist /*=true*/)
+        const WriterProxyData& wdata)
 {
     assert(wdata.guid() != c_Guid_Unknown);
 
@@ -151,11 +150,8 @@ bool StatefulReader::matched_writer_add(
     }
 
     SequenceNumber_t initial_sequence;
-    if (persist)
-    {
-        add_persistence_guid(wdata.guid(), wdata.persistence_guid());
-        initial_sequence = get_last_notified(wdata.guid());
-    }
+    add_persistence_guid(wdata.guid(), wdata.persistence_guid());
+    initial_sequence = get_last_notified(wdata.guid());
     
     wp->start(wdata, initial_sequence);
 

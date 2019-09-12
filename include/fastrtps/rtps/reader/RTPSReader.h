@@ -71,10 +71,9 @@ public:
     /**
      * Add a matched writer represented by its attributes.
      * @param wdata Attributes of the writer to add.
-     * @param persist If the Reader must try to recover Writer formered registered state
      * @return True if correctly added.
      */
-    RTPS_DllAPI virtual bool matched_writer_add(const WriterProxyData& wdata, bool persist = true) = 0;
+    RTPS_DllAPI virtual bool matched_writer_add(const WriterProxyData& wdata) = 0;
 
     /**
      * Remove a writer represented by its attributes from the matched writers.

@@ -302,6 +302,7 @@ void PDPServer::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
     // boilerplate, note that PDPSimple version doesn't use RELIABLE entities
     logInfo(RTPS_PDP, "For RTPSParticipant: " << pdata->m_guid.guidPrefix);
+
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     uint32_t auxendp = endp;
     auxendp &= DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
@@ -311,7 +312,8 @@ void PDPServer::assignRemoteEndpoints(ParticipantProxyData* pdata)
         temp_writer_data_.clear();
         temp_writer_data_.guid().guidPrefix = pdata->m_guid.guidPrefix;
         temp_writer_data_.guid().entityId = c_EntityId_SPDPWriter;
-        temp_writer_data_.persistence_guid(temp_writer_data_.guid());
+        temp_writer_data_.persistence_guid(pdata->get_persistence_guid());
+        temp_writer_data_.set_persistence_entity_id(c_EntityId_SPDPWriter);
         temp_writer_data_.set_remote_locators(pdata->metatraffic_locators, network, true);
         temp_writer_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
         temp_writer_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
@@ -407,7 +409,7 @@ void PDPServer::removeRemoteEndpoints(ParticipantProxyData* pdata)
             temp_writer_data_.set_remote_locators(pdata->metatraffic_locators, network, true);
             temp_writer_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
             temp_writer_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-            mp_PDPReader->matched_writer_add(temp_writer_data_, false);
+            mp_PDPReader->matched_writer_add(temp_writer_data_);
         }
 
     }
