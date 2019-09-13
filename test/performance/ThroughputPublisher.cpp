@@ -465,7 +465,7 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
         samples += demand;
         //cout << "samples sent: "<<samples<< endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(recovery_time_ms));
-        timewait_us += t_overhead_;
+        timewait_us += t_overhead_ + std::chrono::microseconds(recovery_time_ms * 1000);
     }
     command.m_command = TEST_ENDS;
 
@@ -506,7 +506,7 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
             result.publisher.send_samples = samples;
             result.publisher.totaltime_us = std::chrono::duration<double, std::micro>(t_end_ - t_start_) - timewait_us;
             result.subscriber.recv_samples = command.m_lastrecsample - command.m_lostsamples;
-            result.subscriber.totaltime_us = std::chrono::microseconds(command.m_totaltime);
+            result.subscriber.totaltime_us = std::chrono::microseconds(command.m_totaltime) - timewait_us;
             result.subscriber.lost_samples = command.m_lostsamples;
             result.compute();
             m_timeStats.push_back(result);

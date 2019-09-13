@@ -759,9 +759,9 @@ void LatencyTestPublisher::analyzeTimes(uint32_t datasize)
     TimeStats TS;
     TS.nbytes = datasize + 4;
     TS.received = n_received;
-    TS.m_min = *std::min_element(times_.begin(), times_.end());
-    TS.m_max = *std::max_element(times_.begin(), times_.end());
-    TS.mean = std::accumulate(times_.begin(), times_.end(), std::chrono::duration<double, std::micro>(0)).count() / times_.size();
+    TS.m_min = *std::min_element(times_.begin(), times_.end()) / 2.;
+    TS.m_max = *std::max_element(times_.begin(), times_.end()) / 2.;
+    TS.mean = std::accumulate(times_.begin(), times_.end(), std::chrono::duration<double, std::micro>(0)).count() / times_.size() / 2.;
 
     double auxstdev = 0;
     for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = times_.begin(); tit != times_.end(); ++tit)
