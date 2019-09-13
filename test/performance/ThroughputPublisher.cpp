@@ -20,7 +20,6 @@
 #include "ThroughputPublisher.h"
 
 #include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/utils/eClock.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
@@ -33,6 +32,7 @@
 
 #include <map>
 #include <fstream>
+#include <chrono>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -321,7 +321,7 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
     {
         for (auto dit = sit->second.begin(); dit != sit->second.end(); ++dit)
         {
-            eClock::my_sleep(100);
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
             //cout << "Starting test with demand: " << *dit << endl;
             command.m_command = READY_TO_START;
             command.m_size = sit->first;
@@ -464,15 +464,15 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
         t_end_ = std::chrono::steady_clock::now();
         samples += demand;
         //cout << "samples sent: "<<samples<< endl;
-        eClock::my_sleep(recovery_time_ms);
-        timewait_us += t_overhead_;
+        std::this_thread::sleep_for(std::chrono::milliseconds(recovery_time_ms));
+        timewait_us += t_overhead_ + std::chrono::microseconds(recovery_time_ms * 1000);
     }
     command.m_command = TEST_ENDS;
 
     //cout << "SEND COMMAND "<< command.m_command << endl;
-    eClock::my_sleep(100);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     mp_commandpub->write((void*)&command);
-    eClock::my_sleep(100);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     mp_datapub->removeAllChange();
 
     if (dynamic_data)
@@ -506,7 +506,7 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
             result.publisher.send_samples = samples;
             result.publisher.totaltime_us = std::chrono::duration<double, std::micro>(t_end_ - t_start_) - timewait_us;
             result.subscriber.recv_samples = command.m_lastrecsample - command.m_lostsamples;
-            result.subscriber.totaltime_us = std::chrono::microseconds(command.m_totaltime);
+            result.subscriber.totaltime_us = std::chrono::microseconds(command.m_totaltime) - timewait_us;
             result.subscriber.lost_samples = command.m_lostsamples;
             result.compute();
             m_timeStats.push_back(result);
