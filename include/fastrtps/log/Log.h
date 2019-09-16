@@ -155,7 +155,7 @@ class Log
             std::mutex mCvMutex;
             bool mLogging;
             bool mWork;
-            volatile int current_loop;
+            int current_loop;
 
             // Context configuration.
             std::mutex mConfigMutex;
