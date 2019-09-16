@@ -276,6 +276,42 @@ bool SubscriberHistory::find_key_for_change(
     return find_key(a_change, &map_it);
 }
 
+void SubscriberHistory::deserialize_change(
+        CacheChange_t* change,
+        uint32_t ownership_strength,
+        void* data,
+        SampleInfo_t* info)
+{
+    if (change->kind == ALIVE)
+    {
+        mp_subImpl->getType()->deserialize(&change->serializedPayload, data);
+    }
+
+    if (info != nullptr)
+    {
+        info->sampleKind = change->kind;
+        info->sample_identity.writer_guid(change->writerGUID);
+        info->sample_identity.sequence_number(change->sequenceNumber);
+        info->sourceTimestamp = change->sourceTimestamp;
+        if (mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
+        {
+            info->ownershipStrength = ownership_strength;
+        }
+        if (mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
+            change->instanceHandle == c_InstanceHandle_Unknown &&
+            change->kind == ALIVE)
+        {
+            bool is_key_protected = false;
+#if HAVE_SECURITY
+            is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
+#endif
+            mp_subImpl->getType()->getKey(data, &change->instanceHandle, is_key_protected);
+        }
+        info->iHandle = change->instanceHandle;
+        info->related_sample_identity = change->write_params.sample_identity();
+    }
+}
+
 bool SubscriberHistory::readNextData(
         void* data,
         SampleInfo_t* info,
@@ -296,34 +332,8 @@ bool SubscriberHistory::readNextData(
         if (mp_reader->nextUnreadCache(&change, &wp))
         {
             logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
-            if (change->kind == ALIVE)
-            {
-                mp_subImpl->getType()->deserialize(&change->serializedPayload, data);
-            }
-
-            if (info != nullptr)
-            {
-                info->sampleKind = change->kind;
-                info->sample_identity.writer_guid(change->writerGUID);
-                info->sample_identity.sequence_number(change->sequenceNumber);
-                info->sourceTimestamp = change->sourceTimestamp;
-                if (mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
-                {
-                    info->ownershipStrength = wp->ownership_strength();
-                }
-                if (mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
-                    change->instanceHandle == c_InstanceHandle_Unknown &&
-                    change->kind == ALIVE)
-                {
-                    bool is_key_protected = false;
-#if HAVE_SECURITY
-                    is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
-#endif
-                    mp_subImpl->getType()->getKey(data, &change->instanceHandle, is_key_protected);
-                }
-                info->iHandle = change->instanceHandle;
-                info->related_sample_identity = change->write_params.sample_identity();
-            }
+            uint32_t ownership = wp ? wp->ownership_strength() : 0;
+            deserialize_change(change, ownership, data, info);
             return true;
         }
     }
@@ -352,32 +362,8 @@ bool SubscriberHistory::takeNextData(
         {
             logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": taking seqNum" << change->sequenceNumber <<
                     " from writer: " << change->writerGUID);
-            if (change->kind == ALIVE)
-            {
-                mp_subImpl->getType()->deserialize(&change->serializedPayload, data);
-            }
-            if (info != nullptr)
-            {
-                info->sampleKind = change->kind;
-                info->sample_identity.writer_guid(change->writerGUID);
-                info->sample_identity.sequence_number(change->sequenceNumber);
-                info->sourceTimestamp = change->sourceTimestamp;
-                if (mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
-                {
-                    info->ownershipStrength = wp->ownership_strength();
-                }
-                if (mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
-                        change->instanceHandle == c_InstanceHandle_Unknown && change->kind == ALIVE)
-                {
-                    bool is_key_protected = false;
-#if HAVE_SECURITY
-                    is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
-#endif
-                    mp_subImpl->getType()->getKey(data, &change->instanceHandle, is_key_protected);
-                }
-                info->iHandle = change->instanceHandle;
-                info->related_sample_identity = change->write_params.sample_identity();
-            }
+            uint32_t ownership = wp ? wp->ownership_strength() : 0;
+            deserialize_change(change, ownership, data, info);
             remove_change_sub(change);
             return true;
         }
@@ -398,7 +384,7 @@ bool SubscriberHistory::find_key(
         return true;
     }
 
-    if ((int)keyed_changes_.size() < m_resourceLimitsQos.max_instances)
+    if (keyed_changes_.size() < static_cast<size_t>(m_resourceLimitsQos.max_instances))
     {
         *vit_out = keyed_changes_.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
         return true;
@@ -420,7 +406,8 @@ bool SubscriberHistory::find_key(
 }
 
 
-bool SubscriberHistory::remove_change_sub(CacheChange_t* change)
+bool SubscriberHistory::remove_change_sub(
+        CacheChange_t* change)
 {
     if (mp_reader == nullptr || mp_mutex == nullptr)
     {
