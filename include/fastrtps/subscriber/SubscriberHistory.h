@@ -90,15 +90,6 @@ class SubscriberHistory: public rtps::ReaderHistory
                 std::chrono::steady_clock::time_point& max_blocking_time);
         ///@}
 
-        bool readNextBuffer(
-                rtps::SerializedPayload_t* data,
-                SampleInfo_t* info);
-
-        bool takeNextBuffer(
-                rtps::SerializedPayload_t* data,
-                SampleInfo_t* info);
-
-
         /**
          * This method is called to remove a change from the SubscriberHistory.
          * @param change Pointer to the CacheChange_t.
