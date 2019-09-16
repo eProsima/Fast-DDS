@@ -293,10 +293,7 @@ void SubscriberHistory::deserialize_change(
         info->sample_identity.writer_guid(change->writerGUID);
         info->sample_identity.sequence_number(change->sequenceNumber);
         info->sourceTimestamp = change->sourceTimestamp;
-        if (mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS)
-        {
-            info->ownershipStrength = ownership_strength;
-        }
+        info->ownershipStrength = ownership_strength;
         if (mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
             change->instanceHandle == c_InstanceHandle_Unknown &&
             change->kind == ALIVE)
@@ -332,7 +329,8 @@ bool SubscriberHistory::readNextData(
         if (mp_reader->nextUnreadCache(&change, &wp))
         {
             logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
-            uint32_t ownership = wp ? wp->ownership_strength() : 0;
+            uint32_t ownership = wp && mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
+                wp->ownership_strength() : 0;
             deserialize_change(change, ownership, data, info);
             return true;
         }
@@ -362,7 +360,8 @@ bool SubscriberHistory::takeNextData(
         {
             logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": taking seqNum" << change->sequenceNumber <<
                     " from writer: " << change->writerGUID);
-            uint32_t ownership = wp ? wp->ownership_strength() : 0;
+            uint32_t ownership = wp && mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
+                wp->ownership_strength() : 0;
             deserialize_change(change, ownership, data, info);
             remove_change_sub(change);
             return true;
