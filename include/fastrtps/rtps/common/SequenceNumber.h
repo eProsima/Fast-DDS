@@ -18,6 +18,7 @@
 
 #ifndef RPTS_ELEM_SEQNUM_H_
 #define RPTS_ELEM_SEQNUM_H_
+
 #include "../../fastrtps_dll.h"
 #include "../../utils/fixed_size_bitmap.hpp"
 #include "Types.h"
@@ -347,11 +348,7 @@ inline bool sort_seqNum(const SequenceNumber_t& s1, const SequenceNumber_t& s2) 
  */
 inline std::ostream& operator<<(std::ostream& output, const SequenceNumber_t& seqNum)
 {
-#ifdef LLONG_MAX
     return output << seqNum.to64long();
-#else
-    return output << "{high: " << seqNum.high << ", low: " << seqNum.low << "}";
-#endif
 }
 
 inline std::ostream& operator<<(std::ostream& output, std::vector<SequenceNumber_t>& seqNumSet)
@@ -370,11 +367,7 @@ struct SequenceNumberHash
 {
     std::size_t operator()(const SequenceNumber_t& sequence_number) const noexcept
     {
-#ifdef LLONG_MAX
         return static_cast<std::size_t>(sequence_number.to64long());
-#else
-        return static_cast<std::size_t>(sequence_number.low);
-#endif
     };
 };
 
@@ -403,18 +396,10 @@ using SequenceNumberSet_t = BitmapRange<SequenceNumber_t, SequenceNumberDiff, 25
  */
 inline std::ostream& operator<<(std::ostream& output, const SequenceNumberSet_t& sns)
 {
-#ifdef LLONG_MAX
     output << sns.base().to64long() << ":";
-#else
-    output << "{high: " << sns.base().high << ", low: " << sns.base().low << "} :";
-#endif
     sns.for_each([&](SequenceNumber_t it)
     {
-#ifdef LLONG_MAX
         output << it.to64long() << "-";
-#else
-        output << "{high: " << it.high << ", low: " << it.low << "} -";
-#endif
     });
 
     return output;
