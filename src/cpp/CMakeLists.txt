@@ -243,6 +243,17 @@ if(ANDROID)
         )
 endif()
 
+# Option to enable strict real-time. In this case, several API functions have a real-time behaviour.
+# * Publisher::write() - Uses ReliabilityQosPolicy.max_blocking_time
+# * Subscriber::takeNextData() - Uses ReliabilityQosPolicy.max_blocking_time
+# * Subscriber::readNextData() - Uses ReliabilityQosPolicy.max_blocking_time
+option(STRICT_REALTIME "Enable a strict real-time behavour." OFF)
+if(STRICT_REALTIME)
+    set(HAVE_STRICT_REALTIME 1)
+else()
+    set(HAVE_STRICT_REALTIME 0)
+endif()
+
 configure_file(${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/config.h.in
     ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.h)
 

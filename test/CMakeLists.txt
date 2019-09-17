@@ -35,7 +35,7 @@ if(EPROSIMA_BUILD_TESTS AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER)
     add_subdirectory(communication)
     add_subdirectory(unittest)
 
-    if(UNIX AND NOT APPLE)
+    if(UNIX AND NOT APPLE AND STRICT_REALTIME)
         add_subdirectory(realtime)
     endif()
 endif()

@@ -68,6 +68,11 @@
 #define TLS_FOUND @TLS_FOUND@
 #endif
 
+// Strict real-time
+#ifndef HAVE_STRICT_REALTIME
+#define HAVE_STRICT_REALTIME @HAVE_STRICT_REALTIME@
+#endif
+
 // Deprecated macro
 #if __cplusplus >= 201402L
 #define FASTRTPS_DEPRECATED(msg) [[ deprecated(msg) ]]

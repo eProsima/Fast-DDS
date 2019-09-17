@@ -104,14 +104,22 @@ bool SubscriberImpl::wait_for_unread_samples(const Duration_t& timeout)
 bool SubscriberImpl::readNextData(void* data,SampleInfo_t* info)
 {
     auto max_blocking_time = std::chrono::steady_clock::now() +
+#if HAVE_STRICT_REALTIME
         std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
+#else
+        std::chrono::hours(24);
+#endif
     return this->m_history.readNextData(data, info, max_blocking_time);
 }
 
 bool SubscriberImpl::takeNextData(void* data,SampleInfo_t* info)
 {
     auto max_blocking_time = std::chrono::steady_clock::now() +
+#if HAVE_STRICT_REALTIME
         std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
+#else
+        std::chrono::hours(24);
+#endif
     return this->m_history.takeNextData(data, info, max_blocking_time);
 }
 
