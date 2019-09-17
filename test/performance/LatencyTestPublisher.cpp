@@ -528,8 +528,10 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* subscri
         subscriber->takeNextData((void*)mp_up->m_DynData_in,&mp_up->m_sampleinfo);
         if (mp_up->m_DynData_in->get_uint32_value(0) == mp_up->m_DynData_out->get_uint32_value(0))
         {
+            // Factor of 2 below is to calculate the roundtrip divided by two. Note that the overhead does not
+            // need to be halved, as we access the clock twice per round trip
             mp_up->t_end_ = std::chrono::steady_clock::now();
-            mp_up->times_.push_back(std::chrono::duration<double, std::micro>(mp_up->t_end_ - mp_up->t_start_) - mp_up->t_overhead_);
+            mp_up->times_.push_back(std::chrono::duration<double, std::micro>(mp_up->t_end_ - mp_up->t_start_) / 2. - mp_up->t_overhead_);
             mp_up->n_received++;
 
             // Reset seqnum from out data
@@ -550,7 +552,7 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* subscri
         if(mp_up->mp_latency_in->seqnum == mp_up->mp_latency_out->seqnum)
         {
             mp_up->t_end_ = std::chrono::steady_clock::now();
-            mp_up->times_.push_back(std::chrono::duration<double, std::micro>(mp_up->t_end_ - mp_up->t_start_) - mp_up->t_overhead_);
+            mp_up->times_.push_back(std::chrono::duration<double, std::micro>(mp_up->t_end_ - mp_up->t_start_) / 2. - mp_up->t_overhead_);
             mp_up->n_received++;
 
             // Reset seqnum from out data
@@ -759,9 +761,9 @@ void LatencyTestPublisher::analyzeTimes(uint32_t datasize)
     TimeStats TS;
     TS.nbytes = datasize + 4;
     TS.received = n_received;
-    TS.m_min = *std::min_element(times_.begin(), times_.end()) / 2.;
-    TS.m_max = *std::max_element(times_.begin(), times_.end()) / 2.;
-    TS.mean = std::accumulate(times_.begin(), times_.end(), std::chrono::duration<double, std::micro>(0)).count() / times_.size() / 2.;
+    TS.m_min = *std::min_element(times_.begin(), times_.end());
+    TS.m_max = *std::max_element(times_.begin(), times_.end());
+    TS.mean = std::accumulate(times_.begin(), times_.end(), std::chrono::duration<double, std::micro>(0)).count() / times_.size();
 
     double auxstdev = 0;
     for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = times_.begin(); tit != times_.end(); ++tit)
