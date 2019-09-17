@@ -25,12 +25,8 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr REQUIRED)
 endif()
 
-if(NOT foonathan_memory_FOUND)
-    find_package(foonathan_memory REQUIRED)
-endif()
-
 if(NOT fastrtps_FOUND)
-find_package(fastrtps REQUIRED)
+    find_package(fastrtps REQUIRED)
 endif()
 
 # Set C++11
