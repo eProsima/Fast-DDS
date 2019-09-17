@@ -58,6 +58,17 @@ public:
      */
     const rtps::GUID_t& getGuid();
 
+    /**
+     * Method to block the current thread until an unread message is available
+     */
+    inline void waitForUnreadMessage()
+    {
+        const Duration_t one_day{ 24 * 3600, 0 };
+        while (!wait_for_unread_samples(one_day))
+        {
+        }
+    }
+
     /*!
      * @brief Blocks the current thread until an unread sample is available.
      * @param timeout Maximum time the function will be blocked if any sample is received.
@@ -110,6 +121,15 @@ public:
      * @return There is a clean state with all Publishers.
      */
     bool isInCleanState() const;
+
+    /**
+     * Get the unread count.
+     * @return Unread count
+     */
+    inline uint64_t getUnreadCount() const
+    {
+        return get_unread_count();
+    }
 
     /**
      * Get the unread count.
