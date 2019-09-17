@@ -38,20 +38,29 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 
-ThroughputPublisher::DataPubListener::DataPubListener(ThroughputPublisher& up):m_up(up){}
-ThroughputPublisher::DataPubListener::~DataPubListener(){}
+// *******************************************************************************************
+// ************************************ DATA PUB LISTENER ************************************
+// *******************************************************************************************
+ThroughputPublisher::DataPubListener::DataPubListener(ThroughputPublisher& up)
+    :m_up(up)
+{
+}
 
-void ThroughputPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
+ThroughputPublisher::DataPubListener::~DataPubListener()
+{
+}
+
+void ThroughputPublisher::DataPubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(m_up.dataMutex_);
     if (info.status == MATCHED_MATCHING)
     {
-        //std::cout << C_RED << "DATA Pub Matched" << C_DEF << std::endl;
         ++m_up.data_disc_count_;
     }
     else
     {
-        //std::cout << C_RED << "DATA PUBLISHER MATCHING REMOVAL" << C_DEF << std::endl;
         --m_up.data_disc_count_;
     }
 
@@ -59,9 +68,22 @@ void ThroughputPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub
     m_up.data_disc_cond_.notify_one();
 }
 
-ThroughputPublisher::CommandSubListener::CommandSubListener(ThroughputPublisher& up):m_up(up){}
-ThroughputPublisher::CommandSubListener::~CommandSubListener(){}
-void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/, MatchingInfo& info)
+
+// *******************************************************************************************
+// ********************************** COMMAND SUB LISTENER ***********************************
+// *******************************************************************************************
+ThroughputPublisher::CommandSubListener::CommandSubListener(ThroughputPublisher& up)
+    :m_up(up)
+{
+}
+
+ThroughputPublisher::CommandSubListener::~CommandSubListener()
+{
+}
+
+void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(m_up.mutex_);
     if (info.status == MATCHED_MATCHING)
@@ -79,10 +101,21 @@ void ThroughputPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* 
     m_up.disc_cond_.notify_one();
 }
 
-ThroughputPublisher::CommandPubListener::CommandPubListener(ThroughputPublisher& up):m_up(up){}
-ThroughputPublisher::CommandPubListener::~CommandPubListener(){}
 
-void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* /*pub*/,
+// *******************************************************************************************
+// ********************************** COMMAND PUB LISTENER ***********************************
+// *******************************************************************************************
+ThroughputPublisher::CommandPubListener::CommandPubListener(ThroughputPublisher& up)
+    :m_up(up)
+{
+}
+
+ThroughputPublisher::CommandPubListener::~CommandPubListener()
+{
+}
+
+void ThroughputPublisher::CommandPubListener::onPublicationMatched(
+    Publisher* /*pub*/,
     MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(m_up.mutex_);
@@ -101,11 +134,20 @@ void ThroughputPublisher::CommandPubListener::onPublicationMatched(Publisher* /*
     m_up.disc_cond_.notify_one();
 }
 
-ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostname, bool export_csv,
+// *******************************************************************************************
+// ********************************** THROUGHPUT PUBLISHER ***********************************
+// *******************************************************************************************
+ThroughputPublisher::ThroughputPublisher(
+        bool reliable,
+        uint32_t pid,
+        bool hostname,
+        bool export_csv,
         const std::string& export_prefix,
         const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
         const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-        const std::string& sXMLConfigFile, bool dynamic_types, int forced_domain)
+        const std::string& sXMLConfigFile,
+        bool dynamic_types,
+        int forced_domain)
     : disc_count_(0),
     data_disc_count_(0),
 #pragma warning(disable:4355)
@@ -119,16 +161,20 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     dynamic_data(dynamic_types),
     m_forced_domain(forced_domain)
 {
-    if (dynamic_data) // Dummy type registration
+    // Dummy type registration
+    if (dynamic_data)
     {
         // Create basic builders
         DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
 
         // Add members to the struct.
         struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-        struct_type_builder->add_member(1, "data",
+        struct_type_builder->add_member(
+            1,
+            "data",
             DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), LENGTH_UNLIMITED
+                DynamicTypeBuilderFactory::get_instance()->create_byte_type(),
+                LENGTH_UNLIMITED
             ));
         struct_type_builder->set_name("ThroughputType");
 
@@ -150,6 +196,7 @@ ThroughputPublisher::ThroughputPublisher(bool reliable, uint32_t pid, bool hostn
     {
         PParam.rtps.builtin.domainId = pid % 230;
     }
+
     PParam.rtps.setName("Participant_publisher");
     PParam.rtps.properties = part_property_policy;
 
@@ -285,7 +332,11 @@ ThroughputPublisher::~ThroughputPublisher()
     Domain::removeParticipant(mp_par);
 }
 
-void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int demand, int msg_size)
+void ThroughputPublisher::run(
+        uint32_t test_time,
+        uint32_t recovery_time_ms,
+        int demand,
+        int msg_size)
 {
     if (!ready)
     {
@@ -322,23 +373,42 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
         for (auto dit = sit->second.begin(); dit != sit->second.end(); ++dit)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            //cout << "Starting test with demand: " << *dit << endl;
             command.m_command = READY_TO_START;
             command.m_size = sit->first;
             command.m_demand = *dit;
-            //cout << "SEND COMMAND "<< command.m_command << endl;
+
+            // Check history resources depending on the history kind and demand
+            if (pubAttr.topic.historyQos.kind == KEEP_LAST_HISTORY_QOS)
+            {
+                // Ensure that the history depth is at least the demand
+                if (pubAttr.topic.historyQos.depth < 0 ||
+                    static_cast<uint32_t>(pubAttr.topic.historyQos.depth) < command.m_demand)
+                {
+                    logWarning(THROUGHPUTPUBLISHER, "Setting history depth to " << command.m_demand);
+                    pubAttr.topic.historyQos.depth = command.m_demand;
+                }
+            }
+            // KEEP_ALL case
+            else
+            {
+                // Ensure that the max samples is at least the demand
+                if (pubAttr.topic.resourceLimitsQos.max_samples < 0 ||
+                    static_cast<uint32_t>(pubAttr.topic.resourceLimitsQos.max_samples) < command.m_demand)
+                {
+                    logWarning(THROUGHPUTPUBLISHER, "Setting resource limit max samples to " << command.m_demand);
+                    pubAttr.topic.resourceLimitsQos.max_samples = command.m_demand;
+                }
+            }
+
             mp_commandpub->write((void*)&command);
             command.m_command = DEFAULT;
             mp_commandsub->wait_for_unread_samples({20, 0});
             mp_commandsub->takeNextData((void*)&command, &info);
-            //cout << "RECI COMMAND "<< command.m_command << endl;
-            //cout << "Received command of type: "<< command << endl;
             if (command.m_command == BEGIN)
             {
                 if (!test(test_time, recovery_time_ms, *dit, sit->first))
                 {
                     command.m_command = ALL_STOPS;
-                    //	cout << "SEND COMMAND "<< command.m_command << endl;
                     mp_commandpub->write((void*)&command);
                     return;
                 }
@@ -357,8 +427,8 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
         }
         sit--;
     }
+
     command.m_command = ALL_STOPS;
-    //	cout << "SEND COMMAND "<< command.m_command << endl;
     mp_commandpub->write((void*)&command);
     mp_commandpub->wait_for_all_acked(eprosima::fastrtps::Time_t(20, 0));
 
@@ -384,7 +454,11 @@ void ThroughputPublisher::run(uint32_t test_time, uint32_t recovery_time_ms, int
     }
 }
 
-bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, uint32_t demand, uint32_t msg_size)
+bool ThroughputPublisher::test(
+        uint32_t test_time,
+        uint32_t recovery_time_ms,
+        uint32_t demand,
+        uint32_t msg_size)
 {
     if (dynamic_data)
     {
@@ -393,9 +467,12 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
 
         // Add members to the struct.
         struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-        struct_type_builder->add_member(1, "data",
+        struct_type_builder->add_member(
+            1,
+            "data",
             DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), msg_size
+                DynamicTypeBuilderFactory::get_instance()->create_byte_type(),
+                msg_size
             ));
         struct_type_builder->set_name("ThroughputType");
 
@@ -422,9 +499,11 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
         Domain::registerType(mp_par, latency_t);
         latency = new ThroughputType((uint16_t)msg_size);
     }
+
     mp_datapub = Domain::createPublisher(mp_par, pubAttr, &m_DataPubListener);
 
     t_end_ = std::chrono::steady_clock::now();
+
     std::chrono::duration<double, std::micro> timewait_us(0);
     std::chrono::duration<double, std::micro> test_time_us = std::chrono::seconds(test_time);
     uint32_t samples = 0;
@@ -432,24 +511,20 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
     ThroughputCommandType command;
     SampleInfo_t info;
     command.m_command = TEST_STARTS;
-    //cout << "SEND COMMAND "<< command.m_command << endl;
     mp_commandpub->write((void*)&command);
 
-    //std::cout << "Waiting for data discovery" << std::endl;
     std::unique_lock<std::mutex> data_disc_lock(dataMutex_);
     data_disc_cond_.wait(data_disc_lock, [&]()
     {
         return data_disc_count_ > 0;
     });
     data_disc_lock.unlock();
-    //std::cout << "Discovery data complete" << std::endl;
 
     t_start_ = std::chrono::steady_clock::now();
     while (std::chrono::duration<double, std::micro>(t_end_ - t_start_) < test_time_us)
     {
         for (uint32_t sample = 0; sample < demand; sample++)
         {
-            //cout << sample << "*"<<std::flush;
             if (dynamic_data)
             {
                 m_DynData->set_uint32_value(m_DynData->get_uint32_value(0) + 1, 0);
@@ -463,13 +538,11 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
         }
         t_end_ = std::chrono::steady_clock::now();
         samples += demand;
-        //cout << "samples sent: "<<samples<< endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(recovery_time_ms));
         timewait_us += t_overhead_ + std::chrono::microseconds(recovery_time_ms * 1000);
     }
     command.m_command = TEST_ENDS;
 
-    //cout << "SEND COMMAND "<< command.m_command << endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     mp_commandpub->write((void*)&command);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -496,10 +569,8 @@ bool ThroughputPublisher::test(uint32_t test_time, uint32_t recovery_time_ms, ui
     mp_commandsub->wait_for_unread_samples({20, 0});
     if (mp_commandsub->takeNextData((void*)&command, &info))
     {
-        //cout << "RECI COMMAND "<< command.m_command << endl;
         if (command.m_command == TEST_RESULTS)
         {
-            //cout << "Received results from subscriber"<<endl;
             TroughputResults result;
             result.demand = demand;
             result.payload_size = msg_size + 4 + 4;
@@ -573,7 +644,6 @@ bool ThroughputPublisher::loadDemandsPayload()
     bool more = true;
     while (std::getline(fi, line))
     {
-        //	cout << "READING LINE: "<< line<<endl;
         start = 0;
         end = line.find(DELIM);
         first = true;
@@ -581,7 +651,6 @@ bool ThroughputPublisher::loadDemandsPayload()
         more = true;
         while (more)
         {
-            //	cout << "SUBSTR: "<< line.substr(start,end-start) << endl;
             std::istringstream iss(line.substr(start, end - start));
             if (first)
             {
