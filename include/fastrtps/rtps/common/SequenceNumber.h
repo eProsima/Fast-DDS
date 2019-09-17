@@ -25,7 +25,6 @@
 
 #include <vector>
 #include <algorithm>
-#include <limits.h>
 #include <cassert>
 
 namespace eprosima {
