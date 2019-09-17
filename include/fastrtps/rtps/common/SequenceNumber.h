@@ -23,9 +23,9 @@
 #include "../../utils/fixed_size_bitmap.hpp"
 #include "Types.h"
 
-#include <vector>
 #include <algorithm>
 #include <cassert>
+#include <vector>
 
 namespace eprosima {
 namespace fastrtps {
@@ -37,25 +37,15 @@ namespace rtps {
 struct RTPS_DllAPI SequenceNumber_t
 {
     //!
-    int32_t high;
+    int32_t high = 0;
     //!
-    uint32_t low;
+    uint32_t low = 0;
 
     //!Default constructor
     SequenceNumber_t() noexcept
     {
         high = 0;
         low = 0;
-    }
-
-    /*!
-     * @brief Copy constructor.
-     */
-    SequenceNumber_t(
-            const SequenceNumber_t& seq) noexcept
-        : high(seq.high)
-        , low(seq.low)
-    {
     }
 
     /*!
@@ -75,27 +65,14 @@ struct RTPS_DllAPI SequenceNumber_t
      */
     uint64_t to64long() const noexcept
     {
-        return (static_cast<uint64_t>(high) << 32) + low;
+        return (static_cast<uint64_t>(high) << 32u) + low;
     }
-
-    /*!
-     * Assignment operator
-     * @param seq SequenceNumber_t to copy the data from
-     */
-    SequenceNumber_t& operator =(
-            const SequenceNumber_t& seq) noexcept
-    {
-        high = seq.high;
-        low = seq.low;
-        return *this;
-    }
-
 
     //! Increase SequenceNumber in 1.
     SequenceNumber_t& operator ++() noexcept
     {
         ++low;
-        if (!low)
+        if (low == 0)
         {
             ++high;
         }
@@ -131,7 +108,7 @@ struct RTPS_DllAPI SequenceNumber_t
 
     static SequenceNumber_t unknown() noexcept
     {
-        return SequenceNumber_t(-1, 0);
+        return { -1, 0 };
     }
 
 };
@@ -148,12 +125,7 @@ inline bool operator ==(
         const SequenceNumber_t& sn1,
         const SequenceNumber_t& sn2) noexcept
 {
-    if (sn1.low != sn2.low || sn1.high != sn2.high)
-    {
-        return false;
-    }
-
-    return true;
+    return (sn1.low == sn2.low) && (sn1.high == sn2.high);
 }
 
 /**
@@ -166,12 +138,7 @@ inline bool operator !=(
         const SequenceNumber_t& sn1,
         const SequenceNumber_t& sn2) noexcept
 {
-    if (sn1.low != sn2.low || sn1.high != sn2.high)
-    {
-        return true;
-    }
-
-    return false;
+    return (sn1.low != sn2.low) || (sn1.high != sn2.high);
 }
 
 /**
@@ -343,9 +310,9 @@ inline std::ostream& operator <<(
 
 inline std::ostream& operator <<(
         std::ostream& output,
-        std::vector<SequenceNumber_t>& seqNumSet)
+        const std::vector<SequenceNumber_t>& seqNumSet)
 {
-    for(SequenceNumber_t sn : seqNumSet)
+    for(const SequenceNumber_t& sn : seqNumSet)
     {
         output << sn << " ";
     }
