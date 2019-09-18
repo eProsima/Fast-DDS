@@ -435,10 +435,13 @@ void SecurityManager::remove_discovered_participant_info(
 
     if (auth_ptr)
     {
-        if (auth_ptr->event_ != nullptr)
         {
-            delete auth_ptr->event_;
-            auth_ptr->event_ = nullptr;
+            std::unique_lock<std::mutex> lock(auth_ptr->mtx_event_);
+            if (auth_ptr->event_ != nullptr)
+            {
+                delete auth_ptr->event_;
+                auth_ptr->event_ = nullptr;
+            }
         }
 
         if (auth_ptr->handshake_handle_ != nullptr)
@@ -712,10 +715,13 @@ bool SecurityManager::on_process_handshake(
     assert(remote_participant_info->handshake_handle_ != nullptr);
 
     // Remove previous change
-    if (remote_participant_info->event_ != nullptr)
     {
-        delete remote_participant_info->event_;
-        remote_participant_info->event_ = nullptr;
+        std::unique_lock<std::mutex> lock(remote_participant_info->mtx_event_);
+        if (remote_participant_info->event_ != nullptr)
+        {
+            delete remote_participant_info->event_;
+            remote_participant_info->event_ = nullptr;
+        }
     }
     if (remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
     {
@@ -834,23 +840,25 @@ bool SecurityManager::on_process_handshake(
                         }
 
                     }
-
                     if (ret == VALIDATION_PENDING_HANDSHAKE_MESSAGE)
                     {
                         remote_participant_info->expected_sequence_number_ = expected_sequence_number;
                         const GUID_t guid = participant_data.m_guid;
-                        remote_participant_info->event_ = new TimedEvent(participant_->getEventResource(),
+                        {
+                            std::unique_lock<std::mutex> lock(remote_participant_info->mtx_event_);
+                            remote_participant_info->event_ = new TimedEvent(participant_->getEventResource(),
                                 [&, guid](TimedEvent::EventCode code) -> bool
+                            {
+                                if (TimedEvent::EVENT_SUCCESS == code)
                                 {
-                                    if (TimedEvent::EVENT_SUCCESS == code)
-                                    {
-                                        resend_handshake_message_token(guid);
-                                    }
+                                    resend_handshake_message_token(guid);
+                                }
 
-                                    return true;
-                                },
+                                return true;
+                            },
                                 500); // TODO (Ricardo) Configurable
-                        remote_participant_info->event_->restart_timer();
+                            remote_participant_info->event_->restart_timer();
+                        }
                     }
 
                     returnedValue = true;
