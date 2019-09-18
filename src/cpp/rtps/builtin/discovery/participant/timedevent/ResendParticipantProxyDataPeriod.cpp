@@ -33,13 +33,23 @@ namespace rtps {
 
 ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(
         PDPSimple* p_SPDP,
-        double interval)
+        const BuiltinAttributes& config)
     : TimedEvent(
             p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
             p_SPDP->getRTPSParticipant()->getEventResource().getThread(),
-            interval)
-    , mp_PDP(p_SPDP)
+            0)
+    , pdp_(p_SPDP)
+    , standard_period_(config.leaseDuration_announcementperiod)
+    // TODO (MiguelC): Copy from config.initial_announcements when ABI changes
+    // , initial_announcements_(config.initial_announcements)
 {
+    if ((initial_announcements_.count > 0) && (initial_announcements_.period <= c_TimeZero))
+    {
+        // Force a small interval (1ms) between initial announcements
+        initial_announcements_.period = { 0, 1000000 };
+    }
+
+    set_next_interval();
 }
 
 ResendParticipantProxyDataPeriod::~ResendParticipantProxyDataPeriod()
@@ -58,9 +68,9 @@ void ResendParticipantProxyDataPeriod::event(
     if(code == EVENT_SUCCESS)
     {
         logInfo(RTPS_PDP,"ResendDiscoveryData Period");
-        mp_PDP->announceParticipantState(false);
-
-        this->restart_timer();
+        pdp_->announceParticipantState(false);
+        set_next_interval();
+        restart_timer();
     }
     else if(code == EVENT_ABORT)
     {
@@ -69,6 +79,19 @@ void ResendParticipantProxyDataPeriod::event(
     else
     {
         logInfo(RTPS_PDP,"message: " << msg);
+    }
+}
+
+void ResendParticipantProxyDataPeriod::set_next_interval()
+{
+    if (initial_announcements_.count > 0)
+    {
+        --initial_announcements_.count;
+        update_interval(initial_announcements_.period);
+    }
+    else
+    {
+        update_interval(standard_period_);
     }
 }
 

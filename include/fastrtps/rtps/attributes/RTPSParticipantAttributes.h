@@ -78,6 +78,19 @@ public:
 };
 
 /**
+ * Struct InitialAnnouncementConfig defines the behavior of the RTPSParticipant initial announcements.
+ * @ingroup RTPS_ATTRIBUTES_MODULE
+ */
+struct InitialAnnouncementConfig
+{
+    /// Number of initial announcements with specific period (default 4)
+    uint32_t count = 4u;
+
+    /// Specific period for initial announcements (default 100ms)
+    Duration_t period = { 0, 100000000u };
+};
+
+/**
  * Class BuiltinAttributes, to define the behavior of the RTPSParticipant builtin protocols.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
@@ -121,6 +134,9 @@ class BuiltinAttributes
          * as well as to all Multicast ports.
          */
         Duration_t leaseDuration_announcementperiod;
+
+        // TODO (MiguelC): Add when safe to change ABI
+        // InitialAnnouncementConfig initial_announcements;
 
         //!Attributes of the SimpleEDP protocol
         SimpleEDPAttributes m_simpleEDP;
@@ -194,6 +210,7 @@ class BuiltinAttributes
     private:
         //! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
         std::string m_staticEndpointXMLFilename;
+
 };
 
 /**
