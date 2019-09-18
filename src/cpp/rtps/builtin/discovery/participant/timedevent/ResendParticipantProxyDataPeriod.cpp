@@ -27,30 +27,33 @@
 
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 
-ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(PDPSimple* p_SPDP,
-        double interval):
-    TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
-            p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval),
-    mp_PDP(p_SPDP)
-    {
-
-
-    }
+ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(
+        PDPSimple* p_SPDP,
+        double interval)
+    : TimedEvent(
+            p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
+            p_SPDP->getRTPSParticipant()->getEventResource().getThread(),
+            interval)
+    , mp_PDP(p_SPDP)
+{
+}
 
 ResendParticipantProxyDataPeriod::~ResendParticipantProxyDataPeriod()
 {
     destroy();
 }
 
-void ResendParticipantProxyDataPeriod::event(EventCode code, const char* msg)
+void ResendParticipantProxyDataPeriod::event(
+        EventCode code,
+        const char* msg)
 {
 
     // Unused in release mode.
-    (void)msg;
+    (void) msg;
 
     if(code == EVENT_SUCCESS)
     {
@@ -69,10 +72,10 @@ void ResendParticipantProxyDataPeriod::event(EventCode code, const char* msg)
     }
     else
     {
-        logInfo(RTPS_PDP,"message: " <<msg);
+        logInfo(RTPS_PDP,"message: " << msg);
     }
 }
 
-}
-} /* namespace rtps */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
