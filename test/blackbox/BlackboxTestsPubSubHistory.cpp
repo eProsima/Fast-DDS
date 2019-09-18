@@ -390,12 +390,16 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer2(TEST_TOPIC_NAME);
 
-    reader.reliability(RELIABLE_RELIABILITY_QOS).
-        history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
-        history_depth(1).
-        resource_limits_allocated_samples(1).
-        resource_limits_max_samples(1);
-    
+    reader
+        .reliability(RELIABLE_RELIABILITY_QOS)
+        .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+        .history_depth(1)
+        .resource_limits_allocated_samples(1)
+        .resource_limits_max_samples(1);
+
+    writer.max_blocking_time({ 120, 0 });
+    writer2.max_blocking_time({ 120, 0 });
+
     reader.init();
     ASSERT_TRUE(reader.isInitialized());
 
@@ -415,9 +419,9 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
 
     // First writer sends two samples (reader would only keep the last one)
     data.index(1u);
-    writer.send_sample(data);
+    ASSERT_TRUE(writer.send_sample(data));
     data.index(2u);
-    writer.send_sample(data);
+    ASSERT_TRUE(writer.send_sample(data));
 
     // Wait for reader to acknowledge samples
     while (!writer.waitForAllAcked(std::chrono::milliseconds(100)))
@@ -426,7 +430,7 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
 
     // Second writer sends one sample (reader should discard previous one)
     data.index(3u);
-    writer2.send_sample(data);
+    ASSERT_TRUE(writer2.send_sample(data));
 
     // Wait for reader to acknowledge sample
     while (!writer2.waitForAllAcked(std::chrono::milliseconds(100)))
@@ -435,7 +439,7 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
 
     // Only last sample should be present
     HelloWorld received;
-    reader.takeNextData(&received, nullptr);
+    ASSERT_TRUE(reader.takeNextData(&received, nullptr));
     ASSERT_EQ(received.index(), 3u);
 }
 
