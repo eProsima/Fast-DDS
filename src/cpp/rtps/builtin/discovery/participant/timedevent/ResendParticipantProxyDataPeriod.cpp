@@ -58,10 +58,6 @@ void ResendParticipantProxyDataPeriod::event(
     if(code == EVENT_SUCCESS)
     {
         logInfo(RTPS_PDP,"ResendDiscoveryData Period");
-        //FIXME: Change for liveliness protocol
-        mp_PDP->getMutex()->lock();
-        mp_PDP->getLocalParticipantProxyData()->m_manualLivelinessCount++;
-        mp_PDP->getMutex()->unlock();
         mp_PDP->announceParticipantState(false);
 
         this->restart_timer();
