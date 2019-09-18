@@ -212,28 +212,7 @@ include(${PROJECT_SOURCE_DIR}/cmake/common/eprosima_libraries.cmake)
 eprosima_find_package(fastcdr REQUIRED)
 eprosima_find_thirdparty(Asio asio)
 eprosima_find_thirdparty(TinyXML2 tinyxml2)
-
-#allow architecture dependent config file search for foonathan_memory
-if("${CMAKE_GENERATOR_PLATFORM}" MATCHES "^([Ww][Ii][Nn]32)$")
-    set(foonathan_vendor_FIND_LIBRARY_USE "FIND_LIBRARY_USE_LIB32_PATHS")
-    get_property(foonathan_vendor_FIND_LIBRARY_USE_value GLOBAL PROPERTY FIND_LIBRARY_USE_LIB32_PATHS)
-    set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB32_PATHS TRUE)
-    set( CMAKE_FIND_LIBRARY_CUSTOM_LIB_SUFFIX 32 )         
-elseif ("${CMAKE_GENERATOR_PLATFORM}" MATCHES "^([Xx]64)$")
-    set(foonathan_vendor_FIND_LIBRARY_USE "FIND_LIBRARY_USE_LIB64_PATHS")
-    get_property(foonathan_vendor_FIND_LIBRARY_USE_value GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS)
-    set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS TRUE)
-    set( CMAKE_FIND_LIBRARY_CUSTOM_LIB_SUFFIX 64 )     
-endif()
-
 find_package(foonathan_memory REQUIRED)
-
-#restore global properties state
-if(foonathan_vendor_FIND_LIBRARY_USE)
-    set_property(GLOBAL PROPERTY ${foonathan_vendor_FIND_LIBRARY_USE} ${foonathan_vendor_FIND_LIBRARY_USE_value})
-    unset(foonathan_vendor_FIND_LIBRARY_USE)
-    unset(foonathan_vendor_FIND_LIBRARY_USE_value)
-endif() 
 
 if(ANDROID)
     eprosima_find_thirdparty(android-ifaddrs android-ifaddrs)
