@@ -61,8 +61,8 @@ class SubscriberHistory: public rtps::ReaderHistory
         virtual ~SubscriberHistory();
 
         /**
-         * Called when a change is received by the Subscriber History. Will add the change to the history
-         * if it wasn't already present
+         * Called when a change is received by the Subscriber. Will add the change to the history.
+         * @pre Change should not be already present in the history.
          * @param[in] change The received change
          * @param unknown_missing_changes_up_to Number of missing changes before this one
          * @return
