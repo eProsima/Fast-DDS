@@ -151,9 +151,15 @@ Then, download the docker image file from https://eprosima.com/index.php/downloa
 Load the image and run it:
 
 	$ docker load -i ubuntu-fast-rtps.tar
+	$ docker tag ubuntu-fast-rtps:<version> ubuntu-fast-rtps:latest
 	$ docker run -it ubuntu-fast-rtps
 
 You can run as many images as you want and check the communication between them.
+
+For instance, to run `Benchmark` example, run the following commands in the separate terminal sessions:
+
+	$ docker run -i ubuntu-fast-rtps /usr/local/examples/C++/Benchmark/bin/Benchmark subscriber udp
+	$ docker run -i ubuntu-fast-rtps /usr/local/examples/C++/Benchmark/bin/Benchmark publisher udp
 
 ## Getting Help
 
