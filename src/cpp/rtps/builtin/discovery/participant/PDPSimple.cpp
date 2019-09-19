@@ -54,6 +54,7 @@
 #include <fastrtps/log/Log.h>
 
 #include <mutex>
+#include <chrono>
 
 using namespace eprosima::fastrtps;
 
@@ -885,10 +886,9 @@ void PDPSimple::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
             logInfo(RTPS_LIVELINESS,"RTPSParticipant "<< (*it)->m_guid << " is Alive");
             // TODO Ricardo: Study if isAlive attribute is necessary.
             (*it)->isAlive = true;
-            if((*it)->mp_leaseDurationTimer != nullptr)
+            if ((*it)->mp_leaseDurationTimer != nullptr)
             {
-                (*it)->mp_leaseDurationTimer->cancel_timer();
-                (*it)->mp_leaseDurationTimer->restart_timer();
+                (*it)->mp_leaseDurationTimer->last_received_message_tm = std::chrono::steady_clock::now();
             }
             break;
         }

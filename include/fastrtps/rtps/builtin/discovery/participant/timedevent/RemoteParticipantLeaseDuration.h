@@ -38,29 +38,30 @@ class ParticipantProxyData;
  */
 class RemoteParticipantLeaseDuration:public TimedEvent
 {
-public:
-	/**
-	 * Constructor
-	 * @param p_SPDP Pointer to the PDPSimple object.
-	 * @param pdata Pointer to the ParticipantProxyData associated with this TimedEvent.
-	 * @param interval Interval in ms.
-	 */
-	RemoteParticipantLeaseDuration(PDPSimple* p_SPDP,
-			ParticipantProxyData* pdata,
-			double interval);
-	virtual ~RemoteParticipantLeaseDuration();
+    public:
+        /**
+         * Constructor
+         * @param p_SPDP Pointer to the PDPSimple object.
+         * @param pdata Pointer to the ParticipantProxyData associated with this TimedEvent.
+         * @param interval Interval in ms.
+         */
+        RemoteParticipantLeaseDuration(PDPSimple* p_SPDP,
+                ParticipantProxyData* pdata,
+                double interval);
+        virtual ~RemoteParticipantLeaseDuration();
 
- 	/**
-	*  Temporal event that check if the RTPSParticipant is alive, and removes it if not.
-	* @param code Code representing the status of the event
-	* @param msg Message associated to the event
-	*/
-	void event(EventCode code, const char* msg= nullptr);
-	//!Pointer to the PDPSimple object.
-	PDPSimple* mp_PDP;
-	//!Pointer to the RTPSParticipantProxyData object that contains this temporal event.
-	ParticipantProxyData* mp_participantProxyData;
-
+        /**
+         *  Temporal event that check if the RTPSParticipant is alive, and removes it if not.
+         * @param code Code representing the status of the event
+         * @param msg Message associated to the event
+         */
+        void event(EventCode code, const char* msg= nullptr);
+        //!Pointer to the PDPSimple object.
+        PDPSimple* mp_PDP;
+        //!Pointer to the RTPSParticipantProxyData object that contains this temporal event.
+        ParticipantProxyData* mp_participantProxyData;
+        //!
+        std::chrono::steady_clock::time_point last_received_message_tm;
 };
 
 }

@@ -24,10 +24,12 @@
 #include "../../../../participant/RTPSParticipantImpl.h"
 #include <fastrtps/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
+#include <fastrtps/utils/TimeConversion.h>
 
 #include <fastrtps/log/Log.h>
 
 #include <mutex>
+#include <chrono>
 
 
 
@@ -40,7 +42,7 @@ RemoteParticipantLeaseDuration::RemoteParticipantLeaseDuration(PDPSimple* p_SPDP
         ParticipantProxyData* pdata,
         double interval):
     TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
-            p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval, TimedEvent::ON_SUCCESS),
+            p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval),
     mp_PDP(p_SPDP),
     mp_participantProxyData(pdata)
     {
@@ -59,24 +61,38 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
 
     if(code == EVENT_SUCCESS)
     {
-        logInfo(RTPS_LIVELINESS,"RTPSParticipant no longer ALIVE, trying to remove: "
-                << mp_participantProxyData->m_guid);
-
-        // This assignment must be before removeRemoteParticipant because mp_participantProxyData is deleted there.
-        ParticipantDiscoveryInfo info;
-        info.status = ParticipantDiscoveryInfo::DROPPED_PARTICIPANT;
-        info.info.copy(*mp_participantProxyData);
-
-        // Set pointer to null because this call will be delete itself.
-        mp_participantProxyData->mp_leaseDurationTimer = nullptr;
-        if(mp_PDP->removeRemoteParticipant(mp_participantProxyData->m_guid))
+        // Check last received message's time_point plus lease duration time doesn't overcome now().
+        // If overcame, remove participant.
+        auto now = std::chrono::steady_clock::now();
+        auto real_lease_tm = last_received_message_tm +
+                std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(mp_participantProxyData->m_leaseDuration));
+        if (now > real_lease_tm)
         {
-            if(mp_PDP->getRTPSParticipant()->getListener()!=nullptr)
+            logInfo(RTPS_LIVELINESS,"RTPSParticipant no longer ALIVE, trying to remove: "
+                    << mp_participantProxyData->m_guid);
+
+            // This assignment must be before removeRemoteParticipant because mp_participantProxyData is deleted there.
+            ParticipantDiscoveryInfo info;
+            info.status = ParticipantDiscoveryInfo::DROPPED_PARTICIPANT;
+            info.info.copy(*mp_participantProxyData);
+
+            // Set pointer to null because this call will be delete itself.
+            mp_participantProxyData->mp_leaseDurationTimer = nullptr;
+            if(mp_PDP->removeRemoteParticipant(mp_participantProxyData->m_guid))
             {
-                mp_PDP->getRTPSParticipant()->getListener()->onParticipantDiscovery(
-                        mp_PDP->getRTPSParticipant()->getUserRTPSParticipant(), std::move(info));
+                if(mp_PDP->getRTPSParticipant()->getListener()!=nullptr)
+                {
+                    mp_PDP->getRTPSParticipant()->getListener()->onParticipantDiscovery(
+                            mp_PDP->getRTPSParticipant()->getUserRTPSParticipant(), std::move(info));
+                }
             }
+            return;
         }
+
+        // Calculate next trigger.
+        auto next_trigger = real_lease_tm - now;
+        update_interval_millisec(std::chrono::duration_cast<std::chrono::milliseconds>(next_trigger).count());
+        restart_timer();
     }
     else if(code == EVENT_ABORT)
     {
