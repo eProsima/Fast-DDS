@@ -39,33 +39,33 @@ class ResendParticipantProxyDataPeriod: public TimedEvent
 {
 public:
 
-	/**
-	 * Constructor.
-	 * @param p_SPDP Pointer to the PDPSimple.
-	 * @param config Configuration of builtin discovery.
-	 */
-	ResendParticipantProxyDataPeriod(
+    /**
+     * Constructor.
+     * @param p_SPDP Pointer to the PDPSimple.
+     * @param config Configuration of builtin discovery.
+     */
+    ResendParticipantProxyDataPeriod(
             PDPSimple* p_SPDP,
-			const BuiltinAttributes& config);
+            const BuiltinAttributes& config);
 
-	virtual ~ResendParticipantProxyDataPeriod();
-	
-	/**
-	* Method invoked when the event occurs.
-	* This temporal event resends the RTPSParticipantProxyData to all remote RTPSParticipants.
-	* @param code Code representing the status of the event
-	* @param msg Message associated to the event
-	*/
-	void event(
+    virtual ~ResendParticipantProxyDataPeriod();
+    
+    /**
+    * Method invoked when the event occurs.
+    * This temporal event resends the RTPSParticipantProxyData to all remote RTPSParticipants.
+    * @param code Code representing the status of the event
+    * @param msg Message associated to the event
+    */
+    void event(
             EventCode code,
             const char* msg = nullptr) override;
 
 private:
 
     void set_next_interval();
-	
-	//! Pointer to the PDPSimple object.
-	PDPSimple* pdp_;
+    
+    //! Pointer to the PDPSimple object.
+    PDPSimple* pdp_;
     //! Holds announcement period after the initial announcements have been sent
     Duration_t standard_period_;
     //! Holds number of initial announcements left and sending period
