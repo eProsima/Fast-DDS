@@ -252,8 +252,6 @@ private:
 
                 TimedEvent* event_;
 
-                std::mutex mtx_event_;
-
             private:
 
                 AuthenticationInfo(
