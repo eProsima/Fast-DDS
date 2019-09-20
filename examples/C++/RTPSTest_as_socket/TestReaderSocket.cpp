@@ -64,6 +64,7 @@ bool TestReaderSocket::init(std::string ip, uint32_t port)
 
     //CREATE READER
     ReaderAttributes ratt;
+    ratt.endpoint.setEntityID(3);
     Locator_t loc;
     IPLocator::setIPv4(loc, ip);
     loc.port = static_cast<uint16_t>(port);
