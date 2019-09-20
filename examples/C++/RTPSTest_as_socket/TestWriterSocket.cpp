@@ -78,7 +78,7 @@ bool TestWriterSocket::init(
 
     //ADD REMOTE READER (IN THIS CASE A READER IN THE SAME MACHINE)
     ReaderProxyData ratt(4u, 1u);
-    ratt.guid(mp_participant->getGuid());
+    ratt.guid({c_GuidPrefix_Unknown, 0x304});
     Locator_t loc;
     IPLocator::setIPv4(loc, ip);
     loc.port = static_cast<uint16_t>(port);
