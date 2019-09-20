@@ -45,9 +45,11 @@ class RemoteParticipantLeaseDuration:public TimedEvent
          * @param pdata Pointer to the ParticipantProxyData associated with this TimedEvent.
          * @param interval Interval in ms.
          */
-        RemoteParticipantLeaseDuration(PDPSimple* p_SPDP,
+        RemoteParticipantLeaseDuration(
+                PDPSimple* p_SPDP,
                 ParticipantProxyData* pdata,
                 double interval);
+
         virtual ~RemoteParticipantLeaseDuration();
 
         /**
@@ -55,13 +57,31 @@ class RemoteParticipantLeaseDuration:public TimedEvent
          * @param code Code representing the status of the event
          * @param msg Message associated to the event
          */
-        void event(EventCode code, const char* msg= nullptr);
+        void event(
+                EventCode code,
+                const char* msg= nullptr);
+
+        void last_received_message_tm(
+                const std::chrono::steady_clock::time_point& last_received_message_tm)
+        {
+            last_received_message_tm_ = last_received_message_tm;
+        }
+
+        void update_lease_duration(const Duration_t& lease_duration);
+
+    private:
+
         //!Pointer to the PDPSimple object.
         PDPSimple* mp_PDP;
+
         //!Pointer to the RTPSParticipantProxyData object that contains this temporal event.
         ParticipantProxyData* mp_participantProxyData;
-        //!
-        std::chrono::steady_clock::time_point last_received_message_tm;
+
+        //! Store the last timestamp it was received a RTPS message from the remote participant.
+        std::chrono::steady_clock::time_point last_received_message_tm_;
+
+        //! Remote participant lease duration in microseconds.
+        std::chrono::microseconds lease_duration_;
 };
 
 }

@@ -888,7 +888,7 @@ void PDPSimple::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
             (*it)->isAlive = true;
             if ((*it)->mp_leaseDurationTimer != nullptr)
             {
-                (*it)->mp_leaseDurationTimer->last_received_message_tm = std::chrono::steady_clock::now();
+                (*it)->mp_leaseDurationTimer->last_received_message_tm(std::chrono::steady_clock::now());
             }
             break;
         }

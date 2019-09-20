@@ -436,9 +436,7 @@ bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
 #endif
     if (this->mp_leaseDurationTimer != nullptr)
     {
-        mp_leaseDurationTimer->cancel_timer();
-        mp_leaseDurationTimer->update_interval(m_leaseDuration);
-        mp_leaseDurationTimer->restart_timer();
+        this->mp_leaseDurationTimer->update_lease_duration(m_leaseDuration);
     }
     return true;
 }

@@ -40,12 +40,14 @@ namespace rtps {
 
 RemoteParticipantLeaseDuration::RemoteParticipantLeaseDuration(PDPSimple* p_SPDP,
         ParticipantProxyData* pdata,
-        double interval):
-    TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
-            p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval),
-    mp_PDP(p_SPDP),
-    mp_participantProxyData(pdata)
+        double interval)
+    : TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
+            p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval)
+    , mp_PDP(p_SPDP)
+    , mp_participantProxyData(pdata)
     {
+        lease_duration_ = std::chrono::microseconds(
+                TimeConv::Duration_t2MicroSecondsInt64(mp_participantProxyData->m_leaseDuration));
 
     }
 
@@ -64,8 +66,7 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
         // Check last received message's time_point plus lease duration time doesn't overcome now().
         // If overcame, remove participant.
         auto now = std::chrono::steady_clock::now();
-        auto real_lease_tm = last_received_message_tm +
-                std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(mp_participantProxyData->m_leaseDuration));
+        auto real_lease_tm = last_received_message_tm_ + lease_duration_;
         if (now > real_lease_tm)
         {
             logInfo(RTPS_LIVELINESS,"RTPSParticipant no longer ALIVE, trying to remove: "
@@ -103,6 +104,23 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
     {
         logInfo(RTPS_LIVELINESS,"message: " <<msg);
     }
+}
+
+void RemoteParticipantLeaseDuration::update_lease_duration(const Duration_t& lease_duration)
+{
+    auto new_lease_duration = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(lease_duration));
+
+    if(new_lease_duration < lease_duration_)
+    {
+        // Calculate next trigger.
+        auto real_lease_tm = last_received_message_tm_ + new_lease_duration;
+        auto next_trigger = real_lease_tm - std::chrono::steady_clock::now();
+        cancel_timer();
+        update_interval_millisec(std::chrono::duration_cast<std::chrono::milliseconds>(next_trigger).count());
+        restart_timer();
+    }
+
+    lease_duration_ = new_lease_duration;
 }
 
 } // namespace rtps
