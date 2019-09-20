@@ -106,28 +106,6 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
     }
 }
 
-void RemoteParticipantLeaseDuration::assert_liveliness()
-{
-    last_received_message_tm_ = std::chrono::steady_clock::now();
-}
-
-void RemoteParticipantLeaseDuration::update_lease_duration(const Duration_t& lease_duration)
-{
-    auto new_lease_duration = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(lease_duration));
-
-    if(new_lease_duration < lease_duration_)
-    {
-        // Calculate next trigger.
-        auto real_lease_tm = last_received_message_tm_ + new_lease_duration;
-        auto next_trigger = real_lease_tm - std::chrono::steady_clock::now();
-        cancel_timer();
-        update_interval_millisec(std::chrono::duration_cast<std::chrono::milliseconds>(next_trigger).count());
-        restart_timer();
-    }
-
-    lease_duration_ = new_lease_duration;
-}
-
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
