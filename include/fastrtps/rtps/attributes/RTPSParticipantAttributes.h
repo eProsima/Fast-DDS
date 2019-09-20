@@ -143,6 +143,9 @@ class BuiltinAttributes
         //!Initial announcements configuration
         InitialAnnouncementConfig initial_announcements;
 
+        //!Set to true to avoid multicast traffic on builtin endpoints
+        bool avoid_builtin_multicast = false;
+
         //!Attributes of the SimpleEDP protocol
         SimpleEDPAttributes m_simpleEDP;
 
@@ -190,6 +193,7 @@ class BuiltinAttributes
                    (leaseDuration == b.leaseDuration) &&
                    (leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&
                    (initial_announcements == b.initial_announcements) &&
+                   (avoid_builtin_multicast == b.avoid_builtin_multicast) &&
                    (m_simpleEDP == b.m_simpleEDP) &&
                    (metatrafficUnicastLocatorList == b.metatrafficUnicastLocatorList) &&
                    (metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&
