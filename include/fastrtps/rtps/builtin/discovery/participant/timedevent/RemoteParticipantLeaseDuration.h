@@ -61,11 +61,7 @@ class RemoteParticipantLeaseDuration:public TimedEvent
                 EventCode code,
                 const char* msg= nullptr);
 
-        void last_received_message_tm(
-                const std::chrono::steady_clock::time_point& last_received_message_tm)
-        {
-            last_received_message_tm_ = last_received_message_tm;
-        }
+        void assert_liveliness();
 
         void update_lease_duration(const Duration_t& lease_duration);
 

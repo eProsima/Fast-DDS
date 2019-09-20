@@ -156,9 +156,7 @@ bool test_UDPv4Transport::packet_should_drop(const octet* send_buffer, uint32_t 
                 CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
                 cdrMessage.pos = old_pos;
 
-                if(writer_id == c_EntityId_SPDPWriter ||
-                        writer_id == c_EntityId_SEDPPubWriter ||
-                        writer_id == c_EntityId_SEDPSubWriter)
+                if(writer_id == c_EntityId_SPDPWriter)
                 {
                     if (always_drop_participant_builtin_topic_data)
                     {
@@ -168,6 +166,11 @@ bool test_UDPv4Transport::packet_should_drop(const octet* send_buffer, uint32_t 
                     {
                         return false;
                     }
+                }
+                else if((!drop_publication_builtin_topic_data_ && writer_id == c_EntityId_SEDPPubWriter) ||
+                        (!drop_subscription_builtin_topic_data_ && writer_id == c_EntityId_SEDPSubWriter))
+                {
+                    return false;
                 }
 
                 if(should_be_dropped(&drop_data_messages_percentage_))

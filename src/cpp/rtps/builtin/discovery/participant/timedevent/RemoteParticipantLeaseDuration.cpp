@@ -106,6 +106,11 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
     }
 }
 
+void RemoteParticipantLeaseDuration::assert_liveliness()
+{
+    last_received_message_tm_ = std::chrono::steady_clock::now();
+}
+
 void RemoteParticipantLeaseDuration::update_lease_duration(const Duration_t& lease_duration)
 {
     auto new_lease_duration = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(lease_duration));
