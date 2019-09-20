@@ -83,11 +83,11 @@ public:
  */
 struct InitialAnnouncementConfig
 {
-    /// Number of initial announcements with specific period (default 4)
-    uint32_t count = 4u;
+    /// Number of initial announcements with specific period (default 1)
+    uint32_t count = 1u;
 
-    /// Specific period for initial announcements (default 100ms)
-    Duration_t period = { 0, 100000000u };
+    /// Specific period for initial announcements (default 500ms)
+    Duration_t period = { 0, 500000000u };
 };
 
 /**
