@@ -135,8 +135,8 @@ class BuiltinAttributes
          */
         Duration_t leaseDuration_announcementperiod;
 
-        // TODO (MiguelC): Add when safe to change ABI
-        // InitialAnnouncementConfig initial_announcements;
+        //!Initial announcements configuration
+        InitialAnnouncementConfig initial_announcements;
 
         //!Attributes of the SimpleEDP protocol
         SimpleEDPAttributes m_simpleEDP;

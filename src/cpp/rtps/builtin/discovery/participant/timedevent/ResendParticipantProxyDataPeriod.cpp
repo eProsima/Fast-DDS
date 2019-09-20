@@ -40,8 +40,7 @@ ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(
             0)
     , pdp_(p_SPDP)
     , standard_period_(config.leaseDuration_announcementperiod)
-    // TODO (MiguelC): Copy from config.initial_announcements when ABI changes
-    // , initial_announcements_(config.initial_announcements)
+    , initial_announcements_(config.initial_announcements)
 {
     if ((initial_announcements_.count > 0) && (initial_announcements_.period <= c_TimeZero))
     {
