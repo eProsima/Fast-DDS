@@ -88,6 +88,11 @@ struct InitialAnnouncementConfig
 
     /// Specific period for initial announcements (default 500ms)
     Duration_t period = { 0, 500000000u };
+
+    bool operator==(const InitialAnnouncementConfig& b) const
+    {
+        return (count == b.count) && (period == b.period);
+    }
 };
 
 /**
@@ -177,22 +182,22 @@ class BuiltinAttributes
 
         bool operator==(const BuiltinAttributes& b) const
         {
-            return (this->use_SIMPLE_RTPSParticipantDiscoveryProtocol ==
-                       b.use_SIMPLE_RTPSParticipantDiscoveryProtocol) &&
-                   (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
-                   (this->use_SIMPLE_EndpointDiscoveryProtocol == b.use_SIMPLE_EndpointDiscoveryProtocol) &&
-                   (this->use_STATIC_EndpointDiscoveryProtocol == b.use_STATIC_EndpointDiscoveryProtocol) &&
-                   (this->domainId == b.domainId) &&
-                   (this->leaseDuration == b.leaseDuration) &&
-                   (this->leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&
-                   (this->m_simpleEDP == b.m_simpleEDP) &&
-                   (this->metatrafficUnicastLocatorList == b.metatrafficUnicastLocatorList) &&
-                   (this->metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&
-                   (this->initialPeersList == b.initialPeersList) &&
-                   (this->readerHistoryMemoryPolicy == b.readerHistoryMemoryPolicy) &&
-                   (this->writerHistoryMemoryPolicy == b.writerHistoryMemoryPolicy) &&
-                   (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename) &&
-                   (this->mutation_tries == b.mutation_tries);
+            return (use_SIMPLE_RTPSParticipantDiscoveryProtocol == b.use_SIMPLE_RTPSParticipantDiscoveryProtocol) &&
+                   (use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
+                   (use_SIMPLE_EndpointDiscoveryProtocol == b.use_SIMPLE_EndpointDiscoveryProtocol) &&
+                   (use_STATIC_EndpointDiscoveryProtocol == b.use_STATIC_EndpointDiscoveryProtocol) &&
+                   (domainId == b.domainId) &&
+                   (leaseDuration == b.leaseDuration) &&
+                   (leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&
+                   (initial_announcements == b.initial_announcements) &&
+                   (m_simpleEDP == b.m_simpleEDP) &&
+                   (metatrafficUnicastLocatorList == b.metatrafficUnicastLocatorList) &&
+                   (metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&
+                   (initialPeersList == b.initialPeersList) &&
+                   (readerHistoryMemoryPolicy == b.readerHistoryMemoryPolicy) &&
+                   (writerHistoryMemoryPolicy == b.writerHistoryMemoryPolicy) &&
+                   (m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename) &&
+                   (mutation_tries == b.mutation_tries);
         }
 
         /**
