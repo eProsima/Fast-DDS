@@ -35,6 +35,7 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
                 <xs:element name="domainId" type="uint32Type" minOccurs="0"/>
                 <xs:element name="leaseDuration" type="durationType" minOccurs="0"/>
                 <xs:element name="leaseAnnouncement" type="durationType" minOccurs="0"/>
+                <xs:element name="initialAnnouncements" type="initialAnnouncementsType" minOccurs="0"/>
                 <xs:element name="simpleEDP" type="simpleEDPType" minOccurs="0"/>
                 <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0"/>
@@ -112,6 +113,12 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
         {
             // leaseAnnouncement - durationType
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, builtin.leaseDuration_announcementperiod, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, INITIAL_ANNOUNCEMENTS) == 0)
+        {
+            // initialAnnouncements - initialAnnouncementsType
+            if (XMLP_ret::XML_OK != getXMLInitialAnnouncementsConfig(p_aux0, builtin.initial_announcements, ident))
                 return XMLP_ret::XML_ERROR;
         }
         else if (strcmp(name, SIMPLE_EDP) == 0)
@@ -192,6 +199,46 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
 
     return XMLP_ret::XML_OK;
 }
+
+XMLP_ret XMLParser::getXMLInitialAnnouncementsConfig(
+    tinyxml2::XMLElement* elem,
+    InitialAnnouncementConfig& config,
+    uint8_t ident)
+{
+    /*
+        <xs:complexType name="initialAnnouncementsType">
+            <xs:all minOccurs="0">
+                <xs:element name="count" type="uint32Type" minOccurs="0"/>
+                <xs:element name="period" type="durationType" minOccurs="0"/>
+            </xs:all>
+        </xs:complexType>
+    */
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, COUNT) == 0)
+        {
+            // portBase - uint16Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &config.count, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, PERIOD) == 0)
+        {
+            // domainIDGain - uint16Type
+            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, config.period, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'portType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+    return XMLP_ret::XML_OK;
+}
+
 
 XMLP_ret XMLParser::getXMLPortParameters(tinyxml2::XMLElement *elem, PortParameters &port, uint8_t ident)
 {
