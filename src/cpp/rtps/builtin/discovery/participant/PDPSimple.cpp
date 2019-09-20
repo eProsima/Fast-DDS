@@ -176,9 +176,11 @@ void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant
             participant_data->m_key.value[i] = participant_data->m_guid.entityId.value[i - 12];
     }
 
-
-    participant_data->m_metatrafficMulticastLocatorList = this->mp_builtin->m_metatrafficMulticastLocatorList;
-    participant_data->m_metatrafficUnicastLocatorList = this->mp_builtin->m_metatrafficUnicastLocatorList;
+    participant_data->m_metatrafficUnicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
+    if (!m_discovery.avoid_builtin_multicast || participant_data->m_metatrafficUnicastLocatorList.empty())
+    {
+        participant_data->m_metatrafficMulticastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
+    }
 
     participant_data->m_participantName = std::string(mp_RTPSParticipant->getAttributes().getName());
 
@@ -260,6 +262,39 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
     mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this, m_discovery);
 
     return true;
+}
+
+void PDPSimple::get_metatraffic_locators(
+        EndpointAttributes& destination,
+        const ParticipantProxyData& origin)
+{
+    destination.unicastLocatorList = origin.m_metatrafficUnicastLocatorList;
+    if (!m_discovery.avoid_builtin_multicast || destination.unicastLocatorList.empty())
+    {
+        destination.multicastLocatorList = origin.m_metatrafficMulticastLocatorList;
+    }
+}
+
+void PDPSimple::get_metatraffic_locators(
+        ReaderProxyData& destination,
+        const ParticipantProxyData& origin)
+{
+    destination.unicastLocatorList(origin.m_metatrafficUnicastLocatorList);
+    if (!m_discovery.avoid_builtin_multicast || destination.unicastLocatorList().empty())
+    {
+        destination.multicastLocatorList(origin.m_metatrafficMulticastLocatorList);
+    }
+}
+
+void PDPSimple::get_metatraffic_locators(
+        WriterProxyData& destination,
+        const ParticipantProxyData& origin)
+{
+    destination.unicastLocatorList(origin.m_metatrafficUnicastLocatorList);
+    if (!m_discovery.avoid_builtin_multicast || destination.unicastLocatorList().empty())
+    {
+        destination.multicastLocatorList(origin.m_metatrafficMulticastLocatorList);
+    }
 }
 
 void PDPSimple::stopParticipantAnnouncement()
