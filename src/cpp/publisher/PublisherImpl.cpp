@@ -142,9 +142,13 @@ bool PublisherImpl::create_new_change_with_params(
     // Block lowlevel writer
     auto max_blocking_time = std::chrono::steady_clock::now() +
         std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
-    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex(), std::defer_lock);
 
+#if HAVE_STRICT_REALTIME
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex(), std::defer_lock);
     if(lock.try_lock_until(max_blocking_time))
+#else
+    std::unique_lock<std::recursive_timed_mutex> lock(mp_writer->getMutex());
+#endif
     {
         CacheChange_t* ch = mp_writer->new_change(mp_type->getSerializedSizeProvider(data), changeKind, handle);
         if(ch != nullptr)
