@@ -23,7 +23,6 @@
 #include <dds/core/types.hpp>
 #include <dds/core/refmacros.hpp>
 #include <dds/core/ref_traits.hpp> //used when macros of refmacros.hpp expand
-
 namespace dds {
 namespace core {
 
@@ -100,9 +99,8 @@ public:
      * @param null
      */
     explicit Reference(
-            dds::core::null_type&)
+            dds::core::null_type&):impl_()
     {
-        throw "Not implemented";
     }
 
     /**
@@ -111,9 +109,8 @@ public:
      * @param ref the other reference
      */
     explicit Reference(
-            const Reference& ref)
+            const Reference& ref):impl_(ref.impl_)
     {
-        throw "Not implemented";
     }
 
     /**
@@ -125,7 +122,14 @@ public:
     explicit Reference(
             const Reference<D>& ref)
     {
-        throw "Not implemented";
+        impl_ = std::dynamic_pointer_cast<DELEGATE_T>(ref.impl_);
+        if (impl_ != ref.impl_)
+        {
+            throw \
+            IllegalOperationError(std::string("Attempted invalid cast: ")\
+            + typeid(ref).name() + " to " + typeid(*this).name());
+        }
+
     }
 
     /** @cond
@@ -139,15 +143,13 @@ public:
      * the doxygen generated API documentation.
      */
     explicit Reference(
-            DELEGATE_T* p)
+            DELEGATE_T* p):impl_(p)
     {
-        throw "Not implemented";
     }
 
     explicit Reference(
-            const DELEGATE_REF_T& p)
+            const DELEGATE_REF_T& p):impl_(p)
     {
-        throw "Not implemented";
     }
     /** @endcond */
 
@@ -171,7 +173,13 @@ public:
      */
     operator DELEGATE_REF_T() const
     {
-        throw "Not implemented";
+        //FRANAVA: keeping This Under My Watch
+        if( impl_ == dds::core::null_type())
+        {
+            throw IllegalOperationError("asking for a null reference") ;
+        }
+        return impl_;
+
     }
     /** @endcond */
 
@@ -188,7 +196,18 @@ public:
     bool operator==(
             const R& ref) const
     {
-        throw "Not implemented";
+        bool equal = false;
+        if (this->is_nil() && ref.is_nil())
+        {
+            /* Both delegates are null. */
+            equal = true;
+        }
+        else if (!this->is_nil() && !ref.is_nil())
+        {
+            /* Check delegates. */
+            equal = (this->delegate() == ref.delegate());
+        }
+        return equal;
     }
 
     /**
@@ -205,7 +224,9 @@ public:
     bool operator!=(
             const R& ref) const
     {
-        throw "Not implemented";
+        // FRANAVA read something removing the this keyword.
+        // not sure if applies here
+        return !(*this == ref);
     }
 
     /**
@@ -220,7 +241,14 @@ public:
     Reference& operator=(
             const Reference<D>& that)
     {
-        throw "Not implemented";
+        //To implement
+        static_assert((is_base_of<DELEGATE_T, D>::value),"value error");
+        if(this != (Reference*)&that)
+        {
+            *this = Reference<DELEGATE_T>(that);
+        }
+        return *this;
+
     }
 
     /** @copydoc dds::core::Reference::operator=(const Reference<D>& that) */
@@ -228,7 +256,15 @@ public:
     Reference& operator=(
             const R& rhs)
     {
-        throw "Not implemented";
+        static_assert(
+            is_base_of< DELEGATE_T, typename R::DELEGATE_T>::value,
+            "location: operator=()" );
+        if(this != (Reference*)&rhs)
+        {
+            *this = Reference<DELEGATE_T>(rhs);
+        }
+        return *this;
+
     }
 
     /**
@@ -244,7 +280,10 @@ public:
     Reference& operator=(
             const null_type)
     {
-        throw "Not implemented";
+        DELEGATE_REF_T tmp;
+        impl_ = tmp;
+        return *this;
+
     }
 
     /**
@@ -256,7 +295,7 @@ public:
      */
     bool is_nil() const
     {
-        throw "Not implemented";
+        return impl_.get() == 0 ;
     }
 
     /**
@@ -275,7 +314,7 @@ public:
     bool operator==(
             const null_type) const
     {
-        throw "Not implemented";
+        return this->is_nil();
     }
 
     /**
@@ -294,16 +333,13 @@ public:
     bool operator!=(
             const null_type nil) const
     {
-        throw "Not implemented";
+        return !(this->is_nil());
     }
 
 private:
     // -- disallow dynamic allocation for reference types
     void* operator new(
-            size_t)
-    {
-        throw "Not implemented";
-    }
+            size_t) ; // FRANAVA: not implemented
 
 public:
     /** @cond
@@ -314,12 +350,20 @@ public:
      */
     DELEGATE_REF_T& delegate()
     {
-        throw "Not implemented";
+        if( impl_ == dds::core::null_type())
+        {
+            throw IllegalOperationError("requesting a null reference") ;
+        }
+        return impl_;
     }
 
     const DELEGATE_REF_T& delegate() const
     {
-        throw "Not implemented";
+        if( impl_ == dds::core::null_type())
+        {
+            throw IllegalOperationError("requesting a null reference") ;
+        }
+        return impl_;
     }
 
     /** @endcond */
@@ -343,13 +387,22 @@ public:
      */
     DELEGATE* operator->()
     {
-        throw "Not implemented";
+        if( impl_ == dds::core::null_type())
+        {
+            throw IllegalOperationError("requesting a null reference") ;
+        }
+        return impl_.get();
+
     }
 
     /** @copydoc dds::core::Reference::operator->() */
     const DELEGATE* operator->() const
     {
-        throw "Not implemented";
+        if( impl_ == dds::core::null_type())
+        {
+            throw IllegalOperationError("requesting a null reference") ;
+        }
+        return impl_.get();
     }
 
     /** @cond
@@ -360,12 +413,20 @@ public:
      */
     operator DELEGATE_REF_T& ()
     {
-        throw "Not implemented";
+        if( impl_ == dds::core::null_type())
+        {
+            throw IllegalOperationError("requesting a null reference") ;
+        }
+        return impl_;
     }
 
     operator const DELEGATE_REF_T& () const
     {
-        throw "Not implemented";
+        if( impl_ == dds::core::null_type())
+        {
+            throw IllegalOperationError("requesting a null reference") ;
+        }
+        return impl_;
     }
     /** @endcond */
 
@@ -377,7 +438,7 @@ protected:
     void set_ref(
             DELEGATE_T* p)
     {
-        throw "Not implemented";
+        impl_.reset(p);
     }
 
 protected:
@@ -407,8 +468,7 @@ bool operator ==(
         dds::core::null_type,
         const dds::core::Reference<D>& r)
 {
-    (void) r;
-    return false;
+    return r.is_nil() ;
 }
 
 /**
@@ -429,8 +489,7 @@ bool operator !=(
         dds::core::null_type,
         const dds::core::Reference<D>& r)
 {
-    (void) r;
-    return false;
+    return r.is_nil() ;
 }
 
 #endif // OMG_DDS_CORE_REFERENCE_HPP_
