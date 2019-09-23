@@ -33,6 +33,8 @@
 #include "../../security/accesscontrol/ParticipantSecurityAttributes.h"
 #endif
 
+#include <chrono>
+
 #define DISCOVERY_PARTICIPANT_DATA_MAX_SIZE 5000
 #define DISCOVERY_TOPIC_DATA_MAX_SIZE 500
 #define DISCOVERY_PUBLICATION_DATA_MAX_SIZE 5000
@@ -171,6 +173,26 @@ class ParticipantProxyData
          * @return guid persistent GUID_t or c_Guid_Unknown
          */
         GUID_t get_persistence_guid() const;
+
+        void assert_liveliness();
+
+        const std::chrono::steady_clock::time_point& last_received_message_tm() const
+        {
+            return last_received_message_tm_;
+        }
+
+        const std::chrono::microseconds& lease_duration() const
+        {
+            return lease_duration_;
+        }
+
+    private:
+
+        //! Store the last timestamp it was received a RTPS message from the remote participant.
+        std::chrono::steady_clock::time_point last_received_message_tm_;
+
+        //! Remote participant lease duration in microseconds.
+        std::chrono::microseconds lease_duration_;
 };
 
 } /* namespace rtps */

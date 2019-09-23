@@ -322,11 +322,6 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
         {
             logInfo(RTPS_MSG_IN, IDSTRING "MessageReceiver not add change " << change_to_add->sequenceNumber);
             releaseCache(change_to_add);
-
-            if(getGuid().entityId == c_EntityId_SPDPReader)
-            {
-                mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(change->writerGUID.guidPrefix);
-            }
         }
     }
 
@@ -406,12 +401,6 @@ bool StatelessReader::processDataFragMsg(
                 if (!change_received(change_completed))
                 {
                     logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long());
-
-                    // Assert liveliness because if it is a participant discovery info.
-                    if (getGuid().entityId == c_EntityId_SPDPReader)
-                    {
-                        mp_RTPSParticipant->assertRemoteRTPSParticipantLiveliness(incomingChange->writerGUID.guidPrefix);
-                    }
 
                     // Release CacheChange_t.
                     releaseCache(change_completed);

@@ -285,9 +285,10 @@ public:
 
     /**
      * Assert the liveliness of a Remote Participant.
-     * @param guidP GuidPrefix_t of the participant whose liveliness is being asserted.
+     * @param remote_guid GuidPrefix_t of the participant whose liveliness is being asserted.
      */
-    void assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP);
+    void assert_remote_participant_liveliness(
+            const GuidPrefix_t& remote_guid);
 
     /**
      * Get the RTPS participant
@@ -373,6 +374,11 @@ protected:
     bool lookup_participant_key(
             const GUID_t& participant_guid,
             InstanceHandle_t& key);
+
+private:
+
+    void check_remote_participant_liveliness(
+            ParticipantProxyData* remote_participant);
 
 };
 

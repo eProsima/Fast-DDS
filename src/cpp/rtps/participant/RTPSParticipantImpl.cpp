@@ -1070,9 +1070,13 @@ void RTPSParticipantImpl::ResourceSemaphoreWait()
     }
 }
 
-void RTPSParticipantImpl::assertRemoteRTPSParticipantLiveliness(const GuidPrefix_t& guidP)
+void RTPSParticipantImpl::assert_remote_participant_liveliness(
+        const GuidPrefix_t& remote_guid)
 {
-    this->mp_builtinProtocols->mp_PDP->assertRemoteParticipantLiveliness(guidP);
+    if (mp_builtinProtocols && mp_builtinProtocols->mp_PDP)
+    {
+        mp_builtinProtocols->mp_PDP->assert_remote_participant_liveliness(remote_guid);
+    }
 }
 
 uint32_t RTPSParticipantImpl::getMaxMessageSize() const

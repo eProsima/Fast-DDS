@@ -346,15 +346,35 @@ class PubSubWriter
         std::cout << "Writer discovery finished..." << std::endl;
     }
 
-    void wait_participant_undiscovery()
+    bool wait_participant_undiscovery(std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
+        bool ret_value = true;
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
         std::cout << "Writer is waiting undiscovery..." << std::endl;
 
-        cv_.wait(lock, [&](){return participant_matched_ == 0;});
+        if(timeout == std::chrono::seconds::zero())
+        {
+            cv_.wait(lock, [&](){return participant_matched_ == 0;});
+        }
+        else
+        {
+            if (!cv_.wait_for(lock, timeout, [&](){return participant_matched_ == 0;}))
+            {
+                ret_value = false;
+            }
+        }
 
-        std::cout << "Writer undiscovery finished..." << std::endl;
+        if (ret_value)
+        {
+            std::cout << "Writer undiscovery finished successfully..." << std::endl;
+        }
+        else
+        {
+            std::cout << "Writer undiscovery finished unsuccessfully..." << std::endl;
+        }
+
+        return ret_value;
     }
 
     void wait_reader_undiscovery()

@@ -26,8 +26,10 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/qos/QosPolicies.h>
+#include <fastrtps/utils/TimeConversion.h>
 
 #include <mutex>
+#include <chrono>
 
 using namespace eprosima::fastrtps;
 
@@ -79,6 +81,7 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
     , m_userData(pdata.m_userData)
     , lease_duration_event(nullptr)
     , should_check_lease_duration(false)
+    , lease_duration_(std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(pdata.m_leaseDuration)))
 
     // This method is only called from SecurityManager when a new participant is discovered and the
     // corresponding DiscoveredParticipantInfo struct is created. Only participant info is used,
@@ -295,6 +298,7 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
                 const ParameterTime_t* p = dynamic_cast<const ParameterTime_t*>(param);
                 assert(p != nullptr);
                 this->m_leaseDuration = p->time.to_duration_t();
+                lease_duration_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(m_leaseDuration));
                 break;
             }
             case PID_BUILTIN_ENDPOINT_SET:
@@ -389,6 +393,7 @@ void ParticipantProxyData::clear()
     m_participantName = "";
     m_key = InstanceHandle_t();
     m_leaseDuration = Duration_t();
+    lease_duration_ = std::chrono::microseconds::zero();
     isAlive = true;
 #if HAVE_SECURITY
     identity_token_ = IdentityToken();
@@ -413,6 +418,7 @@ void ParticipantProxyData::copy(const ParticipantProxyData& pdata)
     m_manualLivelinessCount = pdata.m_manualLivelinessCount;
     m_participantName = pdata.m_participantName;
     m_leaseDuration = pdata.m_leaseDuration;
+    lease_duration_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(pdata.m_leaseDuration));
     m_key = pdata.m_key;
     isAlive = pdata.isAlive;
     m_properties = pdata.m_properties;
@@ -445,10 +451,21 @@ bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
     security_attributes_ = pdata.security_attributes_;
     plugin_security_attributes_ = pdata.plugin_security_attributes_;
 #endif
+    auto new_lease_duration = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(m_leaseDuration));
     if (this->lease_duration_event != nullptr)
     {
-        lease_duration_event->update_interval(m_leaseDuration);
+        if(new_lease_duration < lease_duration_)
+        {
+            // Calculate next trigger.
+            auto real_lease_tm = last_received_message_tm_ + new_lease_duration;
+            auto next_trigger = real_lease_tm - std::chrono::steady_clock::now();
+            lease_duration_event->cancel_timer();
+            lease_duration_event->update_interval_millisec(
+                    (double)std::chrono::duration_cast<std::chrono::milliseconds>(next_trigger).count());
+            lease_duration_event->restart_timer();
+        }
     }
+    lease_duration_ = new_lease_duration;
     return true;
 }
 
@@ -515,6 +532,10 @@ GUID_t ParticipantProxyData::get_persistence_guid() const
     return persistent;
 }
 
+void ParticipantProxyData::assert_liveliness()
+{
+    last_received_message_tm_ = std::chrono::steady_clock::now();
+}
 
 } /* namespace rtps */
 } /* namespace fastrtps */

@@ -50,8 +50,7 @@
 #include <fastrtps/log/Log.h>
 
 #include <mutex>
-
-using namespace eprosima::fastrtps;
+#include <chrono>
 
 namespace eprosima {
 namespace fastrtps {
@@ -167,7 +166,7 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
                         {
                             if (TimedEvent::EVENT_SUCCESS == code)
                             {
-                                remove_remote_participant(ret_val->m_guid, ParticipantDiscoveryInfo::DROPPED_PARTICIPANT);
+                                check_remote_participant_liveliness(ret_val);
                             }
 
                             return false;
@@ -329,7 +328,7 @@ bool PDP::initPDP(
                 {
                     if (TimedEvent::EVENT_SUCCESS == code)
                     {
-                        remove_remote_participant(pool_item->m_guid, ParticipantDiscoveryInfo::DROPPED_PARTICIPANT);
+                        check_remote_participant_liveliness(pool_item);
                     }
 
                     return false;
@@ -959,21 +958,18 @@ const BuiltinAttributes& PDP::builtin_attributes() const
     return mp_builtin->m_att;
 }
 
-void PDP::assertRemoteParticipantLiveliness(const GuidPrefix_t& guidP)
+void PDP::assert_remote_participant_liveliness(
+        const GuidPrefix_t& remote_guid)
 {
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
-    for(ParticipantProxyData* it : this->participant_proxies_)
+
+    for (ParticipantProxyData* it : this->participant_proxies_)
     {
-        if(it->m_guid.guidPrefix == guidP)
+        if(it->m_guid.guidPrefix == remote_guid)
         {
-            logInfo(RTPS_LIVELINESS,"RTPSParticipant " << it->m_guid << " is Alive");
             // TODO Ricardo: Study if isAlive attribute is necessary.
             it->isAlive = true;
-            if(it->lease_duration_event != nullptr && it->should_check_lease_duration)
-            {
-                it->lease_duration_event->cancel_timer();
-                it->lease_duration_event->restart_timer();
-            }
+            it->assert_liveliness();
             break;
         }
     }
@@ -992,6 +988,32 @@ CDRMessage_t PDP::get_participant_proxy_data_serialized(Endianness_t endian)
     }
 
     return cdr_msg;
+}
+
+void PDP::check_remote_participant_liveliness(
+        ParticipantProxyData* remote_participant)
+{
+    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
+
+    if(GUID_t::unknown() != remote_participant->m_guid)
+    {
+        // Check last received message's time_point plus lease duration time doesn't overcome now().
+        // If overcame, remove participant.
+        auto now = std::chrono::steady_clock::now();
+        auto real_lease_tm = remote_participant->last_received_message_tm() +
+                std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(remote_participant->m_leaseDuration));
+        if (now > real_lease_tm)
+        {
+            remove_remote_participant(remote_participant->m_guid, ParticipantDiscoveryInfo::DROPPED_PARTICIPANT);
+            return;
+        }
+
+        // Calculate next trigger.
+        auto next_trigger = real_lease_tm - now;
+        remote_participant->lease_duration_event->update_interval_millisec(
+                (double)std::chrono::duration_cast<std::chrono::milliseconds>(next_trigger).count());
+        remote_participant->lease_duration_event->restart_timer();
+    }
 }
 
 } /* namespace rtps */
