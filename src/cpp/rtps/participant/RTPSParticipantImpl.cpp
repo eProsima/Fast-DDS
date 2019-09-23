@@ -1037,7 +1037,10 @@ void RTPSParticipantImpl::ResourceSemaphoreWait()
 
 void RTPSParticipantImpl::assertRemoteRTPSParticipantLiveliness(const GuidPrefix_t& guidP)
 {
-    this->mp_builtinProtocols->mp_PDP->assertRemoteParticipantLiveliness(guidP);
+    if (mp_builtinProtocols && mp_builtinProtocols->mp_PDP)
+    {
+        this->mp_builtinProtocols->mp_PDP->assertRemoteParticipantLiveliness(guidP);
+    }
 }
 
 uint32_t RTPSParticipantImpl::getMaxMessageSize() const

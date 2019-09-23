@@ -236,6 +236,8 @@ class PDPSimple
     bool createSPDPEndpoints();
     std::recursive_mutex* mp_mutex;
 
+    void check_remote_participant_liveliness(const GUID_t& remote_participant_guid);
+
 
 
 };
