@@ -78,7 +78,8 @@ class RemoteParticipantLeaseDuration:public TimedEvent
                 auto real_lease_tm = last_received_message_tm_ + new_lease_duration;
                 auto next_trigger = real_lease_tm - std::chrono::steady_clock::now();
                 cancel_timer();
-                update_interval_millisec(std::chrono::duration_cast<std::chrono::milliseconds>(next_trigger).count());
+                update_interval_millisec(
+                        (double)std::chrono::duration_cast<std::chrono::milliseconds>(next_trigger).count());
                 restart_timer();
             }
 

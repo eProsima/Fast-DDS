@@ -92,7 +92,7 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
 
         // Calculate next trigger.
         auto next_trigger = real_lease_tm - now;
-        update_interval_millisec(std::chrono::duration_cast<std::chrono::milliseconds>(next_trigger).count());
+        update_interval_millisec((double)std::chrono::duration_cast<std::chrono::milliseconds>(next_trigger).count());
         restart_timer();
     }
     else if(code == EVENT_ABORT)
