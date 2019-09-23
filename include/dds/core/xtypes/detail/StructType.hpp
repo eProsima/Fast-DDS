@@ -75,11 +75,11 @@ public:
     void annotation(
             xtypes::Annotation &a )
     {
-        annotations_.push_back( std::reference_wrapper<xtypes::Annotation>(a) ) ;
+        annotations_.push_back( a ) ;
     }
 
     void annotations(
-            std::vector<std::reference_wrapper<xtypes::Annotation>> &v)
+            std::vector<xtypes::Annotation> &v)
     {
         annotations_.reserve( v.size() + annotations_.size() );
 
@@ -126,7 +126,7 @@ public:
         return *retval ;
     }
 
-    const std::vector<std::reference_wrapper<xtypes::Annotation>> &annotations()
+    const std::vector< xtypes::Annotation > &annotations()
     {
         return annotations_ ;
     }
@@ -148,8 +148,8 @@ public:
         auto rv = find_if(
                     annotations_.begin(),
                     annotations_.end(),
-                    [&](std::reference_wrapper<xtypes::Annotation> &aa)
-                    {return aa.get().akind() == a.akind() ;}) ;
+                    [&]( xtypes::Annotation &aa)
+                    {return aa.akind() == a.akind() ;}) ;
 
         COND_EXCEP_THROW(rv != annotations_.end(), "could not find such annotation");
     }
@@ -157,7 +157,7 @@ public:
 private:
     std::string name_ ;
     std::vector<xtypes::MemberType> members_ ;
-    std::vector<std::reference_wrapper<xtypes::Annotation>> annotations_ ;
+    std::vector<xtypes::Annotation> annotations_ ;
 };
 
 } //namespace detail

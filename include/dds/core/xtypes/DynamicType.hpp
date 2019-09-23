@@ -47,7 +47,7 @@ public:
         return impl()->kind() ;
     }
 
-    const std::vector<std::reference_wrapper<Annotation>>& annotations() const
+    const std::vector<Annotation>& annotations() const
     {
         return impl()->annotations() ;
     }
@@ -103,7 +103,7 @@ protected:
     TDynamicType(
             const std::string& name,
             TypeKind kind,
-            const std::vector<std::reference_wrapper<Annotation>>& annotations)
+            const std::vector<Annotation>& annotations)
     {
         impl()->name(name) ;
         impl()->kind(kind) ;

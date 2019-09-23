@@ -102,7 +102,7 @@ public:
         const std::string& name,
         const TStructType& parent,
         const std::vector<MemberType>& members,
-        const std::vector<std::reference_wrapper<Annotation>>& annotations)
+        const std::vector<Annotation>& annotations)
     {
         TDynamicType<DELEGATE>::impl()->name(name) ;
         parentTs_ = parent ;
@@ -157,7 +157,7 @@ public:
         return TDynamicType<DELEGATE>::impl()->member(name) ;
     }
 
-    const std::vector<std::reference_wrapper<Annotation>>& annotations() const
+    const std::vector<Annotation>& annotations() const
     {
         return TDynamicType<DELEGATE>::impl()->annotations() ;
     }

@@ -63,7 +63,7 @@ public:
     TMemberType(
             const std::string& name,
             const TDynamicType<OTHER_DELEGATE>& type,
-            const std::vector<std::reference_wrapper<Annotation>>& annotations)
+            const std::vector<Annotation>& annotations)
     {
         impl()->name(name) ;
         impl()->dt(type) ;

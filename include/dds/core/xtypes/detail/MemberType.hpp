@@ -66,7 +66,7 @@ public:
     }
 
     void annotation(
-            std::vector<std::reference_wrapper<xtypes::Annotation>> &ann)
+            std::vector<xtypes::Annotation> &ann)
     {
         ann_.reserve(ann.size() + ann_.size()) ;
         for (auto it = ann.begin() ; it != ann.end() ; ++it)
@@ -90,7 +90,7 @@ public:
     void annotation(
             xtypes::Annotation &ann)
     {
-        ann_.push_back(std::reference_wrapper<xtypes::Annotation>(ann))  ;
+        ann_.push_back(ann)  ;
     }
 
     const std::string &name()const noexcept
@@ -103,7 +103,7 @@ public:
         return dt_ ;
     }
 
-    const std::vector<std::reference_wrapper<xtypes::Annotation>>& annotation()
+    const std::vector< xtypes::Annotation >& annotation()
     {
         return ann_ ;
     }
@@ -114,8 +114,8 @@ public:
         auto rem = std::find_if(
                     ann_.begin(),
                     ann_.end(),
-                    [&]( std::reference_wrapper<xtypes::Annotation>&b)
-                        {return b.get().akind() == a.akind();} ) ;
+                    [&]( xtypes::Annotation &b)
+                        {return b.akind() == a.akind();} ) ;
         if ( rem != ann_.end() )
         {
             ann_.erase(rem) ;
@@ -123,14 +123,14 @@ public:
     }
 
 
-    std::vector<std::reference_wrapper<xtypes::Annotation>>::iterator annIt(
+    std::vector<xtypes::Annotation>::iterator annIt(
             AnnotationKind &ann)
     {
         return std::find_if(
                         ann_.begin(),
                         ann_.end(),
-                        [&]( std::reference_wrapper<xtypes::Annotation>&a)
-                            { return (a.get().akind() == ann) ;} ) ;
+                        [&]( xtypes::Annotation &a)
+                            { return (a.akind() == ann) ;} ) ;
     }
 
     bool findAnnotation(
@@ -183,7 +183,7 @@ public:
             throw IllegalOperationError("No Bitsetbound Annotation found") ;
         }
         AnnotationKind a = AnnotationKind_def::Type::BITSETBOUND_ANNOTATION_TYPE ;
-        annIt(a)->get().bound() ;
+        annIt(a)->bound() ;
     }
 
     bool has_id()
@@ -199,13 +199,13 @@ public:
             throw IllegalOperationError("No Id Annotation found") ;
         }
         AnnotationKind a = AnnotationKind_def::Type::ID_ANNOTATION_TYPE ;
-        annIt(a)->get().id() ;
+        annIt(a)->id() ;
     }
 
 private:
     std::string name_ ;
     xtypes::DynamicType dt_ ;
-    std::vector<std::reference_wrapper<xtypes::Annotation>> ann_ ;
+    std::vector<xtypes::Annotation> ann_ ;
 };
 
 } //namespace detail

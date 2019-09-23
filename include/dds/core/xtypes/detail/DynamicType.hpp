@@ -39,11 +39,11 @@ public:
     void annotation(
             xtypes::Annotation &a)
     {
-        ann_.push_back(std::reference_wrapper<xtypes::Annotation>(a)) ;
+        ann_.push_back(a) ;
     }
 
     void annotation(
-            const std::vector<std::reference_wrapper<xtypes::Annotation>>& annotations)
+            const std::vector<xtypes::Annotation>& annotations)
     {
         ann_.reserve(annotations.size() + ann_.size()) ;
         for (auto it = annotations.begin() ; it != annotations.end() ; ++it)
@@ -64,7 +64,7 @@ public:
         }
     }
 
-    const std::vector<std::reference_wrapper<xtypes::Annotation>>& annotations() const
+    const std::vector<xtypes::Annotation>& annotations() const
     {
         return ann_ ;
     }
@@ -72,7 +72,7 @@ public:
 private:
     std::string name_ ;
     TypeKind kind_ ;
-    std::vector<std::reference_wrapper<xtypes::Annotation>> ann_ ;
+    std::vector<xtypes::Annotation> ann_ ;
 };
 
 } //namespace detail
