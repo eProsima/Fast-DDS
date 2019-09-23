@@ -364,15 +364,35 @@ public:
         std::cout << "Reader discovery finished..." << std::endl;
     }
 
-    void wait_participant_undiscovery()
+    bool wait_participant_undiscovery(std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
+        bool ret_value = true;
         std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
         std::cout << "Reader is waiting undiscovery..." << std::endl;
 
-        cvDiscovery_.wait(lock, [&](){return participant_matched_ == 0;});
+        if(timeout == std::chrono::seconds::zero())
+        {
+            cvDiscovery_.wait(lock, [&](){return participant_matched_ == 0;});
+        }
+        else
+        {
+            if (!cvDiscovery_.wait_for(lock, timeout, [&](){return participant_matched_ == 0;}))
+            {
+                ret_value = false;
+            }
+        }
 
-        std::cout << "Reader undiscovery finished..." << std::endl;
+        if (ret_value)
+        {
+            std::cout << "Reader undiscovery finished successfully..." << std::endl;
+        }
+        else
+        {
+            std::cout << "Reader undiscovery finished unsuccessfully..." << std::endl;
+        }
+
+        return ret_value;
     }
 
     void wait_writer_undiscovery()

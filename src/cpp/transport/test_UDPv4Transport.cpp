@@ -24,6 +24,7 @@ namespace rtps{
 std::vector<std::vector<octet> > test_UDPv4Transport::test_UDPv4Transport_DropLog;
 uint32_t test_UDPv4Transport::test_UDPv4Transport_DropLogLength = 0;
 bool test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = false;
+bool test_UDPv4Transport::always_drop_participant_builtin_topic_data = false;
 
 test_UDPv4Transport::test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor):
     drop_data_messages_percentage_(descriptor.dropDataMessagesPercentage),
@@ -156,10 +157,22 @@ bool test_UDPv4Transport::packet_should_drop(const octet* send_buffer, uint32_t 
                 CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
                 cdrMessage.pos = old_pos;
 
-                if((!drop_participant_builtin_topic_data_ && writer_id == c_EntityId_SPDPWriter) ||
-                        (!drop_publication_builtin_topic_data_ && writer_id == c_EntityId_SEDPPubWriter) ||
+                if(writer_id == c_EntityId_SPDPWriter)
+                {
+                    if (always_drop_participant_builtin_topic_data)
+                    {
+                        return true;
+                    }
+                    else if(!drop_participant_builtin_topic_data_)
+                    {
+                        return false;
+                    }
+                }
+                else if((!drop_publication_builtin_topic_data_ && writer_id == c_EntityId_SEDPPubWriter) ||
                         (!drop_subscription_builtin_topic_data_ && writer_id == c_EntityId_SEDPSubWriter))
+                {
                     return false;
+                }
 
                 if(should_be_dropped(&drop_data_messages_percentage_))
                     return true;

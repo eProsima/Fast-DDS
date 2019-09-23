@@ -48,6 +48,7 @@ public:
     // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
     RTPS_DllAPI static std::vector<std::vector<octet> > test_UDPv4Transport_DropLog;
     RTPS_DllAPI static uint32_t test_UDPv4Transport_DropLogLength;
+    RTPS_DllAPI static bool always_drop_participant_builtin_topic_data;
 
 private:
 

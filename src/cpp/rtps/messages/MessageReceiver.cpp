@@ -347,6 +347,9 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
             break;
         }
     }
+
+
+    participant_->assert_remote_participant_liveliness(sourceGuidPrefix);
 }
 
 bool MessageReceiver::checkRTPSHeader(CDRMessage_t*msg) //check and proccess the RTPS Header

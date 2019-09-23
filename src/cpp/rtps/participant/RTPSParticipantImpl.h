@@ -188,9 +188,10 @@ public:
 
     /**
         * Assert the liveliness of a remote participant
-        * @param guidP GuidPrefix_t of the participant.
+        * @param remote_guid GuidPrefix_t of the participant.
         */
-    void assertRemoteRTPSParticipantLiveliness(const GuidPrefix_t& guidP);
+    void assert_remote_participant_liveliness(
+            const GuidPrefix_t& remote_guid);
 
     /**
         * Get the RTPSParticipant ID
