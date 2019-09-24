@@ -72,6 +72,11 @@ void TimedEvent::destroy()
     mp_impl->destroy();
 }
 
+void TimedEvent::mark_for_destruction()
+{
+    mp_impl->mark_for_destruction();
+}
+
 }
 } /* namespace rtps */
 } /* namespace eprosima */

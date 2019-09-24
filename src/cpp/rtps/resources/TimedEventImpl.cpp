@@ -100,6 +100,11 @@ void TimedEventImpl::destroy()
         cond_.wait(lock);
 }
 
+void TimedEventImpl::mark_for_destruction()
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+    state_.get()->autodestruction_ = TimedEvent::ALLWAYS;
+}
 
 /* In this function we don't need to exchange the state,
  * because this function try to cancel, but if the event is running
