@@ -87,6 +87,7 @@ void RemoteParticipantLeaseDuration::event(EventCode code, const char* msg)
                             mp_PDP->getRTPSParticipant()->getUserRTPSParticipant(), std::move(info));
                 }
             }
+            mark_for_destruction();
             return;
         }
 
