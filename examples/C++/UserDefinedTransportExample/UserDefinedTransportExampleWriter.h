@@ -30,40 +30,42 @@
 
 class my_WriterListener: public eprosima::fastrtps::rtps::WriterListener
 {
-	public:
-		my_WriterListener();
-		~my_WriterListener();
-		void onWriterMatched(eprosima::fastrtps::rtps::RTPSWriter* writer, eprosima::fastrtps::rtps::MatchingInfo& info);
-		int n_matched;
+    public:
+        my_WriterListener();
+        ~my_WriterListener() override;
+        void onWriterMatched(
+                eprosima::fastrtps::rtps::RTPSWriter* writer,
+                eprosima::fastrtps::rtps::MatchingInfo& info) override;
+        int n_matched;
 };
 
 
 class UserDefinedTransportExampleWriter
 {
-	private:
+    private:
 
-	my_WriterListener *my_listener;
-	void waitformatching();   	
-	
-	public:
+    my_WriterListener *my_listener;
+    void waitformatching();
+
+    public:
 
         UserDefinedTransportExampleWriter();
         ~UserDefinedTransportExampleWriter();
-        	
+
         void init();
         bool isInitialized();
-	void sendData();
+    void sendData();
 
     private:
         eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
-		eprosima::fastrtps::rtps::RTPSParticipant *my_participant;
+        eprosima::fastrtps::rtps::RTPSParticipant *my_participant;
         eprosima::fastrtps::rtps::WriterAttributes wattr;
-		eprosima::fastrtps::rtps::RTPSWriter *my_writer;
-		eprosima::fastrtps::rtps::HistoryAttributes hattr;
-		eprosima::fastrtps::rtps::WriterHistory *my_history;
-		eprosima::fastrtps::TopicAttributes tattr;
-		eprosima::fastrtps::WriterQos wqos;
-		bool initialized_;
+        eprosima::fastrtps::rtps::RTPSWriter *my_writer;
+        eprosima::fastrtps::rtps::HistoryAttributes hattr;
+        eprosima::fastrtps::rtps::WriterHistory *my_history;
+        eprosima::fastrtps::TopicAttributes tattr;
+        eprosima::fastrtps::WriterQos wqos;
+        bool initialized_;
 };
 
 

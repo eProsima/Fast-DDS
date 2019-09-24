@@ -41,6 +41,16 @@ class NetworkFactory
     public:
 
         NetworkFactory() {}
+
+        bool transform_remote_locator(
+                const Locator_t& remote_locator,
+                Locator_t& result_locator) const
+        {
+            result_locator = remote_locator;
+            return true;
+        }
+
+        uint32_t get_min_send_buffer_size() { return 65536; }
 };
 
 } // namespace rtps

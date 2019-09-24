@@ -14,68 +14,85 @@
 
 #include "UserDefinedTransportExampleReader.h"
 #include <memory>
+#include <chrono>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-	
-my_ReaderListener::my_ReaderListener() :n_received(0) {}
-my_ReaderListener::~my_ReaderListener(){}
 
-void my_ReaderListener::onNewDataMessage(RTPSReader*, const CacheChange_t* const)
+my_ReaderListener::my_ReaderListener()
+    : n_received(0)
+{}
+
+my_ReaderListener::~my_ReaderListener()
+{}
+
+void my_ReaderListener::onNewCacheChangeAdded(
+        RTPSReader*,
+        const CacheChange_t* const)
 {
-	n_received++;
-	std::cout << "Received " << n_received << " samples so far" << std::endl;
+    n_received++;
+    std::cout << "Received " << n_received << " samples so far" << std::endl;
 }
 
-void my_ReaderListener::onReaderMatched(RTPSReader*, MatchingInfo&)
+void my_ReaderListener::onReaderMatched(
+        RTPSReader*,
+        MatchingInfo&)
 {
-	std::cout << "Matched with a Writer" << std::endl;
+    std::cout << "Matched with a Writer" << std::endl;
 }
 
 
-UserDefinedTransportExampleReader::UserDefinedTransportExampleReader() : my_participant(nullptr), my_reader(nullptr), initialized_(false)
+UserDefinedTransportExampleReader::UserDefinedTransportExampleReader()
+    : my_participant(nullptr)
+    , my_reader(nullptr)
+    , initialized_(false)
 {
 }
 
 UserDefinedTransportExampleReader::~UserDefinedTransportExampleReader()
 {
-    if(my_participant != nullptr)
-		RTPSDomain::removeRTPSParticipant(my_participant);
+    if (my_participant != nullptr)
+    {
+        RTPSDomain::removeRTPSParticipant(my_participant);
+    }
 }
 
 void UserDefinedTransportExampleReader::init()
 {
-	//Creation of the participant
-	auto customTransport = std::make_shared<UDPv4TransportDescriptor>();
-		customTransport->sendBufferSize = 65536;
-		customTransport->receiveBufferSize = 65536;
+    //Creation of the participant
+    auto customTransport = std::make_shared<UDPv4TransportDescriptor>();
+    customTransport->sendBufferSize = 65536;
+    customTransport->receiveBufferSize = 65536;
 
-	pattr.userTransports.push_back(customTransport);
-	pattr.useBuiltinTransports = false;
-	my_participant = RTPSDomain::createParticipant(pattr);
-	    
-	//Creation of the Reader 
-		my_listener = new my_ReaderListener();
-	my_history = new ReaderHistory(hattr); 
-		my_reader= RTPSDomain::createRTPSReader(my_participant, rattr, my_history, my_listener);
+    pattr.userTransports.push_back(customTransport);
+    pattr.useBuiltinTransports = false;
+    my_participant = RTPSDomain::createParticipant(pattr);
 
-	// Register type
-	tattr.topicKind = NO_KEY;
-	tattr.topicDataType = "string";
-	tattr.topicName = "ExampleTopic";
-	my_participant->registerReader(my_reader,tattr, rqos);            
-	initialized_ = true;
+    //Creation of the Reader
+    my_listener = new my_ReaderListener();
+    my_history = new ReaderHistory(hattr);
+    my_reader= RTPSDomain::createRTPSReader(my_participant, rattr, my_history, my_listener);
+
+    // Register type
+    tattr.topicKind = NO_KEY;
+    tattr.topicDataType = "string";
+    tattr.topicName = "ExampleTopic";
+    my_participant->registerReader(my_reader,tattr, rqos);
+    initialized_ = true;
 }
 
-bool UserDefinedTransportExampleReader::read(){
-	while(my_listener->n_received < 9){}
-	return true;
-
+bool UserDefinedTransportExampleReader::read()
+{
+    while(my_listener->n_received < 9)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10)) ;
+    }
+    return true;
 }
 
 bool UserDefinedTransportExampleReader::isInitialized()
 {
-	return initialized_;
+    return initialized_;
 }

@@ -92,7 +92,8 @@ class TCPReqRepHelloWorldRequester
             int domainId,
             uint16_t listeningPort,
             uint32_t maxInitialPeer = 0,
-            const char* certs_path = nullptr);
+            const char* certs_path = nullptr,
+            bool force_localhost = false);
         bool isInitialized() const { return initialized_; }
         void newNumber(eprosima::fastrtps::rtps::SampleIdentity related_sample_identity, uint16_t number);
         void block();
