@@ -448,17 +448,16 @@ bool TCPTransportInterface::transform_remote_locator(
 {
     if (IsLocatorSupported(remote_locator))
     {
-        bool is_local = is_local_locator(remote_locator);
-        if (!is_local || is_locator_allowed(remote_locator))
+        if (is_local_locator(remote_locator))
         {
-            if (is_local)
-            {
-                // Loopback locator
-                fill_local_ip(result_locator);
-                IPLocator::setPhysicalPort(result_locator, IPLocator::getPhysicalPort(remote_locator));
-                IPLocator::setLogicalPort(result_locator, IPLocator::getLogicalPort(remote_locator));
-                return true;
-            }
+            // Loopback locator
+            fill_local_ip(result_locator);
+            IPLocator::setPhysicalPort(result_locator, IPLocator::getPhysicalPort(remote_locator));
+            IPLocator::setLogicalPort(result_locator, IPLocator::getLogicalPort(remote_locator));
+            return true;
+        }
+        else if (is_locator_allowed(remote_locator))
+        {
             result_locator = remote_locator;
             return true;
         }
