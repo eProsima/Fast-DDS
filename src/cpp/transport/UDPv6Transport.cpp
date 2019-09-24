@@ -440,12 +440,18 @@ bool UDPv6Transport::is_local_locator(const Locator_t& locator) const
 {
     assert(locator.kind == LOCATOR_KIND_UDPv4);
 
-    if(IPLocator::isLocal(locator))
+    if (IPLocator::isLocal(locator))
+    {
         return true;
+    }
 
-    for(auto localInterface : currentInterfaces)
+    for (const IPFinder::info_IP& localInterface : currentInterfaces)
+    {
         if(IPLocator::compareAddress(localInterface.locator, locator))
+        {
             return true;
+        }
+    }
 
     return false;
 }
