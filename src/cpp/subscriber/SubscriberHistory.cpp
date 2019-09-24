@@ -321,8 +321,8 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
     }
 
     std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
-    CacheChange_t* change;
-    WriterProxy * wp;
+    CacheChange_t* change = nullptr;
+    WriterProxy * wp = nullptr;
     if (this->mp_reader->nextUnreadCache(&change, &wp))
     {
         change->isRead = true;
