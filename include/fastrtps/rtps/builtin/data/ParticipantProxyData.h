@@ -72,12 +72,13 @@ class TimedEvent;
 class RTPSParticipantImpl;
 class ReaderProxyData;
 class WriterProxyData;
+class NetworkFactory;
 
 /**
 * ParticipantProxyData class is used to store and convert the information Participants send to each other during the PDP phase.
 *@ingroup BUILTIN_MODULE
 */
-class ParticipantProxyData 
+class ParticipantProxyData
 {
     public:
 
@@ -151,7 +152,10 @@ class ParticipantProxyData
          * Read the parameter list from a recevied CDRMessage_t
          * @return True on success
          */
-        bool readFromCDRMessage(CDRMessage_t* msg, bool use_encapsulation=true);
+        bool readFromCDRMessage(
+                CDRMessage_t* msg,
+                bool use_encapsulation,
+                const NetworkFactory& network);
 
         //! Clear the data (restore to default state).
         void clear();

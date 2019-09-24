@@ -210,12 +210,30 @@ bool TCPv4Transport::is_local_locator(const Locator_t& locator) const
 {
     assert(locator.kind == LOCATOR_KIND_TCPv4);
 
+    /*
+     * Check case: Remote WAN address isn't our WAN address.
+     */
+    if (IPLocator::hasWan(locator))
+    {
+        const octet* wan = IPLocator::getWan(locator);
+        if (memcmp(wan, configuration_.wan_addr, 4 * sizeof(octet)) != 0)
+        {
+            return false; // WAN mismatch
+        }
+    }
+
+    /*
+     * Check case: Address is localhost
+     */
     if (IPLocator::isLocal(locator))
     {
         return true;
     }
 
-    for (auto localInterface : current_interfaces_)
+    /*
+     * Check case: Address is one of our addresses.
+     */
+    for (const IPFinder::info_IP& localInterface : current_interfaces_)
     {
         if (IPLocator::compareAddress(locator, localInterface.locator))
         {

@@ -141,7 +141,7 @@ void TCPTransportInterface::clean()
                 channels.push_back(channel.second);
             }
         }
-        
+
         for (auto& channel : channels)
         {
             if (channel->connection_established())
@@ -443,14 +443,24 @@ Locator_t TCPTransportInterface::RemoteToMainLocal(const Locator_t& remote) cons
 }
 
 bool TCPTransportInterface::transform_remote_locator(
-    const Locator_t& remote_locator,
-    Locator_t& result_locator) const
+        const Locator_t& remote_locator,
+        Locator_t& result_locator) const
 {
-    if (IsLocatorSupported(remote_locator) &&
-        (!is_local_locator(remote_locator) || is_locator_allowed(remote_locator)))
+    if (IsLocatorSupported(remote_locator))
     {
-        result_locator = remote_locator;
-        return true;
+        if (is_local_locator(remote_locator))
+        {
+            // Loopback locator
+            fill_local_ip(result_locator);
+            IPLocator::setPhysicalPort(result_locator, IPLocator::getPhysicalPort(remote_locator));
+            IPLocator::setLogicalPort(result_locator, IPLocator::getLogicalPort(remote_locator));
+            return true;
+        }
+        else if (is_locator_allowed(remote_locator))
+        {
+            result_locator = remote_locator;
+            return true;
+        }
     }
 
     return false;

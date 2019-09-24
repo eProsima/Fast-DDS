@@ -58,7 +58,7 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
     {
     }
 
-ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata) 
+ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
     : m_protocolVersion(pdata.m_protocolVersion)
     , m_guid(pdata.m_guid)
     , m_VendorId(pdata.m_VendorId)
@@ -213,9 +213,12 @@ bool ParticipantProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encap
     return CDRMessage::addParameterSentinel(msg);
 }
 
-bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encapsulation)
+bool ParticipantProxyData::readFromCDRMessage(
+        CDRMessage_t* msg,
+        bool use_encapsulation,
+        const NetworkFactory& network)
 {
-    auto param_process = [this](const Parameter_t* param)
+    auto param_process = [this, &network](const Parameter_t* param)
     {
         switch (param->Pid)
         {
@@ -267,30 +270,44 @@ bool ParticipantProxyData::readFromCDRMessage(CDRMessage_t* msg, bool use_encaps
             {
                 const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
                 assert(p != nullptr);
-                // TODO: NetworkFactory
-                metatraffic_locators.add_multicast_locator(p->locator);
+                Locator_t temp_locator;
+                if (network.transform_remote_locator(p->locator, temp_locator))
+                {
+                    metatraffic_locators.add_multicast_locator(temp_locator);
+                }
                 break;
             }
             case PID_METATRAFFIC_UNICAST_LOCATOR:
             {
                 const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
                 assert(p != nullptr);
-                // TODO: NetworkFactory
-                metatraffic_locators.add_unicast_locator(p->locator);
+                Locator_t temp_locator;
+                if (network.transform_remote_locator(p->locator, temp_locator))
+                {
+                    metatraffic_locators.add_unicast_locator(temp_locator);
+                }
                 break;
             }
             case PID_DEFAULT_UNICAST_LOCATOR:
             {
                 const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
                 assert(p != nullptr);
-                default_locators.add_unicast_locator(p->locator);
+                Locator_t temp_locator;
+                if (network.transform_remote_locator(p->locator, temp_locator))
+                {
+                    default_locators.add_unicast_locator(temp_locator);
+                }
                 break;
             }
             case PID_DEFAULT_MULTICAST_LOCATOR:
             {
                 const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
                 assert(p != nullptr);
-                default_locators.add_multicast_locator(p->locator);
+                Locator_t temp_locator;
+                if (network.transform_remote_locator(p->locator, temp_locator))
+                {
+                    default_locators.add_multicast_locator(temp_locator);
+                }
                 break;
             }
             case PID_PARTICIPANT_LEASE_DURATION:

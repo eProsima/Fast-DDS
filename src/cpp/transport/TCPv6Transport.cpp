@@ -229,7 +229,7 @@ bool TCPv6Transport::is_local_locator(const Locator_t& locator) const
         return true;
     }
 
-    for (auto localInterface : current_interfaces_)
+    for (const IPFinder::info_IP& localInterface : current_interfaces_)
     {
         if (IPLocator::compareAddress(locator, localInterface.locator))
         {

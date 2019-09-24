@@ -78,12 +78,12 @@ void PDPListener::onNewCacheChangeAdded(
             parent_pdp_->mp_PDPReaderHistory->remove_change(change);
             return;
         }
-        
+
         // Access to temp_participant_data_ is protected by reader lock
 
         // Load information on temp_participant_data_
         CDRMessage_t msg(change->serializedPayload);
-        if(temp_participant_data_.readFromCDRMessage(&msg))
+        if(temp_participant_data_.readFromCDRMessage(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory()))
         {
             // After correctly reading it
             change->instanceHandle = temp_participant_data_.m_key;

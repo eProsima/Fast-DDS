@@ -90,7 +90,7 @@ void PDPServerListener::onNewCacheChangeAdded(
 
         // Load information on temp_participant_data_
         CDRMessage_t msg(change->serializedPayload);
-        if(temp_participant_data_.readFromCDRMessage(&msg))
+        if(temp_participant_data_.readFromCDRMessage(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory()))
         {
             change->instanceHandle = temp_participant_data_.m_key;
 
