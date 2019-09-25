@@ -38,7 +38,6 @@ class RTPSParticipantImpl;
 class BuiltinProtocols;
 class EDP;
 class ResendParticipantProxyDataPeriod;
-class RemoteParticipantLeaseDuration;
 class ReaderProxyData;
 class WriterProxyData;
 class ParticipantProxyData;
@@ -51,8 +50,6 @@ class PDPSimpleListener;
  */
 class PDPSimple
 {
-    friend class ResendRTPSParticipantProxyDataPeriod;
-    friend class RemoteRTPSParticipantLeaseDuration;
     friend class PDPSimpleListener;
     public:
     /**
