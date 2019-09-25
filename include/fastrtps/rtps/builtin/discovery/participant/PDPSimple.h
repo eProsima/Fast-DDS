@@ -42,7 +42,7 @@ class ReaderProxyData;
 class WriterProxyData;
 class ParticipantProxyData;
 class PDPSimpleListener;
-
+class EndpointAttributes;
 
 /**
  * Class PDPSimple that implements the SimpleRTPSParticipantDiscoveryProtocol as defined in the RTPS specification.
@@ -188,6 +188,18 @@ class PDPSimple
      * @param kind Kind of endpoint.
      */
     bool newRemoteEndpointStaticallyDiscovered(const GUID_t& pguid, int16_t userDefinedId,EndpointKind_t kind);
+
+    void get_metatraffic_locators(
+            EndpointAttributes& destination,
+            const ParticipantProxyData& origin);
+
+    void get_metatraffic_locators(
+            WriterProxyData& destination,
+            const ParticipantProxyData& origin);
+
+    void get_metatraffic_locators(
+            ReaderProxyData& destination,
+            const ParticipantProxyData& origin);
 
     /**
      * Get the RTPS participant
