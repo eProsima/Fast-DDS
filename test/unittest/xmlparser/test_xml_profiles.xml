@@ -33,6 +33,13 @@
                     <sec>10</sec>
                     <nanosec>333</nanosec>
                 </leaseAnnouncement>
+                <initialAnnouncements>
+                    <count>2</count>
+                    <period>
+                        <sec>1</sec>
+                        <nanosec>827</nanosec>
+                    </period>
+                </initialAnnouncements>
                 <simpleEDP>
                     <PUBWRITER_SUBREADER>false</PUBWRITER_SUBREADER>
                     <PUBREADER_SUBWRITER>true</PUBREADER_SUBWRITER>

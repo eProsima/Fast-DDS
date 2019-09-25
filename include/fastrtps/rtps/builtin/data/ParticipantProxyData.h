@@ -102,7 +102,7 @@ class ParticipantProxyData
         //!Default multicast locator list
         LocatorList_t m_defaultMulticastLocatorList;
         //!Manual liveliness count
-        Count_t m_manualLivelinessCount;
+        Count_t m_manualLivelinessCount; // TODO(MiguelC): remove when safe to change ABI
         //!Participant name
         string_255 m_participantName;
         //!

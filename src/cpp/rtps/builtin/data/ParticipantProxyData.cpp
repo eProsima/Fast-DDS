@@ -375,7 +375,6 @@ void ParticipantProxyData::clear()
     m_metatrafficMulticastLocatorList.clear();
     m_defaultUnicastLocatorList.clear();
     m_defaultMulticastLocatorList.clear();
-    m_manualLivelinessCount = 0;
     m_participantName = "";
     m_key = InstanceHandle_t();
     m_leaseDuration = Duration_t();
@@ -402,7 +401,6 @@ void ParticipantProxyData::copy(ParticipantProxyData& pdata)
     m_metatrafficMulticastLocatorList = pdata.m_metatrafficMulticastLocatorList;
     m_defaultUnicastLocatorList = pdata.m_defaultUnicastLocatorList;
     m_defaultMulticastLocatorList = pdata.m_defaultMulticastLocatorList;
-    m_manualLivelinessCount = pdata.m_manualLivelinessCount;
     m_participantName = pdata.m_participantName;
     m_leaseDuration = pdata.m_leaseDuration;
     m_key = pdata.m_key;
@@ -423,7 +421,6 @@ bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
     m_metatrafficMulticastLocatorList = pdata.m_metatrafficMulticastLocatorList;
     m_defaultUnicastLocatorList = pdata.m_defaultUnicastLocatorList;
     m_defaultMulticastLocatorList = pdata.m_defaultMulticastLocatorList;
-    m_manualLivelinessCount = pdata.m_manualLivelinessCount;
     m_properties = pdata.m_properties;
     m_leaseDuration = pdata.m_leaseDuration;
     m_userData = pdata.m_userData;

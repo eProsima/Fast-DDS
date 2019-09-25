@@ -27,41 +27,50 @@
 
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 
-ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(PDPSimple* p_SPDP,
-        double interval):
-    TimedEvent(p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
-            p_SPDP->getRTPSParticipant()->getEventResource().getThread(), interval),
-    mp_PDP(p_SPDP)
+ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(
+        PDPSimple* p_SPDP,
+        const BuiltinAttributes& config)
+    : TimedEvent(
+            p_SPDP->getRTPSParticipant()->getEventResource().getIOService(),
+            p_SPDP->getRTPSParticipant()->getEventResource().getThread(),
+            0)
+    , pdp_(p_SPDP)
+    , standard_period_(config.leaseDuration_announcementperiod)
+    , initial_announcements_(config.initial_announcements)
+{
+    if ((initial_announcements_.count > 0) && (initial_announcements_.period <= c_TimeZero))
     {
-
-
+        // Force a small interval (1ms) between initial announcements
+        logWarning(RTPS_PDP, "Initial announcement period is not strictly positive. Changing to 1ms.");
+        initial_announcements_.period = { 0, 1000000 };
     }
+
+    set_next_interval();
+}
 
 ResendParticipantProxyDataPeriod::~ResendParticipantProxyDataPeriod()
 {
     destroy();
 }
 
-void ResendParticipantProxyDataPeriod::event(EventCode code, const char* msg)
+void ResendParticipantProxyDataPeriod::event(
+        EventCode code,
+        const char* msg)
 {
 
     // Unused in release mode.
-    (void)msg;
+    (void) msg;
 
     if(code == EVENT_SUCCESS)
     {
         logInfo(RTPS_PDP,"ResendDiscoveryData Period");
-        //FIXME: Change for liveliness protocol
-        mp_PDP->getMutex()->lock();
-        mp_PDP->getLocalParticipantProxyData()->m_manualLivelinessCount++;
-        mp_PDP->getMutex()->unlock();
-        mp_PDP->announceParticipantState(false);
-
-        this->restart_timer();
+        pdp_->announceParticipantState(false);
+        set_next_interval();
+        restart_timer();
     }
     else if(code == EVENT_ABORT)
     {
@@ -69,10 +78,23 @@ void ResendParticipantProxyDataPeriod::event(EventCode code, const char* msg)
     }
     else
     {
-        logInfo(RTPS_PDP,"message: " <<msg);
+        logInfo(RTPS_PDP,"message: " << msg);
     }
 }
 
+void ResendParticipantProxyDataPeriod::set_next_interval()
+{
+    if (initial_announcements_.count > 0)
+    {
+        --initial_announcements_.count;
+        update_interval(initial_announcements_.period);
+    }
+    else
+    {
+        update_interval(standard_period_);
+    }
 }
-} /* namespace rtps */
-} /* namespace eprosima */
+
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima

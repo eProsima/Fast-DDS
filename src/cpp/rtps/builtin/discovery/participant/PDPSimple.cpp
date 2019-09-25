@@ -257,8 +257,7 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
     if(!mp_RTPSParticipant->enableReader(mp_SPDPReader))
         return false;
 
-    mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(
-        this, TimeConv::Duration_t2MilliSecondsDouble(m_discovery.leaseDuration_announcementperiod));
+    mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this, m_discovery);
 
     return true;
 }
@@ -284,7 +283,6 @@ void PDPSimple::announceParticipantState(bool new_change, bool dispose)
         {
             this->mp_mutex->lock();
             ParticipantProxyData* local_participant_data = getLocalParticipantProxyData();
-            local_participant_data->m_manualLivelinessCount++;
             InstanceHandle_t key = local_participant_data->m_key;
             ParticipantProxyData proxy_data_copy(*local_participant_data);
             this->mp_mutex->unlock();
