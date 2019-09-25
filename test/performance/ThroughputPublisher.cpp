@@ -385,6 +385,7 @@ void ThroughputPublisher::run(
                     static_cast<uint32_t>(pubAttr.topic.historyQos.depth) < command.m_demand)
                 {
                     logWarning(THROUGHPUTPUBLISHER, "Setting history depth to " << command.m_demand);
+                    pubAttr.topic.resourceLimitsQos.max_samples = command.m_demand;
                     pubAttr.topic.historyQos.depth = command.m_demand;
                 }
             }
@@ -399,6 +400,8 @@ void ThroughputPublisher::run(
                     pubAttr.topic.resourceLimitsQos.max_samples = command.m_demand;
                 }
             }
+            // Set the allocated samples to the max_samples. This is because allocated_sample must be <= max_samples
+            pubAttr.topic.resourceLimitsQos.allocated_samples = pubAttr.topic.resourceLimitsQos.max_samples;
 
             mp_commandpub->write((void*)&command);
             command.m_command = DEFAULT;
