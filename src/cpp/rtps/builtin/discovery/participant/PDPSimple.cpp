@@ -222,7 +222,7 @@ bool PDPSimple::createPDPEndpoints()
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(rout, false);
 #endif
-        
+
         if (rout != nullptr)
         {
             std::lock_guard<std::mutex> data_guard(temp_data_lock_);

@@ -255,15 +255,19 @@ void PDP::initializeParticipantProxyData(ParticipantProxyData* participant_data)
         }
     }
 
-    participant_data->metatraffic_locators.multicast.clear();
-    for(const Locator_t& loc: this->mp_builtin->m_metatrafficMulticastLocatorList)
-    {
-        participant_data->metatraffic_locators.add_multicast_locator(loc);
-    }
     participant_data->metatraffic_locators.unicast.clear();
     for (const Locator_t& loc : this->mp_builtin->m_metatrafficUnicastLocatorList)
     {
         participant_data->metatraffic_locators.add_unicast_locator(loc);
+    }
+
+    participant_data->metatraffic_locators.multicast.clear();
+    if (!m_discovery.discovery_config.avoid_builtin_multicast || participant_data->metatraffic_locators.unicast.empty())
+    {
+        for(const Locator_t& loc: this->mp_builtin->m_metatrafficMulticastLocatorList)
+        {
+            participant_data->metatraffic_locators.add_multicast_locator(loc);
+        }
     }
 
     participant_data->m_participantName = std::string(mp_RTPSParticipant->getAttributes().getName());
