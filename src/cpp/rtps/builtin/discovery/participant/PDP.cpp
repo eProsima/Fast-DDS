@@ -120,7 +120,7 @@ PDP::~PDP()
     delete mp_PDPWriterHistory;
     delete mp_PDPReaderHistory;
     delete mp_listener;
-    
+
     for(ParticipantProxyData* it : participant_proxies_)
     {
         delete it;
@@ -254,10 +254,10 @@ void PDP::initializeParticipantProxyData(ParticipantProxyData* participant_data)
                     c_EntityId_RTPSParticipant));
         }
     }
- 
+
     participant_data->metatraffic_locators.multicast.clear();
     for(const Locator_t& loc: this->mp_builtin->m_metatrafficMulticastLocatorList)
-    { 
+    {
         participant_data->metatraffic_locators.add_multicast_locator(loc);
     }
     participant_data->metatraffic_locators.unicast.clear();
@@ -306,6 +306,7 @@ bool PDP::initPDP(
     logInfo(RTPS_PDP,"Beginning");
     mp_RTPSParticipant = part;
     m_discovery = mp_RTPSParticipant->getAttributes().builtin;
+    initial_announcements_ = m_discovery.discovery_config.initial_announcements;
     //CREATE ENDPOINTS
     if (!createPDPEndpoints())
     {
@@ -350,7 +351,7 @@ bool PDP::initPDP(
 
                 return false;
             },
-            TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discovery_config.leaseDuration_announcementperiod));
+            get_next_interval());
 
     return true;
 }
@@ -382,7 +383,7 @@ void PDP::announceParticipantState(
             if(mp_PDPWriterHistory->getHistorySize() > 0)
                 mp_PDPWriterHistory->remove_min_change();
             // TODO(Ricardo) Change DISCOVERY_PARTICIPANT_DATA_MAX_SIZE with getLocalParticipantProxyData()->size().
-            change = mp_PDPWriter->new_change([]() -> uint32_t 
+            change = mp_PDPWriter->new_change([]() -> uint32_t
                 {
                     return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
                 }
@@ -422,7 +423,7 @@ void PDP::announceParticipantState(
 
         if(mp_PDPWriterHistory->getHistorySize() > 0)
             mp_PDPWriterHistory->remove_min_change();
-        change = mp_PDPWriter->new_change([]() -> uint32_t 
+        change = mp_PDPWriter->new_change([]() -> uint32_t
             {
                 return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
             }
@@ -616,7 +617,7 @@ bool PDP::removeWriterProxyData(const GUID_t& writer_guid)
 }
 
 bool PDP::lookup_participant_name(
-        const GUID_t& guid, 
+        const GUID_t& guid,
         string_255& name)
 {
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
@@ -648,7 +649,7 @@ bool PDP::lookup_participant_key(
 }
 
 ReaderProxyData* PDP::addReaderProxyData(
-        const GUID_t& reader_guid, 
+        const GUID_t& reader_guid,
         GUID_t& participant_guid,
         std::function<bool(ReaderProxyData*, bool, const ParticipantProxyData&)> initializer_func)
 {
@@ -1014,6 +1015,28 @@ void PDP::check_remote_participant_liveliness(
                 (double)std::chrono::duration_cast<std::chrono::milliseconds>(next_trigger).count());
         remote_participant->lease_duration_event->restart_timer();
     }
+}
+
+double PDP::get_next_interval()
+{
+    double millis =
+        TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discovery_config.leaseDuration_announcementperiod);
+
+    if (initial_announcements_.count > 0)
+    {
+        millis = TimeConv::Duration_t2MilliSecondsDouble(initial_announcements_.period);
+
+        if (millis < 0)
+        {
+            // Force a small interval (1ms) between initial announcements
+            logWarning(RTPS_PDP, "Initial announcement period is not strictly positive. Changing to 1ms.");
+            millis = 1;
+        }
+
+        --initial_announcements_.count;
+    }
+
+    return millis;
 }
 
 } /* namespace rtps */

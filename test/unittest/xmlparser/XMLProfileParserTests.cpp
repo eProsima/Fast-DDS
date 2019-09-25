@@ -108,6 +108,9 @@ TEST_F(XMLProfileParserTests, XMLParserParcipant)
     EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
+    EXPECT_EQ(builtin.discovery_config.initial_announcements.count, 2u);
+    EXPECT_EQ(builtin.discovery_config.initial_announcements.period.seconds, 1);
+    EXPECT_EQ(builtin.discovery_config.initial_announcements.period.nanosec, 827u);
     EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
     EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
     IPLocator::setIPv4(locator, 192, 168, 1, 5);

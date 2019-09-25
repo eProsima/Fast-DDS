@@ -102,7 +102,7 @@ public:
     /**
      * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
      * @param new_change If true a new change (with new seqNum) is created and sent;If false the last change is re-sent
-     * @param dispose sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED 
+     * @param dispose sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED
      * @param wparams allows to identify the change
      */
     virtual void announceParticipantState(
@@ -223,7 +223,7 @@ public:
     virtual void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata) = 0;
 
     /**
-     * Some PDP classes require EDP matching with update PDP DATAs like EDPStatic 
+     * Some PDP classes require EDP matching with update PDP DATAs like EDPStatic
      * @return true if EDP endpoinst must be match
      */
     virtual bool updateInfoMatchesEDP() { return false; }
@@ -349,6 +349,8 @@ protected:
     std::mutex temp_data_lock_;
     //!Participant data atomic access assurance
     std::recursive_mutex* mp_mutex;
+    //!Participant's initial announcements config
+    InitialAnnouncementConfig initial_announcements_;
 
     /**
      * Adds an entry to the collection of participant proxy information.
@@ -374,6 +376,11 @@ protected:
     bool lookup_participant_key(
             const GUID_t& participant_guid,
             InstanceHandle_t& key);
+
+    /**
+     * Calculates next interval
+     */
+    double get_next_interval();
 
 private:
 

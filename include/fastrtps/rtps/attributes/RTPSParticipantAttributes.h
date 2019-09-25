@@ -129,6 +129,24 @@ public:
 };
 
 /**
+ * Struct InitialAnnouncementConfig defines the behavior of the RTPSParticipant initial announcements.
+ * @ingroup RTPS_ATTRIBUTES_MODULE
+ */
+struct InitialAnnouncementConfig
+{
+    /// Number of initial announcements with specific period (default 0)
+    uint32_t count = 0u;
+
+    /// Specific period for initial announcements (default 500ms)
+    Duration_t period = { 0, 500000000u };
+
+    bool operator==(const InitialAnnouncementConfig& b) const
+    {
+        return (count == b.count) && (period == b.period);
+    }
+};
+
+/**
  * Class DiscoverySettings, to define the attributes of the several discovery protocols available
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
@@ -161,6 +179,9 @@ public:
      * as well as to all Multicast ports.
      */
     Duration_t leaseDuration_announcementperiod;
+
+    //!Initial announcements configuration
+    InitialAnnouncementConfig initial_announcements;
 
     //!Attributes of the SimpleEDP protocol
     SimpleEDPAttributes m_simpleEDP;
@@ -197,6 +218,7 @@ public:
                 (this->m_PDPfactory == b.m_PDPfactory) &&
                 (this->leaseDuration == b.leaseDuration) &&
                 (this->leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&
+                (this->initial_announcements == b.initial_announcements) &&
                 (this->m_simpleEDP == b.m_simpleEDP) &&
                 (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename) &&
                 (this->m_DiscoveryServers == b.m_DiscoveryServers);
