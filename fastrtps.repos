@@ -2,7 +2,7 @@ repositories:
     foonathan_memory_vendor:
         type: git
         url: https://github.com/eProsima/foonathan_memory_vendor.git
-        version: master
+        version: v0.3.0
     fastcdr:
         type: git
         url: https://github.com/eProsima/Fast-CDR.git
@@ -10,7 +10,7 @@ repositories:
     fastrtps:
         type: git
         url: https://github.com/eProsima/Fast-RTPS.git
-        version: v1.9.0
+        version: v1.9.1
     fastrtpsgen:
         type: git
         url: https://github.com/eProsima/Fast-RTPS-Gen.git
