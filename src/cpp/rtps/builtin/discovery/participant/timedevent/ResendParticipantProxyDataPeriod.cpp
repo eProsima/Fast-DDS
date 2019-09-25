@@ -45,6 +45,7 @@ ResendParticipantProxyDataPeriod::ResendParticipantProxyDataPeriod(
     if ((initial_announcements_.count > 0) && (initial_announcements_.period <= c_TimeZero))
     {
         // Force a small interval (1ms) between initial announcements
+        logWarning(RTPS_PDP, "Initial announcement period is not strictly positive. Changing to 1ms.");
         initial_announcements_.period = { 0, 1000000 };
     }
 
