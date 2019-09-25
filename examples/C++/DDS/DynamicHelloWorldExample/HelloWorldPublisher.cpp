@@ -151,7 +151,7 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
                 std::cout << "Message: " << message << " with index: " << index
                           << " array: " << aux_array << " SENT" << std::endl;
             }
-            eClock::my_sleep(sleep);
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
     }
     else
@@ -185,7 +185,7 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
                 std::cout << "Message: " << message << " with index: " << index
                           << " array: " << aux_array << " SENT" << std::endl;
             }
-            eClock::my_sleep(sleep);
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
     }
 }

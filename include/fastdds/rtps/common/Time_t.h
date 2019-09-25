@@ -75,7 +75,7 @@ struct RTPS_DllAPI Time_t
             Time_t& ret);
 };
 
-using Duration_t = Time_t
+using Duration_t = Time_t;
 
 namespace rtps {
 

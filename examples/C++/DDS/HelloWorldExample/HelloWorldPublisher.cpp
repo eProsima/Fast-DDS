@@ -114,7 +114,7 @@ void HelloWorldPublisher::runThread(
                 std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
                           << " SENT" << std::endl;
             }
-            eClock::my_sleep(sleep);
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
     }
     else
@@ -130,7 +130,7 @@ void HelloWorldPublisher::runThread(
                 std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
                           << " SENT" << std::endl;
             }
-            eClock::my_sleep(sleep);
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
     }
 }

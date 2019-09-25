@@ -24,6 +24,7 @@
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/network/NetworkFactory.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/utils/TimeConversion.h>

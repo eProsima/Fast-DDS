@@ -221,7 +221,7 @@ void TestPublisher::runThread()
     std::cout << m_Name << " running..." << std::endl;
     while (!publish() && iPrevCount < m_iSamples)
     {
-        eClock::my_sleep(m_iWaitTime);
+        std::this_thread::sleep_for(std::chrono::milliseconds(m_iWaitTime));
         ++iPrevCount;
     }
 }

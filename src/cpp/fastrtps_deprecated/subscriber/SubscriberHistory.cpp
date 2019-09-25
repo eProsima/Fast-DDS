@@ -31,15 +31,9 @@
 namespace eprosima {
 namespace fastrtps {
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace rtps;
 
 using eprosima::fastdds::dds::TopicDataType;
-
-inline bool sort_ReaderHistoryCache(CacheChange_t* c1, CacheChange_t* c2)
-{
-    return c1->sequenceNumber < c2->sequenceNumber;
-}
 
 SubscriberHistory::SubscriberHistory(
         const TopicAttributes& topic_att,
@@ -74,15 +68,15 @@ SubscriberHistory::SubscriberHistory(
     using std::placeholders::_1;
     using std::placeholders::_2;
 
-    if (simpl->getAttributes().topic.getTopicKind() == NO_KEY)
+    if (topic_att.getTopicKind() == NO_KEY)
     {
-        receive_fn_ = history.kind == KEEP_ALL_HISTORY_QOS ? 
+        receive_fn_ = topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
             std::bind(&SubscriberHistory::received_change_keep_all_no_key, this, _1, _2) :
             std::bind(&SubscriberHistory::received_change_keep_last_no_key, this, _1, _2);
     }
     else
     {
-        receive_fn_ = history.kind == KEEP_ALL_HISTORY_QOS ? 
+        receive_fn_ = topic_att.historyQos.kind == KEEP_ALL_HISTORY_QOS ?
             std::bind(&SubscriberHistory::received_change_keep_all_with_key, this, _1, _2) :
             std::bind(&SubscriberHistory::received_change_keep_last_with_key, this, _1, _2);
     }
@@ -115,7 +109,7 @@ bool SubscriberHistory::received_change_keep_all_no_key(
         size_t unknown_missing_changes_up_to)
 {
     // TODO(Ricardo) Check
-    if (m_changes.size() + unknown_missing_changes_up_to < static_cast<size_t>(m_resourceLimitsQos.max_samples) )
+    if (m_changes.size() + unknown_missing_changes_up_to < static_cast<size_t>(resource_limited_qos_.max_samples) )
     {
         return add_received_change(a_change);
     }
@@ -128,7 +122,7 @@ bool SubscriberHistory::received_change_keep_last_no_key(
         size_t /* unknown_missing_changes_up_to */ )
 {
     bool add = false;
-    if (m_changes.size() < static_cast<size_t>(m_historyQos.depth) )
+    if (m_changes.size() < static_cast<size_t>(history_qos_.depth) )
     {
         add = true;
     }
@@ -158,7 +152,7 @@ bool SubscriberHistory::received_change_keep_all_with_key(
     if (find_key_for_change(a_change, vit))
     {
         std::vector<CacheChange_t*>& instance_changes = vit->second.cache_changes;
-        if (instance_changes.size() < static_cast<size_t>(m_resourceLimitsQos.max_samples_per_instance) )
+        if (instance_changes.size() < static_cast<size_t>(resource_limited_qos_.max_samples_per_instance) )
         {
             return add_received_change_with_key(a_change, vit->second.cache_changes);
         }
@@ -178,7 +172,7 @@ bool SubscriberHistory::received_change_keep_last_with_key(
     {
         bool add = false;
         std::vector<CacheChange_t*>& instance_changes = vit->second.cache_changes;
-        if (instance_changes.size() < static_cast<size_t>(m_historyQos.depth) )
+        if (instance_changes.size() < static_cast<size_t>(history_qos_.depth) )
         {
             add = true;
         }
@@ -205,18 +199,18 @@ bool SubscriberHistory::add_received_change(
     if (m_isHistoryFull)
     {
         // Discarding the sample.
-        logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << mp_subImpl->getGuid().entityId);
+        logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
         return false;
     }
 
     if (add_change(a_change))
     {
-        if (m_changes.size() == static_cast<size_t>(m_resourceLimitsQos.max_samples) )
+        if (m_changes.size() == static_cast<size_t>(resource_limited_qos_.max_samples) )
         {
             m_isHistoryFull = true;
         }
 
-        logInfo(SUBSCRIBER, mp_subImpl->getGuid().entityId
+        logInfo(SUBSCRIBER, topic_att_.getTopicDataType()
             << ": Change " << a_change->sequenceNumber << " added from: "
             << a_change->writerGUID;);
 
@@ -233,13 +227,13 @@ bool SubscriberHistory::add_received_change_with_key(
     if (m_isHistoryFull)
     {
         // Discarting the sample.
-        logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << mp_subImpl->getGuid().entityId);
+        logWarning(SUBSCRIBER, "Attempting to add Data to Full ReaderHistory: " << topic_att_.getTopicDataType());
         return false;
     }
 
     if (add_change(a_change))
     {
-        if (m_changes.size() == static_cast<size_t>(m_resourceLimitsQos.max_samples))
+        if (m_changes.size() == static_cast<size_t>(resource_limited_qos_.max_samples))
         {
             m_isHistoryFull = true;
         }
@@ -264,22 +258,22 @@ bool SubscriberHistory::find_key_for_change(
         rtps::CacheChange_t* a_change,
         t_m_Inst_Caches::iterator& map_it)
 {
-    if (!a_change->instanceHandle.isDefined() && mp_subImpl->getType() != nullptr)
+    if (!a_change->instanceHandle.isDefined() && type_ != nullptr)
     {
         logInfo(RTPS_HISTORY, "Getting Key of change with no Key transmitted")
-        mp_subImpl->getType()->deserialize(&a_change->serializedPayload, mp_getKeyObject);
+        type_->deserialize(&a_change->serializedPayload, get_key_object_);
         bool is_key_protected = false;
 #if HAVE_SECURITY
         is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
 #endif
-        if (!mp_subImpl->getType()->getKey(mp_getKeyObject, &a_change->instanceHandle, is_key_protected))
+        if (!type_->getKey(get_key_object_, &a_change->instanceHandle, is_key_protected))
         {
             return false;
         }
     }
     else if (!a_change->instanceHandle.isDefined())
     {
-        logWarning(RTPS_HISTORY, "NO KEY in topic: " << mp_subImpl->getAttributes().topic.topicName
+        logWarning(RTPS_HISTORY, "NO KEY in topic: " << topic_att_.topicName
             << " and no method to obtain it";);
         return false;
     }
@@ -295,7 +289,7 @@ void SubscriberHistory::deserialize_change(
 {
     if (change->kind == ALIVE)
     {
-        mp_subImpl->getType()->deserialize(&change->serializedPayload, data);
+        type_->deserialize(&change->serializedPayload, data);
     }
 
     if (info != nullptr)
@@ -305,7 +299,7 @@ void SubscriberHistory::deserialize_change(
         info->sample_identity.sequence_number(change->sequenceNumber);
         info->sourceTimestamp = change->sourceTimestamp;
         info->ownershipStrength = ownership_strength;
-        if (mp_subImpl->getAttributes().topic.topicKind == WITH_KEY &&
+        if (topic_att_.topicKind == WITH_KEY &&
             change->instanceHandle == c_InstanceHandle_Unknown &&
             change->kind == ALIVE)
         {
@@ -313,7 +307,7 @@ void SubscriberHistory::deserialize_change(
 #if HAVE_SECURITY
             is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
 #endif
-            mp_subImpl->getType()->getKey(data, &change->instanceHandle, is_key_protected);
+            type_->getKey(data, &change->instanceHandle, is_key_protected);
         }
         info->iHandle = change->instanceHandle;
         info->related_sample_identity = change->write_params.sample_identity();
@@ -340,7 +334,7 @@ bool SubscriberHistory::readNextData(
         if (mp_reader->nextUnreadCache(&change, &wp))
         {
             logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
-            uint32_t ownership = wp && mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
+            uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
                 wp->ownership_strength() : 0;
             deserialize_change(change, ownership, data, info);
             return true;
@@ -371,7 +365,7 @@ bool SubscriberHistory::takeNextData(
         {
             logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": taking seqNum" << change->sequenceNumber <<
                     " from writer: " << change->writerGUID);
-            uint32_t ownership = wp && mp_subImpl->getAttributes().qos.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
+            uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
                 wp->ownership_strength() : 0;
             deserialize_change(change, ownership, data, info);
             remove_change_sub(change);
@@ -394,7 +388,7 @@ bool SubscriberHistory::find_key(
         return true;
     }
 
-    if (keyed_changes_.size() < static_cast<size_t>(m_resourceLimitsQos.max_instances))
+    if (keyed_changes_.size() < static_cast<size_t>(resource_limited_qos_.max_instances))
     {
         *vit_out = keyed_changes_.insert(std::make_pair(a_change->instanceHandle, KeyedChanges())).first;
         return true;

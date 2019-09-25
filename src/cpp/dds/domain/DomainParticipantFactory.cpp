@@ -92,7 +92,7 @@ DomainParticipantFactory::~DomainParticipantFactory()
     fastrtps::types::DynamicDataFactory::delete_instance();
     fastrtps::types::TypeObjectFactory::delete_instance();
 
-    fastrtps::eClock::my_sleep(100);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     fastrtps::Log::KillThread();
 }
 

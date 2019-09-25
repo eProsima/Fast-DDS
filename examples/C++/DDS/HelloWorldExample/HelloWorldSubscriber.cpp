@@ -123,6 +123,6 @@ void HelloWorldSubscriber::run(
     std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
     while (number > listener_.samples_)
     {
-        eClock::my_sleep(500);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 }
