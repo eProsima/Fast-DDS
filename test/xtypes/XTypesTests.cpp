@@ -34,6 +34,15 @@
 #include <string>
 #include <gtest/gtest.h>
 
+#if defined(_WIN32)
+#define GET_PID _getpid
+#include <process.h>
+#else
+#define GET_PID getpid
+#include <sys/types.h>
+#include <unistd.h>
+#endif
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
@@ -50,6 +59,8 @@ public:
     {
         //Log::SetVerbosity(Log::Info);
         //Log::SetCategoryFilter(std::regex("(SECURITY)"));
+
+        DOMAIN_ID_ = static_cast<int>(GET_PID()) % 230;
         registerTypesTypes();
     }
 
@@ -59,6 +70,7 @@ public:
         Log::KillThread();
         eprosima::fastrtps::Domain::stopAll();
         ++DOMAIN_ID_;
+        DOMAIN_ID_ %= 230;
     }
 };
 

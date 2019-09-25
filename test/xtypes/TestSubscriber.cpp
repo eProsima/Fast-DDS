@@ -32,6 +32,7 @@
 #include <fastdds/dds/topic/DataReader.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include <gtest/gtest.h>
+#include <asio.hpp>
 
 
 #include <fastrtps/Domain.h>
@@ -87,7 +88,9 @@ bool TestSubscriber::init(
         mp_participant->register_type(m_Type);
     }
 
-    Rparam.topic.topicName = topicName;
+    std::ostringstream t;
+    t << topicName << "_" << asio::ip::host_name() << "_" << domain;
+    Rparam.topic.topicName = t.str();
     if (type_object != nullptr)
     {
         Rparam.topic.type = *type_object;

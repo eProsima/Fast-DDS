@@ -33,6 +33,7 @@
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <gtest/gtest.h>
+#include <asio.hpp>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
@@ -89,7 +90,9 @@ bool TestPublisher::init(
         mp_participant->register_type(m_Type);
     }
 
-    Wparam.topic.topicName = topicName;
+    std::ostringstream t;
+    t << topicName << "_" << asio::ip::host_name() << "_" << domain;
+    Wparam.topic.topicName = t.str();
     if (type_object != nullptr)
     {
         Wparam.topic.type = *type_object;
