@@ -111,6 +111,8 @@ public:
 
     void destroy();
 
+    void mark_for_destruction();
+
 private:
 	TimedEventImpl* mp_impl;
 };

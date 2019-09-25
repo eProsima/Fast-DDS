@@ -111,6 +111,8 @@ namespace eprosima
 
                     void destroy();
 
+                    void mark_for_destruction();
+
                     /**
                      * Get interval in milliseconds
                      * @return Event interval in milliseconds
