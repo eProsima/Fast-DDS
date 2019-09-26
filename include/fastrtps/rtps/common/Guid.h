@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file Guid.h 	
+ * @file Guid.h
  */
 
 #ifndef RTPS_GUID_H_
@@ -24,11 +24,10 @@
 
 #include <cstdint>
 #include <cstring>
-#include <sstream>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 
 
@@ -225,7 +224,7 @@ struct RTPS_DllAPI EntityId_t{
         //return id;
     }
 #if !__BIG_ENDIAN__
-    //! 
+    //!
     void reverse(){
         octet oaux;
         oaux = value[3];
@@ -393,14 +392,14 @@ struct RTPS_DllAPI GUID_t{
     /**
      * @param guidP Guid prefix
      * @param id Entity id
-     */	
+     */
     GUID_t(const GuidPrefix_t& guidP,uint32_t id):
         guidPrefix(guidP),entityId(id) {}
 
     /**
      * @param guidP Guid prefix
      * @param entId Entity id
-     */	
+     */
     GUID_t(const GuidPrefix_t& guidP,const EntityId_t& entId):
         guidPrefix(guidP),entityId(entId) {}
 
