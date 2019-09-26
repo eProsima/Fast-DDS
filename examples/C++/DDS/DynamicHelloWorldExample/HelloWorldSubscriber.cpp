@@ -48,7 +48,7 @@ bool HelloWorldSubscriber::init()
     qos_.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     topic_.topicKind = NO_KEY;
     topic_.topicDataType = "HelloWorld";
-    topic_.topicName = "HelloWorldTopic";
+    topic_.topicName = "DDSDynHelloWorldTopic";
 
     return true;
 }

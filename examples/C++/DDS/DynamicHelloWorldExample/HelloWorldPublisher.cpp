@@ -43,7 +43,12 @@ mp_publisher(nullptr)
 
 bool HelloWorldPublisher::init()
 {
-    xmlparser::XMLProfileManager::loadXMLFile("example_type.xml");
+    if (xmlparser::XMLP_ret::XML_OK != xmlparser::XMLProfileManager::loadXMLFile("example_type.xml"))
+    {
+        std::cout << "Cannot open XML file \"example_type.xml\". Please, run the publisher from the folder "
+                  << "that contatins this XML file." << std::endl;
+        return false;
+    }
 
     types::DynamicType_ptr dyn_type = xmlparser::XMLProfileManager::getDynamicTypeByName("HelloWorld")->build();
     TypeSupport m_type(new types::DynamicPubSubType(dyn_type));
@@ -79,7 +84,7 @@ bool HelloWorldPublisher::init()
     PublisherAttributes Wparam;
     Wparam.topic.topicKind = NO_KEY;
     Wparam.topic.topicDataType = "HelloWorld";
-    Wparam.topic.topicName = "HelloWorldTopic";
+    Wparam.topic.topicName = "DDSDynHelloWorldTopic";
     Wparam.topic.auto_fill_xtypes = true; // Share the type with readers.
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     //mp_publisher = mp_participant->create_publisher(qos, Wparam, nullptr);

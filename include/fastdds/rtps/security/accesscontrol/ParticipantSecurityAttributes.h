@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Ma#include <fastdds/rtps/security/common/Handle.h>ntenimiento SL (eProsima).
+// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -86,8 +86,8 @@ typedef uint32_t ParticipantSecurityAttributesMask;
 
 struct ParticipantSecurityAttributes
 {
-    ParticipantSecurityAttributes() : 
-        allow_unauthenticated_participants(false), is_access_protected(true), 
+    ParticipantSecurityAttributes() :
+        allow_unauthenticated_participants(false), is_access_protected(true),
         is_rtps_protected(false), is_discovery_protected(false), is_liveliness_protected(false),
         plugin_participant_attributes (0UL)
     {}
@@ -121,10 +121,10 @@ struct ParticipantSecurityAttributes
         return rv;
     }
 
-    inline bool match(const ParticipantSecurityAttributesMask remoteMask, 
+    inline bool match(const ParticipantSecurityAttributesMask remoteMask,
         const PluginParticipantSecurityAttributesMask remotePluginMask) const
     {
-        return security_mask_matches(mask(), remoteMask) && 
+        return security_mask_matches(mask(), remoteMask) &&
             security_mask_matches(plugin_participant_attributes, remotePluginMask);
     }
 };

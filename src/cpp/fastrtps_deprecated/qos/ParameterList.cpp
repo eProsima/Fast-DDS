@@ -692,7 +692,6 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     if (size % 2 == 1) // Odd, we must read the alignment
                     {
                         valid &= CDRMessage::readInt16(&msg, &temp);
-                        std::cout << "Leido odd: " << temp << std::endl;
                     }
                     IF_VALID_CALL
                 }

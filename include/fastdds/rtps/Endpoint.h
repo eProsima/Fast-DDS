@@ -51,10 +51,10 @@ class Endpoint
             const GUID_t& guid,
             const EndpointAttributes& att)
         : mp_RTPSParticipant(pimpl)
-          , m_guid(guid)
-          , m_att(att)
+        , m_guid(guid)
+        , m_att(att)
 #if HAVE_SECURITY
-          ,supports_rtps_protection_(true)
+        ,supports_rtps_protection_(true)
 #endif
     {
     }
