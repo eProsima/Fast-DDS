@@ -242,7 +242,7 @@ public:
             const Reference<D>& that)
     {
         //To implement
-        static_assert((is_base_of<DELEGATE_T, D>::value),"value error");
+        static_assert((is_base_of<DELEGATE_T, D>::value), "value error");
         if(this != (Reference*)&that)
         {
             *this = Reference<DELEGATE_T>(that);
