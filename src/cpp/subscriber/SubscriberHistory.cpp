@@ -66,13 +66,13 @@ SubscriberHistory::SubscriberHistory(
 
     if (simpl->getAttributes().topic.getTopicKind() == NO_KEY)
     {
-        receive_fn_ = history.kind == KEEP_ALL_HISTORY_QOS ? 
+        receive_fn_ = history.kind == KEEP_ALL_HISTORY_QOS ?
             std::bind(&SubscriberHistory::received_change_keep_all_no_key, this, _1, _2) :
             std::bind(&SubscriberHistory::received_change_keep_last_no_key, this, _1, _2);
     }
     else
     {
-        receive_fn_ = history.kind == KEEP_ALL_HISTORY_QOS ? 
+        receive_fn_ = history.kind == KEEP_ALL_HISTORY_QOS ?
             std::bind(&SubscriberHistory::received_change_keep_all_with_key, this, _1, _2) :
             std::bind(&SubscriberHistory::received_change_keep_last_with_key, this, _1, _2);
     }
@@ -322,7 +322,7 @@ bool SubscriberHistory::readNextData(void* data, SampleInfo_t* info)
 
     std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
     CacheChange_t* change = nullptr;
-    WriterProxy * wp = nullptr;
+    WriterProxy* wp = nullptr;
     if (this->mp_reader->nextUnreadCache(&change, &wp))
     {
         change->isRead = true;
@@ -347,8 +347,8 @@ bool SubscriberHistory::takeNextData(void* data, SampleInfo_t* info)
     }
 
     std::lock_guard<std::recursive_timed_mutex> guard(*mp_mutex);
-    CacheChange_t* change;
-    WriterProxy * wp;
+    CacheChange_t* change = nullptr;
+    WriterProxy* wp = nullptr;
     if (this->mp_reader->nextUntakenCache(&change, &wp))
     {
         if (!change->isRead)
