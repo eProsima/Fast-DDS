@@ -111,17 +111,17 @@ HelloWorldPublisher::~HelloWorldPublisher()
 
 void HelloWorldPublisher::PubListener::on_publication_matched(
         eprosima::fastdds::dds::DataWriter*,
-        eprosima::fastrtps::rtps::MatchingInfo &info)
+        eprosima::fastdds::dds::PublicationMatchedStatus &info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if(info.current_count_change > 0)
     {
-        n_matched++;
+        n_matched = info.current_count;
         firstConnected = true;
         std::cout << "Publisher matched"<<std::endl;
     }
-    else
+    else if (info.current_count_change < 0)
     {
-        n_matched--;
+        n_matched = info.current_count;
         std::cout << "Publisher unmatched"<<std::endl;
     }
 }
