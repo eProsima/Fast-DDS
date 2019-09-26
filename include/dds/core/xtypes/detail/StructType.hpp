@@ -126,7 +126,7 @@ public:
         return *retval ;
     }
 
-    const std::vector< xtypes::Annotation > &annotations()
+    const std::vector<xtypes::Annotation> &annotations()
     {
         return annotations_ ;
     }
