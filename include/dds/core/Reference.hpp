@@ -331,7 +331,7 @@ public:
      * @return true if this reference is not null.
      */
     bool operator!=(
-            const null_type nil) const
+            const null_type) const
     {
         return !(this->is_nil());
     }
