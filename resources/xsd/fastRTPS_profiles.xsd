@@ -283,6 +283,7 @@
             <xs:element name="leaseDuration" type="durationType" minOccurs="0"/>
             <xs:element name="leaseAnnouncement" type="durationType" minOccurs="0"/>
             <xs:element name="initialAnnouncements" type="initialAnnouncementsType" minOccurs="0"/>
+            <xs:element name="avoid_builtin_multicast" type="boolType" minOccurs="0"/>
             <xs:element name="simpleEDP" type="simpleEDPType" minOccurs="0"/>
             <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0"/>

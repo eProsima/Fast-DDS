@@ -121,6 +121,14 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
             if (XMLP_ret::XML_OK != getXMLInitialAnnouncementsConfig(p_aux0, builtin.initial_announcements, ident))
                 return XMLP_ret::XML_ERROR;
         }
+        else if (strcmp(name, AVOID_BUILTIN_MULTICAST) == 0)
+        {
+            // avoid_builtin_multicast - boolType
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &builtin.avoid_builtin_multicast, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
         else if (strcmp(name, SIMPLE_EDP) == 0)
         {
             // simpleEDP
@@ -576,7 +584,7 @@ XMLP_ret XMLParser::getXMLContainerAllocationConfig(
             // maximum - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux_value, ident))
                 return XMLP_ret::XML_ERROR;
-            allocation_config.maximum = (aux_value == 0u) ? 
+            allocation_config.maximum = (aux_value == 0u) ?
                 std::numeric_limits<size_t>::max() : static_cast<size_t>(aux_value);
         }
         else if (strcmp(name, INCREMENT) == 0)

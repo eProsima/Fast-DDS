@@ -226,6 +226,7 @@ extern const char* DOMAIN_ID;
 extern const char* LEASEDURATION;
 extern const char* LEASE_ANNOUNCE;
 extern const char* INITIAL_ANNOUNCEMENTS;
+extern const char* AVOID_BUILTIN_MULTICAST;
 extern const char* SIMPLE_EDP;
 extern const char* META_UNI_LOC_LIST;
 extern const char* META_MULTI_LOC_LIST;

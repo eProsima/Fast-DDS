@@ -209,6 +209,7 @@ const char* DOMAIN_ID = "domainId";
 const char* LEASEDURATION = "leaseDuration";
 const char* LEASE_ANNOUNCE = "leaseAnnouncement";
 const char* INITIAL_ANNOUNCEMENTS = "initialAnnouncements";
+const char* AVOID_BUILTIN_MULTICAST = "avoid_builtin_multicast";
 const char* SIMPLE_EDP = "simpleEDP";
 const char* META_UNI_LOC_LIST = "metatrafficUnicastLocatorList";
 const char* META_MULTI_LOC_LIST = "metatrafficMulticastLocatorList";

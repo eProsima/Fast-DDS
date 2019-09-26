@@ -34,6 +34,7 @@
                         <sec>10</sec>
                         <nanosec>333</nanosec>
                     </leaseAnnouncement>
+                    <avoid_builtin_multicast>false</avoid_builtin_multicast>
                     <simpleEDP>
                         <PUBWRITER_SUBREADER>false</PUBWRITER_SUBREADER>
                         <PUBREADER_SUBWRITER>true</PUBREADER_SUBWRITER>
