@@ -21,6 +21,8 @@
 #ifndef MESSAGERECEIVER_H_
 #define MESSAGERECEIVER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+#include <unordered_map>
 #include "../common/all_common.h"
 #include "../../qos/ParameterList.h"
 #include <fastrtps/rtps/writer/StatelessWriter.h>
@@ -28,7 +30,7 @@
 
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class RTPSWriter;
@@ -77,7 +79,7 @@ class MessageReceiver
 
     private:
         std::vector<RTPSWriter *> AssociatedWriters;
-        std::vector<RTPSReader *> AssociatedReaders;
+        std::unordered_map<EntityId_t, std::vector<RTPSReader*>> AssociatedReaders;
         std::mutex mtx;
         //!Protocol version of the message
         ProtocolVersion_t sourceVersion;
@@ -122,6 +124,19 @@ class MessageReceiver
          * @return True if correctly read.
          */
         bool readSubmessageHeader(CDRMessage_t*msg, SubmessageHeader_t* smh);
+
+        /**
+         * Find if there is a reader (in AssociatedReaders) that will accept a msg directed
+         * to the given entity ID.
+         */
+        bool willAReaderAcceptMsgDirectedTo(const EntityId_t & readerID);
+
+        /**
+         * Find all readers (in AssociatedReaders), with the given entity ID, and call the
+         * callback provided.
+         */
+        void findAllReaders(const EntityId_t & readerID, std::function<void(RTPSReader*)>);
+
         /**
          *
          * @param msg

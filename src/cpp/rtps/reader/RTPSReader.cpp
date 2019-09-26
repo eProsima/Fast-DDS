@@ -66,17 +66,9 @@ RTPSReader::~RTPSReader()
     mp_history->mp_mutex = nullptr;
 }
 
-bool RTPSReader::acceptMsgDirectedTo(EntityId_t& entityId)
-{
-    if(entityId == m_guid.entityId)
-        return true;
-    if(m_acceptMessagesToUnknownReaders && entityId == c_EntityId_Unknown)
-        return true;
-    else
-        return false;
-}
-
-bool RTPSReader::reserveCache(CacheChange_t** change, uint32_t dataCdrSerializedSize)
+bool RTPSReader::reserveCache(
+        CacheChange_t** change, 
+        uint32_t dataCdrSerializedSize)
 {
     return mp_history->reserve_Cache(change, dataCdrSerializedSize);
 }
