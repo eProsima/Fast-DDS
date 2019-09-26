@@ -68,4 +68,9 @@
 #define TLS_FOUND @TLS_FOUND@
 #endif
 
+// Strict real-time
+#ifndef HAVE_STRICT_REALTIME
+#define HAVE_STRICT_REALTIME @HAVE_STRICT_REALTIME@
+#endif
+
 #endif // _FASTRTPS_CONFIG_H_
