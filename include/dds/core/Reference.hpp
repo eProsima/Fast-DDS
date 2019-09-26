@@ -99,9 +99,9 @@ public:
      * @param null
      */
     explicit Reference(
-            dds::core::null_type&):impl_()
-    {
-    }
+            dds::core::null_type &n)
+    :impl_()
+    {}
 
     /**
      * Creates a Reference from another.
@@ -109,9 +109,9 @@ public:
      * @param ref the other reference
      */
     explicit Reference(
-            const Reference& ref):impl_(ref.impl_)
-    {
-    }
+            const Reference& ref)
+        :impl_(ref.impl_)
+    {}
 
     /**
      * Creates a Reference from other Reference type safely.
@@ -125,9 +125,9 @@ public:
         impl_ = std::dynamic_pointer_cast<DELEGATE_T>(ref.impl_);
         if (impl_ != ref.impl_)
         {
-            throw \
-            IllegalOperationError(std::string("Attempted invalid cast: ")\
-            + typeid(ref).name() + " to " + typeid(*this).name());
+            throw 
+                IllegalOperationError(std::string("Attempted invalid cast: ") + 
+                typeid(ref).name() + " to " + typeid(*this).name());
         }
 
     }
@@ -143,14 +143,14 @@ public:
      * the doxygen generated API documentation.
      */
     explicit Reference(
-            DELEGATE_T* p):impl_(p)
-    {
-    }
+            DELEGATE_T* p)
+        :impl_(p)
+    {}
 
     explicit Reference(
-            const DELEGATE_REF_T& p):impl_(p)
-    {
-    }
+            const DELEGATE_REF_T& p)
+        :impl_(p)
+    {}
     /** @endcond */
 
     /**
@@ -162,8 +162,7 @@ public:
      * delegate will not be destroyed.
      */
     ~Reference()
-    {
-    }
+    {}
 
     /** @cond
      * Function possibly needed for delegate implementation, but not recommended
@@ -173,13 +172,7 @@ public:
      */
     operator DELEGATE_REF_T() const
     {
-        //FRANAVA: keeping This Under My Watch
-        if( impl_ == dds::core::null_type())
-        {
-            throw IllegalOperationError("asking for a null reference") ;
-        }
-        return impl_;
-
+        return impl_ ;
     }
     /** @endcond */
 
@@ -225,7 +218,6 @@ public:
             const R& ref) const
     {
         // FRANAVA read something removing the this keyword.
-        // not sure if applies here
         return !(*this == ref);
     }
 
@@ -278,12 +270,9 @@ public:
      */
 
     Reference& operator=(
-            const null_type)
+            const null_type nil)
     {
-        DELEGATE_REF_T tmp;
-        impl_ = tmp;
-        return *this;
-
+        return null ;
     }
 
     /**
@@ -339,7 +328,7 @@ public:
 private:
     // -- disallow dynamic allocation for reference types
     void* operator new(
-            size_t) ; // FRANAVA: not implemented
+            size_t) ; 
 
 public:
     /** @cond
@@ -350,19 +339,11 @@ public:
      */
     DELEGATE_REF_T& delegate()
     {
-        if( impl_ == dds::core::null_type())
-        {
-            throw IllegalOperationError("requesting a null reference") ;
-        }
         return impl_;
     }
 
     const DELEGATE_REF_T& delegate() const
     {
-        if( impl_ == dds::core::null_type())
-        {
-            throw IllegalOperationError("requesting a null reference") ;
-        }
         return impl_;
     }
 
@@ -387,10 +368,6 @@ public:
      */
     DELEGATE* operator->()
     {
-        if( impl_ == dds::core::null_type())
-        {
-            throw IllegalOperationError("requesting a null reference") ;
-        }
         return impl_.get();
 
     }
@@ -398,10 +375,6 @@ public:
     /** @copydoc dds::core::Reference::operator->() */
     const DELEGATE* operator->() const
     {
-        if( impl_ == dds::core::null_type())
-        {
-            throw IllegalOperationError("requesting a null reference") ;
-        }
         return impl_.get();
     }
 
@@ -413,19 +386,11 @@ public:
      */
     operator DELEGATE_REF_T& ()
     {
-        if( impl_ == dds::core::null_type())
-        {
-            throw IllegalOperationError("requesting a null reference") ;
-        }
         return impl_;
     }
 
     operator const DELEGATE_REF_T& () const
     {
-        if( impl_ == dds::core::null_type())
-        {
-            throw IllegalOperationError("requesting a null reference") ;
-        }
         return impl_;
     }
     /** @endcond */
