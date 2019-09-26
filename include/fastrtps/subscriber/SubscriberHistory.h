@@ -27,12 +27,11 @@
 #include "../common/KeyedChanges.h"
 #include "SampleInfo.h"
 
+#include <chrono>
+#include <functional>
+
 namespace eprosima {
 namespace fastrtps {
-
-namespace rtps{
-class WriterProxy;
-}
 
 class SubscriberImpl;
 
@@ -50,27 +49,27 @@ class SubscriberHistory: public rtps::ReaderHistory
          * @param payloadMax Maximum payload size per change.
          * @param history History QoS policy for the reader.
          * @param resource Resource Limit QoS policy for the reader.
-         * @param mempolicy Set wether the payloads ccan dynamically resized or not.
+         * @param mempolicy Set wether the payloads can be dynamically resized or not.
          */
         SubscriberHistory(
-            SubscriberImpl* pimpl,
-            uint32_t payloadMax,
-            const HistoryQosPolicy& history,
-            const ResourceLimitsQosPolicy& resource,
-            rtps::MemoryManagementPolicy_t mempolicy);
+                SubscriberImpl* pimpl,
+                uint32_t payloadMax,
+                const HistoryQosPolicy& history,
+                const ResourceLimitsQosPolicy& resource,
+                rtps::MemoryManagementPolicy_t mempolicy);
 
         virtual ~SubscriberHistory();
 
         /**
-         * Called when a change is received by the Subscriber History. Will add the change to the history
-         * if it wasn't already present
+         * Called when a change is received by the Subscriber. Will add the change to the history.
+         * @pre Change should not be already present in the history.
          * @param[in] change The received change
          * @param unknown_missing_changes_up_to Number of missing changes before this one
          * @return
          */
         bool received_change(
-            rtps::CacheChange_t* change,
-            size_t unknown_missing_changes_up_to);
+                rtps::CacheChange_t* change,
+                size_t unknown_missing_changes_up_to);
 
         /** @name Read or take data methods.
          * Methods to read or take data from the History.
@@ -83,16 +82,13 @@ class SubscriberHistory: public rtps::ReaderHistory
         bool takeNextData(void* data, SampleInfo_t* info);
         ///@}
 
-        bool readNextBuffer(rtps::SerializedPayload_t* data, SampleInfo_t* info);
-        bool takeNextBuffer(rtps::SerializedPayload_t* data, SampleInfo_t* info);
-
-
         /**
          * This method is called to remove a change from the SubscriberHistory.
          * @param change Pointer to the CacheChange_t.
          * @return True if removed.
          */
-        bool remove_change_sub(rtps::CacheChange_t* change);
+        bool remove_change_sub(
+                rtps::CacheChange_t* change);
 
         /** Get the unread count.
          * @return Unread count
@@ -125,7 +121,7 @@ class SubscriberHistory: public rtps::ReaderHistory
 
     private:
 
-        typedef std::map<rtps::InstanceHandle_t, KeyedChanges> t_m_Inst_Caches;
+        using t_m_Inst_Caches = std::map<rtps::InstanceHandle_t, KeyedChanges>;
 
         //!Number of unread CacheChange_t.
         uint64_t m_unreadCacheCount;
@@ -142,6 +138,9 @@ class SubscriberHistory: public rtps::ReaderHistory
 
         //!Type object to deserialize Key
         void * mp_getKeyObject;
+
+        /// Function processing a received change
+        std::function<bool(rtps::CacheChange_t*, size_t)> receive_fn_;
 
         /**
          * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
@@ -165,9 +164,59 @@ class SubscriberHistory: public rtps::ReaderHistory
             if (m_unreadCacheCount > 0)
                 --m_unreadCacheCount;
         }
+
+        /**
+         * @brief Method that finds a key in m_keyedChanges or tries to add it if not found
+         * @param a_change The change to get the key from
+         * @param map_it A map iterator to the given key
+         * @return True if it was found or could be added to the map
+         */
+        bool find_key_for_change(
+                rtps::CacheChange_t* a_change,
+                t_m_Inst_Caches::iterator& map_it);
+
+        /**
+         * @name Variants of incoming change processing. 
+         *       Will be called with the history mutex taken.
+         * @param[in] change The received change
+         * @param unknown_missing_changes_up_to Number of missing changes before this one
+         * @return
+         */
+        ///@{
+        bool received_change_keep_all_no_key(
+                rtps::CacheChange_t* change,
+                size_t unknown_missing_changes_up_to);
+
+        bool received_change_keep_last_no_key(
+                rtps::CacheChange_t* change,
+                size_t unknown_missing_changes_up_to);
+
+        bool received_change_keep_all_with_key(
+                rtps::CacheChange_t* change,
+                size_t unknown_missing_changes_up_to);
+
+        bool received_change_keep_last_with_key(
+                rtps::CacheChange_t* change,
+                size_t unknown_missing_changes_up_to);
+        ///@}
+
+        bool add_received_change(
+                rtps::CacheChange_t* a_change);
+
+        bool add_received_change_with_key(
+                rtps::CacheChange_t* a_change,
+                std::vector<rtps::CacheChange_t*>& instance_changes);
+
+        void deserialize_change(
+                rtps::CacheChange_t* change,
+                uint16_t ownership_strength,
+                void* data,
+                SampleInfo_t* info);
 };
 
-} /* namespace fastrtps */
-} /* namespace eprosima */
+} // namespace fastrtps
+} // namespace eprosima
+
 #endif
+
 #endif /* SUBSCRIBERHISTORY_H_ */
