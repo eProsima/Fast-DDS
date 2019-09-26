@@ -96,6 +96,44 @@ public:
     }
 
     /**
+     * Copy constructor.
+     *
+     * Constructs a ResourceLimitedVector from another ResourceLimitedVector.
+     *
+     * @param other ResourceLimitedVector to be copied.
+     */
+    ResourceLimitedVector(
+            const ResourceLimitedVector& other)
+        : configuration_(other.configuration_)
+        , collection_(other.collection_.get_allocator())
+    {
+        collection_.reserve(other.collection_.capacity());
+        collection_.assign(other.collection_.begin(), other.collection_.end());
+    }
+
+    /**
+     * Assignment operator.
+     *
+     * Makes the contents of the ResourceLimitedVector the same as the ones in other
+     * ResourceLimitedVector.
+     *
+     * @param other ResourceLimitedVector from where contents are copied.
+     *
+     * @return a reference to this ResourceLimitedVector.
+     */
+    ResourceLimitedVector& operator = (const ResourceLimitedVector& other)
+    {
+        clear();
+        for (const_reference item : other)
+        {
+            push_back(item);
+        }
+
+        assert(size() == other.size());
+        return *this;
+    }
+
+    /**
      * Add element at the end.
      *
      * Adds a new element at the end of the vector, after its current last element.
