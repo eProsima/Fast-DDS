@@ -50,7 +50,7 @@ private:
         ~PubListener() override {}
         void on_publication_matched(
                 eprosima::fastdds::dds::DataWriter* writer,
-                eprosima::fastrtps::rtps::MatchingInfo& info) override;
+                eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
         int n_matched;
         bool firstConnected;
     }m_listener;

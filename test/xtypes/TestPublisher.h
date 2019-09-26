@@ -134,7 +134,7 @@ private:
 
         void on_publication_matched(
             eprosima::fastdds::dds::DataWriter* writer,
-            eprosima::fastrtps::rtps::MatchingInfo& info) override;
+            eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
         TestPublisher* mParent;
         int n_matched;
