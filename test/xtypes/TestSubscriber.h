@@ -137,7 +137,7 @@ public:
 
         void on_subscription_matched(
                 eprosima::fastdds::dds::DataReader* reader,
-                eprosima::fastrtps::rtps::MatchingInfo& info) override;
+                eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
         void on_data_available(eprosima::fastdds::dds::DataReader* reader) override;
 

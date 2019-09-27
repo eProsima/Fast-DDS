@@ -60,14 +60,14 @@ HelloWorldSubscriber::~HelloWorldSubscriber() {
 
 void HelloWorldSubscriber::SubListener::on_subscription_matched(
         eprosima::fastdds::dds::DataReader*,
-        eprosima::fastrtps::rtps::MatchingInfo& info)
+        eprosima::fastdds::dds::SubscriptionMatchedStatus& info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if(info.current_count_change > 0)
     {
         n_matched++;
         std::cout << "Subscriber matched"<<std::endl;
     }
-    else
+    else if (info.current_count_change < 0)
     {
         n_matched--;
         std::cout << "Subscriber unmatched"<<std::endl;

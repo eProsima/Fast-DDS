@@ -59,7 +59,9 @@ class HelloWorldSubscriber
             public:
                 SubListener():n_matched(0),n_samples(0){ };
                 ~SubListener(){ };
-                void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
+                void onSubscriptionMatched(
+                        eprosima::fastrtps::Subscriber* sub,
+                        eprosima::fastrtps::rtps::MatchingInfo& info);
                 void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
                 // Dynamic Types
                 eprosima::fastrtps::types::DynamicData* m_DynHello;
