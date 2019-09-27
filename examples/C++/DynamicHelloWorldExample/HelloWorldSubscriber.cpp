@@ -89,9 +89,7 @@ HelloWorldSubscriber::~HelloWorldSubscriber() {
     Domain::stopAll();
 }
 
-void HelloWorldSubscriber::SubListener::onSubscriptionMatched(
-        Subscriber* /*sub*/,
-        MatchingInfo& info)
+void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
 {
     if(info.status == MATCHED_MATCHING)
     {
