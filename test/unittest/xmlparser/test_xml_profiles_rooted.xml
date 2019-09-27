@@ -51,7 +51,6 @@
                             <sec>10</sec>
                             <nanosec>333</nanosec>
                         </leaseAnnouncement>
-                        <avoid_builtin_multicast>false</avoid_builtin_multicast>
                         <simpleEDP>
                             <PUBWRITER_SUBREADER>false</PUBWRITER_SUBREADER>
                             <PUBREADER_SUBWRITER>true</PUBREADER_SUBWRITER>
@@ -59,7 +58,15 @@
                         <leaseDuration>
                             <sec>DURATION_INFINITY</sec>
                         </leaseDuration>
+                        <initialAnnouncements>
+                            <count>2</count>
+                            <period>
+                                <sec>1</sec>
+                                <nanosec>827</nanosec>
+                            </period>
+                        </initialAnnouncements>
                     </discovery_config>
+                    <avoid_builtin_multicast>false</avoid_builtin_multicast>
                     <use_WriterLivelinessProtocol>false</use_WriterLivelinessProtocol>
                     <domainId>2019102</domainId>
                     <metatrafficUnicastLocatorList>
