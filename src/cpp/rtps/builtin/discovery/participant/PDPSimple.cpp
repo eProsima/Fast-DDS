@@ -320,6 +320,8 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     uint32_t auxendp = endp;
+    bool use_multicast_locators = !mp_RTPSParticipant->getAttributes().builtin.avoid_builtin_multicast ||
+                                  pdata->metatraffic_locators.unicast.empty();
     auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
     if(auxendp!=0)
     {
@@ -329,7 +331,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         temp_writer_data_.guid().entityId = c_EntityId_SPDPWriter;
         temp_writer_data_.persistence_guid(pdata->get_persistence_guid());
         temp_writer_data_.set_persistence_entity_id(c_EntityId_SPDPWriter);
-        temp_writer_data_.set_remote_locators(pdata->metatraffic_locators, network, true);
+        temp_writer_data_.set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
         temp_writer_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
         temp_writer_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_PDPReader->matched_writer_add(temp_writer_data_);
@@ -343,7 +345,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         temp_reader_data_.m_expectsInlineQos = false;
         temp_reader_data_.guid().guidPrefix = pdata->m_guid.guidPrefix;
         temp_reader_data_.guid().entityId = c_EntityId_SPDPReader;
-        temp_reader_data_.set_remote_locators(pdata->metatraffic_locators, network, true);
+        temp_reader_data_.set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
         temp_reader_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
         temp_reader_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_PDPWriter->matched_reader_add(temp_reader_data_);

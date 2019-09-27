@@ -183,9 +183,6 @@ public:
     //!Initial announcements configuration
     InitialAnnouncementConfig initial_announcements;
 
-    //!Set to true to avoid multicast traffic on builtin endpoints
-    bool avoid_builtin_multicast = false;
-
     //!Attributes of the SimpleEDP protocol
     SimpleEDPAttributes m_simpleEDP;
 
@@ -213,7 +210,6 @@ public:
                 (this->leaseDuration == b.leaseDuration) &&
                 (this->leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&
                 (this->initial_announcements == b.initial_announcements) &&
-                (avoid_builtin_multicast == b.avoid_builtin_multicast) &&
                 (this->m_simpleEDP == b.m_simpleEDP) &&
                 (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename) &&
                 (this->m_DiscoveryServers == b.m_DiscoveryServers);
@@ -274,6 +270,9 @@ class BuiltinAttributes
         //! Mutation tries if the port is being used.
         uint32_t mutation_tries = 100u;
 
+        //!Set to true to avoid multicast traffic on builtin endpoints
+        bool avoid_builtin_multicast = false;
+
         BuiltinAttributes() = default;
 
         virtual ~BuiltinAttributes() = default;
@@ -288,7 +287,8 @@ class BuiltinAttributes
                    (this->initialPeersList == b.initialPeersList) &&
                    (this->readerHistoryMemoryPolicy == b.readerHistoryMemoryPolicy) &&
                    (this->writerHistoryMemoryPolicy == b.writerHistoryMemoryPolicy) &&
-                   (this->mutation_tries == b.mutation_tries);
+                   (this->mutation_tries == b.mutation_tries) &&
+                   (this->avoid_builtin_multicast == b.avoid_builtin_multicast);
         }
 
 };

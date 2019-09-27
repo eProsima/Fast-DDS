@@ -216,14 +216,6 @@ XMLP_ret XMLParser::getXMLDiscoverySettings(tinyxml2::XMLElement* elem, rtps::Di
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, AVOID_BUILTIN_MULTICAST) == 0)
-        {
-            // avoid_builtin_multicast - boolType
-            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &settings.avoid_builtin_multicast, ident))
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-        }
         else if (strcmp(name, SIMPLE_EDP) == 0)
         {
             // simpleEDP
@@ -356,6 +348,14 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
             // mutation_tries - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &builtin.mutation_tries, ident))
                 return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, AVOID_BUILTIN_MULTICAST) == 0)
+        {
+            // avoid_builtin_multicast - boolType
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &builtin.avoid_builtin_multicast, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
         }
         else
         {

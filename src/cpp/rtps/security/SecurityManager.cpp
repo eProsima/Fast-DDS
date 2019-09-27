@@ -968,7 +968,7 @@ bool SecurityManager::create_participant_stateless_message_reader()
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = NO_KEY;
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
-    if (!participant_->getRTPSParticipantAttributes().builtin.discovery_config.avoid_builtin_multicast)
+    if (!participant_->getRTPSParticipantAttributes().builtin.avoid_builtin_multicast)
     {
         ratt.endpoint.multicastLocatorList =
             participant_->getRTPSParticipantAttributes().builtin.metatrafficMulticastLocatorList;

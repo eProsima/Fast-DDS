@@ -102,8 +102,6 @@ class ParticipantProxyData
         RemoteLocatorList metatraffic_locators;
         //!Default locators
         RemoteLocatorList default_locators;
-        //!Manual liveliness count
-        Count_t m_manualLivelinessCount; // TODO(MiguelC): remove when safe to change ABI
         //!Participant name
         string_255 m_participantName;
         //!

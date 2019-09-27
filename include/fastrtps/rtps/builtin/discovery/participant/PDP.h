@@ -307,8 +307,6 @@ public:
 protected:
     //!Pointer to the builtin protocols object.
     BuiltinProtocols* mp_builtin;
-    //!TimedEvent to periodically resend the local RTPSParticipant information.
-    TimedEvent* resend_participant_info_event_;
     //!Pointer to the local RTPSParticipant.
     RTPSParticipantImpl* mp_RTPSParticipant;
     //!Discovery attributes.
@@ -349,8 +347,6 @@ protected:
     std::mutex temp_data_lock_;
     //!Participant data atomic access assurance
     std::recursive_mutex* mp_mutex;
-    //!Participant's initial announcements config
-    InitialAnnouncementConfig initial_announcements_;
 
     /**
      * Adds an entry to the collection of participant proxy information.
@@ -377,15 +373,24 @@ protected:
             const GUID_t& participant_guid,
             InstanceHandle_t& key);
 
-    /**
-     * Calculates next interval
-     */
-    double get_next_interval();
-
 private:
+    //!TimedEvent to periodically resend the local RTPSParticipant information.
+    TimedEvent* resend_participant_info_event_;
+    //!Participant's initial announcements config
+    InitialAnnouncementConfig initial_announcements_;
 
     void check_remote_participant_liveliness(
             ParticipantProxyData* remote_participant);
+
+    /**
+     * Calculates the next announcement interval
+     */
+    void set_next_announcement_interval();
+
+    /**
+     * Calculates the initial announcement interval
+     */
+    void set_initial_announcement_interval();
 
 };
 
