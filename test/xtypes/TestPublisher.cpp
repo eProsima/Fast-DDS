@@ -30,7 +30,6 @@
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/Domain.h>
-#include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <gtest/gtest.h>
 #include <asio.hpp>

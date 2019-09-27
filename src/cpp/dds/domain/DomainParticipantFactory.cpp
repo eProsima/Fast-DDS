@@ -24,7 +24,6 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <dds/domain/DomainParticipantImpl.hpp>
 
-#include <fastrtps/utils/eClock.h>
 #include <fastrtps/log/Log.h>
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>

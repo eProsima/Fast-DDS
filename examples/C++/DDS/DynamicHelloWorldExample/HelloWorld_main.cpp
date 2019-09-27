@@ -20,7 +20,6 @@
 #include "HelloWorldPublisher.h"
 #include "HelloWorldSubscriber.h"
 
-#include <fastrtps/utils/eClock.h>
 #include <fastrtps/log/Log.h>
 
 using namespace eprosima;

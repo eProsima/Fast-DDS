@@ -22,7 +22,6 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
-#include <fastrtps/utils/eClock.h>
 #include <fastrtps/log/Log.h>
 
 using namespace eprosima;

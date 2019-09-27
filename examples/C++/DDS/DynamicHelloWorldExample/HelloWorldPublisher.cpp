@@ -24,7 +24,6 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastrtps/utils/eClock.h>
 
 #include <fastrtps/types/DynamicDataFactory.h>
 

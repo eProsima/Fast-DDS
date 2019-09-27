@@ -22,7 +22,6 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastrtps/utils/eClock.h>
 
 #include <fastrtps/types/DynamicDataHelper.hpp>
 #include <fastrtps/types/DynamicDataFactory.h>
