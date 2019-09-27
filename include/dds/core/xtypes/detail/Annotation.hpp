@@ -162,7 +162,7 @@ class BitBoundAnnotation : public  Annotation
     {
     }
 
-    uint32_t bsb()const noexcept{return bsb_ ;}
+    uint32_t bsb() const noexcept { return bsb_ ; }
 
     void bsb(uint32_t bsb){ bsb_= bsb; }
 private:
