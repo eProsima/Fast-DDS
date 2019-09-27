@@ -758,8 +758,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         watt.guid.guidPrefix = pdata->m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_SPDPWriter;
         watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        get_metatraffic_locators(watt.endpoint, *pdata);
         watt.endpoint.reliabilityKind = BEST_EFFORT;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         mp_SPDPReader->matched_writer_add(watt);
@@ -772,8 +771,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         ratt.expectsInlineQos = false;
         ratt.guid.guidPrefix = pdata->m_guid.guidPrefix;
         ratt.guid.entityId = c_EntityId_SPDPReader;
-        ratt.endpoint.unicastLocatorList = pdata->m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = pdata->m_metatrafficMulticastLocatorList;
+        get_metatraffic_locators(ratt.endpoint, *pdata);
         ratt.endpoint.reliabilityKind = BEST_EFFORT;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         mp_SPDPWriter->matched_reader_add(ratt);
