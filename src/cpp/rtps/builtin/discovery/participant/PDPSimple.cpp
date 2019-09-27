@@ -256,12 +256,17 @@ bool PDPSimple::initPDP(RTPSParticipantImpl* part)
         return false;
     }
 
-    if(!mp_RTPSParticipant->enableReader(mp_SPDPReader))
-        return false;
-
-    mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this, m_discovery);
-
     return true;
+}
+
+bool PDPSimple::enable()
+{
+    bool result = mp_RTPSParticipant->enableReader(mp_SPDPReader);
+    if (result)
+    {
+        mp_resendParticipantTimer = new ResendParticipantProxyDataPeriod(this, m_discovery);
+    }
+    return result;
 }
 
 void PDPSimple::get_metatraffic_locators(

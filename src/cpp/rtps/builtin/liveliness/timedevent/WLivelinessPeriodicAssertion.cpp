@@ -126,37 +126,42 @@ bool WLivelinessPeriodicAssertion::manual_by_participant_liveliness_assertion()
 
 bool WLivelinessPeriodicAssertion::add_cache_change()
 {
-    auto writer = mp_WLP->getBuiltinWriter();
-    auto history = mp_WLP->getBuiltinWriterHistory();
+    StatefulWriter* writer = mp_WLP->getBuiltinWriter();
+    WriterHistory* history = mp_WLP->getBuiltinWriterHistory();
 
     std::lock_guard<std::recursive_timed_mutex> wguard(writer->getMutex());
 
-    CacheChange_t* change=writer->new_change(
-                []() -> uint32_t { return BUILTIN_PARTICIPANT_DATA_MAX_SIZE; },
-                ALIVE,
-                m_iHandle);
+    CacheChange_t* change = writer->new_change(
+            []() -> uint32_t { return BUILTIN_PARTICIPANT_DATA_MAX_SIZE; },
+            ALIVE,
+            m_iHandle);
 
-    if(change != nullptr)
+    if (change != nullptr)
     {
+        change->serializedPayload.data[0] = 0;
 #if __BIG_ENDIAN__
         change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+        change->serializedPayload.data[1] = PL_CDR_BE;
 #else
         change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+        change->serializedPayload.data[1] = PL_CDR_LE;
 #endif
-        memcpy(change->serializedPayload.data,m_guidP.value,12);
+        change->serializedPayload.data[2] = 0;
+        change->serializedPayload.data[3] = 0;
 
-        for(uint8_t i =12;i<24;++i)
+        memcpy(change->serializedPayload.data + 4, m_iHandle.value, 16);
+
+        for (size_t i = 20; i < 28; ++i)
         {
             change->serializedPayload.data[i] = 0;
         }
-        change->serializedPayload.data[15] = m_livelinessKind+1;
-        change->serializedPayload.length = 12+4+4+4;
+        change->serializedPayload.length = 4 + 12 + 4 + 4 + 4;
 
-        if(history->getHistorySize() > 0)
+        if (history->getHistorySize() > 0)
         {
-            for(auto chit = history->changesBegin(); chit != history->changesEnd(); ++chit)
+            for (auto chit = history->changesBegin(); chit != history->changesEnd(); ++chit)
             {
-                if((*chit)->instanceHandle == change->instanceHandle)
+                if ((*chit)->instanceHandle == change->instanceHandle)
                 {
                     history->remove_change(*chit);
                     break;

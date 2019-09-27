@@ -146,7 +146,10 @@ bool WLP::initWL(RTPSParticipantImpl* p)
 
     bool retVal = createEndpoints();
 #if HAVE_SECURITY
-    if (retVal) createSecureEndpoints();
+    if (retVal)
+    {
+        retVal = createSecureEndpoints();
+    }
 #endif
     return retVal;
 }
@@ -623,133 +626,109 @@ bool WLP::remove_local_writer(RTPSWriter* W)
 
     logInfo(RTPS_LIVELINESS, W->getGuid().entityId <<" from Liveliness Protocol");
 
-    t_WIT wToEraseIt;
-    ParticipantProxyData pdata;
-    WriterProxyData wdata;
-    if (this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData(W->getGuid(), wdata, pdata))
+    if (W->get_liveliness_kind() == AUTOMATIC_LIVELINESS_QOS)
     {
-        bool found = false;
-        if (wdata.m_qos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS)
-        {
-            min_automatic_ms_ = std::numeric_limits<double>::max();
-            for (t_WIT it = automatic_writers_.begin(); it != automatic_writers_.end(); ++it)
-            {
-                ParticipantProxyData pdata2;
-                WriterProxyData wdata2;
-                if (this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), wdata2, pdata2))
-                {
-                    double mintimeWIT(TimeConv::Duration_t2MilliSecondsDouble(
-                        wdata2.m_qos.m_liveliness.announcement_period));
+        auto it = std::find(
+                    automatic_writers_.begin(),
+                    automatic_writers_.end(),
+                    W);
 
-                    if (W->getGuid().entityId == (*it)->getGuid().entityId)
-                    {
-                        found = true;
-                        wToEraseIt = it;
-                        continue;
-                    }
-                    if (min_automatic_ms_ > mintimeWIT)
-                    {
-                        min_automatic_ms_ = mintimeWIT;
-                    }
-                }
-            }
-            if (found)
-            {
-                automatic_writers_.erase(wToEraseIt);
-                if (automatic_liveliness_assertion_ != nullptr)
-                {
-                    if (automatic_writers_.size() > 0)
-                    {
-                        automatic_liveliness_assertion_->update_interval_millisec(min_automatic_ms_);
-                    }
-                    else
-                    {
-                        automatic_liveliness_assertion_->cancel_timer();
-                    }
-                }
-            }
-        }
-        else if (wdata.m_qos.m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+        if (it == automatic_writers_.end())
         {
-            min_manual_by_participant_ms_ = std::numeric_limits<double>::max();
-            for(t_WIT it = manual_by_participant_writers_.begin(); it != manual_by_participant_writers_.end(); ++it)
-            {
-                ParticipantProxyData pdata2;
-                WriterProxyData wdata2;
-                if (this->mp_builtinProtocols->mp_PDP->lookupWriterProxyData((*it)->getGuid(), wdata2, pdata2))
-                {
-                    double mintimeWIT(TimeConv::Duration_t2MilliSecondsDouble(
-                        wdata2.m_qos.m_liveliness.announcement_period));
-                    if (W->getGuid().entityId == (*it)->getGuid().entityId)
-                    {
-                        found = true;
-                        wToEraseIt = it;
-                        continue;
-                    }
-                    if (min_manual_by_participant_ms_ > mintimeWIT)
-                    {
-                        min_manual_by_participant_ms_ = mintimeWIT;
-                    }
-                }
-            }
-            if (found)
-            {
-                manual_by_participant_writers_.erase(wToEraseIt);
-                if (manual_liveliness_assertion_ != nullptr)
-                {
-                    if (manual_by_participant_writers_.size() > 0)
-                    {
-                        manual_liveliness_assertion_->update_interval_millisec(min_manual_by_participant_ms_);
-                    }
-                    else
-                    {
-                        manual_liveliness_assertion_->cancel_timer();
-                    }
-                }
-            }
-
-            if (!pub_liveliness_manager_->remove_writer(
-                        W->getGuid(),
-                        wdata.m_qos.m_liveliness.kind,
-                        wdata.m_qos.m_liveliness.lease_duration))
-            {
-                logError(RTPS_LIVELINESS, "Could not remove writer " << W->getGuid() << " from liveliness manager");
-            }
-        }
-        else if (wdata.m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
-        {
-            for (auto it=manual_by_topic_writers_.begin(); it!=manual_by_topic_writers_.end(); ++it)
-            {
-                if (W->getGuid().entityId == (*it)->getGuid().entityId)
-                {
-                    found = true;
-                    wToEraseIt = it;
-                }
-            }
-            if (found)
-            {
-                manual_by_topic_writers_.erase(wToEraseIt);
-            }
-
-            if (!pub_liveliness_manager_->remove_writer(
-                        W->getGuid(),
-                        wdata.m_qos.m_liveliness.kind,
-                        wdata.m_qos.m_liveliness.lease_duration))
-            {
-                logError(RTPS_LIVELINESS, "Could not remove writer " << W->getGuid() << " from liveliness manager");
-            }
-        }
-
-        if (found)
-        {
-            return true;
-        }
-        else
-        {
+            logWarning(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
             return false;
         }
+
+        automatic_writers_.erase(it);
+
+        if (automatic_writers_.size() == 0)
+        {
+            automatic_liveliness_assertion_->cancel_timer();
+            return true;
+        }
+
+        // There are still some writers. Calculate the new minimum announcement period
+
+        min_automatic_ms_ =std::numeric_limits<double>::max();
+        for (const auto& w : automatic_writers_)
+        {
+            auto announcement_period = TimeConv::Duration_t2MilliSecondsDouble(w->get_liveliness_announcement_period());
+            if (min_automatic_ms_ > announcement_period)
+            {
+                min_automatic_ms_ = announcement_period;
+            }
+        }
+        automatic_liveliness_assertion_->update_interval(min_automatic_ms_);
     }
-    logWarning(RTPS_LIVELINESS,"Writer "<<W->getGuid().entityId << " not found.");
+    else if (W->get_liveliness_kind() == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    {
+        auto it = std::find(
+                    manual_by_participant_writers_.begin(),
+                    manual_by_participant_writers_.end(),
+                    W);
+
+        if (it == manual_by_participant_writers_.end())
+        {
+            logWarning(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
+            return false;
+        }
+
+        manual_by_participant_writers_.erase(it);
+
+        if (!pub_liveliness_manager_->remove_writer(
+                    W->getGuid(),
+                    W->get_liveliness_kind(),
+                    W->get_liveliness_lease_duration()))
+        {
+            logError(RTPS_LIVELINESS, "Could not remove writer " << W->getGuid() << " from liveliness manager");
+        }
+
+        if (manual_by_participant_writers_.size() == 0)
+        {
+            manual_liveliness_assertion_->cancel_timer();
+            return true;
+        }
+
+        // There are still some writers. Calculate the new minimum announcement period
+
+        min_manual_by_participant_ms_ =std::numeric_limits<double>::max();
+        for (const auto& w : manual_by_participant_writers_)
+        {
+            auto announcement_period = TimeConv::Duration_t2MilliSecondsDouble(w->get_liveliness_announcement_period());
+            if (min_manual_by_participant_ms_ > announcement_period)
+            {
+                min_manual_by_participant_ms_ = announcement_period;
+            }
+        }
+        manual_liveliness_assertion_->update_interval(min_manual_by_participant_ms_);
+        return true;
+    }
+    else if (W->get_liveliness_kind() == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+    {
+        auto it = std::find(
+                    manual_by_topic_writers_.begin(),
+                    manual_by_topic_writers_.end(),
+                    W);
+
+        if (it == manual_by_topic_writers_.end())
+        {
+            logWarning(RTPS_LIVELINESS, "Writer " << W->getGuid() << " not found.");
+            return false;
+        }
+
+        manual_by_topic_writers_.erase(it);
+
+        if (!pub_liveliness_manager_->remove_writer(
+                    W->getGuid(),
+                    W->get_liveliness_kind(),
+                    W->get_liveliness_lease_duration()))
+        {
+            logError(RTPS_LIVELINESS, "Could not remove writer " << W->getGuid() << " from liveliness manager");
+        }
+        return true;
+    }
+
+    logWarning(RTPS_LIVELINESS, "Writer "<< W->getGuid() << " not found.");
     return false;
 }
 

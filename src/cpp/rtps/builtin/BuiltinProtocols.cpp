@@ -87,6 +87,9 @@ bool BuiltinProtocols::initBuiltinProtocols(RTPSParticipantImpl* p_part, Builtin
             mp_WLP = new WLP(this);
             mp_WLP->initWL(mp_participantImpl);
         }
+
+        mp_PDP->enable();
+
         mp_PDP->announceParticipantState(true);
         mp_PDP->resetParticipantAnnouncement();
     }

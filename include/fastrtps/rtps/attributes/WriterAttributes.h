@@ -86,6 +86,7 @@ class WriterAttributes
         WriterAttributes()
             : liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
             , liveliness_lease_duration(c_TimeInfinite)
+            , liveliness_announcement_period(c_TimeInfinite)
             , mode(SYNCHRONOUS_WRITER)
             , disable_heartbeat_piggyback(false)
             , disable_positive_acks(false)
@@ -109,6 +110,9 @@ class WriterAttributes
 
         //! Liveliness lease duration
         Duration_t liveliness_lease_duration;
+
+        //! Liveliness announcement period
+        Duration_t liveliness_announcement_period;
 
         //!Indicates if the Writer is synchronous or asynchronous
         RTPSWriterPublishMode mode;
