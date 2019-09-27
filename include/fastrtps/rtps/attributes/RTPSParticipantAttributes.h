@@ -134,11 +134,11 @@ public:
  */
 struct InitialAnnouncementConfig
 {
-    /// Number of initial announcements with specific period (default 0)
-    uint32_t count = 0u;
+    /// Number of initial announcements with specific period (default 5)
+    uint32_t count = 5u;
 
-    /// Specific period for initial announcements (default 500ms)
-    Duration_t period = { 0, 500000000u };
+    /// Specific period for initial announcements (default 100ms)
+    Duration_t period = { 0, 100000000u };
 
     bool operator==(const InitialAnnouncementConfig& b) const
     {
@@ -172,13 +172,13 @@ public:
      * Lease Duration of the RTPSParticipant,
      * indicating how much time remote RTPSParticipants should consider this RTPSParticipant alive.
      */
-    Duration_t leaseDuration = { 130, 0 };
+    Duration_t leaseDuration = { 20, 0 };
 
     /**
      * The period for the RTPSParticipant to send its Discovery Message to all other discovered RTPSParticipants
      * as well as to all Multicast ports.
      */
-    Duration_t leaseDuration_announcementperiod = { 40, 0 };
+    Duration_t leaseDuration_announcementperiod = { 3, 0 };
 
     //!Initial announcements configuration
     InitialAnnouncementConfig initial_announcements;
@@ -271,7 +271,7 @@ class BuiltinAttributes
         uint32_t mutation_tries = 100u;
 
         //!Set to true to avoid multicast traffic on builtin endpoints
-        bool avoid_builtin_multicast = false;
+        bool avoid_builtin_multicast = true;
 
         BuiltinAttributes() = default;
 
