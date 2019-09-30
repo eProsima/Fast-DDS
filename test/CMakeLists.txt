@@ -31,12 +31,15 @@ set(MEMORYCHECK_SUPPRESSIONS_FILE ${MEMORYCHECK_SUPPRESSIONS_FILE_TMP} CACHE FIL
 # Testing
 ###############################################################################
 if(EPROSIMA_BUILD_TESTS AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER)
-    add_subdirectory(blackbox)
-    add_subdirectory(communication)
-    add_subdirectory(unittest)
-    add_subdirectory(dds/core/xtypes)
-    if(UNIX AND NOT APPLE)
-        add_subdirectory(realtime)
+    if(EPROSIMA_BUILD_CORE_STANDALONE)
+        add_subdirectory(dds/core/xtypes)
+    else()
+        add_subdirectory(blackbox)
+        add_subdirectory(communication)
+        add_subdirectory(unittest)
+        if(UNIX AND NOT APPLE)
+            add_subdirectory(realtime)
+        endif()
     endif()
 endif()
 

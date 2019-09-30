@@ -140,6 +140,7 @@ public:
                     [&](xtypes::MemberType &t) {return t.name() == m.name() ;}) ;
 
         COND_EXCEP_THROW(rv != members_.end(), "could not find "+ m.name()+" member");
+        members_.erase(rv) ;
     }
 
     void remove_annotation(
@@ -152,6 +153,7 @@ public:
                     {return aa.akind() == a.akind() ;}) ;
 
         COND_EXCEP_THROW(rv != annotations_.end(), "could not find such annotation");
+        annotations_.erase(rv) ;
     }
 
 private:

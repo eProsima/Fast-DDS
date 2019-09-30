@@ -98,7 +98,7 @@ public:
         return name_ ;
     }
 
-    const xtypes::DynamicType &dt() const noexcept
+    const xtypes::DynamicType &dynamic_type() const noexcept
     {
         return dt_ ;
     }
@@ -123,21 +123,32 @@ public:
     }
 
 
-    std::vector<xtypes::Annotation>::iterator annIt(
-            AnnotationKind &ann)
+    bool annotation_iterator(
+            AnnotationKind &annotation_kind,
+            xtypes::Annotation &retAnn)
     {
-        return std::find_if(
-                        ann_.begin(),
-                        ann_.end(),
-                        [&]( xtypes::Annotation &a)
-                            { return (a.akind() == ann) ;} ) ;
+        auto retVal = std::find_if(
+                            ann_.begin(),
+                            ann_.end(),
+                            [&]( xtypes::Annotation &a)
+                                { return (a.akind() == annotation_kind) ;} ) ;
+
+        if(retVal == ann_.end())
+        {
+            return false ;
+        }
+        retAnn = *retVal ;
+        return true ;
     }
 
     bool findAnnotation(
-            AnnotationKind &ann)
+            AnnotationKind &annotation_kind)
     {
-        auto found = annIt(ann) ;
-        return found != ann_.end() ;
+        return ann_.end() ==  std::find_if(
+                                    ann_.begin(),
+                                    ann_.end(),
+                                    [&]( xtypes::Annotation &a)
+                                        { return (a.akind() == annotation_kind) ;} ) ;
     }
 
     bool is_optional()
@@ -175,7 +186,7 @@ public:
         AnnotationKind a = AnnotationKind_def::Type::BITSETBOUND_ANNOTATION_TYPE ;
         return findAnnotation(a) ;
     }
-
+/*
     uint32_t get_bitbound()
     {
         if(false == has_bitbound())
@@ -183,9 +194,9 @@ public:
             throw IllegalOperationError("No Bitsetbound Annotation found") ;
         }
         AnnotationKind a = AnnotationKind_def::Type::BITSETBOUND_ANNOTATION_TYPE ;
-        annIt(a)->bound() ;
+        return annIt(a)->bound() ;
     }
-
+*/
     bool has_id()
     {
         AnnotationKind a = AnnotationKind_def::Type::ID_ANNOTATION_TYPE ;
@@ -194,12 +205,15 @@ public:
 
     uint32_t get_id()
     {
-        if( false == has_id() )
+        AnnotationKind a = AnnotationKind_def::Type::ID_ANNOTATION_TYPE ;
+
+        // creting a generic IdAnnotation that will be filled by annotation_iterator()
+        xtypes::IdAnnotation ida(0) ;
+        if(not annotation_iterator(a, ida))
         {
             throw IllegalOperationError("No Id Annotation found") ;
         }
-        AnnotationKind a = AnnotationKind_def::Type::ID_ANNOTATION_TYPE ;
-        annIt(a)->id() ;
+        return ida->id();
     }
 
 private:

@@ -29,34 +29,35 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
+template<typename DELEGATE>
+class TIdAnnotation ;
 
 template<typename DELEGATE>
 class TAnnotation : public Reference<DELEGATE>
 {
-public:
+
     OMG_DDS_REF_TYPE_BASE(
             TAnnotation,
             dds::core::Reference,
             DELEGATE)
+public:
 
-//    virtual //TAnnotation();
+    virtual ~TAnnotation();
 
     TypeKind kind() const;
 
-    virtual uint32_t bound()const
+    template<typename Q,
+            template <typename> class K>
+    operator K<Q>&()
     {
-        throw IllegalOperationError("cannot use bound() on non-bitsetbount annotations") ;
-    }
-
-    virtual uint32_t id()const
-    {
-        throw IllegalOperationError("cannot use id() on non-id annotations") ;
+        return reinterpret_cast<K<Q>&>(*this) ;
     }
 
     const AnnotationKind& akind()const
     {
         return impl()->akind() ;
     }
+
 protected:
     TAnnotation(
             const TypeKind& kind);
@@ -66,17 +67,21 @@ template<typename DELEGATE>
 class TIdAnnotation : public TAnnotation<DELEGATE>
 {
 using TAnnotation<DELEGATE>::impl ;
+
 public:
+
     TIdAnnotation(
             uint32_t id)
+        :TAnnotation<DELEGATE>(TypeKind::ANNOTATION_TYPE)
     {
         impl()->id(id) ;
     }
 
-    virtual uint32_t id() const
+    uint32_t id() const
     {
         return impl()->id() ;
     }
+
 };
 
 template<typename DELEGATE>
@@ -204,8 +209,16 @@ typedef TBitBoundAnnotation<detail::BitBoundAnnotation> BitBoundAnnotation;
 
 //FRANAVA We must think about the fact that previous API has a way of creating a
 //dynamically defined Annotation.
-
-
+/*
+namespace converter
+{
+    IdAnnotation convert(const Annotation &a)
+    {
+        uint32_t idav = reinterpret_cast<const IdAnnotation&>(a).id() ;
+        return IdAnnotation(idav) ;
+    }
+}
+*/
 namespace annotation {
 
 // These functions can be used to get cached instances,

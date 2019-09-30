@@ -19,7 +19,7 @@
 #define EPROSIMA_DDS_CORE_XTYPES_DETAIL_ANNOTATION_HPP_
 #include <stdint.h>
 #include <string>
-#include <dds/core/xtypes/AnnotKind.hpp>
+#include <dds/core/xtypes/AnnotationKind.hpp>
 
 namespace dds {
 namespace core {
@@ -59,6 +59,19 @@ public:
     {
         return id_ ;
     }
+
+    template<typename Q,
+            template <typename> class K>
+    operator  K<Q>&()
+    {
+        return reinterpret_cast<K<Q>&>(*this) ;
+    }
+
+    IdAnnotation(
+            Annotation &a)
+        :Annotation(AnnotationKind::ID_ANNOTATION_TYPE)
+        ,id_(static_cast<const detail::IdAnnotation&>(a).id())
+    {}
 
 private:
     uint32_t id_ ;
