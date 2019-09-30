@@ -75,7 +75,7 @@ public:
     void annotation(
             xtypes::Annotation &a )
     {
-        annotations_.push_back( a ) ;
+        annotations_.emplace_back(a) ;
     }
 
     void annotations(
