@@ -242,31 +242,6 @@ else()
 endif()
 
 ###############################################################################
-# Java application
-###############################################################################
-option(BUILD_JAVA "Activate the compilation of the Java application" OFF)
-option(TEST_JAVA "Perform testing when compile the Java application" OFF)
-
-if(EPROSIMA_INSTALLER)
-    set(BUILD_JAVA ON)
-endif()
-
-if(BUILD_JAVA)
-    include(${PROJECT_SOURCE_DIR}/cmake/dev/java_support.cmake)
-
-    if(TEST_JAVA)
-        set(CMD_JAVA "build")
-    else()
-        set(CMD_JAVA "assemble")
-    endif()
-
-    gradle_build(${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen ${CMD_JAVA}
-        THIRDPARTY_DEPENDENCY idl
-        THIRDPARTY_DEPENDENCY fastcdr
-        )
-endif()
-
-###############################################################################
 # Compile library.
 ###############################################################################
 add_subdirectory(src/cpp)
@@ -407,33 +382,6 @@ if(INSTALL_EXAMPLES)
   set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} examples")
 
   set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} examples)
-endif()
-
-if(BUILD_JAVA)
-    install(FILES ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen/share/fastrtps/${PROJECT_NAME}gen.jar
-        DESTINATION ${DATA_INSTALL_DIR}/${PROJECT_NAME}
-        COMPONENT java
-        )
-
-    if(WIN32)
-        install(PROGRAMS
-            ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen/scripts/${PROJECT_NAME}gen.bat
-            DESTINATION ${BIN_INSTALL_DIR}
-            COMPONENT java
-            )
-    else()
-        install(PROGRAMS
-            ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}gen/scripts/${PROJECT_NAME}gen
-            DESTINATION ${BIN_INSTALL_DIR}
-            COMPONENT java
-            )
-    endif()
-
-    ### Java component
-    set(CPACK_COMPONENT_JAVA_DISPLAY_NAME "Java application")
-    set(CPACK_COMPONENT_JAVA_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} generator")
-
-    set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} java)
 endif()
 
 if(BUILD_DOCUMENTATION)
