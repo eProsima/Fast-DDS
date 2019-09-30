@@ -38,7 +38,7 @@ public:
     StructType(){}
 
     void name(
-            const std::string &s)
+            const std::string& s)
     {
         name_ = s;
     }
