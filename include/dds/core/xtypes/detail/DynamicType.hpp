@@ -30,7 +30,7 @@ namespace detail {
 class DynamicType
 {
 public:
-    const std::string & name() const noexcept{return name_ ;}
+    const std::string& name() const noexcept { return name_; }
     const TypeKind & kind() const noexcept{return kind_ ;}
 
     void name(const std::string &name){ name_ = name ;}
