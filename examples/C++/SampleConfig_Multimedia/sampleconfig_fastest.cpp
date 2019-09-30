@@ -105,7 +105,5 @@ void fastest(){
     }
     std::cout << std::endl;
 
-
-
-
+    Domain::stopAll();
 }
