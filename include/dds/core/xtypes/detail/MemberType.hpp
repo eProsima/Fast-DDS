@@ -178,7 +178,7 @@ public:
 
     uint32_t get_bitbound()
     {
-        if( false == has_bitbound() )
+        if(false == has_bitbound())
         {
             throw IllegalOperationError("No Bitsetbound Annotation found") ;
         }
