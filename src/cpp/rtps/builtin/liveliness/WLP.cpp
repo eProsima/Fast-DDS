@@ -383,8 +383,7 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         watt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         watt.guid.entityId = c_EntityId_WriterLiveliness;
         watt.endpoint.persistence_guid = watt.guid;
-        watt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
-        watt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
+        mp_builtinProtocols->mp_PDP->get_metatraffic_locators(watt.endpoint, pdata);
         watt.endpoint.topicKind = WITH_KEY;
         watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         watt.endpoint.reliabilityKind = RELIABLE;
@@ -399,8 +398,7 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.expectsInlineQos = false;
         ratt.guid.guidPrefix = pdata.m_guid.guidPrefix;
         ratt.guid.entityId = c_EntityId_ReaderLiveliness;
-        ratt.endpoint.unicastLocatorList = pdata.m_metatrafficUnicastLocatorList;
-        ratt.endpoint.multicastLocatorList = pdata.m_metatrafficMulticastLocatorList;
+        mp_builtinProtocols->mp_PDP->get_metatraffic_locators(ratt.endpoint, pdata);
         ratt.endpoint.topicKind = WITH_KEY;
         ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
         ratt.endpoint.reliabilityKind = RELIABLE;
@@ -417,8 +415,7 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         watt.guid().guidPrefix = pdata.m_guid.guidPrefix;
         watt.guid().entityId = c_EntityId_WriterLivelinessSecure;
         watt.persistence_guid(watt.guid());
-        watt.unicastLocatorList(pdata.m_metatrafficUnicastLocatorList);
-        watt.multicastLocatorList(pdata.m_metatrafficMulticastLocatorList);
+        mp_builtinProtocols->mp_PDP->get_metatraffic_locators(watt, pdata);
         watt.topicKind(WITH_KEY);
         watt.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         watt.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -439,8 +436,7 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
         ratt.m_expectsInlineQos = false;
         ratt.guid().guidPrefix = pdata.m_guid.guidPrefix;
         ratt.guid().entityId = c_EntityId_ReaderLivelinessSecure;
-        ratt.unicastLocatorList(pdata.m_metatrafficUnicastLocatorList);
-        ratt.multicastLocatorList(pdata.m_metatrafficMulticastLocatorList);
+        mp_builtinProtocols->mp_PDP->get_metatraffic_locators(ratt, pdata);
         ratt.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         ratt.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
         ratt.topicKind(WITH_KEY);

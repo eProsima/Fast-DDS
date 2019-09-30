@@ -183,6 +183,9 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParcipantProfile)
     EXPECT_EQ(builtin.leaseDuration, c_TimeInfinite);
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.seconds, 10);
     EXPECT_EQ(builtin.leaseDuration_announcementperiod.nanosec, 333u);
+    EXPECT_EQ(builtin.initial_announcements.count, 2u);
+    EXPECT_EQ(builtin.initial_announcements.period.seconds, 1);
+    EXPECT_EQ(builtin.initial_announcements.period.nanosec, 827u);
     EXPECT_FALSE(builtin.avoid_builtin_multicast);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
     EXPECT_EQ(builtin.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
