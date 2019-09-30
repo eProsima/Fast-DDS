@@ -40,7 +40,7 @@ public:
     void name(
             const std::string &s)
     {
-        name_ = s ;
+        name_ = s;
     }
 
     void member(
