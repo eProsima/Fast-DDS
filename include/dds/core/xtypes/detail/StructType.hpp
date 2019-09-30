@@ -101,7 +101,7 @@ public:
         }
     }
 
-    const std::vector<xtypes::MemberType>& members()const noexcept
+    const std::vector<xtypes::MemberType>& members() const noexcept
     {
         return members_ ;
     }
