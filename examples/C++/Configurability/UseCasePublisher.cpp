@@ -299,5 +299,7 @@ int main(){
         }
     }
 
+    Domain::stopAll();
+
     return 0;
 }
