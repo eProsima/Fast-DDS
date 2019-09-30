@@ -24,7 +24,6 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastrtps/utils/eClock.h>
 
 #include <fastrtps/types/DynamicDataFactory.h>
 
@@ -142,7 +141,7 @@ void TypeLookupPublisher::runThread(uint32_t samples, uint32_t sleep)
                 m_Hello->get_uint32_value(index, 1);
                 std::cout << "Message: " << message << " with index: " << index << " SENT" << std::endl;
             }
-            eClock::my_sleep(sleep);
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
     }
     else
@@ -159,7 +158,7 @@ void TypeLookupPublisher::runThread(uint32_t samples, uint32_t sleep)
                 m_Hello->get_uint32_value(index, 1);
                 std::cout << "Message: " << message << " with index: " << index << " SENT" << std::endl;
             }
-            eClock::my_sleep(sleep);
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
     }
 }

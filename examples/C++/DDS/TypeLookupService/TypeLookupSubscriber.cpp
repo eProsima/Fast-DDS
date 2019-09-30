@@ -22,7 +22,6 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastrtps/utils/eClock.h>
 
 #include <fastrtps/types/DynamicDataHelper.hpp>
 #include <fastrtps/types/DynamicDataFactory.h>
@@ -209,5 +208,5 @@ void TypeLookupSubscriber::run(uint32_t number)
 {
     std::cout << "Subscriber running until "<< number << "samples have been received"<<std::endl;
     while(number > this->m_listener.n_samples)
-        eClock::my_sleep(500);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
 }

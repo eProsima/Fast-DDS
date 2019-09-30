@@ -30,7 +30,6 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/utils/eClock.h>
 
 #include <mutex>
 #include <condition_variable>
@@ -311,8 +310,8 @@ int main(
         inner->set_byte_value(inner_count + 1, 0);
         data->return_loaned_value(inner);
 
-        eClock::my_sleep(250);
-    };
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    }
 
     DomainParticipantFactory::get_instance()->delete_participant(participant);
 

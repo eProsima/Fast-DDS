@@ -30,7 +30,6 @@
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/utils/eClock.h>
 
 #include <mutex>
 #include <condition_variable>
@@ -343,7 +342,7 @@ int main(
 
     while(notexit && g_run)
     {
-        eClock::my_sleep(250);
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 
     if (g_run)
