@@ -34,7 +34,7 @@ public:
     const TypeKind & kind() const noexcept{return kind_ ;}
 
     void name(const std::string &name){ name_ = name ;}
-    void kind(const TypeKind &  kind) { kind_ = kind ;}
+    void kind(const TypeKind& kind) { kind_ = kind; }
 
     void annotation(
             xtypes::Annotation &a)
