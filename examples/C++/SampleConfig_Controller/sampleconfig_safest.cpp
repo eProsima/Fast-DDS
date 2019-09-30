@@ -116,4 +116,5 @@ void safest(){
     }
     std::cout << std::endl;
 
+    Domain::stopAll();
 }
