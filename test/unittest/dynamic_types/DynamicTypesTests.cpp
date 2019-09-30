@@ -25,9 +25,11 @@
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicDataPtr.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include "idl/BasicPubSubTypes.h"
+#include "idl/BasicTypeObject.h"
 #include <tinyxml2.h>
 
 using namespace eprosima::fastrtps;
@@ -4904,6 +4906,132 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
         delete(pbType);
         XMLProfileManager::DeleteInstance();
     }
+}
+
+TEST(TypeIdentifierTests, MinimalTypeIdentifierComparision)
+{
+    TypeIdentifier enum1 = *GetMyEnumIdentifier(false);
+    TypeIdentifier aliasEnum1 = *GetMyAliasEnumIdentifier(false);
+    TypeIdentifier aliasAliasEnum1 = *GetMyAliasAliasEnumIdentifier(false);
+    TypeIdentifier boolStruct1 = *GetBoolStructIdentifier(false);
+    TypeIdentifier octetStruct1 = *GetOctetStructIdentifier(false);
+    TypeIdentifier shortStruct1 = *GetShortStructIdentifier(false);
+    TypeIdentifier longStruct1 = *GetLongStructIdentifier(false);
+    TypeIdentifier longLongStruct1 = *GetLongLongStructIdentifier(false);
+    TypeIdentifier uShortStruct1 = *GetShortStructIdentifier(false);
+    TypeIdentifier uLongStruct1 = *GetULongStructIdentifier(false);
+    TypeIdentifier uLongLongStruct1 = *GetULongLongStructIdentifier(false);
+    TypeIdentifier floatStruct1 = *GetFloatStructIdentifier(false);
+    TypeIdentifier doubleStruct1 = *GetDoubleStructIdentifier(false);
+    TypeIdentifier longDoubleStruct1 = *GetLongDoubleStructIdentifier(false);
+    TypeIdentifier charStruct1 = *GetCharStructIdentifier(false);
+    TypeIdentifier wcharStruct1 = *GetWCharStructIdentifier(false);
+    TypeIdentifier stringStruct1 = *GetStringStructIdentifier(false);
+    TypeIdentifier wstringStruct1 = *GetWStringStructIdentifier(false);
+    TypeIdentifier largeStringStruct1 = *GetLargeStringStructIdentifier(false);
+    TypeIdentifier largeWStringStruct1 = *GetLargeWStringStructIdentifier(false);
+    TypeIdentifier arrayStruct1 = *GetArraytStructIdentifier(false);
+    GetMyArrayIdentifier(false); // We need to generate it before arrayArrayStruct
+    TypeIdentifier arrayArrayStruct1 = *GetArrayArrayStructIdentifier(false);
+    TypeIdentifier sequenceStruct1 = *GetSequenceStructIdentifier(false);
+    TypeIdentifier sequenceSequenceStruct1 = *GetSequenceSequenceStructIdentifier(false);
+    TypeIdentifier mapStruct1 = *GetMapStructIdentifier(false);
+    TypeIdentifier mapMapStruct1 = *GetMapMapStructIdentifier(false);
+    TypeIdentifier structStruct1 = *GetStructStructIdentifier(false);
+    TypeIdentifier structStructStruct1 = *GetStructStructStructIdentifier(false);
+    TypeIdentifier simpleUnion1 = *GetSimpleUnionIdentifier(false);
+    TypeIdentifier unionUnion1 = *GetUnionUnionIdentifier(false);
+    TypeIdentifier wCharUnion1 = *GetWCharUnionIdentifier(false);
+    TypeIdentifier unionUnionStruct1 = *GetUnionUnionUnionStructIdentifier(false);
+    TypeObjectFactory::get_instance()->delete_instance(); // Force new instances instead reusing them
+    registerBasicTypes(); // Register them again
+    TypeIdentifier enum2 = *GetMyEnumIdentifier(false);
+    TypeIdentifier aliasEnum2 = *GetMyAliasEnumIdentifier(false);
+    TypeIdentifier aliasAliasEnum2 = *GetMyAliasAliasEnumIdentifier(false);
+    TypeIdentifier boolStruct2 = *GetBoolStructIdentifier(false);
+    TypeIdentifier octetStruct2 = *GetOctetStructIdentifier(false);
+    TypeIdentifier shortStruct2 = *GetShortStructIdentifier(false);
+    TypeIdentifier longStruct2 = *GetLongStructIdentifier(false);
+    TypeIdentifier longLongStruct2 = *GetLongLongStructIdentifier(false);
+    TypeIdentifier uShortStruct2 = *GetShortStructIdentifier(false);
+    TypeIdentifier uLongStruct2 = *GetULongStructIdentifier(false);
+    TypeIdentifier uLongLongStruct2 = *GetULongLongStructIdentifier(false);
+    TypeIdentifier floatStruct2 = *GetFloatStructIdentifier(false);
+    TypeIdentifier doubleStruct2 = *GetDoubleStructIdentifier(false);
+    TypeIdentifier longDoubleStruct2 = *GetLongDoubleStructIdentifier(false);
+    TypeIdentifier charStruct2 = *GetCharStructIdentifier(false);
+    TypeIdentifier wcharStruct2 = *GetWCharStructIdentifier(false);
+    TypeIdentifier stringStruct2 = *GetStringStructIdentifier(false);
+    TypeIdentifier wstringStruct2 = *GetWStringStructIdentifier(false);
+    TypeIdentifier largeStringStruct2 = *GetLargeStringStructIdentifier(false);
+    TypeIdentifier largeWStringStruct2 = *GetLargeWStringStructIdentifier(false);
+    TypeIdentifier arrayStruct2 = *GetArraytStructIdentifier(false);
+    TypeIdentifier arrayArrayStruct2 = *GetArrayArrayStructIdentifier(false);
+    TypeIdentifier sequenceStruct2 = *GetSequenceStructIdentifier(false);
+    TypeIdentifier sequenceSequenceStruct2 = *GetSequenceSequenceStructIdentifier(false);
+    TypeIdentifier mapStruct2 = *GetMapStructIdentifier(false);
+    TypeIdentifier mapMapStruct2 = *GetMapMapStructIdentifier(false);
+    TypeIdentifier structStruct2 = *GetStructStructIdentifier(false);
+    TypeIdentifier structStructStruct2 = *GetStructStructStructIdentifier(false);
+    TypeIdentifier simpleUnion2 = *GetSimpleUnionIdentifier(false);
+    TypeIdentifier unionUnion2 = *GetUnionUnionIdentifier(false);
+    TypeIdentifier wCharUnion2 = *GetWCharUnionIdentifier(false);
+    TypeIdentifier unionUnionStruct2 = *GetUnionUnionUnionStructIdentifier(false);
+
+    // Compare equals
+    ASSERT_TRUE(enum1 == enum2);
+    ASSERT_TRUE(aliasEnum1 == aliasEnum2 || aliasEnum2 == enum1);
+    ASSERT_TRUE(aliasAliasEnum1 == aliasAliasEnum2 || aliasAliasEnum2 == enum1);
+    ASSERT_TRUE(boolStruct1 == boolStruct2);
+    ASSERT_TRUE(octetStruct1 == octetStruct2);
+    ASSERT_TRUE(shortStruct1 == shortStruct2);
+    ASSERT_TRUE(longStruct1 == longStruct2);
+    ASSERT_TRUE(longLongStruct1 == longLongStruct2);
+    ASSERT_TRUE(uShortStruct1 == uShortStruct2);
+    ASSERT_TRUE(uLongStruct1 == uLongStruct2);
+    ASSERT_TRUE(uLongLongStruct1 == uLongLongStruct2);
+    ASSERT_TRUE(floatStruct1 == floatStruct2);
+    ASSERT_TRUE(doubleStruct1 == doubleStruct2);
+    ASSERT_TRUE(longDoubleStruct1 == longDoubleStruct2);
+    ASSERT_TRUE(charStruct1 == charStruct2);
+    ASSERT_TRUE(wcharStruct1 == wcharStruct2);
+    ASSERT_TRUE(stringStruct1 == stringStruct2);
+    ASSERT_TRUE(wstringStruct1 == wstringStruct2);
+    ASSERT_TRUE(largeStringStruct1 == largeStringStruct2);
+    ASSERT_TRUE(largeWStringStruct1 == largeWStringStruct2);
+    ASSERT_TRUE(arrayStruct1 == arrayStruct2);
+    ASSERT_TRUE(arrayArrayStruct1 == arrayArrayStruct2);
+    ASSERT_TRUE(sequenceStruct1 == sequenceStruct2);
+    ASSERT_TRUE(sequenceSequenceStruct1 == sequenceSequenceStruct2);
+    ASSERT_TRUE(mapStruct1 == mapStruct2);
+    ASSERT_TRUE(mapMapStruct1 == mapMapStruct2);
+    ASSERT_TRUE(structStruct1 == structStruct2);
+    ASSERT_TRUE(structStructStruct1 == structStructStruct2);
+    ASSERT_TRUE(simpleUnion1 == simpleUnion2);
+    ASSERT_TRUE(unionUnion1 == unionUnion2);
+    ASSERT_TRUE(wCharUnion1 == wCharUnion2);
+    ASSERT_TRUE(unionUnionStruct1 == unionUnionStruct2);
+    ASSERT_TRUE(enum2 == aliasEnum2);
+
+    // Compare some not equals
+    ASSERT_FALSE(aliasAliasEnum1 == boolStruct1);
+    ASSERT_FALSE(octetStruct1 == shortStruct1);
+    ASSERT_FALSE(longStruct1 == longLongStruct1);
+    ASSERT_FALSE(uShortStruct1 == uLongStruct1);
+    ASSERT_FALSE(uLongStruct1 == uLongLongStruct2);
+    ASSERT_FALSE(floatStruct1 == doubleStruct1);
+    ASSERT_FALSE(doubleStruct1 == longDoubleStruct2);
+    ASSERT_FALSE(charStruct1 == wcharStruct1);
+    ASSERT_FALSE(stringStruct1 == wstringStruct1);
+    ASSERT_FALSE(stringStruct1 == largeStringStruct2);
+    ASSERT_FALSE(wstringStruct1 == largeWStringStruct2);
+    ASSERT_FALSE(arrayStruct1 == arrayArrayStruct1);
+    ASSERT_FALSE(sequenceStruct1 == sequenceSequenceStruct1);
+    ASSERT_FALSE(mapStruct1 == mapMapStruct1);
+    ASSERT_FALSE(structStruct1 == structStructStruct1);
+    ASSERT_FALSE(simpleUnion1 == unionUnion1);
+    ASSERT_FALSE(unionUnion1 == wCharUnion2);
+    ASSERT_FALSE(unionUnionStruct1 == unionUnion1);
 }
 
 int main(int argc, char **argv)

@@ -39,6 +39,7 @@ protected:
     friend class AnnotationDescriptor;
     friend class TypeObjectFactory;
     friend class DynamicTypeMember;
+    friend class DynamicDataHelper;
 
     DynamicType();
 
@@ -105,49 +106,49 @@ protected:
     bool is_key_defined_;
 
 public:
-    bool equals(const DynamicType* other) const;
+    RTPS_DllAPI bool equals(const DynamicType* other) const;
 
-    ResponseCode get_all_members(std::map<MemberId, DynamicTypeMember*>& members);
+    RTPS_DllAPI ResponseCode get_all_members(std::map<MemberId, DynamicTypeMember*>& members);
 
-    ResponseCode get_all_members_by_name(std::map<std::string, DynamicTypeMember*>& members);
+    RTPS_DllAPI ResponseCode get_all_members_by_name(std::map<std::string, DynamicTypeMember*>& members);
 
-    uint32_t get_bounds(uint32_t index = 0) const;
+    RTPS_DllAPI uint32_t get_bounds(uint32_t index = 0) const;
 
-    uint32_t get_bounds_size() const;
+    RTPS_DllAPI uint32_t get_bounds_size() const;
 
-    ResponseCode get_descriptor(TypeDescriptor* descriptor) const;
+    RTPS_DllAPI ResponseCode get_descriptor(TypeDescriptor* descriptor) const;
 
-    const TypeDescriptor* get_descriptor() const;
+    RTPS_DllAPI const TypeDescriptor* get_descriptor() const;
 
-    TypeDescriptor* get_descriptor();
+    RTPS_DllAPI TypeDescriptor* get_descriptor();
 
-    bool key_annotation() const;
+    RTPS_DllAPI bool key_annotation() const;
 
-    inline TypeKind get_kind() const
+    RTPS_DllAPI inline TypeKind get_kind() const
     {
         return kind_;
     }
 
-    std::string get_name() const;
+    RTPS_DllAPI std::string get_name() const;
 
-    MemberId get_members_count() const;
+    RTPS_DllAPI MemberId get_members_count() const;
 
-    uint32_t get_total_bounds() const;
+    RTPS_DllAPI uint32_t get_total_bounds() const;
 
-    const TypeDescriptor* get_type_descriptor() const
+    RTPS_DllAPI const TypeDescriptor* get_type_descriptor() const
     {
         return descriptor_;
     }
 
-    bool has_children() const;
+    RTPS_DllAPI bool has_children() const;
 
-    bool is_consistent() const;
+    RTPS_DllAPI bool is_consistent() const;
 
-    bool is_complex_kind() const;
+    RTPS_DllAPI bool is_complex_kind() const;
 
-    bool is_discriminator_type() const;
+    RTPS_DllAPI bool is_discriminator_type() const;
 
-    size_t get_size() const;
+    RTPS_DllAPI size_t get_size() const;
 
 };
 

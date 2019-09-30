@@ -17,8 +17,8 @@
  *
  */
 
-#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
-#include <fastrtps/rtps/messages/CDRMessage.h>
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastrtps/qos/ParameterList.h>
 
 #include <fastrtps/log/Log.h>
@@ -176,7 +176,7 @@ bool RTPSMessageCreator::addSubmessageInfoTS_Now(CDRMessage_t* msg,bool invalida
 } /* namespace eprosima */
 
 
-#include "submessages/DataMsg.hpp"
-#include "submessages/HeartbeatMsg.hpp"
-#include "submessages/AckNackMsg.hpp"
-#include "submessages/GapMsg.hpp"
+#include <rtps/messages/submessages/DataMsg.hpp>
+#include <rtps/messages/submessages/HeartbeatMsg.hpp>
+#include <rtps/messages/submessages/AckNackMsg.hpp>
+#include <rtps/messages/submessages/GapMsg.hpp>

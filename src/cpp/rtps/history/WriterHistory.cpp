@@ -16,11 +16,11 @@
  *
  */
 
-#include <fastrtps/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/WriterHistory.h>
 
 #include <fastrtps/log/Log.h>
-#include <fastrtps/rtps/writer/RTPSWriter.h>
-#include <fastrtps/rtps/common/WriteParams.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/common/WriteParams.h>
 
 #include <mutex>
 

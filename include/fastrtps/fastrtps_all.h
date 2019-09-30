@@ -24,32 +24,32 @@
 //DO NOT INCLUDE IN PROJETCTS WERE COMPILATION TIME OR SIZE IS REVELANT
 //SINCE IT INCLUDES ALL NECESSARY HEADERS.
 
-#include "rtps/common/all_common.h"
+#include <fastdds/rtps/common/all_common.h>
 
-#include "Domain.h"
+#include <fastrtps/Domain.h>
 
-#include "participant/Participant.h"
-#include "participant/ParticipantListener.h"
-#include "publisher/Publisher.h"
-#include "subscriber/Subscriber.h"
-#include "publisher/PublisherListener.h"
-#include "subscriber/SubscriberListener.h"
+#include <fastrtps/participant/Participant.h>
+#include <fastrtps/participant/ParticipantListener.h>
+#include <fastrtps/publisher/Publisher.h>
+#include <fastrtps/subscriber/Subscriber.h>
+#include <fastrtps/publisher/PublisherListener.h>
+#include <fastrtps/subscriber/SubscriberListener.h>
 
 
-#include "attributes/ParticipantAttributes.h"
-#include "attributes/PublisherAttributes.h"
-#include "attributes/SubscriberAttributes.h"
+#include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
 
-#include "subscriber/SampleInfo.h"
-#include "TopicDataType.h"
+#include <fastrtps/subscriber/SampleInfo.h>
+#include <fastrtps/TopicDataType.h>
 
-#include "utils/IPFinder.h"
-#include "utils/TimeConversion.h"
+#include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/TimeConversion.h>
 
-#include "qos/ParameterList.h"
-#include "qos/QosPolicies.h"
+#include <fastrtps/qos/ParameterList.h>
+#include <fastrtps/qos/QosPolicies.h>
 
-#include "log/Log.h"
+#include <fastrtps/log/Log.h>
 
 
 #endif /* FASTRTPS_ALL_H_ */

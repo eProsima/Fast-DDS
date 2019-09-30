@@ -20,50 +20,6 @@
 #ifndef __RTPS_WRITER_WRITERDISCOVERYINFO_H__
 #define __RTPS_WRITER_WRITERDISCOVERYINFO_H__
 
-#include "../../fastrtps_dll.h"
-#include "../builtin/data/WriterProxyData.h"
-
-namespace eprosima {
-namespace fastrtps {
-namespace rtps {
-
-/**
-* Class WriterDiscoveryInfo with discovery information of the writer.
-* @ingroup RTPS_MODULE
-*/
-struct WriterDiscoveryInfo
-{
-    public:
-
-        //!Enum DISCOVERY_STATUS, four different status for discovered writers.
-        //!@ingroup RTPS_MODULE
-#if defined(_WIN32)
-        enum RTPS_DllAPI DISCOVERY_STATUS
-#else
-        enum  DISCOVERY_STATUS
-#endif
-        {
-            DISCOVERED_WRITER,
-            CHANGED_QOS_WRITER,
-            REMOVED_WRITER
-        };
-
-        WriterDiscoveryInfo(const WriterProxyData& data)
-            : status(DISCOVERED_WRITER)
-            , info(data)
-        {}
-
-        virtual ~WriterDiscoveryInfo() {}
-
-        //! Status
-        DISCOVERY_STATUS status;
-
-        //! Participant discovery info
-        const WriterProxyData& info;
-};
-
-}
-}
-}
+#include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
 
 #endif // __RTPS_WRITER_WRITERDISCOVERYINFO_H__

@@ -34,22 +34,23 @@
 #include <unistd.h>
 #endif
 
-#include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastrtps/rtps/common/Guid.h>
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/rtps/network/NetworkFactory.h>
-#include <fastrtps/rtps/network/ReceiverResource.h>
-#include <fastrtps/rtps/network/SenderResource.h>
-#include <fastrtps/rtps/messages/MessageReceiver.h>
-#include <fastrtps/rtps/resources/ResourceEvent.h>
-#include <fastrtps/rtps/resources/AsyncWriterThread.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+
+#include <fastdds/rtps/network/NetworkFactory.h>
+#include <fastdds/rtps/network/ReceiverResource.h>
+#include <fastdds/rtps/network/SenderResource.h>
+#include <fastdds/rtps/messages/MessageReceiver.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/resources/AsyncWriterThread.h>
 
 #if HAVE_SECURITY
-#include <fastrtps/rtps/Endpoint.h>
-#include <fastrtps/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
-#include "../security/SecurityManager.h"
+#include <fastdds/rtps/Endpoint.h>
+#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <rtps/security/SecurityManager.h>
 #endif
 
 namespace eprosima {
@@ -270,15 +271,32 @@ public:
 
     WLP* wlp();
 
-    bool get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo);
-
-    bool get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo);
-
     NetworkFactory& network_factory() { return m_network_Factory; }
 
     uint32_t get_min_network_send_buffer_size() { return m_network_Factory.get_min_send_buffer_size(); }
 
     AsyncWriterThread& async_thread() { return async_thread_; }
+
+    /**
+     * @brief Fills a new entityId if set to unknown, or checks if a entity already exists with that
+     * entityId in other case.
+     * @param entityId to check of fill. If filled, EntityKind will be "vendor-specific" (0x01)
+     * @return True if filled or the entityId is available.
+     */
+    bool get_new_entity_id(
+            EntityId_t& entityId);
+
+    void set_check_type_function(
+            std::function<bool(const std::string&)>&& check_type);
+
+    bool check_type(const std::string& type_name)
+    {
+        if (type_check_fn_ != nullptr)
+        {
+            return type_check_fn_(type_name);
+        }
+        return false;
+    }
 
 private:
     //!Attributes of the RTPSParticipant
@@ -310,6 +328,8 @@ private:
     NetworkFactory m_network_Factory;
     //!Async writer thread
     AsyncWriterThread async_thread_;
+    //! Type cheking function
+    std::function<bool(const std::string&)> type_check_fn_;
 
 #if HAVE_SECURITY
     // Security manager

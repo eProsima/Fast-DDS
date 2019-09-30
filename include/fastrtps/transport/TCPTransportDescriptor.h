@@ -15,7 +15,7 @@
 #ifndef TCP_TRANSPORT_DESCRIPTOR_H
 #define TCP_TRANSPORT_DESCRIPTOR_H
 
-#include "./SocketTransportDescriptor.h"
+#include <fastrtps/transport/SocketTransportDescriptor.h>
 #include <fastrtps/fastrtps_dll.h>
 #include <iostream>
 

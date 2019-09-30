@@ -17,12 +17,12 @@
  *
  */
 
-#include <fastrtps/rtps/writer/RTPSWriter.h>
-#include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <fastrtps/log/Log.h>
-#include "../participant/RTPSParticipantImpl.h"
-#include "../flowcontrol/FlowController.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/flowcontrol/FlowController.h>
 
 #include <mutex>
 
@@ -32,11 +32,11 @@ namespace rtps {
 
 
 RTPSWriter::RTPSWriter(
-        RTPSParticipantImpl* impl, 
-        const GUID_t& guid, 
-        const WriterAttributes& att, 
-        WriterHistory* hist, 
-        WriterListener* listen) 
+        RTPSParticipantImpl* impl,
+        const GUID_t& guid,
+        const WriterAttributes& att,
+        WriterHistory* hist,
+        WriterListener* listen)
     : Endpoint(impl, guid, att.endpoint)
     , m_pushMode(true)
     , m_cdrmessages(impl->getMaxMessageSize() > att.throughputController.bytesPerPeriod ?

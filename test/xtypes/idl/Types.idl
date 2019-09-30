@@ -1,0 +1,271 @@
+// Enum
+
+enum MyEnum
+{
+    A,
+    B,
+    C
+};
+
+enum MyBadEnum
+{
+    A1,
+    B1,
+    C1
+};
+
+struct MyEnumStruct
+{
+    MyEnum my_enum;
+};
+
+struct MyBadEnumStruct
+{
+    MyBadEnum my_enum;
+};
+
+// Alias
+
+typedef MyEnum MyAliasEnum;
+
+struct MyAliasEnumStruct
+{
+    MyAliasEnum my_enum; // Keep same name
+};
+
+// All basic types
+
+struct BasicStruct
+{
+    boolean my_bool;
+    long my_int32;
+    string my_string;
+};
+
+struct BasicNamesStruct
+{
+    boolean my_bool_name;
+    long my_int32_name;
+    string my_string_name;
+};
+
+struct BasicBadStruct
+{
+    octet my_bool;
+    long my_int32;
+    string my_string;
+};
+
+// Wide Struct
+
+struct BasicWideStruct
+{
+    boolean my_bool;
+    long my_int32;
+    string my_string;
+    long new_int32;
+    string new_string;
+};
+
+// Bad Wide Struct
+
+struct BadBasicWideStruct
+{
+    long new_int32;
+    string new_string;
+    boolean my_bool;
+    long my_int32;
+    string my_string;
+};
+
+// String bounds
+
+struct StringStruct
+{
+    string my_string;
+};
+
+struct LargeStringStruct
+{
+    string<41925> my_large_string;
+};
+
+// WString bounds
+
+struct WStringStruct
+{
+    wstring my_wstring;
+};
+
+struct LargeWStringStruct
+{
+    wstring<41925> my_large_wstring;
+};
+
+// Array dimensions and size
+
+struct ArrayStruct
+{
+    long my_array[2];
+};
+
+struct ArrayStructEqual
+{
+    long my_array_equal[2];
+};
+
+struct ArrayBadStruct
+{
+    octet my_array[2];
+};
+
+struct ArrayDimensionsStruct
+{
+    long my_array[2][2];
+};
+
+struct ArraySizeStruct
+{
+    long my_array[5];
+};
+
+// Sequence bounds
+
+struct SequenceStruct
+{
+    sequence<long, 2> my_sequence;
+};
+
+struct SequenceStructEqual
+{
+    sequence<long, 2> my_sequence_equal;
+};
+
+struct SequenceBadStruct
+{
+    sequence<octet, 2> my_sequence;
+};
+
+struct SequenceBoundsStruct
+{
+    sequence<long, 4> my_sequence;
+};
+
+struct SequenceSequenceStruct
+{
+    sequence<sequence<long, 2>, 3> my_sequence_sequence;
+};
+
+struct SequenceSequenceBoundsStruct
+{
+    sequence<sequence<long, 5>, 5> my_sequence_sequence;
+};
+
+// Map bounds
+
+struct MapStruct
+{
+    map<long, long, 2> my_map;
+};
+
+struct MapStructEqual
+{
+    map<long, long, 2> my_map_equal;
+};
+
+struct MapBadKeyStruct
+{
+    map<octet, long, 2> my_map;
+};
+
+struct MapBadElemStruct
+{
+    map<long, long long, 2> my_map;
+};
+
+struct MapBoundsStruct
+{
+    map<long, long, 4> my_map;
+};
+
+struct MapMapStruct
+{
+    map<long, map<long, long, 2> , 2> my_map_map;
+};
+
+struct MapMapBoundsStruct
+{
+    map<long, map<long, long, 3> , 3> my_map_map;
+};
+
+// Unions
+
+union SimpleUnion switch (long)
+{
+    case A:
+        long first;
+    case B:
+        long long second;
+};
+
+union SimpleUnionNames switch (long)
+{
+    case A:
+        long first_case;
+    case B:
+        long long second_case;
+};
+
+union SimpleTypeUnion switch (long)
+{
+    case A:
+        octet first;
+    case B:
+        long long second;
+};
+
+union SimpleBadUnion switch (long)
+{
+    case A:
+        long first;
+    case C:
+        long long second;
+};
+
+union SimpleBadDiscUnion switch (octet)
+{
+    case 0:
+        long first;
+    case 1:
+        long long second;
+};
+
+struct SimpleUnionStruct
+{
+    SimpleUnion my_union;
+};
+
+struct SimpleUnionStructEqual
+{
+    SimpleUnion my_union_equal;
+};
+
+struct SimpleUnionNamesStruct
+{
+    SimpleUnionNames my_union;
+};
+
+struct SimpleTypeUnionStruct
+{
+    SimpleTypeUnion my_union;
+};
+
+struct SimpleBadUnionStruct
+{
+    SimpleBadUnion my_union;
+};
+
+struct SimplBadDiscUnionStruct
+{
+    SimpleBadDiscUnion my_union;
+};

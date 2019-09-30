@@ -30,13 +30,17 @@ class TypeObjectFactory
 private:
     mutable std::recursive_mutex m_MutexIdentifiers;
     mutable std::recursive_mutex m_MutexObjects;
+    mutable std::recursive_mutex m_MutexInformations;
 
 protected:
     TypeObjectFactory();
-    std::map<const std::string, const TypeIdentifier*> identifiers_; // Basic, builtin and EK_MINIMAL
+    mutable std::map<const std::string, const TypeIdentifier*> identifiers_; // Basic, builtin and EK_MINIMAL
     std::map<const std::string, const TypeIdentifier*> complete_identifiers_; // Only EK_COMPLETE
     std::map<const TypeIdentifier*, const TypeObject*> objects_; // EK_MINIMAL
     std::map<const TypeIdentifier*, const TypeObject*> complete_objects_; // EK_COMPLETE
+    mutable std::vector<TypeIdentifier*> identifiers_created_;
+    mutable std::map<const TypeIdentifier*, TypeInformation*> informations_;
+    mutable std::vector<TypeInformation*> informations_created_;
     std::map<std::string, std::string> aliases_; // Aliases
 
     DynamicType_ptr build_dynamic_type(
@@ -44,11 +48,17 @@ protected:
             const TypeObject* object,
             const DynamicType_ptr annotation_member_type = nullptr) const;
 
-    const TypeIdentifier* try_get_complete(const TypeIdentifier* identifier) const;
+    const TypeIdentifier* try_get_complete(
+            const TypeIdentifier* identifier) const;
 
-    const TypeIdentifier* get_stored_type_identifier(const TypeIdentifier* identifier) const;
+    const TypeIdentifier* get_stored_type_identifier(
+            const TypeIdentifier* identifier) const;
 
-    void nullify_all_entries(const TypeIdentifier* identifier);
+    std::string generate_name_and_store_type_identifier(
+            const TypeIdentifier* identifier) const;
+
+    void nullify_all_entries(
+            const TypeIdentifier* identifier);
 
     void create_builtin_annotations();
 
@@ -65,6 +75,14 @@ protected:
             const DynamicType_ptr annotation_descriptor_type,
             const NameHash& hash) const;
 
+    void fill_minimal_information(
+            TypeInformation* info,
+            const TypeIdentifier* ident) const;
+
+    void fill_complete_information(
+            TypeInformation* info,
+            const TypeIdentifier* ident) const;
+
 public:
     RTPS_DllAPI static TypeObjectFactory* get_instance();
 
@@ -72,25 +90,34 @@ public:
 
     ~TypeObjectFactory();
 
+    RTPS_DllAPI const TypeInformation* get_type_information(
+            const std::string &type_name) const;
+
     RTPS_DllAPI const TypeObject* get_type_object(
             const std::string& type_name,
             bool complete = false) const;
 
-    RTPS_DllAPI const TypeObject* get_type_object(const TypeIdentifier* identifier) const;
+    RTPS_DllAPI const TypeObject* get_type_object(
+            const TypeIdentifier* identifier) const;
 
-    RTPS_DllAPI TypeKind get_type_kind(const std::string& type_name) const;
+    RTPS_DllAPI TypeKind get_type_kind(
+            const std::string& type_name) const;
 
-    RTPS_DllAPI std::string get_type_name(const TypeKind kind) const;
+    RTPS_DllAPI std::string get_type_name(
+            const TypeKind kind) const;
 
-    RTPS_DllAPI std::string get_type_name(const TypeIdentifier* identifier) const;
+    RTPS_DllAPI std::string get_type_name(
+            const TypeIdentifier* identifier) const;
 
-    RTPS_DllAPI const TypeIdentifier* get_primitive_type_identifier(TypeKind kind) const;
+    RTPS_DllAPI const TypeIdentifier* get_primitive_type_identifier(
+            TypeKind kind) const;
 
     RTPS_DllAPI const TypeIdentifier* get_type_identifier(
             const std::string& type_name,
             bool complete = false) const;
 
-    RTPS_DllAPI const TypeIdentifier* get_type_identifier_trying_complete(const std::string& type_name) const;
+    RTPS_DllAPI const TypeIdentifier* get_type_identifier_trying_complete(
+            const std::string& type_name) const;
 
     RTPS_DllAPI const TypeIdentifier* get_string_identifier(
             uint32_t bound,
@@ -116,6 +143,9 @@ public:
             const std::string& name,
             const TypeIdentifier* identifier,
             const TypeObject* object = nullptr) const;
+
+    RTPS_DllAPI bool is_type_identifier_complete(
+            const TypeIdentifier* identifier) const;
 
     RTPS_DllAPI void add_type_identifier(
             const std::string& type_name,

@@ -40,6 +40,8 @@ namespace eprosima
 namespace eprosima {
 namespace fastrtps {
 
+class TypeConsistencyEnforcementQosPolicy;
+
 namespace types {
 
 typedef octet TypeIdentiferKind;
@@ -379,6 +381,9 @@ public:
      * Equals
      * */
     bool operator==(const TypeIdentifier &other) const;
+
+    RTPS_DllAPI bool consistent(const TypeIdentifier &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 private:
     octet m__d;

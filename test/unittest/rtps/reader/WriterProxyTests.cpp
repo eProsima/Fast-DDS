@@ -21,7 +21,7 @@
     FRIEND_TEST(WriterProxyTests, ReceivedChangeSet); \
     FRIEND_TEST(WriterProxyTests, IrrelevantChangeSet);
 
-#include "WriterProxy.h"
+#include <rtps/reader/WriterProxy.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>

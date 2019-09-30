@@ -17,14 +17,14 @@
  *
  */
 
-#include <fastrtps/rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPClient.h>
+#include <fastdds/rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPClient.h>
 
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 
-#include <fastrtps/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
 
-#include "../../../../participant/RTPSParticipantImpl.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <fastrtps/log/Log.h>
 
@@ -37,7 +37,7 @@ namespace rtps {
 DSClientEvent::DSClientEvent(
         PDPClient* p_PDP,
         double interval)
-    : TimedEvent(p_PDP->getRTPSParticipant()->getEventResource(), 
+    : TimedEvent(p_PDP->getRTPSParticipant()->getEventResource(),
         [this](EventCode code)
         {
             return event(code);
@@ -74,7 +74,7 @@ bool DSClientEvent::event(EventCode code)
             }
         }
         else
-        { 
+        {
             // Not all servers have yet received our DATA(p) thus resend
             mp_PDP->_serverPing = true;
             mp_PDP->announceParticipantState(false);

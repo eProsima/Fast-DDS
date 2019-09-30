@@ -17,15 +17,15 @@
  *
  */
 
-#include <fastrtps/rtps/messages/MessageReceiver.h>
+#include <fastdds/rtps/messages/MessageReceiver.h>
 
-#include <fastrtps/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 
-#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
 
-#include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
 
-#include "../participant/RTPSParticipantImpl.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <mutex>
 
