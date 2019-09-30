@@ -117,7 +117,7 @@ public:
     const xtypes::MemberType& member(
             const std::string &s)const
     {
-        auto retval= find_if(
+        auto retval = find_if(
                         members_.begin(),
                         members_.end(),
                         [&](const xtypes::MemberType &m){return m.name() == s ;});
