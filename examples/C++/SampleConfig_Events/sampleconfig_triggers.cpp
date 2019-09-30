@@ -115,4 +115,6 @@ void triggers(){
         std::cout << std::to_string(my_sample.index()) << " ";
     }
     std::cout << std::endl;
+
+    Domain::stopAll();
 }
