@@ -27,7 +27,7 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
-template<typename T>
+template<typename>
 struct dynamic_type_traits
 {
     static constexpr TypeKind TYPE_ID = TypeKind::NO_TYPE;
@@ -41,9 +41,9 @@ class TPrimitiveType : public TDynamicType<DELEGATE>
 {
 public:
     TPrimitiveType()
-        : DynamicType(
-                dynamic_type_traits<T>::TYPE_ID,
-                dynamic_type_traits<T>::NAME)
+        : TDynamicType<DELEGATE>(
+                dynamic_type_traits<T>::NAME,
+                dynamic_type_traits<T>::TYPE_ID)
     {
     }
 };
