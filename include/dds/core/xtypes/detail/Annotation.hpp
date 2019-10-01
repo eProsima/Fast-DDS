@@ -150,7 +150,10 @@ public:
             const std::string &vbt):
         Annotation(AnnotationKind::VERBATIM_ANNOTATION_TYPE),
         vbt_(vbt)
-    {
+    VerbatimAnnotation(
+            const std::string &vbt)
+        : Annotation(AnnotationKind::VERBATIM_ANNOTATION_TYPE)
+        , vbt_(vbt)
     }
 
     void vbt(const std::string &vbt)
