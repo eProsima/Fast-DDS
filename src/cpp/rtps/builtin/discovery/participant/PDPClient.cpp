@@ -176,7 +176,7 @@ bool PDPClient::init(RTPSParticipantImpl* part)
 
 ParticipantProxyData* PDPClient::createParticipantProxyData(
     const ParticipantProxyData& participant_data,
-    const CacheChange_t&)
+    const GUID_t&)
 {
     std::unique_lock<std::recursive_mutex> lock(*getMutex());
 

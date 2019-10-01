@@ -53,6 +53,7 @@ void PDPServerListener::onNewCacheChangeAdded(
         const CacheChange_t* const change_in)
 {
     CacheChange_t* change = (CacheChange_t*)(change_in);
+    GUID_t writer_guid = change->writerGUID;
     logInfo(RTPS_PDP,"SPDP Message received");
 
     if(change->instanceHandle == c_InstanceHandle_Unknown)
@@ -115,7 +116,7 @@ void PDPServerListener::onNewCacheChangeAdded(
             if(pdata == nullptr)
             {
                 // Create a new one when not found
-                pdata = parent_pdp_->createParticipantProxyData(temp_participant_data_, *change);
+                pdata = parent_pdp_->createParticipantProxyData(temp_participant_data_, writer_guid);
                 if (pdata != nullptr)
                 {
                     lock.unlock();
