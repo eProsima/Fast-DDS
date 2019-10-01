@@ -186,7 +186,10 @@ class BitBoundAnnotation : public  Annotation
             uint32_t bsb ):
         Annotation(AnnotationKind::BITSETBOUND_ANNOTATION_TYPE),
         bsb_(bsb)
-    {
+        BitBoundAnnotation(
+                uint32_t bsb )
+            : Annotation(AnnotationKind::BITSETBOUND_ANNOTATION_TYPE)
+            , bsb_(bsb)
     }
 
     uint32_t bsb() const noexcept { return bsb_ ; }
