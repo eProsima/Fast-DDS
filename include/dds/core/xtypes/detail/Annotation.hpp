@@ -138,7 +138,8 @@ private:
 class MustUnderstandAnnotation : public  Annotation
 {
     MustUnderstandAnnotation():
-        Annotation(AnnotationKind::MUST_UNDERSTAND_ANNOTATION_TYPE)
+        MustUnderstandAnnotation()
+            : Annotation(AnnotationKind::MUST_UNDERSTAND_ANNOTATION_TYPE)
     {}
 };
 
