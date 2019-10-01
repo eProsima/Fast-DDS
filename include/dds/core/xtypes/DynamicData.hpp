@@ -41,12 +41,12 @@ template<
         typename DELEGATE_TYPE>
 class TDynamicData : Reference<DELEGATE>
 {
-public:
     OMG_DDS_REF_TYPE_PROTECTED_DC(
             TDynamicData,
             Reference,
             DELEGATE)
 
+public:
     TDynamicData(
             const TDynamicType<DELEGATE_TYPE>& type)
     {
