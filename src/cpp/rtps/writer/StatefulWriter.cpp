@@ -901,13 +901,15 @@ void StatefulWriter::check_acked_status()
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
     bool all_acked = true;
+    bool has_min_low_mark = false;
     SequenceNumber_t min_low_mark;
 
     for(const ReaderProxy* it : matched_readers_)
     {
         SequenceNumber_t reader_low_mark = it->changes_low_mark();
-        if(min_low_mark == SequenceNumber_t() || reader_low_mark < min_low_mark)
+        if(reader_low_mark < min_low_mark || !has_min_low_mark)
         {
+            has_min_low_mark = true;
             min_low_mark = reader_low_mark;
         }
 
