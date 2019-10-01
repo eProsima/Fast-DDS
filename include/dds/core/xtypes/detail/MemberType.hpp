@@ -138,7 +138,7 @@ public:
                             [&]( xtypes::Annotation &a)
                                 { return (a.akind() == annotation_kind) ;} ) ;
 
-        if(retVal == ann_.end())
+        if (retVal == ann_.end())
         {
             return false ;
         }
