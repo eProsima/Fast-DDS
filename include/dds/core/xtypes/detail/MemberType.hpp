@@ -37,7 +37,7 @@ public:
             const std::string &name,
             xtypes::DynamicType &dt):
         name_(name),
-        dt_(dt.name(),dt.kind(), dt.annotations()),
+        dt_(dt),
         ann_()
     {
     }
@@ -47,7 +47,7 @@ public:
             xtypes::DynamicType &dt,
             xtypes::Annotation &a):
         name_(name),
-        dt_(dt.name(),dt.kind(), dt.annotations()),
+        dt_(dt),
         ann_()
     {
         ann_.push_back(a) ;
@@ -65,7 +65,7 @@ public:
         dt_ = dt ;
     }
 
-    void annotation(
+    void annotations(
             std::vector<xtypes::Annotation> &ann)
     {
         ann_.reserve(ann.size() + ann_.size()) ;
@@ -76,7 +76,7 @@ public:
     }
 
     template<typename AnnoIter>
-    void annotation(
+    void annotations(
             AnnoIter begin,
             AnnoIter end)
     {
@@ -103,7 +103,7 @@ public:
         return dt_ ;
     }
 
-    const std::vector< xtypes::Annotation >& annotation()
+    const std::vector<xtypes::Annotation>& annotations()
     {
         return ann_ ;
     }
@@ -141,8 +141,8 @@ public:
         return true ;
     }
 
-    bool findAnnotation(
-            AnnotationKind &annotation_kind)
+    bool find_annotation(
+            AnnotationKind& annotation_kind)
     {
         return ann_.end() ==  std::find_if(
                                     ann_.begin(),
@@ -154,37 +154,37 @@ public:
     bool is_optional()
     {
         AnnotationKind  a = AnnotationKind_def::Type::OPTIONAL_ANNOTATION_TYPE ;
-        return findAnnotation(a) ;
+        return find_annotation(a) ;
     }
 
     bool is_shared()
     {
         AnnotationKind a = AnnotationKind_def::Type::SHARED_ANNOTATION_TYPE ;
-        return findAnnotation(a) ;
+        return find_annotation(a) ;
     }
 
     bool is_key()
     {
         AnnotationKind a = AnnotationKind_def::Type::KEY_ANNOTATION_TYPE ;
-        return findAnnotation(a) ;
+        return find_annotation(a) ;
     }
 
     bool is_must_understand()
     {
         AnnotationKind a = AnnotationKind_def::Type::MUST_UNDERSTAND_ANNOTATION_TYPE ;
-        return findAnnotation(a) ;
+        return find_annotation(a) ;
     }
 
     bool is_bitset()
     {
         AnnotationKind a = AnnotationKind_def::Type::BITSET_ANNOTATION_TYPE ;
-        return findAnnotation(a) ;
+        return find_annotation(a) ;
     }
 
     bool has_bitbound()
     {
         AnnotationKind a = AnnotationKind_def::Type::BITSETBOUND_ANNOTATION_TYPE ;
-        return findAnnotation(a) ;
+        return find_annotation(a) ;
     }
 /*
     uint32_t get_bitbound()
@@ -200,7 +200,7 @@ public:
     bool has_id()
     {
         AnnotationKind a = AnnotationKind_def::Type::ID_ANNOTATION_TYPE ;
-        return findAnnotation(a) ;
+        return find_annotation(a) ;
     }
 
     uint32_t get_id()

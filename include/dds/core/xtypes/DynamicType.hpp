@@ -36,20 +36,21 @@ class TDynamicType : public Reference<DELEGATE>
             TDynamicType,
             Reference,
             DELEGATE)
+
 public:
     const std::string& name() const
     {
-        return impl()->name() ;
+        return impl()->name();
     }
 
     TypeKind kind() const
     {
-        return impl()->kind() ;
+        return impl()->kind();
     }
 
     const std::vector<Annotation>& annotations() const
     {
-        return impl()->annotations() ;
+        return impl()->annotations();
     }
 
     bool operator ==(
@@ -63,31 +64,34 @@ public:
     {
         return !(*this == that);
     }
+
     bool is_primitive_type()
     {
-        return (impl()->kind().underlying() & 0x4000 ) != 0  ;
+        return (impl()->kind().underlying() & 0x4000 ) != 0;
     }
+
     bool is_collection_type()
     {
-        return (impl()->kind().underlying() & 0x0200 ) != 0  ;
+        return (impl()->kind().underlying() & 0x0200 ) != 0;
     }
+
     bool is_aggregation_type()
     {
-        return (impl()->kind().underlying() & 0x0100 ) != 0  ;
+        return (impl()->kind().underlying() & 0x0100 ) != 0;
     }
+
     bool is_constructed_type()
     {
-        return (impl()->kind().underlying() & 0x8000 ) != 0  ;
+        return (impl()->kind().underlying() & 0x8000 ) != 0;
     }
-#if(0)
+
 protected:
-#endif
     TDynamicType(
             const std::string& name,
             TypeKind kind)
     {
-        impl()->name(name) ;
-        impl()->kind(kind) ;
+        impl()->name(name);
+        impl()->kind(kind);
     }
 
     TDynamicType(
@@ -95,9 +99,9 @@ protected:
             TypeKind kind,
             const Annotation& annotation)
     {
-        impl()->name(name) ;
-        impl()->kind(kind) ;
-        impl()->annotation(annotation) ;
+        impl()->name(name);
+        impl()->kind(kind);
+        impl()->annotation(annotation);
     }
 
     TDynamicType(
@@ -122,6 +126,7 @@ protected:
         impl()->annotation(begin, end) ;
     }
 
+public:
     TDynamicType(
             const TDynamicType& other) = default;
 };
