@@ -39,7 +39,12 @@ public:
         name_(name),
         dt_(dt),
         ann_()
-    {
+        MemberType(
+                const std::string &name,
+                xtypes::DynamicType &dt)
+            : name_(name)
+            , dt_(dt.name(),dt.kind(), dt.annotations())
+            , ann_()
     }
 
     MemberType(
