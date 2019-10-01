@@ -51,7 +51,7 @@ void PDPListener::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {
-    CacheChange_t* change = (CacheChange_t*)(change_in);
+    CacheChange_t* change = const_cast<CacheChange_t*>(change_in);
     GUID_t writer_guid = change->writerGUID;
     logInfo(RTPS_PDP,"SPDP Message received");
 

@@ -531,7 +531,10 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
     valid &= CDRMessage::readEntityId(msg,&readerID);
 
     //WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
-    if (!willAReaderAcceptMsgDirectedTo(readerID)) return false;
+    if (!willAReaderAcceptMsgDirectedTo(readerID))
+    {
+        return false;
+    }
 
     //FOUND THE READER.
     //We ask the reader for a cachechange to store the information.

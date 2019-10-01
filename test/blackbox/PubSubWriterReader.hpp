@@ -333,9 +333,11 @@ class PubSubWriterReader
             eprosima::fastrtps::Domain::removeParticipant(participant_);
     }
 
-    void init()
+    void init(bool avoid_multicast = true, uint32_t initial_pdp_count = 5)
     {
         //Create participant
+        participant_attr_.rtps.builtin.avoid_builtin_multicast = avoid_multicast;
+        participant_attr_.rtps.builtin.discovery_config.initial_announcements.count = initial_pdp_count;
         participant_attr_.rtps.builtin.domainId = (uint32_t)GET_PID() % 230;
         participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr_, &participant_listener_);
 
@@ -393,8 +395,8 @@ class PubSubWriterReader
     }
 
     bool isInitialized() const
-    { 
-        return initialized_; 
+    {
+        return initialized_;
     }
 
     void destroy()
@@ -667,7 +669,7 @@ class PubSubWriterReader
     std::set<eprosima::fastrtps::rtps::GUID_t> matched_readers_;
     std::atomic<bool> receiving_;
     type_support type_;
-	eprosima::fastrtps::rtps::SequenceNumber_t last_seq;
+    eprosima::fastrtps::rtps::SequenceNumber_t last_seq;
     size_t current_received_count_;
     size_t number_samples_expected_;
 #if HAVE_SECURITY

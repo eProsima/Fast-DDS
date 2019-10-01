@@ -177,9 +177,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
 
-    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
-    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
-
     // Initial peers
     if (m_att.builtin.initialPeersList.empty())
     {
@@ -250,6 +247,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     {
         logError(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
     }
+
+    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
+    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
+
     logInfo(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
 }
 
@@ -854,7 +855,7 @@ void RTPSParticipantImpl::createSenderResources(const LocatorList_t& locator_lis
 void RTPSParticipantImpl::createSenderResources(const Locator_t& locator)
 {
     std::unique_lock<std::timed_mutex> lock(m_send_resources_mutex_);
-    
+
     m_network_Factory.build_send_resources(send_resource_list_, locator);
 }
 
