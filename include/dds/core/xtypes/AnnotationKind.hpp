@@ -6,7 +6,7 @@
 
 namespace dds {
 namespace core {
-namespace xtypes{
+namespace xtypes {
 
 struct AnnotationKind_def
 {
