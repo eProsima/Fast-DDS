@@ -380,6 +380,11 @@ set_public_headers_directory(${PROJECT_SOURCE_DIR}/include ${PROJECT_NAME}
     COMPONENT headers
     INSTALL
     )
+set_public_headers_directory(${PROJECT_SOURCE_DIR}/include fastdds
+    DESTINATION ${INCLUDE_INSTALL_DIR}
+    COMPONENT headers
+    INSTALL
+    )
 
 # Install config.h header
 set_public_header(${PROJECT_BINARY_DIR}/include ${PROJECT_NAME} config.h
@@ -406,6 +411,7 @@ set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers" PARENT_SCOPE)
 set(CPACK_COMPONENT_HEADERS_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} C++ Headers" PARENT_SCOPE)
 
 # Install sources
+
 if(UNIX AND EPROSIMA_INSTALLER)
     install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/cpp
         DESTINATION src
