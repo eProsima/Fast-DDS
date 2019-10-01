@@ -214,7 +214,7 @@ public:
 
         // creting a generic IdAnnotation that will be filled by annotation_iterator()
         xtypes::IdAnnotation ida(0) ;
-        if(not annotation_iterator(a, ida))
+        if (not annotation_iterator(a, ida))
         {
             throw IllegalOperationError("No Id Annotation found") ;
         }
