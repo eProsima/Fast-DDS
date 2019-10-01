@@ -82,7 +82,8 @@ private:
 class KeyAnnotation : public  Annotation
 {
 public:
-    KeyAnnotation():
+    KeyAnnotation()
+        :Annotation(AnnotationKind::KEY_ANNOTATION_TYPE)
         Annotation(AnnotationKind::KEY_ANNOTATION_TYPE)
     {}
 };
