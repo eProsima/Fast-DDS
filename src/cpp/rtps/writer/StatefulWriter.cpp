@@ -950,9 +950,7 @@ void StatefulWriter::check_acked_status()
             next_all_acked_notify_sequence_ = current_seq;
         }
 
-        SequenceNumber_t calc = min_low_mark < get_seq_num_min() ? SequenceNumber_t() :
-            (min_low_mark - get_seq_num_min()) + 1;
-        if (calc > SequenceNumber_t())
+        if (min_low_mark >= get_seq_num_min())
         {
             may_remove_change_ = 1;
             may_remove_change_cond_.notify_one();
