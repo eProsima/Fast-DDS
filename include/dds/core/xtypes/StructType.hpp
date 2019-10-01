@@ -49,7 +49,7 @@ template<typename DELEGATE>
 class TStructType : public TDynamicType<DELEGATE>
 {
 
-    TStructType &parent_ts_ ;
+    TStructType& parent_ts_;
 public:
     explicit TStructType(
             const std::string& name)
@@ -61,7 +61,7 @@ public:
         const std::string& name,
         const std::vector<MemberType>& members)
     {
-        TDynamicType<DELEGATE>::impl()->name(name) ;
+        TDynamicType<DELEGATE>::impl()->name(name);
     }
 
     TStructType(
@@ -69,9 +69,9 @@ public:
         const TStructType& parent,
         const std::vector<MemberType>& members)
     {
-        TDynamicType<DELEGATE>::impl()->name(name) ;
-        parent_ts_ = parent ;
-        TDynamicType<DELEGATE>::impl()->members(members) ;
+        TDynamicType<DELEGATE>::impl()->name(name);
+        parent_ts_ = parent;
+        TDynamicType<DELEGATE>::impl()->members(members);
     }
 
     template<typename MemberIter>
@@ -81,9 +81,9 @@ public:
         const MemberIter& begin,
         const MemberIter& end)
     {
-        TDynamicType<DELEGATE>::impl()->name(name) ;
-        parent_ts_ = parent ;
-        TDynamicType<DELEGATE>::impl()->members(begin, end) ;
+        TDynamicType<DELEGATE>::impl()->name(name);
+        parent_ts_ = parent;
+        TDynamicType<DELEGATE>::impl()->members(begin, end);
     }
 
     TStructType(
@@ -92,10 +92,10 @@ public:
         const std::vector<MemberType>& members,
         const Annotation& annotation)
     {
-        TDynamicType<DELEGATE>::impl()->name(name) ;
-        parent_ts_ = parent ;
-        TDynamicType<DELEGATE>::impl()->members(members) ;
-        TDynamicType<DELEGATE>::impl()->annotation(annotation) ;
+        TDynamicType<DELEGATE>::impl()->name(name);
+        parent_ts_ = parent;
+        TDynamicType<DELEGATE>::impl()->members(members);
+        TDynamicType<DELEGATE>::impl()->annotation(annotation);
     }
 
     TStructType(
@@ -104,10 +104,10 @@ public:
         const std::vector<MemberType>& members,
         const std::vector<Annotation>& annotations)
     {
-        TDynamicType<DELEGATE>::impl()->name(name) ;
-        parent_ts_ = parent ;
-        TDynamicType<DELEGATE>::impl()->members(members) ;
-        TDynamicType<DELEGATE>::impl()->annotations(annotations) ;
+        TDynamicType<DELEGATE>::impl()->name(name);
+        parent_ts_ = parent;
+        TDynamicType<DELEGATE>::impl()->members(members);
+        TDynamicType<DELEGATE>::impl()->annotations(annotations);
     }
 
     template<
@@ -121,10 +121,10 @@ public:
         const AnnotationIter& annotation_begin,
         const AnnotationIter& annotation_end)
     {
-        TDynamicType<DELEGATE>::impl()->name(name) ;
-        parent_ts_ = parent ;
-        TDynamicType<DELEGATE>::impl()->members(member_begin, member_end) ;
-        TDynamicType<DELEGATE>::impl()->annotations(annotation_begin, annotation_end) ;
+        TDynamicType<DELEGATE>::impl()->name(name);
+        parent_ts_ = parent;
+        TDynamicType<DELEGATE>::impl()->members(member_begin, member_end);
+        TDynamicType<DELEGATE>::impl()->annotations(annotation_begin, annotation_end);
     }
 
     template<typename BASE_DELEGATE>
@@ -135,57 +135,57 @@ public:
 
     TStructType parent() const
     {
-        return parent_ts_ ;
+        return parent_ts_;
     }
 
     const std::vector<MemberType>& members() const
     {
-        return TDynamicType<DELEGATE>::impl()->members() ;
+        return TDynamicType<DELEGATE>::impl()->members();
     }
 
     const MemberType& member(
             uint32_t id) const
     {
-        return TDynamicType<DELEGATE>::impl()->member(id) ;
+        return TDynamicType<DELEGATE>::impl()->member(id);
     }
 
     const MemberType& member(
             const std::string& name) const
     {
-        return TDynamicType<DELEGATE>::impl()->member(name) ;
+        return TDynamicType<DELEGATE>::impl()->member(name);
     }
 
     const std::vector<Annotation>& annotations() const
     {
-        return TDynamicType<DELEGATE>::impl()->annotations() ;
+        return TDynamicType<DELEGATE>::impl()->annotations();
     }
 
     TStructType add_member(
             const MemberType& member) const
     {
-        TDynamicType<DELEGATE>::impl()->member(member) ;
-        return *this ;
+        TDynamicType<DELEGATE>::impl()->member(member);
+        return *this;
     }
 
     TStructType remove_member(
             const MemberType& member) const
     {
-        TDynamicType<DELEGATE>::impl()->remove_member() ;
-        return *this ;
+        TDynamicType<DELEGATE>::impl()->remove_member();
+        return *this;
     }
 
     TStructType add_annotation(
             const Annotation& annotation) const
     {
-        TDynamicType<DELEGATE>::impl()->annotation(annotation) ;
-        return *this ;
+        TDynamicType<DELEGATE>::impl()->annotation(annotation);
+        return *this;
     }
 
     TStructType remove_annotation(
             const Annotation& annotation) const
     {
-        TDynamicType<DELEGATE>::impl()->remove_annotation(annotation) ;
-        return *this ;
+        TDynamicType<DELEGATE>::impl()->remove_annotation(annotation);
+        return *this;
     }
 };
 

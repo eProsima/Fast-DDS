@@ -99,7 +99,7 @@ public:
      * @param null
      */
     explicit Reference(
-            dds::core::null_type &n)
+            dds::core::null_type& n)
         :impl_()
     {}
 
@@ -172,7 +172,7 @@ public:
      */
     operator DELEGATE_REF_T() const
     {
-        return impl_ ;
+        return impl_;
     }
     /** @endcond */
 
@@ -272,7 +272,7 @@ public:
     Reference& operator=(
             const null_type nil)
     {
-        return null ;
+        return null;
     }
 
     /**
@@ -284,7 +284,7 @@ public:
      */
     bool is_nil() const
     {
-        return impl_.get() == 0 ;
+        return impl_.get() == 0;
     }
 
     /**
@@ -328,7 +328,7 @@ public:
 private:
     // -- disallow dynamic allocation for reference types
     void* operator new(
-            size_t) ; 
+            size_t); 
 
 public:
     /** @cond
@@ -433,7 +433,7 @@ bool operator ==(
         dds::core::null_type,
         const dds::core::Reference<D>& r)
 {
-    return r.is_nil() ;
+    return r.is_nil();
 }
 
 /**
@@ -454,7 +454,7 @@ bool operator !=(
         dds::core::null_type,
         const dds::core::Reference<D>& r)
 {
-    return !r.is_nil() ;
+    return !r.is_nil();
 }
 
 #endif // OMG_DDS_CORE_REFERENCE_HPP_

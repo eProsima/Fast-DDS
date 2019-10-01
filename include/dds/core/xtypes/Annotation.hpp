@@ -30,7 +30,7 @@ namespace core {
 namespace xtypes {
 
 template<typename DELEGATE>
-class TIdAnnotation ;
+class TIdAnnotation;
 
 template<typename DELEGATE>
 class TAnnotation : public Reference<DELEGATE>
@@ -50,12 +50,12 @@ public:
             template <typename> class K>
     operator K<Q>&()
     {
-        return reinterpret_cast<K<Q>&>(*this) ;
+        return reinterpret_cast<K<Q>&>(*this);
     }
 
     const AnnotationKind& akind()const
     {
-        return impl()->akind() ;
+        return impl()->akind();
     }
 
 protected:
@@ -66,7 +66,7 @@ protected:
 template<typename DELEGATE>
 class TIdAnnotation : public TAnnotation<DELEGATE>
 {
-using TAnnotation<DELEGATE>::impl ;
+using TAnnotation<DELEGATE>::impl;
 
 public:
 
@@ -74,12 +74,12 @@ public:
             uint32_t id)
         :TAnnotation<DELEGATE>(TypeKind::ANNOTATION_TYPE)
     {
-        impl()->id(id) ;
+        impl()->id(id);
     }
 
     uint32_t id() const
     {
-        return impl()->id() ;
+        return impl()->id();
     }
 
 };
@@ -87,7 +87,7 @@ public:
 template<typename DELEGATE>
 class TKeyAnnotation : public TAnnotation<DELEGATE>
 {
-using TAnnotation<DELEGATE>::impl ;
+using TAnnotation<DELEGATE>::impl;
 public:
     TKeyAnnotation()
     {
@@ -115,17 +115,17 @@ public:
 template<typename DELEGATE>
 class TExtensibilityAnnotation : public TAnnotation<DELEGATE>
 {
-using TAnnotation<DELEGATE>::impl ;
+using TAnnotation<DELEGATE>::impl;
 public:
     TExtensibilityAnnotation(
             ExtensibilityKind xkind)
     {
-        impl()->xKind() ;
+        impl()->xKind();
     }
 
     ExtensibilityKind extensibility_kind() const
     {
-        return impl()->xKind() ;
+        return impl()->xKind();
     }
 };
 
@@ -141,17 +141,17 @@ public:
 template<typename DELEGATE>
 class TVerbatimAnnotation : public TAnnotation<DELEGATE>
 {
-using TAnnotation<DELEGATE>::impl ;
+using TAnnotation<DELEGATE>::impl;
 public:
     TVerbatimAnnotation(
             const std::string& text)
     {
-        impl()->vbt(text) ;
+        impl()->vbt(text);
     }
 
     const std::string& verbatim_text() const
     {
-        return impl()->vbt() ;
+        return impl()->vbt();
     }
 };
 
@@ -168,23 +168,23 @@ public:
 template<typename DELEGATE>
 class  TBitBoundAnnotation : public TAnnotation<DELEGATE>
 {
-using TAnnotation<DELEGATE>::impl ;
+using TAnnotation<DELEGATE>::impl;
 public:
     TBitBoundAnnotation(
             uint32_t bound)
     {
-        impl()->bsb(bound) ;
+        impl()->bsb(bound);
     }
 
     virtual uint32_t bound()const
     {
-        return impl()->bsb() ;
+        return impl()->bsb();
     }
 
     void bound(
             uint32_t bound)
     {
-        impl()->bsb(bound) ;
+        impl()->bsb(bound);
     }
 };
 
@@ -213,10 +213,10 @@ typedef TBitBoundAnnotation<detail::BitBoundAnnotation> BitBoundAnnotation;
 /*
 namespace converter
 {
-    IdAnnotation convert(const Annotation &a)
+    IdAnnotation convert(const Annotation& a)
     {
-        uint32_t idav = reinterpret_cast<const IdAnnotation&>(a).id() ;
-        return IdAnnotation(idav) ;
+        uint32_t idav = reinterpret_cast<const IdAnnotation&>(a).id();
+        return IdAnnotation(idav);
     }
 }
 */

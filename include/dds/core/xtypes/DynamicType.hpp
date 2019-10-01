@@ -67,22 +67,22 @@ public:
 
     bool is_primitive_type()
     {
-        return (impl()->kind().underlying() & 0x4000 ) != 0;
+        return (impl()->kind().underlying()&  0x4000 ) != 0;
     }
 
     bool is_collection_type()
     {
-        return (impl()->kind().underlying() & 0x0200 ) != 0;
+        return (impl()->kind().underlying()&  0x0200 ) != 0;
     }
 
     bool is_aggregation_type()
     {
-        return (impl()->kind().underlying() & 0x0100 ) != 0;
+        return (impl()->kind().underlying()&  0x0100 ) != 0;
     }
 
     bool is_constructed_type()
     {
-        return (impl()->kind().underlying() & 0x8000 ) != 0;
+        return (impl()->kind().underlying()&  0x8000 ) != 0;
     }
 
 protected:
@@ -109,9 +109,9 @@ protected:
             TypeKind kind,
             const std::vector<Annotation>& annotations)
     {
-        impl()->name(name) ;
-        impl()->kind(kind) ;
-        impl()->annotation(annotations) ;
+        impl()->name(name);
+        impl()->kind(kind);
+        impl()->annotation(annotations);
     }
 
     template<typename AnnotationIter>
@@ -121,9 +121,9 @@ protected:
             const AnnotationIter& begin,
             const AnnotationIter& end)
     {
-        impl()->name(name) ;
-        impl()->kind(kind) ;
-        impl()->annotation(begin, end) ;
+        impl()->name(name);
+        impl()->kind(kind);
+        impl()->annotation(begin, end);
     }
 
 public:
@@ -135,28 +135,28 @@ template<typename T>
 bool is_primitive_type(
         const TDynamicType<T>& t)
 {
-    return t.is_primitive_type() ;
+    return t.is_primitive_type();
 }
 
 template<typename T>
 bool is_constructed_type(
         const TDynamicType<T>& t)
 {
-    return t.is_constructed_type() ;
+    return t.is_constructed_type();
 }
 
 template<typename T>
 bool is_collection_type(
         const TDynamicType<T>& t)
 {
-    return t.is_collection_type() ;
+    return t.is_collection_type();
 }
 
 template<typename T>
 bool is_aggregation_type(
         const TDynamicType<T>& t)
 {
-    return t.is_aggregation_type() ;
+    return t.is_aggregation_type();
 }
 
 typedef TDynamicType<detail::DynamicType> DynamicType;

@@ -47,17 +47,17 @@ public:
             const std::string& name,
             const TDynamicType<OTHER_DELEGATE>& type)
     {
-        impl()->name(name) ;
-        impl()->dt(type) ;
+        impl()->name(name);
+        impl()->dt(type);
     }
 
     TMemberType(const std::string& name,
                 const xtypes::DynamicType& type,
                 const Annotation& annotation)
     {
-        impl()->name(name) ;
-        impl()->dt(type) ;
-        impl()->annotation(annotation) ;
+        impl()->name(name);
+        impl()->dt(type);
+        impl()->annotation(annotation);
     }
 
     TMemberType(
@@ -65,9 +65,9 @@ public:
             const TDynamicType<OTHER_DELEGATE>& type,
             const std::vector<Annotation>& annotations)
     {
-        impl()->name(name) ;
-        impl()->dt(type) ;
-        impl()->annotation(annotations) ;
+        impl()->name(name);
+        impl()->dt(type);
+        impl()->annotation(annotations);
     }
 
     template<typename AnnotationIter>
@@ -77,78 +77,78 @@ public:
             const AnnotationIter& begin,
             const AnnotationIter& end)
     {
-        impl()->name(name) ;
-        impl()->dt(type) ;
-        impl()->annotation(begin, end) ;
+        impl()->name(name);
+        impl()->dt(type);
+        impl()->annotation(begin, end);
     }
 
     const std::string& name() const
     {
-        return impl()->name() ;
+        return impl()->name();
     }
 
     const TDynamicType<OTHER_DELEGATE>& type() const
     {
-        return impl()->dt() ;
+        return impl()->dt();
     }
 
     TMemberType add_annotation(
             const Annotation& annotation)
     {
-        impl()->annotation(annotation) ;
-        return *this ;
+        impl()->annotation(annotation);
+        return *this;
     }
 
     TMemberType remove_annotation(
             const Annotation& annotation)
     {
-        impl().remove_annotation(annotation) ;
-        return *this ;
+        impl().remove_annotation(annotation);
+        return *this;
     }
 
     bool is_optional() const
     {
-        return impl()->is_optional() ;
+        return impl()->is_optional();
     }
 
     bool is_shared() const
     {
-        return impl()->is_shared() ;
+        return impl()->is_shared();
     }
 
     bool is_key() const
     {
-        return impl()->is_key() ;
+        return impl()->is_key();
     }
 
     bool is_must_understand() const
     {
-        return impl()->is_must_understand() ;
+        return impl()->is_must_understand();
     }
 
     bool is_bitset() const
     {
-        return impl()->is_bitset() ;
+        return impl()->is_bitset();
     }
 
     bool has_bitbound() const
     {
-        return impl()->has_bitbound() ;
+        return impl()->has_bitbound();
     }
 
     uint32_t get_bitbound() const
     {
-        return impl()->get_bitbound() ;
+        return impl()->get_bitbound();
     }
 
     bool has_id() const
     {
-        return impl()->has_id() ;
+        return impl()->has_id();
     }
 
     uint32_t get_id() const
     {
-        return impl()->get_bitbound() ;
+        return impl()->get_bitbound();
     }
 };
 

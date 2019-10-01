@@ -37,18 +37,18 @@ public:
     void kind(const TypeKind& kind) { kind_ = kind; }
 
     void annotation(
-            xtypes::Annotation &a)
+            xtypes::Annotation& a)
     {
-        ann_.push_back(a) ;
+        ann_.push_back(a);
     }
 
     void annotation(
             const std::vector<xtypes::Annotation>& annotations)
     {
-        ann_.reserve(annotations.size() + ann_.size()) ;
-        for (auto it = annotations.begin() ; it != annotations.end() ; ++it)
+        ann_.reserve(annotations.size() + ann_.size());
+        for (auto it = annotations.begin(); it != annotations.end(); ++it)
         {
-            ann_.emplace_back(*it) ;
+            ann_.emplace_back(*it);
         }
     }
 
@@ -57,22 +57,22 @@ public:
             AnnoIter begin,
             AnnoIter end)
     {
-        ann_.reserve(ann_.size() + ( end - begin) ) ;
-        for (auto it = begin ; it != end ; ++it)
+        ann_.reserve(ann_.size() + ( end - begin) );
+        for (auto it = begin; it != end; ++it)
         {
-            ann_.emplace_back(*it) ;
+            ann_.emplace_back(*it);
         }
     }
 
     const std::vector<xtypes::Annotation>& annotations() const
     {
-        return ann_ ;
+        return ann_;
     }
 
 private:
-    std::string name_ ;
-    TypeKind kind_ ;
-    std::vector<xtypes::Annotation> ann_ ;
+    std::string name_;
+    TypeKind kind_;
+    std::vector<xtypes::Annotation> ann_;
 };
 
 } //namespace detail

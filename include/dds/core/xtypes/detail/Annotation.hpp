@@ -30,16 +30,13 @@ class Annotation
 {
 public:
     Annotation(
-            AnnotationKind ak):
-        ak_(ak)
-    Annotation(
             AnnotationKind ak)
         : ak_(ak)
-    }
+    {}
 
-    const AnnotationKind& akind() {return ak_ ;}
+    const AnnotationKind& akind() {return ak_;}
 private:
-    AnnotationKind ak_ ;
+    AnnotationKind ak_;
 };
 
 class IdAnnotation : public  Annotation
@@ -48,63 +45,57 @@ public:
     IdAnnotation()
         : Annotation(AnnotationKind::OPTIONAL_ANNOTATION_TYPE)
         , id_()
-        Annotation(AnnotationKind::OPTIONAL_ANNOTATION_TYPE),
-        id_()
-    {
-    }
+    {} 
 
     void id(
             uint32_t id )
     {
-        id_ = id ;
+        id_ = id;
     }
 
     uint32_t id() const noexcept
     {
-        return id_ ;
+        return id_;
     }
 
     template<typename Q,
             template <typename> class K>
     operator  K<Q>&()
     {
-        return reinterpret_cast<K<Q>&>(*this) ;
+        return reinterpret_cast<K<Q>&>(*this);
     }
 
     IdAnnotation(
-            Annotation &a)
-        :Annotation(AnnotationKind::ID_ANNOTATION_TYPE)
-        ,id_(static_cast<const detail::IdAnnotation&>(a).id())
+            Annotation& a)
+        : Annotation(AnnotationKind::ID_ANNOTATION_TYPE)
+        , id_(static_cast<const detail::IdAnnotation&>(a).id())
     {}
 
 private:
-    uint32_t id_ ;
+    uint32_t id_;
 };
 
 class KeyAnnotation : public  Annotation
 {
 public:
     KeyAnnotation()
-        :Annotation(AnnotationKind::KEY_ANNOTATION_TYPE)
-        Annotation(AnnotationKind::KEY_ANNOTATION_TYPE)
+        : Annotation(AnnotationKind::KEY_ANNOTATION_TYPE)
     {}
 };
 
 class SharedAnnotation : public  Annotation
 {
 public:
-    SharedAnnotation():
-        SharedAnnotation()
-            : Annotation(AnnotationKind::SHARED_ANNOTATION_TYPE)
+    SharedAnnotation()
+        : Annotation(AnnotationKind::SHARED_ANNOTATION_TYPE)
     {}
 };
 
 class NestedAnnotation : public  Annotation
 {
 public:
-    NestedAnnotation():
-        NestedAnnotation()
-           : Annotation(AnnotationKind::NESTED_ANNOTATION_TYPE)
+    NestedAnnotation()
+        : Annotation(AnnotationKind::NESTED_ANNOTATION_TYPE)
     {}
 };
 
@@ -112,12 +103,9 @@ class ExtensibilityAnnotation : public  Annotation
 {
 public:
     ExtensibilityAnnotation(
-            ExtensibilityKind xkind):
-        ExtensibilityAnnotation(
-                ExtensibilityKind xkind)
-            : Annotation(AnnotationKind::EXTENSIBILITY_ANNOTATION_TYPE)
-            , xk_(xkind)
-        xk_(xkind)
+            ExtensibilityKind xkind)
+        : Annotation(AnnotationKind::EXTENSIBILITY_ANNOTATION_TYPE)
+        , xk_(xkind)
     {
     }
 
@@ -129,19 +117,18 @@ public:
     void xKind(
             ExtensibilityKind xk)
     {
-        xk_ = xk ;
+        xk_ = xk;
     }
 
 private:
-    ExtensibilityKind xk_ ;
+    ExtensibilityKind xk_;
 
 };
 
 class MustUnderstandAnnotation : public  Annotation
 {
-    MustUnderstandAnnotation():
-        MustUnderstandAnnotation()
-            : Annotation(AnnotationKind::MUST_UNDERSTAND_ANNOTATION_TYPE)
+    MustUnderstandAnnotation()
+        : Annotation(AnnotationKind::MUST_UNDERSTAND_ANNOTATION_TYPE)
     {}
 };
 
@@ -149,56 +136,46 @@ class VerbatimAnnotation : public  Annotation
 {
 public:
     VerbatimAnnotation(
-            const std::string &vbt):
-        Annotation(AnnotationKind::VERBATIM_ANNOTATION_TYPE),
-        vbt_(vbt)
-    VerbatimAnnotation(
-            const std::string &vbt)
+            const std::string& vbt)
         : Annotation(AnnotationKind::VERBATIM_ANNOTATION_TYPE)
         , vbt_(vbt)
-    }
+    {}
 
     void vbt(
-            const std::string &vbt)
+            const std::string& vbt)
     {
-        vbt_ = vbt ;
+        vbt_ = vbt;
     }
 
     const std::string& vbt() const noexcept
     {
-        return vbt_ ;
+        return vbt_;
     }
 private:
-    std::string vbt_ ;
+    std::string vbt_;
 };
 
 
 class BitsetAnnotation : public  Annotation
 {
-    BitsetAnnotation():
-        Annotation(AnnotationKind::BITSET_ANNOTATION_TYPE)
     BitsetAnnotation()
         : Annotation(AnnotationKind::BITSET_ANNOTATION_TYPE)
- };
+				{}
+};
 
 class BitBoundAnnotation : public  Annotation
 {
     BitBoundAnnotation(
+            uint32_t bsb )
+        : Annotation(AnnotationKind::BITSETBOUND_ANNOTATION_TYPE)
+        , bsb_(bsb)
+    {}
 
-            uint32_t bsb ):
-        Annotation(AnnotationKind::BITSETBOUND_ANNOTATION_TYPE),
-        bsb_(bsb)
-        BitBoundAnnotation(
-                uint32_t bsb )
-            : Annotation(AnnotationKind::BITSETBOUND_ANNOTATION_TYPE)
-            , bsb_(bsb)
-    }
-
-    uint32_t bsb() const noexcept { return bsb_ ; }
+    uint32_t bsb() const noexcept { return bsb_; }
 
     void bsb(uint32_t bsb) { bsb_ = bsb; }
 private:
-    uint32_t bsb_ ;
+    uint32_t bsb_;
 };
 
 } //namespace detail
