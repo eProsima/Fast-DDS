@@ -181,7 +181,8 @@ public:
         return impl()->bsb() ;
     }
 
-    void bound(uint32_t bound)
+    void bound(
+            uint32_t bound)
     {
         impl()->bsb(bound) ;
     }
