@@ -365,14 +365,14 @@ class PubSubWriterReader
         }
     }
 
-    bool create_additional_topics(int num_topics)
+    bool create_additional_topics(size_t num_topics)
     {
         bool ret_val = initialized_;
         if (ret_val)
         {
             std::string topic_name = publisher_attr_.topic.topicName.c_str();
 
-            for (int i = 0; ret_val && (i < num_topics); i++)
+            for (size_t i = 0; ret_val && (i < num_topics); i++)
             {
                 topic_name += "/";
                 publisher_attr_.topic.topicName = topic_name;
@@ -382,7 +382,7 @@ class PubSubWriterReader
 
             topic_name = subscriber_attr_.topic.topicName.c_str();
 
-            for (int i = 0; ret_val && (i < num_topics); i++)
+            for (size_t i = 0; ret_val && (i < num_topics); i++)
             {
                 topic_name += "/";
                 subscriber_attr_.topic.topicName = topic_name;
