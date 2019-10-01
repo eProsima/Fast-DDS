@@ -143,8 +143,6 @@ public:
         return TDynamicType<DELEGATE>::impl()->members() ;
     }
 
-//FRANAVA: imho unsafe
-#warning FRANAVA Is there a need for this? No MemberId is ever set into MemberType!
     const MemberType& member(
             uint32_t id) const
     {
