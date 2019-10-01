@@ -152,7 +152,7 @@ public:
                     [&]( xtypes::Annotation& aa)
                     {return aa.akind() == a.akind();});
 
-        COND_EXCEP_THROW(rv != annotations_.end(), "could not find such annotation");
+        COND_EXCEP_THROW(rv == annotations_.end(), "could not find such annotation");
         annotations_.erase(rv);
     }
 
