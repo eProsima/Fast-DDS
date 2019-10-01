@@ -924,21 +924,29 @@ void StatefulWriter::check_acked_status()
         // Inform of samples acked.
         if(mp_listener != nullptr)
         {
-            for(SequenceNumber_t current_seq = next_all_acked_notify_sequence_; current_seq <= min_low_mark; ++current_seq)
+            // In the case where we haven't received an acknack from a recently matched reader,
+            // min_low_mark will be zero, and no change will be notified as received by all
+            SequenceNumber_t current_seq;
+            for(current_seq = next_all_acked_notify_sequence_; current_seq <= min_low_mark; ++current_seq)
             {
                 std::vector<CacheChange_t*>::iterator history_end = mp_history->changesEnd();
-                std::vector<CacheChange_t*>::iterator cit = std::lower_bound(mp_history->changesBegin(), history_end, current_seq,
-                    [](const CacheChange_t* change, const SequenceNumber_t& seq)
-                    {
-                        return change->sequenceNumber < seq;
-                    });
+                std::vector<CacheChange_t*>::iterator cit =
+                    std::lower_bound(mp_history->changesBegin(), history_end, current_seq,
+                        [](
+                                const CacheChange_t* change,
+                                const SequenceNumber_t& seq)
+                        {
+                            return change->sequenceNumber < seq;
+                        });
                 if(cit != history_end && (*cit)->sequenceNumber == current_seq)
                 {
                     mp_listener->onWriterChangeReceivedByAll(this, *cit);
                 }
             }
 
-            next_all_acked_notify_sequence_ = min_low_mark + 1;
+            // This will change next_all_acked_notify_sequence_ to min_low_mark + 1 on the most usual case.
+            // On the special case where an acknack has not been received for a reader, it will remain unchanged.
+            next_all_acked_notify_sequence_ = current_seq;
         }
 
         SequenceNumber_t calc = min_low_mark < get_seq_num_min() ? SequenceNumber_t() :
