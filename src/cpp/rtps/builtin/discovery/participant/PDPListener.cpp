@@ -80,6 +80,19 @@ void PDPListener::onNewCacheChangeAdded(
             return;
         }
 
+        // Release reader lock to avoid ABBA lock. PDP mutex should always be first.
+        // Keep change information on local variables to check consistency later
+        SequenceNumber_t seq_num = change->sequenceNumber;
+        reader->getMutex().unlock();
+        std::unique_lock<std::recursive_mutex> lock(*parent_pdp_->getMutex());
+        reader->getMutex().lock();
+
+        // If change is not consistent, it will be processed on the thread that has overriten it
+        if ((ALIVE != change->kind) || (seq_num != change->sequenceNumber) || (writer_guid != change->writerGUID))
+        {
+            return;
+        }
+
         // Access to temp_participant_data_ is protected by reader lock
 
         // Load information on temp_participant_data_
@@ -90,12 +103,8 @@ void PDPListener::onNewCacheChangeAdded(
             change->instanceHandle = temp_participant_data_.m_key;
             guid = temp_participant_data_.m_guid;
 
-            // At this point we can release reader lock.
-            reader->getMutex().unlock();
-
             // Check if participant already exists (updated info)
             ParticipantProxyData* pdata = nullptr;
-            std::unique_lock<std::recursive_mutex> lock(*parent_pdp_->getMutex());
             for (ParticipantProxyData* it : parent_pdp_->participant_proxies_)
             {
                 if(guid == it->m_guid)
@@ -114,6 +123,7 @@ void PDPListener::onNewCacheChangeAdded(
                 pdata = parent_pdp_->createParticipantProxyData(temp_participant_data_, writer_guid);
                 if (pdata != nullptr)
                 {
+                    reader->getMutex().unlock();
                     lock.unlock();
 
                     parent_pdp_->announceParticipantState(false);
@@ -124,6 +134,7 @@ void PDPListener::onNewCacheChangeAdded(
             {
                 pdata->updateData(temp_participant_data_);
                 pdata->isAlive = true;
+                reader->getMutex().unlock();
                 lock.unlock();
 
                 if(parent_pdp_->updateInfoMatchesEDP())
