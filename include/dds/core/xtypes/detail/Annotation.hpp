@@ -156,7 +156,8 @@ public:
         , vbt_(vbt)
     }
 
-    void vbt(const std::string &vbt)
+    void vbt(
+            const std::string &vbt)
     {
         vbt_ = vbt ;
     }
