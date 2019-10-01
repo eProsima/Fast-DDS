@@ -147,7 +147,7 @@ public:
     bool find_annotation(
             AnnotationKind& annotation_kind)
     {
-        return ann_.end() ==  std::find_if(
+        return ann_.end() !=  std::find_if(
                                     ann_.begin(),
                                     ann_.end(),
                                     [&]( xtypes::Annotation& a)
