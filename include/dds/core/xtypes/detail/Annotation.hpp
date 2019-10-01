@@ -101,7 +101,8 @@ class NestedAnnotation : public  Annotation
 {
 public:
     NestedAnnotation():
-        Annotation(AnnotationKind::NESTED_ANNOTATION_TYPE)
+        NestedAnnotation()
+           : Annotation(AnnotationKind::NESTED_ANNOTATION_TYPE)
     {}
 };
 
