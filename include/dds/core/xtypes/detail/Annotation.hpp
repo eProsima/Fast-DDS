@@ -160,7 +160,7 @@ class BitsetAnnotation : public  Annotation
 {
     BitsetAnnotation()
         : Annotation(AnnotationKind::BITSET_ANNOTATION_TYPE)
-				{}
+	{}
 };
 
 class BitBoundAnnotation : public  Annotation
