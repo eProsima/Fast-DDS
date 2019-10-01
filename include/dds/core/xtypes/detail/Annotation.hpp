@@ -92,7 +92,8 @@ class SharedAnnotation : public  Annotation
 {
 public:
     SharedAnnotation():
-        Annotation(AnnotationKind::SHARED_ANNOTATION_TYPE)
+        SharedAnnotation()
+            : Annotation(AnnotationKind::SHARED_ANNOTATION_TYPE)
     {}
 };
 
