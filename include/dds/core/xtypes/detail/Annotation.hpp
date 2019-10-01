@@ -111,7 +111,10 @@ class ExtensibilityAnnotation : public  Annotation
 public:
     ExtensibilityAnnotation(
             ExtensibilityKind xkind):
-        Annotation(AnnotationKind::EXTENSIBILITY_ANNOTATION_TYPE),
+        ExtensibilityAnnotation(
+                ExtensibilityKind xkind)
+            : Annotation(AnnotationKind::EXTENSIBILITY_ANNOTATION_TYPE)
+            , xk_(xkind)
         xk_(xkind)
     {
     }
