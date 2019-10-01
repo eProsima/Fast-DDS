@@ -251,7 +251,7 @@ public:
         static_assert(
             is_base_of< DELEGATE_T, typename R::DELEGATE_T>::value,
             "location: operator=()" );
-        if(this != (Reference*)&rhs)
+        if (this != (Reference*)&rhs)
         {
             *this = Reference<DELEGATE_T>(rhs);
         }
