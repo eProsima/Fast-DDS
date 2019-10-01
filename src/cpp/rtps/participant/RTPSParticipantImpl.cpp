@@ -177,6 +177,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
 
+    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
+    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
+
     // Initial peers
     if (m_att.builtin.initialPeersList.empty())
     {
@@ -247,9 +250,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     {
         logError(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
     }
-
-    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
-    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
 
     logInfo(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
 }
