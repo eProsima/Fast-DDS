@@ -43,7 +43,9 @@ private:
 class IdAnnotation : public  Annotation
 {
 public:
-    IdAnnotation():
+    IdAnnotation()
+        : Annotation(AnnotationKind::OPTIONAL_ANNOTATION_TYPE)
+        , id_()
         Annotation(AnnotationKind::OPTIONAL_ANNOTATION_TYPE),
         id_()
     {
