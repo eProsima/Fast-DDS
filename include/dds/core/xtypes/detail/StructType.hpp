@@ -139,7 +139,7 @@ public:
                     members_.end(),
                     [&](xtypes::MemberType& t) {return t.name() == m.name();});
 
-        COND_EXCEP_THROW(rv != members_.end(), "could not find "+ m.name()+" member");
+        COND_EXCEP_THROW(rv == members_.end(), "could not find "+ m.name()+" member");
         members_.erase(rv);
     }
 
