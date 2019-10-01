@@ -32,7 +32,9 @@ public:
     Annotation(
             AnnotationKind ak):
         ak_(ak)
-    {
+    Annotation(
+            AnnotationKind ak)
+        : ak_(ak)
     }
 
     const AnnotationKind& akind() {return ak_ ;}
