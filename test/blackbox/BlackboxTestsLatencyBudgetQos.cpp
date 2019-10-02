@@ -16,9 +16,6 @@
 
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
-#include "PubSubParticipant.hpp"
-#include "ReqRepAsReliableHelloWorldRequester.hpp"
-#include "ReqRepAsReliableHelloWorldReplier.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
