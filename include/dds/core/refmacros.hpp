@@ -43,7 +43,7 @@
     typedef typename ::dds::core::smart_ptr_traits< DELEGATE >::ref_type      DELEGATE_REF_T; \
     typedef typename ::dds::core::smart_ptr_traits< DELEGATE >::weak_ref_type DELEGATE_WEAK_REF_T; \
     \
-    private:\
+    protected:\
     const typename ::dds::core::Reference< DELEGATE >::DELEGATE_REF_T& impl() const \
     { return ::dds::core::Reference< DELEGATE >::impl_; }\
     typename ::dds::core::Reference< DELEGATE >::DELEGATE_REF_T& impl() \
