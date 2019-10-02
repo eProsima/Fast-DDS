@@ -29,22 +29,18 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
-template<typename DELEGATE>
-class TIdAnnotation;
-
-template<typename DELEGATE>
-class TAnnotation : public Reference<DELEGATE>
+template<typename ANNOTATION>
+class Annotation : public Reference<ANNOTATION>
 {
-
     OMG_DDS_REF_TYPE_BASE(
-            TAnnotation,
+            Annotation,
             dds::core::Reference,
-            DELEGATE)
+            ANNOTATION)
+
 public:
+    virtual ~Annotation() = default;
 
-    virtual ~TAnnotation();
-
-    TypeKind kind() const;
+    TypeKind kind() const { return TypeKind::ANNOTATION_TYPE; };
 
     template<typename Q,
             template <typename> class K>
@@ -53,37 +49,35 @@ public:
         return reinterpret_cast<K<Q>&>(*this);
     }
 
-    const AnnotationKind& akind()const
+    const AnnotationKind& akind() const
     {
-        return impl()->akind();
+        return impl()->kind();
     }
 
 protected:
-    TAnnotation(
-            const TypeKind& kind);
+    Annotation(ANNOTATION* detail)
+        : Reference<ANNOTATION>(detail)
+    {}
 };
 
-template<typename DELEGATE>
-class TIdAnnotation : public TAnnotation<DELEGATE>
+
+class IdAnnotation : public Annotation<detail::IdAnnotation>
 {
-using TAnnotation<DELEGATE>::impl;
+using Annotation<detail::IdAnnotation>::impl;
 
 public:
-
-    TIdAnnotation(
+    IdAnnotation(
             uint32_t id)
-        :TAnnotation<DELEGATE>(TypeKind::ANNOTATION_TYPE)
-    {
-        impl()->id(id);
-    }
+        : Annotation<detail::IdAnnotation>(std::make_shared<detail::IdAnnotation>(id))
+    {}
 
     uint32_t id() const
     {
         return impl()->id();
     }
-
 };
 
+/*
 template<typename DELEGATE>
 class TKeyAnnotation : public TAnnotation<DELEGATE>
 {
@@ -208,25 +202,19 @@ typedef TBitsetAnnotation<detail::BitsetAnnotation> BitsetAnnotation;
 
 typedef TBitBoundAnnotation<detail::BitBoundAnnotation> BitBoundAnnotation;
 
-//FRANAVA We must think about the fact that previous API has a way of creating a
-//dynamically defined Annotation.
-/*
-namespace converter
-{
-    IdAnnotation convert(const Annotation& a)
-    {
-        uint32_t idav = reinterpret_cast<const IdAnnotation&>(a).id();
-        return IdAnnotation(idav);
-    }
-}
 */
+
 namespace annotation {
 
 // These functions can be used to get cached instances,
 // to avoid the proliferation of small annotation objects.
-IdAnnotation id(
-        uint32_t);
+inline IdAnnotation id(
+        uint32_t id)
+{
+    return IdAnnotation(id);
+}
 
+/*
 KeyAnnotation key();
 
 SharedAnnotation shared();
@@ -251,6 +239,7 @@ BitsetAnnotation bitset();
 
 BitsetAnnotation bit_bound(
         uint32_t bound);
+        */
 
 } //namespace annotation
 } //namespace xtypes

@@ -29,34 +29,35 @@ namespace detail {
 class Annotation
 {
 public:
+    virtual ~Annotation() = default;
+
+    const AnnotationKind& kind() { return kind_; }
+
+protected:
     Annotation(
-            AnnotationKind ak)
-        : ak_(ak)
+            AnnotationKind kind)
+        : kind_(kind)
     {}
 
-    const AnnotationKind& akind() {return ak_;}
 private:
-    AnnotationKind ak_;
+    AnnotationKind kind_;
 };
 
-class IdAnnotation : public  Annotation
+class IdAnnotation : public Annotation
 {
 public:
-    IdAnnotation()
+    IdAnnotation(uint32_t id)
         : Annotation(AnnotationKind::OPTIONAL_ANNOTATION_TYPE)
-        , id_()
-    {} 
+        , id_(id)
+    {}
 
-    void id(
-            uint32_t id )
-    {
-        id_ = id;
-    }
+    IdAnnotation(const IdAnnotation& annotation)
+        : Annotation(AnnotationKind::ID_ANNOTATION_TYPE)
+        , id_(annotation.id())
+    {}
 
-    uint32_t id() const noexcept
-    {
-        return id_;
-    }
+    void id(uint32_t id) { id_ = id; }
+    uint32_t id() const { return id_; }
 
     template<typename Q,
             template <typename> class K>
@@ -64,12 +65,6 @@ public:
     {
         return reinterpret_cast<K<Q>&>(*this);
     }
-
-    IdAnnotation(
-            Annotation& a)
-        : Annotation(AnnotationKind::ID_ANNOTATION_TYPE)
-        , id_(static_cast<const detail::IdAnnotation&>(a).id())
-    {}
 
 private:
     uint32_t id_;
@@ -105,54 +100,40 @@ public:
     ExtensibilityAnnotation(
             ExtensibilityKind xkind)
         : Annotation(AnnotationKind::EXTENSIBILITY_ANNOTATION_TYPE)
-        , xk_(xkind)
+        , xkind_(xkind)
     {
     }
 
-    const ExtensibilityKind& xKind()const noexcept
-    {
-        return xk_;
-    }
+    const ExtensibilityKind& xKind() const { return xkind_; }
 
-    void xKind(
-            ExtensibilityKind xk)
-    {
-        xk_ = xk;
-    }
+    void xKind( ExtensibilityKind xk) { xkind_ = xk; }
 
 private:
-    ExtensibilityKind xk_;
-
+    ExtensibilityKind xkind_;
 };
 
-class MustUnderstandAnnotation : public  Annotation
+class MustUnderstandAnnotation : public Annotation
 {
     MustUnderstandAnnotation()
         : Annotation(AnnotationKind::MUST_UNDERSTAND_ANNOTATION_TYPE)
     {}
 };
 
-class VerbatimAnnotation : public  Annotation
+class VerbatimAnnotation : public Annotation
 {
 public:
     VerbatimAnnotation(
-            const std::string& vbt)
+            const std::string& verbatim)
         : Annotation(AnnotationKind::VERBATIM_ANNOTATION_TYPE)
-        , vbt_(vbt)
+        , verbatim_(verbatim)
     {}
 
-    void vbt(
-            const std::string& vbt)
-    {
-        vbt_ = vbt;
-    }
+    const std::string& verbatim() const { return verbatim_; }
 
-    const std::string& vbt() const noexcept
-    {
-        return vbt_;
-    }
+    void verbatim(const std::string& verbatim) { verbatim_ = verbatim; }
+
 private:
-    std::string vbt_;
+    std::string verbatim_;
 };
 
 
@@ -166,16 +147,17 @@ class BitsetAnnotation : public  Annotation
 class BitBoundAnnotation : public  Annotation
 {
     BitBoundAnnotation(
-            uint32_t bsb )
+            uint32_t bitsetbound)
         : Annotation(AnnotationKind::BITSETBOUND_ANNOTATION_TYPE)
-        , bsb_(bsb)
+        , bitsetbound_(bitsetbound)
     {}
 
-    uint32_t bsb() const noexcept { return bsb_; }
+    uint32_t bitsetbound() const  { return bitsetbound_; }
 
-    void bsb(uint32_t bsb) { bsb_ = bsb; }
+    void bitsetbound(uint32_t bitsetbound) { bitsetbound_ = bitsetbound; }
+
 private:
-    uint32_t bsb_;
+    uint32_t bitsetbound_;
 };
 
 } //namespace detail

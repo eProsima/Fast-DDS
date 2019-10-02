@@ -111,7 +111,7 @@ protected:
     {
         impl()->name(name);
         impl()->kind(kind);
-        impl()->annotation(annotations);
+        impl()->annotations(annotations);
     }
 
     template<typename AnnotationIter>
@@ -123,7 +123,7 @@ protected:
     {
         impl()->name(name);
         impl()->kind(kind);
-        impl()->annotation(begin, end);
+        impl()->annotations(begin, end);
     }
 
 public:

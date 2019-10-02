@@ -24,26 +24,26 @@ set(${CORE_STANDALONE}_source_files
     detail/macros.cpp
     detail/ref_traits.cpp
     xtypes/Annotation.cpp
-    xtypes/CollectionTypes.cpp
-    xtypes/DynamicData.cpp
-    xtypes/DynamicType.cpp
-    xtypes/MemberType.cpp
-    xtypes/PrimitiveTypes.cpp
-    xtypes/StructType.cpp
+    #xtypes/CollectionTypes.cpp
+    #xtypes/DynamicData.cpp
+    #xtypes/DynamicType.cpp
+    #xtypes/MemberType.cpp
+    #xtypes/PrimitiveTypes.cpp
+    #xtypes/StructType.cpp
     xtypes/TypeKind.cpp
-    xtypes/TypeProvider.cpp
-    xtypes/UnionCase.cpp
-    xtypes/UnionType.cpp
+    #xtypes/TypeProvider.cpp
+    #xtypes/UnionCase.cpp
+    #xtypes/UnionType.cpp
     xtypes/detail/Annotation.cpp
-    xtypes/detail/CollectionTypes.cpp
-    xtypes/detail/DynamicData.cpp
-    xtypes/detail/DynamicType.cpp
-    xtypes/detail/MemberType.cpp
-    xtypes/detail/PrimitiveTypes.cpp
-    xtypes/detail/StructType.cpp
-    xtypes/detail/TypeProvider.cpp
-    xtypes/detail/UnionCase.cpp
-    xtypes/detail/UnionType.cpp
+    #xtypes/detail/CollectionTypes.cpp
+    #xtypes/detail/DynamicData.cpp
+    #xtypes/detail/DynamicType.cpp
+    #xtypes/detail/MemberType.cpp
+    #xtypes/detail/PrimitiveTypes.cpp
+    #xtypes/detail/StructType.cpp
+    #xtypes/detail/TypeProvider.cpp
+    #xtypes/detail/UnionCase.cpp
+    #xtypes/detail/UnionType.cpp
     )
 
 add_library(${CORE_STANDALONE} ${${CORE_STANDALONE}_source_files})

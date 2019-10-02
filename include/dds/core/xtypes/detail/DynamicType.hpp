@@ -30,10 +30,50 @@ namespace detail {
 class DynamicType
 {
 public:
+    DynamicType(
+            const std::string& name,
+            TypeKind kind)
+        : name_(name)
+        , kind_(kind)
+    {
+    }
+
+    DynamicType(
+            const std::string& name,
+            TypeKind kind,
+            const Annotation& annotation)
+        : name_(name)
+        , kind_(kind)
+    {
+        ann_.push_back(annotation);
+    }
+
+    DynamicType(
+            const std::string& name,
+            TypeKind kind,
+            const std::vector<Annotation>& annotations)
+        : name_(name)
+        , kind_(kind)
+        , ann_(annotations)
+    {
+    }
+
+    template<typename AnnotationIter>
+    TDynamicType(
+            const std::string& name,
+            TypeKind kind,
+            const AnnotationIter& begin,
+            const AnnotationIter& end)
+        : name_(name)
+        , kind_(kind)
+        , annotations(begin, end)
+    {
+    }
+
     const std::string& name() const noexcept { return name_; }
     const TypeKind& kind() const noexcept { return kind_; }
 
-    void name(const std::string& name){ name_ = name; }
+    void name(const std::string& name) { name_ = name; }
     void kind(const TypeKind& kind) { kind_ = kind; }
 
     void annotation(
@@ -42,7 +82,7 @@ public:
         ann_.push_back(a);
     }
 
-    void annotation(
+    void annotations(
             const std::vector<xtypes::Annotation>& annotations)
     {
         ann_.reserve(annotations.size() + ann_.size());
@@ -52,10 +92,10 @@ public:
         }
     }
 
-    template<typename AnnoIter>
-    void annotation(
-            AnnoIter begin,
-            AnnoIter end)
+    template<typename AnnotationIter>
+    void annotations(
+            AnnotationIter begin,
+            AnnotationIter end)
     {
         ann_.reserve(ann_.size() + ( end - begin) );
         for (auto it = begin; it != end; ++it)
@@ -68,6 +108,8 @@ public:
     {
         return ann_;
     }
+
+    virtual bool equals(const DynamicType& other) const = 0;
 
 private:
     std::string name_;

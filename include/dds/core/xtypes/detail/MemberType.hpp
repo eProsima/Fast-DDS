@@ -18,8 +18,8 @@
 #ifndef EPROSIMA_DDS_CORE_XTYPES_DETAIL_MEMBER_TYPE_HPP_
 #define EPROSIMA_DDS_CORE_XTYPES_DETAIL_MEMBER_TYPE_HPP_
 
-#include <dds/core/xtypes/Annotation.hpp>
-#include <dds/core/xtypes/DynamicType.hpp>
+#include <dds/core/xtypes/detail/Annotation.hpp>
+#include <dds/core/xtypes/detail/DynamicType.hpp>
 
 #include <vector>
 #include <functional>
@@ -35,25 +35,19 @@ class MemberType
 public:
     MemberType(
             const std::string& name,
-            xtypes::DynamicType& dt)
+            const DynamicType& dynamic_type)
         : name_(name)
-#if(0)
-        , dt_(dt.name(),dt.kind(), dt.annotations())
-#else
-        , dt_(dt)
-#endif
-        , ann_()
+        , dynamic_type_(dynamic_type)
     {}
 
     MemberType(
             const std::string& name,
-            xtypes::DynamicType& dt,
-            xtypes::Annotation& a):
-        name_(name),
-        dt_(dt),
-        ann_()
+            const DynamicType& dynamic_type,
+            Annotation& annotation)
+        : name_(name)
+        , dynamic_type_(dynamic_type)
     {
-        ann_.push_back(a);
+        annotations_.push_back(annotation);
     }
 
     void name(
@@ -62,19 +56,19 @@ public:
         name_ = name;
     }
 
-    void dt(
-            const xtypes::DynamicType& dt)
+    void dynamic_type(
+            const DynamicType& dynamic_type)
     {
-        dt_ = dt;
+        dynamic_type_ = dynamic_type;
     }
 
     void annotations(
-            std::vector<xtypes::Annotation>& ann)
+            std::vector<xtypes::Annotation>& annotations)
     {
-        ann_.reserve(ann.size() + ann_.size());
-        for (auto it = ann.begin(); it != ann.end(); ++it)
+        annotations_.reserve(annotations.size() + annotations_.size());
+        for (auto it = annotations.begin(); it != annotations.end(); ++it)
         {
-            ann_.emplace_back(*it);
+            annotations_.emplace_back(*it);
         }
     }
 
@@ -83,17 +77,17 @@ public:
             AnnoIter begin,
             AnnoIter end)
     {
-        ann_.reserve(ann_.size() + ( end - begin) );
+        annotations_.reserve(annotations_.size() + ( end - begin) );
         for (auto it = begin; it != end; ++it)
         {
-            ann_.emplace_back(*it);
+            annotations_.emplace_back(*it);
         }
     }
 
     void annotation(
-            xtypes::Annotation& ann)
+            xtypes::Annotation& annotations)
     {
-        ann_.push_back(ann);
+        annotations_.push_back(annotations);
     }
 
     const std::string& name()const noexcept
@@ -101,27 +95,27 @@ public:
         return name_;
     }
 
-    const xtypes::DynamicType& dynamic_type() const noexcept
+    const const DynamicType& dynamic_type() const noexcept
     {
-        return dt_;
+        return dynamic_type_;
     }
 
     const std::vector<xtypes::Annotation>& annotations()
     {
-        return ann_;
+        return annotations_;
     }
 
     void remove_annotation(
             const xtypes::Annotation& a)
     {
         auto rem = std::find_if(
-                    ann_.begin(),
-                    ann_.end(),
+                    annotations_.begin(),
+                    annotations_.end(),
                     [&]( xtypes::Annotation& b)
                         {return b.akind() == a.akind();} );
-        if ( rem != ann_.end() )
+        if ( rem != annotations_.end() )
         {
-            ann_.erase(rem);
+            annotations_.erase(rem);
         }
     }
 
@@ -131,12 +125,12 @@ public:
             xtypes::Annotation& retAnn)
     {
         auto retVal = std::find_if(
-                            ann_.begin(),
-                            ann_.end(),
+                            annotations_.begin(),
+                            annotations_.end(),
                             [&]( xtypes::Annotation& a)
                                 { return (a.akind() == annotation_kind);} );
 
-        if (retVal == ann_.end())
+        if (retVal == annotations_.end())
         {
             return false;
         }
@@ -147,9 +141,9 @@ public:
     bool find_annotation(
             AnnotationKind& annotation_kind)
     {
-        return ann_.end() !=  std::find_if(
-                                    ann_.begin(),
-                                    ann_.end(),
+        return annotations_.end() !=  std::find_if(
+                                    annotations_.begin(),
+                                    annotations_.end(),
                                     [&]( xtypes::Annotation& a)
                                         { return (a.akind() == annotation_kind);} );
     }
@@ -221,8 +215,8 @@ public:
 
 private:
     std::string name_;
-    xtypes::DynamicType dt_;
-    std::vector<xtypes::Annotation> ann_;
+    DynamicType dynamic_type_;
+    std::vector<Annotation> annotations_;
 };
 
 } //namespace detail
