@@ -1,6 +1,6 @@
 #!/bin/sh
 
-## Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+## Copyright 2018-2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 ##
 ## Licensed under the Apache License, Version 2.0 (the "License");
 ## you may not use this file except in compliance with the License.
@@ -15,13 +15,25 @@
 ## limitations under the License.
 
 ############################################################################################
-# This script launches the allocation test example under callgrind, causing the generation 
-# of several callgraph files:
-#   - callgrind.out.args.1   events during endpoint matching
-#   - callgrind.out.args.2   events while transmitting first sample
-#   - callgrind.out.args.3   events while transmitting the rest of samples
-#   - callgrind.out.args.4   events during endpoint unmatching
+# This script launches the allocation test example under the interpose library of
+# osrf_testing_tools for one qos profile received as argument:
+#   
+#   tl_be: transient-local best-effort" << std::endl
+#   tl_re: transient-local reliable" << std::endl
+#   vo_be: volatile best-effort" << std::endl
+#   vo_re: volatile reliable" << std::endl;
+# 
+# Following files will be generated:
+#   alloc_test_publisher_$1.csv    Allocations count summary for publisher
+#   alloc_test_subscriber_$1.csv   Allocations count summary for subscriber
 ############################################################################################
 
-# Run 'AllocationTest' using the memory_tools_interpose library:
-LD_PRELOAD=/usr/local/lib/libmemory_tools_interpose.so:/usr/local/lib/libmemory_tools.so ./AllocationTest $* true
+LD_PRELOAD=/usr/local/lib/libmemory_tools_interpose.so:/usr/local/lib/libmemory_tools.so ./AllocationTest publisher $1 true &
+sleep 1
+./AllocationTest subscriber $1
+
+sleep 5
+
+LD_PRELOAD=/usr/local/lib/libmemory_tools_interpose.so:/usr/local/lib/libmemory_tools.so ./AllocationTest subscriber $1 true &
+sleep 1
+./AllocationTest publisher $1
