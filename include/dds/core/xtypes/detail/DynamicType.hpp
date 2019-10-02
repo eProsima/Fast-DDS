@@ -23,7 +23,6 @@
 
 #include <string>
 #include <vector>
-#include <functional>
 
 namespace dds {
 namespace core {
@@ -68,30 +67,17 @@ public:
             const AnnotationIter& end)
         : name_(name)
         , kind_(kind)
-    {
-        annotations_ = std::vector<xtypes::Annotation>(begin, end);
-    }
+        , annotations_(begin, end)
+    {}
 
     const std::string& name() const { return name_; }
     const TypeKind& kind() const { return kind_; }
     const std::vector<xtypes::Annotation>& annotations() const { return annotations_; }
 
-    void name(const std::string& name) { name_ = name; }
-    void kind(const TypeKind& kind) { kind_ = kind; }
-    void annotations( const std::vector<xtypes::Annotation>& annotations) { annotations_ = annotations; }
-
     void add_annotation(
             const xtypes::Annotation& annotation)
     {
-        annotations_.push_back(std::ref(annotation));
-    }
-
-    template<typename AnnotationIter>
-    void annotations(
-            AnnotationIter begin,
-            AnnotationIter end)
-    {
-        annotations_ = std::vector<xtypes::Annotation>(begin, end);
+        annotations_.emplace_back(annotation);
     }
 
 private:

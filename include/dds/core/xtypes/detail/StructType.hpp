@@ -18,8 +18,10 @@
 #ifndef EPROSIMA_DDS_CORE_XTYPES_DETAIL_STRUCT_TYPE_HPP_
 #define EPROSIMA_DDS_CORE_XTYPES_DETAIL_STRUCT_TYPE_HPP_
 
-#include <string>
+#include <dds/core/xtypes/detail/DynamicType.hpp>
 #include <dds/core/xtypes/MemberType.hpp>
+
+#include <string>
 
 #define COND_EXCEP_THROW(EXPR, CONT) if(EXPR) {\
     throw IllegalOperationError(CONT);\
@@ -29,137 +31,118 @@
 namespace dds {
 namespace core {
 namespace xtypes {
+
+class StructType;
+
 namespace detail {
 
 
-class StructType
+class StructType : public DynamicType
 {
 public:
-    StructType(){}
+    StructType(
+            const std::string& name)
+        : DynamicType(name, TypeKind::STRUCTURE_TYPE)
+        , parent_(nullptr)
+    {}
 
-    void name(
-            const std::string& s)
-    {
-        name_ = s;
-    }
+    StructType(
+            const std::string& name,
+            const xtypes::StructType& parent)
+        : DynamicType(name, TypeKind::STRUCTURE_TYPE)
+        , parent_(&parent)
+    {}
 
-    void member(
-            const xtypes::MemberType& m)
-    {
-        members_.push_back(m);
-    }
+    StructType(
+            const std::string& name,
+            const xtypes::StructType& parent,
+            const std::vector<xtypes::MemberType>& members)
+        : DynamicType(name, TypeKind::STRUCTURE_TYPE)
+        , parent_(&parent)
+        , members_(members)
+    {}
 
-    void members(
-            std::vector<xtypes::MemberType>& v)
-    {
-        members_.reserve( v.size() + members_.size() );
+    template<typename MemberIter>
+    StructType(
+            const std::string& name,
+            const xtypes::StructType& parent,
+            const MemberIter begin,
+            const MemberIter end)
+        : DynamicType(name, TypeKind::STRUCTURE_TYPE)
+        , parent_(&parent)
+        , members_(begin, end)
+    {}
 
-        for(auto it = v.begin(); v.end() != it; ++it)
-        {
-            members_.emplace_back(*it);
-        }
-    }
+    StructType(
+            const std::string& name,
+            const xtypes::StructType& parent,
+            const std::vector<xtypes::MemberType>& members,
+            const xtypes::Annotation& annotation)
+        : DynamicType(name, TypeKind::STRUCTURE_TYPE, annotation)
+        , parent_(&parent)
+        , members_(members)
+    {}
 
-    template <typename MemberIter>
-    void members(
-            MemberIter& begin, MemberIter& end)
-    {
-        members_.reserve( (end - begin) + members_.size() );
+    StructType(
+            const std::string& name,
+            const xtypes::StructType& parent,
+            const std::vector<xtypes::MemberType>& members,
+            const std::vector<xtypes::Annotation>& annotations)
+        : DynamicType(name, TypeKind::STRUCTURE_TYPE, annotations)
+        , parent_(&parent)
+        , members_(members)
+    {}
 
-        for(auto it = begin; end != it; ++it)
-        {
-            members_.emplace_back(*it);
-        }
-    }
+    template<typename MemberIter, typename AnnotationIter>
+    StructType(
+            const std::string& name,
+            const xtypes::StructType& parent,
+            const MemberIter members_begin,
+            const MemberIter members_end,
+            const AnnotationIter annotations_begin,
+            const AnnotationIter annotations_end)
+        : DynamicType(name, TypeKind::STRUCTURE_TYPE, annotations_begin, annotations_end)
+        , parent_(&parent)
+        , members_(members_begin, members_end)
+    {}
 
-    void annotation(
-            xtypes::Annotation& a )
-    {
-        annotations_.emplace_back(a);
-    }
-
-    void annotations(
-            std::vector<xtypes::Annotation>& v)
-    {
-        annotations_.reserve( v.size() + annotations_.size() );
-
-        for(auto it = v.begin(); v.end() != it; ++it)
-        {
-            annotations_.emplace_back(*it);
-        }
-    }
-
-    template <typename AnnotationIter>
-    void annotations(
-            AnnotationIter& begin, AnnotationIter& end)
-    {
-        annotations_.reserve( (end - begin) + annotations_.size() );
-
-        for(auto it = begin; end != it; ++it)
-        {
-            annotations_.emplace_back(*it);
-        }
-    }
-
-    const std::vector<xtypes::MemberType>& members() const noexcept
-    {
-        return members_;
-    }
+    const xtypes::StructType* parent() const { return parent_; }
+    const std::vector<xtypes::MemberType>& members() const { return members_; }
 
     const xtypes::MemberType& member(
             uint32_t id)const
     {
-        COND_EXCEP_THROW(id >= members_.size(), "no such member_id could be found");
-
+        COND_EXCEP_THROW(id >= members_.size(), "no such member id could be found");
         return members_[id];
     }
 
     const xtypes::MemberType& member(
-            const std::string& s)const
+            const std::string& name) const
     {
         auto retval = find_if(
                         members_.begin(),
                         members_.end(),
-                        [&](const xtypes::MemberType& m){return m.name() == s;});
+                        [&](const xtypes::MemberType& m) { return m.name() == name; } );
 
-        COND_EXCEP_THROW(retval == members_.end(), "member"+s+"not found");
+        COND_EXCEP_THROW(retval == members_.end(), "member" + name + "not found");
         return *retval;
     }
 
-    const std::vector<xtypes::Annotation>& annotations()
+    void add_member(
+            const xtypes::MemberType& member)
     {
-        return annotations_;
+        members_.emplace_back(member);
     }
 
-    void remove_member(
-            const xtypes::MemberType& m)
+    void add_annotation(
+            xtypes::Annotation& annotation)
     {
-        auto rv = find_if(
-                    members_.begin(),
-                    members_.end(),
-                    [&](xtypes::MemberType& t) {return t.name() == m.name();});
-
-        COND_EXCEP_THROW(rv == members_.end(), "could not find "+ m.name()+" member");
-        members_.erase(rv);
-    }
-
-    void remove_annotation(
-            const xtypes::Annotation& a)
-    {
-        auto rv = find_if(
-                    annotations_.begin(),
-                    annotations_.end(),
-                    [&]( xtypes::Annotation& aa)
-                    {return aa.akind() == a.akind();});
-
-        COND_EXCEP_THROW(rv == annotations_.end(), "could not find such annotation");
-        annotations_.erase(rv);
+        add_annotation(annotation);
     }
 
 private:
-    std::string name_;
+    const xtypes::StructType* parent_;
     std::vector<xtypes::MemberType> members_;
-    std::vector<xtypes::Annotation> annotations_;
 };
 
 } //namespace detail

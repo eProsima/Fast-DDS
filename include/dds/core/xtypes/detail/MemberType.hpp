@@ -46,7 +46,7 @@ public:
         : name_(name)
         , dynamic_type_(dynamic_type)
     {
-        annotations_.push_back(annotation);
+        annotations_.emplace_back(annotation);
     }
 
     MemberType(
@@ -55,9 +55,8 @@ public:
             const std::vector<xtypes::Annotation>& annotations)
         : name_(name)
         , dynamic_type_(dynamic_type)
-    {
-        annotations_ = annotations;
-    }
+        , annotations_(annotations)
+    {}
 
 
     template<typename AnnotationIter>
@@ -68,9 +67,8 @@ public:
             const AnnotationIter& end)
         : name_(name)
         , dynamic_type_(dynamic_type)
-    {
-        annotations_ = std::vector<xtypes::Annotation>(begin, end);
-    }
+        , annotations_(begin, end)
+    {}
 
     const std::string& name() const { return name_; }
     const xtypes::DynamicType& dynamic_type() const { return dynamic_type_; }
@@ -82,15 +80,7 @@ public:
 
     void add_annotation(const xtypes::Annotation& annotations)
     {
-        annotations_.push_back(annotations);
-    }
-
-    template<typename AnnotationIter>
-    void annotations(
-            AnnotationIter begin,
-            AnnotationIter end)
-    {
-        annotations_ = std::vector<xtypes::Annotation>(begin, end);
+        annotations_.emplace_back(annotations);
     }
 
     void remove_annotation(
@@ -99,8 +89,7 @@ public:
         auto rem = std::find_if(
                 annotations_.begin(),
                 annotations_.end(),
-                [&](xtypes::Annotation& a)
-                    { return a.akind() == annotation.akind(); } );
+                [&](xtypes::Annotation& a) { return a.akind() == annotation.akind(); } );
 
         if (rem != annotations_.end())
         {
@@ -176,8 +165,7 @@ private:
         auto retVal = std::find_if(
                 annotations_.begin(),
                 annotations_.end(),
-                [&](xtypes::Annotation& a)
-                    { return (a.akind() == kind); } );
+                [&](xtypes::Annotation& a) { return (a.akind() == kind); } );
 
         if (retVal == annotations_.end())
         {
@@ -194,8 +182,7 @@ private:
         return annotations_.end() !=  std::find_if(
                 annotations_.begin(),
                 annotations_.end(),
-                [&](xtypes::Annotation& a)
-                    { return (a.akind() == kind);} );
+                [&](xtypes::Annotation& a) { return (a.akind() == kind);} );
     }
 
 private:

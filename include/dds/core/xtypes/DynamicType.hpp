@@ -54,6 +54,12 @@ public:
         return impl()->annotations();
     }
 
+    DynamicType& add_annotation(const Annotation& annotation)
+    {
+        impl()->add_annotation(annotation);
+        return *this;
+    }
+
     bool is_primitive_type() const
     {
         return (impl()->kind().underlying() & TypeKind::PRIMITIVE_TYPE) != 0;
@@ -92,6 +98,11 @@ public:
     */
 
 protected:
+    DynamicType(
+            detail::DynamicType* detail)
+        : Reference(detail)
+    {}
+
     DynamicType(
             const std::string& name,
             TypeKind kind)

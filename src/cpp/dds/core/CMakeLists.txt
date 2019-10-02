@@ -30,7 +30,7 @@ set(${CORE_STANDALONE}_source_files
     xtypes/DynamicType.cpp
     xtypes/MemberType.cpp
     xtypes/PrimitiveTypes.cpp
-    #xtypes/StructType.cpp
+    xtypes/StructType.cpp
     xtypes/TypeKind.cpp
     #xtypes/TypeProvider.cpp
     #xtypes/UnionCase.cpp
@@ -41,7 +41,7 @@ set(${CORE_STANDALONE}_source_files
     xtypes/detail/DynamicType.cpp
     xtypes/detail/MemberType.cpp
     xtypes/detail/PrimitiveTypes.cpp
-    #xtypes/detail/StructType.cpp
+    xtypes/detail/StructType.cpp
     #xtypes/detail/TypeProvider.cpp
     #xtypes/detail/UnionCase.cpp
     #xtypes/detail/UnionType.cpp
