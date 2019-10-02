@@ -17,9 +17,9 @@
 
 #ifndef EPROSIMA_DDS_CORE_XTYPES_DETAIL_ANNOTATION_HPP_
 #define EPROSIMA_DDS_CORE_XTYPES_DETAIL_ANNOTATION_HPP_
-#include <stdint.h>
-#include <string>
 #include <dds/core/xtypes/AnnotationKind.hpp>
+
+#include <string>
 
 namespace dds {
 namespace core {

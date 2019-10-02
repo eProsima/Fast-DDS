@@ -40,8 +40,7 @@ public:
     constexpr SafeEnum(
             Inner v)
         : val(v)
-    {
-    }
+    {}
 
     Inner underlying() const
     {

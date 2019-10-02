@@ -21,7 +21,9 @@
 #define OMG_DDS_CORE_XTYPES_ANNOTATION_HPP_
 
 #include <dds/core/xtypes/detail/Annotation.hpp>
+
 #include <dds/core/xtypes/TypeKind.hpp>
+
 #include <dds/core/SafeEnumeration.hpp>
 #include <dds/core/Reference.hpp>
 
@@ -29,51 +31,40 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
-template<typename ANNOTATION>
-class Annotation : public Reference<ANNOTATION>
+class Annotation : public Reference<detail::Annotation>
 {
     OMG_DDS_REF_TYPE_BASE(
             Annotation,
             dds::core::Reference,
-            ANNOTATION)
+            detail::Annotation)
 
 public:
+    Annotation(detail::Annotation* annotation)
+        : Reference<detail::Annotation>(annotation)
+    {}
+
     virtual ~Annotation() = default;
 
-    TypeKind kind() const { return TypeKind::ANNOTATION_TYPE; };
-
-    template<typename Q,
-            template <typename> class K>
-    operator K<Q>&()
-    {
-        return reinterpret_cast<K<Q>&>(*this);
-    }
+    TypeKind kind() const { return TypeKind::ANNOTATION_TYPE; }
 
     const AnnotationKind& akind() const
     {
         return impl()->kind();
     }
-
-protected:
-    Annotation(ANNOTATION* detail)
-        : Reference<ANNOTATION>(detail)
-    {}
 };
 
 
-class IdAnnotation : public Annotation<detail::IdAnnotation>
+class IdAnnotation : public Annotation
 {
-using Annotation<detail::IdAnnotation>::impl;
-
 public:
     IdAnnotation(
             uint32_t id)
-        : Annotation<detail::IdAnnotation>(std::make_shared<detail::IdAnnotation>(id))
+        : Annotation(std::make_shared<detail::IdAnnotation>(id))
     {}
 
     uint32_t id() const
     {
-        return impl()->id();
+        return std::static_pointer_cast<detail::IdAnnotation>(impl())->id();
     }
 };
 
