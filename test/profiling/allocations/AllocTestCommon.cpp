@@ -177,10 +177,11 @@ void print_results(
 
     if (pos == 0)
     {
-        output_stream << "\"Phase 0 Allocations\", \"Phase 0 Deallocations\","
-            << " \"Phase 1 Allocations\", \"Phase 1 Deallocations\","
-            << " \"Phase 2 Allocations\", \"Phase 2 Deallocations\","
-            << " \"Phase 3 Allocations\", \"Phase 3 Deallocations\"\n";
+        output_stream << "\"Discovery allocations\", \"Discovery deallocations\","
+            << " \"First sample allocations\", \"First sample deallocations\","
+            << " \"Data exchange allocations\", \"Data exchange deallocations\","
+            << " \"Undiscovery allocations\", \"Undiscovery deallocations\""
+            << std::endl;
     }
 
     for (size_t i = 0; i < 4; i++)
