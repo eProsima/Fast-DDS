@@ -39,6 +39,13 @@ using InconsistentTopicStatus = BaseStatus;
 
 } //namespace dds
 } //namespace fastdds
+
+namespace fastrtps {
+
+using LivelinessLostStatus = fastdds::dds::BaseStatus;
+
+}
+
 } //namespace eprosima
 
 #endif // _FASTDDS_BASE_STATUS_HPP_

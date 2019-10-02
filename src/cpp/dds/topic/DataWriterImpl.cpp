@@ -580,15 +580,12 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
         fastrtps::rtps::RTPSWriter* /*writer*/,
         const fastrtps::LivelinessLostStatus& status)
 {
-    fastdds::dds::LivelinessLostStatus dds_status;
-    dds_status.total_count = status.total_count;
-    dds_status.total_count_change = status.total_count_change;
     if (data_writer_->listener_ != nullptr)
     {
-        data_writer_->listener_->on_liveliness_lost(data_writer_->user_datawriter_, dds_status);
+        data_writer_->listener_->on_liveliness_lost(data_writer_->user_datawriter_, status);
     }
 
-    data_writer_->publisher_->publisher_listener_.on_liveliness_lost(data_writer_->user_datawriter_, dds_status);
+    data_writer_->publisher_->publisher_listener_.on_liveliness_lost(data_writer_->user_datawriter_, status);
 }
 
 bool DataWriterImpl::wait_for_acknowledgments(

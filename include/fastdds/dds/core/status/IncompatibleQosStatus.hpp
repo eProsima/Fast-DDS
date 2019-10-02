@@ -24,9 +24,9 @@
 
 namespace eprosima {
 namespace fastdds {
-namespace dds{
+namespace dds {
 
-typedef uint32_t QosPolicyId_t;
+using QosPolicyId_t = uint32_t;
 
 struct QosPolicyCount 
 {
@@ -39,7 +39,7 @@ struct QosPolicyCount
     int32_t count;
 };
 
-typedef std::vector<QosPolicyCount> QosPolicyCountSeq;
+using QosPolicyCountSeq = std::vector<QosPolicyCount>;
 
 //! @brief A struct storing the requested incompatible QoS status
 struct IncompatibleQosStatus
