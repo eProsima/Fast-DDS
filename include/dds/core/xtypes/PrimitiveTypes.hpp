@@ -34,14 +34,12 @@ struct dynamic_type_traits
     static constexpr const char* const NAME = "no_type";
 };
 
-template<
-        typename T,
-        typename DELEGATE>
-class TPrimitiveType : public TDynamicType<DELEGATE>
+template<typename T>
+class PrimitiveType : public DynamicType
 {
 public:
-    TPrimitiveType()
-        : TDynamicType<DELEGATE>(
+    PrimitiveType()
+        : DynamicType(
                 dynamic_type_traits<T>::NAME,
                 dynamic_type_traits<T>::TYPE_ID)
     {
@@ -56,7 +54,7 @@ public:
  * DynamicType int16Type = primitive_type<int16_t>();
  */
 template<typename T>
-TPrimitiveType<T, detail::DynamicType> primitive_type()
+PrimitiveType<T> primitive_type()
 {
     throw "Not implemented";
 }

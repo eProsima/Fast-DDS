@@ -69,14 +69,16 @@ public:
         : name_(name)
         , kind_(kind)
     {
-        annotations(begin, end);
+        annotations_ = std::vector<xtypes::Annotation>(begin, end);
     }
 
     const std::string& name() const { return name_; }
     const TypeKind& kind() const { return kind_; }
+    const std::vector<xtypes::Annotation>& annotations() const { return annotations_; }
 
     void name(const std::string& name) { name_ = name; }
     void kind(const TypeKind& kind) { kind_ = kind; }
+    void annotations( const std::vector<xtypes::Annotation>& annotations) { annotations_ = annotations; }
 
     void add_annotation(
             const xtypes::Annotation& annotation)
@@ -84,33 +86,12 @@ public:
         annotations_.push_back(std::ref(annotation));
     }
 
-    void annotations(
-            const std::vector<xtypes::Annotation>& annotations)
-    {
-        annotations_ = annotations;
-    }
-
     template<typename AnnotationIter>
     void annotations(
             AnnotationIter begin,
             AnnotationIter end)
     {
-        annotations_.clear();
-        annotations_.reserve(annotations_.size() + (end - begin));
-        for (auto it = begin; it != end; ++it)
-        {
-            annotations_.emplace_back(*it);
-        }
-    }
-
-    const std::vector<xtypes::Annotation>& annotations() const
-    {
-        return annotations_;
-    }
-
-    virtual bool equals(const DynamicType& other) const
-    {
-        return kind_ == other.kind_ && name_ == other.name_; //CHECK: also annotations?
+        annotations_ = std::vector<xtypes::Annotation>(begin, end);
     }
 
 private:

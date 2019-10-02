@@ -24,11 +24,12 @@ set(${CORE_STANDALONE}_source_files
     detail/macros.cpp
     detail/ref_traits.cpp
     xtypes/Annotation.cpp
+    xtypes/Annotations.cpp
     #xtypes/CollectionTypes.cpp
     #xtypes/DynamicData.cpp
     xtypes/DynamicType.cpp
-    #xtypes/MemberType.cpp
-    #xtypes/PrimitiveTypes.cpp
+    xtypes/MemberType.cpp
+    xtypes/PrimitiveTypes.cpp
     #xtypes/StructType.cpp
     xtypes/TypeKind.cpp
     #xtypes/TypeProvider.cpp
@@ -38,8 +39,8 @@ set(${CORE_STANDALONE}_source_files
     #xtypes/detail/CollectionTypes.cpp
     #xtypes/detail/DynamicData.cpp
     xtypes/detail/DynamicType.cpp
-    #xtypes/detail/MemberType.cpp
-    #xtypes/detail/PrimitiveTypes.cpp
+    xtypes/detail/MemberType.cpp
+    xtypes/detail/PrimitiveTypes.cpp
     #xtypes/detail/StructType.cpp
     #xtypes/detail/TypeProvider.cpp
     #xtypes/detail/UnionCase.cpp

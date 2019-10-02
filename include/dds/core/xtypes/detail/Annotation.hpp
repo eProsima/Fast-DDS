@@ -17,6 +17,7 @@
 
 #ifndef EPROSIMA_DDS_CORE_XTYPES_DETAIL_ANNOTATION_HPP_
 #define EPROSIMA_DDS_CORE_XTYPES_DETAIL_ANNOTATION_HPP_
+
 #include <dds/core/xtypes/AnnotationKind.hpp>
 
 #include <string>

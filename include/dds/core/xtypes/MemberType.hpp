@@ -21,88 +21,74 @@
 #define OMG_DDS_CORE_XTYPES_MEMBER_TYPE_HPP
 
 #include <dds/core/xtypes/detail/MemberType.hpp>
-#include <dds/core/detail/inttypes.hpp>
+
+//#include <dds/core/detail/inttypes.hpp>
 
 #include <dds/core/xtypes/DynamicType.hpp>
+
 #include <dds/core/Reference.hpp>
-
-
 
 namespace dds {
 namespace core {
 namespace xtypes {
 
-template<
-        typename DELEGATE,
-        typename OTHER_DELEGATE>
-class TMemberType : public Reference<DELEGATE>
+class MemberType : public Reference<detail::MemberType>
 {
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TMemberType,
+            MemberType,
             Reference,
-            DELEGATE)
+            detail::MemberType)
 
 public:
-    TMemberType(
+    MemberType(
             const std::string& name,
-            const TDynamicType<OTHER_DELEGATE>& type)
-    {
-        impl()->name(name);
-        impl()->dt(type);
-    }
+            const DynamicType& type)
+        : Reference(new detail::MemberType(name, type))
+    {}
 
-    TMemberType(const std::string& name,
-                const xtypes::DynamicType& type,
-                const Annotation& annotation)
-    {
-        impl()->name(name);
-        impl()->dt(type);
-        impl()->annotation(annotation);
-    }
+    MemberType(const std::string& name,
+            const DynamicType& type,
+            const Annotation& annotation)
+        : Reference(new detail::MemberType(name, type, annotation))
+    {}
 
-    TMemberType(
+    MemberType(
             const std::string& name,
-            const TDynamicType<OTHER_DELEGATE>& type,
+            const DynamicType& type,
             const std::vector<Annotation>& annotations)
-    {
-        impl()->name(name);
-        impl()->dt(type);
-        impl()->annotation(annotations);
-    }
+        : Reference(new detail::MemberType(name, type, annotations))
+    {}
 
     template<typename AnnotationIter>
-    TMemberType(
+    MemberType(
             const std::string& name,
-            const TDynamicType<OTHER_DELEGATE>& type,
+            const DynamicType& type,
             const AnnotationIter& begin,
             const AnnotationIter& end)
-    {
-        impl()->name(name);
-        impl()->dt(type);
-        impl()->annotation(begin, end);
-    }
+        : Reference(new detail::MemberType(name, type, begin, end))
+    {}
 
     const std::string& name() const
     {
         return impl()->name();
     }
 
-    const TDynamicType<OTHER_DELEGATE>& type() const
+    const DynamicType& type() const
     {
-        return impl()->dt();
+        return impl()->dynamic_type();
     }
 
-    TMemberType add_annotation(
+    MemberType& add_annotation(
             const Annotation& annotation)
     {
-        impl()->annotation(annotation);
+        impl()->add_annotation(annotation);
         return *this;
     }
 
-    TMemberType remove_annotation(
+    MemberType& remove_annotation(
             const Annotation& annotation)
     {
-        impl().remove_annotation(annotation);
+        impl()->remove_annotation(annotation);
         return *this;
     }
 
@@ -151,9 +137,6 @@ public:
         return impl()->get_bitbound();
     }
 };
-
-typedef TMemberType<detail::MemberType, detail::DynamicType> MemberType;
-typedef MemberType Member;
 
 } //namespace xtypes
 } //namespace core

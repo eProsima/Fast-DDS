@@ -18,8 +18,7 @@
 #ifndef EPROSIMA_DDS_CORE_XTYPES_DETAIL_MEMBER_TYPE_HPP_
 #define EPROSIMA_DDS_CORE_XTYPES_DETAIL_MEMBER_TYPE_HPP_
 
-#include <dds/core/xtypes/detail/Annotation.hpp>
-#include <dds/core/xtypes/detail/DynamicType.hpp>
+#include <dds/core/xtypes/DynamicType.hpp>
 
 #include <vector>
 #include <functional>
@@ -35,188 +34,174 @@ class MemberType
 public:
     MemberType(
             const std::string& name,
-            const DynamicType& dynamic_type)
+            const xtypes::DynamicType& dynamic_type)
         : name_(name)
         , dynamic_type_(dynamic_type)
     {}
 
     MemberType(
             const std::string& name,
-            const DynamicType& dynamic_type,
-            Annotation& annotation)
+            const xtypes::DynamicType& dynamic_type,
+            const xtypes::Annotation& annotation)
         : name_(name)
         , dynamic_type_(dynamic_type)
     {
         annotations_.push_back(annotation);
     }
 
-    void name(
-            const std::string& name)
+    MemberType(
+            const std::string& name,
+            const xtypes::DynamicType& dynamic_type,
+            const std::vector<xtypes::Annotation>& annotations)
+        : name_(name)
+        , dynamic_type_(dynamic_type)
     {
-        name_ = name;
+        annotations_ = annotations;
     }
 
-    void dynamic_type(
-            const DynamicType& dynamic_type)
+
+    template<typename AnnotationIter>
+    MemberType(
+            const std::string& name,
+            const xtypes::DynamicType dynamic_type,
+            const AnnotationIter& begin,
+            const AnnotationIter& end)
+        : name_(name)
+        , dynamic_type_(dynamic_type)
     {
-        dynamic_type_ = dynamic_type;
+        annotations_ = std::vector<xtypes::Annotation>(begin, end);
     }
 
-    void annotations(
-            std::vector<xtypes::Annotation>& annotations)
-    {
-        annotations_.reserve(annotations.size() + annotations_.size());
-        for (auto it = annotations.begin(); it != annotations.end(); ++it)
-        {
-            annotations_.emplace_back(*it);
-        }
-    }
+    const std::string& name() const { return name_; }
+    const xtypes::DynamicType& dynamic_type() const { return dynamic_type_; }
+    const std::vector<xtypes::Annotation>& annotations() const { return annotations_; }
 
-    template<typename AnnoIter>
-    void annotations(
-            AnnoIter begin,
-            AnnoIter end)
-    {
-        annotations_.reserve(annotations_.size() + ( end - begin) );
-        for (auto it = begin; it != end; ++it)
-        {
-            annotations_.emplace_back(*it);
-        }
-    }
+    void name(const std::string& name) { name_ = name; }
+    void dynamic_type(const xtypes::DynamicType& dynamic_type) { dynamic_type_ = dynamic_type; }
+    void annotations(const std::vector<xtypes::Annotation>& annotations) { annotations_ = annotations; }
 
-    void annotation(
-            xtypes::Annotation& annotations)
+    void add_annotation(const xtypes::Annotation& annotations)
     {
         annotations_.push_back(annotations);
     }
 
-    const std::string& name()const noexcept
+    template<typename AnnotationIter>
+    void annotations(
+            AnnotationIter begin,
+            AnnotationIter end)
     {
-        return name_;
-    }
-
-    const const DynamicType& dynamic_type() const noexcept
-    {
-        return dynamic_type_;
-    }
-
-    const std::vector<xtypes::Annotation>& annotations()
-    {
-        return annotations_;
+        annotations_ = std::vector<xtypes::Annotation>(begin, end);
     }
 
     void remove_annotation(
-            const xtypes::Annotation& a)
+            const xtypes::Annotation& annotation)
     {
         auto rem = std::find_if(
-                    annotations_.begin(),
-                    annotations_.end(),
-                    [&]( xtypes::Annotation& b)
-                        {return b.akind() == a.akind();} );
-        if ( rem != annotations_.end() )
+                annotations_.begin(),
+                annotations_.end(),
+                [&](xtypes::Annotation& a)
+                    { return a.akind() == annotation.akind(); } );
+
+        if (rem != annotations_.end())
         {
             annotations_.erase(rem);
         }
     }
 
+    bool is_optional()
+    {
+        AnnotationKind  kind = AnnotationKind_def::Type::OPTIONAL_ANNOTATION_TYPE;
+        return has_annotation(kind);
+    }
 
+    bool is_shared()
+    {
+        AnnotationKind kind = AnnotationKind_def::Type::SHARED_ANNOTATION_TYPE;
+        return has_annotation(kind);
+    }
+
+    bool is_key()
+    {
+        AnnotationKind kind = AnnotationKind_def::Type::KEY_ANNOTATION_TYPE;
+        return has_annotation(kind);
+    }
+
+    bool is_must_understand()
+    {
+        AnnotationKind kind = AnnotationKind_def::Type::MUST_UNDERSTAND_ANNOTATION_TYPE;
+        return has_annotation(kind);
+    }
+
+    bool is_bitset()
+    {
+        AnnotationKind kind = AnnotationKind_def::Type::BITSET_ANNOTATION_TYPE;
+        return has_annotation(kind);
+    }
+
+    bool has_bitbound()
+    {
+        AnnotationKind kind = AnnotationKind_def::Type::BITSETBOUND_ANNOTATION_TYPE;
+        return has_annotation(kind);
+    }
+
+    bool has_id()
+    {
+        AnnotationKind kind = AnnotationKind_def::Type::ID_ANNOTATION_TYPE;
+        return has_annotation(kind);
+    }
+
+    uint32_t get_id()
+    {
+        AnnotationKind kind = AnnotationKind_def::Type::ID_ANNOTATION_TYPE;
+
+        // creting a generic IdAnnotation that will be filled by annotation_iterator()
+        xtypes::IdAnnotation ida(0);
+        if (!annotation_iterator(kind, ida))
+        {
+            throw IllegalOperationError("No Id Annotation found");
+        }
+        return ida.id();
+    }
+
+    int32_t get_bitbound() const
+    {
+        return 0; //TODO //similar to get_id
+    }
+
+private:
     bool annotation_iterator(
-            AnnotationKind& annotation_kind,
-            xtypes::Annotation& retAnn)
+            AnnotationKind kind,
+            xtypes::Annotation& next)
     {
         auto retVal = std::find_if(
-                            annotations_.begin(),
-                            annotations_.end(),
-                            [&]( xtypes::Annotation& a)
-                                { return (a.akind() == annotation_kind);} );
+                annotations_.begin(),
+                annotations_.end(),
+                [&](xtypes::Annotation& a)
+                    { return (a.akind() == kind); } );
 
         if (retVal == annotations_.end())
         {
             return false;
         }
-        retAnn = *retVal;
+
+        next = *retVal;
         return true;
     }
 
-    bool find_annotation(
-            AnnotationKind& annotation_kind)
+    bool has_annotation(
+            AnnotationKind kind)
     {
         return annotations_.end() !=  std::find_if(
-                                    annotations_.begin(),
-                                    annotations_.end(),
-                                    [&]( xtypes::Annotation& a)
-                                        { return (a.akind() == annotation_kind);} );
-    }
-
-    bool is_optional()
-    {
-        AnnotationKind  a = AnnotationKind_def::Type::OPTIONAL_ANNOTATION_TYPE;
-        return find_annotation(a);
-    }
-
-    bool is_shared()
-    {
-        AnnotationKind a = AnnotationKind_def::Type::SHARED_ANNOTATION_TYPE;
-        return find_annotation(a);
-    }
-
-    bool is_key()
-    {
-        AnnotationKind a = AnnotationKind_def::Type::KEY_ANNOTATION_TYPE;
-        return find_annotation(a);
-    }
-
-    bool is_must_understand()
-    {
-        AnnotationKind a = AnnotationKind_def::Type::MUST_UNDERSTAND_ANNOTATION_TYPE;
-        return find_annotation(a);
-    }
-
-    bool is_bitset()
-    {
-        AnnotationKind a = AnnotationKind_def::Type::BITSET_ANNOTATION_TYPE;
-        return find_annotation(a);
-    }
-
-    bool has_bitbound()
-    {
-        AnnotationKind a = AnnotationKind_def::Type::BITSETBOUND_ANNOTATION_TYPE;
-        return find_annotation(a);
-    }
-/*
-    uint32_t get_bitbound()
-    {
-        if(false == has_bitbound())
-        {
-            throw IllegalOperationError("No Bitsetbound Annotation found");
-        }
-        AnnotationKind a = AnnotationKind_def::Type::BITSETBOUND_ANNOTATION_TYPE;
-        return annIt(a)->bound();
-    }
-*/
-    bool has_id()
-    {
-        AnnotationKind a = AnnotationKind_def::Type::ID_ANNOTATION_TYPE;
-        return find_annotation(a);
-    }
-
-    uint32_t get_id()
-    {
-        AnnotationKind a = AnnotationKind_def::Type::ID_ANNOTATION_TYPE;
-
-        // creting a generic IdAnnotation that will be filled by annotation_iterator()
-        xtypes::IdAnnotation ida(0);
-        if (not annotation_iterator(a, ida))
-        {
-            throw IllegalOperationError("No Id Annotation found");
-        }
-        return ida->id();
+                annotations_.begin(),
+                annotations_.end(),
+                [&](xtypes::Annotation& a)
+                    { return (a.akind() == kind);} );
     }
 
 private:
     std::string name_;
-    DynamicType dynamic_type_;
-    std::vector<Annotation> annotations_;
+    xtypes::DynamicType dynamic_type_;
+    std::vector<xtypes::Annotation> annotations_;
 };
 
 } //namespace detail
