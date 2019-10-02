@@ -73,15 +73,21 @@ set(LIB_VERSION_STR "${LIB_MAJOR_VERSION}.${LIB_MINOR_VERSION}.${LIB_PATCH_VERSI
 ###############################################################################
 # Project                                                                     #
 ###############################################################################
-if(CMAKE_VERSION VERSION_LESS 3.0)
-    project(fastrtps C CXX)
-    set(PROJECT_VERSION_MAJOR "${LIB_MAJOR_VERSION}")
-    set(PROJECT_VERSION_MINOR "${LIB_MINOR_VERSION}")
-    set(PROJECT_VERSION_PATCH "${LIB_PATCH_VERSION}")
-    set(PROJECT_VERSION "${LIB_VERSION_STR}")
-else()
+if (DEFINED PROJECT_VERSION)
+    message(STATUS "Manual version: ${PROJECT_VERSION}")
     cmake_policy(SET CMP0048 NEW)
-    project(fastrtps VERSION "${LIB_VERSION_STR}" LANGUAGES C CXX)
+    project(fastrtps VERSION "${PROJECT_VERSION}" LANGUAGES C CXX)
+else()
+    if(CMAKE_VERSION VERSION_LESS 3.0)
+        project(fastrtps C CXX)
+        set(PROJECT_VERSION_MAJOR "${LIB_MAJOR_VERSION}")
+        set(PROJECT_VERSION_MINOR "${LIB_MINOR_VERSION}")
+        set(PROJECT_VERSION_PATCH "${LIB_PATCH_VERSION}")
+        set(PROJECT_VERSION "${LIB_VERSION_STR}")
+    else()
+        cmake_policy(SET CMP0048 NEW)
+        project(fastrtps VERSION "${LIB_VERSION_STR}" LANGUAGES C CXX)
+    endif()
 endif()
 
 set(PROJECT_NAME_STYLED "FastRTPS")
@@ -343,10 +349,10 @@ if(BUILD_DOCUMENTATION)
     ### ReadTheDocs ########################
 
     add_custom_target(readthedocs
-        COMMAND "${WGET_EXE}" "https://media.readthedocs.org/htmlzip/eprosima-fast-rtps/latest/eprosima-fast-rtps.zip"
+        COMMAND "${WGET_EXE}" "https://media.readthedocs.org/htmlzip/eprosima-fast-rtps/v${PROJECT_VERSION}/eprosima-fast-rtps.zip"
         COMMAND "${UNZIP_EXE}" "eprosima-fast-rtps.zip" -d "${PROJECT_BINARY_DIR}/doc/"
         COMMAND ${CMAKE_COMMAND} -E remove_directory "${PROJECT_BINARY_DIR}/doc/manual"
-        COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_BINARY_DIR}/doc/eprosima-fast-rtps-latest" "${PROJECT_BINARY_DIR}/doc/manual"
+        COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_BINARY_DIR}/doc/eprosima-fast-rtps-v${PROJECT_VERSION}" "${PROJECT_BINARY_DIR}/doc/manual"
         COMMAND ${CMAKE_COMMAND} -E remove "eprosima-fast-rtps.zip"
         )
 
