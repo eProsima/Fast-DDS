@@ -24,10 +24,9 @@
 #include <dds/core/detail/inttypes.hpp>
 
 #include <dds/core/xtypes/DynamicType.hpp>
-#include <dds/core/xtypes/Annotation.hpp>
 #include <dds/core/Reference.hpp>
 
-#include <vector>
+
 
 namespace dds {
 namespace core {
@@ -48,14 +47,17 @@ public:
             const std::string& name,
             const TDynamicType<OTHER_DELEGATE>& type)
     {
-        throw "Not implemented";
+        impl()->name(name);
+        impl()->dt(type);
     }
 
     TMemberType(const std::string& name,
-                const dds::core::xtypes::DynamicType& type,
+                const xtypes::DynamicType& type,
                 const Annotation& annotation)
     {
-        throw "Not implemented";
+        impl()->name(name);
+        impl()->dt(type);
+        impl()->annotation(annotation);
     }
 
     TMemberType(
@@ -63,7 +65,9 @@ public:
             const TDynamicType<OTHER_DELEGATE>& type,
             const std::vector<Annotation>& annotations)
     {
-        throw "Not implemented";
+        impl()->name(name);
+        impl()->dt(type);
+        impl()->annotation(annotations);
     }
 
     template<typename AnnotationIter>
@@ -73,74 +77,78 @@ public:
             const AnnotationIter& begin,
             const AnnotationIter& end)
     {
-        throw "Not implemented";
+        impl()->name(name);
+        impl()->dt(type);
+        impl()->annotation(begin, end);
     }
 
     const std::string& name() const
     {
-        throw "Not implemented";
+        return impl()->name();
     }
 
-    const dds::core::xtypes::TDynamicType<OTHER_DELEGATE>& type() const
+    const TDynamicType<OTHER_DELEGATE>& type() const
     {
-        throw "Not implemented";
+        return impl()->dt();
     }
 
     TMemberType add_annotation(
             const Annotation& annotation)
     {
-        throw "Not implemented";
+        impl()->annotation(annotation);
+        return *this;
     }
 
     TMemberType remove_annotation(
             const Annotation& annotation)
     {
-        throw "Not implemented";
+        impl().remove_annotation(annotation);
+        return *this;
     }
 
     bool is_optional() const
     {
-        throw "Not implemented";
+        return impl()->is_optional();
     }
 
     bool is_shared() const
     {
-        throw "Not implemented";
+        return impl()->is_shared();
     }
 
     bool is_key() const
     {
-        throw "Not implemented";
+        return impl()->is_key();
     }
 
     bool is_must_understand() const
     {
-        throw "Not implemented";
+        return impl()->is_must_understand();
     }
 
     bool is_bitset() const
     {
-        throw "Not implemented";
+        return impl()->is_bitset();
     }
 
     bool has_bitbound() const
     {
-        throw "Not implemented";
+        return impl()->has_bitbound();
     }
 
-    int32_t get_bitbound() const
+    uint32_t get_bitbound() const
     {
-        throw "Not implemented";
+        return impl()->get_bitbound();
     }
 
     bool has_id() const
     {
-        throw "Not implemented";
+        return impl()->has_id();
     }
 
-    int32_t get_id() const
+    uint32_t get_id() const
     {
-        throw "Not implemented";
+        return impl()->get_bitbound();
     }
 };
 

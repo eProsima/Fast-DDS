@@ -32,6 +32,14 @@ namespace xtypes {
 // to limit initialization issues with ctors.
 
 template<>
+struct dynamic_type_traits<bool>
+{
+    static constexpr TypeKind TYPE_ID = TypeKind::BOOLEAN_TYPE;
+    static constexpr const char* NAME = "bool";
+};
+
+
+template<>
 struct dynamic_type_traits<uint8_t>
 {
     static constexpr TypeKind TYPE_ID = TypeKind::UINT_8_TYPE;
@@ -65,6 +73,56 @@ struct dynamic_type_traits<uint32_t>
     static constexpr TypeKind TYPE_ID = TypeKind::UINT_32_TYPE;
     static constexpr const char* NAME = "uint32_t";
 };
+
+template<>
+struct dynamic_type_traits<int64_t>
+{
+    static constexpr TypeKind TYPE_ID = TypeKind::INT_64_TYPE;
+    static constexpr const char* NAME = "int64_t";
+};
+
+template<>
+struct dynamic_type_traits<uint64_t>
+{
+    static constexpr TypeKind TYPE_ID = TypeKind::UINT_64_TYPE;
+    static constexpr const char* NAME = "uint64_t";
+};
+
+template<>
+struct dynamic_type_traits<float>
+{
+    static constexpr TypeKind TYPE_ID = TypeKind::FLOAT_32_TYPE;
+    static constexpr const char* NAME = "float";
+};
+
+template<>
+struct dynamic_type_traits<double>
+{
+    static constexpr TypeKind TYPE_ID = TypeKind::FLOAT_64_TYPE;
+    static constexpr const char* NAME = "double";
+};
+
+template<>
+struct dynamic_type_traits<long double>
+{
+    static constexpr TypeKind TYPE_ID = TypeKind::FLOAT_128_TYPE;
+    static constexpr const char* NAME = "longdouble";
+};
+
+template<>
+struct dynamic_type_traits<char>
+{
+    static constexpr TypeKind TYPE_ID = TypeKind::CHAR_8_TYPE;
+    static constexpr const char* NAME = "char";
+};
+
+template<>
+struct dynamic_type_traits<char32_t>
+{
+    static constexpr TypeKind TYPE_ID = TypeKind::CHAR_32_TYPE;
+    static constexpr const char* NAME = "char32_t";
+};
+
 
 } //namespace xtypes
 } //namespace core

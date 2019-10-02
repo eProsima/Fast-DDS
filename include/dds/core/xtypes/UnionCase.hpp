@@ -58,7 +58,7 @@ public:
 };
 
 template<typename T>
-struct UnionCase : public TUnionCase <T, detail::UnionCase> {} ;
+struct UnionCase : public TUnionCase <T, detail::UnionCase> {};
 
 } //namespace xtypes
 } //namespace core
