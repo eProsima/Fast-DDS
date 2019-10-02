@@ -784,7 +784,8 @@ public:
 
     virtual RTPS_DllAPI ~ResourceLimitsQosPolicy() { }
 
-    bool operator==(const ResourceLimitsQosPolicy& b) const
+    bool operator ==(
+            const ResourceLimitsQosPolicy& b) const
     {
         return (this->max_samples == b.max_samples) &&
                (this->max_instances == b.max_instances) &&
@@ -941,7 +942,8 @@ public:
         RTPS_DllAPI TransportPriorityQosPolicy():Parameter_t(PID_TRANSPORT_PRIORITY,4),QosPolicy(false),value(0){};
         virtual RTPS_DllAPI ~TransportPriorityQosPolicy(){};
 
-        bool operator==(const TransportPriorityQosPolicy& b) const
+        bool operator ==(
+                const TransportPriorityQosPolicy& b) const
         {
             return (this->value == b.value) &&
                 Parameter_t::operator==(b) &&
