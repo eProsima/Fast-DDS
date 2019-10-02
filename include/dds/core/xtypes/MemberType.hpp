@@ -136,6 +136,8 @@ public:
     }
 };
 
+typedef MemberType Member;
+
 } //namespace xtypes
 } //namespace core
 } //namespace dds

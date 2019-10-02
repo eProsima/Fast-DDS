@@ -26,7 +26,7 @@ set(${CORE_STANDALONE}_source_files
     xtypes/Annotation.cpp
     xtypes/Annotations.cpp
     #xtypes/CollectionTypes.cpp
-    #xtypes/DynamicData.cpp
+    xtypes/DynamicData.cpp
     xtypes/DynamicType.cpp
     xtypes/MemberType.cpp
     xtypes/PrimitiveTypes.cpp
@@ -37,7 +37,7 @@ set(${CORE_STANDALONE}_source_files
     #xtypes/UnionType.cpp
     xtypes/detail/Annotation.cpp
     #xtypes/detail/CollectionTypes.cpp
-    #xtypes/detail/DynamicData.cpp
+    xtypes/detail/DynamicData.cpp
     xtypes/detail/DynamicType.cpp
     xtypes/detail/MemberType.cpp
     xtypes/detail/PrimitiveTypes.cpp

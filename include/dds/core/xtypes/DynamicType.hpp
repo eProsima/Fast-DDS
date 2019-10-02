@@ -80,23 +80,6 @@ public:
         return (impl()->kind().underlying() & TypeKind::CONSTRUCTED_TYPE) != 0;
     }
 
-    /*
-    bool operator ==(
-            const DynamicType& that) const
-    {
-        return *(impl()) == *(that.impl());
-    }
-
-    bool operator !=(
-            const DynamicType& that) const
-    {
-        return !(*this == that);
-    }
-
-    DynamicType(
-            const DynamicType& other) = default; //CHECK: this
-    */
-
 protected:
     DynamicType(
             detail::DynamicType* detail)

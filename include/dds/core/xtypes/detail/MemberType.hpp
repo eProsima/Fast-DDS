@@ -191,6 +191,8 @@ private:
     std::vector<xtypes::Annotation> annotations_;
 };
 
+typedef MemberType Member;
+
 } //namespace detail
 } //namespace xtypes
 } //namespace core
