@@ -21,7 +21,6 @@
 #define OMG_DDS_CORE_XTYPES_ANNOTATION_HPP_
 
 #include <dds/core/xtypes/detail/Annotation.hpp>
-
 #include <dds/core/xtypes/TypeKind.hpp>
 #include <dds/core/SafeEnumeration.hpp>
 #include <dds/core/Reference.hpp>
@@ -30,48 +29,34 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
-struct AnnotationKind_def
-{
-    enum Type
-    {
-        ID_ANNOTATION_TYPE,
-        OPTIONAL_ANNOTATION_TYPE,
-        KEY_ANNOTATION_TYPE,
-        SHARED_ANNOTATION_TYPE,
-        NESTED_ANNOTATION_TYPE,
-        EXTENSIBILITY_ANNOTATION_TYPE,
-        MUST_UNDERSTAND_ANNOTATION_TYPE,
-        VERBATIM_ANNOTATION_TYPE,
-        BITSET_ANNOTATION_TYPE
-    };
-};
-
-typedef dds::core::SafeEnum<AnnotationKind_def> AnnotationKind;
-
-struct ExtensibilityKind_def
-{
-    enum Type
-    {
-        FINAL,
-        EXTENSIBLE,
-        MUTABLE
-    };
-};
-typedef dds::core::SafeEnum<ExtensibilityKind_def> ExtensibilityKind;
+template<typename DELEGATE>
+class TIdAnnotation;
 
 template<typename DELEGATE>
 class TAnnotation : public Reference<DELEGATE>
 {
-public:
 
     OMG_DDS_REF_TYPE_BASE(
             TAnnotation,
             dds::core::Reference,
             DELEGATE)
+public:
 
-    //TAnnotation();
+    virtual ~TAnnotation();
 
     TypeKind kind() const;
+
+    template<typename Q,
+            template <typename> class K>
+    operator K<Q>&()
+    {
+        return reinterpret_cast<K<Q>&>(*this);
+    }
+
+    const AnnotationKind& akind()const
+    {
+        return impl()->akind();
+    }
 
 protected:
     TAnnotation(
@@ -81,23 +66,28 @@ protected:
 template<typename DELEGATE>
 class TIdAnnotation : public TAnnotation<DELEGATE>
 {
+using TAnnotation<DELEGATE>::impl;
+
 public:
+
     TIdAnnotation(
             uint32_t id)
+        :TAnnotation<DELEGATE>(TypeKind::ANNOTATION_TYPE)
     {
-        (void) id;
+        impl()->id(id);
     }
 
     uint32_t id() const
     {
-        return 0;
+        return impl()->id();
     }
+
 };
 
 template<typename DELEGATE>
 class TKeyAnnotation : public TAnnotation<DELEGATE>
-
 {
+using TAnnotation<DELEGATE>::impl;
 public:
     TKeyAnnotation()
     {
@@ -125,17 +115,17 @@ public:
 template<typename DELEGATE>
 class TExtensibilityAnnotation : public TAnnotation<DELEGATE>
 {
+using TAnnotation<DELEGATE>::impl;
 public:
     TExtensibilityAnnotation(
             ExtensibilityKind xkind)
     {
-        (void) xkind;
+        impl()->xKind();
     }
 
     ExtensibilityKind extensibility_kind() const
     {
-        ExtensibilityKind ret;
-        return ret;
+        return impl()->xKind();
     }
 };
 
@@ -151,17 +141,17 @@ public:
 template<typename DELEGATE>
 class TVerbatimAnnotation : public TAnnotation<DELEGATE>
 {
+using TAnnotation<DELEGATE>::impl;
 public:
     TVerbatimAnnotation(
             const std::string& text)
     {
-        (void) text;
+        impl()->vbt(text);
     }
 
     const std::string& verbatim_text() const
     {
-        const std::string txt;
-        return txt;
+        return impl()->vbt();
     }
 };
 
@@ -178,11 +168,23 @@ public:
 template<typename DELEGATE>
 class  TBitBoundAnnotation : public TAnnotation<DELEGATE>
 {
+using TAnnotation<DELEGATE>::impl;
 public:
     TBitBoundAnnotation(
             uint32_t bound)
     {
-        (void) bound;
+        impl()->bsb(bound);
+    }
+
+    virtual uint32_t bound()const
+    {
+        return impl()->bsb();
+    }
+
+    void bound(
+            uint32_t bound)
+    {
+        impl()->bsb(bound);
     }
 };
 
@@ -206,6 +208,18 @@ typedef TBitsetAnnotation<detail::BitsetAnnotation> BitsetAnnotation;
 
 typedef TBitBoundAnnotation<detail::BitBoundAnnotation> BitBoundAnnotation;
 
+//FRANAVA We must think about the fact that previous API has a way of creating a
+//dynamically defined Annotation.
+/*
+namespace converter
+{
+    IdAnnotation convert(const Annotation& a)
+    {
+        uint32_t idav = reinterpret_cast<const IdAnnotation&>(a).id();
+        return IdAnnotation(idav);
+    }
+}
+*/
 namespace annotation {
 
 // These functions can be used to get cached instances,
