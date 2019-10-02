@@ -33,9 +33,9 @@
 
 #include <fastdds/rtps/writer/WriterListener.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
-#include <fastdds/dds/qos/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastrtps/qos/LivelinessLostStatus.h>
-#include <fastdds/dds/qos/BaseStatus.h>
+#include <fastdds/dds/core/status/BaseStatus.hpp>
 
 namespace eprosima {
 namespace fastrtps{
@@ -173,11 +173,11 @@ public:
     bool dispose(
             void* data);
 
-    ReturnCode_t get_liveliness_lost_status(
+    bool get_liveliness_lost_status(
             LivelinessLostStatus& status);
 
     /* TODO
-    ReturnCode_t get_offered_incompatible_qos_status(
+    bool get_offered_incompatible_qos_status(
             OfferedIncompatibleQosStatus& status)
     {
         // Not implemented

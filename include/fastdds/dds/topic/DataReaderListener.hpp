@@ -23,9 +23,9 @@
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastrtps/qos/SampleRejectedStatus.hpp>
-#include <fastrtps/qos/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/rtps/common/MatchingInfo.h>
-#include <fastdds/dds/qos/BaseStatus.h>
+#include <fastdds/dds/core/status/BaseStatus.hpp>
 
 namespace eprosima {
 namespace fastdds {

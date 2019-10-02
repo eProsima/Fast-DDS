@@ -13,17 +13,17 @@
 // limitations under the License.
 
 /**
- * @file BaseStatus.h
+ * @file BaseStatus.hpp
 */
 
-#ifndef _FASTRTPS_BASE_STATUS_H_
-#define _FASTRTPS_BASE_STATUS_H_
+#ifndef _FASTDDS_BASE_STATUS_HPP_
+#define _FASTDDS_BASE_STATUS_HPP_
 
 #include <cstdint>
 
 namespace eprosima {
 namespace fastdds {
-namespace dds{
+namespace dds {
 
 //! @brief A struct storing the base status
 struct BaseStatus
@@ -37,8 +37,8 @@ using SampleLostStatus = BaseStatus;
 using LivelinessLostStatus = BaseStatus;
 using InconsistentTopicStatus = BaseStatus;
 
-} //end of anamespace dds
-} //end of namespace fastdds
-} //end of namespace eprosima
+} //namespace dds
+} //namespace fastdds
+} //namespace eprosima
 
-#endif // _FASTRTPS_BASE_STATUS_H_
+#endif // _FASTDDS_BASE_STATUS_HPP_

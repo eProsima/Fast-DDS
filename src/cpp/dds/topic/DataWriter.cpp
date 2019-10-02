@@ -146,7 +146,7 @@ void DataWriter::get_offered_deadline_missed_status(
     impl_->get_offered_deadline_missed_status(status);
 }
 
-ReturnCode_t DataWriter::get_liveliness_lost_status(
+bool DataWriter::get_liveliness_lost_status(
         LivelinessLostStatus& status)
 {
     return impl_->get_liveliness_lost_status(status);
