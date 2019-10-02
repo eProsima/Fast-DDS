@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <profiles>
-<<<<<<< HEAD
 
-=======
->>>>>>> Unit test XML
     <participant profile_name="test_participant_profile" is_default_profile="true">
         <rtps>
             <builtin>
@@ -96,4 +93,5 @@
         </qos>
         <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
     </subscriber>
+
 </profiles>
