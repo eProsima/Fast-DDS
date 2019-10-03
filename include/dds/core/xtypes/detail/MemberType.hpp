@@ -80,7 +80,7 @@ public:
 
     void add_annotation(const xtypes::Annotation& annotations)
     {
-        annotations_.emplace_back(annotations);
+        annotations_.emplace_back(annotation);
     }
 
     void remove_annotation(
