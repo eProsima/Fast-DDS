@@ -862,15 +862,22 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(tinyxml2::XMLElement *elem, WriterQo
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, DURABILITY_SRV) == 0 || strcmp(name, LATENCY_BUDGET) == 0 ||
-                 strcmp(name, USER_DATA) == 0 || strcmp(name, TIME_FILTER) == 0 ||
-                 strcmp(name, OWNERSHIP) == 0 || strcmp(name, OWNERSHIP_STRENGTH) == 0 ||
-                 strcmp(name, DEST_ORDER) == 0 || strcmp(name, PRESENTATION) == 0 ||
-                 strcmp(name, TOPIC_DATA) == 0 || strcmp(name, GROUP_DATA) == 0)
+        else if(strcmp(name, LATENCY_BUDGET) == 0)
+        {
+            //Latency Budget
+            if(XMLP_ret::XML_OK != getXMLLatencyBudgetQos(p_aux0, qos.m_latencyBudget, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, DURABILITY_SRV) == 0 || strcmp(name, USER_DATA) == 0 || 
+                 strcmp(name, TIME_FILTER) == 0 || strcmp(name, OWNERSHIP) == 0 || 
+                 strcmp(name, OWNERSHIP_STRENGTH) == 0 || strcmp(name, DEST_ORDER) == 0 || 
+                 strcmp(name, PRESENTATION) == 0 || strcmp(name, TOPIC_DATA) == 0 || 
+                 strcmp(name, GROUP_DATA) == 0)
         {
             // TODO: Do not supported for now
             //if (nullptr != (p_aux = elem->FirstChildElement(    DURABILITY_SRV))) getXMLDurabilityServiceQos(p_aux, ident);
-            //if (nullptr != (p_aux = elem->FirstChildElement(    LATENCY_BUDGET))) getXMLLatencyBudgetQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(         USER_DATA))) getXMLUserDataQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(       TIME_FILTER))) getXMLTimeBasedFilterQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(         OWNERSHIP))) getXMLOwnershipQos(p_aux, ident);
@@ -966,15 +973,22 @@ XMLP_ret XMLParser::getXMLReaderQosPolicies(tinyxml2::XMLElement *elem, ReaderQo
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, DURABILITY_SRV) == 0 || strcmp(name, LATENCY_BUDGET) == 0 ||
-                 strcmp(name, USER_DATA) == 0 || strcmp(name, TIME_FILTER) == 0 ||
-                 strcmp(name, OWNERSHIP) == 0 || strcmp(name, OWNERSHIP_STRENGTH) == 0 ||
-                 strcmp(name, DEST_ORDER) == 0 || strcmp(name, PRESENTATION) == 0 ||
-                 strcmp(name, TOPIC_DATA) == 0 || strcmp(name, GROUP_DATA) == 0)
+        else if(strcmp(name, LATENCY_BUDGET) == 0)
+        {
+            //Latency Budget
+            if(XMLP_ret::XML_OK != getXMLLatencyBudgetQos(p_aux0, qos.m_latencyBudget, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, DURABILITY_SRV) == 0 || strcmp(name, USER_DATA) == 0 || 
+                 strcmp(name, TIME_FILTER) == 0 || strcmp(name, OWNERSHIP) == 0 || 
+                 strcmp(name, OWNERSHIP_STRENGTH) == 0 || strcmp(name, DEST_ORDER) == 0 || 
+                 strcmp(name, PRESENTATION) == 0 || strcmp(name, TOPIC_DATA) == 0 || 
+                 strcmp(name, GROUP_DATA) == 0)
         {
             // TODO: Do not supported for now
             //if (nullptr != (p_aux = elem->FirstChildElement(    DURABILITY_SRV))) getXMLDurabilityServiceQos(p_aux, ident);
-            //if (nullptr != (p_aux = elem->FirstChildElement(    LATENCY_BUDGET))) getXMLLatencyBudgetQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(         USER_DATA))) getXMLUserDataQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(       TIME_FILTER))) getXMLTimeBasedFilterQos(p_aux, ident);
             //if (nullptr != (p_aux = elem->FirstChildElement(         OWNERSHIP))) getXMLOwnershipQos(p_aux, ident);

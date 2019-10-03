@@ -480,6 +480,18 @@ class PubSubWriter
         return *this;
     }
 
+    PubSubWriter& latency_budget_duration(
+            const eprosima::fastrtps::Duration_t& latency_duration)
+    {
+        publisher_attr_.qos.m_latencyBudget.duration = latency_duration;
+        return *this;
+    }
+
+    eprosima::fastrtps::Duration_t get_latency_budget_duration()
+    {
+        return publisher_attr_.qos.m_latencyBudget.duration;
+    }
+
     PubSubWriter& liveliness_announcement_period(const eprosima::fastrtps::Duration_t announcement_period)
     {
         publisher_attr_.qos.m_liveliness.announcement_period = announcement_period;
