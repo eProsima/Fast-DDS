@@ -1498,11 +1498,11 @@ const SubscriptionMatchedStatus EDP::update_subscription_matched_status(
         status.total_count += change;
         status.total_count_change +=change;
         status.last_publication_handle = writer_guid;
-        SubscriptionMatchedStatus aux = status;
+        SubscriptionMatchedStatus returned = status;
         status.current_count = 0;
         status.current_count_change = 0;
         reader_status_.emplace(reader_guid, status);
-        return aux;
+        return returned;
     }
 }
 
@@ -1532,11 +1532,11 @@ const PublicationMatchedStatus EDP::update_publication_matched_status(
         status.total_count += change;
         status.total_count_change +=change;
         status.last_subscription_handle = writer_guid;
-        PublicationMatchedStatus aux = status;
+        PublicationMatchedStatus returned = status;
         status.current_count = 0;
         status.current_count_change = 0;
         writer_status_.emplace(writer_guid, status);
-        return aux;
+        return returned;
     }
 }
 
