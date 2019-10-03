@@ -87,6 +87,7 @@ set(${PROJECT_NAME}_source_files
     dds/topic/DataReaderImpl.cpp
     dds/topic/DataWriterImpl.cpp
     dds/topic/TypeSupport.cpp
+    dds/topic/qos/TopicQos.cpp
     dds/topic/TypeSupport.cpp
     dds/publisher/PublisherImpl.cpp
     dds/publisher/qos/PublisherQos.cpp
