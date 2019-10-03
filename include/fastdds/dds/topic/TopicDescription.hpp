@@ -47,12 +47,12 @@ protected:
 
    virtual DomainParticipant* get_participant() const = 0;
 
-    std::string& get_name() const
+    const std::string& get_name() const
     {
         return name_;
     }
 
-    std::string& get_type_name() const
+    const std::string& get_type_name() const
     {
         return type_name_;
     }
