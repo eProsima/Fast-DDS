@@ -90,8 +90,8 @@ class ReqRepHelloWorldRequester
         virtual ~ReqRepHelloWorldRequester();
         void init();
         void init_with_latency(
-                eprosima::fastrtps::Duration_t latency_budget_duration_pub,
-                eprosima::fastrtps::Duration_t latency_budget_duration_sub);
+                const eprosima::fastrtps::Duration_t& latency_budget_duration_pub,
+                const eprosima::fastrtps::Duration_t& latency_budget_duration_sub);
         bool isInitialized() const { return initialized_; }
         void newNumber(eprosima::fastrtps::rtps::SampleIdentity related_sample_identity, uint16_t number);
         void block(const std::chrono::seconds &seconds);

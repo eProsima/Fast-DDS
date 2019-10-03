@@ -77,8 +77,8 @@ void ReqRepHelloWorldRequester::init()
 }
 
 void ReqRepHelloWorldRequester::init_with_latency(
-        eprosima::fastrtps::Duration_t latency_budget_duration_pub,
-        eprosima::fastrtps::Duration_t latency_budget_duration_sub)
+        const eprosima::fastrtps::Duration_t& latency_budget_duration_pub,
+        const eprosima::fastrtps::Duration_t& latency_budget_duration_sub)
 {
     ParticipantAttributes pattr;
     participant_ = Domain::createParticipant(pattr);

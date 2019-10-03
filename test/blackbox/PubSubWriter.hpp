@@ -480,7 +480,8 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& latency_budget_duration(const eprosima::fastrtps::Duration_t latency_duration)
+    PubSubWriter& latency_budget_duration(
+            const eprosima::fastrtps::Duration_t latency_duration)
     {
         publisher_attr_.qos.m_latencyBudget.duration = latency_duration;
         return *this;
