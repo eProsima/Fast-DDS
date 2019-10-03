@@ -26,11 +26,10 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/common/KeyedChanges.h>
+#include <fastrtps/attributes/TopicAttributes.h>
 
 namespace eprosima {
 namespace fastrtps {
-
-class TopicAttributes;
 
 /**
  * Class PublisherHistory, implementing a WriterHistory with support for keyed topics and HistoryQOS.
@@ -122,7 +121,7 @@ private:
     //!ResourceLimitsQosPolicy values.
     ResourceLimitsQosPolicy resource_limited_qos_;
     //!Topic Attributes
-    const TopicAttributes& topic_att_;
+    TopicAttributes topic_att_;
 
     /**
      * @brief Method that finds a key in m_keyedChanges or tries to add it if not found

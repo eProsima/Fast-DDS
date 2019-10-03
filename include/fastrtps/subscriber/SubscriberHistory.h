@@ -28,18 +28,13 @@
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/common/KeyedChanges.h>
 #include <fastrtps/subscriber/SampleInfo.h>
+#include <fastrtps/attributes/TopicAttributes.h>
 
 #include <chrono>
 #include <functional>
 
 namespace eprosima {
 namespace fastrtps {
-
-namespace rtps{
-class WriterProxy;
-}
-
-class TopicAttributes;
 
 /**
  * Class SubscriberHistory, container of the different CacheChanges of a subscriber
@@ -137,11 +132,11 @@ class SubscriberHistory: public rtps::ReaderHistory
         //!ResourceLimitsQosPolicy values.
         ResourceLimitsQosPolicy resource_limited_qos_;
         //!Topic Attributes
-        const TopicAttributes& topic_att_;
+        TopicAttributes topic_att_;
         //!TopicDataType
         fastdds::dds::TopicDataType* type_;
         //!ReaderQos
-        const fastrtps::ReaderQos& qos_;
+        fastrtps::ReaderQos qos_;
 
         //!Type object to deserialize Key
         void* get_key_object_;
@@ -170,7 +165,7 @@ class SubscriberHistory: public rtps::ReaderHistory
                 t_m_Inst_Caches::iterator& map_it);
 
         /**
-         * @name Variants of incoming change processing. 
+         * @name Variants of incoming change processing.
          *       Will be called with the history mutex taken.
          * @param[in] change The received change
          * @param unknown_missing_changes_up_to Number of missing changes before this one
