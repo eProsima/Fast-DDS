@@ -18,12 +18,26 @@
 #ifndef EPROSIMA_DDS_CORE_XTYPES_DETAIL_DYNAMICDATA_HPP_
 #define EPROSIMA_DDS_CORE_XTYPES_DETAIL_DYNAMICDATA_HPP_
 
+#include <dds/core/xtypes/DynamicType.hpp>
+
 namespace dds {
 namespace core {
 namespace xtypes {
 namespace detail {
 
-class DynamicData { };
+class DynamicData
+{
+public:
+    DynamicData(
+            const xtypes::DynamicType& type)
+        : type_(type)
+    {
+
+    }
+
+private:
+    xtypes::DynamicType type_;
+};
 
 } //namespace detail
 } //namespace xtypes

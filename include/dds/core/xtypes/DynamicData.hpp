@@ -46,10 +46,8 @@ class DynamicData : Reference<detail::DynamicData>
 public:
     DynamicData(
             const DynamicType& type)
-    {
-        (void) type;
-        throw "Not implemented";
-    }
+        : Reference(new detail::DynamicData(type))
+    {}
 
     template<typename T>
     void value(

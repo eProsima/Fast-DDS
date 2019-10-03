@@ -16,3 +16,11 @@
 */
 
 #include <dds/core/types.hpp>
+
+namespace dds {
+namespace core {
+
+const null_type null;
+
+} //namespace core
+} //namespace dds

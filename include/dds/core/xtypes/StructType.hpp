@@ -37,6 +37,9 @@ namespace xtypes {
 
 class StructType : public DynamicType
 {
+    OMG_DDS_EXPLICIT_REF_BASE(
+            StructType, DynamicType)
+
 public:
     StructType(
             const std::string& name)
@@ -92,9 +95,9 @@ public:
         : DynamicType(new detail::StructType(name, parent, members_begin, members_end, annotations_begin, annotations_end))
     {}
 
-    const StructType& parent() const
+    StructType parent() const
     {
-        return *std::static_pointer_cast<detail::StructType>(impl())->parent();
+        return polymorphic_cast<StructType>(std::static_pointer_cast<detail::StructType>(impl())->parent());
     }
 
     const std::vector<MemberType>& members() const
@@ -120,6 +123,13 @@ public:
         std::static_pointer_cast<detail::StructType>(impl())->add_member(member);
         return *this;
     }
+
+    /*
+    StructType(
+            const DynamicType& type)
+        : DynamicType(type)
+    {}
+    */
 };
 
 } //namespace xtypes

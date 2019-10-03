@@ -31,9 +31,6 @@
 namespace dds {
 namespace core {
 namespace xtypes {
-
-class StructType;
-
 namespace detail {
 
 
@@ -43,70 +40,70 @@ public:
     StructType(
             const std::string& name)
         : DynamicType(name, TypeKind::STRUCTURE_TYPE)
-        , parent_(nullptr)
+        , parent_(null)
     {}
 
     StructType(
             const std::string& name,
-            const xtypes::StructType& parent)
+            const xtypes::DynamicType& parent)
         : DynamicType(name, TypeKind::STRUCTURE_TYPE)
-        , parent_(&parent)
+        , parent_(parent)
     {}
 
     StructType(
             const std::string& name,
-            const xtypes::StructType& parent,
+            const xtypes::DynamicType& parent,
             const std::vector<xtypes::MemberType>& members)
         : DynamicType(name, TypeKind::STRUCTURE_TYPE)
-        , parent_(&parent)
+        , parent_(parent)
         , members_(members)
     {}
 
     template<typename MemberIter>
     StructType(
             const std::string& name,
-            const xtypes::StructType& parent,
+            const xtypes::DynamicType& parent,
             const MemberIter begin,
             const MemberIter end)
         : DynamicType(name, TypeKind::STRUCTURE_TYPE)
-        , parent_(&parent)
+        , parent_(parent)
         , members_(begin, end)
     {}
 
     StructType(
             const std::string& name,
-            const xtypes::StructType& parent,
+            const xtypes::DynamicType& parent,
             const std::vector<xtypes::MemberType>& members,
             const xtypes::Annotation& annotation)
         : DynamicType(name, TypeKind::STRUCTURE_TYPE, annotation)
-        , parent_(&parent)
+        , parent_(parent)
         , members_(members)
     {}
 
     StructType(
             const std::string& name,
-            const xtypes::StructType& parent,
+            const xtypes::DynamicType& parent,
             const std::vector<xtypes::MemberType>& members,
             const std::vector<xtypes::Annotation>& annotations)
         : DynamicType(name, TypeKind::STRUCTURE_TYPE, annotations)
-        , parent_(&parent)
+        , parent_(parent)
         , members_(members)
     {}
 
     template<typename MemberIter, typename AnnotationIter>
     StructType(
             const std::string& name,
-            const xtypes::StructType& parent,
+            const xtypes::DynamicType& parent,
             const MemberIter members_begin,
             const MemberIter members_end,
             const AnnotationIter annotations_begin,
             const AnnotationIter annotations_end)
         : DynamicType(name, TypeKind::STRUCTURE_TYPE, annotations_begin, annotations_end)
-        , parent_(&parent)
+        , parent_(parent)
         , members_(members_begin, members_end)
     {}
 
-    const xtypes::StructType* parent() const { return parent_; }
+    const xtypes::DynamicType& parent() const { return parent_; }
     const std::vector<xtypes::MemberType>& members() const { return members_; }
 
     const xtypes::MemberType& member(
@@ -141,7 +138,7 @@ public:
     }
 
 private:
-    const xtypes::StructType* parent_;
+    xtypes::DynamicType parent_;
     std::vector<xtypes::MemberType> members_;
 };
 
