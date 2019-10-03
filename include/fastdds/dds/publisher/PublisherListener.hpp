@@ -19,10 +19,8 @@
 #ifndef _FASTDDS_PUBLISHERLISTENER_HPP_
 #define _FASTDDS_PUBLISHERLISTENER_HPP_
 
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
-#include <fastrtps/qos/LivelinessLostStatus.h>
+#include <fastdds/dds/core/status/BaseStatus.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -73,7 +71,7 @@ public:
      */
     virtual void on_liveliness_lost(
             Publisher* pub,
-            const fastrtps::LivelinessLostStatus& status)
+            const LivelinessLostStatus& status)
     {
         (void)pub;
         (void)status;

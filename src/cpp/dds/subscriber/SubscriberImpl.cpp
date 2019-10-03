@@ -466,7 +466,7 @@ void SubscriberImpl::SubscriberReaderListener::on_sample_rejected(
 
 void SubscriberImpl::SubscriberReaderListener::on_requested_incompatible_qos(
         DataReader* /*reader*/,
-        const fastrtps::RequestedIncompatibleQosStatus& /*status*/)
+        const RequestedIncompatibleQosStatus& /*status*/)
 {
     /* TODO
     if (subscriber_->listener_ != nullptr)
@@ -478,7 +478,7 @@ void SubscriberImpl::SubscriberReaderListener::on_requested_incompatible_qos(
 
 void SubscriberImpl::SubscriberReaderListener::on_sample_lost(
         DataReader* /*reader*/,
-        const fastrtps::SampleLostStatus& /*status*/)
+        const SampleLostStatus& /*status*/)
 {
     /* TODO
     if (subscriber_->listener_ != nullptr)

@@ -686,11 +686,12 @@ bool DataWriterImpl::lifespan_expired()
 }
 
 bool DataWriterImpl::get_liveliness_lost_status(
-        fastrtps::LivelinessLostStatus& status)
+        LivelinessLostStatus& status)
 {
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
-    status = writer_->liveliness_lost_status_;
+    status.total_count = writer_->liveliness_lost_status_.total_count;
+    status.total_count_change = writer_->liveliness_lost_status_.total_count_change;
 
     writer_->liveliness_lost_status_.total_count_change = 0u;
 

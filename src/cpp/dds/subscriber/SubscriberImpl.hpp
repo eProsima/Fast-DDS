@@ -221,11 +221,11 @@ private:
 
         void on_requested_incompatible_qos(
                 DataReader* reader,
-                const fastrtps::RequestedIncompatibleQosStatus& status) override;
+                const RequestedIncompatibleQosStatus& status) override;
 
         void on_sample_lost(
                 DataReader* reader,
-                const fastrtps::SampleLostStatus& status) override;
+                const SampleLostStatus& status) override;
 
         SubscriberImpl* subscriber_;
     } subscriber_listener_;
