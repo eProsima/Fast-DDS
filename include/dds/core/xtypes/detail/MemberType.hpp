@@ -78,7 +78,8 @@ public:
     void dynamic_type(const xtypes::DynamicType& dynamic_type) { dynamic_type_ = dynamic_type; }
     void annotations(const std::vector<xtypes::Annotation>& annotations) { annotations_ = annotations; }
 
-    void add_annotation(const xtypes::Annotation& annotation)
+    void add_annotation(
+            const xtypes::Annotation& annotation)
     {
         annotations_.emplace_back(annotation);
     }
