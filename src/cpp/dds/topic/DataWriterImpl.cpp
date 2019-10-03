@@ -537,11 +537,6 @@ const WriterQos& DataWriterImpl::get_qos() const
 ReturnCode_t DataWriterImpl::set_listener(
         DataWriterListener* listener)
 {
-    if (listener_ == listener)
-    {
-        return ReturnCode_t::RETCODE_ERROR;
-    }
-
     listener_ = listener;
     return ReturnCode_t::RETCODE_OK;
 }

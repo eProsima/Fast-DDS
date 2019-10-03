@@ -114,10 +114,6 @@ const PublisherListener* PublisherImpl::get_listener() const
 ReturnCode_t PublisherImpl::set_listener(
         PublisherListener* listener)
 {
-    if (listener_ == listener)
-    {
-        return ReturnCode_t::RETCODE_OK;
-    }
     listener_ = listener;
     return ReturnCode_t::RETCODE_OK;
 }

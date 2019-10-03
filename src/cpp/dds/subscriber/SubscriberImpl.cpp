@@ -112,10 +112,6 @@ const SubscriberListener* SubscriberImpl::get_listener() const
 ReturnCode_t SubscriberImpl::set_listener(
         SubscriberListener* listener)
 {
-    if (listener_ == listener)
-    {
-        return ReturnCode_t::RETCODE_OK;
-    }
     listener_ = listener;
     return ReturnCode_t::RETCODE_OK;
 }
