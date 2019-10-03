@@ -29,167 +29,108 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
-template<typename DELEGATE>
-class TStructForwardDeclaration : public TDynamicType<DELEGATE>
-{
-public:
-    TStructForwardDeclaration(
-            const std::string& name)
-    {
-        throw "Not implemented";
-    }
-};
-
 /**
  * Create a dynamic structure type. If the members don't have Id associated
  * explicitly, then their ID will be the same as the ordinal position on the
  * members vector.
- */
-template<typename DELEGATE>
-class TStructType : public TDynamicType<DELEGATE>
+ */ //TODO implementation regarding the commnet
+
+class StructType : public DynamicType
 {
+    OMG_DDS_EXPLICIT_REF_BASE(
+            StructType, DynamicType)
 
-    TStructType& parent_ts_;
 public:
-    explicit TStructType(
+    StructType(
             const std::string& name)
-    {
-        throw "Not implemented";
-    }
+        : DynamicType(new detail::StructType(name))
+    {}
 
-    TStructType(
-        const std::string& name,
-        const std::vector<MemberType>& members)
-    {
-        TDynamicType<DELEGATE>::impl()->name(name);
-    }
+    StructType(
+            const std::string& name,
+            const StructType& parent)
+        : DynamicType(new detail::StructType(name, parent))
+    {}
 
-    TStructType(
-        const std::string& name,
-        const TStructType& parent,
-        const std::vector<MemberType>& members)
-    {
-        TDynamicType<DELEGATE>::impl()->name(name);
-        parent_ts_ = parent;
-        TDynamicType<DELEGATE>::impl()->members(members);
-    }
+    StructType(
+            const std::string& name,
+            const StructType& parent,
+            const std::vector<MemberType>& members)
+        : DynamicType(new detail::StructType(name, parent, members))
+    {}
 
     template<typename MemberIter>
-    TStructType(
-        const std::string& name,
-        const TStructType& parent,
-        const MemberIter& begin,
-        const MemberIter& end)
-    {
-        TDynamicType<DELEGATE>::impl()->name(name);
-        parent_ts_ = parent;
-        TDynamicType<DELEGATE>::impl()->members(begin, end);
-    }
+    StructType(
+            const std::string& name,
+            const StructType& parent,
+            const MemberIter& begin,
+            const MemberIter& end)
+        : DynamicType(new detail::StructType(name, parent, begin, end))
+    {}
 
-    TStructType(
-        const std::string& name,
-        const TStructType& parent,
-        const std::vector<MemberType>& members,
-        const Annotation& annotation)
-    {
-        TDynamicType<DELEGATE>::impl()->name(name);
-        parent_ts_ = parent;
-        TDynamicType<DELEGATE>::impl()->members(members);
-        TDynamicType<DELEGATE>::impl()->annotation(annotation);
-    }
+    StructType(
+            const std::string& name,
+            const StructType& parent,
+            const std::vector<MemberType>& members,
+            const Annotation& annotation)
+        : DynamicType(new detail::StructType(name, parent, members, annotation))
+    {}
 
-    TStructType(
-        const std::string& name,
-        const TStructType& parent,
-        const std::vector<MemberType>& members,
-        const std::vector<Annotation>& annotations)
-    {
-        TDynamicType<DELEGATE>::impl()->name(name);
-        parent_ts_ = parent;
-        TDynamicType<DELEGATE>::impl()->members(members);
-        TDynamicType<DELEGATE>::impl()->annotations(annotations);
-    }
+    StructType(
+            const std::string& name,
+            const StructType& parent,
+            const std::vector<MemberType>& members,
+            const std::vector<Annotation>& annotations)
+        : DynamicType(new detail::StructType(name, parent, members, annotations))
+    {}
 
-    template<
-            typename AnnotationIter,
-            typename MemberIter>
-    TStructType(
-        const std::string& name,
-        const TStructType& parent,
-        const MemberIter& member_begin,
-        const MemberIter& member_end,
-        const AnnotationIter& annotation_begin,
-        const AnnotationIter& annotation_end)
-    {
-        TDynamicType<DELEGATE>::impl()->name(name);
-        parent_ts_ = parent;
-        TDynamicType<DELEGATE>::impl()->members(member_begin, member_end);
-        TDynamicType<DELEGATE>::impl()->annotations(annotation_begin, annotation_end);
-    }
+    template<typename AnnotationIter, typename MemberIter>
+    StructType(
+            const std::string& name,
+            const StructType& parent,
+            const MemberIter& members_begin,
+            const MemberIter& members_end,
+            const AnnotationIter& annotations_begin,
+            const AnnotationIter& annotations_end)
+        : DynamicType(new detail::StructType(name, parent, members_begin, members_end, annotations_begin, annotations_end))
+    {}
 
-    template<typename BASE_DELEGATE>
-    operator TDynamicType<BASE_DELEGATE>() const
+    StructType parent() const
     {
-        throw "Not implemented";
-    }
-
-    TStructType parent() const
-    {
-        return parent_ts_;
+        return polymorphic_cast<StructType>(std::static_pointer_cast<detail::StructType>(impl())->parent());
     }
 
     const std::vector<MemberType>& members() const
     {
-        return TDynamicType<DELEGATE>::impl()->members();
+        return std::static_pointer_cast<detail::StructType>(impl())->members();
     }
 
     const MemberType& member(
             uint32_t id) const
     {
-        return TDynamicType<DELEGATE>::impl()->member(id);
+        return std::static_pointer_cast<detail::StructType>(impl())->member(id);
     }
 
     const MemberType& member(
             const std::string& name) const
     {
-        return TDynamicType<DELEGATE>::impl()->member(name);
+        return std::static_pointer_cast<detail::StructType>(impl())->member(name);
     }
 
-    const std::vector<Annotation>& annotations() const
-    {
-        return TDynamicType<DELEGATE>::impl()->annotations();
-    }
-
-    TStructType add_member(
+    StructType add_member(
             const MemberType& member) const
     {
-        TDynamicType<DELEGATE>::impl()->member(member);
+        std::static_pointer_cast<detail::StructType>(impl())->add_member(member);
         return *this;
     }
 
-    TStructType remove_member(
-            const MemberType& member) const
-    {
-        TDynamicType<DELEGATE>::impl()->remove_member();
-        return *this;
-    }
-
-    TStructType add_annotation(
-            const Annotation& annotation) const
-    {
-        TDynamicType<DELEGATE>::impl()->annotation(annotation);
-        return *this;
-    }
-
-    TStructType remove_annotation(
-            const Annotation& annotation) const
-    {
-        TDynamicType<DELEGATE>::impl()->remove_annotation(annotation);
-        return *this;
-    }
+    /*
+    StructType(
+            const DynamicType& type)
+        : DynamicType(type)
+    {}
+    */
 };
-
-typedef TStructType<detail::StructType> StructType;
 
 } //namespace xtypes
 } //namespace core

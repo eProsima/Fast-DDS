@@ -22,20 +22,21 @@
 
 #include <dds/core/xtypes/detail/DynamicType.hpp>
 
-#include <dds/core/Reference.hpp>
 #include <dds/core/xtypes/TypeKind.hpp>
+#include <dds/core/xtypes/Annotation.hpp>
+
+#include <dds/core/Reference.hpp>
 
 namespace dds {
 namespace core {
 namespace xtypes {
 
-template<typename DELEGATE>
-class TDynamicType : public Reference<DELEGATE>
+class DynamicType : public Reference<detail::DynamicType>
 {
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TDynamicType,
+            DynamicType,
             Reference,
-            DELEGATE)
+            detail::DynamicType)
 
 public:
     const std::string& name() const
@@ -53,113 +54,95 @@ public:
         return impl()->annotations();
     }
 
-    bool operator ==(
-            const TDynamicType& that) const
+    DynamicType& add_annotation(const Annotation& annotation)
     {
-        return *(impl()) == *(that.impl());
+        impl()->add_annotation(annotation);
+        return *this;
     }
 
-    bool operator !=(
-            const TDynamicType& that) const
+    bool is_primitive_type() const
     {
-        return !(*this == that);
+        return (impl()->kind().underlying() & TypeKind::PRIMITIVE_TYPE) != 0;
     }
 
-    bool is_primitive_type()
+    bool is_collection_type() const
     {
-        return (impl()->kind().underlying()&  0x4000 ) != 0;
+        return (impl()->kind().underlying() & TypeKind::COLLECTION_TYPE) != 0;
     }
 
-    bool is_collection_type()
+    bool is_aggregation_type() const
     {
-        return (impl()->kind().underlying()&  0x0200 ) != 0;
+        return (impl()->kind().underlying() & TypeKind::AGGREGATION_TYPE) != 0;
     }
 
-    bool is_aggregation_type()
+    bool is_constructed_type() const
     {
-        return (impl()->kind().underlying()&  0x0100 ) != 0;
-    }
-
-    bool is_constructed_type()
-    {
-        return (impl()->kind().underlying()&  0x8000 ) != 0;
+        return (impl()->kind().underlying() & TypeKind::CONSTRUCTED_TYPE) != 0;
     }
 
 protected:
-    TDynamicType(
+    DynamicType(
+            detail::DynamicType* detail)
+        : Reference(detail)
+    {}
+
+    DynamicType(
             const std::string& name,
             TypeKind kind)
-    {
-        impl()->name(name);
-        impl()->kind(kind);
-    }
+        : Reference(new detail::DynamicType(name, kind))
+    {}
 
-    TDynamicType(
+    DynamicType(
             const std::string& name,
             TypeKind kind,
             const Annotation& annotation)
-    {
-        impl()->name(name);
-        impl()->kind(kind);
-        impl()->annotation(annotation);
-    }
+        : Reference(new detail::DynamicType(name, kind, annotation))
+    {}
 
-    TDynamicType(
+    DynamicType(
             const std::string& name,
             TypeKind kind,
             const std::vector<Annotation>& annotations)
-    {
-        impl()->name(name);
-        impl()->kind(kind);
-        impl()->annotation(annotations);
-    }
+        : Reference(new detail::DynamicType(name, kind, annotations))
+    {}
 
     template<typename AnnotationIter>
-    TDynamicType(
+    DynamicType(
             const std::string& name,
             TypeKind kind,
             const AnnotationIter& begin,
             const AnnotationIter& end)
-    {
-        impl()->name(name);
-        impl()->kind(kind);
-        impl()->annotation(begin, end);
-    }
-
-public:
-    TDynamicType(
-            const TDynamicType& other) = default;
+        : Reference(new detail::DynamicType(name, kind, begin, end))
+    {}
 };
 
 template<typename T>
-bool is_primitive_type(
-        const TDynamicType<T>& t)
+inline bool is_primitive_type(
+        const DynamicType& t)
 {
     return t.is_primitive_type();
 }
 
 template<typename T>
-bool is_constructed_type(
-        const TDynamicType<T>& t)
+inline bool is_constructed_type(
+        const DynamicType& t)
 {
     return t.is_constructed_type();
 }
 
 template<typename T>
-bool is_collection_type(
-        const TDynamicType<T>& t)
+inline bool is_collection_type(
+        const DynamicType& t)
 {
     return t.is_collection_type();
 }
 
 template<typename T>
-bool is_aggregation_type(
-        const TDynamicType<T>& t)
+inline bool is_aggregation_type(
+        const DynamicType& t)
 {
     return t.is_aggregation_type();
 }
-
-typedef TDynamicType<detail::DynamicType> DynamicType;
 
 } //namespace xtypes
 } //namespace core

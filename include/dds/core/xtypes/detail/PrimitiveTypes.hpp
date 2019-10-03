@@ -38,7 +38,6 @@ struct dynamic_type_traits<bool>
     static constexpr const char* NAME = "bool";
 };
 
-
 template<>
 struct dynamic_type_traits<uint8_t>
 {

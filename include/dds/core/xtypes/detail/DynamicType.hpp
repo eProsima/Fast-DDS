@@ -17,10 +17,12 @@
 #ifndef EPROSIMA_DDS_CORE_XTYPES_DETAIL_DYNAMIC_TYPE_HPP_
 #define EPROSIMA_DDS_CORE_XTYPES_DETAIL_DYNAMIC_TYPE_HPP_
 
-#include <string>
-#include <dds/core/xtypes/TypeKind.hpp>
-#include <functional>
 #include <dds/core/xtypes/Annotation.hpp>
+
+#include <dds/core/xtypes/TypeKind.hpp> // Allow this include from detail because is only an enum
+
+#include <string>
+#include <vector>
 
 namespace dds {
 namespace core {
@@ -30,49 +32,58 @@ namespace detail {
 class DynamicType
 {
 public:
-    const std::string& name() const noexcept { return name_; }
-    const TypeKind& kind() const noexcept { return kind_; }
+    DynamicType(
+            const std::string& name,
+            TypeKind kind)
+        : name_(name)
+        , kind_(kind)
+    {}
 
-    void name(const std::string& name){ name_ = name; }
-    void kind(const TypeKind& kind) { kind_ = kind; }
-
-    void annotation(
-            xtypes::Annotation& a)
+    DynamicType(
+            const std::string& name,
+            TypeKind kind,
+            const xtypes::Annotation& annotation)
+        : name_(name)
+        , kind_(kind)
     {
-        ann_.push_back(a);
+        annotations_.push_back((annotation));
     }
 
-    void annotation(
+    DynamicType(
+            const std::string& name,
+            TypeKind kind,
             const std::vector<xtypes::Annotation>& annotations)
+        : name_(name)
+        , kind_(kind)
+        , annotations_(annotations)
     {
-        ann_.reserve(annotations.size() + ann_.size());
-        for (auto it = annotations.begin(); it != annotations.end(); ++it)
-        {
-            ann_.emplace_back(*it);
-        }
     }
 
-    template<typename AnnoIter>
-    void annotation(
-            AnnoIter begin,
-            AnnoIter end)
-    {
-        ann_.reserve(ann_.size() + ( end - begin) );
-        for (auto it = begin; it != end; ++it)
-        {
-            ann_.emplace_back(*it);
-        }
-    }
+    template<typename AnnotationIter>
+    DynamicType(
+            const std::string& name,
+            TypeKind kind,
+            const AnnotationIter& begin,
+            const AnnotationIter& end)
+        : name_(name)
+        , kind_(kind)
+        , annotations_(begin, end)
+    {}
 
-    const std::vector<xtypes::Annotation>& annotations() const
+    const std::string& name() const { return name_; }
+    const TypeKind& kind() const { return kind_; }
+    const std::vector<xtypes::Annotation>& annotations() const { return annotations_; }
+
+    void add_annotation(
+            const xtypes::Annotation& annotation)
     {
-        return ann_;
+        annotations_.emplace_back(annotation);
     }
 
 private:
     std::string name_;
     TypeKind kind_;
-    std::vector<xtypes::Annotation> ann_;
+    std::vector<xtypes::Annotation> annotations_;
 };
 
 } //namespace detail

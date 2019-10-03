@@ -36,7 +36,7 @@ namespace core {
 typedef std::vector<uint8_t> ByteSeq;
 
 /**
- * Use a std::vector<std::string> to hold a sequence of bytes.
+ * Use a std::vector<std::string> to hold a sequence of strings.
  */
 typedef std::vector<std::string> StringSeq;
 

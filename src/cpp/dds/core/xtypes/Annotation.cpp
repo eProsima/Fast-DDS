@@ -20,39 +20,7 @@
 namespace dds {
 namespace core {
 namespace xtypes {
-namespace annotation {
 
-// These functions can be used to get cached instances,
-// to avoid the proliferation of small annotation objects.
-IdAnnotation id(
-        uint32_t);
-
-KeyAnnotation key();
-
-SharedAnnotation shared();
-
-NestedAnnotation nested();
-
-ExtensibilityAnnotation extensibility(
-        ExtensibilityKind kind);
-
-ExtensibilityAnnotation get_final();
-
-ExtensibilityAnnotation extensible();
-
-ExtensibilityAnnotation get_mutable();
-
-MustUnderstandAnnotation must_understand();
-
-VerbatimAnnotation verbatim(
-        const std::string& text);
-
-BitsetAnnotation bitset();
-
-BitsetAnnotation bit_bound(
-        uint32_t bound);
-
-} //namespace annotation
 } //namespace xtypes
 } //namespace core
 } //namespace dds

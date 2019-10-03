@@ -15,12 +15,15 @@
  *
 */
 
-#include <dds/core/types.hpp>
+#include <dds/core/xtypes/Annotations.hpp>
 
 namespace dds {
 namespace core {
+namespace xtypes {
+namespace annotation {
 
-const null_type null;
-
+} //namespace annotation
+} //namespace xtypes
 } //namespace core
 } //namespace dds
+

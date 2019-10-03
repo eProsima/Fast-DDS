@@ -36,22 +36,18 @@ namespace xtypes {
  * writing of samples in a type-safe manner but without any compile-time knowledge
  * of the type being read or written.
  */
-template<
-        typename DELEGATE,
-        typename DELEGATE_TYPE>
-class TDynamicData : Reference<DELEGATE>
+class DynamicData : Reference<detail::DynamicData>
 {
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TDynamicData,
+            DynamicData,
             Reference,
-            DELEGATE)
+            detail::DynamicData)
 
 public:
-    TDynamicData(
-            const TDynamicType<DELEGATE_TYPE>& type)
-    {
-        throw "Not implemented";
-    }
+    DynamicData(
+            const DynamicType& type)
+        : Reference(new detail::DynamicData(type))
+    {}
 
     template<typename T>
     void value(
@@ -83,7 +79,7 @@ public:
         throw "Not implemented";
     }
 
-    TDynamicType<DELEGATE_TYPE> type() const
+    DynamicType type() const
     {
         throw "Not implemented";
     }
@@ -91,23 +87,24 @@ public:
     MemberType member_type(
             uint32_t id) const
     {
+        (void) id;
         throw "Not implemented";
     }
 
     MemberType member_type(
             const std::string& name) const
     {
+        (void) name;
         throw "Not implemented";
     }
 
     uint32_t member_id(
             const std::string& name) const
     {
+        (void) name;
         throw "Not implemented";
     }
 };
-
-typedef TDynamicData<detail::DynamicData, detail::DynamicType> DynamicData;
 
 } //namespace xtypes
 } //namespace core

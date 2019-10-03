@@ -21,7 +21,9 @@
 #define OMG_DDS_CORE_XTYPES_ANNOTATION_HPP_
 
 #include <dds/core/xtypes/detail/Annotation.hpp>
+
 #include <dds/core/xtypes/TypeKind.hpp>
+
 #include <dds/core/SafeEnumeration.hpp>
 #include <dds/core/Reference.hpp>
 
@@ -29,61 +31,44 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
-template<typename DELEGATE>
-class TIdAnnotation;
-
-template<typename DELEGATE>
-class TAnnotation : public Reference<DELEGATE>
+class Annotation : public Reference<detail::Annotation>
 {
-
     OMG_DDS_REF_TYPE_BASE(
-            TAnnotation,
+            Annotation,
             dds::core::Reference,
-            DELEGATE)
+            detail::Annotation)
+
 public:
+    Annotation(detail::Annotation* annotation)
+        : Reference<detail::Annotation>(annotation)
+    {}
 
-    virtual ~TAnnotation();
+    virtual ~Annotation() = default;
 
-    TypeKind kind() const;
+    TypeKind kind() const { return TypeKind::ANNOTATION_TYPE; }
 
-    template<typename Q,
-            template <typename> class K>
-    operator K<Q>&()
+    const AnnotationKind& akind() const
     {
-        return reinterpret_cast<K<Q>&>(*this);
+        return impl()->kind();
     }
-
-    const AnnotationKind& akind()const
-    {
-        return impl()->akind();
-    }
-
-protected:
-    TAnnotation(
-            const TypeKind& kind);
 };
 
-template<typename DELEGATE>
-class TIdAnnotation : public TAnnotation<DELEGATE>
+
+class IdAnnotation : public Annotation
 {
-using TAnnotation<DELEGATE>::impl;
-
 public:
-
-    TIdAnnotation(
+    IdAnnotation(
             uint32_t id)
-        :TAnnotation<DELEGATE>(TypeKind::ANNOTATION_TYPE)
-    {
-        impl()->id(id);
-    }
+        : Annotation(std::make_shared<detail::IdAnnotation>(id))
+    {}
 
     uint32_t id() const
     {
-        return impl()->id();
+        return std::static_pointer_cast<detail::IdAnnotation>(impl())->id();
     }
-
 };
 
+/*
 template<typename DELEGATE>
 class TKeyAnnotation : public TAnnotation<DELEGATE>
 {
@@ -188,71 +173,8 @@ public:
     }
 };
 
-typedef TAnnotation<detail::Annotation> Annotation;
-
-typedef TIdAnnotation<detail::IdAnnotation> IdAnnotation;
-
-typedef TKeyAnnotation<detail::KeyAnnotation> KeyAnnotation;
-
-typedef TSharedAnnotation<detail::SharedAnnotation> SharedAnnotation;
-
-typedef TNestedAnnotation<detail::NestedAnnotation> NestedAnnotation;
-
-typedef TExtensibilityAnnotation<detail::ExtensibilityAnnotation> ExtensibilityAnnotation;
-
-typedef TMustUnderstandAnnotation<detail::MustUnderstandAnnotation> MustUnderstandAnnotation;
-
-typedef TVerbatimAnnotation<detail::VerbatimAnnotation> VerbatimAnnotation;
-
-typedef TBitsetAnnotation<detail::BitsetAnnotation> BitsetAnnotation;
-
-typedef TBitBoundAnnotation<detail::BitBoundAnnotation> BitBoundAnnotation;
-
-//FRANAVA We must think about the fact that previous API has a way of creating a
-//dynamically defined Annotation.
-/*
-namespace converter
-{
-    IdAnnotation convert(const Annotation& a)
-    {
-        uint32_t idav = reinterpret_cast<const IdAnnotation&>(a).id();
-        return IdAnnotation(idav);
-    }
-}
 */
-namespace annotation {
 
-// These functions can be used to get cached instances,
-// to avoid the proliferation of small annotation objects.
-IdAnnotation id(
-        uint32_t);
-
-KeyAnnotation key();
-
-SharedAnnotation shared();
-
-NestedAnnotation nested();
-
-ExtensibilityAnnotation extensibility(
-        ExtensibilityKind kind);
-
-ExtensibilityAnnotation get_final();
-
-ExtensibilityAnnotation extensible();
-
-ExtensibilityAnnotation get_mutable();
-
-MustUnderstandAnnotation must_understand();
-
-VerbatimAnnotation verbatim(
-        const std::string& text);
-
-BitsetAnnotation bitset();
-
-BitsetAnnotation bit_bound(
-        uint32_t bound);
-
-} //namespace annotation
 } //namespace xtypes
 } //namespace core
 } //namespace dds
