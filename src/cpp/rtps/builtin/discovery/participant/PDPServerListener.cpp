@@ -53,6 +53,7 @@ void PDPServerListener::onNewCacheChangeAdded(
         const CacheChange_t* const change_in)
 {
     CacheChange_t* change = (CacheChange_t*)(change_in);
+    GUID_t writer_guid = change->writerGUID;
     logInfo(RTPS_PDP,"SPDP Message received");
 
     if(change->instanceHandle == c_InstanceHandle_Unknown)
@@ -86,13 +87,14 @@ void PDPServerListener::onNewCacheChangeAdded(
             return;
         }
 
-        // Access to temp_participant_data_ is protected by reader lock
+        ParticipantProxyData local_data(parent_pdp_->getRTPSParticipant()->getRTPSParticipantAttributes().allocation);
 
-        // Load information on temp_participant_data_
+        // Load information on local_data
         CDRMessage_t msg(change->serializedPayload);
-        if(temp_participant_data_.readFromCDRMessage(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory()))
+        if(local_data.readFromCDRMessage(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory()))
         {
-            change->instanceHandle = temp_participant_data_.m_key;
+            change->instanceHandle = local_data.m_key;
+            guid = local_data.m_guid;
 
             // At this point we can release reader lock.
             reader->getMutex().unlock();
@@ -102,7 +104,7 @@ void PDPServerListener::onNewCacheChangeAdded(
             std::unique_lock<std::recursive_mutex> lock(*parent_pdp_->getMutex());
             for (ParticipantProxyData* it : parent_pdp_->participant_proxies_)
             {
-                if(temp_participant_data_.m_guid == it->m_guid)
+                if(guid == it->m_guid)
                 {
                     pdata = it;
                     break;
@@ -115,7 +117,7 @@ void PDPServerListener::onNewCacheChangeAdded(
             if(pdata == nullptr)
             {
                 // Create a new one when not found
-                pdata = parent_pdp_->createParticipantProxyData(temp_participant_data_, *change);
+                pdata = parent_pdp_->createParticipantProxyData(local_data, writer_guid);
                 if (pdata != nullptr)
                 {
                     lock.unlock();
@@ -132,7 +134,7 @@ void PDPServerListener::onNewCacheChangeAdded(
             }
             else
             {
-                pdata->updateData(temp_participant_data_);
+                pdata->updateData(local_data);
                 pdata->isAlive = true;
                 lock.unlock();
 
