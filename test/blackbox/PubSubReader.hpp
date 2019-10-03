@@ -484,7 +484,7 @@ public:
     }
 
     PubSubReader& latency_budget_duration(
-            const eprosima::fastrtps::Duration_t latency_duration)
+            const eprosima::fastrtps::Duration_t& latency_duration)
     {
         subscriber_attr_.qos.m_latencyBudget.duration = latency_duration;
         return *this;
