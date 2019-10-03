@@ -70,12 +70,12 @@ public:
     /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info
      * @param p from DATA msg deserialization
-     * @param c from DATA msg
+     * @param writer_guid GUID of originating writer
      * @return new ParticipantProxyData * or nullptr on failure
      */
     ParticipantProxyData* createParticipantProxyData(
         const ParticipantProxyData& p,
-        const CacheChange_t& c) override;
+        const GUID_t& writer_guid) override;
 
     /**
      * Create the SPDP Writer and Reader

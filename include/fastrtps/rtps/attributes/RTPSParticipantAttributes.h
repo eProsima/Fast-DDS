@@ -129,6 +129,24 @@ public:
 };
 
 /**
+ * Struct InitialAnnouncementConfig defines the behavior of the RTPSParticipant initial announcements.
+ * @ingroup RTPS_ATTRIBUTES_MODULE
+ */
+struct InitialAnnouncementConfig
+{
+    /// Number of initial announcements with specific period (default 5)
+    uint32_t count = 5u;
+
+    /// Specific period for initial announcements (default 100ms)
+    Duration_t period = { 0, 100000000u };
+
+    bool operator==(const InitialAnnouncementConfig& b) const
+    {
+        return (count == b.count) && (period == b.period);
+    }
+};
+
+/**
  * Class DiscoverySettings, to define the attributes of the several discovery protocols available
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
@@ -137,30 +155,33 @@ class DiscoverySettings
 {
 public:
     //! Chosen discovery protocol
-    DiscoveryProtocol_t discoveryProtocol;
+    DiscoveryProtocol_t discoveryProtocol = DiscoveryProtocol_t::SIMPLE;
 
     /**
      * If set to true, SimpleEDP would be used.
      */
-    bool use_SIMPLE_EndpointDiscoveryProtocol;
+    bool use_SIMPLE_EndpointDiscoveryProtocol = true;
 
     /**
      * If set to true, StaticEDP based on an XML file would be implemented.
      * The XML filename must be provided.
      */
-    bool use_STATIC_EndpointDiscoveryProtocol;
+    bool use_STATIC_EndpointDiscoveryProtocol = false;
 
     /**
      * Lease Duration of the RTPSParticipant,
      * indicating how much time remote RTPSParticipants should consider this RTPSParticipant alive.
      */
-    Duration_t leaseDuration;
+    Duration_t leaseDuration = { 20, 0 };
 
     /**
      * The period for the RTPSParticipant to send its Discovery Message to all other discovered RTPSParticipants
      * as well as to all Multicast ports.
      */
-    Duration_t leaseDuration_announcementperiod;
+    Duration_t leaseDuration_announcementperiod = { 3, 0 };
+
+    //!Initial announcements configuration
+    InitialAnnouncementConfig initial_announcements;
 
     //!Attributes of the SimpleEDP protocol
     SimpleEDPAttributes m_simpleEDP;
@@ -172,21 +193,12 @@ public:
      *  send its Discovery Message to its servers
      *  check for EDP endpoints matching
      */
-    Duration_t discoveryServer_client_syncperiod;
+    Duration_t discoveryServer_client_syncperiod = { 0, 450 * 1000000}; // 450 milliseconds
 
     //! Discovery Server settings, only needed if use_CLIENT_DiscoveryProtocol=true
     RemoteServerList_t  m_DiscoveryServers;
 
-    DiscoverySettings()
-    {
-        discoveryProtocol = DiscoveryProtocol_t::SIMPLE;
-        use_SIMPLE_EndpointDiscoveryProtocol = true;
-        use_STATIC_EndpointDiscoveryProtocol = false;
-        discoveryServer_client_syncperiod.nanosec = 450 * 1000000; // 450 milliseconds
-        m_staticEndpointXMLFilename = "";
-        leaseDuration.seconds = 130;
-        leaseDuration_announcementperiod.seconds = 40;
-    }
+    DiscoverySettings() = default;
 
     bool operator==(const DiscoverySettings& b) const
     {
@@ -197,6 +209,7 @@ public:
                 (this->m_PDPfactory == b.m_PDPfactory) &&
                 (this->leaseDuration == b.leaseDuration) &&
                 (this->leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&
+                (this->initial_announcements == b.initial_announcements) &&
                 (this->m_simpleEDP == b.m_simpleEDP) &&
                 (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename) &&
                 (this->m_DiscoveryServers == b.m_DiscoveryServers);
@@ -216,7 +229,7 @@ public:
 
     private:
         //! StaticEDP XML filename, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
-        std::string m_staticEndpointXMLFilename;
+        std::string m_staticEndpointXMLFilename = "";
 };
 
 /**
@@ -232,12 +245,12 @@ class BuiltinAttributes
         DiscoverySettings discovery_config;
 
         //!Indicates to use the WriterLiveliness protocol.
-        bool use_WriterLivelinessProtocol;
+        bool use_WriterLivelinessProtocol = true;
 
         /**
          * DomainId to be used by the RTPSParticipant (80 by default).
          */
-        uint32_t domainId;
+        uint32_t domainId = 0;
 
         //!Metatraffic Unicast Locator List
         LocatorList_t metatrafficUnicastLocatorList;
@@ -249,23 +262,20 @@ class BuiltinAttributes
         LocatorList_t initialPeersList;
 
         //! Memory policy for builtin readers
-        MemoryManagementPolicy_t readerHistoryMemoryPolicy;
+        MemoryManagementPolicy_t readerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
 
         //! Memory policy for builtin writers
-        MemoryManagementPolicy_t writerHistoryMemoryPolicy;
+        MemoryManagementPolicy_t writerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
 
         //! Mutation tries if the port is being used.
-        uint32_t mutation_tries;
+        uint32_t mutation_tries = 100u;
 
-        BuiltinAttributes()
-        {
-            domainId = 0;
-            use_WriterLivelinessProtocol = true;
-            readerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
-            writerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
-            mutation_tries = 100u;
-        }
-        virtual ~BuiltinAttributes() {}
+        //!Set to true to avoid multicast traffic on builtin endpoints
+        bool avoid_builtin_multicast = true;
+
+        BuiltinAttributes() = default;
+
+        virtual ~BuiltinAttributes() = default;
 
         bool operator==(const BuiltinAttributes& b) const
         {
@@ -277,7 +287,8 @@ class BuiltinAttributes
                    (this->initialPeersList == b.initialPeersList) &&
                    (this->readerHistoryMemoryPolicy == b.readerHistoryMemoryPolicy) &&
                    (this->writerHistoryMemoryPolicy == b.writerHistoryMemoryPolicy) &&
-                   (this->mutation_tries == b.mutation_tries);
+                   (this->mutation_tries == b.mutation_tries) &&
+                   (this->avoid_builtin_multicast == b.avoid_builtin_multicast);
         }
 
 };
@@ -325,8 +336,8 @@ class RTPSParticipantAttributes
         LocatorList_t defaultUnicastLocatorList;
 
         /**
-         * Default list of Multicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case
-         * that it was defined with NO MulticastLocators. This is usually left empty.
+         * Default list of Multicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the
+         * case that it was defined with NO UnicastLocators. This is usually left empty.
          */
         LocatorList_t defaultMulticastLocatorList;
 

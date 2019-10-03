@@ -21,10 +21,10 @@
 #define DSCLIENTEVENT_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include "../../../../resources/TimedEvent.h"
+#include <fastrtps/rtps/resources/TimedEvent.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class PDPClient;
@@ -57,8 +57,10 @@ public:
 	//!Pointer to the PDPServer object.
     PDPClient* mp_PDP;
 };
-}
-} /* namespace rtps */
-} /* namespace eprosima */
+
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
+
 #endif
 #endif /* DSCLIENTEVENT_H_ */

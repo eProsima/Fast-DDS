@@ -107,7 +107,7 @@ bool PDPServer::init(RTPSParticipantImpl* part)
 
 ParticipantProxyData* PDPServer::createParticipantProxyData(
     const ParticipantProxyData& participant_data,
-    const CacheChange_t& change)
+    const GUID_t& writer_guid)
 {
     std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
@@ -115,7 +115,7 @@ ParticipantProxyData* PDPServer::createParticipantProxyData(
     // other clients liveliness is provided through server's PDP discovery data
 
     // check if the DATA msg is relayed by another server
-    bool do_lease = participant_data.m_guid.guidPrefix == change.writerGUID.guidPrefix;
+    bool do_lease = participant_data.m_guid.guidPrefix == writer_guid.guidPrefix;
 
     if (!do_lease)
     {

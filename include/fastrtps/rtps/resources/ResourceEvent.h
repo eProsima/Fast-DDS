@@ -124,6 +124,8 @@ class ResourceEvent
 
         //! Method called by the internal thread.
         void run_io_service();
+
+        std::promise<void> ready;
 };
 }
 }

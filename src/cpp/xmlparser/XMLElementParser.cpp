@@ -207,10 +207,19 @@ XMLP_ret XMLParser::getXMLDiscoverySettings(tinyxml2::XMLElement* elem, rtps::Di
             if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, settings.leaseDuration_announcementperiod, ident))
                 return XMLP_ret::XML_ERROR;
         }
+        else if (strcmp(name, INITIAL_ANNOUNCEMENTS) == 0)
+        {
+            // initialAnnouncements - initialAnnouncementsType
+            if (XMLP_ret::XML_OK !=
+                    getXMLInitialAnnouncementsConfig(p_aux0, settings.initial_announcements, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
         else if (strcmp(name, SIMPLE_EDP) == 0)
         {
             // simpleEDP
-            for (p_aux1 = p_aux0->FirstChildElement(); p_aux1 != NULL; p_aux1 = p_aux1->NextSiblingElement())
+            for (p_aux1 = p_aux0->FirstChildElement(); p_aux1 != nullptr; p_aux1 = p_aux1->NextSiblingElement())
             {
                 name = p_aux1->Name();
                 if (strcmp(name, PUBWRITER_SUBREADER) == 0)
@@ -340,6 +349,14 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &builtin.mutation_tries, ident))
                 return XMLP_ret::XML_ERROR;
         }
+        else if (strcmp(name, AVOID_BUILTIN_MULTICAST) == 0)
+        {
+            // avoid_builtin_multicast - boolType
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &builtin.avoid_builtin_multicast, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
         else
         {
             logError(XMLPARSER, "Invalid element found into 'builtinAttributesType'. Name: " << name);
@@ -349,6 +366,46 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(tinyxml2::XMLElement *elem, BuiltinA
 
     return XMLP_ret::XML_OK;
 }
+
+XMLP_ret XMLParser::getXMLInitialAnnouncementsConfig(
+    tinyxml2::XMLElement* elem,
+    InitialAnnouncementConfig& config,
+    uint8_t ident)
+{
+    /*
+        <xs:complexType name="initialAnnouncementsType">
+            <xs:all minOccurs="0">
+                <xs:element name="count" type="uint32Type" minOccurs="0"/>
+                <xs:element name="period" type="durationType" minOccurs="0"/>
+            </xs:all>
+        </xs:complexType>
+    */
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, COUNT) == 0)
+        {
+            // portBase - uint16Type
+            if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &config.count, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else if (strcmp(name, PERIOD) == 0)
+        {
+            // domainIDGain - uint16Type
+            if (XMLP_ret::XML_OK != getXMLDuration(p_aux0, config.period, ident))
+                return XMLP_ret::XML_ERROR;
+        }
+        else
+        {
+            logError(XMLPARSER, "Invalid element found into 'portType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+    return XMLP_ret::XML_OK;
+}
+
 
 XMLP_ret XMLParser::getXMLPortParameters(tinyxml2::XMLElement *elem, PortParameters &port, uint8_t ident)
 {
@@ -686,7 +743,7 @@ XMLP_ret XMLParser::getXMLContainerAllocationConfig(
             // maximum - uint32Type
             if (XMLP_ret::XML_OK != getXMLUint(p_aux0, &aux_value, ident))
                 return XMLP_ret::XML_ERROR;
-            allocation_config.maximum = (aux_value == 0u) ? 
+            allocation_config.maximum = (aux_value == 0u) ?
                 std::numeric_limits<size_t>::max() : static_cast<size_t>(aux_value);
         }
         else if (strcmp(name, INCREMENT) == 0)
@@ -2469,7 +2526,7 @@ XMLP_ret XMLParser::getXMLBool(tinyxml2::XMLElement *elem, bool *b, uint8_t /*id
 XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, DiscoveryProtocol_t * e, uint8_t /*ident*/)
 {
     /*
-    	<xs:simpleType name="DiscoveryProtocol">
+        <xs:simpleType name="DiscoveryProtocol">
             <xs:restriction base="xs:string">
                 <xs:enumeration value="NONE"/>
                 <xs:enumeration value="SIMPLE"/>
@@ -2524,13 +2581,13 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, DiscoveryProtocol_t *
 XMLP_ret XMLParser::getXMLRemoteServer(tinyxml2::XMLElement* elem, RemoteServerAttributes & server, uint8_t ident)
 {
     /*
- 	    <xs:complexType name="RemoteServerAttributes">
-		    <xs:all minOccurs="1">
+        <xs:complexType name="RemoteServerAttributes">
+            <xs:all minOccurs="1">
                 <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="0"/>
-		    </xs:all>
-		    <xs:attribute name="guidPrefix" type="guid" use="required"/>
-	    </xs:complexType>   
+            </xs:all>
+            <xs:attribute name="guidPrefix" type="guid" use="required"/>
+        </xs:complexType>
     */
 
     const char* Prefix = nullptr;
@@ -2551,7 +2608,7 @@ XMLP_ret XMLParser::getXMLRemoteServer(tinyxml2::XMLElement* elem, RemoteServerA
         logError(XMLPARSER, "getXMLRemoteServer found an invalid server's guidPrefix XML_ERROR!");
             return XMLP_ret::XML_ERROR;
     }
-    
+
     pLU = elem->FirstChildElement(META_UNI_LOC_LIST);
     pLM = elem->FirstChildElement(META_MULTI_LOC_LIST);
 
@@ -2560,7 +2617,7 @@ XMLP_ret XMLParser::getXMLRemoteServer(tinyxml2::XMLElement* elem, RemoteServerA
         logError(XMLPARSER, "getXMLRemoteServer couldn't find any server's locator XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    
+
     if (pLU && XMLP_ret::XML_OK != getXMLLocatorList(pLU, server.metatrafficUnicastLocatorList, ident))
     {
         logError(XMLPARSER, "getXMLRemoteServer was given a misformatted server's " << META_UNI_LOC_LIST << " XML_ERROR!");

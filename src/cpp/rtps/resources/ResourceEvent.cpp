@@ -196,9 +196,8 @@ void ResourceEvent::run_io_service()
 void ResourceEvent::init_thread()
 {
     thread_ = std::thread(&ResourceEvent::run_io_service, this);
-    std::promise<void> ready;
     std::future<void> ready_fut = ready.get_future();
-    io_service_.post([&ready]()
+    io_service_.post([this]()
         {
             ready.set_value();
         });

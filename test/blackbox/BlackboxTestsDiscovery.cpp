@@ -536,30 +536,33 @@ TEST(BlackBox, PubSubAsReliableHelloworldUserData)
     reader.wait_discovery_result();
 }
 
-//! Tests discovery of 20 participants, having one publisher and one subscriber each
-TEST(Discovery, TwentyParticipants)
+//! Auxiliar method for discovering participants tests
+static void discoverParticipantsTest(
+        bool avoid_multicast,
+        size_t n_participants,
+        uint32_t wait_ms,
+        const std::string& topic_name)
 {
-    // Number of participants
-    constexpr size_t n_participants = 20;
-    // Wait time for discovery
-    constexpr unsigned int wait_ms = 20;
-
     std::vector<std::shared_ptr<PubSubWriterReader<HelloWorldType>>> pubsub;
     pubsub.reserve(n_participants);
 
-    for (unsigned int i=0; i<n_participants; i++)
+    for (size_t i = 0; i < n_participants; ++i)
     {
-        pubsub.emplace_back(std::make_shared<PubSubWriterReader<HelloWorldType>>(TEST_TOPIC_NAME));
+        pubsub.emplace_back(std::make_shared<PubSubWriterReader<HelloWorldType>>(topic_name));
     }
 
     // Initialization of all the participants
+    std::cout << "Initializing PubSubs for topic " << topic_name << std::endl;
+    uint32_t idx = 1;
     for (auto& ps : pubsub)
     {
-        ps->init();
+        std::cout << "\rParticipant " << idx++ << " of " << n_participants << std::flush;
+        ps->init(avoid_multicast);
         ASSERT_EQ(ps->isInitialized(), true);
     }
 
     bool all_discovered = false;
+    std::cout << std::endl << "Waiting discovery between " << n_participants << " participants." << std::endl;
     while (!all_discovered)
     {
         all_discovered = true;
@@ -592,35 +595,50 @@ TEST(Discovery, TwentyParticipants)
     }
 }
 
-//! Regression for ROS2 #280 and #281
-TEST(Discovery, TwentyParticipantsSeveralEndpoints)
+//! Tests discovery of 20 participants, having one publisher and one subscriber each, using multicast
+TEST(Discovery, TwentyParticipantsMulticast)
 {
-    // Number of participants
-    constexpr size_t n_participants = 20;
-    // Number of endpoints
-    constexpr size_t n_topics = 10;
+    discoverParticipantsTest(false, 20, 20, TEST_TOPIC_NAME);
+}
+
+//! Tests discovery of 20 participants, having one publisher and one subscriber each, using unicast
+TEST(Discovery, TwentyParticipantsUnicast)
+{
+    discoverParticipantsTest(true, 20, 20, TEST_TOPIC_NAME);
+}
+
+//! Auxiliar method for discovering participants tests
+static void discoverParticipantsSeveralEndpointsTest(
+        bool avoid_multicast,
+        size_t n_participants,
+        size_t n_topics,
+        uint32_t wait_ms,
+        const std::string& topic_name)
+{
     // Total number of discovered endpoints
-    constexpr size_t n_total_endpoints = n_participants * n_topics;
-    // Wait time for discovery
-    constexpr unsigned int wait_ms = 20;
+    size_t n_total_endpoints = n_participants * n_topics;
 
     std::vector<std::shared_ptr<PubSubWriterReader<HelloWorldType>>> pubsub;
     pubsub.reserve(n_participants);
 
     for (unsigned int i = 0; i < n_participants; i++)
     {
-        pubsub.emplace_back(std::make_shared<PubSubWriterReader<HelloWorldType>>(TEST_TOPIC_NAME));
+        pubsub.emplace_back(std::make_shared<PubSubWriterReader<HelloWorldType>>(topic_name));
     }
 
     // Initialization of all the participants
+    std::cout << "Initializing PubSubs for topic " << topic_name << std::endl;
+    uint32_t idx = 1;
     for (auto& ps : pubsub)
     {
-        ps->init();
+        std::cout << "\rParticipant " << idx++ << " of " << n_participants << std::flush;
+        ps->init(avoid_multicast);
         ASSERT_EQ(ps->isInitialized(), true);
         ASSERT_TRUE(ps->create_additional_topics(n_topics - 1));
     }
 
     bool all_discovered = false;
+    std::cout << std::endl << "Waiting discovery between " << n_participants << " participants." << std::endl;
     while (!all_discovered)
     {
         all_discovered = true;
@@ -651,4 +669,16 @@ TEST(Discovery, TwentyParticipantsSeveralEndpoints)
     {
         ps->destroy();
     }
+}
+
+//! Regression for ROS2 #280 and #281, using multicat
+TEST(Discovery, TwentyParticipantsSeveralEndpointsMulticast)
+{
+    discoverParticipantsSeveralEndpointsTest(false, 20, 20, 20, TEST_TOPIC_NAME);
+}
+
+//! Regression for ROS2 #280 and #281, using unicast
+TEST(Discovery, TwentyParticipantsSeveralEndpointsUnicast)
+{
+    discoverParticipantsSeveralEndpointsTest(true, 20, 20, 20, TEST_TOPIC_NAME);
 }
