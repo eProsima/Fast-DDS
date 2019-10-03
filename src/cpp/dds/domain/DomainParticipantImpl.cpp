@@ -154,7 +154,7 @@ ReturnCode_t DomainParticipantImpl::delete_publisher(
 
     if (pit != publishers_.end() && pub->get_instance_handle() == pit->second->get_instance_handle())
     {
-        if (!pub->has_datawriters())
+        if (pub->has_datawriters())
         {
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }
@@ -180,7 +180,7 @@ ReturnCode_t DomainParticipantImpl::delete_subscriber(
 
     if (sit != subscribers_.end() && sub->get_instance_handle() == sit->second->get_instance_handle())
     {
-        if (!sub->has_datareaders())
+        if (sub->has_datareaders())
         {
             return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         }

@@ -158,6 +158,8 @@ ReturnCode_t DataWriterImpl::write(
             void* data,
             const rtps::InstanceHandle_t& handle)
 {
+    //TODO Review when HANDLE_NIL is implemented as this just checks if the handle is 0,
+    // but it need to check if there is an existing entity with that handle
     if (!handle.isDefined())
     {
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
