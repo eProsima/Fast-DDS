@@ -190,7 +190,7 @@ TestPublisher::PubListener::PubListener(TestPublisher* parent)
 
 void TestPublisher::PubListener::on_publication_matched(
         eprosima::fastdds::dds::DataWriter*,
-        eprosima::fastdds::dds::PublicationMatchedStatus& info)
+        const eprosima::fastdds::dds::PublicationMatchedStatus& info)
 {
     if(info.current_count_change > 0)
     {

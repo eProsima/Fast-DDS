@@ -25,6 +25,8 @@
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/Guid.h>
+#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 
 namespace eprosima {
 namespace fastrtps{
@@ -212,6 +214,13 @@ class EDP
         virtual bool pairing_remote_reader_with_local_builtin_writer_after_security(const GUID_t& /*local_writer*/,
                 const ReaderProxyData& /*remote_reader_data*/) { return false; }
 #endif
+        const fastdds::dds::SubscriptionMatchedStatus update_subscription_matched_status(GUID_t reader_guid,
+                GUID_t writer_guid,
+                int change);
+
+        const fastdds::dds::PublicationMatchedStatus update_publication_matched_status(GUID_t reader_guid,
+                GUID_t writer_guid,
+                int change);
 
         //! Pointer to the PDP object that contains the endpoint discovery protocol.
         PDP* mp_PDP;
@@ -259,6 +268,8 @@ class EDP
 
         ReaderProxyData temp_reader_proxy_data_;
         WriterProxyData temp_writer_proxy_data_;
+        std::map<GUID_t, fastdds::dds::SubscriptionMatchedStatus> reader_status_;
+        std::map<GUID_t, fastdds::dds::PublicationMatchedStatus> writer_status_;
 };
 
 } /* namespace rtps */
