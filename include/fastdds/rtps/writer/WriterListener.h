@@ -61,7 +61,7 @@ public:
      */
     virtual void onWriterMatched(
             RTPSWriter* writer,
-            eprosima::fastdds::dds::PublicationMatchedStatus& info)
+            const eprosima::fastdds::dds::PublicationMatchedStatus& info)
     {
         (void)writer;
         (void)info;

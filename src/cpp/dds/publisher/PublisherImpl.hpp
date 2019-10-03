@@ -184,9 +184,8 @@ private:
 
             virtual ~PublisherWriterListener() override {}
 
-            void on_publication_matched(
-                    DataWriter* writer,
-                    fastdds::dds::PublicationMatchedStatus& info) override;
+            void on_publication_matched(DataWriter* writer,
+                    const PublicationMatchedStatus &info) override;
 
             void on_offered_deadline_missed(
                 DataWriter* writer,

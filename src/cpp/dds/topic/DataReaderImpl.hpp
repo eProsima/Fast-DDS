@@ -220,9 +220,8 @@ private:
 
         virtual ~InnerDataReaderListener() override {}
 
-        void onReaderMatched(
-                fastrtps::rtps::RTPSReader* reader,
-                fastdds::dds::SubscriptionMatchedStatus& info) override;
+        void onReaderMatched(fastrtps::rtps::RTPSReader* reader,
+                const SubscriptionMatchedStatus &info) override;
 
         void onNewCacheChangeAdded(
                 fastrtps::rtps::RTPSReader* reader,

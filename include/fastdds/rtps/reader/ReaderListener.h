@@ -66,7 +66,7 @@ public:
      */
     virtual void onReaderMatched(
             RTPSReader* reader,
-            fastdds::dds::SubscriptionMatchedStatus& info)
+            const fastdds::dds::SubscriptionMatchedStatus& info)
     {
         (void)reader;
         (void)info;

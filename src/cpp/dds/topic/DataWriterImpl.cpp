@@ -556,7 +556,7 @@ const Publisher* DataWriterImpl::get_publisher() const
 
 void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         RTPSWriter* /*writer*/,
-        PublicationMatchedStatus& info)
+        const PublicationMatchedStatus& info)
 {
     if (data_writer_->listener_ != nullptr )
     {

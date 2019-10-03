@@ -424,7 +424,7 @@ void SubscriberImpl::SubscriberReaderListener::on_data_available(
 
 void SubscriberImpl::SubscriberReaderListener::on_subscription_matched(
         DataReader* /*reader*/,
-        fastdds::dds::SubscriptionMatchedStatus& info)
+        const fastdds::dds::SubscriptionMatchedStatus& info)
 {
     if (subscriber_->listener_ != nullptr)
     {

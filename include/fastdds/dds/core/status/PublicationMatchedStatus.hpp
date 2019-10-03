@@ -21,32 +21,21 @@
 
 #include <cstdint>
 #include <fastrtps/rtps/common/InstanceHandle.h>
+#include <fastdds/dds/core/status/MatchedStatus.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
 //! @brief A structure storing the publication status
-struct PublicationMatchedStatus
+struct PublicationMatchedStatus: public MatchedStatus
 {
-	//! @brief Total cumulative count the concerned writer discovered a match with a reader
-	//! @details It found a reader for the same topic with a requested Qos that is compatible with that offered by the writer
-    int32_t total_count = 0;
-
-	//! @brief The change in total_count since the last time the listener was called or the status was read
-    int32_t total_count_change = 0;
-
-	//! @brief The number of readers currently matched to the concerned writer
-    int32_t current_count = 0;
-
-	//! @brief The change in current_count since the last time the listener was called or the status was read
-    int32_t current_count_change = 0;
-
 	//! @brief Handle to the last reader that matched the writer causing the status to change
 	eprosima::fastrtps::rtps::InstanceHandle_t last_subscription_handle;
 };
 
-} //end of namespace dds
-} //end of namespace fastdds
-} //end of namespace eprosima
-#endif
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
+
+#endif //_PUBLICATION_MATCHED_STATUS_HPP_

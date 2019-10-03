@@ -47,7 +47,7 @@ public:
      */
     virtual void on_publication_matched(
             DataWriter* writer,
-            fastdds::dds::PublicationMatchedStatus& info)
+            const fastdds::dds::PublicationMatchedStatus& info)
     {
         (void)writer;
         (void)info;

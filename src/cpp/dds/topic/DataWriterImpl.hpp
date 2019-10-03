@@ -228,7 +228,7 @@ private:
 
             void onWriterMatched(
                     fastrtps::rtps::RTPSWriter* writer,
-                    fastdds::dds::PublicationMatchedStatus& info) override;
+                    const fastdds::dds::PublicationMatchedStatus& info) override;
 
             void onWriterChangeReceivedByAll(
                     fastrtps::rtps::RTPSWriter* writer,

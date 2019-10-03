@@ -66,9 +66,8 @@ public:
         SubListener(HelloWorldSubscriber* sub):n_matched(0),n_samples(0),subscriber_(sub){}
         ~SubListener() override {}
         void on_data_available(eprosima::fastdds::dds::DataReader* reader) override;
-        void on_subscription_matched(
-                eprosima::fastdds::dds::DataReader* reader,
-                eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
+        void on_subscription_matched(eprosima::fastdds::dds::DataReader* reader,
+                const eprosima::fastdds::dds::SubscriptionMatchedStatus &info) override;
         void on_type_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
                 const eprosima::fastrtps::string_255& topic,

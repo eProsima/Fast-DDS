@@ -46,7 +46,7 @@ public:
      */
     virtual void on_publication_matched(
             Publisher* pub,
-            fastdds::dds::PublicationMatchedStatus& info)
+            const fastdds::dds::PublicationMatchedStatus& info)
     {
         (void)pub;
         (void)info;

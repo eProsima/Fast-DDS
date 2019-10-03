@@ -315,7 +315,7 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
 
 void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         RTPSReader* /*reader*/,
-        SubscriptionMatchedStatus& info)
+        const SubscriptionMatchedStatus& info)
 {
     if (data_reader_->listener_ != nullptr)
     {
