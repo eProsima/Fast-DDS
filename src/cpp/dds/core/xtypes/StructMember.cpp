@@ -15,4 +15,4 @@
  *
 */
 
-#include <dds/core/xtypes/PrimitiveTypes.hpp>
+#include <dds/core/xtypes/StructMember.hpp>

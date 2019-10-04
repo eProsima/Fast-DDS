@@ -11,6 +11,12 @@ set(CORE_STANDALONE ${PROJECT_NAME})
 set(${CORE_STANDALONE}_source_files
     ${ALL_HEADERS}
     core.cpp
+    xtypes/TypeKind.cpp
+    xtypes/DynamicType.cpp
+    xtypes/PrimitiveTypes.cpp
+    xtypes/AggregationType.cpp
+    xtypes/StructMember.cpp
+    xtypes/StructType.cpp
     #conformance.cpp
     #Exception.cpp
     #macros.cpp
@@ -27,11 +33,7 @@ set(${CORE_STANDALONE}_source_files
     #xtypes/Annotations.cpp
     #xtypes/CollectionTypes.cpp
     #xtypes/DynamicData.cpp
-    #xtypes/DynamicType.cpp
     #xtypes/MemberType.cpp
-    #xtypes/PrimitiveTypes.cpp
-    #xtypes/StructType.cpp
-    #xtypes/TypeKind.cpp
     #xtypes/TypeProvider.cpp
     #xtypes/UnionCase.cpp
     #xtypes/UnionType.cpp
