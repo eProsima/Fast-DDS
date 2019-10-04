@@ -693,6 +693,7 @@ PlainArraySElemDefn::PlainArraySElemDefn(PlainArraySElemDefn &&x)
     }
     else
     {
+        delete m_element_identifier;
         m_element_identifier = nullptr;
     }
 }
@@ -703,11 +704,15 @@ PlainArraySElemDefn& PlainArraySElemDefn::operator=(const PlainArraySElemDefn &x
     m_array_bound_seq = x.m_array_bound_seq;
     if (x.m_element_identifier != nullptr)
     {
-        m_element_identifier = new TypeIdentifier();
+        if (m_element_identifier == nullptr)
+        {
+            m_element_identifier = new TypeIdentifier();
+        }
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
+        delete m_element_identifier;
         m_element_identifier = nullptr;
     }
 

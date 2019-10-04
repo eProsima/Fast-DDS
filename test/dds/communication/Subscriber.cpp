@@ -196,7 +196,7 @@ public:
             SampleInfo_t info;
             DataReader* reader = subscriber->lookup_datareader(g_subscriber_attributes.topic.topicName.to_string());
 
-            if(nullptr != reader && reader->take_next_sample(sample.get(), &info))
+            if(nullptr != reader && !!reader->take_next_sample(sample.get(), &info))
             {
                 if(info.sampleKind == ALIVE)
                 {

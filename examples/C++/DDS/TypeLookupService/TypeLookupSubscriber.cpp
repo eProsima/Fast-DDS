@@ -117,7 +117,7 @@ void TypeLookupSubscriber::SubListener::on_data_available(
     if (dit != subscriber_->datas_.end())
     {
         types::DynamicData_ptr data = dit->second;
-        if (reader->take_next_sample(data.get(), &m_info))
+        if (reader->take_next_sample(data.get(), &m_info) == ReturnCode_t::RETCODE_OK)
         {
             if (m_info.sampleKind == ALIVE)
             {

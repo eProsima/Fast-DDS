@@ -102,7 +102,7 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
 void HelloWorldSubscriber::SubListener::on_data_available(
         eprosima::fastdds::dds::DataReader* reader)
 {
-    if (reader->take_next_sample(&hello_, &info_))
+    if (reader->take_next_sample(&hello_, &info_) == ReturnCode_t::RETCODE_OK)
     {
         if (info_.sampleKind == eprosima::fastrtps::rtps::ALIVE)
         {
