@@ -3,50 +3,20 @@
 ###############################################################################
 
 file(GLOB_RECURSE ALL_HEADERS
-    ${PROJECT_SOURCE_DIR}/include/dds/core/**/*.hpp
+    ${PROJECT_SOURCE_DIR}/include/dds/core/xtypes/*.hpp
     )
 
 set(CORE_STANDALONE ${PROJECT_NAME})
 
 set(${CORE_STANDALONE}_source_files
     ${ALL_HEADERS}
-    core.cpp
-    xtypes/TypeKind.cpp
-    xtypes/DynamicType.cpp
-    xtypes/PrimitiveTypes.cpp
-    xtypes/AggregationType.cpp
-    xtypes/StructMember.cpp
-    xtypes/StructType.cpp
-    xtypes/DynamicData.cpp
-    #conformance.cpp
-    #Exception.cpp
-    #macros.cpp
-    #Reference.cpp
-    #refmacros.cpp
-    #ref_traits.cpp
-    #SafeEnumeration.cpp
-    #types.cpp
-    #detail/conformance.cpp
-    #detail/inttypes.cpp
-    #detail/macros.cpp
-    #detail/ref_traits.cpp
-    #xtypes/Annotation.cpp
-    #xtypes/Annotations.cpp
-    #xtypes/CollectionTypes.cpp
-    #xtypes/MemberType.cpp
-    #xtypes/TypeProvider.cpp
-    #xtypes/UnionCase.cpp
-    #xtypes/UnionType.cpp
-    #xtypes/detail/Annotation.cpp
-    #xtypes/detail/CollectionTypes.cpp
-    #xtypes/detail/DynamicData.cpp
-    #xtypes/detail/DynamicType.cpp
-    #xtypes/detail/MemberType.cpp
-    #xtypes/detail/PrimitiveTypes.cpp
-    #xtypes/detail/StructType.cpp
-    #xtypes/detail/TypeProvider.cpp
-    #xtypes/detail/UnionCase.cpp
-    #xtypes/detail/UnionType.cpp
+    TypeKind.cpp
+    DynamicType.cpp
+    PrimitiveTypes.cpp
+    AggregationType.cpp
+    StructMember.cpp
+    StructType.cpp
+    DynamicData.cpp
     )
 
 add_library(${CORE_STANDALONE} ${${CORE_STANDALONE}_source_files})
