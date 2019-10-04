@@ -84,12 +84,12 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
         eprosima::fastdds::dds::DataReader*,
         const eprosima::fastdds::dds::SubscriptionMatchedStatus& info)
 {
-    if (info.current_count_change > 0)
+    if (info.current_count_change == 1)
     {
         matched_ = info.current_count;
         std::cout << "Subscriber matched." << std::endl;
     }
-    else if (info.current_count_change < 0)
+    else if (info.current_count_change == -1)
     {
         matched_ = info.current_count;
         std::cout << "Subscriber unmatched." << std::endl;

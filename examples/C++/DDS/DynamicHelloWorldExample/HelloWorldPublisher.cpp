@@ -113,13 +113,13 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
         eprosima::fastdds::dds::DataWriter*,
         const eprosima::fastdds::dds::PublicationMatchedStatus &info)
 {
-    if(info.current_count_change > 0)
+    if(info.current_count_change == 1)
     {
         n_matched = info.current_count;
         firstConnected = true;
         std::cout << "Publisher matched"<<std::endl;
     }
-    else if (info.current_count_change < 0)
+    else if (info.current_count_change == -1)
     {
         n_matched = info.current_count;
         std::cout << "Publisher unmatched"<<std::endl;
