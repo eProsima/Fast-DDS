@@ -19,16 +19,13 @@
 
 #include <fastdds/dds/builtin/typelookup/TypeLookupReplyListener.hpp>
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
-#include <fastdds/dds/builtin/typelookup/common/TypeLookupTypes.hpp>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/types/DynamicPubSubType.h>
 
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
 #include <fastrtps/log/Log.h>
 
 #include <rtps/participant/RTPSParticipantImpl.h>

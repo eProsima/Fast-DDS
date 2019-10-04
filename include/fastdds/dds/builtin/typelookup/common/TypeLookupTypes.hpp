@@ -20,7 +20,6 @@
 #ifndef TYPELOOKUPTYPES_HPP
 #define TYPELOOKUPTYPES_HPP
 
-#include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/types/TypeObject.h>
 #include <fastdds/dds/builtin/common/RequestHeader.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>

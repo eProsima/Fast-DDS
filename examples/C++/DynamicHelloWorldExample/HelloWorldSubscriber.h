@@ -44,7 +44,8 @@ class HelloWorldSubscriber
         void run();
 
         //!Run the subscriber until number samples have been recevied.
-        void run(uint32_t number);
+        void run(
+                uint32_t number);
 
     private:
 
@@ -54,25 +55,39 @@ class HelloWorldSubscriber
 
     public:
 
-        class SubListener:public eprosima::fastrtps::SubscriberListener
+        class SubListener : public eprosima::fastrtps::SubscriberListener
         {
             public:
-                SubListener():n_matched(0),n_samples(0){ };
-                ~SubListener(){ };
-                void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
-                void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+                SubListener()
+                    : n_matched(0)
+                    , n_samples(0)
+                {}
+
+                ~SubListener() override {}
+
+                void onSubscriptionMatched(
+                        eprosima::fastrtps::Subscriber* sub,
+                        eprosima::fastrtps::rtps::MatchingInfo& info) override;
+
+                void onNewDataMessage(
+                        eprosima::fastrtps::Subscriber* sub) override;
+
                 // Dynamic Types
                 eprosima::fastrtps::types::DynamicData* m_DynHello;
+
                 eprosima::fastrtps::SampleInfo_t m_info;
+
                 int n_matched;
+
                 uint32_t n_samples;
-        }m_listener;
+        } m_listener;
 
         class PartListener : public eprosima::fastrtps::ParticipantListener
         {
-            void onParticipantDiscovery(eprosima::fastrtps::Participant* p,
+            void onParticipantDiscovery(
+                    eprosima::fastrtps::Participant* p,
                     eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
-        }m_part_list;
+        } m_part_list;
 
     private:
 

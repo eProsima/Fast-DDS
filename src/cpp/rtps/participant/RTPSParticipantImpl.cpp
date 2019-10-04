@@ -1164,7 +1164,8 @@ fastdds::dds::builtin::TypeLookupManager* RTPSParticipantImpl::typelookup_manage
     return mp_builtinProtocols->tlm_;
 }
 
-IPersistenceService* RTPSParticipantImpl::get_persistence_service(const EndpointAttributes& param)
+IPersistenceService* RTPSParticipantImpl::get_persistence_service(
+        const EndpointAttributes& param)
 {
     IPersistenceService* ret_val;
 

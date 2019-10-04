@@ -83,6 +83,18 @@ protected:
             TypeInformation* info,
             const TypeIdentifier* ident) const;
 
+    void fill_minimal_dependant_types(
+            TypeInformation* info,
+            const TypeIdentifier* identifier) const;
+
+    void fill_complete_dependant_types(
+            TypeInformation* info,
+            const TypeIdentifier* identifier) const;
+
+    void fill_complete_minimal_dependant_types(
+            TypeInformation* info,
+            const TypeIdentifier* identifier) const;
+
 public:
     RTPS_DllAPI static TypeObjectFactory* get_instance();
 
@@ -90,9 +102,19 @@ public:
 
     ~TypeObjectFactory();
 
+    /**
+     * @brief get_type_information Retrieves the TypeInformation of the named type.
+     * @param type_name
+     * @return
+     */
     RTPS_DllAPI const TypeInformation* get_type_information(
             const std::string &type_name) const;
 
+    /**
+     * @brief get_type_information Retrieves the TypeInformation of the given TypeIdentifier.
+     * @param identifier
+     * @return
+     */
     RTPS_DllAPI TypeInformation* get_type_information(
             const TypeIdentifier* identifier) const;
 

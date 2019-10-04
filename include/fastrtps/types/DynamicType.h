@@ -21,8 +21,7 @@
 namespace eprosima {
 
 namespace fastdds {
-namespace dds
-{
+namespace dds {
 class DomainParticipantImpl;
 } // namespace dds
 } // namespace fastdds

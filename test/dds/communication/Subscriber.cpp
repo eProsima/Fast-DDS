@@ -108,11 +108,12 @@ public:
                         {
                             const types::TypeIdentifier* ident =
                                 types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(name);
-                            const types::TypeObject* obj =
-                                types::TypeObjectFactory::get_instance()->get_type_object(ident);
 
                             if (nullptr != ident)
                             {
+                                const types::TypeObject* obj =
+                                    types::TypeObjectFactory::get_instance()->get_type_object(ident);
+
                                 types::DynamicType_ptr dyn_type =
                                     types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
 
@@ -127,7 +128,8 @@ public:
                             }
                             else
                             {
-                                std::cout << "ERROR: TypeIdentifier cannot be retrieved for type: " << name << std::endl;
+                                std::cout << "ERROR: TypeIdentifier cannot be retrieved for type: "
+                                          << name << std::endl;
                             }
                         }
                         else

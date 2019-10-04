@@ -31,8 +31,10 @@ using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TypeLookupSubscriber::TypeLookupSubscriber():mp_participant(nullptr),
-    mp_subscriber(nullptr), m_listener(this)
+TypeLookupSubscriber::TypeLookupSubscriber()
+    : mp_participant(nullptr)
+    , mp_subscriber(nullptr)
+    , m_listener(this)
 {
 }
 
@@ -49,8 +51,10 @@ bool TypeLookupSubscriber::init()
     PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     PParam.rtps.setName("Participant_sub");
     mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &m_listener);
-    if(mp_participant==nullptr)
+    if (mp_participant == nullptr)
+    {
         return false;
+    }
 
     // CREATE THE COMMON READER ATTRIBUTES
     qos_.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
@@ -66,7 +70,8 @@ bool TypeLookupSubscriber::init()
     return true;
 }
 
-TypeLookupSubscriber::~TypeLookupSubscriber() {
+TypeLookupSubscriber::~TypeLookupSubscriber()
+{
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
     readers_.clear();
     datas_.clear();
@@ -76,15 +81,15 @@ void TypeLookupSubscriber::SubListener::on_subscription_matched(
         eprosima::fastdds::dds::DataReader* reader,
         eprosima::fastrtps::rtps::MatchingInfo& info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
-        std::cout << "Subscriber matched"<<std::endl;
+        std::cout << "Subscriber matched" << std::endl;
     }
     else
     {
         n_matched--;
-        std::cout << "Subscriber unmatched"<<std::endl;
+        std::cout << "Subscriber unmatched" << std::endl;
         auto itr = subscriber_->readers_.find(reader);
         if (itr != subscriber_->readers_.end())
         {
@@ -104,7 +109,8 @@ void TypeLookupSubscriber::SubListener::on_subscription_matched(
     }
 }
 
-void TypeLookupSubscriber::SubListener::on_data_available(eprosima::fastdds::dds::DataReader* reader)
+void TypeLookupSubscriber::SubListener::on_data_available(
+        eprosima::fastdds::dds::DataReader* reader)
 {
     auto dit = subscriber_->datas_.find(reader);
 
@@ -113,7 +119,7 @@ void TypeLookupSubscriber::SubListener::on_data_available(eprosima::fastdds::dds
         types::DynamicData_ptr data = dit->second;
         if (reader->take_next_sample(data.get(), &m_info))
         {
-            if(m_info.sampleKind == ALIVE)
+            if (m_info.sampleKind == ALIVE)
             {
                 types::DynamicType_ptr type = subscriber_->readers_[reader];
                 this->n_samples++;
@@ -160,18 +166,20 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                 {
                     const types::TypeIdentifier* ident =
                         types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(name);
-                    const types::TypeObject* obj =
-                        types::TypeObjectFactory::get_instance()->get_type_object(ident);
 
                     if (nullptr != ident)
                     {
+                        const types::TypeObject* obj =
+                            types::TypeObjectFactory::get_instance()->get_type_object(ident);
+
                         types::DynamicType_ptr dyn_type =
                             types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
 
                         if (nullptr != dyn_type)
                         {
                             subscriber_->readers_[reader] = dyn_type;
-                            types::DynamicData_ptr data(types::DynamicDataFactory::get_instance()->create_data(dyn_type));
+                            types::DynamicData_ptr data(
+                                types::DynamicDataFactory::get_instance()->create_data(dyn_type));
                             subscriber_->datas_[reader] = data;
                         }
                         else
@@ -204,9 +212,12 @@ void TypeLookupSubscriber::run()
     std::cin.ignore();
 }
 
-void TypeLookupSubscriber::run(uint32_t number)
+void TypeLookupSubscriber::run(
+        uint32_t number)
 {
-    std::cout << "Subscriber running until "<< number << "samples have been received"<<std::endl;
+    std::cout << "Subscriber running until " << number << " samples have been received" << std::endl;
     while(number > this->m_listener.n_samples)
+    {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
 }

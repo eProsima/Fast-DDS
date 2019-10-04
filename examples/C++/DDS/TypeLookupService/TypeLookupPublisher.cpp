@@ -35,8 +35,9 @@ using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TypeLookupPublisher::TypeLookupPublisher():mp_participant(nullptr),
-mp_publisher(nullptr)
+TypeLookupPublisher::TypeLookupPublisher()
+    : mp_participant(nullptr)
+    , mp_publisher(nullptr)
 {
 }
 
@@ -66,14 +67,15 @@ bool TypeLookupPublisher::init()
     PParam.rtps.setName("Participant_pub");
     mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam);
 
-    if(mp_participant==nullptr)
+    if (mp_participant == nullptr)
+    {
         return false;
+    }
 
     //REGISTER THE TYPE
     mp_participant->register_type(m_type);
 
     //CREATE THE PUBLISHER
-    //PublisherQos qos;
     PublisherAttributes Wparam;
     Wparam.topic.topicKind = NO_KEY;
     Wparam.topic.topicDataType = "TypeLookup";
@@ -87,11 +89,12 @@ bool TypeLookupPublisher::init()
     Wparam.times.heartbeatPeriod.seconds = 2;
     Wparam.times.heartbeatPeriod.nanosec = 200*1000*1000;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    //mp_publisher = mp_participant->create_publisher(qos, Wparam, nullptr);
     mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, Wparam, nullptr);
 
-    if(mp_publisher == nullptr)
+    if (mp_publisher == nullptr)
+    {
         return false;
+    }
 
     // CREATE THE WRITER
     writer_ = mp_publisher->create_datawriter(Wparam.topic, Wparam.qos, &m_listener);
@@ -114,26 +117,28 @@ void TypeLookupPublisher::PubListener::on_publication_matched(
         eprosima::fastdds::dds::DataWriter*,
         eprosima::fastrtps::rtps::MatchingInfo &info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
         firstConnected = true;
-        std::cout << "Publisher matched"<<std::endl;
+        std::cout << "Publisher matched" << std::endl;
     }
     else
     {
         n_matched--;
-        std::cout << "Publisher unmatched"<<std::endl;
+        std::cout << "Publisher unmatched" << std::endl;
     }
 }
 
-void TypeLookupPublisher::runThread(uint32_t samples, uint32_t sleep)
+void TypeLookupPublisher::runThread(
+        uint32_t samples,
+        uint32_t sleep)
 {
     if (samples == 0)
     {
-        while(!stop)
+        while (!stop)
         {
-            if(publish(false))
+            if (publish(false))
             {
                 std::string message;
                 m_Hello->get_string_value(message, 0);
@@ -146,10 +151,12 @@ void TypeLookupPublisher::runThread(uint32_t samples, uint32_t sleep)
     }
     else
     {
-        for(uint32_t i = 0;i<samples;++i)
+        for (uint32_t i = 0; i < samples; ++i)
         {
-            if(!publish())
+            if (!publish())
+            {
                 --i;
+            }
             else
             {
                 std::string message;
@@ -163,7 +170,9 @@ void TypeLookupPublisher::runThread(uint32_t samples, uint32_t sleep)
     }
 }
 
-void TypeLookupPublisher::run(uint32_t samples, uint32_t sleep)
+void TypeLookupPublisher::run(
+        uint32_t samples,
+        uint32_t sleep)
 {
     stop = false;
     std::thread thread(&TypeLookupPublisher::runThread, this, samples, sleep);
@@ -180,9 +189,10 @@ void TypeLookupPublisher::run(uint32_t samples, uint32_t sleep)
     thread.join();
 }
 
-bool TypeLookupPublisher::publish(bool waitForListener)
+bool TypeLookupPublisher::publish(
+        bool waitForListener)
 {
-    if(m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
+    if (m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
     {
         uint32_t index;
         m_Hello->get_uint32_value(index, 1);

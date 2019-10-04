@@ -39,13 +39,20 @@ struct RequestHeader
 
     InstanceName instanceName;
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(const RequestHeader& data, size_t current_alignment = 0);
+    RTPS_DllAPI static size_t getCdrSerializedSize(
+            const RequestHeader& data,
+            size_t current_alignment = 0);
 
-    RTPS_DllAPI void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    RTPS_DllAPI void serialize(
+            eprosima::fastcdr::Cdr &cdr) const;
 
-    RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
+    RTPS_DllAPI void deserialize(
+            eprosima::fastcdr::Cdr &cdr);
 
-    RTPS_DllAPI static bool isKeyDefined() { return false; }
+    RTPS_DllAPI static bool isKeyDefined()
+    {
+        return false;
+    }
 };
 
 } // namespace rpc

@@ -165,7 +165,8 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_type(
     }
 }
 
-DynamicType_ptr DynamicTypeBuilderFactory::create_type(const DynamicTypeBuilder* other)
+DynamicType_ptr DynamicTypeBuilderFactory::create_type(
+        const DynamicTypeBuilder* other)
 {
     if (other != nullptr)
     {

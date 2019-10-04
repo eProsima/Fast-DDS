@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file TypeLookupReplyListener.h
+ * @file TypeLookupReplyListener.hpp
  *
  */
 
@@ -23,7 +23,7 @@
 #include <fastrtps/rtps/reader/ReaderListener.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 
 namespace types {
 class TypeObjectFactory;
@@ -47,14 +47,16 @@ class TypeLookupManager;
  * Class TypeLookupReplyListener that receives the typelookup request messages of remote endpoints.
  * @ingroup TYPES_MODULE
  */
-class TypeLookupReplyListener : public fastrtps::rtps::ReaderListener {
+class TypeLookupReplyListener : public fastrtps::rtps::ReaderListener
+{
 public:
 
     /**
      * @brief Constructor
      * @param pwlp Pointer to the writer liveliness protocol
      */
-    TypeLookupReplyListener(TypeLookupManager* pwlp);
+    TypeLookupReplyListener(
+            TypeLookupManager* pwlp);
 
     /**
      * @brief Destructor

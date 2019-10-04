@@ -24,7 +24,6 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
-#include <fastdds/rtps/writer/WriterListener.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
@@ -34,7 +33,7 @@
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastrtps/types/TypeObjectFactory.h>
+// TODO Uncomment if security is implemented.
 //#include <fastdds/rtps/common/Guid.h>
 //#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 
@@ -75,7 +74,7 @@ TypeLookupManager::TypeLookupManager(
     , temp_writer_proxy_data_(
           prot->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
           prot->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
-/*
+/* TODO Uncomment if security is implemented
 #if HAVE_SECURITY
     , builtin_request_writer_secure_(nullptr)
     , builtin_reply_writer_secure_(nullptr)
@@ -92,7 +91,7 @@ TypeLookupManager::TypeLookupManager(
 
 TypeLookupManager::~TypeLookupManager()
 {
-/*
+/* TODO Uncomment if security is implemented
 #if HAVE_SECURITY
     participant_->deleteUserEndpoint(builtin_request_writer_secure_);
     participant_->deleteUserEndpoint(builtin_reply_writer_secure_);
@@ -308,7 +307,7 @@ ReaderHistory* TypeLookupManager::get_builtin_reply_reader_history()
 {
     return builtin_reply_reader_history_;
 }
-/*
+/* TODO Implement if security is needed.
 #if HAVE_SECURITY
 bool TypeLookupManager::pairing_remote_reader_with_local_writer_after_security(
         const GUID_t& local_writer,
@@ -332,7 +331,6 @@ bool TypeLookupManager::create_endpoints()
     hatt.initialReservedCaches = 20;
     hatt.maximumReservedCaches = 1000;
     hatt.payloadMaxSize = TYPELOOKUP_DATA_MAX_SIZE;
-    // hatt.qos.kind = fastrtps::KEEP_ALL_HISTORY_QOS; // TODO: KEEP_ALL only in Pub/Sub layer!
 
     WriterAttributes watt;
     watt.endpoint.unicastLocatorList = builtin_protocols_->m_metatrafficUnicastLocatorList;
@@ -465,7 +463,7 @@ bool TypeLookupManager::create_endpoints()
 
     return true;
 }
-/*
+/* TODO Implement if security is needed.
 #if HAVE_SECURITY
 bool TypeLookupManager::create_secure_endpoints()
 {
@@ -536,8 +534,6 @@ bool TypeLookupManager::send_request(
     req.header.requestId.writer_guid(builtin_request_writer_->getGuid());
     req.header.requestId.sequence_number(request_seq_number_);
     ++request_seq_number_;
-
-    //SerializedPayload_t payload(static_cast<uint32_t>(TypeLookup_Request::getCdrSerializedSize(req)) + 4);
 
     CacheChange_t* change = builtin_request_writer_->new_change(
         [&req]()
@@ -703,4 +699,4 @@ const fastrtps::rtps::GUID_t& TypeLookupManager::get_builtin_request_writer_guid
 } // namespace builtin
 } // namespace dds
 } // namespace fastdds
-} // namespace builtin
+} // namespace eprosima

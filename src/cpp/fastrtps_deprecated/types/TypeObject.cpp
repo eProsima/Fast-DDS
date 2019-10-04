@@ -8861,7 +8861,8 @@ void TypeInformation::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> m_complete;
 }
 
-OctetSeq& operator++(OctetSeq& s)
+OctetSeq& operator ++(
+        OctetSeq& s)
 {
     if (s.empty())
     {
@@ -8914,14 +8915,16 @@ OctetSeq& operator++(OctetSeq& s)
     return s;
 }
 
-OctetSeq operator++(OctetSeq& s, int)
+OctetSeq operator ++(
+        OctetSeq& s, int)
 {
     OctetSeq r = s;
     ++s;
     return r;
 }
 
-size_t to_size_t(const OctetSeq& s)
+size_t to_size_t(
+        const OctetSeq& s)
 {
     if (s.size() > 4)
     {

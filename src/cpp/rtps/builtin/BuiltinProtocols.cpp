@@ -136,7 +136,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
         tlm_->init_typelookup_service(mp_participantImpl);
     }
 
-    if(m_att.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SIMPLE ||
+    if (m_att.discovery_config.discoveryProtocol == DiscoveryProtocol_t::SIMPLE ||
             m_att.discovery_config.discoveryProtocol == DiscoveryProtocol_t::CLIENT)
     {
         mp_PDP->enable();

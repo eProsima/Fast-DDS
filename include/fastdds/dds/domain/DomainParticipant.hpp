@@ -35,10 +35,6 @@ using eprosima::fastrtps::types::ReturnCode_t;
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-
-class RTPSParticipant;
-class WriterProxyData;
-class ReaderProxyData;
 class ResourceEvent;
 } // namespace rtps
 
@@ -59,11 +55,9 @@ class DomainParticipantImpl;
 class DomainParticipantListener;
 class Publisher;
 class PublisherQos;
-class PublisherImpl;
 class PublisherListener;
 class Subscriber;
 class SubscriberQos;
-class SubscriberImpl;
 class SubscriberListener;
 
 /**

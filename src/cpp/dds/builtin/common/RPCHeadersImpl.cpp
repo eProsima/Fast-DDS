@@ -23,7 +23,9 @@
 
 using namespace eprosima::fastdds::dds::rpc;
 
-size_t ReplyHeader::getCdrSerializedSize(const ReplyHeader& data, size_t current_alignment)
+size_t ReplyHeader::getCdrSerializedSize(
+        const ReplyHeader& data,
+        size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
@@ -35,7 +37,8 @@ size_t ReplyHeader::getCdrSerializedSize(const ReplyHeader& data, size_t current
     return current_alignment - initial_alignment;
 }
 
-void ReplyHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
+void ReplyHeader::serialize(
+        eprosima::fastcdr::Cdr &scdr) const
 {
     for (uint32_t i = 0; i < fastrtps::rtps::GuidPrefix_t::size; ++i)
     {
@@ -52,7 +55,8 @@ void ReplyHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
     scdr << static_cast<uint32_t>(remoteEx);
 }
 
-void ReplyHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void ReplyHeader::deserialize(
+        eprosima::fastcdr::Cdr &dcdr)
 {
     for (uint32_t i = 0; i < fastrtps::rtps::GuidPrefix_t::size; ++i)
     {
@@ -70,7 +74,9 @@ void ReplyHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
     remoteEx = static_cast<RemoteExceptionCode_t>(aux);
 }
 
-size_t RequestHeader::getCdrSerializedSize(const RequestHeader& data, size_t current_alignment)
+size_t RequestHeader::getCdrSerializedSize(
+        const RequestHeader& data,
+        size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
@@ -82,7 +88,8 @@ size_t RequestHeader::getCdrSerializedSize(const RequestHeader& data, size_t cur
     return current_alignment - initial_alignment;
 }
 
-void RequestHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
+void RequestHeader::serialize(
+        eprosima::fastcdr::Cdr &scdr) const
 {
     for (uint32_t i = 0; i < fastrtps::rtps::GuidPrefix_t::size; ++i)
     {
@@ -98,7 +105,8 @@ void RequestHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
     scdr << instanceName.to_string();
 }
 
-void RequestHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void RequestHeader::deserialize(
+        eprosima::fastcdr::Cdr &dcdr)
 {
     for (uint32_t i = 0; i < fastrtps::rtps::GuidPrefix_t::size; ++i)
     {

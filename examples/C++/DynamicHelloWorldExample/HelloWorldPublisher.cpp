@@ -26,8 +26,6 @@
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
 
 #include <thread>
@@ -64,8 +62,10 @@ bool HelloWorldPublisher::init()
     PParam.rtps.setName("DynHelloWorld_pub");
     mp_participant = Domain::createParticipant(PParam, (ParticipantListener*)&m_part_list);
 
-    if(mp_participant==nullptr)
+    if (mp_participant == nullptr)
+    {
         return false;
+    }
 
     //REGISTER THE TYPE
     Domain::registerDynamicType(mp_participant, &m_DynType);
@@ -75,10 +75,11 @@ bool HelloWorldPublisher::init()
     Wparam.topic.topicKind = NO_KEY;
     Wparam.topic.topicDataType = "HelloWorld";
     Wparam.topic.topicName = "HelloWorldTopic";
-    //Wparam.topic.topicDiscoveryKind = NO_CHECK;  // Do it compatible with other HelloWorlds
     mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_listener);
-    if(mp_publisher == nullptr)
+    if (mp_publisher == nullptr)
+    {
         return false;
+    }
 
     return true;
 
@@ -93,24 +94,28 @@ HelloWorldPublisher::~HelloWorldPublisher()
     Domain::stopAll();
 }
 
-void HelloWorldPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
+void HelloWorldPublisher::PubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
         firstConnected = true;
-        std::cout << "Publisher matched"<<std::endl;
+        std::cout << "Publisher matched" << std::endl;
     }
     else
     {
         n_matched--;
-        std::cout << "Publisher unmatched"<<std::endl;
+        std::cout << "Publisher unmatched" << std::endl;
     }
 }
 
-void HelloWorldPublisher::PartListener::onParticipantDiscovery(Participant*, ParticipantDiscoveryInfo&& info)
+void HelloWorldPublisher::PartListener::onParticipantDiscovery(
+        Participant*,
+        ParticipantDiscoveryInfo&& info)
 {
-    if(info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Participant " << info.info.m_participantName << " discovered" << std::endl;
     }
@@ -124,13 +129,15 @@ void HelloWorldPublisher::PartListener::onParticipantDiscovery(Participant*, Par
     }
 }
 
-void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
+void HelloWorldPublisher::runThread(
+        uint32_t samples,
+        uint32_t sleep)
 {
     uint32_t i = 0;
 
-    while(!stop && (i < samples || samples == 0))
+    while (!stop && (i < samples || samples == 0))
     {
-        if(publish(samples != 0))
+        if (publish(samples != 0))
         {
             std::string message;
             m_DynHello->get_string_value(message, 1);
@@ -144,7 +151,9 @@ void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)
     }
 }
 
-void HelloWorldPublisher::run(uint32_t samples, uint32_t sleep)
+void HelloWorldPublisher::run(
+        uint32_t samples,
+        uint32_t sleep)
 {
     stop = false;
     std::thread thread(&HelloWorldPublisher::runThread, this, samples, sleep);
@@ -161,9 +170,10 @@ void HelloWorldPublisher::run(uint32_t samples, uint32_t sleep)
     thread.join();
 }
 
-bool HelloWorldPublisher::publish(bool waitForListener)
+bool HelloWorldPublisher::publish(
+        bool waitForListener)
 {
-    if(m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
+    if (m_listener.firstConnected || !waitForListener || m_listener.n_matched>0)
     {
         uint32_t index;
         m_DynHello->get_uint32_value(index, 0);

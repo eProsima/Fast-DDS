@@ -64,26 +64,26 @@ public:
             DomainParticipant* /*participant*/,
             rtps::ParticipantDiscoveryInfo&& info) override
     {
-        if(info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+        if (info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
                 " discovered participant " << info.info.m_guid << std::endl;
         }
-        else if(info.status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+        else if (info.status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
                 " detected changes on participant " << info.info.m_guid << std::endl;
         }
-        else if(info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+        else if (info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
                 " removed participant " << info.info.m_guid << std::endl;
         }
-        else if(info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+        else if (info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
         {
             std::cout << "Publisher participant " << //participant->getGuid() <<
                 " dropped participant " << info.info.m_guid << std::endl;
-            if(exit_on_lost_liveliness_)
+            if (exit_on_lost_liveliness_)
             {
                 run = false;
             }
@@ -129,7 +129,7 @@ public:
             MatchingInfo& info) override
     {
         std::unique_lock<std::mutex> lock(mutex_);
-        if(info.status == MATCHED_MATCHING)
+        if (info.status == MATCHED_MATCHING)
         {
             std::cout << "Publisher matched with subscriber " << info.remoteEndpointGuid << std::endl;
             ++matched_;
@@ -160,13 +160,13 @@ int main(
 
     while(arg_count < argc)
     {
-        if(strcmp(argv[arg_count], "--exit_on_lost_liveliness") == 0)
+        if (strcmp(argv[arg_count], "--exit_on_lost_liveliness") == 0)
         {
             exit_on_lost_liveliness = true;
         }
-        else if(strcmp(argv[arg_count], "--seed") == 0)
+        else if (strcmp(argv[arg_count], "--seed") == 0)
         {
-            if(++arg_count >= argc)
+            if (++arg_count >= argc)
             {
                 std::cout << "--seed expects a parameter" << std::endl;
                 return -1;
@@ -174,9 +174,9 @@ int main(
 
             seed = strtol(argv[arg_count], nullptr, 10);
         }
-        else if(strcmp(argv[arg_count], "--wait") == 0)
+        else if (strcmp(argv[arg_count], "--wait") == 0)
         {
-            if(++arg_count >= argc)
+            if (++arg_count >= argc)
             {
                 std::cout << "--wait expects a parameter" << std::endl;
                 return -1;
@@ -184,9 +184,9 @@ int main(
 
             wait = strtol(argv[arg_count], nullptr, 10);
         }
-        else if(strcmp(argv[arg_count], "--samples") == 0)
+        else if (strcmp(argv[arg_count], "--samples") == 0)
         {
-            if(++arg_count >= argc)
+            if (++arg_count >= argc)
             {
                 std::cout << "--samples expects a parameter" << std::endl;
                 return -1;
@@ -194,9 +194,9 @@ int main(
 
             samples = strtol(argv[arg_count], nullptr, 10);
         }
-        else if(strcmp(argv[arg_count], "--magic") == 0)
+        else if (strcmp(argv[arg_count], "--magic") == 0)
         {
-            if(++arg_count >= argc)
+            if (++arg_count >= argc)
             {
                 std::cout << "--magic expects a parameter" << std::endl;
                 return -1;
@@ -204,10 +204,10 @@ int main(
 
             magic = argv[arg_count];
         }
-        else if(strcmp(argv[arg_count], "--xmlfile") == 0)
+        else if (strcmp(argv[arg_count], "--xmlfile") == 0)
         {
             std::cout << "--xmlfile option isn't implemented yet." << std::endl;
-            if(++arg_count >= argc)
+            if (++arg_count >= argc)
             {
                 std::cout << "--xmlfile expects a parameter" << std::endl;
                 return -1;
@@ -220,7 +220,7 @@ int main(
     }
 
     /* TODO - XMLProfileManager doesn't support DDS yet
-    if(xml_file)
+    if (xml_file)
     {
         DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
     }
@@ -295,7 +295,7 @@ int main(
         uint32_t index;
         data->get_uint32_value(index, 1);
 
-        if(index == samples)
+        if (index == samples)
         {
             data->set_uint32_value(1, 1);
         }

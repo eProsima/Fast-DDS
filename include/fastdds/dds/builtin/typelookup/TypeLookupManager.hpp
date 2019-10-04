@@ -36,13 +36,11 @@ namespace rtps {
 
 class BuiltinProtocols;
 class ReaderHistory;
-class ReaderProxyData;
 class RTPSParticipantImpl;
 class StatefulReader;
 class StatefulWriter;
 class ParticipantProxyData;
 class WriterHistory;
-class WriterProxyData;
 
 } // namespace rtps
 } // namespace fastrtps
@@ -152,7 +150,7 @@ public:
     */
     fastrtps::rtps::ReaderHistory* get_builtin_reply_reader_history();
 
-/*
+/* TODO Uncomment if security is implemented.
 #if HAVE_SECURITY
     bool pairing_remote_reader_with_local_writer_after_security(
             const fastrtps::rtps::GUID_t& local_writer,
@@ -255,7 +253,7 @@ private:
 
     mutable TypeLookup_ReplyTypeSupport reply_type_;
 
-/*
+/* TODO Uncomment if security is implemented.
 #if HAVE_SECURITY
     //!Pointer to the builtinRTPSParticipantMEssageWriter.
     fastrtps::rtps::StatefulWriter* builtin_request_writer_secure_;

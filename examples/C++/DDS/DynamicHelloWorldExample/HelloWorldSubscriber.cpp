@@ -40,7 +40,8 @@ bool HelloWorldSubscriber::init()
     eprosima::fastrtps::ParticipantAttributes PParam;
     PParam.rtps.setName("Participant_sub");
     mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &m_listener);
-    if (mp_participant==nullptr)
+
+    if (mp_participant == nullptr)
     {
         return false;
     }
@@ -54,7 +55,8 @@ bool HelloWorldSubscriber::init()
     return true;
 }
 
-HelloWorldSubscriber::~HelloWorldSubscriber() {
+HelloWorldSubscriber::~HelloWorldSubscriber()
+{
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
     readers_.clear();
     datas_.clear();
@@ -153,5 +155,7 @@ void HelloWorldSubscriber::run(
 {
     std::cout << "Subscriber running until "<< number << "samples have been received"<<std::endl;
     while (number > this->m_listener.n_samples)
+    {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
 }

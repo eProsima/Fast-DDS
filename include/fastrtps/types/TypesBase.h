@@ -24,22 +24,25 @@
 #include <algorithm>
 #include <memory>
 
-namespace eprosima{
-namespace fastcdr{
-    class Cdr;
-}
-}
-
 namespace eprosima {
+namespace fastcdr {
+class Cdr;
+} // namespace fastcdr
 namespace fastrtps {
 namespace types {
 
 using eprosima::fastrtps::rtps::octet;
 
 using OctetSeq = std::vector<octet>;
-OctetSeq& operator++(OctetSeq&);
-OctetSeq operator++(OctetSeq&, int);
-size_t to_size_t(const OctetSeq&);
+
+OctetSeq& operator ++(
+        OctetSeq&);
+
+OctetSeq operator ++(
+        OctetSeq&, int);
+
+size_t to_size_t(
+        const OctetSeq&);
 
 const std::string CONST_TRUE = "true";
 const std::string CONST_FALSE = "false";

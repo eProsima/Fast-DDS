@@ -73,7 +73,7 @@ bool HelloWorldPublisher::init()
     PParam.rtps.setName("Participant_pub");
     mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam);
 
-    if (mp_participant==nullptr)
+    if (mp_participant == nullptr)
     {
         return false;
     }
@@ -90,7 +90,6 @@ bool HelloWorldPublisher::init()
     Wparam.topic.auto_fill_type_object = true; // Share the type with readers.
     Wparam.topic.auto_fill_type_information = false;
     Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    //mp_publisher = mp_participant->create_publisher(qos, Wparam, nullptr);
     mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, Wparam, nullptr);
 
     if (mp_publisher == nullptr)

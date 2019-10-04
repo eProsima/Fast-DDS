@@ -918,7 +918,7 @@ bool PDP::remove_remote_participant(
             }
         }
 
-        if(mp_builtin->mp_WLP != nullptr)
+        if (mp_builtin->mp_WLP != nullptr)
         {
             this->mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
         }
