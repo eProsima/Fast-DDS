@@ -17,6 +17,7 @@ set(${CORE_STANDALONE}_source_files
     xtypes/AggregationType.cpp
     xtypes/StructMember.cpp
     xtypes/StructType.cpp
+    xtypes/DynamicData.cpp
     #conformance.cpp
     #Exception.cpp
     #macros.cpp
@@ -32,7 +33,6 @@ set(${CORE_STANDALONE}_source_files
     #xtypes/Annotation.cpp
     #xtypes/Annotations.cpp
     #xtypes/CollectionTypes.cpp
-    #xtypes/DynamicData.cpp
     #xtypes/MemberType.cpp
     #xtypes/TypeProvider.cpp
     #xtypes/UnionCase.cpp
