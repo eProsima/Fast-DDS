@@ -87,8 +87,6 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
         eprosima::fastdds::dds::DataWriter*,
         const eprosima::fastdds::dds::PublicationMatchedStatus &info)
 {
-    std::cout << "Current Count " << info.current_count << " Change " << info.current_count_change << std::endl;
-    std::cout << "Total Count " << info.total_count << " Chnage " << info.total_count_change << std::endl;
     if (info.current_count_change == 1)
     {
         matched_ = info.current_count;
