@@ -47,7 +47,8 @@ public:
     //!RUN the subscriber
     void run();
     //!Run the subscriber until number samples have been recevied.
-    void run(uint32_t number);
+    void run(
+            uint32_t number);
 
 private:
     eprosima::fastdds::dds::DomainParticipant* mp_participant;
@@ -63,10 +64,16 @@ public:
         , public eprosima::fastdds::dds::DomainParticipantListener
     {
     public:
-        SubListener(HelloWorldSubscriber* sub):n_matched(0),n_samples(0),subscriber_(sub){}
+        SubListener(
+                HelloWorldSubscriber* sub)
+            :n_matched(0)
+            ,n_samples(0)
+            ,subscriber_(sub){}
         ~SubListener() override {}
-        void on_data_available(eprosima::fastdds::dds::DataReader* reader) override;
-        void on_subscription_matched(eprosima::fastdds::dds::DataReader* reader,
+        void on_data_available(
+                eprosima::fastdds::dds::DataReader* reader) override;
+        void on_subscription_matched(
+                eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus &info) override;
         void on_type_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,

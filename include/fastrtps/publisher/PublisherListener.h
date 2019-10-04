@@ -19,9 +19,9 @@
 #ifndef PUBLISHERLISTENER_H_
 #define PUBLISHERLISTENER_H_
 
+#include <fastrtps/rtps/common/MatchingInfo.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/LivelinessLostStatus.h>
-#include <fastrtps/rtps/common/MatchingInfo.h>
 
 namespace eprosima {
 namespace fastrtps {

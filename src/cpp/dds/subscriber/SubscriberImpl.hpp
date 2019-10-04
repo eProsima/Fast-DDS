@@ -203,8 +203,9 @@ private:
         void on_data_available(
                 DataReader* reader) override;
 
-        void on_subscription_matched(DataReader* reader,
-                const SubscriptionMatchedStatus &info) override;
+        void on_subscription_matched(
+                DataReader* reader,
+                const SubscriptionMatchedStatus& info) override;
 
         void on_requested_deadline_missed(
                 DataReader* reader,

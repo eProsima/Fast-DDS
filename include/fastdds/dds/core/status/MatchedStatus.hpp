@@ -29,16 +29,10 @@ namespace dds {
 struct MatchedStatus
 {
 	//! @brief Constructor
-    MatchedStatus()
-        : total_count()
-        , total_count_change()
-        , current_count()
-        , current_count_change()
-    {}
+    MatchedStatus() = default;
 
     //! @brief Destructor
-    ~MatchedStatus()
-    {}
+    ~MatchedStatus() = default;
 
 	//! @brief Total cumulative count the concerned reader discovered a match with a writer
 	//! @details It found a writer for te same topic with a requested QoS that is compatible with that offered by the reader

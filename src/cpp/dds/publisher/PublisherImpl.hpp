@@ -184,12 +184,13 @@ private:
 
             virtual ~PublisherWriterListener() override {}
 
-            void on_publication_matched(DataWriter* writer,
+            void on_publication_matched(
+                    DataWriter* writer,
                     const PublicationMatchedStatus &info) override;
 
             void on_offered_deadline_missed(
-                DataWriter* writer,
-                const fastrtps::OfferedDeadlineMissedStatus& status) override;
+                    DataWriter* writer,
+                    const fastrtps::OfferedDeadlineMissedStatus& status) override;
 
             void on_liveliness_lost(
                     DataWriter* writer,
