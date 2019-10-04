@@ -58,7 +58,7 @@ public:
 
     ~TypeDescriptor();
 
-    ResponseCode copy_from(const TypeDescriptor* descriptor);
+    ReturnCode_t copy_from(const TypeDescriptor* descriptor);
 
     bool equals(const TypeDescriptor* descriptor) const;
 
@@ -86,9 +86,9 @@ public:
 
     void set_name(std::string name);
 
-    ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
+    ReturnCode_t apply_annotation(AnnotationDescriptor& descriptor);
 
-    ResponseCode apply_annotation(
+    ReturnCode_t apply_annotation(
             const std::string& annotation_name,
             const std::string& key,
             const std::string& value);

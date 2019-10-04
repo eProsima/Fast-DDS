@@ -24,24 +24,28 @@
 
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastrtps/types/TypesBase.h>
 
 #include <utility>
 
-namespace eprosima{
-namespace fastrtps{
+using eprosima::fastrtps::types::ReturnCode_t;
 
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
+
 class RTPSParticipant;
 class WriterProxyData;
 class ReaderProxyData;
 class ResourceEvent;
-}
+
+}  //namespace rtps
 
 class ParticipantAttributes;
 class PublisherAttributes;
 class SubscriberAttributes;
 
-} // namespace fastrtps
+} //namespace fastrtps
 
 namespace fastdds {
 namespace dds {
@@ -70,7 +74,7 @@ public:
      * @param listener
      * @return true if the listener was updated.
      */
-    bool set_listener(
+    ReturnCode_t set_listener(
             DomainParticipantListener* listener);
 
     /**
@@ -96,7 +100,7 @@ public:
      * @param publisher to be deleted.
      * @return if publisher was deleted.
      */
-    bool delete_publisher(
+    ReturnCode_t delete_publisher(
             Publisher* publisher);
 
     /**
@@ -116,7 +120,7 @@ public:
      * @param subscriber to be deleted.
      * @return if subscriber was deleted.
      */
-    bool delete_subscriber(
+    ReturnCode_t delete_subscriber(
             Subscriber* subscriber);
 
     /**
@@ -196,7 +200,7 @@ public:
      * writing data regularly.
      * @return if liveliness was asserted.
      */
-    bool assert_liveliness();
+    ReturnCode_t assert_liveliness();
 
     /**
      * This operation sets a default value of the Publisher QoS policies which will be used for newly created
@@ -211,7 +215,7 @@ public:
      * @param qos
      * @return if given qos was applied as default.
      */
-    bool set_default_publisher_qos(
+    ReturnCode_t set_default_publisher_qos(
             const fastdds::dds::PublisherQos& qos);
 
     /**
@@ -235,7 +239,7 @@ public:
      * @param qos
      * @return Always true.
      */
-    bool get_default_publisher_qos(
+    ReturnCode_t get_default_publisher_qos(
             fastdds::dds::PublisherQos& qos) const;
 
     /**
@@ -251,7 +255,7 @@ public:
      * @param qos
      * @return if given qos was applied as default.
      */
-    bool set_default_subscriber_qos(
+    ReturnCode_t set_default_subscriber_qos(
             const fastdds::dds::SubscriberQos& qos);
 
     /**
@@ -275,7 +279,7 @@ public:
      * @param qos
      * @return Always true.
      */
-    bool get_default_subscriber_qos(
+    ReturnCode_t get_default_subscriber_qos(
             fastdds::dds::SubscriberQos& qos) const;
 
     // TODO Get/Set default Topic Qos
@@ -321,7 +325,7 @@ public:
      * @param current_time
      * @return Always true
      */
-    bool get_current_time(
+    ReturnCode_t get_current_time(
             fastrtps::Time_t& current_time) const;
 
     /**

@@ -21,6 +21,7 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicData.h>
 #include <mutex>
+
 //#define DISABLE_DYNAMIC_MEMORY_CHECK
 
 namespace eprosima {
@@ -32,7 +33,7 @@ class DynamicDataFactory
 protected:
     DynamicDataFactory();
 
-    ResponseCode create_members(
+    ReturnCode_t create_members(
             DynamicData* pData,
             DynamicType_ptr pType);
 
@@ -46,7 +47,7 @@ public:
 
     RTPS_DllAPI static DynamicDataFactory* get_instance();
 
-    RTPS_DllAPI static ResponseCode delete_instance();
+    RTPS_DllAPI static ReturnCode_t delete_instance();
 
     RTPS_DllAPI DynamicData* create_data(DynamicTypeBuilder* pBuilder);
 
@@ -54,7 +55,7 @@ public:
 
     RTPS_DllAPI DynamicData* create_copy(const DynamicData* pData);
 
-    RTPS_DllAPI ResponseCode delete_data(DynamicData* pData);
+    RTPS_DllAPI ReturnCode_t delete_data(DynamicData* pData);
 
     RTPS_DllAPI bool is_empty() const;
 };

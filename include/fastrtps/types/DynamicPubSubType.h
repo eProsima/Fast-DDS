@@ -69,10 +69,10 @@ public:
 
     RTPS_DllAPI DynamicType_ptr GetDynamicType() const;
 
-    RTPS_DllAPI ResponseCode SetDynamicType(
+    RTPS_DllAPI ReturnCode_t SetDynamicType(
             DynamicData_ptr pData);
 
-    RTPS_DllAPI ResponseCode SetDynamicType(
+    RTPS_DllAPI ReturnCode_t SetDynamicType(
             DynamicType_ptr pType);
 };
 

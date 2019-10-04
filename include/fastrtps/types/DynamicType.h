@@ -51,7 +51,7 @@ protected:
 
     virtual void clear();
 
-    ResponseCode copy_from_builder(const DynamicTypeBuilder* other);
+    ReturnCode_t copy_from_builder(const DynamicTypeBuilder* other);
 
     // Checks if there is a member with the given name.
     bool exists_member_by_name(const std::string& name) const;
@@ -59,24 +59,24 @@ protected:
     // This method is used by Dynamic Data to override the name of the types based on ALIAS.
     void set_name(const std::string& name);
 
-    ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
+    ReturnCode_t apply_annotation(AnnotationDescriptor& descriptor);
 
-    ResponseCode apply_annotation(
+    ReturnCode_t apply_annotation(
             const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 
-    ResponseCode apply_annotation_to_member(
+    ReturnCode_t apply_annotation_to_member(
             MemberId id,
             AnnotationDescriptor& descriptor);
 
-    ResponseCode apply_annotation_to_member(
+    ReturnCode_t apply_annotation_to_member(
             MemberId id,
             const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 
-    ResponseCode get_annotation(
+    ReturnCode_t get_annotation(
             AnnotationDescriptor& descriptor,
             uint32_t idx);
 
@@ -90,11 +90,11 @@ protected:
 
     DynamicType_ptr get_key_element_type() const;
 
-    ResponseCode get_member(
+    ReturnCode_t get_member(
             DynamicTypeMember& member,
             MemberId id);
 
-    ResponseCode get_member_by_name(
+    ReturnCode_t get_member_by_name(
             DynamicTypeMember& member,
             const std::string& name);
 
@@ -108,15 +108,15 @@ protected:
 public:
     RTPS_DllAPI bool equals(const DynamicType* other) const;
 
-    RTPS_DllAPI ResponseCode get_all_members(std::map<MemberId, DynamicTypeMember*>& members);
+    RTPS_DllAPI ReturnCode_t get_all_members(std::map<MemberId, DynamicTypeMember*>& members);
 
-    RTPS_DllAPI ResponseCode get_all_members_by_name(std::map<std::string, DynamicTypeMember*>& members);
+    RTPS_DllAPI ReturnCode_t get_all_members_by_name(std::map<std::string, DynamicTypeMember*>& members);
 
     RTPS_DllAPI uint32_t get_bounds(uint32_t index = 0) const;
 
     RTPS_DllAPI uint32_t get_bounds_size() const;
 
-    RTPS_DllAPI ResponseCode get_descriptor(TypeDescriptor* descriptor) const;
+    RTPS_DllAPI ReturnCode_t get_descriptor(TypeDescriptor* descriptor) const;
 
     RTPS_DllAPI const TypeDescriptor* get_descriptor() const;
 

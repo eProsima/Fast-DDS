@@ -128,7 +128,7 @@ bool MemberDescriptor::check_union_labels(const std::vector<uint64_t>& labels) c
     return true;
 }
 
-ResponseCode MemberDescriptor::copy_from(const MemberDescriptor* other)
+ReturnCode_t MemberDescriptor::copy_from(const MemberDescriptor* other)
 {
     if (other != nullptr)
     {
@@ -155,17 +155,17 @@ ResponseCode MemberDescriptor::copy_from(const MemberDescriptor* other)
             index_ = other->index_;
             default_label_ = other->default_label_;
             labels_ = other->labels_;
-            return ResponseCode::RETCODE_OK;
+            return ReturnCode_t::RETCODE_OK;
         }
         catch (std::exception& /*e*/)
         {
-            return ResponseCode::RETCODE_ERROR;
+            return ReturnCode_t::RETCODE_ERROR;
         }
     }
     else
     {
         logError(DYN_TYPES, "Error copying MemberDescriptor, invalid input descriptor");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -427,10 +427,10 @@ void MemberDescriptor::set_default_union_value(bool bDefault)
 bool MemberDescriptor::annotation_is_optional() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_OPTIONAL_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -450,10 +450,10 @@ bool MemberDescriptor::annotation_get_key() const
     {
         ann = get_annotation(ANNOTATION_EPKEY_ID);
     }
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -464,10 +464,10 @@ bool MemberDescriptor::annotation_get_key() const
 bool MemberDescriptor::annotation_is_must_understand() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_MUST_UNDERSTAND_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -478,10 +478,10 @@ bool MemberDescriptor::annotation_is_must_understand() const
 bool MemberDescriptor::annotation_is_non_serialized() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_NON_SERIALIZED_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -508,10 +508,10 @@ bool MemberDescriptor::annotation_is_position() const
 std::string MemberDescriptor::annotation_get_value() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_VALUE_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return value;
         }
@@ -522,10 +522,10 @@ std::string MemberDescriptor::annotation_get_value() const
 std::string MemberDescriptor::annotation_get_default() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_DEFAULT_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return value;
         }
@@ -536,10 +536,10 @@ std::string MemberDescriptor::annotation_get_default() const
 uint16_t MemberDescriptor::annotation_get_position() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_POSITION_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return static_cast<uint16_t>(std::stoi(value));
         }
@@ -671,10 +671,10 @@ bool MemberDescriptor::annotation_is_bit_bound() const
 uint16_t MemberDescriptor::annotation_get_bit_bound() const
 {
     AnnotationDescriptor* ann = get_annotation(ANNOTATION_BIT_BOUND_ID);
-    if(ann != nullptr)
+    if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == ResponseCode::RETCODE_OK)
+        if (ann->get_value(value) == ReturnCode_t::RETCODE_OK)
         {
             return static_cast<uint16_t>(std::stoi(value));
         }
@@ -696,23 +696,23 @@ void MemberDescriptor::annotation_set_bit_bound(uint16_t bit_bound)
     ann->set_value("value", std::to_string(bit_bound));
 }
 
-ResponseCode MemberDescriptor::apply_annotation(AnnotationDescriptor& descriptor)
+ReturnCode_t MemberDescriptor::apply_annotation(AnnotationDescriptor& descriptor)
 {
     if (descriptor.is_consistent())
     {
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
         pNewDescriptor->copy_from(&descriptor);
         annotation_.push_back(pNewDescriptor);
-        return ResponseCode::RETCODE_OK;
+        return ReturnCode_t::RETCODE_OK;
     }
     else
     {
         logError(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
-        return ResponseCode::RETCODE_BAD_PARAMETER;
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
 
-ResponseCode MemberDescriptor::apply_annotation(
+ReturnCode_t MemberDescriptor::apply_annotation(
         const std::string& annotation_name,
         const std::string& key,
         const std::string& value)
@@ -730,7 +730,7 @@ ResponseCode MemberDescriptor::apply_annotation(
         pNewDescriptor->set_value(key, value);
         annotation_.push_back(pNewDescriptor);
     }
-    return ResponseCode::RETCODE_OK;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 AnnotationDescriptor* MemberDescriptor::get_annotation(const std::string& name) const

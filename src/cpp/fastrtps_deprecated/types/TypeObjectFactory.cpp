@@ -52,15 +52,15 @@ TypeObjectFactory* TypeObjectFactory::get_instance()
     return g_instance;
 }
 
-ResponseCode TypeObjectFactory::delete_instance()
+ReturnCode_t TypeObjectFactory::delete_instance()
 {
     if (g_instance != nullptr)
     {
         delete g_instance;
         g_instance = nullptr;
-        return ResponseCode::RETCODE_OK;
+        return ReturnCode_t::RETCODE_OK;
     }
-    return ResponseCode::RETCODE_ERROR;
+    return ReturnCode_t::RETCODE_ERROR;
 }
 
 TypeObjectFactory::TypeObjectFactory()

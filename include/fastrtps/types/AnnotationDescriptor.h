@@ -39,20 +39,20 @@ public:
     AnnotationDescriptor(const AnnotationDescriptor* descriptor);
     AnnotationDescriptor(DynamicType_ptr p_type);
 
-    ResponseCode copy_from(const AnnotationDescriptor* other);
+    ReturnCode_t copy_from(const AnnotationDescriptor* other);
     bool equals(const AnnotationDescriptor*) const;
     bool is_consistent() const;
     bool key_annotation() const;
 
-    ResponseCode get_value(
+    ReturnCode_t get_value(
             std::string& value,
             const std::string& key);
 
-    ResponseCode get_value(std::string& value); // key = "value"
+    ReturnCode_t get_value(std::string& value); // key = "value"
 
-    ResponseCode get_all_value(std::map<std::string, std::string>& value) const;
+    ReturnCode_t get_all_value(std::map<std::string, std::string>& value) const;
 
-    ResponseCode set_value(
+    ReturnCode_t set_value(
         const std::string& key,
         const std::string& value);
 

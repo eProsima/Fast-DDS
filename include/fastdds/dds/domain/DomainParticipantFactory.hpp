@@ -21,12 +21,16 @@
 #define _FASTDDS_DOMAINPARTICIPANT_HPP_
 
 #include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/types/TypesBase.h>
+
 #include <mutex>
 #include <map>
 
-namespace eprosima{
-namespace fastdds{
-namespace dds{
+using eprosima::fastrtps::types::ReturnCode_t;
+
+namespace eprosima {
+namespace fastdds {
+namespace dds {
 
 class DomainParticipantListener;
 class DomainParticipant;
@@ -87,11 +91,11 @@ public:
         uint8_t domain_id) const;
 
     //!Fills participant_attributes with the default values.
-    RTPS_DllAPI bool get_default_participant_qos(
+    RTPS_DllAPI ReturnCode_t get_default_participant_qos(
             fastrtps::ParticipantAttributes& participant_qos) const;
 
     /* TODO
-    RTPS_DllAPI bool set_default_participant_qos(
+    RTPS_DllAPI ReturnCode_t set_default_participant_qos(
             const fastrtps::ParticipantAttributes& participant_qos);
     */
 
@@ -100,7 +104,7 @@ public:
      * @param part Pointer to the participant.
      * @return True if correctly removed.
      */
-    RTPS_DllAPI bool delete_participant(
+    RTPS_DllAPI ReturnCode_t delete_participant(
             DomainParticipant* part);
 
     /**

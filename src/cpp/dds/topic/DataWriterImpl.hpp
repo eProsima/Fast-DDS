@@ -36,13 +36,18 @@
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastrtps/qos/LivelinessLostStatus.h>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
+#include <fastrtps/types/TypesBase.h>
+
+using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
+
 class RTPSWriter;
 class RTPSParticipant;
 class TimedEvent;
+
 } // namespace rtps
 
 } // namespace fastrtps
@@ -109,7 +114,7 @@ public:
      * @par Calling example:
      * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
-    bool write(
+    ReturnCode_t write(
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle);
 
@@ -130,14 +135,14 @@ public:
         return type_;
     }
 
-    bool wait_for_acknowledgments(
+    ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
     /**
      * @brief Returns the offered deadline missed status
      * @param Deadline missed status struct
      */
-    void get_offered_deadline_missed_status(
+    ReturnCode_t get_offered_deadline_missed_status(
             fastrtps::OfferedDeadlineMissedStatus& status);
 
     bool set_attributes(
@@ -145,7 +150,7 @@ public:
 
     const fastrtps::rtps::WriterAttributes& get_attributes() const;
 
-    bool set_qos(
+    ReturnCode_t set_qos(
             const fastrtps::WriterQos& qos);
 
     const fastrtps::WriterQos& get_qos() const;
@@ -157,7 +162,7 @@ public:
 
     const DataWriterListener* get_listener() const;
 
-    bool set_listener(
+    ReturnCode_t set_listener(
             DataWriterListener* listener);
 
     /* TODO
@@ -166,18 +171,18 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle);
     */
 
-    bool dispose(
+    ReturnCode_t dispose(
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle);
 
     bool dispose(
             void* data);
 
-    bool get_liveliness_lost_status(
+    ReturnCode_t get_liveliness_lost_status(
             LivelinessLostStatus& status);
 
     /* TODO
-    bool get_offered_incompatible_qos_status(
+    ReturnCode_t get_offered_incompatible_qos_status(
             OfferedIncompatibleQosStatus& status)
     {
         // Not implemented
@@ -188,7 +193,7 @@ public:
 
     const Publisher* get_publisher() const;
 
-    bool assert_liveliness();
+    ReturnCode_t assert_liveliness();
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
