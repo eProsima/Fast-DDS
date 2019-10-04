@@ -115,13 +115,13 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
 {
     if(info.current_count_change == 1)
     {
-        n_matched = info.current_count;
+        n_matched = info.total_count;
         firstConnected = true;
         std::cout << "Publisher matched"<<std::endl;
     }
     else if (info.current_count_change == -1)
     {
-        n_matched = info.current_count;
+        n_matched = info.total_count;
         std::cout << "Publisher unmatched"<<std::endl;
     }
 }

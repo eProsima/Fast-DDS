@@ -86,12 +86,12 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
 {
     if (info.current_count_change == 1)
     {
-        matched_ = info.current_count;
+        matched_ = info.total_count;
         std::cout << "Subscriber matched." << std::endl;
     }
     else if (info.current_count_change == -1)
     {
-        matched_ = info.current_count;
+        matched_ = info.total_count;
         std::cout << "Subscriber unmatched." << std::endl;
     }
 }
