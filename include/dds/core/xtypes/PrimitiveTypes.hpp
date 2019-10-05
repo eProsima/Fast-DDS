@@ -54,19 +54,19 @@ DDS_CORE_XTYPES_PRIMITIVE(char32_t, CHAR_32_TYPE)
 template<typename T>
 class PrimitiveType : public DynamicType
 {
-public:
-    PrimitiveType()
-        : DynamicType(dynamic_type_traits<T>::TYPE_ID)
-    {}
-
-    PrimitiveType(const PrimitiveType& other) = default;
-    PrimitiveType(PrimitiveType&& other) = default;
+    template<typename R>
+    friend const PrimitiveType<R>& primitive_type();
 
 protected:
     virtual size_t memory_size() const
     {
         return sizeof(T);
     };
+
+private:
+    PrimitiveType()
+        : DynamicType(dynamic_type_traits<T>::TYPE_ID)
+    {}
 };
 
 template<typename T>
