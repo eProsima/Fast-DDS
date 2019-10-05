@@ -20,6 +20,8 @@
 
 #include <dds/core/xtypes/StructType.hpp>
 
+#include <cstring>
+
 namespace dds {
 namespace core {
 namespace xtypes {
@@ -34,7 +36,25 @@ public:
         , is_loaned(false)
     {}
 
-    ~DynamicData()
+    DynamicData(
+            const DynamicData& other)
+        : type_(other.type_)
+        , data_(new uint8_t[type_.memory_size()])
+        , is_loaned(false)
+    {
+        std::memcpy(data_, other.data_, type_.memory_size());
+    }
+
+    DynamicData(
+            DynamicData&& other)
+        : type_(other.type_)
+        , data_(other.data_)
+        , is_loaned(other.is_loaned)
+    {
+        other.is_loaned = true;
+    }
+
+    virtual ~DynamicData()
     {
         if(!is_loaned)
         {
