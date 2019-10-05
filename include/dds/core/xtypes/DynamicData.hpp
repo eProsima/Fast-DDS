@@ -61,7 +61,7 @@ public:
     T& value(
             const std::string& member_name) const
     {
-        return *reinterpret_cast<T*>(data_ + member_offset(member_name));
+        return *reinterpret_cast<T*>(data_ + struct_member(member_name).offset());
     }
 
     template<typename T>
@@ -69,13 +69,14 @@ public:
             const std::string& member_name,
             const T& value)
     {
-        *reinterpret_cast<T*>(data_ + member_offset(member_name)) = value;
+        *reinterpret_cast<T*>(data_ + struct_member(member_name).offset()) = value;
     }
 
     DynamicData loan_value(
             const std::string& member_name) const
     {
-        return DynamicData(type_, data_ + member_offset(member_name));
+        const StructMember& member = struct_member(member_name);
+        return DynamicData(member.type(), data_ + member.offset());
     }
 
 private:
@@ -87,13 +88,13 @@ private:
         , is_loaned(true)
     {}
 
-    size_t member_offset(const std::string& name) const
+    const StructMember& struct_member(const std::string& name) const
     {
-        if(type().kind() == TypeKind::STRUCTURE_TYPE)
+        if(type().kind() != TypeKind::STRUCTURE_TYPE)
         {
-            return static_cast<const StructType&>(type_).member(name).offset();
+            throw "Exception Not implemented";
         }
-        throw "Exception Not implemented";
+        return static_cast<const StructType&>(type_).member(name);
     }
 
     const DynamicType& type_;

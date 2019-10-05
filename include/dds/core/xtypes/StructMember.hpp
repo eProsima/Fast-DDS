@@ -24,6 +24,7 @@
 
 #include <string>
 #include <memory>
+#include <type_traits>
 
 namespace dds {
 namespace core {
@@ -42,6 +43,17 @@ public:
         , type_(type.clone())
     {}
 
+    template<
+        typename DynamicTypeImpl,
+        class = typename std::enable_if<!std::is_lvalue_reference<DynamicTypeImpl>::value>::type
+    >
+    StructMember(
+            const std::string& name,
+            DynamicTypeImpl&& type)
+        : name_(name)
+        , type_(new DynamicTypeImpl(std::move(type)))
+    {}
+
     StructMember(
             const StructMember& other)
         : name_(other.name_)
@@ -53,6 +65,8 @@ public:
         , offset_(other.offset_)
     {}
 
+    StructMember(StructMember&& other) = default;
+
     const std::string& name() const { return name_; }
     const DynamicType& type() const { return *type_; }
     int32_t get_id() const { return id_; }
@@ -62,28 +76,28 @@ public:
     bool is_bitset() const { return bitset_; };
     size_t offset() const { return offset_; }
 
-    StructMember& id(int32_t value)
+    StructMember&& id(int32_t value)
     {
         bitset_ = value;
-        return * this;
+        return std::move(*this);
     }
 
-    StructMember& key(bool value)
+    StructMember&& key(bool value)
     {
         key_ = value;
-        return *this;
+        return std::move(*this);
     }
 
-    StructMember& optional(bool value)
+    StructMember&& optional(bool value)
     {
         optional_ = value;
-        return *this;
+        return std::move(*this);
     }
 
-    StructMember& bitset(bool value)
+    StructMember&& bitset(bool value)
     {
         bitset_ = value;
-        return *this;
+        return std::move(*this);
     }
 
 private:

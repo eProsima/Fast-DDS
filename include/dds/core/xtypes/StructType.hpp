@@ -43,17 +43,19 @@ public:
         : AggregationType(other)
         , parent_(other.parent_ != nullptr ? other.parent_->clone() : nullptr)
         , memory_size_(other.memory_size_)
-     {}
+    {}
+
+    StructType(StructType&& other) = default;
 
     bool has_parent() const { return parent_ == nullptr; }
     const DynamicType& parent() const { return *parent_; }
 
-    StructType& add_member(const StructMember& member)
+    StructType&& add_member(StructMember&& member)
     {
-        StructMember& inner = insert_member(member.name(), member);
+        StructMember& inner = insert_member(member.name(), std::move(member));
         inner.offset_ = memory_size_;
         memory_size_ += inner.type().memory_size();
-        return *this;
+        return std::move(*this);
     }
 
     virtual size_t memory_size() const

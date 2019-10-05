@@ -64,6 +64,7 @@ protected:
     {}
 
     DynamicType(const DynamicType& other) = default;
+    DynamicType(DynamicType&& other) = default;
 
 private:
     std::string name_;

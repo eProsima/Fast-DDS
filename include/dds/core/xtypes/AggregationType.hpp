@@ -43,9 +43,12 @@ protected:
         : DynamicType(name, kind)
     {}
 
-    MemberImpl& insert_member(const std::string& name, const MemberImpl& member)
+    AggregationType(const AggregationType& other) = default;
+    AggregationType(AggregationType&& other) = default;
+
+    MemberImpl& insert_member(const std::string& name, MemberImpl&& member)
     {
-        return members_.emplace(name, member).first->second;
+        return members_.emplace(name, std::move(member)).first->second;
     }
 
 private:
