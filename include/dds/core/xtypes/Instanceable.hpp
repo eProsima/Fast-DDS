@@ -15,36 +15,37 @@
  * limitations under the License.
  *
 */
+#ifndef OMG_DDS_CORE_XTYPES_INSTANCEABLE_TYPE_HPP_
+#define OMG_DDS_CORE_XTYPES_INSTANCEABLE_TYPE_HPP_
 
-#ifndef OMG_DDS_CORE_XTYPES_DYNAMIC_COLLECTION_TYPE_HPP_
-#define OMG_DDS_CORE_XTYPES_DYNAMIC_COLLECTION_TYPE_HPP_
-
-#include <dds/core/xtypes/CollectionType.hpp>
+#include <cstdint>
+#include <cstddef>
 
 namespace dds {
 namespace core {
 namespace xtypes {
 
-class DynamicCollectionType : public CollectionType
+class DynamicData;
+
+class Instanceable
 {
+    friend DynamicData;
+
 public:
-    uint32_t bounds() const { return bounds_; }
+    virtual ~Instanceable() = default;
+
+    virtual size_t memory_size() const = 0; //TODO: make protected
 
 protected:
-    DynamicCollectionType(
-            TypeKind kind,
-            const std::shared_ptr<DynamicType>& content,
-            uint32_t bounds)
-        : CollectionType(kind, content)
-        , bounds_(bounds)
-    {}
+    Instanceable() = default;
 
-private:
-    uint32_t bounds_;
+    virtual void init(uint8_t* /*instance_memory*/) const { };
+    virtual void copy(uint8_t* /*target_instance_memory*/, uint8_t* /*source_instance_memory*/) const { };
+    virtual void destroy(uint8_t* /*instance_memory*/) const { };
 };
 
 } //namespace xtypes
 } //namespace core
 } //namespace dds
 
-#endif //OMG_DDS_CORE_XTYPES_DYNAMIC_COLLECTION_TYPE_HPP_
+#endif //OMG_DDS_CORE_XTYPES_INSTANCIABLE_TYPE_HPP_

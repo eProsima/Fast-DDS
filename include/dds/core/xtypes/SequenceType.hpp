@@ -47,7 +47,13 @@ public:
     SequenceType(const SequenceType& other) = default;
     SequenceType(SequenceType&& other) = default;
 
+protected:
     virtual void init(uint8_t* /*instance_memory*/) const
+    {
+        //TODO
+    }
+
+    virtual void copy(uint8_t* /*instance_memory*/, uint8_t* /*instance_memory*/) const
     {
         //TODO
     }

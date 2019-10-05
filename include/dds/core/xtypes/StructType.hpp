@@ -54,6 +54,7 @@ public:
         return std::move(*this);
     }
 
+protected:
     virtual size_t memory_size() const
     {
         return memory_size_;

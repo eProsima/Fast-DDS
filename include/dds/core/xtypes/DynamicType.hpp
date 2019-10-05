@@ -18,6 +18,7 @@
 #ifndef OMG_DDS_CORE_XTYPES_DYNAMIC_TYPE_HPP_
 #define OMG_DDS_CORE_XTYPES_DYNAMIC_TYPE_HPP_
 
+#include <dds/core/xtypes/Instanceable.hpp>
 #include <dds/core/xtypes/TypeKind.hpp>
 
 #include <string>
@@ -26,7 +27,7 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
-class DynamicType
+class DynamicType : public Instanceable
 {
 public:
     virtual ~DynamicType() = default;
@@ -52,8 +53,6 @@ public:
     {
         return (int(kind_) & int(TypeKind::CONSTRUCTED_TYPE)) != 0;
     }
-
-    virtual size_t memory_size() const = 0;
 
 protected:
     DynamicType(

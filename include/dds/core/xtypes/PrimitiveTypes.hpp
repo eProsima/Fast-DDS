@@ -62,6 +62,7 @@ public:
     PrimitiveType(const PrimitiveType& other) = default;
     PrimitiveType(PrimitiveType&& other) = default;
 
+protected:
     virtual size_t memory_size() const
     {
         return sizeof(T);
@@ -69,7 +70,7 @@ public:
 };
 
 template<typename T>
-PrimitiveType<T> primitive_type()
+const PrimitiveType<T>& primitive_type()
 {
     static PrimitiveType<T> p;
     return p;

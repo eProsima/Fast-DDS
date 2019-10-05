@@ -18,11 +18,6 @@
 #ifndef OMG_DDS_XTYPES_TYPE_KIND_HPP_
 #define OMG_DDS_XTYPES_TYPE_KIND_HPP_
 
-#include <dds/core/detail/conformance.hpp>
-#include <dds/core/SafeEnumeration.hpp>
-
-#include <bitset>
-
 namespace dds {
 namespace core {
 namespace xtypes {

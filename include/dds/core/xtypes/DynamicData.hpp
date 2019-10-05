@@ -30,11 +30,21 @@ class DynamicData
 {
 public:
     DynamicData(
-            const DynamicType& type)
+            const DynamicType& type,
+            bool cleaned = false)
         : type_(type)
-        , data_(new uint8_t[type.memory_size()])
+        , data_((cleaned) ? new uint8_t[type.memory_size()]() : new uint8_t[type.memory_size()])
         , is_loaned(false)
-    {}
+    {
+        /*
+        size_t offset = 0;
+        for(DynamicData& element: *this)
+        {
+            element.type().init(data_ + offset);
+            offset += element.type().memory_size();
+        }
+        */
+    }
 
     DynamicData(
             const DynamicData& other)
@@ -42,7 +52,14 @@ public:
         , data_(new uint8_t[other.type_.memory_size()])
         , is_loaned(false)
     {
-        std::memcpy(data_, other.data_, type_.memory_size());
+        /*
+        size_t offset = 0;
+        for(DynamicData& element: *this)
+        {
+            element.type().copy(data_ + offset, other.data_ + offset);
+            offset += element.type().memory_size();
+        }
+        */
     }
 
     DynamicData(
@@ -58,6 +75,14 @@ public:
     {
         if(!is_loaned)
         {
+            /*
+            size_t offset = 0;
+            for(DynamicData& element: *this)
+            {
+                element.type().destroy(data_ + offset);
+                offset += element.type().memory_size();
+            }
+            */
             delete[] data_;
         }
     }
