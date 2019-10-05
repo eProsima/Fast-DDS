@@ -36,7 +36,7 @@ template<> \
 struct dynamic_type_traits<TYPE> \
 { \
     static constexpr TypeKind TYPE_ID = TypeKind::KIND; \
-    static constexpr const char* NAME = "#TYPE"; \
+    static constexpr const char* NAME = #TYPE; \
 };\
 
 DDS_CORE_XTYPES_PRIMITIVE(bool, BOOLEAN_TYPE)
@@ -75,7 +75,8 @@ public:
 template<typename T>
 PrimitiveType<T> primitive_type()
 {
-    throw "Not implemented";
+    static PrimitiveType<T> p;
+    return p;
 }
 
 } //namespace xtypes

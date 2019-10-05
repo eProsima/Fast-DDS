@@ -54,7 +54,7 @@ public:
     void value(
             const T& value)
     {
-        return *reinterpret_cast<T*>(data_) = value;
+        *reinterpret_cast<T*>(data_) = value;
     }
 
     template<typename T>
@@ -69,7 +69,7 @@ public:
             const std::string& member_name,
             const T& value)
     {
-        return *reinterpret_cast<T*>(data_ + member_offset(member_name)) = value;
+        *reinterpret_cast<T*>(data_ + member_offset(member_name)) = value;
     }
 
     DynamicData loan_value(
@@ -91,7 +91,7 @@ private:
     {
         if(type().kind() == TypeKind::STRUCTURE_TYPE)
         {
-            static_cast<const StructType&>(type_).member(name).offset();
+            return static_cast<const StructType&>(type_).member(name).offset();
         }
         throw "Exception Not implemented";
     }

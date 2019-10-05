@@ -41,7 +41,7 @@ public:
     StructType(
             const StructType& other)
         : AggregationType(other)
-        , parent_(other.parent_->clone())
+        , parent_(other.parent_ != nullptr ? other.parent_->clone() : nullptr)
         , memory_size_(other.memory_size_)
      {}
 
