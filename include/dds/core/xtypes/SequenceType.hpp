@@ -34,14 +34,14 @@ public:
     SequenceType(
             const DynamicTypeImpl& content,
             uint32_t bounds = 0)
-        : DynamicCollectionType(TypeKind::SEQUENCE_TYPE, new DynamicTypeImpl(content), bounds)
+        : DynamicCollectionType(TypeKind::SEQUENCE_TYPE, std::make_shared<DynamicTypeImpl>(content), bounds)
     {}
 
     template<typename DynamicTypeImpl>
     SequenceType(
             const DynamicTypeImpl&& content,
             uint32_t bounds = 0)
-        : DynamicCollectionType(TypeKind::SEQUENCE_TYPE, new DynamicTypeImpl(std::move(content)), bounds)
+        : DynamicCollectionType(TypeKind::SEQUENCE_TYPE, std::make_shared<DynamicTypeImpl>(std::move(content)), bounds)
     {}
 
     SequenceType(const SequenceType& other) = default;

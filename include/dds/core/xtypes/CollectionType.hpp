@@ -35,7 +35,7 @@ public:
 protected:
     CollectionType(
             TypeKind kind,
-            DynamicType* content)
+            const std::shared_ptr<DynamicType>& content)
         : DynamicType(kind)
         , content_(content)
     {}
@@ -44,7 +44,7 @@ protected:
     CollectionType(CollectionType&& other) = default;
 
 private:
-    std::unique_ptr<DynamicType> content_;
+    std::shared_ptr<DynamicType> content_;
 };
 
 } //namespace xtypes

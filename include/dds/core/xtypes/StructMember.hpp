@@ -41,7 +41,7 @@ public:
             const std::string& name,
             const DynamicTypeImpl& type)
         : name_(name)
-        , type_(new DynamicTypeImpl(type))
+        , type_(std::make_shared<DynamicTypeImpl>(type))
     {}
 
     template<typename DynamicTypeImpl>
@@ -49,20 +49,10 @@ public:
             const std::string& name,
             const DynamicTypeImpl&& type)
         : name_(name)
-        , type_(new DynamicTypeImpl(std::move(type)))
+        , type_(std::make_shared<DynamicTypeImpl>(std::move(type)))
     {}
 
-    StructMember(
-            const StructMember& other)
-        : name_(other.name_)
-        , type_(other.type_->clone())
-        , id_(other.id_)
-        , key_(other.key_)
-        , optional_(other.optional_)
-        , bitset_(other.bitset_)
-        , offset_(other.offset_)
-    {}
-
+    StructMember(const StructMember& other) = default;
     StructMember(StructMember&& other) = default;
     virtual ~StructMember() = default;
 
@@ -101,7 +91,7 @@ public:
 
 private:
     std::string name_;
-    std::unique_ptr<DynamicType> type_;
+    std::shared_ptr<DynamicType> type_;
     int32_t id_;
     bool key_;
     bool optional_;

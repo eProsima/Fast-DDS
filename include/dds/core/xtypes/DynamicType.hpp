@@ -54,7 +54,6 @@ public:
     }
 
     virtual size_t memory_size() const = 0;
-    virtual DynamicType* clone() const = 0;
 
 protected:
     DynamicType(

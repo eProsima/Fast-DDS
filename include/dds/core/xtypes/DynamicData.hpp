@@ -39,7 +39,7 @@ public:
     DynamicData(
             const DynamicData& other)
         : type_(other.type_)
-        , data_(new uint8_t[type_.memory_size()])
+        , data_(new uint8_t[other.type_.memory_size()])
         , is_loaned(false)
     {
         std::memcpy(data_, other.data_, type_.memory_size());

@@ -66,11 +66,6 @@ public:
     {
         return sizeof(T);
     };
-
-    virtual DynamicType* clone() const
-    {
-        return new PrimitiveType();
-    }
 };
 
 template<typename T>

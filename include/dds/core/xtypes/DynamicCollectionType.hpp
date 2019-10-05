@@ -36,14 +36,11 @@ public:
 protected:
     DynamicCollectionType(
             TypeKind kind,
-            DynamicType* content,
+            const std::shared_ptr<DynamicType>& content,
             uint32_t bounds)
         : CollectionType(kind, content)
         , bounds_(bounds)
     {}
-
-    DynamicCollectionType(const DynamicCollectionType& other) = default;
-    DynamicCollectionType(DynamicCollectionType&& other) = default;
 
 private:
     uint32_t bounds_;
