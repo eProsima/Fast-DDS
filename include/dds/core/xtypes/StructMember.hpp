@@ -24,7 +24,6 @@
 
 #include <string>
 #include <memory>
-#include <type_traits>
 
 namespace dds {
 namespace core {
@@ -35,21 +34,20 @@ class StructType;
 class StructMember
 {
     friend StructType;
+
 public:
+    template<typename DynamicTypeImpl>
     StructMember(
             const std::string& name,
-            const DynamicType& type)
+            const DynamicTypeImpl& type)
         : name_(name)
-        , type_(type.clone())
+        , type_(new DynamicTypeImpl(type))
     {}
 
-    template<
-        typename DynamicTypeImpl,
-        class = typename std::enable_if<!std::is_lvalue_reference<DynamicTypeImpl>::value>::type
-    >
+    template<typename DynamicTypeImpl>
     StructMember(
             const std::string& name,
-            DynamicTypeImpl&& type)
+            const DynamicTypeImpl&& type)
         : name_(name)
         , type_(new DynamicTypeImpl(std::move(type)))
     {}
@@ -66,6 +64,7 @@ public:
     {}
 
     StructMember(StructMember&& other) = default;
+    virtual ~StructMember() = default;
 
     const std::string& name() const { return name_; }
     const DynamicType& type() const { return *type_; }

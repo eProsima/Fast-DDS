@@ -35,7 +35,7 @@ class StructType : public AggregationType<StructMember>
 public:
     StructType(
             const std::string& name)
-        : AggregationType(name, TypeKind::STRUCTURE_TYPE)
+        : AggregationType(TypeKind::STRUCTURE_TYPE, name)
     {}
 
     StructType(

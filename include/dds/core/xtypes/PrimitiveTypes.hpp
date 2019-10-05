@@ -28,7 +28,6 @@ template<typename>
 struct dynamic_type_traits
 {
     static constexpr TypeKind TYPE_ID = TypeKind::NO_TYPE;
-    static constexpr const char* const NAME = "no_type";
 };
 
 #define DDS_CORE_XTYPES_PRIMITIVE(TYPE, KIND) \
@@ -36,7 +35,6 @@ template<> \
 struct dynamic_type_traits<TYPE> \
 { \
     static constexpr TypeKind TYPE_ID = TypeKind::KIND; \
-    static constexpr const char* NAME = #TYPE; \
 };\
 
 DDS_CORE_XTYPES_PRIMITIVE(bool, BOOLEAN_TYPE)
@@ -58,8 +56,11 @@ class PrimitiveType : public DynamicType
 {
 public:
     PrimitiveType()
-        : DynamicType(dynamic_type_traits<T>::NAME, dynamic_type_traits<T>::TYPE_ID)
+        : DynamicType(dynamic_type_traits<T>::TYPE_ID)
     {}
+
+    PrimitiveType(const PrimitiveType& other) = default;
+    PrimitiveType(PrimitiveType&& other) = default;
 
     virtual size_t memory_size() const
     {

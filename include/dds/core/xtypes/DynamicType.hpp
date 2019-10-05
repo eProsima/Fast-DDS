@@ -29,7 +29,8 @@ namespace xtypes {
 class DynamicType
 {
 public:
-    const std::string& name() const { return name_; }
+    virtual ~DynamicType() = default;
+
     const TypeKind& kind() const { return kind_; }
 
     bool is_primitive_type() const
@@ -57,17 +58,14 @@ public:
 
 protected:
     DynamicType(
-            const std::string& name,
             TypeKind kind)
-        : name_(name)
-        , kind_(kind)
+        : kind_(kind)
     {}
 
     DynamicType(const DynamicType& other) = default;
     DynamicType(DynamicType&& other) = default;
 
 private:
-    std::string name_;
     TypeKind kind_;
 };
 

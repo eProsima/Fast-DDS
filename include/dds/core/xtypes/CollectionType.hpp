@@ -16,48 +16,39 @@
  *
 */
 
-#ifndef OMG_DDS_CORE_XTYPES_AGGREGATION_TYPE_HPP_
-#define OMG_DDS_CORE_XTYPES_AGGREGATION_TYPE_HPP_
+#ifndef OMG_DDS_CORE_XTYPES_COLLECTION_TYPE_HPP_
+#define OMG_DDS_CORE_XTYPES_COLLECTION_TYPE_HPP_
 
 #include <dds/core/xtypes/DynamicType.hpp>
 
-#include <map>
+#include <memory>
 
 namespace dds {
 namespace core {
 namespace xtypes {
 
-template<typename MemberImpl>
-class AggregationType : public DynamicType
+class CollectionType : public DynamicType
 {
 public:
-    const std::string& name() const { return name_; }
-    size_t member_count() const { return members_.size(); }
-    const MemberImpl& member(const std::string& name) const { return members_.at(name); }
+    const DynamicType& content_type_() const { return *content_; }
 
 protected:
-    AggregationType(
+    CollectionType(
             TypeKind kind,
-            const std::string& name)
+            DynamicType* content)
         : DynamicType(kind)
-        , name_(name)
+        , content_(content)
     {}
 
-    AggregationType(const AggregationType& other) = default;
-    AggregationType(AggregationType&& other) = default;
-
-    MemberImpl& insert_member(const std::string& name, MemberImpl&& member)
-    {
-        return members_.emplace(name, std::move(member)).first->second;
-    }
+    CollectionType(const CollectionType& other) = default;
+    CollectionType(CollectionType&& other) = default;
 
 private:
-    std::string name_;
-    std::map<std::string, MemberImpl> members_;
+    std::unique_ptr<DynamicType> content_;
 };
 
 } //namespace xtypes
 } //namespace core
 } //namespace dds
 
-#endif //OMG_DDS_CORE_XTYPES_AGGREGATION_TYPE_HPP_
+#endif //OMG_DDS_CORE_XTYPES_COLLECTION_TYPE_HPP_

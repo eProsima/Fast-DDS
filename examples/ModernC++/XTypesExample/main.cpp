@@ -34,10 +34,8 @@ int main()
     std::cout << "outter name: " << outter.name() << std::endl;
     std::cout << "outter kind: " << (outter.kind() == TypeKind::STRUCTURE_TYPE) << std::endl;
     std::cout << "  om1 name: " << outter.member("om1").name() << std::endl;
-    std::cout << "  om1 type name: " << outter.member("om1").type().name() << std::endl;
     std::cout << "  om1 type kind: " << (outter.member("om1").type().kind() == TypeKind::FLOAT_64_TYPE) << std::endl;
     std::cout << "  om2 name: " << outter.member("om2").name() << std::endl;
-    std::cout << "  om2 type name: " << outter.member("om2").type().name() << std::endl;
     std::cout << "  om2 type kind: " << (outter.member("om2").type().kind() == TypeKind::STRUCTURE_TYPE) << std::endl;
     std::cout << "  om2 im1 name: " << static_cast<const StructType&>(outter.member("om2").type()).member("im1").name() << std::endl;
     std::cout << "  om2 im2 name: " << static_cast<const StructType&>(outter.member("om2").type()).member("im2").name() << std::endl;

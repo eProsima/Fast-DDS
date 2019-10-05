@@ -13,6 +13,9 @@ set(${CORE_STANDALONE}_source_files
     TypeKind.cpp
     DynamicType.cpp
     PrimitiveTypes.cpp
+    CollectionType.cpp
+    DynamicCollectionType.cpp
+    SequenceType.cpp
     AggregationType.cpp
     StructMember.cpp
     StructType.cpp
