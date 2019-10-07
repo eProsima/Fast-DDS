@@ -33,9 +33,9 @@ public:
 protected:
     DynamicCollectionType(
             TypeKind kind,
-            const std::shared_ptr<DynamicType>& content,
+            DynamicType::Ptr&& content,
             uint32_t bounds)
-        : CollectionType(kind, content)
+        : CollectionType(kind, std::move(content))
         , bounds_(bounds)
     {}
 

@@ -36,14 +36,13 @@ public:
     StructType(
             const std::string& name)
         : AggregationType(TypeKind::STRUCTURE_TYPE, name)
-        , parent_(nullptr)
         , memory_size_(0)
     {}
 
     StructType(const StructType& other) = default;
     StructType(StructType&& other) = default;
 
-    bool has_parent() const { return parent_ == nullptr; }
+    bool has_parent() const { return parent_.get() == nullptr; }
     const DynamicType& parent() const { return *parent_; }
 
     StructType&& add_member(StructMember&& member)
@@ -60,8 +59,13 @@ protected:
         return memory_size_;
     }
 
+    virtual DynamicType* clone() const
+    {
+        return new StructType(*this);
+    }
+
 private:
-    std::shared_ptr<DynamicType> parent_;
+    DynamicType::Ptr parent_;
     size_t memory_size_;
 };
 

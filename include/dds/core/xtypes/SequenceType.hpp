@@ -30,30 +30,39 @@ namespace xtypes {
 class SequenceType : public DynamicCollectionType
 {
 public:
-    template<typename DynamicTypeImpl>
     SequenceType(
-            const DynamicTypeImpl& content,
+            const DynamicType& content,
             uint32_t bounds = 0)
-        : DynamicCollectionType(TypeKind::SEQUENCE_TYPE, std::make_shared<DynamicTypeImpl>(content), bounds)
+        : DynamicCollectionType(TypeKind::SEQUENCE_TYPE, DynamicType::Ptr(content), bounds)
     {}
 
     template<typename DynamicTypeImpl>
     SequenceType(
             const DynamicTypeImpl&& content,
             uint32_t bounds = 0)
-        : DynamicCollectionType(TypeKind::SEQUENCE_TYPE, std::make_shared<DynamicTypeImpl>(std::move(content)), bounds)
+        : DynamicCollectionType(TypeKind::SEQUENCE_TYPE, DynamicType::Ptr(std::move(content)), bounds)
     {}
 
     SequenceType(const SequenceType& other) = default;
     SequenceType(SequenceType&& other) = default;
 
+    virtual size_t memory_size() const
+    {
+        return 0; //TODO
+    }
+
 protected:
+    virtual DynamicType* clone() const
+    {
+        return new SequenceType(*this);
+    }
+
     virtual void init(uint8_t* /*instance_memory*/) const
     {
         //TODO
     }
 
-    virtual void copy(uint8_t* /*instance_memory*/, uint8_t* /*instance_memory*/) const
+    virtual void copy(uint8_t* /*target_instance_memory*/, const uint8_t* /*source_instance_memory*/) const
     {
         //TODO
     }

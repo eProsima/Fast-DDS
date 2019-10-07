@@ -21,7 +21,7 @@
 #include <dds/core/xtypes/Instanceable.hpp>
 #include <dds/core/xtypes/TypeKind.hpp>
 
-#include <string>
+#include <utility>
 
 namespace dds {
 namespace core {
@@ -63,8 +63,59 @@ protected:
     DynamicType(const DynamicType& other) = default;
     DynamicType(DynamicType&& other) = default;
 
+    virtual DynamicType* clone() const = 0;
+
 private:
     TypeKind kind_;
+
+
+public:
+    class Ptr
+    {
+    public:
+        Ptr()
+            : type_(nullptr)
+        {}
+
+        Ptr(const DynamicType& type)
+            : type_(type.is_primitive_type() ? &type : type.clone())
+        {}
+
+        template<typename DynamicTypeImpl>
+        Ptr(const DynamicTypeImpl&& type)
+            : type_(new DynamicTypeImpl(std::move(type)))
+        {}
+
+        Ptr(const Ptr& ptr)
+            : type_(ptr.type_ == nullptr || ptr.type_->is_primitive_type() ? ptr.type_ : ptr.type_->clone())
+        {}
+
+        Ptr(Ptr&& ptr)
+            : type_ (ptr.type_)
+        {
+            ptr.type_ = nullptr;
+        }
+
+        virtual ~Ptr()
+        {
+            if(type_ != nullptr && !type_->is_primitive_type())
+            {
+                delete type_;
+            }
+        }
+
+        void reset()
+        {
+            type_ = nullptr;
+        }
+
+        const DynamicType* get() const { return type_; }
+        const DynamicType& operator *() const { return *type_; }
+        const DynamicType* operator ->() const { return type_; }
+
+    private:
+        const DynamicType* type_;
+    };
 };
 
 } //namespace xtypes

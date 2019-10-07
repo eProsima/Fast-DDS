@@ -23,7 +23,6 @@
 #include <dds/core/xtypes/DynamicType.hpp>
 
 #include <string>
-#include <memory>
 
 namespace dds {
 namespace core {
@@ -36,12 +35,11 @@ class StructMember
     friend StructType;
 
 public:
-    template<typename DynamicTypeImpl>
     StructMember(
             const std::string& name,
-            const DynamicTypeImpl& type)
+            const DynamicType& type)
         : name_(name)
-        , type_(std::make_shared<DynamicTypeImpl>(type))
+        , type_(type)
     {}
 
     template<typename DynamicTypeImpl>
@@ -49,7 +47,7 @@ public:
             const std::string& name,
             const DynamicTypeImpl&& type)
         : name_(name)
-        , type_(std::make_shared<DynamicTypeImpl>(std::move(type)))
+        , type_(std::move(type))
     {}
 
     StructMember(const StructMember& other) = default;
@@ -91,7 +89,7 @@ public:
 
 private:
     std::string name_;
-    std::shared_ptr<DynamicType> type_;
+    DynamicType::Ptr type_;
     int32_t id_;
     bool key_;
     bool optional_;

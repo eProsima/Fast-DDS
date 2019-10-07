@@ -21,6 +21,7 @@
 
 #include <dds/core/xtypes/DynamicType.hpp>
 
+#include <string>
 #include <map>
 
 namespace dds {

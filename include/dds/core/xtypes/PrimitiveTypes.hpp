@@ -63,6 +63,11 @@ protected:
         return sizeof(T);
     };
 
+    virtual DynamicType* clone() const
+    {
+        return new PrimitiveType<T>();
+    }
+
 private:
     PrimitiveType()
         : DynamicType(dynamic_type_traits<T>::TYPE_ID)
@@ -72,6 +77,9 @@ private:
 template<typename T>
 const PrimitiveType<T>& primitive_type()
 {
+    // The creation of PrimitiveType should be always created
+    // by this function in order to not broken the DynamicType::Ptr
+    // optimizations for PrimitiveType
     static PrimitiveType<T> p;
     return p;
 }

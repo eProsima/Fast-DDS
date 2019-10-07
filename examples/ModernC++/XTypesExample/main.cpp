@@ -45,5 +45,6 @@ int main()
     std::cout << "  om1: " << data.value<double>("om1") << std::endl;
     std::cout << "  om2: " << data.loan_value("om2").value<uint32_t>("im1") << std::endl;
     std::cout << "  om2: " << data.loan_value("om2").value<float>("im2") << std::endl;
+
     return 0;
 }

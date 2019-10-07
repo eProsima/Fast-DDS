@@ -40,7 +40,7 @@ protected:
     Instanceable() = default;
 
     virtual void init(uint8_t* /*instance_memory*/) const { };
-    virtual void copy(uint8_t* /*target_instance_memory*/, uint8_t* /*source_instance_memory*/) const { };
+    virtual void copy(uint8_t* /*target_instance_memory*/, const uint8_t* /*source_instance_memory*/) const { };
     virtual void destroy(uint8_t* /*instance_memory*/) const { };
 };
 
