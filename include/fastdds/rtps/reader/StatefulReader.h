@@ -275,8 +275,6 @@ class StatefulReader : public RTPSReader
         bool disable_positive_acks_;
         //! False when being destroyed
         bool is_alive_;
-        //! Message buffer used in the response.
-        RTPSMessageGroup_t message_buffer_;
 };
 
 } /* namespace rtps */
