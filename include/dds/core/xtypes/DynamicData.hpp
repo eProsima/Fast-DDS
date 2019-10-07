@@ -20,8 +20,6 @@
 
 #include <dds/core/xtypes/StructType.hpp>
 
-#include <cstring>
-
 namespace dds {
 namespace core {
 namespace xtypes {
@@ -134,21 +132,21 @@ public:
     template<typename T>
     T& value()
     {
-        return *reinterpret_cast<T*>(instance_);
+        return const_cast<T&>(DynamicDataConst::value<T>());
     }
 
     template<typename T>
     void value(
             const T& value)
     {
-        *reinterpret_cast<T*>(instance_) = value;
+        const_cast<T&>(DynamicDataConst::value<T>()) = value;
     }
 
     template<typename T>
     T& value(
             const std::string& member_name)
     {
-        return *reinterpret_cast<T*>(instance_ + struct_member(member_name).offset());
+        return const_cast<T&>(DynamicDataConst::value<T>(member_name));
     }
 
     template<typename T>
@@ -156,7 +154,7 @@ public:
             const std::string& member_name,
             const T& value)
     {
-        *reinterpret_cast<T*>(instance_ + struct_member(member_name).offset()) = value;
+        const_cast<T&>(DynamicDataConst::value<T>(member_name)) = value;
     }
 
     DynamicData loan_value(
