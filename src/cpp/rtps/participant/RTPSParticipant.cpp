@@ -132,6 +132,12 @@ void RTPSParticipant::set_check_type_function(
     mp_impl->set_check_type_function(std::move(check_type));
 }
 
+void RTPSParticipant::set_listener(
+        RTPSParticipantListener* listener)
+{
+    mp_impl->set_listener(listener);
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

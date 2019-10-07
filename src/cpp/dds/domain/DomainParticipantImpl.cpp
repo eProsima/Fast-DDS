@@ -89,6 +89,8 @@ DomainParticipantImpl::DomainParticipantImpl(
 void DomainParticipantImpl::disable()
 {
     participant_->set_listener(nullptr);
+    rtps_listener_.participant_ = nullptr;
+    rtps_participant_->set_listener(nullptr);
     {
         std::lock_guard<std::mutex> lock(mtx_pubs_);
         for (auto pub_it = publishers_.begin(); pub_it != publishers_.end(); ++pub_it)
@@ -698,7 +700,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
         RTPSParticipant*,
         ParticipantDiscoveryInfo&& info)
 {
-    if (participant_->listener_ != nullptr)
+    if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         participant_->listener_->on_participant_discovery(participant_->participant_, std::move(info));
     }
@@ -709,7 +711,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantAuthenticati
         RTPSParticipant*,
         ParticipantAuthenticationInfo&& info)
 {
-    if (participant_->listener_ != nullptr)
+    if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         participant_->listener_->onParticipantAuthentication(participant_->participant_, std::move(info));
     }
@@ -720,7 +722,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
         RTPSParticipant*,
         ReaderDiscoveryInfo&& info)
 {
-    if (participant_->listener_ != nullptr)
+    if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         participant_->listener_->on_subscriber_discovery(participant_->participant_, std::move(info));
     }
@@ -730,7 +732,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
         RTPSParticipant*,
         WriterDiscoveryInfo&& info)
 {
-    if (participant_->listener_ != nullptr)
+    if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         participant_->listener_->on_publisher_discovery(participant_->participant_, std::move(info));
     }
@@ -744,7 +746,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
         const fastrtps::types::TypeObject* object,
         fastrtps::types::DynamicType_ptr dyn_type)
 {
-    if (participant_->listener_ != nullptr)
+    if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         participant_->listener_->on_type_discovery(
             participant_->participant_,
@@ -763,7 +765,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_dependencies_repl
         const fastrtps::rtps::SampleIdentity& request_sample_id,
         const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies)
 {
-    if (participant_->listener_ != nullptr)
+    if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         participant_->listener_->on_type_dependencies_reply(
             participant_->participant_, request_sample_id, dependencies);
@@ -778,7 +780,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_information_recei
         const fastrtps::string_255& type_name,
         const fastrtps::types::TypeInformation& type_information)
 {
-    if (participant_->listener_ != nullptr)
+    if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         if (type_information.complete().typeid_with_size().type_id()._d() > 0
             || type_information.minimal().typeid_with_size().type_id()._d() > 0)

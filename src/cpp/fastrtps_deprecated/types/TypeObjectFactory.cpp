@@ -1775,6 +1775,8 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(const std::string& name, c
                 return build_dynamic_type(descriptor, object);
             }
             break;
+        case TK_NONE:
+            return DynamicType_ptr(nullptr); // Maybe in discovery, return nullptr quietly.
         default:
             break;
     }

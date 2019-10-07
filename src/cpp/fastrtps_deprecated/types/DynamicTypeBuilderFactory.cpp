@@ -649,7 +649,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_custom_builder(
         }
         else
         {
-            logError(DYN_TYPES, "Error creating type, unsupported type kind.");
+            logError(DYN_TYPES, "Error creating type, unsupported type kind: " << static_cast<uint32_t>(kind));
         }
     }
     else

@@ -353,7 +353,7 @@ int main(
         listener.cv_.wait(lock, [&]{ return listener.number_samples_ >= samples; });
     }
 
-    //DomainParticipantFactory::get_instance()->delete_participant(participant);
+    DomainParticipantFactory::get_instance()->delete_participant(participant);
 
     return 0;
 }

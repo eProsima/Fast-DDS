@@ -240,6 +240,16 @@ public:
      */
     inline RTPSParticipantListener* getListener() { return mp_participantListener; }
 
+    /**
+     * @brief Modifies the participant listener
+     * @param listener
+     */
+    void set_listener(
+            RTPSParticipantListener* listener)
+    {
+        mp_participantListener = listener;
+    }
+
     std::vector<std::string> getParticipantNames() const;
 
     /**

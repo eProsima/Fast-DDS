@@ -47,6 +47,7 @@ class TopicAttributes;
 namespace rtps {
 
 class RTPSParticipantImpl;
+class RTPSParticipantListener;
 class RTPSWriter;
 class RTPSReader;
 class WriterProxyData;
@@ -219,6 +220,13 @@ public:
      * @return
      */
     fastdds::dds::builtin::TypeLookupManager* typelookup_manager() const;
+
+    /**
+     * @brief Modifies the participant listener
+     * @param listener
+     */
+    void set_listener(
+            RTPSParticipantListener* listener);
 
 private:
 
