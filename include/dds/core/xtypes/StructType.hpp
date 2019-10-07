@@ -53,12 +53,12 @@ public:
         return std::move(*this);
     }
 
-protected:
     virtual size_t memory_size() const
     {
         return memory_size_;
     }
 
+protected:
     virtual DynamicType* clone() const
     {
         return new StructType(*this);

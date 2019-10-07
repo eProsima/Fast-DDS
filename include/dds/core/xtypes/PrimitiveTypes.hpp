@@ -57,12 +57,12 @@ class PrimitiveType : public DynamicType
     template<typename R>
     friend const PrimitiveType<R>& primitive_type();
 
-protected:
     virtual size_t memory_size() const
     {
         return sizeof(T);
     };
 
+protected:
     virtual DynamicType* clone() const
     {
         return new PrimitiveType<T>();

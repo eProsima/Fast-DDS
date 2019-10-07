@@ -31,7 +31,7 @@ set(MEMORYCHECK_SUPPRESSIONS_FILE ${MEMORYCHECK_SUPPRESSIONS_FILE_TMP} CACHE FIL
 # Testing
 ###############################################################################
 if(EPROSIMA_BUILD_TESTS AND IS_TOP_LEVEL AND NOT EPROSIMA_INSTALLER)
-    if(EPROSIMA_BUILD_CORE_STANDALONE)
+    if(EPROSIMA_BUILD_XTYPES_STANDALONE)
         add_subdirectory(dds/core/xtypes)
     else()
         add_subdirectory(blackbox)

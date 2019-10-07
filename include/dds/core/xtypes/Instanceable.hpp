@@ -33,7 +33,6 @@ class Instanceable
 
 public:
     virtual ~Instanceable() = default;
-
     virtual size_t memory_size() const = 0; //TODO: make protected
 
 protected:
