@@ -96,7 +96,8 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
     }
     else
     {
-        std::cout << info.current_count_change << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+        std::cout << info.current_count_change
+                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
     }
 }
 
