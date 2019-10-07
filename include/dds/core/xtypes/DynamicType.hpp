@@ -86,7 +86,7 @@ public:
         {}
 
         template<typename DynamicTypeImpl>
-        Ptr(const DynamicTypeImpl&& type)
+        Ptr(const DynamicTypeImpl&& type) //Ok, never comes a PrimitiveType as rvalue
             : type_(new DynamicTypeImpl(std::move(type)))
         {}
 

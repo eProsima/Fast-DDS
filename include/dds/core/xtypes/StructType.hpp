@@ -58,6 +58,30 @@ public:
         return memory_size_;
     }
 
+    virtual void init_instance(uint8_t* memory) const
+    {
+        for(auto&& it: member_map())
+        {
+            it.second.type().init_instance(memory);
+        }
+    };
+
+    virtual void copy_instance(uint8_t* target, const uint8_t* source) const
+    {
+        for(auto&& it: member_map())
+        {
+            it.second.type().copy_instance(target + it.second.offset(), source + it.second.offset());
+        }
+    };
+
+    virtual void destroy_instance(uint8_t* memory) const
+    {
+        for(auto&& it: member_map())
+        {
+            it.second.type().destroy_instance(memory);
+        }
+    };
+
 protected:
     virtual DynamicType* clone() const
     {

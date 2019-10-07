@@ -1,4 +1,5 @@
 @startuml
+DynamicType -up-|> Instanceable
 
 PrimitiveType -up-|> DynamicType
 AggregationType -up-|> DynamicType
@@ -17,18 +18,24 @@ MapType -up-|> DynamicCollectionType
 
 DynamicType *--> TypeKind
 
-DynamicData *--> DynamicType
+DynamicData *-right-> DynamicType
 DynamicDataIterator *-right-> DynamicData
 
 StructType --> StructMember
 UnionType --> UnionMember
 EnumType --> EnumMember
 
+class Instanceable {
+    friend DynamicData;
+    + virtual size_t memory_size() const;
+    # virtual size_t init() const;
+    # virtual size_t copy() const;
+    # virtual size_t destroy() const;
+}
 class DynamicType {
     - std::string name;
     - TypeKind kind;
     # DynamicType(name, kind);
-    + virtual size_t memory_size() const;
     + const std::string& name() const;
 }
 

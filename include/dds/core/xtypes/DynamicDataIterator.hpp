@@ -32,6 +32,51 @@ public:
 
 };
 
+
+    class Iterator
+    {
+    public:
+        Iterator()
+            : current_(nullptr)
+        {}
+
+        Iterator(DynamicData& data)
+            : current_(&data)
+        {
+            if(current_->type().kind() != TypeKind::STRUCTURE_TYPE)
+            {
+                current_member_ = static_cast<const StructType&>(current_->type()).member_map().begin();
+            }
+        }
+
+        Iterator& operator++()
+        {
+            //TODO
+            return *this;
+        }
+
+        bool operator==(const Iterator& other)
+        {
+            //TODO
+            (void) other;
+            return true;
+        }
+
+        bool operator!=(const Iterator& other)
+        {
+            //TODO
+            (void) other;
+            return false;
+        }
+
+        DynamicData& operator*() { return *current_; }
+
+    private:
+        DynamicData* current_;
+        std::map<std::string, StructMember>::const_iterator current_member_;
+    };
+
+
 } //namespace xtypes
 } //namespace core
 } //namespace dds

@@ -21,8 +21,6 @@
 
 #include <dds/core/xtypes/MutableCollectionType.hpp>
 
-#include <memory>
-
 namespace dds {
 namespace core {
 namespace xtypes {
@@ -51,25 +49,25 @@ public:
         return 0; //TODO
     }
 
+    virtual void init_instance(uint8_t* /*memory*/) const
+    {
+        //TODO
+    }
+
+    virtual void copy_instance(uint8_t* /*target*/, const uint8_t* /*source*/) const
+    {
+        //TODO
+    }
+
+    virtual void destroy_instance(uint8_t* /*memory*/) const
+    {
+        //TODO
+    }
+
 protected:
     virtual DynamicType* clone() const
     {
         return new SequenceType(*this);
-    }
-
-    virtual void init(uint8_t* /*instance_memory*/) const
-    {
-        //TODO
-    }
-
-    virtual void copy(uint8_t* /*target_instance_memory*/, const uint8_t* /*source_instance_memory*/) const
-    {
-        //TODO
-    }
-
-    virtual void destroy(uint8_t* /*instance_memory*/) const
-    {
-        //TODO
     }
 };
 

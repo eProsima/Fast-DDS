@@ -20,6 +20,8 @@
 
 #include <dds/core/xtypes/DynamicType.hpp>
 
+#include <cstring>
+
 namespace dds {
 namespace core {
 namespace xtypes {
@@ -63,6 +65,11 @@ class PrimitiveType : public DynamicType
     {
         return sizeof(T);
     };
+
+    virtual void copy_instance(uint8_t* target, const uint8_t* source) const
+    {
+        std::memcpy(target, source, sizeof(T));
+    }
 
 protected:
     virtual DynamicType* clone() const

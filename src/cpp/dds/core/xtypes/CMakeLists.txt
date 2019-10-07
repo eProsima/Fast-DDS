@@ -20,7 +20,7 @@ set(${XTYPES_STANDALONE}_source_files
     StructMember.cpp
     StructType.cpp
     DynamicData.cpp
-    DynamicDataIterator.cpp
+    #DynamicDataIterator.cpp
     )
 
 add_library(${XTYPES_STANDALONE} ${${XTYPES_STANDALONE}_source_files})

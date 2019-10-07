@@ -25,22 +25,19 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
-class DynamicData;
-
 class Instanceable
 {
-    friend DynamicData;
-
 public:
     virtual ~Instanceable() = default;
-    virtual size_t memory_size() const = 0; //TODO: make protected
+
+    virtual size_t memory_size() const = 0;
+    virtual void init_instance(uint8_t* /*memory*/) const { } //Default does nothing
+    virtual void copy_instance(uint8_t* target_memory, const uint8_t* source_memory) const = 0;
+    virtual void destroy_instance(uint8_t* /*memory*/) const { } //Default does nothing
 
 protected:
     Instanceable() = default;
 
-    virtual void init(uint8_t* /*instance_memory*/) const { };
-    virtual void copy(uint8_t* /*target_instance_memory*/, const uint8_t* /*source_instance_memory*/) const { };
-    virtual void destroy(uint8_t* /*instance_memory*/) const { };
 };
 
 } //namespace xtypes

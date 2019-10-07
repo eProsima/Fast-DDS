@@ -21,8 +21,6 @@
 
 #include <dds/core/xtypes/DynamicType.hpp>
 
-#include <memory>
-
 namespace dds {
 namespace core {
 namespace xtypes {
