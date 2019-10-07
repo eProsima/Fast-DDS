@@ -512,7 +512,7 @@ bool EDP::unpairReaderProxy(
                 info.remoteEndpointGuid = reader_guid;
                 (*wit)->getListener()->onWriterMatched((*wit),info);
 
-                const PublicationMatchedStatus pub_info =
+                const PublicationMatchedStatus& pub_info =
                         update_publication_matched_status(reader_guid, writer_guid, -1);
                 (*wit)->getListener()->onWriterMatched((*wit), pub_info);
             }
@@ -963,7 +963,7 @@ bool EDP::pairingWriter(
                         W->getListener()->onWriterMatched(W,info);
 
 
-                        const PublicationMatchedStatus pub_info =
+                        const PublicationMatchedStatus& pub_info =
                                 update_publication_matched_status(reader_guid, writer_guid, 1);
                         W->getListener()->onWriterMatched(W, pub_info);
                     }
@@ -987,7 +987,7 @@ bool EDP::pairingWriter(
                         W->getListener()->onWriterMatched(W,info);
 
                         const GUID_t& writer_guid = W->getGuid();
-                        const PublicationMatchedStatus pub_info =
+                        const PublicationMatchedStatus& pub_info =
                                 update_publication_matched_status(reader_guid, writer_guid, -1);
                         W->getListener()->onWriterMatched(W, pub_info);
 
@@ -1040,7 +1040,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                         info.remoteEndpointGuid = reader_guid;
                         (*wit)->getListener()->onWriterMatched((*wit),info);
 
-                        const PublicationMatchedStatus pub_info =
+                        const PublicationMatchedStatus& pub_info =
                                 update_publication_matched_status(reader_guid, writerGUID, 1);
                         (*wit)->getListener()->onWriterMatched((*wit), pub_info);
                     }
@@ -1063,7 +1063,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                         info.remoteEndpointGuid = reader_guid;
                         (*wit)->getListener()->onWriterMatched((*wit),info);
 
-                        const PublicationMatchedStatus pub_info =
+                        const PublicationMatchedStatus& pub_info =
                                 update_publication_matched_status(reader_guid, writerGUID, -1);
                         (*wit)->getListener()->onWriterMatched((*wit), pub_info);
                     }
@@ -1121,7 +1121,7 @@ bool EDP::pairing_reader_proxy_with_local_writer(
                             info.remoteEndpointGuid = reader_guid;
                             (*wit)->getListener()->onWriterMatched((*wit),info);
 
-                            const PublicationMatchedStatus pub_info =
+                            const PublicationMatchedStatus& pub_info =
                                     update_publication_matched_status(reader_guid, writerGUID, -1);
                             (*wit)->getListener()->onWriterMatched((*wit), pub_info);
                         }
@@ -1161,7 +1161,7 @@ bool EDP::pairing_remote_reader_with_local_writer_after_security(
                     (*wit)->getListener()->onWriterMatched((*wit),info);
 
 
-                    const PublicationMatchedStatus pub_info =
+                    const PublicationMatchedStatus& pub_info =
                             update_publication_matched_status(reader_guid, writerGUID, 1);
                     (*wit)->getListener()->onWriterMatched((*wit), pub_info);
                 }
