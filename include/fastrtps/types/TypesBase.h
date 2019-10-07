@@ -193,7 +193,7 @@ enum ReturnCode_t : uint32_t
 */
 class ReturnCode_t;
 
-class ReturnCode_t
+class RTPS_DllAPI ReturnCode_t
 {
 public:
     ReturnCode_t(
