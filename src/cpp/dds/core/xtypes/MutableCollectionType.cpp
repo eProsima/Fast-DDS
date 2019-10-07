@@ -15,4 +15,4 @@
  *
 */
 
-#include <dds/core/xtypes/DynamicCollectionType.hpp>
+#include <dds/core/xtypes/MutableCollectionType.hpp>

@@ -16,40 +16,36 @@
  *
 */
 
-#ifndef OMG_DDS_CORE_XTYPES_COLLECTION_TYPE_HPP_
-#define OMG_DDS_CORE_XTYPES_COLLECTION_TYPE_HPP_
+#ifndef OMG_DDS_CORE_XTYPES_MUTABLE_COLLECTION_TYPE_HPP_
+#define OMG_DDS_CORE_XTYPES_MUTABLE_COLLECTION_TYPE_HPP_
 
-#include <dds/core/xtypes/DynamicType.hpp>
-
-#include <memory>
+#include <dds/core/xtypes/CollectionType.hpp>
 
 namespace dds {
 namespace core {
 namespace xtypes {
 
-class CollectionType : public DynamicType
+class MutableCollectionType : public CollectionType
 {
 public:
-    const DynamicType& content_type_() const { return *content_; }
+    uint32_t bounds() const { return bounds_; }
 
 protected:
-    CollectionType(
+    MutableCollectionType(
             TypeKind kind,
             const std::string& name,
-            DynamicType::Ptr&& content)
-        : DynamicType(kind, name)
-        , content_(std::move(content))
+            DynamicType::Ptr&& content,
+            uint32_t bounds)
+        : CollectionType(kind, name, std::move(content))
+        , bounds_(bounds)
     {}
 
-    CollectionType(const CollectionType& other) = default;
-    CollectionType(CollectionType&& other) = default;
-
 private:
-    DynamicType::Ptr content_;
+    uint32_t bounds_;
 };
 
 } //namespace xtypes
 } //namespace core
 } //namespace dds
 
-#endif //OMG_DDS_CORE_XTYPES_COLLECTION_TYPE_HPP_
+#endif //OMG_DDS_CORE_XTYPES_MUTABLE_COLLECTION_TYPE_HPP_

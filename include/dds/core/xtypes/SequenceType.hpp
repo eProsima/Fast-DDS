@@ -19,7 +19,7 @@
 #ifndef OMG_DDS_CORE_XTYPES_SEQUENCE_TYPE_HPP_
 #define OMG_DDS_CORE_XTYPES_SEQUENCE_TYPE_HPP_
 
-#include <dds/core/xtypes/DynamicCollectionType.hpp>
+#include <dds/core/xtypes/MutableCollectionType.hpp>
 
 #include <memory>
 
@@ -27,20 +27,20 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
-class SequenceType : public DynamicCollectionType
+class SequenceType : public MutableCollectionType
 {
 public:
     SequenceType(
             const DynamicType& content,
             uint32_t bounds = 0)
-        : DynamicCollectionType(TypeKind::SEQUENCE_TYPE, DynamicType::Ptr(content), bounds)
+        : MutableCollectionType(TypeKind::SEQUENCE_TYPE, "sequence_" + std::to_string(bounds), DynamicType::Ptr(content), bounds)
     {}
 
     template<typename DynamicTypeImpl>
     SequenceType(
             const DynamicTypeImpl&& content,
             uint32_t bounds = 0)
-        : DynamicCollectionType(TypeKind::SEQUENCE_TYPE, DynamicType::Ptr(std::move(content)), bounds)
+        : MutableCollectionType(TypeKind::SEQUENCE_TYPE, "sequence_" + std::to_string(bounds), DynamicType::Ptr(std::move(content)), bounds)
     {}
 
     SequenceType(const SequenceType& other) = default;

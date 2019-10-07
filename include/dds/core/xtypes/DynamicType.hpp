@@ -21,7 +21,7 @@
 #include <dds/core/xtypes/Instanceable.hpp>
 #include <dds/core/xtypes/TypeKind.hpp>
 
-#include <utility>
+#include <string>
 
 namespace dds {
 namespace core {
@@ -32,6 +32,7 @@ class DynamicType : public Instanceable
 public:
     virtual ~DynamicType() = default;
 
+    const std::string& name() const { return name_; }
     const TypeKind& kind() const { return kind_; }
 
     bool is_primitive_type() const
@@ -56,8 +57,10 @@ public:
 
 protected:
     DynamicType(
-            TypeKind kind)
+            TypeKind kind,
+            const std::string& name)
         : kind_(kind)
+        , name_(name)
     {}
 
     DynamicType(const DynamicType& other) = default;
@@ -67,6 +70,7 @@ protected:
 
 private:
     TypeKind kind_;
+    std::string name_;
 
 
 public:

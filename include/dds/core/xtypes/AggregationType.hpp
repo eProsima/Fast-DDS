@@ -32,7 +32,6 @@ template<typename MemberImpl>
 class AggregationType : public DynamicType
 {
 public:
-    const std::string& name() const { return name_; }
     size_t member_count() const { return members_.size(); }
     const MemberImpl& member(const std::string& name) const { return members_.at(name); }
 
@@ -40,8 +39,7 @@ protected:
     AggregationType(
             TypeKind kind,
             const std::string& name)
-        : DynamicType(kind)
-        , name_(name)
+        : DynamicType(kind, name)
     {}
 
     MemberImpl& insert_member(const std::string& name, MemberImpl&& member)
@@ -50,7 +48,6 @@ protected:
     }
 
 private:
-    std::string name_;
     std::map<std::string, MemberImpl> members_;
 };
 

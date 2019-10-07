@@ -6,31 +6,32 @@ file(GLOB_RECURSE ALL_HEADERS
     ${PROJECT_SOURCE_DIR}/include/dds/core/xtypes/*.hpp
     )
 
-set(CORE_STANDALONE ${PROJECT_NAME})
+set(XTYPES_STANDALONE ${PROJECT_NAME})
 
-set(${CORE_STANDALONE}_source_files
+set(${XTYPES_STANDALONE}_source_files
     ${ALL_HEADERS}
     TypeKind.cpp
     DynamicType.cpp
     PrimitiveTypes.cpp
     CollectionType.cpp
-    DynamicCollectionType.cpp
+    MutableCollectionType.cpp
     SequenceType.cpp
     AggregationType.cpp
     StructMember.cpp
     StructType.cpp
     DynamicData.cpp
+    DynamicDataIterator.cpp
     )
 
-add_library(${CORE_STANDALONE} ${${CORE_STANDALONE}_source_files})
+add_library(${XTYPES_STANDALONE} ${${XTYPES_STANDALONE}_source_files})
 
-target_include_directories(${CORE_STANDALONE}
+target_include_directories(${XTYPES_STANDALONE}
     PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include/fastrtps>
     )
 
-set_target_properties(${CORE_STANDALONE}
+set_target_properties(${XTYPES_STANDALONE}
     PROPERTIES
         CXX_STANDARD 11
     )

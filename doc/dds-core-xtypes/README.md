@@ -9,10 +9,6 @@ For instance, future modifications of a DynamicType already in a Publisher/Subsc
 Also, the type definition is in configuration stage, where the performance is not significant.
 RTI uses this architecture.
 
-### DynamicType has no method `name()`
-This method is only used as a key for the dynamic type in the factory.
-Since we have not factory, we do not need this cost-memory attribute.
-
 ### LoanValue without lock
 The internal implementation of DynamicTypes does not need to lokc/unlock the loan values.
 This allow to simplify the API access of nested members in DynamicData

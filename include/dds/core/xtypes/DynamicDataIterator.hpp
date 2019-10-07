@@ -13,38 +13,27 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
-*/
+ */
 
-#ifndef OMG_DDS_CORE_XTYPES_DYNAMIC_COLLECTION_TYPE_HPP_
-#define OMG_DDS_CORE_XTYPES_DYNAMIC_COLLECTION_TYPE_HPP_
+#ifndef OMG_DDS_CORE_XTYPES_DYNAMIC_DATA_ITERATOR_HPP_
+#define OMG_DDS_CORE_XTYPES_DYNAMIC_DATA_ITERATOR_HPP_
 
-#include <dds/core/xtypes/CollectionType.hpp>
+#include <dds/core/xtypes/DynamicData.hpp>
+
+#include <cstring>
 
 namespace dds {
 namespace core {
 namespace xtypes {
 
-class DynamicCollectionType : public CollectionType
+class DynamicDataIterator
 {
 public:
-    uint32_t bounds() const { return bounds_; }
 
-protected:
-    DynamicCollectionType(
-            TypeKind kind,
-            DynamicType::Ptr&& content,
-            uint32_t bounds)
-        : CollectionType(kind, std::move(content))
-        , bounds_(bounds)
-    {}
-
-private:
-    uint32_t bounds_;
 };
 
 } //namespace xtypes
 } //namespace core
 } //namespace dds
 
-#endif //OMG_DDS_CORE_XTYPES_DYNAMIC_COLLECTION_TYPE_HPP_
+#endif //OMG_DDS_CORE_XTYPES_DYNAMIC_DATA_ITERATOR_HPP_
