@@ -72,6 +72,10 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
         n_matched = info.total_count;
         std::cout << "Subscriber unmatched"<<std::endl;
     }
+    else
+    {
+        std::cout << info.current_count_change << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+    }
 }
 
 void HelloWorldSubscriber::SubListener::on_data_available(eprosima::fastdds::dds::DataReader* reader)

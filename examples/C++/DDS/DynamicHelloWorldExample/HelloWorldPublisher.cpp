@@ -124,6 +124,10 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
         n_matched = info.total_count;
         std::cout << "Publisher unmatched"<<std::endl;
     }
+    else
+    {
+        std::cout << info.current_count_change << " is not a valid value for PublicationMatchedStatus current count change" << std::endl;
+    }
 }
 
 void HelloWorldPublisher::runThread(uint32_t samples, uint32_t sleep)

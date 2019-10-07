@@ -98,6 +98,10 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
         matched_ = info.total_count;
         std::cout << "Publisher unmatched." << std::endl;
     }
+    else
+    {
+        std::cout << info.current_count_change << " is not a valid value for PublicationMatchedStatus current count change" << std::endl;
+    }
 }
 
 void HelloWorldPublisher::runThread(
