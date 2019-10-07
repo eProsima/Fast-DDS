@@ -49,7 +49,7 @@ public:
         return 0; //TODO
     }
 
-    virtual void init_instance(uint8_t* /*memory*/) const
+    virtual void init_instance(uint8_t* /*instance*/) const
     {
         //TODO
     }
@@ -59,7 +59,7 @@ public:
         //TODO
     }
 
-    virtual void destroy_instance(uint8_t* /*memory*/) const
+    virtual void destroy_instance(uint8_t* /*instance*/) const
     {
         //TODO
     }

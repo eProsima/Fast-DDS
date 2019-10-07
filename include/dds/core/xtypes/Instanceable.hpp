@@ -31,9 +31,12 @@ public:
     virtual ~Instanceable() = default;
 
     virtual size_t memory_size() const = 0;
-    virtual void init_instance(uint8_t* /*memory*/) const { } //Default does nothing
-    virtual void copy_instance(uint8_t* target_memory, const uint8_t* source_memory) const = 0;
-    virtual void destroy_instance(uint8_t* /*memory*/) const { } //Default does nothing
+
+    virtual void init_instance(uint8_t* /*instance*/) const { } //Default does nothing
+
+    virtual void copy_instance(uint8_t* target, const uint8_t* source) const = 0;
+
+    virtual void destroy_instance(uint8_t* /*instance*/) const { } //Default does nothing
 
 protected:
     Instanceable() = default;

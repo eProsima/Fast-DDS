@@ -21,117 +21,78 @@
 #include <dds/core/xtypes/StructType.hpp>
 
 #include <cstring>
-#include <iostream> //DELETE
 
 namespace dds {
 namespace core {
 namespace xtypes {
 
-class ConstDynamicData
-{
-
-};
-
-class DynamicData
+class DynamicDataConst
 {
 public:
-    DynamicData(
-            const DynamicType& type,
-            bool cleaned = false)
+    DynamicDataConst(
+            const DynamicType& type)
         : type_(type)
-        , data_((cleaned) ? new uint8_t[type.memory_size()]() : new uint8_t[type.memory_size()])
+        , instance_(new uint8_t[type.memory_size()])
         , is_loaned(false)
     {
-        type_.init_instance(data_);
+        type_.init_instance(instance_);
     }
 
-    DynamicData(
-            const DynamicData& other)
+    DynamicDataConst(
+            const DynamicDataConst& other)
         : type_(other.type_)
-        , data_(new uint8_t[other.type_.memory_size()])
+        , instance_(new uint8_t[other.type_.memory_size()])
         , is_loaned(false)
     {
-        std::cout << "copied" << std::endl;
-        type_.copy_instance(data_, other.data_);
+        type_.copy_instance(instance_, other.instance_);
     }
 
-    DynamicData(
-            DynamicData&& other)
+    DynamicDataConst(
+            DynamicDataConst&& other)
         : type_(std::move(other.type_))
-        , data_(std::move(other.data_))
+        , instance_(std::move(other.instance_))
         , is_loaned(std::move(other.is_loaned))
     {
         other.is_loaned = true;
     }
 
-    virtual ~DynamicData()
+    virtual ~DynamicDataConst()
     {
         if(!is_loaned)
         {
-            type_.destroy_instance(data_);
-            delete[] data_;
+            type_.destroy_instance(instance_);
+            delete[] instance_;
         }
     }
 
     const DynamicType& type() const { return type_; }
 
     template<typename T>
-    T& value()
-    {
-        return *reinterpret_cast<T*>(data_);
-    }
-
-    template<typename T>
     const T& value() const
     {
-        return *reinterpret_cast<T*>(data_);
-    }
-
-    template<typename T>
-    void value(
-            const T& value)
-    {
-        *reinterpret_cast<T*>(data_) = value;
-    }
-
-    template<typename T>
-    T& value(
-            const std::string& member_name)
-    {
-        return *reinterpret_cast<T*>(data_ + struct_member(member_name).offset());
+        return *reinterpret_cast<T*>(instance_);
     }
 
     template<typename T>
     const T& value(
             const std::string& member_name) const
     {
-        return *reinterpret_cast<T*>(data_ + struct_member(member_name).offset());
+        return *reinterpret_cast<T*>(instance_ + struct_member(member_name).offset());
     }
 
-    template<typename T>
-    void value(
-            const std::string& member_name,
-            const T& value)
-    {
-        *reinterpret_cast<T*>(data_ + struct_member(member_name).offset()) = value;
-    }
-
-    DynamicData loan_value(
-            const std::string& member_name)
+    DynamicDataConst loan_value(
+            const std::string& member_name) const
     {
         const StructMember& member = struct_member(member_name);
-        return DynamicData(member.type(), data_ + member.offset());
+        return DynamicDataConst(member.type(), instance_ + member.offset());
     }
 
-    DynamicData operator [] (const std::string& member_name)
+    DynamicDataConst operator [] (const std::string& member_name) const
     {
         return loan_value(member_name);
     }
 
-    //Iterator begin() { return Iterator(*this); }
-    //Iterator end() { return  Iterator(); }
-
-private:
+protected:
     const StructMember& struct_member(const std::string& name) const
     {
         if(type().kind() != TypeKind::STRUCTURE_TYPE)
@@ -141,17 +102,79 @@ private:
         return static_cast<const StructType&>(type_).member(name);
     }
 
-    DynamicData(
+    DynamicDataConst(
             const DynamicType& type,
             uint8_t* source)
         : type_(type)
-        , data_(source)
+        , instance_(source)
+        , is_loaned(true)
+    {}
+
+    DynamicDataConst(
+            const DynamicDataConst& other,
+            bool) //only for distinguish from copy constructor
+        : type_(other.type_)
+        , instance_(other.instance_)
         , is_loaned(true)
     {}
 
     const DynamicType& type_;
-    uint8_t* data_;
+    uint8_t* instance_;
     bool is_loaned;
+};
+
+class DynamicData : public DynamicDataConst
+{
+public:
+    DynamicData(
+            const DynamicType& type)
+        : DynamicDataConst(type)
+    {}
+
+    template<typename T>
+    T& value()
+    {
+        return *reinterpret_cast<T*>(instance_);
+    }
+
+    template<typename T>
+    void value(
+            const T& value)
+    {
+        *reinterpret_cast<T*>(instance_) = value;
+    }
+
+    template<typename T>
+    T& value(
+            const std::string& member_name)
+    {
+        return *reinterpret_cast<T*>(instance_ + struct_member(member_name).offset());
+    }
+
+    template<typename T>
+    void value(
+            const std::string& member_name,
+            const T& value)
+    {
+        *reinterpret_cast<T*>(instance_ + struct_member(member_name).offset()) = value;
+    }
+
+    DynamicData loan_value(
+            const std::string& member_name)
+    {
+        return DynamicDataConst::loan_value(member_name);
+    }
+
+    DynamicData operator [] (
+            const std::string& member_name)
+    {
+        return loan_value(member_name);
+    }
+
+private:
+    DynamicData(DynamicDataConst&& other)
+        : DynamicDataConst(std::move(other))
+    {}
 };
 
 } //namespace xtypes

@@ -58,11 +58,11 @@ public:
         return memory_size_;
     }
 
-    virtual void init_instance(uint8_t* memory) const
+    virtual void init_instance(uint8_t* instance) const
     {
         for(auto&& it: member_map())
         {
-            it.second.type().init_instance(memory);
+            it.second.type().init_instance(instance);
         }
     };
 
@@ -74,11 +74,11 @@ public:
         }
     };
 
-    virtual void destroy_instance(uint8_t* memory) const
+    virtual void destroy_instance(uint8_t* instance) const
     {
         for(auto&& it: member_map())
         {
-            it.second.type().destroy_instance(memory);
+            it.second.type().destroy_instance(instance);
         }
     };
 
