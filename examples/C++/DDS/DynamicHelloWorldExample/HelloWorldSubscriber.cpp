@@ -138,11 +138,6 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
         subscriber_->qos_,
         &subscriber_->m_listener);
 
-    if (reader == nullptr)
-    {
-        std::cout << "Muero" << std::endl;
-    }
-
     subscriber_->readers_[reader] = dyn_type;
     eprosima::fastrtps::types::DynamicData_ptr data(
         eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type));

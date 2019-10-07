@@ -75,22 +75,48 @@ protected:
             const DynamicType_ptr annotation_descriptor_type,
             const NameHash& hash) const;
 
+    /**
+     * @brief Fills the TypeInformation provided with the minimal TypeIdentifiers and its minimal dependencies.
+     * @param info
+     * @param ident
+     */
     void fill_minimal_information(
             TypeInformation* info,
             const TypeIdentifier* ident) const;
 
+    /**
+     * @brief Fills the TypeInformation provided with the complete TypeIdentifiers and its complete dependencies
+     * if possible, or minimal ones in other case.
+     * @param info
+     * @param ident
+     */
     void fill_complete_information(
             TypeInformation* info,
             const TypeIdentifier* ident) const;
 
+    /**
+     * @brief Auxiliar function to fill minimal dependencies.
+     * @param info
+     * @param identifier
+     */
     void fill_minimal_dependant_types(
             TypeInformation* info,
             const TypeIdentifier* identifier) const;
 
+    /**
+     * @brief Auxiliar function to fill complete dependencies.
+     * @param info
+     * @param identifier
+     */
     void fill_complete_dependant_types(
             TypeInformation* info,
             const TypeIdentifier* identifier) const;
 
+    /**
+     * @brief Auxiliar function to fill minimal information with complete dependencies.
+     * @param info
+     * @param identifier
+     */
     void fill_complete_minimal_dependant_types(
             TypeInformation* info,
             const TypeIdentifier* identifier) const;

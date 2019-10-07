@@ -20,7 +20,6 @@
 #ifndef HELLOWORLDPUBLISHER_H_
 #define HELLOWORLDPUBLISHER_H_
 
-#include <fastrtps/fastrtps_fwd.h>
 #include <fastdds/dds/topic/DataWriterListener.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 
