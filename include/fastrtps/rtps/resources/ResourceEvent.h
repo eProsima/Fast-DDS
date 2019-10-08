@@ -27,6 +27,7 @@
 #include <thread>
 #include <atomic>
 #include <vector>
+#include <future>
 #include <asio.hpp>
 
 namespace eprosima {
