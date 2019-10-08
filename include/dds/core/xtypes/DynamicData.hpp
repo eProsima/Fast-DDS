@@ -20,6 +20,7 @@
 
 #include <dds/core/xtypes/StructType.hpp>
 #include <dds/core/xtypes/CollectionType.hpp>
+#include <dds/core/xtypes/SequenceType.hpp>
 #include <dds/core/xtypes/PrimitiveTypes.hpp>
 
 namespace dds {
@@ -29,20 +30,13 @@ namespace xtypes {
 class DynamicDataConst
 {
 public:
-    template<typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
-    DynamicDataConst(
-            T value)
-        : type_(&primitive_type<T>())
-        , instance_(reinterpret_cast<uint8_t*>(new T(value)))
-        , managed_(true)
-    {}
-
     DynamicDataConst(
             const DynamicType& type)
         : type_(&type)
         , instance_(new uint8_t[type.memory_size()])
         , managed_(true)
     {
+        std::cout << "DynamicData - ALLOC" << std::endl;
         type_->construct_instance(instance_);
     }
 
@@ -54,6 +48,7 @@ public:
     {
         if(other.managed_)
         {
+            std::cout << "DynamicData - ALLOC" << std::endl;
             type_->copy_instance(instance_, other.instance_);
         }
     }
@@ -93,11 +88,6 @@ public:
         return *reinterpret_cast<T*>(instance_);
     }
 
-    const std::vector<DynamicDataConst>& seq() const // this = SequenceType
-    {
-        return *reinterpret_cast<std::vector<DynamicDataConst>*>(instance_);
-    }
-
     DynamicDataConst operator [] (
             const std::string& member_name) const // this = StructType
     {
@@ -106,17 +96,10 @@ public:
     }
 
     DynamicDataConst operator [] (
-            size_t index) const // this SequenceType & ArrayType
+            size_t index) const // this = SequenceType & ArrayType
     {
         const CollectionType* collection = static_cast<const CollectionType*>(type_);
-        if(type_->kind() == TypeKind::ARRAY_TYPE)
-        {
-            return DynamicDataConst(collection->content_type(), collection->get_at(instance_, index));
-        }
-        else //SequenceType //TODO: runtime errorsonly in debug mode
-        {
-            return seq()[index].get_ref();
-        }
+        return DynamicDataConst(collection->content_type(), collection->get_instance_at(instance_, index));
     }
 
 protected:
@@ -132,6 +115,7 @@ protected:
     uint8_t* instance_;
     bool managed_;
 
+    const DynamicType& type(const DynamicDataConst& other) const { return *other.type_; }
     uint8_t* instance(const DynamicDataConst& other) const { return other.instance_; }
 };
 
@@ -139,12 +123,6 @@ protected:
 class DynamicData : public DynamicDataConst
 {
 public:
-    template<typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
-    DynamicData(
-            T value)
-        : DynamicDataConst(value)
-    {}
-
     DynamicData(
             const DynamicType& type)
         : DynamicDataConst(type)
@@ -153,8 +131,6 @@ public:
     DynamicData& operator = (
             const DynamicData& other)
     {
-        std::cout << type().name() << std::endl;
-        std::cout << other.type().name() << std::endl;
         type_->copy_instance(instance_, instance(other));
         return *this;
     }
@@ -172,15 +148,19 @@ public:
         return *this;
     }
 
-    DynamicData& push(const DynamicData& data) // this = SequenceType
+    template<typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+    DynamicData push(T value) // this = SequenceType
     {
-        seq().push_back(data);
+        const SequenceType* sequence = static_cast<const SequenceType*>(type_);
+        sequence->push_instance(instance_, reinterpret_cast<uint8_t*>(&value));
         return *this;
     }
 
-    std::vector<DynamicData>& seq() const // this = SequenceType
+    DynamicData push(const DynamicData& data) // this = SequenceType
     {
-        return const_cast<std::vector<DynamicData>&>(reinterpret_cast<const std::vector<DynamicData>&>(DynamicDataConst::seq()));
+        const SequenceType* sequence = static_cast<const SequenceType*>(type_);
+        sequence->push_instance(instance_, instance(data));
+        return *this;
     }
 
     DynamicData operator [] (
@@ -196,7 +176,8 @@ public:
     }
 
 private:
-    DynamicData(DynamicDataConst&& other)
+    DynamicData(
+            DynamicDataConst&& other)
         : DynamicDataConst(std::move(other))
     {}
 };

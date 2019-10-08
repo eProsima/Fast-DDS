@@ -20,7 +20,7 @@
 #define OMG_DDS_CORE_XTYPES_SEQUENCE_TYPE_HPP_
 
 #include <dds/core/xtypes/MutableCollectionType.hpp>
-#include <dds/core/xtypes/DynamicData.hpp>
+#include <dds/core/xtypes/SequenceInstance.hpp>
 
 #include <vector>
 
@@ -57,22 +57,37 @@ public:
 
     virtual size_t memory_size() const
     {
-        return sizeof(std::vector<DynamicData>);
+        return sizeof(SequenceInstance);
     }
 
     virtual void construct_instance(uint8_t* instance) const
     {
-        new (instance) std::vector<DynamicData>(bounds(), content_type());
+        new (instance) SequenceInstance(content_type(), bounds());
     }
 
     virtual void copy_instance(uint8_t* target, const uint8_t* source) const
     {
-        new (target) std::vector<DynamicData>(*reinterpret_cast<const std::vector<DynamicData>*>(source));
+        new (target) SequenceInstance(*reinterpret_cast<const SequenceInstance*>(source));
     }
 
     virtual void destroy_instance(uint8_t* instance) const
     {
-        reinterpret_cast<std::vector<DynamicData>*>(instance)->~vector();
+        reinterpret_cast<SequenceInstance*>(instance)->~SequenceInstance();
+    }
+
+    virtual uint8_t* get_instance_at(uint8_t* instance, size_t index) const
+    {
+        return reinterpret_cast<SequenceInstance*>(instance)->operator[](uint32_t(index));
+    }
+
+    uint8_t* push_instance(uint8_t* instance, const uint8_t* value) const
+    {
+        return reinterpret_cast<SequenceInstance*>(instance)->push(value);
+    }
+
+    size_t get_instance_size(uint8_t* instance) const
+    {
+        return reinterpret_cast<SequenceInstance*>(instance)->size();
     }
 
 protected:

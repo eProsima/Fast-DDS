@@ -31,14 +31,16 @@ class SequenceInstance
 {
 public:
     SequenceInstance(
-            DynamicType& content,
+            const DynamicType& content,
             uint32_t capacity = 0)
         : content_(content)
         , block_size_(content.memory_size())
         , memory_(capacity > 0 ? new uint8_t[capacity * block_size_] : nullptr)
         , capacity_(capacity)
         , size_(0)
-    {}
+    {
+        if(capacity_ > 0) std::cout << "SequenceInstance: " << content_.name() << " - ALLOC" << std::endl;
+    }
 
     SequenceInstance(
             const SequenceInstance& other)
@@ -50,6 +52,7 @@ public:
     {
         if(memory_ != nullptr)
         {
+            if(capacity_ > 0) std::cout << "SequenceInstance: " << content_.name() << " - ALLOC" << std::endl;
             copy_content(memory_, other.memory_, size_ * block_size_, content_);
         }
     }
@@ -72,7 +75,8 @@ public:
         }
     }
 
-    uint8_t* push(uint8_t* instance)
+    uint8_t* push(
+            const uint8_t* instance)
     {
         if(size_ == capacity_)
         {
@@ -81,19 +85,22 @@ public:
 
         uint8_t* place = memory_ + size_ * block_size_;
         content_.copy_instance(place, instance);
-        size_ += block_size_;
+        size_++;
 
         return place;
     }
 
-    uint8_t* operator [] (uint32_t index)
+    uint8_t* operator [] (
+            uint32_t index)
     {
         //TODO: debug exception
         return memory_ + index * block_size_;
     }
 
+    uint32_t size() const { return size_; }
+
 private:
-    DynamicType& content_;
+    const DynamicType& content_;
     uint32_t block_size_;
     uint8_t* memory_;
     uint32_t capacity_;
@@ -101,17 +108,22 @@ private:
 
     void realloc()
     {
-        uint32_t new_capacity = capacity_ * 2;
+        std::cout << "SequenceInstance: " << content_.name() << " - ALLOC" << std::endl;
+        uint32_t new_capacity = (capacity_ > 0) ? capacity_ * 2 : 1;
         uint8_t* new_memory = new uint8_t[new_capacity * block_size_];
 
-        copy_content(new_memory, memory_, capacity_ * block_size_, content_);
+        std::memcpy(new_memory, memory_, capacity_ * block_size_); // this move the sequence instead of copy
 
         delete memory_;
         memory_ = new_memory;
         capacity_ = new_capacity;
     }
 
-    static void copy_content(uint8_t* target, const uint8_t* source, uint32_t size, DynamicType& content)
+    static void copy_content(
+            uint8_t* target,
+            const uint8_t* source,
+            uint32_t size,
+            const DynamicType& content)
     {
         uint32_t block_size = content.memory_size();
         if(content.is_constructed_type())

@@ -14,7 +14,7 @@ int main()
     StructType outter("OutterType");
     outter.add_member(Member("om1", primitive_type<double>()));
     outter.add_member(Member("om2", inner));
-    outter.add_member(Member("om3", SequenceType(primitive_type<uint32_t>())));
+    outter.add_member(Member("om3", SequenceType(primitive_type<uint32_t>(), 5)));
     outter.add_member(Member("om4", SequenceType(inner)));
     outter.add_member(Member("om5", ArrayType(primitive_type<uint32_t>(), 10)));
     outter.add_member(Member("om6", ArrayType(inner, 10)));
@@ -23,8 +23,8 @@ int main()
     data["om1"].value(6.7);
     data["om2"]["im1"].value(42);
     data["om2"]["im2"].value(35.8f);
-    data["om3"].seq().push_back(12); //std::vector push_back
-    data["om3"].seq().push_back(31);
+    data["om3"].push(12);
+    data["om3"].push(31);
     data["om3"].push(50); // direct push to the internal std::vector
     data["om3"][1].value(100); //direct index access to the std::vector
     data["om4"].push(data["om2"]);
@@ -50,7 +50,7 @@ int main()
     std::cout << "  om1: " << data["om1"].value<double>() << std::endl;
     std::cout << "  om2: " << data["om2"]["im1"].value<uint32_t>() << std::endl;
     std::cout << "  om2: " << data["om2"]["im2"].value<float>() << std::endl;
-    std::cout << "  om3: " << data["om3"].seq()[0].value<uint32_t>() << std::endl;
+    std::cout << "  om3: " << data["om3"][0].value<uint32_t>() << std::endl;
     std::cout << "  om3: " << data["om3"][1].value<uint32_t>() << std::endl;
     std::cout << "  om3: " << data["om3"][2].value<uint32_t>() << std::endl;
     std::cout << "  om4: " << data["om4"][1]["im2"].value<float>() << std::endl;

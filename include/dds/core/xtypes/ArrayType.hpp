@@ -100,7 +100,7 @@ public:
         }
     }
 
-    virtual uint8_t* get_at(uint8_t* instance, size_t index) const
+    virtual uint8_t* get_instance_at(uint8_t* instance, size_t index) const
     {
         return instance + index * content_type().memory_size();
     }
