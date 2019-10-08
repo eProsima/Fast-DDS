@@ -21,6 +21,7 @@
 #define _FASTDDS_DATAREADERQOS_HPP
 
 #include <fastrtps/qos/QosPolicies.h>
+#include <fastdds/dds/core/policy/ReaderDataLifecycleQosPolicy.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -69,9 +70,8 @@ public:
     //!Time Based Filter Qos, NOT implemented in the library.
     fastrtps::TimeBasedFilterQosPolicy time_based_filter;
 
-    //TODO: Uncomment when ReaderDataLifecycleQosPolicy struct is implemented
     //!Reader Data Lifecycle Qos, NOT implemented in the library.
-    //fastrtps::ReaderDataLifecycleQosPolicy reader_data_lifecycle;
+    fastdds::dds::ReaderDataLifecycleQosPolicy reader_data_lifecycle;
 
     bool operator ==(
             const DataReaderQos& b) const
@@ -87,7 +87,7 @@ public:
                (this->user_data == b.user_data) &&
                (this->ownership == b.ownership) &&
                (this->time_based_filter == b.time_based_filter);
-               //(this->reader_data_lifecycle == b.reader_data_lifecycle);
+               (this->reader_data_lifecycle == b.reader_data_lifecycle);
     }
 
     /* TODO: Implement this method
