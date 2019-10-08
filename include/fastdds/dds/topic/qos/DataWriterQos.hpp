@@ -21,6 +21,7 @@
 #define _FASTDDS_DATAWRITERQOS_HPP
 
 #include <fastrtps/qos/QosPolicies.h>
+#include <fastdds/dds/core/policy/WriterDataLifecycleQosPolicy.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -79,7 +80,7 @@ public:
     fastrtps::OwnershipStrengthQosPolicy ownership_strength;
 
     //!Writer Data Lifecycle Qos, NOT implemented in the library.
-    //fastdds::dds::WriterDataLifecycleQosPolicy writer_data_lifecycle;
+    fastdds::dds::WriterDataLifecycleQosPolicy writer_data_lifecycle;
 
     bool operator ==(
             const DataWriterQos& b) const
@@ -97,8 +98,8 @@ public:
                (this->lifespan == b.lifespan) &&
                (this->user_data == b.user_data) &&
                (this->ownership == b.ownership) &&
-               (this->ownership_strength == b.ownership_strength); //&&
-               //(this->writer_data_lifecycle == b.writer_data_lifecycle);
+               (this->ownership_strength == b.ownership_strength) &&
+               (this->writer_data_lifecycle == b.writer_data_lifecycle);
     }
 
     /* TODO: Implement this method
