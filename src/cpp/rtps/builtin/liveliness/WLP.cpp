@@ -18,26 +18,26 @@
  */
 #include <limits>
 
-#include <fastrtps/rtps/builtin/liveliness/WLP.h>
-#include <fastrtps/rtps/builtin/liveliness/WLPListener.h>
-#include "../../participant/RTPSParticipantImpl.h"
-#include <fastrtps/rtps/writer/StatefulWriter.h>
-#include <fastrtps/rtps/writer/LivelinessManager.h>
-#include <fastrtps/rtps/writer/WriterListener.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
-#include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/builtin/liveliness/WLPListener.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
+#include <fastdds/rtps/writer/LivelinessManager.h>
+#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
 
-#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
 
 
 #include <mutex>
@@ -387,12 +387,14 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     uint32_t endp = pdata.m_availableBuiltinEndpoints;
     uint32_t partdet = endp;
     uint32_t auxendp = endp;
+    bool use_multicast_locators = !mp_participant->getAttributes().builtin.avoid_builtin_multicast ||
+                                  pdata.metatraffic_locators.unicast.empty();
 
     std::lock_guard<std::mutex> data_guard(temp_data_lock_);
 
     temp_writer_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
     temp_writer_proxy_data_.persistence_guid(pdata.get_persistence_guid());
-    temp_writer_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, true);
+    temp_writer_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
     temp_writer_proxy_data_.topicKind(WITH_KEY);
     temp_writer_proxy_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     temp_writer_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -400,7 +402,7 @@ bool WLP::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     temp_reader_proxy_data_.clear();
     temp_reader_proxy_data_.m_expectsInlineQos = false;
     temp_reader_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_reader_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, true);
+    temp_reader_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
     temp_reader_proxy_data_.topicKind(WITH_KEY);
     temp_reader_proxy_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     temp_reader_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;

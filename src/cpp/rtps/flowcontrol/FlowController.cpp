@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "FlowController.h"
+#include <rtps/flowcontrol/FlowController.h>
 #include <thread>
 
 using namespace eprosima::fastrtps::rtps;
@@ -74,7 +74,7 @@ void FlowController::DeRegisterAsListeningController()
     }
 }
 
-bool FlowController::IsListening(FlowController* filter) 
+bool FlowController::IsListening(FlowController* filter)
 {
    std::unique_lock<std::recursive_mutex> scopedLock(FlowControllerMutex);
    auto it = find(ListeningControllers.begin(), ListeningControllers.end(), filter);

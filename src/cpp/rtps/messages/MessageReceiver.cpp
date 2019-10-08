@@ -17,15 +17,15 @@
  *
  */
 
-#include <fastrtps/rtps/messages/MessageReceiver.h>
+#include <fastdds/rtps/messages/MessageReceiver.h>
 
-#include <fastrtps/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 
-#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
 
-#include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
 
-#include "../participant/RTPSParticipantImpl.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <mutex>
 
@@ -531,7 +531,10 @@ bool MessageReceiver::proc_Submsg_Data(CDRMessage_t* msg,SubmessageHeader_t* smh
     valid &= CDRMessage::readEntityId(msg,&readerID);
 
     //WE KNOW THE READER THAT THE MESSAGE IS DIRECTED TO SO WE LOOK FOR IT:
-    if (!willAReaderAcceptMsgDirectedTo(readerID)) return false;
+    if (!willAReaderAcceptMsgDirectedTo(readerID))
+    {
+        return false;
+    }
 
     //FOUND THE READER.
     //We ask the reader for a cachechange to store the information.

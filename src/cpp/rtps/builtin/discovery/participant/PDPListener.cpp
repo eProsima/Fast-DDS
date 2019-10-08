@@ -17,21 +17,21 @@
  *
  */
 
-#include <fastrtps/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
 
-#include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
 
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <fastrtps/rtps/builtin/discovery/participant/PDP.h>
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPListener.h>
-#include <fastrtps/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
 
-#include <fastrtps/rtps/participant/ParticipantDiscoveryInfo.h>
-#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
 
-#include "../../../participant/RTPSParticipantImpl.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <mutex>
 
@@ -51,7 +51,8 @@ void PDPListener::onNewCacheChangeAdded(
         RTPSReader* reader,
         const CacheChange_t* const change_in)
 {
-    CacheChange_t* change = (CacheChange_t*)(change_in);
+    CacheChange_t* change = const_cast<CacheChange_t*>(change_in);
+    GUID_t writer_guid = change->writerGUID;
     logInfo(RTPS_PDP,"SPDP Message received");
 
     // Make sure we have an instance handle (i.e GUID)
@@ -79,6 +80,19 @@ void PDPListener::onNewCacheChangeAdded(
             return;
         }
 
+        // Release reader lock to avoid ABBA lock. PDP mutex should always be first.
+        // Keep change information on local variables to check consistency later
+        SequenceNumber_t seq_num = change->sequenceNumber;
+        reader->getMutex().unlock();
+        std::unique_lock<std::recursive_mutex> lock(*parent_pdp_->getMutex());
+        reader->getMutex().lock();
+
+        // If change is not consistent, it will be processed on the thread that has overriten it
+        if ((ALIVE != change->kind) || (seq_num != change->sequenceNumber) || (writer_guid != change->writerGUID))
+        {
+            return;
+        }
+
         // Access to temp_participant_data_ is protected by reader lock
 
         // Load information on temp_participant_data_
@@ -87,16 +101,13 @@ void PDPListener::onNewCacheChangeAdded(
         {
             // After correctly reading it
             change->instanceHandle = temp_participant_data_.m_key;
-
-            // At this point we can release reader lock.
-            reader->getMutex().unlock();
+            guid = temp_participant_data_.m_guid;
 
             // Check if participant already exists (updated info)
             ParticipantProxyData* pdata = nullptr;
-            std::unique_lock<std::recursive_mutex> lock(*parent_pdp_->getMutex());
             for (ParticipantProxyData* it : parent_pdp_->participant_proxies_)
             {
-                if(temp_participant_data_.m_guid == it->m_guid)
+                if(guid == it->m_guid)
                 {
                     pdata = it;
                     break;
@@ -109,9 +120,10 @@ void PDPListener::onNewCacheChangeAdded(
             if(pdata == nullptr)
             {
                 // Create a new one when not found
-                pdata = parent_pdp_->createParticipantProxyData(temp_participant_data_, *change);
+                pdata = parent_pdp_->createParticipantProxyData(temp_participant_data_, writer_guid);
                 if (pdata != nullptr)
                 {
+                    reader->getMutex().unlock();
                     lock.unlock();
 
                     parent_pdp_->announceParticipantState(false);
@@ -122,6 +134,7 @@ void PDPListener::onNewCacheChangeAdded(
             {
                 pdata->updateData(temp_participant_data_);
                 pdata->isAlive = true;
+                reader->getMutex().unlock();
                 lock.unlock();
 
                 if(parent_pdp_->updateInfoMatchesEDP())

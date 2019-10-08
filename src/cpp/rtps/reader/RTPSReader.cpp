@@ -17,15 +17,15 @@
  *
 */
 
-#include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastrtps/log/Log.h>
-#include "FragmentedChangePitStop.h"
-#include "ReaderHistoryState.hpp"
+#include <rtps/reader/FragmentedChangePitStop.h>
+#include <rtps/reader/ReaderHistoryState.hpp>
 
-#include <fastrtps/rtps/reader/ReaderListener.h>
-#include <fastrtps/rtps/resources/ResourceEvent.h>
-#include "../participant/RTPSParticipantImpl.h"
+#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
+#include <fastrtps_deprecated/participant/ParticipantImpl.h>
 
 #include <foonathan/memory/namespace_alias.hpp>
 
@@ -71,7 +71,7 @@ RTPSReader::~RTPSReader()
 }
 
 bool RTPSReader::reserveCache(
-        CacheChange_t** change, 
+        CacheChange_t** change,
         uint32_t dataCdrSerializedSize)
 {
     return mp_history->reserve_Cache(change, dataCdrSerializedSize);
@@ -176,7 +176,7 @@ SequenceNumber_t RTPSReader::get_last_notified(const GUID_t& guid)
 }
 
 void RTPSReader::set_last_notified(
-        const GUID_t& peristence_guid, 
+        const GUID_t& peristence_guid,
         const SequenceNumber_t& seq)
 {
     history_state_->history_record[peristence_guid] = seq;

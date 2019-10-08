@@ -21,19 +21,20 @@
 #define SUBSCRIBERHISTORY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/rtps/resources/ResourceManagement.h>
-#include "../rtps/history/ReaderHistory.h"
-#include "../qos/QosPolicies.h"
-#include "../common/KeyedChanges.h"
-#include "SampleInfo.h"
+#include <fastdds/dds/topic/TopicDataType.hpp>
+#include <fastdds/rtps/resources/ResourceManagement.h>
+#include <fastrtps/qos/ReaderQos.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastrtps/qos/QosPolicies.h>
+#include <fastrtps/common/KeyedChanges.h>
+#include <fastrtps/subscriber/SampleInfo.h>
+#include <fastrtps/attributes/TopicAttributes.h>
 
 #include <chrono>
 #include <functional>
 
 namespace eprosima {
 namespace fastrtps {
-
-class SubscriberImpl;
 
 /**
  * Class SubscriberHistory, container of the different CacheChanges of a subscriber
@@ -45,18 +46,18 @@ class SubscriberHistory: public rtps::ReaderHistory
 
         /**
          * Constructor. Requires information about the subscriber.
-         * @param pimpl Pointer to the subscriber implementation.
+         * @param topic_att TopicAttributes.
+         * @param type TopicDataType.
+         * @param qos ReaderQoS policy.
          * @param payloadMax Maximum payload size per change.
-         * @param history History QoS policy for the reader.
-         * @param resource Resource Limit QoS policy for the reader.
-         * @param mempolicy Set wether the payloads can be dynamically resized or not.
+         * @param mempolicy Set wether the payloads ccan dynamically resized or not.
          */
         SubscriberHistory(
-                SubscriberImpl* pimpl,
-                uint32_t payloadMax,
-                const HistoryQosPolicy& history,
-                const ResourceLimitsQosPolicy& resource,
-                rtps::MemoryManagementPolicy_t mempolicy);
+            const TopicAttributes& topic_att,
+            fastdds::dds::TopicDataType* type,
+            const fastrtps::ReaderQos& qos,
+            uint32_t payloadMax,
+            rtps::MemoryManagementPolicy_t mempolicy);
 
         virtual ~SubscriberHistory();
 
@@ -127,14 +128,18 @@ class SubscriberHistory: public rtps::ReaderHistory
         //!Time point when the next deadline will occur (only used for topics with no key)
         std::chrono::steady_clock::time_point next_deadline_us_;
         //!HistoryQosPolicy values.
-        HistoryQosPolicy m_historyQos;
+        HistoryQosPolicy history_qos_;
         //!ResourceLimitsQosPolicy values.
-        ResourceLimitsQosPolicy m_resourceLimitsQos;
-        //!Publisher Pointer
-        SubscriberImpl* mp_subImpl;
+        ResourceLimitsQosPolicy resource_limited_qos_;
+        //!Topic Attributes
+        TopicAttributes topic_att_;
+        //!TopicDataType
+        fastdds::dds::TopicDataType* type_;
+        //!ReaderQos
+        fastrtps::ReaderQos qos_;
 
         //!Type object to deserialize Key
-        void * mp_getKeyObject;
+        void* get_key_object_;
 
         /// Function processing a received change
         std::function<bool(rtps::CacheChange_t*, size_t)> receive_fn_;
@@ -160,7 +165,7 @@ class SubscriberHistory: public rtps::ReaderHistory
                 t_m_Inst_Caches::iterator& map_it);
 
         /**
-         * @name Variants of incoming change processing. 
+         * @name Variants of incoming change processing.
          *       Will be called with the history mutex taken.
          * @param[in] change The received change
          * @param unknown_missing_changes_up_to Number of missing changes before this one

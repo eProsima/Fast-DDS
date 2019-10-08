@@ -17,9 +17,9 @@
  *
  */
 
-#include <fastrtps/rtps/participant/RTPSParticipant.h>
-#include "RTPSParticipantImpl.h"
-#include <fastrtps/rtps/Endpoint.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastdds/rtps/Endpoint.h>
 
 namespace eprosima {
 namespace fastrtps{
@@ -105,16 +105,6 @@ uint32_t RTPSParticipant::getMaxDataSize() const
     return mp_impl->getMaxDataSize();
 }
 
-bool RTPSParticipant::get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo)
-{
-    return mp_impl->get_remote_writer_info(writerGuid, returnedInfo);
-}
-
-bool RTPSParticipant::get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo)
-{
-    return mp_impl->get_remote_reader_info(readerGuid, returnedInfo);
-}
-
 ResourceEvent& RTPSParticipant::get_resource_event() const
 {
     return mp_impl->getEventResource();
@@ -123,6 +113,18 @@ ResourceEvent& RTPSParticipant::get_resource_event() const
 WLP* RTPSParticipant::wlp() const
 {
     return mp_impl->wlp();
+}
+
+bool RTPSParticipant::get_new_entity_id(
+        EntityId_t& entityId)
+{
+    return mp_impl->get_new_entity_id(entityId);
+}
+
+void RTPSParticipant::set_check_type_function(
+        std::function<bool(const std::string&)>&& check_type)
+{
+    mp_impl->set_check_type_function(std::move(check_type));
 }
 
 } /* namespace rtps */

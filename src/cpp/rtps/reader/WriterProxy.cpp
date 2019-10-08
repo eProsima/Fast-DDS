@@ -17,17 +17,17 @@
  *
  */
 
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
-#include "WriterProxy.h"
-#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <rtps/reader/WriterProxy.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <fastrtps/rtps/resources/TimedEvent.h>
-#include <fastrtps/rtps/messages/RTPSMessageCreator.h>
-#include "../participant/RTPSParticipantImpl.h"
+#include <fastdds/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <foonathan/memory/namespace_alias.hpp>
 #include <fastrtps/utils/collections/foonathan_memory_helpers.hpp>
@@ -139,7 +139,7 @@ void WriterProxy::clear()
     is_alive_ = false;
     attributes_.guid(c_Guid_Unknown);
     last_heartbeat_count_ = 0;
-    heartbeat_final_flag_ = false;
+    heartbeat_final_flag_.store(false);
     guid_as_vector_.clear();
     guid_prefix_as_vector_.clear();
     changes_received_.clear();
@@ -455,7 +455,7 @@ void WriterProxy::perform_initial_ack_nack() const
 
 void WriterProxy::perform_heartbeat_response() const
 {
-    reader_->send_acknack(this, *this, heartbeat_final_flag_);
+    reader_->send_acknack(this, *this, heartbeat_final_flag_.load());
 }
 
 bool WriterProxy::process_heartbeat(
@@ -483,7 +483,7 @@ bool WriterProxy::process_heartbeat(
         last_heartbeat_count_ = count;
         lost_changes_update(first_seq);
         missing_changes_update(last_seq);
-        heartbeat_final_flag_ = final_flag;
+        heartbeat_final_flag_.store(final_flag);
 
         //Analyze wheter a acknack message is needed:
         if (!final_flag)

@@ -17,13 +17,14 @@
  *
  */
 
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastrtps/rtps/resources/TimedEvent.h>
-#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastrtps_deprecated/participant/ParticipantImpl.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/network/NetworkFactory.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/utils/TimeConversion.h>
@@ -45,7 +46,6 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
     , m_availableBuiltinEndpoints(0)
     , metatraffic_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
     , default_locators(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
-    , m_manualLivelinessCount(0)
 #if HAVE_SECURITY
     , security_attributes_(0UL)
     , plugin_security_attributes_(0UL)
@@ -66,7 +66,6 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
     , m_availableBuiltinEndpoints(pdata.m_availableBuiltinEndpoints)
     , metatraffic_locators(pdata.metatraffic_locators)
     , default_locators(pdata.default_locators)
-    , m_manualLivelinessCount(pdata.m_manualLivelinessCount)
     , m_participantName(pdata.m_participantName)
     , m_key(pdata.m_key)
     , m_leaseDuration(pdata.m_leaseDuration)
@@ -406,7 +405,6 @@ void ParticipantProxyData::clear()
     metatraffic_locators.multicast.clear();
     default_locators.unicast.clear();
     default_locators.multicast.clear();
-    m_manualLivelinessCount = 0;
     m_participantName = "";
     m_key = InstanceHandle_t();
     m_leaseDuration = Duration_t();
@@ -432,7 +430,6 @@ void ParticipantProxyData::copy(const ParticipantProxyData& pdata)
     m_availableBuiltinEndpoints = pdata.m_availableBuiltinEndpoints;
     metatraffic_locators = pdata.metatraffic_locators;
     default_locators = pdata.default_locators;
-    m_manualLivelinessCount = pdata.m_manualLivelinessCount;
     m_participantName = pdata.m_participantName;
     m_leaseDuration = pdata.m_leaseDuration;
     lease_duration_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(pdata.m_leaseDuration));
@@ -457,7 +454,6 @@ bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
 {
     metatraffic_locators = pdata.metatraffic_locators;
     default_locators = pdata.default_locators;
-    m_manualLivelinessCount = pdata.m_manualLivelinessCount;
     m_properties = pdata.m_properties;
     m_leaseDuration = pdata.m_leaseDuration;
     m_userData = pdata.m_userData;

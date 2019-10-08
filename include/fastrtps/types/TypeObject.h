@@ -34,12 +34,14 @@ namespace eprosima
 namespace eprosima{
 namespace fastrtps{
 
+class TypeConsistencyEnforcementQosPolicy;
+
 namespace types{
 
 /*struct CommonStructMember final {
-	MemberId                                   member_id;
-	StructMemberFlag                           member_flags;
-	TypeIdentifier                             member_type_id;
+    MemberId                                   member_id;
+    StructMemberFlag                           member_flags;
+    TypeIdentifier                             member_type_id;
 };*/
 class CommonStructMember
 {
@@ -72,6 +74,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CommonStructMember& other) const;
+
+    RTPS_DllAPI bool consistent(const CommonStructMember &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     MemberId m_member_id;
     StructMemberFlag m_member_flags;
@@ -80,9 +85,9 @@ private:
 
 // COMPLETE Details for a member of an aggregate type
 /*struct CompleteMemberDetail final{
-	MemberName                                 name;
-	AppliedBuiltinMemberAnnotations  ann_builtin; // Optional
-	AppliedAnnotationSeq             ann_custom; // Optional
+    MemberName                                 name;
+    AppliedBuiltinMemberAnnotations  ann_builtin; // Optional
+    AppliedAnnotationSeq             ann_custom; // Optional
 };*/
 class CompleteMemberDetail
 {
@@ -115,6 +120,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteMemberDetail& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteMemberDetail &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     MemberName m_name;
     AppliedBuiltinMemberAnnotations m_ann_builtin;
@@ -123,7 +131,7 @@ private:
 
 // MINIMAL Details for a member of an aggregate type
 /*struct MinimalMemberDetail final{
-	NameHash                                  name_hash;
+    NameHash                                  name_hash;
 };*/
 
 class MinimalMemberDetail final
@@ -147,14 +155,17 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalMemberDetail& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalMemberDetail &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     NameHash m_name_hash;
 };
 
 // Member of an aggregate type
 /*struct CompleteStructMember {
-	CommonStructMember                         common;
-	CompleteMemberDetail                       detail;
+    CommonStructMember                         common;
+    CompleteMemberDetail                       detail;
 };*/
 class CompleteStructMember
 {
@@ -182,6 +193,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteStructMember& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteStructMember &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonStructMember m_common;
     CompleteMemberDetail m_detail;
@@ -192,8 +206,8 @@ typedef std::vector<CompleteStructMember> CompleteStructMemberSeq;
 
 // Member of an aggregate type
 /*struct MinimalStructMember {
-	CommonStructMember                         common;
-	MinimalMemberDetail                        detail;
+    CommonStructMember                         common;
+    MinimalMemberDetail                        detail;
 };*/
 class MinimalStructMember
 {
@@ -221,6 +235,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalStructMember& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalStructMember &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonStructMember m_common;
     MinimalMemberDetail m_detail;
@@ -230,7 +247,7 @@ private:
 typedef std::vector<MinimalStructMember> MinimalStructMemberSeq;
 
 /*struct AppliedBuiltinTypeAnnotations {
-	AppliedVerbatimAnnotation verbatim;  // @verbatim(...) // @optional
+    AppliedVerbatimAnnotation verbatim;  // @verbatim(...) // @optional
 };*/
 class AppliedBuiltinTypeAnnotations
 {
@@ -253,12 +270,15 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const AppliedBuiltinTypeAnnotations& other) const;
+
+    RTPS_DllAPI bool consistent(const AppliedBuiltinTypeAnnotations &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     AppliedVerbatimAnnotation m_verbatim;
 };
 
 /*struct MinimalTypeDetail final{
-	// Empty. Available for future extension
+    // Empty. Available for future extension
 };*/
 class MinimalTypeDetail
 {
@@ -276,13 +296,16 @@ public:
    RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalTypeDetail&) const { return true; }
+
+    RTPS_DllAPI bool consistent(const MinimalTypeDetail &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
 };
 
 /*struct CompleteTypeDetail final{
-	AppliedBuiltinTypeAnnotations  ann_builtin; // @optional
-	AppliedAnnotationSeq           ann_custom; // @optional
-	QualifiedTypeName                        type_name;
+    AppliedBuiltinTypeAnnotations  ann_builtin; // @optional
+    AppliedAnnotationSeq           ann_custom; // @optional
+    QualifiedTypeName                        type_name;
 };*/
 class CompleteTypeDetail
 {
@@ -315,14 +338,17 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteTypeDetail& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteTypeDetail &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     AppliedBuiltinTypeAnnotations m_ann_builtin;
     AppliedAnnotationSeq m_ann_custom;
     QualifiedTypeName m_type_name;
 };
 /*struct CompleteStructHeader {
-	TypeIdentifier                           base_type;
-	CompleteTypeDetail                       detail;
+    TypeIdentifier                           base_type;
+    CompleteTypeDetail                       detail;
 };*/
 class CompleteStructHeader
 {
@@ -350,13 +376,16 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteStructHeader& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteStructHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     TypeIdentifier m_base_type;
     CompleteTypeDetail m_detail;
 };
 /*struct MinimalStructHeader {
-	TypeIdentifier                           base_type;
-	MinimalTypeDetail                        detail;
+    TypeIdentifier                           base_type;
+    MinimalTypeDetail                        detail;
 };*/
 class MinimalStructHeader
 {
@@ -384,15 +413,18 @@ public:
    RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalStructHeader& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalStructHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     TypeIdentifier m_base_type;
     MinimalTypeDetail m_detail;
 };
 
 /*struct CompleteStructType final{
-	StructTypeFlag             struct_flags;
-	CompleteStructHeader       header;
-	CompleteStructMemberSeq    member_seq;
+    StructTypeFlag             struct_flags;
+    CompleteStructHeader       header;
+    CompleteStructMemberSeq    member_seq;
 };*/
 class CompleteStructType
 {
@@ -425,6 +457,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteStructType& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteStructType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     StructTypeFlag m_struct_flags;
     CompleteStructHeader m_header;
@@ -432,9 +467,9 @@ private:
 };
 
 /*struct MinimalStructType final{
-	StructTypeFlag             struct_flags;
-	MinimalStructHeader        header;
-	MinimalStructMemberSeq     member_seq;
+    StructTypeFlag             struct_flags;
+    MinimalStructHeader        header;
+    MinimalStructMemberSeq     member_seq;
 };*/
 class MinimalStructType
 {
@@ -467,6 +502,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalStructType& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalStructType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     StructTypeFlag m_struct_flags;
     MinimalStructHeader m_header;
@@ -480,10 +518,10 @@ private:
 typedef std::vector<int32_t> UnionCaseLabelSeq;
 
 /*struct CommonUnionMember final{
-	MemberId                    member_id;
-	UnionMemberFlag             member_flags;
-	TypeIdentifier              type_id;
-	UnionCaseLabelSeq           label_seq;
+    MemberId                    member_id;
+    UnionMemberFlag             member_flags;
+    TypeIdentifier              type_id;
+    UnionCaseLabelSeq           label_seq;
 };*/
 class CommonUnionMember
 {
@@ -521,6 +559,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CommonUnionMember& other) const;
+
+    RTPS_DllAPI bool consistent(const CommonUnionMember &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     MemberId m_member_id;
     UnionMemberFlag m_member_flags;
@@ -530,8 +571,8 @@ private:
 
 // Member of a union type
 /*struct CompleteUnionMember {
-	CommonUnionMember      common;
-	CompleteMemberDetail   detail;
+    CommonUnionMember      common;
+    CompleteMemberDetail   detail;
 };*/
 class CompleteUnionMember
 {
@@ -559,6 +600,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteUnionMember& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteUnionMember &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonUnionMember m_common;
     CompleteMemberDetail m_detail;
@@ -569,8 +613,8 @@ typedef std::vector<CompleteUnionMember> CompleteUnionMemberSeq;
 
 // Member of a union type
 /*struct MinimalUnionMember {
-	CommonUnionMember   common;
-	MinimalMemberDetail detail;
+    CommonUnionMember   common;
+    MinimalMemberDetail detail;
 };*/
 class MinimalUnionMember
 {
@@ -598,6 +642,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalUnionMember& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalUnionMember &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonUnionMember m_common;
     MinimalMemberDetail m_detail;
@@ -607,8 +654,8 @@ private:
 typedef std::vector<MinimalUnionMember> MinimalUnionMemberSeq;
 
 /*struct CommonDiscriminatorMember final{
-	UnionDiscriminatorFlag       member_flags;
-	TypeIdentifier               type_id;
+    UnionDiscriminatorFlag       member_flags;
+    TypeIdentifier               type_id;
 };*/
 class CommonDiscriminatorMember
 {
@@ -636,6 +683,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CommonDiscriminatorMember& other) const;
+
+    RTPS_DllAPI bool consistent(const CommonDiscriminatorMember &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     UnionDiscriminatorFlag m_member_flags;
     TypeIdentifier m_type_id;
@@ -643,9 +693,9 @@ private:
 
 // Member of a union type
 /*struct CompleteDiscriminatorMember {
-	CommonDiscriminatorMember                common;
-	AppliedBuiltinTypeAnnotations  ann_builtin; // Optional
-	AppliedAnnotationSeq           ann_custom; // Optional
+    CommonDiscriminatorMember                common;
+    AppliedBuiltinTypeAnnotations  ann_builtin; // Optional
+    AppliedAnnotationSeq           ann_custom; // Optional
 };*/
 class CompleteDiscriminatorMember
 {
@@ -678,6 +728,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteDiscriminatorMember& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteDiscriminatorMember &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonDiscriminatorMember m_common;
     AppliedBuiltinTypeAnnotations m_ann_builtin;
@@ -686,7 +739,7 @@ private:
 
 // Member of a union type
 /*struct MinimalDiscriminatorMember {
-	CommonDiscriminatorMember   common;
+    CommonDiscriminatorMember   common;
 };*/
 class MinimalDiscriminatorMember
 {
@@ -709,12 +762,15 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalDiscriminatorMember& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalDiscriminatorMember &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonDiscriminatorMember m_common;
 };
 
 /*struct CompleteUnionHeader {
-	CompleteTypeDetail          detail;
+    CompleteTypeDetail          detail;
 };*/
 class CompleteUnionHeader
 {
@@ -737,12 +793,15 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteUnionHeader& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteUnionHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CompleteTypeDetail m_detail;
 };
 
 /*struct MinimalUnionHeader {
-	MinimalTypeDetail           detail;
+    MinimalTypeDetail           detail;
 };*/
 class MinimalUnionHeader
 {
@@ -765,15 +824,18 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalUnionHeader& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalUnionHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     MinimalTypeDetail m_detail;
 };
 
 /*struct CompleteUnionType final{
-	UnionTypeFlag                union_flags;
-	CompleteUnionHeader          header;
-	CompleteDiscriminatorMember  discriminator;
-	CompleteUnionMemberSeq       member_seq;
+    UnionTypeFlag                union_flags;
+    CompleteUnionHeader          header;
+    CompleteDiscriminatorMember  discriminator;
+    CompleteUnionMemberSeq       member_seq;
 };*/
 class CompleteUnionType
 {
@@ -811,6 +873,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteUnionType& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteUnionType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     UnionTypeFlag m_union_flags;
     CompleteUnionHeader m_header;
@@ -819,10 +884,10 @@ private:
 };
 
 /*struct MinimalUnionType final{
-	UnionTypeFlag                union_flags;
-	MinimalUnionHeader           header;
-	MinimalDiscriminatorMember   discriminator;
-	MinimalUnionMemberSeq        member_seq;
+    UnionTypeFlag                union_flags;
+    MinimalUnionHeader           header;
+    MinimalDiscriminatorMember   discriminator;
+    MinimalUnionMemberSeq        member_seq;
 };*/
 class MinimalUnionType
 {
@@ -860,6 +925,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalUnionType& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalUnionType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     UnionTypeFlag m_union_flags;
     MinimalUnionHeader m_header;
@@ -869,8 +937,8 @@ private:
 
 // --- Annotation: ---------------------------------------------------
 /*struct CommonAnnotationParameter final{
-	AnnotationParameterFlag      member_flags;
-	TypeIdentifier               member_type_id;
+    AnnotationParameterFlag      member_flags;
+    TypeIdentifier               member_type_id;
 };*/
 class CommonAnnotationParameter
 {
@@ -898,6 +966,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CommonAnnotationParameter& other) const;
+
+    RTPS_DllAPI bool consistent(const CommonAnnotationParameter &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     AnnotationParameterFlag m_member_flags;
     TypeIdentifier m_member_type_id;
@@ -906,9 +977,9 @@ private:
 // Member of an annotation type
 
 /*struct CompleteAnnotationParameter {
-	CommonAnnotationParameter  common;
-	MemberName                 name;
-	AnnotationParameterValue   default_value;
+    CommonAnnotationParameter  common;
+    MemberName                 name;
+    AnnotationParameterValue   default_value;
 };*/
 class CompleteAnnotationParameter
 {
@@ -941,6 +1012,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteAnnotationParameter& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteAnnotationParameter &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonAnnotationParameter m_common;
     MemberName m_name;
@@ -949,9 +1023,9 @@ private:
 // Ordered by CompleteAnnotationParameter.name
 typedef    std::vector<CompleteAnnotationParameter> CompleteAnnotationParameterSeq;
 /*struct MinimalAnnotationParameter {
-	CommonAnnotationParameter  common;
-	NameHash                   name_hash;
-	AnnotationParameterValue   default_value;
+    CommonAnnotationParameter  common;
+    NameHash                   name_hash;
+    AnnotationParameterValue   default_value;
 };*/
 class MinimalAnnotationParameter
 {
@@ -984,6 +1058,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalAnnotationParameter& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalAnnotationParameter &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonAnnotationParameter m_common;
     MemberName m_name;
@@ -993,7 +1070,7 @@ private:
 // Ordered by MinimalAnnotationParameter.name_hash
 typedef    std::vector<MinimalAnnotationParameter> MinimalAnnotationParameterSeq;
 /*struct CompleteAnnotationHeader {
-	QualifiedTypeName         annotation_name;
+    QualifiedTypeName         annotation_name;
 };*/
 class CompleteAnnotationHeader
 {
@@ -1016,12 +1093,15 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteAnnotationHeader& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteAnnotationHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     QualifiedTypeName m_annotation_name;
 };
 
 /*struct MinimalAnnotationHeader {
-	// Empty. Available for future extension
+    // Empty. Available for future extension
 };*/
 class MinimalAnnotationHeader
 {
@@ -1039,13 +1119,16 @@ public:
    RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalAnnotationHeader&) const { return true; }
+
+    RTPS_DllAPI bool consistent(const MinimalAnnotationHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
 };
 
 /*struct CompleteAnnotationType final{
-	AnnotationTypeFlag             annotation_flag;
-	CompleteAnnotationHeader       header;
-	CompleteAnnotationParameterSeq member_seq;
+    AnnotationTypeFlag             annotation_flag;
+    CompleteAnnotationHeader       header;
+    CompleteAnnotationParameterSeq member_seq;
 };*/
 class CompleteAnnotationType final
 {
@@ -1078,15 +1161,18 @@ public:
    RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteAnnotationType& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteAnnotationType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     AnnotationTypeFlag m_annotation_flag;
     CompleteAnnotationHeader m_header;
     CompleteAnnotationParameterSeq m_member_seq;
 };
 /*struct MinimalAnnotationType final{
-	AnnotationTypeFlag             annotation_flag;
-	MinimalAnnotationHeader        header;
-	MinimalAnnotationParameterSeq  member_seq;
+    AnnotationTypeFlag             annotation_flag;
+    MinimalAnnotationHeader        header;
+    MinimalAnnotationParameterSeq  member_seq;
 };*/
 class MinimalAnnotationType final
 {
@@ -1119,6 +1205,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalAnnotationType& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalAnnotationType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     AnnotationTypeFlag m_annotation_flag;
     MinimalAnnotationHeader m_header;
@@ -1127,8 +1216,8 @@ private:
 
 // --- Alias: ---------------------------------------------------------
 /*struct CommonAliasBody final{
-	AliasMemberFlag       related_flags;
-	TypeIdentifier        related_type;
+    AliasMemberFlag       related_flags;
+    TypeIdentifier        related_type;
 };*/
 class CommonAliasBody
 {
@@ -1156,15 +1245,18 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CommonAliasBody& other) const;
+
+//    RTPS_DllAPI bool consistent(const CommonAliasBody &x,
+//        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     AliasMemberFlag m_related_flags;
     TypeIdentifier m_related_type;
 };
 
 /*struct CompleteAliasBody {
-	CommonAliasBody       common;
-	AppliedBuiltinMemberAnnotations  ann_builtin; // Optional
-	AppliedAnnotationSeq             ann_custom; // Optional
+    CommonAliasBody       common;
+    AppliedBuiltinMemberAnnotations  ann_builtin; // Optional
+    AppliedAnnotationSeq             ann_custom; // Optional
 };*/
 class CompleteAliasBody
 {
@@ -1197,6 +1289,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteAliasBody& other) const;
+
+//    RTPS_DllAPI bool consistent(const CompleteAliasBody &x,
+//        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonAliasBody m_common;
     AppliedBuiltinMemberAnnotations m_ann_builtin;
@@ -1204,7 +1299,7 @@ private:
 };
 
 /*struct MinimalAliasBody {
-	CommonAliasBody       common;
+    CommonAliasBody       common;
 };*/
 class MinimalAliasBody
 {
@@ -1227,12 +1322,15 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalAliasBody& other) const;
+
+//    RTPS_DllAPI bool consistent(const MinimalAliasBody &x,
+//        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonAliasBody m_common;
 };
 
 /*struct CompleteAliasHeader {
-	CompleteTypeDetail    detail;
+    CompleteTypeDetail    detail;
 };*/
 class CompleteAliasHeader
 {
@@ -1255,12 +1353,15 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteAliasHeader& other) const;
+
+//    RTPS_DllAPI bool consistent(const CompleteAliasHeader &x,
+//        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CompleteTypeDetail m_detail;
 };
 
 /*struct MinimalAliasHeader {
-	// Empty. Available for future extension
+    // Empty. Available for future extension
 };*/
 class MinimalAliasHeader
 {
@@ -1278,13 +1379,16 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalAliasHeader&) const { return true; }
+
+//    RTPS_DllAPI bool consistent(const MinimalAliasHeader &x,
+//        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
 };
 
 /*struct CompleteAliasType final{
-	AliasTypeFlag         alias_flags;
-	CompleteAliasHeader   header;
-	CompleteAliasBody     body;
+    AliasTypeFlag         alias_flags;
+    CompleteAliasHeader   header;
+    CompleteAliasBody     body;
 };*/
 class CompleteAliasType
 {
@@ -1317,15 +1421,18 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteAliasType& other) const;
+
+//    RTPS_DllAPI bool consistent(const CompleteAliasType &x,
+//        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     AliasTypeFlag m_alias_flags;
     CompleteAliasHeader m_header;
     CompleteAliasBody m_body;
 };
 /*struct MinimalAliasType final{
-	AliasTypeFlag         alias_flags;
-	MinimalAliasHeader    header;
-	MinimalAliasBody      body;
+    AliasTypeFlag         alias_flags;
+    MinimalAliasHeader    header;
+    MinimalAliasBody      body;
 };*/
 class MinimalAliasType
 {
@@ -1358,6 +1465,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalAliasType& other) const;
+
+//    RTPS_DllAPI bool consistent(const MinimalAliasType &x,
+//        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     AliasTypeFlag m_alias_flags;
     MinimalAliasHeader m_header;
@@ -1366,8 +1476,8 @@ private:
 
 // --- Collections: ---------------------------------------------------
 /*struct CompleteElementDetail final{
-	AppliedBuiltinMemberAnnotations  ann_builtin; // Optional
-	AppliedAnnotationSeq             ann_custom; // Optional
+    AppliedBuiltinMemberAnnotations  ann_builtin; // Optional
+    AppliedAnnotationSeq             ann_custom; // Optional
 };*/
 class CompleteElementDetail
 {
@@ -1395,13 +1505,16 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteElementDetail& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteElementDetail &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     AppliedBuiltinMemberAnnotations m_ann_builtin;
     AppliedAnnotationSeq m_ann_custom;
 };
 /*struct CommonCollectionElement final{
-	CollectionElementFlag     element_flags;
-	TypeIdentifier            type;
+    CollectionElementFlag     element_flags;
+    TypeIdentifier            type;
 };*/
 class CommonCollectionElement final
 {
@@ -1429,14 +1542,17 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CommonCollectionElement& other) const;
+
+    RTPS_DllAPI bool consistent(const CommonCollectionElement &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CollectionElementFlag m_element_flags;
     TypeIdentifier m_type;
 };
 
 /*struct CompleteCollectionElement {
-	CommonCollectionElement   common;
-	CompleteElementDetail     detail;
+    CommonCollectionElement   common;
+    CompleteElementDetail     detail;
 };*/
 class CompleteCollectionElement
 {
@@ -1464,13 +1580,16 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteCollectionElement& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteCollectionElement &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonCollectionElement m_common;
     CompleteElementDetail m_detail;
 };
 
 /*struct MinimalCollectionElement {
-	CommonCollectionElement   common;
+    CommonCollectionElement   common;
 };*/
 class MinimalCollectionElement
 {
@@ -1493,12 +1612,15 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalCollectionElement& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalCollectionElement &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonCollectionElement m_common;
 };
 
 /*struct CommonCollectionHeader final{
-	LBound                    bound;
+    LBound                    bound;
 };*/
 class CommonCollectionHeader
 {
@@ -1521,13 +1643,16 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CommonCollectionHeader& other) const;
+
+    RTPS_DllAPI bool consistent(const CommonCollectionHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     LBound m_bound;
 };
 
 /*struct CompleteCollectionHeader {
-	CommonCollectionHeader        common;
-	CompleteTypeDetail  detail; // Optional // not present for anonymous
+    CommonCollectionHeader        common;
+    CompleteTypeDetail  detail; // Optional // not present for anonymous
 };*/
 class CompleteCollectionHeader
 {
@@ -1555,13 +1680,16 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteCollectionHeader& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteCollectionHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonCollectionHeader m_common;
     CompleteTypeDetail m_detail;
 };
 
 /*struct MinimalCollectionHeader {
-	CommonCollectionHeader        common;
+    CommonCollectionHeader        common;
 };*/
 class MinimalCollectionHeader
 {
@@ -1584,15 +1712,18 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalCollectionHeader& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalCollectionHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonCollectionHeader m_common;
 };
 
 // --- Sequence: -----------------------------------------------------
 /*struct CompleteSequenceType final{
-	CollectionTypeFlag         collection_flag;
-	CompleteCollectionHeader   header;
-	CompleteCollectionElement  element;
+    CollectionTypeFlag         collection_flag;
+    CompleteCollectionHeader   header;
+    CompleteCollectionElement  element;
 };*/
 class CompleteSequenceType
 {
@@ -1625,6 +1756,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteSequenceType& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteSequenceType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CollectionTypeFlag m_collection_flag;
     CompleteCollectionHeader m_header;
@@ -1632,9 +1766,9 @@ private:
 };
 
 /*struct MinimalSequenceType final{
-	CollectionTypeFlag         collection_flag;
-	MinimalCollectionHeader    header;
-	MinimalCollectionElement   element;
+    CollectionTypeFlag         collection_flag;
+    MinimalCollectionHeader    header;
+    MinimalCollectionElement   element;
 };*/
 class MinimalSequenceType
 {
@@ -1667,6 +1801,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalSequenceType& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalSequenceType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CollectionTypeFlag m_collection_flag;
     MinimalCollectionHeader m_header;
@@ -1675,7 +1812,7 @@ private:
 
 // --- Array: -----------------------------------------------------
 /*struct CommonArrayHeader final{
-	LBoundSeq           bound_seq;
+    LBoundSeq           bound_seq;
 };*/
 class CommonArrayHeader
 {
@@ -1698,13 +1835,16 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CommonArrayHeader& other) const;
+
+    RTPS_DllAPI bool consistent(const CommonArrayHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     LBoundSeq m_bound_seq;
 };
 
 /*struct CompleteArrayHeader {
-	CommonArrayHeader   common;
-	CompleteTypeDetail  detail;
+    CommonArrayHeader   common;
+    CompleteTypeDetail  detail;
 };*/
 class CompleteArrayHeader
 {
@@ -1732,13 +1872,16 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteArrayHeader& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteArrayHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonArrayHeader m_common;
     CompleteTypeDetail m_detail;
 };
 
 /*struct MinimalArrayHeader {
-	CommonArrayHeader   common;
+    CommonArrayHeader   common;
 };*/
 class MinimalArrayHeader
 {
@@ -1761,14 +1904,17 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalArrayHeader& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalArrayHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonArrayHeader m_common;
 };
 
 /*struct CompleteArrayType  {
-	CollectionTypeFlag          collection_flag;
-	CompleteArrayHeader         header;
-	CompleteCollectionElement   element;
+    CollectionTypeFlag          collection_flag;
+    CompleteArrayHeader         header;
+    CompleteCollectionElement   element;
 };*/
 class CompleteArrayType
 {
@@ -1801,6 +1947,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteArrayType& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteArrayType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CollectionTypeFlag m_collection_flag;
     CompleteArrayHeader m_header;
@@ -1808,9 +1957,9 @@ private:
 };
 
 /*struct MinimalArrayType final{
-	CollectionTypeFlag         collection_flag;
-	MinimalArrayHeader         header;
-	MinimalCollectionElement   element;
+    CollectionTypeFlag         collection_flag;
+    MinimalArrayHeader         header;
+    MinimalCollectionElement   element;
 };*/
 class MinimalArrayType
 {
@@ -1843,6 +1992,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalArrayType& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalArrayType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CollectionTypeFlag m_collection_flag;
     MinimalArrayHeader m_header;
@@ -1851,10 +2003,10 @@ private:
 
 // --- Map: -----------------------------------------------------
 /*struct CompleteMapType final{
-	CollectionTypeFlag            collection_flag;
-	CompleteCollectionHeader      header;
-	CompleteCollectionElement     key;
-	CompleteCollectionElement     element;
+    CollectionTypeFlag            collection_flag;
+    CompleteCollectionHeader      header;
+    CompleteCollectionElement     key;
+    CompleteCollectionElement     element;
 };*/
 class CompleteMapType final
 {
@@ -1892,6 +2044,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteMapType& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteMapType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CollectionTypeFlag m_collection_flag;
     CompleteCollectionHeader m_header;
@@ -1899,10 +2054,10 @@ private:
     CompleteCollectionElement m_element;
 };
 /*struct MinimalMapType final{
-	CollectionTypeFlag          collection_flag;
-	MinimalCollectionHeader     header;
-	MinimalCollectionElement    key;
-	MinimalCollectionElement    element;
+    CollectionTypeFlag          collection_flag;
+    MinimalCollectionHeader     header;
+    MinimalCollectionElement    key;
+    MinimalCollectionElement    element;
 };*/
 class MinimalMapType final
 {
@@ -1940,6 +2095,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalMapType& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalMapType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CollectionTypeFlag m_collection_flag;
     MinimalCollectionHeader m_header;
@@ -1953,8 +2111,8 @@ typedef uint16_t BitBound;
 // Constant in an enumerated type
 
 /*struct CommonEnumeratedLiteral {
-	int32_t                     value;
-	EnumeratedLiteralFlag    flags;
+    int32_t                     value;
+    EnumeratedLiteralFlag    flags;
 };*/
 class CommonEnumeratedLiteral
 {
@@ -1982,6 +2140,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CommonEnumeratedLiteral& other) const;
+
+    RTPS_DllAPI bool consistent(const CommonEnumeratedLiteral &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     int32_t m_value;
     EnumeratedLiteralFlag m_flags;
@@ -1990,8 +2151,8 @@ private:
 // Constant in an enumerated type
 
 /*struct CompleteEnumeratedLiteral {
-	CommonEnumeratedLiteral  common;
-	CompleteMemberDetail     detail;
+    CommonEnumeratedLiteral  common;
+    CompleteMemberDetail     detail;
 };*/
 class CompleteEnumeratedLiteral
 {
@@ -2019,6 +2180,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteEnumeratedLiteral& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteEnumeratedLiteral &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonEnumeratedLiteral m_common;
     CompleteMemberDetail m_detail;
@@ -2029,8 +2193,8 @@ typedef std::vector<CompleteEnumeratedLiteral> CompleteEnumeratedLiteralSeq;
 // Constant in an enumerated type
 
 /*struct MinimalEnumeratedLiteral {
-	CommonEnumeratedLiteral  common;
-	MinimalMemberDetail      detail;
+    CommonEnumeratedLiteral  common;
+    MinimalMemberDetail      detail;
 };*/
 class MinimalEnumeratedLiteral
 {
@@ -2058,6 +2222,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalEnumeratedLiteral& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalEnumeratedLiteral &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonEnumeratedLiteral m_common;
     MinimalMemberDetail m_detail;
@@ -2067,7 +2234,7 @@ private:
 typedef std::vector<MinimalEnumeratedLiteral> MinimalEnumeratedLiteralSeq;
 
 /*struct CommonEnumeratedHeader final{
-	BitBound                bit_bound;
+    BitBound                bit_bound;
 };*/
 class CommonEnumeratedHeader final
 {
@@ -2090,13 +2257,16 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CommonEnumeratedHeader& other) const;
+
+    RTPS_DllAPI bool consistent(const CommonEnumeratedHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     BitBound m_bit_bound;
 };
 
 /*struct CompleteEnumeratedHeader {
-	CommonEnumeratedHeader  common;
-	CompleteTypeDetail      detail;
+    CommonEnumeratedHeader  common;
+    CompleteTypeDetail      detail;
 };*/
 class CompleteEnumeratedHeader
 {
@@ -2124,13 +2294,16 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteEnumeratedHeader& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteEnumeratedHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonEnumeratedHeader m_common;
     CompleteTypeDetail m_detail;
 };
 
 /*struct MinimalEnumeratedHeader {
-	CommonEnumeratedHeader  common;
+    CommonEnumeratedHeader  common;
 };*/
 class MinimalEnumeratedHeader
 {
@@ -2153,15 +2326,18 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalEnumeratedHeader& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalEnumeratedHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonEnumeratedHeader m_common;
 };
 
 // Enumerated type
 /*struct CompleteEnumeratedType final{
-	EnumTypeFlag                    enum_flags; // unused
-	CompleteEnumeratedHeader        header;
-	CompleteEnumeratedLiteralSeq    literal_seq;
+    EnumTypeFlag                    enum_flags; // unused
+    CompleteEnumeratedHeader        header;
+    CompleteEnumeratedLiteralSeq    literal_seq;
 };*/
 class CompleteEnumeratedType
 {
@@ -2194,6 +2370,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteEnumeratedType& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteEnumeratedType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     EnumTypeFlag m_enum_flags;
     CompleteEnumeratedHeader m_header;
@@ -2201,9 +2380,9 @@ private:
 };
 // Enumerated type
 /*struct MinimalEnumeratedType final{
-	EnumTypeFlag                  enum_flags; // unused
-	MinimalEnumeratedHeader       header;
-	MinimalEnumeratedLiteralSeq   literal_seq;
+    EnumTypeFlag                  enum_flags; // unused
+    MinimalEnumeratedHeader       header;
+    MinimalEnumeratedLiteralSeq   literal_seq;
 };*/
 class MinimalEnumeratedType
 {
@@ -2236,6 +2415,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalEnumeratedType& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalEnumeratedType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     EnumTypeFlag m_enum_flags;
     MinimalEnumeratedHeader m_header;
@@ -2245,8 +2427,8 @@ private:
 // --- Bitmask: -------------------------------------------------------
 // Bit in a bit mask
 /*struct CommonBitflag final{
-	uint16_t         position;
-	BitflagFlag            flags;
+    uint16_t         position;
+    BitflagFlag            flags;
 };*/
 class CommonBitflag final
 {
@@ -2274,14 +2456,17 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CommonBitflag& other) const;
+
+    RTPS_DllAPI bool consistent(const CommonBitflag &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     uint16_t m_position;
     BitflagFlag m_flags;
 };
 
 /*struct CompleteBitflag {
-	CommonBitflag          common;
-	CompleteMemberDetail   detail;
+    CommonBitflag          common;
+    CompleteMemberDetail   detail;
 };*/
 class CompleteBitflag
 {
@@ -2309,6 +2494,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteBitflag& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteBitflag &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonBitflag m_common;
     CompleteMemberDetail m_detail;
@@ -2316,8 +2504,8 @@ private:
 // Ordered by Bitflag.position
 typedef std::vector<CompleteBitflag> CompleteBitflagSeq;
 /*struct MinimalBitflag {
-	CommonBitflag        common;
-	MinimalMemberDetail  detail;
+    CommonBitflag        common;
+    MinimalMemberDetail  detail;
 };*/
 class MinimalBitflag
 {
@@ -2345,6 +2533,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalBitflag& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalBitflag &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonBitflag m_common;
     MinimalMemberDetail m_detail;
@@ -2354,7 +2545,7 @@ private:
 typedef std::vector<MinimalBitflag> MinimalBitflagSeq;
 
 /*struct CommonBitmaskHeader final{
-	BitBound             bit_bound;
+    BitBound             bit_bound;
 };*/
 class CommonBitmaskHeader final
 {
@@ -2377,6 +2568,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CommonBitmaskHeader& other) const;
+
+    RTPS_DllAPI bool consistent(const CommonBitmaskHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     BitBound m_bit_bound;
 };
@@ -2384,9 +2578,9 @@ typedef CompleteEnumeratedHeader CompleteBitmaskHeader;
 
 typedef MinimalEnumeratedHeader  MinimalBitmaskHeader;
 /*struct CompleteBitmaskType {
-	BitmaskTypeFlag          bitmask_flags; // unused
-	CompleteBitmaskHeader    header;
-	CompleteBitflagSeq       flag_seq;
+    BitmaskTypeFlag          bitmask_flags; // unused
+    CompleteBitmaskHeader    header;
+    CompleteBitflagSeq       flag_seq;
 };*/
 class CompleteBitmaskType
 {
@@ -2419,6 +2613,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteBitmaskType& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteBitmaskType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     BitmaskTypeFlag m_bitmask_flags;
     CompleteBitmaskHeader m_header;
@@ -2426,9 +2623,9 @@ private:
 };
 
 /*struct MinimalBitmaskType {
-	BitmaskTypeFlag          bitmask_flags; // unused
-	MinimalBitmaskHeader     header;
-	MinimalBitflagSeq        flag_seq;
+    BitmaskTypeFlag          bitmask_flags; // unused
+    MinimalBitmaskHeader     header;
+    MinimalBitflagSeq        flag_seq;
 };*/
 class MinimalBitmaskType
 {
@@ -2461,6 +2658,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalBitmaskType& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalBitmaskType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     BitmaskTypeFlag m_bitmask_flags;
     MinimalBitmaskHeader m_header;
@@ -2469,10 +2669,10 @@ private:
 
 // --- Bitset: ---------------------------------------------------------
 /*struct CommonBitfield final{
-	uint16_t        position;
-	BitsetMemberFlag      flags;
-	octet                 bitcount;
-	TypeKind              holder_type; // Must be primitive integer type
+    uint16_t        position;
+    BitsetMemberFlag      flags;
+    octet                 bitcount;
+    TypeKind              holder_type; // Must be primitive integer type
 };*/
 class CommonBitfield final
 {
@@ -2510,6 +2710,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CommonBitfield& other) const;
+
+    RTPS_DllAPI bool consistent(const CommonBitfield &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     uint16_t m_position;
     BitsetMemberFlag m_flags;
@@ -2518,8 +2721,8 @@ private:
 };
 
 /*struct CompleteBitfield {
-	CommonBitfield           common;
-	CompleteMemberDetail     detail;
+    CommonBitfield           common;
+    CompleteMemberDetail     detail;
 };*/
 class CompleteBitfield
 {
@@ -2547,6 +2750,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteBitfield& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteBitfield &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonBitfield m_common;
     CompleteMemberDetail m_detail;
@@ -2554,8 +2760,8 @@ private:
 // Ordered by Bitfield.position
 typedef std::vector<CompleteBitfield> CompleteBitfieldSeq;
 /*struct MinimalBitfield {
-	CommonBitfield       common;
-	NameHash             name_hash;
+    CommonBitfield       common;
+    NameHash             name_hash;
 };*/
 class MinimalBitfield
 {
@@ -2583,6 +2789,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalBitfield& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalBitfield &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     CommonBitfield m_common;
     NameHash m_name_hash;
@@ -2590,7 +2799,7 @@ private:
 // Ordered by Bitfield.position
 typedef std::vector<MinimalBitfield> MinimalBitfieldSeq;
 /*struct CompleteBitsetHeader {
-	CompleteTypeDetail   detail;
+    CompleteTypeDetail   detail;
 };*/
 class CompleteBitsetHeader
 {
@@ -2618,13 +2827,16 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteBitsetHeader& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteBitsetHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     TypeIdentifier m_base_type;
     CompleteTypeDetail m_detail;
 };
 
 /*struct MinimalBitsetHeader {
-	// Empty. Available for future extension
+    // Empty. Available for future extension
 };*/
 class MinimalBitsetHeader
 {
@@ -2647,13 +2859,16 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalBitsetHeader& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalBitsetHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     TypeIdentifier m_base_type;
 };
 /*struct CompleteBitsetType  {
-	BitsetTypeFlag         bitset_flags; // unused
-	CompleteBitsetHeader   header;
-	CompleteBitfieldSeq    field_seq;
+    BitsetTypeFlag         bitset_flags; // unused
+    CompleteBitsetHeader   header;
+    CompleteBitfieldSeq    field_seq;
 };*/
 class CompleteBitsetType
 {
@@ -2686,6 +2901,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteBitsetType& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteBitsetType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     BitsetTypeFlag m_bitset_flags;
     CompleteBitsetHeader m_header;
@@ -2693,9 +2911,9 @@ private:
 };
 
 /*struct MinimalBitsetType  {
-	BitsetTypeFlag       bitset_flags; // unused
-	MinimalBitsetHeader  header;
-	MinimalBitfieldSeq   field_seq;
+    BitsetTypeFlag       bitset_flags; // unused
+    MinimalBitsetHeader  header;
+    MinimalBitfieldSeq   field_seq;
 };*/
 class MinimalBitsetType
 {
@@ -2728,6 +2946,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalBitsetType& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalBitsetType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     BitsetTypeFlag m_bitset_flags;
     MinimalBitsetHeader m_header;
@@ -2739,7 +2960,7 @@ private:
 // kind APPENDABLE or MUTABLE so that they can be extended in the future
 
 /*struct CompleteExtendedType {
-	// Empty. Available for future extension
+    // Empty. Available for future extension
 };*/
 class CompleteExtendedType
 {
@@ -2757,11 +2978,14 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteExtendedType&) const { return true; }
+
+    RTPS_DllAPI bool consistent(const CompleteExtendedType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
 };
 
 /*struct MinimalExtendedType  {
-	// Empty. Available for future extension
+    // Empty. Available for future extension
 };*/
 class MinimalExtendedType
 {
@@ -2779,6 +3003,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalExtendedType&) const { return true; }
+
+    RTPS_DllAPI bool consistent(const MinimalExtendedType &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
 };
 
@@ -2845,6 +3072,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const CompleteTypeObject& other) const;
+
+    RTPS_DllAPI bool consistent(const CompleteTypeObject &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     octet m__d;
 
@@ -2924,6 +3154,9 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const MinimalTypeObject& other) const;
+
+    RTPS_DllAPI bool consistent(const MinimalTypeObject &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     octet m__d;
 
@@ -3079,6 +3312,14 @@ public:
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
     RTPS_DllAPI bool operator==(const TypeObject& other) const;
+
+    /*!
+     * @brief This function check type consistency enforcement with the given TypeObject x.
+     * @param x TypeObject to check if can be assigned to the current instance.
+     * @param consistency TypeConsistencyEnforcementQoSPolicy to apply.
+     */
+    RTPS_DllAPI bool consistent(const TypeObject &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 private:
     uint8_t m__d;
 
@@ -3095,8 +3336,8 @@ typedef std::vector<TypeObject> TypeObjectSeq;
 typedef TypeObjectSeq        StronglyConnectedComponent;
 
 /*struct TypeIdentifierTypeObjectPair final {
-	TypeIdentifier  type_identifier;
-	TypeObject      type_object;
+    TypeIdentifier  type_identifier;
+    TypeObject      type_object;
 };*/
 class TypeIdentifierTypeObjectPair final
 {
@@ -3129,8 +3370,8 @@ private:
 typedef std::vector<TypeIdentifierTypeObjectPair> TypeIdentifierTypeObjectPairSeq;
 
 /*struct TypeIdentifierPair final {
-	TypeIdentifier  type_identifier1;
-	TypeIdentifier  type_identifier2;
+    TypeIdentifier  type_identifier1;
+    TypeIdentifier  type_identifier2;
 };*/
 class TypeIdentifierPair final
 {
@@ -3163,8 +3404,8 @@ private:
 
 typedef std::vector<TypeIdentifierPair> TypeIdentifierPairSeq;
 /*struct TypeIdentifierWithSize {
-	TypeIdentifier  type_id;
-	uint32_t                typeobject_serialized_size;
+    TypeIdentifier  type_id;
+    uint32_t                typeobject_serialized_size;
 };*/
 class TypeIdentifierWithSize
 {
@@ -3195,13 +3436,13 @@ private:
     uint32_t m_typeobject_serialized_size;
 };
 
-typedef std::vector<TypeIdentifierWithSize> TypeIdentfierWithSizeSeq;
+typedef std::vector<TypeIdentifierWithSize> TypeIdentifierWithSizeSeq;
 
 /*struct TypeIdentifierWithDependencies {
-	TypeIdentifierWithSize            typeid_with_size;
-	// The total additional types related to minimal_type
-	int32_t                             dependent_typeid_count;
-	TypeIdentfierWithSizeSeq  dependent_typeids;
+    TypeIdentifierWithSize            typeid_with_size;
+    // The total additional types related to minimal_type
+    int32_t                             dependent_typeid_count;
+    TypeIdentifierWithSizeSeq  dependent_typeids;
 };*/
 class TypeIdentifierWithDependencies
 {
@@ -3223,10 +3464,10 @@ public:
     RTPS_DllAPI inline const int32_t& dependent_typeid_count() const { return m_dependent_typeid_count; }
     RTPS_DllAPI inline int32_t& dependent_typeid_count() { return m_dependent_typeid_count; }
 
-    RTPS_DllAPI inline void dependent_typeids(const TypeIdentfierWithSizeSeq &_dependent_typeids) { m_dependent_typeids = _dependent_typeids; }
-    RTPS_DllAPI inline void dependent_typeids(TypeIdentfierWithSizeSeq &&_dependent_typeids) { m_dependent_typeids = std::move(_dependent_typeids); }
-    RTPS_DllAPI inline const TypeIdentfierWithSizeSeq& dependent_typeids() const { return m_dependent_typeids; }
-    RTPS_DllAPI inline TypeIdentfierWithSizeSeq& dependent_typeids() { return m_dependent_typeids; }
+    RTPS_DllAPI inline void dependent_typeids(const TypeIdentifierWithSizeSeq &_dependent_typeids) { m_dependent_typeids = _dependent_typeids; }
+    RTPS_DllAPI inline void dependent_typeids(TypeIdentifierWithSizeSeq &&_dependent_typeids) { m_dependent_typeids = std::move(_dependent_typeids); }
+    RTPS_DllAPI inline const TypeIdentifierWithSizeSeq& dependent_typeids() const { return m_dependent_typeids; }
+    RTPS_DllAPI inline TypeIdentifierWithSizeSeq& dependent_typeids() { return m_dependent_typeids; }
 
     // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(const TypeIdentifierWithDependencies& data, size_t current_alignment = 0);
@@ -3235,7 +3476,7 @@ public:
 private:
     TypeIdentifierWithSize m_typeid_with_size;
     int32_t m_dependent_typeid_count;
-    TypeIdentfierWithSizeSeq m_dependent_typeids;
+    TypeIdentifierWithSizeSeq m_dependent_typeids;
 };
 
 typedef    std::vector<TypeIdentifierWithDependencies> TypeIdentifierWithDependenciesSeq;
@@ -3245,8 +3486,8 @@ typedef    std::vector<TypeIdentifierWithDependencies> TypeIdentifierWithDepende
 // and SubscriptionBuiltinTopicData
 
 /*struct TypeInformation  {
-	TypeIdentifierWithDependencies minimal; // @id{0x1001}
-	TypeIdentifierWithDependencies complete; // @id{0x1002}
+    TypeIdentifierWithDependencies minimal; // @id{0x1001}
+    TypeIdentifierWithDependencies complete; // @id{0x1002}
 };*/
 class TypeInformation
 {

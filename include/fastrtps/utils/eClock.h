@@ -20,7 +20,7 @@
 #ifndef ECLOCK_H_
 #define ECLOCK_H_
 
-#include "../rtps/common/Time_t.h"
+#include <fastdds/rtps/common/Time_t.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -80,7 +80,7 @@ public:
     static void my_sleep(uint32_t milliseconds);
 
 private:
-    
+
     uint64_t interval_start;
 };
 

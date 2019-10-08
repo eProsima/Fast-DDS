@@ -13,23 +13,12 @@
 // limitations under the License.
 
 /**
- * @file all_common.h	
+ * @file all_common.h
  */
 
 #ifndef FASTRTPS_ALL_COMMON_H_
 #define FASTRTPS_ALL_COMMON_H_
 
-#include "Types.h"
-#include "CDRMessage_t.h"
-#include "Guid.h"
-#include "InstanceHandle.h"
-#include "Locator.h"
-#include "SequenceNumber.h"
-#include "FragmentNumber.h"
-#include "SerializedPayload.h"
-#include "Time_t.h"
-#include "CacheChange.h"
-#include "MatchingInfo.h"
-
+#include <fastdds/rtps/common/all_common.h>
 
 #endif /* FASTRTPS_ALL_COMMON_H_ */

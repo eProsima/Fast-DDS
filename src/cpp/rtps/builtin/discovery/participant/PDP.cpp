@@ -17,35 +17,41 @@
  *
  */
 
-#include <fastrtps/rtps/builtin/discovery/participant/PDP.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPListener.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
 
-#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
-#include <fastrtps/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
 
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
-#include <fastrtps/rtps/resources/TimedEvent.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
 
-#include <fastrtps/rtps/resources/AsyncWriterThread.h>
+#include <fastdds/rtps/resources/AsyncWriterThread.h>
 
-#include "../../../participant/RTPSParticipantImpl.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
 
-#include <fastrtps/rtps/writer/StatelessWriter.h>
-#include <fastrtps/rtps/reader/StatelessReader.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/writer/StatelessWriter.h>
+#include <fastdds/rtps/reader/StatelessReader.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
 
-#include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
 
+#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/types/DynamicPubSubType.h>
 
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/utils/IPLocator.h>
+
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastrtps/log/Log.h>
 
@@ -71,7 +77,6 @@ PDP::PDP (
         BuiltinProtocols* built,
         const RTPSParticipantAllocationAttributes& allocation)
     : mp_builtin(built)
-    , resend_participant_info_event_(nullptr)
     , mp_RTPSParticipant(nullptr)
     , mp_PDPWriter(nullptr)
     , mp_PDPReader(nullptr)
@@ -90,6 +95,7 @@ PDP::PDP (
     , temp_reader_data_(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
     , temp_writer_data_(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
     , mp_mutex(new std::recursive_mutex())
+    , resend_participant_info_event_(nullptr)
 {
     size_t max_unicast_locators = allocation.locators.max_unicast_locators;
     size_t max_multicast_locators = allocation.locators.max_multicast_locators;
@@ -120,7 +126,7 @@ PDP::~PDP()
     delete mp_PDPWriterHistory;
     delete mp_PDPReaderHistory;
     delete mp_listener;
-    
+
     for(ParticipantProxyData* it : participant_proxies_)
     {
         delete it;
@@ -254,16 +260,20 @@ void PDP::initializeParticipantProxyData(ParticipantProxyData* participant_data)
                     c_EntityId_RTPSParticipant));
         }
     }
- 
-    participant_data->metatraffic_locators.multicast.clear();
-    for(const Locator_t& loc: this->mp_builtin->m_metatrafficMulticastLocatorList)
-    { 
-        participant_data->metatraffic_locators.add_multicast_locator(loc);
-    }
+
     participant_data->metatraffic_locators.unicast.clear();
     for (const Locator_t& loc : this->mp_builtin->m_metatrafficUnicastLocatorList)
     {
         participant_data->metatraffic_locators.add_unicast_locator(loc);
+    }
+
+    participant_data->metatraffic_locators.multicast.clear();
+    if (!m_discovery.avoid_builtin_multicast || participant_data->metatraffic_locators.unicast.empty())
+    {
+        for(const Locator_t& loc: this->mp_builtin->m_metatrafficMulticastLocatorList)
+        {
+            participant_data->metatraffic_locators.add_multicast_locator(loc);
+        }
     }
 
     participant_data->m_participantName = std::string(mp_RTPSParticipant->getAttributes().getName());
@@ -306,6 +316,7 @@ bool PDP::initPDP(
     logInfo(RTPS_PDP,"Beginning");
     mp_RTPSParticipant = part;
     m_discovery = mp_RTPSParticipant->getAttributes().builtin;
+    initial_announcements_ = m_discovery.discovery_config.initial_announcements;
     //CREATE ENDPOINTS
     if (!createPDPEndpoints())
     {
@@ -340,17 +351,16 @@ bool PDP::initPDP(
             {
                 if (TimedEvent::EVENT_SUCCESS == code)
                 {
-                    {
-                        std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
-                        getLocalParticipantProxyData()->m_manualLivelinessCount++;
-                    }
                     announceParticipantState(false);
+                    set_next_announcement_interval();
                     return true;
                 }
 
                 return false;
             },
-            TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discovery_config.leaseDuration_announcementperiod));
+            0);
+
+    set_initial_announcement_interval();
 
     return true;
 }
@@ -374,7 +384,6 @@ void PDP::announceParticipantState(
         {
             this->mp_mutex->lock();
             ParticipantProxyData* local_participant_data = getLocalParticipantProxyData();
-            local_participant_data->m_manualLivelinessCount++;
             InstanceHandle_t key = local_participant_data->m_key;
             ParticipantProxyData proxy_data_copy(*local_participant_data);
             this->mp_mutex->unlock();
@@ -382,7 +391,7 @@ void PDP::announceParticipantState(
             if(mp_PDPWriterHistory->getHistorySize() > 0)
                 mp_PDPWriterHistory->remove_min_change();
             // TODO(Ricardo) Change DISCOVERY_PARTICIPANT_DATA_MAX_SIZE with getLocalParticipantProxyData()->size().
-            change = mp_PDPWriter->new_change([]() -> uint32_t 
+            change = mp_PDPWriter->new_change([]() -> uint32_t
                 {
                     return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
                 }
@@ -422,7 +431,7 @@ void PDP::announceParticipantState(
 
         if(mp_PDPWriterHistory->getHistorySize() > 0)
             mp_PDPWriterHistory->remove_min_change();
-        change = mp_PDPWriter->new_change([]() -> uint32_t 
+        change = mp_PDPWriter->new_change([]() -> uint32_t
             {
                 return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
             }
@@ -616,7 +625,7 @@ bool PDP::removeWriterProxyData(const GUID_t& writer_guid)
 }
 
 bool PDP::lookup_participant_name(
-        const GUID_t& guid, 
+        const GUID_t& guid,
         string_255& name)
 {
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
@@ -648,7 +657,7 @@ bool PDP::lookup_participant_key(
 }
 
 ReaderProxyData* PDP::addReaderProxyData(
-        const GUID_t& reader_guid, 
+        const GUID_t& reader_guid,
         GUID_t& participant_guid,
         std::function<bool(ReaderProxyData*, bool, const ParticipantProxyData&)> initializer_func)
 {
@@ -682,6 +691,7 @@ ReaderProxyData* PDP::addReaderProxyData(
                         ReaderDiscoveryInfo info(*ret_val);
                         info.status = ReaderDiscoveryInfo::CHANGED_QOS_READER;
                         listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                        check_and_notify_type_discovery(listener, *ret_val);
                     }
 
                     return ret_val;
@@ -728,6 +738,7 @@ ReaderProxyData* PDP::addReaderProxyData(
                 ReaderDiscoveryInfo info(*ret_val);
                 info.status = ReaderDiscoveryInfo::DISCOVERED_READER;
                 listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                check_and_notify_type_discovery(listener, *ret_val);
             }
 
             return ret_val;
@@ -772,6 +783,7 @@ WriterProxyData* PDP::addWriterProxyData(
                         WriterDiscoveryInfo info(*ret_val);
                         info.status = WriterDiscoveryInfo::CHANGED_QOS_WRITER;
                         listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                        check_and_notify_type_discovery(listener, *ret_val);
                     }
 
                     return ret_val;
@@ -818,6 +830,7 @@ WriterProxyData* PDP::addWriterProxyData(
                 WriterDiscoveryInfo info(*ret_val);
                 info.status = WriterDiscoveryInfo::DISCOVERED_WRITER;
                 listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                check_and_notify_type_discovery(listener, *ret_val);
             }
 
             return ret_val;
@@ -1014,6 +1027,92 @@ void PDP::check_remote_participant_liveliness(
                 (double)std::chrono::duration_cast<std::chrono::milliseconds>(next_trigger).count());
         remote_participant->lease_duration_event->restart_timer();
     }
+}
+
+void PDP::check_and_notify_type_discovery(
+        RTPSParticipantListener* listener,
+        const WriterProxyData& wdata) const
+{
+    check_and_notify_type_discovery(
+        listener,
+        wdata.topicName(),
+        wdata.typeName(),
+        wdata.type_id().m_type_identifier,
+        wdata.type().m_type_object);
+}
+
+void PDP::check_and_notify_type_discovery(
+        RTPSParticipantListener* listener,
+        const ReaderProxyData& rdata) const
+{
+    check_and_notify_type_discovery(
+        listener,
+        rdata.topicName(),
+        rdata.typeName(),
+        rdata.type_id().m_type_identifier,
+        rdata.type().m_type_object);
+}
+
+void PDP::check_and_notify_type_discovery(
+        RTPSParticipantListener* listener,
+        const string_255& topic_name,
+        const string_255& type_name,
+        const types::TypeIdentifier& type_id,
+        const types::TypeObject& type_obj) const
+{
+    // Are we discovering a type?
+    types::DynamicType_ptr dyn_type;
+    if (type_obj._d() == types::EK_COMPLETE) // Writer shares a Complete TypeObject
+    {
+        dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
+            type_name.to_string(), &type_id, &type_obj);
+    }
+    else if (type_id._d() != static_cast<octet>(0x00)
+             && type_id._d() < types::EK_MINIMAL) // Writer shares a TypeIdentifier that doesn't need TypeObject
+    {
+        dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
+            type_name.to_string(), &type_id);
+    }
+
+    if (dyn_type != nullptr)
+    {
+        types::DynamicPubSubType type_support(dyn_type);
+
+        if (!mp_RTPSParticipant->check_type(type_name.to_string()))
+        {
+            // Discovering a type
+            listener->on_type_discovery(
+                mp_RTPSParticipant->getUserRTPSParticipant(),
+                topic_name,
+                &type_id,
+                &type_obj,
+                dyn_type);
+        }
+    }
+}
+
+void PDP::set_next_announcement_interval()
+{
+    if (initial_announcements_.count > 0)
+    {
+        --initial_announcements_.count;
+        resend_participant_info_event_->update_interval(initial_announcements_.period);
+    }
+    else
+    {
+        resend_participant_info_event_->update_interval(m_discovery.discovery_config.leaseDuration_announcementperiod);
+    }
+}
+
+void PDP::set_initial_announcement_interval()
+{
+    if ((initial_announcements_.count > 0) && (initial_announcements_.period <= c_TimeZero))
+    {
+        // Force a small interval (1ms) between initial announcements
+        logWarning(RTPS_PDP, "Initial announcement period is not strictly positive. Changing to 1ms.");
+        initial_announcements_.period = { 0, 1000000 };
+    }
+    set_next_announcement_interval();
 }
 
 } /* namespace rtps */

@@ -20,14 +20,14 @@
 #define FASTRTPS_RTPS_READER_WRITERPROXY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/rtps/common/Types.h>
-#include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/rtps/common/CacheChange.h>
-#include <fastrtps/rtps/attributes/ReaderAttributes.h>
-#include <fastrtps/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-#include <fastrtps/rtps/messages/RTPSMessageSenderInterface.hpp>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
+#include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
 #include <foonathan/memory/container.hpp>
 #include <foonathan/memory/memory_pool.hpp>
@@ -150,7 +150,7 @@ public:
 
     /**
      * Get the number of missing changes up to a certain sequence number.
-     * @param seq_num Sequence number limiting the query. 
+     * @param seq_num Sequence number limiting the query.
      *                Only changes with a sequence number less than this one will be considered.
      * @return the number of missing changes with a sequence number less than seq_num.
      */
@@ -324,7 +324,7 @@ private:
             const SequenceNumber_t& seq_num);
 
     bool received_change_set(
-            const SequenceNumber_t& seq_num, 
+            const SequenceNumber_t& seq_num,
             bool is_relevance);
 
     void cleanup();
@@ -342,7 +342,7 @@ private:
     //! Last Heartbeatcount.
     uint32_t last_heartbeat_count_;
     //!Indicates if the heartbeat has the final flag set.
-    bool heartbeat_final_flag_;
+    std::atomic<bool> heartbeat_final_flag_;
     //!Is the writer alive
     bool is_alive_;
 

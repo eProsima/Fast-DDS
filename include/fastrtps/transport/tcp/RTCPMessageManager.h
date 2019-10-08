@@ -18,10 +18,10 @@
 #ifndef RTCP_MESSAGEMANAGER_H_
 #define RTCP_MESSAGEMANAGER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "../../qos/ParameterList.h"
-#include <fastrtps/rtps/common/all_common.h>
-#include <fastrtps/rtps/writer/StatelessWriter.h>
-#include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastrtps/qos/ParameterList.h>
+#include <fastdds/rtps/common/all_common.h>
+#include <fastdds/rtps/writer/StatelessWriter.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastrtps/transport/tcp/TCPControlMessage.h>
 #include <fastrtps/transport/tcp/RTCPHeader.h>
 

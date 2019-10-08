@@ -17,31 +17,31 @@
  *
  */
 
-#include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPListener.h>
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDPSimple.h>
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDPStatic.h>
-#include <fastrtps/rtps/resources/TimedEvent.h>
-#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
-#include <fastrtps/rtps/builtin/liveliness/WLP.h>
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
-#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
-#include <fastrtps/rtps/writer/StatelessWriter.h>
-#include <fastrtps/rtps/resources/AsyncWriterThread.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/writer/StatelessWriter.h>
+#include <fastdds/rtps/resources/AsyncWriterThread.h>
 
-#include <fastrtps/rtps/reader/StatelessReader.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/reader/StatelessReader.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
 
-#include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
 
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/utils/IPLocator.h>
 
-#include "../../../participant/RTPSParticipantImpl.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <fastrtps/log/Log.h>
 
@@ -84,6 +84,18 @@ void PDPSimple::initializeParticipantProxyData(ParticipantProxyData* participant
     {
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR;
         participant_data->m_availableBuiltinEndpoints |= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_ANNOUNCER;
+    }
+
+    if (getRTPSParticipant()->getAttributes().builtin.use_TypeLookupServiceServer)
+    {
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
+    }
+
+    if (mp_RTPSParticipant->getAttributes().builtin.use_TypeLookupServiceClient)
+    {
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
     }
 
 #if HAVE_SECURITY
@@ -139,8 +151,8 @@ bool PDPSimple::init(RTPSParticipantImpl* part)
 }
 
 ParticipantProxyData * PDPSimple::createParticipantProxyData(
-        const ParticipantProxyData & participant_data,
-        const CacheChange_t &)
+        const ParticipantProxyData& participant_data,
+        const GUID_t&)
 {
     std::unique_lock<std::recursive_mutex> lock(*getMutex());
 
@@ -222,7 +234,7 @@ bool PDPSimple::createPDPEndpoints()
 #if HAVE_SECURITY
         mp_RTPSParticipant->set_endpoint_rtps_protection_supports(rout, false);
 #endif
-        
+
         if (rout != nullptr)
         {
             std::lock_guard<std::mutex> data_guard(temp_data_lock_);
@@ -320,6 +332,8 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     uint32_t endp = pdata->m_availableBuiltinEndpoints;
     uint32_t auxendp = endp;
+    bool use_multicast_locators = !mp_RTPSParticipant->getAttributes().builtin.avoid_builtin_multicast ||
+                                  pdata->metatraffic_locators.unicast.empty();
     auxendp &=DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER;
     if(auxendp!=0)
     {
@@ -329,7 +343,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         temp_writer_data_.guid().entityId = c_EntityId_SPDPWriter;
         temp_writer_data_.persistence_guid(pdata->get_persistence_guid());
         temp_writer_data_.set_persistence_entity_id(c_EntityId_SPDPWriter);
-        temp_writer_data_.set_remote_locators(pdata->metatraffic_locators, network, true);
+        temp_writer_data_.set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
         temp_writer_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
         temp_writer_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_PDPReader->matched_writer_add(temp_writer_data_);
@@ -343,7 +357,7 @@ void PDPSimple::assignRemoteEndpoints(ParticipantProxyData* pdata)
         temp_reader_data_.m_expectsInlineQos = false;
         temp_reader_data_.guid().guidPrefix = pdata->m_guid.guidPrefix;
         temp_reader_data_.guid().entityId = c_EntityId_SPDPReader;
-        temp_reader_data_.set_remote_locators(pdata->metatraffic_locators, network, true);
+        temp_reader_data_.set_remote_locators(pdata->metatraffic_locators, network, use_multicast_locators);
         temp_reader_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
         temp_reader_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         mp_PDPWriter->matched_reader_add(temp_reader_data_);

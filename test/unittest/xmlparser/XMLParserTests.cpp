@@ -293,7 +293,7 @@ TEST_F(XMLParserTests, Types)
 {
     std::unique_ptr<BaseNode> root;
     ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
-   
+
     BaseNode * profiles(root->getChild(0));
     ASSERT_TRUE(profiles);
     ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
@@ -418,12 +418,14 @@ TEST_F(XMLParserTests, DurationCheck)
     EXPECT_EQ(publisher_atts.qos.m_liveliness.lease_duration.seconds, 1);
     EXPECT_EQ(publisher_atts.qos.m_liveliness.lease_duration.nanosec, 2u);
     EXPECT_EQ(publisher_atts.qos.m_liveliness.announcement_period, c_TimeInfinite);
+    EXPECT_EQ(publisher_atts.qos.m_latencyBudget.duration.seconds, 10);
 
     ASSERT_TRUE(subscriber_profile);
     EXPECT_EQ(subscriber_atts.qos.m_deadline.period, c_TimeInfinite);
     EXPECT_EQ(subscriber_atts.qos.m_liveliness.lease_duration, c_TimeInfinite);
     EXPECT_EQ(subscriber_atts.qos.m_liveliness.announcement_period.seconds, 0);
     EXPECT_EQ(subscriber_atts.qos.m_liveliness.announcement_period.nanosec, 0u);
+    EXPECT_EQ(subscriber_atts.qos.m_latencyBudget.duration.seconds, 20);
 }
 
 TEST_F(XMLParserTests, Data)

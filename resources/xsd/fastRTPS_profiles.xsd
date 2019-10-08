@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles"       
+           xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles"
            targetNamespace="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles"
            attributeFormDefault="unqualified"
            elementFormDefault="qualified">
@@ -280,7 +280,7 @@
             <xs:enumeration value="STATIC"/>
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="guid">
         <xs:restriction base="xs:string">
           <xs:pattern value="([0-9a-fA-F]{1,2}\.){11}[0-9a-fA-F]{1,2}" />
@@ -297,7 +297,7 @@
             <xs:sequence>
                 <xs:element name="metatrafficMulticastLocatorList" type="locatorListType" minOccurs="1" />
                 <xs:element name="metatrafficUnicastLocatorList" type="locatorListType" minOccurs="0" />
-            </xs:sequence>			
+            </xs:sequence>
         </xs:choice>
         <xs:attribute name="prefix" type="guid" use="required"/>
     </xs:complexType>
@@ -308,12 +308,20 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="initialAnnouncementsType">
+        <xs:all minOccurs="0">
+            <xs:element name="count" type="uint32Type" minOccurs="0"/>
+            <xs:element name="period" type="durationType" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+
     <xs:complexType name="discoverySettingsType">
         <xs:all minOccurs="0">
             <xs:element name="discoveryProtocol" type="DiscoveryProtocol" minOccurs="0"/>
             <xs:element name="EDP" type="EDPType" minOccurs="0"/>
             <xs:element name="leaseDuration" type="durationType" minOccurs="0"/>
             <xs:element name="leaseAnnouncement" type="durationType" minOccurs="0"/>
+            <xs:element name="initialAnnouncements" type="initialAnnouncementsType" minOccurs="0"/>
             <xs:element name="simpleEDP" type="simpleEDPType" minOccurs="0"/>
             <xs:element name="clientAnnouncementPeriod" type="durationType" minOccurs="0"/>
             <xs:element name="discoveryServersList" type="DiscoveryServerList" minOccurs="0"/>
@@ -332,6 +340,7 @@
             <xs:element name="readerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
             <xs:element name="writerHistoryMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
             <xs:element name="mutation_tries" type="uint32Type" minOccurs="0"/>
+            <xs:element name="avoid_builtin_multicast" type="boolType" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
 
@@ -358,7 +367,7 @@
             <xs:element name="increment" type="uint32Type" minOccurs="0"/>
         </xs:all>
     </xs:complexType>
-    
+
     <xs:complexType name="remoteLocatorsAllocationConfigType">
         <xs:all minOccurs="0">
             <xs:element name="max_unicast_locators" type="uint32Type" minOccurs="0"/>

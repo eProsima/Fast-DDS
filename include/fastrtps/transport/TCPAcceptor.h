@@ -16,7 +16,7 @@
 #define _TCP_ACCEPTOR_BASE_
 
 #include <asio.hpp>
-#include <fastrtps/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.h>
 
 namespace eprosima{
 namespace fastrtps{

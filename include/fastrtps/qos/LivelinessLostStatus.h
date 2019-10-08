@@ -19,24 +19,6 @@
 #ifndef _LIVELINESS_LOST_STATUS_H_
 #define _LIVELINESS_LOST_STATUS_H_
 
-#include <cstdint>
-
-namespace eprosima {
-namespace fastrtps {
-
-//! @brief A struct storing the liveliness lost status
-struct LivelinessLostStatus
-{
-    //! @brief Total cumulative number of times that a previously-alive publisher became not alive due to a
-    //! failure to actively signal its liveliness within its offered liveliness period. This count does not
-    //! change when an already not alive publisher remains not alive for another liveliness period
-    uint32_t total_count = 0;
-
-    //! @brief The change in total_count since the last time the listener was called or the status was read
-    uint32_t total_count_change = 0;
-};
-
-} //end of namespace
-} //end of namespace eprosima
+#include <fastdds/dds/core/status/BaseStatus.hpp>
 
 #endif /* _LIVELINESS_LOST_STATUS_H_ */

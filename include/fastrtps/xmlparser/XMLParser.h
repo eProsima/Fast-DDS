@@ -15,12 +15,12 @@
 #ifndef XML_PARSER_H_
 #define XML_PARSER_H_
 
-#include "stdio.h"
-#include "../transport/TransportDescriptorInterface.h"
-#include "../attributes/ParticipantAttributes.h"
-#include "../attributes/PublisherAttributes.h"
-#include "../attributes/SubscriberAttributes.h"
-#include "./XMLParserCommon.h"
+#include <stdio.h>
+#include <fastrtps/transport/TransportDescriptorInterface.h>
+#include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
@@ -451,6 +451,11 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret getXMLDiscoverySettings(
         tinyxml2::XMLElement* elem,
         rtps::DiscoverySettings& settings,
+        uint8_t ident);
+
+    RTPS_DllAPI static XMLP_ret getXMLInitialAnnouncementsConfig(
+        tinyxml2::XMLElement* elem,
+        rtps::InitialAnnouncementConfig& config,
         uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLBuiltinAttributes(

@@ -17,10 +17,10 @@
  *
  */
 
-#include <fastrtps/rtps/RTPSDomain.h>
+#include <fastdds/rtps/RTPSDomain.h>
 
-#include <fastrtps/rtps/participant/RTPSParticipant.h>
-#include "participant/RTPSParticipantImpl.h"
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <fastrtps/log/Log.h>
 
@@ -33,8 +33,8 @@
 #include <fastrtps/utils/System.h>
 #include <fastrtps/utils/md5.h>
 
-#include <fastrtps/rtps/writer/RTPSWriter.h>
-#include <fastrtps/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <chrono>
 #include <thread>

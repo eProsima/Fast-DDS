@@ -13,16 +13,15 @@
 // limitations under the License.
 
 /**
- * @file PublisherListener.h	
+ * @file PublisherListener.h
  */
 
 #ifndef PUBLISHERLISTENER_H_
 #define PUBLISHERLISTENER_H_
 
-#include "../rtps/common/Types.h"
-#include "../rtps/common/MatchingInfo.h"
-#include "../qos/DeadlineMissedStatus.h"
-#include "../qos/LivelinessLostStatus.h"
+#include <fastrtps/rtps/common/MatchingInfo.h>
+#include <fastrtps/qos/DeadlineMissedStatus.h>
+#include <fastrtps/qos/LivelinessLostStatus.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -40,11 +39,11 @@ public:
     PublisherListener(){}
     virtual ~PublisherListener(){}
 
-	/**
-	 * This method is called when the Publisher is matched (or unmatched) against an endpoint.
-	 * @param pub Pointer to the associated Publisher
-	 * @param info Information regarding the matched subscriber
-	 */
+    /**
+     * This method is called when the Publisher is matched (or unmatched) against an endpoint.
+     * @param pub Pointer to the associated Publisher
+     * @param info Information regarding the matched subscriber
+     */
     virtual void onPublicationMatched(
             Publisher* pub,
             rtps::MatchingInfo& info)

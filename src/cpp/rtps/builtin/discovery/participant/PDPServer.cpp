@@ -17,31 +17,31 @@
  *
  */
 
-#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
-#include <fastrtps/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
 
-#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
-#include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
 
-#include <fastrtps/rtps/writer/StatefulWriter.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
 
-#include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
 
 #include <fastrtps/utils/TimeConversion.h>
 
-#include "DirectMessageSender.hpp"
-#include "../../../participant/RTPSParticipantImpl.h"
+#include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <fastrtps/log/Log.h>
 
-#include <fastrtps/rtps/builtin/discovery/participant/timedevent/DServerEvent.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPServerListener.h>
-#include <fastrtps/rtps/builtin/discovery/participant/PDPServer.h>
-#include <fastrtps/rtps/builtin/discovery/endpoint/EDPServer.h>
+#include <fastdds/rtps/builtin/discovery/participant/timedevent/DServerEvent.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPServerListener.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPServer.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPServer.h>
 
 
-#include <fastrtps/rtps/writer/ReaderProxy.h>
+#include <fastdds/rtps/writer/ReaderProxy.h>
 
 #include <algorithm>
 #include <forward_list>
@@ -98,16 +98,16 @@ bool PDPServer::init(RTPSParticipantImpl* part)
     */
     mp_sync = new DServerEvent(this,
         TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discovery_config.discoveryServer_client_syncperiod));
-    awakeServerThread(); 
+    awakeServerThread();
     // the timer is also restart from removeRemoteParticipant, remove(Publisher|Subscriber)FromHistory
     // and queueParticipantForEDPMatch
-    
+
     return true;
 }
 
 ParticipantProxyData* PDPServer::createParticipantProxyData(
     const ParticipantProxyData& participant_data,
-    const CacheChange_t& change)
+    const GUID_t& writer_guid)
 {
     std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
@@ -115,7 +115,7 @@ ParticipantProxyData* PDPServer::createParticipantProxyData(
     // other clients liveliness is provided through server's PDP discovery data
 
     // check if the DATA msg is relayed by another server
-    bool do_lease = participant_data.m_guid.guidPrefix == change.writerGUID.guidPrefix;
+    bool do_lease = participant_data.m_guid.guidPrefix == writer_guid.guidPrefix;
 
     if (!do_lease)
     {
@@ -261,7 +261,7 @@ void PDPServer::initializeParticipantProxyData(ParticipantProxyData* participant
 
     // A PDP server should always be provided with all EDP endpoints
     // because it must relay all clients EDP info
-    participant_data->m_availableBuiltinEndpoints 
+    participant_data->m_availableBuiltinEndpoints
         |= DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER
         | DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_DETECTOR
         | DISC_BUILTIN_ENDPOINT_PUBLICATION_DETECTOR
@@ -337,7 +337,7 @@ void PDPServer::assignRemoteEndpoints(ParticipantProxyData* pdata)
 
         // TODO: remove when the Writer API issue is resolved
         std::lock_guard<std::recursive_mutex> lock(*getMutex());
-        // Waiting till we remove C++11 restriction: 
+        // Waiting till we remove C++11 restriction:
         // clients_.insert_or_assign(temp_reader_data_.guid(), temp_reader_data_);
         auto emplace_result = clients_.emplace(temp_reader_data_.guid(), temp_reader_data_);
         if (!emplace_result.second)
@@ -520,8 +520,8 @@ bool PDPServer::trimPDPWriterHistory()
 
     std::copy_if(mp_PDPWriterHistory->changesBegin(),
         mp_PDPWriterHistory->changesBegin(), std::front_inserter(removal),
-        [this](const CacheChange_t* chan) 
-        { 
+        [this](const CacheChange_t* chan)
+        {
             return _demises.find(chan->instanceHandle) != _demises.cend();
         });
 
@@ -631,7 +631,7 @@ void PDPServer::removeParticipantForEDPMatch(const GUID_t& guid)
             return;
         }
     }
-    
+
 }
 
 std::string PDPServer::GetPersistenceFileName()
@@ -894,7 +894,7 @@ bool PDPServer::remove_remote_participant(
         CacheChange_t *pC;
 
         // Check if the DATA(p[UD]) is already in Reader
-        if (! (mp_PDPReaderHistory->get_max_change(&pC) && 
+        if (! (mp_PDPReaderHistory->get_max_change(&pC) &&
                 pC->kind == NOT_ALIVE_DISPOSED_UNREGISTERED && // last message received is aun DATA(p[UD])
                 pC->instanceHandle == key )) // from the same participant I'm going to report
         {   // We must create the DATA(p[UD])
@@ -920,10 +920,10 @@ bool PDPServer::remove_remote_participant(
         }
 
     }
-    
+
     // Trigger the WriterHistory cleaning mechanism of demised participants DATA. Note that
     // only DATA acknowledge by all clients would be actually removed
-    {   
+    {
         std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
         InstanceHandle_t ih;
