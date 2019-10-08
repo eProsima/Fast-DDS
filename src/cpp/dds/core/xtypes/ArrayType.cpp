@@ -1,5 +1,4 @@
 /*
- * Copyright 2010, Object Management Group, Inc.
  * Copyright 2019, Proyectos y Sistemas de Mantenimiento SL (eProsima).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,13 +15,4 @@
  *
 */
 
-#ifndef OMG_DDS_CORE_XTYPES_XTYPES_HPP_
-#define OMG_DDS_CORE_XTYPES_XTYPES_HPP_
-
-#include <dds/core/xtypes/PrimitiveTypes.hpp>
-#include <dds/core/xtypes/StructType.hpp>
-#include <dds/core/xtypes/SequenceType.hpp>
 #include <dds/core/xtypes/ArrayType.hpp>
-#include <dds/core/xtypes/DynamicData.hpp>
-
-#endif //OMG_DDS_CORE_XTYPES_XTYPES_HPP_

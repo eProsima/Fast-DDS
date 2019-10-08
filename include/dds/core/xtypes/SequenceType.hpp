@@ -34,23 +34,26 @@ public:
     SequenceType(
             const DynamicType& content,
             uint32_t bounds = 0)
-        : MutableCollectionType(TypeKind::SEQUENCE_TYPE, "sequence_" + std::to_string(bounds), DynamicType::Ptr(content), bounds)
+        : MutableCollectionType(
+                TypeKind::SEQUENCE_TYPE,
+                "sequence_" + std::to_string(bounds),
+                DynamicType::Ptr(content),
+                bounds)
     {}
 
     template<typename DynamicTypeImpl>
     SequenceType(
             const DynamicTypeImpl&& content,
             uint32_t bounds)
-        : MutableCollectionType(TypeKind::SEQUENCE_TYPE, "sequence_" + std::to_string(bounds), DynamicType::Ptr(std::move(content)), bounds)
+        : MutableCollectionType(
+                TypeKind::SEQUENCE_TYPE,
+                "sequence_" + std::to_string(bounds),
+                DynamicType::Ptr(std::move(content)),
+                bounds)
     {}
 
-    SequenceType(const SequenceType& other)
-        : MutableCollectionType(other)
-    {}
-
-    SequenceType(SequenceType&& other)
-        : MutableCollectionType(std::move(other))
-    {}
+    SequenceType(const SequenceType& other) = default;
+    SequenceType(SequenceType&& other) = default;
 
     virtual size_t memory_size() const
     {

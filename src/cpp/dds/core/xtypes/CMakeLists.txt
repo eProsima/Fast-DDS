@@ -16,6 +16,7 @@ set(${XTYPES_STANDALONE}_source_files
     CollectionType.cpp
     MutableCollectionType.cpp
     SequenceType.cpp
+    ArrayType.cpp
     AggregationType.cpp
     StructMember.cpp
     StructType.cpp
