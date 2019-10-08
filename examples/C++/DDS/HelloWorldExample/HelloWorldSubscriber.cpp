@@ -82,17 +82,22 @@ HelloWorldSubscriber::~HelloWorldSubscriber()
 
 void HelloWorldSubscriber::SubListener::on_subscription_matched(
         eprosima::fastdds::dds::DataReader*,
-        eprosima::fastrtps::rtps::MatchingInfo& info)
+        const eprosima::fastdds::dds::SubscriptionMatchedStatus& info)
 {
-    if (info.status == MATCHED_MATCHING)
+    if (info.current_count_change == 1)
     {
-        matched_++;
+        matched_ = info.total_count;
         std::cout << "Subscriber matched." << std::endl;
+    }
+    else if (info.current_count_change == -1)
+    {
+        matched_ = info.total_count;
+        std::cout << "Subscriber unmatched." << std::endl;
     }
     else
     {
-        matched_--;
-        std::cout << "Subscriber unmatched." << std::endl;
+        std::cout << info.current_count_change
+                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
     }
 }
 

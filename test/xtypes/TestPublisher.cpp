@@ -190,9 +190,9 @@ TestPublisher::PubListener::PubListener(TestPublisher* parent)
 
 void TestPublisher::PubListener::on_publication_matched(
         eprosima::fastdds::dds::DataWriter*,
-        eprosima::fastrtps::rtps::MatchingInfo& info)
+        const eprosima::fastdds::dds::PublicationMatchedStatus& info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if(info.current_count_change > 0)
     {
         std::cout << mParent->m_Name << " matched." << std::endl;
         mParent->matched();

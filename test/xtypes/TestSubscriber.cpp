@@ -201,14 +201,14 @@ void TestSubscriber::matched(bool unmatched)
 
 void TestSubscriber::SubListener::on_subscription_matched(
         eprosima::fastdds::dds::DataReader*,
-        eprosima::fastrtps::rtps::MatchingInfo& info)
+        const eprosima::fastdds::dds::SubscriptionMatchedStatus& info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if(info.current_count_change > 0)
     {
         mParent->matched();
         std::cout << mParent->m_Name << " matched."<<std::endl;
     }
-    else
+    else if (info.current_count_change < 0)
     {
         mParent->matched(true);
         std::cout << mParent->m_Name << " unmatched."<<std::endl;
