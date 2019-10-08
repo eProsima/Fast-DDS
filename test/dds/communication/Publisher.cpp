@@ -126,18 +126,23 @@ public:
 
     void on_publication_matched(
             Publisher* /*publisher*/,
-            MatchingInfo& info) override
+            const PublicationMatchedStatus& info) override
     {
         std::unique_lock<std::mutex> lock(mutex_);
-        if (info.status == MATCHED_MATCHING)
+        if (info.current_count_change == 1)
         {
-            std::cout << "Publisher matched with subscriber " << info.remoteEndpointGuid << std::endl;
+            std::cout << "Publisher matched with subscriber " << info.last_subscription_handle << std::endl;
             ++matched_;
+        }
+        else if (info.current_count_change == -1)
+        {
+            std::cout << "Publisher unmatched with subscriber " << info.last_subscription_handle << std::endl;
+            --matched_;
         }
         else
         {
-            std::cout << "Publisher unmatched with subscriber " << info.remoteEndpointGuid << std::endl;
-            --matched_;
+            std::cout << info.current_count_change
+                      << " is not a valid value for PublicationMatchedStatus current count change" << std::endl;
         }
         cv_.notify_all();
     }

@@ -85,7 +85,7 @@ public:
 
         void on_subscription_matched(
                 eprosima::fastdds::dds::DataReader* reader,
-                eprosima::fastrtps::rtps::MatchingInfo& info) override;
+                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
         void on_type_information_received(
                 eprosima::fastdds::dds::DomainParticipant* participant,

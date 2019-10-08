@@ -174,15 +174,20 @@ public:
 
     void on_subscription_matched(
             Subscriber* /*subscriber*/,
-            MatchingInfo& info) override
+            const SubscriptionMatchedStatus& info) override
     {
-        if(info.status == MATCHED_MATCHING)
+        if(info.current_count_change == 1)
         {
-            std::cout << "Subscriber matched with publisher " << info.remoteEndpointGuid << std::endl;
+            std::cout << "Subscriber matched with publisher " << info.last_publication_handle << std::endl;
+        }
+        else if (info.current_count_change == -1)
+        {
+            std::cout << "Subscriber unmatched with publisher " << info.last_publication_handle << std::endl;
         }
         else
         {
-            std::cout << "Subscriber unmatched with publisher " << info.remoteEndpointGuid << std::endl;
+            std::cout << info.current_count_change
+                      << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
         }
     }
 

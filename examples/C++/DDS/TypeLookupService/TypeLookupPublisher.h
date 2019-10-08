@@ -68,7 +68,7 @@ private:
 
         void on_publication_matched(
                 eprosima::fastdds::dds::DataWriter* writer,
-                eprosima::fastrtps::rtps::MatchingInfo& info) override;
+                const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
         int n_matched;
 

@@ -115,18 +115,22 @@ TypeLookupPublisher::~TypeLookupPublisher()
 
 void TypeLookupPublisher::PubListener::on_publication_matched(
         eprosima::fastdds::dds::DataWriter*,
-        eprosima::fastrtps::rtps::MatchingInfo &info)
+        const eprosima::fastdds::dds::PublicationMatchedStatus& info)
 {
-    if (info.status == MATCHED_MATCHING)
+    if (info.current_count_change == 1)
     {
         n_matched++;
         firstConnected = true;
         std::cout << "Publisher matched" << std::endl;
     }
-    else
+    else if (info.current_count_change == -1)
     {
         n_matched--;
         std::cout << "Publisher unmatched" << std::endl;
+    }
+    else
+    {
+        std::cout << "Publisher received an invalid value for PublicationMatchedStatus." << std::endl;
     }
 }
 

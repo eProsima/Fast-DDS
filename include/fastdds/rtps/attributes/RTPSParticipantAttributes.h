@@ -240,10 +240,10 @@ class TypeLookupSettings
 public:
 
     //!Indicates to use the TypeLookup Service client endpoints
-    bool use_client;
+    bool use_client = false;
 
     //!Indicates to use the TypeLookup Service server endpoints
-    bool use_server;
+    bool use_server = false;
 
 };
 

@@ -79,14 +79,14 @@ TypeLookupSubscriber::~TypeLookupSubscriber()
 
 void TypeLookupSubscriber::SubListener::on_subscription_matched(
         eprosima::fastdds::dds::DataReader* reader,
-        eprosima::fastrtps::rtps::MatchingInfo& info)
+        const eprosima::fastdds::dds::SubscriptionMatchedStatus& info)
 {
-    if (info.status == MATCHED_MATCHING)
+    if (info.current_count_change == 1)
     {
         n_matched++;
         std::cout << "Subscriber matched" << std::endl;
     }
-    else
+    else if (info.current_count_change == -1)
     {
         n_matched--;
         std::cout << "Subscriber unmatched" << std::endl;
@@ -106,6 +106,10 @@ void TypeLookupSubscriber::SubListener::on_subscription_matched(
         {
             subscriber_->mp_subscriber->delete_datareader(reader);
         }
+    }
+    else
+    {
+        std::cout << "Subscriber received an invalid value for SubscriptionMatchedStatus." << std::endl;
     }
 }
 
