@@ -58,7 +58,15 @@
                         <leaseDuration>
                             <sec>DURATION_INFINITY</sec>
                         </leaseDuration>
+                        <initialAnnouncements>
+                            <count>2</count>
+                            <period>
+                                <sec>1</sec>
+                                <nanosec>827</nanosec>
+                            </period>
+                        </initialAnnouncements>
                     </discovery_config>
+                    <avoid_builtin_multicast>false</avoid_builtin_multicast>
                     <use_WriterLivelinessProtocol>false</use_WriterLivelinessProtocol>
                     <domainId>2019102</domainId>
                     <metatrafficUnicastLocatorList>

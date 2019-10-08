@@ -369,14 +369,14 @@ bool EDPSimple::create_sedp_secure_endpoints()
 
         if (plugin_part_attr.is_discovery_encrypted)
         {
-            ratt.endpoint.security_attributes().plugin_endpoint_attributes |= 
+            ratt.endpoint.security_attributes().plugin_endpoint_attributes |=
                 PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
             watt.endpoint.security_attributes().plugin_endpoint_attributes |=
                 PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
         }
         if (plugin_part_attr.is_discovery_origin_authenticated)
         {
-            ratt.endpoint.security_attributes().plugin_endpoint_attributes |= 
+            ratt.endpoint.security_attributes().plugin_endpoint_attributes |=
                 PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
             watt.endpoint.security_attributes().plugin_endpoint_attributes |=
                 PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
@@ -651,6 +651,8 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     uint32_t endp = pdata.m_availableBuiltinEndpoints;
     uint32_t auxendp = endp;
+    bool use_multicast_locators = !mp_PDP->getRTPSParticipant()->getAttributes().builtin.avoid_builtin_multicast ||
+                                  pdata.metatraffic_locators.unicast.empty();
     auxendp &=DISC_BUILTIN_ENDPOINT_PUBLICATION_ANNOUNCER;
 
     std::lock_guard<std::mutex> data_guard(temp_data_lock_);
@@ -658,14 +660,14 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     temp_reader_proxy_data_.clear();
     temp_reader_proxy_data_.m_expectsInlineQos = false;
     temp_reader_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
-    temp_reader_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, true);
+    temp_reader_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
     temp_reader_proxy_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     temp_reader_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
     temp_writer_proxy_data_.clear();
     temp_writer_proxy_data_.guid().guidPrefix = pdata.m_guid.guidPrefix;
     temp_writer_proxy_data_.persistence_guid(pdata.get_persistence_guid());
-    temp_writer_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, true);
+    temp_writer_proxy_data_.set_remote_locators(pdata.metatraffic_locators, network, use_multicast_locators);
     temp_writer_proxy_data_.m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     temp_writer_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
 
@@ -719,7 +721,7 @@ void EDPSimple::assignRemoteEndpoints(const ParticipantProxyData& pdata)
     {
         temp_writer_proxy_data_.guid().entityId = sedp_builtin_publications_secure_writer;
         temp_writer_proxy_data_.set_persistence_entity_id(sedp_builtin_publications_secure_writer);
- 
+
         if(!mp_RTPSParticipant->security_manager().discovered_builtin_writer(
                     publications_secure_reader_.first->getGuid(), pdata.m_guid, temp_writer_proxy_data_,
                     publications_secure_reader_.first->getAttributes().security_attributes()))

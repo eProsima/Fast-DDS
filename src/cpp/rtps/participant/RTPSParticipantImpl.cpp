@@ -251,6 +251,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     {
         logError(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
     }
+
     logInfo(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
 }
 

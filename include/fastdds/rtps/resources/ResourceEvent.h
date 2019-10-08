@@ -27,6 +27,7 @@
 #include <thread>
 #include <atomic>
 #include <vector>
+#include <future>
 #include <asio.hpp>
 
 namespace eprosima {
@@ -124,6 +125,8 @@ class ResourceEvent
 
         //! Method called by the internal thread.
         void run_io_service();
+
+        std::promise<void> ready;
 };
 }
 }

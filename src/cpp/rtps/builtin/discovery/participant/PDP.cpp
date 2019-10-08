@@ -77,7 +77,6 @@ PDP::PDP (
         BuiltinProtocols* built,
         const RTPSParticipantAllocationAttributes& allocation)
     : mp_builtin(built)
-    , resend_participant_info_event_(nullptr)
     , mp_RTPSParticipant(nullptr)
     , mp_PDPWriter(nullptr)
     , mp_PDPReader(nullptr)
@@ -96,6 +95,7 @@ PDP::PDP (
     , temp_reader_data_(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
     , temp_writer_data_(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
     , mp_mutex(new std::recursive_mutex())
+    , resend_participant_info_event_(nullptr)
 {
     size_t max_unicast_locators = allocation.locators.max_unicast_locators;
     size_t max_multicast_locators = allocation.locators.max_multicast_locators;
@@ -261,15 +261,19 @@ void PDP::initializeParticipantProxyData(ParticipantProxyData* participant_data)
         }
     }
 
-    participant_data->metatraffic_locators.multicast.clear();
-    for(const Locator_t& loc: this->mp_builtin->m_metatrafficMulticastLocatorList)
-    {
-        participant_data->metatraffic_locators.add_multicast_locator(loc);
-    }
     participant_data->metatraffic_locators.unicast.clear();
     for (const Locator_t& loc : this->mp_builtin->m_metatrafficUnicastLocatorList)
     {
         participant_data->metatraffic_locators.add_unicast_locator(loc);
+    }
+
+    participant_data->metatraffic_locators.multicast.clear();
+    if (!m_discovery.avoid_builtin_multicast || participant_data->metatraffic_locators.unicast.empty())
+    {
+        for(const Locator_t& loc: this->mp_builtin->m_metatrafficMulticastLocatorList)
+        {
+            participant_data->metatraffic_locators.add_multicast_locator(loc);
+        }
     }
 
     participant_data->m_participantName = std::string(mp_RTPSParticipant->getAttributes().getName());
@@ -312,6 +316,7 @@ bool PDP::initPDP(
     logInfo(RTPS_PDP,"Beginning");
     mp_RTPSParticipant = part;
     m_discovery = mp_RTPSParticipant->getAttributes().builtin;
+    initial_announcements_ = m_discovery.discovery_config.initial_announcements;
     //CREATE ENDPOINTS
     if (!createPDPEndpoints())
     {
@@ -346,17 +351,16 @@ bool PDP::initPDP(
             {
                 if (TimedEvent::EVENT_SUCCESS == code)
                 {
-                    {
-                        std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
-                        getLocalParticipantProxyData()->m_manualLivelinessCount++;
-                    }
                     announceParticipantState(false);
+                    set_next_announcement_interval();
                     return true;
                 }
 
                 return false;
             },
-            TimeConv::Duration_t2MilliSecondsDouble(m_discovery.discovery_config.leaseDuration_announcementperiod));
+            0);
+
+    set_initial_announcement_interval();
 
     return true;
 }
@@ -380,7 +384,6 @@ void PDP::announceParticipantState(
         {
             this->mp_mutex->lock();
             ParticipantProxyData* local_participant_data = getLocalParticipantProxyData();
-            local_participant_data->m_manualLivelinessCount++;
             InstanceHandle_t key = local_participant_data->m_key;
             ParticipantProxyData proxy_data_copy(*local_participant_data);
             this->mp_mutex->unlock();
@@ -1086,6 +1089,30 @@ void PDP::check_and_notify_type_discovery(
                 dyn_type);
         }
     }
+}
+
+void PDP::set_next_announcement_interval()
+{
+    if (initial_announcements_.count > 0)
+    {
+        --initial_announcements_.count;
+        resend_participant_info_event_->update_interval(initial_announcements_.period);
+    }
+    else
+    {
+        resend_participant_info_event_->update_interval(m_discovery.discovery_config.leaseDuration_announcementperiod);
+    }
+}
+
+void PDP::set_initial_announcement_interval()
+{
+    if ((initial_announcements_.count > 0) && (initial_announcements_.period <= c_TimeZero))
+    {
+        // Force a small interval (1ms) between initial announcements
+        logWarning(RTPS_PDP, "Initial announcement period is not strictly positive. Changing to 1ms.");
+        initial_announcements_.period = { 0, 1000000 };
+    }
+    set_next_announcement_interval();
 }
 
 } /* namespace rtps */
