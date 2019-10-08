@@ -10,14 +10,15 @@ set(XTYPES_STANDALONE ${PROJECT_NAME})
 
 set(${XTYPES_STANDALONE}_source_files
     ${ALL_HEADERS}
-    SequenceInstance.cpp
     TypeKind.cpp
     DynamicType.cpp
+    SequenceInstance.cpp
     PrimitiveTypes.cpp
     CollectionType.cpp
-    MutableCollectionType.cpp
-    SequenceType.cpp
     ArrayType.cpp
+    MutableCollectionType.cpp
+    StringType.cpp
+    SequenceType.cpp
     AggregationType.cpp
     StructMember.cpp
     StructType.cpp

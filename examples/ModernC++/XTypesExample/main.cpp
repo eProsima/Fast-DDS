@@ -18,6 +18,7 @@ int main()
     outter.add_member(Member("om4", SequenceType(inner)));
     outter.add_member(Member("om5", ArrayType(primitive_type<uint32_t>(), 10)));
     outter.add_member(Member("om6", ArrayType(inner, 10)));
+    outter.add_member(Member("om7", StringType()));
 
     DynamicData data(outter);
     data["om1"].value(6.7);
@@ -32,6 +33,7 @@ int main()
     data["om4"][1] = data["om2"];
     data["om5"][1].value(123);
     data["om6"][1] = data["om2"];
+    data["om7"].string("This is a string!");
 
 
     // DYNAMIC TYPE INFO
@@ -55,8 +57,9 @@ int main()
     std::cout << "  om3: " << data["om3"][1].value<uint32_t>() << std::endl;
     std::cout << "  om3: " << data["om3"][2].value<uint32_t>() << std::endl;
     std::cout << "  om4: " << data["om4"][1]["im2"].value<float>() << std::endl;
-    std::cout << "  om4: " << data["om5"][1].value<uint32_t>() << std::endl;
-    std::cout << "  om4: " << data["om6"][1]["im1"].value<uint32_t>() << std::endl;
+    std::cout << "  om5: " << data["om5"][1].value<uint32_t>() << std::endl;
+    std::cout << "  om6: " << data["om6"][1]["im1"].value<uint32_t>() << std::endl;
+    std::cout << "  om7: " << data["om7"].string() << std::endl;
 
     return 0;
 }

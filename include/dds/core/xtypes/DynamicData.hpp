@@ -43,6 +43,11 @@ public:
         return *reinterpret_cast<T*>(instance_);
     }
 
+    const std::string& string() const // this = PrimitiveType
+    {
+        return *reinterpret_cast<std::string*>(instance_);
+    }
+
     ReadableDynamicDataRef operator [] (
             const std::string& member_name) const // this = StructType
     {
@@ -94,6 +99,11 @@ public:
         return ReadableDynamicDataRef::value<T>();
     }
 
+    const std::string& string() // this = PrimitiveType
+    {
+        return *reinterpret_cast<std::string*>(instance_);
+    }
+
     WritableDynamicDataRef operator [] (
             const std::string& member_name) // this = StructType
     {
@@ -110,6 +120,11 @@ public:
     void value(T t) // this = PrimitiveType
     {
         *reinterpret_cast<T*>(instance_) = t;
+    }
+
+    void string(const std::string& s) // this = StringType
+    {
+        *reinterpret_cast<std::string*>(instance_) = s;
     }
 
     template<typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
