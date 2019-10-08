@@ -38,7 +38,7 @@ public:
     size_t instance_id() const { return size_t(instance_); }
 
     template<typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
-    const T& value() const // this = PrimitiveType
+    T value() const // this = PrimitiveType
     {
         return *reinterpret_cast<T*>(instance_);
     }
@@ -89,31 +89,9 @@ public:
     }
 
     template<typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
-    T& value() // this = PrimitiveType
+    T value() // this = PrimitiveType
     {
-        return const_cast<T&>(ReadableDynamicDataRef::value<T>());
-    }
-
-    template<typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
-    WritableDynamicDataRef& value(const T& t) // this = PrimitiveType
-    {
-        const_cast<T&>(ReadableDynamicDataRef::value<T>()) = t;
-        return *this;
-    }
-
-    template<typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
-    WritableDynamicDataRef push(T value) // this = SequenceType
-    {
-        const SequenceType* sequence = static_cast<const SequenceType*>(type_);
-        sequence->push_instance(instance_, reinterpret_cast<uint8_t*>(&value));
-        return *this;
-    }
-
-    WritableDynamicDataRef push(const WritableDynamicDataRef& data) // this = SequenceType
-    {
-        const SequenceType* sequence = static_cast<const SequenceType*>(type_);
-        sequence->push_instance(instance_, instance(data));
-        return *this;
+        return ReadableDynamicDataRef::value<T>();
     }
 
     WritableDynamicDataRef operator [] (
@@ -126,6 +104,27 @@ public:
             size_t index) // this = SequenceType & ArrayType
     {
         return ReadableDynamicDataRef::operator[](index);
+    }
+
+    template<typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+    void value(T t) // this = PrimitiveType
+    {
+        *reinterpret_cast<T*>(instance_) = t;
+    }
+
+    template<typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+    WritableDynamicDataRef& push(T value) // this = SequenceType
+    {
+        const SequenceType* sequence = static_cast<const SequenceType*>(type_);
+        sequence->push_instance(instance_, reinterpret_cast<uint8_t*>(&value));
+        return *this;
+    }
+
+    WritableDynamicDataRef& push(const WritableDynamicDataRef& data) // this = SequenceType
+    {
+        const SequenceType* sequence = static_cast<const SequenceType*>(type_);
+        sequence->push_instance(instance_, instance(data));
+        return *this;
     }
 
 protected:
@@ -159,7 +158,6 @@ public:
 
     virtual ~DynamicData()
     {
-        std::cout << "DynamicData - FREE " << uintptr_t(instance_) << std::endl;
         type_->destroy_instance(instance_);
         delete[] instance_;
     }
