@@ -64,22 +64,22 @@ public:
             DomainParticipant* /*participant*/,
             rtps::ParticipantDiscoveryInfo&& info) override
     {
-        if(info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+        if (info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
         {
             std::cout << "Subscriber participant " << //participant->getGuid() <<
                 " discovered participant " << info.info.m_guid << std::endl;
         }
-        else if(info.status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+        else if (info.status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
         {
             std::cout << "Subscriber participant " << //participant->getGuid() <<
                 " detected changes on participant " << info.info.m_guid << std::endl;
         }
-        else if(info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+        else if (info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
         {
             std::cout << "Subscriber participant " << //participant->getGuid() <<
                 " removed participant " << info.info.m_guid << std::endl;
         }
-        else if(info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+        else if (info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
         {
             std::cout << "Subscriber participant " << //participant->getGuid() <<
                 " dropped participant " << info.info.m_guid << std::endl;
@@ -168,7 +168,8 @@ class SubListener : public SubscriberListener
 {
 public:
 
-    SubListener() : number_samples_(0) {}
+    SubListener()
+        : number_samples_(0) {}
 
     ~SubListener() override {}
 
@@ -176,7 +177,7 @@ public:
             Subscriber* /*subscriber*/,
             const SubscriptionMatchedStatus& info) override
     {
-        if(info.current_count_change == 1)
+        if (info.current_count_change == 1)
         {
             std::cout << "Subscriber matched with publisher " << info.last_publication_handle << std::endl;
         }
@@ -201,9 +202,9 @@ public:
             SampleInfo_t info;
             DataReader* reader = subscriber->lookup_datareader(g_subscriber_attributes.topic.topicName.to_string());
 
-            if(nullptr != reader && !!reader->take_next_sample(sample.get(), &info))
+            if (nullptr != reader && !!reader->take_next_sample(sample.get(), &info))
             {
-                if(info.sampleKind == ALIVE)
+                if (info.sampleKind == ALIVE)
                 {
                     std::unique_lock<std::mutex> lock(mutex_);
                     ++number_samples_;
@@ -255,15 +256,15 @@ int main(
     //char* xml_file = nullptr;
     std::string magic;
 
-    while(arg_count < argc)
+    while (arg_count < argc)
     {
-        if(strcmp(argv[arg_count], "--notexit") == 0)
+        if (strcmp(argv[arg_count], "--notexit") == 0)
         {
             notexit = true;
         }
-        else if(strcmp(argv[arg_count], "--seed") == 0)
+        else if (strcmp(argv[arg_count], "--seed") == 0)
         {
-            if(++arg_count >= argc)
+            if (++arg_count >= argc)
             {
                 std::cout << "--seed expects a parameter" << std::endl;
                 return -1;
@@ -271,9 +272,9 @@ int main(
 
             seed = strtol(argv[arg_count], nullptr, 10);
         }
-        else if(strcmp(argv[arg_count], "--samples") == 0)
+        else if (strcmp(argv[arg_count], "--samples") == 0)
         {
-            if(++arg_count >= argc)
+            if (++arg_count >= argc)
             {
                 std::cout << "--samples expects a parameter" << std::endl;
                 return -1;
@@ -281,9 +282,9 @@ int main(
 
             samples = strtol(argv[arg_count], nullptr, 10);
         }
-        else if(strcmp(argv[arg_count], "--magic") == 0)
+        else if (strcmp(argv[arg_count], "--magic") == 0)
         {
-            if(++arg_count >= argc)
+            if (++arg_count >= argc)
             {
                 std::cout << "--magic expects a parameter" << std::endl;
                 return -1;
@@ -291,10 +292,10 @@ int main(
 
             magic = argv[arg_count];
         }
-        else if(strcmp(argv[arg_count], "--xmlfile") == 0)
+        else if (strcmp(argv[arg_count], "--xmlfile") == 0)
         {
             std::cout << "--xmlfile option isn't implemented yet." << std::endl;
-            if(++arg_count >= argc)
+            if (++arg_count >= argc)
             {
                 std::cout << "--xmlfile expects a parameter" << std::endl;
                 return -1;
@@ -347,7 +348,7 @@ int main(
         return 1;
     }
 
-    while(notexit && g_run)
+    while (notexit && g_run)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
@@ -355,7 +356,9 @@ int main(
     if (g_run)
     {
         std::unique_lock<std::mutex> lock(listener.mutex_);
-        listener.cv_.wait(lock, [&]{ return listener.number_samples_ >= samples; });
+        listener.cv_.wait(lock, [&] {
+            return listener.number_samples_ >= samples;
+        });
     }
 
     DomainParticipantFactory::get_instance()->delete_participant(participant);

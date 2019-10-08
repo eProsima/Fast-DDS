@@ -131,13 +131,13 @@ public:
         std::unique_lock<std::mutex> lock(mutex_);
         if (info.current_count_change == 1)
         {
-            std::cout << "Publisher matched with subscriber " << info.last_subscription_handle << std::endl;
-            ++matched_;
+            std::cout << "Publisher matched with subscriber " << info.last_subscription_handle
+                      << ": " << ++matched_ << std::endl;
         }
         else if (info.current_count_change == -1)
         {
-            std::cout << "Publisher unmatched with subscriber " << info.last_subscription_handle << std::endl;
-            --matched_;
+            std::cout << "Publisher unmatched with subscriber " << info.last_subscription_handle
+                      << ": " << --matched_ << std::endl;
         }
         else
         {
@@ -163,7 +163,7 @@ int main(
     uint32_t samples = 4;
     std::string magic;
 
-    while(arg_count < argc)
+    while (arg_count < argc)
     {
         if (strcmp(argv[arg_count], "--exit_on_lost_liveliness") == 0)
         {
@@ -283,7 +283,9 @@ int main(
     if (wait > 0)
     {
         std::unique_lock<std::mutex> lock(listener.mutex_);
-        listener.cv_.wait(lock, [&]{return listener.matched_ >= wait;});
+        listener.cv_.wait(lock, [&] {
+            return listener.matched_ >= wait;
+        });
     }
 
     types::DynamicData_ptr data(types::DynamicDataFactory::get_instance()->create_data(dyn_type));
