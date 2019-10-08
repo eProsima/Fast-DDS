@@ -70,7 +70,7 @@ public:
                 }
             }
 
-            delete memory_;
+            delete[] memory_;
             memory_ = nullptr;
         }
     }
@@ -114,7 +114,7 @@ private:
 
         std::memcpy(new_memory, memory_, capacity_ * block_size_); // this move the sequence instead of copy
 
-        delete memory_;
+        delete[] memory_;
         memory_ = new_memory;
         capacity_ = new_capacity;
     }

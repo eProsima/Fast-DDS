@@ -33,6 +33,7 @@ int main()
     data["om5"][1].value(123);
     data["om6"][1] = data["om2"];
 
+
     // DYNAMIC TYPE INFO
     std::cout << "outter name: " << outter.name() << std::endl;
     std::cout << "outter kind: " << (outter.kind() == TypeKind::STRUCTURE_TYPE) << std::endl;
