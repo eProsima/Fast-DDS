@@ -15,10 +15,10 @@
 #ifndef __TEST_UNITTEST_RTPS_SECURITY_SECURITYTESTS_HPP__
 #define __TEST_UNITTEST_RTPS_SECURITY_SECURITYTESTS_HPP__
 
+#include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/rtps/security/common/Handle.h>
 #include <rtps/security/MockAuthenticationPlugin.h>
 #include <rtps/security/MockCryptographyPlugin.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
 #include <fastrtps/rtps/writer/StatelessWriter.h>
 #include <fastrtps/rtps/writer/StatefulWriter.h>
 #include <fastrtps/rtps/history/WriterHistory.h>

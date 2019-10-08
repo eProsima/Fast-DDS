@@ -21,13 +21,13 @@
 #define EDPSIMPLELISTENER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/rtps/reader/ReaderListener.h>
-#include <fastrtps/rtps/writer/WriterListener.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/writer/WriterListener.h>
 
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
-#include "rtps/participant/RTPSParticipantImpl.h"
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -38,7 +38,7 @@ class RTPSReader;
 struct CacheChange_t;
 
 /*!
- * Placeholder class EDPListener 
+ * Placeholder class EDPListener
  * @ingroup DISCOVERY_MODULE
  */
 
@@ -119,13 +119,13 @@ class EDPSimplePUBListener : public EDPBasePUBListener
          */
         EDPSimplePUBListener(EDPSimple* sedp)
             : EDPBasePUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators)
-            , sedp_(sedp) 
+            , sedp_(sedp)
         {}
 
         virtual ~EDPSimplePUBListener() = default;
 
         /**
-         * Virtual method, 
+         * Virtual method,
          * @param reader
          * @param change
          */
@@ -135,7 +135,7 @@ class EDPSimplePUBListener : public EDPBasePUBListener
 
 
         /*!
-         * This method is called when all the readers matched with this Writer acknowledge that a cache 
+         * This method is called when all the readers matched with this Writer acknowledge that a cache
          * change has been received.
          * @param writer Pointer to the RTPSWriter.
          * @param change Pointer to the affected CacheChange_t.
@@ -162,7 +162,7 @@ class EDPSimpleSUBListener : public EDPBaseSUBListener
           Constructor
          * @param sedp Pointer to the EDPSimple associated with this listener.
          */
-        EDPSimpleSUBListener(EDPSimple* sedp) 
+        EDPSimpleSUBListener(EDPSimple* sedp)
             : EDPBaseSUBListener(sedp->mp_RTPSParticipant->getAttributes().allocation.locators)
             , sedp_(sedp)
         {
@@ -179,7 +179,7 @@ class EDPSimpleSUBListener : public EDPBaseSUBListener
                 const CacheChange_t* const change) override;
 
         /*!
-         * This method is called when all the readers matched with this Writer acknowledge that a cache 
+         * This method is called when all the readers matched with this Writer acknowledge that a cache
          * change has been received.
          * @param writer Pointer to the RTPSWriter.
          * @param change Pointer to the affected CacheChange_t.

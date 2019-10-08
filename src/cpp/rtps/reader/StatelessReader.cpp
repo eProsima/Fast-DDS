@@ -17,16 +17,16 @@
  *
  */
 
-#include <fastrtps/rtps/reader/StatelessReader.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/StatelessReader.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastrtps/log/Log.h>
-#include <fastrtps/rtps/common/CacheChange.h>
-#include <fastrtps/rtps/builtin/BuiltinProtocols.h>
-#include <fastrtps/rtps/builtin/liveliness/WLP.h>
-#include <fastrtps/rtps/writer/LivelinessManager.h>
-#include "../participant/RTPSParticipantImpl.h"
-#include "FragmentedChangePitStop.h"
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/writer/LivelinessManager.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/FragmentedChangePitStop.h>
 
 #include <mutex>
 #include <thread>
@@ -94,7 +94,7 @@ bool StatelessReader::matched_writer_add(
                 logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
             }
         }
-        
+
         return true;
     }
 
@@ -143,7 +143,7 @@ bool StatelessReader::matched_writer_remove(const GUID_t& writer_guid)
 bool StatelessReader::matched_writer_is_matched(const GUID_t& writer_guid)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    return std::any_of(matched_writers_.begin(), matched_writers_.end(), 
+    return std::any_of(matched_writers_.begin(), matched_writers_.end(),
         [writer_guid](const RemoteWriterInfo_t& item)
         {
             return item.guid == writer_guid;
@@ -176,7 +176,7 @@ bool StatelessReader::change_received(CacheChange_t* change)
 }
 
 bool StatelessReader::nextUntakenCache(
-        CacheChange_t** change, 
+        CacheChange_t** change,
         WriterProxy** /*wpout*/)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
@@ -302,8 +302,8 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
 #endif
                 if (!change_to_add->copy(change))
                 {
-                    logWarning(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: " 
-                        << change->serializedPayload.length << " bytes and max size in reader " 
+                    logWarning(RTPS_MSG_IN, IDSTRING "Problem copying CacheChange, received data is: "
+                        << change->serializedPayload.length << " bytes and max size in reader "
                         << getGuid().entityId << " is " << change_to_add->serializedPayload.max_size);
                     releaseCache(change_to_add);
                     return false;
@@ -329,8 +329,8 @@ bool StatelessReader::processDataMsg(CacheChange_t *change)
 }
 
 bool StatelessReader::processDataFragMsg(
-        CacheChange_t* incomingChange, 
-        uint32_t sampleSize, 
+        CacheChange_t* incomingChange,
+        uint32_t sampleSize,
         uint32_t fragmentStartingNum)
 {
     assert(incomingChange);
@@ -442,7 +442,7 @@ bool StatelessReader::acceptMsgFrom(const GUID_t& writerId)
         return true;
     }
 
-    return std::any_of(matched_writers_.begin(), matched_writers_.end(), 
+    return std::any_of(matched_writers_.begin(), matched_writers_.end(),
         [& writerId](const RemoteWriterInfo_t& writer)
         {
             return writer.guid == writerId;
@@ -450,7 +450,7 @@ bool StatelessReader::acceptMsgFrom(const GUID_t& writerId)
 }
 
 bool StatelessReader::thereIsUpperRecordOf(
-        const GUID_t& guid, 
+        const GUID_t& guid,
         const SequenceNumber_t& seq)
 {
     return get_last_notified(guid) >= seq;

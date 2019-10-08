@@ -260,7 +260,14 @@ class PubSubWriter
     {
         //Create participant
         participant_attr_.rtps.builtin.domainId = (uint32_t)GET_PID() % 230;
-        participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr_, &participant_listener_);
+
+        // Use local copies of attributes to catch #6507 issues with valgrind
+        eprosima::fastrtps::ParticipantAttributes participant_attr;
+        eprosima::fastrtps::PublisherAttributes publisher_attr;
+        participant_attr = participant_attr_;
+        publisher_attr = publisher_attr_;
+
+        participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr, &participant_listener_);
 
         if(participant_ != nullptr)
         {
@@ -270,7 +277,7 @@ class PubSubWriter
             eprosima::fastrtps::Domain::registerType(participant_, &type_);
 
             //Create publisher
-            publisher_ = eprosima::fastrtps::Domain::createPublisher(participant_, publisher_attr_, &listener_);
+            publisher_ = eprosima::fastrtps::Domain::createPublisher(participant_, publisher_attr, &listener_);
 
             if(publisher_ != nullptr)
             {
@@ -478,6 +485,18 @@ class PubSubWriter
     {
         publisher_attr_.qos.m_liveliness.lease_duration = lease_duration;
         return *this;
+    }
+
+    PubSubWriter& latency_budget_duration(
+            const eprosima::fastrtps::Duration_t& latency_duration)
+    {
+        publisher_attr_.qos.m_latencyBudget.duration = latency_duration;
+        return *this;
+    }
+
+    eprosima::fastrtps::Duration_t get_latency_budget_duration()
+    {
+        return publisher_attr_.qos.m_latencyBudget.duration;
     }
 
     PubSubWriter& liveliness_announcement_period(const eprosima::fastrtps::Duration_t announcement_period)

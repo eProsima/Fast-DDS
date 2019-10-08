@@ -2214,6 +2214,22 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
     DynamicDataFactory::get_instance()->delete_data(dynDataFromDynamic);
 }
 
+TEST_F(DynamicComplexTypesTests, TypeInformation)
+{
+    const TypeObject* compl_obj = TypeObjectFactory::get_instance()->get_type_object("CompleteStruct", true);
+    const TypeInformation* info = TypeObjectFactory::get_instance()->get_type_information("CompleteStruct");
+    ASSERT_FALSE(info->minimal().typeid_with_size().type_id() == info->complete().typeid_with_size().type_id());
+    ASSERT_TRUE(info->complete().typeid_with_size().type_id()._d() == EK_COMPLETE);
+    ASSERT_TRUE(info->complete().dependent_typeid_count() == 2);
+    ASSERT_TRUE(info->complete().typeid_with_size().typeobject_serialized_size()
+        == TypeObject::getCdrSerializedSize(*compl_obj));
+    const TypeInformation* enum_info = TypeObjectFactory::get_instance()->get_type_information("MyAliasEnum");
+    ASSERT_TRUE(enum_info->minimal().typeid_with_size().type_id()._d() == EK_MINIMAL);
+    const TypeInformation* bool_info = TypeObjectFactory::get_instance()->get_type_information("bool");
+    ASSERT_TRUE(bool_info->minimal().typeid_with_size().type_id()._d() == TK_BOOLEAN);
+    ASSERT_TRUE(bool_info->minimal().typeid_with_size().typeobject_serialized_size() == 0);
+}
+
 int main(int argc, char **argv)
 {
     Log::SetVerbosity(Log::Info);

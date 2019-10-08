@@ -16,15 +16,16 @@
 #define TYPES_DYNAMIC_PUB_SUB_TYPE_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/TopicDataType.h>
+#include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/DynamicDataPtr.h>
+#include <fastrtps/utils/md5.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace types {
 
-class DynamicPubSubType : public eprosima::fastrtps::TopicDataType
+class DynamicPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 protected:
 
@@ -38,15 +39,17 @@ public:
 
     RTPS_DllAPI DynamicPubSubType();
 
-    RTPS_DllAPI DynamicPubSubType(DynamicType_ptr pDynamicType);
+    RTPS_DllAPI DynamicPubSubType(
+            DynamicType_ptr pDynamicType);
 
     RTPS_DllAPI virtual ~DynamicPubSubType();
 
     RTPS_DllAPI void* createData() override;
 
-    RTPS_DllAPI void deleteData(void * data) override;
+    RTPS_DllAPI void deleteData (
+            void * data) override;
 
-    RTPS_DllAPI bool deserialize(
+    RTPS_DllAPI bool deserialize (
             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
             void* data) override;
 
@@ -55,7 +58,8 @@ public:
             eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
             bool force_md5 = false) override;
 
-    RTPS_DllAPI std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
+    RTPS_DllAPI std::function<uint32_t()> getSerializedSizeProvider(
+            void* data) override;
 
     RTPS_DllAPI bool serialize(
             void* data,
@@ -65,9 +69,11 @@ public:
 
     RTPS_DllAPI DynamicType_ptr GetDynamicType() const;
 
-    RTPS_DllAPI ResponseCode SetDynamicType(DynamicData_ptr pData);
+    RTPS_DllAPI ReturnCode_t SetDynamicType(
+            DynamicData_ptr pData);
 
-    RTPS_DllAPI ResponseCode SetDynamicType(DynamicType_ptr pType);
+    RTPS_DllAPI ReturnCode_t SetDynamicType(
+            DynamicType_ptr pType);
 };
 
 } // namespace types

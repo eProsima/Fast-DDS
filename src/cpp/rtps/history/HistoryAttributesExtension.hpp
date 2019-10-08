@@ -22,7 +22,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 namespace eprosima {

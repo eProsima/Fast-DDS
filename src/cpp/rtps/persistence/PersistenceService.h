@@ -19,9 +19,9 @@
 #ifndef PERSISTENCESERVICE_H_
 #define PERSISTENCESERVICE_H_
 
-#include <fastrtps/rtps/common/Guid.h>
-#include <fastrtps/rtps/common/CacheChange.h>
-#include <fastrtps/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 
 #include <foonathan/memory/container.hpp>
 #include <foonathan/memory/memory_pool.hpp>

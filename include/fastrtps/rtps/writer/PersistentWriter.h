@@ -20,50 +20,6 @@
 #ifndef PERSISTENTWRITER_H_
 #define PERSISTENTWRITER_H_
 
-#include "RTPSWriter.h"
-#include <string>
+#include <fastdds/rtps/writer/PersistentWriter.h>
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-namespace eprosima {
-namespace fastrtps{
-namespace rtps {
-
-class IPersistenceService;
-class WriterHistory;
-
-/**
- * Class PersistentWriter, that manages history persistence.
- * @ingroup WRITER_MODULE
- */
-class PersistentWriter
-{
-    protected:
-    PersistentWriter(GUID_t& guid,WriterAttributes& att,WriterHistory* hist, IPersistenceService* persistence);
-    public:
-    virtual ~PersistentWriter();
-    
-    /**
-     * Add a specific change to storage.
-     * @param change Pointer to the change to be stored.
-     */
-    void add_persistent_change(CacheChange_t* change);
-
-    /**
-     * Remove a change from storage.
-     * @param change Pointer to the change to be removed.
-     */
-    void remove_persistent_change(CacheChange_t* change);
-
-    private:
-    //!Persistence service
-    IPersistenceService* persistence_;
-    //!Persistence GUID
-    std::string persistence_guid_;
-};
-}
-} /* namespace rtps */
-} /* namespace eprosima */
-
-#endif
 #endif /* PERSISTENTWRITER_H_ */

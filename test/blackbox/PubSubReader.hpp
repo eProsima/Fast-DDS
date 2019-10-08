@@ -253,7 +253,14 @@ public:
     void init()
     {
         participant_attr_.rtps.builtin.domainId = (uint32_t)GET_PID() % 230;
-        participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr_, &participant_listener_);
+
+        // Use local copies of attributes to catch #6507 issues with valgrind
+        eprosima::fastrtps::ParticipantAttributes participant_attr;
+        eprosima::fastrtps::SubscriberAttributes subscriber_attr;
+        participant_attr = participant_attr_;
+        subscriber_attr = subscriber_attr_;
+
+        participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attr, &participant_listener_);
 
         ASSERT_NE(participant_, nullptr);
 
@@ -263,7 +270,7 @@ public:
         ASSERT_EQ(eprosima::fastrtps::Domain::registerType(participant_, &type_), true);
 
         //Create subscribe r
-        subscriber_ = eprosima::fastrtps::Domain::createSubscriber(participant_, subscriber_attr_, &listener_);
+        subscriber_ = eprosima::fastrtps::Domain::createSubscriber(participant_, subscriber_attr, &listener_);
         ASSERT_NE(subscriber_, nullptr);
 
         std::cout << "Created subscriber " << subscriber_->getGuid() << " for topic " <<
@@ -481,6 +488,18 @@ public:
     {
         subscriber_attr_.qos.m_liveliness.lease_duration = lease_duration;
         return *this;
+    }
+
+    PubSubReader& latency_budget_duration(
+            const eprosima::fastrtps::Duration_t& latency_duration)
+    {
+        subscriber_attr_.qos.m_latencyBudget.duration = latency_duration;
+        return *this;
+    }
+
+    eprosima::fastrtps::Duration_t get_latency_budget_duration()
+    {
+        return subscriber_attr_.qos.m_latencyBudget.duration;
     }
 
     PubSubReader& key(bool keyed)

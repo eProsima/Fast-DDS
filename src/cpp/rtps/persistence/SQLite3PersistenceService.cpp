@@ -17,11 +17,11 @@
  *
  */
 
-#include "SQLite3PersistenceService.h"
+#include <rtps/persistence/SQLite3PersistenceService.h>
 #include <fastrtps/log/Log.h>
-#include <fastrtps/rtps/history/CacheChangePool.h>
+#include <fastdds/rtps/history/CacheChangePool.h>
 
-#include "sqlite3.h"
+#include <rtps/persistence/sqlite3.h>
 
 #include <string.h>
 
@@ -35,7 +35,7 @@ static sqlite3* open_or_create_database(const char* filename)
     int rc;
 
     // Open database
-    int flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | 
+    int flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE |
                 SQLITE_OPEN_FULLMUTEX | SQLITE_OPEN_SHAREDCACHE;
     rc = sqlite3_open_v2(filename, &db, flags, 0);
     if (rc != SQLITE_OK)
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS writers(
     instance binary(16),
     payload blob,
     PRIMARY KEY(guid, seq_num DESC)
-) WITHOUT ROWID; 
+) WITHOUT ROWID;
 
 CREATE TABLE IF NOT EXISTS readers(
     guid text,
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS readers(
     writer_guid_entity binary(4),
     seq_num integer,
     PRIMARY KEY(guid, writer_guid_prefix, writer_guid_entity)
-) WITHOUT ROWID; 
+) WITHOUT ROWID;
 
 )";
     rc = sqlite3_exec(db,create_statement,0,0,0);
@@ -257,7 +257,7 @@ bool SQLite3PersistenceService::load_reader_from_storage(
 bool SQLite3PersistenceService::update_writer_seq_on_storage(
         const std::string& reader_guid,
         const GUID_t& writer_guid,
-        const SequenceNumber_t& seq_number) 
+        const SequenceNumber_t& seq_number)
 {
     logInfo(RTPS_PERSISTENCE, "Reader " << reader_guid << " setting seq for writer " << writer_guid << " to " << seq_number);
 

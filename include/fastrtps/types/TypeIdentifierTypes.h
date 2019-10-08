@@ -40,11 +40,14 @@ namespace eprosima
 namespace eprosima{
 namespace fastrtps{
 
+class TypeConsistencyEnforcementQosPolicy;
+
 namespace types{
 
 
 // Forward declaration
 class TypeIdentifier;
+class StringLTypeDefn;
 
 /*!
  * @brief This class represents the structure StringSTypeDefn defined by the user in the IDL file.
@@ -147,6 +150,12 @@ public:
      * @param cdr CDR serialization object.
      */
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
+
+    RTPS_DllAPI bool consistent(const StringSTypeDefn &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
+
+    RTPS_DllAPI bool consistent(const StringLTypeDefn &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 private:
     SBound m_bound;
@@ -252,6 +261,12 @@ public:
      * @param cdr CDR serialization object.
      */
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
+
+    RTPS_DllAPI bool consistent(const StringLTypeDefn &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
+
+    RTPS_DllAPI bool consistent(const StringSTypeDefn &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 private:
     LBound m_bound;
@@ -383,6 +398,9 @@ public:
      * @param cdr CDR serialization object.
      */
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
+
+    RTPS_DllAPI bool consistent(const PlainCollectionHeader &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 
 private:
@@ -549,6 +567,9 @@ public:
      */
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
+    RTPS_DllAPI bool consistent(const PlainSequenceSElemDefn &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
+
 
 private:
     PlainCollectionHeader m_header;
@@ -714,6 +735,9 @@ public:
      * @param cdr CDR serialization object.
      */
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
+
+    RTPS_DllAPI bool consistent(const PlainSequenceLElemDefn &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 
 
@@ -891,6 +915,9 @@ public:
      */
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
+    RTPS_DllAPI bool consistent(const PlainArraySElemDefn &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
+
 
 
 private:
@@ -1066,6 +1093,9 @@ public:
      * @param cdr CDR serialization object.
      */
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
+
+    RTPS_DllAPI bool consistent(const PlainArrayLElemDefn &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 
 
@@ -1282,6 +1312,9 @@ public:
      * @param cdr CDR serialization object.
      */
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
+
+    RTPS_DllAPI bool consistent(const PlainMapSTypeDefn &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 
 
@@ -1501,6 +1534,9 @@ public:
      */
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
+    RTPS_DllAPI bool consistent(const PlainMapLTypeDefn &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
+
 
 private:
     PlainCollectionHeader m_header;
@@ -1672,6 +1708,9 @@ public:
      */
     RTPS_DllAPI void deserialize(eprosima::fastcdr::Cdr &cdr);
 
+    RTPS_DllAPI bool consistent(const StronglyConnectedComponentId &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
+
 
 private:
     TypeObjectHashId m_sc_component_id;
@@ -1751,6 +1790,9 @@ public:
      * @param cdr CDR serialization object.
      */
     RTPS_DllAPI virtual void deserialize(eprosima::fastcdr::Cdr &cdr);
+
+    RTPS_DllAPI bool consistent(const ExtendedTypeDefn &x,
+        const TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 
 };

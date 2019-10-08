@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/rtps/flowcontrol/ThroughputControllerDescriptor.h>
+#include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 
 namespace eprosima{
 namespace fastrtps{

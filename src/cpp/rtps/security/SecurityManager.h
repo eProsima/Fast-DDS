@@ -20,15 +20,15 @@
 
 #include <rtps/security/SecurityPluginFactory.h>
 
-#include <fastrtps/rtps/security/authentication/Handshake.h>
-#include <fastrtps/rtps/security/common/ParticipantGenericMessage.h>
-#include <fastrtps/rtps/reader/ReaderListener.h>
-#include <fastrtps/rtps/common/SequenceNumber.h>
-#include <fastrtps/rtps/common/SerializedPayload.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastrtps/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/security/authentication/Handshake.h>
+#include <fastdds/rtps/security/common/ParticipantGenericMessage.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
 
 #include <map>
 #include <mutex>

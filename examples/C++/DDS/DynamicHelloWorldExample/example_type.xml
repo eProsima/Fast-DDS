@@ -1,0 +1,9 @@
+<types>
+    <type>
+        <struct name="HelloWorld">
+            <member name="message" type="string"/>
+            <member name="index" type="uint32"/>
+            <member name="array" type="uint32" arrayDimensions="5,2"/>
+        </struct>
+    </type>
+</types>

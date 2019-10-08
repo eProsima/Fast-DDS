@@ -50,11 +50,11 @@ protected:
     MemberId current_member_id_;
     uint32_t max_index_;
 
-    ResponseCode _apply_annotation_to_member(
+    ReturnCode_t _apply_annotation_to_member(
             MemberId id,
             AnnotationDescriptor& descriptor);
 
-    ResponseCode _apply_annotation_to_member(
+    ReturnCode_t _apply_annotation_to_member(
             MemberId id,
             const std::string& annotation_name,
             const std::string& key,
@@ -69,27 +69,27 @@ protected:
 
     void clear();
 
-    ResponseCode copy_from_builder(const DynamicTypeBuilder* other);
+    ReturnCode_t copy_from_builder(const DynamicTypeBuilder* other);
 
 public:
-    RTPS_DllAPI ResponseCode add_empty_member(
+    RTPS_DllAPI ReturnCode_t add_empty_member(
             uint32_t index,
             const std::string& name);
 
-    RTPS_DllAPI ResponseCode add_member(const MemberDescriptor* descriptor);
+    RTPS_DllAPI ReturnCode_t add_member(const MemberDescriptor* descriptor);
 
-    RTPS_DllAPI ResponseCode add_member(
+    RTPS_DllAPI ReturnCode_t add_member(
             MemberId id,
             const std::string& name,
             DynamicTypeBuilder* type_ = nullptr);
 
-    RTPS_DllAPI ResponseCode add_member(
+    RTPS_DllAPI ReturnCode_t add_member(
             MemberId id,
             const std::string& name,
             DynamicTypeBuilder* type_,
             const std::string& defaultValue);
 
-    RTPS_DllAPI ResponseCode add_member(
+    RTPS_DllAPI ReturnCode_t add_member(
             MemberId id,
             const std::string& name,
             DynamicTypeBuilder* type_,
@@ -97,18 +97,18 @@ public:
             const std::vector<uint64_t>& unionLabels,
             bool isDefaultLabel);
 
-    RTPS_DllAPI ResponseCode add_member(
+    RTPS_DllAPI ReturnCode_t add_member(
             MemberId id,
             const std::string& name,
             DynamicType_ptr type_ = nullptr);
 
-    RTPS_DllAPI ResponseCode add_member(
+    RTPS_DllAPI ReturnCode_t add_member(
             MemberId id,
             const std::string& name,
             DynamicType_ptr type_,
             const std::string& defaultValue);
 
-    RTPS_DllAPI ResponseCode add_member(
+    RTPS_DllAPI ReturnCode_t add_member(
             MemberId id,
             const std::string& name,
             DynamicType_ptr type_,
@@ -116,18 +116,18 @@ public:
             const std::vector<uint64_t>& unionLabels,
             bool isDefaultLabel);
 
-    RTPS_DllAPI ResponseCode apply_annotation(AnnotationDescriptor& descriptor);
+    RTPS_DllAPI ReturnCode_t apply_annotation(AnnotationDescriptor& descriptor);
 
-    RTPS_DllAPI ResponseCode apply_annotation(
+    RTPS_DllAPI ReturnCode_t apply_annotation(
             const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 
-    RTPS_DllAPI ResponseCode apply_annotation_to_member(
+    RTPS_DllAPI ReturnCode_t apply_annotation_to_member(
             MemberId id,
             AnnotationDescriptor& descriptor);
 
-    RTPS_DllAPI ResponseCode apply_annotation_to_member(
+    RTPS_DllAPI ReturnCode_t apply_annotation_to_member(
             MemberId id,
             const std::string& annotation_name,
             const std::string& key,
@@ -135,9 +135,9 @@ public:
 
     RTPS_DllAPI DynamicType_ptr build();
 
-    RTPS_DllAPI ResponseCode copy_from(const DynamicTypeBuilder* other);
+    RTPS_DllAPI ReturnCode_t copy_from(const DynamicTypeBuilder* other);
 
-    ResponseCode get_all_members(std::map<MemberId, DynamicTypeMember*>& members);
+    ReturnCode_t get_all_members(std::map<MemberId, DynamicTypeMember*>& members);
 
     RTPS_DllAPI inline TypeKind get_kind() const
     {
@@ -157,7 +157,7 @@ public:
 
     bool is_discriminator_type() const;
 
-    RTPS_DllAPI ResponseCode set_name(const std::string& name);
+    RTPS_DllAPI ReturnCode_t set_name(const std::string& name);
 };
 
 } // namespace types

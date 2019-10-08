@@ -19,14 +19,14 @@
 #ifndef SUBSCRIBERATTRIBUTES_H_
 #define SUBSCRIBERATTRIBUTES_H_
 
-#include <fastrtps/rtps/resources/ResourceManagement.h>
+#include <fastdds/rtps/resources/ResourceManagement.h>
 
-#include "../rtps/common/Time_t.h"
-#include "../rtps/common/Locator.h"
-#include "../rtps/attributes/ReaderAttributes.h"
-#include "TopicAttributes.h"
-#include "../qos/ReaderQos.h"
-#include "../rtps/attributes/PropertyPolicy.h"
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/qos/ReaderQos.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 
 
 

@@ -19,40 +19,7 @@
 
 #ifndef STATEFULPERSISTENTREADER_H_
 #define STATEFULPERSISTENTREADER_H_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include "StatefulReader.h"
+#include <fastdds/rtps/reader/StatefulPersistentReader.h>
 
-namespace eprosima {
-namespace fastrtps{
-namespace rtps {
-
-class IPersistenceService;
-
-/**
- * Class StatefulPersistentReader, specialization of StatefulReader that manages sequence number persistence.
- * @ingroup READER_MODULE
- */
-class StatefulPersistentReader : public StatefulReader
-{
-    friend class RTPSParticipantImpl;
-
-    StatefulPersistentReader(RTPSParticipantImpl*, GUID_t& guid,
-        ReaderAttributes& att, ReaderHistory* hist, ReaderListener* listen,
-        IPersistenceService* persistence);
-    public:
-    virtual ~StatefulPersistentReader();
-
-    protected:
-    virtual void set_last_notified(const GUID_t& persistence_guid, const SequenceNumber_t& seq) override;
-
-    private:
-    IPersistenceService* persistence_;
-    std::string persistence_guid_;
-};
-}
-} /* namespace rtps */
-} /* namespace eprosima */
-
-#endif
 #endif /* STATEFULPERSISTENTREADER_H_ */

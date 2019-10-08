@@ -16,7 +16,7 @@
 #define UDP_CHANNEL_RESOURCE_INFO_
 
 #include <fastrtps/transport/ChannelResource.h>
-#include <fastrtps/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Locator.h>
 #include <asio.hpp>
 
 namespace eprosima{

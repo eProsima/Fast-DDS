@@ -17,11 +17,11 @@
  *
  */
 
-#include <fastrtps/rtps/reader/StatefulPersistentReader.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
-#include "../persistence/PersistenceService.h"
-#include "../participant/RTPSParticipantImpl.h"
-#include "ReaderHistoryState.hpp"
+#include <fastdds/rtps/reader/StatefulPersistentReader.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <rtps/persistence/PersistenceService.h>
+#include <fastrtps_deprecated/participant/ParticipantImpl.h>
+#include <rtps/reader/ReaderHistoryState.hpp>
 
 namespace eprosima {
 namespace fastrtps {

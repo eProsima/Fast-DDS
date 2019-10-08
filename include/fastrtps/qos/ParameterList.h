@@ -19,11 +19,11 @@
 #ifndef PARAM_LIST_T_H_
 #define PARAM_LIST_T_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include "ParameterTypes.h"
-#include "../rtps/messages/RTPS_messages.h"
-#include "../rtps/common/CDRMessage_t.h"
-#include "../rtps/messages/CDRMessage.h"
-#include "../rtps/common/CacheChange.h"
+#include <fastrtps/qos/ParameterTypes.h>
+#include <fastdds/rtps/messages/RTPS_messages.h>
+#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
+#include <fastdds/rtps/common/CacheChange.h>
 
 #include <functional>
 
@@ -34,8 +34,8 @@ namespace fastrtps {
  * ParameterList class has static methods to update or read a list of Parameter_t
  * @ingroup PARAMETER_MODULE
  */
- 
-class ParameterList 
+
+class ParameterList
 {
     public:
 

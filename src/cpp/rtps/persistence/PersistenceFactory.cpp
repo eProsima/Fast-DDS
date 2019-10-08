@@ -17,10 +17,10 @@
  *
  */
 
-#include "PersistenceService.h"
-#include "SQLite3PersistenceService.h"
+#include <rtps/persistence/PersistenceService.h>
+#include <rtps/persistence/SQLite3PersistenceService.h>
 
-#include <fastrtps/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 
 namespace eprosima {
 namespace fastrtps{

@@ -33,7 +33,7 @@ public:
     using Base::operator*;
     using Base::operator bool;
 
-    DynamicData_ptr()
+    RTPS_DllAPI DynamicData_ptr()
     {
     }
 

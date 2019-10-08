@@ -19,7 +19,7 @@
 #ifndef _DEADLINE_MISSED_STATUS_H_
 #define _DEADLINE_MISSED_STATUS_H_
 
-#include <fastrtps/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/InstanceHandle.h>
 
 namespace eprosima {
 namespace fastrtps {

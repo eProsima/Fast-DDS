@@ -15,12 +15,12 @@
 #ifndef TEST_UDPV4_TRANSPORT_H
 #define TEST_UDPV4_TRANSPORT_H
 #include <fastrtps/transport/UDPv4Transport.h>
-#include <fastrtps/rtps/messages/RTPS_messages.h>
-#include <fastrtps/rtps/common/SequenceNumber.h>
-#include <fastrtps/rtps/messages/CDRMessage.h>
+#include <fastdds/rtps/messages/RTPS_messages.h>
+#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
 #include <vector>
 
-#include "test_UDPv4TransportDescriptor.h"
+#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 
 namespace eprosima{
 namespace fastrtps{

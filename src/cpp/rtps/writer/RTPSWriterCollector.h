@@ -19,9 +19,9 @@
 #ifndef _RTPS_WRITER_RTPSWRITERCOLLECTOR_H_
 #define _RTPS_WRITER_RTPSWRITERCOLLECTOR_H_
 
-#include <fastrtps/rtps/common/SequenceNumber.h>
-#include <fastrtps/rtps/common/FragmentNumber.h>
-#include <fastrtps/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/FragmentNumber.h>
+#include <fastdds/rtps/common/CacheChange.h>
 
 #include <vector>
 #include <cassert>
