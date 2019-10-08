@@ -40,6 +40,10 @@ public:
             const DynamicType& type)
         : name_(name)
         , type_(type)
+        , id_(-1)
+        , key_(false)
+        , optional_(false)
+        , bitset_(false)
     {}
 
     template<typename DynamicTypeImpl>
@@ -48,6 +52,10 @@ public:
             const DynamicTypeImpl&& type)
         : name_(name)
         , type_(std::move(type))
+        , id_(-1)
+        , key_(false)
+        , optional_(false)
+        , bitset_(false)
     {}
 
     StructMember(const StructMember& other) = default;
@@ -65,7 +73,7 @@ public:
 
     StructMember&& id(int32_t value)
     {
-        bitset_ = value;
+        id_ = value;
         return std::move(*this);
     }
 

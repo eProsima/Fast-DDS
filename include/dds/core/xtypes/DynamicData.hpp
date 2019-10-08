@@ -28,23 +28,26 @@ namespace xtypes {
 class DynamicDataConst
 {
 public:
+    template<
+        typename T,
+        class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
     DynamicDataConst(
-            uint16_t&& value)
-        : type_(primitive_type<uint16_t>())
-        , instance_(new uint8_t[type_.memory_size()])
+            T value)
+        : type_(&primitive_type<T>())
+        , instance_(new uint8_t[type_->memory_size()])
         , is_loaned(false)
     {
-        type_.init_instance(instance_);
-        *reinterpret_cast<uint16_t*>(instance_) = value;
+        type_->init_instance(instance_);
+        *reinterpret_cast<T*>(instance_) = value;
     }
 
     DynamicDataConst(
             const DynamicType& type)
-        : type_(type)
+        : type_(&type)
         , instance_(new uint8_t[type.memory_size()])
         , is_loaned(false)
     {
-        type_.init_instance(instance_);
+        type_->init_instance(instance_);
     }
 
     template<typename T>
@@ -54,16 +57,16 @@ public:
         , instance_(new uint8_t[type.memory_size()])
         , is_loaned(false)
     {
-        type_.init_instance(instance_);
+        type_->init_instance(instance_);
     }
 
     DynamicDataConst(
             const DynamicDataConst& other)
         : type_(other.type_)
-        , instance_(new uint8_t[other.type_.memory_size()])
+        , instance_(new uint8_t[other.type_->memory_size()])
         , is_loaned(false)
     {
-        type_.copy_instance(instance_, other.instance_);
+        type_->copy_instance(instance_, other.instance_);
     }
 
     DynamicDataConst(
@@ -79,12 +82,14 @@ public:
     {
         if(!is_loaned)
         {
-            type_.destroy_instance(instance_);
+            type_->destroy_instance(instance_);
             delete[] instance_;
         }
     }
 
-    const DynamicType& type() const { return type_; }
+    bool has_type() const { return type_ != nullptr; }
+    const DynamicType& type() const { return *type_; }
+    size_t instance_id() const { return size_t(instance_); }
 
     template<typename T>
     const T& value() const
@@ -115,15 +120,15 @@ protected:
     {
         if(type().kind() != TypeKind::STRUCTURE_TYPE)
         {
-            throw "Exception Not implemented";
+            throw "Exception Not implemented"; //TODO: Exceptions and their checks only in Debug mode
         }
-        return static_cast<const StructType&>(type_).member(name);
+        return static_cast<const StructType*>(type_)->member(name);
     }
 
     DynamicDataConst(
             const DynamicType& type,
             uint8_t* source)
-        : type_(type)
+        : type_(&type)
         , instance_(source)
         , is_loaned(true)
     {}
@@ -136,7 +141,7 @@ protected:
         , is_loaned(true)
     {}
 
-    const DynamicType& type_;
+    const DynamicType* type_;
     uint8_t* instance_;
     bool is_loaned;
 };
@@ -145,9 +150,12 @@ protected:
 class DynamicData : public DynamicDataConst
 {
 public:
+    template<
+        typename T,
+        class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
     DynamicData(
-            uint16_t&& a)
-        : DynamicDataConst(std::move(a))
+            T value)
+        : DynamicDataConst(value)
     {}
 
     DynamicData(
@@ -162,9 +170,17 @@ public:
     }
 
     template<typename T>
-    void value(const T& t)
+    DynamicData& value(const T& t)
     {
         const_cast<T&>(DynamicDataConst::value<T>()) = t;
+        return *this;
+    }
+
+    template<typename T>
+    DynamicData& push(const T& t)
+    {
+        values().push_back(t);
+        return *this;
     }
 
     std::vector<DynamicData>& values() const

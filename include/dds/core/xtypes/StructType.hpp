@@ -42,7 +42,7 @@ public:
     StructType(const StructType& other) = default;
     StructType(StructType&& other) = default;
 
-    bool has_parent() const { return parent_.get() == nullptr; }
+    bool has_parent() const { return parent_.get() != nullptr; }
     const DynamicType& parent() const { return *parent_; }
 
     StructType&& add_member(StructMember&& member)

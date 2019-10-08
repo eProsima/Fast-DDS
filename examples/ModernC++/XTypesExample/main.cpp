@@ -31,12 +31,12 @@ int main()
     data["om1"].value(6.7);
     data["om2"]["im1"].value(42);
     data["om2"]["im2"].value(35.8f);
-    data["om3"].values().push_back(12);
+    data["om3"].values().push_back(12); //std::vector push_back
     data["om3"].values().push_back(31);
-    data["om3"].values().push_back(50);
-    data["om3"][1].value(100);
-    data["om4"].values().push_back(data["om2"]);
-    data["om4"].values().push_back(data["om2"]);
+    data["om3"].push(50); // direct push to the internal std::vector
+    data["om3"][1].value(100); //direct index access to the std::vector
+    data["om4"].push(data["om2"]);
+    data["om4"].push(data["om2"]);
 
     // DYNAMIC TYPE INFO
     std::cout << "outter name: " << outter.name() << std::endl;
