@@ -28,7 +28,7 @@ namespace xtypes {
 class CollectionType : public DynamicType
 {
 public:
-    const DynamicType& content_type_() const { return *content_; }
+    const DynamicType& content_type() const { return *content_; }
 
 protected:
     CollectionType(
@@ -38,9 +38,6 @@ protected:
         : DynamicType(kind, name)
         , content_(std::move(content))
     {}
-
-    CollectionType(const CollectionType& other) = default;
-    CollectionType(CollectionType&& other) = default;
 
 private:
     DynamicType::Ptr content_;

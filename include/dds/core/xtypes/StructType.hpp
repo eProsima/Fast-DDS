@@ -62,7 +62,7 @@ public:
     {
         for(auto&& it: member_map())
         {
-            it.second.type().init_instance(instance);
+            it.second.type().init_instance(instance + it.second.offset());
         }
     };
 
@@ -78,7 +78,7 @@ public:
     {
         for(auto&& it: member_map())
         {
-            it.second.type().destroy_instance(instance);
+            it.second.type().destroy_instance(instance + it.second.offset());
         }
     };
 

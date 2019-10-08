@@ -20,6 +20,9 @@
 #define OMG_DDS_CORE_XTYPES_SEQUENCE_TYPE_HPP_
 
 #include <dds/core/xtypes/MutableCollectionType.hpp>
+#include <dds/core/xtypes/DynamicData.hpp>
+
+#include <vector>
 
 namespace dds {
 namespace core {
@@ -37,31 +40,36 @@ public:
     template<typename DynamicTypeImpl>
     SequenceType(
             const DynamicTypeImpl&& content,
-            uint32_t bounds = 0)
+            uint32_t bounds)
         : MutableCollectionType(TypeKind::SEQUENCE_TYPE, "sequence_" + std::to_string(bounds), DynamicType::Ptr(std::move(content)), bounds)
     {}
 
-    SequenceType(const SequenceType& other) = default;
-    SequenceType(SequenceType&& other) = default;
+    SequenceType(const SequenceType& other)
+        : MutableCollectionType(other)
+    {}
+
+    SequenceType(SequenceType&& other)
+        : MutableCollectionType(std::move(other))
+    {}
 
     virtual size_t memory_size() const
     {
-        return 0; //TODO
+        return sizeof(std::vector<DynamicData>);
     }
 
-    virtual void init_instance(uint8_t* /*instance*/) const
+    virtual void init_instance(uint8_t* instance) const
     {
-        //TODO
+        new (instance) std::vector<DynamicData>(bounds(), content_type());
     }
 
-    virtual void copy_instance(uint8_t* /*target*/, const uint8_t* /*source*/) const
+    virtual void copy_instance(uint8_t* target, const uint8_t* source) const
     {
-        //TODO
+        new (target) std::vector<DynamicData>(*reinterpret_cast<const std::vector<DynamicData>*>(source));
     }
 
-    virtual void destroy_instance(uint8_t* /*instance*/) const
+    virtual void destroy_instance(uint8_t* instance) const
     {
-        //TODO
+        reinterpret_cast<std::vector<DynamicData>*>(instance)->~vector();
     }
 
 protected:

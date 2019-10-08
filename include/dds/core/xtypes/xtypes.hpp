@@ -21,6 +21,7 @@
 
 #include <dds/core/xtypes/PrimitiveTypes.hpp>
 #include <dds/core/xtypes/StructType.hpp>
+#include <dds/core/xtypes/SequenceType.hpp>
 #include <dds/core/xtypes/DynamicData.hpp>
 
 #endif //OMG_DDS_CORE_XTYPES_XTYPES_HPP_

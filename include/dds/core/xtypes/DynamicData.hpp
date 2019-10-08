@@ -19,6 +19,7 @@
 #define OMG_DDS_CORE_XTYPES_DYNAMIC_DATA_HPP_
 
 #include <dds/core/xtypes/StructType.hpp>
+#include <dds/core/xtypes/PrimitiveTypes.hpp>
 
 namespace dds {
 namespace core {
@@ -28,7 +29,27 @@ class DynamicDataConst
 {
 public:
     DynamicDataConst(
+            uint16_t&& value)
+        : type_(primitive_type<uint16_t>())
+        , instance_(new uint8_t[type_.memory_size()])
+        , is_loaned(false)
+    {
+        type_.init_instance(instance_);
+        *reinterpret_cast<uint16_t*>(instance_) = value;
+    }
+
+    DynamicDataConst(
             const DynamicType& type)
+        : type_(type)
+        , instance_(new uint8_t[type.memory_size()])
+        , is_loaned(false)
+    {
+        type_.init_instance(instance_);
+    }
+
+    template<typename T>
+    DynamicDataConst(
+            const T&& type)
         : type_(type)
         , instance_(new uint8_t[type.memory_size()])
         , is_loaned(false)
@@ -71,23 +92,22 @@ public:
         return *reinterpret_cast<T*>(instance_);
     }
 
-    template<typename T>
-    const T& value(
-            const std::string& member_name) const
+    const std::vector<DynamicDataConst>& values() const
     {
-        return *reinterpret_cast<T*>(instance_ + struct_member(member_name).offset());
+        return *reinterpret_cast<std::vector<DynamicDataConst>*>(instance_);
     }
 
-    DynamicDataConst loan_value(
+    DynamicDataConst operator [] (
             const std::string& member_name) const
     {
         const StructMember& member = struct_member(member_name);
         return DynamicDataConst(member.type(), instance_ + member.offset());
     }
 
-    DynamicDataConst operator [] (const std::string& member_name) const
+    const DynamicDataConst& operator [] (
+            size_t index) const
     {
-        return loan_value(member_name);
+        return values()[index];
     }
 
 protected:
@@ -121,9 +141,15 @@ protected:
     bool is_loaned;
 };
 
+
 class DynamicData : public DynamicDataConst
 {
 public:
+    DynamicData(
+            uint16_t&& a)
+        : DynamicDataConst(std::move(a))
+    {}
+
     DynamicData(
             const DynamicType& type)
         : DynamicDataConst(type)
@@ -136,37 +162,26 @@ public:
     }
 
     template<typename T>
-    void value(
-            const T& value)
+    void value(const T& t)
     {
-        const_cast<T&>(DynamicDataConst::value<T>()) = value;
+        const_cast<T&>(DynamicDataConst::value<T>()) = t;
     }
 
-    template<typename T>
-    T& value(
-            const std::string& member_name)
+    std::vector<DynamicData>& values() const
     {
-        return const_cast<T&>(DynamicDataConst::value<T>(member_name));
-    }
-
-    template<typename T>
-    void value(
-            const std::string& member_name,
-            const T& value)
-    {
-        const_cast<T&>(DynamicDataConst::value<T>(member_name)) = value;
-    }
-
-    DynamicData loan_value(
-            const std::string& member_name)
-    {
-        return DynamicDataConst::loan_value(member_name);
+        return const_cast<std::vector<DynamicData>&>(reinterpret_cast<const std::vector<DynamicData>&>(DynamicDataConst::values()));
     }
 
     DynamicData operator [] (
             const std::string& member_name)
     {
-        return loan_value(member_name);
+        return DynamicDataConst::operator[](member_name);
+    }
+
+    DynamicData& operator [] (
+            size_t index) const
+    {
+        return const_cast<DynamicData&>(reinterpret_cast<const DynamicData&>(DynamicDataConst::operator[](index)));
     }
 
 private:

@@ -22,6 +22,7 @@
 #include <dds/core/xtypes/TypeKind.hpp>
 
 #include <string>
+#include <iostream> //DELETE
 
 namespace dds {
 namespace core {

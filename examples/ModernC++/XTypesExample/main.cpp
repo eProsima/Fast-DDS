@@ -14,6 +14,8 @@ int main()
     StructType outter("OutterType");
     outter.add_member(Member("om1", primitive_type<double>()));
     outter.add_member(Member("om2", inner));
+    outter.add_member(Member("om3", SequenceType(primitive_type<uint32_t>())));
+    outter.add_member(Member("om4", SequenceType(inner)));
 
     /*
     StructType outter("OutterType");
@@ -26,9 +28,15 @@ int main()
     */
 
     DynamicData data(outter);
-    data.value("om1", 6.7);
-    data.loan_value("om2").value("im1", 42);
-    data.loan_value("om2").value("im2", 35.8f);
+    data["om1"].value(6.7);
+    data["om2"]["im1"].value(42);
+    data["om2"]["im2"].value(35.8f);
+    data["om3"].values().push_back(12);
+    data["om3"].values().push_back(31);
+    data["om3"].values().push_back(50);
+    data["om3"][1].value(100);
+    data["om4"].values().push_back(data["om2"]);
+    data["om4"].values().push_back(data["om2"]);
 
     // DYNAMIC TYPE INFO
     std::cout << "outter name: " << outter.name() << std::endl;
@@ -39,12 +47,18 @@ int main()
     std::cout << "  om2 type kind: " << (outter.member("om2").type().kind() == TypeKind::STRUCTURE_TYPE) << std::endl;
     std::cout << "  om2 im1 name: " << static_cast<const StructType&>(outter.member("om2").type()).member("im1").name() << std::endl;
     std::cout << "  om2 im2 name: " << static_cast<const StructType&>(outter.member("om2").type()).member("im2").name() << std::endl;
+    std::cout << "  om3 name: " << outter.member("om3").name() << std::endl;
+    std::cout << "  om3 type kind: " << (outter.member("om3").type().kind() == TypeKind::SEQUENCE_TYPE) << std::endl;
 
     //DYNAMIC DATA INFO
     std::cout << "outter values: " << std::endl;
-    std::cout << "  om1: " << data.value<double>("om1") << std::endl;
-    std::cout << "  om2: " << data.loan_value("om2").value<uint32_t>("im1") << std::endl;
-    std::cout << "  om2: " << data.loan_value("om2").value<float>("im2") << std::endl;
+    std::cout << "  om1: " << data["om1"].value<double>() << std::endl;
+    std::cout << "  om2: " << data["om2"]["im1"].value<uint32_t>() << std::endl;
+    std::cout << "  om2: " << data["om2"]["im2"].value<float>() << std::endl;
+    std::cout << "  om3: " << data["om3"].values()[0].value<uint32_t>() << std::endl;
+    std::cout << "  om3: " << data["om3"].values()[1].value<uint32_t>() << std::endl;
+    std::cout << "  om3: " << data["om3"][2].value<uint32_t>() << std::endl;
+    std::cout << "  om4: " << data["om4"][1]["im2"].value<float>() << std::endl;
 
     return 0;
 }
