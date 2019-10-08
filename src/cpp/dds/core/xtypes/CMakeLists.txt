@@ -10,6 +10,7 @@ set(XTYPES_STANDALONE ${PROJECT_NAME})
 
 set(${XTYPES_STANDALONE}_source_files
     ${ALL_HEADERS}
+    SequenceInstance.cpp
     TypeKind.cpp
     DynamicType.cpp
     PrimitiveTypes.cpp

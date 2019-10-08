@@ -19,6 +19,7 @@
 #define OMG_DDS_CORE_XTYPES_DYNAMIC_DATA_HPP_
 
 #include <dds/core/xtypes/StructType.hpp>
+#include <dds/core/xtypes/CollectionType.hpp>
 #include <dds/core/xtypes/PrimitiveTypes.hpp>
 
 namespace dds {
@@ -107,11 +108,12 @@ public:
     DynamicDataConst operator [] (
             size_t index) const // this SequenceType & ArrayType
     {
+        const CollectionType* collection = static_cast<const CollectionType*>(type_);
         if(type_->kind() == TypeKind::ARRAY_TYPE)
         {
-            //return type().
+            return DynamicDataConst(collection->content_type(), collection->get_at(instance_, index));
         }
-        //else //SequenceType //TODO: runtime errorsonly in debug mode
+        else //SequenceType //TODO: runtime errorsonly in debug mode
         {
             return seq()[index].get_ref();
         }
@@ -129,15 +131,15 @@ protected:
     const DynamicType* type_;
     uint8_t* instance_;
     bool managed_;
+
+    uint8_t* instance(const DynamicDataConst& other) const { return other.instance_; }
 };
 
 
 class DynamicData : public DynamicDataConst
 {
 public:
-    template<
-        typename T,
-        class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+    template<typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
     DynamicData(
             T value)
         : DynamicDataConst(value)
@@ -147,6 +149,15 @@ public:
             const DynamicType& type)
         : DynamicDataConst(type)
     {}
+
+    DynamicData& operator = (
+            const DynamicData& other)
+    {
+        std::cout << type().name() << std::endl;
+        std::cout << other.type().name() << std::endl;
+        type_->copy_instance(instance_, instance(other));
+        return *this;
+    }
 
     template<typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
     T& value() // this = PrimitiveType

@@ -20,9 +20,9 @@
 #define OMG_DDS_CORE_XTYPES_ARRAY_TYPE_HPP_
 
 #include <dds/core/xtypes/CollectionType.hpp>
-#include <dds/core/xtypes/DynamicData.hpp>
 
 #include <vector>
+#include <cstring>
 
 namespace dds {
 namespace core {
@@ -33,7 +33,7 @@ class ArrayType : public CollectionType
 public:
     ArrayType(
             const DynamicType& content,
-            uint32_t dimension = 0)
+            uint32_t dimension)
         : CollectionType(
                 TypeKind::ARRAY_TYPE,
                 "array_" + std::to_string(dimension),
@@ -74,9 +74,9 @@ public:
 
     virtual void copy_instance(uint8_t* target, const uint8_t* source) const
     {
+        size_t block_size = content_type().memory_size();
         if(content_type().is_constructed_type())
         {
-            size_t block_size = content_type().memory_size();
             for(uint32_t i = 0; i < dimension_; i++)
             {
                 content_type().copy_instance(target + i * block_size, source + i * block_size);
@@ -84,7 +84,7 @@ public:
         }
         else //optimization when the type is primitive
         {
-            std::memcpy(target, source, dimension_ * content_type().memory_size());
+            std::memcpy(target, source, dimension_ * block_size);
         }
     }
 
@@ -98,6 +98,11 @@ public:
                 content_type().destroy_instance(instance + i * block_size);
             }
         }
+    }
+
+    virtual uint8_t* get_at(uint8_t* instance, size_t index) const
+    {
+        return instance + index * content_type().memory_size();
     }
 
 protected:
