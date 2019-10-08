@@ -60,14 +60,14 @@ public:
         return dimension_ * content_type().memory_size();
     }
 
-    virtual void init_instance(uint8_t* instance) const
+    virtual void construct_instance(uint8_t* instance) const
     {
         if(content_type().is_constructed_type())
         {
             size_t block_size = content_type().memory_size();
             for(uint32_t i = 0; i < dimension_; i++)
             {
-                content_type().init_instance(instance + i * block_size);
+                content_type().construct_instance(instance + i * block_size);
             }
         }
     }

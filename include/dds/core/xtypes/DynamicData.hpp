@@ -32,53 +32,43 @@ public:
     DynamicDataConst(
             T value)
         : type_(&primitive_type<T>())
-        , instance_(new uint8_t[type_->memory_size()])
-        , is_loaned(false)
-    {
-        type_->init_instance(instance_);
-        *reinterpret_cast<T*>(instance_) = value;
-    }
+        , instance_(reinterpret_cast<uint8_t*>(new T(value)))
+        , managed_(true)
+    {}
 
     DynamicDataConst(
             const DynamicType& type)
         : type_(&type)
         , instance_(new uint8_t[type.memory_size()])
-        , is_loaned(false)
+        , managed_(true)
     {
-        type_->init_instance(instance_);
-    }
-
-    template<typename T>
-    DynamicDataConst(
-            const T&& type)
-        : type_(type)
-        , instance_(new uint8_t[type.memory_size()])
-        , is_loaned(false)
-    {
-        type_->init_instance(instance_);
+        type_->construct_instance(instance_);
     }
 
     DynamicDataConst(
             const DynamicDataConst& other)
         : type_(other.type_)
-        , instance_(new uint8_t[other.type_->memory_size()])
-        , is_loaned(false)
+        , instance_(other.managed_ ? new uint8_t[other.type_->memory_size()] : other.instance_)
+        , managed_(other.managed_)
     {
-        type_->copy_instance(instance_, other.instance_);
+        if(other.managed_)
+        {
+            type_->copy_instance(instance_, other.instance_);
+        }
     }
 
     DynamicDataConst(
             DynamicDataConst&& other)
         : type_(std::move(other.type_))
         , instance_(std::move(other.instance_))
-        , is_loaned(std::move(other.is_loaned))
+        , managed_(std::move(other.managed_))
     {
-        other.is_loaned = true;
+        other.managed_ = false;
     }
 
     virtual ~DynamicDataConst()
     {
-        if(!is_loaned)
+        if(managed_)
         {
             type_->destroy_instance(instance_);
             delete[] instance_;
@@ -87,7 +77,14 @@ public:
 
     bool has_type() const { return type_ != nullptr; }
     const DynamicType& type() const { return *type_; }
+
     size_t instance_id() const { return size_t(instance_); }
+    bool is_ref() const { return !managed_; }
+
+    DynamicDataConst get_ref() const
+    {
+        return DynamicDataConst(*type_, instance_);
+    }
 
     template<typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
     const T& value() const // this = PrimitiveType
@@ -103,37 +100,35 @@ public:
     DynamicDataConst operator [] (
             const std::string& member_name) const // this = StructType
     {
-        const StructMember& member = struct_member(member_name);
+        const StructMember& member = static_cast<const StructType*>(type_)->member(member_name);
         return DynamicDataConst(member.type(), instance_ + member.offset());
     }
 
-    const DynamicDataConst& operator [] (
+    DynamicDataConst operator [] (
             size_t index) const // this SequenceType & ArrayType
     {
-        return seq()[index];
+        if(type_->kind() == TypeKind::ARRAY_TYPE)
+        {
+            //return type().
+        }
+        //else //SequenceType //TODO: runtime errorsonly in debug mode
+        {
+            return seq()[index].get_ref();
+        }
     }
 
 protected:
-    const StructMember& struct_member(const std::string& name) const
-    {
-        if(type().kind() != TypeKind::STRUCTURE_TYPE)
-        {
-            throw "Exception Not implemented"; //TODO: Exceptions and their checks only in Debug mode
-        }
-        return static_cast<const StructType*>(type_)->member(name);
-    }
-
     DynamicDataConst(
             const DynamicType& type,
             uint8_t* source)
         : type_(&type)
         , instance_(source)
-        , is_loaned(true)
+        , managed_(false)
     {}
 
     const DynamicType* type_;
     uint8_t* instance_;
-    bool is_loaned;
+    bool managed_;
 };
 
 
@@ -184,9 +179,9 @@ public:
     }
 
     DynamicData operator [] (
-            size_t index) const // this = SequenceType & ArrayType
+            size_t index) // this = SequenceType & ArrayType
     {
-        return const_cast<DynamicData&>(reinterpret_cast<const DynamicData&>(DynamicDataConst::operator[](index)));
+        return DynamicDataConst::operator[](index);
     }
 
 private:

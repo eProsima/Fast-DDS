@@ -60,7 +60,7 @@ public:
         return sizeof(std::vector<DynamicData>);
     }
 
-    virtual void init_instance(uint8_t* instance) const
+    virtual void construct_instance(uint8_t* instance) const
     {
         new (instance) std::vector<DynamicData>(bounds(), content_type());
     }

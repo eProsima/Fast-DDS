@@ -32,7 +32,7 @@ public:
 
     virtual size_t memory_size() const = 0;
 
-    virtual void init_instance(uint8_t* /*instance*/) const { } //Default does nothing
+    virtual void construct_instance(uint8_t* /*instance*/) const { } //Default does nothing
 
     virtual void copy_instance(uint8_t* target, const uint8_t* source) const = 0;
 
