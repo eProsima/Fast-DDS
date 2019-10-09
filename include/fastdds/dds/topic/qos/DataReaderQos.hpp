@@ -86,7 +86,7 @@ public:
                (this->resource_limits == b.resource_limits) &&
                (this->user_data == b.user_data) &&
                (this->ownership == b.ownership) &&
-               (this->time_based_filter == b.time_based_filter);
+               (this->time_based_filter == b.time_based_filter) &&
                (this->reader_data_lifecycle == b.reader_data_lifecycle);
     }
 
