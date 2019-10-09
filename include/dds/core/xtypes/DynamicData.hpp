@@ -81,11 +81,6 @@ protected:
 class WritableDynamicDataRef : public ReadableDynamicDataRef
 {
 public:
-    WritableDynamicDataRef(
-            ReadableDynamicDataRef&& other)
-        : ReadableDynamicDataRef(std::move(other))
-    {}
-
     WritableDynamicDataRef& operator = (
             const WritableDynamicDataRef& other)
     {
@@ -143,11 +138,15 @@ public:
     }
 
 protected:
-
     WritableDynamicDataRef(
             const DynamicType& type,
             uint8_t* source)
         : ReadableDynamicDataRef(type, source)
+    {}
+
+    WritableDynamicDataRef(
+            ReadableDynamicDataRef&& other)
+        : ReadableDynamicDataRef(std::move(other))
     {}
 };
 

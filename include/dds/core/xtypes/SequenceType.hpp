@@ -36,7 +36,7 @@ public:
             uint32_t bounds = 0)
         : MutableCollectionType(
                 TypeKind::SEQUENCE_TYPE,
-                "sequence_" + std::to_string(bounds),
+                "sequence_" + ((bounds > 0) ? "_" + std::to_string(bounds) + "_" : "") + content.name(),
                 DynamicType::Ptr(content),
                 bounds)
     {}
@@ -47,13 +47,25 @@ public:
             uint32_t bounds)
         : MutableCollectionType(
                 TypeKind::SEQUENCE_TYPE,
-                "sequence_" + std::to_string(bounds),
+                "sequence_" + ((bounds > 0) ? "_" + std::to_string(bounds) + "_" : "") + content.name(),
                 DynamicType::Ptr(std::move(content)),
                 bounds)
     {}
 
     SequenceType(const SequenceType& other) = default;
     SequenceType(SequenceType&& other) = default;
+
+    virtual bool is_subset_of(const DynamicType& other) const
+    {
+        if(other.kind() != TypeKind::SEQUENCE_TYPE)
+        {
+            return false;
+        }
+
+        const SequenceType& other_sequence = static_cast<const SequenceType&>(other);
+        return bounds() <= other_sequence.bounds()
+            && content_type().is_subset_of(other_sequence.content_type());
+    }
 
     virtual size_t memory_size() const
     {

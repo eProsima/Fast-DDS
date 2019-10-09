@@ -27,12 +27,28 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
-class StringType : public DynamicType
+class StringType : public MutableCollectionType
 {
 public:
-    StringType()
-        : DynamicType(TypeKind::STRING_TYPE, "std::string")
+    StringType(
+            int bounds = 0)
+        : MutableCollectionType(
+                TypeKind::STRING_TYPE,
+                "std::string_" + ((bounds > 0) ? "_" + std::to_string(bounds) + "_" : ""),
+                DynamicType::Ptr(primitive_type<char>()),
+                bounds)
     {}
+
+    virtual bool is_subset_of(const DynamicType& other) const
+    {
+        if(other.kind() != TypeKind::STRING_TYPE)
+        {
+            return false;
+        }
+
+        const StringType& other_string = static_cast<const StringType&>(other);
+        return bounds() <= other_string.bounds();
+    }
 
     virtual size_t memory_size() const
     {
@@ -52,6 +68,12 @@ public:
     virtual void destroy_instance(uint8_t* instance) const
     {
         reinterpret_cast<std::string*>(instance)->~basic_string();
+    }
+
+    virtual uint8_t* get_instance_at(uint8_t* instance, size_t index) const
+    {
+        void* char_addr = &reinterpret_cast<std::string*>(instance)->operator[](index);
+        return static_cast<uint8_t*>(char_addr);
     }
 
 protected:

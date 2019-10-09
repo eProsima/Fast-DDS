@@ -53,6 +53,29 @@ public:
         return std::move(*this);
     }
 
+    virtual bool is_subset_of(const DynamicType& other) const
+    {
+        if(other.kind() != TypeKind::STRUCTURE_TYPE)
+        {
+            return false;
+        }
+
+        const StructType& other_struct = static_cast<const StructType&>(other);
+        bool comp = true;
+        for(auto&& it: member_map())
+        {
+            if(!it.second.is_optional())
+            {
+                auto other_it = other_struct.member_map().find(it.first);
+                if(other_it != other_struct.member_map().end())
+                {
+                    comp &= it.second.type().is_subset_of(other_it->second.type());
+                }
+            }
+        }
+        return comp;
+    }
+
     virtual size_t memory_size() const
     {
         return memory_size_;

@@ -36,7 +36,7 @@ public:
             uint32_t dimension)
         : CollectionType(
                 TypeKind::ARRAY_TYPE,
-                "array_" + std::to_string(dimension),
+                "array_" + std::to_string(dimension) + "_" + content.name(),
                 DynamicType::Ptr(content))
         , dimension_(dimension)
     {}
@@ -47,13 +47,25 @@ public:
             uint32_t dimension)
         : CollectionType(
                 TypeKind::ARRAY_TYPE,
-                "array_" + std::to_string(dimension),
+                "array_" + std::to_string(dimension) + "_" + content.name(),
                 DynamicType::Ptr(std::move(content)))
         , dimension_(dimension)
     {}
 
     ArrayType(const ArrayType& other) = default;
     ArrayType(ArrayType&& other) = default;
+
+    virtual bool is_subset_of(const DynamicType& other) const
+    {
+        if(other.kind() != TypeKind::ARRAY_TYPE)
+        {
+            return false;
+        }
+
+        const ArrayType& other_array = static_cast<const ArrayType&>(other);
+        return dimension_ <= other_array.dimension_
+            && content_type().is_subset_of(other_array.content_type());
+    }
 
     virtual size_t memory_size() const
     {

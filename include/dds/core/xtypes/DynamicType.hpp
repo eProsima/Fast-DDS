@@ -56,6 +56,8 @@ public:
         return (int(kind_) & int(TypeKind::CONSTRUCTED_TYPE)) != 0;
     }
 
+    virtual bool is_subset_of(const DynamicType& other) const = 0;
+
 protected:
     DynamicType(
             TypeKind kind,
