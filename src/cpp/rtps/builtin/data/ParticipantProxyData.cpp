@@ -29,8 +29,11 @@
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/utils/TimeConversion.h>
 
+#include <rtps/builtin/data/ProxyHashTables.hpp>
+
 #include <mutex>
 #include <chrono>
+#include <unordered_set>
 
 using namespace eprosima::fastrtps;
 
@@ -53,9 +56,10 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
     , isAlive(false)
     , lease_duration_event(nullptr)
     , should_check_lease_duration(false)
-    , m_readers(allocation.readers)
-    , m_writers(allocation.writers)
+    , m_readers(new ProxyHashTable<ReaderProxyData>(allocation.readers))
+    , m_writers(new ProxyHashTable<WriterProxyData>(allocation.writers))
     {
+
     }
 
 ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
@@ -92,15 +96,8 @@ ParticipantProxyData::~ParticipantProxyData()
 {
     logInfo(RTPS_PARTICIPANT, m_guid);
 
-    for (ReaderProxyData* it : m_readers)
-    {
-        delete it;
-    }
-
-    for (WriterProxyData* it : m_writers)
-    {
-        delete it;
-    }
+    delete m_readers;
+    delete m_writers;
 
     if (lease_duration_event != nullptr)
     {

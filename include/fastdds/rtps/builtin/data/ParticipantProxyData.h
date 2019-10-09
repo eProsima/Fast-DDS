@@ -78,6 +78,10 @@ class ReaderProxyData;
 class WriterProxyData;
 class NetworkFactory;
 
+// proxy specific declarations
+template<class Proxy>
+class ProxyHashTable;
+
 /**
 * ParticipantProxyData class is used to store and convert the information Participants send to each other during the PDP phase.
 *@ingroup BUILTIN_MODULE
@@ -135,9 +139,9 @@ class ParticipantProxyData
         //!
         bool should_check_lease_duration;
         //!
-        ResourceLimitedVector<ReaderProxyData*> m_readers;
+        ProxyHashTable<ReaderProxyData> * m_readers = nullptr;
         //!
-        ResourceLimitedVector<WriterProxyData*> m_writers;
+        ProxyHashTable<WriterProxyData> * m_writers = nullptr;
 
         /**
          * Update the data.
