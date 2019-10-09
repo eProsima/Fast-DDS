@@ -38,6 +38,8 @@
 
 #include <fastrtps/types/TypeObjectFactory.h>
 
+#include <rtps/builtin/data/ProxyHashTables.hpp>
+
 #include <mutex>
 
 using namespace eprosima::fastrtps;
@@ -890,8 +892,9 @@ bool EDP::pairingReader(
     for (ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
             pit != mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
-        for (WriterProxyData* wdatait : (*pit)->m_writers)
+        for(auto & pair : *(*pit)->m_writers)
         {
+            WriterProxyData* wdatait = pair.second;
             bool valid = validMatching(&rdata, wdatait);
             const GUID_t& reader_guid = R->getGuid();
             const GUID_t& writer_guid = wdatait->guid();
@@ -967,8 +970,9 @@ bool EDP::pairingWriter(
     for (ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
             pit != mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
-        for (ReaderProxyData* rdatait : (*pit)->m_readers)
+        for(auto & pair : *(*pit)->m_readers)
         {
+            ReaderProxyData* rdatait = pair.second;
             const GUID_t& reader_guid = rdatait->guid();
             if (reader_guid == c_Guid_Unknown)
             {
