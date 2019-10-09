@@ -195,13 +195,25 @@ LocatorList_t TCPv4Transport::NormalizeLocator(const Locator_t& locator)
         get_ipv4s(locNames);
         for (const auto& infoIP : locNames)
         {
+            auto ip = asio::ip::address_v4::from_string(infoIP.name);
+            if (is_interface_allowed(ip))
+            {
+                Locator_t newloc(locator);
+                IPLocator::setIPv4(newloc, infoIP.locator);
+                list.push_back(newloc);
+            }
+        }
+        if (list.empty())
+        {
             Locator_t newloc(locator);
-            IPLocator::setIPv4(newloc, infoIP.locator);
+            IPLocator::setIPv4(newloc, "127.0.0.1");
             list.push_back(newloc);
         }
     }
     else
+    {
         list.push_back(locator);
+    }
 
     return list;
 }
