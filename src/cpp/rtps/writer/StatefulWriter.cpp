@@ -235,7 +235,7 @@ void StatefulWriter::unsent_change_added_to_history(
                 //At this point we are sure all information was stores. We now can send data.
                 if (!m_separateSendingEnabled)
                 {
-                    RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, *this, max_blocking_time);
+                    RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
                     if (!group.add_data(*change, expectsInlineQos))
                     {
                         logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
@@ -249,7 +249,7 @@ void StatefulWriter::unsent_change_added_to_history(
                 {
                     for (ReaderProxy* it : matched_readers_)
                     {
-                        RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, it->message_sender(),
+                        RTPSMessageGroup group(mp_RTPSParticipant, this, it->message_sender(),
                                 max_blocking_time);
                         if (!group.add_data(*change, it->expects_inline_qos()))
                         {
@@ -370,7 +370,7 @@ void StatefulWriter::send_any_unsent_changes()
                     std::set<SequenceNumber_t> irrelevant;
 
                     // Specific destination message group
-                    RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, remoteReader->message_sender());
+                    RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReader->message_sender());
 
                     // Loop all changes
                     bool is_reliable = remoteReader->is_reliable();
@@ -472,7 +472,7 @@ void StatefulWriter::send_any_unsent_changes()
 
             try
             {
-                RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, *this);
+                RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
                 uint32_t lastBytesProcessed = 0;
 
                 while (!relevantChanges.empty())
@@ -595,7 +595,7 @@ void StatefulWriter::send_any_unsent_changes()
         {
             try
             {
-                RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, *this);
+                RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
                 send_heartbeat_nts_(all_remote_readers_.size(), group, disable_positive_acks_);
             }
             catch(const RTPSMessageGroup::timeout&)
@@ -738,7 +738,7 @@ bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
 
         try
         {
-            RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, rp->message_sender());
+            RTPSMessageGroup group(mp_RTPSParticipant, this, rp->message_sender());
 
             // Send initial heartbeat
             send_heartbeat_nts_(1u, group, disable_positive_acks_);
@@ -1092,7 +1092,7 @@ bool StatefulWriter::send_periodic_heartbeat(
             {
                 try
                 {
-                    RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, *this);
+                    RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
                     send_heartbeat_nts_(all_remote_readers_.size(), group, disable_positive_acks_, liveliness);
                 }
                 catch(const RTPSMessageGroup::timeout&)
@@ -1107,7 +1107,7 @@ bool StatefulWriter::send_periodic_heartbeat(
         // This is a liveliness heartbeat, we don't care about checking sequence numbers
         try
         {
-            RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, *this);
+            RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
             send_heartbeat_nts_(all_remote_readers_.size(), group, final, liveliness);
         }
         catch(const RTPSMessageGroup::timeout&)
@@ -1125,7 +1125,7 @@ void StatefulWriter::send_heartbeat_to_nts(
 {
     try
     {
-        RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, remoteReaderProxy.message_sender());
+        RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReaderProxy.message_sender());
         send_heartbeat_nts_(1u, group, disable_positive_acks_, liveliness);
     }
     catch(const RTPSMessageGroup::timeout&)

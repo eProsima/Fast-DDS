@@ -58,14 +58,6 @@ PDPServer::PDPServer(
         DurabilityKind_t durability_kind)
     : PDP(builtin, allocation)
     , _durability(durability_kind)
-    , _msgbuffer(
-        DISCOVERY_PARTICIPANT_DATA_MAX_SIZE,
-        builtin->mp_participantImpl->getGuid().guidPrefix,
-#if HAVE_SECURITY
-        builtin->mp_participantImpl->is_secure())
-#else
-        false)
-#endif
     , mp_sync(nullptr)
     , PDP_callback_(false)
 {
@@ -797,7 +789,7 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
                 }
 
                 DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
-                RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, _msgbuffer, sender);
+                RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, sender);
 
                 if (!group.add_data(*change, false))
                 {
@@ -854,7 +846,7 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
             }
 
             DirectMessageSender sender(getRTPSParticipant(), &remote_readers, &locators);
-            RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, _msgbuffer, sender);
+            RTPSMessageGroup group(getRTPSParticipant(), mp_PDPWriter, sender);
 
             if (!group.add_data(*pPD, false))
             {

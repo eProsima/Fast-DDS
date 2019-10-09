@@ -78,15 +78,6 @@ StatefulReader::StatefulReader(
     , proxy_changes_config_(resource_limits_from_history(hist->m_att, 0))
     , disable_positive_acks_(att.disable_positive_acks)
     , is_alive_(true)
-    , message_buffer_(
-            pimpl->getMaxMessageSize(),
-            pimpl->getGuid().guidPrefix,
-#if HAVE_SECURITY
-            pimpl->is_secure()
-#else
-            false
-#endif
-            )
 {
     const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
     for (size_t n = 0; n < att.matched_writers_allocation.initial; ++n)
@@ -884,7 +875,7 @@ void StatefulReader::send_acknack(
 
     logInfo(RTPS_READER, "Sending ACKNACK: " << sns);
 
-    RTPSMessageGroup group(getRTPSParticipant(), this, message_buffer_, sender);
+    RTPSMessageGroup group(getRTPSParticipant(), this, sender);
     group.add_acknack(sns, acknack_count_, is_final);
 }
 
@@ -907,7 +898,7 @@ void StatefulReader::send_acknack(
 
     try
     {
-        RTPSMessageGroup group(getRTPSParticipant(), this, message_buffer_, sender);
+        RTPSMessageGroup group(getRTPSParticipant(), this, sender);
         if (!missing_changes.empty() || !heartbeat_was_final)
         {
             GUID_t guid = sender.remote_guids().at(0);
