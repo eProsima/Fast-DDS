@@ -89,6 +89,11 @@ class PrimitiveType : public DynamicType
     virtual void construct_instance(uint8_t* /*instance*/) const { } //Default does nothing
     virtual void destroy_instance(uint8_t* /*instance*/) const { } //Default does nothing
 
+    virtual void for_each_instance(uint8_t* instance, size_t level, InstanceVisitor visitor) const
+    {
+        visitor(*this, instance, level);
+    }
+
 protected:
     virtual DynamicType* clone() const
     {

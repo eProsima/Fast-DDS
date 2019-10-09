@@ -34,7 +34,7 @@ public:
             int bounds = 0)
         : MutableCollectionType(
                 TypeKind::STRING_TYPE,
-                "std::string_" + ((bounds > 0) ? "_" + std::to_string(bounds) + "_" : ""),
+                "std::string_" + ((bounds > 0) ? std::to_string(bounds) + "_" : ""),
                 DynamicType::Ptr(primitive_type<char>()),
                 bounds)
     {}
@@ -80,6 +80,11 @@ public:
             const uint8_t* other_instance) const
     {
         return *reinterpret_cast<const std::string*>(instance) == *reinterpret_cast<const std::string*>(other_instance);
+    }
+
+    virtual void for_each_instance(uint8_t* instance, size_t level, InstanceVisitor visitor) const
+    {
+        visitor(*this, instance, level);
     }
 
     virtual uint8_t* get_instance_at(

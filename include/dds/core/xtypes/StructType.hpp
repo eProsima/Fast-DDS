@@ -70,7 +70,6 @@ public:
                 if(other_it != other_struct.member_map().end())
                 {
                     comp &= it.second.type().is_subset_of(other_it->second.type());
-                    std::cout << "comp " << comp << " " << it.second.name() << " " << other_it->second.name() <<  std::endl;
                 }
                 else
                 {
@@ -126,6 +125,15 @@ public:
             comp &= it.second.type().compare_instance(instance + it.second.offset(), other_instance + it.second.offset());
         }
         return comp;
+    }
+
+    virtual void for_each_instance(uint8_t* instance, size_t level, InstanceVisitor visitor) const
+    {
+        visitor(*this, instance, level);
+        for(auto&& it: member_map())
+        {
+            it.second.type().for_each_instance(instance + it.second.offset(), level + 1, visitor);
+        }
     }
 
 protected:

@@ -16,8 +16,8 @@ int main()
     outter.add_member(Member("om2", inner));
     outter.add_member(Member("om3", SequenceType(primitive_type<uint32_t>(), 5)));
     outter.add_member(Member("om4", SequenceType(inner)));
-    outter.add_member(Member("om5", ArrayType(primitive_type<uint32_t>(), 10)));
-    outter.add_member(Member("om6", ArrayType(inner, 10)));
+    outter.add_member(Member("om5", ArrayType(primitive_type<uint32_t>(), 4)));
+    outter.add_member(Member("om6", ArrayType(inner, 4)));
     outter.add_member(Member("om7", StringType()));
 
     DynamicData data(outter);
@@ -36,39 +36,43 @@ int main()
     data["om7"].value<std::string>("Hi!"); //Check small string
     data["om7"].string("This is a string!"); //Check small string
 
-    // DYNAMIC TYPE INFO
-    std::cout << "outter name: " << outter.name() << std::endl;
-    std::cout << "outter kind: " << (outter.kind() == TypeKind::STRUCTURE_TYPE) << std::endl;
-    std::cout << "  om1 name: " << outter.member("om1").name() << std::endl;
-    std::cout << "  om1 type kind: " << (outter.member("om1").type().kind() == TypeKind::FLOAT_64_TYPE) << std::endl;
-    std::cout << "  om2 name: " << outter.member("om2").name() << std::endl;
-    std::cout << "  om2 type kind: " << (outter.member("om2").type().kind() == TypeKind::STRUCTURE_TYPE) << std::endl;
-    std::cout << "  om2 im1 name: " << static_cast<const StructType&>(outter.member("om2").type()).member("im1").name() << std::endl;
-    std::cout << "  om2 im2 name: " << static_cast<const StructType&>(outter.member("om2").type()).member("im2").name() << std::endl;
-    std::cout << "  om3 name: " << outter.member("om3").name() << std::endl;
-    std::cout << "  om3 type kind: " << (outter.member("om3").type().kind() == TypeKind::SEQUENCE_TYPE) << std::endl;
+    size_t deep = 0;
+    data.for_each([&](ReadableDynamicDataRef data, size_t deep)
+    {
+        std::string tabs(deep * 4, ' ');
+        switch(data.type().kind())
+        {
+            case TypeKind::UINT_32_TYPE:
+                std::cout << tabs << "Type: " << data.type().name() << ", value: " << data.value<uint32_t>() << std::endl;
+                break;
+            case TypeKind::FLOAT_32_TYPE:
+                std::cout << tabs << "Type: " << data.type().name() << ", value: " << data.value<float>() << std::endl;
+                break;
+            case TypeKind::FLOAT_64_TYPE:
+                std::cout << tabs << "Type: " << data.type().name() << ", value: " << data.value<double>() << std::endl;
+                break;
+            case TypeKind::STRING_TYPE:
+                std::cout << tabs << "Type: " << data.type().name() << ", value: " << data.value<std::string>() << std::endl;
+                break;
+            case TypeKind::ARRAY_TYPE:
+                std::cout << tabs << "Type: " << data.type().name() << ", size: " << data.size() << std::endl;
+                deep++;
+                break;
+            case TypeKind::SEQUENCE_TYPE:
+                std::cout << tabs << "Type: " << data.type().name() << ", size: " << data.size() << std::endl;
+                deep++;
+                break;
+            case TypeKind::STRUCTURE_TYPE:
+                std::cout << tabs << "Type: Structure, name: " << data.type().name() << std::endl;
+                deep++;
+                break;
+            default:
+                std::cout << tabs << "Unexpected type: " << data.type().name() << std::endl;
+        }
+    });
+
     std::cout << "  outter is_subset_of outter: " << outter.is_subset_of(outter) << std::endl;
     std::cout << "  outter is_subset_of inner: " << outter.is_subset_of(inner) << std::endl;
-
-    //DYNAMIC DATA INFO
-    std::cout << "outter values: " << std::endl;
-    std::cout << "  om1: " << data["om1"].value<double>() << std::endl;
-    std::cout << "  om2: " << data["om2"]["im1"].value<uint32_t>() << std::endl;
-    std::cout << "  om2: " << data["om2"]["im2"].value<float>() << std::endl;
-    std::cout << "  om3: " << data["om3"][0].value<uint32_t>() << std::endl;
-    std::cout << "  om3: " << data["om3"][1].value<uint32_t>() << std::endl;
-    std::cout << "  om3: " << data["om3"][2].value<uint32_t>() << std::endl;
-    std::cout << "  om4: " << data["om4"][1]["im2"].value<float>() << std::endl;
-    std::cout << "  om5: " << data["om5"][1].value<uint32_t>() << std::endl;
-    std::cout << "  om6: " << data["om6"][1]["im1"].value<uint32_t>() << std::endl;
-    std::cout << "  om7: " << data["om7"].value<std::string>() << std::endl;
-    std::cout << "  om7: " << data["om7"].string() << std::endl;
-    std::cout << "  om7: " << data["om7"][16].value<char>() << std::endl;
-    std::cout << "  om3_size: " << data["om3"].size() << std::endl;
-    std::cout << "  om4_size: " << data["om4"].size() << std::endl;
-    std::cout << "  om5_size: " << data["om5"].size() << std::endl;
-    std::cout << "  om6_size: " << data["om6"].size() << std::endl;
-    std::cout << "  om7_size: " << data["om7"].size() << std::endl;
     std::cout << "  data == data: " << (data == data) << std::endl;
 
     return 0;

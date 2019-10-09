@@ -36,7 +36,7 @@ public:
             uint32_t bounds = 0)
         : MutableCollectionType(
                 TypeKind::SEQUENCE_TYPE,
-                "sequence_" + ((bounds > 0) ? "_" + std::to_string(bounds) + "_" : "") + content.name(),
+                "sequence_" + ((bounds > 0) ? std::to_string(bounds) + "_" : "") + content.name(),
                 DynamicType::Ptr(content),
                 bounds)
     {}
@@ -47,7 +47,7 @@ public:
             uint32_t bounds)
         : MutableCollectionType(
                 TypeKind::SEQUENCE_TYPE,
-                "sequence_" + ((bounds > 0) ? "_" + std::to_string(bounds) + "_" : "") + content.name(),
+                "sequence_" + ((bounds > 0) ? std::to_string(bounds) + "_" : "") + content.name(),
                 DynamicType::Ptr(std::move(content)),
                 bounds)
     {}
@@ -102,6 +102,16 @@ public:
             const uint8_t* instance) const
     {
         return reinterpret_cast<const SequenceInstance*>(instance)->size();
+    }
+
+    virtual void for_each_instance(uint8_t* instance, size_t level, InstanceVisitor visitor) const
+    {
+        const SequenceInstance& sequence = *reinterpret_cast<const SequenceInstance*>(instance);
+        visitor(*this, instance, level);
+        for(uint32_t i = 0; i < sequence.size(); i++)
+        {
+            content_type().for_each_instance(sequence[i], level + 1, visitor);
+        }
     }
 
     virtual bool compare_instance(

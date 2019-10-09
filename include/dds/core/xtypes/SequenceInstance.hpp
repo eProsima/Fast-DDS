@@ -38,9 +38,7 @@ public:
         , memory_(capacity > 0 ? new uint8_t[capacity * block_size_] : nullptr)
         , capacity_(capacity)
         , size_(0)
-    {
-        if(capacity_ > 0) std::cout << "SequenceInstance: " << content_.name() << " - ALLOC" << std::endl;
-    }
+    {}
 
     SequenceInstance(
             const SequenceInstance& other)
@@ -52,7 +50,6 @@ public:
     {
         if(memory_ != nullptr)
         {
-            if(capacity_ > 0) std::cout << "SequenceInstance: " << content_.name() << " - ALLOC" << std::endl;
             copy_content(memory_, other.memory_, size_ * block_size_, content_);
         }
     }
@@ -109,7 +106,7 @@ public:
     }
 
     uint8_t* operator [] (
-            uint32_t index)
+            uint32_t index) const
     {
         //TODO: debug exception
         return memory_ + index * block_size_;
@@ -126,7 +123,6 @@ private:
 
     void realloc()
     {
-        std::cout << "SequenceInstance: " << content_.name() << " - ALLOC" << std::endl;
         uint32_t new_capacity = (capacity_ > 0) ? capacity_ * 2 : 1;
         uint8_t* new_memory = new uint8_t[new_capacity * block_size_];
 

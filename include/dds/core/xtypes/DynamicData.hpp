@@ -28,7 +28,10 @@ namespace core {
 namespace xtypes {
 
 template<typename T>
-using PrimitiveOrString = typename std::enable_if<std::is_arithmetic<T>::value || std::is_same<std::string, T>::value>::type;
+using PrimitiveOrString = typename std::enable_if<
+    std::is_arithmetic<T>::value ||
+    std::is_same<std::string, T>::value
+    >::type;
 
 class ReadableDynamicDataRef
 {
@@ -38,11 +41,10 @@ public:
     bool operator == (
             const ReadableDynamicDataRef& other) const
     {
-        return type_->compare_instance(instance_, other.instance_);
+        return type_.compare_instance(instance_, other.instance_);
     }
 
-    bool has_type() const { return type_ != nullptr; }
-    const DynamicType& type() const { return *type_; }
+    const DynamicType& type() const { return type_; }
 
     size_t instance_id() const { return size_t(instance_); }
 
@@ -60,35 +62,44 @@ public:
     ReadableDynamicDataRef operator [] (
             const std::string& member_name) const // this = StructType
     {
-        const StructMember& member = static_cast<const StructType*>(type_)->member(member_name);
+        const StructMember& member = static_cast<const StructType&>(type_).member(member_name);
         return ReadableDynamicDataRef(member.type(), instance_ + member.offset());
     }
 
     ReadableDynamicDataRef operator [] (
             size_t index) const // this = CollectionType
     {
-        const CollectionType* collection = static_cast<const CollectionType*>(type_);
-        return ReadableDynamicDataRef(collection->content_type(), collection->get_instance_at(instance_, index));
+        const CollectionType& collection = static_cast<const CollectionType&>(type_);
+        return ReadableDynamicDataRef(collection.content_type(), collection.get_instance_at(instance_, index));
     }
 
     size_t size() const // this = CollectionType
     {
-        const CollectionType* collection = static_cast<const CollectionType*>(type_);
-        return collection->get_instance_size(instance_);
+        const CollectionType& collection = static_cast<const CollectionType&>(type_);
+        return collection.get_instance_size(instance_);
+    }
+
+    using ReadableDataVisitor = std::function<void(ReadableDynamicDataRef data, size_t level)>;
+    void for_each(ReadableDataVisitor visitor)
+    {
+        type_.for_each_instance(instance_, 0, [&](const DynamicType& type, uint8_t* instance, size_t level)
+        {
+            visitor(ReadableDynamicDataRef(type, instance), level);
+        });
     }
 
 protected:
     ReadableDynamicDataRef(
             const DynamicType& type,
             uint8_t* source)
-        : type_(&type)
+        : type_(type)
         , instance_(source)
     {}
 
-    const DynamicType* type_;
+    const DynamicType& type_;
     uint8_t* instance_;
 
-    const DynamicType& type(const ReadableDynamicDataRef& other) const { return *other.type_; }
+    const DynamicType& type(const ReadableDynamicDataRef& other) const { return other.type_; }
     uint8_t* instance(const ReadableDynamicDataRef& other) const { return other.instance_; }
 };
 
@@ -99,12 +110,12 @@ public:
     WritableDynamicDataRef& operator = (
             const WritableDynamicDataRef& other)
     {
-        type_->copy_instance(instance_, instance(other));
+        type_.copy_instance(instance_, instance(other));
         return *this;
     }
 
     template<typename T, class = PrimitiveOrString<T>>
-    const T& value() // this = PrimitiveType
+    const T& value() // this = PrimitiveType & StringType
     {
         return ReadableDynamicDataRef::value<T>();
     }
@@ -127,28 +138,28 @@ public:
     }
 
     template<typename T, class = PrimitiveOrString<T>>
-    void value(const T& t) // this = PrimitiveType
+    void value(const T& t) // this = PrimitiveType & StringType
     {
-        type_->copy_instance(instance_, reinterpret_cast<const uint8_t*>(&t));
+        type_.copy_instance(instance_, reinterpret_cast<const uint8_t*>(&t));
     }
 
     void string(const std::string& s) // this = StringType
     {
-        type_->copy_instance(instance_, reinterpret_cast<const uint8_t*>(&s));
+        type_.copy_instance(instance_, reinterpret_cast<const uint8_t*>(&s));
     }
 
     template<typename T, class = PrimitiveOrString<T>>
     WritableDynamicDataRef& push(const T& value) // this = SequenceType
     {
-        const SequenceType* sequence = static_cast<const SequenceType*>(type_);
-        sequence->push_instance(instance_, reinterpret_cast<const uint8_t*>(&value));
+        const SequenceType& sequence = static_cast<const SequenceType&>(type_);
+        sequence.push_instance(instance_, reinterpret_cast<const uint8_t*>(&value));
         return *this;
     }
 
     WritableDynamicDataRef& push(const WritableDynamicDataRef& data) // this = SequenceType
     {
-        const SequenceType* sequence = static_cast<const SequenceType*>(type_);
-        sequence->push_instance(instance_, instance(data));
+        const SequenceType& sequence = static_cast<const SequenceType&>(type_);
+        sequence.push_instance(instance_, instance(data));
         return *this;
     }
 
@@ -173,8 +184,7 @@ public:
             const DynamicType& type)
         : WritableDynamicDataRef(type, new uint8_t[type.memory_size()])
     {
-        std::cout << "DynamicData - ALLOC " << std::endl;
-        type_->construct_instance(instance_);
+        type_.construct_instance(instance_);
     }
 
     DynamicData(const DynamicData& other) = delete;
@@ -182,7 +192,7 @@ public:
 
     virtual ~DynamicData()
     {
-        type_->destroy_instance(instance_);
+        type_.destroy_instance(instance_);
         delete[] instance_;
     }
 };

@@ -20,6 +20,7 @@
 
 #include <cstdint>
 #include <cstddef>
+#include <functional>
 
 namespace dds {
 namespace core {
@@ -41,6 +42,9 @@ public:
     virtual void destroy_instance(uint8_t* /*instance*/) const { } //Default does nothing
 
     virtual bool compare_instance(const uint8_t* instance, const uint8_t* other_instance) const = 0;
+
+    using InstanceVisitor = std::function<void(const DynamicType& type, uint8_t* instance, size_t level)>;
+    virtual void for_each_instance(uint8_t* instance, size_t level, InstanceVisitor visitor) const = 0;
 
 protected:
     Instanceable() = default;

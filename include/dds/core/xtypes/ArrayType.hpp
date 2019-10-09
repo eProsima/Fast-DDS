@@ -137,6 +137,15 @@ public:
         }
     }
 
+    virtual void for_each_instance(uint8_t* instance, size_t level, InstanceVisitor visitor) const
+    {
+        visitor(*this, instance, level);
+        for(uint32_t i = 0; i < dimension_; i++)
+        {
+            content_type().for_each_instance(instance, level + 1, visitor);
+        }
+    }
+
     virtual uint8_t* get_instance_at(
             uint8_t* instance,
             size_t index) const
