@@ -60,7 +60,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
             )
-        target_link_libraries(BuiltinPKIDH ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES})
+        target_link_libraries(BuiltinPKIDH ${GTEST_LIBRARIES} ${OPENSSL_LIBRARIES} foonathan_memory)
         add_gtest(BuiltinPKIDH
             SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp
             ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
