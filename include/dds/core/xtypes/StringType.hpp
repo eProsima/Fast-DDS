@@ -76,6 +76,11 @@ public:
         return static_cast<uint8_t*>(char_addr);
     }
 
+    virtual size_t get_instance_size(const uint8_t* instance) const
+    {
+        return reinterpret_cast<const std::string*>(instance)->size();
+    }
+
 protected:
     virtual DynamicType* clone() const
     {

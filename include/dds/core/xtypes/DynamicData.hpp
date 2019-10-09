@@ -27,6 +27,9 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
+template<typename T>
+using PrimitiveOrString = typename std::enable_if<std::is_arithmetic<T>::value || std::is_same<std::string, T>::value>::type;
+
 class ReadableDynamicDataRef
 {
 public:
@@ -37,8 +40,8 @@ public:
 
     size_t instance_id() const { return size_t(instance_); }
 
-    template<typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
-    T value() const // this = PrimitiveType
+    template<typename T, class = PrimitiveOrString<T>>
+    T& value() const // this = PrimitiveType
     {
         return *reinterpret_cast<T*>(instance_);
     }
@@ -62,6 +65,12 @@ public:
         return ReadableDynamicDataRef(collection->content_type(), collection->get_instance_at(instance_, index));
     }
 
+    size_t size() const // this = SequenceType & ArrayType
+    {
+        const CollectionType* collection = static_cast<const CollectionType*>(type_);
+        return collection->get_instance_size(instance_);
+    }
+
 protected:
     ReadableDynamicDataRef(
             const DynamicType& type,
@@ -71,7 +80,7 @@ protected:
     {}
 
     const DynamicType* type_;
-    uint8_t* const instance_;
+    uint8_t* instance_;
 
     const DynamicType& type(const ReadableDynamicDataRef& other) const { return *other.type_; }
     uint8_t* instance(const ReadableDynamicDataRef& other) const { return other.instance_; }
@@ -88,8 +97,8 @@ public:
         return *this;
     }
 
-    template<typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
-    T value() // this = PrimitiveType
+    template<typename T, class = PrimitiveOrString<T>>
+    const T& value() // this = PrimitiveType
     {
         return ReadableDynamicDataRef::value<T>();
     }
@@ -111,22 +120,22 @@ public:
         return ReadableDynamicDataRef::operator[](index);
     }
 
-    template<typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
-    void value(T t) // this = PrimitiveType
+    template<typename T, class = PrimitiveOrString<T>>
+    void value(const T& t) // this = PrimitiveType
     {
-        *reinterpret_cast<T*>(instance_) = t;
+        type_->copy_instance(instance_, reinterpret_cast<const uint8_t*>(&t));
     }
 
     void string(const std::string& s) // this = StringType
     {
-        *reinterpret_cast<std::string*>(instance_) = s;
+        type_->copy_instance(instance_, reinterpret_cast<const uint8_t*>(&s));
     }
 
-    template<typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
-    WritableDynamicDataRef& push(T value) // this = SequenceType
+    template<typename T, class = PrimitiveOrString<T>>
+    WritableDynamicDataRef& push(const T& value) // this = SequenceType
     {
         const SequenceType* sequence = static_cast<const SequenceType*>(type_);
-        sequence->push_instance(instance_, reinterpret_cast<uint8_t*>(&value));
+        sequence->push_instance(instance_, reinterpret_cast<const uint8_t*>(&value));
         return *this;
     }
 
@@ -158,17 +167,12 @@ public:
             const DynamicType& type)
         : WritableDynamicDataRef(type, new uint8_t[type.memory_size()])
     {
-        std::cout << "DynamicData - ALLOC " << uintptr_t(instance_) << std::endl;
+        std::cout << "DynamicData - ALLOC " << std::endl;
         type_->construct_instance(instance_);
     }
 
-    DynamicData(
-            const ReadableDynamicDataRef& other)
-        : WritableDynamicDataRef(type(other), new uint8_t[type(other).memory_size()])
-    {
-        std::cout << "DynamicData - ALLOC (copied)" << std::endl;
-        type_->copy_instance(instance_, instance(other));
-    }
+    DynamicData(const DynamicData& other) = delete;
+    DynamicData(DynamicData&& other) = delete;
 
     virtual ~DynamicData()
     {

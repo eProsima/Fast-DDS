@@ -73,7 +73,7 @@ class PrimitiveType : public DynamicType
 
     virtual void copy_instance(uint8_t* target, const uint8_t* source) const
     {
-        std::memcpy(target, source, sizeof(T));
+        *reinterpret_cast<T*>(target) = *reinterpret_cast<const T*>(source);
     }
 
 protected:

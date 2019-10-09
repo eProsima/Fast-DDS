@@ -92,14 +92,14 @@ public:
         return reinterpret_cast<SequenceInstance*>(instance)->operator[](uint32_t(index));
     }
 
+    virtual size_t get_instance_size(const uint8_t* instance) const
+    {
+        return reinterpret_cast<const SequenceInstance*>(instance)->size();
+    }
+
     uint8_t* push_instance(uint8_t* instance, const uint8_t* value) const
     {
         return reinterpret_cast<SequenceInstance*>(instance)->push(value);
-    }
-
-    size_t get_instance_size(uint8_t* instance) const
-    {
-        return reinterpret_cast<SequenceInstance*>(instance)->size();
     }
 
 protected:

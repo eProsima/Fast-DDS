@@ -31,6 +31,7 @@ public:
     const DynamicType& content_type() const { return *content_; }
 
     virtual uint8_t* get_instance_at(uint8_t* instance, size_t index) const = 0;
+    virtual size_t get_instance_size(const uint8_t* instance) const = 0;
 
 protected:
     CollectionType(

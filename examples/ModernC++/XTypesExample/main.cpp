@@ -33,8 +33,8 @@ int main()
     data["om4"][1] = data["om2"];
     data["om5"][1].value(123);
     data["om6"][1] = data["om2"];
+    data["om7"].value<std::string>("Hi!"); //Check small string
     data["om7"].string("This is a string!"); //Check small string
-
 
     // DYNAMIC TYPE INFO
     std::cout << "outter name: " << outter.name() << std::endl;
@@ -59,8 +59,14 @@ int main()
     std::cout << "  om4: " << data["om4"][1]["im2"].value<float>() << std::endl;
     std::cout << "  om5: " << data["om5"][1].value<uint32_t>() << std::endl;
     std::cout << "  om6: " << data["om6"][1]["im1"].value<uint32_t>() << std::endl;
+    std::cout << "  om7: " << data["om7"].value<std::string>() << std::endl;
     std::cout << "  om7: " << data["om7"].string() << std::endl;
     std::cout << "  om7: " << data["om7"][16].value<char>() << std::endl;
+    std::cout << "  om3_size: " << data["om3"].size() << std::endl;
+    std::cout << "  om4_size: " << data["om4"].size() << std::endl;
+    std::cout << "  om5_size: " << data["om5"].size() << std::endl;
+    std::cout << "  om6_size: " << data["om6"].size() << std::endl;
+    std::cout << "  om7_size: " << data["om7"].size() << std::endl;
 
     return 0;
 }

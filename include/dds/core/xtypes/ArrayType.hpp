@@ -117,6 +117,11 @@ public:
         return instance + index * content_type().memory_size();
     }
 
+    virtual size_t get_instance_size(const uint8_t* /* instance */) const
+    {
+        return dimension_;
+    }
+
 protected:
     virtual DynamicType* clone() const
     {
