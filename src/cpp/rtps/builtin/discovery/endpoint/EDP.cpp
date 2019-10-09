@@ -962,7 +962,7 @@ bool EDP::pairingWriter(
                         info.remoteEndpointGuid = reader_guid;
                         W->getListener()->onWriterMatched(W,info);
 
-
+                        const GUID_t& writer_guid = W->getGuid();
                         const PublicationMatchedStatus& pub_info =
                                 update_publication_matched_status(reader_guid, writer_guid, 1);
                         W->getListener()->onWriterMatched(W, pub_info);
