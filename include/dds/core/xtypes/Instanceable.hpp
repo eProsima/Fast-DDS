@@ -25,6 +25,8 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
+class DynamicType;
+
 class Instanceable
 {
 public:
@@ -37,6 +39,8 @@ public:
     virtual void copy_instance(uint8_t* target, const uint8_t* source) const = 0;
 
     virtual void destroy_instance(uint8_t* /*instance*/) const { } //Default does nothing
+
+    virtual bool compare_instance(const uint8_t* instance, const uint8_t* other_instance) const = 0;
 
 protected:
     Instanceable() = default;

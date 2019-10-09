@@ -72,32 +72,49 @@ public:
         return sizeof(SequenceInstance);
     }
 
-    virtual void construct_instance(uint8_t* instance) const
+    virtual void construct_instance(
+            uint8_t* instance) const
     {
         new (instance) SequenceInstance(content_type(), bounds());
     }
 
-    virtual void copy_instance(uint8_t* target, const uint8_t* source) const
+    virtual void copy_instance(
+            uint8_t* target,
+            const uint8_t* source) const
     {
         new (target) SequenceInstance(*reinterpret_cast<const SequenceInstance*>(source));
     }
 
-    virtual void destroy_instance(uint8_t* instance) const
+    virtual void destroy_instance(
+            uint8_t* instance) const
     {
         reinterpret_cast<SequenceInstance*>(instance)->~SequenceInstance();
     }
 
-    virtual uint8_t* get_instance_at(uint8_t* instance, size_t index) const
+    virtual uint8_t* get_instance_at(
+            uint8_t* instance,
+            size_t index) const
     {
         return reinterpret_cast<SequenceInstance*>(instance)->operator[](uint32_t(index));
     }
 
-    virtual size_t get_instance_size(const uint8_t* instance) const
+    virtual size_t get_instance_size(
+            const uint8_t* instance) const
     {
         return reinterpret_cast<const SequenceInstance*>(instance)->size();
     }
 
-    uint8_t* push_instance(uint8_t* instance, const uint8_t* value) const
+    virtual bool compare_instance(
+            const uint8_t* instance,
+            const uint8_t* other_instance) const
+    {
+        return *reinterpret_cast<const SequenceInstance*>(instance)
+            == *reinterpret_cast<const SequenceInstance*>(other_instance);
+    }
+
+    uint8_t* push_instance(
+            uint8_t* instance,
+            const uint8_t* value) const
     {
         return reinterpret_cast<SequenceInstance*>(instance)->push(value);
     }

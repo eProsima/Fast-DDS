@@ -39,7 +39,8 @@ public:
                 bounds)
     {}
 
-    virtual bool is_subset_of(const DynamicType& other) const
+    virtual bool is_subset_of(
+            const DynamicType& other) const
     {
         if(other.kind() != TypeKind::STRING_TYPE)
         {
@@ -55,28 +56,42 @@ public:
         return sizeof(std::string);
     }
 
-    virtual void construct_instance(uint8_t* instance) const
+    virtual void construct_instance(
+            uint8_t* instance) const
     {
         new (instance) std::string();
     }
 
-    virtual void copy_instance(uint8_t* target, const uint8_t* source) const
+    virtual void copy_instance(
+            uint8_t* target,
+            const uint8_t* source) const
     {
         new (target) std::string(*reinterpret_cast<const std::string*>(source));
     }
 
-    virtual void destroy_instance(uint8_t* instance) const
+    virtual void destroy_instance(
+            uint8_t* instance) const
     {
         reinterpret_cast<std::string*>(instance)->~basic_string();
     }
 
-    virtual uint8_t* get_instance_at(uint8_t* instance, size_t index) const
+    virtual bool compare_instance(
+            const uint8_t* instance,
+            const uint8_t* other_instance) const
+    {
+        return *reinterpret_cast<const std::string*>(instance) == *reinterpret_cast<const std::string*>(other_instance);
+    }
+
+    virtual uint8_t* get_instance_at(
+            uint8_t* instance,
+            size_t index) const
     {
         void* char_addr = &reinterpret_cast<std::string*>(instance)->operator[](index);
         return static_cast<uint8_t*>(char_addr);
     }
 
-    virtual size_t get_instance_size(const uint8_t* instance) const
+    virtual size_t get_instance_size(
+            const uint8_t* instance) const
     {
         return reinterpret_cast<const std::string*>(instance)->size();
     }

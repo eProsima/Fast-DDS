@@ -35,6 +35,12 @@ class ReadableDynamicDataRef
 public:
     virtual ~ReadableDynamicDataRef() = default;
 
+    bool operator == (
+            const ReadableDynamicDataRef& other) const
+    {
+        return type_->compare_instance(instance_, other.instance_);
+    }
+
     bool has_type() const { return type_ != nullptr; }
     const DynamicType& type() const { return *type_; }
 
@@ -59,13 +65,13 @@ public:
     }
 
     ReadableDynamicDataRef operator [] (
-            size_t index) const // this = SequenceType & ArrayType
+            size_t index) const // this = CollectionType
     {
         const CollectionType* collection = static_cast<const CollectionType*>(type_);
         return ReadableDynamicDataRef(collection->content_type(), collection->get_instance_at(instance_, index));
     }
 
-    size_t size() const // this = SequenceType & ArrayType
+    size_t size() const // this = CollectionType
     {
         const CollectionType* collection = static_cast<const CollectionType*>(type_);
         return collection->get_instance_size(instance_);

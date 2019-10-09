@@ -47,6 +47,8 @@ int main()
     std::cout << "  om2 im2 name: " << static_cast<const StructType&>(outter.member("om2").type()).member("im2").name() << std::endl;
     std::cout << "  om3 name: " << outter.member("om3").name() << std::endl;
     std::cout << "  om3 type kind: " << (outter.member("om3").type().kind() == TypeKind::SEQUENCE_TYPE) << std::endl;
+    std::cout << "  outter is_subset_of outter: " << outter.is_subset_of(outter) << std::endl;
+    std::cout << "  outter is_subset_of inner: " << outter.is_subset_of(inner) << std::endl;
 
     //DYNAMIC DATA INFO
     std::cout << "outter values: " << std::endl;
@@ -67,6 +69,7 @@ int main()
     std::cout << "  om5_size: " << data["om5"].size() << std::endl;
     std::cout << "  om6_size: " << data["om6"].size() << std::endl;
     std::cout << "  om7_size: " << data["om7"].size() << std::endl;
+    std::cout << "  data == data: " << (data == data) << std::endl;
 
     return 0;
 }

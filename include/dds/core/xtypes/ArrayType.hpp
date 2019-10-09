@@ -55,7 +55,8 @@ public:
     ArrayType(const ArrayType& other) = default;
     ArrayType(ArrayType&& other) = default;
 
-    virtual bool is_subset_of(const DynamicType& other) const
+    virtual bool is_subset_of(
+            const DynamicType& other) const
     {
         if(other.kind() != TypeKind::ARRAY_TYPE)
         {
@@ -72,7 +73,8 @@ public:
         return dimension_ * content_type().memory_size();
     }
 
-    virtual void construct_instance(uint8_t* instance) const
+    virtual void construct_instance(
+            uint8_t* instance) const
     {
         if(content_type().is_constructed_type())
         {
@@ -84,7 +86,9 @@ public:
         }
     }
 
-    virtual void copy_instance(uint8_t* target, const uint8_t* source) const
+    virtual void copy_instance(
+            uint8_t* target,
+            const uint8_t* source) const
     {
         size_t block_size = content_type().memory_size();
         if(content_type().is_constructed_type())
@@ -100,7 +104,8 @@ public:
         }
     }
 
-    virtual void destroy_instance(uint8_t* instance) const
+    virtual void destroy_instance(
+            uint8_t* instance) const
     {
         if(content_type().is_constructed_type())
         {
@@ -112,12 +117,35 @@ public:
         }
     }
 
-    virtual uint8_t* get_instance_at(uint8_t* instance, size_t index) const
+    virtual bool compare_instance(
+            const uint8_t* instance,
+            const uint8_t* other_instance) const
+    {
+        size_t block_size = content_type().memory_size();
+        if(content_type().is_constructed_type())
+        {
+            bool comp = true;
+            for(uint32_t i = 0; i < dimension_; i++)
+            {
+                comp &= content_type().compare_instance(instance + i * block_size, other_instance + i * block_size);
+            }
+            return comp;
+        }
+        else //optimization when the type is primitive
+        {
+            return std::memcmp(instance, other_instance, dimension_ * block_size) == 0;
+        }
+    }
+
+    virtual uint8_t* get_instance_at(
+            uint8_t* instance,
+            size_t index) const
     {
         return instance + index * content_type().memory_size();
     }
 
-    virtual size_t get_instance_size(const uint8_t* /* instance */) const
+    virtual size_t get_instance_size(
+            const uint8_t*) const
     {
         return dimension_;
     }

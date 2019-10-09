@@ -70,6 +70,11 @@ public:
                 if(other_it != other_struct.member_map().end())
                 {
                     comp &= it.second.type().is_subset_of(other_it->second.type());
+                    std::cout << "comp " << comp << " " << it.second.name() << " " << other_it->second.name() <<  std::endl;
+                }
+                else
+                {
+                    return false;
                 }
             }
         }
@@ -81,29 +86,47 @@ public:
         return memory_size_;
     }
 
-    virtual void construct_instance(uint8_t* instance) const
+    virtual void construct_instance(
+            uint8_t* instance) const
     {
         for(auto&& it: member_map())
         {
             it.second.type().construct_instance(instance + it.second.offset());
         }
-    };
+    }
 
-    virtual void copy_instance(uint8_t* target, const uint8_t* source) const
+    virtual void copy_instance(
+            uint8_t* target,
+            const uint8_t* source) const
     {
+        //TODO: implement optional
         for(auto&& it: member_map())
         {
             it.second.type().copy_instance(target + it.second.offset(), source + it.second.offset());
         }
-    };
+    }
 
-    virtual void destroy_instance(uint8_t* instance) const
+    virtual void destroy_instance(
+            uint8_t* instance) const
     {
         for(auto&& it: member_map())
         {
             it.second.type().destroy_instance(instance + it.second.offset());
         }
-    };
+    }
+
+    virtual bool compare_instance(
+            const uint8_t* instance,
+            const uint8_t* other_instance) const
+    {
+        //TODO: implement optional
+        bool comp = true;
+        for(auto&& it: member_map())
+        {
+            comp &= it.second.type().compare_instance(instance + it.second.offset(), other_instance + it.second.offset());
+        }
+        return comp;
+    }
 
 protected:
     virtual DynamicType* clone() const

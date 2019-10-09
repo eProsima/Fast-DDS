@@ -57,6 +57,24 @@ public:
         }
     }
 
+    bool operator == (
+            const SequenceInstance& other) const
+    {
+        if(content_.is_constructed_type())
+        {
+            bool comp = true;
+            for(uint32_t i = 0; i < size_; i++)
+            {
+                comp &= content_.compare_instance(memory_ + i * block_size_, other.memory_ + i * block_size_);
+            }
+            return comp;
+        }
+        else //optimization when the type is primitive
+        {
+            return std::memcmp(memory_, other.memory_, size_ * block_size_) == 0;
+        }
+    }
+
     virtual ~SequenceInstance()
     {
         if(memory_ != nullptr)
@@ -122,20 +140,20 @@ private:
     static void copy_content(
             uint8_t* target,
             const uint8_t* source,
-            uint32_t size,
+            uint32_t mem_size,
             const DynamicType& content)
     {
         uint32_t block_size = content.memory_size();
         if(content.is_constructed_type())
         {
-            for(uint32_t i = 0; i < size / block_size; i++)
+            for(uint32_t i = 0; i < mem_size / block_size; i++)
             {
                 content.copy_instance(target + i * block_size, source + i * block_size);
             }
         }
         else //optimization when the type is primitive
         {
-            std::memcpy(target, source, size * block_size);
+            std::memcpy(target, source, mem_size);
         }
     }
 };
