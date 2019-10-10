@@ -40,79 +40,39 @@ struct RTPS_DllAPI GUID_t
     //!Entity id
     EntityId_t entityId;
 
-
     /*!
-     * DDefault constructor. Contructs an unknown GUID.
+     * Default constructor. Constructs an unknown GUID
      */
-    GUID_t(){};
-
-    /*!
-     * Copy constructor.
-     */
-    GUID_t(
-            const GUID_t& g)
-        : guidPrefix(g.guidPrefix)
-        , entityId(g.entityId)
-    {
-    }
-
-    /*!
-     * Move constructor.
-     */
-    GUID_t(
-            GUID_t&& g)
-        : guidPrefix(std::move(g.guidPrefix))
-        , entityId(std::move(g.entityId))
+    GUID_t() noexcept
     {
     }
 
     /**
-     * Assignment operator
-     * @param guid GUID to copy the data from.
-     */
-    GUID_t& operator=(const GUID_t &guid)
-    {
-        guidPrefix = guid.guidPrefix;
-        entityId = guid.entityId;
-        return *this;
-    }
-
-    /**
-     * Assignment operator
-     * @param guid GUID to copy the data from.
-     */
-    GUID_t& operator=(GUID_t &&guid)
-    {
-        guidPrefix = std::move(guid.guidPrefix);
-        entityId = std::move(guid.entityId);
-        return *this;
-    }
-
-    /**
-     * @param guidP Guid prefix
+     * Construct
+     * @param guid_prefix Guid prefix
      * @param id Entity id
      */
     GUID_t(
-            const GuidPrefix_t& guidP,
-            uint32_t id)
-        : guidPrefix(guidP)
+            const GuidPrefix_t& guid_prefix,
+            uint32_t id) noexcept
+        : guidPrefix(guid_prefix)
         , entityId(id)
     {
     }
 
     /**
-     * @param guidP Guid prefix
+     * @param guid_prefix Guid prefix
      * @param entId Entity id
      */
     GUID_t(
-            const GuidPrefix_t& guidP,
-            const EntityId_t& entId)
-        : guidPrefix(guidP)
+            const GuidPrefix_t& guid_prefix,
+            const EntityId_t& entId) noexcept
+        : guidPrefix(guid_prefix)
         , entityId(entId)
     {
     }
 
-    static GUID_t unknown()
+    static GUID_t unknown() noexcept
     {
         return GUID_t();
     };
