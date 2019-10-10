@@ -53,48 +53,6 @@ struct RTPS_DllAPI GuidPrefix_t
         memcpy(value, guid, size);
     }
 
-    /*!
-     * Guid prefix copy constructor.
-     * @param g Guid prefix to copy the values from
-     */
-    GuidPrefix_t(
-            const GuidPrefix_t& g)
-    {
-        memcpy(value, g.value, size);
-    }
-
-    /*!
-     * Guid prefix move constructor.
-     * @param g Guid prefix to copy the values from
-     */
-    GuidPrefix_t(
-            GuidPrefix_t&& g)
-    {
-        memmove(value, g.value, size);
-    }
-
-    /**
-     * Guid prefix assignment operator
-     * @param guidpre Guid prefix to copy the values from
-     */
-    GuidPrefix_t& operator=(
-            const GuidPrefix_t& guidpre)
-    {
-        memcpy(value, guidpre.value, size);
-        return *this;
-    }
-
-    /**
-     * Guid prefix assignment operator
-     * @param guidpre Guid prefix to copy the values from
-     */
-    GuidPrefix_t& operator=(
-            GuidPrefix_t&& guidpre)
-    {
-        memmove(value, guidpre.value, size);
-        return *this;
-    }
-
     static GuidPrefix_t unknown()
     {
         return GuidPrefix_t();
