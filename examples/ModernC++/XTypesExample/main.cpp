@@ -26,54 +26,55 @@ int main()
     data["om2"]["im2"].value(35.8f);
     data["om3"].push(12);
     data["om3"].push(31);
-    data["om3"].push(50); // direct push to the internal std::vector
-    data["om3"][1].value(100); //direct index access to the std::vector
+    data["om3"].push(50);
+    data["om3"][1].value(100);
     data["om4"].push(data["om2"]);
     data["om4"].push(data["om2"]);
     data["om4"][1] = data["om2"];
     data["om5"][1].value(123);
     data["om6"][1] = data["om2"];
-    data["om7"].value<std::string>("Hi!"); //Check small string
-    data["om7"].string("This is a string!"); //Check small string
+    data["om7"].value<std::string>("Hi!");
+    data["om7"].string("This is a string!");
 
-    size_t deep = 0;
-    data.for_each([&](ReadableDynamicDataRef data, size_t deep)
+    data.for_each([&](const DynamicData::ReadableNode& o)
     {
-        std::string tabs(deep * 4, ' ');
-        switch(data.type().kind())
+        std::cout << std::string(o.deep() * 4, ' ');
+        if(o.has_parent())
+        {
+            std::cout << "["
+                << (o.parent().type().is_aggregation_type()
+                    ? o.access().struct_member().name()
+                    : std::to_string(o.access().index()))
+                << "] ";
+        }
+        switch(o.data().type().kind())
         {
             case TypeKind::UINT_32_TYPE:
-                std::cout << tabs << "Type: " << data.type().name() << ", value: " << data.value<uint32_t>() << std::endl;
+                std::cout << o.data().value<uint32_t>() << " --- <" << o.data().type().name() << ">";
                 break;
             case TypeKind::FLOAT_32_TYPE:
-                std::cout << tabs << "Type: " << data.type().name() << ", value: " << data.value<float>() << std::endl;
+                std::cout << o.data().value<float>() << " --- <" << o.data().type().name() << ">";
                 break;
             case TypeKind::FLOAT_64_TYPE:
-                std::cout << tabs << "Type: " << data.type().name() << ", value: " << data.value<double>() << std::endl;
+                std::cout << o.data().value<double>() << " --- <" << o.data().type().name() << ">";
                 break;
             case TypeKind::STRING_TYPE:
-                std::cout << tabs << "Type: " << data.type().name() << ", value: " << data.value<std::string>() << std::endl;
+                std::cout << o.data().value<std::string>() << " --- <" << o.data().type().name() << ">";
                 break;
             case TypeKind::ARRAY_TYPE:
-                std::cout << tabs << "Type: " << data.type().name() << ", size: " << data.size() << std::endl;
-                deep++;
+                std::cout << "<" << o.data().type().name() << ">";
                 break;
             case TypeKind::SEQUENCE_TYPE:
-                std::cout << tabs << "Type: " << data.type().name() << ", size: " << data.size() << std::endl;
-                deep++;
+                std::cout << "<" << o.data().type().name() << "[" << o.data().size() << "]>";
                 break;
             case TypeKind::STRUCTURE_TYPE:
-                std::cout << tabs << "Type: Structure, name: " << data.type().name() << std::endl;
-                deep++;
+                std::cout << "Structure: <" << o.data().type().name() << ">";
                 break;
             default:
-                std::cout << tabs << "Unexpected type: " << data.type().name() << std::endl;
+                std::cout << "Unexpected type: " << o.data().type().name();
         }
+        std::cout << std::endl;
     });
-
-    std::cout << "  outter is_subset_of outter: " << outter.is_subset_of(outter) << std::endl;
-    std::cout << "  outter is_subset_of inner: " << outter.is_subset_of(inner) << std::endl;
-    std::cout << "  data == data: " << (data == data) << std::endl;
 
     return 0;
 }

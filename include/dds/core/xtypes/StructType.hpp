@@ -127,12 +127,14 @@ public:
         return comp;
     }
 
-    virtual void for_each_instance(uint8_t* instance, size_t level, InstanceVisitor visitor) const
+    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const
     {
-        visitor(*this, instance, level);
+        visitor(node);
         for(auto&& it: member_map())
         {
-            it.second.type().for_each_instance(instance + it.second.offset(), level + 1, visitor);
+            const StructMember& member = it.second;
+            InstanceNode child(node, member.type(), node.instance + member.offset(), InstanceNode::Access(member));
+            member.type().for_each_instance(child, visitor);
         }
     }
 

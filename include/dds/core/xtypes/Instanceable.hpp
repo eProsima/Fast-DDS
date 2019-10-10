@@ -27,6 +27,7 @@ namespace core {
 namespace xtypes {
 
 class DynamicType;
+class StructMember;
 
 class Instanceable
 {
@@ -43,12 +44,48 @@ public:
 
     virtual bool compare_instance(const uint8_t* instance, const uint8_t* other_instance) const = 0;
 
-    using InstanceVisitor = std::function<void(const DynamicType& type, uint8_t* instance, size_t level)>;
-    virtual void for_each_instance(uint8_t* instance, size_t level, InstanceVisitor visitor) const = 0;
+    struct InstanceNode
+    {
+        const InstanceNode* parent;
+        const DynamicType& type;
+        uint8_t* instance;
+        size_t deep;
+        union Access
+        {
+            size_t index;
+            const StructMember& struct_member;
+            Access(size_t index) : index(index) {}
+            Access(const StructMember& member) : struct_member(member) {}
+        } access;
+
+        InstanceNode(
+                const DynamicType& type,
+                uint8_t* instance)
+            : parent(nullptr)
+            , type(type)
+            , instance(instance)
+            , deep(0)
+            , access(0)
+        {}
+
+        InstanceNode(
+                const InstanceNode& parent,
+                const DynamicType& type,
+                uint8_t* instance,
+                const Access& access)
+            : parent(&parent)
+            , type(type)
+            , instance(instance)
+            , deep(parent.deep + 1)
+            , access(access)
+        {}
+    };
+
+    using InstanceVisitor = std::function<void(const InstanceNode& node)>;
+    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const = 0;
 
 protected:
     Instanceable() = default;
-
 };
 
 } //namespace xtypes

@@ -137,12 +137,14 @@ public:
         }
     }
 
-    virtual void for_each_instance(uint8_t* instance, size_t level, InstanceVisitor visitor) const
+    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const
     {
-        visitor(*this, instance, level);
+        visitor(node);
+        size_t block_size = content_type().memory_size();
         for(uint32_t i = 0; i < dimension_; i++)
         {
-            content_type().for_each_instance(instance, level + 1, visitor);
+            InstanceNode child(node, content_type(), node.instance + i * block_size, InstanceNode::Access(i));
+            content_type().for_each_instance(child, visitor);
         }
     }
 

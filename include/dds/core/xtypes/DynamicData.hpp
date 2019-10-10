@@ -79,12 +79,36 @@ public:
         return collection.get_instance_size(instance_);
     }
 
-    using ReadableDataVisitor = std::function<void(ReadableDynamicDataRef data, size_t level)>;
-    void for_each(ReadableDataVisitor visitor)
+    class ReadableNode
     {
-        type_.for_each_instance(instance_, 0, [&](const DynamicType& type, uint8_t* instance, size_t level)
+    public:
+        class AccessMethod
         {
-            visitor(ReadableDynamicDataRef(type, instance), level);
+        public:
+            AccessMethod(const Instanceable::InstanceNode::Access& access) : access_(access) {}
+            size_t index() const { return access_.index; }
+            const StructMember& struct_member() const { return access_.struct_member; }
+        private:
+            const Instanceable::InstanceNode::Access& access_;
+        };
+
+        ReadableNode(const Instanceable::InstanceNode& instance_node) : internal_(instance_node) {}
+        bool has_parent() const { return internal_.parent != nullptr; }
+        ReadableNode parent() const { return ReadableNode(*internal_.parent); }
+        ReadableDynamicDataRef data() const { return ReadableDynamicDataRef(internal_.type, internal_.instance); }
+        const DynamicType& type() const { return internal_.type; }
+        size_t deep() const { return internal_.deep; }
+        AccessMethod access() const { return AccessMethod(internal_.access); }
+    private:
+        const Instanceable::InstanceNode& internal_;
+    };
+
+    void for_each(std::function<void(const ReadableNode& node)> visitor)
+    {
+        Instanceable::InstanceNode root(type_, instance_);
+        type_.for_each_instance(root, [&](const Instanceable::InstanceNode& instance_node)
+        {
+            visitor(ReadableNode(instance_node));
         });
     }
 
@@ -113,6 +137,8 @@ public:
         type_.copy_instance(instance_, instance(other));
         return *this;
     }
+
+    ReadableDynamicDataRef cref() const { return ReadableDynamicDataRef(*this); }
 
     template<typename T, class = PrimitiveOrString<T>>
     const T& value() // this = PrimitiveType & StringType
@@ -163,6 +189,21 @@ public:
         return *this;
     }
 
+    class WritableNode : public ReadableNode
+    {
+    public:
+        WritableNode(const Instanceable::InstanceNode& instance_node) : ReadableNode(instance_node) {}
+    };
+
+    void for_each(std::function<void(const WritableNode& node)> visitor)
+    {
+        Instanceable::InstanceNode root(type_, instance_);
+        type_.for_each_instance(root, [&](const Instanceable::InstanceNode& instance_node)
+        {
+            visitor(WritableNode(instance_node));
+        });
+    }
+
 protected:
     WritableDynamicDataRef(
             const DynamicType& type,
@@ -195,6 +236,8 @@ public:
         type_.destroy_instance(instance_);
         delete[] instance_;
     }
+
+    WritableDynamicDataRef ref() const { return WritableDynamicDataRef(*this); }
 };
 
 } //namespace xtypes

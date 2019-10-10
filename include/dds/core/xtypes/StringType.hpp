@@ -82,9 +82,9 @@ public:
         return *reinterpret_cast<const std::string*>(instance) == *reinterpret_cast<const std::string*>(other_instance);
     }
 
-    virtual void for_each_instance(uint8_t* instance, size_t level, InstanceVisitor visitor) const
+    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const
     {
-        visitor(*this, instance, level);
+        visitor(node);
     }
 
     virtual uint8_t* get_instance_at(
