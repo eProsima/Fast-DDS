@@ -140,9 +140,9 @@ set(${PROJECT_NAME}_source_files
     fastrtps_deprecated/types/DynamicDataHelper.cpp
 
     fastrtps_deprecated/attributes/TopicAttributes.cpp
-    fastrtps_deprecated/qos/ParameterList.cpp
+    dds/qos/ParameterList.cpp
     fastrtps_deprecated/qos/ParameterTypes.cpp
-    fastrtps_deprecated/qos/QosPolicies.cpp
+    dds/qos/QosPolicies.cpp
     fastrtps_deprecated/qos/WriterQos.cpp
     fastrtps_deprecated/qos/ReaderQos.cpp
     rtps/builtin/BuiltinProtocols.cpp
