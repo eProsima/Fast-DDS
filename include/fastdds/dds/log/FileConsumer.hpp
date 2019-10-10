@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,19 +13,20 @@
 // limitations under the License.
 
 /**
- * @file FileConsumer.h
+ * @file FileConsumer.hpp
  *
  */
 
-#ifndef FILE_CONSUMER_H
-#define FILE_CONSUMER_H
+#ifndef _FASTDDS_FILE_CONSUMER_HPP_
+#define _FASTDDS_FILE_CONSUMER_HPP_
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <fstream>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
 /**
  * Log consumer that writes the log events to a file.
@@ -69,7 +70,8 @@ private:
     bool append_;
 };
 
-} // namespace fastrtps
+} // namespace dds
+} // namespace fastdds
 } // namespace eprosima
 
-#endif // FILE_CONSUMER_H
+#endif // _FASTDDS_FILE_CONSUMER_HPP_

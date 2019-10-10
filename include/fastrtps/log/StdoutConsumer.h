@@ -15,28 +15,12 @@
 #ifndef STDOUT_CONSUMER_H
 #define STDOUT_CONSUMER_H
 
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/StdoutConsumer.hpp>
 
 namespace eprosima {
 namespace fastrtps {
 
-class StdoutConsumer : public LogConsumer
-{
-public:
-
-    virtual ~StdoutConsumer() {}
-
-    RTPS_DllAPI virtual void Consume(
-            const Log::Entry&);
-
-private:
-
-    void print_header(
-            const Log::Entry&) const;
-
-    void print_context(
-            const Log::Entry&) const;
-};
+using StdoutConsumer = fastdds::dds::StdoutConsumer;
 
 } // namespace fastrtps
 } // namespace eprosima

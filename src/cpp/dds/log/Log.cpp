@@ -2,14 +2,15 @@
 #include <iomanip>
 #include <mutex>
 
-#include <fastrtps/log/Log.h>
-#include <fastrtps/log/StdoutConsumer.h>
-#include <fastrtps/log/Colors.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/log/StdoutConsumer.hpp>
+#include <fastdds/dds/log/Colors.hpp>
 #include <iostream>
 
 using namespace std;
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
 struct Log::Resources Log::resources_;
 
@@ -355,5 +356,6 @@ void LogConsumer::print_new_line(
     stream << def << std::endl;
 }
 
-} //namespace fastrtps
+} //namespace dds
+} //namespace fastdds
 } //namespace eprosima

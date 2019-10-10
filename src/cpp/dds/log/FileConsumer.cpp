@@ -1,8 +1,9 @@
-#include <fastrtps/log/FileConsumer.h>
+#include <fastdds/dds/log/FileConsumer.hpp>
 #include <iomanip>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
 FileConsumer::FileConsumer()
     : FileConsumer("output.log")
@@ -53,5 +54,6 @@ void FileConsumer::print_context(
     LogConsumer::print_context(file_, entry, false);
 }
 
-} // Namespace fastrtps
+} // Namespace dds
+} // Namespace fastdds
 } // Namespace eprosima
