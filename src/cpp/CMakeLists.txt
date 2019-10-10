@@ -31,9 +31,9 @@ endif(WIN32)
 set(${PROJECT_NAME}_source_files
     ${ALL_HEADERS}
 
-    fastrtps_deprecated/log/Log.cpp
-    fastrtps_deprecated/log/StdoutConsumer.cpp
-    fastrtps_deprecated/log/FileConsumer.cpp
+    dds/log/Log.cpp
+    dds/log/StdoutConsumer.cpp
+    dds/log/FileConsumer.cpp
     fastrtps_deprecated/utils/eClock.cpp
     fastrtps_deprecated/utils/IPFinder.cpp
     fastrtps_deprecated/utils/md5.cpp
