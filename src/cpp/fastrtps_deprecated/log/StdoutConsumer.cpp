@@ -5,23 +5,26 @@
 namespace eprosima {
 namespace fastrtps {
 
-void StdoutConsumer::Consume(const Log::Entry& entry)
+void StdoutConsumer::Consume(
+        const Log::Entry& entry)
 {
-   PrintHeader(entry);
-   PrintMessage(std::cout, entry, true);
-   PrintContext(entry);
-   PrintNewLine(std::cout, true);
+    print_header(entry);
+    print_message(std::cout, entry, true);
+    print_context(entry);
+    print_new_line(std::cout, true);
 }
 
-void StdoutConsumer::PrintHeader(const Log::Entry& entry) const
+void StdoutConsumer::print_header(
+        const Log::Entry& entry) const
 {
-    PrintTimestamp(std::cout, entry, true);
-    LogConsumer::PrintHeader(std::cout, entry, true);
+    print_timestamp(std::cout, entry, true);
+    LogConsumer::print_header(std::cout, entry, true);
 }
 
-void StdoutConsumer::PrintContext(const Log::Entry& entry) const
+void StdoutConsumer::print_context(
+        const Log::Entry& entry) const
 {
-    LogConsumer::PrintContext(std::cout, entry, true);
+    LogConsumer::print_context(std::cout, entry, true);
 }
 
 } // Namespace fastrtps

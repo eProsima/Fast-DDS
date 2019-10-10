@@ -32,8 +32,10 @@ namespace fastrtps {
  *
  * @file FileConsumer.h
  */
-class FileConsumer : public LogConsumer {
+class FileConsumer : public LogConsumer
+{
 public:
+
     //! Default constructor: filename = "output.log", append = false.
     RTPS_DllAPI FileConsumer();
 
@@ -41,23 +43,30 @@ public:
      * @param filename path of the output file where the log will be wrote.
      * @param append indicates if the consumer must append the content in the filename.
      */
-    RTPS_DllAPI FileConsumer(const std::string &filename, bool append = false);
+    RTPS_DllAPI FileConsumer(
+            const std::string& filename,
+            bool append = false);
 
     /** \internal
      * Called by Log to ask us to consume the Entry.
      * @param Log::Entry to consume.
      */
-    RTPS_DllAPI virtual void Consume(const Log::Entry&);
+    RTPS_DllAPI virtual void Consume(
+            const Log::Entry&);
 
     virtual ~FileConsumer();
 
 private:
-    void PrintHeader(const Log::Entry&);
-    void PrintContext(const Log::Entry&);
 
-    std::string mOutputFile;
-    std::ofstream mFile;
-    bool mAppend;
+    void print_header(
+            const Log::Entry&);
+
+    void print_context(
+            const Log::Entry&);
+
+    std::string output_file_;
+    std::ofstream file_;
+    bool append_;
 };
 
 } // namespace fastrtps
