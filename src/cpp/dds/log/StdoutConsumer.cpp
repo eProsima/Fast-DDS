@@ -1,9 +1,10 @@
-#include <fastrtps/log/StdoutConsumer.h>
+#include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <iostream>
 #include <iomanip>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
 void StdoutConsumer::Consume(
         const Log::Entry& entry)
@@ -27,5 +28,6 @@ void StdoutConsumer::print_context(
     LogConsumer::print_context(std::cout, entry, true);
 }
 
-} // Namespace fastrtps
+} // Namespace dds
+} // Namespace fastdds
 } // Namespace eprosima

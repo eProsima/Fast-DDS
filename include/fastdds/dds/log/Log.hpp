@@ -1,5 +1,5 @@
 
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,8 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#ifndef _FASTRTPS_LOG_LOG_H_
-#define _FASTRTPS_LOG_LOG_H_
+#ifndef _FASTDDS_LOG_LOG_HPP_
+#define _FASTDDS_LOG_LOG_HPP_
 
 #include <fastrtps/utils/DBQueue.h>
 #include <fastrtps/fastrtps_dll.h>
@@ -45,7 +45,8 @@
 #define logError(cat, msg) logError_(cat, msg)
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
 class LogConsumer;
 
@@ -155,7 +156,7 @@ private:
 
     struct Resources
     {
-        DBQueue<Entry> logs;
+        fastrtps::DBQueue<Entry> logs;
         std::vector<std::unique_ptr<LogConsumer> > consumers;
         std::unique_ptr<std::thread> logging_thread;
 
@@ -188,8 +189,6 @@ private:
     // if the log entry is blacklisted.
     static bool preprocess(
             Entry&);
-
-    static void launch_thread();
 
     static void run();
 
@@ -280,7 +279,8 @@ protected:
 #define logInfo_(cat, msg)
 #endif
 
-} // namespace fastrtps
+} // namespace dds
+} // namespace fastdds
 } // namespace eprosima
 
 #endif
