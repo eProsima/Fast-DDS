@@ -14,7 +14,7 @@
 
 /**
  * @file LivelinessChangedStatus.h
-*/
+ */
 
 #ifndef _LIVELINESS_CHANGED_STATUS_H_
 #define _LIVELINESS_CHANGED_STATUS_H_

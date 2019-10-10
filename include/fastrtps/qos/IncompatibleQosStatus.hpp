@@ -14,7 +14,7 @@
 
 /**
  * @file IncompatibleQosStatus.hpp
-*/
+ */
 
 #ifndef _FASTRTPS_INCOMPATIBLE_QOS_STATUS_HPP_
 #define _FASTRTPS_INCOMPATIBLE_QOS_STATUS_HPP_

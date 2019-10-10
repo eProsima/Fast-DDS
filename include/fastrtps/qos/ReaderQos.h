@@ -32,12 +32,15 @@ namespace fastrtps {
  * Please consult each of them to check for implementation details and default values.
  * @ingroup FASTRTPS_ATTRIBUTES_MODULE
  */
-class  ReaderQos{
+class ReaderQos
+{
 public:
+
     RTPS_DllAPI ReaderQos() {}
     RTPS_DllAPI virtual ~ReaderQos() {}
 
-    bool operator==(const ReaderQos& b) const
+    bool operator==(
+            const ReaderQos& b) const
     {
         return (this->m_durability == b.m_durability) &&
                (this->m_deadline == b.m_deadline) &&
@@ -118,7 +121,9 @@ public:
      * @param readerqos Reference from a ReaderQos object.
      * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
      */
-    RTPS_DllAPI void setQos(const ReaderQos& readerqos, bool first_time);
+    RTPS_DllAPI void setQos(
+            const ReaderQos& readerqos,
+            bool first_time);
 
     /**
      * Check if the Qos values are compatible between each other.
@@ -131,7 +136,8 @@ public:
      * @param qos Reference to the new qos.
      * @return True if they can be updated.
      */
-    RTPS_DllAPI bool canQosBeUpdated(const ReaderQos& qos) const;
+    RTPS_DllAPI bool canQosBeUpdated(
+            const ReaderQos& qos) const;
 };
 
 RTPS_DllAPI extern const ReaderQos DATAREADER_QOS_DEFAULT;

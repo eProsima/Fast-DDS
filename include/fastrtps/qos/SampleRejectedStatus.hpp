@@ -14,7 +14,7 @@
 
 /**
  * @file SampleRejectedStatus.hpp
-*/
+ */
 
 #ifndef _FASTRTPS_SAMPLE_REJECTED_STATUS_HPP_
 #define _FASTRTPS_SAMPLE_REJECTED_STATUS_HPP_
@@ -25,7 +25,8 @@
 namespace eprosima {
 namespace fastrtps {
 
-enum SampleRejectedStatusKind {
+enum SampleRejectedStatusKind
+{
     NOT_REJECTED,
     REJECTED_BY_INSTANCES_LIMIT,
     REJECTED_BY_SAMPLES_LIMIT,

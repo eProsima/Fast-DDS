@@ -33,13 +33,15 @@ namespace fastrtps {
  * Please consult each of them to check for implementation details and default values.
  * @ingroup FASTRTPS_ATTRIBUTES_MODULE
  */
-class  WriterQos
+class WriterQos
 {
 public:
+
     RTPS_DllAPI WriterQos();
     RTPS_DllAPI virtual ~WriterQos();
 
-    bool operator==(const WriterQos& b) const
+    bool operator==(
+            const WriterQos& b) const
     {
         return (this->m_durability == b.m_durability) &&
                (this->m_durabilityService == b.m_durabilityService) &&
@@ -124,7 +126,9 @@ public:
      * @param qos Reference from a WriterQos object.
      * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
      */
-    RTPS_DllAPI void setQos(const WriterQos& qos, bool first_time);
+    RTPS_DllAPI void setQos(
+            const WriterQos& qos,
+            bool first_time);
 
     /**
      * Check if the Qos values are compatible between each other.
@@ -132,7 +136,8 @@ public:
      */
     RTPS_DllAPI bool checkQos() const;
 
-    RTPS_DllAPI bool canQosBeUpdated(const WriterQos& qos) const;
+    RTPS_DllAPI bool canQosBeUpdated(
+            const WriterQos& qos) const;
 };
 
 RTPS_DllAPI extern const WriterQos DATAWRITER_QOS_DEFAULT;
