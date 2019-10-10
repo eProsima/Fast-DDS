@@ -43,16 +43,6 @@ struct RTPS_DllAPI GuidPrefix_t
         memset(value, 0, size);
     }
 
-    /**
-     * Guid prefix constructor
-     * @param guid Guid prefix
-     */
-    GuidPrefix_t(
-            octet guid[size])
-    {
-        memcpy(value, guid, size);
-    }
-
     static GuidPrefix_t unknown()
     {
         return GuidPrefix_t();
