@@ -9,43 +9,48 @@ FileConsumer::FileConsumer()
 {
 }
 
-FileConsumer::FileConsumer(const std::string &filename, bool append)
-    : mOutputFile(filename)
-    , mAppend(append)
+FileConsumer::FileConsumer(
+        const std::string& filename,
+        bool append)
+    : output_file_(filename)
+    , append_(append)
 {
-    if (mAppend)
+    if (append_)
     {
-        mFile.open(mOutputFile, std::ios::out | std::ios::app);
+        file_.open(output_file_, std::ios::out | std::ios::app);
     }
     else
     {
-        mFile.open(mOutputFile, std::ios::out);
+        file_.open(output_file_, std::ios::out);
     }
 }
 
 FileConsumer::~FileConsumer()
 {
-    mFile.close();
+    file_.close();
 }
 
-void FileConsumer::Consume(const Log::Entry& entry)
+void FileConsumer::Consume(
+        const Log::Entry& entry)
 {
-    PrintHeader(entry);
-    PrintMessage(mFile, entry, false);
-    PrintContext(entry);
-    PrintNewLine(mFile, false);
-    mFile.flush();
+    print_header(entry);
+    print_message(file_, entry, false);
+    print_context(entry);
+    print_new_line(file_, false);
+    file_.flush();
 }
 
-void FileConsumer::PrintHeader(const Log::Entry& entry)
+void FileConsumer::print_header(
+        const Log::Entry& entry)
 {
-    PrintTimestamp(mFile, entry, false);
-    LogConsumer::PrintHeader(mFile, entry, false);
+    print_timestamp(file_, entry, false);
+    LogConsumer::print_header(file_, entry, false);
 }
 
-void FileConsumer::PrintContext(const Log::Entry& entry)
+void FileConsumer::print_context(
+        const Log::Entry& entry)
 {
-    LogConsumer::PrintContext(mFile, entry, false);
+    LogConsumer::print_context(file_, entry, false);
 }
 
 } // Namespace fastrtps
