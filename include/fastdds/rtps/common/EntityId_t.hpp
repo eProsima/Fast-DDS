@@ -63,7 +63,7 @@ namespace rtps {
 //!@ingroup COMMON_MODULE
 struct RTPS_DllAPI EntityId_t
 {
-    static const unsigned int size = 4;
+    static constexpr unsigned int size = 4;
     octet value[size];
     //! Default constructor. Uknown entity.
     EntityId_t(){
