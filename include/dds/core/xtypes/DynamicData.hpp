@@ -23,6 +23,8 @@
 #include <dds/core/xtypes/SequenceType.hpp>
 #include <dds/core/xtypes/PrimitiveTypes.hpp>
 
+#include <iostream>
+
 namespace dds {
 namespace core {
 namespace xtypes {
@@ -77,6 +79,15 @@ public:
     {
         const CollectionType& collection = static_cast<const CollectionType&>(type_);
         return collection.get_instance_size(instance_);
+    }
+
+    template<typename T, class = PrimitiveOrString<T>>
+    std::vector<T> as_vector() const // this = CollectionType with PrimitiveOrString content
+    {
+        const CollectionType& collection = static_cast<const CollectionType&>(type_);
+        const T* location = reinterpret_cast<T*>(collection.get_instance_at(instance_, 0));
+        size_t size = collection.get_instance_size(instance_);
+        return std::vector<T>(location, location + size);
     }
 
     class ReadableNode
@@ -231,8 +242,25 @@ public:
         type_.construct_instance(instance_);
     }
 
-    DynamicData(const DynamicData& other) = delete;
-    DynamicData(DynamicData&& other) = delete;
+    DynamicData(const DynamicData& other)
+        : WritableDynamicDataRef(other.type_, new uint8_t[other.type_.memory_size()])
+    {
+        type_.copy_instance(instance_, instance(other));
+    }
+
+    DynamicData(DynamicData&& other)
+        : WritableDynamicDataRef(other.type_, new uint8_t[other.type_.memory_size()])
+    {
+        type_.move_instance(instance_, instance(other));
+    }
+
+    DynamicData& operator = (
+            const DynamicData& other)
+    {
+        type_.destroy_instance(instance_);
+        type_.copy_instance(instance_, instance(other));
+        return *this;
+    }
 
     virtual ~DynamicData()
     {

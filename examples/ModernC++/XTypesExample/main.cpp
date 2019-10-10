@@ -20,16 +20,16 @@ void print_data(const ReadableDynamicDataRef& data)
         switch(o.data().type().kind())
         {
             case TypeKind::UINT_32_TYPE:
-                std::cout << o.data().value<uint32_t>() << " --- <" << o.data().type().name() << ">";
+                std::cout << "<" << o.data().type().name() << ">    " << o.data().value<uint32_t>();
                 break;
             case TypeKind::FLOAT_32_TYPE:
-                std::cout << o.data().value<float>() << " --- <" << o.data().type().name() << ">";
+                std::cout << "<" << o.data().type().name() << ">       " << o.data().value<float>();
                 break;
             case TypeKind::FLOAT_64_TYPE:
-                std::cout << o.data().value<double>() << " --- <" << o.data().type().name() << ">";
+                std::cout << "<" << o.data().type().name() << ">     " << o.data().value<double>();
                 break;
             case TypeKind::STRING_TYPE:
-                std::cout << o.data().value<std::string>() << " --- <" << o.data().type().name() << ">";
+                std::cout << "<" << o.data().type().name() << ">      " << o.data().value<std::string>();
                 break;
             case TypeKind::ARRAY_TYPE:
                 std::cout << "<" << o.data().type().name() << ">";
@@ -49,7 +49,6 @@ void print_data(const ReadableDynamicDataRef& data)
 
 int main()
 {
-    // XTYPES API
     StructType inner("InnerType");
     inner.add_member(Member("im1", primitive_type<uint32_t>()));
     inner.add_member(Member("im2", primitive_type<float>()));
@@ -80,28 +79,6 @@ int main()
     data["om7"].string("This is a string!");
 
     print_data(data);
-
-
-
-    StructType temp_type("Temp");
-    temp_type.add_member(Member("number", primitive_type<uint32_t>()));
-    temp_type.add_member(Member("string", StringType()));
-
-    StructType fixed_type("Fixed");
-    fixed_type.add_member(Member("number", primitive_type<uint32_t>()));
-    fixed_type.add_member(Member("inner", SequenceType(temp_type)));
-
-    DynamicData fixed(fixed_type);
-    fixed["number"].value(42);
-    for(int i = 0; i < 2; i++)
-    {
-        DynamicData temp(temp_type);
-        temp["number"].value(i);
-        temp["string"].value(std::to_string(i));
-        fixed["inner"].push(temp);
-    }
-
-    print_data(fixed);
 
     return 0;
 }

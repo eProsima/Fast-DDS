@@ -34,7 +34,7 @@ public:
             int bounds = 0)
         : MutableCollectionType(
                 TypeKind::STRING_TYPE,
-                "std::string_" + ((bounds > 0) ? std::to_string(bounds) + "_" : ""),
+                "std::string" + ((bounds > 0) ? "_" + std::to_string(bounds) : ""),
                 DynamicType::Ptr(primitive_type<char>()),
                 bounds)
     {}
@@ -48,6 +48,7 @@ public:
             uint8_t* instance) const
     {
         new (instance) std::string();
+        reinterpret_cast<std::string*>(instance)->reserve(bounds());
     }
 
     virtual void copy_instance(
