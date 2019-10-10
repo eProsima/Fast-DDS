@@ -134,9 +134,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/qos/WriterQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/qos/ReaderQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/log/FileConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/FileConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
 
