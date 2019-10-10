@@ -87,7 +87,7 @@ public:
         public:
             AccessMethod(const Instanceable::InstanceNode::Access& access) : access_(access) {}
             size_t index() const { return access_.index; }
-            const StructMember& struct_member() const { return access_.struct_member; }
+            const StructMember& struct_member() const { return *access_.struct_member; }
         private:
             const Instanceable::InstanceNode::Access& access_;
         };
@@ -103,7 +103,7 @@ public:
         const Instanceable::InstanceNode& internal_;
     };
 
-    void for_each(std::function<void(const ReadableNode& node)> visitor)
+    void for_each(std::function<void(const ReadableNode& node)> visitor) const
     {
         Instanceable::InstanceNode root(type_, instance_);
         type_.for_each_instance(root, [&](const Instanceable::InstanceNode& instance_node)
@@ -134,6 +134,7 @@ public:
     WritableDynamicDataRef& operator = (
             const WritableDynamicDataRef& other)
     {
+        type_.destroy_instance(instance_);
         type_.copy_instance(instance_, instance(other));
         return *this;
     }
@@ -166,11 +167,13 @@ public:
     template<typename T, class = PrimitiveOrString<T>>
     void value(const T& t) // this = PrimitiveType & StringType
     {
+        type_.destroy_instance(instance_);
         type_.copy_instance(instance_, reinterpret_cast<const uint8_t*>(&t));
     }
 
     void string(const std::string& s) // this = StringType
     {
+        type_.destroy_instance(instance_);
         type_.copy_instance(instance_, reinterpret_cast<const uint8_t*>(&s));
     }
 

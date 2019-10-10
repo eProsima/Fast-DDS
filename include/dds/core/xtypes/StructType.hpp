@@ -53,6 +53,61 @@ public:
         return std::move(*this);
     }
 
+    virtual size_t memory_size() const
+    {
+        return memory_size_;
+    }
+
+    virtual void construct_instance(
+            uint8_t* instance) const
+    {
+        for(auto&& it: member_map())
+        {
+            it.second.type().construct_instance(instance + it.second.offset());
+        }
+    }
+
+    virtual void copy_instance(
+            uint8_t* target,
+            const uint8_t* source) const
+    {
+        for(auto&& it: member_map())
+        {
+            it.second.type().copy_instance(target + it.second.offset(), source + it.second.offset());
+        }
+    }
+
+    virtual void move_instance(
+            uint8_t* target,
+            uint8_t* source) const
+    {
+        for(auto&& it: member_map())
+        {
+            it.second.type().move_instance(target + it.second.offset(), source + it.second.offset());
+        }
+    }
+
+    virtual void destroy_instance(
+            uint8_t* instance) const
+    {
+        for (auto it = member_map().rbegin(); it != member_map().rend(); ++it)
+        {
+            it->second.type().destroy_instance(instance + it->second.offset());
+        }
+    }
+
+    virtual bool compare_instance(
+            const uint8_t* instance,
+            const uint8_t* other_instance) const
+    {
+        bool comp = true;
+        for(auto&& it: member_map())
+        {
+            comp &= it.second.type().compare_instance(instance + it.second.offset(), other_instance + it.second.offset());
+        }
+        return comp;
+    }
+
     virtual bool is_subset_of(const DynamicType& other) const
     {
         if(other.kind() != TypeKind::STRUCTURE_TYPE)
@@ -76,53 +131,6 @@ public:
                     return false;
                 }
             }
-        }
-        return comp;
-    }
-
-    virtual size_t memory_size() const
-    {
-        return memory_size_;
-    }
-
-    virtual void construct_instance(
-            uint8_t* instance) const
-    {
-        for(auto&& it: member_map())
-        {
-            it.second.type().construct_instance(instance + it.second.offset());
-        }
-    }
-
-    virtual void copy_instance(
-            uint8_t* target,
-            const uint8_t* source) const
-    {
-        //TODO: implement optional
-        for(auto&& it: member_map())
-        {
-            it.second.type().copy_instance(target + it.second.offset(), source + it.second.offset());
-        }
-    }
-
-    virtual void destroy_instance(
-            uint8_t* instance) const
-    {
-        for(auto&& it: member_map())
-        {
-            it.second.type().destroy_instance(instance + it.second.offset());
-        }
-    }
-
-    virtual bool compare_instance(
-            const uint8_t* instance,
-            const uint8_t* other_instance) const
-    {
-        //TODO: implement optional
-        bool comp = true;
-        for(auto&& it: member_map())
-        {
-            comp &= it.second.type().compare_instance(instance + it.second.offset(), other_instance + it.second.offset());
         }
         return comp;
     }

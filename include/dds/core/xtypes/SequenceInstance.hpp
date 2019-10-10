@@ -50,7 +50,7 @@ public:
     {
         if(memory_ != nullptr)
         {
-            copy_content(memory_, other.memory_, size_ * block_size_, content_);
+            copy_content(memory_, other.memory_);
         }
     }
 
@@ -79,7 +79,7 @@ public:
             if(content_.is_constructed_type())
             {
                 uint32_t block_size = block_size_;
-                for(uint32_t i = 0; i < size_; i++)
+                for(int32_t i = size_ - 1; i >= 0; i--)
                 {
                     content_.destroy_instance(memory_ + i * block_size);
                 }
@@ -100,6 +100,7 @@ public:
 
         uint8_t* place = memory_ + size_ * block_size_;
         content_.copy_instance(place, instance);
+
         size_++;
 
         return place;
@@ -126,30 +127,44 @@ private:
         uint32_t new_capacity = (capacity_ > 0) ? capacity_ * 2 : 1;
         uint8_t* new_memory = new uint8_t[new_capacity * block_size_];
 
-        std::memcpy(new_memory, memory_, capacity_ * block_size_); // this move the sequence instead of copy
+        move_content(new_memory, memory_);
 
         delete[] memory_;
         memory_ = new_memory;
         capacity_ = new_capacity;
     }
 
-    static void copy_content(
+    void copy_content(
             uint8_t* target,
-            const uint8_t* source,
-            uint32_t mem_size,
-            const DynamicType& content)
+            const uint8_t* source)
     {
-        uint32_t block_size = content.memory_size();
-        if(content.is_constructed_type())
+        if(content_.is_constructed_type())
         {
-            for(uint32_t i = 0; i < mem_size / block_size; i++)
+            for(uint32_t i = 0; i < size_; i++)
             {
-                content.copy_instance(target + i * block_size, source + i * block_size);
+                content_.copy_instance(target + i * block_size_, source + i * block_size_);
             }
         }
         else //optimization when the type is primitive
         {
-            std::memcpy(target, source, mem_size);
+            std::memcpy(target, source, size_ * block_size_);
+        }
+    }
+
+    void move_content(
+            uint8_t* target,
+            uint8_t* source)
+    {
+        if(content_.is_constructed_type())
+        {
+            for(uint32_t i = 0; i < size_; i++)
+            {
+                content_.move_instance(target + i * block_size_, source + i * block_size_);
+            }
+        }
+        else //optimization when the type is primitive
+        {
+            std::memcpy(target, source, size_ * block_size_);
         }
     }
 };

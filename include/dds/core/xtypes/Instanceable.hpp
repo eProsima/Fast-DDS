@@ -40,6 +40,8 @@ public:
 
     virtual void copy_instance(uint8_t* target, const uint8_t* source) const = 0;
 
+    virtual void move_instance(uint8_t* target, uint8_t* source) const = 0;
+
     virtual void destroy_instance(uint8_t* /*instance*/) const { } //Default does nothing
 
     virtual bool compare_instance(const uint8_t* instance, const uint8_t* other_instance) const = 0;
@@ -53,9 +55,9 @@ public:
         union Access
         {
             size_t index;
-            const StructMember& struct_member;
+            const StructMember* struct_member;
             Access(size_t index) : index(index) {}
-            Access(const StructMember& member) : struct_member(member) {}
+            Access(const StructMember& member) : struct_member(&member) {}
         } access;
 
         InstanceNode(

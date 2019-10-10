@@ -39,18 +39,6 @@ public:
                 bounds)
     {}
 
-    virtual bool is_subset_of(
-            const DynamicType& other) const
-    {
-        if(other.kind() != TypeKind::STRING_TYPE)
-        {
-            return false;
-        }
-
-        const StringType& other_string = static_cast<const StringType&>(other);
-        return bounds() <= other_string.bounds();
-    }
-
     virtual size_t memory_size() const
     {
         return sizeof(std::string);
@@ -69,10 +57,18 @@ public:
         new (target) std::string(*reinterpret_cast<const std::string*>(source));
     }
 
+    virtual void move_instance(
+            uint8_t* target,
+            uint8_t* source) const
+    {
+        new (target) std::string(std::move(*reinterpret_cast<const std::string*>(source)));
+    }
+
     virtual void destroy_instance(
             uint8_t* instance) const
     {
-        reinterpret_cast<std::string*>(instance)->~basic_string();
+        using namespace std;
+        reinterpret_cast<std::string*>(instance)->std::string::~string();
     }
 
     virtual bool compare_instance(
@@ -80,6 +76,18 @@ public:
             const uint8_t* other_instance) const
     {
         return *reinterpret_cast<const std::string*>(instance) == *reinterpret_cast<const std::string*>(other_instance);
+    }
+
+    virtual bool is_subset_of(
+            const DynamicType& other) const
+    {
+        if(other.kind() != TypeKind::STRING_TYPE)
+        {
+            return false;
+        }
+
+        const StringType& other_string = static_cast<const StringType&>(other);
+        return bounds() <= other_string.bounds();
     }
 
     virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const

@@ -55,19 +55,6 @@ public:
     ArrayType(const ArrayType& other) = default;
     ArrayType(ArrayType&& other) = default;
 
-    virtual bool is_subset_of(
-            const DynamicType& other) const
-    {
-        if(other.kind() != TypeKind::ARRAY_TYPE)
-        {
-            return false;
-        }
-
-        const ArrayType& other_array = static_cast<const ArrayType&>(other);
-        return dimension_ <= other_array.dimension_
-            && content_type().is_subset_of(other_array.content_type());
-    }
-
     virtual size_t memory_size() const
     {
         return dimension_ * content_type().memory_size();
@@ -76,13 +63,10 @@ public:
     virtual void construct_instance(
             uint8_t* instance) const
     {
-        if(content_type().is_constructed_type())
+        size_t block_size = content_type().memory_size();
+        for(uint32_t i = 0; i < dimension_; i++)
         {
-            size_t block_size = content_type().memory_size();
-            for(uint32_t i = 0; i < dimension_; i++)
-            {
-                content_type().construct_instance(instance + i * block_size);
-            }
+            content_type().construct_instance(instance + i * block_size);
         }
     }
 
@@ -104,13 +88,31 @@ public:
         }
     }
 
+    virtual void move_instance(
+            uint8_t* target,
+            uint8_t* source) const
+    {
+        size_t block_size = content_type().memory_size();
+        if(content_type().is_constructed_type())
+        {
+            for(uint32_t i = 0; i < dimension_; i++)
+            {
+                content_type().move_instance(target + i * block_size, source + i * block_size);
+            }
+        }
+        else //optimization when the type is primitive
+        {
+            std::memcpy(target, source, dimension_ * block_size);
+        }
+    }
+
     virtual void destroy_instance(
             uint8_t* instance) const
     {
         if(content_type().is_constructed_type())
         {
             size_t block_size = content_type().memory_size();
-            for(uint32_t i = 0; i < dimension_; i++)
+            for(int32_t i = dimension_ - 1; i >= 0; i--)
             {
                 content_type().destroy_instance(instance + i * block_size);
             }
@@ -135,6 +137,19 @@ public:
         {
             return std::memcmp(instance, other_instance, dimension_ * block_size) == 0;
         }
+    }
+
+    virtual bool is_subset_of(
+            const DynamicType& other) const
+    {
+        if(other.kind() != TypeKind::ARRAY_TYPE)
+        {
+            return false;
+        }
+
+        const ArrayType& other_array = static_cast<const ArrayType&>(other);
+        return dimension_ <= other_array.dimension_
+            && content_type().is_subset_of(other_array.content_type());
     }
 
     virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const

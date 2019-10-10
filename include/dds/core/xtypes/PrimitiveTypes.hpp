@@ -61,22 +61,28 @@ class PrimitiveType : public DynamicType
     template<typename R>
     friend const PrimitiveType<R>& primitive_type();
 
-    virtual bool is_subset_of(
-            const DynamicType& other) const
-    {
-        return other.kind() == kind();
-    }
-
     virtual size_t memory_size() const
     {
         return sizeof(T);
     };
+
+    virtual void construct_instance(uint8_t* instance) const
+    {
+        *reinterpret_cast<T*>(instance) = T(0);
+    }
+
+    virtual void destroy_instance(uint8_t* /*instance*/) const { } //Default does nothing
 
     virtual void copy_instance(
             uint8_t* target,
             const uint8_t* source) const
     {
         *reinterpret_cast<T*>(target) = *reinterpret_cast<const T*>(source);
+    }
+
+    virtual void move_instance(uint8_t* target, uint8_t* source) const
+    {
+        copy_instance(target, source);
     }
 
     virtual bool compare_instance(
@@ -86,8 +92,12 @@ class PrimitiveType : public DynamicType
         return *reinterpret_cast<const T*>(instance) == *reinterpret_cast<const T*>(other_instance);
     }
 
-    virtual void construct_instance(uint8_t* /*instance*/) const { } //Default does nothing
-    virtual void destroy_instance(uint8_t* /*instance*/) const { } //Default does nothing
+    virtual bool is_subset_of(
+            const DynamicType& other) const
+    {
+        return other.kind() == kind();
+    }
+
 
     virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const
     {

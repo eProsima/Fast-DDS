@@ -55,18 +55,6 @@ public:
     SequenceType(const SequenceType& other) = default;
     SequenceType(SequenceType&& other) = default;
 
-    virtual bool is_subset_of(const DynamicType& other) const
-    {
-        if(other.kind() != TypeKind::SEQUENCE_TYPE)
-        {
-            return false;
-        }
-
-        const SequenceType& other_sequence = static_cast<const SequenceType&>(other);
-        return bounds() <= other_sequence.bounds()
-            && content_type().is_subset_of(other_sequence.content_type());
-    }
-
     virtual size_t memory_size() const
     {
         return sizeof(SequenceInstance);
@@ -83,6 +71,13 @@ public:
             const uint8_t* source) const
     {
         new (target) SequenceInstance(*reinterpret_cast<const SequenceInstance*>(source));
+    }
+
+    virtual void move_instance(
+            uint8_t* target,
+            uint8_t* source) const
+    {
+        new (target) SequenceInstance(std::move(*reinterpret_cast<const SequenceInstance*>(source)));
     }
 
     virtual void destroy_instance(
@@ -104,6 +99,26 @@ public:
         return reinterpret_cast<const SequenceInstance*>(instance)->size();
     }
 
+    virtual bool compare_instance(
+            const uint8_t* instance,
+            const uint8_t* other_instance) const
+    {
+        return *reinterpret_cast<const SequenceInstance*>(instance)
+            == *reinterpret_cast<const SequenceInstance*>(other_instance);
+    }
+
+    virtual bool is_subset_of(const DynamicType& other) const
+    {
+        if(other.kind() != TypeKind::SEQUENCE_TYPE)
+        {
+            return false;
+        }
+
+        const SequenceType& other_sequence = static_cast<const SequenceType&>(other);
+        return bounds() <= other_sequence.bounds()
+            && content_type().is_subset_of(other_sequence.content_type());
+    }
+
     virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const
     {
         const SequenceInstance& sequence = *reinterpret_cast<const SequenceInstance*>(node.instance);
@@ -113,14 +128,6 @@ public:
             InstanceNode child(node, content_type(), sequence[i], InstanceNode::Access(i));
             content_type().for_each_instance(child, visitor);
         }
-    }
-
-    virtual bool compare_instance(
-            const uint8_t* instance,
-            const uint8_t* other_instance) const
-    {
-        return *reinterpret_cast<const SequenceInstance*>(instance)
-            == *reinterpret_cast<const SequenceInstance*>(other_instance);
     }
 
     uint8_t* push_instance(
