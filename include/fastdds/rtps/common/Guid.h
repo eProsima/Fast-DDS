@@ -75,6 +75,32 @@ struct RTPS_DllAPI GUID_t
     {
     }
 
+    /**
+     * Checks whether this guid is for an entity on the same host as another guid.
+     *
+     * @param other_guid GUID_t to compare to.
+     *
+     * @return true when this guid is on the same host, false otherwise.
+     */
+    bool is_on_same_host_as(
+        const GUID_t& other_guid) const
+    {
+        return memcmp(guidPrefix.value, other_guid.guidPrefix.value, 4) == 0;
+    }
+
+    /**
+     * Checks whether this guid is for an entity on the same host and process as another guid.
+     *
+     * @param other_guid GUID_t to compare to.
+     *
+     * @return true when this guid is on the same host and process, false otherwise.
+     */
+    bool is_on_same_process_as(
+        const GUID_t& other_guid) const
+    {
+        return memcmp(guidPrefix.value, other_guid.guidPrefix.value, 8) == 0;
+    }
+
     static GUID_t unknown() noexcept
     {
         return GUID_t();
