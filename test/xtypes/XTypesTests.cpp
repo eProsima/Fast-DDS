@@ -45,6 +45,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
+using eprosima::fastdds::dds::Log;
 
 static int DOMAIN_ID_ = 10;
 
