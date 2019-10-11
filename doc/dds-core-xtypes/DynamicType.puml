@@ -30,7 +30,9 @@ class Instanceable {
     + virtual size_t memory_size() const;
     # virtual size_t init() const;
     # virtual size_t copy() const;
+    # virtual size_t move() const;
     # virtual size_t destroy() const;
+    # virtual size_t compare() const;
 }
 class DynamicType {
     - std::string name;

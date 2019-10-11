@@ -46,6 +46,12 @@ public:
         return type_.compare_instance(instance_, other.instance_);
     }
 
+    bool operator != (
+            const ReadableDynamicDataRef& other) const
+    {
+        return !(*this == other);
+    }
+
     const DynamicType& type() const { return type_; }
 
     size_t instance_id() const { return size_t(instance_); }
