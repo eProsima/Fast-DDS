@@ -70,10 +70,10 @@ std::pair<std::string,std::string> EDPStaticProperty::toProperty(std::string typ
     prop.first = ss.str();
     ss.clear();
     ss.str(std::string());
-    ss << (int)ent.value[0]<<".";
-    ss << (int)ent.value[1]<<".";
-    ss << (int)ent.value[2]<<".";
-    ss << (int)ent.value[3];
+    ss << (int)((ent >> 24) & 0xFF)<<".";
+    ss << (int)((ent >> 16) & 0xFF)<<".";
+    ss << (int)((ent >> 8) & 0xFF)<<".";
+    ss << (int)(ent & 0xFF);
     prop.second = ss.str();
     return prop;
 }
@@ -91,11 +91,10 @@ bool EDPStaticProperty::fromProperty(std::pair<std::string,std::string> prop)
         ss.clear();
         ss.str(std::string());
         ss << prop.second;
-        int a,b,c,d;
+        uint32_t a,b,c,d;
         char ch;
         ss >> a >> ch >> b >> ch >> c >>ch >> d;
-        m_entityId.value[0] = (octet)a;m_entityId.value[1] = (octet)b;
-        m_entityId.value[2] = (octet)c;m_entityId.value[3] = (octet)d;
+        m_entityId = a << 24 | b << 16 | c << 8 | d;
         return true;
     }
     return false;
@@ -321,18 +320,18 @@ bool EDPStatic::newRemoteWriter(
 
 bool EDPStatic::checkEntityId(ReaderProxyData* rdata)
 {
-    if(rdata->topicKind() == WITH_KEY && rdata->guid().entityId.value[3] == 0x07)
+    if(rdata->topicKind() == WITH_KEY && (rdata->guid().entityId & 0xFF) == 0x07)
         return true;
-    if(rdata->topicKind() == NO_KEY && rdata->guid().entityId.value[3] == 0x04)
+    if(rdata->topicKind() == NO_KEY && (rdata->guid().entityId & 0xFF) == 0x04)
         return true;
     return false;
 }
 
 bool EDPStatic::checkEntityId(WriterProxyData* wdata)
 {
-    if(wdata->topicKind() == WITH_KEY && wdata->guid().entityId.value[3] == 0x02)
+    if(wdata->topicKind() == WITH_KEY && (wdata->guid().entityId & 0xFF) == 0x02)
         return true;
-    if(wdata->topicKind() == NO_KEY && wdata->guid().entityId.value[3] == 0x03)
+    if(wdata->topicKind() == NO_KEY && (wdata->guid().entityId & 0xFF) == 0x03)
         return true;
     return false;
 }

@@ -144,7 +144,7 @@ bool test_UDPv4Transport::packet_should_drop(const octet* send_buffer, uint32_t 
             return false;
 
         SequenceNumber_t sequence_number{SequenceNumber_t::unknown()};
-        EntityId_t writer_id;
+        EntityId_t writer_id = ENTITYID_UNKNOWN;
         auto old_pos = cdrMessage.pos;
 
         switch(cdrSubMessageHeader.submessageId)

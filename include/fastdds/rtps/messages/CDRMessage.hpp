@@ -66,12 +66,10 @@ inline bool CDRMessage::appendMsg(CDRMessage_t*first, CDRMessage_t*second) {
 }
 
 
-inline bool CDRMessage::readEntityId(CDRMessage_t* msg,const EntityId_t* id) {
+inline bool CDRMessage::readEntityId(CDRMessage_t* msg, EntityId_t* id) {
     if(msg->pos+4>msg->length)
         return false;
-    uint32_t* aux1 = (uint32_t*) id->value;
-    uint32_t* aux2 = (uint32_t*) &msg->buffer[msg->pos];
-    *aux1 = *aux2;
+    *id = read_entity_id_from_buffer(&msg->buffer[msg->pos]);
     msg->pos+=4;
     return true;
 }
@@ -503,20 +501,27 @@ inline bool CDRMessage::addOctetVector(CDRMessage_t*msg, const std::vector<octet
     return valid;
 }
 
-
-inline bool CDRMessage::addEntityId(CDRMessage_t* msg, const EntityId_t*ID) {
-    if(msg->pos+4>=msg->max_size)
+inline bool CDRMessage::addEntityId(
+        CDRMessage_t* msg,
+        const EntityId_t& ID) 
+{
+    if (msg->pos + 4 >= msg->max_size)
     {
         return false;
     }
-    int* aux1;
-    int* aux2;
-    aux1 = (int*)(&msg->buffer[msg->pos]);
-    aux2 = (int*) ID->value;
-    *aux1 = *aux2;
-    msg->pos +=4;
-    msg->length+=4;
+
+    write_entity_id_to_buffer(ID, &msg->buffer[msg->pos]);
+    msg->pos += 4;
+    msg->length += 4;
     return true;
+}
+
+
+inline bool CDRMessage::addEntityId(
+        CDRMessage_t* msg,
+        const EntityId_t*ID)
+{
+    return addEntityId(msg, *ID);
 }
 
 
@@ -666,7 +671,7 @@ inline bool CDRMessage::addParameterSampleIdentity(CDRMessage_t *msg, const Samp
     CDRMessage::addUInt16(msg, PID_RELATED_SAMPLE_IDENTITY);
     CDRMessage::addUInt16(msg, 24);
     CDRMessage::addData(msg, sample_id.writer_guid().guidPrefix.value, GuidPrefix_t::size);
-    CDRMessage::addData(msg, sample_id.writer_guid().entityId.value, EntityId_t::size);
+    CDRMessage::addEntityId(msg, sample_id.writer_guid().entityId);
     CDRMessage::addInt32(msg, sample_id.sequence_number().high);
     CDRMessage::addUInt32(msg, sample_id.sequence_number().low);
     return true;
@@ -915,7 +920,7 @@ inline bool CDRMessage::addMessageIdentity(CDRMessage_t* msg, const security::Me
 
     if(!CDRMessage::addData(msg, message_identity.source_guid().guidPrefix.value, GuidPrefix_t::size))
         return false;
-    if(!CDRMessage::addData(msg, message_identity.source_guid().entityId.value, EntityId_t::size))
+    if(!CDRMessage::addEntityId(msg, message_identity.source_guid().entityId))
         return false;
     if(!CDRMessage::addInt64(msg, message_identity.sequence_number()))
         return false;
@@ -929,7 +934,7 @@ inline bool CDRMessage::readMessageIdentity(CDRMessage_t* msg, security::Message
 
     if(!CDRMessage::readData(msg, message_identity.source_guid().guidPrefix.value, GuidPrefix_t::size))
         return false;
-    if(!CDRMessage::readData(msg, message_identity.source_guid().entityId.value, EntityId_t::size))
+    if(!CDRMessage::readEntityId(msg, &message_identity.source_guid().entityId))
         return false;
     if(!CDRMessage::readInt64(msg, &message_identity.sequence_number()))
         return false;
@@ -947,15 +952,15 @@ inline bool CDRMessage::addParticipantGenericMessage(CDRMessage_t* msg, const se
         return false;
     if(!CDRMessage::addData(msg, message.destination_participant_key().guidPrefix.value, GuidPrefix_t::size))
         return false;
-    if(!CDRMessage::addData(msg, message.destination_participant_key().entityId.value, EntityId_t::size))
+    if(!CDRMessage::addEntityId(msg, message.destination_participant_key().entityId))
         return false;
     if(!CDRMessage::addData(msg, message.destination_endpoint_key().guidPrefix.value, GuidPrefix_t::size))
         return false;
-    if(!CDRMessage::addData(msg, message.destination_endpoint_key().entityId.value, EntityId_t::size))
+    if(!CDRMessage::addEntityId(msg, message.destination_endpoint_key().entityId))
         return false;
     if(!CDRMessage::addData(msg, message.source_endpoint_key().guidPrefix.value, GuidPrefix_t::size))
         return false;
-    if(!CDRMessage::addData(msg, message.source_endpoint_key().entityId.value, EntityId_t::size))
+    if(!CDRMessage::addEntityId(msg, message.source_endpoint_key().entityId))
         return false;
     if(!CDRMessage::addString(msg, message.message_class_id()))
         return false;
@@ -975,15 +980,15 @@ inline bool CDRMessage::readParticipantGenericMessage(CDRMessage_t* msg, securit
         return false;
     if(!CDRMessage::readData(msg, message.destination_participant_key().guidPrefix.value, GuidPrefix_t::size))
         return false;
-    if(!CDRMessage::readData(msg, message.destination_participant_key().entityId.value, EntityId_t::size))
+    if(!CDRMessage::readEntityId(msg, &message.destination_participant_key().entityId))
         return false;
     if(!CDRMessage::readData(msg, message.destination_endpoint_key().guidPrefix.value, GuidPrefix_t::size))
         return false;
-    if(!CDRMessage::readData(msg, message.destination_endpoint_key().entityId.value, EntityId_t::size))
+    if(!CDRMessage::readEntityId(msg, &message.destination_endpoint_key().entityId))
         return false;
     if(!CDRMessage::readData(msg, message.source_endpoint_key().guidPrefix.value, GuidPrefix_t::size))
         return false;
-    if(!CDRMessage::readData(msg, message.source_endpoint_key().entityId.value, EntityId_t::size))
+    if(!CDRMessage::readEntityId(msg, &message.source_endpoint_key().entityId))
         return false;
     if(!CDRMessage::readString(msg, &message.message_class_id()))
         return false;

@@ -237,7 +237,7 @@ bool SQLite3PersistenceService::load_reader_from_storage(
         {
             GUID_t guid;
             memcpy(guid.guidPrefix.value, sqlite3_column_blob(load_reader_stmt_, 0), GuidPrefix_t::size);
-            memcpy(guid.entityId.value, sqlite3_column_blob(load_reader_stmt_, 1), EntityId_t::size);
+            guid.entityId = read_entity_id_from_buffer((const octet*)sqlite3_column_blob(load_reader_stmt_, 1));
             sqlite3_int64 sn = sqlite3_column_int64(load_reader_stmt_, 2);
             SequenceNumber_t seq((int32_t)((sn >> 32) & 0xFFFFFFFF), (uint32_t)(sn & 0xFFFFFFFF));
             seq_map[guid] = seq;
@@ -263,10 +263,12 @@ bool SQLite3PersistenceService::update_writer_seq_on_storage(
 
     if (update_reader_stmt_ != NULL)
     {
+        octet entity_blob[4];
+        write_entity_id_to_buffer(writer_guid.entityId, entity_blob);
         sqlite3_reset(update_reader_stmt_);
         sqlite3_bind_text(update_reader_stmt_, 1, reader_guid.c_str(), -1, SQLITE_STATIC);
         sqlite3_bind_blob(update_reader_stmt_, 2, writer_guid.guidPrefix.value, GuidPrefix_t::size, SQLITE_STATIC);
-        sqlite3_bind_blob(update_reader_stmt_, 3, writer_guid.entityId.value, EntityId_t::size, SQLITE_STATIC);
+        sqlite3_bind_blob(update_reader_stmt_, 3, entity_blob, 4, SQLITE_STATIC);
         sqlite3_bind_int64(update_reader_stmt_, 4, seq_number.to64long());
         return sqlite3_step(update_reader_stmt_) == SQLITE_DONE;
     }

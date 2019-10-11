@@ -76,7 +76,7 @@ bool TestWriterPersistent::init()
 	watt.endpoint.reliabilityKind = BEST_EFFORT;
     watt.endpoint.durabilityKind = TRANSIENT;
     watt.endpoint.persistence_guid.guidPrefix.value[11] = 1;
-    watt.endpoint.persistence_guid.entityId.value[3] = 1;
+    watt.endpoint.persistence_guid.entityId = 1;
     watt.endpoint.properties = property_policy;
     std::cout << "PID: " << watt.endpoint.persistence_guid << std::endl;
     mp_writer = RTPSDomain::createRTPSWriter(mp_participant,watt,mp_history,&m_listener);

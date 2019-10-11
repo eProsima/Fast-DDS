@@ -74,7 +74,7 @@ bool TestReaderPersistent::init()
     ratt.endpoint.unicastLocatorList.push_back(loc);
     ratt.endpoint.durabilityKind = TRANSIENT;
     ratt.endpoint.persistence_guid.guidPrefix.value[11] = 2;
-    ratt.endpoint.persistence_guid.entityId.value[3] = 1;
+    ratt.endpoint.persistence_guid.entityId = 1;
     ratt.endpoint.properties = property_policy;
     mp_reader = RTPSDomain::createRTPSReader(mp_participant,ratt,mp_history,&m_listener);
     if(mp_reader == nullptr)

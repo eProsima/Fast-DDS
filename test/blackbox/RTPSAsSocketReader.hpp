@@ -270,10 +270,7 @@ class RTPSAsSocketReader
                 wattr.guid().guidPrefix.value[9] = 0;
                 wattr.guid().guidPrefix.value[10] = 0;
                 wattr.guid().guidPrefix.value[11] = 0;
-                wattr.guid().entityId.value[0] = 0;
-                wattr.guid().entityId.value[1] = 0;
-                wattr.guid().entityId.value[2] = 2;
-                wattr.guid().entityId.value[3] = 3;
+                wattr.guid().entityId = 0x00000203;
                 reader_->matched_writer_add(wattr);
             }
             else

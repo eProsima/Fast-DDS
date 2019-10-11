@@ -240,13 +240,7 @@ void PDP::initializeParticipantProxyData(ParticipantProxyData* participant_data)
     }
     participant_data->m_expectsInlineQos = false;
     participant_data->m_guid = mp_RTPSParticipant->getGuid();
-    for(uint8_t i = 0; i<16; ++i)
-    {
-        if(i<12)
-            participant_data->m_key.value[i] = participant_data->m_guid.guidPrefix.value[i];
-        else
-            participant_data->m_key.value[i] = participant_data->m_guid.entityId.value[i - 12];
-    }
+    participant_data->m_key = participant_data->m_guid;
 
     // Keep persistence Guid_Prefix_t in a specific property. This info must be propagated to all builtin endpoints
     {

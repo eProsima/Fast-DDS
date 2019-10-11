@@ -41,7 +41,7 @@ struct RTPS_DllAPI GUID_t
     //!Guid prefix
     GuidPrefix_t guidPrefix;
     //!Entity id
-    EntityId_t entityId;
+    EntityId_t entityId = ENTITYID_UNKNOWN;
 
     /*!
      * Default constructor. Contructs an unknown GUID.
@@ -57,21 +57,9 @@ struct RTPS_DllAPI GUID_t
      */
     GUID_t(
             const GuidPrefix_t& guid_prefix,
-            uint32_t id) noexcept
+            EntityId_t id) noexcept
         : guidPrefix(guid_prefix)
         , entityId(id)
-    {
-    }
-
-    /**
-     * @param guid_prefix Guid prefix
-     * @param entity_id Entity id
-     */
-    GUID_t(
-            const GuidPrefix_t& guid_prefix,
-            const EntityId_t& entity_id) noexcept
-        : guidPrefix(guid_prefix)
-        , entityId(entity_id)
     {
     }
 
@@ -83,7 +71,7 @@ struct RTPS_DllAPI GUID_t
      * @return true when this guid is on the same host, false otherwise.
      */
     bool is_on_same_host_as(
-        const GUID_t& other_guid) const
+            const GUID_t& other_guid) const
     {
         return memcmp(guidPrefix.value, other_guid.guidPrefix.value, 4) == 0;
     }
@@ -96,7 +84,7 @@ struct RTPS_DllAPI GUID_t
      * @return true when this guid is on the same host and process, false otherwise.
      */
     bool is_on_same_process_as(
-        const GUID_t& other_guid) const
+            const GUID_t& other_guid) const
     {
         return memcmp(guidPrefix.value, other_guid.guidPrefix.value, 8) == 0;
     }
@@ -108,7 +96,7 @@ struct RTPS_DllAPI GUID_t
      */
     bool is_builtin()
     {
-        return entityId.value[3] >= 0xC0;
+        return entityId & 0xC0 == 0xC0;
     }
 
     static GUID_t unknown() noexcept
@@ -135,14 +123,9 @@ inline bool operator ==(
         const GUID_t& g1,
         const GUID_t& g2)
 {
-    if (g1.guidPrefix == g2.guidPrefix && g1.entityId == g2.entityId)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return
+        g1.guidPrefix == g2.guidPrefix &&
+        g1.entityId == g2.entityId;
 }
 
 /**
@@ -155,43 +138,26 @@ inline bool operator !=(
         const GUID_t& g1,
         const GUID_t& g2)
 {
-    if (g1.guidPrefix != g2.guidPrefix || g1.entityId != g2.entityId)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return
+        g1.guidPrefix != g2.guidPrefix ||
+        g1.entityId != g2.entityId;
 }
 
 inline bool operator <(
         const GUID_t& g1,
         const GUID_t& g2)
 {
-    for (uint8_t i = 0; i < 12; ++i)
+    auto cmp = memcmp(g1.guidPrefix.value, g2.guidPrefix.value, GuidPrefix_t::size);
+    if (cmp < 0)
     {
-        if (g1.guidPrefix.value[i] < g2.guidPrefix.value[i])
-        {
-            return true;
-        }
-        else if (g1.guidPrefix.value[i] > g2.guidPrefix.value[i])
-        {
-            return false;
-        }
+        return true;
     }
-    for (uint8_t i = 0; i < 4; ++i)
+    else if (cmp > 0)
     {
-        if (g1.entityId.value[i] < g2.entityId.value[i])
-        {
-            return true;
-        }
-        else if (g1.entityId.value[i] > g2.entityId.value[i])
-        {
-            return false;
-        }
+        return false;
     }
-    return false;
+
+    return g1.entityId < g2.entityId;
 }
 #endif
 
@@ -211,7 +177,7 @@ inline std::ostream& operator <<(
 {
     if (guid !=c_Guid_Unknown)
     {
-        output << guid.guidPrefix << "|" << guid.entityId;
+        output << guid.guidPrefix << "|" << std::hex << guid.entityId << std::dec;
     }
     else
     {

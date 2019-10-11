@@ -50,7 +50,6 @@ class ReaderHistory;
 class WriterListener;
 class ReaderListener;
 class PDPSimple;
-struct EntityId_t;
 
 class MockParticipantListener : public RTPSParticipantListener
 {

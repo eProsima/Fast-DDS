@@ -224,7 +224,7 @@ void test_UDPv4Tests::HELPER_FillDataMessage(CDRMessage_t& message, SequenceNumb
 {
    GuidPrefix_t prefix;
    TopicKind_t topic = WITH_KEY;
-   EntityId_t entityID;
+   EntityId_t entityID = ENTITYID_UNKNOWN;
    CacheChange_t change;
    change.sequenceNumber = sequenceNumber; // Here is where the SN propagates from
    RTPSMessageCreator::addMessageData(&message, prefix, &change, topic, entityID, false, nullptr);
@@ -233,7 +233,7 @@ void test_UDPv4Tests::HELPER_FillDataMessage(CDRMessage_t& message, SequenceNumb
 void test_UDPv4Tests::HELPER_FillAckNackMessage(CDRMessage_t& message)
 {
    GuidPrefix_t prefix;
-   EntityId_t entityID;
+   EntityId_t entityID = ENTITYID_UNKNOWN;
    SequenceNumberSet_t set;
 	RTPSMessageCreator::addMessageAcknack(&message, prefix, prefix, entityID, entityID, set, 0, false);
 }
@@ -241,7 +241,7 @@ void test_UDPv4Tests::HELPER_FillAckNackMessage(CDRMessage_t& message)
 void test_UDPv4Tests::HELPER_FillHeartbeatMessage(CDRMessage_t& message)
 {
    GuidPrefix_t prefix;
-   EntityId_t entityID;
+   EntityId_t entityID = ENTITYID_UNKNOWN;
    SequenceNumber_t sn1;
    SequenceNumber_t sn2;
 	RTPSMessageCreator::addMessageHeartbeat(&message, prefix, entityID, entityID, sn1, sn2, 0, false, false);

@@ -30,6 +30,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+using EntityId_t = uint32_t;
 
 #define ENTITYID_UNKNOWN 0x00000000
 #define ENTITYID_RTPSParticipant  0x000001c1
@@ -58,221 +59,6 @@ namespace rtps {
 #define ENTITYID_SPDP_RELIABLE_BUILTIN_PARTICIPANT_SECURE_WRITER 0xff0101c2
 #define ENTITYID_SPDP_RELIABLE_BUILTIN_PARTICIPANT_SECURE_READER 0xff0101c7
 #endif
-
-//!@brief Structure EntityId_t, entity id part of GUID_t.
-//!@ingroup COMMON_MODULE
-struct RTPS_DllAPI EntityId_t
-{
-    static constexpr unsigned int size = 4;
-    octet value[size];
-    //! Default constructor. Uknown entity.
-    EntityId_t(){
-        *this = ENTITYID_UNKNOWN;
-    }
-    /**
-     * Main constructor.
-     * @param id Entity id
-     */
-    EntityId_t(
-            uint32_t id)
-    {
-        uint32_t* aux = (uint32_t*)(value);
-        *aux = id;
-#if !__BIG_ENDIAN__
-        reverse();
-#endif
-    }
-
-    /*!
-     * @brief Copy constructor
-     */
-    EntityId_t(
-            const EntityId_t& id)
-    {
-        memcpy(value, id.value, size);
-    }
-
-    /*!
-     * @brief Move constructor
-     */
-    EntityId_t(
-            EntityId_t&& id)
-    {
-        memmove(value, id.value, size);
-    }
-
-    EntityId_t& operator =(
-            const EntityId_t& id)
-    {
-        memcpy(value, id.value, size);
-        return *this;
-    }
-
-    EntityId_t& operator =(
-            EntityId_t&& id)
-    {
-        memmove(value, id.value, size);
-        return *this;
-    }
-
-    /**
-     * Assignment operator.
-     * @param id Entity id to copy
-     */
-    EntityId_t& operator =(
-            uint32_t id)
-    {
-        uint32_t* aux = (uint32_t*)(value);
-        *aux = id;
-#if !__BIG_ENDIAN__
-        reverse();
-#endif
-        return *this;
-        //return id;
-    }
-#if !__BIG_ENDIAN__
-    //!
-    void reverse(){
-        octet oaux;
-        oaux = value[3];
-        value[3] = value[0];
-        value[0] = oaux;
-        oaux = value[2];
-        value[2] = value[1];
-        value[1] = oaux;
-    }
-#endif
-
-    static EntityId_t unknown()
-    {
-        return EntityId_t();
-    }
-};
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-/**
- * Guid prefix comparison operator
- * @param id1 EntityId to compare
- * @param id2 ID prefix to compare
- * @return True if equal
- */
-inline bool operator ==(
-        EntityId_t& id1,
-        const uint32_t id2)
-{
-#if !__BIG_ENDIAN__
-    id1.reverse();
-#endif
-    uint32_t* aux1 = (uint32_t*)(id1.value);
-    bool result = true;
-    if (*aux1 == id2)
-    {
-        result = true;
-    }
-    else
-    {
-        result = false;
-    }
-#if !__BIG_ENDIAN__
-    id1.reverse();
-#endif
-    return result;
-}
-/**
- * Guid prefix comparison operator
- * @param id1 First EntityId to compare
- * @param id2 Second EntityId to compare
- * @return True if equal
- */
-inline bool operator ==(
-        const EntityId_t& id1,
-        const EntityId_t& id2)
-{
-    for (uint8_t i = 0; i < 4; ++i)
-    {
-        if (id1.value[i] != id2.value[i])
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-/**
- * Guid prefix comparison operator
- * @param id1 First EntityId to compare
- * @param id2 Second EntityId to compare
- * @return True if not equal
- */
-inline bool operator !=(
-        const EntityId_t& id1,
-        const EntityId_t& id2)
-{
-    for (uint8_t i = 0; i < 4; ++i)
-    {
-        if (id1.value[i] != id2.value[i])
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-#endif
-
-inline std::ostream& operator <<(
-        std::ostream& output,
-        const EntityId_t& enI)
-{
-    output << std::hex;
-    output << (int)enI.value[0] << "." << (int)enI.value[1] << "." << (int)enI.value[2] << "." << (int)enI.value[3];
-    return output << std::dec;
-}
-
-inline std::istream& operator >>(
-        std::istream& input,
-        EntityId_t& enP)
-{
-    std::istream::sentry s(input);
-
-    if (s)
-    {
-        char point;
-        unsigned short hex;
-        std::ios_base::iostate excp_mask = input.exceptions();
-
-        try
-        {
-            input.exceptions(excp_mask | std::ios_base::failbit | std::ios_base::badbit);
-            input >> std::hex >> hex;
-
-            if (hex > 255)
-            {
-                input.setstate(std::ios_base::failbit);
-            }
-
-            enP.value[0] = static_cast<octet>(hex);
-
-            for (int i = 1; i < 4; ++i)
-            {
-                input >> point >> hex;
-                if ( point != '.' || hex > 255 )
-                {
-                    input.setstate(std::ios_base::failbit);
-                }
-                enP.value[i] = static_cast<octet>(hex);
-            }
-
-            input >> std::dec;
-        }
-        catch (std::ios_base::failure& ){}
-
-        input.exceptions(excp_mask);
-    }
-
-    return input;
-}
 
 const EntityId_t c_EntityId_Unknown = ENTITYID_UNKNOWN;
 const EntityId_t c_EntityId_SPDPReader = ENTITYID_SPDP_BUILTIN_RTPSParticipant_READER;
@@ -306,23 +92,28 @@ const EntityId_t c_EntityId_WriterLivelinessSecure = ENTITYID_P2P_BUILTIN_PARTIC
 const EntityId_t c_EntityId_ReaderLivelinessSecure = ENTITYID_P2P_BUILTIN_PARTICIPANT_MESSAGE_SECURE_READER;
 #endif
 
+inline EntityId_t read_entity_id_from_buffer(
+        const octet* buffer)
+{
+    return
+        ((uint32_t)buffer[0]) << 24 |
+        ((uint32_t)buffer[1]) << 16 |
+        ((uint32_t)buffer[2]) << 8 |
+        ((uint32_t)buffer[3]);
+}
+
+inline void write_entity_id_to_buffer(
+        EntityId_t entity_id,
+        octet buffer[4])
+{
+    buffer[0] = (entity_id >> 24) & 0xFF;
+    buffer[1] = (entity_id >> 16) & 0xFF;
+    buffer[2] = (entity_id >> 8) & 0xFF;
+    buffer[3] = entity_id & 0xFF;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
-
-namespace std {
-template <>
-struct hash<eprosima::fastrtps::rtps::EntityId_t>
-{
-    std::size_t operator()(
-            const eprosima::fastrtps::rtps::EntityId_t& k) const
-    {
-        const uint32_t* aux = reinterpret_cast<const uint32_t*>(k.value);
-        return static_cast<std::size_t>(*aux);
-    }
-};
-
-} // namespace std
-
 
 #endif /* _FASTDDS_RTPS_COMMON_ENTITYID_T_HPP_ */

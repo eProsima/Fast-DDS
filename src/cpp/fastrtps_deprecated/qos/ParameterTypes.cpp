@@ -80,7 +80,7 @@ bool ParameterGuid_t::addToCDRMessage(CDRMessage_t* msg)
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, PARAMETER_GUID_LENGTH);//this->length);
     valid &= CDRMessage::addData(msg,this->guid.guidPrefix.value,12);
-    valid &= CDRMessage::addData(msg,this->guid.entityId.value,4);
+    valid &= CDRMessage::addEntityId(msg,this->guid.entityId);
     return valid;
 }
 
@@ -207,7 +207,7 @@ bool ParameterSampleIdentity_t::addToCDRMessage(CDRMessage_t*msg)
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
     valid &= CDRMessage::addData(msg, sample_id.writer_guid().guidPrefix.value, GuidPrefix_t::size);
-    valid &= CDRMessage::addData(msg, sample_id.writer_guid().entityId.value, EntityId_t::size);
+    valid &= CDRMessage::addEntityId(msg, sample_id.writer_guid().entityId);
     valid &= CDRMessage::addInt32(msg, sample_id.sequence_number().high);
     valid &= CDRMessage::addUInt32(msg, sample_id.sequence_number().low);
     return valid;

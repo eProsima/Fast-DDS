@@ -331,16 +331,16 @@ bool RTPSParticipantImpl::createWriter(
 {
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
     logInfo(RTPS_PARTICIPANT," of type " << type);
-    EntityId_t entId;
+    EntityId_t entId = ENTITYID_UNKNOWN;
     if(entityId == c_EntityId_Unknown)
     {
         if(param.endpoint.topicKind == NO_KEY)
         {
-            entId.value[3] = 0x03;
+            entId = 0x03;
         }
         else if(param.endpoint.topicKind == WITH_KEY)
         {
-            entId.value[3] = 0x02;
+            entId = 0x02;
         }
         uint32_t idnum;
         if(param.endpoint.getEntityID() > 0)
@@ -353,10 +353,7 @@ bool RTPSParticipantImpl::createWriter(
             idnum = IdCounter;
         }
 
-        octet* c = reinterpret_cast<octet*>(&idnum);
-        entId.value[2] = c[0];
-        entId.value[1] = c[1];
-        entId.value[0] = c[2];
+        entId |= idnum << 8;
         if(this->existsEntityId(entId, WRITER))
         {
             logError(RTPS_PARTICIPANT,"A writer with the same entityId already exists in this RTPSParticipant");
@@ -493,16 +490,16 @@ bool RTPSParticipantImpl::createReader(
 {
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" :"BEST_EFFORT";
     logInfo(RTPS_PARTICIPANT," of type " << type);
-    EntityId_t entId;
+    EntityId_t entId = ENTITYID_UNKNOWN;
     if(entityId== c_EntityId_Unknown)
     {
         if (param.endpoint.topicKind == NO_KEY)
         {
-            entId.value[3] = 0x04;
+            entId = 0x04;
         }
         else if (param.endpoint.topicKind == WITH_KEY)
         {
-            entId.value[3] = 0x07;
+            entId = 0x07;
         }
         uint32_t idnum;
         if (param.endpoint.getEntityID() > 0)
@@ -515,10 +512,7 @@ bool RTPSParticipantImpl::createReader(
             idnum = IdCounter;
         }
 
-        octet* c = reinterpret_cast<octet*>(&idnum);
-        entId.value[2] = c[0];
-        entId.value[1] = c[1];
-        entId.value[0] = c[2];
+        entId |= idnum << 8;
         if(this->existsEntityId(entId,WRITER))
         {
             logError(RTPS_PARTICIPANT,"A reader with the same entityId already exists in this RTPSParticipant");
@@ -1176,11 +1170,8 @@ bool RTPSParticipantImpl::get_new_entity_id(
     {
         EntityId_t entId;
         uint32_t idnum = ++IdCounter;
-        octet* c = reinterpret_cast<octet*>(&idnum);
-        entId.value[2] = c[0];
-        entId.value[1] = c[1];
-        entId.value[0] = c[2];
-        entId.value[3] = 0x01; // Vendor specific
+        entId = idnum << 8;
+        entId |= 0x01; // Vendor specific
     }
     else
     {

@@ -555,24 +555,9 @@ static bool adjust_participant_key(X509* cert, const GUID_t& candidate_participa
     adjusted_participant_key.guidPrefix.value[4] = (md[3] << 7) | (md[4] >> 1);
     adjusted_participant_key.guidPrefix.value[5] = (md[4] << 7) | (md[5] >> 1);
 
-    unsigned char key[16] = {
-        candidate_participant_key.guidPrefix.value[0],
-        candidate_participant_key.guidPrefix.value[1],
-        candidate_participant_key.guidPrefix.value[2],
-        candidate_participant_key.guidPrefix.value[3],
-        candidate_participant_key.guidPrefix.value[4],
-        candidate_participant_key.guidPrefix.value[5],
-        candidate_participant_key.guidPrefix.value[6],
-        candidate_participant_key.guidPrefix.value[7],
-        candidate_participant_key.guidPrefix.value[8],
-        candidate_participant_key.guidPrefix.value[9],
-        candidate_participant_key.guidPrefix.value[10],
-        candidate_participant_key.guidPrefix.value[11],
-        candidate_participant_key.entityId.value[0],
-        candidate_participant_key.entityId.value[1],
-        candidate_participant_key.entityId.value[2],
-        candidate_participant_key.entityId.value[3]
-    };
+    unsigned char key[16];
+    memcpy(key, candidate_participant_key.guidPrefix.value, 12);
+    write_entity_id_to_buffer(candidate_participant_key.entityId, &key[12]);
 
     if(!EVP_Digest(&key, 16, md, NULL, EVP_sha256(), NULL))
     {
@@ -587,10 +572,7 @@ static bool adjust_participant_key(X509* cert, const GUID_t& candidate_participa
     adjusted_participant_key.guidPrefix.value[10] = md[4];
     adjusted_participant_key.guidPrefix.value[11] = md[5];
 
-    adjusted_participant_key.entityId.value[0] = candidate_participant_key.entityId.value[0];
-    adjusted_participant_key.entityId.value[1] = candidate_participant_key.entityId.value[1];
-    adjusted_participant_key.entityId.value[2] = candidate_participant_key.entityId.value[2];
-    adjusted_participant_key.entityId.value[3] = candidate_participant_key.entityId.value[3];
+    adjusted_participant_key.entityId = candidate_participant_key.entityId;
 
     return true;
 }

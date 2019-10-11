@@ -48,17 +48,7 @@ struct RTPS_DllAPI InstanceHandle_t{
 
     InstanceHandle_t(const GUID_t& guid)
     {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            if (i < 12)
-            {
-                value[i] = guid.guidPrefix.value[i];
-            }
-            else
-            {
-                value[i] = guid.entityId.value[i - 12];
-            }
-        }
+        *this = guid;
     }
 
     /**
@@ -80,13 +70,9 @@ struct RTPS_DllAPI InstanceHandle_t{
     */
     InstanceHandle_t& operator=(const GUID_t& guid)
     {
-        for(uint8_t i =0;i<16;i++)
-        {
-            if(i<12)
-                value[i] = guid.guidPrefix.value[i];
-            else
-                value[i] = guid.entityId.value[i-12];
-        }
+        memcpy(value, guid.guidPrefix.value, GuidPrefix_t::size);
+        write_entity_id_to_buffer(guid.entityId, &value[12]);
+
         return *this;
     }
 
@@ -139,14 +125,8 @@ inline bool operator==(const InstanceHandle_t & ihandle1, const InstanceHandle_t
 */
 inline void iHandle2GUID(GUID_t& guid,const InstanceHandle_t& ihandle)
 {
-    for(uint8_t i = 0;i<16;++i)
-    {
-        if(i<12)
-            guid.guidPrefix.value[i] = ihandle.value[i];
-        else
-            guid.entityId.value[i-12] = ihandle.value[i];
-    }
-    return;
+    memcpy(guid.guidPrefix.value, ihandle.value, GuidPrefix_t::size);
+    guid.entityId = read_entity_id_from_buffer(&ihandle.value[12]);
 }
 
 
@@ -158,13 +138,7 @@ inline void iHandle2GUID(GUID_t& guid,const InstanceHandle_t& ihandle)
 inline GUID_t iHandle2GUID(const InstanceHandle_t& ihandle)
 {
     GUID_t guid;
-    for(uint8_t i = 0;i<16;++i)
-    {
-        if(i<12)
-            guid.guidPrefix.value[i] = ihandle.value[i];
-        else
-            guid.entityId.value[i-12] = ihandle.value[i];
-    }
+    iHandle2GUID(guid, ihandle);
     return guid;
 }
 

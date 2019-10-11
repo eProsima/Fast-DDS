@@ -27,8 +27,10 @@ bool OperationDataType::serialize(void* data, SerializedPayload_t* payload)
 	Operation* op = (Operation*)data;
 	payload->length = this->m_typeSize;
 	uint32_t pos = 0;
-	memcpy(payload->data,op->m_guid.guidPrefix.value,12);pos+=12;
-	memcpy(payload->data+pos,op->m_guid.entityId.value,4);pos+=4;
+	memcpy(payload->data,op->m_guid.guidPrefix.value,12);
+    pos+=12;
+    write_entity_id_to_buffer(op->m_guid.entityId, payload->data + pos);
+    pos+=4;
 	*(uint32_t*)(payload->data+pos) = (uint32_t)op->m_operationId;pos+=4;
 	*(Operation::OPERATIONTYPE*)(payload->data+pos) = op->m_operationType;pos+=4;
 	*(int32_t*)(payload->data+pos) = op->m_num1;pos+=sizeof(int32_t);
@@ -43,7 +45,8 @@ bool OperationDataType::deserialize(SerializedPayload_t* payload, void* data)
 	{
 		uint32_t pos = 0;
 		memcpy(op->m_guid.guidPrefix.value,payload->data,12);pos+=12;
-		memcpy(op->m_guid.entityId.value,payload->data+pos,4);pos+=4;
+        op->m_guid.entityId = read_entity_id_from_buffer(payload->data + pos);
+        pos+=4;
 		op->m_operationId = *(uint32_t*)(payload->data+pos);pos+=4;
 		op->m_operationType = *(Operation::OPERATIONTYPE*)(payload->data+pos);pos+=4;
 		op->m_num1 = *(int32_t*)(payload->data+pos);pos+=sizeof(int32_t);
@@ -73,7 +76,8 @@ bool ResultDataType::serialize(void* data, SerializedPayload_t* payload)
 	payload->length = this->m_typeSize;
 	uint32_t pos = 0;
 	memcpy(payload->data,res->m_guid.guidPrefix.value,12);pos+=12;
-	memcpy(payload->data+pos,res->m_guid.entityId.value,4);pos+=4;
+    write_entity_id_to_buffer(res->m_guid.entityId, payload->data + pos);
+    pos+=4;
 	*(uint32_t*)(payload->data+pos) = (uint32_t)res->m_operationId;pos+=4;
 	*(Result::RESULTTYPE*)(payload->data+pos) = res->m_resultType;pos+=4;
 	*(int32_t*)(payload->data+pos) = res->m_result;
@@ -87,7 +91,8 @@ bool ResultDataType::deserialize(SerializedPayload_t* payload, void* data)
 	{
 		uint32_t pos = 0;
 		memcpy(res->m_guid.guidPrefix.value,payload->data,12);pos+=12;
-		memcpy(res->m_guid.entityId.value,payload->data+pos,4);pos+=4;
+        res->m_guid.entityId = read_entity_id_from_buffer(payload->data + pos);
+        pos+=4;
 		res->m_operationId = *(uint32_t*)(payload->data+pos);pos+=4;
 		res->m_resultType =  *(Result::RESULTTYPE*)(payload->data+pos);pos+=4;
 		res->m_result = *(int32_t*)(payload->data+pos);

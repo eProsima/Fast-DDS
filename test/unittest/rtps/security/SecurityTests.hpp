@@ -102,10 +102,7 @@ class SecurityTest : public ::testing::Test
             participant_key.guidPrefix.value[9] = 10;
             participant_key.guidPrefix.value[10] = 11;
             participant_key.guidPrefix.value[11] = 12;
-            participant_key.entityId.value[0] = 0x0;
-            participant_key.entityId.value[1] = 0x0;
-            participant_key.entityId.value[2] = 0x1;
-            participant_key.entityId.value[3] = 0xc1;
+            participant_key.entityId = 0x000001C1;
         }
 
         void initialization_ok();

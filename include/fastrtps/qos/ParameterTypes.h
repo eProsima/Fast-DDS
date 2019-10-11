@@ -288,14 +288,8 @@ class ParameterGuid_t: public Parameter_t {
         ParameterGuid_t(ParameterId_t pid,uint16_t in_length,rtps::GUID_t guidin):Parameter_t(pid,in_length),guid(guidin){};
         ParameterGuid_t(ParameterId_t pid,uint16_t in_length,rtps::InstanceHandle_t& iH):Parameter_t(pid,in_length)
         {
-            for(uint8_t i =0;i<16;++i)
-            {
-                if(i<12)
-                    guid.guidPrefix.value[i] = iH.value[i];
-                else
-                    guid.entityId.value[i-12] = iH.value[i];
-            }
-        };
+            iHandle2GUID(guid, iH);
+        }
         /**
          * Add the parameter to a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message where the parameter should be added.

@@ -226,10 +226,8 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
-            octet* c = (octet*)&id;
-            rdata->guid().entityId.value[2] = c[0];
-            rdata->guid().entityId.value[1] = c[1];
-            rdata->guid().entityId.value[0] = c[2];
+            rdata->guid().entityId &= 0x000000FF;
+            rdata->guid().entityId |= id << 8;
         }
         else if (key == EXPECT_INLINE_QOS)
         {
@@ -263,12 +261,14 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
             if (auxString == _NO_KEY)
             {
                 rdata->topicKind() = NO_KEY;
-                rdata->guid().entityId.value[3] = 0x04;
+                rdata->guid().entityId &= 0xFFFFFF00;
+                rdata->guid().entityId |= 0x04;
             }
             else if (auxString == _WITH_KEY)
             {
                 rdata->topicKind() = WITH_KEY;
-                rdata->guid().entityId.value[3] = 0x07;
+                rdata->guid().entityId &= 0xFFFFFF00;
+                rdata->guid().entityId |= 0x07;
             }
             else
             {
@@ -311,12 +311,14 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(tinyxml2::XMLElement* xml_endp
             if (auxString == _NO_KEY)
             {
                 rdata->topicKind() = NO_KEY;
-                rdata->guid().entityId.value[3] = 0x04;
+                rdata->guid().entityId &= 0xFFFFFF00;
+                rdata->guid().entityId |= 0x04;
             }
             else if (auxString == _WITH_KEY)
             {
                 rdata->topicKind() = WITH_KEY;
-                rdata->guid().entityId.value[3] = 0x07;
+                rdata->guid().entityId &= 0xFFFFFF00;
+                rdata->guid().entityId |= 0x07;
             }
             else
             {
@@ -490,10 +492,8 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
                 delete(wdata);
                 return XMLP_ret::XML_ERROR;
             }
-            octet* c = (octet*)&id;
-            wdata->guid().entityId.value[2] = c[0];
-            wdata->guid().entityId.value[1] = c[1];
-            wdata->guid().entityId.value[0] = c[2];
+            wdata->guid().entityId &= 0x000000FF;
+            wdata->guid().entityId |= id << 8;
         }
         else if(key == EXPECT_INLINE_QOS)
         {
@@ -513,12 +513,14 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
             if(auxString == _NO_KEY)
             {
                 wdata->topicKind(NO_KEY);
-                wdata->guid().entityId.value[3] = 0x03;
+                wdata->guid().entityId &= 0xFFFFFF00;
+                wdata->guid().entityId |= 0x03;
             }
             else if (auxString == _WITH_KEY)
             {
                 wdata->topicKind(WITH_KEY);
-                wdata->guid().entityId.value[3] = 0x02;
+                wdata->guid().entityId &= 0xFFFFFF00;
+                wdata->guid().entityId |= 0x02;
             }
             else
             {
@@ -560,12 +562,14 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(tinyxml2::XMLElement* xml_endp
             if(auxString == _NO_KEY)
             {
                 wdata->topicKind(NO_KEY);
-                wdata->guid().entityId.value[3] = 0x03;
+                wdata->guid().entityId &= 0xFFFFFF00;
+                wdata->guid().entityId |= 0x03;
             }
             else if (auxString == _WITH_KEY)
             {
                 wdata->topicKind(WITH_KEY);
-                wdata->guid().entityId.value[3] = 0x02;
+                wdata->guid().entityId &= 0xFFFFFF00;
+                wdata->guid().entityId |= 0x02;
             }
             else
             {

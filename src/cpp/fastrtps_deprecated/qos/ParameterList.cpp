@@ -223,7 +223,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     ParameterGuid_t p(pid, plength);
                     valid &= CDRMessage::readData(&msg, p.guid.guidPrefix.value, 12);
-                    valid &= CDRMessage::readData(&msg, p.guid.entityId.value, 4);
+                    valid &= CDRMessage::readEntityId(&msg, &p.guid.entityId);
                     IF_VALID_CALL
                 }
                 case PID_TOPIC_NAME:
@@ -660,7 +660,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     {
                         ParameterSampleIdentity_t p(pid, plength);
                         valid &= CDRMessage::readData(&msg, p.sample_id.writer_guid().guidPrefix.value, GuidPrefix_t::size);
-                        valid &= CDRMessage::readData(&msg, p.sample_id.writer_guid().entityId.value, EntityId_t::size);
+                        valid &= CDRMessage::readEntityId(&msg, &p.sample_id.writer_guid().entityId);
                         valid &= CDRMessage::readInt32(&msg, &p.sample_id.sequence_number().high);
                         valid &= CDRMessage::readUInt32(&msg, &p.sample_id.sequence_number().low);
                         IF_VALID_CALL

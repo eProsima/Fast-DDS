@@ -399,13 +399,7 @@ bool ReaderProxyData::readFromCDRMessage(
             {
                 const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
                 assert(p != nullptr);
-                for (uint8_t i = 0; i < 16; ++i)
-                {
-                    if (i < 12)
-                        m_RTPSParticipantKey.value[i] = p->guid.guidPrefix.value[i];
-                    else
-                        m_RTPSParticipantKey.value[i] = p->guid.entityId.value[i - 12];
-                }
+                m_RTPSParticipantKey = p->guid;
                 break;
             }
             case PID_ENDPOINT_GUID:
@@ -413,13 +407,7 @@ bool ReaderProxyData::readFromCDRMessage(
                 const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
                 assert(p != nullptr);
                 m_guid = p->guid;
-                for (uint8_t i = 0; i<16; ++i)
-                {
-                    if (i<12)
-                        m_key.value[i] = p->guid.guidPrefix.value[i];
-                    else
-                        m_key.value[i] = p->guid.entityId.value[i - 12];
-                }
+                m_key = m_guid;
                 break;
             }
             case PID_UNICAST_LOCATOR:
@@ -525,9 +513,9 @@ bool ReaderProxyData::readFromCDRMessage(
     clear();
     if (ParameterList::readParameterListfromCDRMsg(*msg, param_process, true, qos_size))
     {
-        if (m_guid.entityId.value[3] == 0x04)
+        if ((m_guid.entityId & 0xFF) == 0x04)
             m_topicKind = NO_KEY;
-        else if (m_guid.entityId.value[3] == 0x07)
+        else if ((m_guid.entityId & 0xFF) == 0x07)
             m_topicKind = WITH_KEY;
 
         return true;

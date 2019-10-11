@@ -49,7 +49,7 @@ public:
     //!User ID
     uint16_t m_userId;
     //!Entity ID
-    EntityId_t m_entityId;
+    EntityId_t m_entityId = ENTITYID_UNKNOWN;
     /**
     * Convert information to a property
     * @param type Type of endpoint

@@ -310,7 +310,7 @@ protected:
     //!Accept msg from unknwon writers (BE-true,RE-false)
     bool m_acceptMessagesFromUnkownWriters;
     //!Trusted writer (for Builtin)
-    EntityId_t m_trustedWriterEntityId;
+    EntityId_t m_trustedWriterEntityId = ENTITYID_UNKNOWN;
     //!Expects Inline Qos.
     bool m_expectsInlineQos;
 

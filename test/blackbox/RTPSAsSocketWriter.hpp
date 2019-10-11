@@ -215,10 +215,7 @@ class RTPSAsSocketWriter : public eprosima::fastrtps::rtps::WriterListener
             rattr.guid().guidPrefix.value[9] = 0;
             rattr.guid().guidPrefix.value[10] = 0;
             rattr.guid().guidPrefix.value[11] = 0;
-            rattr.guid().entityId.value[0] = 0;
-            rattr.guid().entityId.value[1] = 0;
-            rattr.guid().entityId.value[2] = 1;
-            rattr.guid().entityId.value[3] = 4;
+            rattr.guid().entityId = 0x00000104;
 
             writer_->matched_reader_add(rattr);
         }
