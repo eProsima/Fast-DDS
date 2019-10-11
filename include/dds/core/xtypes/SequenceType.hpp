@@ -55,59 +55,59 @@ public:
     SequenceType(const SequenceType& other) = default;
     SequenceType(SequenceType&& other) = default;
 
-    virtual size_t memory_size() const
+    virtual size_t memory_size() const override
     {
         return sizeof(SequenceInstance);
     }
 
     virtual void construct_instance(
-            uint8_t* instance) const
+            uint8_t* instance) const override
     {
         new (instance) SequenceInstance(content_type(), bounds());
     }
 
     virtual void copy_instance(
             uint8_t* target,
-            const uint8_t* source) const
+            const uint8_t* source) const override
     {
         new (target) SequenceInstance(*reinterpret_cast<const SequenceInstance*>(source));
     }
 
     virtual void move_instance(
             uint8_t* target,
-            uint8_t* source) const
+            uint8_t* source) const override
     {
         new (target) SequenceInstance(std::move(*reinterpret_cast<const SequenceInstance*>(source)));
     }
 
     virtual void destroy_instance(
-            uint8_t* instance) const
+            uint8_t* instance) const override
     {
         reinterpret_cast<SequenceInstance*>(instance)->~SequenceInstance();
     }
 
     virtual uint8_t* get_instance_at(
             uint8_t* instance,
-            size_t index) const
+            size_t index) const override
     {
         return reinterpret_cast<SequenceInstance*>(instance)->operator[](uint32_t(index));
     }
 
     virtual size_t get_instance_size(
-            const uint8_t* instance) const
+            const uint8_t* instance) const override
     {
         return reinterpret_cast<const SequenceInstance*>(instance)->size();
     }
 
     virtual bool compare_instance(
             const uint8_t* instance,
-            const uint8_t* other_instance) const
+            const uint8_t* other_instance) const override
     {
         return *reinterpret_cast<const SequenceInstance*>(instance)
             == *reinterpret_cast<const SequenceInstance*>(other_instance);
     }
 
-    virtual bool is_subset_of(const DynamicType& other) const
+    virtual bool is_subset_of(const DynamicType& other) const override
     {
         if(other.kind() != TypeKind::SEQUENCE_TYPE)
         {
@@ -119,7 +119,7 @@ public:
             && content_type().is_subset_of(other_sequence.content_type());
     }
 
-    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const
+    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const override
     {
         const SequenceInstance& sequence = *reinterpret_cast<const SequenceInstance*>(node.instance);
         visitor(node);
@@ -138,7 +138,7 @@ public:
     }
 
 protected:
-    virtual DynamicType* clone() const
+    virtual DynamicType* clone() const override
     {
         return new SequenceType(*this);
     }

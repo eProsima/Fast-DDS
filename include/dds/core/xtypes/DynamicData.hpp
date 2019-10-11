@@ -169,6 +169,18 @@ public:
         return *reinterpret_cast<std::string*>(instance_);
     }
 
+    ReadableDynamicDataRef operator [] (
+            const std::string& member_name) const // this = StructType
+    {
+        return ReadableDynamicDataRef::operator[](member_name);
+    }
+
+    ReadableDynamicDataRef operator [] (
+            size_t index) const // this = SequenceType & ArrayType
+    {
+        return ReadableDynamicDataRef::operator[](index);
+    }
+
     WritableDynamicDataRef operator [] (
             const std::string& member_name) // this = StructType
     {
@@ -268,7 +280,7 @@ public:
         return *this;
     }
 
-    virtual ~DynamicData()
+    virtual ~DynamicData() override
     {
         type_.destroy_instance(instance_);
         delete[] instance_;

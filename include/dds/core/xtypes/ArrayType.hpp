@@ -55,13 +55,13 @@ public:
     ArrayType(const ArrayType& other) = default;
     ArrayType(ArrayType&& other) = default;
 
-    virtual size_t memory_size() const
+    virtual size_t memory_size() const override
     {
         return dimension_ * content_type().memory_size();
     }
 
     virtual void construct_instance(
-            uint8_t* instance) const
+            uint8_t* instance) const override
     {
         size_t block_size = content_type().memory_size();
         for(uint32_t i = 0; i < dimension_; i++)
@@ -72,7 +72,7 @@ public:
 
     virtual void copy_instance(
             uint8_t* target,
-            const uint8_t* source) const
+            const uint8_t* source) const override
     {
         size_t block_size = content_type().memory_size();
         if(content_type().is_constructed_type())
@@ -90,7 +90,7 @@ public:
 
     virtual void move_instance(
             uint8_t* target,
-            uint8_t* source) const
+            uint8_t* source) const override
     {
         size_t block_size = content_type().memory_size();
         if(content_type().is_constructed_type())
@@ -107,7 +107,7 @@ public:
     }
 
     virtual void destroy_instance(
-            uint8_t* instance) const
+            uint8_t* instance) const override
     {
         if(content_type().is_constructed_type())
         {
@@ -121,7 +121,7 @@ public:
 
     virtual bool compare_instance(
             const uint8_t* instance,
-            const uint8_t* other_instance) const
+            const uint8_t* other_instance) const override
     {
         size_t block_size = content_type().memory_size();
         if(content_type().is_constructed_type())
@@ -140,7 +140,7 @@ public:
     }
 
     virtual bool is_subset_of(
-            const DynamicType& other) const
+            const DynamicType& other) const override
     {
         if(other.kind() != TypeKind::ARRAY_TYPE)
         {
@@ -152,7 +152,7 @@ public:
             && content_type().is_subset_of(other_array.content_type());
     }
 
-    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const
+    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const override
     {
         visitor(node);
         size_t block_size = content_type().memory_size();
@@ -165,19 +165,19 @@ public:
 
     virtual uint8_t* get_instance_at(
             uint8_t* instance,
-            size_t index) const
+            size_t index) const override
     {
         return instance + index * content_type().memory_size();
     }
 
     virtual size_t get_instance_size(
-            const uint8_t*) const
+            const uint8_t*) const override
     {
         return dimension_;
     }
 
 protected:
-    virtual DynamicType* clone() const
+    virtual DynamicType* clone() const override
     {
         return new ArrayType(*this);
     }

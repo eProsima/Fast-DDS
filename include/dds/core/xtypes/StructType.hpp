@@ -53,13 +53,13 @@ public:
         return std::move(*this);
     }
 
-    virtual size_t memory_size() const
+    virtual size_t memory_size() const override
     {
         return memory_size_;
     }
 
     virtual void construct_instance(
-            uint8_t* instance) const
+            uint8_t* instance) const override
     {
         for(auto&& it: member_map())
         {
@@ -69,7 +69,7 @@ public:
 
     virtual void copy_instance(
             uint8_t* target,
-            const uint8_t* source) const
+            const uint8_t* source) const override
     {
         for(auto&& it: member_map())
         {
@@ -79,7 +79,7 @@ public:
 
     virtual void move_instance(
             uint8_t* target,
-            uint8_t* source) const
+            uint8_t* source) const override
     {
         for(auto&& it: member_map())
         {
@@ -88,7 +88,7 @@ public:
     }
 
     virtual void destroy_instance(
-            uint8_t* instance) const
+            uint8_t* instance) const override
     {
         for (auto it = member_map().rbegin(); it != member_map().rend(); ++it)
         {
@@ -98,7 +98,7 @@ public:
 
     virtual bool compare_instance(
             const uint8_t* instance,
-            const uint8_t* other_instance) const
+            const uint8_t* other_instance) const override
     {
         bool comp = true;
         for(auto&& it: member_map())
@@ -108,7 +108,7 @@ public:
         return comp;
     }
 
-    virtual bool is_subset_of(const DynamicType& other) const
+    virtual bool is_subset_of(const DynamicType& other) const override
     {
         if(other.kind() != TypeKind::STRUCTURE_TYPE)
         {
@@ -135,7 +135,7 @@ public:
         return comp;
     }
 
-    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const
+    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const override
     {
         visitor(node);
         for(auto&& it: member_map())
@@ -147,7 +147,7 @@ public:
     }
 
 protected:
-    virtual DynamicType* clone() const
+    virtual DynamicType* clone() const override
     {
         return new StructType(*this);
     }

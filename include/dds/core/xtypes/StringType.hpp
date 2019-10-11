@@ -39,13 +39,13 @@ public:
                 bounds)
     {}
 
-    virtual size_t memory_size() const
+    virtual size_t memory_size() const override
     {
         return sizeof(std::string);
     }
 
     virtual void construct_instance(
-            uint8_t* instance) const
+            uint8_t* instance) const override
     {
         new (instance) std::string();
         reinterpret_cast<std::string*>(instance)->reserve(bounds());
@@ -53,20 +53,20 @@ public:
 
     virtual void copy_instance(
             uint8_t* target,
-            const uint8_t* source) const
+            const uint8_t* source) const override
     {
         new (target) std::string(*reinterpret_cast<const std::string*>(source));
     }
 
     virtual void move_instance(
             uint8_t* target,
-            uint8_t* source) const
+            uint8_t* source) const override
     {
         new (target) std::string(std::move(*reinterpret_cast<const std::string*>(source)));
     }
 
     virtual void destroy_instance(
-            uint8_t* instance) const
+            uint8_t* instance) const override
     {
         using namespace std;
         reinterpret_cast<std::string*>(instance)->std::string::~string();
@@ -74,13 +74,13 @@ public:
 
     virtual bool compare_instance(
             const uint8_t* instance,
-            const uint8_t* other_instance) const
+            const uint8_t* other_instance) const override
     {
         return *reinterpret_cast<const std::string*>(instance) == *reinterpret_cast<const std::string*>(other_instance);
     }
 
     virtual bool is_subset_of(
-            const DynamicType& other) const
+            const DynamicType& other) const override
     {
         if(other.kind() != TypeKind::STRING_TYPE)
         {
@@ -91,27 +91,27 @@ public:
         return bounds() <= other_string.bounds();
     }
 
-    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const
+    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const override
     {
         visitor(node);
     }
 
     virtual uint8_t* get_instance_at(
             uint8_t* instance,
-            size_t index) const
+            size_t index) const override
     {
         void* char_addr = &reinterpret_cast<std::string*>(instance)->operator[](index);
         return static_cast<uint8_t*>(char_addr);
     }
 
     virtual size_t get_instance_size(
-            const uint8_t* instance) const
+            const uint8_t* instance) const override
     {
         return reinterpret_cast<const std::string*>(instance)->size();
     }
 
 protected:
-    virtual DynamicType* clone() const
+    virtual DynamicType* clone() const override
     {
         return new StringType(*this);
     }

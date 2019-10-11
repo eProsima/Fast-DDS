@@ -61,51 +61,51 @@ class PrimitiveType : public DynamicType
     template<typename R>
     friend const PrimitiveType<R>& primitive_type();
 
-    virtual size_t memory_size() const
+    virtual size_t memory_size() const override
     {
         return sizeof(T);
     };
 
-    virtual void construct_instance(uint8_t* instance) const
+    virtual void construct_instance(uint8_t* instance) const override
     {
         *reinterpret_cast<T*>(instance) = T(0);
     }
 
-    virtual void destroy_instance(uint8_t* /*instance*/) const { } //Default does nothing
+    virtual void destroy_instance(uint8_t* /*instance*/) const override { } //Default does nothing
 
     virtual void copy_instance(
             uint8_t* target,
-            const uint8_t* source) const
+            const uint8_t* source) const override
     {
         *reinterpret_cast<T*>(target) = *reinterpret_cast<const T*>(source);
     }
 
-    virtual void move_instance(uint8_t* target, uint8_t* source) const
+    virtual void move_instance(uint8_t* target, uint8_t* source) const override
     {
         copy_instance(target, source);
     }
 
     virtual bool compare_instance(
             const uint8_t* instance,
-            const uint8_t* other_instance) const
+            const uint8_t* other_instance) const override
     {
         return *reinterpret_cast<const T*>(instance) == *reinterpret_cast<const T*>(other_instance);
     }
 
     virtual bool is_subset_of(
-            const DynamicType& other) const
+            const DynamicType& other) const override
     {
         return other.kind() == kind();
     }
 
 
-    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const
+    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const override
     {
         visitor(node);
     }
 
 protected:
-    virtual DynamicType* clone() const
+    virtual DynamicType* clone() const override
     {
         return new PrimitiveType<T>();
     }
