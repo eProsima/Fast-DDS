@@ -59,7 +59,8 @@ template<typename T>
 class PrimitiveType : public DynamicType
 {
     template<typename R>
-    friend const PrimitiveType<R>& primitive_type();
+    friend const DynamicType& primitive_type();
+    friend const DynamicType& null();
 
     virtual size_t memory_size() const override
     {
@@ -117,12 +118,24 @@ private:
 };
 
 template<typename T>
-const PrimitiveType<T>& primitive_type()
+const DynamicType& primitive_type()
 {
     // The creation of PrimitiveType should be always created
     // by this function in order to not broken the DynamicType::Ptr
     // optimizations for PrimitiveType
     static PrimitiveType<T> p;
+    return p;
+}
+
+
+inline const DynamicType& null()
+{
+    struct Null
+    {
+        Null(int){}
+        bool operator == (const Null&) const { return true; }
+    };
+    static PrimitiveType<Null> p;
     return p;
 }
 

@@ -43,7 +43,7 @@ protected:
         : DynamicType(kind, name)
     {}
 
-    MemberImpl& insert_member(const std::string& name, MemberImpl&& member)
+    MemberImpl& insert_member(const std::string& name, const MemberImpl& member)
     {
         return members_.emplace(name, std::move(member)).first->second;
     }

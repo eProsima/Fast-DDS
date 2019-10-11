@@ -93,7 +93,7 @@ public:
         {}
 
         Ptr(const Ptr& ptr)
-            : type_(ptr.type_ == nullptr || ptr.type_->is_primitive_type() ? ptr.type_ : ptr.type_->clone())
+            : type_((ptr.type_ == nullptr || ptr.type_->is_primitive_type()) ? ptr.type_ : ptr.type_->clone())
         {}
 
         Ptr(Ptr&& ptr)

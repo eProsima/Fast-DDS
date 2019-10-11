@@ -45,12 +45,27 @@ public:
     bool has_parent() const { return parent_.get() != nullptr; }
     const DynamicType& parent() const { return *parent_; }
 
-    StructType&& add_member(StructMember&& member)
+    StructType& add_member(const StructMember& member)
     {
-        StructMember& inner = insert_member(member.name(), std::move(member));
+        StructMember& inner = insert_member(member.name(), member);
         inner.offset_ = memory_size_;
         memory_size_ += inner.type().memory_size();
-        return std::move(*this);
+        return *this;
+    }
+
+    StructType& add_member(
+            const std::string& name,
+            const DynamicType& type)
+    {
+        return add_member(Member(name, type));
+    }
+
+    template<typename DynamicTypeImpl>
+    StructType& add_member(
+            const std::string& name,
+            const DynamicTypeImpl&& type)
+    {
+        return add_member(Member(name, type));
     }
 
     virtual size_t memory_size() const override

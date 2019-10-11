@@ -71,28 +71,28 @@ public:
     bool is_bitset() const { return bitset_; };
     size_t offset() const { return offset_; }
 
-    StructMember&& id(int32_t value)
+    StructMember& id(int32_t value)
     {
         id_ = value;
-        return std::move(*this);
+        return *this;
     }
 
-    StructMember&& key(bool value)
+    StructMember& key(bool value = true)
     {
         key_ = value;
-        return std::move(*this);
+        return *this;
     }
 
-    StructMember&& optional(bool value)
+    StructMember& optional(bool value = true)
     {
         optional_ = value;
-        return std::move(*this);
+        return *this;
     }
 
-    StructMember&& bitset(bool value)
+    StructMember& bitset(bool value = true)
     {
         bitset_ = value;
-        return std::move(*this);
+        return *this;
     }
 
 private:
