@@ -280,15 +280,13 @@ bool TypeConsistencyEnforcementQosPolicy::addToCDRMessage(
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, this->length);
-    valid &= CDRMessage::addUInt32(msg, this->m_kind);
+    valid &= CDRMessage::addUInt16(msg, this->m_kind);
     valid &= CDRMessage::addOctet(msg, static_cast<octet>(m_ignore_sequence_bounds));
     valid &= CDRMessage::addOctet(msg, static_cast<octet>(m_ignore_string_bounds));
     valid &= CDRMessage::addOctet(msg, static_cast<octet>(m_ignore_member_names));
     valid &= CDRMessage::addOctet(msg, static_cast<octet>(m_prevent_type_widening));
     valid &= CDRMessage::addOctet(msg, static_cast<octet>(m_force_type_validation));
-    valid &= CDRMessage::addOctet(msg, octet(0x00)); // 10th byte
-    valid &= CDRMessage::addOctet(msg, octet(0x00)); // 11th byte
-    valid &= CDRMessage::addOctet(msg, octet(0x00)); // 12th byte, aligned
+    valid &= CDRMessage::addOctet(msg, octet(0x00)); // 8th byte
     return valid;
 }
 

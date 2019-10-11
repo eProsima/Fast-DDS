@@ -1147,7 +1147,7 @@ public:
             fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
-enum TypeConsistencyKind : uint32_t
+enum TypeConsistencyKind : uint16_t
 {
     DISALLOW_TYPE_COERCION,
     ALLOW_TYPE_COERCION
@@ -1170,7 +1170,7 @@ public:
     bool m_force_type_validation;
 
     RTPS_DllAPI TypeConsistencyEnforcementQosPolicy()
-        : Parameter_t(PID_TYPE_CONSISTENCY_ENFORCEMENT, 12) // 4 + 5 + alignment bytes
+        : Parameter_t(PID_TYPE_CONSISTENCY_ENFORCEMENT, 8) // 2 + 5 + 1 alignment byte
         , QosPolicy(true)
     {
         m_kind = ALLOW_TYPE_COERCION;
