@@ -39,13 +39,14 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-bool run = true;
+static bool run = true;
+static std::mutex print_mtx;
 
 class ParListener : public ParticipantListener
 {
     public:
-        ParListener() {};
-        virtual ~ParListener(){};
+        ParListener() {}
+        virtual ~ParListener() override {}
 
         /**
          * This method is called when a new Participant is discovered, or a previously discovered participant changes its QOS or is removed.
@@ -56,6 +57,7 @@ class ParListener : public ParticipantListener
                 Participant* /*participant*/,
                 rtps::ParticipantDiscoveryInfo&& info) override
         {
+            std::lock_guard<std::mutex> lock(print_mtx);
             if(info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
             {
                 std::cout << "Subscriber participant " << //participant->getGuid() <<
@@ -83,6 +85,7 @@ class ParListener : public ParticipantListener
                 Participant* /*participant*/,
                 rtps::ParticipantAuthenticationInfo&& info) override
         {
+            std::lock_guard<std::mutex> lock(print_mtx);
             if (rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
             {
                 std::cout << "Subscriber participant " << //participant->getGuid() <<
@@ -108,6 +111,7 @@ class SubListener : public SubscriberListener
 
         void onSubscriptionMatched(Subscriber* /*subscriber*/, MatchingInfo& info) override
         {
+            std::lock_guard<std::mutex> lock(print_mtx);
             if(info.status == MATCHED_MATCHING)
             {
                 std::cout << "Subscriber matched with publisher " << info.remoteEndpointGuid << std::endl;
@@ -128,9 +132,11 @@ class SubListener : public SubscriberListener
                 if(info.sampleKind == ALIVE)
                 {
                     std::unique_lock<std::mutex> lock(mutex_);
+                    print_mtx.lock();
                     std::cout << "Received sample (" << info.sample_identity.writer_guid() << " - " <<
                         info.sample_identity.sequence_number() << "): index(" << sample.index() << "), message("
                         << sample.message() << ")" << std::endl;
+                    print_mtx.unlock();
                     if(max_number_samples_ <= ++number_samples_[info.sample_identity.writer_guid()])
                     {
                         cv_.notify_all();
@@ -144,6 +150,7 @@ class SubListener : public SubscriberListener
                 const LivelinessChangedStatus& status) override
         {
             (void)sub;
+            std::lock_guard<std::mutex> lock(print_mtx);
             if (status.alive_count_change == 1)
             {
                 std::cout << "Publisher recovered liveliness" << std::endl;
