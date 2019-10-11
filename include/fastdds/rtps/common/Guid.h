@@ -101,6 +101,16 @@ struct RTPS_DllAPI GUID_t
         return memcmp(guidPrefix.value, other_guid.guidPrefix.value, 8) == 0;
     }
 
+    /**
+     * Checks whether this guid corresponds to a builtin entity.
+     *
+     * @return true when this guid corresponds to a builtin entity, false otherwise.
+     */
+    bool is_builtin()
+    {
+        return entityId.value[3] >= 0xC0;
+    }
+
     static GUID_t unknown() noexcept
     {
         return GUID_t();
