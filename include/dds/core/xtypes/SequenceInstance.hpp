@@ -54,6 +54,17 @@ public:
         }
     }
 
+    SequenceInstance(
+            SequenceInstance&& other)
+        : content_(std::move(other.content_))
+        , block_size_(std::move(other.block_size_))
+        , memory_(std::move(other.memory_))
+        , capacity_(std::move(other.capacity_))
+        , size_(std::move(other.size_))
+    {
+        other.memory_ = nullptr;
+    }
+
     bool operator == (
             const SequenceInstance& other) const
     {
