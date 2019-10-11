@@ -179,17 +179,21 @@ void ThroughputSubscriber::processMessage()
     {
         switch (m_CommandSubListener.m_commandin.m_command)
         {
-            default: break;
-            case (DEFAULT): break;
+            case (DEFAULT):
+            {
+                break;
+            }
             case (BEGIN):
             {
                 break;
             }
             case (READY_TO_START):
             {
+                std::cout << "-----------------------------------------------------------------------" << std::endl;
                 std::cout << "Command: READY_TO_START" << std::endl;
                 m_datasize = m_CommandSubListener.m_commandin.m_size;
                 m_demand = m_CommandSubListener.m_commandin.m_demand;
+
                 if (dynamic_data)
                 {
                     // Create basic builders
@@ -206,10 +210,9 @@ void ThroughputSubscriber::processMessage()
                         "data",
                         DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
                             DynamicTypeBuilderFactory::get_instance()->create_byte_type(),
-                            m_datasize
-                        ));
-                    struct_type_builder->set_name("ThroughputType");
+                            m_datasize));
 
+                    struct_type_builder->set_name("ThroughputType");
                     m_pDynType = struct_type_builder->build();
                     m_DynType.CleanDynamicType();
                     m_DynType.SetDynamicType(m_pDynType);
@@ -247,15 +250,15 @@ void ThroughputSubscriber::processMessage()
             }
             case (TEST_STARTS):
             {
-                t_start_ = std::chrono::steady_clock::now();
                 std::cout << "Command: TEST_STARTS" << std::endl;
+                t_start_ = std::chrono::steady_clock::now();
                 break;
             }
             case (TEST_ENDS):
             {
                 t_end_ = std::chrono::steady_clock::now();
-                m_DataSubListener.saveNumbers();
                 std::cout << "Command: TEST_ENDS" << std::endl;
+                m_DataSubListener.saveNumbers();
                 std::unique_lock<std::mutex> lock(mutex_);
                 stop_count_ = 1;
                 lock.unlock();
@@ -279,11 +282,11 @@ void ThroughputSubscriber::processMessage()
                 lock.unlock();
                 std::cout << "Command: ALL_STOPS" << std::endl;
             }
+            default:
+            {
+                break;
+            }
         }
-    }
-    else
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
 }
 
@@ -534,11 +537,20 @@ void ThroughputSubscriber::run()
 
         if (stop_count_ == 1)
         {
+            std::cout << "Waiting for data matching removal" << std::endl;
+            std::unique_lock<std::mutex> data_disc_lock(dataMutex_);
+            data_disc_cond_.wait(data_disc_lock, [&]()
+            {
+                return data_disc_count_ == 0;
+            });
+            data_disc_lock.unlock();
+
             std::cout << "Waiting clean state" << std::endl;
             while (!mp_datasub->isInCleanState())
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
             }
+
             std::cout << "Sending results" << std::endl;
             ThroughputCommandType comm;
             comm.m_command = TEST_RESULTS;
@@ -582,6 +594,7 @@ void ThroughputSubscriber::run()
                 delete throughput_t;
                 throughput_t = nullptr;
             }
+            std::cout << "-----------------------------------------------------------------------" << std::endl;
         }
     } while (stop_count_ != 2);
 
