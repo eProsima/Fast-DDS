@@ -253,11 +253,11 @@ void keys()
     Subscriber* mySub = initSubscriber(sampleType, nullptr);
 
     // wait for the connection
-    if (pubListener.n_matched == 0)
+    std::unique_lock<std::mutex> lock(pubListener.mutex_);
+    pubListener.cv_.wait(lock, [&pubListener]()
     {
-        std::unique_lock<std::mutex> lock(pubListener.mutex_);
-        pubListener.cv_.wait(lock);
-    }
+        return pubListener.n_matched > 0;
+    });
 
     //Send 10 samples
     std::cout << "Publishing 5 keys, 10 samples per key..." << std::endl;
@@ -318,11 +318,11 @@ void publisherKeys()
     Publisher* myPub = initPublisher(sampleType, pubListener);
 
     // wait for the connection
-    if (pubListener.n_matched == 0)
+    std::unique_lock<std::mutex> lock(pubListener.mutex_);
+    pubListener.cv_.wait(lock, [&pubListener]()
     {
-        std::unique_lock<std::mutex> lock(pubListener.mutex_);
-        pubListener.cv_.wait(lock);
-    }
+        return pubListener.n_matched > 0;
+    });
 
     //Send 10 samples
     std::cout << "Publishing 5 keys, 10 samples per key..." << std::endl;
@@ -361,11 +361,11 @@ void subscriberKeys()
     initSubscriber(sampleType, &subListener);
 
     // wait for the connection
-    if (subListener.n_matched == 0)
+    std::unique_lock<std::mutex> lock(subListener.mutex_);
+    subListener.cv_.wait(lock, [&subListener]()
     {
-        std::unique_lock<std::mutex> lock(subListener.mutex_);
-        subListener.cv_.wait(lock);
-    }
+        return subListener.n_matched > 0;
+    });
 
     std::cin.ignore();
 
