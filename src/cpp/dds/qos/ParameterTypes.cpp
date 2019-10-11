@@ -17,11 +17,14 @@
  *
  */
 
-#include <fastrtps/qos/ParameterTypes.h>
+#include <fastdds/dds/qos/ParameterTypes.hpp>
 #include <fastdds/rtps/messages/CDRMessage.h>
 
-using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+
+namespace eprosima {
+namespace fastdds {
+namespace dds {
 
 // PARAMETER LOCATOR
 bool ParameterLocator_t::addToCDRMessage(
@@ -281,3 +284,7 @@ bool ParameterEndpointSecurityInfo_t::addToCDRMessage(
 }
 
 #endif
+
+} //namespace dds
+} //namespace fastdds
+} //namespace eprosima

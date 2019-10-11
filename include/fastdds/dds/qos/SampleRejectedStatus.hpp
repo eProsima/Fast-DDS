@@ -16,14 +16,15 @@
  * @file SampleRejectedStatus.hpp
  */
 
-#ifndef _FASTRTPS_SAMPLE_REJECTED_STATUS_HPP_
-#define _FASTRTPS_SAMPLE_REJECTED_STATUS_HPP_
+#ifndef _FASTDDS_DDS_QOS_SAMPLEREJECTEDSTATUS_HPP_
+#define _FASTDDS_DDS_QOS_SAMPLEREJECTEDSTATUS_HPP_
 
 #include <cstdint>
 #include <fastdds/rtps/common/InstanceHandle.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
 enum SampleRejectedStatusKind
 {
@@ -55,10 +56,11 @@ struct SampleRejectedStatus
     /**
      * Handle to the instance being updated by the last sample that was rejected.
      */
-    rtps::InstanceHandle_t last_instance_handle;
+    fastrtps::rtps::InstanceHandle_t last_instance_handle;
 };
 
-} //end of namespace fastrtps
-} //end of namespace eprosima
+} //namespace dds
+} //namespace fastdds
+} //namespace eprosima
 
-#endif // _FASTRTPS_SAMPLE_REJECTED_STATUS_HPP_
+#endif // _FASTDDS_DDS_QOS_SAMPLEREJECTEDSTATUS_HPP_

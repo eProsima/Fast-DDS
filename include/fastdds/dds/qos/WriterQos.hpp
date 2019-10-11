@@ -13,18 +13,18 @@
 // limitations under the License.
 
 /**
- * @file WriterQos.h
+ * @file WriterQos.hpp
  *
  */
 
-#ifndef WRITERQOS_H_
-#define WRITERQOS_H_
+#ifndef _FASTDDS_DDS_QOS_WRITERQOS_HPP_
+#define _FASTDDS_DDS_QOS_WRITERQOS_HPP_
 
-#include <fastrtps/qos/QosPolicies.h>
+#include <fastdds/dds/qos/QosPolicies.hpp>
 
 namespace eprosima {
-namespace fastrtps {
-
+namespace fastdds {
+namespace dds {
 
 /**
  * Class WriterQos, containing all the possible Qos that can be set for a determined Publisher.
@@ -142,7 +142,8 @@ public:
 
 RTPS_DllAPI extern const WriterQos DATAWRITER_QOS_DEFAULT;
 
-} /* namespace  */
-} /* namespace eprosima */
+} //namespace dds
+} //namespace fastdds
+} //namespace eprosima
 
-#endif /* WRITERQOS_H_ */
+#endif // _FASTDDS_DDS_QOS_WRITERQOS_HPP_

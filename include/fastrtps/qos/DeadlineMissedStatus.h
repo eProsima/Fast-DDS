@@ -19,36 +19,12 @@
 #ifndef _DEADLINE_MISSED_STATUS_H_
 #define _DEADLINE_MISSED_STATUS_H_
 
-#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/dds/qos/DeadlineMissedStatus.hpp>
 
 namespace eprosima {
 namespace fastrtps {
 
-//! @brief A struct storing the deadline status
-//! @ingroup DEADLINE_MODULE
-struct DeadlineMissedStatus
-{
-    //! @brief Constructor
-    DeadlineMissedStatus()
-        : total_count()
-        , total_count_change()
-        , last_instance_handle()
-    {}
-
-    //! @brief Destructor
-    ~DeadlineMissedStatus()
-    {}
-
-    //! @brief Total cumulative number of offered deadline periods epased during which a writer failed to provide data
-    //! @details Missed deadlines accumulate, that is, each deadline period the total_count will be incremented by 1
-    uint32_t total_count;
-
-    //! @brief The change in total_count since the last time the listener was called or the status was read
-    uint32_t total_count_change;
-
-    //! @brief Handle to the last instance missing the deadline
-    rtps::InstanceHandle_t last_instance_handle;
-};
+using DeadlineMissedStatus = fastdds::dds::DeadlineMissedStatus;
 
 typedef DeadlineMissedStatus OfferedDeadlineMissedStatus;
 typedef DeadlineMissedStatus RequestedDeadlineMissedStatus;

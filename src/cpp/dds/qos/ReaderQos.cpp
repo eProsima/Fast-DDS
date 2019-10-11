@@ -17,11 +17,14 @@
  *
  */
 
-#include <fastrtps/qos/ReaderQos.h>
+#include <fastdds/dds/qos/ReaderQos.hpp>
 #include <fastrtps/log/Log.h>
 
+using namespace eprosima::fastrtps;
+
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
 RTPS_DllAPI const ReaderQos DATAREADER_QOS_DEFAULT;
 
@@ -204,5 +207,6 @@ bool ReaderQos::canQosBeUpdated(
     return updatable;
 }
 
-} /* namespace pubsub */
-} /* namespace eprosima */
+} //namespace dds
+} //namespace fastdds
+} //namespace eprosima

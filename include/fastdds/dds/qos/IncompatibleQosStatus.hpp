@@ -16,13 +16,14 @@
  * @file IncompatibleQosStatus.hpp
  */
 
-#ifndef _FASTRTPS_INCOMPATIBLE_QOS_STATUS_HPP_
-#define _FASTRTPS_INCOMPATIBLE_QOS_STATUS_HPP_
+#ifndef _FASTDDS_DDS_QOS_INCOMPATIBLEQOSSTATUS_HPP_
+#define _FASTDDS_DDS_QOS_INCOMPATIBLEQOSSTATUS_HPP_
 
 #include <cstdint>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
 //! @brief A struct storing the requested incompatible QoS status
 struct IncompatibleQosStatus
@@ -45,7 +46,8 @@ struct IncompatibleQosStatus
 typedef IncompatibleQosStatus RequestedIncompatibleQosStatus;
 typedef IncompatibleQosStatus OfferedIncompatibleQosStatus;
 
-} //end of namespace fastrtps
-} //end of namespace eprosima
+} //namespace dds
+} //namespace fastdds
+} //namespace eprosima
 
-#endif // _FASTRTPS_INCOMPATIBLE_QOS_STATUS_HPP_
+#endif // _FASTDDS_DDS_QOS_INCOMPATIBLEQOSSTATUS_HPP_

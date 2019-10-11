@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file ParameterTypes.h
+ * @file ParameterTypes.hpp
  */
 
-#ifndef PARAMETERTYPES_H_
-#define PARAMETERTYPES_H_
+#ifndef _FASTDDS_DDS_QOS_PARAMETERTYPES_HPP_
+#define _FASTDDS_DDS_QOS_PARAMETERTYPES_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <fastdds/rtps/common/all_common.h>
 #include <fastdds/rtps/common/Token.h>
@@ -33,13 +33,15 @@
 #include <vector>
 
 namespace eprosima {
-namespace fastrtps {
 
+namespace fastrtps {
 namespace rtps {
 struct CDRMessage_t;
 }
+}
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+namespace fastdds {
+namespace dds {
 
 /**
  * @addtogroup PARAMETER_MODULE
@@ -155,7 +157,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     RTPS_DllAPI virtual bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) = 0;
+            fastrtps::rtps::CDRMessage_t* msg) = 0;
 
 public:
 
@@ -172,7 +174,7 @@ class ParameterKey_t : public Parameter_t
 {
 public:
 
-    rtps::InstanceHandle_t key;
+    fastrtps::rtps::InstanceHandle_t key;
     ParameterKey_t(){};
     /**
      * Constructor using a parameter PID and the parameter length
@@ -186,7 +188,7 @@ public:
     ParameterKey_t(
             ParameterId_t pid,
             uint16_t in_length,
-            rtps::InstanceHandle_t& ke)
+            fastrtps::rtps::InstanceHandle_t& ke)
         : Parameter_t(pid, in_length)
         , key(ke){};
     /**
@@ -195,7 +197,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
 /**
@@ -205,7 +207,7 @@ class ParameterLocator_t : public Parameter_t
 {
 public:
 
-    rtps::Locator_t locator;
+    fastrtps::rtps::Locator_t locator;
 
     ParameterLocator_t()
     {
@@ -226,7 +228,7 @@ public:
     ParameterLocator_t(
             ParameterId_t pid,
             uint16_t in_length,
-            const rtps::Locator_t& loc)
+            const fastrtps::rtps::Locator_t& loc)
         : Parameter_t(pid, in_length)
         , locator(loc)
     {
@@ -238,7 +240,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
 };
 #define PARAMETER_LOCATOR_LENGTH 24
 
@@ -263,7 +265,7 @@ public:
     ParameterString_t(
             ParameterId_t pid,
             uint16_t in_length,
-            const string_255& strin)
+            const fastrtps::string_255& strin)
         : Parameter_t(pid, in_length)
         , m_string(strin){}
 
@@ -273,14 +275,14 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
     inline const char* getName()const { return m_string.c_str(); };
     inline void setName(
             const char* name){ m_string = name; };
 
 private:
 
-    string_255 m_string;
+    fastrtps::string_255 m_string;
 };
 
 /**
@@ -315,7 +317,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_PORT_LENGTH 4
@@ -327,7 +329,7 @@ class ParameterGuid_t : public Parameter_t
 {
 public:
 
-    rtps::GUID_t guid;
+    fastrtps::rtps::GUID_t guid;
     ParameterGuid_t(){};
     /**
      * Constructor using a parameter PID and the parameter length
@@ -341,13 +343,13 @@ public:
     ParameterGuid_t(
             ParameterId_t pid,
             uint16_t in_length,
-            rtps::GUID_t guidin)
+            fastrtps::rtps::GUID_t guidin)
         : Parameter_t(pid, in_length)
         , guid(guidin){};
     ParameterGuid_t(
             ParameterId_t pid,
             uint16_t in_length,
-            rtps::InstanceHandle_t& iH)
+            fastrtps::rtps::InstanceHandle_t& iH)
         : Parameter_t(pid, in_length)
     {
         for (uint8_t i =0; i<16; ++i)
@@ -368,7 +370,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_GUID_LENGTH 16
@@ -380,8 +382,8 @@ class ParameterProtocolVersion_t : public Parameter_t
 {
 public:
 
-    rtps::ProtocolVersion_t protocolVersion;
-    ParameterProtocolVersion_t(){protocolVersion = rtps::c_ProtocolVersion;};
+    fastrtps::rtps::ProtocolVersion_t protocolVersion;
+    ParameterProtocolVersion_t(){protocolVersion = fastrtps::rtps::c_ProtocolVersion;};
     /**
      * Constructor using a parameter PID and the parameter length
      * @param pid Pid of the parameter
@@ -390,14 +392,14 @@ public:
     ParameterProtocolVersion_t(
             ParameterId_t pid,
             uint16_t in_length)
-        : Parameter_t(pid, in_length){protocolVersion = rtps::c_ProtocolVersion;};
+        : Parameter_t(pid, in_length){protocolVersion = fastrtps::rtps::c_ProtocolVersion;};
     /**
      * Add the parameter to a CDRMessage_t message.
      * @param[in,out] msg Pointer to the message where the parameter should be added.
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_PROTOCOL_LENGTH 4
@@ -409,9 +411,9 @@ class ParameterVendorId_t : public Parameter_t
 {
 public:
 
-    rtps::VendorId_t vendorId;
+    fastrtps::rtps::VendorId_t vendorId;
     ParameterVendorId_t()
-        : vendorId(rtps::c_VendorId_eProsima) {}
+        : vendorId(fastrtps::rtps::c_VendorId_eProsima) {}
     /**
      * Constructor using a parameter PID and the parameter length
      * @param pid Pid of the parameter
@@ -421,14 +423,14 @@ public:
             ParameterId_t pid,
             uint16_t in_length)
         : Parameter_t(pid, in_length)
-        , vendorId(rtps::c_VendorId_eProsima) {}
+        , vendorId(fastrtps::rtps::c_VendorId_eProsima) {}
     /**
      * Add the parameter to a CDRMessage_t message.
      * @param[in,out] msg Pointer to the message where the parameter should be added.
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_VENDOR_LENGTH 4
@@ -440,7 +442,7 @@ class ParameterIP4Address_t : public Parameter_t
 {
 public:
 
-    rtps::octet address[4];
+    fastrtps::rtps::octet address[4];
     ParameterIP4Address_t(){this->setIP4Address(0, 0, 0, 0);};
     /**
      * Constructor using a parameter PID and the parameter length
@@ -457,12 +459,12 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
     void setIP4Address(
-            rtps::octet o1,
-            rtps::octet o2,
-            rtps::octet o3,
-            rtps::octet o4);
+            fastrtps::rtps::octet o1,
+            fastrtps::rtps::octet o2,
+            fastrtps::rtps::octet o3,
+            fastrtps::rtps::octet o4);
 };
 
 #define PARAMETER_IP4_LENGTH 4
@@ -499,7 +501,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_BOOL_LENGTH 4
@@ -537,7 +539,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_STATUS_INFO_LENGTH 4
@@ -549,7 +551,7 @@ class ParameterCount_t : public Parameter_t
 {
 public:
 
-    rtps::Count_t count;
+    fastrtps::rtps::Count_t count;
     ParameterCount_t()
         : count(0){};
     /**
@@ -568,7 +570,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_COUNT_LENGTH 4
@@ -580,7 +582,7 @@ class ParameterEntityId_t : public Parameter_t
 {
 public:
 
-    rtps::EntityId_t entityId;
+    fastrtps::rtps::EntityId_t entityId;
     ParameterEntityId_t()
         : entityId(ENTITYID_UNKNOWN){};
     /**
@@ -599,7 +601,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_ENTITYID_LENGTH 4
@@ -611,7 +613,7 @@ class ParameterTime_t : public Parameter_t
 {
 public:
 
-    rtps::Time_t time;
+    fastrtps::rtps::Time_t time;
     ParameterTime_t(){};
     /**
      * Constructor using a parameter PID and the parameter length
@@ -628,7 +630,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_TIME_LENGTH 8
@@ -640,7 +642,7 @@ class ParameterBuiltinEndpointSet_t : public Parameter_t
 {
 public:
 
-    rtps::BuiltinEndpointSet_t endpointSet;
+    fastrtps::rtps::BuiltinEndpointSet_t endpointSet;
     ParameterBuiltinEndpointSet_t()
         : endpointSet(0){};
     /**
@@ -660,7 +662,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_BUILTINENDPOINTSET_LENGTH 4
@@ -700,7 +702,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
 /**
@@ -710,10 +712,10 @@ class ParameterSampleIdentity_t : public Parameter_t
 {
 public:
 
-    rtps::SampleIdentity sample_id;
+    fastrtps::rtps::SampleIdentity sample_id;
 
     ParameterSampleIdentity_t()
-        : sample_id(rtps::SampleIdentity::unknown()) {}
+        : sample_id(fastrtps::rtps::SampleIdentity::unknown()) {}
 
     /**
      * Constructor using a parameter PID and the parameter length
@@ -724,7 +726,7 @@ public:
             ParameterId_t pid,
             uint16_t in_length)
         : Parameter_t(pid, in_length)
-        , sample_id(rtps::SampleIdentity::unknown()) {}
+        , sample_id(fastrtps::rtps::SampleIdentity::unknown()) {}
 
     /**
      * Add the parameter to a CDRMessage_t message.
@@ -732,7 +734,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
 #if HAVE_SECURITY
@@ -744,7 +746,7 @@ class ParameterToken_t : public Parameter_t
 {
 public:
 
-    rtps::Token token;
+    fastrtps::rtps::Token token;
 
     ParameterToken_t() {}
 
@@ -764,15 +766,15 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
 class ParameterParticipantSecurityInfo_t : public Parameter_t
 {
 public:
 
-    rtps::security::ParticipantSecurityAttributesMask security_attributes;
-    rtps::security::PluginParticipantSecurityAttributesMask plugin_security_attributes;
+    fastrtps::rtps::security::ParticipantSecurityAttributesMask security_attributes;
+    fastrtps::rtps::security::PluginParticipantSecurityAttributesMask plugin_security_attributes;
 
     ParameterParticipantSecurityInfo_t()
         : Parameter_t(PID_PARTICIPANT_SECURITY_INFO, 0)
@@ -797,7 +799,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH 8
@@ -806,8 +808,8 @@ class ParameterEndpointSecurityInfo_t : public Parameter_t
 {
 public:
 
-    rtps::security::EndpointSecurityAttributesMask security_attributes;
-    rtps::security::PluginEndpointSecurityAttributesMask plugin_security_attributes;
+    fastrtps::rtps::security::EndpointSecurityAttributesMask security_attributes;
+    fastrtps::rtps::security::PluginEndpointSecurityAttributesMask plugin_security_attributes;
 
     ParameterEndpointSecurityInfo_t()
         : Parameter_t(PID_ENDPOINT_SECURITY_INFO, 0)
@@ -832,7 +834,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
 #define PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH 8
@@ -841,10 +843,9 @@ public:
 
 ///@}
 
-#endif
+} //namespace dds
+} //namespace fastdds
+} //namespace eprosima
 
-} //end of namespace
-} //end of namespace eprosima
-
 #endif
-#endif /* PARAMETERTYPES_H_ */
+#endif // _FASTDDS_DDS_QOS_PARAMETERTYPES_HPP_

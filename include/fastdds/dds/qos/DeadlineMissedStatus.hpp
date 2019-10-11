@@ -13,16 +13,17 @@
 // limitations under the License.
 
 /**
- * @file DeadlineMissedStatus.h
+ * @file DeadlineMissedStatus.hpp
  */
 
-#ifndef _DEADLINE_MISSED_STATUS_H_
-#define _DEADLINE_MISSED_STATUS_H_
+#ifndef _FASTDDS_DDS_QOS_DEADLINEMISSEDSTATUS_HPP_
+#define _FASTDDS_DDS_QOS_DEADLINEMISSEDSTATUS_HPP_
 
 #include <fastdds/rtps/common/InstanceHandle.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
 //! @brief A struct storing the deadline status
 //! @ingroup DEADLINE_MODULE
@@ -47,13 +48,14 @@ struct DeadlineMissedStatus
     uint32_t total_count_change;
 
     //! @brief Handle to the last instance missing the deadline
-    rtps::InstanceHandle_t last_instance_handle;
+    fastrtps::rtps::InstanceHandle_t last_instance_handle;
 };
 
 typedef DeadlineMissedStatus OfferedDeadlineMissedStatus;
 typedef DeadlineMissedStatus RequestedDeadlineMissedStatus;
 
-} //end of namespace
-} //end of namespace eprosima
+} //namespace dds
+} //namespace fastdds
+} //namespace eprosima
 
-#endif /* _DEADLINE_MISSED_STATUS_H_ */
+#endif // _FASTDDS_DDS_QOS_DEADLINEMISSEDSTATUS_HPP_

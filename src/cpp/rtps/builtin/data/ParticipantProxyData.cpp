@@ -36,10 +36,11 @@ using namespace eprosima::fastrtps;
 
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
-ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttributes& allocation)
+ParticipantProxyData::ParticipantProxyData(
+        const RTPSParticipantAllocationAttributes& allocation)
     : m_protocolVersion(c_ProtocolVersion)
     , m_VendorId(c_VendorId_Unknown)
     , m_expectsInlineQos(false)
@@ -55,10 +56,11 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
     , should_check_lease_duration(false)
     , m_readers(allocation.readers)
     , m_writers(allocation.writers)
-    {
-    }
+{
+}
 
-ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
+ParticipantProxyData::ParticipantProxyData(
+        const ParticipantProxyData& pdata)
     : m_protocolVersion(pdata.m_protocolVersion)
     , m_guid(pdata.m_guid)
     , m_VendorId(pdata.m_VendorId)
@@ -85,8 +87,8 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
     // This method is only called from SecurityManager when a new participant is discovered and the
     // corresponding DiscoveredParticipantInfo struct is created. Only participant info is used,
     // so there is no need to copy m_readers and m_writers
-    {
-    }
+{
+}
 
 ParticipantProxyData::~ParticipantProxyData()
 {
@@ -108,96 +110,146 @@ ParticipantProxyData::~ParticipantProxyData()
     }
 }
 
-bool ParticipantProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulation)
+bool ParticipantProxyData::writeToCDRMessage(
+        CDRMessage_t* msg,
+        bool write_encapsulation)
 {
     if (write_encapsulation)
     {
-        if (!ParameterList::writeEncapsulationToCDRMsg(msg)) return false;
+        if (!ParameterList::writeEncapsulationToCDRMsg(msg))
+        {
+            return false;
+        }
     }
 
     {
-        ParameterProtocolVersion_t p(PID_PROTOCOL_VERSION,4);
+        ParameterProtocolVersion_t p(fastdds::dds::PID_PROTOCOL_VERSION, 4);
         p.protocolVersion = this->m_protocolVersion;
-        if (!p.addToCDRMessage(msg)) return false;
+        if (!p.addToCDRMessage(msg))
+        {
+            return false;
+        }
     }
     {
-        ParameterVendorId_t p(PID_VENDORID,4);
+        ParameterVendorId_t p(fastdds::dds::PID_VENDORID, 4);
         p.vendorId[0] = this->m_VendorId[0];
         p.vendorId[1] = this->m_VendorId[1];
-        if (!p.addToCDRMessage(msg)) return false;
+        if (!p.addToCDRMessage(msg))
+        {
+            return false;
+        }
     }
-    if(this->m_expectsInlineQos)
+    if (this->m_expectsInlineQos)
     {
-        ParameterBool_t p(PID_EXPECTS_INLINE_QOS, PARAMETER_BOOL_LENGTH, m_expectsInlineQos);
-        if (!p.addToCDRMessage(msg)) return false;
-    }
-    {
-        ParameterGuid_t p(PID_PARTICIPANT_GUID, PARAMETER_GUID_LENGTH, m_guid);
-        if (!p.addToCDRMessage(msg)) return false;
-    }
-    for(const Locator_t& it : metatraffic_locators.multicast)
-    {
-        ParameterLocator_t p(PID_METATRAFFIC_MULTICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, it);
-        if (!p.addToCDRMessage(msg)) return false;
-    }
-    for(const Locator_t& it : metatraffic_locators.unicast)
-    {
-        ParameterLocator_t p(PID_METATRAFFIC_UNICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, it);
-        if (!p.addToCDRMessage(msg)) return false;
-    }
-    for(const Locator_t& it : default_locators.unicast)
-    {
-        ParameterLocator_t p(PID_DEFAULT_UNICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, it);
-        if (!p.addToCDRMessage(msg)) return false;
-    }
-    for(const Locator_t& it : default_locators.multicast)
-    {
-        ParameterLocator_t p(PID_DEFAULT_MULTICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, it);
-        if (!p.addToCDRMessage(msg)) return false;
+        ParameterBool_t p(fastdds::dds::PID_EXPECTS_INLINE_QOS, PARAMETER_BOOL_LENGTH, m_expectsInlineQos);
+        if (!p.addToCDRMessage(msg))
+        {
+            return false;
+        }
     }
     {
-        ParameterTime_t p(PID_PARTICIPANT_LEASE_DURATION, PARAMETER_TIME_LENGTH);
+        ParameterGuid_t p(fastdds::dds::PID_PARTICIPANT_GUID, PARAMETER_GUID_LENGTH, m_guid);
+        if (!p.addToCDRMessage(msg))
+        {
+            return false;
+        }
+    }
+    for (const Locator_t& it : metatraffic_locators.multicast)
+    {
+        ParameterLocator_t p(fastdds::dds::PID_METATRAFFIC_MULTICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, it);
+        if (!p.addToCDRMessage(msg))
+        {
+            return false;
+        }
+    }
+    for (const Locator_t& it : metatraffic_locators.unicast)
+    {
+        ParameterLocator_t p(fastdds::dds::PID_METATRAFFIC_UNICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, it);
+        if (!p.addToCDRMessage(msg))
+        {
+            return false;
+        }
+    }
+    for (const Locator_t& it : default_locators.unicast)
+    {
+        ParameterLocator_t p(fastdds::dds::PID_DEFAULT_UNICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, it);
+        if (!p.addToCDRMessage(msg))
+        {
+            return false;
+        }
+    }
+    for (const Locator_t& it : default_locators.multicast)
+    {
+        ParameterLocator_t p(fastdds::dds::PID_DEFAULT_MULTICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, it);
+        if (!p.addToCDRMessage(msg))
+        {
+            return false;
+        }
+    }
+    {
+        ParameterTime_t p(fastdds::dds::PID_PARTICIPANT_LEASE_DURATION, PARAMETER_TIME_LENGTH);
         p.time = m_leaseDuration;
-        if (!p.addToCDRMessage(msg)) return false;
+        if (!p.addToCDRMessage(msg))
+        {
+            return false;
+        }
     }
     {
-        ParameterBuiltinEndpointSet_t p(PID_BUILTIN_ENDPOINT_SET, PARAMETER_BUILTINENDPOINTSET_LENGTH);
+        ParameterBuiltinEndpointSet_t p(fastdds::dds::PID_BUILTIN_ENDPOINT_SET, PARAMETER_BUILTINENDPOINTSET_LENGTH);
         p.endpointSet = m_availableBuiltinEndpoints;
-        if (!p.addToCDRMessage(msg)) return false;
+        if (!p.addToCDRMessage(msg))
+        {
+            return false;
+        }
     }
 
-    if(m_participantName.size() > 0)
+    if (m_participantName.size() > 0)
     {
-        ParameterString_t p(PID_ENTITY_NAME, 0, m_participantName);
-        if (!p.addToCDRMessage(msg)) return false;
+        ParameterString_t p(fastdds::dds::PID_ENTITY_NAME, 0, m_participantName);
+        if (!p.addToCDRMessage(msg))
+        {
+            return false;
+        }
     }
 
-    if(this->m_userData.size()>0)
+    if (this->m_userData.size()>0)
     {
         UserDataQosPolicy p;
         p.setDataVec(m_userData);
-        if (!p.addToCDRMessage(msg)) return false;
+        if (!p.addToCDRMessage(msg))
+        {
+            return false;
+        }
     }
 
-    if(this->m_properties.properties.size()>0)
+    if (this->m_properties.properties.size()>0)
     {
         ParameterPropertyList_t p(m_properties);
-        if (!p.addToCDRMessage(msg)) return false;
+        if (!p.addToCDRMessage(msg))
+        {
+            return false;
+        }
     }
 
 #if HAVE_SECURITY
-    if(!this->identity_token_.class_id().empty())
+    if (!this->identity_token_.class_id().empty())
     {
-        ParameterToken_t p(PID_IDENTITY_TOKEN, 0);
+        ParameterToken_t p(fastdds::dds::PID_IDENTITY_TOKEN, 0);
         p.token = identity_token_;
-        if (!p.addToCDRMessage(msg)) return false;
+        if (!p.addToCDRMessage(msg))
+        {
+            return false;
+        }
     }
 
-    if(!this->permissions_token_.class_id().empty())
+    if (!this->permissions_token_.class_id().empty())
     {
-        ParameterToken_t p(PID_PERMISSIONS_TOKEN, 0);
+        ParameterToken_t p(fastdds::dds::PID_PERMISSIONS_TOKEN, 0);
         p.token = permissions_token_;
-        if (!p.addToCDRMessage(msg)) return false;
+        if (!p.addToCDRMessage(msg))
+        {
+            return false;
+        }
     }
 
     if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
@@ -205,7 +257,10 @@ bool ParticipantProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encap
         ParameterParticipantSecurityInfo_t p;
         p.security_attributes = this->security_attributes_;
         p.plugin_security_attributes = this->plugin_security_attributes_;
-        if (!p.addToCDRMessage(msg)) return false;
+        if (!p.addToCDRMessage(msg))
+        {
+            return false;
+        }
     }
 #endif
 
@@ -218,174 +273,176 @@ bool ParticipantProxyData::readFromCDRMessage(
         const NetworkFactory& network)
 {
     auto param_process = [this, &network](const Parameter_t* param)
-    {
-        switch (param->Pid)
-        {
-            case PID_KEY_HASH:
             {
-                const ParameterKey_t* p = dynamic_cast<const ParameterKey_t*>(param);
-                assert(p != nullptr);
-                GUID_t guid;
-                iHandle2GUID(guid, p->key);
-                this->m_guid = guid;
-                this->m_key = p->key;
-                break;
-            }
-            case PID_PROTOCOL_VERSION:
-            {
-                const ParameterProtocolVersion_t* p = dynamic_cast<const ParameterProtocolVersion_t*>(param);
-                assert(p != nullptr);
-                if (p->protocolVersion.m_major < c_ProtocolVersion.m_major)
+                switch (param->Pid)
                 {
-                    return false;
-                }
-                this->m_protocolVersion = p->protocolVersion;
-                break;
-            }
-            case PID_VENDORID:
-            {
-                const ParameterVendorId_t* p = dynamic_cast<const ParameterVendorId_t*>(param);
-                assert(p != nullptr);
-                this->m_VendorId[0] = p->vendorId[0];
-                this->m_VendorId[1] = p->vendorId[1];
-                break;
-            }
-            case PID_EXPECTS_INLINE_QOS:
-            {
-                const ParameterBool_t* p = dynamic_cast<const ParameterBool_t*>(param);
-                assert(p != nullptr);
-                this->m_expectsInlineQos = p->value;
-                break;
-            }
-            case PID_PARTICIPANT_GUID:
-            {
-                const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
-                assert(p != nullptr);
-                this->m_guid = p->guid;
-                this->m_key = p->guid;
-                break;
-            }
-            case PID_METATRAFFIC_MULTICAST_LOCATOR:
-            {
-                const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
-                assert(p != nullptr);
-                Locator_t temp_locator;
-                if (network.transform_remote_locator(p->locator, temp_locator))
-                {
-                    metatraffic_locators.add_multicast_locator(temp_locator);
-                }
-                break;
-            }
-            case PID_METATRAFFIC_UNICAST_LOCATOR:
-            {
-                const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
-                assert(p != nullptr);
-                Locator_t temp_locator;
-                if (network.transform_remote_locator(p->locator, temp_locator))
-                {
-                    metatraffic_locators.add_unicast_locator(temp_locator);
-                }
-                break;
-            }
-            case PID_DEFAULT_UNICAST_LOCATOR:
-            {
-                const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
-                assert(p != nullptr);
-                Locator_t temp_locator;
-                if (network.transform_remote_locator(p->locator, temp_locator))
-                {
-                    default_locators.add_unicast_locator(temp_locator);
-                }
-                break;
-            }
-            case PID_DEFAULT_MULTICAST_LOCATOR:
-            {
-                const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
-                assert(p != nullptr);
-                Locator_t temp_locator;
-                if (network.transform_remote_locator(p->locator, temp_locator))
-                {
-                    default_locators.add_multicast_locator(temp_locator);
-                }
-                break;
-            }
-            case PID_PARTICIPANT_LEASE_DURATION:
-            {
-                const ParameterTime_t* p = dynamic_cast<const ParameterTime_t*>(param);
-                assert(p != nullptr);
-                this->m_leaseDuration = p->time.to_duration_t();
-                lease_duration_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(m_leaseDuration));
-                break;
-            }
-            case PID_BUILTIN_ENDPOINT_SET:
-            {
-                const ParameterBuiltinEndpointSet_t* p = dynamic_cast<const ParameterBuiltinEndpointSet_t*>(param);
-                assert(p != nullptr);
-                this->m_availableBuiltinEndpoints = p->endpointSet;
-                break;
-            }
-            case PID_ENTITY_NAME:
-            {
-                const ParameterString_t* p = dynamic_cast<const ParameterString_t*>(param);
-                assert(p != nullptr);
-                this->m_participantName = p->getName();
-                break;
-            }
-            case PID_PROPERTY_LIST:
-            {
-                const ParameterPropertyList_t* p = dynamic_cast<const ParameterPropertyList_t*>(param);
-                assert(p != nullptr);
-                this->m_properties = *p;
-                break;
-            }
-            case PID_USER_DATA:
-            {
-                const UserDataQosPolicy* p = dynamic_cast<const UserDataQosPolicy*>(param);
-                assert(p != nullptr);
-                this->m_userData = p->getDataVec();
-                break;
-            }
-            case PID_IDENTITY_TOKEN:
-            {
+                    case fastdds::dds::PID_KEY_HASH:
+                    {
+                        const ParameterKey_t* p = dynamic_cast<const ParameterKey_t*>(param);
+                        assert(p != nullptr);
+                        GUID_t guid;
+                        iHandle2GUID(guid, p->key);
+                        this->m_guid = guid;
+                        this->m_key = p->key;
+                        break;
+                    }
+                    case fastdds::dds::PID_PROTOCOL_VERSION:
+                    {
+                        const ParameterProtocolVersion_t* p = dynamic_cast<const ParameterProtocolVersion_t*>(param);
+                        assert(p != nullptr);
+                        if (p->protocolVersion.m_major < c_ProtocolVersion.m_major)
+                        {
+                            return false;
+                        }
+                        this->m_protocolVersion = p->protocolVersion;
+                        break;
+                    }
+                    case fastdds::dds::PID_VENDORID:
+                    {
+                        const ParameterVendorId_t* p = dynamic_cast<const ParameterVendorId_t*>(param);
+                        assert(p != nullptr);
+                        this->m_VendorId[0] = p->vendorId[0];
+                        this->m_VendorId[1] = p->vendorId[1];
+                        break;
+                    }
+                    case fastdds::dds::PID_EXPECTS_INLINE_QOS:
+                    {
+                        const ParameterBool_t* p = dynamic_cast<const ParameterBool_t*>(param);
+                        assert(p != nullptr);
+                        this->m_expectsInlineQos = p->value;
+                        break;
+                    }
+                    case fastdds::dds::PID_PARTICIPANT_GUID:
+                    {
+                        const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
+                        assert(p != nullptr);
+                        this->m_guid = p->guid;
+                        this->m_key = p->guid;
+                        break;
+                    }
+                    case fastdds::dds::PID_METATRAFFIC_MULTICAST_LOCATOR:
+                    {
+                        const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
+                        assert(p != nullptr);
+                        Locator_t temp_locator;
+                        if (network.transform_remote_locator(p->locator, temp_locator))
+                        {
+                            metatraffic_locators.add_multicast_locator(temp_locator);
+                        }
+                        break;
+                    }
+                    case fastdds::dds::PID_METATRAFFIC_UNICAST_LOCATOR:
+                    {
+                        const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
+                        assert(p != nullptr);
+                        Locator_t temp_locator;
+                        if (network.transform_remote_locator(p->locator, temp_locator))
+                        {
+                            metatraffic_locators.add_unicast_locator(temp_locator);
+                        }
+                        break;
+                    }
+                    case fastdds::dds::PID_DEFAULT_UNICAST_LOCATOR:
+                    {
+                        const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
+                        assert(p != nullptr);
+                        Locator_t temp_locator;
+                        if (network.transform_remote_locator(p->locator, temp_locator))
+                        {
+                            default_locators.add_unicast_locator(temp_locator);
+                        }
+                        break;
+                    }
+                    case fastdds::dds::PID_DEFAULT_MULTICAST_LOCATOR:
+                    {
+                        const ParameterLocator_t* p = dynamic_cast<const ParameterLocator_t*>(param);
+                        assert(p != nullptr);
+                        Locator_t temp_locator;
+                        if (network.transform_remote_locator(p->locator, temp_locator))
+                        {
+                            default_locators.add_multicast_locator(temp_locator);
+                        }
+                        break;
+                    }
+                    case fastdds::dds::PID_PARTICIPANT_LEASE_DURATION:
+                    {
+                        const ParameterTime_t* p = dynamic_cast<const ParameterTime_t*>(param);
+                        assert(p != nullptr);
+                        this->m_leaseDuration = p->time.to_duration_t();
+                        lease_duration_ =
+                                std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(m_leaseDuration));
+                        break;
+                    }
+                    case fastdds::dds::PID_BUILTIN_ENDPOINT_SET:
+                    {
+                        const ParameterBuiltinEndpointSet_t* p =
+                                dynamic_cast<const ParameterBuiltinEndpointSet_t*>(param);
+                        assert(p != nullptr);
+                        this->m_availableBuiltinEndpoints = p->endpointSet;
+                        break;
+                    }
+                    case fastdds::dds::PID_ENTITY_NAME:
+                    {
+                        const ParameterString_t* p = dynamic_cast<const ParameterString_t*>(param);
+                        assert(p != nullptr);
+                        this->m_participantName = p->getName();
+                        break;
+                    }
+                    case fastdds::dds::PID_PROPERTY_LIST:
+                    {
+                        const ParameterPropertyList_t* p = dynamic_cast<const ParameterPropertyList_t*>(param);
+                        assert(p != nullptr);
+                        this->m_properties = *p;
+                        break;
+                    }
+                    case fastdds::dds::PID_USER_DATA:
+                    {
+                        const UserDataQosPolicy* p = dynamic_cast<const UserDataQosPolicy*>(param);
+                        assert(p != nullptr);
+                        this->m_userData = p->getDataVec();
+                        break;
+                    }
+                    case fastdds::dds::PID_IDENTITY_TOKEN:
+                    {
 #if HAVE_SECURITY
-                const ParameterToken_t* p = dynamic_cast<const ParameterToken_t*>(param);
-                assert(p != nullptr);
-                this->identity_token_ = std::move(p->token);
+                        const ParameterToken_t* p = dynamic_cast<const ParameterToken_t*>(param);
+                        assert(p != nullptr);
+                        this->identity_token_ = std::move(p->token);
 #else
-                logWarning(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
+                        logWarning(RTPS_PARTICIPANT, "Received PID_IDENTITY_TOKEN but security is disabled");
 #endif
-                break;
-            }
-            case PID_PERMISSIONS_TOKEN:
-            {
+                        break;
+                    }
+                    case fastdds::dds::PID_PERMISSIONS_TOKEN:
+                    {
 #if HAVE_SECURITY
-                const ParameterToken_t* p = dynamic_cast<const ParameterToken_t*>(param);
-                assert(p != nullptr);
-                this->permissions_token_ = std::move(p->token);
+                        const ParameterToken_t* p = dynamic_cast<const ParameterToken_t*>(param);
+                        assert(p != nullptr);
+                        this->permissions_token_ = std::move(p->token);
 #else
-                logWarning(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
+                        logWarning(RTPS_PARTICIPANT, "Received PID_PERMISSIONS_TOKEN but security is disabled");
 #endif
-                break;
-            }
-            case PID_PARTICIPANT_SECURITY_INFO:
-            {
+                        break;
+                    }
+                    case fastdds::dds::PID_PARTICIPANT_SECURITY_INFO:
+                    {
 #if HAVE_SECURITY
-                const ParameterParticipantSecurityInfo_t* p =
-                    dynamic_cast<const ParameterParticipantSecurityInfo_t*>(param);
-                assert(p != nullptr);
-                this->security_attributes_ = p->security_attributes;
-                this->plugin_security_attributes_ = p->plugin_security_attributes;
+                        const ParameterParticipantSecurityInfo_t* p =
+                                dynamic_cast<const ParameterParticipantSecurityInfo_t*>(param);
+                        assert(p != nullptr);
+                        this->security_attributes_ = p->security_attributes;
+                        this->plugin_security_attributes_ = p->plugin_security_attributes;
 #else
-                logWarning(RTPS_PARTICIPANT, "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
+                        logWarning(RTPS_PARTICIPANT, "Received PID_PARTICIPANT_SECURITY_INFO but security is disabled");
 #endif
-                break;
-            }
+                        break;
+                    }
 
-            default: break;
-        }
+                    default: break;
+                }
 
-        return true;
-    };
+                return true;
+            };
 
     uint32_t qos_size;
     clear();
@@ -421,7 +478,8 @@ void ParticipantProxyData::clear()
     m_userData.clear();
 }
 
-void ParticipantProxyData::copy(const ParticipantProxyData& pdata)
+void ParticipantProxyData::copy(
+        const ParticipantProxyData& pdata)
 {
     m_protocolVersion = pdata.m_protocolVersion;
     m_guid = pdata.m_guid;
@@ -450,7 +508,8 @@ void ParticipantProxyData::copy(const ParticipantProxyData& pdata)
 #endif
 }
 
-bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
+bool ParticipantProxyData::updateData(
+        ParticipantProxyData& pdata)
 {
     metatraffic_locators = pdata.metatraffic_locators;
     default_locators = pdata.default_locators;
@@ -467,14 +526,14 @@ bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
     auto new_lease_duration = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(m_leaseDuration));
     if (this->lease_duration_event != nullptr)
     {
-        if(new_lease_duration < lease_duration_)
+        if (new_lease_duration < lease_duration_)
         {
             // Calculate next trigger.
             auto real_lease_tm = last_received_message_tm_ + new_lease_duration;
             auto next_trigger = real_lease_tm - std::chrono::steady_clock::now();
             lease_duration_event->cancel_timer();
             lease_duration_event->update_interval_millisec(
-                    (double)std::chrono::duration_cast<std::chrono::milliseconds>(next_trigger).count());
+                (double)std::chrono::duration_cast<std::chrono::milliseconds>(next_trigger).count());
             lease_duration_event->restart_timer();
         }
     }
@@ -482,7 +541,8 @@ bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
     return true;
 }
 
-void ParticipantProxyData::set_persistence_guid(const GUID_t& guid)
+void ParticipantProxyData::set_persistence_guid(
+        const GUID_t& guid)
 {
     // only valid values
     if (guid == c_Guid_Unknown)
@@ -499,16 +559,16 @@ void ParticipantProxyData::set_persistence_guid(const GUID_t& guid)
     persistent_guid.second = data.str();
 
     // if exists replace
-    std::vector<std::pair<std::string, std::string>> & props = m_properties.properties;
+    std::vector<std::pair<std::string, std::string> >& props = m_properties.properties;
 
-    std::vector<std::pair<std::string, std::string>>::iterator it =
-        std::find_if(
-            props.begin(),
-            props.end(),
-            [&persistent_guid](const std::pair<std::string, std::string> & p)
-            {
-                return persistent_guid.first == p.first;
-            });
+    std::vector<std::pair<std::string, std::string> >::iterator it =
+            std::find_if(
+        props.begin(),
+        props.end(),
+        [&persistent_guid](const std::pair<std::string, std::string>& p)
+                {
+                    return persistent_guid.first == p.first;
+                });
 
     if (it != props.end())
     {
@@ -525,16 +585,16 @@ GUID_t ParticipantProxyData::get_persistence_guid() const
 {
     GUID_t persistent(c_Guid_Unknown);
 
-    const std::vector<std::pair<std::string, std::string>> & props = m_properties.properties;
+    const std::vector<std::pair<std::string, std::string> >& props = m_properties.properties;
 
-    std::vector<std::pair<std::string, std::string>>::const_iterator it =
-        std::find_if(
-            props.cbegin(),
-            props.cend(),
-            [](const std::pair<std::string, std::string> & p)
-            {
-                return "PID_PERSISTENCE_GUID" == p.first;
-            });
+    std::vector<std::pair<std::string, std::string> >::const_iterator it =
+            std::find_if(
+        props.cbegin(),
+        props.cend(),
+        [](const std::pair<std::string, std::string>& p)
+                {
+                    return "PID_PERSISTENCE_GUID" == p.first;
+                });
 
     if (it != props.end())
     {

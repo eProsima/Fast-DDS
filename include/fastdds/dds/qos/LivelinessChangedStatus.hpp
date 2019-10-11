@@ -13,16 +13,17 @@
 // limitations under the License.
 
 /**
- * @file LivelinessChangedStatus.h
+ * @file LivelinessChangedStatus.hpp
  */
 
-#ifndef _LIVELINESS_CHANGED_STATUS_H_
-#define _LIVELINESS_CHANGED_STATUS_H_
+#ifndef _FASTDDS_DDS_QOS_LIVELINESSCHANGEDSTATUS_HPP_
+#define _FASTDDS_DDS_QOS_LIVELINESSCHANGEDSTATUS_HPP_
 
 #include <fastdds/rtps/common/InstanceHandle.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
 //! @brief A struct storing the liveliness changed status
 struct LivelinessChangedStatus
@@ -48,10 +49,11 @@ struct LivelinessChangedStatus
     int32_t not_alive_count_change = 0;
 
     //! @brief Handle to the last publisher whose change in liveliness caused this status to change
-    rtps::InstanceHandle_t last_publication_handle;
+    fastrtps::rtps::InstanceHandle_t last_publication_handle;
 };
 
-} //end of namespace
-} //end of namespace eprosima
+} //namespace dds
+} //namespace fastdds
+} //namespace eprosima
 
-#endif /* _LIVELINESS_CHANGED_STATUS_H_ */
+#endif // _FASTDDS_DDS_QOS_LIVELINESSCHANGEDSTATUS_HPP_

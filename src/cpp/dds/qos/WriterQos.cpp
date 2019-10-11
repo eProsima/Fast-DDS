@@ -17,13 +17,17 @@
  *
  */
 
-#include <fastrtps/qos/WriterQos.h>
+#include <fastdds/dds/qos/WriterQos.hpp>
 #include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-RTPS_DllAPI const WriterQos eprosima::fastrtps::DATAWRITER_QOS_DEFAULT;
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+
+RTPS_DllAPI const WriterQos DATAWRITER_QOS_DEFAULT;
 
 WriterQos::WriterQos()
 {
@@ -220,3 +224,7 @@ bool WriterQos::canQosBeUpdated(
     return updatable;
 
 }
+
+} //namespace dds
+} //namespace fastdds
+} //namespace eprosima

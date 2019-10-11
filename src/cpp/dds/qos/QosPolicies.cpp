@@ -17,13 +17,16 @@
  *
  */
 
-#include <fastrtps/qos/QosPolicies.h>
+#include <fastdds/dds/qos/QosPolicies.hpp>
 
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastrtps/log/Log.h>
 #include <fastcdr/Cdr.h>
 
-using namespace eprosima::fastrtps;
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+
 using namespace eprosima::fastrtps::rtps;
 
 bool DurabilityQosPolicy::addToCDRMessage(
@@ -309,7 +312,7 @@ bool DisablePositiveACKsQosPolicy::addToCDRMessage(
 bool TypeIdV1::addToCDRMessage(
         CDRMessage_t* msg)
 {
-    size_t size = types::TypeIdentifier::getCdrSerializedSize(m_type_identifier) + 4;
+    size_t size = fastrtps::types::TypeIdentifier::getCdrSerializedSize(m_type_identifier) + 4;
     SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
@@ -360,7 +363,7 @@ bool TypeIdV1::readFromCDRMessage(
 bool TypeObjectV1::addToCDRMessage(
         CDRMessage_t* msg)
 {
-    size_t size = types::TypeObject::getCdrSerializedSize(m_type_object) + 4;
+    size_t size = fastrtps::types::TypeObject::getCdrSerializedSize(m_type_object) + 4;
     SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
@@ -411,7 +414,7 @@ bool TypeObjectV1::readFromCDRMessage(
 bool xtypes::TypeInformation::addToCDRMessage(
         CDRMessage_t* msg)
 {
-    size_t size = types::TypeInformation::getCdrSerializedSize(type_information) + 4;
+    size_t size = fastrtps::types::TypeInformation::getCdrSerializedSize(type_information) + 4;
     SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
@@ -460,3 +463,7 @@ bool xtypes::TypeInformation::readFromCDRMessage(
 
     return true;
 }
+
+} //namespace dds
+} //namespace fastdds
+} //namespace eprosima

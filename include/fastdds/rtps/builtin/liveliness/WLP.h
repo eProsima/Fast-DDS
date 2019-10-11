@@ -34,10 +34,6 @@
 
 namespace eprosima {
 namespace fastrtps {
-
-class ReaderQos;
-class WriterQos;
-
 namespace rtps {
 
 class BuiltinProtocols;
@@ -66,42 +62,50 @@ class WLP
     friend class StatelessReader;
 
 public:
+
     /**
-    * Constructor
-    * @param prot Pointer to the BuiltinProtocols object.
-    */
-    WLP(BuiltinProtocols* prot);
+     * Constructor
+     * @param prot Pointer to the BuiltinProtocols object.
+     */
+    WLP(
+            BuiltinProtocols* prot);
     virtual ~WLP();
     /**
      * Initialize the WLP protocol.
      * @param p Pointer to the RTPS participant implementation.
      * @return true if the initialziacion was succesful.
      */
-    bool initWL(RTPSParticipantImpl* p);
+    bool initWL(
+            RTPSParticipantImpl* p);
     /**
      * Assign the remote endpoints for a newly discovered RTPSParticipant.
      * @param pdata Pointer to the RTPSParticipantProxyData object.
      * @return True if correct.
      */
-    bool assignRemoteEndpoints(const ParticipantProxyData& pdata);
+    bool assignRemoteEndpoints(
+            const ParticipantProxyData& pdata);
     /**
      * Remove remote endpoints from the liveliness protocol.
      * @param pdata Pointer to the ParticipantProxyData to remove
      */
-    void removeRemoteEndpoints(ParticipantProxyData* pdata);
+    void removeRemoteEndpoints(
+            ParticipantProxyData* pdata);
     /**
      * Add a local writer to the liveliness protocol.
      * @param W Pointer to the RTPSWriter.
      * @param wqos Quality of service policies for the writer.
-    * @return True if correct.
+     * @return True if correct.
      */
-    bool add_local_writer(RTPSWriter* W, const WriterQos& wqos);
+    bool add_local_writer(
+            RTPSWriter* W,
+            const WriterQos& wqos);
     /**
      * Remove a local writer from the liveliness protocol.
      * @param W Pointer to the RTPSWriter.
      * @return True if removed.
      */
-    bool remove_local_writer(RTPSWriter* W);
+    bool remove_local_writer(
+            RTPSWriter* W);
 
     /**
      * @brief Adds a local reader to the liveliness protocol
@@ -109,14 +113,17 @@ public:
      * @param rqos Quality of service policies for the reader
      * @return True if added successfully
      */
-    bool add_local_reader(RTPSReader* reader, const ReaderQos& rqos);
+    bool add_local_reader(
+            RTPSReader* reader,
+            const ReaderQos& rqos);
 
     /**
      * @brief Removes a local reader from the livliness protocol
      * @param reader Pointer to the reader to remove
      * @return True if removed successfully
      */
-    bool remove_local_reader(RTPSReader* reader);
+    bool remove_local_reader(
+            RTPSReader* reader);
 
     /**
      * @brief A method to assert liveliness of a given writer
@@ -149,14 +156,17 @@ public:
     WriterHistory* builtin_writer_history();
 
 #if HAVE_SECURITY
-    bool pairing_remote_reader_with_local_writer_after_security(const GUID_t& local_writer,
-        const ReaderProxyData& remote_reader_data);
+    bool pairing_remote_reader_with_local_writer_after_security(
+            const GUID_t& local_writer,
+            const ReaderProxyData& remote_reader_data);
 
-    bool pairing_remote_writer_with_local_reader_after_security(const GUID_t& local_reader,
-        const WriterProxyData& remote_writer_data);
+    bool pairing_remote_writer_with_local_reader_after_security(
+            const GUID_t& local_reader,
+            const WriterProxyData& remote_writer_data);
 #endif
 
 private:
+
     /**
      * Create the endpoints used in the WLP.
      * @return true if correct.
@@ -263,7 +273,8 @@ private:
      * @param instance key of the change to add
      * @return true if change is correctly added
      */
-    bool send_liveliness_message(const InstanceHandle_t& instance);
+    bool send_liveliness_message(
+            const InstanceHandle_t& instance);
 
 #if HAVE_SECURITY
     //!Pointer to the builtinRTPSParticipantMEssageWriter.

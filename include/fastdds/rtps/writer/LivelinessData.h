@@ -61,7 +61,7 @@ struct LivelinessData
 
     LivelinessData()
         : guid()
-        , kind(AUTOMATIC_LIVELINESS_QOS)
+        , kind(LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
         , lease_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
         , status(WriterStatus::NOT_ASSERTED)
     {}
@@ -74,11 +74,12 @@ struct LivelinessData
      * @param other Liveliness data to compare to
      * @return True if equal
      */
-    bool operator==(const LivelinessData& other) const
+    bool operator==(
+            const LivelinessData& other) const
     {
         return ((guid == other.guid) &&
-                (kind == other.kind) &&
-                (lease_duration == other.lease_duration));
+               (kind == other.kind) &&
+               (lease_duration == other.lease_duration));
     }
 
     /**
@@ -86,7 +87,8 @@ struct LivelinessData
      * @param other Liveliness data to compare to
      * @return True if different
      */
-    bool operator!=(const LivelinessData& other) const
+    bool operator!=(
+            const LivelinessData& other) const
     {
         return (!operator==(other));
     }

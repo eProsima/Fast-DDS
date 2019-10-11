@@ -600,7 +600,7 @@ inline bool CDRMessage::addParameterStatus(CDRMessage_t* msg, octet status)
     {
         return false;
     }
-    CDRMessage::addUInt16(msg,PID_STATUS_INFO);
+    CDRMessage::addUInt16(msg, fastdds::dds::PID_STATUS_INFO);
     CDRMessage::addUInt16(msg,4);
     CDRMessage::addOctet(msg,0);
     CDRMessage::addOctet(msg,0);
@@ -616,7 +616,7 @@ inline bool CDRMessage::addParameterKey(CDRMessage_t* msg, const InstanceHandle_
     {
         return false;
     }
-    CDRMessage::addUInt16(msg,PID_KEY_HASH);
+    CDRMessage::addUInt16(msg, fastdds::dds::PID_KEY_HASH);
     CDRMessage::addUInt16(msg,16);
     for(uint8_t i=0;i<16;i++)
         msg->buffer[msg->pos+i] = iHandle->value[i];
@@ -631,7 +631,7 @@ inline bool CDRMessage::addParameterSentinel(CDRMessage_t* msg)
     {
         return false;
     }
-    CDRMessage::addUInt16(msg, PID_SENTINEL);
+    CDRMessage::addUInt16(msg, fastdds::dds::PID_SENTINEL);
     CDRMessage::addUInt16(msg, 0);
 
     return true;
@@ -663,7 +663,7 @@ inline bool CDRMessage::addParameterSampleIdentity(CDRMessage_t *msg, const Samp
         return false;
     }
 
-    CDRMessage::addUInt16(msg, PID_RELATED_SAMPLE_IDENTITY);
+    CDRMessage::addUInt16(msg, fastdds::dds::PID_RELATED_SAMPLE_IDENTITY);
     CDRMessage::addUInt16(msg, 24);
     CDRMessage::addData(msg, sample_id.writer_guid().guidPrefix.value, GuidPrefix_t::size);
     CDRMessage::addData(msg, sample_id.writer_guid().entityId.value, EntityId_t::size);

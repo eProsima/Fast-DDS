@@ -17,19 +17,20 @@
  *
  */
 
-#include <fastrtps/qos/ParameterList.h>
-#include <fastrtps/qos/QosPolicies.h>
+#include <fastdds/dds/qos/ParameterList.hpp>
+#include <fastdds/dds/qos/QosPolicies.hpp>
 
 #include <functional>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
-using namespace rtps;
+using namespace fastrtps::rtps;
 
 #define IF_VALID_CALL {if(valid){qos_size += plength;if(!processor(&p)) return false;}else{return false;}break;}
 
-bool ParameterList::writeEncapsulationToCDRMsg(rtps::CDRMessage_t* msg)
+bool ParameterList::writeEncapsulationToCDRMsg(fastrtps::rtps::CDRMessage_t* msg)
 {
     bool valid = CDRMessage::addOctet(msg, 0);
     if (msg->msg_endian == BIGEND)
@@ -235,7 +236,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                         return false;
                     }
                     ParameterString_t p(pid, plength);
-                    string_255 aux;
+                    fastrtps::string_255 aux;
                     valid &= CDRMessage::readString(&msg, &aux);
                     p.setName(aux.c_str());
                     //                cout << "READ: "<< p.m_string<<endl;
@@ -898,5 +899,6 @@ bool ParameterList::readInstanceHandleFromCDRMsg(CacheChange_t* change, const ui
     return false;
 }
 
-}  // namespace fastrtps
+}  // namespace dds
+}  // namespace fastdds
 }  // namespace eprosima
