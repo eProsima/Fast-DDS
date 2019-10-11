@@ -800,13 +800,12 @@ bool StatefulWriter::matched_reader_remove(const GUID_t& reader_guid)
         periodic_hb_event_->cancel_timer();
     }
 
-    lock.unlock();
-
     if(rproxy != nullptr)
     {
         rproxy->stop();
         matched_readers_pool_.push_back(rproxy);
 
+        lock.unlock();
         check_acked_status();
 
         return true;

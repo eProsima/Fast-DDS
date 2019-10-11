@@ -149,6 +149,7 @@ void PDPListener::onNewCacheChangeAdded(
                 RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
                 if (listener != nullptr)
                 {
+                    std::lock_guard<std::mutex> lock(parent_pdp_->callback_mtx_);
                     ParticipantDiscoveryInfo info(*pdata);
                     info.status = status;
 
@@ -164,10 +165,13 @@ void PDPListener::onNewCacheChangeAdded(
     }
     else
     {
+        reader->getMutex().unlock();
         if (parent_pdp_->remove_remote_participant(guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT))
         {
+            reader->getMutex().lock();
             return; // all changes related with this participant have been removed from history by remove_remote_participant
         }
+        reader->getMutex().lock();
     }
 
     //Remove change form history.
