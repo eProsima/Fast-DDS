@@ -49,6 +49,10 @@ public:
     {
         StructMember& inner = insert_member(member.name(), member);
         inner.offset_ = memory_size_;
+        if(!inner.has_id())
+        {
+            inner.id_ = member_count() - 1;
+        }
         memory_size_ += inner.type().memory_size();
         return *this;
     }
