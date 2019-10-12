@@ -63,20 +63,19 @@ int main()
     outter.add_member("om7", ArrayType(inner, 4));
 
     DynamicData data(outter);
-    data["om1"].value(6.7);
-    data["om2"]["im1"].value(42);
-    data["om2"]["im2"].value(35.8f);
-    data["om3"].value<std::string>("Hi!");
-    data["om3"].string("This is a string!");
-    data["om4"].push(12);
-    data["om4"].push(31);
-    data["om4"].push(50);
-    data["om4"][1].value(100);
-    data["om5"].push(data["om2"]);
-    data["om5"].push(data["om2"]);
-    data["om5"][1] = data["om2"];
-    data["om6"][1].value(123);
-    data["om7"][1] = data["om2"];
+    data["om1"].value(6.7);                     //PrimitiveType<double>
+    data["om2"]["im1"].value(42);               //PrimitiveType<uint32_t>
+    data["om2"]["im2"].value(35.8f);            //PrimitiveType<float>
+    data["om3"].value<std::string>("Hi!");      //StringType
+    data["om3"].string("This is a string!");    //...
+    data["om4"].push(12);                       //SequenceType(PrimitiveType<uint32_t>)
+    data["om4"].push(31);                       //...
+    data["om4"].push(50);                       //...
+    data["om4"][1].value(100);                  //...
+    data["om5"].push(data["om2"]);              //SequenceType(inner)
+    data["om5"][0] = data["om2"];               //...
+    data["om6"][1].value(123);                  //ArrayType(PrimitiveType<uint32_t>)
+    data["om7"][1] = data["om2"];               //ArrayType(inner)
 
     print_data(data);
 
