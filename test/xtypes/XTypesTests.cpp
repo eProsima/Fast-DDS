@@ -45,7 +45,6 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
-using eprosima::fastdds::dds::Log;
 
 static int DOMAIN_ID_ = 10;
 
@@ -67,7 +66,7 @@ public:
     ~xtypestests()
     {
         //Log::Reset();
-        Log::KillThread();
+        eprosima::fastdds::dds::Log::KillThread();
         eprosima::fastrtps::Domain::stopAll();
         ++DOMAIN_ID_;
         DOMAIN_ID_ %= 230;
