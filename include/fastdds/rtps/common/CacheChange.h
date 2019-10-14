@@ -82,7 +82,7 @@ struct RTPS_DllAPI CacheChange_t
         : kind(ALIVE)
         , isRead(false)
         , is_untyped_(true)
-        , dataFragments_(new std::vector<uint32_t>())
+        , dataFragments_(nullptr)
         , fragment_size_(0)
     {
     }
@@ -105,7 +105,7 @@ struct RTPS_DllAPI CacheChange_t
         , serializedPayload(payload_size)
         , isRead(false)
         , is_untyped_(is_untyped)
-        , dataFragments_(new std::vector<uint32_t>())
+        , dataFragments_(nullptr)
         , fragment_size_(0)
     {
     }
@@ -128,7 +128,10 @@ struct RTPS_DllAPI CacheChange_t
         bool ret = serializedPayload.copy(&ch_ptr->serializedPayload, (ch_ptr->is_untyped_ ? false : true));
 
         setFragmentSize(ch_ptr->fragment_size_);
-        dataFragments_->assign(ch_ptr->dataFragments_->begin(), ch_ptr->dataFragments_->end());
+        if (ch_ptr->fragment_size_ > 0)
+        {
+            dataFragments_->assign(ch_ptr->dataFragments_->begin(), ch_ptr->dataFragments_->end());
+        }
 
         isRead = ch_ptr->isRead;
 
@@ -149,22 +152,26 @@ struct RTPS_DllAPI CacheChange_t
         serializedPayload.encapsulation = ch_ptr->serializedPayload.encapsulation;
 
         setFragmentSize(ch_ptr->fragment_size_);
-        dataFragments_->assign(ch_ptr->dataFragments_->begin(), ch_ptr->dataFragments_->end());
+        if (ch_ptr->fragment_size_ > 0)
+        {
+            dataFragments_->assign(ch_ptr->dataFragments_->begin(), ch_ptr->dataFragments_->end());
+        }
 
         isRead = ch_ptr->isRead;
     }
 
     ~CacheChange_t()
     {
-        if (dataFragments_)
+        if (dataFragments_ != nullptr)
         {
             delete dataFragments_;
+            dataFragments_ = nullptr;
         }
     }
 
     uint32_t getFragmentCount() const
     {
-        return (uint32_t)dataFragments_->size();
+        return (dataFragments_ != nullptr) ? (uint32_t)dataFragments_->size() : 0;
     }
 
     std::vector<uint32_t>* getDataFragments() { return dataFragments_; }
@@ -178,13 +185,20 @@ struct RTPS_DllAPI CacheChange_t
 
         if (fragment_size == 0)
         {
-            dataFragments_->clear();
+            if (dataFragments_ != nullptr)
+            {
+                dataFragments_->clear();
+            }
         }
         else
         {
             //TODO Mirar si cuando se compatibilice con RTI funciona el calculo, porque ellos
             //en el sampleSize incluyen el padding.
             uint32_t size = (serializedPayload.length + fragment_size - 1) / fragment_size;
+            if (dataFragments_ == nullptr)
+            {
+                dataFragments_ = new std::vector<uint32_t>();
+            }
             dataFragments_->assign(size, ChangeFragmentStatus_t::NOT_PRESENT);
         }
     }
