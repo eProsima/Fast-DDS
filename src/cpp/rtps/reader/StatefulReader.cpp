@@ -430,7 +430,8 @@ bool StatefulReader::processDataFragMsg(
 
             // Fragments manager has to process incomming fragments.
             // If CacheChange_t is completed, it will be returned;
-            CacheChange_t* change_completed = fragmentedChangePitStop_->process(change_to_add, sampleSize, fragmentStartingNum);
+            CacheChange_t* change_completed = fragmentedChangePitStop_->process(
+                change_to_add, sampleSize, fragmentStartingNum, change_to_add->getFragmentCount());
 
 #if HAVE_SECURITY
             if(getAttributes().security_attributes().is_payload_protected)

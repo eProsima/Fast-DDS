@@ -110,12 +110,17 @@ FragmentedChangePitStop(RTPSReader *parent) : parent_(parent) {}
 /*!
  * @brief Process incomming fragments.
  * @param incoming_change. CacheChange_t that stores the incomming fragments.
- * @param sampleSize Total size of the sample. It was received in the DATA_FRAG submessage.
- * @param fragmentStartingNum. First fragment number in the DATA_FRAG submessage.
+ * @param sample_size Total size of the sample. It was received in the DATA_FRAG submessage.
+ * @param fragment_starting_num. First fragment number in the DATA_FRAG submessage.
+ * @param fragments_in_submessage. Number of fragments present in the DATA_FRAG submessage.
  * @return If a CacheChange_t is completed with new incomming fragments, this will be returned.
  * In other case nullptr is returned.
  */
-CacheChange_t* process(CacheChange_t* incoming_change, uint32_t sampleSize, uint32_t fragmentStartingNum);
+CacheChange_t* process(
+        CacheChange_t* incoming_change,
+        uint32_t sample_size,
+        FragmentNumber_t fragment_starting_num,
+        uint16_t fragments_in_submessage);
 
 /*!
  * @brief Search if there is a CacheChange_t, giving SequenceNumber_t and writer GUID_t,
