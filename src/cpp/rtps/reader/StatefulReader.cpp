@@ -369,7 +369,8 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 bool StatefulReader::processDataFragMsg(
         CacheChange_t* incomingChange,
         uint32_t sampleSize,
-        uint32_t fragmentStartingNum)
+        uint32_t fragmentStartingNum,
+        uint16_t fragmentsInSubmessage)
 {
     WriterProxy *pWP = nullptr;
 
@@ -431,7 +432,7 @@ bool StatefulReader::processDataFragMsg(
             // Fragments manager has to process incomming fragments.
             // If CacheChange_t is completed, it will be returned;
             CacheChange_t* change_completed = fragmentedChangePitStop_->process(
-                change_to_add, sampleSize, fragmentStartingNum, change_to_add->getFragmentCount());
+                change_to_add, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
 
 #if HAVE_SECURITY
             if(getAttributes().security_attributes().is_payload_protected)
