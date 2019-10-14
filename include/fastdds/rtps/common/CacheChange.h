@@ -127,8 +127,8 @@ struct RTPS_DllAPI CacheChange_t
 
         bool ret = serializedPayload.copy(&ch_ptr->serializedPayload, (ch_ptr->is_untyped_ ? false : true));
 
-        setFragmentSize(ch_ptr->fragment_size_);
-        if (ch_ptr->fragment_size_ > 0)
+        setFragmentSize(ch_ptr->fragment_size_, ch_ptr->dataFragments_ != nullptr);
+        if (ch_ptr->dataFragments_ != nullptr)
         {
             dataFragments_->assign(ch_ptr->dataFragments_->begin(), ch_ptr->dataFragments_->end());
         }
@@ -151,8 +151,8 @@ struct RTPS_DllAPI CacheChange_t
         // Copy certain values from serializedPayload
         serializedPayload.encapsulation = ch_ptr->serializedPayload.encapsulation;
 
-        setFragmentSize(ch_ptr->fragment_size_);
-        if (ch_ptr->fragment_size_ > 0)
+        setFragmentSize(ch_ptr->fragment_size_, ch_ptr->dataFragments_ != nullptr);
+        if (ch_ptr->dataFragments_ != nullptr)
         {
             dataFragments_->assign(ch_ptr->dataFragments_->begin(), ch_ptr->dataFragments_->end());
         }
@@ -171,7 +171,7 @@ struct RTPS_DllAPI CacheChange_t
 
     uint32_t getFragmentCount() const
     {
-        return (dataFragments_ != nullptr) ? (uint32_t)dataFragments_->size() : 0;
+        return fragment_count_;
     }
 
     std::vector<uint32_t>* getDataFragments() { return dataFragments_; }
@@ -179,9 +179,11 @@ struct RTPS_DllAPI CacheChange_t
     uint16_t getFragmentSize() const { return fragment_size_; }
 
     void setFragmentSize(
-            uint16_t fragment_size)
+            uint16_t fragment_size,
+            bool set_fragment_state = false)
     {
         this->fragment_size_ = fragment_size;
+        this->fragment_count_ = 0;
 
         if (fragment_size == 0)
         {
@@ -192,14 +194,16 @@ struct RTPS_DllAPI CacheChange_t
         }
         else
         {
-            //TODO Mirar si cuando se compatibilice con RTI funciona el calculo, porque ellos
-            //en el sampleSize incluyen el padding.
-            uint32_t size = (serializedPayload.length + fragment_size - 1) / fragment_size;
-            if (dataFragments_ == nullptr)
+            // This follows RTPS 8.3.7.3.5
+            this->fragment_count_ = (serializedPayload.length + fragment_size - 1) / fragment_size;
+            if (set_fragment_state)
             {
-                dataFragments_ = new std::vector<uint32_t>();
+                if (dataFragments_ == nullptr)
+                {
+                    dataFragments_ = new std::vector<uint32_t>();
+                }
+                dataFragments_->assign(this->fragment_count_, ChangeFragmentStatus_t::NOT_PRESENT);
             }
-            dataFragments_->assign(size, ChangeFragmentStatus_t::NOT_PRESENT);
         }
     }
 
@@ -210,6 +214,9 @@ private:
 
     // Fragment size
     uint16_t fragment_size_;
+
+    // Number of fragments
+    uint32_t fragment_count_;
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
