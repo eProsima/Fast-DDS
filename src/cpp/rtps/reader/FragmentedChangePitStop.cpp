@@ -18,7 +18,11 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, uint32_t sampleSize, uint32_t fragmentStartingNum)
+CacheChange_t* FragmentedChangePitStop::process(
+        CacheChange_t* incoming_change,
+        uint32_t sample_size,
+        FragmentNumber_t fragment_starting_num,
+        uint16_t fragments_in_submessage)
 {
     CacheChange_t* returnedValue = nullptr;
 
@@ -44,10 +48,10 @@ CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, 
     {
         CacheChange_t* original_change = nullptr;
 
-        if(!parent_->reserveCache(&original_change, sampleSize))
+        if(!parent_->reserveCache(&original_change, sample_size))
             return nullptr;
 
-        if(original_change->serializedPayload.max_size < sampleSize)
+        if(original_change->serializedPayload.max_size < sample_size)
         {
             parent_->releaseCache(original_change);
             return nullptr;
@@ -56,7 +60,7 @@ CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, 
         //Change comes preallocated (size sampleSize)
         original_change->copy_not_memcpy(incoming_change);
         // The length of the serialized payload has to be sample size.
-        original_change->serializedPayload.length = sampleSize;
+        original_change->serializedPayload.length = sample_size;
         original_change->setFragmentSize(incoming_change->getFragmentSize());
 
         // Insert
@@ -64,12 +68,12 @@ CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, 
     }
 
     bool was_updated = false;
-    for (uint32_t count = (fragmentStartingNum - 1); count < (fragmentStartingNum - 1) + incoming_change->getFragmentCount(); ++count)
+    for (uint32_t count = (fragment_starting_num - 1); count < (fragment_starting_num - 1) + fragments_in_submessage; ++count)
     {
         if(original_change_cit->getChange()->getDataFragments()->at(count) == ChangeFragmentStatus_t::NOT_PRESENT)
         {
             size_t original_offset = size_t(count) * original_change_cit->getChange()->getFragmentSize();
-            size_t incoming_offset = size_t(count - (fragmentStartingNum - 1)) * incoming_change->getFragmentSize();
+            size_t incoming_offset = size_t(count - (fragment_starting_num - 1)) * incoming_change->getFragmentSize();
 
             // All cases minus last fragment.
             if (count + 1 != original_change_cit->getChange()->getFragmentCount())
