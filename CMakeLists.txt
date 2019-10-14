@@ -31,6 +31,7 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
+
 ###############################################################################
 # Version information                                                         #
 ###############################################################################
@@ -257,6 +258,10 @@ endif()
 # Compile library.
 ###############################################################################
 option(EPROSIMA_BUILD_XTYPES_STANDALONE "Only compiles dds-core-xtypes part" OFF)
+
+# Used exclusively in this commit
+set(EPROSIMA_BUILD_XTYPES_STANDALONE ON)
+
 if(NOT EPROSIMA_BUILD_XTYPES_STANDALONE)
     add_subdirectory(src/cpp)
 else()
