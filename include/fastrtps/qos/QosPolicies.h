@@ -969,7 +969,7 @@ public:
     bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
 };
 
-enum TypeConsistencyKind : uint32_t
+enum TypeConsistencyKind : uint16_t
 {
     DISALLOW_TYPE_COERCION,
     ALLOW_TYPE_COERCION
@@ -989,8 +989,19 @@ public:
     bool m_prevent_type_widening;
     bool m_force_type_validation;
 
-    RTPS_DllAPI TypeConsistencyEnforcementQosPolicy() {};
-    virtual RTPS_DllAPI ~TypeConsistencyEnforcementQosPolicy() {};
+    RTPS_DllAPI TypeConsistencyEnforcementQosPolicy()
+        : Parameter_t(PID_TYPE_CONSISTENCY_ENFORCEMENT, 8)
+        , QosPolicy(true)
+    {
+        m_kind = ALLOW_TYPE_COERCION;
+        m_ignore_sequence_bounds = true;
+        m_ignore_string_bounds = true;
+        m_ignore_member_names = false;
+        m_prevent_type_widening = false;
+        m_force_type_validation = false;
+    }
+
+    virtual RTPS_DllAPI ~TypeConsistencyEnforcementQosPolicy() {}
     /**
     * Appends QoS to the specified CDR message.
     * @param msg Message to append the QoS Policy to.

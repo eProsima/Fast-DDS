@@ -693,47 +693,44 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                 }
                 case PID_TYPE_CONSISTENCY_ENFORCEMENT:
                 {
-                    uint16_t uKind(0);
-                    octet temp(0);
-                    TypeConsistencyEnforcementQosPolicy p;
-                    p.m_ignore_sequence_bounds = false;
-                    p.m_ignore_string_bounds = false;
-                    p.m_ignore_member_names = false;
-                    p.m_prevent_type_widening = false;
-                    p.m_force_type_validation = false;
-
-                    valid &= plength >= 2;
-                    if (valid)
+                    if (7 < plength)
                     {
+                        uint16_t uKind(0);
+                        octet temp(0);
+                        TypeConsistencyEnforcementQosPolicy p;
+                        p.m_ignore_sequence_bounds = false;
+                        p.m_ignore_string_bounds = false;
+                        p.m_ignore_member_names = false;
+                        p.m_prevent_type_widening = false;
+                        p.m_force_type_validation = false;
+
                         valid &= CDRMessage::readUInt16(&msg, &uKind);
                         p.m_kind = static_cast<TypeConsistencyKind>(uKind);
-                    }
-                    if (valid && plength >= 3)
-                    {
+
                         valid &= CDRMessage::readOctet(&msg, &temp);
                         p.m_ignore_sequence_bounds = temp == 0 ? false : true;
-                    }
-                    if (valid && plength >= 4)
-                    {
+
                         valid &= CDRMessage::readOctet(&msg, &temp);
                         p.m_ignore_string_bounds = temp == 0 ? false : true;
-                    }
-                    if (valid && plength >= 5)
-                    {
+
                         valid &= CDRMessage::readOctet(&msg, &temp);
                         p.m_ignore_member_names = temp == 0 ? false : true;
-                    }
-                    if (valid && plength >= 6)
-                    {
+
                         valid &= CDRMessage::readOctet(&msg, &temp);
                         p.m_prevent_type_widening = temp == 0 ? false : true;
-                    }
-                    if (valid && plength >= 7)
-                    {
+
                         valid &= CDRMessage::readOctet(&msg, &temp);
                         p.m_force_type_validation = temp == 0 ? false : true;
+
+                        for (int i = 7; valid && i < plength; ++i) // Consume the alignment
+                        {
+                            valid &= CDRMessage::readOctet(&msg, &temp);
+                        }
+
+                        IF_VALID_CALL
                     }
-                    IF_VALID_CALL
+
+                    return false;
                 }
                 case PID_TYPE_IDV1:
                 {
