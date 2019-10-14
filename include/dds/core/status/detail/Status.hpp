@@ -18,9 +18,14 @@
 #ifndef EPROSIMA_DDS_CORE_STATUS_DETAIL_STATUS_HPP_
 #define EPROSIMA_DDS_CORE_STATUS_DETAIL_STATUS_HPP_
 
-//TODO: Fix when StatusDelegate is implemented
-//#include <dds/core/status/detail/TStatusImpl.hpp>
-//#include <org/opensplice/core/status/StatusDelegate.hpp>
+#include <fastdds/dds/core/status/BaseStatus.hpp>
+#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastrtps/qos/LivelinessChangedStatus.h>
+#include <fastrtps/qos/LivelinessLostStatus.h>
+#include <fastrtps/qos/DeadlineMissedStatus.h>
+#include <fastrtps/qos/IncompatibleQosStatus.hpp>
+#include <fastrtps/qos/SampleRejectedStatus.hpp>
 
 /**
  * @cond
@@ -32,49 +37,38 @@ namespace core {
 namespace status {
 namespace detail {
 
-//TODO: Fix when StatusDelegate is implemented
-//typedef dds::core::status::TInconsistentTopicStatus< org::opensplice::core::InconsistentTopicStatusDelegate > InconsistentTopicStatus;
-class InconsistentTopicStatus { };
+using InconsistentTopicStatus =
+    dds::core::status::TInconsistentTopicStatus<eprosima::fastdds::dds::InconsistentTopicStatus>;
 
-//TODO: Fix when StatusDelegate is implemented
-//typedef dds::core::status::TLivelinessChangedStatus <org::opensplice::core::LivelinessChangedStatusDelegate> LivelinessChangedStatus;
-class LivelinessChangedStatus { };
+using LivelinessChangedStatus =
+    dds::core::status::TLivelinessChangedStatus <eprosima::fastrtps::LivelinessChangedStatus>;
 
-//TODO: Fix when StatusDelegate is implemented
-//typedef dds::core::status::TLivelinessLostStatus<org::opensplice::core::LivelinessLostStatusDelegate> LivelinessLostStatus;
-class LivelinessLostStatus { };
+using LivelinessLostStatus =
+    dds::core::status::TLivelinessLostStatus<eprosima::fastrtps::LivelinessLostStatus>;
 
-//TODO: Fix when StatusDelegate is implemented
-//typedef dds::core::status::TOfferedDeadlineMissedStatus<org::opensplice::core::OfferedDeadlineMissedStatusDelegate> OfferedDeadlineMissedStatus;
-class OfferedDeadlineMissedStatus { };
+using OfferedDeadlineMissedStatus =
+    dds::core::status::TOfferedDeadlineMissedStatus<eprosima::fastrtps::OfferedDeadlineMissedStatus>;
 
-//TODO: Fix when StatusDelegate is implemented
-//typedef dds::core::status::TOfferedIncompatibleQosStatus<org::opensplice::core::OfferedIncompatibleQosStatusDelegate> OfferedIncompatibleQosStatus;
-class OfferedIncompatibleQosStatus { };
+using OfferedIncompatibleQosStatus =
+    dds::core::status::TOfferedIncompatibleQosStatus<eprosima::fastrtps::OfferedIncompatibleQosStatus>;
 
-//TODO: Fix when StatusDelegate is implemented
-//typedef dds::core::status::TPublicationMatchedStatus<org::opensplice::core::PublicationMatchedStatusDelegate> PublicationMatchedStatus;
-class PublicationMatchedStatus { };
+using PublicationMatchedStatus =
+    dds::core::status::TPublicationMatchedStatus<eprosima::fastdds::dds::PublicationMatchedStatus>;
 
-//TODO: Fix when StatusDelegate is implemented
-//typedef dds::core::status::TSampleRejectedStatus< org::opensplice::core::SampleRejectedStatusDelegate > SampleRejectedStatus;
-class SampleRejectedStatus { };
+using SampleRejectedStatus =
+    dds::core::status::TSampleRejectedStatus<eprosima::fastrtps::SampleRejectedStatus>;
 
-//TODO: Fix when StatusDelegate is implemented
-//typedef dds::core::status::TRequestedDeadlineMissedStatus<org::opensplice::core::RequestedDeadlineMissedStatusDelegate> RequestedDeadlineMissedStatus;
-class RequestedDeadlineMissedStatus { };
+using RequestedDeadlineMissedStatus =
+    dds::core::status::TRequestedDeadlineMissedStatus<eprosima::fastrtps::RequestedDeadlineMissedStatus>;
 
-//TODO: Fix when StatusDelegate is implemented
-//typedef dds::core::status::TRequestedIncompatibleQosStatus<org::opensplice::core::RequestedIncompatibleQosStatusDelegate> RequestedIncompatibleQosStatus;
-class RequestedIncompatibleQosStatus { };
+using RequestedIncompatibleQosStatus =
+    dds::core::status::TRequestedIncompatibleQosStatus<eprosima::fastrtps::RequestedIncompatibleQosStatus>;
 
-//TODO: Fix when StatusDelegate is implemented
-//typedef dds::core::status::TSampleLostStatus<org::opensplice::core::SampleLostStatusDelegate> SampleLostStatus;
-class SampleLostStatus { };
+using SampleLostStatus =
+    dds::core::status::TSampleLostStatus<eprosima::fastdds::dds::SampleLostStatus>;
 
-//TODO: Fix when StatusDelegate is implemented
-//typedef dds::core::status::TSubscriptionMatchedStatus<org::opensplice::core::SubscriptionMatchedStatusDelegate> SubscriptionMatchedStatus;
-class SubscriptionMatchedStatus { };
+using SubscriptionMatchedStatus =
+    dds::core::status::TSubscriptionMatchedStatus<eprosima::fastdds::dds::SubscriptionMatchedStatus>;
 
 } //namespace detail
 } //namespace status
@@ -82,5 +76,7 @@ class SubscriptionMatchedStatus { };
 } //namespace dds
 
 /** @endcond */
+
+#include <dds/core/status/detail/TStatusImpl.hpp>
 
 #endif //EPROSIMA_DDS_CORE_STATUS_DETAIL_STATUS_HPP_

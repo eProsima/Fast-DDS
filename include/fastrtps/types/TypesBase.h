@@ -26,11 +26,9 @@
 
 namespace eprosima{
 namespace fastcdr{
-	class Cdr;
-}
+    class Cdr;
 }
 
-namespace eprosima {
 namespace fastrtps {
 namespace types {
 

@@ -21,7 +21,6 @@
 #ifndef OMG_DDS_CORE_STATUS_STATUS_HPP_
 #define OMG_DDS_CORE_STATUS_STATUS_HPP_
 
-#include <dds/core/status/detail/Status.hpp>
 #include <dds/core/status/State.hpp>
 
 #include <dds/core/Value.hpp>
@@ -440,31 +439,29 @@ class DataOnReadersStatus
 template<typename STATUS>
 StatusMask get_status();
 
-typedef ::dds::core::status::detail::InconsistentTopicStatus InconsistentTopicStatus;
+#include <dds/core/status/detail/Status.hpp>
 
-typedef ::dds::core::status::detail::LivelinessChangedStatus LivelinessChangedStatus;
+using InconsistentTopicStatus = dds::core::status::detail::InconsistentTopicStatus;
 
-typedef ::dds::core::status::detail::LivelinessLostStatus LivelinessLostStatus;
+using LivelinessChangedStatus = dds::core::status::detail::LivelinessChangedStatus;
 
-typedef ::dds::core::status::detail::OfferedDeadlineMissedStatus OfferedDeadlineMissedStatus;
+using LivelinessLostStatus = dds::core::status::detail::LivelinessLostStatus;
 
-typedef ::dds::core::status::detail::OfferedIncompatibleQosStatus OfferedIncompatibleQosStatus;
+using OfferedDeadlineMissedStatus = dds::core::status::detail::OfferedDeadlineMissedStatus;
 
-typedef ::dds::core::status::detail::PublicationMatchedStatus PublicationMatchedStatus;
+using OfferedIncompatibleQosStatus = dds::core::status::detail::OfferedIncompatibleQosStatus;
 
-class SampleRejectedState;
+using PublicationMatchedStatus = dds::core::status::detail::PublicationMatchedStatus;
 
-typedef ::dds::core::status::detail::SampleRejectedStatus SampleRejectedStatus;
+using SampleRejectedStatus = dds::core::status::detail::SampleRejectedStatus;
 
-typedef ::dds::core::status::detail::RequestedDeadlineMissedStatus RequestedDeadlineMissedStatus;
+using RequestedDeadlineMissedStatus = dds::core::status::detail::RequestedDeadlineMissedStatus;
 
-typedef ::dds::core::status::detail::RequestedIncompatibleQosStatus RequestedIncompatibleQosStatus;
+using RequestedIncompatibleQosStatus = dds::core::status::detail::RequestedIncompatibleQosStatus;
 
-typedef ::dds::core::status::detail::SampleLostStatus SampleLostStatus;
+using SampleLostStatus = dds::core::status::detail::SampleLostStatus;
 
-class StatusMask;
-
-typedef ::dds::core::status::detail::SubscriptionMatchedStatus SubscriptionMatchedStatus;
+using SubscriptionMatchedStatus = dds::core::status::detail::SubscriptionMatchedStatus;
 
 } //namespace status
 } //namespace core
