@@ -22,10 +22,8 @@
 
 #include <fastrtps/log/Log.h>
 
-using namespace eprosima;
-using namespace fastdds;
-using namespace fastrtps;
-using namespace rtps;
+using eprosima::fastdds::dds::Log;
+
 int main(int argc, char** argv)
 {
     std::cout << "Starting "<< std::endl;

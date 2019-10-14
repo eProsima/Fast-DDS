@@ -27,8 +27,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(${ASIO_INCLUDE_DIR})
 
         set(COMMON_SOURCES_AUTH_PLUGIN_TEST_SOURCE
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/data/ParticipantProxyData.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/qos/ParameterList.cpp

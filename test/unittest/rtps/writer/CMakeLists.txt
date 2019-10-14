@@ -24,8 +24,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(WRITERPROXYTESTS_SOURCE ReaderProxyTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/ReaderProxy.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
             )
 
@@ -59,8 +59,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     # LivelinessManager
 
     set(LIVELINESSMANAGERTESTS_SOURCE LivelinessManagerTests.cpp
-          ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/log/Log.cpp
-          ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/log/StdoutConsumer.cpp
+          ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/Log.cpp
+          ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/StdoutConsumer.cpp
           ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LivelinessManager.cpp
           ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
           ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp

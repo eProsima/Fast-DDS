@@ -66,7 +66,7 @@ public:
     ~xtypestests()
     {
         //Log::Reset();
-        Log::KillThread();
+        eprosima::fastdds::dds::Log::KillThread();
         eprosima::fastrtps::Domain::stopAll();
         ++DOMAIN_ID_;
         DOMAIN_ID_ %= 230;
