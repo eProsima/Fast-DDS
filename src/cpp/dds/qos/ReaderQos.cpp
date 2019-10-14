@@ -84,7 +84,7 @@ void ReaderQos::setQos(
         m_presentation = qos.m_presentation;
         m_presentation.hasChanged = true;
     }
-    if (qos.m_partition.getNames().size()>0)
+    if (qos.m_partition.getNames().size() > 0)
     {
         m_partition = qos.m_partition;
         m_partition.hasChanged = true;
@@ -102,10 +102,9 @@ void ReaderQos::setQos(
     if (first_time || m_durabilityService.history_kind != qos.m_durabilityService.history_kind ||
             m_durabilityService.history_depth != qos.m_durabilityService.history_depth ||
             m_durabilityService.max_instances != qos.m_durabilityService.max_instances ||
-            m_durabilityService.max_samples != qos.m_durabilityService.max_samples||
+            m_durabilityService.max_samples != qos.m_durabilityService.max_samples ||
             m_durabilityService.max_samples_per_instance != qos.m_durabilityService.max_samples_per_instance ||
-            m_durabilityService.service_cleanup_delay != qos.m_durabilityService.service_cleanup_delay
-            )
+            m_durabilityService.service_cleanup_delay != qos.m_durabilityService.service_cleanup_delay)
     {
         m_durabilityService = qos.m_durabilityService;
         m_durabilityService.hasChanged = true;
@@ -139,7 +138,6 @@ void ReaderQos::setQos(
         type_consistency.hasChanged = true;
     }
 }
-
 
 bool ReaderQos::checkQos() const
 {

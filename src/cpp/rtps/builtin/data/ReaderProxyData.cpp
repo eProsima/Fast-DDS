@@ -50,7 +50,7 @@ ReaderProxyData::ReaderProxyData (
 
 ReaderProxyData::~ReaderProxyData()
 {
-    logInfo(RTPS_PROXY_DATA, "ReaderProxyData destructor: "<< this->m_guid; );
+    logInfo(RTPS_PROXY_DATA, "ReaderProxyData destructor: " << this->m_guid; );
 }
 
 ReaderProxyData::ReaderProxyData(
@@ -76,7 +76,7 @@ ReaderProxyData::ReaderProxyData(
     m_qos.setQos(readerInfo.m_qos, true);
 }
 
-ReaderProxyData& ReaderProxyData::operator=(
+ReaderProxyData& ReaderProxyData::operator =(
         const ReaderProxyData& readerInfo)
 {
     m_expectsInlineQos = readerInfo.m_expectsInlineQos;
@@ -186,119 +186,119 @@ bool ReaderProxyData::writeToCDRMessage(
             return false;
         }
     }
-    if (m_qos.m_durability.sendAlways() || m_qos.m_durability.hasChanged)
+    if (m_qos.m_durability.send_always() || m_qos.m_durability.hasChanged)
     {
         if (!m_qos.m_durability.addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if (m_qos.m_durabilityService.sendAlways() || m_qos.m_durabilityService.hasChanged)
+    if (m_qos.m_durabilityService.send_always() || m_qos.m_durabilityService.hasChanged)
     {
         if (!m_qos.m_durabilityService.addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if (m_qos.m_deadline.sendAlways() || m_qos.m_deadline.hasChanged)
+    if (m_qos.m_deadline.send_always() || m_qos.m_deadline.hasChanged)
     {
         if (!m_qos.m_deadline.addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if (m_qos.m_latencyBudget.sendAlways() || m_qos.m_latencyBudget.hasChanged)
+    if (m_qos.m_latencyBudget.send_always() || m_qos.m_latencyBudget.hasChanged)
     {
         if (!m_qos.m_latencyBudget.addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if (m_qos.m_liveliness.sendAlways() || m_qos.m_liveliness.hasChanged)
+    if (m_qos.m_liveliness.send_always() || m_qos.m_liveliness.hasChanged)
     {
         if (!m_qos.m_liveliness.addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if (m_qos.m_reliability.sendAlways() || m_qos.m_reliability.hasChanged)
+    if (m_qos.m_reliability.send_always() || m_qos.m_reliability.hasChanged)
     {
         if (!m_qos.m_reliability.addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if (m_qos.m_lifespan.sendAlways() || m_qos.m_lifespan.hasChanged)
+    if (m_qos.m_lifespan.send_always() || m_qos.m_lifespan.hasChanged)
     {
         if (!m_qos.m_lifespan.addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if (m_qos.m_userData.sendAlways() || m_qos.m_userData.hasChanged)
+    if (m_qos.m_userData.send_always() || m_qos.m_userData.hasChanged)
     {
         if (!m_qos.m_userData.addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if (m_qos.m_timeBasedFilter.sendAlways() || m_qos.m_timeBasedFilter.hasChanged)
+    if (m_qos.m_timeBasedFilter.send_always() || m_qos.m_timeBasedFilter.hasChanged)
     {
         if (!m_qos.m_timeBasedFilter.addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if (m_qos.m_ownership.sendAlways() || m_qos.m_ownership.hasChanged)
+    if (m_qos.m_ownership.send_always() || m_qos.m_ownership.hasChanged)
     {
         if (!m_qos.m_ownership.addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if (m_qos.m_destinationOrder.sendAlways() || m_qos.m_destinationOrder.hasChanged)
+    if (m_qos.m_destinationOrder.send_always() || m_qos.m_destinationOrder.hasChanged)
     {
         if (!m_qos.m_destinationOrder.addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if (m_qos.m_presentation.sendAlways() || m_qos.m_presentation.hasChanged)
+    if (m_qos.m_presentation.send_always() || m_qos.m_presentation.hasChanged)
     {
         if (!m_qos.m_presentation.addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if (m_qos.m_partition.sendAlways() || m_qos.m_partition.hasChanged)
+    if (m_qos.m_partition.send_always() || m_qos.m_partition.hasChanged)
     {
         if (!m_qos.m_partition.addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if (m_qos.m_topicData.sendAlways() || m_qos.m_topicData.hasChanged)
+    if (m_qos.m_topicData.send_always() || m_qos.m_topicData.hasChanged)
     {
         if (!m_qos.m_topicData.addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if (m_qos.m_groupData.sendAlways() || m_qos.m_groupData.hasChanged)
+    if (m_qos.m_groupData.send_always() || m_qos.m_groupData.hasChanged)
     {
         if (!m_qos.m_groupData.addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if (m_qos.m_timeBasedFilter.sendAlways() || m_qos.m_timeBasedFilter.hasChanged)
+    if (m_qos.m_timeBasedFilter.send_always() || m_qos.m_timeBasedFilter.hasChanged)
     {
         if (!m_qos.m_timeBasedFilter.addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if (m_qos.m_disablePositiveACKs.sendAlways() || m_qos.m_disablePositiveACKs.hasChanged)
+    if (m_qos.m_disablePositiveACKs.send_always() || m_qos.m_disablePositiveACKs.hasChanged)
     {
         if (!m_qos.m_disablePositiveACKs.addToCDRMessage(msg))
         {
@@ -336,13 +336,13 @@ bool ReaderProxyData::writeToCDRMessage(
 #endif
 
     /* TODO - Enable when implement XCDR, XCDR2 and/or XML
-       if (m_qos.representation.sendAlways() || m_qos.representation.hasChanged)
+       if (m_qos.representation.send_always() || m_qos.representation.hasChanged)
        {
         if (!m_qos.representation.addToCDRMessage(msg)) return false;
        }
      */
 
-    if (m_qos.type_consistency.sendAlways() || m_qos.type_consistency.hasChanged)
+    if (m_qos.type_consistency.send_always() || m_qos.type_consistency.hasChanged)
     {
         if (!m_qos.type_consistency.addToCDRMessage(msg))
         {
@@ -511,9 +511,9 @@ bool ReaderProxyData::readFromCDRMessage(
                         const ParameterGuid_t* p = dynamic_cast<const ParameterGuid_t*>(param);
                         assert(p != nullptr);
                         m_guid = p->guid;
-                        for (uint8_t i = 0; i<16; ++i)
+                        for (uint8_t i = 0; i < 16; ++i)
                         {
-                            if (i<12)
+                            if (i < 12)
                             {
                                 m_key.value[i] = p->guid.guidPrefix.value[i];
                             }

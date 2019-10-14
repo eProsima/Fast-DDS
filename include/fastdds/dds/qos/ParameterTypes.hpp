@@ -129,7 +129,9 @@ public:
 
     RTPS_DllAPI Parameter_t()
         : Pid(PID_PAD)
-        , length(0) { }
+        , length(0)
+    {
+    }
 
     /**
      * Constructor using a parameter PID and the parameter length
@@ -140,11 +142,15 @@ public:
             ParameterId_t pid,
             uint16_t length)
         : Pid(pid)
-        , length(length) {}
+        , length(length)
+    {
+    }
 
-    virtual RTPS_DllAPI ~Parameter_t() { }
+    virtual RTPS_DllAPI ~Parameter_t()
+    {
+    }
 
-    bool operator==(
+    bool operator ==(
             const Parameter_t& b) const
     {
         return (this->Pid == b.Pid) &&
@@ -175,7 +181,11 @@ class ParameterKey_t : public Parameter_t
 public:
 
     fastrtps::rtps::InstanceHandle_t key;
-    ParameterKey_t(){};
+
+    ParameterKey_t()
+    {
+    }
+
     /**
      * Constructor using a parameter PID and the parameter length
      * @param pid Pid of the parameter
@@ -184,13 +194,19 @@ public:
     ParameterKey_t(
             ParameterId_t pid,
             uint16_t in_length)
-        : Parameter_t(pid, in_length){};
+        : Parameter_t(pid, in_length)
+    {
+    }
+
     ParameterKey_t(
             ParameterId_t pid,
             uint16_t in_length,
             fastrtps::rtps::InstanceHandle_t& ke)
         : Parameter_t(pid, in_length)
-        , key(ke){};
+        , key(ke)
+    {
+    }
+
     /**
      * Add the parameter to a CDRMessage_t message.
      * @param[in,out] msg Pointer to the message where the parameter should be added.
@@ -252,7 +268,10 @@ class ParameterString_t : public Parameter_t
 {
 public:
 
-    ParameterString_t(){};
+    ParameterString_t()
+    {
+    }
+
     /**
      * Constructor using a parameter PID and the parameter length
      * @param pid Pid of the parameter
@@ -261,13 +280,18 @@ public:
     ParameterString_t(
             ParameterId_t pid,
             uint16_t in_length)
-        : Parameter_t(pid, in_length){};
+        : Parameter_t(pid, in_length)
+    {
+    }
+
     ParameterString_t(
             ParameterId_t pid,
             uint16_t in_length,
             const fastrtps::string_255& strin)
         : Parameter_t(pid, in_length)
-        , m_string(strin){}
+        , string_(strin)
+    {
+    }
 
     /**
      * Add the parameter to a CDRMessage_t message.
@@ -276,13 +300,20 @@ public:
      */
     bool addToCDRMessage(
             fastrtps::rtps::CDRMessage_t* msg) override;
-    inline const char* getName()const { return m_string.c_str(); };
+    inline const char* getName()const
+    {
+        return string_.c_str();
+    }
+
     inline void setName(
-            const char* name){ m_string = name; };
+            const char* name)
+    {
+        string_ = name;
+    }
 
 private:
 
-    fastrtps::string_255 m_string;
+    fastrtps::string_255 string_;
 };
 
 /**
@@ -294,7 +325,10 @@ public:
 
     uint32_t port;
     ParameterPort_t()
-        : port(0){};
+        : port(0)
+    {
+    }
+
     /**
      * Constructor using a parameter PID and the parameter length
      * @param pid Pid of the parameter
@@ -304,13 +338,19 @@ public:
             ParameterId_t pid,
             uint16_t in_length)
         : Parameter_t(pid, in_length)
-        , port(0){};
+        , port(0)
+    {
+    }
+
     ParameterPort_t(
             ParameterId_t pid,
             uint16_t in_length,
             uint32_t po)
         : Parameter_t(pid, in_length)
-        , port(po){};
+        , port(po)
+    {
+    }
+
     /**
      * Add the parameter to a CDRMessage_t message.
      * @param[in,out] msg Pointer to the message where the parameter should be added.
@@ -330,7 +370,10 @@ class ParameterGuid_t : public Parameter_t
 public:
 
     fastrtps::rtps::GUID_t guid;
-    ParameterGuid_t(){};
+    ParameterGuid_t()
+    {
+    }
+
     /**
      * Constructor using a parameter PID and the parameter length
      * @param pid Pid of the parameter
@@ -339,31 +382,38 @@ public:
     ParameterGuid_t(
             ParameterId_t pid,
             uint16_t in_length)
-        : Parameter_t(pid, in_length){};
+        : Parameter_t(pid, in_length)
+    {
+    }
+
     ParameterGuid_t(
             ParameterId_t pid,
             uint16_t in_length,
             fastrtps::rtps::GUID_t guidin)
         : Parameter_t(pid, in_length)
-        , guid(guidin){};
+        , guid(guidin)
+    {
+    }
+
     ParameterGuid_t(
             ParameterId_t pid,
             uint16_t in_length,
             fastrtps::rtps::InstanceHandle_t& iH)
         : Parameter_t(pid, in_length)
     {
-        for (uint8_t i =0; i<16; ++i)
+        for (uint8_t i = 0; i < 16; ++i)
         {
-            if (i<12)
+            if (i < 12)
             {
                 guid.guidPrefix.value[i] = iH.value[i];
             }
             else
             {
-                guid.entityId.value[i-12] = iH.value[i];
+                guid.entityId.value[i - 12] = iH.value[i];
             }
         }
-    };
+    }
+
     /**
      * Add the parameter to a CDRMessage_t message.
      * @param[in,out] msg Pointer to the message where the parameter should be added.
@@ -383,7 +433,11 @@ class ParameterProtocolVersion_t : public Parameter_t
 public:
 
     fastrtps::rtps::ProtocolVersion_t protocolVersion;
-    ParameterProtocolVersion_t(){protocolVersion = fastrtps::rtps::c_ProtocolVersion;};
+    ParameterProtocolVersion_t()
+    {
+        protocolVersion = fastrtps::rtps::c_ProtocolVersion;
+    }
+
     /**
      * Constructor using a parameter PID and the parameter length
      * @param pid Pid of the parameter
@@ -392,7 +446,11 @@ public:
     ParameterProtocolVersion_t(
             ParameterId_t pid,
             uint16_t in_length)
-        : Parameter_t(pid, in_length){protocolVersion = fastrtps::rtps::c_ProtocolVersion;};
+        : Parameter_t(pid, in_length)
+    {
+        protocolVersion = fastrtps::rtps::c_ProtocolVersion;
+    }
+
     /**
      * Add the parameter to a CDRMessage_t message.
      * @param[in,out] msg Pointer to the message where the parameter should be added.
@@ -413,7 +471,10 @@ public:
 
     fastrtps::rtps::VendorId_t vendorId;
     ParameterVendorId_t()
-        : vendorId(fastrtps::rtps::c_VendorId_eProsima) {}
+        : vendorId(fastrtps::rtps::c_VendorId_eProsima)
+    {
+    }
+
     /**
      * Constructor using a parameter PID and the parameter length
      * @param pid Pid of the parameter
@@ -423,7 +484,10 @@ public:
             ParameterId_t pid,
             uint16_t in_length)
         : Parameter_t(pid, in_length)
-        , vendorId(fastrtps::rtps::c_VendorId_eProsima) {}
+        , vendorId(fastrtps::rtps::c_VendorId_eProsima)
+    {
+    }
+
     /**
      * Add the parameter to a CDRMessage_t message.
      * @param[in,out] msg Pointer to the message where the parameter should be added.
@@ -443,7 +507,11 @@ class ParameterIP4Address_t : public Parameter_t
 public:
 
     fastrtps::rtps::octet address[4];
-    ParameterIP4Address_t(){this->setIP4Address(0, 0, 0, 0);};
+    ParameterIP4Address_t()
+    {
+        this->setIP4Address(0, 0, 0, 0);
+    }
+
     /**
      * Constructor using a parameter PID and the parameter length
      * @param pid Pid of the parameter
@@ -452,7 +520,11 @@ public:
     ParameterIP4Address_t(
             ParameterId_t pid,
             uint16_t in_length)
-        : Parameter_t(pid, in_length){this->setIP4Address(0, 0, 0, 0);};
+        : Parameter_t(pid, in_length)
+    {
+        this->setIP4Address(0, 0, 0, 0);
+    }
+
     /**
      * Add the parameter to a CDRMessage_t message.
      * @param[in,out] msg Pointer to the message where the parameter should be added.
@@ -478,7 +550,10 @@ public:
 
     bool value;
     ParameterBool_t()
-        : value(false){};
+        : value(false)
+    {
+    }
+
     /**
      * Constructor using a parameter PID and the parameter length
      * @param pid Pid of the parameter
@@ -488,13 +563,19 @@ public:
             ParameterId_t pid,
             uint16_t in_length)
         : Parameter_t(pid, in_length)
-        , value(false){};
+        , value(false)
+    {
+    }
+
     ParameterBool_t(
             ParameterId_t pid,
             uint16_t in_length,
             bool inbool)
         : Parameter_t(pid, in_length)
-        , value(inbool){};
+        , value(inbool)
+    {
+    }
+
     /**
      * Add the parameter to a CDRMessage_t message.
      * @param[in,out] msg Pointer to the message where the parameter should be added.
@@ -515,7 +596,9 @@ public:
 
     uint8_t status;
     ParameterStatusInfo_t()
-        : status(0) {}
+        : status(0)
+    {
+    }
 
     /**
      * Constructor using a parameter PID and the parameter length
@@ -526,13 +609,19 @@ public:
             ParameterId_t pid,
             uint16_t in_length)
         : Parameter_t(pid, in_length)
-        , status(0) {}
+        , status(0)
+    {
+    }
+
     ParameterStatusInfo_t(
             ParameterId_t pid,
             uint16_t in_length,
             uint8_t instatus)
         : Parameter_t(pid, in_length)
-        , status(instatus) {}
+        , status(instatus)
+    {
+    }
+
     /**
      * Add the parameter to a CDRMessage_t message.
      * @param[in,out] msg Pointer to the message where the parameter should be added.
@@ -553,7 +642,10 @@ public:
 
     fastrtps::rtps::Count_t count;
     ParameterCount_t()
-        : count(0){};
+        : count(0)
+    {
+    }
+
     /**
      * Constructor using a parameter PID and the parameter length
      * @param pid Pid of the parameter
@@ -563,7 +655,10 @@ public:
             ParameterId_t pid,
             uint16_t in_length)
         : Parameter_t(pid, in_length)
-        , count(0){};
+        , count(0)
+    {
+    }
+
     /**
      * Add the parameter to a CDRMessage_t message.
      * @param[in,out] msg Pointer to the message where the parameter should be added.
@@ -584,7 +679,10 @@ public:
 
     fastrtps::rtps::EntityId_t entityId;
     ParameterEntityId_t()
-        : entityId(ENTITYID_UNKNOWN){};
+        : entityId(ENTITYID_UNKNOWN)
+    {
+    }
+
     /**
      * Constructor using a parameter PID and the parameter length
      * @param pid Pid of the parameter
@@ -594,7 +692,10 @@ public:
             ParameterId_t pid,
             uint16_t in_length)
         : Parameter_t(pid, in_length)
-        , entityId(ENTITYID_UNKNOWN){};
+        , entityId(ENTITYID_UNKNOWN)
+    {
+    }
+
     /**
      * Add the parameter to a CDRMessage_t message.
      * @param[in,out] msg Pointer to the message where the parameter should be added.
@@ -614,7 +715,10 @@ class ParameterTime_t : public Parameter_t
 public:
 
     fastrtps::rtps::Time_t time;
-    ParameterTime_t(){};
+    ParameterTime_t()
+    {
+    }
+
     /**
      * Constructor using a parameter PID and the parameter length
      * @param pid Pid of the parameter
@@ -623,7 +727,10 @@ public:
     ParameterTime_t(
             ParameterId_t pid,
             uint16_t in_length)
-        : Parameter_t(pid, in_length){};
+        : Parameter_t(pid, in_length)
+    {
+    }
+
     /**
      * Add the parameter to a CDRMessage_t message.
      * @param[in,out] msg Pointer to the message where the parameter should be added.
@@ -644,7 +751,10 @@ public:
 
     fastrtps::rtps::BuiltinEndpointSet_t endpointSet;
     ParameterBuiltinEndpointSet_t()
-        : endpointSet(0){};
+        : endpointSet(0)
+    {
+    }
+
     /**
      * Constructor using a parameter PID and the parameter length
      * @param pid Pid of the parameter
@@ -655,7 +765,9 @@ public:
             uint16_t in_length)
         : Parameter_t(pid, in_length)
         , endpointSet(0)
-    {};
+    {
+    }
+
     /**
      * Add the parameter to a CDRMessage_t message.
      * @param[in,out] msg Pointer to the message where the parameter should be added.
@@ -678,7 +790,9 @@ public:
     std::vector<std::pair<std::string, std::string> > properties;
 
     ParameterPropertyList_t()
-        : Parameter_t(PID_PROPERTY_LIST, 0) {}
+        : Parameter_t(PID_PROPERTY_LIST, 0)
+    {
+    }
 
     /**
      * Constructor using a parameter PID and the parameter length
@@ -687,7 +801,9 @@ public:
     ParameterPropertyList_t(
             ParameterId_t /*pid*/,
             uint16_t in_length)
-        : Parameter_t(PID_PROPERTY_LIST, in_length) {}
+        : Parameter_t(PID_PROPERTY_LIST, in_length)
+    {
+    }
 
     ParameterPropertyList_t(
             const ParameterPropertyList_t& parameter_properties)
@@ -715,7 +831,9 @@ public:
     fastrtps::rtps::SampleIdentity sample_id;
 
     ParameterSampleIdentity_t()
-        : sample_id(fastrtps::rtps::SampleIdentity::unknown()) {}
+        : sample_id(fastrtps::rtps::SampleIdentity::unknown())
+    {
+    }
 
     /**
      * Constructor using a parameter PID and the parameter length
@@ -726,7 +844,9 @@ public:
             ParameterId_t pid,
             uint16_t in_length)
         : Parameter_t(pid, in_length)
-        , sample_id(fastrtps::rtps::SampleIdentity::unknown()) {}
+        , sample_id(fastrtps::rtps::SampleIdentity::unknown())
+    {
+    }
 
     /**
      * Add the parameter to a CDRMessage_t message.
@@ -748,7 +868,9 @@ public:
 
     fastrtps::rtps::Token token;
 
-    ParameterToken_t() {}
+    ParameterToken_t()
+    {
+    }
 
     /**
      * Constructor using a parameter PID and the parameter length
@@ -758,7 +880,9 @@ public:
     ParameterToken_t(
             ParameterId_t pid,
             uint16_t in_length)
-        : Parameter_t(pid, in_length) {}
+        : Parameter_t(pid, in_length)
+    {
+    }
 
     /**
      * Add the parameter to a CDRMessage_t message.

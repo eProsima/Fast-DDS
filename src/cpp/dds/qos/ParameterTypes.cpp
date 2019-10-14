@@ -48,27 +48,27 @@ bool ParameterKey_t::addToCDRMessage(
 bool ParameterString_t::addToCDRMessage(
         CDRMessage_t* msg)
 {
-    if (this->m_string.size()==0)
+    if (this->string_.size() == 0)
     {
         return false;
     }
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     //Str size
-    uint32_t str_siz = (uint32_t)this->m_string.size();
-    int rest = (str_siz+1) % 4;
+    uint32_t str_siz = (uint32_t)this->string_.size();
+    int rest = (str_siz + 1) % 4;
     if (rest != 0)
     {
         rest = 4 - rest; //how many you have to add
     }
-    this->length = (uint16_t)(str_siz+1 + 4 + rest);
+    this->length = (uint16_t)(str_siz + 1 + 4 + rest);
     valid &= CDRMessage::addUInt16(msg, this->length);
-    valid &= CDRMessage::addUInt32(msg, str_siz+1);
-    valid &= CDRMessage::addData(msg,
-                    (unsigned char*) this->m_string.c_str(), str_siz+1);
+    valid &= CDRMessage::addUInt32(msg, str_siz + 1);
+    valid &= CDRMessage::addData(msg, (unsigned char*) this->string_.c_str(), str_siz + 1);
     if (rest != 0)
     {
         octet oc = '\0';
-        for (int i = 0; i < rest; i++){
+        for (int i = 0; i < rest; i++)
+        {
             valid &= CDRMessage::addOctet(msg, oc);
         }
     }
@@ -96,7 +96,6 @@ bool ParameterGuid_t::addToCDRMessage(
     return valid;
 }
 
-
 //PARAMETER_ PROTOCOL VERSION
 bool ParameterProtocolVersion_t::addToCDRMessage(
         CDRMessage_t* msg)
@@ -120,7 +119,6 @@ bool ParameterVendorId_t::addToCDRMessage(
     return valid;
 }
 
-
 //PARAMETER_ IP4ADDRESS
 bool ParameterIP4Address_t::addToCDRMessage(
         CDRMessage_t* msg)
@@ -130,20 +128,22 @@ bool ParameterIP4Address_t::addToCDRMessage(
     valid &= CDRMessage::addData(msg, this->address, 4);
     return valid;
 }
+
 void ParameterIP4Address_t::setIP4Address(
         octet o1,
         octet o2,
         octet o3,
-        octet o4){
+        octet o4)
+{
     address[0] = o1;
     address[1] = o2;
     address[2] = o3;
     address[3] = o4;
 }
 
-
 bool ParameterBool_t::addToCDRMessage(
-        CDRMessage_t* msg){
+        CDRMessage_t* msg)
+{
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, PARAMETER_BOOL_LENGTH);//this->length);
     octet val = value ? 1 : 0;
@@ -165,13 +165,13 @@ bool ParameterStatusInfo_t::addToCDRMessage(
 }
 
 bool ParameterCount_t::addToCDRMessage(
-        CDRMessage_t* msg){
+        CDRMessage_t* msg)
+{
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     valid &= CDRMessage::addUInt16(msg, PARAMETER_COUNT_LENGTH);//this->length);
     valid &= CDRMessage::addUInt32(msg, count);
     return valid;
 }
-
 
 bool ParameterEntityId_t::addToCDRMessage(
         CDRMessage_t* msg)
@@ -209,7 +209,7 @@ bool ParameterPropertyList_t::addToCDRMessage(
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
     valid &= CDRMessage::addUInt32(msg, (uint32_t)this->properties.size());
     for (std::vector<std::pair<std::string, std::string> >::iterator it = this->properties.begin();
-            it!=this->properties.end(); ++it)
+            it != this->properties.end(); ++it)
     {
         valid &= CDRMessage::addString(msg, it->first);
         valid &= CDRMessage::addString(msg, it->second);
@@ -220,11 +220,11 @@ bool ParameterPropertyList_t::addToCDRMessage(
         valid &= CDRMessage::addOctet(msg, 0);
     }
     uint16_t pos_param_end = (uint16_t)msg->pos;
-    this->length = pos_param_end-pos_str-2;
+    this->length = pos_param_end - pos_str - 2;
     msg->pos = pos_str;
     valid &= CDRMessage::addUInt16(msg, this->length);//this->length);
     msg->pos = pos_param_end;
-    msg->length-=2;
+    msg->length -= 2;
     return valid;
 }
 
