@@ -750,11 +750,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
         {
             ch.serializedPayload.length = payload_size;
 
-            // TODO Mejorar el reubicar el vector de fragmentos.
             ch.setFragmentSize(fragmentSize);
-            ch.getDataFragments()->clear();
-            ch.getDataFragments()->resize(fragmentsInSubmessage, ChangeFragmentStatus_t::PRESENT);
-
             ch.serializedPayload.data = &msg->buffer[msg->pos];
             ch.serializedPayload.length = payload_size;
             msg->pos += payload_size;
