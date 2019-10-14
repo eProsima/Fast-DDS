@@ -260,6 +260,11 @@ public:
         type_.construct_instance(instance_);
     }
 
+    DynamicData(
+            const DynamicType::Ptr& type)
+        : DynamicData(*type)
+    {}
+
     DynamicData(const DynamicData& other)
         : WritableDynamicDataRef(other.type_, new uint8_t[other.type_.memory_size()])
     {
