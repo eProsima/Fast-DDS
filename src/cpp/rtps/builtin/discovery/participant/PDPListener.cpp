@@ -148,7 +148,7 @@ void PDPListener::onNewCacheChangeAdded(
                 RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
                 if (listener != nullptr)
                 {
-                    std::lock_guard<std::mutex> lock(parent_pdp_->callback_mtx_);
+                    std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
                     ParticipantDiscoveryInfo info(*pdata);
                     info.status = status;
 
