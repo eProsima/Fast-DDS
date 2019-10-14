@@ -800,9 +800,9 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
         << AssociatedReaders.size());
     //Look for the correct reader to add the change
     findAllReaders(readerID, [
-            &ch, sampleSize, fragmentStartingNum
+            &ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage
         ] (RTPSReader* reader) {
-            reader->processDataFragMsg(&ch, sampleSize, fragmentStartingNum);
+            reader->processDataFragMsg(&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
         });
 
     ch.serializedPayload.data = nullptr;

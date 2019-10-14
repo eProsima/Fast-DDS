@@ -101,13 +101,15 @@ public:
      *
      * @param change Pointer to the CacheChange_t.
      * @param sampleSize Size of the complete, assembled message.
-     * @param fragmentStartingNum Starting number of this particular fragment.
+     * @param fragmentStartingNum Starting number of this particular message.
+     * @param fragmentsInSubmessage Number of fragments on this particular message.
      * @return true if the reader accepts message.
      */
     RTPS_DllAPI virtual bool processDataFragMsg(
             CacheChange_t* change,
             uint32_t sampleSize,
-            uint32_t fragmentStartingNum) = 0;
+            uint32_t fragmentStartingNum,
+            uint16_t fragmentsInSubmessage) = 0;
 
     /**
      * Processes a new HEARTBEAT message.
