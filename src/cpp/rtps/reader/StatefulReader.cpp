@@ -939,33 +939,7 @@ void StatefulReader::send_acknack(
             for (auto cit : uncompleted_changes)
             {
                 FragmentNumberSet_t frag_sns;
-
-                //  Search first fragment not present.
-                uint32_t frag_num = 0;
-                auto fit = cit->getDataFragments()->begin();
-                for (; fit != cit->getDataFragments()->end(); ++fit)
-                {
-                    ++frag_num;
-                    if (*fit == ChangeFragmentStatus_t::NOT_PRESENT)
-                        break;
-                }
-
-                // Never should happend.
-                assert(frag_num != 0);
-                assert(fit != cit->getDataFragments()->end());
-
-                // Store FragmentNumberSet_t base.
-                frag_sns.base(frag_num);
-
-                // Fill the FragmentNumberSet_t bitmap.
-                for (; fit != cit->getDataFragments()->end(); ++fit)
-                {
-                    if (*fit == ChangeFragmentStatus_t::NOT_PRESENT)
-                        frag_sns.add(frag_num);
-
-                    ++frag_num;
-                }
-
+                cit->get_missing_fragments(frag_sns);
                 ++nackfrag_count_;
                 logInfo(RTPS_READER, "Sending NACKFRAG for sample" << cit->sequenceNumber << ": " << frag_sns;);
 

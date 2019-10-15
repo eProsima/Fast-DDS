@@ -44,12 +44,6 @@ enum RTPS_DllAPI ChangeKind_t
     NOT_ALIVE_DISPOSED_UNREGISTERED   //!< NOT_ALIVE_DISPOSED_UNREGISTERED
 };
 
-enum ChangeFragmentStatus_t
-{
-    NOT_PRESENT = 0,
-    PRESENT = 1
-};
-
 /**
  * Structure CacheChange_t, contains information on a specific CacheChange.
  * @ingroup COMMON_MODULE
@@ -148,9 +142,31 @@ struct RTPS_DllAPI CacheChange_t
         return fragment_count_;
     }
 
-    std::vector<uint32_t>* getDataFragments() { return dataFragments_; }
+    uint16_t getFragmentSize() const
+    { 
+        return fragment_size_; 
+    }
 
-    uint16_t getFragmentSize() const { return fragment_size_; }
+    bool is_fully_assembled()
+    {
+        return first_missing_fragment_ >= fragment_count_;
+    }
+
+    void get_missing_fragments(
+            FragmentNumberSet_t& frag_sns)
+    {
+        frag_sns.base(first_missing_fragment_ + 1);
+
+        uint32_t current_frag = first_missing_fragment_;
+        while (current_frag < fragment_count_)
+        {
+            frag_sns.add(current_frag + 1);
+            size_t offset = fragment_size_;
+            offset *= current_frag;
+            uint32_t* fragment = (uint32_t*)&serializedPayload.data[offset];
+            current_frag = *fragment;
+        }
+    }
 
     void setFragmentSize(
             uint16_t fragment_size,
@@ -208,9 +224,6 @@ struct RTPS_DllAPI CacheChange_t
     }
 
 private:
-
-    // Data fragments
-    std::vector<uint32_t>* dataFragments_ = nullptr;
 
     // Fragment size
     uint16_t fragment_size_ = 0;
