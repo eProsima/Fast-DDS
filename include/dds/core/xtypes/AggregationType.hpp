@@ -23,6 +23,7 @@
 
 #include <string>
 #include <map>
+#include <cassert>
 
 namespace dds {
 namespace core {
@@ -45,6 +46,7 @@ protected:
 
     MemberImpl& insert_member(const std::string& name, const MemberImpl& member)
     {
+        assert(members_.count(name) == 0);
         return members_.emplace(name, std::move(member)).first->second;
     }
 
