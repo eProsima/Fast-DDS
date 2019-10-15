@@ -22,6 +22,8 @@
 
 #include <fastdds/dds/qos/ReaderQos.hpp>
 
+#include <fastrtps/qos/QosPolicies.h>  // Needed for old enum constant values
+
 namespace eprosima {
 namespace fastrtps {
 
