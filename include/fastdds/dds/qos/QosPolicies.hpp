@@ -509,7 +509,7 @@ public:
     RTPS_DllAPI UserDataQosPolicy()
         : Parameter_t(PID_USER_DATA, 0)
         , QosPolicy(false)
-        , dataVec{}
+        , data_vec_{}
     {
     }
 
@@ -520,7 +520,7 @@ public:
     bool operator ==(
             const UserDataQosPolicy& b) const
     {
-        return (this->dataVec == b.dataVec) &&
+        return (this->data_vec_ == b.data_vec_) &&
                Parameter_t::operator ==(b) &&
                QosPolicy::operator ==(b);
     }
@@ -537,24 +537,24 @@ public:
      * Returns raw data vector.
      * @return raw data as vector of octets.
      * */
-    RTPS_DllAPI inline std::vector<fastrtps::rtps::octet> getDataVec() const
+    RTPS_DllAPI inline std::vector<fastrtps::rtps::octet> data_vec() const
     {
-        return dataVec;
+        return data_vec_;
     }
 
     /**
      * Sets raw data vector.
      * @param vec raw data to set.
      * */
-    RTPS_DllAPI inline void setDataVec(
+    RTPS_DllAPI inline void data_vec(
             const std::vector<fastrtps::rtps::octet>& vec)
     {
-        dataVec = vec;
+        data_vec_ = vec;
     }
 
 private:
 
-    std::vector<fastrtps::rtps::octet> dataVec;
+    std::vector<fastrtps::rtps::octet> data_vec_;
 };
 
 /**
@@ -677,7 +677,7 @@ public:
     RTPS_DllAPI PartitionQosPolicy()
         : Parameter_t(PID_PARTITION, 0)
         , QosPolicy(false)
-        , names{}
+        , names_{}
     {
     }
 
@@ -688,7 +688,7 @@ public:
     bool operator ==(
             const PartitionQosPolicy& b) const
     {
-        return (this->names == b.names) &&
+        return (this->names_ == b.names_) &&
                Parameter_t::operator ==(b) &&
                QosPolicy::operator ==(b);
     }
@@ -708,7 +708,7 @@ public:
     RTPS_DllAPI inline void push_back(
             const char* name)
     {
-        names.push_back(std::string(name)); hasChanged = true;
+        names_.push_back(std::string(name)); hasChanged = true;
     }
 
     /**
@@ -716,31 +716,32 @@ public:
      */
     RTPS_DllAPI inline void clear()
     {
-        names.clear();
+        names_.clear();
     }
 
     /**
      * Returns partition names.
      * @return Vector of partition name strings.
      */
-    RTPS_DllAPI inline std::vector<std::string> getNames() const
+    RTPS_DllAPI inline std::vector<std::string> names() const
     {
-        return names;
+        return names_;
     }
 
     /**
      * Overrides partition names
      * @param nam Vector of partition name strings.
      */
-    RTPS_DllAPI inline void setNames(
+    RTPS_DllAPI inline void names(
             std::vector<std::string>& nam)
     {
-        names = nam; hasChanged = true;
+        names_ = nam;
+        hasChanged = true;
     }
 
 private:
 
-    std::vector<std::string> names;
+    std::vector<std::string> names_;
 };
 
 

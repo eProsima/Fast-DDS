@@ -67,7 +67,7 @@ void ReaderQos::setQos(
         m_destinationOrder = qos.m_destinationOrder;
         m_destinationOrder.hasChanged = true;
     }
-    if (m_userData.getDataVec() != qos.m_userData.getDataVec())
+    if (m_userData.data_vec() != qos.m_userData.data_vec())
     {
         m_userData = qos.m_userData;
         m_userData.hasChanged = true;
@@ -84,7 +84,7 @@ void ReaderQos::setQos(
         m_presentation = qos.m_presentation;
         m_presentation.hasChanged = true;
     }
-    if (qos.m_partition.getNames().size() > 0)
+    if (qos.m_partition.names().size() > 0)
     {
         m_partition = qos.m_partition;
         m_partition.hasChanged = true;

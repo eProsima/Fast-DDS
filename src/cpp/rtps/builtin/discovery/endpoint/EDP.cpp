@@ -185,7 +185,7 @@ bool EDP::newLocalWriterProxyData(
         const TopicAttributes& att,
         const WriterQos& wqos)
 {
-    logInfo(RTPS_EDP, "Adding " << writer->getGuid().entityId << " in topic "<<att.topicName);
+    logInfo(RTPS_EDP, "Adding " << writer->getGuid().entityId << " in topic " << att.topicName);
 
     auto init_fun = [this, writer, &att, &wqos](
         WriterProxyData* wpd,
@@ -460,7 +460,7 @@ bool EDP::unpairWriterProxy(
 
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for (std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
-            rit!=mp_RTPSParticipant->userReadersListEnd(); ++rit)
+            rit != mp_RTPSParticipant->userReadersListEnd(); ++rit)
     {
         if ((*rit)->matched_writer_remove(writer_guid))
         {
@@ -471,7 +471,7 @@ bool EDP::unpairWriterProxy(
 #endif
 
             //MATCHED AND ADDED CORRECTLY:
-            if ((*rit)->getListener()!=nullptr)
+            if ((*rit)->getListener() != nullptr)
             {
                 MatchingInfo info;
                 info.status = REMOVED_MATCHING;
@@ -497,7 +497,7 @@ bool EDP::unpairReaderProxy(
 
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for (std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
-            wit!=mp_RTPSParticipant->userWritersListEnd(); ++wit)
+            wit != mp_RTPSParticipant->userWritersListEnd(); ++wit)
     {
         if ((*wit)->matched_reader_remove(reader_guid))
         {
@@ -507,7 +507,7 @@ bool EDP::unpairReaderProxy(
                     participant_guid, reader_guid);
 #endif
             //MATCHED AND ADDED CORRECTLY:
-            if ((*wit)->getListener()!=nullptr)
+            if ((*wit)->getListener() != nullptr)
             {
                 MatchingInfo info;
                 info.status = REMOVED_MATCHING;
@@ -522,7 +522,6 @@ bool EDP::unpairReaderProxy(
     }
     return true;
 }
-
 
 bool EDP::validMatching(
         const WriterProxyData* wdata,
@@ -542,8 +541,8 @@ bool EDP::validMatching(
     if (wdata->topicKind() != rdata->topicKind())
     {
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS:Remote Reader " << rdata->guid() << " is publishing in topic "
-                                                               << rdata->topicName() << "(keyed:"<< rdata->topicKind() <<
-                "), local writer publishes as keyed: "<< wdata->topicKind())
+                                                               << rdata->topicName() << "(keyed:" << rdata->topicKind() <<
+                "), local writer publishes as keyed: " << wdata->topicKind())
         return false;
     }
     if (!rdata->isAlive()) //Matching
@@ -555,28 +554,28 @@ bool EDP::validMatching(
             && rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
     //Means our writer is BE but the reader wants RE
     {
-        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: "<< rdata->topicName() <<"):Remote Reader "
-                                                        << rdata->guid() << " is Reliable and local writer is BE ");
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topicName() << "):Remote Reader "
+                                                         << rdata->guid() << " is Reliable and local writer is BE ");
         return false;
     }
     if (wdata->m_qos.m_durability.kind < rdata->m_qos.m_durability.kind)
     {
         // TODO (MCC) Change log message
-        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: "<< rdata->topicName() <<"):RemoteReader "
-                                                        << rdata->guid() <<
-                            " has TRANSIENT_LOCAL DURABILITY and we offer VOLATILE");
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topicName() << "):RemoteReader "
+                                                         << rdata->guid() <<
+                " has TRANSIENT_LOCAL DURABILITY and we offer VOLATILE");
         return false;
     }
     if (wdata->m_qos.m_ownership.kind != rdata->m_qos.m_ownership.kind)
     {
-        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: "<< rdata->topicName() <<"):Remote reader "
-                                                        << rdata->guid() << " has different Ownership Kind");
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topicName() << "):Remote reader "
+                                                         << rdata->guid() << " has different Ownership Kind");
         return false;
     }
     if (wdata->m_qos.m_deadline.period > rdata->m_qos.m_deadline.period)
     {
-        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: "<< rdata->topicName() <<"):Remote reader "
-                                                        << rdata->guid() << " has smaller DEADLINE period");
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topicName() << "):Remote reader "
+                                                         << rdata->guid() << " has smaller DEADLINE period");
         return false;
     }
     if (!wdata->m_qos.m_disablePositiveACKs.enabled && rdata->m_qos.m_disablePositiveACKs.enabled)
@@ -603,28 +602,28 @@ bool EDP::validMatching(
 
     //Partition check:
     bool matched = false;
-    if (wdata->m_qos.m_partition.names.empty() && rdata->m_qos.m_partition.names.empty())
+    if (wdata->m_qos.m_partition.names().empty() && rdata->m_qos.m_partition.names().empty())
     {
         matched = true;
     }
-    else if (wdata->m_qos.m_partition.names.empty() && rdata->m_qos.m_partition.names.size()>0)
+    else if (wdata->m_qos.m_partition.names().empty() && rdata->m_qos.m_partition.names().size() > 0)
     {
-        for (std::vector<std::string>::const_iterator rnameit = rdata->m_qos.m_partition.names.begin();
-                rnameit!=rdata->m_qos.m_partition.names.end(); ++rnameit)
+        for (std::vector<std::string>::const_iterator rnameit = rdata->m_qos.m_partition.names().begin();
+                rnameit != rdata->m_qos.m_partition.names().end(); ++rnameit)
         {
-            if (rnameit->size()==0)
+            if (rnameit->size() == 0)
             {
                 matched = true;
                 break;
             }
         }
     }
-    else if (wdata->m_qos.m_partition.names.size()>0 && rdata->m_qos.m_partition.names.empty() )
+    else if (wdata->m_qos.m_partition.names().size() > 0 && rdata->m_qos.m_partition.names().empty() )
     {
-        for (std::vector<std::string>::const_iterator wnameit = wdata->m_qos.m_partition.names.begin();
-                wnameit !=  wdata->m_qos.m_partition.names.end(); ++wnameit)
+        for (std::vector<std::string>::const_iterator wnameit = wdata->m_qos.m_partition.names().begin();
+                wnameit !=  wdata->m_qos.m_partition.names().end(); ++wnameit)
         {
-            if (wnameit->size()==0)
+            if (wnameit->size() == 0)
             {
                 matched = true;
                 break;
@@ -633,11 +632,11 @@ bool EDP::validMatching(
     }
     else
     {
-        for (std::vector<std::string>::const_iterator wnameit = wdata->m_qos.m_partition.names.begin();
-                wnameit !=  wdata->m_qos.m_partition.names.end(); ++wnameit)
+        for (std::vector<std::string>::const_iterator wnameit = wdata->m_qos.m_partition.names().begin();
+                wnameit !=  wdata->m_qos.m_partition.names().end(); ++wnameit)
         {
-            for (std::vector<std::string>::const_iterator rnameit = rdata->m_qos.m_partition.names.begin();
-                    rnameit!=rdata->m_qos.m_partition.names.end(); ++rnameit)
+            for (std::vector<std::string>::const_iterator rnameit = rdata->m_qos.m_partition.names().begin();
+                    rnameit != rdata->m_qos.m_partition.names().end(); ++rnameit)
             {
                 if (StringMatching::matchString(wnameit->c_str(), rnameit->c_str()))
                 {
@@ -653,7 +652,7 @@ bool EDP::validMatching(
     }
     if (!matched) //Different partitions
     {
-        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: "<< rdata->topicName() <<"): Different Partitions");
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topicName() << "): Different Partitions");
     }
     return matched;
 }
@@ -753,8 +752,8 @@ bool EDP::validMatching(
             && wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
     //Means our reader is reliable but hte writer is not
     {
-        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: "<< wdata->topicName() << "): Remote Writer "
-                                                        << wdata->guid() << " is Best Effort and local reader is RELIABLE " << endl;
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "): Remote Writer "
+                                                         << wdata->guid() << " is Best Effort and local reader is RELIABLE " << endl;
                 );
         return false;
     }
@@ -802,28 +801,28 @@ bool EDP::validMatching(
 
     //Partition check:
     bool matched = false;
-    if (rdata->m_qos.m_partition.names.empty() && wdata->m_qos.m_partition.names.empty())
+    if (rdata->m_qos.m_partition.names().empty() && wdata->m_qos.m_partition.names().empty())
     {
         matched = true;
     }
-    else if (rdata->m_qos.m_partition.names.empty() && wdata->m_qos.m_partition.names.size()>0)
+    else if (rdata->m_qos.m_partition.names().empty() && wdata->m_qos.m_partition.names().size() > 0)
     {
-        for (std::vector<std::string>::const_iterator rnameit = wdata->m_qos.m_partition.names.begin();
-                rnameit!=wdata->m_qos.m_partition.names.end(); ++rnameit)
+        for (std::vector<std::string>::const_iterator rnameit = wdata->m_qos.m_partition.names().begin();
+                rnameit != wdata->m_qos.m_partition.names().end(); ++rnameit)
         {
-            if (rnameit->size()==0)
+            if (rnameit->size() == 0)
             {
                 matched = true;
                 break;
             }
         }
     }
-    else if (rdata->m_qos.m_partition.names.size()>0 && wdata->m_qos.m_partition.names.empty() )
+    else if (rdata->m_qos.m_partition.names().size() > 0 && wdata->m_qos.m_partition.names().empty() )
     {
-        for (std::vector<std::string>::const_iterator wnameit = rdata->m_qos.m_partition.names.begin();
-                wnameit !=  rdata->m_qos.m_partition.names.end(); ++wnameit)
+        for (std::vector<std::string>::const_iterator wnameit = rdata->m_qos.m_partition.names().begin();
+                wnameit !=  rdata->m_qos.m_partition.names().end(); ++wnameit)
         {
-            if (wnameit->size()==0)
+            if (wnameit->size() == 0)
             {
                 matched = true;
                 break;
@@ -832,11 +831,11 @@ bool EDP::validMatching(
     }
     else
     {
-        for (std::vector<std::string>::const_iterator wnameit = rdata->m_qos.m_partition.names.begin();
-                wnameit !=  rdata->m_qos.m_partition.names.end(); ++wnameit)
+        for (std::vector<std::string>::const_iterator wnameit = rdata->m_qos.m_partition.names().begin();
+                wnameit !=  rdata->m_qos.m_partition.names().end(); ++wnameit)
         {
-            for (std::vector<std::string>::const_iterator rnameit = wdata->m_qos.m_partition.names.begin();
-                    rnameit!=wdata->m_qos.m_partition.names.end(); ++rnameit)
+            for (std::vector<std::string>::const_iterator rnameit = wdata->m_qos.m_partition.names().begin();
+                    rnameit != wdata->m_qos.m_partition.names().end(); ++rnameit)
             {
                 if (StringMatching::matchString(wnameit->c_str(), rnameit->c_str()))
                 {
@@ -869,11 +868,11 @@ bool EDP::pairingReader(
 {
     (void)participant_guid;
 
-    logInfo(RTPS_EDP, rdata.guid() <<" in topic: \"" << rdata.topicName() <<"\"");
+    logInfo(RTPS_EDP, rdata.guid() << " in topic: \"" << rdata.topicName() << "\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
     for (ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
-            pit!=mp_PDP->ParticipantProxiesEnd(); ++pit)
+            pit != mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
         for (WriterProxyData* wdatait : (*pit)->m_writers)
         {
@@ -894,7 +893,7 @@ bool EDP::pairingReader(
                 {
                     logInfo(RTPS_EDP, "Valid Matching to writerProxy: " << writer_guid);
                     //MATCHED AND ADDED CORRECTLY:
-                    if (R->getListener()!=nullptr)
+                    if (R->getListener() != nullptr)
                     {
                         MatchingInfo info;
                         info.status = MATCHED_MATCHING;
@@ -920,7 +919,7 @@ bool EDP::pairingReader(
 #endif
 
                     //MATCHED AND ADDED CORRECTLY:
-                    if (R->getListener()!=nullptr)
+                    if (R->getListener() != nullptr)
                     {
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
@@ -946,11 +945,11 @@ bool EDP::pairingWriter(
 {
     (void)participant_guid;
 
-    logInfo(RTPS_EDP, W->getGuid() << " in topic: \"" << wdata.topicName() <<"\"");
+    logInfo(RTPS_EDP, W->getGuid() << " in topic: \"" << wdata.topicName() << "\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
     for (ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
-            pit!=mp_PDP->ParticipantProxiesEnd(); ++pit)
+            pit != mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
         for (ReaderProxyData* rdatait : (*pit)->m_readers)
         {
@@ -975,7 +974,7 @@ bool EDP::pairingWriter(
                 {
                     logInfo(RTPS_EDP, "Valid Matching to readerProxy: " << reader_guid);
                     //MATCHED AND ADDED CORRECTLY:
-                    if (W->getListener()!=nullptr)
+                    if (W->getListener() != nullptr)
                     {
                         MatchingInfo info;
                         info.status = MATCHED_MATCHING;
@@ -999,7 +998,7 @@ bool EDP::pairingWriter(
                     mp_RTPSParticipant->security_manager().remove_reader(W->getGuid(), participant_guid, reader_guid);
 #endif
                     //MATCHED AND ADDED CORRECTLY:
-                    if (W->getListener()!=nullptr)
+                    if (W->getListener() != nullptr)
                     {
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
@@ -1026,11 +1025,11 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
 {
     (void)participant_guid;
 
-    logInfo(RTPS_EDP, rdata->guid() <<" in topic: \"" << rdata->topicName() <<"\"");
+    logInfo(RTPS_EDP, rdata->guid() << " in topic: \"" << rdata->topicName() << "\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for (std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
-            wit!=mp_RTPSParticipant->userWritersListEnd(); ++wit)
+            wit != mp_RTPSParticipant->userWritersListEnd(); ++wit)
     {
         (*wit)->getMutex().lock();
         GUID_t writerGUID = (*wit)->getGuid();
@@ -1053,7 +1052,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                 {
                     logInfo(RTPS_EDP, "Valid Matching to local writer: " << writerGUID.entityId);
                     //MATCHED AND ADDED CORRECTLY:
-                    if ((*wit)->getListener()!=nullptr)
+                    if ((*wit)->getListener() != nullptr)
                     {
                         MatchingInfo info;
                         info.status = MATCHED_MATCHING;
@@ -1077,7 +1076,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                         (*wit)->getGuid(), participant_guid, reader_guid);
 #endif
                     //MATCHED AND ADDED CORRECTLY:
-                    if ((*wit)->getListener()!=nullptr)
+                    if ((*wit)->getListener() != nullptr)
                     {
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
@@ -1102,11 +1101,11 @@ bool EDP::pairing_reader_proxy_with_local_writer(
         const GUID_t& remote_participant_guid,
         ReaderProxyData& rdata)
 {
-    logInfo(RTPS_EDP, rdata.guid() <<" in topic: \"" << rdata.topicName() <<"\"");
+    logInfo(RTPS_EDP, rdata.guid() << " in topic: \"" << rdata.topicName() << "\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for (std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
-            wit!=mp_RTPSParticipant->userWritersListEnd(); ++wit)
+            wit != mp_RTPSParticipant->userWritersListEnd(); ++wit)
     {
         (*wit)->getMutex().lock();
         GUID_t writerGUID = (*wit)->getGuid();
@@ -1135,7 +1134,7 @@ bool EDP::pairing_reader_proxy_with_local_writer(
                         mp_RTPSParticipant->security_manager().remove_reader((*wit)->getGuid(),
                                 remote_participant_guid, reader_guid);
                         //MATCHED AND ADDED CORRECTLY:
-                        if ((*wit)->getListener()!=nullptr)
+                        if ((*wit)->getListener() != nullptr)
                         {
                             MatchingInfo info;
                             info.status = REMOVED_MATCHING;
@@ -1161,7 +1160,7 @@ bool EDP::pairing_remote_reader_with_local_writer_after_security(
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for (std::vector<RTPSWriter*>::iterator wit = mp_RTPSParticipant->userWritersListBegin();
-            wit!=mp_RTPSParticipant->userWritersListEnd(); ++wit)
+            wit != mp_RTPSParticipant->userWritersListEnd(); ++wit)
     {
         (*wit)->getMutex().lock();
         GUID_t writerGUID = (*wit)->getGuid();
@@ -1174,7 +1173,7 @@ bool EDP::pairing_remote_reader_with_local_writer_after_security(
             {
                 logInfo(RTPS_EDP, "Valid Matching to local writer: " << writerGUID.entityId);
                 //MATCHED AND ADDED CORRECTLY:
-                if ((*wit)->getListener()!=nullptr)
+                if ((*wit)->getListener() != nullptr)
                 {
                     MatchingInfo info;
                     info.status = MATCHED_MATCHING;
@@ -1196,6 +1195,7 @@ bool EDP::pairing_remote_reader_with_local_writer_after_security(
 
     return pairing_remote_reader_with_local_builtin_writer_after_security(local_writer, remote_reader_data);
 }
+
 #endif
 
 bool EDP::pairing_writer_proxy_with_any_local_reader(
@@ -1204,11 +1204,11 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
 {
     (void)participant_guid;
 
-    logInfo(RTPS_EDP, wdata->guid() <<" in topic: \"" << wdata->topicName() <<"\"");
+    logInfo(RTPS_EDP, wdata->guid() << " in topic: \"" << wdata->topicName() << "\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for (std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
-            rit!=mp_RTPSParticipant->userReadersListEnd(); ++rit)
+            rit != mp_RTPSParticipant->userReadersListEnd(); ++rit)
     {
         GUID_t readerGUID;
         (*rit)->getMutex().lock();
@@ -1232,7 +1232,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                 {
                     logInfo(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId);
                     //MATCHED AND ADDED CORRECTLY:
-                    if ((*rit)->getListener()!=nullptr)
+                    if ((*rit)->getListener() != nullptr)
                     {
                         MatchingInfo info;
                         info.status = MATCHED_MATCHING;
@@ -1256,7 +1256,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                     mp_RTPSParticipant->security_manager().remove_writer(readerGUID, participant_guid, writer_guid);
 #endif
                     //MATCHED AND ADDED CORRECTLY:
-                    if ((*rit)->getListener()!=nullptr)
+                    if ((*rit)->getListener() != nullptr)
                     {
                         MatchingInfo info;
                         info.status = REMOVED_MATCHING;
@@ -1280,11 +1280,11 @@ bool EDP::pairing_writer_proxy_with_local_reader(
         const GUID_t& remote_participant_guid,
         WriterProxyData& wdata)
 {
-    logInfo(RTPS_EDP, wdata.guid() <<" in topic: \"" << wdata.topicName() <<"\"");
+    logInfo(RTPS_EDP, wdata.guid() << " in topic: \"" << wdata.topicName() << "\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for (std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
-            rit!=mp_RTPSParticipant->userReadersListEnd(); ++rit)
+            rit != mp_RTPSParticipant->userReadersListEnd(); ++rit)
     {
         GUID_t readerGUID;
         (*rit)->getMutex().lock();
@@ -1314,7 +1314,7 @@ bool EDP::pairing_writer_proxy_with_local_reader(
                         mp_RTPSParticipant->security_manager().remove_writer(readerGUID,
                                 remote_participant_guid, writer_guid);
                         //MATCHED AND ADDED CORRECTLY:
-                        if ((*rit)->getListener()!=nullptr)
+                        if ((*rit)->getListener() != nullptr)
                         {
                             MatchingInfo info;
                             info.status = REMOVED_MATCHING;
@@ -1339,7 +1339,7 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_RTPSParticipant->getParticipantMutex());
     for (std::vector<RTPSReader*>::iterator rit = mp_RTPSParticipant->userReadersListBegin();
-            rit!=mp_RTPSParticipant->userReadersListEnd(); ++rit)
+            rit != mp_RTPSParticipant->userReadersListEnd(); ++rit)
     {
         GUID_t readerGUID;
         (*rit)->getMutex().lock();
@@ -1354,7 +1354,7 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
             {
                 logInfo(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId);
                 //MATCHED AND ADDED CORRECTLY:
-                if ((*rit)->getListener()!=nullptr)
+                if ((*rit)->getListener() != nullptr)
                 {
                     MatchingInfo info;
                     info.status = MATCHED_MATCHING;
@@ -1376,6 +1376,7 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
 
     return pairing_remote_writer_with_local_builtin_reader_after_security(local_reader, remote_writer_data);
 }
+
 #endif
 
 bool EDP::checkTypeIdentifier(

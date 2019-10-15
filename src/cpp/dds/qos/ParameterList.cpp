@@ -415,9 +415,9 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                         return false;
                     }
                     length_diff += 4;
-                    p.dataVec.resize(vec_size);
+                    p.data_vec_.resize(vec_size);
                     pos_ref = msg.pos;
-                    valid &= CDRMessage::readData(&msg, p.dataVec.data(), vec_size);
+                    valid &= CDRMessage::readData(&msg, p.data_vec_.data(), vec_size);
                     if (valid)
                     {
                         msg.pos += (plength - 4 - vec_size);
@@ -479,7 +479,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                             return false;
                         }
 
-                        p.names.push_back(auxstr);
+                        p.names_.push_back(auxstr);
                     }
 
                     IF_VALID_CALL

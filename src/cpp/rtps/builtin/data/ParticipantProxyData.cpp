@@ -212,17 +212,17 @@ bool ParticipantProxyData::writeToCDRMessage(
         }
     }
 
-    if (this->m_userData.size()>0)
+    if (this->m_userData.size() > 0)
     {
         UserDataQosPolicy p;
-        p.setDataVec(m_userData);
+        p.data_vec(m_userData);
         if (!p.addToCDRMessage(msg))
         {
             return false;
         }
     }
 
-    if (this->m_properties.properties.size()>0)
+    if (this->m_properties.properties.size() > 0)
     {
         ParameterPropertyList_t p(m_properties);
         if (!p.addToCDRMessage(msg))
@@ -399,7 +399,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                     {
                         const UserDataQosPolicy* p = dynamic_cast<const UserDataQosPolicy*>(param);
                         assert(p != nullptr);
-                        this->m_userData = p->getDataVec();
+                        this->m_userData = p->data_vec();
                         break;
                     }
                     case fastdds::dds::PID_IDENTITY_TOKEN:
@@ -448,7 +448,6 @@ bool ParticipantProxyData::readFromCDRMessage(
     clear();
     return ParameterList::readParameterListfromCDRMsg(*msg, param_process, use_encapsulation, qos_size);
 }
-
 
 void ParticipantProxyData::clear()
 {

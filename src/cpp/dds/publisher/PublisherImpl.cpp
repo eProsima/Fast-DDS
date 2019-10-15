@@ -130,7 +130,7 @@ void PublisherImpl::PublisherWriterListener::on_publication_matched(
 
 void PublisherImpl::PublisherWriterListener::on_liveliness_lost(
         DataWriter* /*writer*/,
-        const LivelinessLostStatus &status)
+        const LivelinessLostStatus& status)
 {
     if (publisher_->listener_ != nullptr)
     {
@@ -140,7 +140,7 @@ void PublisherImpl::PublisherWriterListener::on_liveliness_lost(
 
 void PublisherImpl::PublisherWriterListener::on_offered_deadline_missed(
         DataWriter* /*writer*/,
-        const fastrtps::OfferedDeadlineMissedStatus &status)
+        const fastrtps::OfferedDeadlineMissedStatus& status)
 {
     if (publisher_->listener_ != nullptr)
     {
@@ -161,7 +161,7 @@ DataWriter* PublisherImpl::create_datawriter(
     // Check the type was registered.
     if (type_support.empty())
     {
-        logError(PUBLISHER, "Type: "<< topic_att.getTopicDataType() << " Not Registered");
+        logError(PUBLISHER, "Type: " << topic_att.getTopicDataType() << " Not Registered");
         return nullptr;
     }
 
@@ -211,11 +211,11 @@ DataWriter* PublisherImpl::create_datawriter(
     property.value(topic_att.getTopicName().c_str());
     w_att.endpoint.properties.properties().push_back(std::move(property));
 
-    if (writer_qos.m_partition.getNames().size() > 0)
+    if (writer_qos.m_partition.names().size() > 0)
     {
         property.name("partitions");
         std::string partitions;
-        for(auto partition : writer_qos.m_partition.getNames())
+        for (auto partition : writer_qos.m_partition.names())
         {
             partitions += partition + ";";
         }
@@ -224,7 +224,7 @@ DataWriter* PublisherImpl::create_datawriter(
     }
 
     if (writer_qos.m_disablePositiveACKs.enabled &&
-        writer_qos.m_disablePositiveACKs.duration != c_TimeInfinite)
+            writer_qos.m_disablePositiveACKs.duration != c_TimeInfinite)
     {
         w_att.disable_positive_acks = true;
         w_att.keep_duration = writer_qos.m_disablePositiveACKs.duration;
@@ -336,36 +336,36 @@ bool PublisherImpl::contains_entity(
 }
 
 /* TODO
-bool PublisherImpl::suspend_publications()
-{
+   bool PublisherImpl::suspend_publications()
+   {
     logError(PUBLISHER, "Operation not implemented");
     return false;
-}
-*/
+   }
+ */
 
 /* TODO
-bool PublisherImpl::resume_publications()
-{
+   bool PublisherImpl::resume_publications()
+   {
     logError(PUBLISHER, "Operation not implemented");
     return false;
-}
-*/
+   }
+ */
 
 /* TODO
-bool PublisherImpl::begin_coherent_changes()
-{
+   bool PublisherImpl::begin_coherent_changes()
+   {
     logError(PUBLISHER, "Operation not implemented");
     return false;
-}
-*/
+   }
+ */
 
 /* TODO
-bool PublisherImpl::end_coherent_changes()
-{
+   bool PublisherImpl::end_coherent_changes()
+   {
     logError(PUBLISHER, "Operation not implemented");
     return false;
-}
-*/
+   }
+ */
 
 
 ReturnCode_t PublisherImpl::set_default_datawriter_qos(
@@ -390,14 +390,14 @@ const fastrtps::WriterQos& PublisherImpl::get_default_datawriter_qos() const
 }
 
 /* TODO
-bool PublisherImpl::copy_from_topic_qos(
+   bool PublisherImpl::copy_from_topic_qos(
         fastrtps::WriterQos&,
         const fastrtps::TopicAttributes&) const
-{
+   {
     logError(PUBLISHER, "Operation not implemented");
     return false;
-}
-*/
+   }
+ */
 
 ReturnCode_t PublisherImpl::wait_for_acknowledgments(
         const Duration_t& max_wait)
@@ -437,12 +437,12 @@ const Publisher* PublisherImpl::get_publisher() const
 }
 
 /* TODO
-bool PublisherImpl::delete_contained_entities()
-{
+   bool PublisherImpl::delete_contained_entities()
+   {
     logError(PUBLISHER, "Operation not implemented");
     return false;
-}
-*/
+   }
+ */
 
 const fastrtps::PublisherAttributes& PublisherImpl::get_attributes() const
 {
@@ -457,19 +457,19 @@ bool PublisherImpl::set_attributes(
     if (att_.qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
     {
         if (att.unicastLocatorList.size() != att_.unicastLocatorList.size() ||
-            att.multicastLocatorList.size() != att_.multicastLocatorList.size())
+                att.multicastLocatorList.size() != att_.multicastLocatorList.size())
         {
-            logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
+            logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
             updated &= false;
         }
         else
         {
-            for(LocatorListConstIterator lit1 = att_.unicastLocatorList.begin();
-                 lit1!=att_.unicastLocatorList.end();++lit1)
+            for (LocatorListConstIterator lit1 = att_.unicastLocatorList.begin();
+                    lit1 != att_.unicastLocatorList.end(); ++lit1)
             {
                 missing = true;
-                for(LocatorListConstIterator lit2 = att.unicastLocatorList.begin();
-                     lit2!= att.unicastLocatorList.end();++lit2)
+                for (LocatorListConstIterator lit2 = att.unicastLocatorList.begin();
+                        lit2 != att.unicastLocatorList.end(); ++lit2)
                 {
                     if (*lit1 == *lit2)
                     {
@@ -479,16 +479,16 @@ bool PublisherImpl::set_attributes(
                 }
                 if (missing)
                 {
-                    logWarning(PUBLISHER,"Locator: "<< *lit1 << " not present in new list");
-                    logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
+                    logWarning(PUBLISHER, "Locator: " << *lit1 << " not present in new list");
+                    logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
                 }
             }
-            for(LocatorListConstIterator lit1 = att_.multicastLocatorList.begin();
-                 lit1!=att_.multicastLocatorList.end();++lit1)
+            for (LocatorListConstIterator lit1 = att_.multicastLocatorList.begin();
+                    lit1 != att_.multicastLocatorList.end(); ++lit1)
             {
                 missing = true;
-                for(LocatorListConstIterator lit2 = att.multicastLocatorList.begin();
-                     lit2!= att.multicastLocatorList.end();++lit2)
+                for (LocatorListConstIterator lit2 = att.multicastLocatorList.begin();
+                        lit2 != att.multicastLocatorList.end(); ++lit2)
                 {
                     if (*lit1 == *lit2)
                     {
@@ -498,8 +498,8 @@ bool PublisherImpl::set_attributes(
                 }
                 if (missing)
                 {
-                    logWarning(PUBLISHER,"Locator: "<< *lit1<< " not present in new list");
-                    logWarning(PUBLISHER,"Locator Lists cannot be changed or updated in this version");
+                    logWarning(PUBLISHER, "Locator: " << *lit1 << " not present in new list");
+                    logWarning(PUBLISHER, "Locator Lists cannot be changed or updated in this version");
                 }
             }
         }

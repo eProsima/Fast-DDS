@@ -92,7 +92,7 @@ const SubscriberQos& SubscriberImpl::get_qos() const
 ReturnCode_t SubscriberImpl::set_qos(
         const SubscriberQos& qos)
 {
-     if (!qos.check_qos())
+    if (!qos.check_qos())
     {
         if (!qos_.can_qos_be_updated(qos))
         {
@@ -116,7 +116,6 @@ ReturnCode_t SubscriberImpl::set_listener(
     return ReturnCode_t::RETCODE_OK;
 }
 
-
 DataReader* SubscriberImpl::create_datareader(
         const fastrtps::TopicAttributes& topic_att,
         const fastrtps::ReaderQos& reader_qos,
@@ -130,7 +129,7 @@ DataReader* SubscriberImpl::create_datareader(
     // Check the type was registered.
     if (type_support.empty())
     {
-        logError(SUBSCRIBER, "Type : "<< topic_att.getTopicDataType() << " Not Registered");
+        logError(SUBSCRIBER, "Type : " << topic_att.getTopicDataType() << " Not Registered");
         return nullptr;
     }
     if (topic_att.topicKind == WITH_KEY && !type_support->m_isGetKeyDefined)
@@ -155,12 +154,12 @@ DataReader* SubscriberImpl::create_datareader(
     ratt.expectsInlineQos = att_.expectsInlineQos;
     ratt.endpoint.properties = att_.properties;
 
-    if (att_.getEntityID()>0)
+    if (att_.getEntityID() > 0)
     {
         ratt.endpoint.setEntityID(static_cast<uint8_t>(att_.getEntityID()));
     }
 
-    if (att_.getUserDefinedID()>0)
+    if (att_.getUserDefinedID() > 0)
     {
         ratt.endpoint.setUserDefinedID(static_cast<uint8_t>(att_.getUserDefinedID()));
     }
@@ -173,11 +172,11 @@ DataReader* SubscriberImpl::create_datareader(
     property.name("topic_name");
     property.value(topic_att.getTopicName().c_str());
     ratt.endpoint.properties.properties().push_back(std::move(property));
-    if (reader_qos.m_partition.getNames().size() > 0)
+    if (reader_qos.m_partition.names().size() > 0)
     {
         property.name("partitions");
         std::string partitions;
-        for(auto partition : reader_qos.m_partition.getNames())
+        for (auto partition : reader_qos.m_partition.names())
         {
             partitions += partition + ";";
         }
@@ -276,20 +275,20 @@ bool SubscriberImpl::has_datareaders() const
 }
 
 /* TODO
-bool SubscriberImpl::begin_access()
-{
+   bool SubscriberImpl::begin_access()
+   {
     logError(PUBLISHER, "Operation not implemented");
     return false;
-}
-*/
+   }
+ */
 
 /* TODO
-bool SubscriberImpl::end_access()
-{
+   bool SubscriberImpl::end_access()
+   {
     logError(PUBLISHER, "Operation not implemented");
     return false;
-}
-*/
+   }
+ */
 
 ReturnCode_t SubscriberImpl::notify_datareaders() const
 {
@@ -304,12 +303,12 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
 }
 
 /* TODO
-bool SubscriberImpl::delete_contained_entities()
-{
+   bool SubscriberImpl::delete_contained_entities()
+   {
     logError(PUBLISHER, "Operation not implemented");
     return false;
-}
-*/
+   }
+ */
 
 ReturnCode_t SubscriberImpl::set_default_datareader_qos(
         const fastrtps::ReaderQos& qos)
@@ -351,14 +350,14 @@ bool SubscriberImpl::contains_entity(
 }
 
 /* TODO
-bool SubscriberImpl::copy_from_topic_qos(
+   bool SubscriberImpl::copy_from_topic_qos(
         fastrtps::ReaderQos&,
         const fastrtps::TopicAttributes&) const
-{
+   {
     logError(PUBLISHER, "Operation not implemented");
     return false;
-}
-*/
+   }
+ */
 
 bool SubscriberImpl::set_attributes(
         const fastrtps::SubscriberAttributes& att)
@@ -368,17 +367,17 @@ bool SubscriberImpl::set_attributes(
     if (att.unicastLocatorList.size() != att_.unicastLocatorList.size() ||
             att.multicastLocatorList.size() != att_.multicastLocatorList.size())
     {
-        logWarning(RTPS_READER,"Locator Lists cannot be changed or updated in this version");
+        logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
         updated &= false;
     }
     else
     {
-        for(LocatorListConstIterator lit1 = att_.unicastLocatorList.begin();
-                lit1!=att_.unicastLocatorList.end();++lit1)
+        for (LocatorListConstIterator lit1 = att_.unicastLocatorList.begin();
+                lit1 != att_.unicastLocatorList.end(); ++lit1)
         {
             missing = true;
-            for(LocatorListConstIterator lit2 = att.unicastLocatorList.begin();
-                    lit2!= att.unicastLocatorList.end();++lit2)
+            for (LocatorListConstIterator lit2 = att.unicastLocatorList.begin();
+                    lit2 != att.unicastLocatorList.end(); ++lit2)
             {
                 if (*lit1 == *lit2)
                 {
@@ -388,16 +387,16 @@ bool SubscriberImpl::set_attributes(
             }
             if (missing)
             {
-                logWarning(RTPS_READER,"Locator: "<< *lit1 << " not present in new list");
-                logWarning(RTPS_READER,"Locator Lists cannot be changed or updated in this version");
+                logWarning(RTPS_READER, "Locator: " << *lit1 << " not present in new list");
+                logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
             }
         }
-        for(LocatorListConstIterator lit1 = att_.multicastLocatorList.begin();
-                lit1!=att_.multicastLocatorList.end();++lit1)
+        for (LocatorListConstIterator lit1 = att_.multicastLocatorList.begin();
+                lit1 != att_.multicastLocatorList.end(); ++lit1)
         {
             missing = true;
-            for(LocatorListConstIterator lit2 = att.multicastLocatorList.begin();
-                    lit2!= att.multicastLocatorList.end();++lit2)
+            for (LocatorListConstIterator lit2 = att.multicastLocatorList.begin();
+                    lit2 != att.multicastLocatorList.end(); ++lit2)
             {
                 if (*lit1 == *lit2)
                 {
@@ -407,8 +406,8 @@ bool SubscriberImpl::set_attributes(
             }
             if (missing)
             {
-                logWarning(RTPS_READER,"Locator: "<< *lit1<< " not present in new list");
-                logWarning(RTPS_READER,"Locator Lists cannot be changed or updated in this version");
+                logWarning(RTPS_READER, "Locator: " << *lit1 << " not present in new list");
+                logWarning(RTPS_READER, "Locator Lists cannot be changed or updated in this version");
             }
         }
     }
@@ -470,11 +469,11 @@ void SubscriberImpl::SubscriberReaderListener::on_sample_rejected(
         const fastrtps::SampleRejectedStatus& /*status*/)
 {
     /* TODO
-    if (subscriber_->listener_ != nullptr)
-    {
+       if (subscriber_->listener_ != nullptr)
+       {
         subscriber_->listener_->on_sample_rejected(subscriber_->user_subscriber_, status);
-    }
-    */
+       }
+     */
 }
 
 void SubscriberImpl::SubscriberReaderListener::on_requested_incompatible_qos(
@@ -482,11 +481,11 @@ void SubscriberImpl::SubscriberReaderListener::on_requested_incompatible_qos(
         const RequestedIncompatibleQosStatus& /*status*/)
 {
     /* TODO
-    if (subscriber_->listener_ != nullptr)
-    {
+       if (subscriber_->listener_ != nullptr)
+       {
         subscriber_->listener_->on_requested_incompatible_qos(subscriber_->user_subscriber_, status);
-    }
-    */
+       }
+     */
 }
 
 void SubscriberImpl::SubscriberReaderListener::on_sample_lost(
@@ -494,11 +493,11 @@ void SubscriberImpl::SubscriberReaderListener::on_sample_lost(
         const SampleLostStatus& /*status*/)
 {
     /* TODO
-    if (subscriber_->listener_ != nullptr)
-    {
+       if (subscriber_->listener_ != nullptr)
+       {
         subscriber_->listener_->on_sample_rejected(subscriber_->user_subscriber_, status);
-    }
-    */
+       }
+     */
 }
 
 const InstanceHandle_t& SubscriberImpl::get_instance_handle() const
