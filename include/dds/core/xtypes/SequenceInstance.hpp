@@ -68,6 +68,11 @@ public:
     bool operator == (
             const SequenceInstance& other) const
     {
+        if(other.size() != size_)
+        {
+            return false;
+        }
+
         if(content_.is_constructed_type())
         {
             bool comp = true;
