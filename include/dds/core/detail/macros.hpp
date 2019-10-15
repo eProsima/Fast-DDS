@@ -18,6 +18,8 @@
 #ifndef EPROSIMA_DDS_CORE_DETAIL_MACROS_HPP_
 #define EPROSIMA_DDS_CORE_DETAIL_MACROS_HPP_
 
+#include <fastrtps/fastrtps_dll.h>
+
 #include <iostream>
 
 // Constants
@@ -35,12 +37,7 @@
 // ==========================================================================
 
 
-// DLL Export Macros
-#ifdef _WIN32 // This is defined for 32/64 bit Windows
-#define OMG_DDS_API_DETAIL __declspec(dllexport)
-#else
-#define OMG_DDS_API_DETAIL
-#endif
+#define OMG_DDS_API_DETAIL RTPS_DllAPI
 // ==========================================================================
 
 

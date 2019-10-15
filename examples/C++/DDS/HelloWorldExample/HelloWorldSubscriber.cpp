@@ -104,7 +104,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(
 {
     if (reader->take_next_sample(&hello_, &info_))
     {
-        if (info_.sampleKind == eprosima::fastrtps::rtps::ALIVE)
+        if (info_.instance_state == ::dds::sub::status::InstanceState::alive())
         {
             samples_++;
             // Print your structure data here.
