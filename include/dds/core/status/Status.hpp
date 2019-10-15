@@ -27,6 +27,8 @@
 #include <dds/core/InstanceHandle.hpp>
 #include <dds/core/policy/CorePolicy.hpp>
 
+#include <cstdint>
+
 namespace dds {
 namespace core {
 namespace status {

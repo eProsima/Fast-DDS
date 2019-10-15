@@ -19,6 +19,8 @@
 #ifndef _FASTDDS_TOPIC_DESCRIPTION_HPP_
 #define _FASTDDS_TOPIC_DESCRIPTION_HPP_
 
+#include <fastrtps/fastrtps_dll.h>
+
 #include <string>
 
 namespace eprosima {
@@ -32,7 +34,7 @@ class DomainParticipant;
  * and subscriptions are tied to a single data-type
  * @ingroup FASTDDS_MODULE
  */
-class TopicDescription
+class RTPS_DllAPI TopicDescription
 {
 protected:
     TopicDescription(
