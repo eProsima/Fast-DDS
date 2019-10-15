@@ -602,14 +602,14 @@ bool EDP::validMatching(
 
     //Partition check:
     bool matched = false;
-    if (wdata->m_qos.m_partition.names().empty() && rdata->m_qos.m_partition.names().empty())
+    if (wdata->m_qos.m_partition.names_.empty() && rdata->m_qos.m_partition.names_.empty())
     {
         matched = true;
     }
-    else if (wdata->m_qos.m_partition.names().empty() && rdata->m_qos.m_partition.names().size() > 0)
+    else if (wdata->m_qos.m_partition.names_.empty() && rdata->m_qos.m_partition.names_.size() > 0)
     {
-        for (std::vector<std::string>::const_iterator rnameit = rdata->m_qos.m_partition.names().begin();
-                rnameit != rdata->m_qos.m_partition.names().end(); ++rnameit)
+        for (std::vector<std::string>::const_iterator rnameit = rdata->m_qos.m_partition.names_.begin();
+                rnameit != rdata->m_qos.m_partition.names_.end(); ++rnameit)
         {
             if (rnameit->size() == 0)
             {
@@ -618,10 +618,10 @@ bool EDP::validMatching(
             }
         }
     }
-    else if (wdata->m_qos.m_partition.names().size() > 0 && rdata->m_qos.m_partition.names().empty() )
+    else if (wdata->m_qos.m_partition.names_.size() > 0 && rdata->m_qos.m_partition.names_.empty() )
     {
-        for (std::vector<std::string>::const_iterator wnameit = wdata->m_qos.m_partition.names().begin();
-                wnameit !=  wdata->m_qos.m_partition.names().end(); ++wnameit)
+        for (std::vector<std::string>::const_iterator wnameit = wdata->m_qos.m_partition.names_.begin();
+                wnameit !=  wdata->m_qos.m_partition.names_.end(); ++wnameit)
         {
             if (wnameit->size() == 0)
             {
@@ -632,11 +632,11 @@ bool EDP::validMatching(
     }
     else
     {
-        for (std::vector<std::string>::const_iterator wnameit = wdata->m_qos.m_partition.names().begin();
-                wnameit !=  wdata->m_qos.m_partition.names().end(); ++wnameit)
+        for (std::vector<std::string>::const_iterator wnameit = wdata->m_qos.m_partition.names_.begin();
+                wnameit !=  wdata->m_qos.m_partition.names_.end(); ++wnameit)
         {
-            for (std::vector<std::string>::const_iterator rnameit = rdata->m_qos.m_partition.names().begin();
-                    rnameit != rdata->m_qos.m_partition.names().end(); ++rnameit)
+            for (std::vector<std::string>::const_iterator rnameit = rdata->m_qos.m_partition.names_.begin();
+                    rnameit != rdata->m_qos.m_partition.names_.end(); ++rnameit)
             {
                 if (StringMatching::matchString(wnameit->c_str(), rnameit->c_str()))
                 {
@@ -801,14 +801,14 @@ bool EDP::validMatching(
 
     //Partition check:
     bool matched = false;
-    if (rdata->m_qos.m_partition.names().empty() && wdata->m_qos.m_partition.names().empty())
+    if (rdata->m_qos.m_partition.names_.empty() && wdata->m_qos.m_partition.names_.empty())
     {
         matched = true;
     }
-    else if (rdata->m_qos.m_partition.names().empty() && wdata->m_qos.m_partition.names().size() > 0)
+    else if (rdata->m_qos.m_partition.names_.empty() && wdata->m_qos.m_partition.names_.size() > 0)
     {
-        for (std::vector<std::string>::const_iterator rnameit = wdata->m_qos.m_partition.names().begin();
-                rnameit != wdata->m_qos.m_partition.names().end(); ++rnameit)
+        for (std::vector<std::string>::const_iterator rnameit = wdata->m_qos.m_partition.names_.begin();
+                rnameit != wdata->m_qos.m_partition.names_.end(); ++rnameit)
         {
             if (rnameit->size() == 0)
             {
@@ -817,10 +817,10 @@ bool EDP::validMatching(
             }
         }
     }
-    else if (rdata->m_qos.m_partition.names().size() > 0 && wdata->m_qos.m_partition.names().empty() )
+    else if (rdata->m_qos.m_partition.names_.size() > 0 && wdata->m_qos.m_partition.names_.empty() )
     {
-        for (std::vector<std::string>::const_iterator wnameit = rdata->m_qos.m_partition.names().begin();
-                wnameit !=  rdata->m_qos.m_partition.names().end(); ++wnameit)
+        for (std::vector<std::string>::const_iterator wnameit = rdata->m_qos.m_partition.names_.begin();
+                wnameit !=  rdata->m_qos.m_partition.names_.end(); ++wnameit)
         {
             if (wnameit->size() == 0)
             {
@@ -831,11 +831,11 @@ bool EDP::validMatching(
     }
     else
     {
-        for (std::vector<std::string>::const_iterator wnameit = rdata->m_qos.m_partition.names().begin();
-                wnameit !=  rdata->m_qos.m_partition.names().end(); ++wnameit)
+        for (std::vector<std::string>::const_iterator wnameit = rdata->m_qos.m_partition.names_.begin();
+                wnameit !=  rdata->m_qos.m_partition.names_.end(); ++wnameit)
         {
-            for (std::vector<std::string>::const_iterator rnameit = wdata->m_qos.m_partition.names().begin();
-                    rnameit != wdata->m_qos.m_partition.names().end(); ++rnameit)
+            for (std::vector<std::string>::const_iterator rnameit = wdata->m_qos.m_partition.names_.begin();
+                    rnameit != wdata->m_qos.m_partition.names_.end(); ++rnameit)
             {
                 if (StringMatching::matchString(wnameit->c_str(), rnameit->c_str()))
                 {
