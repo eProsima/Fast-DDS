@@ -57,7 +57,7 @@ enum ChangeFragmentStatus_t
 struct RTPS_DllAPI CacheChange_t
 {
     //!Kind of change, default value ALIVE.
-    ChangeKind_t kind;
+    ChangeKind_t kind = ALIVE;
     //!GUID_t of the writer that generated this change.
     GUID_t writerGUID;
     //!Handle of the data associated wiht this change.
@@ -67,23 +67,18 @@ struct RTPS_DllAPI CacheChange_t
     //!Serialized Payload associated with the change.
     SerializedPayload_t serializedPayload;
     //!Indicates if the cache has been read (only used in READERS)
-    bool isRead;
+    bool isRead = false;
     //!Source TimeStamp (only used in Readers)
     Time_t sourceTimestamp;
 
     WriteParams write_params;
-    bool is_untyped_;
+    bool is_untyped_ = true;;
 
     /*!
      * @brief Default constructor.
      * Creates an empty CacheChange_t.
      */
     CacheChange_t()
-        : kind(ALIVE)
-        , isRead(false)
-        , is_untyped_(true)
-        , dataFragments_(nullptr)
-        , fragment_size_(0)
     {
     }
 
@@ -101,12 +96,8 @@ struct RTPS_DllAPI CacheChange_t
     CacheChange_t(
             uint32_t payload_size,
             bool is_untyped = false)
-        : kind(ALIVE)
-        , serializedPayload(payload_size)
-        , isRead(false)
+        : serializedPayload(payload_size)
         , is_untyped_(is_untyped)
-        , dataFragments_(nullptr)
-        , fragment_size_(0)
     {
     }
 
@@ -210,13 +201,13 @@ struct RTPS_DllAPI CacheChange_t
 private:
 
     // Data fragments
-    std::vector<uint32_t>* dataFragments_;
+    std::vector<uint32_t>* dataFragments_ = nullptr;
 
     // Fragment size
-    uint16_t fragment_size_;
+    uint16_t fragment_size_ = 0;
 
     // Number of fragments
-    uint32_t fragment_count_;
+    uint32_t fragment_count_ = 0;
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
