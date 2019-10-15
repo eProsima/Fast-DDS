@@ -138,7 +138,7 @@ public:
         {
             return reinterpret_cast<SequenceInstance*>(instance)->push(value);
         }
-        return nullptr;;
+        return nullptr;
     }
 
 protected:

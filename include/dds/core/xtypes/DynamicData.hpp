@@ -73,14 +73,16 @@ public:
             const std::string& member_name) const // this = StructType
     {
         assert(type_.kind() == TypeKind::STRUCTURE_TYPE);
-        const StructMember& member = static_cast<const StructType&>(type_).member(member_name);
+        const StructType& structure = static_cast<const StructType&>(type_);
+        assert(structure.has_member(member_name));
+        const StructMember& member = structure.member(member_name);
         return ReadableDynamicDataRef(member.type(), instance_ + member.offset());
     }
 
     ReadableDynamicDataRef operator [] (
             size_t index) const // this = CollectionType
     {
-        assert(type_.is_collection_type());
+        assert(type_.is_collection_type() && index < size());
         const CollectionType& collection = static_cast<const CollectionType&>(type_);
         return ReadableDynamicDataRef(collection.content_type(), collection.get_instance_at(instance_, index));
     }

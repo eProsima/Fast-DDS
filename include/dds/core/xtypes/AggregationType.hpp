@@ -35,7 +35,8 @@ class AggregationType : public DynamicType
 public:
     size_t member_count() const { return members_.size(); }
     const std::map<std::string, MemberImpl>& member_map() const { return members_; }
-    const  MemberImpl& member(const std::string& name) const { return members_.at(name); }
+    const MemberImpl& member(const std::string& name) const { return members_.at(name); }
+    bool has_member(const std::string& name) const { return members_.count(name) != 0; }
 
 protected:
     AggregationType(
