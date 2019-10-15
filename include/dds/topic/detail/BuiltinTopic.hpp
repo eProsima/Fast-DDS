@@ -21,8 +21,7 @@
 #include <dds/topic/Topic.hpp>
 //#include <dds/topic/detail/TTopicImpl.hpp>
 //#include <dds/topic/detail/TBuiltinTopicImpl.hpp>
-//#include <org/opensplice/topic/BuiltinTopicDelegate.hpp>
-//#include <org/opensplice/topic/BuiltinTopic.hpp>
+#include <fastdds/dds/topic/ParticipantBuiltinTopicData.hpp>
 
 /**
  * @cond
@@ -33,8 +32,7 @@ namespace dds {
 namespace topic {
 namespace detail {
 
-//typedef dds::topic::TParticipantBuiltinTopicData<org::opensplice::topic::ParticipantBuiltinTopicDataDelegate> ParticipantBuiltinTopicData;
-class ParticipantBuiltinTopicData { };
+using ParticipantBuiltinTopicData = eprosima::fastdds::dds::ParticipantBuiltinTopicData;
 
 //typedef dds::topic::TTopicBuiltinTopicData<org::opensplice::topic::TopicBuiltinTopicDataDelegate> TopicBuiltinTopicData;
 class TopicBuiltinTopicData { };
