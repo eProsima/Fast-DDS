@@ -57,12 +57,12 @@ bool TypeLookupSubscriber::init()
     }
 
     // CREATE THE COMMON READER ATTRIBUTES
-    qos_.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    qos_.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    qos_.m_durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    qos_.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     topic_.topicKind = NO_KEY;
     topic_.topicDataType = "TypeLookup";
     topic_.topicName = "TypeLookupTopic";
-    topic_.historyQos.kind = KEEP_LAST_HISTORY_QOS;
+    topic_.historyQos.kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
     topic_.historyQos.depth = 30;
     topic_.resourceLimitsQos.max_samples = 50;
     topic_.resourceLimitsQos.allocated_samples = 20;
