@@ -92,7 +92,6 @@ struct RTPS_DllAPI CacheChange_t
      * @param payload_size Serialized payload size
      * @param is_untyped Flag to mark the change as untyped.
      */
-    // TODO Check pass uint32_t to serializedPayload that needs int16_t.
     CacheChange_t(
             uint32_t payload_size,
             bool is_untyped = false)
@@ -115,18 +114,12 @@ struct RTPS_DllAPI CacheChange_t
         sequenceNumber = ch_ptr->sequenceNumber;
         sourceTimestamp = ch_ptr->sourceTimestamp;
         write_params = ch_ptr->write_params;
-
-        bool ret = serializedPayload.copy(&ch_ptr->serializedPayload, (ch_ptr->is_untyped_ ? false : true));
-
-        setFragmentSize(ch_ptr->fragment_size_, ch_ptr->dataFragments_ != nullptr);
-        if (ch_ptr->dataFragments_ != nullptr)
-        {
-            dataFragments_->assign(ch_ptr->dataFragments_->begin(), ch_ptr->dataFragments_->end());
-        }
-
         isRead = ch_ptr->isRead;
+        fragment_size_ = ch_ptr->fragment_size_;
+        fragment_count_ = ch_ptr->fragment_count_;
+        first_missing_fragment_ = ch_ptr->first_missing_fragment_;
 
-        return ret;
+        return serializedPayload.copy(&ch_ptr->serializedPayload, (ch_ptr->is_untyped_ ? false : true));
     }
 
     void copy_not_memcpy(
@@ -138,26 +131,16 @@ struct RTPS_DllAPI CacheChange_t
         sequenceNumber = ch_ptr->sequenceNumber;
         sourceTimestamp = ch_ptr->sourceTimestamp;
         write_params = ch_ptr->write_params;
+        isRead = ch_ptr->isRead;
 
         // Copy certain values from serializedPayload
         serializedPayload.encapsulation = ch_ptr->serializedPayload.encapsulation;
 
-        setFragmentSize(ch_ptr->fragment_size_, ch_ptr->dataFragments_ != nullptr);
-        if (ch_ptr->dataFragments_ != nullptr)
-        {
-            dataFragments_->assign(ch_ptr->dataFragments_->begin(), ch_ptr->dataFragments_->end());
-        }
-
-        isRead = ch_ptr->isRead;
+        setFragmentSize(ch_ptr->fragment_size_, true);
     }
 
     ~CacheChange_t()
     {
-        if (dataFragments_ != nullptr)
-        {
-            delete dataFragments_;
-            dataFragments_ = nullptr;
-        }
     }
 
     uint32_t getFragmentCount() const
@@ -173,27 +156,53 @@ struct RTPS_DllAPI CacheChange_t
             uint16_t fragment_size,
             bool set_fragment_state = false)
     {
-        this->fragment_size_ = fragment_size;
-        this->fragment_count_ = 0;
+        fragment_size_ = fragment_size;
+        fragment_count_ = 0;
+        first_missing_fragment_ = 0;
 
-        if (fragment_size == 0)
-        {
-            if (dataFragments_ != nullptr)
-            {
-                dataFragments_->clear();
-            }
-        }
-        else
+        if (fragment_size > 0)
         {
             // This follows RTPS 8.3.7.3.5
-            this->fragment_count_ = (serializedPayload.length + fragment_size - 1) / fragment_size;
+            fragment_count_ = (serializedPayload.length + fragment_size - 1) / fragment_size;
             if (set_fragment_state)
             {
-                if (dataFragments_ == nullptr)
+                octet* fragment_ptr = serializedPayload.data;
+                for (uint32_t i = 1; i <= fragment_count_; i++, fragment_ptr += fragment_size_)
                 {
-                    dataFragments_ = new std::vector<uint32_t>();
+                    *((uint32_t*)fragment_ptr) = i;  // index to next fragment in missing list
                 }
-                dataFragments_->assign(this->fragment_count_, ChangeFragmentStatus_t::NOT_PRESENT);
+            }
+        }
+    }
+
+    void received_fragments(
+            uint32_t initial_fragment,
+            uint32_t num_of_fragments)
+    {
+        if (fragment_size_ > 0)
+        {
+            if (initial_fragment == first_missing_fragment_)
+            {
+                first_missing_fragment_ += num_of_fragments;
+            }
+            else
+            {
+                // Find prev in missing list
+                uint32_t current_frag = first_missing_fragment_;
+                while (current_frag < initial_fragment)
+                {
+                    size_t offset = fragment_size_;
+                    offset *= current_frag;
+                    uint32_t* fragment = (uint32_t*) &serializedPayload.data[offset];
+                    if (*fragment >= initial_fragment)
+                    {
+                        if (*fragment < initial_fragment + num_of_fragments)
+                        {
+                            *fragment = initial_fragment + num_of_fragments;
+                        }
+                    }
+                    current_frag = *fragment;
+                }
             }
         }
     }
@@ -208,6 +217,9 @@ private:
 
     // Number of fragments
     uint32_t fragment_count_ = 0;
+
+    // First fragment in missing list
+    uint32_t first_missing_fragment_ = 0;
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
