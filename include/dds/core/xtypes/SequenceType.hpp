@@ -134,7 +134,11 @@ public:
             uint8_t* instance,
             const uint8_t* value) const
     {
-        return reinterpret_cast<SequenceInstance*>(instance)->push(value);
+        if(get_instance_size(instance) < bounds() || bounds() == 0)
+        {
+            return reinterpret_cast<SequenceInstance*>(instance)->push(value);
+        }
+        return nullptr;;
     }
 
 protected:

@@ -223,7 +223,8 @@ public:
     {
         assert(type_.kind() == TypeKind::SEQUENCE_TYPE);
         const SequenceType& sequence = static_cast<const SequenceType&>(type_);
-        sequence.push_instance(instance_, reinterpret_cast<const uint8_t*>(&value));
+        uint8_t* element = sequence.push_instance(instance_, reinterpret_cast<const uint8_t*>(&value));
+        assert(element != nullptr);
         return *this;
     }
 
@@ -231,7 +232,8 @@ public:
     {
         assert(type_.kind() == TypeKind::SEQUENCE_TYPE);
         const SequenceType& sequence = static_cast<const SequenceType&>(type_);
-        sequence.push_instance(instance_, instance(data));
+        uint8_t* element = sequence.push_instance(instance_, instance(data));
+        assert(element != nullptr);
         return *this;
     }
 
