@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastdds/dds/qos/WriterQos.hpp>
+#include <fastdds/dds/topic/qos/WriterQos.hpp>
 #include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps;

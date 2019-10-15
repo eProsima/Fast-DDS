@@ -19,7 +19,7 @@
 #ifndef _LIVELINESS_CHANGED_STATUS_H_
 #define _LIVELINESS_CHANGED_STATUS_H_
 
-#include <fastdds/dds/qos/LivelinessChangedStatus.hpp>
+#include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 
 namespace eprosima {
 namespace fastrtps {

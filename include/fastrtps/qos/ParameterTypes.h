@@ -20,7 +20,7 @@
 #define PARAMETERTYPES_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/dds/qos/ParameterTypes.hpp>
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
 
 namespace eprosima {
 namespace fastrtps {

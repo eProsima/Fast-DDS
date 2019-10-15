@@ -20,7 +20,7 @@
 #ifndef QOS_POLICIES_H_
 #define QOS_POLICIES_H_
 
-#include <fastdds/dds/qos/QosPolicies.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 namespace eprosima {
 namespace fastrtps {

@@ -13,62 +13,58 @@
 // limitations under the License.
 
 /**
- * @file WriterQos.hpp
+ * @file ReaderQos.hpp
  *
  */
 
-#ifndef _FASTDDS_DDS_QOS_WRITERQOS_HPP_
-#define _FASTDDS_DDS_QOS_WRITERQOS_HPP_
+#ifndef _FASTDDS_DDS_QOS_READERQOS_HPP_
+#define _FASTDDS_DDS_QOS_READERQOS_HPP_
 
-#include <fastdds/dds/qos/QosPolicies.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
 /**
- * Class WriterQos, containing all the possible Qos that can be set for a determined Publisher.
+ * Class ReaderQos, contains all the possible Qos that can be set for a determined Subscriber.
  * Although these values can be set and are transmitted
  * during the Endpoint Discovery Protocol, not all of the behaviour associated with them has been implemented in the library.
  * Please consult each of them to check for implementation details and default values.
  * @ingroup FASTRTPS_ATTRIBUTES_MODULE
  */
-class WriterQos
+class ReaderQos
 {
 public:
 
-    RTPS_DllAPI WriterQos();
-    RTPS_DllAPI virtual ~WriterQos();
+    RTPS_DllAPI ReaderQos() {}
+    RTPS_DllAPI virtual ~ReaderQos() {}
 
     bool operator==(
-            const WriterQos& b) const
+            const ReaderQos& b) const
     {
         return (this->m_durability == b.m_durability) &&
-               (this->m_durabilityService == b.m_durabilityService) &&
                (this->m_deadline == b.m_deadline) &&
                (this->m_latencyBudget == b.m_latencyBudget) &&
                (this->m_liveliness == b.m_liveliness) &&
                (this->m_reliability == b.m_reliability) &&
-               (this->m_lifespan == b.m_lifespan) &&
+               (this->m_ownership == b.m_ownership) &&
+               (this->m_destinationOrder == b.m_destinationOrder) &&
                (this->m_userData == b.m_userData) &&
                (this->m_timeBasedFilter == b.m_timeBasedFilter) &&
-               (this->m_ownership == b.m_ownership) &&
-               (this->m_ownershipStrength == b.m_ownershipStrength) &&
-               (this->m_destinationOrder == b.m_destinationOrder) &&
                (this->m_presentation == b.m_presentation) &&
                (this->m_partition == b.m_partition) &&
                (this->m_topicData == b.m_topicData) &&
                (this->m_groupData == b.m_groupData) &&
-               (this->m_publishMode == b.m_publishMode) &&
+               (this->m_durabilityService == b.m_durabilityService) &&
+               (this->m_lifespan == b.m_lifespan) &&
                (this->m_disablePositiveACKs == b.m_disablePositiveACKs) &&
+               (this->type_consistency == b.type_consistency) &&
                (this->representation == b.representation);
     }
 
     //!Durability Qos, implemented in the library.
     DurabilityQosPolicy m_durability;
-
-    //!Durability Service Qos, NOT implemented in the library.
-    DurabilityServiceQosPolicy m_durabilityService;
 
     //!Deadline Qos, implemented in the library.
     DeadlineQosPolicy m_deadline;
@@ -79,26 +75,20 @@ public:
     //!Liveliness Qos, implemented in the library.
     LivelinessQosPolicy m_liveliness;
 
-    //!Reliability Qos, implemented in the library.
+    //!ReliabilityQos, implemented in the library.
     ReliabilityQosPolicy m_reliability;
 
-    //!Lifespan Qos, NOT implemented in the library.
-    LifespanQosPolicy m_lifespan;
+    //!Ownership Qos, NOT implemented in the library.
+    OwnershipQosPolicy m_ownership;
+
+    //!Destinatio Order Qos, NOT implemented in the library.
+    DestinationOrderQosPolicy m_destinationOrder;
 
     //!UserData Qos, NOT implemented in the library.
     UserDataQosPolicy m_userData;
 
     //!Time Based Filter Qos, NOT implemented in the library.
     TimeBasedFilterQosPolicy m_timeBasedFilter;
-
-    //!Ownership Qos, NOT implemented in the library.
-    OwnershipQosPolicy m_ownership;
-
-    //!Owenership Strength Qos, NOT implemented in the library.
-    OwnershipStrengthQosPolicy m_ownershipStrength;
-
-    //!Destination Order Qos, NOT implemented in the library.
-    DestinationOrderQosPolicy m_destinationOrder;
 
     //!Presentation Qos, NOT implemented in the library.
     PresentationQosPolicy m_presentation;
@@ -109,25 +99,31 @@ public:
     //!Topic Data Qos, NOT implemented in the library.
     TopicDataQosPolicy m_topicData;
 
-    //!Group Data Qos, NOT implemented in the library.
+    //!GroupData Qos, NOT implemented in the library.
     GroupDataQosPolicy m_groupData;
 
-    //!Publication Mode Qos, implemented in the library.
-    PublishModeQosPolicy m_publishMode;
+    //!Durability Service Qos, NOT implemented in the library.
+    DurabilityServiceQosPolicy m_durabilityService;
+
+    //!Lifespan Qos, NOT implemented in the library.
+    LifespanQosPolicy m_lifespan;
 
     //!Data Representation Qos, implemented in the library.
     DataRepresentationQosPolicy representation;
 
-    //!Disable positive acks QoS, implemented in the library.
+    //!Type consistency enforcement Qos, NOT implemented in the library.
+    TypeConsistencyEnforcementQosPolicy type_consistency;
+
+    //!Disable positive ACKs QoS
     DisablePositiveACKsQosPolicy m_disablePositiveACKs;
 
     /**
      * Set Qos from another class
-     * @param qos Reference from a WriterQos object.
+     * @param readerqos Reference from a ReaderQos object.
      * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
      */
     RTPS_DllAPI void setQos(
-            const WriterQos& qos,
+            const ReaderQos& readerqos,
             bool first_time);
 
     /**
@@ -136,14 +132,19 @@ public:
      */
     RTPS_DllAPI bool checkQos() const;
 
+    /**
+     * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
+     * @param qos Reference to the new qos.
+     * @return True if they can be updated.
+     */
     RTPS_DllAPI bool canQosBeUpdated(
-            const WriterQos& qos) const;
+            const ReaderQos& qos) const;
 };
 
-RTPS_DllAPI extern const WriterQos DATAWRITER_QOS_DEFAULT;
+RTPS_DllAPI extern const ReaderQos DATAREADER_QOS_DEFAULT;
 
 } //namespace dds
 } //namespace fastdds
 } //namespace eprosima
 
-#endif // _FASTDDS_DDS_QOS_WRITERQOS_HPP_
+#endif // _FASTDDS_DDS_QOS_READERQOS_HPP_

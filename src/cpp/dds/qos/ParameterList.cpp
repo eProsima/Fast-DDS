@@ -17,8 +17,8 @@
  *
  */
 
-#include <fastdds/dds/qos/ParameterList.hpp>
-#include <fastdds/dds/qos/QosPolicies.hpp>
+#include <fastdds/dds/core/policy/ParameterList.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 #include <functional>
 

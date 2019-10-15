@@ -19,7 +19,7 @@
 #ifndef _FASTRTPS_INCOMPATIBLE_QOS_STATUS_HPP_
 #define _FASTRTPS_INCOMPATIBLE_QOS_STATUS_HPP_
 
-#include <fastdds/dds/qos/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 
 namespace eprosima {
 namespace fastrtps {
