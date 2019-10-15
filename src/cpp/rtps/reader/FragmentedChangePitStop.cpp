@@ -67,6 +67,8 @@ CacheChange_t* FragmentedChangePitStop::process(
         original_change_cit = changes_.insert(ChangeInPit(original_change));
     }
 
+    original_change_cit->getChange()->received_fragments(fragment_starting_num - 1, fragments_in_submessage);
+
     bool was_updated = false;
     for (uint32_t count = (fragment_starting_num - 1); count < (fragment_starting_num - 1) + fragments_in_submessage; ++count)
     {
