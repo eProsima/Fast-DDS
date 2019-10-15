@@ -36,7 +36,7 @@ public:
 
     ~ParticipantBuiltinTopicData() {}
 
-    const ::dds::topic::BuiltinTopicKey& key() const
+    const BuiltinTopicKey& key() const
     {
         return key_;
     }

@@ -63,7 +63,7 @@ public:
     }
 
     bool operator ==(
-            BuiltinTopicKey& other) const
+            const BuiltinTopicKey& other) const
     {
         return (key_[0] == other.key_[0] &&
                 key_[1] == other.key_[1] &&
