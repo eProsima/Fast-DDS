@@ -23,7 +23,7 @@
 #include <dds/core/xtypes/SequenceType.hpp>
 #include <dds/core/xtypes/PrimitiveTypes.hpp>
 
-#include <iostream>
+#include <cassert>
 
 namespace dds {
 namespace core {
@@ -53,23 +53,26 @@ public:
     }
 
     const DynamicType& type() const { return type_; }
-
     size_t instance_id() const { return size_t(instance_); }
 
     template<typename T, class = PrimitiveOrString<T>>
     T& value() const // this = PrimitiveType
     {
+        assert(type_.is_primitive_type()
+            || type_.kind() == TypeKind::STRING_TYPE);
         return *reinterpret_cast<T*>(instance_);
     }
 
-    const std::string& string() const // this = PrimitiveType
+    const std::string& string() const // this = StringType
     {
+        assert(type_.kind() == TypeKind::STRING_TYPE);
         return *reinterpret_cast<std::string*>(instance_);
     }
 
     ReadableDynamicDataRef operator [] (
             const std::string& member_name) const // this = StructType
     {
+        assert(type_.kind() == TypeKind::STRUCTURE_TYPE);
         const StructMember& member = static_cast<const StructType&>(type_).member(member_name);
         return ReadableDynamicDataRef(member.type(), instance_ + member.offset());
     }
@@ -77,12 +80,14 @@ public:
     ReadableDynamicDataRef operator [] (
             size_t index) const // this = CollectionType
     {
+        assert(type_.is_collection_type());
         const CollectionType& collection = static_cast<const CollectionType&>(type_);
         return ReadableDynamicDataRef(collection.content_type(), collection.get_instance_at(instance_, index));
     }
 
     size_t size() const // this = CollectionType
     {
+        assert(type_.is_collection_type());
         const CollectionType& collection = static_cast<const CollectionType&>(type_);
         return collection.get_instance_size(instance_);
     }
@@ -91,6 +96,10 @@ public:
     std::vector<T> as_vector() const // this = CollectionType with PrimitiveOrString content
     {
         const CollectionType& collection = static_cast<const CollectionType&>(type_);
+        assert(type_.is_collection_type());
+        assert(type_.is_primitive_type()
+            || collection.content_type().kind() == TypeKind::STRING_TYPE);
+
         const T* location = reinterpret_cast<T*>(collection.get_instance_at(instance_, 0));
         size_t size = collection.get_instance_size(instance_);
         return std::vector<T>(location, location + size);
@@ -164,9 +173,9 @@ public:
         return ReadableDynamicDataRef::value<T>();
     }
 
-    const std::string& string() // this = PrimitiveType
+    const std::string& string() // this = StringType
     {
-        return *reinterpret_cast<std::string*>(instance_);
+        return ReadableDynamicDataRef::string();
     }
 
     ReadableDynamicDataRef operator [] (
@@ -196,12 +205,15 @@ public:
     template<typename T, class = PrimitiveOrString<T>>
     void value(const T& t) // this = PrimitiveType & StringType
     {
+        assert(type_.is_primitive_type()
+            || type_.kind() == TypeKind::STRING_TYPE);
         type_.destroy_instance(instance_);
         type_.copy_instance(instance_, reinterpret_cast<const uint8_t*>(&t));
     }
 
     void string(const std::string& s) // this = StringType
     {
+        assert(type_.kind() == TypeKind::STRING_TYPE);
         type_.destroy_instance(instance_);
         type_.copy_instance(instance_, reinterpret_cast<const uint8_t*>(&s));
     }
@@ -209,6 +221,7 @@ public:
     template<typename T, class = PrimitiveOrString<T>>
     WritableDynamicDataRef& push(const T& value) // this = SequenceType
     {
+        assert(type_.kind() == TypeKind::SEQUENCE_TYPE);
         const SequenceType& sequence = static_cast<const SequenceType&>(type_);
         sequence.push_instance(instance_, reinterpret_cast<const uint8_t*>(&value));
         return *this;
@@ -216,6 +229,7 @@ public:
 
     WritableDynamicDataRef& push(const WritableDynamicDataRef& data) // this = SequenceType
     {
+        assert(type_.kind() == TypeKind::SEQUENCE_TYPE);
         const SequenceType& sequence = static_cast<const SequenceType&>(type_);
         sequence.push_instance(instance_, instance(data));
         return *this;
