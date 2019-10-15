@@ -140,11 +140,11 @@ set(${PROJECT_NAME}_source_files
     fastrtps_deprecated/types/DynamicDataHelper.cpp
 
     fastrtps_deprecated/attributes/TopicAttributes.cpp
-    fastrtps_deprecated/qos/ParameterList.cpp
-    fastrtps_deprecated/qos/ParameterTypes.cpp
-    fastrtps_deprecated/qos/QosPolicies.cpp
-    fastrtps_deprecated/qos/WriterQos.cpp
-    fastrtps_deprecated/qos/ReaderQos.cpp
+    dds/qos/ParameterList.cpp
+    dds/qos/ParameterTypes.cpp
+    dds/qos/QosPolicies.cpp
+    dds/qos/WriterQos.cpp
+    dds/qos/ReaderQos.cpp
     rtps/builtin/BuiltinProtocols.cpp
     rtps/builtin/discovery/participant/DirectMessageSender.cpp
     rtps/builtin/discovery/participant/PDP.cpp

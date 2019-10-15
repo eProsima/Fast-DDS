@@ -32,7 +32,6 @@ namespace eprosima {
 namespace fastrtps {
 
 class TopicAttributes;
-class ReaderQos;
 
 } // namespace fastrtps
 
@@ -45,6 +44,7 @@ class SubscriberImpl;
 class SubscriberQos;
 class DataReader;
 class DataReaderListener;
+class ReaderQos;
 
 /**
  * Class Subscriber, contains the public API that allows the user to control the reception of messages.
@@ -114,7 +114,7 @@ public:
      */
     DataReader* create_datareader(
             const fastrtps::TopicAttributes& topic_attr,
-            const fastrtps::ReaderQos& reader_qos,
+            const ReaderQos& reader_qos,
             DataReaderListener* listener);
 
     /**
@@ -145,7 +145,7 @@ public:
      * @return true
      */
     ReturnCode_t get_datareaders(
-        std::vector<DataReader*>& readers) const;
+            std::vector<DataReader*>& readers) const;
 
     /**
      * This operation checks if the subscriber has DataReaders
@@ -154,12 +154,12 @@ public:
     bool has_datareaders() const;
 
     /* TODO
-    bool begin_access();
-    */
+       bool begin_access();
+     */
 
     /* TODO
-    bool end_access();
-    */
+       bool end_access();
+     */
 
     /**
      * This operation invokes the operation on_data_available on the DataReaderListener objects attached to
@@ -172,8 +172,8 @@ public:
     ReturnCode_t notify_datareaders() const;
 
     /* TODO
-    bool delete_contained_entities();
-    */
+       bool delete_contained_entities();
+     */
 
     /**
      * This operation sets a default value of the DataReader QoS policies which will be used for newly created
@@ -188,7 +188,7 @@ public:
      * @param qos
      */
     ReturnCode_t set_default_datareader_qos(
-            const fastrtps::ReaderQos& qos);
+            const ReaderQos& qos);
 
     /**
      * This operation returns the default value of the DataReader QoS, that is, the QoS policies which will be
@@ -199,7 +199,7 @@ public:
      * call to get_default_datareader_qos, or else, if the call was never made, the default values.
      * @return Current default ReaderQos.
      */
-    const fastrtps::ReaderQos& get_default_datareader_qos() const;
+    const ReaderQos& get_default_datareader_qos() const;
 
     /**
      * This operation retrieves the default value of the DataReader QoS, that is, the QoS policies which will be
@@ -212,13 +212,13 @@ public:
      * @return Always true.
      */
     ReturnCode_t get_default_datareader_qos(
-            fastrtps::ReaderQos& qos) const;
+            ReaderQos& qos) const;
 
     /* TODO
-    bool copy_from_topic_qos(
-            fastrtps::ReaderQos& reader_qos,
+       bool copy_from_topic_qos(
+            ReaderQos& reader_qos,
             const fastrtps::TopicAttributes& topic_qos) const;
-    */
+     */
 
     /**
      * Update the Attributes of the subscriber;
@@ -246,6 +246,7 @@ public:
     const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
 
 private:
+
     SubscriberImpl* impl_;
 };
 

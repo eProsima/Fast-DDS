@@ -59,10 +59,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLParser.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLElementParser.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLParserCommon.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/qos/QosPolicies.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/qos/ParameterTypes.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/qos/WriterQos.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/qos/ReaderQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/qos/QosPolicies.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/qos/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/qos/WriterQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/qos/ReaderQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
@@ -129,10 +129,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLParser.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLElementParser.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLParserCommon.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/qos/QosPolicies.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/qos/ParameterTypes.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/qos/WriterQos.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/qos/ReaderQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/qos/QosPolicies.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/qos/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/qos/WriterQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/qos/ReaderQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/StdoutConsumer.cpp
