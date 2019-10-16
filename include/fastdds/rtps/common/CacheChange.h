@@ -185,10 +185,7 @@ struct RTPS_DllAPI CacheChange_t
         while (current_frag < fragment_count_)
         {
             frag_sns.add(current_frag + 1);
-            size_t offset = fragment_size_;
-            offset *= current_frag;
-            uint32_t* fragment = (uint32_t*)&serializedPayload.data[offset];
-            current_frag = *fragment;
+            current_frag = get_next_missing_fragment(current_frag);
         }
     }
 
@@ -218,10 +215,10 @@ struct RTPS_DllAPI CacheChange_t
             {
                 // Keep index of next fragment on the payload portion at the beginning of each fragment. Last
                 // fragment will have fragment_count_ as 'next fragment index'
-                octet* fragment_ptr = serializedPayload.data;
-                for (uint32_t i = 1; i <= fragment_count_; i++, fragment_ptr += fragment_size_)
+                size_t offset = 0;
+                for (uint32_t i = 1; i <= fragment_count_; i++, offset += fragment_size_)
                 {
-                    *((uint32_t*)fragment_ptr) = i;  // index to next fragment in missing list
+                    set_next_missing_fragment(i-1, i);  // index to next fragment in missing list
                 }
             }
             else
@@ -258,10 +255,7 @@ struct RTPS_DllAPI CacheChange_t
                 // Perform first = *first until first >= last_received
                 while (first_missing_fragment_ < last_fragment)
                 {
-                    size_t offset = fragment_size_;
-                    offset *= first_missing_fragment_;
-                    uint32_t* fragment = (uint32_t*)&serializedPayload.data[offset];
-                    first_missing_fragment_ = *fragment;
+                    first_missing_fragment_ = get_next_missing_fragment(first_missing_fragment_);
                 }
             }
             else
@@ -270,27 +264,22 @@ struct RTPS_DllAPI CacheChange_t
                 uint32_t current_frag = first_missing_fragment_;
                 while (current_frag < initial_fragment)
                 {
-                    size_t offset = fragment_size_;
-                    offset *= current_frag;
-                    uint32_t* fragment = (uint32_t*) &serializedPayload.data[offset];
-                    if (*fragment >= initial_fragment)
+                    uint32_t next_frag = get_next_missing_fragment(current_frag);
+                    if (next_frag >= initial_fragment)
                     {
                         // This is the fragment previous to initial_fragment.
                         // Find future value for next by repeating next = *next until next >= last_fragment.
-                        uint32_t next_missing_fragment = *fragment;
+                        uint32_t next_missing_fragment = next_frag;
                         while (next_missing_fragment < last_fragment)
                         {
-                            size_t next_fragment_offset = fragment_size_;
-                            next_fragment_offset *= next_missing_fragment;
-                            uint32_t* next_fragment = (uint32_t*)&serializedPayload.data[next_fragment_offset];
-                            next_missing_fragment = *next_fragment;
+                            next_missing_fragment = get_next_missing_fragment(next_missing_fragment);
                         }
 
                         // Update next and finish loop
-                        *fragment = next_missing_fragment;
+                        set_next_missing_fragment(current_frag, next_missing_fragment);
                         break;
                     }
-                    current_frag = *fragment;
+                    current_frag = next_frag;
                 }
             }
         }
@@ -306,6 +295,30 @@ private:
 
     // First fragment in missing list
     uint32_t first_missing_fragment_ = 0;
+
+    uint32_t get_next_missing_fragment(
+            uint32_t fragment_index)
+    {
+        uint32_t* ptr = next_fragment_pointer(fragment_index);
+        return *ptr;
+    }
+
+    void set_next_missing_fragment(
+            uint32_t fragment_index,
+            uint32_t next_fragment_index)
+    {
+        uint32_t* ptr = next_fragment_pointer(fragment_index);
+        *ptr = next_fragment_index;
+    }
+
+    uint32_t* next_fragment_pointer(
+            uint32_t fragment_index)
+    {
+        size_t offset = fragment_size_;
+        offset *= fragment_index;
+        offset = (offset + 3) & ~3;
+        return (uint32_t*)(&serializedPayload.data[offset]);
+    }
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
