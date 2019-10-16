@@ -21,6 +21,10 @@
 #include <dds/topic/Topic.hpp>
 //#include <dds/topic/detail/TTopicImpl.hpp>
 //#include <dds/topic/detail/TBuiltinTopicImpl.hpp>
+#include <fastdds/dds/topic/ParticipantBuiltinTopicData.hpp>
+#include <fastdds/dds/topic/TopicBuiltinTopicData.hpp>
+#include <fastdds/dds/topic/PublicationBuiltinTopicData.hpp>
+#include <fastdds/dds/topic/SubscriptionBuiltinTopicData.hpp>
 
 /**
  * @cond
@@ -31,22 +35,13 @@ namespace dds {
 namespace topic {
 namespace detail {
 
-//TODO: Make these classes inherit from fastdds BuiltinTopicData when it is implemented
-class ParticipantBuiltinTopicData
-{
-};
+using ParticipantBuiltinTopicData = eprosima::fastdds::dds::ParticipantBuiltinTopicData;
 
-class TopicBuiltinTopicData
-{
-};
+using TopicBuiltinTopicData = eprosima::fastdds::dds::TopicBuiltinTopicData;
 
-class PublicationBuiltinTopicData
-{
-};
+using PublicationBuiltinTopicData = eprosima::fastdds::dds::PublicationBuiltinTopicData;
 
-class SubscriptionBuiltinTopicData
-{
-};
+using SubscriptionBuiltinTopicData = eprosima::fastdds::dds::SubscriptionBuiltinTopicData;
 
 } //namespace detail
 } //namespace topic

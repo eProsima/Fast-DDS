@@ -64,8 +64,7 @@ namespace topic {
  * @see @ref DCPS_Builtin_Topics
  * @see @ref DCPS_Builtin_Topics_ParticipantData
  */
-template<typename D>
-class TParticipantBuiltinTopicData : public dds::core::Value<D>
+class ParticipantBuiltinTopicData : public dds::core::Value<detail::ParticipantBuiltinTopicData>
 {
 public:
 
@@ -116,8 +115,7 @@ public:
  * @see @ref DCPS_Builtin_Topics
  * @see @ref DCPS_Builtin_Topics_TopicData
  */
-template<typename D>
-class TTopicBuiltinTopicData : public dds::core::Value<D>
+class TopicBuiltinTopicData : public dds::core::Value<detail::TopicBuiltinTopicData>
 {
 public:
 
@@ -241,8 +239,7 @@ public:
  * @see @ref DCPS_Builtin_Topics
  * @see @ref DCPS_Builtin_Topics_PublicationData
  */
-template<typename D>
-class TPublicationBuiltinTopicData : public dds::core::Value<D>
+class PublicationBuiltinTopicData : public dds::core::Value<detail::PublicationBuiltinTopicData>
 {
 public:
 
@@ -383,8 +380,7 @@ public:
  * @see @ref DCPS_Builtin_Topics
  * @see @ref DCPS_Builtin_Topics_SubscriptionData
  */
-template<typename D>
-class TSubscriptionBuiltinTopicData : public dds::core::Value<D>
+class SubscriptionBuiltinTopicData  : public dds::core::Value<detail::SubscriptionBuiltinTopicData>
 {
 public:
 
@@ -474,11 +470,6 @@ public:
     const dds::core::policy::GroupData& group_data() const;
 
 };
-
-typedef dds::topic::detail::ParticipantBuiltinTopicData ParticipantBuiltinTopicData;
-typedef dds::topic::detail::TopicBuiltinTopicData TopicBuiltinTopicData;
-typedef dds::topic::detail::PublicationBuiltinTopicData PublicationBuiltinTopicData;
-typedef dds::topic::detail::SubscriptionBuiltinTopicData SubscriptionBuiltinTopicData;
 
 } //namespace topic
 } //namespace dds
