@@ -47,12 +47,11 @@ There is no memory penalty using *eProsima xtypes* in realtion to compiled types
 - **Easy to use**: Compresive API and intuitive concepts.
 
 ## API usage
-*Examples can be found in [example folder](../examples/ModernC++/xtypes folder).*
+*Examples can be found in [example folder](../../examples/ModernC++/xtypes).* folder
 
 ### Type definition
 All types inherit from DynamicType as the following diagram represents:
-**"v$major.$minor"**
-// image
+![](http://www.plantuml.com/plantuml/png/XP512eCm44NtSmelu0r4b7RJXL3G2upf4099j9D9GUZXYviG9MstBoypy_bT46I9piATZJDYNZHjArLrNEjtMrqtZywe7K6lDPD6COl_fbmMQqdzCc0KZahovzDSW9uPjzmuZeKX2iwMSbfoqpxZTMuKlyD8pqXUqNyJS0x2g2GFbk0vJZEGcublRhLjaivN9bxUg2o6K1qAQgOMElAFlRaF)
 
 #### PrimitiveType
 Represents the basic type of the system.
@@ -81,7 +80,7 @@ StringType str2(50); //bounded string
 ```
 
 #### StructType
-You can specify an `StructType` givin the type name of the structure.
+You can specify an `StructType` given the type name of the structure.
 ```c++
 StructType my_struct("MyStruct");
 ```
@@ -205,9 +204,33 @@ node.access().member() // member used for access from parent to this node
 Note: `node.data()` will return a `ReadableDynamicDataRef` or a `WritableDynamicDataRef` depending of the node type.
 
 ## Performance
-The `DynamicData` instance only requires to reserve the minimal allocations needed to store the data.
+The `DynamicData` instance only uses the minimal allocations needed to store the data.
 If its associated type only contains the following (nested) types: `PrimitiveType`, `StructType`, or `ArrayType`;
 the memory required can be performed with only **one allocation** at the creation of the DynamicData.
-If the type, contains some `MutableCollectionType`, another allocation is needed to store this mutable element.
+Only if the type contains some `MutableCollectionType`, another allocation will be performed to manage the inner types of that mutable type.
 
+Let see an example:
+```c++
+StructType inner("Inner");
+inner.add_member("m_int", primitive_type<int>());
+inner.add_member("m_float", primitive_type<float>());
+inner.add_member("m_array", ArrayType(primitive_type<uint16_t>(), 4));
+
+DynamicData data(inner);
+```
+This `DynamicData` will be represented in memory as follow, with only one allocation:
+![](inner-memory.png)
+
+The next complex type:
+```c++
+StructType outter("Outter");
+outter.add_member("m_inner", inner);
+outter.add_member("m_array_inner", ArrayType(inner, 4));
+outter.add_member("m_sequence_inner", SequenceType(inner, 4));
+outter.add_member("m_string", StringType());
+
+DynamicData data(outter);
+```
+Needs two more allocations, one for the secuence, and another one for the string:
+![](outter-memory.png)
 
