@@ -118,10 +118,10 @@ TEST(CacheChange, FragmentManagement)
         }
     };
 
-    CacheChange_t uut(100);
-    uut.serializedPayload.length = 100;
+    CacheChange_t uut(90);
+    uut.serializedPayload.length = 90;
     
-    uut.setFragmentSize(10, true);
+    uut.setFragmentSize(9, true);
     for (const FragmentTestStep& step : test_steps)
     {
         step.do_test(uut);
