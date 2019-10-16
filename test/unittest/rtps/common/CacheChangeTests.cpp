@@ -102,8 +102,8 @@ TEST(CacheChange, FragmentManagement)
             {false, false, false, true, true, true, true, true, false, true}
         },
         {
-            "received (7, 8, 9)",
-            {7, 3},
+            "received (7, 8, 9, 10)",
+            {7, 4},
             {false, false, false, true, true, true, true, false, false, false}
         },
         {
