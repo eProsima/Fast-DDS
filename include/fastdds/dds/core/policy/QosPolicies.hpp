@@ -91,7 +91,7 @@ public:
     bool autoenable_created_entities;
 
     RTPS_DllAPI EntityFactoryQosPolicy()
-        : autoenable_created_entities(false)
+        : autoenable_created_entities(true)
     {}
 
     virtual RTPS_DllAPI ~EntityFactoryQosPolicy()

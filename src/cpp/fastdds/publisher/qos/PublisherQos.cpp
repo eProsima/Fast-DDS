@@ -39,10 +39,7 @@ void PublisherQos::set_qos(
         const PublisherQos& qos,
         bool first_time)
 {
-    if (first_time)
-    {
-        entity_factory = qos.entity_factory;
-    }
+    entity_factory = qos.entity_factory;
     if (first_time)
     {
         durability = qos.durability;
