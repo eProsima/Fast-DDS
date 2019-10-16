@@ -348,6 +348,8 @@ protected:
     std::mutex temp_data_lock_;
     //!Participant data atomic access assurance
     std::recursive_mutex* mp_mutex;
+    //!To protect callbacks (ParticipantProxyData&)
+    std::mutex callback_mtx_;
 
     /**
      * Adds an entry to the collection of participant proxy information.

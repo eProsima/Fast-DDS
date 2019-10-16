@@ -36,13 +36,13 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-bool run = true;
+static bool run = true;
 
 class ParListener : public ParticipantListener
 {
     public:
-        ParListener(bool exit_on_lost_liveliness) : exit_on_lost_liveliness_(exit_on_lost_liveliness) {};
-        virtual ~ParListener(){};
+        ParListener(bool exit_on_lost_liveliness) : exit_on_lost_liveliness_(exit_on_lost_liveliness) {}
+        virtual ~ParListener() override {}
 
         /**
          * This method is called when a new Participant is discovered, or a previously discovered participant
