@@ -22,7 +22,7 @@
 
 #include <fastdds/dds/core/policy/ParameterList.hpp>
 
-#include <fastdds/dds/core/policy/ParameterTypes.hpp>
+#include <fastrtps/qos/ParameterTypes.h>
 #include <fastdds/rtps/messages/RTPS_messages.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
