@@ -247,9 +247,17 @@ struct RTPS_DllAPI CacheChange_t
     {
         if (fragment_size_ > 0)
         {
-            if (initial_fragment == first_missing_fragment_)
+            uint32_t last_fragment = initial_fragment + num_of_fragments;
+            if (initial_fragment <= first_missing_fragment_)
             {
-                first_missing_fragment_ += num_of_fragments;
+                // Perform first = *first until first >= last_received
+                while (first_missing_fragment_ < last_fragment)
+                {
+                    size_t offset = fragment_size_;
+                    offset *= first_missing_fragment_;
+                    uint32_t* fragment = (uint32_t*)&serializedPayload.data[offset];
+                    first_missing_fragment_ = *fragment;
+                }
             }
             else
             {
@@ -262,10 +270,20 @@ struct RTPS_DllAPI CacheChange_t
                     uint32_t* fragment = (uint32_t*) &serializedPayload.data[offset];
                     if (*fragment >= initial_fragment)
                     {
-                        if (*fragment < initial_fragment + num_of_fragments)
+                        // This is the fragment previous to initial_fragment.
+                        // Find future value for next by repeating next = *next until next >= last_fragment.
+                        uint32_t next_missing_fragment = *fragment;
+                        while (next_missing_fragment < last_fragment)
                         {
-                            *fragment = initial_fragment + num_of_fragments;
+                            size_t next_fragment_offset = fragment_size_;
+                            next_fragment_offset *= next_missing_fragment;
+                            uint32_t* next_fragment = (uint32_t*)&serializedPayload.data[next_fragment_offset];
+                            next_missing_fragment = *next_fragment;
                         }
+
+                        // Update next and finish loop
+                        *fragment = next_missing_fragment;
+                        break;
                     }
                     current_frag = *fragment;
                 }
