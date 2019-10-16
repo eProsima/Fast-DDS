@@ -237,8 +237,7 @@ public:
  * @see @ref DCPS_Builtin_Topics
  * @see @ref DCPS_Builtin_Topics_PublicationData
  */
-template<typename D>
-class TPublicationBuiltinTopicData : public dds::core::Value<D>
+class PublicationBuiltinTopicData : public dds::core::Value<detail::PublicationBuiltinTopicData>
 {
 public:
     /**
@@ -469,8 +468,6 @@ public:
 
 };
 
-typedef dds::topic::detail::TopicBuiltinTopicData TopicBuiltinTopicData;
-typedef dds::topic::detail::PublicationBuiltinTopicData PublicationBuiltinTopicData;
 typedef dds::topic::detail::SubscriptionBuiltinTopicData SubscriptionBuiltinTopicData;
 
 } //namespace topic
