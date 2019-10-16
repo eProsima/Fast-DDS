@@ -24,6 +24,7 @@
 #include <fastdds/dds/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/topic/TopicBuiltinTopicData.hpp>
 #include <fastdds/dds/topic/PublicationBuiltinTopicData.hpp>
+#include <fastdds/dds/topic/SubscriptionBuiltinTopicData.hpp>
 
 /**
  * @cond
@@ -40,8 +41,7 @@ using TopicBuiltinTopicData = eprosima::fastdds::dds::TopicBuiltinTopicData;
 
 using PublicationBuiltinTopicData = eprosima::fastdds::dds::PublicationBuiltinTopicData;
 
-//typedef dds::topic::TSubscriptionBuiltinTopicData<org::opensplice::topic::SubscriptionBuiltinTopicDataDelegate> SubscriptionBuiltinTopicData;
-class SubscriptionBuiltinTopicData { };
+using SubscriptionBuiltinTopicData = eprosima::fastdds::dds::SubscriptionBuiltinTopicData;
 
 } //namespace detail
 } //namespace topic

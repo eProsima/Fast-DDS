@@ -377,8 +377,7 @@ public:
  * @see @ref DCPS_Builtin_Topics
  * @see @ref DCPS_Builtin_Topics_SubscriptionData
  */
-template<typename D>
-class TSubscriptionBuiltinTopicData  : public dds::core::Value<D>
+class SubscriptionBuiltinTopicData  : public dds::core::Value<detail::SubscriptionBuiltinTopicData>
 {
 public:
     /**
@@ -467,8 +466,6 @@ public:
     const dds::core::policy::GroupData& group_data() const;
 
 };
-
-typedef dds::topic::detail::SubscriptionBuiltinTopicData SubscriptionBuiltinTopicData;
 
 } //namespace topic
 } //namespace dds
