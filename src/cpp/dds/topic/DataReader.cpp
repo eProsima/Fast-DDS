@@ -20,7 +20,6 @@
 #include <fastdds/dds/topic/DataReader.hpp>
 #include <dds/topic/DataReaderImpl.hpp>
 
-
 namespace eprosima {
 
 using namespace fastrtps;

@@ -27,7 +27,7 @@
 #include <fastdds/dds/topic/DataReaderListener.hpp>
 #include <fastdds/dds/topic/DataReader.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastrtps/subscriber/SampleInfo.h>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/rtps/common/Types.h>
 
@@ -152,7 +152,7 @@ public:
         void on_data_available(eprosima::fastdds::dds::DataReader* reader) override;
 
         TestSubscriber* mParent;
-        eprosima::fastrtps::SampleInfo_t m_info;
+        eprosima::fastdds::dds::SampleInfo_t info_;
         int n_matched;
         uint32_t n_samples;
     }m_subListener;

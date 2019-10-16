@@ -62,7 +62,10 @@ public:
     /**
      * Construct a SampleState with default MaskType.
      */
-    SampleState();
+    SampleState()
+        : std::bitset<OMG_DDS_STATE_BIT_COUNT>()
+    {
+    }
 
     /**
      * Construct a SampleState with MaskType of i.
@@ -70,7 +73,10 @@ public:
      * @param i MaskType
      */
     explicit SampleState(
-            uint32_t i);
+            uint32_t i)
+        : std::bitset<OMG_DDS_STATE_BIT_COUNT>(i)
+    {
+    }
 
     /**
      * Copy constructor.
@@ -79,7 +85,10 @@ public:
      * @param src the SampleState to copy from
      */
     SampleState(
-            const SampleState& src);
+            const SampleState& src)
+        : std::bitset<OMG_DDS_STATE_BIT_COUNT>(src)
+    {
+    }
 
     /**
      * Construct a SampleState with existing MaskType.
@@ -87,7 +96,10 @@ public:
      * @param src the MaskType to copy from
      */
     SampleState(
-            const MaskType& src);
+            const MaskType& src)
+        : std::bitset<OMG_DDS_STATE_BIT_COUNT>(src)
+    {
+    }
 
     /**
      * Get the READ_SAMPLE_STATE.
@@ -99,7 +111,10 @@ public:
      *
      * @return the read SampleState
      */
-    inline static const SampleState read();
+    inline static const SampleState read()
+    {
+        return SampleState(0x0001 << 0u);
+    }
 
     /**
      * Get the NOT_READ_SAMPLE_STATE.
@@ -109,7 +124,10 @@ public:
      *
      * @return the not_read SampleState
      */
-    inline static const SampleState not_read();
+    inline static const SampleState not_read()
+    {
+        return SampleState(0x0001 << 1u);
+    }
 
     /**
      * Get any SampleState.
@@ -118,7 +136,10 @@ public:
      *
      * @return any SampleState
      */
-    inline static const SampleState any();
+    inline static const SampleState any()
+    {
+        return SampleState(0xffff);
+    }
 };
 
 /**
@@ -150,7 +171,10 @@ public:
     /**
      * Construct a ViewState with default MaskType.
      */
-    ViewState();
+    ViewState()
+        : std::bitset<OMG_DDS_STATE_BIT_COUNT>()
+    {
+    }
 
     /**
      * Construct a ViewState with MaskType of i.
@@ -158,7 +182,10 @@ public:
      * @param m the MaskType
      */
     explicit ViewState(
-            uint32_t m);
+            uint32_t m)
+        : std::bitset<OMG_DDS_STATE_BIT_COUNT>(m)
+    {
+    }
 
     /**
      * Copy constructor.
@@ -168,7 +195,10 @@ public:
      * @param src the ViewState to copy from
      */
     ViewState(
-            const ViewState& src);
+            const ViewState& src)
+        : std::bitset<OMG_DDS_STATE_BIT_COUNT>(src)
+    {
+    }
 
     /**
      * Construct a ViewState with existing MaskType.
@@ -176,7 +206,10 @@ public:
      * @param src the MaskType to copy from
      */
     ViewState(
-            const MaskType& src);
+            const MaskType& src)
+        : std::bitset<OMG_DDS_STATE_BIT_COUNT>(src)
+    {
+    }
 
     /**
      * Get the NEW_VIEW_STATE.
@@ -189,7 +222,10 @@ public:
      *
      * @return the new_view ViewState
      */
-    inline static const ViewState new_view();
+    inline static const ViewState new_view()
+    {
+        return ViewState(0x0001 << 0u);
+    }
 
     /**
      * Get the NOT_NEW_VIEW_STATE.
@@ -200,7 +236,10 @@ public:
      *
      * @return the not_new_view ViewState
      */
-    inline static const ViewState not_new_view();
+    inline static const ViewState not_new_view()
+    {
+        return ViewState(0x0001 << 1u);
+    }
 
     /**
      * Get any ViewState.
@@ -209,7 +248,10 @@ public:
      *
      * @return the any ViewState
      */
-    inline static const ViewState any();
+    inline static const ViewState any()
+    {
+        return ViewState(0xffff);
+    }
 
 };
 
@@ -250,7 +292,10 @@ public:
     /**
      * Construct an InstanceState with no state flags set.
      */
-    InstanceState();
+    InstanceState()
+        : std::bitset<OMG_DDS_STATE_BIT_COUNT>()
+    {
+    }
 
     /**
      * Construct an InstanceState with an uint32_t m, representing a bit array.
@@ -258,7 +303,10 @@ public:
      * @param m the bit array to initialize the bitset with
      */
     explicit InstanceState(
-            uint32_t m);
+            uint32_t m)
+        : std::bitset<OMG_DDS_STATE_BIT_COUNT>(m)
+    {
+    }
 
     /**
      * Copy constructor.
@@ -268,7 +316,10 @@ public:
      * @param src the InstanceState to copy from
      */
     InstanceState(
-            const InstanceState& src);
+            const InstanceState& src)
+        : std::bitset<OMG_DDS_STATE_BIT_COUNT>(src)
+    {
+    }
 
     /**
      * Construct an InstanceState with existing MaskType.
@@ -276,7 +327,10 @@ public:
      * @param src the bitset to copy from
      */
     InstanceState(
-            const MaskType& src);
+            const MaskType& src)
+        : std::bitset<OMG_DDS_STATE_BIT_COUNT>(src)
+    {
+    }
 
     /**
      * Get ALIVE_INSTANCE_STATE.
@@ -289,7 +343,10 @@ public:
      *
      * @return the alive InstanceState
      */
-    inline static const InstanceState alive();
+    inline static const InstanceState alive()
+    {
+        return InstanceState(0x0001 << 0u);
+    }
 
     /**
      * Get NOT_ALIVE_DISPOSED_INSTANCE_STATE.
@@ -304,7 +361,10 @@ public:
      *
      * @return the not_alive_disposed InstanceState
      */
-    inline static const InstanceState not_alive_disposed();
+    inline static const InstanceState not_alive_disposed()
+    {
+        return InstanceState(0x0001 << 1u);
+    }
 
     /**
      * Get NOT_ALIVE_NO_WRITERS_INSTANCE_STATE.
@@ -316,7 +376,10 @@ public:
      *
      * @return the not_alive_no_writers InstanceState
      */
-    inline static const InstanceState not_alive_no_writers();
+    inline static const InstanceState not_alive_no_writers()
+    {
+        return InstanceState(0x0001 << 2u);
+    }
 
     /**
      * Get not_alive mask
@@ -336,7 +399,10 @@ public:
      *
      * @return the not_alive_mask InstanceState
      */
-    inline static const InstanceState not_alive_mask();
+    inline static const InstanceState not_alive_mask()
+    {
+        return not_alive_disposed() | not_alive_no_writers();
+    }
 
     /**
      * Get any InstanceState.
@@ -345,7 +411,10 @@ public:
      *
      * @return the any InstanceState
      */
-    inline static const InstanceState any();
+    inline static const InstanceState any()
+    {
+        return InstanceState(0xffff);
+    }
 
 };
 
