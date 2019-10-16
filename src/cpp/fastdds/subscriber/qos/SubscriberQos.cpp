@@ -32,6 +32,10 @@ void SubscriberQos::set_qos(
 {
     if (first_time)
     {
+        entity_factory = qos.entity_factory;
+    }
+    if (first_time)
+    {
         durability = qos.durability;
         durability.hasChanged = true;
     }
