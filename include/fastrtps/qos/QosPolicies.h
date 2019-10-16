@@ -22,6 +22,12 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 
+#include <vector>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
+#include <fastrtps/types/TypeObject.h>
+
 namespace eprosima {
 namespace fastrtps {
 

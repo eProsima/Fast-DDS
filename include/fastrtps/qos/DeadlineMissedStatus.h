@@ -21,6 +21,8 @@
 
 #include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
 
+#include <fastdds/rtps/common/InstanceHandle.h>
+
 namespace eprosima {
 namespace fastrtps {
 

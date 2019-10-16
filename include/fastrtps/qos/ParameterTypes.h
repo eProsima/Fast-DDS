@@ -22,6 +22,19 @@
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 
+#include <fastdds/rtps/common/all_common.h>
+#include <fastdds/rtps/common/Token.h>
+
+#include <fastrtps/utils/fixed_size_string.hpp>
+
+#if HAVE_SECURITY
+#include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
+#include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
+#endif
+
+#include <string>
+#include <vector>
+
 namespace eprosima {
 namespace fastrtps {
 
