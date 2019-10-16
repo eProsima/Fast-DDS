@@ -113,9 +113,14 @@ struct RTPS_DllAPI CacheChange_t
         fragment_count_ = ch_ptr->fragment_count_;
         first_missing_fragment_ = ch_ptr->first_missing_fragment_;
 
-        return serializedPayload.copy(&ch_ptr->serializedPayload, (ch_ptr->is_untyped_ ? false : true));
+        return serializedPayload.copy(&ch_ptr->serializedPayload, !ch_ptr->is_untyped_);
     }
 
+    /*!
+     * Copy information form a different change into this one.
+     * All the elements are copied except data.
+     * @param[in] ch_ptr Pointer to the change.
+     */
     void copy_not_memcpy(
             const CacheChange_t* ch_ptr)
     {
@@ -130,6 +135,7 @@ struct RTPS_DllAPI CacheChange_t
         // Copy certain values from serializedPayload
         serializedPayload.encapsulation = ch_ptr->serializedPayload.encapsulation;
 
+        // Copy fragment size and initialize missing list to 'all fragments missing'
         setFragmentSize(ch_ptr->fragment_size_, true);
     }
 
@@ -137,26 +143,44 @@ struct RTPS_DllAPI CacheChange_t
     {
     }
 
+    /*!
+     * Get the number of fragments this change is split into.
+     * @return number of fragments.
+     */
     uint32_t getFragmentCount() const
     {
         return fragment_count_;
     }
 
+    /*!
+     * Get the size of each fragment this change is split into.
+     * @return size of fragment (0 means change is not fragmented).
+     */
     uint16_t getFragmentSize() const
     { 
         return fragment_size_; 
     }
 
+    /*!
+     * Checks if all fragments have been received.
+     * @return true when change is fully assembled (i.e. no missing fragments).
+     */
     bool is_fully_assembled()
     {
         return first_missing_fragment_ >= fragment_count_;
     }
 
+    /*!
+     * Fills a FragmentNumberSet_t with the list of missing fragments.
+     * @param [out] frag_sns FragmentNumberSet_t where result is stored.
+     */
     void get_missing_fragments(
             FragmentNumberSet_t& frag_sns)
     {
+        // Note: Fragment numbers are 1-based but we keep them 0 based.
         frag_sns.base(first_missing_fragment_ + 1);
 
+        // Traverse list of missing fragments, adding them to frag_sns
         uint32_t current_frag = first_missing_fragment_;
         while (current_frag < fragment_count_)
         {
@@ -168,9 +192,18 @@ struct RTPS_DllAPI CacheChange_t
         }
     }
 
+    /*!
+     * Set fragment size for this change.
+     *
+     * @param fragment_size Size of fragments.
+     * @param create_fragment_list Whether to create missing fragments list or not.
+     *
+     * @remarks Parameter create_fragment_list should only be true when receiving the first
+     *          fragment of a change.
+     */
     void setFragmentSize(
             uint16_t fragment_size,
-            bool set_fragment_state = false)
+            bool create_fragment_list = false)
     {
         fragment_size_ = fragment_size;
         fragment_count_ = 0;
@@ -180,17 +213,34 @@ struct RTPS_DllAPI CacheChange_t
         {
             // This follows RTPS 8.3.7.3.5
             fragment_count_ = (serializedPayload.length + fragment_size - 1) / fragment_size;
-            if (set_fragment_state)
+
+            if (create_fragment_list)
             {
+                // Keep index of next fragment on the payload portion at the beginning of each fragment. Last
+                // fragment will have fragment_count_ as 'next fragment index'
                 octet* fragment_ptr = serializedPayload.data;
                 for (uint32_t i = 1; i <= fragment_count_; i++, fragment_ptr += fragment_size_)
                 {
                     *((uint32_t*)fragment_ptr) = i;  // index to next fragment in missing list
                 }
             }
+            else
+            {
+                // List not created. This means we are going to send this change fragmented, so it is already
+                // assembled, and the missing list is empty (i.e. first missing points to fragment count)
+                first_missing_fragment_ = fragment_count_;
+            }
         }
     }
 
+    /*!
+     * Mark a set of consecutive fragments as received.
+     * This will remove a set of consecutive fragments from the missing list.
+     * Should be called BEFORE copying the received data into the serialized payload.
+     *
+     * @param initial_fragment Index (0-based) of first received fragment.
+     * @param num_of_fragments Number of received fragments. Should be strictly positive.
+     */
     void received_fragments(
             uint32_t initial_fragment,
             uint32_t num_of_fragments)
