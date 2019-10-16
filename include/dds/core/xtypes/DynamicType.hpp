@@ -55,6 +55,15 @@ public:
         return (int(kind_) & int(TypeKind::CONSTRUCTED_TYPE)) != 0;
     }
 
+    enum class Consistency
+    {
+        IGNORE_TYPE_WIDTH = 1,
+        IGNORE_SEQUENCE_BOUNDS = 2,
+        IGNORE_STRING_BOUNDS = 4,
+        IGNORE_MEMBER_NAMES = 8,
+        IGNORE_MEMBERS = 16,
+    };
+
     virtual bool is_subset_of(const DynamicType& other) const = 0;
 
 protected:
@@ -87,10 +96,18 @@ public:
             : type_(type.is_primitive_type() ? &type : type.clone())
         {}
 
-        template<typename DynamicTypeImpl>
-        Ptr(const DynamicTypeImpl&& type) //Ok, never comes a PrimitiveType as rvalue
+        template<typename DynamicTypeImpl, class = typename std::enable_if<
+            std::is_base_of<DynamicType, DynamicTypeImpl>::value
+            >::type>
+        Ptr(const DynamicTypeImpl&& type)
             : type_(new DynamicTypeImpl(std::move(type)))
-        {}
+        {
+            // Moving a PrimitiveType will get an error since all primitives are statically allocated.
+            // Since PrimitiveType only can be constructed by its helper function primitive_type<T> that
+            // returns always a reference, it will never be pased as a rvalue reference.
+            // Anyway, an assert is placed here to avoid errors in future changes.
+            assert(!type.is_primitive_type());
+        }
 
         Ptr(const Ptr& ptr)
             : type_((ptr.type_ == nullptr || ptr.type_->is_primitive_type()) ? ptr.type_ : ptr.type_->clone())

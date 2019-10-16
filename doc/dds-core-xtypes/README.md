@@ -108,7 +108,7 @@ The members can be modified with the following annotations:
 Any `DynamicType` can be tested with another `DynamicType` in a *subset* evaluation.
 Given the following line:
 ```c++
-t1.is_convertible_from(t2)
+t1.is_convertible_from(t2, flags)
 ```
 The previous sentence will be evaluate true if it is possible to get a instance of `t1` that be compatible with an instance of `t2`.
 //TODO
