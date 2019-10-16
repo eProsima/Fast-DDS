@@ -365,9 +365,8 @@ void subscriberKeys()
     std::unique_lock<std::mutex> lock(subListener.mutex_);
     subListener.cv_.wait(lock, [&subListener]()
     {
-         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-         return subListener.n_matched > 0;
-     });
+        return subListener.n_matched > 0;
+    });
 
     std::cin.ignore();
 
