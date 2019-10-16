@@ -99,12 +99,11 @@ public:
     {
         const CollectionType& collection = static_cast<const CollectionType&>(type_);
         assert(type_.is_collection_type());
-        assert(type_.is_primitive_type()
+        assert(collection.content_type().is_primitive_type()
             || collection.content_type().kind() == TypeKind::STRING_TYPE);
 
         const T* location = reinterpret_cast<T*>(collection.get_instance_at(instance_, 0));
-        size_t size = collection.get_instance_size(instance_);
-        return std::vector<T>(location, location + size);
+        return std::vector<T>(location, location + size());
     }
 
     class ReadableNode

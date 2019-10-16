@@ -36,13 +36,13 @@ public:
 
     virtual size_t memory_size() const = 0;
 
-    virtual void construct_instance(uint8_t* /*instance*/) const { } //Default does nothing
+    virtual void construct_instance(uint8_t* instance) const = 0;
 
     virtual void copy_instance(uint8_t* target, const uint8_t* source) const = 0;
 
     virtual void move_instance(uint8_t* target, uint8_t* source) const = 0;
 
-    virtual void destroy_instance(uint8_t* /*instance*/) const { } //Default does nothing
+    virtual void destroy_instance(uint8_t* instance) const = 0;
 
     virtual bool compare_instance(const uint8_t* instance, const uint8_t* other_instance) const = 0;
 

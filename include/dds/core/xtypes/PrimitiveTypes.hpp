@@ -99,7 +99,6 @@ class PrimitiveType : public DynamicType
         return other.kind() == kind();
     }
 
-
     virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const override
     {
         visitor(node);

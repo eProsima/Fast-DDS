@@ -16,7 +16,8 @@ This allow to simplify the API access of nested members in DynamicData
 ### Removed Annotation clases
 Annotation concepts has been embebed into the places where they are necessary in a more intuitive way.
 
-### Added some methods out of standard to ease the live to the user
-[] operator to access members.
-DynamicTypeIterator class
+### Added some methods out of standard to ease the user live
+* [] operator to access members and indexes.
+* `for_each`
+* `is_subset`
 
