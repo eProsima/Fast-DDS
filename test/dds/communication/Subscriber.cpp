@@ -226,7 +226,7 @@ public:
 
     void on_liveliness_changed(
             Subscriber* sub,
-            const LivelinessChangedStatus& status) override
+            const eprosima::fastdds::dds::LivelinessChangedStatus& status) override
     {
         (void)sub;
         if (status.alive_count_change == 1)
