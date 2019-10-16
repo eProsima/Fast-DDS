@@ -66,7 +66,7 @@ struct RTPS_DllAPI CacheChange_t
     Time_t sourceTimestamp;
 
     WriteParams write_params;
-    bool is_untyped_ = true;;
+    bool is_untyped_ = true;
 
     /*!
      * @brief Default constructor.
