@@ -21,8 +21,10 @@
 #include <dds/topic/Topic.hpp>
 //#include <dds/topic/detail/TTopicImpl.hpp>
 //#include <dds/topic/detail/TBuiltinTopicImpl.hpp>
-//#include <org/opensplice/topic/BuiltinTopicDelegate.hpp>
-//#include <org/opensplice/topic/BuiltinTopic.hpp>
+#include <fastdds/dds/topic/ParticipantBuiltinTopicData.hpp>
+#include <fastdds/dds/topic/TopicBuiltinTopicData.hpp>
+#include <fastdds/dds/topic/PublicationBuiltinTopicData.hpp>
+#include <fastdds/dds/topic/SubscriptionBuiltinTopicData.hpp>
 
 /**
  * @cond
@@ -33,17 +35,13 @@ namespace dds {
 namespace topic {
 namespace detail {
 
-//typedef dds::topic::TParticipantBuiltinTopicData<org::opensplice::topic::ParticipantBuiltinTopicDataDelegate> ParticipantBuiltinTopicData;
-class ParticipantBuiltinTopicData { };
+using ParticipantBuiltinTopicData = eprosima::fastdds::dds::ParticipantBuiltinTopicData;
 
-//typedef dds::topic::TTopicBuiltinTopicData<org::opensplice::topic::TopicBuiltinTopicDataDelegate> TopicBuiltinTopicData;
-class TopicBuiltinTopicData { };
+using TopicBuiltinTopicData = eprosima::fastdds::dds::TopicBuiltinTopicData;
 
-//typedef dds::topic::TPublicationBuiltinTopicData<org::opensplice::topic::PublicationBuiltinTopicDataDelegate> PublicationBuiltinTopicData;
-class PublicationBuiltinTopicData { };
+using PublicationBuiltinTopicData = eprosima::fastdds::dds::PublicationBuiltinTopicData;
 
-//typedef dds::topic::TSubscriptionBuiltinTopicData<org::opensplice::topic::SubscriptionBuiltinTopicDataDelegate> SubscriptionBuiltinTopicData;
-class SubscriptionBuiltinTopicData { };
+using SubscriptionBuiltinTopicData = eprosima::fastdds::dds::SubscriptionBuiltinTopicData;
 
 } //namespace detail
 } //namespace topic

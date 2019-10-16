@@ -18,7 +18,7 @@
 #ifndef EPROSIMA_DDS_TOPIC_DETAIL_BUILTIN_TOPIC_KEY_HPP_
 #define EPROSIMA_DDS_TOPIC_DETAIL_BUILTIN_TOPIC_KEY_HPP_
 
-//#include <org/opensplice/topic/BuiltinTopicKeyDelegate.hpp>
+#include <fastdds/dds/topic/BuiltinTopicKey.hpp>
 //#include <dds/topic/detail/TBuiltinTopicKeyImpl.hpp>
 
 /**
@@ -30,8 +30,7 @@ namespace dds {
 namespace topic {
 namespace detail {
 
-//typedef dds::topic::TBuiltinTopicKey<org::opensplice::topic::BuiltinTopicKeyDelegate> BuiltinTopicKey;
-class BuiltinTopicKey { };
+using BuiltinTopicKey = eprosima::fastdds::dds::BuiltinTopicKey;
 
 } //namespace detail
 } //namespace topic
