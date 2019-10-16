@@ -242,6 +242,7 @@ public:
     {
     public:
         WritableNode(const Instanceable::InstanceNode& instance_node) : ReadableNode(instance_node) {}
+        WritableDynamicDataRef data() const { return ReadableNode::data(); }
     };
 
     void for_each(std::function<void(const WritableNode& node)> visitor)

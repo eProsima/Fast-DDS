@@ -37,13 +37,13 @@ int my_value = data["b"]["a"].value<int>();
 ```
 
 ## Why use *eProsima xtypes*?
-- **OMG standard**: eProsima xtypes is based on the [dds-xtypes standard](https://www.omg.org/spec/DDS-XTypes/About-DDS-XTypes/) from the omg.
+- **OMG standard**: *eProsima xtypes* is based on the [dds-xtypes standard](https://www.omg.org/spec/DDS-XTypes/About-DDS-XTypes/) from the omg.
 - **C++11 API**: it uses most modern features of C++11 to offer a really easy API to use.
-- **Memory lightweight**: data instantiations use the same memory as types builts by the compiler.
-There is no memory penalty using eProsima xtypes in realtion to compiled types.
+- **Memory lightweight**: data instances use the same memory as types builts by the compiler.
+There is no memory penalty using *eProsima xtypes* in realtion to compiled types.
 - **Fast**: really small cost accesing to data members.
 - **Header only library**: avoid the linking problems.
-- **No external dependency**: eProsima xtypes only uses tools from std.
+- **No external dependency**: *eProsima xtypes* only uses tools from std.
 - **Easy to use**: Compresive API and intuitive concepts.
 
 ## API usage
@@ -51,7 +51,7 @@ There is no memory penalty using eProsima xtypes in realtion to compiled types.
 
 ### Type definition
 All types inherit from DynamicType as the following diagram represents:
-
+**"v$major.$minor"**
 // image
 
 #### PrimitiveType
@@ -72,16 +72,16 @@ There are several collection types:
 
 ```c++
 ArrayType a1(primitive_type<int>(), 10); //size 10
-ArrayType a2(struct, 10); //Array of structs (struct previously defined as StructType)
+ArrayType a2(structure, 10); //Array of structures (structure previously defined as StructType)
 SequenceType s1(primitive<float>()); //unbounded sequence
 SequenceType s2(primitive<float>(),30); //bounded sequence, max size will be 30
-SequenceType s3(SequenceType(struct), 20); //bounded sequence of unbounded sequences of structs.
+SequenceType s3(SequenceType(structure), 20); //bounded sequence of unbounded sequences of structures.
 StringType str1; //unbounded string
 StringType str2(50); //bounded string
 ```
 
 #### StructType
-You can specify an `StructType` givin a type name for this structure.
+You can specify an `StructType` givin the type name of the structure.
 ```c++
 StructType my_struct("MyStruct");
 ```
@@ -95,27 +95,27 @@ my_struct.add_member("m_d", ArrayType(25)); //shortcut version
 my_struct.add_member("m_e", other_struct)); //member of structs
 my_struct.add_member("m_f", SequenceType(other_struct))); //member of sequence of structs
 ```
-Note: once a `DynamicType` is added to an struct, a copy is performed (excepts for PrimitiveType).
-This allow to modify the `DynamicType`s without side effects, and facilitate the memory management of the
-DynamicType by the user.
+Note: once a `DynamicType` is added to an struct, a copy is performed (excepts for `PrimitiveType`).
+This allow to modify the `DynamicType`s without side effects, and facilitate the memory management by the user.
 
-##### Struct Member annotations
-There are several member annotations:
+##### annotations
+The members can be modified with the following annotations:
 - optional(): Set the member as optional.
 - id(value): Set the id to the member.
 - key(): Set the member as key member.
+//TODO
 
 #### `is_convertible_from` function of DynamicType
-//TODO
-Any DynamicType can be tested with another DynamicType in a *subset* evaluation.
+Any `DynamicType` can be tested with another `DynamicType` in a *subset* evaluation.
 Given the following line:
 ```c++
 t1.is_convertible_from(t2)
 ```
 The previous sentence will be evaluate true if it is possible to get a instance of `t1` that be compatible with an instance of `t2`.
+//TODO
 
 ### Data instantation
-In order to instantiate a data from a DynamicType, only is necessary to call the DynamicData constructor:
+In order to instantiate a data from a DynamicType is only necessary to call the DynamicData constructor:
 ```c++
 DynamicData data(my_defined_type);
 ```
@@ -163,15 +163,51 @@ There are two ways to obtain a references to a `DynamicData`:
 1. `ReadableDynamicDataRef` for `const` references.
 2. `WritableDynamicDataRef` for mutable references.
 
-A reference no contain any value, only points to an already existing `DynamicData` part of it.
-You can get a reference when access with the `[]` operator or calling the `ref()` or `cref()` of a `DynamicData`.
-If you will obtain a `ReadableDynamicDataRef` or a `WritableDynamicDataRef` depending if the theses operators are
+A reference no contain any value, only points to an already existing `DynamicData`, or part of it.
+You can get a reference when access with the `[]` operator or calling the `ref()` and `cref()` methods of a `DynamicData`.
+You will obtain a `ReadableDynamicDataRef` or a `WritableDynamicDataRef` depending if theses methods are
 calling from a `const DynamicData` or from a `DynamicData` itself.
 
-#### `operator ==` of DynamicData
+#### `operator ==` of `DynamicData`
+You can check the equality between 2 `DynamicData`s.
+It is not necessary that the associated types of the `DynamicData`s be the same as long as their types be compatibles
+(see the `is_compatible_from` section).
+//TODO
 
-#### `for_each` function of DynamicData
-
+#### `for_each` function of `DynamicData`
+This function offers an easy way to iterate the `DynamicData` tree.
+The function receive a callback that will be called for each node of the tree.
+```c++
+data.for_each([&](const DynamicData::ReadableNode& node)
+{
+    switch(node.data().type().kind())
+    {
+        case TypeKind::STRUCTURE_TYPE:
+        case TypeKind::SEQUENCE_TYPE:
+        case TypeKind::ARRAY_TYPE:
+        case TypeKind::STRING_TYPE:
+        case TypeKind::UINT_32_TYPE:
+        case TypeKind::FLOAT_32_TYPE:
+        //...
+    }
+});
+```
+The `node` parameter of the callback can be a `ReadableNode` or `WritableNode` depends of the mutability of the `DynamicData`,
+and has the following methods that allows to introspect the node
+```c++
+node.data() // for a view of the data
+node.type() // related type
+node.deep() // nested deep
+node.parent() // parent node in the data tree
+node.access().index() // index used for access from parent to this node
+node.access().member() // member used for access from parent to this node
+```
+Note: `node.data()` will return a `ReadableDynamicDataRef` or a `WritableDynamicDataRef` depending of the node type.
 
 ## Performance
+The `DynamicData` instance only requires to reserve the minimal allocations needed to store the data.
+If its associated type only contains the following (nested) types: `PrimitiveType`, `StructType`, or `ArrayType`;
+the memory required can be performed with only **one allocation** at the creation of the DynamicData.
+If the type, contains some `MutableCollectionType`, another allocation is needed to store this mutable element.
+
 
