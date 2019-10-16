@@ -30,7 +30,7 @@ namespace dds {
 namespace topic {
 namespace detail {
 
-typedef dds::topic::TAnyTopic<eprosima::fastdds::dds::Topic> AnyTopic;
+using AnyTopic = eprosima::fastdds::dds::Topic;
 
 } //namespace detail
 } //namespace topic

@@ -21,11 +21,11 @@
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
-#include <fastrtps/qos/LivelinessChangedStatus.h>
-#include <fastrtps/qos/LivelinessLostStatus.h>
-#include <fastrtps/qos/DeadlineMissedStatus.h>
-#include <fastrtps/qos/IncompatibleQosStatus.hpp>
-#include <fastrtps/qos/SampleRejectedStatus.hpp>
+#include <fastdds/dds/qos/LivelinessChangedStatus.hpp>
+#include <fastdds/dds/core/status/BaseStatus.hpp>
+#include <fastdds/dds/qos/DeadlineMissedStatus.hpp>
+#include <fastdds/dds/qos/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/qos/SampleRejectedStatus.hpp>
 
 /**
  * @cond
@@ -37,38 +37,27 @@ namespace core {
 namespace status {
 namespace detail {
 
-using InconsistentTopicStatus =
-    dds::core::status::TInconsistentTopicStatus<eprosima::fastdds::dds::InconsistentTopicStatus>;
+using InconsistentTopicStatus = eprosima::fastdds::dds::InconsistentTopicStatus;
 
-using LivelinessChangedStatus =
-    dds::core::status::TLivelinessChangedStatus <eprosima::fastrtps::LivelinessChangedStatus>;
+using LivelinessChangedStatus = eprosima::fastdds::dds::LivelinessChangedStatus;
 
-using LivelinessLostStatus =
-    dds::core::status::TLivelinessLostStatus<eprosima::fastrtps::LivelinessLostStatus>;
+using LivelinessLostStatus = eprosima::fastdds::dds::LivelinessLostStatus;
 
-using OfferedDeadlineMissedStatus =
-    dds::core::status::TOfferedDeadlineMissedStatus<eprosima::fastrtps::OfferedDeadlineMissedStatus>;
+using OfferedDeadlineMissedStatus = eprosima::fastdds::dds::OfferedDeadlineMissedStatus;
 
-using OfferedIncompatibleQosStatus =
-    dds::core::status::TOfferedIncompatibleQosStatus<eprosima::fastrtps::OfferedIncompatibleQosStatus>;
+using OfferedIncompatibleQosStatus = eprosima::fastdds::dds::OfferedIncompatibleQosStatus;
 
-using PublicationMatchedStatus =
-    dds::core::status::TPublicationMatchedStatus<eprosima::fastdds::dds::PublicationMatchedStatus>;
+using PublicationMatchedStatus = eprosima::fastdds::dds::PublicationMatchedStatus;
 
-using SampleRejectedStatus =
-    dds::core::status::TSampleRejectedStatus<eprosima::fastrtps::SampleRejectedStatus>;
+using SampleRejectedStatus = eprosima::fastdds::dds::SampleRejectedStatus;
 
-using RequestedDeadlineMissedStatus =
-    dds::core::status::TRequestedDeadlineMissedStatus<eprosima::fastrtps::RequestedDeadlineMissedStatus>;
+using RequestedDeadlineMissedStatus = eprosima::fastdds::dds::RequestedDeadlineMissedStatus;
 
-using RequestedIncompatibleQosStatus =
-    dds::core::status::TRequestedIncompatibleQosStatus<eprosima::fastrtps::RequestedIncompatibleQosStatus>;
+using RequestedIncompatibleQosStatus = eprosima::fastdds::dds::RequestedIncompatibleQosStatus;
 
-using SampleLostStatus =
-    dds::core::status::TSampleLostStatus<eprosima::fastdds::dds::SampleLostStatus>;
+using SampleLostStatus = eprosima::fastdds::dds::SampleLostStatus;
 
-using SubscriptionMatchedStatus =
-    dds::core::status::TSubscriptionMatchedStatus<eprosima::fastdds::dds::SubscriptionMatchedStatus>;
+using SubscriptionMatchedStatus = eprosima::fastdds::dds::SubscriptionMatchedStatus;
 
 } //namespace detail
 } //namespace status

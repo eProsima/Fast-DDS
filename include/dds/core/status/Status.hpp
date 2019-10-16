@@ -36,8 +36,7 @@ namespace status {
 /**
  * \copydoc DCPS_Status_InconsistentTopic
  */
-template<typename D>
-class TInconsistentTopicStatus : public dds::core::Value<D>
+class TInconsistentTopicStatus : public dds::core::Value<detail::InconsistentTopicStatus>
 {
 public:
     TInconsistentTopicStatus();
@@ -57,8 +56,7 @@ public:
 /**
  * \copydoc DCPS_Status_SampleLost
  */
-template<typename D>
-class TSampleLostStatus : public dds::core::Value<D>
+class TSampleLostStatus : public dds::core::Value<detail::SampleLostStatus>
 {
 public:
     TSampleLostStatus();
@@ -80,8 +78,7 @@ public:
 /**
  * \copydoc DCPS_Status_SampleRejected
  */
-template<typename D>
-class TSampleRejectedStatus : public dds::core::Value<D>
+class TSampleRejectedStatus : public dds::core::Value<detail::SampleRejectedStatus>
 {
 public:
     TSampleRejectedStatus();
@@ -113,8 +110,7 @@ public:
 /**
  * \copydoc DCPS_Status_LivelinessLost
  */
-template<typename D>
-class TLivelinessLostStatus : public dds::core::Value<D>
+class TLivelinessLostStatus : public dds::core::Value<detail::LivelinessLostStatus>
 {
 public:
     TLivelinessLostStatus();
@@ -138,8 +134,7 @@ public:
 /**
  * \copydoc DCPS_Status_LivelinessChanged
  */
-template<typename D>
-class TLivelinessChangedStatus : public dds::core::Value<D>
+class TLivelinessChangedStatus : public dds::core::Value<detail::LivelinessChangedStatus>
 {
 public:
     TLivelinessChangedStatus();
@@ -187,8 +182,7 @@ public:
 /**
  * \copydoc DCPS_Status_OfferedDeadlineMissed
  */
-template<typename D>
-class TOfferedDeadlineMissedStatus : public dds::core::Value<D>
+class TOfferedDeadlineMissedStatus : public dds::core::Value<detail::OfferedDeadLineMissedStatus>
 {
 public:
     TOfferedDeadlineMissedStatus();
@@ -217,8 +211,7 @@ public:
 /**
  * \copydoc DCPS_Status_RequestedDeadlineMissed
  */
-template<typename D>
-class TRequestedDeadlineMissedStatus : public dds::core::Value<D>
+class TRequestedDeadlineMissedStatus : public dds::core::Value<detail::RequestedDeadlineMissedStatus>
 {
 public:
     TRequestedDeadlineMissedStatus();
@@ -248,8 +241,7 @@ public:
 /**
  * \copydoc DCPS_Status_OfferedIncompatibleQoS
  */
-template<typename D>
-class TOfferedIncompatibleQosStatus : public dds::core::Value<D>
+class TOfferedIncompatibleQosStatus : public dds::core::Value<detail::OfferedIncompatibleQosStatus>
 {
 public:
     TOfferedIncompatibleQosStatus();
@@ -296,8 +288,7 @@ public:
 /**
  * \copydoc DCPS_Status_RequestedIncompatibleQoS
  */
-template<typename D>
-class TRequestedIncompatibleQosStatus : public dds::core::Value<D>
+class TRequestedIncompatibleQosStatus : public dds::core::Value<detail::RequestedIncompatibleQosStatus>
 {
 public:
     TRequestedIncompatibleQosStatus();
@@ -344,8 +335,7 @@ public:
 /**
  * \copydoc DCPS_Status_PublicationMatched
  */
-template<typename D>
-class TPublicationMatchedStatus : public dds::core::Value<D>
+class TPublicationMatchedStatus : public dds::core::Value<detail::PublicationMatchedStatus>
 {
 public:
     TPublicationMatchedStatus();
@@ -386,8 +376,7 @@ public:
 /**
  * \copydoc DCPS_Status_SubscriptionMatched
  */
-template<typename D>
-class TSubscriptionMatchedStatus : public dds::core::Value<D>
+class TSubscriptionMatchedStatus : public dds::core::Value<detail::SubscriptionMatchedStatus>
 {
 public:
     TSubscriptionMatchedStatus();
@@ -442,28 +431,6 @@ template<typename STATUS>
 StatusMask get_status();
 
 #include <dds/core/status/detail/Status.hpp>
-
-using InconsistentTopicStatus = dds::core::status::detail::InconsistentTopicStatus;
-
-using LivelinessChangedStatus = dds::core::status::detail::LivelinessChangedStatus;
-
-using LivelinessLostStatus = dds::core::status::detail::LivelinessLostStatus;
-
-using OfferedDeadlineMissedStatus = dds::core::status::detail::OfferedDeadlineMissedStatus;
-
-using OfferedIncompatibleQosStatus = dds::core::status::detail::OfferedIncompatibleQosStatus;
-
-using PublicationMatchedStatus = dds::core::status::detail::PublicationMatchedStatus;
-
-using SampleRejectedStatus = dds::core::status::detail::SampleRejectedStatus;
-
-using RequestedDeadlineMissedStatus = dds::core::status::detail::RequestedDeadlineMissedStatus;
-
-using RequestedIncompatibleQosStatus = dds::core::status::detail::RequestedIncompatibleQosStatus;
-
-using SampleLostStatus = dds::core::status::detail::SampleLostStatus;
-
-using SubscriptionMatchedStatus = dds::core::status::detail::SubscriptionMatchedStatus;
 
 } //namespace status
 } //namespace core
