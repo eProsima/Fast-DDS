@@ -245,9 +245,14 @@ struct RTPS_DllAPI CacheChange_t
             uint32_t initial_fragment,
             uint32_t num_of_fragments)
     {
-        if (fragment_size_ > 0)
+        if ( (fragment_size_ > 0) && (initial_fragment < fragment_count_) )
         {
             uint32_t last_fragment = initial_fragment + num_of_fragments;
+            if (last_fragment > fragment_count_)
+            {
+                last_fragment = fragment_count_;
+            }
+
             if (initial_fragment <= first_missing_fragment_)
             {
                 // Perform first = *first until first >= last_received
