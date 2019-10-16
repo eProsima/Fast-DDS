@@ -46,8 +46,6 @@ class TimedEvent;
 
 } // namespace rtps
 
-class SampleInfo_t;
-
 } // namespace fastrtps
 
 namespace fastdds {
@@ -55,6 +53,7 @@ namespace dds {
 
 class Subscriber;
 class SubscriberImpl;
+class SampleInfo_t;
 
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
@@ -94,24 +93,24 @@ public:
     /* TODO
     bool read(
             std::vector<void*>& data_values,
-            std::vector<fastrtps::SampleInfo_t>& sample_infos,
+            std::vector<SampleInfo_t>& sample_infos,
             uint32_t max_samples);
     */
 
     ReturnCode_t read_next_sample(
             void* data,
-            fastrtps::SampleInfo_t* info);
+            SampleInfo_t* info);
 
     /* TODO
     bool take(
             std::vector<void*>& data_values,
-            std::vector<fastrtps::SampleInfo_t>& sample_infos,
+            std::vector<SampleInfo_t>& sample_infos,
             uint32_t max_samples);
     */
 
     ReturnCode_t take_next_sample(
             void* data,
-            fastrtps::SampleInfo_t* info);
+            SampleInfo_t* info);
 
     ///@}
 
