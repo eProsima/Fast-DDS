@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <condition_variable>
 
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
@@ -11,8 +12,6 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/subscriber/SampleInfo.h>
-
-#include <fastrtps/utils/eClock.h>
 
 #include "samplePubSubTypes.h"
 
@@ -43,8 +42,11 @@ public:
 
     PubListener()
         : n_matched(0)
-        , firstConnected(false) {};
-    ~PubListener() {};
+        , firstConnected(false)
+    {}
+
+    ~PubListener() {}
+
     void onPublicationMatched(
             eprosima::fastrtps::Publisher* /*pub*/,
             eprosima::fastrtps::rtps::MatchingInfo& info)
@@ -57,9 +59,13 @@ public:
         {
             n_matched--;
         }
+        cv_.notify_all();
     }
+
     int n_matched;
     bool firstConnected;
+    std::condition_variable cv_;
+    std::mutex mutex_;
 };
 
 class SubListener : public eprosima::fastrtps::SubscriberListener
@@ -68,8 +74,11 @@ public:
 
     SubListener()
         : n_matched(0)
-        , n_samples(0) {};
-    ~SubListener() {};
+        , n_samples(0)
+    {}
+
+    ~SubListener() {}
+
     void onSubscriptionMatched(
             eprosima::fastrtps::Subscriber* /*sub*/,
             eprosima::fastrtps::rtps::MatchingInfo& info)
@@ -82,7 +91,9 @@ public:
         {
             n_matched--;
         }
+        cv_.notify_all();
     }
+
     void onNewDataMessage(
             eprosima::fastrtps::Subscriber* sub)
     {
@@ -101,14 +112,20 @@ public:
     eprosima::fastrtps::SampleInfo_t m_info;
     int n_matched;
     uint32_t n_samples;
+    std::condition_variable cv_;
+    std::mutex mutex_;
 };
 
 void keys();
+
 void publisherKeys();
+
 void subscriberKeys();
+
 Publisher* initPublisher(
         samplePubSubType& sampleType,
         PubListener& listener);
+
 Subscriber* initSubscriber(
         samplePubSubType& sampleType,
         SubListener* listener);
@@ -238,10 +255,11 @@ void keys()
     Subscriber* mySub = initSubscriber(sampleType, nullptr);
 
     // wait for the connection
-    while (pubListener.n_matched == 0)
+    std::unique_lock<std::mutex> lock(pubListener.mutex_);
+    pubListener.cv_.wait(lock, [&pubListener]()
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
+        return pubListener.n_matched > 0;
+    });
 
     //Send 10 samples
     std::cout << "Publishing 5 keys, 10 samples per key..." << std::endl;
@@ -255,7 +273,7 @@ void keys()
         }
     }
 
-    eClock::my_sleep(1500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     std::cout << "Publishing 10 more samples on a key 3..." << std::endl;
     for (uint8_t j = 0; j < 10; j++)
@@ -265,7 +283,7 @@ void keys()
         myPub->write(&my_sample);
     }
 
-    eClock::my_sleep(1500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     //Read the contents of both histories:
     std::vector< std::pair<int, int> > sampleList;
@@ -302,10 +320,11 @@ void publisherKeys()
     Publisher* myPub = initPublisher(sampleType, pubListener);
 
     // wait for the connection
-    while (pubListener.n_matched == 0)
+    std::unique_lock<std::mutex> lock(pubListener.mutex_);
+    pubListener.cv_.wait(lock, [&pubListener]()
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
+        return pubListener.n_matched > 0;
+    });
 
     //Send 10 samples
     std::cout << "Publishing 5 keys, 10 samples per key..." << std::endl;
@@ -319,7 +338,7 @@ void publisherKeys()
         }
     }
 
-    eClock::my_sleep(1500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     std::cout << "Publishing 10 more samples on a key 3..." << std::endl;
     for (uint8_t j = 0; j < 10; j++)
@@ -329,7 +348,7 @@ void publisherKeys()
         myPub->write(&my_sample);
     }
 
-    eClock::my_sleep(1500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     Domain::stopAll();
 }
@@ -343,11 +362,11 @@ void subscriberKeys()
 
     initSubscriber(sampleType, &subListener);
 
-    // wait for the connection
-    while (subListener.n_matched == 0)
+    std::unique_lock<std::mutex> lock(subListener.mutex_);
+    subListener.cv_.wait(lock, [&subListener]()
     {
-        eClock::my_sleep(100);
-    }
+         return subListener.n_matched > 0;
+     });
 
     std::cin.ignore();
 
