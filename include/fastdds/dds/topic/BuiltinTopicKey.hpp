@@ -26,6 +26,8 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+using BUILTIN_TOPIC_KEY_TYPE_NATIVE = int32_t;
+
 class BuiltinTopicKey
 {
 public:
@@ -71,7 +73,7 @@ public:
     }
 
 private:
-    int32_t key_[3];
+    BUILTIN_TOPIC_KEY_TYPE_NATIVE key_[3];
 };
 
 } // namespace dds
