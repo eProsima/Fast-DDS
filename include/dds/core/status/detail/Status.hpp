@@ -22,7 +22,6 @@
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/qos/LivelinessChangedStatus.hpp>
-#include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/qos/DeadlineMissedStatus.hpp>
 #include <fastdds/dds/qos/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/qos/SampleRejectedStatus.hpp>

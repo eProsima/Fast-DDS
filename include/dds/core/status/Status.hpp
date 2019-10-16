@@ -36,10 +36,10 @@ namespace status {
 /**
  * \copydoc DCPS_Status_InconsistentTopic
  */
-class TInconsistentTopicStatus : public dds::core::Value<detail::InconsistentTopicStatus>
+class InconsistentTopicStatus : public dds::core::Value<detail::InconsistentTopicStatus>
 {
 public:
-    TInconsistentTopicStatus();
+    InconsistentTopicStatus();
 
     /**
      * @return Total cumulative count of all inconsistent topics detected.
@@ -56,10 +56,10 @@ public:
 /**
  * \copydoc DCPS_Status_SampleLost
  */
-class TSampleLostStatus : public dds::core::Value<detail::SampleLostStatus>
+class SampleLostStatus : public dds::core::Value<detail::SampleLostStatus>
 {
 public:
-    TSampleLostStatus();
+    SampleLostStatus();
 
     /**
      * @return Total cumulative count of all samples lost across of instances of data
@@ -78,10 +78,10 @@ public:
 /**
  * \copydoc DCPS_Status_SampleRejected
  */
-class TSampleRejectedStatus : public dds::core::Value<detail::SampleRejectedStatus>
+class SampleRejectedStatus : public dds::core::Value<detail::SampleRejectedStatus>
 {
 public:
-    TSampleRejectedStatus();
+    SampleRejectedStatus();
 
     /**
      * @return Total cumulative count of samples rejected by the DataReader.
@@ -110,10 +110,10 @@ public:
 /**
  * \copydoc DCPS_Status_LivelinessLost
  */
-class TLivelinessLostStatus : public dds::core::Value<detail::LivelinessLostStatus>
+class LivelinessLostStatus : public dds::core::Value<detail::LivelinessLostStatus>
 {
 public:
-    TLivelinessLostStatus();
+    LivelinessLostStatus();
 
     /**
      * @return Total cumulative number of times that a previously-alive DataWriter
@@ -134,10 +134,10 @@ public:
 /**
  * \copydoc DCPS_Status_LivelinessChanged
  */
-class TLivelinessChangedStatus : public dds::core::Value<detail::LivelinessChangedStatus>
+class LivelinessChangedStatus : public dds::core::Value<detail::LivelinessChangedStatus>
 {
 public:
-    TLivelinessChangedStatus();
+    LivelinessChangedStatus();
 
     /**
      * @return The total number of currently active DataWriters that write the Topic
@@ -182,10 +182,10 @@ public:
 /**
  * \copydoc DCPS_Status_OfferedDeadlineMissed
  */
-class TOfferedDeadlineMissedStatus : public dds::core::Value<detail::OfferedDeadLineMissedStatus>
+class OfferedDeadlineMissedStatus : public dds::core::Value<detail::OfferedDeadLineMissedStatus>
 {
 public:
-    TOfferedDeadlineMissedStatus();
+    OfferedDeadlineMissedStatus();
 
     /**
      * @return Total cumulative number of offered deadline periods elapsed during
@@ -211,10 +211,10 @@ public:
 /**
  * \copydoc DCPS_Status_RequestedDeadlineMissed
  */
-class TRequestedDeadlineMissedStatus : public dds::core::Value<detail::RequestedDeadlineMissedStatus>
+class RequestedDeadlineMissedStatus : public dds::core::Value<detail::RequestedDeadlineMissedStatus>
 {
 public:
-    TRequestedDeadlineMissedStatus();
+    RequestedDeadlineMissedStatus();
 
     /**
      * @return Total cumulative number of missed deadlines detected for any instance
@@ -241,10 +241,10 @@ public:
 /**
  * \copydoc DCPS_Status_OfferedIncompatibleQoS
  */
-class TOfferedIncompatibleQosStatus : public dds::core::Value<detail::OfferedIncompatibleQosStatus>
+class OfferedIncompatibleQosStatus : public dds::core::Value<detail::OfferedIncompatibleQosStatus>
 {
 public:
-    TOfferedIncompatibleQosStatus();
+    OfferedIncompatibleQosStatus();
 
     /**
      * @return Total cumulative number of times the concerned DataWriter
@@ -288,10 +288,10 @@ public:
 /**
  * \copydoc DCPS_Status_RequestedIncompatibleQoS
  */
-class TRequestedIncompatibleQosStatus : public dds::core::Value<detail::RequestedIncompatibleQosStatus>
+class RequestedIncompatibleQosStatus : public dds::core::Value<detail::RequestedIncompatibleQosStatus>
 {
 public:
-    TRequestedIncompatibleQosStatus();
+    RequestedIncompatibleQosStatus();
 
     /**
      * @return Total cumulative number of times the concerned DataReader
@@ -335,10 +335,10 @@ public:
 /**
  * \copydoc DCPS_Status_PublicationMatched
  */
-class TPublicationMatchedStatus : public dds::core::Value<detail::PublicationMatchedStatus>
+class PublicationMatchedStatus : public dds::core::Value<detail::PublicationMatchedStatus>
 {
 public:
-    TPublicationMatchedStatus();
+    PublicationMatchedStatus();
 
     /**
      * @return Total cumulative count the concerned DataWriter discovered a
@@ -376,10 +376,10 @@ public:
 /**
  * \copydoc DCPS_Status_SubscriptionMatched
  */
-class TSubscriptionMatchedStatus : public dds::core::Value<detail::SubscriptionMatchedStatus>
+class SubscriptionMatchedStatus : public dds::core::Value<detail::SubscriptionMatchedStatus>
 {
 public:
-    TSubscriptionMatchedStatus();
+    SubscriptionMatchedStatus();
 
     /**
      * @return Total cumulative count the concerned DataReader discovered a
