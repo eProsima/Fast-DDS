@@ -115,6 +115,11 @@ WLP* RTPSParticipant::wlp() const
     return mp_impl->wlp();
 }
 
+fastdds::dds::builtin::TypeLookupManager* RTPSParticipant::typelookup_manager() const
+{
+    return mp_impl->typelookup_manager();
+}
+
 bool RTPSParticipant::get_new_entity_id(
         EntityId_t& entityId)
 {
@@ -125,6 +130,12 @@ void RTPSParticipant::set_check_type_function(
         std::function<bool(const std::string&)>&& check_type)
 {
     mp_impl->set_check_type_function(std::move(check_type));
+}
+
+void RTPSParticipant::set_listener(
+        RTPSParticipantListener* listener)
+{
+    mp_impl->set_listener(listener);
 }
 
 } /* namespace rtps */

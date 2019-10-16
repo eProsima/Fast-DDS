@@ -666,6 +666,9 @@ void WriterProxyData::clear()
     m_typeMaxSerialized = 0;
     m_topicKind = NO_KEY;
     persistence_guid_ = c_Guid_Unknown;
+    m_type_id = TypeIdV1();
+    m_type = TypeObjectV1();
+    m_type_information = xtypes::TypeInformation();
 }
 
 void WriterProxyData::copy(

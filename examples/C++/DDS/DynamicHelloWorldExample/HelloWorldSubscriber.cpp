@@ -40,7 +40,8 @@ bool HelloWorldSubscriber::init()
     eprosima::fastrtps::ParticipantAttributes PParam;
     PParam.rtps.setName("Participant_sub");
     mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &m_listener);
-    if (mp_participant==nullptr)
+
+    if (mp_participant == nullptr)
     {
         return false;
     }
@@ -54,7 +55,8 @@ bool HelloWorldSubscriber::init()
     return true;
 }
 
-HelloWorldSubscriber::~HelloWorldSubscriber() {
+HelloWorldSubscriber::~HelloWorldSubscriber()
+{
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
     readers_.clear();
     datas_.clear();
@@ -89,7 +91,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(
     if (dit != subscriber_->datas_.end())
     {
         eprosima::fastrtps::types::DynamicData_ptr data = dit->second;
-        if (reader->take_next_sample(data.get(), &m_info))
+        if (reader->take_next_sample(data.get(), &m_info) == ReturnCode_t::RETCODE_OK)
         {
             if (m_info.sampleKind == eprosima::fastrtps::rtps::ALIVE)
             {
@@ -104,6 +106,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(
 
 void HelloWorldSubscriber::SubListener::on_type_discovery(
         DomainParticipant*,
+        const eprosima::fastrtps::rtps::SampleIdentity&,
         const eprosima::fastrtps::string_255& topic,
         const eprosima::fastrtps::types::TypeIdentifier*,
         const eprosima::fastrtps::types::TypeObject*,
@@ -136,8 +139,8 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
         &subscriber_->m_listener);
 
     subscriber_->readers_[reader] = dyn_type;
-    eprosima::fastrtps::types::DynamicData_ptr data =
-            eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type);
+    eprosima::fastrtps::types::DynamicData_ptr data(
+        eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type));
     subscriber_->datas_[reader] = data;
 }
 
@@ -152,5 +155,7 @@ void HelloWorldSubscriber::run(
 {
     std::cout << "Subscriber running until "<< number << "samples have been received"<<std::endl;
     while (number > this->m_listener.n_samples)
+    {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
 }

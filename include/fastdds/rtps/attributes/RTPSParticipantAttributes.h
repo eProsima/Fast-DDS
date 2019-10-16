@@ -233,10 +233,24 @@ public:
 };
 
 /**
+ * TypeLookupService settings.
+ */
+class TypeLookupSettings
+{
+public:
+
+    //!Indicates to use the TypeLookup Service client endpoints
+    bool use_client = false;
+
+    //!Indicates to use the TypeLookup Service server endpoints
+    bool use_server = false;
+
+};
+
+/**
  * Class BuiltinAttributes, to define the behavior of the RTPSParticipant builtin protocols.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
-
 class BuiltinAttributes
 {
     public:
@@ -247,11 +261,8 @@ class BuiltinAttributes
         //!Indicates to use the WriterLiveliness protocol.
         bool use_WriterLivelinessProtocol = true;
 
-        //!Indicates to use the TypeLookup Service client endpoints
-        bool use_TypeLookupServiceClient = false;
-
-        //!Indicates to use the TypeLookup Service server endpoints
-        bool use_TypeLookupServiceServer = false;
+        //!TypeLookup Service settings
+        TypeLookupSettings typelookup_config;
 
         /**
          * DomainId to be used by the RTPSParticipant (80 by default).
@@ -287,8 +298,8 @@ class BuiltinAttributes
         {
             return (this->discovery_config == b.discovery_config) &&
                    (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
-                   (use_TypeLookupServiceClient == b.use_TypeLookupServiceClient) &&
-                   (use_TypeLookupServiceServer == b.use_TypeLookupServiceServer) &&
+                   (typelookup_config.use_client == b.typelookup_config.use_client) &&
+                   (typelookup_config.use_server == b.typelookup_config.use_server) &&
                    (this->domainId == b.domainId) &&
                    (this->metatrafficUnicastLocatorList == b.metatrafficUnicastLocatorList) &&
                    (this->metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&

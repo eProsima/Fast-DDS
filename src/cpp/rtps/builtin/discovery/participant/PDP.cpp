@@ -53,6 +53,8 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
+#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
+
 #include <fastrtps/log/Log.h>
 
 #include <mutex>
@@ -224,6 +226,18 @@ void PDP::initializeParticipantProxyData(ParticipantProxyData* participant_data)
         participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_WRITER;
         participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_DATA_READER;
 #endif
+    }
+
+    if (mp_RTPSParticipant->getAttributes().builtin.typelookup_config.use_server)
+    {
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
+    }
+
+    if (mp_RTPSParticipant->getAttributes().builtin.typelookup_config.use_client)
+    {
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
+        participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
     }
 
 #if HAVE_SECURITY
@@ -904,8 +918,16 @@ bool PDP::remove_remote_participant(
             }
         }
 
-        if(mp_builtin->mp_WLP != nullptr)
+        if (mp_builtin->mp_WLP != nullptr)
+        {
             this->mp_builtin->mp_WLP->removeRemoteEndpoints(pdata);
+        }
+
+        if (mp_builtin->tlm_ != nullptr)
+        {
+            mp_builtin->tlm_->remove_remote_endpoints(pdata);
+        }
+
         this->mp_EDP->removeRemoteEndpoints(pdata);
         this->removeRemoteEndpoints(pdata);
 
@@ -1039,7 +1061,8 @@ void PDP::check_and_notify_type_discovery(
         wdata.topicName(),
         wdata.typeName(),
         wdata.type_id().m_type_identifier,
-        wdata.type().m_type_object);
+        wdata.type().m_type_object,
+        wdata.type_information());
 }
 
 void PDP::check_and_notify_type_discovery(
@@ -1051,7 +1074,8 @@ void PDP::check_and_notify_type_discovery(
         rdata.topicName(),
         rdata.typeName(),
         rdata.type_id().m_type_identifier,
-        rdata.type().m_type_object);
+        rdata.type().m_type_object,
+        rdata.type_information());
 }
 
 void PDP::check_and_notify_type_discovery(
@@ -1059,8 +1083,16 @@ void PDP::check_and_notify_type_discovery(
         const string_255& topic_name,
         const string_255& type_name,
         const types::TypeIdentifier& type_id,
-        const types::TypeObject& type_obj) const
+        const types::TypeObject& type_obj,
+        const xtypes::TypeInformation& type_info) const
 {
+    // Notify about type_info
+    if (type_info.assigned())
+    {
+        listener->on_type_information_received(
+            mp_RTPSParticipant->getUserRTPSParticipant(), topic_name, type_name, type_info.type_information);
+    }
+
     // Are we discovering a type?
     types::DynamicType_ptr dyn_type;
     if (type_obj._d() == types::EK_COMPLETE) // Writer shares a Complete TypeObject
@@ -1084,6 +1116,7 @@ void PDP::check_and_notify_type_discovery(
             // Discovering a type
             listener->on_type_discovery(
                 mp_RTPSParticipant->getUserRTPSParticipant(),
+                fastdds::dds::builtin::INVALID_SAMPLE_IDENTITY,
                 topic_name,
                 &type_id,
                 &type_obj,

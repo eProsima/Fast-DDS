@@ -54,6 +54,17 @@
 #endif
 
 namespace eprosima {
+
+namespace fastdds {
+namespace dds {
+namespace builtin {
+
+class TypeLookupManager;
+
+} // namespace builtin
+} // namespace dds
+} // namespace fastdds
+
 namespace fastrtps {
 
 class TopicAttributes;
@@ -229,6 +240,16 @@ public:
      */
     inline RTPSParticipantListener* getListener() { return mp_participantListener; }
 
+    /**
+     * @brief Modifies the participant listener
+     * @param listener
+     */
+    void set_listener(
+            RTPSParticipantListener* listener)
+    {
+        mp_participantListener = listener;
+    }
+
     std::vector<std::string> getParticipantNames() const;
 
     /**
@@ -280,6 +301,8 @@ public:
     PDPSimple* pdpsimple();
 
     WLP* wlp();
+
+    fastdds::dds::builtin::TypeLookupManager* typelookup_manager() const;
 
     NetworkFactory& network_factory() { return m_network_Factory; }
 

@@ -15,3 +15,4 @@
 set(fastrtps_FOUND TRUE)
 add_subdirectory(HelloWorldExample)
 add_subdirectory(DynamicHelloWorldExample)
+add_subdirectory(TypeLookupService)

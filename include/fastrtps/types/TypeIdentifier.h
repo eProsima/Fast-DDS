@@ -407,6 +407,12 @@ public:
             const TypeIdentifier& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
+    /**
+     * @brief equivalence_hash_to_string
+     * @return string representation of the equivalence hash
+     */
+    RTPS_DllAPI std::string equivalence_hash_to_string() const;
+
 private:
 
     octet m__d;

@@ -26,8 +26,6 @@
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
 
 using namespace eprosima::fastrtps;
@@ -37,7 +35,7 @@ using namespace eprosima::fastrtps::types;
 HelloWorldSubscriber::HelloWorldSubscriber()
     : mp_participant(nullptr)
     , mp_subscriber(nullptr)
-    , m_DynType(nullptr)
+    , m_DynType(DynamicType_ptr(nullptr))
 {
 }
 
@@ -47,8 +45,10 @@ bool HelloWorldSubscriber::init()
     PParam.rtps.builtin.domainId = 0;
     PParam.rtps.setName("DynHelloWorld_sub");
     mp_participant = Domain::createParticipant(PParam, (ParticipantListener*)&m_part_list);
-    if(mp_participant==nullptr)
+    if (mp_participant == nullptr)
+    {
         return false;
+    }
 
     //  Create basic types and add members to the struct.
     DynamicTypeBuilder_ptr created_type_ulong = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
@@ -69,19 +69,20 @@ bool HelloWorldSubscriber::init()
     Rparam.topic.topicKind = NO_KEY;
     Rparam.topic.topicDataType = "HelloWorld";
     Rparam.topic.topicName = "HelloWorldTopic";
-    //Rparam.topic.topicDiscoveryKind = NO_CHECK; // Do it compatible with other HelloWorlds
 
     mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_listener);
 
-    if(mp_subscriber == nullptr)
+    if (mp_subscriber == nullptr)
+    {
         return false;
+    }
 
 
     return true;
 }
 
-HelloWorldSubscriber::~HelloWorldSubscriber() {
-    // TODO Auto-generated destructor stub
+HelloWorldSubscriber::~HelloWorldSubscriber()
+{
     Domain::removeParticipant(mp_participant);
 
     DynamicDataFactory::get_instance()->delete_data(m_listener.m_DynHello);
@@ -89,23 +90,27 @@ HelloWorldSubscriber::~HelloWorldSubscriber() {
     Domain::stopAll();
 }
 
-void HelloWorldSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void HelloWorldSubscriber::SubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         n_matched++;
-        std::cout << "Subscriber matched"<<std::endl;
+        std::cout << "Subscriber matched" << std::endl;
     }
     else
     {
         n_matched--;
-        std::cout << "Subscriber unmatched"<<std::endl;
+        std::cout << "Subscriber unmatched" << std::endl;
     }
 }
 
-void HelloWorldSubscriber::PartListener::onParticipantDiscovery(Participant*, ParticipantDiscoveryInfo&& info)
+void HelloWorldSubscriber::PartListener::onParticipantDiscovery(
+        Participant*,
+        ParticipantDiscoveryInfo&& info)
 {
-    if(info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Participant " << info.info.m_participantName << " discovered" << std::endl;
     }
@@ -119,11 +124,12 @@ void HelloWorldSubscriber::PartListener::onParticipantDiscovery(Participant*, Pa
     }
 }
 
-void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
+void HelloWorldSubscriber::SubListener::onNewDataMessage(
+        Subscriber* sub)
 {
-    if(sub->takeNextData((void*)m_DynHello, &m_info))
+    if (sub->takeNextData((void*)m_DynHello, &m_info))
     {
-        if(m_info.sampleKind == ALIVE)
+        if (m_info.sampleKind == ALIVE)
         {
             this->n_samples++;
             // Print your structure data here.
@@ -132,7 +138,7 @@ void HelloWorldSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
             uint32_t index;
             m_DynHello->get_uint32_value(index, 0);
 
-            std::cout << "Message: "<<message<< " with index: "<<index<< " RECEIVED"<<std::endl;
+            std::cout << "Message: " << message << " with index: " << index << " RECEIVED" << std::endl;
         }
     }
 }
@@ -144,10 +150,11 @@ void HelloWorldSubscriber::run()
     std::cin.ignore();
 }
 
-void HelloWorldSubscriber::run(uint32_t number)
+void HelloWorldSubscriber::run(
+        uint32_t number)
 {
-    std::cout << "Subscriber running until "<< number << "samples have been received"<<std::endl;
-    while(number > this->m_listener.n_samples)
+    std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
+    while (number > this->m_listener.n_samples)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
