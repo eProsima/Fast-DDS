@@ -56,6 +56,7 @@ public:
         {
             size_t index;
             const StructMember* struct_member;
+
             Access(size_t index) : index(index) {}
             Access(const StructMember& member) : struct_member(&member) {}
         } access;

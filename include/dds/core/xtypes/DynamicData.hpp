@@ -58,8 +58,8 @@ public:
     template<typename T, class = PrimitiveOrString<T>>
     T& value() const // this = PrimitiveType
     {
-        assert(type_.is_primitive_type()
-            || type_.kind() == TypeKind::STRING_TYPE);
+        assert((type_.kind() == TypeKind::STRING_TYPE && std::is_same<std::string, T>::value)
+            || type_.kind() == primitive_type<T>().kind());
         return *reinterpret_cast<T*>(instance_);
     }
 
@@ -75,6 +75,7 @@ public:
         assert(type_.kind() == TypeKind::STRUCTURE_TYPE);
         const StructType& structure = static_cast<const StructType&>(type_);
         assert(structure.has_member(member_name));
+
         const StructMember& member = structure.member(member_name);
         return ReadableDynamicDataRef(member.type(), instance_ + member.offset());
     }
@@ -99,8 +100,8 @@ public:
     {
         const CollectionType& collection = static_cast<const CollectionType&>(type_);
         assert(type_.is_collection_type());
-        assert(collection.content_type().is_primitive_type()
-            || collection.content_type().kind() == TypeKind::STRING_TYPE);
+        assert((collection.content_type().kind() == TypeKind::STRING_TYPE && std::is_same<std::string, T>::value)
+            || collection.content_type().kind() == primitive_type<T>().kind());
 
         const T* location = reinterpret_cast<T*>(collection.get_instance_at(instance_, 0));
         return std::vector<T>(location, location + size());
@@ -206,8 +207,8 @@ public:
     template<typename T, class = PrimitiveOrString<T>>
     void value(const T& t) // this = PrimitiveType & StringType
     {
-        assert(type_.is_primitive_type()
-            || type_.kind() == TypeKind::STRING_TYPE);
+        assert((type_.kind() == TypeKind::STRING_TYPE && std::is_same<std::string, T>::value)
+            || type_.kind() == primitive_type<T>().kind());
         type_.destroy_instance(instance_);
         type_.copy_instance(instance_, reinterpret_cast<const uint8_t*>(&t));
     }
@@ -224,6 +225,9 @@ public:
     {
         assert(type_.kind() == TypeKind::SEQUENCE_TYPE);
         const SequenceType& sequence = static_cast<const SequenceType&>(type_);
+        assert((sequence.content_type().kind() == TypeKind::STRING_TYPE && std::is_same<std::string, T>::value)
+            || sequence.content_type().kind() == primitive_type<T>().kind());
+
         uint8_t* element = sequence.push_instance(instance_, reinterpret_cast<const uint8_t*>(&value));
         assert(element != nullptr);
         return *this;
@@ -233,6 +237,7 @@ public:
     {
         assert(type_.kind() == TypeKind::SEQUENCE_TYPE);
         const SequenceType& sequence = static_cast<const SequenceType&>(type_);
+
         uint8_t* element = sequence.push_instance(instance_, instance(data));
         assert(element != nullptr);
         return *this;
