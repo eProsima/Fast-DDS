@@ -22,6 +22,7 @@
 //#include <dds/topic/detail/TTopicImpl.hpp>
 //#include <dds/topic/detail/TBuiltinTopicImpl.hpp>
 #include <fastdds/dds/topic/ParticipantBuiltinTopicData.hpp>
+#include <fastdds/dds/topic/TopicBuiltinTopicData.hpp>
 
 /**
  * @cond
@@ -34,8 +35,7 @@ namespace detail {
 
 using ParticipantBuiltinTopicData = eprosima::fastdds::dds::ParticipantBuiltinTopicData;
 
-//typedef dds::topic::TTopicBuiltinTopicData<org::opensplice::topic::TopicBuiltinTopicDataDelegate> TopicBuiltinTopicData;
-class TopicBuiltinTopicData { };
+using TopicBuiltinTopicData = eprosima::fastdds::dds::TopicBuiltinTopicData;
 
 //typedef dds::topic::TPublicationBuiltinTopicData<org::opensplice::topic::PublicationBuiltinTopicDataDelegate> PublicationBuiltinTopicData;
 class PublicationBuiltinTopicData { };

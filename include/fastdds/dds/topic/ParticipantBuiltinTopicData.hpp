@@ -23,7 +23,7 @@
 #define _FASTDDS_PARTICIPANT_BUILTIN_TOPIC_DATA_HPP_
 
 #include <fastdds/dds/topic/BuiltinTopicKey.hpp>
-#include <fastrtps/qos/QosPolicies.h>
+#include <fastdds/dds/qos/QosPolicies.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -47,13 +47,13 @@ public:
         key_ = key;
     }
 
-    const fastrtps::UserDataQosPolicy& user_data() const
+    const UserDataQosPolicy& user_data() const
     {
         return user_data_;
     }
 
     void user_data(
-            const fastrtps::UserDataQosPolicy& user_data)
+            const UserDataQosPolicy& user_data)
     {
         user_data_ = user_data;
     }
@@ -69,7 +69,7 @@ private:
 
     BuiltinTopicKey key_;
 
-    fastrtps::UserDataQosPolicy user_data_;
+    UserDataQosPolicy user_data_;
 };
 
 } // namespace dds

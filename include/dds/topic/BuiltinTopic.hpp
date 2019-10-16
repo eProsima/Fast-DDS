@@ -114,8 +114,7 @@ public:
  * @see @ref DCPS_Builtin_Topics
  * @see @ref DCPS_Builtin_Topics_TopicData
  */
-template<typename D>
-class TTopicBuiltinTopicData : public dds::core::Value<D>
+class TopicBuiltinTopicData : public dds::core::Value<detail::TopicBuiltinTopicData>
 {
 public:
     /**
