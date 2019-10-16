@@ -26,6 +26,7 @@
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastrtps/utils/TimeConversion.h>
@@ -35,6 +36,8 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace std::chrono;
+
+using DeprecatedSampleInfo = eprosima::fastrtps::SampleInfo_t;
 
 namespace eprosima {
 namespace fastdds {
@@ -68,16 +71,26 @@ DataReaderImpl::DataReaderImpl(
     , user_datareader_(nullptr)
 {
     deadline_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
-             [&]() -> bool
+             [&](TimedEvent::EventCode code) -> bool
              {
-                 return deadline_missed();
+                 if (TimedEvent::EVENT_SUCCESS == code)
+                 {
+                     return deadline_missed();
+                 }
+
+                 return false;
              },
              qos_.m_deadline.period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
-             [&]() -> bool
+             [&](TimedEvent::EventCode code) -> bool
              {
-                 return lifespan_expired();
+                 if (TimedEvent::EVENT_SUCCESS == code)
+                 {
+                     return lifespan_expired();
+                 }
+
+                 return false;
              },
              qos_.m_lifespan.duration.to_ns() * 1e-6);
 
@@ -134,8 +147,37 @@ ReturnCode_t DataReaderImpl::read_next_sample(
 #else
         std::chrono::hours(24);
 #endif
-    if (history_.readNextData(data, info, max_blocking_time))
+
+    DeprecatedSampleInfo dep_info;
+    if (history_.readNextData(data, &dep_info, max_blocking_time))
     {
+        // Transform SampleInfo
+        info->valid_data = dep_info.sampleKind == rtps::ChangeKind_t::ALIVE;
+        info->view_state = ::dds::sub::status::ViewState::new_view();
+        if (dep_info.sampleKind == rtps::ChangeKind_t::ALIVE)
+        {
+            info->instance_state = ::dds::sub::status::InstanceState::alive();
+        }
+        else if (dep_info.sampleKind == rtps::ChangeKind_t::NOT_ALIVE_DISPOSED)
+        {
+            info->instance_state = ::dds::sub::status::InstanceState::not_alive_disposed();
+        }
+        else if (dep_info.sampleKind == rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED)
+        {
+            info->instance_state = ::dds::sub::status::InstanceState::not_alive_no_writers();
+        }
+        else if (dep_info.sampleKind == rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED)
+        {
+            info->instance_state = ::dds::sub::status::InstanceState::not_alive_mask();
+        }
+        info->sample_state = ::dds::sub::status::SampleState::read();
+        info->sample_rank = static_cast<int32_t>(dep_info.sample_identity.sequence_number().to64long()); // ??
+        info->generation_rank = 0;
+        info->source_timestamp = dep_info.sourceTimestamp.to_duration_t();
+        info->publication_handle = dep_info.sample_identity.writer_guid();
+        info->absolute_generation_rank = 0;
+        info->disposed_generation_count = 0;
+        info->no_writers_generation_count = 0;
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_ERROR;
@@ -151,8 +193,37 @@ ReturnCode_t DataReaderImpl::take_next_sample(
 #else
         std::chrono::hours(24);
 #endif
-    if (history_.takeNextData(data, info, max_blocking_time))
+
+    DeprecatedSampleInfo dep_info;
+    if (history_.takeNextData(data, &dep_info, max_blocking_time))
     {
+        // Transform SampleInfo
+        info->valid_data = dep_info.sampleKind == rtps::ChangeKind_t::ALIVE;
+        info->view_state = ::dds::sub::status::ViewState::new_view();
+        if (dep_info.sampleKind == rtps::ChangeKind_t::ALIVE)
+        {
+            info->instance_state = ::dds::sub::status::InstanceState::alive();
+        }
+        else if (dep_info.sampleKind == rtps::ChangeKind_t::NOT_ALIVE_DISPOSED)
+        {
+            info->instance_state = ::dds::sub::status::InstanceState::not_alive_disposed();
+        }
+        else if (dep_info.sampleKind == rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED)
+        {
+            info->instance_state = ::dds::sub::status::InstanceState::not_alive_no_writers();
+        }
+        else if (dep_info.sampleKind == rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED)
+        {
+            info->instance_state = ::dds::sub::status::InstanceState::not_alive_mask();
+        }
+        info->sample_state = ::dds::sub::status::SampleState::read();
+        info->sample_rank = static_cast<int32_t>(dep_info.sample_identity.sequence_number().to64long()); // ??
+        info->generation_rank = 0;
+        info->source_timestamp = dep_info.sourceTimestamp.to_duration_t();
+        info->publication_handle = dep_info.sample_identity.writer_guid();
+        info->absolute_generation_rank = 0;
+        info->disposed_generation_count = 0;
+        info->no_writers_generation_count = 0;
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_ERROR;

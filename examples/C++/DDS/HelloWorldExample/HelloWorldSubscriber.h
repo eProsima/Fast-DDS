@@ -24,7 +24,7 @@
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/topic/DataReaderListener.hpp>
-#include <fastrtps/subscriber/SampleInfo.h>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 
 class HelloWorldSubscriber
@@ -72,7 +72,7 @@ private:
 
         HelloWorld hello_;
 
-        eprosima::fastrtps::SampleInfo_t info_;
+        eprosima::fastdds::dds::SampleInfo_t info_;
 
         int matched_;
 
