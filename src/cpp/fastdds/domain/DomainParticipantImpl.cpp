@@ -821,6 +821,20 @@ bool DomainParticipantImpl::exists_entity_id(
     return contains_entity(instance, false);
 }
 
+ReturnCode_t DomainParticipantImpl::get_qos(
+        DomainParticipantQos& qos) const
+{
+    qos = qos_;
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipantImpl::set_qos(
+        const DomainParticipantQos& qos)
+{
+    qos_ = qos;
+    return ReturnCode_t::RETCODE_OK;
+}
+
 fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_type_dependencies(
         const fastrtps::types::TypeIdentifierSeq& in) const
 {
