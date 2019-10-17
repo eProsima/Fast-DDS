@@ -409,16 +409,9 @@ bool StatelessReader::processDataFragMsg(
                 CacheChange_t* change_completed = nullptr;
                 if (work_change != nullptr)
                 {
-                    work_change->received_fragments(fragmentStartingNum - 1, fragmentsInSubmessage);
-
-                    size_t offset = size_t(fragmentStartingNum - 1) * work_change->getFragmentSize();
-
-                    memcpy(
-                        &work_change->serializedPayload.data[offset],
-                        change_to_add->serializedPayload.data,
-                        change_to_add->serializedPayload.length);
-
-                    if (work_change->is_fully_assembled())
+                    if(FragmentedChangePitStop::add_fragments_to_change(
+                        work_change, change_to_add->serializedPayload,
+                        fragmentStartingNum, fragmentsInSubmessage))
                     {
                         change_completed = work_change;
                         work_change = nullptr;
