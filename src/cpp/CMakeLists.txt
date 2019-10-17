@@ -31,9 +31,9 @@ endif(WIN32)
 set(${PROJECT_NAME}_source_files
     ${ALL_HEADERS}
 
-    dds/log/Log.cpp
-    dds/log/StdoutConsumer.cpp
-    dds/log/FileConsumer.cpp
+    fastdds/log/Log.cpp
+    fastdds/log/StdoutConsumer.cpp
+    fastdds/log/FileConsumer.cpp
     fastrtps_deprecated/utils/eClock.cpp
     fastrtps_deprecated/utils/IPFinder.cpp
     fastrtps_deprecated/utils/md5.cpp
@@ -81,45 +81,45 @@ set(${PROJECT_NAME}_source_files
     fastrtps_deprecated/subscriber/Subscriber.cpp
     fastrtps_deprecated/subscriber/SubscriberImpl.cpp
     fastrtps_deprecated/subscriber/SubscriberHistory.cpp
-    dds/topic/DataReader.cpp
-    dds/topic/DataWriter.cpp
-    dds/topic/DataReaderImpl.cpp
-    dds/topic/DataWriterImpl.cpp
-    dds/topic/TypeSupport.cpp
-    dds/topic/qos/TopicQos.cpp
-    dds/topic/qos/DataWriterQos.cpp
-    dds/topic/qos/DataReaderQos.cpp
-    dds/topic/TypeSupport.cpp
-    dds/topic/Topic.cpp
-    dds/publisher/PublisherImpl.cpp
-    dds/publisher/qos/PublisherQos.cpp
-    dds/publisher/Publisher.cpp
-    dds/subscriber/SubscriberImpl.cpp
-    dds/subscriber/qos/SubscriberQos.cpp
-    dds/subscriber/Subscriber.cpp
-    dds/domain/DomainParticipantFactory.cpp
-    dds/domain/DomainParticipantImpl.cpp
-    dds/domain/DomainParticipant.cpp
-    dds/builtin/typelookup/common/TypeLookupTypes.cpp
-    dds/builtin/common/RPCHeadersImpl.cpp
-    dds/builtin/typelookup/TypeLookupManager.cpp
-    dds/builtin/typelookup/TypeLookupRequestListener.cpp
-    dds/builtin/typelookup/TypeLookupReplyListener.cpp
-    rtps/transport/ChannelResource.cpp
-    rtps/transport/UDPChannelResource.cpp
-    rtps/transport/TCPChannelResource.cpp
-    rtps/transport/TCPChannelResourceBasic.cpp
-    rtps/transport/TCPAcceptor.cpp
-    rtps/transport/TCPAcceptorBasic.cpp
-    rtps/transport/UDPv4Transport.cpp
-    rtps/transport/TCPTransportInterface.cpp
-    rtps/transport/UDPTransportInterface.cpp
-    rtps/transport/TCPv4Transport.cpp
-    rtps/transport/UDPv6Transport.cpp
-    rtps/transport/TCPv6Transport.cpp
-    rtps/transport/test_UDPv4Transport.cpp
-    rtps/transport/tcp/TCPControlMessage.cpp
-    rtps/transport/tcp/RTCPMessageManager.cpp
+    fastdds/topic/DataReader.cpp
+    fastdds/topic/DataWriter.cpp
+    fastdds/topic/DataReaderImpl.cpp
+    fastdds/topic/DataWriterImpl.cpp
+    fastdds/topic/TypeSupport.cpp
+    fastdds/topic/qos/TopicQos.cpp
+    fastdds/topic/qos/DataWriterQos.cpp
+    fastdds/topic/qos/DataReaderQos.cpp
+    fastdds/topic/TypeSupport.cpp
+    fastdds/topic/Topic.cpp
+    fastdds/publisher/PublisherImpl.cpp
+    fastdds/publisher/qos/PublisherQos.cpp
+    fastdds/publisher/Publisher.cpp
+    fastdds/subscriber/SubscriberImpl.cpp
+    fastdds/subscriber/qos/SubscriberQos.cpp
+    fastdds/subscriber/Subscriber.cpp
+    fastdds/domain/DomainParticipantFactory.cpp
+    fastdds/domain/DomainParticipantImpl.cpp
+    fastdds/domain/DomainParticipant.cpp
+    fastdds/builtin/typelookup/common/TypeLookupTypes.cpp
+    fastdds/builtin/common/RPCHeadersImpl.cpp
+    fastdds/builtin/typelookup/TypeLookupManager.cpp
+    fastdds/builtin/typelookup/TypeLookupRequestListener.cpp
+    fastdds/builtin/typelookup/TypeLookupReplyListener.cpp
+    fastrtps_deprecated/transport/ChannelResource.cpp
+    fastrtps_deprecated/transport/UDPChannelResource.cpp
+    fastrtps_deprecated/transport/TCPChannelResource.cpp
+    fastrtps_deprecated/transport/TCPChannelResourceBasic.cpp
+    fastrtps_deprecated/transport/TCPAcceptor.cpp
+    fastrtps_deprecated/transport/TCPAcceptorBasic.cpp
+    fastrtps_deprecated/transport/UDPv4Transport.cpp
+    fastrtps_deprecated/transport/TCPTransportInterface.cpp
+    fastrtps_deprecated/transport/UDPTransportInterface.cpp
+    fastrtps_deprecated/transport/TCPv4Transport.cpp
+    fastrtps_deprecated/transport/UDPv6Transport.cpp
+    fastrtps_deprecated/transport/TCPv6Transport.cpp
+    fastrtps_deprecated/transport/test_UDPv4Transport.cpp
+    fastrtps_deprecated/transport/tcp/TCPControlMessage.cpp
+    fastrtps_deprecated/transport/tcp/RTCPMessageManager.cpp
 
     fastrtps_deprecated/types/AnnotationDescriptor.cpp
     fastrtps_deprecated/types/AnnotationParameterValue.cpp
@@ -146,11 +146,11 @@ set(${PROJECT_NAME}_source_files
     fastrtps_deprecated/types/DynamicDataHelper.cpp
 
     fastrtps_deprecated/attributes/TopicAttributes.cpp
-    dds/core/policy/ParameterList.cpp
-    dds/core/policy/ParameterTypes.cpp
-    dds/core/policy/QosPolicies.cpp
-    dds/topic/qos/WriterQos.cpp
-    dds/topic/qos/ReaderQos.cpp
+    fastdds/core/policy/ParameterList.cpp
+    fastdds/core/policy/ParameterTypes.cpp
+    fastdds/core/policy/QosPolicies.cpp
+    fastdds/topic/qos/WriterQos.cpp
+    fastdds/topic/qos/ReaderQos.cpp
     rtps/builtin/BuiltinProtocols.cpp
     rtps/builtin/discovery/participant/DirectMessageSender.cpp
     rtps/builtin/discovery/participant/PDP.cpp
