@@ -84,6 +84,27 @@ protected:
     bool send_always_;
 };
 
+class EntityFactoryQosPolicy
+{
+public:
+
+    bool autoenable_created_entities;
+
+    RTPS_DllAPI EntityFactoryQosPolicy()
+        : autoenable_created_entities(true)
+    {}
+
+    virtual RTPS_DllAPI ~EntityFactoryQosPolicy()
+    {}
+
+    bool operator ==(
+            const EntityFactoryQosPolicy& qos) const
+    {
+        return autoenable_created_entities == qos.autoenable_created_entities;
+    }
+
+};
+
 /**
  * Enum DurabilityQosPolicyKind_t, different kinds of durability for DurabilityQosPolicy.
  */
