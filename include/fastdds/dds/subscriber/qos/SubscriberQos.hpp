@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_SUBSCRIBERQOS_HPP_
 #define _FASTDDS_SUBSCRIBERQOS_HPP_
 
-#include <fastrtps/qos/QosPolicies.h>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -60,62 +60,66 @@ public:
                (this->group_data == b.group_data) &&
                (this->durability_service == b.durability_service) &&
                (this->lifespan == b.lifespan) &&
+               (this->entity_factory == b.entity_factory) &&
                (this->disable_positive_acks == b.disable_positive_acks);
     }
 
     //!Durability Qos, implemented in the library.
-    fastrtps::DurabilityQosPolicy durability;
+    DurabilityQosPolicy durability;
 
     //!Deadline Qos, implemented in the library.
-    fastrtps::DeadlineQosPolicy deadline;
+    DeadlineQosPolicy deadline;
 
     //!Latency Budget Qos, NOT implemented in the library.
-    fastrtps::LatencyBudgetQosPolicy latency_budget;
+    LatencyBudgetQosPolicy latency_budget;
 
     //!Liveliness Qos, implemented in the library.
-    fastrtps::LivelinessQosPolicy liveliness;
+    LivelinessQosPolicy liveliness;
 
     //!ReliabilityQos, implemented in the library.
-    fastrtps::ReliabilityQosPolicy reliability;
+    ReliabilityQosPolicy reliability;
 
     //!Ownership Qos, NOT implemented in the library.
-    fastrtps::OwnershipQosPolicy ownership;
+    OwnershipQosPolicy ownership;
 
     //!Destinatio Order Qos, NOT implemented in the library.
-    fastrtps::DestinationOrderQosPolicy destination_order;
+    DestinationOrderQosPolicy destination_order;
 
     //!UserData Qos, NOT implemented in the library.
-    fastrtps::UserDataQosPolicy user_data;
+    UserDataQosPolicy user_data;
 
     //!Time Based Filter Qos, NOT implemented in the library.
-    fastrtps::TimeBasedFilterQosPolicy time_based_filter;
+    TimeBasedFilterQosPolicy time_based_filter;
 
     //!Presentation Qos, NOT implemented in the library.
-    fastrtps::PresentationQosPolicy presentation;
+    PresentationQosPolicy presentation;
 
     //!Partition Qos, implemented in the library.
-    fastrtps::PartitionQosPolicy partition;
+    PartitionQosPolicy partition;
 
     //!Topic Data Qos, NOT implemented in the library.
-    fastrtps::TopicDataQosPolicy topic_data;
+    TopicDataQosPolicy topic_data;
 
     //!GroupData Qos, NOT implemented in the library.
-    fastrtps::GroupDataQosPolicy group_data;
+    GroupDataQosPolicy group_data;
 
     //!Durability Service Qos, NOT implemented in the library.
-    fastrtps::DurabilityServiceQosPolicy durability_service;
+    DurabilityServiceQosPolicy durability_service;
 
     //!Lifespan Qos, NOT implemented in the library.
-    fastrtps::LifespanQosPolicy lifespan;
+    LifespanQosPolicy lifespan;
 
     //!Data Representation Qos, implemented in the library.
-    fastrtps::DataRepresentationQosPolicy representation;
+    DataRepresentationQosPolicy representation;
 
     //!Type consistency enforcement Qos, NOT implemented in the library.
-    fastrtps::TypeConsistencyEnforcementQosPolicy type_consistency;
+    TypeConsistencyEnforcementQosPolicy type_consistency;
 
     //!Disable positive ACKs QoS
-    fastrtps::DisablePositiveACKsQosPolicy disable_positive_acks;
+    DisablePositiveACKsQosPolicy disable_positive_acks;
+
+    //!Auto enable on creation
+    EntityFactoryQosPolicy entity_factory;
 
     /**
      * Set Qos from another class
