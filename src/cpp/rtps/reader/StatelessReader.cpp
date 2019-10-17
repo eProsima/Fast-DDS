@@ -321,69 +321,75 @@ bool StatelessReader::processDataFragMsg(
 {
     assert(incomingChange);
 
+    GUID_t writer_guid = incomingChange->writerGUID;
+
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
-
-    if (acceptMsgFrom(incomingChange->writerGUID))
+    for (const RemoteWriterInfo_t& writer : matched_writers_)
     {
-        assert_writer_liveliness(incomingChange->writerGUID);
-
-        // Check if CacheChange was received.
-        if (!thereIsUpperRecordOf(incomingChange->writerGUID, incomingChange->sequenceNumber))
+        if (writer.guid == writer_guid)
         {
-            logInfo(RTPS_MSG_IN, IDSTRING "Trying to add fragment " << incomingChange->sequenceNumber.to64long() <<
-                " TO reader: " << m_guid);
+            assert_writer_liveliness(writer_guid);
 
-            CacheChange_t* change_to_add = incomingChange;
+            // Check if CacheChange was received.
+            if (!thereIsUpperRecordOf(writer_guid, incomingChange->sequenceNumber))
+            {
+                logInfo(RTPS_MSG_IN, IDSTRING "Trying to add fragment " << incomingChange->sequenceNumber.to64long() <<
+                    " TO reader: " << m_guid);
+
+                CacheChange_t* change_to_add = incomingChange;
 
 #if HAVE_SECURITY
-            if (getAttributes().security_attributes().is_payload_protected)
-            {
-                // Reserve a new cache from the corresponding cache pool
-                if (reserveCache(&change_to_add, incomingChange->serializedPayload.length)) 
+                if (getAttributes().security_attributes().is_payload_protected)
                 {
-                    change_to_add->copy_not_memcpy(incomingChange);
-                    if (!getRTPSParticipant()->security_manager().decode_serialized_payload(
-                            incomingChange->serializedPayload,
-                            change_to_add->serializedPayload, m_guid, incomingChange->writerGUID))
+                    // Reserve a new cache from the corresponding cache pool
+                    if (reserveCache(&change_to_add, incomingChange->serializedPayload.length))
                     {
-                        releaseCache(change_to_add);
-                        logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
-                        return false;
+                        change_to_add->copy_not_memcpy(incomingChange);
+                        if (!getRTPSParticipant()->security_manager().decode_serialized_payload(
+                            incomingChange->serializedPayload,
+                            change_to_add->serializedPayload, m_guid, writer_guid))
+                        {
+                            releaseCache(change_to_add);
+                            logWarning(RTPS_MSG_IN, "Cannont decode serialized payload");
+                            return false;
+                        }
+                    }
+                }
+#endif
+
+                // Try to remove previous CacheChange_t from PitStop.
+                fragmentedChangePitStop_->try_to_remove_until(incomingChange->sequenceNumber, writer_guid);
+
+                // Fragments manager has to process incomming fragments.
+                // If CacheChange_t is completed, it will be returned;
+                CacheChange_t* change_completed = fragmentedChangePitStop_->process(
+                    change_to_add, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
+
+#if HAVE_SECURITY
+                if (getAttributes().security_attributes().is_payload_protected)
+                {
+                    releaseCache(change_to_add);
+                }
+#endif
+
+                // If the change was completed, process it.
+                if (change_completed != nullptr)
+                {
+                    if (!change_received(change_completed))
+                    {
+                        logInfo(RTPS_MSG_IN,
+                            IDSTRING "MessageReceiver not add change " << change_completed->sequenceNumber.to64long());
+
+                        // Release CacheChange_t.
+                        releaseCache(change_completed);
                     }
                 }
             }
-#endif
-
-            // Try to remove previous CacheChange_t from PitStop.
-            fragmentedChangePitStop_->try_to_remove_until(incomingChange->sequenceNumber, incomingChange->writerGUID);
-
-            // Fragments manager has to process incomming fragments.
-            // If CacheChange_t is completed, it will be returned;
-            CacheChange_t* change_completed = fragmentedChangePitStop_->process(
-                change_to_add, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
-
-#if HAVE_SECURITY
-            if (getAttributes().security_attributes().is_payload_protected)
-            {
-                releaseCache(change_to_add);
-            }
-#endif
-
-            // If the change was completed, process it.
-            if (change_completed != nullptr)
-            {
-                if (!change_received(change_completed))
-                {
-                    logInfo(RTPS_MSG_IN,
-                        IDSTRING "MessageReceiver not add change " << change_completed->sequenceNumber.to64long());
-
-                    // Release CacheChange_t.
-                    releaseCache(change_completed);
-                }
-            }
+            return true;
         }
     }
 
+    logWarning(RTPS_MSG_IN, IDSTRING "Reader " << m_guid << " received DATA_FRAG from unknown writer" << writer_guid);
     return true;
 }
 
