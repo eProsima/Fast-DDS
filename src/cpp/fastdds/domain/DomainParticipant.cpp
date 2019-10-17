@@ -251,6 +251,18 @@ fastrtps::rtps::ResourceEvent& DomainParticipant::get_resource_event() const
     return impl_->get_resource_event();
 }
 
+ReturnCode_t DomainParticipant::get_qos(
+        DomainParticipantQos& qos) const
+{
+    return impl_->get_qos(qos);
+}
+
+ReturnCode_t DomainParticipant::set_qos(
+        const DomainParticipantQos& qos)
+{
+    return impl_->set_qos(qos);
+}
+
 fastrtps::rtps::SampleIdentity DomainParticipant::get_type_dependencies(
         const fastrtps::types::TypeIdentifierSeq& in) const
 {

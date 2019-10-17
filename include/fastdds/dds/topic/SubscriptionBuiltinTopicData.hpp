@@ -23,7 +23,7 @@
 #define _FASTDDS_SUBCRIPTION_BUILTIN_TOPIC_DATA_HPP_
 
 #include <fastdds/dds/topic/BuiltinTopicKey.hpp>
-#include <fastdds/dds/qos/QosPolicies.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 namespace eprosima {
 namespace fastdds {

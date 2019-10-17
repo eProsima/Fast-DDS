@@ -21,11 +21,13 @@
 #define _FASTDDS_DOMAIN_PARTICIPANT_HPP_
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastrtps/types/TypeIdentifier.h>
 
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+
 #include <fastrtps/types/TypesBase.h>
 
 #include <utility>
@@ -369,6 +371,12 @@ public:
             fastrtps::rtps::EndpointKind_t kind);
 
     fastrtps::rtps::ResourceEvent& get_resource_event() const;
+
+    ReturnCode_t get_qos(
+            DomainParticipantQos& qos) const;
+
+    ReturnCode_t set_qos(
+            const DomainParticipantQos& qos);
 
     /**
      * When a DomainParticipant receives an incomplete list of TypeIdentifiers in a
