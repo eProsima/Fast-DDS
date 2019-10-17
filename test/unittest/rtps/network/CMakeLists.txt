@@ -27,8 +27,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             NetworkFactoryTests.cpp
             mock/MockTransport.cpp
 
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
 
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
@@ -49,8 +49,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
 
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterList.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterTypes.cpp
 
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp

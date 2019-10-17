@@ -17,7 +17,7 @@
  *
  */
 
-#include <dds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
@@ -28,11 +28,11 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 
 #include <fastrtps/attributes/PublisherAttributes.h>
-#include <dds/publisher/PublisherImpl.hpp>
+#include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <dds/subscriber/SubscriberImpl.hpp>
+#include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 
 #include <fastdds/dds/topic/DataReader.hpp>
