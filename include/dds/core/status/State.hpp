@@ -47,7 +47,9 @@ public:
     /**
      * Construct an empty SampleRejectedState.
      */
-    SampleRejectedState();
+    SampleRejectedState()
+        : std::bitset<OMG_DDS_STATE_BIT_COUNT>()
+    {}
 
     /**
      * Copy constructor.
@@ -57,7 +59,9 @@ public:
      * @param src the SampleRejectedState to copy from
      */
     SampleRejectedState(
-            const SampleRejectedState& src);
+            const SampleRejectedState& src)
+        : std::bitset<OMG_DDS_STATE_BIT_COUNT>(src)
+    {}
 
     /**
      * Construct a SampleRejectedState with existing MaskType.
@@ -65,7 +69,9 @@ public:
      * @param src the MaskType to copy from
      */
     SampleRejectedState(
-            const MaskType& src);
+            const MaskType& src)
+        : std::bitset<OMG_DDS_STATE_BIT_COUNT>(src)
+    {}
 
     /**
      * Get the NOT_REJECTED.
@@ -128,7 +134,9 @@ public:
 private:
 
     SampleRejectedState(
-            uint32_t s);
+            uint32_t s)
+        : std::bitset<OMG_DDS_STATE_BIT_COUNT>(s)
+    {}
 };
 
 /**
@@ -154,7 +162,10 @@ public:
     /**
      * Construct an StatusMask with no flags set.
      */
-    StatusMask();
+    StatusMask()
+        : std::bitset<OMG_DDS_STATUS_COUNT>()
+    {
+    }
 
     /**
      * Construct an StatusMask with an uint32_t bit mask.
@@ -162,7 +173,10 @@ public:
      * @param mask the bit array to initialize the bitset with
      */
     explicit StatusMask(
-            uint32_t mask);
+            uint32_t mask)
+        : std::bitset<OMG_DDS_STATUS_COUNT>(mask)
+    {
+    }
 
     /**
      * Copy constructor.
@@ -172,10 +186,14 @@ public:
      * @param other the StatusMask to copy from
      */
     StatusMask(
-            const StatusMask& other);
+            const StatusMask& other)
+        : std::bitset<OMG_DDS_STATUS_COUNT>(other)
+    {
+    }
 
     /** @cond */
-    ~StatusMask();
+    ~StatusMask()
+    {}
     /** @endcond */
 
     /**

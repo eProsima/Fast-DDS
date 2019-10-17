@@ -21,12 +21,13 @@
 #ifndef OMG_DDS_CORE_STATUS_STATUS_HPP_
 #define OMG_DDS_CORE_STATUS_STATUS_HPP_
 
-#include <dds/core/status/detail/Status.hpp>
 #include <dds/core/status/State.hpp>
 
 #include <dds/core/Value.hpp>
 #include <dds/core/InstanceHandle.hpp>
 #include <dds/core/policy/CorePolicy.hpp>
+
+#include <cstdint>
 
 namespace dds {
 namespace core {
@@ -35,12 +36,10 @@ namespace status {
 /**
  * \copydoc DCPS_Status_InconsistentTopic
  */
-template<typename D>
-class TInconsistentTopicStatus : public dds::core::Value<D>
+class InconsistentTopicStatus : public dds::core::Value<detail::InconsistentTopicStatus>
 {
 public:
-
-    TInconsistentTopicStatus();
+    InconsistentTopicStatus();
 
     /**
      * @return Total cumulative count of all inconsistent topics detected.
@@ -57,12 +56,10 @@ public:
 /**
  * \copydoc DCPS_Status_SampleLost
  */
-template<typename D>
-class TSampleLostStatus : public dds::core::Value<D>
+class SampleLostStatus : public dds::core::Value<detail::SampleLostStatus>
 {
 public:
-
-    TSampleLostStatus();
+    SampleLostStatus();
 
     /**
      * @return Total cumulative count of all samples lost across of instances of data
@@ -81,12 +78,10 @@ public:
 /**
  * \copydoc DCPS_Status_SampleRejected
  */
-template<typename D>
-class TSampleRejectedStatus : public dds::core::Value<D>
+class SampleRejectedStatus : public dds::core::Value<detail::SampleRejectedStatus>
 {
 public:
-
-    TSampleRejectedStatus();
+    SampleRejectedStatus();
 
     /**
      * @return Total cumulative count of samples rejected by the DataReader.
@@ -115,12 +110,10 @@ public:
 /**
  * \copydoc DCPS_Status_LivelinessLost
  */
-template<typename D>
-class TLivelinessLostStatus : public dds::core::Value<D>
+class LivelinessLostStatus : public dds::core::Value<detail::LivelinessLostStatus>
 {
 public:
-
-    TLivelinessLostStatus();
+    LivelinessLostStatus();
 
     /**
      * @return Total cumulative number of times that a previously-alive DataWriter
@@ -141,12 +134,10 @@ public:
 /**
  * \copydoc DCPS_Status_LivelinessChanged
  */
-template<typename D>
-class TLivelinessChangedStatus : public dds::core::Value<D>
+class LivelinessChangedStatus : public dds::core::Value<detail::LivelinessChangedStatus>
 {
 public:
-
-    TLivelinessChangedStatus();
+    LivelinessChangedStatus();
 
     /**
      * @return The total number of currently active DataWriters that write the Topic
@@ -191,12 +182,10 @@ public:
 /**
  * \copydoc DCPS_Status_OfferedDeadlineMissed
  */
-template<typename D>
-class TOfferedDeadlineMissedStatus : public dds::core::Value<D>
+class OfferedDeadlineMissedStatus : public dds::core::Value<detail::OfferedDeadLineMissedStatus>
 {
 public:
-
-    TOfferedDeadlineMissedStatus();
+    OfferedDeadlineMissedStatus();
 
     /**
      * @return Total cumulative number of offered deadline periods elapsed during
@@ -222,12 +211,10 @@ public:
 /**
  * \copydoc DCPS_Status_RequestedDeadlineMissed
  */
-template<typename D>
-class TRequestedDeadlineMissedStatus : public dds::core::Value<D>
+class RequestedDeadlineMissedStatus : public dds::core::Value<detail::RequestedDeadlineMissedStatus>
 {
 public:
-
-    TRequestedDeadlineMissedStatus();
+    RequestedDeadlineMissedStatus();
 
     /**
      * @return Total cumulative number of missed deadlines detected for any instance
@@ -254,12 +241,10 @@ public:
 /**
  * \copydoc DCPS_Status_OfferedIncompatibleQoS
  */
-template<typename D>
-class TOfferedIncompatibleQosStatus : public dds::core::Value<D>
+class OfferedIncompatibleQosStatus : public dds::core::Value<detail::OfferedIncompatibleQosStatus>
 {
 public:
-
-    TOfferedIncompatibleQosStatus();
+    OfferedIncompatibleQosStatus();
 
     /**
      * @return Total cumulative number of times the concerned DataWriter
@@ -303,12 +288,10 @@ public:
 /**
  * \copydoc DCPS_Status_RequestedIncompatibleQoS
  */
-template<typename D>
-class TRequestedIncompatibleQosStatus : public dds::core::Value<D>
+class RequestedIncompatibleQosStatus : public dds::core::Value<detail::RequestedIncompatibleQosStatus>
 {
 public:
-
-    TRequestedIncompatibleQosStatus();
+    RequestedIncompatibleQosStatus();
 
     /**
      * @return Total cumulative number of times the concerned DataReader
@@ -352,12 +335,10 @@ public:
 /**
  * \copydoc DCPS_Status_PublicationMatched
  */
-template<typename D>
-class TPublicationMatchedStatus : public dds::core::Value<D>
+class PublicationMatchedStatus : public dds::core::Value<detail::PublicationMatchedStatus>
 {
 public:
-
-    TPublicationMatchedStatus();
+    PublicationMatchedStatus();
 
     /**
      * @return Total cumulative count the concerned DataWriter discovered a
@@ -395,12 +376,10 @@ public:
 /**
  * \copydoc DCPS_Status_SubscriptionMatched
  */
-template<typename D>
-class TSubscriptionMatchedStatus : public dds::core::Value<D>
+class SubscriptionMatchedStatus : public dds::core::Value<detail::SubscriptionMatchedStatus>
 {
 public:
-
-    TSubscriptionMatchedStatus();
+    SubscriptionMatchedStatus();
 
     /**
      * @return Total cumulative count the concerned DataReader discovered a
@@ -451,31 +430,7 @@ class DataOnReadersStatus
 template<typename STATUS>
 StatusMask get_status();
 
-typedef ::dds::core::status::detail::InconsistentTopicStatus InconsistentTopicStatus;
-
-typedef ::dds::core::status::detail::LivelinessChangedStatus LivelinessChangedStatus;
-
-typedef ::dds::core::status::detail::LivelinessLostStatus LivelinessLostStatus;
-
-typedef ::dds::core::status::detail::OfferedDeadlineMissedStatus OfferedDeadlineMissedStatus;
-
-typedef ::dds::core::status::detail::OfferedIncompatibleQosStatus OfferedIncompatibleQosStatus;
-
-typedef ::dds::core::status::detail::PublicationMatchedStatus PublicationMatchedStatus;
-
-class SampleRejectedState;
-
-typedef ::dds::core::status::detail::SampleRejectedStatus SampleRejectedStatus;
-
-typedef ::dds::core::status::detail::RequestedDeadlineMissedStatus RequestedDeadlineMissedStatus;
-
-typedef ::dds::core::status::detail::RequestedIncompatibleQosStatus RequestedIncompatibleQosStatus;
-
-typedef ::dds::core::status::detail::SampleLostStatus SampleLostStatus;
-
-class StatusMask;
-
-typedef ::dds::core::status::detail::SubscriptionMatchedStatus SubscriptionMatchedStatus;
+#include <dds/core/status/detail/Status.hpp>
 
 } //namespace status
 } //namespace core
