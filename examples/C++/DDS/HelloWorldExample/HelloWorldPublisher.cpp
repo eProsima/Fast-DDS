@@ -51,7 +51,7 @@ bool HelloWorldPublisher::init()
     }
 
     //REGISTER THE TYPE
-    type_.register_type(participant_, type_->getName());
+    type_.register_type(participant_, type_.get_type_name());
 
     //CREATE THE PUBLISHER
     eprosima::fastrtps::PublisherAttributes pub_att;

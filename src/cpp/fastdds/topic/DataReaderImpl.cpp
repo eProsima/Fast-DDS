@@ -61,7 +61,7 @@ DataReaderImpl::DataReaderImpl(
     , history_(topic_att_,
                type_.get(),
                qos_,
-               type_->m_typeSize + 3, /* Possible alignment */
+               type_.get()->m_typeSize + 3, /* Possible alignment */
                memory_policy)
     , listener_(listener)
     , reader_listener_(this)

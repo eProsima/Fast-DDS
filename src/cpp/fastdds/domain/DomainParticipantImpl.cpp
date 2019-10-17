@@ -585,7 +585,7 @@ bool DomainParticipantImpl::register_type(
 {
     TypeSupport t = find_type(type_name);
 
-    if (t != nullptr)
+    if (t.get() != nullptr)
     {
         if (t == type)
         {
