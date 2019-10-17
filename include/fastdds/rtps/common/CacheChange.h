@@ -317,7 +317,7 @@ private:
         size_t offset = fragment_size_;
         offset *= fragment_index;
         offset = (offset + 3) & ~3;
-        return (uint32_t*)(&serializedPayload.data[offset]);
+        return reinterpret_cast<uint32_t*>(&serializedPayload.data[offset]);
     }
 };
 
