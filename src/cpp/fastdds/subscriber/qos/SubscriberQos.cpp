@@ -30,6 +30,7 @@ void SubscriberQos::set_qos(
         const SubscriberQos& qos,
         bool first_time)
 {
+    entity_factory = qos.entity_factory;
     if (first_time)
     {
         durability = qos.durability;

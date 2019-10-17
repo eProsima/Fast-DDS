@@ -27,6 +27,7 @@
 
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/types/TypesBase.h>
@@ -285,10 +286,19 @@ public:
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
 
+    ReturnCode_t get_qos(
+            DomainParticipantQos& qos) const;
+
+    ReturnCode_t set_qos(
+            const DomainParticipantQos& qos);
+
 private:
 
     //!Participant Attributes
     fastrtps::ParticipantAttributes att_;
+
+    //!Participant Qos
+    DomainParticipantQos qos_;
 
     //!RTPSParticipant
     fastrtps::rtps::RTPSParticipant* rtps_participant_;

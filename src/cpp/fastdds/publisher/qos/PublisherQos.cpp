@@ -18,7 +18,7 @@
  */
 
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
 
 using namespace eprosima::fastdds::dds;
 
@@ -26,8 +26,8 @@ RTPS_DllAPI const PublisherQos eprosima::fastdds::dds::PUBLISHER_QOS_DEFAULT;
 
 PublisherQos::PublisherQos()
 {
-    this->reliability.kind = fastrtps::RELIABLE_RELIABILITY_QOS;
-    this->durability.kind = fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS;
+    this->reliability.kind = RELIABLE_RELIABILITY_QOS;
+    this->durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 }
 
 PublisherQos::~PublisherQos()
@@ -39,6 +39,7 @@ void PublisherQos::set_qos(
         const PublisherQos& qos,
         bool first_time)
 {
+    entity_factory = qos.entity_factory;
     if (first_time)
     {
         durability = qos.durability;
