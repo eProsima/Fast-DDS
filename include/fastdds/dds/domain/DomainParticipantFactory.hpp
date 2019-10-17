@@ -23,6 +23,9 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/types/TypesBase.h>
 
+#include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+
 #include <mutex>
 #include <map>
 
@@ -52,6 +55,7 @@ public:
     RTPS_DllAPI static DomainParticipantFactory* get_instance();
 
     /**
+     * TODO: Legacy method. Think about this method.
      * Create a Participant from a profile name.
      * @param participant_profile Participant profile name.
      * @param listen ParticipantListener Pointer.
@@ -62,6 +66,8 @@ public:
             DomainParticipantListener* listen = nullptr);
 
     /**
+     * TODO: Legacy method. Remove once ParticipantAttributes is totally replaced by DomainParticipantQos and
+     * StatusMask implemented.
      * Create a Participant.
      * @param att Participant Attributes.
      * @param listen ParticipantListener Pointer.
@@ -88,16 +94,12 @@ public:
      * @return
      */
     RTPS_DllAPI std::vector<DomainParticipant*> lookup_participants(
-        uint8_t domain_id) const;
+            uint8_t domain_id) const;
 
+    // TODO: Legacy method. Remove once ParticipantAttributes is totally replaced by DomainParticipantQos.
     //!Fills participant_attributes with the default values.
     RTPS_DllAPI ReturnCode_t get_default_participant_qos(
             fastrtps::ParticipantAttributes& participant_qos) const;
-
-    /* TODO
-    RTPS_DllAPI ReturnCode_t set_default_participant_qos(
-            const fastrtps::ParticipantAttributes& participant_qos);
-    */
 
     /**
      * Remove a Participant and all associated publishers and subscribers.
@@ -115,7 +117,25 @@ public:
     RTPS_DllAPI bool load_XML_profiles_file(
             const std::string& xml_profile_file);
 
-    // TODO set/get DomainParticipantFactoryQos
+    RTPS_DllAPI ReturnCode_t get_qos(
+            DomainParticipantFactoryQos& qos) const;
+
+    RTPS_DllAPI ReturnCode_t set_qos(
+            const DomainParticipantFactoryQos& qos);
+
+    RTPS_DllAPI ReturnCode_t get_default_participant_qos(
+            DomainParticipantQos& participant_qos) const;
+
+    RTPS_DllAPI ReturnCode_t set_default_participant_qos(
+            const DomainParticipantQos& participant_qos);
+
+    /* TODO implement
+    RTPS_DllAPI DomainParticipant* create_participant(
+            uint8_t domain_id,
+            const DomainParticipantQos& qos,
+            DomainParticipantListener* listen = nullptr,
+            const StatusMask& mask);
+    */
 
 private:
 
@@ -133,6 +153,9 @@ private:
 
     mutable bool default_xml_profiles_loaded;
 
+    DomainParticipantFactoryQos factory_qos_;
+
+    DomainParticipantQos default_participant_qos_;
 
 };
 
