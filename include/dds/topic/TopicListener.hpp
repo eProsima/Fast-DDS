@@ -101,8 +101,8 @@ public:
      *               an input to the application).
      */
     virtual void on_inconsistent_topic(
-	Topic<T>& topic,
-	const dds::core::status::InconsistentTopicStatus& status) = 0;
+            Topic<T>& topic,
+            const dds::core::status::InconsistentTopicStatus& status) = 0;
 };
 
 
@@ -136,8 +136,8 @@ public:
 
 public:
     virtual void on_inconsistent_topic(
-	Topic<T>& topic,
-    const dds::core::status::InconsistentTopicStatus& status)
+            Topic<T>& topic,
+            const dds::core::status::InconsistentTopicStatus& status)
     {
     }
 /** @endcond */

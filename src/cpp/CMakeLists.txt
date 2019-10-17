@@ -90,6 +90,7 @@ set(${PROJECT_NAME}_source_files
     dds/topic/qos/DataWriterQos.cpp
     dds/topic/qos/DataReaderQos.cpp
     dds/topic/TypeSupport.cpp
+    dds/topic/Topic.cpp
     dds/publisher/PublisherImpl.cpp
     dds/publisher/qos/PublisherQos.cpp
     dds/publisher/Publisher.cpp
