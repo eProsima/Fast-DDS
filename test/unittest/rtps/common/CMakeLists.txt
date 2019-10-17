@@ -19,8 +19,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
     if(GTEST_FOUND)
         set(SEQUENCENUMBERTESTS_SOURCE SequenceNumberTests.cpp)
         set(PORTPARAMETERSTESTS_SOURCE PortParametersTests.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/StdoutConsumer.cpp)
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp)
 
         add_executable(SequenceNumberTests ${SEQUENCENUMBERTESTS_SOURCE})
         target_compile_definitions(SequenceNumberTests PRIVATE FASTRTPS_NO_LIB)

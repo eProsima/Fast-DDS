@@ -22,8 +22,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         endif()
 
         set(LOG_COMMON_SOURCE
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
             )
 
         set(LOGTESTS_TEST_SOURCE LogTests.cpp)
@@ -47,7 +47,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(LOGFILETESTS_SOURCE
             ${LOG_COMMON_SOURCE}
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/FileConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/FileConsumer.cpp
             ${LOGFILETESTS_TEST_SOURCE})
 
         # External sources

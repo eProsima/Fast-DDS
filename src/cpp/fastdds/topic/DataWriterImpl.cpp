@@ -17,11 +17,11 @@
  *
  */
 
-#include <dds/topic/DataWriterImpl.hpp>
+#include <fastdds/topic/DataWriterImpl.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <dds/publisher/PublisherImpl.hpp>
+#include <fastdds/publisher/PublisherImpl.hpp>
 
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
