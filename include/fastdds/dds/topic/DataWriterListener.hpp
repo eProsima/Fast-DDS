@@ -54,8 +54,6 @@ public:
         (void)info;
     }
 
-
-
     /**
      * A method called when a deadline is missed
      * @param writer Pointer to the associated Publisher
