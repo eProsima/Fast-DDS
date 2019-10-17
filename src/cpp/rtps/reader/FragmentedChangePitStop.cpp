@@ -20,6 +20,51 @@
 using namespace eprosima::fastrtps::rtps;
 using Log = eprosima::fastdds::dds::Log;
 
+bool FragmentedChangePitStop::add_fragments_to_change(
+        CacheChange_t* change,
+        const SerializedPayload_t& incoming_data,
+        uint32_t fragment_starting_num,
+        uint32_t fragments_in_submessage)
+{
+    uint32_t fragment_size = change->getFragmentSize();
+    uint32_t original_offset = (fragment_starting_num - 1) * fragment_size;
+    uint32_t total_length = change->serializedPayload.length;
+    uint32_t incoming_length = incoming_data.length;
+    uint32_t total_fragments = change->getFragmentCount();
+    uint32_t last_fragment_index = fragment_starting_num + fragments_in_submessage - 1;
+
+    // Validate fragment indexes
+    if (last_fragment_index > total_fragments)
+    {
+        logWarning(RTPS_MSG_IN, "Inconsistent fragment numbers " << last_fragment_index << " > " << total_fragments);
+        return false;
+    }
+
+    // validate lengths
+    if (original_offset + incoming_length > total_length)
+    {
+        logWarning(RTPS_MSG_IN, "Incoming fragment length would exceed sample length");
+        return false;
+    }
+
+    if (last_fragment_index < total_fragments)
+    {
+        if (incoming_length % fragment_size != 0)
+        {
+            logWarning(RTPS_MSG_IN, "Incoming payload length not multiple of fragment size");
+            return false;
+        }
+    }
+
+    change->received_fragments(fragment_starting_num - 1, fragments_in_submessage);
+
+    memcpy(
+        &change->serializedPayload.data[original_offset],
+        incoming_data.data, incoming_length);
+
+    return change->is_fully_assembled();
+}
+
 CacheChange_t* FragmentedChangePitStop::process(
         CacheChange_t* incoming_change,
         uint32_t sample_size,
@@ -69,43 +114,11 @@ CacheChange_t* FragmentedChangePitStop::process(
         original_change_cit = changes_.insert(ChangeInPit(original_change));
     }
 
-    uint32_t fragment_size = original_change_cit->getChange()->getFragmentSize();
-    uint32_t original_offset = (fragment_starting_num - 1) * fragment_size;
-    uint32_t total_length = original_change_cit->getChange()->serializedPayload.length;
-    uint32_t incoming_length = incoming_change->serializedPayload.length;
-    uint32_t total_fragments = original_change_cit->getChange()->getFragmentCount();
-    uint32_t last_fragment_index = fragment_starting_num + fragments_in_submessage - 1;
-
-    // Validate fragment indexes
-    if (last_fragment_index > total_fragments)
-    {
-        logWarning(RTPS_MSG_IN, "Inconsistent fragment numbers " << last_fragment_index << " > " << total_fragments);
-        return nullptr;
-    }
-
-    // validate lengths
-    if (original_offset + incoming_length > total_length)
-    {
-        logWarning(RTPS_MSG_IN, "Incoming fragment length would exceed sample length");
-        return nullptr;
-    }
-
-    if (last_fragment_index < total_fragments)
-    {
-        if (incoming_length % fragment_size != 0)
-        {
-            logWarning(RTPS_MSG_IN, "Incoming payload length not multiple of fragment size");
-            return nullptr;
-        }
-    }
-
-    original_change_cit->getChange()->received_fragments(fragment_starting_num - 1, fragments_in_submessage);
-
-    memcpy(
-        &original_change_cit->getChange()->serializedPayload.data[original_offset],
-        incoming_change->serializedPayload.data, incoming_length);
-
-    if (original_change_cit->getChange()->is_fully_assembled())
+    if(add_fragments_to_change(
+        original_change_cit->getChange(),
+        incoming_change->serializedPayload,
+        fragment_starting_num,
+        fragments_in_submessage))
     {
         returnedValue = original_change_cit->getChange();
         changes_.erase(original_change_cit);
