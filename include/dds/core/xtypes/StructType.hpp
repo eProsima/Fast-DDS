@@ -119,15 +119,19 @@ public:
             const uint8_t* instance,
             const uint8_t* other_instance) const override
     {
-        bool comp = true;
         for(auto&& it: member_map())
         {
-            comp &= it.second.type().compare_instance(instance + it.second.offset(), other_instance + it.second.offset());
+            if(!it.second.type().compare_instance(instance + it.second.offset(), other_instance + it.second.offset()))
+            {
+                return false;
+            }
         }
-        return comp;
+        return true;
     }
 
-    virtual bool is_subset_of(const DynamicType& other) const override
+    virtual bool is_subset_of(
+            const DynamicType& other,
+            TypeConsistency consistency = TypeConsistency::NONE) const override
     {
         if(other.kind() != TypeKind::STRUCTURE_TYPE)
         {
@@ -135,26 +139,79 @@ public:
         }
 
         const StructType& other_struct = static_cast<const StructType&>(other);
-        bool comp = true;
-        for(auto&& it: member_map())
+
+        if(int(consistency) & int(TypeConsistency::IGNORE_MEMBERS))
         {
-            if(!it.second.is_optional())
+            if(int(consistency) & int(TypeConsistency::IGNORE_MEMBER_NAMES))
             {
-                auto other_it = other_struct.member_map().find(it.first);
-                if(other_it != other_struct.member_map().end())
+                auto other_it = other_struct.member_map().begin();
+                for(auto&& it: member_map())
                 {
-                    comp &= it.second.type().is_subset_of(other_it->second.type());
-                }
-                else
-                {
+                    while(other_it != other_struct.member_map().end())
+                    {
+                        if(it.second.type().is_subset_of(other_it->second.type(), consistency))
+                        {
+                            continue;
+                        }
+                        ++other_it;
+                    }
                     return false;
                 }
+                return true;
+            }
+            else //NO IGNORE_MEMBER_NAMES
+            {
+                for(auto&& it: member_map())
+                {
+                    auto other_it = other_struct.member_map().find(it.first);
+                    if(other_it == other_struct.member_map().end()
+                        || it.second.name() != other_it->second.name()
+                        || !it.second.type().is_subset_of(other_it->second.type(), consistency))
+                    {
+                        return false;
+                    }
+                }
+                return true;
             }
         }
-        return comp;
+        else if(member_count() == other_struct.member_count()) //NO IGNORE_MEMBERS
+        {
+            if(int(consistency) & int(TypeConsistency::IGNORE_MEMBER_NAMES))
+            {
+                auto other_it = other_struct.member_map().begin();
+                for(auto&& it: member_map())
+                {
+                    if(other_it == other_struct.member_map().end()
+                        || !it.second.type().is_subset_of(other_it->second.type(), consistency))
+                    {
+                        return false;
+                    }
+                    ++other_it;
+                }
+                return true;
+            }
+            else //NO IGNORE_MEMBERS_NAMES
+            {
+                auto other_it = other_struct.member_map().begin();
+                for(auto&& it: member_map())
+                {
+                    if(other_it == other_struct.member_map().end()
+                        || it.second.name() != other_it->second.name()
+                        || !it.second.type().is_subset_of(other_it->second.type(), consistency))
+                    {
+                        return false;
+                    }
+                    ++other_it;
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
-    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const override
+    virtual void for_each_instance(
+            const InstanceNode& node,
+            InstanceVisitor visitor) const override
     {
         visitor(node);
         for(auto&& it: member_map())

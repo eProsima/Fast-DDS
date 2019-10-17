@@ -80,7 +80,8 @@ public:
     }
 
     virtual bool is_subset_of(
-            const DynamicType& other) const override
+            const DynamicType& other,
+            TypeConsistency consistency = TypeConsistency::NONE) const override
     {
         if(other.kind() != TypeKind::STRING_TYPE)
         {
@@ -88,10 +89,15 @@ public:
         }
 
         const StringType& other_string = static_cast<const StringType&>(other);
-        return bounds() <= other_string.bounds();
+
+        return (int(consistency) & int(TypeConsistency::IGNORE_STRING_BOUNDS))
+            ? bounds() <= other_string.bounds()
+            : bounds() == other_string.bounds();
     }
 
-    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const override
+    virtual void for_each_instance(
+            const InstanceNode& node,
+            InstanceVisitor visitor) const override
     {
         visitor(node);
     }

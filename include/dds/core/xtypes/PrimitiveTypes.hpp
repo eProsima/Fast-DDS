@@ -81,7 +81,9 @@ class PrimitiveType : public DynamicType
         *reinterpret_cast<T*>(target) = *reinterpret_cast<const T*>(source);
     }
 
-    virtual void move_instance(uint8_t* target, uint8_t* source) const override
+    virtual void move_instance(
+            uint8_t* target,
+            uint8_t* source) const override
     {
         copy_instance(target, source);
     }
@@ -94,12 +96,19 @@ class PrimitiveType : public DynamicType
     }
 
     virtual bool is_subset_of(
-            const DynamicType& other) const override
+            const DynamicType& other,
+            TypeConsistency consistency = TypeConsistency::NONE) const override
     {
+        if(int(consistency) & int(TypeConsistency::IGNORE_TYPE_WIDTH))
+        {
+            return other.memory_size() <= other.memory_size();
+        }
         return other.kind() == kind();
     }
 
-    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const override
+    virtual void for_each_instance(
+            const InstanceNode& node,
+            InstanceVisitor visitor) const override
     {
         visitor(node);
     }
@@ -119,7 +128,7 @@ private:
 template<typename T>
 const DynamicType& primitive_type()
 {
-    // The creation of PrimitiveType should be always created
+    // The creation of PrimitiveType must be always created
     // by this function in order to not broken the DynamicType::Ptr
     // optimizations for PrimitiveType
     static PrimitiveType<T> p;

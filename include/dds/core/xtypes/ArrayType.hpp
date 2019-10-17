@@ -55,6 +55,8 @@ public:
     ArrayType(const ArrayType& other) = default;
     ArrayType(ArrayType&& other) = default;
 
+    uint32_t dimension() const { return dimension_; }
+
     virtual size_t memory_size() const override
     {
         return dimension_ * content_type().memory_size();
@@ -140,7 +142,8 @@ public:
     }
 
     virtual bool is_subset_of(
-            const DynamicType& other) const override
+            const DynamicType& other,
+            TypeConsistency consistency = TypeConsistency::NONE) const override
     {
         if(other.kind() != TypeKind::ARRAY_TYPE)
         {
@@ -148,11 +151,17 @@ public:
         }
 
         const ArrayType& other_array = static_cast<const ArrayType&>(other);
-        return dimension_ <= other_array.dimension_
-            && content_type().is_subset_of(other_array.content_type());
+
+        bool match_bounds = (int(consistency) & int(TypeConsistency::IGNORE_ARRAY_BOUNDS))
+            ? dimension() <= other_array.dimension()
+            : dimension() == other_array.dimension();
+
+        return match_bounds && content_type().is_subset_of(other_array.content_type(), consistency);
     }
 
-    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const override
+    virtual void for_each_instance(
+            const InstanceNode& node,
+            InstanceVisitor visitor) const override
     {
         visitor(node);
         size_t block_size = content_type().memory_size();

@@ -107,7 +107,9 @@ public:
             == *reinterpret_cast<const SequenceInstance*>(other_instance);
     }
 
-    virtual bool is_subset_of(const DynamicType& other) const override
+    virtual bool is_subset_of(
+            const DynamicType& other,
+            TypeConsistency consistency = TypeConsistency::NONE) const override
     {
         if(other.kind() != TypeKind::SEQUENCE_TYPE)
         {
@@ -115,11 +117,17 @@ public:
         }
 
         const SequenceType& other_sequence = static_cast<const SequenceType&>(other);
-        return bounds() <= other_sequence.bounds()
-            && content_type().is_subset_of(other_sequence.content_type());
+
+        bool match_bounds = (int(consistency) & int(TypeConsistency::IGNORE_SEQUENCE_BOUNDS))
+            ? bounds() <= other_sequence.bounds()
+            : bounds() == other_sequence.bounds();
+
+        return match_bounds && content_type().is_subset_of(other_sequence.content_type(), consistency);
     }
 
-    virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const override
+    virtual void for_each_instance(
+            const InstanceNode& node,
+            InstanceVisitor visitor) const override
     {
         const SequenceInstance& sequence = *reinterpret_cast<const SequenceInstance*>(node.instance);
         visitor(node);

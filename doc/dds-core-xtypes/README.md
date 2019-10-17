@@ -89,7 +89,7 @@ Once it has been declared, any number of members can be added.
 ```c++
 my_struct.add_member(Member("m_a", primitive_type<int>()));
 my_struct.add_member(Member("m_b", StringType()));
-my_struct.add_member(Member("m_c", primitive_type<double>().optional().id(42))); //with annotations
+my_struct.add_member(Member("m_c", primitive_type<double>().key().id(42))); //with annotations
 my_struct.add_member("m_d", ArrayType(25)); //shortcut version
 my_struct.add_member("m_e", other_struct)); //member of structs
 my_struct.add_member("m_f", SequenceType(other_struct))); //member of sequence of structs
@@ -97,21 +97,25 @@ my_struct.add_member("m_f", SequenceType(other_struct))); //member of sequence o
 Note: once a `DynamicType` is added to an struct, a copy is performed (excepts for `PrimitiveType`).
 This allow to modify the `DynamicType`s without side effects, and facilitate the memory management by the user.
 
-##### annotations
-The members can be modified with the following annotations:
-- optional(): Set the member as optional.
-- id(value): Set the id to the member.
-- key(): Set the member as key member.
-//TODO
-
-#### `is_convertible_from` function of DynamicType
+#### `is_subset_of` function of `DynamicType`
 Any `DynamicType` can be tested with another `DynamicType` in a *subset* evaluation.
-Given the following line:
 ```c++
-t1.is_convertible_from(t2, flags)
+tested_type.is_subset_of(other_type, type_consistency);
 ```
-The previous sentence will be evaluate true if it is possible to get a instance of `t1` that be compatible with an instance of `t2`.
-//TODO
+The previous sentence will be evaluate `true` if it is possible to get an instance of `tested_type`
+that could be compatible with an instance of `other_type`.
+This evaluation can be parametrized enabling any set of the following type consistency QoS Policies,
+(that will be applied for the entire nested tree of `DynamicType`s):
+
+- `NONE`: by default. The subset evaluation is analogous as an equal evaluation.
+- `IGNORE_TYPE_WIDTH`: the subset evaluation will be true if the width of the primitive type is less or equals than the other type.
+  Otherwise, only the equailty is take into account.
+- `IGNORE_SEQUENCE_BOUNDS`: the subset evaluation will be true if the bounds of the `SequenceType` is less or equals than the other type.
+  Otherwise, only `SequeceType`s with the same bounds can be matched.
+- `IGNORE_ARRAY_BOUNDS`: same as `IGNORE_SEQUENCE_BOUNDS` but for the case of `ArrayType`.
+- `IGNORE_STRING_BOUNDS`: same as `IGNORE_SEQUENCE_BOUNDS` but for the case of `StringType`.
+- `IGNORE_MEMBER_NAMES`: if enabled, the matching between aggregated types will be by type instead of beeing by type and name.
+- `IGNORE_MEMBERS`: if enabled, only members of the tested type will be checked to match with the next type.
 
 ### Data instantation
 In order to instantiate a data from a DynamicType is only necessary to call the DynamicData constructor:
@@ -167,10 +171,14 @@ You can get a reference when access with the `[]` operator or calling the `ref()
 You will obtain a `ReadableDynamicDataRef` or a `WritableDynamicDataRef` depending if theses methods are
 calling from a `const DynamicData` or from a `DynamicData` itself.
 
-#### `operator ==` of `DynamicData`
-You can check the equality between 2 `DynamicData`s.
-It is not necessary that the associated types of the `DynamicData`s be the same as long as their types be compatibles
-(see the `is_compatible_from` section).
+#### `is_less_equals_than` function of `DynamicData`
+Analogous to type matching, but over the values of `DynamicData`.
+```c++
+tested_data.is_less_equals_of(other_data, type_consistency);
+```
+It checks that the tested data will be less or equals than the compared data.
+As `is_subset_of`, this function also accepts type consistency QoS policies.
+(See the `is_subset_of` section).
 //TODO
 
 #### `for_each` function of `DynamicData`
@@ -179,7 +187,7 @@ The function receive a callback that will be called for each node of the tree.
 ```c++
 data.for_each([&](const DynamicData::ReadableNode& node)
 {
-    switch(node.data().type().kind())
+    switch(node.type().kind())
     {
         case TypeKind::STRUCTURE_TYPE:
         case TypeKind::SEQUENCE_TYPE:

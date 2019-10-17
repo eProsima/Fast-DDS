@@ -51,7 +51,7 @@ int main()
 {
     StructType inner("InnerType");
     inner.add_member(Member("im1", primitive_type<uint32_t>()));
-    inner.add_member(Member("im2", primitive_type<float>()).optional());
+    inner.add_member(Member("im2", primitive_type<float>()).id(2));
 
     StructType outter("OutterType");
     outter.add_member("om1", primitive_type<double>());
