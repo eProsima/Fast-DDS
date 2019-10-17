@@ -196,7 +196,7 @@ set(${PROJECT_NAME}_source_files
     rtps/persistence/sqlite3.c
     fastrtps_deprecated/utils/TimedConditionVariable.cpp
 
-    ../../include/dds/domain/detail/TDomainParticipantImpl.hpp
+    dds/domain/detail/DomainParticipant.cpp
     )
 
 # TLS Support
