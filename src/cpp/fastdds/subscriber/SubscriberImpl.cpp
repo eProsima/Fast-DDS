@@ -17,9 +17,9 @@
  *
  */
 
-#include <dds/subscriber/SubscriberImpl.hpp>
-#include <dds/topic/DataReaderImpl.hpp>
-#include <dds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/subscriber/SubscriberImpl.hpp>
+#include <fastdds/topic/DataReaderImpl.hpp>
+#include <fastdds/domain/DomainParticipantImpl.hpp>
 
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
