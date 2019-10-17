@@ -19,7 +19,7 @@
 
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <dds/subscriber/SubscriberImpl.hpp>
+#include <fastdds/subscriber/SubscriberImpl.hpp>
 
 using namespace eprosima;
 using namespace eprosima::fastdds::dds;
