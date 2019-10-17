@@ -225,7 +225,7 @@ void TestSubscriber::SubListener::on_subscription_matched(
 void TestSubscriber::SubListener::on_data_available(
         eprosima::fastdds::dds::DataReader* reader)
 {
-    if (!!reader->take_next_sample(mParent->m_Data, &m_info))
+    if (!!reader->take_next_sample(mParent->m_Data, &info_))
     {
         if (info_.instance_state == ::dds::sub::status::InstanceState::alive())
         {
