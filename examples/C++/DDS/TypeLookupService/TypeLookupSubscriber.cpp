@@ -121,9 +121,9 @@ void TypeLookupSubscriber::SubListener::on_data_available(
     if (dit != subscriber_->datas_.end())
     {
         types::DynamicData_ptr data = dit->second;
-        if (reader->take_next_sample(data.get(), &m_info) == ReturnCode_t::RETCODE_OK)
+        if (reader->take_next_sample(data.get(), &info_) == ReturnCode_t::RETCODE_OK)
         {
-            if (m_info.sampleKind == ALIVE)
+            if (info_.instance_state == ::dds::sub::status::InstanceState::alive())
             {
                 types::DynamicType_ptr type = subscriber_->readers_[reader];
                 this->n_samples++;
