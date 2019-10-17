@@ -17,9 +17,9 @@
  *
  */
 
-#include <dds/publisher/PublisherImpl.hpp>
-#include <dds/topic/DataWriterImpl.hpp>
-#include <dds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/publisher/PublisherImpl.hpp>
+#include <fastdds/topic/DataWriterImpl.hpp>
+#include <fastdds/domain/DomainParticipantImpl.hpp>
 
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
