@@ -14,6 +14,7 @@
  * limitations under the License.
  *
 */
+
 #ifndef EPROSIMA_DDS_TOPIC_TANYTOPIC_IMPL_HPP_
 #define EPROSIMA_DDS_TOPIC_TANYTOPIC_IMPL_HPP_
 

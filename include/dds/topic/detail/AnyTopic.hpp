@@ -23,17 +23,14 @@
  * Ignore this file in the API
  */
 
-//#include <dds/topic/detail/TAnyTopicImpl.hpp>
-//TODO: Fix when AnyTopicDelegate is implemented
-//#include <org/opensplice/topic/AnyTopicDelegate.hpp>
+#include <dds/topic/detail/TAnyTopicImpl.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 
 namespace dds {
 namespace topic {
 namespace detail {
 
-//TODO: Fix when AnyTopicDelegate is implemented
-//typedef dds::topic::TAnyTopic<org::opensplice::topic::AnyTopicDelegate> AnyTopic;
-class AnyTopic { };
+using AnyTopic = eprosima::fastdds::dds::Topic;
 
 } //namespace detail
 } //namespace topic

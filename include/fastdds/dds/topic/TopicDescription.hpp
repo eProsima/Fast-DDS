@@ -19,6 +19,8 @@
 #ifndef _FASTDDS_TOPIC_DESCRIPTION_HPP_
 #define _FASTDDS_TOPIC_DESCRIPTION_HPP_
 
+#include <fastrtps/fastrtps_dll.h>
+
 #include <string>
 
 namespace eprosima {
@@ -35,26 +37,26 @@ class DomainParticipant;
 class TopicDescription
 {
 protected:
-    TopicDescription(
-            const std::string& name,
-            const std::string& type_name)
+	RTPS_DllAPI TopicDescription(
+            const char* name,
+            const char* type_name)
         : name_(name)
         , type_name_(type_name)
     {}
 
-    ~TopicDescription()
+	RTPS_DllAPI ~TopicDescription()
     {}
 
-   virtual DomainParticipant* get_participant() const = 0;
+    virtual RTPS_DllAPI DomainParticipant* get_participant() const = 0;
 
-    const std::string& get_name() const
+    RTPS_DllAPI const char* get_name() const
     {
-        return name_;
+        return name_.c_str();
     }
 
-    const std::string& get_type_name() const
+	RTPS_DllAPI const char* get_type_name() const
     {
-        return type_name_;
+        return type_name_.c_str();
     }
 
 protected:
