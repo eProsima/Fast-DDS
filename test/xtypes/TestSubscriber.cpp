@@ -85,7 +85,7 @@ bool TestSubscriber::init(
     //CREATE THE SUBSCRIBER
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = topic_kind;
-    Rparam.topic.topicDataType = m_Type.get() != nullptr ? m_Type.get_type_name() : nullptr;
+    Rparam.topic.topicDataType = m_Type.get() != nullptr ? m_Type.get_type_name() : "";
     Rparam.topic.auto_fill_type_object = false;
     Rparam.topic.auto_fill_type_information = false;
 

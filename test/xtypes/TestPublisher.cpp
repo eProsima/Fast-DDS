@@ -88,7 +88,7 @@ bool TestPublisher::init(
     Wparam.topic.auto_fill_type_object = false;
     Wparam.topic.auto_fill_type_information = false;
     Wparam.topic.topicKind = topic_kind;
-    Wparam.topic.topicDataType = m_Type.get() != nullptr ? m_Type.get_type_name() : nullptr;
+    Wparam.topic.topicDataType = m_Type.get() != nullptr ? m_Type.get_type_name() : "";
 
     //REGISTER THE TYPE
     if (m_Type.get() != nullptr)

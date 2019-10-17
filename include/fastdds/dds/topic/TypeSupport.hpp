@@ -48,7 +48,7 @@ private:
     const fastrtps::types::TypeIdentifier* type_id_;
 
     // TopicDataType for retro-compatibility
-    fastdds::dds::TopicDataType* topic_data_type_;
+    std::shared_ptr<fastdds::dds::TopicDataType> topic_data_type_;
 
 public:
     RTPS_DllAPI TypeSupport()
@@ -73,7 +73,7 @@ public:
             fastdds::dds::TopicDataType* ptr)
         : data_type_name_(ptr != nullptr ? ptr->m_topicDataTypeName : "")
         , type_id_(ptr != nullptr ? ptr->type_id_ : nullptr)
-        , topic_data_type_(ptr)
+        , topic_data_type_(std::shared_ptr<fastdds::dds::TopicDataType>(ptr))
     {}
 
     /*!
@@ -85,8 +85,8 @@ public:
             fastrtps::types::DynamicPubSubType ptr)
         : data_type_name_(ptr.m_topicDataTypeName)
         , type_id_(ptr.type_id_)
-        , topic_data_type_( std::shared_ptr<fastdds::dds::TopicDataType>(
-                  std::make_shared<fastrtps::types::DynamicPubSubType>(std::move(ptr))).get())
+        , topic_data_type_(std::shared_ptr<fastdds::dds::TopicDataType>(
+                  std::make_shared<fastrtps::types::DynamicPubSubType>(std::move(ptr))))
     {}
 
     RTPS_DllAPI virtual bool register_type(
@@ -190,7 +190,7 @@ public:
 
     RTPS_DllAPI TopicDataType* get() const
     {
-        return topic_data_type_;
+        return topic_data_type_.get();
     }
 };
 
