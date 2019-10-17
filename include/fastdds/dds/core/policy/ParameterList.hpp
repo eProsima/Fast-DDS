@@ -20,7 +20,7 @@
 #define _FASTDDS_DDS_QOS_PARAMETERLIST_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/dds/qos/ParameterTypes.hpp>
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/rtps/messages/RTPS_messages.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/messages/CDRMessage.h>

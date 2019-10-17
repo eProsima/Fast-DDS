@@ -114,7 +114,7 @@ public:
     */
 };
 
-extern const DataReaderQos DATAREADER_QOS_DEFAULT;
+//extern const DataReaderQos DATAREADER_QOS_DEFAULT;
 
 } // namespace dds
 } // namespace fastdds

@@ -19,7 +19,9 @@
 #ifndef _FASTRTPS_SAMPLE_REJECTED_STATUS_HPP_
 #define _FASTRTPS_SAMPLE_REJECTED_STATUS_HPP_
 
-#include <fastdds/dds/qos/SampleRejectedStatus.hpp>
+#include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
+
+#include <fastdds/rtps/common/InstanceHandle.h>
 
 namespace eprosima {
 namespace fastrtps {

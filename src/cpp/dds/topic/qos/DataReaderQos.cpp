@@ -21,7 +21,7 @@
 
 using namespace eprosima::fastdds::dds;
 
-const DataReaderQos eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT;
+//const DataReaderQos eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT;
 
 /* TODO: Implement this method
 void DataReaderQos::setQos(

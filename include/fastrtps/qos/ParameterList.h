@@ -20,7 +20,15 @@
 #define PARAM_LIST_T_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/dds/qos/ParameterList.hpp>
+#include <fastdds/dds/core/policy/ParameterList.hpp>
+
+#include <fastrtps/qos/ParameterTypes.h>
+#include <fastdds/rtps/messages/RTPS_messages.h>
+#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
+#include <fastdds/rtps/common/CacheChange.h>
+
+#include <functional>
 
 namespace eprosima {
 namespace fastrtps {

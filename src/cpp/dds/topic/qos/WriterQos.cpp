@@ -13,23 +13,35 @@
 // limitations under the License.
 
 /**
- * @file ReaderQos.cpp
+ * @file WriterQos.cpp
  *
  */
 
-#include <fastdds/dds/qos/ReaderQos.hpp>
+#include <fastdds/dds/topic/qos/WriterQos.hpp>
 #include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-RTPS_DllAPI const ReaderQos DATAREADER_QOS_DEFAULT;
+RTPS_DllAPI const WriterQos DATAWRITER_QOS_DEFAULT;
 
-void ReaderQos::setQos(
-        const ReaderQos& qos,
+WriterQos::WriterQos()
+{
+    this->m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    this->m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+}
+
+WriterQos::~WriterQos()
+{
+
+}
+
+void WriterQos::setQos(
+        const WriterQos& qos,
         bool first_time)
 {
     if (first_time)
@@ -72,7 +84,7 @@ void ReaderQos::setQos(
         m_userData = qos.m_userData;
         m_userData.hasChanged = true;
     }
-    if (m_timeBasedFilter.minimum_separation != qos.m_timeBasedFilter.minimum_separation )
+    if (first_time || m_timeBasedFilter.minimum_separation != qos.m_timeBasedFilter.minimum_separation)
     {
         m_timeBasedFilter = qos.m_timeBasedFilter;
         m_timeBasedFilter.hasChanged = true;
@@ -89,12 +101,13 @@ void ReaderQos::setQos(
         m_partition = qos.m_partition;
         m_partition.hasChanged = true;
     }
+
     if (m_topicData.getValue() != qos.m_topicData.getValue())
     {
         m_topicData = qos.m_topicData;
         m_topicData.hasChanged = true;
     }
-    if (m_groupData.getValue() != qos.m_groupData.getValue() )
+    if (m_groupData.getValue() != qos.m_groupData.getValue())
     {
         m_groupData = qos.m_groupData;
         m_groupData.hasChanged = true;
@@ -104,42 +117,38 @@ void ReaderQos::setQos(
             m_durabilityService.max_instances != qos.m_durabilityService.max_instances ||
             m_durabilityService.max_samples != qos.m_durabilityService.max_samples ||
             m_durabilityService.max_samples_per_instance != qos.m_durabilityService.max_samples_per_instance ||
-            m_durabilityService.service_cleanup_delay != qos.m_durabilityService.service_cleanup_delay)
+            m_durabilityService.service_cleanup_delay != qos.m_durabilityService.service_cleanup_delay
+            )
     {
         m_durabilityService = qos.m_durabilityService;
         m_durabilityService.hasChanged = true;
     }
-    if (m_lifespan.duration != qos.m_lifespan.duration )
+    if (m_lifespan.duration != qos.m_lifespan.duration)
     {
         m_lifespan = qos.m_lifespan;
         m_lifespan.hasChanged = true;
+    }
+    if (qos.m_ownershipStrength.value != m_ownershipStrength.value)
+    {
+        m_ownershipStrength = qos.m_ownershipStrength;
+        m_ownershipStrength.hasChanged = true;
     }
     if (first_time)
     {
         m_disablePositiveACKs = qos.m_disablePositiveACKs;
         m_disablePositiveACKs.hasChanged = true;
     }
-
-    if (representation.m_value != qos.representation.m_value)
+    // Writers only manages the first element in the list of data representations.
+    if (qos.representation.m_value.size() != representation.m_value.size() ||
+            (qos.representation.m_value.size() > 0 && representation.m_value.size() > 0 &&
+            *qos.representation.m_value.begin() != *representation.m_value.begin()))
     {
         representation = qos.representation;
         representation.hasChanged = true;
     }
-
-    if (first_time ||
-            type_consistency.m_kind != qos.type_consistency.m_kind ||
-            type_consistency.m_ignore_member_names != qos.type_consistency.m_ignore_member_names ||
-            type_consistency.m_ignore_string_bounds != qos.type_consistency.m_ignore_string_bounds ||
-            type_consistency.m_ignore_sequence_bounds != qos.type_consistency.m_ignore_sequence_bounds ||
-            type_consistency.m_force_type_validation != qos.type_consistency.m_force_type_validation ||
-            type_consistency.m_prevent_type_widening != qos.type_consistency.m_prevent_type_widening)
-    {
-        type_consistency = qos.type_consistency;
-        type_consistency.hasChanged = true;
-    }
 }
 
-bool ReaderQos::checkQos() const
+bool WriterQos::checkQos() const
 {
     if (m_durability.kind == PERSISTENT_DURABILITY_QOS)
     {
@@ -156,53 +165,63 @@ bool ReaderQos::checkQos() const
         logError(RTPS_QOS_CHECK, "BEST_EFFORT incompatible with EXCLUSIVE ownership");
         return false;
     }
+    if (m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS || m_liveliness.kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS)
+    {
+        if (m_liveliness.lease_duration < c_TimeInfinite &&
+                m_liveliness.lease_duration <= m_liveliness.announcement_period)
+        {
+            logError(RTPS_QOS_CHECK, "WRITERQOS: LeaseDuration <= announcement period.");
+            return false;
+        }
+    }
     return true;
 }
 
-bool ReaderQos::canQosBeUpdated(
-        const ReaderQos& qos) const
+bool WriterQos::canQosBeUpdated(
+        const WriterQos& qos) const
 {
     bool updatable = true;
     if ( m_durability.kind != qos.m_durability.kind)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Durability kind cannot be changed after the creation of a subscriber.");
+        logWarning(RTPS_QOS_CHECK, "Durability kind cannot be changed after the creation of a publisher.");
     }
 
-    if (m_liveliness.kind != qos.m_liveliness.kind)
+    if (m_liveliness.kind !=  qos.m_liveliness.kind)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Liveliness Kind cannot be changed after the creation of a subscriber.");
+        logWarning(RTPS_QOS_CHECK, "Liveliness Kind cannot be changed after the creation of a publisher.");
     }
 
     if (m_liveliness.lease_duration != qos.m_liveliness.lease_duration)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Liveliness lease duration cannot be changed after the creation of a subscriber.");
+        logWarning(RTPS_QOS_CHECK, "Liveliness lease duration cannot be changed after the creation of a publisher.");
     }
 
     if (m_liveliness.announcement_period != qos.m_liveliness.announcement_period)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Liveliness announcement cannot be changed after the creation of a subscriber.");
+        logWarning(RTPS_QOS_CHECK, "Liveliness announcement cannot be changed after the creation of a publisher.");
     }
 
     if (m_reliability.kind != qos.m_reliability.kind)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Reliability Kind cannot be changed after the creation of a subscriber.");
+        logWarning(RTPS_QOS_CHECK, "Reliability Kind cannot be changed after the creation of a publisher.");
     }
     if (m_ownership.kind != qos.m_ownership.kind)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Ownership Kind cannot be changed after the creation of a subscriber.");
+        logWarning(RTPS_QOS_CHECK, "Ownership Kind cannot be changed after the creation of a publisher.");
     }
     if (m_destinationOrder.kind != qos.m_destinationOrder.kind)
     {
         updatable = false;
-        logWarning(RTPS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a subscriber.");
+        logWarning(RTPS_QOS_CHECK, "Destination order Kind cannot be changed after the creation of a publisher.");
     }
     return updatable;
+
 }
 
 } //namespace dds

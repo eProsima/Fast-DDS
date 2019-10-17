@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastdds/dds/qos/ParameterTypes.hpp>
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/rtps/messages/CDRMessage.h>
 
 using namespace eprosima::fastrtps::rtps;

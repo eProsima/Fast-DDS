@@ -20,7 +20,13 @@
 #ifndef QOS_POLICIES_H_
 #define QOS_POLICIES_H_
 
-#include <fastdds/dds/qos/QosPolicies.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+
+#include <vector>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastrtps/qos/ParameterTypes.h>
+#include <fastrtps/types/TypeObject.h>
 
 namespace eprosima {
 namespace fastrtps {
