@@ -27,7 +27,7 @@
 #include <fastdds/dds/topic/DataReader.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/subscriber/SampleInfo.h>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 
@@ -204,7 +204,7 @@ public:
 
             if (nullptr != reader && !!reader->take_next_sample(sample.get(), &info))
             {
-                if (info.sampleKind == ALIVE)
+                if (info.instance_state == ::dds::sub::status::InstanceState::alive())
                 {
                     std::unique_lock<std::mutex> lock(mutex_);
                     ++number_samples_;

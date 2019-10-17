@@ -24,7 +24,7 @@
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/topic/DataReader.hpp>
 #include <fastdds/dds/topic/DataReaderListener.hpp>
-#include <fastrtps/subscriber/SampleInfo.h>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastrtps/rtps/common/Types.h>
 
 #include <fastrtps/types/DynamicPubSubType.h>
@@ -93,7 +93,7 @@ public:
                 const eprosima::fastrtps::string_255 type_name,
                 const eprosima::fastrtps::types::TypeInformation& type_information) override;
 
-        eprosima::fastrtps::SampleInfo_t m_info;
+        eprosima::fastdds::dds::SampleInfo_t info_;
 
         int n_matched;
 
