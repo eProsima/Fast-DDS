@@ -324,7 +324,7 @@ bool StatelessReader::processDataFragMsg(
     GUID_t writer_guid = incomingChange->writerGUID;
 
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
-    for (const RemoteWriterInfo_t& writer : matched_writers_)
+    for (RemoteWriterInfo_t& writer : matched_writers_)
     {
         if (writer.guid == writer_guid)
         {
@@ -335,6 +335,13 @@ bool StatelessReader::processDataFragMsg(
             {
                 logInfo(RTPS_MSG_IN, IDSTRING "Trying to add fragment " << incomingChange->sequenceNumber.to64long() <<
                     " TO reader: " << m_guid);
+
+                // Early return if we already know abount a greater sequence number
+                CacheChange_t* work_change = writer.fragmented_change;
+                if (work_change != nullptr && work_change->sequenceNumber > incomingChange->sequenceNumber)
+                {
+                    return true;
+                }
 
                 CacheChange_t* change_to_add = incomingChange;
 
@@ -357,13 +364,68 @@ bool StatelessReader::processDataFragMsg(
                 }
 #endif
 
-                // Try to remove previous CacheChange_t from PitStop.
-                fragmentedChangePitStop_->try_to_remove_until(incomingChange->sequenceNumber, writer_guid);
+                // Check if pending fragmented change should be dropped
+                if (work_change != nullptr)
+                {
+                    if(work_change->sequenceNumber < change_to_add->sequenceNumber)
+                    {
+                        // Pending change should be dropped. Check if it can be reused
+                        if (work_change->serializedPayload.max_size <= sampleSize)
+                        {
+                            // Sample fits inside pending change. Reuse it.
+                            work_change->copy_not_memcpy(change_to_add);
+                            work_change->serializedPayload.length = sampleSize;
+                            work_change->setFragmentSize(change_to_add->getFragmentSize(), true);
+                        }
+                        else
+                        {
+                            // Release change, and let it be reserved later
+                            releaseCache(work_change);
+                            work_change = nullptr;
+                        }
+                    }
+                }
 
-                // Fragments manager has to process incomming fragments.
-                // If CacheChange_t is completed, it will be returned;
-                CacheChange_t* change_completed = fragmentedChangePitStop_->process(
-                    change_to_add, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
+                // Check if a new change should be reserved
+                if (work_change == nullptr)
+                {
+                    if (reserveCache(&work_change, sampleSize))
+                    {
+                        if (work_change->serializedPayload.max_size < sampleSize)
+                        {
+                            releaseCache(work_change);
+                            work_change = nullptr;
+                        }
+                        else
+                        {
+                            work_change->copy_not_memcpy(change_to_add);
+                            work_change->serializedPayload.length = sampleSize;
+                            work_change->setFragmentSize(change_to_add->getFragmentSize(), true);
+                        }
+                    }
+                }
+
+                // Process fragment and set change_completed if it is fully reassembled
+                CacheChange_t* change_completed = nullptr;
+                if (work_change != nullptr)
+                {
+                    work_change->received_fragments(fragmentStartingNum - 1, fragmentsInSubmessage);
+
+                    size_t offset = size_t(fragmentStartingNum - 1) * work_change->getFragmentSize();
+
+                    memcpy(
+                        &work_change->serializedPayload.data[offset],
+                        change_to_add->serializedPayload.data,
+                        change_to_add->serializedPayload.length);
+
+                    if (work_change->is_fully_assembled())
+                    {
+                        change_completed = work_change;
+                        work_change = nullptr;
+                    }
+                }
+
+                writer.fragmented_change = work_change;
 
 #if HAVE_SECURITY
                 if (getAttributes().security_attributes().is_payload_protected)
