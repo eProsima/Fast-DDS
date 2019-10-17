@@ -76,8 +76,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLParser.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLElementParser.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLParserCommon.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/QosPolicies.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/QosPolicies.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterTypes.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/qos/WriterQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/qos/ReaderQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp

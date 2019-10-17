@@ -86,8 +86,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterList.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterTypes.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPv4Transport.cpp
@@ -125,8 +125,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterList.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterTypes.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPv6Transport.cpp
@@ -162,8 +162,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterList.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterTypes.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/test_UDPv4Transport.cpp

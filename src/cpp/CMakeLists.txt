@@ -147,9 +147,9 @@ set(${PROJECT_NAME}_source_files
     fastrtps_deprecated/types/DynamicDataHelper.cpp
 
     fastrtps_deprecated/attributes/TopicAttributes.cpp
-    dds/core/policy/ParameterList.cpp
-    dds/core/policy/ParameterTypes.cpp
-    dds/core/policy/QosPolicies.cpp
+    fastdds/core/policy/ParameterList.cpp
+    fastdds/core/policy/ParameterTypes.cpp
+    fastdds/core/policy/QosPolicies.cpp
     fastdds/topic/qos/WriterQos.cpp
     fastdds/topic/qos/ReaderQos.cpp
     rtps/builtin/BuiltinProtocols.cpp
