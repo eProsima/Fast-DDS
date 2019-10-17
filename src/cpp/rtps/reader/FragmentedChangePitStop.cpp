@@ -18,7 +18,11 @@
 
 using namespace eprosima::fastrtps::rtps;
 
-CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, uint32_t sampleSize, uint32_t fragmentStartingNum)
+CacheChange_t* FragmentedChangePitStop::process(
+        CacheChange_t* incoming_change,
+        uint32_t sample_size,
+        FragmentNumber_t fragment_starting_num,
+        uint16_t fragments_in_submessage)
 {
     CacheChange_t* returnedValue = nullptr;
 
@@ -44,10 +48,10 @@ CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, 
     {
         CacheChange_t* original_change = nullptr;
 
-        if(!parent_->reserveCache(&original_change, sampleSize))
+        if(!parent_->reserveCache(&original_change, sample_size))
             return nullptr;
 
-        if(original_change->serializedPayload.max_size < sampleSize)
+        if(original_change->serializedPayload.max_size < sample_size)
         {
             parent_->releaseCache(original_change);
             return nullptr;
@@ -56,58 +60,26 @@ CacheChange_t* FragmentedChangePitStop::process(CacheChange_t* incoming_change, 
         //Change comes preallocated (size sampleSize)
         original_change->copy_not_memcpy(incoming_change);
         // The length of the serialized payload has to be sample size.
-        original_change->serializedPayload.length = sampleSize;
-        original_change->setFragmentSize(incoming_change->getFragmentSize());
+        original_change->serializedPayload.length = sample_size;
+        original_change->setFragmentSize(incoming_change->getFragmentSize(), true);
 
         // Insert
         original_change_cit = changes_.insert(ChangeInPit(original_change));
     }
 
-    bool was_updated = false;
-    for (uint32_t count = (fragmentStartingNum - 1); count < (fragmentStartingNum - 1) + incoming_change->getFragmentCount(); ++count)
+    original_change_cit->getChange()->received_fragments(fragment_starting_num - 1, fragments_in_submessage);
+
+    size_t original_offset = size_t(fragment_starting_num - 1) * original_change_cit->getChange()->getFragmentSize();
+
+    memcpy(
+        &original_change_cit->getChange()->serializedPayload.data[original_offset],
+        incoming_change->serializedPayload.data,
+        incoming_change->serializedPayload.length);
+
+    if (original_change_cit->getChange()->is_fully_assembled())
     {
-        if(original_change_cit->getChange()->getDataFragments()->at(count) == ChangeFragmentStatus_t::NOT_PRESENT)
-        {
-            size_t original_offset = size_t(count) * original_change_cit->getChange()->getFragmentSize();
-            size_t incoming_offset = size_t(count - (fragmentStartingNum - 1)) * incoming_change->getFragmentSize();
-
-            // All cases minus last fragment.
-            if (count + 1 != original_change_cit->getChange()->getFragmentCount())
-            {
-                memcpy(original_change_cit->getChange()->serializedPayload.data + original_offset,
-                        incoming_change->serializedPayload.data + incoming_offset,
-                        incoming_change->getFragmentSize());
-            }
-            // Last fragment is a special case when copying.
-            else
-            {
-                memcpy(original_change_cit->getChange()->serializedPayload.data + original_offset,
-                        incoming_change->serializedPayload.data + incoming_offset,
-                        original_change_cit->getChange()->serializedPayload.length - original_offset);
-            }
-
-            original_change_cit->getChange()->getDataFragments()->at(count) = ChangeFragmentStatus_t::PRESENT;
-
-            was_updated = true;
-        }
-    }
-
-    // If was updated, check if it is completed.
-    if(was_updated)
-    {
-        auto fit = original_change_cit->getChange()->getDataFragments()->begin();
-        for(; fit != original_change_cit->getChange()->getDataFragments()->end(); ++fit)
-        {
-            if(*fit == ChangeFragmentStatus_t::NOT_PRESENT)
-                break;
-        }
-
-        // If it is completed, return CacheChange_t and remove information.
-        if(fit == original_change_cit->getChange()->getDataFragments()->end())
-        {
-            returnedValue = original_change_cit->getChange();
-            changes_.erase(original_change_cit);
-        }
+        returnedValue = original_change_cit->getChange();
+        changes_.erase(original_change_cit);
     }
 
     return returnedValue;

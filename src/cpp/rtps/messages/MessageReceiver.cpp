@@ -217,13 +217,14 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
 
         valid = true;
         count++;
+        uint32_t next_msg_pos = submessage->pos;
+        next_msg_pos += (submsgh.submessageLength + 3) & ~3;
         switch(submsgh.submessageId)
         {
             case DATA:
                 {
                     if(this->destGuidPrefix != participantGuidPrefix)
                     {
-                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN,IDSTRING"Data Submsg ignored, DST is another RTPSParticipant");
                     }
                     else
@@ -236,7 +237,6 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
             case DATA_FRAG:
                 if (this->destGuidPrefix != participantGuidPrefix)
                 {
-                    submessage->pos += submsgh.submessageLength;
                     logInfo(RTPS_MSG_IN, IDSTRING"DataFrag Submsg ignored, DST is another RTPSParticipant");
                 }
                 else
@@ -249,7 +249,6 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
                 {
                     if(this->destGuidPrefix != participantGuidPrefix)
                     {
-                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN,IDSTRING"Gap Submsg ignored, DST is another RTPSParticipant...");
                     }
                     else
@@ -263,7 +262,6 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
                 {
                     if(this->destGuidPrefix != participantGuidPrefix)
                     {
-                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN,IDSTRING"Acknack Submsg ignored, DST is another RTPSParticipant...");
                     }
                     else
@@ -277,7 +275,6 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
                 {
                     if (this->destGuidPrefix != participantGuidPrefix)
                     {
-                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN, IDSTRING"NackFrag Submsg ignored, DST is another RTPSParticipant...");
                     }
                     else
@@ -291,7 +288,6 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
                 {
                     if(this->destGuidPrefix != participantGuidPrefix)
                     {
-                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN,IDSTRING"HB Submsg ignored, DST is another RTPSParticipant...");
                     }
                     else
@@ -305,7 +301,6 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
                 {
                     if (this->destGuidPrefix != participantGuidPrefix)
                     {
-                        submessage->pos += submsgh.submessageLength;
                         logInfo(RTPS_MSG_IN, IDSTRING"HBFrag Submsg ignored, DST is another RTPSParticipant...");
                     }
                     else
@@ -317,7 +312,6 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
                 }
             case PAD:
                 logWarning(RTPS_MSG_IN,IDSTRING"PAD messages not yet implemented, ignoring");
-                submessage->pos += submsgh.submessageLength; //IGNORE AND CONTINUE
                 break;
             case INFO_DST:
                 logInfo(RTPS_MSG_IN,IDSTRING"InfoDST message received, processing...");
@@ -338,7 +332,6 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
             case INFO_REPLY_IP4:
                 break;
             default:
-                submessage->pos += submsgh.submessageLength; //ID NOT KNOWN. IGNORE AND CONTINUE
                 break;
         }
 
@@ -346,6 +339,8 @@ void MessageReceiver::processCDRMsg(const Locator_t& loc, CDRMessage_t*msg)
         {
             break;
         }
+
+        submessage->pos = next_msg_pos;
     }
 
 
@@ -750,11 +745,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
         {
             ch.serializedPayload.length = payload_size;
 
-            // TODO Mejorar el reubicar el vector de fragmentos.
             ch.setFragmentSize(fragmentSize);
-            ch.getDataFragments()->clear();
-            ch.getDataFragments()->resize(fragmentsInSubmessage, ChangeFragmentStatus_t::PRESENT);
-
             ch.serializedPayload.data = &msg->buffer[msg->pos];
             ch.serializedPayload.length = payload_size;
             msg->pos += payload_size;
@@ -800,9 +791,9 @@ bool MessageReceiver::proc_Submsg_DataFrag(CDRMessage_t* msg, SubmessageHeader_t
         << AssociatedReaders.size());
     //Look for the correct reader to add the change
     findAllReaders(readerID, [
-            &ch, sampleSize, fragmentStartingNum
+            &ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage
         ] (RTPSReader* reader) {
-            reader->processDataFragMsg(&ch, sampleSize, fragmentStartingNum);
+            reader->processDataFragMsg(&ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
         });
 
     ch.serializedPayload.data = nullptr;
