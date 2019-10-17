@@ -300,6 +300,45 @@ bool DomainParticipantFactory::load_XML_profiles_file(
     return true;
 }
 
+ReturnCode_t DomainParticipantFactory::get_qos(
+        DomainParticipantFactoryQos& qos) const
+{
+    qos = factory_qos_;
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipantFactory::set_qos(
+        const DomainParticipantFactoryQos& qos)
+{
+    factory_qos_ = qos;
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipantFactory::get_default_participant_qos(
+        DomainParticipantQos& participant_qos) const
+{
+    participant_qos = default_participant_qos_;
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipantFactory::set_default_participant_qos(
+        const DomainParticipantQos& participant_qos)
+{
+    default_participant_qos_ = participant_qos;
+    return ReturnCode_t::RETCODE_OK;
+}
+
+/* TODO implement
+DomainParticipant* DomainParticipantFactory::create_participant(
+        uint8_t domain_id,
+        const DomainParticipantQos& qos,
+        DomainParticipantListener* listen = nullptr,
+        const StatusMask& mask)
+{
+}
+*/
+
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
