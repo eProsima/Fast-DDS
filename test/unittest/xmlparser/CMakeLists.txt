@@ -61,8 +61,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLParserCommon.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/QosPolicies.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterTypes.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/qos/WriterQos.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/qos/ReaderQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/qos/WriterQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/qos/ReaderQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
@@ -131,8 +131,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLParserCommon.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/QosPolicies.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterTypes.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/qos/WriterQos.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/qos/ReaderQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/qos/WriterQos.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/qos/ReaderQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp

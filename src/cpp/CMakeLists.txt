@@ -150,8 +150,8 @@ set(${PROJECT_NAME}_source_files
     dds/core/policy/ParameterList.cpp
     dds/core/policy/ParameterTypes.cpp
     dds/core/policy/QosPolicies.cpp
-    fastdds/qos/WriterQos.cpp
-    fastdds/qos/ReaderQos.cpp
+    fastdds/topic/qos/WriterQos.cpp
+    fastdds/topic/qos/ReaderQos.cpp
     rtps/builtin/BuiltinProtocols.cpp
     rtps/builtin/discovery/participant/DirectMessageSender.cpp
     rtps/builtin/discovery/participant/PDP.cpp
