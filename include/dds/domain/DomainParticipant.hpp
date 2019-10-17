@@ -56,22 +56,21 @@ class DomainParticipantListener;
  *
  * @see @ref DCPS_Modules_DomainParticipant "Domain Participant"
  */
-template<typename DELEGATE>
-class TDomainParticipant : public ::dds::core::TEntity<DELEGATE>
+class DomainParticipant : public ::dds::core::TEntity<detail::DomainParticipant>
 {
 public:
     /**
      * Local representation of the dds::domain::DomainParticipantListener
      */
-    typedef DomainParticipantListener Listener;
+    using Listener = DomainParticipantListener;
 
 public:
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TDomainParticipant,
+            DomainParticipant,
             dds::core::TEntity,
-            DELEGATE)
+            detail::DomainParticipant)
     OMG_DDS_EXPLICIT_REF_BASE_DECL(
-            TDomainParticipant,
+            DomainParticipant,
             dds::core::Entity)
 
     /**
@@ -92,7 +91,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TDomainParticipant(
+    DomainParticipant(
             uint32_t id);
 
     /**
@@ -114,14 +113,14 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TDomainParticipant(
+    DomainParticipant(
             uint32_t id,
             const dds::domain::qos::DomainParticipantQos& qos,
             dds::domain::DomainParticipantListener* listener = NULL,
             const dds::core::status::StatusMask& event_mask = dds::core::status::StatusMask::none());
 
     /** @cond */
-    virtual ~TDomainParticipant();
+    virtual ~DomainParticipant();
     /** @endcond */
 
     /**
@@ -280,11 +279,11 @@ public:
     dds::core::Time current_time() const;
 
     /** @copydoc dds::domain::DomainParticipant::qos(const dds::domain::qos::DomainParticipantQos& qos) */
-    TDomainParticipant& operator <<(
+    DomainParticipant& operator <<(
             const qos::DomainParticipantQos& qos);
 
     /** @copydoc dds::domain::DomainParticipant::qos() */
-    const TDomainParticipant& operator >>(
+    const DomainParticipant& operator >>(
             qos::DomainParticipantQos& qos) const;
 
     /**
@@ -383,7 +382,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TDomainParticipant& default_publisher_qos(
+    DomainParticipant& default_publisher_qos(
             const ::dds::pub::qos::PublisherQos& qos);
 
     /**
@@ -436,7 +435,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TDomainParticipant& default_subscriber_qos(
+    DomainParticipant& default_subscriber_qos(
             const ::dds::sub::qos::SubscriberQos& qos);
 
     /**
@@ -492,14 +491,11 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TDomainParticipant& default_topic_qos(
+    DomainParticipant& default_topic_qos(
             const dds::topic::qos::TopicQos& qos);
 
     //=============================================================================
 };
-
-
-typedef dds::domain::detail::DomainParticipant DomainParticipant;
 
 } //namespace domain
 } //namespace dds

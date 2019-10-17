@@ -15,25 +15,22 @@
  *
 */
 
-#ifndef EPROSIMA_DDS_DOMAIN_TDOMAINPARTICIPANT_IMPL_HPP_
-#define EPROSIMA_DDS_DOMAIN_TDOMAINPARTICIPANT_IMPL_HPP_
-
 /**
- * @file TDomainParticipantImpl.hpp
+ * @file DomainParticipantImpl.cpp
  */
 
 #include <dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 
 namespace dds {
 namespace domain {
 
-template<typename DELEGATE>
-TDomainParticipant<DELEGATE>::TDomainParticipant(
+DomainParticipant::DomainParticipant(
         uint32_t did)
-    : ::dds::core::Reference<DELEGATE>(
-            new DELEGATE(
+    : ::dds::core::Reference(
+            new detail::DomainParticipant(
                     did,
-                    //org::opensplice::domain::DomainParticipantDelegate::default_participant_qos(),
+                    eprosima::fastdds::dds::PARTICIPANT_DEFAULT_QOS,
                     NULL,
                     dds::core::status::StatusMask::none()))
 {
@@ -42,14 +39,13 @@ TDomainParticipant<DELEGATE>::TDomainParticipant(
 //    this->delegate()->init(this->impl_);
 }
 
-template<typename DELEGATE>
-TDomainParticipant<DELEGATE>::TDomainParticipant(
+DomainParticipant::DomainParticipant(
         uint32_t id,
         const dds::domain::qos::DomainParticipantQos& qos,
         dds::domain::DomainParticipantListener* listener,
         const dds::core::status::StatusMask& mask) :
-    ::dds::core::Reference<DELEGATE>(
-            new DELEGATE(
+    ::dds::core::Reference(
+            new detail::DomainParticipant(
                     id,
                     qos,
                     listener,
@@ -60,171 +56,150 @@ TDomainParticipant<DELEGATE>::TDomainParticipant(
 //    this->delegate()->init(this->impl_);
 }
 
-template<typename DELEGATE>
-TDomainParticipant<DELEGATE>::~TDomainParticipant()
+DomainParticipant::~DomainParticipant()
 {
 }
 
-template<typename DELEGATE>
-void TDomainParticipant<DELEGATE>::listener(
+void DomainParticipant::listener(
         Listener* listener,
         const ::dds::core::status::StatusMask& event_mask)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->listener(listener, event_mask);
+    this->delegate()->listener(listener, event_mask);
 }
 
-template<typename DELEGATE>
-typename TDomainParticipant<DELEGATE>::Listener* TDomainParticipant<DELEGATE>::listener() const
+typename DomainParticipant::Listener* DomainParticipant::listener() const
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->listener();
+    return this->delegate()->listener();
 }
 
-template<typename DELEGATE>
-const dds::domain::qos::DomainParticipantQos& TDomainParticipant<DELEGATE>::qos() const
+const dds::domain::qos::DomainParticipantQos& DomainParticipant::qos() const
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->qos();
+    return this->delegate()->qos();
 }
 
-template<typename DELEGATE>
-void TDomainParticipant<DELEGATE>::qos(
+void DomainParticipant::qos(
         const dds::domain::qos::DomainParticipantQos& qos)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->qos(qos);
+    this->delegate()->qos(qos);
 }
 
-template<typename DELEGATE>
-uint32_t TDomainParticipant<DELEGATE>::domain_id() const
+uint32_t DomainParticipant::domain_id() const
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->domain_id();
+    return this->delegate()->domain_id();
 }
 
-template<typename DELEGATE>
-void TDomainParticipant<DELEGATE>::assert_liveliness()
+void DomainParticipant::assert_liveliness()
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->assert_liveliness();
+    this->delegate()->assert_liveliness();
 }
 
-template<typename DELEGATE>
-bool TDomainParticipant<DELEGATE>::contains_entity(
+bool DomainParticipant::contains_entity(
         const ::dds::core::InstanceHandle& handle)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->contains_entity(handle);
+    return this->delegate()->contains_entity(handle);
 }
 
-template<typename DELEGATE>
-dds::core::Time TDomainParticipant<DELEGATE>::current_time() const
+dds::core::Time DomainParticipant::current_time() const
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->current_time();
+    return this->delegate()->current_time();
 }
 
-template<typename DELEGATE>
-dds::domain::qos::DomainParticipantQos TDomainParticipant<DELEGATE>::default_participant_qos()
+dds::domain::qos::DomainParticipantQos DomainParticipant::default_participant_qos()
 {
     //To implement
 //    ISOCPP_REPORT_STACK_NC_BEGIN();
-//    return DELEGATE::default_participant_qos();
+    return detail::DomainParticipant::default_participant_qos();
 }
 
-template<typename DELEGATE>
-void TDomainParticipant<DELEGATE>::default_participant_qos(
+void DomainParticipant::default_participant_qos(
         const ::dds::domain::qos::DomainParticipantQos& qos)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_NC_BEGIN();
-//    DELEGATE::default_participant_qos(qos);
+    detail::DomainParticipant::default_participant_qos(qos);
 }
 
-template<typename DELEGATE>
-dds::pub::qos::PublisherQos TDomainParticipant<DELEGATE>::default_publisher_qos() const
+dds::pub::qos::PublisherQos DomainParticipant::default_publisher_qos() const
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->default_publisher_qos();
+    return this->delegate()->default_publisher_qos();
 }
 
-template<typename DELEGATE>
-TDomainParticipant<DELEGATE>& TDomainParticipant<DELEGATE>::default_publisher_qos(
+DomainParticipant& DomainParticipant::default_publisher_qos(
         const ::dds::pub::qos::PublisherQos& qos)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    this->delegate()->default_publisher_qos(qos);
-//    return *this;
+    return *this;
 }
 
-template<typename DELEGATE>
-dds::sub::qos::SubscriberQos TDomainParticipant<DELEGATE>::default_subscriber_qos() const
+dds::sub::qos::SubscriberQos DomainParticipant::default_subscriber_qos() const
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->default_subscriber_qos();
+    return this->delegate()->default_subscriber_qos();
 }
 
-template<typename DELEGATE>
-TDomainParticipant<DELEGATE>& TDomainParticipant<DELEGATE>::default_subscriber_qos(
+DomainParticipant& DomainParticipant::default_subscriber_qos(
         const ::dds::sub::qos::SubscriberQos& qos)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->default_subscriber_qos(qos);
-//    return *this;
+    this->delegate()->default_subscriber_qos(qos);
+    return *this;
 }
 
-template<typename DELEGATE>
-dds::topic::qos::TopicQos TDomainParticipant<DELEGATE>::default_topic_qos() const
+dds::topic::qos::TopicQos DomainParticipant::default_topic_qos() const
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->default_topic_qos();
+    return this->delegate()->default_topic_qos();
 }
 
-template<typename DELEGATE>
-TDomainParticipant<DELEGATE>& TDomainParticipant<DELEGATE>::default_topic_qos(
+DomainParticipant& DomainParticipant::default_topic_qos(
         const dds::topic::qos::TopicQos& qos)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->default_topic_qos(qos);
-//    return *this;
+    this->delegate()->default_topic_qos(qos);
+    return *this;
 }
 
-template<typename DELEGATE>
-TDomainParticipant<DELEGATE>& TDomainParticipant<DELEGATE>::operator <<(
+DomainParticipant& DomainParticipant::operator <<(
         const dds::domain::qos::DomainParticipantQos& qos)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->qos(qos);
-//    return *this;
+    this->qos(qos);
+    return *this;
 }
 
-template<typename DELEGATE>
-const TDomainParticipant<DELEGATE>& TDomainParticipant<DELEGATE>::operator >>(
+const DomainParticipant& DomainParticipant::operator >>(
         dds::domain::qos::DomainParticipantQos& qos) const
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    qos = this->qos();
-//    return *this;
+    qos = this->qos();
+    return *this;
 }
 
 } //namespace domain
 } //namespace dds
-
-#endif //EPROSIMA_DDS_DOMAIN_TDOMAINPARTICIPANT_IMPL_HPP_

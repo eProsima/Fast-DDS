@@ -418,11 +418,11 @@ public:
             const std::string& type_name,
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
 
+    virtual ~DomainParticipant();
+
 private:
 
     DomainParticipant();
-
-    virtual ~DomainParticipant();
 
     DomainParticipantImpl* impl_;
 

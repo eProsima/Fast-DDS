@@ -268,7 +268,7 @@ const int32_t MAX_BITMASK_LENGTH = 64;
 const int32_t MAX_ELEMENTS_COUNT = 100;
 const int32_t MAX_STRING_LENGTH = 255;
 
-#define LENGTH_UNLIMITED        0
+//#define LENGTH_UNLIMITED        0
 
 // Long Bound of a collection type
 typedef uint32_t LBound;

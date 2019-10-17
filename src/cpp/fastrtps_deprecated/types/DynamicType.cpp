@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <dds/core/LengthUnlimited.hpp>
+
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
@@ -400,7 +402,7 @@ uint32_t DynamicType::get_bounds(uint32_t index /*= 0*/) const
     {
         return descriptor_->get_bounds(index);
     }
-    return LENGTH_UNLIMITED;
+    return static_cast<uint32_t>(dds::core::LENGTH_UNLIMITED);
 }
 
 uint32_t DynamicType::get_bounds_size() const
@@ -445,7 +447,7 @@ uint32_t DynamicType::get_total_bounds() const
     {
         return descriptor_->get_total_bounds();
     }
-    return LENGTH_UNLIMITED;
+    return static_cast<uint32_t>(dds::core::LENGTH_UNLIMITED);
 }
 
 bool DynamicType::has_children() const
