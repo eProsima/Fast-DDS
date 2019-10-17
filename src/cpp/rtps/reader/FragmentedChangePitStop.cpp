@@ -15,8 +15,10 @@
 #include <rtps/reader/FragmentedChangePitStop.h>
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/dds/log/Log.hpp>
 
 using namespace eprosima::fastrtps::rtps;
+using Log = eprosima::fastdds::dds::Log;
 
 CacheChange_t* FragmentedChangePitStop::process(
         CacheChange_t* incoming_change,
@@ -67,14 +69,41 @@ CacheChange_t* FragmentedChangePitStop::process(
         original_change_cit = changes_.insert(ChangeInPit(original_change));
     }
 
-    original_change_cit->getChange()->received_fragments(fragment_starting_num - 1, fragments_in_submessage);
+    uint32_t fragment_size = original_change_cit->getChange()->getFragmentSize();
+    uint32_t original_offset = (fragment_starting_num - 1) * fragment_size;
+    uint32_t total_length = original_change_cit->getChange()->serializedPayload.length;
+    uint32_t incoming_length = incoming_change->serializedPayload.length;
+    uint32_t total_fragments = original_change_cit->getChange()->getFragmentCount();
+    uint32_t last_fragment_index = fragment_starting_num + fragments_in_submessage - 1;
 
-    size_t original_offset = size_t(fragment_starting_num - 1) * original_change_cit->getChange()->getFragmentSize();
+    // Validate fragment indexes
+    if (last_fragment_index > total_fragments)
+    {
+        logWarning(RTPS_MSG_IN, "Inconsistent fragment numbers " << last_fragment_index << " > " << total_fragments);
+        return nullptr;
+    }
+
+    // validate lengths
+    if (original_offset + incoming_length > total_length)
+    {
+        logWarning(RTPS_MSG_IN, "Incoming fragment length would exceed sample length");
+        return nullptr;
+    }
+
+    if (last_fragment_index < total_fragments)
+    {
+        if (incoming_length % fragment_size != 0)
+        {
+            logWarning(RTPS_MSG_IN, "Incoming payload length not multiple of fragment size");
+            return nullptr;
+        }
+    }
+
+    original_change_cit->getChange()->received_fragments(fragment_starting_num - 1, fragments_in_submessage);
 
     memcpy(
         &original_change_cit->getChange()->serializedPayload.data[original_offset],
-        incoming_change->serializedPayload.data,
-        incoming_change->serializedPayload.length);
+        incoming_change->serializedPayload.data, incoming_length);
 
     if (original_change_cit->getChange()->is_fully_assembled())
     {
