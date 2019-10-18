@@ -24,10 +24,12 @@
 // TODO Remove when PSM DDS Listeners are ready to be used.
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 
+// TODO uncomment when PSM DDS Listeners are ready to be used.
+/*
 #include <dds/pub/PublisherListener.hpp>
 #include <dds/sub/SubscriberListener.hpp>
 #include <dds/topic/AnyTopicListener.hpp>
-
+*/
 
 namespace dds {
 namespace domain {

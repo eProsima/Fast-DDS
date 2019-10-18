@@ -30,13 +30,12 @@ namespace domain {
 
 DomainParticipant::DomainParticipant(
         uint32_t did)
-    : dds::core::TEntity<detail::DomainParticipant>(
+    : dds::core::Reference<detail::DomainParticipant>(
             new detail::DomainParticipant(
                     static_cast<uint8_t>(did),
                     eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT,
                     nullptr,
                     dds::core::status::StatusMask::none()))
-
 {
 }
 
@@ -45,7 +44,7 @@ DomainParticipant::DomainParticipant(
         const dds::domain::qos::DomainParticipantQos& qos,
         dds::domain::DomainParticipantListener* listener,
         const dds::core::status::StatusMask& mask)
-    : dds::core::TEntity<detail::DomainParticipant>(
+    : dds::core::Reference<detail::DomainParticipant>(
             new detail::DomainParticipant(
                     static_cast<uint8_t>(id),
                     qos,
