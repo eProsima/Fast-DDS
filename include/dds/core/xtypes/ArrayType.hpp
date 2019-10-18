@@ -141,22 +141,27 @@ public:
         }
     }
 
-    virtual bool is_subset_of(
-            const DynamicType& other,
-            TypeConsistency consistency = TypeConsistency::NONE) const override
+    virtual TypeConsistency is_subset_of(
+            const DynamicType& other) const override
     {
         if(other.kind() != TypeKind::ARRAY_TYPE)
         {
-            return false;
+            return TypeConsistency::NONE;
         }
 
         const ArrayType& other_array = static_cast<const ArrayType&>(other);
 
-        bool match_bounds = (int(consistency) & int(TypeConsistency::IGNORE_ARRAY_BOUNDS))
-            ? dimension() <= other_array.dimension()
-            : dimension() == other_array.dimension();
-
-        return match_bounds && content_type().is_subset_of(other_array.content_type(), consistency);
+        if(dimension() == other_array.dimension())
+        {
+            return TypeConsistency::EQUALS
+                | content_type().is_subset_of(other_array.content_type());
+        }
+        else if(dimension() <= other_array.dimension())
+        {
+            return TypeConsistency::IGNORE_ARRAY_BOUNDS
+                | content_type().is_subset_of(other_array.content_type());
+        }
+        return TypeConsistency::NONE;
     }
 
     virtual void for_each_instance(

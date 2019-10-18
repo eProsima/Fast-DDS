@@ -243,6 +243,11 @@ public:
         return *this;
     }
 
+    void for_each(std::function<void(const ReadableNode& node)> visitor) const
+    {
+        ReadableDynamicDataRef::for_each(visitor);
+    }
+
     class WritableNode : public ReadableNode
     {
     public:
@@ -283,6 +288,16 @@ public:
         type_.construct_instance(instance_);
     }
 
+    /*
+    DynamicData(
+            const DynamicType& type, const DynamicData& other)
+        : WritableDynamicDataRef(type, new uint8_t[type.memory_size()])
+    {
+        type.copy_instance_from_type();
+    }
+    */
+
+    //TODO: check this usage
     DynamicData(
             const DynamicType::Ptr& type)
         : DynamicData(*type)

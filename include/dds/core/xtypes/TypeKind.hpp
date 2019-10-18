@@ -18,6 +18,8 @@
 #ifndef OMG_DDS_XTYPES_TYPE_KIND_HPP_
 #define OMG_DDS_XTYPES_TYPE_KIND_HPP_
 
+#include <type_traits>
+
 namespace dds {
 namespace core {
 namespace xtypes {
@@ -59,6 +61,32 @@ enum class TypeKind
     UNION_FWD_DECL_TYPE       = CONSTRUCTED_TYPE | AGGREGATION_TYPE | 0x000A,
     STRUCTURE_FWD_DECL_TYPE   = CONSTRUCTED_TYPE | AGGREGATION_TYPE | 0x000B
 };
+
+
+inline TypeKind operator | (TypeKind lhs, TypeKind rhs)
+{
+    using T = std::underlying_type<TypeKind>::type;
+    return static_cast<TypeKind>(static_cast<T>(lhs) | static_cast<T>(rhs));
+}
+
+inline TypeKind& operator |= (TypeKind& lhs, TypeKind rhs)
+{
+    lhs = lhs | rhs;
+    return lhs;
+}
+
+inline TypeKind operator & (TypeKind lhs, TypeKind rhs)
+{
+    using T = std::underlying_type<TypeKind>::type;
+    return static_cast<TypeKind>(static_cast<T>(lhs) & static_cast<T>(rhs));
+}
+
+inline TypeKind& operator &= (TypeKind& lhs, TypeKind rhs)
+{
+    lhs = lhs & rhs;
+    return lhs;
+}
+
 
 } //namespace xtypes
 } //namespace core

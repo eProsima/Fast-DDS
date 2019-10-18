@@ -129,84 +129,46 @@ public:
         return true;
     }
 
-    virtual bool is_subset_of(
-            const DynamicType& other,
-            TypeConsistency consistency = TypeConsistency::NONE) const override
+    virtual TypeConsistency is_subset_of(
+            const DynamicType& other) const override
     {
         if(other.kind() != TypeKind::STRUCTURE_TYPE)
         {
-            return false;
+            return TypeConsistency::NONE;
         }
 
         const StructType& other_struct = static_cast<const StructType&>(other);
 
-        if(int(consistency) & int(TypeConsistency::IGNORE_MEMBERS))
+        TypeConsistency consistency = TypeConsistency::EQUALS;
+        auto other_it = other_struct.member_map().begin();
+        for(auto&& it: member_map())
         {
-            if(int(consistency) & int(TypeConsistency::IGNORE_MEMBER_NAMES))
+            if(other_it != other_struct.member_map().end())
             {
-                auto other_it = other_struct.member_map().begin();
-                for(auto&& it: member_map())
+                TypeConsistency internal_consistency = it.second.type().is_subset_of(other_it->second.type());
+                if(internal_consistency == TypeConsistency::NONE)
                 {
-                    while(other_it != other_struct.member_map().end())
-                    {
-                        if(it.second.type().is_subset_of(other_it->second.type(), consistency))
-                        {
-                            continue;
-                        }
-                        ++other_it;
-                    }
-                    return false;
+                    return TypeConsistency::NONE;
                 }
-                return true;
+
+                if(it.second.name() != other_it->second.name())
+                {
+                    consistency |= TypeConsistency::IGNORE_MEMBER_NAMES;
+                }
+                consistency |= internal_consistency;
             }
-            else //NO IGNORE_MEMBER_NAMES
+            else
             {
-                for(auto&& it: member_map())
-                {
-                    auto other_it = other_struct.member_map().find(it.first);
-                    if(other_it == other_struct.member_map().end()
-                        || it.second.name() != other_it->second.name()
-                        || !it.second.type().is_subset_of(other_it->second.type(), consistency))
-                    {
-                        return false;
-                    }
-                }
-                return true;
+                return TypeConsistency::NONE;
             }
+            other_it++;
         }
-        else if(member_count() == other_struct.member_count()) //NO IGNORE_MEMBERS
+        if(other_it != other_struct.member_map().end())
         {
-            if(int(consistency) & int(TypeConsistency::IGNORE_MEMBER_NAMES))
-            {
-                auto other_it = other_struct.member_map().begin();
-                for(auto&& it: member_map())
-                {
-                    if(other_it == other_struct.member_map().end()
-                        || !it.second.type().is_subset_of(other_it->second.type(), consistency))
-                    {
-                        return false;
-                    }
-                    ++other_it;
-                }
-                return true;
-            }
-            else //NO IGNORE_MEMBERS_NAMES
-            {
-                auto other_it = other_struct.member_map().begin();
-                for(auto&& it: member_map())
-                {
-                    if(other_it == other_struct.member_map().end()
-                        || it.second.name() != other_it->second.name()
-                        || !it.second.type().is_subset_of(other_it->second.type(), consistency))
-                    {
-                        return false;
-                    }
-                    ++other_it;
-                }
-                return true;
-            }
+            consistency |= TypeConsistency::IGNORE_OTHER_MEMBERS;
         }
-        return false;
+
+        return consistency;
     }
 
     virtual void for_each_instance(

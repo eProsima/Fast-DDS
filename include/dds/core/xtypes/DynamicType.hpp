@@ -20,23 +20,13 @@
 
 #include <dds/core/xtypes/Instanceable.hpp>
 #include <dds/core/xtypes/TypeKind.hpp>
+#include <dds/core/xtypes/TypeConsistency.hpp>
 
 #include <string>
 
 namespace dds {
 namespace core {
 namespace xtypes {
-
-enum class TypeConsistency
-{
-    NONE = 0,
-    IGNORE_TYPE_WIDTH = 1,
-    IGNORE_SEQUENCE_BOUNDS = 2,
-    IGNORE_ARRAY_BOUNDS = 4,
-    IGNORE_STRING_BOUNDS = 8,
-    IGNORE_MEMBER_NAMES = 16,
-    IGNORE_MEMBERS = 32,
-};
 
 class DynamicType : public Instanceable
 {
@@ -66,7 +56,7 @@ public:
         return (int(kind_) & int(TypeKind::CONSTRUCTED_TYPE)) != 0;
     }
 
-    virtual bool is_subset_of(const DynamicType& other, TypeConsistency consistency = TypeConsistency::NONE) const = 0;
+    virtual TypeConsistency is_subset_of(const DynamicType& other) const = 0;
 
 protected:
     DynamicType(

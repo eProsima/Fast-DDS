@@ -95,15 +95,22 @@ class PrimitiveType : public DynamicType
         return *reinterpret_cast<const T*>(instance) == *reinterpret_cast<const T*>(other_instance);
     }
 
-    virtual bool is_subset_of(
-            const DynamicType& other,
-            TypeConsistency consistency = TypeConsistency::NONE) const override
+    virtual TypeConsistency is_subset_of(
+            const DynamicType& other) const override
     {
-        if(int(consistency) & int(TypeConsistency::IGNORE_TYPE_WIDTH))
+        if(kind() == other.kind())
         {
-            return other.memory_size() <= other.memory_size();
+            return TypeConsistency::EQUALS;
         }
-        return other.kind() == kind();
+        else if(memory_size() == other.memory_size())
+        {
+            return TypeConsistency::IGNORE_TYPE_SIGN;
+        }
+        else if(memory_size() <= other.memory_size())
+        {
+            return TypeConsistency::IGNORE_TYPE_WIDTH;
+        }
+        return TypeConsistency::NONE;
     }
 
     virtual void for_each_instance(

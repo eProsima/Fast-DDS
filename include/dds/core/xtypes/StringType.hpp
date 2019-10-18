@@ -79,20 +79,25 @@ public:
         return *reinterpret_cast<const std::string*>(instance) == *reinterpret_cast<const std::string*>(other_instance);
     }
 
-    virtual bool is_subset_of(
-            const DynamicType& other,
-            TypeConsistency consistency = TypeConsistency::NONE) const override
+    virtual TypeConsistency is_subset_of(
+            const DynamicType& other) const override
     {
         if(other.kind() != TypeKind::STRING_TYPE)
         {
-            return false;
+            return TypeConsistency::NONE;
         }
 
         const StringType& other_string = static_cast<const StringType&>(other);
 
-        return (int(consistency) & int(TypeConsistency::IGNORE_STRING_BOUNDS))
-            ? bounds() <= other_string.bounds()
-            : bounds() == other_string.bounds();
+        if(bounds() == other_string.bounds())
+        {
+            return TypeConsistency::EQUALS;
+        }
+        else if(bounds() <= other_string.bounds())
+        {
+            return TypeConsistency::IGNORE_STRING_BOUNDS;
+        }
+        return TypeConsistency::NONE;
     }
 
     virtual void for_each_instance(

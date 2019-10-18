@@ -100,33 +100,35 @@ This allow to modify the `DynamicType`s without side effects, and facilitate the
 #### `is_subset_of` function of `DynamicType`
 Any `DynamicType` can be tested with another `DynamicType` in a *subset* evaluation.
 ```c++
-tested_type.is_subset_of(other_type, type_consistency);
+TypeConsistency consistency = tested_type.is_subset_of(other_type);
+if(consisency & TypeConsistency::IGNORE_TYPE_WIDTH)
+//...
+if(consisency & TypeConsistency::IGNORE_TYPE_WIDTH)
+//...
 ```
-The previous sentence will be evaluate `true` if it is possible to get an instance of `tested_type`
-that could be compatible with an instance of `other_type`.
-This evaluation can be parametrized enabling any set of the following type consistency QoS Policies,
-(that will be applied for the entire nested tree of `DynamicType`s):
+The previous sentence will be evaluate what level of consistency must `tested_type` has in order to be a subset of `other_type`.
+The type consistency, could be a set of the following:
 
-- `NONE`: by default. The subset evaluation is analogous as an equal evaluation.
-- `IGNORE_TYPE_WIDTH`: the subset evaluation will be true if the width of the primitive type is less or equals than the other type.
-  Otherwise, only the equailty is take into account.
-- `IGNORE_SEQUENCE_BOUNDS`: the subset evaluation will be true if the bounds of the `SequenceType` is less or equals than the other type.
-  Otherwise, only `SequeceType`s with the same bounds can be matched.
-- `IGNORE_ARRAY_BOUNDS`: same as `IGNORE_SEQUENCE_BOUNDS` but for the case of `ArrayType`.
-- `IGNORE_STRING_BOUNDS`: same as `IGNORE_SEQUENCE_BOUNDS` but for the case of `StringType`.
-- `IGNORE_MEMBER_NAMES`: if enabled, the matching between aggregated types will be by type instead of beeing by type and name.
-- `IGNORE_MEMBERS`: if enabled, only members of the tested type will be checked to match with the next type.
+- `NONE`: Unknown way to interpret `tested_type` as a subset of `other_type`.
+- `EQUALS`: The subset evaluation is analogous to an equal evaluation.
+- `IGNORE_TYPE_WIDTH`: the subset evaluation will be true if the width of the some primitive types are less or equals than the other type.
+- `IGNORE_SEQUENCE_BOUNDS`: the subset evaluation will be true if the bounds of the some sequences are less or equals than the other type.
+- `IGNORE_ARRAY_BOUNDS`: same as `IGNORE_SEQUENCE_BOUNDS` but for the case of arrays.
+- `IGNORE_STRING_BOUNDS`: same as `IGNORE_SEQUENCE_BOUNDS` but for the case of string.
+- `IGNORE_MEMBER_NAMES`: the subset evaluation will be true if the names of some members differs.
+- `IGNORE_OTHER_MEMBERS`: the subset evaluation will be true if some members of `other_type` are ignored.
 
 ### Data instantation
 In order to instantiate a data from a DynamicType is only necessary to call the DynamicData constructor:
 ```c++
 DynamicData data(my_defined_type);
 ```
-This line allocates all the memory necesary to hold the data of `my_defined_type`.
+This line allocates all the memory necesary to hold the data of `my_defined_type`
+and initialize their content to 0 or to the corresponted default values.
 It is important to know that the type must have a higher lifetime than the DynamicData,
 because the DynamicData only save a references to it.
 
-Depends of the type, the data will be behave in different ways.
+Depending of the type, the data will be behave in different ways.
 The following methods are available to use when:
 1. `DynamicData` represents a PrimitiveType (of `int` as example):
   ```c++
