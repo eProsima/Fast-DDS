@@ -23,6 +23,7 @@
 
 #include <vector>
 #include <cstring>
+#include <cassert>
 
 namespace dds {
 namespace core {
@@ -90,6 +91,33 @@ public:
         }
     }
 
+    virtual void copy_instance_from_type(
+            uint8_t* target,
+            const uint8_t* source,
+            const DynamicType& other) const override
+    {
+        assert(other.kind() == TypeKind::ARRAY_TYPE);
+        const ArrayType& other_array = static_cast<const ArrayType&>(other);
+        size_t block_size = content_type().memory_size();
+        size_t other_block_size = other_array.content_type().memory_size();
+        size_t min_dimension = std::min(dimension_, other_array.dimension_);
+
+        if(content_type().is_constructed_type() || block_size != other_block_size)
+        {
+            for(uint32_t i = 0; i < min_dimension; i++)
+            {
+                content_type().copy_instance_from_type(
+                        target + i * block_size,
+                        source + i * other_block_size,
+                        other_array.content_type());
+            }
+        }
+        else //optimization when the type is primitive with same block_size
+        {
+            std::memcpy(target, source, min_dimension * block_size);
+        }
+    }
+
     virtual void move_instance(
             uint8_t* target,
             uint8_t* source) const override
@@ -141,7 +169,7 @@ public:
         }
     }
 
-    virtual TypeConsistency is_subset_of(
+    virtual TypeConsistency is_compatible(
             const DynamicType& other) const override
     {
         if(other.kind() != TypeKind::ARRAY_TYPE)
@@ -154,14 +182,11 @@ public:
         if(dimension() == other_array.dimension())
         {
             return TypeConsistency::EQUALS
-                | content_type().is_subset_of(other_array.content_type());
+                | content_type().is_compatible(other_array.content_type());
         }
-        else if(dimension() <= other_array.dimension())
-        {
-            return TypeConsistency::IGNORE_ARRAY_BOUNDS
-                | content_type().is_subset_of(other_array.content_type());
-        }
-        return TypeConsistency::NONE;
+
+        return TypeConsistency::IGNORE_ARRAY_BOUNDS
+            | content_type().is_compatible(other_array.content_type());
     }
 
     virtual void for_each_instance(

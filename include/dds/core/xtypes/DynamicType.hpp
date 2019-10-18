@@ -23,6 +23,7 @@
 #include <dds/core/xtypes/TypeConsistency.hpp>
 
 #include <string>
+#include <cassert>
 
 namespace dds {
 namespace core {
@@ -56,7 +57,7 @@ public:
         return (int(kind_) & int(TypeKind::CONSTRUCTED_TYPE)) != 0;
     }
 
-    virtual TypeConsistency is_subset_of(const DynamicType& other) const = 0;
+    virtual TypeConsistency is_compatible(const DynamicType& other) const = 0;
 
 protected:
     DynamicType(

@@ -23,6 +23,7 @@
 #include <dds/core/xtypes/SequenceInstance.hpp>
 
 #include <vector>
+#include <cassert>
 
 namespace dds {
 namespace core {
@@ -73,6 +74,15 @@ public:
         new (target) SequenceInstance(*reinterpret_cast<const SequenceInstance*>(source));
     }
 
+    virtual void copy_instance_from_type(
+            uint8_t* target,
+            const uint8_t* source,
+            const DynamicType& other) const override
+    {
+        assert(other.kind() == TypeKind::SEQUENCE_TYPE);
+        new (target) SequenceInstance(*reinterpret_cast<const SequenceInstance*>(source), content_type(), bounds());
+    }
+
     virtual void move_instance(
             uint8_t* target,
             uint8_t* source) const override
@@ -107,7 +117,7 @@ public:
             == *reinterpret_cast<const SequenceInstance*>(other_instance);
     }
 
-    virtual TypeConsistency is_subset_of(
+    virtual TypeConsistency is_compatible(
             const DynamicType& other) const override
     {
         if(other.kind() != TypeKind::SEQUENCE_TYPE)
@@ -120,14 +130,11 @@ public:
         if(bounds() == other_sequence.bounds())
         {
             return TypeConsistency::EQUALS
-                | content_type().is_subset_of(other_sequence.content_type());
+                | content_type().is_compatible(other_sequence.content_type());
         }
-        else if(bounds() <= other_sequence.bounds())
-        {
-            return TypeConsistency::IGNORE_SEQUENCE_BOUNDS
-                | content_type().is_subset_of(other_sequence.content_type());
-        }
-        return TypeConsistency::NONE;
+
+        return TypeConsistency::IGNORE_SEQUENCE_BOUNDS
+            | content_type().is_compatible(other_sequence.content_type());
     }
 
     virtual void for_each_instance(

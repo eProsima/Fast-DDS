@@ -151,8 +151,8 @@ protected:
     const DynamicType& type_;
     uint8_t* instance_;
 
-    const DynamicType& type(const ReadableDynamicDataRef& other) const { return other.type_; }
-    uint8_t* instance(const ReadableDynamicDataRef& other) const { return other.instance_; }
+    const DynamicType& p_type(const ReadableDynamicDataRef& other) const { return other.type_; }
+    uint8_t* p_instance(const ReadableDynamicDataRef& other) const { return other.instance_; }
 };
 
 
@@ -163,7 +163,7 @@ public:
             const WritableDynamicDataRef& other)
     {
         type_.destroy_instance(instance_);
-        type_.copy_instance(instance_, instance(other));
+        type_.copy_instance(instance_, p_instance(other));
         return *this;
     }
 
@@ -238,7 +238,7 @@ public:
         assert(type_.kind() == TypeKind::SEQUENCE_TYPE);
         const SequenceType& sequence = static_cast<const SequenceType&>(type_);
 
-        uint8_t* element = sequence.push_instance(instance_, instance(data));
+        uint8_t* element = sequence.push_instance(instance_, p_instance(data));
         assert(element != nullptr);
         return *this;
     }
@@ -288,38 +288,35 @@ public:
         type_.construct_instance(instance_);
     }
 
-    /*
     DynamicData(
-            const DynamicType& type, const DynamicData& other)
+            const DynamicData& other,
+            const DynamicType& type)
         : WritableDynamicDataRef(type, new uint8_t[type.memory_size()])
     {
-        type.copy_instance_from_type();
+        assert(type_.is_compatible(other.type()) != TypeConsistency::NONE);
+        type_.copy_instance_from_type(instance_, p_instance(other), p_type(other));
     }
-    */
-
-    //TODO: check this usage
-    DynamicData(
-            const DynamicType::Ptr& type)
-        : DynamicData(*type)
-    {}
 
     DynamicData(const DynamicData& other)
         : WritableDynamicDataRef(other.type_, new uint8_t[other.type_.memory_size()])
     {
-        type_.copy_instance(instance_, instance(other));
+        assert(type_.is_compatible(other.type()) == TypeConsistency::EQUALS);
+        type_.copy_instance(instance_, p_instance(other));
     }
 
     DynamicData(DynamicData&& other)
         : WritableDynamicDataRef(other.type_, new uint8_t[other.type_.memory_size()])
     {
-        type_.move_instance(instance_, instance(other));
+        assert(type_.is_compatible(other.type()) == TypeConsistency::EQUALS);
+        type_.move_instance(instance_, p_instance(other));
     }
 
     DynamicData& operator = (
             const DynamicData& other)
     {
+        assert(type_.is_compatible(other.type()) == TypeConsistency::EQUALS);
         type_.destroy_instance(instance_);
-        type_.copy_instance(instance_, instance(other));
+        type_.copy_instance(instance_, p_instance(other));
         return *this;
     }
 

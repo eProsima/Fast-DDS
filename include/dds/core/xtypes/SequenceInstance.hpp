@@ -22,6 +22,7 @@
 
 #include <cstdint>
 #include <cstring>
+#include <cassert>
 
 namespace dds {
 namespace core {
@@ -35,8 +36,8 @@ public:
             uint32_t capacity = 0)
         : content_(content)
         , block_size_(content.memory_size())
-        , memory_(capacity > 0 ? new uint8_t[capacity * block_size_] : nullptr)
         , capacity_(capacity)
+        , memory_(capacity > 0 ? new uint8_t[capacity * block_size_] : nullptr)
         , size_(0)
     {}
 
@@ -44,8 +45,8 @@ public:
             const SequenceInstance& other)
         : content_(other.content_)
         , block_size_(other.block_size_)
-        , memory_(other.capacity_ > 0 ? new uint8_t[other.capacity_ * other.block_size_] : nullptr)
         , capacity_(other.capacity_)
+        , memory_(other.capacity_ > 0 ? new uint8_t[other.capacity_ * other.block_size_] : nullptr)
         , size_(other.size_)
     {
         if(memory_ != nullptr)
@@ -55,11 +56,27 @@ public:
     }
 
     SequenceInstance(
+            const SequenceInstance& other,
+            const DynamicType& content,
+            uint32_t bounds)
+        : content_(content)
+        , block_size_(content.memory_size())
+        , capacity_(std::min(other.capacity_, bounds))
+        , memory_(capacity_ > 0 ? new uint8_t[capacity_ * block_size_] : nullptr)
+        , size_(std::min(other.size_, bounds))
+    {
+        if(memory_ != nullptr)
+        {
+            copy_content_from_type(memory_, other.memory_, other.content_);
+        }
+    }
+
+    SequenceInstance(
             SequenceInstance&& other)
         : content_(std::move(other.content_))
         , block_size_(std::move(other.block_size_))
-        , memory_(std::move(other.memory_))
         , capacity_(std::move(other.capacity_))
+        , memory_(std::move(other.memory_))
         , size_(std::move(other.size_))
     {
         other.memory_ = nullptr;
@@ -125,7 +142,7 @@ public:
     uint8_t* operator [] (
             uint32_t index) const
     {
-        //TODO: debug exception
+        assert(index < size_);
         return memory_ + index * block_size_;
     }
 
@@ -134,8 +151,8 @@ public:
 private:
     const DynamicType& content_;
     uint32_t block_size_;
-    uint8_t* memory_;
     uint32_t capacity_;
+    uint8_t* memory_;
     uint32_t size_;
 
     void realloc()
@@ -152,7 +169,7 @@ private:
 
     void copy_content(
             uint8_t* target,
-            const uint8_t* source)
+            const uint8_t* source) const
     {
         if(content_.is_constructed_type())
         {
@@ -162,6 +179,28 @@ private:
             }
         }
         else //optimization when the type is primitive
+        {
+            std::memcpy(target, source, size_ * block_size_);
+        }
+    }
+
+    void copy_content_from_type(
+            uint8_t* target,
+            const uint8_t* source,
+            const DynamicType& other_content) const
+    {
+        size_t other_block_size = other_content.memory_size();
+        if(content_.is_constructed_type() || block_size_ != other_block_size)
+        {
+            for(uint32_t i = 0; i < size_; i++)
+            {
+                content_.copy_instance_from_type(
+                        target + i * block_size_,
+                        source + i * other_block_size,
+                        other_content);
+            }
+        }
+        else //optimization when the type is primitive with same block_size
         {
             std::memcpy(target, source, size_ * block_size_);
         }

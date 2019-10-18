@@ -15,7 +15,7 @@ struct Outter {
 };
 ```
 
-You can create the representative code that define these IDL types using xtypes:
+You can create the representative C++ code that define these IDL types using xtypes:
 
 ```c++
 StructType inner("Inner");
@@ -97,17 +97,13 @@ my_struct.add_member("m_f", SequenceType(other_struct))); //member of sequence o
 Note: once a `DynamicType` is added to an struct, a copy is performed (excepts for `PrimitiveType`).
 This allow to modify the `DynamicType`s without side effects, and facilitate the memory management by the user.
 
-#### `is_subset_of` function of `DynamicType`
-Any `DynamicType` can be tested with another `DynamicType` in a *subset* evaluation.
+#### `is_compatible` function of `DynamicType`
+Any `DynamicType` can be tested with another `DynamicType` to check its compatibility.
 ```c++
-TypeConsistency consistency = tested_type.is_subset_of(other_type);
-if(consisency & TypeConsistency::IGNORE_TYPE_WIDTH)
-//...
-if(consisency & TypeConsistency::IGNORE_TYPE_WIDTH)
-//...
+TypeConsistency consistency = tested_type.is_compatible(other_type);
 ```
-The previous sentence will be evaluate what level of consistency must `tested_type` has in order to be a subset of `other_type`.
-The type consistency, could be a set of the following:
+The previous sentence will evaluate what level of consistency there are between the types.
+The type consistency, could be a set of the following QoS polities:
 
 - `NONE`: Unknown way to interpret `tested_type` as a subset of `other_type`.
 - `EQUALS`: The subset evaluation is analogous to an equal evaluation.
@@ -115,10 +111,13 @@ The type consistency, could be a set of the following:
 - `IGNORE_SEQUENCE_BOUNDS`: the subset evaluation will be true if the bounds of the some sequences are less or equals than the other type.
 - `IGNORE_ARRAY_BOUNDS`: same as `IGNORE_SEQUENCE_BOUNDS` but for the case of arrays.
 - `IGNORE_STRING_BOUNDS`: same as `IGNORE_SEQUENCE_BOUNDS` but for the case of string.
-- `IGNORE_MEMBER_NAMES`: the subset evaluation will be true if the names of some members differs.
+- `IGNORE_MEMBER_NAMES`: the subset evaluation will be true if the names of some members differs (but no the position).
 - `IGNORE_OTHER_MEMBERS`: the subset evaluation will be true if some members of `other_type` are ignored.
 
+Note: the `TypeConsistency` is an enum with `|` and `&` operator override to manage it as a set of QoS polities.
+
 ### Data instantation
+#### Initialization
 In order to instantiate a data from a DynamicType is only necessary to call the DynamicData constructor:
 ```c++
 DynamicData data(my_defined_type);
@@ -128,7 +127,19 @@ and initialize their content to 0 or to the corresponted default values.
 It is important to know that the type must have a higher lifetime than the DynamicData,
 because the DynamicData only save a references to it.
 
-Depending of the type, the data will be behave in different ways.
+Other ways to initalizate a `DynamicData` is by *copy*, and by *compatible copy*.
+```c++
+DynamicData data1(type1); //default initalization
+DynamicData data2(data1); //Copy constructor
+
+//Create a compatible DynamicData with the values of data1 that can be accessed as type2.
+//To archieve this, type2 must be compatible with type1.
+//This can be checked with is_compatible function.
+DynamicData data3(data1, type2);
+```
+
+#### Internal data access
+Depending of the type, the data will behave in different ways.
 The following methods are available to use when:
 1. `DynamicData` represents a PrimitiveType (of `int` as example):
   ```c++
@@ -173,15 +184,9 @@ You can get a reference when access with the `[]` operator or calling the `ref()
 You will obtain a `ReadableDynamicDataRef` or a `WritableDynamicDataRef` depending if theses methods are
 calling from a `const DynamicData` or from a `DynamicData` itself.
 
-#### `is_less_equals_than` function of `DynamicData`
-Analogous to type matching, but over the values of `DynamicData`.
-```c++
-tested_data.is_less_equals_of(other_data, type_consistency);
-```
-It checks that the tested data will be less or equals than the compared data.
-As `is_subset_of`, this function also accepts type consistency QoS policies.
-(See the `is_subset_of` section).
-//TODO
+#### `==` function of `DynamicData`
+A DynamicData can be test with another one.
+The type should be the same.
 
 #### `for_each` function of `DynamicData`
 This function offers an easy way to iterate the `DynamicData` tree.
@@ -243,4 +248,10 @@ DynamicData data(outter);
 ```
 Needs two more allocations, one for the secuence, and another one for the string:
 ![](outter-memory.png)
+
+## Debugging DynamicData
+As the `DynamicData` is totally built in runtime, no static checks can be done to ensure the correct behaviour.
+As an attempt to solve this, many methods are checked with `asserts`, to avoid the overload of checks in *release mode*.
+We strongly recommend to compile in *debug mode* during developing phase to allow `xtypes` library to perform all possible checks.
+In the same way, to improve the performance avoiding all the cost of the checks, compile in *release mode* for production.
 

@@ -96,6 +96,29 @@ public:
         }
     }
 
+    virtual void copy_instance_from_type(
+            uint8_t* target,
+            const uint8_t* source,
+            const DynamicType& other) const override
+    {
+        assert(other.kind() == TypeKind::STRUCTURE_TYPE);
+        const StructType& other_struct = static_cast<const StructType&>(other);
+
+        auto other_it = other_struct.member_map().begin();
+        for(auto&& it: member_map())
+        {
+            if(other_it != other_struct.member_map().end())
+            {
+                it.second.type().copy_instance_from_type(target + it.second.offset(), source + it.second.offset(), other);
+            }
+            else
+            {
+                it.second.type().construct_instance(target + it.second.offset());
+            }
+            other_it++;
+        }
+    }
+
     virtual void move_instance(
             uint8_t* target,
             uint8_t* source) const override
@@ -129,7 +152,7 @@ public:
         return true;
     }
 
-    virtual TypeConsistency is_subset_of(
+    virtual TypeConsistency is_compatible(
             const DynamicType& other) const override
     {
         if(other.kind() != TypeKind::STRUCTURE_TYPE)
@@ -145,7 +168,7 @@ public:
         {
             if(other_it != other_struct.member_map().end())
             {
-                TypeConsistency internal_consistency = it.second.type().is_subset_of(other_it->second.type());
+                TypeConsistency internal_consistency = it.second.type().is_compatible(other_it->second.type());
                 if(internal_consistency == TypeConsistency::NONE)
                 {
                     return TypeConsistency::NONE;
@@ -159,13 +182,13 @@ public:
             }
             else
             {
-                return TypeConsistency::NONE;
+                return TypeConsistency::IGNORE_MEMBERS;
             }
             other_it++;
         }
         if(other_it != other_struct.member_map().end())
         {
-            consistency |= TypeConsistency::IGNORE_OTHER_MEMBERS;
+            consistency |= TypeConsistency::IGNORE_MEMBERS;
         }
 
         return consistency;

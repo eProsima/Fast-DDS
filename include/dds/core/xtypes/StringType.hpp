@@ -58,6 +58,15 @@ public:
         new (target) std::string(*reinterpret_cast<const std::string*>(source));
     }
 
+    virtual void copy_instance_from_type(
+            uint8_t* target,
+            const uint8_t* source,
+            const DynamicType& other) const override
+    {
+        assert(other.kind() == TypeKind::STRING_TYPE);
+        new (target) std::string(*reinterpret_cast<const std::string*>(source));
+    }
+
     virtual void move_instance(
             uint8_t* target,
             uint8_t* source) const override
@@ -79,7 +88,7 @@ public:
         return *reinterpret_cast<const std::string*>(instance) == *reinterpret_cast<const std::string*>(other_instance);
     }
 
-    virtual TypeConsistency is_subset_of(
+    virtual TypeConsistency is_compatible(
             const DynamicType& other) const override
     {
         if(other.kind() != TypeKind::STRING_TYPE)
@@ -93,11 +102,8 @@ public:
         {
             return TypeConsistency::EQUALS;
         }
-        else if(bounds() <= other_string.bounds())
-        {
-            return TypeConsistency::IGNORE_STRING_BOUNDS;
-        }
-        return TypeConsistency::NONE;
+
+        return TypeConsistency::IGNORE_STRING_BOUNDS;
     }
 
     virtual void for_each_instance(

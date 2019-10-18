@@ -21,6 +21,7 @@
 #include <dds/core/xtypes/DynamicType.hpp>
 
 #include <cstring>
+#include <cassert>
 
 namespace dds {
 namespace core {
@@ -60,7 +61,6 @@ class PrimitiveType : public DynamicType
 {
     template<typename R>
     friend const DynamicType& primitive_type();
-    friend const DynamicType& null();
 
     virtual size_t memory_size() const override
     {
@@ -81,6 +81,15 @@ class PrimitiveType : public DynamicType
         *reinterpret_cast<T*>(target) = *reinterpret_cast<const T*>(source);
     }
 
+    virtual void copy_instance_from_type(
+            uint8_t* target,
+            const uint8_t* source,
+            const DynamicType& other) const override
+    {
+        assert(other.is_primitive_type());
+        *reinterpret_cast<T*>(target) = *reinterpret_cast<const T*>(source);
+    }
+
     virtual void move_instance(
             uint8_t* target,
             uint8_t* source) const override
@@ -95,7 +104,7 @@ class PrimitiveType : public DynamicType
         return *reinterpret_cast<const T*>(instance) == *reinterpret_cast<const T*>(other_instance);
     }
 
-    virtual TypeConsistency is_subset_of(
+    virtual TypeConsistency is_compatible(
             const DynamicType& other) const override
     {
         if(kind() == other.kind())
@@ -106,11 +115,8 @@ class PrimitiveType : public DynamicType
         {
             return TypeConsistency::IGNORE_TYPE_SIGN;
         }
-        else if(memory_size() <= other.memory_size())
-        {
-            return TypeConsistency::IGNORE_TYPE_WIDTH;
-        }
-        return TypeConsistency::NONE;
+
+        return TypeConsistency::IGNORE_TYPE_WIDTH;
     }
 
     virtual void for_each_instance(
@@ -139,18 +145,6 @@ const DynamicType& primitive_type()
     // by this function in order to not broken the DynamicType::Ptr
     // optimizations for PrimitiveType
     static PrimitiveType<T> p;
-    return p;
-}
-
-
-inline const DynamicType& null()
-{
-    struct Null
-    {
-        Null(int){}
-        bool operator == (const Null&) const { return true; }
-    };
-    static PrimitiveType<Null> p;
     return p;
 }
 

@@ -40,6 +40,8 @@ public:
 
     virtual void copy_instance(uint8_t* target, const uint8_t* source) const = 0;
 
+    virtual void copy_instance_from_type(uint8_t* target, const uint8_t* source, const DynamicType& other) const = 0;
+
     virtual void move_instance(uint8_t* target, uint8_t* source) const = 0;
 
     virtual void destroy_instance(uint8_t* instance) const = 0;

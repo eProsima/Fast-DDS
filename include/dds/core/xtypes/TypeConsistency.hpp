@@ -34,7 +34,7 @@ enum class TypeConsistency
     IGNORE_ARRAY_BOUNDS = 8,
     IGNORE_STRING_BOUNDS = 16,
     IGNORE_MEMBER_NAMES = 32,
-    IGNORE_OTHER_MEMBERS = 64,
+    IGNORE_MEMBERS = 64,
 };
 
 inline TypeConsistency operator | (TypeConsistency lhs, TypeConsistency rhs)

@@ -87,7 +87,6 @@ inline TypeKind& operator &= (TypeKind& lhs, TypeKind rhs)
     return lhs;
 }
 
-
 } //namespace xtypes
 } //namespace core
 } //namespace dds
