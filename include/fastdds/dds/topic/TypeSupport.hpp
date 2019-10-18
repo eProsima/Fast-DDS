@@ -21,6 +21,7 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/TypesBase.h>
 #include <string>
 #include <functional>
 #include <memory>
@@ -89,7 +90,7 @@ public:
                   std::make_shared<fastrtps::types::DynamicPubSubType>(std::move(ptr))))
     {}
 
-    RTPS_DllAPI virtual bool register_type(
+    RTPS_DllAPI virtual eprosima::fastrtps::types::ReturnCode_t register_type(
             DomainParticipant* participant,
             std::string type_name) const;
 

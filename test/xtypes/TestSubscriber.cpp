@@ -301,7 +301,7 @@ bool TestSubscriber::register_discovered_type()
     TypeSupport type(disc_type_);
     topic_att.auto_fill_type_object = true;
     topic_att.auto_fill_type_information = true;
-    return mp_participant->register_type(type, disc_type_->get_name());
+    return mp_participant->register_type(type, disc_type_->get_name()) == ReturnCode_t::RETCODE_OK;
 }
 
 void TestSubscriber::run()

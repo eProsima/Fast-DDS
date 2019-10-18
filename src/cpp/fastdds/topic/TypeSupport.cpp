@@ -21,8 +21,9 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastrtps::types;
 
-bool TypeSupport::register_type(
+ReturnCode_t TypeSupport::register_type(
         DomainParticipant* participant,
         std::string type_name) const
 {
