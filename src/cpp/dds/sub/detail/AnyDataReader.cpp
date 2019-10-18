@@ -15,9 +15,6 @@
  *
 */
 
-#ifndef EPROSIMA_DDS_SUB_DETAIL_TANYDATAREADER_HPP_
-#define EPROSIMA_DDS_SUB_DETAIL_TANYDATAREADER_HPP_
-
 /**
  * @file
  */
@@ -32,29 +29,25 @@
 namespace dds {
 namespace sub {
 
-template<typename DELEGATE>
-TAnyDataReader<DELEGATE>::~TAnyDataReader()
+AnyDataReader::~AnyDataReader()
 {
 }
 
-template<typename DELEGATE>
-const dds::sub::Subscriber& TAnyDataReader<DELEGATE>::subscriber() const
+const dds::sub::Subscriber& AnyDataReader::subscriber() const
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->subscriber();
 }
 
-template<typename DELEGATE>
-const dds::topic::TopicDescription& TAnyDataReader<DELEGATE>::topic_description() const
+const dds::topic::TopicDescription& AnyDataReader::topic_description() const
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->topic_description();
 }
 
-template<typename DELEGATE>
-void TAnyDataReader<DELEGATE>::wait_for_historical_data(
+void AnyDataReader::wait_for_historical_data(
         const dds::core::Duration& timeout)
 {
     //To implement
@@ -63,16 +56,14 @@ void TAnyDataReader<DELEGATE>::wait_for_historical_data(
 }
 
 
-template<typename DELEGATE>
-dds::sub::qos::DataReaderQos TAnyDataReader<DELEGATE>::qos() const
+dds::sub::qos::DataReaderQos AnyDataReader::qos() const
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->qos();
 }
 
-template<typename DELEGATE>
-void TAnyDataReader<DELEGATE>::qos(
+void AnyDataReader::qos(
         const dds::sub::qos::DataReaderQos& qos)
 {
     //To implement
@@ -80,8 +71,7 @@ void TAnyDataReader<DELEGATE>::qos(
 //    this->delegate()->qos(qos);
 }
 
-template<typename DELEGATE>
-TAnyDataReader<DELEGATE>& TAnyDataReader<DELEGATE>::operator <<(
+AnyDataReader& AnyDataReader::operator <<(
         const dds::sub::qos::DataReaderQos& qos)
 {
     //To implement
@@ -90,8 +80,7 @@ TAnyDataReader<DELEGATE>& TAnyDataReader<DELEGATE>::operator <<(
 //    return *this;
 }
 
-template<typename DELEGATE>
-const TAnyDataReader<DELEGATE>& TAnyDataReader<DELEGATE>::operator >>(
+const AnyDataReader& AnyDataReader::operator >>(
         dds::sub::qos::DataReaderQos& qos) const
 {
     //To implement
@@ -101,48 +90,42 @@ const TAnyDataReader<DELEGATE>& TAnyDataReader<DELEGATE>::operator >>(
 }
 
 
-template<typename DELEGATE>
-dds::core::status::LivelinessChangedStatus TAnyDataReader<DELEGATE>::liveliness_changed_status()
+dds::core::status::LivelinessChangedStatus AnyDataReader::liveliness_changed_status()
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->liveliness_changed_status();
 }
 
-template<typename DELEGATE>
-dds::core::status::SampleRejectedStatus TAnyDataReader<DELEGATE>::sample_rejected_status()
+dds::core::status::SampleRejectedStatus AnyDataReader::sample_rejected_status()
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->sample_rejected_status();
 }
 
-template<typename DELEGATE>
-dds::core::status::SampleLostStatus TAnyDataReader<DELEGATE>::sample_lost_status()
+dds::core::status::SampleLostStatus AnyDataReader::sample_lost_status()
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->sample_lost_status();
 }
 
-template<typename DELEGATE>
-dds::core::status::RequestedDeadlineMissedStatus TAnyDataReader<DELEGATE>::requested_deadline_missed_status()
+dds::core::status::RequestedDeadlineMissedStatus AnyDataReader::requested_deadline_missed_status()
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->requested_deadline_missed_status();
 }
 
-template<typename DELEGATE>
-dds::core::status::RequestedIncompatibleQosStatus TAnyDataReader<DELEGATE>::requested_incompatible_qos_status()
+dds::core::status::RequestedIncompatibleQosStatus AnyDataReader::requested_incompatible_qos_status()
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->requested_incompatible_qos_status();
 }
 
-template<typename DELEGATE>
-dds::core::status::SubscriptionMatchedStatus TAnyDataReader<DELEGATE>::subscription_matched_status()
+dds::core::status::SubscriptionMatchedStatus AnyDataReader::subscription_matched_status()
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -152,4 +135,3 @@ dds::core::status::SubscriptionMatchedStatus TAnyDataReader<DELEGATE>::subscript
 } //namespace sub
 } //namespace dds
 
-#endif //EPROSIMA_DDS_SUB_DETAIL_TANYDATAREADER_HPP_

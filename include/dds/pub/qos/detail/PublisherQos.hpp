@@ -18,18 +18,14 @@
 #ifndef EPROSIMA_DDS_PUB_QOS_DETAIL_PUBLISER_QOS_HPP_
 #define EPROSIMA_DDS_PUB_QOS_DETAIL_PUBLISER_QOS_HPP_
 
-//#include <dds/core/detail/TEntityQosImpl.hpp>
-//TODO: Fix when PublisherQosDelegate is implemented
-//#include <org/opensplice/pub/qos/PublisherQosDelegate.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 
 namespace dds {
 namespace pub {
 namespace qos {
 namespace detail {
 
-//TODO: Fix when PublisherQosDelegate is implemented
-//typedef ::dds::core::TEntityQos< ::org::opensplice::pub::qos::PublisherQosDelegate> PublisherQos;
-class PublisherQos { };
+using PublisherQos = eprosima::fastdds::dds::PublisherQos;
 
 } //namespace detail
 } //namespace qos
