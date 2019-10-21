@@ -516,9 +516,10 @@ bool ThroughputPublisher::test(
     });
     data_disc_lock.unlock();
 
-    // Declate test time variables
+    // Declare test time variables
     std::chrono::duration<double, std::micro> timewait_us(0);
-    std::chrono::duration<double, std::micro> test_time_us = std::chrono::seconds(test_time);
+    std::chrono::duration<double, std::nano> test_time_ns = std::chrono::seconds(test_time);
+    std::chrono::duration<double, std::nano> recovery_duration_ns = std::chrono::milliseconds(recovery_time_ms);
     std::chrono::steady_clock::time_point batch_start;
 
     // Send a TEST_STARTS and sleep for a while to give the subscriber time to set up
@@ -538,9 +539,9 @@ bool ThroughputPublisher::test(
     }
     timewait_us += std::chrono::duration<double, std::micro>(std::chrono::steady_clock::now() - data_disc_start);
 
-    // Send batches until test_time_us is reached
+    // Send batches until test_time_ns is reached
     t_start_ = std::chrono::steady_clock::now();
-    while (std::chrono::duration<double, std::micro>(t_end_ - t_start_) < test_time_us)
+    while ((t_end_ - t_start_) < test_time_ns)
     {
         // Get start time
         batch_start = std::chrono::steady_clock::now();
@@ -563,12 +564,13 @@ bool ThroughputPublisher::test(
         // Add the number of sent samples
         samples += demand;
 
-        // If the batch took less than the recovery time, sleep for the difference recovery_time - batch_duration.
-        // Else, go ahead with next batch without time to recover.
-        if ((t_end_ - batch_start) <= std::chrono::milliseconds(recovery_time_ms))
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(recovery_time_ms) - (t_end_ - batch_start));
-        }
+        /*
+            If the batch took less than the recovery time, sleep for the difference recovery_duration - batch_duration.
+            Else, go ahead with the next batch without time to recover.
+            The previous is achieved with a call to sleep_for(). If the duration specified for sleep_for is negative,
+            all implementations we know about return without setting the thread to sleep.
+        */
+        std::this_thread::sleep_for(recovery_duration_ns - (t_end_ - batch_start));
 
         timewait_us += t_overhead_ * 2; // We access the clock twice per batch.
     }
