@@ -25,6 +25,7 @@
 #include <fastdds/dds/topic/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <dds/domain/DomainParticipant.hpp>
+#include <dds/pub/Publisher.hpp>
 
 class HelloWorldPublisher
 {
@@ -50,7 +51,7 @@ private:
 
     dds::domain::DomainParticipant participant_;
 
-    eprosima::fastdds::dds::Publisher* publisher_;
+    dds::pub::Publisher publisher_;
 
     eprosima::fastdds::dds::DataWriter* writer_;
 

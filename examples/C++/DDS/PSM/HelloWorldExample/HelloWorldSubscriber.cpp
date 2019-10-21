@@ -20,17 +20,16 @@
 #include "HelloWorldSubscriber.h"
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-//#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/DataReader.hpp>
 
 #include <dds/domain/DomainParticipant.hpp>
+#include <dds/sub/Subscriber.hpp>
 
 using namespace eprosima::fastdds::dds;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
     : participant_(nullptr)
-    , subscriber_(nullptr)
+    , subscriber_(dds::core::null)
     , type_(new HelloWorldPubSubType())
 {
 }
@@ -54,10 +53,11 @@ bool HelloWorldSubscriber::init()
     type_.register_type(participant_.delegate().get(), type_->getName());
 
     //CREATE THE SUBSCRIBER
-    eprosima::fastrtps::SubscriberAttributes sub_att;
-    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, sub_att, nullptr);
+    //eprosima::fastrtps::SubscriberAttributes sub_att;
+    //subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, sub_att, nullptr);
+    subscriber_ = dds::sub::Subscriber(participant_, SUBSCRIBER_QOS_DEFAULT, nullptr);
 
-    if (subscriber_ == nullptr)
+    if (subscriber_ == dds::core::null)
     {
         return false;
     }

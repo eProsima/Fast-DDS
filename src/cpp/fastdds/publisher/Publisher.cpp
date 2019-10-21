@@ -18,10 +18,11 @@
  */
 
 #include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/publisher/PublisherImpl.hpp>
 
 #include <fastrtps/log/Log.h>
+
+#include <dds/domain/DomainParticipant.hpp>
 
 using namespace eprosima;
 using namespace eprosima::fastdds::dds;
@@ -29,6 +30,15 @@ using namespace eprosima::fastdds::dds;
 Publisher::Publisher(
         PublisherImpl* p)
     : impl_(p)
+{
+}
+
+Publisher::Publisher(
+        const ::dds::domain::DomainParticipant& dp,
+        const PublisherQos& qos,
+        PublisherListener* listener,
+        const ::dds::core::status::StatusMask& /*mask*/)
+    : impl_(dp.delegate()->create_publisher(qos, fastrtps::PublisherAttributes(), listener/*, mask*/)->impl_)
 {
 }
 
@@ -55,6 +65,11 @@ ReturnCode_t Publisher::set_qos(
 }
 
 const PublisherListener* Publisher::get_listener() const
+{
+    return impl_->get_listener();
+}
+
+PublisherListener* Publisher::get_listener()
 {
     return impl_->get_listener();
 }

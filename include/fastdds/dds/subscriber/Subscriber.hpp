@@ -26,7 +26,18 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 
+#include <dds/core/status/Status.hpp>
+
 using eprosima::fastrtps::types::ReturnCode_t;
+
+namespace dds {
+namespace domain {
+class DomainParticipant;
+} // domain
+namespace sub {
+class Subscriber;
+} // sub
+} // dds
 
 namespace eprosima {
 namespace fastrtps {
@@ -56,6 +67,7 @@ class RTPS_DllAPI Subscriber
 {
     friend class SubscriberImpl;
     friend class DomainParticipantImpl;
+    friend class ::dds::sub::Subscriber;
 
     /**
      * Constructor from a SubscriberImpl pointer
@@ -66,10 +78,15 @@ class RTPS_DllAPI Subscriber
         : impl_(pimpl)
     {}
 
-
-    virtual ~Subscriber() {}
+    Subscriber(
+            const ::dds::domain::DomainParticipant& dp,
+            const SubscriberQos& qos,
+            SubscriberListener* listener = NULL,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
 
 public:
+
+    virtual ~Subscriber() {}
 
     /**
      * Allows accessing the Subscriber Qos.

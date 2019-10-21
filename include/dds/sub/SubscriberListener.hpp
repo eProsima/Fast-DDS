@@ -20,7 +20,12 @@
 #ifndef OMG_DDS_SUB_SUBSCRIBER_LISTENER_HPP_
 #define OMG_DDS_SUB_SUBSCRIBER_LISTENER_HPP_
 
-#include <dds/sub/AnyDataReaderListener.hpp>
+// TODO Uncomment the PSM listeners are implemented.
+//#include <dds/sub/AnyDataReaderListener.hpp>
+
+// TODO Remove the PSM listeners are implemented.
+#include <fastdds/dds/subscriber/SubscriberListener.hpp>
+
 #include <dds/sub/Subscriber.hpp>
 
 namespace dds {
@@ -120,15 +125,18 @@ namespace sub {
  * @see @ref DCPS_Modules_Subscriber "Subscriber"
  * @see @ref DCPS_Modules_Infrastructure_Listener "Listener information"
  */
-class OMG_DDS_API SubscriberListener : public virtual AnyDataReaderListener
+// TODO Uncomment the PSM listeners are implemented.
+//class OMG_DDS_API SubscriberListener : public virtual AnyDataReaderListener
+// TODO Remove the PSM listeners are implemented.
+class SubscriberListener : public eprosima::fastdds::dds::SubscriberListener
 {
 public:
     /** @cond */
-    typedef ::dds::core::smart_ptr_traits<SubscriberListener>::ref_type ref_type;
+    //typedef ::dds::core::smart_ptr_traits<SubscriberListener>::ref_type ref_type;
     /** @endcond */
 
     /** @cond */
-    virtual ~SubscriberListener()
+    virtual ~SubscriberListener() override
     {
     }
     /** @endcond */
@@ -161,7 +169,8 @@ public:
      *            an input to the application provided by the Data Distribution Service).
      */
     virtual void on_data_on_readers(
-            Subscriber& sub) = 0;
+            //Subscriber& sub) = 0;
+            Subscriber& sub) {};
 };
 
 
@@ -181,9 +190,14 @@ public:
  *
  * @see dds::sub::SubscriberListener
  */
+// TODO Uncomment the PSM listeners are implemented.
+/*
 class OMG_DDS_API NoOpSubscriberListener :
         public virtual SubscriberListener,
         public virtual NoOpAnyDataReaderListener
+*/
+// TODO Remove the PSM listeners are implemented.
+class NoOpSubscriberListener : public SubscriberListener
 {
 /** @cond
  * All these functions have already been documented in the non-NoOp listener.
@@ -195,7 +209,7 @@ public:
     }
 
     virtual void on_data_on_readers(
-            Subscriber&)
+            Subscriber&) override
     {
     }
 /** @endcond */

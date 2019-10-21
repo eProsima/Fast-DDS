@@ -197,9 +197,12 @@ set(${PROJECT_NAME}_source_files
     fastrtps_deprecated/utils/TimedConditionVariable.cpp
 
     dds/domain/detail/DomainParticipant.cpp
+    dds/pub/Publisher.cpp
+    dds/sub/Subscriber.cpp
     dds/core/Time.cpp
     dds/core/Duration.cpp
     dds/core/InstanceHandle.cpp
+    dds/core/types.cpp
     )
 
 # TLS Support

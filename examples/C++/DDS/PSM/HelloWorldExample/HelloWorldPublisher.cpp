@@ -21,7 +21,6 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
 
@@ -31,7 +30,7 @@ using namespace eprosima::fastdds::dds;
 
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)
-    , publisher_(nullptr)
+    , publisher_(dds::core::null)
     , type_(new HelloWorldPubSubType())
 {
 }
@@ -40,13 +39,13 @@ bool HelloWorldPublisher::init()
 {
     hello_.index(0);
     hello_.message("HelloWorld");
+    /*
     eprosima::fastrtps::ParticipantAttributes participant_att;
     participant_att.rtps.builtin.domainId = 0;
     participant_att.rtps.setName("Participant_pub");
-    //participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att);
+    */
     participant_ = dds::domain::DomainParticipant(0);
 
-    //if (participant_ == nullptr)
     if (participant_ == dds::core::null)
     {
         return false;
@@ -60,9 +59,10 @@ bool HelloWorldPublisher::init()
     pub_att.topic.topicDataType = "HelloWorld";
     pub_att.topic.topicName = "HelloWorldTopic";
     pub_att.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, pub_att, nullptr);
+    publisher_ = ::dds::pub::Publisher(participant_);
+    //publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, pub_att, nullptr);
 
-    if (publisher_ == nullptr)
+    if (publisher_ == dds::core::null)
     {
         return false;
     }

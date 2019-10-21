@@ -27,6 +27,7 @@
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 
 #include <dds/domain/DomainParticipant.hpp>
+#include <dds/sub/Subscriber.hpp>
 
 class HelloWorldSubscriber
 {
@@ -48,7 +49,7 @@ public:
 private:
     dds::domain::DomainParticipant participant_;
 
-    eprosima::fastdds::dds::Subscriber* subscriber_;
+    dds::sub::Subscriber subscriber_;
 
     eprosima::fastdds::dds::DataReader* reader_;
 

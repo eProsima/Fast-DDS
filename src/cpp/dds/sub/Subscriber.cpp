@@ -15,9 +15,6 @@
  *
 */
 
-#ifndef EPROSIMA_DDS_SUB_TSUBSCRIBER_IMPL_HPP_
-#define EPROSIMA_DDS_SUB_TSUBSCRIBER_IMPL_HPP_
-
 /**
  * @file
  */
@@ -26,49 +23,46 @@
  * OMG PSM class declaration
  */
 #include <dds/sub/Subscriber.hpp>
+#include <dds/sub/SubscriberListener.hpp>
 
 namespace dds {
 namespace sub {
 
-template<typename DELEGATE>
-TSubscriber<DELEGATE>::TSubscriber(
+Subscriber::Subscriber(
         const ::dds::domain::DomainParticipant& dp)
-    : ::dds::core::Reference<DELEGATE>(new DELEGATE(dp,
-                                                    dp.default_subscriber_qos(),
-                                                    NULL,
-                                                    dds::core::status::StatusMask::none()))
+    : ::dds::core::Reference<detail::Subscriber>(
+            new detail::Subscriber(dp,
+                dp.default_subscriber_qos(),
+                nullptr,
+                dds::core::status::StatusMask::none()))
 {
     //To implement
 //	ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
 //    this->delegate()->init(this->impl_);
 }
 
-template<typename DELEGATE>
-TSubscriber<DELEGATE>::TSubscriber(
+Subscriber::Subscriber(
         const ::dds::domain::DomainParticipant& dp,
         const dds::sub::qos::SubscriberQos& qos,
         dds::sub::SubscriberListener* listener,
         const dds::core::status::StatusMask& mask)
-    : ::dds::core::Reference<DELEGATE>(new DELEGATE(dp, qos, listener, mask))
+    : ::dds::core::Reference<detail::Subscriber>(new detail::Subscriber(dp, qos, listener, mask))
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
 //    this->delegate()->init(this->impl_);
 }
 
-template<typename DELEGATE>
-TSubscriber<DELEGATE>::~TSubscriber() {}
+Subscriber::~Subscriber() {}
 
-template<typename DELEGATE>
-void TSubscriber<DELEGATE>::notify_datareaders()
+void Subscriber::notify_datareaders()
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    this->delegate()->notify_datareaders();
 }
 
-template<typename DELEGATE>
-void TSubscriber<DELEGATE>::listener(
+void Subscriber::listener(
         Listener* listener,
         const dds::core::status::StatusMask& event_mask)
 {
@@ -77,8 +71,7 @@ void TSubscriber<DELEGATE>::listener(
 //    return this->delegate()->listener(listener, event_mask);
 }
 
-template<typename DELEGATE>
-typename TSubscriber<DELEGATE>::Listener* TSubscriber<DELEGATE>::listener() const
+typename Subscriber::Listener* Subscriber::listener() const
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -86,16 +79,14 @@ typename TSubscriber<DELEGATE>::Listener* TSubscriber<DELEGATE>::listener() cons
 }
 
 
-template<typename DELEGATE>
-const dds::sub::qos::SubscriberQos& TSubscriber<DELEGATE>::qos() const
+const dds::sub::qos::SubscriberQos& Subscriber::qos() const
 {
       //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->qos();
 }
 
-template<typename DELEGATE>
-void TSubscriber<DELEGATE>::qos(
+void Subscriber::qos(
             const dds::sub::qos::SubscriberQos& sqos)
 {
     //To implement
@@ -103,16 +94,14 @@ void TSubscriber<DELEGATE>::qos(
 //    this->delegate()->qos(sqos);
 }
 
-template<typename DELEGATE>
-dds::sub::qos::DataReaderQos TSubscriber<DELEGATE>::default_datareader_qos() const
+dds::sub::qos::DataReaderQos Subscriber::default_datareader_qos() const
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->default_datareader_qos();
 }
 
-template<typename DELEGATE>
-TSubscriber<DELEGATE>& TSubscriber<DELEGATE>::default_datareader_qos(
+Subscriber& Subscriber::default_datareader_qos(
     const dds::sub::qos::DataReaderQos& qos)
 {
     //To implement
@@ -122,16 +111,14 @@ TSubscriber<DELEGATE>& TSubscriber<DELEGATE>::default_datareader_qos(
 //    return *this;
 }
 
-template<typename DELEGATE>
-const dds::domain::DomainParticipant& TSubscriber<DELEGATE>::participant() const
+const dds::domain::DomainParticipant& Subscriber::participant() const
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->participant();
 }
 
-template<typename DELEGATE>
-TSubscriber<DELEGATE>& TSubscriber<DELEGATE>::operator <<(
+Subscriber& Subscriber::operator <<(
             const dds::sub::qos::SubscriberQos& qos)
 {
     //To implement
@@ -141,8 +128,7 @@ TSubscriber<DELEGATE>& TSubscriber<DELEGATE>::operator <<(
 //    return *this;
 }
 
-template<typename DELEGATE>
-const TSubscriber<DELEGATE>& TSubscriber<DELEGATE>::operator >>(
+const Subscriber& Subscriber::operator >>(
             dds::sub::qos::SubscriberQos& qos) const
 {
     //To implement
@@ -154,5 +140,3 @@ const TSubscriber<DELEGATE>& TSubscriber<DELEGATE>::operator >>(
 
 } //namespace sub
 } //namespace dds
-
-#endif //EPROSIMA_DDS_SUB_TSUBSCRIBER_IMPL_HPP_

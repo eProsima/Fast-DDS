@@ -21,8 +21,19 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 
+#include <dds/domain/DomainParticipant.hpp>
+
 using namespace eprosima;
 using namespace eprosima::fastdds::dds;
+
+Subscriber::Subscriber(
+        const ::dds::domain::DomainParticipant& dp,
+        const SubscriberQos& qos,
+        SubscriberListener* listener,
+        const ::dds::core::status::StatusMask& /*mask*/)
+    : impl_(dp.delegate()->create_subscriber(qos, fastrtps::SubscriberAttributes(), listener/*, mask*/)->impl_)
+{
+}
 
 const SubscriberQos& Subscriber::get_qos() const
 {

@@ -25,7 +25,18 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/types/TypesBase.h>
 
+#include <dds/core/status/Status.hpp>
+
 using eprosima::fastrtps::types::ReturnCode_t;
+
+namespace dds {
+namespace domain {
+class DomainParticipant;
+} // domain
+namespace pub {
+class Publisher;
+} // pub
+} // dds
 
 namespace eprosima {
 namespace fastrtps {
@@ -53,7 +64,7 @@ class RTPS_DllAPI Publisher
 {
     friend class PublisherImpl;
     friend class DomainParticipantImpl;
-    virtual ~Publisher();
+    friend class ::dds::pub::Publisher;
 
     /**
      * Create a publisher, assigning its pointer to the associated writer.
@@ -62,7 +73,15 @@ class RTPS_DllAPI Publisher
     Publisher(
             PublisherImpl* p);
 
+    Publisher(
+            const ::dds::domain::DomainParticipant& dp,
+            const PublisherQos& qos,
+            PublisherListener* listener = NULL,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+
 public:
+
+    virtual ~Publisher();
 
     /**
      * Allows accessing the Publisher Qos.
@@ -89,6 +108,8 @@ public:
      * Retrieves the attached PublisherListener.
      */
     const PublisherListener* get_listener() const;
+
+    PublisherListener* get_listener();
 
     /**
      * Modifies the PublisherListener.
