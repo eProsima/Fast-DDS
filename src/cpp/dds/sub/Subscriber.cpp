@@ -36,9 +36,6 @@ Subscriber::Subscriber(
                 nullptr,
                 dds::core::status::StatusMask::none()))
 {
-    //To implement
-//	ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-//    this->delegate()->init(this->impl_);
 }
 
 Subscriber::Subscriber(
@@ -48,94 +45,75 @@ Subscriber::Subscriber(
         const dds::core::status::StatusMask& mask)
     : ::dds::core::Reference<detail::Subscriber>(new detail::Subscriber(dp, qos, listener, mask))
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-//    this->delegate()->init(this->impl_);
 }
 
 Subscriber::~Subscriber() {}
 
 void Subscriber::notify_datareaders()
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->notify_datareaders();
+    delegate()->notify_datareaders();
 }
 
 void Subscriber::listener(
         Listener* listener,
-        const dds::core::status::StatusMask& event_mask)
+        const dds::core::status::StatusMask& /*event_mask*/)
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->listener(listener, event_mask);
+    delegate()->set_listener(listener/*, event_mask*/);
 }
 
 typename Subscriber::Listener* Subscriber::listener() const
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->listener();
+    return dynamic_cast<Listener*>(delegate()->get_listener());
 }
 
 
 const dds::sub::qos::SubscriberQos& Subscriber::qos() const
 {
-      //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->qos();
+    return delegate()->get_qos();
 }
 
 void Subscriber::qos(
             const dds::sub::qos::SubscriberQos& sqos)
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->qos(sqos);
+    delegate()->set_qos(sqos);
 }
 
 dds::sub::qos::DataReaderQos Subscriber::default_datareader_qos() const
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->default_datareader_qos();
+    // TODO Use DataReaderQos instead of ReaderQos
+    //return delegate()->default_datareader_qos();
+    return qos::DataReaderQos();
 }
 
 Subscriber& Subscriber::default_datareader_qos(
     const dds::sub::qos::DataReaderQos& qos)
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-//    this->delegate()->default_datareader_qos(qos);
-//    return *this;
+    // TODO Use DataReaderQos instead of ReaderQos
+    //delegate()->default_datareader_qos(qos);
+    (void)qos;
+    return *this;
 }
 
 const dds::domain::DomainParticipant& Subscriber::participant() const
 {
-    //To implement
+    //TODO implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->participant();
+    return dds::core::null;
 }
 
 Subscriber& Subscriber::operator <<(
             const dds::sub::qos::SubscriberQos& qos)
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-//    this->qos(qos);
-//    return *this;
+    this->qos(qos);
+    return *this;
 }
 
 const Subscriber& Subscriber::operator >>(
             dds::sub::qos::SubscriberQos& qos) const
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-//    qos = this->qos();
-//    return *this;
+    qos = this->qos();
+    return *this;
 }
 
 } //namespace sub

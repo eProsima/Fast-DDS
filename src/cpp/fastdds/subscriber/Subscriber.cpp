@@ -58,6 +58,11 @@ const SubscriberListener* Subscriber::get_listener() const
     return impl_->get_listener();
 }
 
+SubscriberListener* Subscriber::get_listener()
+{
+    return impl_->get_listener();
+}
+
 ReturnCode_t Subscriber::set_listener(
         SubscriberListener* listener)
 {

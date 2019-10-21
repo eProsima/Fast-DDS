@@ -109,6 +109,11 @@ const SubscriberListener* SubscriberImpl::get_listener() const
     return listener_;
 }
 
+SubscriberListener* SubscriberImpl::get_listener()
+{
+    return listener_;
+}
+
 ReturnCode_t SubscriberImpl::set_listener(
         SubscriberListener* listener)
 {

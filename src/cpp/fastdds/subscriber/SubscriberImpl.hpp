@@ -84,6 +84,8 @@ public:
 
     const SubscriberListener* get_listener() const;
 
+    SubscriberListener* get_listener();
+
     ReturnCode_t set_listener(
             SubscriberListener* listener);
 

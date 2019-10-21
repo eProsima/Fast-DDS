@@ -114,6 +114,8 @@ public:
      */
     const SubscriberListener* get_listener() const;
 
+    SubscriberListener* get_listener();
+
     /**
      * Modifies the SubscriberListener.
      * @param listener
