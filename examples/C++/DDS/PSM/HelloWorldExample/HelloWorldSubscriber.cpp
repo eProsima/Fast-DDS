@@ -102,7 +102,7 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
 void HelloWorldSubscriber::SubListener::on_data_available(
         eprosima::fastdds::dds::DataReader* reader)
 {
-    if (reader->take_next_sample(&hello_, &info_))
+    if (!!reader->take_next_sample(&hello_, &info_))
     {
         if (info_.instance_state == ::dds::sub::status::InstanceState::alive())
         {

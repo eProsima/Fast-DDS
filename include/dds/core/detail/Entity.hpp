@@ -33,7 +33,15 @@ namespace detail {
 
 //TODO: Fix when EntityDelegate is implemented
 //typedef dds::core::TEntity<org::opensplice::core::EntityDelegate> Entity;
-class Entity { };
+class Entity
+{
+public:
+    Entity()
+    {}
+
+    ~Entity()
+    {}
+};
 
 } //namespace detail
 } //namespace core

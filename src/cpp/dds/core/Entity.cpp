@@ -27,7 +27,6 @@
  */
 #include <dds/core/detail/ReferenceImpl.hpp>
 #include <dds/core/Entity.hpp>
-//#include <org/opensplice/core/ReportUtils.hpp>
 
 namespace dds {
 namespace core {
@@ -51,6 +50,7 @@ const status::StatusMask TEntity<DELEGATE>::status_changes()
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->status_changes();
+    return status::StatusMask::none();
 }
 
 template<typename DELEGATE>
@@ -59,6 +59,7 @@ const InstanceHandle TEntity<DELEGATE>::instance_handle() const
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->instance_handle();
+    return InstanceHandle();
 }
 
 template<typename DELEGATE>

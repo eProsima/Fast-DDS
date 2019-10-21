@@ -199,6 +199,8 @@ set(${PROJECT_NAME}_source_files
     dds/domain/detail/DomainParticipant.cpp
     dds/core/Time.cpp
     dds/core/Duration.cpp
+    dds/core/Entity.cpp
+    dds/core/InstanceHandle.cpp
     )
 
 # TLS Support
