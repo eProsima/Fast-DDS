@@ -55,6 +55,8 @@ public:
     const DynamicType& type() const { return type_; }
     size_t instance_id() const { return size_t(instance_); }
 
+    inline std::string to_string() const; // Into DynamicDataImpl.hpp
+
     template<typename T, class = PrimitiveOrString<T>>
     T& value() const // this = PrimitiveType
     {
@@ -289,7 +291,7 @@ public:
     }
 
     DynamicData(
-            const DynamicData& other,
+            const ReadableDynamicDataRef& other,
             const DynamicType& type)
         : WritableDynamicDataRef(type, new uint8_t[type.memory_size()])
     {
@@ -332,5 +334,7 @@ public:
 } //namespace xtypes
 } //namespace core
 } //namespace dds
+
+#include <dds/core/xtypes/DynamicDataImpl.hpp>
 
 #endif //OMG_DDS_CORE_XTYPES_DYNAMIC_DATA_HPP_

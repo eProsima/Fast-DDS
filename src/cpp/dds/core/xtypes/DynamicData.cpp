@@ -16,3 +16,4 @@
 */
 
 #include <dds/core/xtypes/DynamicData.hpp>
+#include <dds/core/xtypes/DynamicDataImpl.hpp>
