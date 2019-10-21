@@ -138,13 +138,18 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
         msg.pos += 2;
     }
 
+    uint32_t original_pos = msg.pos;
     while (!is_sentinel)
     {
+        // Align to 4 byte boundary
+        qos_size = (qos_size + 3) & ~3;
+        msg.pos = original_pos + qos_size;
+
         valid = true;
         valid &= CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
         valid &= CDRMessage::readUInt16(&msg, &plength);
         qos_size += 4;
-        if (!valid || msg.pos > msg.length)
+        if (!valid || ((msg.pos + plength) > msg.length))
         {
             return false;
         }
@@ -179,7 +184,6 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     valid &= CDRMessage::readOctet(&msg, &p.protocolVersion.m_major);
                     valid &= CDRMessage::readOctet(&msg, &p.protocolVersion.m_minor);
                     valid &= (plength == PARAMETER_PROTOCOL_LENGTH);
-                    msg.pos += 2;
                     IF_VALID_CALL()
                 }
                 case PID_EXPECTS_INLINE_QOS:
@@ -190,7 +194,6 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     ParameterBool_t p(PID_EXPECTS_INLINE_QOS, plength);
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.value);
-                    msg.pos += 3;
                     IF_VALID_CALL()
                 }
                 case PID_VENDORID:
@@ -199,7 +202,6 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     valid &= CDRMessage::readOctet(&msg, &p.vendorId[0]);
                     valid &= CDRMessage::readOctet(&msg, &p.vendorId[1]);
                     valid &= (plength == PARAMETER_VENDOR_LENGTH);
-                    msg.pos += 2;
                     IF_VALID_CALL()
                 }
                 case PID_MULTICAST_IPADDRESS:
@@ -207,22 +209,13 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                 case PID_METATRAFFIC_UNICAST_IPADDRESS:
                 case PID_METATRAFFIC_MULTICAST_IPADDRESS:
                 {
-                    ParameterIP4Address_t p(pid, plength);
-                    if (plength == PARAMETER_IP4_LENGTH)
-                    {
-                        p.address[0] = msg.buffer[msg.pos];
-                        p.address[1] = msg.buffer[msg.pos + 1];
-                        p.address[2] = msg.buffer[msg.pos + 2];
-                        p.address[3] = msg.buffer[msg.pos + 3];
-                        msg.pos += 4;
-                        qos_size += plength;
-                        if(!processor(&p)) return false;
-                    }
-                    else
+                    if (plength != PARAMETER_IP4_LENGTH)
                     {
                         return false;
                     }
-                    break;
+                    ParameterIP4Address_t p(pid, plength);
+                    valid &= CDRMessage::readData(&msg, p.address, 4);
+                    IF_VALID_CALL()
                 }
                 case PID_PARTICIPANT_GUID:
                 case PID_GROUP_GUID:
@@ -304,7 +297,6 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     octet status = msg.buffer[msg.pos + 3];
                     ParameterStatusInfo_t p(pid, plength, status);
-                    msg.pos += plength;
                     qos_size += plength;
                     if(!processor(&p)) return false;
                     break;
@@ -332,7 +324,6 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     DurabilityQosPolicy p;
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.kind);
-                    msg.pos += 3;
                     IF_VALID_CALL()
                 }
                 case PID_DEADLINE:
@@ -384,7 +375,6 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     OwnershipQosPolicy p;
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.kind);
-                    msg.pos += 3;
                     IF_VALID_CALL()
                 }
                 case PID_RELIABILITY:
@@ -410,7 +400,6 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     DestinationOrderQosPolicy p;
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.kind);
-                    msg.pos += 3;
                     IF_VALID_CALL()
                 }
                 case PID_USER_DATA:
@@ -470,7 +459,6 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     msg.pos += 3;
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.coherent_access);
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.ordered_access);
-                    msg.pos += 2;
                     IF_VALID_CALL()
                 }
                 case PID_PARTITION:
@@ -532,7 +520,8 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                         return false;
                     }
                     HistoryQosPolicy p;
-                    valid &= CDRMessage::readOctet(&msg, (octet*)&p.kind); msg.pos += 3;
+                    valid &= CDRMessage::readOctet(&msg, (octet*)&p.kind);
+                    msg.pos += 3;
                     valid &= CDRMessage::readInt32(&msg, &p.depth);
                     IF_VALID_CALL()
                 }
@@ -547,7 +536,8 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     uint32_t frac(0);
                     valid &= CDRMessage::readUInt32(&msg, &frac);
                     p.service_cleanup_delay.fraction(frac);
-                    valid &= CDRMessage::readOctet(&msg, (octet*)&p.history_kind); msg.pos += 3;
+                    valid &= CDRMessage::readOctet(&msg, (octet*)&p.history_kind);
+                    msg.pos += 3;
                     valid &= CDRMessage::readInt32(&msg, &p.history_depth);
                     valid &= CDRMessage::readInt32(&msg, &p.max_samples);
                     valid &= CDRMessage::readInt32(&msg, &p.max_instances);
@@ -637,11 +627,6 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                 }
                 case PID_CONTENT_FILTER_PROPERTY:
                 {
-                    if (plength > msg.length - msg.pos)
-                    {
-                        return false;
-                    }
-                    msg.pos += plength;
                     qos_size += plength;
                     break;
                 }
@@ -677,13 +662,12 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                         valid &= CDRMessage::readUInt32(&msg, &p.sample_id.sequence_number().low);
                         IF_VALID_CALL()
                     }
-                    else if (plength > msg.length - msg.pos || plength > 24)
+                    else if (plength > 24)
                     {
                         return false;
                     }
                     else
                     {
-                        msg.pos += plength;
                         qos_size += plength;
                         break;
                     }
@@ -763,7 +747,6 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                 {
                     ParameterToken_t p(pid, plength);
                     valid &= CDRMessage::readDataHolder(&msg, p.token);
-                    msg.pos += (4 - msg.pos % 4) & 3; //align
                     IF_VALID_CALL()
                 }
 
@@ -812,11 +795,6 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                 case PID_PAD:
                 default:
                 {
-                    if (plength > msg.length - msg.pos)
-                    {
-                        return false;
-                    }
-                    msg.pos += plength;
                     qos_size += plength;
                     break;
                 }
