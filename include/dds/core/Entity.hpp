@@ -256,4 +256,6 @@ typedef dds::core::detail::Entity Entity;
 } //namespace core
 } //namespace dds
 
+#include <dds/core/detail/TEntityImpl.hpp>
+
 #endif //OMG_DDS_CORE_ENTITY_HPP_

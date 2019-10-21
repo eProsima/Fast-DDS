@@ -22,10 +22,11 @@
 
 #include "HelloWorldPubSubTypes.h"
 
-#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/topic/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+
+#include <dds/domain/DomainParticipant.hpp>
 
 class HelloWorldSubscriber
 {
@@ -45,7 +46,7 @@ public:
             uint32_t number);
 
 private:
-    eprosima::fastdds::dds::DomainParticipant* participant_;
+    dds::domain::DomainParticipant participant_;
 
     eprosima::fastdds::dds::Subscriber* subscriber_;
 

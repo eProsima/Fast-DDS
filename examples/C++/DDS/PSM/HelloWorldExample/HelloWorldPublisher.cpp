@@ -25,8 +25,6 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
 
-#include <dds/domain/DomainParticipant.hpp>
-
 #include <thread>
 
 using namespace eprosima::fastdds::dds;

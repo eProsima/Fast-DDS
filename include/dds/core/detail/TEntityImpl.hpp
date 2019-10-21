@@ -15,9 +15,6 @@
  *
 */
 
-#ifndef EPROSIMA_DDS_CORE_TENTITY_IMPL_HPP_
-#define EPROSIMA_DDS_CORE_TENTITY_IMPL_HPP_
-
 /**
  * @file
  */
@@ -26,7 +23,6 @@
  * OMG PSM class declaration
  */
 #include <dds/core/detail/ReferenceImpl.hpp>
-#include <dds/core/Entity.hpp>
 
 namespace dds {
 namespace core {
@@ -81,4 +77,3 @@ void TEntity<DELEGATE>::retain()
 } //namespace core
 } //namespace dds
 
-#endif //EPROSIMA_DDS_CORE_TENTITY_IMPL_HPP_

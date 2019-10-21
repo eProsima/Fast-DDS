@@ -20,9 +20,11 @@
 #include "HelloWorldSubscriber.h"
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+//#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/DataReader.hpp>
+
+#include <dds/domain/DomainParticipant.hpp>
 
 using namespace eprosima::fastdds::dds;
 
@@ -38,15 +40,18 @@ bool HelloWorldSubscriber::init()
     eprosima::fastrtps::ParticipantAttributes participant_att;
     participant_att.rtps.builtin.domainId = 0;
     participant_att.rtps.setName("Participant_sub");
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att);
+    //participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att);
+    participant_ = dds::domain::DomainParticipant(0);
 
-    if (participant_ == nullptr)
+    //if (participant_ == nullptr)
+    if (participant_ == dds::core::null)
     {
         return false;
     }
 
     //REGISTER THE TYPE
-    type_.register_type(participant_, type_->getName());
+    //type_.register_type(participant_, type_->getName());
+    type_.register_type(participant_.delegate().get(), type_->getName());
 
     //CREATE THE SUBSCRIBER
     eprosima::fastrtps::SubscriberAttributes sub_att;
@@ -75,7 +80,7 @@ bool HelloWorldSubscriber::init()
 
 HelloWorldSubscriber::~HelloWorldSubscriber()
 {
-    DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    //DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 
 void HelloWorldSubscriber::SubListener::on_subscription_matched(
