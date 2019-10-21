@@ -190,7 +190,7 @@ The type should be the same.
 
 #### `for_each` function of `DynamicData`
 This function offers an easy way to iterate the `DynamicData` tree.
-The function receive a callback that will be called for each node of the tree.
+The function receive a visitor callback that will be called for each node of the tree.
 ```c++
 data.for_each([&](const DynamicData::ReadableNode& node)
 {
@@ -217,6 +217,15 @@ node.access().index() // index used for access from parent to this node
 node.access().member() // member used for access from parent to this node
 ```
 Note: `node.data()` will return a `ReadableDynamicDataRef` or a `WritableDynamicDataRef` depending of the node type.
+
+In order to break the tree iteration, the user call throw a boolean value.
+For example:
+```
+case TypeKind::FLOAT_128_TYPE: // The user app does not support 128 float values
+    throw false; // Break the tree iteration
+```
+The boolean exception value will be returned by `for_each` function call.
+If the visitor callback implementation does not call an exception, `for_each` function will return `true`.
 
 ## Performance
 The `DynamicData` instance only uses the minimal allocations needed to store the data.

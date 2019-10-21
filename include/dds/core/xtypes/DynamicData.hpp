@@ -133,13 +133,18 @@ public:
         const Instanceable::InstanceNode& internal_;
     };
 
-    void for_each(std::function<void(const ReadableNode& node)> visitor) const
+    bool for_each(std::function<void(const ReadableNode& node)> visitor) const
     {
         Instanceable::InstanceNode root(type_, instance_);
-        type_.for_each_instance(root, [&](const Instanceable::InstanceNode& instance_node)
+        try
         {
-            visitor(ReadableNode(instance_node));
-        });
+            type_.for_each_instance(root, [&](const Instanceable::InstanceNode& instance_node)
+            {
+                visitor(ReadableNode(instance_node));
+            });
+            return true;
+        }
+        catch(bool value) { return value; }
     }
 
 protected:
@@ -245,9 +250,9 @@ public:
         return *this;
     }
 
-    void for_each(std::function<void(const ReadableNode& node)> visitor) const
+    bool for_each(std::function<void(const ReadableNode& node)> visitor) const
     {
-        ReadableDynamicDataRef::for_each(visitor);
+        return ReadableDynamicDataRef::for_each(visitor);
     }
 
     class WritableNode : public ReadableNode
@@ -257,13 +262,18 @@ public:
         WritableDynamicDataRef data() const { return ReadableNode::data(); }
     };
 
-    void for_each(std::function<void(const WritableNode& node)> visitor)
+    bool for_each(std::function<void(const WritableNode& node)> visitor)
     {
         Instanceable::InstanceNode root(type_, instance_);
-        type_.for_each_instance(root, [&](const Instanceable::InstanceNode& instance_node)
+        try
         {
-            visitor(WritableNode(instance_node));
-        });
+            type_.for_each_instance(root, [&](const Instanceable::InstanceNode& instance_node)
+            {
+                visitor(WritableNode(instance_node));
+            });
+            return true;
+        }
+        catch(bool value) { return value; }
     }
 
 protected:
