@@ -98,7 +98,7 @@ Note: once a `DynamicType` is added to an struct, a copy is performed (excepts f
 This allow to modify the `DynamicType`s without side effects, and facilitate the memory management by the user.
 
 #### `is_compatible` function of `DynamicType`
-Any `DynamicType` can be tested with another `DynamicType` to check its compatibility.
+Any `DynamicType` can be compared with another `DynamicType` to check its compatibility.
 ```c++
 TypeConsistency consistency = tested_type.is_compatible(other_type);
 ```
@@ -185,7 +185,7 @@ You will obtain a `ReadableDynamicDataRef` or a `WritableDynamicDataRef` dependi
 calling from a `const DynamicData` or from a `DynamicData` itself.
 
 #### `==` function of `DynamicData`
-A DynamicData can be test with another one.
+A DynamicData can be compared in depth with another one.
 The type should be the same.
 
 #### `for_each` function of `DynamicData`

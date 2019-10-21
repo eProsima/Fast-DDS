@@ -109,7 +109,10 @@ public:
         {
             if(other_it != other_struct.member_map().end())
             {
-                it.second.type().copy_instance_from_type(target + it.second.offset(), source + it.second.offset(), other);
+                it.second.type().copy_instance_from_type(
+                        target + it.second.offset(),
+                        source + other_it->second.offset(),
+                        other_it->second.type());
             }
             else
             {
