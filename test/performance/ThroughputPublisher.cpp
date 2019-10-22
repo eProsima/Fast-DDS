@@ -509,17 +509,6 @@ bool ThroughputPublisher::test(
 
     mp_datapub = Domain::createPublisher(mp_par, pubAttr, &m_DataPubListener);
 
-    t_end_ = std::chrono::steady_clock::now();
-
-    std::chrono::duration<double, std::micro> timewait_us(0);
-    std::chrono::duration<double, std::micro> test_time_us = std::chrono::seconds(test_time);
-    uint32_t samples = 0;
-    size_t aux;
-    ThroughputCommandType command;
-    SampleInfo_t info;
-    command.m_command = TEST_STARTS;
-    mp_commandpub->write((void*)&command);
-
     std::unique_lock<std::mutex> data_disc_lock(dataMutex_);
     data_disc_cond_.wait(data_disc_lock, [&]()
     {
@@ -527,9 +516,36 @@ bool ThroughputPublisher::test(
     });
     data_disc_lock.unlock();
 
-    t_start_ = std::chrono::steady_clock::now();
-    while (std::chrono::duration<double, std::micro>(t_end_ - t_start_) < test_time_us)
+    // Declare test time variables
+    std::chrono::duration<double, std::micro> timewait_us(0);
+    std::chrono::duration<double, std::nano> test_time_ns = std::chrono::seconds(test_time);
+    std::chrono::duration<double, std::nano> recovery_duration_ns = std::chrono::milliseconds(recovery_time_ms);
+    std::chrono::steady_clock::time_point batch_start;
+
+    // Send a TEST_STARTS and sleep for a while to give the subscriber time to set up
+    uint32_t samples = 0;
+    size_t aux;
+    ThroughputCommandType command;
+    SampleInfo_t info;
+    command.m_command = TEST_STARTS;
+    mp_commandpub->write((void*)&command);
+
+    // If the subscriber does not acknowledge the TEST_STARTS in time, we consider something went wrong.
+    std::chrono::steady_clock::time_point data_disc_start = std::chrono::steady_clock::now();
+    if (!mp_commandpub->wait_for_all_acked(eprosima::fastrtps::Time_t(20, 0)))
     {
+        std::cout << "Something went wrong: The subscriber has not acknowledged the TEST_STARTS command." << std::endl;
+        return false;
+    }
+    timewait_us += std::chrono::duration<double, std::micro>(std::chrono::steady_clock::now() - data_disc_start);
+
+    // Send batches until test_time_ns is reached
+    t_start_ = std::chrono::steady_clock::now();
+    while ((t_end_ - t_start_) < test_time_ns)
+    {
+        // Get start time
+        batch_start = std::chrono::steady_clock::now();
+        // Send a batch of size demand
         for (uint32_t sample = 0; sample < demand; sample++)
         {
             if (dynamic_data)
@@ -543,10 +559,20 @@ bool ThroughputPublisher::test(
                 mp_datapub->write((void*)throughput);
             }
         }
+        // Get end time
         t_end_ = std::chrono::steady_clock::now();
+        // Add the number of sent samples
         samples += demand;
-        std::this_thread::sleep_for(std::chrono::milliseconds(recovery_time_ms));
-        timewait_us += t_overhead_;
+
+        /*
+            If the batch took less than the recovery time, sleep for the difference recovery_duration - batch_duration.
+            Else, go ahead with the next batch without time to recover.
+            The previous is achieved with a call to sleep_for(). If the duration specified for sleep_for is negative,
+            all implementations we know about return without setting the thread to sleep.
+        */
+        std::this_thread::sleep_for(recovery_duration_ns - (t_end_ - batch_start));
+
+        timewait_us += t_overhead_ * 2; // We access the clock twice per batch.
     }
     command.m_command = TEST_ENDS;
 

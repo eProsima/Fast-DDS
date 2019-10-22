@@ -52,17 +52,23 @@ class ThroughputSubscriber
 {
 public:
 
-    ThroughputSubscriber(bool reliable, uint32_t pid, bool hostname,
+    ThroughputSubscriber(
+        bool reliable,
+        uint32_t pid,
+        bool hostname,
         const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
         const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-        const std::string& sXMLConfigFile, bool dynamic_types, int forced_domain);
+        const std::string& sXMLConfigFile,
+        bool dynamic_types,
+        int forced_domain);
     virtual ~ThroughputSubscriber();
     void processMessage();
     eprosima::fastrtps::Participant* mp_par;
     eprosima::fastrtps::Subscriber* mp_datasub;
     eprosima::fastrtps::Publisher* mp_commandpubli;
     eprosima::fastrtps::Subscriber* mp_commandsub;
-    std::chrono::steady_clock::time_point t_start_, t_end_;
+    std::chrono::steady_clock::time_point t_start_;
+    std::chrono::steady_clock::time_point t_end_;
     std::chrono::duration<double, std::micro> t_overhead_;
     std::mutex mutex_;
     uint32_t disc_count_;
