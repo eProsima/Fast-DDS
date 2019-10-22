@@ -54,7 +54,7 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 struct Arg : public option::Arg
 {
 
-    static void printError(const char* msg1, const option::Option& opt, const char* msg2)
+    static void print_error(const char* msg1, const option::Option& opt, const char* msg2)
     {
         fprintf(stderr, "%s", msg1);
         fwrite(opt.name, opt.namelen, 1, stderr);
@@ -65,7 +65,7 @@ struct Arg : public option::Arg
     {
         if (msg)
         {
-            printError("Unknown option '", option, "'\n");
+            print_error("Unknown option '", option, "'\n");
         }
         return option::ARG_ILLEGAL;
     }
@@ -79,7 +79,7 @@ struct Arg : public option::Arg
 
         if (msg)
         {
-            printError("Option '", option, "' requires an argument\n");
+            print_error("Option '", option, "' requires an argument\n");
         }
         return option::ARG_ILLEGAL;
     }
@@ -97,7 +97,7 @@ struct Arg : public option::Arg
 
         if (msg)
         {
-            printError("Option '", option, "' requires a numeric argument\n");
+            print_error("Option '", option, "' requires a numeric argument\n");
         }
         return option::ARG_ILLEGAL;
     }
@@ -110,7 +110,7 @@ struct Arg : public option::Arg
         }
         if (msg)
         {
-            printError("Option '", option, "' requires a numeric argument\n");
+            print_error("Option '", option, "' requires a numeric argument\n");
         }
         return option::ARG_ILLEGAL;
     }
@@ -137,27 +137,27 @@ enum  optionIndex {
 };
 
 const option::Descriptor usage[] = {
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "Usage: ThroughputTest <publisher|subscriber>\n\nGeneral options:" },
-    { HELP,    0,"h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
-    { RELIABILITY,0,"r","reliability",      Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
-    { SEED,0,"","seed",                     Arg::Numeric,   "  \t--seed=<num>  \tSeed to calculate domain and topic, to isolate test." },
-    { HOSTNAME,0,"","hostname",             Arg::None,      "\t--hostname \tAppend hostname to the topic." },
-    { XML_FILE, 0, "", "xml",               Arg::String,    "\t--xml \tXML Configuration file." },
-    { DYNAMIC_TYPES, 0, "", "dynamic_types",Arg::None,      "\t--dynamic_types \tUse dynamic types." },
-    { FORCED_DOMAIN, 0, "", "domain",       Arg::Numeric,   "\t--domain \tSet the domain to connect." },
+    { UNKNOWN_OPT,   0, "",  "",              Arg::None,     "Usage: ThroughputTest <publisher|subscriber>\n\nGeneral options:" },
+    { HELP,          0, "h", "help",          Arg::None,     "  -h         --help                 Produce help message." },
+    { RELIABILITY,   0, "r", "reliability",   Arg::Required, "  -r <arg>,  --reliability=<arg>    Set reliability (\"reliable\"/\"besteffort\")."},
+    { SEED,          0, "",  "seed",          Arg::Numeric,  "             --seed=<num>           Seed to calculate domain and topic, to isolate test." },
+    { HOSTNAME,      0, "",  "hostname",      Arg::None,     "             --hostname             Append hostname to the topic." },
+    { XML_FILE,      0, "",  "xml",           Arg::String,   "             --xml                  XML Configuration file." },
+    { DYNAMIC_TYPES, 0, "",  "dynamic_types", Arg::None,     "             --dynamic_types        Use dynamic types." },
+    { FORCED_DOMAIN, 0, "",  "domain",        Arg::Numeric,  "             --domain               Set the domain to connect." },
 #if HAVE_SECURITY
-    { USE_SECURITY, 0, "", "security",      Arg::Required,  "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
-    { CERTS_PATH, 0, "", "certs",           Arg::Required,  "  --certs <arg>  \tPath where located certificates." },
+    { USE_SECURITY,  0, "",  "security",      Arg::Required, "             --security <arg>       Echo mode (\"true\"/\"false\")." },
+    { CERTS_PATH,    0, "",  "certs",         Arg::Required, "             --certs <arg>          Path where located certificates." },
 #endif
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nPublisher options:"},
-    { TIME, 0,"t","time",                   Arg::Numeric,   "  -t <num>, \t--time=<num>  \tTime of the test in seconds." },
-    { RECOVERY_TIME, 0,"","recovery_time",  Arg::Numeric,   "  \t--recovery_time=<num>  \tHow long to sleep after writing a demand in milliseconds." },
-    { DEMAND, 0,"d","demand",               Arg::Numeric,   "  -d <num>, \t--demand=<num>  \tNumber of sample sent in block." },
-    { MSG_SIZE, 0,"s","msg_size",           Arg::Numeric,   "  -s <num>, \t--msg_size=<num>  \tSize of the message." },
-    { FILE_R,0,"f","file",                  Arg::Required,  "  -f <arg>, \t--file=<arg> \tFile to read the payload demands from." },
-    { EXPORT_CSV,0,"","export_csv",         Arg::None,      "\t--export_csv \tFlag to export a CVS file." },
-    { EXPORT_PREFIX,0,"","export_prefix",   Arg::String,    "\t--export_prefix \tFile prefix for the CSV file." },
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nNote:\nIf no demand or msg_size is provided the .csv file is used.\n"},
+    { UNKNOWN_OPT,   0, "",  "",              Arg::None,     "\nPublisher options:"},
+    { TIME,          0, "t", "time",          Arg::Numeric,  "  -t <num>,  --time=<num>           Time of the test in seconds." },
+    { RECOVERY_TIME, 0, "",  "recovery_time", Arg::Numeric,  "             --recovery_time=<num>  If a demand takes shorter to send than <recovery_time>, sleep the rest" },
+    { DEMAND,        0, "d", "demand",        Arg::Numeric,  "  -d <num>,  --demand=<num>         Number of samples sent in block." },
+    { MSG_SIZE,      0, "s", "msg_size",      Arg::Numeric,  "  -s <num>,  --msg_size=<num>       Size of the message." },
+    { FILE_R,        0, "f", "file",          Arg::Required, "  -f <arg>,  --file=<arg>           File to read the payload demands from." },
+    { EXPORT_CSV,    0, "",  "export_csv",    Arg::None,     "             --export_csv           Flag to export a CVS file." },
+    { EXPORT_PREFIX, 0, "",  "export_prefix", Arg::String,   "             --export_prefix        File prefix for the CSV file." },
+    { UNKNOWN_OPT,   0, "",   "",             Arg::None,     "\nNote:\nIf no demand or msg_size is provided the .csv file is used.\n"},
     { 0, 0, 0, 0, 0, 0 }
 };
 
@@ -183,7 +183,8 @@ int main(int argc, char** argv)
 #endif
 
     bool pub_sub = false;
-    uint32_t test_time_sec = 5, recovery_time_ms = 5;
+    uint32_t test_time_sec = 5;
+    uint32_t recovery_time_ms = 5;
     int demand = 0;
     int msg_size = 0;
     bool reliable = false;
@@ -192,7 +193,7 @@ int main(int argc, char** argv)
     bool export_csv = false;
     std::string export_prefix = "";
     std::string file_name = "";
-    std::string sXMLConfigFile = "";
+    std::string xml_config_file = "";
     bool dynamic_types = false;
     int forced_domain = -1;
 #if HAVE_SECURITY
@@ -312,7 +313,7 @@ int main(int argc, char** argv)
             case XML_FILE:
                 if (opt.arg != nullptr)
                 {
-                    sXMLConfigFile = opt.arg;
+                    xml_config_file = opt.arg;
                 }
                 else
                 {
@@ -357,8 +358,10 @@ int main(int argc, char** argv)
         }
     }
 
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-        pub_property_policy, sub_property_policy;
+    PropertyPolicy pub_part_property_policy;
+    PropertyPolicy sub_part_property_policy;
+    PropertyPolicy pub_property_policy;
+    PropertyPolicy sub_property_policy;
 
 #if HAVE_SECURITY
     if (use_security)
@@ -369,56 +372,101 @@ int main(int argc, char** argv)
             return -1;
         }
 
-        sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+        sub_part_property_policy.properties().emplace_back(Property(
+            "dds.sec.auth.plugin",
             "builtin.PKI-DH"));
-        sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+        sub_part_property_policy.properties().emplace_back(Property(
+            "dds.sec.auth.builtin.PKI-DH.identity_ca",
             "file://" + certs_path + "/maincacert.pem"));
-        sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+        sub_part_property_policy.properties().emplace_back(Property(
+            "dds.sec.auth.builtin.PKI-DH.identity_certificate",
             "file://" + certs_path + "/mainsubcert.pem"));
-        sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+        sub_part_property_policy.properties().emplace_back(Property(
+            "dds.sec.auth.builtin.PKI-DH.private_key",
             "file://" + certs_path + "/mainsubkey.pem"));
-        sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+        sub_part_property_policy.properties().emplace_back(Property(
+            "dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
-        sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-        sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-        sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+        sub_part_property_policy.properties().emplace_back(
+            "rtps.participant.rtps_protection_kind",
+            "ENCRYPT");
+        sub_property_policy.properties().emplace_back(
+            "rtps.endpoint.submessage_protection_kind",
+            "ENCRYPT");
+        sub_property_policy.properties().emplace_back(
+            "rtps.endpoint.payload_protection_kind",
+            "ENCRYPT");
 
-        pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+        pub_part_property_policy.properties().emplace_back(Property(
+            "dds.sec.auth.plugin",
             "builtin.PKI-DH"));
-        pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+        pub_part_property_policy.properties().emplace_back(Property(
+            "dds.sec.auth.builtin.PKI-DH.identity_ca",
             "file://" + certs_path + "/maincacert.pem"));
-        pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+        pub_part_property_policy.properties().emplace_back(Property(
+            "dds.sec.auth.builtin.PKI-DH.identity_certificate",
             "file://" + certs_path + "/mainpubcert.pem"));
-        pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+        pub_part_property_policy.properties().emplace_back(Property(
+            "dds.sec.auth.builtin.PKI-DH.private_key",
             "file://" + certs_path + "/mainpubkey.pem"));
-        pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+        pub_part_property_policy.properties().emplace_back(Property(
+            "dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC"));
-        pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-        pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-        pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+        pub_part_property_policy.properties().emplace_back(
+            "rtps.participant.rtps_protection_kind",
+            "ENCRYPT");
+        pub_property_policy.properties().emplace_back(
+            "rtps.endpoint.submessage_protection_kind",
+            "ENCRYPT");
+        pub_property_policy.properties().emplace_back(
+            "rtps.endpoint.payload_protection_kind",
+            "ENCRYPT");
     }
 #endif
 
     std::cout << "Starting Throughput Test" << std::endl;
 
     // Load an XML file with predefined profiles for publisher and subscriber
-    if (sXMLConfigFile.length() > 0)
+    if (xml_config_file.length() > 0)
     {
-        xmlparser::XMLProfileManager::loadXMLFile(sXMLConfigFile);
+        xmlparser::XMLProfileManager::loadXMLFile(xml_config_file);
     }
 
     if (pub_sub)
     {
-        ThroughputPublisher tpub(reliable, seed, hostname, export_csv, export_prefix, pub_part_property_policy,
-            pub_property_policy, sXMLConfigFile, file_name, dynamic_types, forced_domain);
-        tpub.run(test_time_sec, recovery_time_ms, demand, msg_size);
+        ThroughputPublisher test_publisher(
+            reliable,
+            seed,
+            hostname,
+            export_csv,
+            export_prefix,
+            pub_part_property_policy,
+            pub_property_policy,
+            xml_config_file,
+            file_name,
+            dynamic_types,
+            forced_domain);
+
+        test_publisher.run(
+            test_time_sec,
+            recovery_time_ms,
+            demand,
+            msg_size);
     }
     else
     {
-        ThroughputSubscriber tsub(reliable, seed, hostname, sub_part_property_policy, sub_property_policy, sXMLConfigFile, dynamic_types, forced_domain);
-        tsub.run();
-    }
+        ThroughputSubscriber test_subscriber(
+            reliable,
+            seed,
+            hostname,
+            sub_part_property_policy,
+            sub_property_policy,
+            xml_config_file,
+            dynamic_types,
+            forced_domain);
 
+        test_subscriber.run();
+    }
     Domain::stopAll();
 
     return 0;

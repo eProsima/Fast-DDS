@@ -189,19 +189,19 @@ ThroughputPublisher::ThroughputPublisher(
 
     // Create RTPSParticipant
     std::string participant_profile_name = "participant_profile";
-    ParticipantAttributes PParam;
+    ParticipantAttributes participant_params;
 
     if (forced_domain_ >= 0)
     {
-        PParam.rtps.builtin.domainId = forced_domain_;
+        participant_params.rtps.builtin.domainId = forced_domain_;
     }
     else
     {
-        PParam.rtps.builtin.domainId = pid % 230;
+        participant_params.rtps.builtin.domainId = pid % 230;
     }
 
-    PParam.rtps.setName("Participant_publisher");
-    PParam.rtps.properties = part_property_policy;
+    participant_params.rtps.setName("Participant_publisher");
+    participant_params.rtps.properties = part_property_policy;
 
     if (xml_config_file_.length() > 0)
     {
@@ -224,7 +224,7 @@ ThroughputPublisher::ThroughputPublisher(
     }
     else
     {
-        participant_ = Domain::createParticipant(PParam);
+        participant_ = Domain::createParticipant(participant_params);
     }
 
     if (participant_ == nullptr)
@@ -234,7 +234,7 @@ ThroughputPublisher::ThroughputPublisher(
         return;
     }
 
-    //REGISTER THE COMMAND TYPE
+    // REGISTER THE DATA TYPE
     throughput_type_ = nullptr;
     Domain::registerType(
         participant_,
@@ -242,31 +242,31 @@ ThroughputPublisher::ThroughputPublisher(
 
     // Create Sending Publisher
     std::string profile_name = "publisher_profile";
-    PublisherAttributes Wparam;
-    Wparam.topic.topicDataType = "ThroughputType";
-    Wparam.topic.topicKind = NO_KEY;
-    std::ostringstream pt;
-    pt << "ThroughputTest_";
+    PublisherAttributes data_pub_attrs;
+    data_pub_attrs.topic.topicDataType = "ThroughputType";
+    data_pub_attrs.topic.topicKind = NO_KEY;
+    std::ostringstream data_topic;
+    data_topic << "ThroughputTest_";
     if (hostname)
     {
-        pt << asio::ip::host_name() << "_";
+        data_topic << asio::ip::host_name() << "_";
     }
-    pt << pid << "_UP";
-    Wparam.topic.topicName = pt.str();
+    data_topic << pid << "_UP";
+    data_pub_attrs.topic.topicName = data_topic.str();
     if (reliable)
     {
-        //RELIABLE
-        Wparam.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(100).to_duration_t();
-        Wparam.times.nackSupressionDuration = TimeConv::MilliSeconds2Time_t(0).to_duration_t();
-        Wparam.times.nackResponseDelay = TimeConv::MilliSeconds2Time_t(0).to_duration_t();
-        Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        // RELIABLE
+        data_pub_attrs.times.heartbeatPeriod = TimeConv::MilliSeconds2Time_t(100).to_duration_t();
+        data_pub_attrs.times.nackSupressionDuration = TimeConv::MilliSeconds2Time_t(0).to_duration_t();
+        data_pub_attrs.times.nackResponseDelay = TimeConv::MilliSeconds2Time_t(0).to_duration_t();
+        data_pub_attrs.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     }
     else
     {
-        //BEST EFFORT:
-        Wparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        // BEST EFFORT:
+        data_pub_attrs.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
     }
-    Wparam.properties = property_policy;
+    data_pub_attrs.properties = property_policy;
 
     if (xml_config_file_.length() > 0)
     {
@@ -280,50 +280,50 @@ ThroughputPublisher::ThroughputPublisher(
     }
     else
     {
-        pub_attrs_ = Wparam;
+        pub_attrs_ = data_pub_attrs;
     }
     data_publisher_ = nullptr;
 
     // COMMAND SUBSCRIBER
-    SubscriberAttributes Rparam;
-    Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    Rparam.topic.topicDataType = "ThroughputCommand";
-    Rparam.topic.topicKind = NO_KEY;
-    std::ostringstream sct;
-    sct << "ThroughputTest_Command_";
+    SubscriberAttributes command_subscriber_attrs;
+    command_subscriber_attrs.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    command_subscriber_attrs.topic.topicDataType = "ThroughputCommand";
+    command_subscriber_attrs.topic.topicKind = NO_KEY;
+    std::ostringstream sub_command_topic;
+    sub_command_topic << "ThroughputTest_Command_";
     if (hostname)
     {
-        sct << asio::ip::host_name() << "_";
+        sub_command_topic << asio::ip::host_name() << "_";
     }
-    sct << pid << "_SUB2PUB";
-    Rparam.topic.topicName = sct.str();
-    Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    sub_command_topic << pid << "_SUB2PUB";
+    command_subscriber_attrs.topic.topicName = sub_command_topic.str();
+    command_subscriber_attrs.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    command_subscriber_attrs.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
     command_subscriber_ = Domain::createSubscriber(
             participant_,
-            Rparam,
+            command_subscriber_attrs,
             (SubscriberListener*)&this->command_sub_listener_);
 
-    PublisherAttributes Wparam2;
-    Wparam2.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    Wparam2.topic.topicDataType = "ThroughputCommand";
-    Wparam2.topic.topicKind = NO_KEY;
-    std::ostringstream pct;
-    pct << "ThroughputTest_Command_";
+    PublisherAttributes command_publisher_attrs;
+    command_publisher_attrs.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    command_publisher_attrs.topic.topicDataType = "ThroughputCommand";
+    command_publisher_attrs.topic.topicKind = NO_KEY;
+    std::ostringstream pub_command_topic;
+    pub_command_topic << "ThroughputTest_Command_";
     if (hostname)
     {
-        pct << asio::ip::host_name() << "_";
+        pub_command_topic << asio::ip::host_name() << "_";
     }
-    pct << pid << "_PUB2SUB";
-    Wparam2.topic.topicName = pct.str();
-    Wparam2.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    Wparam2.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    Wparam2.qos.m_publishMode.kind = SYNCHRONOUS_PUBLISH_MODE;
+    pub_command_topic << pid << "_PUB2SUB";
+    command_publisher_attrs.topic.topicName = pub_command_topic.str();
+    command_publisher_attrs.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    command_publisher_attrs.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    command_publisher_attrs.qos.m_publishMode.kind = SYNCHRONOUS_PUBLISH_MODE;
 
     command_publisher_ = Domain::createPublisher(
             participant_,
-            Wparam2,
+            command_publisher_attrs,
             (PublisherListener*)&this->command_pub_listener_);
 
     // Calculate overhead
@@ -464,7 +464,7 @@ void ThroughputPublisher::run(
 
     if (export_csv_)
     {
-        std::ofstream outFile;
+        std::ofstream output_file;
         if (export_prefix_.length() == 0)
         {
             std::string str_reliable = "besteffort";
@@ -472,15 +472,15 @@ void ThroughputPublisher::run(
             {
                 str_reliable = "reliable";
             }
-            outFile.open("perf_ThroughputTest_" + std::to_string(payload_) + "B_" + str_reliable + "_all_.csv");
+            output_file.open("perf_ThroughputTest_" + std::to_string(payload_) + "B_" + str_reliable + "_all_.csv");
         }
         else
         {
-            outFile.open(export_prefix_ + std::to_string(payload_) + "_all_.csv");
+            output_file.open(export_prefix_ + std::to_string(payload_) + "_all_.csv");
         }
 
-        outFile << output_file_.str();
-        outFile.close();
+        output_file << output_file_.str();
+        output_file.close();
     }
 }
 
@@ -518,15 +518,15 @@ bool ThroughputPublisher::test(
         dynamic_data_type_ = DynamicDataFactory::get_instance()->create_data(dynamic_type_);
 
         MemberId id;
-        DynamicData *my_data = dynamic_data_type_->loan_value(dynamic_data_type_->get_member_id_at_index(1));
+        DynamicData *dynamic_data = dynamic_data_type_->loan_value(dynamic_data_type_->get_member_id_at_index(1));
         for (uint32_t i = 0; i < msg_size; ++i)
         {
-            my_data->insert_sequence_data(id);
-            my_data->set_byte_value(
+            dynamic_data->insert_sequence_data(id);
+            dynamic_data->set_byte_value(
                 0,
                 id);
         }
-        dynamic_data_type_->return_loaned_value(my_data);
+        dynamic_data_type_->return_loaned_value(dynamic_data);
     }
     else
     {
@@ -558,10 +558,10 @@ bool ThroughputPublisher::test(
     // Send a TEST_STARTS and sleep for a while to give the subscriber time to set up
     uint32_t samples = 0;
     size_t aux;
-    ThroughputCommandType command;
+    ThroughputCommandType command_sample;
     SampleInfo_t info;
-    command.m_command = TEST_STARTS;
-    command_publisher_->write((void*)&command);
+    command_sample.m_command = TEST_STARTS;
+    command_publisher_->write((void*)&command_sample);
 
     // If the subscriber does not acknowledge the TEST_STARTS in time, we consider something went wrong.
     std::chrono::steady_clock::time_point data_disc_start = std::chrono::steady_clock::now();
@@ -609,9 +609,9 @@ bool ThroughputPublisher::test(
 
         timewait_us += t_overhead_ * 2; // We access the clock twice per batch.
     }
-    command.m_command = TEST_ENDS;
+    command_sample.m_command = TEST_ENDS;
 
-    command_publisher_->write((void*)&command);
+    command_publisher_->write((void*)&command_sample);
     data_publisher_->removeAllChange();
 
     // If the subscriber does not acknowledge the TEST_ENDS in time, we consider something went wrong.
@@ -643,49 +643,49 @@ bool ThroughputPublisher::test(
 
     command_subscriber_->wait_for_unread_samples({20, 0});
     if (command_subscriber_->takeNextData(
-            (void*)&command,
+            (void*)&command_sample,
             &info))
     {
-        if (command.m_command == TEST_RESULTS)
+        if (command_sample.m_command == TEST_RESULTS)
         {
             TroughputResults result;
             result.demand = demand;
             result.payload_size = msg_size + 4 + 4;
             result.publisher.send_samples = samples;
             result.publisher.totaltime_us = std::chrono::duration<double, std::micro>(t_end_ - t_start_) - timewait_us;
-            result.subscriber.recv_samples = command.m_lastrecsample - command.m_lostsamples;
-            result.subscriber.totaltime_us = std::chrono::microseconds(command.m_totaltime) - timewait_us;
-            result.subscriber.lost_samples = command.m_lostsamples;
+            result.subscriber.recv_samples = command_sample.m_lastrecsample - command_sample.m_lostsamples;
+            result.subscriber.totaltime_us = std::chrono::microseconds(command_sample.m_totaltime) - timewait_us;
+            result.subscriber.lost_samples = command_sample.m_lostsamples;
             result.compute();
             results_.push_back(result);
 
             output_file_ << "\"" << result.subscriber.MBitssec << "\"";
             if (export_csv_)
             {
-                std::ofstream outFile;
+                std::ofstream output_file;
                 std::string str_reliable = "besteffort";
                 if (reliable_)
                 {
                     str_reliable = "reliable";
                 }
 
-                std::string fileName = "";
+                std::string filename = "";
                 if (export_prefix_.length() > 0)
                 {
-                    fileName = export_prefix_ + std::to_string(
+                    filename = export_prefix_ + std::to_string(
                         result.payload_size) + "B_" + str_reliable + "_" + std::to_string(result.demand) +
                         "demand.csv";
                 }
                 else
                 {
-                    fileName = "perf_ThroughputTest_" + std::to_string(result.payload_size) +
+                    filename = "perf_ThroughputTest_" + std::to_string(result.payload_size) +
                         "B_" + str_reliable + "_" + std::to_string(result.demand) + "demand.csv";
                 }
-                outFile.open(fileName);
-                outFile << "\"" << result.payload_size << " bytes; demand " << result.demand
+                output_file.open(filename);
+                output_file << "\"" << result.payload_size << " bytes; demand " << result.demand
                     << " (" + str_reliable + ")\"" << std::endl;
-                outFile << "\"" << result.subscriber.MBitssec << "\"";
-                outFile.close();
+                output_file << "\"" << result.subscriber.MBitssec << "\"";
+                output_file.close();
             }
 
             printResults(result);

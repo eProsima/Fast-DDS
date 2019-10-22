@@ -53,101 +53,146 @@ class ThroughputSubscriber
 public:
 
     ThroughputSubscriber(
-        bool reliable,
-        uint32_t pid,
-        bool hostname,
-        const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-        const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-        const std::string& sXMLConfigFile,
-        bool dynamic_types,
-        int forced_domain);
+            bool reliable,
+            uint32_t pid,
+            bool hostname,
+            const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
+            const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+            const std::string& xml_config_file,
+            bool dynamic_types,
+            int forced_domain);
+
     virtual ~ThroughputSubscriber();
-    void processMessage();
-    eprosima::fastrtps::Participant* mp_par;
-    eprosima::fastrtps::Subscriber* mp_datasub;
-    eprosima::fastrtps::Publisher* mp_commandpubli;
-    eprosima::fastrtps::Subscriber* mp_commandsub;
+
+    void run();
+
+private:
+    void process_message();
+
+    // Entities
+    eprosima::fastrtps::Participant* participant_;
+    eprosima::fastrtps::Subscriber* data_subscriber_;
+    eprosima::fastrtps::Publisher* command_publisher_;
+    eprosima::fastrtps::Subscriber* command_subscriber_;
+
+    // Time
     std::chrono::steady_clock::time_point t_start_;
     std::chrono::steady_clock::time_point t_end_;
     std::chrono::duration<double, std::micro> t_overhead_;
-    std::mutex mutex_;
-    uint32_t disc_count_;
-    std::condition_variable disc_cond_;
-    std::mutex dataMutex_;
-    uint32_t data_disc_count_;
-    std::condition_variable data_disc_cond_;
-    //! 0 - Continuing test, 1 - End of a test, 2 - Finish application
-    int stop_count_;
+
+    // Test synchronization
+    std::mutex command_mutex_;
+    std::mutex data_mutex_;
+    std::condition_variable command_discovery_cv_;
+    std::condition_variable data_discovery_cv_;
+    uint32_t command_discovery_count_;
+    uint32_t data_discovery_count_;
+
+    // Data and commands
+    ThroughputCommandDataType throuput_command_type_;
+    // Static Data
+    ThroughputDataType* throughput_data_type_;
+    ThroughputType* throughput_type_;
+    // Dynamic Data
+    eprosima::fastrtps::types::DynamicData* dynamic_data_type_;
+    eprosima::fastrtps::types::DynamicPubSubType dynamic_pub_sub_type_;
+    eprosima::fastrtps::types::DynamicType_ptr dynamic_type_;
+    eprosima::fastrtps::SubscriberAttributes sub_attrs_;
+
+    // Flags
+    bool dynamic_data_ = false;
+    bool ready_;
+    int stop_count_;  //! 0 - Continuing test, 1 - End of a test, 2 - Finish application
+
+    // Test configuration
+    uint32_t data_size_;
+    uint32_t demand_;
+    int forced_domain_;
+
+    // Files
+    std::string xml_config_file_;
+
+    // Data listener
     class DataSubListener : public eprosima::fastrtps::SubscriberListener
     {
     public:
 
-        DataSubListener(ThroughputSubscriber& up);
-        virtual ~DataSubListener();
-        ThroughputSubscriber& m_up;
-        void reset();
-        uint32_t lastseqnum, saved_lastseqnum;
-        uint32_t lostsamples, saved_lostsamples;
-        bool first;
-        eprosima::fastrtps::SampleInfo_t info;
-        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
-            eprosima::fastrtps::rtps::MatchingInfo& info);
-        void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-        void saveNumbers();
-        std::ofstream myfile;
-    }m_DataSubListener;
+        DataSubListener(
+                ThroughputSubscriber& throughput_subscriber);
 
+        virtual ~DataSubListener();
+
+        void onSubscriptionMatched(
+                eprosima::fastrtps::Subscriber* sub,
+                eprosima::fastrtps::rtps::MatchingInfo& info);
+
+        void onNewDataMessage(
+                eprosima::fastrtps::Subscriber* sub);
+
+        void reset();
+
+        void save_numbers();
+
+        uint32_t saved_last_seq_num_;
+        uint32_t saved_lost_samples_;
+    private:
+
+        ThroughputSubscriber& throughput_subscriber_;
+        uint32_t last_seq_num_;
+        uint32_t lost_samples_;
+        bool first_;
+        eprosima::fastrtps::SampleInfo_t info_;
+    } data_sub_listener_;
+
+    // Command listeners
     class CommandSubListener : public eprosima::fastrtps::SubscriberListener
     {
     public:
 
-        CommandSubListener(ThroughputSubscriber& up);
+
+        CommandSubListener(
+                ThroughputSubscriber& throughput_subscriber);
+
         virtual ~CommandSubListener();
-        ThroughputSubscriber& m_up;
-        ThroughputCommandType m_commandin;
-        eprosima::fastrtps::SampleInfo_t info;
-        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
-            eprosima::fastrtps::rtps::MatchingInfo& info);
-        void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-        void saveNumbers();
+
+        ThroughputSubscriber& throughput_subscriber_;
+        ThroughputCommandType command_type_;
+        eprosima::fastrtps::SampleInfo_t info_;
+
+        void onSubscriptionMatched(
+                eprosima::fastrtps::Subscriber* sub,
+                eprosima::fastrtps::rtps::MatchingInfo& info);
+
+        void onNewDataMessage(
+                eprosima::fastrtps::Subscriber* sub);
+
+        void save_numbers();
 
     private:
 
-        CommandSubListener& operator=(const CommandSubListener&);
-    }m_CommandSubListener;
+        CommandSubListener& operator=(
+            const CommandSubListener&);
+    } command_sub_listener_;
 
     class CommandPubListener : public eprosima::fastrtps::PublisherListener
     {
     public:
 
-        CommandPubListener(ThroughputSubscriber& up);
+        CommandPubListener(
+                ThroughputSubscriber& throughput_subscriber);
+
         virtual ~CommandPubListener();
-        ThroughputSubscriber& m_up;
-        void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
-            eprosima::fastrtps::rtps::MatchingInfo& info);
+
+        ThroughputSubscriber& throughput_subscriber_;
+
+        void onPublicationMatched(
+                eprosima::fastrtps::Publisher* pub,
+                eprosima::fastrtps::rtps::MatchingInfo& info);
 
     private:
 
-        CommandPubListener& operator=(const CommandPubListener&);
-    }m_CommandPubListener;
-
-    bool ready;
-    uint32_t m_datasize;
-    uint32_t m_demand;
-    void run();
-    ThroughputCommandDataType throuputcommand_t;
-    std::string m_sXMLConfigFile;
-    bool dynamic_data = false;
-    int m_forced_domain;
-
-    // Static Data
-    ThroughputDataType* throughput_t;
-    ThroughputType* throughputin;
-    // Dynamic Data
-    eprosima::fastrtps::types::DynamicData* m_DynData;
-    eprosima::fastrtps::types::DynamicPubSubType m_DynType;
-    eprosima::fastrtps::types::DynamicType_ptr m_pDynType;
-    eprosima::fastrtps::SubscriberAttributes subAttr;
+        CommandPubListener& operator=(
+            const CommandPubListener&);
+    } command_pub_listener_;
 };
-
 #endif /* THROUGHPUTSUBSCRIBER_H_ */

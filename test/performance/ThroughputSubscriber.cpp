@@ -39,13 +39,14 @@ using namespace eprosima::fastrtps::types;
 // *******************************************************************************************
 // ************************************ DATA SUB LISTENER ************************************
 // *******************************************************************************************
-ThroughputSubscriber::DataSubListener::DataSubListener(ThroughputSubscriber& up)
-    : m_up(up)
-    , lastseqnum(0)
-    , saved_lastseqnum(0)
-    , lostsamples(0)
-    , saved_lostsamples(0)
-    , first(true)
+ThroughputSubscriber::DataSubListener::DataSubListener(
+        ThroughputSubscriber& throughput_subscriber)
+    : saved_last_seq_num_(0)
+    , saved_lost_samples_(0)
+    , throughput_subscriber_(throughput_subscriber)
+    , last_seq_num_(0)
+    , lost_samples_(0)
+    , first_(true)
 {
 }
 
@@ -55,45 +56,46 @@ ThroughputSubscriber::DataSubListener::~DataSubListener()
 
 void ThroughputSubscriber::DataSubListener::reset()
 {
-    lastseqnum = 0;
-    first = true;
-    lostsamples=0;
+    last_seq_num_ = 0;
+    first_ = true;
+    lost_samples_=0;
 }
 
 void ThroughputSubscriber::DataSubListener::onSubscriptionMatched(
         Subscriber* /*sub*/,
         MatchingInfo& match_info)
 {
-    std::unique_lock<std::mutex> lock(m_up.dataMutex_);
-
+    std::unique_lock<std::mutex> lock(throughput_subscriber_.data_mutex_);
     if (match_info.status == MATCHED_MATCHING)
     {
         std::cout << C_RED << "DATA Sub Matched" << C_DEF << std::endl;
-        ++m_up.data_disc_count_;
+        ++throughput_subscriber_.data_discovery_count_;
     }
     else
     {
         std::cout << C_RED << "DATA SUBSCRIBER MATCHING REMOVAL" << C_DEF << std::endl;
-        --m_up.data_disc_count_;
+        --throughput_subscriber_.data_discovery_count_;
     }
-
     lock.unlock();
-    m_up.data_disc_cond_.notify_one();
+    throughput_subscriber_.data_discovery_cv_.notify_one();
 }
 
-void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscriber)
+void ThroughputSubscriber::DataSubListener::onNewDataMessage(
+        Subscriber* subscriber)
 {
-    if (m_up.dynamic_data)
+    if (throughput_subscriber_.dynamic_data_)
     {
-        while (subscriber->takeNextData((void*)m_up.m_DynData, &info))
+        while (subscriber->takeNextData(
+            (void*)throughput_subscriber_.dynamic_data_type_,
+            &info_))
         {
-            if (info.sampleKind == ALIVE)
+            if (info_.sampleKind == ALIVE)
             {
-                if ((lastseqnum + 1) < m_up.m_DynData->get_uint32_value(0))
+                if ((last_seq_num_ + 1) < throughput_subscriber_.dynamic_data_type_->get_uint32_value(0))
                 {
-                    lostsamples += m_up.m_DynData->get_uint32_value(0) - lastseqnum - 1;
+                    lost_samples_ += throughput_subscriber_.dynamic_data_type_->get_uint32_value(0) - last_seq_num_ - 1;
                 }
-                lastseqnum = m_up.m_DynData->get_uint32_value(0);
+                last_seq_num_ = throughput_subscriber_.dynamic_data_type_->get_uint32_value(0);
             }
             else
             {
@@ -103,17 +105,19 @@ void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscri
     }
     else
     {
-        if (m_up.throughputin != nullptr)
+        if (throughput_subscriber_.throughput_type_ != nullptr)
         {
-            while (subscriber->takeNextData((void*)m_up.throughputin, &info))
+            while (subscriber->takeNextData(
+                (void*)throughput_subscriber_.throughput_type_,
+                &info_))
             {
-                if (info.sampleKind == ALIVE)
+                if (info_.sampleKind == ALIVE)
                 {
-                    if ((lastseqnum + 1) < m_up.throughputin->seqnum)
+                    if ((last_seq_num_ + 1) < throughput_subscriber_.throughput_type_->seqnum)
                     {
-                        lostsamples += m_up.throughputin->seqnum - lastseqnum - 1;
+                        lost_samples_ += throughput_subscriber_.throughput_type_->seqnum - last_seq_num_ - 1;
                     }
-                    lastseqnum = m_up.throughputin->seqnum;
+                    last_seq_num_ = throughput_subscriber_.throughput_type_->seqnum;
                 }
                 else
                 {
@@ -128,17 +132,18 @@ void ThroughputSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscri
     }
 }
 
-void ThroughputSubscriber::DataSubListener::saveNumbers()
+void ThroughputSubscriber::DataSubListener::save_numbers()
 {
-    saved_lastseqnum = lastseqnum;
-    saved_lostsamples = lostsamples;
+    saved_last_seq_num_ = last_seq_num_;
+    saved_lost_samples_ = lost_samples_;
 }
 
 // *******************************************************************************************
 // *********************************** COMMAND SUB LISTENER **********************************
 // *******************************************************************************************
-ThroughputSubscriber::CommandSubListener::CommandSubListener(ThroughputSubscriber& up)
-    :m_up(up)
+ThroughputSubscriber::CommandSubListener::CommandSubListener(
+        ThroughputSubscriber& throughput_subscriber)
+    :throughput_subscriber_(throughput_subscriber)
 {
 }
 
@@ -147,34 +152,36 @@ ThroughputSubscriber::CommandSubListener::~CommandSubListener()
 }
 
 void ThroughputSubscriber::CommandSubListener::onSubscriptionMatched(
-    Subscriber* /*sub*/,
-    MatchingInfo& match_info)
+        Subscriber* /*sub*/,
+        MatchingInfo& match_info)
 {
-    std::unique_lock<std::mutex> lock(m_up.mutex_);
+    std::unique_lock<std::mutex> lock(throughput_subscriber_.command_mutex_);
     if (match_info.status == MATCHED_MATCHING)
     {
         std::cout << C_RED << "COMMAND Sub Matched" << C_DEF << std::endl;
-        ++m_up.disc_count_;
+        ++throughput_subscriber_.command_discovery_count_;
     }
     else
     {
         std::cout << C_RED << "COMMAND SUBSCRIBER MATCHING REMOVAL" << C_DEF << std::endl;
-        --m_up.disc_count_;
+        --throughput_subscriber_.command_discovery_count_;
     }
 
     lock.unlock();
-    m_up.disc_cond_.notify_one();
+    throughput_subscriber_.command_discovery_cv_.notify_one();
 }
 
-void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber*)
+void ThroughputSubscriber::CommandSubListener::onNewDataMessage(
+    Subscriber*)
 {
 }
 
 // *******************************************************************************************
 // *********************************** COMMAND PUB LISTENER **********************************
 // *******************************************************************************************
-ThroughputSubscriber::CommandPubListener::CommandPubListener(ThroughputSubscriber& up)
-    :m_up(up)
+ThroughputSubscriber::CommandPubListener::CommandPubListener(
+        ThroughputSubscriber& throughput_subscriber)
+    :throughput_subscriber_(throughput_subscriber)
 {
 }
 
@@ -186,21 +193,19 @@ void ThroughputSubscriber::CommandPubListener::onPublicationMatched(
         Publisher* /*pub*/,
         MatchingInfo& info)
 {
-    std::unique_lock<std::mutex> lock(m_up.mutex_);
-
+    std::unique_lock<std::mutex> lock(throughput_subscriber_.command_mutex_);
     if (info.status == MATCHED_MATCHING)
     {
         std::cout << C_RED << "COMMAND Pub Matched" << C_DEF << std::endl;
-        ++m_up.disc_count_;
+        ++throughput_subscriber_.command_discovery_count_;
     }
     else
     {
         std::cout << C_RED << "COMMAND PUBLISHER MATCHING REMOVAL" << C_DEF << std::endl;
-        --m_up.disc_count_;
+        --throughput_subscriber_.command_discovery_count_;
     }
-
     lock.unlock();
-    m_up.disc_cond_.notify_one();
+    throughput_subscriber_.command_discovery_cv_.notify_one();
 }
 
 // *******************************************************************************************
@@ -218,26 +223,26 @@ ThroughputSubscriber::ThroughputSubscriber(
         bool hostname,
         const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
         const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-        const std::string& sXMLConfigFile,
+        const std::string& xml_config_file,
         bool dynamic_types,
         int forced_domain)
-    : disc_count_(0)
-    , data_disc_count_(0)
+    : command_discovery_count_(0)
+    , data_discovery_count_(0)
+    , throughput_type_(nullptr)
+    , dynamic_data_(dynamic_types)
+    , ready_(true)
     , stop_count_(0)
+    , data_size_(0)
+    , demand_(0)
+    , forced_domain_(forced_domain)
+    , xml_config_file_(xml_config_file)
 #pragma warning(disable:4355)
-    , m_DataSubListener(*this)
-    , m_CommandSubListener(*this)
-    , m_CommandPubListener(*this)
-    , ready(true)
-    , m_datasize(0)
-    , m_demand(0)
-    , m_sXMLConfigFile(sXMLConfigFile)
-    , dynamic_data(dynamic_types)
-    , m_forced_domain(forced_domain)
-    , throughputin(nullptr)
+    , data_sub_listener_(*this)
+    , command_sub_listener_(*this)
+    , command_pub_listener_(*this)
 {
     // Dummy type registration
-    if (dynamic_data)
+    if (dynamic_data_)
     {
         // Create basic builders
         DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
@@ -252,138 +257,147 @@ ThroughputSubscriber::ThroughputSubscriber(
             "data",
             DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
                 DynamicTypeBuilderFactory::get_instance()->create_byte_type(),
-                LENGTH_UNLIMITED
-            ));
+                LENGTH_UNLIMITED));
         struct_type_builder->set_name("ThroughputType");
-
-        m_pDynType = struct_type_builder->build();
-        m_DynType.SetDynamicType(m_pDynType);
+        dynamic_type_ = struct_type_builder->build();
+        dynamic_pub_sub_type_.SetDynamicType(dynamic_type_);
     }
 
     // Create RTPSParticipant
     std::string participant_profile_name = "participant_profile";
-    ParticipantAttributes PParam;
-    if (m_forced_domain >= 0)
+    ParticipantAttributes participant_attrs;
+    if (forced_domain_ >= 0)
     {
-        PParam.rtps.builtin.domainId = m_forced_domain;
+        participant_attrs.rtps.builtin.domainId = forced_domain_;
     }
     else
     {
-        PParam.rtps.builtin.domainId = pid % 230;
+        participant_attrs.rtps.builtin.domainId = pid % 230;
     }
-    PParam.rtps.setName("Participant_subscriber");
-    PParam.rtps.properties = part_property_policy;
+    participant_attrs.rtps.setName("Participant_subscriber");
+    participant_attrs.rtps.properties = part_property_policy;
 
-    if (m_sXMLConfigFile.length() > 0)
+    if (xml_config_file_.length() > 0)
     {
-        if (m_forced_domain >= 0)
+        if (forced_domain_ >= 0)
         {
-            ParticipantAttributes participant_att;
             if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
-                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
-                    participant_att))
+                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(
+                    participant_profile_name,
+                    participant_attrs))
             {
-                participant_att.rtps.builtin.domainId = m_forced_domain;
-                mp_par = Domain::createParticipant(participant_att);
+                participant_attrs.rtps.builtin.domainId = forced_domain_;
+                participant_ = Domain::createParticipant(participant_attrs);
             }
         }
         else
         {
-            mp_par = Domain::createParticipant(participant_profile_name);
+            participant_ = Domain::createParticipant(participant_profile_name);
         }
     }
     else
     {
-        mp_par = Domain::createParticipant(PParam);
+        participant_ = Domain::createParticipant(participant_attrs);
     }
 
-    if (mp_par == nullptr)
+    if (participant_ == nullptr)
     {
         std::cout << "ERROR creating participant" << std::endl;
-        ready = false;
+        ready_ = false;
         return;
     }
 
-    //REGISTER THE COMMAND TYPE
-    throughput_t = nullptr;
-    Domain::registerType(mp_par, (TopicDataType*)&throuputcommand_t);
+    // REGISTER THE DATA TYPE
+    throughput_data_type_ = nullptr;
+    Domain::registerType(
+        participant_,
+        (TopicDataType*)&throuput_command_type_);
 
     std::string profile_name = "subscriber_profile";
-    SubscriberAttributes Sparam;
-    Sparam.topic.topicDataType = "ThroughputType";
-    Sparam.topic.topicKind = NO_KEY;
-    std::ostringstream st;
-    st << "ThroughputTest_";
+    SubscriberAttributes data_subscriber_attrs;
+    data_subscriber_attrs.topic.topicDataType = "ThroughputType";
+    data_subscriber_attrs.topic.topicKind = NO_KEY;
+    std::ostringstream data_topic;
+    data_topic << "ThroughputTest_";
     if (hostname)
     {
-        st << asio::ip::host_name() << "_";
+        data_topic << asio::ip::host_name() << "_";
     }
-    st << pid << "_UP";
-    Sparam.topic.topicName = st.str();
+    data_topic << pid << "_UP";
+    data_subscriber_attrs.topic.topicName = data_topic.str();
     if (reliable)
     {
-        //RELIABLE
-        Sparam.times.heartbeatResponseDelay = TimeConv::MilliSeconds2Time_t(0).to_duration_t();
-        Sparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        // RELIABLE
+        data_subscriber_attrs.times.heartbeatResponseDelay = TimeConv::MilliSeconds2Time_t(0).to_duration_t();
+        data_subscriber_attrs.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     }
     else
     {
-        //BEST EFFORT
-        Sparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        // BEST EFFORT
+        data_subscriber_attrs.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
     }
-    Sparam.properties = property_policy;
+    data_subscriber_attrs.properties = property_policy;
 
-    if (m_sXMLConfigFile.length() > 0)
+    if (xml_config_file_.length() > 0)
     {
         if (xmlparser::XMLP_ret::XML_ERROR
-                == xmlparser::XMLProfileManager::fillSubscriberAttributes(profile_name, subAttr))
+                == xmlparser::XMLProfileManager::fillSubscriberAttributes(
+                    profile_name,
+                    sub_attrs_))
         {
             std::cout << "Cannot read subscriber profile " << profile_name << std::endl;
         }
     }
     else
     {
-        subAttr = Sparam;
+        sub_attrs_ = data_subscriber_attrs;
     }
-    mp_datasub = nullptr;
+    data_subscriber_ = nullptr;
 
-    //COMMAND
-    PublisherAttributes Wparam;
-    Wparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    Wparam.topic.topicDataType = "ThroughputCommand";
-    Wparam.topic.topicKind = NO_KEY;
-    std::ostringstream pct;
-    pct << "ThroughputTest_Command_";
+    // COMMAND
+    PublisherAttributes command_publisher_attrs;
+    command_publisher_attrs.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    command_publisher_attrs.topic.topicDataType = "ThroughputCommand";
+    command_publisher_attrs.topic.topicKind = NO_KEY;
+    std::ostringstream pub_command_topic;
+    pub_command_topic << "ThroughputTest_Command_";
     if (hostname)
     {
-        pct << asio::ip::host_name() << "_";
+        pub_command_topic << asio::ip::host_name() << "_";
     }
-    pct << pid << "_SUB2PUB";
-    Wparam.topic.topicName = pct.str();
-    Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    Wparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    Wparam.qos.m_publishMode.kind = SYNCHRONOUS_PUBLISH_MODE;
+    pub_command_topic << pid << "_SUB2PUB";
+    command_publisher_attrs.topic.topicName = pub_command_topic.str();
+    command_publisher_attrs.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    command_publisher_attrs.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    command_publisher_attrs.qos.m_publishMode.kind = SYNCHRONOUS_PUBLISH_MODE;
 
-    mp_commandpubli = Domain::createPublisher(mp_par, Wparam, (PublisherListener*)&this->m_CommandPubListener);
+    command_publisher_ = Domain::createPublisher(
+        participant_,
+        command_publisher_attrs,
+        (PublisherListener*)&this->command_pub_listener_);
 
-    SubscriberAttributes Rparam;
-    Rparam.topic.topicDataType = "ThroughputCommand";
-    Rparam.topic.topicKind = NO_KEY;
-    Rparam.topic.topicName = "ThroughputCommandP2S";
-    std::ostringstream sct;
-    sct << "ThroughputTest_Command_";
+    SubscriberAttributes command_subscriber_attrs;
+    command_subscriber_attrs.topic.topicDataType = "ThroughputCommand";
+    command_subscriber_attrs.topic.topicKind = NO_KEY;
+    command_subscriber_attrs.topic.topicName = "ThroughputCommandP2S";
+    std::ostringstream sub_command_topic;
+    sub_command_topic << "ThroughputTest_Command_";
     if (hostname)
     {
-        sct << asio::ip::host_name() << "_";
+        sub_command_topic << asio::ip::host_name() << "_";
     }
-    sct << pid << "_PUB2SUB";
-    Rparam.topic.topicName = sct.str();
-    Rparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    Rparam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    Rparam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    sub_command_topic << pid << "_PUB2SUB";
+    command_subscriber_attrs.topic.topicName = sub_command_topic.str();
+    command_subscriber_attrs.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    command_subscriber_attrs.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    command_subscriber_attrs.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 
-    mp_commandsub = Domain::createSubscriber(mp_par, Rparam, (SubscriberListener*)&this->m_CommandSubListener);
+    command_subscriber_ = Domain::createSubscriber(
+        participant_,
+        command_subscriber_attrs,
+        (SubscriberListener*)&this->command_sub_listener_);
 
+    // Calculate overhead
     t_start_ = std::chrono::steady_clock::now();
     for (int i = 0; i < 1000; ++i)
     {
@@ -392,21 +406,23 @@ ThroughputSubscriber::ThroughputSubscriber(
     t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
     std::cout << "Overhead " << t_overhead_.count() << std::endl;
 
-    if (mp_commandsub == nullptr || mp_commandpubli == nullptr)
+    if (command_subscriber_ == nullptr || command_publisher_ == nullptr)
     {
-        ready = false;
+        ready_ = false;
     }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
 
-void ThroughputSubscriber::processMessage()
+void ThroughputSubscriber::process_message()
 {
-    if(mp_commandsub->wait_for_unread_samples({100, 0}))
+    if(command_subscriber_->wait_for_unread_samples({100, 0}))
     {
-        if (mp_commandsub->takeNextData((void*)&m_CommandSubListener.m_commandin, &m_CommandSubListener.info))
+        if (command_subscriber_->takeNextData(
+            (void*)&command_sub_listener_.command_type_,
+            &command_sub_listener_.info_))
         {
-            switch (m_CommandSubListener.m_commandin.m_command)
+            switch (command_sub_listener_.command_type_.m_command)
             {
                 case (DEFAULT):
                 {
@@ -420,10 +436,10 @@ void ThroughputSubscriber::processMessage()
                 {
                     std::cout << "-----------------------------------------------------------------------" << std::endl;
                     std::cout << "Command: READY_TO_START" << std::endl;
-                    m_datasize = m_CommandSubListener.m_commandin.m_size;
-                    m_demand = m_CommandSubListener.m_commandin.m_demand;
+                    data_size_ = command_sub_listener_.command_type_.m_size;
+                    demand_ = command_sub_listener_.command_type_.m_demand;
 
-                    if (dynamic_data)
+                    if (dynamic_data_)
                     {
                         // Create basic builders
                         DynamicTypeBuilder_ptr struct_type_builder(
@@ -439,39 +455,46 @@ void ThroughputSubscriber::processMessage()
                             "data",
                             DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
                                 DynamicTypeBuilderFactory::get_instance()->create_byte_type(),
-                                m_datasize));
+                                data_size_));
 
                         struct_type_builder->set_name("ThroughputType");
-                        m_pDynType = struct_type_builder->build();
-                        m_DynType.CleanDynamicType();
-                        m_DynType.SetDynamicType(m_pDynType);
+                        dynamic_type_ = struct_type_builder->build();
+                        dynamic_pub_sub_type_.CleanDynamicType();
+                        dynamic_pub_sub_type_.SetDynamicType(dynamic_type_);
 
-                        Domain::registerType(mp_par, &m_DynType);
+                        Domain::registerType(
+                            participant_,
+                            &dynamic_pub_sub_type_);
 
-                        m_DynData = DynamicDataFactory::get_instance()->create_data(m_pDynType);
+                        dynamic_data_type_ = DynamicDataFactory::get_instance()->create_data(dynamic_type_);
                     }
                     else
                     {
-                        delete(throughput_t);
-                        delete(throughputin);
+                        delete(throughput_data_type_);
+                        delete(throughput_type_);
 
-                        throughput_t = new ThroughputDataType(m_datasize);
-                        Domain::registerType(mp_par, throughput_t);
-                        throughputin = new ThroughputType((uint16_t)m_datasize);
+                        throughput_data_type_ = new ThroughputDataType(data_size_);
+                        Domain::registerType(
+                            participant_,
+                            throughput_data_type_);
+                        throughput_type_ = new ThroughputType((uint16_t)data_size_);
                     }
 
-                    mp_datasub = Domain::createSubscriber(mp_par, subAttr, &m_DataSubListener);
+                    data_subscriber_ = Domain::createSubscriber(
+                        participant_,
+                        sub_attrs_,
+                        &data_sub_listener_);
 
-                    ThroughputCommandType command(BEGIN);
+                    ThroughputCommandType command_sample(BEGIN);
                     std::this_thread::sleep_for(std::chrono::milliseconds(50));
-                    m_DataSubListener.reset();
-                    mp_commandpubli->write(&command);
+                    data_sub_listener_.reset();
+                    command_publisher_->write(&command_sample);
 
                     std::cout << "Waiting for data discovery" << std::endl;
-                    std::unique_lock<std::mutex> data_disc_lock(dataMutex_);
-                    data_disc_cond_.wait(data_disc_lock, [&]()
+                    std::unique_lock<std::mutex> data_disc_lock(data_mutex_);
+                    data_discovery_cv_.wait(data_disc_lock, [&]()
                     {
-                        return data_disc_count_ > 0;
+                        return data_discovery_count_ > 0;
                     });
                     data_disc_lock.unlock();
                     std::cout << "Discovery data complete" << std::endl;
@@ -487,26 +510,26 @@ void ThroughputSubscriber::processMessage()
                 {
                     t_end_ = std::chrono::steady_clock::now();
                     std::cout << "Command: TEST_ENDS" << std::endl;
-                    m_DataSubListener.saveNumbers();
-                    std::unique_lock<std::mutex> lock(mutex_);
+                    data_sub_listener_.save_numbers();
+                    std::unique_lock<std::mutex> lock(command_mutex_);
                     stop_count_ = 1;
                     lock.unlock();
-                    if (dynamic_data)
+                    if (dynamic_data_)
                     {
                         DynamicTypeBuilderFactory::delete_instance();
-                        DynamicDataFactory::get_instance()->delete_data(m_DynData);
+                        DynamicDataFactory::get_instance()->delete_data(dynamic_data_type_);
                     }
                     else
                     {
-                        delete(throughputin);
-                        throughputin = nullptr;
+                        delete(throughput_type_);
+                        throughput_type_ = nullptr;
                     }
-                    subAttr = mp_datasub->getAttributes();
+                    sub_attrs_ = data_subscriber_->getAttributes();
                     break;
                 }
                 case (ALL_STOPS):
                 {
-                    std::unique_lock<std::mutex> lock(mutex_);
+                    std::unique_lock<std::mutex> lock(command_mutex_);
                     stop_count_ = 2;
                     lock.unlock();
                     std::cout << "Command: ALL_STOPS" << std::endl;
@@ -522,81 +545,84 @@ void ThroughputSubscriber::processMessage()
 
 void ThroughputSubscriber::run()
 {
-    if (!ready)
+    if (!ready_)
     {
         return;
     }
     std::cout << "Waiting for command discovery" << std::endl;
     {
-        std::unique_lock<std::mutex> lock(mutex_);
-        disc_cond_.wait(lock, [&](){
-            return disc_count_ >= 2;
+        std::unique_lock<std::mutex> lock(command_mutex_);
+        command_discovery_cv_.wait(lock, [&]()
+        {
+            return command_discovery_count_ >= 2;
         });
     }
     std::cout << "Discovery command complete" << std::endl;
 
     do
     {
-        processMessage();
+        process_message();
 
         if (stop_count_ == 1)
         {
             std::cout << "Waiting for data matching removal" << std::endl;
-            std::unique_lock<std::mutex> data_disc_lock(dataMutex_);
-            data_disc_cond_.wait(data_disc_lock, [&]()
+            std::unique_lock<std::mutex> data_disc_lock(data_mutex_);
+            data_discovery_cv_.wait(data_disc_lock, [&]()
             {
-                return data_disc_count_ == 0;
+                return data_discovery_count_ == 0;
             });
             data_disc_lock.unlock();
 
             std::cout << "Waiting clean state" << std::endl;
-            while (!mp_datasub->isInCleanState())
+            while (!data_subscriber_->isInCleanState())
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
             }
 
             std::cout << "Sending results" << std::endl;
-            ThroughputCommandType comm;
-            comm.m_command = TEST_RESULTS;
-            comm.m_demand = m_demand;
-            comm.m_size = m_datasize + 4 + 4;
-            comm.m_lastrecsample = m_DataSubListener.saved_lastseqnum;
-            comm.m_lostsamples = m_DataSubListener.saved_lostsamples;
+            ThroughputCommandType command_sample;
+            command_sample.m_command = TEST_RESULTS;
+            command_sample.m_demand = demand_;
+            command_sample.m_size = data_size_ + 4 + 4;
+            command_sample.m_lastrecsample = data_sub_listener_.saved_last_seq_num_;
+            command_sample.m_lostsamples = data_sub_listener_.saved_lost_samples_;
 
-            auto total_time_count =
+            double total_time_count =
                 (std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count();
 
             if (total_time_count < std::numeric_limits<uint64_t>::min())
             {
-                comm.m_totaltime = std::numeric_limits<uint64_t>::min();
+                command_sample.m_totaltime = std::numeric_limits<uint64_t>::min();
             }
             else if (total_time_count > std::numeric_limits<uint64_t>::max())
             {
-                comm.m_totaltime = std::numeric_limits<uint64_t>::max();
+                command_sample.m_totaltime = std::numeric_limits<uint64_t>::max();
             }
             else
             {
-                comm.m_totaltime = static_cast<uint64_t>(total_time_count);
+                command_sample.m_totaltime = static_cast<uint64_t>(total_time_count);
             }
 
-            std::cout << "Last Received Sample: " << comm.m_lastrecsample << std::endl;
-            std::cout << "Lost Samples: " << comm.m_lostsamples << std::endl;
+            std::cout << "Last Received Sample: " << command_sample.m_lastrecsample << std::endl;
+            std::cout << "Lost Samples: " << command_sample.m_lostsamples << std::endl;
             std::cout << "Samples per second: "
-                << (double)(comm.m_lastrecsample - comm.m_lostsamples) * 1000000 / comm.m_totaltime
+                << (double)(command_sample.m_lastrecsample - command_sample.m_lostsamples) * 1000000 / command_sample.m_totaltime
                 << std::endl;
-            std::cout << "Test of size " << comm.m_size << " and demand " << comm.m_demand << " ends." << std::endl;
-            mp_commandpubli->write(&comm);
+            std::cout << "Test of size " << command_sample.m_size << " and demand " << command_sample.m_demand << " ends." << std::endl;
+            command_publisher_->write(&command_sample);
 
             stop_count_ = 0;
 
-            Domain::removeSubscriber(mp_datasub);
-            mp_datasub = nullptr;
-            Domain::unregisterType(mp_par, "ThroughputType");
+            Domain::removeSubscriber(data_subscriber_);
+            data_subscriber_ = nullptr;
+            Domain::unregisterType(
+                participant_,
+                "ThroughputType");
 
-            if (!dynamic_data)
+            if (!dynamic_data_)
             {
-                delete throughput_t;
-                throughput_t = nullptr;
+                delete throughput_data_type_;
+                throughput_data_type_ = nullptr;
             }
             std::cout << "-----------------------------------------------------------------------" << std::endl;
         }
