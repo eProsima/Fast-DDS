@@ -410,8 +410,7 @@ int main(int argc, char** argv)
     if (pub_sub)
     {
         ThroughputPublisher tpub(reliable, seed, hostname, export_csv, export_prefix, pub_part_property_policy,
-            pub_property_policy, sXMLConfigFile, dynamic_types, forced_domain);
-        tpub.m_file_name = file_name;
+            pub_property_policy, sXMLConfigFile, file_name, dynamic_types, forced_domain);
         tpub.run(test_time_sec, recovery_time_ms, demand, msg_size);
     }
     else
