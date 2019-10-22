@@ -279,7 +279,7 @@ In this case, two allocations will be needed: one for the sequence, and a second
 
 ## Debugging DynamicData
 As a `DynamicData` is fully built at runtime, no static checks can ensure its correct behaviour.
-As an attempt to solve this, asserts have been implemented accross various methods to avoid the overload of checks in *release mode*.
+As an attempt to solve this, asserts have been placed accross various methods to avoid the overload of checks in *release mode*.
 We strongly recommend to compile in *debug mode* during developing phase: this will allow `xtypes` library to perform all possible checks.
 Following the same line of thoughts, in order to improve the performance the final product should be compiled 
 releasr *release mode*: in this case no checks will be performed.
