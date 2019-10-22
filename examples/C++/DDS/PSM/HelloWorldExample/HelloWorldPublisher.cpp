@@ -31,7 +31,6 @@ using namespace eprosima::fastdds::dds;
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)
     , publisher_(dds::core::null)
-    , type_(new HelloWorldPubSubType())
 {
 }
 
@@ -52,7 +51,13 @@ bool HelloWorldPublisher::init()
     }
 
     //REGISTER THE TYPE
-    type_.register_type(participant_.delegate().get(), type_->getName());
+    type_.register_type(participant_.delegate().get());
+
+
+    // TopicQos
+    dds::topic::qos::TopicQos topicQos
+        = participant_.default_topic_qos()
+          << dds::core::policy::Reliability::Reliable();
 
     //CREATE THE PUBLISHER
     eprosima::fastrtps::PublisherAttributes pub_att;

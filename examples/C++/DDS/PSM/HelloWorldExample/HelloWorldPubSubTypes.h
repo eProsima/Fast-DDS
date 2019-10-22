@@ -23,8 +23,9 @@
 #ifndef _HELLOWORLD_PUBSUBTYPES_H_
 #define _HELLOWORLD_PUBSUBTYPES_H_
 
-//#include <dds/topic/Topic.hpp>
-#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TopicDataType.hpp>
+
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include "HelloWorld.h"
 
@@ -32,8 +33,7 @@
  * @brief This class represents the TopicDataType of the type HelloWorld defined by the user in the IDL file.
  * @ingroup HELLOWORLD
  */
-//class HelloWorldPubSubType : public dds::topic::Topic<HelloWorld> {
-class HelloWorldPubSubType : public eprosima::fastdds::dds::Topic {
+class HelloWorldPubSubType : public  eprosima::fastdds::dds::TopicDataType {
 public:
         typedef HelloWorld type;
 
@@ -47,6 +47,25 @@ public:
     void deleteData(void * data);
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+};
+
+class HelloWorldTypeSupport : public eprosima::fastdds::dds::TypeSupport
+{
+private:
+    using eprosima::fastdds::dds::TypeSupport::TypeSupport;
+
+public:
+    HelloWorldTypeSupport()
+        : eprosima::fastdds::dds::TypeSupport(new HelloWorldPubSubType())
+    {}
+
+    eprosima::fastrtps::types::ReturnCode_t register_type(
+            eprosima::fastdds::dds::DomainParticipant* participant)
+    {
+        return eprosima::fastdds::dds::TypeSupport::register_type(participant, get_type_name());
+    }
+
+    virtual ~HelloWorldTypeSupport() {}
 };
 
 #endif // _HelloWorld_PUBSUBTYPE_H_

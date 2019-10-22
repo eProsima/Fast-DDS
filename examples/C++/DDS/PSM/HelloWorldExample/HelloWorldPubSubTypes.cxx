@@ -23,6 +23,9 @@
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
 
+#include <fastrtps/rtps/common/SerializedPayload.h>
+#include <fastrtps/rtps/common/InstanceHandle.h>
+
 #include "HelloWorldPubSubTypes.h"
 
 using namespace eprosima::fastrtps;

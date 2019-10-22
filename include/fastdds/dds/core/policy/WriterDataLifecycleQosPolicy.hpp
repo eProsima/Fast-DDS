@@ -31,6 +31,11 @@ public:
         : autodispose_unregistered_instances(true)
     {}
 
+    WriterDataLifecycleQosPolicy(
+            bool autodispose)
+        : autodispose_unregistered_instances(autodispose)
+    {}
+
     virtual RTPS_DllAPI ~WriterDataLifecycleQosPolicy() {}
 
     bool operator ==(

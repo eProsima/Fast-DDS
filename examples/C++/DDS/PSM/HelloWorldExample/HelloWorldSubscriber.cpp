@@ -30,7 +30,6 @@ using namespace eprosima::fastdds::dds;
 HelloWorldSubscriber::HelloWorldSubscriber()
     : participant_(nullptr)
     , subscriber_(dds::core::null)
-    , type_(new HelloWorldPubSubType())
 {
 }
 
@@ -50,7 +49,7 @@ bool HelloWorldSubscriber::init()
 
     //REGISTER THE TYPE
     //type_.register_type(participant_, type_->getName());
-    type_.register_type(participant_.delegate().get(), type_->getName());
+    type_.register_type(participant_.delegate().get());
 
     //CREATE THE SUBSCRIBER
     //eprosima::fastrtps::SubscriberAttributes sub_att;

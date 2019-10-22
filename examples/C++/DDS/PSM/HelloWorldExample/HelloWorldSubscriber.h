@@ -53,7 +53,7 @@ private:
 
     eprosima::fastdds::dds::DataReader* reader_;
 
-    eprosima::fastdds::dds::TypeSupport type_;
+    HelloWorldTypeSupport type_;
 
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {

@@ -170,7 +170,10 @@ public:
      */
     virtual void on_data_on_readers(
             //Subscriber& sub) = 0;
-            Subscriber& sub) {};
+            Subscriber& sub)
+    {
+        (void)sub;
+    }
 };
 
 
