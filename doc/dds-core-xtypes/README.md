@@ -143,7 +143,7 @@ DynamicData data2(data1); //copy initialization
 DynamicData data3(data1, type2); //compatible copy initialization
 ```
 
-The last line creates a compatible `DynamicData(type2)` with the values of `data1` that can be accessed being a `type2`.
+The last line creates a compatible `DynamicData` with the values of `data1` that can be accessed being a `type2`.
 To archieve this, `type2` must be compatible with `type1`.
 This compatibility can be checked with `is_compatible` function.
 
