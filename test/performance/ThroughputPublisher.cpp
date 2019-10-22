@@ -170,16 +170,9 @@ ThroughputPublisher::ThroughputPublisher(
         DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
 
         // Add members to the struct.
-        struct_type_builder->add_member(
-            0,
-            "seqnum",
-            DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-        struct_type_builder->add_member(
-            1,
-            "data",
-            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(),
-                LENGTH_UNLIMITED));
+        struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
+        struct_type_builder->add_member(1, "data", DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), LENGTH_UNLIMITED));
         struct_type_builder->set_name("ThroughputType");
         dynamic_type_ = struct_type_builder->build();
         dynamic_pub_sub_type_.SetDynamicType(dynamic_type_);
@@ -209,8 +202,7 @@ ThroughputPublisher::ThroughputPublisher(
         {
             ParticipantAttributes participant_att;
             if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
-                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(
-                    participant_profile_name,
+                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
                     participant_att))
             {
                 participant_att.rtps.builtin.domainId = forced_domain_;
@@ -236,9 +228,7 @@ ThroughputPublisher::ThroughputPublisher(
 
     // REGISTER THE DATA TYPE
     throughput_type_ = nullptr;
-    Domain::registerType(
-        participant_,
-        (TopicDataType*)&throuput_command_type_);
+    Domain::registerType(participant_, (TopicDataType*)&throuput_command_type_);
 
     // Create Sending Publisher
     std::string profile_name = "publisher_profile";
@@ -271,9 +261,7 @@ ThroughputPublisher::ThroughputPublisher(
     if (xml_config_file_.length() > 0)
     {
         if (xmlparser::XMLP_ret::XML_ERROR
-                == xmlparser::XMLProfileManager::fillPublisherAttributes(
-                    profile_name,
-                    pub_attrs_))
+                == xmlparser::XMLProfileManager::fillPublisherAttributes(profile_name, pub_attrs_))
         {
             std::cout << "Cannot read publisher profile " << profile_name << std::endl;
         }
@@ -300,10 +288,8 @@ ThroughputPublisher::ThroughputPublisher(
     command_subscriber_attrs.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     command_subscriber_attrs.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
-    command_subscriber_ = Domain::createSubscriber(
-            participant_,
-            command_subscriber_attrs,
-            (SubscriberListener*)&this->command_sub_listener_);
+    command_subscriber_ = Domain::createSubscriber(participant_, command_subscriber_attrs,
+        (SubscriberListener*)&this->command_sub_listener_);
 
     PublisherAttributes command_publisher_attrs;
     command_publisher_attrs.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
@@ -321,10 +307,8 @@ ThroughputPublisher::ThroughputPublisher(
     command_publisher_attrs.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     command_publisher_attrs.qos.m_publishMode.kind = SYNCHRONOUS_PUBLISH_MODE;
 
-    command_publisher_ = Domain::createPublisher(
-            participant_,
-            command_publisher_attrs,
-            (PublisherListener*)&this->command_pub_listener_);
+    command_publisher_ = Domain::createPublisher(participant_, command_publisher_attrs,
+        (PublisherListener*)&this->command_pub_listener_);
 
     // Calculate overhead
     t_start_ = std::chrono::steady_clock::now();
@@ -398,9 +382,7 @@ void ThroughputPublisher::run(
                 if (pub_attrs_.topic.historyQos.depth < 0 ||
                     static_cast<uint32_t>(pub_attrs_.topic.historyQos.depth) < command.m_demand)
                 {
-                    logWarning(
-                        THROUGHPUTPUBLISHER,
-                        "Setting history depth to " << command.m_demand);
+                    logWarning(THROUGHPUTPUBLISHER, "Setting history depth to " << command.m_demand);
                     pub_attrs_.topic.resourceLimitsQos.max_samples = command.m_demand;
                     pub_attrs_.topic.historyQos.depth = command.m_demand;
                 }
@@ -412,9 +394,7 @@ void ThroughputPublisher::run(
                 if (pub_attrs_.topic.resourceLimitsQos.max_samples < 0 ||
                     static_cast<uint32_t>(pub_attrs_.topic.resourceLimitsQos.max_samples) < command.m_demand)
                 {
-                    logWarning(
-                        THROUGHPUTPUBLISHER,
-                        "Setting resource limit max samples to " << command.m_demand);
+                    logWarning(THROUGHPUTPUBLISHER, "Setting resource limit max samples to " << command.m_demand);
                     pub_attrs_.topic.resourceLimitsQos.max_samples = command.m_demand;
                 }
             }
@@ -424,15 +404,10 @@ void ThroughputPublisher::run(
             command_publisher_->write((void*)&command);
             command.m_command = DEFAULT;
             command_subscriber_->wait_for_unread_samples({20, 0});
-            command_subscriber_->takeNextData(
-                (void*)&command,
-                &info);
+            command_subscriber_->takeNextData((void*)&command, &info);
             if (command.m_command == BEGIN)
             {
-                if (!test(
-                        test_time,
-                        recovery_time_ms,
-                        *dit, sit->first))
+                if (!test(test_time, recovery_time_ms, *dit, sit->first))
                 {
                     command.m_command = ALL_STOPS;
                     command_publisher_->write((void*)&command);
@@ -496,25 +471,15 @@ bool ThroughputPublisher::test(
         DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
 
         // Add members to the struct.
-        struct_type_builder->add_member(
-            0,
-            "seqnum",
-            DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-        struct_type_builder->add_member(
-            1,
-            "data",
-            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(),
-                msg_size
-            ));
+        struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
+        struct_type_builder->add_member(1, "data", DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), msg_size));
         struct_type_builder->set_name("ThroughputType");
         dynamic_type_ = struct_type_builder->build();
         dynamic_pub_sub_type_.CleanDynamicType();
         dynamic_pub_sub_type_.SetDynamicType(dynamic_type_);
 
-        Domain::registerType(
-            participant_,
-            &dynamic_pub_sub_type_);
+        Domain::registerType(participant_, &dynamic_pub_sub_type_);
         dynamic_data_type_ = DynamicDataFactory::get_instance()->create_data(dynamic_type_);
 
         MemberId id;
@@ -522,25 +487,18 @@ bool ThroughputPublisher::test(
         for (uint32_t i = 0; i < msg_size; ++i)
         {
             dynamic_data->insert_sequence_data(id);
-            dynamic_data->set_byte_value(
-                0,
-                id);
+            dynamic_data->set_byte_value(0, id);
         }
         dynamic_data_type_->return_loaned_value(dynamic_data);
     }
     else
     {
         throughput_data_type_ = new ThroughputDataType(msg_size);
-        Domain::registerType(
-            participant_,
-            throughput_data_type_);
+        Domain::registerType(participant_, throughput_data_type_);
         throughput_type_ = new ThroughputType((uint16_t)msg_size);
     }
 
-    data_publisher_ = Domain::createPublisher(
-        participant_,
-        pub_attrs_,
-        &data_pub_listener_);
+    data_publisher_ = Domain::createPublisher(participant_, pub_attrs_, &data_pub_listener_);
 
     std::unique_lock<std::mutex> data_disc_lock(data_mutex_);
     data_discovery_cv_.wait(data_disc_lock, [&]()
@@ -583,9 +541,7 @@ bool ThroughputPublisher::test(
         {
             if (dynamic_data_)
             {
-                dynamic_data_type_->set_uint32_value(
-                    dynamic_data_type_->get_uint32_value(0) + 1,
-                    0);
+                dynamic_data_type_->set_uint32_value(dynamic_data_type_->get_uint32_value(0) + 1, 0);
                 data_publisher_->write((void*)dynamic_data_type_);
             }
             else
@@ -633,18 +589,14 @@ bool ThroughputPublisher::test(
     pub_attrs_ = data_publisher_->getAttributes();
     Domain::removePublisher(data_publisher_);
     data_publisher_ = nullptr;
-    Domain::unregisterType(
-        participant_,
-        "ThroughputType");
+    Domain::unregisterType(participant_, "ThroughputType");
     if (!dynamic_data_)
     {
         delete throughput_data_type_;
     }
 
     command_subscriber_->wait_for_unread_samples({20, 0});
-    if (command_subscriber_->takeNextData(
-            (void*)&command_sample,
-            &info))
+    if (command_subscriber_->takeNextData((void*)&command_sample, &info))
     {
         if (command_sample.m_command == TEST_RESULTS)
         {
@@ -672,14 +624,13 @@ bool ThroughputPublisher::test(
                 std::string filename = "";
                 if (export_prefix_.length() > 0)
                 {
-                    filename = export_prefix_ + std::to_string(
-                        result.payload_size) + "B_" + str_reliable + "_" + std::to_string(result.demand) +
-                        "demand.csv";
+                    filename = export_prefix_ + std::to_string(result.payload_size) + "B_" + str_reliable + "_" +
+                        std::to_string(result.demand) + "demand.csv";
                 }
                 else
                 {
-                    filename = "perf_ThroughputTest_" + std::to_string(result.payload_size) +
-                        "B_" + str_reliable + "_" + std::to_string(result.demand) + "demand.csv";
+                    filename = "perf_ThroughputTest_" + std::to_string(result.payload_size) + "B_" + str_reliable +
+                        "_" + std::to_string(result.demand) + "demand.csv";
                 }
                 output_file.open(filename);
                 output_file << "\"" << result.payload_size << " bytes; demand " << result.demand
@@ -722,9 +673,7 @@ bool ThroughputPublisher::load_demands_payload()
     size_t end;
     bool first = true;
     bool more = true;
-    while (std::getline(
-            fi,
-            line))
+    while (std::getline(fi, line))
     {
         start = 0;
         end = line.find(DELIM);
@@ -733,9 +682,7 @@ bool ThroughputPublisher::load_demands_payload()
         more = true;
         while (more)
         {
-            std::istringstream iss(line.substr(
-                start,
-                end - start));
+            std::istringstream iss(line.substr(start, end - start));
             if (first)
             {
                 iss >> payload_;
@@ -758,9 +705,7 @@ bool ThroughputPublisher::load_demands_payload()
             if (end == std::string::npos)
             {
                 more = false;
-                std::istringstream n_iss(line.substr(
-                    start,
-                    end - start));
+                std::istringstream n_iss(line.substr(start, end - start));
                 if (n_iss >> demand)
                 {
                     demand_payload_[payload_].push_back(demand);

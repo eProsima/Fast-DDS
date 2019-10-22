@@ -434,37 +434,14 @@ int main(int argc, char** argv)
 
     if (pub_sub)
     {
-        ThroughputPublisher test_publisher(
-            reliable,
-            seed,
-            hostname,
-            export_csv,
-            export_prefix,
-            pub_part_property_policy,
-            pub_property_policy,
-            xml_config_file,
-            file_name,
-            dynamic_types,
-            forced_domain);
-
-        test_publisher.run(
-            test_time_sec,
-            recovery_time_ms,
-            demand,
-            msg_size);
+        ThroughputPublisher test_publisher(reliable, seed, hostname, export_csv, export_prefix,
+            pub_part_property_policy, pub_property_policy, xml_config_file, file_name, dynamic_types, forced_domain);
+        test_publisher.run(test_time_sec, recovery_time_ms, demand, msg_size);
     }
     else
     {
-        ThroughputSubscriber test_subscriber(
-            reliable,
-            seed,
-            hostname,
-            sub_part_property_policy,
-            sub_property_policy,
-            xml_config_file,
-            dynamic_types,
-            forced_domain);
-
+        ThroughputSubscriber test_subscriber(reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
+            xml_config_file, dynamic_types, forced_domain);
         test_subscriber.run();
     }
     Domain::stopAll();

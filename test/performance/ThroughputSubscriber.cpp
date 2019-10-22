@@ -85,9 +85,7 @@ void ThroughputSubscriber::DataSubListener::onNewDataMessage(
 {
     if (throughput_subscriber_.dynamic_data_)
     {
-        while (subscriber->takeNextData(
-            (void*)throughput_subscriber_.dynamic_data_type_,
-            &info_))
+        while (subscriber->takeNextData((void*)throughput_subscriber_.dynamic_data_type_, &info_))
         {
             if (info_.sampleKind == ALIVE)
             {
@@ -107,9 +105,7 @@ void ThroughputSubscriber::DataSubListener::onNewDataMessage(
     {
         if (throughput_subscriber_.throughput_type_ != nullptr)
         {
-            while (subscriber->takeNextData(
-                (void*)throughput_subscriber_.throughput_type_,
-                &info_))
+            while (subscriber->takeNextData((void*)throughput_subscriber_.throughput_type_, &info_))
             {
                 if (info_.sampleKind == ALIVE)
                 {
@@ -248,16 +244,9 @@ ThroughputSubscriber::ThroughputSubscriber(
         DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
 
         // Add members to the struct.
-        struct_type_builder->add_member(
-            0,
-            "seqnum",
-            DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-        struct_type_builder->add_member(
-            1,
-            "data",
-            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(),
-                LENGTH_UNLIMITED));
+        struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
+        struct_type_builder->add_member(1, "data", DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), LENGTH_UNLIMITED));
         struct_type_builder->set_name("ThroughputType");
         dynamic_type_ = struct_type_builder->build();
         dynamic_pub_sub_type_.SetDynamicType(dynamic_type_);
@@ -282,8 +271,7 @@ ThroughputSubscriber::ThroughputSubscriber(
         if (forced_domain_ >= 0)
         {
             if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
-                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(
-                    participant_profile_name,
+                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
                     participant_attrs))
             {
                 participant_attrs.rtps.builtin.domainId = forced_domain_;
@@ -309,9 +297,7 @@ ThroughputSubscriber::ThroughputSubscriber(
 
     // REGISTER THE DATA TYPE
     throughput_data_type_ = nullptr;
-    Domain::registerType(
-        participant_,
-        (TopicDataType*)&throuput_command_type_);
+    Domain::registerType(participant_, (TopicDataType*)&throuput_command_type_);
 
     std::string profile_name = "subscriber_profile";
     SubscriberAttributes data_subscriber_attrs;
@@ -341,9 +327,7 @@ ThroughputSubscriber::ThroughputSubscriber(
     if (xml_config_file_.length() > 0)
     {
         if (xmlparser::XMLP_ret::XML_ERROR
-                == xmlparser::XMLProfileManager::fillSubscriberAttributes(
-                    profile_name,
-                    sub_attrs_))
+                == xmlparser::XMLProfileManager::fillSubscriberAttributes(profile_name, sub_attrs_))
         {
             std::cout << "Cannot read subscriber profile " << profile_name << std::endl;
         }
@@ -371,9 +355,7 @@ ThroughputSubscriber::ThroughputSubscriber(
     command_publisher_attrs.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     command_publisher_attrs.qos.m_publishMode.kind = SYNCHRONOUS_PUBLISH_MODE;
 
-    command_publisher_ = Domain::createPublisher(
-        participant_,
-        command_publisher_attrs,
+    command_publisher_ = Domain::createPublisher(participant_, command_publisher_attrs,
         (PublisherListener*)&this->command_pub_listener_);
 
     SubscriberAttributes command_subscriber_attrs;
@@ -392,9 +374,7 @@ ThroughputSubscriber::ThroughputSubscriber(
     command_subscriber_attrs.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     command_subscriber_attrs.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
 
-    command_subscriber_ = Domain::createSubscriber(
-        participant_,
-        command_subscriber_attrs,
+    command_subscriber_ = Domain::createSubscriber(participant_, command_subscriber_attrs,
         (SubscriberListener*)&this->command_sub_listener_);
 
     // Calculate overhead
@@ -418,9 +398,7 @@ void ThroughputSubscriber::process_message()
 {
     if(command_subscriber_->wait_for_unread_samples({100, 0}))
     {
-        if (command_subscriber_->takeNextData(
-            (void*)&command_sub_listener_.command_type_,
-            &command_sub_listener_.info_))
+        if (command_subscriber_->takeNextData((void*)&command_sub_listener_.command_type_, &command_sub_listener_.info_))
         {
             switch (command_sub_listener_.command_type_.m_command)
             {
@@ -446,25 +424,18 @@ void ThroughputSubscriber::process_message()
                             DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
 
                         // Add members to the struct.
-                        struct_type_builder->add_member(
-                            0,
-                            "seqnum",
+                        struct_type_builder->add_member(0, "seqnum",
                             DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-                        struct_type_builder->add_member(
-                            1,
-                            "data",
+                        struct_type_builder->add_member(1, "data",
                             DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                                DynamicTypeBuilderFactory::get_instance()->create_byte_type(),
-                                data_size_));
+                                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), data_size_));
 
                         struct_type_builder->set_name("ThroughputType");
                         dynamic_type_ = struct_type_builder->build();
                         dynamic_pub_sub_type_.CleanDynamicType();
                         dynamic_pub_sub_type_.SetDynamicType(dynamic_type_);
 
-                        Domain::registerType(
-                            participant_,
-                            &dynamic_pub_sub_type_);
+                        Domain::registerType(participant_, &dynamic_pub_sub_type_);
 
                         dynamic_data_type_ = DynamicDataFactory::get_instance()->create_data(dynamic_type_);
                     }
@@ -474,16 +445,11 @@ void ThroughputSubscriber::process_message()
                         delete(throughput_type_);
 
                         throughput_data_type_ = new ThroughputDataType(data_size_);
-                        Domain::registerType(
-                            participant_,
-                            throughput_data_type_);
+                        Domain::registerType(participant_, throughput_data_type_);
                         throughput_type_ = new ThroughputType((uint16_t)data_size_);
                     }
 
-                    data_subscriber_ = Domain::createSubscriber(
-                        participant_,
-                        sub_attrs_,
-                        &data_sub_listener_);
+                    data_subscriber_ = Domain::createSubscriber(participant_, sub_attrs_, &data_sub_listener_);
 
                     ThroughputCommandType command_sample(BEGIN);
                     std::this_thread::sleep_for(std::chrono::milliseconds(50));
@@ -615,9 +581,7 @@ void ThroughputSubscriber::run()
 
             Domain::removeSubscriber(data_subscriber_);
             data_subscriber_ = nullptr;
-            Domain::unregisterType(
-                participant_,
-                "ThroughputType");
+            Domain::unregisterType(participant_, "ThroughputType");
 
             if (!dynamic_data_)
             {
