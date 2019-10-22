@@ -41,10 +41,13 @@ class HelloWorldPublisher
         bool init();
 
         //!Publish a sample
-        bool publish(bool waitForListener = true);
+        bool publish(
+                bool waitForListener = true);
 
         //!Run for number samples
-        void run(uint32_t number, uint32_t sleep);
+        void run(
+                uint32_t number,
+                uint32_t sleep);
 
     private:
 
@@ -54,26 +57,40 @@ class HelloWorldPublisher
 
         bool stop;
 
-        class PubListener:public eprosima::fastrtps::PublisherListener
+        class PubListener : public eprosima::fastrtps::PublisherListener
         {
             public:
-                PubListener():n_matched(0),firstConnected(false){};
-                ~PubListener(){};
-                void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info);
+                PubListener()
+                    : n_matched(0)
+                    , firstConnected(false)
+                {}
+
+                ~PubListener() override {}
+
+                void onPublicationMatched(
+                        eprosima::fastrtps::Publisher* pub,
+                        eprosima::fastrtps::rtps::MatchingInfo& info) override;
+
                 int n_matched;
+
                 bool firstConnected;
-        }m_listener;
+
+        } m_listener;
 
         class PartListener : public eprosima::fastrtps::ParticipantListener
         {
-            void onParticipantDiscovery(eprosima::fastrtps::Participant* participant,
+            void onParticipantDiscovery(
+                    eprosima::fastrtps::Participant* participant,
                     eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
         } m_part_list;
 
-        void runThread(uint32_t number, uint32_t sleep);
+        void runThread(
+                uint32_t number,
+                uint32_t sleep);
 
         // Dynamic Types
         eprosima::fastrtps::types::DynamicData* m_DynHello;
+
         eprosima::fastrtps::types::DynamicPubSubType m_DynType;
 };
 

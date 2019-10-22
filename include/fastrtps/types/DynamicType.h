@@ -19,6 +19,13 @@
 #include <fastrtps/types/DynamicTypePtr.h>
 
 namespace eprosima {
+
+namespace fastdds {
+namespace dds {
+class DomainParticipantImpl;
+} // namespace dds
+} // namespace fastdds
+
 namespace fastrtps {
 namespace types {
 
@@ -40,6 +47,7 @@ protected:
     friend class TypeObjectFactory;
     friend class DynamicTypeMember;
     friend class DynamicDataHelper;
+    friend class fastdds::dds::DomainParticipantImpl;
 
     DynamicType();
 

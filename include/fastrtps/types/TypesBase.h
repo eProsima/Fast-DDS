@@ -24,17 +24,25 @@
 #include <algorithm>
 #include <memory>
 
-namespace eprosima{
-namespace fastcdr{
-	class Cdr;
-}
-}
-
 namespace eprosima {
+namespace fastcdr {
+class Cdr;
+} // namespace fastcdr
 namespace fastrtps {
 namespace types {
 
 using eprosima::fastrtps::rtps::octet;
+
+using OctetSeq = std::vector<octet>;
+
+OctetSeq& operator ++(
+        OctetSeq&);
+
+OctetSeq operator ++(
+        OctetSeq&, int);
+
+size_t to_size_t(
+        const OctetSeq&);
 
 const std::string CONST_TRUE = "true";
 const std::string CONST_FALSE = "false";
@@ -165,6 +173,7 @@ const uint16_t MemberFlagMinimalMask = 0x003f;
 /*!
  * @brief This class represents the enumeration ReturnCode_t.
  */
+/*
 enum ReturnCode_t : uint32_t
 {
     RETCODE_OK = 0,
@@ -180,6 +189,72 @@ enum ReturnCode_t : uint32_t
     RETCODE_TIMEOUT = 10,
     RETCODE_NO_DATA = 11,
     RETCODE_ILLEGAL_OPERATION = 12
+};
+*/
+class ReturnCode_t;
+
+class RTPS_DllAPI ReturnCode_t
+{
+public:
+    ReturnCode_t(
+            uint32_t value)
+    {
+        value_ = value;
+    }
+
+    ReturnCode_t(
+        const ReturnCode_t& code)
+    {
+        value_ = code.value_;
+    }
+
+    explicit operator bool() = delete;
+
+    bool operator !()
+    {
+        return value_ != ReturnCode_t::RETCODE_OK.value_;
+    }
+
+    ReturnCode_t& operator =(
+            const ReturnCode_t& c)
+    {
+        value_ = c.value_;
+        return *this;
+    }
+
+    bool operator ==(
+            const ReturnCode_t& c)
+    {
+        return value_ == c.value_;
+    }
+
+    bool operator !=(
+            const ReturnCode_t& c)
+    {
+        return value_ != c.value_;
+    }
+
+    uint32_t operator ()()
+    {
+        return value_;
+    }
+
+    static const ReturnCode_t RETCODE_OK;
+    static const ReturnCode_t RETCODE_ERROR;
+    static const ReturnCode_t RETCODE_UNSUPPORTED;
+    static const ReturnCode_t RETCODE_BAD_PARAMETER;
+    static const ReturnCode_t RETCODE_PRECONDITION_NOT_MET;
+    static const ReturnCode_t RETCODE_OUT_OF_RESOURCES;
+    static const ReturnCode_t RETCODE_NOT_ENABLED;
+    static const ReturnCode_t RETCODE_IMMUTABLE_POLICY;
+    static const ReturnCode_t RETCODE_INCONSISTENT_POLICY;
+    static const ReturnCode_t RETCODE_ALREADY_DELETED;
+    static const ReturnCode_t RETCODE_TIMEOUT;
+    static const ReturnCode_t RETCODE_NO_DATA;
+    static const ReturnCode_t RETCODE_ILLEGAL_OPERATION;
+
+private:
+    uint32_t value_ = ReturnCode_t::RETCODE_OK.value_;
 };
 
 typedef uint32_t MemberId;

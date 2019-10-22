@@ -39,13 +39,13 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-bool run = true;
+static bool run = true;
 
 class ParListener : public ParticipantListener
 {
     public:
-        ParListener() {};
-        virtual ~ParListener(){};
+        ParListener() {}
+        virtual ~ParListener() override {}
 
         /**
          * This method is called when a new Participant is discovered, or a previously discovered participant changes its QOS or is removed.

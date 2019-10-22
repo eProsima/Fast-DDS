@@ -126,7 +126,7 @@ public:
     */
 };
 
-extern const DataWriterQos DATAWRITER_QOS_DEFAULT;
+//extern const DataWriterQos DATAWRITER_QOS_DEFAULT;
 
 } // namespace dds
 } // namespace fastdds

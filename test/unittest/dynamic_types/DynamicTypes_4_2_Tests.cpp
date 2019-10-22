@@ -263,7 +263,7 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
     // Serialize static <-> dynamic
 
     StructTest struct_test;
-    DynamicData_ptr dyn_data = DynamicDataFactory::get_instance()->create_data(dyn_type);
+    DynamicData_ptr dyn_data(DynamicDataFactory::get_instance()->create_data(dyn_type));
 
     DynamicPubSubType pst_dynamic(dyn_type);
     uint32_t payload_dyn_size = static_cast<uint32_t>(pst_dynamic.getSerializedSizeProvider(dyn_data.get())());
@@ -277,10 +277,10 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
     ASSERT_TRUE(pst_static.serialize(&struct_test, &st_payload));
     ASSERT_TRUE(st_payload.length == payload_size);
 
-    DynamicData_ptr dyn_data_from_dynamic = DynamicDataFactory::get_instance()->create_data(dyn_type);
+    DynamicData_ptr dyn_data_from_dynamic(DynamicDataFactory::get_instance()->create_data(dyn_type));
     ASSERT_TRUE(pst_dynamic.deserialize(&payload, dyn_data_from_dynamic.get()));
 
-    types::DynamicData_ptr dyn_data_from_static = DynamicDataFactory::get_instance()->create_data(dyn_type);
+    types::DynamicData_ptr dyn_data_from_static(DynamicDataFactory::get_instance()->create_data(dyn_type));
     ASSERT_TRUE(pst_dynamic.deserialize(&st_payload, dyn_data_from_static.get()));
 
     // DEBUG Printing payloads
@@ -348,7 +348,7 @@ TEST_F(DynamicTypes_4_2_Tests, Static_Dynamic_Values)
 
     // Dynamic deserialization from static
     DynamicPubSubType pst_dynamic(dyn_type);
-    DynamicData_ptr dyn_data = DynamicDataFactory::get_instance()->create_data(dyn_type);
+    DynamicData_ptr dyn_data(DynamicDataFactory::get_instance()->create_data(dyn_type));
     ASSERT_TRUE(pst_dynamic.deserialize(&st_payload, dyn_data.get()));
 
     // Dynamic serialization

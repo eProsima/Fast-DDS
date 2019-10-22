@@ -98,15 +98,18 @@ class StatefulReader : public RTPSReader
 
         /**
          * Processes a new DATA FRAG message.
+         *
          * @param change Pointer to the CacheChange_t.
-         * @param sampleSize Size of the complete assembled message.
-         * @param fragmentStartingNum fragment number of this particular fragment.
-         * @return true if the reader accepts messages.
+         * @param sampleSize Size of the complete, assembled message.
+         * @param fragmentStartingNum Starting number of this particular message.
+         * @param fragmentsInSubmessage Number of fragments on this particular message.
+         * @return true if the reader accepts message.
          */
         bool processDataFragMsg(
                 CacheChange_t* change,
                 uint32_t sampleSize,
-                uint32_t fragmentStartingNum) override;
+                uint32_t fragmentStartingNum,
+                uint16_t fragmentsInSubmessage) override;
 
         /**
          * Processes a new HEARTBEAT message.

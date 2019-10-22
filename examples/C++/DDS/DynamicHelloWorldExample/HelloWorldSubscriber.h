@@ -24,13 +24,9 @@
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/topic/DataReader.hpp>
 #include <fastdds/dds/topic/DataReaderListener.hpp>
-#include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/rtps/common/Types.h>
 
-#include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/DynamicTypePtr.h>
-#include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/TypeIdentifier.h>
 #include <fastrtps/types/TypeObject.h>
 
@@ -38,26 +34,38 @@
 
 #include <map>
 
-class HelloWorldSubscriber {
+class HelloWorldSubscriber
+{
 public:
     HelloWorldSubscriber();
+
     virtual ~HelloWorldSubscriber();
+
     //!Initialize the subscriber
     bool init();
+
     //!RUN the subscriber
     void run();
+
     //!Run the subscriber until number samples have been recevied.
     void run(
             uint32_t number);
 
 private:
     eprosima::fastdds::dds::DomainParticipant* mp_participant;
+
     eprosima::fastdds::dds::Subscriber* mp_subscriber;
+
     std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::DynamicType_ptr> readers_;
+
     std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::DynamicData_ptr> datas_;
+
     eprosima::fastrtps::SubscriberAttributes att_;
+
     eprosima::fastrtps::ReaderQos qos_;
+
     eprosima::fastrtps::TopicAttributes topic_;
+
 public:
     class SubListener
         : public eprosima::fastdds::dds::DataReaderListener
@@ -66,27 +74,37 @@ public:
     public:
         SubListener(
                 HelloWorldSubscriber* sub)
-            :n_matched(0)
-            ,n_samples(0)
-            ,subscriber_(sub){}
+            : n_matched(0)
+            , n_samples(0)
+            , subscriber_(sub)
+        {}
+
         ~SubListener() override {}
+
         void on_data_available(
                 eprosima::fastdds::dds::DataReader* reader) override;
+
         void on_subscription_matched(
                 eprosima::fastdds::dds::DataReader* reader,
-                const eprosima::fastdds::dds::SubscriptionMatchedStatus &info) override;
+                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
+
         void on_type_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
+                const eprosima::fastrtps::rtps::SampleIdentity& request_sample_id,
                 const eprosima::fastrtps::string_255& topic,
                 const eprosima::fastrtps::types::TypeIdentifier* identifier,
                 const eprosima::fastrtps::types::TypeObject* object,
                 eprosima::fastrtps::types::DynamicType_ptr dyn_type) override;
 
         eprosima::fastrtps::SampleInfo_t m_info;
+
         int n_matched;
+
         uint32_t n_samples;
+
         HelloWorldSubscriber* subscriber_;
-    }m_listener;
+
+    } m_listener;
 
 };
 

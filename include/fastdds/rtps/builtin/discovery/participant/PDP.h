@@ -348,6 +348,8 @@ protected:
     std::mutex temp_data_lock_;
     //!Participant data atomic access assurance
     std::recursive_mutex* mp_mutex;
+    //!To protect callbacks (ParticipantProxyData&)
+    std::mutex callback_mtx_;
 
     /**
      * Adds an entry to the collection of participant proxy information.
@@ -398,7 +400,8 @@ private:
             const string_255& topic_name,
             const string_255& type_name,
             const types::TypeIdentifier& type_id,
-            const types::TypeObject& type_obj) const;
+            const types::TypeObject& type_obj,
+            const xtypes::TypeInformation& type_info) const;
 
     /**
      * Calculates the next announcement interval

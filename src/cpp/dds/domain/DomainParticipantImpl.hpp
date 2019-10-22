@@ -61,7 +61,6 @@ class Subscriber;
 class SubscriberImpl;
 class SubscriberListener;
 
-
 /**
  * This is the implementation class of the DomainParticipant.
  * @ingroup FASTRTPS_MODULE
@@ -272,6 +271,17 @@ public:
 
     fastrtps::rtps::ResourceEvent& get_resource_event() const;
 
+    fastrtps::rtps::SampleIdentity get_type_dependencies(
+            const fastrtps::types::TypeIdentifierSeq& in) const;
+
+    fastrtps::rtps::SampleIdentity get_types(
+            const fastrtps::types::TypeIdentifierSeq& in) const;
+
+    bool register_remote_type(
+            const fastrtps::types::TypeInformation& type_information,
+            const std::string& type_name,
+            std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
+
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
 
@@ -307,6 +317,21 @@ private:
     std::map<std::string, TypeSupport> types_;
     mutable std::mutex mtx_types_;
 
+    // Mutex for requests and callbacks maps.
+    std::mutex mtx_request_cb_;
+
+    // register_remote_type parent request, type_name, callback relationship.
+    std::map<fastrtps::rtps::SampleIdentity,
+             std::pair<std::string, std::function<void(
+                                        const std::string& name,
+                                        const fastrtps::types::DynamicType_ptr)>>> register_callbacks_;
+
+    // Relationship between child and parent request
+    std::map<fastrtps::rtps::SampleIdentity, fastrtps::rtps::SampleIdentity> child_requests_;
+
+    // All parent's child requests
+    std::map<fastrtps::rtps::SampleIdentity, std::vector<fastrtps::rtps::SampleIdentity>> parent_requests_;
+
     class MyRTPSParticipantListener : public fastrtps::rtps::RTPSParticipantListener
     {
         public:
@@ -337,11 +362,23 @@ private:
                     fastrtps::rtps::WriterDiscoveryInfo&& info) override;
 
             void on_type_discovery(
-                fastrtps::rtps::RTPSParticipant* participant,
-                const fastrtps::string_255& topic,
-                const fastrtps::types::TypeIdentifier* identifier,
-                const fastrtps::types::TypeObject* object,
-                fastrtps::types::DynamicType_ptr dyn_type) override;
+                    fastrtps::rtps::RTPSParticipant* participant,
+                    const fastrtps::rtps::SampleIdentity& request_sample_id,
+                    const fastrtps::string_255& topic,
+                    const fastrtps::types::TypeIdentifier* identifier,
+                    const fastrtps::types::TypeObject* object,
+                    fastrtps::types::DynamicType_ptr dyn_type) override;
+
+            void on_type_dependencies_reply(
+                    fastrtps::rtps::RTPSParticipant* participant,
+                    const fastrtps::rtps::SampleIdentity& request_sample_id,
+                    const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies) override;
+
+            void on_type_information_received(
+                    fastrtps::rtps::RTPSParticipant* participant,
+                    const fastrtps::string_255& topic_name,
+                    const fastrtps::string_255& type_name,
+                    const fastrtps::types::TypeInformation& type_information) override;
 
             DomainParticipantImpl* participant_;
 
@@ -350,6 +387,38 @@ private:
     bool exists_entity_id(
             const fastrtps::rtps::EntityId_t& entity_id) const;
 
+    bool register_dynamic_type(
+            fastrtps::types::DynamicType_ptr dyn_type);
+
+    bool check_get_type_request(
+            const fastrtps::rtps::SampleIdentity& requestId,
+            const fastrtps::types::TypeIdentifier* identifier,
+            const fastrtps::types::TypeObject* object,
+            fastrtps::types::DynamicType_ptr dyn_type);
+
+    bool check_get_dependencies_request(
+            const fastrtps::rtps::SampleIdentity& requestId,
+            const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies);
+
+    // Always call it with the mutex already taken
+    void remove_parent_request(
+            const fastrtps::rtps::SampleIdentity& request);
+
+    // Always call it with the mutex already taken
+    void remove_child_request(
+            const fastrtps::rtps::SampleIdentity& request);
+
+    // Always call it with the mutex already taken
+    void on_child_requests_finished(
+            const fastrtps::rtps::SampleIdentity& parent);
+
+    void fill_pending_dependencies(
+            const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies,
+            fastrtps::types::TypeIdentifierSeq& pending_identifiers,
+            fastrtps::types::TypeIdentifierSeq& pending_objects) const;
+
+    std::string get_inner_type_name(
+            const fastrtps::rtps::SampleIdentity& id) const;
 };
 
 } /* namespace dds */

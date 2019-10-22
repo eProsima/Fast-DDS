@@ -21,8 +21,8 @@ LivelinessManager::LivelinessManager(
     , mutex_()
     , timer_owner_(nullptr)
     , timer_(
-            service,
-            [this](TimedEvent::EventCode code) -> bool
+        service,
+        [this](TimedEvent::EventCode code) -> bool
             {
                 if (TimedEvent::EVENT_SUCCESS == code)
                 {
@@ -31,7 +31,7 @@ LivelinessManager::LivelinessManager(
 
                 return false;
             },
-            0)
+        0)
 {
 }
 
@@ -49,7 +49,7 @@ bool LivelinessManager::add_writer(
 {
     std::unique_lock<std::mutex> lock(mutex_);
 
-    if (!manage_automatic_ && kind == AUTOMATIC_LIVELINESS_QOS)
+    if (!manage_automatic_ && kind == LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
     {
         logWarning(RTPS_WRITER, "Liveliness manager not managing automatic writers, writer not added");
         return false;
@@ -91,18 +91,18 @@ bool LivelinessManager::remove_writer(
                     if (writer.status == LivelinessData::WriterStatus::ALIVE)
                     {
                         callback_(writer.guid,
-                                  writer.kind,
-                                  writer.lease_duration,
-                                  -1,
-                                  0);
+                                writer.kind,
+                                writer.lease_duration,
+                                -1,
+                                0);
                     }
                     else if (writer.status == LivelinessData::WriterStatus::NOT_ALIVE)
                     {
                         callback_(writer.guid,
-                                  writer.kind,
-                                  writer.lease_duration,
-                                  0,
-                                  -1);
+                                writer.kind,
+                                writer.lease_duration,
+                                0,
+                                -1);
                     }
                 }
 
@@ -148,8 +148,8 @@ bool LivelinessManager::assert_liveliness(
 
     timer_.cancel_timer();
 
-    if (wit->kind == MANUAL_BY_PARTICIPANT_LIVELINESS_QOS ||
-        wit->kind == AUTOMATIC_LIVELINESS_QOS)
+    if (wit->kind == LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS ||
+            wit->kind == LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
     {
         for (LivelinessData& w: writers_)
         {
@@ -159,7 +159,7 @@ bool LivelinessManager::assert_liveliness(
             }
         }
     }
-    else if (wit->kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+    else if (wit->kind == LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS)
     {
         assert_writer_liveliness(*wit);
     }
@@ -180,11 +180,12 @@ bool LivelinessManager::assert_liveliness(
     return true;
 }
 
-bool LivelinessManager::assert_liveliness(LivelinessQosPolicyKind kind)
+bool LivelinessManager::assert_liveliness(
+        LivelinessQosPolicyKind kind)
 {
     std::unique_lock<std::mutex> lock(mutex_);
 
-    if (!manage_automatic_ && kind == AUTOMATIC_LIVELINESS_QOS)
+    if (!manage_automatic_ && kind == LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
     {
         logWarning(RTPS_WRITER, "Liveliness manager not managing automatic writers, writer not added");
         return false;
@@ -208,7 +209,9 @@ bool LivelinessManager::assert_liveliness(LivelinessQosPolicyKind kind)
     // Updates the timer owner
     if (!calculate_next())
     {
-        logError(RTPS_WRITER, "Error when restarting liveliness timer: " << writers_.size() << " writers, liveliness " << kind);
+        logError(RTPS_WRITER,
+                "Error when restarting liveliness timer: " << writers_.size() << " writers, liveliness " <<
+                kind);
         return false;
     }
 
@@ -258,10 +261,10 @@ bool LivelinessManager::timer_expired()
     if (callback_ != nullptr)
     {
         callback_(timer_owner_->guid,
-                  timer_owner_->kind,
-                  timer_owner_->lease_duration,
-                  -1,
-                  1);
+                timer_owner_->kind,
+                timer_owner_->lease_duration,
+                -1,
+                1);
     }
     timer_owner_->status = LivelinessData::WriterStatus::NOT_ALIVE;
 
@@ -273,7 +276,7 @@ bool LivelinessManager::timer_expired()
         timer_.update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
         return true;
     }
-    
+
     return false;
 }
 
@@ -281,7 +284,7 @@ bool LivelinessManager::find_writer(
         const GUID_t& guid,
         const LivelinessQosPolicyKind& kind,
         const Duration_t& lease_duration,
-        ResourceLimitedVector<LivelinessData>::iterator *wit_out)
+        ResourceLimitedVector<LivelinessData>::iterator* wit_out)
 {
     for (LivelinessDataIterator it=writers_.begin(); it!=writers_.end(); ++it)
     {
@@ -296,7 +299,8 @@ bool LivelinessManager::find_writer(
     return false;
 }
 
-bool LivelinessManager::is_any_alive(LivelinessQosPolicyKind kind)
+bool LivelinessManager::is_any_alive(
+        LivelinessQosPolicyKind kind)
 {
     std::unique_lock<std::mutex> lock(mutex_);
 
@@ -310,25 +314,26 @@ bool LivelinessManager::is_any_alive(LivelinessQosPolicyKind kind)
     return false;
 }
 
-void LivelinessManager::assert_writer_liveliness(LivelinessData& writer)
+void LivelinessManager::assert_writer_liveliness(
+        LivelinessData& writer)
 {
     if (callback_ != nullptr)
     {
         if (writer.status == LivelinessData::WriterStatus::NOT_ASSERTED)
         {
             callback_(writer.guid,
-                      writer.kind,
-                      writer.lease_duration,
-                      1,
-                      0);
+                    writer.kind,
+                    writer.lease_duration,
+                    1,
+                    0);
         }
         else if (writer.status == LivelinessData::WriterStatus::NOT_ALIVE)
         {
             callback_(writer.guid,
-                      writer.kind,
-                      writer.lease_duration,
-                      1,
-                      -1);
+                    writer.kind,
+                    writer.lease_duration,
+                    1,
+                    -1);
         }
     }
 

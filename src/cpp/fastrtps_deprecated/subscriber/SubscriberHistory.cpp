@@ -300,8 +300,8 @@ void SubscriberHistory::deserialize_change(
         info->sourceTimestamp = change->sourceTimestamp;
         info->ownershipStrength = ownership_strength;
         if (topic_att_.topicKind == WITH_KEY &&
-            change->instanceHandle == c_InstanceHandle_Unknown &&
-            change->kind == ALIVE)
+                change->instanceHandle == c_InstanceHandle_Unknown &&
+                change->kind == ALIVE)
         {
             bool is_key_protected = false;
 #if HAVE_SECURITY
@@ -327,15 +327,15 @@ bool SubscriberHistory::readNextData(
 
     std::unique_lock<RecursiveTimedMutex> lock(*mp_mutex, std::defer_lock);
 
-    if(lock.try_lock_until(max_blocking_time))
+    if (lock.try_lock_until(max_blocking_time))
     {
         CacheChange_t* change;
-        WriterProxy * wp;
+        WriterProxy* wp;
         if (mp_reader->nextUnreadCache(&change, &wp))
         {
             logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": reading " << change->sequenceNumber);
             uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
-                wp->ownership_strength() : 0;
+                    wp->ownership_strength() : 0;
             deserialize_change(change, ownership, data, info);
             return true;
         }
@@ -357,16 +357,16 @@ bool SubscriberHistory::takeNextData(
 
     std::unique_lock<RecursiveTimedMutex> lock(*mp_mutex, std::defer_lock);
 
-    if(lock.try_lock_until(max_blocking_time))
+    if (lock.try_lock_until(max_blocking_time))
     {
-        CacheChange_t* change;
-        WriterProxy * wp;
+        CacheChange_t* change = nullptr;
+        WriterProxy* wp = nullptr;
         if (mp_reader->nextUntakenCache(&change, &wp))
         {
             logInfo(SUBSCRIBER, mp_reader->getGuid().entityId << ": taking seqNum" << change->sequenceNumber <<
                     " from writer: " << change->writerGUID);
             uint32_t ownership = wp && qos_.m_ownership.kind == EXCLUSIVE_OWNERSHIP_QOS ?
-                wp->ownership_strength() : 0;
+                    wp->ownership_strength() : 0;
             deserialize_change(change, ownership, data, info);
             remove_change_sub(change);
             return true;

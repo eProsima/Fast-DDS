@@ -48,7 +48,8 @@ class FragmentedChangePitStop
          * This constructor has to be used if the ChangeInPit will be used to be stored in a container.
          * @param change Related CacheChange_t.
          */
-        ChangeInPit(CacheChange_t* change)
+        ChangeInPit(
+                CacheChange_t* change)
             : sequence_number_(change->sequenceNumber)
             , change_(change)
         {
@@ -59,13 +60,15 @@ class FragmentedChangePitStop
          * @param sequence_number SequenceNumber_t used as key.
          * @remarks Not use this constructor if the object will be stored in a container.
          */
-        ChangeInPit(const SequenceNumber_t &sequence_number)
+        ChangeInPit(
+                const SequenceNumber_t& sequence_number)
             : sequence_number_(sequence_number)
             , change_(nullptr)
         {
         }
 
-        ChangeInPit(const ChangeInPit& cip)
+        ChangeInPit(
+                const ChangeInPit& cip)
             : sequence_number_(cip.sequence_number_)
             , change_(cip.change_)
         {
@@ -73,90 +76,126 @@ class FragmentedChangePitStop
 
         CacheChange_t* getChange() const { return change_; }
 
-        bool operator==(const ChangeInPit& cip) const
+        bool operator==(
+                const ChangeInPit& cip) const
         {
             return sequence_number_ == cip.sequence_number_;
         }
 
     private:
 
-        ChangeInPit& operator=(const ChangeInPit& cip) = delete;
+        ChangeInPit& operator=(
+                const ChangeInPit& cip) = delete;
 
         const SequenceNumber_t sequence_number_;
         CacheChange_t* change_;
 
     public:
+
         /*!
          * @brief Defined the STD hash function for ChangeInPit.
          */
         struct ChangeInPitHash
         {
-            std::size_t operator()(const ChangeInPit& cip) const
+            std::size_t operator()(
+                    const ChangeInPit& cip) const
             {
-                return SequenceNumberHash{}(cip.sequence_number_);
+                return SequenceNumberHash{} (cip.sequence_number_);
             }
         };
     };
 
-    public:
+public:
 
-/*!
- * @brief Default constructor.
- * @param parent RTPSReader managing this object.
- * It is necessary the access to reserve a new CacheChange_t.
- */
-FragmentedChangePitStop(RTPSReader *parent) : parent_(parent) {}
+    /*!
+     * @brief Add received fragments to change
+     *
+     * @param change Pointer to the change being reassembled
+     * @param incoming_data Serialized payload received on the DATA_FRAG message
+     * @param fragment_starting_num First fragment number (1-based) as received on the DATA_FRAG message
+     * @param fragments_in_submessage Number of fragments as received on the DATA_FRAG message
+     *
+     * @return true if the change is fully reassembled after adding received fragments.
+     */
+    static bool add_fragments_to_change(
+            CacheChange_t* change,
+            const SerializedPayload_t& incoming_data,
+            uint32_t fragment_starting_num,
+            uint32_t fragments_in_submessage);
 
-/*!
- * @brief Process incomming fragments.
- * @param incoming_change. CacheChange_t that stores the incomming fragments.
- * @param sampleSize Total size of the sample. It was received in the DATA_FRAG submessage.
- * @param fragmentStartingNum. First fragment number in the DATA_FRAG submessage.
- * @return If a CacheChange_t is completed with new incomming fragments, this will be returned.
- * In other case nullptr is returned.
- */
-CacheChange_t* process(CacheChange_t* incoming_change, uint32_t sampleSize, uint32_t fragmentStartingNum);
+    /*!
+     * @brief Default constructor.
+     * @param parent RTPSReader managing this object.
+     * It is necessary the access to reserve a new CacheChange_t.
+     */
+    FragmentedChangePitStop(
+            RTPSReader* parent)
+        : parent_(parent) {}
 
-/*!
- * @brief Search if there is a CacheChange_t, giving SequenceNumber_t and writer GUID_t,
- * waiting to be completed because it is fragmented.
- * @param sequence_number SequenceNumber_t of the searched CacheChange_t.
- * @param writer_guid writer GUID_t of the searched CacheChange_t.
- * @return If a CacheChange_t was found, it will be returned. In other case nullptr is returned.
- */
-CacheChange_t* find(const SequenceNumber_t& sequence_number, const GUID_t& writer_guid);
+    /*!
+     * @brief Process incomming fragments.
+     * @param incoming_change. CacheChange_t that stores the incomming fragments.
+     * @param sample_size Total size of the sample. It was received in the DATA_FRAG submessage.
+     * @param fragment_starting_num. First fragment number in the DATA_FRAG submessage.
+     * @param fragments_in_submessage. Number of fragments present in the DATA_FRAG submessage.
+     * @return If a CacheChange_t is completed with new incomming fragments, this will be returned.
+     * In other case nullptr is returned.
+     */
+    CacheChange_t* process(
+            CacheChange_t* incoming_change,
+            uint32_t sample_size,
+            FragmentNumber_t fragment_starting_num,
+            uint16_t fragments_in_submessage);
 
-/*!
- * @brief Checks if there is a CacheChange_t, giving SequenceNumber_t and writer GUID_t.
- * In case there is, it will be removed.
- * @param sequence_number SequenceNumber_t of the searched CacheChange_t.
- * @param writer_guid writer GUID_t of the searched CacheChange_t.
- * @return If a CacheChange_t was found and removed, true value will be returned. In other case
- * false value is returned.
- */
-bool try_to_remove(const SequenceNumber_t& sequence_number, const GUID_t& writer_guid);
+    /*!
+     * @brief Search if there is a CacheChange_t, giving SequenceNumber_t and writer GUID_t,
+     * waiting to be completed because it is fragmented.
+     * @param sequence_number SequenceNumber_t of the searched CacheChange_t.
+     * @param writer_guid writer GUID_t of the searched CacheChange_t.
+     * @return If a CacheChange_t was found, it will be returned. In other case nullptr is returned.
+     */
+    CacheChange_t* find(
+            const SequenceNumber_t& sequence_number,
+            const GUID_t& writer_guid);
 
-/*!
- * @brief Checks if there are CacheChange_t, with writer GUID_t and a SequenceNumber_t lower than given SequenceNumber_t.
- * In case there are, they will be removed.
- * @param sequence_number SequenceNumber_t used as maximum.
- * @param writer_guid writer GUID_t of the searched CacheChange_t.
- * @return If some CacheChange_t were found and removed, true value will be returned. In other case
- * false value is returned.
- */
-bool try_to_remove_until(const SequenceNumber_t& sequence_number, const GUID_t& writer_guid);
+    /*!
+     * @brief Checks if there is a CacheChange_t, giving SequenceNumber_t and writer GUID_t.
+     * In case there is, it will be removed.
+     * @param sequence_number SequenceNumber_t of the searched CacheChange_t.
+     * @param writer_guid writer GUID_t of the searched CacheChange_t.
+     * @return If a CacheChange_t was found and removed, true value will be returned. In other case
+     * false value is returned.
+     */
+    bool try_to_remove(
+            const SequenceNumber_t& sequence_number,
+            const GUID_t& writer_guid);
+
+    /*!
+     * @brief Checks if there are CacheChange_t, with writer GUID_t and a SequenceNumber_t lower than given SequenceNumber_t.
+     * In case there are, they will be removed.
+     * @param sequence_number SequenceNumber_t used as maximum.
+     * @param writer_guid writer GUID_t of the searched CacheChange_t.
+     * @return If some CacheChange_t were found and removed, true value will be returned. In other case
+     * false value is returned.
+     */
+    bool try_to_remove_until(
+            const SequenceNumber_t& sequence_number,
+            const GUID_t& writer_guid);
 
 private:
 
-std::unordered_multiset<ChangeInPit, ChangeInPit::ChangeInPitHash> changes_;
+    std::unordered_multiset<ChangeInPit, ChangeInPit::ChangeInPitHash> changes_;
 
-RTPSReader* parent_;
+    RTPSReader* parent_;
 
-FragmentedChangePitStop(const FragmentedChangePitStop&) = delete;
+    FragmentedChangePitStop(
+            const FragmentedChangePitStop&) = delete;
 
-FragmentedChangePitStop& operator=(const FragmentedChangePitStop&) = delete;
+    FragmentedChangePitStop& operator=(
+            const FragmentedChangePitStop&) = delete;
 };
-}
+
+} // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
 

@@ -14,33 +14,17 @@
 
 /**
  * @file IncompatibleQosStatus.hpp
-*/
+ */
 
 #ifndef _FASTRTPS_INCOMPATIBLE_QOS_STATUS_HPP_
 #define _FASTRTPS_INCOMPATIBLE_QOS_STATUS_HPP_
 
-#include <cstdint>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 
 namespace eprosima {
 namespace fastrtps {
 
-//! @brief A struct storing the requested incompatible QoS status
-struct IncompatibleQosStatus
-{
-    /**
-     * Total cumulative number of times the concerned endpoint
-     * discovered another endpoint for the same Topic with a requested QoS that
-     * is incompatible with that offered by the concerned endpoint.
-     */
-    uint32_t total_count = 0;
-
-    /**
-     * The change in total_count since the last time the listener was called or the status was read.
-     */
-    uint32_t total_count_change = 0;
-
-    // TODO QosPolicyId_t and QosPolicyCountSeq
-};
+using IncompatibleQosStatus = fastdds::dds::IncompatibleQosStatus;
 
 typedef IncompatibleQosStatus RequestedIncompatibleQosStatus;
 typedef IncompatibleQosStatus OfferedIncompatibleQosStatus;

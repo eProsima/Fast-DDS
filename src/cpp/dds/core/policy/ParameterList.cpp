@@ -17,19 +17,20 @@
  *
  */
 
-#include <fastrtps/qos/ParameterList.h>
-#include <fastrtps/qos/QosPolicies.h>
+#include <fastdds/dds/core/policy/ParameterList.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 #include <functional>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
 
-using namespace rtps;
+using namespace fastrtps::rtps;
 
 #define IF_VALID_CALL {if(valid){qos_size += plength;if(!processor(&p)) return false;}else{return false;}break;}
 
-bool ParameterList::writeEncapsulationToCDRMsg(rtps::CDRMessage_t* msg)
+bool ParameterList::writeEncapsulationToCDRMsg(fastrtps::rtps::CDRMessage_t* msg)
 {
     bool valid = CDRMessage::addOctet(msg, 0);
     if (msg->msg_endian == BIGEND)
@@ -235,7 +236,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                         return false;
                     }
                     ParameterString_t p(pid, plength);
-                    string_255 aux;
+                    fastrtps::string_255 aux;
                     valid &= CDRMessage::readString(&msg, &aux);
                     p.setName(aux.c_str());
                     //                cout << "READ: "<< p.m_string<<endl;
@@ -414,9 +415,9 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                         return false;
                     }
                     length_diff += 4;
-                    p.dataVec.resize(vec_size);
+                    p.data_vec_.resize(vec_size);
                     pos_ref = msg.pos;
-                    valid &= CDRMessage::readData(&msg, p.dataVec.data(), vec_size);
+                    valid &= CDRMessage::readData(&msg, p.data_vec_.data(), vec_size);
                     if (valid)
                     {
                         msg.pos += (plength - 4 - vec_size);
@@ -478,7 +479,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                             return false;
                         }
 
-                        p.names.push_back(auxstr);
+                        p.names_.push_back(auxstr);
                     }
 
                     IF_VALID_CALL
@@ -697,51 +698,44 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                 }
                 case PID_TYPE_CONSISTENCY_ENFORCEMENT:
                 {
-                    uint32_t uKind(0);
-                    octet temp(0);
-                    TypeConsistencyEnforcementQosPolicy p;
-                    p.m_ignore_sequence_bounds = false;
-                    p.m_ignore_string_bounds = false;
-                    p.m_ignore_member_names = false;
-                    p.m_prevent_type_widening = false;
-                    p.m_force_type_validation = false;
+                    if (7 < plength)
+                    {
+                        uint16_t uKind(0);
+                        octet temp(0);
+                        TypeConsistencyEnforcementQosPolicy p;
+                        p.m_ignore_sequence_bounds = false;
+                        p.m_ignore_string_bounds = false;
+                        p.m_ignore_member_names = false;
+                        p.m_prevent_type_widening = false;
+                        p.m_force_type_validation = false;
 
-                    valid &= plength >= 3;
-                    if (valid)
-                    {
-                        valid &= CDRMessage::readUInt32(&msg, &uKind);
+                        valid &= CDRMessage::readUInt16(&msg, &uKind);
                         p.m_kind = static_cast<TypeConsistencyKind>(uKind);
-                    }
-                    if (valid && plength >= 4)
-                    {
+
                         valid &= CDRMessage::readOctet(&msg, &temp);
                         p.m_ignore_sequence_bounds = temp == 0 ? false : true;
-                    }
-                    if (valid && plength >= 5)
-                    {
+
                         valid &= CDRMessage::readOctet(&msg, &temp);
                         p.m_ignore_string_bounds = temp == 0 ? false : true;
-                    }
-                    if (valid && plength >= 6)
-                    {
+
                         valid &= CDRMessage::readOctet(&msg, &temp);
                         p.m_ignore_member_names = temp == 0 ? false : true;
-                    }
-                    if (valid && plength >= 7)
-                    {
+
                         valid &= CDRMessage::readOctet(&msg, &temp);
                         p.m_prevent_type_widening = temp == 0 ? false : true;
-                    }
-                    if (valid && plength >= 8)
-                    {
+
                         valid &= CDRMessage::readOctet(&msg, &temp);
                         p.m_force_type_validation = temp == 0 ? false : true;
+
+                        for (int i = 7; valid && i < plength; ++i) // Consume the alignment
+                        {
+                            valid &= CDRMessage::readOctet(&msg, &temp);
+                        }
+
+                        IF_VALID_CALL
                     }
-                    for (int i = 9; valid && i < plength; ++i) // Consume the alignment
-                    {
-                        valid &= CDRMessage::readOctet(&msg, &temp);
-                    }
-                    IF_VALID_CALL
+
+                    return false;
                 }
                 case PID_TYPE_IDV1:
                 {
@@ -898,5 +892,6 @@ bool ParameterList::readInstanceHandleFromCDRMsg(CacheChange_t* change, const ui
     return false;
 }
 
-}  // namespace fastrtps
+}  // namespace dds
+}  // namespace fastdds
 }  // namespace eprosima

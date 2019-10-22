@@ -41,7 +41,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-PDPListener::PDPListener(PDP* parent)
+PDPListener::PDPListener(
+        PDP* parent)
     : parent_pdp_(parent)
     , temp_participant_data_(parent->getRTPSParticipant()->getRTPSParticipantAttributes().allocation)
 {
@@ -53,14 +54,14 @@ void PDPListener::onNewCacheChangeAdded(
 {
     CacheChange_t* change = const_cast<CacheChange_t*>(change_in);
     GUID_t writer_guid = change->writerGUID;
-    logInfo(RTPS_PDP,"SPDP Message received");
+    logInfo(RTPS_PDP, "SPDP Message received");
 
     // Make sure we have an instance handle (i.e GUID)
-    if(change->instanceHandle == c_InstanceHandle_Unknown)
+    if (change->instanceHandle == c_InstanceHandle_Unknown)
     {
-        if(!this->get_key(change))
+        if (!this->get_key(change))
         {
-            logWarning(RTPS_PDP,"Problem getting the key of the change, removing");
+            logWarning(RTPS_PDP, "Problem getting the key of the change, removing");
             parent_pdp_->mp_PDPReaderHistory->remove_change(change);
             return;
         }
@@ -70,7 +71,7 @@ void PDPListener::onNewCacheChangeAdded(
     GUID_t guid;
     iHandle2GUID(guid, change->instanceHandle);
 
-    if(change->kind == ALIVE)
+    if (change->kind == ALIVE)
     {
         // Ignore announcement from own RTPSParticipant
         if (guid == parent_pdp_->getRTPSParticipant()->getGuid())
@@ -97,7 +98,7 @@ void PDPListener::onNewCacheChangeAdded(
 
         // Load information on temp_participant_data_
         CDRMessage_t msg(change->serializedPayload);
-        if(temp_participant_data_.readFromCDRMessage(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory()))
+        if (temp_participant_data_.readFromCDRMessage(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory()))
         {
             // After correctly reading it
             change->instanceHandle = temp_participant_data_.m_key;
@@ -107,7 +108,7 @@ void PDPListener::onNewCacheChangeAdded(
             ParticipantProxyData* pdata = nullptr;
             for (ParticipantProxyData* it : parent_pdp_->participant_proxies_)
             {
-                if(guid == it->m_guid)
+                if (guid == it->m_guid)
                 {
                     pdata = it;
                     break;
@@ -115,9 +116,9 @@ void PDPListener::onNewCacheChangeAdded(
             }
 
             auto status = (pdata == nullptr) ? ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT :
-                ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT;
+                    ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT;
 
-            if(pdata == nullptr)
+            if (pdata == nullptr)
             {
                 // Create a new one when not found
                 pdata = parent_pdp_->createParticipantProxyData(temp_participant_data_, writer_guid);
@@ -137,7 +138,7 @@ void PDPListener::onNewCacheChangeAdded(
                 reader->getMutex().unlock();
                 lock.unlock();
 
-                if(parent_pdp_->updateInfoMatchesEDP())
+                if (parent_pdp_->updateInfoMatchesEDP())
                 {
                     parent_pdp_->mp_EDP->assignRemoteEndpoints(*pdata);
                 }
@@ -148,6 +149,7 @@ void PDPListener::onNewCacheChangeAdded(
                 RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
                 if (listener != nullptr)
                 {
+                    std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
                     ParticipantDiscoveryInfo info(*pdata);
                     info.status = status;
 
@@ -163,19 +165,23 @@ void PDPListener::onNewCacheChangeAdded(
     }
     else
     {
-        if(parent_pdp_->remove_remote_participant(guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT))
+        reader->getMutex().unlock();
+        if (parent_pdp_->remove_remote_participant(guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT))
         {
+            reader->getMutex().lock();
             return; // all changes related with this participant have been removed from history by remove_remote_participant
         }
+        reader->getMutex().lock();
     }
 
     //Remove change form history.
     parent_pdp_->mp_PDPReaderHistory->remove_change(change);
 }
 
-bool PDPListener::get_key(CacheChange_t* change)
+bool PDPListener::get_key(
+        CacheChange_t* change)
 {
-    return ParameterList::readInstanceHandleFromCDRMsg(change, PID_PARTICIPANT_GUID);
+    return ParameterList::readInstanceHandleFromCDRMsg(change, fastdds::dds::PID_PARTICIPANT_GUID);
 }
 
 } /* namespace rtps */

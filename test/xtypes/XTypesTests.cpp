@@ -42,7 +42,6 @@
 #include <unistd.h>
 #endif
 
-using namespace eprosima::fastrtps;
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
 
@@ -71,6 +70,7 @@ public:
         ++DOMAIN_ID_;
         DOMAIN_ID_ %= 230;
     }
+
 };
 
 /**** NO TYPE OBJECT ****/
@@ -78,7 +78,7 @@ public:
 /*
  * Both endpoints share the same type without DataRepresentationQos, so they must match.
  * This represents classical match.
-*/
+ */
 TEST_F(xtypestests, NoTypeObjectSameType)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -99,7 +99,7 @@ TEST_F(xtypestests, NoTypeObjectSameType)
 /*
  * Both endpoints share the same type without DataRepresentationQosm, but they force type validation,
  * so they must not match.
-*/
+ */
 TEST_F(xtypestests, NoTypeObjectSameTypeForce)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -118,7 +118,8 @@ TEST_F(xtypestests, NoTypeObjectSameTypeForce)
     pub.init("NoTypeObjectSameTypeForce", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("NoTypeObjectSameTypeForce", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, nullptr, "Sub1", nullptr, &typeConQos);
+    sub.init("NoTypeObjectSameTypeForce", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, nullptr, "Sub1", nullptr,
+            &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -129,7 +130,7 @@ TEST_F(xtypestests, NoTypeObjectSameTypeForce)
 /*
  * The endpoints have different types without DataRepresentationQos, so they must not match.
  * This represents classical mismatch.
-*/
+ */
 TEST_F(xtypestests, NoTypeObjectDifferentType)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -140,7 +141,8 @@ TEST_F(xtypestests, NoTypeObjectDifferentType)
     pub.init("NoTypeObjectDifferentType", DOMAIN_ID_, type, nullptr, nullptr, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("NoTypeObjectDifferentType", DOMAIN_ID_, NO_KEY, type2, nullptr, nullptr, nullptr, "Sub1", nullptr, nullptr);
+    sub.init("NoTypeObjectDifferentType", DOMAIN_ID_, NO_KEY, type2, nullptr, nullptr, nullptr, "Sub1", nullptr,
+            nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -153,7 +155,7 @@ TEST_F(xtypestests, NoTypeObjectDifferentType)
 /*
  * Both endpoints share the same type using XCDR1 so they must match.
  * This represents classical match.
-*/
+ */
 TEST_F(xtypestests, TypeObjectV1SameType)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -180,7 +182,8 @@ TEST_F(xtypestests, TypeObjectV1SameType)
     pub.init("TypeObjectV1SameType", DOMAIN_ID_, type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1SameType", DOMAIN_ID_, NO_KEY, type, type_obj, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeObjectV1SameType", DOMAIN_ID_, NO_KEY, type, type_obj, type_id, nullptr, "Sub1", &dataRepQos,
+            nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -191,7 +194,7 @@ TEST_F(xtypestests, TypeObjectV1SameType)
 /*
  * TEST TYPE DISCOVERY
  * RETRIEVE PUB's TYPE
-*/
+ */
 TEST_F(xtypestests, TypeDiscoverySubs)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -218,14 +221,14 @@ TEST_F(xtypestests, TypeDiscoverySubs)
     pub.init("TypeDiscoverySubs", DOMAIN_ID_, type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeDiscoverySubs", DOMAIN_ID_, NO_KEY, nullptr, nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeDiscoverySubs", DOMAIN_ID_, NO_KEY, TypeSupport(nullptr), nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
     sub.waitTypeDiscovery(true, 3);
     //pub.waitDiscovery(true, 3);
 
-    types::DynamicType_ptr disc_type = sub.discovered_type();
+    eprosima::fastrtps::types::DynamicType_ptr disc_type = sub.discovered_type();
     ASSERT_TRUE(disc_type != nullptr);
 
     sub.register_discovered_type();
@@ -241,7 +244,7 @@ TEST_F(xtypestests, TypeDiscoverySubs)
 /*
  * TEST TYPE DISCOVERY
  * RETRIEVE SUB's TYPE
-*/
+ */
 TEST_F(xtypestests, TypeDiscoveryPubs)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -265,7 +268,7 @@ TEST_F(xtypestests, TypeDiscoveryPubs)
     //typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("TypeDiscoveryPubs", DOMAIN_ID_, nullptr, nullptr, nullptr, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeDiscoveryPubs", DOMAIN_ID_, TypeSupport(nullptr), nullptr, nullptr, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
     sub.init("TypeDiscoveryPubs", DOMAIN_ID_, NO_KEY, type, type_obj, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
@@ -278,7 +281,7 @@ TEST_F(xtypestests, TypeDiscoveryPubs)
 
 /*
  * Both endpoints different types using XCDR1 so they must not match even with full coercion allowed.
-*/
+ */
 TEST_F(xtypestests, TypeObjectV1DifferentType)
 {
     TypeSupport type1(new BasicStructPubSubType());
@@ -308,7 +311,8 @@ TEST_F(xtypestests, TypeObjectV1DifferentType)
     pub.init("TypeObjectV1DifferentType", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1DifferentType", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1DifferentType", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos,
+            &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -319,7 +323,7 @@ TEST_F(xtypestests, TypeObjectV1DifferentType)
 /*
  * BasicStruct and BasicNamesStruct are similar structures, but with different names in members.
  * This test checks failure at the member names through TypeIdentifier's hashes. The endpoints must not match.
-*/
+ */
 TEST_F(xtypestests, TypeObjectV1NamesManaged)
 {
     TypeSupport type1(new BasicStructPubSubType());
@@ -349,7 +353,8 @@ TEST_F(xtypestests, TypeObjectV1NamesManaged)
     pub.init("TypeObjectV1NamesManaged", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1NamesManaged", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1NamesManaged", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos,
+            &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -360,7 +365,7 @@ TEST_F(xtypestests, TypeObjectV1NamesManaged)
 /*
  * BasicStruct and BasicNamesStruct are similar structures, but with different names in struct and members.
  * This test checks ignoring at the member names through TypeIdentifier's hashes. The endpoints must match.
-*/
+ */
 TEST_F(xtypestests, DISABLED_TypeObjectV1NamesIgnored)
 {
     TypeSupport type1(new BasicStructPubSubType());
@@ -390,7 +395,8 @@ TEST_F(xtypestests, DISABLED_TypeObjectV1NamesIgnored)
     pub.init("TypeObjectV1NamesIgnored", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1NamesIgnored", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1NamesIgnored", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos,
+            &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -402,7 +408,7 @@ TEST_F(xtypestests, DISABLED_TypeObjectV1NamesIgnored)
  * BasicStruct and BasicNamesStruct are similar structures, but with different names in struct and members.
  * This test checks ignoring at the member names when disallowed type coercion has no effect.
  * The endpoints must not match.
-*/
+ */
 TEST_F(xtypestests, TypeObjectV1NamesIgnoredDisallow)
 {
     TypeSupport type1(new BasicStructPubSubType());
@@ -432,7 +438,8 @@ TEST_F(xtypestests, TypeObjectV1NamesIgnoredDisallow)
     pub.init("TypeObjectV1NamesIgnoredDisallow", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1NamesIgnoredDisallow", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1NamesIgnoredDisallow", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1",
+            &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -443,7 +450,7 @@ TEST_F(xtypestests, TypeObjectV1NamesIgnoredDisallow)
 /*
  * BasicStruct and BasicWideStruct are similar structures, but with "Wide" adds a member.
  * This test checks type widening. The endpoints must match.
-*/
+ */
 TEST_F(xtypestests, DISABLED_TypeObjectV1TypeWidening)
 {
     TypeSupport type1(new BasicStructPubSubType());
@@ -473,7 +480,8 @@ TEST_F(xtypestests, DISABLED_TypeObjectV1TypeWidening)
     pub.init("TypeObjectV1TypeWidening", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1TypeWidening", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1TypeWidening", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos,
+            &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -484,7 +492,7 @@ TEST_F(xtypestests, DISABLED_TypeObjectV1TypeWidening)
 /*
  * BasicStruct and BadBasicWideStruct are similar structures, but with "Wide" adds a member, and in this case
  * modifies the type of other member. The endpoints must not match.
-*/
+ */
 TEST_F(xtypestests, TypeObjectV1BadTypeWidening)
 {
     TypeSupport type1(new BasicStructPubSubType());
@@ -514,7 +522,8 @@ TEST_F(xtypestests, TypeObjectV1BadTypeWidening)
     pub.init("TypeObjectV1BadTypeWidening", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1BadTypeWidening", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1BadTypeWidening", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1",
+            &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -525,7 +534,7 @@ TEST_F(xtypestests, TypeObjectV1BadTypeWidening)
 /*
  * BasicStruct and BasicWideStruct are similar structures, but with "Wide" adds a member.
  * This test checks prevent type widening when assigning narrow to wide. The endpoints must match.
-*/
+ */
 TEST_F(xtypestests, DISABLED_TypeObjectV1TypeWideningPreventedNarrowToWide)
 {
     TypeSupport type1(new BasicStructPubSubType());
@@ -552,10 +561,12 @@ TEST_F(xtypestests, DISABLED_TypeObjectV1TypeWideningPreventedNarrowToWide)
     typeConQos.m_prevent_type_widening = true;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("TypeObjectV1TypeWideningPreventedNarrowToWide", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeObjectV1TypeWideningPreventedNarrowToWide", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1",
+            &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1TypeWideningPreventedNarrowToWide", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1TypeWideningPreventedNarrowToWide", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr,
+            "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -566,7 +577,7 @@ TEST_F(xtypestests, DISABLED_TypeObjectV1TypeWideningPreventedNarrowToWide)
 /*
  * BasicStruct and BasicWideStruct are similar structures, but with "Wide" adds a member.
  * This test checks prevent type widening when assining from wide to narrow. The endpoints must not match.
-*/
+ */
 TEST_F(xtypestests, TypeObjectV1TypeWideningPreventedWideToNarrow)
 {
     TypeSupport type1(new BasicStructPubSubType());
@@ -593,10 +604,12 @@ TEST_F(xtypestests, TypeObjectV1TypeWideningPreventedWideToNarrow)
     typeConQos.m_prevent_type_widening = true;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("TypeObjectV1TypeWideningPreventedWideToNarrow", DOMAIN_ID_, type2, type_obj2, type_id2, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeObjectV1TypeWideningPreventedWideToNarrow", DOMAIN_ID_, type2, type_obj2, type_id2, nullptr, "Pub1",
+            &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1TypeWideningPreventedWideToNarrow", DOMAIN_ID_, NO_KEY, type1, type_obj1, type_id1, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1TypeWideningPreventedWideToNarrow", DOMAIN_ID_, NO_KEY, type1, type_obj1, type_id1, nullptr,
+            "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -607,7 +620,7 @@ TEST_F(xtypestests, TypeObjectV1TypeWideningPreventedWideToNarrow)
 /*
  * BasicStruct and BasicWideStruct are similar structures, but with "Wide" adds a member, but coercion is disallowed.
  * This test checks type widening. The endpoints must match.
-*/
+ */
 TEST_F(xtypestests, TypeObjectV1TypeWideningDisallow)
 {
     TypeSupport type1(new BasicStructPubSubType());
@@ -637,7 +650,8 @@ TEST_F(xtypestests, TypeObjectV1TypeWideningDisallow)
     pub.init("TypeObjectV1TypeWideningDisallow", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1TypeWideningDisallow", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1TypeWideningDisallow", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1",
+            &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -648,7 +662,7 @@ TEST_F(xtypestests, TypeObjectV1TypeWideningDisallow)
 /*
  * SequenceStruct and SequenceBoundsStruct are similar structures, but with "Bounds" the size of the sequence is bigger.
  * This test checks sequence bounds. The endpoints must match.
-*/
+ */
 TEST_F(xtypestests, DISABLED_TypeObjectV1SequenceBoundsIgnored)
 {
     TypeSupport type1(new SequenceStructPubSubType());
@@ -678,7 +692,8 @@ TEST_F(xtypestests, DISABLED_TypeObjectV1SequenceBoundsIgnored)
     pub.init("TypeObjectV1SequenceBoundsIgnored", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1SequenceBoundsIgnored", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1SequenceBoundsIgnored", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1",
+            &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -689,7 +704,7 @@ TEST_F(xtypestests, DISABLED_TypeObjectV1SequenceBoundsIgnored)
 /*
  * SequenceStruct and SequenceBoundsStruct are similar structures, but with "Bounds" the size of the sequence is bigger.
  * This test checks sequence bounds. The endpoints must not match.
-*/
+ */
 TEST_F(xtypestests, TypeObjectV1SequenceBoundsManaged)
 {
     TypeSupport type1(new SequenceStructPubSubType());
@@ -719,7 +734,8 @@ TEST_F(xtypestests, TypeObjectV1SequenceBoundsManaged)
     pub.init("TypeObjectV1SequenceBoundsManaged", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1SequenceBoundsManaged", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1SequenceBoundsManaged", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1",
+            &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -731,7 +747,7 @@ TEST_F(xtypestests, TypeObjectV1SequenceBoundsManaged)
  * StringStruct and LargeStringStruct are similar structures, but with "Large" the size of the string is bigger.
  * Names are ignored because the member is named different.
  * This test checks string bounds. The endpoints must match.
-*/
+ */
 TEST_F(xtypestests, DISABLED_TypeObjectV1LargeStringIgnored)
 {
     TypeSupport type1(new StringStructPubSubType());
@@ -761,7 +777,8 @@ TEST_F(xtypestests, DISABLED_TypeObjectV1LargeStringIgnored)
     pub.init("TypeObjectV1LargeStringIgnored", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1LargeStringIgnored", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1LargeStringIgnored", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1",
+            &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -773,7 +790,7 @@ TEST_F(xtypestests, DISABLED_TypeObjectV1LargeStringIgnored)
  * StringStruct and LargeStringStruct are similar structures, but with "Large" the size of the string is bigger.
  * Names are ignored because the member is named different.
  * This test checks string bounds. The endpoints must not match.
-*/
+ */
 TEST_F(xtypestests, TypeObjectV1LargeStringManaged)
 {
     TypeSupport type1(new StringStructPubSubType());
@@ -803,7 +820,8 @@ TEST_F(xtypestests, TypeObjectV1LargeStringManaged)
     pub.init("TypeObjectV1LargeStringManaged", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1LargeStringManaged", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1LargeStringManaged", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1",
+            &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -813,7 +831,7 @@ TEST_F(xtypestests, TypeObjectV1LargeStringManaged)
 
 /*
  * Both endpoints share the same type using XCDR1 so they must match, in this case using Complete.
-*/
+ */
 TEST_F(xtypestests, TypeObjectV1SameTypeComplete)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -840,7 +858,8 @@ TEST_F(xtypestests, TypeObjectV1SameTypeComplete)
     pub.init("TypeObjectV1SameTypeComplete", DOMAIN_ID_, type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1SameTypeComplete", DOMAIN_ID_, NO_KEY, type, type_obj, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeObjectV1SameTypeComplete", DOMAIN_ID_, NO_KEY, type, type_obj, type_id, nullptr, "Sub1", &dataRepQos,
+            nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -851,7 +870,7 @@ TEST_F(xtypestests, TypeObjectV1SameTypeComplete)
 /*
  * Both endpoints use compatible but different types using XCDR1 but without coercion so they must not match,
  * in this case using Complete.
-*/
+ */
 TEST_F(xtypestests, TypeObjectV1InvalidComplete)
 {
     TypeSupport type1(new BasicStructPubSubType());
@@ -881,7 +900,8 @@ TEST_F(xtypestests, TypeObjectV1InvalidComplete)
     pub.init("TypeObjectV1InvalidComplete", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1InvalidComplete", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeObjectV1InvalidComplete", DOMAIN_ID_, NO_KEY, type2, type_obj2, type_id2, nullptr, "Sub1",
+            &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -892,7 +912,7 @@ TEST_F(xtypestests, TypeObjectV1InvalidComplete)
 /*
  * Both endpoints the same type using XCDR1 but one using minimal and the other complete.
  * They shouldn't match.
-*/
+ */
 TEST_F(xtypestests, MixingMinimalAndComplete)
 {
     TypeSupport type1(new BasicStructPubSubType());
@@ -921,7 +941,8 @@ TEST_F(xtypestests, MixingMinimalAndComplete)
     pub.init("MixingMinimalAndComplete", DOMAIN_ID_, type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("MixingMinimalAndComplete", DOMAIN_ID_, NO_KEY, type1, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("MixingMinimalAndComplete", DOMAIN_ID_, NO_KEY, type1, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos,
+            nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -934,7 +955,7 @@ TEST_F(xtypestests, MixingMinimalAndComplete)
 /*
  * Both endpoints share the same type using XCDR1 so they must match.
  * This represents classical match.
-*/
+ */
 TEST_F(xtypestests, TypeIdentifierSameType)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -960,7 +981,8 @@ TEST_F(xtypestests, TypeIdentifierSameType)
     pub.init("TypeIdentifierSameType", DOMAIN_ID_, type, nullptr, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifierSameType", DOMAIN_ID_, NO_KEY, type, nullptr, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeIdentifierSameType", DOMAIN_ID_, NO_KEY, type, nullptr, type_id, nullptr, "Sub1", &dataRepQos,
+            nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -970,7 +992,7 @@ TEST_F(xtypestests, TypeIdentifierSameType)
 
 /*
  * Both endpoints different types using XCDR1 so they must not match even with full coercion allowed.
-*/
+ */
 TEST_F(xtypestests, TypeIdentifierDifferentType)
 {
     TypeSupport type1(new BasicStructPubSubType());
@@ -998,7 +1020,8 @@ TEST_F(xtypestests, TypeIdentifierDifferentType)
     pub.init("TypeIdentifierDifferentType", DOMAIN_ID_, type1, nullptr, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifierDifferentType", DOMAIN_ID_, NO_KEY, type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeIdentifierDifferentType", DOMAIN_ID_, NO_KEY, type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos,
+            &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1009,7 +1032,7 @@ TEST_F(xtypestests, TypeIdentifierDifferentType)
 /*
  * BasicStruct and BasicNamesStruct are similar structures, but with different names in members.
  * This test checks failure at the member names through TypeIdentifier's hashes. The endpoints must not match.
-*/
+ */
 TEST_F(xtypestests, TypeIdentifierNamesManaged)
 {
     TypeSupport type1(new BasicStructPubSubType());
@@ -1037,7 +1060,8 @@ TEST_F(xtypestests, TypeIdentifierNamesManaged)
     pub.init("TypeIdentifierNamesManaged", DOMAIN_ID_, type1, nullptr, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifierNamesManaged", DOMAIN_ID_, NO_KEY, type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeIdentifierNamesManaged", DOMAIN_ID_, NO_KEY, type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos,
+            &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1048,7 +1072,7 @@ TEST_F(xtypestests, TypeIdentifierNamesManaged)
 /*
  * BasicStruct and BasicNamesStruct are similar structures, but with different names in struct and members.
  * This test checks ignoring at the member names through TypeIdentifier's hashes. The endpoints must match.
-*/
+ */
 TEST_F(xtypestests, DISABLED_TypeIdentifierNamesIgnored)
 {
     TypeSupport type1(new BasicStructPubSubType());
@@ -1076,7 +1100,8 @@ TEST_F(xtypestests, DISABLED_TypeIdentifierNamesIgnored)
     pub.init("TypeIdentifierNamesIgnored", DOMAIN_ID_, type1, nullptr, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifierNamesIgnored", DOMAIN_ID_, NO_KEY, type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeIdentifierNamesIgnored", DOMAIN_ID_, NO_KEY, type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos,
+            &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1089,7 +1114,7 @@ TEST_F(xtypestests, DISABLED_TypeIdentifierNamesIgnored)
 /*
  * Both endpoints share the same type using XCDR1 so they must match.
  * This represents classical match.
-*/
+ */
 TEST_F(xtypestests, TypeInformationSameType)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -1114,7 +1139,8 @@ TEST_F(xtypestests, TypeInformationSameType)
     pub.init("TypeInformationSameType", DOMAIN_ID_, type, nullptr, nullptr, type_info, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeInformationSameType", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, type_info, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeInformationSameType", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, type_info, "Sub1", &dataRepQos,
+            nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1124,7 +1150,7 @@ TEST_F(xtypestests, TypeInformationSameType)
 
 /*
  * Both endpoints different types using XCDR1 so they must not match even with full coercion allowed.
-*/
+ */
 TEST_F(xtypestests, TypeInformationDifferentType)
 {
     TypeSupport type1(new BasicStructPubSubType());
@@ -1152,7 +1178,8 @@ TEST_F(xtypestests, TypeInformationDifferentType)
     pub.init("TypeInformationDifferentType", DOMAIN_ID_, type1, nullptr, nullptr, type_info1, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeInformationDifferentType", DOMAIN_ID_, NO_KEY, type2, nullptr, nullptr, type_info2, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeInformationDifferentType", DOMAIN_ID_, NO_KEY, type2, nullptr, nullptr, type_info2, "Sub1",
+            &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1163,7 +1190,7 @@ TEST_F(xtypestests, TypeInformationDifferentType)
 /*
  * BasicStruct and BasicNamesStruct are similar structures, but with different names in members.
  * This test checks failure at the member names through TypeInformation's hashes. The endpoints must not match.
-*/
+ */
 TEST_F(xtypestests, TypeInformationNamesManaged)
 {
     TypeSupport type1(new BasicStructPubSubType());
@@ -1191,7 +1218,8 @@ TEST_F(xtypestests, TypeInformationNamesManaged)
     pub.init("TypeInformationNamesManaged", DOMAIN_ID_, type1, nullptr, nullptr, type_info1, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeInformationNamesManaged", DOMAIN_ID_, NO_KEY, type2, nullptr, nullptr, type_info2, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeInformationNamesManaged", DOMAIN_ID_, NO_KEY, type2, nullptr, nullptr, type_info2, "Sub1",
+            &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1202,7 +1230,7 @@ TEST_F(xtypestests, TypeInformationNamesManaged)
 /*
  * BasicStruct and BasicNamesStruct are similar structures, but with different names in struct and members.
  * This test checks ignoring at the member names through TypeInformation's hashes. The endpoints must match.
-*/
+ */
 TEST_F(xtypestests, DISABLED_TypeInformationNamesIgnored)
 {
     TypeSupport type1(new BasicStructPubSubType());
@@ -1230,7 +1258,8 @@ TEST_F(xtypestests, DISABLED_TypeInformationNamesIgnored)
     pub.init("TypeInformationNamesIgnored", DOMAIN_ID_, type1, nullptr, nullptr, type_info1, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeInformationNamesIgnored", DOMAIN_ID_, NO_KEY, type2, nullptr, nullptr, type_info2, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeInformationNamesIgnored", DOMAIN_ID_, NO_KEY, type2, nullptr, nullptr, type_info2, "Sub1",
+            &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1255,7 +1284,8 @@ TEST_F(xtypestests, TypeIdentifier_TypeObject)
     pub.init("TypeIdentifier_TypeObject", DOMAIN_ID_, type, nullptr, type_id, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifier_TypeObject", DOMAIN_ID_, NO_KEY, type, type_obj, nullptr, nullptr, "Sub1", nullptr, &typeConQos);
+    sub.init("TypeIdentifier_TypeObject", DOMAIN_ID_, NO_KEY, type, type_obj, nullptr, nullptr, "Sub1", nullptr,
+            &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1278,7 +1308,8 @@ TEST_F(xtypestests, TypeIdentifier_TypeInformation)
     pub.init("TypeIdentifier_TypeInformation", DOMAIN_ID_, type, nullptr, type_id, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifier_TypeInformation", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, type_info, "Sub1", nullptr, &typeConQos);
+    sub.init("TypeIdentifier_TypeInformation", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, type_info, "Sub1", nullptr,
+            &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1301,7 +1332,8 @@ TEST_F(xtypestests, TypeObject_TypeInformation)
     pub.init("TypeObject_TypeInformation", DOMAIN_ID_, type, type_obj, nullptr, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObject_TypeInformation", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, type_info, "Sub1", nullptr, &typeConQos);
+    sub.init("TypeObject_TypeInformation", DOMAIN_ID_, NO_KEY, type, nullptr, nullptr, type_info, "Sub1", nullptr,
+            &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1313,7 +1345,7 @@ TEST_F(xtypestests, TypeObject_TypeInformation)
 
 /*
  * Empty-Empty
-*/
+ */
 TEST_F(xtypestests, DISABLED_DataRepQoSEE)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -1338,7 +1370,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoSEE)
 
 /*
  * Empty-XCDR1
-*/
+ */
 TEST_F(xtypestests, DISABLED_DataRepQoSE1)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -1368,7 +1400,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoSE1)
 
 /*
  * Empty-XCDR2
-*/
+ */
 TEST_F(xtypestests, DISABLED_DataRepQoSE2)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -1398,7 +1430,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoSE2)
 
 /*
  * Empty-XML
-*/
+ */
 TEST_F(xtypestests, DISABLED_DataRepQoSEX)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -1428,7 +1460,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoSEX)
 
 /*
  * Empty-XCDR12
-*/
+ */
 TEST_F(xtypestests, DISABLED_DataRepQoSE12)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -1458,7 +1490,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoSE12)
 
 /*
  * XCDR1-XCDR2
-*/
+ */
 TEST_F(xtypestests, DISABLED_DataRepQoS12)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -1488,7 +1520,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoS12)
 
 /*
  * XCDR2-Empty
-*/
+ */
 TEST_F(xtypestests, DISABLED_DataRepQoS2E)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -1518,7 +1550,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoS2E)
 
 /*
  * XCDR2-XCDR1
-*/
+ */
 TEST_F(xtypestests, DISABLED_DataRepQoS21)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -1548,7 +1580,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoS21)
 
 /*
  * XCDR2-XCDR2
-*/
+ */
 TEST_F(xtypestests, DISABLED_DataRepQoS22)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -1573,7 +1605,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoS22)
 
 /*
  * XML-Empty
-*/
+ */
 TEST_F(xtypestests, DISABLED_DataRepQoSXE)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -1603,7 +1635,7 @@ TEST_F(xtypestests, DISABLED_DataRepQoSXE)
 
 /*
  * XML-XML - Fails until supported.
-*/
+ */
 TEST_F(xtypestests, DISABLED_DataRepQoSXX)
 {
     TypeSupport type(new BasicStructPubSubType());
@@ -1631,7 +1663,9 @@ TEST_F(xtypestests, DISABLED_DataRepQoSXX)
     pub.waitDiscovery(false, 3);
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
 

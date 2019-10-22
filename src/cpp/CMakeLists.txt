@@ -89,6 +89,7 @@ set(${PROJECT_NAME}_source_files
     dds/topic/TypeSupport.cpp
     dds/topic/qos/TopicQos.cpp
     dds/topic/qos/DataWriterQos.cpp
+    dds/topic/qos/DataReaderQos.cpp
     dds/topic/TypeSupport.cpp
     dds/publisher/PublisherImpl.cpp
     dds/publisher/qos/PublisherQos.cpp
@@ -99,6 +100,11 @@ set(${PROJECT_NAME}_source_files
     dds/domain/DomainParticipantFactory.cpp
     dds/domain/DomainParticipantImpl.cpp
     dds/domain/DomainParticipant.cpp
+    dds/builtin/typelookup/common/TypeLookupTypes.cpp
+    dds/builtin/common/RPCHeadersImpl.cpp
+    dds/builtin/typelookup/TypeLookupManager.cpp
+    dds/builtin/typelookup/TypeLookupRequestListener.cpp
+    dds/builtin/typelookup/TypeLookupReplyListener.cpp
     fastrtps_deprecated/transport/ChannelResource.cpp
     fastrtps_deprecated/transport/UDPChannelResource.cpp
     fastrtps_deprecated/transport/TCPChannelResource.cpp
@@ -140,11 +146,11 @@ set(${PROJECT_NAME}_source_files
     fastrtps_deprecated/types/DynamicDataHelper.cpp
 
     fastrtps_deprecated/attributes/TopicAttributes.cpp
-    fastrtps_deprecated/qos/ParameterList.cpp
-    fastrtps_deprecated/qos/ParameterTypes.cpp
-    fastrtps_deprecated/qos/QosPolicies.cpp
-    fastrtps_deprecated/qos/WriterQos.cpp
-    fastrtps_deprecated/qos/ReaderQos.cpp
+    dds/core/policy/ParameterList.cpp
+    dds/core/policy/ParameterTypes.cpp
+    dds/core/policy/QosPolicies.cpp
+    dds/topic/qos/WriterQos.cpp
+    dds/topic/qos/ReaderQos.cpp
     rtps/builtin/BuiltinProtocols.cpp
     rtps/builtin/discovery/participant/DirectMessageSender.cpp
     rtps/builtin/discovery/participant/PDP.cpp

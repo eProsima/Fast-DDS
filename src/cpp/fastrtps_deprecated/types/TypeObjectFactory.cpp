@@ -240,15 +240,15 @@ const TypeInformation* TypeObjectFactory::get_type_information(
         if (innerInfo != informations_.end())
         {
             information = innerInfo->second;
+            fill_minimal_information(information, min_identifier);
         }
         else
         {
             information = new TypeInformation();
+            fill_minimal_information(information, min_identifier);
             informations_[min_identifier] = information;
             informations_created_.push_back(information);
         }
-
-        fill_minimal_information(information, min_identifier);
     }
 
     if (comp_identifier != nullptr)
@@ -264,12 +264,15 @@ const TypeInformation* TypeObjectFactory::get_type_information(
             else
             {
                 information = new TypeInformation();
+                fill_complete_information(information, comp_identifier);
                 informations_[comp_identifier] = information;
                 informations_created_.push_back(information);
             }
         }
-
-        fill_complete_information(information, comp_identifier);
+        else
+        {
+            fill_complete_information(information, comp_identifier);
+        }
     }
 
     return information;
@@ -277,8 +280,23 @@ const TypeInformation* TypeObjectFactory::get_type_information(
 
 void TypeObjectFactory::fill_minimal_information(
         TypeInformation *info,
-        const TypeIdentifier* ident) const
+        const TypeIdentifier* user_ident) const
 {
+    const TypeIdentifier* ident = get_stored_type_identifier(user_ident);
+    {
+        std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+        auto it = informations_.find(ident);
+        if (it != informations_.end())
+        {
+            if (info == it->second)
+            {
+                return;
+            }
+            info->minimal(it->second->minimal());
+            return;
+        }
+    }
+
     info->minimal().typeid_with_size().type_id(*ident);
     const TypeObject* obj = get_type_object(ident);
 
@@ -329,10 +347,7 @@ void TypeObjectFactory::fill_minimal_information(
             }
             else
             {
-                TypeInformation *information = new TypeInformation();
-                fill_complete_information(information, innerId);
-                informations_[innerId] = information;
-                informations_created_.push_back(information);
+                fill_minimal_dependant_types(info, innerId);
             }
             break;
         }
@@ -349,10 +364,7 @@ void TypeObjectFactory::fill_minimal_information(
             }
             else
             {
-                TypeInformation *information = new TypeInformation();
-                fill_complete_information(information, innerId);
-                informations_[innerId] = information;
-                informations_created_.push_back(information);
+                fill_minimal_dependant_types(info, innerId);
             }
             break;
         }
@@ -369,10 +381,7 @@ void TypeObjectFactory::fill_minimal_information(
             }
             else
             {
-                TypeInformation *information = new TypeInformation();
-                fill_complete_information(information, innerId);
-                informations_[innerId] = information;
-                informations_created_.push_back(information);
+                fill_minimal_dependant_types(info, innerId);
             }
             const TypeIdentifier *keyId = get_stored_type_identifier(
                 &obj->minimal().map_type().key().common().type());
@@ -383,10 +392,7 @@ void TypeObjectFactory::fill_minimal_information(
             }
             else
             {
-                TypeInformation *information = new TypeInformation();
-                fill_complete_information(information, keyId);
-                informations_[keyId] = information;
-                informations_created_.push_back(information);
+                fill_minimal_dependant_types(info, innerId);
             }
             break;
         }
@@ -406,10 +412,7 @@ void TypeObjectFactory::fill_minimal_information(
                     }
                     else
                     {
-                        TypeInformation *information = new TypeInformation();
-                        fill_complete_information(information, innerId);
-                        informations_[innerId] = information;
-                        informations_created_.push_back(information);
+                        fill_minimal_dependant_types(info, innerId);
                     }
                     break;
                 }
@@ -429,10 +432,7 @@ void TypeObjectFactory::fill_minimal_information(
                         }
                         else
                         {
-                            TypeInformation *information = new TypeInformation();
-                            fill_complete_information(information, innerId);
-                            informations_[innerId] = information;
-                            informations_created_.push_back(information);
+                            fill_minimal_dependant_types(info, innerId);
                         }
                     }
                     info->minimal().dependent_typeid_count(static_cast<int32_t>(members.size()));
@@ -463,10 +463,7 @@ void TypeObjectFactory::fill_minimal_information(
                         }
                         else
                         {
-                            TypeInformation *information = new TypeInformation();
-                            fill_complete_information(information, innerId);
-                            informations_[innerId] = information;
-                            informations_created_.push_back(information);
+                            fill_minimal_dependant_types(info, innerId);
                         }
                     }
                     const TypeIdentifier *descId = get_stored_type_identifier(
@@ -479,10 +476,7 @@ void TypeObjectFactory::fill_minimal_information(
                     }
                     else
                     {
-                        TypeInformation *information = new TypeInformation();
-                        fill_complete_information(information, descId);
-                        informations_[descId] = information;
-                        informations_created_.push_back(information);
+                        fill_minimal_dependant_types(info, descId);
                     }
                     info->minimal().dependent_typeid_count(static_cast<int32_t>(members.size() + 1));
                     break;
@@ -497,13 +491,80 @@ void TypeObjectFactory::fill_minimal_information(
             break;
     }
     std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
-    informations_[ident] = info;
+    TypeInformation* new_info = new TypeInformation();
+    *new_info = *info;
+    informations_[ident] = new_info;
+    informations_created_.push_back(new_info);
+}
+
+TypeInformation* TypeObjectFactory::get_type_information(
+        const TypeIdentifier* identifier) const
+{
+    const TypeIdentifier* ident = get_stored_type_identifier(identifier);
+    {
+        std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+        auto it = informations_.find(ident);
+        if (it != informations_.end())
+        {
+            return it->second;
+        }
+    }
+
+    return nullptr;
+}
+
+void TypeObjectFactory::fill_complete_dependant_types(
+        TypeInformation* info,
+        const TypeIdentifier* identifier) const
+{
+    TypeInformation* information = new TypeInformation();
+    fill_complete_information(information, identifier);
+    informations_[identifier] = information;
+    informations_created_.push_back(information);
+    info->complete().dependent_typeids().push_back(information->complete().typeid_with_size());
+}
+
+void TypeObjectFactory::fill_minimal_dependant_types(
+        TypeInformation* info,
+        const TypeIdentifier* identifier) const
+{
+    TypeInformation* information = new TypeInformation();
+    fill_minimal_information(information, identifier);
+    informations_[identifier] = information;
+    informations_created_.push_back(information);
+    info->minimal().dependent_typeids().push_back(information->minimal().typeid_with_size());
+}
+
+void TypeObjectFactory::fill_complete_minimal_dependant_types(
+        TypeInformation* info,
+        const TypeIdentifier* identifier) const
+{
+    TypeInformation* information = new TypeInformation();
+    fill_complete_information(information, identifier);
+    informations_[identifier] = information;
+    informations_created_.push_back(information);
+    info->minimal().dependent_typeids().push_back(information->complete().typeid_with_size());
 }
 
 void TypeObjectFactory::fill_complete_information(
         TypeInformation *info,
-        const TypeIdentifier* ident) const
+        const TypeIdentifier* user_ident) const
 {
+    const TypeIdentifier* ident = get_stored_type_identifier(user_ident);
+    {
+        std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
+        auto it = informations_.find(ident);
+        if (it != informations_.end())
+        {
+            if (info == it->second)
+            {
+                return;
+            }
+            info->complete(it->second->complete());
+            return;
+        }
+    }
+
     info->complete().typeid_with_size().type_id(*ident);
     const TypeObject* obj = get_type_object(ident);
 
@@ -554,10 +615,7 @@ void TypeObjectFactory::fill_complete_information(
             }
             else
             {
-                TypeInformation *information = new TypeInformation();
-                fill_complete_information(information, innerId);
-                informations_[innerId] = information;
-                informations_created_.push_back(information);
+                fill_complete_dependant_types(info, innerId);
             }
             break;
         }
@@ -574,10 +632,7 @@ void TypeObjectFactory::fill_complete_information(
             }
             else
             {
-                TypeInformation *information = new TypeInformation();
-                fill_complete_information(information, innerId);
-                informations_[innerId] = information;
-                informations_created_.push_back(information);
+                fill_complete_dependant_types(info, innerId);
             }
             break;
         }
@@ -594,10 +649,7 @@ void TypeObjectFactory::fill_complete_information(
             }
             else
             {
-                TypeInformation *information = new TypeInformation();
-                fill_complete_information(information, innerId);
-                informations_[innerId] = information;
-                informations_created_.push_back(information);
+                fill_complete_dependant_types(info, innerId);
             }
             const TypeIdentifier *keyId = get_stored_type_identifier(
                 &obj->complete().map_type().key().common().type());
@@ -609,10 +661,7 @@ void TypeObjectFactory::fill_complete_information(
                 }
                 else
                 {
-                    TypeInformation *information = new TypeInformation();
-                    fill_complete_information(information, keyId);
-                    informations_[innerId] = information;
-                    informations_created_.push_back(information);
+                    fill_complete_dependant_types(info, innerId);
                 }
             }
             break;
@@ -633,10 +682,7 @@ void TypeObjectFactory::fill_complete_information(
                     }
                     else
                     {
-                        TypeInformation *information = new TypeInformation();
-                        fill_complete_information(information, innerId);
-                        informations_[innerId] = information;
-                        informations_created_.push_back(information);
+                        fill_complete_minimal_dependant_types(info, innerId);
                     }
                     break;
                 }
@@ -656,10 +702,7 @@ void TypeObjectFactory::fill_complete_information(
                         }
                         else
                         {
-                            TypeInformation *information = new TypeInformation();
-                            fill_complete_information(information, innerId);
-                            informations_[innerId] = information;
-                            informations_created_.push_back(information);
+                            fill_complete_minimal_dependant_types(info, innerId);
                         }
                     }
                     info->minimal().dependent_typeid_count(static_cast<int32_t>(members.size()));
@@ -690,10 +733,7 @@ void TypeObjectFactory::fill_complete_information(
                         }
                         else
                         {
-                            TypeInformation *information = new TypeInformation();
-                            fill_complete_information(information, innerId);
-                            informations_[innerId] = information;
-                            informations_created_.push_back(information);
+                            fill_complete_minimal_dependant_types(info, innerId);
                         }
                     }
                     const TypeIdentifier *descId = get_stored_type_identifier(
@@ -706,10 +746,7 @@ void TypeObjectFactory::fill_complete_information(
                     }
                     else
                     {
-                        TypeInformation *information = new TypeInformation();
-                        fill_complete_information(information, descId);
-                        informations_[descId] = information;
-                        informations_created_.push_back(information);
+                        fill_complete_minimal_dependant_types(info, descId);
                     }
                     info->minimal().dependent_typeid_count(static_cast<int32_t>(members.size() + 1));
                     break;
@@ -735,10 +772,7 @@ void TypeObjectFactory::fill_complete_information(
                     }
                     else
                     {
-                        TypeInformation *information = new TypeInformation();
-                        fill_complete_information(information, innerId);
-                        informations_[innerId] = information;
-                        informations_created_.push_back(information);
+                        fill_complete_dependant_types(info, innerId);
                     }
                     break;
                 }
@@ -758,10 +792,7 @@ void TypeObjectFactory::fill_complete_information(
                         }
                         else
                         {
-                            TypeInformation *information = new TypeInformation();
-                            fill_complete_information(information, innerId);
-                            informations_[innerId] = information;
-                            informations_created_.push_back(information);
+                            fill_complete_dependant_types(info, innerId);
                         }
                     }
                     info->complete().dependent_typeid_count(static_cast<int32_t>(members.size()));
@@ -792,10 +823,7 @@ void TypeObjectFactory::fill_complete_information(
                         }
                         else
                         {
-                            TypeInformation *information = new TypeInformation();
-                            fill_complete_information(information, innerId);
-                            informations_[innerId] = information;
-                            informations_created_.push_back(information);
+                            fill_complete_dependant_types(info, innerId);
                         }
                     }
                     const TypeIdentifier *descId = get_stored_type_identifier(
@@ -808,10 +836,7 @@ void TypeObjectFactory::fill_complete_information(
                     }
                     else
                     {
-                        TypeInformation *information = new TypeInformation();
-                        fill_complete_information(information, descId);
-                        informations_[descId] = information;
-                        informations_created_.push_back(information);
+                        fill_complete_dependant_types(info, descId);
                     }
                     info->complete().dependent_typeid_count(static_cast<int32_t>(members.size() + 1));
                     break;
@@ -823,7 +848,10 @@ void TypeObjectFactory::fill_complete_information(
             break;
     }
     std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
-    informations_[ident] = info;
+    TypeInformation* new_info = new TypeInformation();
+    *new_info = *info;
+    informations_[ident] = new_info;
+    informations_created_.push_back(new_info);
 }
 
 const TypeObject* TypeObjectFactory::get_type_object(const std::string& type_name, bool complete) const
@@ -1747,6 +1775,8 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(const std::string& name, c
                 return build_dynamic_type(descriptor, object);
             }
             break;
+        case TK_NONE:
+            return DynamicType_ptr(nullptr); // Maybe in discovery, return nullptr quietly.
         default:
             break;
     }
@@ -1757,7 +1787,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(const std::string& name, c
     {
         return outputType->build();
     }
-    return nullptr;
+    return DynamicType_ptr(nullptr);
 }
 
 // TODO annotations
@@ -1768,7 +1798,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
 {
     if (object == nullptr || object->_d() != EK_COMPLETE)
     {
-        return nullptr;
+        return DynamicType_ptr(nullptr);
     }
 
     // Change descriptor's kind
@@ -2025,7 +2055,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
         default:
             break;
     }
-    return nullptr;
+    return DynamicType_ptr(nullptr);
 }
 
 void TypeObjectFactory::apply_type_annotations(
@@ -2098,6 +2128,131 @@ std::string TypeObjectFactory::get_key_from_hash(
         }
     }
     return "";
+}
+
+TypeIdentifierWithSizeSeq TypeObjectFactory::typelookup_get_type_dependencies(
+        const TypeIdentifierSeq& identifiers,
+        const OctetSeq& in_continuation_point,
+        OctetSeq& out_continuation_point,
+        size_t max_size) const
+{
+    TypeIdentifierWithSizeSeq result;
+    size_t continuation_point = to_size_t(in_continuation_point);
+    size_t start_index = max_size * continuation_point;
+    size_t skip = 0;
+
+    // TODO Manage the overflow with additional "start_indexes" to cover
+    // the complete 256 bits possibilities of OctetSeq.
+    if (start_index < continuation_point)
+    {
+        // Overflow
+        for(octet& o : out_continuation_point)
+        {
+            o = 0;
+        }
+        return result;
+    }
+
+    // For each given identifier
+    for (const TypeIdentifier& identifier : identifiers)
+    {
+        const TypeIdentifier* local_id = get_stored_type_identifier(&identifier);
+
+        // Check it is known
+        if (local_id != nullptr)
+        {
+            // Create or retrieve its TypeInformation
+            if (get_type_information(local_id) == nullptr)
+            {
+                TypeInformation aux;
+                if (local_id->_d() > EK_MINIMAL)
+                {
+                    fill_complete_information(&aux, local_id);
+                }
+                else
+                {
+                    fill_minimal_information(&aux, local_id);
+                }
+            }
+            const TypeInformation* local_info = get_type_information(local_id);
+            if (local_info != nullptr)
+            {
+                // With the TypeInformation, retrieve directly their dependencies
+                const TypeIdentifierWithSizeSeq& full_results =
+                    (local_id->_d() > EK_MINIMAL)
+                    ? local_info->complete().dependent_typeids()
+                    : local_info->minimal().dependent_typeids();
+
+                // Check the start_index
+                if (skip + full_results.size() < start_index)
+                {
+                    skip += full_results.size();
+                    continue;
+                }
+                else
+                {
+                    size_t local_start = start_index - skip;
+                    size_t added = 0;
+                    // Add the next identifiers.
+                    for (size_t i = local_start; i < local_start + max_size && i < full_results.size(); ++i)
+                    {
+                        result.push_back(full_results[i]);
+                        ++added;
+                    }
+                    skip = 0;
+                    start_index = 0;
+                    if (added == max_size)
+                    {
+                        // If max_size reached, increment out_continuation_point
+                        ++out_continuation_point;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
+const TypeIdentifier* TypeObjectFactory::typelookup_get_type(
+        const TypeIdentifier& identifier,
+        TypeObject& object) const
+{
+    const TypeIdentifier* local_id = get_stored_type_identifier(&identifier);
+
+    if (local_id != nullptr)
+    {
+        const TypeObject* local_obj = get_type_object(local_id);
+        if (local_obj != nullptr)
+        {
+            object = *local_obj;
+        }
+    }
+
+    return local_id;
+}
+
+bool TypeObjectFactory::typelookup_check_type_identifier(
+        const TypeIdentifier& identifier) const
+{
+    return get_stored_type_identifier(&identifier) != nullptr;
+}
+
+const TypeObject* TypeObjectFactory::typelookup_get_type_object_from_information(
+        const TypeInformation& information) const
+{
+    if (information.complete().typeid_with_size().type_id()._d() != 0)
+    {
+        const TypeIdentifier* local_id =
+            get_stored_type_identifier(&information.complete().typeid_with_size().type_id());
+
+        if (local_id != nullptr)
+        {
+            return get_type_object(local_id);
+        }
+    }
+    return nullptr;
 }
 
 } // namespace types

@@ -25,8 +25,6 @@
 #include <fastdds/dds/topic/DataReader.hpp>
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
     : participant_(nullptr)
@@ -37,7 +35,7 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 
 bool HelloWorldSubscriber::init()
 {
-    ParticipantAttributes participant_att;
+    eprosima::fastrtps::ParticipantAttributes participant_att;
     participant_att.rtps.builtin.domainId = 0;
     participant_att.rtps.setName("Participant_sub");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att);
@@ -51,7 +49,7 @@ bool HelloWorldSubscriber::init()
     type_.register_type(participant_, type_->getName());
 
     //CREATE THE SUBSCRIBER
-    SubscriberAttributes sub_att;
+    eprosima::fastrtps::SubscriberAttributes sub_att;
     subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, sub_att, nullptr);
 
     if (subscriber_ == nullptr)
@@ -62,7 +60,7 @@ bool HelloWorldSubscriber::init()
     // CREATE THE READER
     ReaderQos rqos;
     rqos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    TopicAttributes topic_att;
+    eprosima::fastrtps::TopicAttributes topic_att;
     topic_att.topicDataType = "HelloWorld";
     topic_att.topicName = "HelloWorldTopic";
     reader_ = subscriber_->create_datareader(topic_att, rqos, &listener_);
@@ -104,9 +102,9 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
 void HelloWorldSubscriber::SubListener::on_data_available(
         eprosima::fastdds::dds::DataReader* reader)
 {
-    if (reader->take_next_sample(&hello_, &info_))
+    if (reader->take_next_sample(&hello_, &info_) == ReturnCode_t::RETCODE_OK)
     {
-        if (info_.sampleKind == ALIVE)
+        if (info_.sampleKind == eprosima::fastrtps::rtps::ALIVE)
         {
             samples_++;
             // Print your structure data here.

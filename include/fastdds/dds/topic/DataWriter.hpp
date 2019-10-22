@@ -27,9 +27,8 @@
 using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 
-class WriterQos;
 class TopicAttributes;
 
 namespace rtps {
@@ -54,6 +53,7 @@ class TypeSupport;
 
 class DataWriterImpl;
 class DataWriterListener;
+class WriterQos;
 
 /**
  * Class DataWriter, contains the actual implementation of the behaviour of the DataWriter.
@@ -147,19 +147,19 @@ public:
      * Establishes the WriterQos for this DataWriter.
      */
     ReturnCode_t set_qos(
-            const fastrtps::WriterQos& qos);
+            const WriterQos& qos);
 
     /**
      * Retrieves the WriterQos for this DataWriter.
      */
-    const fastrtps::WriterQos& get_qos() const;
+    const WriterQos& get_qos() const;
 
     /**
      * Fills the WriterQos with the values of this DataWriter.
      * @return true
      */
     ReturnCode_t get_qos(
-            fastrtps::WriterQos& qos) const;
+            WriterQos& qos) const;
 
     /**
      * Establishes the topic for this DataWriter.
@@ -184,10 +184,10 @@ public:
             DataWriterListener* listener);
 
     /* TODO
-    bool get_key_value(
+       bool get_key_value(
             void* key_holder,
             const fastrtps::rtps::InstanceHandle_t& handle);
-    */
+     */
 
     ReturnCode_t dispose(
             void* data,
@@ -200,20 +200,21 @@ public:
             LivelinessLostStatus& status);
 
     /* TODO
-    bool get_offered_incompatible_qos_status(
+       bool get_offered_incompatible_qos_status(
             OfferedIncompatibleQosStatus& status)
-    {
+       {
         // Not implemented
         (void)status;
         return false;
-    }
-    */
+       }
+     */
 
     const Publisher* get_publisher() const;
 
     ReturnCode_t assert_liveliness();
 
 private:
+
     DataWriterImpl* impl_;
 };
 

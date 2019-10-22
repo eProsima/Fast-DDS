@@ -439,7 +439,7 @@ void ThroughputSubscriber::process_message()
                     data_size_ = command_sub_listener_.command_type_.m_size;
                     demand_ = command_sub_listener_.command_type_.m_demand;
 
-                    if (dynamic_data_)
+                    if (dynamic_data)
                     {
                         // Create basic builders
                         DynamicTypeBuilder_ptr struct_type_builder(
