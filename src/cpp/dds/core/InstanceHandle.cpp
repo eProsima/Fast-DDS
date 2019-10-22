@@ -35,9 +35,8 @@ InstanceHandle::InstanceHandle()
 {
 }
 
-template<typename ARG0>
 InstanceHandle::InstanceHandle(
-        const ARG0& arg0)
+        const detail::InstanceHandle& arg0)
     : Value(arg0)
 {
 }

@@ -199,10 +199,13 @@ set(${PROJECT_NAME}_source_files
     dds/domain/detail/DomainParticipant.cpp
     dds/pub/Publisher.cpp
     dds/sub/Subscriber.cpp
+    #dds/topic/TopicDescription.cpp
+    #dds/topic/AnyTopic.cpp
     dds/core/Time.cpp
     dds/core/Duration.cpp
     dds/core/InstanceHandle.cpp
     dds/core/types.cpp
+    #dds/core/Entity.cpp
     )
 
 # TLS Support

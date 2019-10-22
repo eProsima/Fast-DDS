@@ -87,4 +87,6 @@ typedef dds::topic::detail::TopicDescription TopicDescription;
 } //namespace topic
 } //namespace dds
 
+#include <dds/topic/detail/TTopicDescriptionImpl.hpp>
+
 #endif //OMG_DDS_TOPIC_TOPIC_DESCRIPTION_HPP_

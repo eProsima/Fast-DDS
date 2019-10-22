@@ -22,10 +22,11 @@
 
 #include "HelloWorldPubSubTypes.h"
 
-#include <fastdds/dds/topic/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/pub/Publisher.hpp>
+#include <dds/pub/DataWriter.hpp>
+#include <dds/pub/DataWriterListener.hpp>
 
 class HelloWorldPublisher
 {
@@ -53,7 +54,7 @@ private:
 
     dds::pub::Publisher publisher_;
 
-    eprosima::fastdds::dds::DataWriter* writer_;
+    dds::pub::DataWriter* writer_;
 
     bool stop_;
 

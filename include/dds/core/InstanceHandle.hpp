@@ -71,9 +71,8 @@ public:
      * from some other type. This function is intended for internal
      * usage.
      */
-    template<typename ARG0>
     InstanceHandle(
-            const ARG0& arg0);
+            const detail::InstanceHandle& arg0);
     /** @endcond */
 
 public:
