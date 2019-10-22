@@ -52,7 +52,7 @@ No memory penalty is introduced by using *eProsima xtypes* in relation to compil
 
 The API is divided into two different and yet related conceps.
 1. Type definition: classes and methods needed for your runtime type definition.
-2. Data instantiation: set of values organized accordingly with its own type definition.
+2. Data instance: set of values organized accordingly with its own type definition.
 
 ### Type definition
 All types inherit from the base abstract type `DynamicType` as shown in the following diagram:
