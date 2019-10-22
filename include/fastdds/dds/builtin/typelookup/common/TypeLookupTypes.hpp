@@ -381,7 +381,7 @@ class TypeLookup_RequestTypeSupport : public TypeSupport
 public:
     RTPS_DllAPI bool serialize(
             void* data,
-            fastrtps::rtps::SerializedPayload_t* payload) override;
+            fastrtps::rtps::SerializedPayload_t* payload) const override;
 
     RTPS_DllAPI bool deserialize(
             fastrtps::rtps::SerializedPayload_t* payload,
@@ -401,7 +401,7 @@ class TypeLookup_ReplyTypeSupport : public TypeSupport
 public:
     RTPS_DllAPI bool serialize(
             void* data,
-            fastrtps::rtps::SerializedPayload_t* payload) override;
+            fastrtps::rtps::SerializedPayload_t* payload) const override;
 
     RTPS_DllAPI bool deserialize(
             fastrtps::rtps::SerializedPayload_t* payload,

@@ -1196,7 +1196,7 @@ void TypeLookup_Reply::deserialize(eprosima::fastcdr::Cdr &dcdr)
 // TypeSupports
 bool TypeLookup_RequestTypeSupport::serialize(
         void* data,
-        fastrtps::rtps::SerializedPayload_t* payload)
+        fastrtps::rtps::SerializedPayload_t* payload) const
 {
     TypeLookup_Request* type = static_cast<TypeLookup_Request*>(data);
     //eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -1295,7 +1295,7 @@ TypeLookup_ReplyTypeSupport::TypeLookup_ReplyTypeSupport()
 */
 bool TypeLookup_ReplyTypeSupport::serialize(
         void* data,
-        fastrtps::rtps::SerializedPayload_t* payload)
+        fastrtps::rtps::SerializedPayload_t* payload) const
 {
     TypeLookup_Reply* type = static_cast<TypeLookup_Reply*>(data);
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
