@@ -115,7 +115,7 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
     TypeSupport m_type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
     subscriber_->mp_participant->register_type(m_type);
 
-    std::cout << "Discovered type: " << m_type->getName() << " from topic " << topic << std::endl;
+    std::cout << "Discovered type: " << m_type.get_type_name() << " from topic " << topic << std::endl;
 
     if (subscriber_->mp_subscriber == nullptr)
     {
@@ -132,7 +132,7 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
             return;
         }
     }
-    subscriber_->topic_.topicDataType = m_type->getName();
+    subscriber_->topic_.topicDataType = m_type.get_type_name();
     DataReader* reader = subscriber_->mp_subscriber->create_datareader(
         subscriber_->topic_,
         subscriber_->qos_,
