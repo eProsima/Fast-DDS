@@ -154,7 +154,7 @@ The following methods are available when:
     ```c++
     data.value(42); //sets the value to 42
     int value = data.value<int>(); //read the value
-     ```
+    ```
 1. `DynamicData` represents an `AggregationType`
     ```c++
     data["member_name"].value(42); //set value 42 to the int member called "member_name"
