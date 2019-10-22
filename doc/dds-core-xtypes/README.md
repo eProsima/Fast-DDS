@@ -208,7 +208,7 @@ The type should be the same.
 
 #### `for_each` function of `DynamicData`
 This function provides an easy way to iterate the `DynamicData` tree.
-for_each receive a visitor callback that will be called for each node of the tree.
+`for_each` receive a visitor callback that will be called for each node of the tree.
 ```c++
 data.for_each([&](const DynamicData::ReadableNode& node)
 {
