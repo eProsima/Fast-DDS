@@ -200,7 +200,7 @@ There are two ways to obtain a reference to a `DynamicData`:
 
 A reference does not contain any value and only points to an already existing `DynamicData`, or to part of it.
 You can obtain a reference by accessing data with `[]` operator or by calling `ref()` and `cref()`.
-Depending on whether the reference comes from a `const DynamcData` or a `DynamicData`, a ReadableDynamicDataRef` or a `WritableDynamicDataRef` is returned.
+Depending on whether the reference comes from a `const DynamcData` or a `DynamicData`, a `ReadableDynamicDataRef` or a `WritableDynamicDataRef` is returned.
 
 #### `==` function of `DynamicData`
 A `DynamicData` can be compared in depth with another one.
