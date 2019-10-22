@@ -5,30 +5,31 @@ Lightweight C++ implementation of dds-xtypes.
 Given the following IDL,
 
 ```c++
-struct Inner {
+struct inner {
     long a;
 };
 
-struct Outter {
+struct outer {
     long b;
-    Inner c;
+    inner c;
 };
 ```
 
-you can create the representative C++ code that define these IDL types using *xtypes*:
+you can create the representative C++ code defining this IDL's types using *xtypes*:
 
 ```c++
-StructType inner("Inner");
-outter.add_member("a", primitive_type<int>());
+StructType inner("inner");
+outer.add_member("a", primitive_type<int>());
 
-StructType outter("Outter");
-outter.add_member("b", inner);
-outter.add_member("c", primitive_type<int>());
+StructType outer("outer");
+outer.add_member("b", inner);
+outer.add_member("c", primitive_type<int>());
 ```
 
-Once you defined the types, you can instatiate them and access to their data:
+Once these types have been defined, you can instatiate them and access their data:
 ```c++
-DynamicData data(outter);
+//create the DynamicData accordingly with the recently created "outer" DynamicType
+DynamicData data(outer);
 //write value
 data["b"]["a"].value(42);
 
@@ -36,43 +37,44 @@ data["b"]["a"].value(42);
 int my_value = data["b"]["a"].value<int>();
 ```
 
-## Why use *eProsima xtypes*?
+## Why should you use *eProsima xtypes*?
 - **OMG standard**: *eProsima xtypes* is based on the [dds-xtypes standard](https://www.omg.org/spec/DDS-XTypes/About-DDS-XTypes/) from the *OMG*.
-- **C++11 API**: it uses the most modern features of C++11 to offer a really easy API to use.
+- **C++11 API**: *eProsima xtypes* uses C++11 latest features, providing  an easy-to-use API.
 - **Memory lightweight**: data instances use the same memory as types builts by the compiler.
-There is no memory penalty using *eProsima xtypes* in relation to compiled types.
-- **Fast**: really small cost accesing to data members.
-- **Header only library**: avoid the linking problems.
-- **No external dependency**: *eProsima xtypes* only uses dependencies from *std*.
+No memory penalty is introduced by using *eProsima xtypes* in relation to compiled types.
+- **Fast**: Accesing to data members is swift and quick.
+- **Header only library**: avoids the linking problems.
+- **No external dependency**: *eProsima xtypes*'s only dependencies are from *std*.
 - **Easy to use**: Compresive API and intuitive concepts.
 
 ## API usage
 *Examples can be found in [example folder](../../examples/ModernC++/xtypes).*
 
-The API is divided in two differents but related conceps.
-1. Type definition: the classes and methods needed for defining your type in runtime.
-2. Data instantiation: a set of values organized as its type define.
+The API is divided into two different and yet related conceps.
+1. Type definition: classes and methods needed for your runtime type definition.
+2. Data instantiation: set of values organized accordingly with its own type definition.
 
 ### Type definition
-All types inherit from the base abstract type `DynamicType`, as the following diagram represents:
+All types inherit from the base abstract type `DynamicType` as shown in the following diagram:
 ![](http://www.plantuml.com/plantuml/png/XP512eCm44NtSmelu0r4b7RJXL3G2upf4099j9D9GUZXYviG9MstBoypy_bT46I9piATZJDYNZHjArLrNEjtMrqtZywe7K6lDPD6COl_fbmMQqdzCc0KZahovzDSW9uPjzmuZeKX2iwMSbfoqpxZTMuKlyD8pqXUqNyJS0x2g2GFbk0vJZEGcublRhLjaivN9bxUg2o6K1qAQgOMElAFlRaF)
 
 #### PrimitiveType
-Represents the basic type of the system.
-To create a `PrimitiveType`, a helper function must be used:
+Represents the system's basic types.
+In order to create a `PrimitiveType`, a helper function must be used:
 ```c++
 const DynamicType& t = primitive_type<T>();
 ```
-where `T` can be one of the following basic types:
+with `T` being one of the following basic types:
 `bool` `char` `wchar_t` `uint8_t` `int16_t` `uint16_t` `int32_t` `uint32_t` `int64_t` `uint64_t` `float` `double` `long double`
 
 #### Collection Type
+As pointed by the self-explanatory name, CollectionTypes provide a way to create the most various collections.
 There are several collection types:
 
-- `ArrayType`: for a fixed size arrange of elements. Similar to *C* arrays.
-- `SequenceType`: for a variable size arrange of elements. Equivalent to `std::vector` in *C++*
-- `StringType`: for a variable size arrange of chars. Similar to `std::string` in *C++*
-- `WStringType`: for a variable size arrange of chars. Similar to `std::wstring` in *C++*
+- `ArrayType`: fixed-size set of elements. Similar to *C-like* arrays.
+- `SequenceType`: variable-size set of elements. Equivalent to *C++* `*std::vector` 
+- `StringType`: variable-size set of char-type elements. Similar to *C++* `std::string`
+- `WStringType`: variable-size set of wchar-type elements. Similar to *C++* `std::wstring`
 
 ```c++
 ArrayType a1(primitive_type<int>(), 10); //size 10
@@ -86,12 +88,12 @@ WStringType wstr(); //unbounded wstring
 ```
 
 #### StructType
-You can specify an `StructType` given the type name of the structure.
+Similarly to a *C-like struct*, a `StructType` represents an aggregation of members.
+You can specify a `StructType` given the type name of the structure.
 ```c++
 StructType my_struct("MyStruct");
 ```
-Similar to a *C struct*, `StructType` represents an aggregation of members.
-Once it has been declared, any number of members can be added.
+Once the `StructType` has been declared, any number of members can be added.
 ```c++
 my_struct.add_member(Member("m_a", primitive_type<int>()));
 my_struct.add_member(Member("m_b", StringType()));
@@ -101,15 +103,15 @@ my_struct.add_member("m_e", other_struct)); //member of structs
 my_struct.add_member("m_f", SequenceType(other_struct))); //member of sequence of structs
 ```
 Note: once a `DynamicType` is added to an struct, a copy is performed.
-This allow to modify the `DynamicType`s without side effects, and facilitate the memory management by the user.
+This allows modifications to `DynamicType` to be performed without side effects. It also and facilitates the user's memory management duties.
 
 #### `is_compatible` function of `DynamicType`
-Any `DynamicType` can be compared with another `DynamicType` to check its compatibility.
+Any pair of `DynamicType`s can be checked for their mutual compatibility (note that A's compatibility with B does not imply that B is therefore compatible with A).
 ```c++
 TypeConsistency consistency = tested_type.is_compatible(other_type);
 ```
-The previous sentence will evaluate what level of consistency are there between the types.
-The type consistency, could be a set of the following *QoS polities*:
+This line will evaluate consistency levels among the two types.
+The returned `TypeConsistency` is going to be a subset of the following *QoS polities*:
 
 - `NONE`: Unknown way to interpret `tested_type` as `other_type`.
 - `EQUALS`: The evaluation is analogous to an equal evaluation.
@@ -120,20 +122,20 @@ The type consistency, could be a set of the following *QoS polities*:
 - `IGNORE_MEMBER_NAMES`: the evaluation will be true if the names of some members differs (but no the position).
 - `IGNORE_OTHER_MEMBERS`: the evaluation will be true if some members of `other_type` are ignored.
 
-Note: the `TypeConsistency` is an enum with `|` and `&` operator override to manage it as a set of QoS polities.
+Note: `TypeConsistency` is an enum with `|` and `&` operators overrided to manage it as a set of QoS polities.
 
-### Data instantation
+### Data instances
 #### Initialization
 To instantiate a data, only is necessary a `DynamicType`:
 ```c++
 DynamicData data(my_defined_type);
 ```
 
-This line allocates all the memory necesary to hold the data of `my_defined_type`
-and initialize their content to *0* or to the corresponding *default values*.
-It is important to know that the type must have a higher lifetime than the DynamicData,
-because the DynamicData only save a references to it.
-Other ways to initalizate a `DynamicData` is by *copy*, and by *compatible copy*.
+This line allocates all the memory necesary to hold the data defined by `my_defined_type`
+and initializes their content to *0* or to the corresponding *default values*.
+Please, note that the type must have a higher lifetime than the DynamicData,
+since `DynamicData` only saves a reference to it.
+Other ways to initalizate a `DynamicData` are respectively *copy* and *compatible copy*.
 
 ```c++
 DynamicData data1(type1); //default initalization
@@ -141,73 +143,72 @@ DynamicData data2(data1); //copy initialization
 DynamicData data3(data1, type2); //compatible copy initialization
 ```
 
-Last line creates a compatible `DynamicData` with the values of `data1` that can be accessed as `type2`.
+The last line creates a compatible `DynamicData(type2)` with the values of `data1` that can be accessed being a `type2`.
 To archieve this, `type2` must be compatible with `type1`.
 This compatibility can be checked with `is_compatible` function.
 
 #### Internal data access
-Depending of the type, the data will behave in different ways.
-The following methods are available to use when:
+Depending on the type, the `DynamicData` will behave in different ways.
+The following methods are available when:
 1. `DynamicData` represents a `PrimitiveType` (of `int` as example):
-  ```c++
-  data.value(42); //sets the value to 42
-  int value = data.value<int>(); //read the value
-  ```
+    ```c++
+    data.value(42); //sets the value to 42
+    int value = data.value<int>(); //read the value
+     ```
 1. `DynamicData` represents an `AggregationType`
-  ```c++
-  data["member_name"].value(42); //set value 42 to the int member called "member_name"
-  int value = data["member_name"].value<int>(); //get value from int member called "member_name"
-  data["member_name"].value(dynamic_data_representing_a_value);
-  WritableDynamicDataRef ref = data["member_name"];
-  ```
+    ```c++
+    data["member_name"].value(42); //set value 42 to the int member called "member_name"
+    int value = data["member_name"].value<int>(); //get value from int member called "member_name"
+    data["member_name"].value(dynamic_data_representing_a_value);
+    WritableDynamicDataRef ref = data["member_name"];
+    ```
 1. `DynamicData` represents a `CollectionType`
-  ```c++
-  size_t size = data.size(); //size of collection
-  data[2].value(42); // set value 42 to position 2 of the collection.
-  int value = data[2].value<int>(); // get value from position 2 of the collection.
-  data[2] = dynamic_data_representing_a_value;
-  WritableDynamicDataRef ref = data[2]; //references to a DynamicData that represents a collection
-  ```
+    ```c++
+    size_t size = data.size(); //size of collection
+    data[2].value(42); // set value 42 to position 2 of the collection.
+    int value = data[2].value<int>(); // get value from position 2 of the collection.
+    data[2] = dynamic_data_representing_a_value;
+    WritableDynamicDataRef ref = data[2]; //references to a DynamicData that represents a collection
+    ```
 1. `DynamicData` represents a `StringType`
-The same as `CollectionType` plus:
-  ```c++
-  data.value<std::string>("Hello data!"); //sets the string value
-  data.string("Hello again!"); // shortcut version for string
-  const std::string& s1 = data.value<std::string>(); //read the string value
-  const std::string& s2 = data.string(); // shortcut version for string
-  ```
+    Same as `CollectionType` plus:
+    ```c++
+    data.value<std::string>("Hello data!"); //sets the string value
+    data.string("Hello again!"); // shortcut version for string
+    const std::string& s1 = data.value<std::string>(); //read the string value
+    const std::string& s2 = data.string(); // shortcut version for string
+    ```
 1. `DynamicData` represents a `WStringType`
-The same as `CollectionType` plus:
-  ```c++
-  data.value<std::wstring>(L"Hello data! \u263A"); //sets the string value
-  data.wstring(L"Hello again! \u263A"); // shortcut version for string
-  const std::wstring& s1 = data.value<std::wstring>(); //read the string value
-  const std::wstring& s2 = data.wstring(); // shortcut version for string
-  ```
+    Same as `CollectionType` plus:
+    ```c++
+    data.value<std::wstring>(L"Hello data! \u263A"); //sets the string value
+    data.wstring(L"Hello again! \u263A"); // shortcut version for string
+    const std::wstring& s1 = data.value<std::wstring>(); //read the string value
+    const std::wstring& s2 = data.wstring(); // shortcut version for string
+    ```
 1. `DynamicData` represents a `SequenceType`
-The same as `CollectionType` plus:
-  ```c++
-  data.push(42); // push back new value to the sequence.
-  data.push(dynamic_data_representing_a_value);
-  ```
+    Same as `CollectionType` plus:
+    ```c++
+    data.push(42); // push back new value to the sequence.
+    data.push(dynamic_data_representing_a_value);
+    ```
 
 #### References to `DynamicData`
 There are two ways to obtain a reference to a `DynamicData`:
 1. `ReadableDynamicDataRef` for constant references.
 2. `WritableDynamicDataRef` for mutable references.
 
-A reference no contain any value, only points to an already existing `DynamicData`, or part of it.
-You can get a reference when access with the `[]` operator or calling the `ref()` and `cref()` methods of the `DynamicData`.
-You will obtain a `ReadableDynamicDataRef` or a `WritableDynamicDataRef` depending if theses methods are
-calling from a `const DynamicData` or from a `DynamicData` itself.
+A reference does not contain any value and only points to an already existing `DynamicData`, or to part of it.
+You can obtain a reference by accessing data with `[]` operator or by calling `ref()` and `cref()`, such methods being provided by `DynamicData`.
+Depending on whether the reference comes from a `const DynamcData` or a `DynamicData`, a ReadableDynamicDataRef` or a `WritableDynamicDataRef` is returned.
 
 #### `==` function of `DynamicData`
 A `DynamicData` can be compared in depth with another one.
 The type should be the same.
 
 #### `for_each` function of `DynamicData`
-This function offers an easy way to iterate the `DynamicData` tree.
-The function receive a visitor callback that will be called for each node of the tree.
+This function provides an easy way to iterate the `DynamicData` tree.
+for_each receive a visitor callback that will be called for each node of the tree.
 ```c++
 data.for_each([&](const DynamicData::ReadableNode& node)
 {
@@ -223,8 +224,8 @@ data.for_each([&](const DynamicData::ReadableNode& node)
     }
 });
 ```
-The `node` parameter of the callback can be a `ReadableNode` or `WritableNode` depends of the mutability of the `DynamicData`,
-and has the following methods that allows to introspect the node
+The `node` callback parameters can be either `ReadableNode` or `WritableNode`, depending on `DynamicData` mutability,
+and provides the following methods for introspection
 ```c++
 node.data() // for a view of the data
 node.type() // related type
@@ -235,51 +236,53 @@ node.access().member() // member used for access from parent to this node
 ```
 Note: `node.data()` will return a `ReadableDynamicDataRef` or a `WritableDynamicDataRef` depending of the node type.
 
-In order to break the tree iteration, the user call throw a boolean value.
+In order to break the tree iteration, the user can throw a boolean value.
+
 For example:
 ```
 case TypeKind::FLOAT_128_TYPE: // The user app does not support 128 float values
     throw false; // Break the tree iteration
 ```
 The boolean exception value will be returned by `for_each` function call.
-If the visitor callback implementation does not call an exception, `for_each` function will return `true` by default.
+If the visitor callback implementation does not call an exception, `for_each` function returns `true` by default.
 
 ## Performance
-The `DynamicData` instance only uses the minimal allocations needed to store the data.
+The `DynamicData` instance uses the minimal allocations needed to store any data.
 If its associated type only contains the following (nested) types: `PrimitiveType`, `StructType`, or `ArrayType`;
-the memory required can be got with only **one allocation** at the creation phase of the `DynamicData`.
-Only if the type contains some `MutableCollectionType`, another allocation will be performed to manage the inner types of that mutable type.
+the memory required can be allocated with only **one allocation** during the creation phase of the `DynamicData`.
+On the other hand, if the type contains any `MutableCollectionType`, other allocations will be performed in order to manage that inner types' mutable members.
 
 Let see an example:
 ```c++
-StructType inner("Inner");
+StructType inner("inner");
 inner.add_member("m_int", primitive_type<int>());
 inner.add_member("m_float", primitive_type<float>());
 inner.add_member("m_array", ArrayType(primitive_type<uint16_t>(), 4));
 
 DynamicData data(inner);
 ```
-This data from `inner` will be represented in memory as follow, with only one allocation:
+`DynamicData data(inner)` will be represented in memory as follows. Only one memory allocation is needed:
 ![](inner-memory.png)
 
 The next complex type:
 ```c++
-StructType outter("Outter");
-outter.add_member("m_inner", inner);
-outter.add_member("m_array_inner", ArrayType(inner, 4));
-outter.add_member("m_sequence_inner", SequenceType(inner, 4));
-outter.add_member("m_string", StringType());
+StructType outer("outer");
+outer.add_member("m_inner", inner);
+outer.add_member("m_array_inner", ArrayType(inner, 4));
+outer.add_member("m_sequence_inner", SequenceType(inner, 4));
+outer.add_member("m_string", StringType());
 
-DynamicData data(outter);
+DynamicData data(outer);
 ```
-Needs two more allocations, one for the secuence, and another one for the string:
-![](outter-memory.png)
+In this case, two allocations will be needed: one for the sequence, and a second one for the string:
+![](outer-memory.png)
 
 ## Debugging DynamicData
-As a `DynamicData` is totally built in runtime, no static checks can be done to ensure the correct behaviour.
-As an attempt to solve this, many methods are checked with `asserts`, to avoid the overload of checks in *release mode*.
-We strongly recommend to compile in *debug mode* during developing phase to allow `xtypes` library to perform all possible checks.
-In the same way, to improve the performance, compile in *release mode* for production, in order to avoid the cost of the checks.
+As a `DynamicData` is fully built at runtime, no static checks can ensure its correct behaviour.
+As an attempt to solve this, asserts have been implemented accross various methods to avoid the overload of checks in *release mode*.
+We strongly recommend to compile in *debug mode* during developing phase: this will allow `xtypes` library to perform all possible checks.
+Following the same line of thoughts, in order to improve the performance the final product should be compiled 
+releasr *release mode*: in this case no checks will be performed.
 
 Reminder: `asserts` function from std emit an *abort* signal.
 If you need more information about why a concrete `assert` was reached, the *stacktrace* should be very useful.
