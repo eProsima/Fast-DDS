@@ -33,7 +33,6 @@
 
 #include <mutex>
 #include <chrono>
-#include <unordered_set>
 
 using namespace eprosima::fastrtps;
 
@@ -95,6 +94,7 @@ ParticipantProxyData::ParticipantProxyData(
     , m_writers(nullptr)
 {
 }
+
 
 ParticipantProxyData::~ParticipantProxyData()
 {

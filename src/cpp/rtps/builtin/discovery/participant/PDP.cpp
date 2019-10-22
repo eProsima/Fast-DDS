@@ -496,13 +496,8 @@ bool PDP::has_reader_proxy_data(const GUID_t& reader)
     {
         if (pit->m_guid.guidPrefix == reader.guidPrefix)
         {
-            for (auto rp : *pit->m_readers)
-            {
-                if (rp.second->guid() == reader)
-                {
-                    return true;
-                }
-            }
+            ProxyHashTable<ReaderProxyData> & readers = *pit->m_readers;
+            return readers.find(reader.entityId) != readers.end();
         }
     }
     return false;
@@ -533,13 +528,8 @@ bool PDP::has_writer_proxy_data(const GUID_t& writer)
     {
         if (pit->m_guid.guidPrefix == writer.guidPrefix)
         {
-            for (auto wp : *pit->m_writers)
-            {
-                if (wp.second->guid() == writer)
-                {
-                    return true;
-                }
-            }
+            ProxyHashTable<WriterProxyData> & writers = *pit->m_writers;
+            return writers.find(writer.entityId) != writers.end();
         }
     }
     return false;
@@ -613,24 +603,22 @@ bool PDP::removeWriterProxyData(const GUID_t& writer_guid)
             if (wit != pit->m_writers->end())
             {
                 WriterProxyData *pW = wit->second;
-                if (pW->guid() == writer_guid)
+                mp_EDP->unpairWriterProxy(pit->m_guid, writer_guid);
+
+                RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
+                if (listener)
                 {
-                    mp_EDP->unpairWriterProxy(pit->m_guid, writer_guid);
-
-                    RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-                    if (listener)
-                    {
-                        WriterDiscoveryInfo info(std::move(*pW));
-                        info.status = WriterDiscoveryInfo::REMOVED_WRITER;
-                        listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
-                    }
-
-                    // Clear writer proxy data and move to pool in order to allow reuse
-                    pW->clear();
-                    pit->m_writers->erase(wit);
-                    writer_proxies_pool_.push_back(pW);
-                    return true;
+                    WriterDiscoveryInfo info(std::move(*pW));
+                    info.status = WriterDiscoveryInfo::REMOVED_WRITER;
+                    listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
                 }
+
+                // Clear writer proxy data and move to pool in order to allow reuse
+                pW->clear();
+                pit->m_writers->erase(wit);
+                writer_proxies_pool_.push_back(pW);
+
+                return true;
             }
         }
     }
