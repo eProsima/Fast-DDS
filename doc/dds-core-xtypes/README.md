@@ -282,7 +282,7 @@ As a `DynamicData` is fully built at runtime, no static checks can ensure its co
 As an attempt to solve this, asserts have been placed accross various methods to avoid the overload of checks in *release mode*.
 We strongly recommend to compile in *debug mode* during developing phase: this will allow `xtypes` library to perform all possible checks.
 Following the same line of thoughts, in order to improve the performance the final product should be compiled in 
-release *release mode*: in this case no checks will be performed.
+*release mode*, in this case no checks will be performed.
 
 Reminder: `asserts` function from std emit an *abort* signal.
 If you need more information about why a concrete `assert` was reached, the *stacktrace* should be very useful.
