@@ -68,7 +68,7 @@ bool TestPublisher::init(
         bool use_typelookup)
 {
     m_Name = name;
-    m_Type.swap(type);
+    m_Type = type;
     using_typelookup_ = use_typelookup;
 
     ParticipantAttributes PParam;
@@ -94,10 +94,10 @@ bool TestPublisher::init(
     Wparam.topic.auto_fill_type_object = false;
     Wparam.topic.auto_fill_type_information = false;
     Wparam.topic.topicKind = topic_kind;
-    Wparam.topic.topicDataType = m_Type != nullptr ? m_Type->getName() : nullptr;
+    Wparam.topic.topicDataType = m_Type.get() != nullptr ? m_Type.get_type_name() : "";
 
     //REGISTER THE TYPE
-    if (m_Type != nullptr)
+    if (m_Type.get() != nullptr)
     {
         mp_participant->register_type(m_Type);
     }
@@ -126,7 +126,7 @@ bool TestPublisher::init(
     // Wparam.topic.dataRepresentationQos = XML_DATA_REPRESENTATION
     // Wparam.topic.dataRepresentationQos = XCDR2_DATA_REPRESENTATION
 
-    if (m_Type != nullptr)
+    if (m_Type.get() != nullptr)
     {
         mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, Wparam, nullptr);
         if (mp_publisher == nullptr)
@@ -136,7 +136,7 @@ bool TestPublisher::init(
 
         writer_ = mp_publisher->create_datawriter(Wparam.topic, Wparam.qos, &m_pubListener);
 
-        m_Data = m_Type->createData();
+        m_Data = m_Type.create_data();
     }
 
     m_bInitialized = true;
@@ -146,9 +146,9 @@ bool TestPublisher::init(
 
 TestPublisher::~TestPublisher()
 {
-    if (m_Type)
+    if (m_Type.get())
     {
-        m_Type->deleteData(m_Data);
+        m_Type.delete_data(m_Data);
     }
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
 }

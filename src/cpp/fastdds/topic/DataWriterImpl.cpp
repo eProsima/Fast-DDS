@@ -61,7 +61,7 @@ DataWriterImpl::DataWriterImpl(
     , topic_att_(topic_att)
     , w_att_(att)
     , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
-    , history_(topic_att_, type_->m_typeSize
+    , history_(topic_att_, type_.get()->m_typeSize
 #if HAVE_SECURITY
             // In future v2 changepool is in writer, and writer set this value to cachechagepool.
             + 20 /*SecureDataHeader*/ + 4 + ((2 * 16) /*EVP_MAX_IV_LENGTH max block size*/ - 1 ) /* SecureDataBodey*/
@@ -80,18 +80,28 @@ DataWriterImpl::DataWriterImpl(
     , user_datawriter_(nullptr)
 {
     deadline_timer_ = new TimedEvent(publisher_->get_participant()->get_resource_event(),
-            [&]() -> bool
-            {
-                return deadline_missed();
-            },
-            qos_.m_deadline.period.to_ns() * 1e-6);
+                                     [&](TimedEvent::EventCode code) -> bool
+                                     {
+                                         if (TimedEvent::EVENT_SUCCESS == code)
+                                         {
+                                             return deadline_missed();
+                                         }
+
+                                         return false;
+                                     },
+                                     qos_.m_deadline.period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(publisher_->get_participant()->get_resource_event(),
-            [&]() -> bool
-            {
-                return lifespan_expired();
-            },
-            qos_.m_lifespan.duration.to_ns() * 1e-6);
+                                     [&](TimedEvent::EventCode code) -> bool
+                                     {
+                                         if (TimedEvent::EVENT_SUCCESS == code)
+                                         {
+                                             return lifespan_expired();
+                                         }
+
+                                         return false;
+                                     },
+                                     qos_.m_lifespan.duration.to_ns() * 1e-6);
 
     RTPSWriter* writer = RTPSDomain::createRTPSWriter(
         publisher_->rtps_participant(),
@@ -123,7 +133,7 @@ DataWriterImpl::~DataWriterImpl()
 
     if (writer_ != nullptr)
     {
-        logInfo(PUBLISHER, guid().entityId << " in topic: " << type_->getName());
+        logInfo(PUBLISHER, guid().entityId << " in topic: " << type_.get_type_name());
     }
 
     RTPSDomain::removeRTPSWriter(writer_);
@@ -212,7 +222,7 @@ bool DataWriterImpl::check_new_change_preconditions(
             || change_kind == NOT_ALIVE_DISPOSED
             || change_kind == NOT_ALIVE_DISPOSED_UNREGISTERED)
     {
-        if (!type_->m_isGetKeyDefined)
+        if (!type_.get()->m_isGetKeyDefined)
         {
             logError(PUBLISHER, "Topic is NO_KEY, operation not permitted");
             return false;
@@ -239,13 +249,13 @@ bool DataWriterImpl::perform_create_new_change(
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 #endif
     {
-        CacheChange_t* ch = writer_->new_change(type_->getSerializedSizeProvider(data), change_kind, handle);
+        CacheChange_t* ch = writer_->new_change(type_.get()->getSerializedSizeProvider(data), change_kind, handle);
         if (ch != nullptr)
         {
             if (change_kind == ALIVE)
             {
                 //If these two checks are correct, we asume the cachechange is valid and thwn we can write to it.
-                if (!type_->serialize(data, &ch->serializedPayload))
+                if (!type_.serialize(data, &ch->serializedPayload))
                 {
                     logWarning(RTPS_WRITER, "RTPSWriter:Serialization returns false"; );
                     history_.release_Cache(ch);
@@ -352,13 +362,13 @@ bool DataWriterImpl::create_new_change_with_params(
     }
 
     InstanceHandle_t handle;
-    if (type_->m_isGetKeyDefined)
+    if (type_.get()->m_isGetKeyDefined)
     {
         bool is_key_protected = false;
 #if HAVE_SECURITY
         is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif
-        type_->getKey(data, &handle, is_key_protected);
+        type_.get()->getKey(data,&handle,is_key_protected);
     }
 
     return perform_create_new_change(changeKind, data, wparams, handle);

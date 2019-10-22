@@ -132,7 +132,7 @@ DataReader* SubscriberImpl::create_datareader(
         logError(SUBSCRIBER, "Type : " << topic_att.getTopicDataType() << " Not Registered");
         return nullptr;
     }
-    if (topic_att.topicKind == WITH_KEY && !type_support->m_isGetKeyDefined)
+    if (topic_att.topicKind == WITH_KEY && !type_support.get()->m_isGetKeyDefined)
     {
         logError(SUBSCRIBER, "Keyed Topic needs getKey function");
         return nullptr;

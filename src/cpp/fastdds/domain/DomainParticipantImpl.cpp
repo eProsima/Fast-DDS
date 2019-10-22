@@ -579,36 +579,36 @@ const TypeSupport DomainParticipantImpl::find_type(
     return TypeSupport(nullptr);
 }
 
-bool DomainParticipantImpl::register_type(
+ReturnCode_t DomainParticipantImpl::register_type(
         const TypeSupport type,
         const std::string& type_name)
 {
     TypeSupport t = find_type(type_name);
 
-    if (t != nullptr)
+    if (t.get() != nullptr)
     {
         if (t == type)
         {
-            return true;
+            return ReturnCode_t::RETCODE_OK;
         }
 
         logError(PARTICIPANT, "Another type with the same name '" << type_name << "' is already registered.");
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
     if (type_name.size() <= 0)
     {
         logError(PARTICIPANT, "Registered Type must have a name");
-        return false;
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
     logInfo(PARTICIPANT, "Type " << type_name << " registered.");
     std::lock_guard<std::mutex> lock(mtx_types_);
-    types_.insert(std::make_pair(type_name, type));
-
-    return true;
+    auto it = types_.insert(std::make_pair(type_name, type));
+    return (it.second) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
 }
 
-bool DomainParticipantImpl::register_dynamic_type_to_factories(
+ReturnCode_t DomainParticipantImpl::register_dynamic_type_to_factories(
     const std::string& type_name) const
 {
     using namespace  eprosima::fastrtps::types;
@@ -646,22 +646,22 @@ bool DomainParticipantImpl::register_dynamic_type_to_factories(
                 const TypeIdentifier *type_id_complete = objectFactory->get_type_identifier(dpst->getName(), true);
                 const TypeObject *type_obj_complete = objectFactory->get_type_object(dpst->getName(), true);
                 objectFactory->add_type_object(dpst->getName(), type_id_complete, type_obj_complete); // Add complete
-                return true;
+                return ReturnCode_t::RETCODE_OK;
             }
         }
     }
 
-    return false; // Isn't a registered dynamic type.
+    return ReturnCode_t::RETCODE_ERROR; // Isn't a registered dynamic type.
 }
 
-bool DomainParticipantImpl::unregister_type(
+ReturnCode_t DomainParticipantImpl::unregister_type(
         const char* type_name)
 {
     TypeSupport t = find_type(type_name);
 
     if (t.empty())
     {
-        return true; // Not registered, so unregistering complete.
+        return ReturnCode_t::RETCODE_OK; // Not registered, so unregistering complete.
     }
 
     {
@@ -672,7 +672,7 @@ bool DomainParticipantImpl::unregister_type(
         {
             if (sit.second->type_in_use(type_name))
             {
-                return false; // Is in use
+                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET; // Is in use
             }
         }
     }
@@ -685,7 +685,7 @@ bool DomainParticipantImpl::unregister_type(
         {
             if (pit.second->type_in_use(type_name))
             {
-                return false; // Is in use
+                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET; // Is in use
             }
         }
     }
@@ -693,7 +693,7 @@ bool DomainParticipantImpl::unregister_type(
     std::lock_guard<std::mutex> lock(mtx_types_);
     types_.erase(type_name);
 
-    return true;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
@@ -847,7 +847,7 @@ fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_types(
     return rtps_participant_->typelookup_manager()->get_types(in);
 }
 
-bool DomainParticipantImpl::register_remote_type(
+ReturnCode_t DomainParticipantImpl::register_remote_type(
         const fastrtps::types::TypeInformation& type_information,
         const std::string& type_name,
         std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback)
@@ -863,12 +863,16 @@ bool DomainParticipantImpl::register_remote_type(
 
         if (nullptr != dyn)
         {
-            if (register_dynamic_type(dyn))
+            // For plain types, don't call the callback
+            return register_dynamic_type(dyn);
+            /*
+            if (!!register_dynamic_type(dyn))
             {
                 //callback(type_name, dyn); // For plain types, don't call the callback
                 return true;
             }
             return false;
+            */
         }
         // If cannot create the dynamic type, probably is because it depend on unknown types.
         // We must continue.
@@ -889,12 +893,16 @@ bool DomainParticipantImpl::register_remote_type(
 
         if (nullptr != dyn)
         {
-            if (register_dynamic_type(dyn))
+            // If the type is already registered, don't call the callback.
+            return register_dynamic_type(dyn);
+            /*
+            if (!!register_dynamic_type(dyn))
             {
                 //callback(type_name, dyn); // If the type is already registered, don't call the callback.
                 return true;
             }
             return false;
+            */
         }
     }
     else if (rtps_participant_->typelookup_manager() != nullptr)
@@ -947,9 +955,9 @@ bool DomainParticipantImpl::register_remote_type(
         // Move the filled vector to the map
         parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
 
-        return false;
+        return ReturnCode_t::RETCODE_NO_DATA;
     }
-    return false;
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
 bool DomainParticipantImpl::check_get_type_request(
@@ -974,7 +982,7 @@ bool DomainParticipantImpl::check_get_type_request(
             if (nullptr != dyn_type)
             {
                 dyn_type->set_name(name);
-                if (register_dynamic_type(dyn_type))
+                if (!!register_dynamic_type(dyn_type))
                 {
                     callback(name, dyn_type);
                     remove_parent_request(requestId);
@@ -994,7 +1002,7 @@ bool DomainParticipantImpl::check_get_type_request(
 
                 if (nullptr != dynamic)
                 {
-                    if (register_dynamic_type(dynamic))
+                    if (!!register_dynamic_type(dynamic))
                     {
                         callback(name, dynamic);
                         remove_parent_request(requestId);
@@ -1167,7 +1175,7 @@ bool DomainParticipantImpl::check_get_dependencies_request(
     return false;
 }
 
-bool DomainParticipantImpl::register_dynamic_type(
+ReturnCode_t DomainParticipantImpl::register_dynamic_type(
         fastrtps::types::DynamicType_ptr dyn_type)
 {
     TypeSupport type(new fastrtps::types::DynamicPubSubType(dyn_type));
