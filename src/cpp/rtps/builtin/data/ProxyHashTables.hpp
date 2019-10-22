@@ -43,9 +43,9 @@ template<
     class RawAllocator = foonathan::memory::default_allocator>
 class node_segregator
 {
-    foonathan::memory::memory_pool<foonathan::memory::node_pool, RawAllocator>* _node_allocator = nullptr;
-    std::size_t _block_size = 0;
-    const bool& _initialization_is_done;
+    foonathan::memory::memory_pool<foonathan::memory::node_pool, RawAllocator>* node_allocator_ = nullptr;
+    std::size_t block_size_ = 0;
+    const bool& initialization_is_done_;
 
 public:
 
@@ -55,45 +55,45 @@ public:
             std::size_t nodes_to_allocate,
             const bool& flag,
             std::size_t padding = foonathan::memory::detail::memory_block_stack::implementation_offset)
-        : _block_size(nodes_to_allocate * node_size + padding)
-        , _node_allocator(new allocator_type(node_size, nodes_to_allocate * node_size + padding))
-        , _initialization_is_done(flag)
+        : block_size_(nodes_to_allocate * node_size + padding)
+        , node_allocator_(new allocator_type(node_size, nodes_to_allocate * node_size + padding))
+        , initialization_is_done_(flag)
     {}
 
     node_segregator(
             node_segregator&& s)
-        : _node_allocator(s._node_allocator)
-        , _block_size(s._block_size)
-        , _initialization_is_done(s._initialization_is_done)
+        : node_allocator_(s.node_allocator_)
+        , block_size_(s.block_size_)
+        , initialization_is_done_(s.initialization_is_done_)
     {
-        s._node_allocator = nullptr;
+        s.node_allocator_ = nullptr;
     }
 
     node_segregator(
             const node_segregator& s)
-        : _block_size(s._block_size)
-        , _node_allocator(new allocator_type(node_size, s._block_size))
-        , _initialization_is_done(s._initialization_is_done)
+        : block_size_(s.block_size_)
+        , node_allocator_(new allocator_type(node_size, s.block_size_))
+        , initialization_is_done_(s.initialization_is_done_)
     {}
 
     ~node_segregator()
     {
-        if (_node_allocator)
+        if (node_allocator_)
         {
-            delete _node_allocator;
+            delete node_allocator_;
         }
     }
 
     allocator_type& get_allocator() const noexcept
     {
-        return *_node_allocator;
+        return *node_allocator_;
     }
 
     bool use_allocate_node(
             std::size_t size,
             std::size_t) noexcept
     {
-        return _initialization_is_done && size == node_size;
+        return initialization_is_done_ && size == node_size;
     }
 
     bool use_allocate_array(
@@ -107,10 +107,10 @@ public:
 
 struct ProxyCollectionInitizalizer
 {
-    bool _initialized;
+    bool initialized_;
 
     ProxyCollectionInitizalizer()
-        : _initialized(false)
+        : initialized_(false)
     {}
 
 };
@@ -150,14 +150,14 @@ public:
             foonathan::memory::make_segregator(
                 segregator(
                     r.initial ? r.initial : 1u,
-                    _initialized),
+                    initialized_),
                 foonathan::memory::new_allocator()
                 )
             )
         , base_class(r.initial ? r.initial : 1u, *static_cast<allocator_type*>(this))
     {
         // notify the pool that fixed allocations may start
-        _initialized = true;
+        initialized_ = true;
     }
 };
 
