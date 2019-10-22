@@ -130,7 +130,7 @@ public:
      * @param type_name The name that will be used to identify the Type.
      * @return True if registered.
      */
-    bool register_type(
+    ReturnCode_t register_type(
             TypeSupport type,
             const std::string& type_name);
 
@@ -139,7 +139,7 @@ public:
      * @param type TypeSupport.
      * @return True if registered.
      */
-    bool register_type(
+    ReturnCode_t register_type(
             TypeSupport type);
 
     /**
@@ -147,7 +147,7 @@ public:
      * @param typeName Name of the type
      * @return True if unregistered.
      */
-    bool unregister_type(
+    ReturnCode_t unregister_type(
             const char* typeName);
 
     // TODO create/delete topic
@@ -413,7 +413,7 @@ public:
      * @return true if type is already available (callback will not be called). false if type isn't available yet
      * (the callback will be called if negotiation is success, and ignored in other case).
      */
-    bool register_remote_type(
+    ReturnCode_t register_remote_type(
             const fastrtps::types::TypeInformation& type_information,
             const std::string& type_name,
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);

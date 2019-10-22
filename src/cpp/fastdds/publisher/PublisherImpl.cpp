@@ -166,7 +166,7 @@ DataWriter* PublisherImpl::create_datawriter(
     }
 
     // Check the type supports keys.
-    if (topic_att.topicKind == WITH_KEY && !type_support->m_isGetKeyDefined)
+    if (topic_att.topicKind == WITH_KEY && !type_support.get()->m_isGetKeyDefined)
     {
         logError(PUBLISHER, "Keyed Topic " << topic_att.getTopicName() << " needs getKey function");
         return nullptr;

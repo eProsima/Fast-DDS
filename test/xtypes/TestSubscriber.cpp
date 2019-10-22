@@ -66,7 +66,7 @@ bool TestSubscriber::init(
         bool use_typelookup)
 {
     m_Name = name;
-    m_Type.swap(type);
+    m_Type = type;
     using_typelookup_ = use_typelookup;
     ParticipantAttributes PParam;
     PParam.rtps.builtin.domainId = domain;
@@ -85,12 +85,12 @@ bool TestSubscriber::init(
     //CREATE THE SUBSCRIBER
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = topic_kind;
-    Rparam.topic.topicDataType = m_Type != nullptr ? m_Type->getName() : nullptr;
+    Rparam.topic.topicDataType = m_Type.get() != nullptr ? m_Type.get_type_name() : "";
     Rparam.topic.auto_fill_type_object = false;
     Rparam.topic.auto_fill_type_information = false;
 
     //REGISTER THE TYPE
-    if (m_Type != nullptr)
+    if (m_Type.get() != nullptr)
     {
         mp_participant->register_type(m_Type);
     }
@@ -121,7 +121,7 @@ bool TestSubscriber::init(
     }
 
     // Create sub and reader if topic was provided
-    if (m_Type != nullptr)
+    if (m_Type.get() != nullptr)
     {
         mp_subscriber = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
 
@@ -131,7 +131,7 @@ bool TestSubscriber::init(
         }
 
         reader_ = mp_subscriber->create_datareader(Rparam.topic, Rparam.qos, &m_subListener);
-        m_Data = m_Type->createData();
+        m_Data = m_Type.create_data();
     }
 
     m_bInitialized = true;
@@ -143,9 +143,9 @@ bool TestSubscriber::init(
 
 TestSubscriber::~TestSubscriber()
 {
-    if (m_Type != nullptr)
+    if (m_Type.get() != nullptr)
     {
-        m_Type->deleteData(m_Data);
+        m_Type.delete_data(m_Data);
     }
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
 }
@@ -301,7 +301,7 @@ bool TestSubscriber::register_discovered_type()
     TypeSupport type(disc_type_);
     topic_att.auto_fill_type_object = true;
     topic_att.auto_fill_type_information = true;
-    return mp_participant->register_type(type, disc_type_->get_name());
+    return mp_participant->register_type(type, disc_type_->get_name()) == ReturnCode_t::RETCODE_OK;
 }
 
 void TestSubscriber::run()
