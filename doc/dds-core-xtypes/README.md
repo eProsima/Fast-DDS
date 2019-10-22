@@ -124,7 +124,7 @@ The returned `TypeConsistency` is going to be a subset of the following *QoS pol
 
 Note: `TypeConsistency` is an enum with `|` and `&` operators overrided to manage it as a set of QoS polities.
 
-### Data instances
+### Data instance
 #### Initialization
 To instantiate a data, only is necessary a `DynamicType`:
 ```c++
