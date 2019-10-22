@@ -11,7 +11,7 @@ struct Inner {
 
 struct Outer {
     long b;
-    inner c;
+    Inner c;
 };
 ```
 
