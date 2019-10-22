@@ -5,11 +5,11 @@ Lightweight C++ implementation of dds-xtypes.
 Given the following IDL,
 
 ```c++
-struct inner {
+struct Inner {
     long a;
 };
 
-struct outer {
+struct Outer {
     long b;
     inner c;
 };
@@ -18,17 +18,17 @@ struct outer {
 you can create the representative C++ code defining this IDL's types using *xtypes*:
 
 ```c++
-StructType inner("inner");
+StructType inner("Inner");
 outer.add_member("a", primitive_type<int>());
 
-StructType outer("outer");
+StructType outer("Outer");
 outer.add_member("b", inner);
 outer.add_member("c", primitive_type<int>());
 ```
 
 Once these types have been defined, you can instatiate them and access their data:
 ```c++
-//create the DynamicData accordingly with the recently created "outer" DynamicType
+//create the DynamicData accordingly with the recently created "Outer" DynamicType
 DynamicData data(outer);
 //write value
 data["b"]["a"].value(42);
@@ -106,7 +106,7 @@ Note: once a `DynamicType` is added to an struct, a copy is performed.
 This allows modifications to `DynamicType` to be performed without side effects. It also and facilitates the user's memory management duties.
 
 #### `is_compatible` function of `DynamicType`
-Any pair of `DynamicType`s can be checked for their mutual compatibility (note that A's compatibility with B does not imply that B is therefore compatible with A).
+Any pair of `DynamicType`s can be checked for their mutual compatibility.
 ```c++
 TypeConsistency consistency = tested_type.is_compatible(other_type);
 ```
@@ -250,23 +250,23 @@ If the visitor callback implementation does not call an exception, `for_each` fu
 The `DynamicData` instance uses the minimal allocations needed to store any data.
 If its associated type only contains the following (nested) types: `PrimitiveType`, `StructType`, or `ArrayType`;
 the memory required can be allocated with only **one allocation** during the creation phase of the `DynamicData`.
-On the other hand, if the type contains any `MutableCollectionType`, other allocations will be performed in order to manage that inner types' mutable members.
+On the other hand, each inner `MutableCollectionType` will trigger a further allocation.
 
 Let see an example:
 ```c++
-StructType inner("inner");
+StructType inner("Inner");
 inner.add_member("m_int", primitive_type<int>());
 inner.add_member("m_float", primitive_type<float>());
 inner.add_member("m_array", ArrayType(primitive_type<uint16_t>(), 4));
 
 DynamicData data(inner);
 ```
-`DynamicData data(inner)` will be represented in memory as follows. Only one memory allocation is needed:
+Such data will be represented in memory as follows. Only one memory allocation is needed:
 ![](inner-memory.png)
 
 The next complex type:
 ```c++
-StructType outer("outer");
+StructType outer("Outer");
 outer.add_member("m_inner", inner);
 outer.add_member("m_array_inner", ArrayType(inner, 4));
 outer.add_member("m_sequence_inner", SequenceType(inner, 4));
@@ -281,8 +281,8 @@ In this case, two allocations will be needed: one for the sequence, and a second
 As a `DynamicData` is fully built at runtime, no static checks can ensure its correct behaviour.
 As an attempt to solve this, asserts have been placed accross various methods to avoid the overload of checks in *release mode*.
 We strongly recommend to compile in *debug mode* during developing phase: this will allow `xtypes` library to perform all possible checks.
-Following the same line of thoughts, in order to improve the performance the final product should be compiled 
-releasr *release mode*: in this case no checks will be performed.
+Following the same line of thoughts, in order to improve the performance the final product should be compiled in 
+release *release mode*: in this case no checks will be performed.
 
 Reminder: `asserts` function from std emit an *abort* signal.
 If you need more information about why a concrete `assert` was reached, the *stacktrace* should be very useful.
