@@ -260,7 +260,7 @@ int main(
     PublisherAttributes publisher_attributes;
     //Domain::getDefaultPublisherAttributes(publisher_attributes);
     publisher_attributes.topic.topicKind = NO_KEY;
-    publisher_attributes.topic.topicDataType = type->getName();
+    publisher_attributes.topic.topicDataType = type.get_type_name();
     publisher_attributes.topic.topicName = topic.str();
     publisher_attributes.qos.m_liveliness.lease_duration = 3;
     publisher_attributes.qos.m_liveliness.announcement_period = 1;
