@@ -27,35 +27,36 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
-class StringType : public MutableCollectionType
+template<typename CHAR_T, TypeKind KIND, const char* TYPE_NAME>
+class TStringType : public MutableCollectionType
 {
 public:
-    StringType(
+    TStringType(
             int bounds = 0)
         : MutableCollectionType(
-                TypeKind::STRING_TYPE,
-                "std::string" + ((bounds > 0) ? "_" + std::to_string(bounds) : ""),
-                DynamicType::Ptr(primitive_type<char>()),
+                KIND,
+                TYPE_NAME + ((bounds > 0) ? "_" + std::to_string(bounds) : ""),
+                DynamicType::Ptr(primitive_type<CHAR_T>()),
                 bounds)
     {}
 
     virtual size_t memory_size() const override
     {
-        return sizeof(std::string);
+        return sizeof(std::basic_string<CHAR_T>);
     }
 
     virtual void construct_instance(
             uint8_t* instance) const override
     {
-        new (instance) std::string();
-        reinterpret_cast<std::string*>(instance)->reserve(bounds());
+        new (instance) std::basic_string<CHAR_T>();
+        reinterpret_cast<std::basic_string<CHAR_T>*>(instance)->reserve(bounds());
     }
 
     virtual void copy_instance(
             uint8_t* target,
             const uint8_t* source) const override
     {
-        new (target) std::string(*reinterpret_cast<const std::string*>(source));
+        new (target) std::basic_string<CHAR_T>(*reinterpret_cast<const std::basic_string<CHAR_T>*>(source));
     }
 
     virtual void copy_instance_from_type(
@@ -63,40 +64,40 @@ public:
             const uint8_t* source,
             const DynamicType& other) const override
     {
-        assert(other.kind() == TypeKind::STRING_TYPE);
-        new (target) std::string(*reinterpret_cast<const std::string*>(source));
+        assert(other.kind() == KIND);
+        new (target) std::basic_string<CHAR_T>(*reinterpret_cast<const std::basic_string<CHAR_T>*>(source));
     }
 
     virtual void move_instance(
             uint8_t* target,
             uint8_t* source) const override
     {
-        new (target) std::string(std::move(*reinterpret_cast<const std::string*>(source)));
+        new (target) std::basic_string<CHAR_T>(std::move(*reinterpret_cast<const std::basic_string<CHAR_T>*>(source)));
     }
 
     virtual void destroy_instance(
             uint8_t* instance) const override
     {
         using namespace std;
-        reinterpret_cast<std::string*>(instance)->std::string::~string();
+        reinterpret_cast<std::basic_string<CHAR_T>*>(instance)->std::basic_string<CHAR_T>::~basic_string<CHAR_T>();
     }
 
     virtual bool compare_instance(
             const uint8_t* instance,
             const uint8_t* other_instance) const override
     {
-        return *reinterpret_cast<const std::string*>(instance) == *reinterpret_cast<const std::string*>(other_instance);
+        return *reinterpret_cast<const std::basic_string<CHAR_T>*>(instance) == *reinterpret_cast<const std::basic_string<CHAR_T>*>(other_instance);
     }
 
     virtual TypeConsistency is_compatible(
             const DynamicType& other) const override
     {
-        if(other.kind() != TypeKind::STRING_TYPE)
+        if(other.kind() != KIND)
         {
             return TypeConsistency::NONE;
         }
 
-        const StringType& other_string = static_cast<const StringType&>(other);
+        const TStringType& other_string = static_cast<const TStringType&>(other);
 
         if(bounds() == other_string.bounds())
         {
@@ -117,22 +118,28 @@ public:
             uint8_t* instance,
             size_t index) const override
     {
-        void* char_addr = &reinterpret_cast<std::string*>(instance)->operator[](index);
+        void* char_addr = &reinterpret_cast<std::basic_string<CHAR_T>*>(instance)->operator[](index);
         return static_cast<uint8_t*>(char_addr);
     }
 
     virtual size_t get_instance_size(
             const uint8_t* instance) const override
     {
-        return reinterpret_cast<const std::string*>(instance)->size();
+        return reinterpret_cast<const std::basic_string<CHAR_T>*>(instance)->size();
     }
 
 protected:
     virtual DynamicType* clone() const override
     {
-        return new StringType(*this);
+        return new TStringType(*this);
     }
 };
+
+constexpr const char string_type_name[] = "std::string";
+using StringType = TStringType<char, TypeKind::STRING_TYPE, string_type_name>;
+
+constexpr const char wstring_type_name[] = "std::wstring";
+using WStringType = TStringType<wchar_t, TypeKind::WSTRING_TYPE, string_type_name>;
 
 } //namespace xtypes
 } //namespace core

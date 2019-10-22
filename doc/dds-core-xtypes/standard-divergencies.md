@@ -1,5 +1,3 @@
-# Readme
-
 ## Divergences from standard (rationales)
 
 ### value-types instance of reference-types

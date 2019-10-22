@@ -32,7 +32,8 @@ namespace xtypes {
 template<typename T>
 using PrimitiveOrString = typename std::enable_if<
     std::is_arithmetic<T>::value ||
-    std::is_same<std::string, T>::value
+    std::is_same<std::string, T>::value ||
+    std::is_same<std::wstring, T>::value
     >::type;
 
 class ReadableDynamicDataRef
@@ -61,7 +62,8 @@ public:
     T& value() const // this = PrimitiveType
     {
         assert((type_.kind() == TypeKind::STRING_TYPE && std::is_same<std::string, T>::value)
-            || type_.kind() == primitive_type<T>().kind());
+            || (type_.kind() == TypeKind::WSTRING_TYPE && std::is_same<std::wstring, T>::value)
+            || (type_.kind() == primitive_type<T>().kind()));
         return *reinterpret_cast<T*>(instance_);
     }
 
@@ -69,6 +71,12 @@ public:
     {
         assert(type_.kind() == TypeKind::STRING_TYPE);
         return *reinterpret_cast<std::string*>(instance_);
+    }
+
+    const std::wstring& wstring() const // this = WStringType
+    {
+        assert(type_.kind() == TypeKind::WSTRING_TYPE);
+        return *reinterpret_cast<std::wstring*>(instance_);
     }
 
     ReadableDynamicDataRef operator [] (
@@ -103,7 +111,8 @@ public:
         const CollectionType& collection = static_cast<const CollectionType&>(type_);
         assert(type_.is_collection_type());
         assert((collection.content_type().kind() == TypeKind::STRING_TYPE && std::is_same<std::string, T>::value)
-            || collection.content_type().kind() == primitive_type<T>().kind());
+            || (collection.content_type().kind() == TypeKind::WSTRING_TYPE && std::is_same<std::wstring, T>::value)
+            || (collection.content_type().kind() == primitive_type<T>().kind()));
 
         const T* location = reinterpret_cast<T*>(collection.get_instance_at(instance_, 0));
         return std::vector<T>(location, location + size());
@@ -215,7 +224,9 @@ public:
     void value(const T& t) // this = PrimitiveType & StringType
     {
         assert((type_.kind() == TypeKind::STRING_TYPE && std::is_same<std::string, T>::value)
-            || type_.kind() == primitive_type<T>().kind());
+            || (type_.kind() == TypeKind::STRING_TYPE && std::is_same<std::wstring, T>::value)
+            || (type_.kind() == primitive_type<T>().kind()));
+
         type_.destroy_instance(instance_);
         type_.copy_instance(instance_, reinterpret_cast<const uint8_t*>(&t));
     }
@@ -227,13 +238,21 @@ public:
         type_.copy_instance(instance_, reinterpret_cast<const uint8_t*>(&s));
     }
 
+    void wstring(const std::wstring& s) // this = WStringType
+    {
+        assert(type_.kind() == TypeKind::WSTRING_TYPE);
+        type_.destroy_instance(instance_);
+        type_.copy_instance(instance_, reinterpret_cast<const uint8_t*>(&s));
+    }
+
     template<typename T, class = PrimitiveOrString<T>>
     WritableDynamicDataRef& push(const T& value) // this = SequenceType
     {
         assert(type_.kind() == TypeKind::SEQUENCE_TYPE);
         const SequenceType& sequence = static_cast<const SequenceType&>(type_);
         assert((sequence.content_type().kind() == TypeKind::STRING_TYPE && std::is_same<std::string, T>::value)
-            || sequence.content_type().kind() == primitive_type<T>().kind());
+            || (sequence.content_type().kind() == TypeKind::WSTRING_TYPE && std::is_same<std::wstring, T>::value)
+            || (sequence.content_type().kind() == primitive_type<T>().kind()));
 
         uint8_t* element = sequence.push_instance(instance_, reinterpret_cast<const uint8_t*>(&value));
         assert(element != nullptr);

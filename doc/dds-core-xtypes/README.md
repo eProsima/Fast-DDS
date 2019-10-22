@@ -64,7 +64,7 @@ To create a `PrimitiveType`, a helper function must be used:
 const DynamicType& t = primitive_type<T>();
 ```
 where `T` can be one of the following basic types:
-`char` `uint8_t` `int16_t` `uint16_t` `int32_t` `uint32_t` `int64_t` `uint64_t` `float` `double` `char32`
+`bool` `char` `wchar_t` `uint8_t` `int16_t` `uint16_t` `int32_t` `uint32_t` `int64_t` `uint64_t` `float` `double` `long double`
 
 #### Collection Type
 There are several collection types:
@@ -72,6 +72,7 @@ There are several collection types:
 - `ArrayType`: for a fixed size arrange of elements. Similar to *C* arrays.
 - `SequenceType`: for a variable size arrange of elements. Equivalent to `std::vector` in *C++*
 - `StringType`: for a variable size arrange of chars. Similar to `std::string` in *C++*
+- `WStringType`: for a variable size arrange of chars. Similar to `std::wstring` in *C++*
 
 ```c++
 ArrayType a1(primitive_type<int>(), 10); //size 10
@@ -81,6 +82,7 @@ SequenceType s2(primitive<float>(),30); //bounded sequence, max size will be 30
 SequenceType s3(SequenceType(structure), 20); //bounded sequence of unbounded sequences of structures.
 StringType str1; //unbounded string
 StringType str2(50); //bounded string
+WStringType wstr(); //unbounded wstring
 ```
 
 #### StructType
@@ -151,14 +153,14 @@ The following methods are available to use when:
   data.value(42); //sets the value to 42
   int value = data.value<int>(); //read the value
   ```
-2. `DynamicData` represents a `StringType`
+1. `DynamicData` represents an `AggregationType`
   ```c++
-  data.value<std::string>("Hello data!"); //sets the string value
-  data.string("Hello again!"); // shortcut version for string
-  const std::string& s1 = data.value<std::string>(); //read the string value
-  const std::string& s2 = data.string(); // shortcut version for string
+  data["member_name"].value(42); //set value 42 to the int member called "member_name"
+  int value = data["member_name"].value<int>(); //get value from int member called "member_name"
+  data["member_name"].value(dynamic_data_representing_a_value);
+  WritableDynamicDataRef ref = data["member_name"];
   ```
-3. `DynamicData` represents a `CollectionType`
+1. `DynamicData` represents a `CollectionType`
   ```c++
   size_t size = data.size(); //size of collection
   data[2].value(42); // set value 42 to position 2 of the collection.
@@ -166,17 +168,27 @@ The following methods are available to use when:
   data[2] = dynamic_data_representing_a_value;
   WritableDynamicDataRef ref = data[2]; //references to a DynamicData that represents a collection
   ```
-4. `DynamicData` represents a `SequenceType`
+1. `DynamicData` represents a `StringType`
+The same as `CollectionType` plus:
+  ```c++
+  data.value<std::string>("Hello data!"); //sets the string value
+  data.string("Hello again!"); // shortcut version for string
+  const std::string& s1 = data.value<std::string>(); //read the string value
+  const std::string& s2 = data.string(); // shortcut version for string
+  ```
+1. `DynamicData` represents a `WStringType`
+The same as `CollectionType` plus:
+  ```c++
+  data.value<std::wstring>(L"Hello data! \u263A"); //sets the string value
+  data.wstring(L"Hello again! \u263A"); // shortcut version for string
+  const std::wstring& s1 = data.value<std::wstring>(); //read the string value
+  const std::wstring& s2 = data.wstring(); // shortcut version for string
+  ```
+1. `DynamicData` represents a `SequenceType`
+The same as `CollectionType` plus:
   ```c++
   data.push(42); // push back new value to the sequence.
   data.push(dynamic_data_representing_a_value);
-  ```
-5. `DynamicData` represents an `AggregationType`
-  ```c++
-  data["member_name"].value(42); //set value 42 to the int member called "member_name"
-  int value = data["member_name"].value<int>(); //get value from int member called "member_name"
-  data["member_name"].value(dynamic_data_representing_a_value);
-  WritableDynamicDataRef ref = data["member_name"];
   ```
 
 #### References to `DynamicData`

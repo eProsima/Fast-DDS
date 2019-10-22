@@ -21,6 +21,8 @@
 #include <dds/core/xtypes/DynamicData.hpp>
 
 #include <sstream>
+#include <locale>
+#include <codecvt>
 
 namespace dds {
 namespace core {
@@ -47,7 +49,7 @@ inline std::string ReadableDynamicDataRef::to_string() const
             case TypeKind::CHAR_8_TYPE:
                 ss << "<" << type_name << ">  " << o.data().value<char>();
                 break;
-            case TypeKind::CHAR_32_TYPE:
+            case TypeKind::CHAR_16_TYPE:
                 ss << "<" << type_name << ">  " << o.data().value<char32_t>();
                 break;
             case TypeKind::UINT_8_TYPE:
@@ -83,6 +85,12 @@ inline std::string ReadableDynamicDataRef::to_string() const
             case TypeKind::STRING_TYPE:
                 ss << "<" << type_name << ">  " << o.data().value<std::string>();
                 break;
+            case TypeKind::WSTRING_TYPE:
+            {
+                std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
+                ss << "<" << type_name << ">  " << converter.to_bytes(o.data().value<std::wstring>());
+                break;
+            }
             case TypeKind::ARRAY_TYPE:
                 ss << "<" << type_name << ">";
                 break;
