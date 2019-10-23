@@ -43,10 +43,6 @@ template<
     class RawAllocator = foonathan::memory::default_allocator>
 class node_segregator
 {
-    foonathan::memory::memory_pool<foonathan::memory::node_pool, RawAllocator>* node_allocator_ = nullptr;
-    std::size_t block_size_ = 0;
-    const bool& initialization_is_done_;
-
 public:
 
     using allocator_type = foonathan::memory::memory_pool<foonathan::memory::node_pool, RawAllocator>;
@@ -103,6 +99,12 @@ public:
     {
         return false;
     }
+
+private:
+
+    allocator_type* node_allocator_ = nullptr;
+    std::size_t block_size_ = 0;
+    const bool& initialization_is_done_;
 };
 
 struct ProxyCollectionInitizalizer
@@ -115,9 +117,7 @@ struct ProxyCollectionInitizalizer
 
 };
 
-
-}
-
+} // namespace detail
 
 template<class Proxy>
 class ProxyHashTable
@@ -141,7 +141,6 @@ public:
         foonathan::memory::unordered_map_node_size<typename ProxyHashTable<Proxy>::value_type>::value>;
     using allocator_type = foonathan::memory::binary_segregator<segregator, foonathan::memory::new_allocator>;
     using base_class = foonathan::memory::unordered_map<EntityId_t, Proxy*, allocator_type>;
-
 
     explicit ProxyHashTable(
             const ResourceLimitedContainerConfig& r)
