@@ -109,6 +109,8 @@ private:
 
 struct ProxyCollectionInitizalizer
 {
+protected:
+
     bool initialized_;
 
     ProxyCollectionInitizalizer()
@@ -121,8 +123,8 @@ struct ProxyCollectionInitizalizer
 
 template<class Proxy>
 class ProxyHashTable
-    : public detail::ProxyCollectionInitizalizer
-    , public foonathan::memory::binary_segregator<
+    : protected detail::ProxyCollectionInitizalizer
+    , protected foonathan::memory::binary_segregator<
         detail::node_segregator<foonathan::memory::unordered_map_node_size<std::pair<const EntityId_t,
         Proxy*> >::value>,
         foonathan::memory::new_allocator >
@@ -153,7 +155,7 @@ public:
                 foonathan::memory::new_allocator()
                 )
             )
-        , base_class(r.initial ? r.initial : 1u, *static_cast<allocator_type*>(this))
+        , base_class(r.initial ? r.initial : 1u, hasher(), key_equal(), *static_cast<allocator_type*>(this))
     {
         // notify the pool that fixed allocations may start
         initialized_ = true;
