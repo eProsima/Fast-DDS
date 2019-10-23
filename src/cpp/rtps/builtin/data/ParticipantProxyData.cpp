@@ -85,13 +85,12 @@ ParticipantProxyData::ParticipantProxyData(
     , m_userData(pdata.m_userData)
     , lease_duration_event(nullptr)
     , should_check_lease_duration(false)
-    , lease_duration_(std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(pdata.m_leaseDuration)))
-
-    // This method is only called from SecurityManager when a new participant is discovered and the
+    // This method is only called when calling the participant discovery listener and the
     // corresponding DiscoveredParticipantInfo struct is created. Only participant info is used,
     // so there is no need to copy m_readers and m_writers
     , m_readers(nullptr)
     , m_writers(nullptr)
+    , lease_duration_(pdata.lease_duration_)
 {
 }
 

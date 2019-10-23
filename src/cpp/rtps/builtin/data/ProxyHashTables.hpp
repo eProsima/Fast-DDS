@@ -58,8 +58,8 @@ public:
 
     node_segregator(
             node_segregator&& s)
-        : node_allocator_(s.node_allocator_)
-        , block_size_(s.block_size_)
+        : block_size_(s.block_size_)
+        , node_allocator_(s.node_allocator_)
         , initialization_is_done_(s.initialization_is_done_)
     {
         s.node_allocator_ = nullptr;
@@ -102,8 +102,8 @@ public:
 
 private:
 
-    allocator_type* node_allocator_ = nullptr;
     std::size_t block_size_ = 0;
+    allocator_type* node_allocator_ = nullptr;
     const bool& initialization_is_done_;
 };
 
