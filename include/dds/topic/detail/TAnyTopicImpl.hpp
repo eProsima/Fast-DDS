@@ -59,7 +59,7 @@ TAnyTopic<DELEGATE>& TAnyTopic<DELEGATE>::operator<<(
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    qos(qos);
+    this->qos(qos);
     return *this;
 }
 
@@ -69,7 +69,7 @@ const TAnyTopic<DELEGATE>& TAnyTopic<DELEGATE>::operator>>(
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    qos = qos();
+    qos = this->qos();
     return *this;
 }
 

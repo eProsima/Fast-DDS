@@ -317,5 +317,5 @@ ReturnCode_t DomainParticipant::get_default_topic_qos(
 
 const fastdds::dds::TopicQos& DomainParticipant::get_default_topic_qos() const
 {
-    return get_default_topic_qos();
+    return impl_->get_default_topic_qos();
 }

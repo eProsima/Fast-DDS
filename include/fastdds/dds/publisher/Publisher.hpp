@@ -55,6 +55,8 @@ class PublisherQos;
 class DataWriter;
 class DataWriterListener;
 class WriterQos;
+class DataWriterQos;
+class Topic;
 
 /**
  * Class Publisher, used to send data to associated subscribers.
@@ -129,6 +131,11 @@ public:
     DataWriter* create_datawriter(
             const fastrtps::TopicAttributes& topic_attr,
             const WriterQos& writer_qos,
+            DataWriterListener* listener);
+
+    DataWriter* create_datawriter(
+            const Topic& topic,
+            const DataWriterQos& qos,
             DataWriterListener* listener);
 
     /**

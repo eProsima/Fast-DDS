@@ -22,10 +22,7 @@
 #include <dds/pub/AnyDataWriter.hpp>
 #include <dds/topic/detail/Topic.hpp>
 
-//#include <org/opensplice/core/EntityDelegate.hpp>
-//#include <org/opensplice/topic/TopicTraits.hpp>
-//#include <org/opensplice/core/ScopedLock.hpp>
-//#include <org/opensplice/pub/AnyDataWriterDelegate.hpp>
+#include <fastdds/dds/topic/DataWriter.hpp>
 
 /**
  * @cond
@@ -35,18 +32,35 @@
 namespace dds {
 namespace pub {
 
-template<typename T>
-class DataWriterListener;
+//template<typename T>
+//class DataWriterListener;
 
 namespace detail {
 
+using DataWriter =  eprosima::fastdds::dds::DataWriter;
+/*
 template<typename T>
-class DataWriter { };
+class DataWriter : public eprosima::fastdds::dds::DataWriter
+{
+public:
+
+    DataWriter(
+            const ::dds::pub::Publisher& pub,
+            const ::dds::topic::Topic<T>& topic,
+            const ::dds::pub::qos::DataWriterQos& qos,
+            ::dds::pub::DataWriterListener<T>* listener = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none())
+        : eprosima::fastdds::dds::DataWriter(pub, topic, qos, listener, mask)
+    {
+    }
+
+};
+*/
 
 } //namespace detail
 
-template<typename T, template<typename Q> class DELEGATE>
-class DataWriter;
+//template<typename T, template<typename Q> class DELEGATE>
+//class DataWriter;
 
 } //namespace pub
 } //namespace dds

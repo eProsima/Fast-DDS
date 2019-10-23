@@ -23,6 +23,8 @@
 
 #include <dds/pub/DataWriter.hpp>
 
+#include <fastdds/dds/topic/DataWriterListener.hpp>
+
 namespace dds {
 namespace pub {
 
@@ -97,110 +99,117 @@ namespace pub {
  * @see @ref DCPS_Modules_Publication_DataWriter "Data Writer"
  * @see @ref DCPS_Modules_Infrastructure_Listener "Listener information"
  */
+
 template<typename T>
-class DataWriterListener
+class DataWriterListener : public eprosima::fastdds::dds::DataWriterListener
 {
-public:
-    /** @cond */
-    virtual ~DataWriterListener()
-    {
-    }
-    /** @endcond */
 
-    /**
-     * This operation is called by the Data Distribution Service when the
-     * OfferedDeadlineMissedStatus changes.
-     *
-     * This operation will only be called when
-     * the relevant DataWriterListener is installed and enabled for the offered
-     * deadline missed status (StatusMask::offered_deadline_missed()). The
-     * offered deadline missed status will change when the
-     * deadline that the DataWriter has committed through its DeadlineQosPolicy
-     * was not respected for a specific instance.
-     *
-     * @param writer contain a pointer to the DataWriter on which
-     *               the OfferedDeadlineMissedStatus has changed (this is an input to the
-     *               application)
-     * @param status contain the
-     *               OfferedDeadlineMissedStatus object (this is an input to
-     *               the application).
-     */
-    virtual void on_offered_deadline_missed(
-        DataWriter<T>& writer,
-        const dds::core::status::OfferedDeadlineMissedStatus& status) = 0;
-
-    /**
-     * This operation called by the Data Distribution Service when the
-     * OfferedIncompatibleQosStatus changes.
-     *
-     * This operation will only be called when
-     * the relevant DataWriterListener is installed and enabled for the
-     * StatusMask::offered_incompatible_qos(). The incompatible Qos status will
-     * change when a DataReader object has been discovered by the DataWriter with
-     * the same Topic and a requested DataReaderQos that was incompatible with the
-     * one offered by the DataWriter.
-     *
-     * @param writer contain a pointer to the DataWriter on which
-     *               the OfferedIncompatibleQosStatus has changed (this is an input to
-     *               the application).
-     * @param status contain the OfferedIncompatibleQosStatus object (this is
-     *               an input to the application).
-     */
-    virtual void on_offered_incompatible_qos(
-        DataWriter<T>& writer,
-        const dds::core::status::OfferedIncompatibleQosStatus&  status) = 0;
-
-    /**
-     * This operation is called by the Data Distribution Service when the
-     * LivelinessLostStatus changes.
-     *
-     * This operation will only be called when the relevant
-     * DataWriterListener is installed and enabled for the liveliness lost status
-     * (StatusMask::liveliness_lost()).
-     * The liveliness lost status will change when the liveliness that the DataWriter has
-     * committed through its LivelinessQosPolicy was not respected. In other words,
-     * the DataWriter failed to actively signal its liveliness within the offered liveliness
-     * period. As a result, the DataReader objects will consider the DataWriter as no
-     * longer “alive”.
-     *
-     * @param writer contains a pointer to the DataWriter on which
-     *               the LivelinessLostStatus has changed (this is an input to
-     *               the application).
-     * @param status contains the LivelinessLostStatus object (this is an input
-     *               to the application).
-     */
-    virtual void on_liveliness_lost(
-        DataWriter<T>& writer,
-        const dds::core::status::LivelinessLostStatus& status) = 0;
-
-    /**
-     * This operation is called by the Data
-     * Distribution Service when a new match has been discovered for the current
-     * publication, or when an existing match has ceased to exist.
-     *
-     * Usually this means that a
-     * new DataReader that matches the Topic and that has compatible Qos as the current
-     * DataWriter has either been discovered, or that a previously discovered
-     * DataReader has ceased to be matched to the current DataWriter. A DataReader
-     * may cease to match when it gets deleted, when it changes its Qos to a value that is
-     * incompatible with the current DataWriter or when either the DataWriter or the
-     * DataReader has chosen to put its matching counterpart on its ignore-list using the
-     * dds::sub::ignore or dds::pub::ignore operations.
-     *
-     * it will only be called when the relevant DataWriterListener is installed and enabled
-     * for the StatusMask::publication_matched().
-     *
-     * @param writer contains a pointer to the DataWriter for which
-     *               a match has been discovered (this is an input to the application provided by the
-     *               Data Distribution Service).
-     * @param status contains the
-     *               PublicationMatchedStatus object (this is an input to the application
-     *               provided by the Data Distribution Service).
-     */
-    virtual void on_publication_matched(
-        DataWriter<T>& writer,
-        const dds::core::status::PublicationMatchedStatus& status) = 0;
 };
+
+//template<typename T>
+//class DataWriterListener
+//{
+//public:
+//    /** @cond */
+//    virtual ~DataWriterListener()
+//    {
+//    }
+//    /** @endcond */
+//
+//    /**
+//     * This operation is called by the Data Distribution Service when the
+//     * OfferedDeadlineMissedStatus changes.
+//     *
+//     * This operation will only be called when
+//     * the relevant DataWriterListener is installed and enabled for the offered
+//     * deadline missed status (StatusMask::offered_deadline_missed()). The
+//     * offered deadline missed status will change when the
+//     * deadline that the DataWriter has committed through its DeadlineQosPolicy
+//     * was not respected for a specific instance.
+//     *
+//     * @param writer contain a pointer to the DataWriter on which
+//     *               the OfferedDeadlineMissedStatus has changed (this is an input to the
+//     *               application)
+//     * @param status contain the
+//     *               OfferedDeadlineMissedStatus object (this is an input to
+//     *               the application).
+//     */
+//    virtual void on_offered_deadline_missed(
+//        DataWriter<T>& writer,
+//        const dds::core::status::OfferedDeadlineMissedStatus& status) = 0;
+//
+//    /**
+//     * This operation called by the Data Distribution Service when the
+//     * OfferedIncompatibleQosStatus changes.
+//     *
+//     * This operation will only be called when
+//     * the relevant DataWriterListener is installed and enabled for the
+//     * StatusMask::offered_incompatible_qos(). The incompatible Qos status will
+//     * change when a DataReader object has been discovered by the DataWriter with
+//     * the same Topic and a requested DataReaderQos that was incompatible with the
+//     * one offered by the DataWriter.
+//     *
+//     * @param writer contain a pointer to the DataWriter on which
+//     *               the OfferedIncompatibleQosStatus has changed (this is an input to
+//     *               the application).
+//     * @param status contain the OfferedIncompatibleQosStatus object (this is
+//     *               an input to the application).
+//     */
+//    virtual void on_offered_incompatible_qos(
+//        DataWriter<T>& writer,
+//        const dds::core::status::OfferedIncompatibleQosStatus&  status) = 0;
+//
+//    /**
+//     * This operation is called by the Data Distribution Service when the
+//     * LivelinessLostStatus changes.
+//     *
+//     * This operation will only be called when the relevant
+//     * DataWriterListener is installed and enabled for the liveliness lost status
+//     * (StatusMask::liveliness_lost()).
+//     * The liveliness lost status will change when the liveliness that the DataWriter has
+//     * committed through its LivelinessQosPolicy was not respected. In other words,
+//     * the DataWriter failed to actively signal its liveliness within the offered liveliness
+//     * period. As a result, the DataReader objects will consider the DataWriter as no
+//     * longer “alive”.
+//     *
+//     * @param writer contains a pointer to the DataWriter on which
+//     *               the LivelinessLostStatus has changed (this is an input to
+//     *               the application).
+//     * @param status contains the LivelinessLostStatus object (this is an input
+//     *               to the application).
+//     */
+//    virtual void on_liveliness_lost(
+//        DataWriter<T>& writer,
+//        const dds::core::status::LivelinessLostStatus& status) = 0;
+//
+//    /**
+//     * This operation is called by the Data
+//     * Distribution Service when a new match has been discovered for the current
+//     * publication, or when an existing match has ceased to exist.
+//     *
+//     * Usually this means that a
+//     * new DataReader that matches the Topic and that has compatible Qos as the current
+//     * DataWriter has either been discovered, or that a previously discovered
+//     * DataReader has ceased to be matched to the current DataWriter. A DataReader
+//     * may cease to match when it gets deleted, when it changes its Qos to a value that is
+//     * incompatible with the current DataWriter or when either the DataWriter or the
+//     * DataReader has chosen to put its matching counterpart on its ignore-list using the
+//     * dds::sub::ignore or dds::pub::ignore operations.
+//     *
+//     * it will only be called when the relevant DataWriterListener is installed and enabled
+//     * for the StatusMask::publication_matched().
+//     *
+//     * @param writer contains a pointer to the DataWriter for which
+//     *               a match has been discovered (this is an input to the application provided by the
+//     *               Data Distribution Service).
+//     * @param status contains the
+//     *               PublicationMatchedStatus object (this is an input to the application
+//     *               provided by the Data Distribution Service).
+//     */
+//    virtual void on_publication_matched(
+//        DataWriter<T>& writer,
+//        const dds::core::status::PublicationMatchedStatus& status) = 0;
+//};
 
 
 /**
@@ -219,43 +228,50 @@ public:
  *
  * @see dds::pub::DataWriterListener
  */
+
 template<typename T>
-class NoOpDataWriterListener : public virtual DataWriterListener<T>
+class NoOpDataWriterListener : public eprosima::fastdds::dds::DataWriterListener
 {
-/** @cond
- * All these functions have already been documented in the non-NoOp listener.
- * Ignore these functions for the doxygen API documentation for clarity.
- */
-public:
-    virtual ~NoOpDataWriterListener()
-    {
-    }
 
-    virtual void on_offered_deadline_missed(
-            DataWriter<T>& writer,
-            const dds::core::status::OfferedDeadlineMissedStatus& status)
-    {
-    }
-
-    virtual void on_offered_incompatible_qos(
-            DataWriter<T>& writer,
-            const dds::core::status::OfferedIncompatibleQosStatus&  status)
-    {
-    }
-
-    virtual void on_liveliness_lost(
-            DataWriter<T>& writer,
-            const dds::core::status::LivelinessLostStatus& status)
-    {
-    }
-
-    virtual void on_publication_matched(
-            DataWriter<T>& writer,
-            const dds::core::status::PublicationMatchedStatus& status)
-    {
-    }
-/** @endcond */
 };
+
+//template<typename T>
+//class NoOpDataWriterListener : public virtual DataWriterListener<T>
+//{
+///** @cond
+// * All these functions have already been documented in the non-NoOp listener.
+// * Ignore these functions for the doxygen API documentation for clarity.
+// */
+//public:
+//    virtual ~NoOpDataWriterListener()
+//    {
+//    }
+//
+//    virtual void on_offered_deadline_missed(
+//            DataWriter<T>& writer,
+//            const dds::core::status::OfferedDeadlineMissedStatus& status)
+//    {
+//    }
+//
+//    virtual void on_offered_incompatible_qos(
+//            DataWriter<T>& writer,
+//            const dds::core::status::OfferedIncompatibleQosStatus&  status)
+//    {
+//    }
+//
+//    virtual void on_liveliness_lost(
+//            DataWriter<T>& writer,
+//            const dds::core::status::LivelinessLostStatus& status)
+//    {
+//    }
+//
+//    virtual void on_publication_matched(
+//            DataWriter<T>& writer,
+//            const dds::core::status::PublicationMatchedStatus& status)
+//    {
+//    }
+///** @endcond */
+//};
 
 } //namespace pub
 } //namespace dds

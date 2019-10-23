@@ -54,11 +54,11 @@ private:
 
     dds::pub::Publisher publisher_;
 
-    dds::pub::DataWriter* writer_;
+    dds::pub::DataWriter<HelloWorld> writer_;
 
     bool stop_;
 
-    class PubListener : public eprosima::fastdds::dds::DataWriterListener
+    class PubListener : public dds::pub::DataWriterListener<HelloWorld>
     {
     public:
         PubListener()
@@ -83,6 +83,7 @@ private:
             uint32_t sleep);
 
     HelloWorldTypeSupport type_;
+    dds::topic::Topic<HelloWorld> topic_;
 };
 
 

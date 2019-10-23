@@ -19,6 +19,7 @@
 #define EPROSIMA_DDS_TOPIC_QOS_DETAIL_TOPIC_QOS_HPP_
 
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <dds/core/policy/CorePolicy.hpp>
 
 namespace dds {
 namespace topic {
@@ -26,6 +27,14 @@ namespace qos {
 namespace detail {
 
 using TopicQos = eprosima::fastdds::dds::TopicQos;
+
+TopicQos& operator <<(
+        TopicQos& topic_qos,
+        const dds::core::policy::Reliability& reliability);
+/*{
+    topic_qos.reliability = reliability;
+    return topic_qos;
+}*/
 
 } //namespace detail
 } //namespace qos

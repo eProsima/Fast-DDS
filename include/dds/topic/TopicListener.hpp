@@ -20,7 +20,8 @@
 #ifndef OMG_DDS_TOPIC_TOPIC_LISTENER_HPP_
 #define OMG_DDS_TOPIC_TOPIC_LISTENER_HPP_
 
-#include "dds/topic/Topic.hpp"
+//#include "dds/topic/Topic.hpp"
+#include <fastdds/dds/topic/TopicListener.hpp>
 
 namespace dds {
 namespace topic {
@@ -74,36 +75,40 @@ namespace topic {
  * @see @ref DCPS_Modules_Infrastructure_Listener "Listener information"
  */
 template<typename T>
-class TopicListener
+class TopicListener : public eprosima::fastdds::dds::TopicListener
 {
-public:
-    /** @cond */
-    virtual ~TopicListener()
-    {
-    }
-    /** @endcond */
-
-public:
-    /**
-     * This operation is called by the Data Distribution Service when the
-     * InconsistentTopicStatus changes.
-     *
-     * The implementation may be left empty
-     * when this functionality is not needed. This operation will only be called when the
-     * relevant TopicListener is installed and enabled with the
-     * StatusMask::inconsistent_topic(). The InconsistentTopicStatus will change
-     * when another Topic exists with the same topic_name but different
-     * characteristics.
-     *
-     * @param topic  contain a pointer to the Topic on which the conflict
-     *               occurred (this is an input to the application).
-     * @param status contain the InconsistentTopicStatus object (this is
-     *               an input to the application).
-     */
-    virtual void on_inconsistent_topic(
-            Topic<T>& topic,
-            const dds::core::status::InconsistentTopicStatus& status) = 0;
 };
+//template<typename T>
+//class TopicListener
+//{
+//public:
+//    /** @cond */
+//    virtual ~TopicListener()
+//    {
+//    }
+//    /** @endcond */
+//
+//public:
+//    /**
+//     * This operation is called by the Data Distribution Service when the
+//     * InconsistentTopicStatus changes.
+//     *
+//     * The implementation may be left empty
+//     * when this functionality is not needed. This operation will only be called when the
+//     * relevant TopicListener is installed and enabled with the
+//     * StatusMask::inconsistent_topic(). The InconsistentTopicStatus will change
+//     * when another Topic exists with the same topic_name but different
+//     * characteristics.
+//     *
+//     * @param topic  contain a pointer to the Topic on which the conflict
+//     *               occurred (this is an input to the application).
+//     * @param status contain the InconsistentTopicStatus object (this is
+//     *               an input to the application).
+//     */
+//    virtual void on_inconsistent_topic(
+//            Topic<T>& topic,
+//            const dds::core::status::InconsistentTopicStatus& status) = 0;
+//};
 
 
 /**
@@ -123,25 +128,29 @@ public:
  * @see dds::topic::TopicListener
  */
 template<typename T>
-class NoOpTopicListener : public virtual TopicListener<T>
+class NoOpTopicListener : public eprosima::fastdds::dds::TopicListener
 {
-/** @cond
- * All these functions have already been documented in the non-NoOp listener.
- * Ignore these functions for the doxygen API documentation for clarity.
- */
-public:
-    virtual ~NoOpTopicListener()
-    {
-    }
-
-public:
-    virtual void on_inconsistent_topic(
-            Topic<T>& topic,
-            const dds::core::status::InconsistentTopicStatus& status)
-    {
-    }
-/** @endcond */
 };
+//template<typename T>
+//class NoOpTopicListener : public virtual TopicListener<T>
+//{
+///** @cond
+// * All these functions have already been documented in the non-NoOp listener.
+// * Ignore these functions for the doxygen API documentation for clarity.
+// */
+//public:
+//    virtual ~NoOpTopicListener()
+//    {
+//    }
+//
+//public:
+//    virtual void on_inconsistent_topic(
+//            Topic<T>& topic,
+//            const dds::core::status::InconsistentTopicStatus& status)
+//    {
+//    }
+///** @endcond */
+//};
 
 } //namespace topic
 } //namespace dds

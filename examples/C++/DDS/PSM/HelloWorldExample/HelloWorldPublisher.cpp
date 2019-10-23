@@ -31,6 +31,8 @@ using namespace eprosima::fastdds::dds;
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)
     , publisher_(dds::core::null)
+    , writer_(dds::core::null)
+    , topic_(dds::core::null)
 {
 }
 
@@ -57,13 +59,17 @@ bool HelloWorldPublisher::init()
     // TopicQos
     dds::topic::qos::TopicQos topicQos
         = participant_.default_topic_qos()
-          << dds::core::policy::Reliability::Reliable();
+        ; //<< dds::core::policy::Reliability::Reliable();
+    topicQos.reliability = dds::core::policy::Reliability::Reliable();
+
+    topic_ = dds::topic::Topic<HelloWorld>(participant_, "HelloWorldTopic", "HelloWorld", topicQos);
 
     //CREATE THE PUBLISHER
-    eprosima::fastrtps::PublisherAttributes pub_att;
+    /*eprosima::fastrtps::PublisherAttributes pub_att;
     pub_att.topic.topicDataType = "HelloWorld";
     pub_att.topic.topicName = "HelloWorldTopic";
     pub_att.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    */
     publisher_ = ::dds::pub::Publisher(participant_);
     //publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, pub_att, nullptr);
 
@@ -72,10 +78,14 @@ bool HelloWorldPublisher::init()
         return false;
     }
 
-    // CREATE THE WRITER
-    writer_ = publisher_->create_datawriter(pub_att.topic, pub_att.qos, &listener_);
+    // DataWriterQos
+    dds::pub::qos::DataWriterQos dwqos = topicQos;
 
-    if (writer_ == nullptr)
+    // CREATE THE WRITER
+    writer_ = dds::pub::DataWriter<HelloWorld>(publisher_, topic_, dwqos, &listener_);
+    //writer_ = publisher_->create_datawriter(pub_att.topic, pub_att.qos, &listener_);
+
+    if (writer_ == dds::core::null)
     {
         return false;
     }
@@ -169,7 +179,7 @@ bool HelloWorldPublisher::publish(
     if (listener_.firstConnected_ || !waitForListener || listener_.matched_>0)
     {
         hello_.index(hello_.index()+1);
-        writer_->write(&hello_);
+        writer_.write(hello_);
         return true;
     }
     return false;

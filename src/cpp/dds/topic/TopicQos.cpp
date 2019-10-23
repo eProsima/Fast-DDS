@@ -15,21 +15,22 @@
  *
 */
 
-#ifndef EPROSIMA_DDS_PUB_QOS_DETAIL_DATAWRITER_QOS_HPP_
-#define EPROSIMA_DDS_PUB_QOS_DETAIL_DATAWRITER_QOS_HPP_
-
-#include <fastdds/dds/topic/qos/DataWriterQos.hpp>
+#include <dds/topic/detail/Topic.hpp>
 
 namespace dds {
-namespace pub {
+namespace topic {
 namespace qos {
 namespace detail {
 
-using DataWriterQos = eprosima::fastdds::dds::DataWriterQos;
+TopicQos& operator <<(
+        TopicQos& topic_qos,
+        const dds::core::policy::Reliability& reliability)
+{
+    topic_qos.reliability = reliability;
+    return topic_qos;
+}
 
-} //namespace detail
-} //namespace qos
-} //namespace pub
-} //namespace dds
-
-#endif //EPROSIMA_DDS_PUB_QOS_DETAIL_DATAWRITER_QOS_HPP_
+} // detail
+} // qos
+} // topic
+} // dds

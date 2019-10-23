@@ -204,6 +204,7 @@ set(${PROJECT_NAME}_source_files
     dds/core/InstanceHandle.cpp
     dds/core/types.cpp
     dds/core/policy/CorePolicy.cpp
+    dds/topic/TopicQos.cpp
     )
 
 # TLS Support

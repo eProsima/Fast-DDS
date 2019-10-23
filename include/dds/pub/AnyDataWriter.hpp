@@ -365,4 +365,6 @@ typedef ::dds::pub::detail::AnyDataWriter AnyDataWriter;
 } //namespace pub
 } //namespace dds
 
+#include <dds/pub/detail/TAnyDataWriterImpl.hpp>
+
 #endif //OMG_DDS_PUB_ANY_DATA_WRITER_HPP_
