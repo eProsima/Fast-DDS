@@ -107,54 +107,62 @@ private:
     const bool& initialization_is_done_;
 };
 
-struct ProxyCollectionInitizalizer
+template<
+    std::size_t node_size,
+    class RawAllocator = foonathan::memory::new_allocator>
+class binary_node_segregator
+    : public foonathan::memory::binary_segregator<node_segregator<node_size>, RawAllocator>
 {
-protected:
+public:
+    using segregator = node_segregator<node_size>;
+    using base_class = foonathan::memory::binary_segregator<segregator, RawAllocator>;
+    using is_stateful = std::true_type;
+    using is_shared = std::false_type;
+
+    binary_node_segregator(
+            std::size_t nodes_to_allocate)
+        : base_class(segregator(nodes_to_allocate, initialized_), RawAllocator())
+        , initialized_(false)
+    {
+    }
+
+    void has_been_initialized()
+    {
+        initialized_ = true;
+    }
+
+    void is_being_destroyed()
+    {
+        initialized_ = false;
+    }
+
+private:
 
     bool initialized_;
-
-    ProxyCollectionInitizalizer()
-        : initialized_(false)
-    {}
-
 };
 
 } // namespace detail
 
 template<class Proxy>
 class ProxyHashTable
-    : protected detail::ProxyCollectionInitizalizer
-    , protected foonathan::memory::binary_segregator<
-        detail::node_segregator<foonathan::memory::unordered_map_node_size<std::pair<const EntityId_t,
-        Proxy*> >::value>,
-        foonathan::memory::new_allocator >
+    : protected detail::binary_node_segregator<
+        foonathan::memory::unordered_map_node_size<std::pair<const EntityId_t, Proxy*> >::value>
     , public foonathan::memory::unordered_map<
         EntityId_t,
         Proxy*,
-        foonathan::memory::binary_segregator <
-            detail::node_segregator<foonathan::memory::unordered_map_node_size<std::pair<const EntityId_t,
-            Proxy*> >::value>,
-            foonathan::memory::new_allocator >
-        >
+        detail::binary_node_segregator<
+            foonathan::memory::unordered_map_node_size<std::pair<const EntityId_t, Proxy*> >::value>
+    >
 {
 public:
 
-    using segregator = detail::node_segregator<
-        foonathan::memory::unordered_map_node_size<typename ProxyHashTable<Proxy>::value_type>::value>;
-    using allocator_type = foonathan::memory::binary_segregator<segregator, foonathan::memory::new_allocator>;
+    using allocator_type = detail::binary_node_segregator<
+        foonathan::memory::unordered_map_node_size<std::pair<const EntityId_t, Proxy*> >::value>;
     using base_class = foonathan::memory::unordered_map<EntityId_t, Proxy*, allocator_type>;
 
     explicit ProxyHashTable(
             const ResourceLimitedContainerConfig& r)
-        : ProxyCollectionInitizalizer() // force to be initialize first
-        , allocator_type(               // pool must be initialized before the unordered_map
-            foonathan::memory::make_segregator(
-                segregator(
-                    r.initial ? r.initial : 1u,
-                    initialized_),
-                foonathan::memory::new_allocator()
-                )
-            )
+        : allocator_type(r.initial ? r.initial : 1u)
         , base_class(
             r.initial ? r.initial : 1u,
             std::hash<EntityId_t>(),
@@ -162,7 +170,13 @@ public:
             *static_cast<allocator_type*>(this))
     {
         // notify the pool that fixed allocations may start
-        initialized_ = true;
+        allocator_type::has_been_initialized();
+    }
+
+    ~ProxyHashTable()
+    {
+        base_class::clear();
+        allocator_type::is_being_destroyed();
     }
 };
 
