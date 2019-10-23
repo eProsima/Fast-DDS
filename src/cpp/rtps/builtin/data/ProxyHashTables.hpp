@@ -155,7 +155,11 @@ public:
                 foonathan::memory::new_allocator()
                 )
             )
-        , base_class(r.initial ? r.initial : 1u, hasher(), key_equal(), *static_cast<allocator_type*>(this))
+        , base_class(
+            r.initial ? r.initial : 1u,
+            std::hash<EntityId_t>(),
+            std::equal_to<EntityId_t>(),
+            *static_cast<allocator_type*>(this))
     {
         // notify the pool that fixed allocations may start
         initialized_ = true;
