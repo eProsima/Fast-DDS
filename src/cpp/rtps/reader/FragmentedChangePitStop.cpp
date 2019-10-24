@@ -15,8 +15,10 @@
 #include "FragmentedChangePitStop.h"
 #include <fastrtps/rtps/common/CacheChange.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
+#include <fastrtps/log/Log.h>
 
 using namespace eprosima::fastrtps::rtps;
+using Log = eprosima::fastrtps::Log;
 
 CacheChange_t* FragmentedChangePitStop::process(
         CacheChange_t* incoming_change,
@@ -32,26 +34,32 @@ CacheChange_t* FragmentedChangePitStop::process(
     auto original_change_cit = range.first;
 
     // If there is a range, search the CacheChange_t with the same writer GUID_t.
-    if(original_change_cit != changes_.end())
+    if (original_change_cit != changes_.end())
     {
-        for(; original_change_cit != range.second; ++original_change_cit)
+        for (; original_change_cit != range.second; ++original_change_cit)
         {
-            if(original_change_cit->getChange()->writerGUID == incoming_change->writerGUID)
+            if (original_change_cit->getChange()->writerGUID == incoming_change->writerGUID)
+            {
                 break;
+            }
         }
     }
     else
+    {
         original_change_cit = range.second;
+    }
 
     // If not found an existing CacheChange_t, reserve one and insert.
-    if(original_change_cit == range.second)
+    if (original_change_cit == range.second)
     {
         CacheChange_t* original_change = nullptr;
 
-        if(!parent_->reserveCache(&original_change, sample_size))
+        if (!parent_->reserveCache(&original_change, sample_size))
+        {
             return nullptr;
+        }
 
-        if(original_change->serializedPayload.max_size < sample_size)
+        if (original_change->serializedPayload.max_size < sample_size)
         {
             parent_->releaseCache(original_change);
             return nullptr;
@@ -67,14 +75,41 @@ CacheChange_t* FragmentedChangePitStop::process(
         original_change_cit = changes_.insert(ChangeInPit(original_change));
     }
 
-    original_change_cit->getChange()->received_fragments(fragment_starting_num - 1, fragments_in_submessage);
+    uint32_t fragment_size = original_change_cit->getChange()->getFragmentSize();
+    uint32_t original_offset = (fragment_starting_num - 1) * fragment_size;
+    uint32_t total_length = original_change_cit->getChange()->serializedPayload.length;
+    uint32_t incoming_length = incoming_change->serializedPayload.length;
+    uint32_t total_fragments = original_change_cit->getChange()->getFragmentCount();
+    uint32_t last_fragment_index = fragment_starting_num + fragments_in_submessage - 1;
 
-    size_t original_offset = size_t(fragment_starting_num - 1) * original_change_cit->getChange()->getFragmentSize();
+    // Validate fragment indexes
+    if (last_fragment_index > total_fragments)
+    {
+        logWarning(RTPS_MSG_IN, "Inconsistent fragment numbers " << last_fragment_index << " > " << total_fragments);
+        return nullptr;
+    }
+
+    // validate lengths
+    if (original_offset + incoming_length > total_length)
+    {
+        logWarning(RTPS_MSG_IN, "Incoming fragment length would exceed sample length");
+        return nullptr;
+    }
+
+    if (last_fragment_index < total_fragments)
+    {
+        if (incoming_length % fragment_size != 0)
+        {
+            logWarning(RTPS_MSG_IN, "Incoming payload length not multiple of fragment size");
+            return nullptr;
+        }
+    }
+
+    original_change_cit->getChange()->received_fragments(fragment_starting_num - 1, fragments_in_submessage);
 
     memcpy(
         &original_change_cit->getChange()->serializedPayload.data[original_offset],
-        incoming_change->serializedPayload.data,
-        incoming_change->serializedPayload.length);
+        incoming_change->serializedPayload.data, incoming_length);
 
     if (original_change_cit->getChange()->is_fully_assembled())
     {
@@ -85,7 +120,9 @@ CacheChange_t* FragmentedChangePitStop::process(
     return returnedValue;
 }
 
-CacheChange_t* FragmentedChangePitStop::find(const SequenceNumber_t& sequence_number, const GUID_t& writer_guid)
+CacheChange_t* FragmentedChangePitStop::find(
+        const SequenceNumber_t& sequence_number,
+        const GUID_t& writer_guid)
 {
     CacheChange_t* returnedValue = nullptr;
 
@@ -94,11 +131,11 @@ CacheChange_t* FragmentedChangePitStop::find(const SequenceNumber_t& sequence_nu
     auto cit = range.first;
 
     // If there is a range, search the CacheChange_t with the same writer GUID_t.
-    if(cit != changes_.end())
+    if (cit != changes_.end())
     {
-        for(; cit != range.second; ++cit)
+        for (; cit != range.second; ++cit)
         {
-            if(cit->getChange()->writerGUID == writer_guid)
+            if (cit->getChange()->writerGUID == writer_guid)
             {
                 returnedValue = cit->getChange();
                 break;
@@ -109,7 +146,9 @@ CacheChange_t* FragmentedChangePitStop::find(const SequenceNumber_t& sequence_nu
     return returnedValue;
 }
 
-bool FragmentedChangePitStop::try_to_remove(const SequenceNumber_t& sequence_number, const GUID_t& writer_guid)
+bool FragmentedChangePitStop::try_to_remove(
+        const SequenceNumber_t& sequence_number,
+        const GUID_t& writer_guid)
 {
     bool returnedValue = false;
 
@@ -118,11 +157,11 @@ bool FragmentedChangePitStop::try_to_remove(const SequenceNumber_t& sequence_num
     auto cit = range.first;
 
     // If there is a range, search the CacheChange_t with the same writer GUID_t.
-    if(cit != changes_.end())
+    if (cit != changes_.end())
     {
-        for(; cit != range.second; ++cit)
+        for (; cit != range.second; ++cit)
         {
-            if(cit->getChange()->writerGUID == writer_guid)
+            if (cit->getChange()->writerGUID == writer_guid)
             {
                 // Destroy CacheChange_t.
                 parent_->releaseCache(cit->getChange());
@@ -136,14 +175,16 @@ bool FragmentedChangePitStop::try_to_remove(const SequenceNumber_t& sequence_num
     return returnedValue;
 }
 
-bool FragmentedChangePitStop::try_to_remove_until(const SequenceNumber_t& sequence_number, const GUID_t& writer_guid)
+bool FragmentedChangePitStop::try_to_remove_until(
+        const SequenceNumber_t& sequence_number,
+        const GUID_t& writer_guid)
 {
     bool returnedValue = false;
 
     auto cit = changes_.begin();
-    while(cit != changes_.end())
+    while (cit != changes_.end())
     {
-        if(cit->getChange()->sequenceNumber < sequence_number &&
+        if (cit->getChange()->sequenceNumber < sequence_number &&
                 cit->getChange()->writerGUID == writer_guid)
         {
             // Destroy CacheChange_t.
