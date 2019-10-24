@@ -39,36 +39,45 @@ p_dynamictype_map_t XMLProfileManager::m_dynamictypes;
 
 BaseNode* XMLProfileManager::root = nullptr;
 
-XMLP_ret XMLProfileManager::fillParticipantAttributes(const std::string &profile_name, ParticipantAttributes &atts)
+XMLP_ret XMLProfileManager::fillParticipantAttributes(const std::string &profile_name, ParticipantAttributes &atts, bool log_error)
 {
     part_map_iterator_t it = m_participant_profiles.find(profile_name);
     if (it == m_participant_profiles.end())
     {
-        logError(XMLPARSER, "Profile '" << profile_name << "' not found '");
+        if (log_error)
+        {
+            logError(XMLPARSER, "Profile '" << profile_name << "' not found '");
+        }
         return XMLP_ret::XML_ERROR;
     }
     atts = *(it->second);
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileManager::fillPublisherAttributes(const std::string &profile_name, PublisherAttributes &atts)
+XMLP_ret XMLProfileManager::fillPublisherAttributes(const std::string &profile_name, PublisherAttributes &atts, bool log_error)
 {
     publ_map_iterator_t it = m_publisher_profiles.find(profile_name);
     if (it == m_publisher_profiles.end())
     {
-        logError(XMLPARSER, "Profile '" << profile_name << "' not found '");
+        if (log_error)
+        {
+            logError(XMLPARSER, "Profile '" << profile_name << "' not found '");
+        }
         return XMLP_ret::XML_ERROR;
     }
     atts = *(it->second);
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileManager::fillSubscriberAttributes(const std::string &profile_name, SubscriberAttributes &atts)
+XMLP_ret XMLProfileManager::fillSubscriberAttributes(const std::string &profile_name, SubscriberAttributes &atts, bool log_error)
 {
     subs_map_iterator_t it = m_subscriber_profiles.find(profile_name);
     if (it == m_subscriber_profiles.end())
     {
-        logError(XMLPARSER, "Profile '" << profile_name << "' not found");
+        if (log_error)
+        {
+            logError(XMLPARSER, "Profile '" << profile_name << "' not found");
+        }
         return XMLP_ret::XML_ERROR;
     }
     atts = *(it->second);
