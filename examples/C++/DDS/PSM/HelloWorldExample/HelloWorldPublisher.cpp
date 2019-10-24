@@ -59,8 +59,7 @@ bool HelloWorldPublisher::init()
     // TopicQos
     dds::topic::qos::TopicQos topicQos
         = participant_.default_topic_qos()
-        ; //<< dds::core::policy::Reliability::Reliable();
-    topicQos.reliability = dds::core::policy::Reliability::Reliable();
+        << dds::core::policy::Reliability::Reliable();
 
     topic_ = dds::topic::Topic<HelloWorld>(participant_, "HelloWorldTopic", "HelloWorld", topicQos);
 

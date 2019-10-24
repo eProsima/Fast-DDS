@@ -28,14 +28,6 @@ namespace detail {
 
 using TopicQos = eprosima::fastdds::dds::TopicQos;
 
-TopicQos& operator <<(
-        TopicQos& topic_qos,
-        const dds::core::policy::Reliability& reliability);
-/*{
-    topic_qos.reliability = reliability;
-    return topic_qos;
-}*/
-
 } //namespace detail
 } //namespace qos
 } //namespace topic

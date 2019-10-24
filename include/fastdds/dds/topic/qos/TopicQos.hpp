@@ -93,6 +93,13 @@ public:
                (this->ownership == b.ownership);
     }
 
+    TopicQos& operator <<(
+            const fastrtps::ReliabilityQosPolicy& qos)
+    {
+        reliability = qos;
+        return *this;
+    }
+
     /* TODO: Implement this method
      * Set Qos from another class
      * @param qos Reference from a TopicQos object.
