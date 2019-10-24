@@ -108,6 +108,22 @@ public:
 public:
 
     /*!
+     * @brief Add received fragments to change
+     *
+     * @param change Pointer to the change being reassembled
+     * @param incoming_data Serialized payload received on the DATA_FRAG message
+     * @param fragment_starting_num First fragment number (1-based) as received on the DATA_FRAG message
+     * @param fragments_in_submessage Number of fragments as received on the DATA_FRAG message
+     *
+     * @return true if the change is fully reassembled after adding received fragments.
+     */
+    static bool add_fragments_to_change(
+            CacheChange_t* change,
+            const SerializedPayload_t& incoming_data,
+            uint32_t fragment_starting_num,
+            uint32_t fragments_in_submessage);
+
+    /*!
      * @brief Default constructor.
      * @param parent RTPSReader managing this object.
      * It is necessary the access to reserve a new CacheChange_t.
