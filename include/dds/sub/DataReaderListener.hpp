@@ -32,6 +32,7 @@ namespace sub {
 template<typename T>
 class DataReader;
 
+
 /**
  * @brief
  * DataReader events Listener
@@ -281,7 +282,18 @@ public:
     virtual void on_data_available(
             DataReader<T>& reader)
     {
-        (void) reader;
+         (void) reader;
+    }
+
+    // TODO Replace properly...
+    virtual void on_data_available(
+            eprosima::fastdds::dds::DataReader* reader) override
+    {
+        // TODO Dont do this trick
+        DataReader<T> temp_reader(core::null); // Remove this constructor when this callback is properly implemented.
+        temp_reader.delegate().reset(reader, [](detail::DataReader*){});
+        on_data_available(temp_reader);
+        temp_reader.delegate().reset();
     }
 
     /**

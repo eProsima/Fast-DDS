@@ -358,6 +358,9 @@ public:
      */
     void assert_liveliness();
 
+protected:
+    const Publisher* publisher_;
+
 };
 
 typedef ::dds::pub::detail::AnyDataWriter AnyDataWriter;

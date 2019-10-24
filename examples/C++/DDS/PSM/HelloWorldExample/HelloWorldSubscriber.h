@@ -22,12 +22,11 @@
 
 #include "HelloWorldPubSubTypes.h"
 
-#include <fastdds/dds/topic/DataReaderListener.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
-
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/sub/Subscriber.hpp>
+#include <dds/sub/DataReader.hpp>
+#include <dds/sub/DataReaderListener.hpp>
+#include <dds/sub/SampleInfo.hpp>
 
 class HelloWorldSubscriber
 {
@@ -51,11 +50,13 @@ private:
 
     dds::sub::Subscriber subscriber_;
 
-    eprosima::fastdds::dds::DataReader* reader_;
+    dds::sub::DataReader<HelloWorld> reader_;
 
     HelloWorldTypeSupport type_;
 
-    class SubListener : public eprosima::fastdds::dds::DataReaderListener
+    dds::topic::Topic<HelloWorld> topic_;
+
+    class SubListener : public dds::sub::DataReaderListener<HelloWorld>
     {
     public:
         SubListener()
@@ -66,15 +67,19 @@ private:
         ~SubListener() override
         {}
 
-        void on_data_available(
-                eprosima::fastdds::dds::DataReader* reader) override;
+        //void on_data_available(
+        //        eprosima::fastdds::dds::DataReader* reader) override;
 
-        void on_subscription_matched(eprosima::fastdds::dds::DataReader* reader,
+        void on_data_available(
+                dds::sub::DataReader<HelloWorld>& reader) override;
+
+        void on_subscription_matched(
+                eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus &info) override;
 
         HelloWorld hello_;
 
-        eprosima::fastdds::dds::SampleInfo_t info_;
+        dds::sub::SampleInfo info_;
 
         int matched_;
 

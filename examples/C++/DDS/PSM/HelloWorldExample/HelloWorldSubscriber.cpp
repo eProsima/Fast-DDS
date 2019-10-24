@@ -18,26 +18,24 @@
  */
 
 #include "HelloWorldSubscriber.h"
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastdds/dds/topic/DataReader.hpp>
-
-#include <dds/domain/DomainParticipant.hpp>
-#include <dds/sub/Subscriber.hpp>
 
 using namespace eprosima::fastdds::dds;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
     : participant_(nullptr)
     , subscriber_(dds::core::null)
+    , reader_(dds::core::null)
+    , topic_(dds::core::null)
 {
 }
 
 bool HelloWorldSubscriber::init()
 {
+    /*
     eprosima::fastrtps::ParticipantAttributes participant_att;
     participant_att.rtps.builtin.domainId = 0;
     participant_att.rtps.setName("Participant_sub");
+    */
     //participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att);
     participant_ = dds::domain::DomainParticipant(0);
 
@@ -62,14 +60,28 @@ bool HelloWorldSubscriber::init()
     }
 
     // CREATE THE READER
+    /*
     ReaderQos rqos;
     rqos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     eprosima::fastrtps::TopicAttributes topic_att;
     topic_att.topicDataType = "HelloWorld";
     topic_att.topicName = "HelloWorldTopic";
     reader_ = subscriber_->create_datareader(topic_att, rqos, &listener_);
+    */
 
-    if (reader_ == nullptr)
+    // TopicQos
+    dds::topic::qos::TopicQos topicQos
+        = participant_.default_topic_qos()
+        << dds::core::policy::Reliability::Reliable();
+
+    topic_ = dds::topic::Topic<HelloWorld>(participant_, "HelloWorldTopic", "HelloWorld", topicQos);
+
+    dds::sub::qos::DataReaderQos drqos = topicQos;
+
+    // CREATE THE WRITER
+    reader_ = dds::sub::DataReader<HelloWorld>(subscriber_, topic_, drqos, &listener_);
+
+    if (reader_ == dds::core::null)
     {
         return false;
     }
@@ -102,13 +114,13 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
                   << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
     }
 }
-
+/*
 void HelloWorldSubscriber::SubListener::on_data_available(
         eprosima::fastdds::dds::DataReader* reader)
 {
-    if (!!reader->take_next_sample(&hello_, &info_))
+    if (!!reader->take_next_sample(&hello_, info_))
     {
-        if (info_.instance_state == ::dds::sub::status::InstanceState::alive())
+        if (info_->instance_state == ::dds::sub::status::InstanceState::alive())
         {
             samples_++;
             // Print your structure data here.
@@ -116,6 +128,26 @@ void HelloWorldSubscriber::SubListener::on_data_available(
         }
     }
 }
+*/
+
+
+void HelloWorldSubscriber::SubListener::on_data_available(
+        dds::sub::DataReader<HelloWorld>& reader)
+{
+    dds::sub::LoanedSamples<HelloWorld> samples = reader.take();
+    //for (auto sample : samples)
+    for (auto sample = samples.begin(); sample < samples.end(); ++sample)
+    {
+        if (sample->info().valid())
+        {
+            samples_++;
+            hello_ = sample->data();
+            // Print your structure data here.
+            std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
+        }
+    }
+}
+
 
 void HelloWorldSubscriber::run()
 {

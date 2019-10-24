@@ -117,7 +117,7 @@ template<
         typename T,
          template<typename Q> class DELEGATE>
 ::dds::core::InstanceHandleSeq matched_publications(
-        const DataReader<T, DELEGATE>& dr);
+        const DataReader<T>& dr);
 
 /**
  * This operation retrieves the list of publications currently "associated" with the
@@ -177,7 +177,7 @@ template<
         typename FwdIterator,
         template<typename Q> class DELEGATE>
 uint32_t matched_publications(
-        const dds::sub::DataReader<T, DELEGATE>& dr,
+        const dds::sub::DataReader<T>& dr,
         FwdIterator begin,
         uint32_t max_size);
 
@@ -224,7 +224,7 @@ template<
         typename T,
         template<typename Q> class DELEGATE>
 const dds::topic::PublicationBuiltinTopicData matched_publication_data(
-        const dds::sub::DataReader<T, DELEGATE>& dr,
+        const dds::sub::DataReader<T>& dr,
         const ::dds::core::InstanceHandle& h);
 
 } //namespace sub

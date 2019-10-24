@@ -102,6 +102,10 @@ public:
         return this->samples_.data();
     }
 
+    LoanedSamplesContainer& container()
+    {
+        return samples_;
+    }
 
 private:
     LoanedSamplesContainer samples_;

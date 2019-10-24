@@ -199,6 +199,7 @@ set(${PROJECT_NAME}_source_files
     dds/domain/detail/DomainParticipant.cpp
     dds/pub/Publisher.cpp
     dds/sub/Subscriber.cpp
+    dds/sub/SampleInfo.cpp
     dds/core/Time.cpp
     dds/core/Duration.cpp
     dds/core/InstanceHandle.cpp

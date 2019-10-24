@@ -23,11 +23,11 @@
  * Ignore this file in the API
  */
 
+#include <dds/sub/SampleInfo.hpp>
+
 namespace dds {
 namespace sub {
 namespace detail {
-
-#include <dds/sub/SampleInfo.hpp>
 
 template<typename T>
 class Sample

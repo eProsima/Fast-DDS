@@ -18,11 +18,6 @@
  */
 
 #include "HelloWorldPublisher.h"
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastdds/dds/topic/DataWriter.hpp>
 
 #include <thread>
 

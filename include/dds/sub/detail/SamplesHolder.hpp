@@ -34,7 +34,7 @@ namespace dds {
 namespace sub {
 namespace detail {
 
-class SampleInfo;
+//class SampleInfo;
 
 template<typename T>
 class LoanedSamplesHolder /*: public SamplesHolder*/

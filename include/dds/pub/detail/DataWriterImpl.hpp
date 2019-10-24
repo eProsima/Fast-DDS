@@ -15,8 +15,8 @@
  *
 */
 
-#ifndef EPROSIMA_DDS_PUB_DATA_WRITER_IMPL_HPP_
-#define EPROSIMA_DDS_PUB_DATA_WRITER_IMPL_HPP_
+//#ifndef EPROSIMA_DDS_PUB_DATA_WRITER_IMPL_HPP_
+//#define EPROSIMA_DDS_PUB_DATA_WRITER_IMPL_HPP_
 
 /***************************************************************************
  *
@@ -45,9 +45,7 @@ DataWriter<T>::DataWriter(
                             nullptr,
                             dds::core::status::StatusMask::none()))
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(pub);
-//    this->delegate()->init(this->impl_);
+    publisher_ = &pub;
 }
 
 template<typename T>
@@ -65,9 +63,7 @@ DataWriter<T>::DataWriter(
               listener,
               mask))
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(pub);
-//    this->delegate()->init(this->impl_);
+    publisher_ = &pub;
 }
 
 template<typename T>
@@ -281,6 +277,7 @@ const dds::core::InstanceHandle DataWriter<T>::register_instance(
 {
     /* Invalid time will be used as current time. */
     //return this->delegate()->register_instance(key, dds::core::Time::invalid());
+    return dds::core::InstanceHandle::nil();
 }
 
 template<typename T>
@@ -291,6 +288,7 @@ const dds::core::InstanceHandle DataWriter<T>::register_instance(
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->register_instance(key, timestamp);
+    return dds::core::InstanceHandle::nil();
 }
 
 template<typename T>
@@ -302,6 +300,7 @@ DataWriter<T>& DataWriter<T>::unregister_instance(
 //    /* Invalid time will be used as current time. */
 //    this->delegate()->unregister_instance(i, dds::core::Time::invalid());
 //    return *this;
+    return *this;
 }
 
 template<typename T>
@@ -313,6 +312,7 @@ DataWriter<T>& DataWriter<T>::unregister_instance(
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    this->delegate()->unregister_instance(i, timestamp);
 //    return *this;
+    return *this;
 }
 
 template<typename T>
@@ -324,6 +324,7 @@ DataWriter<T>& DataWriter<T>::unregister_instance(
 //    /* Invalid time will be used as current time. */
 //    this->delegate()->unregister_instance(key, dds::core::Time::invalid());
 //    return *this;
+    return *this;
 }
 
 template<typename T>
@@ -334,6 +335,7 @@ DataWriter<T>& DataWriter<T>::unregister_instance(const T& key,
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    this->delegate()->unregister_instance(key, timestamp);
 //    return *this;
+    return *this;
 }
 
 template<typename T>
@@ -345,6 +347,7 @@ DataWriter<T>& DataWriter<T>::dispose_instance(
 //    /* Invalid time will be used as current time. */
 //    this->delegate()->dispose_instance(i, dds::core::Time::invalid());
 //    return *this;
+    return *this;
 }
 
 template<typename T>
@@ -356,6 +359,7 @@ DataWriter<T>& DataWriter<T>::dispose_instance(
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    this->delegate()->dispose_instance(i, timestamp);
 //    return *this;
+    return *this;
 }
 
 template<typename T>
@@ -367,6 +371,7 @@ DataWriter<T>& DataWriter<T>::dispose_instance(
 //    /* Invalid time will be used as current time. */
 //    this->delegate()->dispose_instance(key, dds::core::Time::invalid());
 //    return *this;
+    return *this;
 }
 
 template<typename T>
@@ -378,6 +383,7 @@ DataWriter<T>& DataWriter<T>::dispose_instance(
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    this->delegate()->dispose_instance(key, timestamp);
 //    return *this;
+    return *this;
 }
 
 template<typename T>
@@ -388,6 +394,7 @@ dds::topic::TopicInstance<T>& DataWriter<T>::key_value(
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->key_value(i, h);
+    return dds::topic::TopicInstance<T>();
 }
 
 template<typename T>
@@ -407,6 +414,7 @@ dds::core::InstanceHandle DataWriter<T>::lookup_instance(
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->lookup_instance(key);
+    return dds::core::InstanceHandle::nil();
 }
 
 template<typename T>
@@ -420,11 +428,11 @@ const dds::topic::Topic<T>& DataWriter<T>::topic() const
 template<typename T>
 void DataWriter<T>::listener(
         DataWriterListener<T>* listener,
-        const ::dds::core::status::StatusMask& mask)
+        const ::dds::core::status::StatusMask& /*mask*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->listener(listener, mask);
+    this->delegate()->set_listener(listener/*, mask*/);
 }
 
 template<typename T>
@@ -439,4 +447,4 @@ DataWriterListener<T>* DataWriter<T>::listener() const
 
 /** @endcond */
 
-#endif //EPROSIMA_DDS_PUB_DATA_WRITER_IMPL_HPP_
+//#endif //EPROSIMA_DDS_PUB_DATA_WRITER_IMPL_HPP_

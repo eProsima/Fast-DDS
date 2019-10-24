@@ -36,7 +36,6 @@ namespace dds {
 namespace sub {
 namespace detail {
 
-template<typename T>
 using DataReader = eprosima::fastdds::dds::DataReader;
 
 } //namespace detail

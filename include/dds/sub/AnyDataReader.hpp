@@ -45,20 +45,21 @@ namespace sub {
  *
  * @see dds::sub::DataReader
  */
-class AnyDataReader : public dds::core::TEntity<detail::AnyDataReader>
+template<typename DELEGATE>
+class TAnyDataReader : public dds::core::TEntity<DELEGATE>
 {
 public:
 
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            AnyDataReader,
+            TAnyDataReader,
             dds::core::TEntity,
-            detail::AnyDataReader)
+            DELEGATE)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            AnyDataReader)
+            TAnyDataReader)
 
     /** @cond */
-    virtual ~AnyDataReader();
+    virtual ~TAnyDataReader();
     /** @endcond */
 
     //==========================================================================
@@ -199,11 +200,11 @@ public:
             const qos::DataReaderQos& qos);
 
     /** @copydoc dds::sub::TAnyDataReader::qos(const dds::sub::qos::DataReaderQos& qos) */
-    AnyDataReader& operator <<(
+    TAnyDataReader& operator <<(
             const qos::DataReaderQos& qos);
 
     /** @copydoc dds::sub::TAnyDataReader::qos() */
-    const AnyDataReader& operator >>(
+    const TAnyDataReader& operator >>(
             qos::DataReaderQos& qos) const;
 
 
@@ -376,11 +377,15 @@ public:
     dds::core::status::SubscriptionMatchedStatus subscription_matched_status();
 
 public:
-    mutable Subscriber* subscriber_;
+    const Subscriber* subscriber_;
 
 };
 
+using AnyDataReader = TAnyDataReader<detail::AnyDataReader>;
+
 } //namespace sub
 } //namespace dds
+
+#include <dds/sub/detail/TAnyDataReaderImpl.hpp>
 
 #endif //OMG_DDS_SUB_ANY_DATA_READER_HPP_
