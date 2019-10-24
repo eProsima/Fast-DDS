@@ -165,7 +165,7 @@ void StatelessWriter::unsent_change_added_to_history(
                     std::vector<GUID_t> guids(1);
                     for (const ReaderLocator& it : matched_readers_)
                     {
-                        RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, it, max_blocking_time);
+                        RTPSMessageGroup group(mp_RTPSParticipant, this, it, max_blocking_time);
 
                         if (!group.add_data(*change, it.expects_inline_qos()))
                         {
@@ -175,7 +175,7 @@ void StatelessWriter::unsent_change_added_to_history(
                 }
                 else
                 {
-                    RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, *this, max_blocking_time);
+                    RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
 
                     if (!group.add_data(*change, is_inline_qos_expected_))
                     {
@@ -305,7 +305,7 @@ void StatelessWriter::send_any_unsent_changes()
 
     try
     {
-        RTPSMessageGroup group(mp_RTPSParticipant, this,  m_cdrmessages, *this);
+        RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
 
         bool bHasListener = mp_listener != nullptr;
         while(!changesToSend.empty())
