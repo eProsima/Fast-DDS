@@ -40,7 +40,7 @@ using namespace eprosima::fastrtps::rtps;
 
 StatelessReader::~StatelessReader()
 {
-    logInfo(RTPS_READER, "Removing reader " << this->getGuid());
+    logInfo(RTPS_READER, "Removing reader " << m_guid);
 }
 
 StatelessReader::StatelessReader(
@@ -81,7 +81,7 @@ bool StatelessReader::matched_writer_add(
 
         if (liveliness_lease_duration_ < c_TimeInfinite)
         {
-            auto wlp = this->mp_RTPSParticipant->wlp();
+            auto wlp = mp_RTPSParticipant->wlp();
             if ( wlp != nullptr)
             {
                 wlp->sub_liveliness_manager_->add_writer(
@@ -116,7 +116,7 @@ bool StatelessReader::matched_writer_remove(
 
             if (liveliness_lease_duration_ < c_TimeInfinite)
             {
-                auto wlp = this->mp_RTPSParticipant->wlp();
+                auto wlp = mp_RTPSParticipant->wlp();
                 if ( wlp != nullptr)
                 {
                     wlp->sub_liveliness_manager_->remove_writer(
@@ -264,25 +264,7 @@ bool StatelessReader::processDataMsg(
         logInfo(RTPS_MSG_IN, IDSTRING "Trying to add change " << change->sequenceNumber << " TO reader: "
                                                               << getGuid().entityId);
 
-        if (liveliness_lease_duration_ < c_TimeInfinite)
-        {
-            if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
-                    writer_has_manual_liveliness(change->writerGUID))
-            {
-                auto wlp = this->mp_RTPSParticipant->wlp();
-                if ( wlp != nullptr)
-                {
-                    wlp->sub_liveliness_manager_->assert_liveliness(
-                        change->writerGUID,
-                        liveliness_kind_,
-                        liveliness_lease_duration_);
-                }
-                else
-                {
-                    logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
-                }
-            }
-        }
+        assert_writer_liveliness(change->writerGUID);
 
         CacheChange_t* change_to_add;
 
@@ -344,25 +326,7 @@ bool StatelessReader::processDataFragMsg(
 
     if (acceptMsgFrom(incomingChange->writerGUID))
     {
-        if (liveliness_lease_duration_ < c_TimeInfinite)
-        {
-            if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
-                    writer_has_manual_liveliness(incomingChange->writerGUID))
-            {
-                auto wlp = this->mp_RTPSParticipant->wlp();
-                if ( wlp != nullptr)
-                {
-                    wlp->sub_liveliness_manager_->assert_liveliness(
-                        incomingChange->writerGUID,
-                        liveliness_kind_,
-                        liveliness_lease_duration_);
-                }
-                else
-                {
-                    logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
-                }
-            }
-        }
+        assert_writer_liveliness(incomingChange->writerGUID);
 
         // Check if CacheChange was received.
         if (!thereIsUpperRecordOf(incomingChange->writerGUID, incomingChange->sequenceNumber))
@@ -446,11 +410,11 @@ bool StatelessReader::processGapMsg(
 bool StatelessReader::acceptMsgFrom(
         const GUID_t& writerId)
 {
-    if (this->m_acceptMessagesFromUnkownWriters)
+    if (m_acceptMessagesFromUnkownWriters)
     {
         return true;
     }
-    else if (writerId.entityId == this->m_trustedWriterEntityId)
+    else if (writerId.entityId == m_trustedWriterEntityId)
     {
         return true;
     }
@@ -467,6 +431,30 @@ bool StatelessReader::thereIsUpperRecordOf(
         const SequenceNumber_t& seq)
 {
     return get_last_notified(guid) >= seq;
+}
+
+void StatelessReader::assert_writer_liveliness(
+        const GUID_t& guid)
+{
+    if (liveliness_lease_duration_ < c_TimeInfinite)
+    {
+        if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
+                writer_has_manual_liveliness(guid))
+        {
+            auto wlp = mp_RTPSParticipant->wlp();
+            if (wlp != nullptr)
+            {
+                wlp->sub_liveliness_manager_->assert_liveliness(
+                    guid,
+                    liveliness_kind_,
+                    liveliness_lease_duration_);
+            }
+            else
+            {
+                logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled");
+            }
+        }
+    }
 }
 
 bool StatelessReader::writer_has_manual_liveliness(

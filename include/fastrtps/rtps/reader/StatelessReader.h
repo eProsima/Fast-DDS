@@ -199,6 +199,13 @@ private:
             const SequenceNumber_t& seq);
 
     /**
+     * @brief Assert liveliness of remote writer
+     * @param guid The guid of the remote writer
+     */
+    void assert_writer_liveliness(
+            const GUID_t& guid);
+
+    /**
      * @brief A method to check if a matched writer has manual_by_topic liveliness
      * @param guid The guid of the remote writer
      * @return True if writer has manual_by_topic livelinesss
