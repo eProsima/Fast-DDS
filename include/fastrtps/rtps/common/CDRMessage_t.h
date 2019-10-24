@@ -21,7 +21,8 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include "SerializedPayload.h"
 #include "Types.h"
-#include <stdlib.h>
+#include <cassert>
+#include <cstdlib>
 #include <cstring>
 
 namespace eprosima{
@@ -161,6 +162,25 @@ struct RTPS_DllAPI CDRMessage_t{
         message.buffer = nullptr;
 
         return *(this);
+    }
+
+    void reserve(
+            uint32_t size)
+    {
+        assert(wraps == false);
+        if (size > max_size)
+        {
+            octet* new_buffer = (octet*) realloc(buffer, size);
+            if (new_buffer == nullptr)
+            {
+                // TODO: Exception? Assertion?
+            }
+            else
+            {
+                buffer = new_buffer;
+                max_size = size;
+            }
+        }
     }
 
     //!Pointer to the buffer where the data is stored.

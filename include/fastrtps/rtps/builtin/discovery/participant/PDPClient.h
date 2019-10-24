@@ -43,9 +43,6 @@ class PDPClient : public PDP
 {
     friend class DSClientEvent;
 
-    //! Messages announcement ancillary
-    RTPSMessageGroup_t _msgbuffer;
-
 public:
 
     /**

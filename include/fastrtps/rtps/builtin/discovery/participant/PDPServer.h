@@ -60,9 +60,6 @@ class PDPServer : public PDP
     //! TRANSIENT or TRANSIENT_LOCAL durability;
     DurabilityKind_t _durability;
 
-    //! Messages announcement ancillary
-    RTPSMessageGroup_t _msgbuffer;
-
     //! Temporary locator list to solve new Writer API issue
     // TODO: remove when the Writer API issue is resolved
     std::map<GUID_t, ReaderProxyData> clients_;

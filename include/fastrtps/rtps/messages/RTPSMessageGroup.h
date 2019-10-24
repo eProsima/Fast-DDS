@@ -38,41 +38,6 @@ class RTPSParticipantImpl;
 class Endpoint;
 
 /**
- * Class RTPSMessageGroup_t that contains the messages used to send multiples changes as one message.
- * @ingroup WRITER_MODULE
- */
-class RTPSMessageGroup_t
-{
-    public:
-
-        RTPSMessageGroup_t(
-                uint32_t payload,
-                const GuidPrefix_t& participant_guid,
-                bool has_security)
-            : rtpsmsg_submessage_(payload)
-            , rtpsmsg_fullmsg_(payload)
-#if HAVE_SECURITY
-            , rtpsmsg_encrypt_(has_security ? payload : 0u)
-#endif
-        {
-            (void)has_security; // unused when built without security
-
-            CDRMessage::initCDRMsg(&rtpsmsg_fullmsg_);
-            RTPSMessageCreator::addHeader(&rtpsmsg_fullmsg_, participant_guid);
-        }
-
-        CDRMessage_t rtpsmsg_submessage_;
-
-        CDRMessage_t rtpsmsg_fullmsg_;
-
-#if HAVE_SECURITY
-        CDRMessage_t rtpsmsg_encrypt_;
-#endif
-};
-
-class RTPSWriter;
-
-/**
  * RTPSMessageGroup Class used to construct a RTPS message.
  * @ingroup WRITER_MODULE
  */
@@ -94,14 +59,12 @@ class RTPSWriter;
          * Constructs a RTPSMessageGroup allowing the destination endpoints to change.
          * @param participant Pointer to the participant sending data.
          * @param endpoint Pointer to the endpoint sending data.
-         * @param msg_group Reference to data buffer for messages.
          * @param msg_sender Reference to message sender interface.
          * @param max_blocking_time_point Future time point where blocking send should end.
          */
         RTPSMessageGroup(
                 RTPSParticipantImpl* participant,
                 Endpoint* endpoint,
-                RTPSMessageGroup_t& msg_group,
                 const RTPSMessageSenderInterface& msg_sender,
                 std::chrono::steady_clock::time_point max_blocking_time_point =
                     std::chrono::steady_clock::now() + std::chrono::hours(24));
