@@ -277,10 +277,15 @@ endif()
 ###############################################################################
 # Add an option to toggle the generation of the API documentation.
 option(BUILD_DOCUMENTATION "Use doxygen to create product documentation" OFF)
+option(CHECK_DOCUMENTATION "Use doxygen to check code documentation" OFF)
 
 if(EPROSIMA_INSTALLER)
     set(BUILD_DOCUMENTATION ON)
     set(DOXYGEN_SHOULD_SKIP_THIS_PUBLIC "DOXYGEN_SHOULD_SKIP_THIS_PUBLIC")
+endif()
+
+if(CHECK_DOCUMENTATION)
+    set(BUILD_DOCUMENTATION ON)
 endif()
 
 if(BUILD_DOCUMENTATION)
@@ -342,21 +347,25 @@ if(BUILD_DOCUMENTATION)
     configure_file(doc/README.html.in ${README_LOCATION}/README.html @ONLY IMMEDIATE)
 
     ### ReadTheDocs ########################
-
-    add_custom_target(readthedocs
-        COMMAND "${WGET_EXE}" "https://media.readthedocs.org/htmlzip/eprosima-fast-rtps/v${PROJECT_VERSION}/eprosima-fast-rtps.zip"
-        COMMAND "${UNZIP_EXE}" "eprosima-fast-rtps.zip" -d "${PROJECT_BINARY_DIR}/doc/"
-        COMMAND ${CMAKE_COMMAND} -E remove_directory "${PROJECT_BINARY_DIR}/doc/manual"
-        COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_BINARY_DIR}/doc/eprosima-fast-rtps-v${PROJECT_VERSION}" "${PROJECT_BINARY_DIR}/doc/manual"
-        COMMAND ${CMAKE_COMMAND} -E remove "eprosima-fast-rtps.zip"
-        )
-
-    add_dependencies(readthedocs docdirs)
+    if(NOT CHECK_DOCUMENTATION)
+        add_custom_target(readthedocs
+            COMMAND "${WGET_EXE}" "https://media.readthedocs.org/htmlzip/eprosima-fast-rtps/v${PROJECT_VERSION}/eprosima-fast-rtps.zip"
+            COMMAND "${UNZIP_EXE}" "eprosima-fast-rtps.zip" -d "${PROJECT_BINARY_DIR}/doc/"
+            COMMAND ${CMAKE_COMMAND} -E remove_directory "${PROJECT_BINARY_DIR}/doc/manual"
+            COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_BINARY_DIR}/doc/eprosima-fast-rtps-v${PROJECT_VERSION}" "${PROJECT_BINARY_DIR}/doc/manual"
+            COMMAND ${CMAKE_COMMAND} -E remove "eprosima-fast-rtps.zip"
+            )
+    
+        add_dependencies(readthedocs docdirs)
+    endif()
 
     add_custom_target(doc ALL
         COMMENT "Generated project documentation" VERBATIM)
 
-    add_dependencies(doc doxygen readthedocs)
+    add_dependencies(doc doxygen)
+    if(NOT CHECK_DOCUMENTATION)
+        add_dependencies(doc readthedocs)
+    endif()
 endif()
 
 ###############################################################################
