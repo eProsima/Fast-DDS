@@ -79,14 +79,16 @@ public:
      * @param writer_guid GUID of the writer to remove.
      * @return True if correctly removed.
      */
-    RTPS_DllAPI virtual bool matched_writer_remove(const GUID_t& writer_guid) = 0;
+    RTPS_DllAPI virtual bool matched_writer_remove(
+            const GUID_t& writer_guid) = 0;
 
     /**
      * Tells us if a specific Writer is matched against this reader.
      * @param writer_guid GUID of the writer to check.
      * @return True if it is matched.
      */
-    RTPS_DllAPI virtual bool matched_writer_is_matched(const GUID_t& writer_guid) = 0;
+    RTPS_DllAPI virtual bool matched_writer_is_matched(
+            const GUID_t& writer_guid) = 0;
 
     /**
      * Processes a new DATA message. Previously the message must have been accepted by function acceptMsgDirectedTo.
@@ -94,7 +96,8 @@ public:
      * @param change Pointer to the CacheChange_t.
      * @return true if the reader accepts messages from the.
      */
-    RTPS_DllAPI virtual bool processDataMsg(CacheChange_t* change) = 0;
+    RTPS_DllAPI virtual bool processDataMsg(
+            CacheChange_t* change) = 0;
 
     /**
      * Processes a new DATA FRAG message.
@@ -165,7 +168,8 @@ public:
      * @param target Pointed to ReaderLister to attach
      * @return True is correctly set.
      */
-    RTPS_DllAPI bool setListener(ReaderListener* target);
+    RTPS_DllAPI bool setListener(
+            ReaderListener* target);
 
     /**
      * Reserve a CacheChange_t.
@@ -180,7 +184,8 @@ public:
     /**
      * Release a cacheChange.
      */
-    RTPS_DllAPI void releaseCache(CacheChange_t* change);
+    RTPS_DllAPI void releaseCache(
+            CacheChange_t* change);
 
     /**
      * Read the next unread CacheChange_t from the history
@@ -332,7 +337,8 @@ protected:
 
 private:
 
-    RTPSReader& operator=(const RTPSReader&) = delete;
+    RTPSReader& operator=(
+            const RTPSReader&) = delete;
 };
 
 } /* namespace rtps */
