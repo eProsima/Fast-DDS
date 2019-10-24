@@ -22,7 +22,6 @@
 
 #include "HelloWorldPubSubTypes.h"
 
-#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/pub/Publisher.hpp>
 #include <dds/pub/DataWriter.hpp>

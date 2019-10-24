@@ -20,10 +20,6 @@
 #include "HelloWorldPublisher.h"
 #include "HelloWorldSubscriber.h"
 
-#include <fastdds/dds/log/Log.hpp>
-
-using eprosima::fastdds::dds::Log;
-
 int main(
         int argc,
         char** argv)
@@ -54,7 +50,6 @@ int main(
     else
     {
         std::cout << "publisher OR subscriber argument needed" << std::endl;
-        Log::Reset();
         return 0;
     }
 
@@ -79,6 +74,5 @@ int main(
                 break;
             }
     }
-    Log::Reset();
     return 0;
 }
