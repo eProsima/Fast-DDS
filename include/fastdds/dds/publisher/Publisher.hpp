@@ -31,7 +31,6 @@ namespace eprosima {
 namespace fastrtps {
 
 class TopicAttributes;
-class WriterQos;
 
 } // namespace fastrtps
 
@@ -44,6 +43,7 @@ class PublisherImpl;
 class PublisherQos;
 class DataWriter;
 class DataWriterListener;
+class WriterQos;
 
 /**
  * Class Publisher, used to send data to associated subscribers.
@@ -60,7 +60,7 @@ class RTPS_DllAPI Publisher
      * Don't use directly, create Publisher using create_publisher from Participant.
      */
     Publisher(
-        PublisherImpl* p);
+            PublisherImpl* p);
 
 public:
 
@@ -107,7 +107,7 @@ public:
      */
     DataWriter* create_datawriter(
             const fastrtps::TopicAttributes& topic_attr,
-            const fastrtps::WriterQos& writer_qos,
+            const WriterQos& writer_qos,
             DataWriterListener* listener);
 
     /**
@@ -142,7 +142,7 @@ public:
      * @return true
      */
     bool get_datawriters(
-        std::vector<DataWriter*>& writers) const;
+            std::vector<DataWriter*>& writers) const;
 
     /**
      * This operation checks if the publisher has DataWriters
@@ -151,20 +151,20 @@ public:
     bool has_datawriters() const;
 
     /* TODO
-    bool suspend_publications();
-    */
+       bool suspend_publications();
+     */
 
     /* TODO
-    bool resume_publications();
-    */
+       bool resume_publications();
+     */
 
     /* TODO
-    bool begin_coherent_changes();
-    */
+       bool begin_coherent_changes();
+     */
 
     /* TODO
-    bool end_coherent_changes();
-    */
+       bool end_coherent_changes();
+     */
 
     /**
      * This operation blocks the calling thread until either all data written by the reliable DataWriter entities
@@ -184,8 +184,8 @@ public:
     const DomainParticipant* get_participant() const;
 
     /* TODO
-    bool delete_contained_entities();
-    */
+       bool delete_contained_entities();
+     */
 
     /**
      * This operation sets a default value of the DataWriter QoS policies which will be used for newly created
@@ -200,7 +200,7 @@ public:
      * @param qos
      */
     ReturnCode_t set_default_datawriter_qos(
-            const fastrtps::WriterQos& qos);
+            const WriterQos& qos);
 
     /**
      * This operation returns the default value of the DataWriter QoS, that is, the QoS policies which will be used
@@ -211,7 +211,7 @@ public:
      * successful call to set_default_datawriter_qos, or else, if the call was never made, the default values.
      * @return Current default WriterQos
      */
-    const fastrtps::WriterQos& get_default_datawriter_qos() const;
+    const WriterQos& get_default_datawriter_qos() const;
 
     /**
      * This operation retrieves the default value of the DataWriter QoS, that is, the QoS policies which will be used
@@ -224,13 +224,13 @@ public:
      * @return Always true.
      */
     ReturnCode_t get_default_datawriter_qos(
-            fastrtps::WriterQos& qos) const;
+            WriterQos& qos) const;
 
     /* TODO
-    bool copy_from_topic_qos(
-            fastrtps::WriterQos& writer_qos,
+       bool copy_from_topic_qos(
+            WriterQos& writer_qos,
             const fastrtps::TopicAttributes& topic_qos) const;
-    */
+     */
 
     /**
      * Get the Attributes of the Publisher.

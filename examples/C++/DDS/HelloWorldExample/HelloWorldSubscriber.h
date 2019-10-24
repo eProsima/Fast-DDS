@@ -25,6 +25,7 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/topic/DataReaderListener.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 
 class HelloWorldSubscriber
 {
@@ -66,9 +67,8 @@ private:
         void on_data_available(
                 eprosima::fastdds::dds::DataReader* reader) override;
 
-        void on_subscription_matched(
-                eprosima::fastdds::dds::DataReader* reader,
-                eprosima::fastrtps::rtps::MatchingInfo& info) override;
+        void on_subscription_matched(eprosima::fastdds::dds::DataReader* reader,
+                const eprosima::fastdds::dds::SubscriptionMatchedStatus &info) override;
 
         HelloWorld hello_;
 

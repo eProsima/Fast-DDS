@@ -46,7 +46,7 @@ protected:
     DynamicType_ptr build_dynamic_type(
             TypeDescriptor& descriptor,
             const TypeObject* object,
-            const DynamicType_ptr annotation_member_type = nullptr) const;
+            const DynamicType_ptr annotation_member_type = DynamicType_ptr(nullptr)) const;
 
     const TypeIdentifier* try_get_complete(
             const TypeIdentifier* identifier) const;
@@ -75,13 +75,51 @@ protected:
             const DynamicType_ptr annotation_descriptor_type,
             const NameHash& hash) const;
 
+    /**
+     * @brief Fills the TypeInformation provided with the minimal TypeIdentifiers and its minimal dependencies.
+     * @param info
+     * @param ident
+     */
     void fill_minimal_information(
             TypeInformation* info,
             const TypeIdentifier* ident) const;
 
+    /**
+     * @brief Fills the TypeInformation provided with the complete TypeIdentifiers and its complete dependencies
+     * if possible, or minimal ones in other case.
+     * @param info
+     * @param ident
+     */
     void fill_complete_information(
             TypeInformation* info,
             const TypeIdentifier* ident) const;
+
+    /**
+     * @brief Auxiliar function to fill minimal dependencies.
+     * @param info
+     * @param identifier
+     */
+    void fill_minimal_dependant_types(
+            TypeInformation* info,
+            const TypeIdentifier* identifier) const;
+
+    /**
+     * @brief Auxiliar function to fill complete dependencies.
+     * @param info
+     * @param identifier
+     */
+    void fill_complete_dependant_types(
+            TypeInformation* info,
+            const TypeIdentifier* identifier) const;
+
+    /**
+     * @brief Auxiliar function to fill minimal information with complete dependencies.
+     * @param info
+     * @param identifier
+     */
+    void fill_complete_minimal_dependant_types(
+            TypeInformation* info,
+            const TypeIdentifier* identifier) const;
 
 public:
     RTPS_DllAPI static TypeObjectFactory* get_instance();
@@ -90,8 +128,21 @@ public:
 
     ~TypeObjectFactory();
 
+    /**
+     * @brief get_type_information Retrieves the TypeInformation of the named type.
+     * @param type_name
+     * @return
+     */
     RTPS_DllAPI const TypeInformation* get_type_information(
             const std::string &type_name) const;
+
+    /**
+     * @brief get_type_information Retrieves the TypeInformation of the given TypeIdentifier.
+     * @param identifier
+     * @return
+     */
+    RTPS_DllAPI TypeInformation* get_type_information(
+            const TypeIdentifier* identifier) const;
 
     RTPS_DllAPI const TypeObject* get_type_object(
             const std::string& type_name,
@@ -163,6 +214,57 @@ public:
         std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
         aliases_.emplace(std::pair<std::string, std::string>(alias_name, target_type));
     }
+
+    /**
+     * @brief Returns a TypeIdentifierWithSizeSeq object filled with the dependencies of the
+     * given identifiers. If continuation_point isn't empty, then it will skip the first
+     * (max_size * continuation_point) dependencies.
+     * @param identifiers
+     * @param in_continuation_point
+     * @param out_continuation_point
+     * @param max_size
+     * @return
+     */
+    RTPS_DllAPI TypeIdentifierWithSizeSeq typelookup_get_type_dependencies(
+            const TypeIdentifierSeq& identifiers,
+            const OctetSeq& in_continuation_point,
+            OctetSeq& out_continuation_point,
+            size_t max_size) const;
+
+    /**
+     * @brief Fills the given object with the complete version of the given identifier.
+     * If the given identifier was MINIMAL, then it will return the stored COMPLETE identifier pointer.
+     * Otherwise, it will return the given identifier address (to make comparision trivial).
+     * @param identifier
+     * @param object
+     * @return
+     */
+    RTPS_DllAPI const TypeIdentifier* typelookup_get_type(
+            const TypeIdentifier& identifier,
+            TypeObject& object) const;
+
+    /**
+     * @brief Checks if a TypeIdentifier is already known by the factory.
+     * @param identifier
+     * @return
+     */
+    RTPS_DllAPI bool typelookup_check_type_identifier(
+            const TypeIdentifier& identifier) const;
+
+    /**
+     * @brief Retrieves the CompleteTypeObject from the given TypeInformation.
+     * If it doesn't exist, it returns nullptr.
+     * A user that received a TypeInformation from TypeLookupService that calls this method and returns nullptr,
+     * must iterate through the TypeInformation dependencies calling recursively to getTypeDependencies method in
+     * its participant (which will call the correspondent method in the TypeLookupService), retrieving the
+     * TypeObject correspondent and registering the type into the Factory with a name using the add_type_object method,
+     * for each COMPLETE TypeIdentifier received in this way until all the hierarchy is registered, and then,
+     * the user may call again this method that should return the TypeObject.
+     * @param information
+     * @return
+     */
+    RTPS_DllAPI const TypeObject* typelookup_get_type_object_from_information(
+            const TypeInformation& information) const;
 };
 
 } // namespace types

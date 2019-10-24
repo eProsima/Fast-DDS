@@ -171,123 +171,6 @@ void ThroughputSubscriber::CommandSubListener::onNewDataMessage(Subscriber*)
 }
 
 // *******************************************************************************************
-// ********************************** THROUGHPUT SUBSCRIBER **********************************
-// *******************************************************************************************
-void ThroughputSubscriber::processMessage()
-{
-    if (mp_commandsub->takeNextData((void*)&m_CommandSubListener.m_commandin, &m_CommandSubListener.info))
-    {
-        switch (m_CommandSubListener.m_commandin.m_command)
-        {
-            default: break;
-            case (DEFAULT): break;
-            case (BEGIN):
-            {
-                break;
-            }
-            case (READY_TO_START):
-            {
-                std::cout << "Command: READY_TO_START" << std::endl;
-                m_datasize = m_CommandSubListener.m_commandin.m_size;
-                m_demand = m_CommandSubListener.m_commandin.m_demand;
-                if (dynamic_data)
-                {
-                    // Create basic builders
-                    DynamicTypeBuilder_ptr struct_type_builder(
-                        DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
-
-                    // Add members to the struct.
-                    struct_type_builder->add_member(
-                        0,
-                        "seqnum",
-                        DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-                    struct_type_builder->add_member(
-                        1,
-                        "data",
-                        DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                            DynamicTypeBuilderFactory::get_instance()->create_byte_type(),
-                            m_datasize
-                        ));
-                    struct_type_builder->set_name("ThroughputType");
-
-                    m_pDynType = struct_type_builder->build();
-                    m_DynType.CleanDynamicType();
-                    m_DynType.SetDynamicType(m_pDynType);
-
-                    Domain::registerType(mp_par, &m_DynType);
-
-                    m_DynData = DynamicDataFactory::get_instance()->create_data(m_pDynType);
-                }
-                else
-                {
-                    delete(throughput_t);
-                    delete(throughputin);
-
-                    throughput_t = new ThroughputDataType(m_datasize);
-                    Domain::registerType(mp_par, throughput_t);
-                    throughputin = new ThroughputType((uint16_t)m_datasize);
-                }
-
-                mp_datasub = Domain::createSubscriber(mp_par, subAttr, &m_DataSubListener);
-
-                ThroughputCommandType command(BEGIN);
-                std::this_thread::sleep_for(std::chrono::milliseconds(50));
-                m_DataSubListener.reset();
-                mp_commandpubli->write(&command);
-
-                std::cout << "Waiting for data discovery" << std::endl;
-                std::unique_lock<std::mutex> data_disc_lock(dataMutex_);
-                data_disc_cond_.wait(data_disc_lock, [&]()
-                {
-                    return data_disc_count_ > 0;
-                });
-                data_disc_lock.unlock();
-                std::cout << "Discovery data complete" << std::endl;
-                break;
-            }
-            case (TEST_STARTS):
-            {
-                t_start_ = std::chrono::steady_clock::now();
-                std::cout << "Command: TEST_STARTS" << std::endl;
-                break;
-            }
-            case (TEST_ENDS):
-            {
-                t_end_ = std::chrono::steady_clock::now();
-                m_DataSubListener.saveNumbers();
-                std::cout << "Command: TEST_ENDS" << std::endl;
-                std::unique_lock<std::mutex> lock(mutex_);
-                stop_count_ = 1;
-                lock.unlock();
-                if (dynamic_data)
-                {
-                    DynamicTypeBuilderFactory::delete_instance();
-                    DynamicDataFactory::get_instance()->delete_data(m_DynData);
-                }
-                else
-                {
-                    delete(throughputin);
-                    throughputin = nullptr;
-                }
-                subAttr = mp_datasub->getAttributes();
-                break;
-            }
-            case (ALL_STOPS):
-            {
-                std::unique_lock<std::mutex> lock(mutex_);
-                stop_count_ = 2;
-                lock.unlock();
-                std::cout << "Command: ALL_STOPS" << std::endl;
-            }
-        }
-    }
-    else
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(5));
-    }
-}
-
-// *******************************************************************************************
 // *********************************** COMMAND PUB LISTENER **********************************
 // *******************************************************************************************
 ThroughputSubscriber::CommandPubListener::CommandPubListener(ThroughputSubscriber& up)
@@ -319,6 +202,10 @@ void ThroughputSubscriber::CommandPubListener::onPublicationMatched(
     lock.unlock();
     m_up.disc_cond_.notify_one();
 }
+
+// *******************************************************************************************
+// ********************************** THROUGHPUT SUBSCRIBER **********************************
+// *******************************************************************************************
 
 ThroughputSubscriber::~ThroughputSubscriber()
 {
@@ -513,6 +400,126 @@ ThroughputSubscriber::ThroughputSubscriber(
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
 
+void ThroughputSubscriber::processMessage()
+{
+    if(mp_commandsub->wait_for_unread_samples({100, 0}))
+    {
+        if (mp_commandsub->takeNextData((void*)&m_CommandSubListener.m_commandin, &m_CommandSubListener.info))
+        {
+            switch (m_CommandSubListener.m_commandin.m_command)
+            {
+                case (DEFAULT):
+                {
+                    break;
+                }
+                case (BEGIN):
+                {
+                    break;
+                }
+                case (READY_TO_START):
+                {
+                    std::cout << "-----------------------------------------------------------------------" << std::endl;
+                    std::cout << "Command: READY_TO_START" << std::endl;
+                    m_datasize = m_CommandSubListener.m_commandin.m_size;
+                    m_demand = m_CommandSubListener.m_commandin.m_demand;
+
+                    if (dynamic_data)
+                    {
+                        // Create basic builders
+                        DynamicTypeBuilder_ptr struct_type_builder(
+                            DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
+
+                        // Add members to the struct.
+                        struct_type_builder->add_member(
+                            0,
+                            "seqnum",
+                            DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
+                        struct_type_builder->add_member(
+                            1,
+                            "data",
+                            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                                DynamicTypeBuilderFactory::get_instance()->create_byte_type(),
+                                m_datasize));
+
+                        struct_type_builder->set_name("ThroughputType");
+                        m_pDynType = struct_type_builder->build();
+                        m_DynType.CleanDynamicType();
+                        m_DynType.SetDynamicType(m_pDynType);
+
+                        Domain::registerType(mp_par, &m_DynType);
+
+                        m_DynData = DynamicDataFactory::get_instance()->create_data(m_pDynType);
+                    }
+                    else
+                    {
+                        delete(throughput_t);
+                        delete(throughputin);
+
+                        throughput_t = new ThroughputDataType(m_datasize);
+                        Domain::registerType(mp_par, throughput_t);
+                        throughputin = new ThroughputType((uint16_t)m_datasize);
+                    }
+
+                    mp_datasub = Domain::createSubscriber(mp_par, subAttr, &m_DataSubListener);
+
+                    ThroughputCommandType command(BEGIN);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                    m_DataSubListener.reset();
+                    mp_commandpubli->write(&command);
+
+                    std::cout << "Waiting for data discovery" << std::endl;
+                    std::unique_lock<std::mutex> data_disc_lock(dataMutex_);
+                    data_disc_cond_.wait(data_disc_lock, [&]()
+                    {
+                        return data_disc_count_ > 0;
+                    });
+                    data_disc_lock.unlock();
+                    std::cout << "Discovery data complete" << std::endl;
+                    break;
+                }
+                case (TEST_STARTS):
+                {
+                    std::cout << "Command: TEST_STARTS" << std::endl;
+                    t_start_ = std::chrono::steady_clock::now();
+                    break;
+                }
+                case (TEST_ENDS):
+                {
+                    t_end_ = std::chrono::steady_clock::now();
+                    std::cout << "Command: TEST_ENDS" << std::endl;
+                    m_DataSubListener.saveNumbers();
+                    std::unique_lock<std::mutex> lock(mutex_);
+                    stop_count_ = 1;
+                    lock.unlock();
+                    if (dynamic_data)
+                    {
+                        DynamicTypeBuilderFactory::delete_instance();
+                        DynamicDataFactory::get_instance()->delete_data(m_DynData);
+                    }
+                    else
+                    {
+                        delete(throughputin);
+                        throughputin = nullptr;
+                    }
+                    subAttr = mp_datasub->getAttributes();
+                    break;
+                }
+                case (ALL_STOPS):
+                {
+                    std::unique_lock<std::mutex> lock(mutex_);
+                    stop_count_ = 2;
+                    lock.unlock();
+                    std::cout << "Command: ALL_STOPS" << std::endl;
+                }
+                default:
+                {
+                    break;
+                }
+            }
+        }
+    }
+}
+
 void ThroughputSubscriber::run()
 {
     if (!ready)
@@ -534,11 +541,20 @@ void ThroughputSubscriber::run()
 
         if (stop_count_ == 1)
         {
+            std::cout << "Waiting for data matching removal" << std::endl;
+            std::unique_lock<std::mutex> data_disc_lock(dataMutex_);
+            data_disc_cond_.wait(data_disc_lock, [&]()
+            {
+                return data_disc_count_ == 0;
+            });
+            data_disc_lock.unlock();
+
             std::cout << "Waiting clean state" << std::endl;
             while (!mp_datasub->isInCleanState())
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
             }
+
             std::cout << "Sending results" << std::endl;
             ThroughputCommandType comm;
             comm.m_command = TEST_RESULTS;
@@ -582,6 +598,7 @@ void ThroughputSubscriber::run()
                 delete throughput_t;
                 throughput_t = nullptr;
             }
+            std::cout << "-----------------------------------------------------------------------" << std::endl;
         }
     } while (stop_count_ != 2);
 

@@ -27,12 +27,12 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(${ASIO_INCLUDE_DIR})
 
         set(COMMON_SOURCES_AUTH_PLUGIN_TEST_SOURCE
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/StdoutConsumer.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/data/ParticipantProxyData.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/qos/ParameterList.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/qos/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterList.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterTypes.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
@@ -55,7 +55,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         target_include_directories(BuiltinPKIDH PRIVATE
             ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS}
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/NetworkFactory/
-            ${PROJECT_SOURCE_DIR}/test/mock/rtps/QosPolicies/
+            ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies/
             ${OPENSSL_INCLUDE_DIR}
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp

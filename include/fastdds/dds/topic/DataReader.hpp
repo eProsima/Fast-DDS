@@ -34,8 +34,6 @@ namespace eprosima {
 namespace fastrtps {
 
 class TopicAttributes;
-class ReaderQos;
-struct LivelinessChangedStatus;
 
 namespace rtps {
 class ReaderAttributes;
@@ -55,6 +53,8 @@ class SubscriberImpl;
 class DataReaderImpl;
 class DataReaderListener;
 class TypeSupport;
+class ReaderQos;
+struct LivelinessChangedStatus;
 
 /**
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
@@ -65,12 +65,13 @@ class RTPS_DllAPI DataReader
     friend class SubscriberImpl;
 
     /**
-    * Creates a DataReader. Don't use it directly, but through Subscriber.
-    */
+     * Creates a DataReader. Don't use it directly, but through Subscriber.
+     */
     DataReader(
             DataReaderImpl* impl);
 
 public:
+
     virtual ~DataReader();
 
     /**
@@ -87,22 +88,22 @@ public:
     ///@{
 
     /* TODO
-    bool read(
+       bool read(
             std::vector<void*>& data_values,
             std::vector<fastrtps::SampleInfo_t>& sample_infos,
             uint32_t max_samples);
-    */
+     */
 
     ReturnCode_t read_next_sample(
             void* data,
             fastrtps::SampleInfo_t* info);
 
     /* TODO
-    bool take(
+       bool take(
             std::vector<void*>& data_values,
             std::vector<fastrtps::SampleInfo_t>& sample_infos,
             uint32_t max_samples);
-    */
+     */
 
     ReturnCode_t take_next_sample(
             void* data,
@@ -111,17 +112,17 @@ public:
     ///@}
 
     /**
-    * Get associated GUID
-    * @return Associated GUID
-    */
+     * Get associated GUID
+     * @return Associated GUID
+     */
     const fastrtps::rtps::GUID_t& guid();
 
     fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
 
     /**
-    * Get topic data type
-    * @return Topic data type
-    */
+     * Get topic data type
+     * @return Topic data type
+     */
     TypeSupport type();
 
     /**
@@ -137,12 +138,12 @@ public:
     const fastrtps::rtps::ReaderAttributes& get_attributes() const;
 
     ReturnCode_t set_qos(
-            const fastrtps::ReaderQos& qos);
+            const ReaderQos& qos);
 
-    const fastrtps::ReaderQos& get_qos() const;
+    const ReaderQos& get_qos() const;
 
     ReturnCode_t get_qos(
-            fastrtps::ReaderQos& qos) const;
+            ReaderQos& qos) const;
 
     bool set_topic(
             const fastrtps::TopicAttributes& att);
@@ -155,37 +156,38 @@ public:
     const DataReaderListener* get_listener() const;
 
     /* TODO
-    bool get_key_value(
+       bool get_key_value(
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle);
-    */
+     */
 
     ReturnCode_t get_liveliness_changed_status(
-            fastrtps::LivelinessChangedStatus& status) const;
+            LivelinessChangedStatus& status) const;
 
     /* TODO
-    bool get_requested_incompatible_qos_status(
+       bool get_requested_incompatible_qos_status(
             fastrtps::RequestedIncompatibleQosStatus& status) const;
-    */
+     */
 
     /* TODO
-    bool get_sample_lost_status(
+       bool get_sample_lost_status(
             fastrtps::SampleLostStatus& status) const;
-    */
+     */
 
     /* TODO
-    bool get_sample_rejected_status(
+       bool get_sample_rejected_status(
             fastrtps::SampleRejectedStatus& status) const;
-    */
+     */
 
     const Subscriber* get_subscriber() const;
 
     /* TODO
-    bool wait_for_historical_data(
+       bool wait_for_historical_data(
             const fastrtps::Duration_t& max_wait) const;
-    */
+     */
 
 private:
+
     DataReaderImpl* impl_;
 };
 

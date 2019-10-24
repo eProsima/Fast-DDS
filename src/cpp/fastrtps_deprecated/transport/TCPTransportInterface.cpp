@@ -447,24 +447,38 @@ bool TCPTransportInterface::transform_remote_locator(
         const Locator_t& remote_locator,
         Locator_t& result_locator) const
 {
-    if (IsLocatorSupported(remote_locator))
+    if (!IsLocatorSupported(remote_locator))
     {
-        if (is_local_locator(remote_locator))
-        {
-            // Loopback locator
-            fill_local_ip(result_locator);
-            IPLocator::setPhysicalPort(result_locator, IPLocator::getPhysicalPort(remote_locator));
-            IPLocator::setLogicalPort(result_locator, IPLocator::getLogicalPort(remote_locator));
-            return true;
-        }
-        else if (is_locator_allowed(remote_locator))
-        {
-            result_locator = remote_locator;
-            return true;
-        }
+        // remote_locator not supported
+        return false;
     }
 
-    return false;
+    if (!is_local_locator(remote_locator))
+    {
+        // remote_locator is not local
+        result_locator = remote_locator;
+        return true;
+    }
+
+    if (!is_locator_allowed(remote_locator))
+    {
+        // remote_locator not in the whitelist
+        return false;
+    }
+
+    fill_local_ip(result_locator);
+    if (is_locator_allowed(result_locator))
+    {
+        // Locator localhost is in the whitelist, so use localhost instead of remote_locator
+        IPLocator::setPhysicalPort(result_locator, IPLocator::getPhysicalPort(remote_locator));
+        IPLocator::setLogicalPort(result_locator, IPLocator::getLogicalPort(remote_locator));
+        return true;
+    }
+
+    // remote_locator is allowed and local. Localhost is not allowed
+    // Then, we can use remote_locator
+    result_locator = remote_locator;
+    return true;
 }
 
 void TCPTransportInterface::CloseOutputChannel(std::shared_ptr<TCPChannelResource>& channel)

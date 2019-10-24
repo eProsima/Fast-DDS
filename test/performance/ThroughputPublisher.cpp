@@ -231,7 +231,7 @@ ThroughputPublisher::ThroughputPublisher(
     }
 
     //REGISTER THE COMMAND TYPE
-    latency_t = nullptr;
+    throughput = nullptr;
     Domain::registerType(mp_par, (TopicDataType*)&throuputcommand_t);
 
     // Create Sending Publisher
@@ -433,7 +433,11 @@ void ThroughputPublisher::run(
 
     command.m_command = ALL_STOPS;
     mp_commandpub->write((void*)&command);
-    mp_commandpub->wait_for_all_acked(eprosima::fastrtps::Time_t(20, 0));
+    bool all_acked = mp_commandpub->wait_for_all_acked(eprosima::fastrtps::Time_t(20, 0));
+    if (!all_acked)
+    {
+        std::cout << "Not all acked!" << std::endl;
+    }
 
     if (m_export_csv)
     {
@@ -498,23 +502,12 @@ bool ThroughputPublisher::test(
     }
     else
     {
-        latency_t = new ThroughputDataType(msg_size);
-        Domain::registerType(mp_par, latency_t);
-        latency = new ThroughputType((uint16_t)msg_size);
+        throughput_t = new ThroughputDataType(msg_size);
+        Domain::registerType(mp_par, throughput_t);
+        throughput = new ThroughputType((uint16_t)msg_size);
     }
 
     mp_datapub = Domain::createPublisher(mp_par, pubAttr, &m_DataPubListener);
-
-    t_end_ = std::chrono::steady_clock::now();
-
-    std::chrono::duration<double, std::micro> timewait_us(0);
-    std::chrono::duration<double, std::micro> test_time_us = std::chrono::seconds(test_time);
-    uint32_t samples = 0;
-    size_t aux;
-    ThroughputCommandType command;
-    SampleInfo_t info;
-    command.m_command = TEST_STARTS;
-    mp_commandpub->write((void*)&command);
 
     std::unique_lock<std::mutex> data_disc_lock(dataMutex_);
     data_disc_cond_.wait(data_disc_lock, [&]()
@@ -523,9 +516,36 @@ bool ThroughputPublisher::test(
     });
     data_disc_lock.unlock();
 
-    t_start_ = std::chrono::steady_clock::now();
-    while (std::chrono::duration<double, std::micro>(t_end_ - t_start_) < test_time_us)
+    // Declare test time variables
+    std::chrono::duration<double, std::micro> timewait_us(0);
+    std::chrono::duration<double, std::nano> test_time_ns = std::chrono::seconds(test_time);
+    std::chrono::duration<double, std::nano> recovery_duration_ns = std::chrono::milliseconds(recovery_time_ms);
+    std::chrono::steady_clock::time_point batch_start;
+
+    // Send a TEST_STARTS and sleep for a while to give the subscriber time to set up
+    uint32_t samples = 0;
+    size_t aux;
+    ThroughputCommandType command;
+    SampleInfo_t info;
+    command.m_command = TEST_STARTS;
+    mp_commandpub->write((void*)&command);
+
+    // If the subscriber does not acknowledge the TEST_STARTS in time, we consider something went wrong.
+    std::chrono::steady_clock::time_point data_disc_start = std::chrono::steady_clock::now();
+    if (!mp_commandpub->wait_for_all_acked(eprosima::fastrtps::Time_t(20, 0)))
     {
+        std::cout << "Something went wrong: The subscriber has not acknowledged the TEST_STARTS command." << std::endl;
+        return false;
+    }
+    timewait_us += std::chrono::duration<double, std::micro>(std::chrono::steady_clock::now() - data_disc_start);
+
+    // Send batches until test_time_ns is reached
+    t_start_ = std::chrono::steady_clock::now();
+    while ((t_end_ - t_start_) < test_time_ns)
+    {
+        // Get start time
+        batch_start = std::chrono::steady_clock::now();
+        // Send a batch of size demand
         for (uint32_t sample = 0; sample < demand; sample++)
         {
             if (dynamic_data)
@@ -535,21 +555,36 @@ bool ThroughputPublisher::test(
             }
             else
             {
-                latency->seqnum++;
-                mp_datapub->write((void*)latency);
+                throughput->seqnum++;
+                mp_datapub->write((void*)throughput);
             }
         }
+        // Get end time
         t_end_ = std::chrono::steady_clock::now();
+        // Add the number of sent samples
         samples += demand;
-        std::this_thread::sleep_for(std::chrono::milliseconds(recovery_time_ms));
-        timewait_us += t_overhead_ + std::chrono::microseconds(recovery_time_ms * 1000);
+
+        /*
+            If the batch took less than the recovery time, sleep for the difference recovery_duration - batch_duration.
+            Else, go ahead with the next batch without time to recover.
+            The previous is achieved with a call to sleep_for(). If the duration specified for sleep_for is negative,
+            all implementations we know about return without setting the thread to sleep.
+        */
+        std::this_thread::sleep_for(recovery_duration_ns - (t_end_ - batch_start));
+
+        timewait_us += t_overhead_ * 2; // We access the clock twice per batch.
     }
     command.m_command = TEST_ENDS;
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     mp_commandpub->write((void*)&command);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     mp_datapub->removeAllChange();
+
+    // If the subscriber does not acknowledge the TEST_ENDS in time, we consider something went wrong.
+    if (!mp_commandpub->wait_for_all_acked(eprosima::fastrtps::Time_t(20, 0)))
+    {
+        std::cout << "Something went wrong: The subscriber has not acknowledged the TEST_ENDS command." << std::endl;
+        return false;
+    }
 
     if (dynamic_data)
     {
@@ -558,7 +593,7 @@ bool ThroughputPublisher::test(
     }
     else
     {
-        delete(latency);
+        delete(throughput);
     }
     pubAttr = mp_datapub->getAttributes();
     Domain::removePublisher(mp_datapub);
@@ -566,7 +601,7 @@ bool ThroughputPublisher::test(
     Domain::unregisterType(mp_par, "ThroughputType");
     if (!dynamic_data)
     {
-        delete latency_t;
+        delete throughput_t;
     }
 
     mp_commandsub->wait_for_unread_samples({20, 0});
@@ -623,7 +658,9 @@ bool ThroughputPublisher::test(
         }
     }
     else
+    {
         std::cout << "PROBLEM READING RESULTS;" << std::endl;
+    }
 
     return false;
 }

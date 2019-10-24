@@ -109,6 +109,7 @@ void WLPListener::onNewCacheChangeAdded(
         return;
     }
 
+    history->getMutex()->unlock();
     if (mp_WLP->automatic_readers_)
     {
         mp_WLP->sub_liveliness_manager_->assert_liveliness(AUTOMATIC_LIVELINESS_QOS);
@@ -117,6 +118,9 @@ void WLPListener::onNewCacheChangeAdded(
     {
         mp_WLP->sub_liveliness_manager_->assert_liveliness(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
     }
+    mp_WLP->mp_builtinProtocols->mp_PDP->getMutex()->unlock();
+    history->getMutex()->lock();
+    mp_WLP->mp_builtinProtocols->mp_PDP->getMutex()->lock();
     return;
 }
 

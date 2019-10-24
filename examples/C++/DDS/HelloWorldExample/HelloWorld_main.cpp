@@ -24,10 +24,7 @@
 
 #include <fastrtps/log/Log.h>
 
-using namespace eprosima;
-using namespace fastdds::dds;
-using namespace fastrtps;
-using namespace rtps;
+using eprosima::fastdds::dds::Log;
 
 int main(
         int argc,

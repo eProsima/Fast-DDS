@@ -54,7 +54,7 @@ ResourceEvent::~ResourceEvent()
     assert(back_ == nullptr);
 
     logInfo(RTPS_PARTICIPANT,"Removing event thread");
-    stop_ = true,
+    stop_.store(true);
     io_service_.stop();
 
     if (thread_.joinable())
@@ -94,7 +94,7 @@ bool ResourceEvent::register_timer_nts(TimedEventImpl* event)
 
 void ResourceEvent::unregister_timer(TimedEventImpl* event)
 {
-    assert(!stop_);
+    assert(!stop_.load());
 
     std::unique_lock<TimedMutex> lock(mutex_);
 
@@ -158,7 +158,7 @@ void ResourceEvent::notify(TimedEventImpl* event, const std::chrono::steady_cloc
 
 void ResourceEvent::run_io_service()
 {
-    while (!stop_)
+    while (!stop_.load())
     {
 #if ASIO_VERSION >= 101200
         io_service_.restart();
@@ -196,9 +196,8 @@ void ResourceEvent::run_io_service()
 void ResourceEvent::init_thread()
 {
     thread_ = std::thread(&ResourceEvent::run_io_service, this);
-    std::promise<void> ready;
     std::future<void> ready_fut = ready.get_future();
-    io_service_.post([&ready]()
+    io_service_.post([this]()
         {
             ready.set_value();
         });

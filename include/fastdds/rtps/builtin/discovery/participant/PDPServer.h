@@ -59,9 +59,6 @@ class PDPServer : public PDP
     //! TRANSIENT or TRANSIENT_LOCAL durability;
     DurabilityKind_t _durability;
 
-    //! Messages announcement ancillary
-    RTPSMessageGroup_t _msgbuffer;
-
     //! Temporary locator list to solve new Writer API issue
     // TODO: remove when the Writer API issue is resolved
     std::map<GUID_t, ReaderProxyData> clients_;
@@ -92,12 +89,12 @@ public:
     /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info
      * @param p ParticipantProxyData from DATA msg deserialization
-     * @param c CacheChange_t from DATA msg
+     * @param writer_guid GUID of originating writer
      * @return new ParticipantProxyData * or nullptr on failure
      */
     ParticipantProxyData* createParticipantProxyData(
         const ParticipantProxyData& p,
-        const CacheChange_t& c) override;
+        const GUID_t& writer_guid) override;
 
     /**
      * Create the SPDP Writer and Reader

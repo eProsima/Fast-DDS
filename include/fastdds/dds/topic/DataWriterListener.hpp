@@ -20,9 +20,9 @@
 #define _FASTRTPS_DATAWRITERLISTENER_HPP_
 
 #include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
+#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -47,7 +47,7 @@ public:
      */
     virtual void on_publication_matched(
             DataWriter* writer,
-            fastrtps::rtps::MatchingInfo& info)
+            const fastdds::dds::PublicationMatchedStatus& info)
     {
         (void)writer;
         (void)info;

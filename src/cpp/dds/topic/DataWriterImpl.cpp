@@ -37,6 +37,7 @@
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
 #include <functional>
+#include <iostream>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -572,7 +573,7 @@ const Publisher* DataWriterImpl::get_publisher() const
 
 void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         RTPSWriter* /*writer*/,
-        MatchingInfo& info)
+        const PublicationMatchedStatus& info)
 {
     if (data_writer_->listener_ != nullptr )
     {

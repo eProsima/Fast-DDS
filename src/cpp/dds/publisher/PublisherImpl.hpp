@@ -34,7 +34,7 @@
 using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class RTPSParticipant;
@@ -42,7 +42,6 @@ class RTPSParticipant;
 } //namespace rtps
 
 class TopicAttributes;
-class WriterQos;
 
 } // namespace fastrtps
 
@@ -54,6 +53,7 @@ class DomainParticipantImpl;
 class DomainParticipant;
 class Publisher;
 class DataWriterImpl;
+class WriterQos;
 
 /**
  * Class PublisherImpl, contains the actual implementation of the behaviour of the Publisher.
@@ -90,7 +90,7 @@ public:
 
     DataWriter* create_datawriter(
             const fastrtps::TopicAttributes& topic_attr,
-            const fastrtps::WriterQos& writer_qos,
+            const WriterQos& writer_qos,
             DataWriterListener* listener);
 
     ReturnCode_t delete_datawriter(
@@ -103,25 +103,25 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle) const;
 
     bool get_datawriters(
-        std::vector<DataWriter*>& writers) const;
+            std::vector<DataWriter*>& writers) const;
 
     bool has_datawriters() const;
 
     /* TODO
-    bool suspend_publications();
-    */
+       bool suspend_publications();
+     */
 
     /* TODO
-    bool resume_publications();
-    */
+       bool resume_publications();
+     */
 
     /* TODO
-    bool begin_coherent_changes();
-    */
+       bool begin_coherent_changes();
+     */
 
     /* TODO
-    bool end_coherent_changes();
-    */
+       bool end_coherent_changes();
+     */
 
     ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
@@ -129,19 +129,19 @@ public:
     const DomainParticipant* get_participant() const;
 
     /* TODO
-    bool delete_contained_entities();
-    */
+       bool delete_contained_entities();
+     */
 
     ReturnCode_t set_default_datawriter_qos(
-            const fastrtps::WriterQos& qos);
+            const WriterQos& qos);
 
-    const fastrtps::WriterQos& get_default_datawriter_qos() const;
+    const WriterQos& get_default_datawriter_qos() const;
 
     /* TODO
-    bool copy_from_topic_qos(
-            fastrtps::WriterQos& writer_qos,
+       bool copy_from_topic_qos(
+            WriterQos& writer_qos,
             const fastrtps::TopicAttributes& topic_qos) const;
-    */
+     */
 
     fastrtps::rtps::RTPSParticipant* rtps_participant() const
     {
@@ -152,7 +152,8 @@ public:
 
     const fastrtps::PublisherAttributes& get_attributes() const;
 
-    bool set_attributes(const fastrtps::PublisherAttributes& att);
+    bool set_attributes(
+            const fastrtps::PublisherAttributes& att);
 
     const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
 
@@ -160,7 +161,8 @@ public:
     void disable();
 
     //! Check if any writer uses the given type name
-    bool type_in_use(const std::string& type_name) const;
+    bool type_in_use(
+            const std::string& type_name) const;
 
 private:
 
@@ -171,7 +173,7 @@ private:
     fastrtps::PublisherAttributes att_;
 
     //! Map of Pointers to the associated Data Writers. Topic name is the key.
-    std::map<std::string, std::vector<DataWriterImpl*>> writers_;
+    std::map<std::string, std::vector<DataWriterImpl*> > writers_;
 
     mutable std::mutex mtx_writers_;
 
@@ -179,36 +181,37 @@ private:
     PublisherListener* listener_;
 
     //!Listener to capture the events of the Writer
-    class PublisherWriterListener: public DataWriterListener
+    class PublisherWriterListener : public DataWriterListener
     {
-        public:
-            PublisherWriterListener(
-                    PublisherImpl* p)
-                : publisher_(p)
-            {}
+public:
 
-            virtual ~PublisherWriterListener() override {}
+        PublisherWriterListener(
+                PublisherImpl* p)
+            : publisher_(p)
+        {}
 
-            void on_publication_matched(
-                    DataWriter* writer,
-                    fastrtps::rtps::MatchingInfo& info) override;
+        virtual ~PublisherWriterListener() override {}
 
-            void on_offered_deadline_missed(
+        void on_publication_matched(
+                DataWriter* writer,
+                const PublicationMatchedStatus& info) override;
+
+        void on_offered_deadline_missed(
                 DataWriter* writer,
                 const fastrtps::OfferedDeadlineMissedStatus& status) override;
 
-            void on_liveliness_lost(
-                    DataWriter* writer,
-                    const LivelinessLostStatus& status) override;
+        void on_liveliness_lost(
+                DataWriter* writer,
+                const LivelinessLostStatus& status) override;
 
-            PublisherImpl* publisher_;
+        PublisherImpl* publisher_;
     } publisher_listener_;
 
     Publisher* user_publisher_;
 
     fastrtps::rtps::RTPSParticipant* rtps_participant_;
 
-    fastrtps::WriterQos default_datawriter_qos_;
+    WriterQos default_datawriter_qos_;
 
     fastrtps::rtps::InstanceHandle_t handle_;
 

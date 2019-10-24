@@ -28,8 +28,6 @@
 #include <thread>
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
 
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)
@@ -42,7 +40,7 @@ bool HelloWorldPublisher::init()
 {
     hello_.index(0);
     hello_.message("HelloWorld");
-    ParticipantAttributes participant_att;
+    eprosima::fastrtps::ParticipantAttributes participant_att;
     participant_att.rtps.builtin.domainId = 0;
     participant_att.rtps.setName("Participant_pub");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att);
@@ -56,7 +54,7 @@ bool HelloWorldPublisher::init()
     type_.register_type(participant_, type_->getName());
 
     //CREATE THE PUBLISHER
-    PublisherAttributes pub_att;
+    eprosima::fastrtps::PublisherAttributes pub_att;
     pub_att.topic.topicDataType = "HelloWorld";
     pub_att.topic.topicName = "HelloWorldTopic";
     pub_att.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
@@ -85,18 +83,23 @@ HelloWorldPublisher::~HelloWorldPublisher()
 
 void HelloWorldPublisher::PubListener::on_publication_matched(
         eprosima::fastdds::dds::DataWriter*,
-        eprosima::fastrtps::rtps::MatchingInfo &info)
+        const eprosima::fastdds::dds::PublicationMatchedStatus& info)
 {
-    if(info.status == MATCHED_MATCHING)
+    if (info.current_count_change == 1)
     {
-        matched_++;
+        matched_ = info.total_count;
         firstConnected_ = true;
         std::cout << "Publisher matched." << std::endl;
     }
+    else if (info.current_count_change == -1)
+    {
+        matched_ = info.total_count;
+        std::cout << "Publisher unmatched." << std::endl;
+    }
     else
     {
-        matched_--;
-        std::cout << "Publisher unmatched." << std::endl;
+        std::cout << info.current_count_change
+                  << " is not a valid value for PublicationMatchedStatus current count change" << std::endl;
     }
 }
 
@@ -153,9 +156,10 @@ void HelloWorldPublisher::run(
     thread.join();
 }
 
-bool HelloWorldPublisher::publish(bool waitForListener)
+bool HelloWorldPublisher::publish(
+        bool waitForListener)
 {
-    if(listener_.firstConnected_ || !waitForListener || listener_.matched_>0)
+    if (listener_.firstConnected_ || !waitForListener || listener_.matched_>0)
     {
         hello_.index(hello_.index()+1);
         writer_->write(&hello_);

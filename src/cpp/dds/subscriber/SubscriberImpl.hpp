@@ -41,7 +41,6 @@ class RTPSParticipant;
 } //namespace rtps
 
 class TopicAttributes;
-class ReaderQos;
 
 } // namespace fastrtps
 
@@ -53,12 +52,14 @@ class DomainParticipant;
 class DomainParticipantImpl;
 class Subscriber;
 class DataReaderImpl;
+class ReaderQos;
 
 /**
  * Class SubscriberImpl, contains the actual implementation of the behaviour of the Subscriber.
  *  @ingroup FASTRTPS_MODULE
  */
-class SubscriberImpl {
+class SubscriberImpl
+{
     friend class DomainParticipantImpl;
     friend class DataReaderImpl;
 
@@ -67,10 +68,10 @@ class SubscriberImpl {
      * Don't use directly, create Subscriber using create_subscriber from Participant.
      */
     SubscriberImpl(
-        DomainParticipantImpl* p,
-        const SubscriberQos& qos,
-        const fastrtps::SubscriberAttributes& attr,
-        SubscriberListener* listen = nullptr);
+            DomainParticipantImpl* p,
+            const SubscriberQos& qos,
+            const fastrtps::SubscriberAttributes& attr,
+            SubscriberListener* listen = nullptr);
 
 public:
 
@@ -88,7 +89,7 @@ public:
 
     DataReader* create_datareader(
             const fastrtps::TopicAttributes& topic_attr,
-            const fastrtps::ReaderQos& reader_qos,
+            const ReaderQos& reader_qos,
             DataReaderListener* listener);
 
     ReturnCode_t delete_datareader(
@@ -100,41 +101,41 @@ public:
     bool contains_entity(
             const fastrtps::rtps::InstanceHandle_t& handle) const;
     /* TODO
-    bool begin_access();
-    */
+       bool begin_access();
+     */
 
     /* TODO
-    bool end_access();
-    */
+       bool end_access();
+     */
 
     /* TODO When StateKinds are implemented.
-    bool get_datareaders(
+       bool get_datareaders(
         std::vector<DataReader*>& readers,
         std::vector<SampleStateKind> sample_states,
         std::vector<ViewStateKind> view_states,
         std::vector<InstanceStateKind> instance_states) const;
-    */
+     */
     ReturnCode_t get_datareaders(
-        std::vector<DataReader*>& readers) const;
+            std::vector<DataReader*>& readers) const;
 
     bool has_datareaders() const;
 
     ReturnCode_t notify_datareaders() const;
 
     /* TODO
-    bool delete_contained_entities();
-    */
+       bool delete_contained_entities();
+     */
 
     ReturnCode_t set_default_datareader_qos(
-            const fastrtps::ReaderQos& qos);
+            const ReaderQos& qos);
 
-    const fastrtps::ReaderQos& get_default_datareader_qos() const;
+    const ReaderQos& get_default_datareader_qos() const;
 
     /* TODO
-    bool copy_from_topic_qos(
-            fastrtps::ReaderQos& reader_qos,
+       bool copy_from_topic_qos(
+            ReaderQos& reader_qos,
             const fastrtps::TopicAttributes& topic_qos) const;
-    */
+     */
 
     /**
      * Update the Attributes of the subscriber;
@@ -190,7 +191,7 @@ private:
     fastrtps::SubscriberAttributes att_;
 
     //!Map of Pointer to associated DataReaders. Topic name is the key.
-    std::map<std::string, std::vector<DataReaderImpl*>> readers_;
+    std::map<std::string, std::vector<DataReaderImpl*> > readers_;
 
     mutable std::mutex mtx_readers_;
 
@@ -199,8 +200,10 @@ private:
 
     class SubscriberReaderListener : public DataReaderListener
     {
-    public:
-        SubscriberReaderListener(SubscriberImpl* s)
+public:
+
+        SubscriberReaderListener(
+                SubscriberImpl* s)
             : subscriber_(s)
         {}
 
@@ -211,7 +214,7 @@ private:
 
         void on_subscription_matched(
                 DataReader* reader,
-                fastrtps::rtps::MatchingInfo& info) override;
+                const SubscriptionMatchedStatus& info) override;
 
         void on_requested_deadline_missed(
                 DataReader* reader,
@@ -241,7 +244,7 @@ private:
     //!RTPSParticipant
     fastrtps::rtps::RTPSParticipant* rtps_participant_;
 
-    fastrtps::ReaderQos default_datareader_qos_;
+    ReaderQos default_datareader_qos_;
 
     fastrtps::rtps::InstanceHandle_t handle_;
 

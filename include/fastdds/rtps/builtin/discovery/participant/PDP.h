@@ -93,12 +93,12 @@ public:
     /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info
      * @param p from DATA msg deserialization
-     * @param c from DATA msg
+     * @param writer_guid GUID of originating writer
      * @return new ParticipantProxyData * or nullptr on failure
      */
     virtual ParticipantProxyData* createParticipantProxyData(
             const ParticipantProxyData& p,
-            const CacheChange_t& c) = 0;
+            const GUID_t& writer_guid) = 0;
 
     /**
      * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
@@ -308,8 +308,6 @@ public:
 protected:
     //!Pointer to the builtin protocols object.
     BuiltinProtocols* mp_builtin;
-    //!TimedEvent to periodically resend the local RTPSParticipant information.
-    TimedEvent* resend_participant_info_event_;
     //!Pointer to the local RTPSParticipant.
     RTPSParticipantImpl* mp_RTPSParticipant;
     //!Discovery attributes.
@@ -350,6 +348,8 @@ protected:
     std::mutex temp_data_lock_;
     //!Participant data atomic access assurance
     std::recursive_mutex* mp_mutex;
+    //!To protect callbacks (ParticipantProxyData&)
+    std::mutex callback_mtx_;
 
     /**
      * Adds an entry to the collection of participant proxy information.
@@ -378,6 +378,12 @@ protected:
 
 private:
 
+    //!TimedEvent to periodically resend the local RTPSParticipant information.
+    TimedEvent* resend_participant_info_event_;
+
+    //!Participant's initial announcements config
+    InitialAnnouncementConfig initial_announcements_;
+
     void check_remote_participant_liveliness(
             ParticipantProxyData* remote_participant);
 
@@ -394,7 +400,18 @@ private:
             const string_255& topic_name,
             const string_255& type_name,
             const types::TypeIdentifier& type_id,
-            const types::TypeObject& type_obj) const;
+            const types::TypeObject& type_obj,
+            const xtypes::TypeInformation& type_info) const;
+
+    /**
+     * Calculates the next announcement interval
+     */
+    void set_next_announcement_interval();
+
+    /**
+     * Calculates the initial announcement interval
+     */
+    void set_initial_announcement_interval();
 
 };
 

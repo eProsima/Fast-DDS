@@ -48,6 +48,7 @@ void callgrind_dump()
 
 static bool g_print_alloc_traces = false;
 static bool g_print_dealloc_traces = false;
+static bool g_print_results = true;
 
 static std::atomic_size_t g_allocations[4];
 static std::atomic_size_t g_deallocations[4];
@@ -117,6 +118,7 @@ void entities_created(
 
     if (!osrf_testing_tools_cpp::memory_tools::is_working())
     {
+        g_print_results = false;
         std::cerr << "Memory profiler not working!" << std::endl;
     }
 }
@@ -161,6 +163,11 @@ void print_results(
         const std::string& entity,
         const std::string& config)
 {
+    if(!g_print_results)
+    {
+        return;
+    }
+    
     std::string output_filename = file_prefix;
     if (file_prefix.length() == 0)
     {
@@ -177,10 +184,11 @@ void print_results(
 
     if (pos == 0)
     {
-        output_stream << "\"Phase 0 Allocations\", \"Phase 0 Deallocations\","
-            << " \"Phase 1 Allocations\", \"Phase 1 Deallocations\","
-            << " \"Phase 2 Allocations\", \"Phase 2 Deallocations\","
-            << " \"Phase 3 Allocations\", \"Phase 3 Deallocations\"\n";
+        output_stream << "\"Discovery allocations\", \"Discovery deallocations\","
+            << " \"First sample allocations\", \"First sample deallocations\","
+            << " \"Data exchange allocations\", \"Data exchange deallocations\","
+            << " \"Undiscovery allocations\", \"Undiscovery deallocations\""
+            << std::endl;
     }
 
     for (size_t i = 0; i < 4; i++)

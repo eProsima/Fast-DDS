@@ -18,10 +18,7 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/DynamicTypeMember.h>
-#include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/log/Log.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicData.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -394,7 +391,7 @@ DynamicType_ptr DynamicType::get_base_type() const
     {
         return descriptor_->get_base_type();
     }
-    return nullptr;
+    return DynamicType_ptr(nullptr);
 }
 
 uint32_t DynamicType::get_bounds(uint32_t index /*= 0*/) const
@@ -421,7 +418,7 @@ DynamicType_ptr DynamicType::get_discriminator_type() const
     {
         return descriptor_->get_discriminator_type();
     }
-    return nullptr;
+    return DynamicType_ptr(nullptr);
 }
 
 DynamicType_ptr DynamicType::get_element_type() const
@@ -430,7 +427,7 @@ DynamicType_ptr DynamicType::get_element_type() const
     {
         return descriptor_->get_element_type();
     }
-    return nullptr;
+    return DynamicType_ptr(nullptr);
 }
 
 DynamicType_ptr DynamicType::get_key_element_type() const
@@ -439,7 +436,7 @@ DynamicType_ptr DynamicType::get_key_element_type() const
     {
         return descriptor_->get_key_element_type();
     }
-    return nullptr;
+    return DynamicType_ptr(nullptr);
 }
 
 uint32_t DynamicType::get_total_bounds() const

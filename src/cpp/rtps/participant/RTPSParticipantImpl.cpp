@@ -251,6 +251,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     {
         logError(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
     }
+
     logInfo(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
 }
 
@@ -1158,7 +1159,13 @@ WLP* RTPSParticipantImpl::wlp()
     return mp_builtinProtocols->mp_WLP;
 }
 
-IPersistenceService* RTPSParticipantImpl::get_persistence_service(const EndpointAttributes& param)
+fastdds::dds::builtin::TypeLookupManager* RTPSParticipantImpl::typelookup_manager() const
+{
+    return mp_builtinProtocols->tlm_;
+}
+
+IPersistenceService* RTPSParticipantImpl::get_persistence_service(
+        const EndpointAttributes& param)
 {
     IPersistenceService* ret_val;
 

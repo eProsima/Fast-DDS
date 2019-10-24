@@ -78,15 +78,6 @@ StatefulReader::StatefulReader(
     , proxy_changes_config_(resource_limits_from_history(hist->m_att, 0))
     , disable_positive_acks_(att.disable_positive_acks)
     , is_alive_(true)
-    , message_buffer_(
-            pimpl->getMaxMessageSize(),
-            pimpl->getGuid().guidPrefix,
-#if HAVE_SECURITY
-            pimpl->is_secure()
-#else
-            false
-#endif
-            )
 {
     const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
     for (size_t n = 0; n < att.matched_writers_allocation.initial; ++n)
@@ -378,7 +369,8 @@ bool StatefulReader::processDataMsg(CacheChange_t *change)
 bool StatefulReader::processDataFragMsg(
         CacheChange_t* incomingChange,
         uint32_t sampleSize,
-        uint32_t fragmentStartingNum)
+        uint32_t fragmentStartingNum,
+        uint16_t fragmentsInSubmessage)
 {
     WriterProxy *pWP = nullptr;
 
@@ -439,7 +431,8 @@ bool StatefulReader::processDataFragMsg(
 
             // Fragments manager has to process incomming fragments.
             // If CacheChange_t is completed, it will be returned;
-            CacheChange_t* change_completed = fragmentedChangePitStop_->process(change_to_add, sampleSize, fragmentStartingNum);
+            CacheChange_t* change_completed = fragmentedChangePitStop_->process(
+                change_to_add, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
 
 #if HAVE_SECURITY
             if(getAttributes().security_attributes().is_payload_protected)
@@ -884,7 +877,7 @@ void StatefulReader::send_acknack(
 
     logInfo(RTPS_READER, "Sending ACKNACK: " << sns);
 
-    RTPSMessageGroup group(getRTPSParticipant(), this, message_buffer_, sender);
+    RTPSMessageGroup group(getRTPSParticipant(), this, sender);
     group.add_acknack(sns, acknack_count_, is_final);
 }
 
@@ -907,7 +900,7 @@ void StatefulReader::send_acknack(
 
     try
     {
-        RTPSMessageGroup group(getRTPSParticipant(), this, message_buffer_, sender);
+        RTPSMessageGroup group(getRTPSParticipant(), this, sender);
         if (!missing_changes.empty() || !heartbeat_was_final)
         {
             GUID_t guid = sender.remote_guids().at(0);
@@ -946,33 +939,7 @@ void StatefulReader::send_acknack(
             for (auto cit : uncompleted_changes)
             {
                 FragmentNumberSet_t frag_sns;
-
-                //  Search first fragment not present.
-                uint32_t frag_num = 0;
-                auto fit = cit->getDataFragments()->begin();
-                for (; fit != cit->getDataFragments()->end(); ++fit)
-                {
-                    ++frag_num;
-                    if (*fit == ChangeFragmentStatus_t::NOT_PRESENT)
-                        break;
-                }
-
-                // Never should happend.
-                assert(frag_num != 0);
-                assert(fit != cit->getDataFragments()->end());
-
-                // Store FragmentNumberSet_t base.
-                frag_sns.base(frag_num);
-
-                // Fill the FragmentNumberSet_t bitmap.
-                for (; fit != cit->getDataFragments()->end(); ++fit)
-                {
-                    if (*fit == ChangeFragmentStatus_t::NOT_PRESENT)
-                        frag_sns.add(frag_num);
-
-                    ++frag_num;
-                }
-
+                cit->get_missing_fragments(frag_sns);
                 ++nackfrag_count_;
                 logInfo(RTPS_READER, "Sending NACKFRAG for sample" << cit->sequenceNumber << ": " << frag_sns;);
 

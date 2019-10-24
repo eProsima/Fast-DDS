@@ -235,7 +235,7 @@ void StatefulWriter::unsent_change_added_to_history(
                 //At this point we are sure all information was stores. We now can send data.
                 if (!m_separateSendingEnabled)
                 {
-                    RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, *this, max_blocking_time);
+                    RTPSMessageGroup group(mp_RTPSParticipant, this, *this, max_blocking_time);
                     if (!group.add_data(*change, expectsInlineQos))
                     {
                         logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
@@ -249,7 +249,7 @@ void StatefulWriter::unsent_change_added_to_history(
                 {
                     for (ReaderProxy* it : matched_readers_)
                     {
-                        RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, it->message_sender(),
+                        RTPSMessageGroup group(mp_RTPSParticipant, this, it->message_sender(),
                                 max_blocking_time);
                         if (!group.add_data(*change, it->expects_inline_qos()))
                         {
@@ -370,7 +370,7 @@ void StatefulWriter::send_any_unsent_changes()
                     std::set<SequenceNumber_t> irrelevant;
 
                     // Specific destination message group
-                    RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, remoteReader->message_sender());
+                    RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReader->message_sender());
 
                     // Loop all changes
                     bool is_reliable = remoteReader->is_reliable();
@@ -472,7 +472,7 @@ void StatefulWriter::send_any_unsent_changes()
 
             try
             {
-                RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, *this);
+                RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
                 uint32_t lastBytesProcessed = 0;
 
                 while (!relevantChanges.empty())
@@ -595,7 +595,7 @@ void StatefulWriter::send_any_unsent_changes()
         {
             try
             {
-                RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, *this);
+                RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
                 send_heartbeat_nts_(all_remote_readers_.size(), group, disable_positive_acks_);
             }
             catch(const RTPSMessageGroup::timeout&)
@@ -738,7 +738,7 @@ bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
 
         try
         {
-            RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, rp->message_sender());
+            RTPSMessageGroup group(mp_RTPSParticipant, this, rp->message_sender());
 
             // Send initial heartbeat
             send_heartbeat_nts_(1u, group, disable_positive_acks_);
@@ -800,13 +800,12 @@ bool StatefulWriter::matched_reader_remove(const GUID_t& reader_guid)
         periodic_hb_event_->cancel_timer();
     }
 
-    lock.unlock();
-
     if(rproxy != nullptr)
     {
         rproxy->stop();
         matched_readers_pool_.push_back(rproxy);
 
+        lock.unlock();
         check_acked_status();
 
         return true;
@@ -902,13 +901,15 @@ void StatefulWriter::check_acked_status()
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
     bool all_acked = true;
+    bool has_min_low_mark = false;
     SequenceNumber_t min_low_mark;
 
     for(const ReaderProxy* it : matched_readers_)
     {
         SequenceNumber_t reader_low_mark = it->changes_low_mark();
-        if(min_low_mark == SequenceNumber_t() || reader_low_mark < min_low_mark)
+        if(reader_low_mark < min_low_mark || !has_min_low_mark)
         {
+            has_min_low_mark = true;
             min_low_mark = reader_low_mark;
         }
 
@@ -923,26 +924,32 @@ void StatefulWriter::check_acked_status()
         // Inform of samples acked.
         if(mp_listener != nullptr)
         {
-            for(SequenceNumber_t current_seq = next_all_acked_notify_sequence_; current_seq <= min_low_mark; ++current_seq)
+            // In the case where we haven't received an acknack from a recently matched reader,
+            // min_low_mark will be zero, and no change will be notified as received by all
+            SequenceNumber_t current_seq;
+            for(current_seq = next_all_acked_notify_sequence_; current_seq <= min_low_mark; ++current_seq)
             {
                 std::vector<CacheChange_t*>::iterator history_end = mp_history->changesEnd();
-                std::vector<CacheChange_t*>::iterator cit = std::lower_bound(mp_history->changesBegin(), history_end, current_seq,
-                    [](const CacheChange_t* change, const SequenceNumber_t& seq)
-                    {
-                        return change->sequenceNumber < seq;
-                    });
+                std::vector<CacheChange_t*>::iterator cit =
+                    std::lower_bound(mp_history->changesBegin(), history_end, current_seq,
+                        [](
+                                const CacheChange_t* change,
+                                const SequenceNumber_t& seq)
+                        {
+                            return change->sequenceNumber < seq;
+                        });
                 if(cit != history_end && (*cit)->sequenceNumber == current_seq)
                 {
                     mp_listener->onWriterChangeReceivedByAll(this, *cit);
                 }
             }
 
-            next_all_acked_notify_sequence_ = min_low_mark + 1;
+            // This will change next_all_acked_notify_sequence_ to min_low_mark + 1 on the most usual case.
+            // On the special case where an acknack has not been received for a reader, it will remain unchanged.
+            next_all_acked_notify_sequence_ = current_seq;
         }
 
-        SequenceNumber_t calc = min_low_mark < get_seq_num_min() ? SequenceNumber_t() :
-            (min_low_mark - get_seq_num_min()) + 1;
-        if (calc > SequenceNumber_t())
+        if (min_low_mark >= get_seq_num_min())
         {
             may_remove_change_ = 1;
             may_remove_change_cond_.notify_one();
@@ -1092,7 +1099,7 @@ bool StatefulWriter::send_periodic_heartbeat(
             {
                 try
                 {
-                    RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, *this);
+                    RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
                     send_heartbeat_nts_(all_remote_readers_.size(), group, disable_positive_acks_, liveliness);
                 }
                 catch(const RTPSMessageGroup::timeout&)
@@ -1107,7 +1114,7 @@ bool StatefulWriter::send_periodic_heartbeat(
         // This is a liveliness heartbeat, we don't care about checking sequence numbers
         try
         {
-            RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, *this);
+            RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
             send_heartbeat_nts_(all_remote_readers_.size(), group, final, liveliness);
         }
         catch(const RTPSMessageGroup::timeout&)
@@ -1125,7 +1132,7 @@ void StatefulWriter::send_heartbeat_to_nts(
 {
     try
     {
-        RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, remoteReaderProxy.message_sender());
+        RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReaderProxy.message_sender());
         send_heartbeat_nts_(1u, group, disable_positive_acks_, liveliness);
     }
     catch(const RTPSMessageGroup::timeout&)
