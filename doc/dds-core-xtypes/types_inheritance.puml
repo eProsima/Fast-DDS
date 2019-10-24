@@ -9,6 +9,7 @@ ArrayType -up-|> CollectionType
 MutableCollectionType -up-|> CollectionType
 
 StringType -up-|> MutableCollectionType
+WStringType -up-|> MutableCollectionType
 SequenceType -up-|> MutableCollectionType
 
 abstract DynamicType
