@@ -54,6 +54,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
+#include <rtps/builtin/data/ProxyHashTables.hpp>
 
 #include <fastrtps/log/Log.h>
 
@@ -495,13 +496,8 @@ bool PDP::has_reader_proxy_data(const GUID_t& reader)
     {
         if (pit->m_guid.guidPrefix == reader.guidPrefix)
         {
-            for (ReaderProxyData* rit : pit->m_readers)
-            {
-                if (rit->guid() == reader)
-                {
-                    return true;
-                }
-            }
+            ProxyHashTable<ReaderProxyData> & readers = *pit->m_readers;
+            return readers.find(reader.entityId) != readers.end();
         }
     }
     return false;
@@ -514,13 +510,11 @@ bool PDP::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData& rdata)
     {
         if (pit->m_guid.guidPrefix == reader.guidPrefix)
         {
-            for (ReaderProxyData* rit : pit->m_readers)
+            auto rit = pit->m_readers->find(reader.entityId);
+            if(rit != pit->m_readers->end())
             {
-                if (rit->guid() == reader)
-                {
-                    rdata.copy(rit);
-                    return true;
-                }
+                rdata.copy(rit->second);
+                return true;
             }
         }
     }
@@ -534,13 +528,8 @@ bool PDP::has_writer_proxy_data(const GUID_t& writer)
     {
         if (pit->m_guid.guidPrefix == writer.guidPrefix)
         {
-            for (WriterProxyData* wit : pit->m_writers)
-            {
-                if (wit->guid() == writer)
-                {
-                    return true;
-                }
-            }
+            ProxyHashTable<WriterProxyData> & writers = *pit->m_writers;
+            return writers.find(writer.entityId) != writers.end();
         }
     }
     return false;
@@ -553,13 +542,11 @@ bool PDP::lookupWriterProxyData(const GUID_t& writer, WriterProxyData& wdata)
     {
         if (pit->m_guid.guidPrefix == writer.guidPrefix)
         {
-            for (WriterProxyData* wit : pit->m_writers)
+            auto wit = pit->m_writers->find(writer.entityId);
+            if ( wit != pit->m_writers->end() )
             {
-                if (wit->guid() == writer)
-                {
-                    wdata.copy(wit);
-                    return true;
-                }
+                wdata.copy(wit->second);
+                return true;
             }
         }
     }
@@ -575,26 +562,26 @@ bool PDP::removeReaderProxyData(const GUID_t& reader_guid)
     {
         if (pit->m_guid.guidPrefix == reader_guid.guidPrefix)
         {
-            for (ReaderProxyData* rit : pit->m_readers)
+            auto rit = pit->m_readers->find(reader_guid.entityId);
+
+            if (rit != pit->m_readers->end())
             {
-                if (rit->guid() == reader_guid)
+                ReaderProxyData * pR = rit->second;
+                mp_EDP->unpairReaderProxy(pit->m_guid, reader_guid);
+
+                RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
+                if (listener)
                 {
-                    mp_EDP->unpairReaderProxy(pit->m_guid, reader_guid);
-
-                    RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-                    if (listener)
-                    {
-                        ReaderDiscoveryInfo info(std::move(*rit));
-                        info.status = ReaderDiscoveryInfo::REMOVED_READER;
-                        listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
-                    }
-
-                    // Clear reader proxy data and move to pool in order to allow reuse
-                    rit->clear();
-                    pit->m_readers.remove(rit);
-                    reader_proxies_pool_.push_back(rit);
-                    return true;
+                    ReaderDiscoveryInfo info(std::move(*pR));
+                    info.status = ReaderDiscoveryInfo::REMOVED_READER;
+                    listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
                 }
+
+                // Clear reader proxy data and move to pool in order to allow reuse
+                pR->clear();
+                pit->m_readers->erase(rit);
+                reader_proxies_pool_.push_back(pR);
+                return true;
             }
         }
     }
@@ -611,26 +598,27 @@ bool PDP::removeWriterProxyData(const GUID_t& writer_guid)
     {
         if (pit->m_guid.guidPrefix == writer_guid.guidPrefix)
         {
-            for (WriterProxyData* wit : pit->m_writers)
+            auto wit = pit->m_writers->find(writer_guid.entityId);
+
+            if (wit != pit->m_writers->end())
             {
-                if (wit->guid() == writer_guid)
+                WriterProxyData *pW = wit->second;
+                mp_EDP->unpairWriterProxy(pit->m_guid, writer_guid);
+
+                RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
+                if (listener)
                 {
-                    mp_EDP->unpairWriterProxy(pit->m_guid, writer_guid);
-
-                    RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-                    if (listener)
-                    {
-                        WriterDiscoveryInfo info(std::move(*wit));
-                        info.status = WriterDiscoveryInfo::REMOVED_WRITER;
-                        listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
-                    }
-
-                    // Clear writer proxy data and move to pool in order to allow reuse
-                    wit->clear();
-                    pit->m_writers.remove(wit);
-                    writer_proxies_pool_.push_back(wit);
-                    return true;
+                    WriterDiscoveryInfo info(std::move(*pW));
+                    info.status = WriterDiscoveryInfo::REMOVED_WRITER;
+                    listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
                 }
+
+                // Clear writer proxy data and move to pool in order to allow reuse
+                pW->clear();
+                pit->m_writers->erase(wit);
+                writer_proxies_pool_.push_back(pW);
+
+                return true;
             }
         }
     }
@@ -688,28 +676,27 @@ ReaderProxyData* PDP::addReaderProxyData(
             participant_guid = pit->m_guid;
 
             // Check that it is not already there:
-            for(ReaderProxyData* rit : pit->m_readers)
+            auto rpi = pit->m_readers->find(reader_guid.entityId);
+
+            if( rpi != pit->m_readers->end())
             {
-                if(rit->guid().entityId == reader_guid.entityId)
+                ret_val = rpi->second;
+
+                if (!initializer_func(ret_val, true, *pit))
                 {
-                    if (!initializer_func(rit, true, *pit))
-                    {
-                        return nullptr;
-                    }
-
-                    ret_val = rit;
-
-                    RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-                    if(listener)
-                    {
-                        ReaderDiscoveryInfo info(*ret_val);
-                        info.status = ReaderDiscoveryInfo::CHANGED_QOS_READER;
-                        listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
-                        check_and_notify_type_discovery(listener, *ret_val);
-                    }
-
-                    return ret_val;
+                    return nullptr;
                 }
+
+                RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
+                if(listener)
+                {
+                    ReaderDiscoveryInfo info(*ret_val);
+                    info.status = ReaderDiscoveryInfo::CHANGED_QOS_READER;
+                    listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                    check_and_notify_type_discovery(listener, *ret_val);
+                }
+
+                return ret_val;
             }
 
             // Try to take one entry from the pool
@@ -739,7 +726,7 @@ ReaderProxyData* PDP::addReaderProxyData(
             }
 
             // Add to ParticipantProxyData
-            pit->m_readers.push_back(ret_val);
+            (*pit->m_readers)[reader_guid.entityId] = ret_val;
 
             if (!initializer_func(ret_val, false, *pit))
             {
@@ -780,28 +767,27 @@ WriterProxyData* PDP::addWriterProxyData(
             participant_guid = pit->m_guid;
 
             // Check that it is not already there:
-            for (WriterProxyData* wit : pit->m_writers)
+            auto wpi = pit->m_writers->find(writer_guid.entityId);
+
+            if (wpi != pit->m_writers->end())
             {
-                if (wit->guid().entityId == writer_guid.entityId)
+                ret_val = wpi->second;
+
+                if (!initializer_func(ret_val, true, *pit))
                 {
-                    if (!initializer_func(wit, true, *pit))
-                    {
-                        return nullptr;
-                    }
-
-                    ret_val = wit;
-
-                    RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-                    if (listener)
-                    {
-                        WriterDiscoveryInfo info(*ret_val);
-                        info.status = WriterDiscoveryInfo::CHANGED_QOS_WRITER;
-                        listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
-                        check_and_notify_type_discovery(listener, *ret_val);
-                    }
-
-                    return ret_val;
+                    return nullptr;
                 }
+
+                RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
+                if (listener)
+                {
+                    WriterDiscoveryInfo info(*ret_val);
+                    info.status = WriterDiscoveryInfo::CHANGED_QOS_WRITER;
+                    listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                    check_and_notify_type_discovery(listener, *ret_val);
+                }
+
+                return ret_val;
             }
 
             // Try to take one entry from the pool
@@ -831,7 +817,7 @@ WriterProxyData* PDP::addWriterProxyData(
             }
 
             // Add to ParticipantProxyData
-            pit->m_writers.push_back(ret_val);
+            (*pit->m_writers)[writer_guid.entityId] = ret_val;
 
             if (!initializer_func(ret_val, false, *pit))
             {
@@ -886,8 +872,9 @@ bool PDP::remove_remote_participant(
         {
             RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
 
-            for(ReaderProxyData* rit : pdata->m_readers)
+            for(auto pit : *pdata->m_readers)
             {
+                ReaderProxyData* rit = pit.second;
                 GUID_t reader_guid(rit->guid());
                 if (reader_guid != c_Guid_Unknown)
                 {
@@ -901,8 +888,9 @@ bool PDP::remove_remote_participant(
                     }
                 }
             }
-            for(WriterProxyData* wit : pdata->m_writers)
+            for(auto pit : *pdata->m_writers)
             {
+                WriterProxyData* wit = pit.second;
                 GUID_t writer_guid(wit->guid());
                 if (writer_guid != c_Guid_Unknown)
                 {
@@ -959,18 +947,18 @@ bool PDP::remove_remote_participant(
         this->mp_mutex->lock();
 
         // Return reader proxy objects to pool
-        for (ReaderProxyData* rit : pdata->m_readers)
+        for (auto pit : *pdata->m_readers)
         {
-            reader_proxies_pool_.push_back(rit);
+            reader_proxies_pool_.push_back(pit.second);
         }
-        pdata->m_readers.clear();
+        pdata->m_readers->clear();
 
         // Return writer proxy objects to pool
-        for (WriterProxyData* wit : pdata->m_writers)
+        for (auto pit : *pdata->m_writers)
         {
-            writer_proxies_pool_.push_back(wit);
+            writer_proxies_pool_.push_back(pit.second);
         }
-        pdata->m_writers.clear();
+        pdata->m_writers->clear();
 
         // Cancel lease event
         if (pdata->lease_duration_event != nullptr)

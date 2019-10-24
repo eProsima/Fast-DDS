@@ -115,13 +115,13 @@ class EDPServer : public EDPSimple
     //! Callback to remove unnecesary WriterHistory info
     bool trimPUBWriterHistory()
     {
-        return trimWriterHistory<ResourceLimitedVector<WriterProxyData*>>(_PUBdemises,
+        return trimWriterHistory<ProxyHashTable<WriterProxyData>*>(_PUBdemises,
             *publications_writer_.first, *publications_writer_.second, &ParticipantProxyData::m_writers);
     }
 
     bool trimSUBWriterHistory()
     {
-        return trimWriterHistory<ResourceLimitedVector<ReaderProxyData*>>(_SUBdemises,
+        return trimWriterHistory<ProxyHashTable<ReaderProxyData>*>(_SUBdemises,
             *subscriptions_writer_.first, *subscriptions_writer_.second, &ParticipantProxyData::m_readers);
     }
 

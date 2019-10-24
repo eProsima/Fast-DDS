@@ -31,6 +31,7 @@
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 
+#include <rtps/builtin/data/ProxyHashTables.hpp>
 
 #include <fastrtps/log/Log.h>
 
@@ -158,9 +159,9 @@ bool EDPServer::trimWriterHistory(
     {
         ProxyCont & readers = (*iD)->*pC;
 
-        for (auto iE : readers)
+        for (auto iE : *readers)
         {
-            disposal.insert(iE->key());
+            disposal.insert(iE.second->key());
         }
     }
     std::set_difference(_demises.cbegin(), _demises.cend(), disposal.cbegin(), disposal.cend(),
