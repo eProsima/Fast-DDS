@@ -86,12 +86,11 @@ class DataWriterListener;
 template<typename T>
 class DataWriter : public TAnyDataWriter<detail::DataWriter>
 {
-
 public:
     /**
      * Local convenience typedef for dds::pub::DataWriterListener.
      */
-    typedef DataWriterListener<T> Listener;
+    using Listener = DataWriterListener<T>;
 
     OMG_DDS_REF_TYPE_PROTECTED_DC(
             DataWriter,

@@ -220,7 +220,7 @@ public:
             LivelinessLostStatus& status);
 
     /* TODO
-       bool get_offered_incompatible_qos_status(
+       ReturnCode_t get_offered_incompatible_qos_status(
             OfferedIncompatibleQosStatus& status)
        {
         // Not implemented

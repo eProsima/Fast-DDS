@@ -32,6 +32,7 @@ namespace dds {
 namespace core {
 
 InstanceHandle::InstanceHandle()
+    : Value()
 {
 }
 

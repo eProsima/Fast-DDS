@@ -57,7 +57,7 @@ private:
 
     bool stop_;
 
-    class PubListener : public dds::pub::DataWriterListener<HelloWorld>
+    class PubListener : public dds::pub::NoOpDataWriterListener<HelloWorld>
     {
     public:
         PubListener()

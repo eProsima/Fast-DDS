@@ -32,325 +32,303 @@ namespace status {
 //TInconsistentTopicStatus
 
 InconsistentTopicStatus::InconsistentTopicStatus()
-    : dds::core::Value()
+    : dds::core::Value<detail::InconsistentTopicStatus>()
 {
 }
 
 int32_t InconsistentTopicStatus::total_count() const
 {
-    //To implement
-//    return this->delegate().total_count();
+    return delegate().total_count;
 }
 
 int32_t InconsistentTopicStatus::total_count_change() const
 {
-    //To implement
-//    return this->delegate().total_count_change();
+    return delegate().total_count_change;
 }
 
-//TSampleLostStatus
+////TSampleLostStatus
 
 SampleLostStatus::SampleLostStatus()
-    : dds::core::Value()
+    : dds::core::Value<detail::SampleLostStatus>()
 {
 }
 
 int32_t SampleLostStatus::total_count() const
 {
-    //To implement
-//    return this->delegate().total_count();
+    return delegate().total_count;
 }
 
 int32_t SampleLostStatus::total_count_change() const
 {
-    //To implement
-//    return this->delegate().total_count_change();
+    return delegate().total_count_change;
 }
 
 //TSampleRejectedStatus
 
 SampleRejectedStatus::SampleRejectedStatus()
-    : dds::core::Value()
+    : dds::core::Value<detail::SampleRejectedStatus>()
 {
 }
 
 int32_t SampleRejectedStatus::total_count() const
 {
-    //To implement
-//    return this->delegate().total_count();
+    return delegate().total_count;
 }
 
 int32_t SampleRejectedStatus::total_count_change() const
 {
-    //To implement
-//    return this->delegate().total_count_change();
+    return delegate().total_count_change;
 }
 
 const dds::core::status::SampleRejectedState SampleRejectedStatus::last_reason() const
 {
-    //To implement
-//    return this->delegate().last_reason();
+    dds::core::status::SampleRejectedState state;
+    eprosima::fastdds::dds::SampleRejectedStatusKind kind = delegate().last_reason;
+    if(kind == eprosima::fastdds::dds::REJECTED_BY_INSTANCES_LIMIT)
+    {
+        return state.rejected_by_instances_limit();
+    }
+    else if(kind == eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT)
+    {
+        return state.rejected_by_samples_limit();
+    }
+    else if(kind == eprosima::fastdds::dds::REJECTED_BY_SAMPLES_PER_INSTANCE_LIMIT)
+    {
+        return state.rejected_by_samples_per_instance_limit();
+    }
+    else
+    {
+        return state.not_rejected();
+    }
 }
 
 const dds::core::InstanceHandle SampleRejectedStatus::last_instance_handle() const
 {
-    //To implement
-//    return this->delegate().last_instance_handle();
+    return delegate().last_instance_handle;
 }
 
 //TLivelinessLostStatus
 LivelinessLostStatus::LivelinessLostStatus()
-    : dds::core::Value()
+    : dds::core::Value<detail::LivelinessLostStatus>()
 {
 }
 
 int32_t LivelinessLostStatus::total_count() const
 {
-    //To implement
-//    return this->delegate().total_count();
+    return delegate().total_count;
 }
 
 int32_t LivelinessLostStatus::total_count_change() const
 {
-    //To implement
-//    return this->delegate().total_count_change();
+    return delegate().total_count_change;
 }
 
-//TLivelinessChangedStatus
+////TLivelinessChangedStatus
 
 LivelinessChangedStatus::LivelinessChangedStatus()
-    : dds::core::Value()
+    : dds::core::Value<detail::LivelinessChangedStatus>()
 {
 }
 
 int32_t LivelinessChangedStatus::alive_count() const
 {
-    //To implement
-//    return this->delegate().alive_count();
+    return delegate().alive_count;
 }
 
 int32_t LivelinessChangedStatus::not_alive_count() const
 {
-    //To implement
-//    return this->delegate().not_alive_count();
+    return delegate().not_alive_count;
 }
 
 int32_t LivelinessChangedStatus::alive_count_change() const
 {
-    //To implement
-//    return this->delegate().alive_count();
+    return delegate().alive_count_change;
 }
 
 int32_t LivelinessChangedStatus::not_alive_count_change() const
 {
-    //To implement
-//    return this->delegate().not_alive_count();
+    return delegate().not_alive_count_change;
 }
 
 const dds::core::InstanceHandle LivelinessChangedStatus::last_publication_handle() const
 {
-    //To implement
-//    return this->delegate().last_publication_handle();
+    return delegate().last_publication_handle;
 }
 
 //TOfferedDeadlineMissedStatus
 
 OfferedDeadlineMissedStatus::OfferedDeadlineMissedStatus()
-    : dds::core::Value()
+    : dds::core::Value<detail::OfferedDeadlineMissedStatus>()
 {
 }
 
 int32_t OfferedDeadlineMissedStatus::total_count() const
 {
-    //To implement
-//    return this->delegate().total_count();
+    return delegate().total_count;
 }
 
 int32_t OfferedDeadlineMissedStatus::total_count_change() const
 {
-    //To implement
-//    return this->delegate().total_count_change();
+    return delegate().total_count_change;
 }
 
 const dds::core::InstanceHandle OfferedDeadlineMissedStatus::last_instance_handle() const
 {
-    //To implement
-//    return this->delegate().last_instance_handle();
+    return delegate().last_instance_handle;
 }
 
 //TRequestedDeadlineMissedStatus
 
 RequestedDeadlineMissedStatus::RequestedDeadlineMissedStatus()
-    : dds::core::Value()
+    : dds::core::Value<detail::RequestedDeadlineMissedStatus>()
 {
 }
 
 int32_t RequestedDeadlineMissedStatus::total_count() const
 {
-    //To implement
-//    return this->delegate().total_count();
+    return delegate().total_count;
 }
 
 int32_t RequestedDeadlineMissedStatus::total_count_change() const
 {
-    //To implement
-//    return this->delegate().total_count_change();
+    return delegate().total_count_change;
 }
 
 const dds::core::InstanceHandle RequestedDeadlineMissedStatus::last_instance_handle() const
 {
-    //To implement
-//    return this->delegate().last_instance_handle();
+    return delegate().last_instance_handle;
 }
 
 //TOfferedIncompatibleQosStatus
 
 OfferedIncompatibleQosStatus::OfferedIncompatibleQosStatus()
-    : dds::core::Value()
+    : dds::core::Value<detail::OfferedIncompatibleQosStatus>()
 {
 }
 
 int32_t OfferedIncompatibleQosStatus::total_count() const
 {
-    //To implement
-//    return this->delegate().total_count();
+    return delegate().total_count;
 }
 
 int32_t OfferedIncompatibleQosStatus::total_count_change() const
 {
-    //To implement
-//    return this->delegate().total_count_change();
+    return delegate().total_count_change;
 }
 
 dds::core::policy::QosPolicyId OfferedIncompatibleQosStatus::last_policy_id() const
 {
-    //To implement
-//    return this->delegate().last_policy_id();
+    return delegate().last_policy_id;
 }
 
 const dds::core::policy::QosPolicyCountSeq OfferedIncompatibleQosStatus::policies() const
 {
-    //To implement
-//    return this->delegate().policies();
+    return delegate().policies;
 }
 
 const dds::core::policy::QosPolicyCountSeq& OfferedIncompatibleQosStatus::policies(
         dds::core::policy::QosPolicyCountSeq& dst) const
 {
-    //To implement
-//    return this->delegate().policies(dst);
+    dst = delegate().policies;
+    return dst;
 }
 
 //TRequestedIncompatibleQosStatus
 
 RequestedIncompatibleQosStatus::RequestedIncompatibleQosStatus()
-    : dds::core::Value()
+    : dds::core::Value<detail::RequestedIncompatibleQosStatus>()
 {
 }
 
 int32_t RequestedIncompatibleQosStatus::total_count() const
 {
-    //To implement
-//    return this->delegate().total_count();
+    return delegate().total_count;
 }
 
 int32_t RequestedIncompatibleQosStatus::total_count_change() const
 {
-    //To implement
-//    return this->delegate().total_count_change();
+    return delegate().total_count_change;
 }
 
 dds::core::policy::QosPolicyId RequestedIncompatibleQosStatus::last_policy_id() const
 {
-    //To implement
-//    return this->delegate().last_policy_id();
+    return delegate().last_policy_id;
 }
 
 const dds::core::policy::QosPolicyCountSeq RequestedIncompatibleQosStatus::policies() const
 {
-    //To implement
-//    return this->delegate().policies();
+    return delegate().policies;
 }
 
 const dds::core::policy::QosPolicyCountSeq& RequestedIncompatibleQosStatus::policies(
         dds::core::policy::QosPolicyCountSeq& dst) const
 {
-    //To implement
-//    return this->delegate().policies(dst);
+    dst = delegate().policies;
+    return dst;
 }
 
 //TPublicationMatchedStatus
 
 PublicationMatchedStatus::PublicationMatchedStatus()
-    : dds::core::Value()
+    : dds::core::Value<detail::PublicationMatchedStatus>()
 {
 }
 
 int32_t PublicationMatchedStatus::total_count() const
 {
-    //To implement
-//    return this->delegate().total_count();
+    return delegate().total_count;
 }
 
 int32_t PublicationMatchedStatus::total_count_change() const
 {
-    //To implement
-//    return this->delegate().total_count_change();
+    return delegate().total_count_change;
 }
 
 int32_t PublicationMatchedStatus::current_count() const
 {
-    //To implement
-//    return this->delegate().current_count();
+    return delegate().current_count;
 }
 
 int32_t PublicationMatchedStatus::current_count_change() const
 {
-    //To implement
-//    return this->delegate().current_count_change();
+    return delegate().current_count_change;
 }
 
 const dds::core::InstanceHandle PublicationMatchedStatus::last_subscription_handle() const
 {
-    //To implement
-//    return this->delegate().last_subscription_handle();
+    return delegate().last_subscription_handle;
 }
 
 //TSubscriptionMatchedStatus
 
 SubscriptionMatchedStatus::SubscriptionMatchedStatus()
-    : dds::core::Value()
+    : dds::core::Value<detail::SubscriptionMatchedStatus>()
 {
 }
 
 int32_t SubscriptionMatchedStatus::total_count() const
 {
-    //To implement
-//    return this->delegate().total_count();
+    return delegate().total_count;
 }
 
 int32_t SubscriptionMatchedStatus::total_count_change() const
 {
-    //To implement
-//    return this->delegate().total_count_change();
+    return delegate().total_count_change;
 }
 
 int32_t SubscriptionMatchedStatus::current_count() const
 {
-    //To implement
-//    return this->delegate().current_count();
+    return delegate().current_count;
 }
 
 int32_t SubscriptionMatchedStatus::current_count_change() const
 {
-    //To implement
-//    return this->delegate().current_count_change();
+    return delegate().current_count_change;
 }
 
 const dds::core::InstanceHandle SubscriptionMatchedStatus::last_publication_handle() const
 {
-    //To implement
-//    return this->delegate().last_publication_handle();
+    return delegate().last_publication_handle;
 }
 
 } //namespace status
