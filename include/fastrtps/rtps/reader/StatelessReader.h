@@ -188,7 +188,8 @@ private:
     {
         GUID_t guid;
         GUID_t persistence_guid;
-        bool has_manual_topic_liveliness;
+        bool has_manual_topic_liveliness = false;
+        CacheChange_t* fragmented_change = nullptr;
     };
 
     bool acceptMsgFrom(
