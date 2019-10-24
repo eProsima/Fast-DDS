@@ -86,14 +86,6 @@ public:
     ExtendedAnnotationParameterValue& operator=(ExtendedAnnotationParameterValue &&x);
 
     /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    //static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
-
-    /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
      * @param current_alignment Buffer alignment.
@@ -543,14 +535,6 @@ public:
     ExtendedAnnotationParameterValue& extended_value();
 
     /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    //static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
-
-    /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
      * @param current_alignment Buffer alignment.
@@ -876,14 +860,6 @@ public:
     }
 
     /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    //static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
-
-    /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
      * @param current_alignment Buffer alignment.
@@ -959,7 +935,6 @@ public:
     inline const AnnotationParameterValue& value() const { return m_value; }
     inline AnnotationParameterValue& value() { return m_value; }
 
-    static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const AppliedAnnotationParameter& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -999,7 +974,6 @@ public:
     inline const AppliedAnnotationParameterSeq& param_seq() const { return m_param_seq; }
     inline AppliedAnnotationParameterSeq& param_seq() { return m_param_seq; }
 
-    //static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const AppliedAnnotation& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1048,7 +1022,6 @@ public:
     inline const std::string& text() const { return m_text; }
     inline std::string& text() { return m_text; }
 
-    //static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const AppliedVerbatimAnnotation& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
@@ -1102,7 +1075,6 @@ public:
     inline const std::string& hash_id() const { return m_hash_id; }
     inline std::string& hash_id() { return m_hash_id; }
 
-    //static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     static size_t getCdrSerializedSize(const AppliedBuiltinMemberAnnotations& data, size_t current_alignment = 0);
     void serialize(eprosima::fastcdr::Cdr &cdr) const;
     void deserialize(eprosima::fastcdr::Cdr &cdr);
