@@ -19,7 +19,7 @@
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/log/Log.h>
 #include <MockReceiverResource.h>
-#include "../../../src/cpp/fastrtps_deprecated/transport/TCPSenderResource.hpp"
+#include "../../../src/cpp/rtps/transport/TCPSenderResource.hpp"
 
 #include <memory>
 #include <asio.hpp>

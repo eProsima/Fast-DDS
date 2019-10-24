@@ -15,7 +15,7 @@
 #include <fastrtps/transport/TransportInterface.h>
 #include <fastrtps/transport/UDPTransportInterface.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
-#include <fastrtps_deprecated/transport/UDPSenderResource.hpp>
+#include <rtps/transport/UDPSenderResource.hpp>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
