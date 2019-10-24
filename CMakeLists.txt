@@ -416,10 +416,12 @@ if(BUILD_DOCUMENTATION)
         COMPONENT documentation
         )
 
-    install(DIRECTORY ${PROJECT_BINARY_DIR}/doc/manual
-        DESTINATION ${DOC_INSTALL_DIR}
-        COMPONENT documentation
-        )
+    if(NOT CHECK_DOCUMENTATION)
+        install(DIRECTORY ${PROJECT_BINARY_DIR}/doc/manual
+            DESTINATION ${DOC_INSTALL_DIR}
+            COMPONENT documentation
+            )
+    endif()
 
     ### Documentation component
     set(CPACK_COMPONENT_DOCUMENTATION_DISPLAY_NAME "Documentation")
