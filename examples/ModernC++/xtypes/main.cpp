@@ -10,17 +10,17 @@ int main()
     inner.add_member(Member("im1", primitive_type<uint32_t>()));
     inner.add_member(Member("im2", primitive_type<float>()).id(2));
 
-    StructType outter("OutterType");
-    outter.add_member("om1", primitive_type<double>());
-    outter.add_member("om2", inner);
-    outter.add_member("om3", StringType());
-    outter.add_member("om4", WStringType());
-    outter.add_member("om5", SequenceType(primitive_type<uint32_t>(), 5));
-    outter.add_member("om6", SequenceType(inner));
-    outter.add_member("om7", ArrayType(primitive_type<uint32_t>(), 4));
-    outter.add_member("om8", ArrayType(inner, 4));
+    StructType outer("OuterType");
+    outer.add_member("om1", primitive_type<double>());
+    outer.add_member("om2", inner);
+    outer.add_member("om3", StringType());
+    outer.add_member("om4", WStringType());
+    outer.add_member("om5", SequenceType(primitive_type<uint32_t>(), 5));
+    outer.add_member("om6", SequenceType(inner));
+    outer.add_member("om7", ArrayType(primitive_type<uint32_t>(), 4));
+    outer.add_member("om8", ArrayType(inner, 4));
 
-    DynamicData data(outter);
+    DynamicData data(outer);
     data["om1"].value(6.7);                                //PrimitiveType<double>
     data["om2"]["im1"].value(42u);                         //PrimitiveType<uint32_t>
     data["om2"]["im2"].value(35.8f);                       //PrimitiveType<float>

@@ -59,8 +59,13 @@ DDS_CORE_XTYPES_PRIMITIVE(wchar_t, CHAR_16_TYPE)
 template<typename T>
 class PrimitiveType : public DynamicType
 {
+private:
     template<typename R>
     friend const DynamicType& primitive_type();
+
+    PrimitiveType()
+        : DynamicType(dynamic_type_traits<T>::TYPE_ID, dynamic_type_traits<T>::NAME)
+    {}
 
     virtual size_t memory_size() const override
     {
@@ -111,12 +116,17 @@ class PrimitiveType : public DynamicType
         {
             return TypeConsistency::EQUALS;
         }
-        else if(memory_size() == other.memory_size())
-        {
-            return TypeConsistency::IGNORE_TYPE_SIGN;
-        }
 
-        return TypeConsistency::IGNORE_TYPE_WIDTH;
+        TypeConsistency consistency = TypeConsistency::EQUALS;
+        if(memory_size() != other.memory_size())
+        {
+            consistency |= TypeConsistency::IGNORE_TYPE_WIDTH;
+        }
+        else
+        {
+            consistency |= TypeConsistency::IGNORE_TYPE_SIGN;
+        }
+        return consistency;
     }
 
     virtual void for_each_instance(
@@ -131,11 +141,6 @@ protected:
     {
         return new PrimitiveType<T>();
     }
-
-private:
-    PrimitiveType()
-        : DynamicType(dynamic_type_traits<T>::TYPE_ID, dynamic_type_traits<T>::NAME)
-    {}
 };
 
 template<typename T>

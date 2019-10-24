@@ -111,7 +111,7 @@ Any pair of `DynamicType`s can be checked for their mutual compatibility.
 TypeConsistency consistency = tested_type.is_compatible(other_type);
 ```
 This line will evaluate consistency levels among the two types.
-The returned `TypeConsistency` is going to be a subset of the following *QoS polities*:
+The returned `TypeConsistency` is going to be a subset of the following *QoS policies*:
 
 - `NONE`: Unknown way to interpret `tested_type` as `other_type`.
 - `EQUALS`: The evaluation is analogous to an equal evaluation.
@@ -122,7 +122,7 @@ The returned `TypeConsistency` is going to be a subset of the following *QoS pol
 - `IGNORE_MEMBER_NAMES`: the evaluation will be true if the names of some members differs (but no the position).
 - `IGNORE_OTHER_MEMBERS`: the evaluation will be true if some members of `other_type` are ignored.
 
-Note: `TypeConsistency` is an enum with `|` and `&` operators overrided to manage it as a set of QoS polities.
+Note: `TypeConsistency` is an enum with `|` and `&` operators overrided to manage it as a set of QoS policies.
 
 ### Data instance
 #### Initialization
