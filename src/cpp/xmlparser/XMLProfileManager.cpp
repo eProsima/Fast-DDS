@@ -27,19 +27,21 @@ using namespace ::xmlparser;
 
 std::map<std::string, up_participant_t> XMLProfileManager::m_participant_profiles;
 ParticipantAttributes default_participant_attributes;
-std::map<std::string, up_publisher_t>   XMLProfileManager::m_publisher_profiles;
+std::map<std::string, up_publisher_t> XMLProfileManager::m_publisher_profiles;
 PublisherAttributes default_publisher_attributes;
-std::map<std::string, up_subscriber_t>  XMLProfileManager::m_subscriber_profiles;
+std::map<std::string, up_subscriber_t> XMLProfileManager::m_subscriber_profiles;
 SubscriberAttributes default_subscriber_attributes;
-std::map<std::string, up_topic_t>       XMLProfileManager::m_topic_profiles;
+std::map<std::string, up_topic_t> XMLProfileManager::m_topic_profiles;
 TopicAttributes default_topic_attributes;
-std::map<std::string, XMLP_ret>         XMLProfileManager::m_xml_files;
+std::map<std::string, XMLP_ret> XMLProfileManager::m_xml_files;
 sp_transport_map_t XMLProfileManager::m_transport_profiles;
 p_dynamictype_map_t XMLProfileManager::m_dynamictypes;
-
 BaseNode* XMLProfileManager::root = nullptr;
 
-XMLP_ret XMLProfileManager::fillParticipantAttributes(const std::string &profile_name, ParticipantAttributes &atts, bool log_error)
+XMLP_ret XMLProfileManager::fillParticipantAttributes(
+        const std::string& profile_name,
+        ParticipantAttributes& atts,
+        bool log_error)
 {
     part_map_iterator_t it = m_participant_profiles.find(profile_name);
     if (it == m_participant_profiles.end())
@@ -54,7 +56,10 @@ XMLP_ret XMLProfileManager::fillParticipantAttributes(const std::string &profile
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileManager::fillPublisherAttributes(const std::string &profile_name, PublisherAttributes &atts, bool log_error)
+XMLP_ret XMLProfileManager::fillPublisherAttributes(
+        const std::string& profile_name,
+        PublisherAttributes& atts,
+        bool log_error)
 {
     publ_map_iterator_t it = m_publisher_profiles.find(profile_name);
     if (it == m_publisher_profiles.end())
@@ -69,7 +74,10 @@ XMLP_ret XMLProfileManager::fillPublisherAttributes(const std::string &profile_n
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileManager::fillSubscriberAttributes(const std::string &profile_name, SubscriberAttributes &atts, bool log_error)
+XMLP_ret XMLProfileManager::fillSubscriberAttributes(
+        const std::string& profile_name,
+        SubscriberAttributes& atts,
+        bool log_error)
 {
     subs_map_iterator_t it = m_subscriber_profiles.find(profile_name);
     if (it == m_subscriber_profiles.end())
@@ -84,7 +92,9 @@ XMLP_ret XMLProfileManager::fillSubscriberAttributes(const std::string &profile_
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileManager::fillTopicAttributes(const std::string& profile_name, TopicAttributes& atts)
+XMLP_ret XMLProfileManager::fillTopicAttributes(
+        const std::string& profile_name,
+        TopicAttributes& atts)
 {
     topic_map_iterator_t it = m_topic_profiles.find(profile_name);
     if (it == m_topic_profiles.end())
@@ -96,22 +106,26 @@ XMLP_ret XMLProfileManager::fillTopicAttributes(const std::string& profile_name,
     return XMLP_ret::XML_OK;
 }
 
-void XMLProfileManager::getDefaultParticipantAttributes(ParticipantAttributes& participant_attributes)
+void XMLProfileManager::getDefaultParticipantAttributes(
+        ParticipantAttributes& participant_attributes)
 {
     participant_attributes = default_participant_attributes;
 }
 
-void XMLProfileManager::getDefaultPublisherAttributes(PublisherAttributes& publisher_attributes)
+void XMLProfileManager::getDefaultPublisherAttributes(
+        PublisherAttributes& publisher_attributes)
 {
     publisher_attributes = default_publisher_attributes;
 }
 
-void XMLProfileManager::getDefaultSubscriberAttributes(SubscriberAttributes& subscriber_attributes)
+void XMLProfileManager::getDefaultSubscriberAttributes(
+        SubscriberAttributes& subscriber_attributes)
 {
     subscriber_attributes = default_subscriber_attributes;
 }
 
-void XMLProfileManager::getDefaultTopicAttributes(TopicAttributes& topic_attributes)
+void XMLProfileManager::getDefaultTopicAttributes(
+        TopicAttributes& topic_attributes)
 {
     topic_attributes = default_topic_attributes;
 }
@@ -137,7 +151,8 @@ void XMLProfileManager::loadDefaultXMLFile()
     loadXMLFile(DEFAULT_FASTRTPS_PROFILES);
 }
 
-XMLP_ret XMLProfileManager::loadXMLProfiles(tinyxml2::XMLElement& profiles)
+XMLP_ret XMLProfileManager::loadXMLProfiles(
+        tinyxml2::XMLElement& profiles)
 {
     up_base_node_t root_node;
     XMLParser::loadXMLProfiles(profiles, root_node);
@@ -169,12 +184,14 @@ XMLP_ret XMLProfileManager::loadXMLProfiles(tinyxml2::XMLElement& profiles)
     return XMLP_ret::XML_ERROR;
 }
 
-XMLP_ret XMLProfileManager::loadXMLDynamicTypes(tinyxml2::XMLElement& types)
+XMLP_ret XMLProfileManager::loadXMLDynamicTypes(
+        tinyxml2::XMLElement& types)
 {
     return XMLParser::loadXMLDynamicTypes(types);
 }
 
-XMLP_ret XMLProfileManager::loadXMLNode(tinyxml2::XMLDocument& doc)
+XMLP_ret XMLProfileManager::loadXMLNode(
+        tinyxml2::XMLDocument& doc)
 {
     up_base_node_t root_node;
     XMLParser::loadXML(doc, root_node);
@@ -206,7 +223,8 @@ XMLP_ret XMLProfileManager::loadXMLNode(tinyxml2::XMLDocument& doc)
     return XMLP_ret::XML_ERROR;
 }
 
-XMLP_ret XMLProfileManager::loadXMLFile(const std::string& filename)
+XMLP_ret XMLProfileManager::loadXMLFile(
+        const std::string& filename)
 {
     if (filename.empty())
     {
@@ -259,7 +277,9 @@ XMLP_ret XMLProfileManager::loadXMLFile(const std::string& filename)
     return XMLP_ret::XML_ERROR;
 }
 
-XMLP_ret XMLProfileManager::extractDynamicTypes(up_base_node_t profiles, const std::string& filename)
+XMLP_ret XMLProfileManager::extractDynamicTypes(
+        up_base_node_t profiles,
+        const std::string& filename)
 {
     if (nullptr == profiles)
     {
@@ -297,7 +317,9 @@ XMLP_ret XMLProfileManager::extractDynamicTypes(up_base_node_t profiles, const s
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileManager::extractProfiles(up_base_node_t profiles, const std::string& filename)
+XMLP_ret XMLProfileManager::extractProfiles(
+        up_base_node_t profiles,
+        const std::string& filename)
 {
     if (nullptr == profiles)
     {
@@ -357,7 +379,9 @@ XMLP_ret XMLProfileManager::extractProfiles(up_base_node_t profiles, const std::
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileManager::extractParticipantProfile(up_base_node_t& profile, const std::string& filename)
+XMLP_ret XMLProfileManager::extractParticipantProfile(
+        up_base_node_t& profile,
+        const std::string& filename)
 {
     (void)(filename);
     std::string profile_name = "";
@@ -388,7 +412,9 @@ XMLP_ret XMLProfileManager::extractParticipantProfile(up_base_node_t& profile, c
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileManager::extractPublisherProfile(up_base_node_t& profile, const std::string& filename)
+XMLP_ret XMLProfileManager::extractPublisherProfile(
+        up_base_node_t& profile,
+        const std::string& filename)
 {
     (void)(filename);
     std::string profile_name = "";
@@ -419,7 +445,9 @@ XMLP_ret XMLProfileManager::extractPublisherProfile(up_base_node_t& profile, con
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLProfileManager::extractSubscriberProfile(up_base_node_t& profile, const std::string& filename)
+XMLP_ret XMLProfileManager::extractSubscriberProfile(
+        up_base_node_t& profile,
+        const std::string& filename)
 {
     (void)(filename);
     std::string profile_name = "";
@@ -450,7 +478,9 @@ XMLP_ret XMLProfileManager::extractSubscriberProfile(up_base_node_t& profile, co
     return XMLP_ret::XML_OK;
 }
 
-bool XMLProfileManager::insertTransportById(const std::string& sId, sp_transport_t transport)
+bool XMLProfileManager::insertTransportById(
+        const std::string& sId,
+        sp_transport_t transport)
 {
     if (m_transport_profiles.find(sId) == m_transport_profiles.end())
     {
@@ -461,7 +491,8 @@ bool XMLProfileManager::insertTransportById(const std::string& sId, sp_transport
     return false;
 }
 
-sp_transport_t XMLProfileManager::getTransportById(const std::string& sId)
+sp_transport_t XMLProfileManager::getTransportById(
+        const std::string& sId)
 {
     if (m_transport_profiles.find(sId) != m_transport_profiles.end())
     {
@@ -470,7 +501,9 @@ sp_transport_t XMLProfileManager::getTransportById(const std::string& sId)
     return nullptr;
 }
 
-bool XMLProfileManager::insertDynamicTypeByName(const std::string& sName, p_dynamictypebuilder_t type)
+bool XMLProfileManager::insertDynamicTypeByName(
+        const std::string& sName,
+        p_dynamictypebuilder_t type)
 {
     if (m_dynamictypes.find(sName) == m_dynamictypes.end())
     {
@@ -481,7 +514,8 @@ bool XMLProfileManager::insertDynamicTypeByName(const std::string& sName, p_dyna
     return false;
 }
 
-p_dynamictypebuilder_t XMLProfileManager::getDynamicTypeByName(const std::string& sName)
+p_dynamictypebuilder_t XMLProfileManager::getDynamicTypeByName(
+        const std::string& sName)
 {
     if (m_dynamictypes.find(sName) != m_dynamictypes.end())
     {
@@ -490,7 +524,9 @@ p_dynamictypebuilder_t XMLProfileManager::getDynamicTypeByName(const std::string
     return nullptr;
 }
 
-XMLP_ret XMLProfileManager::extractTopicProfile(up_base_node_t& profile, const std::string& filename)
+XMLP_ret XMLProfileManager::extractTopicProfile(
+        up_base_node_t& profile,
+        const std::string& filename)
 {
     (void)(filename);
     std::string profile_name = "";
