@@ -95,12 +95,12 @@ public:
      * @param profile_name Name for the profile to be used to fill the structure.
      * @param atts Structure to be filled.
      * @param log_error Flag to log an error if the profile_name is not found.
-     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
      */
     RTPS_DllAPI static XMLP_ret fillParticipantAttributes(
             const std::string& profile_name,
             ParticipantAttributes& atts,
-            bool log_error = false);
+            bool log_error = true);
 
     //!Fills participant_attributes with the default values.
     RTPS_DllAPI static void getDefaultParticipantAttributes(
@@ -111,12 +111,12 @@ public:
      * @param profile_name Name for the profile to be used to fill the structure.
      * @param atts Structure to be filled.
      * @param log_error Flag to log an error if the profile_name is not found.
-     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
      */
     RTPS_DllAPI static XMLP_ret fillPublisherAttributes(
             const std::string& profile_name,
             PublisherAttributes& atts,
-            bool log_error = false);
+            bool log_error = true);
 
     //!Fills publisher_attributes with the default values.
     RTPS_DllAPI static void getDefaultPublisherAttributes(
@@ -127,12 +127,12 @@ public:
      * @param profile_name Name for the profile to be used to fill the structure.
      * @param atts Structure to be filled.
      * @param log_error Flag to log an error if the profile_name is not found.
-     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
      */
     RTPS_DllAPI static XMLP_ret fillSubscriberAttributes(
             const std::string& profile_name,
             SubscriberAttributes& atts,
-            bool log_error = false);
+            bool log_error = true);
 
     //!Fills subscriber_attributes with the default values.
     RTPS_DllAPI static void getDefaultSubscriberAttributes(
