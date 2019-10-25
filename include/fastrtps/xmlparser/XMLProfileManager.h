@@ -140,12 +140,12 @@ public:
 
     //!Add a new transport instance along with its id.
     RTPS_DllAPI static bool insertTransportById(
-            const std::string& sId,
+            const std::string& transport_id,
             sp_transport_t transport);
 
     //!Retrieves a transport instance by its id.
     RTPS_DllAPI static sp_transport_t getTransportById(
-            const std::string& sId);
+            const std::string& transport_id);
 
     /**
      * Search for the profile specified and fill the structure.
@@ -163,12 +163,12 @@ public:
 
     //!Add a new dynamic type instance along with its name.
     RTPS_DllAPI static bool insertDynamicTypeByName(
-            const std::string& sName,
+            const std::string& type_name,
             p_dynamictypebuilder_t type);
 
     //!Retrieves a transport instance by its name.
     RTPS_DllAPI static p_dynamictypebuilder_t getDynamicTypeByName(
-            const std::string& sName);
+            const std::string& type_name);
 
     /**
      * Deletes the XMLProsileManager instance.
@@ -177,11 +177,11 @@ public:
      */
     RTPS_DllAPI static void DeleteInstance()
     {
-        m_participant_profiles.clear();
-        m_publisher_profiles.clear();
-        m_subscriber_profiles.clear();
-        m_xml_files.clear();
-        m_transport_profiles.clear();
+        participant_profiles_.clear();
+        publisher_profiles_.clear();
+        subscriber_profiles_.clear();
+        xml_files_.clear();
+        transport_profiles_.clear();
     }
 
     /**
@@ -190,11 +190,11 @@ public:
      * XMLProfileManager::DeleteDynamicPubSubType method.
      */
     RTPS_DllAPI static types::DynamicPubSubType* CreateDynamicPubSubType(
-            const std::string& typeName)
+            const std::string& type_name)
     {
-        if (m_dynamictypes.find(typeName) != m_dynamictypes.end())
+        if (dynamic_types_.find(type_name) != dynamic_types_.end())
         {
-            return new types::DynamicPubSubType(m_dynamictypes[typeName]->build());
+            return new types::DynamicPubSubType(dynamic_types_[type_name]->build());
         }
         return nullptr;
     }
@@ -237,19 +237,19 @@ private:
 
     static BaseNode* root;
 
-    static participant_map_t m_participant_profiles;
+    static participant_map_t participant_profiles_;
 
-    static publisher_map_t m_publisher_profiles;
+    static publisher_map_t publisher_profiles_;
 
-    static subscriber_map_t m_subscriber_profiles;
+    static subscriber_map_t subscriber_profiles_;
 
-    static topic_map_t m_topic_profiles;
+    static topic_map_t topic_profiles_;
 
-    static xmlfiles_map_t m_xml_files;
+    static xmlfiles_map_t xml_files_;
 
-    static sp_transport_map_t m_transport_profiles;
+    static sp_transport_map_t transport_profiles_;
 
-    static p_dynamictype_map_t m_dynamictypes;
+    static p_dynamictype_map_t dynamic_types_;
 };
 
 } /* xmlparser */
