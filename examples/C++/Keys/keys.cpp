@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <condition_variable>
 
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
@@ -11,8 +12,6 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/subscriber/SampleInfo.h>
-
-#include <fastrtps/utils/eClock.h>
 
 #include "samplePubSubTypes.h"
 
@@ -37,25 +36,20 @@ typedef struct
     uint16_t max_samples_per_key;
 } example_configuration;
 
-class PubListener :public eprosima::fastrtps::PublisherListener
+class PubListener : public eprosima::fastrtps::PublisherListener
 {
 public:
-    PubListener() :n_matched(0), firstConnected(false) {};
-    ~PubListener() {};
-    void onPublicationMatched(eprosima::fastrtps::Publisher* /*pub*/, eprosima::fastrtps::rtps::MatchingInfo& /*info*/)
-    {
-        //runPublisher();
-    }
-    int n_matched;
-    bool firstConnected;
-};
 
-class SubListener :public eprosima::fastrtps::SubscriberListener
-{
-public:
-    SubListener() :n_matched(0), n_samples(0) {};
-    ~SubListener() {};
-    void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, eprosima::fastrtps::rtps::MatchingInfo& info)
+    PubListener()
+        : n_matched(0)
+        , firstConnected(false)
+    {}
+
+    ~PubListener() {}
+
+    void onPublicationMatched(
+            eprosima::fastrtps::Publisher* /*pub*/,
+            eprosima::fastrtps::rtps::MatchingInfo& info)
     {
         if (info.status == MATCHED_MATCHING)
         {
@@ -65,8 +59,43 @@ public:
         {
             n_matched--;
         }
+        cv_.notify_all();
     }
-    void onNewDataMessage(eprosima::fastrtps::Subscriber* sub)
+
+    int n_matched;
+    bool firstConnected;
+    std::condition_variable cv_;
+    std::mutex mutex_;
+};
+
+class SubListener : public eprosima::fastrtps::SubscriberListener
+{
+public:
+
+    SubListener()
+        : n_matched(0)
+        , n_samples(0)
+    {}
+
+    ~SubListener() {}
+
+    void onSubscriptionMatched(
+            eprosima::fastrtps::Subscriber* /*sub*/,
+            eprosima::fastrtps::rtps::MatchingInfo& info)
+    {
+        if (info.status == MATCHED_MATCHING)
+        {
+            n_matched++;
+        }
+        else
+        {
+            n_matched--;
+        }
+        cv_.notify_all();
+    }
+
+    void onNewDataMessage(
+            eprosima::fastrtps::Subscriber* sub)
     {
         if (sub->takeNextData((void*)&m_sample, &m_info))
         {
@@ -83,15 +112,27 @@ public:
     eprosima::fastrtps::SampleInfo_t m_info;
     int n_matched;
     uint32_t n_samples;
+    std::condition_variable cv_;
+    std::mutex mutex_;
 };
 
 void keys();
-void publisherKeys();
-void subscriberKeys();
-Publisher* initPublisher(samplePubSubType& sampleType, PubListener& listener);
-Subscriber* initSubscriber(samplePubSubType& sampleType, SubListener* listener);
 
-int main(int argc, char** argv)
+void publisherKeys();
+
+void subscriberKeys();
+
+Publisher* initPublisher(
+        samplePubSubType& sampleType,
+        PubListener& listener);
+
+Subscriber* initSubscriber(
+        samplePubSubType& sampleType,
+        SubListener* listener);
+
+int main(
+        int argc,
+        char** argv)
 {
     int iMode = -1;
     if (argc > 1)
@@ -121,14 +162,16 @@ int main(int argc, char** argv)
     return 0;
 }
 
-Publisher* initPublisher(samplePubSubType& sampleType, PubListener& listener)
+Publisher* initPublisher(
+        samplePubSubType& sampleType,
+        PubListener& listener)
 {
     ParticipantAttributes PparamPub;
     PparamPub.rtps.builtin.domainId = 0;
     PparamPub.rtps.builtin.leaseDuration = c_TimeInfinite;
     PparamPub.rtps.setName("PublisherParticipant");
 
-    Participant *PubParticipant = Domain::createParticipant(PparamPub);
+    Participant* PubParticipant = Domain::createParticipant(PparamPub);
     if (PubParticipant == nullptr)
     {
         std::cout << " Something went wrong while creating the Publisher Participant..." << std::endl;
@@ -152,7 +195,7 @@ Publisher* initPublisher(samplePubSubType& sampleType, PubListener& listener)
     Pparam.topic.resourceLimitsQos.max_samples_per_instance = 20;
 
     std::cout << "Creating Publisher..." << std::endl;
-    Publisher *myPub = Domain::createPublisher(PubParticipant, Pparam, &listener);
+    Publisher* myPub = Domain::createPublisher(PubParticipant, Pparam, &listener);
     if (myPub == nullptr)
     {
         std::cout << "Something went wrong while creating the Publisher..." << std::endl;
@@ -160,14 +203,16 @@ Publisher* initPublisher(samplePubSubType& sampleType, PubListener& listener)
     return myPub;
 }
 
-Subscriber* initSubscriber(samplePubSubType& sampleType, SubListener* listener)
+Subscriber* initSubscriber(
+        samplePubSubType& sampleType,
+        SubListener* listener)
 {
     ParticipantAttributes PparamSub;
     PparamSub.rtps.builtin.domainId = 0;
     PparamSub.rtps.builtin.leaseDuration = c_TimeInfinite;
     PparamSub.rtps.setName("SubscriberParticipant");
 
-    Participant *SubParticipant = Domain::createParticipant(PparamSub);
+    Participant* SubParticipant = Domain::createParticipant(PparamSub);
     if (SubParticipant == nullptr)
     {
         std::cout << " Something went wrong while creating the Subscriber Participant..." << std::endl;
@@ -191,7 +236,7 @@ Subscriber* initSubscriber(samplePubSubType& sampleType, SubListener* listener)
     Rparam.topic.resourceLimitsQos.max_samples_per_instance = 20;
 
     std::cout << "Creating Subscriber..." << std::endl;
-    Subscriber *mySub = Domain::createSubscriber(SubParticipant, Rparam, listener);
+    Subscriber* mySub = Domain::createSubscriber(SubParticipant, Rparam, listener);
     if (mySub == nullptr)
     {
         std::cout << "Something went wrong while creating the Subscriber..." << std::endl;
@@ -209,6 +254,13 @@ void keys()
     Publisher* myPub = initPublisher(sampleType, pubListener);
     Subscriber* mySub = initSubscriber(sampleType, nullptr);
 
+    // wait for the connection
+    std::unique_lock<std::mutex> lock(pubListener.mutex_);
+    pubListener.cv_.wait(lock, [&pubListener]()
+    {
+        return pubListener.n_matched > 0;
+    });
+
     //Send 10 samples
     std::cout << "Publishing 5 keys, 10 samples per key..." << std::endl;
     for (uint8_t i = 0; i < 5; i++)
@@ -221,7 +273,7 @@ void keys()
         }
     }
 
-    eClock::my_sleep(1500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     std::cout << "Publishing 10 more samples on a key 3..." << std::endl;
     for (uint8_t j = 0; j < 10; j++)
@@ -231,7 +283,7 @@ void keys()
         myPub->write(&my_sample);
     }
 
-    eClock::my_sleep(1500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     //Read the contents of both histories:
     std::vector< std::pair<int, int> > sampleList;
@@ -267,6 +319,13 @@ void publisherKeys()
 
     Publisher* myPub = initPublisher(sampleType, pubListener);
 
+    // wait for the connection
+    std::unique_lock<std::mutex> lock(pubListener.mutex_);
+    pubListener.cv_.wait(lock, [&pubListener]()
+    {
+        return pubListener.n_matched > 0;
+    });
+
     //Send 10 samples
     std::cout << "Publishing 5 keys, 10 samples per key..." << std::endl;
     for (uint8_t i = 0; i < 5; i++)
@@ -279,7 +338,7 @@ void publisherKeys()
         }
     }
 
-    eClock::my_sleep(1500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     std::cout << "Publishing 10 more samples on a key 3..." << std::endl;
     for (uint8_t j = 0; j < 10; j++)
@@ -289,7 +348,7 @@ void publisherKeys()
         myPub->write(&my_sample);
     }
 
-    eClock::my_sleep(1500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
     Domain::stopAll();
 }
@@ -303,11 +362,11 @@ void subscriberKeys()
 
     initSubscriber(sampleType, &subListener);
 
-    // wait for the connection
-    while (subListener.n_matched == 0)
+    std::unique_lock<std::mutex> lock(subListener.mutex_);
+    subListener.cv_.wait(lock, [&subListener]()
     {
-        eClock::my_sleep(100);
-    }
+         return subListener.n_matched > 0;
+     });
 
     std::cin.ignore();
 
