@@ -342,18 +342,6 @@ public:
      */
     RTPS_DllAPI ExtendedTypeDefn& extended_defn();
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-    /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    //static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
-
-#endif
-
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.

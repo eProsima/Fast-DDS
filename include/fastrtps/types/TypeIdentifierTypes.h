@@ -115,18 +115,6 @@ public:
         return m_bound;
     }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-    /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
-
-#endif
-
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -219,18 +207,6 @@ public:
     {
         return m_bound;
     }
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-    /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
-
-#endif
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -350,18 +326,6 @@ public:
     {
         return m_element_flags;
     }
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-    /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
-
-#endif
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -516,18 +480,6 @@ public:
         return m_element_identifier;
     }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-    /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
-
-#endif
-
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -681,18 +633,6 @@ public:
     {
         return m_element_identifier;
     }
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-    /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
-
-#endif
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -858,18 +798,6 @@ public:
         return m_element_identifier;
     }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-    /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
-
-#endif
-
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -1033,18 +961,6 @@ public:
     {
         return m_element_identifier;
     }
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-    /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
-
-#endif
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1249,18 +1165,6 @@ public:
     {
         return m_key_identifier;
     }
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-    /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
-
-#endif
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1468,18 +1372,6 @@ public:
         return m_key_identifier;
     }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-    /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
-
-#endif
-
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -1639,18 +1531,6 @@ public:
         return m_scc_index;
     }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-    /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
-
-#endif
-
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -1718,18 +1598,6 @@ public:
      * @param x Reference to the object ExtendedTypeDefn that will be copied.
      */
     RTPS_DllAPI virtual ExtendedTypeDefn& operator=(ExtendedTypeDefn &&x);
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-    /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
-
-#endif
 
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
