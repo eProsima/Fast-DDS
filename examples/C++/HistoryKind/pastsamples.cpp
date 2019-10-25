@@ -161,6 +161,8 @@ void pastsamples(){
     }
     std::cout << std::endl;
 
+    Domain::removeParticipant(PubParticipant);
+    Domain::removeParticipant(SubParticipant);
 }
 
 
