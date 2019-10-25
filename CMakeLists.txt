@@ -277,10 +277,15 @@ endif()
 ###############################################################################
 # Add an option to toggle the generation of the API documentation.
 option(BUILD_DOCUMENTATION "Use doxygen to create product documentation" OFF)
+option(CHECK_DOCUMENTATION "Use doxygen to check code documentation" OFF)
 
 if(EPROSIMA_INSTALLER)
     set(BUILD_DOCUMENTATION ON)
     set(DOXYGEN_SHOULD_SKIP_THIS_PUBLIC "DOXYGEN_SHOULD_SKIP_THIS_PUBLIC")
+endif()
+
+if(CHECK_DOCUMENTATION)
+    set(BUILD_DOCUMENTATION ON)
 endif()
 
 if(BUILD_DOCUMENTATION)
@@ -298,17 +303,20 @@ if(BUILD_DOCUMENTATION)
     elseif(WIN32)
         set(DOXYFILE_MAKE make.bat)
     endif()
-    find_program(WGET_EXE wget)
-    if(WGET_EXE)
-        message(STATUS "Found WGet: ${WGET_EXE}")
-    else()
-        message(FATAL_ERROR "wget is needed to build the documentation. Please install it correctly")
-    endif()
-    find_program(UNZIP_EXE unzip)
-    if(UNZIP_EXE)
-        message(STATUS "Found Unzip: ${UNZIP_EXE}")
-    else()
-        message(FATAL_ERROR "unzip is needed to build the documentation. Please install it correctly")
+    
+    if(NOT CHECK_DOCUMENTATION)
+        find_program(WGET_EXE wget)
+        if(WGET_EXE)
+            message(STATUS "Found WGet: ${WGET_EXE}")
+        else()
+            message(FATAL_ERROR "wget is needed to build the documentation. Please install it correctly")
+        endif()
+        find_program(UNZIP_EXE unzip)
+        if(UNZIP_EXE)
+            message(STATUS "Found Unzip: ${UNZIP_EXE}")
+        else()
+            message(FATAL_ERROR "unzip is needed to build the documentation. Please install it correctly")
+        endif()
     endif()
 
     # Target to create documentation directories
@@ -317,7 +325,11 @@ if(BUILD_DOCUMENTATION)
         COMMENT "Creating documentation directory" VERBATIM)
 
     ### Doxygen ########################3
-
+    if(CHECK_DOCUMENTATION)
+        set(USE_DOT NO)
+    else()
+        set(USE_DOT YES)
+    endif()
     # Configure the template doxyfile for or specific project
     configure_file(doxyfile.in ${PROJECT_BINARY_DIR}/doxyfile @ONLY IMMEDIATE)
     # Add custom target to run doxygen when ever the project is build
@@ -342,21 +354,25 @@ if(BUILD_DOCUMENTATION)
     configure_file(doc/README.html.in ${README_LOCATION}/README.html @ONLY IMMEDIATE)
 
     ### ReadTheDocs ########################
-
-    add_custom_target(readthedocs
-        COMMAND "${WGET_EXE}" "https://media.readthedocs.org/htmlzip/eprosima-fast-rtps/v${PROJECT_VERSION}/eprosima-fast-rtps.zip"
-        COMMAND "${UNZIP_EXE}" "eprosima-fast-rtps.zip" -d "${PROJECT_BINARY_DIR}/doc/"
-        COMMAND ${CMAKE_COMMAND} -E remove_directory "${PROJECT_BINARY_DIR}/doc/manual"
-        COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_BINARY_DIR}/doc/eprosima-fast-rtps-v${PROJECT_VERSION}" "${PROJECT_BINARY_DIR}/doc/manual"
-        COMMAND ${CMAKE_COMMAND} -E remove "eprosima-fast-rtps.zip"
-        )
-
-    add_dependencies(readthedocs docdirs)
+    if(NOT CHECK_DOCUMENTATION)
+        add_custom_target(readthedocs
+            COMMAND "${WGET_EXE}" "https://media.readthedocs.org/htmlzip/eprosima-fast-rtps/v${PROJECT_VERSION}/eprosima-fast-rtps.zip"
+            COMMAND "${UNZIP_EXE}" "eprosima-fast-rtps.zip" -d "${PROJECT_BINARY_DIR}/doc/"
+            COMMAND ${CMAKE_COMMAND} -E remove_directory "${PROJECT_BINARY_DIR}/doc/manual"
+            COMMAND ${CMAKE_COMMAND} -E rename "${PROJECT_BINARY_DIR}/doc/eprosima-fast-rtps-v${PROJECT_VERSION}" "${PROJECT_BINARY_DIR}/doc/manual"
+            COMMAND ${CMAKE_COMMAND} -E remove "eprosima-fast-rtps.zip"
+            )
+    
+        add_dependencies(readthedocs docdirs)
+    endif()
 
     add_custom_target(doc ALL
         COMMENT "Generated project documentation" VERBATIM)
 
-    add_dependencies(doc doxygen readthedocs)
+    add_dependencies(doc doxygen)
+    if(NOT CHECK_DOCUMENTATION)
+        add_dependencies(doc readthedocs)
+    endif()
 endif()
 
 ###############################################################################
@@ -403,10 +419,12 @@ if(BUILD_DOCUMENTATION)
         COMPONENT documentation
         )
 
-    install(DIRECTORY ${PROJECT_BINARY_DIR}/doc/manual
-        DESTINATION ${DOC_INSTALL_DIR}
-        COMPONENT documentation
-        )
+    if(NOT CHECK_DOCUMENTATION)
+        install(DIRECTORY ${PROJECT_BINARY_DIR}/doc/manual
+            DESTINATION ${DOC_INSTALL_DIR}
+            COMPONENT documentation
+            )
+    endif()
 
     ### Documentation component
     set(CPACK_COMPONENT_DOCUMENTATION_DISPLAY_NAME "Documentation")
