@@ -39,22 +39,22 @@ public:
 
     bool is_primitive_type() const
     {
-        return (int(kind_) & int(TypeKind::PRIMITIVE_TYPE)) != 0;
+        return (kind_ & TypeKind::PRIMITIVE_TYPE) != TypeKind::NO_TYPE;
     }
 
     bool is_collection_type() const
     {
-        return (int(kind_) & int(TypeKind::COLLECTION_TYPE)) != 0;
+        return (kind_ & TypeKind::COLLECTION_TYPE) != TypeKind::NO_TYPE;
     }
 
     bool is_aggregation_type() const
     {
-        return (int(kind_) & int(TypeKind::AGGREGATION_TYPE)) != 0;
+        return (kind_ & TypeKind::AGGREGATION_TYPE) != TypeKind::NO_TYPE;
     }
 
     bool is_constructed_type() const
     {
-        return (int(kind_) & int(TypeKind::CONSTRUCTED_TYPE)) != 0;
+        return (kind_ & TypeKind::CONSTRUCTED_TYPE) != TypeKind::NO_TYPE;
     }
 
     virtual TypeConsistency is_compatible(const DynamicType& other) const = 0;

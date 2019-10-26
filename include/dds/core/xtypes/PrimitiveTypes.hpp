@@ -112,6 +112,11 @@ private:
     virtual TypeConsistency is_compatible(
             const DynamicType& other) const override
     {
+        if(!other.is_primitive_type())
+        {
+            return TypeConsistency::NONE;
+        }
+
         if(kind() == other.kind())
         {
             return TypeConsistency::EQUALS;
@@ -122,7 +127,8 @@ private:
         {
             consistency |= TypeConsistency::IGNORE_TYPE_WIDTH;
         }
-        else
+
+        if((kind() & TypeKind::UNSIGNED_TYPE) != (other.kind() & TypeKind::UNSIGNED_TYPE))
         {
             consistency |= TypeConsistency::IGNORE_TYPE_SIGN;
         }
