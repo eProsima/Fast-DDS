@@ -32,21 +32,15 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 /**
- * @enum ChangeKind_t, different types of CacheChange_t.
+ * Different types of CacheChange_t.
  * @ingroup COMMON_MODULE
  */
 enum RTPS_DllAPI ChangeKind_t
 {
-    ALIVE,                //!< ALIVE
-    NOT_ALIVE_DISPOSED,   //!< NOT_ALIVE_DISPOSED
-    NOT_ALIVE_UNREGISTERED,//!< NOT_ALIVE_UNREGISTERED
-    NOT_ALIVE_DISPOSED_UNREGISTERED //!<NOT_ALIVE_DISPOSED_UNREGISTERED
-};
-
-enum ChangeFragmentStatus_t
-{
-    NOT_PRESENT = 0,
-    PRESENT = 1
+    ALIVE,                          //!< ALIVE
+    NOT_ALIVE_DISPOSED,             //!< NOT_ALIVE_DISPOSED
+    NOT_ALIVE_UNREGISTERED,         //!< NOT_ALIVE_UNREGISTERED
+    NOT_ALIVE_DISPOSED_UNREGISTERED //!< NOT_ALIVE_DISPOSED_UNREGISTERED
 };
 
 /**
