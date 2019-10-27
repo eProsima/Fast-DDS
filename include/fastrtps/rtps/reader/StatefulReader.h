@@ -102,10 +102,12 @@ public:
 
     /**
      * Processes a new DATA FRAG message.
+     *
      * @param change Pointer to the CacheChange_t.
-     * @param sampleSize Size of the complete assembled message.
-     * @param fragmentStartingNum fragment number of this particular fragment.
-     * @return true if the reader accepts messages.
+     * @param sampleSize Size of the complete, assembled message.
+     * @param fragmentStartingNum Starting number of this particular fragment.
+     * @param fragmentsInSubmessage Number of fragments in the submessage.
+     * @return true if the reader accepts message.
      */
     bool processDataFragMsg(
             CacheChange_t* change,

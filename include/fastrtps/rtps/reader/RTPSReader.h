@@ -107,6 +107,7 @@ public:
      * @param change Pointer to the CacheChange_t.
      * @param sampleSize Size of the complete, assembled message.
      * @param fragmentStartingNum Starting number of this particular fragment.
+     * @param fragmentsInSubmessage Number of fragments in the submessage.
      * @return true if the reader accepts message.
      */
     RTPS_DllAPI virtual bool processDataFragMsg(
