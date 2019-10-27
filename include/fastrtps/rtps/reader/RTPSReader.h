@@ -73,21 +73,24 @@ public:
      * @param wdata Attributes of the writer to add.
      * @return True if correctly added.
      */
-    RTPS_DllAPI virtual bool matched_writer_add(const WriterProxyData& wdata) = 0;
+    RTPS_DllAPI virtual bool matched_writer_add(
+            const WriterProxyData& wdata) = 0;
 
     /**
      * Remove a writer represented by its attributes from the matched writers.
      * @param writer_guid GUID of the writer to remove.
      * @return True if correctly removed.
      */
-    RTPS_DllAPI virtual bool matched_writer_remove(const GUID_t& writer_guid) = 0;
+    RTPS_DllAPI virtual bool matched_writer_remove(
+            const GUID_t& writer_guid) = 0;
 
     /**
      * Tells us if a specific Writer is matched against this reader.
      * @param writer_guid GUID of the writer to check.
      * @return True if it is matched.
      */
-    RTPS_DllAPI virtual bool matched_writer_is_matched(const GUID_t& writer_guid) = 0;
+    RTPS_DllAPI virtual bool matched_writer_is_matched(
+            const GUID_t& writer_guid) = 0;
 
     /**
      * Processes a new DATA message.
@@ -95,7 +98,8 @@ public:
      * @param change Pointer to the CacheChange_t.
      * @return true if the reader accepts messages from the.
      */
-    RTPS_DllAPI virtual bool processDataMsg(CacheChange_t* change) = 0;
+    RTPS_DllAPI virtual bool processDataMsg(
+            CacheChange_t* change) = 0;
 
     /**
      * Processes a new DATA FRAG message.
@@ -103,12 +107,14 @@ public:
      * @param change Pointer to the CacheChange_t.
      * @param sampleSize Size of the complete, assembled message.
      * @param fragmentStartingNum Starting number of this particular fragment.
+     * @param fragmentsInSubmessage Number of fragments in the submessage.
      * @return true if the reader accepts message.
      */
     RTPS_DllAPI virtual bool processDataFragMsg(
             CacheChange_t* change,
             uint32_t sampleSize,
-            uint32_t fragmentStartingNum) = 0;
+            uint32_t fragmentStartingNum,
+            uint16_t fragmentsInSubmessage) = 0;
 
     /**
      * Processes a new HEARTBEAT message.
@@ -164,7 +170,8 @@ public:
      * @param target Pointed to ReaderLister to attach
      * @return True is correctly set.
      */
-    RTPS_DllAPI bool setListener(ReaderListener* target);
+    RTPS_DllAPI bool setListener(
+            ReaderListener* target);
 
     /**
      * Reserve a CacheChange_t.
@@ -179,7 +186,8 @@ public:
     /**
      * Release a cacheChange.
      */
-    RTPS_DllAPI void releaseCache(CacheChange_t* change);
+    RTPS_DllAPI void releaseCache(
+            CacheChange_t* change);
 
     /**
      * Read the next unread CacheChange_t from the history
@@ -202,7 +210,7 @@ public:
             WriterProxy** wp) = 0;
 
     RTPS_DllAPI bool wait_for_unread_cache(
-            const eprosima::fastrtps::Duration_t &timeout);
+            const eprosima::fastrtps::Duration_t& timeout);
 
     RTPS_DllAPI uint64_t get_unread_count() const;
 
@@ -242,12 +250,14 @@ public:
     //! The liveliness changed status struct as defined in the DDS
     LivelinessChangedStatus liveliness_changed_status_;
 
-    inline void enableMessagesFromUnkownWriters(bool enable)
+    inline void enableMessagesFromUnkownWriters(
+            bool enable)
     {
         m_acceptMessagesFromUnkownWriters = enable;
     }
 
-    void setTrustedWriter(const EntityId_t& writer)
+    void setTrustedWriter(
+            const EntityId_t& writer)
     {
         m_acceptMessagesFromUnkownWriters = false;
         m_trustedWriterEntityId = writer;
@@ -279,25 +289,26 @@ protected:
      * @return Last notified sequence number for input guid
      * @remarks Takes persistence_guid into consideration
      */
-    SequenceNumber_t get_last_notified(const GUID_t& guid);
+    SequenceNumber_t get_last_notified(
+            const GUID_t& guid);
 
     /*!
-    * @brief Update the last notified sequence for a RTPS guid
-    * @param guid The RTPS guid of the writer
-    * @param seq Max sequence number available on writer
-    * @return Previous value of last notified sequence number for input guid
-    * @remarks Takes persistence_guid into consideration
-    */
+     * @brief Update the last notified sequence for a RTPS guid
+     * @param guid The RTPS guid of the writer
+     * @param seq Max sequence number available on writer
+     * @return Previous value of last notified sequence number for input guid
+     * @remarks Takes persistence_guid into consideration
+     */
     SequenceNumber_t update_last_notified(
             const GUID_t& guid,
             const SequenceNumber_t& seq);
 
     /*!
-    * @brief Set the last notified sequence for a persistence guid
-    * @param persistence_guid The persistence guid to update
-    * @param seq Sequence number to set for input guid
-    * @remarks Persistent readers will write to DB
-    */
+     * @brief Set the last notified sequence for a persistence guid
+     * @param persistence_guid The persistence guid to update
+     * @param seq Sequence number to set for input guid
+     * @remarks Persistent readers will write to DB
+     */
     virtual void set_last_notified(
             const GUID_t& persistence_guid,
             const SequenceNumber_t& seq);
@@ -331,7 +342,8 @@ protected:
 
 private:
 
-    RTPSReader& operator=(const RTPSReader&) = delete;
+    RTPSReader& operator=(
+            const RTPSReader&) = delete;
 };
 
 } /* namespace rtps */
