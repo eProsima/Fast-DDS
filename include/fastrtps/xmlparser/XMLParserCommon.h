@@ -19,8 +19,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
-#define draw(ident, text, ...) for (uint8_t i = ident + 1; i > 0; --i) (i == 1) ? printf(text, ## __VA_ARGS__) : printf( \
-            "\t")
+#define draw(ident, text, ...) for (uint8_t i = ident + 1; i > 0; --i) (i == 1)? printf(text, ## __VA_ARGS__) : printf( \
+        "\t")
 
 /**
  * Enum class XMLP_ret, used to provide a strongly typed result from the operations within this module.
@@ -308,6 +308,8 @@ extern const char* MULTICAST_LOCATOR;
 extern const char* _RELIABLE_RELIABILITY_QOS;
 extern const char* _BEST_EFFORT_RELIABILITY_QOS;
 extern const char* DURABILITY_QOS;
+extern const char* _PERSISTENT_DURABILITY_QOS;
+extern const char* _TRANSIENT_DURABILITY_QOS;
 extern const char* _TRANSIENT_LOCAL_DURABILITY_QOS;
 extern const char* _VOLATILE_DURABILITY_QOS;
 extern const char* OWNERSHIP_QOS;
