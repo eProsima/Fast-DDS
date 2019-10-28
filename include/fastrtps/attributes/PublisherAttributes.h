@@ -30,7 +30,7 @@
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 
 /**
  * Class PublisherAttributes, used by the user to define the attributes of a Publisher.
@@ -39,15 +39,20 @@ namespace fastrtps{
 class PublisherAttributes
 {
 public:
+
     PublisherAttributes()
         : historyMemoryPolicy(rtps::PREALLOCATED_MEMORY_MODE)
         , m_userDefinedID(-1)
         , m_entityID(-1)
-    {}
+    {
+    }
 
-    virtual ~PublisherAttributes(){}
+    virtual ~PublisherAttributes()
+    {
+    }
 
-    bool operator==(const PublisherAttributes& b) const
+    bool operator ==(
+            const PublisherAttributes& b) const
     {
         return (this->m_userDefinedID == b.m_userDefinedID) &&
                (this->m_entityID == b.m_entityID) &&
@@ -89,30 +94,49 @@ public:
     rtps::PropertyPolicy properties;
     ResourceLimitedContainerConfig matched_subscriber_allocation;
 
+    //! Persitence GUID
+    rtps::GUID_t persistence_guid;
+
     /**
      * Get the user defined ID
      * @return User defined ID
      */
-    inline int16_t getUserDefinedID() const { return m_userDefinedID; }
+    inline int16_t getUserDefinedID() const
+    {
+        return m_userDefinedID;
+    }
 
     /**
      * Get the entity defined ID
      * @return Entity ID
      */
-    inline int16_t getEntityID() const { return m_entityID; }
+    inline int16_t getEntityID() const
+    {
+        return m_entityID;
+    }
 
     /**
      * Set the user defined ID
      * @param id User defined ID to be set
      */
-    inline void setUserDefinedID(uint8_t id) { m_userDefinedID = id; }
+    inline void setUserDefinedID(
+            uint8_t id)
+    {
+        m_userDefinedID = id;
+    }
 
     /**
      * Set the entity ID
      * @param id Entity ID to be set
      */
-    inline void setEntityID(uint8_t id) { m_entityID = id; }
+    inline void setEntityID(
+            uint8_t id)
+    {
+        m_entityID = id;
+    }
+
 private:
+
     //!User Defined ID, used for StaticEndpointDiscovery, default value -1.
     int16_t m_userDefinedID;
     //!Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.

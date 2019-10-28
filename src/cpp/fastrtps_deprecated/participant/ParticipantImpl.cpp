@@ -184,6 +184,7 @@ Publisher* ParticipantImpl::createPublisher(
     watt.endpoint.topicKind = att.topic.topicKind;
     watt.endpoint.unicastLocatorList = att.unicastLocatorList;
     watt.endpoint.remoteLocatorList = att.remoteLocatorList;
+    watt.endpoint.persistence_guid = att.persistence_guid;
     watt.mode = att.qos.m_publishMode.kind ==
             eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
     watt.endpoint.properties = att.properties;
@@ -315,6 +316,7 @@ Subscriber* ParticipantImpl::createSubscriber(
     ratt.endpoint.unicastLocatorList = att.unicastLocatorList;
     ratt.endpoint.remoteLocatorList = att.remoteLocatorList;
     ratt.expectsInlineQos = att.expectsInlineQos;
+    ratt.endpoint.persistence_guid = att.persistence_guid;
     ratt.endpoint.properties = att.properties;
     if (att.getEntityID() > 0)
     {

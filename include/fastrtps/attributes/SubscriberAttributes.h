@@ -39,93 +39,118 @@ namespace fastrtps {
  */
 class SubscriberAttributes
 {
-    public:
-        //!Topic Attributes
-        TopicAttributes topic;
 
-        //!Reader QOs.
-        ReaderQos qos;
+public:
 
-        //!Times for a RELIABLE Reader
-        rtps::ReaderTimes times;
+    //!Topic Attributes
+    TopicAttributes topic;
 
-        //!Unicast locator list
-        rtps::LocatorList_t unicastLocatorList;
+    //!Reader QOs.
+    ReaderQos qos;
 
-        //!Multicast locator list
-        rtps::LocatorList_t multicastLocatorList;
+    //!Times for a RELIABLE Reader
+    rtps::ReaderTimes times;
 
-        //!Remote locator list
-        rtps::LocatorList_t remoteLocatorList;
+    //!Unicast locator list
+    rtps::LocatorList_t unicastLocatorList;
 
-        //!Expects Inline QOS
-        bool expectsInlineQos;
+    //!Multicast locator list
+    rtps::LocatorList_t multicastLocatorList;
 
-        //!Underlying History memory policy
-        rtps::MemoryManagementPolicy_t historyMemoryPolicy;
+    //!Remote locator list
+    rtps::LocatorList_t remoteLocatorList;
 
-        //!Properties
-        rtps::PropertyPolicy properties;
+    //!Expects Inline QOS
+    bool expectsInlineQos;
 
-        //!Matched publishers allocation limits
-        ResourceLimitedContainerConfig matched_publisher_allocation;
+    //!Underlying History memory policy
+    rtps::MemoryManagementPolicy_t historyMemoryPolicy;
 
-        SubscriberAttributes()
-            : expectsInlineQos(false)
-            , historyMemoryPolicy(rtps::PREALLOCATED_MEMORY_MODE)
-            , m_userDefinedID(-1)
-            , m_entityID(-1)
-        {}
+    //!Properties
+    rtps::PropertyPolicy properties;
 
-        virtual ~SubscriberAttributes(){}
+    //!Matched publishers allocation limits
+    ResourceLimitedContainerConfig matched_publisher_allocation;
 
-        bool operator==(const SubscriberAttributes& b) const
-        {
-            return (this->topic == b.topic) &&
-                (this->qos == b.qos) &&
-                (this->times == b.times) &&
-                (this->unicastLocatorList == b.unicastLocatorList) &&
-                (this->multicastLocatorList == b.multicastLocatorList) &&
-                (this->remoteLocatorList == b.remoteLocatorList) &&
-                (this->historyMemoryPolicy == b.historyMemoryPolicy) &&
-                (this->properties == b.properties);
-        }
+    //! Persitence GUID
+    rtps::GUID_t persistence_guid;
 
-        bool operator!=(const SubscriberAttributes& b) const
-        {
-            return !(*this == b);
-        }
+    SubscriberAttributes()
+        : expectsInlineQos(false)
+        , historyMemoryPolicy(rtps::PREALLOCATED_MEMORY_MODE)
+        , m_userDefinedID(-1)
+        , m_entityID(-1)
+    {
+    }
 
-        /**
-         * Get the user defined ID
-         * @return User defined ID
-         */
-        inline int16_t getUserDefinedID() const { return m_userDefinedID; }
+    virtual ~SubscriberAttributes()
+    {
+    }
 
-        /**
-         * Get the entity defined ID
-         * @return Entity ID
-         */
-        inline int16_t getEntityID() const { return m_entityID; }
+    bool operator ==(
+            const SubscriberAttributes& b) const
+    {
+        return (this->topic == b.topic) &&
+               (this->qos == b.qos) &&
+               (this->times == b.times) &&
+               (this->unicastLocatorList == b.unicastLocatorList) &&
+               (this->multicastLocatorList == b.multicastLocatorList) &&
+               (this->remoteLocatorList == b.remoteLocatorList) &&
+               (this->historyMemoryPolicy == b.historyMemoryPolicy) &&
+               (this->properties == b.properties);
+    }
 
-        /**
-         * Set the user defined ID
-         * @param id User defined ID to be set
-         */
-        inline void setUserDefinedID(uint8_t id) { m_userDefinedID = id; }
+    bool operator !=(
+            const SubscriberAttributes& b) const
+    {
+        return !(*this == b);
+    }
 
-        /**
-         * Set the entity ID
-         * @param id Entity ID to be set
-         */
-        inline void setEntityID(uint8_t id) { m_entityID = id; }
+    /**
+     * Get the user defined ID
+     * @return User defined ID
+     */
+    inline int16_t getUserDefinedID() const
+    {
+        return m_userDefinedID;
+    }
 
-    private:
-        //!User Defined ID, used for StaticEndpointDiscovery, default value -1.
-        int16_t m_userDefinedID;
+    /**
+     * Get the entity defined ID
+     * @return Entity ID
+     */
+    inline int16_t getEntityID() const
+    {
+        return m_entityID;
+    }
 
-        //!Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.
-        int16_t m_entityID;
+    /**
+     * Set the user defined ID
+     * @param id User defined ID to be set
+     */
+    inline void setUserDefinedID(
+            uint8_t id)
+    {
+        m_userDefinedID = id;
+    }
+
+    /**
+     * Set the entity ID
+     * @param id Entity ID to be set
+     */
+    inline void setEntityID(
+            uint8_t id)
+    {
+        m_entityID = id;
+    }
+
+private:
+
+    //!User Defined ID, used for StaticEndpointDiscovery, default value -1.
+    int16_t m_userDefinedID;
+
+    //!Entity ID, if the user want to specify the EntityID of the enpoint, default value -1.
+    int16_t m_entityID;
 };
 
 } /* namespace fastrtps */
