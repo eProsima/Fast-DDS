@@ -16,10 +16,9 @@
  *
 */
 
-#ifndef OMG_DDS_CORE_XTYPES_STRUCT_MEMBER_HPP_
-#define OMG_DDS_CORE_XTYPES_STRUCT_MEMBER_HPP_
+#ifndef OMG_DDS_CORE_XTYPES_MEMBER_HPP_
+#define OMG_DDS_CORE_XTYPES_MEMBER_HPP_
 
-#include <dds/core/xtypes/StructMember.hpp>
 #include <dds/core/xtypes/DynamicType.hpp>
 
 #include <string>
@@ -30,12 +29,12 @@ namespace xtypes {
 
 class StructType;
 
-class StructMember
+class Member
 {
     friend StructType;
 
 public:
-    StructMember(
+    Member(
             const std::string& name,
             const DynamicType& type)
         : name_(name)
@@ -47,7 +46,7 @@ public:
     {}
 
     template<typename DynamicTypeImpl>
-    StructMember(
+    Member(
             const std::string& name,
             const DynamicTypeImpl&& type)
         : name_(name)
@@ -58,9 +57,9 @@ public:
         , bitset_(false)
     {}
 
-    StructMember(const StructMember& other) = default;
-    StructMember(StructMember&& other) = default;
-    virtual ~StructMember() = default;
+    Member(const Member& other) = default;
+    Member(Member&& other) = default;
+    virtual ~Member() = default;
 
     const std::string& name() const { return name_; }
     const DynamicType& type() const { return *type_; }
@@ -71,25 +70,25 @@ public:
     bool is_bitset() const { return bitset_; };
     size_t offset() const { return offset_; }
 
-    StructMember& id(int32_t value)
+    Member& id(int32_t value)
     {
         id_ = value;
         return *this;
     }
 
-    StructMember& key(bool value = true)
+    Member& key(bool value = true)
     {
         key_ = value;
         return *this;
     }
 
-    StructMember& optional(bool value = true)
+    Member& optional(bool value = true)
     {
         optional_ = value;
         return *this;
     }
 
-    StructMember& bitset(bool value = true)
+    Member& bitset(bool value = true)
     {
         bitset_ = value;
         return *this;
@@ -105,10 +104,8 @@ private:
     size_t offset_;
 };
 
-typedef StructMember Member;
-
 } //namespace xtypes
 } //namespace core
 } //namespace dds
 
-#endif //OMG_DDS_CORE_XTYPES_STRUCT_MEMBER_HPP_
+#endif //OMG_DDS_CORE_XTYPES_MEMBER_HPP_

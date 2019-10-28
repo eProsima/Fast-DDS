@@ -27,7 +27,7 @@ namespace core {
 namespace xtypes {
 
 class DynamicType;
-class StructMember;
+class Member;
 
 class Instanceable
 {
@@ -54,14 +54,8 @@ public:
         const DynamicType& type;
         uint8_t* instance;
         size_t deep;
-        union Access
-        {
-            size_t index;
-            const StructMember* struct_member;
-
-            Access(size_t index) : index(index) {}
-            Access(const StructMember& member) : struct_member(&member) {}
-        } access;
+        size_t from_index;
+        const Member* from_member;
 
         InstanceNode(
                 const DynamicType& type,
@@ -70,19 +64,22 @@ public:
             , type(type)
             , instance(instance)
             , deep(0)
-            , access(0)
+            , from_index(0)
+            , from_member(nullptr)
         {}
 
         InstanceNode(
                 const InstanceNode& parent,
                 const DynamicType& type,
                 uint8_t* instance,
-                const Access& access)
+                size_t from_index,
+                const Member* from_member)
             : parent(&parent)
             , type(type)
             , instance(instance)
             , deep(parent.deep + 1)
-            , access(access)
+            , from_index(from_index)
+            , from_member(from_member)
         {}
     };
 

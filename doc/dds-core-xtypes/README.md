@@ -56,7 +56,7 @@ The API is divided into two different and yet related conceps.
 
 ### Type definition
 All types inherit from the base abstract type `DynamicType` as shown in the following diagram:
-![](http://www.plantuml.com/plantuml/png/ZT7D2eCm30VmUvx25_0DH9JjieCmKDWvTg4KskhIT23iuOUNKiLzNF_zDI594mHPehDmPUECc2SDoqn56UVoLHVdnQCpQesWrPf9evZ9VoAdoLfItmJqmb59_hoh2z0ouvABRLdeek1eAKiFRUfdlCx5uNUu_GjxUaJoYdvBm348ev9y0odSprrrv4RYYvjjdT1-d9GVTrGMGoWsbwo66Xhoz_N4Rm00)
+![](http://www.plantuml.com/plantuml/png/ZP5DoeD038RtEOKNy0OVedpT5WeANSTf60BZQ3EPWj335pSInVvidpppXibR9qNHF0Iu20-i_A1kdgWeyrG-g-8qHnpOBGWQxuKyAe_ndV8_Xa3kam6jIdPgnxjSW4O4PsjiO-6S5Vj0bXwvwpwEtXg7p-7wgzZIFLDqzDq4x9CAEhKNME7ktsPWOom_tk82fbHisllhAgWftfPQNm00)
 
 #### PrimitiveType
 Represents the system's basic types.
@@ -158,17 +158,19 @@ The following methods are available when:
 1. `DynamicData` represents an `AggregationType`
     ```c++
     data["member_name"].value(42); //set value 42 to the int member called "member_name"
+    data[2].value(42); //set value 42 to the third int member called "member_name"
     int value = data["member_name"].value<int>(); //get value from int member called "member_name"
     data["member_name"].value(dynamic_data_representing_a_value);
     WritableDynamicDataRef ref = data["member_name"];
+    size_t size = data.size(); //number of members
     ```
 1. `DynamicData` represents a `CollectionType`
     ```c++
-    size_t size = data.size(); //size of collection
     data[2].value(42); // set value 42 to position 2 of the collection.
     int value = data[2].value<int>(); // get value from position 2 of the collection.
     data[2] = dynamic_data_representing_a_value;
     WritableDynamicDataRef ref = data[2]; //references to a DynamicData that represents a collection
+    size_t size = data.size(); //size of collection
     ```
 1. `DynamicData` represents a `StringType`
     Same as `CollectionType` plus:
@@ -231,8 +233,8 @@ node.data() // for a view of the data
 node.type() // related type
 node.deep() // nested deep
 node.parent() // parent node in the data tree
-node.access().index() // index used for access from parent to this node
-node.access().member() // member used for access from parent to this node
+node.from_index() // index used when accessed from parent to this node
+node.from_member() // member used when accessed from parent to this node
 ```
 Note: `node.data()` will return a `ReadableDynamicDataRef` or a `WritableDynamicDataRef` depending of the node type.
 

@@ -145,7 +145,7 @@ public:
         visitor(node);
         for(uint32_t i = 0; i < sequence.size(); i++)
         {
-            InstanceNode child(node, content_type(), sequence[i], InstanceNode::Access(i));
+            InstanceNode child(node, content_type(), sequence[i], i, nullptr);
             content_type().for_each_instance(child, visitor);
         }
     }

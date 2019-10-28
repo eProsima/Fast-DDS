@@ -197,7 +197,7 @@ public:
         size_t block_size = content_type().memory_size();
         for(uint32_t i = 0; i < dimension_; i++)
         {
-            InstanceNode child(node, content_type(), node.instance + i * block_size, InstanceNode::Access(i));
+            InstanceNode child(node, content_type(), node.instance + i * block_size, i, nullptr);
             content_type().for_each_instance(child, visitor);
         }
     }

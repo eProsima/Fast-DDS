@@ -139,7 +139,7 @@ constexpr const char string_type_name[] = "std::string";
 using StringType = TStringType<char, TypeKind::STRING_TYPE, string_type_name>;
 
 constexpr const char wstring_type_name[] = "std::wstring";
-using WStringType = TStringType<wchar_t, TypeKind::WSTRING_TYPE, string_type_name>;
+using WStringType = TStringType<wchar_t, TypeKind::WSTRING_TYPE, wstring_type_name>;
 
 } //namespace xtypes
 } //namespace core

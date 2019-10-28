@@ -20,23 +20,27 @@
 #define OMG_DDS_CORE_XTYPES_AGGREGATION_TYPE_HPP_
 
 #include <dds/core/xtypes/DynamicType.hpp>
+#include <dds/core/xtypes/Member.hpp>
 
 #include <string>
 #include <map>
+#include <vector>
 #include <cassert>
 
 namespace dds {
 namespace core {
 namespace xtypes {
 
-template<typename MemberImpl>
 class AggregationType : public DynamicType
 {
 public:
-    size_t member_count() const { return members_.size(); }
-    const std::map<std::string, MemberImpl>& member_map() const { return members_; }
-    const MemberImpl& member(const std::string& name) const { return members_.at(name); }
-    bool has_member(const std::string& name) const { return members_.count(name) != 0; }
+    bool has_member(const std::string& name) const { return indexes_.count(name) != 0; }
+    const std::vector<Member>& members() const { return members_; }
+    const Member& member(size_t index) const { return members_[index]; }
+    const Member& member(const std::string& name) const
+    {
+        return members_[indexes_.at(name)];
+    }
 
 protected:
     AggregationType(
@@ -45,14 +49,17 @@ protected:
         : DynamicType(kind, name)
     {}
 
-    MemberImpl& insert_member(const std::string& name, const MemberImpl& member)
+    Member& insert_member(const Member& member)
     {
-        assert(members_.count(name) == 0);
-        return members_.emplace(name, std::move(member)).first->second;
+        assert(indexes_.count(member.name()) == 0);
+        indexes_.emplace(member.name(), members_.size());
+        members_.emplace_back(std::move(member));
+        return members_.back();
     }
 
 private:
-    std::map<std::string, MemberImpl> members_;
+    std::map<std::string, size_t> indexes_;
+    std::vector<Member> members_;
 };
 
 } //namespace xtypes

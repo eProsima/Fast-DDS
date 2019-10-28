@@ -32,70 +32,70 @@ namespace xtypes {
 inline std::string ReadableDynamicDataRef::to_string() const
 {
     std::stringstream ss;
-    for_each([&](const DynamicData::ReadableNode& o)
+    for_each([&](const DynamicData::ReadableNode& node)
     {
-        const std::string& type_name = o.data().type().name();
-        ss << std::string(o.deep() * 4, ' ');
-        if(o.has_parent())
+        const std::string& type_name = node.data().type().name();
+        ss << std::string(node.deep() * 4, ' ');
+        if(node.has_parent())
         {
             ss << "["
-                << (o.parent().type().is_aggregation_type()
-                    ? o.access().struct_member().name()
-                    : std::to_string(o.access().index()))
+                << (node.parent().type().is_aggregation_type()
+                    ? node.from_member()->name()
+                    : std::to_string(node.from_index()))
                 << "] ";
         }
-        switch(o.data().type().kind())
+        switch(node.data().type().kind())
         {
             case TypeKind::CHAR_8_TYPE:
-                ss << "<" << type_name << ">  " << o.data().value<char>();
+                ss << "<" << type_name << ">  " << node.data().value<char>();
                 break;
             case TypeKind::CHAR_16_TYPE:
-                ss << "<" << type_name << ">  " << o.data().value<char32_t>();
+                ss << "<" << type_name << ">  " << node.data().value<char32_t>();
                 break;
             case TypeKind::UINT_8_TYPE:
-                ss << "<" << type_name << ">  " << o.data().value<uint8_t>();
+                ss << "<" << type_name << ">  " << node.data().value<uint8_t>();
                 break;
             case TypeKind::INT_16_TYPE:
-                ss << "<" << type_name << ">  " << o.data().value<int16_t>();
+                ss << "<" << type_name << ">  " << node.data().value<int16_t>();
                 break;
             case TypeKind::UINT_16_TYPE:
-                ss << "<" << type_name << ">  " << o.data().value<uint16_t>();
+                ss << "<" << type_name << ">  " << node.data().value<uint16_t>();
                 break;
             case TypeKind::INT_32_TYPE:
-                ss << "<" << type_name << ">  " << o.data().value<int32_t>();
+                ss << "<" << type_name << ">  " << node.data().value<int32_t>();
                 break;
             case TypeKind::UINT_32_TYPE:
-                ss << "<" << type_name << ">  " << o.data().value<uint32_t>();
+                ss << "<" << type_name << ">  " << node.data().value<uint32_t>();
                 break;
             case TypeKind::INT_64_TYPE:
-                ss << "<" << type_name << ">  " << o.data().value<int64_t>();
+                ss << "<" << type_name << ">  " << node.data().value<int64_t>();
                 break;
             case TypeKind::UINT_64_TYPE:
-                ss << "<" << type_name << ">  " << o.data().value<uint64_t>();
+                ss << "<" << type_name << ">  " << node.data().value<uint64_t>();
                 break;
             case TypeKind::FLOAT_32_TYPE:
-                ss << "<" << type_name << ">  " << o.data().value<float>();
+                ss << "<" << type_name << ">  " << node.data().value<float>();
                 break;
             case TypeKind::FLOAT_64_TYPE:
-                ss << "<" << type_name << ">  " << o.data().value<double>();
+                ss << "<" << type_name << ">  " << node.data().value<double>();
                 break;
             case TypeKind::FLOAT_128_TYPE:
-                ss << "<" << type_name << ">  " << o.data().value<long double>();
+                ss << "<" << type_name << ">  " << node.data().value<long double>();
                 break;
             case TypeKind::STRING_TYPE:
-                ss << "<" << type_name << ">  " << o.data().value<std::string>();
+                ss << "<" << type_name << ">  " << node.data().value<std::string>();
                 break;
             case TypeKind::WSTRING_TYPE:
             {
                 std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
-                ss << "<" << type_name << ">  " << converter.to_bytes(o.data().value<std::wstring>());
+                ss << "<" << type_name << ">  " << converter.to_bytes(node.data().value<std::wstring>());
                 break;
             }
             case TypeKind::ARRAY_TYPE:
                 ss << "<" << type_name << ">";
                 break;
             case TypeKind::SEQUENCE_TYPE:
-                ss << "<" << type_name << "[" << o.data().size() << "]>";
+                ss << "<" << type_name << "[" << node.data().size() << "]>";
                 break;
             case TypeKind::STRUCTURE_TYPE:
                 ss << "Structure: <" << type_name << ">";

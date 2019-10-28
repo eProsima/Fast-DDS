@@ -20,7 +20,6 @@
 #define OMG_DDS_CORE_XTYPES_STRUCT_TYPE_HPP_
 
 #include <dds/core/xtypes/AggregationType.hpp>
-#include <dds/core/xtypes/StructMember.hpp>
 
 #include <string>
 #include <map>
@@ -30,7 +29,7 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
-class StructType : public AggregationType<StructMember>
+class StructType : public AggregationType
 {
 public:
     StructType(
@@ -45,14 +44,10 @@ public:
     bool has_parent() const { return parent_.get() != nullptr; }
     const DynamicType& parent() const { return *parent_; }
 
-    StructType& add_member(const StructMember& member)
+    StructType& add_member(const Member& member)
     {
-        StructMember& inner = insert_member(member.name(), member);
+        Member& inner = insert_member(member);
         inner.offset_ = memory_size_;
-        if(!inner.has_id())
-        {
-            inner.id_ = member_count() - 1;
-        }
         memory_size_ += inner.type().memory_size();
         return *this;
     }
@@ -80,9 +75,9 @@ public:
     virtual void construct_instance(
             uint8_t* instance) const override
     {
-        for(auto&& it: member_map())
+        for(auto&& member: members())
         {
-            it.second.type().construct_instance(instance + it.second.offset());
+            member.type().construct_instance(instance + member.offset());
         }
     }
 
@@ -90,9 +85,9 @@ public:
             uint8_t* target,
             const uint8_t* source) const override
     {
-        for(auto&& it: member_map())
+        for(auto&& member: members())
         {
-            it.second.type().copy_instance(target + it.second.offset(), source + it.second.offset());
+            member.type().copy_instance(target + member.offset(), source + member.offset());
         }
     }
 
@@ -104,21 +99,21 @@ public:
         assert(other.kind() == TypeKind::STRUCTURE_TYPE);
         const StructType& other_struct = static_cast<const StructType&>(other);
 
-        auto other_it = other_struct.member_map().begin();
-        for(auto&& it: member_map())
+        auto other_member = other_struct.members().begin();
+        for(auto&& member: members())
         {
-            if(other_it != other_struct.member_map().end())
+            if(other_member != other_struct.members().end())
             {
-                it.second.type().copy_instance_from_type(
-                        target + it.second.offset(),
-                        source + other_it->second.offset(),
-                        other_it->second.type());
+                member.type().copy_instance_from_type(
+                        target + member.offset(),
+                        source + other_member->offset(),
+                        other_member->type());
             }
             else
             {
-                it.second.type().construct_instance(target + it.second.offset());
+                member.type().construct_instance(target + member.offset());
             }
-            other_it++;
+            other_member++;
         }
     }
 
@@ -126,18 +121,18 @@ public:
             uint8_t* target,
             uint8_t* source) const override
     {
-        for(auto&& it: member_map())
+        for(auto&& member: members())
         {
-            it.second.type().move_instance(target + it.second.offset(), source + it.second.offset());
+            member.type().move_instance(target + member.offset(), source + member.offset());
         }
     }
 
     virtual void destroy_instance(
             uint8_t* instance) const override
     {
-        for (auto it = member_map().rbegin(); it != member_map().rend(); ++it)
+        for (auto&& member = members().rbegin(); member != members().rend(); ++member)
         {
-            it->second.type().destroy_instance(instance + it->second.offset());
+            member->type().destroy_instance(instance + member->offset());
         }
     }
 
@@ -145,9 +140,9 @@ public:
             const uint8_t* instance,
             const uint8_t* other_instance) const override
     {
-        for(auto&& it: member_map())
+        for(auto&& member: members())
         {
-            if(!it.second.type().compare_instance(instance + it.second.offset(), other_instance + it.second.offset()))
+            if(!member.type().compare_instance(instance + member.offset(), other_instance + member.offset()))
             {
                 return false;
             }
@@ -166,18 +161,18 @@ public:
         const StructType& other_struct = static_cast<const StructType&>(other);
 
         TypeConsistency consistency = TypeConsistency::EQUALS;
-        auto other_it = other_struct.member_map().begin();
-        for(auto&& it: member_map())
+        auto other_member = other_struct.members().begin();
+        for(auto&& member: members())
         {
-            if(other_it != other_struct.member_map().end())
+            if(other_member != other_struct.members().end())
             {
-                TypeConsistency internal_consistency = it.second.type().is_compatible(other_it->second.type());
+                TypeConsistency internal_consistency = member.type().is_compatible(other_member->type());
                 if(internal_consistency == TypeConsistency::NONE)
                 {
                     return TypeConsistency::NONE;
                 }
 
-                if(it.second.name() != other_it->second.name())
+                if(member.name() != other_member->name())
                 {
                     consistency |= TypeConsistency::IGNORE_MEMBER_NAMES;
                 }
@@ -187,9 +182,9 @@ public:
             {
                 return TypeConsistency::IGNORE_MEMBERS;
             }
-            other_it++;
+            other_member++;
         }
-        if(other_it != other_struct.member_map().end())
+        if(other_member != other_struct.members().end())
         {
             consistency |= TypeConsistency::IGNORE_MEMBERS;
         }
@@ -202,10 +197,10 @@ public:
             InstanceVisitor visitor) const override
     {
         visitor(node);
-        for(auto&& it: member_map())
+        for(size_t i = 0; i < members().size(); i++)
         {
-            const StructMember& member = it.second;
-            InstanceNode child(node, member.type(), node.instance + member.offset(), InstanceNode::Access(member));
+            const Member& member = members()[i];
+            InstanceNode child(node, member.type(), node.instance + member.offset(), i, &member);
             member.type().for_each_instance(child, visitor);
         }
     }

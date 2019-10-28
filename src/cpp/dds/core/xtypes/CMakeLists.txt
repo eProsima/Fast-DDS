@@ -19,8 +19,8 @@ set(${XTYPES_STANDALONE}_source_files
     MutableCollectionType.cpp
     StringType.cpp
     SequenceType.cpp
+    Member.cpp
     AggregationType.cpp
-    StructMember.cpp
     StructType.cpp
     DynamicData.cpp
     )

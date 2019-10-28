@@ -13,7 +13,7 @@ WStringType -up-|> MutableCollectionType
 SequenceType -up-|> MutableCollectionType
 
 abstract DynamicType
-abstract AggregationType<MemberImpl>
+abstract AggregationType
 abstract CollectionType
 abstract MutableCollectionType
 class PrimitiveType<T>

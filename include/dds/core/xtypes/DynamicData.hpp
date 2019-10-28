@@ -80,29 +80,45 @@ public:
     }
 
     ReadableDynamicDataRef operator [] (
-            const std::string& member_name) const // this = StructType
+            const std::string& member_name) const // this = AggregationType
     {
-        assert(type_.kind() == TypeKind::STRUCTURE_TYPE);
-        const StructType& structure = static_cast<const StructType&>(type_);
-        assert(structure.has_member(member_name));
+        assert(type_.is_aggregation_type());
+        const AggregationType& aggregation = static_cast<const AggregationType&>(type_);
+        assert(aggregation.has_member(member_name));
 
-        const StructMember& member = structure.member(member_name);
+        const Member& member = aggregation.member(member_name);
         return ReadableDynamicDataRef(member.type(), instance_ + member.offset());
     }
 
     ReadableDynamicDataRef operator [] (
-            size_t index) const // this = CollectionType
+            size_t index) const // this = CollectionType, AggregationType
     {
-        assert(type_.is_collection_type() && index < size());
-        const CollectionType& collection = static_cast<const CollectionType&>(type_);
-        return ReadableDynamicDataRef(collection.content_type(), collection.get_instance_at(instance_, index));
+        assert((type_.is_aggregation_type() || type_.is_collection_type()) && index < size());
+        if(type_.is_collection_type())
+        {
+            const CollectionType& collection = static_cast<const CollectionType&>(type_);
+            return ReadableDynamicDataRef(collection.content_type(), collection.get_instance_at(instance_, index));
+        }
+
+        const AggregationType& aggregation = static_cast<const StructType&>(type_);
+        const Member& member = aggregation.member(index);
+        return ReadableDynamicDataRef(member.type(), instance_ + member.offset());
     }
 
-    size_t size() const // this = CollectionType
+    size_t size() const
     {
-        assert(type_.is_collection_type());
-        const CollectionType& collection = static_cast<const CollectionType&>(type_);
-        return collection.get_instance_size(instance_);
+        assert(type_.is_collection_type() || type_.is_aggregation_type());
+        if(type_.is_collection_type())
+        {
+            const CollectionType& collection = static_cast<const CollectionType&>(type_);
+            return collection.get_instance_size(instance_);
+        }
+        if(type_.is_aggregation_type())
+        {
+            const AggregationType& aggregation = static_cast<const AggregationType&>(type_);
+            return aggregation.members().size();
+        }
+        return 1;
     }
 
     template<typename T, class = PrimitiveOrString<T>>
@@ -121,23 +137,14 @@ public:
     class ReadableNode
     {
     public:
-        class AccessMethod
-        {
-        public:
-            AccessMethod(const Instanceable::InstanceNode::Access& access) : access_(access) {}
-            size_t index() const { return access_.index; }
-            const StructMember& struct_member() const { return *access_.struct_member; }
-        private:
-            const Instanceable::InstanceNode::Access& access_;
-        };
-
         ReadableNode(const Instanceable::InstanceNode& instance_node) : internal_(instance_node) {}
         bool has_parent() const { return internal_.parent != nullptr; }
         ReadableNode parent() const { return ReadableNode(*internal_.parent); }
         ReadableDynamicDataRef data() const { return ReadableDynamicDataRef(internal_.type, internal_.instance); }
         const DynamicType& type() const { return internal_.type; }
         size_t deep() const { return internal_.deep; }
-        AccessMethod access() const { return AccessMethod(internal_.access); }
+        size_t from_index() const { return internal_.from_index; }
+        const Member* from_member() const { return internal_.from_member; }
     private:
         const Instanceable::InstanceNode& internal_;
     };
