@@ -13,8 +13,8 @@
 // limitations under the License.
 
 #include <asio.hpp>
-#include <fastrtps/transport/TCPChannelResource.h>
-#include <fastrtps/transport/TCPTransportInterface.h>
+#include <fastdds/rtps/transport/TCPChannelResource.h>
+#include <fastdds/rtps/transport/TCPTransportInterface.h>
 #include <fastrtps/utils/IPLocator.h>
 
 #include <future>
@@ -22,8 +22,12 @@
 using namespace asio;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
+
+using Locator_t = fastrtps::rtps::Locator_t;
+using octet = fastrtps::rtps::octet;
+using IPLocator = fastrtps::rtps::IPLocator;
 
 TCPChannelResourceBasic::TCPChannelResourceBasic(
         TCPTransportInterface* parent,

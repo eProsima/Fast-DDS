@@ -18,184 +18,24 @@
 #include <fastrtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/transport/TransportReceiverInterface.h>
 #include <fastrtps/transport/ChannelResource.h>
-#include <fastrtps/transport/tcp/RTCPMessageManager.h>
-#include <fastdds/rtps/common/Locator.h>
+//#include <fastrtps/transport/tcp/RTCPMessageManager.h>
 
-#include <asio.hpp>
+#include <fastdds/rtps/transport/TCPChannelResource.h>
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-class TCPConnector;
-class TCPTransportInterface;
+using TCPChannelResource fastdds::rtps::TCPChannelResource;
 
-enum eSocketErrorCodes
-{
-    eNoError,
-    eBrokenPipe,
-    eAsioError,
-    eSystemError,
-    eException,
-    eConnectionAborted = 125
-};
+using eSocketErrorCodes = dds::eSocketErrorCodes;
 
-class TCPChannelResource : public ChannelResource
-{
-
-protected:
-
-    enum TCPConnectionType
-    {
-        TCP_ACCEPT_TYPE = 0,
-        TCP_CONNECT_TYPE = 1
-    };
-
-    enum eConnectionStatus
-    {
-        eDisconnected = 0,
-        eConnecting,                // Output -> Trying connection.
-        eConnected,                 // Output -> Send bind message.
-        eWaitingForBind,            // Input -> Waiting for the bind message.
-        eWaitingForBindResponse,    // Output -> Waiting for the bind response message.
-        eEstablished,
-        eUnbinding
-    };
-
-    TCPTransportInterface* parent_;
-    Locator_t locator_;
-    bool waiting_for_keep_alive_;
-    // Must be accessed after lock pending_logical_mutex_
-    std::map<TCPTransactionId, uint16_t> negotiating_logical_ports_;
-    std::map<TCPTransactionId, uint16_t> last_checked_logical_port_;
-    std::vector<uint16_t> pending_logical_output_ports_; // Must be accessed after lock pending_logical_mutex_
-    std::vector<uint16_t> logical_output_ports_;
-    std::mutex read_mutex_;
-    std::mutex write_mutex_;
-    std::recursive_mutex pending_logical_mutex_;
-    std::atomic<eConnectionStatus> connection_status_;
-
-public:
-
-    void add_logical_port(
-            uint16_t port,
-            RTCPMessageManager* rtcp_manager);
-
-    void set_logical_port_pending(uint16_t port);
-
-    bool remove_logical_port(uint16_t port);
-
-    virtual void disable() override;
-
-    bool is_logical_port_opened(uint16_t port);
-
-    bool is_logical_port_added(uint16_t port);
-
-    bool connection_established()
-    {
-        return connection_status_ == eConnectionStatus::eEstablished;
-    }
-
-    eConnectionStatus connection_status()
-    {
-        return connection_status_;
-    }
-
-    inline const Locator_t& locator() const
-    {
-        return locator_;
-    }
-
-    ResponseCode process_bind_request(const Locator_t& locator);
-
-    // Socket related methods
-    virtual void connect(
-            const std::shared_ptr<TCPChannelResource>& myself) = 0;
-
-    virtual void disconnect() = 0;
-
-    virtual uint32_t read(
-        octet* buffer,
-        std::size_t size,
-        asio::error_code& ec) = 0;
-
-    virtual size_t send(
-        const octet* header,
-        size_t header_size,
-        const octet* buffer,
-        size_t size,
-        asio::error_code& ec) = 0;
-
-    virtual asio::ip::tcp::endpoint remote_endpoint() const = 0;
-
-    virtual asio::ip::tcp::endpoint local_endpoint() const = 0;
-
-    virtual void set_options(const TCPTransportDescriptor* options) = 0;
-
-    virtual void cancel() = 0;
-
-    virtual void close() = 0;
-
-    virtual void shutdown(asio::socket_base::shutdown_type what) = 0;
-
-    TCPConnectionType tcp_connection_type() const { return tcp_connection_type_; }
-
-protected:
-
-    // Constructor called when trying to connect to a remote server
-    TCPChannelResource(
-        TCPTransportInterface* parent,
-        const Locator_t& locator,
-        uint32_t maxMsgSize);
-
-    // Constructor called when local server accepted connection
-    TCPChannelResource(
-        TCPTransportInterface* parent,
-        uint32_t maxMsgSize);
-
-    inline eConnectionStatus change_status(eConnectionStatus s, RTCPMessageManager* rtcp_manager = nullptr)
-    {
-        eConnectionStatus old = connection_status_.exchange(s);
-
-        if (old != s)
-        {
-            if (s == eEstablished)
-            {
-                assert(rtcp_manager != nullptr);
-                send_pending_open_logical_ports(rtcp_manager);
-            }
-        }
-
-        return old;
-    }
-
-    void add_logical_port_response(const TCPTransactionId &id, bool success, RTCPMessageManager* rtcp_manager);
-
-    void process_check_logical_ports_response(
-            const TCPTransactionId &transactionId,
-            const std::vector<uint16_t> &availablePorts,
-            RTCPMessageManager* rtcp_manager);
-
-    TCPConnectionType tcp_connection_type_;
-
-    friend class TCPTransportInterface;
-    friend class RTCPMessageManager;
-
-private:
-
-    void prepare_send_check_logical_ports_req(
-            uint16_t closedPort,
-            RTCPMessageManager* rtcp_manager);
-
-    void send_pending_open_logical_ports(RTCPMessageManager* rtcp_manager);
-
-    void set_all_ports_pending();
-
-    TCPChannelResource(const TCPChannelResource&) = delete;
-
-    TCPChannelResource& operator=(const TCPChannelResource&) = delete;
-};
-
+constexpr eSocketErrorCodes eNoError = eSocketErrorCodes::eNoError;
+constexpr eSocketErrorCodes eBrokenPipe = eSocketErrorCodes::eBrokenPipe;
+constexpr eSocketErrorCodes eAsioError = eSocketErrorCodes::eAsioError;
+constexpr eSocketErrorCodes eSystemError = eSocketErrorCodes::eSystemError;
+constexpr eSocketErrorCodes eException = eSocketErrorCodes::eException;
+constexpr eSocketErrorCodes eConnectionAborted =  eSocketErrorCodes::eConnectionAborted;
 
 } // namespace rtps
 } // namespace fastrtps

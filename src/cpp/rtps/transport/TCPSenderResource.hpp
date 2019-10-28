@@ -16,21 +16,21 @@
 #define __TRANSPORT_TCPSENDERRESOURCE_HPP__
 
 #include <fastdds/rtps/network/SenderResource.h>
-#include <fastrtps/transport/TCPTransportInterface.h>
-#include <fastrtps/transport/TCPChannelResource.h>
+#include <fastdds/rtps/transport/TCPTransportInterface.h>
+#include <fastdds/rtps/transport/TCPChannelResource.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
-class TCPSenderResource : public SenderResource
+class TCPSenderResource : public fastrtps::rtps::SenderResource
 {
     public:
 
         TCPSenderResource(
                 TCPTransportInterface& transport,
                 std::shared_ptr<TCPChannelResource>& channel)
-            : SenderResource(transport.kind())
+            : fastrtps::rtps::SenderResource(transport.kind())
             , channel_(channel)
         {
             // Implementation functions are bound to the right transport parameters
@@ -40,9 +40,9 @@ class TCPSenderResource : public SenderResource
                 };
 
             send_lambda_ = [this, &transport] (
-                    const octet* data,
+                    const fastrtps::rtps::octet* data,
                     uint32_t dataSize,
-                    const Locator_t& destination,
+                    const fastrtps::rtps::Locator_t& destination,
                     const std::chrono::microseconds&)-> bool
                 {
                     return transport.send(data, dataSize, channel_, destination);

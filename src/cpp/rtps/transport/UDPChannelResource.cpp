@@ -13,13 +13,16 @@
 // limitations under the License.
 
 #include <asio.hpp>
-#include <fastrtps/transport/UDPTransportInterface.h>
-#include <fastrtps/transport/UDPChannelResource.h>
+#include <fastdds/rtps/transport/UDPTransportInterface.h>
+#include <fastdds/rtps/transport/UDPChannelResource.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
+
+using Locator_t = fastrtps::rtps::Locator_t;
+using octet = fastrtps::rtps::octet;
 
 UDPChannelResource::UDPChannelResource(
         UDPTransportInterface* transport,

@@ -16,24 +16,33 @@
  * @file RTCPMessageManager.cpp
  *
  */
-#include <fastrtps/transport/tcp/RTCPHeader.h>
-#include <fastrtps/transport/tcp/RTCPMessageManager.h>
-#include <fastrtps/transport/TCPChannelResource.h>
+#include <fastdds/rtps/transport/tcp/RTCPHeader.h>
+#include <fastdds/rtps/transport/tcp/RTCPMessageManager.h>
+#include <fastdds/rtps/transport/TCPChannelResource.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
-#include <fastrtps/transport/TCPTransportInterface.h>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPTransportInterface.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() <<") "<<
 
-using namespace eprosima::fastrtps;
+//using namespace eprosima::fastrtps;
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastdds{
 namespace rtps {
+
+using Locator_t = fastrtps::rtps::Locator_t;
+using IPLocator = fastrtps::rtps::IPLocator;
+using SerializedPayload_t = fastrtps::rtps::SerializedPayload_t;
+using octet = fastrtps::rtps::octet;
+using CDRMessage_t = fastrtps::rtps::CDRMessage_t;
+using RTPSMessageCreator = fastrtps::rtps::RTPSMessageCreator;
+using ProtocolVersion_t = fastrtps::rtps::ProtocolVersion_t;
+using System = fastrtps::System;
 
 static void endpoint_to_locator(
         const asio::ip::tcp::endpoint& endpoint,
@@ -129,7 +138,7 @@ bool RTCPMessageManager::sendData(
     TCPHeader header;
     TCPControlMsgHeader ctrlHeader;
     CDRMessage_t msg;
-    CDRMessage::initCDRMsg(&msg);
+    fastrtps::rtps::CDRMessage::initCDRMsg(&msg);
     const ResponseCode* code = (respCode != RETCODE_VOID) ? &respCode : nullptr;
 
     fillHeaders(kind, transaction_id, ctrlHeader, header, payload, code);
@@ -201,7 +210,7 @@ void RTCPMessageManager::fillHeaders(
         break;
     }
 
-    retCtrlHeader.endianess(DEFAULT_ENDIAN); // Override "false" endianess set on the switch
+    retCtrlHeader.endianess(fastrtps::rtps::DEFAULT_ENDIAN); // Override "false" endianess set on the switch
     header.logical_port = 0; // This is a control message
     header.length = static_cast<uint32_t>(retCtrlHeader.length() + TCPHeader::size());
 

@@ -24,7 +24,7 @@
 #include <fastdds/rtps/common/PortParameters.h>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
-#include <fastrtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastrtps/utils/fixed_size_string.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
@@ -395,7 +395,7 @@ class RTPSParticipantAttributes
         ThroughputControllerDescriptor throughputController;
 
         //!User defined transports to use alongside or in place of builtins.
-        std::vector<std::shared_ptr<TransportDescriptorInterface>> userTransports;
+        std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> userTransports;
 
         //!Set as false to disable the default UDPv4 implementation.
         bool useBuiltinTransports;

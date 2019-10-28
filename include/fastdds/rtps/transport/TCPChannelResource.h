@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _TCP_CHANNEL_RESOURCE_BASE_
-#define _TCP_CHANNEL_RESOURCE_BASE_
+#ifndef _FASTDDS_TCP_CHANNEL_RESOURCE_BASE_
+#define _FASTDDS_TCP_CHANNEL_RESOURCE_BASE_
 
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>
@@ -63,7 +63,7 @@ protected:
     };
 
     TCPTransportInterface* parent_;
-    Locator_t locator_;
+    fastrtps::rtps::Locator_t locator_;
     bool waiting_for_keep_alive_;
     // Must be accessed after lock pending_logical_mutex_
     std::map<TCPTransactionId, uint16_t> negotiating_logical_ports_;
@@ -101,12 +101,12 @@ public:
         return connection_status_;
     }
 
-    inline const Locator_t& locator() const
+    inline const fastrtps::rtps::Locator_t& locator() const
     {
         return locator_;
     }
 
-    ResponseCode process_bind_request(const Locator_t& locator);
+    ResponseCode process_bind_request(const fastrtps::rtps::Locator_t& locator);
 
     // Socket related methods
     virtual void connect(
@@ -115,14 +115,14 @@ public:
     virtual void disconnect() = 0;
 
     virtual uint32_t read(
-        octet* buffer,
+        fastrtps::rtps::octet* buffer,
         std::size_t size,
         asio::error_code& ec) = 0;
 
     virtual size_t send(
-        const octet* header,
+        const fastrtps::rtps::octet* header,
         size_t header_size,
-        const octet* buffer,
+        const fastrtps::rtps::octet* buffer,
         size_t size,
         asio::error_code& ec) = 0;
 
@@ -145,7 +145,7 @@ protected:
     // Constructor called when trying to connect to a remote server
     TCPChannelResource(
         TCPTransportInterface* parent,
-        const Locator_t& locator,
+        const fastrtps::rtps::Locator_t& locator,
         uint32_t maxMsgSize);
 
     // Constructor called when local server accepted connection
@@ -198,7 +198,7 @@ private:
 
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif // _TCP_CHANNEL_RESOURCE_BASE_
+#endif // _FASTDDS_TCP_CHANNEL_RESOURCE_BASE_

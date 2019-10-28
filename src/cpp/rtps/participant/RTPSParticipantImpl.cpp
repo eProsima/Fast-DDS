@@ -35,8 +35,8 @@
 #include <fastdds/rtps/reader/StatefulPersistentReader.h>
 
 #include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 
 #include <fastdds/rtps/RTPSDomain.h>
 
@@ -58,6 +58,9 @@
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {
+
+using UDPv4TransportDescriptor = fastdds::rtps::UDPv4TransportDescriptor;
+using TCPTransportDescriptor = fastdds::rtps::TCPTransportDescriptor;
 
 static EntityId_t TrustedWriter(const EntityId_t& reader)
 {

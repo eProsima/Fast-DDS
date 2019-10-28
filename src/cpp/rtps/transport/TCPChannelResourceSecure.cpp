@@ -12,16 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/transport/TCPChannelResourceSecure.h>
-#include <fastrtps/transport/TCPTransportInterface.h>
+#include <fastdds/rtps/transport/TCPChannelResourceSecure.h>
+#include <fastdds/rtps/transport/TCPTransportInterface.h>
 #include <fastrtps/utils/IPLocator.h>
 
 #include <future>
 #include <chrono>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
+
+using Locator_t = fastrtps::rtps::Locator_t;
+using IPLocator = fastrtps::rtps::IPLocator;
+using octet = fastrtps::rtps::octet;
 
 using namespace asio;
 

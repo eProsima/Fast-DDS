@@ -44,7 +44,7 @@ DataReaderImpl::DataReaderImpl(
         SubscriberImpl* s,
         TypeSupport type,
         const TopicAttributes& topic_att,
-        const rtps::ReaderAttributes& att,
+        const fastrtps::rtps::ReaderAttributes& att,
         const ReaderQos& qos,
         const MemoryManagementPolicy_t memory_policy,
         DataReaderListener* listener)
@@ -244,7 +244,7 @@ const TopicAttributes& DataReaderImpl::get_topic() const
 }
 
 bool DataReaderImpl::set_attributes(
-        const rtps::ReaderAttributes &att)
+        const fastrtps::rtps::ReaderAttributes &att)
 {
     bool updated = true;
     bool missing = false;

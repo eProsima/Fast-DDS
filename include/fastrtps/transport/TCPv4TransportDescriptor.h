@@ -17,45 +17,13 @@
 
 #include <fastrtps/transport/TCPTransportDescriptor.h>
 
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-class TCPTransportInterface;
-/**
- * Transport configuration
- * @ingroup TRANSPORT_MODULE
- */
-typedef struct TCPv4TransportDescriptor: public TCPTransportDescriptor {
-    virtual ~TCPv4TransportDescriptor(){}
-
-    virtual TransportInterface* create_transport() const override;
-
-    octet wan_addr[4];
-
-    void set_WAN_address(octet o1,octet o2,octet o3,octet o4){
-        wan_addr[0] = o1;
-        wan_addr[1] = o2;
-        wan_addr[2] = o3;
-        wan_addr[3] = o4;
-    }
-
-    void set_WAN_address(const std::string& in_address)
-    {
-        std::stringstream ss(in_address);
-        int a,b,c,d; //to store the 4 ints
-        char ch; //to temporarily store the '.'
-        ss >> a >> ch >> b >> ch >> c >> ch >> d;
-        wan_addr[0] = (octet)a;
-        wan_addr[1] = (octet)b;
-        wan_addr[2] = (octet)c;
-        wan_addr[3] = (octet)d;
-    }
-
-    RTPS_DllAPI TCPv4TransportDescriptor();
-
-    RTPS_DllAPI TCPv4TransportDescriptor(const TCPv4TransportDescriptor& t);
-} TCPv4TransportDescriptor;
+using TCPv4TransportDescriptor = fastdds::rtps::TCPv4TransportDescriptor;
 
 } // namespace rtps
 } // namespace fastrtps

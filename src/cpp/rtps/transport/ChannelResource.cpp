@@ -13,10 +13,10 @@
 // limitations under the License.
 
 #include <asio.hpp>
-#include <fastrtps/transport/ChannelResource.h>
+#include <fastdds/rtps/transport/ChannelResource.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 ChannelResource::ChannelResource()

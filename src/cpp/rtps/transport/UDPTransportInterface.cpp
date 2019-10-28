@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/transport/TransportInterface.h>
-#include <fastrtps/transport/UDPTransportInterface.h>
+#include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/UDPTransportInterface.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <rtps/transport/UDPSenderResource.hpp>
 #include <fastrtps/log/Log.h>
@@ -29,8 +29,18 @@ using namespace std;
 using namespace asio;
 
 namespace eprosima{
-namespace fastrtps{
+namespace fastdds{
 namespace rtps {
+
+using Locator_t = fastrtps::rtps::Locator_t;
+using LocatorList_t = fastrtps::rtps::LocatorList_t;
+using IPLocator = fastrtps::rtps::IPLocator;
+using LocatorSelectorEntry = fastrtps::rtps::LocatorSelectorEntry;
+using LocatorSelector = fastrtps::rtps::LocatorSelector;
+using IPFinder = fastrtps::rtps::IPFinder;
+using octet = fastrtps::rtps::octet;
+using PortParameters = fastrtps::rtps::PortParameters;
+using SenderResource = fastrtps::rtps::SenderResource;
 
 struct MultiUniLocatorsLinkage
 {
@@ -506,7 +516,7 @@ bool UDPTransportInterface::send(
  * @return true when at least one entry was invalidated, false otherwise
  */
 static bool check_and_invalidate(
-        ResourceLimitedVector<LocatorSelectorEntry*>& entries,
+        fastrtps::ResourceLimitedVector<LocatorSelectorEntry*>& entries,
         size_t index,
         const Locator_t& locator)
 {
@@ -533,7 +543,7 @@ static bool check_and_invalidate(
 
 void UDPTransportInterface::select_locators(LocatorSelector& selector) const
 {
-    ResourceLimitedVector<LocatorSelectorEntry*>& entries = selector.transport_starts();
+    fastrtps::ResourceLimitedVector<LocatorSelectorEntry*>& entries = selector.transport_starts();
 
     for (size_t i = 0; i < entries.size(); ++i)
     {

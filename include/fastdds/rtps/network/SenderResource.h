@@ -20,13 +20,22 @@
 #include <chrono>
 
 namespace eprosima{
+namespace fastdds{
+namespace rtps{
+
+class ChannelResource;
+class TransportInterface;
+
+}
+}
+}
+
+namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
 class RTPSParticipantImpl;
 class MessageReceiver;
-class ChannelResource;
-class TransportInterface;
 class Locator_t;
 
 /**

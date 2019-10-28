@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _TCP_ACCEPTOR_SECURE_
-#define _TCP_ACCEPTOR_SECURE_
+#ifndef _FASTDDS_TCP_ACCEPTOR_SECURE_
+#define _FASTDDS_TCP_ACCEPTOR_SECURE_
 
 #include <fastdds/rtps/transport/TCPAcceptor.h>
 #include <fastdds/rtps/transport/TCPChannelResourceSecure.h>
@@ -38,7 +38,7 @@ public:
     TCPAcceptorSecure(
         asio::io_service& io_service,
         TCPTransportInterface* parent,
-        const Locator_t& locator);
+        const fastrtps::rtps::Locator_t& locator);
 
     /**
     * Constructor
@@ -49,7 +49,7 @@ public:
     TCPAcceptorSecure(
         asio::io_service& io_service,
         const std::string& interface,
-        const Locator_t& locator);
+        const fastrtps::rtps::Locator_t& locator);
 
     /**
     * Destructor
@@ -69,7 +69,7 @@ public:
 
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif // _TCP_ACCEPTOR_SECURE_
+#endif // _FASTDDS_TCP_ACCEPTOR_SECURE_

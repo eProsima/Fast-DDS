@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TRANSPORT_INTERFACE_H
-#define TRANSPORT_INTERFACE_H
+#ifndef _FASTDDS_TRANSPORT_INTERFACE_H
+#define _FASTDDS_TRANSPORT_INTERFACE_H
 
 #include <memory>
 #include <vector>
@@ -34,9 +34,9 @@ static const uint32_t s_minimumSocketBuffer = 65536;
 static const std::string s_IPv4AddressAny = "0.0.0.0";
 static const std::string s_IPv6AddressAny = "::";
 
-class ChannelResource;
+using SendResourceList = std::vector<std::unique_ptr<fastrtps::rtps::SenderResource>>;
 
-using SendResourceList = std::vector<std::unique_ptr<SenderResource>>;
+class ChannelResource;
 
 /**
  * Interface against which to implement a transport layer, decoupled from FastRTPS internals.
@@ -71,16 +71,16 @@ public:
     * Must report whether the input channel associated to this locator is open. Channels must either be
     * fully closed or fully open, so that "open" and "close" operations are whole and definitive.
     */
-    virtual bool IsInputChannelOpen(const Locator_t&) const = 0;
+    virtual bool IsInputChannelOpen(const fastrtps::rtps::Locator_t&) const = 0;
 
     //! Must report whether the given locator is supported by this transport (typically inspecting its "kind" value).
-    virtual bool IsLocatorSupported(const Locator_t&) const = 0;
+    virtual bool IsLocatorSupported(const fastrtps::rtps::Locator_t&) const = 0;
 
     //! Must report whether the given locator is allowed by this transport.
-    virtual bool is_locator_allowed(const Locator_t&) const = 0;
+    virtual bool is_locator_allowed(const fastrtps::rtps::Locator_t&) const = 0;
 
     //! Returns the locator describing the main (most general) channel that can write to the provided remote locator.
-    virtual Locator_t RemoteToMainLocal(const Locator_t& remote) const = 0;
+    virtual fastrtps::rtps::Locator_t RemoteToMainLocal(const fastrtps::rtps::Locator_t& remote) const = 0;
 
     /**
      * Transforms a remote locator into a locator optimized for local communications.
@@ -94,8 +94,8 @@ public:
      * @return false if the input locator is not supported/allowed by this transport, true otherwise.
      */
     virtual bool transform_remote_locator(
-            const Locator_t& remote_locator,
-            Locator_t& result_locator) const
+            const fastrtps::rtps::Locator_t& remote_locator,
+            fastrtps::rtps::Locator_t& result_locator) const
     {
         (void)remote_locator;
         (void)result_locator;
@@ -106,10 +106,10 @@ public:
     //! any resources that are needed for said channel.
     virtual bool OpenOutputChannel(
             SendResourceList& sender_resource_list,
-            const Locator_t&) = 0;
+            const fastrtps::rtps::Locator_t&) = 0;
 
     virtual bool OpenInputChannel(
-        const Locator_t&,
+        const fastrtps::rtps::Locator_t&,
         TransportReceiverInterface*, uint32_t) = 0;
 
     /**
@@ -117,12 +117,12 @@ public:
     * IMPORTANT: It MUST be safe to call this method even during a Receive operation on another thread. You must implement
     * any necessary mutual exclusion and timeout mechanisms to make sure the channel can be closed without damage.
     */
-    virtual bool CloseInputChannel(const Locator_t&) = 0;
+    virtual bool CloseInputChannel(const fastrtps::rtps::Locator_t&) = 0;
 
     //! Must report whether two locators map to the same internal channel.
-    virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const = 0;
+    virtual bool DoInputLocatorsMatch(const fastrtps::rtps::Locator_t&, const fastrtps::rtps::Locator_t&) const = 0;
 
-    virtual LocatorList_t NormalizeLocator(const Locator_t& locator) = 0;
+    virtual fastrtps::rtps::LocatorList_t NormalizeLocator(const fastrtps::rtps::Locator_t& locator) = 0;
 
     /**
      * Performs the locator selection algorithm for this transport.
@@ -134,42 +134,42 @@ public:
      *
      * @param [in, out] selector Locator selector.
      */
-    virtual void select_locators(LocatorSelector& selector) const = 0;
+    virtual void select_locators(fastrtps::rtps::LocatorSelector& selector) const = 0;
 
-    virtual bool is_local_locator(const Locator_t& locator) const = 0;
+    virtual bool is_local_locator(const fastrtps::rtps::Locator_t& locator) const = 0;
 
     virtual TransportDescriptorInterface* get_configuration() = 0;
 
-    virtual void AddDefaultOutputLocator(LocatorList_t &defaultList) = 0;
+    virtual void AddDefaultOutputLocator(fastrtps::rtps::LocatorList_t &defaultList) = 0;
 
     virtual bool getDefaultMetatrafficMulticastLocators(
-        LocatorList_t& locators,
+        fastrtps::rtps::LocatorList_t& locators,
         uint32_t metatraffic_multicast_port) const = 0;
 
     virtual bool getDefaultMetatrafficUnicastLocators(
-        LocatorList_t& locators,
+        fastrtps::rtps::LocatorList_t& locators,
         uint32_t metatraffic_unicast_port) const = 0;
 
     virtual bool getDefaultUnicastLocators(
-        LocatorList_t& locators,
+        fastrtps::rtps::LocatorList_t& locators,
         uint32_t unicast_port) const = 0;
 
     virtual bool fillMetatrafficMulticastLocator(
-        Locator_t& locator,
+        fastrtps::rtps::Locator_t& locator,
         uint32_t metatraffic_multicast_port) const = 0;
 
     virtual bool fillMetatrafficUnicastLocator(
-        Locator_t& locator,
+        fastrtps::rtps::Locator_t& locator,
         uint32_t metatraffic_unicast_port) const = 0;
 
     virtual bool configureInitialPeerLocator(
-        Locator_t& locator,
-        const PortParameters &port_params,
+        fastrtps::rtps::Locator_t& locator,
+        const fastrtps::rtps::PortParameters &port_params,
         uint32_t domainId,
-        LocatorList_t& list) const = 0;
+        fastrtps::rtps::LocatorList_t& list) const = 0;
 
     virtual bool fillUnicastLocator(
-        Locator_t& locator,
+        fastrtps::rtps::Locator_t& locator,
         uint32_t well_known_port) const = 0;
 
     /**
@@ -188,7 +188,7 @@ protected:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // _FASTDDS_TRANSPORT_INTERFACE_H

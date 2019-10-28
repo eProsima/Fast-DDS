@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TCPV4_TRANSPORT_DESCRIPTOR
-#define TCPV4_TRANSPORT_DESCRIPTOR
+#ifndef _FASTDDS_TCPV4_TRANSPORT_DESCRIPTOR_
+#define _FASTDDS_TCPV4_TRANSPORT_DESCRIPTOR_
 
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
+#include <fastdds/rtps/common/Types.h>
 
 namespace eprosima{
 namespace fastdds{
@@ -31,9 +32,9 @@ typedef struct TCPv4TransportDescriptor: public TCPTransportDescriptor {
 
     virtual TransportInterface* create_transport() const override;
 
-    octet wan_addr[4];
+    fastrtps::rtps::octet wan_addr[4];
 
-    void set_WAN_address(octet o1,octet o2,octet o3,octet o4){
+    void set_WAN_address(fastrtps::rtps::octet o1,fastrtps::rtps::octet o2,fastrtps::rtps::octet o3,fastrtps::rtps::octet o4){
         wan_addr[0] = o1;
         wan_addr[1] = o2;
         wan_addr[2] = o3;
@@ -46,10 +47,10 @@ typedef struct TCPv4TransportDescriptor: public TCPTransportDescriptor {
         int a,b,c,d; //to store the 4 ints
         char ch; //to temporarily store the '.'
         ss >> a >> ch >> b >> ch >> c >> ch >> d;
-        wan_addr[0] = (octet)a;
-        wan_addr[1] = (octet)b;
-        wan_addr[2] = (octet)c;
-        wan_addr[3] = (octet)d;
+        wan_addr[0] = (fastrtps::rtps::octet)a;
+        wan_addr[1] = (fastrtps::rtps::octet)b;
+        wan_addr[2] = (fastrtps::rtps::octet)c;
+        wan_addr[3] = (fastrtps::rtps::octet)d;
     }
 
     RTPS_DllAPI TCPv4TransportDescriptor();
@@ -58,7 +59,7 @@ typedef struct TCPv4TransportDescriptor: public TCPTransportDescriptor {
 } TCPv4TransportDescriptor;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // _FASTDDS_TCPV4_TRANSPORT_DESCRIPTOR_

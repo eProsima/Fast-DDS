@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef SOCKET_TRANSPORT_DESCRIPTOR_H
-#define SOCKET_TRANSPORT_DESCRIPTOR_H
+#ifndef _FASTDDS_SOCKET_TRANSPORT_DESCRIPTOR_H_
+#define _FASTDDS_SOCKET_TRANSPORT_DESCRIPTOR_H_
 
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 
@@ -68,7 +68,7 @@ struct SocketTransportDescriptor : public TransportDescriptorInterface
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif //SOCKET_TRANSPORT_DESCRIPTOR_H
+#endif //_FASTDDS_SOCKET_TRANSPORT_DESCRIPTOR_H_

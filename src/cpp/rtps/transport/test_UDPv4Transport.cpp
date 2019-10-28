@@ -12,14 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/transport/test_UDPv4Transport.h>
+#include <fastdds/rtps/transport/test_UDPv4Transport.h>
 #include <cstdlib>
 
 using namespace std;
 
 namespace eprosima{
-namespace fastrtps{
+namespace fastdds{
 namespace rtps{
+
+using octet = fastrtps::rtps::octet;
+using Locator_t = fastrtps::rtps::Locator_t;
+using CDRMessage_t = fastrtps::rtps::CDRMessage_t;
+using SubmessageHeader_t = fastrtps::rtps::SubmessageHeader_t;
+using SequenceNumber_t = fastrtps::rtps::SequenceNumber_t;
+using EntityId_t = fastrtps::rtps::EntityId_t;
 
 std::vector<std::vector<octet> > test_UDPv4Transport::test_UDPv4Transport_DropLog;
 uint32_t test_UDPv4Transport::test_UDPv4Transport_DropLogLength = 0;
@@ -91,16 +98,16 @@ static bool ReadSubmessageHeader(CDRMessage_t& msg, SubmessageHeader_t& smh)
 
     smh.submessageId = msg.buffer[msg.pos]; msg.pos++;
     smh.flags = msg.buffer[msg.pos]; msg.pos++;
-    msg.msg_endian = smh.flags & BIT(0) ? LITTLEEND : BIGEND;
+    msg.msg_endian = smh.flags & BIT(0) ? fastrtps::rtps::LITTLEEND : fastrtps::rtps::BIGEND;
     uint16_t length = 0;
-    CDRMessage::readUInt16(&msg, &length);
+    fastrtps::rtps::CDRMessage::readUInt16(&msg, &length);
 
     if (msg.pos + length > msg.length)
     {
         return false;
     }
 
-    if ( (length == 0) && (smh.submessageId != INFO_TS) && (smh.submessageId != PAD) )
+    if ( (length == 0) && (smh.submessageId != fastrtps::rtps::INFO_TS) && (smh.submessageId != fastrtps::rtps::PAD) )
     {
         // THIS IS THE LAST SUBMESSAGE
         smh.submessageLength = msg.length - msg.pos;
@@ -149,15 +156,15 @@ bool test_UDPv4Transport::packet_should_drop(const octet* send_buffer, uint32_t 
 
         switch(cdrSubMessageHeader.submessageId)
         {
-            case DATA:
+            case fastrtps::rtps::DATA:
                 // Get WriterID.
                 cdrMessage.pos += 8;
-                CDRMessage::readEntityId(&cdrMessage, &writer_id);
-                CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
-                CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
+                fastrtps::rtps::CDRMessage::readEntityId(&cdrMessage, &writer_id);
+                fastrtps::rtps::CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
+                fastrtps::rtps::CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
                 cdrMessage.pos = old_pos;
 
-                if(writer_id == c_EntityId_SPDPWriter)
+                if(writer_id == fastrtps::rtps::c_EntityId_SPDPWriter)
                 {
                     if (always_drop_participant_builtin_topic_data)
                     {
@@ -168,8 +175,8 @@ bool test_UDPv4Transport::packet_should_drop(const octet* send_buffer, uint32_t 
                         return false;
                     }
                 }
-                else if((!drop_publication_builtin_topic_data_ && writer_id == c_EntityId_SEDPPubWriter) ||
-                        (!drop_subscription_builtin_topic_data_ && writer_id == c_EntityId_SEDPSubWriter))
+                else if((!drop_publication_builtin_topic_data_ && writer_id == fastrtps::rtps::c_EntityId_SEDPPubWriter) ||
+                        (!drop_subscription_builtin_topic_data_ && writer_id == fastrtps::rtps::c_EntityId_SEDPSubWriter))
                 {
                     return false;
                 }
@@ -179,32 +186,32 @@ bool test_UDPv4Transport::packet_should_drop(const octet* send_buffer, uint32_t 
 
                 break;
 
-            case ACKNACK:
+            case fastrtps::rtps::ACKNACK:
                 if(should_be_dropped(&drop_ack_nack_messages_percentage_))
                     return true;
 
                 break;
 
-            case HEARTBEAT:
+            case fastrtps::rtps::HEARTBEAT:
                 cdrMessage.pos += 8;
-                CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
-                CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
+                fastrtps::rtps::CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
+                fastrtps::rtps::CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
                 cdrMessage.pos = old_pos;
                 if(should_be_dropped(&drop_heartbeat_messages_percentage_))
                     return true;
 
                 break;
 
-            case DATA_FRAG:
+            case fastrtps::rtps::DATA_FRAG:
                 if(should_be_dropped(&drop_data_frag_messages_percentage_))
                     return true;
 
                 break;
 
-            case GAP:
+            case fastrtps::rtps::GAP:
                 cdrMessage.pos += 8;
-                CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
-                CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
+                fastrtps::rtps::CDRMessage::readInt32(&cdrMessage, &sequence_number.high);
+                fastrtps::rtps::CDRMessage::readUInt32(&cdrMessage, &sequence_number.low);
                 cdrMessage.pos = old_pos;
 
                 break;

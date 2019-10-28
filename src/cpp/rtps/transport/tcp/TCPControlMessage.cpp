@@ -24,7 +24,7 @@
 namespace { char dummy; }
 #endif
 
-#include <fastrtps/transport/tcp/TCPControlMessage.h>
+#include <fastdds/rtps/transport/tcp/TCPControlMessage.h>
 #include <fastdds/rtps/common/Types.h>
 
 #include <fastcdr/FastCdr.h>
@@ -36,8 +36,13 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 namespace eprosima{
-namespace fastrtps{
+namespace fastdds{
 namespace rtps{
+
+using ProtocolVersion_t = fastrtps::rtps::ProtocolVersion_t;
+using VendorId_t = fastrtps::rtps::VendorId_t;
+using Locator_t = fastrtps::rtps::Locator_t;
+using SerializedPayload_t = fastrtps::rtps::SerializedPayload_t;
 
 static void operator<<(eprosima::fastcdr::Cdr &scdr, const ProtocolVersion_t &protocolVersion)
 {
@@ -97,7 +102,7 @@ static void operator>>(eprosima::fastcdr::Cdr &scdr, ResponseCode &code)
     code = static_cast<ResponseCode>(aux);
 }
 
-ConnectionRequest_t::ConnectionRequest_t() : m_vendorId(c_VendorId_eProsima)
+ConnectionRequest_t::ConnectionRequest_t() : m_vendorId(fastrtps::rtps::c_VendorId_eProsima)
 {
 }
 

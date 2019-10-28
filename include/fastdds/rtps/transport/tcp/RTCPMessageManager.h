@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,9 +15,11 @@
 /**
  * @file RTCPMessageManager.h
  */
-#ifndef RTCP_MESSAGEMANAGER_H_
-#define RTCP_MESSAGEMANAGER_H_
+#ifndef _FASTDDS_RTCP_MESSAGEMANAGER_H_
+#define _FASTDDS_RTCP_MESSAGEMANAGER_H_
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
 #include <fastrtps/qos/ParameterList.h>
 #include <fastdds/rtps/common/all_common.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
@@ -35,7 +37,7 @@ namespace rtps {
 class TCPChannelResource;
 class TCPTransportInterface;
 
-const ProtocolVersion_t c_rtcpProtocolVersion = {1, 0};
+const fastrtps::rtps::ProtocolVersion_t c_rtcpProtocolVersion = {1, 0};
 
 /**
  * Class RTCPMessageManager, process the received TCP messages.
@@ -93,7 +95,7 @@ public:
             std::shared_ptr<TCPChannelResource>& channel,
             const ConnectionRequest_t &request,
             const TCPTransactionId &transactionId,
-            Locator_t &localLocator);
+            fastrtps::rtps::Locator_t &localLocator);
 
     virtual ResponseCode processOpenLogicalPortRequest(
             std::shared_ptr<TCPChannelResource>& channel,
@@ -137,10 +139,10 @@ public:
 
     ResponseCode processRTCPMessage(
             std::shared_ptr<TCPChannelResource>& channel,
-            octet* receive_buffer,
+            fastrtps::rtps::octet* receive_buffer,
             size_t receivedSize);
 
-    static uint32_t& addToCRC(uint32_t &crc, octet data);
+    static uint32_t& addToCRC(uint32_t &crc, fastrtps::rtps::octet data);
 
     void dispose()
     {
@@ -191,26 +193,26 @@ protected:
 
     size_t sendMessage(
             TCPChannelResource* channel,
-            const CDRMessage_t &msg) const;
+            const fastrtps::rtps::CDRMessage_t &msg) const;
 
     bool sendData(
             std::shared_ptr<TCPChannelResource>& channel,
             TCPCPMKind kind,
             const TCPTransactionId &transactionId,
-            const SerializedPayload_t *payload = nullptr,
+            const fastrtps::rtps::SerializedPayload_t *payload = nullptr,
             const ResponseCode respCode = RETCODE_VOID);
 
     bool sendData(
             TCPChannelResource* channel,
             TCPCPMKind kind,
             const TCPTransactionId &transactionId,
-            const SerializedPayload_t *payload = nullptr,
+            const fastrtps::rtps::SerializedPayload_t *payload = nullptr,
             const ResponseCode respCode = RETCODE_VOID);
 
     void fillHeaders(TCPCPMKind kind, const TCPTransactionId &transactionId, TCPControlMsgHeader &retCtrlHeader,
-        TCPHeader &header, const SerializedPayload_t *payload = nullptr, const ResponseCode *respCode = nullptr);
+        TCPHeader &header, const fastrtps::rtps::SerializedPayload_t *payload = nullptr, const ResponseCode *respCode = nullptr);
 
-    bool isCompatibleProtocol(const ProtocolVersion_t &protocol) const;
+    bool isCompatibleProtocol(const fastrtps::rtps::ProtocolVersion_t &protocol) const;
 
     inline bool alive() const
     {
@@ -218,7 +220,7 @@ protected:
     }
 };
 } /* namespace rtps */
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 #endif
-#endif /* RTCP_MESSAGEMANAGER_H_ */
+#endif /* _FASTDDS_RTCP_MESSAGEMANAGER_H_ */

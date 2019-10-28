@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef CHANNEL_RESOURCE_INFO_
-#define CHANNEL_RESOURCE_INFO_
+#ifndef _FASTDDS_CHANNEL_RESOURCE_INFO_
+#define _FASTDDS_CHANNEL_RESOURCE_INFO_
 
 #include <memory>
 #include <map>
@@ -55,21 +55,21 @@ public:
         alive_.store(false);
     }
 
-    inline CDRMessage_t& message_buffer()
+    inline fastrtps::rtps::CDRMessage_t& message_buffer()
     {
         return message_buffer_;
     }
 
 protected:
     //!Received message
-    CDRMessage_t message_buffer_;
+    fastrtps::rtps::CDRMessage_t message_buffer_;
 
     std::atomic<bool> alive_;
     std::thread thread_;
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif // CHANNEL_RESOURCE_INFO_
+#endif // _FASTDDS_CHANNEL_RESOURCE_INFO_

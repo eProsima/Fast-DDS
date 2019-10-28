@@ -384,7 +384,7 @@ private:
 
     //!SenderResource List
     std::timed_mutex m_send_resources_mutex_;
-    SendResourceList send_resource_list_;
+    fastdds::rtps::SendResourceList send_resource_list_;
 
     //!Participant Listener
     RTPSParticipantListener* mp_participantListener;

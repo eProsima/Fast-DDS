@@ -15,174 +15,18 @@
 #ifndef UDP_TRANSPORT_INTERFACE_H
 #define UDP_TRANSPORT_INTERFACE_H
 
-#include <asio.hpp>
-#include <thread>
-
 #include <fastrtps/transport/TransportInterface.h>
 #include <fastrtps/transport/UDPChannelResource.h>
 #include <fastrtps/transport/UDPTransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
 
-#include <vector>
-#include <memory>
-#include <map>
-#include <mutex>
+#include <fastdds/rtps/transport/UDPTransportInterface.h>
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-class UDPTransportInterface : public TransportInterface
-{
-public:
-
-   virtual ~UDPTransportInterface() override;
-
-   void clean();
-
-   //! Removes the listening socket for the specified port.
-   virtual bool CloseInputChannel(const Locator_t&) override;
-
-   //! Removes all outbound sockets on the given port.
-   void CloseOutputChannel(eProsimaUDPSocket& socket);
-
-   //! Reports whether Locators correspond to the same port.
-   virtual bool DoInputLocatorsMatch(const Locator_t&, const Locator_t&) const override;
-
-   virtual const UDPTransportDescriptor* configuration() const = 0;
-
-   bool init() override;
-
-   //! Checks whether there are open and bound sockets for the given port.
-   virtual bool IsInputChannelOpen(const Locator_t&) const override;
-
-   //! Checks for TCP kinds.
-   virtual bool IsLocatorSupported(const Locator_t&) const override;
-
-   //! Opens a socket on the given address and port (as long as they are white listed).
-   virtual bool OpenOutputChannel(
-           SendResourceList& sender_resource_list,
-           const Locator_t&) override;
-
-   /**
-   * Converts a given remote locator (that is, a locator referring to a remote
-   * destination) to the main local locator whose channel can write to that
-   * destination. In this case it will return a 0.0.0.0 address on that port.
-   */
-   virtual Locator_t RemoteToMainLocal(const Locator_t&) const override;
-
-    /**
-     * Transforms a remote locator into a locator optimized for local communications.
-     *
-     * If the remote locator corresponds to one of the local interfaces, it is converted
-     * to the corresponding local address.
-     *
-     * @param [in]  remote_locator Locator to be converted.
-     * @param [out] result_locator Converted locator.
-     *
-     * @return false if the input locator is not supported/allowed by this transport, true otherwise.
-     */
-    virtual bool transform_remote_locator(
-            const Locator_t& remote_locator,
-            Locator_t& result_locator) const override;
-
-   /**
-   * Blocking Send through the specified channel. In both modes, using a localLocator of 0.0.0.0 will
-   * send through all whitelisted interfaces provided the channel is open.
-   * @param send_buffer Slice into the raw data to send.
-   * @param send_buffer_size Size of the raw data. It will be used as a bounds check for the previous argument.
-   * It must not exceed the send_buffer_size fed to this class during construction.
-   * @param socket channel we're sending from.
-   * @param remote_locator Locator describing the remote destination we're sending to.
-   * @param only_multicast_purpose
-   * @param timeout Maximum time this function will block
-   */
-   virtual bool send(
-           const octet* send_buffer,
-           uint32_t send_buffer_size,
-           eProsimaUDPSocket& socket,
-           const Locator_t& remote_locator,
-           bool only_multicast_purpose,
-           const std::chrono::microseconds& timeout);
-
-    /**
-     * Performs the locator selection algorithm for this transport.
-     *
-     * It basically consists of the following steps
-     *   - selector.transport_starts is called
-     *   - transport handles the selection state of each locator
-     *   - if a locator from an entry is selected, selector.select is called for that entry
-     *
-     * In the case of UDP, multicast locators are selected when present in more than one entry,
-     * otherwise unicast locators are selected.
-     *
-     * @param [in, out] selector Locator selector.
-     */
-    virtual void select_locators(LocatorSelector& selector) const override;
-
-    virtual bool fillMetatrafficMulticastLocator(Locator_t &locator,
-        uint32_t metatraffic_multicast_port) const override;
-
-    virtual bool fillMetatrafficUnicastLocator(Locator_t &locator, uint32_t metatraffic_unicast_port) const override;
-
-    virtual bool configureInitialPeerLocator(Locator_t &locator, const PortParameters &port_params, uint32_t domainId,
-        LocatorList_t& list) const override;
-
-    virtual bool fillUnicastLocator(Locator_t &locator, uint32_t well_known_port) const override;
-
-protected:
-
-    friend class UDPChannelResource;
-
-    // For UDPv6, the notion of channel corresponds to a port + direction tuple.
-    asio::io_service io_service_;
-    std::vector<IPFinder::info_IP> currentInterfaces;
-
-    mutable std::recursive_mutex mInputMapMutex;
-    std::map<uint16_t, std::vector<UDPChannelResource*>> mInputSockets;
-
-    uint32_t mSendBufferSize;
-    uint32_t mReceiveBufferSize;
-
-    UDPTransportInterface(int32_t transport_kind);
-
-    virtual bool compare_locator_ip(const Locator_t& lh, const Locator_t& rh) const = 0;
-    virtual bool compare_locator_ip_and_port(const Locator_t& lh, const Locator_t& rh) const = 0;
-
-    virtual void endpoint_to_locator(asio::ip::udp::endpoint& endpoint, Locator_t& locator) = 0;
-    virtual void fill_local_ip(Locator_t& loc) const = 0;
-
-    virtual asio::ip::udp::endpoint GenerateAnyAddressEndpoint(uint16_t port) = 0;
-    virtual asio::ip::udp::endpoint generate_endpoint(uint16_t port) = 0;
-    virtual asio::ip::udp::endpoint generate_endpoint(const std::string& sIp, uint16_t port) = 0;
-    virtual asio::ip::udp::endpoint generate_endpoint(const Locator_t& loc, uint16_t port) = 0;
-    virtual asio::ip::udp::endpoint generate_local_endpoint(const Locator_t& loc, uint16_t port) = 0;
-    virtual asio::ip::udp generate_protocol() const = 0;
-    virtual void get_ips(std::vector<IPFinder::info_IP>& locNames, bool return_loopback = false) = 0;
-
-    //! Checks if the interfaces white list is empty.
-    virtual bool is_interface_whitelist_empty() const = 0;
-
-    //! Checks if the given interface is allowed by the white list.
-    virtual bool is_interface_allowed(const std::string& interface) const = 0;
-
-    /**
-    * Method to get a list of interfaces to bind the socket associated to the given locator.
-    * @return Vector of interfaces in string format.
-    */
-    virtual std::vector<std::string> get_binding_interfaces_list() = 0;
-
-    bool OpenAndBindInputSockets(const Locator_t& locator, TransportReceiverInterface* receiver, bool is_multicast,
-        uint32_t maxMsgSize);
-    UDPChannelResource* CreateInputChannelResource(const std::string& sInterface, const Locator_t& locator,
-        bool is_multicast, uint32_t maxMsgSize, TransportReceiverInterface* receiver);
-    virtual eProsimaUDPSocket OpenAndBindInputSocket(const std::string& sIp, uint16_t port, bool is_multicast) = 0;
-    eProsimaUDPSocket OpenAndBindUnicastOutputSocket(const asio::ip::udp::endpoint& endpoint, uint16_t& port);
-
-    virtual void set_receive_buffer_size(uint32_t size) = 0;
-    virtual void set_send_buffer_size(uint32_t size) = 0;
-    virtual void SetSocketOutboundInterface(eProsimaUDPSocket&, const std::string&) = 0;
-};
+using UDPTransportInterface = fastdds::rtps::UDPTransportInterface;
 
 } // namespace rtps
 } // namespace fastrtps

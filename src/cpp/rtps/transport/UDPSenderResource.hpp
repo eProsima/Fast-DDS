@@ -16,13 +16,13 @@
 #define __TRANSPORT_UDPSENDERRESOURCE_HPP__
 
 #include <fastdds/rtps/network/SenderResource.h>
-#include <fastrtps/transport/UDPTransportInterface.h>
+#include <fastdds/rtps/transport/UDPTransportInterface.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
-class UDPSenderResource : public SenderResource
+class UDPSenderResource : public fastrtps::rtps::SenderResource
 {
     public:
 
@@ -41,9 +41,9 @@ class UDPSenderResource : public SenderResource
                 };
 
             send_lambda_ = [this, &transport] (
-                    const octet* data,
+                    const fastrtps::rtps::octet* data,
                     uint32_t dataSize,
-                    const Locator_t& destination,
+                    const fastrtps::rtps::Locator_t& destination,
                     const std::chrono::microseconds& timeout)-> bool
                 {
                     return transport.send(data, dataSize, socket_, destination, only_multicast_purpose_, timeout);

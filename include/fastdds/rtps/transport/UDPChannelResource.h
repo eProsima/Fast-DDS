@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef UDP_CHANNEL_RESOURCE_INFO_
-#define UDP_CHANNEL_RESOURCE_INFO_
+#ifndef _FASTDDS_UDP_CHANNEL_RESOURCE_INFO_
+#define _FASTDDS_UDP_CHANNEL_RESOURCE_INFO_
 
 #include <fastdds/rtps/transport/ChannelResource.h>
 #include <fastdds/rtps/common/Locator.h>
@@ -80,7 +80,7 @@ public:
         UDPTransportInterface* transport,
         eProsimaUDPSocket& socket,
         uint32_t maxMsgSize,
-        const Locator_t& locator,
+        const fastrtps::rtps::Locator_t& locator,
         const std::string& sInterface,
         TransportReceiverInterface* receiver);
 
@@ -150,7 +150,7 @@ protected:
      * @param input_locator - Locator that triggered the creation of the resource
     */
     void perform_listen_operation(
-            Locator_t input_locator);
+            fastrtps::rtps::Locator_t input_locator);
 
     /**
     * Blocking Receive from the specified channel.
@@ -161,10 +161,10 @@ protected:
     * @param[out] remote_locator Locator describing the remote restination we received a packet from.
     */
     bool Receive(
-            octet* receive_buffer,
+            fastrtps::rtps::octet* receive_buffer,
             uint32_t receive_buffer_capacity,
             uint32_t& receive_buffer_size,
-            Locator_t& remote_locator);
+            fastrtps::rtps::Locator_t& remote_locator);
 
 private:
 
@@ -179,7 +179,7 @@ private:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif // UDP_CHANNEL_RESOURCE_INFO_
+#endif // _FASTDDS_UDP_CHANNEL_RESOURCE_INFO_

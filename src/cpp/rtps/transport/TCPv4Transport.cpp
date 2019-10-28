@@ -12,21 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/transport/TCPv4Transport.h>
+#include <fastdds/rtps/transport/TCPv4Transport.h>
 #include <utility>
 #include <cstring>
 #include <algorithm>
 #include <fastrtps/log/Log.h>
 #include <asio.hpp>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 
 using namespace std;
 using namespace asio;
 
 namespace eprosima{
-namespace fastrtps{
+namespace fastdds{
 namespace rtps {
+
+using IPFinder = fastrtps::rtps::IPFinder;
+using Locator_t = fastrtps::rtps::Locator_t;
+using octet = fastrtps::rtps::octet;
+using IPLocator = fastrtps::rtps::IPLocator;
+using LocatorList_t = fastrtps::rtps::LocatorList_t;
 
 static void get_ipv4s(
         std::vector<IPFinder::info_IP>& locNames,

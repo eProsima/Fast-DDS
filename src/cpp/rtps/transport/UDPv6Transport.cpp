@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/transport/TransportInterface.h>
-#include <fastrtps/transport/UDPv6Transport.h>
+#include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/UDPv6Transport.h>
 #include <utility>
 #include <cstring>
 #include <algorithm>
@@ -27,8 +27,14 @@ using namespace std;
 using namespace asio;
 
 namespace eprosima{
-namespace fastrtps{
+namespace fastdds{
 namespace rtps{
+
+using Locator_t = fastrtps::rtps::Locator_t;
+using IPFinder = fastrtps::rtps::IPFinder;
+using octet = fastrtps::rtps::octet;
+using IPLocator = fastrtps::rtps::IPLocator;
+using LocatorList_t = fastrtps::rtps::LocatorList_t;
 
 static void get_ipv6s(
         vector<IPFinder::info_IP>& locNames,

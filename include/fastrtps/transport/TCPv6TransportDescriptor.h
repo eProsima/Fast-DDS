@@ -17,32 +17,13 @@
 
 #include <fastrtps/transport/TCPTransportDescriptor.h>
 
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-class TCPTransportInterface;
-
-/**
- * Transport configuration
- *
- * - bufferSize:    length of the buffers used for transmission. Passing
- *                  a buffer of different size will cause transmission to
- *                  fail.
- *
- * - interfaceWhiteList: Lists the allowed interfaces.
- * @ingroup TRANSPORT_MODULE
- */
-typedef struct TCPv6TransportDescriptor: public TCPTransportDescriptor
-{
-    virtual ~TCPv6TransportDescriptor(){}
-
-    virtual TransportInterface* create_transport() const override;
-
-    RTPS_DllAPI TCPv6TransportDescriptor();
-
-    RTPS_DllAPI TCPv6TransportDescriptor(const TCPv6TransportDescriptor& t);
-} TCPv6TransportDescriptor;
+using TCPv6TransportDescriptor = fastdds::rtps::TCPv6TransportDescriptor;
 
 } // namespace rtps
 } // namespace fastrtps

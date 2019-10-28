@@ -19,7 +19,7 @@
 #include <vector>
 #include <memory>
 #include <fastdds/rtps/messages/MessageReceiver.h>
-#include <fastrtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/TransportInterface.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -32,7 +32,7 @@ namespace rtps {
  * closes it.
  * @ingroup NETWORK_MODULE
  */
-class ReceiverResource : public TransportReceiverInterface
+class ReceiverResource : public fastdds::rtps::TransportReceiverInterface
 {
    //! Only NetworkFactory is ever allowed to construct a ReceiverResource from scratch.
    //! In doing so, it guarantees the transport and channel are in a valid state for
@@ -86,7 +86,7 @@ private:
     ReceiverResource(const ReceiverResource&) = delete;
     ReceiverResource& operator=(const ReceiverResource&) = delete;
 
-    ReceiverResource(TransportInterface&, const Locator_t&, uint32_t);
+    ReceiverResource(fastdds::rtps::TransportInterface&, const Locator_t&, uint32_t);
     std::function<void()> Cleanup;
     std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
     bool mValid; // Post-construction validity check for the NetworkFactory

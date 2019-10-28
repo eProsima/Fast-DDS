@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TEST_UDPV4_TRANSPORT_DESCRIPTOR
-#define TEST_UDPV4_TRANSPORT_DESCRIPTOR
+#ifndef _FASTDDS_TEST_UDPV4_TRANSPORT_DESCRIPTOR_
+#define _FASTDDS_TEST_UDPV4_TRANSPORT_DESCRIPTOR_
 
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
 
@@ -35,7 +35,7 @@ typedef struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor{
 
    // General drop percentage (indescriminate)
    uint8_t percentageOfMessagesToDrop;
-   std::vector<SequenceNumber_t> sequenceNumberDataMessagesToDrop;
+   std::vector<fastrtps::rtps::SequenceNumber_t> sequenceNumberDataMessagesToDrop;
 
    uint32_t dropLogLength; // logs dropped packets.
 
@@ -46,7 +46,7 @@ typedef struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor{
 } test_UDPv4TransportDescriptor;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // FASTDDS_TEST_UDPV4_TRANSPORT_DESCRIPTOR_

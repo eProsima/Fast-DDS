@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TCPV6_TRANSPORT_DESCRIPTOR
-#define TCPV6_TRANSPORT_DESCRIPTOR
+#ifndef _FASTDDS_TCPV6_TRANSPORT_DESCRIPTOR_
+#define _FASTDDS_TCPV6_TRANSPORT_DESCRIPTOR_
 
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 
@@ -45,7 +45,7 @@ typedef struct TCPv6TransportDescriptor: public TCPTransportDescriptor
 } TCPv6TransportDescriptor;
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // _FASTDDS_TCPV6_TRANSPORT_DESCRIPTOR_

@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TRANSPORT_RECEIVER_INTERFACE_H
-#define TRANSPORT_RECEIVER_INTERFACE_H
+#ifndef _FASTDDS_TRANSPORT_RECEIVER_INTERFACE_H
+#define _FASTDDS_TRANSPORT_RECEIVER_INTERFACE_H
 
 #include <fastdds/rtps/common/Locator.h>
 
@@ -38,12 +38,12 @@ public:
      * @param localLocator Locator identifying the local endpoint.
      * @param remote_locator Locator identifying the remote endpoint.
      */
-    virtual void OnDataReceived(const octet* data, const uint32_t size,
-        const Locator_t& localLocator, const Locator_t& remote_locator) = 0;
+    virtual void OnDataReceived(const fastrtps::rtps::octet* data, const uint32_t size,
+        const fastrtps::rtps::Locator_t& localLocator, const fastrtps::rtps::Locator_t& remote_locator) = 0;
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // _FASTDDS_TRANSPORT_RECEIVER_INTERFACE_H

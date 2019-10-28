@@ -12,16 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/transport/TCPChannelResource.h>
-#include <fastrtps/transport/TCPTransportInterface.h>
+#include <fastdds/rtps/transport/TCPChannelResource.h>
+#include <fastdds/rtps/transport/TCPTransportInterface.h>
 #include <fastrtps/utils/IPLocator.h>
 
 #include <chrono>
 #include <thread>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
+
+using Locator_t = fastrtps::rtps::Locator_t;
+using IPLocator = fastrtps::rtps::IPLocator;
 
 /**
  * Search for the base port in the current domain without taking account the participant

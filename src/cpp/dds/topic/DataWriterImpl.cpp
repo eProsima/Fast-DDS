@@ -149,7 +149,7 @@ bool DataWriterImpl::write(
 
 bool DataWriterImpl::write(
         void* data,
-        rtps::WriteParams& params)
+        fastrtps::rtps::WriteParams& params)
 {
     logInfo(DATA_WRITER, "Writing new data with WriteParams");
     return create_new_change_with_params(ALIVE, data, params);
@@ -157,7 +157,7 @@ bool DataWriterImpl::write(
 
 ReturnCode_t DataWriterImpl::write(
             void* data,
-            const rtps::InstanceHandle_t& handle)
+            const fastrtps::rtps::InstanceHandle_t& handle)
 {
     //TODO Review when HANDLE_NIL is implemented as this just checks if the handle is 0,
     // but it need to check if there is an existing entity with that handle
@@ -176,7 +176,7 @@ ReturnCode_t DataWriterImpl::write(
 
 ReturnCode_t DataWriterImpl::dispose(
         void* data,
-        const rtps::InstanceHandle_t& handle)
+        const fastrtps::rtps::InstanceHandle_t& handle)
 {
     if (!handle.isDefined())
     {
@@ -373,7 +373,7 @@ bool DataWriterImpl::create_new_change_with_params(
         ChangeKind_t changeKind,
         void* data,
         WriteParams& wparams,
-        const rtps::InstanceHandle_t& handle)
+        const fastrtps::rtps::InstanceHandle_t& handle)
 {
     if (!check_new_change_preconditions(changeKind, data))
     {

@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _TCP_CHANNEL_RESOURCE_BASIC_
-#define _TCP_CHANNEL_RESOURCE_BASIC_
+#ifndef _FASTDDS_TCP_CHANNEL_RESOURCE_BASIC_
+#define _FASTDDS_TCP_CHANNEL_RESOURCE_BASIC_
 
 #include <asio.hpp>
 #include <fastdds/rtps/transport/TCPChannelResource.h>
@@ -31,7 +31,7 @@ public:
     TCPChannelResourceBasic(
         TCPTransportInterface* parent,
         asio::io_service& service,
-        const Locator_t& locator,
+        const fastrtps::rtps::Locator_t& locator,
         uint32_t maxMsgSize);
 
     // Constructor called when local server accepted connection
@@ -49,14 +49,14 @@ public:
     void disconnect() override;
 
     uint32_t read(
-        octet* buffer,
+        fastrtps::rtps::octet* buffer,
         std::size_t size,
         asio::error_code& ec) override;
 
     size_t send(
-        const octet* header,
+        const fastrtps::rtps::octet* header,
         size_t header_size,
-        const octet* data,
+        const fastrtps::rtps::octet* data,
         size_t size,
         asio::error_code& ec) override;
 
@@ -81,7 +81,7 @@ private:
 
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif // _TCP_CHANNEL_RESOURCE_BASIC_
+#endif // _FASTDDS_TCP_CHANNEL_RESOURCE_BASIC_

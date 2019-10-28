@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #include <fastdds/rtps/network/NetworkFactory.h>
-#include <fastrtps/transport/TransportDescriptorInterface.h>
+#include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastrtps/utils/IPFinder.h>
@@ -22,10 +22,13 @@
 #include <limits>
 
 using namespace std;
+using namespace eprosima::fastdds::rtps;
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
+
+using SendResourceList = fastdds::rtps::SendResourceList;
 
 NetworkFactory::NetworkFactory() : maxMessageSizeBetweenTransports_(0),
     minSendBufferSize_(std::numeric_limits<uint32_t>::max())

@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/transport/TCPTransportInterface.h>
-#include <fastrtps/transport/tcp/RTCPMessageManager.h>
+#include <fastdds/rtps/transport/TCPTransportInterface.h>
+#include <fastdds/rtps/transport/tcp/RTCPMessageManager.h>
 #include <rtps/transport/TCPSenderResource.hpp>
 //#include "TCPSenderResource.hpp"
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
-#include <fastrtps/transport/TCPChannelResourceBasic.h>
-#include <fastrtps/transport/TCPAcceptorBasic.h>
+#include <fastdds/rtps/transport/TCPChannelResourceBasic.h>
+#include <fastdds/rtps/transport/TCPAcceptorBasic.h>
 #if TLS_FOUND
-#include <fastrtps/transport/TCPChannelResourceSecure.h>
-#include <fastrtps/transport/TCPAcceptorSecure.h>
+#include <fastdds/rtps/transport/TCPChannelResourceSecure.h>
+#include <fastdds/rtps/transport/TCPAcceptorSecure.h>
 #endif
 
 #include <asio/steady_timer.hpp>
@@ -38,8 +38,19 @@ using namespace std;
 using namespace asio;
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
+
+using octet = fastrtps::rtps::octet;
+using Locator_t = fastrtps::rtps::Locator_t;
+using LocatorList_t = fastrtps::rtps::LocatorList_t;
+using IPLocator = fastrtps::rtps::IPLocator;
+using SenderResource = fastrtps::rtps::SenderResource;
+using CDRMessage_t = fastrtps::rtps::CDRMessage_t;
+using LocatorSelector = fastrtps::rtps::LocatorSelector;
+using LocatorSelectorEntry = fastrtps::rtps::LocatorSelectorEntry;
+using PortParameters = fastrtps::rtps::PortParameters;
+using System = fastrtps::System;
 
 static const int s_default_keep_alive_frequency = 5000; // 5 SECONDS
 static const int s_default_keep_alive_timeout = 15000; // 15 SECONDS
@@ -749,7 +760,7 @@ void TCPTransportInterface::perform_listen_operation(
     {
         // Blocking receive.
         CDRMessage_t& msg = channel->message_buffer();
-        CDRMessage::initCDRMsg(&msg);
+        fastrtps::rtps::CDRMessage::initCDRMsg(&msg);
         if (!Receive(rtcp_manager, channel, msg.buffer, msg.max_size, msg.length, remote_locator))
         {
             continue;
@@ -1075,7 +1086,7 @@ bool TCPTransportInterface::send(
 
 void TCPTransportInterface::select_locators(LocatorSelector& selector) const
 {
-    ResourceLimitedVector<LocatorSelectorEntry*>& entries =  selector.transport_starts();
+    fastrtps::ResourceLimitedVector<LocatorSelectorEntry*>& entries =  selector.transport_starts();
 
     for (size_t i = 0; i < entries.size(); ++i)
     {

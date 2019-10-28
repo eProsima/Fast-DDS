@@ -1,6 +1,19 @@
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-#ifndef RTCP_HEADER_H
-#define RTCP_HEADER_H
+#ifndef _FASTDDS_RTCP_HEADER_H_
+#define _FASTDDS_RTCP_HEADER_H_
 
 #include <fastdds/rtps/common/Types.h>
 #include <cstring>
@@ -35,14 +48,14 @@ struct TCPHeader
         rtcp[3] = 'P';
     }
 
-    const octet* address() const
+    const fastrtps::rtps::octet* address() const
     {
-        return reinterpret_cast<const octet*>(this);
+        return reinterpret_cast<const fastrtps::rtps::octet*>(this);
     }
 
-    octet* address()
+    fastrtps::rtps::octet* address()
     {
-        return (octet*)this;
+        return (fastrtps::rtps::octet*)this;
     }
 
     /*!
@@ -59,7 +72,7 @@ struct TCPHeader
 union TCPTransactionId
 {
     uint32_t ints[3];
-    octet octets[12];
+    fastrtps::rtps::octet octets[12];
 
     TCPTransactionId()
     {
@@ -112,15 +125,15 @@ union TCPTransactionId
         return *this;
     }
 
-    TCPTransactionId& operator=(const octet* id)
+    TCPTransactionId& operator=(const fastrtps::rtps::octet* id)
     {
-        memcpy(octets, id, 12 * sizeof(octet));
+        memcpy(octets, id, 12 * sizeof(fastrtps::rtps::octet));
         return *this;
     }
 
     TCPTransactionId& operator=(const char* id)
     {
-        memcpy(octets, id, 12 * sizeof(octet));
+        memcpy(octets, id, 12 * sizeof(fastrtps::rtps::octet));
         return *this;
     }
 
@@ -170,7 +183,7 @@ inline std::ostream& operator<<(std::ostream& output,const TCPTransactionId& t)
     return output;
 }
 
-enum TCPCPMKind : octet
+enum TCPCPMKind : fastrtps::rtps::octet
 {
     BIND_CONNECTION_REQUEST =           0xD1,
     BIND_CONNECTION_RESPONSE =          0xE1,
@@ -187,7 +200,7 @@ enum TCPCPMKind : octet
 class TCPControlMsgHeader
 {
     TCPCPMKind kind_; // 1 byte
-    octet flags_; // 1 byte
+    fastrtps::rtps::octet flags_; // 1 byte
     uint16_t length_; // 2 bytes
     TCPTransactionId transaction_id_; // 12 bytes
 
@@ -195,7 +208,7 @@ public:
     TCPControlMsgHeader()
     {
         kind_ = static_cast<TCPCPMKind>(0x00);
-        flags_ = static_cast<octet>(0x00);
+        flags_ = static_cast<fastrtps::rtps::octet>(0x00);
         length_ = 0;
     }
 
@@ -250,16 +263,16 @@ public:
             bool requires_response)
     {
         //TODO: Optimize receiving a Endianness_t
-        octet e = (endianess) ? BIT(1) : 0x00;
-        octet p = (payload) ? BIT(2) : 0x00;
-        octet r = (requires_response) ? BIT(3) : 0x00;
+        fastrtps::rtps::octet e = (endianess) ? BIT(1) : 0x00;
+        fastrtps::rtps::octet p = (payload) ? BIT(2) : 0x00;
+        fastrtps::rtps::octet r = (requires_response) ? BIT(3) : 0x00;
         flags_ = e | p | r;
     }
 
-    void endianess(Endianness_t endianess)
+    void endianess(fastrtps::rtps::Endianness_t endianess)
     {
         // Endianess flag has inverse logic than Endianness_t :-/
-        if (endianess == Endianness_t::BIGEND)
+        if (endianess == fastrtps::rtps::Endianness_t::BIGEND)
         {
             flags_ &= 0xFE;
         }
@@ -316,7 +329,7 @@ public:
 
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif // RTCP_HEADER_H
+#endif // _FASTDDS_RTCP_HEADER_H_

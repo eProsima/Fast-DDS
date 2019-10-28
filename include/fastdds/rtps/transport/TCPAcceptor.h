@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _TCP_ACCEPTOR_BASE_
-#define _TCP_ACCEPTOR_BASE_
+#ifndef _FASTDDS_TCP_ACCEPTOR_BASE_
+#define _FASTDDS_TCP_ACCEPTOR_BASE_
 
 #include <asio.hpp>
 #include <fastdds/rtps/common/Locator.h>
@@ -31,28 +31,28 @@ class TCPAcceptor
 {
 protected:
     asio::ip::tcp::acceptor acceptor_;
-    Locator_t locator_;
+    fastrtps::rtps::Locator_t locator_;
     asio::ip::tcp::endpoint endpoint_;
-    std::vector<Locator_t> pending_out_locators_;
+    std::vector<fastrtps::rtps::Locator_t> pending_out_locators_;
     asio::io_service* io_service_;
 
 public:
     TCPAcceptor(
         asio::io_service& io_service,
         TCPTransportInterface* parent,
-        const Locator_t& locator);
+        const fastrtps::rtps::Locator_t& locator);
 
     TCPAcceptor(
         asio::io_service& io_service,
         const std::string& interface,
-        const Locator_t& locator);
+        const fastrtps::rtps::Locator_t& locator);
 
-    const Locator_t& locator() const
+    const fastrtps::rtps::Locator_t& locator() const
     {
         return locator_;
     }
 
-    Locator_t& locator()
+    fastrtps::rtps::Locator_t& locator()
     {
         return locator_;
     }
@@ -62,7 +62,7 @@ public:
 
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif // _TCP_ACCEPTOR_BASE_
+#endif // _FASTDDS_TCP_ACCEPTOR_BASE_

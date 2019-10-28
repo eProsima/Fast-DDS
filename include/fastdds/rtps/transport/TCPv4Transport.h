@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TCPV4_TRANSPORT_H
-#define TCPV4_TRANSPORT_H
+#ifndef _FASTDDS_TCPV4_TRANSPORT_H_
+#define _FASTDDS_TCPV4_TRANSPORT_H_
 
 #include <fastdds/rtps/transport/TCPTransportInterface.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
@@ -55,23 +55,23 @@ protected:
     TCPv4Transport();
 
     virtual bool compare_locator_ip(
-        const Locator_t& lh,
-        const Locator_t& rh) const override;
+        const fastrtps::rtps::Locator_t& lh,
+        const fastrtps::rtps::Locator_t& rh) const override;
 
     virtual bool compare_locator_ip_and_port(
-        const Locator_t& lh,
-        const Locator_t& rh) const override;
+        const fastrtps::rtps::Locator_t& lh,
+        const fastrtps::rtps::Locator_t& rh) const override;
 
-    virtual void fill_local_ip(Locator_t& loc) const override;
+    virtual void fill_local_ip(fastrtps::rtps::Locator_t& loc) const override;
 
     virtual asio::ip::tcp::endpoint generate_endpoint(uint16_t port) const override;
 
     virtual asio::ip::tcp::endpoint generate_endpoint(
-        const Locator_t& loc,
+        const fastrtps::rtps::Locator_t& loc,
         uint16_t port) const override;
 
     virtual asio::ip::tcp::endpoint generate_local_endpoint(
-        Locator_t& loc,
+        fastrtps::rtps::Locator_t& loc,
         uint16_t port) const override;
 
     virtual asio::ip::tcp generate_protocol() const override;
@@ -79,7 +79,7 @@ protected:
     virtual asio::ip::tcp get_protocol_type() const override { return asio::ip::tcp::v4(); }
 
     virtual void get_ips(
-        std::vector<IPFinder::info_IP>& locNames,
+        std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
         bool return_loopback = false) const override;
 
     /**
@@ -88,7 +88,7 @@ protected:
     */
     virtual std::vector<std::string> get_binding_interfaces_list() override;
 
-    bool is_locator_allowed(const Locator_t& locator) const override;
+    bool is_locator_allowed(const fastrtps::rtps::Locator_t& locator) const override;
 
     //! Checks if the given ip has been included in the white list to use it.
     virtual bool is_interface_allowed(const std::string& interface) const override;
@@ -97,7 +97,7 @@ protected:
     bool is_interface_allowed(const asio::ip::address_v4& ip) const;
 
     //! Checks if the given interface is allowed by the white list.
-    virtual bool is_interface_allowed(const Locator_t& loc) const override;
+    virtual bool is_interface_allowed(const fastrtps::rtps::Locator_t& loc) const override;
 
     //! Checks if the interfaces white list is empty.
     virtual bool is_interface_whitelist_empty() const override;
@@ -107,7 +107,7 @@ protected:
 
     virtual void endpoint_to_locator(
         const asio::ip::tcp::endpoint& endpoint,
-        Locator_t& locator) const override;
+        fastrtps::rtps::Locator_t& locator) const override;
 
 public:
     RTPS_DllAPI TCPv4Transport(const TCPv4TransportDescriptor&);
@@ -118,13 +118,13 @@ public:
 
     virtual TCPTransportDescriptor* configuration() override;
 
-    virtual LocatorList_t NormalizeLocator(const Locator_t& locator) override;
+    virtual fastrtps::rtps::LocatorList_t NormalizeLocator(const fastrtps::rtps::Locator_t& locator) override;
 
-    virtual bool is_local_locator(const Locator_t& locator) const override;
+    virtual bool is_local_locator(const fastrtps::rtps::Locator_t& locator) const override;
 
     TransportDescriptorInterface* get_configuration() override { return &configuration_; }
 
-    virtual void AddDefaultOutputLocator(LocatorList_t&) override;
+    virtual void AddDefaultOutputLocator(fastrtps::rtps::LocatorList_t&) override;
 
     virtual uint16_t GetLogicalPortIncrement() const override;
 
@@ -133,16 +133,16 @@ public:
     virtual uint16_t GetMaxLogicalPort() const override;
 
     virtual bool fillMetatrafficUnicastLocator(
-        Locator_t &locator,
+        fastrtps::rtps::Locator_t &locator,
         uint32_t metatraffic_unicast_port) const override;
 
     virtual bool fillUnicastLocator(
-        Locator_t &locator,
+        fastrtps::rtps::Locator_t &locator,
         uint32_t well_known_port) const override;
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // _FASTDDS_TCPV4_TRANSPORT_H_
