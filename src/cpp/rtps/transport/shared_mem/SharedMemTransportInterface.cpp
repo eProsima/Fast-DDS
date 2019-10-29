@@ -41,6 +41,7 @@ using SenderResource = fastrtps::rtps::SenderResource;
 using LocatorSelectorEntry = fastrtps::rtps::LocatorSelectorEntry;
 using LocatorSelector = fastrtps::rtps::LocatorSelector;
 using PortParameters = fastrtps::rtps::PortParameters;
+using Log = dds::Log;
 
 
 	struct MultiUniLocatorsLinkage

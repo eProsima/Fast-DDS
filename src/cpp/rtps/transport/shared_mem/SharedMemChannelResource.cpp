@@ -23,6 +23,7 @@ namespace rtps {
 
 using Locator_t = fastrtps::rtps::Locator_t;
 using octet = fastrtps::rtps::octet;
+using Log = dds::Log;
 
 SharedMemChannelResource::SharedMemChannelResource(
 		SharedMemTransportInterface* transport,

@@ -36,6 +36,7 @@ using IPFinder = fastrtps::rtps::IPFinder;
 using IPLocator = fastrtps::rtps::IPLocator;
 using Locator_t = fastrtps::rtps::Locator_t;
 using LocatorList_t = fastrtps::rtps::LocatorList_t;
+using Log = dds::Log;
 
 std::vector<std::shared_ptr<Port>> eProsimaSharedMem::global_ports_;
 std::mutex eProsimaSharedMem::global_ports_mutex_;
