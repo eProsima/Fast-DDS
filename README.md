@@ -43,26 +43,90 @@ You can get either a binary distribution of *eprosima Fast RTPS* or compile the 
 The latest, up to date binary release of *eprosima Fast RTPS* can be obtained from the <a href='http://www.eprosima.com'>company website</a>.
 
 ### Installation from Source
-To compile *eprosima Fast RTPS* from source, at least Cmake version 2.8.12 is needed.
-Clone the project from GitHub:
 
-    $ git clone https://github.com/eProsima/Fast-RTPS
-    $ cd Fast-RTPS
-    $ mkdir build
-    $ cd build
+#### Dependencies
 
-If you are on Linux, execute:
+##### Asio and TinyXML2 libraries
 
-    $ cmake ../ -DTHIRDPARTY=ON
-    $ make
-    $ make install
+On Linux, you can install these libraries using the package manager of your Linux distribution.
+For example, on Ubuntu you can install them by using its package manager with the next command.
 
-If you are on Windows, choose your version of Visual Studio:
+```bash
+sudo apt install libasio-dev libtinyxml2-dev
+```
 
-    > cmake ../  -G "Visual Studio 14 2015 Win64" -DTHIRDPARTY=ON
-    > cmake --build . --target install
-	
-If you want to compile the performance tests, you will need to add the argument `-DPERFORMANCE_TESTS=ON` when calling Cmake.
+On Windows, you can install these libraries using [Chocolatey](https://chocolatey.org).
+First, download the following chocolatey packages from this
+[ROS2 Github repository](https://github.com/ros2/choco-packages/releases/latest).
+
+* asio.1.12.1.nupkg
+* tinyxml2.6.0.0.nupkg
+
+Once these packages are downloaded, open an administrative shell and execute the following command:
+
+```batch
+choco install -y -s <PATH\TO\DOWNLOADS\> asio tinyxml2
+```
+
+Please replace `<PATH\TO\DOWNLOADS>` with the folder you downloaded the packages to.
+
+#### Colcon installation
+*******************
+[colcon](https://colcon.readthedocs.io) is a command line tool to build sets of software packages.
+This section explains to use it to compile easily Fast-RTPS and its dependencies.
+First install ROS2 development tools (colcon and vcstool):
+
+```bash
+pip install -U colcon-common-extensions vcstool
+```
+
+Download the repos file that will be used to download Fast RTPS and its dependencies:
+
+```bash
+$ wget https://raw.githubusercontent.com/eProsima/Fast-RTPS/master/fastrtps.repos
+$ mkdir src
+$ vcs import src < fastrtps.repos
+```
+
+Finally, use colcon to compile all software:
+
+```bash
+$ colcon build
+```
+
+#### Manual installation
+*******************
+Before compiling manually Fast RTPS you need to clone the following dependencies and compile them using
+[CMake](https://cmake.org).
+
+* [Fast CDR](https://github.com/eProsima/Fast-CDR.git)
+
+    ```bash
+    $ git clone https://github.com/eProsima/Fast-CDR.git
+    $ mkdir Fast-CDR/build && cd Fast-CDR/build
+    $ cmake ..
+    $ cmake --build . --target install
+    ```
+
+* [Foonathan memory](https://github.com/foonathan/memory)
+
+    ```bash
+    $ git clone https://github.com/eProsima/foonathan_memory_vendor.git
+    $ cd foonathan_memory_vendor
+    $ git submodule update --init --recursive
+    $ mkdir build && cd build
+    $ cmake ..
+    $ cmake --build . --target install
+    ```
+
+Once all dependencies are installed, you will be able to compile and install Fast RTPS.
+
+```bash
+$ git clone https://github.com/eProsima/Fast-RTPS.git
+$ mkdir Fast-RTPS/build && cd Fast-RTPS/build
+$ cmake ..
+$ cmake --build . --target install
+```
 
 ## Documentation
 
