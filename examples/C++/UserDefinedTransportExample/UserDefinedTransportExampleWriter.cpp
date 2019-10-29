@@ -14,6 +14,7 @@
 
 #include "UserDefinedTransportExampleWriter.h"
 #include <memory>
+#include <chrono>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 
 using namespace eprosima::fastrtps;
@@ -29,7 +30,10 @@ void my_WriterListener::onWriterMatched(RTPSWriter*, MatchingInfo& info)
 }
 
 void UserDefinedTransportExampleWriter::waitformatching(){
-	while(my_listener->n_matched == 0){}
+	while(my_listener->n_matched == 0)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
 	return;
 }
    	
