@@ -33,6 +33,7 @@ using Locator_t = fastrtps::rtps::Locator_t;
 using octet = fastrtps::rtps::octet;
 using IPLocator = fastrtps::rtps::IPLocator;
 using LocatorList_t = fastrtps::rtps::LocatorList_t;
+using Log = fastdds::dds::Log;
 
 static void get_ipv4s(
         std::vector<IPFinder::info_IP>& locNames,
