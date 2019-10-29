@@ -128,7 +128,7 @@ public:
     {
         if(size_ == capacity_)
         {
-            realloc();
+            realloc((capacity_ > 0) ? capacity_ * 2 : 1);
         }
 
         uint8_t* place = memory_ + size_ * block_size_;
@@ -137,6 +137,25 @@ public:
         size_++;
 
         return place;
+    }
+
+    void resize(
+            size_t new_size)
+    {
+        if(size_ >= new_size)
+        {
+            return;
+        }
+
+        realloc(new_size);
+
+        uint8_t* place = memory_ + size_ * block_size_;
+        for(size_t i = size_; i < new_size; i++)
+        {
+            content_.construct_instance(place);
+        }
+
+        size_ = new_size;
     }
 
     uint8_t* operator [] (
@@ -155,9 +174,8 @@ private:
     uint8_t* memory_;
     uint32_t size_;
 
-    void realloc()
+    void realloc(size_t new_capacity)
     {
-        uint32_t new_capacity = (capacity_ > 0) ? capacity_ * 2 : 1;
         uint8_t* new_memory = new uint8_t[new_capacity * block_size_];
 
         move_content(new_memory, memory_);

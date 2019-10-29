@@ -193,6 +193,7 @@ The following methods are available when:
     ```c++
     data.push(42); // push back new value to the sequence.
     data.push(dynamic_data_representing_a_value);
+    data.resize(20); //resize the vector (same behaviour as std::vector::resize())
     ```
 
 #### References to `DynamicData`

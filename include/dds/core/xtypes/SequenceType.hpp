@@ -161,6 +161,13 @@ public:
         return nullptr;
     }
 
+    void resize_instance(
+            uint8_t* instance,
+            size_t size) const
+    {
+        reinterpret_cast<SequenceInstance*>(instance)->resize(size);
+    }
+
 protected:
     virtual DynamicType* clone() const override
     {

@@ -276,6 +276,15 @@ public:
         return *this;
     }
 
+    WritableDynamicDataRef& resize(size_t size) // this = SequenceType
+    {
+        assert(type_.kind() == TypeKind::SEQUENCE_TYPE);
+        const SequenceType& sequence = static_cast<const SequenceType&>(type_);
+
+        sequence.resize_instance(instance_, size);
+        return *this;
+    }
+
     bool for_each(std::function<void(const ReadableNode& node)> visitor) const
     {
         return ReadableDynamicDataRef::for_each(visitor);
