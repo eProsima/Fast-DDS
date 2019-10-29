@@ -23,8 +23,8 @@ namespace eprosima{
 namespace fastdds{
 namespace rtps{
 
-class ChannelResource;
-class TransportInterface;
+//class ChannelResource;
+//class TransportInterface;
 
 }
 }

@@ -26,9 +26,9 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-using TCPChannelResource fastdds::rtps::TCPChannelResource;
+using TCPChannelResource = fastdds::rtps::TCPChannelResource;
 
-using eSocketErrorCodes = dds::eSocketErrorCodes;
+using eSocketErrorCodes = fastdds::rtps::eSocketErrorCodes;
 
 constexpr eSocketErrorCodes eNoError = eSocketErrorCodes::eNoError;
 constexpr eSocketErrorCodes eBrokenPipe = eSocketErrorCodes::eBrokenPipe;

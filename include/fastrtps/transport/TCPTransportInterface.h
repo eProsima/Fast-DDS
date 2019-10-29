@@ -15,10 +15,10 @@
 #ifndef TCP_TRANSPORT_INTERFACE_H
 #define TCP_TRANSPORT_INTERFACE_H
 
+#include <string>
 #include <fastrtps/transport/TransportInterface.h>
 #include <fastrtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
-#include <fastrtps/transport/tcp/RTCPHeader.h>
 #include <fastrtps/transport/TCPChannelResourceBasic.h>
 #include <fastrtps/transport/TCPAcceptorBasic.h>
 

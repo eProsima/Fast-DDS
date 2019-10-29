@@ -18,7 +18,6 @@
 #include <fastrtps/transport/TCPTransportInterface.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
-#include <fastrtps/transport/tcp/RTCPHeader.h>
 
 #include <fastdds/rtps/transport/TCPv4Transport.h>
 

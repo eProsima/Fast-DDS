@@ -21,7 +21,7 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-class TransportInterface;
+//class TransportInterface;
 
 /**
  * Transport configuration
