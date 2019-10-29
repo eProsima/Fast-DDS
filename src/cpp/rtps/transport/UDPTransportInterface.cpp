@@ -41,6 +41,7 @@ using IPFinder = fastrtps::rtps::IPFinder;
 using octet = fastrtps::rtps::octet;
 using PortParameters = fastrtps::rtps::PortParameters;
 using SenderResource = fastrtps::rtps::SenderResource;
+using Log = fastdds::dds::Log;
 
 struct MultiUniLocatorsLinkage
 {

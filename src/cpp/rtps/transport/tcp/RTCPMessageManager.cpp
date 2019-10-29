@@ -43,6 +43,7 @@ using CDRMessage_t = fastrtps::rtps::CDRMessage_t;
 using RTPSMessageCreator = fastrtps::rtps::RTPSMessageCreator;
 using ProtocolVersion_t = fastrtps::rtps::ProtocolVersion_t;
 using System = fastrtps::System;
+using Log = fastdds::dds::Log;
 
 static void endpoint_to_locator(
         const asio::ip::tcp::endpoint& endpoint,

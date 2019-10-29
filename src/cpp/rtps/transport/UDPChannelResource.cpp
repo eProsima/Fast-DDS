@@ -23,6 +23,7 @@ namespace rtps {
 
 using Locator_t = fastrtps::rtps::Locator_t;
 using octet = fastrtps::rtps::octet;
+using Log = fastdds::dds::Log;
 
 UDPChannelResource::UDPChannelResource(
         UDPTransportInterface* transport,

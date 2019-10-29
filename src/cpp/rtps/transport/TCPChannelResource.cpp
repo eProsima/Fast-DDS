@@ -25,6 +25,7 @@ namespace rtps {
 
 using Locator_t = fastrtps::rtps::Locator_t;
 using IPLocator = fastrtps::rtps::IPLocator;
+using Log = fastdds::dds::Log;
 
 /**
  * Search for the base port in the current domain without taking account the participant

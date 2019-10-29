@@ -28,6 +28,7 @@ namespace rtps {
 using Locator_t = fastrtps::rtps::Locator_t;
 using octet = fastrtps::rtps::octet;
 using IPLocator = fastrtps::rtps::IPLocator;
+using Log = fastdds::dds::Log;
 
 TCPChannelResourceBasic::TCPChannelResourceBasic(
         TCPTransportInterface* parent,

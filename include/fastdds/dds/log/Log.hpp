@@ -244,7 +244,7 @@ protected:
     {                                                                                                \
         std::stringstream ss;                                                                        \
         ss << msg;                                                                                   \
-        fastdds::dds::Log::QueueLog(ss.str(), fastdds::dds::Log::Context{__FILE__, __LINE__, __func__, #cat}, fastdds::dds::Log::Kind::Error); \
+        Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Error); \
     }
 #else
 #define logError_(cat, msg)
@@ -253,11 +253,11 @@ protected:
 #ifndef LOG_NO_WARNING
 #define logWarning_(cat, msg)                                                                              \
     {                                                                                                      \
-        if (fastdds::dds::Log::GetVerbosity() >= fastdds::dds::Log::Log::Kind::Warning)                                                     \
+        if (Log::GetVerbosity() >= Log::Kind::Warning)                                                     \
         {                                                                                                  \
             std::stringstream ss;                                                                          \
             ss << msg;                                                                                     \
-            fastdds::dds::Log::QueueLog(ss.str(), fastdds::dds::Log::Log::Context{__FILE__, __LINE__, __func__, #cat}, fastdds::dds::Log::Log::Kind::Warning); \
+            Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Warning); \
         }                                                                                                  \
     }
 #else
@@ -268,11 +268,11 @@ protected:
     (!defined(LOG_NO_INFO))
 #define logInfo_(cat, msg)                                                                              \
     {                                                                                                   \
-        if (fastdds::dds::Log::GetVerbosity() >= fastdds::dds::Log::Log::Kind::Info)                                                     \
+        if (Log::GetVerbosity() >= Log::Kind::Info)                                                     \
         {                                                                                               \
             std::stringstream ss;                                                                       \
             ss << msg;                                                                                  \
-            fastdds::dds::Log::QueueLog(ss.str(), fastdds::dds::Log::Log::Context{__FILE__, __LINE__, __func__, #cat}, fastdds::dds::Log::Log::Kind::Info); \
+            Log::QueueLog(ss.str(), Log::Context{__FILE__, __LINE__, __func__, #cat}, Log::Kind::Info); \
         }                                                                                               \
     }
 #else

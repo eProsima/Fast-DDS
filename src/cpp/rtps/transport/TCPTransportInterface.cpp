@@ -51,6 +51,7 @@ using LocatorSelector = fastrtps::rtps::LocatorSelector;
 using LocatorSelectorEntry = fastrtps::rtps::LocatorSelectorEntry;
 using PortParameters = fastrtps::rtps::PortParameters;
 using System = fastrtps::System;
+using Log = fastdds::dds::Log;
 
 static const int s_default_keep_alive_frequency = 5000; // 5 SECONDS
 static const int s_default_keep_alive_timeout = 15000; // 15 SECONDS

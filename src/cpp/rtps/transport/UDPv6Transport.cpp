@@ -35,6 +35,7 @@ using IPFinder = fastrtps::rtps::IPFinder;
 using octet = fastrtps::rtps::octet;
 using IPLocator = fastrtps::rtps::IPLocator;
 using LocatorList_t = fastrtps::rtps::LocatorList_t;
+using Log = fastdds::dds::Log;
 
 static void get_ipv6s(
         vector<IPFinder::info_IP>& locNames,
