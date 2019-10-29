@@ -19,11 +19,11 @@ you can create the representative C++ code defining this IDL's types using *xtyp
 
 ```c++
 StructType inner("Inner");
-outer.add_member("a", primitive_type<int>());
+outer.add_member("a", primitive_type<int32_t>());
 
 StructType outer("Outer");
 outer.add_member("b", inner);
-outer.add_member("c", primitive_type<int>());
+outer.add_member("c", primitive_type<int32_t>());
 ```
 
 Once these types have been defined, you can instatiate them and access their data:
@@ -34,7 +34,7 @@ DynamicData data(outer);
 data["b"]["a"].value(42);
 
 // read value
-int my_value = data["b"]["a"].value<int>();
+int32_t my_value = data["b"]["a"].value<int32_t>();
 ```
 
 ## Why should you use *eProsima xtypes*?
@@ -77,7 +77,7 @@ There are several collection types:
 - `WStringType`: variable-size set of wchar-type elements. Similar to *C++* `std::wstring`
 
 ```c++
-ArrayType a1(primitive_type<int>(), 10); //size 10
+ArrayType a1(primitive_type<int32_t>(), 10); //size 10
 ArrayType a2(structure, 10); //Array of structures (structure previously defined as StructType)
 SequenceType s1(primitive<float>()); //unbounded sequence
 SequenceType s2(primitive<float>(),30); //bounded sequence, max size will be 30
@@ -95,7 +95,7 @@ StructType my_struct("MyStruct");
 ```
 Once the `StructType` has been declared, any number of members can be added.
 ```c++
-my_struct.add_member(Member("m_a", primitive_type<int>()));
+my_struct.add_member(Member("m_a", primitive_type<int32_t>()));
 my_struct.add_member(Member("m_b", StringType()));
 my_struct.add_member(Member("m_c", primitive_type<double>().key().id(42))); //with annotations
 my_struct.add_member("m_d", ArrayType(25)); //shortcut version
@@ -153,13 +153,13 @@ The following methods are available when:
 1. `DynamicData` represents a `PrimitiveType` (of `int` as example):
     ```c++
     data.value(42); //sets the value to 42
-    int value = data.value<int>(); //read the value
+    int32_t value = data.value<int32_t>(); //read the value
     ```
 1. `DynamicData` represents an `AggregationType`
     ```c++
     data["member_name"].value(42); //set value 42 to the int member called "member_name"
     data[2].value(42); //set value 42 to the third int member called "member_name"
-    int value = data["member_name"].value<int>(); //get value from int member called "member_name"
+    int32_t value = data["member_name"].value<int32_t>(); //get value from int member called "member_name"
     data["member_name"].value(dynamic_data_representing_a_value);
     WritableDynamicDataRef ref = data["member_name"];
     size_t size = data.size(); //number of members
@@ -167,7 +167,7 @@ The following methods are available when:
 1. `DynamicData` represents a `CollectionType`
     ```c++
     data[2].value(42); // set value 42 to position 2 of the collection.
-    int value = data[2].value<int>(); // get value from position 2 of the collection.
+    int32_t value = data[2].value<int32_t>(); // get value from position 2 of the collection.
     data[2] = dynamic_data_representing_a_value;
     WritableDynamicDataRef ref = data[2]; //references to a DynamicData that represents a collection
     size_t size = data.size(); //size of collection
@@ -258,7 +258,7 @@ On the other hand, each inner `MutableCollectionType` will trigger a further all
 Let see an example:
 ```c++
 StructType inner("Inner");
-inner.add_member("m_int", primitive_type<int>());
+inner.add_member("m_int", primitive_type<int32_t>());
 inner.add_member("m_float", primitive_type<float>());
 inner.add_member("m_array", ArrayType(primitive_type<uint16_t>(), 4));
 
