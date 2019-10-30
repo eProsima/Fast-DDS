@@ -51,6 +51,8 @@ public:
 
 	void write(const fastrtps::rtps::octet* buffer, uint32_t size, const std::chrono::microseconds& timeout)
 	{
+		(void)timeout;
+		
 		// TODO: Handle timeout
 		for (auto& observer : observers_)
 		{

@@ -44,6 +44,7 @@ namespace rtps {
 #define LOCATOR_KIND_UDPv6 2
 #define LOCATOR_KIND_TCPv4 4
 #define LOCATOR_KIND_TCPv6 8
+#define LOCATOR_KIND_SHMEM 16
 
 //!@brief Class Locator_t, uniquely identifies a communication channel for a particular transport.
 //For example, an address+port combination in the case of UDP.
@@ -58,6 +59,7 @@ public:
         * LOCATOR_KIND_UDPv6
         * LOCATOR_KIND_TCPv4
         * LOCATOR_KIND_TCPv6
+        * LOCATOR_KIND_SHMEM
         */
     int32_t kind;
     uint32_t port;

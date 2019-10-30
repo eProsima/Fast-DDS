@@ -12,14 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef SHAREDMEM_CHANNEL_RESOURCE_INFO_
-#define SHAREDMEM_CHANNEL_RESOURCE_INFO_
+#ifndef _FASTDDS_SHAREDMEM_CHANNEL_RESOURCE_INFO_
+#define _FASTDDS_SHAREDMEM_CHANNEL_RESOURCE_INFO_
 
 #include <fastrtps/transport/ChannelResource.h>
 #include <fastrtps/rtps/common/Locator.h>
 #include <fastdds/rtps/transport/shared_mem/eProsimaSharedMem.hpp>
-
-#include <asio.hpp>
 
 namespace eprosima{
 namespace fastdds{
@@ -119,7 +117,7 @@ private:
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif // SHAREDMEM_CHANNEL_RESOURCE_INFO_
+#endif // _FASTDDS_SHAREDMEM_CHANNEL_RESOURCE_INFO_

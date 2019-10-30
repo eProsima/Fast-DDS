@@ -23,14 +23,12 @@ namespace fastdds{
 namespace rtps{
 
 /**
- * This is a default UDPv4 implementation.
+ * Shared memory transport implementation.
+ * 
  *    - Opening an output channel by passing a locator will open a socket per interface on the given port.
  *       This collection of sockets constitute the "outbound channel". In other words, a channel corresponds
  *       to a port + a direction.
- *
- *    - It is possible to provide a white list at construction, which limits the interfaces the transport
- *       will ever be able to interact with. If left empty, all interfaces are allowed.
- *
+ * 
  *    - Opening an input channel by passing a locator will open a socket listening on the given port on every
  *       whitelisted interface, and join the multicast channel specified by the locator address. Hence, any locator
  *       that does not correspond to the multicast range will simply open the port without a subsequent join. Joining
@@ -77,42 +75,42 @@ protected:
     SharedMemTransport();
     SharedMemTransportDescriptor configuration_;
 
-    virtual bool compare_locator_ip(const fastrtps::rtps::Locator_t& lh, const fastrtps::rtps::Locator_t& rh) const override;
-    virtual bool compare_locator_ip_and_port(const fastrtps::rtps::Locator_t& lh, const fastrtps::rtps::Locator_t& rh) const override;
+    //virtual bool compare_locator_ip(const fastrtps::rtps::Locator_t& lh, const fastrtps::rtps::Locator_t& rh) const override;
+    //virtual bool compare_locator_ip_and_port(const fastrtps::rtps::Locator_t& lh, const fastrtps::rtps::Locator_t& rh) const override;
 
-    virtual void endpoint_to_locator(asio::ip::udp::endpoint& endpoint, fastrtps::rtps::Locator_t& locator) override;
-    virtual void fill_local_ip(fastrtps::rtps::Locator_t& loc) const override;
+    //virtual void endpoint_to_locator(asio::ip::udp::endpoint& endpoint, fastrtps::rtps::Locator_t& locator) override;
+    //virtual void fill_local_ip(fastrtps::rtps::Locator_t& loc) const override;
 
-    virtual asio::ip::udp::endpoint GenerateAnyAddressEndpoint(uint16_t port) override;
-    virtual asio::ip::udp::endpoint generate_endpoint(uint16_t port) override;
-    virtual asio::ip::udp::endpoint generate_endpoint(const std::string& sIp, uint16_t port) override;
-    virtual asio::ip::udp::endpoint generate_endpoint(const fastrtps::rtps::Locator_t& loc, uint16_t port) override;
-    virtual asio::ip::udp::endpoint generate_local_endpoint(const fastrtps::rtps::Locator_t& loc, uint16_t port) override;
-    virtual asio::ip::udp generate_protocol() const override;
-    virtual void get_ips(std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames, bool return_loopback = false) override;
+    //virtual asio::ip::udp::endpoint GenerateAnyAddressEndpoint(uint16_t port) override;
+    //virtual asio::ip::udp::endpoint generate_endpoint(uint16_t port) override;
+    //virtual asio::ip::udp::endpoint generate_endpoint(const std::string& sIp, uint16_t port) override;
+    //virtual asio::ip::udp::endpoint generate_endpoint(const fastrtps::rtps::Locator_t& loc, uint16_t port) override;
+    //virtual asio::ip::udp::endpoint generate_local_endpoint(const fastrtps::rtps::Locator_t& loc, uint16_t port) override;
+    //virtual asio::ip::udp generate_protocol() const override;
+    //virtual void get_ips(std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames, bool return_loopback = false) override;
 	//eProsimaSharedMem OpenAndBindInputSocket(const std::string& sIp, uint16_t port, bool is_multicast) override;
 
     //! Checks if the given interface is allowed by the white list.
-    virtual bool is_interface_allowed(const std::string& interface) const override;
+    //virtual bool is_interface_allowed(const std::string& interface) const override;
 
     /**
     * Method to get a list of interfaces to bind the socket associated to the given locator.
     * @return Vector of interfaces in string format.
     */
-    virtual std::vector<std::string> get_binding_interfaces_list() override;
+    //virtual std::vector<std::string> get_binding_interfaces_list() override;
 
     //! Checks for whether locator is allowed.
     virtual bool is_locator_allowed(const fastrtps::rtps::Locator_t&) const override;
 
     //! Checks if the given interface is allowed by the white list.
-    bool is_interface_allowed(const asio::ip::address_v4& ip) const;
+    //bool is_interface_allowed(const asio::ip::address_v4& ip) const;
 
     //! Checks if the interfaces white list is empty.
-    virtual bool is_interface_whitelist_empty() const override;
-    std::vector<asio::ip::address_v4> interface_whitelist_;
+    //virtual bool is_interface_whitelist_empty() const override;
+    //std::vector<asio::ip::address_v4> interface_whitelist_;
 
-    virtual void set_receive_buffer_size(uint32_t size) override;
-    virtual void set_send_buffer_size(uint32_t size) override;
+    //virtual void set_receive_buffer_size(uint32_t size) override;
+    //virtual void set_send_buffer_size(uint32_t size) override;
     //virtual void SetSocketOutboundInterface(eProsimaSharedMem&, const std::string&) override;
 };
 

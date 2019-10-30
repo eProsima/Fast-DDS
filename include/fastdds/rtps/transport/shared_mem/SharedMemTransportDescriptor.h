@@ -12,55 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef SHAREDMEM_TRANSPORT_DESCRIPTOR
-#define SHAREDMEM_TRANSPORT_DESCRIPTOR
-
-#include "../SocketTransportDescriptor.h"
+#ifndef _FASTDDS_SHAREDMEM_TRANSPORT_DESCRIPTOR_
+#define _FASTDDS_SHAREDMEM_TRANSPORT_DESCRIPTOR_
 
 namespace eprosima {
-	namespace fastdds {
-		namespace rtps {
+namespace fastdds {
+namespace rtps {
 
-			class TransportInterface;
+class TransportInterface;
 
-			/**
-			 * UDP Transport configuration
-			 *
-			 * - bufferSize:    length of the buffers used for transmission. Passing
-			 *                  a buffer of different size will cause transmission to
-			 *                  fail.
-			 *
-			 * - interfaceWhiteList: Lists the allowed interfaces.
-			 * @ingroup TRANSPORT_MODULE
-			 */
-			typedef struct SharedMemTransportDescriptor : public SocketTransportDescriptor
-			{
-				virtual ~SharedMemTransportDescriptor() {}
+/**
+ * Shared memory transport configuration
+ *
+ * @ingroup TRANSPORT_MODULE
+ */
+typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterface
+{
+	virtual ~SharedMemTransportDescriptor() {}
 
-				virtual TransportInterface* create_transport() const override;
+	virtual TransportInterface* create_transport() const override;
+	uint32_t min_send_buffer_size() const override {return 0;}
 
-				RTPS_DllAPI SharedMemTransportDescriptor();
+	RTPS_DllAPI SharedMemTransportDescriptor();
 
-				RTPS_DllAPI SharedMemTransportDescriptor(const SharedMemTransportDescriptor& t);
+	RTPS_DllAPI SharedMemTransportDescriptor(
+        	const SharedMemTransportDescriptor& t);
 
-				uint16_t m_output_udp_socket;
+	uint32_t shared_memory_port;
+}SharedMemTransportDescriptor;
 
-				/**
-				 * Whether to use non-blocking calls to send_to().
-				 *
-				 * When set to true, calls to send_to() will return inmediately if the buffer is full, but
-				 * no error will be returned to the upper layer. This means that the application will behave
-				 * as if the datagram is sent but lost (i.e. throughput may be reduced). This value is
-				 * specially useful on high-frequency best-effort writers.
-				 *
-				 * When set to false, calls to send_to() will block until the network buffer has space for the
-				 * datagram. This may hinder performance on high-frequency writers.
-				 */
-				bool non_blocking_send = false;
-			} SharedMemTransportDescriptor;
-
-		} // namespace rtps
-	} // namespace fastrtps
+} // namespace rtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif
+#endif // _FASTDDS_SHAREDMEM_TRANSPORT_DESCRIPTOR_
