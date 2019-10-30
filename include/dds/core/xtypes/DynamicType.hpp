@@ -29,34 +29,58 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
+/// \brief Abstract base class for all dynamic types.
 class DynamicType : public Instanceable
 {
 public:
     virtual ~DynamicType() = default;
 
+    /// \brief Name of the DynamicType.
+    /// \returns DynamicType's name.
     const std::string& name() const { return name_; }
+
+    /// \brief type kind this DynamicType. (see dds::core::xtypes::TypeKind)
+    /// \returns type kind corresponding to this DynamicType
     const TypeKind& kind() const { return kind_; }
 
+    /// \brief check if this type is primitive
+    /// (has the corresponding bit of TypeKind::PRIMITIVE_TYPE in its kind).
+    /// \returns true if is primitive
     bool is_primitive_type() const
     {
         return (kind_ & TypeKind::PRIMITIVE_TYPE) != TypeKind::NO_TYPE;
     }
 
+    /// \brief check if this type is a collection
+    /// (has the corresponding bit of TypeKind::COLLECTION_TYPE in its kind).
+    /// \returns true if is a collection
     bool is_collection_type() const
     {
         return (kind_ & TypeKind::COLLECTION_TYPE) != TypeKind::NO_TYPE;
     }
 
+    /// \brief check if this type is an aggregation
+    /// (has the corresponding bit of TypeKind::AGGREGATION_TYPE in its kind).
+    /// \returns true if is an aggregation
     bool is_aggregation_type() const
     {
         return (kind_ & TypeKind::AGGREGATION_TYPE) != TypeKind::NO_TYPE;
     }
 
+    /// \brief check if this type is constructed
+    /// (has the corresponding bit of TypeKind::CONSTRUCTED_TYPE in its kind).
+    /// \returns true if is constructed
     bool is_constructed_type() const
     {
         return (kind_ & TypeKind::CONSTRUCTED_TYPE) != TypeKind::NO_TYPE;
     }
 
+    /// \brief check the compatibility with other DynamicType.
+    /// returns The needed consistency required for the types can be compatibles.
+    ///   TypeConsistency::EQUALS means that the types are identically.
+    ///   TypeConsistency::NONE means that no conversion is known to be compatibles both types.
+    ///   Otherwise, a level of consistency was found for convert both types between them.
+    ///   See dds::core::xtypes::TypeConsistency for more information.
     virtual TypeConsistency is_compatible(const DynamicType& other) const = 0;
 
 protected:
@@ -70,6 +94,8 @@ protected:
     DynamicType(const DynamicType& other) = default;
     DynamicType(DynamicType&& other) = default;
 
+    /// \brief Deep clone of the DynamicType.
+    /// \returns a new DynamicType without managing.
     virtual DynamicType* clone() const = 0;
 
 private:
@@ -78,30 +104,25 @@ private:
 
 
 public:
+    /// \brief Special managed pointer for DynamicTypes.
+    /// It performs some performances to avoid copies for some internal types.
     class Ptr
     {
     public:
+        /// \brief Default initialization without pointer any type.
         Ptr()
             : type_(nullptr)
         {}
 
+        /// \brief Creates a copy of a DynamicType that will be managed.
+        /// The copy is avoid if DynamnicType is primitive.
         Ptr(const DynamicType& type)
             : type_(type.is_primitive_type() ? &type : type.clone())
         {}
 
-        template<typename DynamicTypeImpl, class = typename std::enable_if<
-            std::is_base_of<DynamicType, DynamicTypeImpl>::value
-            >::type>
-        Ptr(const DynamicTypeImpl&& type)
-            : type_(new DynamicTypeImpl(std::move(type)))
-        {
-            // Moving a PrimitiveType will get an error since all primitives are statically allocated.
-            // Since PrimitiveType only can be constructed by its helper function primitive_type<T> that
-            // returns always a reference, it will never be pased as a rvalue reference.
-            // Anyway, an assert is placed here to avoid errors in future changes.
-            assert(!type.is_primitive_type());
-        }
-
+        /// \brief Copy constructor.
+        /// Makes an internal copy of the managed DynamicType.
+        /// The copy is avoid if DynamnicType is primitive.
         Ptr(const Ptr& ptr)
             : type_((ptr.type_ == nullptr || ptr.type_->is_primitive_type()) ? ptr.type_ : ptr.type_->clone())
         {}
@@ -114,20 +135,38 @@ public:
 
         virtual ~Ptr()
         {
+            reset();
+        }
+
+        /// \brief Remove the managed DynamicType and points to nothing.
+        void reset()
+        {
             if(type_ != nullptr && !type_->is_primitive_type())
             {
                 delete type_;
             }
-        }
-
-        void reset()
-        {
             type_ = nullptr;
         }
 
+        /// \brief Free the internal managed DynamicType and points to nothing.
+        const DynamicType* free()
+        {
+            const DynamicType* freed = type_;
+            type_ = nullptr;
+            return freed;
+        }
+
+        /// \brief Returns a pointer of the internal managed DynamicType.
+        /// \returns A pointer of the internal managed DynamicType.
         const DynamicType* get() const { return type_; }
-        const DynamicType& operator *() const { return *type_; }
+
+        /// \brief Returns a pointer of the internal managed DynamicType.
+        /// \returns A pointer of the internal managed DynamicType.
         const DynamicType* operator ->() const { return type_; }
+
+        /// \brief Returns a reference of the intenral managed DynamicType.
+        /// \returns A reference of the internal managed DynamicType.
+        const DynamicType& operator *() const { return *type_; }
 
     private:
         const DynamicType* type_;

@@ -29,25 +29,52 @@ namespace xtypes {
 class DynamicType;
 class Member;
 
+/// \brief Abstract class for all instanceable types.
+/// It contains the needed declarations to manage the instance creation and destruction.
 class Instanceable
 {
 public:
     virtual ~Instanceable() = default;
 
+    /// \brief Calculate the memory size that the instance will occupy in memory.
+    /// \returns Instance memory size.
     virtual size_t memory_size() const = 0;
 
+    /// \brief Constructs an instance in memory.
+    /// \paran[in] instance Location where the instance will be constructed.
     virtual void construct_instance(uint8_t* instance) const = 0;
 
+    /// \brief Copy construction of a instance.
+    /// \param[in] target Location where the instance will be constructed.
+    /// \param[in] source Location from the instance will be copied.
     virtual void copy_instance(uint8_t* target, const uint8_t* source) const = 0;
 
+    /// \brief Copy construction of a instance from another type.
+    /// \pre other type needs to be compatible with the current type
+    /// (see dds::core::xtypes::DynamicType::is_compatible() function).
+    /// \param[in] target Location where the instance will be constructed.
+    /// \param[in] source Location from the instance will be copied.
+    /// \param[in] other Type representing the source instance.
     virtual void copy_instance_from_type(uint8_t* target, const uint8_t* source, const DynamicType& other) const = 0;
 
+    /// \brief Move construction of a instance from another type.
+    /// \post source instance will be invalidated.
+    /// \param[in] target Location where the instance will be constructed.
+    /// \param[in] source Location from the instance will be moved.
     virtual void move_instance(uint8_t* target, uint8_t* source) const = 0;
 
+    /// \brief Destroy an instance.
+    /// \param[in] instance Location where the instance to be removed is placed.
     virtual void destroy_instance(uint8_t* instance) const = 0;
 
+    /// \brief Deep equality comparation of 2 instances.
+    /// \pre the instances must represent the same DynamicType.
+    /// \param[in] instance first instance to be checked.
+    /// \param[in] instance second instance to be checked.
+    /// \returns true if both instance are equals.
     virtual bool compare_instance(const uint8_t* instance, const uint8_t* other_instance) const = 0;
 
+    /// \brief Internal structure used to iterate the instance tree.
     struct InstanceNode
     {
         const InstanceNode* parent;
@@ -84,6 +111,11 @@ public:
     };
 
     using InstanceVisitor = std::function<void(const InstanceNode& node)>;
+
+    /// \brief Function used to iterate the instance tree.
+    /// The iteration will go through the tree in deep, calling the visitor function for each instance type.
+    /// \param[in] node Relative information about the current instance iteration.
+    /// \param[in] visitor Function called each time a new node in the tree is visited.
     virtual void for_each_instance(const InstanceNode& node, InstanceVisitor visitor) const = 0;
 
 protected:

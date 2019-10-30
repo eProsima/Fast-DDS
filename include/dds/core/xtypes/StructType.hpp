@@ -29,9 +29,13 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
+/// \brief DynamicType representing a structure.
+/// A StructType represents a TypeKind::StructType.
 class StructType : public AggregationType
 {
 public:
+    /// \brief Construct a StructType given a name.
+    /// \param[in] name Name of the structure.
     StructType(
             const std::string& name)
         : AggregationType(TypeKind::STRUCTURE_TYPE, name)
@@ -41,10 +45,25 @@ public:
     StructType(const StructType& other) = default;
     StructType(StructType&& other) = default;
 
+    /// \brief Check for a parent existence.
+    /// \returns true if found.
     bool has_parent() const { return parent_.get() != nullptr; }
-    const DynamicType& parent() const { return *parent_; }
 
-    StructType& add_member(const Member& member)
+    /// \brief Get the parent.
+    /// \pre has_parent()
+    /// \returns The parent StructType.
+    const StructType& parent() const
+    {
+        assert(has_parent());
+        return static_cast<const StructType&>(*parent_);
+    }
+
+    /// \brief Add a member to the structure.
+    /// \param[in] member Member to add
+    /// \pre The member name must not exists in this StructType.
+    /// \returns A reference to this StructType.
+    StructType& add_member(
+            const Member& member)
     {
         Member& inner = insert_member(member);
         inner.offset_ = memory_size_;
@@ -52,6 +71,11 @@ public:
         return *this;
     }
 
+    /// \brief Create a member in this structure.
+    /// \param[in] name Member name to create.
+    /// \param[in] type Member type of the member.
+    /// \pre The member name must not exists in this StructType.
+    /// \returns A reference to this StructType.
     StructType& add_member(
             const std::string& name,
             const DynamicType& type)
@@ -59,6 +83,11 @@ public:
         return add_member(Member(name, type));
     }
 
+    /// \brief Create a member in this structure with a type as rvalue.
+    /// \param[in] name Member name to create.
+    /// \param[in] type Member type fo the member.
+    /// \pre The member name must not exists in this StructType.
+    /// \returns A reference to this StructType.
     template<typename DynamicTypeImpl>
     StructType& add_member(
             const std::string& name,

@@ -27,8 +27,9 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
+/// \brief Internal struct used for enable PrimitiveTypes
 template<typename>
-struct dynamic_type_traits
+struct DynamicTypeTrait
 {
     static constexpr TypeKind TYPE_ID = TypeKind::NO_TYPE;
     static constexpr const char* NAME = "no_type";
@@ -36,7 +37,7 @@ struct dynamic_type_traits
 
 #define DDS_CORE_XTYPES_PRIMITIVE(TYPE, KIND) \
 template<> \
-struct dynamic_type_traits<TYPE> \
+struct DynamicTypeTrait<TYPE> \
 { \
     static constexpr TypeKind TYPE_ID = TypeKind::KIND; \
     static constexpr const char* NAME = #TYPE; \
@@ -56,6 +57,10 @@ DDS_CORE_XTYPES_PRIMITIVE(long double, FLOAT_128_TYPE)
 DDS_CORE_XTYPES_PRIMITIVE(char, CHAR_8_TYPE)
 DDS_CORE_XTYPES_PRIMITIVE(wchar_t, CHAR_16_TYPE)
 
+/// \brief DynamicType representing a primitive type.
+/// Primitive types can be the following: bool char wchar_t uint8_t int16_t
+/// uint16_t int32_t uint32_t int64_t uint64_t float double long double.
+/// A PrimitiveType represents a TypeKind::PRIMITIVE_TYPE.
 template<typename T>
 class PrimitiveType : public DynamicType
 {
@@ -64,7 +69,7 @@ private:
     friend const DynamicType& primitive_type();
 
     PrimitiveType()
-        : DynamicType(dynamic_type_traits<T>::TYPE_ID, dynamic_type_traits<T>::NAME)
+        : DynamicType(DynamicTypeTrait<T>::TYPE_ID, DynamicTypeTrait<T>::NAME)
     {}
 
     virtual size_t memory_size() const override
@@ -149,6 +154,10 @@ protected:
     }
 };
 
+/// \brief Helper function to create PrimitiveTypes.
+/// The creation of DynamicTypes representing a PrimitiveType
+/// must be always created by this function.
+/// \returns A DynamicType representing a PrimitiveType<T>
 template<typename T>
 const DynamicType& primitive_type()
 {
