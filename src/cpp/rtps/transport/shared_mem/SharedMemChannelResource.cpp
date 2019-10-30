@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #include <asio.hpp>
-#include <fastdds/rtps/transport/shared_mem/SharedMemTransportInterface.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransport.h>
 #include <fastdds/rtps/transport/shared_mem/SharedMemChannelResource.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
 
@@ -26,7 +26,7 @@ using octet = fastrtps::rtps::octet;
 using Log = dds::Log;
 
 SharedMemChannelResource::SharedMemChannelResource(
-		SharedMemTransportInterface* transport,
+		SharedMemTransport* transport,
 		std::shared_ptr<eProsimaSharedMem::Reader> reader,
         uint32_t maxMsgSize,
         const Locator_t& locator,

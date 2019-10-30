@@ -24,14 +24,14 @@ namespace fastdds{
 namespace rtps{
 
 class TransportReceiverInterface;
-class SharedMemTransportInterface;
+class SharedMemTransport;
 
 class SharedMemChannelResource : public ChannelResource
 {
 public:
 
 	SharedMemChannelResource(
-		SharedMemTransportInterface* transport,
+		SharedMemTransport* transport,
 		std::shared_ptr<eProsimaSharedMem::Reader> reader,
         uint32_t maxMsgSize,
         const fastrtps::rtps::Locator_t& locator,
@@ -110,7 +110,7 @@ private:
     TransportReceiverInterface* message_receiver_; //Associated Readers/Writers inside of MessageReceiver
 	std::shared_ptr<eProsimaSharedMem::Reader> reader_;
     bool only_multicast_purpose_;
-    SharedMemTransportInterface* transport_;
+    SharedMemTransport* transport_;
 
     SharedMemChannelResource(const SharedMemChannelResource&) = delete;
     SharedMemChannelResource& operator=(const SharedMemChannelResource&) = delete;

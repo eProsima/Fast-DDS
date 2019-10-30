@@ -116,7 +116,6 @@ set(${PROJECT_NAME}_source_files
     rtps/transport/UDPv4Transport.cpp
     rtps/transport/TCPTransportInterface.cpp
     rtps/transport/UDPTransportInterface.cpp
-    rtps/transport/shared_mem/SharedMemTransportInterface.cpp
     rtps/transport/shared_mem/SharedMemTransport.cpp
     rtps/transport/TCPv4Transport.cpp
     rtps/transport/UDPv6Transport.cpp

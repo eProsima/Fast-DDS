@@ -16,7 +16,7 @@
 #define __TRANSPORT_UDPSENDERRESOURCE_HPP__
 
 #include <fastrtps/rtps/network/SenderResource.h>
-#include <fastdds/rtps/transport/shared_mem/SharedMemTransportInterface.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransport.h>
 #include <fastdds/rtps/transport/shared_mem/eProsimaSharedMem.hpp>
 
 namespace eprosima {
@@ -28,7 +28,7 @@ class SharedMemSenderResource : public fastrtps::rtps::SenderResource
     public:
 
         SharedMemSenderResource(
-                SharedMemTransportInterface& transport,
+                SharedMemTransport& transport,
 				std::shared_ptr<eProsimaSharedMem::Writter> writter,
                 bool only_multicast_purpose = false)
             : fastrtps::rtps::SenderResource(transport.kind())
