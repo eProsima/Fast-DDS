@@ -30,7 +30,7 @@ namespace core {
 namespace xtypes {
 
 /// \brief DynamicType representing a structure.
-/// A StructType represents a TypeKind::StructType.
+/// A StructType represents a TypeKind::STRUCTURE_TYPE.
 class StructType : public AggregationType
 {
 public:

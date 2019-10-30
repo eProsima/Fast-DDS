@@ -41,30 +41,30 @@ public:
     virtual size_t memory_size() const = 0;
 
     /// \brief Constructs an instance in memory.
-    /// \paran[in] instance Location where the instance will be constructed.
+    /// \param[out] instance Location where the instance will be constructed.
     virtual void construct_instance(uint8_t* instance) const = 0;
 
     /// \brief Copy construction of a instance.
-    /// \param[in] target Location where the instance will be constructed.
+    /// \param[out] target Location where the instance will be constructed.
     /// \param[in] source Location from the instance will be copied.
     virtual void copy_instance(uint8_t* target, const uint8_t* source) const = 0;
 
     /// \brief Copy construction of a instance from another type.
     /// \pre other type needs to be compatible with the current type
     /// (see dds::core::xtypes::DynamicType::is_compatible() function).
-    /// \param[in] target Location where the instance will be constructed.
+    /// \param[out] target Location where the instance will be constructed.
     /// \param[in] source Location from the instance will be copied.
     /// \param[in] other Type representing the source instance.
     virtual void copy_instance_from_type(uint8_t* target, const uint8_t* source, const DynamicType& other) const = 0;
 
     /// \brief Move construction of a instance from another type.
     /// \post source instance will be invalidated.
-    /// \param[in] target Location where the instance will be constructed.
-    /// \param[in] source Location from the instance will be moved.
+    /// \param[out] target Location where the instance will be constructed.
+    /// \param[in, out] source Location from the instance will be moved.
     virtual void move_instance(uint8_t* target, uint8_t* source) const = 0;
 
     /// \brief Destroy an instance.
-    /// \param[in] instance Location where the instance to be removed is placed.
+    /// \param[in, out] instance Location where the instance to be removed is placed.
     virtual void destroy_instance(uint8_t* instance) const = 0;
 
     /// \brief Deep equality comparation of 2 instances.

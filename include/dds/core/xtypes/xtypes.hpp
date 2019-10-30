@@ -16,6 +16,8 @@
  *
 */
 
+/// \file This file contains all needed headers that the user should include.
+
 #ifndef OMG_DDS_CORE_XTYPES_XTYPES_HPP_
 #define OMG_DDS_CORE_XTYPES_XTYPES_HPP_
 

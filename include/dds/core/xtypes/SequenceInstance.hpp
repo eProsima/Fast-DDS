@@ -28,9 +28,14 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
+/// \brief Implementation of a dynamic sequence of DynamicTypes.
+/// This class is used internal by SequenceType to implement its behaviour.
 class SequenceInstance
 {
 public:
+    /// \brief Construct a SequenceInstance
+    /// \param[in] content Content of the sequence
+    /// \param[in] capacity Reserved memory for the sequence.
     SequenceInstance(
             const DynamicType& content,
             uint32_t capacity = 0)
@@ -55,6 +60,11 @@ public:
         }
     }
 
+    /// \brief Copy constructor from a SequenceInstance with other but compatible content.
+    /// \param[in] other Sequence from copy the values.
+    /// \param[in] content Content of the sequence
+    /// \param[in] bounds Max copied elements.
+    /// \pre content and other.content compatibles (see dds::core::xtypes::DynamicType::is_compatible())
     SequenceInstance(
             const SequenceInstance& other,
             const DynamicType& content,
@@ -82,6 +92,7 @@ public:
         other.memory_ = nullptr;
     }
 
+    /// \brief Deep equality operator
     bool operator == (
             const SequenceInstance& other) const
     {
@@ -123,6 +134,10 @@ public:
         }
     }
 
+    /// \brief Push a instance into the sequence
+    /// A reallocation can be done in order to allocate this new value.
+    /// \param[in] instance Instance to push into the sequence.
+    /// \returns Returns the location of the new instance added.
     uint8_t* push(
             const uint8_t* instance)
     {
@@ -139,6 +154,9 @@ public:
         return place;
     }
 
+    /// \brief Resize the sequence. All new elements will be default-initialized.
+    /// If the new size is equal or less than the current size, nothing happens.
+    /// \param[in] new_size New sequence size.
     void resize(
             size_t new_size)
     {
@@ -158,6 +176,9 @@ public:
         size_ = new_size;
     }
 
+    /// \brief Index access operator.
+    /// \param[in] index Requested index
+    /// \returns The instance placed in index location.
     uint8_t* operator [] (
             uint32_t index) const
     {
@@ -165,6 +186,8 @@ public:
         return memory_ + index * block_size_;
     }
 
+    /// \brief Size of the sequence.
+    /// \returns Size of the sequence.
     uint32_t size() const { return size_; }
 
 private:

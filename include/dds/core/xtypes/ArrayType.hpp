@@ -29,9 +29,14 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
+/// \brief DynamicType representing an array collection.
+/// An ArrayType represents a TypeKind::ARRAY_TYPE.
 class ArrayType : public CollectionType
 {
 public:
+    /// \brief Construct an ArrayType.
+    /// \param[in] content Content type of the array.
+    /// \param[in] dimension Size of the Array.
     ArrayType(
             const DynamicType& content,
             uint32_t dimension)
@@ -42,6 +47,9 @@ public:
         , dimension_(dimension)
     {}
 
+    /// \brief Construct an ArrayType.
+    /// \param[in] content Content type of the array.
+    /// \param[in] dimension Size of the Array.
     template<typename DynamicTypeImpl>
     ArrayType(
             const DynamicTypeImpl&& content,
@@ -56,6 +64,8 @@ public:
     ArrayType(const ArrayType& other) = default;
     ArrayType(ArrayType&& other) = default;
 
+    /// \brief Dimension of the array.
+    /// \returns The dimension.
     uint32_t dimension() const { return dimension_; }
 
     virtual size_t memory_size() const override

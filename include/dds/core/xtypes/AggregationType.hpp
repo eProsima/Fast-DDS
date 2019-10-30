@@ -32,7 +32,7 @@ namespace core {
 namespace xtypes {
 
 /// \brief DynamicType representing an aggregation of members.
-/// An AggregationType represents a TypeKind::AggregationType.
+/// An AggregationType represents a TypeKind::AGGREGATION_TYPE.
 class AggregationType : public DynamicType
 {
 public:

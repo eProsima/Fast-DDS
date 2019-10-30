@@ -257,10 +257,8 @@ endif()
 ###############################################################################
 # Compile library.
 ###############################################################################
-option(EPROSIMA_BUILD_XTYPES_STANDALONE "Only compiles dds-core-xtypes part" OFF)
-
 # Used exclusively in this commit
-set(EPROSIMA_BUILD_XTYPES_STANDALONE ON)
+option(EPROSIMA_BUILD_XTYPES_STANDALONE "Only compiles dds-core-xtypes part" ON)
 
 if(NOT EPROSIMA_BUILD_XTYPES_STANDALONE)
     add_subdirectory(src/cpp)

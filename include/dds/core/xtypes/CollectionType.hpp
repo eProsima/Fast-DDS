@@ -25,12 +25,26 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
+/// \brief DynamicType representing collection of elements.
+/// This is the base abstract class for all collections.
+/// A CollectionType represents a TypeKind::COLLECTION_TYPE.
 class CollectionType : public DynamicType
 {
 public:
+    /// \brief Get the content type of the collection.
+    /// \returns a DynamicType represents the content type.
     const DynamicType& content_type() const { return *content_; }
 
+    /// \brief Given an instance that represents a collection,
+    /// it gets the instance at index location.
+    /// \param[in] instance Where the collection is located.
+    /// \param[in] index Index for the instance requested.
+    /// \returns an instance representing a content_type() at index position.
     virtual uint8_t* get_instance_at(uint8_t* instance, size_t index) const = 0;
+
+    /// \brief Get the size of an instance that represents a collection.
+    /// \param[in] instance Where the collection is located.
+    /// \returns The collection size
     virtual size_t get_instance_size(const uint8_t* instance) const = 0;
 
 protected:
