@@ -32,16 +32,18 @@ Once these types have been defined, you can instatiate them and access their dat
 DynamicData data(outer);
 //write value
 data["b"]["a"].value(42);
+data["b"]["a"] = 23;
 
 // read value
 int32_t my_value = data["b"]["a"].value<int32_t>();
 ```
 
 ## Why should you use *eProsima xtypes*?
-- **OMG standard**: *eProsima xtypes* is based on the [dds-xtypes standard](https://www.omg.org/spec/DDS-XTypes/About-DDS-XTypes/) from the *OMG*.
+- **OMG standard**: *eProsima xtypes* is based on the
+  [dds-xtypes standard](https://www.omg.org/spec/DDS-XTypes/About-DDS-XTypes/) from the *OMG*.
 - **C++11 API**: *eProsima xtypes* uses C++11 latest features, providing  an easy-to-use API.
 - **Memory lightweight**: data instances use the same memory as types builts by the compiler.
-No memory penalty is introduced by using *eProsima xtypes* in relation to compiled types.
+  No memory penalty is introduced by using *eProsima xtypes* in relation to compiled types.
 - **Fast**: Accesing to data members is swift and quick.
 - **Header only library**: avoids the linking problems.
 - **No external dependency**: *eProsima xtypes*'s only dependencies are from *std*.
@@ -65,7 +67,8 @@ In order to create a `PrimitiveType`, a helper function must be used:
 const DynamicType& t = primitive_type<T>();
 ```
 with `T` being one of the following basic types:
-`bool` `char` `wchar_t` `uint8_t` `int16_t` `uint16_t` `int32_t` `uint32_t` `int64_t` `uint64_t` `float` `double` `long double`
+`bool` `char` `wchar_t` `uint8_t` `int16_t` `uint16_t` `int32_t` `uint32_t` `int64_t` `uint64_t` `float` `double`
+`long double`
 
 #### Collection Type
 As pointed by the self-explanatory name, CollectionTypes provide a way to create the most various collections.
@@ -103,7 +106,8 @@ my_struct.add_member("m_e", other_struct)); //member of structs
 my_struct.add_member("m_f", SequenceType(other_struct))); //member of sequence of structs
 ```
 Note: once a `DynamicType` is added to an struct, a copy is performed.
-This allows modifications to `DynamicType` to be performed without side effects. It also and facilitates the user's memory management duties.
+This allows modifications to `DynamicType` to be performed without side effects.
+It also and facilitates the user's memory management duties.
 
 #### `is_compatible` function of `DynamicType`
 Any pair of `DynamicType`s can be checked for their mutual compatibility.
@@ -115,8 +119,10 @@ The returned `TypeConsistency` is going to be a subset of the following *QoS pol
 
 - `NONE`: Unknown way to interpret `tested_type` as `other_type`.
 - `EQUALS`: The evaluation is analogous to an equal evaluation.
-- `IGNORE_TYPE_WIDTH`: the evaluation will be true if the width of the some primitive types are less or equals than the other type.
-- `IGNORE_SEQUENCE_BOUNDS`: the evaluation will be true if the bounds of the some sequences are less or equals than the other type.
+- `IGNORE_TYPE_WIDTH`: the evaluation will be true if the width of the some primitive types are less or
+  equals than the other type.
+- `IGNORE_SEQUENCE_BOUNDS`: the evaluation will be true if the bounds of the some sequences are less or
+  equals than the other type.
 - `IGNORE_ARRAY_BOUNDS`: same as `IGNORE_SEQUENCE_BOUNDS` but for the case of arrays.
 - `IGNORE_STRING_BOUNDS`: same as `IGNORE_SEQUENCE_BOUNDS` but for the case of string.
 - `IGNORE_MEMBER_NAMES`: the evaluation will be true if the names of some members differs (but no the position).
@@ -153,12 +159,15 @@ The following methods are available when:
 1. `DynamicData` represents a `PrimitiveType` (of `int` as example):
     ```c++
     data.value(42); //sets the value to 42
+    data = 23; // assignment from primitve, sets the value to 23
     int32_t value = data.value<int32_t>(); //read the value
     ```
 1. `DynamicData` represents an `AggregationType`
     ```c++
     data["member_name"].value(42); //set value 42 to the int member called "member_name"
     data[2].value(42); //set value 42 to the third int member called "member_name"
+    data["member_name"] = 42; //set value 42 to the int member called "member_name"
+    data[2] = 42; //set value 42 to the third int member called "member_name"
     int32_t value = data["member_name"].value<int32_t>(); //get value from int member called "member_name"
     data["member_name"].value(dynamic_data_representing_a_value);
     WritableDynamicDataRef ref = data["member_name"];
@@ -167,6 +176,7 @@ The following methods are available when:
 1. `DynamicData` represents a `CollectionType`
     ```c++
     data[2].value(42); // set value 42 to position 2 of the collection.
+    data[2] = 42; // set value 42 to position 2 of the collection.
     int32_t value = data[2].value<int32_t>(); // get value from position 2 of the collection.
     data[2] = dynamic_data_representing_a_value;
     WritableDynamicDataRef ref = data[2]; //references to a DynamicData that represents a collection
@@ -177,6 +187,7 @@ The following methods are available when:
     ```c++
     data.value<std::string>("Hello data!"); //sets the string value
     data.string("Hello again!"); // shortcut version for string
+    data = "Hello again!"; // assignment version for string
     const std::string& s1 = data.value<std::string>(); //read the string value
     const std::string& s2 = data.string(); // shortcut version for string
     ```
@@ -185,6 +196,7 @@ The following methods are available when:
     ```c++
     data.value<std::wstring>(L"Hello data! \u263A"); //sets the string value
     data.wstring(L"Hello again! \u263A"); // shortcut version for string
+    data = L"Hello again! \u263A"; // assignment version for string
     const std::wstring& s1 = data.value<std::wstring>(); //read the string value
     const std::wstring& s2 = data.wstring(); // shortcut version for string
     ```
@@ -203,7 +215,8 @@ There are two ways to obtain a reference to a `DynamicData`:
 
 A reference does not contain any value and only points to an already existing `DynamicData`, or to part of it.
 You can obtain a reference by accessing data with `[]` operator or by calling `ref()` and `cref()`.
-Depending on whether the reference comes from a `const DynamcData` or a `DynamicData`, a `ReadableDynamicDataRef` or a `WritableDynamicDataRef` is returned.
+Depending on whether the reference comes from a `const DynamcData` or a `DynamicData`, a `ReadableDynamicDataRef`
+or a `WritableDynamicDataRef` is returned.
 
 #### `==` function of `DynamicData`
 A `DynamicData` can be compared in depth with another one.
@@ -282,8 +295,10 @@ In this case, two allocations will be needed: one for the sequence, and a second
 
 ## Debugging DynamicData
 As a `DynamicData` is fully built at runtime, no static checks can ensure its correct behaviour.
-As an attempt to solve this, asserts have been placed accross various methods to avoid the overload of checks in *release mode*.
-We strongly recommend to compile in *debug mode* during developing phase: this will allow `xtypes` library to perform all possible checks.
+As an attempt to solve this, asserts have been placed accross various methods to avoid the overload of checks in
+*release mode*.
+We strongly recommend to compile in *debug mode* during developing phase: this will allow `xtypes` library to
+perform all possible checks.
 Following the same line of thoughts, in order to improve the performance the final product should be compiled in
 *release mode*. In this case, no checks will be performed.
 

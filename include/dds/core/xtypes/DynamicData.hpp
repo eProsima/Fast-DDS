@@ -190,6 +190,28 @@ public:
         return *this;
     }
 
+    template<typename T, class = PrimitiveOrString<T>>
+    WritableDynamicDataRef& operator = (
+            const T& other)
+    {
+        value(other);
+        return *this;
+    }
+
+    WritableDynamicDataRef& operator = (
+            const std::string& other)
+    {
+        string(other);
+        return *this;
+    }
+
+    WritableDynamicDataRef& operator = (
+            const std::wstring& other)
+    {
+        wstring(other);
+        return *this;
+    }
+
     ReadableDynamicDataRef cref() const { return ReadableDynamicDataRef(*this); }
 
     template<typename T, class = PrimitiveOrString<T>>

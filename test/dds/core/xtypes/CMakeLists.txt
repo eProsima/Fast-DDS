@@ -14,7 +14,7 @@
 
 ## DDS-PSM-API-XTYPES-TEST
 
-cmake_minimum_required(VERSION 3.13)
+#cmake_minimum_required(VERSION 3.13)
 
 include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
 
@@ -22,16 +22,16 @@ check_gtest()
 
 if(GTEST_FOUND)
 
-    include_directories(${ASIO_INCLUDE_DIR})        
+    include_directories(${ASIO_INCLUDE_DIR})
 
-    include_directories(${PROJECT_SOURCE_DIR}/include)        
-				set(SOURCE ${PROJECT_SOURCE_DIR}/include/dds/core/xtypes/*.hpp)
-				
-	set(XTYPES_TESTS_SOURCE myTest.cpp)
+    include_directories(${PROJECT_SOURCE_DIR}/include)
+                set(SOURCE ${PROJECT_SOURCE_DIR}/include/dds/core/xtypes/*.hpp)
 
-	add_executable(myTest ${XTYPES_TESTS_SOURCE})
+    set(XTYPES_TESTS_SOURCE myTest.cpp)
 
-	target_link_libraries(myTest ${GTEST_LIBRARIES})
+    add_executable(myTest ${XTYPES_TESTS_SOURCE})
+
+    target_link_libraries(myTest ${GTEST_LIBRARIES})
 
 #	add_xtypes_gtest(myTest SOURCES ${XTYPES_TESTS_SOURCE})
 
