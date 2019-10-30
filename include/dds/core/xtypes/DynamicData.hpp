@@ -29,6 +29,7 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
+/// \brief Check if a C type can promote to a PrimitiveType or StringType.
 template<typename T>
 using PrimitiveOrString = typename std::enable_if<
     std::is_arithmetic<T>::value ||
@@ -36,30 +37,44 @@ using PrimitiveOrString = typename std::enable_if<
     std::is_same<std::wstring, T>::value
     >::type;
 
+/// \brief Class representing a only readable DynamicData reference.
+/// Only readable methods are available.
 class ReadableDynamicDataRef
 {
 public:
     virtual ~ReadableDynamicDataRef() = default;
 
+    /// \brief Deep equality operator. All DynamicData tree will be evaluated for equality.
     bool operator == (
             const ReadableDynamicDataRef& other) const
     {
         return type_.compare_instance(instance_, other.instance_);
     }
 
+    /// \brief Deep inequality operator. Inverse of == operator.
     bool operator != (
             const ReadableDynamicDataRef& other) const
     {
         return !(*this == other);
     }
 
+    /// \brief The representing type of this DynamicData.
+    /// \returns a reference to the representing DynamicType
     const DynamicType& type() const { return type_; }
+
+    /// \brief Returns the id of the managed instance.
+    /// \returns A unique id of the managed instace.
     size_t instance_id() const { return size_t(instance_); }
 
+    /// \brief String representing the DynamicData tree.
+    /// \returns A string representing the DynamicData tree.
     inline std::string to_string() const; // Into DynamicDataImpl.hpp
 
+    /// \brief Returns a value as primitive or string.
+    /// \pre The DynamicData must represent a primitive or string value.
+    /// \returns the value stored in the DynamicData.
     template<typename T, class = PrimitiveOrString<T>>
-    T& value() const // this = PrimitiveType
+    T& value() const
     {
         assert((type_.kind() == TypeKind::STRING_TYPE && std::is_same<std::string, T>::value)
             || (type_.kind() == TypeKind::WSTRING_TYPE && std::is_same<std::wstring, T>::value)
@@ -67,20 +82,31 @@ public:
         return *reinterpret_cast<T*>(instance_);
     }
 
-    const std::string& string() const // this = StringType
+    /// \brief Returns a value as string.
+    /// \pre The DynamicData must represent StringType.
+    /// \returns the value stored in the DynamicData.
+    const std::string& string() const
     {
         assert(type_.kind() == TypeKind::STRING_TYPE);
         return *reinterpret_cast<std::string*>(instance_);
     }
 
-    const std::wstring& wstring() const // this = WStringType
+    /// \brief Returns a value as string of wchars.
+    /// \pre The DynamicData must represent WStringType.
+    /// \returns the value stored in the DynamicData.
+    const std::wstring& wstring() const
     {
         assert(type_.kind() == TypeKind::WSTRING_TYPE);
         return *reinterpret_cast<std::wstring*>(instance_);
     }
 
+    /// \brief Member access operator by name.
+    /// \param[in] member_name Name of the member to access.
+    /// \pre The DynamicData must represent an AggregationType.
+    /// \pre The member_name must exists
+    /// \returns A readable reference of the DynamicData accessed.
     ReadableDynamicDataRef operator [] (
-            const std::string& member_name) const // this = AggregationType
+            const std::string& member_name) const
     {
         assert(type_.is_aggregation_type());
         const AggregationType& aggregation = static_cast<const AggregationType&>(type_);
@@ -90,8 +116,14 @@ public:
         return ReadableDynamicDataRef(member.type(), instance_ + member.offset());
     }
 
+    /// \brief index access operator by name.
+    /// Depends of the underlying DynamicType, the index can be represent the member or element position.
+    /// \param[in] index Index requested.
+    /// \pre The DynamicData must represent an AggregationType or a CollectionType.
+    /// \pre index < size()
+    /// \returns A readable reference of the DynamicData accessed.
     ReadableDynamicDataRef operator [] (
-            size_t index) const // this = CollectionType, AggregationType
+            size_t index) const
     {
         assert((type_.is_aggregation_type() || type_.is_collection_type()) && index < size());
         if(type_.is_collection_type())
@@ -105,6 +137,11 @@ public:
         return ReadableDynamicDataRef(member.type(), instance_ + member.offset());
     }
 
+    /// \brief Size of the DynamicData.
+    /// Aggregation types will return the member count.
+    /// Collection types will return the member count.
+    /// Primtive types are considered as size 1.
+    /// \returns Element size of the DynamicData.
     size_t size() const
     {
         assert(type_.is_collection_type() || type_.is_aggregation_type());
@@ -121,8 +158,11 @@ public:
         return 1;
     }
 
+    /// \brief Returns a std::vector representing the underlying collection of types.
+    /// \pre The collection must have primitive or string values.
+    /// \returns a std::vector representing the internal collection.
     template<typename T, class = PrimitiveOrString<T>>
-    std::vector<T> as_vector() const // this = CollectionType with PrimitiveOrString content
+    std::vector<T> as_vector() const
     {
         const CollectionType& collection = static_cast<const CollectionType&>(type_);
         assert(type_.is_collection_type());
@@ -134,21 +174,46 @@ public:
         return std::vector<T>(location, location + size());
     }
 
+    /// \brief Class used by for_each() function to represent a readable DynamicData node in the tree.
     class ReadableNode
     {
     public:
         ReadableNode(const Instanceable::InstanceNode& instance_node) : internal_(instance_node) {}
+
+        /// \brief Check the parent existance in the tree.
+        /// \returns true if has parent.
         bool has_parent() const { return internal_.parent != nullptr; }
-        ReadableNode parent() const { return ReadableNode(*internal_.parent); }
+
+        /// \brief Get the parent
+        /// \returns A ReadableNode representing the parent in the DynamicData tree.
+        ReadableNode parent() const { assert(has_parent()); return ReadableNode(*internal_.parent); }
+
+        /// \brief Get the associated data.
+        /// \returns A readable reference of the data.
         ReadableDynamicDataRef data() const { return ReadableDynamicDataRef(internal_.type, internal_.instance); }
+
+        /// \brief Get the representing type.
+        /// \returns The DynamicType associated to the data.
         const DynamicType& type() const { return internal_.type; }
+
+        /// \brief Current deep in the DynamicData tree (starts at deep 0).
+        /// \returns The current deep.
         size_t deep() const { return internal_.deep; }
+
+        /// \brief The index used to access to this ReadableNode
+        /// \returns The index used.
         size_t from_index() const { return internal_.from_index; }
+
+        /// \brief The Member used to access to this ReadableNode
+        /// \returns The member or null if the accessor is not an aggregation type.
         const Member* from_member() const { return internal_.from_member; }
     private:
         const Instanceable::InstanceNode& internal_;
     };
 
+    /// \brief Iterate the DynamicData in deep. Each node visited will call to the user visitor function.
+    /// \param[in] visitor User visitor function.
+    /// \returns true if no exceptions by the user were throw. Otherwise, the user boolean exception value.
     bool for_each(std::function<void(const ReadableNode& node)> visitor) const
     {
         Instanceable::InstanceNode root(type_, instance_);
@@ -174,14 +239,19 @@ protected:
     const DynamicType& type_;
     uint8_t* instance_;
 
-    const DynamicType& p_type(const ReadableDynamicDataRef& other) const { return other.type_; }
+    /// \brief protected access to other DynamicData instace.
+    /// \param[in] other readable reference from who get the instance.
+    /// \result The raw instance.
     uint8_t* p_instance(const ReadableDynamicDataRef& other) const { return other.instance_; }
 };
 
 
+/// \brief Class representing a writable DynamicData reference.
+/// This class extends the ReadableDynamicDataRef with a several writable methods.
 class WritableDynamicDataRef : public ReadableDynamicDataRef
 {
 public:
+    /// \brief Assignment operator.
     WritableDynamicDataRef& operator = (
             const WritableDynamicDataRef& other)
     {
@@ -212,45 +282,50 @@ public:
         return *this;
     }
 
+    /// \brief Request a readable reference from this DynamicData.
+    /// \returns a ReadableDynamicDataRef identifying the writable DynamicData.
     ReadableDynamicDataRef cref() const { return ReadableDynamicDataRef(*this); }
 
+    /// \brief See ReadableDynamicDataRef::value()
     template<typename T, class = PrimitiveOrString<T>>
-    const T& value() // this = PrimitiveType & StringType
+    const T& value()
     {
         return ReadableDynamicDataRef::value<T>();
     }
 
-    const std::string& string() // this = StringType
+    /// \brief See ReadableDynamicDataRef::string()
+    const std::string& string()
     {
         return ReadableDynamicDataRef::string();
     }
 
-    ReadableDynamicDataRef operator [] (
-            const std::string& member_name) const // this = StructType
+    /// \brief See ReadableDynamicDataRef::wstring()
+    const std::wstring& wstring()
+    {
+        return ReadableDynamicDataRef::wstring();
+    }
+
+    /// \brief See ReadableDynamicDataRef::operator[]()
+    /// \returns A writable reference to the DynamicData accessed.
+    WritableDynamicDataRef operator [] (
+            const std::string& member_name)
     {
         return ReadableDynamicDataRef::operator[](member_name);
     }
 
-    ReadableDynamicDataRef operator [] (
-            size_t index) const // this = SequenceType & ArrayType
+    /// \brief See ReadableDynamicDataRef::operator[]()
+    /// \returns A writable reference to the DynamicData accessed.
+    WritableDynamicDataRef operator [] (
+            size_t index) //
     {
         return ReadableDynamicDataRef::operator[](index);
     }
 
-    WritableDynamicDataRef operator [] (
-            const std::string& member_name) // this = StructType
-    {
-        return ReadableDynamicDataRef::operator[](member_name);
-    }
-
-    WritableDynamicDataRef operator [] (
-            size_t index) // this = SequenceType & ArrayType
-    {
-        return ReadableDynamicDataRef::operator[](index);
-    }
-
+    /// \brief Set a primitive or string value into the DynamicData
+    /// \input[in] t The primitive or string value.
+    /// \pre The DynamicData must represent a PrimitiveType or W/StringType value.
     template<typename T, class = PrimitiveOrString<T>>
-    void value(const T& t) // this = PrimitiveType & StringType
+    void value(const T& t)
     {
         assert((type_.kind() == TypeKind::STRING_TYPE && std::is_same<std::string, T>::value)
             || (type_.kind() == TypeKind::STRING_TYPE && std::is_same<std::wstring, T>::value)
@@ -260,22 +335,32 @@ public:
         type_.copy_instance(instance_, reinterpret_cast<const uint8_t*>(&t));
     }
 
-    void string(const std::string& s) // this = StringType
+    /// \brief Set a string value into the DynamicData
+    /// \input[in] s The string value.
+    /// \pre The DynamicData must represent a StringType value.
+    void string(const std::string& s)
     {
         assert(type_.kind() == TypeKind::STRING_TYPE);
         type_.destroy_instance(instance_);
         type_.copy_instance(instance_, reinterpret_cast<const uint8_t*>(&s));
     }
 
-    void wstring(const std::wstring& s) // this = WStringType
+    /// \brief Set a wstring value into the DynamicData
+    /// \input[in] s The wstring value.
+    /// \pre The DynamicData must represent a WStringType value.
+    void wstring(const std::wstring& s)
     {
         assert(type_.kind() == TypeKind::WSTRING_TYPE);
         type_.destroy_instance(instance_);
         type_.copy_instance(instance_, reinterpret_cast<const uint8_t*>(&s));
     }
 
+    /// \brief Push a primitive or string value into the DynamicData that represents a SequenceType
+    /// \input[in] t The primitive or string value.
+    /// \pre The DynamicData must represent a SequenceType.
+    /// \returns The writable reference to this DynamicData
     template<typename T, class = PrimitiveOrString<T>>
-    WritableDynamicDataRef& push(const T& value) // this = SequenceType
+    WritableDynamicDataRef& push(const T& t) // this = SequenceType
     {
         assert(type_.kind() == TypeKind::SEQUENCE_TYPE);
         const SequenceType& sequence = static_cast<const SequenceType&>(type_);
@@ -283,12 +368,16 @@ public:
             || (sequence.content_type().kind() == TypeKind::WSTRING_TYPE && std::is_same<std::wstring, T>::value)
             || (sequence.content_type().kind() == primitive_type<T>().kind()));
 
-        uint8_t* element = sequence.push_instance(instance_, reinterpret_cast<const uint8_t*>(&value));
+        uint8_t* element = sequence.push_instance(instance_, reinterpret_cast<const uint8_t*>(&t));
         assert(element != nullptr);
         return *this;
     }
 
-    WritableDynamicDataRef& push(const WritableDynamicDataRef& data) // this = SequenceType
+    /// \brief Push another DynamicData into the DynamicData that represents a SequenceType
+    /// \input[in] data DynamicData to add into the sequence
+    /// \pre The DynamicData must represent a SequenceType.
+    /// \returns The writable reference to this DynamicData
+    WritableDynamicDataRef& push(const ReadableDynamicDataRef& data) // this = SequenceType
     {
         assert(type_.kind() == TypeKind::SEQUENCE_TYPE);
         const SequenceType& sequence = static_cast<const SequenceType&>(type_);
@@ -298,6 +387,12 @@ public:
         return *this;
     }
 
+    /// \brief resize the Sequence representing by the DynamicData.
+    /// If size is less or equals that the current size, nothing happens,
+    /// otherwise a default-initialized values are insert to the sequence to increase its size.
+    /// \param[int] size New sequence size
+    /// \pre The DynamicData must represent a SequenceType.
+    /// \returns The writable reference to this DynamicData
     WritableDynamicDataRef& resize(size_t size) // this = SequenceType
     {
         assert(type_.kind() == TypeKind::SEQUENCE_TYPE);
@@ -307,18 +402,25 @@ public:
         return *this;
     }
 
+    /// \brief (See ReadableDynamicData::for_each())
     bool for_each(std::function<void(const ReadableNode& node)> visitor) const
     {
         return ReadableDynamicDataRef::for_each(visitor);
     }
 
+    /// \brief Class used by for_each() function to represent a writable DynamicData node in the tree.
     class WritableNode : public ReadableNode
     {
     public:
         WritableNode(const Instanceable::InstanceNode& instance_node) : ReadableNode(instance_node) {}
+
+        /// \brief See ReadableNode::data()
+        /// \returns A writable reference of the data.
         WritableDynamicDataRef data() { return ReadableNode::data(); }
     };
 
+    /// \brief (See ReadableDynamicData::for_each())
+    /// A writable specialization of ReadableDynamicDataRef::for_each() function.
     bool for_each(std::function<void(WritableNode& node)> visitor)
     {
         Instanceable::InstanceNode root(type_, instance_);
@@ -341,16 +443,20 @@ protected:
         : ReadableDynamicDataRef(type, source)
     {}
 
+    /// \brief Internal cast from readable to writable
     WritableDynamicDataRef(
             ReadableDynamicDataRef&& other)
         : ReadableDynamicDataRef(std::move(other))
     {}
 };
 
-
+/// \brief Class that represents a DynamicType instantation in memory.
 class DynamicData : public WritableDynamicDataRef
 {
 public:
+    /// \brief Construct a DynamicData from a DynamicType specification.
+    /// The required memory for holding the instance is reserved at this point.
+    /// \param[in] type DynamicType from which the DynamicData is created.
     DynamicData(
             const DynamicType& type)
         : WritableDynamicDataRef(type, new uint8_t[type.memory_size()])
@@ -358,15 +464,20 @@ public:
         type_.construct_instance(instance_);
     }
 
+    /// \brief Construct a DynamicData from another DynamicData with a compatible type.
+    /// (see DynamicType::is_compatible())
+    /// \param[in] other A compatible DynamicData from which de data will be copies.
+    /// \param[in] type DynamicType from which the DynamicData is created.
     DynamicData(
             const ReadableDynamicDataRef& other,
             const DynamicType& type)
         : WritableDynamicDataRef(type, new uint8_t[type.memory_size()])
     {
         assert(type_.is_compatible(other.type()) != TypeConsistency::NONE);
-        type_.copy_instance_from_type(instance_, p_instance(other), p_type(other));
+        type_.copy_instance_from_type(instance_, p_instance(other), other.type());
     }
 
+    /// \brief Copy constructor
     DynamicData(const DynamicData& other)
         : WritableDynamicDataRef(other.type_, new uint8_t[other.type_.memory_size()])
     {
@@ -374,6 +485,7 @@ public:
         type_.copy_instance(instance_, p_instance(other));
     }
 
+    /// \brief Move constructor
     DynamicData(DynamicData&& other)
         : WritableDynamicDataRef(other.type_, new uint8_t[other.type_.memory_size()])
     {
@@ -381,6 +493,7 @@ public:
         type_.move_instance(instance_, p_instance(other));
     }
 
+    /// \brief Assignment operator
     DynamicData& operator = (
             const DynamicData& other)
     {
@@ -396,6 +509,8 @@ public:
         delete[] instance_;
     }
 
+    /// \brief Request a writable reference from this DynamicData.
+    /// \returns a WritableDynamicDataRef identifying th DynamicData.
     WritableDynamicDataRef ref() const { return WritableDynamicDataRef(*this); }
 };
 

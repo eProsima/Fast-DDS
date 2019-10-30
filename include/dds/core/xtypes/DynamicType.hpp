@@ -39,7 +39,7 @@ public:
     /// \returns DynamicType's name.
     const std::string& name() const { return name_; }
 
-    /// \brief type kind this DynamicType. (see dds::core::xtypes::TypeKind)
+    /// \brief type kind this DynamicType. (see TypeKind)
     /// \returns type kind corresponding to this DynamicType
     const TypeKind& kind() const { return kind_; }
 
@@ -80,7 +80,7 @@ public:
     ///   TypeConsistency::EQUALS means that the types are identically.
     ///   TypeConsistency::NONE means that no conversion is known to be compatibles both types.
     ///   Otherwise, a level of consistency was found for convert both types between them.
-    ///   See dds::core::xtypes::TypeConsistency for more information.
+    ///   See TypeConsistency for more information.
     virtual TypeConsistency is_compatible(const DynamicType& other) const = 0;
 
 protected:

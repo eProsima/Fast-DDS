@@ -51,7 +51,7 @@ public:
 
     /// \brief Copy construction of a instance from another type.
     /// \pre other type needs to be compatible with the current type
-    /// (see dds::core::xtypes::DynamicType::is_compatible() function).
+    /// (see DynamicType::is_compatible() function).
     /// \param[out] target Location where the instance will be constructed.
     /// \param[in] source Location from the instance will be copied.
     /// \param[in] other Type representing the source instance.

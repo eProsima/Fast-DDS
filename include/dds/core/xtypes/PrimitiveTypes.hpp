@@ -27,7 +27,7 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
-/// \brief Internal struct used for enable PrimitiveTypes
+/// \brief Internal struct used for enable primitive types
 template<typename>
 struct DynamicTypeTrait
 {

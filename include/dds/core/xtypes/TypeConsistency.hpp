@@ -25,7 +25,7 @@ namespace core {
 namespace xtypes {
 
 /// \brief Differents type consistencies available for type compatibility.
-/// When two types are checked by dds::core::xtypes::DynamicType::is_compatible
+/// When two types are checked by DynamicType::is_compatible
 /// a set of consistencies is returned depending of the required modifications to allow the matching.
 /// \remark TypeConssitency is an enum treats as a bitset.
 enum class TypeConsistency
