@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef __TRANSPORT_UDPSENDERRESOURCE_HPP__
-#define __TRANSPORT_UDPSENDERRESOURCE_HPP__
+#ifndef _FASTDDS_TRANSPORT_UDPSENDERRESOURCE_HPP_
+#define _FASTDDS_TRANSPORT_UDPSENDERRESOURCE_HPP_
 
 #include <fastrtps/rtps/network/SenderResource.h>
-#include <fastdds/rtps/transport/shared_mem/SharedMemTransport.h>
-#include <fastdds/rtps/transport/shared_mem/eProsimaSharedMem.hpp>
+
+#include <rtps/transport/shared_mem/SharedMemTransport.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -25,67 +25,69 @@ namespace rtps {
 
 class SharedMemSenderResource : public fastrtps::rtps::SenderResource
 {
-    public:
+public:
 
-        SharedMemSenderResource(
-                SharedMemTransport& transport,
-				std::shared_ptr<eProsimaSharedMem::Writter> writter,
-                bool only_multicast_purpose = false)
-            : fastrtps::rtps::SenderResource(transport.kind())
-            , writter_(writter)
-            , only_multicast_purpose_(only_multicast_purpose)
-        {
-            // Implementation functions are bound to the right transport parameters
-            /*clean_up = [this, &transport]()
-                {
-                    transport.CloseOutputChannel(socket_);
-                };*/
-
-            send_lambda_ = [this, &transport] (
-                    const fastrtps::rtps::octet* data,
-                    uint32_t dataSize,
-                    const fastrtps::rtps::Locator_t& destination,
-                    const std::chrono::microseconds& timeout)-> bool
-                {
-                    return transport.send(data, dataSize, writter_, destination, only_multicast_purpose_, timeout);
-                };
-        }
-
-        virtual ~SharedMemSenderResource()
-        {
-            if (clean_up)
+    SharedMemSenderResource(
+            SharedMemTransport& transport,
+            std::shared_ptr<SharedMemManager> shared_mem_manager,
+            bool only_multicast_purpose = false)
+        : fastrtps::rtps::SenderResource(transport.kind())
+        , shared_mem_manager_(shared_mem_manager)
+        , only_multicast_purpose_(only_multicast_purpose)
+    {
+        // Implementation functions are bound to the right transport parameters
+        /*clean_up = [this, &transport]()
             {
-                clean_up();
-            }
-        }
+                transport.CloseOutputChannel(socket_);
+            };*/
 
-        static SharedMemSenderResource* cast(TransportInterface& transport, SenderResource* sender_resource)
-        {
-			SharedMemSenderResource* returned_resource = nullptr;
-
-            if (sender_resource->kind() == transport.kind())
+        send_lambda_ = [this, &transport] (
+                const fastrtps::rtps::octet* data,
+                uint32_t dataSize,
+                const fastrtps::rtps::Locator_t& destination,
+                const std::chrono::microseconds& timeout)-> bool
             {
-                returned_resource = dynamic_cast<SharedMemSenderResource*>(sender_resource);
-            }
+                return false;
+                // TODO: Shared memory port should be obtained here.
+                return transport.send(data, dataSize, /*writter_*/nullptr, destination, only_multicast_purpose_, timeout);
+            };
+    }
 
-            return returned_resource;
+    virtual ~SharedMemSenderResource()
+    {
+        if (clean_up)
+        {
+            clean_up();
+        }
+    }
+
+    static SharedMemSenderResource* cast(TransportInterface& transport, SenderResource* sender_resource)
+    {
+        SharedMemSenderResource* returned_resource = nullptr;
+
+        if (sender_resource->kind() == transport.kind())
+        {
+            returned_resource = dynamic_cast<SharedMemSenderResource*>(sender_resource);
         }
 
-    private:
+        return returned_resource;
+    }
 
-		SharedMemSenderResource() = delete;
+private:
 
-		SharedMemSenderResource(const SenderResource&) = delete;
+    SharedMemSenderResource() = delete;
 
-		SharedMemSenderResource& operator=(const SenderResource&) = delete;
+    SharedMemSenderResource(const SenderResource&) = delete;
 
-		std::shared_ptr<eProsimaSharedMem::Writter> writter_;
+    SharedMemSenderResource& operator=(const SenderResource&) = delete;
 
-        bool only_multicast_purpose_;
+    std::shared_ptr<SharedMemManager> shared_mem_manager_;
+
+    bool only_multicast_purpose_;
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif // __TRANSPORT_SHAREDMEMSENDERRESOURCE_HPP__
+#endif // _FASTDDS_TRANSPORT_UDPSENDERRESOURCE_HPP_

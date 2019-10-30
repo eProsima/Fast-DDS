@@ -108,7 +108,6 @@ set(${PROJECT_NAME}_source_files
     fastdds/builtin/typelookup/TypeLookupReplyListener.cpp
     rtps/transport/ChannelResource.cpp
     rtps/transport/UDPChannelResource.cpp
-    rtps/transport/shared_mem/SharedMemChannelResource.cpp
     rtps/transport/TCPChannelResource.cpp
     rtps/transport/TCPChannelResourceBasic.cpp
     rtps/transport/TCPAcceptor.cpp

@@ -15,32 +15,47 @@
 #ifndef _FASTDDS_SHAREDMEM_CHANNEL_RESOURCE_INFO_
 #define _FASTDDS_SHAREDMEM_CHANNEL_RESOURCE_INFO_
 
+#include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastrtps/transport/ChannelResource.h>
 #include <fastrtps/rtps/common/Locator.h>
-#include <fastdds/rtps/transport/shared_mem/eProsimaSharedMem.hpp>
+
+#include <rtps/transport/shared_mem/SharedMemManager.hpp>
+#include <rtps/transport/shared_mem/SharedMemTransport.h>
 
 namespace eprosima{
 namespace fastdds{
 namespace rtps{
 
-class TransportReceiverInterface;
-class SharedMemTransport;
-
 class SharedMemChannelResource : public ChannelResource
 {
 public:
 
+    using Log = fastdds::dds::Log;
+
 	SharedMemChannelResource(
 		SharedMemTransport* transport,
-		std::shared_ptr<eProsimaSharedMem::Reader> reader,
+		std::shared_ptr<SharedMemManager::Reader> reader,
         uint32_t maxMsgSize,
         const fastrtps::rtps::Locator_t& locator,
-        TransportReceiverInterface* receiver);
+        TransportReceiverInterface* receiver)
+    : ChannelResource(maxMsgSize)
+    , message_receiver_(receiver)
+    , reader_(reader)
+    , only_multicast_purpose_(false)
+    , transport_(transport)
+    , locator_(locator)
+    {
+        thread(std::thread(&SharedMemChannelResource::perform_listen_operation, this, locator));
+    }
 
-    virtual ~SharedMemChannelResource() override;
+    virtual ~SharedMemChannelResource() override
+    {
+        message_receiver_ = nullptr;
+    }
 
     SharedMemChannelResource& operator=(SharedMemChannelResource&& channelResource)
     {
+        (void)channelResource;
         //socket_ = moveSocket(channelResource.socket_);
         return *this;
     }
@@ -77,19 +92,49 @@ public:
 
 	const fastrtps::rtps::Locator_t& locator() const
 	{
-		return reader_->locator();
+		return locator_;
 	}
 
-    void release();
+    void release()
+    {
+        // Close and cancel all asynchronous operations associated with the socket.
+        reader_.reset();
+    }
 
-protected:
+private:
+
     /**
      * Function to be called from a new thread, which takes cares of performing a blocking receive
      * operation on the ReceiveResource
      * @param input_locator - Locator that triggered the creation of the resource
     */
     void perform_listen_operation(
-            fastrtps::rtps::Locator_t input_locator);
+            fastrtps::rtps::Locator_t input_locator)
+    {
+        fastrtps::rtps::Locator_t remote_locator;
+
+        while (alive())
+        {
+            // Blocking receive.
+            auto& msg = message_buffer();
+            if (!Receive(msg.buffer, msg.max_size, msg.length, remote_locator))
+            {
+                continue;
+            }
+
+            // Processes the data through the CDR Message interface.
+            if (message_receiver() != nullptr)
+            {
+                message_receiver()->OnDataReceived(msg.buffer, msg.length, input_locator, remote_locator);
+            }
+            else if (alive())
+            {
+                logWarning(RTPS_MSG_IN, "Received Message, but no receiver attached");
+            }
+        }
+
+        message_receiver(nullptr);
+    }
 
     /**
     * Blocking Receive from the specified channel.
@@ -103,14 +148,39 @@ protected:
             fastrtps::rtps::octet* receive_buffer,
             uint32_t receive_buffer_capacity,
             uint32_t& receive_buffer_size,
-            fastrtps::rtps::Locator_t& remote_locator);
+            fastrtps::rtps::Locator_t& remote_locator)
+    {
+        (void)remote_locator;
+        
+        try
+        {
+            throw std::runtime_error("not implemented");
+            
+            auto buffer = reader_->pop();
+            if(buffer->size() > receive_buffer_capacity)
+                throw std::runtime_error("");
+
+            memcpy(receive_buffer, buffer->data(), buffer->size());
+            receive_buffer_size = static_cast<uint32_t>(buffer->size());
+
+            return (receive_buffer_size > 0);
+        }
+        catch (const std::exception& error)
+        {
+            (void)error;
+            logWarning(RTPS_MSG_OUT, "Error receiving data: " << error.what() << " - " << message_receiver()
+                << " (" << this << ")");
+            return false;
+        }
+    }
 
 private:
 
     TransportReceiverInterface* message_receiver_; //Associated Readers/Writers inside of MessageReceiver
-	std::shared_ptr<eProsimaSharedMem::Reader> reader_;
+	std::shared_ptr<SharedMemManager::Reader> reader_;
     bool only_multicast_purpose_;
     SharedMemTransport* transport_;
+    fastrtps::rtps::Locator_t locator_;
 
     SharedMemChannelResource(const SharedMemChannelResource&) = delete;
     SharedMemChannelResource& operator=(const SharedMemChannelResource&) = delete;

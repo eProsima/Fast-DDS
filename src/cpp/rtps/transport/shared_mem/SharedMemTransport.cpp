@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/rtps/transport/TransportInterface.h>
-#include <fastdds/rtps/transport/shared_mem/SharedMemTransport.h>
-#include <fastrtps/rtps/messages/CDRMessage.h>
 #include <utility>
 #include <cstring>
 #include <algorithm>
+
+#include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -25,7 +25,11 @@
 #include <fastdds/rtps/network/SenderResource.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 
-#include "SharedMemSenderResource.hpp"
+#include <rtps/transport/shared_mem/SharedMemTransport.h>
+#include <rtps/transport/shared_mem/SharedMemSenderResource.hpp>
+#include <rtps/transport/shared_mem/SharedMemChannelResource.hpp>
+
+#include <rtps/transport/shared_mem/SharedMemManager.hpp>
 
 using namespace std;
 
@@ -33,7 +37,6 @@ using namespace eprosima;
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 
-using IPLocator = fastrtps::rtps::IPLocator;
 using Locator_t = fastrtps::rtps::Locator_t;
 using LocatorList_t = fastrtps::rtps::LocatorList_t;
 using Log = dds::Log;
@@ -43,22 +46,20 @@ using LocatorSelectorEntry = fastrtps::rtps::LocatorSelectorEntry;
 using LocatorSelector = fastrtps::rtps::LocatorSelector;
 using PortParameters = fastrtps::rtps::PortParameters;
 
-std::vector<std::shared_ptr<Port>> eProsimaSharedMem::global_ports_;
-std::mutex eProsimaSharedMem::global_ports_mutex_;
-
 //*********************************************************
 // SharedMemTransportDescriptor
 //*********************************************************
+
 SharedMemTransportDescriptor::SharedMemTransportDescriptor()
     : TransportDescriptorInterface(s_maximumMessageSize, s_maximumInitialPeersRange)
-    , shared_memory_port(0)
+    , shared_memory_port_id(0)
 {
 }
 
 SharedMemTransportDescriptor::SharedMemTransportDescriptor(
         const SharedMemTransportDescriptor& t)
     : TransportDescriptorInterface(t)
-    , shared_memory_port(t.shared_memory_port)
+    , shared_memory_port_id(t.shared_memory_port_id)
 {
 }
 
@@ -96,7 +97,7 @@ bool SharedMemTransport::getDefaultMetatrafficMulticastLocators(
     Locator_t locator;
     locator.kind = LOCATOR_KIND_SHMEM;
     locator.port = static_cast<uint16_t>(metatraffic_multicast_port);
-    IPLocator::setIPv4(locator, 239, 255, 0, 1);
+    locator.set_Invalid_Address();
     locators.push_back(locator);
     return true;
 }
@@ -133,7 +134,7 @@ void SharedMemTransport::AddDefaultOutputLocator(
     Locator_t locator;
     locator.kind = LOCATOR_KIND_SHMEM;
     locator.set_Invalid_Address();
-    locator.port = configuration_.shared_memory_port;
+    locator.port = configuration_.shared_memory_port_id;
     defaultList.push_back(locator);
 }
 
@@ -158,7 +159,7 @@ bool SharedMemTransport::OpenInputChannel(
     {
 		try
 		{
-			auto channel_resource = CreateInputChannelResource(locator, IPLocator::isMulticast(locator), maxMsgSize, receiver);
+			auto channel_resource = CreateInputChannelResource(locator, locator.port == 0 /*Multicast???*/, maxMsgSize, receiver);
 			input_channels_.push_back(channel_resource);
 		}
 		catch (std::exception& e)
@@ -231,14 +232,14 @@ bool SharedMemTransport::DoInputLocatorsMatch(
 		const Locator_t& left, 
 		const Locator_t& right) const
 {
-	return IPLocator::getPhysicalPort(left) == IPLocator::getPhysicalPort(right);
+	return left.kind == right.kind && left.port == right.port;
 }
 
 bool SharedMemTransport::init()
 {
 	try
 	{
-		shared_mem_ = std::make_shared<eProsimaSharedMem>();
+		shared_mem_manager_ = std::make_shared<SharedMemManager>();
 	}
 	catch (std::exception& e)
 	{
@@ -271,8 +272,9 @@ SharedMemChannelResource* SharedMemTransport::CreateInputChannelResource(
 		uint32_t maxMsgSize,
 		TransportReceiverInterface* receiver)
 {
+	(void)is_multicast;
 	//TODO:Check exceptions
-	return new SharedMemChannelResource(this, shared_mem_->createReader(locator, maxMsgSize), maxMsgSize, locator, receiver);
+	return new SharedMemChannelResource(this, shared_mem_manager_->open_port(locator.port,1)->create_reader(), maxMsgSize, locator, receiver);
 }
 
 bool SharedMemTransport::OpenOutputChannel(
@@ -301,7 +303,7 @@ bool SharedMemTransport::OpenOutputChannel(
 	{
 		//eProsimaSharedMem shared_mem = eProsimaSharedMem(eProsimaSharedMem::ChannelType::WRITER, locator, mSendBufferSize);
 		sender_resource_list.emplace_back(
-			static_cast<SenderResource*>(new SharedMemSenderResource(*this, shared_mem_->createWritter())));
+			static_cast<SenderResource*>(new SharedMemSenderResource(*this, shared_mem_manager_)));
 	}
 	catch (std::exception&)
 	{
@@ -330,7 +332,6 @@ Locator_t SharedMemTransport::RemoteToMainLocal(
 	}
 
 	Locator_t mainLocal(remote);
-	//memset(mainLocal.address, 0x00, sizeof(mainLocal.address));
 	mainLocal.set_Invalid_Address();
 	return mainLocal;
 }
@@ -352,11 +353,17 @@ bool SharedMemTransport::transform_remote_locator(
 bool SharedMemTransport::send(
 		const octet* send_buffer,
 		uint32_t send_buffer_size,
-		std::shared_ptr<eProsimaSharedMem::Writter> writer,
+		std::shared_ptr<SharedMemManager::Port> port,
 		const Locator_t& remote_locator,
 		bool only_multicast_purpose,
 		const std::chrono::microseconds& timeout)
 {
+	(void)send_buffer;
+	(void)send_buffer_size;
+	(void)port;
+	(void)only_multicast_purpose;
+	(void)timeout;
+
 	if (!IsLocatorSupported(remote_locator) /*|| send_buffer_size > configuration()->sendBufferSize*/)
 	{
 		return false;
@@ -364,7 +371,7 @@ bool SharedMemTransport::send(
 	
 	try
 	{
-		writer->write(send_buffer, send_buffer_size, remote_locator, timeout);
+		//writer->write(send_buffer, send_buffer_size, remote_locator, timeout);
 	}
 	catch (const std::exception& error)
 	{
