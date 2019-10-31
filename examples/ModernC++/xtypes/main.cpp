@@ -36,6 +36,10 @@ int main()
     data["om7"][1].value(123u);                            //ArrayType(PrimitiveType<uint32_t>)
     data["om8"][1] = data["om2"];                          //ArrayType(inner)
 
+    data["om1"] = 8.88;                                    //PrimitiveType<double>
+    data["om3"] = "This is a string, assignable too.";     //StringType
+    data["om4"] = L"WStrings attack again! \u263A";        //WStringType
+
     std::cout << data.to_string() << std::endl; //See to_string implementation as an example of data instrospection
 
     return 0;
