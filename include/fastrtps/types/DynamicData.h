@@ -164,7 +164,7 @@ public:
 
     RTPS_DllAPI bool equals(const DynamicData* other) const;
 
-    RTPS_DllAPI inline TypeKind get_kind() const;
+    RTPS_DllAPI TypeKind get_kind() const;
 
     RTPS_DllAPI uint32_t get_item_count() const;
 
