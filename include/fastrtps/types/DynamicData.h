@@ -40,7 +40,7 @@ public:
     RTPS_DllAPI ResponseCode ClearValue(MemberId id);
 
     RTPS_DllAPI bool Equals(const DynamicData* other) const;
-    RTPS_DllAPI inline TypeKind GetKind() const;
+    RTPS_DllAPI TypeKind GetKind() const;
     RTPS_DllAPI uint32_t GetItemCount() const;
     RTPS_DllAPI std::string GetName();
 
