@@ -38,7 +38,9 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
 	RTPS_DllAPI SharedMemTransportDescriptor(
         	const SharedMemTransportDescriptor& t);
 
-	uint32_t shared_memory_port_id;
+	uint32_t segment_size;
+	uint32_t port_queue_capacity;
+	int port_overflow_policy;
 }SharedMemTransportDescriptor;
 
 } // namespace rtps

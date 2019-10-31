@@ -51,15 +51,17 @@ using PortParameters = fastrtps::rtps::PortParameters;
 //*********************************************************
 
 SharedMemTransportDescriptor::SharedMemTransportDescriptor()
-    : TransportDescriptorInterface(s_maximumMessageSize, s_maximumInitialPeersRange)
-    , shared_memory_port_id(0)
+    : TransportDescriptorInterface(SharedMemTransport::maximum_message_size, s_maximumInitialPeersRange)
+	, segment_size(SharedMemTransport::default_segment_size)
+	, port_queue_capacity(SharedMemTransport::default_port_queue_capacity)
 {
 }
 
 SharedMemTransportDescriptor::SharedMemTransportDescriptor(
         const SharedMemTransportDescriptor& t)
     : TransportDescriptorInterface(t)
-    , shared_memory_port_id(t.shared_memory_port_id)
+	, segment_size(t.segment_size)
+	, port_queue_capacity(SharedMemTransport::default_port_queue_capacity)
 {
 }
 
@@ -131,11 +133,7 @@ bool SharedMemTransport::getDefaultUnicastLocators(
 void SharedMemTransport::AddDefaultOutputLocator(
         LocatorList_t &defaultList)
 {
-    Locator_t locator;
-    locator.kind = LOCATOR_KIND_SHMEM;
-    locator.set_Invalid_Address();
-    locator.port = configuration_.shared_memory_port_id;
-    defaultList.push_back(locator);
+	(void)defaultList;
 }
 
 const SharedMemTransportDescriptor* SharedMemTransport::configuration() const
