@@ -260,6 +260,8 @@ public:
         return *this;
     }
 
+    /// \brief A shortcut of WritableDynamicDataRef::value()
+    /// \returns A reference to this DynamicData.
     template<typename T, class = PrimitiveOrString<T>>
     WritableDynamicDataRef& operator = (
             const T& other)
@@ -268,6 +270,8 @@ public:
         return *this;
     }
 
+    /// \brief A shortcut of WritableDynamicDataRef::string()
+    /// \returns A reference to this DynamicData.
     WritableDynamicDataRef& operator = (
             const std::string& other)
     {
@@ -275,6 +279,8 @@ public:
         return *this;
     }
 
+    /// \brief A shortcut of WritableDynamicDataRef::wstring()
+    /// \returns A reference to this DynamicData.
     WritableDynamicDataRef& operator = (
             const std::wstring& other)
     {
