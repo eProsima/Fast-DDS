@@ -241,7 +241,7 @@ public:
     virtual bool IsLocatorSupported(const fastrtps::rtps::Locator_t&) const override;
 
     //! Checks whether there are open and bound sockets for the given port.
-    bool is_output_channel_open_for(const fastrtps::rtps::Locator_t&) const ;
+    bool is_output_channel_open_for(const fastrtps::rtps::Locator_t&) const;
 
     /** Opens an input channel to receive incomming connections.
     *   If there is an existing channel it registers the receiver resource.

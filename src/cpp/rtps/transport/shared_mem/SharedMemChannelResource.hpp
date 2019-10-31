@@ -154,6 +154,8 @@ private:
         
         try
         {
+            //Avoid fast sending loop. Remove when implemented
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
             throw std::runtime_error("not implemented");
             
             auto buffer = reader_->pop();
