@@ -38,7 +38,7 @@ int main()
 
     data["om1"] = 8.88;                                    //PrimitiveType<double>
     data["om3"] = "This is a string, assignable too.";     //StringType
-    data["om4"] = L"WStrings attack again!";               //WStringType
+    data["om4"] = L"WStrings attack again! \u263A";        //WStringType
 
     std::cout << data.to_string() << std::endl; //See to_string implementation as an example of data instrospection
 

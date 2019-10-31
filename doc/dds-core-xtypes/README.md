@@ -32,7 +32,7 @@ Once these types have been defined, you can instatiate them and access their dat
 DynamicData data(outer);
 //write value
 data["b"]["a"].value(42);
-data["b"]["a"] = 23;
+data["b"]["a"] = 23; //shortcut 
 
 // read value
 int32_t my_value = data["b"]["a"].value<int32_t>();
@@ -159,7 +159,7 @@ The following methods are available when:
 1. `DynamicData` represents a `PrimitiveType` (of `int` as example):
     ```c++
     data.value(42); //sets the value to 42
-    data = 23; // assignment from primitve, sets the value to 23
+    data = 23; // Analogous to the one above, assignment from primitive, sets the value to 23
     int32_t value = data.value<int32_t>(); //read the value
     ```
 1. `DynamicData` represents an `AggregationType`
