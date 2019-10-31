@@ -24,6 +24,7 @@
 #include <dds/core/xtypes/PrimitiveTypes.hpp>
 
 #include <cassert>
+#include <iostream>
 
 namespace dds {
 namespace core {
@@ -88,7 +89,7 @@ public:
     const std::string& string() const
     {
         assert(type_.kind() == TypeKind::STRING_TYPE);
-        return *reinterpret_cast<std::string*>(instance_);
+        return value<std::string>();
     }
 
     /// \brief Returns a value as string of wchars.
@@ -97,7 +98,7 @@ public:
     const std::wstring& wstring() const
     {
         assert(type_.kind() == TypeKind::WSTRING_TYPE);
-        return *reinterpret_cast<std::wstring*>(instance_);
+        return value<std::wstring>();
     }
 
     /// \brief Member access operator by name.
@@ -270,8 +271,7 @@ public:
         return *this;
     }
 
-    /// \brief A shortcut of WritableDynamicDataRef::string()
-    /// \returns A reference to this DynamicData.
+    /// \brief Specialization of WritableDynamicDataRef::operator =() for string
     WritableDynamicDataRef& operator = (
             const std::string& other)
     {
@@ -279,8 +279,7 @@ public:
         return *this;
     }
 
-    /// \brief A shortcut of WritableDynamicDataRef::wstring()
-    /// \returns A reference to this DynamicData.
+    /// \brief Specialization of WritableDynamicDataRef::operator =() for wstring
     WritableDynamicDataRef& operator = (
             const std::wstring& other)
     {
@@ -334,8 +333,8 @@ public:
     void value(const T& t)
     {
         assert((type_.kind() == TypeKind::STRING_TYPE && std::is_same<std::string, T>::value)
-            || (type_.kind() == TypeKind::STRING_TYPE && std::is_same<std::wstring, T>::value)
-            || (type_.kind() == primitive_type<T>().kind()));
+            || (type_.kind() == TypeKind::WSTRING_TYPE && std::is_same<std::wstring, T>::value)
+            || (type_.kind() == PrimitiveTypeKindTrait<T>::kind));
 
         type_.destroy_instance(instance_);
         type_.copy_instance(instance_, reinterpret_cast<const uint8_t*>(&t));
@@ -347,8 +346,7 @@ public:
     void string(const std::string& s)
     {
         assert(type_.kind() == TypeKind::STRING_TYPE);
-        type_.destroy_instance(instance_);
-        type_.copy_instance(instance_, reinterpret_cast<const uint8_t*>(&s));
+        value(s);
     }
 
     /// \brief Set a wstring value into the DynamicData
@@ -357,8 +355,7 @@ public:
     void wstring(const std::wstring& s)
     {
         assert(type_.kind() == TypeKind::WSTRING_TYPE);
-        type_.destroy_instance(instance_);
-        type_.copy_instance(instance_, reinterpret_cast<const uint8_t*>(&s));
+        value(s);
     }
 
     /// \brief Push a primitive or string value into the DynamicData that represents a SequenceType

@@ -29,18 +29,18 @@ namespace xtypes {
 
 /// \brief Internal struct used for enable primitive types
 template<typename>
-struct DynamicTypeTrait
+struct PrimitiveTypeKindTrait
 {
-    static constexpr TypeKind TYPE_ID = TypeKind::NO_TYPE;
-    static constexpr const char* NAME = "no_type";
+    static constexpr TypeKind kind = TypeKind::NO_TYPE;
+    static constexpr const char* name = "no_type";
 };
 
 #define DDS_CORE_XTYPES_PRIMITIVE(TYPE, KIND) \
 template<> \
-struct DynamicTypeTrait<TYPE> \
+struct PrimitiveTypeKindTrait<TYPE> \
 { \
-    static constexpr TypeKind TYPE_ID = TypeKind::KIND; \
-    static constexpr const char* NAME = #TYPE; \
+    static constexpr TypeKind kind = TypeKind::KIND; \
+    static constexpr const char* name = #TYPE; \
 };\
 
 DDS_CORE_XTYPES_PRIMITIVE(bool, BOOLEAN_TYPE)
@@ -69,7 +69,7 @@ private:
     friend const DynamicType& primitive_type();
 
     PrimitiveType()
-        : DynamicType(DynamicTypeTrait<T>::TYPE_ID, DynamicTypeTrait<T>::NAME)
+        : DynamicType(PrimitiveTypeKindTrait<T>::kind, PrimitiveTypeKindTrait<T>::name)
     {}
 
     virtual size_t memory_size() const override
