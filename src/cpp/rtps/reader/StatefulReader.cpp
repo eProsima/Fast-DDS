@@ -429,24 +429,48 @@ bool StatefulReader::processDataFragMsg(
             }
 #endif
 
-            // Fragments manager has to process incomming fragments.
-            // If CacheChange_t is completed, it will be returned;
-            CacheChange_t* change_completed = fragmentedChangePitStop_->process(
-                change_to_add, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
+            CacheChange_t* change_created = nullptr;
+            CacheChange_t* work_change = nullptr;
+            if (!mp_history->get_change(change_to_add->sequenceNumber, change_to_add->writerGUID, &work_change))
+            {
+                // A new change should be reserved
+                if (reserveCache(&work_change, sampleSize))
+                {
+                    if (work_change->serializedPayload.max_size < sampleSize)
+                    {
+                        releaseCache(work_change);
+                        work_change = nullptr;
+                    }
+                    else
+                    {
+                        work_change->copy_not_memcpy(change_to_add);
+                        work_change->serializedPayload.length = sampleSize;
+                        work_change->setFragmentSize(change_to_add->getFragmentSize(), true);
+                        change_created = work_change;
+                    }
+                }
+            }
+
+            if (work_change != nullptr)
+            {
+                FragmentedChangePitStop::add_fragments_to_change(work_change, change_to_add->serializedPayload,
+                    fragmentStartingNum, fragmentsInSubmessage);
+            }
 
 #if HAVE_SECURITY
             if(getAttributes().security_attributes().is_payload_protected)
                 releaseCache(change_to_add);
 #endif
 
-            if(change_completed != nullptr)
+            // If this is the first time we have received fragments for this change, add it to history
+            if(change_created != nullptr)
             {
-                if(!change_received(change_completed, pWP))
+                if(!change_received(change_created, pWP))
                 {
 
-                    logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long());
+                    logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_created->sequenceNumber.to64long());
 
-                    releaseCache(change_completed);
+                    releaseCache(change_created);
                 }
             }
         }
