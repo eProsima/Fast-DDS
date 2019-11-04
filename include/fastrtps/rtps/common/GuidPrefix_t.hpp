@@ -34,7 +34,7 @@ namespace rtps {
 //!@ingroup COMMON_MODULE
 struct RTPS_DllAPI GuidPrefix_t
 {
-    static const unsigned int size = 12;
+    static constexpr unsigned int size = 12;
     octet value[size];
 
     //!Default constructor. Set the Guid prefix to 0.
