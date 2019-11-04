@@ -146,45 +146,48 @@ ParticipantProxyData * PDPSimple::createParticipantProxyData(
 
     // decide if we dismiss the participant using the ParticipantFilteringFlags
     const ParticipantFilteringFlags_t & flags = m_discovery.discovery_config.ignoreParticipantFlags;
-    const octet * const remote  = participant_data.m_guid.guidPrefix.value;
-    const octet * const local = getLocalParticipantProxyData()->m_guid.guidPrefix.value;
-    bool ignore = false;
-    int i = 0;
-
-    if(flags & ParticipantFilteringFlags::FILTER_DIFFERENT_HOST)
+        
+    if(flags != ParticipantFilteringFlags_t::NO_FILTER)
     {
+        const octet * const remote = participant_data.m_guid.guidPrefix.value;
+        const octet * const local = getLocalParticipantProxyData()->m_guid.guidPrefix.value;
+        bool ignore = false;
+        int i = 0;
+        
         // filter if vendor or host are different
+        bool other_host = flags & ParticipantFilteringFlags::FILTER_DIFFERENT_HOST;
+
         for(ignore = false, i = 0; i < 4; ++i)
         {
             ignore |= local[i] != remote[i];
         }
-    }
 
-    // above flag is mutually exclusive with the others in host flags
-    if(ignore)
-    {
-        return nullptr;
-    }
-    else
-    {
-        bool same = flags & ParticipantFilteringFlags::FILTER_SAME_PROCESS;
-        bool different = flags & ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS;
-
-        if(same && different) 
-        {   // filter our own host
+        if( other_host && ignore)
+        {
             return nullptr;
         }
         else
-        {   // workout in process filtering
-            // filter if process ID is the same
-            for(ignore = true, i = 4; i < 8; ++i)
-            {
-                ignore &= local[i] == remote[i];
-            }
+        {
+            // above flag is mutually exclusive with the others in host flags
+            bool same = flags & ParticipantFilteringFlags::FILTER_SAME_PROCESS;
+            bool different = flags & ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS;
 
-            if ( (same && ignore) || (different && !ignore) )
-            {
+            if(same && different && !ignore)
+            {   // filter our own host
                 return nullptr;
+            }
+            else
+            {   // workout in process filtering
+                // filter if process ID is the same
+                for(ignore = true, i = 4; i < 8; ++i)
+                {
+                    ignore &= local[i] == remote[i];
+                }
+
+                if((same && ignore) || (different && !ignore))
+                {
+                    return nullptr;
+                }
             }
         }
     }
