@@ -27,13 +27,14 @@
 #include <cstring>
 #include <sstream>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 //!@brief Structure GUID_t, entity identifier, unique in DDS-RTPS Domain.
 //!@ingroup COMMON_MODULE
-struct RTPS_DllAPI GUID_t{
+struct RTPS_DllAPI GUID_t
+{
     //!Guid prefix
     GuidPrefix_t guidPrefix;
     //!Entity id
@@ -48,7 +49,8 @@ struct RTPS_DllAPI GUID_t{
     /*!
      * Copy constructor.
      */
-    GUID_t(const GUID_t& g)
+    GUID_t(
+            const GUID_t& g)
         : guidPrefix(g.guidPrefix)
         , entityId(g.entityId)
     {
@@ -57,7 +59,8 @@ struct RTPS_DllAPI GUID_t{
     /*!
      * Move constructor.
      */
-    GUID_t(GUID_t&& g)
+    GUID_t(
+            GUID_t&& g)
         : guidPrefix(std::move(g.guidPrefix))
         , entityId(std::move(g.entityId))
     {
@@ -127,7 +130,7 @@ inline bool operator==(
         const GUID_t& g1,
         const GUID_t& g2)
 {
-    if(g1.guidPrefix == g2.guidPrefix && g1.entityId==g2.entityId)
+    if (g1.guidPrefix == g2.guidPrefix && g1.entityId==g2.entityId)
         return true;
     else
         return false;
@@ -143,7 +146,7 @@ inline bool operator!=(
         const GUID_t& g1,
         const GUID_t& g2)
 {
-    if(g1.guidPrefix != g2.guidPrefix || g1.entityId!=g2.entityId)
+    if (g1.guidPrefix != g2.guidPrefix || g1.entityId!=g2.entityId)
         return true;
     else
         return false;
@@ -155,16 +158,16 @@ inline bool operator<(
 {
     for (uint8_t i = 0; i < 12; ++i)
     {
-        if(g1.guidPrefix.value[i] < g2.guidPrefix.value[i])
+        if (g1.guidPrefix.value[i] < g2.guidPrefix.value[i])
             return true;
-        else if(g1.guidPrefix.value[i] > g2.guidPrefix.value[i])
+        else if (g1.guidPrefix.value[i] > g2.guidPrefix.value[i])
             return false;
     }
     for (uint8_t i = 0; i < 4; ++i)
     {
-        if(g1.entityId.value[i] < g2.entityId.value[i])
+        if (g1.entityId.value[i] < g2.entityId.value[i])
             return true;
-        else if(g1.entityId.value[i] > g2.entityId.value[i])
+        else if (g1.entityId.value[i] > g2.entityId.value[i])
             return false;
     }
     return false;
@@ -185,7 +188,7 @@ inline std::ostream& operator<<(
         std::ostream& output,
         const GUID_t& guid)
 {
-    if(guid !=c_Guid_Unknown)
+    if (guid !=c_Guid_Unknown)
         output<<guid.guidPrefix<<"|"<<guid.entityId;
     else
         output << "|GUID UNKNOWN|";
@@ -204,7 +207,7 @@ inline std::istream& operator>>(
 {
     std::istream::sentry s(input);
 
-    if(s)
+    if (s)
     {
         std::ios_base::iostate excp_mask = input.exceptions();
 
@@ -215,7 +218,7 @@ inline std::istream& operator>>(
             input >> guid.guidPrefix;
             input >> guid.entityId;
         }
-        catch(std::ios_base::failure &)
+        catch (std::ios_base::failure &)
         {
             // maybe is unknown or just invalid
             guid = c_Guid_Unknown;
