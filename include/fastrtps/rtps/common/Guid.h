@@ -22,6 +22,7 @@
 #include "../../fastrtps_dll.h"
 #include "Types.h"
 #include <fastrtps/rtps/common/GuidPrefix_t.hpp>
+#include <fastrtps/rtps/common/EntityId_t.hpp>
 
 #include <cstdint>
 #include <cstring>

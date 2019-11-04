@@ -20,7 +20,7 @@
 #define _FASTDDS_RTPS_COMMON_ENTITYID_T_HPP_
 
 #include <fastrtps/fastrtps_dll.h>
-#include <fastdds/rtps/common/Types.h>
+#include <fastrtps/rtps/common/Types.h>
 
 #include <cstdint>
 #include <cstring>
