@@ -258,7 +258,7 @@ TEST_F(SharedMemTests, match_if_port_AND_address_matches)
     // Then
     ASSERT_FALSE(transportUnderTest.DoInputLocatorsMatch(locatorAlpha, locatorBeta));
 }
-/*
+
 TEST_F(SharedMemTests, send_to_wrong_port)
 {
     //Given
@@ -280,7 +280,7 @@ TEST_F(SharedMemTests, send_to_wrong_port)
     ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), wrongLocator,
                 std::chrono::microseconds(100)));
 }
-*/
+
 #ifndef __APPLE__
 TEST_F(SharedMemTests, send_and_receive_between_ports)
 {
