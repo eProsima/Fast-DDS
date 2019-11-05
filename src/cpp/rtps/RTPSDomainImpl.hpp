@@ -31,16 +31,17 @@ namespace rtps {
 class RTPSDomainImpl
 {
 public:
+
     /***
      * @returns A pointer to a local reader given its endpoint guid, or nullptr if not found.
      */
     static RTPSReader* find_local_reader(
             const GUID_t& reader_guid)
     {
-        for(auto participant : RTPSDomain::m_RTPSParticipants)
+        for (auto participant : RTPSDomain::m_RTPSParticipants)
         {
             // Reader found
-            if(auto reader = participant.second->find_local_reader(reader_guid))
+            if (auto reader = participant.second->find_local_reader(reader_guid))
             {
                 return reader;
             }
@@ -55,10 +56,10 @@ public:
     static RTPSReader* find_local_writer(
             const GUID_t& writer_guid)
     {
-        for(auto participant : RTPSDomain::m_RTPSParticipants)
+        for (auto participant : RTPSDomain::m_RTPSParticipants)
         {
             // Writer found
-            if(auto writer = participant.second->find_local_reader(writer_guid))
+            if (auto writer = participant.second->find_local_reader(writer_guid))
             {
                 return writer;
             }
