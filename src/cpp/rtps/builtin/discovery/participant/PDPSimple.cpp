@@ -149,20 +149,14 @@ ParticipantProxyData * PDPSimple::createParticipantProxyData(
         
     if(flags != ParticipantFilteringFlags_t::NO_FILTER)
     {
-        const octet * const remote = participant_data.m_guid.guidPrefix.value;
-        const octet * const local = getLocalParticipantProxyData()->m_guid.guidPrefix.value;
-        bool ignore = false;
-        int i = 0;
+        const GUID_t & remote = participant_data.m_guid;
+        const GUID_t & local = getLocalParticipantProxyData()->m_guid;
         
         // filter if vendor or host are different
         bool other_host = flags & ParticipantFilteringFlags::FILTER_DIFFERENT_HOST;
+        bool ignore = local.is_on_same_host_as(remote);
 
-        for(ignore = false, i = 0; i < 4; ++i)
-        {
-            ignore |= local[i] != remote[i];
-        }
-
-        if( other_host && ignore)
+        if( other_host && !ignore)
         {
             return nullptr;
         }
@@ -174,7 +168,7 @@ ParticipantProxyData * PDPSimple::createParticipantProxyData(
 
             if(same && different)  
             {   // filter our own host
-                if(!ignore)
+                if(ignore)
                 {
                     return nullptr;
                 }
@@ -183,10 +177,7 @@ ParticipantProxyData * PDPSimple::createParticipantProxyData(
             {   // above both flags case is mutually exclusive with individual process flags
                 // workout in process filtering
                 // filter if process ID is the same
-                for(ignore = true, i = 4; i < 8; ++i)
-                {
-                    ignore &= local[i] == remote[i];
-                }
+                ignore = local.is_on_same_process_as(remote);
 
                 if((same && ignore) || (different && !ignore))
                 {
