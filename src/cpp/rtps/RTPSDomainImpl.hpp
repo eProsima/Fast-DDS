@@ -59,7 +59,7 @@ public:
         for (auto participant : RTPSDomain::m_RTPSParticipants)
         {
             // Writer found
-            if (auto writer = participant.second->find_local_reader(writer_guid))
+            if (auto writer = participant.second->find_local_writer(writer_guid))
             {
                 return writer;
             }
