@@ -45,6 +45,7 @@
             <builtin>
                 <discovery_config>
                     <discoveryProtocol>SIMPLE</discoveryProtocol>
+                    <ignoreParticipantFlags>FILTER_SAME_PROCESS | FILTER_DIFFERENT_HOST</ignoreParticipantFlags>
                     <EDP>SIMPLE</EDP>
                     <leaseAnnouncement>
                         <sec>10</sec>
