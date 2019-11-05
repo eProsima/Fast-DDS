@@ -103,7 +103,7 @@ bool StatefulReader::matched_writer_add(
         {
             logInfo(RTPS_READER, "Attempting to add existing writer, updating information");
             it->update(wdata);
-            if (getRTPSParticipant()->find_local_writer(wdata.guid()) == nullptr)
+            if (!getRTPSParticipant()->getGuid().is_on_same_process_as(wdata.guid()))
             {
                 for (const Locator_t& locator : it->remote_locators_shrinked())
                 {
@@ -136,13 +136,19 @@ bool StatefulReader::matched_writer_add(
         wp = matched_writers_pool_.back();
         matched_writers_pool_.pop_back();
     }
+    std::cerr << "Tenemos un WP" << std::endl;
 
-    if (getRTPSParticipant()->find_local_writer(wdata.guid()) == nullptr)
+    if (!getRTPSParticipant()->getGuid().is_on_same_process_as(wdata.guid()))
     {
+        std::cerr << "Y no es local" << std::endl;
         for (const Locator_t& locator : wp->remote_locators_shrinked())
         {
             getRTPSParticipant()->createSenderResources(locator);
         }
+    }
+    else
+    {
+        std::cerr << "y es local" << std::endl;
     }
 
     SequenceNumber_t initial_sequence;
