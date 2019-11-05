@@ -81,3 +81,9 @@ foreach writer in join(local process writers, discovered remote writers)
         reader.matched_writer_add(writer)
         writer.matched_reader_add(reader)
 ```
+
+## New design side-effects
+
+* This design isolates all message traffic from the wire, that is, tools like **wireshark™** will become useless. Given that most of our customers actually run intraprocess code, and report their issues using **wireshark™** traces, these changes will create a support nightmare. A workaround may be to supply a flag to inhibits the intraprocess behavior for debugging purposes, stating clearly, that it should be turn off during performance test.
+
+* Once a shared memory transport is developed for interprocess purposes, an intraprocess mechanism would be pointless. That's because the trade off between speed gain and source complexity would be very expensive. From memory consumption point of view using an interprocess discovery database would yield more benefits that having per-process discovery databases.
