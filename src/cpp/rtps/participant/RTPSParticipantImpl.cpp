@@ -630,7 +630,8 @@ bool RTPSParticipantImpl::createReader(
     return true;
 }
 
-RTPSReader* RTPSParticipantImpl::find_local_reader(const GUID_t& reader_guid)
+RTPSReader* RTPSParticipantImpl::find_local_reader(
+        const GUID_t& reader_guid)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 
@@ -645,7 +646,8 @@ RTPSReader* RTPSParticipantImpl::find_local_reader(const GUID_t& reader_guid)
     return nullptr;
 }
 
-RTPSWriter* RTPSParticipantImpl::find_local_writer(const GUID_t& writer_guid)
+RTPSWriter* RTPSParticipantImpl::find_local_writer(
+        const GUID_t& writer_guid)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
 

@@ -283,12 +283,14 @@ public:
     /***
      * @returns A pointer to a local reader given its endpoint guid, or nullptr if not found.
      */
-    RTPSReader* find_local_reader(const GUID_t& reader_guid);
+    RTPSReader* find_local_reader(
+            const GUID_t& reader_guid);
 
     /***
      * @returns A pointer to a local writer given its endpoint guid, or nullptr if not found.
      */
-    RTPSWriter* find_local_writer(const GUID_t& writer_guid);
+    RTPSWriter* find_local_writer(
+            const GUID_t& writer_guid);
 
 private:
     //!Attributes of the RTPSParticipant
