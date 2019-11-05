@@ -81,7 +81,7 @@ struct RTPS_DllAPI GUID_t
      * @return true when this guid is on the same host, false otherwise.
      */
     bool is_on_same_host_as(
-        const GUID_t& other_guid) const
+            const GUID_t& other_guid) const
     {
         return memcmp(guidPrefix.value, other_guid.guidPrefix.value, 4) == 0;
     }
@@ -94,7 +94,7 @@ struct RTPS_DllAPI GUID_t
      * @return true when this guid is on the same host and process, false otherwise.
      */
     bool is_on_same_process_as(
-        const GUID_t& other_guid) const
+            const GUID_t& other_guid) const
     {
         return memcmp(guidPrefix.value, other_guid.guidPrefix.value, 8) == 0;
     }
@@ -127,7 +127,7 @@ inline bool operator==(
         const GUID_t& g1,
         const GUID_t& g2)
 {
-    if (g1.guidPrefix == g2.guidPrefix && g1.entityId==g2.entityId)
+    if (g1.guidPrefix == g2.guidPrefix && g1.entityId == g2.entityId)
         return true;
     else
         return false;
@@ -143,7 +143,7 @@ inline bool operator!=(
         const GUID_t& g1,
         const GUID_t& g2)
 {
-    if (g1.guidPrefix != g2.guidPrefix || g1.entityId!=g2.entityId)
+    if (g1.guidPrefix != g2.guidPrefix || g1.entityId != g2.entityId)
         return true;
     else
         return false;
@@ -185,8 +185,8 @@ inline std::ostream& operator<<(
         std::ostream& output,
         const GUID_t& guid)
 {
-    if (guid !=c_Guid_Unknown)
-        output<<guid.guidPrefix<<"|"<<guid.entityId;
+    if (guid != c_Guid_Unknown)
+        output << guid.guidPrefix << "|" << guid.entityId;
     else
         output << "|GUID UNKNOWN|";
     return output;
@@ -229,8 +229,8 @@ inline std::istream& operator>>(
 
 #endif
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif /* RTPS_GUID_H_ */
