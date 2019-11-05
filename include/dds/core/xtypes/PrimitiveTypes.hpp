@@ -96,7 +96,7 @@ private:
             const uint8_t* source,
             const DynamicType& other) const override
     {
-        assert(other.is_primitive_type());
+        assert(other.is_primitive_type()); (void) other;
         *reinterpret_cast<T*>(target) = *reinterpret_cast<const T*>(source);
     }
 

@@ -70,7 +70,7 @@ public:
             const uint8_t* source,
             const DynamicType& other) const override
     {
-        assert(other.kind() == KIND);
+        assert(other.kind() == KIND); (void) other;
         new (target) std::basic_string<CHAR_T>(*reinterpret_cast<const std::basic_string<CHAR_T>*>(source));
     }
 
