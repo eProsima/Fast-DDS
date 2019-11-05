@@ -172,12 +172,16 @@ ParticipantProxyData * PDPSimple::createParticipantProxyData(
             bool same = flags & ParticipantFilteringFlags::FILTER_SAME_PROCESS;
             bool different = flags & ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS;
 
-            if(same && different && !ignore)
+            if(same && different)  
             {   // filter our own host
-                return nullptr;
+                if(!ignore)
+                {
+                    return nullptr;
+                }
             }
             else
-            {   // workout in process filtering
+            {   // above both flags case is mutually exclusive with individual process flags
+                // workout in process filtering
                 // filter if process ID is the same
                 for(ignore = true, i = 4; i < 8; ++i)
                 {

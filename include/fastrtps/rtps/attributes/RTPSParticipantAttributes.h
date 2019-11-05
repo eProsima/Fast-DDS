@@ -67,7 +67,7 @@ typedef enum DiscoveryProtocol
 } DiscoveryProtocol_t;
 
 //!Filtering flags when discovering participants
-typedef enum ParticipantFilteringFlags
+typedef enum ParticipantFilteringFlags : uint32_t
 {
     NO_FILTER = 0,
     FILTER_DIFFERENT_HOST = 0x1,
