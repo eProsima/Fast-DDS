@@ -20,7 +20,6 @@
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/log/Log.h>
-#include "FragmentedChangePitStop.h"
 #include "ReaderHistoryState.hpp"
 
 #include <fastrtps/rtps/reader/ReaderListener.h>
@@ -90,7 +89,7 @@ bool RTPSReader::setListener(ReaderListener *target)
     return true;
 }
 
-CacheChange_t* RTPSReader::findCacheInFragmentedCachePitStop(
+CacheChange_t* RTPSReader::findCacheInFragmentedProcess(
         const SequenceNumber_t& sequence_number,
         const GUID_t& writer_guid) const
 {

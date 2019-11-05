@@ -20,16 +20,16 @@ include(${PROJECT_SOURCE_DIR}/cmake/dev/generate_msvc_libraries.cmake)
 if(WIN32)
 
 file(GLOB_RECURSE ALL_HEADERS 
-	${PROJECT_SOURCE_DIR}/include/**/*.h
-	${PROJECT_SOURCE_DIR}/include/**/*.hpp
-	${PROJECT_SOURCE_DIR}/src/cpp/**/*.h
-	${PROJECT_SOURCE_DIR}/src/cpp/**/*.hpp
-	)  
+    ${PROJECT_SOURCE_DIR}/include/**/*.h
+    ${PROJECT_SOURCE_DIR}/include/**/*.hpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/**/*.h
+    ${PROJECT_SOURCE_DIR}/src/cpp/**/*.hpp
+    )
 
 endif(WIN32)
 
 set(${PROJECT_NAME}_source_files
-	${ALL_HEADERS} 
+    ${ALL_HEADERS}
 
     log/Log.cpp
     log/StdoutConsumer.cpp
@@ -60,7 +60,6 @@ set(${PROJECT_NAME}_source_files
     rtps/reader/StatefulReader.cpp
     rtps/reader/StatelessReader.cpp
     rtps/reader/RTPSReader.cpp
-    rtps/reader/FragmentedChangePitStop.cpp
     rtps/messages/RTPSMessageCreator.cpp
     rtps/messages/RTPSMessageGroup.cpp
     rtps/messages/MessageReceiver.cpp
@@ -128,21 +127,21 @@ set(${PROJECT_NAME}_source_files
     qos/WriterQos.cpp
     qos/ReaderQos.cpp
     rtps/builtin/BuiltinProtocols.cpp
-	rtps/builtin/discovery/participant/DirectMessageSender.cpp
-	rtps/builtin/discovery/participant/PDP.cpp
+    rtps/builtin/discovery/participant/DirectMessageSender.cpp
+    rtps/builtin/discovery/participant/PDP.cpp
     rtps/builtin/discovery/participant/PDPSimple.cpp
     rtps/builtin/discovery/participant/PDPListener.cpp
-	rtps/builtin/discovery/participant/PDPServerListener.cpp
-	rtps/builtin/discovery/participant/PDPClient.cpp
-	rtps/builtin/discovery/participant/PDPServer.cpp
-	rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
-	rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
+    rtps/builtin/discovery/participant/PDPServerListener.cpp
+    rtps/builtin/discovery/participant/PDPClient.cpp
+    rtps/builtin/discovery/participant/PDPServer.cpp
+    rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
+    rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
     rtps/builtin/discovery/endpoint/EDP.cpp
     rtps/builtin/discovery/endpoint/EDPSimple.cpp
-	rtps/builtin/discovery/endpoint/EDPClient.cpp
-	rtps/builtin/discovery/endpoint/EDPServer.cpp
+    rtps/builtin/discovery/endpoint/EDPClient.cpp
+    rtps/builtin/discovery/endpoint/EDPServer.cpp
     rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp
-	rtps/builtin/discovery/endpoint/EDPServerListeners.cpp
+    rtps/builtin/discovery/endpoint/EDPServerListeners.cpp
     rtps/builtin/discovery/endpoint/EDPStatic.cpp
     rtps/builtin/liveliness/WLP.cpp
     rtps/builtin/liveliness/WLPListener.cpp

@@ -35,11 +35,14 @@ struct FragmentTestStep
         bool missing_fragments[10];
     } check;
 
-    void do_test(CacheChange_t& uut) const
+    void do_test(
+            CacheChange_t& uut) const
     {
         if (input.num_fragments > 0)
         {
-            uut.received_fragments(input.initial_fragment, input.num_fragments);
+            SerializedPayload_t payload{100};
+            payload.length = 100;
+            uut.add_fragments(payload, input.initial_fragment, input.num_fragments);
         }
 
         FragmentNumberSet_t fns;
@@ -47,10 +50,11 @@ struct FragmentTestStep
 
         for (FragmentNumber_t i = 1; i <= 10; i++)
         {
-            EXPECT_EQ(fns.is_set(i), check.missing_fragments[i - 1]) 
-                << "  on: " << fail_description << std::endl << "  index: " << i-1;
+            EXPECT_EQ(fns.is_set(i), check.missing_fragments[i - 1])
+                << "  on: " << fail_description << std::endl << "  index: " << i - 1;
         }
     }
+
 };
 
 /*!
@@ -67,60 +71,60 @@ TEST(CacheChange, FragmentManagement)
             {true, true, true, true, true, true, true, true, true, true}
         },
         {
-            "received out-of-bounds (10)",
-            {10, 1},
+            "received out-of-bounds (11)",
+            {11, 1},
             {true, true, true, true, true, true, true, true, true, true}
+        },
+        {
+            "received (2)",
+            {2, 1},
+            {true, false, true, true, true, true, true, true, true, true}
+        },
+        {
+            "received (2) again",
+            {2, 1},
+            {true, false, true, true, true, true, true, true, true, true}
+        },
+        {
+            "received (2, 3)",
+            {2, 2},
+            {true, false, false, true, true, true, true, true, true, true}
         },
         {
             "received (1)",
             {1, 1},
-            {true, false, true, true, true, true, true, true, true, true}
+            {false, false, false, true, true, true, true, true, true, true}
         },
         {
             "received (1) again",
             {1, 1},
-            {true, false, true, true, true, true, true, true, true, true}
-        },
-        {
-            "received (1, 2)",
-            {1, 2},
-            {true, false, false, true, true, true, true, true, true, true}
-        },
-        {
-            "received (0)",
-            {0, 1},
             {false, false, false, true, true, true, true, true, true, true}
         },
         {
-            "received (0) again",
-            {0, 1},
-            {false, false, false, true, true, true, true, true, true, true}
-        },
-        {
-            "received (8)",
-            {8, 1},
+            "received (9)",
+            {9, 1},
             {false, false, false, true, true, true, true, true, false, true}
         },
         {
-            "received (7, 8, 9, 10)",
-            {7, 4},
-            {false, false, false, true, true, true, true, false, false, false}
+            "received (8, 9, 10, 11)",
+            {8, 4},
+            {false, false, false, true, true, true, true, true, false, true}
         },
         {
-            "received (6)",
-            {6, 1},
-            {false, false, false, true, true, true, false, false, false, false}
+            "received (7)",
+            {7, 1},
+            {false, false, false, true, true, true, false, true, false, true}
         },
         {
-            "received (3, 4, 5)",
-            {3, 3},
-            {false, false, false, false, false, false, false, false, false, false}
+            "received (4, 5, 6)",
+            {4, 3},
+            {false, false, false, false, false, false, false, true, false, true}
         }
     };
 
     CacheChange_t uut(90);
     uut.serializedPayload.length = 90;
-    
+
     uut.setFragmentSize(9, true);
     for (const FragmentTestStep& step : test_steps)
     {
@@ -128,7 +132,9 @@ TEST(CacheChange, FragmentManagement)
     }
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

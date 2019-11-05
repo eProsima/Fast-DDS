@@ -23,7 +23,6 @@
 #include <fastrtps/log/Log.h>
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include "../participant/RTPSParticipantImpl.h"
-#include "FragmentedChangePitStop.h"
 #include "WriterProxy.h"
 #include <fastrtps/utils/TimeConversion.h>
 #include "../history/HistoryAttributesExtension.hpp"
@@ -453,8 +452,8 @@ bool StatefulReader::processDataFragMsg(
 
             if (work_change != nullptr)
             {
-                FragmentedChangePitStop::add_fragments_to_change(work_change, change_to_add->serializedPayload,
-                    fragmentStartingNum, fragmentsInSubmessage);
+                work_change->add_fragments(change_to_add->serializedPayload, fragmentStartingNum,
+                        fragmentsInSubmessage);
             }
 
 #if HAVE_SECURITY
@@ -510,7 +509,7 @@ bool StatefulReader::processHeartbeatMsg(
                 hbCount, firstSN, lastSN, finalFlag, livelinessFlag, disable_positive_acks_, assert_liveliness))
         {
             mp_history->remove_fragmented_changes_until(firstSN, writerGUID);
-            
+
             // Try to assert liveliness if requested by proxy's logic
             if (assert_liveliness)
             {
@@ -565,7 +564,7 @@ bool StatefulReader::processGapMsg(
         {
             if(pWP->irrelevant_change_set(auxSN))
             {
-                CacheChange_t* to_remove = findCacheInFragmentedCachePitStop(auxSN, pWP->guid());
+                CacheChange_t* to_remove = findCacheInFragmentedProcess(auxSN, pWP->guid());
                 if (to_remove != nullptr)
                 {
                     mp_history->remove_change(to_remove);
@@ -577,7 +576,7 @@ bool StatefulReader::processGapMsg(
         {
             if(pWP->irrelevant_change_set(it))
             {
-                CacheChange_t* to_remove = findCacheInFragmentedCachePitStop(auxSN, pWP->guid());
+                CacheChange_t* to_remove = findCacheInFragmentedProcess(auxSN, pWP->guid());
                 if (to_remove != nullptr)
                 {
                     mp_history->remove_change(to_remove);
@@ -954,7 +953,7 @@ void StatefulReader::send_acknack(
                 [&](const SequenceNumber_t& seq)
                 {
                     // Check if the CacheChange_t is uncompleted.
-                    CacheChange_t* uncomplete_change = findCacheInFragmentedCachePitStop(seq, guid);
+                    CacheChange_t* uncomplete_change = findCacheInFragmentedProcess(seq, guid);
                     if (uncomplete_change == nullptr)
                     {
                         if (!sns.add(seq))

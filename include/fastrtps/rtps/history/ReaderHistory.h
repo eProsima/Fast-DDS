@@ -81,7 +81,7 @@ public:
      * @param writer_guid GUID of the writer for which changes should be looked for.
      * @return True if succesful, even if no changes have been removed.
      */
-    bool ReaderHistory::remove_fragmented_changes_until(
+    bool remove_fragmented_changes_until(
             const SequenceNumber_t& seq_num,
             const GUID_t& writer_guid);
 
