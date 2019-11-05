@@ -450,6 +450,11 @@ protected:
 
     /// \brief Internal cast from readable to writable
     WritableDynamicDataRef(
+            const ReadableDynamicDataRef& other)
+        : ReadableDynamicDataRef(other)
+    {}
+
+    WritableDynamicDataRef(
             ReadableDynamicDataRef&& other)
         : ReadableDynamicDataRef(std::move(other))
     {}
@@ -473,6 +478,18 @@ public:
     /// (see DynamicType::is_compatible())
     /// \param[in] other A compatible DynamicData from which de data will be copies.
     /// \param[in] type DynamicType from which the DynamicData is created.
+    DynamicData(
+            const ReadableDynamicDataRef& other)
+        : WritableDynamicDataRef(other)
+    {
+    }
+
+    DynamicData(
+            WritableDynamicDataRef&& other)
+        : WritableDynamicDataRef(std::move(other))
+    {
+    }
+
     DynamicData(
             const ReadableDynamicDataRef& other,
             const DynamicType& type)
