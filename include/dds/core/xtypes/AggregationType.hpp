@@ -31,14 +31,37 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
+/// \brief DynamicType representing an aggregation of members.
+/// An AggregationType represents a TypeKind::AGGREGATION_TYPE.
 class AggregationType : public DynamicType
 {
 public:
+    /// \brief Check for a member name existence.
+    /// \param[in] name Member name to check.
+    /// \returns true if found.
     bool has_member(const std::string& name) const { return indexes_.count(name) != 0; }
+
+    /// \brief Members of the aggregaton.
+    /// \returns A reference to a vector of members.
     const std::vector<Member>& members() const { return members_; }
-    const Member& member(size_t index) const { return members_[index]; }
+
+    /// \brief Get a member by index. O(1).
+    /// \param[in] index Member index.
+    /// \pre index < members().size()
+    /// \returns A reference to the found member.
+    const Member& member(size_t index) const
+    {
+        assert(index < members().size());
+        return members_[index];
+    }
+
+    /// \brief Get a member by name. O(log(n)).
+    /// \param[in] name Member name.
+    /// \pre has_member() == true
+    /// \returns A reference to the found member.
     const Member& member(const std::string& name) const
     {
+        assert(has_member(name));
         return members_[indexes_.at(name)];
     }
 
@@ -49,11 +72,15 @@ protected:
         : DynamicType(kind, name)
     {}
 
+    /// \brief Insert a member into the aggregation.
+    /// \param[in] member Member to add.
+    /// \pre !has_member(member.name())
+    /// \returns A reference to the internal member.
     Member& insert_member(const Member& member)
     {
-        assert(indexes_.count(member.name()) == 0);
+        assert(!has_member(member.name()));
         indexes_.emplace(member.name(), members_.size());
-        members_.emplace_back(std::move(member));
+        members_.emplace_back(member);
         return members_.back();
     }
 

@@ -29,9 +29,14 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
+/// \brief DynamicType representing mutable sequence of elements.
+/// A SequenceType represents a TypeKind::SEQUENCE_TYPE.
 class SequenceType : public MutableCollectionType
 {
 public:
+    /// \brief Construct a SequenceType.
+    /// \param[in] content Content type of the array.
+    /// \param[in] bounds Size limit of the sequence, 0 means that no limits.
     SequenceType(
             const DynamicType& content,
             uint32_t bounds = 0)
@@ -42,6 +47,9 @@ public:
                 bounds)
     {}
 
+    /// \brief Construct a SequenceType.
+    /// \param[in] content Content type of the array.
+    /// \param[in] bounds Size limit of the sequence, 0 means that no limits.
     template<typename DynamicTypeImpl>
     SequenceType(
             const DynamicTypeImpl&& content,
@@ -150,6 +158,11 @@ public:
         }
     }
 
+    /// \brief Push a value to a sequence instance.
+    /// \param[in, out] instance Memory instance representing a SequenceInstance.
+    /// \param[in] value to add into the sequence.
+    /// \returns a instance location representing the new value added
+    /// or nullptr if the sequence reach the limit.
     uint8_t* push_instance(
             uint8_t* instance,
             const uint8_t* value) const
@@ -161,6 +174,10 @@ public:
         return nullptr;
     }
 
+    /// \brief Resize a sequence instance to reach the requested size.
+    /// All new values needed will be default-initialized
+    /// \param[in, out] instance Memory instance representing a SequenceInstance.
+    /// \param[in] size new sequence instance size.
     void resize_instance(
             uint8_t* instance,
             size_t size) const

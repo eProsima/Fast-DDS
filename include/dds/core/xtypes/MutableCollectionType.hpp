@@ -25,9 +25,16 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
+/// \brief DynamicType representing mutable collection of elements.
+/// This is the base abstract class for all mutable collections.
+/// This class specifier the CollectionType class for collection that
+/// can change os size during their lives.
+/// A MutableCollectionType represents a TypeKind::COLLECTION_TYPE.
 class MutableCollectionType : public CollectionType
 {
 public:
+    /// \brief Get the bounds of the collection.
+    /// \returns The bounds of the collection. 0 value means that no bounds were specified.
     uint32_t bounds() const { return bounds_; }
 
 protected:

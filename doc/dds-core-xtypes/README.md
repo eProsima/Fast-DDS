@@ -117,7 +117,7 @@ TypeConsistency consistency = tested_type.is_compatible(other_type);
 This line will evaluate consistency levels among the two types.
 The returned `TypeConsistency` is going to be a subset of the following *QoS policies*:
 
-- `NONE`: Unknown way to interpret `tested_type` as `other_type`.
+- `NONE`: Unknown way to interpret both types as equivalents.
 - `EQUALS`: The evaluation is analogous to an equal evaluation.
 - `IGNORE_TYPE_WIDTH`: the evaluation will be true if the width of the some primitive types are less or
   equals than the other type.

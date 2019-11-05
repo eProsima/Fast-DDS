@@ -27,10 +27,16 @@ namespace dds {
 namespace core {
 namespace xtypes {
 
+/// \brief DynamicType representing a string.
+/// A StringType represents a TypeKind::STRING_TYPE.
+/// A WStringType represents a TypeKind::WSTRING_TYPE.
 template<typename CHAR_T, TypeKind KIND, const char* TYPE_NAME>
 class TStringType : public MutableCollectionType
 {
 public:
+    /// \brief Construct a string
+    /// Depends of the specialization used, the string will contain PrimitiveType of char or wchar elements
+    /// \param[in] bounds Limits of the string, 0 means no limits.
     TStringType(
             int bounds = 0)
         : MutableCollectionType(
@@ -86,7 +92,8 @@ public:
             const uint8_t* instance,
             const uint8_t* other_instance) const override
     {
-        return *reinterpret_cast<const std::basic_string<CHAR_T>*>(instance) == *reinterpret_cast<const std::basic_string<CHAR_T>*>(other_instance);
+        return *reinterpret_cast<const std::basic_string<CHAR_T>*>(instance) ==
+                *reinterpret_cast<const std::basic_string<CHAR_T>*>(other_instance);
     }
 
     virtual TypeConsistency is_compatible(
@@ -135,9 +142,11 @@ protected:
     }
 };
 
+/// \brief Specialization for strings that contains chars
 constexpr const char string_type_name[] = "std::string";
 using StringType = TStringType<char, TypeKind::STRING_TYPE, string_type_name>;
 
+/// \brief Specialization for strings that contains wchars
 constexpr const char wstring_type_name[] = "std::wstring";
 using WStringType = TStringType<wchar_t, TypeKind::WSTRING_TYPE, wstring_type_name>;
 
