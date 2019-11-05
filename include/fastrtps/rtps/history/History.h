@@ -152,7 +152,7 @@ class History
         RTPS_DllAPI bool get_change(
                 const SequenceNumber_t& seq,
                 const GUID_t& guid,
-                CacheChange_t** change);
+                CacheChange_t** change) const;
 
         /**
          * @brief A method to get the change with the earliest timestamp
