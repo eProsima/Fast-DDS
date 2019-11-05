@@ -69,6 +69,7 @@ WriterProxy::WriterProxy(
     , changes_received_(changes_pool_)
     , guid_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
     , guid_prefix_as_vector_(ResourceLimitedContainerConfig::fixed_size_configuration(1u))
+    , is_on_same_process_(false)
 {
     //Create Events
     heartbeat_response_ = new TimedEvent(reader_->getRTPSParticipant()->getEventResource(),
@@ -92,7 +93,6 @@ WriterProxy::WriterProxy(
 
                 return false;
             }, 0 );
-
     clear();
     logInfo(RTPS_READER, "Writer Proxy created in reader: " << reader_->getGuid().entityId);
 }
@@ -112,7 +112,11 @@ void WriterProxy::start(
     guid_as_vector_.push_back(attributes_.guid());
     guid_prefix_as_vector_.push_back(attributes_.guid().guidPrefix);
     is_alive_ = true;
-    initial_acknack_->restart_timer();
+    is_on_same_process_ = (reader_->getRTPSParticipant()->find_local_writer(attributes_.guid()) != nullptr);
+    if (!is_on_same_process_)
+    {
+        initial_acknack_->restart_timer();
+    }
     loaded_from_storage(initial_sequence);
 }
 
@@ -124,6 +128,13 @@ void WriterProxy::update(const WriterProxyData& attributes)
 
     assert(is_alive_);
     attributes_ = attributes;
+    is_on_same_process_ = (reader_->getRTPSParticipant()->find_local_writer(attributes_.guid()) != nullptr);
+    if (is_on_same_process_)
+    {
+        initial_acknack_->cancel_timer();
+        heartbeat_response_->cancel_timer();
+    }
+
 }
 
 void WriterProxy::stop()
@@ -143,6 +154,7 @@ void WriterProxy::clear()
     guid_as_vector_.clear();
     guid_prefix_as_vector_.clear();
     changes_received_.clear();
+    is_on_same_process_ = false;
     loaded_from_storage(SequenceNumber_t());
 }
 
@@ -486,7 +498,7 @@ bool WriterProxy::process_heartbeat(
         heartbeat_final_flag_.store(final_flag);
 
         //Analyze wheter a acknack message is needed:
-        if (!final_flag)
+        if (!final_flag && !is_on_same_process_)
         {
             if (!disable_positive || are_there_missing_changes())
             {
@@ -520,6 +532,11 @@ bool WriterProxy::send(
         CDRMessage_t* message,
         std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
+    if (is_on_same_process_)
+    {
+        return true;
+    }
+
     for (const Locator_t& locator : remote_locators_shrinked())
     {
         if (!reader_->send_sync_nts(message, locator, max_blocking_time_point))
