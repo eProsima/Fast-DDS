@@ -103,9 +103,12 @@ bool StatefulReader::matched_writer_add(
         {
             logInfo(RTPS_READER, "Attempting to add existing writer, updating information");
             it->update(wdata);
-            for (const Locator_t& locator : it->remote_locators_shrinked())
+            if (getRTPSParticipant()->find_local_writer(wdata.guid()) == nullptr)
             {
-                getRTPSParticipant()->createSenderResources(locator);
+                for (const Locator_t& locator : it->remote_locators_shrinked())
+                {
+                    getRTPSParticipant()->createSenderResources(locator);
+                }
             }
             return false;
         }
@@ -134,9 +137,12 @@ bool StatefulReader::matched_writer_add(
         matched_writers_pool_.pop_back();
     }
 
-    for (const Locator_t& locator : wp->remote_locators_shrinked())
+    if (getRTPSParticipant()->find_local_writer(wdata.guid()) == nullptr)
     {
-        getRTPSParticipant()->createSenderResources(locator);
+        for (const Locator_t& locator : wp->remote_locators_shrinked())
+        {
+            getRTPSParticipant()->createSenderResources(locator);
+        }
     }
 
     SequenceNumber_t initial_sequence;

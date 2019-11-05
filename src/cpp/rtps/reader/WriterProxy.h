@@ -363,6 +363,8 @@ private:
     ResourceLimitedVector<GUID_t> guid_as_vector_;
     //!To fool RTPSMessageGroup when using this proxy as single destination
     ResourceLimitedVector<GuidPrefix_t> guid_prefix_as_vector_;
+    //! Is the writer on the same process
+    bool is_on_same_process_;
 
     using ChangeIterator = decltype(changes_received_)::iterator;
 
