@@ -315,33 +315,6 @@ TEST (DynamicData, sequence)
     }                
 }
 
-TEST (DynamicData, test_just_for_luis)
-{
-  
-    StructType temp_type("Temp");
-    temp_type.add_member(Member("number", primitive_type<uint32_t>()));
-    temp_type.add_member(Member("string", StringType()));
-    StructType fixed_type("Fixed");
-    fixed_type.add_member(Member("inner", SequenceType(temp_type)));
-
-    DynamicData fixed(fixed_type);
-                
-    try{
-        for(int i = 0; i < 2; i++)
-        {
-            DynamicData temp(temp_type);
-            temp["number"].value<uint32_t>(i);
-            temp["string"].value(std::to_string(i));
-            fixed["inner"].push(temp);
-         }
-    }
-    catch(exception &e)
-    {
-         cout << "dove: " << e.what();
-         exit(0xff); 
-     }
-}
-
 DynamicData cdd(StructType &st)
 {     
     StringType stri_t;
