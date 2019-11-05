@@ -471,7 +471,15 @@ bool StatefulReader::processDataFragMsg(
                     logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_created->sequenceNumber.to64long());
 
                     releaseCache(change_created);
+                    work_change = nullptr;
                 }
+            }
+
+            // If change has been fully reassembled, mark as received and add notify user
+            if (work_change != nullptr && work_change->is_fully_assembled())
+            {
+                pWP->received_change_set(work_change->sequenceNumber);
+                NotifyChanges(pWP);
             }
         }
     }
@@ -501,7 +509,7 @@ bool StatefulReader::processHeartbeatMsg(
         if (writer->process_heartbeat(
                 hbCount, firstSN, lastSN, finalFlag, livelinessFlag, disable_positive_acks_, assert_liveliness))
         {
-            fragmentedChangePitStop_->try_to_remove_until(firstSN, writerGUID);
+            mp_history->remove_fragmented_changes_until(firstSN, writerGUID);
             
             // Try to assert liveliness if requested by proxy's logic
             if (assert_liveliness)
@@ -557,7 +565,11 @@ bool StatefulReader::processGapMsg(
         {
             if(pWP->irrelevant_change_set(auxSN))
             {
-                fragmentedChangePitStop_->try_to_remove(auxSN, pWP->guid());
+                CacheChange_t* to_remove = findCacheInFragmentedCachePitStop(auxSN, pWP->guid());
+                if (to_remove != nullptr)
+                {
+                    mp_history->remove_change(to_remove);
+                }
             }
         }
 
@@ -565,7 +577,11 @@ bool StatefulReader::processGapMsg(
         {
             if(pWP->irrelevant_change_set(it))
             {
-                fragmentedChangePitStop_->try_to_remove(it, pWP->guid());
+                CacheChange_t* to_remove = findCacheInFragmentedCachePitStop(auxSN, pWP->guid());
+                if (to_remove != nullptr)
+                {
+                    mp_history->remove_change(to_remove);
+                }
             }
         });
 
@@ -686,10 +702,14 @@ bool StatefulReader::change_received(
         if(mp_history->isFull() && mp_history->get_min_change_from(&aux_change, proxGUID))
         {
             prox->lost_changes_update(aux_change->sequenceNumber);
-            fragmentedChangePitStop_->try_to_remove_until(aux_change->sequenceNumber, proxGUID);
         }
 
-        bool ret = prox->received_change_set(a_change->sequenceNumber);
+        bool ret = true;
+        
+        if (a_change->is_fully_assembled())
+        {
+            ret = prox->received_change_set(a_change->sequenceNumber);
+        }
 
         NotifyChanges(prox);
 

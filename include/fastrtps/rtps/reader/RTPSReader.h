@@ -329,8 +329,6 @@ protected:
     //!ReaderHistoryState
     ReaderHistoryState* history_state_;
 
-    FragmentedChangePitStop* fragmentedChangePitStop_;
-
     uint64_t total_unread_ = 0;
 
     TimedConditionVariable new_notification_cv_;
