@@ -140,6 +140,53 @@ bool ReaderHistory::remove_changes_with_guid(const GUID_t& a_guid)
     return true;
 }
 
+bool ReaderHistory::remove_fragmented_changes_until(
+        const SequenceNumber_t& seq_num,
+        const GUID_t& writer_guid)
+{
+    if (mp_reader == nullptr || mp_mutex == nullptr)
+    {
+        logError(RTPS_HISTORY, "You need to create a Reader with History before removing any changes");
+        return false;
+    }
+
+    bool at_least_one_removed = false;
+    std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+    std::vector<CacheChange_t*>::iterator chit = m_changes.begin();
+    while (chit != m_changes.end())
+    {
+        CacheChange_t* item = *chit;
+        if (item->writerGUID == writer_guid)
+        {
+            if (item->sequenceNumber < seq_num)
+            {
+                if (item->is_fully_assembled() == false)
+                {
+                    logInfo(RTPS_HISTORY, "Removing change " << item->sequenceNumber);
+                    mp_reader->change_removed_by_history(item);
+                    m_changePool.release_Cache(item);
+                    chit = m_changes.erase(chit);
+                    at_least_one_removed = true;
+                    continue;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+        ++chit;
+    }
+
+    if (at_least_one_removed)
+    {
+        sortCacheChanges();
+        updateMaxMinSeqNum();
+    }
+
+    return true;
+}
+
 void ReaderHistory::sortCacheChanges()
 {
     std::sort(m_changes.begin(),
