@@ -626,7 +626,38 @@ bool RTPSParticipantImpl::createReader(
         m_userReaderList.push_back(SReader);
     }
     *ReaderOut = SReader;
+
     return true;
+}
+
+RTPSReader* RTPSParticipantImpl::find_local_reader(const GUID_t& reader_guid)
+{
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+
+    for(auto reader : m_allReaderList)
+    {
+        if(reader->getGuid() == reader_guid)
+        {
+            return reader;
+        }
+    }
+
+    return nullptr;
+}
+
+RTPSWriter* RTPSParticipantImpl::find_local_writer(const GUID_t& writer_guid)
+{
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+
+    for(auto writer : m_allWriterList)
+    {
+        if(writer->getGuid() == writer_guid)
+        {
+            return writer;
+        }
+    }
+
+    return nullptr;
 }
 
 bool RTPSParticipantImpl::enableReader(RTPSReader *reader)

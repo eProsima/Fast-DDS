@@ -44,6 +44,7 @@ class RTPSReader;
 class ReaderAttributes;
 class ReaderHistory;
 class ReaderListener;
+class RTPSDomainImpl;
 
 
 /**
@@ -53,7 +54,10 @@ class ReaderListener;
  */
 class RTPSDomain
 {
-    public:
+
+friend class RTPSDomainImpl;
+
+public:
         /**
          * Method to shut down all RTPSParticipants, readers, writers, etc.
          * It must be called at the end of the process to avoid memory leaks.
@@ -127,10 +131,11 @@ class RTPSDomain
          */
         static inline void setMaxRTPSParticipantId(uint32_t maxRTPSParticipantId)
         {
-            m_maxRTPSParticipantID = maxRTPSParticipantId;
+                m_maxRTPSParticipantID = maxRTPSParticipantId;
         }
 
-    private:
+private:
+
         typedef std::pair<RTPSParticipant*,RTPSParticipantImpl*> t_p_RTPSParticipant;
 
         RTPSDomain();

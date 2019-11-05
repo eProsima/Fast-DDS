@@ -36,6 +36,8 @@
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 
+#include "RTPSDomainImpl.hpp"
+
 #include <chrono>
 #include <thread>
 
