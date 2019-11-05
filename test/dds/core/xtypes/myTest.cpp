@@ -42,6 +42,7 @@ using namespace dds::core::xtypes;
 
 #define STRUCTS_SIZE 1E1
 #define CHECKS_NUMBER 1E2
+#define TEN 10
 
 /********************************
  *        DynamicType Tests        *
@@ -787,7 +788,7 @@ TEST (DynamicData, test_equality_check_struct)
     d1["lld"].value<long double>(3.1415926);
     DynamicData d2(stru);
     d2["lld"].value<long double>(3.1415926);
-    EXPECT_EQ(d1, d2);
+    EXPECT_EQ(true, d1 == d2);
     d2["lld"].value<long double>(3.1415925);
     EXPECT_NE(d1, d2);
 
@@ -880,7 +881,7 @@ TEST (QoS, sequence)
     DynamicData dd(d, s2);
 
     EXPECT_EQ(10, dd.size());
-    EXPECT_NE(dd , d);
+    EXPECT_NE(true, dd != d);
     for (size_t i = 0; i < d.size(); ++i)
     {
         EXPECT_EQ( d[i].value<uint16_t>() , dd[i].value<uint16_t>() );
@@ -923,7 +924,7 @@ TEST (QoS, string)
     
     DynamicData e(d,t);
     EXPECT_EQ(10, e.size()); //still pending investigation
-    EXPECT_NE( e , d);
+    EXPECT_NE( true,  e != d);
     for (size_t i = 0; i < e.size(); ++i)
     {
         EXPECT_EQ( d[i].value<char>() , e[i].value<char>() );
@@ -943,7 +944,7 @@ TEST (QoS, other_string)
     
     DynamicData e(d,t);
     EXPECT_EQ(10, e.size()); 
-    EXPECT_NE( e , d);
+    EXPECT_NE( true, e != d);
     for (size_t i = 0; i < d.size(); ++i)
     {
         EXPECT_EQ( d[i].value<char>() , e[i].value<char>() );
@@ -963,7 +964,7 @@ TEST (QoS, wstring)
     
     DynamicData e(d,t);
     EXPECT_EQ(10, e.size()); //still pending investigation
-    EXPECT_NE( e , d);
+    EXPECT_NE( true, e != d);
     for (size_t i = 0; i < e.size(); ++i)
     {
         EXPECT_EQ( d[i].value<wchar_t>() , e[i].value<wchar_t>() );
@@ -983,7 +984,7 @@ TEST (QoS, other_wstring)
     
     DynamicData e(d,t);
     EXPECT_EQ(10, e.size()); 
-    EXPECT_NE(e , d);
+    EXPECT_NE(true , e != d);
     for (size_t i = 0; i < d.size(); ++i)
     {
         EXPECT_EQ( d[i].value<wchar_t>() , e[i].value<wchar_t>() );
@@ -1016,7 +1017,7 @@ TEST (QoS, other_array)
     d[13].value(10);
     DynamicData e(d,b);
     EXPECT_EQ(TypeConsistency::IGNORE_ARRAY_BOUNDS, b.is_compatible(a));
-    EXPECT_NE(e , d);
+    EXPECT_NE(true, e != d);
     for (size_t i = 0; i < e.size(); ++i)
     {
         EXPECT_EQ( d[i].value<uint16_t>() , e[i].value<uint16_t>() );
@@ -1113,15 +1114,15 @@ void dynamicDataChecker()
     
     for (size_t i = 0; i < 10; i-=-1 )
     {
-        d["seq"].push<A>(UINT32);
-        d["arr"][i] = UINT32;
-        o["seq"].push<B>(UINT32);
-        o["arr"][i] = UINT32;
+        d["seq"].push<A>(TEN);
+        d["arr"][i] = TEN;
+        o["seq"].push<B>(TEN);
+        o["arr"][i] = TEN;
     }
 
     DynamicData dd(d,b);
    
-    EXPECT_EQ(o,dd);
+    EXPECT_EQ(true, o == dd);
 }
 
 TEST (QoS, ignore_member)
