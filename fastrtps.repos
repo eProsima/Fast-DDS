@@ -10,11 +10,11 @@ repositories:
     fastrtps:
         type: git
         url: https://github.com/eProsima/Fast-RTPS.git
-        version: v1.9.2
+        version: v1.9.3
     fastrtpsgen:
         type: git
         url: https://github.com/eProsima/Fast-RTPS-Gen.git
-        version: v1.0.1
+        version: v1.0.2
     fastrtpsgen/thirdparty/idl-parser:
         type: git
         url: https://github.com/eProsima/IDL-Parser.git
