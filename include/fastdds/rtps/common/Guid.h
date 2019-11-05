@@ -83,7 +83,7 @@ struct RTPS_DllAPI GUID_t
      * @return true when this guid is on the same host, false otherwise.
      */
     bool is_on_same_host_as(
-        const GUID_t& other_guid) const
+            const GUID_t& other_guid) const
     {
         return memcmp(guidPrefix.value, other_guid.guidPrefix.value, 4) == 0;
     }
@@ -96,7 +96,7 @@ struct RTPS_DllAPI GUID_t
      * @return true when this guid is on the same host and process, false otherwise.
      */
     bool is_on_same_process_as(
-        const GUID_t& other_guid) const
+            const GUID_t& other_guid) const
     {
         return memcmp(guidPrefix.value, other_guid.guidPrefix.value, 8) == 0;
     }
@@ -257,8 +257,8 @@ inline std::istream& operator >>(
 
 #endif
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_RTPS_GUID_H_ */
