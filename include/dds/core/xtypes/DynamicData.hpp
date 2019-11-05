@@ -361,6 +361,7 @@ public:
     /// \brief Push a primitive or string value into the DynamicData that represents a SequenceType
     /// \input[in] t The primitive or string value.
     /// \pre The DynamicData must represent a SequenceType.
+    /// \pre The sequence must have enough space to place this element or be unbounded.
     /// \returns The writable reference to this DynamicData
     template<typename T, class = PrimitiveOrString<T>>
     WritableDynamicDataRef& push(const T& t) // this = SequenceType
@@ -372,13 +373,14 @@ public:
             || (sequence.content_type().kind() == primitive_type<T>().kind()));
 
         uint8_t* element = sequence.push_instance(instance_, reinterpret_cast<const uint8_t*>(&t));
-        assert(element != nullptr);
+        assert(element != nullptr); (void) element;
         return *this;
     }
 
     /// \brief Push another DynamicData into the DynamicData that represents a SequenceType
     /// \input[in] data DynamicData to add into the sequence
     /// \pre The DynamicData must represent a SequenceType.
+    /// \pre The sequence must have enough space to place this element or be unbounded.
     /// \returns The writable reference to this DynamicData
     WritableDynamicDataRef& push(const ReadableDynamicDataRef& data) // this = SequenceType
     {
@@ -386,7 +388,7 @@ public:
         const SequenceType& sequence = static_cast<const SequenceType&>(type_);
 
         uint8_t* element = sequence.push_instance(instance_, p_instance(data));
-        assert(element != nullptr);
+        assert(element != nullptr); (void) element;
         return *this;
     }
 
