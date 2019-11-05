@@ -16,31 +16,28 @@ Endpoints on the same process have the same content on the first 8 octets of the
 * Add methods on RTPSDomain to return a pointer to reader/writer given its guid
 * Should be aware of builtin endpoints
 
-## Intra-process reception thread
-In order to separate the processing of new data on the subscribers from the user calls to write on the publisher, and simulate reception from the transport layer, a local reception thread should be added. It should work in a similar way to the AsyncWriterThread: readers will register their interest when they are informed of new local data. When the thread is awakened, it calls a `notify_new_changes` method on all the interested readers.
+## Intra-process reception
+The processing of new data on the subscribers is performed by the thread writing the data.
+This thread is in charge of copying the `CacheChange_t` into the `ReaderHistory` and calling `NotifyChanges()`.
+This decision was taken to maintain consistence with how currently operate the reception threads coming from transport
+layer.
 
-### RTPSReader
-* A `ResourceLimitedVector<CacheChange_t*> unnotified_changes` should be added to RTPSReader to hold the list of changes pending notification.
-* Method `notify_new_changes` will perform notification of reception for all pending changes.
-* Method `receive_local_writer_data` that receives a change from a local writer
-* Method `receive_local_writer_gap` that receives a gap from a local writer
+User's documentation should make clear any user's listener registered to be informed about new changes implies having
+blocked both the transport's reception threads and threads which write data.
+Also should explain there is another mechanism to read samples, using the function `wait_for_unread_samples()` from the
+user's thread and then taking/reading them.
 
-Additional consideration: It may be interesting to also use this mechanism for transport received data. This will imply that all data reception callbacks will be made on the same thread, regardless of being received from the local process or a remote one. The tradeoff here is the number of context switches will increase.
+Current Reader API will be used by local writers to deliver data. The local writer will call `processDataMsg` and
+`processDataFragMsg` directly.
 
 ## Readers: management of local writers
 When matching a writer, the reader should check if it is on the same process.
-
-### StatelessReader
-* Keep an `is_on_same_process` flag on RemoteWriterInfo_t
-* Make `acceptMsgFrom` return false for local writers. This is necessary in case we receive from a local writer by multicast.
 
 ### StatefulReader
 No output traffic to local writers should be performed.
 * Changes on WriterProxy
     * `remote_locators_shrinked` should return an empty vector for local writers
     * Timed events should never be started for local writers
-* Changes on StatefulReader
-    * Make `processDataMsg` and `processDataFragMsg` ignore local writers. This is necessary in case we receive from a local writer by multicast.
 
 ## Writers: management of local readers
 When matching a reader, the writer should check if it is on the same process.
