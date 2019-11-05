@@ -87,7 +87,7 @@ public:
             const uint8_t* source,
             const DynamicType& other) const override
     {
-        assert(other.kind() == TypeKind::SEQUENCE_TYPE);
+        assert(other.kind() == TypeKind::SEQUENCE_TYPE); (void) other;
         new (target) SequenceInstance(*reinterpret_cast<const SequenceInstance*>(source), content_type(), bounds());
     }
 

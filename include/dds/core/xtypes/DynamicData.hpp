@@ -386,7 +386,7 @@ public:
         const SequenceType& sequence = static_cast<const SequenceType&>(type_);
 
         uint8_t* element = sequence.push_instance(instance_, p_instance(data));
-        assert(element != nullptr);
+        assert(element != nullptr); (void) element;
         return *this;
     }
 
