@@ -97,7 +97,50 @@ private:
             const DynamicType& other) const override
     {
         assert(other.is_primitive_type()); (void) other;
-        *reinterpret_cast<T*>(target) = *reinterpret_cast<const T*>(source);
+        switch(other.kind())
+        {
+            case TypeKind::BOOLEAN_TYPE:
+                *reinterpret_cast<T*>(target) = *reinterpret_cast<const bool*>(source);
+                break;
+            case TypeKind::UINT_8_TYPE:
+                *reinterpret_cast<T*>(target) = *reinterpret_cast<const uint8_t*>(source);
+                break;
+            case TypeKind::UINT_16_TYPE:
+                *reinterpret_cast<T*>(target) = *reinterpret_cast<const uint16_t*>(source);
+                break;
+            case TypeKind::UINT_32_TYPE:
+                *reinterpret_cast<T*>(target) = *reinterpret_cast<const uint32_t*>(source);
+                break;
+            case TypeKind::UINT_64_TYPE:
+                *reinterpret_cast<T*>(target) = *reinterpret_cast<const uint64_t*>(source);
+                break;
+            case TypeKind::INT_16_TYPE:
+                *reinterpret_cast<T*>(target) = *reinterpret_cast<const int16_t*>(source);
+                break;
+            case TypeKind::INT_32_TYPE:
+                *reinterpret_cast<T*>(target) = *reinterpret_cast<const int32_t*>(source);
+                break;
+            case TypeKind::INT_64_TYPE:
+                *reinterpret_cast<T*>(target) = *reinterpret_cast<const int64_t*>(source);
+                break;
+            case TypeKind::CHAR_8_TYPE:
+                *reinterpret_cast<T*>(target) = *reinterpret_cast<const char*>(source);
+                break;
+            case TypeKind::CHAR_16_TYPE:
+                *reinterpret_cast<T*>(target) = *reinterpret_cast<const wchar_t*>(source);
+                break;
+            case TypeKind::FLOAT_32_TYPE:
+                *reinterpret_cast<T*>(target) = *reinterpret_cast<const float*>(source);
+                break;
+            case TypeKind::FLOAT_64_TYPE:
+                *reinterpret_cast<T*>(target) = *reinterpret_cast<const double*>(source);
+                break;
+            case TypeKind::FLOAT_128_TYPE:
+                *reinterpret_cast<T*>(target) = *reinterpret_cast<const long double*>(source);
+                break;
+            default:
+                assert(false); //Must not reached
+        }
     }
 
     virtual void move_instance(

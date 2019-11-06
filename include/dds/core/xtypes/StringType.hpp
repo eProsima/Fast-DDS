@@ -71,7 +71,8 @@ public:
             const DynamicType& other) const override
     {
         assert(other.kind() == KIND); (void) other;
-        new (target) std::basic_string<CHAR_T>(*reinterpret_cast<const std::basic_string<CHAR_T>*>(source));
+        const std::basic_string<CHAR_T>& from = *reinterpret_cast<const std::basic_string<CHAR_T>*>(source);
+        new (target) std::basic_string<CHAR_T>(from, 0, std::min(size_t(bounds()), from.size()));
     }
 
     virtual void move_instance(

@@ -209,7 +209,7 @@ public:
             }
             else
             {
-                return TypeConsistency::IGNORE_MEMBERS;
+                return consistency | TypeConsistency::IGNORE_MEMBERS;
             }
             other_member++;
         }
