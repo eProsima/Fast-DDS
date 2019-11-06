@@ -728,7 +728,7 @@ bool RTPSMessageGroup::add_acknack(
 }
 
 bool RTPSMessageGroup::add_nackfrag(
-        SequenceNumber_t& writerSN,
+        const SequenceNumber_t& writerSN,
         FragmentNumberSet_t fnState,
         int32_t count)
 {

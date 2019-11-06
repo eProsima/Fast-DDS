@@ -46,7 +46,7 @@ enum ChangeKind_t
     NOT_ALIVE_DISPOSED,             //!< NOT_ALIVE_DISPOSED
     NOT_ALIVE_UNREGISTERED,         //!< NOT_ALIVE_UNREGISTERED
     NOT_ALIVE_DISPOSED_UNREGISTERED //!< NOT_ALIVE_DISPOSED_UNREGISTERED
-}
+};
 
 /**
  * Structure CacheChange_t, contains information on a specific CacheChange.

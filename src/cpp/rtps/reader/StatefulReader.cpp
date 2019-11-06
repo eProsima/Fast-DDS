@@ -938,8 +938,6 @@ void StatefulReader::send_acknack(
     }
 
     SequenceNumberSet_t missing_changes = writer->missing_changes();
-    // Stores missing changes but there is some fragments received.
-    std::vector<CacheChange_t*> uncompleted_changes;
 
     try
     {
@@ -964,7 +962,12 @@ void StatefulReader::send_acknack(
                     }
                     else
                     {
-                        uncompleted_changes.push_back(uncomplete_change);
+                        FragmentNumberSet_t frag_sns;
+                        uncomplete_change->get_missing_fragments(frag_sns);
+                        ++nackfrag_count_;
+                        logInfo(RTPS_READER, "Sending NACKFRAG for sample" << cit->sequenceNumber << ": " << frag_sns;);
+
+                        group.add_nackfrag(seq, frag_sns, nackfrag_count_);
                     }
 
                 });
@@ -974,20 +977,6 @@ void StatefulReader::send_acknack(
 
             bool final = sns.empty();
             group.add_acknack(sns, acknack_count_, final);
-        }
-
-        // Now generage NACK_FRAGS
-        if (!uncompleted_changes.empty())
-        {
-            for (auto cit : uncompleted_changes)
-            {
-                FragmentNumberSet_t frag_sns;
-                cit->get_missing_fragments(frag_sns);
-                ++nackfrag_count_;
-                logInfo(RTPS_READER, "Sending NACKFRAG for sample" << cit->sequenceNumber << ": " << frag_sns;);
-
-                group.add_nackfrag(cit->sequenceNumber, frag_sns, nackfrag_count_);
-            }
         }
     }
     catch(const RTPSMessageGroup::timeout&)

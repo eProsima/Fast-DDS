@@ -136,7 +136,7 @@ class Endpoint;
          * @return True when message was added to the group.
          */
         bool add_nackfrag(
-                SequenceNumber_t& seq_number,
+                const SequenceNumber_t& seq_number,
                 FragmentNumberSet_t fn_state,
                 int32_t count);
 
