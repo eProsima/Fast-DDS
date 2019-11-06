@@ -161,8 +161,8 @@ ParticipantProxyData * PDPSimple::createParticipantProxyData(
         }
         else
         {
-            bool filter_same = flags & ParticipantFilteringFlags::FILTER_SAME_PROCESS;
-            bool filter_different = flags & ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS;
+            bool filter_same = (flags & ParticipantFilteringFlags::FILTER_SAME_PROCESS) != 0;
+            bool filter_different = (flags & ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS) != 0 ;
 
             if(filter_same && filter_different)
             {
