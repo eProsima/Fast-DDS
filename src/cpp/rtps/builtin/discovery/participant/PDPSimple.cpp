@@ -151,38 +151,29 @@ ParticipantProxyData * PDPSimple::createParticipantProxyData(
     {
         const GUID_t & remote = participant_data.m_guid;
         const GUID_t & local = getLocalParticipantProxyData()->m_guid;
-        
-        // filter if vendor or host are different
-        bool other_host = flags & ParticipantFilteringFlags::FILTER_DIFFERENT_HOST;
-        bool ignore = local.is_on_same_host_as(remote);
 
-        if( other_host && !ignore)
+        if(!local.is_on_same_host_as(remote))
         {
-            return nullptr;
+            if(flags & ParticipantFilteringFlags::FILTER_DIFFERENT_HOST)
+            {
+                return nullptr;
+            }
         }
         else
         {
-            // above flag is mutually exclusive with the others in host flags
-            bool same = flags & ParticipantFilteringFlags::FILTER_SAME_PROCESS;
-            bool different = flags & ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS;
+            bool filter_same = flags & ParticipantFilteringFlags::FILTER_SAME_PROCESS;
+            bool filter_different = flags & ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS;
 
-            if(same && different)  
-            {   // filter our own host
-                if(ignore)
-                {
-                    return nullptr;
-                }
+            if(filter_same && filter_different)
+            {
+                return nullptr;
             }
-            else
-            {   // above both flags case is mutually exclusive with individual process flags
-                // workout in process filtering
-                // filter if process ID is the same
-                ignore = local.is_on_same_process_as(remote);
 
-                if((same && ignore) || (different && !ignore))
-                {
-                    return nullptr;
-                }
+            bool is_same = local.is_on_same_process_as(remote);
+
+            if((filter_same && is_same) || (filter_different && !is_same))
+            {
+                return nullptr;
             }
         }
     }

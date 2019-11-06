@@ -2620,28 +2620,25 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, ParticipantFilteringF
 
     // Lets parse the flags, we assume the flags argument has been already flushed
     std::regex flags("FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS");
-    std::string suffix(text);
-    std::smatch sm;
-
+    std::cregex_iterator it(text,text+strlen(text),flags);
     uint32_t newflags = *e;
 
-    while(std::regex_search(suffix, sm, flags))
+    while(it != std::cregex_iterator())
     {
-        //if( std::equal(sm.begin(),sm.end(),FILTER_DIFFERENT_HOST) )
-        if( sm.str() == FILTER_DIFFERENT_HOST )
+        std::string flag(it++->str());
+
+        if(flag == FILTER_DIFFERENT_HOST )
         {
             newflags |= ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST;
         }
-        else if( sm.str() == FILTER_DIFFERENT_PROCESS )
+        else if(flag == FILTER_DIFFERENT_PROCESS )
         {
             newflags |= ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS;
         }
-        else if( sm.str() == FILTER_SAME_PROCESS )
+        else if(flag == FILTER_SAME_PROCESS )
         {
             newflags |= ParticipantFilteringFlags_t::FILTER_SAME_PROCESS;
         }
-
-        suffix = sm.suffix();
     }
 
     *e = static_cast<ParticipantFilteringFlags_t>(newflags);
