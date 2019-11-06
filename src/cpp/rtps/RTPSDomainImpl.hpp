@@ -57,43 +57,27 @@ public:
         }
     }
 
-    /***
+    /**
+     * Find a local-process reader.
+     *
+     * @param reader_guid GUID of the local reader to search.
+     *
      * @returns A pointer to a local reader given its endpoint guid, or nullptr if not found.
      */
     static RTPSReader* find_local_reader(
-            const GUID_t& reader_guid)
-    {
-        for (auto participant : RTPSDomain::m_RTPSParticipants)
-        {
-            if (participant.second->getGuid().guidPrefix == reader_guid.guidPrefix)
-            {
-                // Participant found, forward the query
-                return participant.second->find_local_reader(reader_guid); 
-            }
-        }
+            const GUID_t& reader_guid);
 
-        return nullptr;
-    }
-
-    /***
+    /**
+     * Find a local-process writer.
+     *
+     * @param writer_guid GUID of the local writer to search.
+     *
      * @returns A pointer to a local writer given its endpoint guid, or nullptr if not found.
      */
     static RTPSWriter* find_local_writer(
-            const GUID_t& writer_guid)
-    {
-        for (auto participant : RTPSDomain::m_RTPSParticipants)
-        {
-            if (participant.second->getGuid().guidPrefix == writer_guid.guidPrefix)
-            {
-                // Participant found, forward the query
-                return participant.second->find_local_writer(writer_guid);
-            }
-        }
-
-        return nullptr;
-    }
+            const GUID_t& writer_guid);
 };
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
