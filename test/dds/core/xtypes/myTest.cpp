@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-    
+
 #include <gtest/gtest.h>
 #include <dds/core/xtypes/xtypes.hpp>
 #include <iostream>
@@ -19,13 +19,13 @@
 #include <cmath>
 #include <bitset>
 
-using namespace std; 
+using namespace std;
 using namespace dds::core::xtypes;
 
 
 #define UINT8 250
 #define INT16 -32760
-#define UINT16 65530 
+#define UINT16 65530
 #define INT32 -2147483640
 #define UINT32 4294967290
 #define INT64 -9223372036854775800
@@ -36,7 +36,7 @@ using namespace dds::core::xtypes;
 #define CHAR 'f'
 #define WCHAR 34590
 
-#define INNER_STRING_VALUE "lay_down_and_cry" 
+#define INNER_STRING_VALUE "lay_down_and_cry"
 #define INNER_SEQUENCE_STRING "another_prick_in_the_wall"
 #define SECOND_INNER_STRING "paint_it_black"
 
@@ -48,17 +48,17 @@ using namespace dds::core::xtypes;
  *        DynamicType Tests        *
  ********************************/
 
-TEST (StructType , verify_constructor_and_size) 
-{ 
-    StructType st("struct_name"); 
+TEST (StructType , verify_constructor_and_size)
+{
+    StructType st("struct_name");
     EXPECT_EQ("struct_name", st.name());
     st.add_member(Member("int", primitive_type<int>()));
     EXPECT_EQ(4, st.memory_size());
 }
 
-TEST (StructType, build_one_of_each_primitive_type) 
-{ 
-    StructType st("struct_name"); 
+TEST (StructType, build_one_of_each_primitive_type)
+{
+    StructType st("struct_name");
     EXPECT_EQ("struct_name", st.name());
     EXPECT_EQ(TypeKind::STRUCTURE_TYPE, st.kind());
     size_t mem_size = 0;
@@ -100,7 +100,7 @@ TEST (StructType, build_one_of_each_primitive_type)
 TEST (StructType, cascade_add_member_and_copy)
 {
     StructType st("struct_name");
-    st.add_member( 
+    st.add_member(
         Member("bool", primitive_type<bool>())).add_member(
         Member("uint8_t", primitive_type<uint8_t>())).add_member(
         Member("int16_t", primitive_type<int16_t>())).add_member(
@@ -111,8 +111,8 @@ TEST (StructType, cascade_add_member_and_copy)
         Member("uint64_t", primitive_type<uint64_t>())).add_member(
         Member("float", primitive_type<float>())).add_member(
         Member("double", primitive_type<double>())).add_member(
-        Member("long_double", primitive_type<long double>())); 
-    
+        Member("long_double", primitive_type<long double>()));
+
     size_t mem_size = 0;
     mem_size+=sizeof(bool);
     mem_size+=sizeof(uint8_t);
@@ -125,7 +125,7 @@ TEST (StructType, cascade_add_member_and_copy)
     mem_size+=sizeof(float);
     mem_size+=sizeof(double);
     mem_size+=sizeof(long double);
-    
+
     StructType cp = st;
     EXPECT_EQ("struct_name", cp.name());
     EXPECT_EQ(mem_size, cp.memory_size());
@@ -137,30 +137,30 @@ TEST (StructType, self_assign)
     st.add_member(
         Member("long_double", primitive_type<long double>())).add_member(
         Member("uint64_t", primitive_type<uint64_t>())).add_member(
-        Member("uint8_t", primitive_type<uint8_t>()));    
-    
+        Member("uint8_t", primitive_type<uint8_t>()));
+
     StructType in("struct_name");
     in.add_member(
         Member("long_double", primitive_type<long double>())).add_member(
         Member("uint64_t", primitive_type<uint64_t>())).add_member(
-        Member("uint8_t", primitive_type<uint32_t>()));    
-    
+        Member("uint8_t", primitive_type<uint32_t>()));
+
     st.add_member(Member("in_member_name", in));
     st.add_member(Member("selfassign_member_name", st));
     EXPECT_EQ(TypeKind::STRUCTURE_TYPE, st.member("in_member_name").type().kind());
     EXPECT_EQ(TypeKind::STRUCTURE_TYPE, st.member("selfassign_member_name").type().kind());
-    EXPECT_EQ(TypeKind::FLOAT_128_TYPE, 
+    EXPECT_EQ(TypeKind::FLOAT_128_TYPE,
         static_cast<const StructType&>(st.member("selfassign_member_name").type()).member("long_double").type().kind());
-    EXPECT_EQ(TypeKind::UINT_64_TYPE, 
+    EXPECT_EQ(TypeKind::UINT_64_TYPE,
         static_cast<const StructType&>(st.member("selfassign_member_name").type()).member("uint64_t").type().kind());
-    EXPECT_EQ(TypeKind::UINT_8_TYPE, 
+    EXPECT_EQ(TypeKind::UINT_8_TYPE,
         static_cast<const StructType&>(st.member("selfassign_member_name").type()).member("uint8_t").type().kind() );
     size_t mem_size_in = 0;
     mem_size_in+=sizeof(long double);
     mem_size_in+=sizeof(uint64_t);
     mem_size_in+=sizeof(uint32_t);
     EXPECT_EQ(mem_size_in, st.member("in_member_name").type().memory_size());
-    
+
     mem_size_in+=sizeof(long double);
     mem_size_in+=sizeof(uint64_t);
     mem_size_in+=sizeof(uint8_t);
@@ -185,7 +185,7 @@ TEST (StructType, type_verify_test)
         Member("char", primitive_type<char>())).add_member(
         Member("char16_t", primitive_type<wchar_t>()));
 
-     
+
     EXPECT_EQ(TypeKind::BOOLEAN_TYPE, st.member("bool").type().kind());
     EXPECT_EQ(TypeKind::UINT_8_TYPE, st.member("uint8_t").type().kind());
     EXPECT_EQ(TypeKind::INT_16_TYPE , st.member("int16_t").type().kind());
@@ -257,26 +257,26 @@ TEST (DynamicData, primitive_types)
     d["bool"].value<bool>(true);
     d["uint8_t"].value<uint8_t>(UINT8);
     d["int16_t"].value<int16_t>(INT16);
-    d["uint16_t"].value<uint16_t>(UINT16); 
-    d["int32_t"].value<int32_t>(INT32); 
+    d["uint16_t"].value<uint16_t>(UINT16);
+    d["int32_t"].value<int32_t>(INT32);
     d["uint32_t"].value<uint32_t>(UINT32);
     d["int64_t"].value<int64_t>(INT64);
     d["uint64_t"].value<uint64_t>(UINT64);
-    d["float"].value<float>(FLOAT);   
+    d["float"].value<float>(FLOAT);
     d["double"].value<double>(DOUBLE);
     d["long double"].value<long double>(LDOUBLE);
     d["char"].value<char>(CHAR);
     d["char16_t"].value<wchar_t>(WCHAR);
-    
-    EXPECT_EQ(true, d["bool"].value<bool>()); 
+
+    EXPECT_EQ(true, d["bool"].value<bool>());
     EXPECT_EQ(UINT8, d["uint8_t"].value<uint8_t>());
     EXPECT_EQ(INT16, d["int16_t"].value<int16_t>());
-    EXPECT_EQ(UINT16,d["uint16_t"].value<uint16_t>()); 
-    EXPECT_EQ(INT32, d["int32_t"].value<int32_t>()); 
+    EXPECT_EQ(UINT16,d["uint16_t"].value<uint16_t>());
+    EXPECT_EQ(INT32, d["int32_t"].value<int32_t>());
     EXPECT_EQ(UINT32, d["uint32_t"].value<uint32_t>());
     EXPECT_EQ(INT64, d["int64_t"].value<int64_t>());
     EXPECT_EQ(UINT64,d["uint64_t"].value<uint64_t>());
-    EXPECT_EQ( float(FLOAT) , d["float"].value<float>());   
+    EXPECT_EQ( float(FLOAT) , d["float"].value<float>());
     EXPECT_EQ( double(DOUBLE) , d["double"].value<double>());
     long double ld = LDOUBLE;
     EXPECT_EQ( ld , d["long double"].value<long double>());
@@ -291,7 +291,7 @@ TEST (DynamicData, long_random_sequence)
 
     DynamicData d(st);
     srand48(time(0));
-    
+
     for(int i = 0; i < 65000; ++i)
     {
         double r = lrand48()/double(RAND_MAX);
@@ -313,23 +313,23 @@ TEST (DynamicData, sequence)
         d["sequence_1"].push('d');
         d["sequence_1"].push('e');
         d["sequence_2"].push(d["sequence_1"]);
-    }                
+    }
 }
 
 DynamicData cdd(StructType &st)
-{     
+{
     StringType stri_t;
     SequenceType sequ_t(stri_t);
     StructType stru_t("just_a_struct");
     stru_t.add_member(
     Member("sequence", sequ_t));
-                
+
     StructType sec_stru("another_struct");
     sec_stru.add_member(
         Member("int", primitive_type<uint32_t>()));
-                
+
     st.add_member("struct", stru_t).add_member("other_struct", sec_stru);
-    
+
     DynamicData dd(st);
     for(int i = 0; i < 1E1; ++i)
         dd["struct"]["sequence"].push<string>("checking");
@@ -383,14 +383,14 @@ DynamicData create_dynamic_data(long double pi, StructType& the_struct, StructTy
         Member("second_inner_string", StringType())).add_member(
         Member("second_inner_uint32_t", primitive_type<uint32_t>())).add_member(
         Member("second_inner_array", ArrayType(primitive_type<uint8_t>(), 10)));
-    StringType st;     
+    StringType st;
     inner_struct.add_member(
         Member("inner_string", st)).add_member(
         Member("inner_float", primitive_type<float>())).add_member(
         Member("inner_sequence_string", SequenceType(st))).add_member(
         Member("inner_sequence_struct", SequenceType(second_inner_struct)));
-                
-    the_struct.add_member( 
+
+    the_struct.add_member(
         Member("bool", primitive_type<bool>())).add_member(
         Member("uint8_t", primitive_type<uint8_t>())).add_member(
         Member("int16_t", primitive_type<int16_t>())).add_member(
@@ -404,7 +404,7 @@ DynamicData create_dynamic_data(long double pi, StructType& the_struct, StructTy
         Member("long_double", primitive_type<long double>())).add_member(
         Member("array", ArrayType(ArrayType(primitive_type<long double>(), 10), 10))).add_member(
         Member("sequence", SequenceType(inner_struct)));
-                
+
     DynamicData the_data(the_struct);
     the_data["bool"].value(true);
     the_data["uint8_t"].value<uint8_t>(UINT8);
@@ -416,7 +416,7 @@ DynamicData create_dynamic_data(long double pi, StructType& the_struct, StructTy
     the_data["uint64_t"].value<uint64_t>(UINT64);
     the_data["float"].value<float>(FLOAT);
     the_data["double"].value<double>(DOUBLE);
-                
+
     the_data["long_double"].value<>(pi);
 
     for(int i = 0; i < STRUCTS_SIZE; ++i) // creating "sequence"
@@ -428,7 +428,7 @@ DynamicData create_dynamic_data(long double pi, StructType& the_struct, StructTy
         {
             tmp_data["inner_sequence_string"].push<string>(INNER_SEQUENCE_STRING);
         }
-                                
+
         for (int j = 0; j < STRUCTS_SIZE; ++j) // creating "sequence.inner_sequence_struct"
         {
             DynamicData tmp_inner_data(second_inner_struct);
@@ -459,19 +459,19 @@ TEST (DynamicData, cascade_construction)
     StructType the_struct("the_struct");
     StructType inner_struct("inner_struct");
     StructType second_inner_struct("second_inner_struct");
-    
+
     DynamicData the_data = create_dynamic_data(pi, the_struct, inner_struct, second_inner_struct);
 
     EXPECT_EQ(UINT32, the_data["uint32_t"].value<uint32_t>());
-    EXPECT_EQ(INT32, the_data["int32_t"].value<int32_t>()); 
+    EXPECT_EQ(INT32, the_data["int32_t"].value<int32_t>());
     EXPECT_EQ(UINT16, the_data["uint16_t"].value<uint16_t>());
-    EXPECT_EQ(INT16, the_data["int16_t"].value<int16_t>()); 
+    EXPECT_EQ(INT16, the_data["int16_t"].value<int16_t>());
     EXPECT_EQ(true, the_data["bool"].value<bool>());
     EXPECT_EQ(UINT8, the_data["uint8_t"].value<uint8_t>());
-    EXPECT_EQ(INT64, the_data["int64_t"].value<int64_t>()); 
+    EXPECT_EQ(INT64, the_data["int64_t"].value<int64_t>());
     EXPECT_EQ(UINT64, the_data["uint64_t"].value<uint64_t>());
-    EXPECT_EQ(FLOAT, the_data["float"].value<float>()); 
-    EXPECT_EQ(DOUBLE, the_data["double"].value<double>()); 
+    EXPECT_EQ(FLOAT, the_data["float"].value<float>());
+    EXPECT_EQ(DOUBLE, the_data["double"].value<double>());
     EXPECT_EQ(pi, the_data["long_double"].value<long double>());
 
     srand48(time(0));
@@ -486,15 +486,15 @@ TEST (DynamicData, cascade_construction)
         size_t idx_2 = lrand48()%int(STRUCTS_SIZE);
         EXPECT_EQ(SECOND_INNER_STRING, the_data["sequence"][idx_4]["inner_sequence_struct"][idx_2]["second_inner_string"].string());
         EXPECT_EQ(UINT32, the_data["sequence"][idx_4]["inner_sequence_struct"][idx_2]["second_inner_uint32_t"].value<uint32_t>());
-                
+
         size_t arr_idx_3 = lrand48()%int(STRUCTS_SIZE);
         size_t arr_idx_2 = lrand48()%int(STRUCTS_SIZE);
         size_t arr_idx_1 = lrand48()%int(STRUCTS_SIZE);
-                                
+
         long double check_over = LDOUBLE;
         EXPECT_EQ(check_over, the_data["array"][arr_idx_3][arr_idx_2].value<long double>());
         EXPECT_EQ(UINT8, the_data["sequence"][idx_4]["inner_sequence_struct"][idx_2]["second_inner_array"][arr_idx_1].value<uint8_t>());
-    }    
+    }
 }
 
 TEST (DynamicData, curious_interactions)
@@ -508,17 +508,16 @@ TEST (DynamicData, curious_interactions)
     StringType str;
     DynamicData dstr(str);
     dstr.string("all_this_stuff");
-                
+
     the_data["seq"].push(dstr);
     EXPECT_EQ("all_this_stuff", the_data["seq"][0].string());
-//  EXPECT_EQ("all_this_stuff", the_data["seq"].string());<<=this call fails. It is kept here as a memorandum
 }
 
 TEST (DynamicType, testing_is_compatible_string_no_bound)
 {
     StringType s;
     StringType r;
-    
+
     EXPECT_EQ(TypeConsistency::EQUALS, r.is_compatible(s) );
     EXPECT_EQ(TypeConsistency::EQUALS, s.is_compatible(r) );
 }
@@ -529,7 +528,7 @@ TEST (DynamicType, testing_is_compatible_string_same_bound)
     size_t b = lrand48()%1000;
     StringType s(b);
     StringType r(b);
-    
+
     EXPECT_EQ(TypeConsistency::EQUALS, r.is_compatible(s) );
     EXPECT_EQ(TypeConsistency::EQUALS, s.is_compatible(r) );
 }
@@ -539,7 +538,7 @@ TEST (DynamicType, testing_is_compatible_string_different_bound)
 {
     StringType s(15);
     StringType r(30);
-    
+
     EXPECT_NE(0, uint32_t(TypeConsistency::IGNORE_STRING_BOUNDS) & uint32_t(s.is_compatible(r)) );
     EXPECT_NE(0, uint32_t(TypeConsistency::IGNORE_STRING_BOUNDS) & uint32_t(r.is_compatible(s)) );
 }
@@ -619,7 +618,7 @@ TEST (DynamicType, testing_is_compatible_structure_of_primitive_type_char)
     other_str.add_member(Member("int", primitive_type<wchar_t>()));
     StructType another_str("another_check");
     another_str.add_member(Member("int", primitive_type<char>()));
-    
+
     EXPECT_EQ(TypeConsistency::EQUALS , the_str.is_compatible(other_str));
     EXPECT_EQ(TypeConsistency::IGNORE_TYPE_WIDTH, the_str.is_compatible(another_str));
     EXPECT_EQ(TypeConsistency::EQUALS , other_str.is_compatible(the_str));
@@ -769,8 +768,8 @@ TEST (DynamicData, testing_equality_check_string)
     SequenceType s(primitive_type<uint64_t>());
     DynamicData d1(s);
     DynamicData d2(s);
-    d1.push<uint64_t>(3456); 
-    d2.push<uint64_t>(3456); 
+    d1.push<uint64_t>(3456);
+    d2.push<uint64_t>(3456);
     EXPECT_EQ(true , d1 == d2);
     d2[0].value<uint64_t>(3457);
     EXPECT_NE(d1, d2);
@@ -837,7 +836,7 @@ TEST (DynamicData, test_equality_complex_struct)
     vector<string> vv = d1["seqstring"].as_vector<string>();
     vector<uint32_t> t = d1["array"].as_vector<uint32_t>();
     vector<uint32_t> s = d1["sequence"].as_vector<uint32_t>();
-    
+
 
 }
 
@@ -850,14 +849,14 @@ TEST (DynamicType , wstring_and_wstring_struct)
 
     d.wstring(L"sadfsfdasdf");
     dd.string("sadfsfdasdf");
-   
+
     EXPECT_EQ( TypeConsistency::NONE, wst.is_compatible(st) );
     EXPECT_EQ( TypeConsistency::NONE, st.is_compatible(wst) );
 
     StructType struc1("the_struct");
     struc1.add_member(Member("theString", wst ));
 
-    
+
     StructType struc2("the_struct");
     struc2.add_member(Member("theString", st ));
 
@@ -877,7 +876,7 @@ TEST (QoS, sequence)
         d.push(uint16_t());
     }
     d[9].value<uint16_t>(256);
-    
+
     DynamicData dd(d, s2);
 
     EXPECT_EQ(10, dd.size());
@@ -900,7 +899,7 @@ TEST (QoS, other_sequence)
         d.push(uint16_t());
     }
     d[9].value<uint16_t>(256);
-    
+
     DynamicData dd(d, s2);
 
     EXPECT_EQ(10, dd.size());
@@ -915,87 +914,53 @@ TEST (QoS, string)
 {
     StringType s(20);
     StringType t(10);
-    
-    EXPECT_EQ(s.is_compatible(t) , t.is_compatible(s));
-    EXPECT_EQ(TypeConsistency::IGNORE_STRING_BOUNDS, t.is_compatible(s));
-    
-    DynamicData d(s);
-    d.string("12345678901234567890");
-    
-    DynamicData e(d,t);
-    EXPECT_EQ(10, e.size()); //still pending investigation
-    EXPECT_NE( true,  e != d);
-    for (size_t i = 0; i < e.size(); ++i)
-    {
-        EXPECT_EQ( d[i].value<char>() , e[i].value<char>() );
-    }
-}
 
-TEST (QoS, other_string)
-{
-    StringType s(10);
-    StringType t(20);
-    
     EXPECT_EQ(s.is_compatible(t) , t.is_compatible(s));
     EXPECT_EQ(TypeConsistency::IGNORE_STRING_BOUNDS, t.is_compatible(s));
-    
-    DynamicData d(s);
-    d.string("1234567890");
-    
-    DynamicData e(d,t);
-    EXPECT_EQ(10, e.size()); 
-    EXPECT_NE( true, e != d);
-    for (size_t i = 0; i < d.size(); ++i)
-    {
-        EXPECT_EQ( d[i].value<char>() , e[i].value<char>() );
-    }
+
+    DynamicData ds(s);
+    ds.string("12345678901234567890");
+
+    DynamicData dt(t);
+    dt.string("1234567890");
+
+    DynamicData dt_as_ds(dt, s);
+    EXPECT_EQ(10, dt_as_ds.size());
+
+    DynamicData ds_as_dt(ds, t);
+    EXPECT_EQ(10, ds_as_dt.size());
+
+    EXPECT_TRUE(dt == ds_as_dt);
 }
 
 TEST (QoS, wstring)
 {
     WStringType s(20);
     WStringType t(10);
-    
-    EXPECT_EQ(s.is_compatible(t) , t.is_compatible(s));
-    EXPECT_EQ(TypeConsistency::IGNORE_STRING_BOUNDS, t.is_compatible(s));
-    
-    DynamicData d(s);
-    d.wstring(L"12345678901234567890");
-    
-    DynamicData e(d,t);
-    EXPECT_EQ(10, e.size()); //still pending investigation
-    EXPECT_NE( true, e != d);
-    for (size_t i = 0; i < e.size(); ++i)
-    {
-        EXPECT_EQ( d[i].value<wchar_t>() , e[i].value<wchar_t>() );
-    }
-}
 
-TEST (QoS, other_wstring)
-{
-    WStringType s(10);
-    WStringType t(20);
-    
     EXPECT_EQ(s.is_compatible(t) , t.is_compatible(s));
     EXPECT_EQ(TypeConsistency::IGNORE_STRING_BOUNDS, t.is_compatible(s));
-    
-    DynamicData d(s);
-    d.wstring(L"1234567890");
-    
-    DynamicData e(d,t);
-    EXPECT_EQ(10, e.size()); 
-    EXPECT_NE(true , e != d);
-    for (size_t i = 0; i < d.size(); ++i)
-    {
-        EXPECT_EQ( d[i].value<wchar_t>() , e[i].value<wchar_t>() );
-    }
+
+    DynamicData ds(s);
+    ds.wstring(L"12345678901234567890");
+
+    DynamicData dt(t);
+    dt.wstring(L"1234567890");
+
+    DynamicData dt_as_ds(dt, s);
+    EXPECT_EQ(10, dt_as_ds.size());
+
+    DynamicData ds_as_dt(ds, t);
+    EXPECT_EQ(10, ds_as_dt.size());
+
+    EXPECT_TRUE(dt == ds_as_dt);
 }
 
 TEST (QoS, array)
 {
     ArrayType a(primitive_type<uint16_t>(), 10);
     ArrayType b(primitive_type<uint16_t>(), 20);
-    
+
     DynamicData d(a);
     d[8].value(10);
     DynamicData e(d,b);
@@ -1011,7 +976,7 @@ TEST (QoS, other_array)
 {
     ArrayType a(primitive_type<uint16_t>(), 20);
     ArrayType b(primitive_type<uint16_t>(), 10);
-    
+
     DynamicData d(a);
     d[8].value(10);
     d[13].value(10);
@@ -1033,7 +998,7 @@ TEST (QoS, Array_qos)
     EXPECT_EQ(TypeConsistency::IGNORE_ARRAY_BOUNDS |
               TypeConsistency::IGNORE_TYPE_WIDTH |
               TypeConsistency::IGNORE_TYPE_SIGN , a_arr.is_compatible(b_arr));
-    
+
 }
 
 TEST (QoS, mixed_types)
@@ -1048,8 +1013,8 @@ TEST (QoS, mixed_types)
     ArrayType b_arr(primitive_type<int32_t>(), 11);
 
 
-    
-    EXPECT_EQ(TypeConsistency::IGNORE_TYPE_WIDTH, a_string.is_compatible(b_wstring));
+
+    //EXPECT_EQ(TypeConsistency::IGNORE_TYPE_WIDTH, a_string.is_compatible(b_wstring)); //This feature is not supported
 
     EXPECT_EQ(TypeConsistency::IGNORE_SEQUENCE_BOUNDS |
               TypeConsistency::IGNORE_TYPE_SIGN, a_seq.is_compatible(b_seq));
@@ -1057,83 +1022,49 @@ TEST (QoS, mixed_types)
     EXPECT_EQ(TypeConsistency::IGNORE_ARRAY_BOUNDS |
               TypeConsistency::IGNORE_TYPE_WIDTH |
               TypeConsistency::IGNORE_TYPE_SIGN , a_arr.is_compatible(b_arr));
-    
+
     a.add_member(
-            Member("a_string", a_string)).add_member(
+            //Member("a_string", a_string)).add_member( //Not supported
             Member("a_seq", a_seq)).add_member(
             Member("a_arr", a_arr)).add_member(
             Member("a_primitive", primitive_type<wchar_t>()));
 
     b.add_member(
-            Member("b_wstring", b_wstring)).add_member(
+            //Member("b_wstring", b_wstring)).add_member( //Not supported
             Member("b_seq", b_seq)).add_member(
             Member("b_arr", b_arr));
 
     EXPECT_EQ(TypeConsistency::IGNORE_MEMBER_NAMES|
               TypeConsistency::IGNORE_TYPE_SIGN |
               TypeConsistency::IGNORE_TYPE_WIDTH |
-              TypeConsistency::IGNORE_STRING_BOUNDS |
               TypeConsistency::IGNORE_SEQUENCE_BOUNDS |
               TypeConsistency::IGNORE_ARRAY_BOUNDS |
               TypeConsistency::IGNORE_MEMBERS , a.is_compatible(b));
-    
 
-}
 
-template <typename A, typename B, typename C>
-void dynamicDataChecker()
-{
-
-    StructType a("composition");
-    StructType b("composition");
-    
-    StringType string(10);
-    SequenceType a_seq(primitive_type<A>(), 10);
-    SequenceType b_seq(primitive_type<B>(), 10);
-    ArrayType a_arr(primitive_type<A>(), 10);
-    ArrayType b_arr(primitive_type<B>(), 10);
-    
-    a.add_member(
-            Member("string", string)).add_member(
-            Member("seq", a_seq)).add_member(
-            Member("arr", a_arr)).add_member(
-            Member("flying_element", primitive_type<C>()));
-    
-    b.add_member(
-            Member("string", string)).add_member(
-            Member("seq", b_seq)).add_member(
-            Member("arr", b_arr));
-
-    EXPECT_EQ(TypeConsistency::IGNORE_MEMBERS , a.is_compatible(b));
-
-    DynamicData d(a);
-    DynamicData o(b);
-    
-    d["string"].string("the_string");
-    o["string"].string("the_string");
-    
-    for (size_t i = 0; i < 10; i-=-1 )
-    {
-        d["seq"].push<A>(TEN);
-        d["arr"][i] = TEN;
-        o["seq"].push<B>(TEN);
-        o["arr"][i] = TEN;
-    }
-
-    DynamicData dd(d,b);
-   
-    EXPECT_EQ(true, o == dd);
 }
 
 TEST (QoS, ignore_member)
 {
-    dynamicDataChecker<int32_t, uint16_t, char>();
-    dynamicDataChecker<int64_t, uint16_t, char>();
-    dynamicDataChecker<int64_t, uint8_t, char>();
-    dynamicDataChecker<int16_t, uint8_t, char>();
-    dynamicDataChecker<float, float, char>();
-    dynamicDataChecker<double, float, char>();
-    dynamicDataChecker<long double, double, char>();
+    StructType a("composition");
+    StructType b("composition");
+
+    StringType string(10);
+    SequenceType seq(primitive_type<int16_t>(), 10);
+    ArrayType arr(primitive_type<float>(), 10);
+
+    a.add_member(
+            Member("string", string)).add_member(
+            Member("seq", seq)).add_member(
+            Member("arr", arr)).add_member(
+            Member("flying_element", primitive_type<int>()));
+
+    b.add_member(
+            Member("string", string)).add_member(
+            Member("seq", seq)).add_member(
+            Member("arr", arr));
+
+    EXPECT_EQ(TypeConsistency::IGNORE_MEMBERS , a.is_compatible(b));
 }
 
 TEST (QoS, ignore_member_simple_primitive)
@@ -1143,15 +1074,15 @@ TEST (QoS, ignore_member_simple_primitive)
     a.add_member(
             Member("x", primitive_type<char>())).add_member(
             Member("y", primitive_type<char>()));
-    
+
     b.add_member(
             Member("x", primitive_type<char>()));
 
     EXPECT_EQ(TypeConsistency::IGNORE_MEMBERS , a.is_compatible(b));
-    
+
 }
 
-int main(int argc, char** argv) 
+int main(int argc, char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
