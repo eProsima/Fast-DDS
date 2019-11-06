@@ -373,9 +373,9 @@ protected:
     bool encrypt_cachechange(CacheChange_t* change);
 #endif
 
-    //! The liveliness kind of this reader
+    //! The liveliness kind of this writer
     LivelinessQosPolicyKind liveliness_kind_;
-    //! The liveliness lease duration of this reader
+    //! The liveliness lease duration of this writer
     Duration_t liveliness_lease_duration_;
     //! The liveliness announcement period
     Duration_t liveliness_announcement_period_;
