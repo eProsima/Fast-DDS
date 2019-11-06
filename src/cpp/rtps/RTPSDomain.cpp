@@ -36,6 +36,8 @@
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 
+#include "RTPSDomainImpl.hpp"
+
 #include <chrono>
 #include <thread>
 
@@ -292,6 +294,38 @@ bool RTPSDomain::removeRTPSReader(RTPSReader* reader)
         }
     }
     return false;
+}
+
+RTPSReader* RTPSDomainImpl::find_local_reader(
+        const GUID_t& reader_guid)
+{
+    std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);
+    for (const RTPSDomain::t_p_RTPSParticipant& participant : RTPSDomain::m_RTPSParticipants)
+    {
+        if (participant.second->getGuid().guidPrefix == reader_guid.guidPrefix)
+        {
+            // Participant found, forward the query
+            return participant.second->find_local_reader(reader_guid);
+        }
+    }
+
+    return nullptr;
+}
+
+RTPSWriter* RTPSDomainImpl::find_local_writer(
+        const GUID_t& writer_guid)
+{
+    std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);
+    for (const RTPSDomain::t_p_RTPSParticipant& participant : RTPSDomain::m_RTPSParticipants)
+    {
+        if (participant.second->getGuid().guidPrefix == writer_guid.guidPrefix)
+        {
+            // Participant found, forward the query
+            return participant.second->find_local_writer(writer_guid);
+        }
+    }
+
+    return nullptr;
 }
 
 } // namespace rtps
