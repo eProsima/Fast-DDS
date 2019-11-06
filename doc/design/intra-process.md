@@ -79,7 +79,15 @@ foreach writer in join(local process writers, discovered remote writers)
         writer.matched_reader_add(reader)
 ```
 
-## New design side-effects
+## Additional considerations
+
+### Security
+If we rely on the comparison of the GUID to identify endpoints on the same process, those belonging to a secured participant will not be taken into account, as in that case the GUID is recalculated using a hash of the whole participant GUID.
+
+### Liveliness
+There may be changes to the liveliness assertion mechanism, as local process endpoints may be automatically asserted without the need of exchanging messages. Even better, it may be possible to avoid adding local endpoints to the liveliness managers.
+
+### Side effects
 
 * This design isolates all message traffic from the wire, that is, tools like **wireshark™** will become useless. Given that most of our customers actually run intraprocess code, and report their issues using **wireshark™** traces, these changes will create a support nightmare. A workaround may be to supply a flag to inhibits the intraprocess behavior for debugging purposes, stating clearly, that it should be turn off during performance test.
 
