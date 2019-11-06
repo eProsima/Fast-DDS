@@ -386,6 +386,11 @@ set_public_headers_directory(${PROJECT_SOURCE_DIR}/include fastdds
     COMPONENT headers
     INSTALL
     )
+set_public_headers_directory(${PROJECT_SOURCE_DIR}/include dds
+    DESTINATION ${INCLUDE_INSTALL_DIR}
+    COMPONENT headers
+    INSTALL
+    )
 
 # Install config.h header
 set_public_header(${PROJECT_BINARY_DIR}/include ${PROJECT_NAME} config.h

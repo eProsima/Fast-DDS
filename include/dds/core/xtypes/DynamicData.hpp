@@ -450,6 +450,11 @@ protected:
 
     /// \brief Internal cast from readable to writable
     WritableDynamicDataRef(
+            const ReadableDynamicDataRef& other)
+        : ReadableDynamicDataRef(other)
+    {}
+
+    WritableDynamicDataRef(
             ReadableDynamicDataRef&& other)
         : ReadableDynamicDataRef(std::move(other))
     {}
@@ -467,6 +472,20 @@ public:
         : WritableDynamicDataRef(type, new uint8_t[type.memory_size()])
     {
         type_.construct_instance(instance_);
+    }
+
+    /// \brief Copy constructor from a ReadableDynamicDataRef
+    DynamicData(
+            const ReadableDynamicDataRef& other)
+        : WritableDynamicDataRef(other)
+    {
+    }
+
+    /// \brief Move constructor from a WritableDynamicDataRef
+    DynamicData(
+            WritableDynamicDataRef&& other)
+        : WritableDynamicDataRef(std::move(other))
+    {
     }
 
     /// \brief Construct a DynamicData from another DynamicData with a compatible type.

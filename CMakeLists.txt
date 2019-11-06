@@ -257,14 +257,7 @@ endif()
 ###############################################################################
 # Compile library.
 ###############################################################################
-# Used exclusively in this commit
-option(EPROSIMA_BUILD_XTYPES_STANDALONE "Only compiles dds-core-xtypes part" ON)
-
-if(NOT EPROSIMA_BUILD_XTYPES_STANDALONE)
-    add_subdirectory(src/cpp)
-else()
-    add_subdirectory(src/cpp/dds/core/xtypes)
-endif()
+add_subdirectory(src/cpp)
 
 ###############################################################################
 # Testing options
