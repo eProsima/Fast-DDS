@@ -474,22 +474,24 @@ public:
         type_.construct_instance(instance_);
     }
 
-    /// \brief Construct a DynamicData from another DynamicData with a compatible type.
-    /// (see DynamicType::is_compatible())
-    /// \param[in] other A compatible DynamicData from which de data will be copies.
-    /// \param[in] type DynamicType from which the DynamicData is created.
+    /// \brief Copy constructor from a ReadableDynamicDataRef
     DynamicData(
             const ReadableDynamicDataRef& other)
         : WritableDynamicDataRef(other)
     {
     }
 
+    /// \brief Move constructor from a WritableDynamicDataRef
     DynamicData(
             WritableDynamicDataRef&& other)
         : WritableDynamicDataRef(std::move(other))
     {
     }
 
+    /// \brief Construct a DynamicData from another DynamicData with a compatible type.
+    /// (see DynamicType::is_compatible())
+    /// \param[in] other A compatible DynamicData from which de data will be copies.
+    /// \param[in] type DynamicType from which the DynamicData is created.
     DynamicData(
             const ReadableDynamicDataRef& other,
             const DynamicType& type)
