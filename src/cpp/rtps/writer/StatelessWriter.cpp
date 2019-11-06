@@ -198,14 +198,6 @@ void StatelessWriter::unsent_change_added_to_history(
             unsent_changes_.push_back(ChangeForReader_t(change));
             mp_RTPSParticipant->async_thread().wake_up(this, max_blocking_time);
         }
-
-        if (liveliness_lease_duration_ < c_TimeInfinite)
-        {
-            mp_RTPSParticipant->wlp()->assert_liveliness(
-                        getGuid(),
-                        liveliness_kind_,
-                        liveliness_lease_duration_);
-        }
     }
 
     for (ReaderLocator& it : matched_readers_)
@@ -229,6 +221,17 @@ void StatelessWriter::unsent_change_added_to_history(
     {
         logInfo(RTPS_WRITER, "No reader to add change.");
     }
+    else
+    {
+        if (liveliness_lease_duration_ < c_TimeInfinite)
+        {
+            mp_RTPSParticipant->wlp()->assert_liveliness(
+                        getGuid(),
+                        liveliness_kind_,
+                        liveliness_lease_duration_);
+        }
+    }
+    
 }
 
 bool StatelessWriter::intraprocess_delivery(CacheChange_t* change, ReaderLocator& reader_locator)
