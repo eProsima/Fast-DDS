@@ -36,6 +36,7 @@ ReaderLocator::ReaderLocator(
     : owner_(owner)
     , locator_info_(max_unicast_locators, max_multicast_locators)
     , expects_inline_qos_(false)
+    , is_local_reader_(false)
     , guid_prefix_as_vector_(1u)
     , guid_as_vector_(1u)
 {
@@ -45,19 +46,27 @@ bool ReaderLocator::start(
         const GUID_t& remote_guid,
         const ResourceLimitedVector<Locator_t>& unicast_locators,
         const ResourceLimitedVector<Locator_t>& multicast_locators,
-        bool expects_inline_qos)
+        bool expects_inline_qos,
+        bool is_local_reader)
 {
     if (locator_info_.remote_guid == c_Guid_Unknown)
     {
         expects_inline_qos_ = expects_inline_qos;
+        is_local_reader_ = is_local_reader;
         guid_as_vector_.at(0) = remote_guid;
         guid_prefix_as_vector_.at(0) = remote_guid.guidPrefix;
         locator_info_.remote_guid = remote_guid;
+        local_reader_ = nullptr;
 
-        locator_info_.unicast = unicast_locators;
-        locator_info_.multicast = multicast_locators;
+        if(!is_local_reader)
+        {
+            locator_info_.unicast = unicast_locators;
+            locator_info_.multicast = multicast_locators;
+        }
+
         locator_info_.reset();
         locator_info_.enable(true);
+
         return true;
     }
 
@@ -101,6 +110,8 @@ bool ReaderLocator::stop(const GUID_t& remote_guid)
         guid_as_vector_.at(0) = c_Guid_Unknown;
         guid_prefix_as_vector_.at(0) = c_GuidPrefix_Unknown;
         expects_inline_qos_ = false;
+        is_local_reader_ = false;
+        local_reader_ = nullptr;
         return true;
     }
 
