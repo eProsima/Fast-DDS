@@ -34,6 +34,7 @@
 #include <vector>
 
 #include <fastrtps/log/Log.h>
+#include "../RTPSDomainImpl.hpp"
 
 namespace eprosima {
 namespace fastrtps{
@@ -150,6 +151,9 @@ void StatelessWriter::unsent_change_added_to_history(
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
+    bool no_readers_to_add_change = fixed_locators_.empty() && (locator_selector_.selected_size() == 0);
+    bool change_received_by_all = true;
+
     if (!fixed_locators_.empty() || locator_selector_.selected_size() > 0)
     {
 #if HAVE_SECURITY
@@ -182,11 +186,6 @@ void StatelessWriter::unsent_change_added_to_history(
                         logError(RTPS_WRITER, "Error sending change " << change->sequenceNumber);
                     }
                 }
-
-                if (mp_listener != nullptr)
-                {
-                    mp_listener->onWriterChangeReceivedByAll(this, change);
-                }
             }
             catch(const RTPSMessageGroup::timeout&)
             {
@@ -195,6 +194,7 @@ void StatelessWriter::unsent_change_added_to_history(
         }
         else
         {
+            change_received_by_all = false;
             unsent_changes_.push_back(ChangeForReader_t(change));
             mp_RTPSParticipant->async_thread().wake_up(this, max_blocking_time);
         }
@@ -207,14 +207,48 @@ void StatelessWriter::unsent_change_added_to_history(
                         liveliness_lease_duration_);
         }
     }
-    else
+
+    for (ReaderLocator& it : matched_readers_)
     {
-        logInfo(RTPS_WRITER, "No reader to add change.");
+        if(it.is_local_reader())
+        {
+            no_readers_to_add_change = false;
+            intraprocess_delivery(change, it);
+        }
+    }
+    
+    if (change_received_by_all)
+    {
         if (mp_listener != nullptr)
         {
             mp_listener->onWriterChangeReceivedByAll(this, change);
         }
     }
+
+    if (no_readers_to_add_change)
+    {
+        logInfo(RTPS_WRITER, "No reader to add change.");
+    }
+}
+
+bool StatelessWriter::intraprocess_delivery(CacheChange_t* change, ReaderLocator& reader_locator)
+{
+    RTPSReader* reader = reader_locator.local_reader();
+    
+    if (!reader)
+    {
+        if((reader = RTPSDomainImpl::find_local_reader(reader_locator.remote_guid())))
+        {
+            reader_locator.set_local_reader(reader);
+        }
+    }
+
+    if (reader)
+    {
+        return reader->processDataMsg(change);
+    }
+    
+    return false;
 }
 
 bool StatelessWriter::change_removed_by_history(CacheChange_t* change)
@@ -382,7 +416,8 @@ bool StatelessWriter::matched_reader_add(const ReaderProxyData& data)
         if (reader.start(data.guid(),
             data.remote_locators().unicast,
             data.remote_locators().multicast,
-            data.m_expectsInlineQos))
+            data.m_expectsInlineQos,
+            data.guid().is_on_same_process_as(getGuid())))
         {
             new_reader = &reader;
             break;
@@ -401,7 +436,8 @@ bool StatelessWriter::matched_reader_add(const ReaderProxyData& data)
             new_reader->start(data.guid(),
                 data.remote_locators().unicast,
                 data.remote_locators().multicast,
-                data.m_expectsInlineQos);
+                data.m_expectsInlineQos,
+                data.guid().is_on_same_process_as(getGuid()));
         }
         else
         {
