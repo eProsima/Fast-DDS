@@ -112,7 +112,8 @@ struct RTPS_DllAPI GUID_t
     static GUID_t unknown() noexcept
     {
         return GUID_t();
-    };
+    }
+
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
@@ -123,14 +124,18 @@ struct RTPS_DllAPI GUID_t
  * @param g2 Second GUID to compare
  * @return True if equal
  */
-inline bool operator==(
+inline bool operator ==(
         const GUID_t& g1,
         const GUID_t& g2)
 {
     if (g1.guidPrefix == g2.guidPrefix && g1.entityId == g2.entityId)
+    {
         return true;
+    }
     else
+    {
         return false;
+    }
 }
 
 /**
@@ -139,36 +144,49 @@ inline bool operator==(
  * @param g2 Second GUID to compare
  * @return True if not equal
  */
-inline bool operator!=(
+inline bool operator !=(
         const GUID_t& g1,
         const GUID_t& g2)
 {
     if (g1.guidPrefix != g2.guidPrefix || g1.entityId != g2.entityId)
+    {
         return true;
+    }
     else
+    {
         return false;
+    }
 }
 
-inline bool operator<(
+inline bool operator <(
         const GUID_t& g1,
         const GUID_t& g2)
 {
     for (uint8_t i = 0; i < 12; ++i)
     {
         if (g1.guidPrefix.value[i] < g2.guidPrefix.value[i])
+        {
             return true;
+        }
         else if (g1.guidPrefix.value[i] > g2.guidPrefix.value[i])
+        {
             return false;
+        }
     }
     for (uint8_t i = 0; i < 4; ++i)
     {
         if (g1.entityId.value[i] < g2.entityId.value[i])
+        {
             return true;
+        }
         else if (g1.entityId.value[i] > g2.entityId.value[i])
+        {
             return false;
+        }
     }
     return false;
 }
+
 #endif
 
 const GUID_t c_Guid_Unknown;
@@ -181,14 +199,18 @@ const GUID_t c_Guid_Unknown;
  * @param guid GUID_t to print.
  * @return Stream operator.
  */
-inline std::ostream& operator<<(
+inline std::ostream& operator <<(
         std::ostream& output,
         const GUID_t& guid)
 {
     if (guid != c_Guid_Unknown)
+    {
         output << guid.guidPrefix << "|" << guid.entityId;
+    }
     else
+    {
         output << "|GUID UNKNOWN|";
+    }
     return output;
 }
 
@@ -198,7 +220,7 @@ inline std::ostream& operator<<(
  * @param guid GUID_t to print.
  * @return Stream operator.
  */
-inline std::istream& operator>>(
+inline std::istream& operator >>(
         std::istream& input,
         GUID_t& guid)
 {
@@ -215,7 +237,7 @@ inline std::istream& operator>>(
             input >> guid.guidPrefix;
             input >> guid.entityId;
         }
-        catch (std::ios_base::failure &)
+        catch (std::ios_base::failure&)
         {
             // maybe is unknown or just invalid
             guid = c_Guid_Unknown;
