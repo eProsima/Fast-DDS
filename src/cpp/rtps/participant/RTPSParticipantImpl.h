@@ -158,6 +158,9 @@ public:
     // Create receiver resources and start builtin protocols
     void enable();
 
+    // Stop builtin protocols and delete receiver resources
+    void disable();
+
     /**
         * Get associated GUID
         * @return Associated GUID
