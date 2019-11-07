@@ -150,6 +150,7 @@ private:
     ResourceLimitedVector<ReaderLocator> matched_readers_;
     ResourceLimitedVector<ChangeForReader_t, std::true_type> unsent_changes_;
     std::vector<std::unique_ptr<FlowController> > flow_controllers_;
+    uint64_t last_intraprocess_sequence_number_;
 };
 }
 } /* namespace rtps */
