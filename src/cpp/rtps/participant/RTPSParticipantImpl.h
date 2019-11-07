@@ -155,6 +155,9 @@ public:
 
     virtual ~RTPSParticipantImpl();
 
+    // Create receiver resources and start builtin protocols
+    void enable();
+
     /**
         * Get associated GUID
         * @return Associated GUID

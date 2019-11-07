@@ -67,7 +67,6 @@ RTPSParticipant* RTPSDomain::createParticipant(
         const RTPSParticipantAttributes& attrs,
         RTPSParticipantListener* listen)
 {
-    std::lock_guard<std::mutex> guard(m_mutex);
     logInfo(RTPS_PARTICIPANT,"");
 
     RTPSParticipantAttributes PParam = attrs;
@@ -77,24 +76,30 @@ RTPSParticipant* RTPSDomain::createParticipant(
         logError(RTPS_PARTICIPANT,"RTPSParticipant Attributes: LeaseDuration should be >= leaseDuration announcement period");
         return nullptr;
     }
+
     uint32_t ID;
-    if(PParam.participantID < 0)
     {
-        ID = getNewId();
-        while(m_RTPSParticipantIDs.insert(ID).second == false)
+        std::lock_guard<std::mutex> guard(m_mutex);
+    
+        if(PParam.participantID < 0)
         {
             ID = getNewId();
+            while(m_RTPSParticipantIDs.insert(ID).second == false)
+            {
+                ID = getNewId();
+            }
         }
-    }
-    else
-    {
-        ID = PParam.participantID;
-        if(m_RTPSParticipantIDs.insert(ID).second == false)
+        else
         {
-            logError(RTPS_PARTICIPANT,"RTPSParticipant with the same ID already exists");
-            return nullptr;
+            ID = PParam.participantID;
+            if(m_RTPSParticipantIDs.insert(ID).second == false)
+            {
+                logError(RTPS_PARTICIPANT,"RTPSParticipant with the same ID already exists");
+                return nullptr;
+            }
         }
     }
+    
     if(!PParam.defaultUnicastLocatorList.isValid())
     {
         logError(RTPS_PARTICIPANT,"Default Unicast Locator List contains invalid Locator");
@@ -119,7 +124,6 @@ RTPSParticipant* RTPSDomain::createParticipant(
 
     // Generate a new GuidPrefix_t
     GuidPrefix_t guidP;
-
     {
         // Make a new participant GuidPrefix_t up
         int pid = System::GetPID();
@@ -190,7 +194,13 @@ RTPSParticipant* RTPSDomain::createParticipant(
         return nullptr;
     }
 
-    m_RTPSParticipants.push_back(t_p_RTPSParticipant(p,pimpl));
+    {
+        std::lock_guard<std::mutex> guard(m_mutex);
+        m_RTPSParticipants.push_back(t_p_RTPSParticipant(p,pimpl));
+    }
+
+    // Start protocols
+    pimpl->enable();
     return p;
 }
 
