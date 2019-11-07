@@ -104,7 +104,7 @@ bool StatefulReader::matched_writer_add(
         {
             logInfo(RTPS_READER, "Attempting to add existing writer, updating information");
             it->update(wdata);
-            if (!getRTPSParticipant()->getGuid().is_on_same_process_as(wdata.guid()))
+            if (!getRTPSParticipant()->getGuid().is_on_same_process_as(wdata.guid()) || wdata.guid().is_builtin())
             {
                 for (const Locator_t& locator : it->remote_locators_shrinked())
                 {
@@ -138,7 +138,7 @@ bool StatefulReader::matched_writer_add(
         matched_writers_pool_.pop_back();
     }
 
-    if (!getRTPSParticipant()->getGuid().is_on_same_process_as(wdata.guid()))
+    if (!getRTPSParticipant()->getGuid().is_on_same_process_as(wdata.guid()) || wdata.guid().is_builtin())
     {
         for (const Locator_t& locator : wp->remote_locators_shrinked())
         {

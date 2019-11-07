@@ -112,7 +112,7 @@ void WriterProxy::start(
     guid_as_vector_.push_back(attributes_.guid());
     guid_prefix_as_vector_.push_back(attributes_.guid().guidPrefix);
     is_alive_ = true;
-    is_on_same_process_ = reader_->getRTPSParticipant()->getGuid().is_on_same_process_as(attributes_.guid());
+    is_on_same_process_ = !attributes_.guid().is_builtin() && reader_->getRTPSParticipant()->getGuid().is_on_same_process_as(attributes_.guid());
     if (!is_on_same_process_)
     {
         initial_acknack_->restart_timer();
