@@ -215,8 +215,24 @@ void StatelessWriter::unsent_change_added_to_history(
         }
         else
         {
-            unsent_changes_.push_back(ChangeForReader_t(change));
-            mp_RTPSParticipant->async_thread().wake_up(this, max_blocking_time);
+            bool at_least_one_remote = false;
+            for (ReaderLocator& it : matched_readers_)
+            {
+                if (it.is_local_reader())
+                {
+                    intraprocess_delivery(change, it);
+                }
+                else
+                {
+                    at_least_one_remote = false;
+                }
+            }
+
+            if (at_least_one_remote)
+            {
+                unsent_changes_.push_back(ChangeForReader_t(change));
+                mp_RTPSParticipant->async_thread().wake_up(this, max_blocking_time);
+            }
         }
 
         if (liveliness_lease_duration_ < c_TimeInfinite)
