@@ -56,7 +56,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-
 // Default configuration values for PDP reliable entities.
 
 const Duration_t pdp_heartbeat_period{ 0, 350 * 1000  }; // 350 milliseconds

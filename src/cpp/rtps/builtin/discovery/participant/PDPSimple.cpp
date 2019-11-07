@@ -144,6 +144,40 @@ ParticipantProxyData * PDPSimple::createParticipantProxyData(
 {
     std::unique_lock<std::recursive_mutex> lock(*getMutex());
 
+    // decide if we dismiss the participant using the ParticipantFilteringFlags
+    const ParticipantFilteringFlags_t & flags = m_discovery.discovery_config.ignoreParticipantFlags;
+        
+    if(flags != ParticipantFilteringFlags_t::NO_FILTER)
+    {
+        const GUID_t & remote = participant_data.m_guid;
+        const GUID_t & local = getLocalParticipantProxyData()->m_guid;
+
+        if(!local.is_on_same_host_as(remote))
+        {
+            if(flags & ParticipantFilteringFlags::FILTER_DIFFERENT_HOST)
+            {
+                return nullptr;
+            }
+        }
+        else
+        {
+            bool filter_same = (flags & ParticipantFilteringFlags::FILTER_SAME_PROCESS) != 0;
+            bool filter_different = (flags & ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS) != 0 ;
+
+            if(filter_same && filter_different)
+            {
+                return nullptr;
+            }
+
+            bool is_same = local.is_on_same_process_as(remote);
+
+            if((filter_same && is_same) || (filter_different && !is_same))
+            {
+                return nullptr;
+            }
+        }
+    }
+
     ParticipantProxyData* pdata = add_participant_proxy_data(participant_data.m_guid, true);
     if(pdata != nullptr)
     {
