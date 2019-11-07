@@ -4,7 +4,10 @@
 
 option(TINYXML2_FROM_SOURCE "Integrate TinyXML2 source code inside Fast RTPS" OFF)
 
-find_package(TinyXML2 CONFIG QUIET)
+if(NOT (TINYXML2_FROM_SOURCE OR THIRDPARTY))
+    find_package(TinyXML2 CONFIG QUIET)
+endif()
+
 if(TinyXML2_FOUND AND NOT THIRDPARTY)
     message(STATUS "Found TinyXML2: ${TinyXML2_DIR}")
     if(NOT TINYXML2_LIBRARY)
