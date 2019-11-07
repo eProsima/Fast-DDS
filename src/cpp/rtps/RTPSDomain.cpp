@@ -208,6 +208,8 @@ bool RTPSDomain::removeRTPSParticipant(RTPSParticipant* p)
 {
     if(p!=nullptr)
     {
+        p->mp_impl->disable();
+        
         std::lock_guard<std::mutex> guard(m_mutex);
         for(auto it = m_RTPSParticipants.begin();it!= m_RTPSParticipants.end();++it)
         {
