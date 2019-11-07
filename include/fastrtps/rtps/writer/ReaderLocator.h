@@ -111,7 +111,6 @@ class ReaderLocator : public RTPSMessageSenderInterface
          * @param unicast_locators    Unicast locators of the remote reader.
          * @param multicast_locators  Multicast locators of the remote reader.
          * @param expects_inline_qos  Whether remote reader expects to receive inline QoS.
-         * @param is_local_reader     The reader is in the local process.
          *
          * @return true when information has changed, false otherwise.
          */
