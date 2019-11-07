@@ -87,7 +87,8 @@ void ReaderProxy::start(const ReaderProxyData& reader_attributes)
     is_active_ = true;
     reader_attributes_ = reader_attributes;
 
-    timers_enabled_.store(reader_attributes_.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS);
+    timers_enabled_.store((reader_attributes_.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
+            && locator_info_.is_local_reader());
 
     logInfo(RTPS_WRITER, "Reader Proxy started");
 }
@@ -106,8 +107,7 @@ bool ReaderProxy::update(const ReaderProxyData& reader_attributes)
     locator_info_.update(
         reader_attributes.remote_locators().unicast,
         reader_attributes.remote_locators().multicast,
-        reader_attributes.m_expectsInlineQos,
-        reader_attributes.guid().is_on_same_process_as(writer_->getRTPSParticipant()->getGuid()));
+        reader_attributes.m_expectsInlineQos);
 
     return true;
 }
@@ -302,7 +302,7 @@ bool ReaderProxy::set_change_to_status(
         ChangeForReaderStatus_t status,
         bool restart_nack_supression)
 {
-    if (restart_nack_supression && is_reliable())
+    if (restart_nack_supression && is_reliable() && !locator_info_.is_local_reader())
     {
         assert(timers_enabled_.load());
         nack_supression_event_->restart_timer();

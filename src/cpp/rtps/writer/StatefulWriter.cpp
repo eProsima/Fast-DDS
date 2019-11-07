@@ -248,6 +248,14 @@ void StatefulWriter::unsent_change_added_to_history(
                         uint32_t last_processed = 0;
                         send_heartbeat_piggyback_nts_(nullptr, group, last_processed);
                     }
+                    for (ReaderProxy* it : matched_readers_)
+                    {
+                        if (it->is_local_reader())
+                        {
+                            intraprocess_delivery(change, it);
+                            it->set_change_to_status(change->sequenceNumber, ACKNOWLEDGED, false);
+                        }
+                    }
                 }
                 else
                 {
@@ -502,7 +510,14 @@ void StatefulWriter::send_any_unsent_changes()
                 else
                 {
                     remoteReader->set_change_to_status(seq_num, UNDERWAY, true);
-                    notRelevantChanges.add_sequence_number(seq_num, remoteReader);
+                    if (remoteReader->is_local_reader())
+                    {
+                        remoteReader->local_reader()->processGapMsg(m_guid, seq_num, SequenceNumberSet_t(seq_num+1));
+                    }
+                    else
+                    {
+                        notRelevantChanges.add_sequence_number(seq_num, remoteReader);
+                    }
                 }
             };
 
