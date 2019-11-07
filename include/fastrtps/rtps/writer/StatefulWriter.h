@@ -114,6 +114,13 @@ public:
      */
     void send_any_unsent_changes() override;
 
+    /**
+     * Sends a change directly to a intraprocess reader.
+     */
+    bool intraprocess_delivery(
+            CacheChange_t* change,
+            ReaderProxy* reader);
+
     //!Increment the HB count.
     inline void incrementHBCount()
     {
@@ -287,6 +294,14 @@ private:
             bool final,
             bool liveliness = false);
 
+    void send_intraprocess_heartbeat_nts_(
+            ReaderProxy* reader);
+
+    void send_intraprocess_gap_(
+            ReaderProxy* reader,
+            std::set<SequenceNumber_t> changesSeqNum);
+
+
     void check_acked_status();
 
     /**
@@ -309,6 +324,8 @@ private:
     int32_t currentUsageSendBufferSize_;
 
     std::vector<std::unique_ptr<FlowController> > m_controllers;
+
+    uint64_t last_intraprocess_sequence_number_;
 
     StatefulWriter& operator=(const StatefulWriter&) = delete;
 };

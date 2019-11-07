@@ -70,12 +70,9 @@ class ReaderLocator : public RTPSMessageSenderInterface
             return is_local_reader_;
         }
 
-        RTPSReader* local_reader()
-        {
-            return local_reader_;
-        }
+        RTPSReader* local_reader();
 
-        void set_local_reader(RTPSReader* local_reader)
+        void local_reader(RTPSReader* local_reader)
         {
             local_reader_ = local_reader;
         }
@@ -114,13 +111,15 @@ class ReaderLocator : public RTPSMessageSenderInterface
          * @param unicast_locators    Unicast locators of the remote reader.
          * @param multicast_locators  Multicast locators of the remote reader.
          * @param expects_inline_qos  Whether remote reader expects to receive inline QoS.
+         * @param is_local_reader     The reader is in the local process.
          *
          * @return true when information has changed, false otherwise.
          */
         bool update(
                 const ResourceLimitedVector<Locator_t>& unicast_locators,
                 const ResourceLimitedVector<Locator_t>& multicast_locators,
-                bool expects_inline_qos);
+                bool expects_inline_qos,
+                bool is_local_reader);
 
         /**
          * Try to stop using this object for an unmatched reader.

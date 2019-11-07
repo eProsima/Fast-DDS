@@ -507,26 +507,28 @@ bool WriterProxy::process_heartbeat(
         missing_changes_update(last_seq);
         heartbeat_final_flag_.store(final_flag);
 
-        //Analyze wheter a acknack message is needed:
-        if (!final_flag && !is_on_same_process_)
+        //Analyze whether a acknack message is needed:
+        if (!is_on_same_process_)
         {
-            if (!disable_positive || are_there_missing_changes())
+            if (!final_flag)
             {
-                heartbeat_response_->restart_timer();
+                if (!disable_positive || are_there_missing_changes())
+                {
+                    heartbeat_response_->restart_timer();
+                }
+            }
+            else if (final_flag && !liveliness_flag)
+            {
+                if (are_there_missing_changes())
+                {
+                    heartbeat_response_->restart_timer();
+                }
+            }
+            else
+            {
+                assert_liveliness = liveliness_flag;
             }
         }
-        else if (final_flag && !liveliness_flag)
-        {
-            if (are_there_missing_changes())
-            {
-                heartbeat_response_->restart_timer();
-            }
-        }
-        else
-        {
-            assert_liveliness = liveliness_flag;
-        }
-
         return true;
     }
 
