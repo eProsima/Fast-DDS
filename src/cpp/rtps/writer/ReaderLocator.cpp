@@ -24,6 +24,7 @@
 #include <fastrtps/rtps/common/LocatorListComparisons.hpp>
 
 #include "../participant/RTPSParticipantImpl.h"
+#include "rtps/RTPSDomainImpl.hpp"
 
 namespace eprosima {
 namespace fastrtps {
@@ -59,7 +60,11 @@ bool ReaderLocator::start(
         locator_info_.remote_guid = remote_guid;
         local_reader_ = nullptr;
 
-        if (!is_local_reader)
+        if(is_local_reader)
+        {
+            local_reader_ = RTPSDomainImpl::find_local_reader(locator_info_.remote_guid);
+        }
+        else
         {
             locator_info_.unicast = unicast_locators;
             locator_info_.multicast = multicast_locators;
@@ -77,7 +82,8 @@ bool ReaderLocator::start(
 bool ReaderLocator::update(
         const ResourceLimitedVector<Locator_t>& unicast_locators,
         const ResourceLimitedVector<Locator_t>& multicast_locators,
-        bool expects_inline_qos)
+        bool expects_inline_qos,
+        bool is_local_reader)
 {
     bool ret_val = false;
 
@@ -87,10 +93,13 @@ bool ReaderLocator::update(
         ret_val = true;
     }
     if (!(locator_info_.unicast == unicast_locators) ||
-            !(locator_info_.multicast == multicast_locators))
+        !(locator_info_.multicast == multicast_locators))
     {
-        locator_info_.unicast = unicast_locators;
-        locator_info_.multicast = multicast_locators;
+        if(!is_local_reader)
+        {
+            locator_info_.unicast = unicast_locators;
+            locator_info_.multicast = multicast_locators;
+        }
         locator_info_.reset();
         locator_info_.enable(true);
         ret_val = true;
@@ -99,8 +108,7 @@ bool ReaderLocator::update(
     return ret_val;
 }
 
-bool ReaderLocator::stop(
-        const GUID_t& remote_guid)
+bool ReaderLocator::stop(const GUID_t& remote_guid)
 {
     if (locator_info_.remote_guid == remote_guid)
     {
@@ -149,6 +157,15 @@ bool ReaderLocator::send(
     }
 
     return true;
+}
+
+RTPSReader* ReaderLocator::local_reader()
+{
+    if (!local_reader_)
+    {
+        local_reader_ = RTPSDomainImpl::find_local_reader(locator_info_.remote_guid);
+    }
+    return local_reader_;
 }
 
 } /* namespace rtps */

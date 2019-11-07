@@ -42,6 +42,7 @@ namespace rtps {
 
 class StatefulWriter;
 class TimedEvent;
+class RTPSReader;
 
 /**
  * ReaderProxy class that helps to keep the state of a specific Reader with respect to the RTPSWriter.
@@ -263,6 +264,33 @@ public:
     inline const ReaderProxyData& reader_attributes() const
     {
         return reader_attributes_;
+    }
+
+    /**
+     * Check if the reader is on the same process.
+     * @return true if the reader is no the same process.
+     */
+    inline bool is_local_reader()
+    {
+        return locator_info_.is_local_reader();
+    }
+
+    /**
+     * Get the local reader on the same process (if any).
+     * @return The local reader on the same process.
+     */
+    inline RTPSReader* local_reader()
+    {
+        return locator_info_.local_reader();
+    }
+
+    /**
+     * Get the local reader on the same process (if any).
+     * @return The local reader on the same process.
+     */
+    inline void local_reader(RTPSReader* reader)
+    {
+        locator_info_.local_reader(reader);
     }
 
     /**
