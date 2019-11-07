@@ -177,9 +177,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
 
-    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
-    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
-
     // Initial peers
     if (m_att.builtin.initialPeersList.empty())
     {
@@ -227,29 +224,20 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
     // Normalize unicast locators.
     m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
-
-    createReceiverResources(m_att.defaultUnicastLocatorList, true);
-
+    
     if (!hasLocatorsDefined)
     {
         logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
             << m_att.defaultUnicastLocatorList);
     }
-
-    createReceiverResources(m_att.defaultMulticastLocatorList, true);
-
+    
 #if HAVE_SECURITY
     // Start security
     // TODO(Ricardo) Get returned value in future.
     m_security_manager_initialized = m_security_manager.init(security_attributes_, PParam.properties, m_is_security_active);
 #endif
 
-    //START BUILTIN PROTOCOLS
     mp_builtinProtocols = new BuiltinProtocols();
-    if (!mp_builtinProtocols->initBuiltinProtocols(this, m_att.builtin))
-    {
-        logError(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
-    }
 
     logInfo(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
 }
@@ -261,6 +249,21 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         RTPSParticipantListener* plisten)
     : RTPSParticipantImpl(PParam, guidP, c_GuidPrefix_Unknown, par, plisten)
 {
+}
+
+void RTPSParticipantImpl::enable()
+{
+    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
+    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
+
+    createReceiverResources(m_att.defaultUnicastLocatorList, true);
+    createReceiverResources(m_att.defaultMulticastLocatorList, true);
+
+    // Start builtin protocols
+    if (!mp_builtinProtocols->initBuiltinProtocols(this, m_att.builtin))
+    {
+        logError(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
+    }
 }
 
 const std::vector<RTPSWriter*>& RTPSParticipantImpl::getAllWriters() const
