@@ -628,15 +628,18 @@ bool StatefulReader::change_removed_by_history(
     {
         if(wp != nullptr || matched_writer_lookup(a_change->writerGUID,&wp))
         {
-            if(!a_change->isRead && wp->available_changes_max() >= a_change->sequenceNumber)
+            if (a_change->is_fully_assembled())
             {
-                if (0 < total_unread_)
+                if (!a_change->isRead && wp->available_changes_max() >= a_change->sequenceNumber)
                 {
-                    --total_unread_;
+                    if (0 < total_unread_)
+                    {
+                        --total_unread_;
+                    }
                 }
-            }
 
-            wp->change_removed_from_history(a_change->sequenceNumber);
+                wp->change_removed_from_history(a_change->sequenceNumber);
+            }
             return true;
         }
         else if(a_change->writerGUID.entityId != this->m_trustedWriterEntityId)
