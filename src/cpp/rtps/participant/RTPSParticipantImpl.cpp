@@ -266,17 +266,7 @@ void RTPSParticipantImpl::enable()
     }
 }
 
-const std::vector<RTPSWriter*>& RTPSParticipantImpl::getAllWriters() const
-{
-    return m_allWriterList;
-}
-
-const std::vector<RTPSReader*>& RTPSParticipantImpl::getAllReaders() const
-{
-    return m_allReaderList;
-}
-
-RTPSParticipantImpl::~RTPSParticipantImpl()
+void RTPSParticipantImpl::disable()
 {
     // Disable Retries on Transports
     m_network_Factory.Shutdown();
@@ -299,7 +289,20 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
     }
 
     delete(this->mp_builtinProtocols);
+}
 
+const std::vector<RTPSWriter*>& RTPSParticipantImpl::getAllWriters() const
+{
+    return m_allWriterList;
+}
+
+const std::vector<RTPSReader*>& RTPSParticipantImpl::getAllReaders() const
+{
+    return m_allReaderList;
+}
+
+RTPSParticipantImpl::~RTPSParticipantImpl()
+{
 #if HAVE_SECURITY
     m_security_manager.destroy();
 #endif
