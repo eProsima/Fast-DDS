@@ -37,6 +37,7 @@ ReaderLocator::ReaderLocator(
     , locator_info_(max_unicast_locators, max_multicast_locators)
     , expects_inline_qos_(false)
     , is_local_reader_(false)
+    , local_reader_(nullptr)
     , guid_prefix_as_vector_(1u)
     , guid_as_vector_(1u)
 {
