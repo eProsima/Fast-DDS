@@ -68,28 +68,32 @@ public:
      * @param change Pointer to the change that is going to be removed.
      * @return True if removed correctly.
      */
-    bool change_removed_by_history(CacheChange_t* change) override;
+    bool change_removed_by_history(
+            CacheChange_t* change) override;
 
     /**
      * Add a matched reader.
      * @param data Pointer to the ReaderProxyData object added.
      * @return True if added.
      */
-    bool matched_reader_add(const ReaderProxyData& data) override;
+    bool matched_reader_add(
+            const ReaderProxyData& data) override;
 
     /**
      * Remove a matched reader.
      * @param reader_guid GUID of the reader to remove.
      * @return True if removed.
      */
-    bool matched_reader_remove(const GUID_t& reader_guid) override;
+    bool matched_reader_remove(
+            const GUID_t& reader_guid) override;
 
     /**
      * Tells us if a specific Reader is matched against this writer
      * @param reader_guid GUID of the reader to check.
      * @return True if it was matched.
      */
-    bool matched_reader_is_matched(const GUID_t& reader_guid) override;
+    bool matched_reader_is_matched(
+            const GUID_t& reader_guid) override;
 
     /**
      * Method to indicate that there are changes not sent in some of all ReaderProxy.
@@ -100,12 +104,15 @@ public:
      * Update the Attributes of the Writer.
      * @param att New attributes
      */
-    void updateAttributes(const WriterAttributes& att) override {
+    void updateAttributes(
+            const WriterAttributes& att) override
+    {
         (void)att;
         //FOR NOW THERE IS NOTHING TO UPDATE.
     }
 
-    bool set_fixed_locators(const LocatorList_t& locator_list);
+    bool set_fixed_locators(
+            const LocatorList_t& locator_list);
 
     void update_unsent_changes(
             const SequenceNumber_t& seq_num,
@@ -114,7 +121,8 @@ public:
     //!Reset the unsent changes.
     void unsent_changes_reset();
 
-    bool is_acked_by_all(const CacheChange_t* change) const override;
+    bool is_acked_by_all(
+            const CacheChange_t* change) const override;
 
     bool try_remove_change(
             std::chrono::steady_clock::time_point&,
@@ -123,7 +131,8 @@ public:
         return remove_older_changes(1);
     }
 
-    void add_flow_controller(std::unique_ptr<FlowController> controller) override;
+    void add_flow_controller(
+            std::unique_ptr<FlowController> controller) override;
 
     /**
      * Send a message through this interface.
@@ -141,9 +150,12 @@ private:
 
     bool has_builtin_guid();
 
-    void update_reader_info(bool create_sender_resources);
+    void update_reader_info(
+            bool create_sender_resources);
 
-    bool intraprocess_delivery(CacheChange_t* change, ReaderLocator& reader_locator);
+    bool intraprocess_delivery(
+            CacheChange_t* change,
+            ReaderLocator& reader_locator);
 
     bool is_inline_qos_expected_ = false;
     LocatorList_t fixed_locators_;
