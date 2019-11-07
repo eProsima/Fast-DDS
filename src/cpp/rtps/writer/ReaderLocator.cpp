@@ -82,8 +82,7 @@ bool ReaderLocator::start(
 bool ReaderLocator::update(
         const ResourceLimitedVector<Locator_t>& unicast_locators,
         const ResourceLimitedVector<Locator_t>& multicast_locators,
-        bool expects_inline_qos,
-        bool is_local_reader)
+        bool expects_inline_qos)
 {
     bool ret_val = false;
 
@@ -95,7 +94,7 @@ bool ReaderLocator::update(
     if (!(locator_info_.unicast == unicast_locators) ||
         !(locator_info_.multicast == multicast_locators))
     {
-        if(!is_local_reader)
+        if(!is_local_reader_)
         {
             locator_info_.unicast = unicast_locators;
             locator_info_.multicast = multicast_locators;

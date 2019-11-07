@@ -118,8 +118,7 @@ class ReaderLocator : public RTPSMessageSenderInterface
         bool update(
                 const ResourceLimitedVector<Locator_t>& unicast_locators,
                 const ResourceLimitedVector<Locator_t>& multicast_locators,
-                bool expects_inline_qos,
-                bool is_local_reader);
+                bool expects_inline_qos);
 
         /**
          * Try to stop using this object for an unmatched reader.
