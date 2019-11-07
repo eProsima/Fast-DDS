@@ -33,6 +33,18 @@ Current Reader API will be used by local writers to deliver data. The local writ
 ## Readers: management of local writers
 When matching a writer, the reader should check if it is on the same process.
 
+**Considerations at destruction time**
+
+Until now a reader was safe to be destructed because we are sure any thread will access it. This is possible because:
+
+* All events which use the reader were destructed first. Then the event thread will never access the reader.
+* The reader was deregistered from the `ReceiveResource` objects. Then any reception thread will never access the
+reader.
+
+Now a reader can be accessed by a writer from the local process. But it was accessed if there was a match with the
+writer using discovery. Therefore, we are sure there will be an unmatch with the writer using discovery before the reader
+is destructed. And this unmatch will be instantly because the EDP builtin endpoints will use intraprocess mechanism.
+
 ### StatefulReader
 No output traffic to local writers should be performed.
 * Changes on WriterProxy
@@ -43,7 +55,7 @@ No output traffic to local writers should be performed.
 When matching a reader, the writer should check if it is on the same process.
 * No output traffic to local readers should be performed.
 * Samples are sent to local readers using `receive_local_writer_data`.
-* When a local reader is matched, and transient_local durabitlity is used, the reader automatically receives data with `receive_local_writer_data`.
+* When a local reader is matched, and transient_local durability is used, the reader automatically receives data with `receive_local_writer_data`.
 
 ### StatelessWriter
 * On ReaderLocator::start, no locators should be added when the reader is local
@@ -57,27 +69,11 @@ When matching a reader, the writer should check if it is on the same process.
 
 ### Participant discovery (PDP)
 We will leave participant discovery to the standard mechanism, but builtin endpoints will use the new
-mechanism to match with the ones on the local process.
+mechanism to send/receive `ParticipantProxyData` to/from the ones on the local process.
 
 ### Endpoint discovery (EDP)
-Current mechanism performs matching on the local participant when an endpoint is created. 
-This should be extended to inform all participants of the same domain in the current process.
-We should ensure that local readers match the local writers before the local writers match the local readers.
-
-So the process would be:
-```
-// When creating a writer
-foreach reader in join(local process readers, discovered remote readers)
-    if valid_matching(reader, writer)
-        reader.matched_writer_add(writer)
-        writer.matched_reader_add(reader)
-
-// When creating a reader
-foreach writer in join(local process writers, discovered remote writers)
-    if valid_matching(reader, writer)
-        reader.matched_writer_add(writer)
-        writer.matched_reader_add(reader)
-```
+We will leave endpoint discovery to the standard mechanism, but builtin endpoints will use the new mechanism to
+send/receive `WriterProxyData` and `ReaderProxyData` to/from the ones on the local process.
 
 ## Additional considerations
 
