@@ -94,8 +94,8 @@ public:
      * Search for the profile specified and fill the structure.
      * @param profile_name Name for the profile to be used to fill the structure.
      * @param atts Structure to be filled.
-     * @param log_error Flag to log an error if the profile_name is not found.
-     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
+     * @param log_error Flag to log an error if the profile_name is not found. Defaults true.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
     RTPS_DllAPI static XMLP_ret fillParticipantAttributes(
             const std::string& profile_name,
@@ -110,8 +110,8 @@ public:
      * Search for the profile specified and fill the structure.
      * @param profile_name Name for the profile to be used to fill the structure.
      * @param atts Structure to be filled.
-     * @param log_error Flag to log an error if the profile_name is not found.
-     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
+     * @param log_error Flag to log an error if the profile_name is not found. Defaults true.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
     RTPS_DllAPI static XMLP_ret fillPublisherAttributes(
             const std::string& profile_name,
@@ -126,8 +126,8 @@ public:
      * Search for the profile specified and fill the structure.
      * @param profile_name Name for the profile to be used to fill the structure.
      * @param atts Structure to be filled.
-     * @param log_error Flag to log an error if the profile_name is not found.
-     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case. Defaults true.
+     * @param log_error Flag to log an error if the profile_name is not found. Defaults true.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
     RTPS_DllAPI static XMLP_ret fillSubscriberAttributes(
             const std::string& profile_name,
