@@ -83,6 +83,8 @@ void ReaderProxy::start(const ReaderProxyData& reader_attributes)
         reader_attributes.remote_locators().multicast,
         reader_attributes.m_expectsInlineQos,
         /*reader_attributes.guid().is_on_same_process_as(writer_->getGuid()*/false);
+        // TODO: To be uncommented when local (on the same process) readers are found during discovery phase.
+        // A fix in the discovery is pendant to solve this.
 
     is_active_ = true;
     reader_attributes_ = reader_attributes;
