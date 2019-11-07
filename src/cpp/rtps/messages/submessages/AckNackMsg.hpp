@@ -114,7 +114,7 @@ bool RTPSMessageCreator::addSubmessageNackFrag(
         CDRMessage_t* msg,
         const EntityId_t& readerId,
         const EntityId_t& writerId,
-        SequenceNumber_t& writerSN,
+        const SequenceNumber_t& writerSN,
         FragmentNumberSet_t fnState,
         int32_t count)
 {

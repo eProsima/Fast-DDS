@@ -20,7 +20,6 @@
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/log/Log.h>
-#include "FragmentedChangePitStop.h"
 #include "ReaderHistoryState.hpp"
 
 #include <fastrtps/rtps/reader/ReaderListener.h>
@@ -50,13 +49,11 @@ RTPSReader::RTPSReader(
     , m_acceptMessagesFromUnkownWriters(false)
     , m_expectsInlineQos(att.expectsInlineQos)
     , history_state_(new ReaderHistoryState(att.matched_writers_allocation.initial))
-    , fragmentedChangePitStop_(nullptr)
     , liveliness_kind_(att.liveliness_kind_)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
 {
     mp_history->mp_reader = this;
     mp_history->mp_mutex = &mp_mutex;
-    fragmentedChangePitStop_ = new FragmentedChangePitStop(this);
 
     logInfo(RTPS_READER,"RTPSReader created correctly");
 }
@@ -64,7 +61,6 @@ RTPSReader::RTPSReader(
 RTPSReader::~RTPSReader()
 {
     logInfo(RTPS_READER,"Removing reader "<<this->getGuid().entityId;);
-    delete fragmentedChangePitStop_;
     delete history_state_;
     mp_history->mp_reader = nullptr;
     mp_history->mp_mutex = nullptr;
@@ -93,11 +89,16 @@ bool RTPSReader::setListener(ReaderListener *target)
     return true;
 }
 
-CacheChange_t* RTPSReader::findCacheInFragmentedCachePitStop(
+CacheChange_t* RTPSReader::findCacheInFragmentedProcess(
         const SequenceNumber_t& sequence_number,
         const GUID_t& writer_guid) const
 {
-    return fragmentedChangePitStop_->find(sequence_number, writer_guid);
+    CacheChange_t* ret_val = nullptr;
+    if (mp_history->get_change(sequence_number, writer_guid, &ret_val))
+    {
+        return ret_val->is_fully_assembled() ? nullptr : ret_val;
+    }
+    return nullptr;
 }
 
 void RTPSReader::add_persistence_guid(

@@ -235,7 +235,7 @@ public:
      * @param writer_guid writer GUID_t of the searched CacheChange_t.
      * @return If a CacheChange_t was found, it will be returned. In other case nullptr is returned.
      */
-    CacheChange_t* findCacheInFragmentedCachePitStop(
+    CacheChange_t* findCacheInFragmentedProcess(
             const SequenceNumber_t& sequence_number,
             const GUID_t& writer_guid) const;
 
@@ -328,8 +328,6 @@ protected:
 
     //!ReaderHistoryState
     ReaderHistoryState* history_state_;
-
-    FragmentedChangePitStop* fragmentedChangePitStop_;
 
     uint64_t total_unread_ = 0;
 

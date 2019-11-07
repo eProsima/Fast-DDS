@@ -88,7 +88,6 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, const std::function<ui
 
     if(reserve_Cache(chan, dataSize))
     {
-        (*chan)->setFragmentSize(0);
         return true;
     }
 
@@ -162,6 +161,7 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
             ch->isRead = 0;
             ch->sourceTimestamp.seconds(0);
             ch->sourceTimestamp.fraction(0);
+            ch->setFragmentSize(0);
             m_freeCaches.push_back(ch);
             break;
         case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
@@ -176,6 +176,7 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
             ch->isRead = 0;
             ch->sourceTimestamp.seconds(0);
             ch->sourceTimestamp.fraction(0);
+            ch->setFragmentSize(0);
             m_freeCaches.push_back(ch);
             break;
         case DYNAMIC_RESERVE_MEMORY_MODE:

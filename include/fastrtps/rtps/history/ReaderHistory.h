@@ -74,6 +74,17 @@ public:
      * @return True if succesful, even if no changes have been removed.
      * */
     RTPS_DllAPI bool remove_changes_with_guid(const GUID_t& a_guid);
+
+    /**
+     * Remove all fragmented changes from certain writer up to certain sequence number.
+     * @param seq_num First SequenceNumber_t not to be removed.
+     * @param writer_guid GUID of the writer for which changes should be looked for.
+     * @return True if succesful, even if no changes have been removed.
+     */
+    bool remove_fragmented_changes_until(
+            const SequenceNumber_t& seq_num,
+            const GUID_t& writer_guid);
+
     /**
      * Sort the CacheChange_t from the History by timestamp
      */
