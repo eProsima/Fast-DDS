@@ -40,7 +40,7 @@ struct FragmentTestStep
     {
         if (input.num_fragments > 0)
         {
-            SerializedPayload_t payload{100};
+            SerializedPayload_t payload(100);
             payload.length = 100;
             uut.add_fragments(payload, input.initial_fragment, input.num_fragments);
         }
