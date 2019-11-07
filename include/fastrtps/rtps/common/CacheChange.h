@@ -140,7 +140,7 @@ struct RTPS_DllAPI CacheChange_t
         // Copy certain values from serializedPayload
         serializedPayload.encapsulation = ch_ptr->serializedPayload.encapsulation;
 
-        setFragmentSize(ch_ptr->fragment_size_, true);
+        setFragmentSize(ch_ptr->fragment_size_, false);
 
     }
 
