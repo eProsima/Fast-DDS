@@ -29,6 +29,8 @@
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include "../participant/RTPSParticipantImpl.h"
 
+#include "../RTPSDomainImpl.hpp"
+
 #include <foonathan/memory/namespace_alias.hpp>
 #include <fastrtps/utils/collections/foonathan_memory_helpers.hpp>
 
@@ -112,8 +114,10 @@ void WriterProxy::start(
     guid_as_vector_.push_back(attributes_.guid());
     guid_prefix_as_vector_.push_back(attributes_.guid().guidPrefix);
     is_alive_ = true;
-    is_on_same_process_ = !attributes_.guid().is_builtin() &&
-            reader_->getRTPSParticipant()->getGuid().is_on_same_process_as(attributes_.guid());
+    is_on_same_process_ = 
+        RTPSDomainImpl::is_intraprocess_enabled() &&
+        reader_->getGuid().is_on_same_process_as(attributes_.guid());
+
     if (!is_on_same_process_)
     {
         initial_acknack_->restart_timer();
@@ -130,13 +134,11 @@ void WriterProxy::update(
 
     assert(is_alive_);
     attributes_ = attributes;
-    is_on_same_process_ = reader_->getRTPSParticipant()->getGuid().is_on_same_process_as(attributes_.guid());
     if (is_on_same_process_)
     {
         initial_acknack_->cancel_timer();
         heartbeat_response_->cancel_timer();
     }
-
 }
 
 void WriterProxy::stop()
