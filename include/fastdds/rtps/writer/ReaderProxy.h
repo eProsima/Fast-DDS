@@ -51,6 +51,7 @@ class TimedEvent;
 class ReaderProxy
 {
 public:
+
     ~ReaderProxy();
 
     /**
@@ -68,14 +69,16 @@ public:
      * Activate this proxy associating it to a remote reader.
      * @param reader_attributes ReaderProxyData of the reader for which to keep state.
      */
-    void start(const ReaderProxyData& reader_attributes);
+    void start(
+            const ReaderProxyData& reader_attributes);
 
     /**
      * Update information about the remote reader.
      * @param reader_attributes ReaderProxyData with updated information of the reader.
      * @return true if data was modified, false otherwise.
      */
-    bool update(const ReaderProxyData& reader_attributes);
+    bool update(
+            const ReaderProxyData& reader_attributes);
 
     /**
      * Disable this proxy.
@@ -107,29 +110,39 @@ public:
      * @param seq_num Sequence number of the change to be checked.
      * @return true when the change is irrelevant or has been already acknowledged, false otherwise.
      */
-    bool change_is_acked(const SequenceNumber_t& seq_num) const;
+    bool change_is_acked(
+            const SequenceNumber_t& seq_num) const;
 
     /**
      * Mark all changes up to the one indicated by seq_num as Acknowledged.
      * For instance, when seq_num is 30, changes 1-29 are marked as acknowledged.
      * @param seq_num Sequence number of the first change not to be marked as acknowledged.
      */
-    void acked_changes_set(const SequenceNumber_t& seq_num);
+    void acked_changes_set(
+            const SequenceNumber_t& seq_num);
 
     /**
      * Mark all changes in the vector as requested.
      * @param seq_num_set Bitmap of sequence numbers.
      * @return true if at least one change has been marked as REQUESTED, false otherwise.
      */
-    bool requested_changes_set(const SequenceNumberSet_t& seq_num_set);
+    bool requested_changes_set(
+            const SequenceNumberSet_t& seq_num_set);
+
+    static bool change_less_than_sequence(
+            const ChangeForReader_t& change,
+            const SequenceNumber_t& seq_num)
+    {
+        return change.getSequenceNumber() < seq_num;
+    }
 
     /**
-    * Applies the given function object to every unsent change.
-    * @param max_seq Maximum sequence number to be considered without including it.
-    * @param f Function to apply.
-    *          Will receive a SequenceNumber_t and a ChangeForReader_t*.
-    *          The second argument may be nullptr for irrelevant changes.
-    */
+     * Applies the given function object to every unsent change.
+     * @param max_seq Maximum sequence number to be considered without including it.
+     * @param f Function to apply.
+     *          Will receive a SequenceNumber_t and a ChangeForReader_t*.
+     *          The second argument may be nullptr for irrelevant changes.
+     */
     template <class BinaryFunction>
     void for_each_unsent_change(
             const SequenceNumber_t& max_seq,
@@ -141,20 +154,31 @@ public:
             ChangeConstIterator it = changes_for_reader_.begin();
             while (it != changes_for_reader_.end())
             {
+                bool need_to_update = false;
+
                 // Holes before this change are informed as irrelevant.
                 SequenceNumber_t change_seq = it->getSequenceNumber();
-                for(; current_seq < change_seq; ++current_seq)
+                for (; current_seq < change_seq; ++current_seq)
                 {
-                    f(current_seq, nullptr);
+                    need_to_update |= f(current_seq, nullptr);
                 }
 
                 // We then inform of this change if it is unsent, and go to the next one.
                 if (it->getStatus() == UNSENT)
                 {
-                    f(current_seq, &(*it));
+                    need_to_update |= f(current_seq, &(*it));
                 }
                 ++current_seq;
-                ++it;
+
+                if (need_to_update)
+                {
+                    it = std::lower_bound(changes_for_reader_.begin(),
+                                    changes_for_reader_.end(), change_seq, change_less_than_sequence);
+                }
+                else
+                {
+                    ++it;
+                }
             }
 
             // After the last change has been checked, there may be a hole at the end.
@@ -178,9 +202,10 @@ public:
      * @param seq_num Sequence number of the change to update.
      * @param status Status to apply.
      * @param restart_nack_supression Whether nack supression event should be restarted or not.
-     * @return true when a status has changed, false otherwise.
+     * @return 0 when a status has changed, -1 otherwise. In the special case of being removed an element from
+     * changes_for_reader_, 1 value is returned.
      */
-    bool set_change_to_status(
+    int set_change_to_status(
             const SequenceNumber_t& seq_num,
             ChangeForReaderStatus_t status,
             bool restart_nack_supression);
@@ -213,7 +238,8 @@ public:
      * Call this to inform a change was removed from history.
      * @param seq_num Sequence number of the removed change.
      */
-    void change_has_been_removed(const SequenceNumber_t& seq_num);
+    void change_has_been_removed(
+            const SequenceNumber_t& seq_num);
 
     /*!
      * @brief Returns there is some UNACKNOWLEDGED change.
@@ -271,7 +297,8 @@ public:
      * @param acknack_count The count of the received ACKNACK.
      * @return true if internal count changed (i.e. new ACKNACK is accepted)
      */
-    bool check_and_set_acknack_count(uint32_t acknack_count)
+    bool check_and_set_acknack_count(
+            uint32_t acknack_count)
     {
         if (last_acknack_count_ < acknack_count)
         {
@@ -301,10 +328,11 @@ public:
      * @param change
      * @return true if the change is relevant, false otherwise.
      */
-    inline bool rtps_is_relevant(CacheChange_t* change)
+    inline bool rtps_is_relevant(
+            CacheChange_t* change)
     {
         (void)change; return true;
-    };
+    }
 
     /**
      * Get the highest fully acknowledged sequence number.
@@ -319,7 +347,8 @@ public:
      * Change the interval of nack-supression event.
      * @param interval Time from data sending to acknack processing.
      */
-    void update_nack_supression_interval(const Duration_t& interval);
+    void update_nack_supression_interval(
+            const Duration_t& interval);
 
     /**
      * Check if there are gaps in the list of ChangeForReader_t.
@@ -402,7 +431,8 @@ private:
      * @param seq_num Sequence number to find.
      * @return Iterator pointing to the change, changes_for_reader_.end() if not found.
      */
-    ChangeConstIterator find_change(const SequenceNumber_t& seq_num) const;
+    ChangeConstIterator find_change(
+            const SequenceNumber_t& seq_num) const;
 };
 
 } /* namespace rtps */
