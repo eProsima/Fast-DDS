@@ -60,7 +60,7 @@ bool ReaderLocator::start(
         locator_info_.remote_guid = remote_guid;
         local_reader_ = nullptr;
 
-        if(is_local_reader)
+        if (is_local_reader)
         {
             local_reader_ = RTPSDomainImpl::find_local_reader(locator_info_.remote_guid);
         }
@@ -94,7 +94,7 @@ bool ReaderLocator::update(
     if (!(locator_info_.unicast == unicast_locators) ||
         !(locator_info_.multicast == multicast_locators))
     {
-        if(!is_local_reader_)
+        if (!is_local_reader_)
         {
             locator_info_.unicast = unicast_locators;
             locator_info_.multicast = multicast_locators;
