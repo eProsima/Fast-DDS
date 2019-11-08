@@ -63,7 +63,7 @@ bool ReaderLocator::start(
 
         if (is_local_reader_)
         {
-            local_reader_ = RTPSDomainImpl::find_local_reader(locator_info_.remote_guid);
+            local_reader_ = nullptr;// RTPSDomainImpl::find_local_reader(locator_info_.remote_guid);
         }
         else
         {
