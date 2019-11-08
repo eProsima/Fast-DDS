@@ -92,7 +92,7 @@ bool StatefulReader::matched_writer_add(
 {
     assert(wdata.guid() != c_Guid_Unknown);
 
-    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
 
     if (!is_alive_)
     {
@@ -172,6 +172,18 @@ bool StatefulReader::matched_writer_add(
         else
         {
             logError(RTPS_LIVELINESS, "Finite liveliness lease duration but WLP not enabled, cannot add writer");
+        }
+    }
+
+    guard.unlock();
+
+    if (is_same_process)
+    {
+        RTPSWriter* writer = RTPSDomainImpl::find_local_writer(wdata.guid());
+        if (writer)
+        {
+            bool tmp;
+            writer->process_acknack(wdata.guid(), m_guid, 1, SequenceNumberSet_t(), false, tmp);
         }
     }
 

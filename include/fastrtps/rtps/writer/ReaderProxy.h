@@ -124,6 +124,12 @@ public:
     bool requested_changes_set(const SequenceNumberSet_t& seq_num_set);
 
     /**
+     * Performs processing of preemptive acknack
+     * @return true if a heartbeat should be sent, false otherwise.
+     */
+    bool process_initial_acknack();
+
+    /**
     * Applies the given function object to every unsent change.
     * @param max_seq Maximum sequence number to be considered without including it.
     * @param f Function to apply.
@@ -246,6 +252,15 @@ public:
     inline bool expects_inline_qos() const
     {
         return reader_attributes_.m_expectsInlineQos;
+    }
+
+    /**
+     * Check if the reader represented by this proxy is remote and reliable.
+     * @return true if the reader represented by this proxy is remote and reliable.
+     */
+    inline bool is_reliable() const
+    {
+        return reader_attributes_.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS;
     }
 
     /**
