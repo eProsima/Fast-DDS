@@ -340,6 +340,12 @@ RTPSWriter* RTPSDomainImpl::find_local_writer(
     return nullptr;
 }
 
+bool RTPSDomainImpl::is_intraprocess_enabled()
+{
+    // TODO(Miguel C): Make this configurable.
+    return true;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
