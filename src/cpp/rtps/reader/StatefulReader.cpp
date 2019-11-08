@@ -31,6 +31,8 @@
 #include <fastrtps/rtps/builtin/liveliness/WLP.h>
 #include <fastrtps/rtps/writer/LivelinessManager.h>
 
+#include "../RTPSDomainImpl.hpp"
+
 #include <mutex>
 #include <thread>
 
@@ -97,13 +99,17 @@ bool StatefulReader::matched_writer_add(
         return false;
     }
 
+    bool is_same_process =
+        RTPSDomainImpl::is_intraprocess_enabled() &&
+        m_guid.is_on_same_process_as(wdata.guid());
+
     for (WriterProxy* it : matched_writers_)
     {
         if (it->guid() == wdata.guid())
         {
             logInfo(RTPS_READER, "Attempting to add existing writer, updating information");
             it->update(wdata);
-            if (!getRTPSParticipant()->getGuid().is_on_same_process_as(wdata.guid()) || wdata.guid().is_builtin())
+            if (!is_same_process)
             {
                 for (const Locator_t& locator : it->remote_locators_shrinked())
                 {
@@ -137,7 +143,7 @@ bool StatefulReader::matched_writer_add(
         matched_writers_pool_.pop_back();
     }
 
-    if (!getRTPSParticipant()->getGuid().is_on_same_process_as(wdata.guid()) || wdata.guid().is_builtin())
+    if (!is_same_process)
     {
         for (const Locator_t& locator : wp->remote_locators_shrinked())
         {
