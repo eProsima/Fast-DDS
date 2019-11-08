@@ -31,7 +31,7 @@
 #include <fastrtps/rtps/builtin/liveliness/WLP.h>
 #include <fastrtps/rtps/writer/LivelinessManager.h>
 
-#include "../RTPSDomainImpl.hpp"
+#include "rtps/RTPSDomainImpl.hpp"
 
 #include <mutex>
 #include <thread>

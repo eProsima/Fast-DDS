@@ -29,7 +29,7 @@
 #include <fastrtps/rtps/messages/RTPSMessageCreator.h>
 #include "../participant/RTPSParticipantImpl.h"
 
-#include "../RTPSDomainImpl.hpp"
+#include "rtps/RTPSDomainImpl.hpp"
 
 #include <foonathan/memory/namespace_alias.hpp>
 #include <fastrtps/utils/collections/foonathan_memory_helpers.hpp>
