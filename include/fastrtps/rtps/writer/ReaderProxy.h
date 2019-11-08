@@ -249,12 +249,13 @@ public:
     }
 
     /**
-     * Check if the reader represented by this proxy is reliable.
-     * @return true if the reader represented by this proxy is reliable.
+     * Check if the reader represented by this proxy is remote and reliable.
+     * @return true if the reader represented by this proxy is remote and reliable.
      */
-    inline bool is_reliable() const
+    inline bool is_remote_and_reliable() const
     {
-        return reader_attributes_.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS;
+        return !locator_info_.is_local_reader() &&
+            reader_attributes_.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS;
     }
 
     /**

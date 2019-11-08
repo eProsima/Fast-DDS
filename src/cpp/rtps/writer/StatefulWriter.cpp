@@ -213,7 +213,7 @@ void StatefulWriter::unsent_change_added_to_history(
 
                 if(m_pushMode)
                 {
-                    if(it->is_reliable())
+                    if(it->is_remote_and_reliable())
                     {
                         changeForReader.setStatus(UNDERWAY);
                     }
@@ -411,7 +411,7 @@ void StatefulWriter::send_any_unsent_changes()
                     RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReader->message_sender());
 
                     // Loop all changes
-                    bool is_reliable = remoteReader->is_reliable();
+                    bool is_remote_and_reliable = remoteReader->is_remote_and_reliable();
                     auto unsent_change_process = [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
                     {
                         if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
@@ -428,7 +428,7 @@ void StatefulWriter::send_any_unsent_changes()
                                 {
                                     remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
 
-                                    if (is_reliable)
+                                    if (is_remote_and_reliable)
                                     {
                                         activateHeartbeatPeriod = true;
                                     }
@@ -441,7 +441,7 @@ void StatefulWriter::send_any_unsent_changes()
                         }
                         else
                         {
-                            if (is_reliable)
+                            if (is_remote_and_reliable)
                             {
                                 if (remoteReader->is_local_reader())
                                 {
@@ -580,7 +580,7 @@ void StatefulWriter::send_any_unsent_changes()
                                             allFragmentsSent))
                                 {
                                     must_wake_up_async_thread |= !allFragmentsSent;
-                                    if (remoteReader->is_reliable())
+                                    if (remoteReader->is_remote_and_reliable())
                                     {
                                         activateHeartbeatPeriod = true;
                                         if (allFragmentsSent)
@@ -617,7 +617,7 @@ void StatefulWriter::send_any_unsent_changes()
                         {
                             remoteReader->set_change_to_status(changeToSend.sequenceNumber, UNDERWAY, true);
 
-                            if (remoteReader->is_reliable())
+                            if (remoteReader->is_remote_and_reliable())
                             {
                                 activateHeartbeatPeriod = true;
                             }
