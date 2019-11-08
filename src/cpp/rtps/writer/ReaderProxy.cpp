@@ -301,6 +301,17 @@ bool ReaderProxy::requested_changes_set(
     return isSomeoneWasSetRequested;
 }
 
+bool ReaderProxy::process_initial_acknack()
+{
+    if (is_local_reader())
+    {
+        convert_status_on_all_changes(UNACKNOWLEDGED, UNSENT);
+        return false;
+    }
+
+    return true;
+}
+
 bool ReaderProxy::set_change_to_status(
         const SequenceNumber_t& seq_num,
         ChangeForReaderStatus_t status,
@@ -322,9 +333,16 @@ bool ReaderProxy::set_change_to_status(
 
     // If the status is UNDERWAY (change was right now sent) and the reader is besteffort,
     // then the status has to be changed to ACKNOWLEDGED.
-    if (UNDERWAY == status && !is_remote_and_reliable())
+    if (UNDERWAY == status)
     {
-        status = ACKNOWLEDGED;
+        if (!is_reliable())
+        {
+            status = ACKNOWLEDGED;
+        }
+        else if (is_local_reader())
+        {
+            status = UNACKNOWLEDGED;
+        }
     }
 
     // If the change following the low mark is acknowledged, low mark is advanced.

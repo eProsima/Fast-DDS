@@ -213,7 +213,7 @@ void StatefulWriter::unsent_change_added_to_history(
 
                 if(m_pushMode)
                 {
-                    if(it->is_remote_and_reliable())
+                    if(it->is_reliable())
                     {
                         changeForReader.setStatus(UNDERWAY);
                     }
@@ -253,7 +253,11 @@ void StatefulWriter::unsent_change_added_to_history(
                     {
                         if (it->is_local_reader())
                         {
-                            intraprocess_delivery(change, it);
+                            bool delivered = intraprocess_delivery(change, it);
+                            it->set_change_to_status(
+                                change->sequenceNumber, 
+                                delivered ? ACKNOWLEDGED : UNDERWAY,
+                                false);
                         }
                     }
                 }
@@ -263,7 +267,11 @@ void StatefulWriter::unsent_change_added_to_history(
                     {
                         if (it->is_local_reader())
                         {
-                            intraprocess_delivery(change, it);
+                            bool delivered = intraprocess_delivery(change, it);
+                            it->set_change_to_status(
+                                change->sequenceNumber,
+                                delivered ? ACKNOWLEDGED : UNDERWAY,
+                                false);
                         }
                         else
                         {
@@ -416,6 +424,7 @@ void StatefulWriter::send_any_unsent_changes()
 
                     // Loop all changes
                     bool is_remote_and_reliable = remoteReader->is_remote_and_reliable();
+                    SequenceNumber_t max_ack_seq;
                     auto unsent_change_process = [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
                     {
                         if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
@@ -423,7 +432,14 @@ void StatefulWriter::send_any_unsent_changes()
                             // As we checked we are not async, we know we cannot have fragments
                             if (remoteReader->is_local_reader())
                             {
-                                intraprocess_delivery(unsentChange->getChange(), remoteReader);
+                                if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
+                                {
+                                    max_ack_seq = seqNum;
+                                }
+                                else
+                                {
+                                    remoteReader->set_change_to_status(seqNum, UNDERWAY, false);
+                                }
                             }
                             else
                             {
@@ -461,7 +477,7 @@ void StatefulWriter::send_any_unsent_changes()
                     remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
                     if (remoteReader->is_local_reader())
                     {
-                        remoteReader->acked_changes_set(this->next_sequence_number());
+                        remoteReader->acked_changes_set(max_ack_seq + 1);
                     }
 
                     if (!irrelevant.empty())
@@ -493,13 +509,21 @@ void StatefulWriter::send_any_unsent_changes()
 
         for (ReaderProxy* remoteReader : matched_readers_)
         {
+            SequenceNumber_t max_ack_seq;
             auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
             {
                 if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
                 {
                     if (remoteReader->is_local_reader())
                     {
-                        intraprocess_delivery(unsentChange->getChange(), remoteReader);
+                        if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
+                        {
+                            max_ack_seq = seq_num;
+                        }
+                        else
+                        {
+                            remoteReader->set_change_to_status(seq_num, UNDERWAY, false);
+                        }
                     }
                     else
                     {
@@ -530,7 +554,7 @@ void StatefulWriter::send_any_unsent_changes()
             remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
             if (remoteReader->is_local_reader())
             {
-                remoteReader->acked_changes_set(this->next_sequence_number());
+                remoteReader->acked_changes_set(max_ack_seq + 1);
             }
         }
 
@@ -823,7 +847,7 @@ bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
             }
 
             // The ChangeForReader_t status has to be UNACKNOWLEDGED
-            if (!rp->is_local_reader())
+            if (!rp->is_local_reader() || !changeForReader.isRelevant())
             {
                 changeForReader.setStatus(UNACKNOWLEDGED);
             }
@@ -1396,8 +1420,12 @@ bool StatefulWriter::process_acknack(
                     }
                     else if (sn_set.empty() && !final_flag)
                     {
-                        // This is the preemptive acknack. Always send heartbeat
-                        send_heartbeat_to_nts(*remote_reader);
+                        // This is the preemptive acknack.
+                        if (remote_reader->process_initial_acknack())
+                        {
+                            // Send heartbeat if requested
+                            send_heartbeat_to_nts(*remote_reader);
+                        }
                     }
 
                     // Check if all CacheChange are acknowledge, because a user could be waiting
