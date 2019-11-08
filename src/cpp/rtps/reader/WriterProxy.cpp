@@ -21,6 +21,7 @@
 
 #include "WriterProxy.h"
 #include <fastrtps/rtps/reader/StatefulReader.h>
+#include <fastrtps/rtps/writer/RTPSWriter.h>
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/utils/TimeConversion.h>
@@ -118,10 +119,7 @@ void WriterProxy::start(
         RTPSDomainImpl::is_intraprocess_enabled() &&
         reader_->getGuid().is_on_same_process_as(attributes_.guid());
 
-    if (!is_on_same_process_)
-    {
-        initial_acknack_->restart_timer();
-    }
+    initial_acknack_->restart_timer();
     loaded_from_storage(initial_sequence);
 }
 
@@ -134,11 +132,6 @@ void WriterProxy::update(
 
     assert(is_alive_);
     attributes_ = attributes;
-    if (is_on_same_process_)
-    {
-        initial_acknack_->cancel_timer();
-        heartbeat_response_->cancel_timer();
-    }
 }
 
 void WriterProxy::stop()
@@ -474,7 +467,19 @@ void WriterProxy::perform_initial_ack_nack() const
 {
     // Send initial NACK.
     SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
-    reader_->send_acknack(this, sns, *this, false);
+    if (is_on_same_process_)
+    {
+        RTPSWriter* writer = RTPSDomainImpl::find_local_writer(attributes_.guid());
+        if (writer)
+        {
+            bool tmp;
+            writer->process_acknack(attributes_.guid(), reader_->getGuid(), 1, SequenceNumberSet_t(), false, tmp);
+        }
+    }
+    else
+    {
+        reader_->send_acknack(this, sns, *this, false);
+    }
 }
 
 void WriterProxy::perform_heartbeat_response() const
