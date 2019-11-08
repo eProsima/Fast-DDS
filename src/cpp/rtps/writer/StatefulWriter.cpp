@@ -412,7 +412,6 @@ void StatefulWriter::send_any_unsent_changes()
                             if (remoteReader->is_local_reader())
                             {
                                 intraprocess_delivery(unsentChange->getChange(), remoteReader);
-                                remoteReader->set_change_to_status(seqNum, ACKNOWLEDGED, false);
                             }
                             else
                             {
@@ -448,6 +447,10 @@ void StatefulWriter::send_any_unsent_changes()
                         } // Relevance
                     };
                     remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
+                    if (remoteReader->is_local_reader())
+                    {
+                        remoteReader->acked_changes_set(this->next_sequence_number());
+                    }
 
                     if (!irrelevant.empty())
                     {
@@ -485,7 +488,6 @@ void StatefulWriter::send_any_unsent_changes()
                     if (remoteReader->is_local_reader())
                     {
                         intraprocess_delivery(unsentChange->getChange(), remoteReader);
-                        remoteReader->set_change_to_status(unsentChange->getChange()->sequenceNumber, ACKNOWLEDGED, false);
                     }
                     else
                     {
@@ -514,6 +516,10 @@ void StatefulWriter::send_any_unsent_changes()
             };
 
             remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
+            if (remoteReader->is_local_reader())
+            {
+                remoteReader->acked_changes_set(this->next_sequence_number());
+            }
         }
 
         if (m_pushMode)
