@@ -100,6 +100,7 @@ bool StatefulReader::matched_writer_add(
     }
 
     bool is_same_process =
+        !wdata.guid().is_builtin() &&
         RTPSDomainImpl::is_intraprocess_enabled() &&
         m_guid.is_on_same_process_as(wdata.guid());
 

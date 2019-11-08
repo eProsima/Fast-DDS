@@ -53,7 +53,8 @@ bool ReaderLocator::start(
     if (locator_info_.remote_guid == c_Guid_Unknown)
     {
         expects_inline_qos_ = expects_inline_qos;
-        is_local_reader_ = 
+        is_local_reader_ =
+            !remote_guid.is_builtin() &&
             RTPSDomainImpl::is_intraprocess_enabled() &&
             owner_->getGuid().is_on_same_process_as(remote_guid);
         guid_as_vector_.at(0) = remote_guid;
