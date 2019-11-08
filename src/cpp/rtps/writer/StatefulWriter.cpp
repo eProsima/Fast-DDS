@@ -248,12 +248,12 @@ void StatefulWriter::unsent_change_added_to_history(
                         uint32_t last_processed = 0;
                         send_heartbeat_piggyback_nts_(nullptr, group, last_processed);
                     }
+
                     for (ReaderProxy* it : matched_readers_)
                     {
                         if (it->is_local_reader())
                         {
                             intraprocess_delivery(change, it);
-                            it->set_change_to_status(change->sequenceNumber, ACKNOWLEDGED, false);
                         }
                     }
                 }
@@ -264,7 +264,6 @@ void StatefulWriter::unsent_change_added_to_history(
                         if (it->is_local_reader())
                         {
                             intraprocess_delivery(change, it);
-                            it->set_change_to_status(change->sequenceNumber, ACKNOWLEDGED, false);
                         }
                         else
                         {
@@ -361,6 +360,19 @@ bool StatefulWriter::intraprocess_delivery(
      return false;
 }
 
+bool StatefulWriter::intraprocess_gap(
+        ReaderProxy* reader_proxy,
+        const SequenceNumber_t& seq_num)
+{
+    RTPSReader* reader = reader_proxy->local_reader();
+    if (reader)
+    {
+        return reader->processGapMsg(m_guid, seq_num, SequenceNumberSet_t(seq_num + 1));
+    }
+
+    return false;
+}
+
 bool StatefulWriter::change_removed_by_history(CacheChange_t* a_change)
 {
     SequenceNumber_t sequence_number = a_change->sequenceNumber;
@@ -436,7 +448,7 @@ void StatefulWriter::send_any_unsent_changes()
                             {
                                 if (remoteReader->is_local_reader())
                                 {
-                                    remoteReader->local_reader()->processGapMsg(m_guid, seqNum, SequenceNumberSet_t(seqNum+1));
+                                    intraprocess_gap(remoteReader, seqNum);
                                 }
                                 else
                                 {
@@ -506,7 +518,7 @@ void StatefulWriter::send_any_unsent_changes()
                     remoteReader->set_change_to_status(seq_num, UNDERWAY, true);
                     if (remoteReader->is_local_reader())
                     {
-                        remoteReader->local_reader()->processGapMsg(m_guid, seq_num, SequenceNumberSet_t(seq_num+1));
+                        intraprocess_gap(remoteReader, seq_num);
                     }
                     else
                     {
@@ -809,8 +821,10 @@ bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
         {
             if (rp->is_local_reader())
             {
-                send_intraprocess_heartbeat_nts_(rp);
-                send_intraprocess_gap_(rp, not_relevant_changes);
+                for (const SequenceNumber_t& seq_num : not_relevant_changes)
+                {
+                    intraprocess_gap(rp, seq_num);
+                }
 
                 mp_RTPSParticipant->async_thread().wake_up(this);
             }
@@ -849,34 +863,6 @@ bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
             <<rp->reader_attributes().remote_locators().multicast.size()<<"(m) locators");
 
     return true;
-}
-
-void StatefulWriter::send_intraprocess_heartbeat_nts_(ReaderProxy* reader)
-{
-    SequenceNumber_t firstSeq = get_seq_num_min();
-    SequenceNumber_t lastSeq = get_seq_num_max();
-
-    if (firstSeq == c_SequenceNumber_Unknown || lastSeq == c_SequenceNumber_Unknown)
-    {
-        assert(firstSeq == c_SequenceNumber_Unknown && lastSeq == c_SequenceNumber_Unknown);
-
-        firstSeq = next_sequence_number();
-        lastSeq = firstSeq - 1;
-    }
-    else
-    {
-        assert(firstSeq <= lastSeq);
-    }
-
-    incrementHBCount();
-    reader->local_reader()->processHeartbeatMsg(m_guid, 0, firstSeq, lastSeq, disable_positive_acks_, false);
-}
-
-void StatefulWriter::send_intraprocess_gap_(
-        ReaderProxy* reader,
-        std::set<SequenceNumber_t> changesSeqNum)
-{
-
 }
 
 bool StatefulWriter::matched_reader_remove(const GUID_t& reader_guid)

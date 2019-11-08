@@ -119,7 +119,11 @@ public:
      */
     bool intraprocess_delivery(
             CacheChange_t* change,
-            ReaderProxy* reader);
+            ReaderProxy* reader_proxy);
+
+    bool intraprocess_gap(
+            ReaderProxy* reader_proxy,
+            const SequenceNumber_t& seq_num);
 
     //!Increment the HB count.
     inline void incrementHBCount()
@@ -293,14 +297,6 @@ private:
             RTPSMessageGroup& message_group,
             bool final,
             bool liveliness = false);
-
-    void send_intraprocess_heartbeat_nts_(
-            ReaderProxy* reader);
-
-    void send_intraprocess_gap_(
-            ReaderProxy* reader,
-            std::set<SequenceNumber_t> changesSeqNum);
-
 
     void check_acked_status();
 
