@@ -76,6 +76,13 @@ public:
      */
     static RTPSWriter* find_local_writer(
             const GUID_t& writer_guid);
+
+    /**
+     * Check whether intraprocess delivery is enabled or not.
+     *
+     * @returns true when intraprocess delivery is enabled, false otherwise.
+     */
+    static bool is_intraprocess_enabled();
 };
 
 } // namespace rtps
