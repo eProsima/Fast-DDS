@@ -74,7 +74,6 @@ class ReaderLocator : public RTPSMessageSenderInterface
          * @param unicast_locators    Unicast locators of the remote reader.
          * @param multicast_locators  Multicast locators of the remote reader.
          * @param expects_inline_qos  Whether remote reader expects to receive inline QoS.
-         * @param is_local_reader     The reader is in the local process.
          *
          * @return false when this object was already started, true otherwise.
          */
@@ -82,8 +81,7 @@ class ReaderLocator : public RTPSMessageSenderInterface
                 const GUID_t& /*remote_guid*/,
                 const ResourceLimitedVector<Locator_t>& /*unicast_locators*/,
                 const ResourceLimitedVector<Locator_t>& /*multicast_locators*/,
-                bool /*expects_inline_qos*/,
-                bool /*is_local_reader*/)
+                bool /*expects_inline_qos*/)
         {
             return true;
         }
@@ -180,10 +178,6 @@ class ReaderLocator : public RTPSMessageSenderInterface
         RTPSReader* local_reader()
         {
             return nullptr;
-        }
-
-        void local_reader(RTPSReader* local_reader)
-        {
         }
 
     private:

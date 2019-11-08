@@ -286,15 +286,6 @@ public:
     }
 
     /**
-     * Get the local reader on the same process (if any).
-     * @return The local reader on the same process.
-     */
-    inline void local_reader(RTPSReader* reader)
-    {
-        locator_info_.local_reader(reader);
-    }
-
-    /**
      * Called when an ACKNACK is received to set a new value for the count of the last received ACKNACK.
      * @param acknack_count The count of the received ACKNACK.
      * @return true if internal count changed (i.e. new ACKNACK is accepted)

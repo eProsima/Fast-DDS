@@ -457,8 +457,7 @@ bool StatelessWriter::matched_reader_add(
         if (reader.start(data.guid(),
                 data.remote_locators().unicast,
                 data.remote_locators().multicast,
-                data.m_expectsInlineQos,
-                /* !data.guid().is_builtin() && */ data.guid().is_on_same_process_as(getGuid())))
+                data.m_expectsInlineQos))
         {
             new_reader = &reader;
             break;
@@ -477,8 +476,7 @@ bool StatelessWriter::matched_reader_add(
             new_reader->start(data.guid(),
                     data.remote_locators().unicast,
                     data.remote_locators().multicast,
-                    data.m_expectsInlineQos,
-                    /* !data.guid().is_builtin() && */ data.guid().is_on_same_process_as(getGuid()));
+                    data.m_expectsInlineQos);
         }
         else
         {
