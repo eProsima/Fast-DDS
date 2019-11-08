@@ -82,8 +82,7 @@ void ReaderProxy::start(
         reader_attributes.guid(),
         reader_attributes.remote_locators().unicast,
         reader_attributes.remote_locators().multicast,
-        reader_attributes.m_expectsInlineQos,
-        reader_attributes.guid().is_on_same_process_as(writer_->getRTPSParticipant()->getGuid()));
+        reader_attributes.m_expectsInlineQos);
 
     is_active_ = true;
     reader_attributes_ = reader_attributes;

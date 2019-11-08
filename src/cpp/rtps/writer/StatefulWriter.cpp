@@ -353,14 +353,6 @@ bool StatefulWriter::intraprocess_delivery(
         ReaderProxy* reader_proxy)
 {
     RTPSReader* reader = reader_proxy->local_reader();
-    if (!reader)
-    {
-        if((reader = RTPSDomainImpl::find_local_reader(reader_proxy->guid())))
-        {
-            reader_proxy->local_reader(reader);
-        }
-     }
-
      if (reader)
      {
          return reader->processDataMsg(change);
