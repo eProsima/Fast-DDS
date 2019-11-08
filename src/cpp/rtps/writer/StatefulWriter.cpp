@@ -1426,6 +1426,11 @@ bool StatefulWriter::process_acknack(
                             // Send heartbeat if requested
                             send_heartbeat_to_nts(*remote_reader);
                         }
+                        else
+                        {
+                            //nack_response_event_->restart_timer();
+                            mp_RTPSParticipant->async_thread().wake_up(this);
+                        }
                     }
 
                     // Check if all CacheChange are acknowledge, because a user could be waiting
