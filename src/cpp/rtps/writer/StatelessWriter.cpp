@@ -34,7 +34,7 @@
 #include <vector>
 
 #include <fastrtps/log/Log.h>
-#include "../RTPSDomainImpl.hpp"
+#include "rtps/RTPSDomainImpl.hpp"
 
 namespace eprosima {
 namespace fastrtps {
