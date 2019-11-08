@@ -224,7 +224,7 @@ void StatelessWriter::unsent_change_added_to_history(
                 }
                 else
                 {
-                    at_least_one_remote = false;
+                    at_least_one_remote = true;
                 }
             }
 
