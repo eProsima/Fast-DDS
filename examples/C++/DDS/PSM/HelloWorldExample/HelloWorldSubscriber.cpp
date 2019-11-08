@@ -91,7 +91,7 @@ bool HelloWorldSubscriber::init()
 
 HelloWorldSubscriber::~HelloWorldSubscriber()
 {
-    //DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    participant_.delete_participant();
 }
 
 void HelloWorldSubscriber::SubListener::on_subscription_matched(

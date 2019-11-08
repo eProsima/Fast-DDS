@@ -31,6 +31,7 @@
 #include <fastrtps/types/TypesBase.h>
 
 #include <dds/core/status/Status.hpp>
+#include <dds/domain/DomainParticipant.hpp>
 
 #include <utility>
 
@@ -78,6 +79,9 @@ class TopicQos;
 class RTPS_DllAPI DomainParticipant
 {
 public:
+
+    void delete_participant(
+            ::dds::domain::DomainParticipant& part);
 
     /**
      * Allows modifying the DomainParticipantListener.

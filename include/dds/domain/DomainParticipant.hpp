@@ -123,6 +123,8 @@ public:
     virtual ~DomainParticipant();
     /** @endcond */
 
+    void delete_participant();
+
     /**
      * Register a listener with the DomainParticipant.
      *

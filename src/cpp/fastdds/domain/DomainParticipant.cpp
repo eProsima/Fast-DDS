@@ -19,6 +19,7 @@
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <dds/domain/DomainParticipant.hpp>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 
@@ -41,6 +42,13 @@ DomainParticipant::DomainParticipant(
 
 DomainParticipant::~DomainParticipant()
 {
+}
+
+void DomainParticipant::delete_participant(
+        ::dds::domain::DomainParticipant& part)
+{
+    DomainParticipant* participant = part.delegate().get();
+    DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
 ReturnCode_t DomainParticipant::set_listener(

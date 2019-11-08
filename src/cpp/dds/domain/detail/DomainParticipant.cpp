@@ -57,6 +57,11 @@ DomainParticipant::~DomainParticipant()
 {
 }
 
+void DomainParticipant::delete_participant()
+{
+    this->delegate()->delete_participant(*this);
+}
+
 void DomainParticipant::listener(
         Listener* listener,
         const ::dds::core::status::StatusMask& /*event_mask*/)

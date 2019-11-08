@@ -89,7 +89,7 @@ bool HelloWorldPublisher::init()
 
 HelloWorldPublisher::~HelloWorldPublisher()
 {
-    //DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    participant_.delete_participant();
 }
 
 void HelloWorldPublisher::PubListener::on_publication_matched(

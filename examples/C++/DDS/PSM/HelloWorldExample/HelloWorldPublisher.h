@@ -23,6 +23,7 @@
 #include "HelloWorldPubSubTypes.h"
 
 #include <dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <dds/pub/Publisher.hpp>
 #include <dds/pub/DataWriter.hpp>
 #include <dds/pub/DataWriterListener.hpp>
