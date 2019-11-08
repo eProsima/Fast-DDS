@@ -444,13 +444,13 @@ void StatefulWriter::send_any_unsent_changes()
                         }
                         else
                         {
-                            if (is_remote_and_reliable)
+                            if (remoteReader->is_local_reader())
                             {
-                                if (remoteReader->is_local_reader())
-                                {
-                                    intraprocess_gap(remoteReader, seqNum);
-                                }
-                                else
+                                intraprocess_gap(remoteReader, seqNum);
+                            }
+                            else 
+                            {
+                                if (is_remote_and_reliable)
                                 {
                                     irrelevant.emplace(seqNum);
                                 }
@@ -781,7 +781,14 @@ bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
             // This is to cover the case when there are holes in the history
             while (current_seq != (*cit)->sequenceNumber)
             {
-                not_relevant_changes.insert(current_seq);
+                if (rp->is_local_reader())
+                {
+                    intraprocess_gap(rp, current_seq);
+                }
+                else
+                {
+                    not_relevant_changes.insert(current_seq);
+                }
                 ++current_seq;
             }
 
@@ -792,13 +799,27 @@ bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
                 changeForReader.setRelevance(rp->rtps_is_relevant(*cit));
                 if(!rp->rtps_is_relevant(*cit))
                 {
-                    not_relevant_changes.insert(changeForReader.getSequenceNumber());
+                    if (rp->is_local_reader())
+                    {
+                        intraprocess_gap(rp, current_seq);
+                    }
+                    else
+                    {
+                        not_relevant_changes.insert(current_seq);
+                    }
                 }
             }
             else
             {
                 changeForReader.setRelevance(false);
-                not_relevant_changes.insert(changeForReader.getSequenceNumber());
+                if (rp->is_local_reader())
+                {
+                    intraprocess_gap(rp, current_seq);
+                }
+                else
+                {
+                    not_relevant_changes.insert(current_seq);
+                }
             }
 
             // The ChangeForReader_t status has to be UNACKNOWLEDGED
@@ -813,7 +834,14 @@ bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
         // This is to cover the case where the last changes have been removed from the history
         while (current_seq < next_sequence_number())
         {
-            not_relevant_changes.insert(current_seq);
+            if (rp->is_local_reader())
+            {
+                intraprocess_gap(rp, current_seq);
+            }
+            else
+            {
+                not_relevant_changes.insert(current_seq);
+            }
             ++current_seq;
         }
 
@@ -821,11 +849,6 @@ bool StatefulWriter::matched_reader_add(const ReaderProxyData& rdata)
         {
             if (rp->is_local_reader())
             {
-                for (const SequenceNumber_t& seq_num : not_relevant_changes)
-                {
-                    intraprocess_gap(rp, seq_num);
-                }
-
                 mp_RTPSParticipant->async_thread().wake_up(this);
             }
             else
