@@ -115,10 +115,7 @@ void WriterProxy::start(
     guid_as_vector_.push_back(attributes_.guid());
     guid_prefix_as_vector_.push_back(attributes_.guid().guidPrefix);
     is_alive_ = true;
-    is_on_same_process_ =
-        !attributes_.guid().is_builtin() &&
-        RTPSDomainImpl::is_intraprocess_enabled() &&
-        reader_->getGuid().is_on_same_process_as(attributes_.guid());
+    is_on_same_process_ = RTPSDomainImpl::should_intraprocess_between(reader_->getGuid(), attributes_.guid());
 
     initial_acknack_->restart_timer();
     loaded_from_storage(initial_sequence);

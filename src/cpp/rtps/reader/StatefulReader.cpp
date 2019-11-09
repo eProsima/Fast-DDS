@@ -99,10 +99,7 @@ bool StatefulReader::matched_writer_add(
         return false;
     }
 
-    bool is_same_process =
-        !wdata.guid().is_builtin() &&
-        RTPSDomainImpl::is_intraprocess_enabled() &&
-        m_guid.is_on_same_process_as(wdata.guid());
+    bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
 
     for (WriterProxy* it : matched_writers_)
     {
