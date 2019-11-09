@@ -340,10 +340,32 @@ RTPSWriter* RTPSDomainImpl::find_local_writer(
     return nullptr;
 }
 
-bool RTPSDomainImpl::is_intraprocess_enabled()
+/**
+ * Check whether intraprocess delivery should be used between two GUIDs.
+ *
+ * @param local_guid    GUID of the local endpoint performing the query.
+ * @param matched_guid  GUID being queried about.
+ *
+ * @returns true when intraprocess delivery is enabled, false otherwise.
+ */
+bool RTPSDomainImpl::should_intraprocess_between(
+        const GUID_t& local_guid,
+        const GUID_t& matched_guid)
 {
+    if (!local_guid.is_on_same_process_as(matched_guid))
+    {
+        // Not on the same process, should not use intraprocess mechanism.
+        return false;
+    }
+
+    if (local_guid.entityId == c_EntityId_SPDPWriter || local_guid.entityId == c_EntityId_SPDPReader)
+    {
+        // Always disabled for PDP, to avoid inter-domain communications.
+        return false;
+    }
+
     // TODO(Miguel C): Make this configurable.
-    return true;
+    return !matched_guid.is_builtin();
 }
 
 } // namespace rtps

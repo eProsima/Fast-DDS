@@ -27,11 +27,16 @@ class RTPSDomainImpl
 public:
 
     /**
-     * Check whether intraprocess delivery is enabled or not.
+     * Check whether intraprocess delivery should be used between two GUIDs.
      *
-     * @returns true when intraprocess delivery is enabled, false otherwise.
+     * @param local_guid    GUID of the local endpoint performing the query.
+     * @param matched_guid  GUID being queried about.
+     *
+     * @returns true when intraprocess delivery should be used, false otherwise.
      */
-    static bool is_intraprocess_enabled()
+    static bool should_intraprocess_between(
+            const GUID_t& /* local_guid */,
+            const GUID_t& /* matched_guid */)
     {
         return false;
     }
