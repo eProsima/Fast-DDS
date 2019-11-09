@@ -23,6 +23,7 @@ const char* DEFAULT_FASTRTPS_PROFILES = "DEFAULT_FASTRTPS_PROFILES.xml";
 
 const char* ROOT = "dds";
 const char* PROFILES = "profiles";
+const char* LIBRARY_SETTINGS = "library_settings";
 const char* TRANSPORT_DESCRIPTORS = "transport_descriptors";
 const char* PROFILE_NAME = "profile_name";
 const char* DEFAULT_PROF = "is_default_profile";
@@ -55,12 +56,19 @@ const char* LISTENING_PORTS = "listening_ports";
 const char* CALCULATE_CRC = "calculate_crc";
 const char* CHECK_CRC = "check_crc";
 
+const char* OFF = "OFF";
+const char* USER_DATA_ONLY = "USER_DATA_ONLY";
+const char* FULL = "FULL";
+
 const char* QOS_PROFILE = "qos_profile";
 const char* APPLICATION = "application";
 const char* TYPE = "type";
 // const char* TOPIC = "topic";
 const char* DATA_WRITER = "data_writer";
 const char* DATA_READER = "data_reader";
+
+/// RTPS Domain attributes
+const char* INTRAPROCESS_DELIVERY = "intraprocess_delivery";
 
 /// RTPS Participant attributes
 const char* ALLOCATION = "allocation";

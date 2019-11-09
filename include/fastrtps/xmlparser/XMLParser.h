@@ -22,6 +22,7 @@
 #include "../attributes/SubscriberAttributes.h"
 #include "./XMLParserCommon.h"
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
@@ -161,7 +162,11 @@ class XMLParser
      */
     RTPS_DllAPI static XMLP_ret parseLogConfig(tinyxml2::XMLElement* p_root);
 
-    RTPS_DllAPI static XMLP_ret parseXMLTransportsProf(tinyxml2::XMLElement* p_root);
+    RTPS_DllAPI static XMLP_ret parseXMLLibrarySettings(
+        tinyxml2::XMLElement* p_root);
+
+    RTPS_DllAPI static XMLP_ret parseXMLTransportsProf(
+        tinyxml2::XMLElement* p_root);
 
     RTPS_DllAPI static XMLP_ret parseXMLParticipantProf(
         tinyxml2::XMLElement* p_root,
@@ -262,6 +267,11 @@ class XMLParser
     RTPS_DllAPI static void addAllAttributes(
         tinyxml2::XMLElement* p_profile,
         DataNode<T>& node);
+
+    RTPS_DllAPI static XMLP_ret getXMLEnum(
+        tinyxml2::XMLElement* elem,
+        fastrtps::IntraprocessDeliveryType * e,
+        uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLPropertiesPolicy(
         tinyxml2::XMLElement* elem,
