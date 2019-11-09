@@ -36,6 +36,8 @@
 #include <fastrtps/rtps/writer/RTPSWriter.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
 #include "RTPSDomainImpl.hpp"
 
 #include <chrono>
@@ -364,8 +366,20 @@ bool RTPSDomainImpl::should_intraprocess_between(
         return false;
     }
 
-    // TODO(Miguel C): Make this configurable.
-    return !matched_guid.is_builtin();
+    switch (xmlparser::XMLProfileManager::library_settings().intraprocess_delivery)
+    {
+        case IntraprocessDeliveryType::INTRAPROCESS_FULL:
+            return true;
+
+        case IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY:
+            return !matched_guid.is_builtin();
+
+        case IntraprocessDeliveryType::INTRAPROCESS_OFF:
+        default:
+            break;
+    }
+
+    return false;
 }
 
 } // namespace rtps
