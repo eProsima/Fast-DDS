@@ -98,6 +98,10 @@ XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root
                         root->addChild(std::move(profiles_node));
                     }
                 }
+                else if (strcmp(tag, LIBRARY_SETTINGS) == 0)
+                {
+                    ret = parseXMLLibrarySettings(node);
+                }
                 else if (strcmp(tag, PARTICIPANT) == 0)
                 {
                     ret = parseXMLParticipantProf(node, *root);
