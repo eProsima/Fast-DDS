@@ -259,14 +259,6 @@ bool StatelessWriter::intraprocess_delivery(
 {
     RTPSReader* reader = reader_locator.local_reader();
 
-    if (!reader)
-    {
-        if ((reader = RTPSDomainImpl::find_local_reader(reader_locator.remote_guid())))
-        {
-            reader_locator.local_reader(reader);
-        }
-    }
-
     if (reader)
     {
         return reader->processDataMsg(change);
