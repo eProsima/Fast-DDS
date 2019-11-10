@@ -88,7 +88,7 @@ bool ReaderLocator::update(
         ret_val = true;
     }
     if (!(locator_info_.unicast == unicast_locators) ||
-        !(locator_info_.multicast == multicast_locators))
+            !(locator_info_.multicast == multicast_locators))
     {
         if (!is_local_reader_)
         {
@@ -103,7 +103,8 @@ bool ReaderLocator::update(
     return ret_val;
 }
 
-bool ReaderLocator::stop(const GUID_t& remote_guid)
+bool ReaderLocator::stop(
+        const GUID_t& remote_guid)
 {
     if (locator_info_.remote_guid == remote_guid)
     {

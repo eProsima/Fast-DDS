@@ -51,6 +51,7 @@ class RTPSReader;
 class ReaderProxy
 {
 public:
+
     ~ReaderProxy();
 
     /**
@@ -68,14 +69,16 @@ public:
      * Activate this proxy associating it to a remote reader.
      * @param reader_attributes ReaderProxyData of the reader for which to keep state.
      */
-    void start(const ReaderProxyData& reader_attributes);
+    void start(
+            const ReaderProxyData& reader_attributes);
 
     /**
      * Update information about the remote reader.
      * @param reader_attributes ReaderProxyData with updated information of the reader.
      * @return true if data was modified, false otherwise.
      */
-    bool update(const ReaderProxyData& reader_attributes);
+    bool update(
+            const ReaderProxyData& reader_attributes);
 
     /**
      * Disable this proxy.
@@ -107,21 +110,24 @@ public:
      * @param seq_num Sequence number of the change to be checked.
      * @return true when the change is irrelevant or has been already acknowledged, false otherwise.
      */
-    bool change_is_acked(const SequenceNumber_t& seq_num) const;
+    bool change_is_acked(
+            const SequenceNumber_t& seq_num) const;
 
     /**
      * Mark all changes up to the one indicated by seq_num as Acknowledged.
      * For instance, when seq_num is 30, changes 1-29 are marked as acknowledged.
      * @param seq_num Sequence number of the first change not to be marked as acknowledged.
      */
-    void acked_changes_set(const SequenceNumber_t& seq_num);
+    void acked_changes_set(
+            const SequenceNumber_t& seq_num);
 
     /**
      * Mark all changes in the vector as requested.
      * @param seq_num_set Bitmap of sequence numbers.
      * @return true if at least one change has been marked as REQUESTED, false otherwise.
      */
-    bool requested_changes_set(const SequenceNumberSet_t& seq_num_set);
+    bool requested_changes_set(
+            const SequenceNumberSet_t& seq_num_set);
 
     /**
      * Performs processing of preemptive acknack
@@ -130,12 +136,12 @@ public:
     bool process_initial_acknack();
 
     /**
-    * Applies the given function object to every unsent change.
-    * @param max_seq Maximum sequence number to be considered without including it.
-    * @param f Function to apply.
-    *          Will receive a SequenceNumber_t and a ChangeForReader_t*.
-    *          The second argument may be nullptr for irrelevant changes.
-    */
+     * Applies the given function object to every unsent change.
+     * @param max_seq Maximum sequence number to be considered without including it.
+     * @param f Function to apply.
+     *          Will receive a SequenceNumber_t and a ChangeForReader_t*.
+     *          The second argument may be nullptr for irrelevant changes.
+     */
     template <class BinaryFunction>
     void for_each_unsent_change(
             const SequenceNumber_t& max_seq,
@@ -149,7 +155,7 @@ public:
             {
                 // Holes before this change are informed as irrelevant.
                 SequenceNumber_t change_seq = it->getSequenceNumber();
-                for(; current_seq < change_seq; ++current_seq)
+                for (; current_seq < change_seq; ++current_seq)
                 {
                     f(current_seq, nullptr);
                 }
@@ -219,7 +225,8 @@ public:
      * Call this to inform a change was removed from history.
      * @param seq_num Sequence number of the removed change.
      */
-    void change_has_been_removed(const SequenceNumber_t& seq_num);
+    void change_has_been_removed(
+            const SequenceNumber_t& seq_num);
 
     /*!
      * @brief Returns there is some UNACKNOWLEDGED change.
@@ -270,7 +277,7 @@ public:
     inline bool is_remote_and_reliable() const
     {
         return !locator_info_.is_local_reader() &&
-            reader_attributes_.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS;
+               reader_attributes_.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS;
     }
 
     /**
@@ -305,7 +312,8 @@ public:
      * @param acknack_count The count of the received ACKNACK.
      * @return true if internal count changed (i.e. new ACKNACK is accepted)
      */
-    bool check_and_set_acknack_count(uint32_t acknack_count)
+    bool check_and_set_acknack_count(
+            uint32_t acknack_count)
     {
         if (last_acknack_count_ < acknack_count)
         {
@@ -335,10 +343,11 @@ public:
      * @param change
      * @return true if the change is relevant, false otherwise.
      */
-    inline bool rtps_is_relevant(CacheChange_t* change)
+    inline bool rtps_is_relevant(
+            CacheChange_t* change)
     {
         (void)change; return true;
-    };
+    }
 
     /**
      * Get the highest fully acknowledged sequence number.
@@ -353,7 +362,8 @@ public:
      * Change the interval of nack-supression event.
      * @param interval Time from data sending to acknack processing.
      */
-    void update_nack_supression_interval(const Duration_t& interval);
+    void update_nack_supression_interval(
+            const Duration_t& interval);
 
     /**
      * Check if there are gaps in the list of ChangeForReader_t.
@@ -385,6 +395,7 @@ private:
     ResourceLimitedVector<ChangeForReader_t, std::true_type> changes_for_reader_;
     //! Timed Event to manage the delay to mark a change as UNACKED after sending it.
     TimedEvent* nack_supression_event_;
+    TimedEvent* initial_heartbeat_event_;
     //! Are timed events enabled?
     std::atomic_bool timers_enabled_;
     //! Last ack/nack count
@@ -436,7 +447,8 @@ private:
      * @param seq_num Sequence number to find.
      * @return Iterator pointing to the change, changes_for_reader_.end() if not found.
      */
-    ChangeConstIterator find_change(const SequenceNumber_t& seq_num) const;
+    ChangeConstIterator find_change(
+            const SequenceNumber_t& seq_num) const;
 };
 
 } /* namespace rtps */

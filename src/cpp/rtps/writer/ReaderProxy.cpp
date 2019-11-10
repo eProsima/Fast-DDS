@@ -47,6 +47,7 @@ ReaderProxy::ReaderProxy(
     , writer_(writer)
     , changes_for_reader_(resource_limits_from_history(writer->mp_history->m_att, 0))
     , nack_supression_event_(nullptr)
+    , initial_heartbeat_event_(nullptr)
     , timers_enabled_(false)
     , last_acknack_count_(0)
     , last_nackfrag_count_(0)
@@ -63,6 +64,19 @@ ReaderProxy::ReaderProxy(
                 },
                     TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
 
+    initial_heartbeat_event_ =
+            new TimedEvent(writer->getRTPSParticipant()->getEventResource(), [&](
+                        TimedEvent::EventCode code) -> bool
+                {
+                    if (TimedEvent::EVENT_SUCCESS == code)
+                    {
+                        writer_->intraprocess_heartbeat(this);
+                    }
+
+                    return false;
+                },
+                    0);
+
     stop();
 }
 
@@ -72,6 +86,12 @@ ReaderProxy::~ReaderProxy()
     {
         delete(nack_supression_event_);
         nack_supression_event_ = nullptr;
+    }
+
+    if (initial_heartbeat_event_)
+    {
+        delete(initial_heartbeat_event_);
+        initial_heartbeat_event_ = nullptr;
     }
 }
 
@@ -88,6 +108,7 @@ void ReaderProxy::start(
     reader_attributes_ = reader_attributes;
 
     timers_enabled_.store(is_remote_and_reliable());
+    initial_heartbeat_event_->restart_timer();
 
     logInfo(RTPS_WRITER, "Reader Proxy started");
 }
@@ -131,6 +152,7 @@ void ReaderProxy::disable_timers()
     {
         nack_supression_event_->cancel_timer();
     }
+    initial_heartbeat_event_->cancel_timer();
 }
 
 void ReaderProxy::update_nack_supression_interval(
@@ -230,47 +252,53 @@ void ReaderProxy::acked_changes_set(
     }
     else
     {
-        // Special case. Currently only used on Builtin StatefulWriters
-        // after losing lease duration.
-
-        SequenceNumber_t current_sequence = seq_num;
-        SequenceNumber_t min_sequence = writer_->get_seq_num_min();
-        if (seq_num < min_sequence)
+        if (writer_->getGuid().is_builtin())
         {
-            current_sequence = min_sequence;
-        }
-        future_low_mark = current_sequence;
+            // Special case. Currently only used on Builtin StatefulWriters
+            // after losing lease duration.
+            SequenceNumber_t min_sequence = writer_->get_seq_num_min();
 
-        bool should_sort = false;
-        for (; current_sequence <= changes_low_mark_; ++current_sequence)
-        {
-            // Skip all consecutive changes already in the collection
-            ChangeConstIterator it = find_change(current_sequence);
-            while ( it != changes_for_reader_.end() &&
-                    current_sequence <= changes_low_mark_ &&
-                    it->getSequenceNumber() == current_sequence)
+            if (min_sequence != SequenceNumber_t::unknown())
             {
-                ++current_sequence;
-                ++it;
-            }
-
-            if (current_sequence <= changes_low_mark_)
-            {
-                CacheChange_t* change = nullptr;
-                if (writer_->mp_history->get_change(current_sequence, writer_->getGuid(), &change))
+                SequenceNumber_t current_sequence = seq_num;
+                if (seq_num < min_sequence)
                 {
-                    should_sort = true;
-                    ChangeForReader_t cr(change);
-                    cr.setStatus(UNACKNOWLEDGED);
-                    changes_for_reader_.push_back(cr);
+                    current_sequence = min_sequence;
+                }
+                future_low_mark = current_sequence;
+
+                bool should_sort = false;
+                for (; current_sequence <= changes_low_mark_; ++current_sequence)
+                {
+                    // Skip all consecutive changes already in the collection
+                    ChangeConstIterator it = find_change(current_sequence);
+                    while ( it != changes_for_reader_.end() &&
+                            current_sequence <= changes_low_mark_ &&
+                            it->getSequenceNumber() == current_sequence)
+                    {
+                        ++current_sequence;
+                        ++it;
+                    }
+
+                    if (current_sequence <= changes_low_mark_)
+                    {
+                        CacheChange_t* change = nullptr;
+                        if (writer_->mp_history->get_change(current_sequence, writer_->getGuid(), &change))
+                        {
+                            should_sort = true;
+                            ChangeForReader_t cr(change);
+                            cr.setStatus(UNACKNOWLEDGED);
+                            changes_for_reader_.push_back(cr);
+                        }
+                    }
+                }
+
+                // Keep changes sorted by sequence number
+                if (should_sort)
+                {
+                    std::sort(changes_for_reader_.begin(), changes_for_reader_.end(), ChangeForReaderCmp());
                 }
             }
-        }
-
-        // Keep changes sorted by sequence number
-        if (should_sort)
-        {
-            std::sort(changes_for_reader_.begin(), changes_for_reader_.end(), ChangeForReaderCmp());
         }
     }
 
@@ -305,8 +333,7 @@ bool ReaderProxy::process_initial_acknack()
 {
     if (is_local_reader())
     {
-        convert_status_on_all_changes(UNACKNOWLEDGED, UNSENT);
-        return false;
+        return convert_status_on_all_changes(UNACKNOWLEDGED, UNSENT);
     }
 
     return true;

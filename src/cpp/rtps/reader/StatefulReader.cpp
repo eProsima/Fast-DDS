@@ -484,13 +484,13 @@ bool StatefulReader::processDataFragMsg(
 #endif
 
             // If this is the first time we have received fragments for this change, add it to history
-            if(change_created != nullptr)
+            if (change_created != nullptr)
             {
-                if(!change_received(change_created, pWP))
+                if (!change_received(change_created, pWP))
                 {
 
                     logInfo(RTPS_MSG_IN,
-                            IDSTRING"MessageReceiver not add change " << change_created->sequenceNumber.to64long());
+                            IDSTRING "MessageReceiver not add change " << change_created->sequenceNumber.to64long());
 
                     releaseCache(change_created);
                     work_change = nullptr;
@@ -731,7 +731,7 @@ bool StatefulReader::change_received(
         }
 
         bool ret = true;
-        
+
         if (a_change->is_fully_assembled())
         {
             ret = prox->received_change_set(a_change->sequenceNumber);
@@ -949,7 +949,7 @@ void StatefulReader::send_acknack(
         bool is_final)
 {
 
-    std::lock_guard<RecursiveTimedMutex> guard_reader(mp_mutex);
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
 
     if (!writer->is_alive())
     {
@@ -961,8 +961,25 @@ void StatefulReader::send_acknack(
 
     logInfo(RTPS_READER, "Sending ACKNACK: " << sns);
 
-    RTPSMessageGroup group(getRTPSParticipant(), this, sender);
-    group.add_acknack(sns, acknack_count_, is_final);
+    if (!writer->is_on_same_process())
+    {
+        RTPSMessageGroup group(getRTPSParticipant(), this, sender);
+        group.add_acknack(sns, acknack_count_, is_final);
+    }
+    else
+    {
+        GUID_t reader_guid = m_guid;
+        uint32_t acknack_count = acknack_count_;
+        lock.unlock(); //For local writers only call when initial ack, and we have to avoid deadlock with common
+                       //calls writer -> reader
+        RTPSWriter* writer_ptr = RTPSDomainImpl::find_local_writer(writer->guid());
+
+        if (writer_ptr)
+        {
+            bool result;
+            writer_ptr->process_acknack(writer->guid(), reader_guid, acknack_count, sns, is_final, result);
+        }
+    }
 }
 
 void StatefulReader::send_acknack(
@@ -990,28 +1007,29 @@ void StatefulReader::send_acknack(
 
             missing_changes.for_each(
                 [&](const SequenceNumber_t& seq)
+            {
+                // Check if the CacheChange_t is uncompleted.
+                CacheChange_t* uncomplete_change = findCacheInFragmentedProcess(seq, guid);
+                if (uncomplete_change == nullptr)
                 {
-                    // Check if the CacheChange_t is uncompleted.
-                    CacheChange_t* uncomplete_change = findCacheInFragmentedProcess(seq, guid);
-                    if (uncomplete_change == nullptr)
+                    if (!sns.add(seq))
                     {
-                        if (!sns.add(seq))
-                        {
-                            logInfo(RTPS_READER, "Sequence number " << seq
-                                << " exceeded bitmap limit of AckNack. SeqNumSet Base: " << sns.base());
-                        }
+                        logInfo(RTPS_READER, "Sequence number " << seq
+                                                                << " exceeded bitmap limit of AckNack. SeqNumSet Base: "
+                                                                << sns.base());
                     }
-                    else
-                    {
-                        FragmentNumberSet_t frag_sns;
-                        uncomplete_change->get_missing_fragments(frag_sns);
-                        ++nackfrag_count_;
-                        logInfo(RTPS_READER, "Sending NACKFRAG for sample" << seq << ": " << frag_sns;);
+                }
+                else
+                {
+                    FragmentNumberSet_t frag_sns;
+                    uncomplete_change->get_missing_fragments(frag_sns);
+                    ++nackfrag_count_;
+                    logInfo(RTPS_READER, "Sending NACKFRAG for sample" << seq << ": " << frag_sns; );
 
-                        group.add_nackfrag(seq, frag_sns, nackfrag_count_);
-                    }
+                    group.add_nackfrag(seq, frag_sns, nackfrag_count_);
+                }
 
-                });
+            });
 
             acknack_count_++;
             logInfo(RTPS_READER, "Sending ACKNACK: " << sns; );
