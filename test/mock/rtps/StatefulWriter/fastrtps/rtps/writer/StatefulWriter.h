@@ -30,35 +30,55 @@ class RTPSParticipantImpl;
 
 class StatefulWriter : public RTPSWriter
 {
-    public:
+public:
 
-        StatefulWriter(RTPSParticipantImpl* participant) : participant_(participant), mp_history(new WriterHistory()) {}
+    StatefulWriter(
+            RTPSParticipantImpl* participant)
+        : participant_(participant)
+        , mp_history(new WriterHistory())
+    {
+    }
 
-        StatefulWriter() : participant_(nullptr), mp_history(new WriterHistory()) {}
+    StatefulWriter()
+        : participant_(nullptr)
+        , mp_history(new WriterHistory())
+    {
+    }
 
-        virtual ~StatefulWriter() { delete mp_history; }
+    virtual ~StatefulWriter()
+    {
+        delete mp_history;
+    }
 
-        MOCK_METHOD1(matched_reader_add, bool(const ReaderProxyData&));
+    MOCK_METHOD1(matched_reader_add, bool(const ReaderProxyData&));
 
-        MOCK_METHOD1(matched_reader_remove, bool(const GUID_t&));
+    MOCK_METHOD1(matched_reader_remove, bool(const GUID_t&));
 
-        MOCK_METHOD0(getGuid, const GUID_t&());
+    MOCK_METHOD0(getGuid, const GUID_t& ());
 
-        MOCK_METHOD1(unsent_change_added_to_history_mock, void(CacheChange_t*));
+    MOCK_METHOD1(unsent_change_added_to_history_mock, void(CacheChange_t*));
 
-        MOCK_METHOD1(perform_nack_supression, void(const GUID_t&));
+    MOCK_METHOD1(perform_nack_supression, void(const GUID_t&));
 
-        RTPSParticipantImpl* getRTPSParticipant() { return participant_; }
+    MOCK_METHOD1(intraprocess_heartbeat, void(const ReaderProxy*));
 
-        SequenceNumber_t get_seq_num_min() { return SequenceNumber_t(0, 0); }
+    RTPSParticipantImpl* getRTPSParticipant()
+    {
+        return participant_;
+    }
 
-    private:
+    SequenceNumber_t get_seq_num_min()
+    {
+        return SequenceNumber_t(0, 0);
+    }
 
-        friend class ReaderProxy;
+private:
 
-        RTPSParticipantImpl* participant_;
+    friend class ReaderProxy;
 
-        WriterHistory* mp_history;
+    RTPSParticipantImpl* participant_;
+
+    WriterHistory* mp_history;
 };
 
 } // namespace rtps

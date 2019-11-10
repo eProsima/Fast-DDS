@@ -141,7 +141,7 @@ public:
 
 private:
 
-    typedef std::pair<RTPSParticipant*,RTPSParticipantImpl*> t_p_RTPSParticipant;
+    typedef std::pair<RTPSParticipant*, RTPSParticipantImpl*> t_p_RTPSParticipant;
 
     RTPSDomain();
 
@@ -154,10 +154,13 @@ private:
      * @brief Get Id to create a RTPSParticipant.
      * @return Different ID for each call.
      */
-    static inline uint32_t getNewId() { return m_maxRTPSParticipantID++; }
+    static inline uint32_t getNewId()
+    {
+        return m_maxRTPSParticipantID++;
+    }
 
     static void removeRTPSParticipant_nts(
-            std::vector<t_p_RTPSParticipant>::iterator it);
+            t_p_RTPSParticipant&);
 
     static std::mutex m_mutex;
 

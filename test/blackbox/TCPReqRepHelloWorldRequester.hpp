@@ -44,111 +44,153 @@
 
 class TCPReqRepHelloWorldRequester
 {
-    public:
+public:
 
-        class ReplyListener: public eprosima::fastrtps::SubscriberListener
+    class ReplyListener : public eprosima::fastrtps::SubscriberListener
     {
-        public:
-            ReplyListener(TCPReqRepHelloWorldRequester &requester) : requester_(requester) {};
-            ~ReplyListener(){};
-            void onNewDataMessage(eprosima::fastrtps::Subscriber *sub);
-            void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, eprosima::fastrtps::rtps::MatchingInfo& info)
+public:
+
+        ReplyListener(
+                TCPReqRepHelloWorldRequester& requester)
+            : requester_(requester)
+        {
+        }
+
+        ~ReplyListener()
+        {
+        }
+
+        void onNewDataMessage(
+                eprosima::fastrtps::Subscriber* sub);
+        void onSubscriptionMatched(
+                eprosima::fastrtps::Subscriber* /*sub*/,
+                eprosima::fastrtps::rtps::MatchingInfo& info)
+        {
+            if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
             {
-                if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
-                    requester_.matched();
+                requester_.matched();
             }
+        }
 
-        private:
+private:
 
-            ReplyListener& operator=(const ReplyListener&) = delete;
+        ReplyListener& operator =(
+                const ReplyListener&) = delete;
 
-            TCPReqRepHelloWorldRequester &requester_;
+        TCPReqRepHelloWorldRequester& requester_;
     } reply_listener_;
 
-        class RequestListener : public eprosima::fastrtps::PublisherListener
+    class RequestListener : public eprosima::fastrtps::PublisherListener
     {
-        public:
+public:
 
-            RequestListener(TCPReqRepHelloWorldRequester &requester) : requester_(requester){};
-            ~RequestListener(){};
-            void onPublicationMatched(eprosima::fastrtps::Publisher* /*pub*/, eprosima::fastrtps::rtps::MatchingInfo &info)
+        RequestListener(
+                TCPReqRepHelloWorldRequester& requester)
+            : requester_(requester)
+        {
+        }
+
+        ~RequestListener()
+        {
+        }
+
+        void onPublicationMatched(
+                eprosima::fastrtps::Publisher* /*pub*/,
+                eprosima::fastrtps::rtps::MatchingInfo& info)
+        {
+            if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
             {
-                if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
-                    requester_.matched();
+                requester_.matched();
             }
+        }
 
-        private:
+private:
 
-            RequestListener& operator=(const RequestListener&) = delete;
+        RequestListener& operator =(
+                const RequestListener&) = delete;
 
-            TCPReqRepHelloWorldRequester &requester_;
+        TCPReqRepHelloWorldRequester& requester_;
 
     } request_listener_;
 
-        TCPReqRepHelloWorldRequester();
-        virtual ~TCPReqRepHelloWorldRequester();
-        void init(
+    TCPReqRepHelloWorldRequester();
+    virtual ~TCPReqRepHelloWorldRequester();
+    void init(
             int participantId,
             int domainId,
             uint16_t listeningPort,
             uint32_t maxInitialPeer = 0,
             const char* certs_path = nullptr,
             bool force_localhost = false);
-        bool isInitialized() const { return initialized_; }
-        void newNumber(eprosima::fastrtps::rtps::SampleIdentity related_sample_identity, uint16_t number);
-        void block();
-        void wait_discovery(std::chrono::seconds timeout = std::chrono::seconds::zero());
-        void matched();
-        void send(const uint16_t number);
-        bool is_matched();
+    bool isInitialized() const
+    {
+        return initialized_;
+    }
 
-        virtual void configSubscriber(const std::string& suffix)
-        {
-            sattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+    void newNumber(
+            eprosima::fastrtps::rtps::SampleIdentity related_sample_identity,
+            uint16_t number);
+    void block();
+    void wait_discovery(
+            std::chrono::seconds timeout = std::chrono::seconds::zero());
+    void matched();
+    void send(
+            const uint16_t number);
+    bool is_matched();
 
-            std::ostringstream t;
+    virtual void configSubscriber(
+            const std::string& suffix)
+    {
+        sattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
 
-            t << "TCPReqRepHelloworld_" << asio::ip::host_name() << "_" << GET_PID() << "_" << suffix;
+        std::ostringstream t;
 
-            sattr.topic.topicName = t.str();
-        };
+        t << "TCPReqRepHelloworld_" << asio::ip::host_name() << "_" << GET_PID() << "_" << suffix;
 
-        virtual void configPublisher(const std::string& suffix)
-        {
-            puattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+        sattr.topic.topicName = t.str();
+    }
 
-            // Increase default max_blocking_time to 1 second, as our CI infrastructure shows some
-            // big CPU overhead sometimes
-            puattr.qos.m_reliability.max_blocking_time.seconds = 1;
-            puattr.qos.m_reliability.max_blocking_time.nanosec = 0;
+    virtual void configPublisher(
+            const std::string& suffix)
+    {
+        puattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
 
-            std::ostringstream t;
+        // Increase default max_blocking_time to 1 second, as our CI infrastructure shows some
+        // big CPU overhead sometimes
+        puattr.qos.m_reliability.max_blocking_time.seconds = 1;
+        puattr.qos.m_reliability.max_blocking_time.nanosec = 0;
 
-            t << "TCPReqRepHelloworld_" << asio::ip::host_name() << "_" << GET_PID() << "_" << suffix;
+        std::ostringstream t;
 
-            puattr.topic.topicName = t.str();
-        }
+        t << "TCPReqRepHelloworld_" << asio::ip::host_name() << "_" << GET_PID() << "_" << suffix;
 
-    protected:
-        eprosima::fastrtps::PublisherAttributes puattr;
-        eprosima::fastrtps::SubscriberAttributes sattr;
-    private:
+        puattr.topic.topicName = t.str();
+    }
 
-        TCPReqRepHelloWorldRequester& operator=(const TCPReqRepHelloWorldRequester&)= delete;
+protected:
 
-        uint16_t current_number_;
-        uint16_t number_received_;
-        eprosima::fastrtps::Participant *participant_;
-        eprosima::fastrtps::Subscriber *reply_subscriber_;
-        eprosima::fastrtps::Publisher *request_publisher_;
-        bool initialized_;
-        std::mutex mutex_;
-        std::condition_variable cv_;
-        std::mutex mutexDiscovery_;
-        std::condition_variable cvDiscovery_;
-        std::atomic<unsigned int> matched_;
-        HelloWorldType type_;
-        eprosima::fastrtps::rtps::SampleIdentity related_sample_identity_;
+    eprosima::fastrtps::PublisherAttributes puattr;
+    eprosima::fastrtps::SubscriberAttributes sattr;
+
+private:
+
+    TCPReqRepHelloWorldRequester& operator =(
+            const TCPReqRepHelloWorldRequester&) = delete;
+
+    uint16_t current_number_;
+    uint16_t number_received_;
+    eprosima::fastrtps::Participant* participant_;
+    eprosima::fastrtps::Subscriber* reply_subscriber_;
+    eprosima::fastrtps::Publisher* request_publisher_;
+    bool initialized_;
+    std::mutex mutex_;
+    std::condition_variable cv_;
+    std::mutex mutexDiscovery_;
+    std::condition_variable cvDiscovery_;
+    std::atomic<unsigned int> matched_;
+    HelloWorldType type_;
+    eprosima::fastrtps::rtps::SampleIdentity related_sample_identity_;
+    eprosima::fastrtps::rtps::SampleIdentity received_sample_identity_;
 };
 
 #endif // _TEST_BLACKBOX_TCPReqRepHelloWorldRequester_HPP_
