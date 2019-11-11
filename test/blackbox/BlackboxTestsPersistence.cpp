@@ -25,7 +25,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class BlackBoxPersistence : public ::testing::Test
+class Persistence : public ::testing::TestWithParam<bool>
 {
 public:
 
@@ -139,47 +139,14 @@ protected:
 
 };
 
-using BlackBoxPersistenceIntraprocess = BlackBoxPersistence;
-
-TEST_F(BlackBoxPersistence, RTPSAsNonReliableWithPersistence)
-{
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string ip("239.255.1.4");
-
-    reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    writer.make_persistent(db_file_name(), guid_prefix()).
-    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Discover, send and receive
-    run_one_send_recv_test(reader, writer, 0, false);
-
-    // Stop and start reader and writer
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-
-    std::cout << "First round finished." << std::endl;
-
-    reader.init();
-    writer.init();
-
-    // Discover, send and receive
-    run_one_send_recv_test(reader, writer, 13, false);
-    reader.destroy();
-    writer.destroy();
-
-    std::cout << "Second round finished." << std::endl;
-}
-
-TEST_F(BlackBoxPersistenceIntraprocess, RTPSAsNonReliableWithPersistence)
+TEST_P(Persistence, RTPSAsNonReliableWithPersistence)
 {
     LibrarySettingsAttributes library_settings;
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -212,48 +179,21 @@ TEST_F(BlackBoxPersistenceIntraprocess, RTPSAsNonReliableWithPersistence)
 
     std::cout << "Second round finished." << std::endl;
 
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
-TEST_F(BlackBoxPersistence, AsyncRTPSAsNonReliableWithPersistence)
-{
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string ip("239.255.1.4");
-
-    reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    writer.make_persistent(db_file_name(), guid_prefix()).
-    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::BEST_EFFORT).
-    asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Discover, send and receive
-    run_one_send_recv_test(reader, writer, 0, false);
-
-    // Stop and start reader and writer
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-
-    std::cout << "First round finished." << std::endl;
-
-    reader.init();
-    writer.init();
-
-    // Discover, send and receive
-    run_one_send_recv_test(reader, writer, 13, false);
-
-    std::cout << "Second round finished." << std::endl;
-}
-
-TEST_F(BlackBoxPersistenceIntraprocess, AsyncRTPSAsNonReliableWithPersistence)
+TEST_P(Persistence, AsyncRTPSAsNonReliableWithPersistence)
 {
     LibrarySettingsAttributes library_settings;
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -285,47 +225,21 @@ TEST_F(BlackBoxPersistenceIntraprocess, AsyncRTPSAsNonReliableWithPersistence)
 
     std::cout << "Second round finished." << std::endl;
 
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
-TEST_F(BlackBoxPersistence, RTPSAsReliableWithPersistence)
-{
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string ip("239.255.1.4");
-
-    reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).
-    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    writer.make_persistent(db_file_name(), guid_prefix()).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Discover, send and receive
-    run_one_send_recv_test(reader, writer, 0, true);
-
-    // Stop and start reader and writer
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-
-    std::cout << "First round finished." << std::endl;
-
-    reader.init();
-    writer.init();
-
-    // Discover, send and receive
-    run_one_send_recv_test(reader, writer, 20, true);
-
-    std::cout << "Second round finished." << std::endl;
-}
-
-TEST_F(BlackBoxPersistenceIntraprocess, RTPSAsReliableWithPersistence)
+TEST_P(Persistence, RTPSAsReliableWithPersistence)
 {
     LibrarySettingsAttributes library_settings;
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -356,50 +270,21 @@ TEST_F(BlackBoxPersistenceIntraprocess, RTPSAsReliableWithPersistence)
 
     std::cout << "Second round finished." << std::endl;
 
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
-TEST_F(BlackBoxPersistence, AsyncRTPSAsReliableWithPersistence)
-{
-    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string ip("239.255.1.4");
-
-    reader.make_persistent(db_file_name(), guid_prefix()).add_to_multicast_locator_list(ip, global_port).
-    reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    writer.make_persistent(db_file_name(), guid_prefix()).history_depth(10).
-    asynchronously(eprosima::fastrtps::rtps::RTPSWriterPublishMode::ASYNCHRONOUS_WRITER).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Discover, send and receive
-    run_one_send_recv_test(reader, writer, 0, true);
-
-    // Stop and start reader and writer
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-
-    std::cout << "First round finished." << std::endl;
-
-    reader.init();
-    writer.init();
-
-    // Discover, send and receive
-    run_one_send_recv_test(reader, writer, 20, true);
-    reader.destroy();
-    writer.destroy();
-
-    std::cout << "Second round finished." << std::endl;
-}
-
-TEST_F(BlackBoxPersistenceIntraprocess, AsyncRTPSAsReliableWithPersistence)
+TEST_P(Persistence, AsyncRTPSAsReliableWithPersistence)
 {
     LibrarySettingsAttributes library_settings;
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -433,6 +318,21 @@ TEST_F(BlackBoxPersistenceIntraprocess, AsyncRTPSAsReliableWithPersistence)
 
     std::cout << "Second round finished." << std::endl;
 
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
+
+INSTANTIATE_TEST_CASE_P(Persistence,
+        Persistence,
+        testing::Values(false, true),
+        [](const testing::TestParamInfo<Persistence::ParamType>& info)
+{
+    if (info.param)
+    {
+        return "NonIntraprocess";
+    }
+    return "Intraprocess";
+});

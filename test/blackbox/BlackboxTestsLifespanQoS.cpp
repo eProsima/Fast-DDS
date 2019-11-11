@@ -25,8 +25,19 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TEST(LifespanQos, LongLifespan)
+class LifespanQos : public testing::TestWithParam<bool>
 {
+};
+
+TEST_P(LifespanQos, LongLifespan)
+{
+    LibrarySettingsAttributes library_settings;
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
+
     // This test sets a long lifespan, makes the writer send a few samples
     // and checks that those changes can be removed from the history
     // as they should not have been removed due to lifespan QoS
@@ -76,121 +87,22 @@ TEST(LifespanQos, LongLifespan)
     EXPECT_EQ(reader.takeNextData(&msg, &info), true);
     EXPECT_EQ(reader.takeNextData(&msg, &info), true);
     EXPECT_EQ(reader.takeNextData(&msg, &info), true);
+
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
-TEST(LifespanQosIntraprocess, LongLifespan)
+TEST_P(LifespanQos, ShortLifespan)
 {
     LibrarySettingsAttributes library_settings;
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
-
-    // This test sets a long lifespan, makes the writer send a few samples
-    // and checks that those changes can be removed from the history
-    // as they should not have been removed due to lifespan QoS
-
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME, false);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-
-    // Write rate in milliseconds
-    uint32_t writer_sleep_ms = 1;
-    // Number of samples written by writer
-    uint32_t writer_samples = 3;
-    // Lifespan period in milliseconds
-    uint32_t lifespan_ms = 10000;
-
-    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .lifespan_period(lifespan_ms * 1e-3)
-    .init();
-    reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-    .init();
-
-    ASSERT_TRUE(reader.isInitialized());
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator(writer_samples);
-    auto expected_data = data;
-    writer.send(data, writer_sleep_ms);
-    ASSERT_TRUE(data.empty());
-
-    reader.startReception(expected_data);
-    reader.block_for_at_least(writer_samples);
-
-    // Changes should not have been removed due to lifespan
-    // therefore they should still exist in the history and
-    // we should be able to remove them manually
-    size_t removed_pub = 0;
-    writer.remove_all_changes(&removed_pub);
-    EXPECT_EQ(removed_pub, writer_samples);
-
-    // On the reader side we should be able to take the data
-    HelloWorldType::type msg;
-    eprosima::fastrtps::SampleInfo_t info;
-    EXPECT_EQ(reader.takeNextData(&msg, &info), true);
-    EXPECT_EQ(reader.takeNextData(&msg, &info), true);
-    EXPECT_EQ(reader.takeNextData(&msg, &info), true);
-
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
-}
-
-TEST(LifespanQos, ShortLifespan)
-{
-    // This test sets a short lifespan, makes the writer send a few samples
-    // and checks that those samples cannot be removed from the history as
-    // they have been removed by lifespan QoS
-
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-
-    // Write rate in milliseconds
-    uint32_t writer_sleep_ms = 200;
-    // Number of samples written by writer
-    uint32_t writer_samples = 3;
-    // Lifespan period in milliseconds
-    uint32_t lifespan_ms = 1;
-
-    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .lifespan_period(lifespan_ms * 1e-3)
-    .init();
-    reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-    .lifespan_period(lifespan_ms * 1e-3)
-    .init();
-
-    ASSERT_TRUE(reader.isInitialized());
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator(writer_samples);
-    writer.send(data, writer_sleep_ms);
-    ASSERT_TRUE(data.empty());
-
-    // Changes should have been removed from history by lifespan QoS
-    // so we should not be able to remove them anymore
-    size_t removed_pub = 0;
-    writer.remove_all_changes(&removed_pub);
-    EXPECT_EQ(removed_pub, 0u);
-
-    // On the reader side we should not be able to take the data
-    HelloWorldType::type msg;
-    eprosima::fastrtps::SampleInfo_t info;
-    EXPECT_EQ(reader.takeNextData(&msg, &info), false);
-    EXPECT_EQ(reader.takeNextData(&msg, &info), false);
-    EXPECT_EQ(reader.takeNextData(&msg, &info), false);
-}
-
-TEST(LifespanQosIntraprocess, ShortLifespan)
-{
-    LibrarySettingsAttributes library_settings;
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 
     // This test sets a short lifespan, makes the writer send a few samples
     // and checks that those samples cannot be removed from the history as
@@ -237,6 +149,21 @@ TEST(LifespanQosIntraprocess, ShortLifespan)
     EXPECT_EQ(reader.takeNextData(&msg, &info), false);
     EXPECT_EQ(reader.takeNextData(&msg, &info), false);
 
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
+
+INSTANTIATE_TEST_CASE_P(LifespanQos,
+        LifespanQos,
+        testing::Values(false, true),
+        [](const testing::TestParamInfo<LifespanQos::ParamType>& info)
+{
+    if (info.param)
+    {
+        return "NonIntraprocess";
+    }
+    return "Intraprocess";
+});
