@@ -19,12 +19,24 @@
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/transport/test_UDPv4Transport.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TEST(BlackBox, PubSubAsNonReliableData300kb)
+class BlackBox : public testing::TestWithParam<bool>
 {
+};
+
+TEST_P(BlackBox, PubSubAsNonReliableData300kb)
+{
+    LibrarySettingsAttributes library_settings;
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
+
     // Mutes an expected error
     Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
 
@@ -39,10 +51,23 @@ TEST(BlackBox, PubSubAsNonReliableData300kb)
     writer.send(data);
     // In this test data is not sent.
     ASSERT_FALSE(data.empty());
+
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
-TEST(BlackBox, PubSubAsReliableData300kb)
+TEST_P(BlackBox, PubSubAsReliableData300kb)
 {
+    LibrarySettingsAttributes library_settings;
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
+
     // Mutes an expected error
     Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
 
@@ -57,10 +82,23 @@ TEST(BlackBox, PubSubAsReliableData300kb)
     writer.send(data);
     // In this test data is not sent.
     ASSERT_FALSE(data.empty());
+
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
-TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
+TEST_P(BlackBox, AsyncPubSubAsNonReliableData300kb)
 {
+    LibrarySettingsAttributes library_settings;
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
+
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
@@ -74,9 +112,9 @@ TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
     uint32_t periodInMs = 50;
 
     writer.history_depth(10).
-        reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-        add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
+    reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+    add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -94,15 +132,28 @@ TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
     reader.block_for_at_least(2);
+
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
-TEST(BlackBox, AsyncPubSubAsReliableData300kb)
+TEST_P(BlackBox, AsyncPubSubAsReliableData300kb)
 {
+    LibrarySettingsAttributes library_settings;
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
+
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(5).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -112,8 +163,8 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kb)
     uint32_t periodInMs = 50;
 
     writer.history_depth(5).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-        add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+    add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -132,15 +183,28 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kb)
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
     reader.block_for_all();
+
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
-TEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
+TEST_P(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
 {
+    LibrarySettingsAttributes library_settings;
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
+
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(5).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -162,7 +226,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
     writer.add_user_transport_to_pparams(testTransport);
 
     writer.history_depth(5).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -183,18 +247,33 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
     reader.block_for_all();
 
     // Sanity check. Make sure we have dropped a few packets
-    ASSERT_EQ(eprosima::fastrtps::rtps::test_UDPv4Transport::test_UDPv4Transport_DropLog.size(), testTransport->dropLogLength);
+    ASSERT_EQ(
+        eprosima::fastrtps::rtps::test_UDPv4Transport::test_UDPv4Transport_DropLog.size(),
+        testTransport->dropLogLength);
+
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
-TEST(BlackBox, AsyncFragmentSizeTest)
+TEST_P(BlackBox, AsyncFragmentSizeTest)
 {
+    LibrarySettingsAttributes library_settings;
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
+
     // ThroghputController size large than maxMessageSize.
     {
         PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
         PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
         reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
         ASSERT_TRUE(reader.isInitialized());
 
@@ -240,7 +319,7 @@ TEST(BlackBox, AsyncFragmentSizeTest)
         PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
         reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
         ASSERT_TRUE(reader.isInitialized());
 
@@ -257,7 +336,7 @@ TEST(BlackBox, AsyncFragmentSizeTest)
         writer.disable_builtin_transport();
         writer.add_user_transport_to_pparams(testTransport);
         writer.history_depth(10).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
         ASSERT_TRUE(writer.isInitialized());
 
@@ -280,4 +359,23 @@ TEST(BlackBox, AsyncFragmentSizeTest)
         ASSERT_GE(current_received, static_cast<size_t>(1));
         ASSERT_LE(current_received, static_cast<size_t>(3));
     }
+
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
+
+
+INSTANTIATE_TEST_CASE_P(BlackBox,
+        BlackBox,
+        testing::Values(false, true),
+        [](const testing::TestParamInfo<BlackBox::ParamType>& info)
+{
+    if (info.param)
+    {
+        return "NonIntraprocess";
+    }
+    return "Intraprocess";
+});
