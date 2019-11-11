@@ -20,6 +20,7 @@
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
 
 #include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -69,6 +70,58 @@ TEST(DeadlineQos, NoKeyTopicLongDeadline)
     EXPECT_EQ(reader.missed_deadlines(), 0u);
 }
 
+TEST(DeadlineQosIntraprocess, NoKeyTopicLongDeadline)
+{
+    LibrarySettingsAttributes library_settings;
+    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+    xmlparser::XMLProfileManager::library_settings(library_settings);
+
+    // This test sets a long deadline (long in comparison to the write rate),
+    // makes the writer send a few samples and checks that the deadline was
+    // not missed
+    // Uses a topic with no key
+
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Write rate in milliseconds
+    uint32_t writer_sleep_ms = 10;
+    // Number of samples written by writer
+    uint32_t writer_samples = 3;
+    // Deadline period in milliseconds
+    uint32_t deadline_period_ms = 100000;
+
+    reader.deadline_period(deadline_period_ms * 1e-3).init();
+    writer.deadline_period(deadline_period_ms * 1e-3).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator(writer_samples);
+
+    reader.startReception(data);
+
+    size_t count = 0;
+    for (auto data_sample : data)
+    {
+        // Send data
+        writer.send_sample(data_sample);
+        ++count;
+        reader.block_for_at_least(count);
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+
+    EXPECT_EQ(writer.missed_deadlines(), 0u);
+    EXPECT_EQ(reader.missed_deadlines(), 0u);
+
+    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+    xmlparser::XMLProfileManager::library_settings(library_settings);
+}
+
 TEST(DeadlineQos, NoKeyTopicShortDeadline)
 {
     // This test sets a short deadline (short compared to the write rate),
@@ -112,6 +165,58 @@ TEST(DeadlineQos, NoKeyTopicShortDeadline)
     // All samples should have missed the deadline
     EXPECT_GE(writer.missed_deadlines(), writer_samples);
     EXPECT_GE(reader.missed_deadlines(), writer_samples);
+}
+
+TEST(DeadlineQosIntraprocess, NoKeyTopicShortDeadline)
+{
+    LibrarySettingsAttributes library_settings;
+    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+    xmlparser::XMLProfileManager::library_settings(library_settings);
+
+    // This test sets a short deadline (short compared to the write rate),
+    // makes the writer send a few samples and checks that the deadline was missed every time
+    // Uses a topic with no key
+
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Write rate in milliseconds
+    uint32_t writer_sleep_ms = 1000;
+    // Number of samples written by writer
+    uint32_t writer_samples = 3;
+    // Deadline period in milliseconds
+    uint32_t deadline_period_ms = 10;
+
+    reader.deadline_period(deadline_period_ms * 1e-3).init();
+    writer.deadline_period(deadline_period_ms * 1e-3).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator(writer_samples);
+
+    reader.startReception(data);
+
+    size_t count = 0;
+    for (auto data_sample : data)
+    {
+        // Send data
+        writer.send_sample(data_sample);
+        ++count;
+        reader.block_for_at_least(count);
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+
+    // All samples should have missed the deadline
+    EXPECT_GE(writer.missed_deadlines(), writer_samples);
+    EXPECT_GE(reader.missed_deadlines(), writer_samples);
+
+    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+    xmlparser::XMLProfileManager::library_settings(library_settings);
 }
 
 TEST(DeadlineQos, KeyedTopicLongDeadline)
@@ -159,6 +264,58 @@ TEST(DeadlineQos, KeyedTopicLongDeadline)
     EXPECT_EQ(reader.missed_deadlines(), 0u);
 }
 
+TEST(DeadlineQosIntraprocess, KeyedTopicLongDeadline)
+{
+    LibrarySettingsAttributes library_settings;
+    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+    xmlparser::XMLProfileManager::library_settings(library_settings);
+
+    // This test sets a long deadline (long in comparison to the write rate),
+    // makes the writer send a few samples and checks that the deadline was met
+    // Uses a topic with key
+
+    PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Write rate in milliseconds
+    uint32_t writer_sleep_ms = 10;
+    // Number of samples written by writer
+    uint32_t writer_samples = 4;
+    // Deadline period in milliseconds
+    uint32_t deadline_period_ms = 100000;
+
+    reader.deadline_period(deadline_period_ms * 1e-3).key(true).init();
+    writer.deadline_period(deadline_period_ms * 1e-3).key(true).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_keyedhelloworld_data_generator(writer_samples);
+
+    reader.startReception(data);
+
+    size_t count = 0;
+    for (auto data_sample : data)
+    {
+        // Send data
+        data_sample.key(count % 2);
+        writer.send_sample(data_sample);
+        ++count;
+        reader.block_for_at_least(count);
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+
+    EXPECT_EQ(writer.missed_deadlines(), 0u);
+    EXPECT_EQ(reader.missed_deadlines(), 0u);
+
+    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+    xmlparser::XMLProfileManager::library_settings(library_settings);
+}
+
 TEST(DeadlineQos, KeyedTopicShortDeadline)
 {
     // This test sets a short deadline (short compared to the write rate),
@@ -202,4 +359,56 @@ TEST(DeadlineQos, KeyedTopicShortDeadline)
 
     EXPECT_GE(writer.missed_deadlines(), writer_samples);
     EXPECT_GE(reader.missed_deadlines(), writer_samples);
+}
+
+TEST(DeadlineQosIntraprocess, KeyedTopicShortDeadline)
+{
+    LibrarySettingsAttributes library_settings;
+    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+    xmlparser::XMLProfileManager::library_settings(library_settings);
+
+    // This test sets a short deadline (short compared to the write rate),
+    // makes the writer send a few samples and checks that the deadline was missed every time
+    // Uses a topic with key
+
+    PubSubReader<KeyedHelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<KeyedHelloWorldType> writer(TEST_TOPIC_NAME);
+
+    // Number of samples to send
+    uint32_t writer_samples = 4;
+    // Time to wait before sending the sample
+    uint32_t writer_sleep_ms = 1000;
+    // Deadline period in ms
+    uint32_t deadline_period_ms = 10;
+
+    reader.deadline_period(deadline_period_ms * 1e-3).key(true).init();
+    writer.deadline_period(deadline_period_ms * 1e-3).key(true).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_keyedhelloworld_data_generator(writer_samples);
+
+    reader.startReception(data);
+
+    size_t count = 0;
+    for (auto data_sample : data)
+    {
+        // Send data
+        data_sample.key(count % 2);
+        writer.send_sample(data_sample);
+        ++count;
+        reader.block_for_at_least(count);
+        std::this_thread::sleep_for(std::chrono::milliseconds(writer_sleep_ms));
+    }
+
+    EXPECT_GE(writer.missed_deadlines(), writer_samples);
+    EXPECT_GE(reader.missed_deadlines(), writer_samples);
+
+    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+    xmlparser::XMLProfileManager::library_settings(library_settings);
 }

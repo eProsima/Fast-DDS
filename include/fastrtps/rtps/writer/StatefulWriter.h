@@ -128,7 +128,8 @@ public:
             const SequenceNumber_t& seq_num);
 
     bool intraprocess_heartbeat(
-            ReaderProxy* reader_proxy);
+            ReaderProxy* reader_proxy,
+            bool liveliness = false);
 
     //!Increment the HB count.
     inline void incrementHBCount()
