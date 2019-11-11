@@ -17,11 +17,24 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TEST(BlackBox, PubSubReliableWithLimitedSubscribers)
+class BlackBox : public testing::TestWithParam<bool>
 {
+};
+
+TEST_P(BlackBox, PubSubReliableWithLimitedSubscribers)
+{
+    LibrarySettingsAttributes library_settings;
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
+
     PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
     PubSubReader<FixedSizedType> reader2(TEST_TOPIC_NAME);
     PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
@@ -70,10 +83,23 @@ TEST(BlackBox, PubSubReliableWithLimitedSubscribers)
 
     // Second reader should not receive data
     ASSERT_EQ(reader2.getReceivedCount(), 0u);
+
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
-TEST(BlackBox, AsyncPubSubReliableWithLimitedSubscribers)
+TEST_P(BlackBox, AsyncPubSubReliableWithLimitedSubscribers)
 {
+    LibrarySettingsAttributes library_settings;
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
+
     PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
     PubSubReader<FixedSizedType> reader2(TEST_TOPIC_NAME);
     PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
@@ -123,10 +149,23 @@ TEST(BlackBox, AsyncPubSubReliableWithLimitedSubscribers)
 
     // Second reader should not receive data
     ASSERT_EQ(reader2.getReceivedCount(), 0u);
+
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
-TEST(BlackBox, PubSubBestEffortWithLimitedSubscribers)
+TEST_P(BlackBox, PubSubBestEffortWithLimitedSubscribers)
 {
+    LibrarySettingsAttributes library_settings;
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
+
     PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
     PubSubReader<FixedSizedType> reader2(TEST_TOPIC_NAME);
     PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
@@ -174,10 +213,23 @@ TEST(BlackBox, PubSubBestEffortWithLimitedSubscribers)
 
     // Second reader should not receive data
     ASSERT_EQ(reader2.getReceivedCount(), 0u);
+
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
-TEST(BlackBox, AsyncPubSubBestEffortWithLimitedSubscribers)
+TEST_P(BlackBox, AsyncPubSubBestEffortWithLimitedSubscribers)
 {
+    LibrarySettingsAttributes library_settings;
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
+
     PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
     PubSubReader<FixedSizedType> reader2(TEST_TOPIC_NAME);
     PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
@@ -226,10 +278,23 @@ TEST(BlackBox, AsyncPubSubBestEffortWithLimitedSubscribers)
 
     // Second reader should not receive data
     ASSERT_EQ(reader2.getReceivedCount(), 0u);
+
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
-TEST(BlackBox, PubSubReliableWithLimitedPublishers)
+TEST_P(BlackBox, PubSubReliableWithLimitedPublishers)
 {
+    LibrarySettingsAttributes library_settings;
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
+
     PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
     PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
     PubSubWriter<FixedSizedType> writer2(TEST_TOPIC_NAME);
@@ -283,10 +348,23 @@ TEST(BlackBox, PubSubReliableWithLimitedPublishers)
 
     // Reader should not receive data
     ASSERT_EQ(reader.getReceivedCount(), 0u);
+
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
-TEST(BlackBox, AsyncPubSubReliableWithLimitedPublishers)
+TEST_P(BlackBox, AsyncPubSubReliableWithLimitedPublishers)
 {
+    LibrarySettingsAttributes library_settings;
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
+
     PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
     PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
     PubSubWriter<FixedSizedType> writer2(TEST_TOPIC_NAME);
@@ -342,10 +420,23 @@ TEST(BlackBox, AsyncPubSubReliableWithLimitedPublishers)
 
     // Reader should not receive data
     ASSERT_EQ(reader.getReceivedCount(), 0u);
+
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
-TEST(BlackBox, PubSubBestEffortWithLimitedPublishers)
+TEST_P(BlackBox, PubSubBestEffortWithLimitedPublishers)
 {
+    LibrarySettingsAttributes library_settings;
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
+
     PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
     PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
     PubSubWriter<FixedSizedType> writer2(TEST_TOPIC_NAME);
@@ -400,10 +491,23 @@ TEST(BlackBox, PubSubBestEffortWithLimitedPublishers)
 
     // Reader should not receive data
     ASSERT_EQ(reader.getReceivedCount(), 0u);
+
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
-TEST(BlackBox, AsyncPubSubBestEffortWithLimitedPublishers)
+TEST_P(BlackBox, AsyncPubSubBestEffortWithLimitedPublishers)
 {
+    LibrarySettingsAttributes library_settings;
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
+
     PubSubReader<FixedSizedType> reader(TEST_TOPIC_NAME);
     PubSubWriter<FixedSizedType> writer(TEST_TOPIC_NAME);
     PubSubWriter<FixedSizedType> writer2(TEST_TOPIC_NAME);
@@ -460,5 +564,22 @@ TEST(BlackBox, AsyncPubSubBestEffortWithLimitedPublishers)
 
     // Reader should not receive data
     ASSERT_EQ(reader.getReceivedCount(), 0u);
+
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
+
+INSTANTIATE_TEST_CASE_P(RealtimeAllocations,
+        BlackBox,
+        testing::Values(false, true),
+        [](const testing::TestParamInfo<BlackBox::ParamType>& info) {
+              if (info.param)
+              {
+                  return "NonIntraprocess";
+              }
+              return "Intraprocess";
+            });
 

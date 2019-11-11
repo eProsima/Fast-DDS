@@ -15,7 +15,7 @@
 #ifndef __BLACKBOX_BLACKBOXTESTS_HPP__
 #define __BLACKBOX_BLACKBOXTESTS_HPP__
 
-#define TEST_TOPIC_NAME std::string(test_info_->test_case_name() + std::string("_") + test_info_->name())
+#define TEST_TOPIC_NAME std::string(::testing::UnitTest::GetInstance()->current_test_info()->test_case_name() + std::string("_") + ::testing::UnitTest::GetInstance()->current_test_info()->name())
 
 #if defined(_WIN32)
 #define GET_PID _getpid
