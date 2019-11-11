@@ -344,8 +344,8 @@ TEST(Discovery, ParticipantLivelinessAssertion)
             }
         });
 
-    ASSERT_FALSE(reader.wait_participant_undiscovery(std::chrono::seconds(1)));
-    ASSERT_FALSE(writer.wait_participant_undiscovery(std::chrono::seconds(1)));
+    EXPECT_FALSE(reader.wait_participant_undiscovery(std::chrono::seconds(1)));
+    EXPECT_FALSE(writer.wait_participant_undiscovery(std::chrono::seconds(1)));
 
     test_UDPv4Transport::always_drop_participant_builtin_topic_data = false;
 
