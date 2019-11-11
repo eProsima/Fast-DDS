@@ -109,7 +109,11 @@ protected:
 
         // Create DB file name from test name and PID
         std::ostringstream ss;
-        ss << info->test_case_name() << "_" << info->name() << "_" << GET_PID() << ".db";
+        std::string test_case_name(info->test_case_name());
+        std::string test_name(info->name());
+        ss <<
+            test_case_name.replace(test_case_name.find_first_of('/'), 1, "_") << "_" <<
+            test_name.replace(test_name.find_first_of('/'), 1, "_")  << "_" << GET_PID() << ".db";
         db_file_name_ = ss.str();
 
         // Fill guid prefix
