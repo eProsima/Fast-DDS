@@ -368,13 +368,6 @@ XMLP_ret XMLProfileManager::extractProfiles(
 
     profile_count += static_cast<unsigned int>(transport_profiles_.size()); // Count transport profiles
 
-    if (0 == profile_count)
-    {
-        xml_files_.emplace(filename, XMLP_ret::XML_ERROR);
-        logError(XMLPARSER, "Error, file '" << filename << "' bad content");
-        return XMLP_ret::XML_ERROR;
-    }
-
     xml_files_.emplace(filename, XMLP_ret::XML_OK);
 
     return XMLP_ret::XML_OK;
