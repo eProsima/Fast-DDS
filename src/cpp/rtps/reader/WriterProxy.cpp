@@ -534,6 +534,11 @@ bool WriterProxy::process_heartbeat(
                 assert_liveliness = liveliness_flag;
             }
         }
+        else
+        {
+            assert_liveliness = liveliness_flag;
+        }
+
         return true;
     }
 

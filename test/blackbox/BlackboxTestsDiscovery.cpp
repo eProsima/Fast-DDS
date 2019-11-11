@@ -237,6 +237,10 @@ TEST(BlackBox, EDPSlaveReaderAttachment)
 
 TEST(BlackBoxIntraprocess, EDPSlaveReaderAttachment)
 {
+    LibrarySettingsAttributes library_settings;
+    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+    xmlparser::XMLProfileManager::library_settings(library_settings);
+
     PubSubWriter<HelloWorldType> checker(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldType>* reader = new PubSubReader<HelloWorldType>(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType>* writer = new PubSubWriter<HelloWorldType>(TEST_TOPIC_NAME);
@@ -265,6 +269,9 @@ TEST(BlackBoxIntraprocess, EDPSlaveReaderAttachment)
     checker.block_until_discover_topic(checker.topic_name(), 1);
     checker.block_until_discover_partition("test", 0);
     checker.block_until_discover_partition("othertest", 0);
+
+    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+    xmlparser::XMLProfileManager::library_settings(library_settings);
 }
 
 // Used to detect Github issue #155

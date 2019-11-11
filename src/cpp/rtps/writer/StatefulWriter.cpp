@@ -393,7 +393,16 @@ bool StatefulWriter::intraprocess_heartbeat(
         SequenceNumber_t first_seq = get_seq_num_min();
         SequenceNumber_t last_seq = get_seq_num_max();
 
-        if (first_seq != c_SequenceNumber_Unknown && last_seq == c_SequenceNumber_Unknown)
+        if (first_seq == c_SequenceNumber_Unknown || last_seq == c_SequenceNumber_Unknown)
+        {
+            if (liveliness)
+            {
+                first_seq = next_sequence_number();
+                last_seq = first_seq - 1;
+            }
+        }
+
+        if (first_seq != c_SequenceNumber_Unknown && last_seq != c_SequenceNumber_Unknown)
         {
             incrementHBCount();
             return reader->processHeartbeatMsg(m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness);
