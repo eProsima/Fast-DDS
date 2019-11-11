@@ -103,11 +103,11 @@ void ReqRepHelloWorldRequester::block(
 {
     std::unique_lock<std::mutex> lock(mutex_);
 
-    if (current_number_ != number_received_)
+    bool timeout = cv_.wait_for(lock, seconds, [&]() -> bool
     {
-        ASSERT_EQ(cv_.wait_for(lock, seconds), std::cv_status::no_timeout);
-    }
-
+        return current_number_ == number_received_;
+    });
+    ASSERT_TRUE(timeout);
     ASSERT_EQ(current_number_, number_received_);
     ASSERT_EQ(related_sample_identity_, received_sample_identity_);
 }

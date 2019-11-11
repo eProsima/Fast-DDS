@@ -362,6 +362,10 @@ bool StatefulWriter::intraprocess_delivery(
     RTPSReader* reader = reader_proxy->local_reader();
     if (reader)
     {
+        if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
+        {
+            change->write_params.sample_identity(change->write_params.related_sample_identity());
+        }
         return reader->processDataMsg(change);
     }
 
