@@ -342,7 +342,8 @@ private:
 
     std::vector<std::unique_ptr<FlowController> > m_controllers;
 
-    uint64_t last_intraprocess_sequence_number_;
+    bool there_are_remote_readers_ = false;
+
 
     StatefulWriter& operator =(
             const StatefulWriter&) = delete;
