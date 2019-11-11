@@ -382,7 +382,8 @@ bool StatefulWriter::intraprocess_gap(
 }
 
 bool StatefulWriter::intraprocess_heartbeat(
-        ReaderProxy* reader_proxy)
+        ReaderProxy* reader_proxy,
+        bool liveliness)
 {
     std::lock_guard<RecursiveTimedMutex> guardW(mp_mutex);
     RTPSReader* reader = RTPSDomainImpl::find_local_reader(reader_proxy->guid());
@@ -394,7 +395,8 @@ bool StatefulWriter::intraprocess_heartbeat(
 
         if (first_seq != c_SequenceNumber_Unknown && last_seq == c_SequenceNumber_Unknown)
         {
-            return reader->processHeartbeatMsg(m_guid, m_heartbeatCount, first_seq, last_seq, true, false);
+            incrementHBCount();
+            return reader->processHeartbeatMsg(m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness);
         }
     }
 
@@ -1298,6 +1300,14 @@ bool StatefulWriter::send_periodic_heartbeat(
         // This is a liveliness heartbeat, we don't care about checking sequence numbers
         try
         {
+            for (ReaderProxy* it : matched_readers_)
+            {
+                if (it->is_local_reader())
+                {
+                    intraprocess_heartbeat(it, true);
+                }
+            }
+
             RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
             send_heartbeat_nts_(all_remote_readers_.size(), group, final, liveliness);
         }
@@ -1482,11 +1492,6 @@ bool StatefulWriter::process_acknack(
                         if (remote_reader->is_local_reader())
                         {
                             intraprocess_heartbeat(remote_reader);
-                        }
-                        else
-                        {
-                            //nack_response_event_->restart_timer();
-                            mp_RTPSParticipant->async_thread().wake_up(this);
                         }
                     }
 
