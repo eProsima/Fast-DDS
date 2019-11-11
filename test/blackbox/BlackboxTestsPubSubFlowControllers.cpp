@@ -21,47 +21,18 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
+class BlackBox : public testing::TestWithParam<bool>
 {
-    PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
+};
 
-    reader.history_depth(3).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    uint32_t bytesPerPeriod = 68000;
-    uint32_t periodInMs = 500;
-    writer.add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs);
-
-    writer.history_depth(3).
-    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Because its volatile the durability
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_data64kb_data_generator(3);
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
-}
-
-TEST(BlackBoxIntraprocess, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
+TEST_P(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
 {
     LibrarySettingsAttributes library_settings;
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
@@ -96,55 +67,21 @@ TEST(BlackBoxIntraprocess, AsyncPubSubAsReliableData64kbWithParticipantFlowContr
     // Block reader until reception finished or timeout.
     reader.block_for_all();
 
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
-TEST(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTransport)
-{
-    PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
-
-    reader.history_depth(3).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    uint32_t bytesPerPeriod = 65000;
-    uint32_t periodInMs = 500;
-    writer.add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs);
-
-    auto testTransport = std::make_shared<UDPv4TransportDescriptor>();
-    writer.disable_builtin_transport();
-    writer.add_user_transport_to_pparams(testTransport);
-
-    writer.history_depth(3).
-    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Because its volatile the durability
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_data64kb_data_generator(3);
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
-}
-
-TEST(BlackBoxIntraprocess, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTransport)
+TEST_P(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTransport)
 {
     LibrarySettingsAttributes library_settings;
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
@@ -183,8 +120,11 @@ TEST(BlackBoxIntraprocess, AsyncPubSubAsReliableData64kbWithParticipantFlowContr
     // Block reader until reception finished or timeout.
     reader.block_for_all();
 
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
 
 TEST(BlackBox, AsyncPubSubWithFlowController64kb)
@@ -216,21 +156,14 @@ TEST(BlackBox, AsyncPubSubWithFlowController64kb)
     ASSERT_EQ(reader.getReceivedCount(), 1u);
 }
 
-TEST(BlackBox, FlowControllerIfNotAsync)
-{
-    PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
-
-    uint32_t size = 10000;
-    uint32_t periodInMs = 1000;
-    writer.add_throughput_controller_descriptor_to_pparams(size, periodInMs).init();
-    ASSERT_FALSE(writer.isInitialized());
-}
-
-TEST(BlackBoxIntraprocess, FlowControllerIfNotAsync)
+TEST_P(BlackBox, FlowControllerIfNotAsync)
 {
     LibrarySettingsAttributes library_settings;
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
@@ -239,6 +172,21 @@ TEST(BlackBoxIntraprocess, FlowControllerIfNotAsync)
     writer.add_throughput_controller_descriptor_to_pparams(size, periodInMs).init();
     ASSERT_FALSE(writer.isInitialized());
 
-    library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    if (GetParam())
+    {
+        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+        xmlparser::XMLProfileManager::library_settings(library_settings);
+    }
 }
+
+INSTANTIATE_TEST_CASE_P(BlackBox,
+        BlackBox,
+        testing::Values(false, true),
+        [](const testing::TestParamInfo<BlackBox::ParamType>& info)
+{
+    if (info.param)
+    {
+        return "NonIntraprocess";
+    }
+    return "Intraprocess";
+});
