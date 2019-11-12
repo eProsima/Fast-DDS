@@ -27,6 +27,7 @@ namespace fastrtps {
 namespace rtps {
 
 class RTPSParticipantImpl;
+class ReaderProxy;
 
 class StatefulWriter : public RTPSWriter
 {
