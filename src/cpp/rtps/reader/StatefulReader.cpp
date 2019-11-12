@@ -377,9 +377,11 @@ bool StatefulReader::processDataMsg(
                 releaseCache(change_to_add);
             }
         }
+
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 bool StatefulReader::processDataFragMsg(
@@ -560,9 +562,11 @@ bool StatefulReader::processHeartbeatMsg(
             // Maybe now we have to notify user from new CacheChanges.
             NotifyChanges(writer);
         }
+
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 bool StatefulReader::processGapMsg(
@@ -609,9 +613,11 @@ bool StatefulReader::processGapMsg(
 
         // Maybe now we have to notify user from new CacheChanges.
         NotifyChanges(pWP);
+
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 bool StatefulReader::acceptMsgFrom(

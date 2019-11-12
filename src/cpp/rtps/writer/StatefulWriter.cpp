@@ -503,7 +503,14 @@ void StatefulWriter::send_any_unsent_changes()
                                 {
                                     if (remoteReader->is_local_reader())
                                     {
-                                        intraprocess_gap(remoteReader, seqNum);
+                                        if (intraprocess_gap(remoteReader, seqNum))
+                                        {
+                                            max_ack_seq = seqNum;
+                                        }
+                                        else
+                                        {
+                                            remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
+                                        }
                                     }
                                     else
                                     {
@@ -511,8 +518,8 @@ void StatefulWriter::send_any_unsent_changes()
                                         {
                                             irrelevant.emplace(seqNum);
                                         }
+                                        remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
                                     }
-                                    remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
                                 } // Relevance
                             };
                     remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
@@ -587,14 +594,21 @@ void StatefulWriter::send_any_unsent_changes()
                         }
                         else
                         {
-                            remoteReader->set_change_to_status(seq_num, UNDERWAY, true);
                             if (remoteReader->is_local_reader())
                             {
-                                intraprocess_gap(remoteReader, seq_num);
+                                if (intraprocess_gap(remoteReader, seq_num))
+                                {
+                                    max_ack_seq = seq_num;
+                                }
+                                else
+                                {
+                                    remoteReader->set_change_to_status(seq_num, UNDERWAY, true);
+                                }
                             }
                             else
                             {
                                 notRelevantChanges.add_sequence_number(seq_num, remoteReader);
+                                remoteReader->set_change_to_status(seq_num, UNDERWAY, true);
                             }
                         }
                     };
