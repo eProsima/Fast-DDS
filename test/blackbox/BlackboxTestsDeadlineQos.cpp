@@ -27,17 +27,33 @@ using namespace eprosima::fastrtps::rtps;
 
 class DeadlineQos : public testing::TestWithParam<bool>
 {
+public:
+
+    void SetUp() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+
+    }
+
+    void TearDown() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+    }
+
 };
 
 TEST_P(DeadlineQos, NoKeyTopicLongDeadline)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     // This test sets a long deadline (long in comparison to the write rate),
     // makes the writer send a few samples and checks that the deadline was
     // not missed
@@ -79,23 +95,10 @@ TEST_P(DeadlineQos, NoKeyTopicLongDeadline)
 
     EXPECT_EQ(writer.missed_deadlines(), 0u);
     EXPECT_EQ(reader.missed_deadlines(), 0u);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 TEST_P(DeadlineQos, NoKeyTopicShortDeadline)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     // This test sets a short deadline (short compared to the write rate),
     // makes the writer send a few samples and checks that the deadline was missed every time
     // Uses a topic with no key
@@ -137,23 +140,10 @@ TEST_P(DeadlineQos, NoKeyTopicShortDeadline)
     // All samples should have missed the deadline
     EXPECT_GE(writer.missed_deadlines(), writer_samples);
     EXPECT_GE(reader.missed_deadlines(), writer_samples);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 TEST_P(DeadlineQos, KeyedTopicLongDeadline)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     // This test sets a long deadline (long in comparison to the write rate),
     // makes the writer send a few samples and checks that the deadline was met
     // Uses a topic with key
@@ -195,23 +185,10 @@ TEST_P(DeadlineQos, KeyedTopicLongDeadline)
 
     EXPECT_EQ(writer.missed_deadlines(), 0u);
     EXPECT_EQ(reader.missed_deadlines(), 0u);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 TEST_P(DeadlineQos, KeyedTopicShortDeadline)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     // This test sets a short deadline (short compared to the write rate),
     // makes the writer send a few samples and checks that the deadline was missed every time
     // Uses a topic with key
@@ -252,12 +229,6 @@ TEST_P(DeadlineQos, KeyedTopicShortDeadline)
 
     EXPECT_GE(writer.missed_deadlines(), writer_samples);
     EXPECT_GE(reader.missed_deadlines(), writer_samples);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 INSTANTIATE_TEST_CASE_P(DeadlineQos,

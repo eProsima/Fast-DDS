@@ -27,17 +27,33 @@ using namespace eprosima::fastrtps::rtps;
 
 class LifespanQos : public testing::TestWithParam<bool>
 {
+public:
+
+    void SetUp() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+
+    }
+
+    void TearDown() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+    }
+
 };
 
 TEST_P(LifespanQos, LongLifespan)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     // This test sets a long lifespan, makes the writer send a few samples
     // and checks that those changes can be removed from the history
     // as they should not have been removed due to lifespan QoS
@@ -87,23 +103,10 @@ TEST_P(LifespanQos, LongLifespan)
     EXPECT_EQ(reader.takeNextData(&msg, &info), true);
     EXPECT_EQ(reader.takeNextData(&msg, &info), true);
     EXPECT_EQ(reader.takeNextData(&msg, &info), true);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 TEST_P(LifespanQos, ShortLifespan)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     // This test sets a short lifespan, makes the writer send a few samples
     // and checks that those samples cannot be removed from the history as
     // they have been removed by lifespan QoS
@@ -148,12 +151,6 @@ TEST_P(LifespanQos, ShortLifespan)
     EXPECT_EQ(reader.takeNextData(&msg, &info), false);
     EXPECT_EQ(reader.takeNextData(&msg, &info), false);
     EXPECT_EQ(reader.takeNextData(&msg, &info), false);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 INSTANTIATE_TEST_CASE_P(LifespanQos,
