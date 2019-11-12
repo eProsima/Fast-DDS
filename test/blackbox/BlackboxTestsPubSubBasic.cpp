@@ -367,7 +367,7 @@ TEST_P(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
     }
 }
 
-INSTANTIATE_TEST_CASE_P(BlackBox,
+INSTANTIATE_TEST_CASE_P(PubSubBasic,
         BlackBox,
         testing::Values(false, true),
         [](const testing::TestParamInfo<BlackBox::ParamType>& info)

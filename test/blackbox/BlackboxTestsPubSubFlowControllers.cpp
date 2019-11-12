@@ -179,7 +179,7 @@ TEST_P(BlackBox, FlowControllerIfNotAsync)
     }
 }
 
-INSTANTIATE_TEST_CASE_P(BlackBox,
+INSTANTIATE_TEST_CASE_P(PubSubFlowControllers,
         BlackBox,
         testing::Values(false, true),
         [](const testing::TestParamInfo<BlackBox::ParamType>& info)
