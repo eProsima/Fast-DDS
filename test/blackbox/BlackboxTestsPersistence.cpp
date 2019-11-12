@@ -104,6 +104,13 @@ protected:
 
     virtual void SetUp()
     {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+
         // Get info about current test
         auto info = ::testing::UnitTest::GetInstance()->current_test_info();
 
@@ -139,19 +146,19 @@ protected:
     virtual void TearDown()
     {
         std::remove(db_file_name_.c_str());
+
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
     }
 
 };
 
 TEST_P(Persistence, RTPSAsNonReliableWithPersistence)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
@@ -182,23 +189,10 @@ TEST_P(Persistence, RTPSAsNonReliableWithPersistence)
     writer.destroy();
 
     std::cout << "Second round finished." << std::endl;
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 TEST_P(Persistence, AsyncRTPSAsNonReliableWithPersistence)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
@@ -228,23 +222,10 @@ TEST_P(Persistence, AsyncRTPSAsNonReliableWithPersistence)
     run_one_send_recv_test(reader, writer, 13, false);
 
     std::cout << "Second round finished." << std::endl;
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 TEST_P(Persistence, RTPSAsReliableWithPersistence)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
@@ -273,23 +254,10 @@ TEST_P(Persistence, RTPSAsReliableWithPersistence)
     run_one_send_recv_test(reader, writer, 20, true);
 
     std::cout << "Second round finished." << std::endl;
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 TEST_P(Persistence, AsyncRTPSAsReliableWithPersistence)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
     std::string ip("239.255.1.4");
@@ -321,12 +289,6 @@ TEST_P(Persistence, AsyncRTPSAsReliableWithPersistence)
     writer.destroy();
 
     std::cout << "Second round finished." << std::endl;
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 INSTANTIATE_TEST_CASE_P(Persistence,

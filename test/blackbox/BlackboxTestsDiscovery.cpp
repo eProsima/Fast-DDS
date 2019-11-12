@@ -26,17 +26,33 @@ using namespace eprosima::fastrtps::rtps;
 
 class Discovery : public testing::TestWithParam<bool>
 {
+public:
+
+    void SetUp() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+
+    }
+
+    void TearDown() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+    }
+
 };
 
 TEST_P(Discovery, ParticipantRemoval)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -64,12 +80,6 @@ TEST_P(Discovery, ParticipantRemoval)
 
     // Check that reader receives the unmatched.
     reader.wait_participant_undiscovery();
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 TEST(Discovery, StaticDiscovery)
@@ -184,13 +194,6 @@ TEST(Discovery, StaticDiscovery)
 
 TEST_P(Discovery, EDPSlaveReaderAttachment)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubWriter<HelloWorldType> checker(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldType>* reader = new PubSubReader<HelloWorldType>(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType>* writer = new PubSubWriter<HelloWorldType>(TEST_TOPIC_NAME);
@@ -219,12 +222,6 @@ TEST_P(Discovery, EDPSlaveReaderAttachment)
     checker.block_until_discover_topic(checker.topic_name(), 1);
     checker.block_until_discover_partition("test", 0);
     checker.block_until_discover_partition("othertest", 0);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 
@@ -441,13 +438,6 @@ TEST(Discovery, LocalInitialPeers)
 // Test created to check bug #2010 (Github #90)
 TEST_P(Discovery, PubSubAsReliableHelloworldPartitions)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -498,22 +488,10 @@ TEST_P(Discovery, PubSubAsReliableHelloworldPartitions)
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
     reader.block_for_all();
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 TEST_P(Discovery, PubSubAsReliableHelloworldParticipantDiscovery)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -554,23 +532,10 @@ TEST_P(Discovery, PubSubAsReliableHelloworldParticipantDiscovery)
     reader.wait_participant_undiscovery();
 
     reader.wait_discovery_result();
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 TEST_P(Discovery, PubSubAsReliableHelloworldUserData)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -603,12 +568,6 @@ TEST_P(Discovery, PubSubAsReliableHelloworldUserData)
     writer.wait_discovery();
 
     reader.wait_discovery_result();
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Auxiliar method for discovering participants tests
@@ -679,20 +638,7 @@ TEST(Discovery, TwentyParticipantsMulticast)
 //! Tests discovery of 20 participants, having one publisher and one subscriber each, using unicast
 TEST_P(Discovery, TwentyParticipantsUnicast)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     discoverParticipantsTest(true, 20, 20, TEST_TOPIC_NAME);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Auxiliar method for discovering participants tests
@@ -768,20 +714,7 @@ TEST(Discovery, TwentyParticipantsSeveralEndpointsMulticast)
 //! Regression for ROS2 #280 and #281, using unicast
 TEST_P(Discovery, TwentyParticipantsSeveralEndpointsUnicast)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     discoverParticipantsSeveralEndpointsTest(true, 20, 20, 20, TEST_TOPIC_NAME);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 INSTANTIATE_TEST_CASE_P(Discovery,

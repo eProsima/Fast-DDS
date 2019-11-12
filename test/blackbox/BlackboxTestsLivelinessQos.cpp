@@ -27,18 +27,34 @@ using namespace eprosima::fastrtps::rtps;
 
 class LivelinessQos : public testing::TestWithParam<bool>
 {
+public:
+
+    void SetUp() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+
+    }
+
+    void TearDown() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+    }
+
 };
 
 //! Tests that when kind is automatic liveliness is never lost, even if the writer never sends data
 TEST_P(LivelinessQos, Liveliness_Automatic_Reliable)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -70,24 +86,11 @@ TEST_P(LivelinessQos, Liveliness_Automatic_Reliable)
     EXPECT_EQ(writer.times_liveliness_lost(), 0u);
     EXPECT_EQ(reader.times_liveliness_recovered(), 1u);
     EXPECT_EQ(reader.times_liveliness_lost(), 0u);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Same as above using best-effort reliability
 TEST_P(LivelinessQos, Liveliness_Automatic_BestEffort)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -119,12 +122,6 @@ TEST_P(LivelinessQos, Liveliness_Automatic_BestEffort)
     EXPECT_EQ(writer.times_liveliness_lost(), 0u);
     EXPECT_EQ(reader.times_liveliness_recovered(), 1u);
     EXPECT_EQ(reader.times_liveliness_lost(), 0u);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests that liveliness is lost and recovered as expected, with the following paramters
@@ -132,13 +129,6 @@ TEST_P(LivelinessQos, Liveliness_Automatic_BestEffort)
 //! Reader is reliable, and MANUAL_BY_PARTICIPANT
 TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -194,12 +184,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
     EXPECT_EQ(reader.times_liveliness_lost(), num_samples * 2);
     EXPECT_EQ(reader.times_liveliness_recovered(), num_samples * 2);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests that liveliness is lost and recovered as expected, with the following paramters
@@ -207,13 +191,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Reliable)
 //! Reader is best-effort, and MANUAL_BY_PARTICIPANT
 TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_BestEffort)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -269,12 +246,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_BestEffort)
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
     EXPECT_EQ(reader.times_liveliness_lost(), num_samples * 2);
     EXPECT_EQ(reader.times_liveliness_recovered(), num_samples * 2);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests that liveliness is not lost when lease duration is big, with the following paramters
@@ -282,13 +253,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_BestEffort)
 //! Reader is best-effort, and MANUAL_BY_PARTICIPANT
 TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Reliable)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -339,12 +303,6 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Reliable)
     EXPECT_EQ(writer.times_liveliness_lost(), 0u);
     EXPECT_EQ(reader.times_liveliness_lost(), 0u);
     EXPECT_EQ(reader.times_liveliness_recovered(), 1u);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests that liveliness is not lost when lease duration is big, with the following paramters
@@ -352,13 +310,6 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Reliable)
 //! Reader is best-effort, and MANUAL_BY_PARTICIPANT
 TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_BestEffort)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -409,12 +360,6 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_BestEffort)
     EXPECT_EQ(writer.times_liveliness_lost(), 0u);
     EXPECT_EQ(reader.times_liveliness_lost(), 0u);
     EXPECT_EQ(reader.times_liveliness_recovered(), 1u);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests that liveliness is lost and recovered as expected, with the following paramters
@@ -422,13 +367,6 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_BestEffort)
 //! Reader is reliable, and MANUAL_BY_TOPIC
 TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Reliable)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -482,12 +420,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Reliable)
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
     EXPECT_EQ(reader.times_liveliness_lost(), num_samples * 2);
     EXPECT_EQ(reader.times_liveliness_recovered(), num_samples * 2);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests that liveliness is lost and recovered, with the following paramters
@@ -495,13 +427,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Reliable)
 //! Reader is best-effort, and MANUAL_BY_TOPIC
 TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_BestEffort)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -555,12 +480,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_BestEffort)
     // However best-effort writers don't send heartbeats, so the reader in this case will never get notified
     EXPECT_EQ(reader.times_liveliness_lost(), num_samples);
     EXPECT_EQ(reader.times_liveliness_recovered(), num_samples);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness is not lost when lease duration is big, with the following paramters
@@ -568,13 +487,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_BestEffort)
 //! Reader is reliable, and MANUAL_BY_TOPIC
 TEST_P(LivelinessQos, LongLiveliness_ManualByTopic_Reliable)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -625,12 +537,6 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByTopic_Reliable)
     EXPECT_EQ(writer.times_liveliness_lost(), 0u);
     EXPECT_EQ(reader.times_liveliness_lost(), 0u);
     EXPECT_EQ(reader.times_liveliness_recovered(), 1u);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness is not lost when lease duration is big, with the following paramters
@@ -638,13 +544,6 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByTopic_Reliable)
 //! Reader is best-effort, and MANUAL_BY_TOPIC
 TEST_P(LivelinessQos, LongLiveliness_ManualByTopic_BestEffort)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -695,12 +594,6 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByTopic_BestEffort)
     EXPECT_EQ(writer.times_liveliness_lost(), 0u);
     EXPECT_EQ(reader.times_liveliness_lost(), 0u);
     EXPECT_EQ(reader.times_liveliness_recovered(), 1u);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness is not lost when lease duration is big, with the following parameters
@@ -708,13 +601,6 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByTopic_BestEffort)
 //! Reader is reliable, liveliness is automatic
 TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliable)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -764,12 +650,6 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliable)
     EXPECT_EQ(writer.times_liveliness_lost(), 0u);
     EXPECT_EQ(reader.times_liveliness_lost(), 0u);
     EXPECT_EQ(reader.times_liveliness_recovered(), 1u);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness is lost and recovered as expected, with the following parameters
@@ -777,13 +657,6 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_Reliable)
 //! Reader is reliable, liveliness is automatic
 TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -837,12 +710,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
     EXPECT_EQ(reader.times_liveliness_lost(), num_samples * 2);
     EXPECT_EQ(reader.times_liveliness_recovered(), num_samples * 2);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness is not lost when lease duration is big, with the following parameters
@@ -850,13 +717,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_Reliable)
 //! Reader is best-effort, liveliness is automatic
 TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEffort)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -906,12 +766,6 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEffort)
     EXPECT_EQ(writer.times_liveliness_lost(), 0u);
     EXPECT_EQ(reader.times_liveliness_lost(), 0u);
     EXPECT_EQ(reader.times_liveliness_recovered(), 1u);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness is lost and recovered as expected, with the following parameters
@@ -920,13 +774,6 @@ TEST_P(LivelinessQos, LongLiveliness_ManualByParticipant_Automatic_BestEffort)
 //! Liveliness is short in comparison to the writer write/assert rate
 TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -980,12 +827,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
     EXPECT_EQ(reader.times_liveliness_lost(), num_samples * 2);
     EXPECT_EQ(reader.times_liveliness_recovered(), num_samples * 2);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness is lost and recovered, with the following parameters
@@ -993,13 +834,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByParticipant_Automatic_BestEffort)
 //! Reader is reliable, and uses automatic liveliness kind
 TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_Reliable)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -1052,12 +886,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_Reliable)
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
     EXPECT_EQ(reader.times_liveliness_lost(), num_samples * 2);
     EXPECT_EQ(reader.times_liveliness_recovered(), num_samples * 2);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness is lost and recovered, with the following parameters
@@ -1065,13 +893,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_Reliable)
 //! Reader is best-effort, and uses automatic liveliness kind
 TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_BestEffort)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -1124,12 +945,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_BestEffort)
     // and recovered corresponds to the bit in the test when we sent samples (not when we asserted liveliness)
     EXPECT_EQ(reader.times_liveliness_lost(), num_samples);
     EXPECT_EQ(reader.times_liveliness_recovered(), num_samples);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness is lost and recovered as expected, with the following parameters
@@ -1137,13 +952,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_Automatic_BestEffort)
 //! Reader is reliable, and uses manual by participant liveliness kind
 TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_ManualByParticipant_Reliable)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -1196,12 +1004,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_ManualByParticipant_Reliable
     EXPECT_EQ(writer.times_liveliness_lost(), num_samples * 2);
     EXPECT_EQ(reader.times_liveliness_lost(), num_samples * 2);
     EXPECT_EQ(reader.times_liveliness_recovered(), num_samples * 2);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness is lost and recovered as expected, with the following parameters
@@ -1209,13 +1011,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_ManualByParticipant_Reliable
 //! Reader is best-effort, and uses manual by participant liveliness kind
 TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_ManualByParticipant_BestEffort)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -1269,12 +1064,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_ManualByParticipant_BestEffo
     // corresponds only to the bit in the test when the writer wrote samples
     EXPECT_EQ(reader.times_liveliness_lost(), num_samples);
     EXPECT_EQ(reader.times_liveliness_recovered(), num_samples);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness in the following scenario
@@ -1282,13 +1071,6 @@ TEST_P(LivelinessQos, ShortLiveliness_ManualByTopic_ManualByParticipant_BestEffo
 //! A participant with one subscriber (AUTOMATIC)
 TEST_P(LivelinessQos, TwoWriters_OneReader_ManualByParticipant)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     unsigned int num_pub = 2;
     unsigned int num_sub = 1;
     unsigned int lease_duration_ms = 1000;
@@ -1328,12 +1110,6 @@ TEST_P(LivelinessQos, TwoWriters_OneReader_ManualByParticipant)
     // Note that from the subscriber point of view both writers recovered liveliness, even if the
     // MANUAL_BY_PARTICIPANT one didn't assert liveliness explicitly. This is the expected
     // behaviour according to the RTPS standard, section 2.2.3.11 LIVELINESS
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness in the following scenario
@@ -1343,13 +1119,6 @@ TEST_P(LivelinessQos, TwoWriters_OneReader_ManualByParticipant)
 //! Only one publisher asserts liveliness manually
 TEST_P(LivelinessQos, TwoWriters_TwoReaders_ManualByParticipant)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     unsigned int num_pub = 2;
     unsigned int num_sub = 2;
     unsigned int lease_duration_ms = 1000;
@@ -1397,12 +1166,6 @@ TEST_P(LivelinessQos, TwoWriters_TwoReaders_ManualByParticipant)
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), num_pub);
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), num_pub);
     EXPECT_EQ(subscribers.sub_times_liveliness_lost(), num_pub);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness in the same scenario as above but using manual by topic liveliness
@@ -1412,13 +1175,6 @@ TEST_P(LivelinessQos, TwoWriters_TwoReaders_ManualByParticipant)
 //! Only one publisher asserts liveliness manually
 TEST_P(LivelinessQos, TwoWriters_TwoReaders_ManualByTopic)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     unsigned int num_pub = 2;
     unsigned int num_sub = 2;
     unsigned int lease_duration_ms = 1000;
@@ -1473,12 +1229,6 @@ TEST_P(LivelinessQos, TwoWriters_TwoReaders_ManualByTopic)
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 1u);
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 1u);
     EXPECT_EQ(subscribers.sub_times_liveliness_lost(), 1u);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness in the following scenario
@@ -1486,13 +1236,6 @@ TEST_P(LivelinessQos, TwoWriters_TwoReaders_ManualByTopic)
 //! A participant with two subscribers with different liveliness kinds
 TEST_P(LivelinessQos, TwoWriters_TwoReaders)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     unsigned int num_pub = 2;
     unsigned int num_sub = 2;
     unsigned int lease_duration_ms = 1000;
@@ -1540,12 +1283,6 @@ TEST_P(LivelinessQos, TwoWriters_TwoReaders)
     subscribers.sub_wait_liveliness_lost(1u);
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 1u);
     EXPECT_EQ(subscribers.sub_times_liveliness_lost(), 1u);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness in the same scenario as above but using manual by topic liveliness
@@ -1553,13 +1290,6 @@ TEST_P(LivelinessQos, TwoWriters_TwoReaders)
 //! A participant with three subscribers with different liveliness kinds
 TEST_P(LivelinessQos, ThreeWriters_ThreeReaders)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     unsigned int num_pub = 3;
     unsigned int num_sub = 3;
     unsigned int lease_duration_ms = 1000;
@@ -1633,24 +1363,11 @@ TEST_P(LivelinessQos, ThreeWriters_ThreeReaders)
     subscribers.sub_wait_liveliness_lost(3u);
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 2u);
     EXPECT_EQ(subscribers.sub_times_liveliness_lost(), 3u);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests the case where a writer matched to two readers changes QoS and stays matched to only one reader
 TEST_P(LivelinessQos, UnmatchedWriter)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     unsigned int num_pub = 1;
     unsigned int num_sub = 2;
     unsigned int lease_duration_ms = 500;
@@ -1689,12 +1406,6 @@ TEST_P(LivelinessQos, UnmatchedWriter)
     publishers.assert_liveliness(0u);
     subscribers.sub_wait_liveliness_recovered(1u);
     EXPECT_EQ(subscribers.sub_times_liveliness_recovered(), 1u);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness structs when a writer changes from being alive to losing liveliness
@@ -1702,13 +1413,6 @@ TEST_P(LivelinessQos, UnmatchedWriter)
 //! Reader is reliable, and MANUAL_BY_TOPIC
 TEST_P(LivelinessQos, LivelinessChangedStatus_Alive_NotAlive)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -1757,12 +1461,6 @@ TEST_P(LivelinessQos, LivelinessChangedStatus_Alive_NotAlive)
     EXPECT_EQ(status.alive_count_change, -1);
     EXPECT_EQ(status.not_alive_count, 1);
     EXPECT_EQ(status.not_alive_count_change, 1);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness structs when an alive writer is unmatched
@@ -1770,13 +1468,6 @@ TEST_P(LivelinessQos, LivelinessChangedStatus_Alive_NotAlive)
 //! Reader is reliable, and MANUAL_BY_TOPIC
 TEST_P(LivelinessQos, LivelinessChangedStatus_Alive_Unmatched)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -1821,12 +1512,6 @@ TEST_P(LivelinessQos, LivelinessChangedStatus_Alive_Unmatched)
     EXPECT_EQ(status.alive_count_change, -1);
     EXPECT_EQ(status.not_alive_count, 0);
     EXPECT_EQ(status.not_alive_count_change, 0);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 //! Tests liveliness structs when a not alive writer is unmatched
@@ -1834,13 +1519,6 @@ TEST_P(LivelinessQos, LivelinessChangedStatus_Alive_Unmatched)
 //! Reader is reliable, and MANUAL_BY_TOPIC
 TEST_P(LivelinessQos, LivelinessChangedStatus_NotAlive_Unmatched)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -1888,12 +1566,6 @@ TEST_P(LivelinessQos, LivelinessChangedStatus_NotAlive_Unmatched)
     EXPECT_EQ(status.alive_count_change, 0);
     EXPECT_EQ(status.not_alive_count, 0);
     EXPECT_EQ(status.not_alive_count_change, -1);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 
@@ -1901,13 +1573,6 @@ TEST_P(LivelinessQos, LivelinessChangedStatus_NotAlive_Unmatched)
 //! A participant with three publishers, two MANUAL_BY_PARTICIPANT liveliness, one MANUAL_BY_TOPIC
 TEST_P(LivelinessQos, AssertLivelinessParticipant)
 {
-    LibrarySettingsAttributes library_settings;
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
-
     unsigned int num_pub = 3;
     unsigned int lease_duration_ms = 100;
     unsigned int announcement_period_ms = 10;
@@ -1943,12 +1608,6 @@ TEST_P(LivelinessQos, AssertLivelinessParticipant)
     // Only the two MANUAL_BY_PARTICIPANT publishers will have lost liveliness, as the
     // MANUAL_BY_TOPIC one was never asserted
     EXPECT_EQ(publishers.pub_times_liveliness_lost(), 2u);
-
-    if (GetParam())
-    {
-        library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-        xmlparser::XMLProfileManager::library_settings(library_settings);
-    }
 }
 
 INSTANTIATE_TEST_CASE_P(LivelinessQos,
