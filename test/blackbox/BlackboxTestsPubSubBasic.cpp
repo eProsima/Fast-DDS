@@ -23,7 +23,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class BlackBox : public testing::TestWithParam<bool>
+class PubSubBasic : public testing::TestWithParam<bool>
 {
 public:
 
@@ -50,7 +50,7 @@ public:
 
 };
 
-TEST_P(BlackBox, PubSubAsNonReliableHelloworld)
+TEST_P(PubSubBasic, PubSubAsNonReliableHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -78,7 +78,7 @@ TEST_P(BlackBox, PubSubAsNonReliableHelloworld)
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, AsyncPubSubAsNonReliableHelloworld)
+TEST_P(PubSubBasic, AsyncPubSubAsNonReliableHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -108,7 +108,7 @@ TEST_P(BlackBox, AsyncPubSubAsNonReliableHelloworld)
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, PubSubAsReliableHelloworld)
+TEST_P(PubSubBasic, PubSubAsReliableHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -139,7 +139,7 @@ TEST_P(BlackBox, PubSubAsReliableHelloworld)
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, AsyncPubSubAsReliableHelloworld)
+TEST_P(PubSubBasic, AsyncPubSubAsReliableHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -171,7 +171,7 @@ TEST_P(BlackBox, AsyncPubSubAsReliableHelloworld)
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, ReqRepAsReliableHelloworld)
+TEST_P(PubSubBasic, ReqRepAsReliableHelloworld)
 {
     ReqRepAsReliableHelloWorldRequester requester;
     ReqRepAsReliableHelloWorldReplier replier;
@@ -195,7 +195,7 @@ TEST_P(BlackBox, ReqRepAsReliableHelloworld)
     }
 }
 
-TEST_P(BlackBox, PubSubAsReliableData64kb)
+TEST_P(PubSubBasic, PubSubAsReliableData64kb)
 {
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
@@ -226,7 +226,7 @@ TEST_P(BlackBox, PubSubAsReliableData64kb)
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, PubSubMoreThan256Unacknowledged)
+TEST_P(PubSubBasic, PubSubMoreThan256Unacknowledged)
 {
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -253,7 +253,7 @@ TEST_P(BlackBox, PubSubMoreThan256Unacknowledged)
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
+TEST_P(PubSubBasic, PubSubAsReliableHelloworldMulticastDisabled)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -287,13 +287,13 @@ TEST_P(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
 }
 
 INSTANTIATE_TEST_CASE_P(PubSubBasic,
-        BlackBox,
+        PubSubBasic,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<BlackBox::ParamType>& info)
-{
-    if (info.param)
-    {
-        return "NonIntraprocess";
-    }
-    return "Intraprocess";
-});
+        [](const testing::TestParamInfo<PubSubBasic::ParamType>& info) {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
+

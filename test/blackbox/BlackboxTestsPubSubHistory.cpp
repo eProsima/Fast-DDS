@@ -22,7 +22,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class BlackBox : public testing::TestWithParam<bool>
+class PubSubHistory : public testing::TestWithParam<bool>
 {
 public:
 
@@ -47,8 +47,9 @@ public:
     }
 };
 
+
 // Test created to check bug #1568 (Github #34)
-TEST_P(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
+TEST_P(PubSubHistory, PubSubAsNonReliableKeepLastReaderSmallDepth)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -91,7 +92,7 @@ TEST_P(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
 }
 
 //Test created to deal with Issue 39 on Github
-TEST_P(BlackBox, CacheChangeReleaseTest)
+TEST_P(PubSubHistory, CacheChangeReleaseTest)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -131,7 +132,7 @@ TEST_P(BlackBox, CacheChangeReleaseTest)
 }
 
 // Test created to check bug #1555 (Github #31)
-TEST_P(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
+TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepth)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -178,7 +179,7 @@ TEST_P(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
 }
 
 // Test created to check bug #1738 (Github #54)
-TEST_P(BlackBox, PubSubAsReliableKeepLastWriterSmallDepth)
+TEST_P(PubSubHistory, PubSubAsReliableKeepLastWriterSmallDepth)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -210,7 +211,7 @@ TEST_P(BlackBox, PubSubAsReliableKeepLastWriterSmallDepth)
 }
 
 // Test created to check bug #1558 (Github #33)
-TEST_P(BlackBox, PubSubKeepAll)
+TEST_P(PubSubHistory, PubSubKeepAll)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -257,7 +258,7 @@ TEST_P(BlackBox, PubSubKeepAll)
 }
 
 // Test created to check bug #1558 (Github #33)
-TEST_P(BlackBox, PubSubKeepAllTransient)
+TEST_P(PubSubHistory, PubSubKeepAllTransient)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -304,7 +305,7 @@ TEST_P(BlackBox, PubSubKeepAllTransient)
     }
 }
 
-TEST_P(BlackBox, PubReliableKeepAllSubNonReliable)
+TEST_P(PubSubHistory, PubReliableKeepAllSubNonReliable)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -336,7 +337,7 @@ TEST_P(BlackBox, PubReliableKeepAllSubNonReliable)
 }
 
 //Verify that Cachechanges are removed from History when the a Writer unmatches
-TEST_P(BlackBox, StatefulReaderCacheChangeRelease)
+TEST_P(PubSubHistory, StatefulReaderCacheChangeRelease)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -373,7 +374,7 @@ void send_async_data(PubSubWriter<T>& writer, std::list<typename T::type> data_t
     ASSERT_TRUE(data_to_send.empty());
 }
 
-TEST_P(BlackBox, PubSubAsReliableMultithreadKeepLast1)
+TEST_P(PubSubHistory, PubSubAsReliableMultithreadKeepLast1)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -412,7 +413,7 @@ TEST_P(BlackBox, PubSubAsReliableMultithreadKeepLast1)
 }
 
 // Test created to check bug #6319 (Github #708)
-TEST_P(BlackBox, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
+TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -472,13 +473,13 @@ TEST_P(BlackBox, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
 }
 
 INSTANTIATE_TEST_CASE_P(PubSubHistory,
-        BlackBox,
+        PubSubHistory,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<BlackBox::ParamType>& info) {
-              if (info.param)
-              {
-                  return "NonIntraprocess";
-              }
-              return "Intraprocess";
-            });
+        [](const testing::TestParamInfo<PubSubHistory::ParamType>& info) {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
 
