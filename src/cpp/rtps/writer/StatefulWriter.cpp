@@ -556,7 +556,7 @@ void StatefulWriter::send_any_unsent_changes()
                 at_least_one_remote = true;
             }
 
-            SequenceNumber_t max_ack_seq;
+            SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
             auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
                     {
                         if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
@@ -600,7 +600,7 @@ void StatefulWriter::send_any_unsent_changes()
                     };
 
             remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
-            if (remoteReader->is_local_reader())
+            if (remoteReader->is_local_reader() && max_ack_seq != SequenceNumber_t::unknown())
             {
                 remoteReader->acked_changes_set(max_ack_seq + 1);
             }
@@ -653,16 +653,16 @@ void StatefulWriter::send_any_unsent_changes()
                         if (changeToSend.fragmentNumber != 0)
                         {
                             if (group.add_data_frag(*changeToSend.cacheChange, changeToSend.fragmentNumber,
-                                expectsInlineQos))
+                                    expectsInlineQos))
                             {
                                 bool must_wake_up_async_thread = false;
                                 for (ReaderProxy* remoteReader : changeToSend.remoteReaders)
                                 {
                                     bool allFragmentsSent = false;
                                     if (remoteReader->mark_fragment_as_sent_for_change(
-                                        changeToSend.sequenceNumber,
-                                        changeToSend.fragmentNumber,
-                                        allFragmentsSent))
+                                                changeToSend.sequenceNumber,
+                                                changeToSend.fragmentNumber,
+                                                allFragmentsSent))
                                     {
                                         must_wake_up_async_thread |= !allFragmentsSent;
                                         if (remoteReader->is_remote_and_reliable())
@@ -670,8 +670,9 @@ void StatefulWriter::send_any_unsent_changes()
                                             activateHeartbeatPeriod = true;
                                             if (allFragmentsSent)
                                             {
-                                                remoteReader->set_change_to_status(changeToSend.sequenceNumber, UNDERWAY,
-                                                    true);
+                                                remoteReader->set_change_to_status(changeToSend.sequenceNumber,
+                                                        UNDERWAY,
+                                                        true);
                                             }
                                         }
                                         else
@@ -679,7 +680,7 @@ void StatefulWriter::send_any_unsent_changes()
                                             if (allFragmentsSent)
                                             {
                                                 remoteReader->set_change_to_status(changeToSend.sequenceNumber,
-                                                    ACKNOWLEDGED, false);
+                                                        ACKNOWLEDGED, false);
                                             }
                                         }
                                     }
@@ -693,7 +694,7 @@ void StatefulWriter::send_any_unsent_changes()
                             else
                             {
                                 logError(RTPS_WRITER, "Error sending fragment (" << changeToSend.sequenceNumber <<
-                                    ", " << changeToSend.fragmentNumber << ")");
+                                        ", " << changeToSend.fragmentNumber << ")");
                             }
                         }
                         else
@@ -721,7 +722,7 @@ void StatefulWriter::send_any_unsent_changes()
                     }
 
                     for (std::pair<std::vector<ReaderProxy*>,
-                        std::set<SequenceNumber_t> > pair : notRelevantChanges.elements())
+                            std::set<SequenceNumber_t> > pair : notRelevantChanges.elements())
                     {
                         locator_selector_.reset(false);
 
