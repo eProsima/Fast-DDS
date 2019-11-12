@@ -22,11 +22,11 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class BlackBox : public testing::TestWithParam<bool>
+class RealtimeAllocations : public testing::TestWithParam<bool>
 {
 };
 
-TEST_P(BlackBox, PubSubReliableWithLimitedSubscribers)
+TEST_P(RealtimeAllocations, PubSubReliableWithLimitedSubscribers)
 {
     LibrarySettingsAttributes library_settings;
     if (GetParam())
@@ -91,7 +91,7 @@ TEST_P(BlackBox, PubSubReliableWithLimitedSubscribers)
     }
 }
 
-TEST_P(BlackBox, AsyncPubSubReliableWithLimitedSubscribers)
+TEST_P(RealtimeAllocations, AsyncPubSubReliableWithLimitedSubscribers)
 {
     LibrarySettingsAttributes library_settings;
     if (GetParam())
@@ -157,7 +157,7 @@ TEST_P(BlackBox, AsyncPubSubReliableWithLimitedSubscribers)
     }
 }
 
-TEST_P(BlackBox, PubSubBestEffortWithLimitedSubscribers)
+TEST_P(RealtimeAllocations, PubSubBestEffortWithLimitedSubscribers)
 {
     LibrarySettingsAttributes library_settings;
     if (GetParam())
@@ -221,7 +221,7 @@ TEST_P(BlackBox, PubSubBestEffortWithLimitedSubscribers)
     }
 }
 
-TEST_P(BlackBox, AsyncPubSubBestEffortWithLimitedSubscribers)
+TEST_P(RealtimeAllocations, AsyncPubSubBestEffortWithLimitedSubscribers)
 {
     LibrarySettingsAttributes library_settings;
     if (GetParam())
@@ -286,7 +286,7 @@ TEST_P(BlackBox, AsyncPubSubBestEffortWithLimitedSubscribers)
     }
 }
 
-TEST_P(BlackBox, PubSubReliableWithLimitedPublishers)
+TEST_P(RealtimeAllocations, PubSubReliableWithLimitedPublishers)
 {
     LibrarySettingsAttributes library_settings;
     if (GetParam())
@@ -356,7 +356,7 @@ TEST_P(BlackBox, PubSubReliableWithLimitedPublishers)
     }
 }
 
-TEST_P(BlackBox, AsyncPubSubReliableWithLimitedPublishers)
+TEST_P(RealtimeAllocations, AsyncPubSubReliableWithLimitedPublishers)
 {
     LibrarySettingsAttributes library_settings;
     if (GetParam())
@@ -428,7 +428,7 @@ TEST_P(BlackBox, AsyncPubSubReliableWithLimitedPublishers)
     }
 }
 
-TEST_P(BlackBox, PubSubBestEffortWithLimitedPublishers)
+TEST_P(RealtimeAllocations, PubSubBestEffortWithLimitedPublishers)
 {
     LibrarySettingsAttributes library_settings;
     if (GetParam())
@@ -499,7 +499,7 @@ TEST_P(BlackBox, PubSubBestEffortWithLimitedPublishers)
     }
 }
 
-TEST_P(BlackBox, AsyncPubSubBestEffortWithLimitedPublishers)
+TEST_P(RealtimeAllocations, AsyncPubSubBestEffortWithLimitedPublishers)
 {
     LibrarySettingsAttributes library_settings;
     if (GetParam())
@@ -573,13 +573,13 @@ TEST_P(BlackBox, AsyncPubSubBestEffortWithLimitedPublishers)
 }
 
 INSTANTIATE_TEST_CASE_P(RealtimeAllocations,
-        BlackBox,
+        RealtimeAllocations,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<BlackBox::ParamType>& info) {
-              if (info.param)
-              {
-                  return "NonIntraprocess";
-              }
-              return "Intraprocess";
-            });
+        [](const testing::TestParamInfo<RealtimeAllocations::ParamType>& info) {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
 

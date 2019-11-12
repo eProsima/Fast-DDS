@@ -28,7 +28,7 @@ using namespace eprosima::fastrtps::rtps;
 
 static const char* certs_path = nullptr;
 
-class BlackBox : public testing::TestWithParam<bool>
+class Security : public testing::TestWithParam<bool>
 {
 public:
 
@@ -53,7 +53,7 @@ public:
     }
 };
 
-TEST_P(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
+TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -110,7 +110,7 @@ TEST_P(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
 }
 
 // Used to detect Github issue #106
-TEST_P(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok_same_participant)
+TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_ok_same_participant)
 {
     PubSubWriterReader<HelloWorldType> wreader(TEST_TOPIC_NAME);
 
@@ -144,7 +144,7 @@ TEST_P(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_ok_same_participan
     wreader.block_for_all();
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_fail)
+TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_fail)
 {
     {
         PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
@@ -204,7 +204,7 @@ TEST_P(BlackBox, BuiltinAuthenticationPlugin_PKIDH_validation_fail)
     }
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationPlugin_PKIDH_lossy_conditions)
+TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_lossy_conditions)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -258,7 +258,7 @@ TEST_P(BlackBox, BuiltinAuthenticationPlugin_PKIDH_lossy_conditions)
     reader.wait_discovery();
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_ok)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_ok)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -320,7 +320,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_ok)
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_ok)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_ok)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -383,7 +383,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_ok)
 }
 
 // Used to detect Github issue #106
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_rtps_ok_same_participant)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_rtps_ok_same_participant)
 {
     PubSubWriterReader<HelloWorldType> wreader(TEST_TOPIC_NAME);
 
@@ -421,7 +421,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_rtps_ok_same_participant)
     wreader.block_for_all();
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_large_string)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_large_string)
 {
     PubSubReader<StringType> reader(TEST_TOPIC_NAME);
     PubSubWriter<StringType> writer(TEST_TOPIC_NAME);
@@ -483,7 +483,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_large_string)
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_large_string)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_large_string)
 {
     PubSubReader<StringType> reader(TEST_TOPIC_NAME);
     PubSubWriter<StringType> writer(TEST_TOPIC_NAME);
@@ -545,7 +545,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_large_string
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_data300kb)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_data300kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -614,7 +614,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_data300kb)
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_data300kb)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_data300kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -683,7 +683,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_data300kb)
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_ok)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_ok)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -748,7 +748,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_ok)
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_ok)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_ok)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -814,7 +814,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_ok)
 }
 
 // Used to detect Github issue #106
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_submessage_ok_same_participant)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_submessage_ok_same_participant)
 {
     PubSubWriterReader<HelloWorldType> wreader(TEST_TOPIC_NAME);
 
@@ -855,7 +855,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_submessage_ok_same_partici
     wreader.block_for_all();
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_large_string)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_large_string)
 {
     PubSubReader<StringType> reader(TEST_TOPIC_NAME);
     PubSubWriter<StringType> writer(TEST_TOPIC_NAME);
@@ -920,7 +920,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_larg
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_large_string)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_large_string)
 {
     PubSubReader<StringType> reader(TEST_TOPIC_NAME);
     PubSubWriter<StringType> writer(TEST_TOPIC_NAME);
@@ -985,7 +985,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_large_
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_data300kb)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_data300kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -1057,7 +1057,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_data
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_data300kb)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_data300kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -1129,7 +1129,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_data30
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_ok)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_ok)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -1194,7 +1194,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_ok)
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_ok)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_ok)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -1260,7 +1260,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_ok)
 }
 
 // Used to detect Github issue #106
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_payload_ok_same_participant)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_payload_ok_same_participant)
 {
     PubSubWriterReader<HelloWorldType> wreader(TEST_TOPIC_NAME);
 
@@ -1301,7 +1301,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_payload_ok_same_participan
     wreader.block_for_all();
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_large_string)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_large_string)
 {
     PubSubReader<StringType> reader(TEST_TOPIC_NAME);
     PubSubWriter<StringType> writer(TEST_TOPIC_NAME);
@@ -1366,7 +1366,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_large_s
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_large_string)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_large_string)
 {
     PubSubReader<StringType> reader(TEST_TOPIC_NAME);
     PubSubWriter<StringType> writer(TEST_TOPIC_NAME);
@@ -1431,7 +1431,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_large_str
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_data300kb)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_data300kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -1503,7 +1503,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_data300
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_data300kb)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_data300kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -1575,7 +1575,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_data300kb
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_ok)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_ok)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -1644,7 +1644,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_ok)
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_all_ok)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_ok)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -1713,7 +1713,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_all_ok)
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_large_string)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_large_string)
 {
     PubSubReader<StringType> reader(TEST_TOPIC_NAME);
     PubSubWriter<StringType> writer(TEST_TOPIC_NAME);
@@ -1782,7 +1782,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_large_strin
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_all_large_string)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_large_string)
 {
     PubSubReader<StringType> reader(TEST_TOPIC_NAME);
     PubSubWriter<StringType> writer(TEST_TOPIC_NAME);
@@ -1851,7 +1851,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_all_large_string)
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_data300kb)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_data300kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -1927,7 +1927,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_data300kb)
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300kb)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -2004,7 +2004,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300kb)
 }
 
 // Regression test of Refs #2457
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300kb_mix)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300kb_mix)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -2081,7 +2081,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300kb_mix
 }
 
 // Regression test of Refs #2457, Github ros2 #438.
-TEST_P(BlackBox, BuiltinAuthenticationAndCryptoPlugin_user_data)
+TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_user_data)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2227,7 +2227,7 @@ static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2236,7 +2236,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2245,44 +2245,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2292,7 +2255,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
 }
 
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2301,7 +2264,44 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2310,7 +2310,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2319,44 +2319,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_disable_discovery_disable_access_none.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_disable_discovery_disable_access_none.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_none)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_disable_discovery_disable_access_none.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_none)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_disable_discovery_disable_access_none.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_none)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2366,7 +2329,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
 }
 
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_none)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2375,7 +2338,44 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2384,7 +2384,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2393,44 +2393,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2440,7 +2403,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
 }
 
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2449,7 +2412,44 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2458,7 +2458,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2467,44 +2467,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_disable_discovery_enable_access_none.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_disable_discovery_enable_access_none.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_none)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_disable_discovery_enable_access_none.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_none)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_disable_discovery_enable_access_none.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_none)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2514,7 +2477,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
 }
 
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_none)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2523,7 +2486,44 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2532,7 +2532,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2541,44 +2541,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2588,7 +2551,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
 }
 
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2597,7 +2560,44 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2606,7 +2606,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2615,44 +2615,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_none)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_none)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_none)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2662,7 +2625,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
 }
 
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_none)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2671,7 +2634,44 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2680,7 +2680,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2689,44 +2689,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2736,7 +2699,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
 }
 
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2745,7 +2708,44 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2754,7 +2754,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2763,44 +2763,7 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_none)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_none)
-{
-    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
-    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
-
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
-}
-
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_none)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2810,7 +2773,44 @@ TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
 }
 
 
-TEST_P(BlackBox, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_none)
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_none)
+{
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_none)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -2831,14 +2831,14 @@ void blackbox_security_init()
 }
 
 INSTANTIATE_TEST_CASE_P(Security,
-        BlackBox,
+        Security,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<BlackBox::ParamType>& info) {
-              if (info.param)
-              {
-                  return "NonIntraprocess";
-              }
-              return "Intraprocess";
-            });
+        [](const testing::TestParamInfo<Security::ParamType>& info) {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
 
 #endif

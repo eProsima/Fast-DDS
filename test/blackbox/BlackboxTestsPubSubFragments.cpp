@@ -24,7 +24,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class BlackBox : public testing::TestWithParam<bool>
+class PubSubFragments : public testing::TestWithParam<bool>
 {
 public:
 
@@ -51,7 +51,7 @@ public:
 
 };
 
-TEST_P(BlackBox, PubSubAsNonReliableData300kb)
+TEST_P(PubSubFragments, PubSubAsNonReliableData300kb)
 {
     // Mutes an expected error
     Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
@@ -69,7 +69,7 @@ TEST_P(BlackBox, PubSubAsNonReliableData300kb)
     ASSERT_FALSE(data.empty());
 }
 
-TEST_P(BlackBox, PubSubAsReliableData300kb)
+TEST_P(PubSubFragments, PubSubAsReliableData300kb)
 {
     // Mutes an expected error
     Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
@@ -87,7 +87,7 @@ TEST_P(BlackBox, PubSubAsReliableData300kb)
     ASSERT_FALSE(data.empty());
 }
 
-TEST_P(BlackBox, AsyncPubSubAsNonReliableData300kb)
+TEST_P(PubSubFragments, AsyncPubSubAsNonReliableData300kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -124,7 +124,7 @@ TEST_P(BlackBox, AsyncPubSubAsNonReliableData300kb)
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, AsyncPubSubAsReliableData300kb)
+TEST_P(PubSubFragments, AsyncPubSubAsReliableData300kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -162,7 +162,7 @@ TEST_P(BlackBox, AsyncPubSubAsReliableData300kb)
     reader.block_for_all();
 }
 
-TEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
+TEST(PubSubFragments, AsyncPubSubAsReliableData300kbInLossyConditions)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -216,7 +216,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
         testTransport->dropLogLength);
 }
 
-TEST(BlackBox, AsyncFragmentSizeTest)
+TEST(PubSubFragments, AsyncFragmentSizeTest)
 {
     // ThroghputController size large than maxMessageSize.
     {
@@ -313,14 +313,13 @@ TEST(BlackBox, AsyncFragmentSizeTest)
 }
 
 
-INSTANTIATE_TEST_CASE_P(BlackBox,
-        BlackBox,
+INSTANTIATE_TEST_CASE_P(PubSubFragments,
+        PubSubFragments,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<BlackBox::ParamType>& info)
-{
-    if (info.param)
-    {
-        return "NonIntraprocess";
-    }
-    return "Intraprocess";
-});
+        [](const testing::TestParamInfo<PubSubFragments::ParamType>& info) {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });

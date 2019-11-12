@@ -720,11 +720,11 @@ TEST_P(Discovery, TwentyParticipantsSeveralEndpointsUnicast)
 INSTANTIATE_TEST_CASE_P(Discovery,
         Discovery,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<Discovery::ParamType>& info)
-{
-    if (info.param)
-    {
-        return "NonIntraprocess";
-    }
-    return "Intraprocess";
-});
+        [](const testing::TestParamInfo<Discovery::ParamType>& info) {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
+

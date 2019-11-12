@@ -21,7 +21,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class BlackBox : public testing::TestWithParam<bool>
+class PubSubFlowControllers : public testing::TestWithParam<bool>
 {
 public:
 
@@ -48,7 +48,7 @@ public:
 
 };
 
-TEST_P(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
+TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
 {
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
@@ -84,7 +84,7 @@ TEST_P(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControl)
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTransport)
+TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserTransport)
 {
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
@@ -124,7 +124,7 @@ TEST_P(BlackBox, AsyncPubSubAsReliableData64kbWithParticipantFlowControlAndUserT
     reader.block_for_all();
 }
 
-TEST(BlackBox, AsyncPubSubWithFlowController64kb)
+TEST(PubSubFlowControllers, AsyncPubSubWithFlowController64kb)
 {
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> slowWriter(TEST_TOPIC_NAME);
@@ -153,7 +153,7 @@ TEST(BlackBox, AsyncPubSubWithFlowController64kb)
     ASSERT_EQ(reader.getReceivedCount(), 1u);
 }
 
-TEST_P(BlackBox, FlowControllerIfNotAsync)
+TEST_P(PubSubFlowControllers, FlowControllerIfNotAsync)
 {
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
@@ -164,13 +164,13 @@ TEST_P(BlackBox, FlowControllerIfNotAsync)
 }
 
 INSTANTIATE_TEST_CASE_P(PubSubFlowControllers,
-        BlackBox,
+        PubSubFlowControllers,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<BlackBox::ParamType>& info)
-{
-    if (info.param)
-    {
-        return "NonIntraprocess";
-    }
-    return "Intraprocess";
-});
+        [](const testing::TestParamInfo<PubSubFlowControllers::ParamType>& info) {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
+

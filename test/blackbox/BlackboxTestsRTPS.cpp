@@ -25,7 +25,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class BlackBox : public testing::TestWithParam<bool>
+class RTPS : public testing::TestWithParam<bool>
 {
 public:
 
@@ -50,7 +50,7 @@ public:
     }
 };
 
-TEST_P(BlackBox, RTPSAsNonReliableSocket)
+TEST_P(RTPS, RTPSAsNonReliableSocket)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -77,7 +77,7 @@ TEST_P(BlackBox, RTPSAsNonReliableSocket)
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, AsyncRTPSAsNonReliableSocket)
+TEST_P(RTPS, AsyncRTPSAsNonReliableSocket)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -105,7 +105,7 @@ TEST_P(BlackBox, AsyncRTPSAsNonReliableSocket)
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
+TEST_P(RTPS, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -136,7 +136,7 @@ TEST_P(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, RTPSAsReliableSocket)
+TEST_P(RTPS, RTPSAsReliableSocket)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -165,7 +165,7 @@ TEST_P(BlackBox, RTPSAsReliableSocket)
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, AsyncRTPSAsReliableSocket)
+TEST_P(RTPS, AsyncRTPSAsReliableSocket)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -195,7 +195,7 @@ TEST_P(BlackBox, AsyncRTPSAsReliableSocket)
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, RTPSAsNonReliableWithRegistration)
+TEST_P(RTPS, RTPSAsNonReliableWithRegistration)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -225,7 +225,7 @@ TEST_P(BlackBox, RTPSAsNonReliableWithRegistration)
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, AsyncRTPSAsNonReliableWithRegistration)
+TEST_P(RTPS, AsyncRTPSAsNonReliableWithRegistration)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -256,7 +256,7 @@ TEST_P(BlackBox, AsyncRTPSAsNonReliableWithRegistration)
     reader.block_for_at_least(2);
 }
 
-TEST_P(BlackBox, RTPSAsReliableWithRegistration)
+TEST_P(RTPS, RTPSAsReliableWithRegistration)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -288,7 +288,7 @@ TEST_P(BlackBox, RTPSAsReliableWithRegistration)
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, AsyncRTPSAsReliableWithRegistration)
+TEST_P(RTPS, AsyncRTPSAsReliableWithRegistration)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -321,7 +321,7 @@ TEST_P(BlackBox, AsyncRTPSAsReliableWithRegistration)
 }
 
 // Regression test of Refs #2786, github issue #194
-TEST_P(BlackBox, RTPSAsReliableVolatileSocket)
+TEST_P(RTPS, RTPSAsReliableVolatileSocket)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -358,12 +358,12 @@ TEST_P(BlackBox, RTPSAsReliableVolatileSocket)
 }
 
 INSTANTIATE_TEST_CASE_P(RTPS,
-        BlackBox,
+        RTPS,
         testing::Values(false, true),
-        [](const testing::TestParamInfo<BlackBox::ParamType>& info) {
-              if (info.param)
-              {
-                  return "NonIntraprocess";
-              }
-              return "Intraprocess";
-            });
+        [](const testing::TestParamInfo<RTPS::ParamType>& info) {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
