@@ -211,7 +211,7 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastWriterSmallDepth)
 }
 
 // Test created to check bug #1558 (Github #33)
-TEST_P(PubSubHistory, PubSubKeepAll)
+TEST(PubSubHistory, PubSubKeepAll)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -258,7 +258,7 @@ TEST_P(PubSubHistory, PubSubKeepAll)
 }
 
 // Test created to check bug #1558 (Github #33)
-TEST_P(PubSubHistory, PubSubKeepAllTransient)
+TEST(PubSubHistory, PubSubKeepAllTransient)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
