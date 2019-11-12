@@ -90,7 +90,8 @@ public:
             uint32_t how_many);
 
     void run(
-            uint32_t samples);
+            uint32_t samples,
+            uint32_t loops = 0);
 
 private:
 

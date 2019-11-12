@@ -28,6 +28,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <map>
+#include <chrono>
 
 namespace eprosima {
 namespace fastrtps {
@@ -99,8 +100,12 @@ public:
             uint32_t seed,
             const std::string& magic);
 
-    void run(
+    bool run(
             bool notexit);
+
+    bool run_for(
+            bool notexit,
+            const std::chrono::milliseconds& timeout);
 
 private:
 

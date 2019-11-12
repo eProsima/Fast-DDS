@@ -85,19 +85,22 @@ void Publisher::wait_discovery(
 }
 
 void Publisher::run(
-        uint32_t samples)
+        uint32_t samples,
+        const uint32_t loops)
 {
+    uint32_t current_loop = 0;
     HelloWorld data;
     data.index(1);
     data.message("HelloWorld");
 
-    while (run_)
+    while (run_ && (loops == 0 || loops > current_loop))
     {
         publisher_->write((void*)&data);
 
         if (data.index() == samples)
         {
             data.index() = 1;
+            ++current_loop;
         }
         else
         {

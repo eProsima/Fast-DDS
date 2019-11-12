@@ -1,3 +1,4 @@
+#include "Publisher.hpp"
 #include "Subscriber.hpp"
 
 #include <fastrtps/Domain.h>
@@ -8,7 +9,7 @@ int main(
 {
     int arg_count = 1;
     bool notexit = false;
-    uint32_t seed = 7800;
+    uint32_t seed = 7800, wait = 0;
     uint32_t samples = 4;
     uint32_t publishers = 1;
     char* xml_file = nullptr;
@@ -29,6 +30,16 @@ int main(
             }
 
             seed = strtol(argv[arg_count], nullptr, 10);
+        }
+        else if (strcmp(argv[arg_count], "--wait") == 0)
+        {
+            if (++arg_count >= argc)
+            {
+                std::cout << "--wait expects a parameter" << std::endl;
+                return -1;
+            }
+
+            wait = strtol(argv[arg_count], nullptr, 10);
         }
         else if (strcmp(argv[arg_count], "--samples") == 0)
         {
@@ -79,11 +90,26 @@ int main(
         eprosima::fastrtps::Domain::loadXMLProfilesFile(xml_file);
     }
 
+    Publisher publisher(false);
     Subscriber subscriber(publishers, samples);
 
-    if (subscriber.init(seed, magic))
+    if (publisher.init(seed, magic))
     {
-        return subscriber.run(notexit) ? 0 : -1;
+        if (subscriber.init(seed, magic))
+        {
+            if (wait > 0)
+            {
+                publisher.wait_discovery(wait);
+            }
+
+            do
+            {
+                publisher.run(samples, 1);
+            }
+            while (!subscriber.run_for(notexit, std::chrono::milliseconds(100)));
+
+            return 0;
+        }
     }
 
     return -1;

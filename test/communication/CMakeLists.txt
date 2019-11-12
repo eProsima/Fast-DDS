@@ -45,11 +45,23 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     target_include_directories(SimpleCommunicationSubscriber PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
     target_link_libraries(SimpleCommunicationSubscriber fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
+    set(PUBSUB_SOURCE ${COMMON_SOURCE}
+        Publisher.cpp
+        Subscriber.cpp
+        PubSubMain.cpp
+        )
+
+    add_executable(SimpleCommunicationPubSub ${PUBSUB_SOURCE})
+    target_include_directories(SimpleCommunicationPubSub PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
+    target_link_libraries(SimpleCommunicationPubSub fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+
     ###############################################################################
     # Necessary files
     ###############################################################################
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_communication.py
         ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_mix_communication.py
+        ${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/two_publishers_communication.py
         ${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.py
@@ -143,6 +155,42 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             set_property(TEST SimpleCommunicationReliableBestEffort APPEND PROPERTY ENVIRONMENT
                 "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
         endif()
+
+        #add_test(NAME SimpleMixCommunicationBestEffort
+        #    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py)
+
+        ## Set test with label NoMemoryCheck
+        #set_property(TEST SimpleMixCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
+
+        #set_property(TEST SimpleMixCommunicationBestEffort PROPERTY ENVIRONMENT
+        #    "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
+        #set_property(TEST SimpleMixCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
+        #    "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationPubSub>")
+        #set_property(TEST SimpleMixCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
+        #    "XML_FILE=simple_besteffort.xml")
+        #if(WIN32)
+        #    string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+        #    set_property(TEST SimpleMixCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
+        #        "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        #endif()
+
+        #add_test(NAME SimpleMixCommunicationReliable
+        #    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py)
+
+        ## Set test with label NoMemoryCheck
+        #set_property(TEST SimpleMixCommunicationReliable PROPERTY LABELS "NoMemoryCheck")
+
+        #set_property(TEST SimpleMixCommunicationReliable PROPERTY ENVIRONMENT
+        #    "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
+        #set_property(TEST SimpleMixCommunicationReliable APPEND PROPERTY ENVIRONMENT
+        #    "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationPubSub>")
+        #set_property(TEST SimpleMixCommunicationReliable APPEND PROPERTY ENVIRONMENT
+        #    "XML_FILE=simple_reliable.xml")
+        #if(WIN32)
+        #    string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+        #    set_property(TEST SimpleMixCommunicationReliable APPEND PROPERTY ENVIRONMENT
+        #        "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        #endif()
 
         if(SECURITY)
             add_test(NAME SimpleCommunicationSecureBestEffort

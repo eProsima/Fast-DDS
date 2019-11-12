@@ -100,9 +100,18 @@ void Subscriber::onNewDataMessage(
     }
 }
 
-void Subscriber::run(
+bool Subscriber::run(
         bool notexit)
 {
+    return run_for(notexit, std::chrono::hours(24));
+}
+
+bool Subscriber::run_for(
+        bool notexit,
+        const std::chrono::milliseconds& timeout)
+{
+    bool returned_value = false;
+
     while (notexit && run_)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
@@ -111,7 +120,7 @@ void Subscriber::run(
     if (run_)
     {
         std::unique_lock<std::mutex> lock(mutex_);
-        cv_.wait(lock, [&]
+        returned_value = cv_.wait_for(lock, timeout, [&]
         {
             if (publishers_ < number_samples_.size())
             {
@@ -139,7 +148,10 @@ void Subscriber::run(
     if (publishers_ < number_samples_.size())
     {
         std::cout << "ERROR: detected more than " << publishers_ << " publishers" << std::endl;
+        returned_value = false;
     }
+
+    return returned_value;
 }
 
 void Subscriber::onParticipantDiscovery(
