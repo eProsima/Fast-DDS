@@ -257,6 +257,9 @@ private:
     uint32_t value_ = ReturnCode_t::RETCODE_OK.value_;
 };
 
+// TODO Remove this alias when Fast-RTPS reaches version 2
+using ResponseCode = ReturnCode_t;
+
 typedef uint32_t MemberId;
 #define MEMBER_ID_INVALID 0X0FFFFFFF
 #define INDEX_INVALID UINT32_MAX
