@@ -11,6 +11,130 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+macro(add_blackbox_gtest)
+    # Parse arguments
+    if("${ARGV0}" STREQUAL "NAME")
+        set(uniValueArgs NAME COMMAND)
+        unset(test)
+        unset(command)
+    else()
+        set(test "${ARGV0}")
+        set(command "${test}")
+    endif()
+    set(multiValueArgs SOURCES ENVIRONMENTS DEPENDENCIES LABELS)
+    cmake_parse_arguments(GTEST "" "${uniValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    if(GTEST_NAME)
+        set(test ${GTEST_NAME})
+        set(command ${GTEST_COMMAND})
+    endif()
+
+    if(GTEST_INDIVIDUAL)
+        if(WIN32)
+            set(WIN_PATH "$ENV{PATH}")
+            get_target_property(LINK_LIBRARIES_ ${command} LINK_LIBRARIES)
+            if(NOT "${LINK_LIBRARIES_}" STREQUAL "LINK_LIBRARIES_-NOTFOUND")
+                foreach(LIBRARY_LINKED ${LINK_LIBRARIES_})
+                    if(TARGET ${LIBRARY_LINKED})
+                        set(WIN_PATH "$<TARGET_FILE_DIR:${LIBRARY_LINKED}>;${WIN_PATH}")
+                    endif()
+                endforeach()
+            endif()
+            foreach(DEP ${GTEST_DEPENDENCIES})
+                set(WIN_PATH "$<TARGET_FILE_DIR:${DEP}>;${WIN_PATH}")
+            endforeach()
+            string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
+        endif()
+
+        foreach(GTEST_SOURCE_FILE ${GTEST_SOURCES})
+            file(STRINGS ${GTEST_SOURCE_FILE} GTEST_TEST_NAMES REGEX "^TEST(\\(|_F)" )
+            foreach(GTEST_TEST_NAME ${GTEST_TEST_NAMES})
+                string(REGEX REPLACE ["\) \(,"] ";" GTEST_TEST_NAME ${GTEST_TEST_NAME})
+                list(GET GTEST_TEST_NAME 1 GTEST_GROUP_NAME)
+                list(GET GTEST_TEST_NAME 3 GTEST_TEST_NAME)
+                add_test(NAME ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
+                    COMMAND ${command} --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_TEST_NAME})
+
+                # Add environment
+                if(WIN32)
+                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+                endif()
+
+                foreach(property ${GTEST_ENVIRONMENTS})
+                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} APPEND PROPERTY ENVIRONMENT "${property}")
+                endforeach()
+
+                # Add labels
+                set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME} PROPERTY LABELS "${GTEST_LABELS}")
+
+            endforeach()
+            file(STRINGS ${GTEST_SOURCE_FILE} GTEST_TEST_NAMES REGEX "^TEST_P" )
+            foreach(GTEST_TEST_NAME ${GTEST_TEST_NAMES})
+                string(REGEX REPLACE ["\) \(,"] ";" GTEST_TEST_NAME ${GTEST_TEST_NAME})
+                list(GET GTEST_TEST_NAME 1 GTEST_GROUP_NAME)
+                list(GET GTEST_TEST_NAME 3 GTEST_TEST_NAME)
+
+                add_test(NAME ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.NonIntraprocess
+                    COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/NonIntraprocess)
+
+                # Add environment
+                if(WIN32)
+                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.NonIntraprocess APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+                endif()
+
+                foreach(property ${GTEST_ENVIRONMENTS})
+                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.NonIntraprocess APPEND PROPERTY ENVIRONMENT "${property}")
+                endforeach()
+
+                # Add labels
+                set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.NonIntraprocess PROPERTY LABELS "${GTEST_LABELS}")
+
+                add_test(NAME ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess
+                    COMMAND ${command} --gtest_filter=*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/Intraprocess)
+
+                # Add environment
+                if(WIN32)
+                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+                endif()
+
+                foreach(property ${GTEST_ENVIRONMENTS})
+                    set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess APPEND PROPERTY ENVIRONMENT "${property}")
+                endforeach()
+
+                # Add labels
+                set_property(TEST ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}.Intraprocess PROPERTY LABELS "${GTEST_LABELS}")
+
+            endforeach()
+        endforeach()
+    else()
+        add_test(NAME ${test} COMMAND ${command})
+
+        # Add environment
+        if(WIN32)
+            set(WIN_PATH "$ENV{PATH}")
+            get_target_property(LINK_LIBRARIES_ ${command} LINK_LIBRARIES)
+            if(NOT "${LINK_LIBRARIES_}" STREQUAL "LINK_LIBRARIES_-NOTFOUND")
+                foreach(LIBRARY_LINKED ${LINK_LIBRARIES_})
+                    if(TARGET ${LIBRARY_LINKED})
+                        set(WIN_PATH "$<TARGET_FILE_DIR:${LIBRARY_LINKED}>;${WIN_PATH}")
+                    endif()
+                endforeach()
+            endif()
+            foreach(DEP ${GTEST_DEPENDENCIES})
+                set(WIN_PATH "$<TARGET_FILE_DIR:${DEP}>;${WIN_PATH}")
+            endforeach()
+            string(REPLACE ";" "\\;" WIN_PATH "${WIN_PATH}")
+            set_property(TEST ${test} APPEND PROPERTY ENVIRONMENT "PATH=${WIN_PATH}")
+        endif()
+
+        foreach(property ${GTEST_ENVIRONMENTS})
+            set_property(TEST ${test} APPEND PROPERTY ENVIRONMENT "${property}")
+        endforeach()
+
+        # Add labels
+        set_property(TEST ${test} PROPERTY LABELS "${GTEST_LABELS}")
+    endif()
+endmacro()
 
 if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
@@ -78,7 +202,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         target_compile_definitions(BlackboxTests PRIVATE)
         target_include_directories(BlackboxTests PRIVATE ${GTEST_INCLUDE_DIRS})
         target_link_libraries(BlackboxTests fastrtps fastcdr foonathan_memory ${GTEST_LIBRARIES})
-        add_gtest(BlackboxTests SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
+        add_blackbox_gtest(BlackboxTests SOURCES ${BLACKBOXTESTS_TEST_SOURCE}
             ENVIRONMENTS "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
             "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
             "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
