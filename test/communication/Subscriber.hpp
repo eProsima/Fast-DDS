@@ -54,47 +54,12 @@ public:
 
     void onParticipantDiscovery(
             eprosima::fastrtps::Participant* /*participant*/,
-            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
-    {
-        if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
-        {
-            std::cout << "Subscriber participant " <<     //participant->getGuid() <<
-                " discovered participant " << info.info.m_guid << std::endl;
-        }
-        else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
-        {
-            std::cout << "Subscriber participant " <<     //participant->getGuid() <<
-                " detected changes on participant " << info.info.m_guid << std::endl;
-        }
-        else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
-        {
-            std::cout << "Subscriber participant " <<     //participant->getGuid() <<
-                " removed participant " << info.info.m_guid << std::endl;
-        }
-        else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
-        {
-            std::cout << "Subscriber participant " <<     //participant->getGuid() <<
-                " dropped participant " << info.info.m_guid << std::endl;
-        }
-    }
+            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
 
 #if HAVE_SECURITY
     void onParticipantAuthentication(
             eprosima::fastrtps::Participant* /*participant*/,
-            eprosima::fastrtps::rtps::ParticipantAuthenticationInfo&& info) override
-    {
-        if (eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
-        {
-            std::cout << "Subscriber participant " <<     //participant->getGuid() <<
-                " authorized participant " << info.guid << std::endl;
-        }
-        else
-        {
-            std::cout << "Subscriber participant " <<     //participant->getGuid() <<
-                " unauthorized participant " << info.guid << std::endl;
-        }
-    }
-
+            eprosima::fastrtps::rtps::ParticipantAuthenticationInfo&& info) override;
 #endif
 
     void onSubscriptionMatched(

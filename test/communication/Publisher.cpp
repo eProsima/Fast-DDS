@@ -107,3 +107,52 @@ void Publisher::run(
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 }
+
+void Publisher::onParticipantDiscovery(
+        eprosima::fastrtps::Participant* /*participant*/,
+        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
+{
+    if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    {
+        std::cout << "Publisher participant " <<     //participant->getGuid() <<
+            " discovered participant " << info.info.m_guid << std::endl;
+    }
+    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+    {
+        std::cout << "Publisher participant " <<     //participant->getGuid() <<
+            " detected changes on participant " << info.info.m_guid << std::endl;
+    }
+    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+    {
+        std::cout << "Publisher participant " <<     //participant->getGuid() <<
+            " removed participant " << info.info.m_guid << std::endl;
+    }
+    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+    {
+        std::cout << "Publisher participant " <<     //participant->getGuid() <<
+            " dropped participant " << info.info.m_guid << std::endl;
+        if (exit_on_lost_liveliness_)
+        {
+            run_ = false;
+        }
+    }
+}
+
+#if HAVE_SECURITY
+void Publisher::onParticipantAuthentication(
+        eprosima::fastrtps::Participant* participant,
+        eprosima::fastrtps::rtps::ParticipantAuthenticationInfo&& info)
+{
+    if (eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
+    {
+        std::cout << "Publisher participant " << participant->getGuid() <<
+            " authorized participant " << info.guid << std::endl;
+    }
+    else
+    {
+        std::cout << "Publisher participant " << participant->getGuid() <<
+            " unauthorized participant " << info.guid << std::endl;
+    }
+}
+
+#endif

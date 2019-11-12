@@ -141,3 +141,48 @@ void Subscriber::run(
         std::cout << "ERROR: detected more than " << publishers_ << " publishers" << std::endl;
     }
 }
+
+void Subscriber::onParticipantDiscovery(
+        eprosima::fastrtps::Participant* /*participant*/,
+        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
+{
+    if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    {
+        std::cout << "Subscriber participant " <<         //participant->getGuid() <<
+            " discovered participant " << info.info.m_guid << std::endl;
+    }
+    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+    {
+        std::cout << "Subscriber participant " <<         //participant->getGuid() <<
+            " detected changes on participant " << info.info.m_guid << std::endl;
+    }
+    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+    {
+        std::cout << "Subscriber participant " <<         //participant->getGuid() <<
+            " removed participant " << info.info.m_guid << std::endl;
+    }
+    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+    {
+        std::cout << "Subscriber participant " <<         //participant->getGuid() <<
+            " dropped participant " << info.info.m_guid << std::endl;
+    }
+}
+
+#if HAVE_SECURITY
+void Subscriber::onParticipantAuthentication(
+        eprosima::fastrtps::Participant* /*participant*/,
+        eprosima::fastrtps::rtps::ParticipantAuthenticationInfo&& info)
+{
+    if (eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
+    {
+        std::cout << "Subscriber participant " <<         //participant->getGuid() <<
+            " authorized participant " << info.guid << std::endl;
+    }
+    else
+    {
+        std::cout << "Subscriber participant " <<         //participant->getGuid() <<
+            " unauthorized participant " << info.guid << std::endl;
+    }
+}
+
+#endif
