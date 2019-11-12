@@ -162,7 +162,7 @@ TEST_P(BlackBox, AsyncPubSubAsReliableData300kb)
     reader.block_for_all();
 }
 
-TEST_P(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
+TEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -216,7 +216,7 @@ TEST_P(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
         testTransport->dropLogLength);
 }
 
-TEST_P(BlackBox, AsyncFragmentSizeTest)
+TEST(BlackBox, AsyncFragmentSizeTest)
 {
     // ThroghputController size large than maxMessageSize.
     {
