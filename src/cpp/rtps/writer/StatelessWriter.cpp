@@ -407,7 +407,7 @@ void StatelessWriter::send_any_unsent_changes()
         }
     }
 
-    logInfo(RTPS_WRITER, "Finish sending unsent changes"; );
+    logInfo(RTPS_WRITER, "Finish sending unsent changes");
 }
 
 /*

@@ -262,8 +262,8 @@ public:
     }
 
     /**
-     * Check if the reader represented by this proxy is remote and reliable.
-     * @return true if the reader represented by this proxy is remote and reliable.
+     * Check if the reader represented by this proxy is reliable.
+     * @return true if the reader represented by this proxy is reliable.
      */
     inline bool is_reliable() const
     {

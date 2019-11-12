@@ -2567,7 +2567,7 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, IntraprocessDeliveryT
     }
     else
     {
-        logError(XMLPARSER, "Node '" << RTPS_PDP_TYPE << "' with bad content");
+        logError(XMLPARSER, "Node '" << INTRAPROCESS_DELIVERY << "' with bad content");
         return XMLP_ret::XML_ERROR;
     }
 
