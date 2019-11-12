@@ -4,15 +4,12 @@
         <library_settings>
             <intraprocess_delivery>FULL</intraprocess_delivery>
         </library_settings>
-        <participant profile_name="test_participant_profile"
-        is_default_profile="true">
+        <participant profile_name="test_participant_profile" is_default_profile="true">
             <rtps>
                 <allocation>
                     <remote_locators>
-                        <max_unicast_locators>
-                        4</max_unicast_locators>
-                        <max_multicast_locators>
-                        1</max_multicast_locators>
+                        <max_unicast_locators>4</max_unicast_locators>
+                        <max_multicast_locators>1</max_multicast_locators>
                     </remote_locators>
                     <total_participants>
                         <initial>10</initial>
@@ -47,15 +44,11 @@
                     </locator>
                 </defaultMulticastLocatorList>
                 <sendSocketBufferSize>32</sendSocketBufferSize>
-                <listenSocketBufferSize>
-                1000</listenSocketBufferSize>
+                <listenSocketBufferSize>1000</listenSocketBufferSize>
                 <builtin>
                     <discovery_config>
-                        <discoveryProtocol>
-                        SIMPLE</discoveryProtocol>
-                        <ignoreParticipantFlags>FILTER_SAME_PROCESS
-                        |
-                        FILTER_DIFFERENT_HOST</ignoreParticipantFlags>
+                        <discoveryProtocol>SIMPLE</discoveryProtocol>
+                        <ignoreParticipantFlags>FILTER_SAME_PROCESS | FILTER_DIFFERENT_HOST</ignoreParticipantFlags>
                         <EDP>SIMPLE</EDP>
                         <leaseAnnouncement>
                             <sec>10</sec>
@@ -72,16 +65,12 @@
                             </period>
                         </initialAnnouncements>
                         <simpleEDP>
-                            <PUBWRITER_SUBREADER>
-                            false</PUBWRITER_SUBREADER>
-                            <PUBREADER_SUBWRITER>
-                            true</PUBREADER_SUBWRITER>
+                            <PUBWRITER_SUBREADER>false</PUBWRITER_SUBREADER>
+                            <PUBREADER_SUBWRITER>true</PUBREADER_SUBWRITER>
                         </simpleEDP>
                     </discovery_config>
-                    <avoid_builtin_multicast>
-                    false</avoid_builtin_multicast>
-                    <use_WriterLivelinessProtocol>
-                    false</use_WriterLivelinessProtocol>
+                    <avoid_builtin_multicast>false</avoid_builtin_multicast>
+                    <use_WriterLivelinessProtocol>false</use_WriterLivelinessProtocol>
                     <domainId>2019102</domainId>
                     <metatrafficUnicastLocatorList>
                         <locator>
@@ -119,10 +108,8 @@
                             </udpv4>
                         </locator>
                     </initialPeersList>
-                    <readerHistoryMemoryPolicy>
-                    PREALLOCATED</readerHistoryMemoryPolicy>
-                    <writerHistoryMemoryPolicy>
-                    PREALLOCATED</writerHistoryMemoryPolicy>
+                    <readerHistoryMemoryPolicy>PREALLOCATED</readerHistoryMemoryPolicy>
+                    <writerHistoryMemoryPolicy>PREALLOCATED</writerHistoryMemoryPolicy>
                     <mutation_tries>55</mutation_tries>
                 </builtin>
                 <port>
@@ -156,8 +143,7 @@
                 <resourceLimitsQos>
                     <max_samples>432</max_samples>
                     <max_instances>1</max_instances>
-                    <max_samples_per_instance>
-                    100</max_samples_per_instance>
+                    <max_samples_per_instance>100</max_samples_per_instance>
                     <allocated_samples>123</allocated_samples>
                 </resourceLimitsQos>
             </topic>
@@ -253,8 +239,7 @@
                 <increment>0</increment>
             </matchedSubscribersAllocation>
         </publisher>
-        <subscriber profile_name="test_subscriber_profile"
-        is_default_profile="true">
+        <subscriber profile_name="test_subscriber_profile" is_default_profile="true">
             <topic>
                 <kind>WITH_KEY</kind>
                 <name>otherSamplePubSubTopic</name>
@@ -342,8 +327,7 @@
                 </locator>
             </multicastLocatorList>
             <expectsInlineQos>true</expectsInlineQos>
-            <historyMemoryPolicy>
-            PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>
+            <historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>
             <userDefinedID>13</userDefinedID>
             <entityID>31</entityID>
             <matchedPublishersAllocation>
