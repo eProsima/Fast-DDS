@@ -288,7 +288,8 @@ void RTPSParticipantImpl::disable()
         deleteUserEndpoint(static_cast<Endpoint*>(*m_userWriterList.begin()));
     }
 
-    delete(this->mp_builtinProtocols);
+    delete mp_builtinProtocols;
+    mp_builtinProtocols = nullptr;
 }
 
 const std::vector<RTPSWriter*>& RTPSParticipantImpl::getAllWriters() const
@@ -303,6 +304,10 @@ const std::vector<RTPSReader*>& RTPSParticipantImpl::getAllReaders() const
 
 RTPSParticipantImpl::~RTPSParticipantImpl()
 {
+    disable();
+
+    delete mp_builtinProtocols;
+
 #if HAVE_SECURITY
     m_security_manager.destroy();
 #endif
@@ -314,11 +319,11 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
     }
     m_receiverResourcelist.clear();
 
-    delete(this->mp_ResourceSemaphore);
-    delete(this->mp_userParticipant);
+    delete mp_ResourceSemaphore;
+    delete mp_userParticipant;
     send_resource_list_.clear();
 
-    delete(this->mp_mutex);
+    delete mp_mutex;
 }
 
 /*
