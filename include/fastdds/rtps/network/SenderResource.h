@@ -20,17 +20,6 @@
 #include <chrono>
 
 namespace eprosima{
-namespace fastdds{
-namespace rtps{
-
-//class ChannelResource;
-//class TransportInterface;
-
-}
-}
-}
-
-namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 

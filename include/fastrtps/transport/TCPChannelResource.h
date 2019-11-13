@@ -18,7 +18,6 @@
 #include <fastrtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/transport/TransportReceiverInterface.h>
 #include <fastrtps/transport/ChannelResource.h>
-//#include <fastrtps/transport/tcp/RTCPMessageManager.h>
 
 #include <fastdds/rtps/transport/TCPChannelResource.h>
 
