@@ -57,28 +57,32 @@ struct LivelinessData
         , kind(kind_in)
         , lease_duration(lease_duration_in)
         , status(WriterStatus::NOT_ASSERTED)
-    {}
+    {
+    }
 
     LivelinessData()
         : guid()
         , kind(AUTOMATIC_LIVELINESS_QOS)
-        , lease_duration(c_TimeInfinite)
+        , lease_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
         , status(WriterStatus::NOT_ASSERTED)
-    {}
+    {
+    }
 
     ~LivelinessData()
-    {}
+    {
+    }
 
     /**
      * @brief Equality operator
      * @param other Liveliness data to compare to
      * @return True if equal
      */
-    bool operator==(const LivelinessData& other) const
+    bool operator ==(
+            const LivelinessData& other) const
     {
         return ((guid == other.guid) &&
-                (kind == other.kind) &&
-                (lease_duration == other.lease_duration));
+               (kind == other.kind) &&
+               (lease_duration == other.lease_duration));
     }
 
     /**
@@ -86,9 +90,10 @@ struct LivelinessData
      * @param other Liveliness data to compare to
      * @return True if different
      */
-    bool operator!=(const LivelinessData& other) const
+    bool operator !=(
+            const LivelinessData& other) const
     {
-        return (!operator==(other));
+        return (!operator ==(other));
     }
 
     //! GUID of the writer
