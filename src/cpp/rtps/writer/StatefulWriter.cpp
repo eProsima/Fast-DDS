@@ -290,10 +290,8 @@ void StatefulWriter::unsent_change_added_to_history(
                 {
                     periodic_hb_event_->restart_timer(max_blocking_time);
                 }
-                if ( (mp_listener != nullptr) && this->is_acked_by_all(change) )
-                {
-                    mp_listener->onWriterChangeReceivedByAll(this, change);
-                }
+
+                check_acked_status();
 
                 if (disable_positive_acks_ && last_sequence_number_ == SequenceNumber_t())
                 {
@@ -321,7 +319,6 @@ void StatefulWriter::unsent_change_added_to_history(
                 changeForReader.setRelevance(it->rtps_is_relevant(change));
                 it->add_change(changeForReader, false, max_blocking_time);
             }
-            //TODO send to local readers.
 
             if (m_pushMode)
             {
@@ -351,10 +348,7 @@ void StatefulWriter::unsent_change_added_to_history(
     else
     {
         logInfo(RTPS_WRITER, "No reader proxy to add change.");
-        if (mp_listener != nullptr)
-        {
-            mp_listener->onWriterChangeReceivedByAll(this, change);
-        }
+        check_acked_status();
     }
 }
 
