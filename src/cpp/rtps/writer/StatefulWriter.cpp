@@ -414,8 +414,8 @@ bool StatefulWriter::intraprocess_heartbeat(
         if (first_seq != c_SequenceNumber_Unknown && last_seq != c_SequenceNumber_Unknown)
         {
             incrementHBCount();
-            if (returned_value =
-                    reader->processHeartbeatMsg(m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness))
+            if (true == (returned_value =
+                    reader->processHeartbeatMsg(m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness)))
             {
                 SequenceNumber_t last_irrelevance = reader_proxy->changes_low_mark();
                 for (SequenceNumber_t seq_num = first_seq; seq_num <= last_irrelevance; ++seq_num)
