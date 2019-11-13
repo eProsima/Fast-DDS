@@ -100,7 +100,7 @@ public:
      */
     explicit Reference(
             dds::core::null_type& n)
-        :impl_()
+        :impl_(n)
     {}
 
     /**
@@ -272,7 +272,8 @@ public:
     Reference& operator=(
             const null_type nil)
     {
-        return null;
+        this = nil;
+        return this;
     }
 
     /**

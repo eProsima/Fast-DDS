@@ -70,6 +70,10 @@ private:
         {}
 
         void on_publication_matched(
+                dds::pub::DataWriter<HelloWorld>& writer,
+                const dds::core::status::PublicationMatchedStatus& status) override;
+
+        void on_publication_matched(
                 eprosima::fastdds::dds::DataWriter* writer,
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 

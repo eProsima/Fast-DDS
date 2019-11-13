@@ -53,7 +53,8 @@ const dds::domain::DomainParticipant& TTopicDescription<DELEGATE>::domain_partic
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->get_participant();
-    return dds::core::null;
+    *this = dds::core::null;
+    return *this;
 }
 
 } //namespace topic

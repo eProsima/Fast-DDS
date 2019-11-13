@@ -129,6 +129,13 @@ class DataReaderListener : public eprosima::fastdds::dds::DataReaderListener
 {
 public:
 
+    using eprosima::fastdds::dds::DataReaderListener::on_subscription_matched;
+    using eprosima::fastdds::dds::DataReaderListener::on_sample_lost;
+    using eprosima::fastdds::dds::DataReaderListener::on_liveliness_changed;
+    using eprosima::fastdds::dds::DataReaderListener::on_requested_deadline_missed;
+    using eprosima::fastdds::dds::DataReaderListener::on_requested_incompatible_qos;
+    using eprosima::fastdds::dds::DataReaderListener::on_sample_rejected;
+
     /** @cond */
     typedef typename ::dds::core::smart_ptr_traits<DataReaderListener>::ref_type ref_type;
     /** @endcond */

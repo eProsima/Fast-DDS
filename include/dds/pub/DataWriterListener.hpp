@@ -24,6 +24,7 @@
 #include <fastdds/dds/topic/DataWriterListener.hpp>
 
 #include <dds/core/status/Status.hpp>
+#include <dds/core/ref_traits.hpp>
 
 #include <fastdds/dds/topic/DataWriterListener.hpp>
 
@@ -109,6 +110,12 @@ template<typename T>
 class DataWriterListener : public eprosima::fastdds::dds::DataWriterListener
 {
 public:
+
+    using eprosima::fastdds::dds::DataWriterListener::on_publication_matched;
+    using eprosima::fastdds::dds::DataWriterListener::on_offered_deadline_missed;
+    using eprosima::fastdds::dds::DataWriterListener::on_offered_incompatible_qos;
+    using eprosima::fastdds::dds::DataWriterListener::on_liveliness_lost;
+
     /** @cond */
     virtual ~DataWriterListener()
     {

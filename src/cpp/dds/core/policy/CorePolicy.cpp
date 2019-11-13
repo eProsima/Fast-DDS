@@ -687,12 +687,6 @@ eprosima::fastdds::dds::DurabilityQosPolicyKind Durability::to_native(
     eprosima::fastdds::dds::DurabilityQosPolicyKind result;
     switch (kind)
     {
-        case policy::DurabilityKind::VOLATILE:
-            result = eprosima::fastdds::dds::DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS;
-            break;
-        case policy::DurabilityKind::TRANSIENT_LOCAL:
-            result = eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS;
-            break;
 #ifdef  OMG_DDS_PERSISTENCE_SUPPORT
         case policy::DurabilityKind::TRANSIENT:
             result = eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_DURABILITY_QOS;
@@ -701,6 +695,13 @@ eprosima::fastdds::dds::DurabilityQosPolicyKind Durability::to_native(
             result = eprosima::fastdds::dds::DurabilityQosPolicyKind::PERSISTENT_DURABILITY_QOS;
             break;
 #endif
+        case policy::DurabilityKind::VOLATILE:
+            result = eprosima::fastdds::dds::DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS;
+            break;
+        case policy::DurabilityKind::TRANSIENT_LOCAL:
+        default:
+            result = eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS;
+            break;
     }
     return result;
 }
@@ -711,12 +712,6 @@ DurabilityKind::Type Durability::from_native(
     DurabilityKind::Type result;
     switch (kind)
     {
-        case eprosima::fastdds::dds::DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS:
-            result = DurabilityKind::VOLATILE;
-            break;
-        case eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS:
-            result = DurabilityKind::TRANSIENT_LOCAL;
-            break;
 #ifdef  OMG_DDS_PERSISTENCE_SUPPORT
         case eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_DURABILITY_QOS:
             result = DurabilityKind::TRANSIENT;
@@ -725,6 +720,13 @@ DurabilityKind::Type Durability::from_native(
             result = DurabilityKind::PERSISTENT;
             break;
 #endif
+        case eprosima::fastdds::dds::DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS:
+            result = DurabilityKind::VOLATILE;
+            break;
+        case eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS:
+        default:
+            result = DurabilityKind::TRANSIENT_LOCAL;
+            break;
     }
     return result;
 }
@@ -948,6 +950,7 @@ eprosima::fastdds::dds::DestinationOrderQosPolicyKind DestinationOrder::to_nativ
             result = eprosima::fastdds::dds::BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
             break;
         case policy::DestinationOrderKind::BY_RECEPTION_TIMESTAMP:
+        default:
             result = eprosima::fastdds::dds::BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS;
             break;
     }
@@ -964,6 +967,7 @@ DestinationOrderKind::Type DestinationOrder::from_native(
             result = DestinationOrderKind::BY_SOURCE_TIMESTAMP;
             break;
         case eprosima::fastdds::dds::BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS:
+        default:
             result = DestinationOrderKind::BY_RECEPTION_TIMESTAMP;
             break;
     }
@@ -1039,6 +1043,7 @@ eprosima::fastdds::dds::HistoryQosPolicyKind History::to_native(
             result = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
             break;
         case policy::HistoryKind::KEEP_LAST:
+        default:
             result = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
             break;
     }
@@ -1055,6 +1060,7 @@ HistoryKind::Type History::from_native(
             result = HistoryKind::KEEP_ALL;
             break;
         case eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS:
+        default:
             result = HistoryKind::KEEP_LAST;
             break;
     }
@@ -1176,14 +1182,15 @@ eprosima::fastdds::dds::LivelinessQosPolicyKind Liveliness::to_native(
     eprosima::fastdds::dds::LivelinessQosPolicyKind result;
     switch (kind)
     {
-        case policy::LivelinessKind::AUTOMATIC:
-            result = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
-            break;
         case policy::LivelinessKind::MANUAL_BY_TOPIC:
             result = eprosima::fastdds::dds::MANUAL_BY_TOPIC_LIVELINESS_QOS;
             break;
         case policy::LivelinessKind::MANUAL_BY_PARTICIPANT:
             result = eprosima::fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+            break;
+        case policy::LivelinessKind::AUTOMATIC:
+        default:
+            result = eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS;
             break;
     }
     return result;
@@ -1195,14 +1202,15 @@ LivelinessKind::Type Liveliness::from_native(
     LivelinessKind::Type result;
     switch (kind)
     {
-        case eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS:
-            result = LivelinessKind::AUTOMATIC;
-            break;
         case eprosima::fastdds::dds::MANUAL_BY_TOPIC_LIVELINESS_QOS:
             result = LivelinessKind::MANUAL_BY_TOPIC;
             break;
         case eprosima::fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS:
             result = LivelinessKind::MANUAL_BY_PARTICIPANT;
+            break;
+        case eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS:
+        default:
+            result = LivelinessKind::AUTOMATIC;
             break;
     }
     return result;
@@ -1259,6 +1267,7 @@ DurabilityService& DurabilityService::history_kind(
             delegate().history_kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
             break;
         case policy::HistoryKind::KEEP_LAST:
+        default:
             delegate().history_kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
             break;
     }
@@ -1274,6 +1283,7 @@ dds::core::policy::HistoryKind::Type DurabilityService::history_kind() const
             result = HistoryKind::KEEP_ALL;
             break;
         case eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS:
+        default:
             result = HistoryKind::KEEP_LAST;
             break;
     }

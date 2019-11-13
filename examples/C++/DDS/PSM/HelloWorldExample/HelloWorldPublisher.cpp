@@ -48,7 +48,7 @@ bool HelloWorldPublisher::init()
     }
 
     //REGISTER THE TYPE
-    type_.register_type(participant_.delegate().get());
+    type_.register_type(participant_.delegate().get(), type_.get_type_name());
 
 
     // TopicQos
@@ -90,6 +90,13 @@ bool HelloWorldPublisher::init()
 HelloWorldPublisher::~HelloWorldPublisher()
 {
     participant_.delete_participant();
+}
+
+void HelloWorldPublisher::PubListener::on_publication_matched(
+        dds::pub::DataWriter<HelloWorld> &writer,
+        const dds::core::status::PublicationMatchedStatus &status)
+{
+    on_publication_matched(writer.delegate().get(), status);
 }
 
 void HelloWorldPublisher::PubListener::on_publication_matched(

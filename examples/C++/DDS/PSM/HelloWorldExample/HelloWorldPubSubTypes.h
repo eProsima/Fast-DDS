@@ -60,9 +60,10 @@ public:
     {}
 
     eprosima::fastrtps::types::ReturnCode_t register_type(
-            eprosima::fastdds::dds::DomainParticipant* participant)
+            eprosima::fastdds::dds::DomainParticipant* participant,
+            std::string type_name) const
     {
-        return eprosima::fastdds::dds::TypeSupport::register_type(participant, get_type_name());
+        return eprosima::fastdds::dds::TypeSupport::register_type(participant, type_name);
     }
 
     virtual ~HelloWorldTypeSupport() {}

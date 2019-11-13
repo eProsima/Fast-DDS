@@ -47,7 +47,7 @@ bool HelloWorldSubscriber::init()
 
     //REGISTER THE TYPE
     //type_.register_type(participant_, type_->getName());
-    type_.register_type(participant_.delegate().get());
+    type_.register_type(participant_.delegate().get(), type_.get_type_name());
 
     //CREATE THE SUBSCRIBER
     //eprosima::fastrtps::SubscriberAttributes sub_att;
@@ -92,6 +92,13 @@ bool HelloWorldSubscriber::init()
 HelloWorldSubscriber::~HelloWorldSubscriber()
 {
     participant_.delete_participant();
+}
+
+void HelloWorldSubscriber::SubListener::on_subscription_matched(
+        dds::sub::DataReader<HelloWorld>& reader,
+        const dds::core::status::SubscriptionMatchedStatus& status)
+{
+    on_subscription_matched(reader.delegate().get(), status);
 }
 
 void HelloWorldSubscriber::SubListener::on_subscription_matched(

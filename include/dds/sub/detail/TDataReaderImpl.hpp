@@ -389,7 +389,7 @@ DataReader<T>::default_filter_state()
 
 template<typename T>
 DataReader<T>& DataReader<T>::default_filter_state(
-        const dds::sub::status::DataState& status)
+        const dds::sub::status::DataState& /*status*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -401,35 +401,28 @@ template<typename T>
 DataReader<T>& DataReader<T>::operator >>(
         dds::sub::LoanedSamples<T>& ls)
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-//    ls = this->read();
-//    return *this;
+    ls = this->read();
+    return *this;
 }
 
 template<typename T>
 typename DataReader<T>::ManipulatorSelector DataReader<T>::operator >>(
         ManipulatorSelector& (manipulator)(ManipulatorSelector&))
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-//    ManipulatorSelector selector(*this);
-//    manipulator(selector);
-//    return selector;
+    ManipulatorSelector selector(*this);
+    manipulator(selector);
+    return selector;
 }
 
 /** @cond */
 template<typename T>
-template<typename Functor> typename DataReader<T>::ManipulatorSelector DataReader<T>::operator >>( Functor f)
+template<typename Functor>
+typename DataReader<T>::ManipulatorSelector DataReader<T>::operator >>(
+        Functor f)
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-//    ManipulatorSelector selector(*this);
-//    f(selector);
-//    return selector;
+    ManipulatorSelector selector(*this);
+    f(selector);
+    return selector;
 }
 /** @endcond */
 
@@ -467,8 +460,8 @@ LoanedSamples<T> DataReader<T>::take()
 template<typename T>
 template<typename SamplesFWIterator>
 uint32_t DataReader<T>::read(
-        SamplesFWIterator sfit,
-        uint32_t max_samples)
+        SamplesFWIterator /*sfit*/,
+        uint32_t /*max_samples*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -478,8 +471,8 @@ uint32_t DataReader<T>::read(
 template<typename T>
 template<typename SamplesFWIterator>
 uint32_t DataReader<T>::take(
-        SamplesFWIterator sfit,
-        uint32_t max_samples)
+        SamplesFWIterator /*sfit*/,
+        uint32_t /*max_samples*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -489,7 +482,7 @@ uint32_t DataReader<T>::take(
 template<typename T>
 template<typename SamplesBIIterator>
 uint32_t DataReader<T>::read(
-        SamplesBIIterator sbit)
+        SamplesBIIterator /*sbit*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -499,7 +492,7 @@ uint32_t DataReader<T>::read(
 template<typename T>
 template<typename SamplesBIIterator>
 uint32_t DataReader<T>::take(
-        SamplesBIIterator sbit)
+        SamplesBIIterator /*sbit*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -518,7 +511,7 @@ typename DataReader<T>::Selector DataReader<T>::select()
 
 template<typename T>
 dds::topic::TopicInstance<T> DataReader<T>::key_value(
-        const dds::core::InstanceHandle& h)
+        const dds::core::InstanceHandle& /*h*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -527,8 +520,8 @@ dds::topic::TopicInstance<T> DataReader<T>::key_value(
 
 template<typename T>
 T& DataReader<T>::key_value(
-        T& sample,
-        const dds::core::InstanceHandle& h)
+        T& /*sample*/,
+        const dds::core::InstanceHandle& /*h*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -537,7 +530,7 @@ T& DataReader<T>::key_value(
 
 template<typename T>
 const dds::core::InstanceHandle DataReader<T>::lookup_instance(
-        const T& key) const
+        const T& /*key*/) const
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -547,20 +540,16 @@ const dds::core::InstanceHandle DataReader<T>::lookup_instance(
 template<typename T>
 void DataReader<T>::listener(
     Listener* listener,
-    const dds::core::status::StatusMask& event_mask)
+    const dds::core::status::StatusMask& /*event_mask*/)
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->listener(listener, event_mask);
+    this->delegate()->listener(listener/*, event_mask*/);
 }
 
 template<typename T>
 typename DataReader<T>::Listener*
 DataReader<T>::listener() const
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->listener();
+    return this->delegate()->listener();
 }
 
 } //namespace sub

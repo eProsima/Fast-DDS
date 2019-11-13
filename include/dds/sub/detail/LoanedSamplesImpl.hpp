@@ -97,7 +97,7 @@ template<
         typename T,
         template<typename Q> class D>
 LoanedSamples<T, D> move(
-        LoanedSamples<T, D>& a)
+        LoanedSamples<T, D>& /*a*/)
 {
     //To implement
 //    /* Copy reference (not the data) into new LoanedSamples. */

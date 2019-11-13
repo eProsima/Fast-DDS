@@ -109,7 +109,7 @@ void DataWriter<T>::write(
 
 template<typename T>
 void DataWriter<T>::write(
-        const dds::topic::TopicInstance<T>& i)
+        const dds::topic::TopicInstance<T>& /*i*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -118,8 +118,8 @@ void DataWriter<T>::write(
 
 template<typename T>
 void DataWriter<T>::write(
-        const dds::topic::TopicInstance<T>& i,
-        const dds::core::Time& timestamp)
+        const dds::topic::TopicInstance<T>& /*i*/,
+        const dds::core::Time& /*timestamp*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -129,8 +129,8 @@ void DataWriter<T>::write(
 template<typename T>
 template<typename FWIterator>
 void DataWriter<T>::write(
-        const FWIterator& begin,
-        const FWIterator& end)
+        const FWIterator& /*begin*/,
+        const FWIterator& /*end*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -146,9 +146,9 @@ void DataWriter<T>::write(
 template<typename T>
 template<typename FWIterator>
 void DataWriter<T>::write(
-        const FWIterator& begin,
-        const FWIterator& end,
-        const dds::core::Time& timestamp)
+        const FWIterator& /*begin*/,
+        const FWIterator& /*end*/,
+        const dds::core::Time& /*timestamp*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -166,10 +166,10 @@ template<
         typename SamplesFWIterator,
         typename HandlesFWIterator>
 void DataWriter<T>::write(
-        const SamplesFWIterator& data_begin,
-        const SamplesFWIterator& data_end,
-        const HandlesFWIterator& handle_begin,
-        const HandlesFWIterator& handle_end)
+        const SamplesFWIterator& /*data_begin*/,
+        const SamplesFWIterator& /*data_end*/,
+        const HandlesFWIterator& /*handle_begin*/,
+        const HandlesFWIterator& /*handle_end*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -190,11 +190,11 @@ template<
         typename SamplesFWIterator,
         typename HandlesFWIterator>
 void DataWriter<T>::write(
-        const SamplesFWIterator& data_begin,
-        const SamplesFWIterator& data_end,
-        const HandlesFWIterator& handle_begin,
-        const HandlesFWIterator& handle_end,
-        const dds::core::Time& timestamp)
+        const SamplesFWIterator& /*data_begin*/,
+        const SamplesFWIterator& /*data_end*/,
+        const HandlesFWIterator& /*handle_begin*/,
+        const HandlesFWIterator& /*handle_end*/,
+        const dds::core::Time& /*timestamp*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -242,10 +242,8 @@ template<typename T>
 DataWriter<T>& DataWriter<T>::operator <<(
         const T& data)
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->write(data);
-//    return *this;
+    this->write(data);
+    return *this;
 }
 
 template<typename T>
@@ -273,7 +271,7 @@ DataWriter<T>& DataWriter<T>::operator <<(
 
 template<typename T>
 const dds::core::InstanceHandle DataWriter<T>::register_instance(
-        const T& key)
+        const T& /*key*/)
 {
     /* Invalid time will be used as current time. */
     //return this->delegate()->register_instance(key, dds::core::Time::invalid());
@@ -282,8 +280,8 @@ const dds::core::InstanceHandle DataWriter<T>::register_instance(
 
 template<typename T>
 const dds::core::InstanceHandle DataWriter<T>::register_instance(
-        const T& key,
-        const dds::core::Time& timestamp)
+        const T& /*key*/,
+        const dds::core::Time& /*timestamp*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -293,7 +291,7 @@ const dds::core::InstanceHandle DataWriter<T>::register_instance(
 
 template<typename T>
 DataWriter<T>& DataWriter<T>::unregister_instance(
-        const ::dds::core::InstanceHandle& i)
+        const ::dds::core::InstanceHandle& /*i*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -305,8 +303,8 @@ DataWriter<T>& DataWriter<T>::unregister_instance(
 
 template<typename T>
 DataWriter<T>& DataWriter<T>::unregister_instance(
-        const ::dds::core::InstanceHandle& i,
-        const dds::core::Time& timestamp)
+        const ::dds::core::InstanceHandle& /*i*/,
+        const dds::core::Time& /*timestamp*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -317,7 +315,7 @@ DataWriter<T>& DataWriter<T>::unregister_instance(
 
 template<typename T>
 DataWriter<T>& DataWriter<T>::unregister_instance(
-        const T& key)
+        const T& /*key*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -328,8 +326,9 @@ DataWriter<T>& DataWriter<T>::unregister_instance(
 }
 
 template<typename T>
-DataWriter<T>& DataWriter<T>::unregister_instance(const T& key,
-        const dds::core::Time& timestamp)
+DataWriter<T>& DataWriter<T>::unregister_instance(
+        const T& /*key*/,
+        const dds::core::Time& /*timestamp*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -340,7 +339,7 @@ DataWriter<T>& DataWriter<T>::unregister_instance(const T& key,
 
 template<typename T>
 DataWriter<T>& DataWriter<T>::dispose_instance(
-        const ::dds::core::InstanceHandle& i)
+        const ::dds::core::InstanceHandle& /*i*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -352,8 +351,8 @@ DataWriter<T>& DataWriter<T>::dispose_instance(
 
 template<typename T>
 DataWriter<T>& DataWriter<T>::dispose_instance(
-        const ::dds::core::InstanceHandle& i,
-        const dds::core::Time& timestamp)
+        const ::dds::core::InstanceHandle& /*i*/,
+        const dds::core::Time& /*timestamp*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -364,7 +363,7 @@ DataWriter<T>& DataWriter<T>::dispose_instance(
 
 template<typename T>
 DataWriter<T>& DataWriter<T>::dispose_instance(
-        const T& key)
+        const T& /*key*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -376,8 +375,8 @@ DataWriter<T>& DataWriter<T>::dispose_instance(
 
 template<typename T>
 DataWriter<T>& DataWriter<T>::dispose_instance(
-        const T& key,
-        const dds::core::Time& timestamp)
+        const T& /*key*/,
+        const dds::core::Time& /*timestamp*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -388,8 +387,8 @@ DataWriter<T>& DataWriter<T>::dispose_instance(
 
 template<typename T>
 dds::topic::TopicInstance<T>& DataWriter<T>::key_value(
-        dds::topic::TopicInstance<T>& i,
-        const ::dds::core::InstanceHandle& h)
+        dds::topic::TopicInstance<T>& /*i*/,
+        const ::dds::core::InstanceHandle& /*h*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -399,8 +398,8 @@ dds::topic::TopicInstance<T>& DataWriter<T>::key_value(
 
 template<typename T>
 T& DataWriter<T>::key_value(
-        T& sample,
-        const ::dds::core::InstanceHandle& h)
+        T& /*sample*/,
+        const ::dds::core::InstanceHandle& /*h*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
@@ -409,7 +408,7 @@ T& DataWriter<T>::key_value(
 
 template<typename T>
 dds::core::InstanceHandle DataWriter<T>::lookup_instance(
-        const T& key)
+        const T& /*key*/)
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
