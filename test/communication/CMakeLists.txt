@@ -156,41 +156,41 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
                 "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
         endif()
 
-        #add_test(NAME SimpleMixCommunicationBestEffort
-        #    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py)
+        add_test(NAME SimpleMixCommunicationBestEffort
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py)
 
-        ## Set test with label NoMemoryCheck
-        #set_property(TEST SimpleMixCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
+        # Set test with label NoMemoryCheck
+        set_property(TEST SimpleMixCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
 
-        #set_property(TEST SimpleMixCommunicationBestEffort PROPERTY ENVIRONMENT
-        #    "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-        #set_property(TEST SimpleMixCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
-        #    "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationPubSub>")
-        #set_property(TEST SimpleMixCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
-        #    "XML_FILE=simple_besteffort.xml")
-        #if(WIN32)
-        #    string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-        #    set_property(TEST SimpleMixCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
-        #        "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-        #endif()
+        set_property(TEST SimpleMixCommunicationBestEffort PROPERTY ENVIRONMENT
+            "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
+        set_property(TEST SimpleMixCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
+            "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationPubSub>")
+        set_property(TEST SimpleMixCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
+            "XML_FILE=simple_besteffort.xml")
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST SimpleMixCommunicationBestEffort APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
 
-        #add_test(NAME SimpleMixCommunicationReliable
-        #    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py)
+        add_test(NAME SimpleMixCommunicationReliable
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py)
 
-        ## Set test with label NoMemoryCheck
-        #set_property(TEST SimpleMixCommunicationReliable PROPERTY LABELS "NoMemoryCheck")
+        # Set test with label NoMemoryCheck
+        set_property(TEST SimpleMixCommunicationReliable PROPERTY LABELS "NoMemoryCheck")
 
-        #set_property(TEST SimpleMixCommunicationReliable PROPERTY ENVIRONMENT
-        #    "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
-        #set_property(TEST SimpleMixCommunicationReliable APPEND PROPERTY ENVIRONMENT
-        #    "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationPubSub>")
-        #set_property(TEST SimpleMixCommunicationReliable APPEND PROPERTY ENVIRONMENT
-        #    "XML_FILE=simple_reliable.xml")
-        #if(WIN32)
-        #    string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-        #    set_property(TEST SimpleMixCommunicationReliable APPEND PROPERTY ENVIRONMENT
-        #        "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-        #endif()
+        set_property(TEST SimpleMixCommunicationReliable PROPERTY ENVIRONMENT
+            "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
+        set_property(TEST SimpleMixCommunicationReliable APPEND PROPERTY ENVIRONMENT
+            "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationPubSub>")
+        set_property(TEST SimpleMixCommunicationReliable APPEND PROPERTY ENVIRONMENT
+            "XML_FILE=simple_reliable.xml")
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST SimpleMixCommunicationReliable APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
 
         if(SECURITY)
             add_test(NAME SimpleCommunicationSecureBestEffort

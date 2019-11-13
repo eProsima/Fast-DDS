@@ -58,22 +58,19 @@ else:
     if xml_file_sub:
         real_xml_file_sub = os.path.join(script_dir, xml_file_sub)
 
-subscriber1_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid())]
+subscriber_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid())]
         + (["--publishers", "3"])
         + (["--xmlfile", real_xml_file_sub] if real_xml_file_sub else []))
-publisher_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid())]
+publisher1_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid())]
         + (["--xmlfile", real_xml_file_pub] if real_xml_file_pub else [])
         + extra_pub_args)
-subscriber2_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid())]
-        + (["--publishers", "3"])
-        + (["--xmlfile", real_xml_file_sub] if real_xml_file_sub else []))
+publisher2_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid())]
+        + (["--xmlfile", real_xml_file_pub] if real_xml_file_pub else [])
+        + extra_pub_args)
+subscriber_proc.communicate()
+retvalue = subscriber_proc.returncode
 
-subscriber1_proc.communicate()
-retvalue = subscriber1_proc.returncode
-subscriber2_proc.communicate()
-if retvalue == 0:
-    retvalue = subscriber2_proc.returncode
-
-publisher_proc.kill()
+publisher1_proc.kill()
+publisher2_proc.kill()
 
 sys.exit(retvalue)

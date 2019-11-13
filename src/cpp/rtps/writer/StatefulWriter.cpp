@@ -392,6 +392,8 @@ bool StatefulWriter::intraprocess_heartbeat(
         ReaderProxy* reader_proxy,
         bool liveliness)
 {
+    bool returned_value = false;
+
     std::lock_guard<RecursiveTimedMutex> guardW(mp_mutex);
     RTPSReader* reader = RTPSDomainImpl::find_local_reader(reader_proxy->guid());
 
@@ -412,11 +414,19 @@ bool StatefulWriter::intraprocess_heartbeat(
         if (first_seq != c_SequenceNumber_Unknown && last_seq != c_SequenceNumber_Unknown)
         {
             incrementHBCount();
-            return reader->processHeartbeatMsg(m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness);
+            if (returned_value =
+                    reader->processHeartbeatMsg(m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness))
+            {
+                SequenceNumber_t last_irrelevance = reader_proxy->changes_low_mark();
+                for (SequenceNumber_t seq_num = first_seq; seq_num <= last_irrelevance; ++seq_num)
+                {
+                    intraprocess_gap(reader_proxy, seq_num);
+                }
+            }
         }
     }
 
-    return false;
+    return returned_value;
 }
 
 bool StatefulWriter::change_removed_by_history(

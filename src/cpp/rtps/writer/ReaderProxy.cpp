@@ -201,8 +201,9 @@ void ReaderProxy::add_change(
     }
 
     // Irrelevant changes are not added to the collection
-    if (!change.isRelevant())
+    if (!change.isRelevant() && changes_for_reader_.empty())
     {
+        changes_low_mark_ = change.getSequenceNumber();
         return;
     }
 
@@ -471,8 +472,15 @@ void ReaderProxy::change_has_been_removed(
         return;
     }
 
-    // Element may not be in the container when marked as irrelevant.
     auto chit = find_change(seq_num);
+
+    // In intraprocess, if there is an UNACKNOWLEDGED, a GAP has to be send because there is no reliable mechanism.
+    if (is_local_reader() && ACKNOWLEDGED > chit->getStatus())
+    {
+        writer_->intraprocess_gap(this, seq_num);
+    }
+
+    // Element may not be in the container when marked as irrelevant.
     changes_for_reader_.erase(chit);
 }
 

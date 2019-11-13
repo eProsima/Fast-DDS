@@ -63,6 +63,8 @@ public:
 
     MOCK_METHOD1(intraprocess_heartbeat, void(const ReaderProxy*));
 
+    MOCK_METHOD2(intraprocess_gap, void(const ReaderProxy*, const SequenceNumber_t&));
+
     RTPSParticipantImpl* getRTPSParticipant()
     {
         return participant_;
