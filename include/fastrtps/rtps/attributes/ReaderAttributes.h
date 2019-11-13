@@ -39,15 +39,19 @@ namespace rtps {
 class ReaderTimes
 {
 public:
+
     ReaderTimes()
     {
-        initialAcknackDelay.nanosec = 70*1000*1000;
-        heartbeatResponseDelay.nanosec = 5*1000*1000;
+        initialAcknackDelay.nanosec = 70 * 1000 * 1000;
+        heartbeatResponseDelay.nanosec = 5 * 1000 * 1000;
     }
 
-    virtual ~ReaderTimes() {}
+    virtual ~ReaderTimes()
+    {
+    }
 
-    bool operator==(const ReaderTimes& b) const
+    bool operator ==(
+            const ReaderTimes& b) const
     {
         return (this->initialAcknackDelay == b.initialAcknackDelay)  &&
                (this->heartbeatResponseDelay == b.heartbeatResponseDelay);
@@ -65,41 +69,43 @@ public:
  */
 class ReaderAttributes
 {
-    public:
+public:
 
-        ReaderAttributes()
-            : liveliness_kind_(AUTOMATIC_LIVELINESS_QOS)
-            , liveliness_lease_duration(c_TimeInfinite)
-            , expectsInlineQos(false)
-            , disable_positive_acks(false)
-        {
-            endpoint.endpointKind = READER;
-            endpoint.durabilityKind = VOLATILE;
-            endpoint.reliabilityKind = BEST_EFFORT;
-        };
+    ReaderAttributes()
+        : liveliness_kind_(AUTOMATIC_LIVELINESS_QOS)
+        , liveliness_lease_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
+        , expectsInlineQos(false)
+        , disable_positive_acks(false)
+    {
+        endpoint.endpointKind = READER;
+        endpoint.durabilityKind = VOLATILE;
+        endpoint.reliabilityKind = BEST_EFFORT;
+    }
 
-        virtual ~ReaderAttributes() {};
+    virtual ~ReaderAttributes()
+    {
+    }
 
-        //!Attributes of the associated endpoint.
-        EndpointAttributes endpoint;
+    //!Attributes of the associated endpoint.
+    EndpointAttributes endpoint;
 
-        //!Times associated with this reader (only for stateful readers)
-        ReaderTimes times;
+    //!Times associated with this reader (only for stateful readers)
+    ReaderTimes times;
 
-        //! Liveliness kind
-        LivelinessQosPolicyKind liveliness_kind_;
+    //! Liveliness kind
+    LivelinessQosPolicyKind liveliness_kind_;
 
-        //! Liveliness lease duration
-        Duration_t liveliness_lease_duration;
+    //! Liveliness lease duration
+    Duration_t liveliness_lease_duration;
 
-        //!Indicates if the reader expects Inline qos, default value 0.
-        bool expectsInlineQos;
+    //!Indicates if the reader expects Inline qos, default value 0.
+    bool expectsInlineQos;
 
-        //! Disable positive ACKs
-        bool disable_positive_acks;
+    //! Disable positive ACKs
+    bool disable_positive_acks;
 
-        //! Define the allocation behaviour for matched-writer-dependent collections.
-        ResourceLimitedContainerConfig matched_writers_allocation;
+    //! Define the allocation behaviour for matched-writer-dependent collections.
+    ResourceLimitedContainerConfig matched_writers_allocation;
 };
 
 } /* namespace rtps */
