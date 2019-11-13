@@ -19,6 +19,8 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+using Log = fastdds::dds::Log;
+
 ChannelResource::ChannelResource()
     : message_buffer_()
     , alive_(true)
