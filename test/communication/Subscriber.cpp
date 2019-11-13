@@ -143,6 +143,10 @@ bool Subscriber::run_for(
             return true;
         });
     }
+    else
+    {
+        returned_value = true;
+    }
 
 
     if (publishers_ < number_samples_.size())
