@@ -252,7 +252,9 @@ void ReaderProxy::acked_changes_set(
     }
     else
     {
-        if (writer_->getGuid().is_builtin())
+        future_low_mark = changes_low_mark_ + 1;
+
+        if (seq_num == SequenceNumber_t())
         {
             // Special case. Currently only used on Builtin StatefulWriters
             // after losing lease duration.
