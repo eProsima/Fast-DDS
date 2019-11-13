@@ -231,6 +231,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(
             << m_att.defaultUnicastLocatorList);
     }
     
+    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
+    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
+
+    createReceiverResources(m_att.defaultUnicastLocatorList, true);
+    createReceiverResources(m_att.defaultMulticastLocatorList, true);
+
 #if HAVE_SECURITY
     // Start security
     // TODO(Ricardo) Get returned value in future.
@@ -253,12 +259,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
 void RTPSParticipantImpl::enable()
 {
-    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
-    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
-
-    createReceiverResources(m_att.defaultUnicastLocatorList, true);
-    createReceiverResources(m_att.defaultMulticastLocatorList, true);
-
     // Start builtin protocols
     if (!mp_builtinProtocols->initBuiltinProtocols(this, m_att.builtin))
     {
