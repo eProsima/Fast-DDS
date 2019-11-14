@@ -147,21 +147,21 @@ ReturnCode_t DataReaderImpl::read_next_sample(
     if (history_.readNextData(data, &dep_info, max_blocking_time))
     {
         // Transform SampleInfo
-        info->valid_data = dep_info.sampleKind == rtps::ChangeKind_t::ALIVE;
+        info->valid_data = dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::ALIVE;
         info->view_state = ::dds::sub::status::ViewState::new_view();
-        if (dep_info.sampleKind == rtps::ChangeKind_t::ALIVE)
+        if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::ALIVE)
         {
             info->instance_state = ::dds::sub::status::InstanceState::alive();
         }
-        else if (dep_info.sampleKind == rtps::ChangeKind_t::NOT_ALIVE_DISPOSED)
+        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED)
         {
             info->instance_state = ::dds::sub::status::InstanceState::not_alive_disposed();
         }
-        else if (dep_info.sampleKind == rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED)
+        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED)
         {
             info->instance_state = ::dds::sub::status::InstanceState::not_alive_no_writers();
         }
-        else if (dep_info.sampleKind == rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED)
+        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED)
         {
             info->instance_state = ::dds::sub::status::InstanceState::not_alive_mask();
         }
@@ -188,21 +188,21 @@ ReturnCode_t DataReaderImpl::take_next_sample(
     if (history_.takeNextData(data, &dep_info, max_blocking_time))
     {
         // Transform SampleInfo
-        info->valid_data = dep_info.sampleKind == rtps::ChangeKind_t::ALIVE;
+        info->valid_data = dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::ALIVE;
         info->view_state = ::dds::sub::status::ViewState::new_view();
-        if (dep_info.sampleKind == rtps::ChangeKind_t::ALIVE)
+        if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::ALIVE)
         {
             info->instance_state = ::dds::sub::status::InstanceState::alive();
         }
-        else if (dep_info.sampleKind == rtps::ChangeKind_t::NOT_ALIVE_DISPOSED)
+        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED)
         {
             info->instance_state = ::dds::sub::status::InstanceState::not_alive_disposed();
         }
-        else if (dep_info.sampleKind == rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED)
+        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_UNREGISTERED)
         {
             info->instance_state = ::dds::sub::status::InstanceState::not_alive_no_writers();
         }
-        else if (dep_info.sampleKind == rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED)
+        else if (dep_info.sampleKind == fastrtps::rtps::ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED)
         {
             info->instance_state = ::dds::sub::status::InstanceState::not_alive_mask();
         }
