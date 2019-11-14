@@ -68,8 +68,8 @@ When matching a reader, the writer should check if it is on the same process.
 ## Discovery process
 
 ### Participant discovery (PDP)
-We will leave participant discovery to the standard mechanism, but builtin endpoints will use the new
-mechanism to send/receive `ParticipantProxyData` to/from the ones on the local process.
+In order to keep the sepparation of domains while on the same process, we will leave participant discovery to the standard mechanism.
+No intraprocess delivery will be used for builtin PDP readers and writers.
 
 ### Endpoint discovery (EDP)
 We will leave endpoint discovery to the standard mechanism, but builtin endpoints will use the new mechanism to
