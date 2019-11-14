@@ -108,21 +108,21 @@ set(${PROJECT_NAME}_source_files
     fastdds/builtin/typelookup/TypeLookupManager.cpp
     fastdds/builtin/typelookup/TypeLookupRequestListener.cpp
     fastdds/builtin/typelookup/TypeLookupReplyListener.cpp
-    fastrtps_deprecated/transport/ChannelResource.cpp
-    fastrtps_deprecated/transport/UDPChannelResource.cpp
-    fastrtps_deprecated/transport/TCPChannelResource.cpp
-    fastrtps_deprecated/transport/TCPChannelResourceBasic.cpp
-    fastrtps_deprecated/transport/TCPAcceptor.cpp
-    fastrtps_deprecated/transport/TCPAcceptorBasic.cpp
-    fastrtps_deprecated/transport/UDPv4Transport.cpp
-    fastrtps_deprecated/transport/TCPTransportInterface.cpp
-    fastrtps_deprecated/transport/UDPTransportInterface.cpp
-    fastrtps_deprecated/transport/TCPv4Transport.cpp
-    fastrtps_deprecated/transport/UDPv6Transport.cpp
-    fastrtps_deprecated/transport/TCPv6Transport.cpp
-    fastrtps_deprecated/transport/test_UDPv4Transport.cpp
-    fastrtps_deprecated/transport/tcp/TCPControlMessage.cpp
-    fastrtps_deprecated/transport/tcp/RTCPMessageManager.cpp
+    rtps/transport/ChannelResource.cpp
+    rtps/transport/UDPChannelResource.cpp
+    rtps/transport/TCPChannelResource.cpp
+    rtps/transport/TCPChannelResourceBasic.cpp
+    rtps/transport/TCPAcceptor.cpp
+    rtps/transport/TCPAcceptorBasic.cpp
+    rtps/transport/UDPv4Transport.cpp
+    rtps/transport/TCPTransportInterface.cpp
+    rtps/transport/UDPTransportInterface.cpp
+    rtps/transport/TCPv4Transport.cpp
+    rtps/transport/UDPv6Transport.cpp
+    rtps/transport/TCPv6Transport.cpp
+    rtps/transport/test_UDPv4Transport.cpp
+    rtps/transport/tcp/TCPControlMessage.cpp
+    rtps/transport/tcp/RTCPMessageManager.cpp
 
     fastrtps_deprecated/types/AnnotationDescriptor.cpp
     fastrtps_deprecated/types/AnnotationParameterValue.cpp
