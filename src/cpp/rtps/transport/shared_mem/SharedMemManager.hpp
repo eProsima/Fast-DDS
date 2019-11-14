@@ -55,7 +55,7 @@ public:
     }; // Segment
 
     class Port;
-    class Reader
+    class Listener
     {
     public:
 
@@ -63,7 +63,7 @@ public:
         {
             return nullptr;
         }
-    }; // Reader
+    }; // Listener
 
     class Port
     {
@@ -75,7 +75,7 @@ public:
             (void)buffer;
         }
 
-        std::shared_ptr<Reader> create_reader()
+        std::shared_ptr<Listener> create_listener()
         {
             return nullptr;
         }

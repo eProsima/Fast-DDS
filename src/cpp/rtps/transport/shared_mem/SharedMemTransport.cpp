@@ -272,7 +272,7 @@ SharedMemChannelResource* SharedMemTransport::CreateInputChannelResource(
 {
 	(void)is_multicast;
 	//TODO:Check exceptions
-	return new SharedMemChannelResource(this, shared_mem_manager_->open_port(locator.port,1)->create_reader(), maxMsgSize, locator, receiver);
+	return new SharedMemChannelResource(this, shared_mem_manager_->open_port(locator.port,1)->create_listener(), maxMsgSize, locator, receiver);
 }
 
 bool SharedMemTransport::OpenOutputChannel(

@@ -34,13 +34,13 @@ public:
 
 	SharedMemChannelResource(
 		SharedMemTransport* transport,
-		std::shared_ptr<SharedMemManager::Reader> reader,
+		std::shared_ptr<SharedMemManager::Listener> listener,
         uint32_t maxMsgSize,
         const fastrtps::rtps::Locator_t& locator,
         TransportReceiverInterface* receiver)
     : ChannelResource(maxMsgSize)
     , message_receiver_(receiver)
-    , reader_(reader)
+    , listener_(listener)
     , only_multicast_purpose_(false)
     , transport_(transport)
     , locator_(locator)
@@ -98,7 +98,7 @@ public:
     void release()
     {
         // Close and cancel all asynchronous operations associated with the socket.
-        reader_.reset();
+        listener_.reset();
     }
 
 private:
@@ -158,7 +158,7 @@ private:
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
             throw std::runtime_error("not implemented");
             
-            auto buffer = reader_->pop();
+            auto buffer = listener_->pop();
             if(buffer->size() > receive_buffer_capacity)
                 throw std::runtime_error("");
 
@@ -179,7 +179,7 @@ private:
 private:
 
     TransportReceiverInterface* message_receiver_; //Associated Readers/Writers inside of MessageReceiver
-	std::shared_ptr<SharedMemManager::Reader> reader_;
+	std::shared_ptr<SharedMemManager::Listener> listener_;
     bool only_multicast_purpose_;
     SharedMemTransport* transport_;
     fastrtps::rtps::Locator_t locator_;
