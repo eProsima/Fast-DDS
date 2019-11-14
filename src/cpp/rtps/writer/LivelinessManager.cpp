@@ -208,7 +208,7 @@ bool LivelinessManager::assert_liveliness(LivelinessQosPolicyKind kind)
     // Updates the timer owner
     if (!calculate_next())
     {
-        logError(RTPS_WRITER, "Error when restarting liveliness timer: " << writers_.size() << " writers, liveliness " << kind);
+        logInfo(RTPS_WRITER, "Error when restarting liveliness timer: " << writers_.size() << " writers, liveliness " << kind);
         return false;
     }
 
