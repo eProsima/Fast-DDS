@@ -417,10 +417,14 @@ bool StatefulWriter::intraprocess_heartbeat(
             if (true == (returned_value =
                     reader->processHeartbeatMsg(m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness)))
             {
-                SequenceNumber_t last_irrelevance = reader_proxy->changes_low_mark();
-                for (SequenceNumber_t seq_num = first_seq; seq_num <= last_irrelevance; ++seq_num)
+                if (reader_proxy->durability_kind() < TRANSIENT_LOCAL ||
+                        this->getAttributes().durabilityKind < TRANSIENT_LOCAL)
                 {
-                    intraprocess_gap(reader_proxy, seq_num);
+                    SequenceNumber_t last_irrelevance = reader_proxy->changes_low_mark();
+                    for (SequenceNumber_t seq_num = first_seq; seq_num <= last_irrelevance; ++seq_num)
+                    {
+                        intraprocess_gap(reader_proxy, seq_num);
+                    }
                 }
             }
         }

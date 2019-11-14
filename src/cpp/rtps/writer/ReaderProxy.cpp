@@ -201,9 +201,13 @@ void ReaderProxy::add_change(
     }
 
     // Irrelevant changes are not added to the collection
-    if (!change.isRelevant() && changes_for_reader_.empty())
+    if (!change.isRelevant())
     {
-        changes_low_mark_ = change.getSequenceNumber();
+        if (is_local_reader() && changes_for_reader_.empty())
+        {
+            changes_low_mark_ = change.getSequenceNumber();
+        }
+
         return;
     }
 
