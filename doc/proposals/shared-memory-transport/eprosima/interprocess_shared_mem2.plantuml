@@ -46,10 +46,10 @@ class SharedMemManager {
 
 class SharedMemManager::Port {
     +push()
-    +create_consumer()
+    +create_listener()
 }
 
-class SharedMemManager::Consumer {
+class SharedMemManager::Listener {
     +pop()
 }
 
@@ -60,8 +60,8 @@ SharedMemTransport o-- SharedMemManager
 SharedMemTransport "1" *-- "n" SharedMemChannelResource
 SenderResource <|-- SharedMemSenderResource
 SharedMemTransport "1" *-- "1" SharedMemSenderResource
-SharedMemChannelResource "1" *-- "1" SharedMemManager::Consumer : listen on
-SharedMemManager::Consumer "1" o-- "1" SharedMemManager::Port
+SharedMemChannelResource "1" *-- "1" SharedMemManager::Listener : listen on
+SharedMemManager::Listener "1" o-- "1" SharedMemManager::Port
 SharedMemSenderResource "1" *-- "n" SharedMemManager::Port : send to
 
 @enduml
