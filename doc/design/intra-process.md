@@ -27,43 +27,46 @@ blocked both the transport's reception threads and threads which write data.
 Also should explain there is another mechanism to read samples, using the function `wait_for_unread_samples()` from the
 user's thread and then taking/reading them.
 
-Current Reader API will be used by local writers to deliver data. The local writer will call `processDataMsg` and
-`processDataFragMsg` directly.
+Current Reader API will be used by local writers to deliver data. The local writer will call `processDataMsg` directly.
 
 ## Readers: management of local writers
 When matching a writer, the reader should check if it is on the same process.
 
 **Considerations at destruction time**
 
-Until now a reader was safe to be destructed because we are sure any thread will access it. This is possible because:
+Until now a reader was safe to be destructed because we are sure that no thread will access it. This is possible because:
 
 * All events which use the reader were destructed first. Then the event thread will never access the reader.
-* The reader was deregistered from the `ReceiveResource` objects. Then any reception thread will never access the
+* The reader was deregistered from the `ReceiverResource` objects. Then any reception thread will never access the
 reader.
 
 Now a reader can be accessed by a writer from the local process. But it was accessed if there was a match with the
-writer using discovery. Therefore, we are sure there will be an unmatch with the writer using discovery before the reader
-is destructed. And this unmatch will be instantly because the EDP builtin endpoints will use intraprocess mechanism.
+writer using discovery. Therefore, we should make sure there will be an unmatch with the writer using discovery before
+the reader is destructed. And this unmatch will be instantly because the EDP builtin endpoints will use intraprocess
+mechanism.
 
 ### StatefulReader
 No output traffic to local writers should be performed.
 * Changes on WriterProxy
     * `remote_locators_shrinked` should return an empty vector for local writers
-    * Timed events should never be started for local writers
+    * Timed event `heartbeat response` should never be started for local writers
+    * Timed event `initial acknack` should directly call `process_acknack` on the local writer
 
 ## Writers: management of local readers
 When matching a reader, the writer should check if it is on the same process.
 * No output traffic to local readers should be performed.
-* Samples are sent to local readers using `receive_local_writer_data`.
-* When a local reader is matched, and transient_local durability is used, the reader automatically receives data with `receive_local_writer_data`.
+* Samples are sent to local readers using `processDataMsg`.
+* When a local reader is matched, and transient_local durability is used, the reader should automatically receive data
+with `processDataMsg`.
 
 ### StatelessWriter
 * On ReaderLocator::start, no locators should be added when the reader is local
 
 ### StatefulWriter
 * Samples sent to local readers are automatically acknowledged
-* Gaps sent to local readers should use `receive_local_writer_gap`
-* Timed events should never be started for local readers
+* Gaps sent to local readers should directly call `processGapMsg`
+* Heartbeats sent to local readers should directly call `processHeartbeatMsg`
+* Timed events should never be started for local readers, except for an `initial heartbeat`
 
 ## Discovery process
 
@@ -81,7 +84,7 @@ send/receive `WriterProxyData` and `ReaderProxyData` to/from the ones on the loc
 If we rely on the comparison of the GUID to identify endpoints on the same process, those belonging to a secured participant will not be taken into account, as in that case the GUID is recalculated using a hash of the whole participant GUID.
 
 ### Liveliness
-There may be changes to the liveliness assertion mechanism, as local process endpoints may be automatically asserted without the need of exchanging messages. Even better, it may be possible to avoid adding local endpoints to the liveliness managers.
+No changes are necessary for the liveliness assertion mechanism, except that manual_by_topic assertions should directly call `processHeartbeatMsg` on local readers.
 
 ### Side effects
 
