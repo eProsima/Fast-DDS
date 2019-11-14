@@ -229,7 +229,7 @@ int64_t Time::to_microsecs() const
 
 double Time::to_secs() const
 {
-    double seconds = sec_;
+    double seconds = (double) sec_;
     double nanos = nsec_;
     seconds += nanos / 1000000000.;
     return seconds;

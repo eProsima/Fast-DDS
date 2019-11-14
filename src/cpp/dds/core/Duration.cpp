@@ -192,7 +192,7 @@ bool Duration::operator <(
 Duration& Duration::operator +=(
         const Duration& a_ti)
 {
-    sec_ += a_ti.sec();
+    sec_ += (int32_t) a_ti.sec();
     nsec_ += a_ti.nanosec();
     if (nsec_ >= 1000000000)
     {
@@ -213,7 +213,7 @@ Duration& Duration::operator -=(
     }
     else
     {
-        sec_ -= a_ti.sec();
+        sec_ -= (int32_t) a_ti.sec();
         nsec_ -= a_ti.nanosec();
     }
     return *this;
@@ -304,7 +304,7 @@ const Duration OMG_DDS_API operator /(
     const Duration& lhs,
     uint64_t rhs)
 {
-    return Duration(static_cast<int64_t>(lhs.sec() / static_cast<int64_t>(rhs)), lhs.nanosec() / rhs);
+    return Duration(static_cast<int64_t>(lhs.sec() / static_cast<int64_t>(rhs)), lhs.nanosec() / (uint32_t) rhs);
 }
 
 } //namespace core

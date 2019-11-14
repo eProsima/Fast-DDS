@@ -30,7 +30,7 @@ Exception::~Exception() throw()
 
 const char* Exception::what() const throw()
 {
-   throw "Not implemented";
+   return "Not implemented";
 }
 
 
@@ -54,7 +54,7 @@ Error::~Error() throw()
 
 const char* Error::what() const throw()
 {
-    throw "Not implemented";
+    return "Not implemented";
 }
 
 
@@ -79,7 +79,7 @@ AlreadyClosedError::~AlreadyClosedError() throw()
 
 const char* AlreadyClosedError::what() const throw()
 {
-    throw "Not implemented";
+    return "Not implemented";
 }
 
 
@@ -103,7 +103,7 @@ IllegalOperationError::~IllegalOperationError() throw()
 
 const char* IllegalOperationError::what() const throw()
 {
-    throw "Not implemented";
+    return "Not implemented";
 }
 
 ImmutablePolicyError::ImmutablePolicyError(
@@ -126,7 +126,7 @@ ImmutablePolicyError::~ImmutablePolicyError() throw()
 
 const char* ImmutablePolicyError::what() const throw()
 {
-    throw "Not implemented";
+    return "Not implemented";
 }
 
 InconsistentPolicyError::InconsistentPolicyError(
@@ -149,7 +149,7 @@ InconsistentPolicyError::~InconsistentPolicyError() throw()
 
 const char* InconsistentPolicyError::what() const throw()
 {
-    throw "Not implemented";
+    return "Not implemented";
 }
 
 InvalidArgumentError::InvalidArgumentError(
@@ -172,7 +172,7 @@ InvalidArgumentError::~InvalidArgumentError() throw()
 
 const char* InvalidArgumentError::what() const throw()
 {
-    throw "Not implemented";
+    return "Not implemented";
 }
 
 NotEnabledError::NotEnabledError(
@@ -195,7 +195,7 @@ NotEnabledError::~NotEnabledError() throw()
 
 const char* NotEnabledError::what() const throw()
 {
-    throw "Not implemented";
+    return "Not implemented";
 }
 
 OutOfResourcesError::OutOfResourcesError(
@@ -218,7 +218,7 @@ OutOfResourcesError::~OutOfResourcesError() throw()
 
 const char* OutOfResourcesError::what() const throw()
 {
-   throw "Not implemented";
+   return "Not implemented";
 }
 
 PreconditionNotMetError::PreconditionNotMetError(
@@ -241,7 +241,7 @@ PreconditionNotMetError::~PreconditionNotMetError() throw()
 
 const char* PreconditionNotMetError::what() const throw()
 {
-    throw "Not implemented";
+    return "Not implemented";
 }
 
 TimeoutError::TimeoutError(
@@ -264,7 +264,7 @@ TimeoutError::~TimeoutError() throw()
 
 const char* TimeoutError::what() const throw()
 {
-    throw "Not implemented";
+    return "Not implemented";
 }
 
 UnsupportedError::UnsupportedError(
@@ -287,7 +287,7 @@ UnsupportedError::~UnsupportedError() throw()
 
 const char* UnsupportedError::what() const throw()
 {
-    throw "Not implemented";
+    return "Not implemented";
 }
 
 InvalidDowncastError::InvalidDowncastError(
@@ -310,7 +310,7 @@ InvalidDowncastError::~InvalidDowncastError() throw()
 
 const char* InvalidDowncastError::what() const throw()
 {
-    throw "Not implemented";
+    return "Not implemented";
 }
 
 
@@ -334,7 +334,7 @@ NullReferenceError::~NullReferenceError() throw()
 
 const char* NullReferenceError::what() const throw()
 {
-    throw "Not implemented";
+    return "Not implemented";
 }
 
 InvalidDataError::InvalidDataError(
@@ -357,7 +357,7 @@ InvalidDataError::~InvalidDataError() throw()
 
 const char* InvalidDataError::what() const throw()
 {
-    throw "Not implemented";
+    return "Not implemented";
 }
 
 

@@ -206,6 +206,7 @@ set(${PROJECT_NAME}_source_files
     dds/core/types.cpp
     dds/core/policy/CorePolicy.cpp
     dds/core/status/Status.cpp
+    dds/core/Exception.cpp
     )
 
 # TLS Support

@@ -767,14 +767,15 @@ eprosima::fastdds::dds::PresentationQosPolicyAccessScopeKind Presentation::to_na
         case policy::PresentationAccessScopeKind::TOPIC:
             result = eprosima::fastdds::dds::TOPIC_PRESENTATION_QOS;
             break;
-        case policy::PresentationAccessScopeKind::INSTANCE:
-            result = eprosima::fastdds::dds::INSTANCE_PRESENTATION_QOS;
-            break;
 #ifdef  OMG_DDS_OBJECT_MODEL_SUPPORT
         case policy::PresentationAccessScopeKind::GROUP:
             result = eprosima::fastdds::dds::GROUP_PRESENTATION_QOS;
             break;
 #endif  // OMG_DDS_OBJECT_MODEL_SUPPORT
+		case policy::PresentationAccessScopeKind::INSTANCE:
+		default:
+			result = eprosima::fastdds::dds::INSTANCE_PRESENTATION_QOS;
+			break;
     }
     return result;
 }
@@ -788,14 +789,15 @@ PresentationAccessScopeKind::Type Presentation::from_native(
         case eprosima::fastdds::dds::TOPIC_PRESENTATION_QOS:
             result = PresentationAccessScopeKind::TOPIC;
             break;
-        case eprosima::fastdds::dds::INSTANCE_PRESENTATION_QOS:
-            result = PresentationAccessScopeKind::INSTANCE;
-            break;
 #ifdef  OMG_DDS_OBJECT_MODEL_SUPPORT
         case eprosima::fastdds::dds::GROUP_PRESENTATION_QOS:
             result = PresentationAccessScopeKind::GROUP;
             break;
 #endif  // OMG_DDS_OBJECT_MODEL_SUPPORT
+		case eprosima::fastdds::dds::INSTANCE_PRESENTATION_QOS:
+		default:
+			result = PresentationAccessScopeKind::INSTANCE;
+			break;
     }
     return result;
 }
