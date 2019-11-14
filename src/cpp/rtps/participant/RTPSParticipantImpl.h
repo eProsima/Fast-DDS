@@ -155,6 +155,12 @@ public:
 
     virtual ~RTPSParticipantImpl();
 
+    // Create receiver resources and start builtin protocols
+    void enable();
+
+    // Stop builtin protocols and delete receiver resources
+    void disable();
+
     /**
         * Get associated GUID
         * @return Associated GUID
@@ -279,6 +285,18 @@ public:
     uint32_t get_min_network_send_buffer_size() { return m_network_Factory.get_min_send_buffer_size(); }
 
     AsyncWriterThread& async_thread() { return async_thread_; }
+
+    /***
+     * @returns A pointer to a local reader given its endpoint guid, or nullptr if not found.
+     */
+    RTPSReader* find_local_reader(
+            const GUID_t& reader_guid);
+
+    /***
+     * @returns A pointer to a local writer given its endpoint guid, or nullptr if not found.
+     */
+    RTPSWriter* find_local_writer(
+            const GUID_t& writer_guid);
 
 private:
     //!Attributes of the RTPSParticipant

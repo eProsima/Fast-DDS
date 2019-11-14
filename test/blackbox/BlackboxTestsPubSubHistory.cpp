@@ -17,11 +17,39 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+class PubSubHistory : public testing::TestWithParam<bool>
+{
+public:
+
+    void SetUp() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+    }
+
+    void TearDown() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+    }
+};
+
+
 // Test created to check bug #1568 (Github #34)
-TEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
+TEST_P(PubSubHistory, PubSubAsNonReliableKeepLastReaderSmallDepth)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -64,7 +92,7 @@ TEST(BlackBox, PubSubAsNonReliableKeepLastReaderSmallDepth)
 }
 
 //Test created to deal with Issue 39 on Github
-TEST(BlackBox, CacheChangeReleaseTest)
+TEST_P(PubSubHistory, CacheChangeReleaseTest)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -104,7 +132,7 @@ TEST(BlackBox, CacheChangeReleaseTest)
 }
 
 // Test created to check bug #1555 (Github #31)
-TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
+TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepth)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -151,7 +179,7 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepth)
 }
 
 // Test created to check bug #1738 (Github #54)
-TEST(BlackBox, PubSubAsReliableKeepLastWriterSmallDepth)
+TEST_P(PubSubHistory, PubSubAsReliableKeepLastWriterSmallDepth)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -183,7 +211,7 @@ TEST(BlackBox, PubSubAsReliableKeepLastWriterSmallDepth)
 }
 
 // Test created to check bug #1558 (Github #33)
-TEST(BlackBox, PubSubKeepAll)
+TEST(PubSubHistory, PubSubKeepAll)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -230,7 +258,7 @@ TEST(BlackBox, PubSubKeepAll)
 }
 
 // Test created to check bug #1558 (Github #33)
-TEST(BlackBox, PubSubKeepAllTransient)
+TEST(PubSubHistory, PubSubKeepAllTransient)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -277,7 +305,7 @@ TEST(BlackBox, PubSubKeepAllTransient)
     }
 }
 
-TEST(BlackBox, PubReliableKeepAllSubNonReliable)
+TEST_P(PubSubHistory, PubReliableKeepAllSubNonReliable)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -309,7 +337,8 @@ TEST(BlackBox, PubReliableKeepAllSubNonReliable)
 }
 
 //Verify that Cachechanges are removed from History when the a Writer unmatches
-TEST(BlackBox, StatefulReaderCacheChangeRelease){
+TEST_P(PubSubHistory, StatefulReaderCacheChangeRelease)
+{
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -345,7 +374,7 @@ void send_async_data(PubSubWriter<T>& writer, std::list<typename T::type> data_t
     ASSERT_TRUE(data_to_send.empty());
 }
 
-TEST(BlackBox, PubSubAsReliableMultithreadKeepLast1)
+TEST_P(PubSubHistory, PubSubAsReliableMultithreadKeepLast1)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -384,7 +413,7 @@ TEST(BlackBox, PubSubAsReliableMultithreadKeepLast1)
 }
 
 // Test created to check bug #6319 (Github #708)
-TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
+TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -442,4 +471,15 @@ TEST(BlackBox, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
     ASSERT_TRUE(reader.takeNextData(&received, nullptr));
     ASSERT_EQ(received.index(), 3u);
 }
+
+INSTANTIATE_TEST_CASE_P(PubSubHistory,
+        PubSubHistory,
+        testing::Values(false, true),
+        [](const testing::TestParamInfo<PubSubHistory::ParamType>& info) {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
 

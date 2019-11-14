@@ -15,250 +15,92 @@
 /**
  * @file Publisher.cpp
  */
-
 #include <asio.hpp>
 
+#include "Publisher.hpp"
 #include <fastrtps/participant/Participant.h>
-#include <fastrtps/participant/ParticipantListener.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/publisher/Publisher.h>
-#include <fastrtps/publisher/PublisherListener.h>
 #include <fastrtps/Domain.h>
 
-#include <types/HelloWorldType.h>
-
-#include <mutex>
-#include <condition_variable>
 #include <fstream>
 #include <string>
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
-
-static bool run = true;
-
-class ParListener : public ParticipantListener
+Publisher::~Publisher()
 {
-    public:
-        ParListener(bool exit_on_lost_liveliness) : exit_on_lost_liveliness_(exit_on_lost_liveliness) {}
-        virtual ~ParListener() override {}
-
-        /**
-         * This method is called when a new Participant is discovered, or a previously discovered participant
-         * changes its QOS or is removed.
-         * @param p Pointer to the Participant
-         * @param info DiscoveryInfo.
-         */
-        void onParticipantDiscovery(
-                Participant* /*participant*/,
-                rtps::ParticipantDiscoveryInfo&& info) override
-        {
-            if(info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
-            {
-                std::cout << "Publisher participant " << //participant->getGuid() <<
-                    " discovered participant " << info.info.m_guid << std::endl;
-            }
-            else if(info.status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
-            {
-                std::cout << "Publisher participant " << //participant->getGuid() <<
-                    " detected changes on participant " << info.info.m_guid << std::endl;
-            }
-            else if(info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
-            {
-                std::cout << "Publisher participant " << //participant->getGuid() <<
-                    " removed participant " << info.info.m_guid << std::endl;
-            }
-            else if(info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
-            {
-                std::cout << "Publisher participant " << //participant->getGuid() <<
-                    " dropped participant " << info.info.m_guid << std::endl;
-                if(exit_on_lost_liveliness_)
-                {
-                    run = false;
-                }
-            }
-        }
-
-#if HAVE_SECURITY
-        void onParticipantAuthentication(
-                Participant* participant,
-                rtps::ParticipantAuthenticationInfo&& info) override
-        {
-            if (rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
-            {
-                std::cout << "Publisher participant " << participant->getGuid() <<
-                    " authorized participant " << info.guid << std::endl;
-            }
-            else
-            {
-                std::cout << "Publisher participant " << participant->getGuid() <<
-                    " unauthorized participant " << info.guid << std::endl;
-            }
-        }
-#endif
-
-    private:
-
-        bool exit_on_lost_liveliness_;
-};
-
-class PubListener : public PublisherListener
-{
-    public:
-
-        PubListener() : matched_(0) {};
-
-        ~PubListener() {};
-
-        void onPublicationMatched(Publisher* /*publisher*/, MatchingInfo& info) override
-        {
-            std::unique_lock<std::mutex> lock(mutex_);
-            if(info.status == MATCHED_MATCHING)
-            {
-                std::cout << "Publisher matched with subscriber " << info.remoteEndpointGuid << std::endl;
-                ++matched_;
-            }
-            else
-            {
-                std::cout << "Publisher unmatched with subscriber " << info.remoteEndpointGuid << std::endl;
-                --matched_;
-            }
-            cv_.notify_all();
-        }
-
-        std::mutex mutex_;
-        std::condition_variable cv_;
-        unsigned int matched_;
-};
-
-int main(int argc, char** argv)
-{
-    int arg_count = 1;
-    bool exit_on_lost_liveliness = false;
-    uint32_t seed = 7800, wait = 0;
-    char* xml_file = nullptr;
-    uint32_t samples = 4;
-    std::string magic;
-
-    while(arg_count < argc)
+    if (participant_)
     {
-        if(strcmp(argv[arg_count], "--exit_on_lost_liveliness") == 0)
-        {
-            exit_on_lost_liveliness = true;
-        }
-        else if(strcmp(argv[arg_count], "--seed") == 0)
-        {
-            if(++arg_count >= argc)
-            {
-                std::cout << "--seed expects a parameter" << std::endl;
-                return -1;
-            }
-
-            seed = strtol(argv[arg_count], nullptr, 10);
-        }
-        else if(strcmp(argv[arg_count], "--wait") == 0)
-        {
-            if(++arg_count >= argc)
-            {
-                std::cout << "--wait expects a parameter" << std::endl;
-                return -1;
-            }
-
-            wait = strtol(argv[arg_count], nullptr, 10);
-        }
-        else if(strcmp(argv[arg_count], "--samples") == 0)
-        {
-            if(++arg_count >= argc)
-            {
-                std::cout << "--samples expects a parameter" << std::endl;
-                return -1;
-            }
-
-            samples = strtol(argv[arg_count], nullptr, 10);
-        }
-        else if(strcmp(argv[arg_count], "--magic") == 0)
-        {
-            if(++arg_count >= argc)
-            {
-                std::cout << "--magic expects a parameter" << std::endl;
-                return -1;
-            }
-
-            magic = argv[arg_count];
-        }
-        else if(strcmp(argv[arg_count], "--xmlfile") == 0)
-        {
-            if(++arg_count >= argc)
-            {
-                std::cout << "--xmlfile expects a parameter" << std::endl;
-                return -1;
-            }
-
-            xml_file = argv[arg_count];
-        }
-
-        ++arg_count;
+        eprosima::fastrtps::Domain::removeParticipant(participant_);
     }
+}
 
-    if(xml_file)
-    {
-        Domain::loadXMLProfilesFile(xml_file);
-    }
-
-    ParticipantAttributes participant_attributes;
-    Domain::getDefaultParticipantAttributes(participant_attributes);
+bool Publisher::init(
+        uint32_t seed,
+        const std::string& magic)
+{
+    eprosima::fastrtps::ParticipantAttributes participant_attributes;
+    eprosima::fastrtps::Domain::getDefaultParticipantAttributes(participant_attributes);
     participant_attributes.rtps.builtin.domainId = seed % 230;
-    ParListener participant_listener(exit_on_lost_liveliness);
-    Participant* participant = Domain::createParticipant(participant_attributes, &participant_listener);
+    participant_ = eprosima::fastrtps::Domain::createParticipant(participant_attributes, this);
 
-    if(participant == nullptr)
+    if (nullptr == participant_)
     {
-        return 1;
+        return false;
     }
 
-    HelloWorldType type;
-    Domain::registerType(participant,&type);
-
-    PubListener listener;
+    eprosima::fastrtps::Domain::registerType(participant_, &type_);
 
     // Generate topic name
     std::ostringstream topic;
     topic << "HelloWorldTopic_" << ((magic.empty()) ? asio::ip::host_name() : magic) << "_" << seed;
 
-    //CREATE THE PUBLISHER
-    PublisherAttributes publisher_attributes;
-    //Domain::getDefaultPublisherAttributes(publisher_attributes);
-    publisher_attributes.topic.topicKind = NO_KEY;
-    publisher_attributes.topic.topicDataType = type.getName();
+    // Create publisher
+    eprosima::fastrtps::PublisherAttributes publisher_attributes;
+    eprosima::fastrtps::Domain::getDefaultPublisherAttributes(publisher_attributes);
+    publisher_attributes.topic.topicKind = eprosima::fastrtps::rtps::NO_KEY;
+    publisher_attributes.topic.topicDataType = type_.getName();
     publisher_attributes.topic.topicName = topic.str();
     publisher_attributes.qos.m_liveliness.lease_duration = 3;
     publisher_attributes.qos.m_liveliness.announcement_period = 1;
-    publisher_attributes.qos.m_liveliness.kind = AUTOMATIC_LIVELINESS_QOS;
-    Publisher* publisher = Domain::createPublisher(participant, publisher_attributes, &listener);
-    if(publisher == nullptr)
+    publisher_attributes.qos.m_liveliness.kind = eprosima::fastrtps::AUTOMATIC_LIVELINESS_QOS;
+    publisher_ = eprosima::fastrtps::Domain::createPublisher(participant_, publisher_attributes, this);
+
+    if (nullptr == publisher_)
     {
-        Domain::removeParticipant(participant);
-        return 1;
+        eprosima::fastrtps::Domain::removeParticipant(participant_);
+        return false;
     }
 
-    if(wait > 0)
-    {
-        std::unique_lock<std::mutex> lock(listener.mutex_);
-        listener.cv_.wait(lock, [&]{return listener.matched_ >= wait;});
-    }
+    return true;
+}
 
+void Publisher::wait_discovery(
+        uint32_t how_many)
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+    cv_.wait(lock, [&] {
+        return matched_ >= how_many;
+    });
+}
+
+void Publisher::run(
+        uint32_t samples,
+        const uint32_t loops)
+{
+    uint32_t current_loop = 0;
     HelloWorld data;
     data.index(1);
     data.message("HelloWorld");
 
-    while(run)
+    while (run_ && (loops == 0 || loops > current_loop))
     {
-        publisher->write((void*)&data);
+        publisher_->write((void*)&data);
 
-        if(data.index() == samples)
+        if (data.index() == samples)
         {
             data.index() = 1;
+            ++current_loop;
         }
         else
         {
@@ -266,9 +108,54 @@ int main(int argc, char** argv)
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
-    };
-
-    Domain::removeParticipant(participant);
-
-    return 0;
+    }
 }
+
+void Publisher::onParticipantDiscovery(
+        eprosima::fastrtps::Participant* /*participant*/,
+        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
+{
+    if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    {
+        std::cout << "Publisher participant " <<     //participant->getGuid() <<
+            " discovered participant " << info.info.m_guid << std::endl;
+    }
+    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+    {
+        std::cout << "Publisher participant " <<     //participant->getGuid() <<
+            " detected changes on participant " << info.info.m_guid << std::endl;
+    }
+    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+    {
+        std::cout << "Publisher participant " <<     //participant->getGuid() <<
+            " removed participant " << info.info.m_guid << std::endl;
+    }
+    else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+    {
+        std::cout << "Publisher participant " <<     //participant->getGuid() <<
+            " dropped participant " << info.info.m_guid << std::endl;
+        if (exit_on_lost_liveliness_)
+        {
+            run_ = false;
+        }
+    }
+}
+
+#if HAVE_SECURITY
+void Publisher::onParticipantAuthentication(
+        eprosima::fastrtps::Participant* participant,
+        eprosima::fastrtps::rtps::ParticipantAuthenticationInfo&& info)
+{
+    if (eprosima::fastrtps::rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
+    {
+        std::cout << "Publisher participant " << participant->getGuid() <<
+            " authorized participant " << info.guid << std::endl;
+    }
+    else
+    {
+        std::cout << "Publisher participant " << participant->getGuid() <<
+            " unauthorized participant " << info.guid << std::endl;
+    }
+}
+
+#endif

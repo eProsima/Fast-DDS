@@ -177,9 +177,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
 
-    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
-    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
-
     // Initial peers
     if (m_att.builtin.initialPeersList.empty())
     {
@@ -227,15 +224,17 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
     // Normalize unicast locators.
     m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
-
-    createReceiverResources(m_att.defaultUnicastLocatorList, true);
-
+    
     if (!hasLocatorsDefined)
     {
         logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
             << m_att.defaultUnicastLocatorList);
     }
+    
+    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
+    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
 
+    createReceiverResources(m_att.defaultUnicastLocatorList, true);
     createReceiverResources(m_att.defaultMulticastLocatorList, true);
 
 #if HAVE_SECURITY
@@ -244,12 +243,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     m_security_manager_initialized = m_security_manager.init(security_attributes_, PParam.properties, m_is_security_active);
 #endif
 
-    //START BUILTIN PROTOCOLS
     mp_builtinProtocols = new BuiltinProtocols();
-    if (!mp_builtinProtocols->initBuiltinProtocols(this, m_att.builtin))
-    {
-        logError(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
-    }
 
     logInfo(RTPS_PARTICIPANT, "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
 }
@@ -263,17 +257,16 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 {
 }
 
-const std::vector<RTPSWriter*>& RTPSParticipantImpl::getAllWriters() const
+void RTPSParticipantImpl::enable()
 {
-    return m_allWriterList;
+    // Start builtin protocols
+    if (!mp_builtinProtocols->initBuiltinProtocols(this, m_att.builtin))
+    {
+        logError(RTPS_PARTICIPANT, "The builtin protocols were not correctly initialized");
+    }
 }
 
-const std::vector<RTPSReader*>& RTPSParticipantImpl::getAllReaders() const
-{
-    return m_allReaderList;
-}
-
-RTPSParticipantImpl::~RTPSParticipantImpl()
+void RTPSParticipantImpl::disable()
 {
     // Disable Retries on Transports
     m_network_Factory.Shutdown();
@@ -295,7 +288,25 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
         deleteUserEndpoint(static_cast<Endpoint*>(*m_userWriterList.begin()));
     }
 
-    delete(this->mp_builtinProtocols);
+    delete mp_builtinProtocols;
+    mp_builtinProtocols = nullptr;
+}
+
+const std::vector<RTPSWriter*>& RTPSParticipantImpl::getAllWriters() const
+{
+    return m_allWriterList;
+}
+
+const std::vector<RTPSReader*>& RTPSParticipantImpl::getAllReaders() const
+{
+    return m_allReaderList;
+}
+
+RTPSParticipantImpl::~RTPSParticipantImpl()
+{
+    disable();
+
+    delete mp_builtinProtocols;
 
 #if HAVE_SECURITY
     m_security_manager.destroy();
@@ -308,11 +319,11 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
     }
     m_receiverResourcelist.clear();
 
-    delete(this->mp_ResourceSemaphore);
-    delete(this->mp_userParticipant);
+    delete mp_ResourceSemaphore;
+    delete mp_userParticipant;
     send_resource_list_.clear();
 
-    delete(this->mp_mutex);
+    delete mp_mutex;
 }
 
 /*
@@ -626,7 +637,44 @@ bool RTPSParticipantImpl::createReader(
         m_userReaderList.push_back(SReader);
     }
     *ReaderOut = SReader;
+
     return true;
+}
+
+RTPSReader* RTPSParticipantImpl::find_local_reader(
+        const GUID_t& reader_guid)
+{
+    // As this is only called from RTPSDomainImpl::find_local_reader, and it has
+    // the domain mutex taken, there is no need to take the participant mutex
+    // std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+
+    for (auto reader : m_allReaderList)
+    {
+        if (reader->getGuid() == reader_guid)
+        {
+            return reader;
+        }
+    }
+
+    return nullptr;
+}
+
+RTPSWriter* RTPSParticipantImpl::find_local_writer(
+        const GUID_t& writer_guid)
+{
+    // As this is only called from RTPSDomainImpl::find_local_reader, and it has
+    // the domain mutex taken, there is no need to take the participant mutex
+    // std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
+
+    for (auto writer : m_allWriterList)
+    {
+        if (writer->getGuid() == writer_guid)
+        {
+            return writer;
+        }
+    }
+
+    return nullptr;
 }
 
 bool RTPSParticipantImpl::enableReader(RTPSReader *reader)

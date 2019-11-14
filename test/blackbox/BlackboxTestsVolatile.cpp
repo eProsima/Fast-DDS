@@ -21,8 +21,37 @@
 #include "ReqRepAsReliableHelloWorldRequester.hpp"
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
 
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+using namespace eprosima::fastrtps;
+
+class Volatile : public testing::TestWithParam<bool>
+{
+public:
+
+    void SetUp() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+    }
+
+    void TearDown() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+  }
+};
+
 // Test created to check bug #3020 (Github ros2/demos #238)
-TEST(BlackBox, PubSubAsReliableVolatilePubRemoveWithoutSubs)
+TEST_P(Volatile, PubSubAsReliableVolatilePubRemoveWithoutSubs)
 {
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
@@ -43,7 +72,7 @@ TEST(BlackBox, PubSubAsReliableVolatilePubRemoveWithoutSubs)
 }
 
 // Test created to check bug #3087 (Github #230)
-TEST(BlackBox, AsyncPubSubAsNonReliableVolatileHelloworld)
+TEST_P(Volatile, AsyncPubSubAsNonReliableVolatileHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -75,7 +104,7 @@ TEST(BlackBox, AsyncPubSubAsNonReliableVolatileHelloworld)
 }
 
 // Test created to check a bug with writers that use BEST_EFFORT WITH VOLATILE that don't remove messages from history.
-TEST(BlackBox, AsyncPubSubAsNonReliableVolatileKeepAllHelloworld)
+TEST_P(Volatile, AsyncPubSubAsNonReliableVolatileKeepAllHelloworld)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -112,7 +141,7 @@ TEST(BlackBox, AsyncPubSubAsNonReliableVolatileKeepAllHelloworld)
 }
 
 // Test created to check bug #3290 (ROS2 #539)
-TEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliable300Kb)
+TEST_P(Volatile, AsyncVolatileKeepAllPubReliableSubNonReliable300Kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -155,7 +184,7 @@ TEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliable300Kb)
 }
 
 // Test created to check bug #3290 (ROS2 #539)
-TEST(BlackBox, VolatileKeepAllPubReliableSubNonReliableHelloWorld)
+TEST_P(Volatile, VolatileKeepAllPubReliableSubNonReliableHelloWorld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -191,7 +220,7 @@ TEST(BlackBox, VolatileKeepAllPubReliableSubNonReliableHelloWorld)
 }
 
 // Test created to check bug #3290 (ROS2 #539)
-TEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
+TEST_P(Volatile, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -228,7 +257,7 @@ TEST(BlackBox, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
 }
 
 // Regression test of Refs #3376, github ros2/rmw_fastrtps #226
-TEST(BlackBox, ReqRepVolatileHelloworldRequesterCheckWriteParams)
+TEST_P(Volatile, ReqRepVolatileHelloworldRequesterCheckWriteParams)
 {
     ReqRepAsReliableHelloWorldRequester requester;
 
@@ -240,7 +269,7 @@ TEST(BlackBox, ReqRepVolatileHelloworldRequesterCheckWriteParams)
 }
 
 // Test created to check bug #5423, github ros2/ros2 #703
-TEST(BlackBox, AsyncVolatileSubBetweenPubs)
+TEST_P(Volatile, AsyncVolatileSubBetweenPubs)
 {
 	PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
 	PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -282,3 +311,13 @@ TEST(BlackBox, AsyncVolatileSubBetweenPubs)
 	reader.block_for_all();
 }
 
+INSTANTIATE_TEST_CASE_P(Volatile,
+        Volatile,
+        testing::Values(false, true),
+        [](const testing::TestParamInfo<Volatile::ParamType>& info) {
+              if (info.param)
+              {
+                  return "Intraprocess";
+              }
+              return "NonIntraprocess";
+            });

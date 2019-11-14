@@ -51,6 +51,20 @@ class RTPSWriter : public Endpoint
         MOCK_METHOD0(getRTPSParticipant, RTPSParticipantImpl*());
 
         WriterHistory* history_;
+
+        virtual bool process_acknack(
+            const GUID_t& writer_guid,
+            const GUID_t& reader_guid,
+            uint32_t ack_count,
+            const SequenceNumberSet_t& sn_set,
+            bool final_flag,
+            bool& result)
+        {
+            (void)writer_guid; (void)reader_guid; (void)ack_count; (void)sn_set; (void)final_flag;
+
+            result = false;
+            return true;
+        }
 };
 
 } // namespace rtps

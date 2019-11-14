@@ -20,12 +20,37 @@
 #include "RTPSWithRegistrationWriter.hpp"
 #include <thread>
 
-#include <thread>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TEST(BlackBox, RTPSAsNonReliableSocket)
+class RTPS : public testing::TestWithParam<bool>
+{
+public:
+
+    void SetUp() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+    }
+
+    void TearDown() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+    }
+};
+
+TEST_P(RTPS, RTPSAsNonReliableSocket)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -52,7 +77,7 @@ TEST(BlackBox, RTPSAsNonReliableSocket)
     reader.block_for_at_least(2);
 }
 
-TEST(BlackBox, AsyncRTPSAsNonReliableSocket)
+TEST_P(RTPS, AsyncRTPSAsNonReliableSocket)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -80,7 +105,7 @@ TEST(BlackBox, AsyncRTPSAsNonReliableSocket)
     reader.block_for_at_least(2);
 }
 
-TEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
+TEST_P(RTPS, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -111,7 +136,7 @@ TEST(BlackBox, AsyncRTPSAsNonReliableSocketWithWriterSpecificFlowControl)
     reader.block_for_at_least(2);
 }
 
-TEST(BlackBox, RTPSAsReliableSocket)
+TEST_P(RTPS, RTPSAsReliableSocket)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -140,7 +165,7 @@ TEST(BlackBox, RTPSAsReliableSocket)
     reader.block_for_all();
 }
 
-TEST(BlackBox, AsyncRTPSAsReliableSocket)
+TEST_P(RTPS, AsyncRTPSAsReliableSocket)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -170,7 +195,7 @@ TEST(BlackBox, AsyncRTPSAsReliableSocket)
     reader.block_for_all();
 }
 
-TEST(BlackBox, RTPSAsNonReliableWithRegistration)
+TEST_P(RTPS, RTPSAsNonReliableWithRegistration)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -200,7 +225,7 @@ TEST(BlackBox, RTPSAsNonReliableWithRegistration)
     reader.block_for_at_least(2);
 }
 
-TEST(BlackBox, AsyncRTPSAsNonReliableWithRegistration)
+TEST_P(RTPS, AsyncRTPSAsNonReliableWithRegistration)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -231,7 +256,7 @@ TEST(BlackBox, AsyncRTPSAsNonReliableWithRegistration)
     reader.block_for_at_least(2);
 }
 
-TEST(BlackBox, RTPSAsReliableWithRegistration)
+TEST_P(RTPS, RTPSAsReliableWithRegistration)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -263,7 +288,7 @@ TEST(BlackBox, RTPSAsReliableWithRegistration)
     reader.block_for_all();
 }
 
-TEST(BlackBox, AsyncRTPSAsReliableWithRegistration)
+TEST_P(RTPS, AsyncRTPSAsReliableWithRegistration)
 {
     RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -296,7 +321,7 @@ TEST(BlackBox, AsyncRTPSAsReliableWithRegistration)
 }
 
 // Regression test of Refs #2786, github issue #194
-TEST(BlackBox, RTPSAsReliableVolatileSocket)
+TEST_P(RTPS, RTPSAsReliableVolatileSocket)
 {
     RTPSAsSocketReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     RTPSAsSocketWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -331,3 +356,14 @@ TEST(BlackBox, RTPSAsReliableVolatileSocket)
 
     ASSERT_TRUE(writer.is_history_empty());
 }
+
+INSTANTIATE_TEST_CASE_P(RTPS,
+        RTPS,
+        testing::Values(false, true),
+        [](const testing::TestParamInfo<RTPS::ParamType>& info) {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });

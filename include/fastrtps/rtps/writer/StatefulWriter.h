@@ -49,6 +49,7 @@ public:
     virtual ~StatefulWriter();
 
 protected:
+
     //!Constructor
     StatefulWriter(
             RTPSParticipantImpl*,
@@ -107,12 +108,28 @@ public:
      * @param a_change Pointer to the change that is going to be removed.
      * @return True if removed correctly.
      */
-    bool change_removed_by_history(CacheChange_t* a_change) override;
+    bool change_removed_by_history(
+            CacheChange_t* a_change) override;
 
     /**
      * Method to indicate that there are changes not sent in some of all ReaderProxy.
      */
     void send_any_unsent_changes() override;
+
+    /**
+     * Sends a change directly to a intraprocess reader.
+     */
+    bool intraprocess_delivery(
+            CacheChange_t* change,
+            ReaderProxy* reader_proxy);
+
+    bool intraprocess_gap(
+            ReaderProxy* reader_proxy,
+            const SequenceNumber_t& seq_num);
+
+    bool intraprocess_heartbeat(
+            ReaderProxy* reader_proxy,
+            bool liveliness = false);
 
     //!Increment the HB count.
     inline void incrementHBCount()
@@ -125,25 +142,30 @@ public:
      * @param data Pointer to the ReaderProxyData object added.
      * @return True if added.
      */
-    bool matched_reader_add(const ReaderProxyData& data) override;
+    bool matched_reader_add(
+            const ReaderProxyData& data) override;
 
     /**
      * Remove a matched reader.
      * @param reader_guid GUID of the reader to remove.
      * @return True if removed.
      */
-    bool matched_reader_remove(const GUID_t& reader_guid) override;
+    bool matched_reader_remove(
+            const GUID_t& reader_guid) override;
 
     /**
      * Tells us if a specific Reader is matched against this writer
      * @param reader_guid GUID of the reader to check.
      * @return True if it was matched.
      */
-    bool matched_reader_is_matched(const GUID_t& reader_guid) override;
+    bool matched_reader_is_matched(
+            const GUID_t& reader_guid) override;
 
-    bool is_acked_by_all(const CacheChange_t* a_change) const override;
+    bool is_acked_by_all(
+            const CacheChange_t* a_change) const override;
 
-    bool wait_for_all_acked(const Duration_t& max_wait) override;
+    bool wait_for_all_acked(
+            const Duration_t& max_wait) override;
 
     bool all_readers_updated();
 
@@ -159,7 +181,8 @@ public:
      * Update the Attributes of the Writer.
      * @param att New attributes
      */
-    void updateAttributes(const WriterAttributes& att) override;
+    void updateAttributes(
+            const WriterAttributes& att) override;
 
     /**
      * Find a Reader Proxy in this writer.
@@ -167,7 +190,9 @@ public:
      * @param[out] RP Pointer to pointer to return the ReaderProxy.
      * @return True if correct.
      */
-    bool matched_reader_lookup(GUID_t& readerGuid, ReaderProxy** RP);
+    bool matched_reader_lookup(
+            GUID_t& readerGuid,
+            ReaderProxy** RP);
 
     /** Get count of heartbeats
      * @return count of heartbeats
@@ -200,15 +225,20 @@ public:
      * @brief Returns true if disable positive ACKs QoS is enabled
      * @return True if positive acks are disabled, false otherwise
      */
-    inline bool get_disable_positive_acks() const { return disable_positive_acks_; }
+    inline bool get_disable_positive_acks() const
+    {
+        return disable_positive_acks_;
+    }
 
     /**
      * Update the WriterTimes attributes of all associated ReaderProxy.
      * @param times WriterTimes parameter.
      */
-    void updateTimes(const WriterTimes& times);
+    void updateTimes(
+            const WriterTimes& times);
 
-    void add_flow_controller(std::unique_ptr<FlowController> controller) override;
+    void add_flow_controller(
+            std::unique_ptr<FlowController> controller) override;
 
     SequenceNumber_t next_sequence_number() const;
 
@@ -232,7 +262,8 @@ public:
 
     void perform_nack_response();
 
-    void perform_nack_supression(const GUID_t& reader_guid);
+    void perform_nack_supression(
+            const GUID_t& reader_guid);
 
     /**
      * Process an incoming ACKNACK submessage.
@@ -274,7 +305,8 @@ public:
 
 private:
 
-    void update_reader_info(bool create_sender_resources);
+    void update_reader_info(
+            bool create_sender_resources);
 
     void send_heartbeat_piggyback_nts_(
             ReaderProxy* reader,
@@ -300,7 +332,7 @@ private:
     //! True to disable positive ACKs
     bool disable_positive_acks_;
     //! Keep duration for disable positive ACKs QoS, in microseconds
-    std::chrono::duration<double, std::ratio<1, 1000000>> keep_duration_us_;
+    std::chrono::duration<double, std::ratio<1, 1000000> > keep_duration_us_;
     //! Last acknowledged cache change (only used if using disable positive ACKs QoS)
     SequenceNumber_t last_sequence_number_;
 
@@ -310,7 +342,11 @@ private:
 
     std::vector<std::unique_ptr<FlowController> > m_controllers;
 
-    StatefulWriter& operator=(const StatefulWriter&) = delete;
+    bool there_are_remote_readers_ = false;
+
+
+    StatefulWriter& operator =(
+            const StatefulWriter&) = delete;
 };
 
 } /* namespace rtps */
