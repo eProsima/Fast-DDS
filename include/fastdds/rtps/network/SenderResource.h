@@ -25,8 +25,6 @@ namespace rtps{
 
 class RTPSParticipantImpl;
 class MessageReceiver;
-class ChannelResource;
-class TransportInterface;
 class Locator_t;
 
 /**

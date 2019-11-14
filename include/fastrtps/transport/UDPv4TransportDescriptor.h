@@ -17,33 +17,13 @@
 
 #include <fastrtps/transport/UDPTransportDescriptor.h>
 
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-class TransportInterface;
-
-/**
- * Transport configuration
- *
- * - bufferSize:    length of the buffers used for transmission. Passing
- *                  a buffer of different size will cause transmission to
- *                  fail.
- *
- * - interfaceWhiteList: Lists the allowed interfaces.
- * @ingroup TRANSPORT_MODULE
- */
-typedef struct UDPv4TransportDescriptor: public UDPTransportDescriptor
-{
-   virtual ~UDPv4TransportDescriptor(){}
-
-   virtual TransportInterface* create_transport() const override;
-
-   RTPS_DllAPI UDPv4TransportDescriptor();
-
-   RTPS_DllAPI UDPv4TransportDescriptor(const UDPv4TransportDescriptor& t);
-
-} UDPv4TransportDescriptor;
+using UDPv4TransportDescriptor = fastdds::rtps::UDPv4TransportDescriptor;
 
 } // namespace rtps
 } // namespace fastrtps

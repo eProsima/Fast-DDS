@@ -56,10 +56,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/UDPv4Transport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/UDPTransportInterface.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/ChannelResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/UDPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv4Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPTransportInterface.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
@@ -71,10 +71,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/Log.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/UDPv6Transport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/UDPTransportInterface.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/ChannelResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/UDPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv6Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPTransportInterface.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
@@ -90,15 +90,15 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterTypes.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPv4Transport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPTransportInterface.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/ChannelResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPChannelResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPChannelResourceBasic.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPAcceptor.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPAcceptorBasic.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/tcp/RTCPMessageManager.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/tcp/TCPControlMessage.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPv4Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPTransportInterface.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceBasic.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorBasic.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/RTCPMessageManager.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/TCPControlMessage.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
@@ -113,8 +113,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         if(TLS_FOUND)
             set(TCPV4TESTS_SOURCE
                 ${TCPV4TESTS_SOURCE}
-                ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPChannelResourceSecure.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPAcceptorSecure.cpp
+                ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceSecure.cpp
+                ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorSecure.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/security/OpenSSLInit.cpp
             )
         endif()
@@ -129,15 +129,15 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterTypes.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPv6Transport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPTransportInterface.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/ChannelResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPChannelResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPChannelResourceBasic.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPAcceptor.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPAcceptorBasic.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/tcp/RTCPMessageManager.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/tcp/TCPControlMessage.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPv6Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPTransportInterface.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceBasic.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorBasic.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/RTCPMessageManager.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/TCPControlMessage.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
@@ -151,8 +151,8 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         if(TLS_FOUND)
             set(TCPV6TESTS_SOURCE
                 ${TCPV6TESTS_SOURCE}
-                ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPChannelResourceSecure.cpp
-                ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/TCPAcceptorSecure.cpp
+                ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceSecure.cpp
+                ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorSecure.cpp
                 ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/security/OpenSSLInit.cpp
             )
         endif()
@@ -166,11 +166,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterTypes.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPFinder.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/IPLocator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/test_UDPv4Transport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/UDPv4Transport.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/UDPTransportInterface.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/ChannelResource.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/transport/UDPChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/test_UDPv4Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv4Transport.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPTransportInterface.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPChannelResource.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/utils/md5.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp

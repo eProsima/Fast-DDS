@@ -38,9 +38,9 @@
 
 #include <fastdds/rtps/RTPSDomain.h>
 
-#include <fastrtps/transport/UDPv4Transport.h>
-#include <fastrtps/transport/UDPv6Transport.h>
-#include <fastrtps/transport/test_UDPv4Transport.h>
+#include <fastdds/rtps/transport/UDPv4Transport.h>
+#include <fastdds/rtps/transport/UDPv6Transport.h>
+#include <fastdds/rtps/transport/test_UDPv4Transport.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
 #include <fastrtps/log/Log.h>

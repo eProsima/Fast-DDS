@@ -15,7 +15,7 @@
 #ifndef _FASTDDS_RTPS_NETWORK_FACTORY_HPP
 #define _FASTDDS_RTPS_NETWORK_FACTORY_HPP
 
-#include <fastrtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/network/ReceiverResource.h>
 #include <fastdds/rtps/network/SenderResource.h>
@@ -59,7 +59,7 @@ class NetworkFactory
         * are supported here (although it can be easily extended at NetworkFactory.cpp)
         * @param descriptor Structure that defines all initial configuration for a given transport.
         */
-        bool RegisterTransport(const TransportDescriptorInterface* descriptor);
+        bool RegisterTransport(const fastdds::rtps::TransportDescriptorInterface* descriptor);
 
         /**
          * Walks over the list of transports, opening every possible channel that can send through
@@ -67,7 +67,7 @@ class NetworkFactory
          * @param locator Locator through which to send.
          */
         bool build_send_resources(
-                SendResourceList&,
+                fastdds::rtps::SendResourceList&,
                 const Locator_t& locator);
 
         /**
@@ -173,7 +173,7 @@ class NetworkFactory
 
     private:
 
-        std::vector<std::unique_ptr<TransportInterface> > mRegisteredTransports;
+        std::vector<std::unique_ptr<fastdds::rtps::TransportInterface> > mRegisteredTransports;
 
         uint32_t maxMessageSizeBetweenTransports_;
 

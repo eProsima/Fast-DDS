@@ -14,71 +14,17 @@
 
 #ifndef TEST_UDPV4_TRANSPORT_H
 #define TEST_UDPV4_TRANSPORT_H
-#include <fastrtps/transport/UDPv4Transport.h>
-#include <fastdds/rtps/messages/RTPS_messages.h>
-#include <fastdds/rtps/common/SequenceNumber.h>
-#include <fastdds/rtps/messages/CDRMessage.h>
-#include <vector>
 
+#include <fastrtps/transport/UDPv4Transport.h>
 #include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
+
+#include <fastdds/rtps/transport/test_UDPv4Transport.h>
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-/*
- * This transport acts as a shim over UDPv4, allowing
- * packets to be dropped under certain criteria.
- */
-
-class test_UDPv4Transport : public UDPv4Transport
-{
-public:
-    test_UDPv4Transport(const test_UDPv4TransportDescriptor& descriptor);
-
-    virtual bool send(
-           const octet* send_buffer,
-           uint32_t send_buffer_size,
-           eProsimaUDPSocket& socket,
-           const Locator_t& remote_locator,
-           bool only_multicast_purpose,
-           const std::chrono::microseconds& timeout) override;
-
-    RTPS_DllAPI static bool test_UDPv4Transport_ShutdownAllNetwork;
-    // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
-    RTPS_DllAPI static std::vector<std::vector<octet> > test_UDPv4Transport_DropLog;
-    RTPS_DllAPI static uint32_t test_UDPv4Transport_DropLogLength;
-    RTPS_DllAPI static bool always_drop_participant_builtin_topic_data;
-
-private:
-
-    struct PercentageData
-    {
-        PercentageData(uint8_t percent)
-            : percentage(percent)
-            , accumulator(0)
-        {
-        }
-
-        uint8_t percentage;
-        uint8_t accumulator;
-    };
-
-    PercentageData drop_data_messages_percentage_;
-    bool drop_participant_builtin_topic_data_;
-    bool drop_publication_builtin_topic_data_;
-    bool drop_subscription_builtin_topic_data_;
-    PercentageData drop_data_frag_messages_percentage_;
-    PercentageData drop_heartbeat_messages_percentage_;
-    PercentageData drop_ack_nack_messages_percentage_;
-    std::vector<SequenceNumber_t> sequence_number_data_messages_to_drop_;
-    PercentageData percentage_of_messages_to_drop_;
-
-    bool log_drop(const octet* buffer, uint32_t size);
-    bool packet_should_drop(const octet* send_buffer, uint32_t send_buffer_size);
-    bool random_chance_drop();
-    bool should_be_dropped(PercentageData* percentage);
-};
+using test_UDPv4Transport = fastdds::rtps::test_UDPv4Transport;
 
 } // namespace rtps
 } // namespace fastrtps

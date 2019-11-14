@@ -17,33 +17,13 @@
 
 #include <fastrtps/transport/SocketTransportDescriptor.h>
 
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-typedef struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor{
-   bool granularMode;
-
-   // Test shim parameters
-   uint8_t dropDataMessagesPercentage;
-   bool dropParticipantBuiltinTopicData;
-   bool dropPublicationBuiltinTopicData;
-   bool dropSubscriptionBuiltinTopicData;
-   uint8_t dropDataFragMessagesPercentage;
-   uint8_t dropHeartbeatMessagesPercentage;
-   uint8_t dropAckNackMessagesPercentage;
-
-   // General drop percentage (indescriminate)
-   uint8_t percentageOfMessagesToDrop;
-   std::vector<SequenceNumber_t> sequenceNumberDataMessagesToDrop;
-
-   uint32_t dropLogLength; // logs dropped packets.
-
-   RTPS_DllAPI test_UDPv4TransportDescriptor();
-   virtual ~test_UDPv4TransportDescriptor(){}
-
-   virtual TransportInterface* create_transport() const override;
-} test_UDPv4TransportDescriptor;
+using test_UDPv4TransportDescriptor = fastdds::rtps::test_UDPv4TransportDescriptor;
 
 } // namespace rtps
 } // namespace fastrtps

@@ -48,7 +48,7 @@ typedef std::map<std::string, std::string>     node_att_map_t;
 typedef node_att_map_t::iterator               node_att_map_it_t;
 typedef node_att_map_t::const_iterator         node_att_map_cit_t;
 
-typedef std::shared_ptr<rtps::TransportDescriptorInterface> sp_transport_t;
+typedef std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> sp_transport_t;
 typedef std::map<std::string, sp_transport_t>  sp_transport_map_t;
 typedef types::DynamicTypeBuilder*             p_dynamictypebuilder_t;
 typedef std::map<std::string, p_dynamictypebuilder_t> p_dynamictype_map_t;
@@ -510,7 +510,7 @@ class XMLParser
 
     RTPS_DllAPI static XMLP_ret getXMLTransports(
         tinyxml2::XMLElement *elem,
-        std::vector<std::shared_ptr<rtps::TransportDescriptorInterface>> &transports,
+        std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> &transports,
         uint8_t ident);
 
     RTPS_DllAPI static XMLP_ret getXMLDisablePositiveAcksQos(

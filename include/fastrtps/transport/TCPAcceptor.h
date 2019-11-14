@@ -15,51 +15,13 @@
 #ifndef _TCP_ACCEPTOR_BASE_
 #define _TCP_ACCEPTOR_BASE_
 
-#include <asio.hpp>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/transport/TCPAcceptor.h>
 
 namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-class TCPTransportInterface;
-
-/**
- * Common class to wrap ASIO acceptors.
- */
-class TCPAcceptor
-{
-protected:
-    asio::ip::tcp::acceptor acceptor_;
-    Locator_t locator_;
-    asio::ip::tcp::endpoint endpoint_;
-    std::vector<Locator_t> pending_out_locators_;
-    asio::io_service* io_service_;
-
-public:
-    TCPAcceptor(
-        asio::io_service& io_service,
-        TCPTransportInterface* parent,
-        const Locator_t& locator);
-
-    TCPAcceptor(
-        asio::io_service& io_service,
-        const std::string& interface,
-        const Locator_t& locator);
-
-    const Locator_t& locator() const
-    {
-        return locator_;
-    }
-
-    Locator_t& locator()
-    {
-        return locator_;
-    }
-
-	virtual ~TCPAcceptor() = default;
-};
-
+using TCPAcceptor = fastdds::rtps::TCPAcceptor;
 
 } // namespace rtps
 } // namespace fastrtps
