@@ -542,14 +542,14 @@ void DataReader<T>::listener(
     Listener* listener,
     const dds::core::status::StatusMask& /*event_mask*/)
 {
-    this->delegate()->listener(listener/*, event_mask*/);
+    delegate()->set_listener(listener/*, event_mask*/);
 }
 
 template<typename T>
 typename DataReader<T>::Listener*
 DataReader<T>::listener() const
 {
-    return this->delegate()->listener();
+    return delegate()->get_listener();
 }
 
 } //namespace sub
