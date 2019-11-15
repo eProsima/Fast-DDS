@@ -34,6 +34,7 @@ Participant and Endpoint Discovery(PDP, EDP such as metatrrafic transmittion) wi
 ## Memory Management
 
 - Dynamic Configuration
+
   Shared memory transport should be dynamically configured when necessary, that is, when the reader exists on the same host system than the writer. This is mandatory to reduce unnecessary message passing via shared memory.
 
   This can be detected using the GuidPrefix_t information in the locator, which includes vendor id, host id, process id and participant id.
@@ -43,13 +44,16 @@ Participant and Endpoint Discovery(PDP, EDP such as metatrrafic transmittion) wi
   ```
 
 - Lifecycle
+
   Shared memory lifecycle is managed by the writer corresponding to HistoryCache more likely QoS setting.
 
 - Owner
+
   Shared memory is owned by the writer. The writer is responsible of managing the shared memory (creation and removal) according to the aforementioned lifecycle.
 
 - Version
-  Versioning must be used to check if the implementation can use shared memory feature or not.
+
+  Versioning must be used to check if the implementation supports the shared memory feature or not.
 
 ## Shared Memory Framework
 
