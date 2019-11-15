@@ -4,7 +4,7 @@ DDSi-RTPS(Real-Time Publish-Subscribe) is the **protocol** that enable to suppor
 
 # Objective
 
-Shared Memory transport using the current Fast-RTPS transport API & Architecture: The transport will be used as any other transport (Serialization and RTPS encapsulation). This approach is used in other DDS implementations such as commercial release for OpenSplice and RTI Connext DDS. Mostly this is related to ROS2 RMW transport but not only for that also any DDS applications or products as generic aspect.
+Implement a shared Memory transport using the current Fast-RTPS transport API & Architecture: The transport will be used as any other transport (including serialization and RTPS encapsulation). This approach is used in other DDS implementations such as commercial release for OpenSplice and RTI Connext DDS. This is mostly related to ROS2 RMW transport, but it can be used in any DDS application or product.
 
 # Requirements
 
@@ -20,95 +20,104 @@ Shared Memory transport using the current Fast-RTPS transport API & Architecture
 
 ## Interoperability
 
-To keep the interoperability beyond different vendor dds implementation, these must be implemented resides with shared memory transport feature. there is no gurantee that whole system is constructed by eProsima Fast-RTPS so that maybe multiple DDS implementaion would be used in distributed system.
+There is no gurantee that the whole system is constructed with eProsima Fast-RTPS, so multiple DDS implementaions may be used in a distributed system.
+To keep the interoperability between different vendor DDS implementations, the shared memory transport feature has to be implemented with the following:
 
 - All communications must take place using RTPS Messages.
-- All implementations must implement the RTPS Message Receiver
-- Simple Participant and Endpoint Discovery Protocols
+- All implementations must implement the RTPS Message Receiver.
+- Simple Participant and Endpoint Discovery Protocols.
 
 ## Discovery
 
-Participant and Endpoint Discovery(PDP, EDP such as metatrrafic transmittion) will be put stay with current code, since this negotiation does not require shared memory use cases. (all of the RTPS protocol stays put.)
+Participant and Endpoint Discovery(PDP, EDP such as metatrrafic transmittion) will be kept as is in the current code, since this negotiation does not require shared memory use cases (all of the RTPS protocol stays put).
 
 ## Memory Management
 
 - Dynamic Configuration
-  shared memory passing should be dynamicall configured when exactly necessary, that means when reader exists on the same host system with writer. this is mandatory to reduce unnecessary message passing via shared memory.
+  Shared memory transport should be dynamically configured when necessary, that is, when the reader exists on the same host system than the writer. This is mandatory to reduce unnecessary message passing via shared memory.
 
-  this can be detectable using locator information with GuidPrefix_t which includes vendor id, host id, process id and participant id.
+  This can be detected using the GuidPrefix_t information in the locator, which includes vendor id, host id, process id and participant id.
 
   ```
   struct RTPS_DllAPI GuidPrefix_t
   ```
 
 - Lifecycle
-  shared memory lifecycle is decided by writer corresponding to HistoryCache more likely QoS setting.
+  Shared memory lifecycle is managed by the writer corresponding to HistoryCache more likely QoS setting.
 
 - Owner
-  shared memory owner is the writer to create and remove. Owner writer must be responsible for management for shared memory with lifecycle above.
+  Shared memory is owned by the writer. The writer is responsible of managing the shared memory (creation and removal) according to the aforementioned lifecycle.
 
 - Version
-  there should be versioning to check if the implementation can use shared memory feature or not.
+  Versioning must be used to check if the implementation can use shared memory feature or not.
 
 ## Shared Memory Framework
 
-since this whole project is targeted into multi-platform, not using system dependency primitive shared memory framework or system calls.
+Since this whole project is targeted to be multi-platform, it is mandatory not to use system dependent shared memory frameworks or primitives.
 
 - C/C++ implementation
-  primitive baseline implementation, can be used for multi-platform.
-  but most of parts need to be implemented by our own.
-  also good affinity to intra-process just to use std::shared_ptr.
+  - Primitive baseline implementation, can be used for multi-platform.
+  - But most parts need to be implemented by our own.
+  - Also good affinity to intra-process, just use std::shared_ptr.
 - POSIX IPC shared memory (shm_open)
-  This is only for Unix system, so not good affinity for Windows/Mac.
+  - This is only for Unix system, so not good affinity for Windows/Mac.
 - **boost::interprocess**
-  surely multi-platform, this is generic and up-to-date interfaces.
-  - generic shared memory interface
-  - emulation layer available for windows and system v(xsi) if necessary.
-  - memory mapped file (this can be useful to use ramfs to refresh system restart or reboot)
-  - shared memory range can be truncated dynamically.
-  - container mapping with allocator
-  - file locking (this could be useful to exclude access to the memory mapped shared memory)
-  - writer has read_write mode and reader only has read_only mode.
-  - ***althought, cannot extremly optimize via system calls, such as hugetlb to reduce TLB miss hit and pagefaults.***
+  - Surely multi-platform, this is generic and up-to-date interfaces.
+  - Generic shared memory interface
+  - Emulation layer available for windows and system v(xsi) if necessary.
+  - Memory mapped file (this can be useful to use ramfs to refresh system restart or reboot)
+  - Shared memory range can be truncated dynamically.
+  - Container mapping with allocator
+  - File locking (this could be useful to exclude access to the memory mapped shared memory)
+  - Writer has read_write mode and reader only has read_only mode.
+  - ***But cannot be extremly optimized via system calls, such as hugetlb to reduce TLB miss hit and pagefaults.***
 
 
 ## Event Notification
 
-writer needs to notify right after the shared memory is ready to read on reader side. then reader will be notified that data is ready to read out.
+Writer needs to notify right after the shared memory is ready to be read on reader side. Then reader will be notified that data is ready to read out.
 
-- RTPS extensible message? (Submessages with ID's 0x80 to 0xff (inclusive) are vendor-specific), but probably avoid sending message via network.
+- RTPS extensible message
+  - Submessages with ID's 0x80 to 0xff (inclusive) are vendor-specific
+  - But probably we should avoid sending messages via network.
 - **boost::interprocess**
-  - Condition
-    after data is set by writer, notify the subscribers via condision variable on shared memory. (named under topic name?)
-  - Semaphore
-    after data is set by writer, post to notify the subscribers via semaphore on shared memory. can be used to control the number of subscribers to read via wait API (named under topic name?)
+  - Condition: after data is set by writer, notify the subscribers via condition variable on shared memory (named under topic name?).
+  - Semaphore: after data is set by writer, post to notify the subscribers via semaphore on shared memory. Can be used to control the number of subscribers to read via wait API (named under topic name?).
 
 ## Security
 
-- Encryption / Decryption
-  shared memory will be used as transport only, so encrypted data will be stored on shared memory. so this does not affect anything.
-- Access Permission
-  can we support access permission? file system based access permission? this is something needs to be considered, since platform security is totally different so boost::interprocess does not try to standardize the access permission control. this is implementation responsibility.
+- Encryption / Decryption:
+  - Shared memory will be used as transport only, so encrypted data will be stored on shared memory. Therefore, this does not affect anything.
+- Access Permission:
+  - Can we support access permission? Like file system based access permission? This needs to be considered.
+  - Since security implementation is different among platforms, boost::interprocess does not try to standardize the access permission control. This is responsibility of the implementation.
 
 ## Quality of Service
 
-This needs to be considered with detailed design and implementation, but since this is just for replacing transport into shared memory, all of the RTPS protocol applied precisely so expecting full compatibility configuration with Fast-RTPS.
+Since this is just a new implementation of the transport layer for shared memory, where all the rest of the RTPS protocol stays put, we expect full compatibility of configuration with Fast-RTPS.
 
-# Consideration
+Nevertheless, this needs to be further considered during the detailed design and implementation.
+
+# Considerations
 
 ## Intra Process Communication
 
-there is already intra-process communication basically zero-copy based feature in ROS2 rclcpp and rcl layer. (not DDS implementation) this is nothing to do with DDS implementaion but need to consider not to break anything related on this feature in generic perspective.
+There is an intra-process communication feature in ROS2 rclcpp and rcl layer (basically zero-copy based). This has nothing to do with DDS implementation, but needs to be considered to ensure this feature doesn't break when implementing the DDS shared memory transport.
 
 Refer to [Intra-Process-Communication](https://index.ros.org//doc/ros2/Tutorials/Intra-Process-Communication/)
 
-intra-process communication does not support QoS specification, e.g) RMW_QOS_POLICY_HISTORY_KEEP_ALL, !RMW_QOS_POLICY_DURABILITY_VOLATILE is not supported. since this is not exactly DDS/RTPS implementation. intra-process communication uses internally implemented ring buffer, that is introduced [mapped_ring_buffer.hpp](https://github.com/ros2/rclcpp/blob/master/rclcpp/include/rclcpp/mapped_ring_buffer.hpp).
+Intra-process communication does not support QoS specification, e.g) RMW_QOS_POLICY_HISTORY_KEEP_ALL, !RMW_QOS_POLICY_DURABILITY_VOLATILE is not supported. 
+Intra-process communication uses a ring buffer that is internally implemented [mapped_ring_buffer.hpp](https://github.com/ros2/rclcpp/blob/master/rclcpp/include/rclcpp/mapped_ring_buffer.hpp).
 
-**this implementataions stay on rclcpp for other implementations, but will be decricated for eProsima Fast-RTPS use-cases basically.**
+**this implementataion will stay on rclcpp for other implementations, but will be decricated for eProsima Fast-RTPS use-cases basically.**
 
 ## Container Boundary
 
-using container means basically to separate and divide the user space to the another one, so shared memory should not be shared beyond container. this can be actually done just checking IP addresses to see if it is in the same host or not. so not expecting addtional consideration or implementation, it just appears to be network interface.
+Using containers basically means to divide the user space into independent sections, so shared memory should not be used beyond the container boundary.
+
+This can be actually done just checking IP addresses to see if both participants are in the same host or not.
+
+So we don't expect addtional requirements, it just appears to be another network interface.
 
 # Reference
 
