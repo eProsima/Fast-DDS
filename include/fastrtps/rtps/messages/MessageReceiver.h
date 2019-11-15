@@ -136,7 +136,10 @@ class MessageReceiver
          * Find all readers (in AssociatedReaders), with the given entity ID, and call the
          * callback provided.
          */
-        void findAllReaders(const EntityId_t & readerID, std::function<void(RTPSReader*)>);
+        template<typename Functor>
+        void findAllReaders(
+                const EntityId_t & readerID,
+                const Functor & callback);
 
         /**
          *
