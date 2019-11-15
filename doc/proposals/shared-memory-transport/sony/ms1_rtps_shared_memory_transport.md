@@ -102,11 +102,10 @@ Nevertheless, this needs to be further considered during the detailed design and
 
 ## Intra Process Communication
 
-There is an intra-process communication feature in ROS2 rclcpp and rcl layer (basically zero-copy based). This has nothing to do with DDS implementation, but needs to be considered to ensure this feature doesn't break when implementing the DDS shared memory transport.
+There is an intra-process communication feature in ROS2 rclcpp and rcl layer (basically zero-copy based). This has nothing to do with DDS implementation, but needs to be considered to ensure this feature doesn't break when implementing the DDS shared memory transport. Refer to [Intra-Process-Communication](https://index.ros.org//doc/ros2/Tutorials/Intra-Process-Communication/)
 
-Refer to [Intra-Process-Communication](https://index.ros.org//doc/ros2/Tutorials/Intra-Process-Communication/)
+Intra-process communication does not support QoS specification, e.g) RMW_QOS_POLICY_HISTORY_KEEP_ALL, !RMW_QOS_POLICY_DURABILITY_VOLATILE is not supported.
 
-Intra-process communication does not support QoS specification, e.g) RMW_QOS_POLICY_HISTORY_KEEP_ALL, !RMW_QOS_POLICY_DURABILITY_VOLATILE is not supported. 
 Intra-process communication uses a ring buffer that is internally implemented [mapped_ring_buffer.hpp](https://github.com/ros2/rclcpp/blob/master/rclcpp/include/rclcpp/mapped_ring_buffer.hpp).
 
 **this implementataion will stay on rclcpp for other implementations, but will be decricated for eProsima Fast-RTPS use-cases basically.**
@@ -115,9 +114,7 @@ Intra-process communication uses a ring buffer that is internally implemented [m
 
 Using containers basically means to divide the user space into independent sections, so shared memory should not be used beyond the container boundary.
 
-This can be actually done just checking IP addresses to see if both participants are in the same host or not.
-
-So we don't expect addtional requirements, it just appears to be another network interface.
+This can be actually done just checking IP addresses to see if both participants are in the same host or not. So we don't expect addtional requirements, it just appears to be another network interface.
 
 # Reference
 
