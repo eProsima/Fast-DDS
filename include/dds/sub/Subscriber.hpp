@@ -293,6 +293,8 @@ public:
     /** @copydoc dds::sub::Subscriber::qos() */
     const Subscriber& operator >>(
             qos::SubscriberQos& qos) const;
+
+    dds::domain::DomainParticipant* participant_;
 };
 
 } //namespace sub

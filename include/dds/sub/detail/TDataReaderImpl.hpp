@@ -379,12 +379,12 @@ DataReader<T>::~DataReader()
 }
 
 template<typename T>
-dds::sub::status::DataState
-DataReader<T>::default_filter_state()
+dds::sub::status::DataState DataReader<T>::default_filter_state()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->default_filter_state();
+    *this = dds::core::null;
+    return *this;
 }
 
 template<typename T>
@@ -392,9 +392,8 @@ DataReader<T>& DataReader<T>::default_filter_state(
         const dds::sub::status::DataState& /*status*/)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    this->delegate()->default_filter_state(status);
-//    return *this;
+    return *this;
 }
 
 template<typename T>
@@ -430,8 +429,9 @@ template<typename T>
 LoanedSamples<T> DataReader<T>::read()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->read();
+    *this = dds::core::null;
+    return *this;
 }
 
 template<typename T>
@@ -464,8 +464,9 @@ uint32_t DataReader<T>::read(
         uint32_t /*max_samples*/)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->read(sfit, max_samples);
+    throw "Not implemented";
+    return 0;
 }
 
 template<typename T>
@@ -475,8 +476,9 @@ uint32_t DataReader<T>::take(
         uint32_t /*max_samples*/)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->take(sfit, max_samples);
+    throw "Not implemented";
+    return 0;
 }
 
 template<typename T>
@@ -485,8 +487,9 @@ uint32_t DataReader<T>::read(
         SamplesBIIterator /*sbit*/)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->read(sbit);
+    throw "Not implemented";
+    return 0;
 }
 
 template<typename T>
@@ -495,18 +498,17 @@ uint32_t DataReader<T>::take(
         SamplesBIIterator /*sbit*/)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->take(sbit);
+    throw "Not implemented";
+    return 0;
 }
 
 template<typename T>
 typename DataReader<T>::Selector DataReader<T>::select()
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-
-//    Selector selector(*this);
-//    return selector;
+    Selector selector(*this);
+    return selector;
 }
 
 template<typename T>
@@ -514,7 +516,6 @@ dds::topic::TopicInstance<T> DataReader<T>::key_value(
         const dds::core::InstanceHandle& /*h*/)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->key_value(h);
 }
 
@@ -524,7 +525,6 @@ T& DataReader<T>::key_value(
         const dds::core::InstanceHandle& /*h*/)
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->key_value(sample, h);
 }
 
@@ -533,8 +533,9 @@ const dds::core::InstanceHandle DataReader<T>::lookup_instance(
         const T& /*key*/) const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->lookup_instance(key);
+    *this = dds::core::null;
+    return *this;
 }
 
 template<typename T>

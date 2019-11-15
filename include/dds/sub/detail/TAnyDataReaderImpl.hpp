@@ -38,8 +38,9 @@ template<typename DELEGATE>
 const dds::sub::Subscriber& TAnyDataReader<DELEGATE>::subscriber() const
 {
     //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->subscriber();
+    *this = dds::core::null;
+    return *this;
 }
 
 template<typename DELEGATE>
@@ -48,6 +49,8 @@ const dds::topic::TopicDescription& TAnyDataReader<DELEGATE>::topic_description(
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->topic_description();
+    *this = dds::core::null;
+    return *this;
 }
 
 template<typename DELEGATE>
@@ -102,6 +105,8 @@ dds::core::status::SampleRejectedStatus TAnyDataReader<DELEGATE>::sample_rejecte
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->sample_rejected_status();
+    *this = dds::core::null;
+    return *this;
 }
 
 template<typename DELEGATE>
@@ -110,6 +115,8 @@ dds::core::status::SampleLostStatus TAnyDataReader<DELEGATE>::sample_lost_status
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->sample_lost_status();
+    *this = dds::core::null;
+    return *this;
 }
 
 template<typename DELEGATE>
@@ -124,6 +131,8 @@ dds::core::status::RequestedIncompatibleQosStatus TAnyDataReader<DELEGATE>::requ
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->requested_incompatible_qos_status();
+    *this = dds::core::null;
+    return *this;
 }
 
 template<typename DELEGATE>
@@ -132,6 +141,8 @@ dds::core::status::SubscriptionMatchedStatus TAnyDataReader<DELEGATE>::subscript
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    return this->delegate()->subscription_matched_status();
+    *this = dds::core::null;
+    return *this;
 }
 
 } //namespace sub

@@ -320,6 +320,8 @@ public:
      */
     const dds::domain::DomainParticipant& participant() const;
 
+    dds::domain::DomainParticipant* participant_;
+
 };
 
 } //namespace pub

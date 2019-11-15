@@ -96,10 +96,11 @@ Subscriber& Subscriber::default_datareader_qos(
 
 const dds::domain::DomainParticipant& Subscriber::participant() const
 {
-    //TODO implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->participant();
-    return dds::core::null;
+    eprosima::fastdds::dds::DomainParticipant p = *delegate()->get_participant();
+    std::shared_ptr<eprosima::fastdds::dds::DomainParticipant> ptr(&p);
+    participant_->delegate().swap(ptr);
+
+    return *participant_;
 }
 
 Subscriber& Subscriber::operator <<(
