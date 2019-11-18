@@ -27,30 +27,30 @@ using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 
 
-uint32_t datassub[] = {12,28,60,124,252,508,1020,2044,4092,8188,16380};
+uint32_t datassub[] = {12, 28, 60, 124, 252, 508, 1020, 2044, 4092, 8188, 16380};
 uint32_t datassub_large[] = {63996, 131068};
 
 std::vector<uint32_t> data_size_sub;
 
-LatencyTestSubscriber::LatencyTestSubscriber():
-    mp_participant(nullptr),
-    mp_datapub(nullptr),
-    mp_commandpub(nullptr),
-    mp_datasub(nullptr),
-    mp_commandsub(nullptr),
-    disc_count_(0),
-    comm_count_(0),
-    data_count_(0),
-    m_status(0),
-    n_received(0),
-    n_samples(0),
-    m_datapublistener(nullptr),
-    m_datasublistener(nullptr),
-    m_commandpublistener(nullptr),
-    m_commandsublistener(nullptr),
-    m_echo(true),
-    mp_latency(nullptr),
-    m_DynData(nullptr)
+LatencyTestSubscriber::LatencyTestSubscriber()
+    : mp_participant(nullptr)
+    , mp_datapub(nullptr)
+    , mp_commandpub(nullptr)
+    , mp_datasub(nullptr)
+    , mp_commandsub(nullptr)
+    , disc_count_(0)
+    , comm_count_(0)
+    , data_count_(0)
+    , m_status(0)
+    , n_received(0)
+    , n_samples(0)
+    , m_datapublistener(nullptr)
+    , m_datasublistener(nullptr)
+    , m_commandpublistener(nullptr)
+    , m_commandsublistener(nullptr)
+    , m_echo(true)
+    , mp_latency(nullptr)
+    , m_DynData(nullptr)
 {
     m_forcedDomain = -1;
     m_datapublistener.mp_up = this;
@@ -64,13 +64,22 @@ LatencyTestSubscriber::~LatencyTestSubscriber()
     Domain::removeParticipant(mp_participant);
 }
 
-bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pid, bool hostname,
-        const PropertyPolicy& part_property_policy, const PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile, bool dynamic_types, int forced_domain)
+bool LatencyTestSubscriber::init(
+        bool echo,
+        int nsam,
+        bool reliable,
+        uint32_t pid,
+        bool hostname,
+        const PropertyPolicy& part_property_policy,
+        const PropertyPolicy& property_policy,
+        bool large_data,
+        const std::string& sXMLConfigFile,
+        bool dynamic_types,
+        int forced_domain)
 {
-    if(!large_data)
+    if (!large_data)
     {
-         data_size_sub.assign(datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );
+        data_size_sub.assign(datassub, datassub + sizeof(datassub) / sizeof(uint32_t) );
     }
     else
     {
@@ -90,9 +99,9 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
         // Add members to the struct.
         struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
         struct_type_builder->add_member(1, "data",
-            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), data_size_sub.back()
-            ));
+                DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), data_size_sub.back()
+                    ));
         struct_type_builder->set_name("LatencyType");
 
         m_pDynType = struct_type_builder->build();
@@ -120,7 +129,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
         {
             ParticipantAttributes participant_att;
             if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
-                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
+                    eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
                     participant_att))
             {
                 participant_att.rtps.builtin.domainId = m_forcedDomain;
@@ -181,11 +190,13 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
 
     if (m_sXMLConfigFile.length() > 0)
     {
-        mp_datapub = Domain::createPublisher(mp_participant, profile_name, (PublisherListener*)&this->m_datapublistener);
+        mp_datapub =
+                Domain::createPublisher(mp_participant, profile_name, (PublisherListener*)&this->m_datapublistener);
     }
     else
     {
-        mp_datapub = Domain::createPublisher(mp_participant, PubDataparam, (PublisherListener*)&this->m_datapublistener);
+        mp_datapub =
+                Domain::createPublisher(mp_participant, PubDataparam, (PublisherListener*)&this->m_datapublistener);
     }
 
     if (mp_datapub == nullptr)
@@ -276,15 +287,15 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     return true;
 }
 
-
-
-void LatencyTestSubscriber::DataPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
+void LatencyTestSubscriber::DataPubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
-        logInfo(LatencyTest,"Data Pub Matched ");
+        logInfo(LatencyTest, "Data Pub Matched ");
         ++mp_up->disc_count_;
     }
     else
@@ -296,13 +307,15 @@ void LatencyTestSubscriber::DataPubListener::onPublicationMatched(Publisher* /*p
     mp_up->disc_cond_.notify_one();
 }
 
-void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
-        logInfo(LatencyTest,"Data Sub Matched ");
+        logInfo(LatencyTest, "Data Sub Matched ");
         ++mp_up->disc_count_;
     }
     else
@@ -314,13 +327,13 @@ void LatencyTestSubscriber::DataSubListener::onSubscriptionMatched(Subscriber* /
     mp_up->disc_cond_.notify_one();
 }
 
-
-
-void LatencyTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
+void LatencyTestSubscriber::CommandPubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         logInfo(LatencyTest, "Command Pub Matched ");
         ++mp_up->disc_count_;
@@ -334,11 +347,13 @@ void LatencyTestSubscriber::CommandPubListener::onPublicationMatched(Publisher* 
     mp_up->disc_cond_.notify_one();
 }
 
-void LatencyTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void LatencyTestSubscriber::CommandSubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
         logInfo(LatencyTest, "Command Sub Matched ");
         ++mp_up->disc_count_;
@@ -352,21 +367,22 @@ void LatencyTestSubscriber::CommandSubListener::onSubscriptionMatched(Subscriber
     mp_up->disc_cond_.notify_one();
 }
 
-void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* subscriber)
+void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(
+        Subscriber* subscriber)
 {
     TestCommandType command;
-    if(subscriber->takeNextData(&command,&mp_up->m_sampleinfo))
+    if (subscriber->takeNextData(&command, &mp_up->m_sampleinfo))
     {
-        cout << "RCOMMAND: "<< command.m_command << endl;
-        if(command.m_command == READY)
+        cout << "RCOMMAND: " << command.m_command << endl;
+        if (command.m_command == READY)
         {
-            cout << "Publisher has new test ready..."<<endl;
+            cout << "Publisher has new test ready..." << endl;
             mp_up->mutex_.lock();
             ++mp_up->comm_count_;
             mp_up->mutex_.unlock();
             mp_up->comm_cond_.notify_one();
         }
-        else if(command.m_command == STOP)
+        else if (command.m_command == STOP)
         {
             cout << "Publisher has stopped the test" << endl;
             mp_up->mutex_.lock();
@@ -374,7 +390,7 @@ void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub
             mp_up->mutex_.unlock();
             mp_up->data_cond_.notify_one();
         }
-        else if(command.m_command == STOP_ERROR)
+        else if (command.m_command == STOP_ERROR)
         {
             cout << "Publisher has canceled the test" << endl;
             mp_up->m_status = -1;
@@ -383,7 +399,7 @@ void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub
             mp_up->mutex_.unlock();
             mp_up->data_cond_.notify_one();
         }
-        else if(command.m_command == DEFAULT)
+        else if (command.m_command == DEFAULT)
         {
             std::cout << "Something is wrong" << std::endl;
         }
@@ -391,11 +407,12 @@ void LatencyTestSubscriber::CommandSubListener::onNewDataMessage(Subscriber* sub
     //cout << "SAMPLE INFO: "<< mp_up->m_sampleinfo.writerGUID << mp_up->m_sampleinfo.sampleKind << endl;
 }
 
-void LatencyTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscriber)
+void LatencyTestSubscriber::DataSubListener::onNewDataMessage(
+        Subscriber* subscriber)
 {
     if (mp_up->dynamic_data)
     {
-        subscriber->takeNextData((void*)mp_up->m_DynData,&mp_up->m_sampleinfo);
+        subscriber->takeNextData((void*)mp_up->m_DynData, &mp_up->m_sampleinfo);
         if (mp_up->m_echo)
         {
             mp_up->mp_datapub->write((void*)mp_up->m_DynData);
@@ -403,7 +420,7 @@ void LatencyTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscr
     }
     else
     {
-        subscriber->takeNextData((void*)mp_up->mp_latency,&mp_up->m_sampleinfo);
+        subscriber->takeNextData((void*)mp_up->mp_latency, &mp_up->m_sampleinfo);
         if (mp_up->m_echo)
         {
             mp_up->mp_datapub->write((void*)mp_up->mp_latency);
@@ -411,18 +428,20 @@ void LatencyTestSubscriber::DataSubListener::onNewDataMessage(Subscriber* subscr
     }
 }
 
-
 void LatencyTestSubscriber::run()
 {
     //WAIT FOR THE DISCOVERY PROCESS FO FINISH:
     //EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
     std::unique_lock<std::mutex> disc_lock(mutex_);
-    while(disc_count_ != 4) disc_cond_.wait(disc_lock);
+    while (disc_count_ != 4)
+    {
+        disc_cond_.wait(disc_lock);
+    }
     disc_lock.unlock();
 
-    cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
+    cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << endl;
 
-    for(std::vector<uint32_t>::iterator ndata = data_size_sub.begin();ndata!=data_size_sub.end();++ndata)
+    for (std::vector<uint32_t>::iterator ndata = data_size_sub.begin(); ndata != data_size_sub.end(); ++ndata)
     {
         if (!this->test(*ndata))
         {
@@ -431,7 +450,8 @@ void LatencyTestSubscriber::run()
     }
 }
 
-bool LatencyTestSubscriber::test(uint32_t datasize)
+bool LatencyTestSubscriber::test(
+        uint32_t datasize)
 {
     cout << "Preparing test with data size: " << datasize + 4 << endl;
     if (dynamic_data)
@@ -439,7 +459,7 @@ bool LatencyTestSubscriber::test(uint32_t datasize)
         m_DynData = DynamicDataFactory::get_instance()->create_data(m_pDynType);
 
         MemberId id;
-        DynamicData *my_data = m_DynData->loan_value(m_DynData->get_member_id_at_index(1));
+        DynamicData* my_data = m_DynData->loan_value(m_DynData->get_member_id_at_index(1));
         for (uint32_t i = 0; i < datasize; ++i)
         {
             my_data->insert_sequence_data(id);
@@ -453,7 +473,10 @@ bool LatencyTestSubscriber::test(uint32_t datasize)
     }
 
     std::unique_lock<std::mutex> lock(mutex_);
-    if (comm_count_ == 0) comm_cond_.wait(lock);
+    if (comm_count_ == 0)
+    {
+        comm_cond_.wait(lock);
+    }
     --comm_count_;
     lock.unlock();
 
