@@ -178,8 +178,6 @@ const option::Descriptor usage[] = {
     { 0, 0, 0, 0, 0, 0 }
 };
 
-const int c_n_samples = 10000;
-
 int main(
         int argc,
         char** argv)
@@ -203,8 +201,8 @@ int main(
 #endif
 
     TestAgent test_agent = TestAgent::PUBLISHER;
-    int sub_number = 1;
-    int n_samples = c_n_samples;
+    int subscribers = 1;
+    int samples = 10000;
 #if HAVE_SECURITY
     bool use_security = false;
     std::string certs_path;
@@ -217,7 +215,7 @@ int main(
     bool large_data = false;
     std::string export_prefix = "";
     std::string raw_data_file = "";
-    std::string sXMLConfigFile = "";
+    std::string xml_config_file = "";
     bool dynamic_types = false;
     int forced_domain = -1;
 
@@ -289,18 +287,15 @@ int main(
                     return 0;
                 }
                 break;
-
             case SEED:
                 seed = strtol(opt.arg, nullptr, 10);
                 break;
             case SAMPLES:
-                n_samples = strtol(opt.arg, nullptr, 10);
+                samples = strtol(opt.arg, nullptr, 10);
                 break;
-
             case SUBSCRIBERS:
-                sub_number = strtol(opt.arg, nullptr, 10);
+                subscribers = strtol(opt.arg, nullptr, 10);
                 break;
-
             case ECHO_OPT:
                 if (strcmp(opt.arg, "true") == 0)
                 {
@@ -316,21 +311,16 @@ int main(
                     return 0;
                 }
                 break;
-
             case HOSTNAME:
                 hostname = true;
                 break;
-
             case EXPORT_CSV:
                 export_csv = true;
                 break;
-
             case EXPORT_RAW_DATA:
                 raw_data_file = opt.arg;
                 break;
-
             case EXPORT_PREFIX:
-            {
                 if (opt.arg != nullptr)
                 {
                     export_prefix = opt.arg;
@@ -341,14 +331,13 @@ int main(
                     return 0;
                 }
                 break;
-            }
             case LARGE_DATA:
                 large_data = true;
                 break;
             case XML_FILE:
                 if (opt.arg != nullptr)
                 {
-                    sXMLConfigFile = opt.arg;
+                    xml_config_file = opt.arg;
                 }
                 else
                 {
@@ -362,7 +351,6 @@ int main(
             case FORCED_DOMAIN:
                 forced_domain = strtol(opt.arg, nullptr, 10);
                 break;
-
 #if HAVE_SECURITY
             case USE_SECURITY:
                 if (strcmp(opt.arg, "true") == 0)
@@ -379,12 +367,10 @@ int main(
                     return -1;
                 }
                 break;
-
             case CERTS_PATH:
                 certs_path = opt.arg;
                 break;
 #endif
-
             case UNKNOWN_OPT:
                 option::printUsage(fwrite, stdout, usage, columns);
                 return 0;
@@ -392,8 +378,10 @@ int main(
         }
     }
 
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
+    PropertyPolicy pub_part_property_policy;
+    PropertyPolicy sub_part_property_policy;
+    PropertyPolicy pub_property_policy;
+    PropertyPolicy sub_property_policy;
 
 #if HAVE_SECURITY
     if (use_security)
@@ -404,30 +392,27 @@ int main(
             return -1;
         }
 
-        sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-                "builtin.PKI-DH"));
+        sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin", "builtin.PKI-DH"));
         sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
                 "file://" + certs_path + "/maincacert.pem"));
         sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
                 "file://" + certs_path + "/mainsubcert.pem"));
         sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
                 "file://" + certs_path + "/mainsubkey.pem"));
-        sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
-                "builtin.AES-GCM-GMAC"));
+        sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC"));
         sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+
         sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
         sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
-        pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-                "builtin.PKI-DH"));
+        pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin", "builtin.PKI-DH"));
         pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
                 "file://" + certs_path + "/maincacert.pem"));
         pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
                 "file://" + certs_path + "/mainpubcert.pem"));
         pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
                 "file://" + certs_path + "/mainpubkey.pem"));
-        pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
-                "builtin.AES-GCM-GMAC"));
+        pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC"));
         pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
         pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
         pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
@@ -435,55 +420,51 @@ int main(
 #endif
 
     // Load an XML file with predefined profiles for publisher and subscriber
-    if (sXMLConfigFile.length() > 0)
+    if (xml_config_file.length() > 0)
     {
-        xmlparser::XMLProfileManager::loadXMLFile(sXMLConfigFile);
+        xmlparser::XMLProfileManager::loadXMLFile(xml_config_file);
     }
 
     if (test_agent == TestAgent::PUBLISHER)
     {
-        cout << "Performing test with " << sub_number << " subscribers and " << n_samples << " samples" << endl;
-        LatencyTestPublisher latencyPub;
-        latencyPub.init(sub_number, n_samples, reliable, seed, hostname, export_csv, export_prefix, raw_data_file,
-                pub_part_property_policy, pub_property_policy, large_data, sXMLConfigFile, dynamic_types,
-                forced_domain);
-        latencyPub.run();
+        std::cout << "Performing test with " << subscribers << " subscribers and " << samples << " samples" << std::endl;
+        LatencyTestPublisher latency_publisher;
+        latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv, export_prefix,
+                raw_data_file, pub_part_property_policy, pub_property_policy, large_data, xml_config_file,
+                dynamic_types, forced_domain);
+        latency_publisher.run();
     }
     else if (test_agent == TestAgent::SUBSCRIBER)
     {
-        LatencyTestSubscriber latencySub;
-        latencySub.init(echo, n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-                large_data, sXMLConfigFile, dynamic_types, forced_domain);
-        latencySub.run();
+        LatencyTestSubscriber latency_subscriber;
+        latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
+                large_data, xml_config_file, dynamic_types, forced_domain);
+        latency_subscriber.run();
     }
     else if (test_agent == TestAgent::BOTH)
     {
-        cout << "Performing intraprocess test with " << sub_number << " subscribers and " << n_samples << " samples" <<
-                endl;
+        std::cout << "Performing intraprocess test with " << subscribers << " subscribers and " << samples <<
+                " samples" << std::endl;
 
         // Initialize publisher
-        LatencyTestPublisher latencyPub;
-        latencyPub.init(sub_number, n_samples, reliable, seed, hostname, export_csv, export_prefix, raw_data_file,
-                pub_part_property_policy, pub_property_policy, large_data, sXMLConfigFile, dynamic_types,
-                forced_domain);
+        LatencyTestPublisher latency_publisher;
+        latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv, export_prefix,
+                raw_data_file, pub_part_property_policy, pub_property_policy, large_data, xml_config_file,
+                dynamic_types, forced_domain);
 
         // Initialize subscriber
-        LatencyTestSubscriber latencySub;
-        latencySub.init(echo, n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-                large_data, sXMLConfigFile, dynamic_types, forced_domain);
+        LatencyTestSubscriber latency_subscriber;
+        latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
+                large_data, xml_config_file, dynamic_types, forced_domain);
 
         // Spawn run threads
-        std::thread pub_thread(&LatencyTestPublisher::run, &latencyPub);
-        std::thread sub_thread(&LatencyTestSubscriber::run, &latencySub);
+        std::thread pub_thread(&LatencyTestPublisher::run, &latency_publisher);
+        std::thread sub_thread(&LatencyTestSubscriber::run, &latency_subscriber);
         pub_thread.join();
         sub_thread.join();
     }
 
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-    cout << "EVERYTHING STOPPED FINE" << endl;
-
+    std::cout << "EVERYTHING STOPPED FINE" << std::endl;
     return 0;
 }
 
