@@ -24,7 +24,7 @@ MockEvent::MockEvent(
     , cancelled_(0)
     , sem_count_(0)
     , autorestart_(autorestart)
-    , event_(service, std::bind(&MockEvent::callback, this, std::placeholders::_1), milliseconds)
+    , event_(service, std::bind(&MockEvent::callback, this), milliseconds)
 {
 }
 
@@ -32,22 +32,15 @@ MockEvent::~MockEvent()
 {
 }
 
-bool MockEvent::callback(TimedEvent::EventCode code)
+bool MockEvent::callback()
 {
     bool restart = false;
 
-    if(code == TimedEvent::EventCode::EVENT_SUCCESS)
-    {
-        successed_.fetch_add(1, std::memory_order_relaxed);
+    successed_.fetch_add(1, std::memory_order_relaxed);
 
-        if(autorestart_)
-        {
-            restart = true;
-        }
-    }
-    else if(code == TimedEvent::EventCode::EVENT_ABORT)
+    if(autorestart_)
     {
-        cancelled_.fetch_add(1, std::memory_order_relaxed);
+        restart = true;
     }
 
     sem_mutex_.lock();

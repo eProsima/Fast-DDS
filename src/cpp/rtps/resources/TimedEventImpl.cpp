@@ -76,11 +76,6 @@ bool TimedEventImpl::go_cancel()
     {
         cancel_.store(true);
         returned_value = true;
-
-        if (prev_code == StateCode::READY)
-        {
-            callback_(TimedEvent::EVENT_ABORT);
-        }
     }
 
     return returned_value;
@@ -137,7 +132,7 @@ void TimedEventImpl::event(
             state_.compare_exchange_strong(expected, StateCode::INACTIVE);
 
             //Exec
-            bool restart = callback_(TimedEvent::EVENT_SUCCESS);
+            bool restart = callback_();
 
             if (restart)
             {
@@ -153,10 +148,6 @@ void TimedEventImpl::event(
                             std::placeholders::_1));
                 }
             }
-        }
-        else
-        {
-            callback_(TimedEvent::EVENT_ABORT);
         }
     }
 }

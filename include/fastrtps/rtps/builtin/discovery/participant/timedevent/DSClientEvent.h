@@ -52,7 +52,7 @@ public:
         + matches the EDP endpoints when the servers are all aware of this client existence
 	* @param code Code representing the status of the event
 	*/
-	bool event(EventCode code);
+	bool event();
 	
 	//!Pointer to the PDPServer object.
     PDPClient* mp_PDP;

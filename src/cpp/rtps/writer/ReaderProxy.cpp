@@ -52,30 +52,23 @@ ReaderProxy::ReaderProxy(
     , last_acknack_count_(0)
     , last_nackfrag_count_(0)
 {
-    nack_supression_event_ = new TimedEvent(writer_->getRTPSParticipant()->getEventResource(),
-                    [&](TimedEvent::EventCode code) -> bool
+    nack_supression_event_ =
+        new TimedEvent(writer_->getRTPSParticipant()->getEventResource(),
+                [&]() -> bool
                 {
-                    if (TimedEvent::EVENT_SUCCESS == code)
-                    {
-                        writer_->perform_nack_supression(reader_attributes_.guid());
-                    }
-
+                    writer_->perform_nack_supression(reader_attributes_.guid());
                     return false;
                 },
-                    TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
+                TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
 
     initial_heartbeat_event_ =
-            new TimedEvent(writer->getRTPSParticipant()->getEventResource(), [&](
-                        TimedEvent::EventCode code) -> bool
+        new TimedEvent(writer->getRTPSParticipant()->getEventResource(),
+                [&]() -> bool
                 {
-                    if (TimedEvent::EVENT_SUCCESS == code)
-                    {
-                        writer_->intraprocess_heartbeat(this);
-                    }
-
+                    writer_->intraprocess_heartbeat(this);
                     return false;
                 },
-                    0);
+                0);
 
     stop();
 }

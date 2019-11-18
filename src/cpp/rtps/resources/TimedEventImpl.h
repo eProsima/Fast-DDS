@@ -48,7 +48,7 @@ namespace rtps {
  */
 class TimedEventImpl
 {
-    using Callback = std::function<bool (TimedEvent::EventCode)>;
+    using Callback = std::function<bool ()>;
 
 public:
 

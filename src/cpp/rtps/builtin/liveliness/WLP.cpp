@@ -529,15 +529,10 @@ bool WLP::add_local_writer(RTPSWriter* W, const WriterQos& wqos)
         if (automatic_liveliness_assertion_ == nullptr)
         {
             automatic_liveliness_assertion_ = new TimedEvent(mp_participant->getEventResource(),
-                    [&](TimedEvent::EventCode code) -> bool
+                    [&]() -> bool
                     {
-                        if (TimedEvent::EVENT_SUCCESS == code)
-                        {
-                            automatic_liveliness_assertion();
-                            return true;
-                        }
-
-                        return false;
+                        automatic_liveliness_assertion();
+                        return true;
                     },
                     wAnnouncementPeriodMilliSec);
             automatic_liveliness_assertion_->restart_timer();
@@ -561,15 +556,10 @@ bool WLP::add_local_writer(RTPSWriter* W, const WriterQos& wqos)
         if(manual_liveliness_assertion_ == nullptr)
         {
             manual_liveliness_assertion_ = new TimedEvent(mp_participant->getEventResource(),
-                    [&](TimedEvent::EventCode code) -> bool
+                    [&]() -> bool
                     {
-                        if (TimedEvent::EVENT_SUCCESS == code)
-                        {
-                            participant_liveliness_assertion();
-                            return true;
-                        }
-
-                        return false;
+                        participant_liveliness_assertion();
+                        return true;
                     },
                     wAnnouncementPeriodMilliSec);
             manual_liveliness_assertion_->restart_timer();

@@ -29,7 +29,7 @@ namespace rtps {
 
 TimedEvent::TimedEvent(
         ResourceEvent& service,
-        std::function<bool(EventCode)> callback,
+        std::function<bool()> callback,
         double milliseconds)
     : service_(service)
     , impl_(nullptr)
