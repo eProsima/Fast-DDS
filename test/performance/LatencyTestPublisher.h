@@ -176,7 +176,7 @@ public:
     /* Dynamic Types */
     eprosima::fastrtps::types::DynamicData* dynamic_data_type_in_;
     eprosima::fastrtps::types::DynamicData* dynamic_data_type_out_;
-    eprosima::fastrtps::types::DynamicPubSubType dynamic_pu_sub_type_;
+    eprosima::fastrtps::types::DynamicPubSubType dynamic_pub_sub_type_;
     eprosima::fastrtps::types::DynamicType_ptr dynamic_type_;
 
     /* Data Listeners */

@@ -128,7 +128,7 @@ bool LatencyTestPublisher::init(
         struct_type_builder->set_name("LatencyType");
 
         dynamic_type_ = struct_type_builder->build();
-        dynamic_pu_sub_type_.SetDynamicType(dynamic_type_);
+        dynamic_pub_sub_type_.SetDynamicType(dynamic_type_);
     }
 
     // Init output files
@@ -259,7 +259,7 @@ bool LatencyTestPublisher::init(
     // Register the type
     if (dynamic_data_)
     {
-        Domain::registerType(participant_, &dynamic_pu_sub_type_);
+        Domain::registerType(participant_, &dynamic_pub_sub_type_);
     }
     else
     {
@@ -716,7 +716,8 @@ bool LatencyTestPublisher::test(
         dynamic_data_type_in_ = DynamicDataFactory::get_instance()->create_data(dynamic_type_);
         dynamic_data_type_out_ = DynamicDataFactory::get_instance()->create_data(dynamic_type_);
 
-        MemberId id_in, id_out;
+        MemberId id_in;
+        MemberId id_out;
         DynamicData* data_in = dynamic_data_type_in_->loan_value(dynamic_data_type_in_->get_member_id_at_index(1));
         DynamicData* data_out = dynamic_data_type_out_->loan_value(
                 dynamic_data_type_out_->get_member_id_at_index(1));
