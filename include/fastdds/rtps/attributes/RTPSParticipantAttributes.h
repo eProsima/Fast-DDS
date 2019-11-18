@@ -66,6 +66,15 @@ typedef enum DiscoveryProtocol
 
 } DiscoveryProtocol_t;
 
+//!Filtering flags when discovering participants
+typedef enum ParticipantFilteringFlags : uint32_t
+{
+    NO_FILTER = 0,
+    FILTER_DIFFERENT_HOST = 0x1,
+    FILTER_DIFFERENT_PROCESS = 0x2,
+    FILTER_SAME_PROCESS = 0x4
+} ParticipantFilteringFlags_t;
+
 //! PDP factory for EXTERNAL type
 class PDP;
 class BuiltinProtocols;
@@ -198,6 +207,9 @@ public:
     //! Discovery Server settings, only needed if use_CLIENT_DiscoveryProtocol=true
     RemoteServerList_t  m_DiscoveryServers;
 
+    //! Filtering participants out depending on location
+    ParticipantFilteringFlags_t ignoreParticipantFlags = ParticipantFilteringFlags::NO_FILTER;
+
     DiscoverySettings() = default;
 
     bool operator==(const DiscoverySettings& b) const
@@ -212,7 +224,8 @@ public:
                 (this->initial_announcements == b.initial_announcements) &&
                 (this->m_simpleEDP == b.m_simpleEDP) &&
                 (this->m_staticEndpointXMLFilename == b.m_staticEndpointXMLFilename) &&
-                (this->m_DiscoveryServers == b.m_DiscoveryServers);
+                (this->m_DiscoveryServers == b.m_DiscoveryServers) &&
+                (this->ignoreParticipantFlags == b.ignoreParticipantFlags);
     }
 
     /**

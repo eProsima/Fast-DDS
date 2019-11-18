@@ -498,6 +498,11 @@ class XMLParser
         rtps::RemoteServerList_t & list,
         uint8_t ident);
 
+    RTPS_DllAPI static XMLP_ret getXMLEnum(
+        tinyxml2::XMLElement* elem,
+        rtps::ParticipantFilteringFlags_t * e,
+        uint8_t ident);
+
     RTPS_DllAPI static XMLP_ret getXMLRemoteServer(
         tinyxml2::XMLElement* elem,
         rtps::RemoteServerAttributes & server,
