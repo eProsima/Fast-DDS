@@ -37,7 +37,8 @@ TimedEventImpl::TimedEventImpl(
     : m_interval_microsec(interval)
     , timer_(service, interval)
     , callback_(callback)
-    , callback_ptr_(&callback, [](Callback*){})
+    , callback_ptr_(&callback, [](Callback*){
+})
     , state_(StateCode::INACTIVE)
     , cancel_(false)
     , next_(nullptr)
@@ -76,7 +77,7 @@ bool TimedEventImpl::go_cancel()
         cancel_.store(true);
         returned_value = true;
 
-        if(prev_code == StateCode::READY)
+        if (prev_code == StateCode::READY)
         {
             callback_(TimedEvent::EVENT_ABORT);
         }
@@ -106,17 +107,19 @@ void TimedEventImpl::update()
     }
 }
 
-bool TimedEventImpl::update_interval(const eprosima::fastrtps::Duration_t& inter)
+bool TimedEventImpl::update_interval(
+        const eprosima::fastrtps::Duration_t& inter)
 {
     std::unique_lock<std::mutex> lock(mutex_);
     m_interval_microsec = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(inter));
     return true;
 }
 
-bool TimedEventImpl::update_interval_millisec(double time_millisec)
+bool TimedEventImpl::update_interval_millisec(
+        double time_millisec)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    m_interval_microsec = std::chrono::microseconds((int64_t)(time_millisec*1000));
+    m_interval_microsec = std::chrono::microseconds((int64_t)(time_millisec * 1000));
     return true;
 }
 
@@ -126,9 +129,9 @@ void TimedEventImpl::event(
 {
     std::shared_ptr<Callback> callback_ptr = callback_weak_ptr.lock();
 
-    if(callback_ptr)
+    if (callback_ptr)
     {
-        if(ec != asio::error::operation_aborted)
+        if (ec != asio::error::operation_aborted)
         {
             StateCode expected = StateCode::WAITING;
             state_.compare_exchange_strong(expected, StateCode::INACTIVE);
@@ -146,7 +149,8 @@ void TimedEventImpl::event(
                         timer_.expires_from_now(m_interval_microsec);
                     }
 
-                    timer_.async_wait(std::bind(&TimedEventImpl::event, this, callback_weak_ptr, std::placeholders::_1));
+                    timer_.async_wait(std::bind(&TimedEventImpl::event, this, callback_weak_ptr,
+                            std::placeholders::_1));
                 }
             }
         }
