@@ -42,16 +42,16 @@ class TimeStats
 public:
 
     TimeStats()
-        : nbytes(0)
-        , received(0)
-        , m_min(0)
-        , m_max(0)
-        , p50(0)
-        , p90(0)
-        , p99(0)
-        , p9999(0)
-        , mean(0)
-        , stdev(0)
+        : bytes_(0)
+        , received_(0)
+        , minimum_(0)
+        , maximum_(0)
+        , percentile_50_(0)
+        , percentile_90_(0)
+        , percentile_99_(0)
+        , percentile_9999_(0)
+        , mean_(0)
+        , stdev_(0)
     {
     }
 
@@ -59,10 +59,16 @@ public:
     {
     }
 
-    uint64_t nbytes;
-    unsigned int received;
-    std::chrono::duration<double, std::micro>  m_min, m_max;
-    double p50, p90, p99, p9999, mean, stdev;
+    uint64_t bytes_;
+    unsigned int received_;
+    std::chrono::duration<double, std::micro> minimum_;
+    std::chrono::duration<double, std::micro> maximum_;
+    double percentile_50_;
+    double percentile_90_;
+    double percentile_99_;
+    double percentile_9999_;
+    double mean_;
+    double stdev_;
 };
 
 class LatencyTestPublisher
@@ -71,36 +77,39 @@ class LatencyTestPublisher
 public:
 
     LatencyTestPublisher();
+
     virtual ~LatencyTestPublisher();
 
-    eprosima::fastrtps::Participant* mp_participant;
-    eprosima::fastrtps::Publisher* mp_datapub;
-    eprosima::fastrtps::Publisher* mp_commandpub;
-    eprosima::fastrtps::Subscriber* mp_datasub;
-    eprosima::fastrtps::Subscriber* mp_commandsub;
-    std::chrono::steady_clock::time_point t_start_, t_end_;
-    std::chrono::duration<double, std::micro> t_overhead_;
-    int n_subscribers;
-    unsigned int n_samples;
-    eprosima::fastrtps::SampleInfo_t m_sampleinfo;
-    std::vector<std::chrono::duration<double, std::micro> > times_;
-    std::vector<TimeStats> m_stats;
+    eprosima::fastrtps::Participant* participant_;
+    eprosima::fastrtps::Publisher* data_publisher_;
+    eprosima::fastrtps::Publisher* command_publisher_;
+    eprosima::fastrtps::Subscriber* data_subscriber_;
+    eprosima::fastrtps::Subscriber* command_subscriber_;
+    std::chrono::steady_clock::time_point start_time_;
+    std::chrono::steady_clock::time_point end_time_;
+    std::chrono::duration<double, std::micro> overhead_time_;
+    int subscribers_;
+    unsigned int samples_;
+    eprosima::fastrtps::SampleInfo_t sampleinfo_;
+    std::vector<std::chrono::duration<double, std::micro>> times_;
+    std::vector<TimeStats> stats_;
     std::mutex mutex_;
-    int disc_count_;
-    std::condition_variable disc_cond_;
-    int comm_count_;
-    std::condition_variable comm_cond_;
-    int data_count_;
-    std::condition_variable data_cond_;
-    int m_status;
-    unsigned int n_received;
-    bool n_export_csv;
+    int discovery_count_;
+    std::condition_variable discovery_cv_;
+    int command_msg_count_;
+    std::condition_variable command_msg_cv_;
+    int data_msg_count_;
+    std::condition_variable data_msg_cv_;
+    int test_status_;
+    unsigned int received_count_;
+    bool export_csv_;
     std::string raw_data_file_;
     uint64_t raw_sample_count_;
-    std::string m_exportPrefix;
+    std::string export_prefix_;
+
     bool init(
-            int n_sub,
-            int n_sam,
+            int subscribers,
+            int samples,
             bool reliable,
             uint32_t pid,
             bool hostname,
@@ -110,27 +119,32 @@ public:
             const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
             const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
             bool large_data,
-            const std::string& sXMLConfigFile,
-            bool dynamic_types,
+            const std::string& xml_config_file,
+            bool dynamic_data,
             int forced_domain);
+
     void run();
-    void analyzeTimes(
+
+    void analyze_times(
             uint32_t datasize);
+
     bool test(
             uint32_t datasize);
-    void printStat(
+
+    void print_stats(
             TimeStats& TS);
+
     void export_raw_data(
             uint32_t datasize);
 
     class DataPubListener : public eprosima::fastrtps::PublisherListener
     {
-public:
+    public:
 
         DataPubListener(
-                LatencyTestPublisher* up)
-            : mp_up(up)
-            , n_matched(0)
+                LatencyTestPublisher* latency_publisher)
+            : latency_publisher_(latency_publisher)
+            , matched_(0)
         {
         }
 
@@ -141,18 +155,19 @@ public:
         void onPublicationMatched(
                 eprosima::fastrtps::Publisher* pub,
                 eprosima::fastrtps::rtps::MatchingInfo& info);
-        LatencyTestPublisher* mp_up;
-        int n_matched;
-    } m_datapublistener;
+
+        LatencyTestPublisher* latency_publisher_;
+        int matched_;
+    } data_pub_listener_;
 
     class DataSubListener : public eprosima::fastrtps::SubscriberListener
     {
-public:
+    public:
 
         DataSubListener(
-                LatencyTestPublisher* up)
-            : mp_up(up)
-            , n_matched(0)
+                LatencyTestPublisher* latency_publisher)
+            : latency_publisher_(latency_publisher)
+            , matched_(0)
         {
         }
 
@@ -162,21 +177,23 @@ public:
 
         void onSubscriptionMatched(
                 eprosima::fastrtps::Subscriber* sub,
-                eprosima::fastrtps::rtps::MatchingInfo& into);
+                eprosima::fastrtps::rtps::MatchingInfo& info);
+
         void onNewDataMessage(
                 eprosima::fastrtps::Subscriber* sub);
-        LatencyTestPublisher* mp_up;
-        int n_matched;
-    } m_datasublistener;
+
+        LatencyTestPublisher* latency_publisher_;
+        int matched_;
+    } data_sub_listener_;
 
     class CommandPubListener : public eprosima::fastrtps::PublisherListener
     {
-public:
+    public:
 
         CommandPubListener(
-                LatencyTestPublisher* up)
-            : mp_up(up)
-            , n_matched(0)
+                LatencyTestPublisher* latency_publisher)
+            : latency_publisher_(latency_publisher)
+            , matched_(0)
         {
         }
 
@@ -187,18 +204,19 @@ public:
         void onPublicationMatched(
                 eprosima::fastrtps::Publisher* pub,
                 eprosima::fastrtps::rtps::MatchingInfo& info);
-        LatencyTestPublisher* mp_up;
-        int n_matched;
-    } m_commandpublistener;
+
+        LatencyTestPublisher* latency_publisher_;
+        int matched_;
+    } command_pub_listener_;
 
     class CommandSubListener : public eprosima::fastrtps::SubscriberListener
     {
-public:
+    public:
 
         CommandSubListener(
-                LatencyTestPublisher* up)
-            : mp_up(up)
-            , n_matched(0)
+                LatencyTestPublisher* latency_publisher)
+            : latency_publisher_(latency_publisher)
+            , matched_(0)
         {
         }
 
@@ -208,43 +226,44 @@ public:
 
         void onSubscriptionMatched(
                 eprosima::fastrtps::Subscriber* sub,
-                eprosima::fastrtps::rtps::MatchingInfo& into);
+                eprosima::fastrtps::rtps::MatchingInfo& info);
         void onNewDataMessage(
                 eprosima::fastrtps::Subscriber* sub);
-        LatencyTestPublisher* mp_up;
-        int n_matched;
-    } m_commandsublistener;
 
-    TestCommandDataType command_t;
+        LatencyTestPublisher* latency_publisher_;
+        int matched_;
+    } command_sub_listener_;
 
-    std::stringstream output_file_minimum;
-    std::stringstream output_file_average;
-    std::stringstream output_file_16;
-    std::stringstream output_file_32;
-    std::stringstream output_file_64;
-    std::stringstream output_file_128;
-    std::stringstream output_file_256;
-    std::stringstream output_file_512;
-    std::stringstream output_file_1024;
-    std::stringstream output_file_2048;
-    std::stringstream output_file_4096;
-    std::stringstream output_file_8192;
-    std::stringstream output_file_16384;
-    std::stringstream output_file_64000;
-    std::stringstream output_file_131072;
-    std::string m_sXMLConfigFile;
+    TestCommandDataType latency_command_type_;
+
+    std::stringstream output_file_minimum_;
+    std::stringstream output_file_average_;
+    std::stringstream output_file_16_;
+    std::stringstream output_file_32_;
+    std::stringstream output_file_64_;
+    std::stringstream output_file_128_;
+    std::stringstream output_file_256_;
+    std::stringstream output_file_512_;
+    std::stringstream output_file_1024_;
+    std::stringstream output_file_2048_;
+    std::stringstream output_file_4096_;
+    std::stringstream output_file_8192_;
+    std::stringstream output_file_16384_;
+    std::stringstream output_file_64000_;
+    std::stringstream output_file_131072_;
+    std::string xml_config_file_;
     bool reliable_;
-    bool dynamic_data = false;
-    int m_forcedDomain;
+    bool dynamic_data_ = false;
+    int forced_domain_;
     // Static Types
-    LatencyDataType latency_t;
-    LatencyType* mp_latency_in;
-    LatencyType* mp_latency_out;
+    LatencyDataType latency_data_type_;
+    LatencyType* latency_type_in_;
+    LatencyType* latency_type_out_;
     // Dynamic Types
-    eprosima::fastrtps::types::DynamicData* m_DynData_in;
-    eprosima::fastrtps::types::DynamicData* m_DynData_out;
-    eprosima::fastrtps::types::DynamicPubSubType m_DynType;
-    eprosima::fastrtps::types::DynamicType_ptr m_pDynType;
+    eprosima::fastrtps::types::DynamicData* dynamic_data_type_in_;
+    eprosima::fastrtps::types::DynamicData* dynamic_data_type_out_;
+    eprosima::fastrtps::types::DynamicPubSubType dynamic_pu_sub_type_;
+    eprosima::fastrtps::types::DynamicType_ptr dynamic_type_;
 };
 
 
