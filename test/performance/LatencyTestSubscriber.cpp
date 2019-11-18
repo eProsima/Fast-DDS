@@ -130,8 +130,8 @@ bool LatencyTestSubscriber::init(
         if (forced_domain_ >= 0)
         {
             if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
-                    eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
-                    participant_attributes))
+                    eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(
+                        participant_profile_name, participant_attributes))
             {
                 participant_attributes.rtps.builtin.domainId = forced_domain_;
                 participant_ = Domain::createParticipant(participant_attributes);
