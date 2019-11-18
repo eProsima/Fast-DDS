@@ -80,33 +80,6 @@ public:
 
     virtual ~LatencyTestPublisher();
 
-    eprosima::fastrtps::Participant* participant_;
-    eprosima::fastrtps::Publisher* data_publisher_;
-    eprosima::fastrtps::Publisher* command_publisher_;
-    eprosima::fastrtps::Subscriber* data_subscriber_;
-    eprosima::fastrtps::Subscriber* command_subscriber_;
-    std::chrono::steady_clock::time_point start_time_;
-    std::chrono::steady_clock::time_point end_time_;
-    std::chrono::duration<double, std::micro> overhead_time_;
-    int subscribers_;
-    unsigned int samples_;
-    eprosima::fastrtps::SampleInfo_t sampleinfo_;
-    std::vector<std::chrono::duration<double, std::micro>> times_;
-    std::vector<TimeStats> stats_;
-    std::mutex mutex_;
-    int discovery_count_;
-    std::condition_variable discovery_cv_;
-    int command_msg_count_;
-    std::condition_variable command_msg_cv_;
-    int data_msg_count_;
-    std::condition_variable data_msg_cv_;
-    int test_status_;
-    unsigned int received_count_;
-    bool export_csv_;
-    std::string raw_data_file_;
-    uint64_t raw_sample_count_;
-    std::string export_prefix_;
-
     bool init(
             int subscribers,
             int samples,
@@ -125,10 +98,10 @@ public:
 
     void run();
 
-    void analyze_times(
+    bool test(
             uint32_t datasize);
 
-    bool test(
+    void analyze_times(
             uint32_t datasize);
 
     void print_stats(
@@ -137,6 +110,76 @@ public:
     void export_raw_data(
             uint32_t datasize);
 
+    /* Entities */
+    eprosima::fastrtps::Participant* participant_;
+    eprosima::fastrtps::Publisher* data_publisher_;
+    eprosima::fastrtps::Publisher* command_publisher_;
+    eprosima::fastrtps::Subscriber* data_subscriber_;
+    eprosima::fastrtps::Subscriber* command_subscriber_;
+
+    /* Times */
+    std::chrono::steady_clock::time_point start_time_;
+    std::chrono::steady_clock::time_point end_time_;
+    std::chrono::duration<double, std::micro> overhead_time_;
+    std::vector<std::chrono::duration<double, std::micro>> times_;
+
+    /* Data */
+    eprosima::fastrtps::SampleInfo_t sampleinfo_;
+    std::vector<TimeStats> stats_;
+    uint64_t raw_sample_count_;
+
+    /* Test synchronization */
+    std::mutex mutex_;
+    std::condition_variable discovery_cv_;
+    std::condition_variable command_msg_cv_;
+    std::condition_variable data_msg_cv_;
+    int discovery_count_;
+    int command_msg_count_;
+    int data_msg_count_;
+    unsigned int received_count_;
+    int test_status_;
+
+    /* Files */
+    std::stringstream output_file_minimum_;
+    std::stringstream output_file_average_;
+    std::stringstream output_file_16_;
+    std::stringstream output_file_32_;
+    std::stringstream output_file_64_;
+    std::stringstream output_file_128_;
+    std::stringstream output_file_256_;
+    std::stringstream output_file_512_;
+    std::stringstream output_file_1024_;
+    std::stringstream output_file_2048_;
+    std::stringstream output_file_4096_;
+    std::stringstream output_file_8192_;
+    std::stringstream output_file_16384_;
+    std::stringstream output_file_64000_;
+    std::stringstream output_file_131072_;
+    std::string xml_config_file_;
+    std::string raw_data_file_;
+    std::string export_prefix_;
+
+    /* Test configuration and Flags */
+    bool export_csv_;
+    bool reliable_;
+    bool dynamic_data_ = false;
+    int forced_domain_;
+    int subscribers_;
+    unsigned int samples_;
+
+    /* Static Types */
+    LatencyDataType latency_data_type_;
+    LatencyType* latency_type_in_;
+    LatencyType* latency_type_out_;
+    TestCommandDataType latency_command_type_;
+
+    /* Dynamic Types */
+    eprosima::fastrtps::types::DynamicData* dynamic_data_type_in_;
+    eprosima::fastrtps::types::DynamicData* dynamic_data_type_out_;
+    eprosima::fastrtps::types::DynamicPubSubType dynamic_pu_sub_type_;
+    eprosima::fastrtps::types::DynamicType_ptr dynamic_type_;
+
+    /* Data Listeners */
     class DataPubListener : public eprosima::fastrtps::PublisherListener
     {
     public:
@@ -186,6 +229,7 @@ public:
         int matched_;
     } data_sub_listener_;
 
+    /* Command Listeners */
     class CommandPubListener : public eprosima::fastrtps::PublisherListener
     {
     public:
@@ -233,38 +277,6 @@ public:
         LatencyTestPublisher* latency_publisher_;
         int matched_;
     } command_sub_listener_;
-
-    TestCommandDataType latency_command_type_;
-
-    std::stringstream output_file_minimum_;
-    std::stringstream output_file_average_;
-    std::stringstream output_file_16_;
-    std::stringstream output_file_32_;
-    std::stringstream output_file_64_;
-    std::stringstream output_file_128_;
-    std::stringstream output_file_256_;
-    std::stringstream output_file_512_;
-    std::stringstream output_file_1024_;
-    std::stringstream output_file_2048_;
-    std::stringstream output_file_4096_;
-    std::stringstream output_file_8192_;
-    std::stringstream output_file_16384_;
-    std::stringstream output_file_64000_;
-    std::stringstream output_file_131072_;
-    std::string xml_config_file_;
-    bool reliable_;
-    bool dynamic_data_ = false;
-    int forced_domain_;
-    // Static Types
-    LatencyDataType latency_data_type_;
-    LatencyType* latency_type_in_;
-    LatencyType* latency_type_out_;
-    // Dynamic Types
-    eprosima::fastrtps::types::DynamicData* dynamic_data_type_in_;
-    eprosima::fastrtps::types::DynamicData* dynamic_data_type_out_;
-    eprosima::fastrtps::types::DynamicPubSubType dynamic_pu_sub_type_;
-    eprosima::fastrtps::types::DynamicType_ptr dynamic_type_;
 };
-
 
 #endif /* LATENCYPUBLISHER_H_ */
