@@ -75,9 +75,12 @@ public:
     int m_status;
     unsigned int n_received;
     bool n_export_csv;
+    std::string raw_data_file_;
+    uint64_t raw_sample_count_;
     std::string m_exportPrefix;
     bool init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname, bool export_csv,
         const std::string& export_prefix,
+        std::string raw_data_file,
         const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
         const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
         const std::string& sXMLConfigFile, bool dynamic_types, int forced_domain);
@@ -85,6 +88,7 @@ public:
     void analyzeTimes(uint32_t datasize);
     bool test(uint32_t datasize);
     void printStat(TimeStats& TS);
+    void export_raw_data(uint32_t datasize);
 
     class DataPubListener : public eprosima::fastrtps::PublisherListener
     {

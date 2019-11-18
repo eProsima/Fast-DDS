@@ -116,6 +116,7 @@ enum  optionIndex {
     ECHO_OPT,
     HOSTNAME,
     EXPORT_CSV,
+    EXPORT_RAW_DATA,
     EXPORT_PREFIX,
     USE_SECURITY,
     CERTS_PATH,
@@ -125,8 +126,14 @@ enum  optionIndex {
     FORCED_DOMAIN
 };
 
+enum TestAgent {
+    PUBLISHER,
+    SUBSCRIBER,
+    BOTH
+};
+
 const option::Descriptor usage[] = {
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "Usage: LatencyTest <publisher|subscriber>\n\nGeneral options:" },
+    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "Usage: LatencyTest <publisher|subscriber|both>\n\nGeneral options:" },
     { HELP,    0,"h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
     { RELIABILITY,0,"r","reliability",      Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
     { SAMPLES,0,"s","samples",              Arg::Numeric,   "  -s <num>, \t--samples=<num>  \tNumber of samples." },
@@ -140,9 +147,10 @@ const option::Descriptor usage[] = {
     { USE_SECURITY, 0, "", "security",      Arg::Required,      "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
     { CERTS_PATH, 0, "", "certs",           Arg::Required,      "  --certs <arg>  \tPath where located certificates." },
 #endif
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nPublisher options:"},
+    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nPublisher/Both options:"},
     { SUBSCRIBERS,0,"n","subscribers",      Arg::Numeric,   "  -n <num>,   \t--subscribers=<arg>  \tSeed to calculate domain and topic, to isolate test." },
     { EXPORT_CSV,0,"","export_csv",         Arg::None,      "\t--export_cvs \tFlag to export a CSV file." },
+    { EXPORT_RAW_DATA,0,"","export_raw_data", Arg::String,      "\t--export_raw_data \tFile name to export all raw data as CSV." },
     { EXPORT_PREFIX,0,"","export_prefix",   Arg::String,    "\t--export_prefix \tFile prefix for the CSV file." },
     { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nSubscriber options:"},
     { ECHO_OPT, 0,"e","echo",               Arg::Required,  "  -e <arg>, \t--echo=<arg>  \tEcho mode (\"true\"/\"false\")." },
@@ -172,7 +180,7 @@ int main(int argc, char** argv)
     columns = getenv("COLUMNS") ? atoi(getenv("COLUMNS")) : 80;
 #endif
 
-    bool pub_sub = false;
+    TestAgent test_agent = TestAgent::PUBLISHER;
     int sub_number = 1;
     int n_samples = c_n_samples;
 #if HAVE_SECURITY
@@ -186,6 +194,7 @@ int main(int argc, char** argv)
     bool export_csv = false;
     bool large_data = false;
     std::string export_prefix = "";
+    std::string raw_data_file = "";
     std::string sXMLConfigFile = "";
     bool dynamic_types = false;
     int forced_domain = -1;
@@ -196,11 +205,15 @@ int main(int argc, char** argv)
     {
         if (strcmp(argv[0], "publisher") == 0)
         {
-            pub_sub = true;
+            test_agent = TestAgent::PUBLISHER;
         }
         else if (strcmp(argv[0], "subscriber") == 0)
         {
-            pub_sub = false;
+            test_agent = TestAgent::SUBSCRIBER;
+        }
+        else if (strcmp(argv[0], "both") == 0)
+        {
+            test_agent = TestAgent::BOTH;
         }
         else
         {
@@ -288,6 +301,10 @@ int main(int argc, char** argv)
 
             case EXPORT_CSV:
                 export_csv = true;
+                break;
+
+            case EXPORT_RAW_DATA:
+                raw_data_file = opt.arg;
                 break;
 
             case EXPORT_PREFIX:
@@ -401,21 +418,42 @@ int main(int argc, char** argv)
         xmlparser::XMLProfileManager::loadXMLFile(sXMLConfigFile);
     }
 
-    if (pub_sub)
+    if (test_agent == TestAgent::PUBLISHER)
     {
         cout << "Performing test with " << sub_number << " subscribers and " << n_samples << " samples" << endl;
         LatencyTestPublisher latencyPub;
-        latencyPub.init(sub_number, n_samples, reliable, seed, hostname, export_csv, export_prefix,
+        latencyPub.init(sub_number, n_samples, reliable, seed, hostname, export_csv, export_prefix, raw_data_file,
             pub_part_property_policy, pub_property_policy, large_data, sXMLConfigFile, dynamic_types, forced_domain);
         latencyPub.run();
     }
-    else
+    else if (test_agent == TestAgent::SUBSCRIBER)
     {
         LatencyTestSubscriber latencySub;
         latencySub.init(echo, n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
             large_data, sXMLConfigFile, dynamic_types, forced_domain);
         latencySub.run();
     }
+    else if (test_agent == TestAgent::BOTH)
+    {
+        cout << "Performing intraprocess test with " << sub_number << " subscribers and " << n_samples << " samples" << endl;
+
+        // Initialize publisher
+        LatencyTestPublisher latencyPub;
+        latencyPub.init(sub_number, n_samples, reliable, seed, hostname, export_csv, export_prefix, raw_data_file,
+            pub_part_property_policy, pub_property_policy, large_data, sXMLConfigFile, dynamic_types, forced_domain);
+
+        // Initialize subscriber
+        LatencyTestSubscriber latencySub;
+        latencySub.init(echo, n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
+            large_data, sXMLConfigFile, dynamic_types, forced_domain);
+
+        // Spawn run threads
+        std::thread pub_thread(&LatencyTestPublisher::run, &latencyPub);
+        std::thread sub_thread(&LatencyTestSubscriber::run, &latencySub);
+        pub_thread.join();
+        sub_thread.join();
+    }
+
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
