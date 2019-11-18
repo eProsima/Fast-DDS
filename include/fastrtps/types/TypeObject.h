@@ -75,7 +75,6 @@ public:
     RTPS_DllAPI inline const TypeIdentifier& member_type_id() const { return m_member_type_id; }
     RTPS_DllAPI inline TypeIdentifier& member_type_id() { return m_member_type_id; }
 
-    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CommonStructMember& data,
             size_t current_alignment = 0);
@@ -140,7 +139,6 @@ public:
     RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const { return m_ann_custom; }
     RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom() { return m_ann_custom; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteMemberDetail& data,
             size_t current_alignment = 0);
@@ -190,7 +188,6 @@ public:
     RTPS_DllAPI inline const NameHash& name_hash() const { return m_name_hash; }
     RTPS_DllAPI inline NameHash& name_hash() { return m_name_hash; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalMemberDetail& data,
             size_t current_alignment = 0);
@@ -245,7 +242,6 @@ public:
     RTPS_DllAPI inline const CompleteMemberDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline CompleteMemberDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteStructMember& data,
             size_t current_alignment = 0);
@@ -304,7 +300,6 @@ public:
     RTPS_DllAPI inline const MinimalMemberDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline MinimalMemberDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalStructMember& data,
             size_t current_alignment = 0);
@@ -354,7 +349,6 @@ public:
     RTPS_DllAPI inline const AppliedVerbatimAnnotation& verbatim() const { return m_verbatim; }
     RTPS_DllAPI inline AppliedVerbatimAnnotation& verbatim() { return m_verbatim; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const AppliedBuiltinTypeAnnotations& data,
             size_t current_alignment = 0);
@@ -393,7 +387,6 @@ public:
     RTPS_DllAPI MinimalTypeDetail& operator=(
             MinimalTypeDetail&& x);
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalTypeDetail& data,
             size_t current_alignment = 0);
@@ -454,7 +447,6 @@ public:
     RTPS_DllAPI inline const QualifiedTypeName& type_name() const { return m_type_name; }
     RTPS_DllAPI inline QualifiedTypeName& type_name() { return m_type_name; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteTypeDetail& data,
             size_t current_alignment = 0);
@@ -509,7 +501,6 @@ public:
     RTPS_DllAPI inline const CompleteTypeDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline CompleteTypeDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteStructHeader& data,
             size_t current_alignment = 0);
@@ -563,7 +554,6 @@ public:
     RTPS_DllAPI inline const MinimalTypeDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline MinimalTypeDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalStructHeader& data,
             size_t current_alignment = 0);
@@ -626,7 +616,6 @@ public:
     RTPS_DllAPI inline const CompleteStructMemberSeq& member_seq() const { return m_member_seq; }
     RTPS_DllAPI inline CompleteStructMemberSeq& member_seq() { return m_member_seq; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteStructType& data,
             size_t current_alignment = 0);
@@ -690,7 +679,6 @@ public:
     RTPS_DllAPI inline const MinimalStructMemberSeq& member_seq() const { return m_member_seq; }
     RTPS_DllAPI inline MinimalStructMemberSeq& member_seq() { return m_member_seq; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalStructType& data,
             size_t current_alignment = 0);
@@ -768,7 +756,6 @@ public:
     RTPS_DllAPI inline const UnionCaseLabelSeq& label_seq() const { return m_label_seq; }
     RTPS_DllAPI inline UnionCaseLabelSeq& label_seq() { return m_label_seq; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CommonUnionMember& data,
             size_t current_alignment = 0);
@@ -826,7 +813,6 @@ public:
     RTPS_DllAPI inline const CompleteMemberDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline CompleteMemberDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteUnionMember& data,
             size_t current_alignment = 0);
@@ -885,7 +871,6 @@ public:
     RTPS_DllAPI inline const MinimalMemberDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline MinimalMemberDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalUnionMember& data,
             size_t current_alignment = 0);
@@ -943,7 +928,6 @@ public:
     RTPS_DllAPI inline const TypeIdentifier& type_id() const { return m_type_id; }
     RTPS_DllAPI inline TypeIdentifier& type_id() { return m_type_id; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CommonDiscriminatorMember& data,
             size_t current_alignment = 0);
@@ -1007,7 +991,6 @@ public:
     RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const { return m_ann_custom; }
     RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom() { return m_ann_custom; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteDiscriminatorMember& data,
             size_t current_alignment = 0);
@@ -1056,7 +1039,6 @@ public:
     RTPS_DllAPI inline const CommonDiscriminatorMember& common() const { return m_common; }
     RTPS_DllAPI inline CommonDiscriminatorMember& common() { return m_common; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalDiscriminatorMember& data,
             size_t current_alignment = 0);
@@ -1102,7 +1084,6 @@ public:
     RTPS_DllAPI inline const CompleteTypeDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline CompleteTypeDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteUnionHeader& data,
             size_t current_alignment = 0);
@@ -1148,7 +1129,6 @@ public:
     RTPS_DllAPI inline const MinimalTypeDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline MinimalTypeDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalUnionHeader& data,
             size_t current_alignment = 0);
@@ -1218,7 +1198,6 @@ public:
     RTPS_DllAPI inline const CompleteUnionMemberSeq& member_seq() const { return m_member_seq; }
     RTPS_DllAPI inline CompleteUnionMemberSeq& member_seq() { return m_member_seq; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteUnionType& data,
             size_t current_alignment = 0);
@@ -1291,7 +1270,6 @@ public:
     RTPS_DllAPI inline const MinimalUnionMemberSeq& member_seq() const { return m_member_seq; }
     RTPS_DllAPI inline MinimalUnionMemberSeq& member_seq() { return m_member_seq; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalUnionType& data,
             size_t current_alignment = 0);
@@ -1349,7 +1327,6 @@ public:
     RTPS_DllAPI inline const TypeIdentifier& member_type_id() const { return m_member_type_id; }
     RTPS_DllAPI inline TypeIdentifier& member_type_id() { return m_member_type_id; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CommonAnnotationParameter& data,
             size_t current_alignment = 0);
@@ -1414,7 +1391,6 @@ public:
     RTPS_DllAPI inline const AnnotationParameterValue& default_value() const { return m_default_value; }
     RTPS_DllAPI inline AnnotationParameterValue& default_value() { return m_default_value; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteAnnotationParameter& data,
             size_t current_alignment = 0);
@@ -1479,7 +1455,6 @@ public:
     RTPS_DllAPI inline const AnnotationParameterValue& default_value() const { return m_default_value; }
     RTPS_DllAPI inline AnnotationParameterValue& default_value() { return m_default_value; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalAnnotationParameter& data,
             size_t current_alignment = 0);
@@ -1529,7 +1504,6 @@ public:
     RTPS_DllAPI inline const QualifiedTypeName& annotation_name() const { return m_annotation_name; }
     RTPS_DllAPI inline QualifiedTypeName& annotation_name() { return m_annotation_name; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteAnnotationHeader& data,
             size_t current_alignment = 0);
@@ -1568,7 +1542,6 @@ public:
     RTPS_DllAPI MinimalAnnotationHeader& operator=(
             MinimalAnnotationHeader&& x);
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalAnnotationHeader& data,
             size_t current_alignment = 0);
@@ -1629,7 +1602,6 @@ public:
     RTPS_DllAPI inline const CompleteAnnotationParameterSeq& member_seq() const { return m_member_seq; }
     RTPS_DllAPI inline CompleteAnnotationParameterSeq& member_seq() { return m_member_seq; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteAnnotationType& data,
             size_t current_alignment = 0);
@@ -1692,7 +1664,6 @@ public:
     RTPS_DllAPI inline const MinimalAnnotationParameterSeq& member_seq() const { return m_member_seq; }
     RTPS_DllAPI inline MinimalAnnotationParameterSeq& member_seq() { return m_member_seq; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalAnnotationType& data,
             size_t current_alignment = 0);
@@ -1749,7 +1720,6 @@ public:
     RTPS_DllAPI inline const TypeIdentifier& related_type() const { return m_related_type; }
     RTPS_DllAPI inline TypeIdentifier& related_type() { return m_related_type; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CommonAliasBody& data,
             size_t current_alignment = 0);
@@ -1811,7 +1781,6 @@ public:
     RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const { return m_ann_custom; }
     RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom() { return m_ann_custom; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteAliasBody& data,
             size_t current_alignment = 0);
@@ -1858,7 +1827,6 @@ public:
     RTPS_DllAPI inline const CommonAliasBody& common() const { return m_common; }
     RTPS_DllAPI inline CommonAliasBody& common() { return m_common; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalAliasBody& data,
             size_t current_alignment = 0);
@@ -1903,7 +1871,6 @@ public:
     RTPS_DllAPI inline const CompleteTypeDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline CompleteTypeDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteAliasHeader& data,
             size_t current_alignment = 0);
@@ -1941,7 +1908,6 @@ public:
     RTPS_DllAPI MinimalAliasHeader& operator=(
             MinimalAliasHeader&& x);
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalAliasHeader& data,
             size_t current_alignment = 0);
@@ -2001,7 +1967,6 @@ public:
     RTPS_DllAPI inline const CompleteAliasBody& body() const { return m_body; }
     RTPS_DllAPI inline CompleteAliasBody& body() { return m_body; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteAliasType& data,
             size_t current_alignment = 0);
@@ -2063,7 +2028,6 @@ public:
     RTPS_DllAPI inline const MinimalAliasBody& body() const { return m_body; }
     RTPS_DllAPI inline MinimalAliasBody& body() { return m_body; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalAliasType& data,
             size_t current_alignment = 0);
@@ -2119,7 +2083,6 @@ public:
     RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const { return m_ann_custom; }
     RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom() { return m_ann_custom; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteElementDetail& data,
             size_t current_alignment = 0);
@@ -2173,7 +2136,6 @@ public:
     RTPS_DllAPI inline const TypeIdentifier& type() const { return m_type; }
     RTPS_DllAPI inline TypeIdentifier& type() { return m_type; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CommonCollectionElement& data,
             size_t current_alignment = 0);
@@ -2228,7 +2190,6 @@ public:
     RTPS_DllAPI inline const CompleteElementDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline CompleteElementDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteCollectionElement& data,
             size_t current_alignment = 0);
@@ -2275,7 +2236,6 @@ public:
     RTPS_DllAPI inline const CommonCollectionElement& common() const { return m_common; }
     RTPS_DllAPI inline CommonCollectionElement& common() { return m_common; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalCollectionElement& data,
             size_t current_alignment = 0);
@@ -2321,7 +2281,6 @@ public:
     RTPS_DllAPI inline const LBound& bound() const { return m_bound; }
     RTPS_DllAPI inline LBound& bound() { return m_bound; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CommonCollectionHeader& data,
             size_t current_alignment = 0);
@@ -2375,7 +2334,6 @@ public:
     RTPS_DllAPI inline const CompleteTypeDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline CompleteTypeDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteCollectionHeader& data,
             size_t current_alignment = 0);
@@ -2422,7 +2380,6 @@ public:
     RTPS_DllAPI inline const CommonCollectionHeader& common() const { return m_common; }
     RTPS_DllAPI inline CommonCollectionHeader& common() { return m_common; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalCollectionHeader& data,
             size_t current_alignment = 0);
@@ -2485,7 +2442,6 @@ public:
     RTPS_DllAPI inline const CompleteCollectionElement& element() const { return m_element; }
     RTPS_DllAPI inline CompleteCollectionElement& element() { return m_element; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteSequenceType& data,
             size_t current_alignment = 0);
@@ -2549,7 +2505,6 @@ public:
     RTPS_DllAPI inline const MinimalCollectionElement& element() const { return m_element; }
     RTPS_DllAPI inline MinimalCollectionElement& element() { return m_element; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalSequenceType& data,
             size_t current_alignment = 0);
@@ -2598,7 +2553,6 @@ public:
     RTPS_DllAPI inline const LBoundSeq& bound_seq() const { return m_bound_seq; }
     RTPS_DllAPI inline LBoundSeq& bound_seq() { return m_bound_seq; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CommonArrayHeader& data,
             size_t current_alignment = 0);
@@ -2652,7 +2606,6 @@ public:
     RTPS_DllAPI inline const CompleteTypeDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline CompleteTypeDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteArrayHeader& data,
             size_t current_alignment = 0);
@@ -2699,7 +2652,6 @@ public:
     RTPS_DllAPI inline const CommonArrayHeader& common() const { return m_common; }
     RTPS_DllAPI inline CommonArrayHeader& common() { return m_common; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalArrayHeader& data,
             size_t current_alignment = 0);
@@ -2761,7 +2713,6 @@ public:
     RTPS_DllAPI inline const CompleteCollectionElement& element() const { return m_element; }
     RTPS_DllAPI inline CompleteCollectionElement& element() { return m_element; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteArrayType& data,
             size_t current_alignment = 0);
@@ -2825,7 +2776,6 @@ public:
     RTPS_DllAPI inline const MinimalCollectionElement& element() const { return m_element; }
     RTPS_DllAPI inline MinimalCollectionElement& element() { return m_element; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalArrayType& data,
             size_t current_alignment = 0);
@@ -2898,7 +2848,6 @@ public:
     RTPS_DllAPI inline const CompleteCollectionElement& element() const { return m_element; }
     RTPS_DllAPI inline CompleteCollectionElement& element() { return m_element; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteMapType& data,
             size_t current_alignment = 0);
@@ -2970,7 +2919,6 @@ public:
     RTPS_DllAPI inline const MinimalCollectionElement& element() const { return m_element; }
     RTPS_DllAPI inline MinimalCollectionElement& element() { return m_element; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalMapType& data,
             size_t current_alignment = 0);
@@ -3032,7 +2980,6 @@ public:
     RTPS_DllAPI inline const EnumeratedLiteralFlag& flags() const { return m_flags; }
     RTPS_DllAPI inline EnumeratedLiteralFlag& flags() { return m_flags; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CommonEnumeratedLiteral& data,
             size_t current_alignment = 0);
@@ -3089,7 +3036,6 @@ public:
     RTPS_DllAPI inline const CompleteMemberDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline CompleteMemberDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteEnumeratedLiteral& data,
             size_t current_alignment = 0);
@@ -3148,7 +3094,6 @@ public:
     RTPS_DllAPI inline const MinimalMemberDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline MinimalMemberDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalEnumeratedLiteral& data,
             size_t current_alignment = 0);
@@ -3198,7 +3143,6 @@ public:
     RTPS_DllAPI inline const BitBound& bit_bound() const { return m_bit_bound; }
     RTPS_DllAPI inline BitBound& bit_bound() { return m_bit_bound; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CommonEnumeratedHeader& data,
             size_t current_alignment = 0);
@@ -3252,7 +3196,6 @@ public:
     RTPS_DllAPI inline const CompleteTypeDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline CompleteTypeDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteEnumeratedHeader& data,
             size_t current_alignment = 0);
@@ -3299,7 +3242,6 @@ public:
     RTPS_DllAPI inline const CommonEnumeratedHeader& common() const { return m_common; }
     RTPS_DllAPI inline CommonEnumeratedHeader& common() { return m_common; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalEnumeratedHeader& data,
             size_t current_alignment = 0);
@@ -3362,7 +3304,6 @@ public:
     RTPS_DllAPI inline const CompleteEnumeratedLiteralSeq& literal_seq() const { return m_literal_seq; }
     RTPS_DllAPI inline CompleteEnumeratedLiteralSeq& literal_seq() { return m_literal_seq; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteEnumeratedType& data,
             size_t current_alignment = 0);
@@ -3426,7 +3367,6 @@ public:
     RTPS_DllAPI inline const MinimalEnumeratedLiteralSeq& literal_seq() const { return m_literal_seq; }
     RTPS_DllAPI inline MinimalEnumeratedLiteralSeq& literal_seq() { return m_literal_seq; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalEnumeratedType& data,
             size_t current_alignment = 0);
@@ -3484,7 +3424,6 @@ public:
     RTPS_DllAPI inline const BitflagFlag& flags() const { return m_flags; }
     RTPS_DllAPI inline BitflagFlag& flags() { return m_flags; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CommonBitflag& data,
             size_t current_alignment = 0);
@@ -3539,7 +3478,6 @@ public:
     RTPS_DllAPI inline const CompleteMemberDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline CompleteMemberDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteBitflag& data,
             size_t current_alignment = 0);
@@ -3595,7 +3533,6 @@ public:
     RTPS_DllAPI inline const MinimalMemberDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline MinimalMemberDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalBitflag& data,
             size_t current_alignment = 0);
@@ -3645,7 +3582,6 @@ public:
     RTPS_DllAPI inline const BitBound& bit_bound() const { return m_bit_bound; }
     RTPS_DllAPI inline BitBound& bit_bound() { return m_bit_bound; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CommonBitmaskHeader& data,
             size_t current_alignment = 0);
@@ -3709,7 +3645,6 @@ public:
     RTPS_DllAPI inline const CompleteBitflagSeq& flag_seq() const { return m_flag_seq; }
     RTPS_DllAPI inline CompleteBitflagSeq& flag_seq() { return m_flag_seq; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteBitmaskType& data,
             size_t current_alignment = 0);
@@ -3773,7 +3708,6 @@ public:
     RTPS_DllAPI inline const MinimalBitflagSeq& flag_seq() const { return m_flag_seq; }
     RTPS_DllAPI inline MinimalBitflagSeq& flag_seq() { return m_flag_seq; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalBitmaskType& data,
             size_t current_alignment = 0);
@@ -3846,7 +3780,6 @@ public:
     RTPS_DllAPI inline const TypeKind& holder_type() const { return m_holder_type; }
     RTPS_DllAPI inline TypeKind& holder_type() { return m_holder_type; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CommonBitfield& data,
             size_t current_alignment = 0);
@@ -3903,7 +3836,6 @@ public:
     RTPS_DllAPI inline const CompleteMemberDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline CompleteMemberDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteBitfield& data,
             size_t current_alignment = 0);
@@ -3959,7 +3891,6 @@ public:
     RTPS_DllAPI inline const CommonBitfield& common() const { return m_common; }
     RTPS_DllAPI inline CommonBitfield& common() { return m_common; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalBitfield& data,
             size_t current_alignment = 0);
@@ -4014,7 +3945,6 @@ public:
     RTPS_DllAPI inline const CompleteTypeDetail& detail() const { return m_detail; }
     RTPS_DllAPI inline CompleteTypeDetail& detail() { return m_detail; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteBitsetHeader& data,
             size_t current_alignment = 0);
@@ -4061,7 +3991,6 @@ public:
     RTPS_DllAPI inline const TypeIdentifier& base_type() const { return m_base_type; }
     RTPS_DllAPI inline TypeIdentifier& base_type() { return m_base_type; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalBitsetHeader& data,
             size_t current_alignment = 0);
@@ -4122,7 +4051,6 @@ public:
     RTPS_DllAPI inline const CompleteBitfieldSeq& field_seq() const { return m_field_seq; }
     RTPS_DllAPI inline CompleteBitfieldSeq& field_seq() { return m_field_seq; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteBitsetType& data,
             size_t current_alignment = 0);
@@ -4186,7 +4114,6 @@ public:
     RTPS_DllAPI inline const MinimalBitfieldSeq& field_seq() const { return m_field_seq; }
     RTPS_DllAPI inline MinimalBitfieldSeq& field_seq() { return m_field_seq; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalBitsetType& data,
             size_t current_alignment = 0);
@@ -4231,7 +4158,6 @@ public:
     RTPS_DllAPI CompleteExtendedType& operator=(
             CompleteExtendedType&& x);
 
-    // RTPS_DllAPI  static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteExtendedType& data,
             size_t current_alignment = 0);
@@ -4269,7 +4195,6 @@ public:
     RTPS_DllAPI MinimalExtendedType& operator=(
             MinimalExtendedType&& x);
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalExtendedType& data,
             size_t current_alignment = 0);
@@ -4363,7 +4288,6 @@ public:
     RTPS_DllAPI const CompleteExtendedType& extended_type() const;
     RTPS_DllAPI CompleteExtendedType& extended_type();
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const CompleteTypeObject& data,
             size_t current_alignment = 0);
@@ -4470,7 +4394,6 @@ public:
     RTPS_DllAPI const MinimalExtendedType& extended_type() const;
     RTPS_DllAPI MinimalExtendedType& extended_type();
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const MinimalTypeObject& data,
             size_t current_alignment = 0);
@@ -4619,18 +4542,6 @@ public:
      */
     RTPS_DllAPI MinimalTypeObject& minimal();
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-
-    /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
-    // static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
-
-#endif
-
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -4715,7 +4626,6 @@ public:
     RTPS_DllAPI inline const TypeObject& type_object() const { return m_type_object; }
     RTPS_DllAPI inline TypeObject& type_object() { return m_type_object; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const TypeIdentifierTypeObjectPair& data,
             size_t current_alignment = 0);
@@ -4764,7 +4674,6 @@ public:
     RTPS_DllAPI inline const TypeIdentifier& type_identifier2() const { return m_type_identifier2; }
     RTPS_DllAPI inline TypeIdentifier& type_identifier2() { return m_type_identifier2; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const TypeIdentifierPair& data,
             size_t current_alignment = 0);
@@ -4815,7 +4724,6 @@ public:
     RTPS_DllAPI inline const uint32_t& typeobject_serialized_size() const { return m_typeobject_serialized_size; }
     RTPS_DllAPI inline uint32_t& typeobject_serialized_size() { return m_typeobject_serialized_size; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const TypeIdentifierWithSize& data,
             size_t current_alignment = 0);
@@ -4874,7 +4782,6 @@ public:
     RTPS_DllAPI inline const TypeIdentifierWithSizeSeq& dependent_typeids() const { return m_dependent_typeids; }
     RTPS_DllAPI inline TypeIdentifierWithSizeSeq& dependent_typeids() { return m_dependent_typeids; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const TypeIdentifierWithDependencies& data,
             size_t current_alignment = 0);
@@ -4929,7 +4836,6 @@ public:
     RTPS_DllAPI inline const TypeIdentifierWithDependencies& complete() const { return m_complete; }
     RTPS_DllAPI inline TypeIdentifierWithDependencies& complete() { return m_complete; }
 
-    // RTPS_DllAPI static size_t getMaxCdrSerializedSize(size_t current_alignment = 0);
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const TypeInformation& data,
             size_t current_alignment = 0);
