@@ -23,10 +23,14 @@
 #include "HelloWorldPubSubTypes.h"
 
 #include <dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <dds/pub/Publisher.hpp>
 #include <dds/pub/DataWriter.hpp>
 #include <dds/pub/DataWriterListener.hpp>
+#include <dds/topic/Topic.hpp>
+#include <dds/core/status/Status.hpp>
+
+#include <fastdds/dds/topic/DataWriter.hpp>
+#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 
 class HelloWorldPublisher
 {

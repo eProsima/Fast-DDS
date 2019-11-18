@@ -19,7 +19,7 @@
 #define EPROSIMA_DDS_TOPIC_QOS_DETAIL_TOPIC_QOS_HPP_
 
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
-#include <dds/core/policy/CorePolicy.hpp>
+//#include <dds/core/policy/CorePolicy.hpp>
 
 namespace dds {
 namespace topic {

@@ -27,7 +27,6 @@
 #include <dds/sub/DataReader.hpp>
 #include <dds/sub/DataReaderListener.hpp>
 #include <fastdds/dds/topic/DataReaderListener.hpp>
-#include <dds/sub/SampleInfo.hpp>
 
 class HelloWorldSubscriber
 {
@@ -68,9 +67,6 @@ private:
         ~SubListener() override
         {}
 
-        //void on_data_available(
-        //        eprosima::fastdds::dds::DataReader* reader) override;
-
         void on_data_available(
                 dds::sub::DataReader<HelloWorld>& reader) override;
 
@@ -83,8 +79,6 @@ private:
                 const dds::core::status::SubscriptionMatchedStatus& status) override;
 
         HelloWorld hello_;
-
-        dds::sub::SampleInfo info_;
 
         int matched_;
 

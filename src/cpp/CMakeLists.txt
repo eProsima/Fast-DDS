@@ -31,6 +31,18 @@ endif(WIN32)
 set(${PROJECT_NAME}_source_files
     ${ALL_HEADERS}
 
+    dds/domain/DomainParticipant.cpp
+    dds/pub/Publisher.cpp
+    dds/sub/Subscriber.cpp
+    dds/sub/SampleInfo.cpp
+    dds/core/Time.cpp
+    dds/core/Duration.cpp
+    dds/core/InstanceHandle.cpp
+    dds/core/types.cpp
+    dds/core/policy/CorePolicy.cpp
+    dds/core/status/Status.cpp
+    dds/core/Exception.cpp
+
     fastdds/log/Log.cpp
     fastdds/log/StdoutConsumer.cpp
     fastdds/log/FileConsumer.cpp
@@ -195,18 +207,6 @@ set(${PROJECT_NAME}_source_files
     rtps/persistence/SQLite3PersistenceService.cpp
     rtps/persistence/sqlite3.c
     fastrtps_deprecated/utils/TimedConditionVariable.cpp
-
-    dds/domain/detail/DomainParticipant.cpp
-    dds/pub/Publisher.cpp
-    dds/sub/Subscriber.cpp
-    dds/sub/SampleInfo.cpp
-    dds/core/Time.cpp
-    dds/core/Duration.cpp
-    dds/core/InstanceHandle.cpp
-    dds/core/types.cpp
-    dds/core/policy/CorePolicy.cpp
-    dds/core/status/Status.cpp
-    dds/core/Exception.cpp
     )
 
 # TLS Support
@@ -403,6 +403,11 @@ set_public_headers_directory(${PROJECT_SOURCE_DIR}/include ${PROJECT_NAME}
     INSTALL
     )
 set_public_headers_directory(${PROJECT_SOURCE_DIR}/include fastdds
+    DESTINATION ${INCLUDE_INSTALL_DIR}
+    COMPONENT headers
+    INSTALL
+    )
+set_public_headers_directory(${PROJECT_SOURCE_DIR}/include dds
     DESTINATION ${INCLUDE_INSTALL_DIR}
     COMPONENT headers
     INSTALL

@@ -1112,7 +1112,7 @@ public:
      * @return a Reliability QoS instance with the kind set to RELIABLE and the max_blocking_time
      * set to the supplied value
      */
-    static Reliability Reliable(
+    static OMG_DDS_API Reliability Reliable(
             const dds::core::Duration& max_blocking_time = dds::core::Duration::from_millisecs(100));
 
     /**

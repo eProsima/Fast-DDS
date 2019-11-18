@@ -78,14 +78,14 @@ public:
      * An application would normally not create a SampleInfo itself.
      * So, do not put the creation in the API documentation for clarity.
      */
-    SampleInfo();
+    OMG_DDS_API SampleInfo();
 
-    SampleInfo(
+    OMG_DDS_API SampleInfo(
             detail::SampleInfo sample_info);
 
     /** @endcond */
 
-    ~SampleInfo();
+    OMG_DDS_API ~SampleInfo();
 
     /**
      * Gets the timestamp of the sample.
@@ -141,7 +141,7 @@ public:
      *
      * @return the valid_data flag
      */
-    bool valid() const;
+    bool OMG_DDS_API valid() const;
 
     /**
      * Gets the InstanceHandle of the associated data Sample.

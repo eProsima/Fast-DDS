@@ -23,8 +23,10 @@
 #include <dds/sub/detail/Subscriber.hpp>
 
 #include <dds/sub/qos/DataReaderQos.hpp>
+#include <dds/sub/qos/SubscriberQos.hpp>
 
 #include <dds/core/Entity.hpp>
+#include <dds/core/status/Status.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 
 namespace dds {
@@ -102,14 +104,14 @@ public:
      * @throws dds::core::InconsistentPolicyError
      *                  The parameter qos contains conflicting QosPolicy settings.
      */
-    Subscriber(
+    OMG_DDS_API Subscriber(
             const ::dds::domain::DomainParticipant& dp,
             const qos::SubscriberQos& qos,
             SubscriberListener* listener = NULL,
             const dds::core::status::StatusMask& mask = dds::core::status::StatusMask::none());
 
     /** @cond */
-    virtual ~Subscriber();
+    virtual OMG_DDS_API ~Subscriber();
     /** @endcond */
 
     /**

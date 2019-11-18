@@ -24,6 +24,7 @@
 #include <string>
 
 #include <dds/core/detail/conformance.hpp>
+#include <dds/core/refmacros.hpp>
 #include <dds/core/types.hpp>
 #include <dds/core/Time.hpp>
 #include <dds/core/Entity.hpp>
@@ -91,7 +92,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    DomainParticipant(
+    OMG_DDS_API DomainParticipant(
             uint32_t id);
 
     /**
@@ -120,10 +121,10 @@ public:
             const dds::core::status::StatusMask& event_mask = dds::core::status::StatusMask::none());
 
     /** @cond */
-    virtual ~DomainParticipant();
+    virtual OMG_DDS_API ~DomainParticipant();
     /** @endcond */
 
-    void delete_participant();
+    void OMG_DDS_API delete_participant();
 
     /**
      * Register a listener with the DomainParticipant.
@@ -463,7 +464,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    dds::topic::qos::TopicQos default_topic_qos() const;
+    dds::topic::qos::TopicQos OMG_DDS_API default_topic_qos() const;
 
     /**
      * Sets the default TopicQos of the DomainParticipant.

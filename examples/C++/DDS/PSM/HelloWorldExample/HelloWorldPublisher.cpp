@@ -19,6 +19,11 @@
 
 #include "HelloWorldPublisher.h"
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <dds/pub/qos/DataWriterQos.hpp>
+#include <dds/topic/qos/TopicQos.hpp>
+#include <dds/core/policy/CorePolicy.hpp>
+
 #include <thread>
 
 using namespace eprosima::fastdds::dds;
@@ -35,11 +40,7 @@ bool HelloWorldPublisher::init()
 {
     hello_.index(0);
     hello_.message("HelloWorld");
-    /*
-    eprosima::fastrtps::ParticipantAttributes participant_att;
-    participant_att.rtps.builtin.domainId = 0;
-    participant_att.rtps.setName("Participant_pub");
-    */
+
     participant_ = dds::domain::DomainParticipant(0);
 
     if (participant_ == dds::core::null)
@@ -50,22 +51,15 @@ bool HelloWorldPublisher::init()
     //REGISTER THE TYPE
     type_.register_type(participant_.delegate().get(), type_.get_type_name());
 
-
     // TopicQos
-    dds::topic::qos::TopicQos topicQos
-        = participant_.default_topic_qos()
-        << dds::core::policy::Reliability::Reliable();
+	dds::topic::qos::TopicQos topicQos
+		= participant_.default_topic_qos()
+		<< dds::core::policy::Reliability::Reliable();
 
     topic_ = dds::topic::Topic<HelloWorld>(participant_, "HelloWorldTopic", "HelloWorld", topicQos);
 
     //CREATE THE PUBLISHER
-    /*eprosima::fastrtps::PublisherAttributes pub_att;
-    pub_att.topic.topicDataType = "HelloWorld";
-    pub_att.topic.topicName = "HelloWorldTopic";
-    pub_att.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    */
     publisher_ = ::dds::pub::Publisher(participant_);
-    //publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, pub_att, nullptr);
 
     if (publisher_ == dds::core::null)
     {
@@ -73,11 +67,10 @@ bool HelloWorldPublisher::init()
     }
 
     // DataWriterQos
-    dds::pub::qos::DataWriterQos dwqos = topicQos;
+	dds::pub::qos::DataWriterQos dwqos = topicQos;
 
     // CREATE THE WRITER
     writer_ = dds::pub::DataWriter<HelloWorld>(publisher_, topic_, dwqos, &listener_);
-    //writer_ = publisher_->create_datawriter(pub_att.topic, pub_att.qos, &listener_);
 
     if (writer_ == dds::core::null)
     {

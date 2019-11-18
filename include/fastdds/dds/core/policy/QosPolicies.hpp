@@ -198,7 +198,7 @@ public:
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(
+    bool RTPS_DllAPI addToCDRMessage(
             fastrtps::rtps::CDRMessage_t* msg) override;
 
 public:
@@ -249,7 +249,7 @@ public:
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(
+    bool RTPS_DllAPI addToCDRMessage(
             fastrtps::rtps::CDRMessage_t* msg) override;
 
 public:
@@ -300,7 +300,7 @@ public:
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(
+    bool RTPS_DllAPI addToCDRMessage(
             fastrtps::rtps::CDRMessage_t* msg) override;
 
 public:
@@ -385,7 +385,7 @@ public:
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(
+    bool RTPS_DllAPI addToCDRMessage(
             fastrtps::rtps::CDRMessage_t* msg) override;
 
 public:
@@ -449,8 +449,8 @@ public:
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(
-            fastrtps::rtps::CDRMessage_t* msg) override;
+	bool RTPS_DllAPI addToCDRMessage(
+			fastrtps::rtps::CDRMessage_t* msg) override;
 
 public:
 
@@ -525,7 +525,7 @@ public:
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(
+    bool RTPS_DllAPI addToCDRMessage(
             fastrtps::rtps::CDRMessage_t* msg) override;
 
 public:
@@ -587,7 +587,7 @@ public:
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(
+    bool RTPS_DllAPI addToCDRMessage(
             fastrtps::rtps::CDRMessage_t* msg) override;
 
 public:
@@ -928,7 +928,7 @@ public:
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(
+    bool RTPS_DllAPI addToCDRMessage(
             fastrtps::rtps::CDRMessage_t* msg) override;
 
     /**
@@ -1115,7 +1115,7 @@ public:
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(
+    bool RTPS_DllAPI addToCDRMessage(
             fastrtps::rtps::CDRMessage_t* msg) override;
 
 public:
@@ -1199,7 +1199,7 @@ public:
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(
+    bool RTPS_DllAPI addToCDRMessage(
             fastrtps::rtps::CDRMessage_t* msg) override;
 };
 
@@ -1271,7 +1271,7 @@ public:
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(
+    bool RTPS_DllAPI addToCDRMessage(
             fastrtps::rtps::CDRMessage_t* msg) override;
 
 public:
@@ -1327,7 +1327,7 @@ public:
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(
+    bool RTPS_DllAPI addToCDRMessage(
             fastrtps::rtps::CDRMessage_t* msg) override;
 
 public:
@@ -1432,7 +1432,7 @@ public:
      * @param msg Message to append the QoS Policy to.
      * @return True if the modified CDRMessage is valid.
      */
-    bool addToCDRMessage(
+    bool RTPS_DllAPI addToCDRMessage(
             fastrtps::rtps::CDRMessage_t* msg) override;
 };
 

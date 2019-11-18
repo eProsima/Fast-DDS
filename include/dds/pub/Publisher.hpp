@@ -76,7 +76,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    Publisher(
+    OMG_DDS_API Publisher(
             const dds::domain::DomainParticipant& dp);
 
     /**
@@ -101,14 +101,14 @@ public:
      * @throws dds::core::InconsistentPolicyError
      *                  The parameter qos contains conflicting QosPolicy settings.
      */
-    Publisher(
+    OMG_DDS_API Publisher(
             const dds::domain::DomainParticipant& dp,
             const qos::PublisherQos& qos,
             PublisherListener* listener = NULL,
             const dds::core::status::StatusMask& mask = dds::core::status::StatusMask::none());
 
     /** @cond */
-    virtual ~Publisher();
+    virtual OMG_DDS_API ~Publisher();
     /** @endcond */
 
     //==========================================================================
