@@ -37,19 +37,39 @@
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 
-class TimeStats{
+class TimeStats
+{
 public:
-    TimeStats() :nbytes(0), received(0), m_min(0), m_max(0), p50(0), p90(0), p99(0), p9999(0), mean(0), stdev(0){}
-    ~TimeStats(){}
+
+    TimeStats()
+        : nbytes(0)
+        , received(0)
+        , m_min(0)
+        , m_max(0)
+        , p50(0)
+        , p90(0)
+        , p99(0)
+        , p9999(0)
+        , mean(0)
+        , stdev(0)
+    {
+    }
+
+    ~TimeStats()
+    {
+    }
+
     uint64_t nbytes;
     unsigned int received;
     std::chrono::duration<double, std::micro>  m_min, m_max;
     double p50, p90, p99, p9999, mean, stdev;
 };
 
-class LatencyTestPublisher {
+class LatencyTestPublisher
+{
 
 public:
+
     LatencyTestPublisher();
     virtual ~LatencyTestPublisher();
 
@@ -63,7 +83,7 @@ public:
     int n_subscribers;
     unsigned int n_samples;
     eprosima::fastrtps::SampleInfo_t m_sampleinfo;
-    std::vector<std::chrono::duration<double, std::micro>> times_;
+    std::vector<std::chrono::duration<double, std::micro> > times_;
     std::vector<TimeStats> m_stats;
     std::mutex mutex_;
     int disc_count_;
@@ -78,60 +98,119 @@ public:
     std::string raw_data_file_;
     uint64_t raw_sample_count_;
     std::string m_exportPrefix;
-    bool init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname, bool export_csv,
-        const std::string& export_prefix,
-        std::string raw_data_file,
-        const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-        const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
-        const std::string& sXMLConfigFile, bool dynamic_types, int forced_domain);
+    bool init(
+            int n_sub,
+            int n_sam,
+            bool reliable,
+            uint32_t pid,
+            bool hostname,
+            bool export_csv,
+            const std::string& export_prefix,
+            std::string raw_data_file,
+            const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
+            const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+            bool large_data,
+            const std::string& sXMLConfigFile,
+            bool dynamic_types,
+            int forced_domain);
     void run();
-    void analyzeTimes(uint32_t datasize);
-    bool test(uint32_t datasize);
-    void printStat(TimeStats& TS);
-    void export_raw_data(uint32_t datasize);
+    void analyzeTimes(
+            uint32_t datasize);
+    bool test(
+            uint32_t datasize);
+    void printStat(
+            TimeStats& TS);
+    void export_raw_data(
+            uint32_t datasize);
 
     class DataPubListener : public eprosima::fastrtps::PublisherListener
     {
-    public:
-        DataPubListener(LatencyTestPublisher* up) :mp_up(up), n_matched(0) {}
-        ~DataPubListener() {}
-        void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
-            eprosima::fastrtps::rtps::MatchingInfo& info);
+public:
+
+        DataPubListener(
+                LatencyTestPublisher* up)
+            : mp_up(up)
+            , n_matched(0)
+        {
+        }
+
+        ~DataPubListener()
+        {
+        }
+
+        void onPublicationMatched(
+                eprosima::fastrtps::Publisher* pub,
+                eprosima::fastrtps::rtps::MatchingInfo& info);
         LatencyTestPublisher* mp_up;
         int n_matched;
     } m_datapublistener;
 
     class DataSubListener : public eprosima::fastrtps::SubscriberListener
     {
-    public:
-        DataSubListener(LatencyTestPublisher* up) :mp_up(up), n_matched(0) {}
-        ~DataSubListener() {}
-        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
-            eprosima::fastrtps::rtps::MatchingInfo& into);
-        void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+public:
+
+        DataSubListener(
+                LatencyTestPublisher* up)
+            : mp_up(up)
+            , n_matched(0)
+        {
+        }
+
+        ~DataSubListener()
+        {
+        }
+
+        void onSubscriptionMatched(
+                eprosima::fastrtps::Subscriber* sub,
+                eprosima::fastrtps::rtps::MatchingInfo& into);
+        void onNewDataMessage(
+                eprosima::fastrtps::Subscriber* sub);
         LatencyTestPublisher* mp_up;
         int n_matched;
     } m_datasublistener;
 
     class CommandPubListener : public eprosima::fastrtps::PublisherListener
     {
-    public:
-        CommandPubListener(LatencyTestPublisher* up) :mp_up(up), n_matched(0) {}
-        ~CommandPubListener() {}
-        void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
-            eprosima::fastrtps::rtps::MatchingInfo& info);
+public:
+
+        CommandPubListener(
+                LatencyTestPublisher* up)
+            : mp_up(up)
+            , n_matched(0)
+        {
+        }
+
+        ~CommandPubListener()
+        {
+        }
+
+        void onPublicationMatched(
+                eprosima::fastrtps::Publisher* pub,
+                eprosima::fastrtps::rtps::MatchingInfo& info);
         LatencyTestPublisher* mp_up;
         int n_matched;
     } m_commandpublistener;
 
     class CommandSubListener : public eprosima::fastrtps::SubscriberListener
     {
-    public:
-        CommandSubListener(LatencyTestPublisher* up) :mp_up(up), n_matched(0) {}
-        ~CommandSubListener() {}
-        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
-            eprosima::fastrtps::rtps::MatchingInfo& into);
-        void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+public:
+
+        CommandSubListener(
+                LatencyTestPublisher* up)
+            : mp_up(up)
+            , n_matched(0)
+        {
+        }
+
+        ~CommandSubListener()
+        {
+        }
+
+        void onSubscriptionMatched(
+                eprosima::fastrtps::Subscriber* sub,
+                eprosima::fastrtps::rtps::MatchingInfo& into);
+        void onNewDataMessage(
+                eprosima::fastrtps::Subscriber* sub);
         LatencyTestPublisher* mp_up;
         int n_matched;
     } m_commandsublistener;

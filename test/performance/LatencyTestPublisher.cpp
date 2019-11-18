@@ -39,28 +39,28 @@ uint32_t dataspub_large[] = {63996, 131068};
 std::vector<uint32_t> data_size_pub;
 
 
-LatencyTestPublisher::LatencyTestPublisher():
-    mp_participant(nullptr),
-    mp_datapub(nullptr),
-    mp_commandpub(nullptr),
-    mp_datasub(nullptr),
-    mp_commandsub(nullptr),
-    t_overhead_(0.0),
-    n_subscribers(0),
-    n_samples(0),
-    disc_count_(0),
-    comm_count_(0),
-    data_count_(0),
-    m_status(0),
-    n_received(0),
-    m_datapublistener(nullptr),
-    m_datasublistener(nullptr),
-    m_commandpublistener(nullptr),
-    m_commandsublistener(nullptr),
-    mp_latency_in(nullptr),
-    mp_latency_out(nullptr),
-    m_DynData_in(nullptr),
-    m_DynData_out(nullptr)
+LatencyTestPublisher::LatencyTestPublisher()
+    : mp_participant(nullptr)
+    , mp_datapub(nullptr)
+    , mp_commandpub(nullptr)
+    , mp_datasub(nullptr)
+    , mp_commandsub(nullptr)
+    , t_overhead_(0.0)
+    , n_subscribers(0)
+    , n_samples(0)
+    , disc_count_(0)
+    , comm_count_(0)
+    , data_count_(0)
+    , m_status(0)
+    , n_received(0)
+    , m_datapublistener(nullptr)
+    , m_datasublistener(nullptr)
+    , m_commandpublistener(nullptr)
+    , m_commandsublistener(nullptr)
+    , mp_latency_in(nullptr)
+    , mp_latency_out(nullptr)
+    , m_DynData_in(nullptr)
+    , m_DynData_out(nullptr)
 {
     m_forcedDomain = -1;
     m_datapublistener.mp_up = this;
@@ -76,9 +76,20 @@ LatencyTestPublisher::~LatencyTestPublisher()
     Domain::removeParticipant(mp_participant);
 }
 
-bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname, bool export_csv,
-        const std::string& export_prefix, std::string raw_data_file, const PropertyPolicy& part_property_policy,
-        const PropertyPolicy& property_policy, bool large_data, const std::string& sXMLConfigFile, bool dynamic_types,
+bool LatencyTestPublisher::init(
+        int n_sub,
+        int n_sam,
+        bool reliable,
+        uint32_t pid,
+        bool hostname,
+        bool export_csv,
+        const std::string& export_prefix,
+        std::string raw_data_file,
+        const PropertyPolicy& part_property_policy,
+        const PropertyPolicy& property_policy,
+        bool large_data,
+        const std::string& sXMLConfigFile,
+        bool dynamic_types,
         int forced_domain)
 {
     m_sXMLConfigFile = sXMLConfigFile;
@@ -91,7 +102,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     m_forcedDomain = forced_domain;
     raw_data_file_ = raw_data_file;
 
-    if(!large_data)
+    if (!large_data)
     {
         data_size_pub.assign(dataspub, dataspub + sizeof(dataspub) / sizeof(uint32_t) );
     }
@@ -108,9 +119,9 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
         // Add members to the struct.
         struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
         struct_type_builder->add_member(1, "data",
-            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), data_size_pub.back()
-            ));
+                DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
+                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), data_size_pub.back()
+                    ));
         struct_type_builder->set_name("LatencyType");
 
         m_pDynType = struct_type_builder->build();
@@ -125,7 +136,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
        struct tm * now = localtime(&t);
        strftime(date_buffer, 9, "%Y%m%d", now);
        strftime(time_buffer, 7, "%H%M%S", now);
-       */
+     */
     for (std::vector<uint32_t>::iterator it = data_size_pub.begin(); it != data_size_pub.end(); ++it)
     {
         output_file_minimum << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"";
@@ -137,7 +148,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
         }
 
         std::string str_reliable = "besteffort";
-        if(reliable_)
+        if (reliable_)
         {
             str_reliable = "reliable";
         }
@@ -194,7 +205,8 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
                 break;
             case 131072:
                 output_file_131072 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
-                output_file_131072 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
+                output_file_131072 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" <<
+                    std::endl;
                 break;
             default:
                 break;
@@ -226,7 +238,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
             std::cout << "Loading from: " << m_sXMLConfigFile << std::endl;
             ParticipantAttributes participant_att;
             if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
-                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
+                    eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
                     participant_att))
             {
                 participant_att.rtps.builtin.domainId = m_forcedDomain;
@@ -288,11 +300,13 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
 
     if (m_sXMLConfigFile.length() > 0)
     {
-        mp_datapub = Domain::createPublisher(mp_participant, profile_name, (PublisherListener*)&this->m_datapublistener);
+        mp_datapub =
+                Domain::createPublisher(mp_participant, profile_name, (PublisherListener*)&this->m_datapublistener);
     }
     else
     {
-        mp_datapub = Domain::createPublisher(mp_participant, PubDataparam, (PublisherListener*)&this->m_datapublistener);
+        mp_datapub =
+                Domain::createPublisher(mp_participant, PubDataparam, (PublisherListener*)&this->m_datapublistener);
     }
 
     if (mp_datapub == nullptr)
@@ -404,16 +418,18 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     return true;
 }
 
-void LatencyTestPublisher::DataPubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
+void LatencyTestPublisher::DataPubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
-        cout << C_MAGENTA << "Data Pub Matched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Data Pub Matched " << C_DEF << endl;
 
         n_matched++;
-        if(n_matched > mp_up->n_subscribers)
+        if (n_matched > mp_up->n_subscribers)
         {
             std::cout << "More matched subscribers than expected" << std::endl;
             mp_up->m_status = -1;
@@ -430,16 +446,18 @@ void LatencyTestPublisher::DataPubListener::onPublicationMatched(Publisher* /*pu
     mp_up->disc_cond_.notify_one();
 }
 
-void LatencyTestPublisher::DataSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void LatencyTestPublisher::DataSubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
-        cout << C_MAGENTA << "Data Sub Matched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Data Sub Matched " << C_DEF << endl;
 
         n_matched++;
-        if(n_matched > mp_up->n_subscribers)
+        if (n_matched > mp_up->n_subscribers)
         {
             std::cout << "More matched subscribers than expected" << std::endl;
             mp_up->m_status = -1;
@@ -456,16 +474,18 @@ void LatencyTestPublisher::DataSubListener::onSubscriptionMatched(Subscriber* /*
     mp_up->disc_cond_.notify_one();
 }
 
-void LatencyTestPublisher::CommandPubListener::onPublicationMatched(Publisher* /*pub*/, MatchingInfo& info)
+void LatencyTestPublisher::CommandPubListener::onPublicationMatched(
+        Publisher* /*pub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
-        cout << C_MAGENTA << "Command Pub Matched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Command Pub Matched " << C_DEF << endl;
 
         n_matched++;
-        if(n_matched > mp_up->n_subscribers)
+        if (n_matched > mp_up->n_subscribers)
         {
             std::cout << "More matched subscribers than expected" << std::endl;
             mp_up->m_status = -1;
@@ -482,16 +502,18 @@ void LatencyTestPublisher::CommandPubListener::onPublicationMatched(Publisher* /
     mp_up->disc_cond_.notify_one();
 }
 
-void LatencyTestPublisher::CommandSubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void LatencyTestPublisher::CommandSubListener::onSubscriptionMatched(
+        Subscriber* /*sub*/,
+        MatchingInfo& info)
 {
     std::unique_lock<std::mutex> lock(mp_up->mutex_);
 
-    if(info.status == MATCHED_MATCHING)
+    if (info.status == MATCHED_MATCHING)
     {
-        cout << C_MAGENTA << "Command Sub Matched "<<C_DEF<<endl;
+        cout << C_MAGENTA << "Command Sub Matched " << C_DEF << endl;
 
         n_matched++;
-        if(n_matched > mp_up->n_subscribers)
+        if (n_matched > mp_up->n_subscribers)
         {
             std::cout << "More matched subscribers than expected" << std::endl;
             mp_up->m_status = -1;
@@ -508,17 +530,18 @@ void LatencyTestPublisher::CommandSubListener::onSubscriptionMatched(Subscriber*
     mp_up->disc_cond_.notify_one();
 }
 
-void LatencyTestPublisher::CommandSubListener::onNewDataMessage(Subscriber* subscriber)
+void LatencyTestPublisher::CommandSubListener::onNewDataMessage(
+        Subscriber* subscriber)
 {
     TestCommandType command;
     SampleInfo_t info;
     //	cout << "COMMAND RECEIVED"<<endl;
-    if(subscriber->takeNextData((void*)&command,&info))
+    if (subscriber->takeNextData((void*)&command, &info))
     {
-        if(info.sampleKind == ALIVE)
+        if (info.sampleKind == ALIVE)
         {
             //cout << "ALIVE "<<command.m_command<<endl;
-            if(command.m_command == BEGIN)
+            if (command.m_command == BEGIN)
             {
                 //	cout << "POSTING"<<endl;
                 mp_up->mutex_.lock();
@@ -534,24 +557,26 @@ void LatencyTestPublisher::CommandSubListener::onNewDataMessage(Subscriber* subs
     }
 }
 
-void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* subscriber)
+void LatencyTestPublisher::DataSubListener::onNewDataMessage(
+        Subscriber* subscriber)
 {
     if (mp_up->dynamic_data)
     {
-        subscriber->takeNextData((void*)mp_up->m_DynData_in,&mp_up->m_sampleinfo);
+        subscriber->takeNextData((void*)mp_up->m_DynData_in, &mp_up->m_sampleinfo);
         if (mp_up->m_DynData_in->get_uint32_value(0) == mp_up->m_DynData_out->get_uint32_value(0))
         {
             // Factor of 2 below is to calculate the roundtrip divided by two. Note that the overhead does not
             // need to be halved, as we access the clock twice per round trip
             mp_up->t_end_ = std::chrono::steady_clock::now();
-            mp_up->times_.push_back(std::chrono::duration<double, std::micro>(mp_up->t_end_ - mp_up->t_start_) / 2. - mp_up->t_overhead_);
+            mp_up->times_.push_back(std::chrono::duration<double, std::micro>(
+                        mp_up->t_end_ - mp_up->t_start_) / 2. - mp_up->t_overhead_);
             mp_up->n_received++;
 
             // Reset seqnum from out data
             mp_up->m_DynData_out->set_uint32_value(0, 0);
 
             mp_up->mutex_.lock();
-            if(mp_up->data_count_ == 0)
+            if (mp_up->data_count_ == 0)
             {
                 ++mp_up->data_count_;
                 mp_up->data_cond_.notify_one();
@@ -561,18 +586,19 @@ void LatencyTestPublisher::DataSubListener::onNewDataMessage(Subscriber* subscri
     }
     else
     {
-        subscriber->takeNextData((void*)mp_up->mp_latency_in,&mp_up->m_sampleinfo);
-        if(mp_up->mp_latency_in->seqnum == mp_up->mp_latency_out->seqnum)
+        subscriber->takeNextData((void*)mp_up->mp_latency_in, &mp_up->m_sampleinfo);
+        if (mp_up->mp_latency_in->seqnum == mp_up->mp_latency_out->seqnum)
         {
             mp_up->t_end_ = std::chrono::steady_clock::now();
-            mp_up->times_.push_back(std::chrono::duration<double, std::micro>(mp_up->t_end_ - mp_up->t_start_) / 2. - mp_up->t_overhead_);
+            mp_up->times_.push_back(std::chrono::duration<double, std::micro>(
+                        mp_up->t_end_ - mp_up->t_start_) / 2. - mp_up->t_overhead_);
             mp_up->n_received++;
 
             // Reset seqnum from out data
             mp_up->mp_latency_out->seqnum = 0;
 
             mp_up->mutex_.lock();
-            if(mp_up->data_count_ == 0)
+            if (mp_up->data_count_ == 0)
             {
                 ++mp_up->data_count_;
                 mp_up->data_cond_.notify_one();
@@ -593,12 +619,12 @@ void LatencyTestPublisher::run()
     }
     disc_lock.unlock();
 
-    cout << C_B_MAGENTA << "DISCOVERY COMPLETE "<<C_DEF<<endl;
-    printf("Printing round-trip times in us, statistics for %d samples\n",n_samples);
+    cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << endl;
+    printf("Printing round-trip times in us, statistics for %d samples\n", n_samples);
     printf("   Bytes, Samples,   stdev,    mean,     min,     50%%,     90%%,     99%%,  99.99%%,     max\n");
     printf("--------,--------,--------,--------,--------,--------,--------,--------,--------,--------,\n");
 
-    for(std::vector<uint32_t>::iterator ndata = data_size_pub.begin(); ndata != data_size_pub.end(); ++ndata)
+    for (std::vector<uint32_t>::iterator ndata = data_size_pub.begin(); ndata != data_size_pub.end(); ++ndata)
     {
         if (!this->test(*ndata))
         {
@@ -611,9 +637,9 @@ void LatencyTestPublisher::run()
             output_file_average << ",";
         }
     }
-    cout << "REMOVING PUBLISHER"<<endl;
+    cout << "REMOVING PUBLISHER" << endl;
     Domain::removePublisher(this->mp_commandpub);
-    cout << "REMOVING SUBSCRIBER"<<endl;
+    cout << "REMOVING SUBSCRIBER" << endl;
     Domain::removeSubscriber(mp_commandsub);
 
     std::string str_reliable = "besteffort";
@@ -674,7 +700,8 @@ void LatencyTestPublisher::run()
     }
 }
 
-bool LatencyTestPublisher::test(uint32_t datasize)
+bool LatencyTestPublisher::test(
+        uint32_t datasize)
 {
     //cout << "Beginning test of size: "<<datasize+4 <<endl;
     m_status = 0;
@@ -685,8 +712,8 @@ bool LatencyTestPublisher::test(uint32_t datasize)
         m_DynData_out = DynamicDataFactory::get_instance()->create_data(m_pDynType);
 
         MemberId id_in, id_out;
-        DynamicData *my_data_in = m_DynData_in->loan_value(m_DynData_in->get_member_id_at_index(1));
-        DynamicData *my_data_out = m_DynData_out->loan_value(m_DynData_out->get_member_id_at_index(1));
+        DynamicData* my_data_in = m_DynData_in->loan_value(m_DynData_in->get_member_id_at_index(1));
+        DynamicData* my_data_out = m_DynData_out->loan_value(m_DynData_out->get_member_id_at_index(1));
         for (uint32_t i = 0; i < datasize; ++i)
         {
             my_data_in->insert_sequence_data(id_in);
@@ -710,14 +737,16 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 
     //cout << "WAITING FOR COMMAND RESPONSES "<<endl;;
     std::unique_lock<std::mutex> lock(mutex_);
-    comm_cond_.wait(lock, [&]() { return comm_count_ >= n_subscribers; });
+    comm_cond_.wait(lock, [&]() {
+        return comm_count_ >= n_subscribers;
+    });
     comm_count_ = 0;
     lock.unlock();
     //cout << endl;
     //BEGIN THE TEST:
 
     // The first measurement as it's usually not representative, so we take one more and then drop the first one.
-    for(unsigned int count = 1; count <= n_samples + 1; ++count)
+    for (unsigned int count = 1; count <= n_samples + 1; ++count)
     {
         if (dynamic_data)
         {
@@ -736,7 +765,9 @@ bool LatencyTestPublisher::test(uint32_t datasize)
 
 
         lock.lock();
-        data_cond_.wait_for(lock, std::chrono::seconds(1), [&]() { return data_count_ > 0; });
+        data_cond_.wait_for(lock, std::chrono::seconds(1), [&]() {
+            return data_count_ > 0;
+        });
         data_count_ = 0;
         lock.unlock();
     }
@@ -744,13 +775,13 @@ bool LatencyTestPublisher::test(uint32_t datasize)
     command.m_command = STOP;
     mp_commandpub->write(&command);
 
-    if(m_status !=0)
+    if (m_status != 0)
     {
-        cout << "Error in test "<<endl;
+        cout << "Error in test " << endl;
         return false;
     }
     //TEST FINISHED:
-    size_t removed=0;
+    size_t removed = 0;
     mp_datapub->removeAllChange(&removed);
     //cout << "   REMOVED: "<< removed<<endl;
 
@@ -779,17 +810,21 @@ bool LatencyTestPublisher::test(uint32_t datasize)
     return true;
 }
 
-void LatencyTestPublisher::analyzeTimes(uint32_t datasize)
+void LatencyTestPublisher::analyzeTimes(
+        uint32_t datasize)
 {
     TimeStats TS;
     TS.nbytes = datasize + 4;
     TS.received = n_received;
     TS.m_min = *std::min_element(times_.begin(), times_.end());
     TS.m_max = *std::max_element(times_.begin(), times_.end());
-    TS.mean = std::accumulate(times_.begin(), times_.end(), std::chrono::duration<double, std::micro>(0)).count() / times_.size();
+    TS.mean =
+            std::accumulate(times_.begin(), times_.end(),
+                    std::chrono::duration<double, std::micro>(0)).count() / times_.size();
 
     double auxstdev = 0;
-    for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = times_.begin(); tit != times_.end(); ++tit)
+    for (std::vector<std::chrono::duration<double, std::micro> >::iterator tit = times_.begin(); tit != times_.end();
+            ++tit)
     {
         auxstdev += pow(((*tit).count() - TS.mean), 2);
     }
@@ -842,7 +877,8 @@ void LatencyTestPublisher::analyzeTimes(uint32_t datasize)
     m_stats.push_back(TS);
 }
 
-void LatencyTestPublisher::printStat(TimeStats& TS)
+void LatencyTestPublisher::printStat(
+        TimeStats& TS)
 {
     output_file_minimum << "\"" << TS.m_min.count() << "\"";
     output_file_average << "\"" << TS.mean << "\"";
@@ -894,24 +930,26 @@ void LatencyTestPublisher::printStat(TimeStats& TS)
 
 #ifdef _WIN32
     printf("%8I64u,%8u,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
-        TS.nbytes, TS.received, TS.stdev, TS.mean,
-        TS.m_min.count(),
-        TS.p50, TS.p90, TS.p99, TS.p9999,
-        TS.m_max.count());
+            TS.nbytes, TS.received, TS.stdev, TS.mean,
+            TS.m_min.count(),
+            TS.p50, TS.p90, TS.p99, TS.p9999,
+            TS.m_max.count());
 #else
     printf("%8" PRIu64 ",%8u,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f \n",
-        TS.nbytes, TS.received, TS.stdev, TS.mean,
-        TS.m_min.count(),
-        TS.p50, TS.p90, TS.p99, TS.p9999,
-        TS.m_max.count());
+            TS.nbytes, TS.received, TS.stdev, TS.mean,
+            TS.m_min.count(),
+            TS.p50, TS.p90, TS.p99, TS.p9999,
+            TS.m_max.count());
 #endif
 }
 
-void LatencyTestPublisher::export_raw_data(uint32_t datasize)
+void LatencyTestPublisher::export_raw_data(
+        uint32_t datasize)
 {
     std::ofstream data_file;
     data_file.open(raw_data_file_, std::fstream::app);
-    for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = times_.begin(); tit != times_.end(); ++tit)
+    for (std::vector<std::chrono::duration<double, std::micro> >::iterator tit = times_.begin(); tit != times_.end();
+            ++tit)
     {
         data_file << ++raw_sample_count_ << "," << datasize << "," << (*tit).count() << std::endl;
     }
