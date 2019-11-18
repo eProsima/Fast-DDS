@@ -40,45 +40,45 @@ std::vector<uint32_t> data_size_pub;
 
 
 LatencyTestPublisher::LatencyTestPublisher()
-    : mp_participant(nullptr)
-    , mp_datapub(nullptr)
-    , mp_commandpub(nullptr)
-    , mp_datasub(nullptr)
-    , mp_commandsub(nullptr)
-    , t_overhead_(0.0)
-    , n_subscribers(0)
-    , n_samples(0)
-    , disc_count_(0)
-    , comm_count_(0)
-    , data_count_(0)
-    , m_status(0)
-    , n_received(0)
-    , m_datapublistener(nullptr)
-    , m_datasublistener(nullptr)
-    , m_commandpublistener(nullptr)
-    , m_commandsublistener(nullptr)
-    , mp_latency_in(nullptr)
-    , mp_latency_out(nullptr)
-    , m_DynData_in(nullptr)
-    , m_DynData_out(nullptr)
+    : participant_(nullptr)
+    , data_publisher_(nullptr)
+    , command_publisher_(nullptr)
+    , data_subscriber_(nullptr)
+    , command_subscriber_(nullptr)
+    , overhead_time_(0.0)
+    , subscribers_(0)
+    , samples_(0)
+    , discovery_count_(0)
+    , command_msg_count_(0)
+    , data_msg_count_(0)
+    , test_status_(0)
+    , received_count_(0)
+    , data_pub_listener_(nullptr)
+    , data_sub_listener_(nullptr)
+    , command_pub_listener_(nullptr)
+    , command_sub_listener_(nullptr)
+    , latency_type_in_(nullptr)
+    , latency_type_out_(nullptr)
+    , dynamic_data_type_in_(nullptr)
+    , dynamic_data_type_out_(nullptr)
 {
-    m_forcedDomain = -1;
-    m_datapublistener.mp_up = this;
-    m_datasublistener.mp_up = this;
-    m_commandpublistener.mp_up = this;
-    m_commandsublistener.mp_up = this;
-    m_exportPrefix = "";
+    forced_domain_ = -1;
+    data_pub_listener_.latency_publisher_ = this;
+    data_sub_listener_.latency_publisher_ = this;
+    command_pub_listener_.latency_publisher_ = this;
+    command_sub_listener_.latency_publisher_ = this;
+    export_prefix_ = "";
     raw_data_file_ = "";
 }
 
 LatencyTestPublisher::~LatencyTestPublisher()
 {
-    Domain::removeParticipant(mp_participant);
+    Domain::removeParticipant(participant_);
 }
 
 bool LatencyTestPublisher::init(
-        int n_sub,
-        int n_sam,
+        int subscribers,
+        int samples,
         bool reliable,
         uint32_t pid,
         bool hostname,
@@ -88,20 +88,22 @@ bool LatencyTestPublisher::init(
         const PropertyPolicy& part_property_policy,
         const PropertyPolicy& property_policy,
         bool large_data,
-        const std::string& sXMLConfigFile,
-        bool dynamic_types,
+        const std::string& xml_config_file,
+        bool dynamic_data,
         int forced_domain)
 {
-    m_sXMLConfigFile = sXMLConfigFile;
-    n_samples = n_sam;
-    n_subscribers = n_sub;
-    n_export_csv = export_csv;
-    m_exportPrefix = export_prefix;
+    // Initialize state
+    xml_config_file_ = xml_config_file;
+    samples_ = samples;
+    subscribers_ = subscribers;
+    export_csv_ = export_csv;
+    export_prefix_ = export_prefix;
     reliable_ = reliable;
-    dynamic_data = dynamic_types;
-    m_forcedDomain = forced_domain;
+    dynamic_data_ = dynamic_data;
+    forced_domain_ = forced_domain;
     raw_data_file_ = raw_data_file;
 
+    // Payloads for which the test runs
     if (!large_data)
     {
         data_size_pub.assign(dataspub, dataspub + sizeof(dataspub) / sizeof(uint32_t) );
@@ -111,7 +113,8 @@ bool LatencyTestPublisher::init(
         data_size_pub.assign(dataspub_large, dataspub_large + sizeof(dataspub_large) / sizeof(uint32_t) );
     }
 
-    if (dynamic_data)
+    // Init dynamic data
+    if (dynamic_data_)
     {
         // Create basic builders
         DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
@@ -124,288 +127,292 @@ bool LatencyTestPublisher::init(
                     ));
         struct_type_builder->set_name("LatencyType");
 
-        m_pDynType = struct_type_builder->build();
-        m_DynType.SetDynamicType(m_pDynType);
+        dynamic_type_ = struct_type_builder->build();
+        dynamic_pu_sub_type_.SetDynamicType(dynamic_type_);
     }
 
-    //////////////////////////////
-    /*
-       char date_buffer[9];
-       char time_buffer[7];
-       time_t t = time(0);   // get time now
-       struct tm * now = localtime(&t);
-       strftime(date_buffer, 9, "%Y%m%d", now);
-       strftime(time_buffer, 7, "%H%M%S", now);
-     */
+    // Init output files
     for (std::vector<uint32_t>::iterator it = data_size_pub.begin(); it != data_size_pub.end(); ++it)
     {
-        output_file_minimum << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"";
-        output_file_average << "\"" << n_samples << " samples of " << *it + 4 << " bytes (us)\"";
-        if (it != data_size_pub.end() - 1)
-        {
-            output_file_minimum << ",";
-            output_file_average << ",";
-        }
-
+        // Reliability
         std::string str_reliable = "besteffort";
         if (reliable_)
         {
             str_reliable = "reliable";
         }
 
+        // Summary files
+        output_file_minimum_ << "\"" << samples_ << " samples of " << *it + 4 << " bytes (us)\"";
+        output_file_average_ << "\"" << samples_ << " samples of " << *it + 4 << " bytes (us)\"";
+        if (it != data_size_pub.end() - 1)
+        {
+            output_file_minimum_ << ",";
+            output_file_average_ << ",";
+        }
+
+        // Files by payload
         switch (*it + 4)
         {
             case 16:
-                output_file_16 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
-                output_file_16 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
+                output_file_16_ << "\"Minimum of " << samples_ << " samples (" << str_reliable << ")\",";
+                output_file_16_ << "\"Average of " << samples_ << " samples (" << str_reliable << ")\"" << std::endl;
                 break;
             case 32:
-                output_file_32 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
-                output_file_32 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
+                output_file_32_ << "\"Minimum of " << samples_ << " samples (" << str_reliable << ")\",";
+                output_file_32_ << "\"Average of " << samples_ << " samples (" << str_reliable << ")\"" << std::endl;
                 break;
             case 64:
-                output_file_64 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
-                output_file_64 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
+                output_file_64_ << "\"Minimum of " << samples_ << " samples (" << str_reliable << ")\",";
+                output_file_64_ << "\"Average of " << samples_ << " samples (" << str_reliable << ")\"" << std::endl;
                 break;
             case 128:
-                output_file_128 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
-                output_file_128 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
+                output_file_128_ << "\"Minimum of " << samples_ << " samples (" << str_reliable << ")\",";
+                output_file_128_ << "\"Average of " << samples_ << " samples (" << str_reliable << ")\"" << std::endl;
                 break;
             case 256:
-                output_file_256 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
-                output_file_256 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
+                output_file_256_ << "\"Minimum of " << samples_ << " samples (" << str_reliable << ")\",";
+                output_file_256_ << "\"Average of " << samples_ << " samples (" << str_reliable << ")\"" << std::endl;
                 break;
             case 512:
-                output_file_512 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
-                output_file_512 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
+                output_file_512_ << "\"Minimum of " << samples_ << " samples (" << str_reliable << ")\",";
+                output_file_512_ << "\"Average of " << samples_ << " samples (" << str_reliable << ")\"" << std::endl;
                 break;
             case 1024:
-                output_file_1024 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
-                output_file_1024 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
+                output_file_1024_ << "\"Minimum of " << samples_ << " samples (" << str_reliable << ")\",";
+                output_file_1024_ << "\"Average of " << samples_ << " samples (" << str_reliable << ")\"" << std::endl;
                 break;
             case 2048:
-                output_file_2048 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
-                output_file_2048 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
+                output_file_2048_ << "\"Minimum of " << samples_ << " samples (" << str_reliable << ")\",";
+                output_file_2048_ << "\"Average of " << samples_ << " samples (" << str_reliable << ")\"" << std::endl;
                 break;
             case 4096:
-                output_file_4096 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
-                output_file_4096 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
+                output_file_4096_ << "\"Minimum of " << samples_ << " samples (" << str_reliable << ")\",";
+                output_file_4096_ << "\"Average of " << samples_ << " samples (" << str_reliable << ")\"" << std::endl;
                 break;
             case 8192:
-                output_file_8192 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
-                output_file_8192 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
+                output_file_8192_ << "\"Minimum of " << samples_ << " samples (" << str_reliable << ")\",";
+                output_file_8192_ << "\"Average of " << samples_ << " samples (" << str_reliable << ")\"" << std::endl;
                 break;
             case 16384:
-                output_file_16384 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
-                output_file_16384 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
+                output_file_16384_ << "\"Minimum of " << samples_ << " samples (" << str_reliable << ")\",";
+                output_file_16384_ << "\"Average of " << samples_ << " samples (" << str_reliable << ")\"" << std::endl;
                 break;
             case 64000:
-                output_file_64000 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
-                output_file_64000 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" << std::endl;
+                output_file_64000_ << "\"Minimum of " << samples_ << " samples (" << str_reliable << ")\",";
+                output_file_64000_ << "\"Average of " << samples_ << " samples (" << str_reliable << ")\"" << std::endl;
                 break;
             case 131072:
-                output_file_131072 << "\"Minimum of " << n_samples << " samples (" << str_reliable << ")\",";
-                output_file_131072 << "\"Average of " << n_samples << " samples (" << str_reliable << ")\"" <<
+                output_file_131072_ << "\"Minimum of " << samples_ << " samples (" << str_reliable << ")\",";
+                output_file_131072_ << "\"Average of " << samples_ << " samples (" << str_reliable << ")\"" <<
                     std::endl;
                 break;
             default:
                 break;
         }
     }
-    output_file_minimum << std::endl;
-    output_file_average << std::endl;
-    //////////////////////////////
+    output_file_minimum_ << std::endl;
+    output_file_average_ << std::endl;
 
-    // Create RTPSParticipant
+    /* Create RTPSParticipant */
     std::string participant_profile_name = "pub_participant_profile";
-    ParticipantAttributes PParam;
+    ParticipantAttributes participant_attributes;
 
-    if (m_forcedDomain >= 0)
+    if (forced_domain_ >= 0)
     {
-        PParam.rtps.builtin.domainId = m_forcedDomain;
+        participant_attributes.rtps.builtin.domainId = forced_domain_;
     }
     else
     {
-        PParam.rtps.builtin.domainId = pid % 230;
+        participant_attributes.rtps.builtin.domainId = pid % 230;
     }
-    PParam.rtps.properties = part_property_policy;
-    PParam.rtps.setName("Participant_pub");
 
-    if (m_sXMLConfigFile.length() > 0)
+    participant_attributes.rtps.properties = part_property_policy;
+    participant_attributes.rtps.setName("Participant_pub");
+
+    if (xml_config_file_.length() > 0)
     {
-        if (m_forcedDomain >= 0)
+        if (forced_domain_ >= 0)
         {
-            std::cout << "Loading from: " << m_sXMLConfigFile << std::endl;
-            ParticipantAttributes participant_att;
             if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
-                    eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
-                    participant_att))
+                    eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(
+                        participant_profile_name, participant_attributes))
             {
-                participant_att.rtps.builtin.domainId = m_forcedDomain;
-                mp_participant = Domain::createParticipant(participant_att);
+                participant_attributes.rtps.builtin.domainId = forced_domain_;
+                participant_ = Domain::createParticipant(participant_attributes);
             }
         }
         else
         {
-            mp_participant = Domain::createParticipant(participant_profile_name);
+            participant_ = Domain::createParticipant(participant_profile_name);
         }
     }
     else
     {
-        mp_participant = Domain::createParticipant(PParam);
+        participant_ = Domain::createParticipant(participant_attributes);
     }
 
-    if (mp_participant == nullptr)
+    if (participant_ == nullptr)
     {
         return false;
     }
 
     // Register the type
-    if (dynamic_data)
+    if (dynamic_data_)
     {
-        Domain::registerType(mp_participant, &m_DynType);
+        Domain::registerType(participant_, &dynamic_pu_sub_type_);
     }
     else
     {
-        Domain::registerType(mp_participant, (TopicDataType*)&latency_t);
+        Domain::registerType(participant_, (TopicDataType*)&latency_data_type_);
     }
-    Domain::registerType(mp_participant, (TopicDataType*)&command_t);
+    Domain::registerType(participant_, (TopicDataType*)&latency_command_type_);
 
-    // Create Data Publisher
+    /* Create Data Publisher */
     std::string profile_name = "pub_publisher_profile";
-    PublisherAttributes PubDataparam;
-    PubDataparam.topic.topicDataType = "LatencyType";
-    PubDataparam.topic.topicKind = NO_KEY;
-    std::ostringstream pt;
-    pt << "LatencyTest_";
+    PublisherAttributes publisher_data_attributes;
+    publisher_data_attributes.topic.topicDataType = "LatencyType";
+    publisher_data_attributes.topic.topicKind = NO_KEY;
+    std::ostringstream data_pub_topic_name;
+    data_pub_topic_name << "LatencyTest_";
     if (hostname)
     {
-        pt << asio::ip::host_name() << "_";
+        data_pub_topic_name << asio::ip::host_name() << "_";
     }
-    pt << pid << "_PUB2SUB";
-    PubDataparam.topic.topicName = pt.str();
-    PubDataparam.times.heartbeatPeriod.seconds = 0;
-    PubDataparam.times.heartbeatPeriod.nanosec = 100000000;
+    data_pub_topic_name << pid << "_PUB2SUB";
+    publisher_data_attributes.topic.topicName = data_pub_topic_name.str();
+    publisher_data_attributes.times.heartbeatPeriod.seconds = 0;
+    publisher_data_attributes.times.heartbeatPeriod.nanosec = 100000000;
 
     if (!reliable)
     {
-        PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        publisher_data_attributes.qos.m_reliability.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
     }
-    PubDataparam.properties = property_policy;
+    publisher_data_attributes.properties = property_policy;
+
     if (large_data)
     {
-        PubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-        PubDataparam.qos.m_publishMode.kind = eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE;
+        publisher_data_attributes.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+        publisher_data_attributes.qos.m_publishMode.kind = eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE;
     }
 
-    if (m_sXMLConfigFile.length() > 0)
+    if (xml_config_file_.length() > 0)
     {
-        mp_datapub =
-                Domain::createPublisher(mp_participant, profile_name, (PublisherListener*)&this->m_datapublistener);
+        data_publisher_ =
+                Domain::createPublisher(participant_, profile_name, (PublisherListener*)&this->data_pub_listener_);
     }
     else
     {
-        mp_datapub =
-                Domain::createPublisher(mp_participant, PubDataparam, (PublisherListener*)&this->m_datapublistener);
+        data_publisher_ =
+                Domain::createPublisher(participant_, publisher_data_attributes,
+                        (PublisherListener*)&this->data_pub_listener_);
     }
 
-    if (mp_datapub == nullptr)
+    if (data_publisher_ == nullptr)
     {
         return false;
     }
 
-    // Create Echo Subscriber
+    /* Create Data Echo Subscriber */
     profile_name = "pub_subscriber_profile";
-    SubscriberAttributes SubDataparam;
-    SubDataparam.topic.topicDataType = "LatencyType";
-    SubDataparam.topic.topicKind = NO_KEY;
-    std::ostringstream st;
-    st << "LatencyTest_";
+    SubscriberAttributes subscriber_data_attributes;
+    subscriber_data_attributes.topic.topicDataType = "LatencyType";
+    subscriber_data_attributes.topic.topicKind = NO_KEY;
+    std::ostringstream data_sub_topic_name;
+    data_sub_topic_name << "LatencyTest_";
     if (hostname)
     {
-        st << asio::ip::host_name() << "_";
+        data_sub_topic_name << asio::ip::host_name() << "_";
     }
-    st << pid << "_SUB2PUB";
-    SubDataparam.topic.topicName = st.str();
+    data_sub_topic_name << pid << "_SUB2PUB";
+    subscriber_data_attributes.topic.topicName = data_sub_topic_name.str();
+
     if (reliable)
     {
-        SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        subscriber_data_attributes.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
     }
-    SubDataparam.properties = property_policy;
+    subscriber_data_attributes.properties = property_policy;
+
     if (large_data)
     {
-        SubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+        subscriber_data_attributes.historyMemoryPolicy =
+                eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     }
 
-    if (m_sXMLConfigFile.length() > 0)
+    if (xml_config_file_.length() > 0)
     {
-        mp_datasub = Domain::createSubscriber(mp_participant, profile_name, &this->m_datasublistener);
+        data_subscriber_ = Domain::createSubscriber(participant_, profile_name, &this->data_sub_listener_);
     }
     else
     {
-        mp_datasub = Domain::createSubscriber(mp_participant, SubDataparam, &this->m_datasublistener);
+        data_subscriber_ = Domain::createSubscriber(participant_, subscriber_data_attributes,
+                &this->data_sub_listener_);
     }
 
-    if (mp_datasub == nullptr)
+    if (data_subscriber_ == nullptr)
     {
         return false;
     }
 
-    //COMMAND PUBLISHER
-    PublisherAttributes PubCommandParam;
-    PubCommandParam.topic.topicDataType = "TestCommandType";
-    PubCommandParam.topic.topicKind = NO_KEY;
-    std::ostringstream pct;
-    pct << "LatencyTest_Command_";
+    /* Create Command Publisher */
+    PublisherAttributes publisher_command_attributes;
+    publisher_command_attributes.topic.topicDataType = "TestCommandType";
+    publisher_command_attributes.topic.topicKind = NO_KEY;
+    std::ostringstream command_pub_topic_name;
+    command_pub_topic_name << "LatencyTest_Command_";
     if (hostname)
     {
-        pct << asio::ip::host_name() << "_";
+        command_pub_topic_name << asio::ip::host_name() << "_";
     }
-    pct << pid << "_PUB2SUB";
-    PubCommandParam.topic.topicName = pct.str();
-    PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    PubCommandParam.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
+    command_pub_topic_name << pid << "_PUB2SUB";
+    publisher_command_attributes.topic.topicName = command_pub_topic_name.str();
+    publisher_command_attributes.topic.historyQos.kind = eprosima::fastrtps::KEEP_ALL_HISTORY_QOS;
+    publisher_command_attributes.qos.m_durability.kind = eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS;
+    publisher_command_attributes.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+    publisher_command_attributes.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
 
-    mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
-    if (mp_commandpub == nullptr)
+    command_publisher_ = Domain::createPublisher(participant_, publisher_command_attributes,
+            &this->command_pub_listener_);
+
+    if (command_publisher_ == nullptr)
     {
         return false;
     }
 
-    SubscriberAttributes SubCommandParam;
-    SubCommandParam.topic.topicDataType = "TestCommandType";
-    SubCommandParam.topic.topicKind = NO_KEY;
-    std::ostringstream sct;
-    sct << "LatencyTest_Command_";
+    /* Create Command Subscriber */
+    SubscriberAttributes subscriber_command_attributes;
+    subscriber_command_attributes.topic.topicDataType = "TestCommandType";
+    subscriber_command_attributes.topic.topicKind = NO_KEY;
+    std::ostringstream command_sub_topic_name;
+    command_sub_topic_name << "LatencyTest_Command_";
     if (hostname)
     {
-        sct << asio::ip::host_name() << "_";
+        command_sub_topic_name << asio::ip::host_name() << "_";
     }
-    sct << pid << "_SUB2PUB";
-    SubCommandParam.topic.topicName = sct.str();
-    SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    PubCommandParam.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
+    command_sub_topic_name << pid << "_SUB2PUB";
+    subscriber_command_attributes.topic.topicName = command_sub_topic_name.str();
+    subscriber_command_attributes.topic.historyQos.kind = eprosima::fastrtps::KEEP_ALL_HISTORY_QOS;
+    subscriber_command_attributes.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+    subscriber_command_attributes.qos.m_durability.kind = eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS;
+    publisher_command_attributes.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
 
-    mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
-    if (mp_commandsub == nullptr)
+    command_subscriber_ = Domain::createSubscriber(participant_, subscriber_command_attributes,
+            &this->command_sub_listener_);
+
+    if (command_subscriber_ == nullptr)
     {
         return false;
     }
 
-    // Calculate overhead
-    t_start_ = std::chrono::steady_clock::now();
+    /* Calculate Overhead */
+    start_time_ = std::chrono::steady_clock::now();
     for (int i = 0; i < 1000; ++i)
     {
-        t_end_ = std::chrono::steady_clock::now();
+        end_time_ = std::chrono::steady_clock::now();
     }
-    t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
-    cout << "Overhead " << t_overhead_.count() << " ns" << endl;
+    overhead_time_ = std::chrono::duration<double, std::micro>(end_time_ - start_time_) / 1001;
+    cout << "Overhead " << overhead_time_.count() << " ns" << endl;
 
-    // Create the raw_data_file and add the header.
+    /* Create the raw_data_file and add the header */
     if (raw_data_file_ != "")
     {
         raw_sample_count_ = 0;
@@ -414,7 +421,6 @@ bool LatencyTestPublisher::init(
         data_file << "Sample,Payload [Bytes],Latency [us]" << std::endl;
     }
 
-
     return true;
 }
 
@@ -422,112 +428,112 @@ void LatencyTestPublisher::DataPubListener::onPublicationMatched(
         Publisher* /*pub*/,
         MatchingInfo& info)
 {
-    std::unique_lock<std::mutex> lock(mp_up->mutex_);
+    std::unique_lock<std::mutex> lock(latency_publisher_->mutex_);
 
     if (info.status == MATCHED_MATCHING)
     {
-        cout << C_MAGENTA << "Data Pub Matched " << C_DEF << endl;
+        std::cout << C_MAGENTA << "Data Pub Matched" << C_DEF << std::endl;
 
-        n_matched++;
-        if (n_matched > mp_up->n_subscribers)
+        matched_++;
+        if (matched_ > latency_publisher_->subscribers_)
         {
             std::cout << "More matched subscribers than expected" << std::endl;
-            mp_up->m_status = -1;
+            latency_publisher_->test_status_ = -1;
         }
 
-        ++mp_up->disc_count_;
+        ++latency_publisher_->discovery_count_;
     }
     else
     {
-        --mp_up->disc_count_;
+        --latency_publisher_->discovery_count_;
     }
 
     lock.unlock();
-    mp_up->disc_cond_.notify_one();
+    latency_publisher_->discovery_cv_.notify_one();
 }
 
 void LatencyTestPublisher::DataSubListener::onSubscriptionMatched(
         Subscriber* /*sub*/,
         MatchingInfo& info)
 {
-    std::unique_lock<std::mutex> lock(mp_up->mutex_);
+    std::unique_lock<std::mutex> lock(latency_publisher_->mutex_);
 
     if (info.status == MATCHED_MATCHING)
     {
-        cout << C_MAGENTA << "Data Sub Matched " << C_DEF << endl;
+        std::cout << C_MAGENTA << "Data Sub Matched" << C_DEF << std::endl;
 
-        n_matched++;
-        if (n_matched > mp_up->n_subscribers)
+        matched_++;
+        if (matched_ > latency_publisher_->subscribers_)
         {
             std::cout << "More matched subscribers than expected" << std::endl;
-            mp_up->m_status = -1;
+            latency_publisher_->test_status_ = -1;
         }
 
-        ++mp_up->disc_count_;
+        ++latency_publisher_->discovery_count_;
     }
     else
     {
-        --mp_up->disc_count_;
+        --latency_publisher_->discovery_count_;
     }
 
     lock.unlock();
-    mp_up->disc_cond_.notify_one();
+    latency_publisher_->discovery_cv_.notify_one();
 }
 
 void LatencyTestPublisher::CommandPubListener::onPublicationMatched(
         Publisher* /*pub*/,
         MatchingInfo& info)
 {
-    std::unique_lock<std::mutex> lock(mp_up->mutex_);
+    std::unique_lock<std::mutex> lock(latency_publisher_->mutex_);
 
     if (info.status == MATCHED_MATCHING)
     {
-        cout << C_MAGENTA << "Command Pub Matched " << C_DEF << endl;
+        std::cout << C_MAGENTA << "Command Pub Matched" << C_DEF << std::endl;
 
-        n_matched++;
-        if (n_matched > mp_up->n_subscribers)
+        matched_++;
+        if (matched_ > latency_publisher_->subscribers_)
         {
             std::cout << "More matched subscribers than expected" << std::endl;
-            mp_up->m_status = -1;
+            latency_publisher_->test_status_ = -1;
         }
 
-        ++mp_up->disc_count_;
+        ++latency_publisher_->discovery_count_;
     }
     else
     {
-        --mp_up->disc_count_;
+        --latency_publisher_->discovery_count_;
     }
 
     lock.unlock();
-    mp_up->disc_cond_.notify_one();
+    latency_publisher_->discovery_cv_.notify_one();
 }
 
 void LatencyTestPublisher::CommandSubListener::onSubscriptionMatched(
         Subscriber* /*sub*/,
         MatchingInfo& info)
 {
-    std::unique_lock<std::mutex> lock(mp_up->mutex_);
+    std::unique_lock<std::mutex> lock(latency_publisher_->mutex_);
 
     if (info.status == MATCHED_MATCHING)
     {
-        cout << C_MAGENTA << "Command Sub Matched " << C_DEF << endl;
+        std::cout << C_MAGENTA << "Command Sub Matched" << C_DEF << std::endl;
 
-        n_matched++;
-        if (n_matched > mp_up->n_subscribers)
+        matched_++;
+        if (matched_ > latency_publisher_->subscribers_)
         {
             std::cout << "More matched subscribers than expected" << std::endl;
-            mp_up->m_status = -1;
+            latency_publisher_->test_status_ = -1;
         }
 
-        ++mp_up->disc_count_;
+        ++latency_publisher_->discovery_count_;
     }
     else
     {
-        --mp_up->disc_count_;
+        --latency_publisher_->discovery_count_;
     }
 
     lock.unlock();
-    mp_up->disc_cond_.notify_one();
+    latency_publisher_->discovery_cv_.notify_one();
 }
 
 void LatencyTestPublisher::CommandSubListener::onNewDataMessage(
@@ -535,112 +541,112 @@ void LatencyTestPublisher::CommandSubListener::onNewDataMessage(
 {
     TestCommandType command;
     SampleInfo_t info;
-    //	cout << "COMMAND RECEIVED"<<endl;
     if (subscriber->takeNextData((void*)&command, &info))
     {
         if (info.sampleKind == ALIVE)
         {
-            //cout << "ALIVE "<<command.m_command<<endl;
             if (command.m_command == BEGIN)
             {
-                //	cout << "POSTING"<<endl;
-                mp_up->mutex_.lock();
-                ++mp_up->comm_count_;
-                mp_up->mutex_.unlock();
-                mp_up->comm_cond_.notify_one();
+                latency_publisher_->mutex_.lock();
+                ++latency_publisher_->command_msg_count_;
+                latency_publisher_->mutex_.unlock();
+                latency_publisher_->command_msg_cv_.notify_one();
             }
         }
     }
     else
     {
-        cout << "Problem reading" << endl;
+        std::cout << "Problem reading" << std::endl;
     }
 }
 
 void LatencyTestPublisher::DataSubListener::onNewDataMessage(
         Subscriber* subscriber)
 {
-    if (mp_up->dynamic_data)
+    if (latency_publisher_->dynamic_data_)
     {
-        subscriber->takeNextData((void*)mp_up->m_DynData_in, &mp_up->m_sampleinfo);
-        if (mp_up->m_DynData_in->get_uint32_value(0) == mp_up->m_DynData_out->get_uint32_value(0))
+        subscriber->takeNextData((void*)latency_publisher_->dynamic_data_type_in_, &latency_publisher_->sampleinfo_);
+        if (latency_publisher_->dynamic_data_type_in_->get_uint32_value(0) ==
+                latency_publisher_->dynamic_data_type_out_->get_uint32_value(0))
         {
             // Factor of 2 below is to calculate the roundtrip divided by two. Note that the overhead does not
             // need to be halved, as we access the clock twice per round trip
-            mp_up->t_end_ = std::chrono::steady_clock::now();
-            mp_up->times_.push_back(std::chrono::duration<double, std::micro>(
-                        mp_up->t_end_ - mp_up->t_start_) / 2. - mp_up->t_overhead_);
-            mp_up->n_received++;
+            latency_publisher_->end_time_ = std::chrono::steady_clock::now();
+            latency_publisher_->times_.push_back(std::chrono::duration<double, std::micro>(
+                        latency_publisher_->end_time_ - latency_publisher_->start_time_) / 2. -
+                        latency_publisher_->overhead_time_);
+            latency_publisher_->received_count_++;
 
             // Reset seqnum from out data
-            mp_up->m_DynData_out->set_uint32_value(0, 0);
+            latency_publisher_->dynamic_data_type_out_->set_uint32_value(0, 0);
 
-            mp_up->mutex_.lock();
-            if (mp_up->data_count_ == 0)
+            latency_publisher_->mutex_.lock();
+            if (latency_publisher_->data_msg_count_ == 0)
             {
-                ++mp_up->data_count_;
-                mp_up->data_cond_.notify_one();
+                ++latency_publisher_->data_msg_count_;
+                latency_publisher_->data_msg_cv_.notify_one();
             }
-            mp_up->mutex_.unlock();
+            latency_publisher_->mutex_.unlock();
         }
     }
     else
     {
-        subscriber->takeNextData((void*)mp_up->mp_latency_in, &mp_up->m_sampleinfo);
-        if (mp_up->mp_latency_in->seqnum == mp_up->mp_latency_out->seqnum)
+        subscriber->takeNextData((void*)latency_publisher_->latency_type_in_, &latency_publisher_->sampleinfo_);
+        if (latency_publisher_->latency_type_in_->seqnum == latency_publisher_->latency_type_out_->seqnum)
         {
-            mp_up->t_end_ = std::chrono::steady_clock::now();
-            mp_up->times_.push_back(std::chrono::duration<double, std::micro>(
-                        mp_up->t_end_ - mp_up->t_start_) / 2. - mp_up->t_overhead_);
-            mp_up->n_received++;
+            latency_publisher_->end_time_ = std::chrono::steady_clock::now();
+            latency_publisher_->times_.push_back(std::chrono::duration<double, std::micro>(
+                        latency_publisher_->end_time_ - latency_publisher_->start_time_) / 2. -
+                        latency_publisher_->overhead_time_);
+            latency_publisher_->received_count_++;
 
             // Reset seqnum from out data
-            mp_up->mp_latency_out->seqnum = 0;
+            latency_publisher_->latency_type_out_->seqnum = 0;
 
-            mp_up->mutex_.lock();
-            if (mp_up->data_count_ == 0)
+            latency_publisher_->mutex_.lock();
+            if (latency_publisher_->data_msg_count_ == 0)
             {
-                ++mp_up->data_count_;
-                mp_up->data_cond_.notify_one();
+                ++latency_publisher_->data_msg_count_;
+                latency_publisher_->data_msg_cv_.notify_one();
             }
-            mp_up->mutex_.unlock();
+            latency_publisher_->mutex_.unlock();
         }
     }
 }
 
 void LatencyTestPublisher::run()
 {
-    //WAIT FOR THE DISCOVERY PROCESS FO FINISH:
-    //EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
+    // WAIT FOR THE DISCOVERY PROCESS FO FINISH:
+    // EACH SUBSCRIBER NEEDS 4 Matchings (2 publishers and 2 subscribers)
     std::unique_lock<std::mutex> disc_lock(mutex_);
-    while (disc_count_ != (n_subscribers * 4))
+    while (discovery_count_ != (subscribers_ * 4))
     {
-        disc_cond_.wait(disc_lock);
+        discovery_cv_.wait(disc_lock);
     }
     disc_lock.unlock();
 
-    cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << endl;
-    printf("Printing round-trip times in us, statistics for %d samples\n", n_samples);
-    printf("   Bytes, Samples,   stdev,    mean,     min,     50%%,     90%%,     99%%,  99.99%%,     max\n");
+    std::cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << std::endl;
+    printf("Printing round-trip times in us, statistics for %d samples\n", samples_);
+    printf("   Bytes, Samples,   stdev_,    mean_,     min,     50%%,     90%%,     99%%,  99.99%%,     max\n");
     printf("--------,--------,--------,--------,--------,--------,--------,--------,--------,--------,\n");
 
-    for (std::vector<uint32_t>::iterator ndata = data_size_pub.begin(); ndata != data_size_pub.end(); ++ndata)
+    for (std::vector<uint32_t>::iterator payload = data_size_pub.begin(); payload != data_size_pub.end(); ++payload)
     {
-        if (!this->test(*ndata))
+        if (!this->test(*payload))
         {
             break;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        if (ndata != data_size_pub.end() - 1)
+        if (payload != data_size_pub.end() - 1)
         {
-            output_file_minimum << ",";
-            output_file_average << ",";
+            output_file_minimum_ << ",";
+            output_file_average_ << ",";
         }
     }
-    cout << "REMOVING PUBLISHER" << endl;
-    Domain::removePublisher(this->mp_commandpub);
-    cout << "REMOVING SUBSCRIBER" << endl;
-    Domain::removeSubscriber(mp_commandsub);
+    std::cout << "REMOVING PUBLISHER" << std::endl;
+    Domain::removePublisher(this->command_publisher_);
+    std::cout << "REMOVING SUBSCRIBER" << std::endl;
+    Domain::removeSubscriber(command_subscriber_);
 
     std::string str_reliable = "besteffort";
     if (reliable_)
@@ -648,298 +654,292 @@ void LatencyTestPublisher::run()
         str_reliable = "reliable";
     }
 
-    if (n_export_csv)
+    if (export_csv_)
     {
-        std::ofstream outFile;
+        std::ofstream out_file;
 
-        std::string prefix = m_exportPrefix;
+        std::string prefix = export_prefix_;
         if (prefix.length() == 0)
         {
             prefix = "perf_LatencyTest";
         }
 
-        outFile.open(prefix + "_minimum_" + str_reliable + ".csv");
-        outFile << output_file_minimum.str();
-        outFile.close();
-        outFile.open(prefix + "_average_" + str_reliable + ".csv");
-        outFile << output_file_average.str();
-        outFile.close();
-        outFile.open(prefix + "_16_" + str_reliable + ".csv");
-        outFile << output_file_16.str();
-        outFile.close();
-        outFile.open(prefix + "_32_" + str_reliable + ".csv");
-        outFile << output_file_32.str();
-        outFile.close();
-        outFile.open(prefix + "_64_" + str_reliable + ".csv");
-        outFile << output_file_64.str();
-        outFile.close();
-        outFile.open(prefix + "_128_" + str_reliable + ".csv");
-        outFile << output_file_128.str();
-        outFile.close();
-        outFile.open(prefix + "_256_" + str_reliable + ".csv");
-        outFile << output_file_256.str();
-        outFile.close();
-        outFile.open(prefix + "_512_" + str_reliable + ".csv");
-        outFile << output_file_512.str();
-        outFile.close();
-        outFile.open(prefix + "_1024_" + str_reliable + ".csv");
-        outFile << output_file_1024.str();
-        outFile.close();
-        outFile.open(prefix + "_2048_" + str_reliable + ".csv");
-        outFile << output_file_2048.str();
-        outFile.close();
-        outFile.open(prefix + "_4096_" + str_reliable + ".csv");
-        outFile << output_file_4096.str();
-        outFile.close();
-        outFile.open(prefix + "_8192_" + str_reliable + ".csv");
-        outFile << output_file_8192.str();
-        outFile.close();
-        outFile.open(prefix + "_16384_" + str_reliable + ".csv");
-        outFile << output_file_16384.str();
-        outFile.close();
+        out_file.open(prefix + "_minimum_" + str_reliable + ".csv");
+        out_file << output_file_minimum_.str();
+        out_file.close();
+        out_file.open(prefix + "_average_" + str_reliable + ".csv");
+        out_file << output_file_average_.str();
+        out_file.close();
+        out_file.open(prefix + "_16_" + str_reliable + ".csv");
+        out_file << output_file_16_.str();
+        out_file.close();
+        out_file.open(prefix + "_32_" + str_reliable + ".csv");
+        out_file << output_file_32_.str();
+        out_file.close();
+        out_file.open(prefix + "_64_" + str_reliable + ".csv");
+        out_file << output_file_64_.str();
+        out_file.close();
+        out_file.open(prefix + "_128_" + str_reliable + ".csv");
+        out_file << output_file_128_.str();
+        out_file.close();
+        out_file.open(prefix + "_256_" + str_reliable + ".csv");
+        out_file << output_file_256_.str();
+        out_file.close();
+        out_file.open(prefix + "_512_" + str_reliable + ".csv");
+        out_file << output_file_512_.str();
+        out_file.close();
+        out_file.open(prefix + "_1024_" + str_reliable + ".csv");
+        out_file << output_file_1024_.str();
+        out_file.close();
+        out_file.open(prefix + "_2048_" + str_reliable + ".csv");
+        out_file << output_file_2048_.str();
+        out_file.close();
+        out_file.open(prefix + "_4096_" + str_reliable + ".csv");
+        out_file << output_file_4096_.str();
+        out_file.close();
+        out_file.open(prefix + "_8192_" + str_reliable + ".csv");
+        out_file << output_file_8192_.str();
+        out_file.close();
+        out_file.open(prefix + "_16384_" + str_reliable + ".csv");
+        out_file << output_file_16384_.str();
+        out_file.close();
     }
 }
 
 bool LatencyTestPublisher::test(
         uint32_t datasize)
 {
-    //cout << "Beginning test of size: "<<datasize+4 <<endl;
-    m_status = 0;
-    n_received = 0;
-    if (dynamic_data)
+    test_status_ = 0;
+    received_count_ = 0;
+    if (dynamic_data_)
     {
-        m_DynData_in = DynamicDataFactory::get_instance()->create_data(m_pDynType);
-        m_DynData_out = DynamicDataFactory::get_instance()->create_data(m_pDynType);
+        dynamic_data_type_in_ = DynamicDataFactory::get_instance()->create_data(dynamic_type_);
+        dynamic_data_type_out_ = DynamicDataFactory::get_instance()->create_data(dynamic_type_);
 
         MemberId id_in, id_out;
-        DynamicData* my_data_in = m_DynData_in->loan_value(m_DynData_in->get_member_id_at_index(1));
-        DynamicData* my_data_out = m_DynData_out->loan_value(m_DynData_out->get_member_id_at_index(1));
+        DynamicData* data_in = dynamic_data_type_in_->loan_value(dynamic_data_type_in_->get_member_id_at_index(1));
+        DynamicData* data_out = dynamic_data_type_out_->loan_value(
+                dynamic_data_type_out_->get_member_id_at_index(1));
         for (uint32_t i = 0; i < datasize; ++i)
         {
-            my_data_in->insert_sequence_data(id_in);
-            my_data_in->set_byte_value(0, id_in);
-            my_data_out->insert_sequence_data(id_out);
-            my_data_out->set_byte_value(0, id_out);
+            data_in->insert_sequence_data(id_in);
+            data_in->set_byte_value(0, id_in);
+            data_out->insert_sequence_data(id_out);
+            data_out->set_byte_value(0, id_out);
         }
-        m_DynData_in->return_loaned_value(my_data_in);
-        m_DynData_out->return_loaned_value(my_data_out);
+        dynamic_data_type_in_->return_loaned_value(data_in);
+        dynamic_data_type_out_->return_loaned_value(data_out);
     }
     else
     {
-        mp_latency_in = new LatencyType(datasize);
-        mp_latency_out = new LatencyType(datasize);
+        latency_type_in_ = new LatencyType(datasize);
+        latency_type_out_ = new LatencyType(datasize);
     }
 
     times_.clear();
     TestCommandType command;
     command.m_command = READY;
-    mp_commandpub->write(&command);
+    command_publisher_->write(&command);
 
-    //cout << "WAITING FOR COMMAND RESPONSES "<<endl;;
     std::unique_lock<std::mutex> lock(mutex_);
-    comm_cond_.wait(lock, [&]() {
-        return comm_count_ >= n_subscribers;
+    command_msg_cv_.wait(lock, [&]() {
+        return command_msg_count_ >= subscribers_;
     });
-    comm_count_ = 0;
+    command_msg_count_ = 0;
     lock.unlock();
-    //cout << endl;
-    //BEGIN THE TEST:
 
-    // The first measurement as it's usually not representative, so we take one more and then drop the first one.
-    for (unsigned int count = 1; count <= n_samples + 1; ++count)
+    // The first measurement it's usually not representative, so we take one more and then drop the first one.
+    for (unsigned int count = 1; count <= samples_ + 1; ++count)
     {
-        if (dynamic_data)
+        if (dynamic_data_)
         {
-            m_DynData_in->set_uint32_value(0, 0);
-            m_DynData_out->set_uint32_value(count, 0);
-            t_start_ = std::chrono::steady_clock::now();
-            mp_datapub->write((void*)m_DynData_out);
+            dynamic_data_type_in_->set_uint32_value(0, 0);
+            dynamic_data_type_out_->set_uint32_value(count, 0);
+            start_time_ = std::chrono::steady_clock::now();
+            data_publisher_->write((void*)dynamic_data_type_out_);
         }
         else
         {
-            mp_latency_in->seqnum = 0;
-            mp_latency_out->seqnum = count;
-            t_start_ = std::chrono::steady_clock::now();
-            mp_datapub->write((void*)mp_latency_out);
+            latency_type_in_->seqnum = 0;
+            latency_type_out_->seqnum = count;
+            start_time_ = std::chrono::steady_clock::now();
+            data_publisher_->write((void*)latency_type_out_);
         }
 
-
         lock.lock();
-        data_cond_.wait_for(lock, std::chrono::seconds(1), [&]() {
-            return data_count_ > 0;
+        data_msg_cv_.wait_for(lock, std::chrono::seconds(1), [&]() {
+            return data_msg_count_ > 0;
         });
-        data_count_ = 0;
+        data_msg_count_ = 0;
         lock.unlock();
     }
 
     command.m_command = STOP;
-    mp_commandpub->write(&command);
+    command_publisher_->write(&command);
 
-    if (m_status != 0)
+    if (test_status_ != 0)
     {
-        cout << "Error in test " << endl;
+        std::cout << "Error in test " << std::endl;
         return false;
     }
-    //TEST FINISHED:
+
+    // TEST FINISHED:
     size_t removed = 0;
-    mp_datapub->removeAllChange(&removed);
-    //cout << "   REMOVED: "<< removed<<endl;
+    data_publisher_->removeAllChange(&removed);
 
     // Drop the first measurement, as it's usually not representative
     times_.erase(times_.begin());
+
     // Log all data to CSV file if specified
     if (raw_data_file_ != "")
     {
         export_raw_data(datasize + 4);
     }
 
-    analyzeTimes(datasize);
-    printStat(m_stats.back());
+    analyze_times(datasize);
+    print_stats(stats_.back());
 
-    if (dynamic_data)
+    if (dynamic_data_)
     {
-        DynamicDataFactory::get_instance()->delete_data(m_DynData_in);
-        DynamicDataFactory::get_instance()->delete_data(m_DynData_out);
+        DynamicDataFactory::get_instance()->delete_data(dynamic_data_type_in_);
+        DynamicDataFactory::get_instance()->delete_data(dynamic_data_type_out_);
     }
     else
     {
-        delete(mp_latency_in);
-        delete(mp_latency_out);
+        delete(latency_type_in_);
+        delete(latency_type_out_);
     }
 
     return true;
 }
 
-void LatencyTestPublisher::analyzeTimes(
+void LatencyTestPublisher::analyze_times(
         uint32_t datasize)
 {
-    TimeStats TS;
-    TS.nbytes = datasize + 4;
-    TS.received = n_received;
-    TS.m_min = *std::min_element(times_.begin(), times_.end());
-    TS.m_max = *std::max_element(times_.begin(), times_.end());
-    TS.mean =
-            std::accumulate(times_.begin(), times_.end(),
+    // Collect statistics
+    TimeStats stats;
+    stats.bytes_ = datasize + 4;
+    stats.received_ = received_count_;
+    stats.minimum_ = *std::min_element(times_.begin(), times_.end());
+    stats.maximum_ = *std::max_element(times_.begin(), times_.end());
+    stats.mean_ = std::accumulate(times_.begin(), times_.end(),
                     std::chrono::duration<double, std::micro>(0)).count() / times_.size();
 
-    double auxstdev = 0;
+    double aux_stdev = 0;
     for (std::vector<std::chrono::duration<double, std::micro> >::iterator tit = times_.begin(); tit != times_.end();
             ++tit)
     {
-        auxstdev += pow(((*tit).count() - TS.mean), 2);
+        aux_stdev += pow(((*tit).count() - stats.mean_), 2);
     }
-    auxstdev = sqrt(auxstdev / times_.size());
-    TS.stdev = auxstdev;
+    aux_stdev = sqrt(aux_stdev / times_.size());
+    stats.stdev_ = aux_stdev;
 
+    /* Percentiles */
     std::sort(times_.begin(), times_.end());
-    size_t elem = 0;
 
+    size_t elem = 0;
     elem = static_cast<size_t>(times_.size() * 0.5);
     if (elem > 0 && elem <= times_.size())
     {
-        TS.p50 = times_.at(--elem).count();
+        stats.percentile_50_ = times_.at(--elem).count();
     }
     else
     {
-        TS.p50 = NAN;
+        stats.percentile_50_ = NAN;
     }
 
     elem = static_cast<size_t>(times_.size() * 0.9);
     if (elem > 0 && elem <= times_.size())
     {
-        TS.p90 = times_.at(--elem).count();
+        stats.percentile_90_ = times_.at(--elem).count();
     }
     else
     {
-        TS.p90 = NAN;
+        stats.percentile_90_ = NAN;
     }
 
     elem = static_cast<size_t>(times_.size() * 0.99);
     if (elem > 0 && elem <= times_.size())
     {
-        TS.p99 = times_.at(--elem).count();
+        stats.percentile_99_ = times_.at(--elem).count();
     }
     else
     {
-        TS.p99 = NAN;
+        stats.percentile_99_ = NAN;
     }
 
     elem = static_cast<size_t>(times_.size() * 0.9999);
     if (elem > 0 && elem <= times_.size())
     {
-        TS.p9999 = times_.at(--elem).count();
+        stats.percentile_9999_ = times_.at(--elem).count();
     }
     else
     {
-        TS.p9999 = NAN;
+        stats.percentile_9999_ = NAN;
     }
 
-    m_stats.push_back(TS);
+    stats_.push_back(stats);
 }
 
-void LatencyTestPublisher::printStat(
-        TimeStats& TS)
+void LatencyTestPublisher::print_stats(
+        TimeStats& stats)
 {
-    output_file_minimum << "\"" << TS.m_min.count() << "\"";
-    output_file_average << "\"" << TS.mean << "\"";
+    output_file_minimum_ << "\"" << stats.minimum_.count() << "\"";
+    output_file_average_ << "\"" << stats.mean_ << "\"";
 
-    switch (TS.nbytes)
+    switch (stats.bytes_)
     {
         case 16:
-            output_file_16 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
+            output_file_16_ << "\"" << stats.minimum_.count() << "\",\"" << stats.mean_ << "\"" << std::endl;
             break;
         case 32:
-            output_file_32 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
+            output_file_32_ << "\"" << stats.minimum_.count() << "\",\"" << stats.mean_ << "\"" << std::endl;
             break;
         case 64:
-            output_file_64 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
+            output_file_64_ << "\"" << stats.minimum_.count() << "\",\"" << stats.mean_ << "\"" << std::endl;
             break;
         case 128:
-            output_file_128 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
+            output_file_128_ << "\"" << stats.minimum_.count() << "\",\"" << stats.mean_ << "\"" << std::endl;
             break;
         case 256:
-            output_file_256 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
+            output_file_256_ << "\"" << stats.minimum_.count() << "\",\"" << stats.mean_ << "\"" << std::endl;
             break;
         case 512:
-            output_file_512 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
+            output_file_512_ << "\"" << stats.minimum_.count() << "\",\"" << stats.mean_ << "\"" << std::endl;
             break;
         case 1024:
-            output_file_1024 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
+            output_file_1024_ << "\"" << stats.minimum_.count() << "\",\"" << stats.mean_ << "\"" << std::endl;
             break;
         case 2048:
-            output_file_2048 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
+            output_file_2048_ << "\"" << stats.minimum_.count() << "\",\"" << stats.mean_ << "\"" << std::endl;
             break;
         case 4096:
-            output_file_4096 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
+            output_file_4096_ << "\"" << stats.minimum_.count() << "\",\"" << stats.mean_ << "\"" << std::endl;
             break;
         case 8192:
-            output_file_8192 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
+            output_file_8192_ << "\"" << stats.minimum_.count() << "\",\"" << stats.mean_ << "\"" << std::endl;
             break;
         case 16384:
-            output_file_16384 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
+            output_file_16384_ << "\"" << stats.minimum_.count() << "\",\"" << stats.mean_ << "\"" << std::endl;
             break;
         case 64000:
-            output_file_64000 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
+            output_file_64000_ << "\"" << stats.minimum_.count() << "\",\"" << stats.mean_ << "\"" << std::endl;
             break;
         case 131072:
-            output_file_131072 << "\"" << TS.m_min.count() << "\",\"" << TS.mean << "\"" << std::endl;
+            output_file_131072_ << "\"" << stats.minimum_.count() << "\",\"" << stats.mean_ << "\"" << std::endl;
             break;
         default:
             break;
     }
 
 #ifdef _WIN32
-    printf("%8I64u,%8u,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
-            TS.nbytes, TS.received, TS.stdev, TS.mean,
-            TS.m_min.count(),
-            TS.p50, TS.p90, TS.p99, TS.p9999,
-            TS.m_max.count());
+    printf("%8I64u,%8u,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f \n",
+            stats.bytes_, stats.received_, stats.stdev_, stats.mean_, stats.minimum_.count(), stats.percentile_50_,
+            stats.percentile_90_, stats.percentile_99_, stats.percentile_9999_, stats.maximum_.count());
 #else
     printf("%8" PRIu64 ",%8u,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f \n",
-            TS.nbytes, TS.received, TS.stdev, TS.mean,
-            TS.m_min.count(),
-            TS.p50, TS.p90, TS.p99, TS.p9999,
-            TS.m_max.count());
+            stats.bytes_, stats.received_, stats.stdev_, stats.mean_, stats.minimum_.count(), stats.percentile_50_,
+            stats.percentile_90_, stats.percentile_99_, stats.percentile_9999_, stats.maximum_.count());
 #endif
 }
 

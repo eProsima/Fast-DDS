@@ -427,7 +427,8 @@ int main(
 
     if (test_agent == TestAgent::PUBLISHER)
     {
-        std::cout << "Performing test with " << subscribers << " subscribers and " << samples << " samples" << std::endl;
+        std::cout << "Performing test with " << subscribers << " subscribers and " << samples << " samples"
+                << std::endl;
         LatencyTestPublisher latency_publisher;
         latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv, export_prefix,
                 raw_data_file, pub_part_property_policy, pub_property_policy, large_data, xml_config_file,
