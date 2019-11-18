@@ -21,7 +21,6 @@ MockEvent::MockEvent(
         double milliseconds,
         bool autorestart)
     : successed_(0)
-    , cancelled_(0)
     , sem_count_(0)
     , autorestart_(autorestart)
     , event_(service, std::bind(&MockEvent::callback, this), milliseconds)

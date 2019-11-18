@@ -55,10 +55,6 @@ TEST(TimedEvent, Event_SuccessEvents)
     int successed = event.successed_.load(std::memory_order_relaxed);
 
     ASSERT_EQ(successed, 10);
-
-    int cancelled = event.cancelled_.load(std::memory_order_relaxed);
-
-    ASSERT_EQ(cancelled, 0);
 }
 
 /*!
@@ -66,7 +62,7 @@ TEST(TimedEvent, Event_SuccessEvents)
  * @brief This test  checks the correct behavior of cancelling events.
  * This test launches an event several times and cancels it.
  * For each one it launchs the event and inmediatly it cancels the event.
- * Then it waits until the cancelation is executed.
+ * Then it waits more than the timer period and checks it has not been executed.
  */
 TEST(TimedEvent, Event_CancelEvents)
 {
@@ -76,16 +72,12 @@ TEST(TimedEvent, Event_CancelEvents)
     {
         event.event().restart_timer();
         event.event().cancel_timer();
-        event.wait();
+        ASSERT_FALSE(event.wait(120));
     }
 
     int successed = event.successed_.load(std::memory_order_relaxed);
 
     ASSERT_EQ(successed, 0);
-
-    int cancelled = event.cancelled_.load(std::memory_order_relaxed);
-
-    ASSERT_EQ(cancelled, 10);
 }
 
 /*!
@@ -103,18 +95,16 @@ TEST(TimedEvent, Event_RestartEvents)
         event.event().restart_timer();
     }
 
-    for(int i = 0; i < 10; ++i)
+    // Should only be awaken once due to cancellation
+    event.wait();
+    for(int i = 1; i < 10; ++i)
     {
-        event.wait();
+        ASSERT_FALSE(event.wait(120));
     }
 
     int successed = event.successed_.load(std::memory_order_relaxed);
 
     ASSERT_EQ(successed, 1);
-
-    int cancelled = event.cancelled_.load(std::memory_order_relaxed);
-
-    ASSERT_EQ(cancelled, 9);
 }
 
 
@@ -235,9 +225,8 @@ TEST(TimedEventMultithread, Event_TwoStartTwoCancel)
     }
 
     int successed = event.successed_.load(std::memory_order_relaxed);
-    int cancelled = event.cancelled_.load(std::memory_order_relaxed);
 
-    ASSERT_EQ(successed + cancelled, count);
+    ASSERT_EQ(successed, count);
 }
 
 /*!
