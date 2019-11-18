@@ -210,7 +210,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                 case PID_METATRAFFIC_UNICAST_IPADDRESS:
                 case PID_METATRAFFIC_MULTICAST_IPADDRESS:
                 {
-                    if (plength == PARAMETER_IP4_LENGTH)
+                    if (plength != PARAMETER_IP4_LENGTH)
                     {
                         return false;
                     }
