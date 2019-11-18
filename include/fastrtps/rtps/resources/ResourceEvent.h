@@ -19,6 +19,7 @@
 
 #ifndef _RTPS_RESOURCES_RESOURCEEVENT_H_
 #define _RTPS_RESOURCES_RESOURCEEVENT_H_
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include "../../utils/TimedMutex.hpp"
@@ -136,8 +137,11 @@ private:
 
     std::promise<void> ready;
 };
-}
-}
+
+} /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
+
 #endif
+
 #endif //_RTPS_RESOURCES_RESOURCEEVENT_H_
