@@ -68,6 +68,7 @@ LatencyTestPublisher::LatencyTestPublisher():
     m_commandpublistener.mp_up = this;
     m_commandsublistener.mp_up = this;
     m_exportPrefix = "";
+    raw_data_file_ = "";
 }
 
 LatencyTestPublisher::~LatencyTestPublisher()
@@ -76,7 +77,7 @@ LatencyTestPublisher::~LatencyTestPublisher()
 }
 
 bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname, bool export_csv,
-        const std::string& export_prefix, const PropertyPolicy& part_property_policy,
+        const std::string& export_prefix, std::string raw_data_file, const PropertyPolicy& part_property_policy,
         const PropertyPolicy& property_policy, bool large_data, const std::string& sXMLConfigFile, bool dynamic_types,
         int forced_domain)
 {
@@ -88,6 +89,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     reliable_ = reliable;
     dynamic_data = dynamic_types;
     m_forcedDomain = forced_domain;
+    raw_data_file_ = raw_data_file;
 
     if(!large_data)
     {
@@ -203,7 +205,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     //////////////////////////////
 
     // Create RTPSParticipant
-    std::string participant_profile_name = "participant_profile";
+    std::string participant_profile_name = "pub_participant_profile";
     ParticipantAttributes PParam;
 
     if (m_forcedDomain >= 0)
@@ -221,6 +223,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     {
         if (m_forcedDomain >= 0)
         {
+            std::cout << "Loading from: " << m_sXMLConfigFile << std::endl;
             ParticipantAttributes participant_att;
             if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
                 eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
@@ -257,7 +260,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     Domain::registerType(mp_participant, (TopicDataType*)&command_t);
 
     // Create Data Publisher
-    std::string profile_name = "publisher_profile";
+    std::string profile_name = "pub_publisher_profile";
     PublisherAttributes PubDataparam;
     PubDataparam.topic.topicDataType = "LatencyType";
     PubDataparam.topic.topicKind = NO_KEY;
@@ -298,7 +301,7 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     }
 
     // Create Echo Subscriber
-    profile_name = "subscriber_profile";
+    profile_name = "pub_subscriber_profile";
     SubscriberAttributes SubDataparam;
     SubDataparam.topic.topicDataType = "LatencyType";
     SubDataparam.topic.topicKind = NO_KEY;
@@ -387,6 +390,16 @@ bool LatencyTestPublisher::init(int n_sub, int n_sam, bool reliable, uint32_t pi
     }
     t_overhead_ = std::chrono::duration<double, std::micro>(t_end_ - t_start_) / 1001;
     cout << "Overhead " << t_overhead_.count() << " ns" << endl;
+
+    // Create the raw_data_file and add the header.
+    if (raw_data_file_ != "")
+    {
+        raw_sample_count_ = 0;
+        std::ofstream data_file;
+        data_file.open(raw_data_file_);
+        data_file << "Sample,Payload [Bytes],Latency [us]" << std::endl;
+    }
+
 
     return true;
 }
@@ -703,7 +716,8 @@ bool LatencyTestPublisher::test(uint32_t datasize)
     //cout << endl;
     //BEGIN THE TEST:
 
-    for(unsigned int count = 1; count <= n_samples; ++count)
+    // The first measurement as it's usually not representative, so we take one more and then drop the first one.
+    for(unsigned int count = 1; count <= n_samples + 1; ++count)
     {
         if (dynamic_data)
         {
@@ -739,6 +753,15 @@ bool LatencyTestPublisher::test(uint32_t datasize)
     size_t removed=0;
     mp_datapub->removeAllChange(&removed);
     //cout << "   REMOVED: "<< removed<<endl;
+
+    // Drop the first measurement, as it's usually not representative
+    times_.erase(times_.begin());
+    // Log all data to CSV file if specified
+    if (raw_data_file_ != "")
+    {
+        export_raw_data(datasize + 4);
+    }
+
     analyzeTimes(datasize);
     printStat(m_stats.back());
 
@@ -771,7 +794,7 @@ void LatencyTestPublisher::analyzeTimes(uint32_t datasize)
         auxstdev += pow(((*tit).count() - TS.mean), 2);
     }
     auxstdev = sqrt(auxstdev / times_.size());
-    TS.stdev = static_cast<double>(round(auxstdev));
+    TS.stdev = auxstdev;
 
     std::sort(times_.begin(), times_.end());
     size_t elem = 0;
@@ -876,10 +899,21 @@ void LatencyTestPublisher::printStat(TimeStats& TS)
         TS.p50, TS.p90, TS.p99, TS.p9999,
         TS.m_max.count());
 #else
-    printf("%8" PRIu64 ",%8u,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f,%8.2f \n",
+    printf("%8" PRIu64 ",%8u,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f,%8.3f \n",
         TS.nbytes, TS.received, TS.stdev, TS.mean,
         TS.m_min.count(),
         TS.p50, TS.p90, TS.p99, TS.p9999,
         TS.m_max.count());
 #endif
+}
+
+void LatencyTestPublisher::export_raw_data(uint32_t datasize)
+{
+    std::ofstream data_file;
+    data_file.open(raw_data_file_, std::fstream::app);
+    for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = times_.begin(); tit != times_.end(); ++tit)
+    {
+        data_file << ++raw_sample_count_ << "," << datasize << "," << (*tit).count() << std::endl;
+    }
+    data_file.close();
 }

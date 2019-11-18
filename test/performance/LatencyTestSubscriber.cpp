@@ -100,7 +100,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     }
 
     // Create RTPSParticipant
-    std::string participant_profile_name = "participant_profile";
+    std::string participant_profile_name = "sub_participant_profile";
     ParticipantAttributes PParam;
 
     if (m_forcedDomain >= 0)
@@ -153,7 +153,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     Domain::registerType(mp_participant, (TopicDataType*)&command_t);
 
     // Create Data Publisher
-    std::string profile_name = "publisher_profile";
+    std::string profile_name = "sub_publisher_profile";
     PublisherAttributes PubDataparam;
     PubDataparam.topic.topicDataType = "LatencyType";
     PubDataparam.topic.topicKind = NO_KEY;
@@ -194,7 +194,7 @@ bool LatencyTestSubscriber::init(bool echo, int nsam, bool reliable, uint32_t pi
     }
 
     // Create Echo Subscriber
-    profile_name = "subscriber_profile";
+    profile_name = "sub_subscriber_profile";
     SubscriberAttributes SubDataparam;
     SubDataparam.topic.topicDataType = "LatencyType";
     SubDataparam.topic.topicKind = NO_KEY;
