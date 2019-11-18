@@ -41,21 +41,6 @@ public:
 
     virtual ~LatencyTestSubscriber();
 
-    eprosima::fastrtps::Participant* participant_;
-    eprosima::fastrtps::Publisher* data_publisher_;
-    eprosima::fastrtps::Publisher* command_publisher_;
-    eprosima::fastrtps::Subscriber* data_subscriber_;
-    eprosima::fastrtps::Subscriber* command_subscriber_;
-    eprosima::fastrtps::SampleInfo_t sample_info_;
-    std::mutex mutex_;
-    int discovery_count_;
-    std::condition_variable discovery_cv_;
-    int command_msg_count_;
-    std::condition_variable command_msg_cv_;
-    int test_status_;
-    int received_;
-    int samples_;
-
     bool init(
             bool echo,
             int samples,
@@ -74,6 +59,45 @@ public:
     bool test(
             uint32_t datasize);
 
+    /* Entities */
+    eprosima::fastrtps::Participant* participant_;
+    eprosima::fastrtps::Publisher* data_publisher_;
+    eprosima::fastrtps::Publisher* command_publisher_;
+    eprosima::fastrtps::Subscriber* data_subscriber_;
+    eprosima::fastrtps::Subscriber* command_subscriber_;
+
+    /* Data */
+    eprosima::fastrtps::SampleInfo_t sample_info_;
+    int received_;
+
+    /* Test synchronization */
+    std::mutex mutex_;
+    std::condition_variable discovery_cv_;
+    std::condition_variable command_msg_cv_;
+    int discovery_count_;
+    int command_msg_count_;
+    int test_status_;
+
+    /* Files */
+    std::string xml_config_file_;
+
+    /* Test configuration and Flags */
+    bool echo_;
+    int samples_;
+    bool dynamic_data_ = false;
+    int forced_domain_;
+
+    /* Static Types */
+    LatencyDataType latency_data_type_;
+    LatencyType* latency_type_;
+    TestCommandDataType latency_command_type_;
+
+    /* Dynamic Types */
+    eprosima::fastrtps::types::DynamicData* dynamic_data_type_;
+    eprosima::fastrtps::types::DynamicPubSubType dynamic_data_pub_sub_type_;
+    eprosima::fastrtps::types::DynamicType_ptr dynamic_type_;
+
+    /* Data Listeners */
     class DataPubListener : public eprosima::fastrtps::PublisherListener
     {
     public:
@@ -119,6 +143,7 @@ public:
         LatencyTestSubscriber* latency_publisher_;
     } data_sub_listener_;
 
+    /* Command Listeners */
     class CommandPubListener : public eprosima::fastrtps::PublisherListener
     {
     public:
@@ -163,19 +188,6 @@ public:
 
         LatencyTestSubscriber* latency_publisher_;
     } command_sub_listener_;
-
-    bool echo_;
-    TestCommandDataType latency_command_type_;
-    std::string xml_config_file_;
-    bool dynamic_data_ = false;
-    int forced_domain_;
-    // Static Types
-    LatencyDataType latency_data_type_;
-    LatencyType* latency_type_;
-    // Dynamic Types
-    eprosima::fastrtps::types::DynamicData* dynamic_data_type_;
-    eprosima::fastrtps::types::DynamicPubSubType dynamic_data_pub_sub_type_;
-    eprosima::fastrtps::types::DynamicType_ptr dynamic_type_;
 };
 
 #endif /* LATENCYTESTSUBSCRIBER_H_ */

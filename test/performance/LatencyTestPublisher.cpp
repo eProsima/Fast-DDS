@@ -627,7 +627,7 @@ void LatencyTestPublisher::run()
 
     std::cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << std::endl;
     printf("Printing round-trip times in us, statistics for %d samples\n", samples_);
-    printf("   Bytes, Samples,   stdev_,    mean_,     min,     50%%,     90%%,     99%%,  99.99%%,     max\n");
+    printf("   Bytes, Samples,   stdev,    mean,     min,     50%%,     90%%,     99%%,  99.99%%,     max\n");
     printf("--------,--------,--------,--------,--------,--------,--------,--------,--------,--------,\n");
 
     for (std::vector<uint32_t>::iterator payload = data_size_pub.begin(); payload != data_size_pub.end(); ++payload)
