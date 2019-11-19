@@ -38,6 +38,18 @@
                 <name>test_alloc_participant</name>
                 <builtin>
                     <domainId>231</domainId>
+                    <discovery_config>
+                        <ignoreParticipantFlags>FILTER_DIFFERENT_HOST</ignoreParticipantFlags>
+                        <leaseAnnouncement>
+                            <sec>80</sec>
+                        </leaseAnnouncement>
+                        <leaseDuration>
+                            <sec>DURATION_INFINITY</sec>
+                        </leaseDuration>
+                        <initialAnnouncements>
+                            <count>0</count>
+                        </initialAnnouncements>
+                    </discovery_config>
                 </builtin>
             </rtps>
         </participant>
