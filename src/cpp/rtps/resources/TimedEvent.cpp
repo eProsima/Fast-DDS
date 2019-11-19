@@ -34,8 +34,14 @@ TimedEvent::TimedEvent(
     : service_(service)
     , impl_(nullptr)
 {
+    if (milliseconds < 1)
+    {
+        milliseconds = 1;
+    }
+
     impl_ =
-            new TimedEventImpl(service_.get_io_service(), callback,
+            new TimedEventImpl(
+                    callback,
                     std::chrono::microseconds((int64_t)(milliseconds * 1000)));
 }
 
@@ -49,7 +55,7 @@ void TimedEvent::cancel_timer()
 {
     if (impl_->go_cancel())
     {
-        service_.notify(impl_);
+        service_.unregister_timer(impl_);
     }
 }
 
@@ -92,6 +98,6 @@ double TimedEvent::getRemainingTimeMilliSec()
     return impl_->getRemainingTimeMilliSec();
 }
 
-}
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */

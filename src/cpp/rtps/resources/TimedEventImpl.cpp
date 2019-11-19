@@ -31,19 +31,12 @@
 using namespace eprosima::fastrtps::rtps;
 
 TimedEventImpl::TimedEventImpl(
-        asio::io_service& service,
         Callback callback,
         std::chrono::microseconds interval)
-    : m_interval_microsec(interval)
-    , timer_(service, interval)
+    : interval_microsec_(interval)
     , callback_(callback)
-    , callback_ptr_(&callback, [](Callback*){
-})
-    , state_(StateCode::INACTIVE)
-    , cancel_(false)
-    , next_(nullptr)
+    , enabled_(false)
 {
-    //TIME_INFINITE(m_timeInfinite);
 }
 
 TimedEventImpl::~TimedEventImpl()
@@ -52,53 +45,38 @@ TimedEventImpl::~TimedEventImpl()
 
 bool TimedEventImpl::go_ready()
 {
-    bool returned_value = false;
-    StateCode expected = StateCode::INACTIVE;
-
-    if (state_.compare_exchange_strong(expected, StateCode::READY))
+    bool ret_val = enabled_.exchange(true) == false;
+    if (ret_val)
     {
-        returned_value = true;
+        std::unique_lock<std::mutex> lock(mutex_);
+        next_trigger_time_ = std::chrono::steady_clock::now() + interval_microsec_;
     }
 
-    return returned_value;
+    return ret_val;
 }
 
-/* In this function we don't need to exchange the state,
- * because this function try to cancel, but if the event is running
- * in the middle of the operation, it doesn't bother.
- */
 bool TimedEventImpl::go_cancel()
 {
-    bool returned_value = false;
-    StateCode prev_code = StateCode::INACTIVE;
-
-    if ((prev_code = state_.exchange(StateCode::INACTIVE)) != StateCode::INACTIVE)
-    {
-        cancel_.store(true);
-        returned_value = true;
-    }
-
-    return returned_value;
+    return enabled_.exchange(false) == true;
 }
 
-void TimedEventImpl::update()
+void TimedEventImpl::trigger(
+        std::chrono::steady_clock::time_point current_time,
+        std::chrono::steady_clock::time_point cancel_time)
 {
-    StateCode expected = StateCode::READY;
-
-    if (cancel_.exchange(false))
+    if (go_cancel())
     {
-        timer_.cancel();
-    }
-
-    if (state_.compare_exchange_strong(expected, StateCode::WAITING))
-    {
+        if (callback_)
         {
-            std::unique_lock<std::mutex> lock(mutex_);
-            timer_.expires_from_now(m_interval_microsec);
-        }
+            bool restart = callback_ ? callback_() : false;
+            restart &= interval_microsec_.count() > 0;
 
-        std::weak_ptr<Callback> callback_weak_ptr = callback_ptr_;
-        timer_.async_wait(std::bind(&TimedEventImpl::event, this, callback_weak_ptr, std::placeholders::_1));
+            std::unique_lock<std::mutex> lock(mutex_);
+            next_trigger_time_ = restart ?
+                current_time + interval_microsec_ :
+                cancel_time;
+            enabled_.store(restart);
+        }
     }
 }
 
@@ -106,7 +84,7 @@ bool TimedEventImpl::update_interval(
         const eprosima::fastrtps::Duration_t& inter)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    m_interval_microsec = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(inter));
+    interval_microsec_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(inter));
     return true;
 }
 
@@ -114,40 +92,6 @@ bool TimedEventImpl::update_interval_millisec(
         double time_millisec)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    m_interval_microsec = std::chrono::microseconds((int64_t)(time_millisec * 1000));
+    interval_microsec_ = std::chrono::microseconds((int64_t)(time_millisec * 1000));
     return true;
-}
-
-void TimedEventImpl::event(
-        std::weak_ptr<Callback> callback_weak_ptr,
-        const std::error_code& ec)
-{
-    std::shared_ptr<Callback> callback_ptr = callback_weak_ptr.lock();
-
-    if (callback_ptr)
-    {
-        if (ec != asio::error::operation_aborted)
-        {
-            StateCode expected = StateCode::WAITING;
-            state_.compare_exchange_strong(expected, StateCode::INACTIVE);
-
-            //Exec
-            bool restart = callback_();
-
-            if (restart)
-            {
-                expected = StateCode::INACTIVE;
-                if (state_.compare_exchange_strong(expected, StateCode::WAITING))
-                {
-                    {
-                        std::unique_lock<std::mutex> lock(mutex_);
-                        timer_.expires_from_now(m_interval_microsec);
-                    }
-
-                    timer_.async_wait(std::bind(&TimedEventImpl::event, this, callback_weak_ptr,
-                            std::placeholders::_1));
-                }
-            }
-        }
-    }
 }

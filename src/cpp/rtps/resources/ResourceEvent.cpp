@@ -31,31 +31,25 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+static bool event_compare(
+        TimedEventImpl* lhs,
+        TimedEventImpl* rhs)
+{
+    return lhs->next_trigger_time() < rhs->next_trigger_time();
+}
 
 ResourceEvent::ResourceEvent()
     : stop_(false)
-    , allow_to_delete_(false)
-    , front_(nullptr)
-    , back_(nullptr)
-    , io_service_(
-#if ASIO_VERSION >= 101200
-        ASIO_CONCURRENCY_HINT_UNSAFE_IO
-#else
-        1
-#endif
-        )
 {
 }
 
 ResourceEvent::~ResourceEvent()
 {
     // All timer should be unregistered before destroying this object.
-    assert(front_ == nullptr);
-    assert(back_ == nullptr);
+    assert(timers_.empty());
 
     logInfo(RTPS_PARTICIPANT, "Removing event thread");
     stop_.store(true);
-    io_service_.stop();
 
     if (thread_.joinable())
     {
@@ -66,31 +60,22 @@ ResourceEvent::~ResourceEvent()
 bool ResourceEvent::register_timer_nts(
         TimedEventImpl* event)
 {
-    TimedEventImpl* curr = front_;
+    std::vector<TimedEventImpl*>::iterator low_bound;
+    std::vector<TimedEventImpl*>::iterator end_it = timers_.end();
+    
+    // Find insertion position
+    low_bound = std::lower_bound(timers_.begin(), end_it, event, event_compare);
 
-    while (curr != nullptr)
+    // If event is not found from there onwards ...
+    if (std::find(low_bound, end_it, event) == end_it)
     {
-        if (curr == event)
-        {
-            return false;
-        }
-
-        curr = curr->next();
+        // ... add it on its place
+        timers_.emplace(low_bound, event);
+        return true;
     }
 
-    if (back_)
-    {
-        back_->next(event);
-        back_ = event;
-    }
-    else
-    {
-        assert(front_ == nullptr);
-        front_ = event;
-        back_ = event;
-    }
-
-    return true;
+    // It was already present, no need to add again
+    return false;
 }
 
 void ResourceEvent::unregister_timer(
@@ -100,38 +85,24 @@ void ResourceEvent::unregister_timer(
 
     std::unique_lock<TimedMutex> lock(mutex_);
 
-    cv_.wait(lock, [&]()
-                {
-                    return allow_to_delete_;
-                });
+    std::vector<TimedEventImpl*>::iterator it;
+    std::vector<TimedEventImpl*>::iterator end_it = timers_.end();
 
-    TimedEventImpl* prev = nullptr, * curr = front_;
+    // Find with binary search
+    it = std::lower_bound(timers_.begin(), end_it, event, event_compare);
 
-    while (curr && curr != event && curr->next())
+    // Find the event on the list
+    for(; it != end_it; ++it)
     {
-        prev = curr;
-        curr = curr->next();
-    }
-
-    if (curr)
-    {
-        if (prev)
+        if (*it == event)
         {
-            prev->next(curr->next());
-        }
-        else
-        {
-            front_ = curr->next();
-        }
+            // Remove from list
+            timers_.erase(it);
 
-        if (!curr->next())
-        {
-            back_ = prev;
+            // Notify the execution thread that something changed
+            cv_.notify_one();
+            break;
         }
-
-        curr->next(nullptr);
-        curr->go_cancel();
-        curr->update();
     }
 }
 
@@ -142,6 +113,7 @@ void ResourceEvent::notify(
 
     if (register_timer_nts(event))
     {
+        // Notify the execution thread that something changed
         cv_.notify_one();
     }
 }
@@ -156,6 +128,7 @@ void ResourceEvent::notify(
     {
         if (register_timer_nts(event))
         {
+            // Notify the execution thread that something changed
             cv_.notify_one();
         }
     }
@@ -165,50 +138,76 @@ void ResourceEvent::run_io_service()
 {
     while (!stop_.load())
     {
-#if ASIO_VERSION >= 101200
-        io_service_.restart();
-#else
-        io_service_.reset();
-#endif
-        io_service_.poll();
-
         std::unique_lock<TimedMutex> lock(mutex_);
 
-        allow_to_delete_ = true;
-        cv_.notify_one();
+        update_current_time();
+        do_timer_actions();
 
-        if (cv_.wait_for(lock, std::chrono::nanoseconds(1000000), [&]()
-                    {
-                        return front_ != nullptr;
-                    }))
+        std::chrono::steady_clock::time_point next_trigger =
+            (timers_.size() > 0) ?
+                timers_[0]->next_trigger_time() :
+                current_time_ + std::chrono::seconds(1);
+
+        cv_.wait_until(lock, next_trigger);
+    }
+}
+
+void ResourceEvent::sort_timers()
+{
+    std::sort(timers_.begin(), timers_.end(), event_compare);
+}
+
+void ResourceEvent::update_current_time()
+{
+    current_time_ = std::chrono::steady_clock::now();
+}
+
+void ResourceEvent::do_timer_actions()
+{
+    if (!timers_.empty())
+    {
+        TimedEventImpl* last = timers_.back();
+        std::chrono::steady_clock::time_point cancel_time =
+            last->next_trigger_time() + std::chrono::hours(24);
+
+        bool did_something = false;
+        for (TimedEventImpl* tp : timers_)
         {
-            TimedEventImpl* curr = front_;
-
-            while (curr)
+            if (tp->next_trigger_time() <= current_time_)
             {
-                curr->update();
-                curr = curr->next(nullptr);
+                did_something = true;
+                tp->trigger(current_time_, cancel_time);
             }
-
-            front_ = nullptr;
-            back_ = nullptr;
+            else
+            {
+                break;
+            }
         }
 
-        allow_to_delete_ = false;
+        if (did_something)
+        {
+            sort_timers();
+
+            timers_.erase(
+                std::lower_bound(timers_.begin(), timers_.end(), nullptr,
+                    [cancel_time](
+                            TimedEventImpl* a,
+                            TimedEventImpl* b)
+                    {
+                        (void)b;
+                        return a->next_trigger_time() < cancel_time;
+                    }),
+                timers_.end()
+            );
+        }
     }
 }
 
 void ResourceEvent::init_thread()
 {
     thread_ = std::thread(&ResourceEvent::run_io_service, this);
-    std::future<void> ready_fut = ready.get_future();
-    io_service_.post([this]()
-                {
-                    ready.set_value();
-                });
-    ready_fut.wait();
 }
 
-}
-} /* namespace */
+} /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
