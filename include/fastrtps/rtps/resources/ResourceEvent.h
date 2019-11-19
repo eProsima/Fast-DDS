@@ -28,7 +28,6 @@
 #include <thread>
 #include <atomic>
 #include <vector>
-#include <future>
 
 namespace eprosima {
 namespace fastrtps {

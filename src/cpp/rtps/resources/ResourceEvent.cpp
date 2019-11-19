@@ -18,14 +18,12 @@
  */
 
 #include <fastrtps/rtps/resources/ResourceEvent.h>
+#include <fastrtps/log/Log.h>
+
 #include "TimedEventImpl.h"
 
-#include <asio.hpp>
+#include <cassert>
 #include <thread>
-#include <functional>
-#include <future>
-#include <fastrtps/log/Log.h>
-#include <asio/steady_timer.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -152,11 +150,11 @@ void ResourceEvent::run_io_service()
         std::unique_lock<TimedMutex> lock(mutex_);
 
         std::chrono::steady_clock::time_point next_trigger =
-            (active_timers_.size() > 0) ?
-                active_timers_[0]->next_trigger_time() :
-                current_time_ + std::chrono::seconds(1);
+            active_timers_.empty() ?
+                current_time_ + std::chrono::seconds(1) :
+                active_timers_[0]->next_trigger_time();
 
-        cv_.wait_until(lock, next_trigger, [&]() {return pending_timers_.empty() == false; });
+        cv_.wait_until(lock, next_trigger, [&]() {return !pending_timers_.empty(); });
     }
 }
 

@@ -34,10 +34,9 @@ TimedEvent::TimedEvent(
     : service_(service)
     , impl_(nullptr)
 {
-    impl_ =
-            new TimedEventImpl(
-                    callback,
-                    std::chrono::microseconds((int64_t)(milliseconds * 1000)));
+    impl_ = new TimedEventImpl(
+        callback,
+        std::chrono::microseconds(static_cast<int64_t>(milliseconds * 1000)));
 }
 
 TimedEvent::~TimedEvent()

@@ -19,14 +19,11 @@
 
 
 #include "TimedEventImpl.h"
-#include <fastrtps/rtps/resources/ResourceEvent.h>
-#include <fastrtps/rtps/resources/TimedEvent.h>
+
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <cassert>
-#include <functional>
 #include <atomic>
-#include <system_error>
+#include <functional>
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -34,12 +31,8 @@ TimedEventImpl::TimedEventImpl(
         Callback callback,
         std::chrono::microseconds interval)
     : interval_microsec_(interval)
-    , callback_(callback)
+    , callback_(std::move(callback))
     , state_(StateCode::INACTIVE)
-{
-}
-
-TimedEventImpl::~TimedEventImpl()
 {
 }
 
@@ -63,8 +56,6 @@ bool TimedEventImpl::go_cancel()
 
     if ((prev_code = state_.exchange(StateCode::INACTIVE)) != StateCode::INACTIVE)
     {
-        // TODO: needed?
-        // cancel_.store(true);
         returned_value = true;
     }
 
@@ -76,14 +67,6 @@ void TimedEventImpl::update(
         std::chrono::steady_clock::time_point cancel_time)
 {
     StateCode expected = StateCode::READY;
-
-    // TODO(MCC): needed?
-    /*
-    if (cancel_.exchange(false))
-    {
-        timer_.cancel();
-    }
-    */
 
     if (state_.compare_exchange_strong(expected, StateCode::WAITING))
     {
@@ -126,10 +109,10 @@ void TimedEventImpl::trigger(
 }
 
 bool TimedEventImpl::update_interval(
-        const eprosima::fastrtps::Duration_t& inter)
+        const eprosima::fastrtps::Duration_t& time)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    interval_microsec_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(inter));
+    interval_microsec_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(time));
     return true;
 }
 
@@ -137,6 +120,7 @@ bool TimedEventImpl::update_interval_millisec(
         double time_millisec)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    interval_microsec_ = std::chrono::microseconds((int64_t)(time_millisec * 1000));
+    interval_microsec_ = std::chrono::microseconds(
+        static_cast<int64_t>(time_millisec * 1000));
     return true;
 }

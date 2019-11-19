@@ -48,14 +48,12 @@ class TimedEventImpl
 
 public:
 
-    typedef enum
+    enum StateCode
     {
         INACTIVE = 0, //! The event is inactive. asio::io_service is not waiting for it.
         READY, //! The event is ready for being processed by ResourceEvent and added to asio::io_service.
         WAITING, //! The event is being waiting by asio::io_service to being triggered.
-    } StateCode;
-
-    ~TimedEventImpl();
+    };
 
     /*!
      * @brief Default constructor.
@@ -66,8 +64,6 @@ public:
     TimedEventImpl(
             Callback callback,
             std::chrono::microseconds interval);
-
-public:
 
     /*!
      * @brief Updates the expiration time of the event.
@@ -163,8 +159,8 @@ private:
     std::mutex mutex_;
 };
 
-}
-}
+} // namespace rtps
+} // namespace fastrtps
 } // namespace eprosima
 
 #endif
