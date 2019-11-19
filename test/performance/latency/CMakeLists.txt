@@ -113,6 +113,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 
             # If there is security, add a secure test as well
             if(SECURITY)
+                # Add the secure verison
                 add_test(
                     NAME performance.latency.${latency_test_name}_security
                     COMMAND ${PYTHON_EXECUTABLE}
