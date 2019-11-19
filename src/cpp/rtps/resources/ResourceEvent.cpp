@@ -91,6 +91,11 @@ void ResourceEvent::unregister_timer(
 
     std::unique_lock<TimedMutex> lock(mutex_);
 
+    cv_.wait(lock, [&]()
+    {
+        return allow_to_delete_;
+    });
+
     std::vector<TimedEventImpl*>::iterator it;
     std::vector<TimedEventImpl*>::iterator end_it = active_timers_.end();
 
@@ -109,6 +114,13 @@ void ResourceEvent::unregister_timer(
             cv_.notify_one();
             break;
         }
+    }
+
+    // Remove from pending
+    it = std::find(pending_timers_.begin(), pending_timers_.end(), event);
+    if (it != pending_timers_.end())
+    {
+        pending_timers_.erase(it);
     }
 }
 
@@ -149,12 +161,17 @@ void ResourceEvent::run_io_service()
 
         std::unique_lock<TimedMutex> lock(mutex_);
 
+        allow_to_delete_ = true;
+        cv_.notify_one();
+
         std::chrono::steady_clock::time_point next_trigger =
             active_timers_.empty() ?
                 current_time_ + std::chrono::seconds(1) :
                 active_timers_[0]->next_trigger_time();
 
         cv_.wait_until(lock, next_trigger, [&]() {return !pending_timers_.empty(); });
+
+        allow_to_delete_ = false;
     }
 }
 

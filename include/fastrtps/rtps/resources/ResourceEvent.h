@@ -96,6 +96,9 @@ private:
     //! Used to warn there are new TimedEventImpl objects to be processed.
     TimedConditionVariable cv_;
 
+    //! Flag used to allow a thread to delete a TimedEventImpl because the main thread is not using asio::io_service.
+    bool allow_to_delete_;
+
     //! Collection of events pending update action
     std::vector<TimedEventImpl*> pending_timers_;
 
