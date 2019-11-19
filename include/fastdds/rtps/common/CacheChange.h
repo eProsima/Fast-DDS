@@ -78,7 +78,7 @@ struct RTPS_DllAPI CacheChange_t
 
     CacheChange_t(
             const CacheChange_t&) = delete;
-    const CacheChange_t& operator=(
+    const CacheChange_t& operator =(
             const CacheChange_t&) = delete;
 
     /**
@@ -136,7 +136,7 @@ struct RTPS_DllAPI CacheChange_t
         serializedPayload.encapsulation = ch_ptr->serializedPayload.encapsulation;
 
         // Copy fragment size and initialize missing list to 'all fragments missing'
-        setFragmentSize(ch_ptr->fragment_size_, true);
+        setFragmentSize(ch_ptr->fragment_size_, false);
     }
 
     ~CacheChange_t()
@@ -218,7 +218,7 @@ struct RTPS_DllAPI CacheChange_t
                 size_t offset = 0;
                 for (uint32_t i = 1; i <= fragment_count_; i++, offset += fragment_size_)
                 {
-                    set_next_missing_fragment(i-1, i);  // index to next fragment in missing list
+                    set_next_missing_fragment(i - 1, i);  // index to next fragment in missing list
                 }
             }
             else
@@ -228,6 +228,83 @@ struct RTPS_DllAPI CacheChange_t
                 first_missing_fragment_ = fragment_count_;
             }
         }
+    }
+
+    bool add_fragments(
+            const SerializedPayload_t& incoming_data,
+            uint32_t fragment_starting_num,
+            uint32_t fragments_in_submessage)
+    {
+        uint32_t original_offset = (fragment_starting_num - 1) * fragment_size_;
+        uint32_t incoming_length = fragment_size_ * fragments_in_submessage;
+        uint32_t last_fragment_index = fragment_starting_num + fragments_in_submessage - 1;
+
+        // Validate fragment indexes
+        if (last_fragment_index > fragment_count_)
+        {
+            return false;
+        }
+
+        // validate lengths
+        if (last_fragment_index < fragment_count_)
+        {
+            if (incoming_data.length < incoming_length)
+            {
+                return false;
+            }
+        }
+        else
+        {
+            incoming_length = serializedPayload.length - original_offset;
+        }
+
+        if (original_offset + incoming_length > serializedPayload.length)
+        {
+            return false;
+        }
+
+        received_fragments(fragment_starting_num - 1, fragments_in_submessage);
+
+        memcpy(
+            &serializedPayload.data[original_offset],
+            incoming_data.data, incoming_length);
+
+        return is_fully_assembled();
+    }
+
+private:
+
+    // Fragment size
+    uint16_t fragment_size_ = 0;
+
+    // Number of fragments
+    uint32_t fragment_count_ = 0;
+
+    // First fragment in missing list
+    uint32_t first_missing_fragment_ = 0;
+
+    uint32_t get_next_missing_fragment(
+            uint32_t fragment_index)
+    {
+        uint32_t* ptr = next_fragment_pointer(fragment_index);
+        return *ptr;
+    }
+
+    void set_next_missing_fragment(
+            uint32_t fragment_index,
+            uint32_t next_fragment_index)
+    {
+        uint32_t* ptr = next_fragment_pointer(fragment_index);
+        *ptr = next_fragment_index;
+    }
+
+    uint32_t* next_fragment_pointer(
+            uint32_t fragment_index)
+    {
+        size_t offset = fragment_size_;
+        offset *= fragment_index;
+        offset = (offset + 3) & ~3;
+        return reinterpret_cast<uint32_t*>(&serializedPayload.data[offset]);
     }
 
     /*!
@@ -285,40 +362,6 @@ struct RTPS_DllAPI CacheChange_t
         }
     }
 
-private:
-
-    // Fragment size
-    uint16_t fragment_size_ = 0;
-
-    // Number of fragments
-    uint32_t fragment_count_ = 0;
-
-    // First fragment in missing list
-    uint32_t first_missing_fragment_ = 0;
-
-    uint32_t get_next_missing_fragment(
-            uint32_t fragment_index)
-    {
-        uint32_t* ptr = next_fragment_pointer(fragment_index);
-        return *ptr;
-    }
-
-    void set_next_missing_fragment(
-            uint32_t fragment_index,
-            uint32_t next_fragment_index)
-    {
-        uint32_t* ptr = next_fragment_pointer(fragment_index);
-        *ptr = next_fragment_index;
-    }
-
-    uint32_t* next_fragment_pointer(
-            uint32_t fragment_index)
-    {
-        size_t offset = fragment_size_;
-        offset *= fragment_index;
-        offset = (offset + 3) & ~3;
-        return reinterpret_cast<uint32_t*>(&serializedPayload.data[offset]);
-    }
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
@@ -403,9 +446,11 @@ public:
     {
     }
 
-    ~ChangeForReader_t(){}
+    ~ChangeForReader_t()
+    {
+    }
 
-    ChangeForReader_t& operator=(
+    ChangeForReader_t& operator =(
             const ChangeForReader_t& ch)
     {
         status_ = ch.status_;
@@ -529,12 +574,13 @@ private:
 
 struct ChangeForReaderCmp
 {
-    bool operator()(
+    bool operator ()(
             const ChangeForReader_t& a,
             const ChangeForReader_t& b) const
     {
         return a.seq_num_ < b.seq_num_;
     }
+
 };
 
 /**
@@ -570,9 +616,11 @@ public:
     {
     }
 
-    ~ChangeFromWriter_t(){};
+    ~ChangeFromWriter_t()
+    {
+    };
 
-    ChangeFromWriter_t& operator=(
+    ChangeFromWriter_t& operator =(
             const ChangeFromWriter_t& ch)
     {
         status_ = ch.status_;

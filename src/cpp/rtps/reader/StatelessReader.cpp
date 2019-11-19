@@ -26,7 +26,6 @@
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/writer/LivelinessManager.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/reader/FragmentedChangePitStop.h>
 
 #include <mutex>
 #include <thread>
@@ -409,9 +408,8 @@ bool StatelessReader::processDataFragMsg(
                 CacheChange_t* change_completed = nullptr;
                 if (work_change != nullptr)
                 {
-                    if(FragmentedChangePitStop::add_fragments_to_change(
-                        work_change, change_to_add->serializedPayload,
-                        fragmentStartingNum, fragmentsInSubmessage))
+                    if(work_change->add_fragments(change_to_add->serializedPayload, fragmentStartingNum,
+                            fragmentsInSubmessage))
                     {
                         change_completed = work_change;
                         work_change = nullptr;
