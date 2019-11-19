@@ -97,8 +97,11 @@ private:
     //! Used to warn there are new TimedEventImpl objects to be processed.
     TimedConditionVariable cv_;
 
+    //! Collection of events pending update action
+    std::vector<TimedEventImpl*> pending_timers_;
+
     //! Collection of registered events waiting completion
-    std::vector<TimedEventImpl*> timers_;
+    std::vector<TimedEventImpl*> active_timers_;
 
     //! Current time as seen by the execution thread
     std::chrono::steady_clock::time_point current_time_;
@@ -120,6 +123,8 @@ private:
 
     void sort_timers();
     void update_current_time();
+    void activate_timer(
+            TimedEventImpl* event);
 
     void do_timer_actions();
 };

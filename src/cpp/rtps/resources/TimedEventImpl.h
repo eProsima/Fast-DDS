@@ -48,6 +48,13 @@ class TimedEventImpl
 
 public:
 
+    typedef enum
+    {
+        INACTIVE = 0, //! The event is inactive. asio::io_service is not waiting for it.
+        READY, //! The event is ready for being processed by ResourceEvent and added to asio::io_service.
+        WAITING, //! The event is being waiting by asio::io_service to being triggered.
+    } StateCode;
+
     ~TimedEventImpl();
 
     /*!
@@ -132,6 +139,11 @@ public:
      * @brief It updates the asio::steady_timer depending of the state of TimedEventImpl object.
      * @warning This method has to be called from ResourceEvent's internal thread.
      */
+    void update(
+        std::chrono::steady_clock::time_point current_time,
+        std::chrono::steady_clock::time_point cancel_time);
+
+
     void trigger(
             std::chrono::steady_clock::time_point current_time,
             std::chrono::steady_clock::time_point cancel_time);
@@ -146,7 +158,7 @@ private:
 
     Callback callback_;
 
-    std::atomic<bool> enabled_;
+    std::atomic<StateCode> state_;
 
     std::mutex mutex_;
 };

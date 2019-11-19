@@ -34,11 +34,6 @@ TimedEvent::TimedEvent(
     : service_(service)
     , impl_(nullptr)
 {
-    if (milliseconds < 1)
-    {
-        milliseconds = 1;
-    }
-
     impl_ =
             new TimedEventImpl(
                     callback,
@@ -55,7 +50,7 @@ void TimedEvent::cancel_timer()
 {
     if (impl_->go_cancel())
     {
-        service_.unregister_timer(impl_);
+        service_.notify(impl_);
     }
 }
 

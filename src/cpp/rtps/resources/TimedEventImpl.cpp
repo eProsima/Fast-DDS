@@ -35,7 +35,7 @@ TimedEventImpl::TimedEventImpl(
         std::chrono::microseconds interval)
     : interval_microsec_(interval)
     , callback_(callback)
-    , enabled_(false)
+    , state_(StateCode::INACTIVE)
 {
 }
 
@@ -45,38 +45,83 @@ TimedEventImpl::~TimedEventImpl()
 
 bool TimedEventImpl::go_ready()
 {
-    bool ret_val = enabled_.exchange(true) == false;
-    if (ret_val)
+    bool returned_value = false;
+    StateCode expected = StateCode::INACTIVE;
+
+    if (state_.compare_exchange_strong(expected, StateCode::READY))
     {
-        std::unique_lock<std::mutex> lock(mutex_);
-        next_trigger_time_ = std::chrono::steady_clock::now() + interval_microsec_;
+        returned_value = true;
     }
 
-    return ret_val;
+    return returned_value;
 }
 
 bool TimedEventImpl::go_cancel()
 {
-    return enabled_.exchange(false) == true;
+    bool returned_value = false;
+    StateCode prev_code = StateCode::INACTIVE;
+
+    if ((prev_code = state_.exchange(StateCode::INACTIVE)) != StateCode::INACTIVE)
+    {
+        // TODO: needed?
+        // cancel_.store(true);
+        returned_value = true;
+    }
+
+    return returned_value;
+}
+
+void TimedEventImpl::update(
+        std::chrono::steady_clock::time_point current_time,
+        std::chrono::steady_clock::time_point cancel_time)
+{
+    StateCode expected = StateCode::READY;
+
+    // TODO(MCC): needed?
+    /*
+    if (cancel_.exchange(false))
+    {
+        timer_.cancel();
+    }
+    */
+
+    if (state_.compare_exchange_strong(expected, StateCode::WAITING))
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        next_trigger_time_ = current_time + interval_microsec_;
+    }
+    else
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        next_trigger_time_ = cancel_time;
+    }
 }
 
 void TimedEventImpl::trigger(
         std::chrono::steady_clock::time_point current_time,
         std::chrono::steady_clock::time_point cancel_time)
 {
-    if (go_cancel())
+    if (callback_)
     {
-        if (callback_)
-        {
-            bool restart = callback_ ? callback_() : false;
-            restart &= interval_microsec_.count() > 0;
+        StateCode expected = StateCode::WAITING;
+        state_.compare_exchange_strong(expected, StateCode::INACTIVE);
 
-            std::unique_lock<std::mutex> lock(mutex_);
-            next_trigger_time_ = restart ?
-                current_time + interval_microsec_ :
-                cancel_time;
-            enabled_.store(restart);
+        //Exec
+        bool restart = callback_();
+
+        if (restart)
+        {
+            expected = StateCode::INACTIVE;
+            if (state_.compare_exchange_strong(expected, StateCode::WAITING))
+            {
+                std::unique_lock<std::mutex> lock(mutex_);
+                next_trigger_time_ = current_time + interval_microsec_;
+                return;
+            }
         }
+
+        std::unique_lock<std::mutex> lock(mutex_);
+        next_trigger_time_ = cancel_time;
     }
 }
 

@@ -46,7 +46,7 @@ ResourceEvent::ResourceEvent()
 ResourceEvent::~ResourceEvent()
 {
     // All timer should be unregistered before destroying this object.
-    assert(timers_.empty());
+    assert(pending_timers_.empty());
 
     logInfo(RTPS_PARTICIPANT, "Removing event thread");
     stop_.store(true);
@@ -60,22 +60,30 @@ ResourceEvent::~ResourceEvent()
 bool ResourceEvent::register_timer_nts(
         TimedEventImpl* event)
 {
+    if (std::find(pending_timers_.begin(), pending_timers_.end(), event) == pending_timers_.end())
+    {
+        pending_timers_.push_back(event);
+        return true;
+    }
+
+    return false;
+}
+
+void ResourceEvent::activate_timer(
+        TimedEventImpl* event)
+{
     std::vector<TimedEventImpl*>::iterator low_bound;
-    std::vector<TimedEventImpl*>::iterator end_it = timers_.end();
+    std::vector<TimedEventImpl*>::iterator end_it = active_timers_.end();
     
     // Find insertion position
-    low_bound = std::lower_bound(timers_.begin(), end_it, event, event_compare);
+    low_bound = std::lower_bound(active_timers_.begin(), end_it, event, event_compare);
 
     // If event is not found from there onwards ...
     if (std::find(low_bound, end_it, event) == end_it)
     {
         // ... add it on its place
-        timers_.emplace(low_bound, event);
-        return true;
+        active_timers_.emplace(low_bound, event);
     }
-
-    // It was already present, no need to add again
-    return false;
 }
 
 void ResourceEvent::unregister_timer(
@@ -86,10 +94,10 @@ void ResourceEvent::unregister_timer(
     std::unique_lock<TimedMutex> lock(mutex_);
 
     std::vector<TimedEventImpl*>::iterator it;
-    std::vector<TimedEventImpl*>::iterator end_it = timers_.end();
+    std::vector<TimedEventImpl*>::iterator end_it = active_timers_.end();
 
     // Find with binary search
-    it = std::lower_bound(timers_.begin(), end_it, event, event_compare);
+    it = std::lower_bound(active_timers_.begin(), end_it, event, event_compare);
 
     // Find the event on the list
     for(; it != end_it; ++it)
@@ -97,7 +105,7 @@ void ResourceEvent::unregister_timer(
         if (*it == event)
         {
             // Remove from list
-            timers_.erase(it);
+            active_timers_.erase(it);
 
             // Notify the execution thread that something changed
             cv_.notify_one();
@@ -138,23 +146,23 @@ void ResourceEvent::run_io_service()
 {
     while (!stop_.load())
     {
-        std::unique_lock<TimedMutex> lock(mutex_);
-
         update_current_time();
         do_timer_actions();
 
+        std::unique_lock<TimedMutex> lock(mutex_);
+
         std::chrono::steady_clock::time_point next_trigger =
-            (timers_.size() > 0) ?
-                timers_[0]->next_trigger_time() :
+            (active_timers_.size() > 0) ?
+                active_timers_[0]->next_trigger_time() :
                 current_time_ + std::chrono::seconds(1);
 
-        cv_.wait_until(lock, next_trigger);
+        cv_.wait_until(lock, next_trigger, [&]() {return pending_timers_.empty() == false; });
     }
 }
 
 void ResourceEvent::sort_timers()
 {
-    std::sort(timers_.begin(), timers_.end(), event_compare);
+    std::sort(active_timers_.begin(), active_timers_.end(), event_compare);
 }
 
 void ResourceEvent::update_current_time()
@@ -164,42 +172,52 @@ void ResourceEvent::update_current_time()
 
 void ResourceEvent::do_timer_actions()
 {
-    if (!timers_.empty())
+    std::chrono::steady_clock::time_point cancel_time =
+        current_time_ + std::chrono::hours(24);
+
+    bool did_something = false;
+
+    // Process pending orders
     {
-        TimedEventImpl* last = timers_.back();
-        std::chrono::steady_clock::time_point cancel_time =
-            last->next_trigger_time() + std::chrono::hours(24);
-
-        bool did_something = false;
-        for (TimedEventImpl* tp : timers_)
+        std::unique_lock<TimedMutex> lock(mutex_);
+        for (TimedEventImpl* tp : pending_timers_)
         {
-            if (tp->next_trigger_time() <= current_time_)
-            {
-                did_something = true;
-                tp->trigger(current_time_, cancel_time);
-            }
-            else
-            {
-                break;
-            }
+            did_something = true;
+            tp->update(current_time_, cancel_time);
+            activate_timer(tp);
         }
+        pending_timers_.clear();
+    }
 
-        if (did_something)
+    // Trigger active timers
+    for (TimedEventImpl* tp : active_timers_)
+    {
+        if (tp->next_trigger_time() <= current_time_)
         {
-            sort_timers();
+            did_something = true;
+            tp->trigger(current_time_, cancel_time);
+        }
+        else
+        {
+            break;
+        }
+    }
 
-            timers_.erase(
-                std::lower_bound(timers_.begin(), timers_.end(), nullptr,
-                    [cancel_time](
-                            TimedEventImpl* a,
-                            TimedEventImpl* b)
-                    {
-                        (void)b;
-                        return a->next_trigger_time() < cancel_time;
-                    }),
-                timers_.end()
+    // If an action was made, keep active_timers_ sorted
+    if (did_something)
+    {
+        sort_timers();
+        active_timers_.erase(
+            std::lower_bound(active_timers_.begin(), active_timers_.end(), nullptr,
+                [cancel_time](
+                        TimedEventImpl* a,
+                        TimedEventImpl* b)
+                {
+                    (void)b;
+                    return a->next_trigger_time() < cancel_time;
+                }),
+            active_timers_.end()
             );
-        }
     }
 }
 
