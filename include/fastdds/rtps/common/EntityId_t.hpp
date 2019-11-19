@@ -325,7 +325,7 @@ template <>
 struct hash<eprosima::fastrtps::rtps::EntityId_t>
 {
     std::size_t operator()(
-        const eprosima::fastrtps::rtps::EntityId_t& k) const
+            const eprosima::fastrtps::rtps::EntityId_t& k) const
     {
         // recover the participant entity counter
         eprosima::fastrtps::rtps::octet value[4];
@@ -344,6 +344,7 @@ struct hash<eprosima::fastrtps::rtps::EntityId_t>
         return static_cast<std::size_t>(*reinterpret_cast<const uint32_t*>(&value));
     }
 };
+
 } // namespace std
 
 
