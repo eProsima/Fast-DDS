@@ -94,7 +94,7 @@ if __name__ == '__main__':
         # Manage security
         if security is True:
             pub_command.append(
-                './measurements_{}_security.xml'.format(
+                './measurements_{}_security.csv'.format(
                     xml_file.split('/')[-1].split('\\')[-1].split('.')[-2]
                 )
             )
@@ -102,7 +102,7 @@ if __name__ == '__main__':
             sub_command += security_options
         else:
             pub_command.append(
-                './measurements_{}.xml'.format(
+                './measurements_{}.csv'.format(
                     xml_file.split('/')[-1].split('\\')[-1].split('.')[-2]
                 )
             )
