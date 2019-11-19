@@ -96,7 +96,17 @@ void ResourceEvent::unregister_timer(
         return allow_to_delete_;
     });
 
+    bool should_notify = false;
     std::vector<TimedEventImpl*>::iterator it;
+
+    // Remove from pending
+    it = std::find(pending_timers_.begin(), pending_timers_.end(), event);
+    if (it != pending_timers_.end())
+    {
+        pending_timers_.erase(it);
+        should_notify = true;
+    }
+
     std::vector<TimedEventImpl*>::iterator end_it = active_timers_.end();
 
     // Find with binary search
@@ -109,18 +119,15 @@ void ResourceEvent::unregister_timer(
         {
             // Remove from list
             active_timers_.erase(it);
-
-            // Notify the execution thread that something changed
-            cv_.notify_one();
+            should_notify = true;
             break;
         }
     }
 
-    // Remove from pending
-    it = std::find(pending_timers_.begin(), pending_timers_.end(), event);
-    if (it != pending_timers_.end())
+    if (should_notify)
     {
-        pending_timers_.erase(it);
+        // Notify the execution thread that something changed
+        cv_.notify_one();
     }
 }
 
@@ -169,7 +176,7 @@ void ResourceEvent::run_io_service()
                 current_time_ + std::chrono::seconds(1) :
                 active_timers_[0]->next_trigger_time();
 
-        cv_.wait_until(lock, next_trigger, [&]() {return !pending_timers_.empty(); });
+        cv_.wait_until(lock, next_trigger);
 
         allow_to_delete_ = false;
     }
