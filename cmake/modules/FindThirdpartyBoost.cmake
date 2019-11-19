@@ -13,7 +13,11 @@ set(THIRDPARTY_BOOST_INCLUDE_DIR
 
 find_package(Threads REQUIRED)
 
-set(THIRDPARTY_BOOST_LINK_LIBS ${CMAKE_THREAD_LIBS_INIT} $<$<NOT:$<BOOL:${WIN32}>>:rt>)
+if(WIN32 OR APPLE)
+    set(THIRDPARTY_BOOST_LINK_LIBS ${CMAKE_THREAD_LIBS_INIT})
+else() # Posix
+    set(THIRDPARTY_BOOST_LINK_LIBS ${CMAKE_THREAD_LIBS_INIT} rt)
+endif()
 
 try_compile(IS_THIRDPARTY_BOOST_OK
         ${CMAKE_BINARY_DIR}
@@ -24,7 +28,7 @@ try_compile(IS_THIRDPARTY_BOOST_OK
     )
 
 if(NOT IS_THIRDPARTY_BOOST_OK)
-    message(STATUS "Couln't compile thirdparty/boost with current configuration!!!\n" ${OUT})
+    message(FATAL_ERROR "Couln't compile thirdparty/boost with current configuration!!!\n" ${OUT})
 else()
     message(STATUS "Thirdparty/boost compiled OK")
     mark_as_advanced(THIRDPARTY_BOOST_INCLUDE_DIR)
