@@ -16,7 +16,7 @@
 #include "ThroughputPublisher.h"
 #include "ThroughputSubscriber.h"
 
-#include "optionparser.h"
+#include "../optionparser.h"
 
 #include <stdio.h>
 #include <string>
