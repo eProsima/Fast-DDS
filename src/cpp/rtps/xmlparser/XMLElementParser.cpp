@@ -2977,7 +2977,7 @@ XMLP_ret XMLParser::getXMLEnum(tinyxml2::XMLElement *elem, ParticipantFilteringF
     }
 
     // First we check if it matches the schema pattern
-    std::regex schema("((FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS|NO_FILTER)(\\||\\s)*)*");
+    std::regex schema("((FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS|NO_FILTER)*(\\||\\s)*)*");
 
     if(!std::regex_match(text, schema))
     {

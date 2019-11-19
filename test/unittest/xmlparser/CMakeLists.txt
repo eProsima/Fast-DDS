@@ -55,10 +55,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(XMLPROFILEPARSER_SOURCE
             XMLProfileParserTests.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLProfileManager.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLParser.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLElementParser.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLParserCommon.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLProfileManager.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParser.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLElementParser.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParserCommon.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/QosPolicies.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterTypes.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/topic/qos/WriterQos.cpp
@@ -125,10 +125,10 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
 
         set(XMLPARSER_SOURCE
             XMLParserTests.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLProfileManager.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLParser.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLElementParser.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps_deprecated/xmlparser/XMLParserCommon.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLProfileManager.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParser.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLElementParser.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParserCommon.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/QosPolicies.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/core/policy/ParameterTypes.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/dds/topic/qos/WriterQos.cpp
