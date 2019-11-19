@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+    <profiles>
+        <participant profile_name="participant_profile">
+            <rtps>
+                <builtin>
+                    <domainId>232</domainId>
+                </builtin>
+                <name>Participant_publisher</name>
+            </rtps>
+        </participant>
+
+        <!-- PUBLISHER -->
+        <publisher profile_name="publisher_profile">
+            <topic>
+                <name>throughput_interprocess</name>
+                <dataType>ThroughputType</dataType>
+                <kind>NO_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+            </qos>
+        </publisher>
+
+        <!-- SUBSCRIBER -->
+        <subscriber profile_name="subscriber_profile">
+            <topic>
+                <name>throughput_interprocess</name>
+                <dataType>ThroughputType</dataType>
+                <kind>NO_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+            </qos>
+        </subscriber>
+    </profiles>
+</dds>
