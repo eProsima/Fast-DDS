@@ -30,9 +30,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 
     include_directories(${ASIO_INCLUDE_DIR})
 
-    ###############################################################################
-    # Binaries
-    ###############################################################################
+    ###########################################################################
+    # Create and link executable                                              #
+    ###########################################################################
     set(
         THROUGHPUTTEST_SOURCE ThroughputPublisher.cpp
         ThroughputSubscriber.cpp
@@ -40,6 +40,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         main_ThroughputTest.cpp
     )
     add_executable(ThroughputTest ${THROUGHPUTTEST_SOURCE})
+
     target_include_directories(ThroughputTest PRIVATE)
     target_link_libraries(
         ThroughputTest
@@ -49,226 +50,118 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         ${CMAKE_DL_LIBS}
     )
 
+    ###########################################################################
+    # List Throughput tests                                                   #
+    ###########################################################################
+    set(
+        THROUGHPUT_TEST_LIST
+        interprocess_best_effort
+        interprocess_reliable
+    )
+
+    ###########################################################################
+    # List Recovery times                                                     #
+    ###########################################################################
+    set(
+        RECOVERY_TIMES
+        0
+        20
+        40
+        60
+        80
+        100
+    )
+
+    ###########################################################################
+    # Configure XML files                                                     #
+    ###########################################################################
+    foreach(throughput_test_name ${THROUGHPUT_TEST_LIST})
+        configure_file(
+            ${CMAKE_CURRENT_SOURCE_DIR}/xml/${throughput_test_name}.xml
+            ${CMAKE_CURRENT_BINARY_DIR}/xml/${throughput_test_name}.xml
+            COPYONLY
+        )
+    endforeach(throughput_test_name)
+
+    ###########################################################################
+    # Create tests                                                            #
+    ###########################################################################
     find_package(PythonInterp 3 REQUIRED)
     if(PYTHONINTERP_FOUND)
-        ###############################################################################
-        # ThroughputTest16
-        ###############################################################################
-        add_test(NAME ThroughputTest16
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 16)
+        # Loop over the test names
+        foreach(throughput_test_name ${THROUGHPUT_TEST_LIST})
+            foreach(recovery_time ${RECOVERY_TIMES})
+                # Append recovery time to test name
+                set(throughput_test_name_rec ${throughput_test_name}_${recovery_time})
 
-        # Set test with label NoMemoryCheck
-        set_property(TEST ThroughputTest16 PROPERTY LABELS "NoMemoryCheck")
+                # Add the test
+                add_test(
+                    NAME performance.throughput.${throughput_test_name_rec}
+                    COMMAND ${PYTHON_EXECUTABLE}
+                    ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py
+                    --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${throughput_test_name}.xml
+                    --recovery_time ${recovery_time}
+                    --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+                )
 
-        if(WIN32)
-            set_property(TEST ThroughputTest16 PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
-        endif()
-        set_property(TEST ThroughputTest16 APPEND PROPERTY ENVIRONMENT
-            "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
-        set_property(TEST ThroughputTest16 APPEND PROPERTY ENVIRONMENT
-            "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
-        if(SECURITY)
-            set_property(TEST ThroughputTest16 APPEND PROPERTY ENVIRONMENT
-                "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
-        endif()
+                # Set test properties
+                set_property(
+                    TEST performance.throughput.${throughput_test_name_rec}
+                    PROPERTY LABELS "NoMemoryCheck"
+                )
+                set_property(
+                    TEST performance.throughput.${throughput_test_name_rec}
+                    APPEND PROPERTY ENVIRONMENT "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>"
+                )
+                set_property(
+                    TEST performance.throughput.${throughput_test_name_rec}
+                    APPEND PROPERTY ENVIRONMENT "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
+                )
+                if(WIN32)
+                    set_property(
+                        TEST performance.throughput.${throughput_test_name_rec}
+                        PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}"
+                    )
+                endif()
 
-        ###############################################################################
-        # ThroughputTest32
-        ###############################################################################
-        add_test(NAME ThroughputTest32
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 32)
+                if(SECURITY)
+                    # Add the secure version
+                    add_test(
+                        NAME performance.throughput.${throughput_test_name_rec}_security
+                        COMMAND ${PYTHON_EXECUTABLE}
+                        ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py
+                        --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${throughput_test_name}.xml
+                        --recovery_time ${recovery_time}
+                        --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+                        --security
+                    )
 
-        # Set test with label NoMemoryCheck
-        set_property(TEST ThroughputTest32 PROPERTY LABELS "NoMemoryCheck")
+                    # Set test properties
+                    set_property(
+                        TEST performance.throughput.${throughput_test_name_rec}_security
+                        PROPERTY LABELS "NoMemoryCheck"
+                    )
+                    set_property(
+                        TEST performance.throughput.${throughput_test_name_rec}_security
+                        APPEND PROPERTY ENVIRONMENT "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>"
+                    )
+                    set_property(
+                        TEST performance.throughput.${throughput_test_name_rec}_security
+                        APPEND PROPERTY ENVIRONMENT "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
+                    )
+                    if(WIN32)
+                        set_property(
+                            TEST performance.throughput.${throughput_test_name_rec}_security
+                            PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}"
+                        )
+                    endif()
 
-        if(WIN32)
-            set_property(TEST ThroughputTest32 PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
-        endif()
-        set_property(TEST ThroughputTest32 APPEND PROPERTY ENVIRONMENT
-            "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
-        set_property(TEST ThroughputTest32 APPEND PROPERTY ENVIRONMENT
-            "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
-        if(SECURITY)
-            set_property(TEST ThroughputTest32 APPEND PROPERTY ENVIRONMENT
-                "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
-        endif()
-
-        ###############################################################################
-        # ThroughputTest64
-        ###############################################################################
-        add_test(NAME ThroughputTest64
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 64)
-
-        # Set test with label NoMemoryCheck
-        set_property(TEST ThroughputTest64 PROPERTY LABELS "NoMemoryCheck")
-
-        if(WIN32)
-            set_property(TEST ThroughputTest64 PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
-        endif()
-        set_property(TEST ThroughputTest64 APPEND PROPERTY ENVIRONMENT
-            "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
-        set_property(TEST ThroughputTest64 APPEND PROPERTY ENVIRONMENT
-            "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
-        if(SECURITY)
-            set_property(TEST ThroughputTest64 APPEND PROPERTY ENVIRONMENT
-                "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
-        endif()
-
-        ###############################################################################
-        # ThroughputTest128
-        ###############################################################################
-        add_test(NAME ThroughputTest128
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 128)
-
-        # Set test with label NoMemoryCheck
-        set_property(TEST ThroughputTest128 PROPERTY LABELS "NoMemoryCheck")
-
-        if(WIN32)
-            set_property(TEST ThroughputTest128 PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
-        endif()
-        set_property(TEST ThroughputTest128 APPEND PROPERTY ENVIRONMENT
-            "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
-        set_property(TEST ThroughputTest128 APPEND PROPERTY ENVIRONMENT
-            "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
-        if(SECURITY)
-            set_property(TEST ThroughputTest128 APPEND PROPERTY ENVIRONMENT
-                "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
-        endif()
-
-        ###############################################################################
-        # ThroughputTest256
-        ###############################################################################
-        add_test(NAME ThroughputTest256
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 256)
-
-        # Set test with label NoMemoryCheck
-        set_property(TEST ThroughputTest256 PROPERTY LABELS "NoMemoryCheck")
-
-        if(WIN32)
-            set_property(TEST ThroughputTest256 PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
-        endif()
-        set_property(TEST ThroughputTest256 APPEND PROPERTY ENVIRONMENT
-            "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
-        set_property(TEST ThroughputTest256 APPEND PROPERTY ENVIRONMENT
-            "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
-        if(SECURITY)
-            set_property(TEST ThroughputTest256 APPEND PROPERTY ENVIRONMENT
-                "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
-        endif()
-
-        ###############################################################################
-        # ThroughputTest512
-        ###############################################################################
-        add_test(NAME ThroughputTest512
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 512)
-
-        # Set test with label NoMemoryCheck
-        set_property(TEST ThroughputTest512 PROPERTY LABELS "NoMemoryCheck")
-
-        if(WIN32)
-            set_property(TEST ThroughputTest512 PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
-        endif()
-        set_property(TEST ThroughputTest512 APPEND PROPERTY ENVIRONMENT
-            "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
-        set_property(TEST ThroughputTest512 APPEND PROPERTY ENVIRONMENT
-            "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
-        if(SECURITY)
-            set_property(TEST ThroughputTest512 APPEND PROPERTY ENVIRONMENT
-                "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
-        endif()
-
-        ###############################################################################
-        # ThroughputTest1024
-        ###############################################################################
-        add_test(NAME ThroughputTest1024
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 1024)
-
-        # Set test with label NoMemoryCheck
-        set_property(TEST ThroughputTest1024 PROPERTY LABELS "NoMemoryCheck")
-
-        if(WIN32)
-            set_property(TEST ThroughputTest1024 PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
-        endif()
-        set_property(TEST ThroughputTest1024 APPEND PROPERTY ENVIRONMENT
-            "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
-        set_property(TEST ThroughputTest1024 APPEND PROPERTY ENVIRONMENT
-            "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
-        if(SECURITY)
-            set_property(TEST ThroughputTest1024 APPEND PROPERTY ENVIRONMENT
-                "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
-        endif()
-
-        ###############################################################################
-        # ThroughputTest2048
-        ###############################################################################
-        add_test(NAME ThroughputTest2048
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 2048)
-
-        # Set test with label NoMemoryCheck
-        set_property(TEST ThroughputTest2048 PROPERTY LABELS "NoMemoryCheck")
-
-        if(WIN32)
-            set_property(TEST ThroughputTest2048 PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
-        endif()
-        set_property(TEST ThroughputTest2048 APPEND PROPERTY ENVIRONMENT
-            "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
-        set_property(TEST ThroughputTest2048 APPEND PROPERTY ENVIRONMENT
-            "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
-        if(SECURITY)
-            set_property(TEST ThroughputTest2048 APPEND PROPERTY ENVIRONMENT
-                "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
-        endif()
-
-        ###############################################################################
-        # ThroughputTest4096
-        ###############################################################################
-        add_test(NAME ThroughputTest4096
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 4096)
-
-        # Set test with label NoMemoryCheck
-        set_property(TEST ThroughputTest4096 PROPERTY LABELS "NoMemoryCheck")
-
-        if(WIN32)
-            set_property(TEST ThroughputTest4096 PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
-        endif()
-        set_property(TEST ThroughputTest4096 APPEND PROPERTY ENVIRONMENT
-            "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
-        set_property(TEST ThroughputTest4096 APPEND PROPERTY ENVIRONMENT
-            "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
-        if(SECURITY)
-            set_property(TEST ThroughputTest4096 APPEND PROPERTY ENVIRONMENT
-                "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
-        endif()
-
-        ###############################################################################
-        # ThroughputTest8192
-        ###############################################################################
-        add_test(NAME ThroughputTest8192
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py 8192)
-
-        # Set test with label NoMemoryCheck
-        set_property(TEST ThroughputTest8192 PROPERTY LABELS "NoMemoryCheck")
-
-        if(WIN32)
-            set_property(TEST ThroughputTest8192 PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
-        endif()
-        set_property(TEST ThroughputTest8192 APPEND PROPERTY ENVIRONMENT
-            "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>")
-        set_property(TEST ThroughputTest8192 APPEND PROPERTY ENVIRONMENT
-            "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}")
-        if(SECURITY)
-            set_property(TEST ThroughputTest8192 APPEND PROPERTY ENVIRONMENT
-                "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
-        endif()
+                    set_property(
+                        TEST performance.throughput.${throughput_test_name_rec}_security
+                        APPEND PROPERTY ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+                    )
+                endif()
+            endforeach(recovery_time)
+        endforeach(throughput_test_name)
     endif()
 endif()
