@@ -347,7 +347,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         ${ASIO_INCLUDE_DIR}
         ${TINYXML2_INCLUDE_DIR}
         $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
-        ${PROJECT_SOURCE_DIR}/thirdparty/boost/include
+        ${THIRDPARTY_BOOST_INCLUDE_DIR}
         )
 
     # Made linked libraries PRIVATE to prevent local directories in Windows installer.
@@ -366,7 +366,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         ${TINYXML2_LIBRARY}
         $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
-        $<$<NOT:$<BOOL:${WIN32}>>:rt>
+        ${THIRDPARTY_BOOST_LINK_LIBS}
         )
 
     if(MSVC OR MSVC_IDE)

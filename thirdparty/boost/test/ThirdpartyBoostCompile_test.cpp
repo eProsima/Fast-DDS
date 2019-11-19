@@ -50,3 +50,17 @@ public:
         }
     }
 };
+
+int main()
+{
+    try
+    {
+        ThirdpartyBoostCompileTest compile_test;
+    }
+    catch(const std::exception& e)
+    {
+        return -1;
+    }
+    
+    return 0;
+}
