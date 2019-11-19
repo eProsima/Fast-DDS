@@ -114,45 +114,46 @@ bool LatencyTestSubscriber::init(
     std::string participant_profile_name = "sub_participant_profile";
     ParticipantAttributes participant_attributes;
 
+    // Default domain
+    participant_attributes.rtps.builtin.domainId = pid % 230;
+
+    // Default participant name
+    participant_attributes.rtps.setName("Participant_sub");
+
+    participant_attributes.rtps.properties = part_property_policy;
+
+    // Load XML configuration
+    if (xml_config_file_.length() > 0)
+    {
+        if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK !=
+                eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(
+                    participant_profile_name, participant_attributes))
+        {
+            return false;
+        }
+    }
+
+    // Apply user's force domain
     if (forced_domain_ >= 0)
     {
         participant_attributes.rtps.builtin.domainId = forced_domain_;
     }
-    else
-    {
-        participant_attributes.rtps.builtin.domainId = pid % 230;
-    }
-    participant_attributes.rtps.setName("Participant_sub");
-    participant_attributes.rtps.properties = part_property_policy;
 
-    if (xml_config_file_.length() > 0)
+    // If the user has specified a participant property policy with command line arguments, it overrides whatever the
+    // XML configures.
+    if (PropertyPolicyHelper::length(part_property_policy) > 0)
     {
-        if (forced_domain_ >= 0)
-        {
-            if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
-                    eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(
-                        participant_profile_name, participant_attributes))
-            {
-                participant_attributes.rtps.builtin.domainId = forced_domain_;
-                participant_ = Domain::createParticipant(participant_attributes);
-            }
-        }
-        else
-        {
-            participant_ = Domain::createParticipant(participant_profile_name);
-        }
-    }
-    else
-    {
-        participant_ = Domain::createParticipant(participant_attributes);
+        participant_attributes.rtps.properties = part_property_policy;
     }
 
+    // Create the participant
+    participant_ = Domain::createParticipant(participant_profile_name);
     if (participant_ == nullptr)
     {
         return false;
     }
 
-    // Register the type
+    // Register the data type
     if (dynamic_data_)
     {
         Domain::registerType(participant_, &dynamic_data_pub_sub_type_);
@@ -161,6 +162,8 @@ bool LatencyTestSubscriber::init(
     {
         Domain::registerType(participant_, (TopicDataType*)&latency_data_type_);
     }
+
+    // Register the command type
     Domain::registerType(participant_, (TopicDataType*)&latency_command_type_);
 
     /* Create Data Echo Publisher */

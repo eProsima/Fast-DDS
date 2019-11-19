@@ -30,17 +30,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 
     include_directories(${ASIO_INCLUDE_DIR})
 
+    add_subdirectory(latency)
+
     ###############################################################################
     # Binaries
     ###############################################################################
-    set(LATENCYTEST_SOURCE LatencyTestPublisher.cpp
-        LatencyTestSubscriber.cpp
-        LatencyTestTypes.cpp
-        main_LatencyTest.cpp
-        )
-    add_executable(LatencyTest ${LATENCYTEST_SOURCE})
-    target_link_libraries(LatencyTest fastrtps foonathan_memory ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
-
     set(THROUGHPUTTEST_SOURCE ThroughputPublisher.cpp
         ThroughputSubscriber.cpp
         ThroughputTypes.cpp
@@ -128,26 +122,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
     find_package(PythonInterp 3 REQUIRED)
 
     if(PYTHONINTERP_FOUND)
-        ###############################################################################
-        # LatencyTest
-        ###############################################################################
-        add_test(NAME LatencyTest
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/latency_tests.py)
-
-        # Set test with label NoMemoryCheck
-        set_property(TEST LatencyTest PROPERTY LABELS "NoMemoryCheck")
-
-        if(WIN32)
-            set_property(TEST LatencyTest PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
-        endif()
-        set_property(TEST LatencyTest APPEND PROPERTY ENVIRONMENT
-            "LATENCY_TEST_BIN=$<TARGET_FILE:LatencyTest>")
-        if(SECURITY)
-            set_property(TEST LatencyTest APPEND PROPERTY ENVIRONMENT
-                "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
-        endif()
-
         ###############################################################################
         # ThroughputTest16
         ###############################################################################

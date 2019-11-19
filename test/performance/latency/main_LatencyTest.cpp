@@ -14,7 +14,7 @@
 
 #include "LatencyTestPublisher.h"
 #include "LatencyTestSubscriber.h"
-#include "optionparser.h"
+#include "../optionparser.h"
 
 #include <stdio.h>
 #include <string>
@@ -425,22 +425,38 @@ int main(
         xmlparser::XMLProfileManager::loadXMLFile(xml_config_file);
     }
 
+    uint8_t return_code = 0;
+
     if (test_agent == TestAgent::PUBLISHER)
     {
         std::cout << "Performing test with " << subscribers << " subscribers and " << samples << " samples"
                 << std::endl;
         LatencyTestPublisher latency_publisher;
-        latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv, export_prefix,
+        if (latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv, export_prefix,
                 raw_data_file, pub_part_property_policy, pub_property_policy, large_data, xml_config_file,
-                dynamic_types, forced_domain);
-        latency_publisher.run();
+                dynamic_types, forced_domain))
+        {
+            latency_publisher.run();
+        }
+        else
+        {
+            return_code = 1;
+        }
+
     }
     else if (test_agent == TestAgent::SUBSCRIBER)
     {
         LatencyTestSubscriber latency_subscriber;
-        latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-                large_data, xml_config_file, dynamic_types, forced_domain);
-        latency_subscriber.run();
+        if (latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
+                large_data, xml_config_file, dynamic_types, forced_domain))
+        {
+            latency_subscriber.run();
+        }
+        else
+        {
+            return_code = 1;
+        }
+
     }
     else if (test_agent == TestAgent::BOTH)
     {
@@ -449,24 +465,40 @@ int main(
 
         // Initialize publisher
         LatencyTestPublisher latency_publisher;
-        latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv, export_prefix,
-                raw_data_file, pub_part_property_policy, pub_property_policy, large_data, xml_config_file,
-                dynamic_types, forced_domain);
+        bool pub_init = latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv,
+                export_prefix, raw_data_file, pub_part_property_policy, pub_property_policy, large_data,
+                xml_config_file, dynamic_types, forced_domain);
 
         // Initialize subscriber
         LatencyTestSubscriber latency_subscriber;
-        latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-                large_data, xml_config_file, dynamic_types, forced_domain);
+        bool sub_init = latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy,
+                sub_property_policy, large_data, xml_config_file, dynamic_types, forced_domain);
 
         // Spawn run threads
-        std::thread pub_thread(&LatencyTestPublisher::run, &latency_publisher);
-        std::thread sub_thread(&LatencyTestSubscriber::run, &latency_subscriber);
-        pub_thread.join();
-        sub_thread.join();
+        if (pub_init && sub_init)
+        {
+            std::thread pub_thread(&LatencyTestPublisher::run, &latency_publisher);
+            std::thread sub_thread(&LatencyTestSubscriber::run, &latency_subscriber);
+            pub_thread.join();
+            sub_thread.join();
+        }
+        else
+        {
+            return_code = 1;
+        }
+
     }
 
-    std::cout << "EVERYTHING STOPPED FINE" << std::endl;
-    return 0;
+    if (return_code == 0)
+    {
+        std::cout << "EVERYTHING STOPPED FINE" << std::endl;
+    }
+    else
+    {
+        std::cout << "SOMETHING WENT WRONG" << std::endl;
+    }
+
+    return return_code;
 }
 
 #if defined(_MSC_VER)
