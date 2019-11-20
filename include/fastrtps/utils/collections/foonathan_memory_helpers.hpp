@@ -52,7 +52,7 @@ std::size_t memory_pool_block_size(
 
     return num_elems
            * ((node_size > MemoryPool::min_node_size ? node_size : MemoryPool::min_node_size) // Room for elements
-           + 2 * (foonathan::memory::detail::debug_fence_size ? node_size : 0))               // Room for debug info
+           * (foonathan::memory::detail::debug_fence_size ? 3 : 1))               // Room for debug info
            + foonathan::memory::detail::memory_block_stack::implementation_offset;            // Room for padding
 }
 
