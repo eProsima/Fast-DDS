@@ -25,6 +25,7 @@
 #include <foonathan/memory/container.hpp>
 #include <foonathan/memory/memory_pool.hpp>
 #include <foonathan/memory/segregator.hpp>
+#include <foonathan/memory/detail/debug_helpers.hpp>
 
 #include <fastrtps/utils/collections/foonathan_memory_helpers.hpp>
 
@@ -51,10 +52,18 @@ public:
             std::size_t nodes_to_allocate,
             const bool& flag,
             std::size_t padding = foonathan::memory::detail::memory_block_stack::implementation_offset)
-        : block_size_(nodes_to_allocate * node_size + padding)
-        , node_allocator_(new allocator_type(node_size, nodes_to_allocate * node_size + padding))
+        : block_size_(nodes_to_allocate * (node_size
+                // Needs more space in debug info. It allocates space to detect overflow.
+                + 2 * (foonathan::memory::detail::debug_fence_size ? node_size : 0))
+                + padding)
+        , node_allocator_(new allocator_type(node_size,
+                nodes_to_allocate * (node_size
+                // Needs more space in debug info. It allocates space to detect overflow.
+                + 2 * (foonathan::memory::detail::debug_fence_size ? node_size : 0))
+                + padding))
         , initialization_is_done_(flag)
-    {}
+    {
+    }
 
     node_segregator(
             node_segregator&& s)
@@ -70,7 +79,8 @@ public:
         : block_size_(s.block_size_)
         , node_allocator_(new allocator_type(node_size, s.block_size_))
         , initialization_is_done_(s.initialization_is_done_)
-    {}
+    {
+    }
 
     ~node_segregator()
     {
@@ -114,6 +124,7 @@ class binary_node_segregator
     : public foonathan::memory::binary_segregator<node_segregator<node_size>, RawAllocator>
 {
 public:
+
     using segregator = node_segregator<node_size>;
     using base_class = foonathan::memory::binary_segregator<segregator, RawAllocator>;
     using is_stateful = std::true_type;
@@ -152,7 +163,7 @@ class ProxyHashTable
         Proxy*,
         detail::binary_node_segregator<
             foonathan::memory::unordered_map_node_size<std::pair<const EntityId_t, Proxy*> >::value>
-    >
+        >
 {
 public:
 
@@ -178,6 +189,7 @@ public:
         base_class::clear();
         allocator_type::is_being_destroyed();
     }
+
 };
 
 } // namespace rtps
