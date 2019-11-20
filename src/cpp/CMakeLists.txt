@@ -179,11 +179,11 @@ set(${PROJECT_NAME}_source_files
     rtps/exceptions/Exception.cpp
     rtps/attributes/PropertyPolicy.cpp
     rtps/common/Token.cpp
-    fastrtps_deprecated/xmlparser/XMLParserCommon.cpp
-    fastrtps_deprecated/xmlparser/XMLElementParser.cpp
-    fastrtps_deprecated/xmlparser/XMLEndpointParser.cpp
-    fastrtps_deprecated/xmlparser/XMLParser.cpp
-    fastrtps_deprecated/xmlparser/XMLProfileManager.cpp
+    rtps/xmlparser/XMLParserCommon.cpp
+    rtps/xmlparser/XMLElementParser.cpp
+    rtps/xmlparser/XMLEndpointParser.cpp
+    rtps/xmlparser/XMLParser.cpp
+    rtps/xmlparser/XMLProfileManager.cpp
     rtps/writer/PersistentWriter.cpp
     rtps/writer/StatelessPersistentWriter.cpp
     rtps/writer/StatefulPersistentWriter.cpp

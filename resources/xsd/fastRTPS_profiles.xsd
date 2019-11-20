@@ -274,6 +274,12 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="ParticipantFlags">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="((FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS|NO_FILTER)(\||\s)*)*" />
+        </xs:restriction>
+    </xs:simpleType>
+
    <xs:simpleType name="EDPType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="SIMPLE"/>
@@ -318,6 +324,7 @@
     <xs:complexType name="discoverySettingsType">
         <xs:all minOccurs="0">
             <xs:element name="discoveryProtocol" type="DiscoveryProtocol" minOccurs="0"/>
+            <xs:element name="ignoreParticipantFlags" type="ParticipantFlags" minOccurs="0"/>
             <xs:element name="EDP" type="EDPType" minOccurs="0"/>
             <xs:element name="leaseDuration" type="durationType" minOccurs="0"/>
             <xs:element name="leaseAnnouncement" type="durationType" minOccurs="0"/>
