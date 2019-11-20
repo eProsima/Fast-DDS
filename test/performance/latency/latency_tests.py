@@ -154,7 +154,6 @@ if __name__ == '__main__':
                 )
             )
 
-        # command_string = ' '.join(element for element in command)
         print('Executable command: {}'.format(
             ' '.join(element for element in command)),
             flush=True
