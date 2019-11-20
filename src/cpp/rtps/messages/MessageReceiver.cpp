@@ -457,9 +457,10 @@ bool MessageReceiver::willAReaderAcceptMsgDirectedTo(
     return false;
 }
 
+template<typename Functor>
 void MessageReceiver::findAllReaders(
         const EntityId_t& readerID,
-        std::function<void(RTPSReader*)> callback)
+        const Functor& callback)
 {
     if (readerID != c_EntityId_Unknown)
     {
