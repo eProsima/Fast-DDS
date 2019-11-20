@@ -1030,7 +1030,6 @@ void PDP::check_remote_participant_liveliness(
         {
             guard.unlock();
             remove_remote_participant(remote_participant->m_guid, ParticipantDiscoveryInfo::DROPPED_PARTICIPANT);
-            guard.lock();
             return;
         }
 
