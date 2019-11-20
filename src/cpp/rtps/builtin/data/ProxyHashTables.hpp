@@ -52,15 +52,12 @@ public:
             std::size_t nodes_to_allocate,
             const bool& flag,
             std::size_t padding = foonathan::memory::detail::memory_block_stack::implementation_offset)
-        : block_size_(nodes_to_allocate * (node_size
+        : block_size_(nodes_to_allocate
+                * ((node_size > allocator_type::min_node_size ? node_size : allocator_type::min_node_size)
                 // Needs more space in debug info. It allocates space to detect overflow.
                 + 2 * (foonathan::memory::detail::debug_fence_size ? node_size : 0))
                 + padding)
-        , node_allocator_(new allocator_type(node_size,
-                nodes_to_allocate * (node_size
-                // Needs more space in debug info. It allocates space to detect overflow.
-                + 2 * (foonathan::memory::detail::debug_fence_size ? node_size : 0))
-                + padding))
+        , node_allocator_(new allocator_type(node_size, block_size_))
         , initialization_is_done_(flag)
     {
     }
