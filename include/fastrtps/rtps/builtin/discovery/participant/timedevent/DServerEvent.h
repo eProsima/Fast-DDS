@@ -50,7 +50,6 @@ public:
     * This temporal event:
         + resends the client RTPSParticipantProxyData to all remote servers.
         + matches the EDP endpoints when the servers are all aware of this client existence
-    * @param code Code representing the status of the event
     */
     bool event();
 
