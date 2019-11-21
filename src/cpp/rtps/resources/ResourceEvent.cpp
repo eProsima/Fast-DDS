@@ -36,17 +36,11 @@ static bool event_compare(
     return lhs->next_trigger_time() < rhs->next_trigger_time();
 }
 
-ResourceEvent::ResourceEvent()
-    : stop_(false)
-    , allow_vector_manipulation_(false)
-    , timers_count_(0)
-{
-}
-
 ResourceEvent::~ResourceEvent()
 {
     // All timer should be unregistered before destroying this object.
     assert(pending_timers_.empty());
+    assert(timers_count_ == 0);
 
     logInfo(RTPS_PARTICIPANT, "Removing event thread");
     stop_.store(true);

@@ -43,9 +43,9 @@ class ResourceEvent
 {
 public:
 
-    ResourceEvent();
+    ResourceEvent() = default;
 
-    virtual ~ResourceEvent();
+    ~ResourceEvent();
 
     /*!
      * @brief Method to initialize the internal thread.
@@ -97,7 +97,7 @@ public:
 private:
 
     //! Warns the internal thread can stop.
-    std::atomic<bool> stop_;
+    std::atomic<bool> stop_{ false };
 
     //! Protects internal data.
     TimedMutex mutex_;
@@ -106,13 +106,13 @@ private:
     TimedConditionVariable cv_manipulation_;
 
     //! Flag used to allow a thread to manipulate the timer collections when the execution thread is not using them.
-    bool allow_vector_manipulation_;
+    bool allow_vector_manipulation_ = false;
 
     //! Used to warn there are new TimedEventImpl objects to be processed.
     TimedConditionVariable cv_;
 
     //! The total number of created timers.
-    size_t timers_count_;
+    size_t timers_count_ = 0;
 
     //! Collection of events pending update action.
     std::vector<TimedEventImpl*> pending_timers_;
