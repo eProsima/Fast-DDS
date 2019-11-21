@@ -38,6 +38,7 @@ static bool event_compare(
 
 ResourceEvent::ResourceEvent()
     : stop_(false)
+    , allow_to_delete_(false)
 {
 }
 
