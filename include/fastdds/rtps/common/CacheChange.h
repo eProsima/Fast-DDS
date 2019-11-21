@@ -135,7 +135,7 @@ struct RTPS_DllAPI CacheChange_t
         // Copy certain values from serializedPayload
         serializedPayload.encapsulation = ch_ptr->serializedPayload.encapsulation;
 
-        // Copy fragment size and initialize missing list to 'all fragments missing'
+        // Copy fragment size and calculate fragment count
         setFragmentSize(ch_ptr->fragment_size_, false);
     }
 
