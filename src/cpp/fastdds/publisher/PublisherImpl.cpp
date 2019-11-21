@@ -111,6 +111,11 @@ const PublisherListener* PublisherImpl::get_listener() const
     return listener_;
 }
 
+PublisherListener* PublisherImpl::get_listener()
+{
+    return listener_;
+}
+
 ReturnCode_t PublisherImpl::set_listener(
         PublisherListener* listener)
 {

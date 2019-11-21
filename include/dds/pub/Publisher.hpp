@@ -45,8 +45,7 @@ class PublisherListener;
  *
  * @see @ref DCPS_Modules_Publisher "Publisher"
  */
-template<typename DELEGATE>
-class TPublisher : public dds::core::TEntity<DELEGATE>
+class Publisher : public dds::core::TEntity<detail::Publisher>
 {
 public:
     /**
@@ -55,12 +54,12 @@ public:
     typedef PublisherListener Listener;
 
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TPublisher,
+            Publisher,
             dds::core::TEntity,
-            DELEGATE)
+            detail::Publisher)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            TPublisher)
+            Publisher)
 
     /**
      * Create a new Publisher.
@@ -77,7 +76,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TPublisher(
+    OMG_DDS_API Publisher(
             const dds::domain::DomainParticipant& dp);
 
     /**
@@ -102,14 +101,14 @@ public:
      * @throws dds::core::InconsistentPolicyError
      *                  The parameter qos contains conflicting QosPolicy settings.
      */
-    TPublisher(
+    OMG_DDS_API Publisher(
             const dds::domain::DomainParticipant& dp,
             const qos::PublisherQos& qos,
             PublisherListener* listener = NULL,
             const dds::core::status::StatusMask& mask = dds::core::status::StatusMask::none());
 
     /** @cond */
-    virtual ~TPublisher();
+    virtual OMG_DDS_API ~Publisher();
     /** @endcond */
 
     //==========================================================================
@@ -149,11 +148,11 @@ public:
             const qos::PublisherQos& qos);
 
     /** @copydoc dds::pub::Publisher::qos(const dds::pub::qos::PublisherQos& qos) */
-    TPublisher& operator <<(
+    Publisher& operator <<(
             const qos::PublisherQos& qos);
 
     /** @copydoc dds::pub::Publisher::qos() */
-    TPublisher& operator >>(
+    Publisher& operator >>(
             qos::PublisherQos& qos);
 
     /**
@@ -184,7 +183,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TPublisher& default_datawriter_qos(
+    Publisher& default_datawriter_qos(
             const qos::DataWriterQos& qos);
 
     /**
@@ -321,9 +320,9 @@ public:
      */
     const dds::domain::DomainParticipant& participant() const;
 
-};
+    dds::domain::DomainParticipant* participant_;
 
-typedef dds::pub::detail::Publisher Publisher;
+};
 
 } //namespace pub
 } //namespace dds

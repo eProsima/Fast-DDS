@@ -20,6 +20,9 @@
 #ifndef OMG_DDS_TOPIC_ANY_TOPIC_LISTENER_HPP_
 #define OMG_DDS_TOPIC_ANY_TOPIC_LISTENER_HPP_
 
+// TODO Remove when PSM DDS Listeners are ready to be used.
+#include <fastdds/dds/topic/TopicListener.hpp>
+
 #include <dds/topic/AnyTopic.hpp>
 
 namespace dds {
@@ -42,7 +45,10 @@ namespace topic {
  *
  * @see dds::domain::DomainParticipantListener
  */
-class OMG_DDS_API AnyTopicListener
+
+// TODO Uncomment when PSM DDS listeners are ready to be used
+//class OMG_DDS_API AnyTopicListener
+class AnyTopicListener : public eprosima::fastdds::dds::TopicListener
 {
 public:
     /** @cond */
@@ -70,7 +76,9 @@ public:
  * @see dds::topic::AnyTopicListener
  * @see dds::domain::NoOpDomainParticipantListener
  */
-class OMG_DDS_API NoOpAnyTopicListener : public virtual AnyTopicListener
+// TODO Uncomment when PSM DDS listeners are ready to be used
+//class OMG_DDS_API NoOpAnyTopicListener : public virtual AnyTopicListener
+class NoOpAnyTopicListener : public eprosima::fastdds::dds::TopicListener
 {
 /** @cond
  * All these functions have already been documented in the non-NoOp listener.

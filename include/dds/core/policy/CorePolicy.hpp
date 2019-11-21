@@ -23,7 +23,7 @@
 
 #include <dds/core/policy/PolicyKind.hpp>
 #include <dds/core/policy/detail/CorePolicy.hpp>
-#include <dds/core/policy/detail/QosPolicyCount.hpp>
+#include <dds/core/policy/QosPolicyCount.hpp>
 
 #include <dds/core/detail/inttypes.hpp>
 #include <dds/core/types.hpp>
@@ -37,12 +37,12 @@
 #define OMG_DDS_POLICY_TRAITS(POLICY, ID) \
     template<> \
     class policy_id<POLICY> { \
-    public: \
+public: \
         static const dds::core::policy::QosPolicyId value = ID; \
     }; \
     template<> \
     class policy_name<POLICY> { \
-    public:\
+public: \
         static const std::string& name(); \
     };
 
@@ -61,21 +61,21 @@ namespace policy {
 /**
  * \copydoc DCPS_QoS_UserData
  */
-template<typename D>
-class TUserData : public dds::core::Value<D>
+class UserData : public dds::core::Value<detail::UserData>
 {
 public:
+
     /**
      * Creates a UserData QoS instance with an empty UserData
      */
-    TUserData();
+    UserData();
 
     /**
      * Creates a UserData QoS instance
      *
      * @param sequence the sequence of octets
      */
-    explicit TUserData(
+    explicit UserData(
             const dds::core::ByteSeq& sequence);
 
     /**
@@ -86,7 +86,7 @@ public:
      * @param value_end a pointer to the end of a sequence
      * of octets
      */
-    TUserData(
+    UserData(
             const uint8_t* value_begin,
             const uint8_t* value_end);
 
@@ -95,15 +95,15 @@ public:
      *
      * @param other the UserData QoS instance to copy
      */
-    TUserData(
-            const TUserData& other);
+    UserData(
+            const UserData& other);
 
     /**
      * Sets the sequence
      *
      * @param sequence a sequence of octets
      */
-    TUserData& value(
+    UserData& value(
             const dds::core::ByteSeq& sequence);
 
     /**
@@ -114,7 +114,7 @@ public:
      * @param end an iterator pointing to the end of a sequence of octets
      */
     template<typename OCTET_ITER>
-    TUserData& value(
+    UserData& value(
             OCTET_ITER begin,
             OCTET_ITER end);
 
@@ -145,21 +145,21 @@ public:
 /**
  * \copydoc DCPS_QoS_GroupData
  */
-template<typename D>
-class TGroupData : public dds::core::Value<D>
+class GroupData : public dds::core::Value<detail::GroupData>
 {
 public:
+
     /**
      * Creates a GroupData QoS instance
      */
-    TGroupData();
+    GroupData();
 
     /**
      * Creates a GroupData QoS instance
      *
      * @param sequence the sequence of octets representing the GroupData
      */
-    explicit TGroupData(
+    explicit GroupData(
             const dds::core::ByteSeq& sequence);
 
     /**
@@ -167,7 +167,8 @@ public:
      *
      * @param other the GroupData QoS instance to copy
      */
-    TGroupData(const TGroupData& other);
+    GroupData(
+            const GroupData& other);
 
     /**
      * Creates a GroupData QoS instance
@@ -177,7 +178,7 @@ public:
      * @param value_end a pointer to the end of a sequence
      * of octets
      */
-    TGroupData(
+    GroupData(
             const uint8_t* value_begin,
             const uint8_t* value_end);
 
@@ -186,7 +187,7 @@ public:
      *
      * @param sequence a sequence of octets
      */
-    TGroupData& value(
+    GroupData& value(
             const dds::core::ByteSeq& sequence);
 
     /**
@@ -197,7 +198,7 @@ public:
      * @param end an iterator pointing to the end of a sequence of octets
      */
     template<typename OCTET_ITER>
-    TGroupData& value(
+    GroupData& value(
             OCTET_ITER begin,
             OCTET_ITER end);
 
@@ -228,21 +229,21 @@ public:
 /**
  * \copydoc DCPS_QoS_TopicData
  */
-template<typename D>
-class TTopicData : public dds::core::Value<D>
+class TopicData : public dds::core::Value<detail::TopicData>
 {
 public:
+
     /**
      * Creates a TopicData QoS instance
      */
-    TTopicData();
+    TopicData();
 
     /**
      * Creates a TopicData QoS instance
      *
      * @param sequence the sequence of octets representing the TopicData
      */
-    explicit TTopicData(
+    explicit TopicData(
             const dds::core::ByteSeq& sequence);
 
     /**
@@ -250,8 +251,8 @@ public:
      *
      * @param other the TopicData QoS instance to copy
      */
-    TTopicData(
-            const TTopicData& other);
+    TopicData(
+            const TopicData& other);
 
     /**
      * Creates a TopicData QoS instance
@@ -261,7 +262,7 @@ public:
      * @param value_end a pointer to the end of a sequence
      * of octets
      */
-    TTopicData(
+    TopicData(
             const uint8_t* value_begin,
             const uint8_t* value_end);
 
@@ -270,7 +271,7 @@ public:
      *
      * @param sequence a sequence of octets
      */
-    TTopicData& value(
+    TopicData& value(
             const dds::core::ByteSeq& sequence);
 
     /**
@@ -281,7 +282,7 @@ public:
      * @param end an iterator pointing to the end of a sequence of octets
      */
     template<typename OCTET_ITER>
-    TTopicData& value(
+    TopicData& value(
             OCTET_ITER begin,
             OCTET_ITER end);
 
@@ -313,17 +314,17 @@ public:
 /**
  * \copydoc DCPS_QoS_EntityFactory
  */
-template<typename D>
-class TEntityFactory : public dds::core::Value<D>
+class EntityFactory : public dds::core::Value<detail::EntityFactory>
 {
 public:
+
     /**
      * Creates an EntityFactory QoS instance
      *
      * @param autoenable_created_entities boolean indicating whether
      * created Entities should be automatically enabled
      */
-    explicit TEntityFactory(
+    explicit EntityFactory(
             bool autoenable_created_entities = true);
 
     /**
@@ -331,8 +332,8 @@ public:
      *
      * @param other the EntityFactory QoS instance to copy
      */
-    TEntityFactory(
-            const TEntityFactory& other);
+    EntityFactory(
+            const EntityFactory& other);
 
     /**
      * Sets a boolean indicating whether created Entities should be
@@ -341,7 +342,7 @@ public:
      * @param autoenable_created_entities boolean indicating whether
      * created Entities should be automatically enabled
      */
-    TEntityFactory& autoenable_created_entities(
+    EntityFactory& autoenable_created_entities(
             bool autoenable_created_entities);
 
     /**
@@ -356,13 +357,13 @@ public:
      * @return an EntityFactory QoS instance with autoenable_created_entities
      * set to true
      */
-    static TEntityFactory AutoEnable();
+    static EntityFactory AutoEnable();
 
     /**
      * @return an EntityFactory QoS instance with autoenable_created_entities
      * set to false
      */
-    static TEntityFactory ManuallyEnable();
+    static EntityFactory ManuallyEnable();
 };
 
 //==============================================================================
@@ -370,16 +371,16 @@ public:
 /**
  * \copydoc DCPS_QoS_TransportPriority
  */
-template<typename D>
-class TTransportPriority : public dds::core::Value<D>
+class TransportPriority : public dds::core::Value<detail::TransportPriority>
 {
 public:
+
     /**
      * Creates a TransportPriority QoS instance
      *
      * @param priority the priority value
      */
-    explicit TTransportPriority(
+    explicit TransportPriority(
             int32_t priority = 0);
 
     /**
@@ -387,15 +388,15 @@ public:
      *
      * @param other the TransportPriority QoS instance to copy
      */
-    TTransportPriority(
-            const TTransportPriority& other);
+    TransportPriority(
+            const TransportPriority& other);
 
     /**
      * Sets the priority value
      *
      * @param priority the priority value
      */
-    TTransportPriority& value(
+    TransportPriority& value(
             int32_t priority);
 
     /**
@@ -411,16 +412,16 @@ public:
 /**
  * \copydoc DCPS_QoS_Lifespan
  */
-template<typename D>
-class TLifespan : public dds::core::Value<D>
+class Lifespan : public dds::core::Value<detail::Lifespan>
 {
 public:
+
     /**
      * Creates a Lifespan QoS instance
      *
      * @param duration Lifespan expiration duration
      */
-    explicit TLifespan(
+    explicit Lifespan(
             const dds::core::Duration& duration = dds::core::Duration::infinite());
 
     /**
@@ -428,15 +429,15 @@ public:
      *
      * @param other the Lifespan QoS instance to copy
      */
-    TLifespan(
-            const TLifespan& other);
+    Lifespan(
+            const Lifespan& other);
 
     /**
      * Sets the expiration duration
      *
      * @param duration expiration duration
      */
-    TLifespan& duration(
+    Lifespan& duration(
             const dds::core::Duration& duration);
 
     /**
@@ -452,16 +453,16 @@ public:
 /**
  * \copydoc DCPS_QoS_Deadline
  */
-template<typename D>
-class TDeadline : public dds::core::Value<D>
+class Deadline : public dds::core::Value<detail::Deadline>
 {
 public:
+
     /**
      * Creates a Deadline QoS instance
      *
      * @param period deadline period
      */
-    explicit TDeadline(
+    explicit Deadline(
             const dds::core::Duration& period = dds::core::Duration::infinite());
 
     /**
@@ -469,15 +470,15 @@ public:
      *
      * @param other the Deadline QoS instance to copy
      */
-    TDeadline(
-            const TDeadline& other);
+    Deadline(
+            const Deadline& other);
 
     /**
      * Sets the deadline period
      *
      * @param period deadline period
      */
-    TDeadline& period(
+    Deadline& period(
             const dds::core::Duration& period);
 
     /**
@@ -493,16 +494,16 @@ public:
 /**
  * \copydoc DCPS_QoS_LatencyBudget
  */
-template<typename D>
-class TLatencyBudget : public dds::core::Value<D>
+class LatencyBudget : public dds::core::Value<detail::LatencyBudget>
 {
 public:
+
     /**
      * Creates a LatencyBudget QoS instance
      *
      * @param duration duration
      */
-    explicit TLatencyBudget(
+    explicit LatencyBudget(
             const dds::core::Duration& duration = dds::core::Duration::zero());
 
     /**
@@ -510,15 +511,15 @@ public:
      *
      * @param other the LatencyBudget QoS instance to copy
      */
-    TLatencyBudget(
-            const TLatencyBudget& other);
+    LatencyBudget(
+            const LatencyBudget& other);
 
     /**
      * Sets the duration
      *
      * @param duration duration
      */
-    TLatencyBudget& duration(
+    LatencyBudget& duration(
             const dds::core::Duration& duration);
 
     /**
@@ -534,32 +535,32 @@ public:
 /**
  * \copydoc DCPS_QoS_TimeBasedFilter
  */
-template<typename D>
-class TTimeBasedFilter : public dds::core::Value<D>
+class TimeBasedFilter : public dds::core::Value<detail::TimeBasedFilter>
 {
 public:
+
     /**
      * Creates a TimeBasedFilter QoS instance
      *
      * @param period minimum separation period
      */
-    explicit TTimeBasedFilter(
-        const dds::core::Duration& period = dds::core::Duration::zero());
+    explicit TimeBasedFilter(
+            const dds::core::Duration& period = dds::core::Duration::zero());
 
     /**
      * Copies a TimeBasedFilter QoS instance
      *
      * @param other the TimeBasedFilter QoS instance to copy
      */
-    TTimeBasedFilter(
-            const TTimeBasedFilter& other);
+    TimeBasedFilter(
+            const TimeBasedFilter& other);
 
     /**
      * Sets the minimum separation period
      *
      * @param period minimum separation period
      */
-    TTimeBasedFilter& minimum_separation(
+    TimeBasedFilter& minimum_separation(
             const dds::core::Duration& period);
 
     /**
@@ -576,16 +577,16 @@ public:
 /**
  * \copydoc DCPS_QoS_Partition
  */
-template<typename D>
-class TPartition : public dds::core::Value<D>
+class Partition : public dds::core::Value<detail::Partition>
 {
 public:
+
     /**
      * Creates a Partition QoS instance
      *
      * @param name partition name
      */
-    explicit TPartition(
+    explicit Partition(
             const std::string& name = "");
 
     /**
@@ -593,7 +594,7 @@ public:
      *
      * @param names a sequence containing multiple partition names
      */
-    explicit TPartition(
+    explicit Partition(
             const dds::core::StringSeq& names);
 
     /**
@@ -601,15 +602,15 @@ public:
      *
      * @param other the Partition QoS instance to copy
      */
-    TPartition(
-            const TPartition& other);
+    Partition(
+            const Partition& other);
 
     /**
      * Sets the partition name
      *
      * @param name the partition name
      */
-    TPartition& name(
+    Partition& name(
             const std::string& name);
 
     /**
@@ -617,7 +618,7 @@ public:
      *
      * @param names a sequence containing multiple partition names
      */
-    TPartition& name(
+    Partition& name(
             const dds::core::StringSeq& names);
 
     /**
@@ -629,15 +630,15 @@ public:
 };
 
 //==============================================================================
-#ifdef OMG_DDS_OWNERSHIP_SUPPORT
+//#ifdef OMG_DDS_OWNERSHIP_SUPPORT
 
 /**
  * \copydoc DCPS_QoS_Ownership
  */
-template<typename D>
-class TOwnership : public dds::core::Value<D>
+class Ownership : public dds::core::Value<detail::Ownership>
 {
 public:
+
     #   if defined (__SUNPRO_CC) && defined(SHARED)
     #   undef SHARED
     #   endif
@@ -646,23 +647,23 @@ public:
      *
      * @param kind the kind
      */
-    explicit TOwnership(
-        dds::core::policy::OwnershipKind::Type kind = dds::core::policy::OwnershipKind::SHARED);
+    explicit Ownership(
+            dds::core::policy::OwnershipKind::Type kind = dds::core::policy::OwnershipKind::SHARED);
 
     /**
      * Copies an Ownership QoS instance
      *
      * @param other the Ownership QoS instance to copy
      */
-    TOwnership(
-            const TOwnership& other);
+    Ownership(
+            const Ownership& other);
 
     /**
      * Set the kind
      *
      * @param kind the kind
      */
-    TOwnership& kind(
+    Ownership& kind(
             dds::core::policy::OwnershipKind::Type kind);
 
     /**
@@ -675,12 +676,20 @@ public:
     /**
      * @return an Ownership QoS instance with the kind set to EXCLUSIVE
      */
-    static TOwnership Exclusive();
+    static Ownership Exclusive();
 
     /**
      * @return an Ownership QoS instance with the kind set to SHARED
      */
-    static TOwnership Shared();
+    static Ownership Shared();
+
+private:
+
+    static eprosima::fastdds::dds::OwnershipQosPolicyKind to_native(
+            OwnershipKind::Type kind);
+
+    static OwnershipKind::Type from_native(
+            eprosima::fastdds::dds::OwnershipQosPolicyKind kind);
 };
 
 
@@ -689,16 +698,16 @@ public:
 /**
  * \copydoc DCPS_QoS_OwnershipStrength
  */
-template<typename D>
-class TOwnershipStrength : public dds::core::Value<D>
+class OwnershipStrength : public dds::core::Value<detail::OwnershipStrength>
 {
 public:
+
     /**
      * Creates an OwnershipStrength QoS instance
      *
      * @param strength ownership strength
      */
-    explicit TOwnershipStrength(
+    explicit OwnershipStrength(
             int32_t strength = 0);
 
     /**
@@ -706,8 +715,8 @@ public:
      *
      * @param other the OwnershipStrength QoS instance to copy
      */
-    TOwnershipStrength(
-            const TOwnershipStrength& other);
+    OwnershipStrength(
+            const OwnershipStrength& other);
 
     /**
      * Gets the ownership strength value
@@ -721,27 +730,27 @@ public:
      *
      * @param strength the ownership strength value
      */
-    TOwnershipStrength& value(
+    OwnershipStrength& value(
             int32_t strength);
 };
 
-#endif  // OMG_DDS_OWNERSHIP_SUPPORT
+//#endif  // OMG_DDS_OWNERSHIP_SUPPORT
 //==============================================================================
 
 /**
  * \copydoc DCPS_QoS_WriterDataLifecycle
  */
-template<typename D>
-class TWriterDataLifecycle : public dds::core::Value<D>
+class WriterDataLifecycle : public dds::core::Value<detail::WriterDataLifecycle>
 {
 public:
+
     /**
      * Creates a WriterDataLifecycle QoS instance
      *
      * @param autodispose_unregistered_instances Specifies the behavior of the DataWriter
      * with regards to the lifecycle of the data-instances it manages.
      */
-    explicit TWriterDataLifecycle(
+    explicit WriterDataLifecycle(
             bool autodispose_unregistered_instances = true);
 
     /**
@@ -749,8 +758,8 @@ public:
      *
      * @param other the WriterDataLifecycle QoS instance to copy
      */
-    TWriterDataLifecycle(
-            const TWriterDataLifecycle& other);
+    WriterDataLifecycle(
+            const WriterDataLifecycle& other);
 
     /**
      * Gets a boolean indicating if unregistered instances should be autodisposed
@@ -765,20 +774,20 @@ public:
      * @param autodispose_unregistered_instances a boolean indicating if unregistered
      * instances should be autodisposed
      */
-    TWriterDataLifecycle& autodispose_unregistered_instances(
-        bool autodispose_unregistered_instances);
+    WriterDataLifecycle& autodispose_unregistered_instances(
+            bool autodispose_unregistered_instances);
 
     /**
      * @return a WriterDataLifecycle QoS instance with autodispose_unregistered_instances
      * set to true
      */
-    static TWriterDataLifecycle AutoDisposeUnregisteredInstances();
+    static WriterDataLifecycle AutoDisposeUnregisteredInstances();
 
     /**
      * @return a WriterDataLifecycle QoS instance with autodispose_unregistered_instances
      * set to false
      */
-    static TWriterDataLifecycle ManuallyDisposeUnregisteredInstances();
+    static WriterDataLifecycle ManuallyDisposeUnregisteredInstances();
 
 };
 
@@ -787,27 +796,27 @@ public:
 /**
  * \copydoc DCPS_QoS_ReaderDataLifecycle
  */
-template<typename D>
-class TReaderDataLifecycle : public dds::core::Value<D>
+class ReaderDataLifecycle : public dds::core::Value<detail::ReaderDataLifecycle>
 {
 public:
+
     /**
      * Creates a ReaderDataLifecycle QoS instance
      *
      * @param autopurge_nowriter_samples_delay the autopurge nowriter samples delay
      * @param autopurge_disposed_samples_delay the autopurge disposed samples delay
      */
-    TReaderDataLifecycle(
-        const dds::core::Duration& autopurge_nowriter_samples_delay = dds::core::Duration::infinite(),
-        const dds::core::Duration& autopurge_disposed_samples_delay = dds::core::Duration::infinite());
+    ReaderDataLifecycle(
+            const dds::core::Duration& autopurge_nowriter_samples_delay = dds::core::Duration::infinite(),
+            const dds::core::Duration& autopurge_disposed_samples_delay = dds::core::Duration::infinite());
 
     /**
      * Copies a ReaderDataLifecycle QoS instance
      *
      * @param other the ReaderDataLifecycle QoS instance to copy
      */
-    TReaderDataLifecycle(
-            const TReaderDataLifecycle& other);
+    ReaderDataLifecycle(
+            const ReaderDataLifecycle& other);
     /**
      * Gets the autopurge nowriter samples delay
      *
@@ -820,8 +829,8 @@ public:
      *
      * @param autopurge_nowriter_samples_delay the autopurge nowriter samples delay
      */
-    TReaderDataLifecycle& autopurge_nowriter_samples_delay(
-        const dds::core::Duration& autopurge_nowriter_samples_delay);
+    ReaderDataLifecycle& autopurge_nowriter_samples_delay(
+            const dds::core::Duration& autopurge_nowriter_samples_delay);
 
     /**
      * Gets the autopurge_disposed_samples_delay
@@ -835,22 +844,22 @@ public:
      *
      * @return the autopurge disposed samples delay
      */
-    TReaderDataLifecycle& autopurge_disposed_samples_delay(
-        const dds::core::Duration& autopurge_disposed_samples_delay);
+    ReaderDataLifecycle& autopurge_disposed_samples_delay(
+            const dds::core::Duration& autopurge_disposed_samples_delay);
 
     /**
      * @return a ReaderDataLifecycle QoS instance which will not autopurge disposed
      * samples
      */
-    static TReaderDataLifecycle NoAutoPurgeDisposedSamples();
+    static ReaderDataLifecycle NoAutoPurgeDisposedSamples();
 
     /**
      * @param autopurge_disposed_samples_delay the autopurge disposed samples delay
      * @return a ReaderDataLifecycle QoS instance with autopurge_disposed_samples_delay
      * set to a specified value
      */
-    static TReaderDataLifecycle AutoPurgeDisposedSamples(
-        const dds::core::Duration& autopurge_disposed_samples_delay);
+    static ReaderDataLifecycle AutoPurgeDisposedSamples(
+            const dds::core::Duration& autopurge_disposed_samples_delay);
 
 };
 
@@ -859,32 +868,32 @@ public:
 /**
  * \copydoc DCPS_QoS_Durability
  */
-template<typename D>
-class TDurability : public dds::core::Value<D>
+class Durability : public dds::core::Value<detail::Durability>
 {
 public:
+
     /**
      * Creates a Durability QoS instance
      *
      * @param kind the kind
      */
-    explicit TDurability(
-        dds::core::policy::DurabilityKind::Type kind = dds::core::policy::DurabilityKind::VOLATILE);
+    explicit Durability(
+            dds::core::policy::DurabilityKind::Type kind = dds::core::policy::DurabilityKind::VOLATILE);
 
     /**
      * Copies a Durability QoS instance
      *
      * @param other the Durability QoS instance to copy
      */
-    TDurability(
-            const TDurability& other);
+    Durability(
+            const Durability& other);
 
     /**
-    * Set the kind
-    *
-    * @param kind the kind
-    */
-    TDurability& kind(
+     * Set the kind
+     *
+     * @param kind the kind
+     */
+    Durability& kind(
             dds::core::policy::DurabilityKind::Type kind);
 
     /**
@@ -897,22 +906,31 @@ public:
     /**
      * @return a Durability QoS instance with the kind set to VOLATILE
      */
-    static TDurability Volatile();
+    static Durability Volatile();
 
     /**
      * @return a Durability QoS instance with the kind set to TRANSIENT_LOCAL
      */
-    static TDurability TransientLocal();
+    static Durability TransientLocal();
 
     /**
      * @return a Durability QoS instance with the kind set to TRANSIENT
      */
-    static TDurability Transient();
+    static Durability Transient();
 
     /**
      * @return a Durability QoS instance with the kind set to PERSISTENT
      */
-    static TDurability Persistent();
+    static Durability Persistent();
+
+private:
+
+    static eprosima::fastdds::dds::DurabilityQosPolicyKind to_native(
+            DurabilityKind::Type kind);
+
+    static DurabilityKind::Type from_native(
+            eprosima::fastdds::dds::DurabilityQosPolicyKind kind);
+
 };
 
 //==============================================================================
@@ -920,10 +938,10 @@ public:
 /**
  * \copydoc DCPS_QoS_Presentation
  */
-template<typename D>
-class TPresentation : public dds::core::Value<D>
+class Presentation : public dds::core::Value<detail::Presentation>
 {
 public:
+
     /**
      * Creates a Presentation QoS instance
      *
@@ -931,26 +949,26 @@ public:
      * @param coherent_access the coherent_access setting
      * @param ordered_access the ordered_access setting
      */
-    TPresentation(
-        dds::core::policy::PresentationAccessScopeKind::Type access_scope
-        = dds::core::policy::PresentationAccessScopeKind::INSTANCE,
-        bool coherent_access = false,
-        bool ordered_access = false);
+    Presentation(
+            dds::core::policy::PresentationAccessScopeKind::Type access_scope
+                = dds::core::policy::PresentationAccessScopeKind::INSTANCE,
+            bool coherent_access = false,
+            bool ordered_access = false);
 
     /**
      * Copies a Presentation QoS instance
      *
      * @param other the Presentation QoS instance to copy
      */
-    TPresentation(
-            const TPresentation& other);
+    Presentation(
+            const Presentation& other);
 
     /**
      * Sets the access_scope kind
      *
      * @param access_scope the access_scope kind
      */
-    TPresentation& access_scope(
+    Presentation& access_scope(
             dds::core::policy::PresentationAccessScopeKind::Type access_scope);
 
     /**
@@ -965,7 +983,7 @@ public:
      *
      * @param coherent_access the coherent_access setting
      */
-    TPresentation& coherent_access(
+    Presentation& coherent_access(
             bool coherent_access);
 
     /**
@@ -980,7 +998,7 @@ public:
      *
      * @param ordered_access the ordered_access setting
      */
-    TPresentation& ordered_access(
+    Presentation& ordered_access(
             bool ordered_access);
 
     /**
@@ -997,7 +1015,7 @@ public:
      * @return a Presentation QoS instance with a GROUP access_score and coherent_access
      * and ordered_access set to the specified values
      */
-    static TPresentation GroupAccessScope(
+    static Presentation GroupAccessScope(
             bool coherent_access = false,
             bool ordered_access = false);
 
@@ -1008,7 +1026,7 @@ public:
      * @return a Presentation QoS instance with a INSTANCE access_score and coherent_access
      * and ordered_access set to the specified values
      */
-    static TPresentation InstanceAccessScope(
+    static Presentation InstanceAccessScope(
             bool coherent_access = false,
             bool ordered_access = false);
 
@@ -1019,9 +1037,17 @@ public:
      * @return a Presentation QoS instance with a TOPIC access_score and coherent_access
      * and ordered_access set to the specified values
      */
-    static TPresentation TopicAccessScope(
+    static Presentation TopicAccessScope(
             bool coherent_access = false,
             bool ordered_access = false);
+
+private:
+
+    static eprosima::fastdds::dds::PresentationQosPolicyAccessScopeKind to_native(
+            PresentationAccessScopeKind::Type kind);
+
+    static PresentationAccessScopeKind::Type from_native(
+            eprosima::fastdds::dds::PresentationQosPolicyAccessScopeKind kind);
 };
 
 //==============================================================================
@@ -1029,34 +1055,34 @@ public:
 /**
  * \copydoc DCPS_QoS_Reliability
  */
-template<typename D>
-class TReliability : public dds::core::Value<D>
+class Reliability : public dds::core::Value<detail::Reliability>
 {
 public:
+
     /**
      * Creates a Reliability QoS instance
      *
      * @param kind the kind
      * @param max_blocking_time the max_blocking_time
      */
-    TReliability(
-        dds::core::policy::ReliabilityKind::Type kind = dds::core::policy::ReliabilityKind::BEST_EFFORT,
-        const dds::core::Duration& max_blocking_time = dds::core::Duration::from_millisecs(100));
+    Reliability(
+            dds::core::policy::ReliabilityKind::Type kind = dds::core::policy::ReliabilityKind::BEST_EFFORT,
+            const dds::core::Duration& max_blocking_time = dds::core::Duration::from_millisecs(100));
 
     /**
      * Copies a Reliability QoS instance
      *
      * @param other the Reliability QoS instance to copy
      */
-    TReliability(
-            const TReliability& other);
+    Reliability(
+            const Reliability& other);
 
     /**
      * Sets the kind
      *
      * @param kind the kind
      */
-    TReliability& kind(
+    Reliability& kind(
             dds::core::policy::ReliabilityKind::Type kind);
 
     /**
@@ -1071,7 +1097,7 @@ public:
      *
      * @param max_blocking_time the max_blocking_time
      */
-    TReliability& max_blocking_time(
+    Reliability& max_blocking_time(
             const dds::core::Duration& max_blocking_time);
 
     /**
@@ -1086,14 +1112,22 @@ public:
      * @return a Reliability QoS instance with the kind set to RELIABLE and the max_blocking_time
      * set to the supplied value
      */
-    static TReliability Reliable(
+    static OMG_DDS_API Reliability Reliable(
             const dds::core::Duration& max_blocking_time = dds::core::Duration::from_millisecs(100));
 
     /**
      * @return a Reliability QoS instance with the kind set to BEST_EFFORT
      */
-    static TReliability BestEffort(
+    static Reliability BestEffort(
             const dds::core::Duration& max_blocking_time = dds::core::Duration::from_millisecs(100));
+
+private:
+
+    static ReliabilityKind::Type from_native(
+            eprosima::fastdds::dds::ReliabilityQosPolicyKind kind);
+
+    static eprosima::fastdds::dds::ReliabilityQosPolicyKind to_native(
+            ReliabilityKind::Type kind);
 
 };
 
@@ -1102,34 +1136,33 @@ public:
 /**
  * \copydoc DCPS_QoS_DestinationOrder
  */
-template<typename D>
-class TDestinationOrder : public dds::core::Value<D>
+class DestinationOrder : public dds::core::Value<detail::DestinationOrder>
 {
 public:
+
     /**
      * Creates a DestinationOrder QoS instance
      *
      * @param kind the kind
      */
-    explicit TDestinationOrder(
-        dds::core::policy::DestinationOrderKind::Type kind
-        = dds::core::policy::DestinationOrderKind::BY_RECEPTION_TIMESTAMP);
+    explicit DestinationOrder(
+            dds::core::policy::DestinationOrderKind::Type kind
+                = dds::core::policy::DestinationOrderKind::BY_RECEPTION_TIMESTAMP);
 
     /**
      * Copies a DestinationOrder QoS instance
      *
      * @param other the Reliability QoS instance to copy
      */
-    TDestinationOrder(
-            const TDestinationOrder& other);
+    DestinationOrder(
+            const DestinationOrder& other);
 
-public:
     /**
      * Sets the kind
      *
      * @param kind the kind
      */
-    TDestinationOrder& kind(
+    DestinationOrder& kind(
             dds::core::policy::DestinationOrderKind::Type kind);
 
     /**
@@ -1139,16 +1172,24 @@ public:
      */
     dds::core::policy::DestinationOrderKind::Type kind() const;
 
-public:
     /**
      * @return a DestinationOrder QoS instance with the kind set to BY_SOURCE_TIMESTAMP
      */
-    static TDestinationOrder SourceTimestamp();
+    static DestinationOrder SourceTimestamp();
 
     /**
      * @return a DestinationOrder QoS instance with the kind set to BY_RECEPTION_TIMESTAMP
      */
-    static TDestinationOrder ReceptionTimestamp();
+    static DestinationOrder ReceptionTimestamp();
+
+private:
+
+    static eprosima::fastdds::dds::DestinationOrderQosPolicyKind to_native(
+            DestinationOrderKind::Type kind);
+
+    static DestinationOrderKind::Type from_native(
+            eprosima::fastdds::dds::DestinationOrderQosPolicyKind kind);
+
 };
 
 //==============================================================================
@@ -1156,27 +1197,27 @@ public:
 /**
  * \copydoc DCPS_QoS_History
  */
-template<typename D>
-class THistory : public dds::core::Value<D>
+class History : public dds::core::Value<detail::History>
 {
 public:
+
     /**
      * Creates a History QoS instance
      *
      * @param kind the kind
      * @param depth the history depth
      */
-    THistory(
+    History(
             dds::core::policy::HistoryKind::Type kind = dds::core::policy::HistoryKind::KEEP_LAST,
-             int32_t depth = 1);
+            int32_t depth = 1);
 
     /**
      * Copies a History QoS instance
      *
      * @param other the History QoS instance to copy
      */
-    THistory(
-            const THistory& other);
+    History(
+            const History& other);
 
     /**
      * Gets the kind
@@ -1190,7 +1231,7 @@ public:
      *
      * @param kind the kind
      */
-    THistory& kind(
+    History& kind(
             dds::core::policy::HistoryKind::Type kind);
 
     /**
@@ -1205,21 +1246,32 @@ public:
      *
      * @param the history depth
      */
-    THistory& depth(
+    History& depth(
             int32_t depth);
 
     /**
      * @return a History QoS instance with the kind set to KEEP_ALL
      */
-    static THistory KeepAll();
+    static History KeepAll();
 
     /**
      * @param depth the history depth
      * @return a History QoS instance with the kind set to KEEP_LAST and the
      * depth set to the supplied value
      */
-    static THistory KeepLast(
+    static History KeepLast(
             uint32_t depth);
+
+private:
+
+    friend class DurabilityService;
+
+    static eprosima::fastdds::dds::HistoryQosPolicyKind to_native(
+            HistoryKind::Type kind);
+
+    static HistoryKind::Type from_native(
+            eprosima::fastdds::dds::HistoryQosPolicyKind kind);
+
 };
 
 //==============================================================================
@@ -1227,10 +1279,10 @@ public:
 /**
  * \copydoc DCPS_QoS_ResourceLimits
  */
-template<typename D>
-class TResourceLimits : public dds::core::Value<D>
+class ResourceLimits : public dds::core::Value<detail::ResourceLimits>
 {
 public:
+
     /**
      * Creates a ResourceLimits QoS instance
      *
@@ -1238,7 +1290,7 @@ public:
      * @param max_instances the max_instances value
      * @param max_samples_per_instance the max_samples_per_instance value
      */
-    TResourceLimits(
+    ResourceLimits(
             int32_t max_samples = dds::core::LENGTH_UNLIMITED,
             int32_t max_instances = dds::core::LENGTH_UNLIMITED,
             int32_t max_samples_per_instance = dds::core::LENGTH_UNLIMITED);
@@ -1248,16 +1300,17 @@ public:
      *
      * @param other the ResourceLimits QoS instance to copy
      */
-    TResourceLimits(
-            const TResourceLimits& other);
+    ResourceLimits(
+            const ResourceLimits& other);
 
 public:
+
     /**
      * Sets the max_samples value
      *
      * @param max_samples the max_samples value
      */
-    TResourceLimits& max_samples(
+    ResourceLimits& max_samples(
             int32_t max_samples);
 
     /**
@@ -1272,7 +1325,7 @@ public:
      *
      * @param max_instances the max_instances value
      */
-    TResourceLimits& max_instances(
+    ResourceLimits& max_instances(
             int32_t max_instances);
 
     /**
@@ -1287,7 +1340,7 @@ public:
      *
      * @param max_samples_per_instance the max_samples_per_instance value
      */
-    TResourceLimits& max_samples_per_instance(
+    ResourceLimits& max_samples_per_instance(
             int32_t max_samples_per_instance);
 
     /**
@@ -1303,34 +1356,34 @@ public:
 /**
  * \copydoc DCPS_QoS_Liveliness
  */
-template<typename D>
-class TLiveliness : public dds::core::Value<D>
+class Liveliness : public dds::core::Value<detail::Liveliness>
 {
 public:
+
     /**
      * Creates a Liveliness QoS instance
      *
      * @param kind the kind
      * @param lease_duration the lease_duration
      */
-    TLiveliness(
-        dds::core::policy::LivelinessKind::Type kind = dds::core::policy::LivelinessKind::AUTOMATIC,
-        const dds::core::Duration& lease_duration = dds::core::Duration::infinite());
+    Liveliness(
+            dds::core::policy::LivelinessKind::Type kind = dds::core::policy::LivelinessKind::AUTOMATIC,
+            const dds::core::Duration& lease_duration = dds::core::Duration::infinite());
 
     /**
      * Copies a Liveliness QoS instance
      *
      * @param other the Liveliness QoS instance to copy
      */
-    TLiveliness(
-            const TLiveliness& other);
+    Liveliness(
+            const Liveliness& other);
 
     /**
      * Sets the kind
      *
      * @param kind the kind
      */
-    TLiveliness& kind(
+    Liveliness& kind(
             dds::core::policy::LivelinessKind::Type kind);
 
     /**
@@ -1345,7 +1398,7 @@ public:
      *
      * @return the lease_duration
      */
-    TLiveliness& lease_duration(
+    Liveliness& lease_duration(
             const dds::core::Duration& lease_duration);
 
     /**
@@ -1358,34 +1411,43 @@ public:
     /**
      * @return a Liveliness QoS instance with the kind set to AUTOMATIC
      */
-    static TLiveliness Automatic();
+    static Liveliness Automatic();
 
     /**
      * @return a Liveliness QoS instance with the kind set to MANUAL_BY_PARTICIPANT
      * and the lease_duration set to the supplied value
      */
-    static TLiveliness ManualByParticipant(
+    static Liveliness ManualByParticipant(
             const dds::core::Duration& lease_duration = dds::core::Duration::infinite());
 
     /**
      * @return a Liveliness QoS instance with the kind set to MANUAL_BY_TOPIC
      * and the lease_duration set to the supplied value
      */
-    static TLiveliness ManualByTopic(
+    static Liveliness ManualByTopic(
             const dds::core::Duration& lease_duration = dds::core::Duration::infinite());
+
+private:
+
+    static eprosima::fastdds::dds::LivelinessQosPolicyKind to_native(
+            LivelinessKind::Type kind);
+
+    static LivelinessKind::Type from_native(
+            eprosima::fastdds::dds::LivelinessQosPolicyKind kind);
+
 };
 
 
 //==============================================================================
-#ifdef OMG_DDS_PERSISTENCE_SUPPORT
+//#ifdef OMG_DDS_PERSISTENCE_SUPPORT
 
 /**
  * \copydoc DCPS_QoS_DurabilityService
  */
-template<typename D>
-class TDurabilityService : public dds::core::Value<D>
+class DurabilityService : public dds::core::Value<detail::DurabilityService>
 {
 public:
+
     /**
      * Creates a DurabilityService QoS instance
      *
@@ -1396,28 +1458,28 @@ public:
      * @param max_instances the max_instances value
      * @param max_samples_per_instance the max_samples_per_instance value
      */
-    TDurabilityService(
-        const dds::core::Duration& service_cleanup_delay = dds::core::Duration::zero(),
-        dds::core::policy::HistoryKind::Type history_kind = dds::core::policy::HistoryKind::KEEP_LAST,
-        int32_t history_depth = 1,
-        int32_t max_samples = dds::core::LENGTH_UNLIMITED,
-        int32_t max_instances = dds::core::LENGTH_UNLIMITED,
-        int32_t max_samples_per_instance = dds::core::LENGTH_UNLIMITED);
+    DurabilityService(
+            const dds::core::Duration& service_cleanup_delay = dds::core::Duration::zero(),
+            dds::core::policy::HistoryKind::Type history_kind = dds::core::policy::HistoryKind::KEEP_LAST,
+            int32_t history_depth = 1,
+            int32_t max_samples = dds::core::LENGTH_UNLIMITED,
+            int32_t max_instances = dds::core::LENGTH_UNLIMITED,
+            int32_t max_samples_per_instance = dds::core::LENGTH_UNLIMITED);
 
     /**
      * Copies a DurabilityService QoS instance
      *
      * @param other the DurabilityService QoS instance to copy
      */
-    TDurabilityService(
-            const TDurabilityService& other);
+    DurabilityService(
+            const DurabilityService& other);
 
     /**
      * Sets the service_cleanup_delay value
      *
      * @param service_cleanup_delay the service_cleanup_delay value
      */
-    TDurabilityService& service_cleanup_delay(
+    DurabilityService& service_cleanup_delay(
             const dds::core::Duration& service_cleanup_delay);
 
     /**
@@ -1432,7 +1494,7 @@ public:
      *
      * @param the history_kind
      */
-    TDurabilityService& history_kind(
+    DurabilityService& history_kind(
             dds::core::policy::HistoryKind::Type history_kind);
 
     /**
@@ -1447,7 +1509,7 @@ public:
      *
      * @param history_depth the history_depth value
      */
-    TDurabilityService& history_depth(
+    DurabilityService& history_depth(
             int32_t history_depth);
 
     /**
@@ -1462,7 +1524,7 @@ public:
      *
      * @param max_samples the max_samples value
      */
-    TDurabilityService& max_samples(
+    DurabilityService& max_samples(
             int32_t max_samples);
 
     /**
@@ -1477,7 +1539,7 @@ public:
      *
      * @param max_instances the max_instances value
      */
-    TDurabilityService& max_instances(
+    DurabilityService& max_instances(
             int32_t max_instances);
 
     /** Gets the max_instances value
@@ -1491,7 +1553,7 @@ public:
      *
      * @param max_samples_per_instance the max_samples_per_instance value
      */
-    TDurabilityService& max_samples_per_instance(
+    DurabilityService& max_samples_per_instance(
             int32_t max_samples_per_instance);
 
     /**
@@ -1502,88 +1564,94 @@ public:
     int32_t max_samples_per_instance() const;
 };
 
-#endif  //OMG_DDS_PERSISTENCE_SUPPORT
+//#endif  //OMG_DDS_PERSISTENCE_SUPPORT
 
 //==============================================================================
 
-#ifdef OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
+//#ifdef OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
 
-template<typename D>
-class TDataRepresentation : public dds::core::Value<D>
+typedef uint16_t DataRepresentationId;
+
+typedef std::vector<DataRepresentationId> DataRepresentationIdSeq;
+
+class DataRepresentation : public dds::core::Value<detail::DataRepresentation>
 {
 
 public:
-    explicit TDataRepresentation(
-        const dds::core::policy::DataRepresentationIdSeq& value);
 
-    TDataRepresentation(const TDataRepresentation& other)
-        : dds::core::Value<D>(other.value())
-    { }
-public:
-    TDataRepresentation& value(
+    explicit DataRepresentation(
+            const dds::core::policy::DataRepresentationIdSeq& value);
+
+    DataRepresentation(
+            const DataRepresentation& other)
+        : dds::core::Value<detail::DataRepresentation>(other)
+    {
+    }
+
+    DataRepresentation& value(
             const dds::core::policy::DataRepresentationIdSeq& value);
 
     const dds::core::policy::DataRepresentationIdSeq value() const;
 
-    dds::core::policy::DataRepresentationIdSeq&
+    dds::core::policy::DataRepresentationIdSeq& value();
+
+private:
+
+    static std::vector<eprosima::fastdds::dds::DataRepresentationId> to_native(
+            const DataRepresentationIdSeq& seq);
+
 };
 
-#endif  //OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
+//#endif  //OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
 
 
 //============================================================================
 
-#ifdef OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
+//#ifdef OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
 
-template<typename D>
-class TTypeConsistencyEnforcement : public dds::core::Value<D>
+class TypeConsistencyEnforcement : public dds::core::Value<detail::TypeConsistencyEnforcement>
 {
 public:
-    explicit TTypeConsistencyEnforcement(
+
+    explicit TypeConsistencyEnforcement(
             dds::core::policy::TypeConsistencyEnforcementKind::Type kind);
 
-    TTypeConsistencyEnforcement& kind(
+    TypeConsistencyEnforcement& kind(
             dds::core::policy::TypeConsistencyEnforcementKind::Type kind);
 
     dds::core::policy::TypeConsistencyEnforcementKind::Type  kind() const;
+
+    TypeConsistencyEnforcement& ignore_sequence_bounds(
+            bool ignore_sequence_bounds);
+
+    TypeConsistencyEnforcement& ignore_string_bounds(
+            bool ignore_string_bounds);
+
+    TypeConsistencyEnforcement& ignore_member_names(
+            bool ignore_member_names);
+
+    TypeConsistencyEnforcement& prevent_type_widening(
+            bool prevent_type_widening);
+
+    TypeConsistencyEnforcement& force_type_validation(
+            bool force_type_validation);
+
+    bool ignore_sequence_bounds();
+
+    bool ignore_string_bounds();
+
+    bool ignore_member_names();
+
+    bool prevent_type_widening();
+
+    bool force_type_validation();
+
 };
 
-#endif  //OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
+//#endif  //OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
 
 //==============================================================================
 // Policy Trait Classes
-
-#ifdef OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
-typedef uint16_t DataRepresentationId;
-
-typedef std::vector<DataRepresentationId> DataRepresentationIdSeq;
-#endif
-
-typedef dds::core::policy::detail::Deadline Deadline;
-
-typedef dds::core::policy::detail::DestinationOrder DestinationOrder;
-
-typedef dds::core::policy::detail::Durability Durability;
-
-typedef dds::core::policy::detail::EntityFactory EntityFactory;
-
-typedef dds::core::policy::detail::GroupData GroupData;
-
-typedef dds::core::policy::detail::History History;
-
-typedef dds::core::policy::detail::LatencyBudget LatencyBudget;
-
-typedef dds::core::policy::detail::Lifespan Lifespan;
-
-typedef dds::core::policy::detail::Liveliness Liveliness;
-
-typedef dds::core::policy::detail::Ownership Ownership;
-
-#ifdef  OMG_DDS_OWNERSHIP_SUPPORT
-typedef dds::core::policy::detail::OwnershipStrength OwnershipStrength;
-#endif  //OMG_DDS_OWNERSHIP_SUPPORT
-
-typedef dds::core::policy::detail::Partition Partition;
 
 template<typename Policy>
 class policy_id;
@@ -1591,39 +1659,9 @@ class policy_id;
 template<typename Policy>
 class policy_name;
 
-typedef dds::core::policy::detail::Presentation Presentation;
-
-typedef ::dds::core::policy::detail::QosPolicyCount QosPolicyCount;
-
-typedef std::vector<QosPolicyCount> QosPolicyCountSeq;
-
-typedef uint32_t QosPolicyId;
-
-typedef dds::core::policy::detail::ReaderDataLifecycle ReaderDataLifecycle;
-
-typedef dds::core::policy::detail::Reliability Reliability;
-
-typedef dds::core::policy::detail::ResourceLimits ResourceLimits;
-
-typedef dds::core::policy::detail::TimeBasedFilter TimeBasedFilter;
-
-typedef dds::core::policy::detail::TopicData TopicData;
-
-typedef dds::core::policy::detail::TransportPriority TransportPriority;
-
-typedef dds::core::policy::detail::UserData UserData;
-
-typedef dds::core::policy::detail::WriterDataLifecycle WriterDataLifecycle;
-
-#ifdef  OMG_DDS_PERSISTENCE_SUPPORT
-typedef ::dds::core::policy::detail::DurabilityService DurabilityService;
-#endif  //OMG_DDS_PERSISTENCE_SUPPORT
-
 #ifdef OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT
 /** @todo - Known issue. */
 #endif
-
-
 
 OMG_DDS_POLICY_TRAITS(UserData,             1)
 OMG_DDS_POLICY_TRAITS(Durability,           2)
@@ -1632,9 +1670,9 @@ OMG_DDS_POLICY_TRAITS(Deadline,             4)
 OMG_DDS_POLICY_TRAITS(LatencyBudget,        5)
 OMG_DDS_POLICY_TRAITS(Ownership,            6)
 
-#ifdef OMG_DDS_OWNERSHIP_SUPPORT
+//#ifdef OMG_DDS_OWNERSHIP_SUPPORT
 OMG_DDS_POLICY_TRAITS(OwnershipStrength,    7)
-#endif  //OMG_DDS_OWNERSHIP_SUPPORT
+//#endif  //OMG_DDS_OWNERSHIP_SUPPORT
 
 OMG_DDS_POLICY_TRAITS(Liveliness,           8)
 OMG_DDS_POLICY_TRAITS(TimeBasedFilter,      9)
@@ -1651,9 +1689,9 @@ OMG_DDS_POLICY_TRAITS(GroupData,            19)
 OMG_DDS_POLICY_TRAITS(TransportPriority,    20)
 OMG_DDS_POLICY_TRAITS(Lifespan,             21)
 
-#ifdef  OMG_DDS_PERSISTENCE_SUPPORT
+//#ifdef  OMG_DDS_PERSISTENCE_SUPPORT
 OMG_DDS_POLICY_TRAITS(DurabilityService,    22)
-#endif  //OMG_DDS_PERSISTENCE_SUPPORT
+//#endif  //OMG_DDS_PERSISTENCE_SUPPORT
 
 
 } //namespace policy

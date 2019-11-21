@@ -23,11 +23,11 @@
  * Ignore this file in the API
  */
 
+#include <dds/sub/SampleInfo.hpp>
+
 namespace dds {
 namespace sub {
 namespace detail {
-
-#include <dds/sub/SampleInfo.hpp>
 
 template<typename T>
 class Sample
@@ -41,90 +41,78 @@ public:
             const T& d,
             const dds::sub::SampleInfo& i)
     {
-        //To implement
-//        this->data_ = d;
-//        this->info_ = i;
+        this->data_ = d;
+        this->info_ = i;
     }
 
     Sample(
             const Sample& other)
     {
-        //To implement
-//        copy(other);
+        copy(other);
     }
 
     Sample& operator=(
             const Sample& other)
     {
-        //To implement
-//        return copy(other);
+        return copy(other);
     }
 
     Sample& copy(
             const Sample& other)
     {
-        //To implement
-//        this->data_ = other.data_;
-//        this->info_ = other.info_;
+        this->data_ = other.data_;
+        this->info_ = other.info_;
 
-//        return *this;
+        return *this;
     }
 
     const T& data() const
     {
-        //To implement
-//        return data_;
+        return data_;
     }
 
     T& data()
     {
-        //To implement
-//        return data_;
+        return data_;
     }
 
     void data(
             const T& d)
     {
-        //To implement
-//        data_ = d;
+        data_ = d;
     }
 
     const dds::sub::SampleInfo& info() const
     {
-        //To implement
-//        return info_;
+        return info_;
     }
 
     dds::sub::SampleInfo& info()
     {
-        //To implement
-//        return info_;
+        return info_;
     }
 
     void info(
             const dds::sub::SampleInfo& i)
     {
-        //To implement
-//        info_ = i;
+        info_ = i;
     }
 
     bool operator ==(
             const Sample& other) const
     {
-        //To implement
-//        return false;
+        return (this->data_ == other->data_ &&
+                this->info_ == other->info_);
     }
 
     T* data_ptr()
     {
-        //To implement
-//        return &this->data_;
+        return &this->data_;
     }
 
     dds::sub::SampleInfo *info_ptr()
     {
-        //To implement
-//        return &this->info_;
+        return &this->info_;
     }
 
 

@@ -26,6 +26,7 @@
 #include <dds/core/Value.hpp>
 #include <dds/core/InstanceHandle.hpp>
 #include <dds/core/policy/CorePolicy.hpp>
+#include <dds/core/status/detail/Status.hpp>
 
 #include <cstdint>
 
@@ -182,7 +183,7 @@ public:
 /**
  * \copydoc DCPS_Status_OfferedDeadlineMissed
  */
-class OfferedDeadlineMissedStatus : public dds::core::Value<detail::OfferedDeadLineMissedStatus>
+class OfferedDeadlineMissedStatus : public dds::core::Value<detail::OfferedDeadlineMissedStatus>
 {
 public:
     OfferedDeadlineMissedStatus();
@@ -429,8 +430,6 @@ class DataOnReadersStatus
 // This trait is used to get the state associated with each status
 template<typename STATUS>
 StatusMask get_status();
-
-#include <dds/core/status/detail/Status.hpp>
 
 } //namespace status
 } //namespace core

@@ -190,7 +190,6 @@ LoanedSamples<T, D > move(
 } //namespace sub
 } //namespace dds
 
-//TODO: Fix when LoanedSamplesImpl is implemented
-//#include <dds/sub/detail/LoanedSamplesImpl.hpp>
+#include <dds/sub/detail/LoanedSamplesImpl.hpp>
 
 #endif //OMG_DDS_SUB_TLOANED_SAMPLES_HPP_

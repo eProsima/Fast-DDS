@@ -15,12 +15,10 @@
  *
 */
 
-//#include <dds/pub/detail/TPublisherImpl.hpp>
-//TODO: Fix when PublisherDelegate is implemented
-//#include <org/opensplice/pub/PublisherDelegate.hpp>
-
 #ifndef EPROSIMA_DDS_PUB_DETAIL_PUBLISHER_HPP_
 #define EPROSIMA_DDS_PUB_DETAIL_PUBLISHER_HPP_
+
+#include <fastdds/dds/publisher/Publisher.hpp>
 
 /**
  * @cond
@@ -31,9 +29,7 @@ namespace dds {
 namespace pub {
 namespace detail {
 
-//TODO: Fix when PublisherDelegate is implemented
-//typedef dds::pub::TPublisher<org::opensplice::pub::PublisherDelegate> Publisher;
-class Publisher { };
+using Publisher = eprosima::fastdds::dds::Publisher;
 
 } //namespace detail
 } //namespace pub

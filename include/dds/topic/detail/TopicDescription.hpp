@@ -22,9 +22,7 @@
  * @file
  */
 
-//#include <dds/topic/detail/TTopicDescriptionImpl.hpp>
-//TODO: Fix when TopicDescriptionDelegate is implemented
-//#include <org/opensplice/topic/TopicDescriptionDelegate.hpp>
+#include <fastdds/dds/topic/TopicDescription.hpp>
 
 /**
  * @cond
@@ -35,9 +33,7 @@ namespace dds {
 namespace topic {
 namespace detail {
 
-//TODO: Fix when TopicDescriptionDelegate is implemented
-//typedef dds::topic::TTopicDescription<org::opensplice::topic::TopicDescriptionDelegate> TopicDescription;
-class TopicDescription { };
+using TopicDescription = eprosima::fastdds::dds::TopicDescription;
 
 } //namespace detail
 } //namespace topic

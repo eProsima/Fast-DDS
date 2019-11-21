@@ -140,4 +140,6 @@ public:
 } //namespace sub
 } //namespace dds
 
+#include <dds/sub/detail/TSampleImpl.hpp>
+
 #endif //OMG_DDS_SUB_SAMPLE_HPP_

@@ -19,6 +19,11 @@
 
 #include <fastdds/dds/topic/DataReader.hpp>
 #include <fastdds/topic/DataReaderImpl.hpp>
+#include <dds/sub/SampleInfo.hpp>
+#include <dds/sub/detail/SampleInfo.hpp>
+#include <dds/core/detail/Value.hpp>
+
+#include <fastdds/dds/subscriber/Subscriber.hpp>
 
 namespace eprosima {
 
@@ -27,6 +32,17 @@ using namespace fastrtps::rtps;
 
 namespace fastdds {
 namespace dds {
+
+DataReader::DataReader(
+        const Subscriber* sub,
+        const Topic& topic,
+        const DataReaderQos& qos,
+        DataReaderListener* listener,
+        const ::dds::core::status::StatusMask& /*mask*/)
+    : impl_(
+          (const_cast<Subscriber*>(sub))->create_datareader(topic, qos, listener)->impl_)
+{
+}
 
 DataReader::DataReader(
         DataReaderImpl* impl)
@@ -54,6 +70,16 @@ ReturnCode_t DataReader::take_next_sample(
         SampleInfo_t *info)
 {
     return impl_->take_next_sample(data, info);
+}
+
+ReturnCode_t DataReader::take_next_sample(
+        void *data,
+        ::dds::sub::SampleInfo& info)
+{
+    SampleInfo_t sinfo;
+    ReturnCode_t result = impl_->take_next_sample(data, &sinfo);
+    info = sinfo;
+    return result;
 }
 
 const GUID_t& DataReader::guid()
