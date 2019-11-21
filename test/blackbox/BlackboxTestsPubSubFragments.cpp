@@ -21,11 +21,39 @@
 
 #include <fastrtps/log/Log.h>
 #include <fastrtps/transport/test_UDPv4Transport.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TEST(BlackBox, PubSubAsNonReliableData300kb)
+class PubSubFragments : public testing::TestWithParam<bool>
+{
+public:
+
+    void SetUp() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+
+    }
+
+    void TearDown() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+    }
+
+};
+
+TEST_P(PubSubFragments, PubSubAsNonReliableData300kb)
 {
     // Mutes an expected error
     Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
@@ -43,7 +71,7 @@ TEST(BlackBox, PubSubAsNonReliableData300kb)
     ASSERT_FALSE(data.empty());
 }
 
-TEST(BlackBox, PubSubAsReliableData300kb)
+TEST_P(PubSubFragments, PubSubAsReliableData300kb)
 {
     // Mutes an expected error
     Log::SetErrorStringFilter(std::regex("^((?!Big data).)*$"));
@@ -61,7 +89,7 @@ TEST(BlackBox, PubSubAsReliableData300kb)
     ASSERT_FALSE(data.empty());
 }
 
-TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
+TEST_P(PubSubFragments, AsyncPubSubAsNonReliableData300kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
@@ -76,9 +104,9 @@ TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
     uint32_t periodInMs = 50;
 
     writer.history_depth(10).
-        reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-        add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
+    reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+    add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -98,13 +126,13 @@ TEST(BlackBox, AsyncPubSubAsNonReliableData300kb)
     reader.block_for_at_least(2);
 }
 
-TEST(BlackBox, AsyncPubSubAsReliableData300kb)
+TEST_P(PubSubFragments, AsyncPubSubAsReliableData300kb)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(5).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -114,8 +142,8 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kb)
     uint32_t periodInMs = 50;
 
     writer.history_depth(5).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
-        add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+    add_throughput_controller_descriptor_to_pparams(bytesPerPeriod, periodInMs).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -136,13 +164,13 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kb)
     reader.block_for_all();
 }
 
-TEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
+TEST(PubSubFragments, AsyncPubSubAsReliableData300kbInLossyConditions)
 {
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(5).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -164,7 +192,7 @@ TEST(BlackBox, AsyncPubSubAsReliableData300kbInLossyConditions)
     writer.add_user_transport_to_pparams(testTransport);
 
     writer.history_depth(5).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -252,8 +280,7 @@ TEST(PubSubFragments, AsyncPubSubAsBestEffortAlternateSizeInLossyConditions)
     std::this_thread::sleep_for(std::chrono::seconds(1));
 }
 
-
-TEST(BlackBox, AsyncFragmentSizeTest)
+TEST(PubSubFragments, AsyncFragmentSizeTest)
 {
     // ThroghputController size large than maxMessageSize.
     {
@@ -261,7 +288,7 @@ TEST(BlackBox, AsyncFragmentSizeTest)
         PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
         reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
         ASSERT_TRUE(reader.isInitialized());
 
@@ -307,7 +334,7 @@ TEST(BlackBox, AsyncFragmentSizeTest)
         PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
         reader.history_depth(10).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
         ASSERT_TRUE(reader.isInitialized());
 
@@ -324,7 +351,7 @@ TEST(BlackBox, AsyncFragmentSizeTest)
         writer.disable_builtin_transport();
         writer.add_user_transport_to_pparams(testTransport);
         writer.history_depth(10).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
         ASSERT_TRUE(writer.isInitialized());
 
@@ -348,3 +375,15 @@ TEST(BlackBox, AsyncFragmentSizeTest)
         ASSERT_LE(current_received, static_cast<size_t>(3));
     }
 }
+
+INSTANTIATE_TEST_CASE_P(PubSubFragments,
+        PubSubFragments,
+        testing::Values(false, true),
+        [](const testing::TestParamInfo<PubSubFragments::ParamType>& info) {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
+

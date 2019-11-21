@@ -62,6 +62,15 @@ protected:
 
 };
 
+TEST_F(XMLProfileParserTests, XMLParserRootLibrarySettings)
+{
+    ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
+        xmlparser::XMLProfileManager::loadXMLFile("test_xml_root_library_settings.xml"));
+
+    const LibrarySettingsAttributes& library_settings = xmlparser::XMLProfileManager::library_settings();
+    EXPECT_EQ(library_settings.intraprocess_delivery, IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY);
+}
+
 TEST_F(XMLProfileParserTests, XMLoadProfiles)
 {
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
@@ -78,6 +87,15 @@ TEST_F(XMLProfileParserTests, XMLoadProfiles)
             xmlparser::XMLProfileManager::fillParticipantAttributes("bad_name", participant_atts));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_ERROR,
             xmlparser::XMLProfileManager::fillParticipantAttributes("test_publisher_profile", participant_atts));
+}
+
+TEST_F(XMLProfileParserTests, XMLParserLibrarySettings)
+{
+    ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
+        xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+
+    const LibrarySettingsAttributes& library_settings = xmlparser::XMLProfileManager::library_settings();
+    EXPECT_EQ(library_settings.intraprocess_delivery, IntraprocessDeliveryType::INTRAPROCESS_FULL);
 }
 
 TEST_F(XMLProfileParserTests, XMLParserParcipant)

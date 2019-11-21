@@ -27,38 +27,61 @@ namespace fastrtps {
 namespace rtps {
 
 class RTPSParticipantImpl;
+class ReaderProxy;
 
 class StatefulWriter : public RTPSWriter
 {
-    public:
+public:
 
-        StatefulWriter(RTPSParticipantImpl* participant) : participant_(participant), mp_history(new WriterHistory()) {}
+    StatefulWriter(
+            RTPSParticipantImpl* participant)
+        : participant_(participant)
+        , mp_history(new WriterHistory())
+    {
+    }
 
-        StatefulWriter() : participant_(nullptr), mp_history(new WriterHistory()) {}
+    StatefulWriter()
+        : participant_(nullptr)
+        , mp_history(new WriterHistory())
+    {
+    }
 
-        virtual ~StatefulWriter() { delete mp_history; }
+    virtual ~StatefulWriter()
+    {
+        delete mp_history;
+    }
 
-        MOCK_METHOD1(matched_reader_add, bool(const ReaderProxyData&));
+    MOCK_METHOD1(matched_reader_add, bool(const ReaderProxyData &));
 
-        MOCK_METHOD1(matched_reader_remove, bool(const GUID_t&));
+    MOCK_METHOD1(matched_reader_remove, bool(const GUID_t &));
 
-        MOCK_METHOD0(getGuid, const GUID_t&());
+    MOCK_METHOD0(getGuid, const GUID_t &());
 
-        MOCK_METHOD1(unsent_change_added_to_history_mock, void(CacheChange_t*));
+    MOCK_METHOD1(unsent_change_added_to_history_mock, void(CacheChange_t*));
 
-        MOCK_METHOD1(perform_nack_supression, void(const GUID_t&));
+    MOCK_METHOD1(perform_nack_supression, void(const GUID_t &));
 
-        RTPSParticipantImpl* getRTPSParticipant() { return participant_; }
+    MOCK_METHOD1(intraprocess_heartbeat, void(const ReaderProxy*));
 
-        SequenceNumber_t get_seq_num_min() { return SequenceNumber_t(0, 0); }
+    MOCK_METHOD2(intraprocess_gap, void(const ReaderProxy*, const SequenceNumber_t&));
 
-    private:
+    RTPSParticipantImpl* getRTPSParticipant()
+    {
+        return participant_;
+    }
 
-        friend class ReaderProxy;
+    SequenceNumber_t get_seq_num_min()
+    {
+        return SequenceNumber_t(0, 0);
+    }
 
-        RTPSParticipantImpl* participant_;
+private:
 
-        WriterHistory* mp_history;
+    friend class ReaderProxy;
+
+    RTPSParticipantImpl* participant_;
+
+    WriterHistory* mp_history;
 };
 
 } // namespace rtps

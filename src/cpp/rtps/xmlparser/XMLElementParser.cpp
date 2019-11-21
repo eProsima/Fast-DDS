@@ -2901,6 +2901,53 @@ XMLP_ret XMLParser::getXMLBool(
 }
 
 XMLP_ret XMLParser::getXMLEnum(
+        tinyxml2::XMLElement *elem,
+        IntraprocessDeliveryType * e,
+        uint8_t /*ident*/)
+{
+    //<xs:simpleType name="IntraprocessDeliveryType">
+    //    <xs:restriction base="xs:string">
+    //        <xs:enumeration value="OFF"/>
+    //        <xs:enumeration value="USER_DATA_ONLY"/>
+    //        <xs:enumeration value="FULL"/>
+    //    </xs:restriction>
+    //</xs:simpleType>
+
+    const char* text = nullptr;
+
+    if (nullptr == elem || nullptr == e)
+    {
+        logError(XMLPARSER, "nullptr when getXMLEnum XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    else if (nullptr == (text = elem->GetText()))
+    {
+        logError(XMLPARSER, "<" << elem->Value() << "> getXMLEnum XML_ERROR!");
+        return XMLP_ret::XML_ERROR;
+    }
+    else if (strcmp(text, OFF) == 0)
+    {
+        *e = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+    }
+    else if (strcmp(text, USER_DATA_ONLY) == 0)
+    {
+        *e = IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY;
+    }
+    else if (strcmp(text, FULL) == 0)
+    {
+        *e = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+    }
+    else
+    {
+        logError(XMLPARSER, "Node '" << INTRAPROCESS_DELIVERY << "' with bad content");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
+
+XMLP_ret XMLParser::getXMLEnum(
         tinyxml2::XMLElement* elem,
         DiscoveryProtocol_t* e,
         uint8_t /*ident*/)

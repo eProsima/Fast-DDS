@@ -98,6 +98,10 @@ XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root
                         root->addChild(std::move(profiles_node));
                     }
                 }
+                else if (strcmp(tag, LIBRARY_SETTINGS) == 0)
+                {
+                    ret = parseXMLLibrarySettings(node);
+                }
                 else if (strcmp(tag, PARTICIPANT) == 0)
                 {
                     ret = parseXMLParticipantProf(node, *root);
@@ -2242,6 +2246,41 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(tinyxml2::XMLElement
     return memberBuilder;
 }
 
+XMLP_ret XMLParser::parseXMLLibrarySettings(tinyxml2::XMLElement* p_root)
+{
+    /*
+        <xs:complexType name="LibrarySettingsType">
+            <xs:all minOccurs="0">
+                <xs:element name="intraprocess_delivery" type="IntraprocessDeliveryType"/>
+            </xs:all>
+        </xs:complexType>
+    */
+
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    std::string sId = "";
+
+    uint8_t ident = 1;
+    tinyxml2::XMLElement *p_aux0 = nullptr;
+    p_aux0 = p_root->FirstChildElement(INTRAPROCESS_DELIVERY);
+    if (nullptr == p_aux0)
+    {
+        logError(XMLPARSER, "Not found '" << INTRAPROCESS_DELIVERY << "' attribute");
+        return XMLP_ret::XML_ERROR;
+    }
+    else
+    {
+        LibrarySettingsAttributes library_settings;
+        if (XMLP_ret::XML_OK != getXMLEnum(p_aux0, &library_settings.intraprocess_delivery, ident))
+        {
+            return XMLP_ret::XML_ERROR;
+        }
+
+        XMLProfileManager::library_settings(library_settings);
+    }
+
+    return ret;
+}
+
 XMLP_ret XMLParser::parseXMLParticipantProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
@@ -2317,6 +2356,7 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
         <xs:element name="profiles">
             <xs:complexType>
                 <xs:sequence>
+                    <xs:element name="library_settings" type="LibrarySettingsType" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:element name="transport_descriptors" type="TransportDescriptorListType" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:element name="participant" type="participantProfileType" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:element name="publisher" type="publisherProfileType" minOccurs="0" maxOccurs="unbounded"/>
@@ -2338,6 +2378,10 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
             if (strcmp(tag, TRANSPORT_DESCRIPTORS) == 0)
             {
                 parseOk &= parseXMLTransportsProf(p_profile) == XMLP_ret::XML_OK;
+            }
+            else if (strcmp(tag, LIBRARY_SETTINGS) == 0)
+            {
+                parseOk &= parseXMLLibrarySettings(p_profile) == XMLP_ret::XML_OK;
             }
             else if (strcmp(tag, PARTICIPANT) == 0)
             {

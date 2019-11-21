@@ -1,6 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles" >
+<?xml version="1.0" encoding="utf-8" ?>
+<dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
     <profiles>
+        <library_settings>
+            <intraprocess_delivery>FULL</intraprocess_delivery>
+        </library_settings>
         <participant profile_name="simple_participant_profile" is_default_profile="true">
             <rtps>
                 <builtin>
