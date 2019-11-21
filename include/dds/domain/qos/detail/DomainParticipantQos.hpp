@@ -18,18 +18,14 @@
 #ifndef EPROSIMA_DDS_DOMAIN_QOS_DETAIL_DOMAINPARTICIPANTQOS_HPP_
 #define EPROSIMA_DDS_DOMAIN_QOS_DETAIL_DOMAINPARTICIPANTQOS_HPP_
 
-//#include <dds/core/detail/TEntityQosImpl.hpp>
-//TODO: Fix when DomainParticipantQosDelegate is implemented
-//#include <fastdds/dds/domain/qos/DomainParticipantQosDelegate.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 
 namespace dds {
 namespace domain {
 namespace qos {
 namespace detail {
 
-//TODO: Fix when DomainParticipantQosDelegate is implemented
-//typedef ::dds::core::TEntityQos<::fastdds::dds::domain::qos::DomainParticipantQosDelegate> DomainParticipantQos;
-class DomainParticipantQos { };
+using DomainParticipantQos = eprosima::fastdds::dds::DomainParticipantQos;
 
 } //namespace detail
 } //namespace qos

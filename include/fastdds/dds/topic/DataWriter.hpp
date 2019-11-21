@@ -24,7 +24,16 @@
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastrtps/types/TypesBase.h>
 
+#include <dds/core/status/Status.hpp>
+
 using eprosima::fastrtps::types::ReturnCode_t;
+
+namespace dds {
+namespace pub {
+template< typename T>
+class DataWriter;
+} // pub
+} // ::dds
 
 namespace eprosima {
 namespace fastrtps {
@@ -50,10 +59,12 @@ class PublisherImpl;
 class Publisher;
 
 class TypeSupport;
+class Topic;
 
 class DataWriterImpl;
 class DataWriterListener;
 class WriterQos;
+class DataWriterQos;
 
 /**
  * Class DataWriter, contains the actual implementation of the behaviour of the DataWriter.
@@ -63,6 +74,15 @@ class RTPS_DllAPI DataWriter
 {
     friend class PublisherImpl;
     friend class DataWriterImpl;
+    template<typename T>
+    friend class ::dds::pub::DataWriter;
+
+    DataWriter(
+            const Publisher* pub,
+            const Topic& topic,
+            const DataWriterQos& qos,
+            DataWriterListener* listener = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
 
     /**
      * Create a data writer, assigning its pointer to the associated writer.
@@ -200,7 +220,7 @@ public:
             LivelinessLostStatus& status);
 
     /* TODO
-       bool get_offered_incompatible_qos_status(
+       ReturnCode_t get_offered_incompatible_qos_status(
             OfferedIncompatibleQosStatus& status)
        {
         // Not implemented

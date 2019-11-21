@@ -41,7 +41,7 @@ TAnyTopic<DELEGATE>::qos() const
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->qos();
+    return this->delegate()->get_qos();
 }
 
 template<typename DELEGATE>
@@ -50,7 +50,7 @@ void TAnyTopic<DELEGATE>::qos(
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->qos(qos);
+    this->delegate()->set_qos(qos);
 }
 
 template<typename DELEGATE>
@@ -59,8 +59,8 @@ TAnyTopic<DELEGATE>& TAnyTopic<DELEGATE>::operator<<(
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    this->delegate()->qos(qos);
-//    return *this;
+    this->qos(qos);
+    return *this;
 }
 
 template<typename DELEGATE>
@@ -69,8 +69,8 @@ const TAnyTopic<DELEGATE>& TAnyTopic<DELEGATE>::operator>>(
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    qos = this->delegate()->qos();
-//    return *this;
+    qos = this->qos();
+    return *this;
 }
 
 template<typename DELEGATE>
@@ -78,7 +78,7 @@ dds::core::status::InconsistentTopicStatus TAnyTopic<DELEGATE>::inconsistent_top
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->inconsistent_topic_status();
+    return this->delegate()->inconsistent_topic_status();
 }
 
 } //namespace topic

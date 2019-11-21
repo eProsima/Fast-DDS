@@ -140,70 +140,61 @@ template<typename D>
 Value<D>& Value<D>::operator =(
         const Value& other)
 {
-    //To implement
-//    if(this != &other)
-//    {
-//        d_ = other.d_;
-//    }
-//    return *this;
+    if(this != &other)
+    {
+        d_ = other.d_;
+    }
+    return *this;
 }
 
 template<typename D>
 bool Value<D>::operator ==(
         const Value& other) const
 {
-    //To implement
-//    return (d_ == other.d_);
+    return (d_ == other.d_);
 }
 
 template<typename D>
 bool Value<D>::operator !=(
         const Value& other) const
 {
-    //To implement
-//    return !(d_ == other.d_);
+    return !(d_ == other.d_);
 }
 
 template<typename D>
 const D* Value<D>::operator->() const
 {
-    //To implement
-//    return &d_;
+    return &d_;
 }
 
 template<typename D>
 D* Value<D>::operator->()
 {
-    //To implement
-//    return &d_;
+    return &d_;
 }
 
 template<typename D>
 const D& Value<D>::delegate() const
 {
-    //To implement
-//    return d_;
+    return d_;
 }
 
 template<typename D>
 D& Value<D>::delegate()
 {
-    //To implement
-//    return d_;
+    return d_;
 }
 
 template<typename D>
 Value<D>::operator D& ()
 {
-    //To implement
-//    return d_;
+    return d_;
 }
 
 template<typename D>
 Value<D>::operator const D& () const
 {
-    //To implement
-//    return d_;
+    return d_;
 }
 
 } //namespace core

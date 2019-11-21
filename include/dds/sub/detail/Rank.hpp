@@ -21,6 +21,8 @@
 //#include <dds/sub/detail/TRankImpl.hpp>
 //#include <org/opensplice/sub/RankImpl.hpp>
 
+#include <cstdint>
+
 /**
  * @cond
  * Ignore this file in the API
@@ -30,8 +32,17 @@ namespace dds {
 namespace sub {
 namespace detail {
 
-//typedef dds::sub::TRank< org::opensplice::sub::RankImpl > Rank;
-class Rank { };
+struct Rank
+{
+    //!Preview of the samples that follow within the sequence returned by the read or take operations.
+    int32_t sample_rank = 0;
+
+    //!Preview of the samples that follow within the sequence returned by the read or take operations.
+    int32_t generation_rank = 0;
+
+    //!Preview of what is available within DataReader.
+    int32_t absolute_generation_rank = 0;
+};
 
 } //namespace detail
 } //namespace sub

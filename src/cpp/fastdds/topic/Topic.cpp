@@ -24,6 +24,20 @@ using ReturnCode_t = fastrtps::types::ReturnCode_t;
 namespace fastdds {
 namespace dds {
 
+Topic::Topic(
+        const DomainParticipant* dp,
+        const std::string& topic_name,
+        const std::string& type_name,
+        const TopicQos& qos,
+        TopicListener* listener,
+        const ::dds::core::status::StatusMask& mask)
+    : TopicDescription(topic_name.c_str(), type_name.c_str())
+    , listener_(listener)
+    , qos_(qos)
+    , mask_(mask)
+{
+    (void)dp;
+}
 
 ReturnCode_t Topic::get_qos(
         TopicQos& qos) const

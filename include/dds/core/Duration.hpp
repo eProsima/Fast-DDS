@@ -74,10 +74,6 @@ public:
             uint32_t nanosec = 0);
 #endif
 
-    /** @cond */
-    ~Duration();
-    /** @endcond */
-
     /**
      * Create a Duration from a number of microseconds
      * @param microseconds number of microseconds
@@ -253,8 +249,8 @@ public:
     double to_secs() const;
 
 private:
-    int32_t sec_;
-    uint32_t nsec_;
+    int32_t sec_ = 0;
+    uint32_t nsec_ = 0;
 };
 
 /**

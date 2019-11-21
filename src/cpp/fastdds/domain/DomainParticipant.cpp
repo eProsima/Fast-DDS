@@ -18,6 +18,8 @@
  */
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <dds/domain/DomainParticipant.hpp>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 
@@ -29,8 +31,24 @@ DomainParticipant::DomainParticipant()
 {
 }
 
+DomainParticipant::DomainParticipant(
+        DomainId_t did,
+        const DomainParticipantQos& qos,
+        DomainParticipantListener* listen,
+        const ::dds::core::status::StatusMask& mask)
+    : impl_(DomainParticipantFactory::get_instance()->create_participant(did, qos, listen, mask)->impl_)
+{
+}
+
 DomainParticipant::~DomainParticipant()
 {
+}
+
+void DomainParticipant::delete_participant(
+        ::dds::domain::DomainParticipant& part)
+{
+    DomainParticipant* participant = part.delegate().get();
+    DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
 ReturnCode_t DomainParticipant::set_listener(
@@ -40,6 +58,11 @@ ReturnCode_t DomainParticipant::set_listener(
 }
 
 const DomainParticipantListener* DomainParticipant::get_listener() const
+{
+    return impl_->get_listener();
+}
+
+DomainParticipantListener* DomainParticipant::get_listener()
 {
     return impl_->get_listener();
 }
@@ -257,6 +280,11 @@ ReturnCode_t DomainParticipant::get_qos(
     return impl_->get_qos(qos);
 }
 
+const DomainParticipantQos& DomainParticipant::get_qos() const
+{
+    return impl_->get_qos();
+}
+
 ReturnCode_t DomainParticipant::set_qos(
         const DomainParticipantQos& qos)
 {
@@ -281,4 +309,21 @@ ReturnCode_t DomainParticipant::register_remote_type(
         std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback)
 {
     return impl_->register_remote_type(type_information, type_name, callback);
+}
+
+ReturnCode_t DomainParticipant::set_default_topic_qos(
+        const fastdds::dds::TopicQos& qos)
+{
+    return impl_->set_default_topic_qos(qos);
+}
+
+ReturnCode_t DomainParticipant::get_default_topic_qos(
+        fastdds::dds::TopicQos& qos) const
+{
+    return impl_->get_default_topic_qos(qos);
+}
+
+const fastdds::dds::TopicQos& DomainParticipant::get_default_topic_qos() const
+{
+    return impl_->get_default_topic_qos();
 }

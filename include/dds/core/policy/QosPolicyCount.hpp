@@ -21,13 +21,14 @@
 #define OMG_DDS_CORE_POLICY_QOS_POLICY_COUNT_HPP_
 
 #include <dds/core/policy/detail/QosPolicyCount.hpp>
-
 #include <dds/core/Value.hpp>
-#include <dds/core/policy/CorePolicy.hpp>
 
 namespace dds {
 namespace core {
 namespace policy {
+
+using QosPolicyId = detail::QosPolicyId;
+using QosPolicyCountSeq = detail::QosPolicyCountSeq;
 
 /**
  * The QosPolicyCount object shows, for a QosPolicy, the total number of
@@ -35,8 +36,7 @@ namespace policy {
  * same Topic and a requested DataReaderQos that is incompatible with
  * the one offered by the DataWriter.
  */
-template<typename D>
-class TQosPolicyCount : public dds::core::Value<D>
+class QosPolicyCount : public dds::core::Value<detail::QosPolicyCount>
 {
 public:
     /**
@@ -45,35 +45,44 @@ public:
      * @param policy_id the policy_id
      * @param count the count
      */
-    TQosPolicyCount(
+    QosPolicyCount(
             QosPolicyId policy_id,
-            int32_t count);
+            int32_t count)
+        : dds::core::Value<detail::QosPolicyCount>(policy_id, count)
+    {
+    }
 
     /**
      * Copies a QosPolicyCount instance
      *
      * @param other the QosPolicyCount instance to copy
      */
-    TQosPolicyCount(
-            const TQosPolicyCount& other);
+    QosPolicyCount(
+            const QosPolicyCount& other)
+        : dds::core::Value<detail::QosPolicyCount>(other.policy_id(), other.count())
+    {
+    }
 
     /**
      * Gets the policy_id
      *
      * @return the policy_id
      */
-    QosPolicyId policy_id() const;
+    QosPolicyId policy_id() const
+    {
+        return this->delegate().policy_id;
+    }
 
     /**
      * Gets the count
      *
      * @return the count
      */
-    int32_t count() const;
+    int32_t count() const
+    {
+        return this->delegate().count;
+    }
 };
-
-
-typedef dds::core::policy::detail::QosPolicyCount QosPolicyCount;
 
 } //namespace policy
 } //namespace core

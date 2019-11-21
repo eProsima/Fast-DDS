@@ -18,18 +18,15 @@
 #ifndef EPROSIMA_DDS_TOPIC_QOS_DETAIL_TOPIC_QOS_HPP_
 #define EPROSIMA_DDS_TOPIC_QOS_DETAIL_TOPIC_QOS_HPP_
 
-//#include <dds/core/detail/TEntityQosImpl.hpp>
-//TODO: Fix when TopicQosDelegate is implemented
-//#include <org/opensplice/topic/qos/TopicQosDelegate.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
+//#include <dds/core/policy/CorePolicy.hpp>
 
 namespace dds {
 namespace topic {
 namespace qos {
 namespace detail {
 
-//TODO: Fix when TopicQosDelegate is implemented
-//typedef dds::core::TEntityQos< ::org::opensplice::topic::qos::TopicQosDelegate > TopicQos;
-class TopicQos { };
+using TopicQos = eprosima::fastdds::dds::TopicQos;
 
 } //namespace detail
 } //namespace qos

@@ -20,10 +20,16 @@
 #ifndef OMG_DDS_SUB_ANY_DATA_READER_LISTENER_HPP_
 #define OMG_DDS_SUB_ANY_DATA_READER_LISTENER_HPP_
 
+
+// TODO Remove when PSM DDS Listeners are ready to be used.
+#include <fastdds/dds/topic/DataReaderListener.hpp>
+
 #include <dds/core/refmacros.hpp>
 #include <dds/core/ref_traits.hpp>
 #include <dds/core/status/Status.hpp>
+#include <dds/sub/DataReader.hpp>
 #include <dds/sub/AnyDataReader.hpp>
+
 
 namespace dds {
 namespace sub {
@@ -61,35 +67,63 @@ public:
     /** @copydoc dds::sub::DataReaderListener::on_requested_deadline_missed() */
     virtual void on_requested_deadline_missed(
         AnyDataReader& reader,
-        const dds::core::status::RequestedDeadlineMissedStatus& status) = 0;
+        const dds::core::status::RequestedDeadlineMissedStatus& status)
+    {
+        (void) reader;
+        (void) status;
+    }
 
     /** @copydoc dds::sub::DataReaderListener::on_requested_incompatible_qos() */
     virtual void on_requested_incompatible_qos(
         AnyDataReader& reader,
-        const dds::core::status::RequestedIncompatibleQosStatus& status) = 0;
+        const dds::core::status::RequestedIncompatibleQosStatus& status)
+    {
+        (void) reader;
+        (void) status;
+    }
 
     /** @copydoc dds::sub::DataReaderListener::on_sample_rejected() */
     virtual void on_sample_rejected(
         AnyDataReader& reader,
-        const dds::core::status::SampleRejectedStatus& status) = 0;
+        const dds::core::status::SampleRejectedStatus& status)
+    {
+        (void) reader;
+        (void) status;
+    }
 
     /** @copydoc dds::sub::DataReaderListener::on_liveliness_changed() */
     virtual void on_liveliness_changed(
         AnyDataReader& reader,
-        const dds::core::status::LivelinessChangedStatus& status)  = 0;
+        const dds::core::status::LivelinessChangedStatus& status)
+    {
+        (void) reader;
+        (void) status;
+    }
 
     /** @copydoc dds::sub::DataReaderListener::on_data_available() */
-    virtual void on_data_available(AnyDataReader& reader) = 0;
+    virtual void on_data_available(AnyDataReader& reader)
+    {
+        (void) reader;
+        (void) status;
+    }
 
     /** @copydoc dds::sub::DataReaderListener::on_subscription_matched() */
     virtual void on_subscription_matched(
         AnyDataReader& reader,
-        const dds::core::status::SubscriptionMatchedStatus& status) = 0;
+        const dds::core::status::SubscriptionMatchedStatus& status)
+    {
+        (void) reader;
+        (void) status;
+    }
 
     /** @copydoc dds::sub::DataReaderListener::on_sample_lost() */
     virtual void on_sample_lost(
         AnyDataReader& reader,
-        const dds::core::status::SampleLostStatus& status) = 0;
+        const dds::core::status::SampleLostStatus& status)
+    {
+        (void) reader;
+        (void) status;
+    }
 };
 
 

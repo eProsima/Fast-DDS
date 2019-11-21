@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <dds/core/LengthUnlimited.hpp>
+
 #include <fastrtps/types/TypesBase.h>
 #include <gtest/gtest.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
@@ -322,7 +324,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
 
-        created_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder(LENGTH_UNLIMITED);
+        created_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder(
+            static_cast<uint32_t>(dds::core::LENGTH_UNLIMITED));
         ASSERT_TRUE(created_builder != nullptr);
         type = created_builder->build();
         ASSERT_TRUE(type != nullptr);
@@ -338,7 +341,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
 
-        created_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(LENGTH_UNLIMITED);
+        created_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(
+            static_cast<uint32_t>(dds::core::LENGTH_UNLIMITED));
         ASSERT_TRUE(created_builder != nullptr);
         type = created_builder->build();
         ASSERT_TRUE(type != nullptr);

@@ -23,7 +23,6 @@
  * Ignore this file in the API
  */
 
-#include <dds/topic/detail/TAnyTopicImpl.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
 namespace dds {
