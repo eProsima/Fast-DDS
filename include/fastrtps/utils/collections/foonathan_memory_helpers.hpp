@@ -21,6 +21,7 @@
 #define FASTRTPS_UTILS_COLLECTIONS_FOONATHAN_MEMORY_HELPERS_HPP_
 
 #include <foonathan/memory/memory_pool.hpp>
+#include <foonathan/memory/detail/debug_helpers.hpp>
 
 #include "ResourceLimitedContainerConfig.hpp"
 
@@ -49,12 +50,10 @@ std::size_t memory_pool_block_size(
         num_elems = 1u;
     }
 
-    // Make room for debug fence
-    num_elems += 2u;
-
-    return node_size * num_elems       // Room for elements
-        + MemoryPool::min_node_size    // Room for free_list nodes
-        + 16u;                         // Additional fence space
+    return num_elems
+           * ((node_size > MemoryPool::min_node_size ? node_size : MemoryPool::min_node_size) // Room for elements
+           * (foonathan::memory::detail::debug_fence_size ? 3 : 1))                           // Room for debug info
+           + foonathan::memory::detail::memory_block_stack::implementation_offset;            // Room for padding
 }
 
 }  // namespace fastrtps
