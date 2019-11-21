@@ -112,7 +112,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             endif()
 
             # If there is security, add a secure test as well
-            if(SECURITY)
+            if(SECURITY AND (${latency_test_name} MATCHES "^interprocess"))
                 # Add the secure verison
                 add_test(
                     NAME performance.latency.${latency_test_name}_security
