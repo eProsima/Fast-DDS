@@ -53,6 +53,15 @@ public:
     void init_thread();
 
     /*!
+     * @brief This method informs that a TimedEventImpl has been created.
+     *
+     * This method has to be called when creating a TimedEventImpl object.
+     * @param event TimedEventImpl object that has been created.
+     */
+    void register_timer(
+            TimedEventImpl* event);
+
+    /*!
      * @brief This method removes a TimedEventImpl object in case it is waiting to be processed by ResourceEvent's
      * internal thread.
      *
@@ -93,11 +102,17 @@ private:
     //! Protects internal data.
     TimedMutex mutex_;
 
+    //! Used to warn about changes on allow_vector_manipulation_.
+    TimedConditionVariable cv_manipulation_;
+
+    //! Flag used to allow a thread to manipulate the timer collections when the execution thread is not using them.
+    bool allow_vector_manipulation_;
+
     //! Used to warn there are new TimedEventImpl objects to be processed.
     TimedConditionVariable cv_;
 
-    //! Flag used to allow a thread to delete a TimedEventImpl because the main thread is not using asio::io_service.
-    bool allow_to_delete_;
+    //! The total number of created timers.
+    size_t timers_count_;
 
     //! Collection of events pending update action.
     std::vector<TimedEventImpl*> pending_timers_;

@@ -37,6 +37,7 @@ TimedEvent::TimedEvent(
     impl_ = new TimedEventImpl(
         callback,
         std::chrono::microseconds(static_cast<int64_t>(milliseconds * 1000)));
+    service_.register_timer(impl_);
 }
 
 TimedEvent::~TimedEvent()

@@ -38,7 +38,8 @@ static bool event_compare(
 
 ResourceEvent::ResourceEvent()
     : stop_(false)
-    , allow_to_delete_(false)
+    , allow_vector_manipulation_(false)
+    , timers_count_(0)
 {
 }
 
@@ -56,33 +57,22 @@ ResourceEvent::~ResourceEvent()
     }
 }
 
-bool ResourceEvent::register_timer_nts(
-        TimedEventImpl* event)
+void ResourceEvent::register_timer(
+        TimedEventImpl* /*event*/)
 {
-    if (std::find(pending_timers_.begin(), pending_timers_.end(), event) == pending_timers_.end())
+    assert(!stop_.load());
+
+    std::unique_lock<TimedMutex> lock(mutex_);
+
+    cv_manipulation_.wait(lock, [&]()
     {
-        pending_timers_.push_back(event);
-        return true;
-    }
+        return allow_vector_manipulation_;
+    });
 
-    return false;
-}
+    ++timers_count_;
 
-void ResourceEvent::activate_timer(
-        TimedEventImpl* event)
-{
-    std::vector<TimedEventImpl*>::iterator low_bound;
-    std::vector<TimedEventImpl*>::iterator end_it = active_timers_.end();
-    
-    // Find insertion position
-    low_bound = std::lower_bound(active_timers_.begin(), end_it, event, event_compare);
-
-    // If event is not found from there onwards ...
-    if (std::find(low_bound, end_it, event) == end_it)
-    {
-        // ... add it on its place
-        active_timers_.emplace(low_bound, event);
-    }
+    // Notify the execution thread that something changed
+    cv_.notify_one();
 }
 
 void ResourceEvent::unregister_timer(
@@ -92,9 +82,9 @@ void ResourceEvent::unregister_timer(
 
     std::unique_lock<TimedMutex> lock(mutex_);
 
-    cv_.wait(lock, [&]()
+    cv_manipulation_.wait(lock, [&]()
     {
-        return allow_to_delete_;
+        return allow_vector_manipulation_;
     });
 
     bool should_notify = false;
@@ -124,6 +114,9 @@ void ResourceEvent::unregister_timer(
             break;
         }
     }
+
+    // Decrement counter of created timers
+    --timers_count_;
 
     if (should_notify)
     {
@@ -160,18 +153,50 @@ void ResourceEvent::notify(
     }
 }
 
+bool ResourceEvent::register_timer_nts(
+        TimedEventImpl* event)
+{
+    if (std::find(pending_timers_.begin(), pending_timers_.end(), event) == pending_timers_.end())
+    {
+        pending_timers_.push_back(event);
+        return true;
+    }
+
+    return false;
+}
+
+void ResourceEvent::activate_timer(
+        TimedEventImpl* event)
+{
+    std::vector<TimedEventImpl*>::iterator low_bound;
+    std::vector<TimedEventImpl*>::iterator end_it = active_timers_.end();
+    
+    // Find insertion position
+    low_bound = std::lower_bound(active_timers_.begin(), end_it, event, event_compare);
+
+    // If event is not found from there onwards ...
+    if (std::find(low_bound, end_it, event) == end_it)
+    {
+        // ... add it on its place
+        active_timers_.emplace(low_bound, event);
+    }
+}
+
 void ResourceEvent::run_io_service()
 {
     while (!stop_.load())
     {
+        // Perform update and execution of timers
         update_current_time();
         do_timer_actions();
 
         std::unique_lock<TimedMutex> lock(mutex_);
 
-        allow_to_delete_ = true;
-        cv_.notify_one();
+        // Allow other threads to manipulate the timer collections
+        allow_vector_manipulation_ = true;
+        cv_manipulation_.notify_all();
 
+        // Wait for the first timer to be triggered
         std::chrono::steady_clock::time_point next_trigger =
             active_timers_.empty() ?
                 current_time_ + std::chrono::seconds(1) :
@@ -179,7 +204,10 @@ void ResourceEvent::run_io_service()
 
         cv_.wait_until(lock, next_trigger);
 
-        allow_to_delete_ = false;
+        // Don't allow other threads to manipulate the timer collections
+        allow_vector_manipulation_ = false;
+        pending_timers_.reserve(timers_count_);
+        active_timers_.reserve(timers_count_);
     }
 }
 
