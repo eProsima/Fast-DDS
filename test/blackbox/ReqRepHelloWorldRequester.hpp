@@ -45,97 +45,141 @@
 
 class ReqRepHelloWorldRequester
 {
-    public:
+public:
 
-        class ReplyListener: public eprosima::fastrtps::SubscriberListener
+    class ReplyListener : public eprosima::fastrtps::SubscriberListener
     {
-        public:
-            ReplyListener(ReqRepHelloWorldRequester &requester) : requester_(requester) {};
-            ~ReplyListener(){};
-            void onNewDataMessage(eprosima::fastrtps::Subscriber *sub);
-            void onSubscriptionMatched(eprosima::fastrtps::Subscriber* /*sub*/, eprosima::fastrtps::rtps::MatchingInfo& info)
+public:
+
+        ReplyListener(
+                ReqRepHelloWorldRequester& requester)
+            : requester_(requester)
+        {
+        }
+
+        ~ReplyListener()
+        {
+        }
+
+        void onNewDataMessage(
+                eprosima::fastrtps::Subscriber* sub);
+        void onSubscriptionMatched(
+                eprosima::fastrtps::Subscriber* /*sub*/,
+                eprosima::fastrtps::rtps::MatchingInfo& info)
+        {
+            if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
             {
-                if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
-                    requester_.matched();
+                requester_.matched();
             }
+        }
 
-        private:
+private:
 
-            ReplyListener& operator=(const ReplyListener&) = delete;
+        ReplyListener& operator =(
+                const ReplyListener&) = delete;
 
-            ReqRepHelloWorldRequester &requester_;
+        ReqRepHelloWorldRequester& requester_;
     } reply_listener_;
 
-        class RequestListener : public eprosima::fastrtps::PublisherListener
+    class RequestListener : public eprosima::fastrtps::PublisherListener
     {
-        public:
+public:
 
-            RequestListener(ReqRepHelloWorldRequester &requester) : requester_(requester){};
-            ~RequestListener(){};
-            void onPublicationMatched(eprosima::fastrtps::Publisher* /*pub*/, eprosima::fastrtps::rtps::MatchingInfo &info)
+        RequestListener(
+                ReqRepHelloWorldRequester& requester)
+            : requester_(requester)
+        {
+        }
+
+        ~RequestListener()
+        {
+        }
+
+        void onPublicationMatched(
+                eprosima::fastrtps::Publisher* /*pub*/,
+                eprosima::fastrtps::rtps::MatchingInfo& info)
+        {
+            if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
             {
-                if (info.status == eprosima::fastrtps::rtps::MATCHED_MATCHING)
-                    requester_.matched();
+                requester_.matched();
             }
+        }
 
-        private:
+private:
 
-            RequestListener& operator=(const RequestListener&) = delete;
+        RequestListener& operator =(
+                const RequestListener&) = delete;
 
-            ReqRepHelloWorldRequester &requester_;
+        ReqRepHelloWorldRequester& requester_;
 
     } request_listener_;
 
-        ReqRepHelloWorldRequester();
-        virtual ~ReqRepHelloWorldRequester();
-        void init();
-        void init_with_latency(
-                const eprosima::fastrtps::Duration_t& latency_budget_duration_pub,
-                const eprosima::fastrtps::Duration_t& latency_budget_duration_sub);
-        bool isInitialized() const { return initialized_; }
-        void newNumber(eprosima::fastrtps::rtps::SampleIdentity related_sample_identity, uint16_t number);
-        void block(const std::chrono::seconds &seconds);
-        void wait_discovery();
-        void matched();
-        void send(const uint16_t number);
-        const eprosima::fastrtps::Publisher* get_publisher()
-        {
-            return request_publisher_;
-        }
-        const eprosima::fastrtps::Subscriber* get_subscriber()
-        {
-            return reply_subscriber_;
-        }
-        virtual void configSubscriber(const std::string& suffix)
-        {
-            (void) suffix;
-        }
+    ReqRepHelloWorldRequester();
+    virtual ~ReqRepHelloWorldRequester();
+    void init();
+    void init_with_latency(
+            const eprosima::fastrtps::Duration_t& latency_budget_duration_pub,
+            const eprosima::fastrtps::Duration_t& latency_budget_duration_sub);
+    bool isInitialized() const
+    {
+        return initialized_;
+    }
 
-        virtual void configPublisher(const std::string& suffix)
-        {
-            (void) suffix;
-        }
+    void newNumber(
+            eprosima::fastrtps::rtps::SampleIdentity related_sample_identity,
+            uint16_t number);
+    void block(
+            const std::chrono::seconds& seconds);
+    void wait_discovery();
+    void matched();
+    void send(
+            const uint16_t number);
+    const eprosima::fastrtps::Publisher* get_publisher()
+    {
+        return request_publisher_;
+    }
 
-    protected:
-        eprosima::fastrtps::PublisherAttributes puattr;
-        eprosima::fastrtps::SubscriberAttributes sattr;
-    private:
+    const eprosima::fastrtps::Subscriber* get_subscriber()
+    {
+        return reply_subscriber_;
+    }
 
-        ReqRepHelloWorldRequester& operator=(const ReqRepHelloWorldRequester&)= delete;
+    virtual void configSubscriber(
+            const std::string& suffix)
+    {
+        (void) suffix;
+    }
 
-        uint16_t current_number_;
-        uint16_t number_received_;
-        eprosima::fastrtps::Participant *participant_;
-        eprosima::fastrtps::Subscriber *reply_subscriber_;
-        eprosima::fastrtps::Publisher *request_publisher_;
-        bool initialized_;
-        std::mutex mutex_;
-        std::condition_variable cv_;
-        std::mutex mutexDiscovery_;
-        std::condition_variable cvDiscovery_;
-        unsigned int matched_;
-        HelloWorldType type_;
-		eprosima::fastrtps::rtps::SampleIdentity related_sample_identity_;
+    virtual void configPublisher(
+            const std::string& suffix)
+    {
+        (void) suffix;
+    }
+
+protected:
+
+    eprosima::fastrtps::PublisherAttributes puattr;
+    eprosima::fastrtps::SubscriberAttributes sattr;
+
+private:
+
+    ReqRepHelloWorldRequester& operator =(
+            const ReqRepHelloWorldRequester&) = delete;
+
+    uint16_t current_number_;
+    uint16_t number_received_;
+    eprosima::fastrtps::Participant* participant_;
+    eprosima::fastrtps::Subscriber* reply_subscriber_;
+    eprosima::fastrtps::Publisher* request_publisher_;
+    bool initialized_;
+    std::mutex mutex_;
+    std::condition_variable cv_;
+    std::mutex mutexDiscovery_;
+    std::condition_variable cvDiscovery_;
+    unsigned int matched_;
+    HelloWorldType type_;
+    eprosima::fastrtps::rtps::SampleIdentity related_sample_identity_;
+    eprosima::fastrtps::rtps::SampleIdentity received_sample_identity_; 
 };
 
 #endif // _TEST_BLACKBOX_REQREPHELLOWORLDREQUESTER_HPP_

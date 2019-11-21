@@ -37,10 +37,16 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TCPReqRepHelloWorldRequester::TCPReqRepHelloWorldRequester(): reply_listener_(*this), request_listener_(*this),
-    current_number_(std::numeric_limits<uint16_t>::max()), number_received_(std::numeric_limits<uint16_t>::max()),
-    participant_(nullptr), reply_subscriber_(nullptr), request_publisher_(nullptr),
-    initialized_(false), matched_(0)
+TCPReqRepHelloWorldRequester::TCPReqRepHelloWorldRequester()
+    : reply_listener_(*this)
+    , request_listener_(*this)
+    , current_number_(std::numeric_limits<uint16_t>::max())
+    , number_received_(std::numeric_limits<uint16_t>::max())
+    , participant_(nullptr)
+    , reply_subscriber_(nullptr)
+    , request_publisher_(nullptr)
+    , initialized_(false)
+    , matched_(0)
 {
     // By default, memory mode is preallocated (the most restritive)
     sattr.historyMemoryPolicy = PREALLOCATED_MEMORY_MODE;
@@ -49,12 +55,19 @@ TCPReqRepHelloWorldRequester::TCPReqRepHelloWorldRequester(): reply_listener_(*t
 
 TCPReqRepHelloWorldRequester::~TCPReqRepHelloWorldRequester()
 {
-    if(participant_ != nullptr)
+    if (participant_ != nullptr)
+    {
         Domain::removeParticipant(participant_);
+    }
 }
 
-void TCPReqRepHelloWorldRequester::init(int participantId, int domainId, uint16_t listeningPort,
-        uint32_t maxInitialPeer, const char* certs_path, bool force_localhost)
+void TCPReqRepHelloWorldRequester::init(
+        int participantId,
+        int domainId,
+        uint16_t listeningPort,
+        uint32_t maxInitialPeer,
+        const char* certs_path,
+        bool force_localhost)
 {
     ParticipantAttributes pattr;
 
@@ -111,7 +124,7 @@ void TCPReqRepHelloWorldRequester::init(int participantId, int domainId, uint16_
     ASSERT_NE(participant_, nullptr);
 
     // Register type
-    ASSERT_EQ(Domain::registerType(participant_,&type_), true);
+    ASSERT_EQ(Domain::registerType(participant_, &type_), true);
 
     //Create subscriber
     sattr.topic.topicKind = NO_KEY;
@@ -130,37 +143,48 @@ void TCPReqRepHelloWorldRequester::init(int participantId, int domainId, uint16_
     initialized_ = true;
 }
 
-void TCPReqRepHelloWorldRequester::newNumber(SampleIdentity related_sample_identity, uint16_t number)
+void TCPReqRepHelloWorldRequester::newNumber(
+        SampleIdentity related_sample_identity,
+        uint16_t number)
 {
     std::unique_lock<std::mutex> lock(mutex_);
-    ASSERT_EQ(related_sample_identity_, related_sample_identity);
+    received_sample_identity_ = related_sample_identity;
     number_received_ = number;
     ASSERT_EQ(current_number_, number_received_);
-    if(current_number_ == number_received_)
+    if (current_number_ == number_received_)
+    {
         cv_.notify_one();
+    }
 }
 
 void TCPReqRepHelloWorldRequester::block()
 {
     std::unique_lock<std::mutex> lock(mutex_);
     cv_.wait(lock, [this]() -> bool {
-                    return current_number_ == number_received_;
-                    });
+        return current_number_ == number_received_;
+    });
+
+    ASSERT_EQ(related_sample_identity_, received_sample_identity_);
 }
 
-void TCPReqRepHelloWorldRequester::wait_discovery(std::chrono::seconds timeout)
+void TCPReqRepHelloWorldRequester::wait_discovery(
+        std::chrono::seconds timeout)
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
     std::cout << "Requester waiting for discovery..." << std::endl;
 
-    if(timeout == std::chrono::seconds::zero())
+    if (timeout == std::chrono::seconds::zero())
     {
-        cvDiscovery_.wait(lock, [&](){return matched_ >1;});
+        cvDiscovery_.wait(lock, [&](){
+            return matched_ > 1;
+        });
     }
     else
     {
-        cvDiscovery_.wait_for(lock, timeout, [&](){return matched_ > 1;});
+        cvDiscovery_.wait_for(lock, timeout, [&](){
+            return matched_ > 1;
+        });
     }
 
     std::cout << "Requester discovery phase finished" << std::endl;
@@ -170,26 +194,28 @@ void TCPReqRepHelloWorldRequester::matched()
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
     ++matched_;
-    if(matched_ > 1)
+    if (matched_ > 1)
+    {
         cvDiscovery_.notify_one();
+    }
 }
-
 
 bool TCPReqRepHelloWorldRequester::is_matched()
 {
     return matched_ > 1;
 }
 
-void TCPReqRepHelloWorldRequester::ReplyListener::onNewDataMessage(Subscriber *sub)
+void TCPReqRepHelloWorldRequester::ReplyListener::onNewDataMessage(
+        Subscriber* sub)
 {
     ASSERT_NE(sub, nullptr);
 
     HelloWorld hello;
     SampleInfo_t info;
 
-    if(sub->takeNextData((void*)&hello, &info))
+    if (sub->takeNextData((void*)&hello, &info))
     {
-        if(info.sampleKind == ALIVE)
+        if (info.sampleKind == ALIVE)
         {
             ASSERT_EQ(hello.message().compare("GoodBye"), 0);
             requester_.newNumber(info.related_sample_identity, hello.index());
@@ -197,16 +223,19 @@ void TCPReqRepHelloWorldRequester::ReplyListener::onNewDataMessage(Subscriber *s
     }
 }
 
-void TCPReqRepHelloWorldRequester::send(const uint16_t number)
+void TCPReqRepHelloWorldRequester::send(
+        const uint16_t number)
 {
     WriteParams wparams;
     HelloWorld hello;
     hello.index(number);
     hello.message("HelloWorld");
 
-    std::unique_lock<std::mutex> lock(mutex_);
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        current_number_ = number;
+    }
 
     ASSERT_EQ(request_publisher_->write((void*)&hello, wparams), true);
     related_sample_identity_ = wparams.sample_identity();
-    current_number_ = number;
 }

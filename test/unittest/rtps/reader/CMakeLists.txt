@@ -40,6 +40,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
+            ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/TimedEvent
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyData

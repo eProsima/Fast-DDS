@@ -91,6 +91,19 @@ public:
             tinyxml2::XMLElement& types);
 
     /**
+     * Library settings setter.
+     * @param library_settings New value for library settings.
+     */
+    RTPS_DllAPI static void library_settings(
+            const LibrarySettingsAttributes& library_settings);
+
+    /**
+     * Library settings getter.
+     * @return const ref to current library settings.
+     */
+    RTPS_DllAPI static const LibrarySettingsAttributes& library_settings();
+
+    /**
      * Search for the profile specified and fill the structure.
      * @param profile_name Name for the profile to be used to fill the structure.
      * @param atts Structure to be filled.
@@ -236,6 +249,8 @@ private:
             const std::string& filename);
 
     static BaseNode* root;
+
+    static LibrarySettingsAttributes library_settings_;
 
     static participant_map_t participant_profiles_;
 

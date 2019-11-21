@@ -179,6 +179,10 @@ public:
         return true;
     }
 
+    /**
+     * Get the RTPS participant
+     * @return Associated RTPS participant
+    */
     inline RTPSParticipantImpl* getRTPSParticipant() const
     {
         return mp_RTPSParticipant;

@@ -18,11 +18,39 @@
 #include "PubSubWriter.hpp"
 #include "ReqRepAsReliableHelloWorldRequester.hpp"
 #include "ReqRepAsReliableHelloWorldReplier.hpp"
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-TEST(BlackBox, PubSubAsNonReliableHelloworld)
+class PubSubBasic : public testing::TestWithParam<bool>
+{
+public:
+
+    void SetUp() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+
+    }
+
+    void TearDown() override
+    {
+        LibrarySettingsAttributes library_settings;
+        if (GetParam())
+        {
+            library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+            xmlparser::XMLProfileManager::library_settings(library_settings);
+        }
+    }
+
+};
+
+TEST_P(PubSubBasic, PubSubAsNonReliableHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -50,7 +78,7 @@ TEST(BlackBox, PubSubAsNonReliableHelloworld)
     reader.block_for_at_least(2);
 }
 
-TEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
+TEST_P(PubSubBasic, AsyncPubSubAsNonReliableHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
@@ -60,8 +88,8 @@ TEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -80,13 +108,13 @@ TEST(BlackBox, AsyncPubSubAsNonReliableHelloworld)
     reader.block_for_at_least(2);
 }
 
-TEST(BlackBox, PubSubAsReliableHelloworld)
+TEST_P(PubSubBasic, PubSubAsReliableHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -111,18 +139,18 @@ TEST(BlackBox, PubSubAsReliableHelloworld)
     reader.block_for_all();
 }
 
-TEST(BlackBox, AsyncPubSubAsReliableHelloworld)
+TEST_P(PubSubBasic, AsyncPubSubAsReliableHelloworld)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100).
-        asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+    asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -143,7 +171,7 @@ TEST(BlackBox, AsyncPubSubAsReliableHelloworld)
     reader.block_for_all();
 }
 
-TEST(BlackBox, ReqRepAsReliableHelloworld)
+TEST_P(PubSubBasic, ReqRepAsReliableHelloworld)
 {
     ReqRepAsReliableHelloWorldRequester requester;
     ReqRepAsReliableHelloWorldReplier replier;
@@ -167,13 +195,13 @@ TEST(BlackBox, ReqRepAsReliableHelloworld)
     }
 }
 
-TEST(BlackBox, PubSubAsReliableData64kb)
+TEST_P(PubSubBasic, PubSubAsReliableData64kb)
 {
     PubSubReader<Data64kbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data64kbType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(10).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -198,12 +226,12 @@ TEST(BlackBox, PubSubAsReliableData64kb)
     reader.block_for_all();
 }
 
-TEST(BlackBox, PubSubMoreThan256Unacknowledged)
+TEST_P(PubSubBasic, PubSubMoreThan256Unacknowledged)
 {
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
+    durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -216,8 +244,8 @@ TEST(BlackBox, PubSubMoreThan256Unacknowledged)
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-        durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
+    history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -225,19 +253,19 @@ TEST(BlackBox, PubSubMoreThan256Unacknowledged)
     reader.block_for_all();
 }
 
-TEST(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
+TEST_P(PubSubBasic, PubSubAsReliableHelloworldMulticastDisabled)
 {
     PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(100).
-        reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-        disable_multicast(0).init();
+    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    disable_multicast(0).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_depth(100).
-        disable_multicast(1).init();
+    disable_multicast(1).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -257,4 +285,15 @@ TEST(BlackBox, PubSubAsReliableHelloworldMulticastDisabled)
     // Block reader until reception finished or timeout.
     reader.block_for_all();
 }
+
+INSTANTIATE_TEST_CASE_P(PubSubBasic,
+        PubSubBasic,
+        testing::Values(false, true),
+        [](const testing::TestParamInfo<PubSubBasic::ParamType>& info) {
+            if (info.param)
+            {
+                return "Intraprocess";
+            }
+            return "NonIntraprocess";
+        });
 
