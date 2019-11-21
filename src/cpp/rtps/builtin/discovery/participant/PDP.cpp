@@ -996,7 +996,7 @@ CDRMessage_t PDP::get_participant_proxy_data_serialized(Endianness_t endian)
 void PDP::check_remote_participant_liveliness(
         ParticipantProxyData* remote_participant)
 {
-    std::lock_guard<std::recursive_mutex> guard(*this->mp_mutex);
+    std::unique_lock<std::recursive_mutex> guard(*this->mp_mutex);
 
     if(GUID_t::unknown() != remote_participant->m_guid)
     {
@@ -1007,6 +1007,7 @@ void PDP::check_remote_participant_liveliness(
                 std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(remote_participant->m_leaseDuration));
         if (now > real_lease_tm)
         {
+            guard.unlock();
             remove_remote_participant(remote_participant->m_guid, ParticipantDiscoveryInfo::DROPPED_PARTICIPANT);
             return;
         }
