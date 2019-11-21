@@ -21,12 +21,62 @@
 #define OMG_DDS_QOS_DATA_WRITER_QOS_HPP_
 
 #include <dds/pub/qos/detail/DataWriterQos.hpp>
+#include <dds/topic/qos/TopicQos.hpp>
 
 namespace dds {
 namespace pub {
 namespace qos {
 
-typedef dds::pub::qos::detail::DataWriterQos DataWriterQos;
+//typedef dds::pub::qos::detail::DataWriterQos DataWriterQos;
+class DataWriterQos : public detail::DataWriterQos
+{
+public:
+    DataWriterQos()
+        : detail::DataWriterQos ()
+    {
+    }
+
+    DataWriterQos(
+            const DataWriterQos& qos)
+        : detail::DataWriterQos(qos)
+    {
+    }
+
+    DataWriterQos(
+            const topic::qos::TopicQos& qos)
+    {
+        history = qos.history;
+        deadline = qos.deadline;
+        lifespan = qos.lifespan;
+        ownership = qos.ownership;
+        durability = qos.durability;
+        liveliness = qos.liveliness;
+        reliability = qos.reliability;
+        latency_budget = qos.latency_budget;
+        resource_limits = qos.resource_limits;
+        destination_order = qos.destination_order;
+        durability_service = qos.durability_service;
+        transport_priority = qos.transport_priority;
+    }
+
+    DataWriterQos& operator =(
+            const topic::qos::TopicQos& qos)
+    {
+        history = qos.history;
+        deadline = qos.deadline;
+        lifespan = qos.lifespan;
+        ownership = qos.ownership;
+        durability = qos.durability;
+        liveliness = qos.liveliness;
+        reliability = qos.reliability;
+        latency_budget = qos.latency_budget;
+        resource_limits = qos.resource_limits;
+        destination_order = qos.destination_order;
+        durability_service = qos.durability_service;
+        transport_priority = qos.transport_priority;
+        return *this;
+    }
+};
 
 } //namespace qos
 } //namespace pub

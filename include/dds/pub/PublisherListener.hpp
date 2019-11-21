@@ -20,8 +20,11 @@
 #ifndef OMG_DDS_PUB_PUBLISHER_LISTENER_HPP_
 #define OMG_DDS_PUB_PUBLISHER_LISTENER_HPP_
 
-#include <dds/pub/AnyDataWriterListener.hpp>
+// TODO Remove when PSM DDS Listeners are ready to be used.
+#include <fastdds/dds/publisher/PublisherListener.hpp>
 
+// TODO uncomment when PSM DDS Listeners are ready to be used.
+//#include <dds/pub/AnyDataWriterListener.hpp>
 
 namespace dds {
 namespace pub {
@@ -97,7 +100,10 @@ class NoOpPublisherListener;
  * @see @ref DCPS_Modules_Publisher "Publisher"
  * @see @ref DCPS_Modules_Infrastructure_Listener "Listener information"
  */
-class OMG_DDS_API PublisherListener : public virtual AnyDataWriterListener
+// TODO Uncomment when PSM listeners are implemented.
+//class OMG_DDS_API PublisherListener : public virtual AnyDataWriterListener
+// TODO Remove the PSM listeners are implemented.
+class PublisherListener : public eprosima::fastdds::dds::PublisherListener
 {
 public:
     /** @cond */
@@ -106,7 +112,6 @@ public:
     }
     /** @endcond */
 };
-
 
 /**
  * @brief
@@ -124,9 +129,15 @@ public:
  *
  * @see dds::pub::PublisherListener
  */
+
+// TODO Uncomment when PSM DDS listeners are ready to be used
+/*
 class OMG_DDS_API NoOpPublisherListener :
         public virtual PublisherListener,
         public virtual NoOpAnyDataWriterListener
+*/
+// TODO Remove the PSM listeners are implemented.
+class NoOpPublisherListener : public eprosima::fastdds::dds::PublisherListener
 {
 public:
     /** @cond */
@@ -135,7 +146,6 @@ public:
     }
     /** @endcond */
 };
-
 
 } //namespace pub
 } //namespace dds

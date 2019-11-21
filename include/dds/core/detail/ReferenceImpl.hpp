@@ -26,7 +26,7 @@
  * OMG PSM class declaration
  */
 #include <dds/core/Reference.hpp>
-
+/*
 namespace dds {
 namespace core {
 
@@ -97,10 +97,8 @@ bool Reference<DELEGATE>::operator==(
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
 //    bool equal = false;
 //    if (this->is_nil() && ref.is_nil()) {
-//        /* Both delegates are null. */
 //        equal = true;
 //    } else if (!this->is_nil() && !ref.is_nil()) {
-//        /* Check delegates. */
 //        equal = (this->delegate() == ref.delegate());
 //    }
 //    return equal;
@@ -252,5 +250,5 @@ bool operator !=(
 
 } //namespace core
 } //namespace dds
-
+*/
 #endif //EPROSIMA_DDS_CORE_REFERENCE_IMPL_HPP_

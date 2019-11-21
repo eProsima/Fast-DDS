@@ -27,7 +27,7 @@ namespace dds {
 namespace domain {
 namespace qos {
 
-typedef dds::domain::qos::detail::DomainParticipantQos DomainParticipantQos;
+using DomainParticipantQos = dds::domain::qos::detail::DomainParticipantQos;
 
 } //namespace qos
 } //namespace domain

@@ -22,6 +22,9 @@
 #define OMG_DDS_CORE_POLICY_POLICYKIND_HPP_
 
 #include <dds/core/SafeEnumeration.hpp>
+#include <dds/core/conformance.hpp>
+
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 namespace dds {
 namespace core {
@@ -226,6 +229,7 @@ struct LivelinessKind_def
 };
 typedef dds::core::SafeEnum<LivelinessKind_def> LivelinessKind;
 
+/* This isn't standard!
 struct TypeConsistencyEnforcementKind_def
 {
     enum Type
@@ -235,6 +239,11 @@ struct TypeConsistencyEnforcementKind_def
         DECLARED_TYPE_CONSISTENCY,
         ASSIGNABLE_TYPE_CONSISTENCY
     };
+};
+*/
+struct TypeConsistencyEnforcementKind_def
+{
+    using Type = eprosima::fastdds::dds::TypeConsistencyKind;
 };
 
 typedef dds::core::SafeEnum<TypeConsistencyEnforcementKind_def> TypeConsistencyEnforcementKind;

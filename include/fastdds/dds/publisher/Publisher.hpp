@@ -25,7 +25,18 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/types/TypesBase.h>
 
+#include <dds/core/status/Status.hpp>
+
 using eprosima::fastrtps::types::ReturnCode_t;
+
+namespace dds {
+namespace domain {
+class DomainParticipant;
+} // domain
+namespace pub {
+class Publisher;
+} // pub
+} // dds
 
 namespace eprosima {
 namespace fastrtps {
@@ -44,6 +55,8 @@ class PublisherQos;
 class DataWriter;
 class DataWriterListener;
 class WriterQos;
+class DataWriterQos;
+class Topic;
 
 /**
  * Class Publisher, used to send data to associated subscribers.
@@ -53,7 +66,7 @@ class RTPS_DllAPI Publisher
 {
     friend class PublisherImpl;
     friend class DomainParticipantImpl;
-    virtual ~Publisher();
+    friend class ::dds::pub::Publisher;
 
     /**
      * Create a publisher, assigning its pointer to the associated writer.
@@ -62,7 +75,15 @@ class RTPS_DllAPI Publisher
     Publisher(
             PublisherImpl* p);
 
+    Publisher(
+            const ::dds::domain::DomainParticipant& dp,
+            const PublisherQos& qos,
+            PublisherListener* listener = NULL,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+
 public:
+
+    virtual ~Publisher();
 
     /**
      * Allows accessing the Publisher Qos.
@@ -90,6 +111,8 @@ public:
      */
     const PublisherListener* get_listener() const;
 
+    PublisherListener* get_listener();
+
     /**
      * Modifies the PublisherListener.
      * @param listener
@@ -108,6 +131,11 @@ public:
     DataWriter* create_datawriter(
             const fastrtps::TopicAttributes& topic_attr,
             const WriterQos& writer_qos,
+            DataWriterListener* listener);
+
+    DataWriter* create_datawriter(
+            const Topic& topic,
+            const DataWriterQos& qos,
             DataWriterListener* listener);
 
     /**

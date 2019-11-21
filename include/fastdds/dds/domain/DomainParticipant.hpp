@@ -30,9 +30,18 @@
 
 #include <fastrtps/types/TypesBase.h>
 
+#include <dds/core/status/Status.hpp>
+#include <dds/domain/DomainParticipant.hpp>
+
 #include <utility>
 
 using eprosima::fastrtps::types::ReturnCode_t;
+
+namespace dds {
+namespace domain {
+class DomainParticipant;
+}
+}
 
 namespace eprosima {
 namespace fastrtps {
@@ -61,6 +70,7 @@ class PublisherListener;
 class Subscriber;
 class SubscriberQos;
 class SubscriberListener;
+class TopicQos;
 
 /**
  * Class DomainParticipant used to group Publishers and Subscribers into a single working unit.
@@ -69,6 +79,9 @@ class SubscriberListener;
 class RTPS_DllAPI DomainParticipant
 {
 public:
+
+    void delete_participant(
+            ::dds::domain::DomainParticipant& part);
 
     /**
      * Allows modifying the DomainParticipantListener.
@@ -83,6 +96,12 @@ public:
      * @return DomainParticipantListener
      */
     const DomainParticipantListener* get_listener() const;
+
+    /**
+     * Allows accessing the DomainParticipantListener.
+     * @return DomainParticipantListener
+     */
+    DomainParticipantListener* get_listener();
 
     /**
      * Create a Publisher in this Participant.
@@ -283,7 +302,13 @@ public:
     ReturnCode_t get_default_subscriber_qos(
             fastdds::dds::SubscriberQos& qos) const;
 
-    // TODO Get/Set default Topic Qos
+    ReturnCode_t set_default_topic_qos(
+            const fastdds::dds::TopicQos& qos);
+
+    ReturnCode_t get_default_topic_qos(
+            fastdds::dds::TopicQos& qos) const;
+
+    const fastdds::dds::TopicQos& get_default_topic_qos() const;
 
     /* TODO
     bool get_discovered_participants(
@@ -375,6 +400,8 @@ public:
     ReturnCode_t get_qos(
             DomainParticipantQos& qos) const;
 
+    const DomainParticipantQos& get_qos() const;
+
     ReturnCode_t set_qos(
             const DomainParticipantQos& qos);
 
@@ -418,17 +445,25 @@ public:
             const std::string& type_name,
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
 
+    virtual ~DomainParticipant();
+
 private:
 
     DomainParticipant();
 
-    virtual ~DomainParticipant();
+    DomainParticipant(
+            DomainId_t did,
+            const DomainParticipantQos& qos,
+            DomainParticipantListener* listen = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
 
     DomainParticipantImpl* impl_;
 
     friend class DomainParticipantFactory;
 
     friend class DomainParticipantImpl;
+
+    friend class ::dds::domain::DomainParticipant;
 };
 
 } // namespace dds

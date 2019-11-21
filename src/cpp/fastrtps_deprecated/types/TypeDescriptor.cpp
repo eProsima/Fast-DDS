@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <dds/core/LengthUnlimited.hpp>
+
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
@@ -130,7 +132,7 @@ uint32_t TypeDescriptor::get_bounds(uint32_t index /*=0*/) const
     else
     {
         logError(DYN_TYPES, "Error getting bounds value. Index out of range.");
-        return LENGTH_UNLIMITED;
+        return static_cast<uint32_t>(dds::core::LENGTH_UNLIMITED);
     }
 }
 
@@ -175,7 +177,7 @@ uint32_t TypeDescriptor::get_total_bounds() const
         }
         return bounds;
     }
-    return LENGTH_UNLIMITED;
+    return static_cast<uint32_t>(dds::core::LENGTH_UNLIMITED);
 }
 
 bool TypeDescriptor::is_consistent() const

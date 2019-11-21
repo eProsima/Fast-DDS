@@ -20,12 +20,25 @@
 #include <fastdds/dds/topic/DataWriter.hpp>
 #include <fastdds/topic/DataWriterImpl.hpp>
 
+#include <fastdds/dds/publisher/Publisher.hpp>
+
 namespace eprosima {
 
 using namespace fastrtps;
 
 namespace fastdds {
 namespace dds {
+
+DataWriter::DataWriter(
+        const Publisher* pub,
+        const Topic& topic,
+        const DataWriterQos& qos,
+        DataWriterListener* listener,
+        const ::dds::core::status::StatusMask& /*mask*/)
+    : impl_(
+          (const_cast<Publisher*>(pub))->create_datawriter(topic, qos, listener)->impl_)
+{
+}
 
 DataWriter::DataWriter(
         DataWriterImpl* impl)

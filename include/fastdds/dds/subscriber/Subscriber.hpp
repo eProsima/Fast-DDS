@@ -26,7 +26,18 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 
+#include <dds/core/status/Status.hpp>
+
 using eprosima::fastrtps::types::ReturnCode_t;
+
+namespace dds {
+namespace domain {
+class DomainParticipant;
+} // domain
+namespace sub {
+class Subscriber;
+} // sub
+} // dds
 
 namespace eprosima {
 namespace fastrtps {
@@ -45,6 +56,8 @@ class SubscriberQos;
 class DataReader;
 class DataReaderListener;
 class ReaderQos;
+class DataReaderQos;
+class Topic;
 
 /**
  * Class Subscriber, contains the public API that allows the user to control the reception of messages.
@@ -56,6 +69,7 @@ class RTPS_DllAPI Subscriber
 {
     friend class SubscriberImpl;
     friend class DomainParticipantImpl;
+    friend class ::dds::sub::Subscriber;
 
     /**
      * Constructor from a SubscriberImpl pointer
@@ -66,10 +80,15 @@ class RTPS_DllAPI Subscriber
         : impl_(pimpl)
     {}
 
-
-    virtual ~Subscriber() {}
+    Subscriber(
+            const ::dds::domain::DomainParticipant& dp,
+            const SubscriberQos& qos,
+            SubscriberListener* listener = NULL,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
 
 public:
+
+    virtual ~Subscriber() {}
 
     /**
      * Allows accessing the Subscriber Qos.
@@ -97,6 +116,8 @@ public:
      */
     const SubscriberListener* get_listener() const;
 
+    SubscriberListener* get_listener();
+
     /**
      * Modifies the SubscriberListener.
      * @param listener
@@ -115,6 +136,11 @@ public:
     DataReader* create_datareader(
             const fastrtps::TopicAttributes& topic_attr,
             const ReaderQos& reader_qos,
+            DataReaderListener* listener);
+
+    DataReader* create_datareader(
+            const Topic& topic,
+            const DataReaderQos& qos,
             DataReaderListener* listener);
 
     /**

@@ -61,55 +61,51 @@ public:
 
     iterator mbegin()
     {
-        //To implement
-//        return samples_.begin();
+        return samples_.begin();
     }
 
     const_iterator begin() const
     {
-        //To implement
-//        return samples_.begin();
+        return samples_.begin();
     }
 
     const_iterator end() const
     {
-        //To implement
-//        return samples_.end();
+        return samples_.end();
     }
 
     uint32_t length() const
     {
-        //To implement
-//        return static_cast<uint32_t>(samples_.size());
+        return static_cast<uint32_t>(samples_.size());
     }
 
     void reserve(
             uint32_t s)
     {
-        //To implement
-//        samples_.reserve(s);
+        samples_.reserve(s);
     }
 
     void resize(
             uint32_t s)
     {
-         //To implement
-//        samples_.resize(s);
+        samples_.resize(s);
     }
 
     ::dds::sub::Sample<T, Sample>& operator[] (
             uint32_t i)
     {
-        //To implement
-//        return this->samples_[i];
+        return this->samples_[i];
     }
 
     ::dds::sub::Sample<T, Sample> * get_buffer()
     {
-        //To implement
-//        return this->samples_.data();
+        return this->samples_.data();
     }
 
+    LoanedSamplesContainer& container()
+    {
+        return samples_;
+    }
 
 private:
     LoanedSamplesContainer samples_;
