@@ -57,8 +57,8 @@ public:
      * internal thread.
      *
      * This method has to be called before deleting the TimedEventImpl object.
-     * This method cancels any operation of the internal asio::steady_timer.
-     * Then it avoids the situation of asio calling the event handler when it was removed previously.
+     * This method cancels any operation of the timer.
+     * Then it avoids the situation of the execution thread calling the event handler when it was removed previously.
      * @param event TimedEventImpl object that will be deleted and we have to be sure all its operations are cancelled.
      */
     void unregister_timer(
@@ -99,16 +99,16 @@ private:
     //! Flag used to allow a thread to delete a TimedEventImpl because the main thread is not using asio::io_service.
     bool allow_to_delete_;
 
-    //! Collection of events pending update action
+    //! Collection of events pending update action.
     std::vector<TimedEventImpl*> pending_timers_;
 
-    //! Collection of registered events waiting completion
+    //! Collection of registered events waiting completion.
     std::vector<TimedEventImpl*> active_timers_;
 
-    //! Current time as seen by the execution thread
+    //! Current time as seen by the execution thread.
     std::chrono::steady_clock::time_point current_time_;
 
-    //! Thread
+    //! Execution thread.
     std::thread thread_;
 
     /*!
