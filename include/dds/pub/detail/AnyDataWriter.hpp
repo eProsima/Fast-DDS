@@ -18,9 +18,8 @@
 #ifndef EPROSIMA_DDS_PUB_DETAIL_ANYDATAWRITER_HPP_
 #define EPROSIMA_DDS_PUB_DETAIL_ANYDATAWRITER_HPP_
 
-//#include <dds/pub/detail/TAnyDataWriterImpl.hpp>
-//TODO: Fix when DataWriterDelegate is implemented
-//#include <org/opensplice/pub/AnyDataWriterDelegate.hpp>
+//TODO Remove this include when AnyDataWriter is implemented.
+#include <fastdds/dds/topic/DataWriter.hpp>
 
 /**
  * @cond
@@ -31,9 +30,7 @@ namespace dds {
 namespace pub {
 namespace detail {
 
-//TODO: Fix when DataWriterDelegate is implemented
-//typedef dds::pub::TAnyDataWriter<org::opensplice::pub::AnyDataWriterDelegate> AnyDataWriter;
-class AnyDataWriter { };
+using AnyDataWriter = eprosima::fastdds::dds::DataWriter;
 
 } //namespace detail
 } //namespace pub

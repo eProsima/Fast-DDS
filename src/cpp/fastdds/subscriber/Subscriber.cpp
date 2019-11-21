@@ -20,9 +20,23 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/topic/qos/DataReaderQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+
+#include <dds/domain/DomainParticipant.hpp>
 
 using namespace eprosima;
 using namespace eprosima::fastdds::dds;
+
+Subscriber::Subscriber(
+        const ::dds::domain::DomainParticipant& dp,
+        const SubscriberQos& qos,
+        SubscriberListener* listener,
+        const ::dds::core::status::StatusMask& /*mask*/)
+    : impl_(dp.delegate()->create_subscriber(qos, fastrtps::SubscriberAttributes(), listener/*, mask*/)->impl_)
+{
+}
 
 const SubscriberQos& Subscriber::get_qos() const
 {
@@ -47,6 +61,11 @@ const SubscriberListener* Subscriber::get_listener() const
     return impl_->get_listener();
 }
 
+SubscriberListener* Subscriber::get_listener()
+{
+    return impl_->get_listener();
+}
+
 ReturnCode_t Subscriber::set_listener(
         SubscriberListener* listener)
 {
@@ -59,6 +78,32 @@ DataReader* Subscriber::create_datareader(
         DataReaderListener* listener)
 {
     return impl_->create_datareader(topic_attr, reader_qos, listener);
+}
+
+DataReader* Subscriber::create_datareader(
+        const Topic& topic,
+        const DataReaderQos& qos,
+        DataReaderListener* listener)
+{
+    fastrtps::TopicAttributes topic_attr;
+    fastrtps::ReaderQos rqos;
+    topic_attr.topicName = topic.get_name();
+    topic_attr.topicDataType = topic.get_type_name();
+    TopicQos topic_qos;
+    topic.get_qos(topic_qos);
+    topic_attr.historyQos = qos.history;
+    rqos.m_topicData = topic_qos.topic_data;
+    rqos.m_durability = qos.durability;
+    rqos.m_deadline = qos.deadline;
+    rqos.m_latencyBudget = qos.latency_budget;
+    rqos.m_liveliness = qos.liveliness;
+    rqos.m_reliability = qos.reliability;
+    rqos.m_destinationOrder = qos.destination_order;
+    topic_attr.resourceLimitsQos = qos.resource_limits;
+    rqos.m_ownership = qos.ownership;
+    rqos.m_userData = qos.user_data;
+
+    return impl_->create_datareader(topic_attr, rqos, listener);
 }
 
 ReturnCode_t Subscriber::delete_datareader(

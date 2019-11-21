@@ -38,17 +38,13 @@ TTopicDescription<DELEGATE>::~TTopicDescription()
 template<typename DELEGATE>
 const std::string& TTopicDescription<DELEGATE>::name() const
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->name();
+    return this->delegate()->name();
 }
 
 template<typename DELEGATE>
 const std::string& TTopicDescription<DELEGATE>::type_name() const
 {
-    //To implement
-//    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->type_name();
+    return this->delegate()->type_name();
 }
 
 template<typename DELEGATE>
@@ -56,7 +52,9 @@ const dds::domain::DomainParticipant& TTopicDescription<DELEGATE>::domain_partic
 {
     //To implement
 //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-//    return this->delegate()->domain_participant();
+//    return this->delegate()->get_participant();
+    *this = dds::core::null;
+    return *this;
 }
 
 } //namespace topic

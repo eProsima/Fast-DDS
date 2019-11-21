@@ -226,6 +226,18 @@ DomainParticipant* DomainParticipantFactory::create_participant(
     return dom_part;
 }
 
+DomainParticipant* DomainParticipantFactory::create_participant(
+        DomainId_t did,
+        const DomainParticipantQos&,
+        DomainParticipantListener* listen,
+        const ::dds::core::status::StatusMask&)
+{
+    // Minimal implementation to use current FASTRTPS behavior
+    ParticipantAttributes attr;
+    attr.rtps.builtin.domainId = did;
+    return create_participant(attr, listen);
+}
+
 DomainParticipant* DomainParticipantFactory::lookup_participant(
         uint8_t domain_id) const
 {

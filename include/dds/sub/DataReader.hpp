@@ -21,18 +21,19 @@
 #define OMG_DDS_SUB_DATA_READER_HPP_
 
 #include <dds/sub/detail/DataReader.hpp>
-
+#include <dds/sub/detail/Manipulators.hpp>
+#include <dds/sub/AnyDataReader.hpp>
+#include <dds/sub/LoanedSamples.hpp>
+#include <dds/topic/Topic.hpp>
+#include <dds/topic/TopicInstance.hpp>
 
 namespace dds {
 namespace sub {
 
-template<typename T,
-template<typename Q> class DELEGATE = dds::sub::detail::DataReader>
-class DataReader;
+//template<typename T>
+//class DataReader;
 
-template<
-        typename T,
-        template<typename Q> class DELEGATE>
+template<typename T>
 class DataReaderListener;
 
 // = Manipulators
@@ -109,16 +110,14 @@ typedef dds::sub::functors::detail::NextInstanceManipulatorFunctor   NextInstanc
  * @see @ref DCPS_Modules_Subscription "Subscription concept"
  * @see @ref DCPS_Modules_Subscription_DataReader "DataReader concept"
  */
-template<
-        typename T,
-        template<typename Q> class DELEGATE>
-class DataReader : public TAnyDataReader< DELEGATE<T> >
+template<typename T>
+class DataReader : public TAnyDataReader<detail::DataReader>
 {
 public:
     /**
      * Local convenience typedef for dds::sub::DataReaderListener.
      */
-    typedef DataReaderListener<T, DELEGATE> Listener;
+    using Listener = DataReaderListener<T>;
 
     /**
      * The Selector class is used by the DataReader to compose read operations.
@@ -458,7 +457,7 @@ public:
                 SamplesBIIterator sbit);
 
     private:
-        typename DELEGATE<T>::Selector impl_;
+        //using impl_ = detail::DataReader::Selector;
     };
 
     /**
@@ -795,20 +794,26 @@ public:
                 Functor f);
 
     private:
-        typename DELEGATE<T>::ManipulatorSelector impl_;
+        //typename detail::DataReader::ManipulatorSelector impl_;
 
     };
 
 public:
 
-    OMG_DDS_REF_TYPE_PROTECTED_DC_T(
+    OMG_DDS_REF_TYPE_PROTECTED_DC(
             DataReader,
-            TAnyDataReader,
-            T,
-            DELEGATE)
+            dds::sub::TAnyDataReader,
+            detail::DataReader)
 
     OMG_DDS_IMPLICIT_REF_BASE(
             DataReader)
+
+    // TODO - Remove this constructor inmediately after properly implement DataReaderListener
+    DataReader(
+            detail::DataReader* evil_ptr) :
+        ::dds::core::Reference< detail::DataReader >(evil_ptr)
+    {
+    }
 
     /**
      * Create a new DataReader for the desired Topic, ContentFilteredTopic or MultiTopic,
@@ -900,7 +905,7 @@ public:
             const Subscriber& sub,
             const ::dds::topic::Topic<T>& topic,
             const qos::DataReaderQos& qos,
-            DataReaderListener<T, DELEGATE>* listener = NULL,
+            DataReaderListener<T>* listener = nullptr,
             const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
 
     #ifdef OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
@@ -1766,5 +1771,6 @@ inline functors::NextInstanceManipulatorFunctor next_instance(
 } //namespace sub
 } //namespace dds
 
+#include <dds/sub/detail/TDataReaderImpl.hpp>
 
 #endif //OMG_DDS_SUB_DATA_READER_HPP_

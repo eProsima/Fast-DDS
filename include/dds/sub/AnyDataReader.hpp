@@ -21,10 +21,13 @@
 #define OMG_DDS_SUB_ANY_DATA_READER_HPP_
 
 #include <dds/sub/detail/AnyDataReader.hpp>
+
 #include <dds/sub/Subscriber.hpp>
+#include <dds/sub/qos/DataReaderQos.hpp>
+
 #include <dds/core/Entity.hpp>
 #include <dds/topic/TopicDescription.hpp>
-#include <dds/sub/qos/DataReaderQos.hpp>
+
 
 namespace dds {
 namespace sub {
@@ -73,7 +76,7 @@ public:
      * @throws dds::core::AlreadyClosedError
      *                  The entity has already been closed.
      */
-    const dds::sub::Subscriber& subscriber() const;
+    const Subscriber& subscriber() const;
 
     /**
      * Get the TopicDescription associated with this DataReader.
@@ -373,11 +376,16 @@ public:
      */
     dds::core::status::SubscriptionMatchedStatus subscription_matched_status();
 
+public:
+    const Subscriber* subscriber_;
+
 };
 
-typedef ::dds::sub::detail::AnyDataReader AnyDataReader;
+using AnyDataReader = TAnyDataReader<detail::AnyDataReader>;
 
 } //namespace sub
 } //namespace dds
+
+#include <dds/sub/detail/TAnyDataReaderImpl.hpp>
 
 #endif //OMG_DDS_SUB_ANY_DATA_READER_HPP_

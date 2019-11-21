@@ -25,10 +25,20 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/types/TypesBase.h>
 
+#include <dds/core/status/Status.hpp>
+
 #include <vector>
 #include <cstdint>
 
 using eprosima::fastrtps::types::ReturnCode_t;
+
+namespace dds {
+namespace sub {
+template<typename T>
+class DataReader;
+class SampleInfo;
+} // sub
+} // dds
 
 namespace eprosima {
 namespace fastrtps {
@@ -51,7 +61,9 @@ class SubscriberImpl;
 class DataReaderImpl;
 class DataReaderListener;
 class TypeSupport;
+class Topic;
 class ReaderQos;
+class DataReaderQos;
 struct LivelinessChangedStatus;
 class SampleInfo_t;
 
@@ -62,6 +74,16 @@ class SampleInfo_t;
 class RTPS_DllAPI DataReader
 {
     friend class SubscriberImpl;
+
+    template<typename T>
+    friend class ::dds::sub::DataReader;
+
+    DataReader(
+            const Subscriber* pub,
+            const Topic& topic,
+            const DataReaderQos& qos,
+            DataReaderListener* listener = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
 
     /**
      * Creates a DataReader. Don't use it directly, but through Subscriber.
@@ -107,6 +129,10 @@ public:
     ReturnCode_t take_next_sample(
             void* data,
             SampleInfo_t* info);
+
+    ReturnCode_t take_next_sample(
+            void* data,
+            ::dds::sub::SampleInfo& info);
 
     ///@}
 

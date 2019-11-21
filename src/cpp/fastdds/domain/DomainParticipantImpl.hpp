@@ -28,6 +28,7 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/types/TypesBase.h>
@@ -89,6 +90,11 @@ public:
     }
 
     const DomainParticipantListener* get_listener() const
+    {
+        return listener_;
+    }
+
+    DomainParticipantListener* get_listener()
     {
         return listener_;
     }
@@ -190,8 +196,6 @@ public:
 
     const fastdds::dds::SubscriberQos& get_default_subscriber_qos() const;
 
-    // TODO Get/Set default Topic Qos
-
     /* TODO
     bool get_discovered_participants(
             std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const;
@@ -289,8 +293,32 @@ public:
     ReturnCode_t get_qos(
             DomainParticipantQos& qos) const;
 
+    const DomainParticipantQos& get_qos() const
+    {
+        return qos_;
+    }
+
     ReturnCode_t set_qos(
             const DomainParticipantQos& qos);
+
+    ReturnCode_t set_default_topic_qos(
+            const fastdds::dds::TopicQos& qos)
+    {
+        topic_qos_ = qos;
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    ReturnCode_t get_default_topic_qos(
+            fastdds::dds::TopicQos& qos) const
+    {
+        qos = topic_qos_;
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    const fastdds::dds::TopicQos& get_default_topic_qos() const
+    {
+        return topic_qos_;
+    }
 
 private:
 
@@ -299,6 +327,9 @@ private:
 
     //!Participant Qos
     DomainParticipantQos qos_;
+
+    //!Topic Qos
+    TopicQos topic_qos_;
 
     //!RTPSParticipant
     fastrtps::rtps::RTPSParticipant* rtps_participant_;

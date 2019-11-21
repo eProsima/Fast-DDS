@@ -24,6 +24,7 @@
 #include <string>
 
 #include <dds/core/detail/conformance.hpp>
+#include <dds/core/refmacros.hpp>
 #include <dds/core/types.hpp>
 #include <dds/core/Time.hpp>
 #include <dds/core/Entity.hpp>
@@ -56,22 +57,21 @@ class DomainParticipantListener;
  *
  * @see @ref DCPS_Modules_DomainParticipant "Domain Participant"
  */
-template<typename DELEGATE>
-class TDomainParticipant : public ::dds::core::TEntity<DELEGATE>
+class DomainParticipant : public ::dds::core::TEntity<detail::DomainParticipant>
 {
 public:
     /**
      * Local representation of the dds::domain::DomainParticipantListener
      */
-    typedef DomainParticipantListener Listener;
+    using Listener = DomainParticipantListener;
 
 public:
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            TDomainParticipant,
+            DomainParticipant,
             dds::core::TEntity,
-            DELEGATE)
+            detail::DomainParticipant)
     OMG_DDS_EXPLICIT_REF_BASE_DECL(
-            TDomainParticipant,
+            DomainParticipant,
             dds::core::Entity)
 
     /**
@@ -92,7 +92,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TDomainParticipant(
+    OMG_DDS_API DomainParticipant(
             uint32_t id);
 
     /**
@@ -114,15 +114,17 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TDomainParticipant(
+    DomainParticipant(
             uint32_t id,
             const dds::domain::qos::DomainParticipantQos& qos,
             dds::domain::DomainParticipantListener* listener = NULL,
             const dds::core::status::StatusMask& event_mask = dds::core::status::StatusMask::none());
 
     /** @cond */
-    virtual ~TDomainParticipant();
+    virtual OMG_DDS_API ~DomainParticipant();
     /** @endcond */
+
+    void OMG_DDS_API delete_participant();
 
     /**
      * Register a listener with the DomainParticipant.
@@ -280,11 +282,11 @@ public:
     dds::core::Time current_time() const;
 
     /** @copydoc dds::domain::DomainParticipant::qos(const dds::domain::qos::DomainParticipantQos& qos) */
-    TDomainParticipant& operator <<(
+    DomainParticipant& operator <<(
             const qos::DomainParticipantQos& qos);
 
     /** @copydoc dds::domain::DomainParticipant::qos() */
-    const TDomainParticipant& operator >>(
+    const DomainParticipant& operator >>(
             qos::DomainParticipantQos& qos) const;
 
     /**
@@ -383,7 +385,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TDomainParticipant& default_publisher_qos(
+    DomainParticipant& default_publisher_qos(
             const ::dds::pub::qos::PublisherQos& qos);
 
     /**
@@ -436,7 +438,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TDomainParticipant& default_subscriber_qos(
+    DomainParticipant& default_subscriber_qos(
             const ::dds::sub::qos::SubscriberQos& qos);
 
     /**
@@ -462,7 +464,7 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    dds::topic::qos::TopicQos default_topic_qos() const;
+    dds::topic::qos::TopicQos OMG_DDS_API default_topic_qos() const;
 
     /**
      * Sets the default TopicQos of the DomainParticipant.
@@ -492,14 +494,11 @@ public:
      *                  The Data Distribution Service ran out of resources to
      *                  complete this operation.
      */
-    TDomainParticipant& default_topic_qos(
+    DomainParticipant& default_topic_qos(
             const dds::topic::qos::TopicQos& qos);
 
     //=============================================================================
 };
-
-
-typedef dds::domain::detail::DomainParticipant DomainParticipant;
 
 } //namespace domain
 } //namespace dds

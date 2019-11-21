@@ -18,18 +18,14 @@
 #ifndef EPROSIMA_DDS_SUB_QOS_DETAIL_SUBSCRIBER_QOS_HPP_
 #define EPROSIMA_DDS_SUB_QOS_DETAIL_SUBSCRIBER_QOS_HPP_
 
-//#include <dds/core/detail/TEntityQosImpl.hpp>
-//TODO: Fix when SubscriberQosDelegate is implemented
-//#include <org/opensplice/sub/qos/SubscriberQosDelegate.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 
 namespace dds {
 namespace sub {
 namespace qos {
 namespace detail {
 
-//TODO: Fix when SubscriberQosDelegate is implemented
-//typedef ::dds::core::TEntityQos< ::org::opensplice::sub::qos::SubscriberQosDelegate> SubscriberQos;
-class SubscriberQos { };
+using SubscriberQos = eprosima::fastdds::dds::SubscriberQos;
 
 } //namespace detail
 } //namespace qos

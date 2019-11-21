@@ -23,8 +23,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-RTPS_DllAPI extern const DomainParticipantQos PARTICIPANT_QOS_DEFAULT;
-
+const DomainParticipantQos PARTICIPANT_QOS_DEFAULT;
 
 } /* namespace dds */
 } /* namespace fastdds */

@@ -21,10 +21,10 @@
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
-#include <fastdds/dds/qos/LivelinessChangedStatus.hpp>
-#include <fastdds/dds/qos/DeadlineMissedStatus.hpp>
-#include <fastdds/dds/qos/IncompatibleQosStatus.hpp>
-#include <fastdds/dds/qos/SampleRejectedStatus.hpp>
+#include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
+#include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 
 /**
  * @cond
@@ -64,7 +64,5 @@ using SubscriptionMatchedStatus = eprosima::fastdds::dds::SubscriptionMatchedSta
 } //namespace dds
 
 /** @endcond */
-
-#include <dds/core/status/detail/TStatusImpl.hpp>
 
 #endif //EPROSIMA_DDS_CORE_STATUS_DETAIL_STATUS_HPP_

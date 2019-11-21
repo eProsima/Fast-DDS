@@ -34,10 +34,10 @@
 
 //#define OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT                FULL
 //#define OMG_DDS_MULTI_TOPIC_SUPPORT                         FULL
-//#define OMG_DDS_PERSISTENCE_SUPPORT                         FULL
-//#define OMG_DDS_OWNERSHIP_SUPPORT                           FULL
-//#define OMG_DDS_OBJECT_MODEL_SUPPORT                        FULL
-//#define OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT   FULL
+#define OMG_DDS_PERSISTENCE_SUPPORT                         FULL
+#define OMG_DDS_OWNERSHIP_SUPPORT                           PARTIAL
+#define OMG_DDS_OBJECT_MODEL_SUPPORT                        PARTIAL
+#define OMG_DDS_EXTENSIBLE_AND_DYNAMIC_TOPIC_TYPE_SUPPORT   PARTIAL
 #define OMG_DDS_X_TYPES_DYNAMIC_TYPE_SUPPORT                FULL
 //#define OMG_DDS_HAS_PRETTY_PRINT_COUT 1
 

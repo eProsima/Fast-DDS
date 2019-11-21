@@ -18,8 +18,7 @@
 #ifndef EPROSIMA_DDS_SUB_DETAIL_GENERATION_COUNT_HPP_
 #define EPROSIMA_DDS_SUB_DETAIL_GENERATION_COUNT_HPP_
 
-//#include <dds/sub/detail/TGenerationCountImpl.hpp>
-//#include <org/opensplice/sub/GenerationCountImpl.hpp>
+#include <cstdint>
 
 /**
  * @cond
@@ -30,8 +29,11 @@ namespace dds {
 namespace sub {
 namespace detail {
 
-//typedef dds::sub::TGenerationCount< org::opensplice::sub::GenerationCountImpl > GenerationCount;
-class GenerationCount { };
+struct GenerationCount
+{
+    int32_t disposed_generation_count = 0;
+    int32_t no_writers_generation_count = 0;
+};
 
 } //namespace detail
 } //namespace sub

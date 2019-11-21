@@ -18,9 +18,7 @@
 #ifndef EPROSIMA_DDS_CORE_POLICY_DETAIL_QOS_POLICY_COUNT_HPP_
 #define EPROSIMA_DDS_CORE_POLICY_DETAIL_QOS_POLICY_COUNT_HPP_
 
-//TODO: Fix when QosPolicyCountDelegate is implemented
-//#include <dds/core/policy/detail/TQosPolicyCountImpl.hpp>
-//#include <org/opensplice/core/policy/QosPolicyCountDelegate.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 
 /**
  * @cond
@@ -32,9 +30,11 @@ namespace core {
 namespace policy {
 namespace detail {
 
-//TODO: Fix when QosPolicyCountDelegate is implemented
-//typedef dds::core::policy::TQosPolicyCount<org::opensplice::core::policy::QosPolicyCountDelegate> QosPolicyCount;
-class QosPolicyCount { };
+using QosPolicyId = eprosima::fastdds::dds::QosPolicyId_t;
+
+using QosPolicyCount = eprosima::fastdds::dds::QosPolicyCount;
+
+using QosPolicyCountSeq =  eprosima::fastdds::dds::QosPolicyCountSeq;
 
 } //namespace detail
 } //namespace policy

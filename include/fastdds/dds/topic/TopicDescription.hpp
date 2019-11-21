@@ -36,15 +36,15 @@ class DomainParticipant;
  */
 class TopicDescription
 {
-protected:
-	RTPS_DllAPI TopicDescription(
+public:
+    RTPS_DllAPI TopicDescription(
             const char* name,
             const char* type_name)
         : name_(name)
         , type_name_(type_name)
     {}
 
-	RTPS_DllAPI ~TopicDescription()
+    virtual RTPS_DllAPI ~TopicDescription()
     {}
 
     virtual RTPS_DllAPI DomainParticipant* get_participant() const = 0;
@@ -54,9 +54,19 @@ protected:
         return name_.c_str();
     }
 
-	RTPS_DllAPI const char* get_type_name() const
+    RTPS_DllAPI const char* get_type_name() const
     {
         return type_name_.c_str();
+    }
+
+    const std::string& name() const
+    {
+        return name_;
+    }
+
+    const std::string& type_name() const
+    {
+        return type_name_;
     }
 
 protected:
