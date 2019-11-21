@@ -147,7 +147,7 @@ bool LatencyTestSubscriber::init(
     }
 
     // Create the participant
-    participant_ = Domain::createParticipant(participant_profile_name);
+    participant_ = Domain::createParticipant(participant_attributes);
     if (participant_ == nullptr)
     {
         return false;

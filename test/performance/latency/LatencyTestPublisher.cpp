@@ -248,7 +248,7 @@ bool LatencyTestPublisher::init(
     }
 
     // Create the participant
-    participant_ = Domain::createParticipant(participant_profile_name);
+    participant_ = Domain::createParticipant(participant_attributes);
     if (participant_ == nullptr)
     {
         return false;
@@ -624,11 +624,7 @@ void LatencyTestPublisher::run()
         discovery_cv_.wait(disc_lock);
     }
     disc_lock.unlock();
-
     std::cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << std::endl;
-    printf("Printing round-trip times in us, statistics for %d samples\n", samples_);
-    printf("   Bytes, Samples,   stdev,    mean,     min,     50%%,     90%%,     99%%,  99.99%%,     max\n");
-    printf("--------,--------,--------,--------,--------,--------,--------,--------,--------,--------,\n");
 
     for (std::vector<uint32_t>::iterator payload = data_size_pub.begin(); payload != data_size_pub.end(); ++payload)
     {
@@ -647,6 +643,15 @@ void LatencyTestPublisher::run()
     Domain::removePublisher(this->command_publisher_);
     std::cout << "REMOVING SUBSCRIBER" << std::endl;
     Domain::removeSubscriber(command_subscriber_);
+
+    // Print a summary table with the measurements
+    printf("Printing round-trip times in us, statistics for %d samples\n", samples_);
+    printf("   Bytes, Samples,   stdev,    mean,     min,     50%%,     90%%,     99%%,  99.99%%,     max\n");
+    printf("--------,--------,--------,--------,--------,--------,--------,--------,--------,--------,\n");
+    for (uint16_t i = 0; i < stats_.size(); i++)
+    {
+        print_stats(stats_[i]);
+    }
 
     std::string str_reliable = "besteffort";
     if (reliable_)
@@ -798,7 +803,6 @@ bool LatencyTestPublisher::test(
     }
 
     analyze_times(datasize);
-    print_stats(stats_.back());
 
     if (dynamic_data_)
     {
@@ -820,7 +824,7 @@ void LatencyTestPublisher::analyze_times(
     // Collect statistics
     TimeStats stats;
     stats.bytes_ = datasize + 4;
-    stats.received_ = received_count_;
+    stats.received_ = received_count_ - 1;  // Because we are not counting the first one.
     stats.minimum_ = *std::min_element(times_.begin(), times_.end());
     stats.maximum_ = *std::max_element(times_.begin(), times_.end());
     stats.mean_ = std::accumulate(times_.begin(), times_.end(),
