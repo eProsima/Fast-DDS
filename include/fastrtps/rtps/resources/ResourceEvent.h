@@ -106,7 +106,7 @@ private:
     TimedConditionVariable cv_manipulation_;
 
     //! Flag used to allow a thread to manipulate the timer collections when the execution thread is not using them.
-    bool allow_vector_manipulation_ = false;
+    bool allow_vector_manipulation_ = true;
 
     //! Used to warn there are new TimedEventImpl objects to be processed.
     TimedConditionVariable cv_;
@@ -144,6 +144,12 @@ private:
             TimedEventImpl* event);
 
     void do_timer_actions();
+
+    void resize_collections()
+    {
+        pending_timers_.reserve(timers_count_);
+        active_timers_.reserve(timers_count_);
+    }
 };
 
 } /* namespace rtps */
