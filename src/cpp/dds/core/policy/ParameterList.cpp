@@ -28,7 +28,19 @@ namespace dds {
 
 using namespace fastrtps::rtps;
 
-#define IF_VALID_CALL {if(valid){qos_size += plength;if(!processor(&p)) return false;}else{return false;}break;}
+#define IF_VALID_CALL() {                              \
+                            if(valid)                  \
+                            {                          \
+                                qos_size += plength;   \
+                                if(!processor(&p))     \
+                                    return false;      \
+                            }                          \
+                            else                       \
+                            {                          \
+                                return false;          \
+                            }                          \
+                            break;                     \
+                        }
 
 bool ParameterList::writeEncapsulationToCDRMsg(fastrtps::rtps::CDRMessage_t* msg)
 {
@@ -127,13 +139,18 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
         msg.pos += 2;
     }
 
+    uint32_t original_pos = msg.pos;
     while (!is_sentinel)
     {
+        // Align to 4 byte boundary
+        qos_size = (qos_size + 3) & ~3;
+        msg.pos = original_pos + qos_size;
+
         valid = true;
         valid &= CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
         valid &= CDRMessage::readUInt16(&msg, &plength);
         qos_size += 4;
-        if (!valid || msg.pos > msg.length)
+        if (!valid || ((msg.pos + plength) > msg.length))
         {
             return false;
         }
@@ -151,7 +168,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     ParameterLocator_t p(pid, plength);
                     valid &= CDRMessage::readLocator(&msg, &p.locator);
                     valid &= (plength == PARAMETER_LOCATOR_LENGTH);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_DEFAULT_UNICAST_PORT:
                 case PID_METATRAFFIC_UNICAST_PORT:
@@ -160,7 +177,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     ParameterPort_t p(pid, plength);
                     valid &= CDRMessage::readUInt32(&msg, &p.port);
                     valid &= (plength == PARAMETER_LOCATOR_LENGTH);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_PROTOCOL_VERSION:
                 {
@@ -168,8 +185,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     valid &= CDRMessage::readOctet(&msg, &p.protocolVersion.m_major);
                     valid &= CDRMessage::readOctet(&msg, &p.protocolVersion.m_minor);
                     valid &= (plength == PARAMETER_PROTOCOL_LENGTH);
-                    msg.pos += 2;
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_EXPECTS_INLINE_QOS:
                 {
@@ -179,8 +195,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     ParameterBool_t p(PID_EXPECTS_INLINE_QOS, plength);
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.value);
-                    msg.pos += 3;
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_VENDORID:
                 {
@@ -188,30 +203,20 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     valid &= CDRMessage::readOctet(&msg, &p.vendorId[0]);
                     valid &= CDRMessage::readOctet(&msg, &p.vendorId[1]);
                     valid &= (plength == PARAMETER_VENDOR_LENGTH);
-                    msg.pos += 2;
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_MULTICAST_IPADDRESS:
                 case PID_DEFAULT_UNICAST_IPADDRESS:
                 case PID_METATRAFFIC_UNICAST_IPADDRESS:
                 case PID_METATRAFFIC_MULTICAST_IPADDRESS:
                 {
-                    ParameterIP4Address_t p(pid, plength);
-                    if (plength == PARAMETER_IP4_LENGTH)
-                    {
-                        p.address[0] = msg.buffer[msg.pos];
-                        p.address[1] = msg.buffer[msg.pos + 1];
-                        p.address[2] = msg.buffer[msg.pos + 2];
-                        p.address[3] = msg.buffer[msg.pos + 3];
-                        msg.pos += 4;
-                        qos_size += plength;
-                        if(!processor(&p)) return false;
-                    }
-                    else
+                    if (plength != PARAMETER_IP4_LENGTH)
                     {
                         return false;
                     }
-                    break;
+                    ParameterIP4Address_t p(pid, plength);
+                    valid &= CDRMessage::readData(&msg, p.address, 4);
+                    IF_VALID_CALL()
                 }
                 case PID_PARTICIPANT_GUID:
                 case PID_GROUP_GUID:
@@ -225,7 +230,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     ParameterGuid_t p(pid, plength);
                     valid &= CDRMessage::readData(&msg, p.guid.guidPrefix.value, 12);
                     valid &= CDRMessage::readData(&msg, p.guid.entityId.value, 4);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_TOPIC_NAME:
                 case PID_TYPE_NAME:
@@ -241,7 +246,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     p.setName(aux.c_str());
                     //                cout << "READ: "<< p.m_string<<endl;
                     //                cout << msg.pos << endl;
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_PROPERTY_LIST:
                 {
@@ -293,7 +298,6 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     octet status = msg.buffer[msg.pos + 3];
                     ParameterStatusInfo_t p(pid, plength, status);
-                    msg.pos += plength;
                     qos_size += plength;
                     if(!processor(&p)) return false;
                     break;
@@ -306,7 +310,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     ParameterKey_t p(PID_KEY_HASH, 16);
                     valid &= CDRMessage::readData(&msg, p.key.value, 16);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_SENTINEL:
                 {
@@ -321,8 +325,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     DurabilityQosPolicy p;
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.kind);
-                    msg.pos += 3;
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_DEADLINE:
                 {
@@ -335,7 +338,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     uint32_t frac(0);
                     valid &= CDRMessage::readUInt32(&msg, &frac);
                     p.period.fraction(frac);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_LATENCY_BUDGET:
                 {
@@ -348,7 +351,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     uint32_t frac(0);
                     valid &= CDRMessage::readUInt32(&msg, &frac);
                     p.duration.fraction(frac);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_LIVELINESS:
                 {
@@ -363,7 +366,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     uint32_t frac(0);
                     valid &= CDRMessage::readUInt32(&msg, &frac);
                     p.lease_duration.fraction(frac);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_OWNERSHIP:
                 {
@@ -373,8 +376,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     OwnershipQosPolicy p;
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.kind);
-                    msg.pos += 3;
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_RELIABILITY:
                 {
@@ -389,7 +391,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     uint32_t frac(0);
                     valid &= CDRMessage::readUInt32(&msg, &frac);
                     p.max_blocking_time.fraction(frac);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_DESTINATION_ORDER:
                 {
@@ -399,8 +401,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     DestinationOrderQosPolicy p;
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.kind);
-                    msg.pos += 3;
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_USER_DATA:
                 {
@@ -446,7 +447,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     uint32_t frac(0);
                     valid &= CDRMessage::readUInt32(&msg, &frac);
                     p.minimum_separation.fraction(frac);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_PRESENTATION:
                 {
@@ -459,8 +460,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     msg.pos += 3;
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.coherent_access);
                     valid &= CDRMessage::readOctet(&msg, (octet*)&p.ordered_access);
-                    msg.pos += 2;
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_PARTITION:
                 {
@@ -482,7 +482,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                         p.names_.push_back(auxstr);
                     }
 
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_TOPIC_DATA:
                 {
@@ -497,7 +497,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     {
                         return false;
                     }
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_GROUP_DATA:
                 {
@@ -512,7 +512,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     {
                         return false;
                     }
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_HISTORY:
                 {
@@ -521,9 +521,10 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                         return false;
                     }
                     HistoryQosPolicy p;
-                    valid &= CDRMessage::readOctet(&msg, (octet*)&p.kind); msg.pos += 3;
+                    valid &= CDRMessage::readOctet(&msg, (octet*)&p.kind);
+                    msg.pos += 3;
                     valid &= CDRMessage::readInt32(&msg, &p.depth);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_DURABILITY_SERVICE:
                 {
@@ -536,12 +537,13 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     uint32_t frac(0);
                     valid &= CDRMessage::readUInt32(&msg, &frac);
                     p.service_cleanup_delay.fraction(frac);
-                    valid &= CDRMessage::readOctet(&msg, (octet*)&p.history_kind); msg.pos += 3;
+                    valid &= CDRMessage::readOctet(&msg, (octet*)&p.history_kind);
+                    msg.pos += 3;
                     valid &= CDRMessage::readInt32(&msg, &p.history_depth);
                     valid &= CDRMessage::readInt32(&msg, &p.max_samples);
                     valid &= CDRMessage::readInt32(&msg, &p.max_instances);
                     valid &= CDRMessage::readInt32(&msg, &p.max_samples_per_instance);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_LIFESPAN:
                 {
@@ -554,7 +556,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     uint32_t frac(0);
                     valid &= CDRMessage::readUInt32(&msg, &frac);
                     p.duration.fraction(frac);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_OWNERSHIP_STRENGTH:
                 {
@@ -564,7 +566,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     OwnershipStrengthQosPolicy p;
                     valid &= CDRMessage::readUInt32(&msg, &p.value);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_RESOURCE_LIMITS:
                 {
@@ -576,7 +578,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     valid &= CDRMessage::readInt32(&msg, &p.max_samples);
                     valid &= CDRMessage::readInt32(&msg, &p.max_instances);
                     valid &= CDRMessage::readInt32(&msg, &p.max_samples_per_instance);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_TRANSPORT_PRIORITY:
                 {
@@ -586,7 +588,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     TransportPriorityQosPolicy p;
                     valid &= CDRMessage::readUInt32(&msg, &p.value);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_PARTICIPANT_MANUAL_LIVELINESS_COUNT:
                 {
@@ -596,7 +598,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     ParameterCount_t p(PID_PARTICIPANT_MANUAL_LIVELINESS_COUNT, plength);
                     valid &= CDRMessage::readUInt32(&msg, &p.count);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_PARTICIPANT_BUILTIN_ENDPOINTS:
                 case PID_BUILTIN_ENDPOINT_SET:
@@ -607,7 +609,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     ParameterBuiltinEndpointSet_t p(pid, plength);
                     valid &= CDRMessage::readUInt32(&msg, &p.endpointSet);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_PARTICIPANT_LEASE_DURATION:
                 {
@@ -622,15 +624,10 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     uint32_t frac(0);
                     valid &= CDRMessage::readUInt32(&msg, &frac);
                     p.time.fraction(frac);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_CONTENT_FILTER_PROPERTY:
                 {
-                    if (plength > msg.length - msg.pos)
-                    {
-                        return false;
-                    }
-                    msg.pos += plength;
                     qos_size += plength;
                     break;
                 }
@@ -643,7 +640,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     ParameterEntityId_t p(pid, plength);
                     valid &= CDRMessage::readEntityId(&msg, &p.entityId);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_TYPE_MAX_SIZE_SERIALIZED:
                 {
@@ -653,7 +650,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     }
                     ParameterCount_t p(pid, plength);
                     valid &= CDRMessage::readUInt32(&msg, &p.count);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_RELATED_SAMPLE_IDENTITY:
                 {
@@ -664,15 +661,14 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                         valid &= CDRMessage::readData(&msg, p.sample_id.writer_guid().entityId.value, EntityId_t::size);
                         valid &= CDRMessage::readInt32(&msg, &p.sample_id.sequence_number().high);
                         valid &= CDRMessage::readUInt32(&msg, &p.sample_id.sequence_number().low);
-                        IF_VALID_CALL
+                        IF_VALID_CALL()
                     }
-                    else if (plength > msg.length - msg.pos || plength > 24)
+                    else if (plength > 24)
                     {
                         return false;
                     }
                     else
                     {
-                        msg.pos += plength;
                         qos_size += plength;
                         break;
                     }
@@ -694,66 +690,76 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     {
                         valid &= CDRMessage::readInt16(&msg, &temp);
                     }
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_TYPE_CONSISTENCY_ENFORCEMENT:
                 {
-                    if (7 < plength)
+                    if (plength < 2)
                     {
-                        uint16_t uKind(0);
-                        octet temp(0);
-                        TypeConsistencyEnforcementQosPolicy p;
-                        p.m_ignore_sequence_bounds = false;
-                        p.m_ignore_string_bounds = false;
-                        p.m_ignore_member_names = false;
-                        p.m_prevent_type_widening = false;
-                        p.m_force_type_validation = false;
-
-                        valid &= CDRMessage::readUInt16(&msg, &uKind);
-                        p.m_kind = static_cast<TypeConsistencyKind>(uKind);
-
-                        valid &= CDRMessage::readOctet(&msg, &temp);
-                        p.m_ignore_sequence_bounds = temp == 0 ? false : true;
-
-                        valid &= CDRMessage::readOctet(&msg, &temp);
-                        p.m_ignore_string_bounds = temp == 0 ? false : true;
-
-                        valid &= CDRMessage::readOctet(&msg, &temp);
-                        p.m_ignore_member_names = temp == 0 ? false : true;
-
-                        valid &= CDRMessage::readOctet(&msg, &temp);
-                        p.m_prevent_type_widening = temp == 0 ? false : true;
-
-                        valid &= CDRMessage::readOctet(&msg, &temp);
-                        p.m_force_type_validation = temp == 0 ? false : true;
-
-                        for (int i = 7; valid && i < plength; ++i) // Consume the alignment
-                        {
-                            valid &= CDRMessage::readOctet(&msg, &temp);
-                        }
-
-                        IF_VALID_CALL
+                        return false;
                     }
 
-                    return false;
+                    uint16_t uKind(0);
+                    octet temp(0);
+                    TypeConsistencyEnforcementQosPolicy p;
+                    p.m_ignore_sequence_bounds = false;
+                    p.m_ignore_string_bounds = false;
+                    p.m_ignore_member_names = false;
+                    p.m_prevent_type_widening = false;
+                    p.m_force_type_validation = false;
+
+                    valid &= CDRMessage::readUInt16(&msg, &uKind);
+                    p.m_kind = static_cast<TypeConsistencyKind>(uKind);
+
+                    if (valid && plength >= 3)
+                    {
+                        valid &= CDRMessage::readOctet(&msg, &temp);
+                        p.m_ignore_sequence_bounds = temp == 0 ? false : true;
+                    }
+
+                    if (valid && plength >= 4)
+                    {
+                        valid &= CDRMessage::readOctet(&msg, &temp);
+                        p.m_ignore_string_bounds = temp == 0 ? false : true;
+                    }
+
+                    if (valid && plength >= 5)
+                    {
+                        valid &= CDRMessage::readOctet(&msg, &temp);
+                        p.m_ignore_member_names = temp == 0 ? false : true;
+                    }
+
+                    if (valid && plength >= 6)
+                    {
+                        valid &= CDRMessage::readOctet(&msg, &temp);
+                        p.m_prevent_type_widening = temp == 0 ? false : true;
+                    }
+
+                    if (valid && plength >= 7)
+                    {
+                        valid &= CDRMessage::readOctet(&msg, &temp);
+                        p.m_force_type_validation = temp == 0 ? false : true;
+                    }
+
+                    IF_VALID_CALL()
                 }
                 case PID_TYPE_IDV1:
                 {
                     TypeIdV1 p;
                     valid &= p.readFromCDRMessage(&msg, plength);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_TYPE_OBJECTV1:
                 {
                     TypeObjectV1 p;
                     valid &= p.readFromCDRMessage(&msg, plength);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
                 case PID_TYPE_INFORMATION:
                 {
                     xtypes::TypeInformation p;
                     valid &= p.readFromCDRMessage(&msg, plength);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
 
 #if HAVE_SECURITY
@@ -762,8 +768,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                 {
                     ParameterToken_t p(pid, plength);
                     valid &= CDRMessage::readDataHolder(&msg, p.token);
-                    msg.pos += (4 - msg.pos % 4) & 3; //align
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
 
                 case PID_PARTICIPANT_SECURITY_INFO:
@@ -775,7 +780,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     ParameterParticipantSecurityInfo_t p(pid, plength);
                     valid &= CDRMessage::readUInt32(&msg, &p.security_attributes);
                     valid &= CDRMessage::readUInt32(&msg, &p.plugin_security_attributes);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
 
                 case PID_ENDPOINT_SECURITY_INFO:
@@ -787,7 +792,7 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
                     ParameterEndpointSecurityInfo_t p(pid, plength);
                     valid &= CDRMessage::readUInt32(&msg, &p.security_attributes);
                     valid &= CDRMessage::readUInt32(&msg, &p.plugin_security_attributes);
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
 #endif
                 case PID_DISABLE_POSITIVE_ACKS:
@@ -805,17 +810,12 @@ bool ParameterList::readParameterListfromCDRMsg(CDRMessage_t& msg, std::function
 
                     DisablePositiveACKsQosPolicy p;
                     p.enabled = (value == 0) ? false : true;
-                    IF_VALID_CALL
+                    IF_VALID_CALL()
                 }
 
                 case PID_PAD:
                 default:
                 {
-                    if (plength > msg.length - msg.pos)
-                    {
-                        return false;
-                    }
-                    msg.pos += plength;
                     qos_size += plength;
                     break;
                 }

@@ -341,8 +341,15 @@ bool TypeIdV1::addToCDRMessage(
     bool valid = CDRMessage::addUInt16(msg, this->Pid);
     this->length = static_cast<uint16_t>(payload.length);
     valid &= CDRMessage::addUInt16(msg, this->length);
+    valid &= CDRMessage::addData(msg, payload.data, payload.length);
 
-    return valid & CDRMessage::addData(msg, payload.data, payload.length);
+    uint32_t align = 4 - (payload.length % 4); //align
+    for (uint32_t count = 0; count < align; ++count)
+    {
+        valid &= CDRMessage::addOctet(msg, 0);
+    }
+
+    return valid;
 }
 
 bool TypeIdV1::readFromCDRMessage(
