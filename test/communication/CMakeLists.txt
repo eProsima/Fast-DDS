@@ -39,7 +39,7 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
 
     set(SUBSCRIBER_SOURCE ${COMMON_SOURCE}
         Subscriber.cpp
-        PublisherMain.cpp
+        SubscriberMain.cpp
         )
     add_executable(SimpleCommunicationSubscriber ${SUBSCRIBER_SOURCE})
     target_include_directories(SimpleCommunicationSubscriber PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
