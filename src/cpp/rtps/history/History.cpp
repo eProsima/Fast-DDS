@@ -103,7 +103,7 @@ bool History::get_max_change(CacheChange_t** max_change)
 bool History::get_change(
         const SequenceNumber_t& seq,
         const GUID_t& guid,
-        CacheChange_t** change)
+        CacheChange_t** change) const
 {
 
     if (mp_mutex == nullptr)
@@ -114,16 +114,16 @@ bool History::get_change(
 
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
-    for (std::vector<CacheChange_t*>::iterator it = m_changes.begin(); it != m_changes.end(); ++it)
+    for (CacheChange_t* it : m_changes)
     {
-        if ((*it)->writerGUID == guid)
+        if (it->writerGUID == guid)
         {
-            if ((*it)->sequenceNumber == seq)
+            if (it->sequenceNumber == seq)
             {
-                *change = *it;
+                *change = it;
                 return true;
             }
-            else if((*it)->sequenceNumber > seq)
+            else if(it->sequenceNumber > seq)
             {
                 break;
             }

@@ -23,7 +23,6 @@
 #include <fastrtps/log/Log.h>
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/reader/FragmentedChangePitStop.h>
 #include <rtps/reader/WriterProxy.h>
 #include <fastrtps/utils/TimeConversion.h>
 #include <rtps/history/HistoryAttributesExtension.hpp>
@@ -429,25 +428,57 @@ bool StatefulReader::processDataFragMsg(
             }
 #endif
 
-            // Fragments manager has to process incomming fragments.
-            // If CacheChange_t is completed, it will be returned;
-            CacheChange_t* change_completed = fragmentedChangePitStop_->process(
-                change_to_add, sampleSize, fragmentStartingNum, fragmentsInSubmessage);
+            CacheChange_t* change_created = nullptr;
+            CacheChange_t* work_change = nullptr;
+            if (!mp_history->get_change(change_to_add->sequenceNumber, change_to_add->writerGUID, &work_change))
+            {
+                // A new change should be reserved
+                if (reserveCache(&work_change, sampleSize))
+                {
+                    if (work_change->serializedPayload.max_size < sampleSize)
+                    {
+                        releaseCache(work_change);
+                        work_change = nullptr;
+                    }
+                    else
+                    {
+                        work_change->copy_not_memcpy(change_to_add);
+                        work_change->serializedPayload.length = sampleSize;
+                        work_change->setFragmentSize(change_to_add->getFragmentSize(), true);
+                        change_created = work_change;
+                    }
+                }
+            }
+
+            if (work_change != nullptr)
+            {
+                work_change->add_fragments(change_to_add->serializedPayload, fragmentStartingNum,
+                        fragmentsInSubmessage);
+            }
 
 #if HAVE_SECURITY
             if(getAttributes().security_attributes().is_payload_protected)
                 releaseCache(change_to_add);
 #endif
 
-            if(change_completed != nullptr)
+            // If this is the first time we have received fragments for this change, add it to history
+            if(change_created != nullptr)
             {
-                if(!change_received(change_completed, pWP))
+                if(!change_received(change_created, pWP))
                 {
 
-                    logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_completed->sequenceNumber.to64long());
+                    logInfo(RTPS_MSG_IN, IDSTRING"MessageReceiver not add change " << change_created->sequenceNumber.to64long());
 
-                    releaseCache(change_completed);
+                    releaseCache(change_created);
+                    work_change = nullptr;
                 }
+            }
+
+            // If change has been fully reassembled, mark as received and add notify user
+            if (work_change != nullptr && work_change->is_fully_assembled())
+            {
+                pWP->received_change_set(work_change->sequenceNumber);
+                NotifyChanges(pWP);
             }
         }
     }
@@ -477,7 +508,7 @@ bool StatefulReader::processHeartbeatMsg(
         if (writer->process_heartbeat(
                 hbCount, firstSN, lastSN, finalFlag, livelinessFlag, disable_positive_acks_, assert_liveliness))
         {
-            fragmentedChangePitStop_->try_to_remove_until(firstSN, writerGUID);
+            mp_history->remove_fragmented_changes_until(firstSN, writerGUID);
 
             // Try to assert liveliness if requested by proxy's logic
             if (assert_liveliness)
@@ -533,7 +564,11 @@ bool StatefulReader::processGapMsg(
         {
             if(pWP->irrelevant_change_set(auxSN))
             {
-                fragmentedChangePitStop_->try_to_remove(auxSN, pWP->guid());
+                CacheChange_t* to_remove = findCacheInFragmentedProcess(auxSN, pWP->guid());
+                if (to_remove != nullptr)
+                {
+                    mp_history->remove_change(to_remove);
+                }
             }
         }
 
@@ -541,7 +576,11 @@ bool StatefulReader::processGapMsg(
         {
             if(pWP->irrelevant_change_set(it))
             {
-                fragmentedChangePitStop_->try_to_remove(it, pWP->guid());
+                CacheChange_t* to_remove = findCacheInFragmentedProcess(auxSN, pWP->guid());
+                if (to_remove != nullptr)
+                {
+                    mp_history->remove_change(to_remove);
+                }
             }
         });
 
@@ -589,15 +628,19 @@ bool StatefulReader::change_removed_by_history(
     {
         if(wp != nullptr || matched_writer_lookup(a_change->writerGUID,&wp))
         {
-            if(!a_change->isRead && wp->available_changes_max() >= a_change->sequenceNumber)
+            if (a_change->is_fully_assembled())
             {
-                if (0 < total_unread_)
+                if (!a_change->isRead && wp->available_changes_max() >= a_change->sequenceNumber)
                 {
-                    --total_unread_;
+                    if (0 < total_unread_)
+                    {
+                        --total_unread_;
+                    }
                 }
-            }
 
-            wp->change_removed_from_history(a_change->sequenceNumber);
+
+                wp->change_removed_from_history(a_change->sequenceNumber);
+            }
             return true;
         }
         else if(a_change->writerGUID.entityId != this->m_trustedWriterEntityId)
@@ -662,10 +705,14 @@ bool StatefulReader::change_received(
         if(mp_history->isFull() && mp_history->get_min_change_from(&aux_change, proxGUID))
         {
             prox->lost_changes_update(aux_change->sequenceNumber);
-            fragmentedChangePitStop_->try_to_remove_until(aux_change->sequenceNumber, proxGUID);
         }
 
-        bool ret = prox->received_change_set(a_change->sequenceNumber);
+        bool ret = true;
+
+        if (a_change->is_fully_assembled())
+        {
+            ret = prox->received_change_set(a_change->sequenceNumber);
+        }
 
         NotifyChanges(prox);
 
@@ -895,8 +942,6 @@ void StatefulReader::send_acknack(
     }
 
     SequenceNumberSet_t missing_changes = writer->missing_changes();
-    // Stores missing changes but there is some fragments received.
-    std::vector<CacheChange_t*> uncompleted_changes;
 
     try
     {
@@ -910,7 +955,7 @@ void StatefulReader::send_acknack(
                 [&](const SequenceNumber_t& seq)
                 {
                     // Check if the CacheChange_t is uncompleted.
-                    CacheChange_t* uncomplete_change = findCacheInFragmentedCachePitStop(seq, guid);
+                    CacheChange_t* uncomplete_change = findCacheInFragmentedProcess(seq, guid);
                     if (uncomplete_change == nullptr)
                     {
                         if (!sns.add(seq))
@@ -921,7 +966,12 @@ void StatefulReader::send_acknack(
                     }
                     else
                     {
-                        uncompleted_changes.push_back(uncomplete_change);
+                        FragmentNumberSet_t frag_sns;
+                        uncomplete_change->get_missing_fragments(frag_sns);
+                        ++nackfrag_count_;
+                        logInfo(RTPS_READER, "Sending NACKFRAG for sample" << cit->sequenceNumber << ": " << frag_sns;);
+
+                        group.add_nackfrag(seq, frag_sns, nackfrag_count_);
                     }
 
                 });
@@ -931,20 +981,6 @@ void StatefulReader::send_acknack(
 
             bool final = sns.empty();
             group.add_acknack(sns, acknack_count_, final);
-        }
-
-        // Now generage NACK_FRAGS
-        if (!uncompleted_changes.empty())
-        {
-            for (auto cit : uncompleted_changes)
-            {
-                FragmentNumberSet_t frag_sns;
-                cit->get_missing_fragments(frag_sns);
-                ++nackfrag_count_;
-                logInfo(RTPS_READER, "Sending NACKFRAG for sample" << cit->sequenceNumber << ": " << frag_sns;);
-
-                group.add_nackfrag(cit->sequenceNumber, frag_sns, nackfrag_count_);
-            }
         }
     }
     catch(const RTPSMessageGroup::timeout&)
