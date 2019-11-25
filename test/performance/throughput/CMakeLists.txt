@@ -12,149 +12,130 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
-    find_package(Threads REQUIRED)
+###########################################################################
+# Create and link executable                                              #
+###########################################################################
+set(
+    THROUGHPUTTEST_SOURCE ThroughputPublisher.cpp
+    ThroughputSubscriber.cpp
+    ThroughputTypes.cpp
+    main_ThroughputTest.cpp
+)
+add_executable(ThroughputTest ${THROUGHPUTTEST_SOURCE})
 
-    if(WIN32)
-        if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
-            add_definitions(-D_WIN32_WINNT=0x0603)
-        else()
-            add_definitions(-D_WIN32_WINNT=0x0601)
-        endif()
-    endif()
+target_include_directories(ThroughputTest PRIVATE)
+target_link_libraries(
+    ThroughputTest
+    fastrtps
+    foonathan_memory
+    ${CMAKE_THREAD_LIBS_INIT}
+    ${CMAKE_DL_LIBS}
+)
 
-    add_definitions(
-      -DBOOST_ASIO_STANDALONE
-      -DASIO_STANDALONE
+###########################################################################
+# List Throughput tests                                                   #
+###########################################################################
+set(
+    THROUGHPUT_TEST_LIST
+    intraprocess_best_effort
+    intraprocess_reliable
+    interprocess_best_effort
+    interprocess_reliable
+)
+
+###########################################################################
+# Configure XML files                                                     #
+###########################################################################
+foreach(throughput_test_name ${THROUGHPUT_TEST_LIST})
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/xml/${throughput_test_name}.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/xml/${throughput_test_name}.xml
+        COPYONLY
     )
+endforeach(throughput_test_name)
 
-    include_directories(${ASIO_INCLUDE_DIR})
-
-    ###########################################################################
-    # Create and link executable                                              #
-    ###########################################################################
-    set(
-        THROUGHPUTTEST_SOURCE ThroughputPublisher.cpp
-        ThroughputSubscriber.cpp
-        ThroughputTypes.cpp
-        main_ThroughputTest.cpp
-    )
-    add_executable(ThroughputTest ${THROUGHPUTTEST_SOURCE})
-
-    target_include_directories(ThroughputTest PRIVATE)
-    target_link_libraries(
-        ThroughputTest
-        fastrtps
-        foonathan_memory
-        ${CMAKE_THREAD_LIBS_INIT}
-        ${CMAKE_DL_LIBS}
-    )
-
-    ###########################################################################
-    # List Throughput tests                                                   #
-    ###########################################################################
-    set(
-        THROUGHPUT_TEST_LIST
-        intraprocess_best_effort
-        intraprocess_reliable
-        interprocess_best_effort
-        interprocess_reliable
-    )
-
-    ###########################################################################
-    # Configure XML files                                                     #
-    ###########################################################################
+###########################################################################
+# Create tests                                                            #
+###########################################################################
+find_package(PythonInterp 3 REQUIRED)
+if(PYTHONINTERP_FOUND)
+    # Loop over the test names
     foreach(throughput_test_name ${THROUGHPUT_TEST_LIST})
-        configure_file(
-            ${CMAKE_CURRENT_SOURCE_DIR}/xml/${throughput_test_name}.xml
-            ${CMAKE_CURRENT_BINARY_DIR}/xml/${throughput_test_name}.xml
-            COPYONLY
+        # Set the interprocess flag
+        if(${throughput_test_name} MATCHES "^interprocess")
+            set(interproces_flag "--interprocess")
+        else()
+            set(interproces_flag "")
+        endif()
+
+        # Add the test
+        add_test(
+            NAME performance.throughput.${throughput_test_name}
+            COMMAND ${PYTHON_EXECUTABLE}
+            ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py
+            --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${throughput_test_name}.xml
+            --recoveries_file ${CMAKE_CURRENT_SOURCE_DIR}/recoveries.csv
+            --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+            ${interproces_flag}
         )
-    endforeach(throughput_test_name)
 
-    ###########################################################################
-    # Create tests                                                            #
-    ###########################################################################
-    find_package(PythonInterp 3 REQUIRED)
-    if(PYTHONINTERP_FOUND)
-        # Loop over the test names
-        foreach(throughput_test_name ${THROUGHPUT_TEST_LIST})
-            # Set the interprocess flag
-            if(${throughput_test_name} MATCHES "^interprocess")
-                set(interproces_flag "--interprocess")
-            else()
-                set(interproces_flag "")
-            endif()
+        # Set test properties
+        set_property(
+            TEST performance.throughput.${throughput_test_name}
+            PROPERTY LABELS "NoMemoryCheck"
+        )
+        set_property(
+            TEST performance.throughput.${throughput_test_name}
+            APPEND PROPERTY ENVIRONMENT "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>"
+        )
+        set_property(
+            TEST performance.throughput.${throughput_test_name}
+            APPEND PROPERTY ENVIRONMENT "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
+        )
+        if(WIN32)
+            set_property(
+                TEST performance.throughput.${throughput_test_name}
+                PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}"
+            )
+        endif()
 
-            # Add the test
+        if(SECURITY AND (${throughput_test_name} MATCHES "^interprocess"))
+            # Add the secure version
             add_test(
-                NAME performance.throughput.${throughput_test_name}
+                NAME performance.throughput.${throughput_test_name}_security
                 COMMAND ${PYTHON_EXECUTABLE}
                 ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py
                 --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${throughput_test_name}.xml
                 --recoveries_file ${CMAKE_CURRENT_SOURCE_DIR}/recoveries.csv
                 --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
+                --security
                 ${interproces_flag}
             )
 
             # Set test properties
             set_property(
-                TEST performance.throughput.${throughput_test_name}
+                TEST performance.throughput.${throughput_test_name}_security
                 PROPERTY LABELS "NoMemoryCheck"
             )
             set_property(
-                TEST performance.throughput.${throughput_test_name}
+                TEST performance.throughput.${throughput_test_name}_security
                 APPEND PROPERTY ENVIRONMENT "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>"
             )
             set_property(
-                TEST performance.throughput.${throughput_test_name}
+                TEST performance.throughput.${throughput_test_name}_security
                 APPEND PROPERTY ENVIRONMENT "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
             )
             if(WIN32)
                 set_property(
-                    TEST performance.throughput.${throughput_test_name}
+                    TEST performance.throughput.${throughput_test_name}_security
                     PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}"
                 )
             endif()
 
-            if(SECURITY AND (${throughput_test_name} MATCHES "^interprocess"))
-                # Add the secure version
-                add_test(
-                    NAME performance.throughput.${throughput_test_name}_security
-                    COMMAND ${PYTHON_EXECUTABLE}
-                    ${CMAKE_CURRENT_SOURCE_DIR}/throughput_tests.py
-                    --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${throughput_test_name}.xml
-                    --recoveries_file ${CMAKE_CURRENT_SOURCE_DIR}/recoveries.csv
-                    --demands_file ${CMAKE_CURRENT_SOURCE_DIR}/payloads_demands.csv
-                    --security
-                    ${interproces_flag}
-                )
-
-                # Set test properties
-                set_property(
-                    TEST performance.throughput.${throughput_test_name}_security
-                    PROPERTY LABELS "NoMemoryCheck"
-                )
-                set_property(
-                    TEST performance.throughput.${throughput_test_name}_security
-                    APPEND PROPERTY ENVIRONMENT "THROUGHPUT_TEST_BIN=$<TARGET_FILE:ThroughputTest>"
-                )
-                set_property(
-                    TEST performance.throughput.${throughput_test_name}_security
-                    APPEND PROPERTY ENVIRONMENT "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
-                )
-                if(WIN32)
-                    set_property(
-                        TEST performance.throughput.${throughput_test_name}_security
-                        PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}"
-                    )
-                endif()
-
-                set_property(
-                    TEST performance.throughput.${throughput_test_name}_security
-                    APPEND PROPERTY ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
-                )
-            endif()
-        endforeach(throughput_test_name)
-    endif()
+            set_property(
+                TEST performance.throughput.${throughput_test_name}_security
+                APPEND PROPERTY ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+            )
+        endif()
+    endforeach(throughput_test_name)
 endif()

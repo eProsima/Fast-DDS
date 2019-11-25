@@ -12,9 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-option(VIDEO_TESTS "Activate the building and execution of performance tests" OFF)
-add_subdirectory(latency)
-add_subdirectory(throughput)
-if(VIDEO_TESTS)
-    add_subdirectory(video)
+if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
+    find_package(Threads REQUIRED)
+
+    if(WIN32)
+    if("${CMAKE_SYSTEM_NAME}" STREQUAL "WindowsStore")
+    add_definitions(-D_WIN32_WINNT=0x0603)
+    else()
+    add_definitions(-D_WIN32_WINNT=0x0601)
+    endif()
+    endif()
+
+    add_definitions(
+        -DBOOST_ASIO_STANDALONE
+        -DASIO_STANDALONE
+        )
+
+        include_directories(${ASIO_INCLUDE_DIR})
+
+    option(VIDEO_TESTS "Activate the building and execution of performance tests" OFF)
+    add_subdirectory(latency)
+    add_subdirectory(throughput)
+    if(VIDEO_TESTS)
+        add_subdirectory(video)
+    endif()
 endif()
