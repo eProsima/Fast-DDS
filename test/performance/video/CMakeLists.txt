@@ -12,23 +12,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+###########################################################################
+# Find GStreamer                                                          #
+###########################################################################
 if(WIN32)
     if (EXISTS $ENV{GSTREAMER_1_0_ROOT_X86_64})
         if (EXISTS "$ENV{GSTREAMER_1_0_ROOT_X86_64}/include/gstreamer-1.0/gst/gstversion.h")
-            file (READ "$ENV{GSTREAMER_1_0_ROOT_X86_64}/include/gstreamer-1.0/gst/gstversion.h" GSTREAMER_VERSION_CONTENTS)
-            STRING(REGEX MATCH "#define +GST_VERSION_MAJOR +\\(([0-9]+)\\)" _dummy "${GSTREAMER_VERSION_CONTENTS}")
+            # Get the version file
+            file (
+                READ "$ENV{GSTREAMER_1_0_ROOT_X86_64}/include/gstreamer-1.0/gst/gstversion.h"
+                GSTREAMER_VERSION_CONTENTS
+            )
+
+            # Find the version major
+            STRING(
+                REGEX MATCH "#define +GST_VERSION_MAJOR +\\(([0-9]+)\\)"
+                _dummy
+                "${GSTREAMER_VERSION_CONTENTS}"
+            )
             SET(GSTREAMER_VERSION_MAJOR "${CMAKE_MATCH_1}")
 
-            STRING(REGEX MATCH "#define +GST_VERSION_MINOR +\\(([0-9]+)\\)" _dummy "${GSTREAMER_VERSION_CONTENTS}")
+            # Find the version minor
+            STRING(
+                REGEX MATCH "#define +GST_VERSION_MINOR +\\(([0-9]+)\\)"
+                _dummy
+                "${GSTREAMER_VERSION_CONTENTS}"
+            )
             SET(GSTREAMER_VERSION_MINOR "${CMAKE_MATCH_1}")
 
-            STRING(REGEX MATCH "#define +GST_VERSION_MICRO +\\(([0-9]+)\\)" _dummy "${GSTREAMER_VERSION_CONTENTS}")
+            # Find the version micro
+            STRING(REGEX MATCH "#define +GST_VERSION_MICRO +\\(([0-9]+)\\)"
+                _dummy "${GSTREAMER_VERSION_CONTENTS}"
+            )
             SET(GSTREAMER_VERSION_MICRO "${CMAKE_MATCH_1}")
 
+            # Construct the version
             SET(GSTREAMER_VERSION "${GSTREAMER_VERSION_MAJOR}.${GSTREAMER_VERSION_MINOR}.${GSTREAMER_VERSION_MICRO}")
         endif ()
     endif ()
 
+    # Check the version
     if (GSTREAMER_VERSION)
         if ("${GSTREAMER_VERSION}" VERSION_LESS "1.4")
             message(STATUS "Windows: GStreamer version less than the minimum required. ${GSTREAMER_VERSION}")
@@ -43,30 +66,41 @@ else()
 endif()
 
 if(GST_FOUND)
-    set(VIDEOTEST_SOURCE
+    ###########################################################################
+    # Create and link executable                                              #
+    ###########################################################################
+    set(
+        VIDEOTEST_SOURCE
         VideoTestPublisher.cpp
         VideoTestSubscriber.cpp
         VideoTestTypes.cpp
         main_VideoTest.cpp
-        )
+    )
     add_executable(VideoTest ${VIDEOTEST_SOURCE})
-
     target_compile_options(VideoTest PUBLIC ${GST_CFLAGS})
 
     if(NOT WIN32)
-        target_include_directories(VideoTest PUBLIC
+        target_include_directories(
+            VideoTest
+            PUBLIC
             ${GST_INCLUDE_DIRS}
-            )
+        )
     else()
-        target_include_directories(VideoTest PUBLIC
+        target_include_directories(
+            VideoTest
+            PUBLIC
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/include
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/glib-2.0
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/include/gstreamer-1.0
-            $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/glib-2.0/include)
+            $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/glib-2.0/include
+        )
     endif()
 
     if (WIN32)
-        target_link_libraries(VideoTest fastrtps foonathan_memory
+        target_link_libraries(
+            VideoTest
+            fastrtps
+            foonathan_memory
             ${CMAKE_THREAD_LIBS_INIT}
             ${CMAKE_DL_LIBS}
             ${GST_LIBRARIES}
@@ -74,42 +108,78 @@ if(GST_FOUND)
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstbase-1.0.lib
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gstreamer-1.0.lib
             $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/gobject-2.0.lib
-            $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/glib-2.0.lib)
+            $ENV{GSTREAMER_1_0_ROOT_X86_64}/lib/glib-2.0.lib
+        )
     else()
-        target_link_libraries(VideoTest fastrtps foonathan_memory
+        target_link_libraries(
+            VideoTest
+            fastrtps
+            foonathan_memory
             ${CMAKE_THREAD_LIBS_INIT}
             ${CMAKE_DL_LIBS}
             ${GST_LIBRARIES}
             gstapp-1.0
-            )
+        )
+    endif()
+
+    ###########################################################################
+    # List Video tests                                                      #
+    ###########################################################################
+    set(
+        VIDEO_TEST_LIST
+        interprocess_best_effort
+        interprocess_reliable
+    )
+
+    ###########################################################################
+    # Create tests                                                            #
+    ###########################################################################
+    find_package(PythonInterp 3 REQUIRED)
+    if(PYTHONINTERP_FOUND)
+        if(GST_FOUND)
+            # Loop over the test names
+            foreach(video_test_name ${VIDEO_TEST_LIST})
+                # Add the test
+                add_test(
+                    NAME performance.video.${video_test_name}
+                    COMMAND ${PYTHON_EXECUTABLE}
+                    ${CMAKE_CURRENT_SOURCE_DIR}/video_tests.py
+                )
+
+                # Set test properties
+                set_property(
+                    TEST performance.video.${video_test_name}
+                    PROPERTY LABELS "NoMemoryCheck"
+                )
+                set_property(
+                    TEST performance.video.${video_test_name}
+                    APPEND PROPERTY ENVIRONMENT "VIDEO_TEST_BIN=$<TARGET_FILE:VideoTest>"
+                )
+                if(WIN32)
+                    set_property(
+                        TEST performance.video.${video_test_name}
+                        PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}"
+                    )
+                endif()
+
+                # If there is security, add a secure test as well
+                if(SECURITY)
+                    # Add the secure verison
+                    add_test(
+                        NAME performance.video.${video_test_name}_security
+                        COMMAND ${PYTHON_EXECUTABLE}
+                        ${CMAKE_CURRENT_SOURCE_DIR}/video_tests.py
+                    )
+
+                    # Set test properties
+                    set_property(
+                        TEST performance.video.${video_test_name}_security
+                        APPEND PROPERTY ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+                    )
+                endif()
+            endforeach(video_test_name)
+        endif()
     endif()
 else()
-    message(STATUS "GStreamer libraries not found")
-endif()
-
-find_package(PythonInterp 3 REQUIRED)
-
-if(PYTHONINTERP_FOUND)
-    if(GST_FOUND)
-        ###############################################################################
-        # VideoTest
-        ###############################################################################
-        add_test(NAME VideoTest
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/video_tests.py)
-
-        # Set test with label NoMemoryCheck
-        set_property(TEST VideoTest PROPERTY LABELS "NoMemoryCheck")
-
-        if(WIN32)
-            set_property(TEST VideoTest PROPERTY ENVIRONMENT
-                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}")
-        endif()
-        set_property(TEST VideoTest APPEND PROPERTY ENVIRONMENT
-            "VIDEO_TEST_BIN=$<TARGET_FILE:VideoTest>")
-        if(SECURITY)
-            set_property(TEST VideoTest APPEND PROPERTY ENVIRONMENT
-                "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
-        endif()
-    endif()
-
+    message(STATUS "GStreamer libraries not found. Could not compile VideoTests")
 endif()
