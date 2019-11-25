@@ -327,8 +327,21 @@ struct hash<eprosima::fastrtps::rtps::EntityId_t>
     std::size_t operator()(
             const eprosima::fastrtps::rtps::EntityId_t& k) const
     {
-        const uint32_t* aux = reinterpret_cast<const uint32_t*>(k.value);
-        return static_cast<std::size_t>(*aux);
+        // recover the participant entity counter
+        eprosima::fastrtps::rtps::octet value[4];
+
+#if __BIG_ENDIAN__
+        value[3] = k.value[2];
+        value[2] = k.value[1];
+        value[1] = k.value[0];
+        value[0] = 0;
+#else
+        value[3] = 0;
+        value[2] = k.value[0];
+        value[1] = k.value[1];
+        value[0] = k.value[2];
+#endif
+        return static_cast<std::size_t>(*reinterpret_cast<const uint32_t*>(&value));
     }
 };
 
