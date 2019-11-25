@@ -87,21 +87,12 @@ void ResourceEvent::unregister_timer(
         should_notify = true;
     }
 
-    std::vector<TimedEventImpl*>::iterator end_it = active_timers_.end();
-
-    // Find with binary search
-    it = std::lower_bound(active_timers_.begin(), end_it, event, event_compare);
-
-    // Find the event on the list
-    for(; it != end_it; ++it)
+    // Remove from active
+    it = std::find(active_timers_.begin(), active_timers_.end(), event);
+    if (it != active_timers_.end())
     {
-        if (*it == event)
-        {
-            // Remove from list
-            active_timers_.erase(it);
-            should_notify = true;
-            break;
-        }
+        active_timers_.erase(it);
+        should_notify = true;
     }
 
     // Decrement counter of created timers
