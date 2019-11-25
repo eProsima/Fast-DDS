@@ -28,6 +28,8 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 
+#include <fastdds/dds/topic/qos/DataWriterQos.hpp>
+
 #include <mutex>
 #include <map>
 
@@ -53,7 +55,6 @@ class DomainParticipantImpl;
 class DomainParticipant;
 class Publisher;
 class DataWriterImpl;
-class WriterQos;
 
 /**
  * Class PublisherImpl, contains the actual implementation of the behaviour of the Publisher.
@@ -92,7 +93,7 @@ public:
 
     DataWriter* create_datawriter(
             const fastrtps::TopicAttributes& topic_attr,
-            const WriterQos& writer_qos,
+            const DataWriterQos& writer_qos,
             DataWriterListener* listener);
 
     ReturnCode_t delete_datawriter(
@@ -135,13 +136,13 @@ public:
      */
 
     ReturnCode_t set_default_datawriter_qos(
-            const WriterQos& qos);
+            const DataWriterQos& qos);
 
-    const WriterQos& get_default_datawriter_qos() const;
+    const DataWriterQos& get_default_datawriter_qos() const;
 
     /* TODO
        bool copy_from_topic_qos(
-            WriterQos& writer_qos,
+            DataWriterQos& writer_qos,
             const fastrtps::TopicAttributes& topic_qos) const;
      */
 
@@ -213,7 +214,7 @@ public:
 
     fastrtps::rtps::RTPSParticipant* rtps_participant_;
 
-    WriterQos default_datawriter_qos_;
+    DataWriterQos default_datawriter_qos_;
 
     fastrtps::rtps::InstanceHandle_t handle_;
 

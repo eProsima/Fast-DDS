@@ -103,18 +103,18 @@ const rtps::WriterAttributes& DataWriter::get_attributes() const
 }
 
 ReturnCode_t DataWriter::set_qos(
-        const WriterQos& qos)
+        const DataWriterQos& qos)
 {
     return impl_->set_qos(qos);
 }
 
-const WriterQos& DataWriter::get_qos() const
+const DataWriterQos& DataWriter::get_qos() const
 {
     return impl_->get_qos();
 }
 
 ReturnCode_t DataWriter::get_qos(
-        WriterQos& qos) const
+        DataWriterQos& qos) const
 {
     qos = impl_->get_qos();
     return ReturnCode_t::RETCODE_OK;
