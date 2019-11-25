@@ -123,13 +123,24 @@ if(GST_FOUND)
     endif()
 
     ###########################################################################
-    # List Video tests                                                      #
+    # List Video tests                                                        #
     ###########################################################################
     set(
         VIDEO_TEST_LIST
         interprocess_best_effort
         interprocess_reliable
     )
+
+    ###########################################################################
+    # Configure XML files                                                     #
+    ###########################################################################
+    foreach(throughput_test_name ${THROUGHPUT_TEST_LIST})
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/xml/${throughput_test_name}.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/xml/${throughput_test_name}.xml
+        COPYONLY
+    )
+    endforeach(throughput_test_name)
 
     ###########################################################################
     # Create tests                                                            #
@@ -144,6 +155,7 @@ if(GST_FOUND)
                     NAME performance.video.${video_test_name}
                     COMMAND ${PYTHON_EXECUTABLE}
                     ${CMAKE_CURRENT_SOURCE_DIR}/video_tests.py
+                    --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${video_test_name}.xml
                 )
 
                 # Set test properties
@@ -169,6 +181,7 @@ if(GST_FOUND)
                         NAME performance.video.${video_test_name}_security
                         COMMAND ${PYTHON_EXECUTABLE}
                         ${CMAKE_CURRENT_SOURCE_DIR}/video_tests.py
+                        --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${video_test_name}.xml
                     )
 
                     # Set test properties
@@ -176,6 +189,16 @@ if(GST_FOUND)
                         TEST performance.video.${video_test_name}_security
                         APPEND PROPERTY ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
                     )
+                    set_property(
+                        TEST performance.video.${video_test_name}_security
+                        APPEND PROPERTY ENVIRONMENT "VIDEO_TEST_BIN=$<TARGET_FILE:VideoTest>"
+                    )
+                    if(WIN32)
+                        set_property(
+                            TEST performance.video.${video_test_name}_security
+                            PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$ENV{PATH}"
+                        )
+                    endif()
                 endif()
             endforeach(video_test_name)
         endif()
