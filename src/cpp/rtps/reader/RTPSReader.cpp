@@ -23,6 +23,7 @@
 #include <rtps/reader/ReaderHistoryState.hpp>
 
 #include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastrtps_deprecated/participant/ParticipantImpl.h>
 

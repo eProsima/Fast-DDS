@@ -118,7 +118,7 @@ public:
     * Get associated GUID
     * @return Associated GUID
     */
-    const fastrtps::rtps::GUID_t& guid();
+    const fastrtps::rtps::GUID_t& guid() const;
 
     fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
 
@@ -178,6 +178,8 @@ public:
     bool get_sample_rejected_status(
             fastrtps::SampleRejectedStatus& status) const;
     */
+
+    ReturnCode_t get_subscription_matched_status(SubscriptionMatchedStatus &status) const;
 
     const Subscriber* get_subscriber() const;
 

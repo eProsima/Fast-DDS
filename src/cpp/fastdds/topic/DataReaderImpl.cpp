@@ -219,7 +219,7 @@ ReturnCode_t DataReaderImpl::take_next_sample(
     return ReturnCode_t::RETCODE_ERROR;
 }
 
-const GUID_t& DataReaderImpl::guid()
+const GUID_t& DataReaderImpl::guid() const
 {
     return reader_->getGuid();
 }
@@ -660,6 +660,13 @@ ReturnCode_t DataReaderImpl::get_liveliness_changed_status(
     return false;
    }
  */
+
+types::ReturnCode_t DataReaderImpl::get_subscription_matched_status(
+        SubscriptionMatchedStatus& status) const
+{
+    status = reader_->subscription_matched_status_;
+    return ReturnCode_t::RETCODE_OK;
+}
 
 const Subscriber* DataReaderImpl::get_subscriber() const
 {
