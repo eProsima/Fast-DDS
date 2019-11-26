@@ -90,12 +90,12 @@ TEST_P(PubSubFragments, PubSubAsReliableData300kb)
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
-    reader.history_depth(5).
+    reader.history_depth(10).
     reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.history_depth(5).
+    writer.history_depth(10).
     reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -113,7 +113,6 @@ TEST_P(PubSubFragments, PubSubAsReliableData300kb)
     writer.send(data);
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
-    //reader.block_for_at_least(2);
     reader.block_for_all();
 }
 
