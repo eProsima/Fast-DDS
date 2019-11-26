@@ -122,8 +122,9 @@ ReturnCode_t SubscriberImpl::set_listener(
 }
 
 DataReader* SubscriberImpl::create_datareader(
+        const Topic& topic,
         const fastrtps::TopicAttributes& topic_att,
-        const fastrtps::ReaderQos& reader_qos,
+        const DataReaderQos& reader_qos,
         DataReaderListener* listener)
 {
     logInfo(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic_att.getTopicName())
@@ -149,10 +150,10 @@ DataReader* SubscriberImpl::create_datareader(
     }
 
     ReaderAttributes ratt;
-    ratt.endpoint.durabilityKind = reader_qos.m_durability.durabilityKind();
+    ratt.endpoint.durabilityKind = reader_qos.durability.durabilityKind();
     ratt.endpoint.endpointKind = READER;
     ratt.endpoint.multicastLocatorList = att_.multicastLocatorList;
-    ratt.endpoint.reliabilityKind = reader_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
+    ratt.endpoint.reliabilityKind = reader_qos.reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
     ratt.endpoint.topicKind = topic_att.topicKind;
     ratt.endpoint.unicastLocatorList = att_.unicastLocatorList;
     ratt.endpoint.remoteLocatorList = att_.remoteLocatorList;
@@ -177,18 +178,18 @@ DataReader* SubscriberImpl::create_datareader(
     property.name("topic_name");
     property.value(topic_att.getTopicName().c_str());
     ratt.endpoint.properties.properties().push_back(std::move(property));
-    if (reader_qos.m_partition.names().size() > 0)
+    if (qos_.partition.names().size() > 0)
     {
         property.name("partitions");
         std::string partitions;
-        for (auto partition : reader_qos.m_partition.names())
+        for (auto partition : qos_.partition.names())
         {
             partitions += partition + ";";
         }
         property.value(std::move(partitions));
         ratt.endpoint.properties.properties().push_back(std::move(property));
     }
-    if (reader_qos.m_disablePositiveACKs.enabled)
+    if (reader_qos.disable_positive_ACKs.enabled)
     {
         ratt.disable_positive_acks = true;
     }
@@ -196,6 +197,7 @@ DataReader* SubscriberImpl::create_datareader(
     DataReaderImpl* impl = new DataReaderImpl(
         this,
         type_support,
+        topic,
         topic_att,
         ratt,
         reader_qos,
@@ -212,7 +214,8 @@ DataReader* SubscriberImpl::create_datareader(
     DataReader* reader = new DataReader(impl);
     impl->user_datareader_ = reader;
 
-    rtps_participant_->registerReader(impl->reader_, topic_att, reader_qos);
+    ReaderQos rqos = reader_qos.changeToReaderQos();
+    rtps_participant_->registerReader(impl->reader_, topic_att, rqos);
 
     {
         std::lock_guard<std::mutex> lock(mtx_readers_);
@@ -316,11 +319,11 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
  */
 
 ReturnCode_t SubscriberImpl::set_default_datareader_qos(
-        const fastrtps::ReaderQos& qos)
+        const DataReaderQos& qos)
 {
-    if (&qos == &DATAREADER_QOS_DEFAULT)
+    if (&qos == &DDS_DATAREADER_QOS_DEFAULT)
     {
-        default_datareader_qos_.setQos(DATAREADER_QOS_DEFAULT, true);
+        default_datareader_qos_.setQos(DDS_DATAREADER_QOS_DEFAULT, true);
         return ReturnCode_t::RETCODE_OK;
     }
     else if (qos.checkQos())
@@ -331,7 +334,7 @@ ReturnCode_t SubscriberImpl::set_default_datareader_qos(
     return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
 }
 
-const fastrtps::ReaderQos& SubscriberImpl::get_default_datareader_qos() const
+const DataReaderQos& SubscriberImpl::get_default_datareader_qos() const
 {
     return default_datareader_qos_;
 }
@@ -356,7 +359,7 @@ bool SubscriberImpl::contains_entity(
 
 /* TODO
    bool SubscriberImpl::copy_from_topic_qos(
-        fastrtps::ReaderQos&,
+        DataReaderQos&,
         const fastrtps::TopicAttributes&) const
    {
     logError(PUBLISHER, "Operation not implemented");
@@ -517,7 +520,7 @@ bool SubscriberImpl::type_in_use(
     {
         for (DataReaderImpl* reader : it.second)
         {
-            if (reader->get_topic().getTopicDataType() == type_name)
+            if (reader->get_topic_attributes().getTopicDataType() == type_name)
             {
                 return true; // Is in use
             }

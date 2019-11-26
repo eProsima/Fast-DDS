@@ -20,6 +20,7 @@
 #define _FASTDDS_READERDATALIFECYCLEQOSPOLICY_HPP_
 
 #include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 using eprosima::fastrtps::Duration_t;
 
@@ -28,7 +29,7 @@ namespace fastdds {
 namespace dds {
 
 //! @brief A struct storing the base status
-class ReaderDataLifecycleQosPolicy
+class ReaderDataLifecycleQosPolicy : public QosPolicy
 {
 public:
     ReaderDataLifecycleQosPolicy()
@@ -50,6 +51,13 @@ public:
     {
         return (this->autopurge_no_writer_samples_delay == b.autopurge_no_writer_samples_delay) &&
                (this->autopurge_disposed_samples_delay == b.autopurge_disposed_samples_delay);
+    }
+
+    bool operator !=(
+            const ReaderDataLifecycleQosPolicy& b) const
+    {
+        return (this->autopurge_disposed_samples_delay != b.autopurge_disposed_samples_delay) ||
+                (this->autopurge_no_writer_samples_delay != b.autopurge_no_writer_samples_delay);
     }
 public:
     Duration_t autopurge_no_writer_samples_delay;
