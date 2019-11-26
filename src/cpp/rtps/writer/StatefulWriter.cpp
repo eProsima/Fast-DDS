@@ -564,6 +564,7 @@ void StatefulWriter::send_any_unsent_changes()
         RTPSWriterCollector<ReaderProxy*> relevantChanges;
         StatefulWriterOrganizer notRelevantChanges;
         bool at_least_one_remote = false;
+        bool force_piggyback_hb = false; // Force piggyback HB if old samples not acknowledged.
 
         NetworkFactory& network = mp_RTPSParticipant->network_factory();
         locator_selector_.reset(true);
@@ -621,7 +622,15 @@ void StatefulWriter::send_any_unsent_changes()
                             }
                             else
                             {
-                                notRelevantChanges.add_sequence_number(seq_num, remoteReader);
+                                if (seq_num >= get_seq_num_min())
+                                {
+                                    notRelevantChanges.add_sequence_number(seq_num, remoteReader);
+                                }
+                                else
+                                {
+                                    force_piggyback_hb = true;
+                                }
+
                                 remoteReader->set_change_to_status(seq_num, UNDERWAY, true);
                             }
                         }
@@ -746,7 +755,7 @@ void StatefulWriter::send_any_unsent_changes()
                         }
 
                         // Heartbeat piggyback.
-                        send_heartbeat_piggyback_nts_(nullptr, group, lastBytesProcessed);
+                        send_heartbeat_piggyback_nts_(nullptr, group, lastBytesProcessed, force_piggyback_hb);
                     }
 
                     for (std::pair<std::vector<ReaderProxy*>,
@@ -1439,12 +1448,13 @@ void StatefulWriter::send_heartbeat_nts_(
 void StatefulWriter::send_heartbeat_piggyback_nts_(
         ReaderProxy* reader,
         RTPSMessageGroup& message_group,
-        uint32_t& last_bytes_processed)
+        uint32_t& last_bytes_processed,
+        bool force)
 {
     if (!disable_heartbeat_piggyback_)
     {
         size_t number_of_readers = reader == nullptr ? all_remote_readers_.size() : 1u;
-        if (mp_history->isFull())
+        if (force || mp_history->isFull())
         {
             if (reader == nullptr)
             {
