@@ -23,6 +23,7 @@
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/utils/TimedConditionVariable.hpp>
@@ -248,6 +249,8 @@ public:
         m_acceptMessagesFromUnkownWriters = false;
         m_trustedWriterEntityId = writer;
     }
+
+    fastdds::dds::SubscriptionMatchedStatus subscription_matched_status_;
 
 protected:
 

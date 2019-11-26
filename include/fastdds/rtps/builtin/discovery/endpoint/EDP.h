@@ -84,11 +84,17 @@ public:
      * @param pdata Pointer to the ParticipantProxyData to remove
      */
     virtual void removeRemoteEndpoints(
-            ParticipantProxyData* pdata){(void) pdata;};
+            ParticipantProxyData* pdata)
+    {
+        (void) pdata;
+    }
 
     //! Verify if the given participant EDP enpoints are matched with us
     virtual bool areRemoteEndpointsMatched(
-            const ParticipantProxyData* ) { return false; };
+            const ParticipantProxyData* )
+    {
+        return false;
+    }
 
     /**
      * Abstract method that removes a local Reader from the discovery method
@@ -251,14 +257,20 @@ public:
 
     virtual bool pairing_remote_writer_with_local_builtin_reader_after_security(
             const GUID_t& /*local_reader*/,
-            const WriterProxyData& /*remote_writer_data*/) { return false; }
+            const WriterProxyData& /*remote_writer_data*/)
+    {
+        return false;
+    }
 
     virtual bool pairing_remote_reader_with_local_builtin_writer_after_security(
             const GUID_t& /*local_writer*/,
-            const ReaderProxyData& /*remote_reader_data*/) { return false; }
+            const ReaderProxyData& /*remote_reader_data*/)
+    {
+        return false;
+    }
 #endif
     const fastdds::dds::SubscriptionMatchedStatus& update_subscription_matched_status(
-            const GUID_t& reader_guid,
+            RTPSReader& reader,
             const GUID_t& writer_guid,
             int change);
 
@@ -319,8 +331,9 @@ private:
 
     ReaderProxyData temp_reader_proxy_data_;
     WriterProxyData temp_writer_proxy_data_;
-    std::map<GUID_t, fastdds::dds::SubscriptionMatchedStatus> reader_status_;
+
     std::map<GUID_t, fastdds::dds::PublicationMatchedStatus> writer_status_;
+
 };
 
 } /* namespace rtps */
