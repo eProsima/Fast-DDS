@@ -497,7 +497,7 @@ bool EDP::unpairWriterProxy(
                 (*rit)->getListener()->onReaderMatched((*rit), info);
 
                 const SubscriptionMatchedStatus& sub_info =
-                        update_subscription_matched_status(reader_guid, writer_guid, -1);
+                        update_subscription_matched_status(*(*rit), writer_guid, -1);
                 (*rit)->getListener()->onReaderMatched((*rit), sub_info);
             }
         }
@@ -920,7 +920,7 @@ bool EDP::pairingReader(
                         R->getListener()->onReaderMatched(R, info);
 
                         const SubscriptionMatchedStatus& sub_info =
-                                update_subscription_matched_status(reader_guid, writer_guid, 1);
+                                update_subscription_matched_status(*R, writer_guid, 1);
                         R->getListener()->onReaderMatched(R, sub_info);
                     }
                 }
@@ -946,7 +946,7 @@ bool EDP::pairingReader(
                         R->getListener()->onReaderMatched(R, info);
 
                         const SubscriptionMatchedStatus& sub_info =
-                                update_subscription_matched_status(reader_guid, writer_guid, -1);
+                                update_subscription_matched_status(*R, writer_guid, -1);
                         R->getListener()->onReaderMatched(R, sub_info);
                     }
                 }
@@ -1261,7 +1261,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
 
 
                         const SubscriptionMatchedStatus& sub_info =
-                                update_subscription_matched_status(readerGUID, writer_guid, 1);
+                                update_subscription_matched_status(*(*rit), writer_guid, 1);
                         (*rit)->getListener()->onReaderMatched((*rit), sub_info);
                     }
                 }
@@ -1284,7 +1284,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                         (*rit)->getListener()->onReaderMatched((*rit), info);
 
                         const SubscriptionMatchedStatus& sub_info =
-                                update_subscription_matched_status(readerGUID, writer_guid, -1);
+                                update_subscription_matched_status(*(*rit), writer_guid, -1);
                         (*rit)->getListener()->onReaderMatched((*rit), sub_info);
                     }
                 }
@@ -1342,7 +1342,7 @@ bool EDP::pairing_writer_proxy_with_local_reader(
                             (*rit)->getListener()->onReaderMatched((*rit), info);
 
                             const SubscriptionMatchedStatus& sub_info =
-                                    update_subscription_matched_status(readerGUID, writer_guid, -1);
+                                    update_subscription_matched_status(*(*rit), writer_guid, -1);
                             (*rit)->getListener()->onReaderMatched((*rit), sub_info);
                         }
                     }
@@ -1382,7 +1382,7 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
                     (*rit)->getListener()->onReaderMatched((*rit), info);
 
                     const SubscriptionMatchedStatus& sub_info =
-                            update_subscription_matched_status(readerGUID, writer_guid, 1);
+                            update_subscription_matched_status(*(*rit), writer_guid, 1);
                     (*rit)->getListener()->onReaderMatched((*rit), sub_info);
 
                 }
@@ -1535,29 +1535,17 @@ bool EDP::hasTypeObject(
 }
 
 const SubscriptionMatchedStatus& EDP::update_subscription_matched_status(
-        const GUID_t& reader_guid,
+        RTPSReader& reader,
         const GUID_t& writer_guid,
         int change)
 {
-    SubscriptionMatchedStatus* status;
-    auto it = reader_status_.find(reader_guid);
-    if (it == reader_status_.end())
-    {
-        auto pair = reader_status_.emplace(reader_guid, SubscriptionMatchedStatus{});
-        status = &pair.first->second;
-    }
-    else
-    {
-        status = &it->second;
-    }
+    reader.subscription_matched_status_.current_count = change;
+    reader.subscription_matched_status_.current_count_change = change;
+    reader.subscription_matched_status_.total_count += change;
+    reader.subscription_matched_status_.total_count_change += change;
+    reader.subscription_matched_status_.last_publication_handle = writer_guid;
 
-    status->current_count = change;
-    status->current_count_change = change;
-    status->total_count += change;
-    status->total_count_change += change;
-    status->last_publication_handle = writer_guid;
-
-    return *status;
+    return reader.subscription_matched_status_;
 }
 
 const fastdds::dds::PublicationMatchedStatus& EDP::update_publication_matched_status(

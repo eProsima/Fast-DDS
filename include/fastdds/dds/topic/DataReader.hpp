@@ -204,6 +204,8 @@ public:
             fastrtps::SampleRejectedStatus& status) const;
      */
 
+    ReturnCode_t get_subscription_matched_status(SubscriptionMatchedStatus &status);
+
     const Subscriber* get_subscriber() const;
 
     /* TODO

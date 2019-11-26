@@ -207,6 +207,12 @@ bool DataReader::get_sample_rejected_status(
 }
 */
 
+ReturnCode_t DataReader::get_subscription_matched_status(
+        SubscriptionMatchedStatus& status)
+{
+    return impl_->get_subscription_matched_status(status);
+}
+
 const Subscriber* DataReader::get_subscriber() const
 {
     return impl_->get_subscriber();

@@ -23,6 +23,7 @@
 #include <rtps/reader/ReaderHistoryState.hpp>
 
 #include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastrtps/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastrtps_deprecated/participant/ParticipantImpl.h>
 
@@ -182,7 +183,6 @@ void RTPSReader::set_last_notified(
 {
     history_state_->history_record[peristence_guid] = seq;
 }
-
 
 bool RTPSReader::wait_for_unread_cache(
         const eprosima::fastrtps::Duration_t &timeout)
