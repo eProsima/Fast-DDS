@@ -560,10 +560,10 @@ void StatefulWriter::send_any_unsent_changes()
                         logError(RTPS_WRITER, "Error sending change " << changeToSend.sequenceNumber);
                     }
                     }
-
-                    // Heartbeat piggyback.
-                    send_heartbeat_piggyback_nts_(nullptr, group, lastBytesProcessed);
                 }
+
+                // Heartbeat piggyback.
+                send_heartbeat_piggyback_nts_(nullptr, group, lastBytesProcessed);
 
                 for (std::pair<std::vector<ReaderProxy*>, std::set<SequenceNumber_t>> pair : notRelevantChanges.elements())
                 {
