@@ -24,7 +24,7 @@
 #include <fastdds/rtps/common/CacheChange.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class WriterProxy;
@@ -38,14 +38,18 @@ class ReaderHistory : public History
 {
     friend class RTPSReader;
 
-    ReaderHistory(ReaderHistory&&) = delete;
-    ReaderHistory& operator=(ReaderHistory&&) = delete;
+    ReaderHistory(
+            ReaderHistory&&) = delete;
+    ReaderHistory& operator =(
+            ReaderHistory&&) = delete;
 
 public:
+
     /**
      * Constructor of the ReaderHistory. It needs a HistoryAttributes.
      */
-    RTPS_DllAPI ReaderHistory(const HistoryAttributes& att);
+    RTPS_DllAPI ReaderHistory(
+            const HistoryAttributes& att);
     RTPS_DllAPI virtual ~ReaderHistory() override;
 
     /**
@@ -55,28 +59,31 @@ public:
      * @param change Pointer to the change
      * @return True if added.
      */
-    RTPS_DllAPI virtual bool received_change(CacheChange_t* change, size_t);
+    RTPS_DllAPI virtual bool received_change(CacheChange_t * change, size_t);
 
     /**
      * Add a CacheChange_t to the ReaderHistory.
      * @param a_change Pointer to the CacheChange to add.
      * @return True if added.
      */
-    RTPS_DllAPI bool add_change(CacheChange_t* a_change);
+    RTPS_DllAPI bool add_change(
+            CacheChange_t* a_change);
 
     /**
      * Remove a CacheChange_t from the ReaderHistory.
      * @param a_change Pointer to the CacheChange to remove.
      * @return True if removed.
      */
-    RTPS_DllAPI bool remove_change(CacheChange_t* a_change) override;
+    RTPS_DllAPI bool remove_change(
+            CacheChange_t* a_change) override;
 
     /**
      * Remove all changes from the History that have a certain guid.
      * @param a_guid Pointer to the target guid to search for.
      * @return True if succesful, even if no changes have been removed.
      * */
-    RTPS_DllAPI bool remove_changes_with_guid(const GUID_t& a_guid);
+    RTPS_DllAPI bool remove_changes_with_guid(
+            const GUID_t& a_guid);
 
     /**
      * Remove all fragmented changes from certain writer up to certain sequence number.
@@ -97,9 +104,12 @@ public:
      */
     RTPS_DllAPI void updateMaxMinSeqNum() override;
 
-    RTPS_DllAPI bool get_min_change_from(CacheChange_t** min_change, const GUID_t& writerGuid);
+    RTPS_DllAPI bool get_min_change_from(
+            CacheChange_t** min_change,
+            const GUID_t& writerGuid);
 
 protected:
+
     //!Pointer to the reader
     RTPSReader* mp_reader;
 };
