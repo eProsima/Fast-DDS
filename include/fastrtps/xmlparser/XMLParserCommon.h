@@ -373,7 +373,7 @@ extern const char* TLS_VERIFY_PEER;
 extern const char* TLS_VERIFY_FAIL_IF_NO_PEER_CERT;
 extern const char* TLS_VERIFY_CLIENT_ONCE;
 
-// Requester
+// Requester and Replier
 extern const char* SERVICE_NAME;
 extern const char* REQUEST_TYPE;
 extern const char* REPLY_TYPE;

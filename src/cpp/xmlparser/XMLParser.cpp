@@ -2905,6 +2905,113 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Reque
     return XMLP_ret::XML_OK;
 }
 
+XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<ReplierAttributes>& replier_node)
+{
+    /*
+        <xs:complexType name="replierAttributesType">
+            <xs:all>
+                <xs:element name="request_topic_name" type="stringType" minOccurs="0"/>
+                <xs:element name="reply_topic_name" type="stringType" minOccurs="0"/>
+                <xs:element name="publisher" type="publisherProfileType"/>
+                <xs:element name="subscriber" type="subscriberProfileType"/>
+            </xs:all>
+            <xs:attribute name="profile_name" type="stringType" use="required"/>
+            <xs:attribute name="service_name" type="stringType" use="required"/>
+            <xs:attribute name="request_type" type="stringType" use="required"/>
+            <xs:attribute name="reply_type" type="stringType" use="required"/>
+        </xs:complexType>
+    */
+
+    if (nullptr == p_profile)
+    {
+        logError(XMLPARSER, "Bad parameters!");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    addAllAttributes(p_profile, replier_node);
+    auto found_attributes = replier_node.getAttributes();
+
+    auto it_attributes = found_attributes.find(SERVICE_NAME);
+    if (found_attributes.end() != it_attributes)
+    {
+        replier_node.get()->service_name = it_attributes->second;
+        replier_node.get()->request_topic_name = it_attributes->second + "_Request";
+        replier_node.get()->reply_topic_name = it_attributes->second + "_Reply";
+    }
+    else
+    {
+        logError(XMLPARSER, "Not found required attribute " << SERVICE_NAME);
+        return XMLP_ret::XML_ERROR;
+    }
+
+    it_attributes = found_attributes.find(REQUEST_TYPE);
+    if (found_attributes.end() != it_attributes)
+    {
+        replier_node.get()->request_type = it_attributes->second;
+    }
+    else
+    {
+        logError(XMLPARSER, "Not found required attribute " << REQUEST_TYPE);
+        return XMLP_ret::XML_ERROR;
+    }
+
+    it_attributes = found_attributes.find(REPLY_TYPE);
+    if (found_attributes.end() != it_attributes)
+    {
+        replier_node.get()->reply_type = it_attributes->second;
+    }
+    else
+    {
+        logError(XMLPARSER, "Not found required attribute " << REPLY_TYPE);
+        return XMLP_ret::XML_ERROR;
+    }
+
+    uint8_t ident = 1;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
+    const char* name = nullptr;
+
+    for (p_aux0 = p_profile->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, REQUEST_TOPIC_NAME) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &replier_node.get()->request_topic_name, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, REPLY_TOPIC_NAME) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &replier_node.get()->reply_topic_name, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, PUBLISHER) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLPublisherAttributes(p_aux0, replier_node.get()->publisher, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, SUBSCRIBER) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLSubscriberAttributes(p_aux0, replier_node.get()->subscriber, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+    }
+
+    replier_node.get()->subscriber.topic.topicDataType = replier_node.get()->request_type;
+    replier_node.get()->subscriber.topic.topicName = replier_node.get()->request_topic_name;
+
+    replier_node.get()->publisher.topic.topicDataType = replier_node.get()->reply_type;
+    replier_node.get()->publisher.topic.topicName = replier_node.get()->reply_topic_name;
+
+    return XMLP_ret::XML_OK;
+}
+
 } // namespace xmlparser
 } // namespace fastrtps
 } // namespace eprosima
