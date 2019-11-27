@@ -252,22 +252,15 @@ void ReaderProxy::acked_changes_set(
     if (seq_num > changes_low_mark_)
     {
         ChangeIterator chit = find_change(seq_num, false);
-        changes_for_reader_.erase(changes_for_reader_.begin(), chit);
-
-        // The low mark is advanced while the corresponding change is acknowledged
-        bool check_acknowledged_changes = true;
-        while (check_acknowledged_changes)
+        // continue advancing until next change is not acknowledged
+        while (chit != changes_for_reader_.end()
+                && chit->getSequenceNumber() == future_low_mark
+                && chit->getStatus() == ACKNOWLEDGED)
         {
-            check_acknowledged_changes = false;
-            ChangeIterator it = find_change(future_low_mark, true);
-            if (it != changes_for_reader_.end() && it->getStatus() == ACKNOWLEDGED)
-            {
-                assert(it == changes_for_reader_.begin());
-                changes_for_reader_.erase(it);
-                ++future_low_mark;
-                check_acknowledged_changes = true;
-            }
+            ++chit;
+            ++future_low_mark;
         }
+        changes_for_reader_.erase(changes_for_reader_.begin(), chit);
     }
     else
     {
