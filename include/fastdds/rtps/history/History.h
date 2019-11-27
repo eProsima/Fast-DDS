@@ -53,6 +53,10 @@ protected:
 
 public:
 
+    using iterator = std::vector<CacheChange_t*>::iterator;
+    using reverse_iterator = std::vector<CacheChange_t*>::reverse_iterator;
+    using const_iterator = std::vector<CacheChange_t*>::const_iterator;
+
     //!Attributes of the History
     HistoryAttributes m_att;
     /**
@@ -130,12 +134,12 @@ public:
      * Get the beginning of the changes history iterator.
      * @return Iterator to the beginning of the vector.
      */
-    RTPS_DllAPI std::vector<CacheChange_t*>::iterator changesBegin()
+    RTPS_DllAPI iterator changesBegin()
     {
         return m_changes.begin();
     }
 
-    RTPS_DllAPI std::vector<CacheChange_t*>::reverse_iterator changesRbegin()
+    RTPS_DllAPI reverse_iterator changesRbegin()
     {
         return m_changes.rbegin();
     }
@@ -144,12 +148,12 @@ public:
      * Get the end of the changes history iterator.
      * @return Iterator to the end of the vector.
      */
-    RTPS_DllAPI std::vector<CacheChange_t*>::iterator changesEnd()
+    RTPS_DllAPI iterator changesEnd()
     {
         return m_changes.end();
     }
 
-    RTPS_DllAPI std::vector<CacheChange_t*>::reverse_iterator changesRend()
+    RTPS_DllAPI reverse_iterator changesRend()
     {
         return m_changes.rend();
     }
@@ -192,6 +196,12 @@ public:
             const SequenceNumber_t& seq,
             const GUID_t& guid,
             CacheChange_t** change) const;
+
+    RTPS_DllAPI const_iterator get_change_nts(
+            const SequenceNumber_t& seq,
+            const GUID_t& guid,
+            CacheChange_t** change,
+            const_iterator hint) const;
 
     /**
      * @brief A method to get the change with the earliest timestamp

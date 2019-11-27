@@ -116,24 +116,36 @@ bool History::get_change(
     }
 
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+    get_change_nts(seq, guid, change, m_changes.cbegin());
+    return *change != nullptr;
+}
 
-    for (CacheChange_t* it : m_changes)
+History::const_iterator History::get_change_nts(
+        const SequenceNumber_t& seq,
+        const GUID_t& guid,
+        CacheChange_t** change,
+        History::const_iterator hint) const
+{
+    const_iterator returned_value = hint;
+    *change = nullptr;
+
+    for (; returned_value != m_changes.end(); ++returned_value)
     {
-        if (it->writerGUID == guid)
+        if ((*returned_value)->writerGUID == guid)
         {
-            if (it->sequenceNumber == seq)
+            if ((*returned_value)->sequenceNumber == seq)
             {
-                *change = it;
-                return true;
+                *change = *returned_value;
+                break;
             }
-            else if (it->sequenceNumber > seq)
+            else if ((*returned_value)->sequenceNumber > seq)
             {
                 break;
             }
         }
     }
 
-    return false;
+    return returned_value;
 }
 
 bool History::get_earliest_change(
