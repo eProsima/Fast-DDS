@@ -28,8 +28,6 @@
 #include <string>
 #include <map>
 
-
-
 namespace eprosima{
 namespace fastrtps{
 namespace xmlparser{
@@ -42,9 +40,12 @@ typedef std::map<std::string, up_subscriber_t>  subscriber_map_t;
 typedef subscriber_map_t::iterator              subs_map_iterator_t;
 typedef std::map<std::string, up_topic_t>       topic_map_t;
 typedef topic_map_t::iterator                   topic_map_iterator_t;
+typedef std::map<std::string, up_requester_t>   requester_map_t;
+typedef requester_map_t::iterator               requester_map_iterator_t;
+typedef std::map<std::string, up_replier_t>     replier_map_t;
+typedef replier_map_t::iterator                 replier_map_iterator_t;
 typedef std::map<std::string, XMLP_ret>         xmlfiles_map_t;
 typedef xmlfiles_map_t::iterator                xmlfile_map_iterator_t;
-
 
 /**
  * Class XMLProfileManager, used to make available profiles from XML file.
@@ -156,6 +157,27 @@ class XMLProfileManager
         RTPS_DllAPI static p_dynamictypebuilder_t getDynamicTypeByName(const std::string& sName);
 
         /**
+         * Search for the profile specified and fill the structure.
+         * @param profile_name Name for the profile to be used to fill the structure.
+         * @param atts Structure to be filled.
+         * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+         */
+        RTPS_DllAPI static XMLP_ret fillRequesterAttributes(
+                const std::string& profile_name,
+                RequesterAttributes& atts);
+
+        /**
+         * Search for the profile specified and fill the structure.
+         * @param profile_name Name for the profile to be used to fill the structure.
+         * @param atts Structure to be filled.
+         * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+         */
+        RTPS_DllAPI static XMLP_ret fillReplierAttributes(
+                const std::string& profile_name,
+                ReplierAttributes& atts);
+
+
+        /**
          * Deletes the XMLProsileManager instance.
          * FastRTPS's Domain calls this method automatically on its destructor, but
          * if using XMLProfileManager outside of FastRTPS, it should be called manually.
@@ -223,6 +245,13 @@ class XMLProfileManager
             up_base_node_t& profile,
             const std::string& filename);
 
+        RTPS_DllAPI static XMLP_ret extractRequesterProfile(
+                up_base_node_t& profile,
+                const std::string& filename);
+        
+        RTPS_DllAPI static XMLP_ret extractReplierProfile(
+                up_base_node_t& profile,
+                const std::string& filename);
 
         static BaseNode* root;
 
@@ -233,6 +262,10 @@ class XMLProfileManager
         static subscriber_map_t  m_subscriber_profiles;
 
         static topic_map_t       m_topic_profiles;
+
+        static requester_map_t requester_profiles_;
+
+        static replier_map_t replier_profiles_;
 
         static xmlfiles_map_t    m_xml_files;
 

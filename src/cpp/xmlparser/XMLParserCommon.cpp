@@ -32,6 +32,8 @@ const char* SUBSCRIBER = "subscriber";
 const char* RTPS = "rtps";
 const char* TYPES = "types";
 const char* LOG = "log";
+const char* REQUESTER = "requester";
+const char* REPLIER = "replier";
 
 const char* TRANSPORT_DESCRIPTOR = "transport_descriptor";
 const char* TRANSPORT_ID = "transport_id";

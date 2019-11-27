@@ -47,6 +47,8 @@ extern const char* SUBSCRIBER;
 extern const char* RTPS;
 extern const char* TYPES;
 extern const char* LOG;
+extern const char* REQUESTER;
+extern const char* REPLIER;
 
 extern const char* TRANSPORT_DESCRIPTOR;
 extern const char* TRANSPORT_ID;
