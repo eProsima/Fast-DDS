@@ -521,6 +521,11 @@ void ThroughputSubscriber::process_message()
     }
 }
 
+bool ThroughputSubscriber::ready()
+{
+    return ready_;
+}
+
 void ThroughputSubscriber::run()
 {
     if (!ready_)

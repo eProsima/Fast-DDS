@@ -341,6 +341,11 @@ ThroughputPublisher::~ThroughputPublisher()
     Domain::removeParticipant(participant_);
 }
 
+bool ThroughputPublisher::ready()
+{
+    return ready_;
+}
+
 void ThroughputPublisher::run(
         uint32_t test_time,
         uint32_t recovery_time_ms,

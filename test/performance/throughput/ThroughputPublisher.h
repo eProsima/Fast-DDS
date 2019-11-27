@@ -64,6 +64,8 @@ public:
 
     virtual ~ThroughputPublisher();
 
+    bool ready();
+
     void run(
             uint32_t test_time,
             uint32_t recovery_time_ms,
