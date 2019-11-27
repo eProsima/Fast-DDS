@@ -96,10 +96,6 @@ public:
             const GUID_t& writer_guid);
 
     /**
-     * Sort the CacheChange_t from the History by timestamp
-     */
-    RTPS_DllAPI void sortCacheChanges();
-    /**
      * Update the maximum and minimum sequenceNumber cacheChanges.
      */
     RTPS_DllAPI void updateMaxMinSeqNum() override;
