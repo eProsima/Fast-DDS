@@ -20,6 +20,7 @@
 #include "../attributes/ParticipantAttributes.h"
 #include "../attributes/PublisherAttributes.h"
 #include "../attributes/SubscriberAttributes.h"
+#include "../attributes/RequesterAttributes.h"
 #include "./XMLParserCommon.h"
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
@@ -72,6 +73,11 @@ typedef std::unique_ptr<TopicAttributes>       up_topic_t;
 typedef DataNode<TopicAttributes>              node_topic_t;
 typedef node_topic_t*                          p_node_topic_t;
 typedef std::unique_ptr<node_topic_t>          up_node_topic_t;
+
+typedef std::unique_ptr<RequesterAttributes>   up_requester_t;
+typedef DataNode<RequesterAttributes>          node_requester_t;
+typedef node_requester_t*                      p_node_requester_t;
+typedef std::unique_ptr<node_requester_t>      up_node_requester_t;
 
 /**
  * Class XMLParser, used to load XML data.
@@ -179,6 +185,10 @@ class XMLParser
         tinyxml2::XMLElement* p_root,
         BaseNode& rootNode);
 
+    RTPS_DllAPI static XMLP_ret parseXMLRequesterProf(
+        tinyxml2::XMLElement* p_root,
+        BaseNode& rootNode);
+
     RTPS_DllAPI static XMLP_ret parseXMLTransportData(tinyxml2::XMLElement* p_root);
 
     RTPS_DllAPI static XMLP_ret parseXMLCommonTransportData(
@@ -257,6 +267,10 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret fillDataNode(
         tinyxml2::XMLElement* node,
         DataNode<TopicAttributes>& topic_node);
+
+    RTPS_DllAPI static XMLP_ret fillDataNode(
+        tinyxml2::XMLElement* node,
+        DataNode<RequesterAttributes>& requester_node);
 
     template <typename T>
     RTPS_DllAPI static void addAllAttributes(
@@ -486,6 +500,21 @@ class XMLParser
     RTPS_DllAPI static XMLP_ret getXMLDisablePositiveAcksQos(
         tinyxml2::XMLElement* elem,
         DisablePositiveACKsQosPolicy& disablePositiveAcks,
+        uint8_t ident);
+
+    RTPS_DllAPI static XMLP_ret getXMLguidPrefix(
+        tinyxml2::XMLElement *elem,
+        rtps::GuidPrefix_t &prefix,
+        uint8_t ident);
+
+    RTPS_DllAPI static XMLP_ret getXMLPublisherAttributes(
+        tinyxml2::XMLElement *elem,
+        PublisherAttributes &publisher,
+        uint8_t ident);
+
+    RTPS_DllAPI static XMLP_ret getXMLSubscriberAttributes(
+        tinyxml2::XMLElement *elem,
+        SubscriberAttributes &subscriber,
         uint8_t ident);
 };
 
