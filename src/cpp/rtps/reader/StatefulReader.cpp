@@ -587,11 +587,17 @@ bool StatefulReader::processGapMsg(
         // TODO (Miguel C): Refactor this inside WriterProxy
         SequenceNumber_t auxSN;
         SequenceNumber_t finalSN = gapList.base() - 1;
+        History::const_iterator history_iterator = mp_history->changesBegin();
         for (auxSN = gapStart; auxSN <= finalSN; auxSN++)
         {
             if (pWP->irrelevant_change_set(auxSN))
             {
-                CacheChange_t* to_remove = findCacheInFragmentedProcess(auxSN, pWP->guid());
+                CacheChange_t* to_remove = nullptr;
+                auto ret_iterator = findCacheInFragmentedProcess(auxSN, pWP->guid(), &to_remove, history_iterator);
+                if (ret_iterator != mp_history->changesEnd())
+                {
+                    history_iterator = ret_iterator;
+                }
                 if (to_remove != nullptr)
                 {
                     mp_history->remove_change(to_remove);
@@ -603,7 +609,12 @@ bool StatefulReader::processGapMsg(
         {
             if (pWP->irrelevant_change_set(it))
             {
-                CacheChange_t* to_remove = findCacheInFragmentedProcess(auxSN, pWP->guid());
+                CacheChange_t* to_remove = nullptr;
+                auto ret_iterator = findCacheInFragmentedProcess(auxSN, pWP->guid(), &to_remove, history_iterator);
+                if (ret_iterator != mp_history->changesEnd())
+                {
+                    history_iterator = ret_iterator;
+                }
                 if (to_remove != nullptr)
                 {
                     mp_history->remove_change(to_remove);
@@ -1010,12 +1021,18 @@ void StatefulReader::send_acknack(
         {
             GUID_t guid = sender.remote_guids().at(0);
             SequenceNumberSet_t sns(writer->available_changes_max() + 1);
+            History::const_iterator history_iterator = mp_history->changesBegin();
 
             missing_changes.for_each(
                 [&](const SequenceNumber_t& seq)
             {
                 // Check if the CacheChange_t is uncompleted.
-                CacheChange_t* uncomplete_change = findCacheInFragmentedProcess(seq, guid);
+                CacheChange_t* uncomplete_change = nullptr;
+                auto ret_iterator = findCacheInFragmentedProcess(seq, guid, &uncomplete_change, history_iterator);
+                if (ret_iterator != mp_history->changesEnd())
+                {
+                    history_iterator = ret_iterator;
+                }
                 if (uncomplete_change == nullptr)
                 {
                     if (!sns.add(seq))

@@ -91,16 +91,20 @@ bool RTPSReader::setListener(
     return true;
 }
 
-CacheChange_t* RTPSReader::findCacheInFragmentedProcess(
+History::const_iterator RTPSReader::findCacheInFragmentedProcess(
         const SequenceNumber_t& sequence_number,
-        const GUID_t& writer_guid) const
+        const GUID_t& writer_guid,
+        CacheChange_t** change,
+        History::const_iterator hint) const
 {
-    CacheChange_t* ret_val = nullptr;
-    if (mp_history->get_change(sequence_number, writer_guid, &ret_val))
+    History::const_iterator ret_val = mp_history->get_change_nts(sequence_number, writer_guid, change, hint);
+
+    if (nullptr != *change && (*change)->is_fully_assembled())
     {
-        return ret_val->is_fully_assembled() ? nullptr : ret_val;
+        *change = nullptr;
     }
-    return nullptr;
+
+    return ret_val;
 }
 
 void RTPSReader::add_persistence_guid(
