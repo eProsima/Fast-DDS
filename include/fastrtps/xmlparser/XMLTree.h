@@ -25,7 +25,8 @@ enum class NodeType
     ROOT,
     TYPES,
     LOG,
-    REQUESTER
+    REQUESTER,
+    REPLIER
 };
 
 class BaseNode

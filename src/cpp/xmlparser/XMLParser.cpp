@@ -2358,6 +2358,23 @@ XMLP_ret XMLParser::parseXMLRequesterProf(tinyxml2::XMLElement* p_root, BaseNode
     return ret;
 }
 
+XMLP_ret XMLParser::parseXMLReplierProf(tinyxml2::XMLElement* p_root, BaseNode& rootNode)
+{
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    up_replier_t replier_atts{new ReplierAttributes};
+    up_node_replier_t replier_node{new node_replier_t{NodeType::REPLIER, std::move(replier_atts)}};
+    if (XMLP_ret::XML_OK == fillDataNode(p_root, *replier_node))
+    {
+        rootNode.addChild(std::move(replier_node));
+    }
+    else
+    {
+        logError(XMLPARSER, "Error parsing requester profile");
+        ret = XMLP_ret::XML_ERROR;
+    }
+    return ret;
+}
+
 XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profilesNode)
 {
     /*
@@ -2411,6 +2428,14 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
             {
                 parseOk &= parseXMLTypes(p_profile) == XMLP_ret::XML_OK;
             }
+            else if (strcmp(tag, REQUESTER) == 0)
+            {
+                parseOk &= parseXMLRequesterProf(p_profile, profilesNode) == XMLP_ret::XML_OK;
+            }
+            else if (strcmp(tag, REPLIER) == 0)
+            {
+                parseOk &= parseXMLReplierProf(p_profile, profilesNode) == XMLP_ret::XML_OK;
+            }
             else if (strcmp(tag, QOS_PROFILE) == 0)
             {
                 logError(XMLPARSER, "Field 'QOS_PROFILE' do not supported for now");
@@ -2425,6 +2450,7 @@ XMLP_ret XMLParser::parseProfiles(tinyxml2::XMLElement* p_root, BaseNode& profil
             }
             else
             {
+                parseOk = false;
                 logError(XMLPARSER, "Not expected tag: '" << tag << "'");
             }
         }
@@ -2985,6 +3011,12 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Reque
                 return XMLP_ret::XML_ERROR;
             }
         }
+        else
+        {
+            logError(XMLPARSER, "Not expected tag: '" << name << "'");
+            return XMLP_ret::XML_ERROR;
+        }
+
     }
 
     requester_node.get()->publisher.topic.topicDataType = requester_node.get()->request_type;
@@ -3091,6 +3123,11 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Repli
             {
                 return XMLP_ret::XML_ERROR;
             }
+        }
+        else
+        {
+            logError(XMLPARSER, "Not expected tag: '" << name << "'");
+            return XMLP_ret::XML_ERROR;
         }
     }
 
