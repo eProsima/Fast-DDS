@@ -2821,3 +2821,13 @@ XMLP_ret XMLParser::getXMLguidPrefix(tinyxml2::XMLElement *elem, GuidPrefix_t &p
     return (is >> prefix ? XMLP_ret::XML_OK : XMLP_ret::XML_ERROR);
 
 }
+
+XMLP_ret XMLParser::getXMLPublisherAttributes(tinyxml2::XMLElement *elem, PublisherAttributes &publisher, uint8_t ident)
+{
+    return XMLP_ret::XML_ERROR;
+}
+
+XMLP_ret XMLParser::getXMLSubscriberAttributes(tinyxml2::XMLElement *elem, SubscriberAttributes &subscriber, uint8_t ident)
+{
+    return XMLP_ret::XML_ERROR;
+}
