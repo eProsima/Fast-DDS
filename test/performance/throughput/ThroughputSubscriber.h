@@ -64,6 +64,8 @@ public:
 
     virtual ~ThroughputSubscriber();
 
+    bool ready();
+
     void run();
 
 private:

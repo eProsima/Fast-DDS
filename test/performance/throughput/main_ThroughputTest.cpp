@@ -447,19 +447,39 @@ int main(int argc, char** argv)
         xmlparser::XMLProfileManager::loadXMLFile(xml_config_file);
     }
 
+    uint8_t return_code = 0;
+
     if (test_agent == TestAgent::PUBLISHER)
     {
         std::cout << "Starting throughput test publisher agent" << std::endl;
         ThroughputPublisher throughput_publisher(reliable, seed, hostname, export_csv, pub_part_property_policy,
                 pub_property_policy, xml_config_file, file_name, recoveries_file, dynamic_types, forced_domain);
-        throughput_publisher.run(test_time_sec, recovery_time_ms, demand, msg_size);
+
+        if (throughput_publisher.ready())
+        {
+            throughput_publisher.run(test_time_sec, recovery_time_ms, demand, msg_size);
+        }
+        else
+        {
+            return_code = 1;
+        }
+
     }
     else if (test_agent == TestAgent::SUBSCRIBER)
     {
         std::cout << "Starting throughput test subscriber agent" << std::endl;
         ThroughputSubscriber throughput_subscriber(reliable, seed, hostname, sub_part_property_policy,
                 sub_property_policy, xml_config_file, dynamic_types, forced_domain);
-        throughput_subscriber.run();
+
+        if (throughput_subscriber.ready())
+        {
+            throughput_subscriber.run();
+        }
+        else
+        {
+            return_code = 1;
+        }
+
     }
     else if (test_agent == TestAgent::BOTH)
     {
@@ -474,15 +494,31 @@ int main(int argc, char** argv)
                 sub_property_policy, xml_config_file, dynamic_types, forced_domain);
 
         // Spawn run threads
-        std::thread pub_thread(&ThroughputPublisher::run, &throughput_publisher, test_time_sec, recovery_time_ms,
-                demand, msg_size);
-        std::thread sub_thread(&ThroughputSubscriber::run, &throughput_subscriber);
-        pub_thread.join();
-        sub_thread.join();
+        if (throughput_publisher.ready() && throughput_subscriber.ready())
+        {
+            std::thread pub_thread(&ThroughputPublisher::run, &throughput_publisher, test_time_sec, recovery_time_ms,
+                    demand, msg_size);
+            std::thread sub_thread(&ThroughputSubscriber::run, &throughput_subscriber);
+            pub_thread.join();
+            sub_thread.join();
+        }
+        else
+        {
+            return_code = 1;
+        }
     }
 
     Domain::stopAll();
-    return 0;
+    if (return_code == 0)
+    {
+        std::cout << "EVERYTHING STOPPED FINE" << std::endl;
+    }
+    else
+    {
+        std::cout << "SOMETHING WENT WRONG" << std::endl;
+    }
+
+    return return_code;
 }
 
 #if defined(_MSC_VER)
