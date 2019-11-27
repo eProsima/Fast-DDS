@@ -241,6 +241,10 @@ public:
                 fastrtps::rtps::RTPSWriter* writer,
                 const fastrtps::LivelinessLostStatus& status) override;
 
+        void on_offered_incompatible_qos(
+                fastrtps::rtps::RTPSWriter* writer,
+                const OfferedIncompatibleQosStatus& status) override;
+
         DataWriterImpl* data_writer_;
     } writer_listener_;
 

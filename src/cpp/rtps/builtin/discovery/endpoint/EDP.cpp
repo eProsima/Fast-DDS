@@ -778,6 +778,7 @@ bool EDP::validMatching(
             && wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
     //Means our reader is reliable but hte writer is not
     {
+        failing_policy_ = wdata->m_qos.m_reliability.policy_id_;
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "): Remote Writer "
                                                          << wdata->guid() << " is Best Effort and local reader is RELIABLE " << endl;
                 );
@@ -786,6 +787,7 @@ bool EDP::validMatching(
     if (rdata->m_qos.m_durability.kind > wdata->m_qos.m_durability.kind)
     {
         // TODO (MCC) Change log message
+        failing_policy_ = wdata->m_qos.m_durability.policy_id_;
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):RemoteWriter "
                                                          << wdata->guid() << " has VOLATILE DURABILITY and we want TRANSIENT_LOCAL" << endl;
                 );
@@ -793,12 +795,14 @@ bool EDP::validMatching(
     }
     if (rdata->m_qos.m_ownership.kind != wdata->m_qos.m_ownership.kind)
     {
+        failing_policy_ = wdata->m_qos.m_ownership.policy_id_;
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):Remote Writer "
                                                          << wdata->guid() << " has different Ownership Kind" << endl; );
         return false;
     }
     if (rdata->m_qos.m_deadline.period < wdata->m_qos.m_deadline.period)
     {
+        failing_policy_ = wdata->m_qos.m_deadline.policy_id_;
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: "
                 << wdata->topicName() << "):RemoteWriter "
                 << wdata->guid() << "has smaller DEADLINE period");
@@ -811,6 +815,7 @@ bool EDP::validMatching(
     }
     if (wdata->m_qos.m_liveliness.lease_duration > rdata->m_qos.m_liveliness.lease_duration)
     {
+        failing_policy_ = wdata->m_qos.m_liveliness.policy_id_;
         logWarning(RTPS_EDP, "Incompatible liveliness lease durations: offered lease duration "
                 << wdata->m_qos.m_liveliness.lease_duration << " must be <= requested lease duration "
                 << rdata->m_qos.m_liveliness.lease_duration);
@@ -818,6 +823,7 @@ bool EDP::validMatching(
     }
     if (wdata->m_qos.m_liveliness.kind < rdata->m_qos.m_liveliness.kind)
     {
+        failing_policy_ = wdata->m_qos.m_liveliness.policy_id_;
         logWarning(RTPS_EDP, "Incompatible liveliness kinds: offered kind is < than requested kind");
         return false;
     }
@@ -877,6 +883,7 @@ bool EDP::validMatching(
     }
     if (!matched) //Different partitions
     {
+        failing_policy_ = wdata->m_qos.m_partition.policy_id_;
         logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " <<  wdata->topicName() <<
                 "): Different Partitions");
     }
@@ -957,6 +964,10 @@ bool EDP::pairingReader(
                                 update_subscription_matched_status(*R, writer_guid, -1);
                         R->getListener()->onReaderMatched(R, sub_info);
                     }
+                }
+                if (update_requested_incompatible_qos_status(*R))
+                {
+                    R->getListener()->on_requested_incompatible_qos(R, R->requested_incompatible_qos_status_);
                 }
             }
         }
@@ -1039,7 +1050,10 @@ bool EDP::pairingWriter(
 
                     }
                 }
-                update_offered_incompatible_qos_status(*W);
+                if (update_offered_incompatible_qos_status(*W))
+                {
+                    W->getListener()->on_offered_incompatible_qos(W, W->offered_incompatible_qos_status_);
+                }
             }
         }
     }
@@ -1115,7 +1129,11 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                         (*wit)->getListener()->onWriterMatched((*wit), pub_info);
                     }
                 }
-                update_offered_incompatible_qos_status(*(*wit));
+                if (update_offered_incompatible_qos_status(*(*wit)))
+                {
+                    (*wit)->getListener()->on_offered_incompatible_qos((*wit),
+                            (*wit)->offered_incompatible_qos_status_);
+                }
             }
         }
     }
@@ -1173,6 +1191,11 @@ bool EDP::pairing_reader_proxy_with_local_writer(
                                     update_publication_matched_status(reader_guid, *(*wit), -1);
                             (*wit)->getListener()->onWriterMatched((*wit), pub_info);
                         }
+                    }
+                    if (update_offered_incompatible_qos_status(*(*wit)))
+                    {
+                        (*wit)->getListener()->on_offered_incompatible_qos((*wit),
+                                (*wit)->offered_incompatible_qos_status_);
                     }
                 }
             }
@@ -1296,6 +1319,11 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                         (*rit)->getListener()->onReaderMatched((*rit), sub_info);
                     }
                 }
+                if (update_requested_incompatible_qos_status(*(*rit)))
+                {
+                    (*rit)->getListener()->on_requested_incompatible_qos((*rit),
+                            (*rit)->requested_incompatible_qos_status_);
+                }
             }
         }
     }
@@ -1353,6 +1381,11 @@ bool EDP::pairing_writer_proxy_with_local_reader(
                                     update_subscription_matched_status(*(*rit), writer_guid, -1);
                             (*rit)->getListener()->onReaderMatched((*rit), sub_info);
                         }
+                    }
+                    if (update_requested_incompatible_qos_status(*(*rit)))
+                    {
+                        (*rit)->getListener()->on_requested_incompatible_qos((*rit),
+                                (*rit)->requested_incompatible_qos_status_);
                     }
                 }
             }
@@ -1573,27 +1606,62 @@ const fastdds::dds::PublicationMatchedStatus& EDP::update_publication_matched_st
     return writer.publication_matched_status_;
 }
 
-void EDP::update_offered_incompatible_qos_status(
+bool EDP::update_offered_incompatible_qos_status(
         RTPSWriter& W)
 {
-    W.offered_incompatible_qos_status_.last_policy_id = failing_policy_;
-    W.offered_incompatible_qos_status_.total_count++;
-    W.offered_incompatible_qos_status_.total_count_change++;
-    auto it = std::find_if(W.offered_incompatible_qos_status_.policies.begin(),
-                    W.offered_incompatible_qos_status_.policies.end(),
-                    [this] (const QosPolicyCount& policy) -> bool
-                {
-                    return policy.policy_id == failing_policy_;
-                });
-    if (it != W.offered_incompatible_qos_status_.policies.end())
+    if (failing_policy_ != 0)
     {
-        it->count++;
+        W.offered_incompatible_qos_status_.last_policy_id = failing_policy_;
+        W.offered_incompatible_qos_status_.total_count++;
+        W.offered_incompatible_qos_status_.total_count_change++;
+        auto it = std::find_if(W.offered_incompatible_qos_status_.policies.begin(),
+                        W.offered_incompatible_qos_status_.policies.end(),
+                        [this] (const QosPolicyCount& policy) -> bool
+                    {
+                        return policy.policy_id == failing_policy_;
+                    });
+        if (it != W.offered_incompatible_qos_status_.policies.end())
+        {
+            it->count++;
+        }
+        else
+        {
+            QosPolicyCount policy(failing_policy_, 1);
+            W.offered_incompatible_qos_status_.policies.push_back(policy);
+        }
+        failing_policy_ = 0;
+        return true;
     }
-    else
+    return false;
+}
+
+bool EDP::update_requested_incompatible_qos_status(
+        RTPSReader& R)
+{
+    if (failing_policy_ != 0)
     {
-        QosPolicyCount policy(failing_policy_, 1);
-        W.offered_incompatible_qos_status_.policies.push_back(policy);
+        R.requested_incompatible_qos_status_.last_policy_id = failing_policy_;
+        R.requested_incompatible_qos_status_.total_count++;
+        R.requested_incompatible_qos_status_.total_count_change++;
+        auto it = std::find_if(R.requested_incompatible_qos_status_.policies.begin(),
+                        R.requested_incompatible_qos_status_.policies.end(),
+                        [this] (const QosPolicyCount& policy) -> bool
+                    {
+                        return policy.policy_id == failing_policy_;
+                    });
+        if (it != R.requested_incompatible_qos_status_.policies.end())
+        {
+            it->count++;
+        }
+        else
+        {
+            QosPolicyCount policy(failing_policy_, 1);
+            R.requested_incompatible_qos_status_.policies.push_back(policy);
+        }
+        failing_policy_ = 0;
+        return true;
     }
+    return false;
 }
 
 }

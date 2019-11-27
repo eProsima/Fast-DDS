@@ -100,6 +100,9 @@ public:
         return send_always_;
     }
 
+    std::string search_qos_by_id(
+            QosPolicyId_t id);
+
 protected:
 
     bool send_always_;

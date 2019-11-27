@@ -23,6 +23,7 @@
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
@@ -251,6 +252,8 @@ public:
     }
 
     fastdds::dds::SubscriptionMatchedStatus subscription_matched_status_;
+
+    fastdds::dds::RequestedIncompatibleQosStatus requested_incompatible_qos_status_;
 
 protected:
 

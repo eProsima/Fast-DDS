@@ -609,6 +609,18 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
     data_writer_->publisher_->publisher_listener_.on_liveliness_lost(data_writer_->user_datawriter_, status);
 }
 
+void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
+        RTPSWriter* /*writer*/,
+        const OfferedIncompatibleQosStatus& status)
+{
+    if (data_writer_->listener_ != nullptr)
+    {
+        data_writer_->listener_->on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
+    }
+
+    data_writer_->publisher_->publisher_listener_.on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
+}
+
 ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
         const Duration_t& max_wait)
 {

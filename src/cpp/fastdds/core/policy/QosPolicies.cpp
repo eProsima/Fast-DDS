@@ -484,6 +484,59 @@ bool xtypes::TypeInformation::readFromCDRMessage(
     return true;
 }
 
+std::string QosPolicy::search_qos_by_id(
+        QosPolicyId_t id)
+{
+    switch (id){
+    case 1:
+        return "UserDataQosPolicy";
+    case 2:
+        return "DurabilityQosPolicy";
+    case 3:
+        return "PresentationQosPolicy";
+    case 4:
+        return "DeadlineQosPolicy";
+    case 5:
+        return "LatencyBudgetQosPolicy";
+    case 6:
+        return "OwnershipQosPolicy";
+    case 7:
+        return "OwnershipStrengthQosPolicy";
+    case 8:
+        return "LivelinessQosPolicy";
+    case 9:
+        return "TimeBasedFilterQosPolicy";
+    case 10:
+        return "PartitionQosPolicy";
+    case 11:
+        return "ReliabilityQosPolicy";
+    case 12:
+        return "DestinationOrderQosPolicy";
+    case 13:
+        return "HistoryQosPolicy";
+    case 14:
+        return "ResourceLimitsQosPolicy";
+    case 15:
+        return "EntityFactoryQosPolicy";
+    case 16:
+        return "WriterDataLifecycleQosPolicy";
+    case 17:
+        return "ReaderDataLifecycleQosPolicy";
+    case 18:
+        return "TopicDataQosPolicy";
+    case 19:
+        return "GroupDataQosPolicy";
+    case 20:
+        return "TransportPriorityQosPolicy";
+    case 21:
+        return "LifespanQosPolicy";
+    case 22:
+        return "DurabilityServiceQosPolicy";
+    default:
+        return "";
+    }
+}
+
 } //namespace dds
 } //namespace fastdds
 } //namespace eprosima
