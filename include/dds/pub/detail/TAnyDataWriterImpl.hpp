@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 //#ifndef EPROSIMA_DDS_PUB_DETAIL_TANYDATAWRITER_HPP_
 //#define EPROSIMA_DDS_PUB_DETAIL_TANYDATAWRITER_HPP_
@@ -91,25 +91,25 @@ void TAnyDataWriter<DELEGATE>::wait_for_acknowledgments(
 template<typename DELEGATE>
 const dds::core::status::LivelinessLostStatus TAnyDataWriter<DELEGATE>::liveliness_lost_status()
 {
-    return this->delegate()->liveliness_lost_status();
+    return this->delegate()->get_liveliness_lost_status();
 }
 
 template<typename DELEGATE>
 const dds::core::status::OfferedDeadlineMissedStatus TAnyDataWriter<DELEGATE>::offered_deadline_missed_status()
 {
-    return this->delegate()->offered_deadline_missed_status();
+    return this->delegate()->get_offered_deadline_missed_status();
 }
 
 template<typename DELEGATE>
 const dds::core::status::OfferedIncompatibleQosStatus TAnyDataWriter<DELEGATE>::offered_incompatible_qos_status()
 {
-    return this->delegate()->offered_incompatible_qos_status();
+    return this->delegate()->get_offered_incompatible_qos_status();
 }
 
 template<typename DELEGATE>
 const dds::core::status::PublicationMatchedStatus TAnyDataWriter<DELEGATE>::publication_matched_status()
 {
-    return this->delegate()->publication_matched_status();
+    return this->delegate()->get_publication_matched_status();
 }
 
 template<typename DELEGATE>

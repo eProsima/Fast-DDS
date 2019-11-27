@@ -14,7 +14,7 @@
 
 /**
  * @file ReaderDataLifecycleQosPolicy.hpp
-*/
+ */
 
 #ifndef _FASTDDS_READERDATALIFECYCLEQOSPOLICY_HPP_
 #define _FASTDDS_READERDATALIFECYCLEQOSPOLICY_HPP_
@@ -32,16 +32,19 @@ namespace dds {
 class ReaderDataLifecycleQosPolicy : public QosPolicy
 {
 public:
+
     ReaderDataLifecycleQosPolicy()
-        : autopurge_no_writer_samples_delay(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS),
-          autopurge_disposed_samples_delay(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
+        : QosPolicy(false, (QosPolicyId_t)17)
+        , autopurge_no_writer_samples_delay(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
+        , autopurge_disposed_samples_delay(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
     {}
 
     ReaderDataLifecycleQosPolicy(
             const fastrtps::Duration_t& autopurge_no_writer_delay,
             const fastrtps::Duration_t& autopurge_disposed_delay)
-        : autopurge_no_writer_samples_delay(autopurge_no_writer_delay),
-          autopurge_disposed_samples_delay(autopurge_disposed_delay)
+        : QosPolicy(false, (QosPolicyId_t)17)
+        , autopurge_no_writer_samples_delay(autopurge_no_writer_delay)
+        , autopurge_disposed_samples_delay(autopurge_disposed_delay)
     {}
 
     virtual RTPS_DllAPI ~ReaderDataLifecycleQosPolicy() {}
@@ -60,6 +63,7 @@ public:
                 (this->autopurge_no_writer_samples_delay != b.autopurge_no_writer_samples_delay);
     }
 public:
+
     Duration_t autopurge_no_writer_samples_delay;
 
     Duration_t autopurge_disposed_samples_delay;
