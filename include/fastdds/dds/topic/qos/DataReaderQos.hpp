@@ -38,6 +38,7 @@ namespace dds {
 class DataReaderQos
 {
 public:
+
     //!Durability Qos, implemented in the library.
     DurabilityQosPolicy durability;
 
@@ -121,10 +122,10 @@ public:
     RTPS_DllAPI bool canQosBeUpdated(
             const DataReaderQos& qos) const;
 
-    ReaderQos changeToReaderQos() const;
+    RTPS_DllAPI ReaderQos changeToReaderQos() const;
 
-    void changeToDataReaderQos(
-        const ReaderQos& qos);
+    RTPS_DllAPI void changeToDataReaderQos(
+            const ReaderQos& qos);
 
 };
 
