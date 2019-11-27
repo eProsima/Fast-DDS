@@ -20,21 +20,22 @@
 
 class TimedEventEnvironment : public ::testing::Environment
 {
-    public:
+public:
 
-        void SetUp()
-        {
-            service_.init_thread();
-        }
+    void SetUp()
+    {
+        service_.init_thread();
+    }
 
-        void TearDown()
-        {
-        }
+    void TearDown()
+    {
+    }
 
-        eprosima::fastrtps::rtps::ResourceEvent service_;
+    eprosima::fastrtps::rtps::ResourceEvent service_;
 };
 
-TimedEventEnvironment* const env = dynamic_cast<TimedEventEnvironment*>(testing::AddGlobalTestEnvironment(new TimedEventEnvironment));
+TimedEventEnvironment* const env =
+        dynamic_cast<TimedEventEnvironment*>(testing::AddGlobalTestEnvironment(new TimedEventEnvironment));
 
 /*!
  * @fn TEST(TimedEvent, Event_SuccessEvents)
@@ -46,7 +47,7 @@ TEST(TimedEvent, Event_SuccessEvents)
 {
     MockEvent event(env->service_, 100, false);
 
-    for(int i = 0; i < 10; ++i)
+    for (int i = 0; i < 10; ++i)
     {
         event.event().restart_timer();
         event.wait();
@@ -68,7 +69,7 @@ TEST(TimedEvent, Event_CancelEvents)
 {
     MockEvent event(env->service_, 100, false);
 
-    for(int i = 0; i < 10; ++i)
+    for (int i = 0; i < 10; ++i)
     {
         event.event().restart_timer();
         event.event().cancel_timer();
@@ -89,7 +90,7 @@ TEST(TimedEvent, Event_RestartEvents)
 {
     MockEvent event(env->service_, 100, false);
 
-    for(int i = 0; i < 10; ++i)
+    for (int i = 0; i < 10; ++i)
     {
         event.event().cancel_timer();
         event.event().restart_timer();
@@ -97,7 +98,7 @@ TEST(TimedEvent, Event_RestartEvents)
 
     // Should only be awaken once due to cancellation
     event.wait();
-    for(int i = 1; i < 10; ++i)
+    for (int i = 1; i < 10; ++i)
     {
         ASSERT_FALSE(event.wait(120));
     }
@@ -107,6 +108,59 @@ TEST(TimedEvent, Event_RestartEvents)
     ASSERT_EQ(successed, 1);
 }
 
+/*!
+ * @fn TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickCancelEvents)
+ * @brief This test checks the event is not destroyed when it is canceled.
+ * This test launches an event, configured to destroy itself when the event is executed successfully,
+ * several times but inmediatly cancelling it.
+ */
+TEST(TimedEvent, Event_QuickCancelEvents)
+{
+    MockEvent event(env->service_, 1, false);
+
+    // Cancel ten times.
+    for (int i = 0; i < 10; ++i)
+    {
+        event.event().restart_timer();
+        event.event().cancel_timer();
+    }
+
+    ASSERT_FALSE(event.wait(5));
+
+    int successed = event.successed_.load(std::memory_order_relaxed);
+
+    ASSERT_EQ(successed, 0);
+
+    // Last event will be successful.
+    event.event().restart_timer();
+    event.wait();
+
+    successed = event.successed_.load(std::memory_order_relaxed);
+
+    ASSERT_EQ(successed, 1);
+}
+
+/*!
+ * @fn TEST(TimedEvent, EventOnSuccessAutoDestruc_QuickRestartEvents)
+ * @brief This test checks the event is not destroyed when it is canceled and restarted.
+ * This test restarts several events configure to destroy itself when the event is executed successfully.
+ */
+TEST(TimedEvent, Event_QuickRestartEvents)
+{
+    MockEvent event(env->service_, 1, false);
+
+    for (int i = 0; i < 10; ++i)
+    {
+        event.event().cancel_timer();
+        event.event().restart_timer();
+    }
+
+    event.wait_success();
+
+    int successed = event.successed_.load(std::memory_order_relaxed);
+
+    ASSERT_EQ(successed, 1);
+}
 
 /*!
  * @fn TEST(TimedEvent, Event_AutoRestart)
@@ -115,9 +169,9 @@ TEST(TimedEvent, Event_RestartEvents)
  */
 TEST(TimedEvent, Event_AutoRestart)
 {
-    MockEvent event(env->service_, 10 , true);
+    MockEvent event(env->service_, 10, true);
 
-    for(unsigned int i = 0; i < 100; ++i)
+    for (unsigned int i = 0; i < 100; ++i)
     {
         event.event().restart_timer();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -125,7 +179,7 @@ TEST(TimedEvent, Event_AutoRestart)
 
     int successed = event.successed_.load(std::memory_order_relaxed);
 
-    ASSERT_GE(successed , 100);
+    ASSERT_GE(successed, 100);
 }
 
 
@@ -154,14 +208,19 @@ TEST(TimedEvent, Event_AutoRestartAndDeleteRandomly)
  * @param num_loop Number of loops.
  * @param sleep_time Sleeping time between each loop.
  */
-void restart(MockEvent *event, unsigned int num_loop, unsigned int sleep_time)
+void restart(
+        MockEvent* event,
+        unsigned int num_loop,
+        unsigned int sleep_time)
 {
-    for(unsigned int i = 0; i < num_loop; ++i)
+    for (unsigned int i = 0; i < num_loop; ++i)
     {
         event->event().restart_timer();
 
-        if(sleep_time > 0)
+        if (sleep_time > 0)
+        {
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+        }
     }
 }
 
@@ -172,14 +231,19 @@ void restart(MockEvent *event, unsigned int num_loop, unsigned int sleep_time)
  * @param num_loop Number of loops.
  * @param sleep_time Sleeping time between each loop.
  */
-void cancel(MockEvent *event, unsigned int num_loop, unsigned int sleep_time)
+void cancel(
+        MockEvent* event,
+        unsigned int num_loop,
+        unsigned int sleep_time)
 {
-    for(unsigned int i = 0; i < num_loop; ++i)
+    for (unsigned int i = 0; i < num_loop; ++i)
     {
         event->event().cancel_timer();
 
-        if(sleep_time > 0)
+        if (sleep_time > 0)
+        {
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+        }
     }
 }
 
@@ -191,8 +255,8 @@ void cancel(MockEvent *event, unsigned int num_loop, unsigned int sleep_time)
  */
 TEST(TimedEventMultithread, Event_TwoStartTwoCancel)
 {
-    std::thread *thr1 = nullptr, *thr2 = nullptr,
-        *thr3 = nullptr, *thr4 = nullptr;
+    std::thread* thr1 = nullptr, * thr2 = nullptr,
+            * thr3 = nullptr, * thr4 = nullptr;
 
     MockEvent event(env->service_, 3, false);
 
@@ -219,7 +283,7 @@ TEST(TimedEventMultithread, Event_TwoStartTwoCancel)
 
     // Wait until finish the execution of the event.
     int count = 0;
-    while(event.wait(500))
+    while (event.wait(500))
     {
         ++count;
     }
@@ -237,8 +301,8 @@ TEST(TimedEventMultithread, Event_TwoStartTwoCancel)
  */
 TEST(TimedEventMultithread, Event_FourAutoRestart)
 {
-    std::thread *thr1 = nullptr, *thr2 = nullptr,
-        *thr3 = nullptr, *thr4 = nullptr;
+    std::thread* thr1 = nullptr, * thr2 = nullptr,
+            * thr3 = nullptr, * thr4 = nullptr;
 
     MockEvent event(env->service_, 2, true);
 
@@ -267,7 +331,9 @@ TEST(TimedEventMultithread, Event_FourAutoRestart)
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
