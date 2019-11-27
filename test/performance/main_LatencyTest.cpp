@@ -14,7 +14,6 @@
 
 #include "LatencyTestPublisher.h"
 #include "LatencyTestSubscriber.h"
-
 #include "optionparser.h"
 
 #include <stdio.h>
@@ -50,31 +49,48 @@ const Endianness_t DEFAULT_ENDIAN = BIGEND;
 #endif
 
 
-struct Arg: public option::Arg
+struct Arg : public option::Arg
 {
-    static void printError(const char* msg1, const option::Option& opt, const char* msg2)
+    static void printError(
+            const char* msg1,
+            const option::Option& opt,
+            const char* msg2)
     {
         fprintf(stderr, "%s", msg1);
         fwrite(opt.name, opt.namelen, 1, stderr);
         fprintf(stderr, "%s", msg2);
     }
 
-    static option::ArgStatus Unknown(const option::Option& option, bool msg)
+    static option::ArgStatus Unknown(
+            const option::Option& option,
+            bool msg)
     {
-        if (msg) printError("Unknown option '", option, "'\n");
+        if (msg)
+        {
+            printError("Unknown option '", option, "'\n");
+        }
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus Required(const option::Option& option, bool msg)
+    static option::ArgStatus Required(
+            const option::Option& option,
+            bool msg)
     {
         if (option.arg != 0 && option.arg[0] != 0)
-        return option::ARG_OK;
+        {
+            return option::ARG_OK;
+        }
 
-        if (msg) printError("Option '", option, "' requires an argument\n");
+        if (msg)
+        {
+            printError("Option '", option, "' requires an argument\n");
+        }
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus Numeric(const option::Option& option, bool msg)
+    static option::ArgStatus Numeric(
+            const option::Option& option,
+            bool msg)
     {
         char* endptr = 0;
         if (option.arg != 0 && strtol(option.arg, &endptr, 10))
@@ -92,7 +108,9 @@ struct Arg: public option::Arg
         return option::ARG_ILLEGAL;
     }
 
-    static option::ArgStatus String(const option::Option& option, bool msg)
+    static option::ArgStatus String(
+            const option::Option& option,
+            bool msg)
     {
         if (option.arg != 0)
         {
@@ -104,9 +122,11 @@ struct Arg: public option::Arg
         }
         return option::ARG_ILLEGAL;
     }
+
 };
 
-enum  optionIndex {
+enum  optionIndex
+{
     UNKNOWN_OPT,
     HELP,
     RELIABILITY,
@@ -116,6 +136,7 @@ enum  optionIndex {
     ECHO_OPT,
     HOSTNAME,
     EXPORT_CSV,
+    EXPORT_RAW_DATA,
     EXPORT_PREFIX,
     USE_SECURITY,
     CERTS_PATH,
@@ -125,34 +146,41 @@ enum  optionIndex {
     FORCED_DOMAIN
 };
 
-const option::Descriptor usage[] = {
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "Usage: LatencyTest <publisher|subscriber>\n\nGeneral options:" },
-    { HELP,    0,"h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
-    { RELIABILITY,0,"r","reliability",      Arg::Required,  "  -r <arg>, \t--reliability=<arg>  \tSet reliability (\"reliable\"/\"besteffort\")."},
-    { SAMPLES,0,"s","samples",              Arg::Numeric,   "  -s <num>, \t--samples=<num>  \tNumber of samples." },
-    { SEED,0,"","seed",                     Arg::Numeric,   "  \t--seed=<num>  \tNumber of subscribers." },
-    { HOSTNAME,0,"","hostname",             Arg::None,      "\t--hostname \tAppend hostname to the topic." },
-    { LARGE_DATA, 0, "l", "large",          Arg::None,      "  -l \t--large\tTest large data." },
-    { XML_FILE, 0, "", "xml",               Arg::String,    "\t--xml \tXML Configuration file." },
-    { FORCED_DOMAIN, 0, "", "domain",       Arg::Numeric,   "\t--RTPS Domain." },
-    { DYNAMIC_TYPES, 0, "", "dynamic_types",Arg::None,      "\t--dynamic_types \tUse dynamic types." },
-#if HAVE_SECURITY
-    { USE_SECURITY, 0, "", "security",      Arg::Required,      "  --security <arg>  \tEcho mode (\"true\"/\"false\")." },
-    { CERTS_PATH, 0, "", "certs",           Arg::Required,      "  --certs <arg>  \tPath where located certificates." },
-#endif
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nPublisher options:"},
-    { SUBSCRIBERS,0,"n","subscribers",      Arg::Numeric,   "  -n <num>,   \t--subscribers=<arg>  \tSeed to calculate domain and topic, to isolate test." },
-    { EXPORT_CSV,0,"","export_csv",         Arg::None,      "\t--export_cvs \tFlag to export a CSV file." },
-    { EXPORT_PREFIX,0,"","export_prefix",   Arg::String,    "\t--export_prefix \tFile prefix for the CSV file." },
-    { UNKNOWN_OPT, 0,"", "",                Arg::None,      "\nSubscriber options:"},
-    { ECHO_OPT, 0,"e","echo",               Arg::Required,  "  -e <arg>, \t--echo=<arg>  \tEcho mode (\"true\"/\"false\")." },
+enum TestAgent
+{
+    PUBLISHER,
+    SUBSCRIBER,
+    BOTH
+};
 
+const option::Descriptor usage[] = {
+    { UNKNOWN_OPT,     0, "",  "",                Arg::None,     "Usage: LatencyTest <publisher|subscriber|both>\n\nGeneral options:" },
+    { HELP,            0, "h", "help",            Arg::None,     "  -h           --help                Produce help message." },
+    { RELIABILITY,     0, "r", "reliability",     Arg::Required, "  -r <arg>,    --reliability=<arg>   Set reliability (\"reliable\"/\"besteffort\")."},
+    { SAMPLES,         0, "s", "samples",         Arg::Numeric,  "  -s <num>,    --samples=<num>       Number of samples." },
+    { SEED,            0, "",  "seed",            Arg::Numeric,  "               --seed=<num>          Seed to calculate domain and topic." },
+    { HOSTNAME,        0, "",  "hostname",        Arg::None,     "               --hostname            Append hostname to the topic." },
+    { LARGE_DATA,      0, "l", "large",           Arg::None,     "  -l           --large               Test large data." },
+    { XML_FILE,        0, "",  "xml",             Arg::String,   "               --xml                 XML Configuration file." },
+    { FORCED_DOMAIN,   0, "",  "domain",          Arg::Numeric,  "               --domain              RTPS Domain." },
+    { DYNAMIC_TYPES,   0, "",  "dynamic_types",   Arg::None,     "               --dynamic_types       Use dynamic types." },
+#if HAVE_SECURITY
+    { USE_SECURITY,    0, "",  "security",        Arg::Required, "               --security <arg>      Echo mode (\"true\"/\"false\")." },
+    { CERTS_PATH,      0, "",  "certs",           Arg::Required, "               --certs <arg>         Path where located certificates." },
+#endif
+    { UNKNOWN_OPT,     0, "",  "",                Arg::None,     "\nPublisher/Both options:"},
+    { SUBSCRIBERS,     0, "n", "subscribers",     Arg::Numeric,  "  -n <num>,    --subscribers=<arg>   Number of subscribers." },
+    { EXPORT_CSV,      0, "",  "export_csv",      Arg::None,     "               --export_cvs          Flag to export a CSV file." },
+    { EXPORT_RAW_DATA, 0, "",  "export_raw_data", Arg::String,   "               --export_raw_data     File name to export all raw data as CSV." },
+    { EXPORT_PREFIX,   0, "",  "export_prefix",   Arg::String,   "               --export_prefix       File prefix for the CSV file." },
+    { UNKNOWN_OPT,     0, "",  "",                Arg::None,     "\nSubscriber options:"},
+    { ECHO_OPT,        0, "e", "echo",            Arg::Required, "  -e <arg>,    --echo=<arg>          Echo mode (\"true\"/\"false\")." },
     { 0, 0, 0, 0, 0, 0 }
 };
 
-const int c_n_samples = 10000;
-
-int main(int argc, char** argv)
+int main(
+        int argc,
+        char** argv)
 {
     int columns;
 
@@ -172,9 +200,9 @@ int main(int argc, char** argv)
     columns = getenv("COLUMNS") ? atoi(getenv("COLUMNS")) : 80;
 #endif
 
-    bool pub_sub = false;
-    int sub_number = 1;
-    int n_samples = c_n_samples;
+    TestAgent test_agent = TestAgent::PUBLISHER;
+    int subscribers = 1;
+    int samples = 10000;
 #if HAVE_SECURITY
     bool use_security = false;
     std::string certs_path;
@@ -186,7 +214,8 @@ int main(int argc, char** argv)
     bool export_csv = false;
     bool large_data = false;
     std::string export_prefix = "";
-    std::string sXMLConfigFile = "";
+    std::string raw_data_file = "";
+    std::string xml_config_file = "";
     bool dynamic_types = false;
     int forced_domain = -1;
 
@@ -196,11 +225,15 @@ int main(int argc, char** argv)
     {
         if (strcmp(argv[0], "publisher") == 0)
         {
-            pub_sub = true;
+            test_agent = TestAgent::PUBLISHER;
         }
         else if (strcmp(argv[0], "subscriber") == 0)
         {
-            pub_sub = false;
+            test_agent = TestAgent::SUBSCRIBER;
+        }
+        else if (strcmp(argv[0], "both") == 0)
+        {
+            test_agent = TestAgent::BOTH;
         }
         else
         {
@@ -254,18 +287,15 @@ int main(int argc, char** argv)
                     return 0;
                 }
                 break;
-
             case SEED:
                 seed = strtol(opt.arg, nullptr, 10);
                 break;
             case SAMPLES:
-                n_samples = strtol(opt.arg, nullptr, 10);
+                samples = strtol(opt.arg, nullptr, 10);
                 break;
-
             case SUBSCRIBERS:
-                sub_number = strtol(opt.arg, nullptr, 10);
+                subscribers = strtol(opt.arg, nullptr, 10);
                 break;
-
             case ECHO_OPT:
                 if (strcmp(opt.arg, "true") == 0)
                 {
@@ -281,17 +311,16 @@ int main(int argc, char** argv)
                     return 0;
                 }
                 break;
-
             case HOSTNAME:
                 hostname = true;
                 break;
-
             case EXPORT_CSV:
                 export_csv = true;
                 break;
-
+            case EXPORT_RAW_DATA:
+                raw_data_file = opt.arg;
+                break;
             case EXPORT_PREFIX:
-            {
                 if (opt.arg != nullptr)
                 {
                     export_prefix = opt.arg;
@@ -302,14 +331,13 @@ int main(int argc, char** argv)
                     return 0;
                 }
                 break;
-            }
             case LARGE_DATA:
                 large_data = true;
                 break;
             case XML_FILE:
                 if (opt.arg != nullptr)
                 {
-                    sXMLConfigFile = opt.arg;
+                    xml_config_file = opt.arg;
                 }
                 else
                 {
@@ -323,7 +351,6 @@ int main(int argc, char** argv)
             case FORCED_DOMAIN:
                 forced_domain = strtol(opt.arg, nullptr, 10);
                 break;
-
 #if HAVE_SECURITY
             case USE_SECURITY:
                 if (strcmp(opt.arg, "true") == 0)
@@ -340,12 +367,10 @@ int main(int argc, char** argv)
                     return -1;
                 }
                 break;
-
             case CERTS_PATH:
                 certs_path = opt.arg;
                 break;
 #endif
-
             case UNKNOWN_OPT:
                 option::printUsage(fwrite, stdout, usage, columns);
                 return 0;
@@ -353,8 +378,10 @@ int main(int argc, char** argv)
         }
     }
 
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-        pub_property_policy, sub_property_policy;
+    PropertyPolicy pub_part_property_policy;
+    PropertyPolicy sub_part_property_policy;
+    PropertyPolicy pub_property_policy;
+    PropertyPolicy sub_property_policy;
 
 #if HAVE_SECURITY
     if (use_security)
@@ -365,30 +392,27 @@ int main(int argc, char** argv)
             return -1;
         }
 
-        sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-            "builtin.PKI-DH"));
+        sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin", "builtin.PKI-DH"));
         sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-            "file://" + certs_path + "/maincacert.pem"));
+                "file://" + certs_path + "/maincacert.pem"));
         sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-            "file://" + certs_path + "/mainsubcert.pem"));
+                "file://" + certs_path + "/mainsubcert.pem"));
         sub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-            "file://" + certs_path + "/mainsubkey.pem"));
-        sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
-            "builtin.AES-GCM-GMAC"));
+                "file://" + certs_path + "/mainsubkey.pem"));
+        sub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC"));
         sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
+
         sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
         sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
-        pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
-            "builtin.PKI-DH"));
+        pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.plugin", "builtin.PKI-DH"));
         pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
-            "file://" + certs_path + "/maincacert.pem"));
+                "file://" + certs_path + "/maincacert.pem"));
         pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
-            "file://" + certs_path + "/mainpubcert.pem"));
+                "file://" + certs_path + "/mainpubcert.pem"));
         pub_part_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
-            "file://" + certs_path + "/mainpubkey.pem"));
-        pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
-            "builtin.AES-GCM-GMAC"));
+                "file://" + certs_path + "/mainpubkey.pem"));
+        pub_part_property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC"));
         pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
         pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
         pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
@@ -396,31 +420,52 @@ int main(int argc, char** argv)
 #endif
 
     // Load an XML file with predefined profiles for publisher and subscriber
-    if (sXMLConfigFile.length() > 0)
+    if (xml_config_file.length() > 0)
     {
-        xmlparser::XMLProfileManager::loadXMLFile(sXMLConfigFile);
+        xmlparser::XMLProfileManager::loadXMLFile(xml_config_file);
     }
 
-    if (pub_sub)
+    if (test_agent == TestAgent::PUBLISHER)
     {
-        cout << "Performing test with " << sub_number << " subscribers and " << n_samples << " samples" << endl;
-        LatencyTestPublisher latencyPub;
-        latencyPub.init(sub_number, n_samples, reliable, seed, hostname, export_csv, export_prefix,
-            pub_part_property_policy, pub_property_policy, large_data, sXMLConfigFile, dynamic_types, forced_domain);
-        latencyPub.run();
+        std::cout << "Performing test with " << subscribers << " subscribers and " << samples << " samples"
+                << std::endl;
+        LatencyTestPublisher latency_publisher;
+        latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv, export_prefix,
+                raw_data_file, pub_part_property_policy, pub_property_policy, large_data, xml_config_file,
+                dynamic_types, forced_domain);
+        latency_publisher.run();
     }
-    else
+    else if (test_agent == TestAgent::SUBSCRIBER)
     {
-        LatencyTestSubscriber latencySub;
-        latencySub.init(echo, n_samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
-            large_data, sXMLConfigFile, dynamic_types, forced_domain);
-        latencySub.run();
+        LatencyTestSubscriber latency_subscriber;
+        latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
+                large_data, xml_config_file, dynamic_types, forced_domain);
+        latency_subscriber.run();
+    }
+    else if (test_agent == TestAgent::BOTH)
+    {
+        std::cout << "Performing intraprocess test with " << subscribers << " subscribers and " << samples <<
+                " samples" << std::endl;
+
+        // Initialize publisher
+        LatencyTestPublisher latency_publisher;
+        latency_publisher.init(subscribers, samples, reliable, seed, hostname, export_csv, export_prefix,
+                raw_data_file, pub_part_property_policy, pub_property_policy, large_data, xml_config_file,
+                dynamic_types, forced_domain);
+
+        // Initialize subscriber
+        LatencyTestSubscriber latency_subscriber;
+        latency_subscriber.init(echo, samples, reliable, seed, hostname, sub_part_property_policy, sub_property_policy,
+                large_data, xml_config_file, dynamic_types, forced_domain);
+
+        // Spawn run threads
+        std::thread pub_thread(&LatencyTestPublisher::run, &latency_publisher);
+        std::thread sub_thread(&LatencyTestSubscriber::run, &latency_subscriber);
+        pub_thread.join();
+        sub_thread.join();
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-    cout << "EVERYTHING STOPPED FINE" << endl;
-
+    std::cout << "EVERYTHING STOPPED FINE" << std::endl;
     return 0;
 }
 
