@@ -28,6 +28,7 @@
 #include "../common/Time_t.h"
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include "../../utils/TimedConditionVariable.hpp"
+#include "../history/ReaderHistory.h"
 
 namespace eprosima {
 namespace fastrtps {
@@ -35,7 +36,6 @@ namespace rtps {
 
 // Forward declarations
 class LivelinessManager;
-class ReaderHistory;
 class ReaderListener;
 class WriterProxy;
 class FragmentedChangePitStop;
@@ -226,18 +226,25 @@ public:
     RTPS_DllAPI inline ReaderHistory* getHistory()
     {
         return mp_history;
-    };
+    }
 
     /*!
      * @brief Search if there is a CacheChange_t, giving SequenceNumber_t and writer GUID_t,
      * waiting to be completed because it is fragmented.
      * @param sequence_number SequenceNumber_t of the searched CacheChange_t.
      * @param writer_guid writer GUID_t of the searched CacheChange_t.
-     * @return If a CacheChange_t was found, it will be returned. In other case nullptr is returned.
+     * @param change If a CacheChange_t was found, this argument will fill with its pointer.
+     * In other case nullptr is returned.
+     * @param hint Iterator since the search will start.
+     * Used to improve the search.
+     * @return Iterator pointing to the position were CacheChange_t was found.
+     * It can be used to improve next search.
      */
-    CacheChange_t* findCacheInFragmentedProcess(
+    History::const_iterator findCacheInFragmentedProcess(
             const SequenceNumber_t& sequence_number,
-            const GUID_t& writer_guid) const;
+            const GUID_t& writer_guid,
+            CacheChange_t** change,
+            History::const_iterator hint) const;
 
     /*!
      * @brief Returns there is a clean state with all Writers.
@@ -340,7 +347,7 @@ protected:
 
 private:
 
-    RTPSReader& operator=(
+    RTPSReader& operator =(
             const RTPSReader&) = delete;
 };
 
