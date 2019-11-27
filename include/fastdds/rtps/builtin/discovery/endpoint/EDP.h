@@ -276,8 +276,11 @@ public:
 
     const fastdds::dds::PublicationMatchedStatus& update_publication_matched_status(
             const GUID_t& reader_guid,
-            const GUID_t& writer_guid,
+            RTPSWriter& writer,
             int change);
+
+    void update_offered_incompatible_qos_status(
+            RTPSWriter& W);
 
     //! Pointer to the PDP object that contains the endpoint discovery protocol.
     PDP* mp_PDP;
@@ -332,8 +335,7 @@ private:
     ReaderProxyData temp_reader_proxy_data_;
     WriterProxyData temp_writer_proxy_data_;
 
-    std::map<GUID_t, fastdds::dds::PublicationMatchedStatus> writer_status_;
-
+    uint32_t failing_policy_;
 };
 
 } /* namespace rtps */

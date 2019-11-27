@@ -218,15 +218,11 @@ public:
     ReturnCode_t get_liveliness_lost_status(
             LivelinessLostStatus& status);
 
-    /* TODO
-       ReturnCode_t get_offered_incompatible_qos_status(
-            OfferedIncompatibleQosStatus& status)
-       {
-        // Not implemented
-        (void)status;
-        return false;
-       }
-     */
+    ReturnCode_t get_offered_incompatible_qos_status(
+            OfferedIncompatibleQosStatus& status);
+
+    ReturnCode_t get_publication_matched_status(
+            PublicationMatchedStatus& status);
 
     const Publisher* get_publisher() const;
 

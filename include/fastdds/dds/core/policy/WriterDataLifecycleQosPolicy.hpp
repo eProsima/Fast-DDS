@@ -14,7 +14,9 @@
 
 /**
  * @file WriterDataLifecycleQosPolicy.hpp
-*/
+ */
+
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 #ifndef _FASTDDS_WRITERDATALIFECYCLEQOSPOLICY_HPP_
 #define _FASTDDS_WRITERDATALIFECYCLEQOSPOLICY_HPP_
@@ -29,13 +31,16 @@ namespace dds {
 class WriterDataLifecycleQosPolicy : public QosPolicy
 {
 public:
+
     WriterDataLifecycleQosPolicy()
-        : autodispose_unregistered_instances(true)
+        : QosPolicy(false, (QosPolicyId_t)16)
+        , autodispose_unregistered_instances(true)
     {}
 
     WriterDataLifecycleQosPolicy(
             bool autodispose)
-        : autodispose_unregistered_instances(autodispose)
+        : QosPolicy(false, (QosPolicyId_t)16)
+        ,  autodispose_unregistered_instances(autodispose)
     {}
 
     virtual RTPS_DllAPI ~WriterDataLifecycleQosPolicy() {}
@@ -45,7 +50,9 @@ public:
     {
         return (this->autodispose_unregistered_instances == b.autodispose_unregistered_instances);
     }
+
 public:
+
     bool autodispose_unregistered_instances;
 
 };

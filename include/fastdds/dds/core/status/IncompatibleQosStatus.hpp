@@ -14,7 +14,7 @@
 
 /**
  * @file IncompatibleQosStatus.hpp
-*/
+ */
 
 #ifndef _FASTRTPS_INCOMPATIBLE_QOS_STATUS_HPP_
 #define _FASTRTPS_INCOMPATIBLE_QOS_STATUS_HPP_
@@ -39,11 +39,11 @@ struct QosPolicyCount
     }
 
     //! @brief The id of the policy
-    QosPolicyId_t policy_id;
+    QosPolicyId_t policy_id = 0;
 
     //! @brief Total number of times that the concerned writer discovered a reader for the same topic
     //! @details The requested QoS is incompatible with the one offered by the writer
-    int32_t count;
+    int32_t count = 0;
 };
 
 using QosPolicyCountSeq = std::vector<QosPolicyCount>;
@@ -59,7 +59,7 @@ struct IncompatibleQosStatus
     int32_t total_count_change = 0;
 
     //! @brief The id of the policy that was found to be incompatible the last time an incompatibility is detected
-    QosPolicyId_t last_policy_id;
+    QosPolicyId_t last_policy_id = 0;
 
     //! @brief A list of QosPolicyCount
     QosPolicyCountSeq policies;

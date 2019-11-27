@@ -36,7 +36,7 @@ DataWriter::DataWriter(
         DataWriterListener* listener,
         const ::dds::core::status::StatusMask& /*mask*/)
     : impl_(
-          (const_cast<Publisher*>(pub))->create_datawriter(topic, qos, listener)->impl_)
+        (const_cast<Publisher*>(pub))->create_datawriter(topic, qos, listener)->impl_)
 {
 }
 
@@ -62,8 +62,8 @@ bool DataWriter::write(
 }
 
 ReturnCode_t DataWriter::write(
-            void* data,
-            const rtps::InstanceHandle_t& handle)
+        void* data,
+        const rtps::InstanceHandle_t& handle)
 {
     return impl_->write(data, handle);
 }
@@ -148,13 +148,13 @@ const Publisher* DataWriter::get_publisher() const
 }
 
 ReturnCode_t DataWriter::wait_for_acknowledgments(
-        const Duration_t &max_wait)
+        const Duration_t& max_wait)
 {
     return impl_->wait_for_acknowledgments(max_wait);
 }
 
 ReturnCode_t DataWriter::get_offered_deadline_missed_status(
-        OfferedDeadlineMissedStatus &status)
+        OfferedDeadlineMissedStatus& status)
 {
     return impl_->get_offered_deadline_missed_status(status);
 }
@@ -163,6 +163,18 @@ ReturnCode_t DataWriter::get_liveliness_lost_status(
         LivelinessLostStatus& status)
 {
     return impl_->get_liveliness_lost_status(status);
+}
+
+ReturnCode_t DataWriter::get_publication_matched_status(
+        PublicationMatchedStatus& status)
+{
+    return impl_->get_publication_matched_status(status);
+}
+
+ReturnCode_t DataWriter::get_offered_incompatible_qos_status(
+        OfferedIncompatibleQosStatus& status)
+{
+    return impl_->get_offered_incompatible_qos_status(status);
 }
 
 ReturnCode_t DataWriter::assert_liveliness()

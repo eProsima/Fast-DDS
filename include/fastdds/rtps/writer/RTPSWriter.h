@@ -23,6 +23,8 @@
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastrtps/qos/LivelinessLostStatus.h>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
@@ -54,6 +56,7 @@ class RTPSWriter : public Endpoint, public RTPSMessageSenderInterface
     friend class AsyncInterestTree;
 
 protected:
+
     RTPSWriter(
             RTPSParticipantImpl*,
             const GUID_t& guid,
@@ -73,11 +76,13 @@ public:
      */
     template<typename T>
     CacheChange_t* new_change(
-            T &data,
+            T& data,
             ChangeKind_t changeKind,
             InstanceHandle_t handle = c_InstanceHandle_Unknown)
     {
-        return new_change([data]() -> uint32_t {return (uint32_t)T::getCdrSerializedSize(data);}, changeKind, handle);
+        return new_change([data]() -> uint32_t {
+                        return (uint32_t)T::getCdrSerializedSize(data);
+                    }, changeKind, handle);
     }
 
 
@@ -91,40 +96,46 @@ public:
      * @param data Pointer to the ReaderProxyData object added.
      * @return True if added.
      */
-    RTPS_DllAPI virtual bool matched_reader_add(const ReaderProxyData& data) = 0;
+    RTPS_DllAPI virtual bool matched_reader_add(
+            const ReaderProxyData& data) = 0;
 
     /**
      * Remove a matched reader.
      * @param reader_guid GUID of the reader to remove.
      * @return True if removed.
      */
-    RTPS_DllAPI virtual bool matched_reader_remove(const GUID_t& reader_guid) = 0;
+    RTPS_DllAPI virtual bool matched_reader_remove(
+            const GUID_t& reader_guid) = 0;
 
     /**
      * Tells us if a specific Reader is matched against this writer.
      * @param reader_guid GUID of the reader to check.
      * @return True if it was matched.
      */
-    RTPS_DllAPI virtual bool matched_reader_is_matched(const GUID_t& reader_guid) = 0;
+    RTPS_DllAPI virtual bool matched_reader_is_matched(
+            const GUID_t& reader_guid) = 0;
 
     /**
-    * Check if a specific change has been acknowledged by all Readers.
-    * Is only useful in reliable Writer. In BE Writers returns false when pending to be sent.
-    * @return True if acknowledged by all.
-    */
-    RTPS_DllAPI virtual bool is_acked_by_all(const CacheChange_t* /*a_change*/) const { return false; }
+     * Check if a specific change has been acknowledged by all Readers.
+     * Is only useful in reliable Writer. In BE Writers returns false when pending to be sent.
+     * @return True if acknowledged by all.
+     */
+    RTPS_DllAPI virtual bool is_acked_by_all(
+            const CacheChange_t* /*a_change*/) const { return false; }
 
     /**
-    * Waits until all changes were acknowledged or max_wait.
-    * @return True if all were acknowledged.
-    */
-    RTPS_DllAPI virtual bool wait_for_all_acked(const Duration_t& /*max_wait*/) { return true; }
+     * Waits until all changes were acknowledged or max_wait.
+     * @return True if all were acknowledged.
+     */
+    RTPS_DllAPI virtual bool wait_for_all_acked(
+            const Duration_t& /*max_wait*/) { return true; }
 
     /**
      * Update the Attributes of the Writer.
      * @param att New attributes
      */
-    RTPS_DllAPI virtual void updateAttributes(const WriterAttributes& att) = 0;
+    RTPS_DllAPI virtual void updateAttributes(
+            const WriterAttributes& att) = 0;
 
     /**
      * This method triggers the send operation for unsent changes.
@@ -154,7 +165,8 @@ public:
     uint32_t getMaxDataSize();
 
     //! Calculates the maximum size of the data
-    uint32_t calculateMaxDataSize(uint32_t length);
+    uint32_t calculateMaxDataSize(
+            uint32_t length);
 
     /**
      * Get listener
@@ -180,7 +192,8 @@ public:
      * @param max Maximum number of changes to remove.
      * @return at least one change has been removed
      */
-    RTPS_DllAPI bool remove_older_changes(unsigned int max = 0);
+    RTPS_DllAPI bool remove_older_changes(
+            unsigned int max = 0);
 
     /**
      * Tries to remove a change waiting a maximum of the provided microseconds.
@@ -196,7 +209,8 @@ public:
      * Adds a flow controller that will apply to this writer exclusively.
      * @param controller
      */
-    virtual void add_flow_controller(std::unique_ptr<FlowController> controller) = 0;
+    virtual void add_flow_controller(
+            std::unique_ptr<FlowController> controller) = 0;
 
     /**
      * Get RTPS participant
@@ -209,7 +223,8 @@ public:
      * NOTE: This will only work for synchronous writers
      * @param enable If separate sending should be enabled
      */
-    void set_separate_sending (bool enable) { m_separateSendingEnabled = enable; }
+    void set_separate_sending (
+            bool enable) { m_separateSendingEnabled = enable; }
 
     /**
      * Inform if data is sent to readers separatedly
@@ -234,7 +249,7 @@ public:
             uint32_t ack_count,
             const SequenceNumberSet_t& sn_set,
             bool final_flag,
-            bool &result)
+            bool& result)
     {
         (void)reader_guid; (void)ack_count; (void)sn_set; (void)final_flag;
 
@@ -287,6 +302,12 @@ public:
 
     //! Liveliness lost status of this writer
     LivelinessLostStatus liveliness_lost_status_;
+
+    //! Publication matched status of this writer
+    fastdds::dds::PublicationMatchedStatus publication_matched_status_;
+
+    //! Offered incompatible qos status of this writer
+    fastdds::dds::OfferedIncompatibleQosStatus offered_incompatible_qos_status_;
 
     /**
      * Check if the destinations managed by this sender interface have changed.
@@ -346,7 +367,8 @@ protected:
     ResourceLimitedVector<GUID_t> all_remote_readers_;
     ResourceLimitedVector<GuidPrefix_t> all_remote_participants_;
 
-    void add_guid(const GUID_t& remote_guid);
+    void add_guid(
+            const GUID_t& remote_guid);
 
     void compute_selected_guids();
 
@@ -371,12 +393,14 @@ protected:
      * @param a_change Pointer to the change that is going to be removed.
      * @return True if removed correctly.
      */
-    virtual bool change_removed_by_history(CacheChange_t* a_change)=0;
+    virtual bool change_removed_by_history(
+            CacheChange_t* a_change)=0;
 
 #if HAVE_SECURITY
     SerializedPayload_t encrypt_payload_;
 
-    bool encrypt_cachechange(CacheChange_t* change);
+    bool encrypt_cachechange(
+            CacheChange_t* change);
 #endif
 
     //! The liveliness kind of this reader
@@ -388,7 +412,8 @@ protected:
 
 private:
 
-    RTPSWriter& operator=(const RTPSWriter&) = delete;
+    RTPSWriter& operator=(
+            const RTPSWriter&) = delete;
 
     RTPSWriter* next_[2];
 };
