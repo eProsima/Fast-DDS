@@ -226,7 +226,7 @@ public:
     RTPS_DllAPI inline ReaderHistory* getHistory()
     {
         return mp_history;
-    };
+    }
 
     /*!
      * @brief Search if there is a CacheChange_t, giving SequenceNumber_t and writer GUID_t,
@@ -340,7 +340,7 @@ protected:
 
 private:
 
-    RTPSReader& operator=(
+    RTPSReader& operator =(
             const RTPSReader&) = delete;
 };
 
