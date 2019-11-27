@@ -384,7 +384,7 @@ const char* TLS_VERIFY_PEER = "VERIFY_PEER";
 const char* TLS_VERIFY_FAIL_IF_NO_PEER_CERT = "VERIFY_FAIL_IF_NO_PEER_CERT";
 const char* TLS_VERIFY_CLIENT_ONCE = "VERIFY_CLIENT_ONCE";
 
-// Requester
+// Requester and Replier
 const char* SERVICE_NAME = "service_name";
 const char* REQUEST_TYPE = "request_type";
 const char* REPLY_TYPE = "reply_type";
