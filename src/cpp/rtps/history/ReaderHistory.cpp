@@ -71,8 +71,20 @@ bool ReaderHistory::add_change(
         logError(RTPS_HISTORY, "The Writer GUID_t must be defined");
     }
 
-    m_changes.push_back(a_change);
-    sortCacheChanges();
+    if (!m_changes.empty() && a_change->sourceTimestamp < (*m_changes.rbegin())->sourceTimestamp)
+    {
+        auto it = std::lower_bound(m_changes.begin(), m_changes.end(), a_change,
+                        [](const CacheChange_t* c1, const CacheChange_t* c2) -> bool
+                    {
+                        return c1->sourceTimestamp < c2->sourceTimestamp;
+                    });
+        m_changes.insert(it, a_change);
+    }
+    else
+    {
+        m_changes.push_back(a_change);
+    }
+
     updateMaxMinSeqNum();
     logInfo(RTPS_HISTORY,
             "Change " << a_change->sequenceNumber << " added with " << a_change->serializedPayload.length << " bytes");
@@ -105,7 +117,6 @@ bool ReaderHistory::remove_change(
             mp_reader->change_removed_by_history(a_change);
             m_changePool.release_Cache(a_change);
             m_changes.erase(chit);
-            sortCacheChanges();
             updateMaxMinSeqNum();
             return true;
         }
@@ -188,20 +199,10 @@ bool ReaderHistory::remove_fragmented_changes_until(
 
     if (at_least_one_removed)
     {
-        sortCacheChanges();
         updateMaxMinSeqNum();
     }
 
     return true;
-}
-
-void ReaderHistory::sortCacheChanges()
-{
-    std::sort(m_changes.begin(),
-            m_changes.end(),
-            [](CacheChange_t* c1, CacheChange_t* c2){
-                    return c1->sourceTimestamp < c2->sourceTimestamp;
-                });
 }
 
 void ReaderHistory::updateMaxMinSeqNum()
