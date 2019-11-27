@@ -253,6 +253,21 @@ void ReaderProxy::acked_changes_set(
     {
         ChangeIterator chit = find_change(seq_num, false);
         changes_for_reader_.erase(changes_for_reader_.begin(), chit);
+
+        // The low mark is advanced while the corresponding change is acknowledged
+        bool check_acknowledged_changes = true;
+        while (check_acknowledged_changes)
+        {
+            check_acknowledged_changes = false;
+            ChangeIterator it = find_change(future_low_mark, true);
+            if (it != changes_for_reader_.end() && it->getStatus() == ACKNOWLEDGED)
+            {
+                assert(it == changes_for_reader_.begin());
+                changes_for_reader_.erase(it);
+                ++future_low_mark;
+                check_acknowledged_changes = true;
+            }
+        }
     }
     else
     {
