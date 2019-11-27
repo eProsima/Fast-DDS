@@ -26,6 +26,7 @@
 class HelloWorldPublisher
 {
 public:
+
     HelloWorldPublisher();
 
     virtual ~HelloWorldPublisher();
@@ -43,6 +44,7 @@ public:
             uint32_t sleep);
 
 private:
+
     eprosima::fastrtps::types::DynamicData_ptr m_Hello;
 
     eprosima::fastdds::dds::DomainParticipant* mp_participant;
@@ -55,7 +57,8 @@ private:
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
-    public:
+public:
+
         PubListener()
             : n_matched(0)
             , firstConnected(false)
@@ -66,6 +69,11 @@ private:
         void on_publication_matched(
                 eprosima::fastdds::dds::DataWriter* writer,
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
+
+        void on_offered_incompatible_qos(
+                eprosima::fastdds::dds::DataWriter* writer,
+                const eprosima::fastdds::dds::OfferedIncompatibleQosStatus& info) override;
+
         int n_matched;
 
         bool firstConnected;

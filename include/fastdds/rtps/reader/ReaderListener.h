@@ -23,21 +23,22 @@
 #include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 
 #include <mutex>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 class RTPSReader;
 struct CacheChange_t;
 
 /**
-* Class ReaderListener, to be used by the user to override some of is virtual method to program actions to
-* certain events.
-*  @ingroup READER_MODULE
-*/
+ * Class ReaderListener, to be used by the user to override some of is virtual method to program actions to
+ * certain events.
+ *  @ingroup READER_MODULE
+ */
 class RTPS_DllAPI ReaderListener
 {
 public:
@@ -96,6 +97,19 @@ public:
     virtual void on_liveliness_changed(
             RTPSReader* reader,
             const LivelinessChangedStatus& status)
+    {
+        (void)reader;
+        (void)status;
+    }
+
+    /**
+     * Virtual method to be called when the requested qos is incompatible with the one offered
+     * @param sub Subscriber
+     * @param status The requested incompatible qos status
+     */
+    virtual void on_requested_incompatible_qos(
+            RTPSReader* reader,
+            const fastdds::dds::RequestedIncompatibleQosStatus& status)
     {
         (void)reader;
         (void)status;

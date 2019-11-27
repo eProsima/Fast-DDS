@@ -21,18 +21,19 @@
 #include <fastdds/rtps/common/MatchingInfo.h>
 #include <fastrtps/qos/LivelinessLostStatus.h>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 class RTPSWriter;
 struct CacheChange_t;
 
 /**
-* Class WriterListener with virtual method so the user can implement callbacks to certain events.
-*  @ingroup WRITER_MODULE
-*/
+ * Class WriterListener with virtual method so the user can implement callbacks to certain events.
+ *  @ingroup WRITER_MODULE
+ */
 class RTPS_DllAPI WriterListener
 {
 public:
@@ -93,6 +94,20 @@ public:
         (void)writer;
         (void)status;
     }
+
+    /**
+     * Virtual method to be called when the offered qos is incompatible with the one requested
+     * @param sub Subscriber
+     * @param status The requested incompatible qos status
+     */
+    virtual void on_offered_incompatible_qos(
+            RTPSWriter* writer,
+            const fastdds::dds::OfferedIncompatibleQosStatus& status)
+    {
+        (void)writer;
+        (void)status;
+    }
+
 };
 
 } /* namespace rtps */

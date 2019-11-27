@@ -279,8 +279,11 @@ public:
             RTPSWriter& writer,
             int change);
 
-    void update_offered_incompatible_qos_status(
+    bool update_offered_incompatible_qos_status(
             RTPSWriter& W);
+
+    bool update_requested_incompatible_qos_status(
+            RTPSReader& R);
 
     //! Pointer to the PDP object that contains the endpoint discovery protocol.
     PDP* mp_PDP;

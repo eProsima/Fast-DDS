@@ -38,6 +38,7 @@
 class TypeLookupSubscriber
 {
 public:
+
     TypeLookupSubscriber();
 
     virtual ~TypeLookupSubscriber();
@@ -53,6 +54,7 @@ public:
             uint32_t number);
 
 private:
+
     eprosima::fastdds::dds::DomainParticipant* mp_participant;
 
     eprosima::fastdds::dds::Subscriber* mp_subscriber;
@@ -68,12 +70,15 @@ private:
     eprosima::fastrtps::TopicAttributes topic_;
 
 public:
+
     class SubListener
         : public eprosima::fastdds::dds::DataReaderListener
         , public eprosima::fastdds::dds::DomainParticipantListener
     {
-    public:
-        SubListener(TypeLookupSubscriber* sub)
+public:
+
+        SubListener(
+                TypeLookupSubscriber* sub)
             : n_matched(0)
             , n_samples(0)
             , subscriber_(sub)
@@ -87,6 +92,10 @@ public:
         void on_subscription_matched(
                 eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
+
+        void on_requested_incompatible_qos(
+                eprosima::fastdds::dds::DataReader* reader,
+                const eprosima::fastdds::dds::RequestedIncompatibleQosStatus& status) override;
 
         void on_type_information_received(
                 eprosima::fastdds::dds::DomainParticipant* participant,
@@ -108,6 +117,7 @@ public:
     } m_listener;
 
 private:
+
     eprosima::fastrtps::types::DynamicPubSubType m_type;
 };
 

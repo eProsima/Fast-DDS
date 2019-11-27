@@ -136,6 +136,16 @@ void TypeLookupPublisher::PubListener::on_publication_matched(
     }
 }
 
+void TypeLookupPublisher::PubListener::on_offered_incompatible_qos(
+        DataWriter*,
+        const OfferedIncompatibleQosStatus& status)
+{
+    QosPolicy qos;
+    std::cout << "The Offered Qos is incompatible with the Requested one." << std::endl;
+    std::cout << "The Qos causing this incompatibility is " << qos.search_qos_by_id(
+        status.last_policy_id) << "." << std::endl;
+}
+
 void TypeLookupPublisher::runThread(
         uint32_t samples,
         uint32_t sleep)

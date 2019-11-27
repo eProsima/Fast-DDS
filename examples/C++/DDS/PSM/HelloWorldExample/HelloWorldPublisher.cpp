@@ -52,9 +52,9 @@ bool HelloWorldPublisher::init()
     type_.register_type(participant_.delegate().get(), type_.get_type_name());
 
     // TopicQos
-	dds::topic::qos::TopicQos topicQos
-		= participant_.default_topic_qos()
-		<< dds::core::policy::Reliability::Reliable();
+    dds::topic::qos::TopicQos topicQos
+        = participant_.default_topic_qos()
+            << dds::core::policy::Reliability::Reliable();
 
     topic_ = dds::topic::Topic<HelloWorld>(participant_, "HelloWorldTopic", "HelloWorld", topicQos);
 
@@ -67,7 +67,7 @@ bool HelloWorldPublisher::init()
     }
 
     // DataWriterQos
-	dds::pub::qos::DataWriterQos dwqos = topicQos;
+    dds::pub::qos::DataWriterQos dwqos = topicQos;
 
     // CREATE THE WRITER
     writer_ = dds::pub::DataWriter<HelloWorld>(publisher_, topic_, dwqos, &listener_);
@@ -86,8 +86,8 @@ HelloWorldPublisher::~HelloWorldPublisher()
 }
 
 void HelloWorldPublisher::PubListener::on_publication_matched(
-        dds::pub::DataWriter<HelloWorld> &writer,
-        const dds::core::status::PublicationMatchedStatus &status)
+        dds::pub::DataWriter<HelloWorld>& writer,
+        const dds::core::status::PublicationMatchedStatus& status)
 {
     on_publication_matched(writer.delegate().get(), status);
 }
@@ -112,6 +112,16 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
         std::cout << info.current_count_change
                   << " is not a valid value for PublicationMatchedStatus current count change" << std::endl;
     }
+}
+
+void HelloWorldPublisher::PubListener::on_offered_incompatible_qos(
+        DataWriter*,
+        const OfferedIncompatibleQosStatus& status)
+{
+    QosPolicy qos;
+    std::cout << "The Offered Qos is incompatible with the Requested one." << std::endl;
+    std::cout << "The Qos causing this incompatibility is " << qos.search_qos_by_id(
+        status.last_policy_id) << "." << std::endl;
 }
 
 void HelloWorldPublisher::runThread(

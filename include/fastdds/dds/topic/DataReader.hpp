@@ -189,10 +189,8 @@ public:
     ReturnCode_t get_liveliness_changed_status(
             LivelinessChangedStatus& status) const;
 
-    /* TODO
-       bool get_requested_incompatible_qos_status(
-            fastrtps::RequestedIncompatibleQosStatus& status) const;
-     */
+    ReturnCode_t get_requested_incompatible_qos_status(
+            RequestedIncompatibleQosStatus& status) const;
 
     /* TODO
        bool get_sample_lost_status(
@@ -204,7 +202,8 @@ public:
             fastrtps::SampleRejectedStatus& status) const;
      */
 
-    ReturnCode_t get_subscription_matched_status(SubscriptionMatchedStatus &status);
+    ReturnCode_t get_subscription_matched_status(
+            SubscriptionMatchedStatus& status);
 
     const Subscriber* get_subscriber() const;
 

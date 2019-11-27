@@ -31,6 +31,7 @@
 class HelloWorldSubscriber
 {
 public:
+
     HelloWorldSubscriber();
 
     virtual ~HelloWorldSubscriber();
@@ -46,6 +47,7 @@ public:
             uint32_t number);
 
 private:
+
     dds::domain::DomainParticipant participant_;
 
     dds::sub::Subscriber subscriber_;
@@ -58,7 +60,8 @@ private:
 
     class SubListener : public dds::sub::DataReaderListener<HelloWorld>
     {
-    public:
+public:
+
         SubListener()
             : matched_(0)
             , samples_(0)
@@ -78,12 +81,16 @@ private:
                 dds::sub::DataReader<HelloWorld>& writer,
                 const dds::core::status::SubscriptionMatchedStatus& status) override;
 
+        void on_requested_incompatible_qos(
+                eprosima::fastdds::dds::DataReader* reader,
+                const eprosima::fastdds::dds::RequestedIncompatibleQosStatus& status) override;
+
         HelloWorld hello_;
 
         int matched_;
 
         uint32_t samples_;
-    }listener_;
+    } listener_;
 };
 
 #endif /* HELLOWORLDSUBSCRIBER_H_ */
