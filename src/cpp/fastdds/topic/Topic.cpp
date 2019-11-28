@@ -46,6 +46,11 @@ ReturnCode_t Topic::get_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
+const TopicQos& Topic::get_qos() const
+{
+    return qos_;
+}
+
 ReturnCode_t Topic::set_qos(
         const TopicQos& qos)
 {

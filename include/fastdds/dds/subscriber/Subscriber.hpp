@@ -55,7 +55,6 @@ class SubscriberImpl;
 class SubscriberQos;
 class DataReader;
 class DataReaderListener;
-class ReaderQos;
 class DataReaderQos;
 class Topic;
 
@@ -135,13 +134,14 @@ public:
      */
     DataReader* create_datareader(
             const fastrtps::TopicAttributes& topic_attr,
-            const ReaderQos& reader_qos,
+            const DataReaderQos& reader_qos,
             DataReaderListener* listener);
 
     DataReader* create_datareader(
-            const Topic& topic,
+            const Topic& topic, //Change to TopicDescription when DomainParticipant::find_topic() is implemented
             const DataReaderQos& qos,
-            DataReaderListener* listener);
+            DataReaderListener* listener,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
 
     /**
      * This operation deletes a DataReader that belongs to the Subscriber.
@@ -214,7 +214,7 @@ public:
      * @param qos
      */
     ReturnCode_t set_default_datareader_qos(
-            const ReaderQos& qos);
+            const DataReaderQos& qos);
 
     /**
      * This operation returns the default value of the DataReader QoS, that is, the QoS policies which will be
@@ -223,9 +223,9 @@ public:
      *
      * The values retrieved get_default_datareader_qos will match the set of values specified on the last successful
      * call to get_default_datareader_qos, or else, if the call was never made, the default values.
-     * @return Current default ReaderQos.
+     * @return Current default DataReaderQos.
      */
-    const ReaderQos& get_default_datareader_qos() const;
+    const DataReaderQos& get_default_datareader_qos() const;
 
     /**
      * This operation retrieves the default value of the DataReader QoS, that is, the QoS policies which will be
@@ -234,15 +234,15 @@ public:
      *
      * The values retrieved get_default_datareader_qos will match the set of values specified on the last successful
      * call to get_default_datareader_qos, or else, if the call was never made, the default values.
-     * @param qos Current default ReaderQos.
+     * @param qos Current default DataReaderQos.
      * @return Always true.
      */
     ReturnCode_t get_default_datareader_qos(
-            ReaderQos& qos) const;
+            DataReaderQos& qos) const;
 
     /* TODO
        bool copy_from_topic_qos(
-            ReaderQos& reader_qos,
+            DataReaderQos& reader_qos,
             const fastrtps::TopicAttributes& topic_qos) const;
      */
 

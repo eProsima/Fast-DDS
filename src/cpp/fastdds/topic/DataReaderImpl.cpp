@@ -43,31 +43,33 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-DataReaderImpl::DataReaderImpl(
-        SubscriberImpl* s,
+DataReaderImpl::DataReaderImpl(SubscriberImpl* s,
         TypeSupport type,
+        const Topic &topic,
         const TopicAttributes& topic_att,
         const fastrtps::rtps::ReaderAttributes& att,
-        const ReaderQos& qos,
+        const DataReaderQos& qos,
         const MemoryManagementPolicy_t memory_policy,
         DataReaderListener* listener)
     : subscriber_(s)
     , reader_(nullptr)
     , type_(type)
     , topic_att_(topic_att)
+    , topic_(topic)
     , att_(att)
-    , qos_(&qos == &DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
+    , qos_(&qos == &DDS_DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
+    , rqos_(qos_.changeToReaderQos())
 #pragma warning (disable : 4355 )
     , history_(topic_att_,
                type_.get(),
-               qos_,
+               rqos_,
                type_.get()->m_typeSize + 3, /* Possible alignment */
                memory_policy)
     , listener_(listener)
     , reader_listener_(this)
-    , deadline_duration_us_(qos_.m_deadline.period.to_ns() * 1e-3)
+    , deadline_duration_us_(qos_.deadline.period.to_ns() * 1e-3)
     , deadline_missed_status_()
-    , lifespan_duration_us_(qos_.m_lifespan.duration.to_ns() * 1e-3)
+    , lifespan_duration_us_(topic_.get_qos().lifespan.duration.to_ns() * 1e-3)
     , user_datareader_(nullptr)
 {
     deadline_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
@@ -80,7 +82,7 @@ DataReaderImpl::DataReaderImpl(
 
                  return false;
              },
-             qos_.m_deadline.period.to_ns() * 1e-6);
+             qos_.deadline.period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
              [&](TimedEvent::EventCode code) -> bool
@@ -92,7 +94,7 @@ DataReaderImpl::DataReaderImpl(
 
                  return false;
              },
-             qos_.m_lifespan.duration.to_ns() * 1e-6);
+             topic_.get_qos().lifespan.duration.to_ns() * 1e-6);
 
     RTPSReader* reader = RTPSDomain::createRTPSReader(
         subscriber_->rtps_participant(),
@@ -142,12 +144,7 @@ ReturnCode_t DataReaderImpl::read_next_sample(
         SampleInfo_t *info)
 {
     auto max_blocking_time = std::chrono::steady_clock::now() +
-#if HAVE_STRICT_REALTIME
-        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.m_reliability.max_blocking_time));
-#else
-        std::chrono::hours(24);
-#endif
-
+        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability.max_blocking_time));
     DeprecatedSampleInfo dep_info;
     if (history_.readNextData(data, &dep_info, max_blocking_time))
     {
@@ -188,12 +185,7 @@ ReturnCode_t DataReaderImpl::take_next_sample(
         SampleInfo_t *info)
 {
     auto max_blocking_time = std::chrono::steady_clock::now() +
-#if HAVE_STRICT_REALTIME
-        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.m_reliability.max_blocking_time));
-#else
-        std::chrono::hours(24);
-#endif
-
+        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability.max_blocking_time));
     DeprecatedSampleInfo dep_info;
     if (history_.takeNextData(data, &dep_info, max_blocking_time))
     {
@@ -242,7 +234,7 @@ InstanceHandle_t DataReaderImpl::get_instance_handle() const
 }
 
 ReturnCode_t DataReaderImpl::set_qos(
-        const ReaderQos& qos)
+        const DataReaderQos& qos)
 {
     //QOS:
     //CHECK IF THE QOS CAN BE SET
@@ -258,14 +250,15 @@ ReturnCode_t DataReaderImpl::set_qos(
     qos_.setQos(qos,false);
     //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
     //subscriber_->update_reader(this, topic_att_, qos_);
-    subscriber_->rtps_participant()->updateReader(reader_, topic_att_, qos_);
+    ReaderQos rqos = qos_.changeToReaderQos();
+    subscriber_->rtps_participant()->updateReader(reader_, topic_att_, rqos);
 
     // Deadline
-    if (qos_.m_deadline.period != c_TimeInfinite)
+    if (qos_.deadline.period != c_TimeInfinite)
     {
         deadline_duration_us_ =
-                duration<double, std::ratio<1, 1000000>>(qos_.m_deadline.period.to_ns() * 1e-3);
-        deadline_timer_->update_interval_millisec(qos_.m_deadline.period.to_ns() * 1e-6);
+                duration<double, std::ratio<1, 1000000>>(qos_.deadline.period.to_ns() * 1e-3);
+        deadline_timer_->update_interval_millisec(qos_.deadline.period.to_ns() * 1e-6);
     }
     else
     {
@@ -273,11 +266,11 @@ ReturnCode_t DataReaderImpl::set_qos(
     }
 
     // Lifespan
-    if (qos_.m_lifespan.duration != c_TimeInfinite)
+    if (topic_.get_qos().lifespan.duration != c_TimeInfinite)
     {
         lifespan_duration_us_ =
-                std::chrono::duration<double, std::ratio<1, 1000000>>(qos_.m_lifespan.duration.to_ns() * 1e-3);
-        lifespan_timer_->update_interval_millisec(qos_.m_lifespan.duration.to_ns() * 1e-6);
+                std::chrono::duration<double, std::ratio<1, 1000000>>(topic_.get_qos().lifespan.duration.to_ns() * 1e-3);
+        lifespan_timer_->update_interval_millisec(topic_.get_qos().lifespan.duration.to_ns() * 1e-6);
     }
     else
     {
@@ -287,12 +280,12 @@ ReturnCode_t DataReaderImpl::set_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
-const ReaderQos& DataReaderImpl::get_qos() const
+const DataReaderQos& DataReaderImpl::get_qos() const
 {
     return qos_;
 }
 
-bool DataReaderImpl::set_topic(
+bool DataReaderImpl::set_topic_attributes(
         const TopicAttributes& topic_att)
 {
     //TOPIC ATTRIBUTES
@@ -307,9 +300,21 @@ bool DataReaderImpl::set_topic(
     return true;
 }
 
-const TopicAttributes& DataReaderImpl::get_topic() const
+const TopicAttributes& DataReaderImpl::get_topic_attributes() const
 {
     return topic_att_;
+}
+
+bool DataReaderImpl::set_topic(
+        const Topic& topic)
+{
+    topic_ = topic;
+    return true;
+}
+
+const Topic& DataReaderImpl::get_topic() const
+{
+    return topic_;
 }
 
 bool DataReaderImpl::set_attributes(
@@ -421,7 +426,7 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
 bool DataReaderImpl::on_new_cache_change_added(
         const CacheChange_t *const change)
 {
-    if (qos_.m_deadline.period != c_TimeInfinite)
+    if (qos_.deadline.period != c_TimeInfinite)
     {
         std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
@@ -443,10 +448,10 @@ bool DataReaderImpl::on_new_cache_change_added(
 
     CacheChange_t* new_change = const_cast<CacheChange_t*>(change);
 
-    if (qos_.m_lifespan.duration == c_TimeInfinite)
-    {
-        return true;
-    }
+//    if (qos_.m_lifespan.duration == c_TimeInfinite)
+//    {
+//        return true;
+//    }
 
     auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
     auto now = system_clock::now();
@@ -486,7 +491,7 @@ bool DataReaderImpl::on_new_cache_change_added(
 
 bool DataReaderImpl::deadline_timer_reschedule()
 {
-    assert(qos_.m_deadline.period != c_TimeInfinite);
+    assert(qos_.deadline.period != c_TimeInfinite);
 
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
@@ -504,7 +509,7 @@ bool DataReaderImpl::deadline_timer_reschedule()
 
 bool DataReaderImpl::deadline_missed()
 {
-    assert(qos_.m_deadline.period != c_TimeInfinite);
+    assert(qos_.deadline.period != c_TimeInfinite);
 
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
@@ -692,6 +697,15 @@ TypeSupport DataReaderImpl::type()
 {
     return type_;
 }
+
+/* TODO
+ReturnCode_t DataReaderImpl::get_matched_publication_data(
+        PublicationBuiltinTopicData publication_data,
+        fastrtps::rtps::InstanceHandle_t publication_handle)
+{
+
+}
+*/
 
 } /* namespace dds */
 } /* namespace fastdds */
