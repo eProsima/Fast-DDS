@@ -357,15 +357,13 @@ bool SubscriberImpl::contains_entity(
     return false;
 }
 
-/* TODO
-   bool SubscriberImpl::copy_from_topic_qos(
-        DataReaderQos&,
-        const fastrtps::TopicAttributes&) const
-   {
-    logError(PUBLISHER, "Operation not implemented");
-    return false;
-   }
- */
+ReturnCode_t SubscriberImpl::copy_from_topic_qos(
+        DataReaderQos& reader_qos,
+        const TopicQos& topic_qos) const
+{
+    reader_qos.copyFromTopicQos(topic_qos);
+    return ReturnCode_t::RETCODE_OK;
+}
 
 bool SubscriberImpl::set_attributes(
         const fastrtps::SubscriberAttributes& att)

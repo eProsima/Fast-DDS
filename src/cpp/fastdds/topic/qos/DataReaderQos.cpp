@@ -198,7 +198,7 @@ ReaderQos DataReaderQos::changeToReaderQos() const
 }
 
 void DataReaderQos::changeToDataReaderQos(
-    const ReaderQos& qos)
+        const ReaderQos& qos)
 {
     this->durability = qos.m_durability;
     this->deadline = qos.m_deadline;
@@ -212,5 +212,19 @@ void DataReaderQos::changeToDataReaderQos(
     this->representation = qos.representation;
     this->type_consistency = qos.type_consistency;
     this->disable_positive_ACKs = qos.m_disablePositiveACKs;
+}
+
+void DataReaderQos::copyFromTopicQos(
+        const TopicQos& topic_qos)
+{
+    this->durability = topic_qos.durability;
+    this->deadline = topic_qos.deadline;
+    this->destination_order = topic_qos.destination_order;
+    this->history = topic_qos.history;
+    this->latency_budget = topic_qos.latency_budget;
+    this->liveliness = topic_qos.liveliness;
+    this->ownership = topic_qos.ownership;
+    this->reliability = topic_qos.reliability;
+    this->resource_limits = topic_qos.resource_limits;
 }
 

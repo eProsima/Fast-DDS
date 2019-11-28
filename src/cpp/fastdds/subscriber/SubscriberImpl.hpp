@@ -54,6 +54,7 @@ class DomainParticipantImpl;
 class Subscriber;
 class DataReaderImpl;
 class Topic;
+class TopicQos;
 
 /**
  * Class SubscriberImpl, contains the actual implementation of the behaviour of the Subscriber.
@@ -135,11 +136,9 @@ public:
 
     const DataReaderQos& get_default_datareader_qos() const;
 
-    /* TODO
-       bool copy_from_topic_qos(
+    ReturnCode_t copy_from_topic_qos(
             DataReaderQos& reader_qos,
-            const fastrtps::TopicAttributes& topic_qos) const;
-     */
+            const TopicQos& topic_qos) const;
 
     /**
      * Update the Attributes of the subscriber;

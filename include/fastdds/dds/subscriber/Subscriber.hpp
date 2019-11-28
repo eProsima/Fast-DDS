@@ -57,6 +57,7 @@ class DataReader;
 class DataReaderListener;
 class DataReaderQos;
 class Topic;
+class TopicQos;
 
 /**
  * Class Subscriber, contains the public API that allows the user to control the reception of messages.
@@ -240,11 +241,9 @@ public:
     ReturnCode_t get_default_datareader_qos(
             DataReaderQos& qos) const;
 
-    /* TODO
-       bool copy_from_topic_qos(
+    ReturnCode_t copy_from_topic_qos(
             DataReaderQos& reader_qos,
-            const fastrtps::TopicAttributes& topic_qos) const;
-     */
+            const TopicQos& topic_qos) const;
 
     /**
      * Update the Attributes of the subscriber;
