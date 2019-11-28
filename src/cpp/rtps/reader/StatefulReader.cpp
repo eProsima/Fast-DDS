@@ -594,13 +594,13 @@ bool StatefulReader::processGapMsg(
             {
                 CacheChange_t* to_remove = nullptr;
                 auto ret_iterator = findCacheInFragmentedProcess(auxSN, pWP->guid(), &to_remove, history_iterator);
-                if (ret_iterator != mp_history->changesEnd())
-                {
-                    history_iterator = ret_iterator;
-                }
                 if (to_remove != nullptr)
                 {
-                    mp_history->remove_change(to_remove);
+                    ret_iterator = mp_history->remove_change_nts(to_remove, ret_iterator);
+                }
+                else if (ret_iterator != mp_history->changesEnd())
+                {
+                    history_iterator = ret_iterator;
                 }
             }
         }
@@ -611,13 +611,13 @@ bool StatefulReader::processGapMsg(
             {
                 CacheChange_t* to_remove = nullptr;
                 auto ret_iterator = findCacheInFragmentedProcess(auxSN, pWP->guid(), &to_remove, history_iterator);
-                if (ret_iterator != mp_history->changesEnd())
-                {
-                    history_iterator = ret_iterator;
-                }
                 if (to_remove != nullptr)
                 {
-                    mp_history->remove_change(to_remove);
+                    ret_iterator = mp_history->remove_change_nts(to_remove, ret_iterator);
+                }
+                else if (ret_iterator != mp_history->changesEnd())
+                {
+                    history_iterator = ret_iterator;
                 }
             }
         });
