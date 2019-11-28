@@ -24,6 +24,7 @@
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 
 #include <mutex>
 
@@ -104,12 +105,25 @@ public:
 
     /**
      * Virtual method to be called when the requested qos is incompatible with the one offered
-     * @param sub Subscriber
+     * @param sub Reader
      * @param status The requested incompatible qos status
      */
     virtual void on_requested_incompatible_qos(
             RTPSReader* reader,
             const fastdds::dds::RequestedIncompatibleQosStatus& status)
+    {
+        (void)reader;
+        (void)status;
+    }
+
+    /**
+     * Virtual method to be called when a sample is rejected by the Reader
+     * @param sub Reader
+     * @param status The sample rejected status
+     */
+    virtual void on_sample_rejected(
+            RTPSReader* reader,
+            const fastdds::dds::SampleRejectedStatus& status)
     {
         (void)reader;
         (void)status;

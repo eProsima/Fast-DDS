@@ -32,7 +32,7 @@ int main(
 {
     std::cout << "Starting " << std::endl;
     int type = 1;
-    int count = 10;
+    int count = 200;
     int sleep = 100;
     if (argc > 1)
     {
@@ -60,26 +60,26 @@ int main(
         return 0;
     }
 
-    switch(type)
+    switch (type)
     {
-        case 1:
-            {
-                HelloWorldPublisher mypub;
-                if(mypub.init())
-                {
-                    mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
-                }
-                break;
-            }
-        case 2:
-            {
-                HelloWorldSubscriber mysub;
-                if(mysub.init())
-                {
-                    mysub.run();
-                }
-                break;
-            }
+    case 1:
+    {
+        HelloWorldPublisher mypub;
+        if (mypub.init())
+        {
+            mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
+        }
+        break;
+    }
+    case 2:
+    {
+        HelloWorldSubscriber mysub;
+        if (mysub.init())
+        {
+            mysub.run();
+        }
+        break;
+    }
     }
     Log::Reset();
     return 0;

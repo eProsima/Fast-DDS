@@ -79,6 +79,10 @@ public:
                 eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::RequestedIncompatibleQosStatus& status) override;
 
+        void on_sample_rejected(
+                eprosima::fastdds::dds::DataReader* reader,
+                const eprosima::fastdds::dds::SampleRejectedStatus& status) override;
+
         HelloWorld hello_;
 
         eprosima::fastdds::dds::SampleInfo_t info_;
