@@ -253,6 +253,14 @@ void ReaderProxy::acked_changes_set(
     if (seq_num > changes_low_mark_)
     {
         ChangeIterator chit = find_change(seq_num, false);
+        // continue advancing until next change is not acknowledged
+        while (chit != changes_for_reader_.end()
+                && chit->getSequenceNumber() == future_low_mark
+                && chit->getStatus() == ACKNOWLEDGED)
+        {
+            ++chit;
+            ++future_low_mark;
+        }
         changes_for_reader_.erase(changes_for_reader_.begin(), chit);
     }
     else
