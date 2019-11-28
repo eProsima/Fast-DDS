@@ -64,6 +64,10 @@ bool HelloWorldSubscriber::init()
     eprosima::fastrtps::TopicAttributes topic_att;
     topic_att.topicDataType = "HelloWorld";
     topic_att.topicName = "HelloWorldTopic";
+    topic_att.historyQos.kind = KEEP_ALL_HISTORY_QOS;
+    topic_att.historyQos.depth = 2;
+    topic_att.resourceLimitsQos.max_samples = 2;
+    topic_att.resourceLimitsQos.allocated_samples = 1;
     reader_ = subscriber_->create_datareader(topic_att, rqos, &listener_);
 
     if (reader_ == nullptr)
@@ -110,6 +114,16 @@ void HelloWorldSubscriber::SubListener::on_requested_incompatible_qos(
         status.last_policy_id) << "." << std::endl;
 }
 
+void HelloWorldSubscriber::SubListener::on_sample_rejected(
+        DataReader*,
+        const SampleRejectedStatus& status)
+{
+    std::cout << "Sample Rejected Status" << std::endl;
+    std::cout << "Total Count " << status.total_count << std::endl;
+    std::cout << "Total Count Change " << status.total_count_change << std::endl;
+    std::cout << "Reason " << status.last_reason << std::endl;
+}
+
 void HelloWorldSubscriber::SubListener::on_data_available(
         eprosima::fastdds::dds::DataReader* reader)
 {
@@ -120,6 +134,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(
             samples_++;
             // Print your structure data here.
             std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
+            //std::this_thread::sleep_for(std::chrono::milliseconds(10000)); //-->Lost samples
         }
     }
 }

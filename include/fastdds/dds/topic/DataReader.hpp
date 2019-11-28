@@ -197,10 +197,8 @@ public:
             fastrtps::SampleLostStatus& status) const;
      */
 
-    /* TODO
-       bool get_sample_rejected_status(
-            fastrtps::SampleRejectedStatus& status) const;
-     */
+    ReturnCode_t get_sample_rejected_status(
+            SampleRejectedStatus& status) const;
 
     ReturnCode_t get_subscription_matched_status(
             SubscriptionMatchedStatus& status);

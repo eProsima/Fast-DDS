@@ -435,6 +435,17 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
             status);
 }
 
+void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
+        RTPSReader* /*reader*/,
+        const SampleRejectedStatus& status)
+{
+    if (data_reader_->listener_ != nullptr)
+    {
+        data_reader_->listener_->on_sample_rejected(data_reader_->user_datareader_, status);
+    }
+    data_reader_->subscriber_->subscriber_listener_.on_sample_rejected(data_reader_->user_datareader_,
+            status);
+}
 
 bool DataReaderImpl::on_new_cache_change_added(
         const CacheChange_t* const change)
@@ -678,16 +689,12 @@ ReturnCode_t DataReaderImpl::get_requested_incompatible_qos_status(
    }
  */
 
-/* TODO
-   bool DataReaderImpl::get_sample_rejected_status(
+ReturnCode_t DataReaderImpl::get_sample_rejected_status(
         SampleRejectedStatus& status) const
-   {
-    (void)status;
-    // TODO Implement
-    // TODO add callback call subscriber_->subscriber_listener_->on_sample_rejected
-    return false;
-   }
- */
+{
+    status = reader_->sample_rejected_status_;
+    return ReturnCode_t::RETCODE_OK;
+}
 
 types::ReturnCode_t DataReaderImpl::get_subscription_matched_status(
         SubscriptionMatchedStatus& status) const

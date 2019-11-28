@@ -24,6 +24,7 @@
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -86,7 +87,7 @@ public:
      * @param sub Subscriber
      * @param status The requested incompatible qos status
      */
-    virtual void on_requested_incompatible_qos_status(
+    virtual void on_requested_incompatible_qos(
             Subscriber* sub,
             const RequestedIncompatibleQosStatus& status)
     {
@@ -102,6 +103,19 @@ public:
     virtual void on_liveliness_changed(
             Subscriber* sub,
             const LivelinessChangedStatus& status)
+    {
+        (void)sub;
+        (void)status;
+    }
+
+    /**
+     * Virtual method to be called when a sample is rejected by the DataReader
+     * @param sub Subscriber
+     * @param status The sample rejected status
+     */
+    virtual void on_sample_rejected(
+            Subscriber* sub,
+            const SampleRejectedStatus& status)
     {
         (void)sub;
         (void)status;
