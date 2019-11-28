@@ -183,10 +183,8 @@ public:
             fastrtps::SampleLostStatus& status) const;
      */
 
-    /* TODO
-       bool get_sample_rejected_status(
+    ReturnCode_t get_sample_rejected_status(
             fastrtps::SampleRejectedStatus& status) const;
-     */
 
     ReturnCode_t get_subscription_matched_status(
             SubscriptionMatchedStatus& status) const;
@@ -262,6 +260,10 @@ public:
         void on_requested_incompatible_qos(
                 fastrtps::rtps::RTPSReader* reader,
                 const RequestedIncompatibleQosStatus& status) override;
+
+        void on_sample_rejected(
+                fastrtps::rtps::RTPSReader* reader,
+                const SampleRejectedStatus& status) override;
 
         DataReaderImpl* data_reader_;
     } reader_listener_;
