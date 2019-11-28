@@ -33,8 +33,8 @@ DataWriterQos::DataWriterQos()
 
 
 void DataWriterQos::setQos(
-    const DataWriterQos& qos,
-    bool first_time)
+        const DataWriterQos& qos,
+        bool first_time)
 {
     if (first_time)
     {
@@ -71,17 +71,17 @@ void DataWriterQos::setQos(
         destination_order = qos.destination_order;
         destination_order.hasChanged = true;
     }
-    if(first_time)
+    if (first_time)
     {
         history = qos.history;
         history.hasChanged = true;
     }
-    if(first_time)
+    if (first_time)
     {
         resource_limits = qos.resource_limits;
         resource_limits.hasChanged = true;
     }
-    if(transport_priority.value != qos.transport_priority.value)
+    if (transport_priority.value != qos.transport_priority.value)
     {
         transport_priority = qos.transport_priority;
         transport_priority.hasChanged = true;
@@ -106,15 +106,16 @@ void DataWriterQos::setQos(
         ownership_strength = qos.ownership_strength;
         ownership_strength.hasChanged = true;
     }
-    if(writer_data_lifecycle.autodispose_unregistered_instances != qos.writer_data_lifecycle.autodispose_unregistered_instances)
+    if (writer_data_lifecycle.autodispose_unregistered_instances !=
+            qos.writer_data_lifecycle.autodispose_unregistered_instances)
     {
         writer_data_lifecycle = qos.writer_data_lifecycle;
         writer_data_lifecycle.hasChanged = true;
     }
     if (first_time)
     {
-       disable_positive_ACKs = qos.disable_positive_ACKs;
-       disable_positive_ACKs.hasChanged = true;
+        disable_positive_ACKs = qos.disable_positive_ACKs;
+        disable_positive_ACKs.hasChanged = true;
     }
     // Writers only manages the first element in the list of data representations.
     if (qos.representation.m_value.size() != representation.m_value.size() ||
@@ -160,7 +161,7 @@ bool DataWriterQos::checkQos() const
 
 
 bool DataWriterQos::canQosBeUpdated(
-    const DataWriterQos& qos) const
+        const DataWriterQos& qos) const
 {
     bool updatable = true;
     if (durability.kind != qos.durability.kind)
@@ -227,7 +228,7 @@ WriterQos DataWriterQos::changeToWriterQos() const
 }
 
 void DataWriterQos::changeToDataWriterQos(
-    const WriterQos& qos)
+        const WriterQos& qos)
 {
     this->durability = qos.m_durability;
     this->durability_service = qos.m_durabilityService;
@@ -243,4 +244,22 @@ void DataWriterQos::changeToDataWriterQos(
     this->publish_mode = qos.m_publishMode;
     this->disable_positive_ACKs = qos.m_disablePositiveACKs;
     this->representation = qos.representation;
+}
+
+void DataWriterQos::copyFromTopicQos(
+        const TopicQos& topic_qos)
+{
+    this->deadline = topic_qos.deadline;
+    this->destination_order = topic_qos.destination_order;
+    this->durability = topic_qos.durability;
+    this->durability_service = topic_qos.durability_service;
+    this->history = topic_qos.history;
+    this->latency_budget = topic_qos.latency_budget;
+    this->lifespan = topic_qos.lifespan;
+    this->liveliness = topic_qos.liveliness;
+    this->ownership = topic_qos.ownership;
+    this->reliability = topic_qos.reliability;
+    this->resource_limits = topic_qos.resource_limits;
+    this->transport_priority = topic_qos.transport_priority;
+
 }

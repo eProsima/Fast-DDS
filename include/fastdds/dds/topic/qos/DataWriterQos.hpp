@@ -23,6 +23,7 @@
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/core/policy/WriterDataLifecycleQosPolicy.hpp>
 #include <fastdds/dds/topic/qos/WriterQos.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -141,6 +142,9 @@ public:
 
     RTPS_DllAPI void changeToDataWriterQos(
             const WriterQos& qos);
+
+    RTPS_DllAPI void copyFromTopicQos(
+            const TopicQos& topic_qos);
 
 };
 
