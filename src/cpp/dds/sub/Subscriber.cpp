@@ -80,17 +80,15 @@ void Subscriber::qos(
 
 dds::sub::qos::DataReaderQos Subscriber::default_datareader_qos() const
 {
-    // TODO Use DataReaderQos instead of ReaderQos
-    //return delegate()->default_datareader_qos();
-    return qos::DataReaderQos();
+    dds::sub::qos::DataReaderQos rqos;
+    delegate()->get_default_datareader_qos(rqos);
+    return rqos;
 }
 
 Subscriber& Subscriber::default_datareader_qos(
     const dds::sub::qos::DataReaderQos& qos)
 {
-    // TODO Use DataReaderQos instead of ReaderQos
-    //delegate()->default_datareader_qos(qos);
-    (void)qos;
+    delegate()->set_default_datareader_qos(qos);
     return *this;
 }
 

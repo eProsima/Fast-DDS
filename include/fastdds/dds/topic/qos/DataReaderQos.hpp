@@ -20,8 +20,9 @@
 #ifndef _FASTDDS_DATAREADERQOS_HPP
 #define _FASTDDS_DATAREADERQOS_HPP
 
-#include <fastrtps/qos/QosPolicies.h>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/core/policy/ReaderDataLifecycleQosPolicy.hpp>
+#include <fastdds/dds/topic/qos/ReaderQos.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -37,41 +38,51 @@ namespace dds {
 class DataReaderQos
 {
 public:
+
     //!Durability Qos, implemented in the library.
-    fastrtps::DurabilityQosPolicy durability;
+    DurabilityQosPolicy durability;
 
     //!Deadline Qos, implemented in the library.
-    fastrtps::DeadlineQosPolicy deadline;
+    DeadlineQosPolicy deadline;
 
     //!Latency Budget Qos, implemented in the library.
-    fastrtps::LatencyBudgetQosPolicy latency_budget;
+    LatencyBudgetQosPolicy latency_budget;
 
     //!Liveliness Qos, implemented in the library.
-    fastrtps::LivelinessQosPolicy liveliness;
+    LivelinessQosPolicy liveliness;
 
     //!Reliability Qos, implemented in the library.
-    fastrtps::ReliabilityQosPolicy reliability;
+    ReliabilityQosPolicy reliability;
 
     //!Destination Order Qos, NOT implemented in the library.
-    fastrtps::DestinationOrderQosPolicy destination_order;
+    DestinationOrderQosPolicy destination_order;
 
     //!History Qos, implemented in the library.
-    fastrtps::HistoryQosPolicy history;
+    HistoryQosPolicy history;
 
     //!Resource Limits Qos, implemented in the library.
-    fastrtps::ResourceLimitsQosPolicy resource_limits;
+    ResourceLimitsQosPolicy resource_limits;
 
     //!User Data Qos, NOT implemented in the library.
-    fastrtps::UserDataQosPolicy user_data;
+    UserDataQosPolicy user_data;
 
     //!Ownership Qos, NOT implemented in the library.
-    fastrtps::OwnershipQosPolicy ownership;
+    OwnershipQosPolicy ownership;
 
     //!Time Based Filter Qos, NOT implemented in the library.
-    fastrtps::TimeBasedFilterQosPolicy time_based_filter;
+    TimeBasedFilterQosPolicy time_based_filter;
 
     //!Reader Data Lifecycle Qos, NOT implemented in the library.
-    fastdds::dds::ReaderDataLifecycleQosPolicy reader_data_lifecycle;
+    ReaderDataLifecycleQosPolicy reader_data_lifecycle;
+
+    //!Data Representation Qos, implemented in the library.
+    DataRepresentationQosPolicy representation;
+
+    //!Type consistency enforcement Qos, NOT implemented in the library.
+    TypeConsistencyEnforcementQosPolicy type_consistency;
+
+    //!Disable positive ACKs QoS
+    DisablePositiveACKsQosPolicy disable_positive_ACKs;
 
     bool operator ==(
             const DataReaderQos& b) const
@@ -87,34 +98,38 @@ public:
                (this->user_data == b.user_data) &&
                (this->ownership == b.ownership) &&
                (this->time_based_filter == b.time_based_filter) &&
-               (this->reader_data_lifecycle == b.reader_data_lifecycle);
+               (this->reader_data_lifecycle == b.reader_data_lifecycle) &&
+               (this->representation == b.representation) &&
+               (this->type_consistency == b.type_consistency) &&
+               (this->disable_positive_ACKs == b.disable_positive_ACKs);
     }
 
-    /* TODO: Implement this method
-     * Set Qos from another class
+    /* Set Qos from another class
      * @param qos Reference from a DataReaderQos object.
-     * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
+     * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set). */
     RTPS_DllAPI void setQos(
             const DataReaderQos& qos,
             bool first_time);
-    */
 
-    /* TODO: Implement this method
-     * Check if the Qos values are compatible between each other.
-     * @return True if correct.
+    /* Check if the Qos values are compatible between each other.
+     * @return True if correct.    */
     RTPS_DllAPI bool checkQos() const;
-    */
 
-    /* TODO: Implement this method
-     * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
+
+    /* Check if the Qos can be update with the values provided. This method DOES NOT update anything.
      * @param qos Reference to the new qos.
-     * @return True if they can be updated.
+     * @return True if they can be updated.     */
     RTPS_DllAPI bool canQosBeUpdated(
             const DataReaderQos& qos) const;
-    */
+
+    RTPS_DllAPI ReaderQos changeToReaderQos() const;
+
+    RTPS_DllAPI void changeToDataReaderQos(
+            const ReaderQos& qos);
+
 };
 
-//extern const DataReaderQos DATAREADER_QOS_DEFAULT;
+extern const DataReaderQos DDS_DATAREADER_QOS_DEFAULT;
 
 } // namespace dds
 } // namespace fastdds

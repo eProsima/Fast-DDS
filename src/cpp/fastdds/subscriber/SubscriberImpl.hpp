@@ -25,6 +25,7 @@
 
 #include <fastdds/dds/topic/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/topic/qos/DataReaderQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 #include <mutex>
@@ -52,7 +53,7 @@ class DomainParticipant;
 class DomainParticipantImpl;
 class Subscriber;
 class DataReaderImpl;
-class ReaderQos;
+class Topic;
 
 /**
  * Class SubscriberImpl, contains the actual implementation of the behaviour of the Subscriber.
@@ -90,8 +91,9 @@ public:
             SubscriberListener* listener);
 
     DataReader* create_datareader(
+            const Topic& topic,
             const fastrtps::TopicAttributes& topic_attr,
-            const ReaderQos& reader_qos,
+            const DataReaderQos& reader_qos,
             DataReaderListener* listener);
 
     ReturnCode_t delete_datareader(
@@ -129,13 +131,13 @@ public:
      */
 
     ReturnCode_t set_default_datareader_qos(
-            const ReaderQos& qos);
+            const DataReaderQos& qos);
 
-    const ReaderQos& get_default_datareader_qos() const;
+    const DataReaderQos& get_default_datareader_qos() const;
 
     /* TODO
        bool copy_from_topic_qos(
-            ReaderQos& reader_qos,
+            DataReaderQos& reader_qos,
             const fastrtps::TopicAttributes& topic_qos) const;
      */
 
@@ -246,7 +248,7 @@ public:
     //!RTPSParticipant
     fastrtps::rtps::RTPSParticipant* rtps_participant_;
 
-    ReaderQos default_datareader_qos_;
+    DataReaderQos default_datareader_qos_;
 
     fastrtps::rtps::InstanceHandle_t handle_;
 
