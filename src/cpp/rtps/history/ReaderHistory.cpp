@@ -125,6 +125,16 @@ bool ReaderHistory::remove_change(
     return false;
 }
 
+History::const_iterator ReaderHistory::remove_change_nts(
+        CacheChange_t* a_change,
+        History::const_iterator position)
+{
+    (void)a_change;
+    assert(nullptr != a_change);
+    assert((*position) == a_change);
+    return m_changes.erase(position);
+}
+
 bool ReaderHistory::remove_changes_with_guid(
         const GUID_t& a_guid)
 {
