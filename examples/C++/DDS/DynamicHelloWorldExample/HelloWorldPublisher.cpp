@@ -24,6 +24,7 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/topic/qos/DataWriterQos.hpp>
 
 #include <fastrtps/types/DynamicDataFactory.h>
 
@@ -89,7 +90,6 @@ bool HelloWorldPublisher::init()
     Wparam.topic.topicName = "DDSDynHelloWorldTopic";
     Wparam.topic.auto_fill_type_object = true; // Share the type with readers.
     Wparam.topic.auto_fill_type_information = false;
-    Wparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, Wparam, nullptr);
 
     if (mp_publisher == nullptr)
@@ -98,7 +98,9 @@ bool HelloWorldPublisher::init()
     }
 
     // CREATE THE WRITER
-    writer_ = mp_publisher->create_datawriter(Wparam.topic, Wparam.qos, &m_listener);
+    DataWriterQos qos;
+    qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
+    writer_ = mp_publisher->create_datawriter(Wparam.topic, qos, &m_listener);
 
     if (writer_ == nullptr)
     {

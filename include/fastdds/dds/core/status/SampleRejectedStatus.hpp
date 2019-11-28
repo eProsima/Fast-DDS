@@ -51,7 +51,7 @@ struct SampleRejectedStatus
      * Reason for rejecting the last sample rejected.
      * If no samples have been rejected, the reason is the special value NOT_REJECTED.
      */
-    SampleRejectedStatusKind last_reason;
+    SampleRejectedStatusKind last_reason = NOT_REJECTED;
 
     /**
      * Handle to the instance being updated by the last sample that was rejected.

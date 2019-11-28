@@ -19,12 +19,14 @@
 #ifndef _FASTDDS_WRITERDATALIFECYCLEQOSPOLICY_HPP_
 #define _FASTDDS_WRITERDATALIFECYCLEQOSPOLICY_HPP_
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
 //! @brief A struct storing the base status
-class WriterDataLifecycleQosPolicy
+class WriterDataLifecycleQosPolicy : public QosPolicy
 {
 public:
     WriterDataLifecycleQosPolicy()

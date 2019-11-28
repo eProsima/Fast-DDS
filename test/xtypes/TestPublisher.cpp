@@ -23,6 +23,7 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/dds/topic/qos/DataWriterQos.hpp>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
@@ -128,7 +129,9 @@ bool TestPublisher::init(
             return false;
         }
 
-        writer_ = mp_publisher->create_datawriter(Wparam.topic, Wparam.qos, &m_pubListener);
+        DataWriterQos wqos;
+        wqos.changeToDataWriterQos(Wparam.qos);
+        writer_ = mp_publisher->create_datawriter(Wparam.topic, wqos, &m_pubListener);
 
         m_Data = m_Type.create_data();
     }
@@ -147,12 +150,16 @@ TestPublisher::~TestPublisher()
     DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
 }
 
-void TestPublisher::waitDiscovery(bool expectMatch, int maxWait)
+void TestPublisher::waitDiscovery(
+        bool expectMatch,
+        int maxWait)
 {
     std::unique_lock<std::mutex> lock(m_mDiscovery);
 
-    if(m_pubListener.n_matched == 0)
+    if (m_pubListener.n_matched == 0)
+    {
         m_cvDiscovery.wait_for(lock, std::chrono::seconds(maxWait));
+    }
 
     if (expectMatch)
     {
@@ -164,12 +171,16 @@ void TestPublisher::waitDiscovery(bool expectMatch, int maxWait)
     }
 }
 
-void TestPublisher::waitTypeDiscovery(bool expectMatch, int maxWait)
+void TestPublisher::waitTypeDiscovery(
+        bool expectMatch,
+        int maxWait)
 {
     std::unique_lock<std::mutex> lock(mtx_type_discovery_);
 
-    if(!part_listener_.discovered_)
+    if (!part_listener_.discovered_)
+    {
         cv_type_discovery_.wait_for(lock, std::chrono::seconds(maxWait));
+    }
 
     if (expectMatch)
     {
@@ -185,11 +196,14 @@ void TestPublisher::matched()
 {
     std::unique_lock<std::mutex> lock(m_mDiscovery);
     ++m_pubListener.n_matched;
-    if(m_pubListener.n_matched >= 1)
+    if (m_pubListener.n_matched >= 1)
+    {
         m_cvDiscovery.notify_one();
+    }
 }
 
-TestPublisher::PubListener::PubListener(TestPublisher* parent)
+TestPublisher::PubListener::PubListener(
+        TestPublisher* parent)
     : mParent(parent)
     , n_matched(0)
 {
@@ -199,7 +213,7 @@ void TestPublisher::PubListener::on_publication_matched(
         eprosima::fastdds::dds::DataWriter*,
         const eprosima::fastdds::dds::PublicationMatchedStatus& info)
 {
-    if(info.current_count_change > 0)
+    if (info.current_count_change > 0)
     {
         std::cout << mParent->m_Name << " matched." << std::endl;
         mParent->matched();
@@ -235,13 +249,13 @@ void TestPublisher::PartListener::on_type_information_received(
         const eprosima::fastrtps::types::TypeInformation& type_information)
 {
     std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
-        [this, topic_name](const std::string&, const types::DynamicType_ptr type)
-    {
-        std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
-        parent_->tls_callback_called_ = true;
-        on_type_discovery(nullptr, rtps::SampleIdentity(), topic_name, nullptr, nullptr, type);
-        parent_->tls_callback_called_ = false;
-    };
+            [this, topic_name](const std::string&, const types::DynamicType_ptr type)
+            {
+                std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
+                parent_->tls_callback_called_ = true;
+                on_type_discovery(nullptr, rtps::SampleIdentity(), topic_name, nullptr, nullptr, type);
+                parent_->tls_callback_called_ = false;
+            };
 
     std::cout << "Received type information: " << type_name << " on topic: " << topic_name << std::endl;
     parent_->mp_participant->register_remote_type(type_information, type_name.to_string(), callback);

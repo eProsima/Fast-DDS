@@ -25,6 +25,7 @@
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
+#include <fastdds/dds/topic/qos/DataWriterQos.hpp>
 
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
@@ -225,11 +226,11 @@ int main(
     }
 
     /* TODO - XMLProfileManager doesn't support DDS yet
-    if (xml_file)
-    {
+       if (xml_file)
+       {
         DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
-    }
-    */
+       }
+     */
 
     xmlparser::XMLProfileManager::loadXMLFile("example_type.xml");
 
@@ -239,7 +240,7 @@ int main(
     participant_attributes.rtps.builtin.domainId = seed % 230;
     ParListener participant_listener(exit_on_lost_liveliness);
     DomainParticipant* participant =
-        DomainParticipantFactory::get_instance()->create_participant(participant_attributes, &participant_listener);
+            DomainParticipantFactory::get_instance()->create_participant(participant_attributes, &participant_listener);
 
     if (participant == nullptr)
     {
@@ -273,7 +274,9 @@ int main(
         return 1;
     }
 
-    DataWriter* writer = publisher->create_datawriter(publisher_attributes.topic, publisher_attributes.qos, nullptr);
+    DataWriterQos qos;
+    qos.changeToDataWriterQos(publisher_attributes.qos);
+    DataWriter* writer = publisher->create_datawriter(publisher_attributes.topic, qos, nullptr);
     if (writer == nullptr)
     {
         DomainParticipantFactory::get_instance()->delete_participant(participant);

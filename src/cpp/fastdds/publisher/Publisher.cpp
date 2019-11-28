@@ -84,7 +84,7 @@ ReturnCode_t Publisher::set_listener(
 
 DataWriter* Publisher::create_datawriter(
         const fastrtps::TopicAttributes& topic_attr,
-        const fastrtps::WriterQos& writer_qos,
+        const DataWriterQos& writer_qos,
         DataWriterListener* listener)
 {
     return impl_->create_datawriter(topic_attr, writer_qos, listener);
@@ -96,26 +96,13 @@ DataWriter* Publisher::create_datawriter(
         DataWriterListener* listener)
 {
     fastrtps::TopicAttributes topic_attr;
-    fastrtps::WriterQos wqos;
     topic_attr.topicName = topic.get_name();
     topic_attr.topicDataType = topic.get_type_name();
     TopicQos topic_qos;
     topic.get_qos(topic_qos);
     topic_attr.historyQos = qos.history;
-    wqos.m_topicData = topic_qos.topic_data;
-    wqos.m_durability = qos.durability;
-    wqos.m_durabilityService = qos.durability_service;
-    wqos.m_deadline = qos.deadline;
-    wqos.m_latencyBudget = qos.latency_budget;
-    wqos.m_liveliness = qos.liveliness;
-    wqos.m_reliability = qos.reliability;
-    wqos.m_destinationOrder = qos.destination_order;
-    topic_attr.resourceLimitsQos = qos.resource_limits;
-    wqos.m_lifespan = qos.lifespan;
-    wqos.m_ownership = qos.ownership;
-    wqos.m_userData = qos.user_data;
 
-    return impl_->create_datawriter(topic_attr, wqos, listener);
+    return impl_->create_datawriter(topic_attr, qos, listener);
 }
 
 ReturnCode_t Publisher::delete_datawriter(
@@ -188,18 +175,18 @@ bool Publisher::delete_contained_entities()
 */
 
 ReturnCode_t Publisher::set_default_datawriter_qos(
-        const fastrtps::WriterQos& qos)
+        const DataWriterQos& qos)
 {
     return impl_->set_default_datawriter_qos(qos);
 }
 
-const fastrtps::WriterQos& Publisher::get_default_datawriter_qos() const
+const DataWriterQos& Publisher::get_default_datawriter_qos() const
 {
     return impl_->get_default_datawriter_qos();
 }
 
 ReturnCode_t Publisher::get_default_datawriter_qos(
-        fastrtps::WriterQos& qos) const
+        DataWriterQos& qos) const
 {
     qos = impl_->get_default_datawriter_qos();
     return ReturnCode_t::RETCODE_OK;
@@ -207,7 +194,7 @@ ReturnCode_t Publisher::get_default_datawriter_qos(
 
 /* TODO
 bool Publisher::copy_from_topic_qos(
-        fastrtps::WriterQos& writer_qos,
+        DataWriterQos& writer_qos,
         const fastrtps::TopicAttributes& topic_qos) const
 {
     return impl_->copy_from_topic_qos(writer_qos, topic_qos);
