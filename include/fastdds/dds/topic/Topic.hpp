@@ -54,12 +54,14 @@ public:
             const DomainParticipant* dp,
             const std::string& topic_name,
             const std::string& type_name,
-            const TopicQos& qos,
+            const TopicQos& qos = TOPIC_QOS_DEFAULT,
             TopicListener* listener = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
 
     RTPS_DllAPI fastrtps::types::ReturnCode_t get_qos(
             TopicQos& qos) const;
+
+    const TopicQos& get_qos() const;
 
     RTPS_DllAPI fastrtps::types::ReturnCode_t set_qos(
             const TopicQos& qos);
