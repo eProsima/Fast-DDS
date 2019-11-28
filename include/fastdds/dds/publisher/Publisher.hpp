@@ -54,7 +54,6 @@ class PublisherImpl;
 class PublisherQos;
 class DataWriter;
 class DataWriterListener;
-class WriterQos;
 class DataWriterQos;
 class Topic;
 
@@ -130,7 +129,7 @@ public:
      */
     DataWriter* create_datawriter(
             const fastrtps::TopicAttributes& topic_attr,
-            const WriterQos& writer_qos,
+            const DataWriterQos& writer_qos,
             DataWriterListener* listener);
 
     DataWriter* create_datawriter(
@@ -222,13 +221,13 @@ public:
      * This operation will check that the resulting policies are self consistent; if they are not, the operation
      * will have no effect and return false.
      *
-     * The special value DATAWRITER_QOS_DEFAULT may be passed to this operation to indicate that the default QoS
+     * The special value DDS_DATAWRITER_QOS_DEFAULT may be passed to this operation to indicate that the default QoS
      * should be reset back to the initial values the factory would use, that is the values that would be used
      * if the set_default_datawriter_qos operation had never been called.
      * @param qos
      */
     ReturnCode_t set_default_datawriter_qos(
-            const WriterQos& qos);
+            const DataWriterQos& qos);
 
     /**
      * This operation returns the default value of the DataWriter QoS, that is, the QoS policies which will be used
@@ -237,9 +236,9 @@ public:
      *
      * The values retrieved by get_default_datawriter_qos will match the set of values specified on the last
      * successful call to set_default_datawriter_qos, or else, if the call was never made, the default values.
-     * @return Current default WriterQos
+     * @return Current default DataWriterQos
      */
-    const WriterQos& get_default_datawriter_qos() const;
+    const DataWriterQos& get_default_datawriter_qos() const;
 
     /**
      * This operation retrieves the default value of the DataWriter QoS, that is, the QoS policies which will be used
@@ -248,15 +247,15 @@ public:
      *
      * The values retrieved by get_default_datawriter_qos will match the set of values specified on the last
      * successful call to set_default_datawriter_qos, or else, if the call was never made, the default values.
-     * @param qos Copy of the current default WriterQos.
+     * @param qos Copy of the current default DataWriterQos.
      * @return Always true.
      */
     ReturnCode_t get_default_datawriter_qos(
-            WriterQos& qos) const;
+            DataWriterQos& qos) const;
 
     /* TODO
        bool copy_from_topic_qos(
-            WriterQos& writer_qos,
+            DataWriterQos& writer_qos,
             const fastrtps::TopicAttributes& topic_qos) const;
      */
 

@@ -214,27 +214,7 @@ template<typename T>
 DataWriter<T>& DataWriter<T>::operator <<(
         const ::dds::pub::qos::DataWriterQos& qos)
 {
-    eprosima::fastdds::dds::WriterQos wqos;
-    wqos.m_durability = qos.durability;
-    wqos.m_durabilityService = qos.durability_service;
-    //wqos.m_deadline = qos.m_deadline;
-    wqos.m_latencyBudget = qos.latency_budget;
-    wqos.m_liveliness = qos.liveliness;
-    wqos.m_reliability = qos.reliability;
-    wqos.m_lifespan = qos.lifespan;
-    //wqos.m_userData = qos.m_userData;
-    //wqos.m_timeBasedFilter = qos.m_timeBasedFilter;
-    wqos.m_ownership = qos.ownership;
-    wqos.m_ownershipStrength = qos.ownership_strength;
-    wqos.m_destinationOrder = qos.destination_order;
-    //wqos.m_presentation = qos.m_presentation;
-    //wqos.m_partition = qos.m_partition;
-    //wqos.m_topicData = qos.m_topicData;
-    //wqos.m_groupData = qos.m_groupData;
-    //wqos.m_publishMode = qos.m_publishMode;
-    //wqos.m_disablePositiveACKs = qos.m_disablePositiveACKs;
-    //wqos.representation = qos.representation;
-    this->delegate()->set_qos(wqos);
+    this->delegate()->set_qos(qos);
     return *this;
 }
 
