@@ -35,8 +35,8 @@ Topic::Topic(
     , listener_(listener)
     , qos_(qos)
     , mask_(mask)
+    , participant_(const_cast<DomainParticipant*>(dp))
 {
-    (void)dp;
     topic_att_.topicName = topic_name;
     topic_att_.topicDataType = type_name;
     topic_att_.topicKind = qos.topic_kind;
@@ -46,19 +46,21 @@ Topic::Topic(
 
 Topic::Topic(
         const DomainParticipant* dp,
-        const fastrtps::TopicAttributes att,
+        fastrtps::TopicAttributes att,
         TopicListener* listener,
         const ::dds::core::status::StatusMask& mask)
     : TopicDescription(att.getTopicName().c_str(), att.getTopicDataType().c_str())
     , listener_(listener)
     , mask_(mask)
     , topic_att_(att)
+    , participant_(const_cast<DomainParticipant*>(dp))
 {
-    (void) dp;
     TopicQos qos;
     qos.history = att.historyQos;
     qos.resource_limits = att.resourceLimitsQos;
     qos.topic_kind = att.topicKind;
+    qos.auto_fill_type_information = att.auto_fill_type_information;
+    qos.auto_fill_type_object = att.auto_fill_type_object;
     qos_ = qos;
 }
 
@@ -113,10 +115,31 @@ ReturnCode_t Topic::get_inconsistent_topic_status(
 
 DomainParticipant* Topic::get_participant() const
 {
-    // TODO: Retrieve participant
-    return nullptr;
+    return participant_;
 }
 
+std::vector<DataWriter*>* Topic::get_writers() const
+{
+    return const_cast<std::vector<DataWriter*>*>(&writers_);
 }
+
+std::vector<DataReader*>* Topic::get_readers() const
+{
+    return const_cast<std::vector<DataReader*>*>(&readers_);
 }
+
+ReturnCode_t Topic::set_instance_handle(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    handle_ = handle;
+    return ReturnCode_t::RETCODE_OK;
 }
+
+fastrtps::rtps::InstanceHandle_t Topic::get_instance_handle() const
+{
+    return handle_;
+}
+
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima

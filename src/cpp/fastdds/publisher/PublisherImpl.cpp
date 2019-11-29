@@ -263,6 +263,8 @@ DataWriter* PublisherImpl::create_datawriter(
         writers_[topic.get_name()].push_back(impl);
     }
 
+    topic.get_writers()->push_back(writer);
+
     return writer;
 }
 

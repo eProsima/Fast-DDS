@@ -70,18 +70,6 @@ public:
         return type_name_;
     }
 
-    RTPS_DllAPI void set_name(
-            std::string name)
-    {
-        name_ = name;
-    }
-
-    RTPS_DllAPI void set_type_name(
-            std::string type_name)
-    {
-        type_name_ = type_name;
-    }
-
 protected:
 
     //! Name that allows the TopicDescription to be retrieved locally

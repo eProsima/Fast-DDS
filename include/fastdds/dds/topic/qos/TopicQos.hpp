@@ -82,6 +82,11 @@ public:
     //!Topic Kind
     fastrtps::rtps::TopicKind_t topic_kind;
 
+    //!Tries to complete type identifier and type object (TypeObjectV1)
+    bool auto_fill_type_object;
+    //!Tries to complete type information (TypeObjectV2)
+    bool auto_fill_type_information;
+
     bool operator ==(
             const TopicQos& b) const
     {
