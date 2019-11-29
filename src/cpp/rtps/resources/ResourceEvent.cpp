@@ -44,10 +44,7 @@ ResourceEvent::~ResourceEvent()
 
     logInfo(RTPS_PARTICIPANT, "Removing event thread");
     stop_.store(true);
-    {
-        std::lock_guard<TimedMutex> lock(mutex_);
-        cv_.notify_one();
-    }
+    cv_.notify_one();
 
     if (thread_.joinable())
     {
