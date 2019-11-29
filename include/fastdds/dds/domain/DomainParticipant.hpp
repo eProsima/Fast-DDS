@@ -29,6 +29,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/topic/Topic.hpp>
 
 #include <dds/core/status/Status.hpp>
 #include <dds/domain/DomainParticipant.hpp>
@@ -71,6 +72,7 @@ class Subscriber;
 class SubscriberQos;
 class SubscriberListener;
 class TopicQos;
+class TopicListener;
 
 /**
  * Class DomainParticipant used to group Publishers and Subscribers into a single working unit.
@@ -144,6 +146,41 @@ public:
             Subscriber* subscriber);
 
     /**
+     * Create a Topic in this Participant.
+     * @param topic_name Name of the Topic.
+     * @param type_name Name of the TypeSupport.
+     * @param qos QoS of the Topic.
+     * @param listen Pointer to the listener.
+     * @param mask Mask containing the status enabled of the Topic.
+     * @return Pointer to the created Topic.
+     */
+    Topic* create_topic(
+            std::string topic_name,
+            std::string type_name,
+            const fastdds::dds::TopicQos& qos,
+            TopicListener* listen = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+
+    /**
+     * Deletes an existing Topic.
+     * @param topic to be deleted.
+     * @return if topic was deleted.
+     */
+    ReturnCode_t delete_topic(
+            Topic* topic);
+
+
+    /**
+     * Look for an existing Topic.
+     * @param topic_name Name of the Topic.
+     * @param timeout Maximum time.
+     * @return if subscriber was deleted.
+     */
+    Topic* find_topic(
+            const std::string& topic_name,
+            const Duration_t& timeout);
+
+    /**
      * Register a type in this participant.
      * @param type TypeSupport.
      * @param type_name The name that will be used to identify the Type.
@@ -169,31 +206,29 @@ public:
     ReturnCode_t unregister_type(
             const char* typeName);
 
-    // TODO create/delete topic
+    /* TODO
+       Subscriber* get_builtin_subscriber();
+     */
 
     /* TODO
-    Subscriber* get_builtin_subscriber();
-    */
-
-    /* TODO
-    bool ignore_participant(
+       bool ignore_participant(
             const fastrtps::rtps::InstanceHandle_t& handle);
-    */
+     */
 
     /* TODO
-    bool ignore_topic(
+       bool ignore_topic(
             const fastrtps::rtps::InstanceHandle_t& handle);
-    */
+     */
 
     /* TODO
-    bool ignore_publication(
+       bool ignore_publication(
             const fastrtps::rtps::InstanceHandle_t& handle);
-    */
+     */
 
     /* TODO
-    bool ignore_subscription(
+       bool ignore_subscription(
             const fastrtps::rtps::InstanceHandle_t& handle);
-    */
+     */
 
     /**
      * This operation retrieves the domain_id used to create the DomainParticipant.
@@ -203,8 +238,8 @@ public:
     uint8_t get_domain_id() const;
 
     /* TODO
-    bool delete_contained_entities();
-    */
+       bool delete_contained_entities();
+     */
 
     /**
      * This operation manually asserts the liveliness of the DomainParticipant.
@@ -311,26 +346,26 @@ public:
     const fastdds::dds::TopicQos& get_default_topic_qos() const;
 
     /* TODO
-    bool get_discovered_participants(
+       bool get_discovered_participants(
             std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const;
-    */
+     */
 
     /* TODO
-    bool get_discovered_participant_data(
+       bool get_discovered_participant_data(
             ParticipantBuiltinTopicData& participant_data,
             const fastrtps::rtps::InstanceHandle_t& participant_handle) const;
-    */
+     */
 
     /* TODO
-    bool get_discovered_topics(
+       bool get_discovered_topics(
             std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const;
-    */
+     */
 
     /* TODO
-    bool get_discovered_topic_data(
+       bool get_discovered_topic_data(
             TopicBuiltinTopicData& topic_data,
             const fastrtps::rtps::InstanceHandle_t& topic_handle) const;
-    */
+     */
 
     /**
      * This operation checks whether or not the given handle represents an Entity that was created from the

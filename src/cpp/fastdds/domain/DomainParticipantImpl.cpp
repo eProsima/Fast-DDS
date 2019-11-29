@@ -39,6 +39,7 @@
 #include <fastdds/dds/topic/DataWriter.hpp>
 
 #include <fastdds/dds/topic/Topic.hpp>
+#include <fastrtps/utils/TimeConversion.h>
 
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 
@@ -1313,6 +1314,8 @@ Topic* DomainParticipantImpl::create_topic(
         register_dynamic_type_to_factories(type_name);
     }
 
+    cv_topic_.notify_all();
+
     return topic;
 }
 
@@ -1333,4 +1336,28 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
     topics_.erase(topics_.find(topic->get_name()));
     delete topic;
     return ReturnCode_t::RETCODE_OK;
+}
+
+Topic* DomainParticipantImpl::find_topic(
+        const std::string& topic_name,
+        const Duration_t& timeout)
+{
+    std::unique_lock<std::mutex> lock(mtx_types_);
+
+    Topic* topic = nullptr;
+    std::chrono::microseconds max_wait(eprosima::fastrtps::rtps::TimeConv::Duration_t2MicroSecondsInt64(timeout));
+
+    cv_topic_.wait_for(lock, max_wait, [&]()
+    {
+        auto it = topics_.find(topic_name);
+
+        if (it != topics_.end())
+        {
+            topic = it->second;
+
+        }
+        return topic == nullptr;
+
+    });
+    return topic;
 }

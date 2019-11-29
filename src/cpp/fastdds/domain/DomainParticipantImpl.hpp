@@ -136,9 +136,11 @@ public:
     /**
      * Create a Topic in this Participant.
      * @param topic_name Name of the Topic.
-     * @param att Attributes of the Subscriber
+     * @param type_name Name of the TypeSupport.
+     * @param qos QoS of the Topic.
      * @param listen Pointer to the listener.
-     * @return Pointer to the created Subscriber.
+     * @param mask Mask containing the status enabled of the Topic.
+     * @return Pointer to the created Topic.
      */
     Topic* create_topic(
             std::string topic_name,
@@ -149,6 +151,10 @@ public:
 
     ReturnCode_t delete_topic(
             Topic* topic);
+
+    Topic* find_topic(
+            const std::string& topic_name,
+            const Duration_t& timeout);
 
     /**
      * Register a type in this participant.
@@ -380,6 +386,7 @@ private:
     std::map<std::string, Topic*> topics_;
     std::map<fastrtps::rtps::InstanceHandle_t, Topic*> topics_by_handle_;
     mutable std::mutex mtx_types_;
+    std::condition_variable cv_topic_;
 
 
     // Mutex for requests and callbacks maps.
