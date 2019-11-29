@@ -27,8 +27,6 @@
 #include <fastdds/dds/topic/qos/DataWriterQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
-#include <fastrtps/attributes/SubscriberAttributes.h>
-
 #include <thread>
 
 using namespace eprosima::fastdds::dds;

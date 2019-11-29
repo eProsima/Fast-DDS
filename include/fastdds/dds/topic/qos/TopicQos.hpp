@@ -21,6 +21,7 @@
 #define _FASTDDS_TOPICQOS_HPP
 
 #include <fastrtps/qos/QosPolicies.h>
+#include <fastdds/rtps/common/Types.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -36,44 +37,50 @@ namespace dds {
 class TopicQos
 {
 public:
+
+    RTPS_DllAPI TopicQos();
+
     //!Topic Data Qos, NOT implemented in the library.
-    fastrtps::TopicDataQosPolicy topic_data;
+    TopicDataQosPolicy topic_data;
 
     //!Durability Qos, implemented in the library.
-    fastrtps::DurabilityQosPolicy durability;
+    DurabilityQosPolicy durability;
 
     //!Durability Service Qos, NOT implemented in the library.
-    fastrtps::DurabilityServiceQosPolicy durability_service;
+    DurabilityServiceQosPolicy durability_service;
 
     //!Deadline Qos, implemented in the library.
-    fastrtps::DeadlineQosPolicy deadline;
+    DeadlineQosPolicy deadline;
 
     //!Latency Budget Qos, NOT implemented in the library.
-    fastrtps::LatencyBudgetQosPolicy latency_budget;
+    LatencyBudgetQosPolicy latency_budget;
 
     //!Liveliness Qos, implemented in the library.
-    fastrtps::LivelinessQosPolicy liveliness;
+    LivelinessQosPolicy liveliness;
 
     //!Reliability Qos, implemented in the library.
-    fastrtps::ReliabilityQosPolicy reliability;
+    ReliabilityQosPolicy reliability;
 
     //!Destination Order Qos, NOT implemented in the library.
-    fastrtps::DestinationOrderQosPolicy destination_order;
+    DestinationOrderQosPolicy destination_order;
 
     //!History Qos, implemented in the library.
-    fastrtps::HistoryQosPolicy history;
+    HistoryQosPolicy history;
 
     //!Resource Limits Qos, implemented in the library.
-    fastrtps::ResourceLimitsQosPolicy resource_limits;
+    ResourceLimitsQosPolicy resource_limits;
 
     //!Transport Priority Qos, NOT implemented in the library.
-    fastrtps::TransportPriorityQosPolicy transport_priority;
+    TransportPriorityQosPolicy transport_priority;
 
     //!Lifespan Qos, implemented in the library.
-    fastrtps::LifespanQosPolicy lifespan;
+    LifespanQosPolicy lifespan;
 
     //!Ownership Qos, NOT implemented in the library.
-    fastrtps::OwnershipQosPolicy ownership;
+    OwnershipQosPolicy ownership;
+
+    //!Topic Kind
+    fastrtps::rtps::TopicKind_t topic_kind;
 
     //!Tries to complete type identifier and type object (TypeObjectV1)
     bool auto_fill_type_object;
@@ -95,7 +102,8 @@ public:
                (this->resource_limits == b.resource_limits) &&
                (this->transport_priority == b.transport_priority) &&
                (this->lifespan == b.lifespan) &&
-               (this->ownership == b.ownership);
+               (this->ownership == b.ownership) &&
+               (this->topic_kind == b.topic_kind);
     }
 
     TopicQos& operator <<(
@@ -105,25 +113,25 @@ public:
         return *this;
     }
 
-    /* TODO: Implement this method
-     * Set Qos from another class
+    /* Set Qos from another class
      * @param qos Reference from a TopicQos object.
-     * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
-    RTPS_DllAPI void setQos(const TopicQos& qos, bool first_time);
-    */
+     * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set). */
+    RTPS_DllAPI void setQos(
+            const TopicQos& qos,
+            bool first_time);
 
-    /* TODO: Implement this method
-     * Check if the Qos values are compatible between each other.
-     * @return True if correct.
+
+    /* Check if the Qos values are compatible between each other.
+     * @return True if correct.*/
     RTPS_DllAPI bool checkQos() const;
-    */
 
-    /* TODO: Implement this method
-     * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
+
+    /* Check if the Qos can be update with the values provided. This method DOES NOT update anything.
      * @param qos Reference to the new qos.
-     * @return True if they can be updated.
-    RTPS_DllAPI bool canQosBeUpdated(const TopicQos& qos) const;
-    */
+     * @return True if they can be updated. */
+    RTPS_DllAPI bool canQosBeUpdated(
+            const TopicQos& qos) const;
+
 };
 
 extern const TopicQos TOPIC_QOS_DEFAULT;

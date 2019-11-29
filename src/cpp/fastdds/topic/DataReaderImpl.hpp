@@ -76,7 +76,6 @@ class DataReaderImpl
             SubscriberImpl* s,
             TypeSupport type,
             const Topic& topic,
-            const fastrtps::TopicAttributes& topic_att,
             const fastrtps::rtps::ReaderAttributes& att,
             const DataReaderQos& qos,
             const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,

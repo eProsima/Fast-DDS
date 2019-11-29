@@ -25,6 +25,7 @@
 #include <fastdds/dds/topic/DataWriter.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/topic/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 
 #include <fastrtps/types/DynamicDataFactory.h>
 
@@ -99,7 +100,8 @@ bool TypeLookupPublisher::init()
     // CREATE THE WRITER
     DataWriterQos wqos;
     wqos.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
-    writer_ = mp_publisher->create_datawriter(Wparam.topic, wqos, &m_listener);
+    Topic mp_topic(mp_participant, Wparam.topic);
+    writer_ = mp_publisher->create_datawriter(mp_topic, wqos, &m_listener);
 
     if (writer_ == nullptr)
     {

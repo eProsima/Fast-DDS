@@ -48,7 +48,6 @@ DataReaderImpl::DataReaderImpl(
         SubscriberImpl* s,
         TypeSupport type,
         const Topic& topic,
-        const TopicAttributes& topic_att,
         const fastrtps::rtps::ReaderAttributes& att,
         const DataReaderQos& qos,
         const MemoryManagementPolicy_t memory_policy,
@@ -57,7 +56,7 @@ DataReaderImpl::DataReaderImpl(
     : subscriber_(s)
     , reader_(nullptr)
     , type_(type)
-    , topic_att_(topic_att)
+    , topic_att_(topic.get_topic_attributes())
     , topic_(topic)
     , att_(att)
     , qos_(&qos == &DDS_DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
@@ -130,7 +129,7 @@ DataReaderImpl::~DataReaderImpl()
 
     if (reader_ != nullptr)
     {
-        logInfo(DATA_READER, guid().entityId << " in topic: " << topic_att_.topicName);
+        logInfo(DATA_READER, guid().entityId << " in topic: " << topic_.get_name());
     }
 
     RTPSDomain::removeRTPSReader(reader_);
@@ -253,7 +252,6 @@ ReturnCode_t DataReaderImpl::set_qos(
 
     qos_.setQos(qos,false);
     //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
-    //subscriber_->update_reader(this, topic_att_, qos_);
     ReaderQos rqos = qos_.changeToReaderQos();
     subscriber_->rtps_participant()->updateReader(reader_, topic_att_, rqos);
 
@@ -299,9 +297,6 @@ bool DataReaderImpl::set_topic_attributes(
         logWarning(RTPS_READER,"Topic Attributes cannot be updated");
         return false;
     }
-    //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
-    //subscriber_->update_reader(this, topic_att_, qos_);
-    //subscriber_->rtps_participant()->updateReader(reader_, topic_att_, qos_);
     return true;
 }
 

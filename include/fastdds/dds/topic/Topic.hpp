@@ -24,6 +24,7 @@
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/attributes/TopicAttributes.h>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
@@ -44,6 +45,7 @@ class DomainParticipantImpl;
 class Topic : public TopicDescription
 {
 public:
+
     RTPS_DllAPI Topic(
             const DomainParticipant* dp,
             const std::string& topic_name,
@@ -51,6 +53,9 @@ public:
             const TopicQos& qos = TOPIC_QOS_DEFAULT,
             TopicListener* listener = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+
+
+    RTPS_DllAPI fastrtps::TopicAttributes get_topic_attributes() const;
 
     RTPS_DllAPI fastrtps::types::ReturnCode_t get_qos(
             TopicQos& qos) const;

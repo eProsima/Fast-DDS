@@ -25,6 +25,7 @@
 #include <fastdds/dds/topic/DataWriter.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/topic/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 
 #include <fastrtps/types/DynamicDataFactory.h>
 
@@ -100,7 +101,8 @@ bool HelloWorldPublisher::init()
     // CREATE THE WRITER
     DataWriterQos qos;
     qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
-    writer_ = mp_publisher->create_datawriter(Wparam.topic, qos, &m_listener);
+    Topic topic(mp_participant, Wparam.topic);
+    writer_ = mp_publisher->create_datawriter(topic, qos, &m_listener);
 
     if (writer_ == nullptr)
     {
