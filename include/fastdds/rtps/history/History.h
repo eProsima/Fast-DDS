@@ -197,7 +197,7 @@ public:
             const GUID_t& guid,
             CacheChange_t** change) const;
 
-    RTPS_DllAPI const_iterator get_change_nts(
+    const_iterator get_change_nts(
             const SequenceNumber_t& seq,
             const GUID_t& guid,
             CacheChange_t** change,
