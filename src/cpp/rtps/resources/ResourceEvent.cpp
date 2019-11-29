@@ -44,6 +44,10 @@ ResourceEvent::~ResourceEvent()
 
     logInfo(RTPS_PARTICIPANT, "Removing event thread");
     stop_.store(true);
+    {
+        std::lock_guard<TimedMutex> lock(mutex_);
+        cv_.notify_one();
+    }
 
     if (thread_.joinable())
     {
@@ -56,7 +60,7 @@ void ResourceEvent::register_timer(
 {
     assert(!stop_.load());
 
-    std::unique_lock<TimedMutex> lock(mutex_);
+    std::lock_guard<TimedMutex> lock(mutex_);
 
     ++timers_count_;
 
@@ -108,7 +112,7 @@ void ResourceEvent::unregister_timer(
 void ResourceEvent::notify(
         TimedEventImpl* event)
 {
-    std::unique_lock<TimedMutex> lock(mutex_);
+    std::lock_guard<TimedMutex> lock(mutex_);
 
     if (register_timer_nts(event))
     {
@@ -209,12 +213,14 @@ void ResourceEvent::do_timer_actions()
 
     // Process pending orders
     {
-        std::unique_lock<TimedMutex> lock(mutex_);
+        std::lock_guard<TimedMutex> lock(mutex_);
         for (TimedEventImpl* tp : pending_timers_)
         {
             did_something = true;
-            tp->update(current_time_, cancel_time);
-            activate_timer(tp);
+            if (tp->update(current_time_, cancel_time))
+            {
+                activate_timer(tp);
+            }
         }
         pending_timers_.clear();
     }
@@ -253,7 +259,7 @@ void ResourceEvent::do_timer_actions()
 
 void ResourceEvent::init_thread()
 {
-    std::unique_lock<TimedMutex> lock(mutex_);
+    std::lock_guard<TimedMutex> lock(mutex_);
 
     allow_vector_manipulation_ = false;
     resize_collections();
