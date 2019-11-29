@@ -318,20 +318,6 @@ protected:
     RTPSReader* mp_PDPReader;
     //!Pointer to the EDP object.
     EDP* mp_EDP;
-    //!Number of participant proxy data objects created
-    size_t participant_proxies_number_;
-    //!Registered RTPSParticipants (including the local one, that is the first one.)
-    ResourceLimitedVector<ParticipantProxyData*> participant_proxies_;
-    //!Pool of participant proxy data objects ready for reuse
-    ResourceLimitedVector<ParticipantProxyData*> participant_proxies_pool_;
-    //!Number of reader proxy data objects created
-    size_t reader_proxies_number_;
-    //!Pool of reader proxy data objects ready for reuse
-    ResourceLimitedVector<ReaderProxyData*> reader_proxies_pool_;
-    //!Number of writer proxy data objects created
-    size_t writer_proxies_number_;
-    //!Pool of writer proxy data objects ready for reuse
-    ResourceLimitedVector<WriterProxyData*> writer_proxies_pool_;
     //!Variable to indicate if any parameter has changed.
     std::atomic_bool m_hasChangedLocalPDP;
     //!Listener for the SPDP messages.
@@ -350,6 +336,29 @@ protected:
     std::recursive_mutex* mp_mutex;
     //!To protect callbacks (ParticipantProxyData&)
     std::mutex callback_mtx_;
+
+    /**
+     * Per-process database of Participant, Reader and Writer Proxies
+    */
+    //!Number of participant proxy data objects created
+    static size_t participant_proxies_number_;
+    //!Registered RTPSParticipants 
+    static std::vector<ParticipantProxyData*> participant_proxies_;
+    //!Pool of participant proxy data objects ready for reuse
+    static ResourceLimitedVector<ParticipantProxyData*> participant_proxies_pool_;
+    //!Number of reader proxy data objects created
+    static size_t reader_proxies_number_;
+    //!Pool of reader proxy data objects ready for reuse
+    static ResourceLimitedVector<ReaderProxyData*> reader_proxies_pool_;
+    //!Number of writer proxy data objects created
+    static size_t writer_proxies_number_;
+    //!Pool of writer proxy data objects ready for reuse
+    static ResourceLimitedVector<WriterProxyData*> writer_proxies_pool_;
+    //!Mutex for participant atomic access to database, soon a RWLock will replace it for efficiency sake
+    static std::recursive_mutex pdp_db_mutex_; 
+   
+    //! local mask  
+    std::set<guidPrefix> participant_mask; 
 
     /**
      * Adds an entry to the collection of participant proxy information.

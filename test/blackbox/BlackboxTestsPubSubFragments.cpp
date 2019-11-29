@@ -122,7 +122,8 @@ TEST_P(PubSubFragments, AsyncPubSubAsNonReliableData300kb)
     PubSubReader<Data1mbType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbType> writer(TEST_TOPIC_NAME);
 
-    reader.init();
+    //Increasing reception buffer to accomodate large and fast fragments
+    reader.socket_buffer_size(1048576).init();
 
     ASSERT_TRUE(reader.isInitialized());
 

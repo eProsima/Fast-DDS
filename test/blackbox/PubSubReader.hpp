@@ -642,6 +642,12 @@ public:
         return *this;
     }
 
+    PubSubReader& socket_buffer_size(uint32_t sockerBufferSize)
+    {
+        participant_attr_.rtps.listenSocketBufferSize = sockerBufferSize;
+        return *this;
+    }
+
     PubSubReader& durability_kind(const eprosima::fastrtps::DurabilityQosPolicyKind kind)
     {
         subscriber_attr_.qos.m_durability.kind = kind;
