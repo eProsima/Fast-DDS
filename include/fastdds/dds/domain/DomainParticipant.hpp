@@ -29,6 +29,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/topic/Topic.hpp>
 
 #include <dds/core/status/Status.hpp>
 #include <dds/domain/DomainParticipant.hpp>
@@ -73,6 +74,7 @@ class Subscriber;
 class SubscriberQos;
 class SubscriberListener;
 class TopicQos;
+class TopicListener;
 
 /**
  * Class DomainParticipant used to group Publishers and Subscribers into a single working unit.
@@ -211,8 +213,6 @@ public:
      */
     ReturnCode_t unregister_type(
             const char* typeName);
-
-    // TODO create/delete topic
 
     /* TODO
        Subscriber* get_builtin_subscriber();

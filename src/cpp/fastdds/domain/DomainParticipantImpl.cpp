@@ -38,6 +38,9 @@
 #include <fastdds/dds/topic/DataReader.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
 
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastrtps/utils/TimeConversion.h>
+
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 
 #include <fastdds/rtps/RTPSDomain.h>
@@ -1387,10 +1390,6 @@ Topic* DomainParticipantImpl::find_topic(
 
     Topic* topic = nullptr;
     std::chrono::microseconds max_wait(eprosima::fastrtps::rtps::TimeConv::Duration_t2MicroSecondsInt64(timeout));
-
-    for (auto it : topics_){
-        std::cout << "Topic name " << it.first << std::endl;
-    }
 
     cv_topic_.wait_for(lock, max_wait, [&]()
     {
