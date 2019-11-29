@@ -134,8 +134,9 @@ public:
     /*!
      * @brief It updates the asio::steady_timer depending of the state of TimedEventImpl object.
      * @warning This method has to be called from ResourceEvent's internal thread.
+     * @return false if the event was canceled, true otherwise.
      */
-    void update(
+    bool update(
         std::chrono::steady_clock::time_point current_time,
         std::chrono::steady_clock::time_point cancel_time);
 

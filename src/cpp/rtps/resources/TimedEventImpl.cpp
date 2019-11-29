@@ -62,13 +62,14 @@ bool TimedEventImpl::go_cancel()
     return returned_value;
 }
 
-void TimedEventImpl::update(
+bool TimedEventImpl::update(
         std::chrono::steady_clock::time_point current_time,
         std::chrono::steady_clock::time_point cancel_time)
 {
     StateCode expected = StateCode::READY;
+    bool ret_val = state_.compare_exchange_strong(expected, StateCode::WAITING);
 
-    if (state_.compare_exchange_strong(expected, StateCode::WAITING))
+    if (ret_val)
     {
         std::unique_lock<std::mutex> lock(mutex_);
         next_trigger_time_ = current_time + interval_microsec_;
@@ -78,6 +79,8 @@ void TimedEventImpl::update(
         std::unique_lock<std::mutex> lock(mutex_);
         next_trigger_time_ = cancel_time;
     }
+
+    return ret_val;
 }
 
 void TimedEventImpl::trigger(
