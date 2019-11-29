@@ -39,7 +39,6 @@
 #include <fastdds/dds/topic/DataWriter.hpp>
 
 #include <fastdds/dds/topic/Topic.hpp>
-#include <fastrtps/utils/TimeConversion.h>
 
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 
