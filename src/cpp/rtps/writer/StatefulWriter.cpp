@@ -579,6 +579,7 @@ void StatefulWriter::send_any_unsent_changes()
             }
 
             SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
+            SequenceNumber_t min_history_seq = get_seq_num_min();
             auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
                     {
                         if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
@@ -622,7 +623,7 @@ void StatefulWriter::send_any_unsent_changes()
                             }
                             else
                             {
-                                if (seq_num >= get_seq_num_min())
+                                if (seq_num >= min_history_seq)
                                 {
                                     notRelevantChanges.add_sequence_number(seq_num, remoteReader);
                                 }
