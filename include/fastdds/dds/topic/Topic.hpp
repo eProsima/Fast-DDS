@@ -28,6 +28,9 @@
 #include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 
+#include <fastdds/dds/topic/DataReader.hpp>
+#include <fastdds/dds/topic/DataWriter.hpp>
+
 #include <string>
 #include <vector>
 
@@ -36,19 +39,10 @@ namespace fastdds {
 namespace dds {
 
 class TopicListener;
-class DomainParticipant;
+class DomainParticipantImpl;
 
 class Topic : public TopicDescription
 {
-    TopicListener* listener_;
-
-    TopicQos qos_;
-
-    ::dds::core::status::StatusMask mask_;
-
-    InconsistentTopicStatus status_;
-
-
 public:
     RTPS_DllAPI Topic(
             const DomainParticipant* dp,
@@ -61,7 +55,7 @@ public:
     RTPS_DllAPI fastrtps::types::ReturnCode_t get_qos(
             TopicQos& qos) const;
 
-    const TopicQos& get_qos() const;
+    RTPS_DllAPI const TopicQos& get_qos() const;
 
     RTPS_DllAPI fastrtps::types::ReturnCode_t set_qos(
             const TopicQos& qos);
@@ -75,7 +69,35 @@ public:
     RTPS_DllAPI fastrtps::types::ReturnCode_t get_inconsistent_topic_status(
             InconsistentTopicStatus& status) const;
 
-    RTPS_DllAPI DomainParticipant* get_participant() const override;
+    RTPS_DllAPI DomainParticipant* get_participant() const;
+
+    RTPS_DllAPI std::vector<DataWriter*>* get_writers() const;
+
+    RTPS_DllAPI std::vector<DataReader*>* get_readers() const;
+
+    RTPS_DllAPI fastrtps::types::ReturnCode_t set_instance_handle(
+            const fastrtps::rtps::InstanceHandle_t& handle);
+
+    RTPS_DllAPI fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
+
+private:
+
+    fastrtps::rtps::InstanceHandle_t handle_;
+
+    TopicListener* listener_;
+
+    TopicQos qos_;
+
+    ::dds::core::status::StatusMask mask_;
+
+    InconsistentTopicStatus status_;
+
+    fastrtps::TopicAttributes topic_att_;
+
+    DomainParticipant* participant_;
+
+    std::vector<DataReader*> readers_;
+    std::vector<DataWriter*> writers_;
 };
 
 }

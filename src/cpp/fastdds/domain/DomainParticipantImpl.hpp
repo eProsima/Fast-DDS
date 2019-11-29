@@ -404,6 +404,7 @@ private:
     std::condition_variable cv_topic_;
 
 
+
     // Mutex for requests and callbacks maps.
     std::mutex mtx_request_cb_;
 
