@@ -24,6 +24,7 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/topic/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
@@ -131,7 +132,8 @@ bool TestPublisher::init(
 
         DataWriterQos wqos;
         wqos.changeToDataWriterQos(Wparam.qos);
-        writer_ = mp_publisher->create_datawriter(Wparam.topic, wqos, &m_pubListener);
+        Topic topic(mp_participant, Wparam.topic);
+        writer_ = mp_publisher->create_datawriter(topic, wqos, &m_pubListener);
 
         m_Data = m_Type.create_data();
     }

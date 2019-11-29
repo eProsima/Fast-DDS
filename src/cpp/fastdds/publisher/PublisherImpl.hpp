@@ -58,6 +58,7 @@ class DomainParticipantImpl;
 class DomainParticipant;
 class Publisher;
 class DataWriterImpl;
+class Topic;
 
 /**
  * Class PublisherImpl, contains the actual implementation of the behaviour of the Publisher.
@@ -97,7 +98,7 @@ public:
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     DataWriter* create_datawriter(
-            const fastrtps::TopicAttributes& topic_attr,
+            const Topic& topic,
             const DataWriterQos& writer_qos,
             DataWriterListener* listener,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());

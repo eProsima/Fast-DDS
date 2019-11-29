@@ -24,6 +24,7 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/DataReader.hpp>
 #include <fastdds/dds/topic/qos/DataReaderQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 
 using namespace eprosima::fastdds::dds;
 

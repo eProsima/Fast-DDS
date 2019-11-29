@@ -26,6 +26,7 @@
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/topic/DataReader.hpp>
 #include <fastdds/dds/topic/qos/DataReaderQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
@@ -94,16 +95,17 @@ public:
             const eprosima::fastrtps::types::TypeInformation& type_information) override
     {
         std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
-                [topic_name, type_name](const std::string& name, const types::DynamicType_ptr type)
+                [participant, topic_name, type_name](const std::string& name, const types::DynamicType_ptr type)
                 {
                     if (nullptr != g_subscriber)
                     {
                         std::cout << "Discovered type: " << name << " from topic " << topic_name << std::endl;
                         g_subscriber_attributes.topic.topicDataType = type_name;
+                        Topic topic(participant, g_subscriber_attributes.topic);
                         DataReaderQos qos;
                         qos.changeToDataReaderQos(g_subscriber_attributes.qos);
                         g_subscriber->create_datareader(
-                            g_subscriber_attributes.topic,
+                            topic,
                             qos,
                             nullptr);
 

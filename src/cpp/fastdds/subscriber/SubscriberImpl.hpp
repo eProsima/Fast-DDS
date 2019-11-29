@@ -94,7 +94,6 @@ public:
 
     DataReader* create_datareader(
             const Topic& topic,
-            const fastrtps::TopicAttributes& topic_attr,
             const DataReaderQos& reader_qos,
             DataReaderListener* listener,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());

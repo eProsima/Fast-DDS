@@ -26,6 +26,7 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
 #include <fastdds/dds/topic/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
@@ -276,7 +277,8 @@ int main(
 
     DataWriterQos qos;
     qos.changeToDataWriterQos(publisher_attributes.qos);
-    DataWriter* writer = publisher->create_datawriter(publisher_attributes.topic, qos, nullptr);
+    Topic topic_(participant, publisher_attributes.topic);
+    DataWriter* writer = publisher->create_datawriter(topic_, qos, nullptr);
     if (writer == nullptr)
     {
         DomainParticipantFactory::get_instance()->delete_participant(participant);

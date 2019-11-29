@@ -83,14 +83,13 @@ ReturnCode_t Publisher::set_listener(
     return impl_->set_listener(listener, mask);
 }
 
-DataWriter* Publisher::create_datawriter(
-        const fastrtps::TopicAttributes& topic_attr,
-        const DataWriterQos& writer_qos,
-        DataWriterListener* listener,
-        const ::dds::core::status::StatusMask& mask)
-{
-    return impl_->create_datawriter(topic_attr, writer_qos, listener, mask);
-}
+//DataWriter* Publisher::create_datawriter(
+//        const fastrtps::TopicAttributes& topic_attr,
+//        const DataWriterQos& writer_qos,
+//        DataWriterListener* listener)
+//{
+//    return impl_->create_datawriter(topic_attr, writer_qos, listener);
+//}
 
 DataWriter* Publisher::create_datawriter(
         const Topic& topic,

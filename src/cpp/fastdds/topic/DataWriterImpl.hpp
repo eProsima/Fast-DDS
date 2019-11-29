@@ -29,7 +29,8 @@
 #include <fastdds/dds/topic/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/publisher/PublisherHistory.h>
-#include <fastrtps/attributes/TopicAttributes.h>
+//#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastdds/dds/topic/Topic.hpp>
 
 #include <fastdds/rtps/writer/WriterListener.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
@@ -76,7 +77,7 @@ class DataWriterImpl
     DataWriterImpl(
             PublisherImpl* p,
             TypeSupport type,
-            const fastrtps::TopicAttributes& topic_att,
+            const Topic& topic,
             const fastrtps::rtps::WriterAttributes& att,
             const fastdds::dds::DataWriterQos& qos,
             const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
@@ -159,9 +160,9 @@ public:
     const fastdds::dds::DataWriterQos& get_qos() const;
 
     bool set_topic(
-            const fastrtps::TopicAttributes& att);
+            const Topic& topic);
 
-    const fastrtps::TopicAttributes& get_topic() const;
+    const Topic& get_topic() const;
 
     const DataWriterListener* get_listener() const;
 
@@ -212,6 +213,8 @@ private:
     TypeSupport type_;
 
     fastrtps::TopicAttributes topic_att_;
+
+    Topic topic_;
 
     fastrtps::rtps::WriterAttributes w_att_;
 

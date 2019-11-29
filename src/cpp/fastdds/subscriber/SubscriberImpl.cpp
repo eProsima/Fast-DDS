@@ -121,29 +121,28 @@ ReturnCode_t SubscriberImpl::set_listener(
 
 DataReader* SubscriberImpl::create_datareader(
         const Topic& topic,
-        const fastrtps::TopicAttributes& topic_att,
         const DataReaderQos& reader_qos,
         DataReaderListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    logInfo(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic_att.getTopicName())
+    logInfo(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic.get_name())
     //Look for the correct type registration
-    TypeSupport type_support = participant_->find_type(topic_att.getTopicDataType().to_string());
+    TypeSupport type_support = participant_->find_type(topic.get_type_name());
 
     /// Preconditions
     // Check the type was registered.
     if (type_support.empty())
     {
-        logError(SUBSCRIBER, "Type : " << topic_att.getTopicDataType() << " Not Registered");
+        logError(SUBSCRIBER, "Type : " << topic.get_type_name() << " Not Registered");
         return nullptr;
     }
-    if (topic_att.topicKind == WITH_KEY && !type_support.get()->m_isGetKeyDefined)
+    if (topic.get_qos().topic_kind == WITH_KEY && !type_support.get()->m_isGetKeyDefined)
     {
         logError(SUBSCRIBER, "Keyed Topic needs getKey function");
         return nullptr;
     }
 
-    if (!reader_qos.checkQos() || !topic_att.checkQos())
+    if (!reader_qos.checkQos() || !topic.get_qos().checkQos())
     {
         return nullptr;
     }
@@ -153,7 +152,7 @@ DataReader* SubscriberImpl::create_datareader(
     ratt.endpoint.endpointKind = READER;
     ratt.endpoint.multicastLocatorList = att_.multicastLocatorList;
     ratt.endpoint.reliabilityKind = reader_qos.reliability.kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    ratt.endpoint.topicKind = topic_att.topicKind;
+    ratt.endpoint.topicKind = topic.get_qos().topic_kind;
     ratt.endpoint.unicastLocatorList = att_.unicastLocatorList;
     ratt.endpoint.remoteLocatorList = att_.remoteLocatorList;
     ratt.expectsInlineQos = att_.expectsInlineQos;
@@ -175,7 +174,7 @@ DataReader* SubscriberImpl::create_datareader(
     // Insert topic_name and partitions
     Property property;
     property.name("topic_name");
-    property.value(topic_att.getTopicName().c_str());
+    property.value(topic.get_name());
     ratt.endpoint.properties.properties().push_back(std::move(property));
     if (qos_.partition.names().size() > 0)
     {
@@ -202,7 +201,6 @@ DataReader* SubscriberImpl::create_datareader(
         this,
         type_support,
         topic,
-        topic_att,
         ratt,
         reader_qos,
         att_.historyMemoryPolicy,
@@ -220,11 +218,12 @@ DataReader* SubscriberImpl::create_datareader(
     impl->user_datareader_ = reader;
 
     ReaderQos rqos = reader_qos.changeToReaderQos();
+    fastrtps::TopicAttributes topic_att = topic.get_topic_attributes();
     rtps_participant_->registerReader(impl->reader_, topic_att, rqos);
 
     {
         std::lock_guard<std::mutex> lock(mtx_readers_);
-        readers_[topic_att.getTopicName().to_string()].push_back(impl);
+        readers_[topic.get_name()].push_back(impl);
     }
 
     return reader;

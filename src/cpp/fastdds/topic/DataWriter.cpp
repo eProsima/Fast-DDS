@@ -133,12 +133,12 @@ const DataWriterListener* DataWriter::get_listener() const
 }
 
 bool DataWriter::set_topic(
-        const TopicAttributes& att)
+        const Topic& topic)
 {
-    return impl_->set_topic(att);
+    return impl_->set_topic(topic);
 }
 
-const TopicAttributes& DataWriter::get_topic() const
+const Topic& DataWriter::get_topic() const
 {
     return impl_->get_topic();
 }

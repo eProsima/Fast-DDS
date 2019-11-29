@@ -50,7 +50,7 @@ namespace dds {
 DataWriterImpl::DataWriterImpl(
         PublisherImpl* p,
         TypeSupport type,
-        const TopicAttributes& topic_att,
+        const Topic& topic,
         const WriterAttributes& att,
         const DataWriterQos& qos,
         const MemoryManagementPolicy_t memory_policy,
@@ -59,7 +59,8 @@ DataWriterImpl::DataWriterImpl(
     : publisher_(p)
     , writer_(nullptr)
     , type_(type)
-    , topic_att_(topic_att)
+    , topic_att_(topic.get_topic_attributes())
+    , topic_(topic)
     , w_att_(att)
     , qos_(&qos == &DDS_DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
     , history_(topic_att_, type_.get()->m_typeSize
@@ -507,7 +508,6 @@ ReturnCode_t DataWriterImpl::set_qos(
     //Notify the participant that a Writer has changed its QOS
     fastrtps::WriterQos wqos_ = qos_.changeToWriterQos();
     publisher_->rtps_participant()->updateWriter(writer_, topic_att_, wqos_);
-    //publisher_->update_writer(this, topic_att_, qos_);
 
     // Deadline
     if (qos_.deadline.period != c_TimeInfinite)
@@ -556,22 +556,15 @@ const DataWriterListener* DataWriterImpl::get_listener() const
 }
 
 bool DataWriterImpl::set_topic(
-        const TopicAttributes& att)
+        const Topic& topic)
 {
-    //TOPIC ATTRIBUTES
-    if (topic_att_ != att)
-    {
-        logWarning(DATA_WRITER, "Topic Attributes cannot be updated");
-        return false;
-    }
-    //publisher_->update_writer(this, topic_att_, qos_);
-    //publisher_->rtps_participant()->updateWriter(writer_, topic_att_, qos_);
+    topic_ = topic;
     return true;
 }
 
-const TopicAttributes& DataWriterImpl::get_topic() const
+const Topic& DataWriterImpl::get_topic() const
 {
-    return topic_att_;
+    return topic_;
 }
 
 const Publisher* DataWriterImpl::get_publisher() const
