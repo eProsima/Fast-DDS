@@ -37,6 +37,7 @@ class DomainParticipant;
 class TopicDescription
 {
 public:
+
     RTPS_DllAPI TopicDescription(
             const char* name,
             const char* type_name)
@@ -67,6 +68,18 @@ public:
     const std::string& type_name() const
     {
         return type_name_;
+    }
+
+    RTPS_DllAPI void set_name(
+            std::string name)
+    {
+        name_ = name;
+    }
+
+    RTPS_DllAPI void set_type_name(
+            std::string type_name)
+    {
+        type_name_ = type_name;
     }
 
 protected:

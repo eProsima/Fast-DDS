@@ -132,10 +132,10 @@ public:
      * @param listener
      * @return Pointer to the created DataReader. nullptr if failed.
      */
-    DataReader* create_datareader(
-            const fastrtps::TopicAttributes& topic_attr,
-            const DataReaderQos& reader_qos,
-            DataReaderListener* listener);
+    //    DataReader* create_datareader(
+    //            const fastrtps::TopicAttributes& topic_attr,
+    //            const DataReaderQos& reader_qos,
+    //            DataReaderListener* listener);
 
     DataReader* create_datareader(
             const Topic& topic, //Change to TopicDescription when DomainParticipant::find_topic() is implemented

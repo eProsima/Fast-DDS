@@ -43,10 +43,10 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-DataReaderImpl::DataReaderImpl(SubscriberImpl* s,
+DataReaderImpl::DataReaderImpl(
+        SubscriberImpl* s,
         TypeSupport type,
-        const Topic &topic,
-        const TopicAttributes& topic_att,
+        const Topic& topic,
         const fastrtps::rtps::ReaderAttributes& att,
         const DataReaderQos& qos,
         const MemoryManagementPolicy_t memory_policy,
@@ -54,17 +54,17 @@ DataReaderImpl::DataReaderImpl(SubscriberImpl* s,
     : subscriber_(s)
     , reader_(nullptr)
     , type_(type)
-    , topic_att_(topic_att)
+    , topic_att_(topic.get_topic_attributes())
     , topic_(topic)
     , att_(att)
     , qos_(&qos == &DDS_DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
     , rqos_(qos_.changeToReaderQos())
 #pragma warning (disable : 4355 )
     , history_(topic_att_,
-               type_.get(),
-               rqos_,
-               type_.get()->m_typeSize + 3, /* Possible alignment */
-               memory_policy)
+            type_.get(),
+            rqos_,
+            type_.get()->m_typeSize + 3,    /* Possible alignment */
+            memory_policy)
     , listener_(listener)
     , reader_listener_(this)
     , deadline_duration_us_(qos_.deadline.period.to_ns() * 1e-3)
@@ -73,28 +73,28 @@ DataReaderImpl::DataReaderImpl(SubscriberImpl* s,
     , user_datareader_(nullptr)
 {
     deadline_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
-             [&](TimedEvent::EventCode code) -> bool
-             {
-                 if (TimedEvent::EVENT_SUCCESS == code)
-                 {
-                     return deadline_missed();
-                 }
+                    [&](TimedEvent::EventCode code) -> bool
+                {
+                    if (TimedEvent::EVENT_SUCCESS == code)
+                    {
+                        return deadline_missed();
+                    }
 
-                 return false;
-             },
-             qos_.deadline.period.to_ns() * 1e-6);
+                    return false;
+                },
+                    qos_.deadline.period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
-             [&](TimedEvent::EventCode code) -> bool
-             {
-                 if (TimedEvent::EVENT_SUCCESS == code)
-                 {
-                     return lifespan_expired();
-                 }
+                    [&](TimedEvent::EventCode code) -> bool
+                {
+                    if (TimedEvent::EVENT_SUCCESS == code)
+                    {
+                        return lifespan_expired();
+                    }
 
-                 return false;
-             },
-             topic_.get_qos().lifespan.duration.to_ns() * 1e-6);
+                    return false;
+                },
+                    topic_.get_qos().lifespan.duration.to_ns() * 1e-6);
 
     RTPSReader* reader = RTPSDomain::createRTPSReader(
         subscriber_->rtps_participant(),
@@ -126,7 +126,7 @@ DataReaderImpl::~DataReaderImpl()
 
     if (reader_ != nullptr)
     {
-        logInfo(DATA_READER, guid().entityId << " in topic: " << topic_att_.topicName);
+        logInfo(DATA_READER, guid().entityId << " in topic: " << topic_.get_name());
     }
 
     RTPSDomain::removeRTPSReader(reader_);
@@ -140,11 +140,11 @@ bool DataReaderImpl::wait_for_unread_message(
 }
 
 ReturnCode_t DataReaderImpl::read_next_sample(
-        void *data,
-        SampleInfo_t *info)
+        void* data,
+        SampleInfo_t* info)
 {
     auto max_blocking_time = std::chrono::steady_clock::now() +
-        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability.max_blocking_time));
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability.max_blocking_time));
     DeprecatedSampleInfo dep_info;
     if (history_.readNextData(data, &dep_info, max_blocking_time))
     {
@@ -181,11 +181,11 @@ ReturnCode_t DataReaderImpl::read_next_sample(
 }
 
 ReturnCode_t DataReaderImpl::take_next_sample(
-        void *data,
-        SampleInfo_t *info)
+        void* data,
+        SampleInfo_t* info)
 {
     auto max_blocking_time = std::chrono::steady_clock::now() +
-        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability.max_blocking_time));
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability.max_blocking_time));
     DeprecatedSampleInfo dep_info;
     if (history_.takeNextData(data, &dep_info, max_blocking_time))
     {
@@ -249,7 +249,6 @@ ReturnCode_t DataReaderImpl::set_qos(
 
     qos_.setQos(qos,false);
     //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
-    //subscriber_->update_reader(this, topic_att_, qos_);
     ReaderQos rqos = qos_.changeToReaderQos();
     subscriber_->rtps_participant()->updateReader(reader_, topic_att_, rqos);
 
@@ -257,7 +256,7 @@ ReturnCode_t DataReaderImpl::set_qos(
     if (qos_.deadline.period != c_TimeInfinite)
     {
         deadline_duration_us_ =
-                duration<double, std::ratio<1, 1000000>>(qos_.deadline.period.to_ns() * 1e-3);
+                duration<double, std::ratio<1, 1000000> >(qos_.deadline.period.to_ns() * 1e-3);
         deadline_timer_->update_interval_millisec(qos_.deadline.period.to_ns() * 1e-6);
     }
     else
@@ -269,7 +268,8 @@ ReturnCode_t DataReaderImpl::set_qos(
     if (topic_.get_qos().lifespan.duration != c_TimeInfinite)
     {
         lifespan_duration_us_ =
-                std::chrono::duration<double, std::ratio<1, 1000000>>(topic_.get_qos().lifespan.duration.to_ns() * 1e-3);
+                std::chrono::duration<double,
+                        std::ratio<1, 1000000> >(topic_.get_qos().lifespan.duration.to_ns() * 1e-3);
         lifespan_timer_->update_interval_millisec(topic_.get_qos().lifespan.duration.to_ns() * 1e-6);
     }
     else
@@ -294,9 +294,6 @@ bool DataReaderImpl::set_topic_attributes(
         logWarning(RTPS_READER,"Topic Attributes cannot be updated");
         return false;
     }
-    //NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
-    //subscriber_->update_reader(this, topic_att_, qos_);
-    //subscriber_->rtps_participant()->updateReader(reader_, topic_att_, qos_);
     return true;
 }
 
@@ -318,7 +315,7 @@ const Topic& DataReaderImpl::get_topic() const
 }
 
 bool DataReaderImpl::set_attributes(
-        const fastrtps::rtps::ReaderAttributes &att)
+        const fastrtps::rtps::ReaderAttributes& att)
 {
     bool updated = true;
     bool missing = false;
@@ -330,12 +327,12 @@ bool DataReaderImpl::set_attributes(
     }
     else
     {
-        for(LocatorListConstIterator lit1 = att_.endpoint.unicastLocatorList.begin();
-                lit1!=att_.endpoint.unicastLocatorList.end();++lit1)
+        for (LocatorListConstIterator lit1 = att_.endpoint.unicastLocatorList.begin();
+                lit1!=att_.endpoint.unicastLocatorList.end(); ++lit1)
         {
             missing = true;
-            for(LocatorListConstIterator lit2 = att.endpoint.unicastLocatorList.begin();
-                    lit2!= att.endpoint.unicastLocatorList.end();++lit2)
+            for (LocatorListConstIterator lit2 = att.endpoint.unicastLocatorList.begin();
+                    lit2!= att.endpoint.unicastLocatorList.end(); ++lit2)
             {
                 if (*lit1 == *lit2)
                 {
@@ -349,12 +346,12 @@ bool DataReaderImpl::set_attributes(
                 logWarning(RTPS_READER,"Locator Lists cannot be changed or updated in this version");
             }
         }
-        for(LocatorListConstIterator lit1 = att_.endpoint.multicastLocatorList.begin();
-                lit1!=att_.endpoint.multicastLocatorList.end();++lit1)
+        for (LocatorListConstIterator lit1 = att_.endpoint.multicastLocatorList.begin();
+                lit1!=att_.endpoint.multicastLocatorList.end(); ++lit1)
         {
             missing = true;
-            for(LocatorListConstIterator lit2 = att.endpoint.multicastLocatorList.begin();
-                    lit2!= att.endpoint.multicastLocatorList.end();++lit2)
+            for (LocatorListConstIterator lit2 = att.endpoint.multicastLocatorList.begin();
+                    lit2!= att.endpoint.multicastLocatorList.end(); ++lit2)
             {
                 if (*lit1 == *lit2)
                 {
@@ -385,7 +382,7 @@ const ReaderAttributes& DataReaderImpl::get_attributes() const
 
 void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
         RTPSReader* /*reader*/,
-        const CacheChange_t * const change_in)
+        const CacheChange_t* const change_in)
 {
     if (data_reader_->on_new_cache_change_added(change_in))
     {
@@ -424,7 +421,7 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
 }
 
 bool DataReaderImpl::on_new_cache_change_added(
-        const CacheChange_t *const change)
+        const CacheChange_t* const change)
 {
     if (qos_.deadline.period != c_TimeInfinite)
     {
@@ -448,10 +445,10 @@ bool DataReaderImpl::on_new_cache_change_added(
 
     CacheChange_t* new_change = const_cast<CacheChange_t*>(change);
 
-//    if (qos_.m_lifespan.duration == c_TimeInfinite)
-//    {
-//        return true;
-//    }
+    //    if (qos_.m_lifespan.duration == c_TimeInfinite)
+    //    {
+    //        return true;
+    //    }
 
     auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
     auto now = system_clock::now();
@@ -583,30 +580,30 @@ bool DataReaderImpl::lifespan_expired()
 }
 
 /* TODO
-bool DataReaderImpl::read(
+   bool DataReaderImpl::read(
         std::vector<void *>& data_values,
         std::vector<SampleInfo_t>& sample_infos,
         uint32_t max_samples)
-{
+   {
     (void)data_values;
     (void)sample_infos;
     (void)max_samples;
     // TODO Implement
     return false;
-}
+   }
 
-bool DataReaderImpl::take(
+   bool DataReaderImpl::take(
         std::vector<void *>& data_values,
         std::vector<SampleInfo_t>& sample_infos,
         uint32_t max_samples)
-{
+   {
     (void)data_values;
     (void)sample_infos;
     (void)max_samples;
     // TODO Implement
     return false;
-}
-*/
+   }
+ */
 
 ReturnCode_t DataReaderImpl::set_listener(
         DataReaderListener* listener)
@@ -621,16 +618,16 @@ const DataReaderListener* DataReaderImpl::get_listener() const
 }
 
 /* TODO
-bool DataReaderImpl::get_key_value(
+   bool DataReaderImpl::get_key_value(
         void* data,
         const rtps::InstanceHandle_t& handle)
-{
+   {
     (void)data;
     (void)handle;
     // TODO Implement
     return false;
-}
-*/
+   }
+ */
 
 ReturnCode_t DataReaderImpl::get_liveliness_changed_status(
         LivelinessChangedStatus& status) const
@@ -646,37 +643,37 @@ ReturnCode_t DataReaderImpl::get_liveliness_changed_status(
 }
 
 /* TODO
-bool DataReaderImpl::get_requested_incompatible_qos_status(
+   bool DataReaderImpl::get_requested_incompatible_qos_status(
         RequestedIncompatibleQosStatus& status) const
-{
+   {
     (void)status;
     // TODO Implement
     // TODO add callback call subscriber_->subscriber_listener_->on_requested_incompatibe_qos
     return false;
-}
-*/
+   }
+ */
 
 /* TODO
-bool DataReaderImpl::get_sample_lost_status(
+   bool DataReaderImpl::get_sample_lost_status(
         SampleLostStatus& status) const
-{
+   {
     (void)status;
     // TODO Implement
     // TODO add callback call subscriber_->subscriber_listener_->on_sample_lost
     return false;
-}
-*/
+   }
+ */
 
 /* TODO
-bool DataReaderImpl::get_sample_rejected_status(
+   bool DataReaderImpl::get_sample_rejected_status(
         SampleRejectedStatus& status) const
-{
+   {
     (void)status;
     // TODO Implement
     // TODO add callback call subscriber_->subscriber_listener_->on_sample_rejected
     return false;
-}
-*/
+   }
+ */
 
 const Subscriber* DataReaderImpl::get_subscriber() const
 {
@@ -684,14 +681,14 @@ const Subscriber* DataReaderImpl::get_subscriber() const
 }
 
 /* TODO
-bool DataReaderImpl::wait_for_historical_data(
+   bool DataReaderImpl::wait_for_historical_data(
         const Duration_t& max_wait) const
-{
+   {
     (void)max_wait;
     // TODO Implement
     return false;
-}
-*/
+   }
+ */
 
 TypeSupport DataReaderImpl::type()
 {
@@ -699,13 +696,13 @@ TypeSupport DataReaderImpl::type()
 }
 
 /* TODO
-ReturnCode_t DataReaderImpl::get_matched_publication_data(
+   ReturnCode_t DataReaderImpl::get_matched_publication_data(
         PublicationBuiltinTopicData publication_data,
         fastrtps::rtps::InstanceHandle_t publication_handle)
-{
+   {
 
-}
-*/
+   }
+ */
 
 } /* namespace dds */
 } /* namespace fastdds */

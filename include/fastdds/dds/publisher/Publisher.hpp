@@ -127,10 +127,10 @@ public:
      * @param listener
      * @return Pointer to the created DataWriter. nullptr if failed.
      */
-    DataWriter* create_datawriter(
-            const fastrtps::TopicAttributes& topic_attr,
-            const DataWriterQos& writer_qos,
-            DataWriterListener* listener);
+    //    DataWriter* create_datawriter(
+    //            const fastrtps::TopicAttributes& topic_attr,
+    //            const DataWriterQos& writer_qos,
+    //            DataWriterListener* listener);
 
     DataWriter* create_datawriter(
             const Topic& topic,

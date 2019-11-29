@@ -38,7 +38,7 @@ class DataWriter;
 namespace eprosima {
 namespace fastrtps {
 
-class TopicAttributes;
+//class TopicAttributes;
 
 namespace rtps {
 
@@ -184,12 +184,12 @@ public:
      * Establishes the topic for this DataWriter.
      */
     bool set_topic(
-            const fastrtps::TopicAttributes& att);
+            const Topic& topic);
 
     /**
      * Retrieves the topic for this DataWriter.
      */
-    const fastrtps::TopicAttributes& get_topic() const;
+    const Topic& get_topic() const;
 
     /**
      * Retrieves the listener for this DataWriter.

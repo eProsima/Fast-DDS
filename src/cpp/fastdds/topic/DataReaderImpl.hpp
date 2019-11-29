@@ -61,23 +61,24 @@ class SampleInfo_t;
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
  *  @ingroup FASTDDS_MODULE
  */
-class DataReaderImpl {
+class DataReaderImpl
+{
     friend class SubscriberImpl;
 
     /**
-    * Creates a DataReader. Don't use it directly, but through Subscriber.
-    */
+     * Creates a DataReader. Don't use it directly, but through Subscriber.
+     */
     DataReaderImpl(
             SubscriberImpl* s,
             TypeSupport type,
             const Topic& topic,
-            const fastrtps::TopicAttributes& topic_att,
             const fastrtps::rtps::ReaderAttributes& att,
             const DataReaderQos& qos,
             const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
             DataReaderListener* listener = nullptr);
 
 public:
+
     virtual ~DataReaderImpl();
 
     /**
@@ -94,22 +95,22 @@ public:
     ///@{
 
     /* TODO
-    bool read(
+       bool read(
             std::vector<void*>& data_values,
             std::vector<SampleInfo_t>& sample_infos,
             uint32_t max_samples);
-    */
+     */
 
     ReturnCode_t read_next_sample(
             void* data,
             SampleInfo_t* info);
 
     /* TODO
-    bool take(
+       bool take(
             std::vector<void*>& data_values,
             std::vector<SampleInfo_t>& sample_infos,
             uint32_t max_samples);
-    */
+     */
 
     ReturnCode_t take_next_sample(
             void* data,
@@ -118,17 +119,17 @@ public:
     ///@}
 
     /**
-    * Get associated GUID
-    * @return Associated GUID
-    */
+     * Get associated GUID
+     * @return Associated GUID
+     */
     const fastrtps::rtps::GUID_t& guid();
 
     fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
 
     /**
-    * Get topic data type
-    * @return Topic data type
-    */
+     * Get topic data type
+     * @return Topic data type
+     */
     TypeSupport type();
 
     /**
@@ -165,41 +166,41 @@ public:
     const DataReaderListener* get_listener() const;
 
     /* TODO
-    bool get_key_value(
+       bool get_key_value(
             void* data,
             const fastrtps::rtps::InstanceHandle_t& handle);
-    */
+     */
 
     ReturnCode_t get_liveliness_changed_status(
             fastrtps::LivelinessChangedStatus& status) const;
 
     /* TODO
-    bool get_requested_incompatible_qos_status(
+       bool get_requested_incompatible_qos_status(
             fastrtps::RequestedIncompatibleQosStatus& status) const;
-    */
+     */
 
     /* TODO
-    bool get_sample_lost_status(
+       bool get_sample_lost_status(
             fastrtps::SampleLostStatus& status) const;
-    */
+     */
 
     /* TODO
-    bool get_sample_rejected_status(
+       bool get_sample_rejected_status(
             fastrtps::SampleRejectedStatus& status) const;
-    */
+     */
 
     const Subscriber* get_subscriber() const;
 
     /* TODO
-    bool wait_for_historical_data(
+       bool wait_for_historical_data(
             const fastrtps::Duration_t& max_wait) const;
-    */
+     */
 
     /* TODO
-    ReturnCode_t get_matched_publication_data(
+       ReturnCode_t get_matched_publication_data(
             PublicationBuiltinTopicData publication_data,
             fastrtps::rtps::InstanceHandle_t publication_handle);
-    */
+     */
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
@@ -234,7 +235,8 @@ private:
 
     class InnerDataReaderListener : public fastrtps::rtps::ReaderListener
     {
-    public:
+public:
+
         InnerDataReaderListener(
                 DataReaderImpl* s)
             : data_reader_(s)
@@ -262,7 +264,7 @@ private:
     fastrtps::rtps::TimedEvent* deadline_timer_;
 
     //! Deadline duration in microseconds
-    std::chrono::duration<double, std::ratio<1, 1000000>> deadline_duration_us_;
+    std::chrono::duration<double, std::ratio<1, 1000000> > deadline_duration_us_;
 
     //! The current timer owner, i.e. the instance which started the deadline timer
     fastrtps::rtps::InstanceHandle_t timer_owner_;
@@ -274,7 +276,7 @@ private:
     fastrtps::rtps::TimedEvent* lifespan_timer_;
 
     //! The lifespan duration
-    std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
+    std::chrono::duration<double, std::ratio<1, 1000000> > lifespan_duration_us_;
 
     DataReader* user_datareader_;
 

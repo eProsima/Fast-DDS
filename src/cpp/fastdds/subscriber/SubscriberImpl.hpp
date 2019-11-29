@@ -92,7 +92,6 @@ public:
 
     DataReader* create_datareader(
             const Topic& topic,
-            const fastrtps::TopicAttributes& topic_attr,
             const DataReaderQos& reader_qos,
             DataReaderListener* listener);
 

@@ -40,7 +40,7 @@ Publisher::Publisher(
         const PublisherQos& qos,
         PublisherListener* listener,
         const ::dds::core::status::StatusMask& /*mask*/)
-    : impl_(dp.delegate()->create_publisher(qos, fastrtps::PublisherAttributes(), listener/*, mask*/)->impl_)
+    : impl_(dp.delegate()->create_publisher(qos, fastrtps::PublisherAttributes(), listener /*, mask*/)->impl_)
 {
 }
 
@@ -82,27 +82,20 @@ ReturnCode_t Publisher::set_listener(
     return impl_->set_listener(listener);
 }
 
-DataWriter* Publisher::create_datawriter(
-        const fastrtps::TopicAttributes& topic_attr,
-        const DataWriterQos& writer_qos,
-        DataWriterListener* listener)
-{
-    return impl_->create_datawriter(topic_attr, writer_qos, listener);
-}
+//DataWriter* Publisher::create_datawriter(
+//        const fastrtps::TopicAttributes& topic_attr,
+//        const DataWriterQos& writer_qos,
+//        DataWriterListener* listener)
+//{
+//    return impl_->create_datawriter(topic_attr, writer_qos, listener);
+//}
 
 DataWriter* Publisher::create_datawriter(
         const Topic& topic,
         const DataWriterQos& qos,
         DataWriterListener* listener)
 {
-    fastrtps::TopicAttributes topic_attr;
-    topic_attr.topicName = topic.get_name();
-    topic_attr.topicDataType = topic.get_type_name();
-    TopicQos topic_qos;
-    topic.get_qos(topic_qos);
-    topic_attr.historyQos = qos.history;
-
-    return impl_->create_datawriter(topic_attr, qos, listener);
+    return impl_->create_datawriter(topic, qos, listener);
 }
 
 ReturnCode_t Publisher::delete_datawriter(
@@ -129,32 +122,32 @@ bool Publisher::has_datawriters() const
 }
 
 /* TODO
-bool Publisher::suspend_publications()
-{
+   bool Publisher::suspend_publications()
+   {
     return impl_->suspend_publications();
-}
-*/
+   }
+ */
 
 /* TODO
-bool Publisher::resume_publications()
-{
+   bool Publisher::resume_publications()
+   {
     return impl_->resume_publications();
-}
-*/
+   }
+ */
 
 /* TODO
-bool Publisher::begin_coherent_changes()
-{
+   bool Publisher::begin_coherent_changes()
+   {
     return impl_->begin_coherent_changes();
-}
-*/
+   }
+ */
 
 /* TODO
-bool Publisher::end_coherent_changes()
-{
+   bool Publisher::end_coherent_changes()
+   {
     return impl_->end_coherent_changes();
-}
-*/
+   }
+ */
 
 ReturnCode_t Publisher::wait_for_acknowledgments(
         const fastrtps::Duration_t& max_wait)
@@ -168,11 +161,11 @@ const DomainParticipant* Publisher::get_participant() const
 }
 
 /* TODO
-bool Publisher::delete_contained_entities()
-{
+   bool Publisher::delete_contained_entities()
+   {
     return impl_->delete_contained_entities();
-}
-*/
+   }
+ */
 
 ReturnCode_t Publisher::set_default_datawriter_qos(
         const DataWriterQos& qos)
@@ -193,13 +186,13 @@ ReturnCode_t Publisher::get_default_datawriter_qos(
 }
 
 /* TODO
-bool Publisher::copy_from_topic_qos(
+   bool Publisher::copy_from_topic_qos(
         DataWriterQos& writer_qos,
         const fastrtps::TopicAttributes& topic_qos) const
-{
+   {
     return impl_->copy_from_topic_qos(writer_qos, topic_qos);
-}
-*/
+   }
+ */
 
 const fastrtps::PublisherAttributes& Publisher::get_attributes() const
 {

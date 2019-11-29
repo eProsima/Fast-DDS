@@ -36,7 +36,7 @@ DataWriter::DataWriter(
         DataWriterListener* listener,
         const ::dds::core::status::StatusMask& /*mask*/)
     : impl_(
-          (const_cast<Publisher*>(pub))->create_datawriter(topic, qos, listener)->impl_)
+        (const_cast<Publisher*>(pub))->create_datawriter(topic, qos, listener)->impl_)
 {
 }
 
@@ -62,8 +62,8 @@ bool DataWriter::write(
 }
 
 ReturnCode_t DataWriter::write(
-            void* data,
-            const rtps::InstanceHandle_t& handle)
+        void* data,
+        const rtps::InstanceHandle_t& handle)
 {
     return impl_->write(data, handle);
 }
@@ -132,12 +132,12 @@ const DataWriterListener* DataWriter::get_listener() const
 }
 
 bool DataWriter::set_topic(
-        const TopicAttributes& att)
+        const Topic& topic)
 {
-    return impl_->set_topic(att);
+    return impl_->set_topic(topic);
 }
 
-const TopicAttributes& DataWriter::get_topic() const
+const Topic& DataWriter::get_topic() const
 {
     return impl_->get_topic();
 }
@@ -148,13 +148,13 @@ const Publisher* DataWriter::get_publisher() const
 }
 
 ReturnCode_t DataWriter::wait_for_acknowledgments(
-        const Duration_t &max_wait)
+        const Duration_t& max_wait)
 {
     return impl_->wait_for_acknowledgments(max_wait);
 }
 
 ReturnCode_t DataWriter::get_offered_deadline_missed_status(
-        OfferedDeadlineMissedStatus &status)
+        OfferedDeadlineMissedStatus& status)
 {
     return impl_->get_offered_deadline_missed_status(status);
 }

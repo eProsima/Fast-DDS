@@ -34,7 +34,7 @@ Subscriber::Subscriber(
         const SubscriberQos& qos,
         SubscriberListener* listener,
         const ::dds::core::status::StatusMask& /*mask*/)
-    : impl_(dp.delegate()->create_subscriber(qos, fastrtps::SubscriberAttributes(), listener/*, mask*/)->impl_)
+    : impl_(dp.delegate()->create_subscriber(qos, fastrtps::SubscriberAttributes(), listener /*, mask*/)->impl_)
 {
 }
 
@@ -72,14 +72,14 @@ ReturnCode_t Subscriber::set_listener(
     return impl_->set_listener(listener);
 }
 
-DataReader* Subscriber::create_datareader(
-        const fastrtps::TopicAttributes& topic_attr,
-        const DataReaderQos& reader_qos,
-        DataReaderListener* listener)
-{
-    Topic topic(get_participant(), topic_attr.getTopicName().c_str(), topic_attr.getTopicDataType().c_str());
-    return impl_->create_datareader(topic, topic_attr, reader_qos, listener);
-}
+//DataReader* Subscriber::create_datareader(
+//        const fastrtps::TopicAttributes& topic_attr,
+//        const DataReaderQos& reader_qos,
+//        DataReaderListener* listener)
+//{
+//    Topic topic(get_participant(), topic_attr.getTopicName().c_str(), topic_attr.getTopicDataType().c_str());
+//    return impl_->create_datareader(topic, topic_attr, reader_qos, listener);
+//}
 
 DataReader* Subscriber::create_datareader(
         const Topic& topic,
@@ -87,14 +87,7 @@ DataReader* Subscriber::create_datareader(
         DataReaderListener* listener,
         const ::dds::core::status::StatusMask& /*mask*/)
 {
-    fastrtps::TopicAttributes topic_attr;
-    topic_attr.topicName = topic.get_name();
-    topic_attr.topicDataType = topic.get_type_name();
-    TopicQos topic_qos;
-    topic.get_qos(topic_qos);
-    topic_attr.historyQos = qos.history;
-
-    return impl_->create_datareader(topic, topic_attr, qos, listener);
+    return impl_->create_datareader(topic, qos, listener);
 }
 
 ReturnCode_t Subscriber::delete_datareader(
@@ -121,18 +114,18 @@ bool Subscriber::has_datareaders() const
 }
 
 /* TODO
-bool Subscriber::begin_access()
-{
+   bool Subscriber::begin_access()
+   {
     return impl_->begin_access();
-}
-*/
+   }
+ */
 
 /* TODO
-bool Subscriber::end_access()
-{
+   bool Subscriber::end_access()
+   {
     return impl_->end_access();
-}
-*/
+   }
+ */
 
 ReturnCode_t Subscriber::notify_datareaders() const
 {
@@ -140,11 +133,11 @@ ReturnCode_t Subscriber::notify_datareaders() const
 }
 
 /* TODO
-bool Subscriber::delete_contained_entities()
-{
+   bool Subscriber::delete_contained_entities()
+   {
     return impl_->delete_contained_entities();
-}
-*/
+   }
+ */
 
 ReturnCode_t Subscriber::set_default_datareader_qos(
         const DataReaderQos& qos)
@@ -165,13 +158,13 @@ ReturnCode_t Subscriber::get_default_datareader_qos(
 }
 
 /* TODO
-bool Subscriber::copy_from_topic_qos(
+   bool Subscriber::copy_from_topic_qos(
         DataReaderQos& reader_qos,
         const fastrtps::TopicAttributes& topic_qos) const
-{
+   {
     return impl_->copy_from_topic_qos(reader_qos, topic_qos);
-}
-*/
+   }
+ */
 
 bool Subscriber::set_attributes(
         const fastrtps::SubscriberAttributes& att)

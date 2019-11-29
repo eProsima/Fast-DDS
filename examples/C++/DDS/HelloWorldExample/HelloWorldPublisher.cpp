@@ -25,6 +25,7 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
 #include <fastdds/dds/topic/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 
 #include <thread>
 
@@ -60,6 +61,8 @@ bool HelloWorldPublisher::init()
     pub_att.topic.topicName = "HelloWorldTopic";
     publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, pub_att, nullptr);
 
+    Topic topic(participant_, pub_att.topic);
+
     DataWriterQos qos;
     qos.reliability.kind = RELIABLE_RELIABILITY_QOS;
 
@@ -69,7 +72,7 @@ bool HelloWorldPublisher::init()
     }
 
     // CREATE THE WRITER
-    writer_ = publisher_->create_datawriter(pub_att.topic, qos, &listener_);
+    writer_ = publisher_->create_datawriter(topic, qos, &listener_);
 
     if (writer_ == nullptr)
     {

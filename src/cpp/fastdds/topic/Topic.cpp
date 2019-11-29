@@ -37,6 +37,34 @@ Topic::Topic(
     , mask_(mask)
 {
     (void)dp;
+    topic_att_.topicName = topic_name;
+    topic_att_.topicDataType = type_name;
+    topic_att_.topicKind = qos.topic_kind;
+    topic_att_.historyQos = qos.history;
+    topic_att_.resourceLimitsQos = qos.resource_limits;
+}
+
+Topic::Topic(
+        const DomainParticipant* dp,
+        const fastrtps::TopicAttributes att,
+        TopicListener* listener,
+        const ::dds::core::status::StatusMask& mask)
+    : TopicDescription(att.getTopicName().c_str(), att.getTopicDataType().c_str())
+    , listener_(listener)
+    , mask_(mask)
+    , topic_att_(att)
+{
+    (void) dp;
+    TopicQos qos;
+    qos.history = att.historyQos;
+    qos.resource_limits = att.resourceLimitsQos;
+    qos.topic_kind = att.topicKind;
+    qos_ = qos;
+}
+
+fastrtps::TopicAttributes Topic::get_topic_attributes() const
+{
+    return topic_att_;
 }
 
 ReturnCode_t Topic::get_qos(
@@ -54,9 +82,12 @@ const TopicQos& Topic::get_qos() const
 ReturnCode_t Topic::set_qos(
         const TopicQos& qos)
 {
-    // TODO Check updatable
-    qos_ = qos;
-    return ReturnCode_t::RETCODE_OK;
+    if (qos.checkQos())
+    {
+        qos_ = qos;
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
 }
 
 TopicListener* Topic::get_listener() const

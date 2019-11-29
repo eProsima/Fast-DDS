@@ -29,7 +29,8 @@
 #include <fastdds/dds/topic/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/publisher/PublisherHistory.h>
-#include <fastrtps/attributes/TopicAttributes.h>
+//#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastdds/dds/topic/Topic.hpp>
 
 #include <fastdds/rtps/writer/WriterListener.h>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
@@ -41,7 +42,7 @@
 using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 class RTPSWriter;
@@ -74,7 +75,7 @@ class DataWriterImpl
     DataWriterImpl(
             PublisherImpl* p,
             TypeSupport type,
-            const fastrtps::TopicAttributes& topic_att,
+            const Topic& topic,
             const fastrtps::rtps::WriterAttributes& att,
             const fastdds::dds::DataWriterQos& qos,
             const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
@@ -151,14 +152,14 @@ public:
     const fastrtps::rtps::WriterAttributes& get_attributes() const;
 
     ReturnCode_t set_qos(
-            const fastdds::dds::DataWriterQos &qos);
+            const fastdds::dds::DataWriterQos& qos);
 
     const fastdds::dds::DataWriterQos& get_qos() const;
 
     bool set_topic(
-            const fastrtps::TopicAttributes& att);
+            const Topic& topic);
 
-    const fastrtps::TopicAttributes& get_topic() const;
+    const Topic& get_topic() const;
 
     const DataWriterListener* get_listener() const;
 
@@ -166,10 +167,10 @@ public:
             DataWriterListener* listener);
 
     /* TODO
-    bool get_key_value(
+       bool get_key_value(
             void* key_holder,
             const fastrtps::rtps::InstanceHandle_t& handle);
-    */
+     */
 
     ReturnCode_t dispose(
             void* data,
@@ -182,14 +183,14 @@ public:
             LivelinessLostStatus& status);
 
     /* TODO
-    ReturnCode_t get_offered_incompatible_qos_status(
+       ReturnCode_t get_offered_incompatible_qos_status(
             OfferedIncompatibleQosStatus& status)
-    {
+       {
         // Not implemented
         (void)status;
         return false;
-    }
-    */
+       }
+     */
 
     const Publisher* get_publisher() const;
 
@@ -199,6 +200,7 @@ public:
     void disable();
 
 private:
+
     PublisherImpl* publisher_;
 
     //! Pointer to the associated Data Writer.
@@ -208,6 +210,8 @@ private:
     TypeSupport type_;
 
     fastrtps::TopicAttributes topic_att_;
+
+    Topic topic_;
 
     fastrtps::rtps::WriterAttributes w_att_;
 
@@ -222,28 +226,29 @@ private:
     //!Listener to capture the events of the Writer
     class InnerDataWriterListener : public fastrtps::rtps::WriterListener
     {
-        public:
-            InnerDataWriterListener(
-                    DataWriterImpl* w)
-                : data_writer_(w)
-            {
-            }
+public:
 
-            virtual ~InnerDataWriterListener() override {}
+        InnerDataWriterListener(
+                DataWriterImpl* w)
+            : data_writer_(w)
+        {
+        }
 
-            void onWriterMatched(
-                    fastrtps::rtps::RTPSWriter* writer,
-                    const fastdds::dds::PublicationMatchedStatus& info) override;
+        virtual ~InnerDataWriterListener() override {}
 
-            void onWriterChangeReceivedByAll(
-                    fastrtps::rtps::RTPSWriter* writer,
-                    fastrtps::rtps::CacheChange_t* change) override;
+        void onWriterMatched(
+                fastrtps::rtps::RTPSWriter* writer,
+                const fastdds::dds::PublicationMatchedStatus& info) override;
 
-            void on_liveliness_lost(
-                    fastrtps::rtps::RTPSWriter* writer,
-                    const fastrtps::LivelinessLostStatus& status) override;
+        void onWriterChangeReceivedByAll(
+                fastrtps::rtps::RTPSWriter* writer,
+                fastrtps::rtps::CacheChange_t* change) override;
 
-            DataWriterImpl* data_writer_;
+        void on_liveliness_lost(
+                fastrtps::rtps::RTPSWriter* writer,
+                const fastrtps::LivelinessLostStatus& status) override;
+
+        DataWriterImpl* data_writer_;
     } writer_listener_;
 
     uint32_t high_mark_for_frag_;
@@ -252,7 +257,7 @@ private:
     fastrtps::rtps::TimedEvent* deadline_timer_;
 
     //! Deadline duration in microseconds
-    std::chrono::duration<double, std::ratio<1,1000000>> deadline_duration_us_;
+    std::chrono::duration<double, std::ratio<1,1000000> > deadline_duration_us_;
 
     //! The current timer owner, i.e. the instance which started the deadline timer
     fastrtps::rtps::InstanceHandle_t timer_owner_;
@@ -264,7 +269,7 @@ private:
     fastrtps::rtps::TimedEvent* lifespan_timer_;
 
     //! The lifespan duration, in microseconds
-    std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
+    std::chrono::duration<double, std::ratio<1, 1000000> > lifespan_duration_us_;
 
     DataWriter* user_datawriter_;
 

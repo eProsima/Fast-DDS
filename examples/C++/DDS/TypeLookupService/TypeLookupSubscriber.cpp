@@ -22,6 +22,7 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 
 #include <fastrtps/types/DynamicDataHelper.hpp>
 #include <fastrtps/types/DynamicDataFactory.h>
@@ -141,7 +142,7 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
         const eprosima::fastrtps::types::TypeInformation& type_information)
 {
     std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
-        [this, topic_name](const std::string& name, const types::DynamicType_ptr type)
+            [this, topic_name](const std::string& name, const types::DynamicType_ptr type)
             {
                 std::cout << "Discovered type: " << name << " from topic " << topic_name << std::endl;
 
@@ -161,23 +162,24 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                     }
                 }
                 subscriber_->topic_.topicDataType = name;
+                Topic mp_topic(subscriber_->mp_participant, subscriber_->topic_);
                 DataReader* reader = subscriber_->mp_subscriber->create_datareader(
-                    subscriber_->topic_,
+                    mp_topic,
                     subscriber_->qos_,
                     &subscriber_->m_listener);
 
                 if (type == nullptr)
                 {
                     const types::TypeIdentifier* ident =
-                        types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(name);
+                            types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(name);
 
                     if (nullptr != ident)
                     {
                         const types::TypeObject* obj =
-                            types::TypeObjectFactory::get_instance()->get_type_object(ident);
+                                types::TypeObjectFactory::get_instance()->get_type_object(ident);
 
                         types::DynamicType_ptr dyn_type =
-                            types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
+                                types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
 
                         if (nullptr != dyn_type)
                         {
@@ -220,7 +222,7 @@ void TypeLookupSubscriber::run(
         uint32_t number)
 {
     std::cout << "Subscriber running until " << number << " samples have been received" << std::endl;
-    while(number > this->m_listener.n_samples)
+    while (number > this->m_listener.n_samples)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }

@@ -55,6 +55,7 @@ class DomainParticipantImpl;
 class DomainParticipant;
 class Publisher;
 class DataWriterImpl;
+class Topic;
 
 /**
  * Class PublisherImpl, contains the actual implementation of the behaviour of the Publisher.
@@ -92,7 +93,7 @@ public:
             PublisherListener* listener);
 
     DataWriter* create_datawriter(
-            const fastrtps::TopicAttributes& topic_attr,
+            const Topic& topic,
             const DataWriterQos& writer_qos,
             DataWriterListener* listener);
 

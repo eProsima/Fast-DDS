@@ -39,6 +39,7 @@
 class HelloWorldSubscriber
 {
 public:
+
     HelloWorldSubscriber();
 
     virtual ~HelloWorldSubscriber();
@@ -54,6 +55,7 @@ public:
             uint32_t number);
 
 private:
+
     eprosima::fastdds::dds::DomainParticipant* mp_participant;
 
     eprosima::fastdds::dds::Subscriber* mp_subscriber;
@@ -69,11 +71,13 @@ private:
     eprosima::fastrtps::TopicAttributes topic_;
 
 public:
+
     class SubListener
         : public eprosima::fastdds::dds::DataReaderListener
         , public eprosima::fastdds::dds::DomainParticipantListener
     {
-    public:
+public:
+
         SubListener(
                 HelloWorldSubscriber* sub)
             : n_matched(0)

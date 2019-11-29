@@ -22,6 +22,7 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastdds/dds/topic/Topic.hpp>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv6TransportDescriptor.h>
@@ -82,7 +83,6 @@ bool TestSubscriber::init(
     {
         return false;
     }
-
     //CREATE THE SUBSCRIBER
     SubscriberAttributes Rparam;
     Rparam.topic.topicKind = topic_kind;
@@ -132,7 +132,8 @@ bool TestSubscriber::init(
         }
 
         reader_qos.changeToDataReaderQos(Rparam.qos);
-        reader_ = mp_subscriber->create_datareader(Rparam.topic, reader_qos, &m_subListener);
+        Topic topic(mp_participant, Rparam.topic);
+        reader_ = mp_subscriber->create_datareader(topic, reader_qos, &m_subListener);
         m_Data = m_Type.create_data();
     }
 
@@ -301,7 +302,8 @@ DataReader* TestSubscriber::create_datareader()
         }
     }
     topic_att.topicDataType = disc_type_->get_name();
-    return mp_subscriber->create_datareader(topic_att, reader_qos, &m_subListener);
+    Topic topic(mp_participant, topic_att);
+    return mp_subscriber->create_datareader(topic, reader_qos, &m_subListener);
 }
 
 void TestSubscriber::delete_datareader(
