@@ -118,6 +118,14 @@ XMLP_ret XMLParser::parseXML(tinyxml2::XMLDocument& xmlDoc, up_base_node_t& root
                 {
                     ret = parseXMLTopicData(node, *root);
                 }
+                else if (strcmp(tag, REQUESTER) == 0)
+                {
+                    ret = parseXMLRequesterProf(node, *root);
+                }
+                else if (strcmp(tag, REPLIER) == 0)
+                {
+                    ret = parseXMLReplierProf(node, *root);
+                }
                 else if (strcmp(tag, TYPES) == 0)
                 {
                     ret = parseXMLTypes(node);
