@@ -130,10 +130,13 @@ WLP::~WLP()
     }
 
 #if HAVE_SECURITY
-    mp_participant->deleteUserEndpoint(mp_builtinReaderSecure);
-    mp_participant->deleteUserEndpoint(mp_builtinWriterSecure);
-    delete this->mp_builtinReaderSecureHistory;
-    delete this->mp_builtinWriterSecureHistory;
+    if (mp_participant->is_secure())
+    {
+        mp_participant->deleteUserEndpoint(mp_builtinReaderSecure);
+        mp_participant->deleteUserEndpoint(mp_builtinWriterSecure);
+        delete this->mp_builtinReaderSecureHistory;
+        delete this->mp_builtinWriterSecureHistory;
+    }
 #endif
     mp_participant->deleteUserEndpoint(mp_builtinReader);
     mp_participant->deleteUserEndpoint(mp_builtinWriter);
