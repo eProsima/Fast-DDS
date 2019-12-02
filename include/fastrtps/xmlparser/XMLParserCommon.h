@@ -19,7 +19,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
-#define draw(ident, text, ...) for (uint8_t i = ident + 1; i > 0; --i) (i == 1)? printf(text, ## __VA_ARGS__): printf("\t")
+#define draw(ident, text, ...) for (uint8_t i = ident + 1; i > 0; --i) (i == 1) ? printf(text, ## __VA_ARGS__) : printf( \
+            "\t")
 
 /**
  * Enum class XMLP_ret, used to provide a strongly typed result from the operations within this module.

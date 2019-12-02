@@ -60,7 +60,7 @@
 #define DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_DETECTOR        (0x00000001 << 27)
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
 struct CDRMessage_t;
@@ -72,126 +72,133 @@ class WriterProxyData;
 class NetworkFactory;
 
 /**
-* ParticipantProxyData class is used to store and convert the information Participants send to each other during the PDP phase.
-*@ingroup BUILTIN_MODULE
-*/
+ * ParticipantProxyData class is used to store and convert the information Participants send to each other during the PDP phase.
+ *@ingroup BUILTIN_MODULE
+ */
 class ParticipantProxyData
 {
-    public:
+public:
 
-        ParticipantProxyData(const RTPSParticipantAllocationAttributes& allocation);
+    ParticipantProxyData(
+            const RTPSParticipantAllocationAttributes& allocation);
 
-        ParticipantProxyData(const ParticipantProxyData& pdata);
+    ParticipantProxyData(
+            const ParticipantProxyData& pdata);
 
-        virtual ~ParticipantProxyData();
+    virtual ~ParticipantProxyData();
 
-        //!Protocol version
-        ProtocolVersion_t m_protocolVersion;
-        //!GUID
-        GUID_t m_guid;
-        //!Vendor ID
-        VendorId_t m_VendorId;
-        //!Expects Inline QOS.
-        bool m_expectsInlineQos;
-        //!Available builtin endpoints
-        BuiltinEndpointSet_t m_availableBuiltinEndpoints;
-        //!Metatraffic locators
-        RemoteLocatorList metatraffic_locators;
-        //!Default locators
-        RemoteLocatorList default_locators;
-        //!Participant name
-        string_255 m_participantName;
-        //!
-        InstanceHandle_t m_key;
-        //!
-        Duration_t m_leaseDuration;
+    //!Protocol version
+    ProtocolVersion_t m_protocolVersion;
+    //!GUID
+    GUID_t m_guid;
+    //!Vendor ID
+    VendorId_t m_VendorId;
+    //!Expects Inline QOS.
+    bool m_expectsInlineQos;
+    //!Available builtin endpoints
+    BuiltinEndpointSet_t m_availableBuiltinEndpoints;
+    //!Metatraffic locators
+    RemoteLocatorList metatraffic_locators;
+    //!Default locators
+    RemoteLocatorList default_locators;
+    //!Participant name
+    string_255 m_participantName;
+    //!
+    InstanceHandle_t m_key;
+    //!
+    Duration_t m_leaseDuration;
 #if HAVE_SECURITY
-        //!
-        IdentityToken identity_token_;
-        //!
-        PermissionsToken permissions_token_;
-        //!
-        security::ParticipantSecurityAttributesMask security_attributes_;
-        //!
-        security::PluginParticipantSecurityAttributesMask plugin_security_attributes_;
+    //!
+    IdentityToken identity_token_;
+    //!
+    PermissionsToken permissions_token_;
+    //!
+    security::ParticipantSecurityAttributesMask security_attributes_;
+    //!
+    security::PluginParticipantSecurityAttributesMask plugin_security_attributes_;
 #endif
-        //!
-        bool isAlive;
-        //!
-        ParameterPropertyList_t m_properties;
-        //!
-        UserDataQosPolicy m_userData;
-        //!
-        TimedEvent* lease_duration_event;
-        //!
-        bool should_check_lease_duration;
-        //!
-        ResourceLimitedVector<ReaderProxyData*> m_readers;
-        //!
-        ResourceLimitedVector<WriterProxyData*> m_writers;
+    //!
+    bool isAlive;
+    //!
+    ParameterPropertyList_t m_properties;
+    //!
+    UserDataQosPolicy m_userData;
+    //!
+    TimedEvent* lease_duration_event;
+    //!
+    bool should_check_lease_duration;
+    //!
+    ResourceLimitedVector<ReaderProxyData*> m_readers;
+    //!
+    ResourceLimitedVector<WriterProxyData*> m_writers;
 
-        /**
-         * Update the data.
-         * @param pdata Object to copy the data from
-         * @return True on success
-         */
-        bool updateData(ParticipantProxyData& pdata);
+    /**
+     * Update the data.
+     * @param pdata Object to copy the data from
+     * @return True on success
+     */
+    bool updateData(
+            ParticipantProxyData& pdata);
 
-        /**
-         * Write as a parameter list on a CDRMessage_t
-         * @return True on success
-         */
-        bool writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulation);
+    /**
+     * Write as a parameter list on a CDRMessage_t
+     * @return True on success
+     */
+    bool writeToCDRMessage(
+            CDRMessage_t* msg,
+            bool write_encapsulation);
 
-        /**
-         * Read the parameter list from a recevied CDRMessage_t
-         * @return True on success
-         */
-        bool readFromCDRMessage(
-                CDRMessage_t* msg,
-                bool use_encapsulation,
-                const NetworkFactory& network);
+    /**
+     * Read the parameter list from a recevied CDRMessage_t
+     * @return True on success
+     */
+    bool readFromCDRMessage(
+            CDRMessage_t* msg,
+            bool use_encapsulation,
+            const NetworkFactory& network);
 
-        //! Clear the data (restore to default state).
-        void clear();
+    //! Clear the data (restore to default state).
+    void clear();
 
-        /**
-         * Copy the data from another object.
-         * @param pdata Object to copy the data from
-         */
-        void copy(const ParticipantProxyData& pdata);
+    /**
+     * Copy the data from another object.
+     * @param pdata Object to copy the data from
+     */
+    void copy(
+            const ParticipantProxyData& pdata);
 
-        /**
-         * Set participant persistent GUID_t
-         * @param guid valid GUID_t
-         */
-        void set_persistence_guid(const GUID_t & guid);
+    /**
+     * Set participant persistent GUID_t
+     * @param guid valid GUID_t
+     */
+    void set_persistence_guid(
+            const GUID_t& guid);
 
-        /**
-         * Retrieve participant persistent GUID_t
-         * @return guid persistent GUID_t or c_Guid_Unknown
-         */
-        GUID_t get_persistence_guid() const;
+    /**
+     * Retrieve participant persistent GUID_t
+     * @return guid persistent GUID_t or c_Guid_Unknown
+     */
+    GUID_t get_persistence_guid() const;
 
-        void assert_liveliness();
+    void assert_liveliness();
 
-        const std::chrono::steady_clock::time_point& last_received_message_tm() const
-        {
-            return last_received_message_tm_;
-        }
+    const std::chrono::steady_clock::time_point& last_received_message_tm() const
+    {
+        return last_received_message_tm_;
+    }
 
-        const std::chrono::microseconds& lease_duration() const
-        {
-            return lease_duration_;
-        }
+    const std::chrono::microseconds& lease_duration() const
+    {
+        return lease_duration_;
+    }
 
-    private:
+private:
 
-        //! Store the last timestamp it was received a RTPS message from the remote participant.
-        std::chrono::steady_clock::time_point last_received_message_tm_;
+    //! Store the last timestamp it was received a RTPS message from the remote participant.
+    std::chrono::steady_clock::time_point last_received_message_tm_;
 
-        //! Remote participant lease duration in microseconds.
-        std::chrono::microseconds lease_duration_;
+    //! Remote participant lease duration in microseconds.
+    std::chrono::microseconds lease_duration_;
 };
 
 } /* namespace rtps */
