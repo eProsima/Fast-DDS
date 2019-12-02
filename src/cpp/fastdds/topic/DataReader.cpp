@@ -40,9 +40,20 @@ DataReader::DataReader(
         DataReaderListener* listener,
         const ::dds::core::status::StatusMask& /*mask*/)
     : impl_(
-          (const_cast<Subscriber*>(sub))->create_datareader(topic, qos, listener)->impl_)
+        (const_cast<Subscriber*>(sub))->create_datareader(topic, qos, listener)->impl_)
 {
     impl_->set_topic(topic);
+}
+
+DataReader::DataReader(
+        const Subscriber* sub,
+        const TopicDescription& topic_desc,
+        const DataReaderQos& qos,
+        DataReaderListener* listener,
+        const ::dds::core::status::StatusMask& /*mask*/)
+    : impl_(
+        (const_cast<Subscriber*>(sub))->create_datareader(topic_desc, qos, listener)->impl_)
+{
 }
 
 DataReader::DataReader(
@@ -60,21 +71,21 @@ bool DataReader::wait_for_unread_message(
 }
 
 ReturnCode_t DataReader::read_next_sample(
-        void *data,
-        SampleInfo_t *info)
+        void* data,
+        SampleInfo_t* info)
 {
     return impl_->read_next_sample(data, info);
 }
 
 ReturnCode_t DataReader::take_next_sample(
-        void *data,
-        SampleInfo_t *info)
+        void* data,
+        SampleInfo_t* info)
 {
     return impl_->take_next_sample(data, info);
 }
 
 ReturnCode_t DataReader::take_next_sample(
-        void *data,
+        void* data,
         ::dds::sub::SampleInfo& info)
 {
     SampleInfo_t sinfo;
@@ -123,7 +134,7 @@ const TopicAttributes& DataReader::get_topic() const
 }
 
 bool DataReader::set_attributes(
-        const rtps::ReaderAttributes &att)
+        const rtps::ReaderAttributes& att)
 {
     return impl_->set_attributes(att);
 }
@@ -140,22 +151,22 @@ ReturnCode_t DataReader::get_requested_deadline_missed_status(
 }
 
 /* TODO
-bool DataReader::read(
+   bool DataReader::read(
         std::vector<void *>& data_values,
         std::vector<SampleInfo_t>& sample_infos,
         uint32_t max_samples)
-{
+   {
     return impl_->read(...);
-}
+   }
 
-bool DataReader::take(
+   bool DataReader::take(
         std::vector<void *>& data_values,
         std::vector<SampleInfo_t>& sample_infos,
         uint32_t max_samples)
-{
+   {
     return impl_->take(...);
-}
-*/
+   }
+ */
 
 ReturnCode_t DataReader::set_listener(
         DataReaderListener* listener)
@@ -169,13 +180,13 @@ const DataReaderListener* DataReader::get_listener() const
 }
 
 /* TODO
-bool DataReader::get_key_value(
+   bool DataReader::get_key_value(
         void* data,
         const rtps::InstanceHandle_t& handle)
-{
+   {
     return impl->get_key_value(...);
-}
-*/
+   }
+ */
 
 ReturnCode_t DataReader::get_liveliness_changed_status(
         LivelinessChangedStatus& status) const
@@ -184,28 +195,28 @@ ReturnCode_t DataReader::get_liveliness_changed_status(
 }
 
 /* TODO
-bool DataReader::get_requested_incompatible_qos_status(
+   bool DataReader::get_requested_incompatible_qos_status(
         RequestedIncompatibleQosStatus& status) const
-{
+   {
     return impl_->get...;
-}
-*/
+   }
+ */
 
 /* TODO
-bool DataReader::get_sample_lost_status(
+   bool DataReader::get_sample_lost_status(
         SampleLostStatus& status) const
-{
+   {
     return impl_->get...;
-}
-*/
+   }
+ */
 
 /* TODO
-bool DataReader::get_sample_rejected_status(
+   bool DataReader::get_sample_rejected_status(
         SampleRejectedStatus& status) const
-{
+   {
     return impl_->get...;
-}
-*/
+   }
+ */
 
 const Subscriber* DataReader::get_subscriber() const
 {
@@ -213,12 +224,12 @@ const Subscriber* DataReader::get_subscriber() const
 }
 
 /* TODO
-bool DataReader::wait_for_historical_data(
+   bool DataReader::wait_for_historical_data(
         const Duration_t& max_wait) const
-{
+   {
     return impl_->wait_for_historical_data(max_wait);
-}
-*/
+   }
+ */
 
 TypeSupport DataReader::type()
 {
@@ -226,13 +237,13 @@ TypeSupport DataReader::type()
 }
 
 /* TODO
-ReturnCode_t DataReader::get_matched_publication_data(
+   ReturnCode_t DataReader::get_matched_publication_data(
         PublicationBuiltinTopicData publication_data,
         fastrtps::rtps::InstanceHandle_t publication_handle)
-{
+   {
     return impl_->get_matched_publication_data(publication_data, publication_handle);
-}
-*/
+   }
+ */
 
 } /* namespace dds */
 } /* namespace fastdds */

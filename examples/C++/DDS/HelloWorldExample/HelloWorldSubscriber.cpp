@@ -62,8 +62,9 @@ bool HelloWorldSubscriber::init()
     // CREATE THE READER
     DataReaderQos rqos;
     rqos.reliability.kind = RELIABLE_RELIABILITY_QOS;
-    Topic topic(participant_, "HelloWorldTopic", "HelloWorld", TopicQos());
-    reader_ = subscriber_->create_datareader(topic, rqos, &listener_);
+    //Topic topic(participant_, "HelloWorldTopic", "HelloWorld", TopicQos()); //PSM
+    TopicDescription topic_desc(participant_, "HelloWorldTopic", "HelloWorld"); //PIM
+    reader_ = subscriber_->create_datareader(topic_desc, rqos, &listener_);
 
     if (reader_ == nullptr)
     {

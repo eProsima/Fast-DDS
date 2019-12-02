@@ -72,14 +72,21 @@ ReturnCode_t Subscriber::set_listener(
     return impl_->set_listener(listener);
 }
 
-//DataReader* Subscriber::create_datareader(
-//        const fastrtps::TopicAttributes& topic_attr,
-//        const DataReaderQos& reader_qos,
-//        DataReaderListener* listener)
-//{
-//    Topic topic(get_participant(), topic_attr.getTopicName().c_str(), topic_attr.getTopicDataType().c_str());
-//    return impl_->create_datareader(topic, topic_attr, reader_qos, listener);
-//}
+DataReader* Subscriber::create_datareader(
+        const TopicDescription& topic_desc,
+        const DataReaderQos& reader_qos,
+        DataReaderListener* listener,
+        const ::dds::core::status::StatusMask& /*mask*/)
+{
+    Topic* topic = const_cast<DomainParticipant*>(get_participant())->find_topic(topic_desc.get_name(),
+                    Duration_t(100, 0));
+    if (topic == nullptr)
+    {
+        topic = const_cast<DomainParticipant*>(get_participant())->create_topic(topic_desc.get_name(),
+                        topic_desc.get_type_name(), TOPIC_QOS_DEFAULT);
+    }
+    return impl_->create_datareader(*topic, reader_qos, listener);
+}
 
 DataReader* Subscriber::create_datareader(
         const Topic& topic,

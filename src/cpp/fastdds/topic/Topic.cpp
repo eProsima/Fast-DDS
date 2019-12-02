@@ -31,7 +31,7 @@ Topic::Topic(
         const TopicQos& qos,
         TopicListener* listener,
         const ::dds::core::status::StatusMask& mask)
-    : TopicDescription(topic_name.c_str(), type_name.c_str())
+    : TopicDescription(const_cast<DomainParticipant*>(dp), topic_name.c_str(), type_name.c_str())
     , listener_(listener)
     , qos_(qos)
     , mask_(mask)
@@ -49,7 +49,7 @@ Topic::Topic(
         fastrtps::TopicAttributes att,
         TopicListener* listener,
         const ::dds::core::status::StatusMask& mask)
-    : TopicDescription(att.getTopicName().c_str(), att.getTopicDataType().c_str())
+    : TopicDescription(const_cast<DomainParticipant*>(dp), att.getTopicName().c_str(), att.getTopicDataType().c_str())
     , listener_(listener)
     , mask_(mask)
     , topic_att_(att)

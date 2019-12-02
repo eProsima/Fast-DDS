@@ -64,6 +64,7 @@ class DataReaderImpl;
 class DataReaderListener;
 class TypeSupport;
 class Topic;
+class TopicDescription;
 struct LivelinessChangedStatus;
 class SampleInfo_t;
 
@@ -81,6 +82,13 @@ class RTPS_DllAPI DataReader
     DataReader(
             const Subscriber* pub,
             const Topic& topic,
+            const DataReaderQos& qos = DDS_DATAREADER_QOS_DEFAULT,
+            DataReaderListener* listener = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+
+    DataReader(
+            const Subscriber* pub,
+            const TopicDescription& topic_desc,
             const DataReaderQos& qos = DDS_DATAREADER_QOS_DEFAULT,
             DataReaderListener* listener = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
@@ -215,7 +223,7 @@ public:
        ReturnCode_t get_matched_publication_data(
             PublicationBuiltinTopicData publication_data,
             fastrtps::rtps::InstanceHandle_t publication_handle);
-    */
+     */
 
 private:
 
