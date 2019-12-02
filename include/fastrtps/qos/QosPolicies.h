@@ -783,6 +783,9 @@ public:
             rtps::CDRMessage_t* msg,
             uint16_t size) override;
 
+    static uint32_t cdr_serialized_size(
+            const UserDataQosPolicy& data);
+
     /**
      * Returns raw data vector.
      * @return raw data as vector of octets.

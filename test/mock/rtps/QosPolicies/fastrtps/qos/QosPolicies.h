@@ -645,6 +645,12 @@ public:
         return true;
     }
 
+    static uint32_t cdr_serialized_size(
+            const UserDataQosPolicy& data)
+    {
+        return 2 + 2 + 4 + static_cast<uint32_t>(data.size()) + 4;
+    }
+
     /**
      * Reads QoS from the specified CDR message
      * @param msg Message from where the QoS Policy has to be taken.

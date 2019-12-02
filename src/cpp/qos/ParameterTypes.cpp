@@ -68,6 +68,17 @@ bool ParameterKey_t::readFromCDRMessage(
 }
 
 // PARAMETER_ STRING
+uint32_t ParameterString_t::cdr_serialized_size(
+        const string_255& str)
+{
+    // Size including NUL char at the end
+    uint32_t str_siz = static_cast<uint32_t>(str.size()) + 1;
+    // Align to next 4 byte
+    str_siz = (str_siz + 3) & ~3;
+    // p_id + p_length + str_length + str_data
+    return 2 + 2 + 4 + str_siz;
+}
+
 bool ParameterString_t::addToCDRMessage(
         CDRMessage_t* msg)
 {
@@ -385,6 +396,27 @@ bool ParameterBuiltinEndpointSet_t::readFromCDRMessage(
     return CDRMessage::readUInt32(msg, &endpointSet);
 }
 
+uint32_t ParameterPropertyList_t::cdr_serialized_size(
+        const ParameterPropertyList_t& data)
+{
+    // p_id + p_length + n_properties
+    uint32_t ret_val = 2 + 2 + 4;
+    for (ParameterPropertyList_t::const_iterator it = data.begin();
+            it != data.end(); ++it)
+    {
+        // str_len + str_data
+        ret_val += 4 + static_cast<uint32_t>(strlen(it->first().c_str()));
+        // align
+        ret_val = (ret_val + 3) & ~3;
+        // str_len + str_data
+        ret_val += 4 + static_cast<uint32_t>(strlen(it->second().c_str()));
+        // align
+        ret_val = (ret_val + 3) & ~3;
+    }
+
+    return ret_val;
+}
+
 bool ParameterPropertyList_t::addToCDRMessage(
         CDRMessage_t* msg)
 {
@@ -482,6 +514,30 @@ bool ParameterSampleIdentity_t::readFromCDRMessage(
 }
 
 #if HAVE_SECURITY
+
+uint32_t ParameterToken_t::cdr_serialized_size(
+        const rtps::Token& data)
+{
+    // p_id + p_length
+    uint32_t ret_val = 2 + 2;
+
+    // str_len + str_data
+    ret_val += 4 + static_cast<uint32_t>(strlen(data.class_id().c_str()));
+    // align
+    ret_val = (ret_val + 3) & ~3;
+
+    // properties
+    ret_val += static_cast<uint32_t>(PropertyHelper::serialized_size(data.properties()));
+    // align
+    ret_val = (ret_val + 3) & ~3;
+
+    // binary_properties
+    ret_val += static_cast<uint32_t>(BinaryPropertyHelper::serialized_size(data.binary_properties()));
+    // align
+    ret_val = (ret_val + 3) & ~3;
+
+    return ret_val;
+}
 
 bool ParameterToken_t::addToCDRMessage(
         CDRMessage_t* msg)

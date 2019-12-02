@@ -315,6 +315,17 @@ bool PartitionQosPolicy::addToCDRMessage(
     return valid;
 }
 
+uint32_t UserDataQosPolicy::cdr_serialized_size(
+        const UserDataQosPolicy& data)
+{
+    // Size of data
+    uint32_t data_size = static_cast<uint32_t>(data.size());
+    // Align to next 4 byte
+    data_size = (data_size + 3) & ~3;
+    // p_id + p_length + str_length + str_data
+    return 2 + 2 + 4 + data_size;
+}
+
 bool PartitionQosPolicy::readFromCDRMessage(
         CDRMessage_t* msg,
         uint16_t size)

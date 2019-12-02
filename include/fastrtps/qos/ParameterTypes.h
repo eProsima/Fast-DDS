@@ -351,6 +351,9 @@ public:
         m_string = name;
     }
 
+    static uint32_t cdr_serialized_size(
+            const string_255& str);
+
 private:
 
     string_255 m_string;
@@ -1345,6 +1348,9 @@ public:
             rtps::CDRMessage_t* msg,
             uint16_t size) override;
 
+    static uint32_t cdr_serialized_size(
+            const ParameterPropertyList_t& data);
+
 protected:
 
     void push_back_helper (
@@ -1460,6 +1466,9 @@ public:
     bool readFromCDRMessage(
             rtps::CDRMessage_t* msg,
             uint16_t size) override;
+
+    static uint32_t cdr_serialized_size(
+            const rtps::Token& data);
 };
 
 class ParameterParticipantSecurityInfo_t : public Parameter_t

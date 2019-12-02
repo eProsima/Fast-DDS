@@ -141,6 +141,14 @@ public:
             ParticipantProxyData& pdata);
 
     /**
+     * Get the size in bytes of the CDR serialization of this object.
+     * @param include_encapsulation Whether to include the size of the encapsulation info.
+     * @return size in bytes of the CDR serialization.
+     */
+    uint32_t get_serialized_size(
+            bool include_encapsulation) const;
+
+    /**
      * Write as a parameter list on a CDRMessage_t
      * @return True on success
      */
