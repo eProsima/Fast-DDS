@@ -75,7 +75,7 @@ typedef enum ParticipantFilteringFlags : uint32_t
     FILTER_SAME_PROCESS = 0x4
 } ParticipantFilteringFlags_t;
 
-#define BUILTIN_DATA_MAX_SIZE 5000
+#define BUILTIN_DATA_MAX_SIZE 512
 
 //! PDP factory for EXTERNAL type
 class PDP;
