@@ -46,6 +46,33 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
+static void set_builtin_reader_history_attributes(
+        HistoryAttributes& hatt,
+        const ResourceLimitedContainerConfig& allocation,
+        bool is_secure)
+{
+    hatt.payloadMaxSize = is_secure ? 128 : 28;
+
+    if (allocation.maximum < (std::numeric_limits<uint32_t>::max() / 2) )
+    {
+        hatt.initialReservedCaches = static_cast<uint32_t>(allocation.initial) * 2;
+        hatt.maximumReservedCaches = static_cast<uint32_t>(allocation.maximum) * 2;
+    }
+    else
+    {
+        hatt.initialReservedCaches = static_cast<uint32_t>(allocation.initial) * 2;
+        hatt.maximumReservedCaches = 0;
+    }
+}
+
+static void set_builtin_writer_history_attributes(
+        HistoryAttributes& hatt,
+        bool is_secure)
+{
+    hatt.payloadMaxSize = is_secure ? 128 : 28;
+    hatt.initialReservedCaches = 2;
+    hatt.maximumReservedCaches = 2;
+}
 
 WLP::WLP(BuiltinProtocols* p)
     : min_automatic_ms_(std::numeric_limits<double>::max())
@@ -169,21 +196,20 @@ bool WLP::initWL(RTPSParticipantImpl* p)
 
 bool WLP::createEndpoints()
 {
-    // Built-in writer history
+    const ResourceLimitedContainerConfig& participants_allocation =
+        mp_participant->getRTPSParticipantAttributes().allocation.participants;
 
+    // Built-in writer history
     HistoryAttributes hatt;
-    hatt.initialReservedCaches = 20;
-    hatt.maximumReservedCaches = 1000;
-    hatt.payloadMaxSize = BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
+    set_builtin_writer_history_attributes(hatt, false);
     mp_builtinWriterHistory = new WriterHistory(hatt);
 
     // Built-in writer
-
     WriterAttributes watt;
     watt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
     watt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
     watt.endpoint.remoteLocatorList = mp_builtinProtocols->m_initialPeersList;
-    watt.matched_readers_allocation = mp_participant->getRTPSParticipantAttributes().allocation.participants;
+    watt.matched_readers_allocation = participants_allocation;
     watt.endpoint.topicKind = WITH_KEY;
     watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
     watt.endpoint.reliabilityKind = RELIABLE;
@@ -213,10 +239,7 @@ bool WLP::createEndpoints()
     }
 
     // Built-in reader history
-
-    hatt.initialReservedCaches = 100;
-    hatt.maximumReservedCaches = 2000;
-    hatt.payloadMaxSize = BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
+    set_builtin_reader_history_attributes(hatt, participants_allocation, false);
     mp_builtinReaderHistory = new ReaderHistory(hatt);
 
     // WLP listener
@@ -233,7 +256,7 @@ bool WLP::createEndpoints()
     ratt.endpoint.unicastLocatorList =  mp_builtinProtocols->m_metatrafficUnicastLocatorList;
     ratt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
     ratt.endpoint.remoteLocatorList = mp_builtinProtocols->m_initialPeersList;
-    ratt.matched_writers_allocation = mp_participant->getRTPSParticipantAttributes().allocation.participants;
+    ratt.matched_writers_allocation = participants_allocation;
     ratt.endpoint.topicKind = WITH_KEY;
     RTPSReader* rout;
     if (mp_participant->createReader(
@@ -264,16 +287,18 @@ bool WLP::createEndpoints()
 
 bool WLP::createSecureEndpoints()
 {
+    const ResourceLimitedContainerConfig& participants_allocation =
+        mp_participant->getRTPSParticipantAttributes().allocation.participants;
+
     //CREATE WRITER
     HistoryAttributes hatt;
-    hatt.initialReservedCaches = 20;
-    hatt.maximumReservedCaches = 1000;
-    hatt.payloadMaxSize = BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
+    set_builtin_writer_history_attributes(hatt, true);
     mp_builtinWriterSecureHistory = new WriterHistory(hatt);
+
     WriterAttributes watt;
     watt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
     watt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
-    watt.matched_readers_allocation = mp_participant->getRTPSParticipantAttributes().allocation.participants;
+    watt.matched_readers_allocation = participants_allocation;
     //	Wparam.topic.topicName = "DCPSParticipantMessageSecure";
     //	Wparam.topic.topicDataType = "RTPSParticipantMessageData";
     watt.endpoint.topicKind = WITH_KEY;
@@ -309,9 +334,9 @@ bool WLP::createSecureEndpoints()
         mp_builtinWriterSecureHistory = nullptr;
         return false;
     }
-    hatt.initialReservedCaches = 100;
-    hatt.maximumReservedCaches = 2000;
-    hatt.payloadMaxSize = BUILTIN_PARTICIPANT_DATA_MAX_SIZE;
+
+    set_builtin_reader_history_attributes(hatt, participants_allocation, true);
+
     mp_builtinReaderSecureHistory = new ReaderHistory(hatt);
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = WITH_KEY;
@@ -320,7 +345,7 @@ bool WLP::createSecureEndpoints()
     ratt.expectsInlineQos = true;
     ratt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
     ratt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
-    ratt.matched_writers_allocation = mp_participant->getRTPSParticipantAttributes().allocation.participants;
+    ratt.matched_writers_allocation = participants_allocation;
     //Rparam.topic.topicName = "DCPSParticipantMessageSecure";
     //Rparam.topic.topicDataType = "RTPSParticipantMessageData";
     ratt.endpoint.topicKind = WITH_KEY;
