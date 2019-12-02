@@ -38,9 +38,9 @@ DataReader::DataReader(
         const Topic& topic,
         const DataReaderQos& qos,
         DataReaderListener* listener,
-        const ::dds::core::status::StatusMask& /*mask*/)
+        const ::dds::core::status::StatusMask& mask)
     : impl_(
-        (const_cast<Subscriber*>(sub))->create_datareader(topic, qos, listener)->impl_)
+        (const_cast<Subscriber*>(sub))->create_datareader(topic, qos, listener, mask)->impl_)
 {
     impl_->set_topic(topic);
 }
@@ -159,7 +159,7 @@ ReturnCode_t DataReader::get_requested_deadline_missed_status(
 
 ReturnCode_t DataReader::set_listener(
         DataReaderListener* listener,
-        ::dds::core::status::StatusMask mask)
+        const ::dds::core::status::StatusMask& mask)
 {
     return impl_->set_listener(listener, mask);
 }

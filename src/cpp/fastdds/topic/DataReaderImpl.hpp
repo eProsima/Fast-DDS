@@ -78,7 +78,8 @@ class DataReaderImpl
             const fastrtps::rtps::ReaderAttributes& att,
             const DataReaderQos& qos,
             const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
-            DataReaderListener* listener = nullptr);
+            DataReaderListener* listener = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
 public:
 
@@ -165,7 +166,7 @@ public:
 
     ReturnCode_t set_listener(
             DataReaderListener* listener,
-            ::dds::core::status::StatusMask mask = ::dds::core::status::StatusMask::all());
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     const DataReaderListener* get_listener() const;
 
