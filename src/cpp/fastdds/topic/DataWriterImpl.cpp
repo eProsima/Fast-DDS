@@ -54,7 +54,8 @@ DataWriterImpl::DataWriterImpl(
         const WriterAttributes& att,
         const DataWriterQos& qos,
         const MemoryManagementPolicy_t memory_policy,
-        DataWriterListener* listen )
+        DataWriterListener* listen,
+        const ::dds::core::status::StatusMask& mask)
     : publisher_(p)
     , writer_(nullptr)
     , type_(type)
@@ -70,6 +71,7 @@ DataWriterImpl::DataWriterImpl(
             , memory_policy)
     //, history_(std::move(history))
     , listener_(listen)
+    , mask_(mask)
 #pragma warning (disable : 4355 )
     , writer_listener_(this)
     , high_mark_for_frag_(0)
@@ -531,9 +533,11 @@ const DataWriterQos& DataWriterImpl::get_qos() const
 }
 
 ReturnCode_t DataWriterImpl::set_listener(
-        DataWriterListener* listener)
+        DataWriterListener* listener,
+        const ::dds::core::status::StatusMask& mask)
 {
     listener_ = listener;
+    mask_ = mask;
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -570,13 +574,19 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         RTPSWriter* /*writer*/,
         const PublicationMatchedStatus& info)
 {
-    if (data_writer_->listener_ != nullptr )
+    if (data_writer_->listener_ != nullptr && (data_writer_->mask_ == ::dds::core::status::StatusMask::all() ||
+            data_writer_->mask_ == ::dds::core::status::StatusMask::publication_matched()))
     {
         data_writer_->listener_->on_publication_matched(
             data_writer_->user_datawriter_, info);
     }
 
-    data_writer_->publisher_->publisher_listener_.on_publication_matched(data_writer_->user_datawriter_, info);
+    if (data_writer_->publisher_->mask_ == ::dds::core::status::StatusMask::all() ||
+            data_writer_->publisher_->mask_ == ::dds::core::status::StatusMask::publication_matched())
+    {
+
+        data_writer_->publisher_->publisher_listener_.on_publication_matched(data_writer_->user_datawriter_, info);
+    }
 }
 
 void DataWriterImpl::InnerDataWriterListener::onWriterChangeReceivedByAll(
@@ -593,24 +603,35 @@ void DataWriterImpl::InnerDataWriterListener::on_liveliness_lost(
         fastrtps::rtps::RTPSWriter* /*writer*/,
         const fastrtps::LivelinessLostStatus& status)
 {
-    if (data_writer_->listener_ != nullptr)
+    if (data_writer_->listener_ != nullptr && (data_writer_->mask_ == ::dds::core::status::StatusMask::all() ||
+            data_writer_->mask_ == ::dds::core::status::StatusMask::liveliness_lost()))
     {
         data_writer_->listener_->on_liveliness_lost(data_writer_->user_datawriter_, status);
     }
 
-    data_writer_->publisher_->publisher_listener_.on_liveliness_lost(data_writer_->user_datawriter_, status);
+    if (data_writer_->publisher_->mask_ == ::dds::core::status::StatusMask::all() ||
+            data_writer_->publisher_->mask_ == ::dds::core::status::StatusMask::liveliness_lost())
+    {
+        data_writer_->publisher_->publisher_listener_.on_liveliness_lost(data_writer_->user_datawriter_, status);
+    }
 }
 
 void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
         RTPSWriter* /*writer*/,
         const OfferedIncompatibleQosStatus& status)
 {
-    if (data_writer_->listener_ != nullptr)
+    if (data_writer_->listener_ != nullptr && (data_writer_->mask_ == ::dds::core::status::StatusMask::all() ||
+            data_writer_->mask_ == ::dds::core::status::StatusMask::offered_incompatible_qos()))
     {
         data_writer_->listener_->on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
     }
 
-    data_writer_->publisher_->publisher_listener_.on_offered_incompatible_qos(data_writer_->user_datawriter_, status);
+    if (data_writer_->publisher_->mask_ == ::dds::core::status::StatusMask::all() ||
+            data_writer_->publisher_->mask_ == ::dds::core::status::StatusMask::offered_incompatible_qos())
+    {
+        data_writer_->publisher_->publisher_listener_.on_offered_incompatible_qos(data_writer_->user_datawriter_,
+                status);
+    }
 }
 
 ReturnCode_t DataWriterImpl::wait_for_acknowledgments(
@@ -650,8 +671,17 @@ bool DataWriterImpl::deadline_missed()
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
-    listener_->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
-    publisher_->publisher_listener_.on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
+    if (mask_ == ::dds::core::status::StatusMask::all() ||
+            mask_ == ::dds::core::status::StatusMask::offered_deadline_missed())
+    {
+        listener_->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
+    }
+
+    if (publisher_->mask_ == ::dds::core::status::StatusMask::all() ||
+            publisher_->mask_ == ::dds::core::status::StatusMask::offered_deadline_missed())
+    {
+        publisher_->publisher_listener_.on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
+    }
     deadline_missed_status_.total_count_change = 0;
 
     if (!history_.set_next_deadline(

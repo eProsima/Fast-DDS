@@ -26,6 +26,7 @@
 #include <fastrtps/types/TypesBase.h>
 
 #include <dds/core/status/Status.hpp>
+#include <dds/core/status/State.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -119,7 +120,8 @@ public:
      * @return true
      */
     ReturnCode_t set_listener(
-            PublisherListener* listener);
+            PublisherListener* listener,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /**
      * This operation creates a DataWriter. The returned DataWriter will be attached and belongs to the Publisher.
@@ -131,12 +133,14 @@ public:
     DataWriter* create_datawriter(
             const fastrtps::TopicAttributes& topic_attr,
             const DataWriterQos& writer_qos,
-            DataWriterListener* listener);
+            DataWriterListener* listener,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     DataWriter* create_datawriter(
             const Topic& topic,
             const DataWriterQos& qos,
-            DataWriterListener* listener);
+            DataWriterListener* listener,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /**
      * This operation deletes a DataWriter that belongs to the Publisher.

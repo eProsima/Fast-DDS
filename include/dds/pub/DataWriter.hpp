@@ -94,9 +94,9 @@ public:
     using Listener = DataWriterListener<T>;
 
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            DataWriter,
-            dds::pub::TAnyDataWriter,
-            detail::DataWriter)
+        DataWriter,
+        dds::pub::TAnyDataWriter,
+        detail::DataWriter)
 
     OMG_DDS_IMPLICIT_REF_BASE(
         DataWriter)
@@ -197,7 +197,7 @@ public:
             const ::dds::topic::Topic<T>& topic,
             const qos::DataWriterQos& qos,
             DataWriterListener<T>* listener = nullptr,
-            const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+            const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /** @cond */
     virtual ~DataWriter();
