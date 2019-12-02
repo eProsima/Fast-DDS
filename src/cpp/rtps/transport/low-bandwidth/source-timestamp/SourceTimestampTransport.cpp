@@ -51,7 +51,6 @@ SourceTimestampTransport::SourceTimestampTransport(
         const SourceTimestampTransportDescriptor& descriptor)
     : ChainingTransport(descriptor)
     , configuration_(descriptor)
-    , compress_buffer_mutex_()
     , compress_buffer_(nullptr)
 {
 }

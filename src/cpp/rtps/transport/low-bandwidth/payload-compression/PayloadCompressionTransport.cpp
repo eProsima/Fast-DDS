@@ -78,8 +78,6 @@ PayloadCompressionTransport::PayloadCompressionTransport(
         const PayloadCompressionTransportDescriptor& descriptor)
     : ChainingTransport(descriptor)
     , buffer_size_(descriptor.max_message_size())
-    , options_()
-    , compress_buffer_mutex_()
     , compress_buffer_(nullptr)
     , compress_buffer_len_(0)
     , configuration_(descriptor)
