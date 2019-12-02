@@ -68,10 +68,14 @@ void EDPServerPUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
 
     if(change->kind == ALIVE)
     {
-        add_writer_from_change(reader, change, sedp_);
+        // Note: change is removed from history inside this method.
+        add_writer_from_change(reader, reader_history, change, sedp_);
     }
     else
     {
+        //Removing change from history
+        reader_history->remove_change(change);
+
         //REMOVE WRITER FROM OUR READERS:
         logInfo(RTPS_EDP,"Disposed Remote Writer, removing...");
 
@@ -79,9 +83,6 @@ void EDPServerPUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
         this->sedp_->mp_PDP->removeWriterProxyData(auxGUID);
         sedp_->removePublisherFromHistory(change->instanceHandle);
     }
-
-    //Removing change from history
-    reader_history->remove_change(change);
 
     return;
 }
@@ -131,10 +132,14 @@ void EDPServerSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
 
     if(change->kind == ALIVE)
     {
-        add_reader_from_change(reader, change, sedp_);
+        // Note: change is removed from history inside this method.
+        add_reader_from_change(reader, reader_history, change, sedp_);
     }
     else
     {
+        // Remove change from history.
+        reader_history->remove_change(change);
+
         //REMOVE WRITER FROM OUR READERS:
         logInfo(RTPS_EDP,"Disposed Remote Reader, removing...");
 
@@ -142,11 +147,6 @@ void EDPServerSUBListener::onNewCacheChangeAdded(RTPSReader* reader, const Cache
         this->sedp_->mp_PDP->removeReaderProxyData(auxGUID);
         sedp_->removeSubscriberFromHistory(change->instanceHandle);
     }
-
-    // Remove change from history.
-    reader_history->remove_change(change);
-
-    return;
 }
 
 

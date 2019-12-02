@@ -73,6 +73,7 @@ protected:
 
     void add_writer_from_change(
             RTPSReader* reader,
+            ReaderHistory* reader_history,
             CacheChange_t* change,
             EDP* edp);
 
@@ -102,6 +103,7 @@ protected:
 
     void add_reader_from_change(
         RTPSReader* reader,
+        ReaderHistory* reader_history,
         CacheChange_t* change,
         EDP* edp);
 
