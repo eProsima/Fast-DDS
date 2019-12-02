@@ -25,6 +25,7 @@
 #include <fastrtps/types/TypesBase.h>
 
 #include <dds/core/status/Status.hpp>
+#include <dds/core/status/State.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -81,7 +82,7 @@ class RTPS_DllAPI DataWriter
             const Topic& topic,
             const DataWriterQos& qos,
             DataWriterListener* listener = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /**
      * Create a data writer, assigning its pointer to the associated writer.
@@ -200,7 +201,8 @@ public:
      * Establishes the listener for this DataWriter.
      */
     ReturnCode_t set_listener(
-            DataWriterListener* listener);
+            DataWriterListener* listener,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /* TODO
        bool get_key_value(

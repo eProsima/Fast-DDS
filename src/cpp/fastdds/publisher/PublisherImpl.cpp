@@ -117,9 +117,11 @@ PublisherListener* PublisherImpl::get_listener()
 }
 
 ReturnCode_t PublisherImpl::set_listener(
-        PublisherListener* listener)
+        PublisherListener* listener,
+        const ::dds::core::status::StatusMask& mask)
 {
     listener_ = listener;
+    mask_ = mask;
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -127,7 +129,8 @@ void PublisherImpl::PublisherWriterListener::on_publication_matched(
         DataWriter* /*writer*/,
         const PublicationMatchedStatus& info)
 {
-    if (publisher_->listener_ != nullptr)
+    if (publisher_->listener_ != nullptr && (publisher_->mask_ == ::dds::core::status::StatusMask::all() ||
+            publisher_->mask_ == ::dds::core::status::StatusMask::publication_matched()))
     {
         publisher_->listener_->on_publication_matched(publisher_->user_publisher_, info);
     }
@@ -137,7 +140,8 @@ void PublisherImpl::PublisherWriterListener::on_liveliness_lost(
         DataWriter* /*writer*/,
         const LivelinessLostStatus& status)
 {
-    if (publisher_->listener_ != nullptr)
+    if (publisher_->listener_ != nullptr && (publisher_->mask_ == ::dds::core::status::StatusMask::all() ||
+            publisher_->mask_ == ::dds::core::status::StatusMask::liveliness_lost()))
     {
         publisher_->listener_->on_liveliness_lost(publisher_->user_publisher_, status);
     }
@@ -147,7 +151,8 @@ void PublisherImpl::PublisherWriterListener::on_offered_deadline_missed(
         DataWriter* /*writer*/,
         const fastrtps::OfferedDeadlineMissedStatus& status)
 {
-    if (publisher_->listener_ != nullptr)
+    if (publisher_->listener_ != nullptr && (publisher_->mask_ == ::dds::core::status::StatusMask::all() ||
+            publisher_->mask_ == ::dds::core::status::StatusMask::offered_deadline_missed()))
     {
         publisher_->listener_->on_offered_deadline_missed(publisher_->user_publisher_, status);
     }
@@ -156,7 +161,8 @@ void PublisherImpl::PublisherWriterListener::on_offered_deadline_missed(
 DataWriter* PublisherImpl::create_datawriter(
         const fastrtps::TopicAttributes& topic_att,
         const DataWriterQos& writer_qos,
-        DataWriterListener* listener)
+        DataWriterListener* listener,
+        const ::dds::core::status::StatusMask& mask)
 {
     logInfo(PUBLISHER, "CREATING WRITER IN TOPIC: " << topic_att.getTopicName());
     //Look for the correct type registration
@@ -242,7 +248,8 @@ DataWriter* PublisherImpl::create_datawriter(
         w_att,
         writer_qos,
         att_.historyMemoryPolicy,
-        listener);
+        listener,
+        mask);
 
     if (impl->writer_ == nullptr)
     {
