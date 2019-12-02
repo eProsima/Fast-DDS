@@ -159,7 +159,7 @@ bool WLP::initWL(RTPSParticipantImpl* p)
 
     bool retVal = createEndpoints();
 #if HAVE_SECURITY
-    if (retVal)
+    if (retVal && p->is_secure())
     {
         retVal = createSecureEndpoints();
     }
