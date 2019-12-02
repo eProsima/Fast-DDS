@@ -87,18 +87,19 @@ template<typename T>
 class DataWriter : public TAnyDataWriter<detail::DataWriter>
 {
 public:
+
     /**
      * Local convenience typedef for dds::pub::DataWriterListener.
      */
     using Listener = DataWriterListener<T>;
 
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            DataWriter,
-            dds::pub::TAnyDataWriter,
-            detail::DataWriter)
+        DataWriter,
+        dds::pub::TAnyDataWriter,
+        detail::DataWriter)
 
     OMG_DDS_IMPLICIT_REF_BASE(
-            DataWriter)
+        DataWriter)
 
     /**
      * Create a new DataWriter for the desired Topic, using the given Publisher.
@@ -196,7 +197,7 @@ public:
             const ::dds::topic::Topic<T>& topic,
             const qos::DataWriterQos& qos,
             DataWriterListener<T>* listener = nullptr,
-            const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+            const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /** @cond */
     virtual ~DataWriter();
@@ -660,8 +661,8 @@ public:
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
     template<
-            typename SamplesFWIterator,
-            typename HandlesFWIterator>
+        typename SamplesFWIterator,
+        typename HandlesFWIterator>
     void write(
             const SamplesFWIterator& data_begin,
             const SamplesFWIterator& data_end,
@@ -715,8 +716,8 @@ public:
      *                  max_blocking_time of the Reliability QosPolicy elapsed.
      */
     template<
-            typename SamplesFWIterator,
-            typename HandlesFWIterator>
+        typename SamplesFWIterator,
+        typename HandlesFWIterator>
     void write(
             const SamplesFWIterator& data_begin,
             const SamplesFWIterator& data_end,
@@ -742,7 +743,7 @@ public:
      * really for the DataWriter. Leave it from the API documentation for clarity.
      */
     DataWriter& operator <<(
-            DataWriter & (*manipulator)(DataWriter&));
+            DataWriter& (*manipulator)(DataWriter&));
     /** @endcond */
 
     //==========================================================================

@@ -31,6 +31,8 @@
 #include <fastdds/dds/topic/qos/DataWriterQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 
+#include <dds/core/status/State.hpp>
+
 #include <mutex>
 #include <map>
 
@@ -90,12 +92,14 @@ public:
     PublisherListener* get_listener();
 
     ReturnCode_t set_listener(
-            PublisherListener* listener);
+            PublisherListener* listener,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     DataWriter* create_datawriter(
             const fastrtps::TopicAttributes& topic_attr,
             const DataWriterQos& writer_qos,
-            DataWriterListener* listener);
+            DataWriterListener* listener,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     ReturnCode_t delete_datawriter(
             DataWriter* writer);
@@ -181,6 +185,8 @@ private:
 
     //!PublisherListener
     PublisherListener* listener_;
+
+    ::dds::core::status::StatusMask mask_;
 
     //!Listener to capture the events of the Writer
     class PublisherWriterListener : public DataWriterListener

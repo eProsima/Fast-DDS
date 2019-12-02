@@ -38,6 +38,8 @@
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastrtps/types/TypesBase.h>
 
+#include <dds/core/status/State.hpp>
+
 using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
@@ -78,7 +80,8 @@ class DataWriterImpl
             const fastrtps::rtps::WriterAttributes& att,
             const fastdds::dds::DataWriterQos& qos,
             const fastrtps::rtps::MemoryManagementPolicy_t memory_policy,
-            DataWriterListener* listener = nullptr);
+            DataWriterListener* listener = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
 public:
 
@@ -151,7 +154,7 @@ public:
     const fastrtps::rtps::WriterAttributes& get_attributes() const;
 
     ReturnCode_t set_qos(
-            const fastdds::dds::DataWriterQos &qos);
+            const fastdds::dds::DataWriterQos& qos);
 
     const fastdds::dds::DataWriterQos& get_qos() const;
 
@@ -163,7 +166,8 @@ public:
     const DataWriterListener* get_listener() const;
 
     ReturnCode_t set_listener(
-            DataWriterListener* listener);
+            DataWriterListener* listener,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /* TODO
        bool get_key_value(
@@ -215,6 +219,8 @@ private:
 
     //! DataWriterListener
     DataWriterListener* listener_;
+
+    ::dds::core::status::StatusMask mask_;
 
     //!Listener to capture the events of the Writer
     class InnerDataWriterListener : public fastrtps::rtps::WriterListener

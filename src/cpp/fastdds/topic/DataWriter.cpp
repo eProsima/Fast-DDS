@@ -34,9 +34,9 @@ DataWriter::DataWriter(
         const Topic& topic,
         const DataWriterQos& qos,
         DataWriterListener* listener,
-        const ::dds::core::status::StatusMask& /*mask*/)
+        const ::dds::core::status::StatusMask& mask)
     : impl_(
-        (const_cast<Publisher*>(pub))->create_datawriter(topic, qos, listener)->impl_)
+        (const_cast<Publisher*>(pub))->create_datawriter(topic, qos, listener, mask)->impl_)
 {
 }
 
@@ -121,9 +121,10 @@ ReturnCode_t DataWriter::get_qos(
 }
 
 ReturnCode_t DataWriter::set_listener(
-        DataWriterListener* listener)
+        DataWriterListener* listener,
+        const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->set_listener(listener);
+    return impl_->set_listener(listener, mask);
 }
 
 const DataWriterListener* DataWriter::get_listener() const
