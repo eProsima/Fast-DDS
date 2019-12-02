@@ -627,7 +627,7 @@ inline bool CDRMessage::addParameterKey(CDRMessage_t* msg, const InstanceHandle_
 
 inline bool CDRMessage::addParameterSentinel(CDRMessage_t* msg)
 {
-    if(msg->pos+4>=msg->max_size)
+    if(msg->pos+4 > msg->max_size)
     {
         return false;
     }
