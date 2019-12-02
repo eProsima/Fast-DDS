@@ -374,10 +374,10 @@ void PDP::announceParticipantState(
 
             if(mp_PDPWriterHistory->getHistorySize() > 0)
                 mp_PDPWriterHistory->remove_min_change();
-            // TODO(Ricardo) Change DISCOVERY_PARTICIPANT_DATA_MAX_SIZE with getLocalParticipantProxyData()->size().
-            change = mp_PDPWriter->new_change([]() -> uint32_t
+            // TODO(Ricardo) Change mp_builtin->m_att.writerPayloadSize with getLocalParticipantProxyData()->size().
+            change = mp_PDPWriter->new_change([this]() -> uint32_t
                 {
-                    return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+                    return mp_builtin->m_att.writerPayloadSize;
                 }
             , ALIVE, key);
 
@@ -415,9 +415,9 @@ void PDP::announceParticipantState(
 
         if(mp_PDPWriterHistory->getHistorySize() > 0)
             mp_PDPWriterHistory->remove_min_change();
-        change = mp_PDPWriter->new_change([]() -> uint32_t
+        change = mp_PDPWriter->new_change([this]() -> uint32_t
             {
-                return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+                return mp_builtin->m_att.writerPayloadSize;
             }
         , NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
 

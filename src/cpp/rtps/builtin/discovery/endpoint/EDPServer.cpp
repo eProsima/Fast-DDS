@@ -234,8 +234,8 @@ bool EDPServer::addEndpointFromHistory(
 
     if( it == history.changesRend())
     {
-        // history.reserve_Cache(&pCh, DISCOVERY_PUBLICATION_DATA_MAX_SIZE )
-        // history.reserve_Cache(&pCh, DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE )
+        // history.reserve_Cache(&pCh, mp_PDP->builtin_attributes().writerPayloadSize )
+        // history.reserve_Cache(&pCh, mp_PDP->builtin_attributes().readerPayloadSize )
         if (history.reserve_Cache(&pCh, c.serializedPayload.max_size) && pCh && pCh->copy(&c))
         {
             pCh->writerGUID = writer.getGuid();
@@ -283,9 +283,9 @@ bool EDPServer::removeLocalReader(RTPSReader* R)
     {
         InstanceHandle_t iH;
         iH = (R->getGuid());
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+        CacheChange_t* change = writer->first->new_change([this]() -> uint32_t
             {
-                return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
+                return mp_PDP->builtin_attributes().readerPayloadSize;
             },
             NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
         if (change != nullptr)
@@ -318,9 +318,9 @@ bool EDPServer::removeLocalWriter(RTPSWriter* W)
     {
         InstanceHandle_t iH;
         iH = W->getGuid();
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+        CacheChange_t* change = writer->first->new_change([this]() -> uint32_t
             {
-                return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
+                return mp_PDP->builtin_attributes().writerPayloadSize;
             },
             NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
         if (change != nullptr)
@@ -354,9 +354,9 @@ bool EDPServer::processLocalWriterProxyData(
 
     if (writer->first != nullptr)
     {
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+        CacheChange_t* change = writer->first->new_change([this]() -> uint32_t
             {
-                return DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
+                return mp_PDP->builtin_attributes().writerPayloadSize;
             },
             ALIVE, wdata->key());
         if (change != nullptr)
@@ -407,9 +407,9 @@ bool EDPServer::processLocalReaderProxyData(
     if (writer->first != nullptr)
     {
         // TODO(Ricardo) Write a getCdrSerializedPayload for ReaderProxyData.
-        CacheChange_t* change = writer->first->new_change([]() -> uint32_t 
+        CacheChange_t* change = writer->first->new_change([this]() -> uint32_t
             {
-                return DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
+                return mp_PDP->builtin_attributes().readerPayloadSize;
             },
             ALIVE, rdata->key());
 

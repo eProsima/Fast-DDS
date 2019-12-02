@@ -208,7 +208,7 @@ bool PDPClient::createPDPEndpoints()
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
 
     HistoryAttributes hatt;
-    hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+    hatt.payloadMaxSize = mp_builtin->m_att.readerPayloadSize;
     hatt.initialReservedCaches = pdp_initial_reserved_caches;
     hatt.memoryPolicy = mp_builtin->m_att.readerHistoryMemoryPolicy;
     mp_PDPReaderHistory = new ReaderHistory(hatt);
@@ -256,7 +256,7 @@ bool PDPClient::createPDPEndpoints()
         return false;
     }
 
-    hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+    hatt.payloadMaxSize = mp_builtin->m_att.writerPayloadSize;
     hatt.initialReservedCaches = pdp_initial_reserved_caches;
     hatt.memoryPolicy = mp_builtin->m_att.writerHistoryMemoryPolicy;
     mp_PDPWriterHistory = new WriterHistory(hatt);
@@ -471,7 +471,7 @@ void PDPClient::announceParticipantState(
 
         CacheChange_t* change = nullptr;
 
-        if ((change = pW->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE; },
+        if ((change = pW->new_change([this]() -> uint32_t {return mp_builtin->m_att.writerPayloadSize; },
             NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
         {
             // update the sequence number

@@ -143,7 +143,7 @@ bool PDPServer::createPDPEndpoints()
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
 
     HistoryAttributes hatt;
-    hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+    hatt.payloadMaxSize = mp_builtin->m_att.readerPayloadSize;
     hatt.initialReservedCaches = pdp_initial_reserved_caches;
     hatt.memoryPolicy = mp_builtin->m_att.readerHistoryMemoryPolicy;
     mp_PDPReaderHistory = new ReaderHistory(hatt);
@@ -189,7 +189,7 @@ bool PDPServer::createPDPEndpoints()
         return false;
     }
 
-    hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+    hatt.payloadMaxSize = mp_builtin->m_att.writerPayloadSize;
     hatt.initialReservedCaches = pdp_initial_reserved_caches;
     hatt.memoryPolicy = mp_builtin->m_att.writerHistoryMemoryPolicy;
     mp_PDPWriterHistory = new WriterHistory(hatt);
@@ -573,7 +573,6 @@ bool PDPServer::addRelayedChangeToHistory( CacheChange_t& c)
 
     if (it == mp_PDPWriterHistory->changesRend())
     {
-        // mp_PDPWriterHistory->reserve_Cache(&pCh, DISCOVERY_PARTICIPANT_DATA_MAX_SIZE)
         if (mp_PDPWriterHistory->reserve_Cache(&pCh, c.serializedPayload.max_size) && pCh && pCh->copy(&c))
         {
             pCh->writerGUID = mp_PDPWriter->getGuid();
@@ -747,7 +746,7 @@ void PDPServer::announceParticipantState(bool new_change, bool dispose /* = fals
 
             CacheChange_t* change = nullptr;
 
-            if ((change = pW->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE; },
+            if ((change = pW->new_change([this]() -> uint32_t {return mp_builtin->m_att.writerPayloadSize; },
                 NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
             {
                 // update the sequence number
@@ -892,7 +891,7 @@ bool PDPServer::remove_remote_participant(
                 pC->kind == NOT_ALIVE_DISPOSED_UNREGISTERED && // last message received is aun DATA(p[UD])
                 pC->instanceHandle == key )) // from the same participant I'm going to report
         {   // We must create the DATA(p[UD])
-            if ((pC = mp_PDPWriter->new_change([]() -> uint32_t {return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE; },
+            if ((pC = mp_PDPWriter->new_change([this]() -> uint32_t {return mp_builtin->m_att.writerPayloadSize; },
                 NOT_ALIVE_DISPOSED_UNREGISTERED, key)))
             {
                 // Use this server identity in order to hint clients it's a lease duration demise

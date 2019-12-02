@@ -228,7 +228,7 @@ bool PDPSimple::createPDPEndpoints()
 
     //SPDP BUILTIN RTPSParticipant READER
     HistoryAttributes hatt;
-    hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+    hatt.payloadMaxSize = mp_builtin->m_att.readerPayloadSize;
     hatt.memoryPolicy = mp_builtin->m_att.readerHistoryMemoryPolicy;
     hatt.initialReservedCaches = 25;
     if (allocation.participants.initial > 0)
@@ -281,7 +281,7 @@ bool PDPSimple::createPDPEndpoints()
     }
 
     //SPDP BUILTIN RTPSParticipant WRITER
-    hatt.payloadMaxSize = DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
+    hatt.payloadMaxSize = mp_builtin->m_att.writerPayloadSize;
     hatt.initialReservedCaches = 1;
     hatt.maximumReservedCaches = 1;
     hatt.memoryPolicy = mp_builtin->m_att.writerHistoryMemoryPolicy;

@@ -75,6 +75,8 @@ typedef enum ParticipantFilteringFlags : uint32_t
     FILTER_SAME_PROCESS = 0x4
 } ParticipantFilteringFlags_t;
 
+#define BUILTIN_DATA_MAX_SIZE 5000
+
 //! PDP factory for EXTERNAL type
 class PDP;
 class BuiltinProtocols;
@@ -277,8 +279,14 @@ class BuiltinAttributes
         //! Memory policy for builtin readers
         MemoryManagementPolicy_t readerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
 
+        //! Maximum payload size for builtin readers
+        uint32_t readerPayloadSize = BUILTIN_DATA_MAX_SIZE;
+
         //! Memory policy for builtin writers
         MemoryManagementPolicy_t writerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
+
+        //! Maximum payload size for builtin writers
+        uint32_t writerPayloadSize = BUILTIN_DATA_MAX_SIZE;
 
         //! Mutation tries if the port is being used.
         uint32_t mutation_tries = 100u;
@@ -299,7 +307,9 @@ class BuiltinAttributes
                    (this->metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&
                    (this->initialPeersList == b.initialPeersList) &&
                    (this->readerHistoryMemoryPolicy == b.readerHistoryMemoryPolicy) &&
+                   (this->readerPayloadSize == b.readerPayloadSize) &&
                    (this->writerHistoryMemoryPolicy == b.writerHistoryMemoryPolicy) &&
+                   (this->writerPayloadSize == b.writerPayloadSize) &&
                    (this->mutation_tries == b.mutation_tries) &&
                    (this->avoid_builtin_multicast == b.avoid_builtin_multicast);
         }
