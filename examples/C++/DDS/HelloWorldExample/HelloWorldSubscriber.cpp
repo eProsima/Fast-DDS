@@ -61,14 +61,9 @@ bool HelloWorldSubscriber::init()
     // CREATE THE READER
     DataReaderQos rqos;
     rqos.reliability.kind = RELIABLE_RELIABILITY_QOS;
-    eprosima::fastrtps::TopicAttributes topic_att;
-    topic_att.topicDataType = "HelloWorld";
-    topic_att.topicName = "HelloWorldTopic";
-    topic_att.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    topic_att.historyQos.depth = 2;
-    topic_att.resourceLimitsQos.max_samples = 2;
-    topic_att.resourceLimitsQos.allocated_samples = 1;
-    reader_ = subscriber_->create_datareader(topic_att, rqos, nullptr);
+    //Topic topic(participant_, "HelloWorldTopic", "HelloWorld", TopicQos()); //PSM
+    TopicDescription topic_desc(participant_, "HelloWorldTopic", "HelloWorld"); //PIM
+    reader_ = subscriber_->create_datareader(topic_desc, rqos, &listener_);
 
     if (reader_ == nullptr)
     {
