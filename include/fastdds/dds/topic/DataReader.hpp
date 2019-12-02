@@ -84,7 +84,7 @@ class RTPS_DllAPI DataReader
             const Topic& topic,
             const DataReaderQos& qos = DDS_DATAREADER_QOS_DEFAULT,
             DataReaderListener* listener = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /**
      * Creates a DataReader. Don't use it directly, but through Subscriber.
@@ -178,7 +178,7 @@ public:
 
     ReturnCode_t set_listener(
             DataReaderListener* listener,
-            ::dds::core::status::StatusMask mask = ::dds::core::status::StatusMask::all());
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     const DataReaderListener* get_listener() const;
 

@@ -458,7 +458,8 @@ public:
         uint32_t take(
                 SamplesBIIterator sbit);
 
-    private:
+private:
+
         //using impl_ = detail::DataReader::Selector;
     };
 
@@ -773,7 +774,7 @@ public:
          *                  The DataReader has not yet been enabled.
          */
         ManipulatorSelector& operator >>(
-                ManipulatorSelector& (manipulator)(ManipulatorSelector &));
+                ManipulatorSelector& (manipulator)(ManipulatorSelector&));
 
         /**
          * This operation works the same as the @link dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls)
@@ -796,7 +797,8 @@ public:
         ManipulatorSelector operator >>(
                 Functor f);
 
-    private:
+private:
+
         //typename detail::DataReader::ManipulatorSelector impl_;
 
     };
@@ -804,17 +806,17 @@ public:
 public:
 
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            DataReader,
-            dds::sub::TAnyDataReader,
-            detail::DataReader)
+        DataReader,
+        dds::sub::TAnyDataReader,
+        detail::DataReader)
 
     OMG_DDS_IMPLICIT_REF_BASE(
         DataReader)
 
     // TODO - Remove this constructor inmediately after properly implement DataReaderListener
     DataReader(
-            detail::DataReader* evil_ptr) :
-        ::dds::core::Reference< detail::DataReader >(evil_ptr)
+            detail::DataReader* evil_ptr)
+        : ::dds::core::Reference< detail::DataReader >(evil_ptr)
     {
     }
 
@@ -909,7 +911,7 @@ public:
             const ::dds::topic::Topic<T>& topic,
             const qos::DataReaderQos& qos,
             DataReaderListener<T>* listener = nullptr,
-            const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+            const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     #ifdef OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
 
@@ -924,7 +926,7 @@ public:
             const ::dds::topic::ContentFilteredTopic<T>& topic,
             const qos::DataReaderQos& qos,
             DataReaderListener<T>* listener = NULL,
-            const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+            const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     #endif //OMG_DDS_CONTENT_SUBSCRIPTION_SUPPORT
 
@@ -941,7 +943,7 @@ public:
             const ::dds::topic::MultiTopic<T>& topic,
             const qos::DataReaderQos& qos,
             DataReaderListener<T>* listener = NULL,
-            const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+            const dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     #endif //OMG_DDS_MULTI_TOPIC_SUPPORT
 
@@ -1083,7 +1085,7 @@ public:
 
     /** @copydoc dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls) */
     ManipulatorSelector operator >>(
-            ManipulatorSelector& (manipulator)(ManipulatorSelector &));
+            ManipulatorSelector& (manipulator)(ManipulatorSelector&));
 
     /** @copydoc dds::sub::DataReader::operator>>(dds::sub::LoanedSamples<T>& ls) */
     template<typename Functor>

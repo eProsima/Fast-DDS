@@ -67,25 +67,27 @@ SubscriberListener* Subscriber::get_listener()
 }
 
 ReturnCode_t Subscriber::set_listener(
-        SubscriberListener* listener)
+        SubscriberListener* listener,
+        const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->set_listener(listener);
+    return impl_->set_listener(listener, mask);
 }
 
 DataReader* Subscriber::create_datareader(
         const fastrtps::TopicAttributes& topic_attr,
         const DataReaderQos& reader_qos,
-        DataReaderListener* listener)
+        DataReaderListener* listener,
+        const ::dds::core::status::StatusMask& mask)
 {
     Topic topic(get_participant(), topic_attr.getTopicName().c_str(), topic_attr.getTopicDataType().c_str());
-    return impl_->create_datareader(topic, topic_attr, reader_qos, listener);
+    return impl_->create_datareader(topic, topic_attr, reader_qos, listener, mask);
 }
 
 DataReader* Subscriber::create_datareader(
         const Topic& topic,
         const DataReaderQos& qos,
         DataReaderListener* listener,
-        const ::dds::core::status::StatusMask& /*mask*/)
+        const ::dds::core::status::StatusMask& mask)
 {
     fastrtps::TopicAttributes topic_attr;
     topic_attr.topicName = topic.get_name();
@@ -94,7 +96,7 @@ DataReader* Subscriber::create_datareader(
     topic.get_qos(topic_qos);
     topic_attr.historyQos = qos.history;
 
-    return impl_->create_datareader(topic, topic_attr, qos, listener);
+    return impl_->create_datareader(topic, topic_attr, qos, listener, mask);
 }
 
 ReturnCode_t Subscriber::delete_datareader(
