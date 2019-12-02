@@ -1343,6 +1343,7 @@ bool RTPSParticipantImpl::get_new_entity_id(
         entId.value[1] = c[1];
         entId.value[0] = c[2];
         entId.value[3] = 0x01; // Vendor specific
+        entityId = entId;
     }
     else
     {

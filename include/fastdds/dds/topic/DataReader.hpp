@@ -65,6 +65,7 @@ class DataReaderImpl;
 class DataReaderListener;
 class TypeSupport;
 class Topic;
+class TopicDescription;
 struct LivelinessChangedStatus;
 class SampleInfo_t;
 
@@ -85,6 +86,13 @@ class RTPS_DllAPI DataReader
             const DataReaderQos& qos = DDS_DATAREADER_QOS_DEFAULT,
             DataReaderListener* listener = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+
+    DataReader(
+            const Subscriber* pub,
+            const TopicDescription& topic_desc,
+            const DataReaderQos& qos = DDS_DATAREADER_QOS_DEFAULT,
+            DataReaderListener* listener = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
 
     /**
      * Creates a DataReader. Don't use it directly, but through Subscriber.

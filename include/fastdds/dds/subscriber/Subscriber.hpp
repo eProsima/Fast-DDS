@@ -58,6 +58,7 @@ class DataReaderListener;
 class DataReaderQos;
 class Topic;
 class TopicQos;
+class TopicDescription;
 
 /**
  * Class Subscriber, contains the public API that allows the user to control the reception of messages.
@@ -135,7 +136,7 @@ public:
      * @return Pointer to the created DataReader. nullptr if failed.
      */
     DataReader* create_datareader(
-            const fastrtps::TopicAttributes& topic_attr,
+            const TopicDescription& topic_desc,
             const DataReaderQos& reader_qos,
             DataReaderListener* listener,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());

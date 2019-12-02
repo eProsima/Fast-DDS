@@ -46,6 +46,17 @@ DataReader::DataReader(
 }
 
 DataReader::DataReader(
+        const Subscriber* sub,
+        const TopicDescription& topic_desc,
+        const DataReaderQos& qos,
+        DataReaderListener* listener,
+        const ::dds::core::status::StatusMask& mask)
+    : impl_(
+        (const_cast<Subscriber*>(sub))->create_datareader(topic_desc, qos, listener, mask)->impl_)
+{
+}
+
+DataReader::DataReader(
         DataReaderImpl* impl)
     : impl_(impl)
 {}

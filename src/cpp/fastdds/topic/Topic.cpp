@@ -31,12 +31,42 @@ Topic::Topic(
         const TopicQos& qos,
         TopicListener* listener,
         const ::dds::core::status::StatusMask& mask)
-    : TopicDescription(topic_name.c_str(), type_name.c_str())
+    : TopicDescription(const_cast<DomainParticipant*>(dp), topic_name.c_str(), type_name.c_str())
     , listener_(listener)
     , qos_(qos)
     , mask_(mask)
+    , participant_(const_cast<DomainParticipant*>(dp))
 {
-    (void)dp;
+    topic_att_.topicName = topic_name;
+    topic_att_.topicDataType = type_name;
+    topic_att_.topicKind = qos.topic_kind;
+    topic_att_.historyQos = qos.history;
+    topic_att_.resourceLimitsQos = qos.resource_limits;
+}
+
+Topic::Topic(
+        const DomainParticipant* dp,
+        fastrtps::TopicAttributes att,
+        TopicListener* listener,
+        const ::dds::core::status::StatusMask& mask)
+    : TopicDescription(const_cast<DomainParticipant*>(dp), att.getTopicName().c_str(), att.getTopicDataType().c_str())
+    , listener_(listener)
+    , mask_(mask)
+    , topic_att_(att)
+    , participant_(const_cast<DomainParticipant*>(dp))
+{
+    TopicQos qos;
+    qos.history = att.historyQos;
+    qos.resource_limits = att.resourceLimitsQos;
+    qos.topic_kind = att.topicKind;
+    qos.auto_fill_type_information = att.auto_fill_type_information;
+    qos.auto_fill_type_object = att.auto_fill_type_object;
+    qos_ = qos;
+}
+
+fastrtps::TopicAttributes Topic::get_topic_attributes() const
+{
+    return topic_att_;
 }
 
 ReturnCode_t Topic::get_qos(
@@ -54,9 +84,12 @@ const TopicQos& Topic::get_qos() const
 ReturnCode_t Topic::set_qos(
         const TopicQos& qos)
 {
-    // TODO Check updatable
-    qos_ = qos;
-    return ReturnCode_t::RETCODE_OK;
+    if (qos.checkQos())
+    {
+        qos_ = qos;
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
 }
 
 TopicListener* Topic::get_listener() const
@@ -82,10 +115,31 @@ ReturnCode_t Topic::get_inconsistent_topic_status(
 
 DomainParticipant* Topic::get_participant() const
 {
-    // TODO: Retrieve participant
-    return nullptr;
+    return participant_;
 }
 
+std::vector<DataWriter*>* Topic::get_writers() const
+{
+    return const_cast<std::vector<DataWriter*>*>(&writers_);
 }
+
+std::vector<DataReader*>* Topic::get_readers() const
+{
+    return const_cast<std::vector<DataReader*>*>(&readers_);
 }
+
+ReturnCode_t Topic::set_instance_handle(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    handle_ = handle;
+    return ReturnCode_t::RETCODE_OK;
 }
+
+fastrtps::rtps::InstanceHandle_t Topic::get_instance_handle() const
+{
+    return handle_;
+}
+
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima

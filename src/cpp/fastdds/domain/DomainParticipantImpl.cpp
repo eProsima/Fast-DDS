@@ -441,6 +441,15 @@ bool DomainParticipantImpl::contains_entity(
         }
     }
 
+    // Look for topics
+    {
+        std::lock_guard<std::mutex> lock(mtx_types_);
+        if (topics_by_handle_.find(handle) != topics_by_handle_.end())
+        {
+            return true;
+        }
+    }
+
     if (recursive)
     {
         // Look into publishers
@@ -1378,6 +1387,10 @@ Topic* DomainParticipantImpl::find_topic(
 
     Topic* topic = nullptr;
     std::chrono::microseconds max_wait(eprosima::fastrtps::rtps::TimeConv::Duration_t2MicroSecondsInt64(timeout));
+
+    for (auto it : topics_){
+        std::cout << "Topic name " << it.first << std::endl;
+    }
 
     cv_topic_.wait_for(lock, max_wait, [&]()
     {
