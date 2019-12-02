@@ -292,13 +292,13 @@ public:
     LocatorList_t initialPeersList;
 
     //! Memory policy for builtin readers
-    MemoryManagementPolicy_t readerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
+    MemoryManagementPolicy_t readerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     //! Maximum payload size for builtin readers
     uint32_t readerPayloadSize = BUILTIN_DATA_MAX_SIZE;
 
     //! Memory policy for builtin writers
-    MemoryManagementPolicy_t writerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
+    MemoryManagementPolicy_t writerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     //! Maximum payload size for builtin writers
     uint32_t writerPayloadSize = BUILTIN_DATA_MAX_SIZE;
