@@ -275,10 +275,10 @@ class BuiltinAttributes
         LocatorList_t initialPeersList;
 
         //! Memory policy for builtin readers
-        MemoryManagementPolicy_t readerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
+        MemoryManagementPolicy_t readerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
         //! Memory policy for builtin writers
-        MemoryManagementPolicy_t writerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE;
+        MemoryManagementPolicy_t writerHistoryMemoryPolicy = MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
         //! Mutation tries if the port is being used.
         uint32_t mutation_tries = 100u;
