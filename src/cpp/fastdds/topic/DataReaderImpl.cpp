@@ -43,9 +43,10 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-DataReaderImpl::DataReaderImpl(SubscriberImpl* s,
+DataReaderImpl::DataReaderImpl(
+        SubscriberImpl* s,
         TypeSupport type,
-        const Topic &topic,
+        const Topic& topic,
         const TopicAttributes& topic_att,
         const fastrtps::rtps::ReaderAttributes& att,
         const DataReaderQos& qos,
@@ -62,7 +63,7 @@ DataReaderImpl::DataReaderImpl(SubscriberImpl* s,
 #pragma warning (disable : 4355 )
     , history_(topic_att_,
             type_.get(),
-            qos_,
+            rqos_,
             type_.get()->m_typeSize + 3,    /* Possible alignment */
             memory_policy)
     , listener_(listener)
@@ -80,9 +81,9 @@ DataReaderImpl::DataReaderImpl(SubscriberImpl* s,
                         return deadline_missed();
                     }
 
-                 return false;
-             },
-             qos_.deadline.period.to_ns() * 1e-6);
+                    return false;
+                },
+                    qos_.deadline.period.to_ns() * 1e-6);
 
     lifespan_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
                     [&](TimedEvent::EventCode code) -> bool
@@ -92,9 +93,9 @@ DataReaderImpl::DataReaderImpl(SubscriberImpl* s,
                         return lifespan_expired();
                     }
 
-                 return false;
-             },
-             topic_.get_qos().lifespan.duration.to_ns() * 1e-6);
+                    return false;
+                },
+                    topic_.get_qos().lifespan.duration.to_ns() * 1e-6);
 
     RTPSReader* reader = RTPSDomain::createRTPSReader(
         subscriber_->rtps_participant(),
@@ -144,7 +145,7 @@ ReturnCode_t DataReaderImpl::read_next_sample(
         SampleInfo_t* info)
 {
     auto max_blocking_time = std::chrono::steady_clock::now() +
-        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability.max_blocking_time));
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability.max_blocking_time));
     DeprecatedSampleInfo dep_info;
     if (history_.readNextData(data, &dep_info, max_blocking_time))
     {
@@ -185,7 +186,7 @@ ReturnCode_t DataReaderImpl::take_next_sample(
         SampleInfo_t* info)
 {
     auto max_blocking_time = std::chrono::steady_clock::now() +
-        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability.max_blocking_time));
+            std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability.max_blocking_time));
     DeprecatedSampleInfo dep_info;
     if (history_.takeNextData(data, &dep_info, max_blocking_time))
     {
@@ -257,7 +258,7 @@ ReturnCode_t DataReaderImpl::set_qos(
     if (qos_.deadline.period != c_TimeInfinite)
     {
         deadline_duration_us_ =
-                duration<double, std::ratio<1, 1000000>>(qos_.deadline.period.to_ns() * 1e-3);
+                duration<double, std::ratio<1, 1000000> >(qos_.deadline.period.to_ns() * 1e-3);
         deadline_timer_->update_interval_millisec(qos_.deadline.period.to_ns() * 1e-6);
     }
     else
@@ -269,7 +270,8 @@ ReturnCode_t DataReaderImpl::set_qos(
     if (topic_.get_qos().lifespan.duration != c_TimeInfinite)
     {
         lifespan_duration_us_ =
-                std::chrono::duration<double, std::ratio<1, 1000000>>(topic_.get_qos().lifespan.duration.to_ns() * 1e-3);
+                std::chrono::duration<double,
+                        std::ratio<1, 1000000> >(topic_.get_qos().lifespan.duration.to_ns() * 1e-3);
         lifespan_timer_->update_interval_millisec(topic_.get_qos().lifespan.duration.to_ns() * 1e-6);
     }
     else
@@ -472,10 +474,10 @@ bool DataReaderImpl::on_new_cache_change_added(
 
     CacheChange_t* new_change = const_cast<CacheChange_t*>(change);
 
-//    if (qos_.m_lifespan.duration == c_TimeInfinite)
-//    {
-//        return true;
-//    }
+    //    if (qos_.m_lifespan.duration == c_TimeInfinite)
+    //    {
+    //        return true;
+    //    }
 
     auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
     auto now = system_clock::now();
@@ -633,9 +635,11 @@ bool DataReaderImpl::lifespan_expired()
  */
 
 ReturnCode_t DataReaderImpl::set_listener(
-        DataReaderListener* listener)
+        DataReaderListener* listener,
+        ::dds::core::status::StatusMask mask)
 {
     listener_ = listener;
+    mask_ = mask;
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -724,13 +728,13 @@ TypeSupport DataReaderImpl::type()
 }
 
 /* TODO
-ReturnCode_t DataReaderImpl::get_matched_publication_data(
+   ReturnCode_t DataReaderImpl::get_matched_publication_data(
         PublicationBuiltinTopicData publication_data,
         fastrtps::rtps::InstanceHandle_t publication_handle)
-{
+   {
 
-}
-*/
+   }
+ */
 
 } /* namespace dds */
 } /* namespace fastdds */
