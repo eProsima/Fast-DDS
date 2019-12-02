@@ -24,6 +24,7 @@
 #include <fastrtps/rtps/common/Types.h>
 #include <fastrtps/rtps/common/Time_t.h>
 #include <fastrtps/qos/ParameterTypes.h>
+#include <fastrtps/types/TypeObject.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -449,6 +450,12 @@ public:
             rtps::CDRMessage_t* /*msg*/) override
     {
         return true;
+    }
+
+    static uint32_t cdr_serialized_size(
+            const std::vector<rtps::octet>& data)
+    {
+        return 2 + 2 + 4 + static_cast<uint32_t>(data.size()) + 4;
     }
 
     /**

@@ -243,6 +243,9 @@ class ParameterString_t: public Parameter_t
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
         inline const char* getName()const { return m_string.c_str(); };
         inline void setName(const char* name){ m_string = name; };
+
+        static uint32_t cdr_serialized_size(
+                const string_255& str);
     private:
         string_255 m_string;
 };
@@ -551,6 +554,9 @@ class ParameterPropertyList_t : public Parameter_t {
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        static uint32_t cdr_serialized_size(
+                const ParameterPropertyList_t& data);
 };
 
 /**
@@ -603,6 +609,9 @@ class ParameterToken_t : public Parameter_t
          * @return True if the parameter was correctly added.
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+
+        static uint32_t cdr_serialized_size(
+                const rtps::Token& data);
 };
 
 class ParameterParticipantSecurityInfo_t : public Parameter_t

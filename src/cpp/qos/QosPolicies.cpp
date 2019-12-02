@@ -145,6 +145,17 @@ bool PartitionQosPolicy::addToCDRMessage(CDRMessage_t* msg)
     return valid;
 }
 
+uint32_t UserDataQosPolicy::cdr_serialized_size(
+        const std::vector<rtps::octet>& data)
+{
+    // Size of data
+    uint32_t data_size = static_cast<uint32_t>(data.size());
+    // Align to next 4 byte
+    data_size = (data_size + 3) & ~3;
+    // p_id + p_length + str_length + str_data
+    return 2 + 2 + 4 + data_size;
+}
+
 bool UserDataQosPolicy::addToCDRMessage(CDRMessage_t* msg)
 {
     bool valid = CDRMessage::addUInt16(msg, this->Pid);

@@ -533,6 +533,9 @@ public:
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) override;
 
+    static uint32_t cdr_serialized_size(
+            const std::vector<rtps::octet>& data);
+
     /**
      * Returns raw data vector.
      * @return raw data as vector of octets.
