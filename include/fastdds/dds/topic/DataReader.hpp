@@ -28,6 +28,7 @@
 #include <fastrtps/types/TypesBase.h>
 
 #include <dds/core/status/Status.hpp>
+#include <dds/core/status/State.hpp>
 
 #include <vector>
 #include <cstdint>
@@ -176,7 +177,8 @@ public:
     const fastrtps::TopicAttributes& get_topic() const;
 
     ReturnCode_t set_listener(
-            DataReaderListener* listener);
+            DataReaderListener* listener,
+            ::dds::core::status::StatusMask mask = ::dds::core::status::StatusMask::all());
 
     const DataReaderListener* get_listener() const;
 
@@ -214,7 +216,7 @@ public:
        ReturnCode_t get_matched_publication_data(
             PublicationBuiltinTopicData publication_data,
             fastrtps::rtps::InstanceHandle_t publication_handle);
-    */
+     */
 
 private:
 
