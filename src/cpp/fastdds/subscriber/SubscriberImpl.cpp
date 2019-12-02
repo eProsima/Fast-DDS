@@ -115,9 +115,11 @@ SubscriberListener* SubscriberImpl::get_listener()
 }
 
 ReturnCode_t SubscriberImpl::set_listener(
-        SubscriberListener* listener)
+        SubscriberListener* listener,
+        const ::dds::core::status::StatusMask& mask)
 {
     listener_ = listener;
+    mask_ = mask;
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -125,7 +127,8 @@ DataReader* SubscriberImpl::create_datareader(
         const Topic& topic,
         const fastrtps::TopicAttributes& topic_att,
         const DataReaderQos& reader_qos,
-        DataReaderListener* listener)
+        DataReaderListener* listener,
+        const ::dds::core::status::StatusMask& mask)
 {
     logInfo(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic_att.getTopicName())
     //Look for the correct type registration
@@ -202,7 +205,8 @@ DataReader* SubscriberImpl::create_datareader(
         ratt,
         reader_qos,
         att_.historyMemoryPolicy,
-        listener);
+        listener,
+        mask);
 
     if (impl->reader_ == nullptr)
     {
@@ -304,7 +308,11 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
     {
         for (DataReaderImpl* dr : it.second)
         {
-            dr->listener_->on_data_available(dr->user_datareader_);
+            if (dr->mask_ == ::dds::core::status::StatusMask::all() ||
+                    dr->mask_ == ::dds::core::status::StatusMask::data_available())
+            {
+                dr->listener_->on_data_available(dr->user_datareader_);
+            }
         }
     }
     return ReturnCode_t::RETCODE_OK;
@@ -434,7 +442,8 @@ const DomainParticipant* SubscriberImpl::get_participant() const
 void SubscriberImpl::SubscriberReaderListener::on_data_available(
         DataReader* /*reader*/)
 {
-    if (subscriber_->listener_ != nullptr)
+    if (subscriber_->listener_ != nullptr && (subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
+            subscriber_->mask_ == ::dds::core::status::StatusMask::data_available()))
     {
         subscriber_->listener_->on_new_data_message(subscriber_->user_subscriber_);
     }
@@ -444,7 +453,8 @@ void SubscriberImpl::SubscriberReaderListener::on_subscription_matched(
         DataReader* /*reader*/,
         const fastdds::dds::SubscriptionMatchedStatus& info)
 {
-    if (subscriber_->listener_ != nullptr)
+    if (subscriber_->listener_ != nullptr && (subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
+            subscriber_->mask_ == ::dds::core::status::StatusMask::subscription_matched()))
     {
         subscriber_->listener_->on_subscription_matched(subscriber_->user_subscriber_, info);
     }
@@ -454,7 +464,8 @@ void SubscriberImpl::SubscriberReaderListener::on_requested_deadline_missed(
         DataReader* /*reader*/,
         const fastrtps::RequestedDeadlineMissedStatus& status)
 {
-    if (subscriber_->listener_ != nullptr)
+    if (subscriber_->listener_ != nullptr && (subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
+            subscriber_->mask_ == ::dds::core::status::StatusMask::requested_deadline_missed()))
     {
         subscriber_->listener_->on_requested_deadline_missed(subscriber_->user_subscriber_, status);
     }
@@ -464,7 +475,8 @@ void SubscriberImpl::SubscriberReaderListener::on_liveliness_changed(
         DataReader* /*reader*/,
         const fastrtps::LivelinessChangedStatus& status)
 {
-    if (subscriber_->listener_ != nullptr)
+    if (subscriber_->listener_ != nullptr && (subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
+            subscriber_->mask_ == ::dds::core::status::StatusMask::liveliness_changed()))
     {
         subscriber_->listener_->on_liveliness_changed(subscriber_->user_subscriber_, status);
     }
@@ -472,26 +484,24 @@ void SubscriberImpl::SubscriberReaderListener::on_liveliness_changed(
 
 void SubscriberImpl::SubscriberReaderListener::on_sample_rejected(
         DataReader* /*reader*/,
-        const fastrtps::SampleRejectedStatus& /*status*/)
+        const fastrtps::SampleRejectedStatus& status)
 {
-    /* TODO
-       if (subscriber_->listener_ != nullptr)
-       {
+    if (subscriber_->listener_ != nullptr && (subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
+            subscriber_->mask_ == ::dds::core::status::StatusMask::sample_rejected()))
+    {
         subscriber_->listener_->on_sample_rejected(subscriber_->user_subscriber_, status);
-       }
-     */
+    }
 }
 
 void SubscriberImpl::SubscriberReaderListener::on_requested_incompatible_qos(
         DataReader* /*reader*/,
-        const RequestedIncompatibleQosStatus& /*status*/)
+        const RequestedIncompatibleQosStatus& status)
 {
-    /* TODO
-       if (subscriber_->listener_ != nullptr)
-       {
+    if (subscriber_->listener_ != nullptr && (subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
+            subscriber_->mask_ == ::dds::core::status::StatusMask::requested_incompatible_qos()))
+    {
         subscriber_->listener_->on_requested_incompatible_qos(subscriber_->user_subscriber_, status);
-       }
-     */
+    }
 }
 
 void SubscriberImpl::SubscriberReaderListener::on_sample_lost(
@@ -499,9 +509,10 @@ void SubscriberImpl::SubscriberReaderListener::on_sample_lost(
         const SampleLostStatus& /*status*/)
 {
     /* TODO
-       if (subscriber_->listener_ != nullptr)
+       if (subscriber_->listener_ != nullptr && (subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
+            subscriber_->mask_ == ::dds::core::status::StatusMask::sample_lost()))
        {
-        subscriber_->listener_->on_sample_rejected(subscriber_->user_subscriber_, status);
+        subscriber_->listener_->on_sample_lost(subscriber_->user_subscriber_, status);
        }
      */
 }

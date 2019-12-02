@@ -28,6 +28,8 @@
 #include <fastdds/dds/topic/qos/DataReaderQos.hpp>
 #include <fastrtps/types/TypesBase.h>
 
+#include <dds/core/status/State.hpp>
+
 #include <mutex>
 #include <map>
 
@@ -89,13 +91,15 @@ public:
     SubscriberListener* get_listener();
 
     ReturnCode_t set_listener(
-            SubscriberListener* listener);
+            SubscriberListener* listener,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     DataReader* create_datareader(
             const Topic& topic,
             const fastrtps::TopicAttributes& topic_attr,
             const DataReaderQos& reader_qos,
-            DataReaderListener* listener);
+            DataReaderListener* listener,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     ReturnCode_t delete_datareader(
             DataReader* reader);
@@ -200,6 +204,8 @@ private:
 
     //!Listener
     SubscriberListener* listener_;
+
+    ::dds::core::status::StatusMask mask_;
 
     class SubscriberReaderListener : public DataReaderListener
     {

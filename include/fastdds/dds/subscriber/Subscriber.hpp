@@ -124,7 +124,8 @@ public:
      * @return if successfully set.
      */
     ReturnCode_t set_listener(
-            SubscriberListener* listener);
+            SubscriberListener* listener,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /**
      * This operation creates a DataReader. The returned DataReader will be attached and belong to the Subscriber.
@@ -136,13 +137,14 @@ public:
     DataReader* create_datareader(
             const fastrtps::TopicAttributes& topic_attr,
             const DataReaderQos& reader_qos,
-            DataReaderListener* listener);
+            DataReaderListener* listener,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     DataReader* create_datareader(
             const Topic& topic, //Change to TopicDescription when DomainParticipant::find_topic() is implemented
             const DataReaderQos& qos,
             DataReaderListener* listener,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /**
      * This operation deletes a DataReader that belongs to the Subscriber.
