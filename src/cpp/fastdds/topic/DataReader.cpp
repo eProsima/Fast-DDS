@@ -158,9 +158,10 @@ ReturnCode_t DataReader::get_requested_deadline_missed_status(
  */
 
 ReturnCode_t DataReader::set_listener(
-        DataReaderListener* listener)
+        DataReaderListener* listener,
+        ::dds::core::status::StatusMask mask)
 {
-    return impl_->set_listener(listener);
+    return impl_->set_listener(listener, mask);
 }
 
 const DataReaderListener* DataReader::get_listener() const
@@ -228,13 +229,13 @@ TypeSupport DataReader::type()
 }
 
 /* TODO
-ReturnCode_t DataReader::get_matched_publication_data(
+   ReturnCode_t DataReader::get_matched_publication_data(
         PublicationBuiltinTopicData publication_data,
         fastrtps::rtps::InstanceHandle_t publication_handle)
-{
+   {
     return impl_->get_matched_publication_data(publication_data, publication_handle);
-}
-*/
+   }
+ */
 
 } /* namespace dds */
 } /* namespace fastdds */

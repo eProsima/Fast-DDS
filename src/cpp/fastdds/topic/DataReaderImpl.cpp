@@ -633,9 +633,11 @@ bool DataReaderImpl::lifespan_expired()
  */
 
 ReturnCode_t DataReaderImpl::set_listener(
-        DataReaderListener* listener)
+        DataReaderListener* listener,
+        ::dds::core::status::StatusMask mask)
 {
     listener_ = listener;
+    mask_ = mask;
     return ReturnCode_t::RETCODE_OK;
 }
 

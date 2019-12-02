@@ -37,6 +37,8 @@
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastrtps/types/TypesBase.h>
 
+#include <dds/core/status/State.hpp>
+
 using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
@@ -162,7 +164,8 @@ public:
     const Topic& get_topic() const;
 
     ReturnCode_t set_listener(
-            DataReaderListener* listener);
+            DataReaderListener* listener,
+            ::dds::core::status::StatusMask mask = ::dds::core::status::StatusMask::all());
 
     const DataReaderListener* get_listener() const;
 
@@ -197,10 +200,10 @@ public:
      */
 
     /* TODO
-    ReturnCode_t get_matched_publication_data(
+       ReturnCode_t get_matched_publication_data(
             PublicationBuiltinTopicData publication_data,
             fastrtps::rtps::InstanceHandle_t publication_handle);
-    */
+     */
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
@@ -232,6 +235,8 @@ private:
 
     //!Listener
     DataReaderListener* listener_;
+
+    ::dds::core::status::StatusMask mask_;
 
     class InnerDataReaderListener : public fastrtps::rtps::ReaderListener
     {
