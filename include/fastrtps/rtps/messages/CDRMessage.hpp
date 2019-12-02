@@ -772,7 +772,7 @@ inline bool CDRMessage::addParameterKey(
 inline bool CDRMessage::addParameterSentinel(
         CDRMessage_t* msg)
 {
-    if (msg->pos + 4 >= msg->max_size)
+    if (msg->pos + 4 > msg->max_size)
     {
         return false;
     }
