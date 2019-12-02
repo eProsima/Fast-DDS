@@ -188,7 +188,8 @@ uint32_t ParticipantProxyData::get_serialized_size(
     }
 #endif
 
-    return ret_val;
+    // PID_SENTINEL
+    return ret_val + 4;
 }
 
 bool ParticipantProxyData::writeToCDRMessage(
