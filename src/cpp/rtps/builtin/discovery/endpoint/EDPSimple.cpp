@@ -48,7 +48,8 @@ static const Duration_t edp_nack_response_delay{0, 100 * 1000 }; // 100 millisec
 static const Duration_t edp_nack_supression_duration{0, 10*1000}; // 10 milliseconds
 static const Duration_t edp_heartbeat_response_delay{0, 10*1000}; // 10 milliseconds
 
-static const int32_t edp_initial_reserved_caches = 20;
+static const int32_t edp_reader_initial_reserved_caches = 1;
+static const int32_t edp_writer_initial_reserved_caches = 20;
 
 
 EDPSimple::EDPSimple(
@@ -151,14 +152,14 @@ bool EDPSimple::initEDP(BuiltinAttributes& attributes)
 
 void EDPSimple::set_builtin_reader_history_attributes(HistoryAttributes& attributes)
 {
-    attributes.initialReservedCaches = edp_initial_reserved_caches;
+    attributes.initialReservedCaches = edp_reader_initial_reserved_caches;
     attributes.payloadMaxSize = DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE;
     attributes.memoryPolicy = mp_PDP->builtin_attributes().readerHistoryMemoryPolicy;
 }
 
 void EDPSimple::set_builtin_writer_history_attributes(HistoryAttributes& attributes)
 {
-    attributes.initialReservedCaches = edp_initial_reserved_caches;
+    attributes.initialReservedCaches = edp_writer_initial_reserved_caches;
     attributes.payloadMaxSize = DISCOVERY_PUBLICATION_DATA_MAX_SIZE;
     attributes.memoryPolicy = mp_PDP->builtin_attributes().writerHistoryMemoryPolicy;
 }
