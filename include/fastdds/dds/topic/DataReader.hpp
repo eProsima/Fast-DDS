@@ -183,6 +183,8 @@ public:
 
     const fastrtps::TopicAttributes& get_topic() const;
 
+    TopicDescription* get_topicdescription() const;
+
     ReturnCode_t set_listener(
             DataReaderListener* listener);
 
