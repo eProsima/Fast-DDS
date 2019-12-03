@@ -28,26 +28,27 @@ class TCPSenderResource : public fastrtps::rtps::SenderResource
     public:
 
         TCPSenderResource(
-                TCPTransportInterface& transport,
-                std::shared_ptr<TCPChannelResource>& channel)
-            : fastrtps::rtps::SenderResource(transport.kind())
-            , channel_(channel)
-        {
-            // Implementation functions are bound to the right transport parameters
-            clean_up = [this, &transport]()
+        TCPTransportInterface& transport,
+        std::shared_ptr<TCPChannelResource>& channel)
+        : fastrtps::rtps::SenderResource(transport.kind())
+        , channel_(channel)
+    {
+        // Implementation functions are bound to the right transport parameters
+        clean_up = [this, &transport]()
                 {
                     transport.CloseOutputChannel(channel_);
                 };
 
-            send_lambda_ = [this, &transport] (
-                    const fastrtps::rtps::octet* data,
-                    uint32_t dataSize,
-                    const fastrtps::rtps::Locator_t& destination,
-                    const std::chrono::microseconds&)-> bool
+        send_lambda_ = [this, &transport] (
+            const fastrtps::rtps::octet* data,
+            uint32_t dataSize,
+            fastrtps::rtps::LocatorsIterator& destination_locators_begin,
+            fastrtps::rtps::LocatorsIterator& destination_locators_end,
+            const std::chrono::microseconds&) -> bool
                 {
-                    return transport.send(data, dataSize, channel_, destination);
+                    return transport.send(data, dataSize, channel_, destination_locators_begin, destination_locators_end);
                 };
-        }
+    }
 
         virtual ~TCPSenderResource()
         {

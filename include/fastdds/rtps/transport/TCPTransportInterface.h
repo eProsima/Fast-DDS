@@ -172,6 +172,15 @@ protected:
      */
     std::string get_password() const;
 
+    /**
+     * Send a buffer to a destination
+     */
+    bool send(
+            const fastrtps::rtps::octet* send_buffer,
+            uint32_t send_buffer_size,
+            std::shared_ptr<TCPChannelResource>& channel,
+            const fastrtps::rtps::Locator_t& remote_locator);
+
 public:
     friend class RTCPMessageManager;
 
@@ -292,13 +301,15 @@ public:
     * @param send_buffer_size Size of the raw data. It will be used as a bounds check for the previous argument.
     * It must not exceed the send_buffer_size fed to this class during construction.
     * @param channel channel we're sending from.
-    * @param remote_locator Locator describing the remote destination we're sending to.
+    * @param destination_locators_begin destination locators iterator begin.
+    * @param destination_locators_end destination locators iterator end.
     */
     bool send(
         const fastrtps::rtps::octet* send_buffer,
         uint32_t send_buffer_size,
         std::shared_ptr<TCPChannelResource>& channel,
-        const fastrtps::rtps::Locator_t& remote_locator);
+        fastrtps::rtps::LocatorsIterator& destination_locators_begin,
+        fastrtps::rtps::LocatorsIterator& destination_locators_end);
 
     /**
      * Performs the locator selection algorithm for this transport.

@@ -81,6 +81,28 @@ bool test_UDPv4Transport::send(
         const octet* send_buffer,
         uint32_t send_buffer_size,
         eProsimaUDPSocket& socket,
+        fastrtps::rtps::LocatorsIterator& destination_locators_begin,
+        fastrtps::rtps::LocatorsIterator& destination_locators_end,
+        bool only_multicast_purpose,
+        const std::chrono::microseconds& timeout)
+{
+    fastrtps::rtps::LocatorsIterator& it = destination_locators_begin;
+
+    bool ret = true;
+
+    while (it != destination_locators_end)
+    {
+        ret &= !send(send_buffer, send_buffer_size, socket,*it, only_multicast_purpose, timeout);
+        ++it;
+    }
+
+    return ret;
+}
+
+bool test_UDPv4Transport::send(
+        const octet* send_buffer,
+        uint32_t send_buffer_size,
+        eProsimaUDPSocket& socket,
         const Locator_t& remote_locator,
         bool only_multicast_purpose,
         const std::chrono::microseconds& timeout)

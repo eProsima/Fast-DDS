@@ -132,23 +132,15 @@ bool ReaderLocator::send(
     {
         if (locator_info_.unicast.size() > 0)
         {
-            for (const Locator_t& locator : locator_info_.unicast)
-            {
-                if (!owner_->sendSync(message, locator, max_blocking_time_point))
-                {
-                    return false;
-                }
-            }
+            Locators locators_begin(locator_info_.unicast.begin());
+            Locators locators_end(locator_info_.unicast.end());
+            return owner_->sendSync(message, locators_begin, locators_end, max_blocking_time_point);
         }
         else
         {
-            for (const Locator_t& locator : locator_info_.multicast)
-            {
-                if (!owner_->sendSync(message, locator, max_blocking_time_point))
-                {
-                    return false;
-                }
-            }
+            Locators locators_begin = locator_info_.multicast.begin();
+            Locators locators_end = locator_info_.multicast.end();
+            return owner_->sendSync(message, locators_begin, locators_end, max_blocking_time_point);
         }
     }
 

@@ -41,13 +41,15 @@ class UDPSenderResource : public fastrtps::rtps::SenderResource
                 };
 
             send_lambda_ = [this, &transport] (
-                    const fastrtps::rtps::octet* data,
-                    uint32_t dataSize,
-                    const fastrtps::rtps::Locator_t& destination,
-                    const std::chrono::microseconds& timeout)-> bool
-                {
-                    return transport.send(data, dataSize, socket_, destination, only_multicast_purpose_, timeout);
-                };
+                const fastrtps::rtps::octet* data,
+                uint32_t dataSize,
+                fastrtps::rtps::LocatorsIterator& destination_locators_begin,
+                fastrtps::rtps::LocatorsIterator& destination_locators_end,
+                const std::chrono::microseconds& timeout) -> bool
+                    {
+                        return transport.send(data, dataSize, socket_, destination_locators_begin,
+                                    destination_locators_end, only_multicast_purpose_, timeout);
+                    };
         }
 
         virtual ~UDPSenderResource()

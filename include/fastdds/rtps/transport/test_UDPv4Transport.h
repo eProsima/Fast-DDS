@@ -41,7 +41,8 @@ public:
            const fastrtps::rtps::octet* send_buffer,
            uint32_t send_buffer_size,
            eProsimaUDPSocket& socket,
-           const fastrtps::rtps::Locator_t& remote_locator,
+           fastrtps::rtps::LocatorsIterator& destination_locators_begin,
+           fastrtps::rtps::LocatorsIterator& destination_locators_end,
            bool only_multicast_purpose,
            const std::chrono::microseconds& timeout) override;
 
@@ -79,6 +80,14 @@ private:
     bool packet_should_drop(const fastrtps::rtps::octet* send_buffer, uint32_t send_buffer_size);
     bool random_chance_drop();
     bool should_be_dropped(PercentageData* percentage);
+
+    bool send(
+           const fastrtps::rtps::octet* send_buffer,
+           uint32_t send_buffer_size,
+           eProsimaUDPSocket& socket,
+           const fastrtps::rtps::Locator_t& remote_locator,
+           bool only_multicast_purpose,
+           const std::chrono::microseconds& timeout);
 };
 
 } // namespace rtps

@@ -706,15 +706,10 @@ bool StatelessWriter::send(
         return false;
     }
 
-    for (const Locator_t& locator : fixed_locators_)
-    {
-        if (!mp_RTPSParticipant->sendSync(message, locator, max_blocking_time_point))
-        {
-            return false;
-        }
-    }
+    Locators locators_begin(fixed_locators_.begin());
+    Locators locators_end(fixed_locators_.end());
 
-    return true;
+    return mp_RTPSParticipant->sendSync(message, locators_begin, locators_end, max_blocking_time_point);
 }
 
 } /* namespace rtps */

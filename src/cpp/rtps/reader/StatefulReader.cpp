@@ -1068,8 +1068,9 @@ void StatefulReader::send_acknack(
 
 bool StatefulReader::send_sync_nts(
         CDRMessage_t* message,
-        const Locator_t& locator,
+        LocatorsIterator& locators_begin,
+        LocatorsIterator& locators_end,
         std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
-    return mp_RTPSParticipant->sendSync(message, locator, max_blocking_time_point);
+    return mp_RTPSParticipant->sendSync(message, locators_begin, locators_end, max_blocking_time_point);
 }

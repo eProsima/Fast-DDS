@@ -244,12 +244,12 @@ public:
         return mp_event_thr;
     }
 
-    //!Send Method - Deprecated - Stays here for reference purposes
     bool sendSync(
-            CDRMessage_t* msg,
-            const Locator_t& destination_loc,
-            std::chrono::steady_clock::time_point& max_blocking_time_point);
-
+        CDRMessage_t* msg,
+        LocatorsIterator& destination_locators_begin,
+        LocatorsIterator& destination_locators_end,
+        std::chrono::steady_clock::time_point& max_blocking_time_point);
+  
     //!Get the participant Mutex
     std::recursive_mutex* getParticipantMutex() const
     {
