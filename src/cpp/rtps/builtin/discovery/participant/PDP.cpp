@@ -74,13 +74,6 @@ PDP::PDP (
     , mp_PDPWriter(nullptr)
     , mp_PDPReader(nullptr)
     , mp_EDP(nullptr)
-    , participant_proxies_number_(allocation.participants.initial)
-    , participant_proxies_(allocation.participants)
-    , participant_proxies_pool_(allocation.participants)
-    , reader_proxies_number_(allocation.total_readers().initial)
-    , reader_proxies_pool_(allocation.total_readers())
-    , writer_proxies_number_(allocation.total_writers().initial)
-    , writer_proxies_pool_(allocation.total_writers())
     , m_hasChangedLocalPDP(true)
     , mp_listener(nullptr)
     , mp_PDPWriterHistory(nullptr)
@@ -90,6 +83,9 @@ PDP::PDP (
     , mp_mutex(new std::recursive_mutex())
     , resend_participant_info_event_(nullptr)
 {
+    
+    initialize_or_update_db_allocation(allocation);
+
     size_t max_unicast_locators = allocation.locators.max_unicast_locators;
     size_t max_multicast_locators = allocation.locators.max_multicast_locators;
 
@@ -1030,6 +1026,35 @@ void PDP::set_initial_announcement_interval()
     }
     set_next_announcement_interval();
 }
+
+void initialize_or_update_db_allocation(const RTPSParticipantAllocationAttributes& allocation)
+{
+    std::lock_guard<std::recursive_mutex> lock(pdp_db_mutex_);        
+
+    if( participant_proxies_number_ < allocation.participants.initial )
+    {
+        participants_proxies_number_ = allocation.participants.initial;
+    }
+
+    participant_proxies_.reserve(allocation.participants);
+    participant_proxies_pool_.reserve(allocation.participants);
+
+    if( reader_proxies_number_ < allocation.total_readers().initial )
+    {
+        reader_proxies_number_ = allocation.total_readers().initial; 
+    }
+
+    reader_proxies_pool_.reserve(allocation.total_readers());
+
+    if( writer_proxies_number_ < allocation.total_writers().initial )
+    {
+        writer_proxies_number_ = allocation.total_writers().initial
+    }
+
+    writer_proxies_pool_.reserve(allocation.total_writers());
+ 
+}
+
 
 } /* namespace rtps */
 } /* namespace fastrtps */

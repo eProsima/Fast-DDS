@@ -386,6 +386,10 @@ protected:
             InstanceHandle_t& key);
 
 private:
+
+    //!Allocation requirements for each participant to the database
+    void initialize_or_update_db_allocation(const RTPSParticipantAllocationAttributes& allocation);
+
     //!TimedEvent to periodically resend the local RTPSParticipant information.
     TimedEvent* resend_participant_info_event_;
     //!Participant's initial announcements config
