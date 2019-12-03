@@ -326,7 +326,7 @@ Publisher* DomainParticipantImpl::create_publisher(
    }
  */
 
-uint8_t DomainParticipantImpl::get_domain_id() const
+DomainId_t DomainParticipantImpl::get_domain_id() const
 {
     return static_cast<uint8_t>(att_.rtps.builtin.domainId);
 }
