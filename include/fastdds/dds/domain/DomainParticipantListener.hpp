@@ -28,11 +28,24 @@
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 
+#include <fastdds/dds/core/status/BaseStatus.hpp>
+#include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
+#include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
+#include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
+#include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
+#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
 class DomainParticipant;
+class Subscriber;
+class Publisher;
+class Topic;
+class DataWriter;
+class DataReader;
 
 /**
  * Class DomainParticipantListener, overrides behaviour towards certain events.
@@ -137,7 +150,152 @@ public:
         (void)participant, (void)topic_name, (void)type_name, (void)type_information;
     }
 
-    // TODO: Methods in DomainParticipantListener (p.33 - DDS)
+    /*!
+     * This method is called when there are two topics with the same name but different characteristics.
+     * This callback is notified of the InconsistentTopicStatus changes, if those changes are not captured by the TopicListener.
+     */
+    virtual void on_inconsistent_topic(
+            Topic* topic,
+            InconsistentTopicStatus status)
+    {
+        (void) topic, (void) status;
+    }
+
+    /*!
+     * This method is called when the liveliness that the DataWriter has commited was not respected and due to this the DataReader
+     * thinks that the DataWriter is no longer alive.
+     * This callback is notified of the LivelinessLostStatus changes, if those changes are not captured by the DataWriterListener.
+     */
+    virtual void on_liveliness_lost(
+            DataWriter* writer,
+            LivelinessLostStatus status)
+    {
+        (void) writer, (void) status;
+    }
+
+    /*!
+     * This method is called when the deadline commited by the DataWriter was not respected for a specific instance.
+     * This callback is notified of the OfferedDeadlineMissedStatus changes, if those change are not captured by the DataWriterListener.
+     */
+    virtual void on_offered_deadline_missed(
+            DataWriter* writer,
+            OfferedDeadlineMissedStatus status)
+    {
+        (void) writer, (void) status;
+    }
+
+    /*!
+     * This method is called when the QoS offered by the DataWriter is not compatible with the one requested by the DataReader.
+     * This callback is notified of the OfferedIncompatibleQosStatus changes, if those changes are not captured by the DataWriterListener.
+     */
+    virtual void on_offered_incompatible_qos(
+            DataWriter* writer,
+            OfferedIncompatibleQosStatus status)
+    {
+        (void) writer, (void) status;
+    }
+
+    /*!
+     * This method is called when there is new information available on the Subscriber side.
+     * This callback is notified if the status change is not captured by the SubscriberListener.
+     */
+    virtual void on_data_on_readers(
+            Subscriber* subscriber)
+    {
+        (void) subscriber;
+    }
+
+    /*!
+     * This method is called when a sample has been lost.
+     * This callback is notified of the SampleLostStatus changes, if those changes are not captured by the DataReaderListener.
+     */
+    virtual void on_sample_lost(
+            DataReader* reader,
+            SampleLostStatus status)
+    {
+        (void) reader, (void) status;
+    }
+
+    /*!
+     * This method is called when there is new information available on the DataReader side.
+     * This callback is notified if the status change is not captured by the DataReaderListener.
+     */
+    virtual void on_data_available(
+            DataReader* reader)
+    {
+        (void) reader;
+    }
+
+    /*!
+     * This method is called when a sample has been received but rejected.
+     * This callback is notified of hte SampleRejectedStatus changes, if those changes are not captured by the DataReaderListener.
+     */
+    virtual void on_sample_rejected(
+            DataReader* reader,
+            SampleRejectedStatus status)
+    {
+        (void) reader, (void) status;
+    }
+
+    /*!
+     * This method is called when the liveliness of one or more DataWriters that were writing instances read through the DataReader
+     * has changed.
+     * This callback is notified of the LivelinessChangedStatus changes, if those changes are not captured by the DataReaderListener.
+     */
+    virtual void on_liveliness_changed(
+            DataReader* reader,
+            LivelinessChangedStatus status)
+    {
+        (void) reader, (void) status;
+    }
+
+    /*!
+     * This method is called when the deadline that the DataReader was expecting was not respected for a specific instance.
+     * This callback is notified of the RequestedDeadlineMissedStatus changes, if those changes are not captured by the DataReaderListener.
+     */
+    virtual void on_requested_deadline_missed(
+            DataReader* reader,
+            RequestedDeadlineMissedStatus status)
+    {
+        (void) reader, (void) status;
+    }
+
+    /*!
+     * This method is called when the Qos requested by the DataReader is not compatible with the one offered by the DataWriter.
+     * This callback is notified of the RequestedIncompatibleQosStatus changes, if those changes are not captured by the DataReaderListener.
+     */
+    virtual void on_requested_incompatible_qos(
+            DataReader* reader,
+            RequestedIncompatibleQosStatus status)
+
+    {
+        (void) reader, (void) status;
+    }
+
+    /*!
+     * This method is called when the DataWriter found a compatible DataReader(same Topic and compatible Qos) or ceased the connection with a previously
+     * matched DataReader.
+     * This callback is notified of the PublicationMatchedStatus changes, if those changes are not captured by the DataWriterListener.
+     */
+    virtual void on_publication_matched(
+            DataWriter* writer,
+            PublicationMatchedStatus status)
+    {
+        (void) writer, (void) status;
+    }
+
+    /*!
+     * This method is called when the DataReader found a compatible DataWriter(same Topic and compatible Qos) or ceased the connection with a previously
+     * matched DataWriter.
+     * This callback is notified of the SubscriptionMatchedStatus changes, if those changes are not captured by the DataReaderListener.
+     */
+    virtual void on_subscription_matched(
+            DataReader* reader,
+            SubscriptionMatchedStatus status)
+    {
+        (void) reader, (void) status;
+    }
+
 };
 
 } // namespace dds
