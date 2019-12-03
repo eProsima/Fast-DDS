@@ -93,6 +93,35 @@ ReturnCode_t DomainParticipant::delete_subscriber(
     return impl_->delete_subscriber(subscriber);
 }
 
+Topic* DomainParticipant::create_topic(
+        std::string topic_name,
+        std::string type_name,
+        const fastdds::dds::TopicQos& qos,
+        TopicListener* listen,
+        const ::dds::core::status::StatusMask& mask)
+{
+    return impl_->create_topic(topic_name, type_name, qos, listen, mask);
+}
+
+ReturnCode_t DomainParticipant::delete_topic(
+        Topic* topic)
+{
+    return impl_->delete_topic(topic);
+}
+
+Topic* DomainParticipant::find_topic(
+        const std::string& topic_name,
+        const Duration_t& timeout)
+{
+    return impl_->find_topic(topic_name, timeout);
+}
+
+TopicDescription* DomainParticipant::lookup_topicdescription(
+        const std::string& topic_name)
+{
+    return impl_->lookup_topicdescription(topic_name);
+}
+
 ReturnCode_t DomainParticipant::register_type(
         TypeSupport type,
         const std::string& type_name)
