@@ -86,23 +86,7 @@ PDP::PDP (
     
     initialize_or_update_db_allocation(allocation);
 
-    size_t max_unicast_locators = allocation.locators.max_unicast_locators;
-    size_t max_multicast_locators = allocation.locators.max_multicast_locators;
-
-    for (size_t i = 0; i < allocation.participants.initial; ++i)
-    {
-        participant_proxies_pool_.push_back(new ParticipantProxyData(allocation));
-    }
-
-    for (size_t i = 0; i < allocation.total_readers().initial; ++i)
-    {
-        reader_proxies_pool_.push_back(new ReaderProxyData(max_unicast_locators, max_multicast_locators));
-    }
-
-    for (size_t i = 0; i < allocation.total_writers().initial; ++i)
-    {
-        writer_proxies_pool_.push_back(new WriterProxyData(max_unicast_locators, max_multicast_locators));
-    }
+    
 }
 
 PDP::~PDP()
@@ -1031,28 +1015,45 @@ void initialize_or_update_db_allocation(const RTPSParticipantAllocationAttribute
 {
     std::lock_guard<std::recursive_mutex> lock(pdp_db_mutex_);        
 
-    if( participant_proxies_number_ < allocation.participants.initial )
-    {
-        participants_proxies_number_ = allocation.participants.initial;
-    }
-
     participant_proxies_.reserve(allocation.participants);
     participant_proxies_pool_.reserve(allocation.participants);
 
-    if( reader_proxies_number_ < allocation.total_readers().initial )
+    if( participant_proxies_number_ < allocation.participants.initial )
     {
-        reader_proxies_number_ = allocation.total_readers().initial; 
+        for (size_t i = participants_proxies_number_ ; i < allocation.participants.initial; ++i)
+        {
+            participant_proxies_pool_.push_back(new ParticipantProxyData(allocation));
+        }
+
+        participants_proxies_number_ = allocation.participants.initial;
     }
+
+    size_t max_unicast_locators = allocation.locators.max_unicast_locators;
+    size_t max_multicast_locators = allocation.locators.max_multicast_locators;
 
     reader_proxies_pool_.reserve(allocation.total_readers());
 
-    if( writer_proxies_number_ < allocation.total_writers().initial )
+    if( reader_proxies_number_ < allocation.total_readers().initial )
     {
-        writer_proxies_number_ = allocation.total_writers().initial
+        for (size_t i = reader_proxies_number_ ; i < allocation.total_readers().initial; ++i)
+        {
+            reader_proxies_pool_.push_back(new ReaderProxyData(max_unicast_locators, max_multicast_locators));
+        }
+
+        reader_proxies_number_ = allocation.total_readers().initial; 
     }
 
     writer_proxies_pool_.reserve(allocation.total_writers());
- 
+
+    if( writer_proxies_number_ < allocation.total_writers().initial )
+    {
+        for (size_t i = writer_proxies_number_ ; i < allocation.total_writers().initial; ++i)
+        {
+            writer_proxies_pool_.push_back(new WriterProxyData(max_unicast_locators, max_multicast_locators));
+        }
+        
+        writer_proxies_number_ = allocation.total_writers().initial;
+    }
 }
 
 
