@@ -44,6 +44,8 @@ WriterProxyData::WriterProxyData(
     , m_typeMaxSerialized(0)
     , m_topicKind(NO_KEY)
     , m_topicDiscoveryKind(NO_CHECK)
+    , m_type_id(nullptr)
+    , m_type(nullptr)
 {
 }
 
@@ -66,14 +68,27 @@ WriterProxyData::WriterProxyData(
     , m_topicKind(writerInfo.m_topicKind)
     , persistence_guid_(writerInfo.persistence_guid_)
     , m_topicDiscoveryKind(writerInfo.m_topicDiscoveryKind)
-    , m_type_id(writerInfo.m_type_id)
-    , m_type(writerInfo.m_type)
+    , m_type_id(nullptr)
+    , m_type(nullptr)
 {
+    if (writerInfo.m_type_id)
+    {
+        type_id(*writerInfo.m_type_id);
+    }
+
+    if (writerInfo.m_type)
+    {
+        type(*writerInfo.m_type);
+    }
+
     m_qos.setQos(writerInfo.m_qos, true);
 }
 
 WriterProxyData::~WriterProxyData()
 {
+    delete m_type;
+    delete m_type_id;
+
     logInfo(RTPS_PROXY_DATA, this->m_guid);
 }
 
@@ -96,8 +111,26 @@ WriterProxyData& WriterProxyData::operator =(
     persistence_guid_ = writerInfo.persistence_guid_;
     m_qos.setQos(writerInfo.m_qos, true);
     m_topicDiscoveryKind = writerInfo.m_topicDiscoveryKind;
-    m_type_id = writerInfo.m_type_id;
-    m_type = writerInfo.m_type;
+
+    if (writerInfo.m_type_id)
+    {
+        type_id(*writerInfo.m_type_id);
+    }
+    else
+    {
+        delete m_type_id;
+        m_type_id = nullptr;
+    }
+
+    if (writerInfo.m_type)
+    {
+        type(*writerInfo.m_type);
+    }
+    else
+    {
+        delete m_type;
+        m_type = nullptr;
+    }
 
     return *this;
 }
@@ -316,22 +349,23 @@ bool WriterProxyData::writeToCDRMessage(
 
     if (m_topicDiscoveryKind != NO_CHECK)
     {
-        if (m_type_id.m_type_identifier._d() != 0)
+        if (m_type_id && m_type_id->m_type_identifier._d() != 0)
         {
-            if (!m_type_id.addToCDRMessage(msg))
+            if (!m_type_id->addToCDRMessage(msg))
             {
                 return false;
             }
         }
 
-        if (m_type.m_type_object._d() != 0)
+        if (m_type && m_type->m_type_object._d() != 0)
         {
-            if (!m_type.addToCDRMessage(msg))
+            if (!m_type->addToCDRMessage(msg))
             {
                 return false;
             }
         }
     }
+
 #if HAVE_SECURITY
     if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
     {
@@ -559,9 +593,9 @@ bool WriterProxyData::readFromCDRMessage(
                     {
                         const TypeIdV1* p = dynamic_cast<const TypeIdV1*>(param);
                         assert(p != nullptr);
-                        m_type_id = *p;
+                        type_id(*p);
                         m_topicDiscoveryKind = MINIMAL;
-                        if (m_type_id.m_type_identifier._d() == types::EK_COMPLETE)
+                        if (m_type_id->m_type_identifier._d() == types::EK_COMPLETE)
                         {
                             m_topicDiscoveryKind = COMPLETE;
                         }
@@ -571,9 +605,13 @@ bool WriterProxyData::readFromCDRMessage(
                     {
                         const TypeObjectV1* p = dynamic_cast<const TypeObjectV1*>(param);
                         assert(p != nullptr);
-                        m_type = *p;
+                        if (m_type == nullptr)
+                        {
+                            m_type = new TypeObjectV1();
+                        }
+                        *m_type = *p;
                         m_topicDiscoveryKind = MINIMAL;
-                        if (m_type.m_type_object._d() == types::EK_COMPLETE)
+                        if (m_type->m_type_object._d() == types::EK_COMPLETE)
                         {
                             m_topicDiscoveryKind = COMPLETE;
                         }
@@ -640,6 +678,15 @@ void WriterProxyData::clear()
     m_typeMaxSerialized = 0;
     m_topicKind = NO_KEY;
     persistence_guid_ = c_Guid_Unknown;
+    m_topicDiscoveryKind = NO_CHECK;
+    if (m_type_id)
+    {
+        *m_type_id = TypeIdV1();
+    }
+    if (m_type)
+    {
+        *m_type = TypeObjectV1();
+    }
 }
 
 void WriterProxyData::copy(
