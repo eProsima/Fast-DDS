@@ -32,6 +32,8 @@
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 
+#include <dds/core/status/Status.hpp>
+
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/types/TypesBase.h>
 
@@ -65,6 +67,10 @@ class PublisherImpl;
 class PublisherListener;
 class Subscriber;
 class SubscriberImpl;
+class SubscriberListener;
+class Topic;
+class TopicListener;
+class TopicDescription;
 
 /**
  * This is the implementation class of the DomainParticipant.
@@ -136,6 +142,32 @@ public:
 
     ReturnCode_t delete_subscriber(
             Subscriber* subscriber);
+
+    /**
+     * Create a Topic in this Participant.
+     * @param topic_name Name of the Topic.
+     * @param type_name Name of the TypeSupport.
+     * @param qos QoS of the Topic.
+     * @param listen Pointer to the listener.
+     * @param mask Mask containing the status enabled of the Topic.
+     * @return Pointer to the created Topic.
+     */
+    Topic* create_topic(
+            std::string topic_name,
+            std::string type_name,
+            const fastdds::dds::TopicQos& qos,
+            TopicListener* listen = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+
+    ReturnCode_t delete_topic(
+            Topic* topic);
+
+    Topic* find_topic(
+            const std::string& topic_name,
+            const Duration_t& timeout);
+
+    TopicDescription* lookup_topicdescription(
+            const std::string& topic_name);
 
     /**
      * Register a type in this participant.
@@ -366,7 +398,11 @@ private:
 
     //!TopicDataType map
     std::map<std::string, TypeSupport> types_;
+    std::map<std::string, std::pair<Topic*, TopicDescription*> > topics_;
+    std::map<fastrtps::rtps::InstanceHandle_t, Topic*> topics_by_handle_;
     mutable std::mutex mtx_types_;
+    std::condition_variable cv_topic_;
+
 
     // Mutex for requests and callbacks maps.
     std::mutex mtx_request_cb_;

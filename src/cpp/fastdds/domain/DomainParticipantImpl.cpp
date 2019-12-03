@@ -1306,6 +1306,107 @@ const ::dds::core::status::StatusMask& DomainParticipantImpl::get_mask() const
     return mask_;
 }
 
+Topic* DomainParticipantImpl::create_topic(
+        std::string topic_name,
+        std::string type_name,
+        const TopicQos& qos,
+        TopicListener* listen,
+        const ::dds::core::status::StatusMask& mask)
+{
+    if (!qos.checkQos())
+    {
+        return nullptr;
+    }
+
+    Topic* topic = new Topic(this->get_participant(), topic_name, type_name, qos, listen, mask);
+    TopicDescription* topic_description = new TopicDescription(this->get_participant(),
+                    topic_name.c_str(), type_name.c_str());
+
+    // Create InstanceHandle for the new topic
+    GUID_t topic_guid = guid();
+    do
+    {
+        topic_guid.entityId = fastrtps::rtps::c_EntityId_Unknown;
+        rtps_participant_->get_new_entity_id(topic_guid.entityId);
+    } while (exists_entity_id(topic_guid.entityId));
+
+    InstanceHandle_t topic_handle(topic_guid);
+    topic->set_instance_handle(topic_handle);
+
+    //SAVE THE TOPIC INTO MAPS
+    std::lock_guard<std::mutex> lock(mtx_types_);
+    topics_by_handle_[topic_handle] = topic;
+    topics_[topic_name] = std::make_pair(topic, topic_description);
+
+    if (qos.auto_fill_type_object || qos.auto_fill_type_information)
+    {
+        register_dynamic_type_to_factories(type_name);
+    }
+
+    cv_topic_.notify_all();
+
+    return topic;
+}
+
+ReturnCode_t DomainParticipantImpl::delete_topic(
+        Topic* topic)
+{
+    if (participant_ != topic->get_participant())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+    if (!topic->get_writers()->empty() || !topic->get_readers()->empty())
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+    topic->set_listener(nullptr, ::dds::core::status::StatusMask::none());
+    std::lock_guard<std::mutex> lock(mtx_types_);
+    topics_by_handle_.erase(topics_by_handle_.find(topic->get_instance_handle()));
+    auto it = topics_.find(topic->get_name());
+    delete std::get<0>(it->second);
+    delete std::get<1>(it->second);
+    topics_.erase(it);
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
+Topic* DomainParticipantImpl::find_topic(
+        const std::string& topic_name,
+        const Duration_t& timeout)
+{
+    std::unique_lock<std::mutex> lock(mtx_types_);
+
+    Topic* topic = nullptr;
+    std::chrono::microseconds max_wait(eprosima::fastrtps::rtps::TimeConv::Duration_t2MicroSecondsInt64(timeout));
+
+    cv_topic_.wait_for(lock, max_wait, [&]()
+    {
+        auto it = topics_.find(topic_name);
+
+        if (it != topics_.end())
+        {
+            topic = std::get<0>(it->second);
+
+        }
+        return topic == nullptr;
+
+    });
+    return topic;
+}
+
+TopicDescription* DomainParticipantImpl::lookup_topicdescription(
+        const std::string& topic_name)
+{
+    std::unique_lock<std::mutex> lock(mtx_types_);
+    auto it = topics_.find(topic_name);
+
+    if (it != topics_.end())
+    {
+        return std::get<1>(it->second);
+    }
+    return nullptr;
+}
+
 void DomainParticipantImpl::Listener::on_data_on_readers(
         Subscriber* subscriber)
 {
