@@ -66,6 +66,7 @@ class SubscriberImpl;
 class SubscriberListener;
 class Topic;
 class TopicListener;
+class TopicDescription;
 
 /**
  * This is the implementation class of the DomainParticipant.
@@ -155,6 +156,9 @@ public:
     Topic* find_topic(
             const std::string& topic_name,
             const Duration_t& timeout);
+
+    TopicDescription* lookup_topicdescription(
+            const std::string& topic_name);
 
     /**
      * Register a type in this participant.
@@ -383,7 +387,7 @@ private:
 
     //!TopicDataType map
     std::map<std::string, TypeSupport> types_;
-    std::map<std::string, Topic*> topics_;
+    std::map<std::string, std::pair<Topic*, TopicDescription*> > topics_;
     std::map<fastrtps::rtps::InstanceHandle_t, Topic*> topics_by_handle_;
     mutable std::mutex mtx_types_;
     std::condition_variable cv_topic_;

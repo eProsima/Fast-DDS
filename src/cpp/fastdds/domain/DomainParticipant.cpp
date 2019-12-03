@@ -118,6 +118,12 @@ Topic* DomainParticipant::find_topic(
     return impl_->find_topic(topic_name, timeout);
 }
 
+TopicDescription* DomainParticipant::lookup_topicdescription(
+        const std::string& topic_name)
+{
+    return impl_->lookup_topicdescription(topic_name);
+}
+
 ReturnCode_t DomainParticipant::register_type(
         TypeSupport type,
         const std::string& type_name)

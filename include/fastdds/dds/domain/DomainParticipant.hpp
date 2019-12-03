@@ -169,16 +169,23 @@ public:
     ReturnCode_t delete_topic(
             Topic* topic);
 
-
     /**
      * Look for an existing Topic.
      * @param topic_name Name of the Topic.
      * @param timeout Maximum time.
-     * @return if subscriber was deleted.
+     * @return Pointer to the Topic if found, otherwise nullptr
      */
     Topic* find_topic(
             const std::string& topic_name,
             const Duration_t& timeout);
+
+    /**
+     * Look for an existing TopicDescription
+     * @param topic_name Name of the Topic.
+     * @return Pointer to the TopicDescription if found, otherwise nullptr
+     */
+    TopicDescription* lookup_topicdescription(
+            const std::string& topic_name);
 
     /**
      * Register a type in this participant.
