@@ -256,35 +256,45 @@ public:
     }
 
     RTPS_DllAPI void type_id(
-            TypeIdV1 type_id)
+            const TypeIdV1& other_type_id)
     {
-        m_type_id = type_id;
+        type_id() = other_type_id;
     }
 
-    RTPS_DllAPI TypeIdV1 type_id() const
+    RTPS_DllAPI const TypeIdV1& type_id() const
     {
-        return m_type_id;
+        assert(m_type_id != nullptr);
+        return *m_type_id;
     }
 
     RTPS_DllAPI TypeIdV1& type_id()
     {
-        return m_type_id;
+        if (m_type_id == nullptr)
+        {
+            m_type_id = new TypeIdV1();
+        }
+        return *m_type_id;
     }
 
     RTPS_DllAPI void type(
-            TypeObjectV1 type)
+            const TypeObjectV1& other_type)
     {
-        m_type = type;
+        type() = other_type;
     }
 
-    RTPS_DllAPI TypeObjectV1 type() const
+    RTPS_DllAPI const TypeObjectV1& type() const
     {
-        return m_type;
+        assert(m_type != nullptr);
+        return *m_type;
     }
 
     RTPS_DllAPI TypeObjectV1& type()
     {
-        return m_type;
+        if (m_type == nullptr)
+        {
+            m_type = new TypeObjectV1();
+        }
+        return *m_type;
     }
 
     RTPS_DllAPI void topicDiscoveryKind(
@@ -389,9 +399,9 @@ private:
     //!Topic Discovery Kind
     TopicDiscoveryKind_t m_topicDiscoveryKind;
     //!Type Identifier
-    TypeIdV1 m_type_id;
+    TypeIdV1* m_type_id;
     //!Type Object
-    TypeObjectV1 m_type;
+    TypeObjectV1* m_type;
 };
 
 } /* namespace rtps */

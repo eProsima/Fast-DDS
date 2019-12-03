@@ -18,17 +18,13 @@
  */
 
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-
 #include <fastrtps/rtps/common/CDRMessage_t.h>
-
 #include <fastrtps/log/Log.h>
-
 #include <fastrtps/rtps/network/NetworkFactory.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
-
 
 ReaderProxyData::ReaderProxyData (
         const size_t max_unicast_locators,
@@ -43,12 +39,16 @@ ReaderProxyData::ReaderProxyData (
     , m_isAlive(true)
     , m_topicKind(NO_KEY)
     , m_topicDiscoveryKind(NO_CHECK)
+    , m_type_id(nullptr)
+    , m_type(nullptr)
 {
-
 }
 
 ReaderProxyData::~ReaderProxyData()
 {
+    delete m_type;
+    delete m_type_id;
+
     logInfo(RTPS_PROXY_DATA, "ReaderProxyData destructor: " << this->m_guid; );
 }
 
@@ -69,9 +69,19 @@ ReaderProxyData::ReaderProxyData(
     , m_isAlive(readerInfo.m_isAlive)
     , m_topicKind(readerInfo.m_topicKind)
     , m_topicDiscoveryKind(readerInfo.m_topicDiscoveryKind)
-    , m_type_id(readerInfo.m_type_id)
-    , m_type(readerInfo.m_type)
+    , m_type_id(nullptr)
+    , m_type(nullptr)
 {
+    if (readerInfo.m_type_id)
+    {
+        type_id(*readerInfo.m_type_id);
+    }
+
+    if (readerInfo.m_type)
+    {
+        type(*readerInfo.m_type);
+    }
+
     m_qos.setQos(readerInfo.m_qos, true);
 }
 
@@ -95,8 +105,26 @@ ReaderProxyData& ReaderProxyData::operator =(
     m_topicKind = readerInfo.m_topicKind;
     m_qos.setQos(readerInfo.m_qos, true);
     m_topicDiscoveryKind = readerInfo.m_topicDiscoveryKind;
-    m_type_id = readerInfo.m_type_id;
-    m_type = readerInfo.m_type;
+
+    if (readerInfo.m_type_id)
+    {
+        type_id(*readerInfo.m_type_id);
+    }
+    else
+    {
+        delete m_type_id;
+        m_type_id = nullptr;
+    }
+
+    if (readerInfo.m_type)
+    {
+        type(*readerInfo.m_type);
+    }
+    else
+    {
+        delete m_type;
+        m_type = nullptr;
+    }
 
     return *this;
 }
@@ -304,24 +332,26 @@ bool ReaderProxyData::writeToCDRMessage(
             return false;
         }
     }
+
     if (m_topicDiscoveryKind != NO_CHECK)
     {
-        if (m_type_id.m_type_identifier._d() != 0)
+        if (m_type_id && m_type_id->m_type_identifier._d() != 0)
         {
-            if (!m_type_id.addToCDRMessage(msg))
+            if (!m_type_id->addToCDRMessage(msg))
             {
                 return false;
             }
         }
 
-        if (m_type.m_type_object._d() != 0)
+        if (m_type && m_type->m_type_object._d() != 0)
         {
-            if (!m_type.addToCDRMessage(msg))
+            if (!m_type->addToCDRMessage(msg))
             {
                 return false;
             }
         }
     }
+
 #if HAVE_SECURITY
     if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
     {
@@ -557,9 +587,9 @@ bool ReaderProxyData::readFromCDRMessage(
                     {
                         const TypeIdV1* p = dynamic_cast<const TypeIdV1*>(param);
                         assert(p != nullptr);
-                        m_type_id = *p;
+                        type_id(*p);
                         m_topicDiscoveryKind = MINIMAL;
-                        if (m_type_id.m_type_identifier._d() == types::EK_COMPLETE)
+                        if (m_type_id->m_type_identifier._d() == types::EK_COMPLETE)
                         {
                             m_topicDiscoveryKind = COMPLETE;
                         }
@@ -569,9 +599,9 @@ bool ReaderProxyData::readFromCDRMessage(
                     {
                         const TypeObjectV1* p = dynamic_cast<const TypeObjectV1*>(param);
                         assert(p != nullptr);
-                        m_type = *p;
+                        type(*p);
                         m_topicDiscoveryKind = MINIMAL;
-                        if (m_type.m_type_object._d() == types::EK_COMPLETE)
+                        if (m_type->m_type_object._d() == types::EK_COMPLETE)
                         {
                             m_topicDiscoveryKind = COMPLETE;
                         }
@@ -642,8 +672,14 @@ void ReaderProxyData::clear()
     m_topicKind = NO_KEY;
     m_qos = ReaderQos();
     m_topicDiscoveryKind = NO_CHECK;
-    m_type_id = TypeIdV1();
-    m_type = TypeObjectV1();
+    if (m_type_id)
+    {
+        *m_type_id = TypeIdV1();
+    }
+    if (m_type)
+    {
+        *m_type = TypeObjectV1();
+    }
 }
 
 bool ReaderProxyData::is_update_allowed(
