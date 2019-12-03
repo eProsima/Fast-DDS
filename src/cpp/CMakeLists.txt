@@ -460,8 +460,6 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         ${THIRDPARTY_BOOST_LINK_LIBS}
-        $<$<BOOL:${ZLIB_FOUND}>:ZLIB::ZLIB>
-        $<$<BOOL:${BZIP2_FOUND}>:BZip2::BZip2>
         PRIVATE eProsima_atomic
         )
 
