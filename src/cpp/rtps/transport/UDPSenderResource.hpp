@@ -45,10 +45,10 @@ class UDPSenderResource : public fastrtps::rtps::SenderResource
                 uint32_t dataSize,
                 fastrtps::rtps::LocatorsIterator& destination_locators_begin,
                 fastrtps::rtps::LocatorsIterator& destination_locators_end,
-                const std::chrono::microseconds& timeout) -> bool
+                const std::chrono::steady_clock::time_point& max_blocking_time_point) -> bool
                     {
                         return transport.send(data, dataSize, socket_, destination_locators_begin,
-                                    destination_locators_end, only_multicast_purpose_, timeout);
+                                    destination_locators_end, only_multicast_purpose_, max_blocking_time_point);
                     };
         }
 

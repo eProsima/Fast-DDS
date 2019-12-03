@@ -44,7 +44,7 @@ public:
            fastrtps::rtps::LocatorsIterator& destination_locators_begin,
            fastrtps::rtps::LocatorsIterator& destination_locators_end,
            bool only_multicast_purpose,
-           const std::chrono::microseconds& timeout) override;
+           const std::chrono::steady_clock::time_point& max_blocking_time_point) override;
 
     RTPS_DllAPI static bool test_UDPv4Transport_ShutdownAllNetwork;
     // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.

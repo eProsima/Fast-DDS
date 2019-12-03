@@ -44,7 +44,7 @@ class TCPSenderResource : public fastrtps::rtps::SenderResource
             uint32_t dataSize,
             fastrtps::rtps::LocatorsIterator& destination_locators_begin,
             fastrtps::rtps::LocatorsIterator& destination_locators_end,
-            const std::chrono::microseconds&) -> bool
+            const std::chrono::steady_clock::time_point&) -> bool
                 {
                     return transport.send(data, dataSize, channel_, destination_locators_begin, destination_locators_end);
                 };

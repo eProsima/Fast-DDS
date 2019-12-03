@@ -96,7 +96,7 @@ public:
    * @param destination_locators_begin destination locators iterator begin.
    * @param destination_locators_end destination locators iterator end.
    * @param only_multicast_purpose
-   * @param timeout Maximum time this function will block
+   * @param max_blocking_time_point maximum blocking time.
    */
    virtual bool send(
            const fastrtps::rtps::octet* send_buffer,
@@ -105,7 +105,7 @@ public:
            fastrtps::rtps::LocatorsIterator& destination_locators_begin,
            fastrtps::rtps::LocatorsIterator& destination_locators_end,
            bool only_multicast_purpose,
-           const std::chrono::microseconds& timeout);
+           const std::chrono::steady_clock::time_point& max_blocking_time_point);
 
     /**
      * Performs the locator selection algorithm for this transport.

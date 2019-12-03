@@ -45,7 +45,7 @@ public:
      * the previous parameter.
      * @param destination_locators_begin destination endpoint Locators iterator begin.
      * @param destination_locators_end destination endpoint Locators iterator end.
-     * @param timeout If transport supports it then it will use it as maximum blocking time.
+     * @param max_blocking_time_point If transport supports it then it will use it as maximum blocking time.
      * @return Success of the send operation.
      */
     bool send(
@@ -53,13 +53,13 @@ public:
         uint32_t dataLength,
         LocatorsIterator& destination_locators_begin,
         LocatorsIterator& destination_locators_end,
-        const std::chrono::microseconds& timeout)
+        const std::chrono::steady_clock::time_point& max_blocking_time_point)
     {
         bool returned_value = false;
 
         if (send_lambda_)
         {
-            returned_value = send_lambda_(data, dataLength, destination_locators_begin, destination_locators_end, timeout);
+            returned_value = send_lambda_(data, dataLength, destination_locators_begin, destination_locators_end, max_blocking_time_point);
         }
 
         return returned_value;
@@ -91,7 +91,7 @@ protected:
             uint32_t,
             LocatorsIterator& destination_locators_begin,
             LocatorsIterator& destination_locators_end,
-            const std::chrono::microseconds&)> send_lambda_;
+            const std::chrono::steady_clock::time_point&)> send_lambda_;
 
 private:
 
