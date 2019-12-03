@@ -121,6 +121,16 @@ public:
         (void)status;
     }
 
+    /**
+     * Virtual method to be called when there is available data on the Subscriber
+     * @param sub Subscriber
+     */
+    virtual void on_data_on_readers(
+            Subscriber* sub)
+    {
+        (void) sub;
+    }
+
 };
 
 } /* namespace dds */
