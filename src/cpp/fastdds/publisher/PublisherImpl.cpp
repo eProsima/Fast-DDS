@@ -42,11 +42,13 @@ PublisherImpl::PublisherImpl(
         DomainParticipantImpl* p,
         const PublisherQos& qos,
         const fastrtps::PublisherAttributes& att,
-        PublisherListener* listen)
+        PublisherListener* listen,
+        const ::dds::core::status::StatusMask& mask)
     : participant_(p)
     , qos_(&qos == &PUBLISHER_QOS_DEFAULT ? participant_->get_default_publisher_qos() : qos)
     , att_(att)
     , listener_(listen)
+    , mask_(mask)
     , publisher_listener_(this)
     , user_publisher_(nullptr)
     , rtps_participant_(p->rtps_participant())

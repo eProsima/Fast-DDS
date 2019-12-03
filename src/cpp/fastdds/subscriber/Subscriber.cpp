@@ -33,8 +33,8 @@ Subscriber::Subscriber(
         const ::dds::domain::DomainParticipant& dp,
         const SubscriberQos& qos,
         SubscriberListener* listener,
-        const ::dds::core::status::StatusMask& /*mask*/)
-    : impl_(dp.delegate()->create_subscriber(qos, fastrtps::SubscriberAttributes(), listener /*, mask*/)->impl_)
+        const ::dds::core::status::StatusMask& mask)
+    : impl_(dp.delegate()->create_subscriber(qos, fastrtps::SubscriberAttributes(), listener, mask)->impl_)
 {
 }
 

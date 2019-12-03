@@ -75,7 +75,8 @@ class SubscriberImpl
             DomainParticipantImpl* p,
             const SubscriberQos& qos,
             const fastrtps::SubscriberAttributes& attr,
-            SubscriberListener* listen = nullptr);
+            SubscriberListener* listen = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
 public:
 
