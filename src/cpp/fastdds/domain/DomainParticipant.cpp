@@ -52,9 +52,10 @@ void DomainParticipant::delete_participant(
 }
 
 ReturnCode_t DomainParticipant::set_listener(
-        DomainParticipantListener* listener)
+        DomainParticipantListener* listener,
+        const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->set_listener(listener);
+    return impl_->set_listener(listener, mask);
 }
 
 const DomainParticipantListener* DomainParticipant::get_listener() const
@@ -70,9 +71,10 @@ DomainParticipantListener* DomainParticipant::get_listener()
 Publisher* DomainParticipant::create_publisher(
         const fastdds::dds::PublisherQos& qos,
         const fastrtps::PublisherAttributes& att,
-        PublisherListener* listen)
+        PublisherListener* listen,
+        const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->create_publisher(qos, att, listen);
+    return impl_->create_publisher(qos, att, listen, mask);
 }
 
 ReturnCode_t DomainParticipant::delete_publisher(
@@ -84,9 +86,10 @@ ReturnCode_t DomainParticipant::delete_publisher(
 Subscriber* DomainParticipant::create_subscriber(
         const fastdds::dds::SubscriberQos& qos,
         const fastrtps::SubscriberAttributes& att,
-        SubscriberListener* listen)
+        SubscriberListener* listen,
+        const ::dds::core::status::StatusMask& mask)
 {
-    return impl_->create_subscriber(qos, att, listen);
+    return impl_->create_subscriber(qos, att, listen, mask);
 }
 
 ReturnCode_t DomainParticipant::delete_subscriber(
@@ -115,43 +118,43 @@ ReturnCode_t DomainParticipant::unregister_type(
 }
 
 /* TODO
-Subscriber* DomainParticipant::get_builtin_subscriber()
-{
+   Subscriber* DomainParticipant::get_builtin_subscriber()
+   {
     return impl_->get_builtin_subscriber();
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipant::ignore_participant(
+   bool DomainParticipant::ignore_participant(
         const fastrtps::rtps::InstanceHandle_t& handle)
-{
+   {
     return impl_->ignore_participant(handle);
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipant::ignore_topic(
+   bool DomainParticipant::ignore_topic(
         const fastrtps::rtps::InstanceHandle_t& handle)
-{
+   {
     return impl_->ignore_topic(handle);
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipant::ignore_publication(
+   bool DomainParticipant::ignore_publication(
         const fastrtps::rtps::InstanceHandle_t& handle)
-{
+   {
     return impl_->ignore_publication(handle);
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipant::ignore_subscription(
+   bool DomainParticipant::ignore_subscription(
         const fastrtps::rtps::InstanceHandle_t& handle)
-{
+   {
     return impl_->ignore_subscription(handle);
-}
-*/
+   }
+ */
 
 uint8_t DomainParticipant::get_domain_id() const
 {
@@ -159,11 +162,11 @@ uint8_t DomainParticipant::get_domain_id() const
 }
 
 /* TODO
-bool DomainParticipant::delete_contained_entities()
-{
+   bool DomainParticipant::delete_contained_entities()
+   {
     return impl_->delete_contained_entities();
-}
-*/
+   }
+ */
 
 ReturnCode_t DomainParticipant::assert_liveliness()
 {
@@ -207,20 +210,20 @@ ReturnCode_t DomainParticipant::get_default_subscriber_qos(
 }
 
 /* TODO
-bool DomainParticipant::get_discovered_participants(
+   bool DomainParticipant::get_discovered_participants(
         std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const
-{
+   {
     return impl_->get_discovered_participants(participant_handles);
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipant::get_discovered_topics(
+   bool DomainParticipant::get_discovered_topics(
         std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const
-{
+   {
     return impl_->get_discovered_topics(topic_handles);
-}
-*/
+   }
+ */
 
 bool DomainParticipant::contains_entity(
         const fastrtps::rtps::InstanceHandle_t& handle,
@@ -262,9 +265,9 @@ std::vector<std::string> DomainParticipant::get_participant_names() const
 }
 
 bool DomainParticipant::new_remote_endpoint_discovered(
-    const fastrtps::rtps::GUID_t& partguid,
-    uint16_t userId,
-    fastrtps::rtps::EndpointKind_t kind)
+        const fastrtps::rtps::GUID_t& partguid,
+        uint16_t userId,
+        fastrtps::rtps::EndpointKind_t kind)
 {
     return impl_->new_remote_endpoint_discovered(partguid, userId, kind);
 }

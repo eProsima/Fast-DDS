@@ -84,7 +84,7 @@ class RTPS_DllAPI Subscriber
             const ::dds::domain::DomainParticipant& dp,
             const SubscriberQos& qos,
             SubscriberListener* listener = NULL,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
 public:
 

@@ -40,11 +40,13 @@ SubscriberImpl::SubscriberImpl(
         DomainParticipantImpl* p,
         const SubscriberQos& qos,
         const fastrtps::SubscriberAttributes& att,
-        SubscriberListener* listen)
+        SubscriberListener* listen,
+        const ::dds::core::status::StatusMask& mask)
     : participant_(p)
     , qos_(&qos == &SUBSCRIBER_QOS_DEFAULT ? participant_->get_default_subscriber_qos() : qos)
     , att_(att)
     , listener_(listen)
+    , mask_(mask)
     , subscriber_listener_(this)
     , user_subscriber_(nullptr)
     , rtps_participant_(p->rtps_participant())

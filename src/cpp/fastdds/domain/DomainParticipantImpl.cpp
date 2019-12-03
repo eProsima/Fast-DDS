@@ -211,7 +211,8 @@ const GUID_t& DomainParticipantImpl::guid() const
 Publisher* DomainParticipantImpl::create_publisher(
         const PublisherQos& qos,
         const fastrtps::PublisherAttributes& att,
-        PublisherListener* listen)
+        PublisherListener* listen,
+        const ::dds::core::status::StatusMask& mask)
 {
     if (att_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
@@ -246,7 +247,7 @@ Publisher* DomainParticipantImpl::create_publisher(
     }
 
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
-    PublisherImpl* pubimpl = new PublisherImpl(this, qos, att, listen);
+    PublisherImpl* pubimpl = new PublisherImpl(this, qos, att, listen, mask);
     Publisher* pub = new Publisher(pubimpl);
     pubimpl->user_publisher_ = pub;
     pubimpl->rtps_participant_ = rtps_participant_;
@@ -276,52 +277,52 @@ Publisher* DomainParticipantImpl::create_publisher(
 }
 
 /* TODO
-Subscriber* DomainParticipantImpl::get_builtin_subscriber()
-{
+   Subscriber* DomainParticipantImpl::get_builtin_subscriber()
+   {
     logError(PARTICIPANT, "Not implemented.");
     return nullptr;
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipantImpl::ignore_participant(
+   bool DomainParticipantImpl::ignore_participant(
         const fastrtps::rtps::InstanceHandle_t& handle)
-{
+   {
     (void)handle;
     logError(PARTICIPANT, "Not implemented.");
     return false;
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipantImpl::ignore_topic(
+   bool DomainParticipantImpl::ignore_topic(
         const fastrtps::rtps::InstanceHandle_t& handle)
-{
+   {
     (void)handle;
     logError(PARTICIPANT, "Not implemented.");
     return false;
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipantImpl::ignore_publication(
+   bool DomainParticipantImpl::ignore_publication(
         const fastrtps::rtps::InstanceHandle_t& handle)
-{
+   {
     (void)handle;
     logError(PARTICIPANT, "Not implemented.");
     return false;
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipantImpl::ignore_subscription(
+   bool DomainParticipantImpl::ignore_subscription(
         const fastrtps::rtps::InstanceHandle_t& handle)
-{
+   {
     (void)handle;
     logError(PARTICIPANT, "Not implemented.");
     return false;
-}
-*/
+   }
+ */
 
 uint8_t DomainParticipantImpl::get_domain_id() const
 {
@@ -329,12 +330,12 @@ uint8_t DomainParticipantImpl::get_domain_id() const
 }
 
 /* TODO
-bool DomainParticipantImpl::delete_contained_entities()
-{
+   bool DomainParticipantImpl::delete_contained_entities()
+   {
     logError(PARTICIPANT, "Not implemented.");
     return false;
-}
-*/
+   }
+ */
 
 ReturnCode_t DomainParticipantImpl::assert_liveliness()
 {
@@ -395,24 +396,24 @@ const fastdds::dds::SubscriberQos& DomainParticipantImpl::get_default_subscriber
 }
 
 /* TODO
-bool DomainParticipantImpl::get_discovered_participants(
+   bool DomainParticipantImpl::get_discovered_participants(
         std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const
-{
+   {
     (void)participant_handles;
     logError(PARTICIPANT, "Not implemented.");
     return false;
-}
-*/
+   }
+ */
 
 /* TODO
-bool DomainParticipantImpl::get_discovered_topics(
+   bool DomainParticipantImpl::get_discovered_topics(
         std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const
-{
+   {
     (void)topic_handles;
     logError(PARTICIPANT, "Not implemented.");
     return false;
-}
-*/
+   }
+ */
 
 bool DomainParticipantImpl::contains_entity(
         const fastrtps::rtps::InstanceHandle_t& handle,
@@ -499,7 +500,8 @@ std::vector<std::string> DomainParticipantImpl::get_participant_names() const
 Subscriber* DomainParticipantImpl::create_subscriber(
         const SubscriberQos& qos,
         const fastrtps::SubscriberAttributes& att,
-        SubscriberListener* listen)
+        SubscriberListener* listen,
+        const ::dds::core::status::StatusMask& mask)
 {
     if (att_.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
@@ -534,7 +536,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     }
 
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
-    SubscriberImpl* subimpl = new SubscriberImpl(this, qos, att, listen);
+    SubscriberImpl* subimpl = new SubscriberImpl(this, qos, att, listen, mask);
     Subscriber* sub = new Subscriber(subimpl);
     subimpl->user_subscriber_ = sub;
     subimpl->rtps_participant_ = this->rtps_participant_;
@@ -609,7 +611,7 @@ ReturnCode_t DomainParticipantImpl::register_type(
 }
 
 ReturnCode_t DomainParticipantImpl::register_dynamic_type_to_factories(
-    const std::string& type_name) const
+        const std::string& type_name) const
 {
     using namespace  eprosima::fastrtps::types;
     TypeSupport t = find_type(type_name);
@@ -632,8 +634,8 @@ ReturnCode_t DomainParticipantImpl::register_dynamic_type_to_factories(
             dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, &members);
             // Minimal too
             dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, &members, false);
-            const TypeIdentifier *type_id2 = objectFactory->get_type_identifier(dpst->getName());
-            const TypeObject *type_obj = objectFactory->get_type_object(dpst->getName());
+            const TypeIdentifier* type_id2 = objectFactory->get_type_identifier(dpst->getName());
+            const TypeObject* type_obj = objectFactory->get_type_object(dpst->getName());
             if (type_id2 == nullptr)
             {
                 logError(DOMAIN_PARTICIPANT, "Cannot register dynamic type " << dpst->getName());
@@ -643,8 +645,8 @@ ReturnCode_t DomainParticipantImpl::register_dynamic_type_to_factories(
                 objectFactory->add_type_object(dpst->getName(), type_id2, type_obj);
 
                 // Complete, just to make sure it is generated
-                const TypeIdentifier *type_id_complete = objectFactory->get_type_identifier(dpst->getName(), true);
-                const TypeObject *type_obj_complete = objectFactory->get_type_object(dpst->getName(), true);
+                const TypeIdentifier* type_id_complete = objectFactory->get_type_identifier(dpst->getName(), true);
+                const TypeObject* type_obj_complete = objectFactory->get_type_object(dpst->getName(), true);
                 objectFactory->add_type_object(dpst->getName(), type_id_complete, type_obj_complete); // Add complete
                 return ReturnCode_t::RETCODE_OK;
             }
@@ -783,7 +785,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_information_recei
     if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         if (type_information.complete().typeid_with_size().type_id()._d() > 0
-            || type_information.minimal().typeid_with_size().type_id()._d() > 0)
+                || type_information.minimal().typeid_with_size().type_id()._d() > 0)
         {
             participant_->listener_->on_type_information_received(
                 participant_->participant_, topic_name, type_name, type_information);
@@ -866,13 +868,13 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
             // For plain types, don't call the callback
             return register_dynamic_type(dyn);
             /*
-            if (!!register_dynamic_type(dyn))
-            {
+               if (!!register_dynamic_type(dyn))
+               {
                 //callback(type_name, dyn); // For plain types, don't call the callback
                 return true;
-            }
-            return false;
-            */
+               }
+               return false;
+             */
         }
         // If cannot create the dynamic type, probably is because it depend on unknown types.
         // We must continue.
@@ -896,13 +898,13 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
             // If the type is already registered, don't call the callback.
             return register_dynamic_type(dyn);
             /*
-            if (!!register_dynamic_type(dyn))
-            {
+               if (!!register_dynamic_type(dyn))
+               {
                 //callback(type_name, dyn); // If the type is already registered, don't call the callback.
                 return true;
-            }
-            return false;
-            */
+               }
+               return false;
+             */
         }
     }
     else if (rtps_participant_->typelookup_manager() != nullptr)
@@ -998,7 +1000,8 @@ bool DomainParticipantImpl::check_get_type_request(
             if (pending != parent_requests_.end() && pending->second.size() < 2) // Exists and everything is solved.
             {
                 fastrtps::types::DynamicType_ptr dynamic =
-                    fastrtps::types::TypeObjectFactory::get_instance()->build_dynamic_type(name, identifier, object);
+                        fastrtps::types::TypeObjectFactory::get_instance()->build_dynamic_type(name, identifier,
+                                object);
 
                 if (nullptr != dynamic)
                 {
@@ -1266,11 +1269,11 @@ std::string DomainParticipantImpl::get_inner_type_name(
     ss << "type_" << id.writer_guid() << "_" << id.sequence_number();
     std::string str = ss.str();
     std::transform(str.begin(), str.end(), str.begin(),
-       [](unsigned char c)
-       {
-           return static_cast<char>(std::tolower(c));
-       });
+            [](unsigned char c)
+    {
+        return static_cast<char>(std::tolower(c));
+    });
     str.erase(std::remove(str.begin(), str.end(), '.'), str.end());
-    std::replace(str.begin(), str.end(), '|' ,'_');
+    std::replace(str.begin(), str.end(), '|','_');
     return str;
 }
