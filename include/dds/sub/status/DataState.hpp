@@ -54,6 +54,7 @@ class DataState;
 class OMG_DDS_API SampleState : public std::bitset<OMG_DDS_STATE_BIT_COUNT>
 {
 public:
+
     /**
      * Convenience typedef for std::bitset<OMG_DDS_STATE_BIT_COUNT>.
      */
@@ -163,6 +164,7 @@ public:
 class OMG_DDS_API ViewState : public std::bitset<OMG_DDS_STATE_BIT_COUNT>
 {
 public:
+
     /**
      * Convenience typedef for std::bitset<OMG_DDS_STATE_BIT_COUNT>.
      */
@@ -283,12 +285,14 @@ public:
 class OMG_DDS_API InstanceState : public std::bitset<OMG_DDS_STATE_BIT_COUNT>
 {
 public:
+
     /**
      * Convenience typedef for std::bitset<OMG_DDS_STATE_BIT_COUNT>.
      */
     typedef std::bitset<OMG_DDS_STATE_BIT_COUNT> MaskType;
 
 public:
+
     /**
      * Construct an InstanceState with no state flags set.
      */
@@ -435,6 +439,7 @@ public:
 class DataState
 {
 public:
+
     /**
      * Create a DataState instance.
      *
@@ -445,9 +450,9 @@ public:
      *
      */
     DataState()
-//        : ss_(SampleState::any()),
-//          vs_(ViewState::any()),
-//          is_(InstanceState::any())
+        : ss_(SampleState::any())
+        , vs_(ViewState::any())
+        , is_(InstanceState::any())
     {
     }
 
@@ -464,8 +469,8 @@ public:
     /* implicit */ DataState(
             const SampleState& ss)
         : ss_(ss)
-//          vs_(ViewState::any()),
-//          is_(InstanceState::any())
+        , vs_(ViewState::any())
+        , is_(InstanceState::any())
     {
     }
 
@@ -481,9 +486,9 @@ public:
      */
     /* implicit */ DataState(
             const ViewState& vs)
-        : /*ss_(SampleState::any()),*/
-          vs_(vs)
-//          is_(InstanceState::any())
+        : ss_(SampleState::any())
+        , vs_(vs)
+        , is_(InstanceState::any())
     {
     }
 
@@ -499,9 +504,9 @@ public:
      */
     /* implicit */ DataState(
             const InstanceState& is)
-        : /*ss_(SampleState::any()),
-          vs_(ViewState::any()),*/
-          is_(is)
+        : ss_(SampleState::any())
+        , vs_(ViewState::any())
+        , is_(is)
     {
     }
 
@@ -517,10 +522,13 @@ public:
      * @param vs ViewState
      * @param is InstanceState
      */
-    DataState(const SampleState& ss,
-              const ViewState& vs,
-              const InstanceState& is)
-        : ss_(ss), vs_(vs), is_(is)
+    DataState(
+            const SampleState& ss,
+            const ViewState& vs,
+            const InstanceState& is)
+        : ss_(ss)
+        , vs_(vs)
+        , is_(is)
     {
     }
 
@@ -604,22 +612,22 @@ public:
      *
      * @return true if equal
      */
-     bool operator ==(
-             const DataState& o) const
-     {
-         return ((ss_ == o.ss_) && (vs_ == o.vs_) && (is_ == o.is_));
-     }
+    bool operator ==(
+            const DataState& o) const
+    {
+        return ((ss_ == o.ss_) && (vs_ == o.vs_) && (is_ == o.is_));
+    }
 
-     /**
-      * Check if this DataState is not equal with another
-      *
-      * @return true if not equal
-      */
-     bool operator !=(
-             const DataState& o) const
-     {
-         return !operator==(o);
-     }
+    /**
+     * Check if this DataState is not equal with another
+     *
+     * @return true if not equal
+     */
+    bool operator !=(
+            const DataState& o) const
+    {
+        return !operator==(o);
+    }
 
     /**
      * Get SampleState.
@@ -694,12 +702,12 @@ public:
      *
      * @return the any DataState
      */
-    static DataState any();
-//    {
-//        return DataState(SampleState::any(),
-//                         ViewState::any(),
-//                         InstanceState::any());
-//    }
+    static DataState any()
+    {
+        return DataState(SampleState::any(),
+                       ViewState::any(),
+                       InstanceState::any());
+    }
 
     /**
      * Create a DataState instance.
@@ -711,12 +719,12 @@ public:
      *
      * @return the new_data DataState
      */
-    static DataState new_data();
-//    {
-//        return DataState(SampleState::not_read(),
-//                         ViewState::any(),
-//                         InstanceState::alive());
-//    }
+    static DataState new_data()
+    {
+        return DataState(SampleState::not_read(),
+                       ViewState::any(),
+                       InstanceState::alive());
+    }
 
     /**
      * Create a DataState instance.
@@ -728,12 +736,12 @@ public:
      *
      * @return the any_data DataState
      */
-    static DataState any_data();
-//    {
-//        return DataState(SampleState::any(),
-//                         ViewState::any(),
-//                         InstanceState::alive());
-//    }
+    static DataState any_data()
+    {
+        return DataState(SampleState::any(),
+                       ViewState::any(),
+                       InstanceState::alive());
+    }
 
     /**
      * Create a DataState instance.
@@ -745,13 +753,15 @@ public:
      *
      * @return the new_instance DataState
      */
-    static DataState new_instance();
-//    {
-//        return DataState(SampleState::any(),
-//                         ViewState::new_view(),
-//                         InstanceState::alive());
-//    }
+    static DataState new_instance()
+    {
+        return DataState(SampleState::any(),
+                       ViewState::new_view(),
+                       InstanceState::alive());
+    }
+
 private:
+
     SampleState ss_;
     ViewState vs_;
     InstanceState is_;
