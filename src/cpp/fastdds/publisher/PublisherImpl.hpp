@@ -76,7 +76,8 @@ class PublisherImpl
             DomainParticipantImpl* p,
             const PublisherQos& qos,
             const fastrtps::PublisherAttributes& att,
-            PublisherListener* p_listen = nullptr);
+            PublisherListener* p_listen = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
 public:
 

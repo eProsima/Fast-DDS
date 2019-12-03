@@ -39,8 +39,8 @@ Publisher::Publisher(
         const ::dds::domain::DomainParticipant& dp,
         const PublisherQos& qos,
         PublisherListener* listener,
-        const ::dds::core::status::StatusMask& /*mask*/)
-    : impl_(dp.delegate()->create_publisher(qos, fastrtps::PublisherAttributes(), listener /*, mask*/)->impl_)
+        const ::dds::core::status::StatusMask& mask)
+    : impl_(dp.delegate()->create_publisher(qos, fastrtps::PublisherAttributes(), listener, mask)->impl_)
 {
 }
 

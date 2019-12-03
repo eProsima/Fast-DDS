@@ -33,6 +33,8 @@
 #include <dds/core/status/Status.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 
+#include <dds/core/status/State.hpp>
+
 #include <utility>
 
 using eprosima::fastrtps::types::ReturnCode_t;
@@ -89,7 +91,8 @@ public:
      * @return true if the listener was updated.
      */
     ReturnCode_t set_listener(
-            DomainParticipantListener* listener);
+            DomainParticipantListener* listener,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /**
      * Allows accessing the DomainParticipantListener.
@@ -108,12 +111,14 @@ public:
      * @param qos QoS of the Publisher.
      * @param att Attributes of the Publisher. TopicAttributes and WriterQos will be ignored using DDS interface.
      * @param listen Pointer to the listener.
+     * @param mask Indicates which of the Listener callbacks can be called.
      * @return Pointer to the created Publisher.
      */
     Publisher* create_publisher(
             const fastdds::dds::PublisherQos& qos,
             const fastrtps::PublisherAttributes& att,
-            PublisherListener* listen = nullptr);
+            PublisherListener* listen = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /**
      * Deletes an existing Publisher.
@@ -128,12 +133,14 @@ public:
      * @param qos QoS of the Subscriber.
      * @param att Attributes of the Subscriber. TopicAttributes and ReaderQos will be ignored using DDS interface.
      * @param listen Pointer to the listener.
+     * @param mask Indicates which of the Listener callbacks can be called.
      * @return Pointer to the created Subscriber.
      */
     Subscriber* create_subscriber(
             const fastdds::dds::SubscriberQos& qos,
             const fastrtps::SubscriberAttributes& att,
-            SubscriberListener* listen = nullptr);
+            SubscriberListener* listen = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /**
      * Deletes an existing Subscriber.
@@ -172,28 +179,28 @@ public:
     // TODO create/delete topic
 
     /* TODO
-    Subscriber* get_builtin_subscriber();
-    */
+       Subscriber* get_builtin_subscriber();
+     */
 
     /* TODO
-    bool ignore_participant(
+       bool ignore_participant(
             const fastrtps::rtps::InstanceHandle_t& handle);
-    */
+     */
 
     /* TODO
-    bool ignore_topic(
+       bool ignore_topic(
             const fastrtps::rtps::InstanceHandle_t& handle);
-    */
+     */
 
     /* TODO
-    bool ignore_publication(
+       bool ignore_publication(
             const fastrtps::rtps::InstanceHandle_t& handle);
-    */
+     */
 
     /* TODO
-    bool ignore_subscription(
+       bool ignore_subscription(
             const fastrtps::rtps::InstanceHandle_t& handle);
-    */
+     */
 
     /**
      * This operation retrieves the domain_id used to create the DomainParticipant.
@@ -203,8 +210,8 @@ public:
     uint8_t get_domain_id() const;
 
     /* TODO
-    bool delete_contained_entities();
-    */
+       bool delete_contained_entities();
+     */
 
     /**
      * This operation manually asserts the liveliness of the DomainParticipant.
@@ -311,26 +318,26 @@ public:
     const fastdds::dds::TopicQos& get_default_topic_qos() const;
 
     /* TODO
-    bool get_discovered_participants(
+       bool get_discovered_participants(
             std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const;
-    */
+     */
 
     /* TODO
-    bool get_discovered_participant_data(
+       bool get_discovered_participant_data(
             ParticipantBuiltinTopicData& participant_data,
             const fastrtps::rtps::InstanceHandle_t& participant_handle) const;
-    */
+     */
 
     /* TODO
-    bool get_discovered_topics(
+       bool get_discovered_topics(
             std::vector<fastrtps::rtps::InstanceHandle_t>& topic_handles) const;
-    */
+     */
 
     /* TODO
-    bool get_discovered_topic_data(
+       bool get_discovered_topic_data(
             TopicBuiltinTopicData& topic_data,
             const fastrtps::rtps::InstanceHandle_t& topic_handle) const;
-    */
+     */
 
     /**
      * This operation checks whether or not the given handle represents an Entity that was created from the
@@ -455,7 +462,7 @@ private:
             DomainId_t did,
             const DomainParticipantQos& qos,
             DomainParticipantListener* listen = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     DomainParticipantImpl* impl_;
 
