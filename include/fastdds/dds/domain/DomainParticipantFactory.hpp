@@ -77,7 +77,8 @@ public:
      */
     RTPS_DllAPI DomainParticipant* create_participant(
             const fastrtps::ParticipantAttributes& att,
-            DomainParticipantListener* listen = nullptr);
+            DomainParticipantListener* listen = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /**
      * @brief create_participant
@@ -91,7 +92,7 @@ public:
             DomainId_t did,
             const DomainParticipantQos& qos,
             DomainParticipantListener* listen = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /**
      * This operation retrieves a previously created DomainParticipant belonging to specified domain_id.
@@ -149,7 +150,7 @@ private:
 
     friend class DomainParticipantFactoryReleaser;
 
-    std::map<uint8_t, std::vector<DomainParticipantImpl*>> participants_;
+    std::map<uint8_t, std::vector<DomainParticipantImpl*> > participants_;
 
     DomainParticipantFactory();
 

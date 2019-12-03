@@ -75,11 +75,13 @@ using eprosima::fastdds::dds::Log;
 DomainParticipantImpl::DomainParticipantImpl(
         const ParticipantAttributes& patt,
         DomainParticipant* pspart,
-        DomainParticipantListener* listen)
+        DomainParticipantListener* listen,
+        const ::dds::core::status::StatusMask& mask)
     : att_(patt)
     , rtps_participant_(nullptr)
     , participant_(pspart)
     , listener_(listen)
+    , mask_(mask)
 #pragma warning (disable : 4355 )
     , rtps_listener_(this)
 {
