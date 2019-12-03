@@ -47,6 +47,7 @@ namespace dds {
 class DomainParticipantFactoryReleaser
 {
 public:
+
     ~DomainParticipantFactoryReleaser()
     {
         DomainParticipantFactory::delete_instance();
@@ -125,7 +126,7 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
         DomainParticipant* part)
 {
     using PartVectorIt = std::vector<DomainParticipantImpl*>::iterator;
-    using VectorIt = std::map<uint8_t, std::vector<DomainParticipantImpl*>>::iterator;
+    using VectorIt = std::map<uint8_t, std::vector<DomainParticipantImpl*> >::iterator;
 
     if (part->contains_entity(part->get_instance_handle()))
     {
@@ -142,7 +143,7 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
             for (PartVectorIt pit = vit->second.begin(); pit != vit->second.end();)
             {
                 if ((*pit)->get_participant() == part
-                    || (*pit) ->get_participant()->guid() == part->guid())
+                        || (*pit)->get_participant()->guid() == part->guid())
                 {
                     delete (*pit);
                     PartVectorIt next_it = vit->second.erase(pit);
@@ -185,11 +186,12 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 
 DomainParticipant* DomainParticipantFactory::create_participant(
         const ParticipantAttributes& att,
-        DomainParticipantListener* listen)
+        DomainParticipantListener* listen,
+        const ::dds::core::status::StatusMask& mask)
 {
     uint8_t domain_id = static_cast<uint8_t>(att.rtps.builtin.domainId);
     DomainParticipant* dom_part = new DomainParticipant();
-    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(att, dom_part, listen);
+    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(att, dom_part, listen, mask);
     RTPSParticipant* part = RTPSDomain::createParticipant(att.rtps, &dom_part_impl->rtps_listener_);
 
     if (part == nullptr)
@@ -203,7 +205,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 
     {
         std::lock_guard<std::mutex> guard(mtx_participants_);
-        using VectorIt = std::map<uint8_t, std::vector<DomainParticipantImpl*>>::iterator;
+        using VectorIt = std::map<uint8_t, std::vector<DomainParticipantImpl*> >::iterator;
         VectorIt vector_it = participants_.find(domain_id);
 
         if (vector_it == participants_.end())
@@ -219,9 +221,9 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 
     part->set_check_type_function(
         [dom_part](const std::string& type_name) -> bool
-        {
-            return dom_part->find_type(type_name).get() != nullptr;
-        });
+                {
+                    return dom_part->find_type(type_name).get() != nullptr;
+                });
 
     return dom_part;
 }
@@ -230,12 +232,12 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         DomainId_t did,
         const DomainParticipantQos&,
         DomainParticipantListener* listen,
-        const ::dds::core::status::StatusMask&)
+        const ::dds::core::status::StatusMask& mask)
 {
     // Minimal implementation to use current FASTRTPS behavior
     ParticipantAttributes attr;
     attr.rtps.builtin.domainId = did;
-    return create_participant(attr, listen);
+    return create_participant(attr, listen, mask);
 }
 
 DomainParticipant* DomainParticipantFactory::lookup_participant(
@@ -253,7 +255,7 @@ DomainParticipant* DomainParticipantFactory::lookup_participant(
 }
 
 std::vector<DomainParticipant*> DomainParticipantFactory::lookup_participants(
-    uint8_t domain_id) const
+        uint8_t domain_id) const
 {
     std::lock_guard<std::mutex> guard(mtx_participants_);
 
@@ -285,15 +287,15 @@ ReturnCode_t DomainParticipantFactory::get_default_participant_qos(
 }
 
 /* TODO
-bool DomainParticipantFactory::set_default_participant_qos(
+   bool DomainParticipantFactory::set_default_participant_qos(
         const fastrtps::ParticipantAttributes &participant_qos)
-{
+   {
     // TODO XMLProfileManager::setDefault...
     (void)participant_qos;
     logError(DOMAIN_PARTICIPANT_FACTORY, "Not implemented.");
     return false;
-}
-*/
+   }
+ */
 
 bool DomainParticipantFactory::load_XML_profiles_file(
         const std::string& xml_profile_file)
@@ -341,14 +343,14 @@ ReturnCode_t DomainParticipantFactory::set_default_participant_qos(
 }
 
 /* TODO implement
-DomainParticipant* DomainParticipantFactory::create_participant(
+   DomainParticipant* DomainParticipantFactory::create_participant(
         uint8_t domain_id,
         const DomainParticipantQos& qos,
         DomainParticipantListener* listen = nullptr,
         const StatusMask& mask)
-{
-}
-*/
+   {
+   }
+ */
 
 
 } /* namespace dds */

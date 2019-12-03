@@ -78,7 +78,8 @@ private:
     DomainParticipantImpl(
             const fastrtps::ParticipantAttributes& patt,
             DomainParticipant* pspart,
-            DomainParticipantListener* listen = nullptr);
+            DomainParticipantListener* listen = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     virtual ~DomainParticipantImpl();
 
