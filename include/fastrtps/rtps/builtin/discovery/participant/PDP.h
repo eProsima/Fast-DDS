@@ -340,12 +340,15 @@ protected:
     /**
      * Per-process database of Participant, Reader and Writer Proxies
     */
+
     //!Number of participant proxy data objects created
     static size_t participant_proxies_number_;
-    //!Registered RTPSParticipants 
-    static std::vector<ParticipantProxyData*> participant_proxies_;
+    //!Registered RTPSParticipants (including the local one, that is the first one.)
+    ResourceLimitedVector<std::shared_ptr<ParticipantProxyData>> participant_proxies_;
     //!Pool of participant proxy data objects ready for reuse
     static ResourceLimitedVector<ParticipantProxyData*> participant_proxies_pool_;
+    //!Alived participant proxies reference
+    static std::map<guidPrefix,std::weak_ptr<ParticipantProxyData>> db_participant_references_;
     //!Number of reader proxy data objects created
     static size_t reader_proxies_number_;
     //!Pool of reader proxy data objects ready for reuse
@@ -354,11 +357,8 @@ protected:
     static size_t writer_proxies_number_;
     //!Pool of writer proxy data objects ready for reuse
     static ResourceLimitedVector<WriterProxyData*> writer_proxies_pool_;
-    //!Mutex for participant atomic access to database, soon a RWLock will replace it for efficiency sake
-    static std::recursive_mutex pdp_db_mutex_; 
-   
-    //! local mask  
-    std::set<guidPrefix> participant_mask; 
+    //!Mutex protection for static variables TODO: replace by a RWLock
+    static std::recursive_mutex db_mutex_; 
 
     /**
      * Adds an entry to the collection of participant proxy information.

@@ -83,10 +83,7 @@ PDP::PDP (
     , mp_mutex(new std::recursive_mutex())
     , resend_participant_info_event_(nullptr)
 {
-    
     initialize_or_update_db_allocation(allocation);
-
-    
 }
 
 PDP::~PDP()
@@ -99,7 +96,13 @@ PDP::~PDP()
     delete mp_PDPWriterHistory;
     delete mp_PDPReaderHistory;
     delete mp_listener;
+    delete mp_mutex;
 
+    remove_db_resources();
+}
+
+void remove_db_resources()
+{
     for(ParticipantProxyData* it : participant_proxies_)
     {
         delete it;

@@ -109,6 +109,8 @@ ParticipantProxyData::~ParticipantProxyData()
 
 bool ParticipantProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulation)
 {
+    std::lock_guard<recursive_mutex> lock(ppd_mutex_);
+
     if (write_encapsulation)
     {
         if (!ParameterList::writeEncapsulationToCDRMsg(msg)) return false;
@@ -216,6 +218,8 @@ bool ParticipantProxyData::readFromCDRMessage(
         bool use_encapsulation,
         const NetworkFactory& network)
 {
+    std::lock_guard<recursive_mutex> lock(ppd_mutex_);
+
     auto param_process = [this, &network](const Parameter_t* param)
     {
         switch (param->Pid)
@@ -394,6 +398,8 @@ bool ParticipantProxyData::readFromCDRMessage(
 
 void ParticipantProxyData::clear()
 {
+    std::lock_guard<recursive_mutex> lock(ppd_mutex_);
+
     m_protocolVersion = ProtocolVersion_t();
     m_guid = GUID_t();
     //set_VendorId_Unknown(m_VendorId);
@@ -422,6 +428,8 @@ void ParticipantProxyData::clear()
 
 void ParticipantProxyData::copy(const ParticipantProxyData& pdata)
 {
+    std::lock_guard<recursive_mutex> lock(ppd_mutex_);
+
     m_protocolVersion = pdata.m_protocolVersion;
     m_guid = pdata.m_guid;
     m_VendorId[0] = pdata.m_VendorId[0];
@@ -451,6 +459,8 @@ void ParticipantProxyData::copy(const ParticipantProxyData& pdata)
 
 bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
 {
+    std::lock_guard<recursive_mutex> lock(ppd_mutex_);
+
     metatraffic_locators = pdata.metatraffic_locators;
     default_locators = pdata.default_locators;
     m_properties = pdata.m_properties;
@@ -483,6 +493,8 @@ bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
 
 void ParticipantProxyData::set_persistence_guid(const GUID_t& guid)
 {
+    std::lock_guard<recursive_mutex> lock(ppd_mutex_);
+
     // only valid values
     if (guid == c_Guid_Unknown)
     {
@@ -522,6 +534,8 @@ void ParticipantProxyData::set_persistence_guid(const GUID_t& guid)
 
 GUID_t ParticipantProxyData::get_persistence_guid() const
 {
+    std::lock_guard<recursive_mutex> lock(ppd_mutex_);
+
     GUID_t persistent(c_Guid_Unknown);
 
     const std::vector<std::pair<std::string, std::string>> & props = m_properties.properties;
