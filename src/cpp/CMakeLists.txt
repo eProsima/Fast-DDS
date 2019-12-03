@@ -399,6 +399,7 @@ elseif(NOT EPROSIMA_INSTALLER)
         $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
         $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
         $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
+        $<$<AND:$<BOOL:${WIN32}>,$<BOOL:${ZLIB_FOUND}>>:ZLIB_DLL>
         )
 
     # Define public headers
