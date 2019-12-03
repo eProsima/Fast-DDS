@@ -322,6 +322,12 @@ const Topic& DataReaderImpl::get_topic() const
     return topic_;
 }
 
+TopicDescription* DataReaderImpl::get_topicdescription() const
+{
+    return const_cast<DomainParticipant*>(get_subscriber()->get_participant())->lookup_topicdescription(
+        topic_.get_name());
+}
+
 bool DataReaderImpl::set_attributes(
         const fastrtps::rtps::ReaderAttributes& att)
 {
