@@ -24,6 +24,7 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Guid.h>
 
+#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/qos/DataReaderQos.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
@@ -56,7 +57,6 @@ class TimedEvent;
 namespace fastdds {
 namespace dds {
 
-class Subscriber;
 class SubscriberImpl;
 class SampleInfo_t;
 class DomainParticipant;
@@ -165,6 +165,8 @@ public:
     const fastrtps::TopicAttributes& get_topic_attributes() const;
 
     const Topic& get_topic() const;
+
+    TopicDescription* get_topicdescription() const;
 
     ReturnCode_t set_listener(
             DataReaderListener* listener,

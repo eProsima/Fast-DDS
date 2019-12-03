@@ -105,6 +105,11 @@ bool DataReader::set_topic(
     return impl_->set_topic_attributes(topic_att);
 }
 
+TopicDescription* DataReader::get_topicdescription() const
+{
+    return impl_->get_topicdescription();
+}
+
 const DataReaderQos& DataReader::get_qos() const
 {
     return impl_->get_qos();

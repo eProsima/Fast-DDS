@@ -176,6 +176,8 @@ public:
 
     const fastrtps::TopicAttributes& get_topic() const;
 
+    TopicDescription* get_topicdescription() const;
+
     ReturnCode_t set_listener(
             DataReaderListener* listener,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
