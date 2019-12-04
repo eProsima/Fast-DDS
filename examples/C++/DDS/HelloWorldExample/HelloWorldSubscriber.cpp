@@ -39,7 +39,7 @@ bool HelloWorldSubscriber::init()
     eprosima::fastrtps::ParticipantAttributes participant_att;
     participant_att.rtps.builtin.domainId = 0;
     participant_att.rtps.setName("Participant_sub");
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att);
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att, &listener_);
 
     if (participant_ == nullptr)
     {
@@ -68,7 +68,7 @@ bool HelloWorldSubscriber::init()
     topic_att.historyQos.depth = 2;
     topic_att.resourceLimitsQos.max_samples = 2;
     topic_att.resourceLimitsQos.allocated_samples = 1;
-    reader_ = subscriber_->create_datareader(topic_att, rqos, &listener_);
+    reader_ = subscriber_->create_datareader(topic_att, rqos, nullptr);
 
     if (reader_ == nullptr)
     {

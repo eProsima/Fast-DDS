@@ -58,7 +58,7 @@ private:
 
     bool stop_;
 
-    class PubListener : public eprosima::fastdds::dds::DataWriterListener
+    class PubListener : public eprosima::fastdds::dds::DomainParticipantListener
     {
 public:
 

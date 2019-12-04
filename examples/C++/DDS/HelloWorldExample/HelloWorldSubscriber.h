@@ -56,7 +56,7 @@ private:
 
     eprosima::fastdds::dds::TypeSupport type_;
 
-    class SubListener : public eprosima::fastdds::dds::DataReaderListener
+    class SubListener : public eprosima::fastdds::dds::DomainParticipantListener
     {
 public:
 

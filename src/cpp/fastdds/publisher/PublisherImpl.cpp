@@ -209,6 +209,11 @@ DataWriter* PublisherImpl::create_datawriter(
         w_att.keep_duration = writer_qos.disable_positive_ACKs.duration;
     }
 
+    if(listener == nullptr)
+    {
+        listener = listener_;
+    }
+
     DataWriterImpl* impl = new DataWriterImpl(
         this,
         type_support,
