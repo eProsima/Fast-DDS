@@ -565,12 +565,10 @@ bool WriterProxy::send(
     }
 
     ResourceLimitedVector<Locator_t> remote_locators = remote_locators_shrinked();
-    Locators locators_begin(remote_locators.begin());
-    Locators locators_end(remote_locators.end());
-
+    
     return reader_->send_sync_nts(message,
-                   locators_begin,
-                   locators_end,
+                   Locators(remote_locators.begin()),
+                   Locators(remote_locators.end()),
                    max_blocking_time_point);
 }
 

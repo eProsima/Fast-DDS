@@ -81,16 +81,16 @@ bool test_UDPv4Transport::send(
         const octet* send_buffer,
         uint32_t send_buffer_size,
         eProsimaUDPSocket& socket,
-        fastrtps::rtps::LocatorsIterator& destination_locators_begin,
-        fastrtps::rtps::LocatorsIterator& destination_locators_end,
+        fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+        fastrtps::rtps::LocatorsIterator* destination_locators_end,
         bool only_multicast_purpose,
         const std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
-    fastrtps::rtps::LocatorsIterator& it = destination_locators_begin;
+    fastrtps::rtps::LocatorsIterator& it = *destination_locators_begin;
 
     bool ret = true;
     
-    while (it != destination_locators_end)
+    while (it != *destination_locators_end)
     {
         auto now = std::chrono::steady_clock::now();
 
@@ -98,7 +98,8 @@ bool test_UDPv4Transport::send(
         {
             ret &= send(send_buffer, 
                 send_buffer_size, 
-                socket,*it, 
+                socket,
+                *it, 
                 only_multicast_purpose, 
                 std::chrono::duration_cast<std::chrono::microseconds>(now - max_blocking_time_point));
 

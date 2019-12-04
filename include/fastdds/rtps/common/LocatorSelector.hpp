@@ -349,6 +349,12 @@ public:
             }
         }
 
+		iterator(const iterator& other)
+			: locator_selector_(other.locator_selector_)
+			, current_(other.current_)
+		{
+		}
+
         iterator& operator++()
         {
             // Shouldn't call ++ when index already at the end

@@ -93,8 +93,10 @@ public:
    * @param send_buffer_size Size of the raw data. It will be used as a bounds check for the previous argument.
    * It must not exceed the send_buffer_size fed to this class during construction.
    * @param socket channel we're sending from.
-   * @param destination_locators_begin destination locators iterator begin.
-   * @param destination_locators_end destination locators iterator end.
+   * @param destination_locators_begin pointer to destination locators iterator begin, the iterator can be advanced inside this fuction
+   * so should not be reuse.
+   * @param destination_locators_end pointer to destination locators iterator end, the iterator can be advanced inside this fuction
+   * so should not be reuse.
    * @param only_multicast_purpose
    * @param max_blocking_time_point maximum blocking time.
    */
@@ -102,8 +104,8 @@ public:
            const fastrtps::rtps::octet* send_buffer,
            uint32_t send_buffer_size,
            eProsimaUDPSocket& socket,
-           fastrtps::rtps::LocatorsIterator& destination_locators_begin,
-           fastrtps::rtps::LocatorsIterator& destination_locators_end,
+           fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+           fastrtps::rtps::LocatorsIterator* destination_locators_end,
            bool only_multicast_purpose,
            const std::chrono::steady_clock::time_point& max_blocking_time_point);
 

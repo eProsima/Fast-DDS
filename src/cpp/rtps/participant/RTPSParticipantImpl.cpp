@@ -1135,29 +1135,6 @@ std::vector<std::string> RTPSParticipantImpl::getParticipantNames() const
     return participant_names;
 }
 
-bool RTPSParticipantImpl::sendSync(
-        CDRMessage_t* msg,
-        LocatorsIterator& destination_locators_begin,
-        LocatorsIterator& destination_locators_end,
-        std::chrono::steady_clock::time_point& max_blocking_time_point)
-{
-    bool ret_code = false;
-    std::unique_lock<std::timed_mutex> lock(m_send_resources_mutex_, std::defer_lock);
-
-    if (lock.try_lock_until(max_blocking_time_point))
-    {
-        ret_code = true;
-
-        for (auto& send_resource : send_resource_list_)
-        {
-            send_resource->send(msg->buffer, msg->length, destination_locators_begin, destination_locators_end,
-                    max_blocking_time_point);
-        }
-    }
-
-    return ret_code;
-}
-
 void RTPSParticipantImpl::setGuid(
         GUID_t& guid)
 {

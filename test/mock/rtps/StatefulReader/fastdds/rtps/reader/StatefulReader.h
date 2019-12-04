@@ -73,8 +73,8 @@ class StatefulReader : public RTPSReader
 
         bool send_sync_nts(
                 CDRMessage_t* /*message*/,
-                LocatorsIterator& /*destination_locators_begin*/,
-                LocatorsIterator& /*destination_locators_end*/,
+                const LocatorsIterator& /*destination_locators_begin*/,
+                const LocatorsIterator& /*destination_locators_end*/,
                 std::chrono::steady_clock::time_point& /*max_blocking_time_point*/)
         {
             return true;

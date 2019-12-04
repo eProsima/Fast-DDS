@@ -183,8 +183,6 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
 
     LocatorList_t locator_list;
     locator_list.push_back(inputLocator);
-    Locators input_begin(locator_list.begin());
-    Locators input_end(locator_list.end());
 
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
@@ -212,15 +210,18 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
 
     auto sendThreadFunction = [&]()
     {
-        bool sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+        bool sent = false;
         while (!sent)
         {
-            sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+            Locators input_begin(locator_list.begin());
+            Locators input_end(locator_list.end());
+
+            sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
         EXPECT_TRUE(sent);
     };
-
+//std::this_thread::sleep_for(std::chrono::seconds(1));
     senderThread.reset(new std::thread(sendThreadFunction));
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
     senderThread->join();
@@ -255,7 +256,7 @@ TEST_F(TCPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
     // Then
     std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
     ASSERT_FALSE(send_resource_list.at(0)->send(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size(),
-            destination_begin, destination_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+            &destination_begin, &destination_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
 }
 
 TEST_F(TCPv4Tests, RemoteToMainLocal_simply_strips_out_address_leaving_IP_ANY)
@@ -320,7 +321,7 @@ TEST_F(TCPv4Tests, send_to_wrong_interface)
     Locators wrong_end(locator_list.end());
 
     std::vector<octet> message = { 'H','e','l','l','o' };
-    ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), wrong_begin, wrong_end,
+    ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), &wrong_begin, &wrong_end,
                 (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
 }
 
@@ -350,7 +351,7 @@ TEST_F(TCPv4Tests, send_to_blocked_interface)
     Locators wrong_end(locator_list.end());
 
     std::vector<octet> message = { 'H','e','l','l','o' };
-    ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), wrong_begin, wrong_end,
+    ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), &wrong_begin, &wrong_end,
                 (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
 }
 
@@ -396,9 +397,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
 
             LocatorList_t locator_list;
             locator_list.push_back(inputLocator);
-            Locators input_begin(locator_list.begin());
-            Locators input_end(locator_list.end());
-
+            
             Locator_t outputLocator;
             outputLocator.kind = LOCATOR_KIND_TCPv4;
             outputLocator.set_address(locator);
@@ -426,10 +425,16 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
                 bool bFinish(false);
                 auto sendThreadFunction = [&]()
                 {
-                    bool sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+                    Locators input_begin(locator_list.begin());
+                    Locators input_end(locator_list.end());
+
+                    bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
                     while (!bFinish && !sent)
                     {
-                        sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+                        Locators input_begin(locator_list.begin());
+                        Locators input_end(locator_list.end());
+
+                        sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
                         std::this_thread::sleep_for(std::chrono::milliseconds(100));
                     }
                     EXPECT_TRUE(sent);
@@ -485,9 +490,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_client_verifies)
 
     LocatorList_t locator_list;
     locator_list.push_back(inputLocator);
-    Locators input_begin(locator_list.begin());
-    Locators input_end(locator_list.end());
-
+    
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
@@ -515,10 +518,16 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_client_verifies)
 
         auto sendThreadFunction = [&]()
         {
-            bool sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+            Locators input_begin(locator_list.begin());
+            Locators input_end(locator_list.end());
+
+            bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
             while (!sent)
             {
-                sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+                Locators input_begin(locator_list.begin());
+                Locators input_end(locator_list.end());
+
+                sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             EXPECT_TRUE(sent);
@@ -577,9 +586,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_server_verifies)
 
     LocatorList_t locator_list;
     locator_list.push_back(inputLocator);
-    Locators input_begin(locator_list.begin());
-    Locators input_end(locator_list.end());
-
+    
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
@@ -607,10 +614,16 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_server_verifies)
 
         auto sendThreadFunction = [&]()
         {
-            bool sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+            Locators input_begin(locator_list.begin());
+            Locators input_end(locator_list.end());
+
+            bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
             while (!sent)
             {
-                sent = send_resource_list.at(0)->send(message, 5,  input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+                Locators input_begin(locator_list.begin());
+                Locators input_end(locator_list.end());
+
+                sent = send_resource_list.at(0)->send(message, 5,  &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             EXPECT_TRUE(sent);
@@ -671,8 +684,6 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports)
 
     LocatorList_t locator_list;
     locator_list.push_back(inputLocator);
-    Locators input_begin(locator_list.begin());
-    Locators input_end(locator_list.end());
 
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
@@ -701,10 +712,16 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports)
 
         auto sendThreadFunction = [&]()
         {
-            bool sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+            Locators input_begin(locator_list.begin());
+            Locators input_end(locator_list.end());
+
+            bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
             while (!sent)
             {
-                sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+                Locators input_begin(locator_list.begin());
+                Locators input_end(locator_list.end());
+
+                sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             EXPECT_TRUE(sent);
@@ -765,9 +782,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_untrusted)
 
     LocatorList_t locator_list;
     locator_list.push_back(inputLocator);
-    Locators input_begin(locator_list.begin());
-    Locators input_end(locator_list.end());
-
+    
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
@@ -796,11 +811,17 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_untrusted)
 
         auto sendThreadFunction = [&]()
         {
-            bool sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+            Locators input_begin(locator_list.begin());
+            Locators input_end(locator_list.end());
+
+            bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
             int count = 0;
             while (!sent && count < 30)
             {
-                sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+                Locators input_begin(locator_list.begin());
+                Locators input_end(locator_list.end());
+
+                sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 ++count;
             }
@@ -863,9 +884,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_1)
 
     LocatorList_t locator_list;
     locator_list.push_back(inputLocator);
-    Locators input_begin(locator_list.begin());
-    Locators input_end(locator_list.end());
-
+    
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
@@ -893,10 +912,16 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_1)
 
         auto sendThreadFunction = [&]()
         {
-            bool sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+            Locators input_begin(locator_list.begin());
+            Locators input_end(locator_list.end());
+
+            bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
             while (!sent)
             {
-                sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+                Locators input_begin(locator_list.begin());
+                Locators input_end(locator_list.end());
+
+                sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             EXPECT_TRUE(sent);
@@ -1042,9 +1067,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_untrusted_server)
 
     LocatorList_t locator_list;
     locator_list.push_back(inputLocator);
-    Locators input_begin(locator_list.begin());
-    Locators input_end(locator_list.end());
-
+    
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
@@ -1073,11 +1096,16 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_untrusted_server)
 
         auto sendThreadFunction = [&]()
         {
-            bool sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+            Locators input_begin(locator_list.begin());
+            Locators input_end(locator_list.end());
+
+            bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
             int count = 0;
             while (!sent && count < 30)
             {
-                sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+                Locators input_begin(locator_list.begin());
+                Locators input_end(locator_list.end());
+                sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 ++count;
             }
@@ -1120,9 +1148,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
 
     LocatorList_t locator_list;
     locator_list.push_back(inputLocator);
-    Locators input_begin(locator_list.begin());
-    Locators input_end(locator_list.end());
-
+    
     Locator_t outputLocator;
     outputLocator.kind = LOCATOR_KIND_TCPv4;
     IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
@@ -1150,10 +1176,16 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
         bool bFinish(false);
         auto sendThreadFunction = [&]()
         {
-            bool sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+            Locators input_begin(locator_list.begin());
+            Locators input_end(locator_list.end());
+
+            bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
             while (!bFinish && !sent)
             {
-                sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+                Locators input_begin(locator_list.begin());
+                Locators input_end(locator_list.end());
+
+                sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             EXPECT_TRUE(sent);
@@ -1209,9 +1241,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
 
             LocatorList_t locator_list;
             locator_list.push_back(inputLocator);
-            Locators input_begin(locator_list.begin());
-            Locators input_end(locator_list.end());
-
+            
             Locator_t outputLocator;
             outputLocator.kind = LOCATOR_KIND_TCPv4;
             IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
@@ -1239,10 +1269,16 @@ TEST_F(TCPv4Tests, send_and_receive_between_blocked_interfaces_ports)
                 bool bFinished(false);
                 auto sendThreadFunction = [&]()
                 {
-                    bool sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+                    Locators input_begin(locator_list.begin());
+                    Locators input_end(locator_list.end());
+
+                    bool sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
                     while (!bFinished && !sent)
                     {
-                        sent = send_resource_list.at(0)->send(message, 5, input_begin, input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
+                        Locators input_begin(locator_list.begin());
+                        Locators input_end(locator_list.end());
+                        
+                        sent = send_resource_list.at(0)->send(message, 5, &input_begin, &input_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100)));
                         std::this_thread::sleep_for(std::chrono::milliseconds(100));
                     }
                     EXPECT_FALSE(sent);

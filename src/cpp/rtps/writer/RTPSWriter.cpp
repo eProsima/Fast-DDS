@@ -287,9 +287,7 @@ bool RTPSWriter::send(
 {
     RTPSParticipantImpl* participant = getRTPSParticipant();
 
-    LocatorSelector::iterator locators_begin = locator_selector_.begin();
-    LocatorSelector::iterator locators_end = locator_selector_.end();
-    return participant->sendSync(message, locators_begin, locators_end, max_blocking_time_point);
+    return participant->sendSync(message, locator_selector_.begin(), locator_selector_.end(), max_blocking_time_point);
 }
 
 const LivelinessQosPolicyKind& RTPSWriter::get_liveliness_kind() const

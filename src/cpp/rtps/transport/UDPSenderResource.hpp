@@ -43,8 +43,8 @@ class UDPSenderResource : public fastrtps::rtps::SenderResource
             send_lambda_ = [this, &transport] (
                 const fastrtps::rtps::octet* data,
                 uint32_t dataSize,
-                fastrtps::rtps::LocatorsIterator& destination_locators_begin,
-                fastrtps::rtps::LocatorsIterator& destination_locators_end,
+                fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+                fastrtps::rtps::LocatorsIterator* destination_locators_end,
                 const std::chrono::steady_clock::time_point& max_blocking_time_point) -> bool
                     {
                         return transport.send(data, dataSize, socket_, destination_locators_begin,

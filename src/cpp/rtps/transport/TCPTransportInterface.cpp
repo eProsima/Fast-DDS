@@ -989,14 +989,14 @@ bool TCPTransportInterface::send(
         const octet* send_buffer,
         uint32_t send_buffer_size,
         std::shared_ptr<TCPChannelResource>& channel,
-        fastrtps::rtps::LocatorsIterator& destination_locators_begin,
-        fastrtps::rtps::LocatorsIterator& destination_locators_end)
+        fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+        fastrtps::rtps::LocatorsIterator* destination_locators_end)
 {
-    fastrtps::rtps::LocatorsIterator& it = destination_locators_begin;
+    fastrtps::rtps::LocatorsIterator& it = *destination_locators_begin;
 
     bool ret = true;
 
-    while (it != destination_locators_end)
+    while (it != *destination_locators_end)
     {
         ret &= send(send_buffer, send_buffer_size, channel,*it);
         ++it;

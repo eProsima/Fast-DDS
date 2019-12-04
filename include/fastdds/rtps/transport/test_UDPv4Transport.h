@@ -41,8 +41,8 @@ public:
            const fastrtps::rtps::octet* send_buffer,
            uint32_t send_buffer_size,
            eProsimaUDPSocket& socket,
-           fastrtps::rtps::LocatorsIterator& destination_locators_begin,
-           fastrtps::rtps::LocatorsIterator& destination_locators_end,
+           fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+           fastrtps::rtps::LocatorsIterator* destination_locators_end,
            bool only_multicast_purpose,
            const std::chrono::steady_clock::time_point& max_blocking_time_point) override;
 

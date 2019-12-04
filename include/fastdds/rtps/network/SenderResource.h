@@ -51,8 +51,8 @@ public:
     bool send(
         const octet* data,
         uint32_t dataLength,
-        LocatorsIterator& destination_locators_begin,
-        LocatorsIterator& destination_locators_end,
+        LocatorsIterator* destination_locators_begin,
+        LocatorsIterator* destination_locators_end,
         const std::chrono::steady_clock::time_point& max_blocking_time_point)
     {
         bool returned_value = false;
@@ -89,8 +89,8 @@ protected:
     std::function<bool(
             const octet*,
             uint32_t,
-            LocatorsIterator& destination_locators_begin,
-            LocatorsIterator& destination_locators_end,
+            LocatorsIterator* destination_locators_begin,
+            LocatorsIterator* destination_locators_end,
             const std::chrono::steady_clock::time_point&)> send_lambda_;
 
 private:

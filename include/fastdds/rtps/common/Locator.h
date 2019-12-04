@@ -231,10 +231,16 @@ class Locators : public LocatorsIterator
 public:
 
     Locators(
-            LocatorListConstIterator it)
+            const LocatorListConstIterator& it)
         : it_(it)
     {
     }
+
+	Locators(
+		const Locators& other)
+		: it_(other.it_)
+	{
+	}
 
     LocatorsIterator& operator++()
     {
