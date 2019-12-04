@@ -48,8 +48,8 @@ class EDPListener;
  */
 class EDPSimple : public EDP
 {
-    typedef std::pair<StatefulWriter*, WriterHistory*> t_p_StatefulWriter;
-    typedef std::pair<StatefulReader*, ReaderHistory*> t_p_StatefulReader;
+    using t_p_StatefulWriter = std::pair<StatefulWriter*, WriterHistory*>;
+    using t_p_StatefulReader = std::pair<StatefulReader*, ReaderHistory*>;
 
 public:
 
@@ -185,6 +185,20 @@ protected:
      * @return True if correct.
      */
     virtual bool createSEDPEndpoints();
+
+    /**
+     * Create a cache change on a builtin writer and serialize a WriterProxyData on it.
+     * @param [in] data The WriterProxyData object to be serialized.
+     * @param [in] writer The writer,history pair where the change should be added.
+     * @param [in] remove_same_instance Should previous changes with same key be removed?
+     * @param [out] created_change Where the pointer to the created change should be returned.
+     * @return false if data could not be serialized into the created change.
+     */
+    bool serialize_writer_proxy_data(
+            const WriterProxyData& data,
+            const t_p_StatefulWriter& writer,
+            bool remove_same_instance,
+            CacheChange_t** created_change);
 
 private:
 

@@ -540,12 +540,30 @@ bool EDPSimple::processLocalWriterProxyData(
     }
 #endif
 
-    if (writer->first != nullptr)
+    CacheChange_t* change = nullptr;
+    bool ret_val = serialize_writer_proxy_data(*wdata, *writer, true, &change);
+    if (change != nullptr)
     {
-        CacheChange_t* change = writer->first->new_change([this]() -> uint32_t {
-                        return mp_PDP->builtin_attributes().writerPayloadSize;
-                    },
-                        ALIVE, wdata->key());
+        writer->second->add_change(change);
+    }
+    return ret_val;
+}
+
+bool EDPSimple::serialize_writer_proxy_data(
+        const WriterProxyData& data,
+        const t_p_StatefulWriter& writer,
+        bool remove_same_instance,
+        CacheChange_t** created_change)
+{
+    assert(created_change != nullptr);
+    *created_change = nullptr;
+
+    if (writer.first != nullptr)
+    {
+        CacheChange_t* change = writer.first->new_change([]() -> uint32_t {
+            return mp_PDP->builtin_attributes().writerPayloadSize;
+            },
+            ALIVE, data.key());
         if (change != nullptr)
         {
             CDRMessage_t aux_msg(change->serializedPayload);
@@ -555,26 +573,25 @@ bool EDPSimple::processLocalWriterProxyData(
             aux_msg.msg_endian = BIGEND;
 #else
             change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
-            aux_msg.msg_endian =  LITTLEEND;
+            aux_msg.msg_endian = LITTLEEND;
 #endif
 
-            wdata->writeToCDRMessage(&aux_msg, true);
+            data.writeToCDRMessage(&aux_msg, true);
             change->serializedPayload.length = (uint16_t)aux_msg.length;
 
+            if(remove_same_instance)
             {
-                std::unique_lock<RecursiveTimedMutex> lock(*writer->second->getMutex());
-                for (auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
+                std::unique_lock<RecursiveTimedMutex> lock(*writer.second->getMutex());
+                for (auto ch = writer.second->changesBegin(); ch != writer.second->changesEnd(); ++ch)
                 {
                     if ((*ch)->instanceHandle == change->instanceHandle)
                     {
-                        writer->second->remove_change(*ch);
+                        writer.second->remove_change(*ch);
                         break;
                     }
                 }
             }
-
-            writer->second->add_change(change);
-
+            *created_change = change;
             return true;
         }
         return false;

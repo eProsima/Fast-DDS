@@ -382,7 +382,7 @@ public:
     //!Write as a parameter list on a CDRMessage_t
     bool writeToCDRMessage(
             CDRMessage_t* msg,
-            bool write_encapsulation);
+            bool write_encapsulation) const;
 
     //!Read a parameter list from a CDRMessage_t.
     RTPS_DllAPI bool readFromCDRMessage(

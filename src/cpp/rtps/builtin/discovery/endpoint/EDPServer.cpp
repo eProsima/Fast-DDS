@@ -365,48 +365,24 @@ bool EDPServer::processLocalWriterProxyData(
     (void)local_writer;
 
     auto* writer = &publications_writer_;
+    CacheChange_t* change = nullptr;
 
-    if (writer->first != nullptr)
+    // unlike on EDPSimple we wouldn't remove endpoint outdate info till all
+    // client-servers acknowledge reception
+    bool ret_val = serialize_writer_proxy_data(*wdata, *writer, false, &change);
+    if (change != nullptr)
     {
-        CacheChange_t* change = writer->first->new_change([this]() -> uint32_t
-                    {
-                        return mp_PDP->builtin_attributes().writerPayloadSize;
-                    },
-                        ALIVE, wdata->key());
-        if (change != nullptr)
-        {
-            //wdata->toParameterList();
+        // We must key-signed the CacheChange_t to avoid duplications:
+        WriteParams wp;
+        SampleIdentity local;
+        local.writer_guid(writer->first->getGuid());
+        local.sequence_number(writer->second->next_sequence_number());
+        wp.sample_identity(local);
+        wp.related_sample_identity(local);
 
-            CDRMessage_t aux_msg(change->serializedPayload);
-
-#if __BIG_ENDIAN__
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
-            aux_msg.msg_endian = BIGEND;
-#else
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
-            aux_msg.msg_endian = LITTLEEND;
-#endif
-
-            wdata->writeToCDRMessage(&aux_msg, true);
-            change->serializedPayload.length = (uint16_t)aux_msg.length;
-
-            // unlike on EDPSimple we wouldn't remove endpoint outdate info till all
-            // client-servers acknowledge reception
-            // We must key-signed the CacheChange_t to avoid duplications:
-            WriteParams wp;
-            SampleIdentity local;
-            local.writer_guid(writer->first->getGuid());
-            local.sequence_number(writer->second->next_sequence_number());
-            wp.sample_identity(local);
-            wp.related_sample_identity(local);
-
-            writer->second->add_change(change, wp);
-
-            return true;
-        }
-        return false;
+        writer->second->add_change(change, wp);
     }
-    return true;
+    return ret_val;
 }
 
 bool EDPServer::processLocalReaderProxyData(
