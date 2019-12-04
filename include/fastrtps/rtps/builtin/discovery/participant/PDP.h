@@ -346,17 +346,19 @@ protected:
     //!Registered RTPSParticipants (including the local one, that is the first one.)
     ResourceLimitedVector<std::shared_ptr<ParticipantProxyData>> participant_proxies_;
     //!Pool of participant proxy data objects ready for reuse
-    static ResourceLimitedVector<ParticipantProxyData*> participant_proxies_pool_;
+    static std::vector<ParticipantProxyData*> participant_proxies_pool_;
     //!Alived participant proxies reference
     static std::map<GuidPrefix_t,std::weak_ptr<ParticipantProxyData>> pool_participant_references_;
     //!Number of reader proxy data objects created
     static size_t reader_proxies_number_;
     //!Pool of reader proxy data objects ready for reuse
-    static ResourceLimitedVector<ReaderProxyData*> reader_proxies_pool_;
+    static std::vector<ReaderProxyData*> reader_proxies_pool_;
     //!Number of writer proxy data objects created
     static size_t writer_proxies_number_;
     //!Pool of writer proxy data objects ready for reuse
-    static ResourceLimitedVector<WriterProxyData*> writer_proxies_pool_;
+    static std::vector<WriterProxyData*> writer_proxies_pool_;
+    //!Counter of the currently alive PDP instances
+    static size_t pdp_counter_;
     //!Mutex protection for static variables they may be access from any PDP
     static std::recursive_mutex pool_mutex_; 
 
@@ -387,8 +389,11 @@ protected:
 
 private:
 
-    //!Allocation requirements for each participant to the database
-    void initialize_or_update_db_allocation(const RTPSParticipantAllocationAttributes& allocation);
+    //!Allocation requirements for each participant to the pools
+    static void initialize_or_update_pool_allocation(const RTPSParticipantAllocationAttributes& allocation);
+
+    //!Deallocation of common pool resources
+    static void remove_pool_resources();
 
     //!TimedEvent to periodically resend the local RTPSParticipant information.
     TimedEvent* resend_participant_info_event_;

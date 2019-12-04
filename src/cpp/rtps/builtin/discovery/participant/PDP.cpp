@@ -81,9 +81,10 @@ PDP::PDP (
     , temp_reader_data_(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
     , temp_writer_data_(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
     , mp_mutex(new std::recursive_mutex())
+    , participant_proxies_(allocation.participants)
     , resend_participant_info_event_(nullptr)
 {
-    initialize_or_update_db_allocation(allocation);
+    initialize_or_update_pool_allocation(allocation);
 }
 
 PDP::~PDP()
@@ -96,34 +97,12 @@ PDP::~PDP()
     delete mp_PDPWriterHistory;
     delete mp_PDPReaderHistory;
     delete mp_listener;
-    delete mp_mutex;
 
-    remove_db_resources();
-}
-
-void remove_db_resources()
-{
-    for(ParticipantProxyData* it : participant_proxies_)
-    {
-        delete it;
-    }
-
-    for (ParticipantProxyData* it : participant_proxies_pool_)
-    {
-        delete it;
-    }
-
-    for (ReaderProxyData* it : reader_proxies_pool_)
-    {
-        delete it;
-    }
-
-    for (WriterProxyData* it : writer_proxies_pool_)
-    {
-        delete it;
-    }
+    participant_proxies_.clear();
 
     delete mp_mutex;
+
+    remove_pool_resources();
 }
 
 ParticipantProxyData* PDP::add_participant_proxy_data(
@@ -1017,27 +996,34 @@ void PDP::set_initial_announcement_interval()
     set_next_announcement_interval();
 }
 
-void initialize_or_update_db_allocation(const RTPSParticipantAllocationAttributes& allocation)
-{
-    std::lock_guard<std::recursive_mutex> lock(pdp_db_mutex_);        
+// TODO: Iker. Participant allocation attributes SHOULD be moved to the library attributes in the future if we
+// share the discovery data.
 
-    participant_proxies_.reserve(allocation.participants);
-    participant_proxies_pool_.reserve(allocation.participants);
+/*static*/
+void PDP::initialize_or_update_pool_allocation(const RTPSParticipantAllocationAttributes& allocation)
+{
+    std::lock_guard<std::recursive_mutex> lock(pool_mutex_);
+
+    ++pdp_counter_;
+
+    participant_proxies_pool_.reserve(allocation.participants.initial);
 
     if( participant_proxies_number_ < allocation.participants.initial )
     {
-        for (size_t i = participants_proxies_number_ ; i < allocation.participants.initial; ++i)
+        for (size_t i = participant_proxies_number_ ; i < allocation.participants.initial; ++i)
         {
             participant_proxies_pool_.push_back(new ParticipantProxyData(allocation));
         }
 
-        participants_proxies_number_ = allocation.participants.initial;
+        participant_proxies_number_ = allocation.participants.initial;
     }
 
+    // If max_unicast or max_multicast locators changes from participant config to participant config
+    // then Reader and Writer proxies will end up with different allocated storage. See Iker's TODO above.
     size_t max_unicast_locators = allocation.locators.max_unicast_locators;
     size_t max_multicast_locators = allocation.locators.max_multicast_locators;
 
-    reader_proxies_pool_.reserve(allocation.total_readers());
+    reader_proxies_pool_.reserve(allocation.total_readers().initial);
 
     if( reader_proxies_number_ < allocation.total_readers().initial )
     {
@@ -1049,7 +1035,7 @@ void initialize_or_update_db_allocation(const RTPSParticipantAllocationAttribute
         reader_proxies_number_ = allocation.total_readers().initial; 
     }
 
-    writer_proxies_pool_.reserve(allocation.total_writers());
+    writer_proxies_pool_.reserve(allocation.total_writers().initial);
 
     if( writer_proxies_number_ < allocation.total_writers().initial )
     {
@@ -1062,6 +1048,29 @@ void initialize_or_update_db_allocation(const RTPSParticipantAllocationAttribute
     }
 }
 
+/*static*/
+void PDP::remove_pool_resources()
+{
+    std::lock_guard<std::recursive_mutex> lock(pool_mutex_);
+
+    if(!--pdp_counter_)
+    {
+        for(ParticipantProxyData* it : participant_proxies_pool_)
+        {
+            delete it;
+        }
+
+        for(ReaderProxyData* it : reader_proxies_pool_)
+        {
+            delete it;
+        }
+
+        for(WriterProxyData* it : writer_proxies_pool_)
+        {
+            delete it;
+        }
+    }
+}
 
 } /* namespace rtps */
 } /* namespace fastrtps */
