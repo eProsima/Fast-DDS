@@ -187,15 +187,16 @@ protected:
     virtual bool createSEDPEndpoints();
 
     /**
-     * Create a cache change on a builtin writer and serialize a WriterProxyData on it.
-     * @param [in] data The WriterProxyData object to be serialized.
+     * Create a cache change on a builtin writer and serialize a ProxyData on it.
+     * @param [in] data The ProxyData object to be serialized.
      * @param [in] writer The writer,history pair where the change should be added.
      * @param [in] remove_same_instance Should previous changes with same key be removed?
      * @param [out] created_change Where the pointer to the created change should be returned.
      * @return false if data could not be serialized into the created change.
      */
-    bool serialize_writer_proxy_data(
-            const WriterProxyData& data,
+    template<typename ProxyData>
+    bool serialize_proxy_data(
+            const ProxyData& data,
             const t_p_StatefulWriter& writer,
             bool remove_same_instance,
             CacheChange_t** created_change);

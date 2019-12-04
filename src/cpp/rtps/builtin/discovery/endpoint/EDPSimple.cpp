@@ -541,7 +541,7 @@ bool EDPSimple::processLocalWriterProxyData(
 #endif
 
     CacheChange_t* change = nullptr;
-    bool ret_val = serialize_writer_proxy_data(*wdata, *writer, true, &change);
+    bool ret_val = serialize_proxy_data(*wdata, *writer, true, &change);
     if (change != nullptr)
     {
         writer->second->add_change(change);
@@ -549,8 +549,9 @@ bool EDPSimple::processLocalWriterProxyData(
     return ret_val;
 }
 
-bool EDPSimple::serialize_writer_proxy_data(
-        const WriterProxyData& data,
+template<typename ProxyData>
+bool EDPSimple::serialize_proxy_data(
+        const ProxyData& data,
         const t_p_StatefulWriter& writer,
         bool remove_same_instance,
         CacheChange_t** created_change)
@@ -560,10 +561,14 @@ bool EDPSimple::serialize_writer_proxy_data(
 
     if (writer.first != nullptr)
     {
-        CacheChange_t* change = writer.first->new_change([]() -> uint32_t {
-            return mp_PDP->builtin_attributes().writerPayloadSize;
-            },
-            ALIVE, data.key());
+        uint32_t max_size = writer.second->m_att.payloadMaxSize;
+        CacheChange_t* change =
+            writer.first->new_change(
+                [max_size]() -> uint32_t
+                {
+                    return max_size;
+                },
+                ALIVE, data.key());
         if (change != nullptr)
         {
             CDRMessage_t aux_msg(change->serializedPayload);
