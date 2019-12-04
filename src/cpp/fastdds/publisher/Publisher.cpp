@@ -165,7 +165,7 @@ ReturnCode_t Publisher::wait_for_acknowledgments(
     return impl_->wait_for_acknowledgments(max_wait);
 }
 
-const DomainParticipant* Publisher::get_participant() const
+const DomainParticipant& Publisher::get_participant() const
 {
     return impl_->get_participant();
 }

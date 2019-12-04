@@ -75,7 +75,7 @@ DataReaderImpl::DataReaderImpl(
     , lifespan_duration_us_(topic_.get_qos().lifespan.duration.to_ns() * 1e-3)
     , user_datareader_(nullptr)
 {
-    deadline_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
+    deadline_timer_ = new TimedEvent(subscriber_->get_participant().get_resource_event(),
                     [&](TimedEvent::EventCode code) -> bool
                 {
                     if (TimedEvent::EVENT_SUCCESS == code)
@@ -87,7 +87,7 @@ DataReaderImpl::DataReaderImpl(
                 },
                     qos_.deadline.period.to_ns() * 1e-6);
 
-    lifespan_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
+    lifespan_timer_ = new TimedEvent(subscriber_->get_participant().get_resource_event(),
                     [&](TimedEvent::EventCode code) -> bool
                 {
                     if (TimedEvent::EVENT_SUCCESS == code)
@@ -399,11 +399,14 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
         {
             data_reader_->listener_->on_data_available(data_reader_->user_datareader_);
         }
-
-        if (data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
-                data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::data_available())
+        else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
+                (data_reader_->subscriber_->get_participant().get_mask() ==
+                ::dds::core::status::StatusMask::all() ||
+                data_reader_->subscriber_->get_participant().get_mask() ==
+                ::dds::core::status::StatusMask::data_available()))
         {
-            data_reader_->subscriber_->subscriber_listener_.on_data_available(data_reader_->user_datareader_);
+            data_reader_->subscriber_->get_participant().get_listener()->
+            on_data_available(data_reader_->user_datareader_);
         }
     }
 }
@@ -420,10 +423,14 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         data_reader_->listener_->on_subscription_matched(data_reader_->user_datareader_, info);
     }
 
-    if (data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
-            data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::subscription_matched())
+    else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
+            (data_reader_->subscriber_->get_participant().get_mask() ==
+            ::dds::core::status::StatusMask::all() ||
+            data_reader_->subscriber_->get_participant().get_mask() ==
+            ::dds::core::status::StatusMask::subscription_matched()))
     {
-        data_reader_->subscriber_->subscriber_listener_.on_subscription_matched(data_reader_->user_datareader_, info);
+        data_reader_->subscriber_->get_participant().get_listener()->
+        on_subscription_matched(data_reader_->user_datareader_, info);
     }
 }
 
@@ -437,10 +444,14 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
         data_reader_->listener_->on_liveliness_changed(data_reader_->user_datareader_, status);
     }
 
-    if (data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
-            data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::liveliness_changed())
+    else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
+            (data_reader_->subscriber_->get_participant().get_mask() ==
+            ::dds::core::status::StatusMask::all() ||
+            data_reader_->subscriber_->get_participant().get_mask() ==
+            ::dds::core::status::StatusMask::liveliness_changed()))
     {
-        data_reader_->subscriber_->subscriber_listener_.on_liveliness_changed(data_reader_->user_datareader_, status);
+        data_reader_->subscriber_->get_participant().get_listener()->
+        on_liveliness_changed(data_reader_->user_datareader_, status);
     }
 
 }
@@ -455,10 +466,14 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
         data_reader_->listener_->on_requested_incompatible_qos(data_reader_->user_datareader_, status);
     }
 
-    if (data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
-            data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::requested_incompatible_qos())
+    else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
+            (data_reader_->subscriber_->get_participant().get_mask() ==
+            ::dds::core::status::StatusMask::all() ||
+            data_reader_->subscriber_->get_participant().get_mask() ==
+            ::dds::core::status::StatusMask::requested_incompatible_qos()))
     {
-        data_reader_->subscriber_->subscriber_listener_.on_requested_incompatible_qos(data_reader_->user_datareader_,
+        data_reader_->subscriber_->get_participant().get_listener()->
+        on_requested_incompatible_qos(data_reader_->user_datareader_,
                 status);
     }
 }
@@ -473,10 +488,14 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
         data_reader_->listener_->on_sample_rejected(data_reader_->user_datareader_, status);
     }
 
-    if (data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
-            data_reader_->subscriber_->mask_ == ::dds::core::status::StatusMask::sample_rejected())
+    else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
+            (data_reader_->subscriber_->get_participant().get_mask() ==
+            ::dds::core::status::StatusMask::all() ||
+            data_reader_->subscriber_->get_participant().get_mask() ==
+            ::dds::core::status::StatusMask::sample_rejected()))
     {
-        data_reader_->subscriber_->subscriber_listener_.on_sample_rejected(data_reader_->user_datareader_,
+        data_reader_->subscriber_->get_participant().get_listener()->
+        on_sample_rejected(data_reader_->user_datareader_,
                 status);
     }
 }
@@ -581,10 +600,12 @@ bool DataReaderImpl::deadline_missed()
         listener_->on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
     }
 
-    if (subscriber_->mask_ == ::dds::core::status::StatusMask::all() ||
-            subscriber_->mask_ == ::dds::core::status::StatusMask::requested_deadline_missed())
+    else if (subscriber_->get_participant().get_listener() != nullptr &&
+            (subscriber_->get_participant().get_mask() == ::dds::core::status::StatusMask::all() ||
+            subscriber_->get_participant().get_mask() == ::dds::core::status::StatusMask::requested_deadline_missed()))
     {
-        subscriber_->subscriber_listener_.on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
+        subscriber_->get_participant().get_listener()->
+        on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
     }
 
     deadline_missed_status_.total_count_change = 0;

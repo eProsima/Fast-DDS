@@ -151,7 +151,7 @@ DomainParticipantImpl::~DomainParticipantImpl()
 ReturnCode_t DomainParticipantImpl::delete_publisher(
         Publisher* pub)
 {
-    if (participant_ != pub->get_participant())
+    if (participant_ != &pub->get_participant())
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
@@ -177,7 +177,7 @@ ReturnCode_t DomainParticipantImpl::delete_publisher(
 ReturnCode_t DomainParticipantImpl::delete_subscriber(
         Subscriber* sub)
 {
-    if (participant_ != sub->get_participant())
+    if (participant_ != &sub->get_participant())
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
@@ -1278,4 +1278,9 @@ std::string DomainParticipantImpl::get_inner_type_name(
     str.erase(std::remove(str.begin(), str.end(), '.'), str.end());
     std::replace(str.begin(), str.end(), '|','_');
     return str;
+}
+
+const ::dds::core::status::StatusMask& DomainParticipantImpl::get_mask() const
+{
+    return mask_;
 }

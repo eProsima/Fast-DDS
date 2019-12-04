@@ -135,7 +135,7 @@ public:
     ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
-    const DomainParticipant* get_participant() const;
+    const DomainParticipant& get_participant() const;
 
     /* TODO
        bool delete_contained_entities();
@@ -188,33 +188,6 @@ private:
     PublisherListener* listener_;
 
     ::dds::core::status::StatusMask mask_;
-
-    //!Listener to capture the events of the Writer
-    class PublisherWriterListener : public DataWriterListener
-    {
-public:
-
-        PublisherWriterListener(
-                PublisherImpl* p)
-            : publisher_(p)
-        {}
-
-        virtual ~PublisherWriterListener() override {}
-
-        void on_publication_matched(
-                DataWriter* writer,
-                const PublicationMatchedStatus& info) override;
-
-        void on_offered_deadline_missed(
-                DataWriter* writer,
-                const fastrtps::OfferedDeadlineMissedStatus& status) override;
-
-        void on_liveliness_lost(
-                DataWriter* writer,
-                const LivelinessLostStatus& status) override;
-
-        PublisherImpl* publisher_;
-    } publisher_listener_;
 
     Publisher* user_publisher_;
 

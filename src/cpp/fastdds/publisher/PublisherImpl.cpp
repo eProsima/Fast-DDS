@@ -49,7 +49,6 @@ PublisherImpl::PublisherImpl(
     , att_(att)
     , listener_(listen)
     , mask_(mask)
-    , publisher_listener_(this)
     , user_publisher_(nullptr)
     , rtps_participant_(p->rtps_participant())
 {
@@ -125,39 +124,6 @@ ReturnCode_t PublisherImpl::set_listener(
     listener_ = listener;
     mask_ = mask;
     return ReturnCode_t::RETCODE_OK;
-}
-
-void PublisherImpl::PublisherWriterListener::on_publication_matched(
-        DataWriter* /*writer*/,
-        const PublicationMatchedStatus& info)
-{
-    if (publisher_->listener_ != nullptr && (publisher_->mask_ == ::dds::core::status::StatusMask::all() ||
-            publisher_->mask_ == ::dds::core::status::StatusMask::publication_matched()))
-    {
-        publisher_->listener_->on_publication_matched(publisher_->user_publisher_, info);
-    }
-}
-
-void PublisherImpl::PublisherWriterListener::on_liveliness_lost(
-        DataWriter* /*writer*/,
-        const LivelinessLostStatus& status)
-{
-    if (publisher_->listener_ != nullptr && (publisher_->mask_ == ::dds::core::status::StatusMask::all() ||
-            publisher_->mask_ == ::dds::core::status::StatusMask::liveliness_lost()))
-    {
-        publisher_->listener_->on_liveliness_lost(publisher_->user_publisher_, status);
-    }
-}
-
-void PublisherImpl::PublisherWriterListener::on_offered_deadline_missed(
-        DataWriter* /*writer*/,
-        const fastrtps::OfferedDeadlineMissedStatus& status)
-{
-    if (publisher_->listener_ != nullptr && (publisher_->mask_ == ::dds::core::status::StatusMask::all() ||
-            publisher_->mask_ == ::dds::core::status::StatusMask::offered_deadline_missed()))
-    {
-        publisher_->listener_->on_offered_deadline_missed(publisher_->user_publisher_, status);
-    }
 }
 
 DataWriter* PublisherImpl::create_datawriter(
@@ -438,9 +404,9 @@ ReturnCode_t PublisherImpl::wait_for_acknowledgments(
     return ReturnCode_t::RETCODE_OK;
 }
 
-const DomainParticipant* PublisherImpl::get_participant() const
+const DomainParticipant& PublisherImpl::get_participant() const
 {
-    return participant_->get_participant();
+    return *participant_->get_participant();
 }
 
 const Publisher* PublisherImpl::get_publisher() const

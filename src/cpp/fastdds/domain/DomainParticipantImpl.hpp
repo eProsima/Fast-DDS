@@ -327,6 +327,8 @@ public:
         return topic_qos_;
     }
 
+    const ::dds::core::status::StatusMask& get_mask() const;
+
 private:
 
     //!Participant Attributes

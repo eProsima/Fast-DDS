@@ -32,6 +32,7 @@
 
 #include <dds/core/status/Status.hpp>
 #include <dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 
 #include <dds/core/status/State.hpp>
 
@@ -65,7 +66,6 @@ namespace fastdds {
 namespace dds {
 
 class DomainParticipantImpl;
-class DomainParticipantListener;
 class Publisher;
 class PublisherQos;
 class PublisherListener;
@@ -98,13 +98,7 @@ public:
      * Allows accessing the DomainParticipantListener.
      * @return DomainParticipantListener
      */
-    const DomainParticipantListener* get_listener() const;
-
-    /**
-     * Allows accessing the DomainParticipantListener.
-     * @return DomainParticipantListener
-     */
-    DomainParticipantListener* get_listener();
+    DomainParticipantListener* get_listener() const;
 
     /**
      * Create a Publisher in this Participant.
@@ -453,6 +447,8 @@ public:
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
 
     virtual ~DomainParticipant();
+
+    const ::dds::core::status::StatusMask& get_mask() const;
 
 private:
 
