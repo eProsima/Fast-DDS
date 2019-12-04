@@ -348,7 +348,7 @@ protected:
     //!Pool of participant proxy data objects ready for reuse
     static ResourceLimitedVector<ParticipantProxyData*> participant_proxies_pool_;
     //!Alived participant proxies reference
-    static std::map<guidPrefix,std::weak_ptr<ParticipantProxyData>> db_participant_references_;
+    static std::map<GuidPrefix_t,std::weak_ptr<ParticipantProxyData>> pool_participant_references_;
     //!Number of reader proxy data objects created
     static size_t reader_proxies_number_;
     //!Pool of reader proxy data objects ready for reuse
@@ -357,8 +357,8 @@ protected:
     static size_t writer_proxies_number_;
     //!Pool of writer proxy data objects ready for reuse
     static ResourceLimitedVector<WriterProxyData*> writer_proxies_pool_;
-    //!Mutex protection for static variables TODO: replace by a RWLock
-    static std::recursive_mutex db_mutex_; 
+    //!Mutex protection for static variables they may be access from any PDP
+    static std::recursive_mutex pool_mutex_; 
 
     /**
      * Adds an entry to the collection of participant proxy information.

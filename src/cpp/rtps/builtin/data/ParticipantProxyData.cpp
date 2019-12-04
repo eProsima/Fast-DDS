@@ -18,6 +18,7 @@
  */
 
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastrtps/rtps/builtin/discovery/participant/PDP.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/discovery/participant/PDPSimple.h>
@@ -55,6 +56,33 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
     , m_readers(allocation.readers)
     , m_writers(allocation.writers)
     {
+        /**
+         * ParticipantProxyData objects are now shared among several participants PDP and
+         * are managed from a static pool in PDP thus liveliness is not each participant responsability.
+         * Each participant PDP should use shared pointers to enable the framework to track when
+         * a proxy can be returned to the pool. When no proxy is referenced in any PDP it returns to the pool.
+         * To link each participant proxy with the right deleter and prevent allocations on steady state
+         * we create the reference block in construction.
+         * Never use a temporary ParticipantProxyData through a shared_ptr got from share_from_this() method
+        */
+        std::shared_ptr<ParticipantProxyData> create_reference_block_with_suitable_deleter(this,
+            [](ParticipantProxyData* p) 
+            {
+                p->clear(); 
+
+                std::lock_guard<std::recursive_mutex> lock(PDP::pool_mutex_);
+
+                if( p->m_guid == c_Guid_Unknown || !PDP::pool_participant_references_.empty())
+                {
+                    // if its a pool managed object should be included into the map
+                    assert( PDP::pool_participant_references_.find(p->m_guid.guidPrefix)
+                        != PDP::pool_participant_references_.end());
+
+                    PDP::pool_participant_references_.erase(p->m_guid.guidPrefix);
+                    PDP::participant_proxies_pool_.push_back(p);
+                }
+
+            });
     }
 
 ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
@@ -109,7 +137,7 @@ ParticipantProxyData::~ParticipantProxyData()
 
 bool ParticipantProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulation)
 {
-    std::lock_guard<recursive_mutex> lock(ppd_mutex_);
+    std::lock_guard<std::recursive_mutex> lock(ppd_mutex_);
 
     if (write_encapsulation)
     {
@@ -218,7 +246,7 @@ bool ParticipantProxyData::readFromCDRMessage(
         bool use_encapsulation,
         const NetworkFactory& network)
 {
-    std::lock_guard<recursive_mutex> lock(ppd_mutex_);
+    std::lock_guard<std::recursive_mutex> lock(ppd_mutex_);
 
     auto param_process = [this, &network](const Parameter_t* param)
     {
@@ -398,7 +426,9 @@ bool ParticipantProxyData::readFromCDRMessage(
 
 void ParticipantProxyData::clear()
 {
-    std::lock_guard<recursive_mutex> lock(ppd_mutex_);
+    logInfo(RTPS_PARTICIPANT, m_guid );
+
+    std::lock_guard<std::recursive_mutex> lock(ppd_mutex_);
 
     m_protocolVersion = ProtocolVersion_t();
     m_guid = GUID_t();
@@ -428,7 +458,7 @@ void ParticipantProxyData::clear()
 
 void ParticipantProxyData::copy(const ParticipantProxyData& pdata)
 {
-    std::lock_guard<recursive_mutex> lock(ppd_mutex_);
+    std::lock_guard<std::recursive_mutex> lock(ppd_mutex_);
 
     m_protocolVersion = pdata.m_protocolVersion;
     m_guid = pdata.m_guid;
@@ -444,6 +474,7 @@ void ParticipantProxyData::copy(const ParticipantProxyData& pdata)
     isAlive = pdata.isAlive;
     m_properties = pdata.m_properties;
     m_userData = pdata.m_userData;
+    version_ = pdata.version_;
 
     // This method is only called when a new participant is discovered.The destination of the copy
     // will always be a new ParticipantProxyData or one from the pool, so there is no need for
@@ -459,7 +490,7 @@ void ParticipantProxyData::copy(const ParticipantProxyData& pdata)
 
 bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
 {
-    std::lock_guard<recursive_mutex> lock(ppd_mutex_);
+    std::lock_guard<std::recursive_mutex> lock(ppd_mutex_);
 
     metatraffic_locators = pdata.metatraffic_locators;
     default_locators = pdata.default_locators;
@@ -493,7 +524,7 @@ bool ParticipantProxyData::updateData(ParticipantProxyData& pdata)
 
 void ParticipantProxyData::set_persistence_guid(const GUID_t& guid)
 {
-    std::lock_guard<recursive_mutex> lock(ppd_mutex_);
+    std::lock_guard<std::recursive_mutex> lock(ppd_mutex_);
 
     // only valid values
     if (guid == c_Guid_Unknown)
@@ -534,7 +565,7 @@ void ParticipantProxyData::set_persistence_guid(const GUID_t& guid)
 
 GUID_t ParticipantProxyData::get_persistence_guid() const
 {
-    std::lock_guard<recursive_mutex> lock(ppd_mutex_);
+    std::lock_guard<std::recursive_mutex> lock(ppd_mutex_);
 
     GUID_t persistent(c_Guid_Unknown);
 

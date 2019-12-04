@@ -175,6 +175,9 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
 
 void PDP::initializeParticipantProxyData(ParticipantProxyData* participant_data)
 {
+    // Signal out is the first announcement to avoid deserialization from all other intra process participants
+    participant_data->version_ = SequenceNumber_t(0, 1);
+
     participant_data->m_leaseDuration = mp_RTPSParticipant->getAttributes().builtin.discovery_config.leaseDuration;
     //set_VendorId_eProsima(participant_data->m_VendorId);
     participant_data->m_VendorId = c_VendorId_eProsima;
