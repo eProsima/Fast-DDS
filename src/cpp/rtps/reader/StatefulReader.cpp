@@ -969,7 +969,7 @@ void StatefulReader::send_acknack(
                         FragmentNumberSet_t frag_sns;
                         uncomplete_change->get_missing_fragments(frag_sns);
                         ++nackfrag_count_;
-                        logInfo(RTPS_READER, "Sending NACKFRAG for sample" << cit->sequenceNumber << ": " << frag_sns;);
+                        logInfo(RTPS_READER, "Sending NACKFRAG for sample" << seq << ": " << frag_sns;);
 
                         group.add_nackfrag(seq, frag_sns, nackfrag_count_);
                     }
