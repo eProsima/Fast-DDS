@@ -31,15 +31,9 @@ class TimedEvent
 {
     public:
 
-        enum EventCode
-        {
-            EVENT_SUCCESS,
-            EVENT_ABORT
-        };
-
         TimedEvent(
                 ResourceEvent&,
-                std::function<bool(EventCode)>,
+                std::function<bool()>,
                 double)
         {
         }

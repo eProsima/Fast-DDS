@@ -133,6 +133,22 @@ class TimedConditionVariable
             return ret_value;
         }
 
+        template<typename Mutex>
+        bool wait_until(
+                std::unique_lock<Mutex>& lock,
+                const std::chrono::steady_clock::time_point& max_blocking_time)
+        {
+            std::chrono::nanoseconds nsecs = max_blocking_time - std::chrono::steady_clock::now();
+            struct timespec max_wait = { 0, 0 };
+            clock_gettime(CLOCK_REALTIME, &max_wait);
+            nsecs = nsecs + std::chrono::nanoseconds(max_wait.tv_nsec);
+            auto secs = std::chrono::duration_cast<std::chrono::seconds>(nsecs);
+            nsecs -= secs;
+            max_wait.tv_sec += secs.count();
+            max_wait.tv_nsec = (long)nsecs.count();
+            return (CV_TIMEDWAIT_(cv_, lock.mutex()->native_handle(), &max_wait) == 0);
+        }
+
         void notify_one()
         {
             CV_SIGNAL_(cv_);
