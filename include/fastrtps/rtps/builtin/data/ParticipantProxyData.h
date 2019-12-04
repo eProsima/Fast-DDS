@@ -192,7 +192,7 @@ class ParticipantProxyData : public std::enable_shared_from_this<ParticipantProx
          * Now multiple PDP objects can access simultaneously this structure
          * this mutex will protect this members and the (Reader|Writer)ProxyData
         */ 
-        std::recursive_mutex ppd_mutex_;
+        mutable std::recursive_mutex ppd_mutex_;
 
         /**
          * ParticipantProxyData is a shared object among all PDPs, we want to

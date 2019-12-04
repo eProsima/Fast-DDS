@@ -184,7 +184,7 @@ std::shared_ptr<ParticipantProxyData> PDPSimple::createParticipantProxyData(
     pdata->ppd_mutex_.lock();
 
     // It may be the same
-    if(pdata != participant_data.shared_from_this() )
+    if( pdata )
     {
         pdata->copy(participant_data);
         pdata->isAlive = true;

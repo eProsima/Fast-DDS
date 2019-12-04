@@ -378,6 +378,9 @@ protected:
             const GUID_t& participant_guid,
             bool with_lease_duration);
 
+    //! Just add the ParticipantProxyData from the pool to the local collection
+    void  add_participant_proxy_data(std::shared_ptr<ParticipantProxyData> & ppd);
+
     /**
      * Gets the key of a participant proxy data.
      *
@@ -409,7 +412,8 @@ private:
     //!Participant's initial announcements config
     InitialAnnouncementConfig initial_announcements_;
 
-    static void check_remote_participant_liveliness(
+    // TODO: modify the event functor to harbour interested participants
+    void check_remote_participant_liveliness(
             ParticipantProxyData* remote_participant);
 
     void check_and_notify_type_discovery(
