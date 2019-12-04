@@ -137,7 +137,7 @@ WriterProxyData& WriterProxyData::operator =(
 
 bool WriterProxyData::writeToCDRMessage(
         CDRMessage_t* msg,
-        bool write_encapsulation)
+        bool write_encapsulation) const
 {
     if (write_encapsulation)
     {
