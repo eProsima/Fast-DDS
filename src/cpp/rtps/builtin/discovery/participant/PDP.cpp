@@ -123,45 +123,58 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
         const GUID_t& participant_guid,
         bool with_lease_duration)
 {
-    ParticipantProxyData* ret_val = nullptr;
+    std::lock_guard<std::recursive_mutex> guardDb(PDP::pool_mutex_);
+    std::shared_ptr<ParticipantProxyData>& ret_val;
 
-    // Try to take one entry from the pool
-    if (participant_proxies_pool_.empty())
+    //See whether it is already in use
+    std::weak_ptr<ParticipantProxyData> participant_reference = pool_participant_references_.find(participant_guid.guidPrefix);
+    if (participant_reference !=  pool_participant_references_.end() && !participant_reference.expired())
     {
-        size_t max_proxies = participant_proxies_.max_size();
-        if (participant_proxies_number_ < max_proxies)
+        ret_val = shared_ptr<ParticipantProxyData>(participant_reference);
+    }
+    else
+    {
+        // Try to take one entry from the pool
+        if (participant_proxies_pool_.empty())
         {
-            // Pool is empty but limit has not been reached, so we create a new entry.
-            ++participant_proxies_number_;
-            ret_val = new ParticipantProxyData(mp_RTPSParticipant->getRTPSParticipantAttributes().allocation);
-            if (participant_guid != mp_RTPSParticipant->getGuid())
+            size_t max_proxies = participant_proxies_.max_size();
+            if (participant_proxies_number_ < max_proxies)
             {
-                ret_val->lease_duration_event = new TimedEvent(mp_RTPSParticipant->getEventResource(),
+                // Pool is empty but limit has not been reached, so we create a new entry.
+                ++participant_proxies_number_;
+                ParticipantProxyData* participant = new ParticipantProxyData(mp_RTPSParticipant->getRTPSParticipantAttributes().allocation);
+                ret_val = participant->shared_from_this();
+                if (participant_guid != mp_RTPSParticipant->getGuid())
+                {
+                    ret_val->lease_duration_event = new TimedEvent(mp_RTPSParticipant->getEventResource(),
                         [this, ret_val]() -> bool
-                        {
-                            check_remote_participant_liveliness(ret_val);
-                            return false;
-                        }, 0.0);
+                    {
+                        check_remote_participant_liveliness(ret_val.get());
+                        return false;
+                    }, 0.0);
+                }
+            }
+            else
+            {
+                logWarning(RTPS_PDP, "Maximum number of participant proxies (" << max_proxies << \
+                    ") reached for participant " << mp_RTPSParticipant->getGuid() << std::endl);
+                return nullptr;.
             }
         }
         else
         {
-            logWarning(RTPS_PDP, "Maximum number of participant proxies (" << max_proxies << \
-                ") reached for participant " << mp_RTPSParticipant->getGuid() << std::endl);
-            return nullptr;
+            // Pool is not empty, use entry from pool
+            ret_val = participant_proxies_pool_.back()->shared_from_this();
+            participant_proxies_pool_.pop_back();
         }
-    }
-    else
-    {
-        // Pool is not empty, use entry from pool
-        ret_val = participant_proxies_pool_.back();
-        participant_proxies_pool_.pop_back();
+
+        ret_val->should_check_lease_duration = with_lease_duration;
+        ret_val->m_guid = participant_guid;
     }
 
     // Add returned entry to the collection
-    ret_val->should_check_lease_duration = with_lease_duration;
-    ret_val->m_guid = participant_guid;
     participant_proxies_.push_back(ret_val);
+    pool_participant_references_[participant_guid.guidPrefix] = std::weak_ptr(ret_val);
 
     return ret_val;
 }
@@ -300,6 +313,7 @@ bool PDP::initPDP(
     initializeParticipantProxyData(pdata);
 
     // Create lease events on already created proxy data objects
+    PDP::pool_mutex_.lock();
     for (ParticipantProxyData* pool_item : participant_proxies_pool_)
     {
         pool_item->lease_duration_event = new TimedEvent(mp_RTPSParticipant->getEventResource(),
@@ -309,6 +323,7 @@ bool PDP::initPDP(
                     return false;
                 }, 0.0);
     }
+    PDP::pool_mutex_.unlock();
 
     resend_participant_info_event_ = new TimedEvent(mp_RTPSParticipant->getEventResource(),
             [&]() -> bool
@@ -805,7 +820,7 @@ bool PDP::remove_remote_participant(
     }
 
     logInfo(RTPS_PDP,partGUID );
-    ParticipantProxyData* pdata = nullptr;
+    std::shared_ptr<ParticipantProxyData> pdata = nullptr;
 
     //Remove it from our vector or RTPSParticipantProxies:
     this->mp_mutex->lock();
@@ -889,7 +904,7 @@ bool PDP::remove_remote_participant(
             listener->onParticipantDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
         }
 
-        this->mp_mutex->lock();
+        PDP::pool_mutex_.lock();
 
         // Return reader proxy objects to pool
         for (ReaderProxyData* rit : pdata->m_readers)
@@ -911,11 +926,7 @@ bool PDP::remove_remote_participant(
             pdata->lease_duration_event->cancel_timer();
         }
 
-        // Return proxy object to pool
-        pdata->clear();
-        participant_proxies_pool_.push_back(pdata);
-
-        this->mp_mutex->unlock();
+        PDP::pool_mutex_.unlock();
         return true;
     }
 
