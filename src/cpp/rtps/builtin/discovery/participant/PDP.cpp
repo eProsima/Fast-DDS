@@ -130,7 +130,6 @@ std::shared_ptr<ParticipantProxyData> PDP::add_participant_proxy_data(
         const GUID_t& participant_guid,
         bool with_lease_duration)
 {
-
     std::shared_ptr<ParticipantProxyData> ret_val;
 
     {

@@ -141,16 +141,17 @@ void PDPListener::onNewCacheChangeAdded(
             if(deserialize)
             {   // we must create a new proxy
                 pdata = parent_pdp_->createParticipantProxyData( temp_participant_data_, writer_guid);
+                // createParticipantProxyData returns with ParticipantProxyData mutex ownership
             }
             else
             {   // already around add to the locals
                 parent_pdp_->add_participant_proxy_data(pdata);
+                pdata->ppd_mutex_.lock();
             }
             // Release mutexes ownership
             reader->getMutex().unlock();
             lock.unlock();
 
-            // createParticipantProxyData returns with ParticipantProxyData mutex ownership
             parent_pdp_->announceParticipantState(false);
             parent_pdp_->assignRemoteEndpoints(pdata.get());
 
