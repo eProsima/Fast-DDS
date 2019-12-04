@@ -198,6 +198,11 @@ DataReader* SubscriberImpl::create_datareader(
         ratt.disable_positive_acks = true;
     }
 
+    if(listener == nullptr)
+    {
+        listener = listener_;
+    }
+
     DataReaderImpl* impl = new DataReaderImpl(
         this,
         type_support,
