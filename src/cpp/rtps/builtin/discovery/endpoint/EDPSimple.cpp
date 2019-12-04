@@ -477,51 +477,13 @@ bool EDPSimple::processLocalReaderProxyData(
         writer = &subscriptions_secure_writer_;
     }
 #endif
-
-    if (writer->first != nullptr)
+    CacheChange_t* change = nullptr;
+    bool ret_val = serialize_proxy_data(*rdata, *writer, true, &change);
+    if (change != nullptr)
     {
-        // TODO(Ricardo) Write a getCdrSerializedPayload for ReaderProxyData.
-        CacheChange_t* change = writer->first->new_change([this]() -> uint32_t {
-                        return mp_PDP->builtin_attributes().writerPayloadSize;
-                    },
-                        ALIVE, rdata->key());
-
-        if (change != nullptr)
-        {
-            CDRMessage_t aux_msg(change->serializedPayload);
-
-#if __BIG_ENDIAN__
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
-            aux_msg.msg_endian = BIGEND;
-#else
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
-            aux_msg.msg_endian =  LITTLEEND;
-#endif
-
-            rdata->writeToCDRMessage(&aux_msg, true);
-            change->serializedPayload.length = (uint16_t)aux_msg.length;
-
-            {
-                std::unique_lock<RecursiveTimedMutex> lock(*writer->second->getMutex());
-                for (auto ch = writer->second->changesBegin(); ch != writer->second->changesEnd(); ++ch)
-                {
-                    if ((*ch)->instanceHandle == change->instanceHandle)
-                    {
-                        writer->second->remove_change(*ch);
-                        break;
-                    }
-                }
-            }
-
-            writer->second->add_change(change);
-
-            return true;
-        }
-
-        return false;
+        writer->second->add_change(change);
     }
-
-    return true;
+    return ret_val;
 }
 
 bool EDPSimple::processLocalWriterProxyData(
@@ -561,6 +523,7 @@ bool EDPSimple::serialize_proxy_data(
 
     if (writer.first != nullptr)
     {
+        // TODO(Miguel C) Write a getCdrSerializedPayload for ProxyData objects.
         uint32_t max_size = writer.second->m_att.payloadMaxSize;
         CacheChange_t* change =
             writer.first->new_change(

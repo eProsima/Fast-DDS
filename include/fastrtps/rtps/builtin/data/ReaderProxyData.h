@@ -330,7 +330,7 @@ public:
      */
     bool writeToCDRMessage(
             CDRMessage_t* msg,
-            bool write_encapsulation);
+            bool write_encapsulation) const;
 
     /**
      *  Read the information from a CDRMessage_t. The position of hte message must be in the beggining on the parameter list.
