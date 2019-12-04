@@ -100,14 +100,16 @@ void PDPListener::onNewCacheChangeAdded(
         // Check if there is a pool ParticipantProxyData already associated with this change
         // 1- search in the local collection
         std::shared_ptr<ParticipantProxyData> pdata = parent_pdp_->get_from_local_proxies(guid.guidPrefix);
+        bool create = !pdata;
 
         // 2- If not found search in the pool (maybe other participant created it)
         if(!pdata)
         {
-            pdata = PDP::get_from_proxy_pool(guid.guidPrefix);
+            pdata = PDP::get_from_proxy_pool(guid.guidPrefix));
         }
 
         // 3 - Deserialize if needed
+        bool deserialize = false;
         if( !pdata || pdata->version_ < seq_num )
         { 
             // Access to temp_participant_data_ is protected by reader lock
@@ -122,6 +124,8 @@ void PDPListener::onNewCacheChangeAdded(
             }
             else
             {
+                deserialize = true;
+
                 // After correctly reading it
                 change->instanceHandle = temp_participant_data_.m_key;
                 guid = temp_participant_data_.m_guid;
@@ -132,9 +136,10 @@ void PDPListener::onNewCacheChangeAdded(
             }
         }
 
-        if( !pdata 
-            && (pdata = parent_pdp_->createParticipantProxyData(temp_participant_data_, writer_guid)) )
+        if( create )
         {
+                parent_pdp_->createParticipantProxyData( deserialize ? temp_participant_data_ : *pdata , writer_guid);
+
                 // Release mutexes ownership
                 reader->getMutex().unlock();
                 lock.unlock();
@@ -145,7 +150,7 @@ void PDPListener::onNewCacheChangeAdded(
 
                 pdata->ppd_mutex_.unlock(); // got by createParticipantProxyData
         }
-        else if ( temp_participant_data_.m_guid != GUID_t::unknown())
+        else if ( deserialize )
         {
             std::lock_guard<std::recursive_mutex> ppd_lock(pdata->ppd_mutex_);
 

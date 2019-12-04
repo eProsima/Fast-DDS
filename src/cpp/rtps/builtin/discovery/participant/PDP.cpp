@@ -196,6 +196,9 @@ std::shared_ptr<ParticipantProxyData> PDP::add_participant_proxy_data(
 
 void PDP::initializeParticipantProxyData(ParticipantProxyData* participant_data)
 {
+    std::lock_guard<std::recursive_mutex> ppd_lock(participant_data->ppd_mutex_);
+
+
     // Signal out is the first announcement to avoid deserialization from all other intra process participants
     participant_data->version_ = SequenceNumber_t(0, 1);
 
@@ -320,12 +323,13 @@ bool PDP::initPDP(
     }
     //UPDATE METATRAFFIC.
     mp_builtin->updateMetatrafficLocators(this->mp_PDPReader->getAttributes().unicastLocatorList);
-    ParticipantProxyData* pdata = add_participant_proxy_data(part->getGuid(), true);
-    if (pdata == nullptr)
+    std::shared_ptr<ParticipantProxyData> pdata = add_participant_proxy_data(part->getGuid(), true);
+    if (!pdata)
     {
         return false;
     }
-    initializeParticipantProxyData(pdata);
+
+    initializeParticipantProxyData(pdata.get());
 
     // Create lease events on already created proxy data objects
     PDP::pool_mutex_.lock();
@@ -985,6 +989,7 @@ CDRMessage_t PDP::get_participant_proxy_data_serialized(Endianness_t endian)
     return cdr_msg;
 }
 
+/*static*/
 void PDP::check_remote_participant_liveliness(
         ParticipantProxyData* remote_participant)
 {
@@ -1145,6 +1150,24 @@ std::shared_ptr<ParticipantProxyData> PDP::get_from_local_proxies(const GuidPref
 
     // nothing there
     return std::shared_ptr<ParticipantProxyData>();
+}
+
+/*static*/ 
+void PDP::return_participant_proxy_to_pool(ParticipantProxyData * p)
+{
+    p->clear();
+
+    std::lock_guard<std::recursive_mutex> lock(PDP::pool_mutex_);
+
+    if(p->m_guid == c_Guid_Unknown || !PDP::pool_participant_references_.empty())
+    {
+        // if its a pool managed object should be included into the map
+        assert(PDP::pool_participant_references_.find(p->m_guid.guidPrefix)
+            != PDP::pool_participant_references_.end());
+
+        PDP::pool_participant_references_.erase(p->m_guid.guidPrefix);
+        PDP::participant_proxies_pool_.push_back(p);
+    }
 }
 
 } /* namespace rtps */

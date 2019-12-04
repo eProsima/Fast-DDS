@@ -68,20 +68,7 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
         std::shared_ptr<ParticipantProxyData> create_reference_block_with_suitable_deleter(this,
             [](ParticipantProxyData* p) 
             {
-                p->clear(); 
-
-                std::lock_guard<std::recursive_mutex> lock(PDP::pool_mutex_);
-
-                if( p->m_guid == c_Guid_Unknown || !PDP::pool_participant_references_.empty())
-                {
-                    // if its a pool managed object should be included into the map
-                    assert( PDP::pool_participant_references_.find(p->m_guid.guidPrefix)
-                        != PDP::pool_participant_references_.end());
-
-                    PDP::pool_participant_references_.erase(p->m_guid.guidPrefix);
-                    PDP::participant_proxies_pool_.push_back(p);
-                }
-
+                PDP::return_participant_proxy_to_pool(p);
             });
     }
 

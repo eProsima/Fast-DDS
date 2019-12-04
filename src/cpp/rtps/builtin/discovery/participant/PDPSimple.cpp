@@ -178,8 +178,13 @@ std::shared_ptr<ParticipantProxyData> PDPSimple::createParticipantProxyData(
         }
     }
 
-    ParticipantProxyData* pdata = add_participant_proxy_data(participant_data.m_guid, true);
-    if(pdata != nullptr)
+    std::shared_ptr<ParticipantProxyData> pdata = add_participant_proxy_data(participant_data.m_guid, true);
+
+    // createParticipantProxyData locks on the return object to assure further atomic operation
+    pdata->ppd_mutex_.lock();
+
+    // It may be the same
+    if(pdata != participant_data.shared_from_this() )
     {
         pdata->copy(participant_data);
         pdata->isAlive = true;

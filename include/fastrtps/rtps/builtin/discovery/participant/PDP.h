@@ -305,6 +305,9 @@ public:
 
     CDRMessage_t get_participant_proxy_data_serialized(Endianness_t endian);
 
+    //! Deleter for the ParticipantProxyData shared_ptrs
+    static void return_participant_proxy_to_pool(ParticipantProxyData * p);
+
 protected:
     //!Pointer to the builtin protocols object.
     BuiltinProtocols* mp_builtin;
@@ -406,7 +409,7 @@ private:
     //!Participant's initial announcements config
     InitialAnnouncementConfig initial_announcements_;
 
-    void check_remote_participant_liveliness(
+    static void check_remote_participant_liveliness(
             ParticipantProxyData* remote_participant);
 
     void check_and_notify_type_discovery(
