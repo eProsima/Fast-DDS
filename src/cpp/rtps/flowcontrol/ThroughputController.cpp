@@ -71,26 +71,28 @@ void ThroughputController::disable()
 template<typename Collector>
 void ThroughputController::process_nts(Collector& changesToSend)
 {
+    uint32_t size_to_restore = 0;
     auto it = changesToSend.items().begin();
-
-    while (it != changesToSend.items().end())
+    while (
+        it != changesToSend.items().end() &&
+        process_change_nts_(it->cacheChange, it->sequenceNumber, it->fragmentNumber, &size_to_restore))
     {
-        if (!process_change_nts_(it->cacheChange, it->sequenceNumber, it->fragmentNumber))
-        {
-            break;
-        }
-
         ++it;
     }
 
     changesToSend.items().erase(it, changesToSend.items().end());
 
+    if (size_to_restore > 0)
+    {
+        ScheduleRefresh(size_to_restore);
+    }
 }
 
 bool ThroughputController::process_change_nts_(
         CacheChange_t* change,
         const SequenceNumber_t& /*seqNum*/,
-        const FragmentNumber_t fragNum)
+        const FragmentNumber_t fragNum,
+        uint32_t* accumulated_size)
 {
     assert(change != nullptr);
 
@@ -105,7 +107,7 @@ bool ThroughputController::process_change_nts_(
     if ((mAccumulatedPayloadSize + dataLength) <= mBytesPerPeriod)
     {
         mAccumulatedPayloadSize += dataLength;
-        ScheduleRefresh(dataLength);
+        *accumulated_size += dataLength;
         return true;
     }
 

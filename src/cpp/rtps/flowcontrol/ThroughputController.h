@@ -59,7 +59,8 @@ private:
     bool process_change_nts_(
             CacheChange_t* change,
             const SequenceNumber_t& seqNum,
-            const FragmentNumber_t fragNum);
+            const FragmentNumber_t fragNum,
+            uint32_t* accumulated_size);
 
     uint32_t mBytesPerPeriod;
     uint32_t mAccumulatedPayloadSize;
