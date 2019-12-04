@@ -19,9 +19,7 @@
 #ifndef _FASTDDS_PUBLISHERLISTENER_HPP_
 #define _FASTDDS_PUBLISHERLISTENER_HPP_
 
-#include <fastrtps/qos/DeadlineMissedStatus.h>
-#include <fastdds/dds/core/status/BaseStatus.hpp>
-#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
+#include <fastdds/dds/topic/DataWriterListener.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -33,50 +31,50 @@ class Publisher;
  * Class PublisherListener, allows the end user to implement callbacks triggered by certain events.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI PublisherListener
+class RTPS_DllAPI PublisherListener : public DataWriterListener
 {
 public:
     PublisherListener(){}
     virtual ~PublisherListener(){}
 
-    /**
-     * This method is called when the Publisher is matched (or unmatched) against an endpoint.
-     * @param pub Pointer to the associated Publisher
-     * @param info Information regarding the matched subscriber
-     */
-    virtual void on_publication_matched(
-            Publisher* pub,
-            const fastdds::dds::PublicationMatchedStatus& info)
-    {
-        (void)pub;
-        (void)info;
-    }
+//    /**
+//     * This method is called when the Publisher is matched (or unmatched) against an endpoint.
+//     * @param pub Pointer to the associated Publisher
+//     * @param info Information regarding the matched subscriber
+//     */
+//    virtual void on_publication_matched(
+//            Publisher* pub,
+//            const fastdds::dds::PublicationMatchedStatus& info)
+//    {
+//        (void)pub;
+//        (void)info;
+//    }
 
-    /**
-     * A method called when a deadline is missed
-     * @param pub Pointer to the associated Publisher
-     * @param status The deadline missed status
-     */
-    virtual void on_offered_deadline_missed(
-            Publisher* pub,
-            const fastrtps::OfferedDeadlineMissedStatus& status)
-    {
-        (void)pub;
-        (void)status;
-    }
+//    /**
+//     * A method called when a deadline is missed
+//     * @param pub Pointer to the associated Publisher
+//     * @param status The deadline missed status
+//     */
+//    virtual void on_offered_deadline_missed(
+//            Publisher* pub,
+//            const fastrtps::OfferedDeadlineMissedStatus& status)
+//    {
+//        (void)pub;
+//        (void)status;
+//    }
 
-    /**
-     * @brief Method called when the livelivess of a publisher is lost
-     * @param pub The publisher
-     * @param status The liveliness lost status
-     */
-    virtual void on_liveliness_lost(
-            Publisher* pub,
-            const LivelinessLostStatus& status)
-    {
-        (void)pub;
-        (void)status;
-    }
+//    /**
+//     * @brief Method called when the livelivess of a publisher is lost
+//     * @param pub The publisher
+//     * @param status The liveliness lost status
+//     */
+//    virtual void on_liveliness_lost(
+//            Publisher* pub,
+//            const LivelinessLostStatus& status)
+//    {
+//        (void)pub;
+//        (void)status;
+//    }
 };
 
 } /* namespace dds */

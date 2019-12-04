@@ -58,12 +58,7 @@ ReturnCode_t DomainParticipant::set_listener(
     return impl_->set_listener(listener, mask);
 }
 
-const DomainParticipantListener* DomainParticipant::get_listener() const
-{
-    return impl_->get_listener();
-}
-
-DomainParticipantListener* DomainParticipant::get_listener()
+DomainParticipantListener* DomainParticipant::get_listener() const
 {
     return impl_->get_listener();
 }
@@ -329,4 +324,9 @@ ReturnCode_t DomainParticipant::get_default_topic_qos(
 const fastdds::dds::TopicQos& DomainParticipant::get_default_topic_qos() const
 {
     return impl_->get_default_topic_qos();
+}
+
+const ::dds::core::status::StatusMask& DomainParticipant::get_mask() const
+{
+    return impl_->get_mask();
 }

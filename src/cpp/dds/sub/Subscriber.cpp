@@ -94,7 +94,7 @@ Subscriber& Subscriber::default_datareader_qos(
 
 const dds::domain::DomainParticipant& Subscriber::participant() const
 {
-    eprosima::fastdds::dds::DomainParticipant p = *delegate()->get_participant();
+    eprosima::fastdds::dds::DomainParticipant p = delegate()->get_participant();
     std::shared_ptr<eprosima::fastdds::dds::DomainParticipant> ptr(&p);
     participant_->delegate().swap(ptr);
 

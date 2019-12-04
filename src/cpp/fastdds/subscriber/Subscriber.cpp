@@ -79,7 +79,7 @@ DataReader* Subscriber::create_datareader(
         DataReaderListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    Topic topic(get_participant(), topic_attr.getTopicName().c_str(), topic_attr.getTopicDataType().c_str());
+    Topic topic(&get_participant(), topic_attr.getTopicName().c_str(), topic_attr.getTopicDataType().c_str());
     return impl_->create_datareader(topic, topic_attr, reader_qos, listener, mask);
 }
 
@@ -184,7 +184,7 @@ const fastrtps::SubscriberAttributes& Subscriber::get_attributes() const
     return impl_->get_attributes();
 }
 
-const DomainParticipant* Subscriber::get_participant() const
+const DomainParticipant& Subscriber::get_participant() const
 {
     return impl_->get_participant();
 }

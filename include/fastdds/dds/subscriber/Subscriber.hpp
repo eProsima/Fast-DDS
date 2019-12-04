@@ -264,7 +264,7 @@ public:
     /**
      * This operation returns the DomainParticipant to which the Subscriber belongs.
      */
-    const DomainParticipant* get_participant() const;
+    const DomainParticipant& get_participant() const;
 
     /**
      * Returns the Subscriber's handle.
