@@ -371,7 +371,7 @@ protected:
      *
      * @return pointer to the currently inserted entry, nullptr if allocation limits were reached.
      */
-    ParticipantProxyData* add_participant_proxy_data(
+    std::shared_ptr<ParticipantProxyData> add_participant_proxy_data(
             const GUID_t& participant_guid,
             bool with_lease_duration);
 
@@ -394,6 +394,12 @@ private:
 
     //!Deallocation of common pool resources
     static void remove_pool_resources();
+
+    //!Get ParticipantProxyData from the pool if there, nullptr otherwise
+    static std::shared_ptr<ParticipantProxyData> get_from_proxy_pool(const GuidPrefix_t & guid);
+
+    //!Get ParticipantProxyData from local collection, nullptr otherwise
+    std::shared_ptr<ParticipantProxyData> PDP::get_from_local_proxies(const GuidPrefix_t & guid);
 
     //!TimedEvent to periodically resend the local RTPSParticipant information.
     TimedEvent* resend_participant_info_event_;

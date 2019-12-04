@@ -119,63 +119,78 @@ PDP::~PDP()
     remove_pool_resources();
 }
 
-ParticipantProxyData* PDP::add_participant_proxy_data(
+std::shared_ptr<ParticipantProxyData> PDP::add_participant_proxy_data(
         const GUID_t& participant_guid,
         bool with_lease_duration)
 {
-    std::lock_guard<std::recursive_mutex> guardDb(PDP::pool_mutex_);
-    std::shared_ptr<ParticipantProxyData>& ret_val;
 
-    //See whether it is already in use
-    std::weak_ptr<ParticipantProxyData> participant_reference = pool_participant_references_.find(participant_guid.guidPrefix);
-    if (participant_reference !=  pool_participant_references_.end() && !participant_reference.expired())
+    std::shared_ptr<ParticipantProxyData> ret_val;
+
     {
-        ret_val = shared_ptr<ParticipantProxyData>(participant_reference);
-    }
-    else
-    {
-        // Try to take one entry from the pool
-        if (participant_proxies_pool_.empty())
+        std::lock_guard<std::recursive_mutex> pool_guard(PDP::pool_mutex_);
+
+        //See whether it is already in use
+        auto participant_reference = pool_participant_references_.find(participant_guid.guidPrefix);
+        if(participant_reference != pool_participant_references_.end())
         {
-            size_t max_proxies = participant_proxies_.max_size();
-            if (participant_proxies_number_ < max_proxies)
+            ret_val = participant_reference->second.lock();
+
+            // It should be an associated ParticipantProxyData
+            assert(!!ret_val);
+        }
+        else
+        {
+            // Try to take one entry from the pool
+            if(participant_proxies_pool_.empty())
             {
-                // Pool is empty but limit has not been reached, so we create a new entry.
-                ++participant_proxies_number_;
-                ParticipantProxyData* participant = new ParticipantProxyData(mp_RTPSParticipant->getRTPSParticipantAttributes().allocation);
-                ret_val = participant->shared_from_this();
-                if (participant_guid != mp_RTPSParticipant->getGuid())
+                size_t max_proxies = participant_proxies_.max_size();
+                if(participant_proxies_number_ < max_proxies)
                 {
-                    ret_val->lease_duration_event = new TimedEvent(mp_RTPSParticipant->getEventResource(),
-                        [this, ret_val]() -> bool
+                    // Pool is empty but limit has not been reached, so we create a new entry.
+                    ret_val = (new ParticipantProxyData(mp_RTPSParticipant->getRTPSParticipantAttributes().allocation)->shared_from_this());
+
+                    if(!ret_val)
                     {
-                        check_remote_participant_liveliness(ret_val.get());
-                        return false;
-                    }, 0.0);
+                        return ret_val;
+                    }
+
+                    ++participant_proxies_number_;
+
+                    if(participant_guid != mp_RTPSParticipant->getGuid())
+                    {
+                        ret_val->lease_duration_event = new TimedEvent(mp_RTPSParticipant->getEventResource(),
+                            [this, ret_val]() -> bool
+                        {
+                            check_remote_participant_liveliness(ret_val.get());
+                            return false;
+                        }, 0.0);
+                    }
+                }
+                else
+                {
+                    logWarning(RTPS_PDP, "Maximum number of participant proxies (" << max_proxies << \
+                        ") reached for participant " << mp_RTPSParticipant->getGuid() << std::endl);
+                    return nullptr;
                 }
             }
             else
             {
-                logWarning(RTPS_PDP, "Maximum number of participant proxies (" << max_proxies << \
-                    ") reached for participant " << mp_RTPSParticipant->getGuid() << std::endl);
-                return nullptr;.
+                // Pool is not empty, use entry from pool
+                ret_val = participant_proxies_pool_.back()->shared_from_this();
+                participant_proxies_pool_.pop_back();
             }
-        }
-        else
-        {
-            // Pool is not empty, use entry from pool
-            ret_val = participant_proxies_pool_.back()->shared_from_this();
-            participant_proxies_pool_.pop_back();
+
+            ret_val->should_check_lease_duration = with_lease_duration;
+            ret_val->m_guid = participant_guid;
         }
 
-        ret_val->should_check_lease_duration = with_lease_duration;
-        ret_val->m_guid = participant_guid;
+        // Add returned entry to the collection
+        pool_participant_references_[participant_guid.guidPrefix] = std::weak_ptr<ParticipantProxyData>(ret_val);
     }
-
-    // Add returned entry to the collection
+    
+    std::lock_guard<std::recursive_mutex> pdp_lock(*mp_mutex);
     participant_proxies_.push_back(ret_val);
-    pool_participant_references_[participant_guid.guidPrefix] = std::weak_ptr(ret_val);
-
+    
     return ret_val;
 }
 
@@ -1097,6 +1112,39 @@ void PDP::remove_pool_resources()
             delete it;
         }
     }
+}
+
+/*static*/
+std::shared_ptr<ParticipantProxyData> PDP::get_from_proxy_pool(const GuidPrefix_t & guid)
+{
+    std::lock_guard<std::recursive_mutex> lock(pool_mutex_);
+
+    auto it = pool_participant_references_.find(guid);
+
+    if(it == pool_participant_references_.end())
+    {
+        // nothing there
+        return std::shared_ptr<ParticipantProxyData>();
+    }
+
+    // recreate shared_ptr from weak
+    return it->second.lock();
+}
+
+std::shared_ptr<ParticipantProxyData> PDP::get_from_local_proxies(const GuidPrefix_t & guid)
+{
+    std::lock_guard<std::recursive_mutex> lock(*mp_mutex);
+
+    for(std::shared_ptr<ParticipantProxyData> p : participant_proxies_)
+    {
+        if(guid == p->m_guid.guidPrefix)
+        {
+            return p;
+        }
+    }
+
+    // nothing there
+    return std::shared_ptr<ParticipantProxyData>();
 }
 
 } /* namespace rtps */
