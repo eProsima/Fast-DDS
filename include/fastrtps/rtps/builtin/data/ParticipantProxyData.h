@@ -180,15 +180,11 @@ class ParticipantProxyData : public std::enable_shared_from_this<ParticipantProx
 
         const std::chrono::steady_clock::time_point& last_received_message_tm() const
         {
-            std::lock_guard<recursive_mutex> lock(ppd_mutex_);
-
             return last_received_message_tm_;
         }
 
         const std::chrono::microseconds& lease_duration() const
         {
-            std::lock_guard<recursive_mutex> lock(ppd_mutex_);
-            
             return lease_duration_;
         }
 

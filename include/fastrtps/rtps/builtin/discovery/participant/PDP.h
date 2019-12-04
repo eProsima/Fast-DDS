@@ -96,7 +96,7 @@ public:
      * @param writer_guid GUID of originating writer
      * @return new ParticipantProxyData * or nullptr on failure
      */
-    virtual ParticipantProxyData* createParticipantProxyData(
+    virtual std::shared_ptr<ParticipantProxyData> createParticipantProxyData(
             const ParticipantProxyData& p,
             const GUID_t& writer_guid) = 0;
 
@@ -255,7 +255,7 @@ public:
      * Get a pointer to the local RTPSParticipant ParticipantProxyData object.
      * @return Pointer to the local RTPSParticipant ParticipantProxyData object.
      */
-    ParticipantProxyData* getLocalParticipantProxyData()
+    std::shared_ptr<ParticipantProxyData> getLocalParticipantProxyData()
     {
         return participant_proxies_.front();
     }
@@ -270,7 +270,7 @@ public:
      * Get a const_iterator to the beginning of the RTPSParticipant Proxies.
      * @return const_iterator.
      */
-    ResourceLimitedVector<ParticipantProxyData*>::const_iterator ParticipantProxiesBegin()
+    ResourceLimitedVector<std::shared_ptr<ParticipantProxyData>>::const_iterator ParticipantProxiesBegin()
     {
         return participant_proxies_.begin();
     }
@@ -279,7 +279,7 @@ public:
      * Get a const_iterator to the end of the RTPSParticipant Proxies.
      * @return const_iterator.
      */
-    ResourceLimitedVector<ParticipantProxyData*>::const_iterator ParticipantProxiesEnd()
+    ResourceLimitedVector<std::shared_ptr<ParticipantProxyData>>::const_iterator ParticipantProxiesEnd()
     {
         return participant_proxies_.end();
     }

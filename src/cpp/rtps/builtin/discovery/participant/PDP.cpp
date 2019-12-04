@@ -809,7 +809,7 @@ bool PDP::remove_remote_participant(
 
     //Remove it from our vector or RTPSParticipantProxies:
     this->mp_mutex->lock();
-    for(ResourceLimitedVector<ParticipantProxyData*>::iterator pit = participant_proxies_.begin();
+    for(ResourceLimitedVector<std::shared_ptr<ParticipantProxyData>>::iterator pit = participant_proxies_.begin();
             pit!=participant_proxies_.end();++pit)
     {
         if((*pit)->m_guid == partGUID)
@@ -1069,6 +1069,8 @@ void PDP::remove_pool_resources()
 
     if(!--pdp_counter_)
     {
+        assert(pool_participant_references_.empty());
+
         for(ParticipantProxyData* it : participant_proxies_pool_)
         {
             delete it;
