@@ -65,6 +65,20 @@ const Duration_t pdp_heartbeat_response_delay{ 0, 11 * 1000 }; // ~11 millisecon
 
 const int32_t pdp_initial_reserved_caches = 20;
 
+// Static pool resources shared among all participants
+std::recursive_mutex PDP::pool_mutex_;
+size_t PDP::pdp_counter_ = 0;
+
+size_t PDP::participant_proxies_number_ = 0;
+std::vector<ParticipantProxyData*> PDP::participant_proxies_pool_;
+
+size_t PDP::reader_proxies_number_ = 0;
+std::vector<ReaderProxyData*> PDP::reader_proxies_pool_;
+
+size_t PDP::writer_proxies_number_ = 0;
+std::vector<WriterProxyData*> PDP::writer_proxies_pool_;
+
+std::map<GuidPrefix_t, std::weak_ptr<ParticipantProxyData>> PDP::pool_participant_references_;
 
 PDP::PDP (
         BuiltinProtocols* built,

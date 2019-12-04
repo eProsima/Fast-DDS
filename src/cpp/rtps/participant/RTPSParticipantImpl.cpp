@@ -775,17 +775,6 @@ bool RTPSParticipantImpl::assignEndpointListenResources(Endpoint* endp)
 
 bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(Endpoint * pend)
 {
-    /*	This function...
-        - Asks the network factory for new resources
-        - Encapsulates the new resources within the ReceiverControlBlock list
-        - Associated the endpoint to the new elements in the list
-        - Launches the listener thread
-    */
-    // 1 - Ask the network factory to generate the elements that do still not exist
-    std::vector<ReceiverResource> newItems;							//Store the newly created elements
-    std::vector<ReceiverResource> newItemsBuffer;					//Store intermediate results
-    //Iterate through the list of unicast and multicast locators the endpoint has... unless its empty
-    //In that case, just use the standard
     if (pend->getAttributes().unicastLocatorList.empty() && pend->getAttributes().multicastLocatorList.empty())
     {
         //Default unicast
