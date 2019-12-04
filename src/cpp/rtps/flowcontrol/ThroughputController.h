@@ -53,6 +53,9 @@ public:
 
 private:
 
+    template<typename Collector>
+    void process_nts(Collector& changesToSend);
+
     bool process_change_nts_(
             CacheChange_t* change,
             const SequenceNumber_t& seqNum,

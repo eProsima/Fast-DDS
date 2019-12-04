@@ -51,40 +51,14 @@ void ThroughputController::operator ()(
         RTPSWriterCollector<ReaderLocator*>& changesToSend)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
-
-    auto it = changesToSend.items().begin();
-
-    while (it != changesToSend.items().end())
-    {
-        if (!process_change_nts_(it->cacheChange, it->sequenceNumber, it->fragmentNumber))
-        {
-            break;
-        }
-
-        ++it;
-    }
-
-    changesToSend.items().erase(it, changesToSend.items().end());
+    process_nts(changesToSend);
 }
 
 void ThroughputController::operator ()(
         RTPSWriterCollector<ReaderProxy*>& changesToSend)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
-
-    auto it = changesToSend.items().begin();
-
-    while (it != changesToSend.items().end())
-    {
-        if (!process_change_nts_(it->cacheChange, it->sequenceNumber, it->fragmentNumber))
-        {
-            break;
-        }
-
-        ++it;
-    }
-
-    changesToSend.items().erase(it, changesToSend.items().end());
+    process_nts(changesToSend);
 }
 
 void ThroughputController::disable()
@@ -92,6 +66,25 @@ void ThroughputController::disable()
     std::unique_lock<std::recursive_mutex> scopedLock(mThroughputControllerMutex);
     mAssociatedWriter = nullptr;
     mAssociatedParticipant = nullptr;
+}
+
+template<typename Collector>
+void ThroughputController::process_nts(Collector& changesToSend)
+{
+    auto it = changesToSend.items().begin();
+
+    while (it != changesToSend.items().end())
+    {
+        if (!process_change_nts_(it->cacheChange, it->sequenceNumber, it->fragmentNumber))
+        {
+            break;
+        }
+
+        ++it;
+    }
+
+    changesToSend.items().erase(it, changesToSend.items().end());
+
 }
 
 bool ThroughputController::process_change_nts_(
