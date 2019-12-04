@@ -44,7 +44,7 @@ bool HelloWorldPublisher::init()
     eprosima::fastrtps::ParticipantAttributes participant_att;
     participant_att.rtps.builtin.domainId = 0;
     participant_att.rtps.setName("Participant_pub");
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att);
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att, &listener_);
 
     if (participant_ == nullptr)
     {
@@ -69,7 +69,7 @@ bool HelloWorldPublisher::init()
     }
 
     // CREATE THE WRITER
-    writer_ = publisher_->create_datawriter(pub_att.topic, qos, &listener_);
+    writer_ = publisher_->create_datawriter(pub_att.topic, qos, nullptr);
 
     if (writer_ == nullptr)
     {

@@ -249,6 +249,10 @@ Publisher* DomainParticipantImpl::create_publisher(
     }
 
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
+    if(listen == nullptr)
+    {
+        listen = listener_;
+    }
     PublisherImpl* pubimpl = new PublisherImpl(this, qos, att, listen, mask);
     Publisher* pub = new Publisher(pubimpl);
     pubimpl->user_publisher_ = pub;
@@ -538,6 +542,10 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     }
 
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
+    if(listen == nullptr)
+    {
+        listen = listener_;
+    }
     SubscriberImpl* subimpl = new SubscriberImpl(this, qos, att, listen, mask);
     Subscriber* sub = new Subscriber(subimpl);
     subimpl->user_subscriber_ = sub;
