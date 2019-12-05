@@ -74,6 +74,12 @@ void ParticipantProxyData::lease_duration_callback::remove_listener(GuidPrefix_t
     }
 }
 
+void ParticipantProxyData::lease_duration_callback::reset()
+{
+    p = nullptr;
+    listeners_.clear();
+}
+
 void ParticipantProxyData::lease_duration_callback::operator()() const
 {
     if(nullptr != p)
@@ -494,6 +500,9 @@ void ParticipantProxyData::clear()
     m_properties.properties.clear();
     m_properties.length = 0;
     m_userData.clear();
+
+    // reset the lease_callback_
+    lease_callback_.reset();
 }
 
 void ParticipantProxyData::copy(const ParticipantProxyData& pdata)

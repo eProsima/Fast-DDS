@@ -215,6 +215,8 @@ class ParticipantProxyData
 
             lease_duration_callback(ParticipantProxyData * ptr) : p(ptr) {}
 
+            void reset();
+
             void add_listener(GuidPrefix_t prefix, PDP* p);
             void remove_listener(GuidPrefix_t prefix);
 
