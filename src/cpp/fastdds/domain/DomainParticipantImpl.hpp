@@ -61,15 +61,12 @@ namespace fastdds {
 namespace dds {
 
 class DomainParticipant;
+class DomainParticipantListener;
 class Publisher;
 class PublisherImpl;
 class PublisherListener;
 class Subscriber;
 class SubscriberImpl;
-class SubscriberListener;
-class Topic;
-class TopicListener;
-class TopicDescription;
 
 /**
  * This is the implementation class of the DomainParticipant.

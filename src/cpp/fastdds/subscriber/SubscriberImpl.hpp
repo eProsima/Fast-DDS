@@ -23,7 +23,7 @@
 
 #include <fastrtps/attributes/SubscriberAttributes.h>
 
-#include <fastdds/dds/topic/DataReaderListener.hpp>
+#include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/topic/qos/DataReaderQos.hpp>
 #include <fastrtps/types/TypesBase.h>
@@ -52,7 +52,6 @@ namespace fastdds {
 namespace dds {
 
 class SubscriberListener;
-class DomainParticipantImpl;
 class Subscriber;
 class DataReaderImpl;
 class Topic;
@@ -86,9 +85,7 @@ public:
     ReturnCode_t set_qos(
             const SubscriberQos& qos);
 
-    const SubscriberListener* get_listener() const;
-
-    SubscriberListener* get_listener();
+    SubscriberListener* get_listener() const;
 
     ReturnCode_t set_listener(
             SubscriberListener* listener);
@@ -172,7 +169,7 @@ public:
         return rtps_participant_;
     }
 
-    const Subscriber* get_subscriber() const
+    Subscriber* get_subscriber() const
     {
         return user_subscriber_;
     }
@@ -185,6 +182,14 @@ public:
     //! Check if any reader uses the given type name
     bool type_in_use(
             const std::string& type_name) const;
+
+    /**
+     * @brief A method called when a new cache change is added
+     * @param change The cache change that has been added
+     * @return True if the change was added (due to some QoS it could have been 'rejected')
+     */
+    bool on_new_cache_change_added(
+            const fastrtps::rtps::CacheChange_t* const change);
 
 private:
 
@@ -201,7 +206,6 @@ private:
 
     mutable std::mutex mtx_readers_;
 
-    //!Listener
     SubscriberListener* listener_;
 
     Subscriber* user_subscriber_;

@@ -57,6 +57,22 @@ struct SampleRejectedStatus
      * Handle to the instance being updated by the last sample that was rejected.
      */
     fastrtps::rtps::InstanceHandle_t last_instance_handle;
+
+
+    std::string reason_to_string() const
+    {
+        switch (this->last_reason){
+        case 0:
+        default:
+            return "Not rejected";
+        case 1:
+            return "Rejected by instances limit";
+        case 2:
+            return "Rejected by samples limit";
+        case 3:
+            return "Rejected by samples per instance limit";
+        }
+    }
 };
 
 } //namespace dds

@@ -1416,3 +1416,9 @@ void DomainParticipantImpl::Listener::on_data_on_readers(
 {
     subscriber->notify_datareaders();
 }
+
+void DomainParticipantImpl::Listener::on_data_on_readers(
+        Subscriber* subscriber)
+{
+    subscriber->notify_datareaders();
+}

@@ -396,6 +396,12 @@ public:
         return r == status;
     }
 
+    bool is_compatible(
+            StatusMask base) const
+    {
+        return (*this == all() || *this == base);
+    }
+
 };
 
 } //namespace status

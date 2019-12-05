@@ -485,9 +485,8 @@ bool EDP::unpairWriterProxy(
     {
         if ((*rit)->matched_writer_remove(writer_guid))
         {
-            const GUID_t& reader_guid = (*rit)->getGuid();
 #if HAVE_SECURITY
-            mp_RTPSParticipant->security_manager().remove_writer(reader_guid,
+            mp_RTPSParticipant->security_manager().remove_writer((*rit)->getGuid(),
                     participant_guid, writer_guid);
 #endif
 
@@ -522,9 +521,8 @@ bool EDP::unpairReaderProxy(
     {
         if ((*wit)->matched_reader_remove(reader_guid))
         {
-            const GUID_t& writer_guid = (*wit)->getGuid();
 #if HAVE_SECURITY
-            mp_RTPSParticipant->security_manager().remove_reader(writer_guid,
+            mp_RTPSParticipant->security_manager().remove_reader((*wit)->getGuid(),
                     participant_guid, reader_guid);
 #endif
             //MATCHED AND ADDED CORRECTLY:
@@ -913,7 +911,6 @@ bool EDP::pairingReader(
         {
             WriterProxyData* wdatait = pair.second;
             bool valid = validMatching(&rdata, wdatait);
-            const GUID_t& reader_guid = R->getGuid();
             const GUID_t& writer_guid = wdatait->guid();
 
             if (valid)
@@ -922,7 +919,7 @@ bool EDP::pairingReader(
                 if (!mp_RTPSParticipant->security_manager().discovered_writer(R->m_guid, (*pit)->m_guid,
                         *wdatait, R->getAttributes().security_attributes()))
                 {
-                    logError(RTPS_EDP, "Security manager returns an error for reader " << reader_guid);
+                    logError(RTPS_EDP, "Security manager returns an error for reader " << R->getGuid());
                 }
 #else
                 if (R->matched_writer_add(*wdatait))
@@ -950,7 +947,7 @@ bool EDP::pairingReader(
                         && R->matched_writer_remove(wdatait->guid()))
                 {
 #if HAVE_SECURITY
-                    mp_RTPSParticipant->security_manager().remove_writer(reader_guid, participant_guid,
+                    mp_RTPSParticipant->security_manager().remove_writer(R->getGuid(), participant_guid,
                             wdatait->guid());
 #endif
 
@@ -1022,7 +1019,6 @@ bool EDP::pairingWriter(
                         info.remoteEndpointGuid = reader_guid;
                         W->getListener()->onWriterMatched(W, info);
 
-                        const GUID_t& writer_guid = W->getGuid();
                         const PublicationMatchedStatus& pub_info =
                                 update_publication_matched_status(reader_guid, *W, 1);
                         W->getListener()->onWriterMatched(W, pub_info);
