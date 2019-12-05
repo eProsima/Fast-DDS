@@ -26,6 +26,7 @@
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
@@ -393,20 +394,39 @@ void DataReaderImpl::InnerDataReaderListener::onNewCacheChangeAdded(
 {
     if (data_reader_->on_new_cache_change_added(change_in))
     {
-        if (data_reader_->listener_ != nullptr &&
-                (data_reader_->mask_ == ::dds::core::status::StatusMask::all() ||
-                data_reader_->mask_ == ::dds::core::status::StatusMask::data_available()))
+        if (data_reader_->subscriber_->mask_.is_compatible(::dds::core::status::StatusMask::data_on_readers()))
+        {
+            if (data_reader_->subscriber_->listener_ != nullptr)
+            {
+                data_reader_->subscriber_->listener_->on_data_on_readers(data_reader_->get_subscriber());
+            }
+            data_reader_->subscriber_->participant_->subscriber_listener_.on_data_on_readers(
+                data_reader_->get_subscriber());
+
+        }
+        else if (data_reader_->subscriber_->get_participant().get_mask().is_compatible(::dds::core::status::StatusMask::
+                data_on_readers()))
+        {
+            if (data_reader_->subscriber_->get_participant().get_listener() != nullptr)
+            {
+                data_reader_->subscriber_->get_participant().get_listener()->on_data_on_readers(
+                    data_reader_->get_subscriber());
+            }
+            data_reader_->subscriber_->participant_->subscriber_listener_.on_data_on_readers(
+                data_reader_->get_subscriber());
+
+        }
+        else if (data_reader_->listener_ != nullptr &&
+                data_reader_->mask_.is_compatible(::dds::core::status::StatusMask::data_available()))
         {
             data_reader_->listener_->on_data_available(data_reader_->user_datareader_);
         }
         else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
-                (data_reader_->subscriber_->get_participant().get_mask() ==
-                ::dds::core::status::StatusMask::all() ||
-                data_reader_->subscriber_->get_participant().get_mask() ==
-                ::dds::core::status::StatusMask::data_available()))
+                data_reader_->subscriber_->get_participant().get_mask().is_compatible(::dds::core::status::StatusMask::
+                data_available()))
         {
-            data_reader_->subscriber_->get_participant().get_listener()->
-            on_data_available(data_reader_->user_datareader_);
+            data_reader_->subscriber_->get_participant().get_listener()->on_data_available(
+                data_reader_->user_datareader_);
         }
     }
 }
@@ -417,17 +437,14 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         const SubscriptionMatchedStatus& info)
 {
     if (data_reader_->listener_ != nullptr &&
-            (data_reader_->mask_ == ::dds::core::status::StatusMask::all() ||
-            data_reader_->mask_ == ::dds::core::status::StatusMask::subscription_matched()))
+            data_reader_->mask_.is_compatible(::dds::core::status::StatusMask::subscription_matched()))
     {
         data_reader_->listener_->on_subscription_matched(data_reader_->user_datareader_, info);
     }
 
     else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
-            (data_reader_->subscriber_->get_participant().get_mask() ==
-            ::dds::core::status::StatusMask::all() ||
-            data_reader_->subscriber_->get_participant().get_mask() ==
-            ::dds::core::status::StatusMask::subscription_matched()))
+            data_reader_->subscriber_->get_participant().get_mask().is_compatible(
+                ::dds::core::status::StatusMask::subscription_matched()))
     {
         data_reader_->subscriber_->get_participant().get_listener()->
         on_subscription_matched(data_reader_->user_datareader_, info);
@@ -438,17 +455,15 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
         RTPSReader* /*reader*/,
         const fastrtps::LivelinessChangedStatus& status)
 {
-    if (data_reader_->listener_ != nullptr && (data_reader_->mask_ == ::dds::core::status::StatusMask::all() ||
-            data_reader_->mask_ == ::dds::core::status::StatusMask::liveliness_changed()))
+    if (data_reader_->listener_ != nullptr &&
+            data_reader_->mask_.is_compatible(::dds::core::status::StatusMask::liveliness_changed()))
     {
         data_reader_->listener_->on_liveliness_changed(data_reader_->user_datareader_, status);
     }
 
     else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
-            (data_reader_->subscriber_->get_participant().get_mask() ==
-            ::dds::core::status::StatusMask::all() ||
-            data_reader_->subscriber_->get_participant().get_mask() ==
-            ::dds::core::status::StatusMask::liveliness_changed()))
+            data_reader_->subscriber_->get_participant().get_mask().is_compatible(
+                ::dds::core::status::StatusMask::liveliness_changed()))
     {
         data_reader_->subscriber_->get_participant().get_listener()->
         on_liveliness_changed(data_reader_->user_datareader_, status);
@@ -460,17 +475,15 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
         RTPSReader* /*reader*/,
         const RequestedIncompatibleQosStatus& status)
 {
-    if (data_reader_->listener_ != nullptr && (data_reader_->mask_ == ::dds::core::status::StatusMask::all() ||
-            data_reader_->mask_ == ::dds::core::status::StatusMask::requested_incompatible_qos()))
+    if (data_reader_->listener_ != nullptr &&
+            data_reader_->mask_.is_compatible(::dds::core::status::StatusMask::requested_incompatible_qos()))
     {
         data_reader_->listener_->on_requested_incompatible_qos(data_reader_->user_datareader_, status);
     }
 
     else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
-            (data_reader_->subscriber_->get_participant().get_mask() ==
-            ::dds::core::status::StatusMask::all() ||
-            data_reader_->subscriber_->get_participant().get_mask() ==
-            ::dds::core::status::StatusMask::requested_incompatible_qos()))
+            data_reader_->subscriber_->get_participant().get_mask().is_compatible(
+                ::dds::core::status::StatusMask::requested_incompatible_qos()))
     {
         data_reader_->subscriber_->get_participant().get_listener()->
         on_requested_incompatible_qos(data_reader_->user_datareader_,
@@ -482,17 +495,15 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
         RTPSReader* /*reader*/,
         const SampleRejectedStatus& status)
 {
-    if (data_reader_->listener_ != nullptr && (data_reader_->mask_ == ::dds::core::status::StatusMask::all() ||
-            data_reader_->mask_ == ::dds::core::status::StatusMask::sample_rejected()))
+    if (data_reader_->listener_ != nullptr &&
+            data_reader_->mask_.is_compatible(::dds::core::status::StatusMask::sample_rejected()))
     {
         data_reader_->listener_->on_sample_rejected(data_reader_->user_datareader_, status);
     }
 
     else if (data_reader_->subscriber_->get_participant().get_listener() != nullptr &&
-            (data_reader_->subscriber_->get_participant().get_mask() ==
-            ::dds::core::status::StatusMask::all() ||
-            data_reader_->subscriber_->get_participant().get_mask() ==
-            ::dds::core::status::StatusMask::sample_rejected()))
+            data_reader_->subscriber_->get_participant().get_mask().is_compatible(
+                ::dds::core::status::StatusMask::sample_rejected()))
     {
         data_reader_->subscriber_->get_participant().get_listener()->
         on_sample_rejected(data_reader_->user_datareader_,
@@ -594,15 +605,14 @@ bool DataReaderImpl::deadline_missed()
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
 
-    if (mask_ == ::dds::core::status::StatusMask::all() ||
-            mask_ == ::dds::core::status::StatusMask::requested_deadline_missed())
+    if (mask_.is_compatible(::dds::core::status::StatusMask::requested_deadline_missed()))
     {
         listener_->on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
     }
 
     else if (subscriber_->get_participant().get_listener() != nullptr &&
-            (subscriber_->get_participant().get_mask() == ::dds::core::status::StatusMask::all() ||
-            subscriber_->get_participant().get_mask() == ::dds::core::status::StatusMask::requested_deadline_missed()))
+            subscriber_->get_participant().get_mask().is_compatible(::dds::core::status::StatusMask::
+            requested_deadline_missed()))
     {
         subscriber_->get_participant().get_listener()->
         on_requested_deadline_missed(user_datareader_, deadline_missed_status_);
@@ -779,7 +789,7 @@ types::ReturnCode_t DataReaderImpl::get_subscription_matched_status(
     return ReturnCode_t::RETCODE_OK;
 }
 
-const Subscriber* DataReaderImpl::get_subscriber() const
+Subscriber* DataReaderImpl::get_subscriber() const
 {
     return subscriber_->get_subscriber();
 }

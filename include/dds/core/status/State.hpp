@@ -38,6 +38,7 @@ namespace status {
 class OMG_DDS_API SampleRejectedState : public std::bitset<OMG_DDS_STATE_BIT_COUNT>
 {
 public:
+
     /**
      * Convenience typedef for std::bitset<OMG_DDS_STATE_BIT_COUNT>.
      */
@@ -131,6 +132,7 @@ public:
     }
 
 private:
+
     SampleRejectedState(
             uint32_t s)
         : std::bitset<OMG_DDS_STATE_BIT_COUNT>(s)
@@ -151,6 +153,7 @@ private:
 class OMG_DDS_API StatusMask : public std::bitset<OMG_DDS_STATUS_COUNT>
 {
 public:
+
     /**
      * Convenience typedef for std::bitset<OMG_DDS_STATE_BIT_COUNT>.
      */
@@ -226,6 +229,7 @@ public:
     }
 
 public:
+
     /**
      * Get the StatusMask associated with dds::core::status::InconsistentTopicStatus
      *
@@ -366,6 +370,12 @@ public:
     inline static StatusMask all_data_disposed_topic()
     {
         return StatusMask(0x00000001u << 31u);
+    }
+
+    bool is_compatible(
+            StatusMask base) const
+    {
+        return (*this == all() || *this == base);
     }
 
 };

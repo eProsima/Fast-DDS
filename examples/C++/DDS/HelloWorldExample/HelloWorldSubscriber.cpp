@@ -121,7 +121,7 @@ void HelloWorldSubscriber::SubListener::on_sample_rejected(
     std::cout << "Sample Rejected Status" << std::endl;
     std::cout << "Total Count " << status.total_count << std::endl;
     std::cout << "Total Count Change " << status.total_count_change << std::endl;
-    std::cout << "Reason " << status.last_reason << std::endl;
+    std::cout << "Reason " << status.reason_to_string() << std::endl;
 }
 
 void HelloWorldSubscriber::SubListener::on_data_available(
