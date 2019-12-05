@@ -244,39 +244,39 @@ public:
         return mp_event_thr;
     }
 
-    /**
-     * Send a message to several locations
-     * @param msg Message to send.
-     * @param destination_locators_begin Iterator at the first destination locator.
-     * @param destination_locators_end Iterator at the end destination locator.
-     * @param max_blocking_time_point execution time limit timepoint.
-     * @return true if at least one locator has been sent.
-     */
-    template<class LocatorIteratorT>
+	/**
+	 * Send a message to several locations
+	 * @param msg Message to send.
+	 * @param destination_locators_begin Iterator at the first destination locator.
+	 * @param destination_locators_end Iterator at the end destination locator.
+	 * @param max_blocking_time_point execution time limit timepoint.
+	 * @return true if at least one locator has been sent.
+	 */
+	template<class LocatorIteratorT>
     bool sendSync(
-            CDRMessage_t* msg,
-            const LocatorIteratorT& destination_locators_begin,
-            const LocatorIteratorT& destination_locators_end,
-            std::chrono::steady_clock::time_point& max_blocking_time_point)
-    {
-        bool ret_code = false;
-        std::unique_lock<std::timed_mutex> lock(m_send_resources_mutex_, std::defer_lock);
+        CDRMessage_t* msg,
+		const LocatorIteratorT& destination_locators_begin,
+		const LocatorIteratorT& destination_locators_end,
+        std::chrono::steady_clock::time_point& max_blocking_time_point)
+	{
+		bool ret_code = false;
+		std::unique_lock<std::timed_mutex> lock(m_send_resources_mutex_, std::defer_lock);
 
-        if (lock.try_lock_until(max_blocking_time_point))
-        {
-            ret_code = true;
+		if (lock.try_lock_until(max_blocking_time_point))
+		{
+			ret_code = true;
 
-            for (auto& send_resource : send_resource_list_)
-            {
-                LocatorIteratorT locators_begin = destination_locators_begin;
-                LocatorIteratorT locators_end = destination_locators_end;
-                send_resource->send(msg->buffer, msg->length, &locators_begin, &locators_end,
-                        max_blocking_time_point);
-            }
-        }
+			for (auto& send_resource : send_resource_list_)
+			{
+				LocatorIteratorT locators_begin = destination_locators_begin;
+				LocatorIteratorT locators_end = destination_locators_end;
+				send_resource->send(msg->buffer, msg->length, &locators_begin, &locators_end,
+					max_blocking_time_point);
+			}
+		}
 
-        return ret_code;
-    }
+		return ret_code;
+	}
 
     //!Get the participant Mutex
     std::recursive_mutex* getParticipantMutex() const
