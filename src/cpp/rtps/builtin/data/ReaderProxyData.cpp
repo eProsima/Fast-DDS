@@ -150,6 +150,12 @@ ReaderProxyData& ReaderProxyData::operator =(
     return *this;
 }
 
+uint32_t ReaderProxyData::get_serialized_size(
+        bool include_encapsulation) const
+{
+    return 512;
+}
+
 bool ReaderProxyData::writeToCDRMessage(
         CDRMessage_t* msg,
         bool write_encapsulation) const

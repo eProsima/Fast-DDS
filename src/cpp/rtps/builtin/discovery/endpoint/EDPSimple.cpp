@@ -523,13 +523,12 @@ bool EDPSimple::serialize_proxy_data(
 
     if (writer.first != nullptr)
     {
-        // TODO(Miguel C) Write a getCdrSerializedPayload for ProxyData objects.
-        uint32_t max_size = writer.second->m_att.payloadMaxSize;
+        uint32_t cdr_size = data.get_serialized_size(true);
         CacheChange_t* change =
             writer.first->new_change(
-                [max_size]() -> uint32_t
+                [cdr_size]() -> uint32_t
                 {
-                    return max_size;
+                    return cdr_size;
                 },
                 ALIVE, data.key());
         if (change != nullptr)

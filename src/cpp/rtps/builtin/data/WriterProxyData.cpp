@@ -145,6 +145,12 @@ WriterProxyData& WriterProxyData::operator =(
     return *this;
 }
 
+uint32_t WriterProxyData::get_serialized_size(
+        bool include_encapsulation) const
+{
+    return 512;
+}
+
 bool WriterProxyData::writeToCDRMessage(
         CDRMessage_t* msg,
         bool write_encapsulation) const
