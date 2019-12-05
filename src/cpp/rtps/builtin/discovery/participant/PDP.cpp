@@ -153,7 +153,9 @@ std::shared_ptr<ParticipantProxyData> PDP::add_participant_proxy_data(
                 if(participant_proxies_number_ < max_proxies)
                 {
                     // Pool is empty but limit has not been reached, so we create a new entry.
-                    ret_val = (new ParticipantProxyData(mp_RTPSParticipant->getRTPSParticipantAttributes().allocation))->shared_from_this();
+                    ret_val = std::shared_ptr<ParticipantProxyData>(
+                        new ParticipantProxyData(mp_RTPSParticipant->getRTPSParticipantAttributes().allocation),
+                        ParticipantProxyData::pool_deleter());
 
                     if(!ret_val)
                     {
@@ -182,7 +184,7 @@ std::shared_ptr<ParticipantProxyData> PDP::add_participant_proxy_data(
             else
             {
                 // Pool is not empty, use entry from pool
-                ret_val = participant_proxies_pool_.back()->shared_from_this();
+                ret_val.reset(participant_proxies_pool_.back(), ParticipantProxyData::pool_deleter());
                 participant_proxies_pool_.pop_back();
             }
 

@@ -83,7 +83,7 @@ void PDPListener::onNewCacheChangeAdded(
         // Release reader lock to avoid ABBA lock. PDP mutex should always be first.
         // Keep change information on local variables to check consistency later
         SequenceNumber_t seq_num = change->sequenceNumber;
-        ParticipantDiscoveryInfo::DISCOVERY_STATUS status;
+        ParticipantDiscoveryInfo::DISCOVERY_STATUS status = ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT;
         reader->getMutex().unlock();
 
         // changes may arise here on reader status!!!
@@ -105,7 +105,7 @@ void PDPListener::onNewCacheChangeAdded(
         // 2- If not found search in the pool (maybe other participant created it)
         if(!pdata)
         {
-            pdata = PDP::get_from_proxy_pool(guid.guidPrefix));
+            pdata = PDP::get_from_proxy_pool(guid.guidPrefix);
         }
 
         // 3 - Deserialize if needed
@@ -181,7 +181,7 @@ void PDPListener::onNewCacheChangeAdded(
             lock.unlock();
         }
         
-        if( pdata && temp_participant_data_.m_guid != GUID_t::unknown())
+        if( pdata && deserialize)
         {
             RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
             if(listener != nullptr)

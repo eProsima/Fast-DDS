@@ -78,7 +78,7 @@ class NetworkFactory;
 * ParticipantProxyData class is used to store and convert the information Participants send to each other during the PDP phase.
 *@ingroup BUILTIN_MODULE
 */
-class ParticipantProxyData : public std::enable_shared_from_this<ParticipantProxyData>
+class ParticipantProxyData 
 {
     public:
 
@@ -199,6 +199,26 @@ class ParticipantProxyData : public std::enable_shared_from_this<ParticipantProx
          * deserialize only once if at all
         */
         SequenceNumber_t version_;
+
+        struct pool_deleter 
+        {
+            void operator()(ParticipantProxyData* p) const;
+        };
+
+        //! Lease duration auxiliary functor to make the callbacks to the interested participants and track them
+
+        struct lease_duration_callback
+        {
+            std::map<GuidPrefix_t, PDP*> listeners_;
+            ParticipantProxyData * p = { nullptr };
+
+            lease_duration_callback(ParticipantProxyData * ptr) : p(ptr) {}
+
+            void add_listener(GuidPrefix_t prefix, PDP* p);
+            void remove_listener(GuidPrefix_t prefix);
+
+            void operator()() const;
+        } lease_callback_;
 
     private:
 

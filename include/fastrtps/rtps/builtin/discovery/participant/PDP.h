@@ -63,6 +63,7 @@ class PDP
 {
     friend class PDPListener;
     friend class PDPServerListener;
+    friend class ParticipantProxyData;
 
 public:
     /**

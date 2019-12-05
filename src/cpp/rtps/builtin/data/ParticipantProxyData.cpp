@@ -39,6 +39,61 @@ namespace eprosima {
 namespace fastrtps{
 namespace rtps {
 
+/**
+    * ParticipantProxyData objects are now shared among several participants PDP and
+    * are managed from a static pool in PDP thus liveliness is not each participant responsability.
+    * Each participant PDP should use shared pointers to enable the framework to track when
+    * a proxy can be returned to the pool. When no proxy is referenced in any PDP it returns to the pool.
+*/
+
+void ParticipantProxyData::pool_deleter::operator()(
+    ParticipantProxyData* p) const
+{
+    PDP::return_participant_proxy_to_pool(p);
+}
+
+/**
+    * Lease duration auxiliary functor to make the callbacks to the interested participants and track them
+*/
+
+void ParticipantProxyData::lease_duration_callback::add_listener(GuidPrefix_t prefix, PDP* p)
+{
+    if(nullptr != p)
+    {
+        listeners_[prefix] = p;
+    }
+}
+
+void ParticipantProxyData::lease_duration_callback::remove_listener(GuidPrefix_t prefix)
+{
+    if(nullptr != p)
+    {
+        listeners_.erase(prefix);
+    }
+}
+
+void ParticipantProxyData::lease_duration_callback::operator()() const
+{
+    if(nullptr != p)
+    {
+        for(auto pair : listeners_)
+        {
+            pair.second->check_remote_participant_liveliness(p);
+        }
+    }
+}
+
+
+struct lease_duration_callback
+{
+    std::map<GuidPrefix_t, PDP*> listeners_;
+
+    void add_listener(GuidPrefix_t prefix, PDP* p);
+    void remove_listener(GuidPrefix_t prefix);
+
+    void operator()(TimedEvent::EventCode code) const;
+};
+
 ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttributes& allocation)
     : m_protocolVersion(c_ProtocolVersion)
     , m_VendorId(c_VendorId_Unknown)
@@ -55,21 +110,18 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
     , should_check_lease_duration(false)
     , m_readers(allocation.readers)
     , m_writers(allocation.writers)
+    , lease_callback_(this)
     {
-        /**
-         * ParticipantProxyData objects are now shared among several participants PDP and
-         * are managed from a static pool in PDP thus liveliness is not each participant responsability.
-         * Each participant PDP should use shared pointers to enable the framework to track when
-         * a proxy can be returned to the pool. When no proxy is referenced in any PDP it returns to the pool.
-         * To link each participant proxy with the right deleter and prevent allocations on steady state
-         * we create the reference block in construction.
-         * Never use a temporary ParticipantProxyData through a shared_ptr got from share_from_this() method
-        */
-        std::shared_ptr<ParticipantProxyData> create_reference_block_with_suitable_deleter(this,
-            [](ParticipantProxyData* p) 
+        lease_duration_event = new TimedEvent(mp_RTPSParticipant->getEventResource(),
+            [&lease_callback_](TimedEvent::EventCode code) -> bool
+        {
+            if(TimedEvent::EVENT_SUCCESS == code)
             {
-                PDP::return_participant_proxy_to_pool(p);
-            });
+                check_remote_participant_liveliness(ret_val.get());
+            }
+
+            return false;
+        }, 0.0);
     }
 
 ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
@@ -95,7 +147,7 @@ ParticipantProxyData::ParticipantProxyData(const ParticipantProxyData& pdata)
     , lease_duration_event(nullptr)
     , should_check_lease_duration(false)
     , lease_duration_(std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(pdata.m_leaseDuration)))
-
+    , lease_callback_(nullptr)
     // This method is only called from SecurityManager when a new participant is discovered and the
     // corresponding DiscoveredParticipantInfo struct is created. Only participant info is used,
     // so there is no need to copy m_readers and m_writers
