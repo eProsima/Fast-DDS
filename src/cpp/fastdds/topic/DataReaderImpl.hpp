@@ -195,7 +195,7 @@ public:
     ReturnCode_t get_subscription_matched_status(
             SubscriptionMatchedStatus& status) const;
 
-    const Subscriber* get_subscriber() const;
+    Subscriber* get_subscriber() const;
 
     /* TODO
        bool wait_for_historical_data(

@@ -105,12 +105,7 @@ ReturnCode_t SubscriberImpl::set_qos(
     return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
 }
 
-const SubscriberListener* SubscriberImpl::get_listener() const
-{
-    return listener_;
-}
-
-SubscriberListener* SubscriberImpl::get_listener()
+SubscriberListener* SubscriberImpl::get_listener() const
 {
     return listener_;
 }
@@ -198,7 +193,7 @@ DataReader* SubscriberImpl::create_datareader(
         ratt.disable_positive_acks = true;
     }
 
-    if(listener == nullptr)
+    if (listener == nullptr)
     {
         listener = listener_;
     }
@@ -314,8 +309,7 @@ ReturnCode_t SubscriberImpl::notify_datareaders() const
     {
         for (DataReaderImpl* dr : it.second)
         {
-            if (dr->mask_ == ::dds::core::status::StatusMask::all() ||
-                    dr->mask_ == ::dds::core::status::StatusMask::data_available())
+            if (dr->mask_.is_compatible(::dds::core::status::StatusMask::data_available()))
             {
                 dr->listener_->on_data_available(dr->user_datareader_);
             }

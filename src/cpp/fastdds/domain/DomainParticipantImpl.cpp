@@ -84,6 +84,7 @@ DomainParticipantImpl::DomainParticipantImpl(
     , mask_(mask)
 #pragma warning (disable : 4355 )
     , rtps_listener_(this)
+    , subscriber_listener_(this)
 {
     participant_->impl_ = this;
 }
@@ -249,7 +250,7 @@ Publisher* DomainParticipantImpl::create_publisher(
     }
 
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
-    if(listen == nullptr)
+    if (listen == nullptr)
     {
         listen = listener_;
     }
@@ -542,7 +543,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     }
 
     //TODO CONSTRUIR LA IMPLEMENTACION DENTRO DEL OBJETO DEL USUARIO.
-    if(listen == nullptr)
+    if (listen == nullptr)
     {
         listen = listener_;
     }
@@ -1291,4 +1292,10 @@ std::string DomainParticipantImpl::get_inner_type_name(
 const ::dds::core::status::StatusMask& DomainParticipantImpl::get_mask() const
 {
     return mask_;
+}
+
+void DomainParticipantImpl::Listener::on_data_on_readers(
+        Subscriber* subscriber)
+{
+    subscriber->notify_datareaders();
 }
