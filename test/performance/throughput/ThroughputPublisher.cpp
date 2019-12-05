@@ -419,7 +419,6 @@ void ThroughputPublisher::run(
         for (auto dit = sit->second.begin(); dit != sit->second.end(); ++dit)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            command.m_command = READY_TO_START;
             command.m_size = sit->first;
             command.m_demand = *dit;
 
@@ -449,13 +448,15 @@ void ThroughputPublisher::run(
             // Set the allocated samples to the max_samples. This is because allocated_sample must be <= max_samples
             pub_attrs_.topic.resourceLimitsQos.allocated_samples = pub_attrs_.topic.resourceLimitsQos.max_samples;
 
-            command_publisher_->write((void*)&command);
-            command.m_command = DEFAULT;
-            command_subscriber_->wait_for_unread_samples({20, 0});
-            command_subscriber_->takeNextData((void*)&command, &info);
-            if (command.m_command == BEGIN)
+            for (uint16_t i = 0; i < recovery_times_.size(); i++)
             {
-                for (uint16_t i = 0; i < recovery_times_.size(); i++)
+                command.m_command = READY_TO_START;
+                command.m_size = sit->first;
+                command.m_demand = *dit;
+                command_publisher_->write((void*)&command);
+                command_subscriber_->wait_for_unread_samples({20, 0});
+                command_subscriber_->takeNextData((void*)&command, &info);
+                if (command.m_command == BEGIN)
                 {
                     if (!test(test_time, recovery_times_[i], *dit, sit->first))
                     {
