@@ -780,15 +780,9 @@ class PubSubWriter
         return *this;
     }
 
-    PubSubWriter& socket_buffer_size(uint32_t sockerBufferSize)
+    PubSubWriter& socket_buffer_size(uint32_t socketBufferSize)
     {
-        participant_attr_.rtps.listenSocketBufferSize = sockerBufferSize;
-        return *this;
-    }
-
-    PubSubWriter& socket_buffer_size(uint32_t sockerBufferSize)
-    {
-        participant_attr_.rtps.listenSocketBufferSize = sockerBufferSize;
+        participant_attr_.rtps.listenSocketBufferSize = socketBufferSize;
         return *this;
     }
 
