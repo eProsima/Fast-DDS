@@ -28,6 +28,17 @@ namespace fastrtps {
 
 using namespace rtps;
 
+uint32_t QosPolicy::get_cdr_serialized_size(
+        const std::vector<rtps::octet>& data)
+{
+    // Size of data
+    uint32_t data_size = static_cast<uint32_t>(data.size());
+    // Align to next 4 byte
+    data_size = (data_size + 3) & ~3;
+    // p_id + p_length + str_length + str_data
+    return 2 + 2 + 4 + data_size;
+}
+
 bool DurabilityQosPolicy::addToCDRMessage(
         CDRMessage_t* msg) const
 {
@@ -283,6 +294,23 @@ bool PresentationQosPolicy::readFromCDRMessage(
     return valid;
 }
 
+uint32_t PartitionQosPolicy::cdr_serialized_size() const
+{
+    // p_id + p_length + partition_number
+    uint32_t ret_val = 2 + 2 + 4;
+    for (PartitionQosPolicy::const_iterator it = this->begin(); it != this->end(); ++it)
+    {
+        // str_size
+        ret_val += 4;
+        // str_data (including null char)
+        ret_val += static_cast<uint32_t>(it->size());
+        // align
+        ret_val = (ret_val + 3) & ~3;
+    }
+
+    return ret_val;
+}
+
 bool PartitionQosPolicy::addToCDRMessage(
         CDRMessage_t* msg) const
 {
@@ -341,17 +369,6 @@ bool PartitionQosPolicy::readFromCDRMessage(
     uint32_t length_diff = msg->pos - pos_ref;
     valid &= (size == length_diff);
     return valid;
-}
-
-uint32_t UserDataQosPolicy::cdr_serialized_size(
-        const UserDataQosPolicy& data)
-{
-    // Size of data
-    uint32_t data_size = static_cast<uint32_t>(data.size());
-    // Align to next 4 byte
-    data_size = (data_size + 3) & ~3;
-    // p_id + p_length + str_length + str_data
-    return 2 + 2 + 4 + data_size;
 }
 
 bool UserDataQosPolicy::addToCDRMessage(
@@ -734,6 +751,12 @@ bool DisablePositiveACKsQosPolicy::readFromCDRMessage(
     return valid;
 }
 
+uint32_t TypeIdV1::cdr_serialized_size() const
+{
+    size_t size = types::TypeIdentifier::getCdrSerializedSize(m_type_identifier) + 4;
+    return 2 + 2 + static_cast<uint32_t>(size);
+}
+
 bool TypeIdV1::addToCDRMessage(
         CDRMessage_t* msg) const
 {
@@ -783,6 +806,12 @@ bool TypeIdV1::readFromCDRMessage(
     }
 
     return true;
+}
+
+uint32_t TypeObjectV1::cdr_serialized_size() const
+{
+    size_t size = types::TypeObject::getCdrSerializedSize(m_type_object) + 4;
+    return 2 + 2 + static_cast<uint32_t>(size);
 }
 
 bool TypeObjectV1::addToCDRMessage(

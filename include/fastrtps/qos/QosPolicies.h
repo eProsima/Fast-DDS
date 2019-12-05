@@ -76,6 +76,9 @@ public:
 
     virtual inline void clear() = 0;
 
+    static uint32_t get_cdr_serialized_size(
+            const std::vector<rtps::octet>& data);
+
 public:
 
     bool hasChanged;
@@ -726,7 +729,6 @@ public:
                QosPolicy::operator ==(b);
     }
 
-
     bool operator ==(
             const collection_type& b) const
     {
@@ -765,6 +767,11 @@ public:
         hasChanged = false;
     }
 
+    virtual uint32_t cdr_serialized_size() const override
+    {
+        return QosPolicy::get_cdr_serialized_size(collection_);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -782,9 +789,6 @@ public:
     bool readFromCDRMessage(
             rtps::CDRMessage_t* msg,
             uint16_t size) override;
-
-    static uint32_t cdr_serialized_size(
-            const UserDataQosPolicy& data);
 
     /**
      * Returns raw data vector.
@@ -1170,6 +1174,8 @@ public:
         return max_size_;
     }
 
+    virtual uint32_t cdr_serialized_size() const override;
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -1310,6 +1316,11 @@ public:
                QosPolicy::operator ==(b);
     }
 
+    virtual uint32_t cdr_serialized_size() const override
+    {
+        return QosPolicy::get_cdr_serialized_size(value);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -1405,6 +1416,11 @@ public:
         return (this->value == b.value) &&
                Parameter_t::operator ==(b) &&
                QosPolicy::operator ==(b);
+    }
+
+    virtual uint32_t cdr_serialized_size() const override
+    {
+        return QosPolicy::get_cdr_serialized_size(value);
     }
 
     /**
@@ -2124,6 +2140,8 @@ public:
         std::swap(*this, reset);
     }
 
+    virtual uint32_t cdr_serialized_size() const override;
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -2210,6 +2228,8 @@ public:
         TypeObjectV1 reset = TypeObjectV1();
         std::swap(*this, reset);
     }
+
+    virtual uint32_t cdr_serialized_size() const override;
 
     /**
      * Appends QoS to the specified CDR message.
