@@ -410,7 +410,7 @@ private:
     static std::shared_ptr<ParticipantProxyData> get_from_proxy_pool(const GuidPrefix_t & guid);
 
     //!Get ParticipantProxyData from local collection, nullptr otherwise
-    std::shared_ptr<ParticipantProxyData> PDP::get_from_local_proxies(const GuidPrefix_t & guid);
+    std::shared_ptr<ParticipantProxyData> get_from_local_proxies(const GuidPrefix_t & guid);
 
     //!TimedEvent to periodically resend the local RTPSParticipant information.
     TimedEvent* resend_participant_info_event_;
