@@ -172,7 +172,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -231,7 +231,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -290,7 +290,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -368,7 +368,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -440,7 +440,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -524,7 +524,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -594,7 +594,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -771,7 +771,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -848,7 +848,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -925,7 +925,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1176,7 +1176,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1316,7 +1316,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1413,7 +1413,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1521,7 +1521,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1584,7 +1584,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1654,7 +1654,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1718,7 +1718,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1776,7 +1776,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1830,7 +1830,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1918,7 +1918,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -1981,7 +1981,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -2036,7 +2036,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -2130,7 +2130,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message
@@ -2217,7 +2217,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Reads QoS from the specified CDR message

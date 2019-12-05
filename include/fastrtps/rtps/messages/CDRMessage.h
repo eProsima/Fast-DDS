@@ -238,7 +238,7 @@ inline bool addFragmentNumberSet(
 
 inline bool addLocator(
         CDRMessage_t* msg,
-        Locator_t* loc);
+        const Locator_t& loc);
 
 inline bool addParameterStatus(
         CDRMessage_t* msg,

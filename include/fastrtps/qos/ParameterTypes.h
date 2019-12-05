@@ -162,7 +162,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     RTPS_DllAPI virtual bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) = 0;
+            rtps::CDRMessage_t* msg) const = 0;
 
     /**
      * Virtual method used to get the parameter from a CDRMessage_t message.
@@ -209,7 +209,7 @@ public:
     ParameterKey_t(
             ParameterId_t pid,
             uint16_t in_length,
-            rtps::InstanceHandle_t& ke)
+            const rtps::InstanceHandle_t& ke)
         : Parameter_t(pid, in_length)
         , key(ke)
     {
@@ -221,7 +221,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -276,7 +276,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -329,7 +329,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -400,7 +400,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -442,7 +442,7 @@ public:
     ParameterGuid_t(
             ParameterId_t pid,
             uint16_t in_length,
-            rtps::GUID_t guidin)
+            const rtps::GUID_t& guidin)
         : Parameter_t(pid, in_length)
         , guid(guidin)
     {
@@ -451,7 +451,7 @@ public:
     ParameterGuid_t(
             ParameterId_t pid,
             uint16_t in_length,
-            rtps::InstanceHandle_t& iH)
+            const rtps::InstanceHandle_t& iH)
         : Parameter_t(pid, in_length)
     {
         for (uint8_t i = 0; i < 16; ++i)
@@ -473,7 +473,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -520,7 +520,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -567,7 +567,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -614,7 +614,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -675,7 +675,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -731,7 +731,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -778,7 +778,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -825,7 +825,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -870,7 +870,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -917,7 +917,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -1336,7 +1336,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -1409,7 +1409,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -1455,7 +1455,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -1501,7 +1501,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
@@ -1546,7 +1546,7 @@ public:
      * @return True if the parameter was correctly added.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Read the parameter from a CDRMessage_t message.
