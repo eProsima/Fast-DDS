@@ -1190,17 +1190,25 @@ std::shared_ptr<ParticipantProxyData> PDP::get_from_local_proxies(const GuidPref
 /*static*/ 
 void PDP::return_participant_proxy_to_pool(ParticipantProxyData * p)
 {
-    p->clear();
+    assert(p != nullptr);
 
-    std::lock_guard<std::recursive_mutex> lock(PDP::pool_mutex_);
+    GUID_t guid;
 
-    if(p->m_guid == c_Guid_Unknown || !PDP::pool_participant_references_.empty())
     {
+        std::lock_guard<std::recursive_mutex> lock(p->ppd_mutex_);
+        guid = p->m_guid;
+        p->clear();
+    }
+
+    if( guid != c_Guid_Unknown)
+    {
+        std::lock_guard<std::recursive_mutex> lock(PDP::pool_mutex_);
+
         // if its a pool managed object should be included into the map
-        assert(PDP::pool_participant_references_.find(p->m_guid.guidPrefix)
+        assert(PDP::pool_participant_references_.find(guid.guidPrefix)
             != PDP::pool_participant_references_.end());
 
-        PDP::pool_participant_references_.erase(p->m_guid.guidPrefix);
+        PDP::pool_participant_references_.erase(guid.guidPrefix);
         PDP::participant_proxies_pool_.push_back(p);
     }
 }
