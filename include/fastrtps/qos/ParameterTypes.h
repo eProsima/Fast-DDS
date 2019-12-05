@@ -141,6 +141,11 @@ public:
                (this->length == b.length);
     }
 
+    virtual uint32_t cdr_serialized_size() const
+    {
+        return 4 + length;
+    }
+
     /**
      * Virtual method used to add the parameter to a CDRMessage_t message.
      * @param[in,out] msg Pointer to the message where the parameter should be added.
@@ -243,6 +248,10 @@ class ParameterString_t: public Parameter_t
         bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
         inline const char* getName()const { return m_string.c_str(); };
         inline void setName(const char* name){ m_string = name; };
+        virtual uint32_t cdr_serialized_size() const override
+        {
+            return cdr_serialized_size(m_string);
+        }
 
         static uint32_t cdr_serialized_size(
                 const string_255& str);
@@ -555,6 +564,11 @@ class ParameterPropertyList_t : public Parameter_t {
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 
+        virtual uint32_t cdr_serialized_size() const override
+        {
+            return cdr_serialized_size(*this);
+        }
+
         static uint32_t cdr_serialized_size(
                 const ParameterPropertyList_t& data);
 };
@@ -610,9 +624,16 @@ class ParameterToken_t : public Parameter_t
          */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 
+        virtual uint32_t cdr_serialized_size() const override
+        {
+            return cdr_serialized_size(token);
+        }
+
         static uint32_t cdr_serialized_size(
                 const rtps::Token& data);
 };
+
+#define PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH 8
 
 class ParameterParticipantSecurityInfo_t : public Parameter_t
 {
@@ -620,7 +641,8 @@ class ParameterParticipantSecurityInfo_t : public Parameter_t
         rtps::security::ParticipantSecurityAttributesMask security_attributes;
         rtps::security::PluginParticipantSecurityAttributesMask plugin_security_attributes;
 
-        ParameterParticipantSecurityInfo_t() : Parameter_t(PID_PARTICIPANT_SECURITY_INFO, 0)
+        ParameterParticipantSecurityInfo_t()
+            : Parameter_t(PID_PARTICIPANT_SECURITY_INFO, PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH)
         {
         }
 
@@ -641,7 +663,7 @@ class ParameterParticipantSecurityInfo_t : public Parameter_t
         bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 };
 
-#define PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH 8
+#define PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH 8
 
 class ParameterEndpointSecurityInfo_t : public Parameter_t
 {
@@ -649,7 +671,8 @@ class ParameterEndpointSecurityInfo_t : public Parameter_t
         rtps::security::EndpointSecurityAttributesMask security_attributes;
         rtps::security::PluginEndpointSecurityAttributesMask plugin_security_attributes;
 
-        ParameterEndpointSecurityInfo_t() : Parameter_t(PID_ENDPOINT_SECURITY_INFO, 0)
+        ParameterEndpointSecurityInfo_t()
+            : Parameter_t(PID_ENDPOINT_SECURITY_INFO, PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH)
         {
         }
 
@@ -669,8 +692,6 @@ class ParameterEndpointSecurityInfo_t : public Parameter_t
         */
         bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 };
-
-#define PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH 8
 
 #endif
 

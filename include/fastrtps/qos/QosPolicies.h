@@ -73,6 +73,9 @@ public:
         return m_sendAlways;
     }
 
+    static uint32_t get_cdr_serialized_size(
+            const std::vector<rtps::octet>& data);
+
 public:
 
     bool hasChanged;
@@ -525,6 +528,11 @@ public:
                QosPolicy::operator ==(b);
     }
 
+    virtual uint32_t cdr_serialized_size() const override
+    {
+        return QosPolicy::get_cdr_serialized_size(dataVec);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -532,9 +540,6 @@ public:
      */
     bool addToCDRMessage(
             rtps::CDRMessage_t* msg) const override;
-
-    static uint32_t cdr_serialized_size(
-            const std::vector<rtps::octet>& data);
 
     /**
      * Returns raw data vector.
@@ -696,6 +701,8 @@ public:
                QosPolicy::operator ==(b);
     }
 
+    virtual uint32_t cdr_serialized_size() const override;
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -774,6 +781,11 @@ public:
                QosPolicy::operator ==(b);
     }
 
+    virtual uint32_t cdr_serialized_size() const override
+    {
+        return QosPolicy::get_cdr_serialized_size(value);
+    }
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -850,6 +862,11 @@ public:
         return (this->value == b.value) &&
                Parameter_t::operator ==(b) &&
                QosPolicy::operator ==(b);
+    }
+
+    virtual uint32_t cdr_serialized_size() const override
+    {
+        return QosPolicy::get_cdr_serialized_size(value);
     }
 
     /**
@@ -1401,6 +1418,8 @@ public:
     {
     }
 
+    virtual uint32_t cdr_serialized_size() const override;
+
     /**
      * Appends QoS to the specified CDR message.
      * @param msg Message to append the QoS Policy to.
@@ -1474,6 +1493,8 @@ public:
     virtual RTPS_DllAPI ~TypeObjectV1()
     {
     }
+
+    virtual uint32_t cdr_serialized_size() const override;
 
     /**
      * Appends QoS to the specified CDR message.
