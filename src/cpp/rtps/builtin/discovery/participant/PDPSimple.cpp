@@ -180,10 +180,6 @@ std::shared_ptr<ParticipantProxyData> PDPSimple::createParticipantProxyData(
 
     std::shared_ptr<ParticipantProxyData> pdata = add_participant_proxy_data(participant_data.m_guid, true);
 
-    // createParticipantProxyData locks on the return object to assure further atomic operation
-    pdata->ppd_mutex_.lock();
-
-    // It may be the same
     if( pdata )
     {
         pdata->copy(participant_data);

@@ -95,6 +95,7 @@ public:
 
     /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info
+     * If sucessful returns with ParticipantProxyData mutex ownership
      * @param p from DATA msg deserialization
      * @param writer_guid GUID of originating writer
      * @return new ParticipantProxyData * or nullptr on failure
@@ -135,6 +136,7 @@ public:
 
     /**
      * Add a WriterProxyData to the correct ParticipantProxyData.
+     * returns with the ParticipantProxyData locked if successful to prevern WriterProxyData corruption
      * @param [in]  writer_guid       GUID of the writer to add.
      * @param [out] participant_guid  GUID of the ParticipantProxyData where the writer was added.
      * @param [in]  initializer_func  Function to be called in order to set the data of the WriterProxyData.
@@ -373,6 +375,7 @@ protected:
     /**
      * Adds an entry to the collection of participant proxy information.
      * May use one of the entries present in the pool.
+     * If sucessful returns with ParticipantProxyData mutex ownership
      *
      * @param participant_guid GUID of the participant for which to create the proxy object.
      * @param with_lease_duration indicates whether lease duration event should be created.

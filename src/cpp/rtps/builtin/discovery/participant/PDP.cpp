@@ -143,6 +143,9 @@ std::shared_ptr<ParticipantProxyData> PDP::add_participant_proxy_data(
         {
             ret_val = participant_reference->second.lock();
 
+            // locks on the ParticipantProxyData, this method exits with this lock taken
+            ret_val->ppd_mutex_.lock();
+
             // It should be an associated ParticipantProxyData
             assert(!!ret_val);
         }
@@ -192,6 +195,9 @@ std::shared_ptr<ParticipantProxyData> PDP::add_participant_proxy_data(
                 participant_proxies_pool_.pop_back();
             }
 
+            // locks on the ParticipantProxyData, this method exits with this lock taken
+            ret_val->ppd_mutex_.lock();
+
             ret_val->should_check_lease_duration = with_lease_duration;
             ret_val->m_guid = participant_guid;
         }
@@ -201,6 +207,7 @@ std::shared_ptr<ParticipantProxyData> PDP::add_participant_proxy_data(
     }
  
     add_participant_proxy_data(ret_val);
+
 
     return ret_val;
 }
@@ -335,10 +342,14 @@ bool PDP::initPDP(
     //UPDATE METATRAFFIC.
     mp_builtin->updateMetatrafficLocators(this->mp_PDPReader->getAttributes().unicastLocatorList);
     std::shared_ptr<ParticipantProxyData> pdata = add_participant_proxy_data(part->getGuid(), true);
+
     if (!pdata)
     {
         return false;
     }
+
+    pdata->ppd_mutex_.unlock(); // add_participant_proxy_data locks on ParticipantProxyData mutex
+    // nobody knows about him thus we can unlock
 
     initializeParticipantProxyData(pdata.get());
 
@@ -773,7 +784,7 @@ WriterProxyData* PDP::addWriterProxyData(
     {
         if (pit->m_guid.guidPrefix == writer_guid.guidPrefix)
         {
-            std::lock_guard<std::recursive_mutex> ppd_lock(pit->ppd_mutex_);
+            std::unique_lock<std::recursive_mutex> ppd_lock(pit->ppd_mutex_);
 
             // Copy participant data to be used outside.
             participant_guid = pit->m_guid;
@@ -798,6 +809,7 @@ WriterProxyData* PDP::addWriterProxyData(
                         listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
                     }
 
+                    ppd_lock.release(); // retval is valid thus we return with proxy locked
                     return ret_val;
                 }
             }
@@ -831,6 +843,7 @@ WriterProxyData* PDP::addWriterProxyData(
             }
 
             // Add to ParticipantProxyData
+            ret_val->mutex_guard(&pit->ppd_mutex_);
             pit->m_writers.push_back(ret_val);
 
             if (!initializer_func(ret_val, false, *pit))
@@ -846,6 +859,7 @@ WriterProxyData* PDP::addWriterProxyData(
                 listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
             }
 
+            ppd_lock.release(); // retval is valid thus we return with proxy locked
             return ret_val;
         }
     }

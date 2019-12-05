@@ -91,6 +91,9 @@ void EDPBasePUBListener::add_writer_from_change(
 
             // Take again the reader lock.
             reader->getMutex().lock();
+
+            // unlock ParticipantProxyData
+            writer_data->unlock();
         }
         else //NOT ADDED BECAUSE IT WAS ALREADY THERE
         {

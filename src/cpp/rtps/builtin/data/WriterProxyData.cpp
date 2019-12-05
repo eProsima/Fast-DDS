@@ -46,6 +46,7 @@ WriterProxyData::WriterProxyData(
     , m_topicDiscoveryKind(NO_CHECK)
     , m_type_id(nullptr)
     , m_type(nullptr)
+    , ppd_mutex_(nullptr)
 {
 }
 
@@ -70,6 +71,7 @@ WriterProxyData::WriterProxyData(
     , m_topicDiscoveryKind(writerInfo.m_topicDiscoveryKind)
     , m_type_id(nullptr)
     , m_type(nullptr)
+    , ppd_mutex_(nullptr)
 {
     if (writerInfo.m_type_id)
     {
@@ -687,6 +689,25 @@ void WriterProxyData::clear()
     {
         *m_type = TypeObjectV1();
     }
+    ppd_mutex_ = nullptr;
+}
+
+//!Unlock the ParticipantProxyData protective mutex
+void WriterProxyData::unlock()
+{
+    if(ppd_mutex_)
+    {
+        ppd_mutex_->unlock();
+    }
+}
+
+//!Associate a protection mutex to the proxy, ParticipantProxyData one
+void WriterProxyData::mutex_guard(
+    std::recursive_mutex * pM)
+{
+    assert(ppd_mutex_ == nullptr);
+
+    ppd_mutex_ = pM;
 }
 
 void WriterProxyData::copy(
@@ -709,6 +730,7 @@ void WriterProxyData::copy(
         m_type_id = wdata->m_type_id;
         m_type = wdata->m_type;
     }
+    // ppd_mutex_ is not copied
 }
 
 bool WriterProxyData::is_update_allowed(

@@ -383,6 +383,12 @@ public:
             CDRMessage_t* msg,
             const NetworkFactory& network);
 
+    //!Unlock the ParticipantProxyData protective mutex
+    void unlock();
+
+    //!Associate a protection mutex to the proxy, ParticipantProxyData one
+    void mutex_guard(std::recursive_mutex * pM);
+
 private:
 
     //!GUID
@@ -423,6 +429,9 @@ private:
 
     //!Type Object
     TypeObjectV1* m_type;
+
+    //!Reference to the ParticipantProxyData mutex that protects it
+    std::recursive_mutex * ppd_mutex_;
 };
 
 } /* namespace rtps */
