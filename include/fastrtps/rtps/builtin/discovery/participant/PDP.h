@@ -123,6 +123,7 @@ public:
 
     /**
      * Add a ReaderProxyData to the correct ParticipantProxyData.
+     * returns with the ParticipantProxyData locked if successful to prevern ReaderProxyData corruption
      * @param [in]  reader_guid       GUID of the reader to add.
      * @param [out] participant_guid  GUID of the ParticipantProxyData where the reader was added.
      * @param [in]  initializer_func  Function to be called in order to set the data of the ReaderProxyData.

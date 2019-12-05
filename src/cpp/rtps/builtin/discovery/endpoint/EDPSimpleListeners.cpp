@@ -192,6 +192,8 @@ void EDPBaseSUBListener::add_reader_from_change(
 
             // Take again the reader lock.
             reader->getMutex().lock();
+            // unlock ParticipantProxyData
+            reader_data->unlock();
         }
         else
         {

@@ -354,6 +354,12 @@ public:
      */
     void clear();
 
+    //!Unlock the ParticipantProxyData protective mutex
+    void unlock();
+
+    //!Associate a protection mutex to the proxy, ParticipantProxyData one
+    void mutex_guard(std::recursive_mutex * pM);
+
     /**
      * Check if this object can be updated with the information on another object.
      * @param rdata ReaderProxyData object to be checked.
@@ -402,6 +408,9 @@ private:
     TypeIdV1* m_type_id;
     //!Type Object
     TypeObjectV1* m_type;
+
+    //!Reference to the ParticipantProxyData mutex that protects it
+    std::recursive_mutex * ppd_mutex_;
 };
 
 } /* namespace rtps */

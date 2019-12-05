@@ -690,7 +690,7 @@ ReaderProxyData* PDP::addReaderProxyData(
     {
         if(pit->m_guid.guidPrefix == reader_guid.guidPrefix)
         {
-            std::lock_guard<std::recursive_mutex> ppd_lock(pit->ppd_mutex_);
+            std::unique_lock<std::recursive_mutex> ppd_lock(pit->ppd_mutex_);
 
             // Copy participant data to be used outside.
             participant_guid = pit->m_guid;
@@ -715,6 +715,7 @@ ReaderProxyData* PDP::addReaderProxyData(
                         listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
                     }
 
+                    ppd_lock.release(); // If succeeds returns with the lock
                     return ret_val;
                 }
             }
@@ -748,6 +749,7 @@ ReaderProxyData* PDP::addReaderProxyData(
             }
 
             // Add to ParticipantProxyData
+            ret_val->mutex_guard(&pit->ppd_mutex_);
             pit->m_readers.push_back(ret_val);
 
             if (!initializer_func(ret_val, false, *pit))
@@ -763,6 +765,7 @@ ReaderProxyData* PDP::addReaderProxyData(
                 listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
             }
 
+            ppd_lock.release(); // If succeeds returns with the lock
             return ret_val;
         }
     }
