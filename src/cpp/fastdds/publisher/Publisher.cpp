@@ -170,12 +170,10 @@ const DomainParticipant& Publisher::get_participant() const
     return impl_->get_participant();
 }
 
-/* TODO
-   bool Publisher::delete_contained_entities()
-   {
+ReturnCode_t Publisher::delete_contained_entities()
+{
     return impl_->delete_contained_entities();
-   }
- */
+}
 
 ReturnCode_t Publisher::set_default_datawriter_qos(
         const DataWriterQos& qos)

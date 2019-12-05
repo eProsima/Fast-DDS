@@ -215,9 +215,7 @@ public:
      */
     const DomainParticipant& get_participant() const;
 
-    /* TODO
-       bool delete_contained_entities();
-     */
+    ReturnCode_t delete_contained_entities();
 
     /**
      * This operation sets a default value of the DataWriter QoS policies which will be used for newly created
