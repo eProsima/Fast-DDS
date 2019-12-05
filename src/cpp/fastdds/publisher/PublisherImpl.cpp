@@ -209,7 +209,7 @@ DataWriter* PublisherImpl::create_datawriter(
         w_att.keep_duration = writer_qos.disable_positive_ACKs.duration;
     }
 
-    if(listener == nullptr)
+    if (listener == nullptr)
     {
         listener = listener_;
     }
@@ -419,13 +419,25 @@ const Publisher* PublisherImpl::get_publisher() const
     return user_publisher_;
 }
 
-/* TODO
-   bool PublisherImpl::delete_contained_entities()
-   {
-    logError(PUBLISHER, "Operation not implemented");
-    return false;
-   }
- */
+ReturnCode_t PublisherImpl::delete_contained_entities()
+{
+    for (auto it : writers_)
+    {
+        for (DataWriterImpl* writer : it.second)
+        {
+            ReturnCode_t code = delete_datawriter(writer->user_datawriter_);
+            if (code == ReturnCode_t::RETCODE_PRECONDITION_NOT_MET)
+            {
+                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            }
+            else if (code == ReturnCode_t::RETCODE_ERROR)
+            {
+                return ReturnCode_t::RETCODE_ERROR;
+            }
+        }
+    }
+    return ReturnCode_t::RETCODE_OK;
+}
 
 const fastrtps::PublisherAttributes& PublisherImpl::get_attributes() const
 {
