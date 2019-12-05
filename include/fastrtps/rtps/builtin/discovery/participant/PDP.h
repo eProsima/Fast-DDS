@@ -32,6 +32,8 @@
 #include "../../../../utils/collections/ResourceLimitedVector.hpp"
 #include "../../../participant/ParticipantDiscoveryInfo.h"
 
+#include <fastrtps/rtps/resources/ResourceEvent.h>
+
 
 namespace eprosima {
 namespace fastrtps {

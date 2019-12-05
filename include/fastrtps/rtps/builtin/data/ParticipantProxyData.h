@@ -73,6 +73,7 @@ class RTPSParticipantImpl;
 class ReaderProxyData;
 class WriterProxyData;
 class NetworkFactory;
+class PDP;
 
 /**
 * ParticipantProxyData class is used to store and convert the information Participants send to each other during the PDP phase.

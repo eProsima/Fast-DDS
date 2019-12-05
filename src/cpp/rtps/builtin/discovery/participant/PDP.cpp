@@ -174,7 +174,7 @@ std::shared_ptr<ParticipantProxyData> PDP::add_participant_proxy_data(
                             GuidPrefix_t own_prefix = getLocalParticipantProxyData()->m_guid.guidPrefix; 
                             ret_val->lease_callback_.add_listener(own_prefix, this);
                         }
-                        pool_guard.lock()
+                        pool_guard.lock();
                        
                     }
                 }

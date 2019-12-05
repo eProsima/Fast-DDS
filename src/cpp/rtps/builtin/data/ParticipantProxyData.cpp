@@ -118,7 +118,7 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
         std::lock_guard<std::recursive_mutex> lock(PDP::pool_mutex_);
 
         lease_duration_event = new TimedEvent(PDP::event_thr_,
-            [&lease_callback_]() -> bool
+            [this]() -> bool
         {
             lease_callback_();
             return false;
