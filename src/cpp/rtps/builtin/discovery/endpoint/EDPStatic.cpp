@@ -263,6 +263,10 @@ bool EDPStatic::newRemoteReader(
         if(reader_data != nullptr)
         {
             this->pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
+
+            // addReaderProxyData returns a lock object on success
+            reader_data->unlock();
+
             return true;
         }
     }
@@ -313,6 +317,10 @@ bool EDPStatic::newRemoteWriter(
         if (writer_data != nullptr)
         {
             this->pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);
+
+            // addWriterProxyData returns the object locked
+            writer_data->unlock();
+
             return true;
         }
     }
