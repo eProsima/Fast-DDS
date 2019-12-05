@@ -159,13 +159,13 @@ uint32_t ParticipantProxyData::get_serialized_size(
     if (m_userData.size() > 0)
     {
         // PID_USER_DATA
-        ret_val += UserDataQosPolicy::cdr_serialized_size(m_userData);
+        ret_val += QosPolicy::get_cdr_serialized_size(m_userData);
     }
 
     if (m_properties.size() > 0)
     {
         // PID_PROPERTY_LIST
-        ret_val += ParameterPropertyList_t::cdr_serialized_size(m_properties);
+        ret_val += m_properties.cdr_serialized_size();
     }
 
 #if HAVE_SECURITY
