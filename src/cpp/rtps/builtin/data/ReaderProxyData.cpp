@@ -842,6 +842,46 @@ void ReaderProxyData::set_remote_locators(
     }
 }
 
+bool ReaderProxyData::add_knowledge_from(
+        const GUID_t& participant_guid)
+{
+    if(is_known_by(participant_guid))
+    {
+        // Already known
+        return true;
+    }
+
+    participants_kowning_me_.push_back(participant_guid.guidPrefix);
+    return false;
+}
+
+bool ReaderProxyData::remove_knowledge_from(
+        const GUID_t& participant_guid)
+{
+    const GuidPrefix_t& prefix = participant_guid.guidPrefix;
+    auto it = std::find(participants_kowning_me_.begin(), participants_kowning_me_.end(), prefix);
+    if (it != participants_kowning_me_.end())
+    {
+        participants_kowning_me_.erase(it);
+        return true;
+    }
+
+    return false;
+}
+
+bool ReaderProxyData::is_known_by(
+        const GUID_t& participant_guid) const
+{
+    const GuidPrefix_t& prefix = participant_guid.guidPrefix;
+    auto it = std::find(participants_kowning_me_.begin(), participants_kowning_me_.end(), prefix);
+    return it != participants_kowning_me_.end();
+}
+
+bool ReaderProxyData::is_known_by_no_one() const
+{
+    return participants_kowning_me_.empty();
+}
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */
