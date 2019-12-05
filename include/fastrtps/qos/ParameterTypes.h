@@ -146,7 +146,7 @@ public:
      * @param[in,out] msg Pointer to the message where the parameter should be added.
      * @return True if the parameter was correctly added.
      */
-    RTPS_DllAPI virtual bool addToCDRMessage(rtps::CDRMessage_t* msg) = 0;
+    RTPS_DllAPI virtual bool addToCDRMessage(rtps::CDRMessage_t* msg) const = 0;
 
 public:
     //!Parameter ID
@@ -168,13 +168,13 @@ class ParameterKey_t:public Parameter_t{
          * @param in_length Its associated length
          */
         ParameterKey_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
-        ParameterKey_t(ParameterId_t pid,uint16_t in_length,rtps::InstanceHandle_t& ke):Parameter_t(pid,in_length),key(ke){};
+        ParameterKey_t(ParameterId_t pid,uint16_t in_length,const rtps::InstanceHandle_t& ke):Parameter_t(pid,in_length),key(ke){};
         /**
          * Add the parameter to a CDRMessage_t message.
          * @param[in,out] msg Pointer to the message where the parameter should be added.
          * @return True if the parameter was correctly added.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 };
 
 /**
@@ -215,7 +215,7 @@ class ParameterLocator_t: public Parameter_t
          * @param[in,out] msg Pointer to the message where the parameter should be added.
          * @return True if the parameter was correctly added.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 };
 #define PARAMETER_LOCATOR_LENGTH 24
 
@@ -240,7 +240,7 @@ class ParameterString_t: public Parameter_t
          * @param[in,out] msg Pointer to the message where the parameter should be added.
          * @return True if the parameter was correctly added.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
         inline const char* getName()const { return m_string.c_str(); };
         inline void setName(const char* name){ m_string = name; };
 
@@ -269,7 +269,7 @@ class ParameterPort_t: public Parameter_t {
          * @param[in,out] msg Pointer to the message where the parameter should be added.
          * @return True if the parameter was correctly added.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 };
 
 #define PARAMETER_PORT_LENGTH 4
@@ -287,8 +287,8 @@ class ParameterGuid_t: public Parameter_t {
          * @param in_length Its associated length
          */
         ParameterGuid_t(ParameterId_t pid,uint16_t in_length):Parameter_t(pid,in_length){};
-        ParameterGuid_t(ParameterId_t pid,uint16_t in_length,rtps::GUID_t guidin):Parameter_t(pid,in_length),guid(guidin){};
-        ParameterGuid_t(ParameterId_t pid,uint16_t in_length,rtps::InstanceHandle_t& iH):Parameter_t(pid,in_length)
+        ParameterGuid_t(ParameterId_t pid,uint16_t in_length,const rtps::GUID_t& guidin):Parameter_t(pid,in_length),guid(guidin){};
+        ParameterGuid_t(ParameterId_t pid,uint16_t in_length,const rtps::InstanceHandle_t& iH):Parameter_t(pid,in_length)
         {
             for(uint8_t i =0;i<16;++i)
             {
@@ -303,7 +303,7 @@ class ParameterGuid_t: public Parameter_t {
          * @param[in,out] msg Pointer to the message where the parameter should be added.
          * @return True if the parameter was correctly added.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 };
 
 #define PARAMETER_GUID_LENGTH 16
@@ -326,7 +326,7 @@ class ParameterProtocolVersion_t: public Parameter_t {
          * @param[in,out] msg Pointer to the message where the parameter should be added.
          * @return True if the parameter was correctly added.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 };
 
 #define PARAMETER_PROTOCOL_LENGTH 4
@@ -351,7 +351,7 @@ class ParameterVendorId_t:public Parameter_t{
          * @param[in,out] msg Pointer to the message where the parameter should be added.
          * @return True if the parameter was correctly added.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 };
 
 #define PARAMETER_VENDOR_LENGTH 4
@@ -374,7 +374,7 @@ class ParameterIP4Address_t :public Parameter_t{
          * @param[in,out] msg Pointer to the message where the parameter should be added.
          * @return True if the parameter was correctly added.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
         void setIP4Address(rtps::octet o1, rtps::octet o2, rtps::octet o3, rtps::octet o4);
 };
 
@@ -399,7 +399,7 @@ class ParameterBool_t:public Parameter_t{
          * @param[in,out] msg Pointer to the message where the parameter should be added.
          * @return True if the parameter was correctly added.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 };
 
 #define PARAMETER_BOOL_LENGTH 4
@@ -425,7 +425,7 @@ public:
     * @param[in,out] msg Pointer to the message where the parameter should be added.
     * @return True if the parameter was correctly added.
     */
-    bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+    bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 };
 
 #define PARAMETER_STATUS_INFO_LENGTH 4
@@ -448,7 +448,7 @@ class ParameterCount_t:public Parameter_t{
          * @param[in,out] msg Pointer to the message where the parameter should be added.
          * @return True if the parameter was correctly added.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 };
 
 #define PARAMETER_COUNT_LENGTH 4
@@ -471,7 +471,7 @@ class ParameterEntityId_t:public Parameter_t{
          * @param[in,out] msg Pointer to the message where the parameter should be added.
          * @return True if the parameter was correctly added.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 };
 
 #define PARAMETER_ENTITYID_LENGTH 4
@@ -494,7 +494,7 @@ class ParameterTime_t:public Parameter_t{
          * @param[in,out] msg Pointer to the message where the parameter should be added.
          * @return True if the parameter was correctly added.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 };
 
 #define PARAMETER_TIME_LENGTH 8
@@ -522,7 +522,7 @@ class ParameterBuiltinEndpointSet_t : public Parameter_t{
          * @param[in,out] msg Pointer to the message where the parameter should be added.
          * @return True if the parameter was correctly added.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 };
 
 #define PARAMETER_BUILTINENDPOINTSET_LENGTH 4
@@ -553,7 +553,7 @@ class ParameterPropertyList_t : public Parameter_t {
          * @param[in,out] msg Pointer to the message where the parameter should be added.
          * @return True if the parameter was correctly added.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 
         static uint32_t cdr_serialized_size(
                 const ParameterPropertyList_t& data);
@@ -581,7 +581,7 @@ class ParameterSampleIdentity_t : public Parameter_t
          * @param[in,out] msg Pointer to the message where the parameter should be added.
          * @return True if the parameter was correctly added.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 };
 
 #if HAVE_SECURITY
@@ -608,7 +608,7 @@ class ParameterToken_t : public Parameter_t
          * @param[in,out] msg Pointer to the message where the parameter should be added.
          * @return True if the parameter was correctly added.
          */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 
         static uint32_t cdr_serialized_size(
                 const rtps::Token& data);
@@ -638,7 +638,7 @@ class ParameterParticipantSecurityInfo_t : public Parameter_t
         * @param[in,out] msg Pointer to the message where the parameter should be added.
         * @return True if the parameter was correctly added.
         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 };
 
 #define PARAMETER_PARTICIPANT_SECURITY_INFO_LENGTH 8
@@ -667,7 +667,7 @@ class ParameterEndpointSecurityInfo_t : public Parameter_t
         * @param[in,out] msg Pointer to the message where the parameter should be added.
         * @return True if the parameter was correctly added.
         */
-        bool addToCDRMessage(rtps::CDRMessage_t* msg) override;
+        bool addToCDRMessage(rtps::CDRMessage_t* msg) const override;
 };
 
 #define PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH 8

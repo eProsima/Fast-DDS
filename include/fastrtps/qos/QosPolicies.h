@@ -163,7 +163,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
 public:
 
@@ -206,7 +206,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
 public:
 
@@ -249,7 +249,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
 public:
 
@@ -311,7 +311,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
 public:
 
@@ -367,7 +367,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
 public:
 
@@ -435,7 +435,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
 public:
 
@@ -489,7 +489,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
 public:
 
@@ -531,7 +531,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     static uint32_t cdr_serialized_size(
             const std::vector<rtps::octet>& data);
@@ -596,7 +596,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
 public:
 
@@ -657,7 +657,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
 public:
 
@@ -702,7 +702,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Appends a name to the list of partition names.
@@ -780,7 +780,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Appends topic data.
@@ -858,7 +858,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
     /**
      * Appends group data.
@@ -949,7 +949,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
 public:
 
@@ -995,7 +995,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 };
 
 
@@ -1049,7 +1049,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
 public:
 
@@ -1097,7 +1097,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
 public:
 
@@ -1139,7 +1139,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
 public:
 
@@ -1177,7 +1177,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 };
 
 /**
@@ -1243,7 +1243,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 };
 
 enum TypeConsistencyKind : uint16_t
@@ -1290,7 +1290,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 };
 
 /**
@@ -1329,7 +1329,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
 
 public:
 
@@ -1407,7 +1407,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
     bool readFromCDRMessage(
             rtps::CDRMessage_t* msg,
             uint32_t size);
@@ -1481,7 +1481,7 @@ public:
      * @return True if the modified CDRMessage is valid.
      */
     bool addToCDRMessage(
-            rtps::CDRMessage_t* msg) override;
+            rtps::CDRMessage_t* msg) const override;
     bool readFromCDRMessage(
             rtps::CDRMessage_t* msg,
             uint32_t size);
