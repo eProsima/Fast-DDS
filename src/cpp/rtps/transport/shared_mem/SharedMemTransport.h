@@ -144,9 +144,10 @@ public:
 			const fastrtps::rtps::octet* send_buffer,
 			uint32_t send_buffer_size,
 			std::shared_ptr<SharedMemManager::Port> port,
-			const fastrtps::rtps::Locator_t& remote_locator,
+			fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+            fastrtps::rtps::LocatorsIterator* destination_locators_end,
 			bool only_multicast_purpose,
-			const std::chrono::microseconds& timeout);
+			const std::chrono::steady_clock::time_point& max_blocking_time_point);
 
 	/**
 	 * Performs the locator selection algorithm for this transport.

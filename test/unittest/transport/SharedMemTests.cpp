@@ -277,8 +277,15 @@ TEST_F(SharedMemTests, send_to_wrong_port)
     wrongLocator.kind = LOCATOR_KIND_SHMEM;
     wrongLocator.port = g_output_port+1;
     std::vector<octet> message = { 'H','e','l','l','o' };
-    ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), wrongLocator,
-                std::chrono::microseconds(100)));
+
+    LocatorList_t locator_list;
+    locator_list.push_back(wrongLocator);
+
+    Locators locators_begin(locator_list.begin());
+    Locators locators_end(locator_list.end());
+
+    ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), &locators_begin,
+                &locators_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
 }
 
 #ifndef __APPLE__
@@ -312,9 +319,16 @@ TEST_F(SharedMemTests, send_and_receive_between_ports)
     };
     msg_recv->setCallback(recCallback);
 
+    LocatorList_t locator_list;
+    locator_list.push_back(unicastLocator);
+
     auto sendThreadFunction = [&]()
     {
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, unicastLocator, std::chrono::microseconds(100)));
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     };
     senderThread.reset(new std::thread(sendThreadFunction));
     

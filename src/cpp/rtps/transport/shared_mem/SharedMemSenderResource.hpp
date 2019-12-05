@@ -44,12 +44,11 @@ public:
         send_lambda_ = [this, &transport] (
                 const fastrtps::rtps::octet* data,
                 uint32_t dataSize,
-                const fastrtps::rtps::Locator_t& destination,
-                const std::chrono::microseconds& timeout)-> bool
+                fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+                fastrtps::rtps::LocatorsIterator* destination_locators_end,
+                const std::chrono::steady_clock::time_point& max_blocking_time_point)-> bool
             {
-                return false;
-                // TODO: Shared memory port should be obtained here.
-                return transport.send(data, dataSize, /*writter_*/nullptr, destination, only_multicast_purpose_, timeout);
+                return transport.send(data, dataSize, /*writter_*/nullptr, destination_locators_begin, destination_locators_end, only_multicast_purpose_, max_blocking_time_point);
             };
     }
 

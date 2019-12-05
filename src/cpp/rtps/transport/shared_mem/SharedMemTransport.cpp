@@ -352,20 +352,25 @@ bool SharedMemTransport::send(
 		const octet* send_buffer,
 		uint32_t send_buffer_size,
 		std::shared_ptr<SharedMemManager::Port> port,
-		const Locator_t& remote_locator,
+		fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+        fastrtps::rtps::LocatorsIterator* destination_locators_end,
 		bool only_multicast_purpose,
-		const std::chrono::microseconds& timeout)
+		const std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
 	(void)send_buffer;
 	(void)send_buffer_size;
 	(void)port;
 	(void)only_multicast_purpose;
-	(void)timeout;
+	(void)max_blocking_time_point;
+	(void)destination_locators_begin;
+	(void)destination_locators_end;
 
-	if (!IsLocatorSupported(remote_locator) /*|| send_buffer_size > configuration()->sendBufferSize*/)
+	return false;
+
+	/*if (!IsLocatorSupported(remote_locator) || send_buffer_size > configuration()->sendBufferSize)
 	{
 		return false;
-	}
+	}*/
 	
 	try
 	{
