@@ -83,7 +83,9 @@ class ParticipantProxyData
 {
     public:
 
-        ParticipantProxyData(const RTPSParticipantAllocationAttributes& allocation);
+        ParticipantProxyData(
+                std::recursive_mutex* mutex,
+                const RTPSParticipantAllocationAttributes& allocation);
 
         ParticipantProxyData(const ParticipantProxyData& pdata);
 
@@ -193,7 +195,7 @@ class ParticipantProxyData
          * Now multiple PDP objects can access simultaneously this structure
          * this mutex will protect this members and the (Reader|Writer)ProxyData
         */ 
-        mutable std::recursive_mutex ppd_mutex_;
+        // mutable std::recursive_mutex* ppd_mutex_;
 
         /**
          * ParticipantProxyData is a shared object among all PDPs, we want to

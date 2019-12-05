@@ -41,7 +41,7 @@ ReaderProxyData::ReaderProxyData (
     , m_topicDiscoveryKind(NO_CHECK)
     , m_type_id(nullptr)
     , m_type(nullptr)
-    , ppd_mutex_(nullptr)
+    // , ppd_mutex_(nullptr)
 {
 }
 
@@ -72,7 +72,7 @@ ReaderProxyData::ReaderProxyData(
     , m_topicDiscoveryKind(readerInfo.m_topicDiscoveryKind)
     , m_type_id(nullptr)
     , m_type(nullptr)
-    , ppd_mutex_(nullptr)
+    // , ppd_mutex_(nullptr)
 {
     if (readerInfo.m_type_id)
     {
@@ -682,25 +682,28 @@ void ReaderProxyData::clear()
     {
         *m_type = TypeObjectV1();
     }
-    ppd_mutex_ = nullptr;
+    // ppd_mutex_ = nullptr;
 }
 
 //!Unlock the ParticipantProxyData protective mutex
 void ReaderProxyData::unlock()
 {
+    /*
     if(ppd_mutex_)
     {
         ppd_mutex_->unlock();
-}
+    }
+    */
 }
 
 //!Associate a protection mutex to the proxy, ParticipantProxyData one
 void ReaderProxyData::mutex_guard(
     std::recursive_mutex * pM)
 {
+    /*
     assert(ppd_mutex_ == nullptr);
-
     ppd_mutex_ = pM;
+    */
 }
 
 bool ReaderProxyData::is_update_allowed(

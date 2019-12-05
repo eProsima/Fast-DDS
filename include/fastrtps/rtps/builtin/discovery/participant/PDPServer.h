@@ -172,7 +172,7 @@ public:
      */
     inline bool pendingEDPMatches()
     {
-        std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
+        std::lock_guard<std::recursive_mutex> guardPDP(*getMutex());
 
         return !_p2match.empty();
     }

@@ -410,7 +410,7 @@ private:
     TypeObjectV1* m_type;
 
     //!Reference to the ParticipantProxyData mutex that protects it
-    std::recursive_mutex * ppd_mutex_;
+    // std::recursive_mutex * ppd_mutex_;
 };
 
 } /* namespace rtps */

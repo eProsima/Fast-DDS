@@ -307,7 +307,7 @@ public:
      * Get the mutex.
      * @return Pointer to the Mutex
      */
-    inline std::recursive_mutex* getMutex() const {return mp_mutex;}
+    inline std::recursive_mutex* getMutex() const {return &pool_mutex_;}
 
     CDRMessage_t get_participant_proxy_data_serialized(Endianness_t endian);
 
@@ -342,7 +342,7 @@ protected:
     //!To protect temp_writer_data_ and temp_reader_data_
     std::mutex temp_data_lock_;
     //!Participant data atomic access assurance
-    std::recursive_mutex* mp_mutex;
+    // std::recursive_mutex* mp_mutex;
     //!To protect callbacks (ParticipantProxyData&)
     std::mutex callback_mtx_;
 

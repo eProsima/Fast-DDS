@@ -43,7 +43,9 @@ namespace rtps {
 
 PDPListener::PDPListener(PDP* parent)
     : parent_pdp_(parent)
-    , temp_participant_data_(parent->getRTPSParticipant()->getRTPSParticipantAttributes().allocation)
+    , temp_participant_data_(
+        new std::recursive_mutex(),
+        parent->getRTPSParticipant()->getRTPSParticipantAttributes().allocation)
 {
 }
 
@@ -83,7 +85,6 @@ void PDPListener::onNewCacheChangeAdded(
         // Release reader lock to avoid ABBA lock. PDP mutex should always be first.
         // Keep change information on local variables to check consistency later
         SequenceNumber_t seq_num = change->sequenceNumber;
-        ParticipantDiscoveryInfo::DISCOVERY_STATUS status = ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT;
         reader->getMutex().unlock();
 
         // changes may arise here on reader status!!!
@@ -101,6 +102,9 @@ void PDPListener::onNewCacheChangeAdded(
         // 1- search in the local collection
         std::shared_ptr<ParticipantProxyData> pdata = parent_pdp_->get_from_local_proxies(guid.guidPrefix);
         bool create = !pdata;
+        ParticipantDiscoveryInfo::DISCOVERY_STATUS status =
+            create ? ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT :
+            ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT;
 
         // 2- If not found search in the pool (maybe other participant created it)
         if(!pdata)
@@ -131,7 +135,7 @@ void PDPListener::onNewCacheChangeAdded(
                 guid = temp_participant_data_.m_guid;
 
                 // if new create and copy the temp_participant_data
-                status = !pdata ? ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT :
+                status = create ? ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT :
                     ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT;
             }
         }
@@ -146,7 +150,7 @@ void PDPListener::onNewCacheChangeAdded(
             else
             {   // already around add to the locals
                 parent_pdp_->add_participant_proxy_data(pdata);
-                pdata->ppd_mutex_.lock();
+                // pdata->ppd_mutex_->lock();
             }
             // Release mutexes ownership
             reader->getMutex().unlock();
@@ -155,11 +159,11 @@ void PDPListener::onNewCacheChangeAdded(
             parent_pdp_->announceParticipantState(false);
             parent_pdp_->assignRemoteEndpoints(pdata.get());
 
-            pdata->ppd_mutex_.unlock(); // got by createParticipantProxyData
+            // pdata->ppd_mutex_->unlock(); // got by createParticipantProxyData
         }
         else if ( deserialize )
         {
-            std::lock_guard<std::recursive_mutex> ppd_lock(pdata->ppd_mutex_);
+            // std::lock_guard<std::recursive_mutex> ppd_lock(*pdata->ppd_mutex_);
 
             // Participant proxy data mutex was lock above to keep version_
             pdata->updateData(temp_participant_data_);
@@ -181,13 +185,13 @@ void PDPListener::onNewCacheChangeAdded(
             lock.unlock();
         }
         
-        if( pdata && deserialize)
+        if( pdata && (create || deserialize) )
         {
             RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
             if(listener != nullptr)
             {
                 std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
-                std::lock_guard<std::recursive_mutex> ppd_lock(pdata->ppd_mutex_);
+                // std::lock_guard<std::recursive_mutex> ppd_lock(*pdata->ppd_mutex_);
 
                 ParticipantDiscoveryInfo info(*pdata);
                 info.status = status;

@@ -96,7 +96,7 @@ PDP::PDP (
     , mp_PDPReaderHistory(nullptr)
     , temp_reader_data_(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
     , temp_writer_data_(allocation.locators.max_unicast_locators, allocation.locators.max_multicast_locators)
-    , mp_mutex(new std::recursive_mutex())
+    // , mp_mutex(new std::recursive_mutex())
     , participant_proxies_(allocation.participants)
     , resend_participant_info_event_(nullptr)
 {
@@ -116,7 +116,7 @@ PDP::~PDP()
 
     participant_proxies_.clear();
 
-    delete mp_mutex;
+    // delete mp_mutex;
 
     remove_pool_resources();
 }
@@ -124,7 +124,8 @@ PDP::~PDP()
 void  PDP::add_participant_proxy_data(
     std::shared_ptr<ParticipantProxyData> & ppd)
 {
-    std::lock_guard<std::recursive_mutex> pdp_lock(*mp_mutex);
+    // NB: Should has been taken as alias of PDP mutex
+    // std::lock_guard<std::recursive_mutex> pdp_lock(pool_mutex_);
     participant_proxies_.push_back(ppd);
 }
 
@@ -135,7 +136,8 @@ std::shared_ptr<ParticipantProxyData> PDP::add_participant_proxy_data(
     std::shared_ptr<ParticipantProxyData> ret_val;
 
     {
-        std::unique_lock<std::recursive_mutex> pool_guard(PDP::pool_mutex_);
+        // NB: Should has been taken as alias of PDP mutex
+        // std::unique_lock<std::recursive_mutex> pool_guard(PDP::pool_mutex_);
 
         //See whether it is already in use
         auto participant_reference = pool_participant_references_.find(participant_guid.guidPrefix);
@@ -144,7 +146,7 @@ std::shared_ptr<ParticipantProxyData> PDP::add_participant_proxy_data(
             ret_val = participant_reference->second.lock();
 
             // locks on the ParticipantProxyData, this method exits with this lock taken
-            ret_val->ppd_mutex_.lock();
+            // ret_val->ppd_mutex_->lock();
 
             // It should be an associated ParticipantProxyData
             assert(!!ret_val);
@@ -159,7 +161,7 @@ std::shared_ptr<ParticipantProxyData> PDP::add_participant_proxy_data(
                 {
                     // Pool is empty but limit has not been reached, so we create a new entry.
                     ret_val = std::shared_ptr<ParticipantProxyData>(
-                        new ParticipantProxyData(mp_RTPSParticipant->getRTPSParticipantAttributes().allocation),
+                        new ParticipantProxyData(&pool_mutex_, mp_RTPSParticipant->getRTPSParticipantAttributes().allocation),
                         ParticipantProxyData::pool_deleter());
 
                     if(!ret_val)
@@ -171,13 +173,13 @@ std::shared_ptr<ParticipantProxyData> PDP::add_participant_proxy_data(
 
                     if(participant_guid != mp_RTPSParticipant->getGuid())
                     {
-                        pool_guard.unlock();
+                        // pool_guard.unlock();
 
                         {
                             GuidPrefix_t own_prefix = getLocalParticipantProxyData()->m_guid.guidPrefix; 
                             ret_val->lease_callback_.add_listener(own_prefix, this);
                         }
-                        pool_guard.lock();
+                        // pool_guard.lock();
                        
                     }
                 }
@@ -196,7 +198,7 @@ std::shared_ptr<ParticipantProxyData> PDP::add_participant_proxy_data(
             }
 
             // locks on the ParticipantProxyData, this method exits with this lock taken
-            ret_val->ppd_mutex_.lock();
+            // ret_val->ppd_mutex_->lock();
 
             ret_val->should_check_lease_duration = with_lease_duration;
             ret_val->m_guid = participant_guid;
@@ -214,7 +216,7 @@ std::shared_ptr<ParticipantProxyData> PDP::add_participant_proxy_data(
 
 void PDP::initializeParticipantProxyData(ParticipantProxyData* participant_data)
 {
-    std::lock_guard<std::recursive_mutex> ppd_lock(participant_data->ppd_mutex_);
+    // std::lock_guard<std::recursive_mutex> ppd_lock(*participant_data->ppd_mutex_);
 
 
     // Signal out is the first announcement to avoid deserialization from all other intra process participants
@@ -348,7 +350,7 @@ bool PDP::initPDP(
         return false;
     }
 
-    pdata->ppd_mutex_.unlock(); // add_participant_proxy_data locks on ParticipantProxyData mutex
+    // pdata->ppd_mutex_->unlock(); // add_participant_proxy_data locks on ParticipantProxyData mutex
     // nobody knows about him thus we can unlock
 
     initializeParticipantProxyData(pdata.get());
@@ -384,11 +386,11 @@ void PDP::announceParticipantState(
     {
         if(m_hasChangedLocalPDP.exchange(false) || new_change)
         {
-            this->mp_mutex->lock();
+            getMutex()->lock();
             std::shared_ptr<ParticipantProxyData> local_participant_data = getLocalParticipantProxyData();
             InstanceHandle_t key = local_participant_data->m_key;
             ParticipantProxyData proxy_data_copy(*local_participant_data);
-            this->mp_mutex->unlock();
+            getMutex()->unlock();
 
             if(mp_PDPWriterHistory->getHistorySize() > 0)
                 mp_PDPWriterHistory->remove_min_change();
@@ -427,9 +429,9 @@ void PDP::announceParticipantState(
     }
     else
     {
-        this->mp_mutex->lock();
+        getMutex()->lock();
         ParticipantProxyData proxy_data_copy(*getLocalParticipantProxyData());
-        this->mp_mutex->unlock();
+        getMutex()->unlock();
 
         if(mp_PDPWriterHistory->getHistorySize() > 0)
             mp_PDPWriterHistory->remove_min_change();
@@ -478,12 +480,12 @@ void PDP::resetParticipantAnnouncement()
 
 bool PDP::has_reader_proxy_data(const GUID_t& reader)
 {
-    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*getMutex());
     for (std::shared_ptr<ParticipantProxyData> & pit : participant_proxies_)
     {
         if (pit->m_guid.guidPrefix == reader.guidPrefix)
         {
-            std::lock_guard<std::recursive_mutex> lock(pit->ppd_mutex_);
+            // std::lock_guard<std::recursive_mutex> lock(*pit->ppd_mutex_);
 
             for (ReaderProxyData* rit : pit->m_readers)
             {
@@ -499,12 +501,12 @@ bool PDP::has_reader_proxy_data(const GUID_t& reader)
 
 bool PDP::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData& rdata)
 {
-    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*getMutex());
     for (std::shared_ptr<ParticipantProxyData> & pit : participant_proxies_)
     {
         if (pit->m_guid.guidPrefix == reader.guidPrefix)
         {
-            std::lock_guard<std::recursive_mutex> lock(pit->ppd_mutex_);
+            // std::lock_guard<std::recursive_mutex> lock(*pit->ppd_mutex_);
 
             for (ReaderProxyData* rit : pit->m_readers)
             {
@@ -521,12 +523,12 @@ bool PDP::lookupReaderProxyData(const GUID_t& reader, ReaderProxyData& rdata)
 
 bool PDP::has_writer_proxy_data(const GUID_t& writer)
 {
-    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*getMutex());
     for (std::shared_ptr<ParticipantProxyData> & pit : participant_proxies_)
     {
         if (pit->m_guid.guidPrefix == writer.guidPrefix)
         {
-            std::lock_guard<std::recursive_mutex> lock(pit->ppd_mutex_);
+            // std::lock_guard<std::recursive_mutex> lock(*pit->ppd_mutex_);
 
             for (WriterProxyData* wit : pit->m_writers)
             {
@@ -542,12 +544,12 @@ bool PDP::has_writer_proxy_data(const GUID_t& writer)
 
 bool PDP::lookupWriterProxyData(const GUID_t& writer, WriterProxyData& wdata)
 {
-    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*getMutex());
     for (std::shared_ptr<ParticipantProxyData> & pit : participant_proxies_)
     {
         if (pit->m_guid.guidPrefix == writer.guidPrefix)
         {
-            std::lock_guard<std::recursive_mutex> lock(pit->ppd_mutex_);
+            // std::lock_guard<std::recursive_mutex> lock(*pit->ppd_mutex_);
 
             for (WriterProxyData* wit : pit->m_writers)
             {
@@ -565,13 +567,13 @@ bool PDP::lookupWriterProxyData(const GUID_t& writer, WriterProxyData& wdata)
 bool PDP::removeReaderProxyData(const GUID_t& reader_guid)
 {
     logInfo(RTPS_PDP, "Removing reader proxy data " << reader_guid);
-    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*getMutex());
 
     for (std::shared_ptr<ParticipantProxyData>& pit : participant_proxies_)
     {
         if (pit->m_guid.guidPrefix == reader_guid.guidPrefix)
         {
-            std::unique_lock<std::recursive_mutex> lock(pit->ppd_mutex_);
+            // std::unique_lock<std::recursive_mutex> lock(*pit->ppd_mutex_);
 
             for (ReaderProxyData* rit : pit->m_readers)
             {
@@ -591,8 +593,9 @@ bool PDP::removeReaderProxyData(const GUID_t& reader_guid)
                     rit->clear();
                     pit->m_readers.remove(rit);
 
-                    lock.unlock();
-                    std::lock_guard<std::recursive_mutex> pool_lock(PDP::pool_mutex_);
+                    // lock.unlock();
+                    // NB: Should has been taken as alias of PDP mutex
+                    // std::lock_guard<std::recursive_mutex> pool_lock(PDP::pool_mutex_);
                     reader_proxies_pool_.push_back(rit);
                     return true;
                 }
@@ -606,13 +609,13 @@ bool PDP::removeReaderProxyData(const GUID_t& reader_guid)
 bool PDP::removeWriterProxyData(const GUID_t& writer_guid)
 {
     logInfo(RTPS_PDP, "Removing writer proxy data " << writer_guid);
-    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*getMutex());
 
     for (std::shared_ptr<ParticipantProxyData>& pit : participant_proxies_)
     {
         if (pit->m_guid.guidPrefix == writer_guid.guidPrefix)
         {
-            std::unique_lock<std::recursive_mutex> lock(pit->ppd_mutex_);
+            // std::unique_lock<std::recursive_mutex> lock(*pit->ppd_mutex_);
 
             for (WriterProxyData* wit : pit->m_writers)
             {
@@ -631,9 +634,10 @@ bool PDP::removeWriterProxyData(const GUID_t& writer_guid)
                     // Clear writer proxy data and move to pool in order to allow reuse
                     wit->clear();
                     pit->m_writers.remove(wit);
-                    lock.unlock();
+                    // lock.unlock();
 
-                    std::lock_guard<std::recursive_mutex> pool_lock(pool_mutex_);
+                    // NB: Should has been taken as alias of PDP mutex
+                    // std::lock_guard<std::recursive_mutex> pool_lock(pool_mutex_);
                     writer_proxies_pool_.push_back(wit);
                     return true;
                 }
@@ -648,7 +652,7 @@ bool PDP::lookup_participant_name(
         const GUID_t& guid,
         string_255& name)
 {
-    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*getMutex());
     for (std::shared_ptr<ParticipantProxyData>& pit : participant_proxies_)
     {
         if (pit->m_guid == guid)
@@ -664,7 +668,7 @@ bool PDP::lookup_participant_key(
         const GUID_t& participant_guid,
         InstanceHandle_t& key)
 {
-    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*getMutex());
     for (std::shared_ptr<ParticipantProxyData>& pit : participant_proxies_)
     {
         if (pit->m_guid == participant_guid)
@@ -684,13 +688,13 @@ ReaderProxyData* PDP::addReaderProxyData(
     logInfo(RTPS_PDP, "Adding reader proxy data " << reader_guid);
     ReaderProxyData* ret_val = nullptr;
 
-    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*getMutex());
 
     for(std::shared_ptr<ParticipantProxyData>& pit : participant_proxies_)
     {
         if(pit->m_guid.guidPrefix == reader_guid.guidPrefix)
         {
-            std::unique_lock<std::recursive_mutex> ppd_lock(pit->ppd_mutex_);
+            // std::unique_lock<std::recursive_mutex> ppd_lock(*pit->ppd_mutex_);
 
             // Copy participant data to be used outside.
             participant_guid = pit->m_guid;
@@ -715,12 +719,13 @@ ReaderProxyData* PDP::addReaderProxyData(
                         listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
                     }
 
-                    ppd_lock.release(); // If succeeds returns with the lock
+                    // ppd_lock.release(); // If succeeds returns with the lock
                     return ret_val;
                 }
             }
 
-            std::lock_guard<std::recursive_mutex> pool_lock(pool_mutex_);
+            // NB: Should has been taken as alias of PDP mutex
+            // std::lock_guard<std::recursive_mutex> pool_lock(pool_mutex_);
 
             // Try to take one entry from the pool
             if (reader_proxies_pool_.empty())
@@ -749,7 +754,7 @@ ReaderProxyData* PDP::addReaderProxyData(
             }
 
             // Add to ParticipantProxyData
-            ret_val->mutex_guard(&pit->ppd_mutex_);
+            // ret_val->mutex_guard(pit->ppd_mutex_);
             pit->m_readers.push_back(ret_val);
 
             if (!initializer_func(ret_val, false, *pit))
@@ -765,7 +770,7 @@ ReaderProxyData* PDP::addReaderProxyData(
                 listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
             }
 
-            ppd_lock.release(); // If succeeds returns with the lock
+            // ppd_lock.release(); // If succeeds returns with the lock
             return ret_val;
         }
     }
@@ -781,13 +786,13 @@ WriterProxyData* PDP::addWriterProxyData(
     logInfo(RTPS_PDP, "Adding reader proxy data " << writer_guid);
     WriterProxyData* ret_val = nullptr;
 
-    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*getMutex());
 
     for (std::shared_ptr<ParticipantProxyData>& pit : participant_proxies_)
     {
         if (pit->m_guid.guidPrefix == writer_guid.guidPrefix)
         {
-            std::unique_lock<std::recursive_mutex> ppd_lock(pit->ppd_mutex_);
+            // std::unique_lock<std::recursive_mutex> ppd_lock(*pit->ppd_mutex_);
 
             // Copy participant data to be used outside.
             participant_guid = pit->m_guid;
@@ -812,12 +817,13 @@ WriterProxyData* PDP::addWriterProxyData(
                         listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
                     }
 
-                    ppd_lock.release(); // retval is valid thus we return with proxy locked
+                    // ppd_lock.release(); // retval is valid thus we return with proxy locked
                     return ret_val;
                 }
             }
 
-            std::lock_guard<std::recursive_mutex> pool_lock(pool_mutex_);
+            // NB: Should has been taken as alias of PDP mutex
+            // std::lock_guard<std::recursive_mutex> pool_lock(pool_mutex_);
 
             // Try to take one entry from the pool
             if (writer_proxies_pool_.empty())
@@ -846,7 +852,7 @@ WriterProxyData* PDP::addWriterProxyData(
             }
 
             // Add to ParticipantProxyData
-            ret_val->mutex_guard(&pit->ppd_mutex_);
+            // ret_val->mutex_guard(pit->ppd_mutex_);
             pit->m_writers.push_back(ret_val);
 
             if (!initializer_func(ret_val, false, *pit))
@@ -862,7 +868,7 @@ WriterProxyData* PDP::addWriterProxyData(
                 listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
             }
 
-            ppd_lock.release(); // retval is valid thus we return with proxy locked
+            // ppd_lock.release(); // retval is valid thus we return with proxy locked
             return ret_val;
         }
     }
@@ -885,7 +891,7 @@ bool PDP::remove_remote_participant(
     std::shared_ptr<ParticipantProxyData> pdata = nullptr;
 
     //Remove it from our vector or RTPSParticipantProxies:
-    this->mp_mutex->lock();
+    getMutex()->lock();
     for(ResourceLimitedVector<std::shared_ptr<ParticipantProxyData>>::iterator pit = participant_proxies_.begin();
             pit!=participant_proxies_.end();++pit)
     {
@@ -896,11 +902,11 @@ bool PDP::remove_remote_participant(
             break;
         }
     }
-    this->mp_mutex->unlock();
+    getMutex()->unlock();
 
     if(pdata !=nullptr)
     {
-        std::lock_guard<std::recursive_mutex> ppd_lock(pdata->ppd_mutex_);
+        // std::lock_guard<std::recursive_mutex> ppd_lock(*pdata->ppd_mutex_);
 
         if(mp_EDP!=nullptr)
         {
@@ -968,7 +974,8 @@ bool PDP::remove_remote_participant(
             listener->onParticipantDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
         }
 
-        PDP::pool_mutex_.lock();
+        // NB: Should has been taken as alias of PDP mutex
+        // PDP::pool_mutex_.lock();
 
         // Return reader proxy objects to pool
         for (ReaderProxyData* rit : pdata->m_readers)
@@ -984,7 +991,8 @@ bool PDP::remove_remote_participant(
         }
         pdata->m_writers.clear();
 
-        PDP::pool_mutex_.unlock();
+        // NB: Should has been taken as alias of PDP mutex
+        // PDP::pool_mutex_.unlock();
 
         // Cancel lease event
         if (pdata->lease_duration_event != nullptr)
@@ -1007,7 +1015,7 @@ const BuiltinAttributes& PDP::builtin_attributes() const
 void PDP::assert_remote_participant_liveliness(
         const GuidPrefix_t& remote_guid)
 {
-    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*getMutex());
 
     for (std::shared_ptr<ParticipantProxyData>& it : this->participant_proxies_)
     {
@@ -1023,7 +1031,7 @@ void PDP::assert_remote_participant_liveliness(
 
 CDRMessage_t PDP::get_participant_proxy_data_serialized(Endianness_t endian)
 {
-    std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+    std::lock_guard<std::recursive_mutex> guardPDP(*getMutex());
     CDRMessage_t cdr_msg;
     cdr_msg.msg_endian = endian;
 
@@ -1040,7 +1048,7 @@ CDRMessage_t PDP::get_participant_proxy_data_serialized(Endianness_t endian)
 void PDP::check_remote_participant_liveliness(
         ParticipantProxyData* remote_participant)
 {
-    std::unique_lock<std::recursive_mutex> guard(*mp_mutex);
+    std::unique_lock<std::recursive_mutex> guard(pool_mutex_);
 
     if(GUID_t::unknown() != remote_participant->m_guid)
     {
@@ -1107,7 +1115,7 @@ void PDP::initialize_or_update_pool_allocation(const RTPSParticipantAllocationAt
     {
         for (size_t i = participant_proxies_number_ ; i < allocation.participants.initial; ++i)
         {
-            participant_proxies_pool_.push_back(new ParticipantProxyData(allocation));
+            participant_proxies_pool_.push_back(new ParticipantProxyData(&pool_mutex_, allocation));
         }
 
         participant_proxies_number_ = allocation.participants.initial;
@@ -1174,7 +1182,8 @@ void PDP::remove_pool_resources()
 /*static*/
 std::shared_ptr<ParticipantProxyData> PDP::get_from_proxy_pool(const GuidPrefix_t & guid)
 {
-    std::lock_guard<std::recursive_mutex> lock(pool_mutex_);
+    // NB: Should has been taken as alias of PDP mutex
+    // std::lock_guard<std::recursive_mutex> lock(pool_mutex_);
 
     auto it = pool_participant_references_.find(guid);
 
@@ -1190,7 +1199,8 @@ std::shared_ptr<ParticipantProxyData> PDP::get_from_proxy_pool(const GuidPrefix_
 
 std::shared_ptr<ParticipantProxyData> PDP::get_from_local_proxies(const GuidPrefix_t & guid)
 {
-    std::lock_guard<std::recursive_mutex> lock(*mp_mutex);
+    // NB: Should has been taken as alias of PDP mutex
+    // std::lock_guard<std::recursive_mutex> lock(pool_mutex_);
 
     for(std::shared_ptr<ParticipantProxyData> p : participant_proxies_)
     {
@@ -1212,14 +1222,15 @@ void PDP::return_participant_proxy_to_pool(ParticipantProxyData * p)
     GUID_t guid;
 
     {
-        std::lock_guard<std::recursive_mutex> lock(p->ppd_mutex_);
+        // std::lock_guard<std::recursive_mutex> lock(*p->ppd_mutex_);
         guid = p->m_guid;
         p->clear();
     }
 
     if( guid != c_Guid_Unknown)
     {
-        std::lock_guard<std::recursive_mutex> lock(PDP::pool_mutex_);
+        // NB: Should has been taken as alias of PDP mutex
+        // std::lock_guard<std::recursive_mutex> lock(PDP::pool_mutex_);
 
         // if its a pool managed object should be included into the map
         assert(PDP::pool_participant_references_.find(guid.guidPrefix)
