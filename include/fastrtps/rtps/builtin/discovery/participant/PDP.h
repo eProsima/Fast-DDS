@@ -365,6 +365,8 @@ protected:
     static size_t pdp_counter_;
     //!Mutex protection for static variables they may be access from any PDP
     static std::recursive_mutex pool_mutex_; 
+    //! common callbacks resource event
+    static ResourceEvent event_thr_;
 
     /**
      * Adds an entry to the collection of participant proxy information.

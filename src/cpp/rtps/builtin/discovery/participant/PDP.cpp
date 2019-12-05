@@ -80,6 +80,8 @@ std::vector<WriterProxyData*> PDP::writer_proxies_pool_;
 
 std::map<GuidPrefix_t, std::weak_ptr<ParticipantProxyData>> PDP::pool_participant_references_;
 
+ResourceEvent PDP::event_thr_;
+
 PDP::PDP (
         BuiltinProtocols* built,
         const RTPSParticipantAllocationAttributes& allocation)
@@ -133,7 +135,7 @@ std::shared_ptr<ParticipantProxyData> PDP::add_participant_proxy_data(
     std::shared_ptr<ParticipantProxyData> ret_val;
 
     {
-        std::lock_guard<std::recursive_mutex> pool_guard(PDP::pool_mutex_);
+        std::unique_lock<std::recursive_mutex> pool_guard(PDP::pool_mutex_);
 
         //See whether it is already in use
         auto participant_reference = pool_participant_references_.find(participant_guid.guidPrefix);
@@ -166,12 +168,14 @@ std::shared_ptr<ParticipantProxyData> PDP::add_participant_proxy_data(
 
                     if(participant_guid != mp_RTPSParticipant->getGuid())
                     {
-                        ret_val->lease_duration_event = new TimedEvent(mp_RTPSParticipant->getEventResource(),
-                            [this, ret_val]() -> bool
+                        pool_guard.unlock();
+
                         {
-                            check_remote_participant_liveliness(ret_val.get());
-                            return false;
-                        }, 0.0);
+                            GuidPrefix_t own_prefix = getLocalParticipantProxyData()->m_guid.guidPrefix; 
+                            ret_val->lease_callback_.add_listener(own_prefix, this);
+                        }
+                        pool_guard.lock()
+                       
                     }
                 }
                 else
@@ -337,19 +341,6 @@ bool PDP::initPDP(
     }
 
     initializeParticipantProxyData(pdata.get());
-
-    // Create lease events on already created proxy data objects
-    PDP::pool_mutex_.lock();
-    for (ParticipantProxyData* pool_item : participant_proxies_pool_)
-    {
-        pool_item->lease_duration_event = new TimedEvent(mp_RTPSParticipant->getEventResource(),
-                [this, pool_item]() -> bool
-                {
-                    check_remote_participant_liveliness(pool_item);
-                    return false;
-                }, 0.0);
-    }
-    PDP::pool_mutex_.unlock();
 
     resend_participant_info_event_ = new TimedEvent(mp_RTPSParticipant->getEventResource(),
             [&]() -> bool
@@ -866,7 +857,9 @@ bool PDP::remove_remote_participant(
         const GUID_t& partGUID,
         ParticipantDiscoveryInfo::DISCOVERY_STATUS reason)
 {
-    if (partGUID == getLocalParticipantProxyData()->m_guid)
+    GUID_t local = getLocalParticipantProxyData()->m_guid;
+
+    if ( partGUID == local )
     {   // avoid removing our own data
         return false;
     }
@@ -974,13 +967,15 @@ bool PDP::remove_remote_participant(
         }
         pdata->m_writers.clear();
 
+        PDP::pool_mutex_.unlock();
+
         // Cancel lease event
         if (pdata->lease_duration_event != nullptr)
         {
-            pdata->lease_duration_event->cancel_timer();
+            pdata->lease_callback_.remove_listener(local.guidPrefix);
         }
 
-        PDP::pool_mutex_.unlock();
+       
         return true;
     }
 
@@ -1084,7 +1079,10 @@ void PDP::initialize_or_update_pool_allocation(const RTPSParticipantAllocationAt
 {
     std::lock_guard<std::recursive_mutex> lock(pool_mutex_);
 
-    ++pdp_counter_;
+    if(!pdp_counter_++)
+    {
+        event_thr_.init_thread();
+    }
 
     participant_proxies_pool_.reserve(allocation.participants.initial);
 
@@ -1151,6 +1149,8 @@ void PDP::remove_pool_resources()
         {
             delete it;
         }
+
+
     }
 }
 

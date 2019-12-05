@@ -56,11 +56,12 @@ void ParticipantProxyData::pool_deleter::operator()(
     * Lease duration auxiliary functor to make the callbacks to the interested participants and track them
 */
 
-void ParticipantProxyData::lease_duration_callback::add_listener(GuidPrefix_t prefix, PDP* p)
+void ParticipantProxyData::lease_duration_callback::add_listener(GuidPrefix_t prefix, PDP* pdp)
 {
     if(nullptr != p)
     {
-        listeners_[prefix] = p;
+        std::lock_guard<std::recursive_mutex> pool_guard(p->ppd_mutex_);
+        listeners_[prefix] = pdp;
     }
 }
 
@@ -68,6 +69,7 @@ void ParticipantProxyData::lease_duration_callback::remove_listener(GuidPrefix_t
 {
     if(nullptr != p)
     {
+        std::lock_guard<std::recursive_mutex> pool_guard(p->ppd_mutex_);
         listeners_.erase(prefix);
     }
 }
@@ -78,6 +80,7 @@ void ParticipantProxyData::lease_duration_callback::operator()() const
     {
         for(auto pair : listeners_)
         {
+            std::lock_guard<std::recursive_mutex> pool_guard(p->ppd_mutex_);
             pair.second->check_remote_participant_liveliness(p);
         }
     }
@@ -91,7 +94,7 @@ struct lease_duration_callback
     void add_listener(GuidPrefix_t prefix, PDP* p);
     void remove_listener(GuidPrefix_t prefix);
 
-    void operator()(TimedEvent::EventCode code) const;
+    void operator()() const;
 };
 
 ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttributes& allocation)
@@ -112,14 +115,12 @@ ParticipantProxyData::ParticipantProxyData(const RTPSParticipantAllocationAttrib
     , m_writers(allocation.writers)
     , lease_callback_(this)
     {
-        lease_duration_event = new TimedEvent(mp_RTPSParticipant->getEventResource(),
-            [&lease_callback_](TimedEvent::EventCode code) -> bool
-        {
-            if(TimedEvent::EVENT_SUCCESS == code)
-            {
-                check_remote_participant_liveliness(ret_val.get());
-            }
+        std::lock_guard<std::recursive_mutex> lock(PDP::pool_mutex_);
 
+        lease_duration_event = new TimedEvent(PDP::event_thr_,
+            [&lease_callback_]() -> bool
+        {
+            lease_callback_();
             return false;
         }, 0.0);
     }
