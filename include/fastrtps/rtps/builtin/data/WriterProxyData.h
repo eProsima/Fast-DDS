@@ -389,6 +389,17 @@ public:
     //!Associate a protection mutex to the proxy, ParticipantProxyData one
     void mutex_guard(std::recursive_mutex * pM);
 
+    bool add_knowledge_from(
+            const GUID_t& participant_guid);
+
+    bool remove_knowledge_from(
+            const GUID_t& participant_guid);
+
+    bool is_known_by(
+            const GUID_t& participant_guid) const;
+
+    bool is_known_by_no_one() const;
+
 private:
 
     //!GUID
@@ -432,6 +443,9 @@ private:
 
     //!Reference to the ParticipantProxyData mutex that protects it
     // std::recursive_mutex * ppd_mutex_;
+
+    //!Local participants in knwoledge of this proxy
+    std::vector<GuidPrefix_t> participants_kowning_me_; // TODO(Miguel C) Resource limited
 };
 
 } /* namespace rtps */

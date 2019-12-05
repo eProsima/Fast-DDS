@@ -534,7 +534,7 @@ bool PDP::has_writer_proxy_data(const GUID_t& writer)
             {
                 if (wit->guid() == writer)
                 {
-                    return true;
+                    return wit->is_known_by(mp_RTPSParticipant->getGuid());
                 }
             }
         }
@@ -555,8 +555,12 @@ bool PDP::lookupWriterProxyData(const GUID_t& writer, WriterProxyData& wdata)
             {
                 if (wit->guid() == writer)
                 {
-                    wdata.copy(wit);
-                    return true;
+                    if (wit->is_known_by(mp_RTPSParticipant->getGuid()))
+                    {
+                        wdata.copy(wit);
+                        return true;
+                    }
+                    return false;
                 }
             }
         }
@@ -621,25 +625,32 @@ bool PDP::removeWriterProxyData(const GUID_t& writer_guid)
             {
                 if (wit->guid() == writer_guid)
                 {
-                    mp_EDP->unpairWriterProxy(pit->m_guid, writer_guid);
-
-                    RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-                    if (listener)
+                    if (wit->remove_knowledge_from(mp_RTPSParticipant->getGuid()))
                     {
-                        WriterDiscoveryInfo info(std::move(*wit));
-                        info.status = WriterDiscoveryInfo::REMOVED_WRITER;
-                        listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                        mp_EDP->unpairWriterProxy(pit->m_guid, writer_guid);
+
+                        RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
+                        if (listener)
+                        {
+                            WriterDiscoveryInfo info(std::move(*wit));
+                            info.status = WriterDiscoveryInfo::REMOVED_WRITER;
+                            listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                        }
+
+                        if (wit->is_known_by_no_one())
+                        {
+                            // Clear writer proxy data and move to pool in order to allow reuse
+                            wit->clear();
+                            pit->m_writers.remove(wit);
+                            // lock.unlock();
+
+                            // NB: Should has been taken as alias of PDP mutex
+                            // std::lock_guard<std::recursive_mutex> pool_lock(pool_mutex_);
+                            writer_proxies_pool_.push_back(wit);
+                        }
+                        return true;
                     }
-
-                    // Clear writer proxy data and move to pool in order to allow reuse
-                    wit->clear();
-                    pit->m_writers.remove(wit);
-                    // lock.unlock();
-
-                    // NB: Should has been taken as alias of PDP mutex
-                    // std::lock_guard<std::recursive_mutex> pool_lock(pool_mutex_);
-                    writer_proxies_pool_.push_back(wit);
-                    return true;
+                    break;
                 }
             }
         }
@@ -808,12 +819,13 @@ WriterProxyData* PDP::addWriterProxyData(
                     }
 
                     ret_val = wit;
+                    bool already_known = wit->add_knowledge_from(mp_RTPSParticipant->getGuid());
 
                     RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
                     if (listener)
                     {
                         WriterDiscoveryInfo info(*ret_val);
-                        info.status = WriterDiscoveryInfo::CHANGED_QOS_WRITER;
+                        info.status = already_known ? WriterDiscoveryInfo::CHANGED_QOS_WRITER : WriterDiscoveryInfo::DISCOVERED_WRITER;
                         listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
                     }
 
@@ -859,6 +871,8 @@ WriterProxyData* PDP::addWriterProxyData(
             {
                 return nullptr;
             }
+
+            ret_val->add_knowledge_from(mp_RTPSParticipant->getGuid());
 
             RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
             if (listener)
@@ -906,7 +920,9 @@ bool PDP::remove_remote_participant(
 
     if(pdata !=nullptr)
     {
-        // std::lock_guard<std::recursive_mutex> ppd_lock(*pdata->ppd_mutex_);
+        const GUID_t& my_guid = mp_RTPSParticipant->getGuid();
+
+        // std::lock_guard<std::recursive_mutex> ppd_lock(pdata->ppd_mutex_);
 
         if(mp_EDP!=nullptr)
         {
@@ -932,13 +948,16 @@ bool PDP::remove_remote_participant(
                 GUID_t writer_guid(wit->guid());
                 if (writer_guid != c_Guid_Unknown)
                 {
-                    mp_EDP->unpairWriterProxy(partGUID, writer_guid);
-
-                    if (listener)
+                    if (wit->remove_knowledge_from(my_guid))
                     {
-                        WriterDiscoveryInfo info(std::move(*wit));
-                        info.status = WriterDiscoveryInfo::REMOVED_WRITER;
-                        listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                        mp_EDP->unpairWriterProxy(partGUID, writer_guid);
+
+                        if (listener)
+                        {
+                            WriterDiscoveryInfo info(std::move(*wit));
+                            info.status = WriterDiscoveryInfo::REMOVED_WRITER;
+                            listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                        }
                     }
                 }
             }
@@ -985,11 +1004,19 @@ bool PDP::remove_remote_participant(
         pdata->m_readers.clear();
 
         // Return writer proxy objects to pool
-        for (WriterProxyData* wit : pdata->m_writers)
+        for (auto wit = pdata->m_writers.begin(); wit != pdata->m_writers.end();)
         {
-            writer_proxies_pool_.push_back(wit);
+            if ((*wit)->is_known_by_no_one())
+            {
+                (*wit)->clear();
+                writer_proxies_pool_.push_back(*wit);
+                wit = pdata->m_writers.erase(wit);
+            }
+            else
+            {
+                ++wit;
+            }
         }
-        pdata->m_writers.clear();
 
         // NB: Should has been taken as alias of PDP mutex
         // PDP::pool_mutex_.unlock();
