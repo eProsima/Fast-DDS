@@ -49,6 +49,11 @@ class ReaderProxyData
 
         void guid(const GUID_t& guid) { m_guid = guid; }
 
+        bool disable_positive_acks() const
+        {
+            return false;
+        }
+
         const RemoteLocatorList& remote_locators() const
         {
             return remote_locators_;
