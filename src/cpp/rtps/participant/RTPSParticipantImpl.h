@@ -272,6 +272,8 @@ public:
 
 #endif
 
+    PDP* pdp();
+
     PDPSimple* pdpsimple();
 
     WLP* wlp();
@@ -297,6 +299,11 @@ public:
      */
     RTPSWriter* find_local_writer(
             const GUID_t& writer_guid);
+
+    bool is_intraprocess_only() const
+    {
+        return is_intraprocess_only_;
+    }
 
 private:
     //!Attributes of the RTPSParticipant
@@ -409,6 +416,8 @@ private:
 
     //!Participant Mutex
     std::recursive_mutex* mp_mutex;
+
+    bool is_intraprocess_only_;
 
     /*
      * Flow controllers for this participant.

@@ -198,7 +198,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
 #endif
 
     // Check there is at least one transport registered.
-    if (!pimpl->networkFactoryHasRegisteredTransports())
+    if (!pimpl->networkFactoryHasRegisteredTransports() && !pimpl->is_intraprocess_only())
     {
         logError(RTPS_PARTICIPANT, "Cannot create participant, because there is any transport");
         delete pimpl;

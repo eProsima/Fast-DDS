@@ -365,6 +365,15 @@ class PubSubWriterReader
         }
     }
 
+    void set_intraprocess()
+    {
+        uint32_t flags;
+        flags = eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_HOST;
+        flags |= eprosima::fastrtps::rtps::ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS;
+        participant_attr_.rtps.builtin.discovery_config.ignoreParticipantFlags =
+            static_cast<ParticipantFilteringFlags_t>(flags);
+    }
+
     bool create_additional_topics(size_t num_topics)
     {
         bool ret_val = initialized_;

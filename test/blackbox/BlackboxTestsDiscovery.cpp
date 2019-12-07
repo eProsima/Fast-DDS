@@ -575,7 +575,8 @@ static void discoverParticipantsTest(
         bool avoid_multicast,
         size_t n_participants,
         uint32_t wait_ms,
-        const std::string& topic_name)
+        const std::string& topic_name,
+        bool intraprocess)
 {
     std::vector<std::shared_ptr<PubSubWriterReader<HelloWorldType> > > pubsub;
     pubsub.reserve(n_participants);
@@ -591,6 +592,10 @@ static void discoverParticipantsTest(
     for (auto& ps : pubsub)
     {
         std::cout << "\rParticipant " << idx++ << " of " << n_participants << std::flush;
+        if (intraprocess)
+        {
+            ps->set_intraprocess();
+        }
         ps->init(avoid_multicast);
         ASSERT_EQ(ps->isInitialized(), true);
     }
@@ -632,13 +637,13 @@ static void discoverParticipantsTest(
 //! Tests discovery of 20 participants, having one publisher and one subscriber each, using multicast
 TEST(Discovery, TwentyParticipantsMulticast)
 {
-    discoverParticipantsTest(false, 20, 20, TEST_TOPIC_NAME);
+    discoverParticipantsTest(false, 20, 20, TEST_TOPIC_NAME, false);
 }
 
 //! Tests discovery of 20 participants, having one publisher and one subscriber each, using unicast
 TEST_P(Discovery, TwentyParticipantsUnicast)
 {
-    discoverParticipantsTest(true, 20, 20, TEST_TOPIC_NAME);
+    discoverParticipantsTest(true, 20, 20, TEST_TOPIC_NAME, GetParam());
 }
 
 //! Auxiliar method for discovering participants tests

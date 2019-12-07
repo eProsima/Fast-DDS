@@ -105,154 +105,162 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , mp_participantListener(plisten)
     , mp_userParticipant(par)
     , mp_mutex(new std::recursive_mutex())
+    , is_intraprocess_only_(rtps::is_intraprocess_only(PParam))
 {
-    // Builtin transport by default
-    if (PParam.useBuiltinTransports)
+    if (!is_intraprocess_only_)
     {
-        UDPv4TransportDescriptor descriptor;
-        descriptor.sendBufferSize = m_att.sendSocketBufferSize;
-        descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
-        m_network_Factory.RegisterTransport(&descriptor);
-    }
 
-    // Workaround TCP discovery issues when register
-    switch (PParam.builtin.discovery_config.discoveryProtocol)
-    {
-    case DiscoveryProtocol::CLIENT:
-    case DiscoveryProtocol::SERVER:
-    case DiscoveryProtocol::BACKUP:
-        // Verify if listening ports are provided
-        for (auto& transportDescriptor : PParam.userTransports)
+        // Builtin transport by default
+        if (PParam.useBuiltinTransports)
         {
-            TCPTransportDescriptor * pT = dynamic_cast<TCPTransportDescriptor *>(transportDescriptor.get());
-            if (pT && pT->listening_ports.empty())
-            {
-                logError(RTPS_PARTICIPANT, "Participant " << m_att.getName() << " with GUID " << m_guid
-                    << " tries to use discovery server over TCP without providing a proper listening port");
-            }
+            UDPv4TransportDescriptor descriptor;
+            descriptor.sendBufferSize = m_att.sendSocketBufferSize;
+            descriptor.receiveBufferSize = m_att.listenSocketBufferSize;
+            m_network_Factory.RegisterTransport(&descriptor);
         }
-    default:
-        break;
-    }
 
-    // User defined transports
-    for (const auto& transportDescriptor : PParam.userTransports)
-    {
-        m_network_Factory.RegisterTransport(transportDescriptor.get());
+        // Workaround TCP discovery issues when register
+        switch (PParam.builtin.discovery_config.discoveryProtocol)
+        {
+        case DiscoveryProtocol::CLIENT:
+        case DiscoveryProtocol::SERVER:
+        case DiscoveryProtocol::BACKUP:
+            // Verify if listening ports are provided
+            for (auto& transportDescriptor : PParam.userTransports)
+            {
+                TCPTransportDescriptor * pT = dynamic_cast<TCPTransportDescriptor *>(transportDescriptor.get());
+                if (pT && pT->listening_ports.empty())
+                {
+                    logError(RTPS_PARTICIPANT, "Participant " << m_att.getName() << " with GUID " << m_guid
+                        << " tries to use discovery server over TCP without providing a proper listening port");
+                }
+            }
+        default:
+            break;
+        }
+
+        // User defined transports
+        for (const auto& transportDescriptor : PParam.userTransports)
+        {
+            m_network_Factory.RegisterTransport(transportDescriptor.get());
+        }
     }
 
     mp_userParticipant->mp_impl = this;
     mp_event_thr.init_thread();
 
-    // Throughput controller, if the descriptor has valid values
-    if (PParam.throughputController.bytesPerPeriod != UINT32_MAX && PParam.throughputController.periodMillisecs != 0)
+    if (!is_intraprocess_only_)
     {
-        std::unique_ptr<FlowController> controller(new ThroughputController(PParam.throughputController, this));
-        m_controllers.push_back(std::move(controller));
-    }
+        // Throughput controller, if the descriptor has valid values
+        if (PParam.throughputController.bytesPerPeriod != UINT32_MAX && PParam.throughputController.periodMillisecs != 0)
+        {
+            std::unique_ptr<FlowController> controller(new ThroughputController(PParam.throughputController, this));
+            m_controllers.push_back(std::move(controller));
+        }
 
-    /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
-       Else -> Take them */
+        /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
+           Else -> Take them */
 
-    // Creation of metatraffic locator and receiver resources
-    uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(m_att.builtin.domainId);
-    uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(m_att.builtin.domainId,
-        static_cast<uint32_t>(m_att.participantID));
+           // Creation of metatraffic locator and receiver resources
+        uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(m_att.builtin.domainId);
+        uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(m_att.builtin.domainId,
+            static_cast<uint32_t>(m_att.participantID));
 
-    /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
-    if (m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
-    {
-        m_network_Factory.getDefaultMetatrafficMulticastLocators(m_att.builtin.metatrafficMulticastLocatorList,
-            metatraffic_multicast_port);
-        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
+        /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
+        if (m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
+        {
+            m_network_Factory.getDefaultMetatrafficMulticastLocators(m_att.builtin.metatrafficMulticastLocatorList,
+                metatraffic_multicast_port);
+            m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
 
-        m_network_Factory.getDefaultMetatrafficUnicastLocators(m_att.builtin.metatrafficUnicastLocatorList,
-            metatraffic_unicast_port);
-        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
+            m_network_Factory.getDefaultMetatrafficUnicastLocators(m_att.builtin.metatrafficUnicastLocatorList,
+                metatraffic_unicast_port);
+            m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
+        }
+        else
+        {
+            std::for_each(m_att.builtin.metatrafficMulticastLocatorList.begin(),
+                m_att.builtin.metatrafficMulticastLocatorList.end(), [&](Locator_t& locator)
+                {
+                    m_network_Factory.fillMetatrafficMulticastLocator(locator, metatraffic_multicast_port);
+                });
+            m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
+
+            std::for_each(m_att.builtin.metatrafficUnicastLocatorList.begin(),
+                m_att.builtin.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
+                {
+                    m_network_Factory.fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
+                });
+            m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
+        }
+
+        // Initial peers
+        if (m_att.builtin.initialPeersList.empty())
+        {
+            m_att.builtin.initialPeersList = m_att.builtin.metatrafficMulticastLocatorList;
+        }
+        else
+        {
+            LocatorList_t initial_peers;
+            initial_peers.swap(m_att.builtin.initialPeersList);
+
+            std::for_each(initial_peers.begin(), initial_peers.end(),
+                [&](Locator_t& locator)
+                {
+                    m_network_Factory.configureInitialPeerLocator(locator, m_att);
+                });
+        }
+
+        // Creation of user locator and receiver resources
+        bool hasLocatorsDefined = true;
+        //If no default locators are defined we define some.
+        /* The reasoning here is the following.
+           If the parameters of the RTPS Participant don't hold default listening locators for the creation
+           of Endpoints, we make some for Unicast only.
+           If there is at least one listen locator of any kind, we do not create any default ones.
+           If there are no sending locators defined, we create default ones for the transports we implement.
+           */
+        if (m_att.defaultUnicastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
+        {
+            //Default Unicast Locators in case they have not been provided
+            /* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
+            hasLocatorsDefined = false;
+
+            m_network_Factory.getDefaultUnicastLocators(m_att.defaultUnicastLocatorList, m_att);
+        }
+        else
+        {
+            // Locator with port 0, calculate port.
+            std::for_each(m_att.defaultUnicastLocatorList.begin(), m_att.defaultUnicastLocatorList.end(),
+                [&](Locator_t& loc)
+                {
+                    m_network_Factory.fillDefaultUnicastLocator(loc, m_att);
+                });
+
+        }
+
+        // Normalize unicast locators.
+        m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
+
+        if (!hasLocatorsDefined)
+        {
+            logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
+                << m_att.defaultUnicastLocatorList);
+        }
+
+        createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
+        createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
+
+        createReceiverResources(m_att.defaultUnicastLocatorList, true);
+        createReceiverResources(m_att.defaultMulticastLocatorList, true);
     }
     else
     {
-        std::for_each(m_att.builtin.metatrafficMulticastLocatorList.begin(),
-            m_att.builtin.metatrafficMulticastLocatorList.end(), [&](Locator_t& locator)
-        {
-            m_network_Factory.fillMetatrafficMulticastLocator(locator, metatraffic_multicast_port);
-        });
-        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
-
-        std::for_each(m_att.builtin.metatrafficUnicastLocatorList.begin(),
-            m_att.builtin.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
-        {
-            m_network_Factory.fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
-        });
-        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
-    }
-
-    // Initial peers
-    if (m_att.builtin.initialPeersList.empty())
-    {
-        m_att.builtin.initialPeersList = m_att.builtin.metatrafficMulticastLocatorList;
-    }
-    else
-    {
-        LocatorList_t initial_peers;
-        initial_peers.swap(m_att.builtin.initialPeersList);
-
-        std::for_each(initial_peers.begin(), initial_peers.end(),
-            [&](Locator_t& locator)
-            {
-               m_network_Factory.configureInitialPeerLocator(locator, m_att);
-            });
-    }
-
-    // Creation of user locator and receiver resources
-    bool hasLocatorsDefined = true;
-    //If no default locators are defined we define some.
-    /* The reasoning here is the following.
-       If the parameters of the RTPS Participant don't hold default listening locators for the creation
-       of Endpoints, we make some for Unicast only.
-       If there is at least one listen locator of any kind, we do not create any default ones.
-       If there are no sending locators defined, we create default ones for the transports we implement.
-       */
-    if (m_att.defaultUnicastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
-    {
-        //Default Unicast Locators in case they have not been provided
-        /* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
-        hasLocatorsDefined = false;
-
-        m_network_Factory.getDefaultUnicastLocators(m_att.defaultUnicastLocatorList, m_att);
-    }
-    else
-    {
-        // Locator with port 0, calculate port.
-        std::for_each(m_att.defaultUnicastLocatorList.begin(), m_att.defaultUnicastLocatorList.end(),
-            [&](Locator_t& loc)
-        {
-            m_network_Factory.fillDefaultUnicastLocator(loc, m_att);
-        });
-
-    }
-
-    // Normalize unicast locators.
-    m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
-    
-    if (!hasLocatorsDefined)
-    {
-        logInfo(RTPS_PARTICIPANT, m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
-            << m_att.defaultUnicastLocatorList);
-    }
-
-    if (is_intraprocess_only(m_att))
-    {
+        m_att.builtin.metatrafficMulticastLocatorList.clear();
         m_att.builtin.metatrafficUnicastLocatorList.clear();
         m_att.defaultUnicastLocatorList.clear();
         m_att.defaultMulticastLocatorList.clear();
     }
-    
-    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true);
-    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true);
-
-    createReceiverResources(m_att.defaultUnicastLocatorList, true);
-    createReceiverResources(m_att.defaultMulticastLocatorList, true);
 
 #if HAVE_SECURITY
     // Start security
@@ -293,6 +301,10 @@ void RTPSParticipantImpl::disable()
     {
         block.Receiver->UnregisterReceiver(block.mp_receiver);
         block.disable();
+    }
+
+    if (is_intraprocess_only_)
+    {
     }
 
     while(m_userReaderList.size() > 0)
@@ -1201,6 +1213,11 @@ bool RTPSParticipantImpl::pairing_remote_writer_with_local_reader_after_security
 }
 
 #endif
+
+PDP* RTPSParticipantImpl::pdp()
+{
+    return mp_builtinProtocols->mp_PDP;
+}
 
 PDPSimple* RTPSParticipantImpl::pdpsimple()
 {

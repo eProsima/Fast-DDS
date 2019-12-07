@@ -35,6 +35,7 @@
 #include <fastrtps/rtps/resources/AsyncWriterThread.h>
 
 #include "../../../participant/RTPSParticipantImpl.h"
+#include "../../../RTPSDomainImpl.hpp"
 
 #include <fastrtps/rtps/writer/StatelessWriter.h>
 #include <fastrtps/rtps/reader/StatelessReader.h>
@@ -108,11 +109,14 @@ PDP::~PDP()
     delete resend_participant_info_event_;
     mp_RTPSParticipant->disableReader(mp_PDPReader);
     delete mp_EDP;
-    mp_RTPSParticipant->deleteUserEndpoint(mp_PDPWriter);
-    mp_RTPSParticipant->deleteUserEndpoint(mp_PDPReader);
-    delete mp_PDPWriterHistory;
-    delete mp_PDPReaderHistory;
-    delete mp_listener;
+    if (!mp_RTPSParticipant->is_intraprocess_only())
+    {
+        mp_RTPSParticipant->deleteUserEndpoint(mp_PDPWriter);
+        mp_RTPSParticipant->deleteUserEndpoint(mp_PDPReader);
+        delete mp_PDPWriterHistory;
+        delete mp_PDPReaderHistory;
+        delete mp_listener;
+    }
 
     participant_proxies_.clear();
 
@@ -336,15 +340,18 @@ bool PDP::initPDP(
     mp_RTPSParticipant = part;
     m_discovery = mp_RTPSParticipant->getAttributes().builtin;
     initial_announcements_ = m_discovery.discovery_config.initial_announcements;
-    //CREATE ENDPOINTS
-    if (!createPDPEndpoints())
+    if (!part->is_intraprocess_only())
     {
-        return false;
+        //CREATE ENDPOINTS
+        if (!createPDPEndpoints())
+        {
+            return false;
+        }
+        //UPDATE METATRAFFIC.
+        mp_builtin->updateMetatrafficLocators(this->mp_PDPReader->getAttributes().unicastLocatorList);
     }
-    //UPDATE METATRAFFIC.
-    mp_builtin->updateMetatrafficLocators(this->mp_PDPReader->getAttributes().unicastLocatorList);
-    std::shared_ptr<ParticipantProxyData> pdata = add_participant_proxy_data(part->getGuid(), true);
 
+    std::shared_ptr<ParticipantProxyData> pdata = add_participant_proxy_data(part->getGuid(), true);
     if (!pdata)
     {
         return false;
@@ -355,7 +362,19 @@ bool PDP::initPDP(
 
     initializeParticipantProxyData(pdata.get());
 
-    resend_participant_info_event_ = new TimedEvent(mp_RTPSParticipant->getEventResource(),
+    if (part->is_intraprocess_only())
+    {
+        resend_participant_info_event_ = new TimedEvent(mp_RTPSParticipant->getEventResource(),
+            [&]() -> bool
+            {
+                perform_intraprocess_discovery();
+                return false;
+            },
+            1000);
+    }
+    else
+    {
+        resend_participant_info_event_ = new TimedEvent(mp_RTPSParticipant->getEventResource(),
             [&]() -> bool
             {
                 announceParticipantState(false);
@@ -364,14 +383,58 @@ bool PDP::initPDP(
             },
             0);
 
-    set_initial_announcement_interval();
+        set_initial_announcement_interval();
+    }
 
     return true;
 }
 
+void PDP::perform_intraprocess_discovery()
+{
+    // std::lock_guard<std::recursive_mutex> guard(pool_mutex_);
+
+    RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
+    for (auto it : pool_participant_references_)
+    {
+        if (it.first != mp_RTPSParticipant->getGuid().guidPrefix)
+        {
+            std::shared_ptr<ParticipantProxyData> pdata = it.second.lock();
+            add_participant_proxy_data(pdata);
+            assignRemoteEndpoints(pdata.get());
+            if (listener != nullptr)
+            {
+                ParticipantDiscoveryInfo info(*pdata);
+                info.status = ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT;
+
+                listener->onParticipantDiscovery(
+                    mp_RTPSParticipant->getUserRTPSParticipant(),
+                    std::move(info));
+            }
+        }
+    }
+}
+
+void PDP::perform_intraprocess_undiscovery()
+{
+    const GUID_t& guid = mp_RTPSParticipant->getGuid();
+    RTPSDomainImpl::for_each_participant_nts(
+        [this, &guid](
+                const std::pair<RTPSParticipant*, RTPSParticipantImpl*>& pair)
+        {
+            if (pair.second != mp_RTPSParticipant)
+            {
+                pair.second->pdp()->remove_remote_participant(guid,
+                    ParticipantDiscoveryInfo::DISCOVERY_STATUS::REMOVED_PARTICIPANT);
+            }
+            return true;
+        });
+}
+
 bool PDP::enable()
 {
-    return mp_RTPSParticipant->enableReader(mp_PDPReader);
+    return
+        mp_RTPSParticipant->is_intraprocess_only() ||
+        mp_RTPSParticipant->enableReader(mp_PDPReader);
 }
 
 void PDP::announceParticipantState(
@@ -384,7 +447,8 @@ void PDP::announceParticipantState(
 
     if(!dispose)
     {
-        if(m_hasChangedLocalPDP.exchange(false) || new_change)
+        if(!mp_RTPSParticipant->is_intraprocess_only() &&
+            (m_hasChangedLocalPDP.exchange(false) || new_change))
         {
             getMutex()->lock();
             std::shared_ptr<ParticipantProxyData> local_participant_data = getLocalParticipantProxyData();
@@ -429,40 +493,47 @@ void PDP::announceParticipantState(
     }
     else
     {
-        getMutex()->lock();
-        ParticipantProxyData proxy_data_copy(*getLocalParticipantProxyData());
-        getMutex()->unlock();
-
-        if(mp_PDPWriterHistory->getHistorySize() > 0)
-            mp_PDPWriterHistory->remove_min_change();
-        uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
-        change = mp_PDPWriter->new_change([cdr_size]() -> uint32_t
-            {
-                return cdr_size;
-            }
-        , NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
-
-        if(change != nullptr)
+        if (mp_RTPSParticipant->is_intraprocess_only())
         {
-            CDRMessage_t aux_msg(change->serializedPayload);
+            perform_intraprocess_undiscovery();
+        }
+        else
+        {
+            getMutex()->lock();
+            ParticipantProxyData proxy_data_copy(*getLocalParticipantProxyData());
+            getMutex()->unlock();
+
+            if (mp_PDPWriterHistory->getHistorySize() > 0)
+                mp_PDPWriterHistory->remove_min_change();
+            uint32_t cdr_size = proxy_data_copy.get_serialized_size(true);
+            change = mp_PDPWriter->new_change([cdr_size]() -> uint32_t
+                {
+                    return cdr_size;
+                }
+            , NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key);
+
+            if (change != nullptr)
+            {
+                CDRMessage_t aux_msg(change->serializedPayload);
 
 #if __BIG_ENDIAN__
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
-            aux_msg.msg_endian = BIGEND;
+                change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+                aux_msg.msg_endian = BIGEND;
 #else
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
-            aux_msg.msg_endian =  LITTLEEND;
+                change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+                aux_msg.msg_endian = LITTLEEND;
 #endif
 
-            if (proxy_data_copy.writeToCDRMessage(&aux_msg, true))
-            {
-                change->serializedPayload.length = (uint16_t)aux_msg.length;
+                if (proxy_data_copy.writeToCDRMessage(&aux_msg, true))
+                {
+                    change->serializedPayload.length = (uint16_t)aux_msg.length;
 
-                mp_PDPWriterHistory->add_change(change, wparams);
-            }
-            else
-            {
-                logError(RTPS_PDP, "Cannot serialize ParticipantProxyData.");
+                    mp_PDPWriterHistory->add_change(change, wparams);
+                }
+                else
+                {
+                    logError(RTPS_PDP, "Cannot serialize ParticipantProxyData.");
+                }
             }
         }
     }
@@ -990,17 +1061,20 @@ bool PDP::remove_remote_participant(
         mp_builtin->mp_participantImpl->security_manager().remove_participant(*pdata);
 #endif
 
-        this->mp_PDPReaderHistory->getMutex()->lock();
-        for(std::vector<CacheChange_t*>::iterator it=this->mp_PDPReaderHistory->changesBegin();
-                it!=this->mp_PDPReaderHistory->changesEnd();++it)
+        if (this->mp_PDPReaderHistory)
         {
-            if((*it)->instanceHandle == pdata->m_key)
+            this->mp_PDPReaderHistory->getMutex()->lock();
+            for (std::vector<CacheChange_t*>::iterator it = this->mp_PDPReaderHistory->changesBegin();
+                it != this->mp_PDPReaderHistory->changesEnd(); ++it)
             {
-                this->mp_PDPReaderHistory->remove_change(*it);
-                break;
+                if ((*it)->instanceHandle == pdata->m_key)
+                {
+                    this->mp_PDPReaderHistory->remove_change(*it);
+                    break;
+                }
             }
+            this->mp_PDPReaderHistory->getMutex()->unlock();
         }
-        this->mp_PDPReaderHistory->getMutex()->unlock();
 
         auto listener =  mp_RTPSParticipant->getListener();
         if (listener != nullptr)

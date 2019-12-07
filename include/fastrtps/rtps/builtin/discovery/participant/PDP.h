@@ -450,6 +450,9 @@ private:
      */
     void set_initial_announcement_interval();
 
+    void perform_intraprocess_discovery();
+    void perform_intraprocess_undiscovery();
+
 };
 
 
