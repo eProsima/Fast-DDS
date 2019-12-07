@@ -119,7 +119,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
     }
 
     // WLP
-    if (m_att.use_WriterLivelinessProtocol)
+    if (m_att.use_WriterLivelinessProtocol && !mp_participantImpl->is_intraprocess_only())
     {
         mp_WLP = new WLP(this);
         mp_WLP->initWL(mp_participantImpl);
