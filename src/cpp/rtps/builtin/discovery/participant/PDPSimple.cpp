@@ -138,7 +138,7 @@ bool PDPSimple::init(RTPSParticipantImpl* part)
     return true;
 }
 
-ParticipantProxyData * PDPSimple::createParticipantProxyData(
+std::shared_ptr<ParticipantProxyData> PDPSimple::createParticipantProxyData(
         const ParticipantProxyData& participant_data,
         const GUID_t&)
 {
@@ -178,8 +178,9 @@ ParticipantProxyData * PDPSimple::createParticipantProxyData(
         }
     }
 
-    ParticipantProxyData* pdata = add_participant_proxy_data(participant_data.m_guid, true);
-    if(pdata != nullptr)
+    std::shared_ptr<ParticipantProxyData> pdata = add_participant_proxy_data(participant_data.m_guid, true);
+
+    if( pdata )
     {
         pdata->copy(participant_data);
         pdata->isAlive = true;

@@ -183,6 +183,10 @@ bool EDP::newLocalReaderProxyData(
     pairingReader(reader, participant_guid, *reader_data);
     //DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
     processLocalReaderProxyData(reader, reader_data);
+
+    // addWriterProxyData returns a lock object
+    reader_data->unlock();
+
     return true;
 }
 
@@ -299,6 +303,10 @@ bool EDP::newLocalWriterProxyData(
     pairingWriter(writer, participant_guid, *writer_data);
     //DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
     processLocalWriterProxyData(writer, writer_data);
+
+    // addWriterProxyData returns a lock object
+    writer_data->unlock();
+
     return true;
 }
 
@@ -342,6 +350,10 @@ bool EDP::updatedLocalReader(
         processLocalReaderProxyData(reader, reader_data);
         pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
         pairingReader(reader, participant_guid, *reader_data);
+
+        // addReaderProxyData returns a lock object
+        reader_data->unlock();
+
         return true;
     }
     return false;
@@ -385,6 +397,9 @@ bool EDP::updatedLocalWriter(
         processLocalWriterProxyData(writer, writer_data);
         pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);
         pairingWriter(writer, participant_guid, *writer_data);
+
+        // addWriterProxyData returns a locked object on success
+        writer_data->unlock();
         return true;
     }
     return false;
@@ -726,7 +741,7 @@ bool EDP::pairingReader(
     logInfo(RTPS_EDP, rdata.guid() <<" in topic: \"" << rdata.topicName() <<"\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
-    for(ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
+    for(ResourceLimitedVector<std::shared_ptr<ParticipantProxyData>>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
             pit!=mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
         for(WriterProxyData* wdatait : (*pit)->m_writers)
@@ -792,7 +807,7 @@ bool EDP::pairingWriter(
     logInfo(RTPS_EDP, W->getGuid() << " in topic: \"" << wdata.topicName() <<"\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
-    for(ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
+    for(ResourceLimitedVector<std::shared_ptr<ParticipantProxyData>>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
             pit!=mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
         for(ReaderProxyData* rdatait : (*pit)->m_readers)

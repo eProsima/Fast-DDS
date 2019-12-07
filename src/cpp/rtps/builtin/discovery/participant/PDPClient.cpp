@@ -166,7 +166,7 @@ bool PDPClient::init(RTPSParticipantImpl* part)
     return true;
 }
 
-ParticipantProxyData* PDPClient::createParticipantProxyData(
+std::shared_ptr<ParticipantProxyData> PDPClient::createParticipantProxyData(
     const ParticipantProxyData& participant_data,
     const GUID_t&)
 {
