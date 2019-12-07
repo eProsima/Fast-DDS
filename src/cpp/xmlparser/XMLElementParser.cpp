@@ -2233,38 +2233,6 @@ XMLP_ret XMLParser::getXMLLocatorTCPv6(tinyxml2::XMLElement* elem, rtps::Locator
     return XMLP_ret::XML_OK;
 }
 
-XMLP_ret XMLParser::getXMLParticipantList(tinyxml2::XMLElement *elem, std::set<GuidPrefix_t> &participantList, uint8_t ident)
-{
-    /*
-        <xs:complexType name="participantListType">
-            <xs:sequence>
-                <xs:element name="participant" type="stringType" minOccurs="0" maxOccurs="unbounded"/>
-            </xs:sequence>
-        </xs:complexType>
-    */
-    const char* participant = nullptr;
-    for (tinyxml2::XMLElement* p_aux0 = elem->FirstChildElement();
-         p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
-    {
-        participant = p_aux0->Name();
-        if (strcmp(participant, PARTICIPANT) == 0)
-        {
-            GuidPrefix_t guid;
-            if (XMLP_ret::XML_OK != getXMLguidPrefix(p_aux0, guid, ident))
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-            participantList.insert(guid);
-        }
-        else
-        {
-            logError(XMLPARSER, "Invalid element found into 'participantListType'. Name: " << participant);
-            return XMLP_ret::XML_ERROR;
-        }
-    }
-    return XMLP_ret::XML_OK;
-}
-
 XMLP_ret XMLParser::getXMLLocatorList(tinyxml2::XMLElement *elem, LocatorList_t &locatorList, uint8_t ident)
 {
     /*

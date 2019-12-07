@@ -360,7 +360,7 @@ class RTPSParticipantAttributes
          * Whitelisted remote participants. If empty, all remote participants are accepted. Else, only the participants
          * defined here will be accepted
          */
-        std::set<GuidPrefix_t> participantWhitelist;
+        std::set<string_255> participantWhitelist;
 
         /*!
          * @brief Send socket buffer size for the send resource. Zero value indicates to use default system buffer size.
