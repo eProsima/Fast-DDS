@@ -144,6 +144,13 @@ std::shared_ptr<ParticipantProxyData> PDPSimple::createParticipantProxyData(
 {
     std::unique_lock<std::recursive_mutex> lock(*getMutex());
 
+    // decide if we dismiss the participant using the whitelist
+    if (!mp_RTPSParticipant->getRTPSParticipantAttributes().participantWhitelist.empty() 
+            && mp_RTPSParticipant->getRTPSParticipantAttributes().participantWhitelist.find(participant_data.m_guid.guidPrefix) == mp_RTPSParticipant->getRTPSParticipantAttributes().participantWhitelist.end())
+    {
+        return nullptr;
+    }
+
     // decide if we dismiss the participant using the ParticipantFilteringFlags
     const ParticipantFilteringFlags_t & flags = m_discovery.discovery_config.ignoreParticipantFlags;
         

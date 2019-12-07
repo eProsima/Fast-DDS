@@ -2661,6 +2661,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
                 <xs:element name="prefix" type="guid" minOccurs="0"/>
                 <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="participantWhitelist" type="participantList" minOccurs="0"/>
                 <xs:element name="sendSocketBufferSize" type="uint32Type" minOccurs="0"/>
                 <xs:element name="listenSocketBufferSize" type="uint32Type" minOccurs="0"/>
                 <xs:element name="builtin" type="builtinAttributesType" minOccurs="0"/>
@@ -2730,6 +2731,15 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
             // defaultMulticastLocatorList
             if (XMLP_ret::XML_OK !=
                 getXMLLocatorList(p_aux0, participant_node.get()->rtps.defaultMulticastLocatorList, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, PARTICIPANT_WHITELIST) == 0)
+        {
+            // participantWhitelist
+            if (XMLP_ret::XML_OK !=
+                getXMLParticipantList(p_aux0, participant_node.get()->rtps.participantWhitelist, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }

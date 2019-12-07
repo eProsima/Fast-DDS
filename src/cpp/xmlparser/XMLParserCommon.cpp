@@ -75,6 +75,7 @@ const char* ALLOCATION = "allocation";
 const char* PREFIX = "prefix";
 const char* DEF_UNI_LOC_LIST = "defaultUnicastLocatorList";
 const char* DEF_MULTI_LOC_LIST = "defaultMulticastLocatorList";
+const char* PARTICIPANT_WHITELIST = "participantWhitelist";
 const char* SEND_SOCK_BUF_SIZE = "sendSocketBufferSize";
 const char* LIST_SOCK_BUF_SIZE = "listenSocketBufferSize";
 const char* BUILTIN = "builtin";

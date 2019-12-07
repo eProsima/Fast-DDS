@@ -32,6 +32,7 @@
 
 #include <memory>
 #include <sstream>
+#include <set>
 
 namespace eprosima {
 namespace fastrtps {
@@ -330,6 +331,7 @@ class RTPSParticipantAttributes
             return (this->name == b.name) &&
                    (this->defaultUnicastLocatorList == b.defaultUnicastLocatorList) &&
                    (this->defaultMulticastLocatorList == b.defaultMulticastLocatorList) &&
+                   (this->participantWhitelist == b.participantWhitelist) &&
                    (this->sendSocketBufferSize == b.sendSocketBufferSize) &&
                    (this->listenSocketBufferSize == b.listenSocketBufferSize) &&
                    (this->builtin == b.builtin) &&
@@ -353,6 +355,12 @@ class RTPSParticipantAttributes
          * case that it was defined with NO UnicastLocators. This is usually left empty.
          */
         LocatorList_t defaultMulticastLocatorList;
+
+        /**
+         * Whitelisted remote participants. If empty, all remote participants are accepted. Else, only the participants
+         * defined here will be accepted
+         */
+        std::set<GuidPrefix_t> participantWhitelist;
 
         /*!
          * @brief Send socket buffer size for the send resource. Zero value indicates to use default system buffer size.

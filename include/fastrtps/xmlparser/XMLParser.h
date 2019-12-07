@@ -283,6 +283,11 @@ class XMLParser
         rtps::MemoryManagementPolicy_t& historyMemoryPolicy,
         uint8_t ident);
 
+    RTPS_DllAPI static XMLP_ret getXMLParticipantList(
+        tinyxml2::XMLElement* elem,
+        std::set<rtps::GuidPrefix_t>& participantList,
+        uint8_t ident);
+
     RTPS_DllAPI static XMLP_ret getXMLLocatorList(
         tinyxml2::XMLElement* elem,
         rtps::LocatorList_t& locatorList,
