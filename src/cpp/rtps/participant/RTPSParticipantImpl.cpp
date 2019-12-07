@@ -54,6 +54,7 @@
 #include <algorithm>
 
 #include <fastrtps/log/Log.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -68,6 +69,15 @@ static EntityId_t TrustedWriter(
         (reader == c_EntityId_SEDPSubReader) ? c_EntityId_SEDPSubWriter :
         (reader == c_EntityId_ReaderLiveliness) ? c_EntityId_WriterLiveliness :
         c_EntityId_Unknown;
+}
+
+static bool is_intraprocess_only(
+        const RTPSParticipantAttributes& att)
+{
+    return
+        xmlparser::XMLProfileManager::library_settings().intraprocess_delivery == INTRAPROCESS_FULL &&
+        att.builtin.discovery_config.ignoreParticipantFlags == 
+            (ParticipantFilteringFlags::FILTER_DIFFERENT_HOST | ParticipantFilteringFlags::FILTER_DIFFERENT_PROCESS);
 }
 
 Locator_t& RTPSParticipantImpl::applyLocatorAdaptRule(
@@ -246,6 +256,13 @@ RTPSParticipantImpl::RTPSParticipantImpl(
             m_att.defaultUnicastLocatorList);
     }
 
+    if (is_intraprocess_only(m_att))
+    {
+        m_att.builtin.metatrafficUnicastLocatorList.clear();
+        m_att.defaultUnicastLocatorList.clear();
+        m_att.defaultMulticastLocatorList.clear();
+    }
+    
     createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true, false);
     createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true, false);
 
