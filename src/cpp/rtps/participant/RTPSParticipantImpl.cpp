@@ -147,7 +147,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
 
     mp_userParticipant->mp_impl = this;
-    mp_event_thr.init_thread();
 
     if (!is_intraprocess_only_)
     {
@@ -1135,6 +1134,11 @@ void RTPSParticipantImpl::ResourceSemaphoreWait()
     {
         mp_ResourceSemaphore->wait();
     }
+}
+
+ResourceEvent& RTPSParticipantImpl::getEventResource()
+{
+    return PDP::getEventResource();
 }
 
 void RTPSParticipantImpl::assert_remote_participant_liveliness(

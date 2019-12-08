@@ -212,7 +212,7 @@ public:
     void ResourceSemaphoreWait();
 
     //!Get Pointer to the Event Resource.
-    ResourceEvent& getEventResource() { return mp_event_thr; }
+    ResourceEvent& getEventResource();
 
     //!Send Method - Deprecated - Stays here for reference purposes
     bool sendSync(
@@ -314,8 +314,6 @@ private:
     GUID_t m_persistence_guid;
     //! Sending resources. - DEPRECATED -Stays commented for reference purposes
     // ResourceSend* mp_send_thr;
-    //! Event Resource
-    ResourceEvent mp_event_thr;
     //! BuiltinProtocols of this RTPSParticipant
     BuiltinProtocols* mp_builtinProtocols;
     //!Semaphore to wait for the listen thread creation.

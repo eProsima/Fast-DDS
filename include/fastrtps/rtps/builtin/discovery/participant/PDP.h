@@ -314,6 +314,9 @@ public:
     //! Deleter for the ParticipantProxyData shared_ptrs
     static void return_participant_proxy_to_pool(ParticipantProxyData * p);
 
+    //!Get the common event resource
+    static ResourceEvent& getEventResource() { return event_thr_; }
+
 protected:
     //!Pointer to the builtin protocols object.
     BuiltinProtocols* mp_builtin;
