@@ -140,7 +140,7 @@ Publisher* ParticipantImpl::createPublisher(
 
     if(m_att.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
-        if(att.getUserDefinedID() <= 0)
+        if(att.getUserDefinedID() <= 0 && !mp_rtpsParticipant->is_intraprocess_only())
         {
             logError(PARTICIPANT,"Static EDP requires user defined Id");
             return nullptr;
@@ -268,7 +268,7 @@ Subscriber* ParticipantImpl::createSubscriber(
     }
     if(m_att.rtps.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol)
     {
-        if(att.getUserDefinedID() <= 0)
+        if(att.getUserDefinedID() <= 0 && !mp_rtpsParticipant->is_intraprocess_only())
         {
             logError(PARTICIPANT,"Static EDP requires user defined Id");
             return nullptr;
