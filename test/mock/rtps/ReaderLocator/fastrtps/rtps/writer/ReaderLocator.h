@@ -67,6 +67,11 @@ class ReaderLocator : public RTPSMessageSenderInterface
             return nullptr;
         }
 
+        const GUID_t& remote_guid() const
+        {
+            return remote_guid_;
+        }
+
         /**
          * Try to start using this object for a new matched reader.
          *

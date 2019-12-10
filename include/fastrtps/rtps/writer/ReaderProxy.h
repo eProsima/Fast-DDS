@@ -240,7 +240,7 @@ public:
      */
     inline const GUID_t& guid() const
     {
-        return reader_attributes_.guid();
+        return locator_info_.remote_guid();
     }
 
     /**
@@ -249,7 +249,7 @@ public:
      */
     inline DurabilityKind_t durability_kind() const
     {
-        return reader_attributes_.m_qos.m_durability.durabilityKind();
+        return durability_kind_;
     }
 
     /**
@@ -258,7 +258,7 @@ public:
      */
     inline bool expects_inline_qos() const
     {
-        return reader_attributes_.m_expectsInlineQos;
+        return expects_inline_qos_;
     }
 
     /**
@@ -267,7 +267,12 @@ public:
      */
     inline bool is_reliable() const
     {
-        return reader_attributes_.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS;
+        return is_reliable_;
+    }
+
+    inline bool disable_positive_acks() const
+    {
+        return disable_positive_acks_;
     }
 
     /**
@@ -276,17 +281,7 @@ public:
      */
     inline bool is_remote_and_reliable() const
     {
-        return !locator_info_.is_local_reader() &&
-               reader_attributes_.m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS;
-    }
-
-    /**
-     * Get the attributes of the reader represented by this proxy.
-     * @return the attributes of the reader represented by this proxy.
-     */
-    inline const ReaderProxyData& reader_attributes() const
-    {
-        return reader_attributes_;
+        return !locator_info_.is_local_reader() && is_reliable_;
     }
 
     /**
@@ -387,8 +382,14 @@ private:
     bool is_active_;
     //!Reader locator information
     ReaderLocator locator_info_;
-    //!Attributes of the Remote Reader
-    ReaderProxyData reader_attributes_;
+    //!Taken from QoS
+    DurabilityKind_t durability_kind_;
+    //!Taken from QoS
+    bool expects_inline_qos_;
+    //!Taken from QoS
+    bool is_reliable_;
+    //!Taken from QoS
+    bool disable_positive_acks_;
     //!Pointer to the associated StatefulWriter.
     StatefulWriter* writer_;
     //!Set of the changes and its state.
