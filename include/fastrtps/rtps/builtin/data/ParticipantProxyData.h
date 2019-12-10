@@ -35,10 +35,10 @@
 
 #include <chrono>
 
-#define DISCOVERY_PARTICIPANT_DATA_MAX_SIZE 5000
+#define DISCOVERY_PARTICIPANT_DATA_MAX_SIZE 512
 #define DISCOVERY_TOPIC_DATA_MAX_SIZE 500
-#define DISCOVERY_PUBLICATION_DATA_MAX_SIZE 5000
-#define DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE 5000
+#define DISCOVERY_PUBLICATION_DATA_MAX_SIZE 512
+#define DISCOVERY_SUBSCRIPTION_DATA_MAX_SIZE 512
 #define BUILTIN_PARTICIPANT_DATA_MAX_SIZE 100
 
 #define DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER              (0x00000001 << 0)
@@ -139,6 +139,14 @@ class ParticipantProxyData
          * @return True on success
          */
         bool updateData(ParticipantProxyData& pdata);
+
+        /**
+         * Get the size in bytes of the CDR serialization of this object.
+         * @param include_encapsulation Whether to include the size of the encapsulation info.
+         * @return size in bytes of the CDR serialization.
+         */
+        uint32_t get_serialized_size(
+                bool include_encapsulation) const;
 
         /**
          * Write as a parameter list on a CDRMessage_t
