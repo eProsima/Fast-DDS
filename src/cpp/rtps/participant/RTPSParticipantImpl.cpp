@@ -71,7 +71,7 @@ static EntityId_t TrustedWriter(
         c_EntityId_Unknown;
 }
 
-static bool is_intraprocess_only(
+static bool should_be_intraprocess_only(
         const RTPSParticipantAttributes& att)
 {
     return
@@ -107,6 +107,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , mp_participantListener(plisten)
     , mp_userParticipant(par)
     , mp_mutex(new std::recursive_mutex())
+    , is_intraprocess_only_(should_be_intraprocess_only(PParam))
 {
     // Builtin transport by default
     if (PParam.useBuiltinTransports)
@@ -256,7 +257,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
             m_att.defaultUnicastLocatorList);
     }
 
-    if (is_intraprocess_only(m_att))
+    if (is_intraprocess_only())
     {
         m_att.builtin.metatrafficUnicastLocatorList.clear();
         m_att.defaultUnicastLocatorList.clear();
