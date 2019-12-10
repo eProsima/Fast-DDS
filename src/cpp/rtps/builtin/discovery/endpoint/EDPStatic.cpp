@@ -57,9 +57,13 @@ bool EDPStatic::initEDP(BuiltinAttributes& attributes)
 {
     logInfo(RTPS_EDP,"Beginning STATIC EndpointDiscoveryProtocol");
     m_attributes = attributes;
-    mp_edpXML = new xmlparser::XMLEndpointParser();
-    std::string filename(m_attributes.discovery_config.getStaticEndpointXMLFilename());
-    return (this->mp_edpXML->loadXMLFile(filename) == xmlparser::XMLP_ret::XML_OK);
+    if (!mp_RTPSParticipant->is_intraprocess_only())
+    {
+        mp_edpXML = new xmlparser::XMLEndpointParser();
+        std::string filename(m_attributes.discovery_config.getStaticEndpointXMLFilename());
+        return (this->mp_edpXML->loadXMLFile(filename) == xmlparser::XMLP_ret::XML_OK);
+    }
+    return true;
 }
 
 std::pair<std::string,std::string> EDPStaticProperty::toProperty(std::string type,std::string status,uint16_t id,const EntityId_t& ent)
@@ -106,11 +110,14 @@ bool EDPStaticProperty::fromProperty(std::pair<std::string,std::string> prop)
 bool EDPStatic::processLocalReaderProxyData(RTPSReader*, ReaderProxyData* rdata)
 {
     logInfo(RTPS_EDP,rdata->guid().entityId<< " in topic: " <<rdata->topicName());
-    mp_PDP->getMutex()->lock();
-    //Add the property list entry to our local pdp
-    std::shared_ptr<ParticipantProxyData> localpdata = mp_PDP->getLocalParticipantProxyData();
-    localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Reader","ALIVE", rdata->userDefinedId(), rdata->guid().entityId));
-    mp_PDP->getMutex()->unlock();
+    if (!mp_RTPSParticipant->is_intraprocess_only())
+    {
+        mp_PDP->getMutex()->lock();
+        //Add the property list entry to our local pdp
+        std::shared_ptr<ParticipantProxyData> localpdata = mp_PDP->getLocalParticipantProxyData();
+        localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Reader", "ALIVE", rdata->userDefinedId(), rdata->guid().entityId));
+        mp_PDP->getMutex()->unlock();
+    }
     mp_PDP->announceParticipantState(true);
     return true;
 }
@@ -118,13 +125,16 @@ bool EDPStatic::processLocalReaderProxyData(RTPSReader*, ReaderProxyData* rdata)
 bool EDPStatic::processLocalWriterProxyData(RTPSWriter*, WriterProxyData* wdata)
 {
     logInfo(RTPS_EDP ,wdata->guid().entityId << " in topic: " << wdata->topicName());
-    mp_PDP->getMutex()->lock();
-    //Add the property list entry to our local pdp
-    std::shared_ptr<ParticipantProxyData> localpdata = mp_PDP->getLocalParticipantProxyData();
-    localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Writer","ALIVE",
-                wdata->userDefinedId(), wdata->guid().entityId));
-    mp_PDP->getMutex()->unlock();
-    this->mp_PDP->announceParticipantState(true);
+    if (!mp_RTPSParticipant->is_intraprocess_only())
+    {
+        mp_PDP->getMutex()->lock();
+        //Add the property list entry to our local pdp
+        std::shared_ptr<ParticipantProxyData> localpdata = mp_PDP->getLocalParticipantProxyData();
+        localpdata->m_properties.properties.push_back(EDPStaticProperty::toProperty("Writer", "ALIVE",
+            wdata->userDefinedId(), wdata->guid().entityId));
+        mp_PDP->getMutex()->unlock();
+    }
+    mp_PDP->announceParticipantState(true);
     return true;
 }
 
@@ -170,50 +180,99 @@ bool EDPStatic::removeLocalWriter(RTPSWriter*W)
 
 void EDPStatic::assignRemoteEndpoints(const ParticipantProxyData& pdata)
 {
-    for(std::vector<std::pair<std::string,std::string>>::const_iterator pit = pdata.m_properties.properties.begin();
-            pit!=pdata.m_properties.properties.end();++pit)
+    std::lock_guard<std::recursive_mutex> lock(*mp_PDP->getMutex());
+
+    if (mp_RTPSParticipant->is_intraprocess_only())
     {
-        //cout << "STATIC EDP READING PROPERTY " << pit->first << "// " << pit->second << endl;
-        EDPStaticProperty staticproperty;
-        if(staticproperty.fromProperty(*pit))
+        GUID_t temp_participant_guid;
+
+        auto wr_init_fun = [](
+            WriterProxyData* newWPD,
+            bool updating,
+            const ParticipantProxyData& participant_data)
         {
-            if(staticproperty.m_endpointType == "Reader" && staticproperty.m_status=="ALIVE")
+            return true;
+        };
+
+        for (auto wit : pdata.m_writers)
+        {
+            WriterProxyData* writer_data = mp_PDP->addWriterProxyData(wit->guid(), temp_participant_guid, wr_init_fun);
+            if (writer_data != nullptr)
             {
-                GUID_t guid(pdata.m_guid.guidPrefix,staticproperty.m_entityId);
-                if(!this->mp_PDP->has_reader_proxy_data(guid))//IF NOT FOUND, we CREATE AND PAIR IT
+                this->pairing_writer_proxy_with_any_local_reader(pdata.m_guid, writer_data);
+
+                // addWriterProxyData returns the object locked
+                writer_data->unlock();
+            }
+        }
+
+        auto rd_init_fun = [](
+            ReaderProxyData* newWPD,
+            bool updating,
+            const ParticipantProxyData& participant_data)
+        {
+            return true;
+        };
+
+        for (auto rit : pdata.m_readers)
+        {
+            ReaderProxyData* reader_data = mp_PDP->addReaderProxyData(rit->guid(), temp_participant_guid, rd_init_fun);
+            if (reader_data != nullptr)
+            {
+                this->pairing_reader_proxy_with_any_local_writer(pdata.m_guid, reader_data);
+
+                // addWriterProxyData returns the object locked
+                reader_data->unlock();
+            }
+        }
+    }
+    else
+    {
+        for (std::vector<std::pair<std::string, std::string>>::const_iterator pit = pdata.m_properties.properties.begin();
+            pit != pdata.m_properties.properties.end(); ++pit)
+        {
+            //cout << "STATIC EDP READING PROPERTY " << pit->first << "// " << pit->second << endl;
+            EDPStaticProperty staticproperty;
+            if (staticproperty.fromProperty(*pit))
+            {
+                if (staticproperty.m_endpointType == "Reader" && staticproperty.m_status == "ALIVE")
                 {
-                    newRemoteReader(pdata.m_guid, pdata.m_participantName, 
-                        staticproperty.m_userId, staticproperty.m_entityId);
+                    GUID_t guid(pdata.m_guid.guidPrefix, staticproperty.m_entityId);
+                    if (!this->mp_PDP->has_reader_proxy_data(guid))//IF NOT FOUND, we CREATE AND PAIR IT
+                    {
+                        newRemoteReader(pdata.m_guid, pdata.m_participantName,
+                            staticproperty.m_userId, staticproperty.m_entityId);
+                    }
                 }
-            }
-            else if(staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ALIVE")
-            {
-                GUID_t guid(pdata.m_guid.guidPrefix,staticproperty.m_entityId);
-                if(!this->mp_PDP->has_writer_proxy_data(guid))//IF NOT FOUND, we CREATE AND PAIR IT
+                else if (staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ALIVE")
                 {
-                    newRemoteWriter(pdata.m_guid, pdata.m_participantName,
-                        staticproperty.m_userId, staticproperty.m_entityId);
+                    GUID_t guid(pdata.m_guid.guidPrefix, staticproperty.m_entityId);
+                    if (!this->mp_PDP->has_writer_proxy_data(guid))//IF NOT FOUND, we CREATE AND PAIR IT
+                    {
+                        newRemoteWriter(pdata.m_guid, pdata.m_participantName,
+                            staticproperty.m_userId, staticproperty.m_entityId);
+                    }
                 }
-            }
-            else if(staticproperty.m_endpointType == "Reader" && staticproperty.m_status == "ENDED")
-            {
-                GUID_t guid(pdata.m_guid.guidPrefix,staticproperty.m_entityId);
-                this->mp_PDP->removeReaderProxyData(guid);
-            }
-            else if(staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ENDED")
-            {
-                GUID_t guid(pdata.m_guid.guidPrefix,staticproperty.m_entityId);
-                this->mp_PDP->removeWriterProxyData(guid);
+                else if (staticproperty.m_endpointType == "Reader" && staticproperty.m_status == "ENDED")
+                {
+                    GUID_t guid(pdata.m_guid.guidPrefix, staticproperty.m_entityId);
+                    this->mp_PDP->removeReaderProxyData(guid);
+                }
+                else if (staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ENDED")
+                {
+                    GUID_t guid(pdata.m_guid.guidPrefix, staticproperty.m_entityId);
+                    this->mp_PDP->removeWriterProxyData(guid);
+                }
+                else
+                {
+                    logWarning(RTPS_EDP, "Property with type: " << staticproperty.m_endpointType
+                        << " and status " << staticproperty.m_status << " not recognized");
+                }
             }
             else
             {
-                logWarning(RTPS_EDP,"Property with type: "<<staticproperty.m_endpointType
-                        << " and status "<<staticproperty.m_status << " not recognized");
-            }
-        }
-        else
-        {
 
+            }
         }
     }
 }
