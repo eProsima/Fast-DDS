@@ -257,6 +257,12 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="participantListType">
+        <xs:sequence>
+            <xs:element name="participant" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="simpleEDPType">
         <xs:all minOccurs="0">
             <xs:element name="PUBWRITER_SUBREADER" type="boolType"/>
@@ -650,6 +656,7 @@
             <xs:element name="prefix" type="guid" minOccurs="0"/>
             <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0"/>
+            <xs:element name="participantWhitelist" type="participantListType" minOccurs="0" />
             <xs:element name="sendSocketBufferSize" type="uint32Type" minOccurs="0"/>
             <xs:element name="listenSocketBufferSize" type="uint32Type" minOccurs="0"/>
             <xs:element name="builtin" type="builtinAttributesType" minOccurs="0"/>

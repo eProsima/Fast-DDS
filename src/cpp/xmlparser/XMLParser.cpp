@@ -2661,6 +2661,7 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
                 <xs:element name="prefix" type="guid" minOccurs="0"/>
                 <xs:element name="defaultUnicastLocatorList" type="locatorListType" minOccurs="0"/>
                 <xs:element name="defaultMulticastLocatorList" type="locatorListType" minOccurs="0"/>
+                <xs:element name="participantWhitelist" type="participantList" minOccurs="0"/>
                 <xs:element name="sendSocketBufferSize" type="uint32Type" minOccurs="0"/>
                 <xs:element name="listenSocketBufferSize" type="uint32Type" minOccurs="0"/>
                 <xs:element name="builtin" type="builtinAttributesType" minOccurs="0"/>
@@ -2733,6 +2734,32 @@ XMLP_ret XMLParser::fillDataNode(tinyxml2::XMLElement* p_profile, DataNode<Parti
             {
                 return XMLP_ret::XML_ERROR;
             }
+        }
+        else if (strcmp(name, PARTICIPANT_WHITELIST) == 0)
+        {
+            // participantWhitelist
+            const char* participant = nullptr;
+            for (tinyxml2::XMLElement* p_aux1 = p_aux0->FirstChildElement();
+                 p_aux1 != nullptr; p_aux1 = p_aux1->NextSiblingElement())
+            {
+                participant = p_aux1->Name();
+                if (strcmp(participant, PARTICIPANT) == 0)
+                {
+                    std::string s = "";
+                    if (XMLP_ret::XML_OK != getXMLString(p_aux1, &s, ident))
+                    {
+                        return XMLP_ret::XML_ERROR;
+                    }
+                    participant_node.get()->rtps.participantWhitelist.insert(s);
+                }
+                else
+                {
+                    logError(XMLPARSER, "Invalid element found into 'participantListType'. Name: " << participant);
+                    return XMLP_ret::XML_ERROR;
+                }
+            }
+            return XMLP_ret::XML_OK;
+
         }
         else if (strcmp(name, SEND_SOCK_BUF_SIZE) == 0)
         {
