@@ -212,9 +212,16 @@ public:
 
     /**
      * This operation returns the DomainParticipant to which the Publisher belongs.
+     * @return Reference to the DomainParticipant object.
      */
     const DomainParticipant& get_participant() const;
 
+    /**
+     * This operation deletes all the entities that were created by means of the create methods on the Publisher.
+     * That is, it deletes all contained DataWriter objects.
+     * @return PRECONDITION_NOT_MET if any of the contained entities is is a state where it cannot be deleted.
+     * OK if all the DataWriter objects have been deleted correctly.
+     */
     ReturnCode_t delete_contained_entities();
 
     /**

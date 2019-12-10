@@ -436,6 +436,22 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         RTPSReader* /*reader*/,
         const SubscriptionMatchedStatus& info)
 {
+    //Update Matched Publications List
+    if (info.current_count_change == 1) //MATCHED_MATCHING
+    {
+        data_reader_->matched_publications_.push_back(info.last_publication_handle);
+    }
+    else if (info.current_count_change == -1) //REMOVE_MATCHING
+    {
+        auto it = std::find(data_reader_->matched_publications_.begin(),
+                        data_reader_->matched_publications_.end(), info.last_publication_handle);
+        if (it != data_reader_->matched_publications_.end())
+        {
+            data_reader_->matched_publications_.erase(it);
+        }
+    }
+
+    //TODO: Check if the DataWriter should be ignored (DomainParticipant::ignore_publication)
     if (data_reader_->listener_ != nullptr &&
             data_reader_->mask_.is_compatible(::dds::core::status::StatusMask::subscription_matched()))
     {
@@ -817,6 +833,13 @@ TypeSupport DataReaderImpl::type()
 
    }
  */
+
+ReturnCode_t DataReaderImpl::get_matched_publications(
+        std::vector<InstanceHandle_t>& publication_handles) const
+{
+    publication_handles = matched_publications_;
+    return ReturnCode_t::RETCODE_OK;
+}
 
 } /* namespace dds */
 } /* namespace fastdds */

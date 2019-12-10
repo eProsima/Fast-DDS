@@ -218,6 +218,9 @@ public:
             fastrtps::rtps::InstanceHandle_t publication_handle);
      */
 
+    ReturnCode_t get_matched_publications(
+            std::vector<fastrtps::rtps::InstanceHandle_t>& publication_handles) const;
+
 private:
 
     DataReaderImpl* impl_;

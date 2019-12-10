@@ -84,7 +84,7 @@ HelloWorldSubscriber::~HelloWorldSubscriber()
 }
 
 void HelloWorldSubscriber::SubListener::on_subscription_matched(
-        eprosima::fastdds::dds::DataReader*,
+        eprosima::fastdds::dds::DataReader* /*reader*/,
         const eprosima::fastdds::dds::SubscriptionMatchedStatus& info)
 {
     if (info.current_count_change == 1)
