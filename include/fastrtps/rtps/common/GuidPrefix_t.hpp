@@ -72,6 +72,24 @@ struct RTPS_DllAPI GuidPrefix_t
         return (memcmp(value, prefix.value, size) != 0);
     }
 
+    bool operator <(
+        const GuidPrefix_t& g) const
+    {
+        for(uint8_t i = 0; i < 12; ++i)
+        {
+            if(value[i] < g.value[i])
+            {
+                return true;
+            }
+            else if(value[i] > g.value[i])
+            {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
 #endif
 };
 

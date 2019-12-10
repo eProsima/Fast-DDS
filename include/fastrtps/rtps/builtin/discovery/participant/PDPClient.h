@@ -70,7 +70,7 @@ public:
      * @param writer_guid GUID of originating writer
      * @return new ParticipantProxyData * or nullptr on failure
      */
-    ParticipantProxyData* createParticipantProxyData(
+    std::shared_ptr<ParticipantProxyData> createParticipantProxyData(
         const ParticipantProxyData& p,
         const GUID_t& writer_guid) override;
 

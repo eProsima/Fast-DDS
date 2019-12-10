@@ -41,6 +41,7 @@ ReaderProxyData::ReaderProxyData (
     , m_topicDiscoveryKind(NO_CHECK)
     , m_type_id(nullptr)
     , m_type(nullptr)
+    // , ppd_mutex_(nullptr)
 {
 }
 
@@ -71,6 +72,7 @@ ReaderProxyData::ReaderProxyData(
     , m_topicDiscoveryKind(readerInfo.m_topicDiscoveryKind)
     , m_type_id(nullptr)
     , m_type(nullptr)
+    // , ppd_mutex_(nullptr)
 {
     if (readerInfo.m_type_id)
     {
@@ -808,6 +810,28 @@ void ReaderProxyData::clear()
     {
         *m_type = TypeObjectV1();
     }
+    // ppd_mutex_ = nullptr;
+}
+
+//!Unlock the ParticipantProxyData protective mutex
+void ReaderProxyData::unlock()
+{
+    /*
+    if(ppd_mutex_)
+    {
+        ppd_mutex_->unlock();
+    }
+    */
+}
+
+//!Associate a protection mutex to the proxy, ParticipantProxyData one
+void ReaderProxyData::mutex_guard(
+    std::recursive_mutex * pM)
+{
+    /*
+    assert(ppd_mutex_ == nullptr);
+    ppd_mutex_ = pM;
+    */
 }
 
 bool ReaderProxyData::is_update_allowed(
@@ -944,6 +968,46 @@ void ReaderProxyData::set_remote_locators(
             }
         }
     }
+}
+
+bool ReaderProxyData::add_knowledge_from(
+        const GUID_t& participant_guid)
+{
+    if(is_known_by(participant_guid))
+    {
+        // Already known
+        return true;
+    }
+
+    participants_kowning_me_.push_back(participant_guid.guidPrefix);
+    return false;
+}
+
+bool ReaderProxyData::remove_knowledge_from(
+        const GUID_t& participant_guid)
+{
+    const GuidPrefix_t& prefix = participant_guid.guidPrefix;
+    auto it = std::find(participants_kowning_me_.begin(), participants_kowning_me_.end(), prefix);
+    if (it != participants_kowning_me_.end())
+    {
+        participants_kowning_me_.erase(it);
+        return true;
+    }
+
+    return false;
+}
+
+bool ReaderProxyData::is_known_by(
+        const GUID_t& participant_guid) const
+{
+    const GuidPrefix_t& prefix = participant_guid.guidPrefix;
+    auto it = std::find(participants_kowning_me_.begin(), participants_kowning_me_.end(), prefix);
+    return it != participants_kowning_me_.end();
+}
+
+bool ReaderProxyData::is_known_by_no_one() const
+{
+    return participants_kowning_me_.empty();
 }
 
 } /* namespace rtps */

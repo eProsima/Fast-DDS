@@ -73,16 +73,19 @@ class RTPSParticipantImpl;
 class ReaderProxyData;
 class WriterProxyData;
 class NetworkFactory;
+class PDP;
 
 /**
 * ParticipantProxyData class is used to store and convert the information Participants send to each other during the PDP phase.
 *@ingroup BUILTIN_MODULE
 */
-class ParticipantProxyData
+class ParticipantProxyData 
 {
     public:
 
-        ParticipantProxyData(const RTPSParticipantAllocationAttributes& allocation);
+        ParticipantProxyData(
+                std::recursive_mutex* mutex,
+                const RTPSParticipantAllocationAttributes& allocation);
 
         ParticipantProxyData(const ParticipantProxyData& pdata);
 
@@ -195,6 +198,40 @@ class ParticipantProxyData
         {
             return lease_duration_;
         }
+
+        /**
+         * Now multiple PDP objects can access simultaneously this structure
+         * this mutex will protect this members and the (Reader|Writer)ProxyData
+        */ 
+        // mutable std::recursive_mutex* ppd_mutex_;
+
+        /**
+         * ParticipantProxyData is a shared object among all PDPs, we want to
+         * deserialize only once if at all
+        */
+        SequenceNumber_t version_;
+
+        struct pool_deleter 
+        {
+            void operator()(ParticipantProxyData* p) const;
+        };
+
+        //! Lease duration auxiliary functor to make the callbacks to the interested participants and track them
+
+        struct lease_duration_callback
+        {
+            std::map<GuidPrefix_t, PDP*> listeners_;
+            ParticipantProxyData * p = { nullptr };
+
+            lease_duration_callback(ParticipantProxyData * ptr) : p(ptr) {}
+
+            void reset();
+
+            void add_listener(GuidPrefix_t prefix, PDP* p);
+            void remove_listener(GuidPrefix_t prefix);
+
+            void operator()() const;
+        } lease_callback_;
 
     private:
 

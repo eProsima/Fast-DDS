@@ -43,7 +43,9 @@ namespace rtps {
 
 PDPListener::PDPListener(PDP* parent)
     : parent_pdp_(parent)
-    , temp_participant_data_(parent->getRTPSParticipant()->getRTPSParticipantAttributes().allocation)
+    , temp_participant_data_(
+        new std::recursive_mutex(),
+        parent->getRTPSParticipant()->getRTPSParticipantAttributes().allocation)
 {
 }
 
@@ -84,83 +86,123 @@ void PDPListener::onNewCacheChangeAdded(
         // Keep change information on local variables to check consistency later
         SequenceNumber_t seq_num = change->sequenceNumber;
         reader->getMutex().unlock();
+
+        // changes may arise here on reader status!!!
+
         std::unique_lock<std::recursive_mutex> lock(*parent_pdp_->getMutex());
         reader->getMutex().lock();
 
-        // If change is not consistent, it will be processed on the thread that has overriten it
-        if ((ALIVE != change->kind) || (seq_num != change->sequenceNumber) || (writer_guid != change->writerGUID))
+        // Check state 1. If change is not consistent, it will be processed on the thread that has overriten it
+        if((ALIVE != change->kind) || (seq_num != change->sequenceNumber) || (writer_guid != change->writerGUID))
         {
             return;
         }
 
-        // Access to temp_participant_data_ is protected by reader lock
+        // Check if there is a pool ParticipantProxyData already associated with this change
+        // 1- search in the local collection
+        std::shared_ptr<ParticipantProxyData> pdata = parent_pdp_->get_from_local_proxies(guid.guidPrefix);
+        bool create = !pdata;
+        ParticipantDiscoveryInfo::DISCOVERY_STATUS status =
+            create ? ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT :
+            ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT;
 
-        // Load information on temp_participant_data_
-        CDRMessage_t msg(change->serializedPayload);
-        if(temp_participant_data_.readFromCDRMessage(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory()))
+        // 2- If not found search in the pool (maybe other participant created it)
+        if(!pdata)
         {
-            // After correctly reading it
-            change->instanceHandle = temp_participant_data_.m_key;
-            guid = temp_participant_data_.m_guid;
+            pdata = PDP::get_from_proxy_pool(guid.guidPrefix);
+        }
 
-            // Check if participant already exists (updated info)
-            ParticipantProxyData* pdata = nullptr;
-            for (ParticipantProxyData* it : parent_pdp_->participant_proxies_)
+        // 3 - Deserialize if needed
+        bool deserialize = false;
+        if( !pdata || pdata->version_ < seq_num )
+        { 
+            // Access to temp_participant_data_ is protected by reader lock
+            // deserialize on temp_participant_data if new info
+            temp_participant_data_.clear();
+
+            // Load information on temp_participant_data_
+            CDRMessage_t msg(change->serializedPayload);
+            if(!temp_participant_data_.readFromCDRMessage(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory()))
             {
-                if(guid == it->m_guid)
-                {
-                    pdata = it;
-                    break;
-                }
-            }
-
-            auto status = (pdata == nullptr) ? ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT :
-                ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT;
-
-            if(pdata == nullptr)
-            {
-                // Create a new one when not found
-                pdata = parent_pdp_->createParticipantProxyData(temp_participant_data_, writer_guid);
-                if (pdata != nullptr)
-                {
-                    reader->getMutex().unlock();
-                    lock.unlock();
-
-                    parent_pdp_->announceParticipantState(false);
-                    parent_pdp_->assignRemoteEndpoints(pdata);
-                }
+                temp_participant_data_.clear();
             }
             else
             {
-                pdata->updateData(temp_participant_data_);
-                pdata->isAlive = true;
-                reader->getMutex().unlock();
-                lock.unlock();
+                deserialize = true;
 
-                if(parent_pdp_->updateInfoMatchesEDP())
-                {
-                    parent_pdp_->mp_EDP->assignRemoteEndpoints(*pdata);
-                }
+                // After correctly reading it
+                change->instanceHandle = temp_participant_data_.m_key;
+                guid = temp_participant_data_.m_guid;
+
+                // if new create and copy the temp_participant_data
+                status = create ? ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT :
+                    ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT;
             }
-
-            if (pdata != nullptr)
-            {
-                RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
-                if (listener != nullptr)
-                {
-                    std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
-                    ParticipantDiscoveryInfo info(*pdata);
-                    info.status = status;
-
-                    listener->onParticipantDiscovery(
-                        parent_pdp_->getRTPSParticipant()->getUserRTPSParticipant(),
-                        std::move(info));
-                }
-            }
-
-            // Take again the reader lock
-            reader->getMutex().lock();
         }
+
+        if( create )
+        {
+            if(deserialize)
+            {   // we must create a new proxy
+                pdata = parent_pdp_->createParticipantProxyData( temp_participant_data_, writer_guid);
+                // createParticipantProxyData returns with ParticipantProxyData mutex ownership
+            }
+            else
+            {   // already around add to the locals
+                parent_pdp_->add_participant_proxy_data(pdata);
+                // pdata->ppd_mutex_->lock();
+            }
+            // Release mutexes ownership
+            reader->getMutex().unlock();
+            lock.unlock();
+
+            parent_pdp_->announceParticipantState(false);
+            parent_pdp_->assignRemoteEndpoints(pdata.get());
+
+            // pdata->ppd_mutex_->unlock(); // got by createParticipantProxyData
+        }
+        else if ( deserialize )
+        {
+            // std::lock_guard<std::recursive_mutex> ppd_lock(*pdata->ppd_mutex_);
+
+            // Participant proxy data mutex was lock above to keep version_
+            pdata->updateData(temp_participant_data_);
+            pdata->isAlive = true;
+
+            // Release mutexes ownership
+            reader->getMutex().unlock();
+            lock.unlock();
+
+            if(parent_pdp_->updateInfoMatchesEDP())
+            {
+                parent_pdp_->mp_EDP->assignRemoteEndpoints(*pdata);
+            }
+        }
+        else
+        {
+            // Release mutexes ownership
+            reader->getMutex().unlock();
+            lock.unlock();
+        }
+        
+        if( pdata && (create || deserialize) )
+        {
+            RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
+            if(listener != nullptr)
+            {
+                std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
+                // std::lock_guard<std::recursive_mutex> ppd_lock(*pdata->ppd_mutex_);
+
+                ParticipantDiscoveryInfo info(*pdata);
+                info.status = status;
+
+                listener->onParticipantDiscovery(
+                    parent_pdp_->getRTPSParticipant()->getUserRTPSParticipant(),
+                    std::move(info));
+            }
+        }
+
+        reader->getMutex().lock();
     }
     else
     {
