@@ -175,7 +175,7 @@ TEST_P(CacheChangePoolTests, release_cache)
             ASSERT_EQ(pool->get_allCachesSize(), 0U);
             ASSERT_EQ(pool->get_freeCachesSize(), 0U);
         }
-        if (memory_policy == MemoryManagementPolicy_t::DYNAMIC_REUSABLE_MEMORY_MODE)
+        else if (memory_policy == MemoryManagementPolicy_t::DYNAMIC_REUSABLE_MEMORY_MODE)
         {
             ASSERT_EQ(pool->get_allCachesSize(), 1U);
             ASSERT_EQ(pool->get_freeCachesSize(), 1U);
@@ -254,8 +254,8 @@ INSTANTIATE_TEST_CASE_P(
             Values(0, 10, 20, 30),
             Values(128, 256, 512, 1024),
             Values(MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE,
-                    MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
-                    MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE,
+                   MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
+                   MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE,
                    MemoryManagementPolicy_t::DYNAMIC_REUSABLE_MEMORY_MODE)), );
 
 int main(int argc, char **argv)
