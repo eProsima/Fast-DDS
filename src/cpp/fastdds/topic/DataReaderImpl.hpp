@@ -208,6 +208,9 @@ public:
             fastrtps::rtps::InstanceHandle_t publication_handle);
      */
 
+    ReturnCode_t get_matched_publications(
+            std::vector<fastrtps::rtps::InstanceHandle_t>& publication_handles) const;
+
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     void disable();
 
@@ -295,6 +298,8 @@ public:
     std::chrono::duration<double, std::ratio<1, 1000000> > lifespan_duration_us_;
 
     DataReader* user_datareader_;
+
+    std::vector<fastrtps::rtps::InstanceHandle_t> matched_publications_;
 
     /**
      * @brief A method called when a new cache change is added
