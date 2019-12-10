@@ -276,6 +276,11 @@ public:
 
     WLP* wlp();
 
+    bool is_intraprocess_only() const
+    {
+        return is_intraprocess_only_;
+    }
+
     bool get_remote_writer_info(const GUID_t& writerGuid, WriterProxyData& returnedInfo);
 
     bool get_remote_reader_info(const GUID_t& readerGuid, ReaderProxyData& returnedInfo);
@@ -409,6 +414,9 @@ private:
 
     //!Participant Mutex
     std::recursive_mutex* mp_mutex;
+
+    //!Will this participant use intraprocess only?
+    bool is_intraprocess_only_;
 
     /*
      * Flow controllers for this participant.
