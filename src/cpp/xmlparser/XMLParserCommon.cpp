@@ -121,6 +121,7 @@ const char* PROPAGATE = "propagate";
 const char* PREALLOCATED = "PREALLOCATED";
 const char* PREALLOCATED_WITH_REALLOC = "PREALLOCATED_WITH_REALLOC";
 const char* DYNAMIC = "DYNAMIC";
+const char* DYNAMIC_REUSABLE = "DYNAMIC_REUSABLE";
 const char* LOCATOR = "locator";
 const char* UDPv4_LOCATOR = "udpv4";
 const char* UDPv6_LOCATOR = "udpv6";

@@ -2320,6 +2320,8 @@ XMLP_ret XMLParser::getXMLHistoryMemoryPolicy(tinyxml2::XMLElement *elem,
         historyMemoryPolicy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     else if (strcmp(text, DYNAMIC) == 0)
         historyMemoryPolicy = MemoryManagementPolicy::DYNAMIC_RESERVE_MEMORY_MODE;
+    else if (strcmp(text, DYNAMIC_REUSABLE) == 0)
+        historyMemoryPolicy = MemoryManagementPolicy::DYNAMIC_REUSABLE_MEMORY_MODE;
     else
     {
         logError(XMLPARSER, "Node '" << KIND << "' bad content");

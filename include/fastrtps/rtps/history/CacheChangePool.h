@@ -81,6 +81,9 @@ class CacheChangePool {
         //!Get the initial payload size associated with the Pool.
         inline uint32_t getInitialPayloadSize(){return m_initial_payload_size;};
     private:
+        //! Returns a CacheChange to the free caches pool
+        void return_cache_to_pool(CacheChange_t* ch);
+
         uint32_t m_initial_payload_size;
         uint32_t m_payload_size;
         uint32_t m_pool_size;
