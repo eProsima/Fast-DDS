@@ -70,11 +70,14 @@ CacheChangePool::CacheChangePool(int32_t pool_size, uint32_t payload_size, int32
             allocateGroup(pool_size);
             break;
         case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
-            logInfo(RTPS_UTILS,"Semi-Dynamic Mode is active, preallocating memory for pool_size. Size of the cachechanges can be increased");
+            logInfo(RTPS_UTILS,"Semi-Static Mode is active, preallocating memory for pool_size. Size of the cachechanges can be increased");
             allocateGroup(pool_size);
             break;
         case DYNAMIC_RESERVE_MEMORY_MODE:
             logInfo(RTPS_UTILS,"Dynamic Mode is active, CacheChanges are allocated on request");
+            break;
+        case DYNAMIC_REUSABLE_MEMORY_MODE:
+            logInfo(RTPS_UTILS,"Semi-Dynamic Mode is active, no preallocation but dynamically allocated CacheChanges are reused for future cachechanges");
             break;
     }
 }
@@ -133,12 +136,40 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
                 *chan = nullptr;
                 return false;
             }
-
             break;
 
         case DYNAMIC_RESERVE_MEMORY_MODE:
             *chan = allocateSingle(dataSize); //Allocates a single, empty CacheChange. Allocated on Copy
             if(*chan == nullptr) return false;
+            break;
+
+
+        case DYNAMIC_REUSABLE_MEMORY_MODE:
+            if(m_freeCaches.empty())
+            {
+                *chan = allocateSingle(dataSize); //Allocates a single, empty CacheChange, only if none free
+                if(*chan == nullptr)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                *chan = m_freeCaches.back();
+                m_freeCaches.erase(m_freeCaches.end()-1);
+                // TODO(Ricardo) Improve reallocation.
+                try
+                {
+                    (*chan)->serializedPayload.reserve(dataSize);
+                }
+                catch(std::bad_alloc& ex)
+                {
+                    logError(RTPS_HISTORY, "Failed to allocate memory for the serializedPayload, exception caught: " << ex.what());
+                    delete(*chan);
+                    *chan = nullptr;
+                    return false;
+                }
+            }
             break;
     }
 
@@ -150,34 +181,13 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
     switch(memoryMode)
     {
         case PREALLOCATED_MEMORY_MODE:
-            ch->kind = ALIVE;
-            ch->sequenceNumber.high = 0;
-            ch->sequenceNumber.low = 0;
-            ch->writerGUID = c_Guid_Unknown;
-            ch->serializedPayload.length = 0;
-            ch->serializedPayload.pos = 0;
-            for(uint8_t i=0;i<16;++i)
-                ch->instanceHandle.value[i] = 0;
-            ch->isRead = 0;
-            ch->sourceTimestamp.seconds(0);
-            ch->sourceTimestamp.fraction(0);
-            ch->setFragmentSize(0);
-            m_freeCaches.push_back(ch);
+            return_cache_to_pool(ch);
             break;
         case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
-            ch->kind = ALIVE;
-            ch->sequenceNumber.high = 0;
-            ch->sequenceNumber.low = 0;
-            ch->writerGUID = c_Guid_Unknown;
-            ch->serializedPayload.length = 0;
-            ch->serializedPayload.pos = 0;
-            for(uint8_t i=0;i<16;++i)
-                ch->instanceHandle.value[i] = 0;
-            ch->isRead = 0;
-            ch->sourceTimestamp.seconds(0);
-            ch->sourceTimestamp.fraction(0);
-            ch->setFragmentSize(0);
-            m_freeCaches.push_back(ch);
+            return_cache_to_pool(ch);
+            break;
+        case DYNAMIC_REUSABLE_MEMORY_MODE:
+            return_cache_to_pool(ch);
             break;
         case DYNAMIC_RESERVE_MEMORY_MODE:
             // Find pointer in CacheChange vector, remove element, then delete it
@@ -197,10 +207,28 @@ void CacheChangePool::release_Cache(CacheChange_t* ch)
     }
 }
 
+void CacheChangePool::return_cache_to_pool(CacheChange_t* ch)
+{
+    ch->kind = ALIVE;
+    ch->sequenceNumber.high = 0;
+    ch->sequenceNumber.low = 0;
+    ch->writerGUID = c_Guid_Unknown;
+    ch->serializedPayload.length = 0;
+    ch->serializedPayload.pos = 0;
+    for(uint8_t i=0;i<16;++i)
+        ch->instanceHandle.value[i] = 0;
+    ch->isRead = 0;
+    ch->sourceTimestamp.seconds(0);
+    ch->sourceTimestamp.fraction(0);
+    ch->setFragmentSize(0);
+    m_freeCaches.push_back(ch);
+}
+
 bool CacheChangePool::allocateGroup(uint32_t group_size)
 {
-    // This method should only called from within PREALLOCATED_MEMORY_MODE
-    assert(memoryMode != DYNAMIC_RESERVE_MEMORY_MODE);
+    // This method should only called from within PREALLOCATED_MEMORY_MODE or PREALLOCATED_WITH_REALLOC_MEMORY_MODE
+    assert(memoryMode == PREALLOCATED_MEMORY_MODE ||
+            memoryMode == PREALLOCATED_WITH_REALLOC_MEMORY_MODE);
 
     logInfo(RTPS_UTILS,"Allocating group of cache changes of size: "<< group_size);
     bool added = false;
@@ -248,10 +276,11 @@ CacheChange_t* CacheChangePool::allocateSingle(uint32_t dataSize)
     bool added = false;
     CacheChange_t*ch = nullptr;
 
-    // This method should only be called from within DYNAMIC_RESERVE_MEMORY_MODE
-    assert(memoryMode == DYNAMIC_RESERVE_MEMORY_MODE);
+    // This method should only be called from within DYNAMIC_RESERVE_MEMORY_MODE or DYNAMIC_REUSABLE_MEMORY_MODE
+    assert(memoryMode == DYNAMIC_RESERVE_MEMORY_MODE ||
+            memoryMode == DYNAMIC_REUSABLE_MEMORY_MODE);
 
-    if((m_max_pool_size == 0) | (m_pool_size < m_max_pool_size)) { //If no limit or curren changes < max changes
+    if((m_max_pool_size == 0) | (m_pool_size < m_max_pool_size)) { //If no limit or current changes < max changes
         ++m_pool_size;
         ch = new CacheChange_t(dataSize);
         m_allCaches.push_back(ch);

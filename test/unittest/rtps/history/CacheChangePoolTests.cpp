@@ -68,7 +68,8 @@ TEST_P(CacheChangePoolTests, init_pool)
     ASSERT_EQ(pool->getInitialPayloadSize(), payload_size);
 
     size_t expected_size;
-    if (memory_policy == MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
+    if (memory_policy == MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE ||
+            memory_policy == MemoryManagementPolicy_t::DYNAMIC_REUSABLE_MEMORY_MODE)
     {
         expected_size = 0;
     }
@@ -121,6 +122,9 @@ TEST_P(CacheChangePoolTests, reserve_cache)
             case MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE:
                 ASSERT_EQ(ch->serializedPayload.max_size, data_size);
                 break;
+            case MemoryManagementPolicy_t::DYNAMIC_REUSABLE_MEMORY_MODE:
+                ASSERT_EQ(ch->serializedPayload.max_size, data_size);
+                break;
         }
 
         if (max_size > 0)
@@ -152,9 +156,10 @@ TEST_P(CacheChangePoolTests, release_cache)
 
         pool->reserve_Cache(&ch, [data_size]() -> uint32_t {return data_size;});
 
-        if (memory_policy == MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
+        if (memory_policy == MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE ||
+                memory_policy == MemoryManagementPolicy_t::DYNAMIC_REUSABLE_MEMORY_MODE)
         {
-            ASSERT_EQ(pool->get_allCachesSize(), all_caches_size + 1U);
+            ASSERT_EQ(pool->get_allCachesSize(), 1U);
             ASSERT_EQ(pool->get_freeCachesSize(), 0U);
         }
         else
@@ -167,8 +172,13 @@ TEST_P(CacheChangePoolTests, release_cache)
 
         if (memory_policy == MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)
         {
-            ASSERT_EQ(pool->get_allCachesSize(), all_caches_size);
+            ASSERT_EQ(pool->get_allCachesSize(), 0U);
             ASSERT_EQ(pool->get_freeCachesSize(), 0U);
+        }
+        else if (memory_policy == MemoryManagementPolicy_t::DYNAMIC_REUSABLE_MEMORY_MODE)
+        {
+            ASSERT_EQ(pool->get_allCachesSize(), 1U);
+            ASSERT_EQ(pool->get_freeCachesSize(), 1U);
         }
         else
         {
@@ -245,7 +255,8 @@ INSTANTIATE_TEST_CASE_P(
             Values(128, 256, 512, 1024),
             Values(MemoryManagementPolicy_t::PREALLOCATED_MEMORY_MODE,
                    MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
-                   MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE)), );
+                   MemoryManagementPolicy_t::DYNAMIC_RESERVE_MEMORY_MODE,
+                   MemoryManagementPolicy_t::DYNAMIC_REUSABLE_MEMORY_MODE)), );
 
 int main(int argc, char **argv)
 {

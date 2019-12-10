@@ -50,6 +50,7 @@
             <xs:enumeration value="PREALLOCATED"/>
             <xs:enumeration value="PREALLOCATED_WITH_REALLOC"/>
             <xs:enumeration value="DYNAMIC"/>
+            <xs:enumeration value="DYNAMIC_REUSABLE"/>
         </xs:restriction>
     </xs:simpleType>
 
