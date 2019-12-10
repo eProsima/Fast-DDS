@@ -197,6 +197,8 @@ public:
 
     ResourceEvent& get_resource_event() const;
 
+    bool is_intraprocess_only() const;
+
     /**
      * @brief A method to retrieve the built-in writer liveliness protocol
      * @return Writer liveliness protocol

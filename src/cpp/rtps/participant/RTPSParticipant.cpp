@@ -120,6 +120,11 @@ ResourceEvent& RTPSParticipant::get_resource_event() const
     return mp_impl->getEventResource();
 }
 
+bool RTPSParticipant::is_intraprocess_only() const
+{
+    return mp_impl->is_intraprocess_only();
+}
+
 WLP* RTPSParticipant::wlp() const
 {
     return mp_impl->wlp();
