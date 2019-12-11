@@ -97,8 +97,7 @@ public:
 
     void release()
     {
-        // Close and cancel all asynchronous operations associated with the socket.
-        listener_.reset();
+        listener_->close();
     }
 
 private:
@@ -142,7 +141,7 @@ private:
     * capacity must not be less than the receive_buffer_size supplied to this class during construction.
     * @param receive_buffer_capacity Maximum size of the receive_buffer.
     * @param[out] receive_buffer_size Size of the received buffer.
-    * @param[out] remote_locator Locator describing the remote restination we received a packet from.
+    * @param[out] remote_locator Locator describing the remote destination we received a packet from.
     */
     bool Receive(
             fastrtps::rtps::octet* receive_buffer,
@@ -154,18 +153,22 @@ private:
         
         try
         {
-            //Avoid fast sending loop. Remove when implemented
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            throw std::runtime_error("not implemented");
-            
-            auto buffer = listener_->pop();
-            if(buffer->size() > receive_buffer_capacity)
-                throw std::runtime_error("");
+            std::shared_ptr<SharedMemManager::Buffer> buffer = listener_->pop();
 
-            memcpy(receive_buffer, buffer->data(), buffer->size());
-            receive_buffer_size = static_cast<uint32_t>(buffer->size());
+            if(buffer)
+            {
+                if(buffer->size() > receive_buffer_capacity)
+                    throw std::runtime_error("Size of incoming message is bigger than buffer capacity");
 
-            return (receive_buffer_size > 0);
+                memcpy(receive_buffer, buffer->data(), buffer->size());
+                receive_buffer_size = static_cast<uint32_t>(buffer->size());
+
+                return (receive_buffer_size > 0);
+            }
+            else
+            {
+                return false;
+            }
         }
         catch (const std::exception& error)
         {

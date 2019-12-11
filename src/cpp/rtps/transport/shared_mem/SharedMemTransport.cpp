@@ -31,6 +31,8 @@
 
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
 
+#define SHMEM_MANAGER_DOMAIN ("fastrtps")
+
 using namespace std;
 
 using namespace eprosima;
@@ -157,13 +159,13 @@ bool SharedMemTransport::OpenInputChannel(
     {
 		try
 		{
-			auto channel_resource = CreateInputChannelResource(locator, locator.port == 0 /*Multicast???*/, maxMsgSize, receiver);
+			auto channel_resource = CreateInputChannelResource(locator, maxMsgSize, receiver);
 			input_channels_.push_back(channel_resource);
 		}
 		catch (std::exception& e)
 		{
-			logInfo(RTPS_MSG_OUT, "SharedMemTransport Error binding at port: (" << std::to_string(locator.port) << ")"
-				<< " with msg: " << e.what());
+			logInfo(RTPS_MSG_OUT, std::string("CreateInputChannelResource failed for port ") 
+				<< locator.port << " msg: " << e.what());
 			return false;
 		}
 	}
@@ -237,7 +239,8 @@ bool SharedMemTransport::init()
 {
 	try
 	{
-		shared_mem_manager_ = std::make_shared<SharedMemManager>();
+		shared_mem_manager_ = std::make_shared<SharedMemManager>(SHMEM_MANAGER_DOMAIN);
+		shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size);
 	}
 	catch (std::exception& e)
 	{
@@ -266,12 +269,9 @@ bool SharedMemTransport::IsLocatorSupported(
 
 SharedMemChannelResource* SharedMemTransport::CreateInputChannelResource(
 		const Locator_t& locator,
-		bool is_multicast,
 		uint32_t maxMsgSize,
 		TransportReceiverInterface* receiver)
 {
-	(void)is_multicast;
-	//TODO:Check exceptions
 	return new SharedMemChannelResource(this, shared_mem_manager_->open_port(locator.port,1)->create_listener(), maxMsgSize, locator, receiver);
 }
 
@@ -299,22 +299,14 @@ bool SharedMemTransport::OpenOutputChannel(
 
 	try
 	{
-		//eProsimaSharedMem shared_mem = eProsimaSharedMem(eProsimaSharedMem::ChannelType::WRITER, locator, mSendBufferSize);
 		sender_resource_list.emplace_back(
-			static_cast<SenderResource*>(new SharedMemSenderResource(*this, shared_mem_manager_)));
+			static_cast<SenderResource*>(new SharedMemSenderResource(*this)));
 	}
-	catch (std::exception&)
+	catch (std::exception& e)
 	{
-		//	(void)e;
-		/* TODO Que hacer?
-		logError(RTPS_MSG_OUT, "UDPTransport Error binding at port: (" << IPLocator::getPhysicalPort(locator) << ")"
+		logError(RTPS_MSG_OUT, "SharedMemTransport error opening port " << std::to_string(locator.port)
 			<< " with msg: " << e.what());
-		for (auto& socket : mOutputSockets)
-		{
-			delete socket;
-		}
-		mOutputSockets.clear();
-		*/
+
 		return false;
 	}
 
@@ -348,33 +340,92 @@ bool SharedMemTransport::transform_remote_locator(
 	return false;
 }
 
+std::shared_ptr<SharedMemManager::Buffer> SharedMemTransport::copy_to_shared_buffer(
+        const octet* send_buffer,
+        uint32_t send_buffer_size)
+{
+	std::shared_ptr<SharedMemManager::Buffer> shared_buffer = shared_mem_segment_->alloc_buffer(send_buffer_size);	
+
+	memcpy(shared_buffer->data(), send_buffer, send_buffer_size);
+
+	return shared_buffer;
+}
+
 bool SharedMemTransport::send(
 		const octet* send_buffer,
 		uint32_t send_buffer_size,
-		std::shared_ptr<SharedMemManager::Port> port,
 		fastrtps::rtps::LocatorsIterator* destination_locators_begin,
         fastrtps::rtps::LocatorsIterator* destination_locators_end,
-		bool only_multicast_purpose,
 		const std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
-	(void)send_buffer;
-	(void)send_buffer_size;
-	(void)port;
-	(void)only_multicast_purpose;
-	(void)max_blocking_time_point;
-	(void)destination_locators_begin;
-	(void)destination_locators_end;
+	fastrtps::rtps::LocatorsIterator& it = *destination_locators_begin;
 
-	return false;
+    bool ret = true;
 
-	/*if (!IsLocatorSupported(remote_locator) || send_buffer_size > configuration()->sendBufferSize)
+	try
+	{
+		std::shared_ptr<SharedMemManager::Buffer> shared_buffer;
+		
+		shared_buffer = copy_to_shared_buffer(send_buffer, send_buffer_size);
+
+		while (it != *destination_locators_end)
+		{
+			auto now = std::chrono::steady_clock::now();
+
+			if (now < max_blocking_time_point)
+			{
+				ret &=	send(shared_buffer, 
+							*it,
+							std::chrono::duration_cast<std::chrono::microseconds>(max_blocking_time_point - now));
+
+				++it;
+			}
+			else // Time is out
+			{
+				ret = false;
+				break;
+			}
+		}
+
+	}
+	catch(const std::exception& e)
+	{
+		logWarning(RTPS_MSG_OUT, e.what());
+		ret = false;
+	}
+	
+    return ret;
+}
+
+std::shared_ptr<SharedMemManager::Port> SharedMemTransport::find_port(uint32_t port_id)
+{
+	try
+	{
+		return opened_ports_.at(port_id);
+	}
+	catch(const std::out_of_range& e)
+	{
+		// The port is not opened
+		std::shared_ptr<SharedMemManager::Port> port = shared_mem_manager_->open_port(port_id, configuration_.port_queue_capacity);
+		opened_ports_[port_id] = port;
+
+		return port;
+	}
+}
+
+bool SharedMemTransport::send(
+		const std::shared_ptr<SharedMemManager::Buffer>& buffer,
+		const Locator_t& remote_locator,
+		const std::chrono::microseconds& timeout)
+{
+	if (!IsLocatorSupported(remote_locator) /*|| buffer->size > configuration()->sendBufferSize*/)
 	{
 		return false;
-	}*/
+	}
 	
 	try
 	{
-		//writer->write(send_buffer, send_buffer_size, remote_locator, timeout);
+		find_port(remote_locator.port)->push(buffer);
 	}
 	catch (const std::exception& error)
 	{
@@ -382,8 +433,7 @@ bool SharedMemTransport::send(
 		return false;
 	}
 
-	/*logInfo(RTPS_MSG_OUT, "SharedMemTransport: " << send_buffer_size << " bytes TO endpoint: " << destinationEndpoint);
-		<< " FROM " << getSocketPtr(socket)->local_endpoint());*/
+	logInfo(RTPS_MSG_OUT, "SharedMemTransport: " << buffer->size() << " bytes to port " << remote_locator.port);
 
 	return true;
 }

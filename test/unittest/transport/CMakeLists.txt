@@ -292,9 +292,11 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
             ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
             ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
             ${PROJECT_SOURCE_DIR}/src/cpp
+            ${THIRDPARTY_BOOST_INCLUDE_DIR}
             )
         target_link_libraries(SharedMemTests ${GTEST_LIBRARIES} ${MOCKS}
-                $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
+                $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+                ${THIRDPARTY_BOOST_LINK_LIBS})
         if(MSVC OR MSVC_IDE)
             target_link_libraries(SharedMemTests ${PRIVACY} phlpapi Shlwapi )
         else()

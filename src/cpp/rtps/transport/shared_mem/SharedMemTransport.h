@@ -143,10 +143,8 @@ public:
 	bool send(
 			const fastrtps::rtps::octet* send_buffer,
 			uint32_t send_buffer_size,
-			std::shared_ptr<SharedMemManager::Port> port,
 			fastrtps::rtps::LocatorsIterator* destination_locators_begin,
             fastrtps::rtps::LocatorsIterator* destination_locators_end,
-			bool only_multicast_purpose,
 			const std::chrono::steady_clock::time_point& max_blocking_time_point);
 
 	/**
@@ -189,6 +187,8 @@ private:
 	
     SharedMemTransportDescriptor configuration_;
 
+	std::map<uint32_t, std::shared_ptr<SharedMemManager::Port>> opened_ports_;
+
     //! Checks for whether locator is allowed.
     bool is_locator_allowed(const fastrtps::rtps::Locator_t&) const override;
 
@@ -196,14 +196,36 @@ private:
 	std::vector<SharedMemChannelResource*> input_channels_;
 
 	std::shared_ptr<SharedMemManager> shared_mem_manager_;
+	std::shared_ptr<SharedMemManager::Segment> shared_mem_segment_;
 
 	friend class SharedMemChannelResource;
-    SharedMemChannelResource* CreateInputChannelResource(const fastrtps::rtps::Locator_t& locator,
-		bool is_multicast, uint32_t maxMsgSize, TransportReceiverInterface* receiver);
+
+	/**
+	 * Creates an input channel
+	 * @param locator Listening locator
+	 * @param max_msg_size Maximum message size supported by the channel
+	 * @throw std::exception& If the channel cannot be created
+	 */
+    SharedMemChannelResource* CreateInputChannelResource(
+        const fastrtps::rtps::Locator_t& locator,
+        uint32_t max_msg_size,
+        TransportReceiverInterface* receiver);
+
+	std::shared_ptr<SharedMemManager::Buffer> copy_to_shared_buffer(
+        const fastrtps::rtps::octet* send_buffer,
+        uint32_t send_buffer_size);
+
+	bool send(
+		const std::shared_ptr<SharedMemManager::Buffer>& buffer,
+		const fastrtps::rtps::Locator_t& remote_locator,
+		const std::chrono::microseconds& timeout);
+
+	std::shared_ptr<SharedMemManager::Port> find_port(
+        uint32_t port_id);
 };
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // _FASTDDS_SHAREDMEM_TRANSPORT_H_

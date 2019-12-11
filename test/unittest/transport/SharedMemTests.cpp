@@ -331,17 +331,8 @@ TEST_F(SharedMemTests, send_and_receive_between_ports)
             (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
     };
     senderThread.reset(new std::thread(sendThreadFunction));
-    
-    auto timeoutThreadFunction = [&]()
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        ADD_FAILURE() << "Timeout waiting for message";
-        sem.disable();
-    };
-    timeoutThread.reset(new std::thread(timeoutThreadFunction));
 
     sem.wait();
-    timeoutThread->join();
     senderThread->join();
 }
 /*

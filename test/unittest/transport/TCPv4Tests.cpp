@@ -221,7 +221,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_ports)
         }
         EXPECT_TRUE(sent);
     };
-//std::this_thread::sleep_for(std::chrono::seconds(1));
+
     senderThread.reset(new std::thread(sendThreadFunction));
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
     senderThread->join();

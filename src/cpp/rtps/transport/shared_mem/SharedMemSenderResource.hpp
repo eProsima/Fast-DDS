@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_TRANSPORT_UDPSENDERRESOURCE_HPP_
-#define _FASTDDS_TRANSPORT_UDPSENDERRESOURCE_HPP_
+#ifndef _FASTDDS_SHAREDMEM_SENDERRESOURCE_HPP_
+#define _FASTDDS_SHAREDMEM_SENDERRESOURCE_HPP_
 
 #include <fastrtps/rtps/network/SenderResource.h>
-
 #include <rtps/transport/shared_mem/SharedMemTransport.h>
 
 namespace eprosima {
@@ -28,18 +27,14 @@ class SharedMemSenderResource : public fastrtps::rtps::SenderResource
 public:
 
     SharedMemSenderResource(
-            SharedMemTransport& transport,
-            std::shared_ptr<SharedMemManager> shared_mem_manager,
-            bool only_multicast_purpose = false)
+            SharedMemTransport& transport)
         : fastrtps::rtps::SenderResource(transport.kind())
-        , shared_mem_manager_(shared_mem_manager)
-        , only_multicast_purpose_(only_multicast_purpose)
     {
         // Implementation functions are bound to the right transport parameters
-        /*clean_up = [this, &transport]()
+        clean_up = [this, &transport]()
             {
-                transport.CloseOutputChannel(socket_);
-            };*/
+                // No cleanup is required
+            };
 
         send_lambda_ = [this, &transport] (
                 const fastrtps::rtps::octet* data,
@@ -48,7 +43,7 @@ public:
                 fastrtps::rtps::LocatorsIterator* destination_locators_end,
                 const std::chrono::steady_clock::time_point& max_blocking_time_point)-> bool
             {
-                return transport.send(data, dataSize, /*writter_*/nullptr, destination_locators_begin, destination_locators_end, only_multicast_purpose_, max_blocking_time_point);
+                return transport.send(data, dataSize, destination_locators_begin, destination_locators_end, max_blocking_time_point);
             };
     }
 
@@ -79,14 +74,10 @@ private:
     SharedMemSenderResource(const SenderResource&) = delete;
 
     SharedMemSenderResource& operator=(const SenderResource&) = delete;
-
-    std::shared_ptr<SharedMemManager> shared_mem_manager_;
-
-    bool only_multicast_purpose_;
 };
 
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_TRANSPORT_UDPSENDERRESOURCE_HPP_
+#endif // _FASTDDS_SHAREDMEM_SENDERRESOURCE_HPP_
