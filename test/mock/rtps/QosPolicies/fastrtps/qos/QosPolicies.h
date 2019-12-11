@@ -69,7 +69,7 @@ public:
 
     virtual inline void clear() = 0;
 
-    static uint32_t QosPolicy::get_cdr_serialized_size(
+    static uint32_t get_cdr_serialized_size(
             const std::vector<rtps::octet>& data)
     {
         // Size of data
