@@ -204,10 +204,8 @@ public:
 
     const fastdds::dds::SubscriberQos& get_default_subscriber_qos() const;
 
-    /* TODO
-       bool get_discovered_participants(
+    ReturnCode_t get_discovered_participants(
             std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const;
-     */
 
     /* TODO
        bool get_discovered_participant_data(
@@ -384,6 +382,8 @@ private:
 
     // All parent's child requests
     std::map<fastrtps::rtps::SampleIdentity, std::vector<fastrtps::rtps::SampleIdentity> > parent_requests_;
+
+    std::vector<fastrtps::rtps::InstanceHandle_t> discovered_participants_;
 
     class MyRTPSParticipantListener : public fastrtps::rtps::RTPSParticipantListener
     {
