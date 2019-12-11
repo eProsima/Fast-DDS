@@ -109,8 +109,7 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
                     return false;
                 }
             }
-            *chan = m_freeCaches.back();
-            m_freeCaches.erase(m_freeCaches.end()-1);
+            *chan = m_freeCaches.pop_back();
             break;
 
         case PREALLOCATED_WITH_REALLOC_MEMORY_MODE:
@@ -121,8 +120,7 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
                     return false;
                 }
             }
-            *chan = m_freeCaches.back();
-            m_freeCaches.erase(m_freeCaches.end()-1);
+            *chan = m_freeCaches.pop_back();
 
             // TODO(Ricardo) Improve reallocation.
             try
@@ -154,8 +152,7 @@ bool CacheChangePool::reserve_Cache(CacheChange_t** chan, uint32_t dataSize)
             }
             else
             {
-                *chan = m_freeCaches.back();
-                m_freeCaches.erase(m_freeCaches.end()-1);
+                *chan = m_freeCaches.pop_back();
                 // TODO(Ricardo) Improve reallocation.
                 try
                 {
