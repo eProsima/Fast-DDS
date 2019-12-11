@@ -246,8 +246,6 @@ bool EDPServer::addEndpointFromHistory(
 
     if ( it == history.changesRend())
     {
-        // history.reserve_Cache(&pCh, mp_PDP->builtin_attributes().writerPayloadSize )
-        // history.reserve_Cache(&pCh, mp_PDP->builtin_attributes().readerPayloadSize )
         if (history.reserve_Cache(&pCh, c.serializedPayload.max_size) && pCh && pCh->copy(&c))
         {
             pCh->writerGUID = writer.getGuid();
@@ -300,7 +298,7 @@ bool EDPServer::removeLocalReader(
         iH = (R->getGuid());
         CacheChange_t* change = writer->first->new_change([this]() -> uint32_t
                     {
-                        return mp_PDP->builtin_attributes().readerPayloadSize;
+                        return mp_PDP->builtin_attributes().writerPayloadSize;
                     },
                         NOT_ALIVE_DISPOSED_UNREGISTERED, iH);
         if (change != nullptr)
@@ -425,7 +423,7 @@ bool EDPServer::processLocalReaderProxyData(
         // TODO(Ricardo) Write a getCdrSerializedPayload for ReaderProxyData.
         CacheChange_t* change = writer->first->new_change([this]() -> uint32_t
                     {
-                        return mp_PDP->builtin_attributes().readerPayloadSize;
+                        return mp_PDP->builtin_attributes().writerPayloadSize;
                     },
                         ALIVE, rdata->key());
 
