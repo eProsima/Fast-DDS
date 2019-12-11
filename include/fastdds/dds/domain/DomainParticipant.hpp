@@ -311,10 +311,8 @@ public:
 
     const fastdds::dds::TopicQos& get_default_topic_qos() const;
 
-    /* TODO
-       bool get_discovered_participants(
+    ReturnCode_t get_discovered_participants(
             std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const;
-     */
 
     /* TODO
        bool get_discovered_participant_data(
