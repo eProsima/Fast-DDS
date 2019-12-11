@@ -114,6 +114,15 @@ void PDPListener::onNewCacheChangeAdded(
                 }
             }
 
+            // Decide whether we dismiss the remote participant using the local participant whitelist
+            auto whitelist = parent_pdp_->getRTPSParticipant()->getRTPSParticipantAttributes().participantWhitelist;
+            if (!whitelist.empty()
+                    && whitelist.find(temp_participant_data_.m_participantName.to_string()) == whitelist.end())
+            {
+                lock.unlock();
+                return;
+            }
+
             auto status = (pdata == nullptr) ? ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT :
                 ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT;
 
