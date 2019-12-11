@@ -73,6 +73,16 @@ public:
             CacheChange_t* a_change) override;
 
     /**
+     * Remove a specific change from the history.
+     * @param ch Pointer to the CacheChange_t.
+     * @param hint Iterator where the CacheChange_t is located in the history.
+     * @return An iterator pointing to the new location of the element that followed the removed CacheChange_t.
+     */
+    const_iterator remove_change_nts(
+            CacheChange_t* ch,
+            const_iterator position);
+
+    /**
      * Remove all changes from the History that have a certain guid.
      * @param a_guid Pointer to the target guid to search for.
      * @return True if succesful, even if no changes have been removed.
