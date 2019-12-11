@@ -403,15 +403,12 @@ const fastdds::dds::SubscriberQos& DomainParticipantImpl::get_default_subscriber
     return default_sub_qos_;
 }
 
-/* TODO
-   bool DomainParticipantImpl::get_discovered_participants(
+ReturnCode_t DomainParticipantImpl::get_discovered_participants(
         std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const
-   {
-    (void)participant_handles;
-    logError(PARTICIPANT, "Not implemented.");
-    return false;
-   }
- */
+{
+    participant_handles = discovered_participants_;
+    return ReturnCode_t::RETCODE_OK;
+}
 
 /* TODO
    bool DomainParticipantImpl::get_discovered_topics(
@@ -713,6 +710,21 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
         RTPSParticipant*,
         ParticipantDiscoveryInfo&& info)
 {
+    if (info.status == fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+    {
+        participant_->discovered_participants_.push_back(info.info.m_key);
+    }
+    else if (info.status == fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
+            info.status == fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+    {
+        auto it = std::find(participant_->discovered_participants_.begin(),
+                        participant_->discovered_participants_.end(), info.info.m_key);
+        if (it != participant_->discovered_participants_.end())
+        {
+            participant_->discovered_participants_.erase(it);
+        }
+    }
+
     if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         participant_->listener_->on_participant_discovery(participant_->participant_, std::move(info));

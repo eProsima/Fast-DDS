@@ -236,13 +236,11 @@ ReturnCode_t DomainParticipant::get_default_subscriber_qos(
     return ReturnCode_t::RETCODE_OK;
 }
 
-/* TODO
-   bool DomainParticipant::get_discovered_participants(
+ReturnCode_t DomainParticipant::get_discovered_participants(
         std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const
-   {
+{
     return impl_->get_discovered_participants(participant_handles);
-   }
- */
+}
 
 /* TODO
    bool DomainParticipant::get_discovered_topics(
