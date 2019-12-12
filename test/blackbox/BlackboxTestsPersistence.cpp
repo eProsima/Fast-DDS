@@ -14,12 +14,12 @@
 
 #include "BlackboxTests.hpp"
 
+#if HAVE_SQLITE3
+
 #include "RTPSAsSocketReader.hpp"
 #include "RTPSAsSocketWriter.hpp"
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
-#include <thread>
-
 #include <thread>
 
 using namespace eprosima::fastrtps;
@@ -267,3 +267,5 @@ TEST_F(BlackBoxPersistence, AsyncRTPSAsReliableWithPersistence)
 
     std::cout << "Second round finished." << std::endl;
 }
+
+#endif
