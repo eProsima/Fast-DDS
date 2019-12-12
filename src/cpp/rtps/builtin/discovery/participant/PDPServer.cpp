@@ -197,9 +197,13 @@ bool PDPServer::createPDPEndpoints()
     WriterAttributes watt;
     watt.endpoint.endpointKind = WRITER;
     watt.endpoint.durabilityKind = _durability;
+
+#if HAVE_SQLITE3
     watt.endpoint.properties.properties().push_back(Property("dds.persistence.plugin", "builtin.SQLITE3"));
     watt.endpoint.properties.properties().push_back(Property("dds.persistence.sqlite3.filename",
         GetPersistenceFileName()));
+#endif
+
     watt.endpoint.reliabilityKind = RELIABLE;
     watt.endpoint.topicKind = WITH_KEY;
     watt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
@@ -626,6 +630,7 @@ void PDPServer::removeParticipantForEDPMatch(const GUID_t& guid)
 
 }
 
+#if HAVE_SQLITE3
 std::string PDPServer::GetPersistenceFileName()
 {
     assert(getRTPSParticipant());
@@ -643,6 +648,7 @@ std::string PDPServer::GetPersistenceFileName()
    return filename.str();
 
 }
+#endif
 
 bool PDPServer::all_servers_acknowledge_PDP()
 {

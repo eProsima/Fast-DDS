@@ -223,8 +223,10 @@ public:
     void removeRemoteEndpoints(ParticipantProxyData * pdata) override;
     void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata) override;
 
+#if HAVE_SQLITE3
     //! Get filename for persistence database file
     std::string GetPersistenceFileName();
+#endif
 
     //! Wakes up the DServerEvent for new matching or trimming
     void awakeServerThread() { mp_sync->restart_timer(); }
