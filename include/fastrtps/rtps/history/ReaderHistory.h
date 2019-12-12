@@ -75,7 +75,7 @@ public:
     /**
      * Remove a specific change from the history.
      * @param ch Pointer to the CacheChange_t.
-     * @param hint Iterator where the CacheChange_t is located in the history.
+     * @param position Iterator where the CacheChange_t is located in the history.
      * @return An iterator pointing to the new location of the element that followed the removed CacheChange_t.
      */
     const_iterator remove_change_nts(
