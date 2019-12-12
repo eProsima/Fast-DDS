@@ -327,6 +327,20 @@ private:
      */
     bool ack_timer_expired();
 
+    void send_changes_no_push_mode();
+
+    void send_changes_separatedly(
+            SequenceNumber_t max_sequence,
+            bool& activateHeartbeatPeriod);
+
+    void send_all_unsent_changes(
+        SequenceNumber_t max_sequence,
+        bool& activateHeartbeatPeriod);
+
+    void send_unsent_changes_with_flow_control(
+            SequenceNumber_t max_sequence,
+            bool& activateHeartbeatPeriod);
+
     //! True to disable piggyback heartbeats
     bool disable_heartbeat_piggyback_;
     //! True to disable positive ACKs
