@@ -280,6 +280,7 @@ public:
         return *this;
     }
 
+#if HAVE_SQLITE3
     RTPSWithRegistrationWriter& make_persistent(
             const std::string& filename,
             const eprosima::fastrtps::rtps::GuidPrefix_t& guidPrefix)
@@ -294,6 +295,7 @@ public:
             .add_property("dds.persistence.plugin", "builtin.SQLITE3")
             .add_property("dds.persistence.sqlite3.filename", filename);
     }
+#endif
 
     RTPSWithRegistrationWriter& history_depth(
             const int32_t depth)
