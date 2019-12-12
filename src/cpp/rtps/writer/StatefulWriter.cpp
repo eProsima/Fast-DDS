@@ -574,11 +574,6 @@ void StatefulWriter::send_any_unsent_changes()
                     {
                         remoteReader->acked_changes_set(max_ack_seq + 1);
                     }
-
-                    if (!irrelevant.empty())
-                    {
-                        group.add_gap(irrelevant);
-                    }
                 }
                 catch (const RTPSMessageGroup::timeout&)
                 {
@@ -603,7 +598,7 @@ void StatefulWriter::send_any_unsent_changes()
         network.select_locators(locator_selector_);
         compute_selected_guids();
 
-        RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, *this);
+        RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
 
         // Add holes in history and send them to all readers
         if (there_are_remote_readers_)
@@ -860,8 +855,8 @@ void StatefulWriter::send_any_unsent_changes()
         {
             try
             {
-                RTPSMessageGroup group(mp_RTPSParticipant, this, *this);
                 send_heartbeat_nts_(all_remote_readers_.size(), group, disable_positive_acks_);
+                group.flush_and_reset();
             }
             catch (const RTPSMessageGroup::timeout&)
             {
@@ -964,7 +959,7 @@ bool StatefulWriter::matched_reader_add(
     matched_readers_.push_back(rp);
     update_reader_info(true);
 
-    RTPSMessageGroup group(mp_RTPSParticipant, this, m_cdrmessages, rp->message_sender());
+    RTPSMessageGroup group(mp_RTPSParticipant, this, rp->message_sender());
     RTPSGapBuilder gap_builder(group);
 
     // Add initial heartbeat to message group
