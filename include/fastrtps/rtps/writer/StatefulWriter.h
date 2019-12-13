@@ -358,6 +358,7 @@ private:
 
     bool there_are_remote_readers_ = false;
 
+    bool readers_dont_share_locators_ = true;
 
     StatefulWriter& operator =(
             const StatefulWriter&) = delete;
