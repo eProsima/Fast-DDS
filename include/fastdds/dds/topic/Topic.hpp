@@ -51,7 +51,8 @@ class TopicImpl;
 class TopicListener;
 class DomainParticipantImpl;
 
-class Topic : public TopicDescription
+class Topic : public DomainEntity,
+    public TopicDescription
 
 {
     friend class TopicImpl;
@@ -62,6 +63,14 @@ public:
 
     RTPS_DllAPI Topic(
             TopicImpl* impl,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+
+    RTPS_DllAPI Topic(
+            DomainParticipant* dp,
+            const std::string& topic_name,
+            const std::string& type_name,
+            const TopicQos& qos = TOPIC_QOS_DEFAULT,
+            TopicListener* listener = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     RTPS_DllAPI fastrtps::TopicAttributes get_topic_attributes() const;
@@ -85,6 +94,11 @@ public:
     RTPS_DllAPI std::vector<DataWriter*>* get_writers();
 
     RTPS_DllAPI std::vector<DataReader*>* get_readers();
+
+    RTPS_DllAPI fastrtps::types::ReturnCode_t set_instance_handle(
+            const fastrtps::rtps::InstanceHandle_t& handle);
+
+    RTPS_DllAPI fastrtps::rtps::GUID_t get_guid() const;
 
 private:
 

@@ -46,13 +46,6 @@ DomainParticipant::~DomainParticipant()
 {
 }
 
-void DomainParticipant::delete_participant(
-        ::dds::domain::DomainParticipant& part)
-{
-    DomainParticipant* participant = part.delegate().get();
-    DomainParticipantFactory::get_instance()->delete_participant(participant);
-}
-
 ReturnCode_t DomainParticipant::set_listener(
         DomainParticipantListener* listener,
         const ::dds::core::status::StatusMask& mask)
@@ -141,12 +134,10 @@ ReturnCode_t DomainParticipant::unregister_type(
     return impl_->unregister_type(typeName);
 }
 
-/* TODO
-   Subscriber* DomainParticipant::get_builtin_subscriber()
-   {
+BuiltinSubscriber* DomainParticipant::get_builtin_subscriber()
+{
     return impl_->get_builtin_subscriber();
-   }
- */
+}
 
 /* TODO
    bool DomainParticipant::ignore_participant(
@@ -237,6 +228,13 @@ ReturnCode_t DomainParticipant::get_discovered_participants(
         std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const
 {
     return impl_->get_discovered_participants(participant_handles);
+}
+
+ReturnCode_t DomainParticipant::get_discovered_participant_data(
+        ParticipantBuiltinTopicData& participant_data,
+        const fastrtps::rtps::InstanceHandle_t& participant_handle) const
+{
+    return impl_->get_discovered_participant_data(participant_data, participant_handle);
 }
 
 /* TODO

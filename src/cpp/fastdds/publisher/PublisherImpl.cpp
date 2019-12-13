@@ -20,11 +20,13 @@
 #include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/topic/DataWriterImpl.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/subscriber/BuiltinSubscriber.hpp>
 
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/dds/log/Log.hpp>
@@ -237,6 +239,10 @@ DataWriter* PublisherImpl::create_datawriter(
     }
 
     topic->get_writers()->push_back(writer);
+
+    BuiltinSubscriber::get_instance()->add_publication_data(writer->get_instance_handle(),
+            get_participant().get_instance_handle(), topic->get_name(), topic->get_type_name(),
+            get_qos(), writer_qos);
 
     return writer;
 }

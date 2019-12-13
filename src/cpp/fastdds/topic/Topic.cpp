@@ -36,6 +36,19 @@ Topic::Topic(
 {
 }
 
+Topic::Topic(
+        DomainParticipant* dp,
+        const std::string& topic_name,
+        const std::string& type_name,
+        const TopicQos& qos,
+        TopicListener* listener,
+        const ::dds::core::status::StatusMask& mask)
+    : DomainEntity(mask)
+    , TopicDescription(dp, topic_name.c_str(), type_name.c_str())
+    , impl_(dp->create_topic(topic_name, type_name, qos, listener, mask)->impl_)
+{
+}
+
 fastrtps::TopicAttributes Topic::get_topic_attributes() const
 {
     return impl_->get_topic_attributes();
@@ -83,6 +96,18 @@ std::vector<DataWriter*>* Topic::get_writers()
 std::vector<DataReader*>* Topic::get_readers()
 {
     return impl_->get_readers();
+}
+
+ReturnCode_t Topic::set_instance_handle(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    DomainEntity::set_instance_handle(handle);
+    return ReturnCode_t::RETCODE_OK;
+}
+
+fastrtps::rtps::GUID_t Topic::get_guid() const
+{
+    return fastrtps::rtps::iHandle2GUID(get_instance_handle());
 }
 
 } // namespace dds

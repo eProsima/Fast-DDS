@@ -34,9 +34,13 @@
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
+#include <fastdds/dds/subscriber/BuiltinSubscriber.hpp>
 
 #include <fastdds/dds/topic/DataReader.hpp>
 #include <fastdds/dds/topic/DataWriter.hpp>
+
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastrtps/utils/TimeConversion.h>
 
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 
@@ -76,9 +80,11 @@ using eprosima::fastdds::dds::Log;
 DomainParticipantImpl::DomainParticipantImpl(
         const ParticipantAttributes& patt,
         DomainParticipant* pspart,
+        const DomainParticipantQos& qos,
         DomainParticipantListener* listen,
         const ::dds::core::status::StatusMask& mask)
     : att_(patt)
+    , qos_(qos)
     , rtps_participant_(nullptr)
     , participant_(pspart)
     , listener_(listen)
@@ -282,13 +288,10 @@ Publisher* DomainParticipantImpl::create_publisher(
     return pub;
 }
 
-/* TODO
-   Subscriber* DomainParticipantImpl::get_builtin_subscriber()
-   {
-    logError(PARTICIPANT, "Not implemented.");
-    return nullptr;
-   }
- */
+BuiltinSubscriber* DomainParticipantImpl::get_builtin_subscriber()
+{
+    return BuiltinSubscriber::get_instance();
+}
 
 /* TODO
    bool DomainParticipantImpl::ignore_participant(
@@ -406,6 +409,19 @@ ReturnCode_t DomainParticipantImpl::get_discovered_participants(
 {
     participant_handles = discovered_participants_;
     return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipantImpl::get_discovered_participant_data(
+        ParticipantBuiltinTopicData& participant_data,
+        const fastrtps::rtps::InstanceHandle_t& participant_handle) const
+{
+    ParticipantBuiltinTopicData* data = BuiltinSubscriber::get_instance()->get_participant_data(participant_handle);
+    if (data != nullptr)
+    {
+        participant_data = *data;
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
 /* TODO
@@ -719,6 +735,8 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
     if (info.status == fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         participant_->discovered_participants_.push_back(info.info.m_key);
+        BuiltinSubscriber::get_instance()->add_participant_data(info.info.m_key,
+                UserDataQosPolicy(info.info.m_userData));
     }
     else if (info.status == fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
             info.status == fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
@@ -729,6 +747,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
         {
             participant_->discovered_participants_.erase(it);
         }
+        BuiltinSubscriber::get_instance()->delete_participant_data(info.info.m_key);
     }
 
     if (participant_ != nullptr && participant_->listener_ != nullptr)
@@ -1348,6 +1367,9 @@ Topic* DomainParticipantImpl::create_topic(
         rtps_participant_->get_new_entity_id(topic_guid.entityId);
     } while (exists_entity_id(topic_guid.entityId));
 
+    InstanceHandle_t topic_handle(topic_guid);
+    topic->set_instance_handle(topic_handle);
+
     //SAVE THE TOPIC INTO MAPS
     {
         std::lock_guard<std::mutex> lock(mtx_types_);
@@ -1360,6 +1382,9 @@ Topic* DomainParticipantImpl::create_topic(
     {
         register_dynamic_type_to_factories(type_name);
     }
+
+    BuiltinSubscriber::get_instance()->add_topic_data(topic_handle, topic_name, type_name, qos);
+
     cv_topic_.notify_all();
 
     return topic;

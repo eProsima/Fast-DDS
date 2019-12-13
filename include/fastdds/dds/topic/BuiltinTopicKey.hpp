@@ -13,14 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 /**
  * @file BuiltinTopicKey.hpp
-*/
+ */
 
 #ifndef _FASTDDS_BUILTIN_TOPIC_KEY_HPP_
 #define _FASTDDS_BUILTIN_TOPIC_KEY_HPP_
+
+#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/rtps/common/Guid.h>
+
+#include <sstream>
 
 namespace eprosima {
 namespace fastdds {
@@ -31,50 +36,78 @@ using BUILTIN_TOPIC_KEY_TYPE_NATIVE = int32_t;
 class BuiltinTopicKey
 {
 public:
+
     BuiltinTopicKey(){}
 
     BuiltinTopicKey(
-            int32_t key[])
+            const fastrtps::rtps::GUID_t& guid)
     {
-        key_[0] = key[0];
-        key_[1] = key[1];
-        key_[2] = key[2];
+        memcpy(&value_[0], &guid.guidPrefix.value[0], sizeof(guid.guidPrefix));
+        memcpy(&value_[3], &guid.entityId.value[0], sizeof(guid.entityId));
+    }
+
+    BuiltinTopicKey(
+            int32_t val[])
+    {
+        value_[0] = val[0];
+        value_[1] = val[1];
+        value_[2] = val[2];
+        value_[3] = val[3];
     }
 
     ~BuiltinTopicKey() {}
 
-    const int32_t* key() const
+    const int32_t* value() const
     {
-        return key_;
+        return value_;
     }
 
-    void key(
-            int32_t k[])
+    void value(
+            int32_t v[])
     {
-        key_[0] = k[0];
-        key_[1] = k[1];
-        key_[2] = k[2];
+        value_[0] = v[0];
+        value_[1] = v[1];
+        value_[2] = v[2];
+        value_[3] = v[3];
     }
 
-    void key(
+    void value(
             const BuiltinTopicKey& key)
     {
-        key_[0] = key.key()[0];
-        key_[1] = key.key()[1];
-        key_[2] = key.key()[2];
+        value_[0] = key.value()[0];
+        value_[1] = key.value()[1];
+        value_[2] = key.value()[2];
+        value_[3] = key.value()[3];
     }
 
     bool operator ==(
             const BuiltinTopicKey& other) const
     {
-        return (key_[0] == other.key_[0] &&
-                key_[1] == other.key_[1] &&
-                key_[2] == other.key_[2]);
+        return (value_[0] == other.value_[0] &&
+               value_[1] == other.value_[1] &&
+               value_[2] == other.value_[2] &&
+               value_[3] == other.value_[3]);
     }
 
 private:
-    BUILTIN_TOPIC_KEY_TYPE_NATIVE key_[3];
+
+    BUILTIN_TOPIC_KEY_TYPE_NATIVE value_[4];
 };
+
+inline std::ostream& operator <<(
+        std::ostream& output,
+        const BuiltinTopicKey& key)
+{
+    output << std::hex;
+    uint8_t* ptr = (uint8_t*) key.value();
+    for (uint32_t i = 0; i < 15; ++i)
+    {
+        output << (int) *ptr << ".";
+        ptr++;
+    }
+    output << (int) *ptr;
+    return output << std::dec;
+}
 
 } // namespace dds
 } // namespace fastdds

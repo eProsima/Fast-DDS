@@ -184,7 +184,7 @@ const fastrtps::SubscriberAttributes& Subscriber::get_attributes() const
     return impl_->get_attributes();
 }
 
-const DomainParticipant& Subscriber::get_participant() const
+DomainParticipant& Subscriber::get_participant() const
 {
     return impl_->get_participant();
 }

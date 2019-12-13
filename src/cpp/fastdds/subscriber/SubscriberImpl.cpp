@@ -438,7 +438,7 @@ bool SubscriberImpl::set_attributes(
     return updated;
 }
 
-const DomainParticipant& SubscriberImpl::get_participant() const
+DomainParticipant& SubscriberImpl::get_participant() const
 {
     return *participant_->get_participant();
 }

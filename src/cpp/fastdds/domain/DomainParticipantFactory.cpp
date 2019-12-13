@@ -23,6 +23,7 @@
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/dds/subscriber/BuiltinSubscriber.hpp>
 
 #include <fastdds/dds/log/Log.hpp>
 
@@ -90,6 +91,7 @@ DomainParticipantFactory::~DomainParticipantFactory()
     fastrtps::types::DynamicTypeBuilderFactory::delete_instance();
     fastrtps::types::DynamicDataFactory::delete_instance();
     fastrtps::types::TypeObjectFactory::delete_instance();
+    BuiltinSubscriber::delete_instance();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     eprosima::fastdds::dds::Log::KillThread();
@@ -160,8 +162,16 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
             }
             return ReturnCode_t::RETCODE_OK;
         }
+        BuiltinSubscriber::get_instance()->delete_participant_data(part->get_instance_handle());
     }
     return ReturnCode_t::RETCODE_ERROR;
+}
+
+void DomainParticipantFactory::delete_participant(
+        ::dds::domain::DomainParticipant& part)
+{
+    DomainParticipant* participant = part.delegate().get();
+    delete_participant(participant);
 }
 
 DomainParticipant* DomainParticipantFactory::create_participant(
@@ -187,11 +197,12 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 DomainParticipant* DomainParticipantFactory::create_participant(
         const ParticipantAttributes& att,
         DomainParticipantListener* listen,
+        const DomainParticipantQos& qos,
         const ::dds::core::status::StatusMask& mask)
 {
     uint8_t domain_id = static_cast<uint8_t>(att.rtps.builtin.domainId);
     DomainParticipant* dom_part = new DomainParticipant();
-    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(att, dom_part, listen, mask);
+    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(att, dom_part, qos, listen, mask);
     RTPSParticipant* part = RTPSDomain::createParticipant(att.rtps, &dom_part_impl->rtps_listener_);
 
     if (part == nullptr)
@@ -225,19 +236,21 @@ DomainParticipant* DomainParticipantFactory::create_participant(
                     return dom_part->find_type(type_name).get() != nullptr;
                 });
 
+    BuiltinSubscriber::get_instance()->add_participant_data(dom_part->get_instance_handle(), qos);
+
     return dom_part;
 }
 
 DomainParticipant* DomainParticipantFactory::create_participant(
         DomainId_t did,
-        const DomainParticipantQos&,
+        const DomainParticipantQos& qos,
         DomainParticipantListener* listen,
         const ::dds::core::status::StatusMask& mask)
 {
     // Minimal implementation to use current FASTRTPS behavior
     ParticipantAttributes attr;
     attr.rtps.builtin.domainId = did;
-    return create_participant(attr, listen, mask);
+    return create_participant(attr, listen, qos, mask);
 }
 
 DomainParticipant* DomainParticipantFactory::lookup_participant(

@@ -69,12 +69,12 @@ public:
 public:
 
     OMG_DDS_REF_TYPE_PROTECTED_DC(
-            DomainParticipant,
-            dds::core::TEntity,
-            detail::DomainParticipant)
+        DomainParticipant,
+        dds::core::TEntity,
+        detail::DomainParticipant)
     OMG_DDS_EXPLICIT_REF_BASE_DECL(
-            DomainParticipant,
-            dds::core::Entity)
+        DomainParticipant,
+        dds::core::Entity)
 
     /**
      * Creates a new DomainParticipant object. The DomainParticipant signifies
@@ -120,7 +120,7 @@ public:
             uint32_t id,
             const dds::domain::qos::DomainParticipantQos& qos,
             dds::domain::DomainParticipantListener* listener = NULL,
-            const dds::core::status::StatusMask& event_mask = dds::core::status::StatusMask::none());
+            const dds::core::status::StatusMask& event_mask = dds::core::status::StatusMask::all());
 
     /** @cond */
     virtual OMG_DDS_API ~DomainParticipant();

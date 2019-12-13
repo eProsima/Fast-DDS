@@ -28,6 +28,7 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
+#include <fastdds/dds/subscriber/BuiltinSubscriber.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
@@ -81,6 +82,7 @@ private:
     DomainParticipantImpl(
             const fastrtps::ParticipantAttributes& patt,
             DomainParticipant* pspart,
+            const DomainParticipantQos& qos = PARTICIPANT_QOS_DEFAULT,
             DomainParticipantListener* listen = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
@@ -190,9 +192,7 @@ public:
     ReturnCode_t unregister_type(
             const char* typeName);
 
-    // TODO create/delete topic
-
-    // TODO Subscriber* get_builtin_subscriber();
+    BuiltinSubscriber* get_builtin_subscriber();
 
     /* TODO
        bool ignore_participant(
@@ -233,11 +233,9 @@ public:
     ReturnCode_t get_discovered_participants(
             std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const;
 
-    /* TODO
-       bool get_discovered_participant_data(
+    ReturnCode_t get_discovered_participant_data(
             ParticipantBuiltinTopicData& participant_data,
             const fastrtps::rtps::InstanceHandle_t& participant_handle) const;
-     */
 
     /* TODO
        bool get_discovered_topics(
