@@ -25,6 +25,7 @@
 
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <dds/domain/DomainParticipant.hpp>
 
 #include <dds/core/status/Status.hpp>
 
@@ -78,6 +79,7 @@ public:
     RTPS_DllAPI DomainParticipant* create_participant(
             const fastrtps::ParticipantAttributes& att,
             DomainParticipantListener* listen = nullptr,
+            const DomainParticipantQos& qos = PARTICIPANT_QOS_DEFAULT,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /**
@@ -90,7 +92,7 @@ public:
      */
     RTPS_DllAPI DomainParticipant* create_participant(
             DomainId_t did,
-            const DomainParticipantQos& qos,
+            const DomainParticipantQos& qos = PARTICIPANT_QOS_DEFAULT,
             DomainParticipantListener* listen = nullptr,
             const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
@@ -125,6 +127,9 @@ public:
      */
     RTPS_DllAPI ReturnCode_t delete_participant(
             DomainParticipant* part);
+
+    void delete_participant(
+            ::dds::domain::DomainParticipant& part);
 
     /**
      * Load profiles from XML file.

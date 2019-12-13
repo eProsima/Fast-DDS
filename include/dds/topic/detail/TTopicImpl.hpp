@@ -52,11 +52,8 @@ Topic<T>::Topic(
                 "",
                 dp.is_nil() ? qos::TopicQos() : dp.default_topic_qos(),
                 nullptr,
-                ::dds::core::status::StatusMask::none()))
+                ::dds::core::status::StatusMask::all()))
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-    //    this->delegate()->init(this->impl_);
 }
 
 template<typename T>
@@ -70,12 +67,9 @@ Topic<T>::Topic(
                 type_name,
                 dp.is_nil() ? dds::topic::qos::TopicQos() : dp.default_topic_qos(),
                 nullptr,
-                ::dds::core::status::StatusMask::none()))
+                ::dds::core::status::StatusMask::all()))
     , dds::topic::TAnyTopic<detail::Topic>(::dds::core::Reference<detail::Topic>::delegate())
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-    //    this->delegate()->init(this->impl_);
 }
 
 template<typename T>
@@ -94,9 +88,6 @@ Topic<T>::Topic(
                 mask))
     , dds::topic::TAnyTopic<detail::Topic>(::dds::core::Reference<detail::Topic>::delegate())
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-    //    this->delegate()->init(this->impl_);
 }
 
 template<typename T>
@@ -116,9 +107,6 @@ Topic<T>::Topic(
                 mask))
     , dds::topic::TAnyTopic<detail::Topic>(::dds::core::Reference<detail::Topic>::delegate())
 {
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(dp);
-    //    this->delegate()->init(this->impl_);
 }
 
 template<typename T>
@@ -132,18 +120,12 @@ void Topic<T>::listener(
         const ::dds::core::status::StatusMask& event_mask)
 {
     delegate()->set_listener(listener, event_mask);
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    this->delegate()->listener(listener, event_mask);
 }
 
 template<typename T>
 typename Topic<T>::Listener* Topic<T>::listener() const
 {
     return delegate()->get_listener();
-    //To implement
-    //    ISOCPP_REPORT_STACK_DDS_BEGIN(*this);
-    //    return this->delegate()->listener();
 }
 
 

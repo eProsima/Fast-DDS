@@ -27,6 +27,8 @@
 #include <fastdds/dds/topic/qos/DataWriterQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
+#include <fastdds/dds/subscriber/BuiltinSubscriber.hpp>
+
 #include <thread>
 
 using namespace eprosima::fastdds::dds;
@@ -43,9 +45,11 @@ bool HelloWorldPublisher::init()
     hello_.index(0);
     hello_.message("HelloWorld");
     eprosima::fastrtps::ParticipantAttributes participant_att;
-    participant_att.rtps.builtin.domainId = 0;
+    participant_att.rtps.builtin.domainId = 8;
     participant_att.rtps.setName("Participant_pub");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att, &listener_);
+
+    std::cout << "Participant Publisher " << participant_->get_instance_handle() << std::endl;
 
     if (participant_ == nullptr)
     {

@@ -22,15 +22,16 @@
 
 #include <fastrtps/fastrtps_dll.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/dds/topic/ParticipantBuiltinTopicData.hpp>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
 /**
-* Class ParticipantDiscoveryInfo with discovery information of the Participant.
-* @ingroup RTPS_MODULE
-*/
+ * Class ParticipantDiscoveryInfo with discovery information of the Participant.
+ * @ingroup RTPS_MODULE
+ */
 struct ParticipantDiscoveryInfo
 {
     //!Enum DISCOVERY_STATUS, four different status for discovered participants.
@@ -47,7 +48,8 @@ struct ParticipantDiscoveryInfo
         DROPPED_PARTICIPANT
     };
 
-    ParticipantDiscoveryInfo(const ParticipantProxyData& data)
+    ParticipantDiscoveryInfo(
+            const ParticipantProxyData& data)
         : status(DISCOVERED_PARTICIPANT)
         , info(data)
     {}
@@ -70,7 +72,8 @@ struct ParticipantAuthenticationInfo
         UNAUTHORIZED_PARTICIPANT
     };
 
-    ParticipantAuthenticationInfo() : status(UNAUTHORIZED_PARTICIPANT) {}
+    ParticipantAuthenticationInfo()
+        : status(UNAUTHORIZED_PARTICIPANT) {}
 
     ~ParticipantAuthenticationInfo() {}
 
@@ -81,10 +84,12 @@ struct ParticipantAuthenticationInfo
     GUID_t guid;
 };
 
-inline bool operator==(const ParticipantAuthenticationInfo& l, const ParticipantAuthenticationInfo& r)
+inline bool operator==(
+        const ParticipantAuthenticationInfo& l,
+        const ParticipantAuthenticationInfo& r)
 {
     return l.status == r.status &&
-        l.guid == r.guid;
+           l.guid == r.guid;
 }
 #endif
 

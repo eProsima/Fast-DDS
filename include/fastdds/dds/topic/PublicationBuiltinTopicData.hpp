@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 /**
  * @file PublicationBuiltinTopicData.hpp
-*/
+ */
 
 #ifndef _FASTDDS_PUBLICATION_BUILTIN_TOPIC_DATA_HPP_
 #define _FASTDDS_PUBLICATION_BUILTIN_TOPIC_DATA_HPP_
 
 #include <fastdds/dds/topic/BuiltinTopicKey.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+
+#include <fastdds/dds/topic/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -32,6 +35,7 @@ namespace dds {
 class PublicationBuiltinTopicData
 {
 public:
+
     PublicationBuiltinTopicData() {}
 
     ~PublicationBuiltinTopicData() {}
@@ -246,28 +250,49 @@ public:
         group_data_ = group_data;
     }
 
+    void fill_with_publication_qos(
+            const PublisherQos& pqos,
+            const DataWriterQos& dwqos)
+    {
+        durability_ = dwqos.durability;
+        durability_service_ = dwqos.durability_service;
+        deadline_ = dwqos.deadline;
+        latency_budget_ = dwqos.latency_budget;
+        liveliness_ = dwqos.liveliness;
+        reliability_ = dwqos.reliability;
+        lifespan_ = dwqos.lifespan;
+        user_data_ = dwqos.user_data;
+        ownership_ = dwqos.ownership;
+        ownership_strength_ = dwqos.ownership_strength;
+        destination_order_ = dwqos.destination_order;
+        presentation_ = pqos.presentation;
+        partition_ = pqos.partition;
+        topic_data_ = pqos.topic_data;
+        group_data_ = pqos.group_data;
+    }
+
     bool operator ==(
             const PublicationBuiltinTopicData& other)
     {
         return (key_ == other.key() &&
-                participant_key_ == other.participant_key() &&
-                name_.compare(other.name()) &&
-                type_name_.compare(other.type_name()) &&
-                durability_ == other.durability() &&
-                durability_service_ == other.durability_service() &&
-                deadline_ == other.deadline() &&
-                latency_budget_ == other.latency_budget() &&
-                liveliness_ == other.liveliness() &&
-                reliability_ == other.reliability() &&
-                lifespan_ == other.lifespan() &&
-                user_data_ == other.user_data() &&
-                ownership_ == other.ownership() &&
-                ownership_strength_ == other.ownership_strength() &&
-                destination_order_ == other.destination_order() &&
-                presentation_ == other.presentation() &&
-                partition_ == other.partition() &&
-                topic_data_ == other.topic_data() &&
-                group_data_ == other.group_data());
+               participant_key_ == other.participant_key() &&
+               name_.compare(other.name()) &&
+               type_name_.compare(other.type_name()) &&
+               durability_ == other.durability() &&
+               durability_service_ == other.durability_service() &&
+               deadline_ == other.deadline() &&
+               latency_budget_ == other.latency_budget() &&
+               liveliness_ == other.liveliness() &&
+               reliability_ == other.reliability() &&
+               lifespan_ == other.lifespan() &&
+               user_data_ == other.user_data() &&
+               ownership_ == other.ownership() &&
+               ownership_strength_ == other.ownership_strength() &&
+               destination_order_ == other.destination_order() &&
+               presentation_ == other.presentation() &&
+               partition_ == other.partition() &&
+               topic_data_ == other.topic_data() &&
+               group_data_ == other.group_data());
     }
 
 private:

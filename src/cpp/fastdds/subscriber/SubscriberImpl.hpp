@@ -158,7 +158,7 @@ public:
         return att_;
     }
 
-    const DomainParticipant& get_participant() const;
+    DomainParticipant& get_participant() const;
 
     const fastrtps::rtps::RTPSParticipant* rtps_participant() const
     {

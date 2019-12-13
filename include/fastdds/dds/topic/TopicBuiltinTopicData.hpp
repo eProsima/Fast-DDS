@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 /**
  * @file TopicBuiltinTopicData.hpp
-*/
+ */
 
 #ifndef _FASTDDS_TOPIC_BUILTIN_TOPIC_DATA_HPP_
 #define _FASTDDS_TOPIC_BUILTIN_TOPIC_DATA_HPP_
 
 #include <fastdds/dds/topic/BuiltinTopicKey.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -32,6 +33,7 @@ namespace dds {
 class TopicBuiltinTopicData
 {
 public:
+
     TopicBuiltinTopicData() {}
 
     ~TopicBuiltinTopicData() {}
@@ -213,25 +215,43 @@ public:
         topic_data_ = topic_data;
     }
 
+    void fill_with_topic_qos(
+            const TopicQos& tqos)
+    {
+        durability_ = tqos.durability;
+        durability_service_ = tqos.durability_service;
+        deadline_ = tqos.deadline;
+        latency_budget_ = tqos.latency_budget;
+        liveliness_ = tqos.liveliness;
+        reliability_ = tqos.reliability;
+        transport_priority_ = tqos.transport_priority;
+        lifespan_ = tqos.lifespan;
+        destination_order_ = tqos.destination_order;
+        history_ = tqos.history;
+        resource_limits_ = tqos.resource_limits;
+        ownership_ = tqos.ownership;
+        topic_data_ = tqos.topic_data;
+    }
+
     bool operator ==(
             const TopicBuiltinTopicData& other)
     {
         return (key_ == other.key() &&
-                name_.compare(other.name()) &&
-                type_name_.compare(other.type_name()) &&
-                durability_ == other.durability() &&
-                durability_service_ == other.durability_service() &&
-                deadline_ == other.deadline() &&
-                latency_budget_ == other.latency_budget() &&
-                liveliness_ == other.liveliness() &&
-                reliability_ == other.reliability() &&
-                transport_priority_ == other.transport_priority() &&
-                lifespan_ == other.lifespan() &&
-                destination_order_ == other.destination_order() &&
-                history_ == other.history() &&
-                resource_limits_ == other.resource_limits() &&
-                ownership_ == other.ownership() &&
-                topic_data_ == other.topic_data());
+               name_.compare(other.name()) &&
+               type_name_.compare(other.type_name()) &&
+               durability_ == other.durability() &&
+               durability_service_ == other.durability_service() &&
+               deadline_ == other.deadline() &&
+               latency_budget_ == other.latency_budget() &&
+               liveliness_ == other.liveliness() &&
+               reliability_ == other.reliability() &&
+               transport_priority_ == other.transport_priority() &&
+               lifespan_ == other.lifespan() &&
+               destination_order_ == other.destination_order() &&
+               history_ == other.history() &&
+               resource_limits_ == other.resource_limits() &&
+               ownership_ == other.ownership() &&
+               topic_data_ == other.topic_data());
     }
 
 private:

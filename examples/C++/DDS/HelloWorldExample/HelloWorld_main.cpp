@@ -32,7 +32,7 @@ int main(
 {
     std::cout << "Starting " << std::endl;
     int type = 1;
-    int count = 200;
+    int count = 20;
     int sleep = 100;
     if (argc > 1)
     {
