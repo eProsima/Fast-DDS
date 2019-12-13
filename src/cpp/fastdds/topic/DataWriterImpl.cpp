@@ -589,6 +589,7 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         {
             data_writer_->matched_subscriptions_.erase(it);
         }
+        BuiltinSubscriber::get_instance()->delete_subscription_data(info.last_subscription_handle);
     }
 
     //TODO: Check if the DataReader should be ignored (DomainParticipant::ignore_subscription)
@@ -823,6 +824,19 @@ ReturnCode_t DataWriterImpl::get_matched_subscriptions(
 {
     subscription_handles = matched_subscriptions_;
     return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DataWriterImpl::get_matched_subscription_data(
+        SubscriptionBuiltinTopicData& subscription_data,
+        const InstanceHandle_t& subscription_handle) const
+{
+    SubscriptionBuiltinTopicData* data = BuiltinSubscriber::get_instance()->get_subscription_data(subscription_handle);
+    if (data != nullptr)
+    {
+        subscription_data = *data;
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
 } // namespace dds

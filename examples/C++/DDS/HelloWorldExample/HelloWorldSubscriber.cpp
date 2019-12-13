@@ -42,8 +42,6 @@ bool HelloWorldSubscriber::init()
     participant_att.rtps.setName("Participant_sub");
     participant_ = DomainParticipantFactory::get_instance()->create_participant(participant_att, &listener_);
 
-    std::cout << "Participant Subscriber " << participant_->get_instance_handle() << std::endl;
-
     if (participant_ == nullptr)
     {
         return false;

@@ -775,6 +775,15 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
         RTPSParticipant*,
         ReaderDiscoveryInfo&& info)
 {
+    if (info.status == fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERED_READER)
+    {
+        BuiltinSubscriber::get_instance()->add_subscription_data(info.info.key(),
+                SubscriptionBuiltinTopicData(info.info));
+    }
+    else if (info.status == fastrtps::rtps::ReaderDiscoveryInfo::REMOVED_READER)
+    {
+        BuiltinSubscriber::get_instance()->delete_subscription_data(info.info.key());
+    }
     if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         participant_->listener_->on_subscriber_discovery(participant_->participant_, std::move(info));
