@@ -5,10 +5,11 @@
     </library_settings>
 
     <profiles>
-        <participant profile_name="participant_profile">
+        <!-- PARTICIPANTS -->
+        <participant profile_name="pub_participant_profile">
             <rtps>
                 <builtin>
-                    <domainId>232</domainId>
+                    <domainId>222</domainId>
                     <discovery_config>
                         <ignoreParticipantFlags>FILTER_DIFFERENT_PROCESS | FILTER_DIFFERENT_HOST</ignoreParticipantFlags>
                         <leaseAnnouncement>
@@ -22,7 +23,28 @@
                         </initialAnnouncements>
                     </discovery_config>
                 </builtin>
-                <name>Participant_publisher</name>
+                <name>throughput_test_publisher</name>
+            </rtps>
+        </participant>
+
+        <participant profile_name="sub_participant_profile">
+            <rtps>
+                <builtin>
+                    <domainId>222</domainId>
+                    <discovery_config>
+                        <ignoreParticipantFlags>FILTER_DIFFERENT_PROCESS | FILTER_DIFFERENT_HOST</ignoreParticipantFlags>
+                        <leaseAnnouncement>
+                            <sec>DURATION_INFINITY</sec>
+                        </leaseAnnouncement>
+                        <leaseDuration>
+                            <sec>DURATION_INFINITY</sec>
+                        </leaseDuration>
+                        <initialAnnouncements>
+                            <count>0</count>
+                        </initialAnnouncements>
+                    </discovery_config>
+                </builtin>
+                <name>throughput_test_subscriber</name>
             </rtps>
         </participant>
 

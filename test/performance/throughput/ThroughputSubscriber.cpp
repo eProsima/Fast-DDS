@@ -253,19 +253,14 @@ ThroughputSubscriber::ThroughputSubscriber(
     }
 
     /* Create RTPSParticipant */
-    std::string participant_profile_name = "participant_profile";
+    std::string participant_profile_name = "sub_participant_profile";
     ParticipantAttributes participant_attributes;
 
     // Default domain
     participant_attributes.rtps.builtin.domainId = pid % 230;
 
-    if (forced_domain_ >= 0)
-    {
-        participant_attributes.rtps.builtin.domainId = forced_domain_;
-    }
-
     // Default participant name
-    participant_attributes.rtps.setName("Participant_publisher");
+    participant_attributes.rtps.setName("throughput_test_subscriber");
 
     // Load XML file
     if (xml_config_file_.length() > 0)
