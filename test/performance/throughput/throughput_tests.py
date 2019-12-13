@@ -29,16 +29,16 @@ if __name__ == '__main__':
     parser.add_argument(
         '-t',
         '--test_duration',
-        help='The duration of the test [s]',
+        help='The duration of test iteration [s]',
         required=False,
-        default=1
+        default='1'
     )
     parser.add_argument(
         '-r',
         '--recoveries_file',
         help='A CSV file with maxima sleep time between bursts [ms]',
         required=False,
-        default=10
+        default=None
     )
     parser.add_argument(
         '-f',
@@ -64,36 +64,92 @@ if __name__ == '__main__':
     # Parse arguments
     args = parser.parse_args()
     xml_file = args.xml_file
-    test_duration = str(args.test_duration)
-    recoveries_file = str(args.recoveries_file)
+    security = args.security
+    interprocess = args.interprocess
+    recoveries_file = args.recoveries_file
 
-    # Demands files arguments
+    if security and not interprocess:
+        print('Intra-process delivery NOT supported with security')
+        exit(1)  # Exit with error
+
+    # Check that test_duration is positive
+    if str.isdigit(args.test_duration) and int(args.test_duration) > 0:
+        test_duration = str(args.test_duration)
+    else:
+        print(
+            '"test_duration" must be a positive integer, NOT {}'.format(
+                args.test_duration
+            )
+        )
+        exit(1)  # Exit with error
+
+    # XML options
+    reliability = 'default'
+    xml_options = []
+    if xml_file:
+        if not os.path.isfile(xml_file):
+            print('XML file "{}" is NOT a file'.format(xml_file))
+            exit(1)  # Exit with error
+        else:
+            xml_options = ['--xml', xml_file]
+            # Get reliability from XML
+            reliability = xml_file.split('/')[-1].split('\\')[-1]
+            reliability = reliability.split('.')[-2].split('_')[1:]
+            reliability = '_'.join(reliability)
+
+    # Demands files options
     demands_options = []
-    if args.demands_file is not None:
-        demands_options = [
-            '--file',
-            args.demands_file,
-        ]
+    if args.demands_file:
+        if not os.path.isfile(args.demands_file):
+            print('Demands file "{}" is NOT a file'.format(args.demands_file))
+            exit(1)  # Exit with error
+        else:
+            demands_options = [
+                '--file',
+                args.demands_file,
+            ]
 
-    # Security flag
-    security = False
-    if args.security:
-        security = True
-
-    # Inter-process flag
-    interprocess = False
-    if args.interprocess:
-        interprocess = True
+    # Recoveries files options
+    recoveries_options = []
+    if args.recoveries_file:
+        if not os.path.isfile(args.recoveries_file):
+            print(
+                'Recoveries file "{}" is NOT a file'.format(
+                    args.recoveries_file
+                )
+            )
+            exit(1)  # Exit with error
+        else:
+            recoveries_options = [
+                '--recoveries_file',
+                args.recoveries_file,
+            ]
 
     # Environment variables
     executable = os.environ.get('THROUGHPUT_TEST_BIN')
     certs_path = os.environ.get('CERTS_PATH')
 
+    # Check that executable exists
+    if executable:
+        if not os.path.isfile(executable):
+            print('THROUGHPUT_TEST_BIN does NOT specify a file')
+            exit(1)  # Exit with error
+    else:
+        print('THROUGHPUT_TEST_BIN is NOT set')
+        exit(1)  # Exit with error
+
     # Security
     security_options = []
     if security is True:
         if certs_path:
-            security_options = ['--security=true', '--certs=' + certs_path]
+            if os.path.isdir(certs_path):
+                security_options = ['--security=true', '--certs=' + certs_path]
+            else:
+                print('CERTS_PATH does NOT specify a directory')
+                exit(1)  # Exit with error
+        else:
+            print('Cannot find CERTS_PATH environment variable')
+            exit(1)  # Exit with error
 
     # Domain
     domain = str(os.getpid() % 230)
@@ -106,25 +162,19 @@ if __name__ == '__main__':
             'publisher',
             '--time',
             test_duration,
-            '--recoveries_file',
-            recoveries_file,
-            '--xml',
-            xml_file,
             '--export_csv',
         ]
         # Base of test command for subscriber agent
         sub_command = [
             executable,
             'subscriber',
-            '--xml',
-            xml_file,
         ]
 
         # Manage security
         if security is True:
             pub_command.append(
                 './measurements_{}_security.csv'.format(
-                    xml_file.split('/')[-1].split('\\')[-1].split('.')[-2]
+                    reliability
                 )
             )
             pub_command += security_options
@@ -132,13 +182,16 @@ if __name__ == '__main__':
         else:
             pub_command.append(
                 './measurements_{}.csv'.format(
-                    xml_file.split('/')[-1].split('\\')[-1].split('.')[-2]
+                    reliability
                 )
             )
 
         pub_command += demands_options
+        pub_command += recoveries_options
         pub_command += domain_options
+        pub_command += xml_options
         sub_command += domain_options
+        sub_command += xml_options
 
         print('Publisher command: {}'.format(
             ' '.join(element for element in pub_command)),
@@ -150,8 +203,8 @@ if __name__ == '__main__':
         )
 
         # Spawn processes
-        subscriber = subprocess.Popen(pub_command)
-        publisher = subprocess.Popen(sub_command)
+        publisher = subprocess.Popen(pub_command)
+        subscriber = subprocess.Popen(sub_command)
         # Wait until finish
         subscriber.communicate()
         publisher.communicate()
@@ -167,10 +220,6 @@ if __name__ == '__main__':
             'both',
             '--time',
             test_duration,
-            '--recoveries_file',
-            recoveries_file,
-            '--xml',
-            xml_file,
             '--export_csv',
         ]
 
@@ -178,19 +227,21 @@ if __name__ == '__main__':
         if security is True:
             command.append(
                 './measurements_{}_security.csv'.format(
-                    xml_file.split('/')[-1].split('\\')[-1].split('.')[-2],
+                    reliability,
                 )
             )
             command += security_options
         else:
             command.append(
                 './measurements_{}.csv'.format(
-                    xml_file.split('/')[-1].split('\\')[-1].split('.')[-2],
+                    reliability,
                 )
             )
 
         command += demands_options
+        command += recoveries_options
         command += domain_options
+        command += xml_options
 
         print('Executable command: {}'.format(
             ' '.join(element for element in command)),
@@ -202,3 +253,4 @@ if __name__ == '__main__':
         # Wait until finish
         both.communicate()
         exit(both.returncode)
+    exit(0)
