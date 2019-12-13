@@ -221,7 +221,7 @@ bool LatencyTestPublisher::init(
     participant_attributes.rtps.builtin.domainId = pid % 230;
 
     // Default participant name
-    participant_attributes.rtps.setName("Participant_pub");
+    participant_attributes.rtps.setName("latency_test_publisher");
 
     // Load XML configuration
     if (xml_config_file_.length() > 0)
