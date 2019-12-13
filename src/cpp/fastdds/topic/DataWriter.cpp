@@ -194,6 +194,13 @@ ReturnCode_t DataWriter::get_matched_subscriptions(
     return impl_->get_matched_subscriptions(subscription_handles);
 }
 
+ReturnCode_t DataWriter::get_matched_subscription_data(
+        SubscriptionBuiltinTopicData& subscription_data,
+        const rtps::InstanceHandle_t& subscription_handle) const
+{
+    return impl_->get_matched_subscription_data(subscription_data, subscription_handle);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

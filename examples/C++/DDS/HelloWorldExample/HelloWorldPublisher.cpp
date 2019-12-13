@@ -98,7 +98,7 @@ HelloWorldPublisher::~HelloWorldPublisher()
 }
 
 void HelloWorldPublisher::PubListener::on_publication_matched(
-        eprosima::fastdds::dds::DataWriter* /*writer*/,
+        eprosima::fastdds::dds::DataWriter*,
         const eprosima::fastdds::dds::PublicationMatchedStatus& info)
 {
     if (info.current_count_change == 1)

@@ -35,6 +35,8 @@
 #include <fastdds/dds/topic/qos/DataReaderQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 
+#include <mutex>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -74,8 +76,15 @@ public:
 
     RTPS_DllAPI void add_subscription_data(
             const fastrtps::rtps::InstanceHandle_t& reader_handle,
+            const fastrtps::rtps::InstanceHandle_t& participant_handle,
+            std::string topic_name,
+            std::string type_name,
             const SubscriberQos& sqos,
             const DataReaderQos& drqos);
+
+    RTPS_DllAPI void add_subscription_data(
+            const fastrtps::rtps::InstanceHandle_t& writer_handle,
+            const SubscriptionBuiltinTopicData& data);
 
     RTPS_DllAPI void delete_subscription_data(
             const fastrtps::rtps::InstanceHandle_t& reader_handle);
@@ -117,9 +126,16 @@ private:
     virtual ~BuiltinSubscriber(){}
 
     std::map<fastrtps::rtps::InstanceHandle_t, ParticipantBuiltinTopicData> participant_data_;
+    std::mutex part_mutex_;
+
     std::map<fastrtps::rtps::InstanceHandle_t, SubscriptionBuiltinTopicData> subscription_data_;
+    std::mutex sub_mutex_;
+
     std::map<fastrtps::rtps::InstanceHandle_t, PublicationBuiltinTopicData> publication_data_;
+    std::mutex pub_mutex_;
+
     std::map<fastrtps::rtps::InstanceHandle_t, TopicBuiltinTopicData> topic_data_;
+    std::mutex topic_mutex_;
 
 };
 
