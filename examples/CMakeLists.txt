@@ -43,6 +43,6 @@ if(SECURITY)
     add_subdirectory(C++/SecureHelloWorldExample)
 endif()
 
-if(HAVE_SQLITE3)
+if(SQLITE3_SUPPORT)
     add_subdirectory(C++/RTPSTest_persistent)
 endif()
