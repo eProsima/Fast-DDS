@@ -494,7 +494,6 @@ void StatefulWriter::send_any_unsent_changes()
     bool activateHeartbeatPeriod = false;
     SequenceNumber_t max_sequence = mp_history->next_sequence_number();
 
-
     // Separate sending for asynchronous writers
     if (m_pushMode && m_separateSendingEnabled)
     {
@@ -590,7 +589,6 @@ void StatefulWriter::send_any_unsent_changes()
     else
     {
         RTPSWriterCollector<ReaderProxy*> relevantChanges;
-        StatefulWriterOrganizer notRelevantChanges;
         bool force_piggyback_hb = false; // Force piggyback HB if old samples not acknowledged.
 
         NetworkFactory& network = mp_RTPSParticipant->network_factory();
@@ -637,6 +635,7 @@ void StatefulWriter::send_any_unsent_changes()
 
         for (ReaderProxy* remoteReader : matched_readers_)
         {
+            RTPSGapBuilder gaps(group, remoteReader->guid());
             SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
             SequenceNumber_t min_history_seq = get_seq_num_min();
             auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
@@ -687,7 +686,7 @@ void StatefulWriter::send_any_unsent_changes()
                                 // Skip holes in history, as they were added before
                                 if (unsentChange != nullptr)
                                 {
-                                    notRelevantChanges.add_sequence_number(seq_num, remoteReader);
+                                    gaps.add(seq_num);
                                 }
                             }
                             else
@@ -821,24 +820,6 @@ void StatefulWriter::send_any_unsent_changes()
                     // Heartbeat piggyback.
                     send_heartbeat_piggyback_nts_(nullptr, group, lastBytesProcessed, force_piggyback_hb);
 
-                    for (std::pair<std::vector<ReaderProxy*>,
-                            std::set<SequenceNumber_t> > pair : notRelevantChanges.elements())
-                    {
-                        locator_selector_.reset(false);
-
-                        for (const ReaderProxy* remoteReader : pair.first)
-                        {
-                            locator_selector_.enable(remoteReader->guid());
-                        }
-                        if (locator_selector_.state_has_changed())
-                        {
-                            group.flush_and_reset();
-                            network.select_locators(locator_selector_);
-                            compute_selected_guids();
-                        }
-                        group.add_gap(pair.second);
-                    }
-                    
                     group.flush_and_reset();
                 }
                 catch (const RTPSMessageGroup::timeout&)
