@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
-    <!-- PARTICIPANT -->
     <profiles>
-        <participant profile_name="participant_profile">
+        <!-- PARTICIPANTS -->
+        <participant profile_name="pub_participant_profile">
             <rtps>
                 <builtin>
-                    <domainId>233</domainId>
+                    <domainId>229</domainId>
                 </builtin>
-                <name>Participant_publisher</name>
+                <name>video_test_publisher</name>
+            </rtps>
+        </participant>
+
+        <participant profile_name="sub_participant_profile">
+            <rtps>
+                <builtin>
+                    <domainId>229</domainId>
+                </builtin>
+                <name>video_test_subscriber</name>
             </rtps>
         </participant>
 
