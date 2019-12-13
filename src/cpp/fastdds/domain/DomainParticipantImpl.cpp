@@ -783,6 +783,16 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
         RTPSParticipant*,
         WriterDiscoveryInfo&& info)
 {
+    if (info.status == fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER)
+    {
+        BuiltinSubscriber::get_instance()->add_publication_data(info.info.key(),
+                PublicationBuiltinTopicData(info.info));
+    }
+    else if (info.status == fastrtps::rtps::WriterDiscoveryInfo::REMOVED_WRITER)
+    {
+        BuiltinSubscriber::get_instance()->delete_publication_data(info.info.key());
+    }
+
     if (participant_ != nullptr && participant_->listener_ != nullptr)
     {
         participant_->listener_->on_publisher_discovery(participant_->participant_, std::move(info));

@@ -267,6 +267,7 @@ ReturnCode_t PublisherImpl::delete_datawriter(
             {
                 topic_writers->erase(t_it);
             }
+            BuiltinSubscriber::get_instance()->delete_publication_data(writer->get_instance_handle());
             (*dw_it)->set_listener(nullptr);
             vit->second.erase(dw_it);
             delete *dw_it;

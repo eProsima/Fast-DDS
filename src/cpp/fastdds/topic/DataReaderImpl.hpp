@@ -197,11 +197,9 @@ public:
             const fastrtps::Duration_t& max_wait) const;
      */
 
-    /* TODO
-       ReturnCode_t get_matched_publication_data(
-            PublicationBuiltinTopicData publication_data,
-            fastrtps::rtps::InstanceHandle_t publication_handle);
-     */
+    ReturnCode_t get_matched_publication_data(
+            PublicationBuiltinTopicData& publication_data,
+            const fastrtps::rtps::InstanceHandle_t& publication_handle) const;
 
     ReturnCode_t get_matched_publications(
             std::vector<fastrtps::rtps::InstanceHandle_t>& publication_handles) const;

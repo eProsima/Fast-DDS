@@ -160,9 +160,9 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
             {
                 participants_.erase(vit);
             }
+            BuiltinSubscriber::get_instance()->delete_participant_data(part->get_instance_handle());
             return ReturnCode_t::RETCODE_OK;
         }
-        BuiltinSubscriber::get_instance()->delete_participant_data(part->get_instance_handle());
     }
     return ReturnCode_t::RETCODE_ERROR;
 }
