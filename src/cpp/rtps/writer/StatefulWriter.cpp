@@ -41,7 +41,6 @@
 #include <fastrtps/rtps/builtin/liveliness/WLP.h>
 
 #include "RTPSWriterCollector.h"
-#include "StatefulWriterOrganizer.h"
 #include "rtps/RTPSDomainImpl.hpp"
 #include "../messages/RTPSGapBuilder.hpp"
 
