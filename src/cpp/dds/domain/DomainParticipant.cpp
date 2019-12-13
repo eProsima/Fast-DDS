@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 /**
  * @file DomainParticipantImpl.cpp
@@ -31,11 +31,11 @@ namespace domain {
 DomainParticipant::DomainParticipant(
         uint32_t did)
     : dds::core::Reference<detail::DomainParticipant>(
-            new detail::DomainParticipant(
-                    static_cast<uint8_t>(did),
-                    eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT,
-                    nullptr,
-                    dds::core::status::StatusMask::none()))
+        new detail::DomainParticipant(
+            static_cast<uint8_t>(did),
+            eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT,
+            nullptr,
+            dds::core::status::StatusMask::none()))
 {
 }
 
@@ -45,11 +45,11 @@ DomainParticipant::DomainParticipant(
         dds::domain::DomainParticipantListener* listener,
         const dds::core::status::StatusMask& mask)
     : dds::core::Reference<detail::DomainParticipant>(
-            new detail::DomainParticipant(
-                    static_cast<uint8_t>(id),
-                    qos,
-                    listener,
-                    mask))
+        new detail::DomainParticipant(
+            static_cast<uint8_t>(id),
+            qos,
+            listener,
+            mask))
 {
 }
 
@@ -59,14 +59,14 @@ DomainParticipant::~DomainParticipant()
 
 void DomainParticipant::delete_participant()
 {
-    this->delegate()->delete_participant(*this);
+    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(*this);
 }
 
 void DomainParticipant::listener(
         Listener* listener,
         const ::dds::core::status::StatusMask& /*event_mask*/)
 {
-    this->delegate()->set_listener(listener/*, event_mask*/);
+    this->delegate()->set_listener(listener /*, event_mask*/);
 }
 
 typename DomainParticipant::Listener* DomainParticipant::listener() const

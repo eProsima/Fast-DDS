@@ -86,9 +86,10 @@ ReturnCode_t Publisher::set_listener(
 //DataWriter* Publisher::create_datawriter(
 //        const fastrtps::TopicAttributes& topic_attr,
 //        const DataWriterQos& writer_qos,
-//        DataWriterListener* listener)
+//        DataWriterListener* listener,
+//        const ::dds::core::status::StatusMask& mask)
 //{
-//    return impl_->create_datawriter(topic_attr, writer_qos, listener);
+//    return impl_->create_datawriter(topic_attr, writer_qos, listener, mask);
 //}
 
 DataWriter* Publisher::create_datawriter(
@@ -97,14 +98,7 @@ DataWriter* Publisher::create_datawriter(
         DataWriterListener* listener,
         const ::dds::core::status::StatusMask& mask)
 {
-    fastrtps::TopicAttributes topic_attr;
-    topic_attr.topicName = topic.get_name();
-    topic_attr.topicDataType = topic.get_type_name();
-    TopicQos topic_qos;
-    topic.get_qos(topic_qos);
-    topic_attr.historyQos = qos.history;
-
-    return impl_->create_datawriter(topic_attr, qos, listener, mask);
+    return impl_->create_datawriter(topic, qos, listener, mask);
 }
 
 ReturnCode_t Publisher::delete_datawriter(

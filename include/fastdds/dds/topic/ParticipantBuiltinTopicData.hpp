@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 /**
  * @file ParticipantBuiltinTopicData.hpp
-*/
+ */
 
 #ifndef _FASTDDS_PARTICIPANT_BUILTIN_TOPIC_DATA_HPP_
 #define _FASTDDS_PARTICIPANT_BUILTIN_TOPIC_DATA_HPP_
@@ -32,6 +32,7 @@ namespace dds {
 class ParticipantBuiltinTopicData
 {
 public:
+
     ParticipantBuiltinTopicData() {}
 
     ~ParticipantBuiltinTopicData() {}
@@ -62,7 +63,7 @@ public:
             const ParticipantBuiltinTopicData& other)
     {
         return (key_ == other.key() &&
-                user_data_ == other.user_data());
+               user_data_ == other.user_data());
     }
 
 private:

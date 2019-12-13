@@ -34,6 +34,7 @@
 #include <dds/core/status/Status.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
+#include <fastdds/dds/subscriber/BuiltinSubscriber.hpp>
 
 #include <dds/core/status/State.hpp>
 
@@ -83,9 +84,6 @@ class TopicListener;
 class RTPS_DllAPI DomainParticipant
 {
 public:
-
-    void delete_participant(
-            ::dds::domain::DomainParticipant& part);
 
     /**
      * Allows modifying the DomainParticipantListener.
@@ -160,7 +158,7 @@ public:
             std::string type_name,
             const fastdds::dds::TopicQos& qos,
             TopicListener* listen = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
     /**
      * Deletes an existing Topic.
@@ -214,9 +212,7 @@ public:
     ReturnCode_t unregister_type(
             const char* typeName);
 
-    /* TODO
-       Subscriber* get_builtin_subscriber();
-     */
+    BuiltinSubscriber* get_builtin_subscriber();
 
     /* TODO
        bool ignore_participant(
@@ -356,11 +352,9 @@ public:
     ReturnCode_t get_discovered_participants(
             std::vector<fastrtps::rtps::InstanceHandle_t>& participant_handles) const;
 
-    /* TODO
-       bool get_discovered_participant_data(
+    ReturnCode_t get_discovered_participant_data(
             ParticipantBuiltinTopicData& participant_data,
             const fastrtps::rtps::InstanceHandle_t& participant_handle) const;
-     */
 
     /* TODO
        bool get_discovered_topics(

@@ -52,7 +52,13 @@ public:
             const std::string& type_name,
             const TopicQos& qos = TOPIC_QOS_DEFAULT,
             TopicListener* listener = nullptr,
-            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::none());
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
+
+    RTPS_DllAPI Topic(
+            const DomainParticipant* dp,
+            fastrtps::TopicAttributes att,
+            TopicListener* listener = nullptr,
+            const ::dds::core::status::StatusMask& mask = ::dds::core::status::StatusMask::all());
 
 
     RTPS_DllAPI fastrtps::TopicAttributes get_topic_attributes() const;
@@ -84,6 +90,8 @@ public:
             const fastrtps::rtps::InstanceHandle_t& handle);
 
     RTPS_DllAPI fastrtps::rtps::InstanceHandle_t get_instance_handle() const;
+
+    RTPS_DllAPI fastrtps::rtps::GUID_t get_guid() const;
 
 private:
 

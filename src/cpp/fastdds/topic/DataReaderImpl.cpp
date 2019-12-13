@@ -319,8 +319,7 @@ const Topic& DataReaderImpl::get_topic() const
 
 TopicDescription* DataReaderImpl::get_topicdescription() const
 {
-    return const_cast<DomainParticipant*>(get_subscriber()->get_participant())->lookup_topicdescription(
-        topic_.get_name());
+    return get_subscriber()->get_participant().lookup_topicdescription(topic_.get_name());
 }
 
 bool DataReaderImpl::set_attributes(

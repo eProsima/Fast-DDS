@@ -140,6 +140,11 @@ fastrtps::rtps::InstanceHandle_t Topic::get_instance_handle() const
     return handle_;
 }
 
+fastrtps::rtps::GUID_t Topic::get_guid() const
+{
+    return fastrtps::rtps::iHandle2GUID(handle_);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
