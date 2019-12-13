@@ -175,6 +175,14 @@ void BuiltinSubscriber::add_publication_data(
     publication_data_[writer_handle] = data;
 }
 
+void BuiltinSubscriber::add_publication_data(
+        const fastrtps::rtps::InstanceHandle_t& writer_handle,
+        const PublicationBuiltinTopicData& data)
+{
+    std::lock_guard<std::mutex> lock(g_mtx);
+    publication_data_[writer_handle] = data;
+}
+
 void BuiltinSubscriber::delete_publication_data(
         const fastrtps::rtps::InstanceHandle_t& writer_handle)
 {

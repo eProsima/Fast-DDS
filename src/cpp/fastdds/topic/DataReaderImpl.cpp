@@ -449,6 +449,7 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         {
             data_reader_->matched_publications_.erase(it);
         }
+        BuiltinSubscriber::get_instance()->delete_publication_data(info.last_publication_handle);
     }
 
     //TODO: Check if the DataWriter should be ignored (DomainParticipant::ignore_publication)
@@ -825,14 +826,18 @@ TypeSupport DataReaderImpl::type()
     return type_;
 }
 
-/* TODO
-   ReturnCode_t DataReaderImpl::get_matched_publication_data(
-        PublicationBuiltinTopicData publication_data,
-        fastrtps::rtps::InstanceHandle_t publication_handle)
-   {
-
-   }
- */
+ReturnCode_t DataReaderImpl::get_matched_publication_data(
+        PublicationBuiltinTopicData& publication_data,
+        const fastrtps::rtps::InstanceHandle_t& publication_handle) const
+{
+    PublicationBuiltinTopicData* data = BuiltinSubscriber::get_instance()->get_publication_data(publication_handle);
+    if (data != nullptr)
+    {
+        publication_data = *data;
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+}
 
 ReturnCode_t DataReaderImpl::get_matched_publications(
         std::vector<InstanceHandle_t>& publication_handles) const

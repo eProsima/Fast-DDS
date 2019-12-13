@@ -91,6 +91,10 @@ public:
             const PublisherQos& pqos,
             const DataWriterQos& dwqos);
 
+    RTPS_DllAPI void add_publication_data(
+            const fastrtps::rtps::InstanceHandle_t& writer_handle,
+            const PublicationBuiltinTopicData& data);
+
     RTPS_DllAPI void delete_publication_data(
             const fastrtps::rtps::InstanceHandle_t& writer_handle);
 

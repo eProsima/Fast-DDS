@@ -27,6 +27,7 @@
 
 #include <fastdds/dds/topic/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -37,6 +38,30 @@ class PublicationBuiltinTopicData
 public:
 
     PublicationBuiltinTopicData() {}
+
+    PublicationBuiltinTopicData(
+            const fastrtps::rtps::WriterProxyData& data)
+    {
+        key_ = data.guid();
+        participant_key_ = BuiltinTopicKey(fastrtps::rtps::iHandle2GUID(data.RTPSParticipantKey()));
+        name_ = data.topicName();
+        type_name_ = data.typeName();
+        durability_ = data.m_qos.m_durability;
+        durability_service_ = data.m_qos.m_durabilityService;
+        deadline_ = data.m_qos.m_deadline;
+        latency_budget_ = data.m_qos.m_latencyBudget;
+        liveliness_ = data.m_qos.m_liveliness;
+        reliability_ = data.m_qos.m_reliability;
+        lifespan_ = data.m_qos.m_lifespan;
+        user_data_ = data.m_qos.m_userData;
+        ownership_ = data.m_qos.m_ownership;
+        ownership_strength_ = data.m_qos.m_ownershipStrength;
+        destination_order_ = data.m_qos.m_destinationOrder;
+        presentation_ = data.m_qos.m_presentation;
+        partition_ = data.m_qos.m_partition;
+        topic_data_ = data.m_qos.m_topicData;
+        group_data_ = data.m_qos.m_groupData;
+    }
 
     ~PublicationBuiltinTopicData() {}
 

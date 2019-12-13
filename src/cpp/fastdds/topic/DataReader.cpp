@@ -244,14 +244,12 @@ TypeSupport DataReader::type()
     return impl_->type();
 }
 
-/* TODO
-   ReturnCode_t DataReader::get_matched_publication_data(
-        PublicationBuiltinTopicData publication_data,
-        fastrtps::rtps::InstanceHandle_t publication_handle)
-   {
+ReturnCode_t DataReader::get_matched_publication_data(
+        PublicationBuiltinTopicData& publication_data,
+        const fastrtps::rtps::InstanceHandle_t& publication_handle) const
+{
     return impl_->get_matched_publication_data(publication_data, publication_handle);
-   }
- */
+}
 
 ReturnCode_t DataReader::get_matched_publications(
         std::vector<InstanceHandle_t>& publication_handles) const
