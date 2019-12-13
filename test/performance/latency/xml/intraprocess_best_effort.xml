@@ -23,7 +23,7 @@
                         </initialAnnouncements>
                     </discovery_config>
                 </builtin>
-                <name>Participant_pub</name>
+                <name>latency_test_publisher</name>
             </rtps>
         </participant>
         <publisher profile_name="pub_publisher_profile">
@@ -75,7 +75,7 @@
                         </initialAnnouncements>
                     </discovery_config>
                 </builtin>
-                <name>Participant_sub</name>
+                <name>latency_test_subscriber</name>
             </rtps>
         </participant>
         <publisher profile_name="sub_publisher_profile">

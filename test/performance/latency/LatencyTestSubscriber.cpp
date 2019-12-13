@@ -118,7 +118,7 @@ bool LatencyTestSubscriber::init(
     participant_attributes.rtps.builtin.domainId = pid % 230;
 
     // Default participant name
-    participant_attributes.rtps.setName("Participant_sub");
+    participant_attributes.rtps.setName("latency_test_subscriber");
 
     participant_attributes.rtps.properties = part_property_policy;
 

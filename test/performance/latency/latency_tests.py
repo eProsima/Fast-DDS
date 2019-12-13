@@ -13,9 +13,8 @@
 # limitations under the License.
 
 import argparse
-import subprocess
 import os
-from os import listdir
+import subprocess
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -32,7 +31,7 @@ if __name__ == '__main__':
         '--number_of_samples',
         help='The number of measurements to take for each payload',
         required=False,
-        default=10000
+        default='10000'
     )
     parser.add_argument(
         '-s',
@@ -51,26 +50,67 @@ if __name__ == '__main__':
     # Parse arguments
     args = parser.parse_args()
     xml_file = args.xml_file
-    samples = str(args.number_of_samples)
+    security = args.security
+    interprocess = args.interprocess
 
-    # Security flag
-    security = False
-    if args.security:
-        security = True
+    if security and not interprocess:
+        print('Intra-process delivery NOT supported with security')
+        exit(1)  # Exit with error
 
-    # Inter-process flag
-    interprocess = False
-    if args.interprocess:
-        interprocess = True
+    # Check that samples is positive
+    if str.isdigit(args.number_of_samples) and int(args.number_of_samples) > 0:
+        samples = str(args.number_of_samples)
+    else:
+        print(
+            '"number_of_samples" must be a positive integer, NOT {}'.format(
+                args.number_of_samples
+            )
+        )
+        exit(1)  # Exit with error
+
+    # XML options
+    reliability = 'default'
+    xml_options = []
+    if xml_file:
+        if not os.path.isfile(xml_file):
+            print('XML file "{}" is NOT a file'.format(xml_file))
+            exit(1)  # Exit with error
+        else:
+            xml_options = ['--xml', xml_file]
+            # Get reliability from XML
+            reliability = xml_file.split('/')[-1].split('\\')[-1]
+            reliability = reliability.split('.')[-2].split('_')[1:]
+            reliability = '_'.join(reliability)
 
     # Environment variables
     executable = os.environ.get('LATENCY_TEST_BIN')
     certs_path = os.environ.get('CERTS_PATH')
 
+    # Check that executable exists
+    if executable:
+        if not os.path.isfile(executable):
+            print('LATENCY_TEST_BIN does NOT specify a file')
+            exit(1)  # Exit with error
+    else:
+        print('LATENCY_TEST_BIN is NOT set')
+        exit(1)  # Exit with error
+
+    # Security
     security_options = []
     if security is True:
         if certs_path:
-            security_options = ['--security=true', '--certs=' + certs_path]
+            if os.path.isdir(certs_path):
+                security_options = ['--security=true', '--certs=' + certs_path]
+            else:
+                print('CERTS_PATH does NOT specify a directory')
+                exit(1)  # Exit with error
+        else:
+            print('Cannot find CERTS_PATH environment variable')
+            exit(1)  # Exit with error
+
+    # Domain
+    domain = str(os.getpid() % 230)
+    domain_options = ['--domain', domain]
 
     if interprocess is True:
         # Base of test command for publisher agent
@@ -79,33 +119,34 @@ if __name__ == '__main__':
             'publisher',
             '--samples',
             samples,
-            '--xml',
-            xml_file,
             '--export_raw_data',
         ]
         # Base of test command for subscriber agent
         sub_command = [
             executable,
             'subscriber',
-            '--xml',
-            xml_file,
         ]
 
         # Manage security
         if security is True:
             pub_command.append(
-                './measurements_{}_security.csv'.format(
-                    xml_file.split('/')[-1].split('\\')[-1].split('.')[-2]
+                './measurements_interprocess_{}_security.csv'.format(
+                    reliability
                 )
             )
             pub_command += security_options
             sub_command += security_options
         else:
             pub_command.append(
-                './measurements_{}.csv'.format(
-                    xml_file.split('/')[-1].split('\\')[-1].split('.')[-2]
+                './measurements_interprocess_{}.csv'.format(
+                    reliability
                 )
             )
+
+        pub_command += domain_options
+        pub_command += xml_options
+        sub_command += domain_options
+        sub_command += xml_options
 
         print('Publisher command: {}'.format(
             ' '.join(element for element in pub_command)),
@@ -117,8 +158,8 @@ if __name__ == '__main__':
         )
 
         # Spawn processes
-        subscriber = subprocess.Popen(pub_command)
-        publisher = subprocess.Popen(sub_command)
+        publisher = subprocess.Popen(pub_command)
+        subscriber = subprocess.Popen(sub_command)
         # Wait until finish
         subscriber.communicate()
         publisher.communicate()
@@ -134,25 +175,26 @@ if __name__ == '__main__':
             'both',
             '--samples',
             samples,
-            '--xml',
-            xml_file,
             '--export_raw_data',
         ]
 
         # Manage security
         if security is True:
             command.append(
-                './measurements_{}_security.xml'.format(
-                    xml_file.split('/')[-1].split('\\')[-1].split('.')[-2]
+                './measurements_intraprocess_{}_security.csv'.format(
+                    reliability
                 )
             )
             command += security_options
         else:
             command.append(
-                './measurements_{}.xml'.format(
-                    xml_file.split('/')[-1].split('\\')[-1].split('.')[-2]
+                './measurements_intraprocess_{}.csv'.format(
+                    reliability
                 )
             )
+
+        command += domain_options
+        command += xml_options
 
         print('Executable command: {}'.format(
             ' '.join(element for element in command)),
@@ -164,3 +206,4 @@ if __name__ == '__main__':
         # Wait until finish
         both.communicate()
         exit(both.returncode)
+    exit(0)
