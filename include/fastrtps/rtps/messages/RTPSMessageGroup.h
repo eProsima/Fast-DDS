@@ -170,11 +170,25 @@ class Endpoint;
 
         void send();
 
-        void check_and_maybe_flush();
+        void check_and_maybe_flush()
+        {
+            check_and_maybe_flush(sender_.destination_guid_prefix());
+        }
 
-        bool insert_submessage();
+        void check_and_maybe_flush(
+                const GuidPrefix_t& destination_guid_prefix);
 
-        bool add_info_dst_in_buffer(CDRMessage_t* buffer);
+        bool insert_submessage()
+        {
+            return insert_submessage(sender_.destination_guid_prefix());
+        }
+
+        bool insert_submessage(
+                const GuidPrefix_t& destination_guid_prefix);
+
+        bool add_info_dst_in_buffer(
+                CDRMessage_t* buffer,
+                const GuidPrefix_t& destination_guid_prefix);
 
         bool add_info_ts_in_buffer(const Time_t& timestamp);
 

@@ -258,17 +258,19 @@ void RTPSMessageGroup::flush_and_reset()
     current_dst_ = c_GuidPrefix_Unknown;
 }
 
-void RTPSMessageGroup::check_and_maybe_flush()
+void RTPSMessageGroup::check_and_maybe_flush(
+        const GuidPrefix_t& destination_guid_prefix)
 {
     CDRMessage::initCDRMsg(submessage_msg_);
 
     if(sender_.destinations_have_changed())
         flush_and_reset();
 
-    add_info_dst_in_buffer(submessage_msg_);
+    add_info_dst_in_buffer(submessage_msg_, destination_guid_prefix);
 }
 
-bool RTPSMessageGroup::insert_submessage()
+bool RTPSMessageGroup::insert_submessage(
+        const GuidPrefix_t& destination_guid_prefix)
 {
     if(!CDRMessage::appendMsg(full_msg_, submessage_msg_))
     {
@@ -277,7 +279,7 @@ bool RTPSMessageGroup::insert_submessage()
 
         current_dst_ = c_GuidPrefix_Unknown;
 
-        if(!add_info_dst_in_buffer(full_msg_))
+        if(!add_info_dst_in_buffer(full_msg_, destination_guid_prefix))
         {
             logError(RTPS_WRITER,"Cannot add INFO_DST submessage to the CDRMessage. Buffer too small");
             return false;
@@ -293,7 +295,9 @@ bool RTPSMessageGroup::insert_submessage()
     return true;
 }
 
-bool RTPSMessageGroup::add_info_dst_in_buffer(CDRMessage_t* buffer)
+bool RTPSMessageGroup::add_info_dst_in_buffer(
+        CDRMessage_t* buffer,
+        const GuidPrefix_t& destination_guid_prefix)
 {
 #if HAVE_SECURITY
     // Add INFO_SRC when we are at the beginning of the message and RTPS protection is enabled
@@ -304,9 +308,9 @@ bool RTPSMessageGroup::add_info_dst_in_buffer(CDRMessage_t* buffer)
     }
 #endif
 
-    if (current_dst_ != sender_.destination_guid_prefix())
+    if (current_dst_ != destination_guid_prefix)
     {
-        current_dst_ = sender_.destination_guid_prefix();
+        current_dst_ = destination_guid_prefix;
         RTPSMessageCreator::addSubmessageInfoDST(buffer, current_dst_);
     }
 
