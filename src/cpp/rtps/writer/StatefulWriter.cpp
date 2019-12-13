@@ -540,100 +540,92 @@ void StatefulWriter::send_changes_separatedly(
         SequenceNumber_t max_sequence,
         bool& activateHeartbeatPeriod)
 {
-    if (!isAsync())
+    for (ReaderProxy* remoteReader : matched_readers_)
     {
-        for (ReaderProxy* remoteReader : matched_readers_)
+        try
         {
-            try
+            // Specific destination message group
+            RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReader->message_sender());
+            RTPSGapBuilder gaps(group);
+
+            if (!remoteReader->is_local_reader() &&
+                remoteReader->are_there_gaps())
             {
-                // Specific destination message group
-                RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReader->message_sender());
-                RTPSGapBuilder gaps(group);
+                send_heartbeat_nts_(1u, group, true);
+            }
 
-                if (!remoteReader->is_local_reader() &&
-                    remoteReader->are_there_gaps())
-                {
-                    send_heartbeat_nts_(1u, group, true);
-                }
-
-                // Loop all changes
-                bool is_remote_and_reliable = remoteReader->is_remote_and_reliable();
-                SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
-                auto unsent_change_process =
-                        [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
+            // Loop all changes
+            bool is_remote_and_reliable = remoteReader->is_remote_and_reliable();
+            SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
+            auto unsent_change_process =
+                    [&](const SequenceNumber_t& seqNum, const ChangeForReader_t* unsentChange)
+                    {
+                        if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
                         {
-                            if (unsentChange != nullptr && unsentChange->isRelevant() && unsentChange->isValid())
+                            // As we checked we are not async, we know we cannot have fragments
+                            if (remoteReader->is_local_reader())
                             {
-                                // As we checked we are not async, we know we cannot have fragments
-                                if (remoteReader->is_local_reader())
+                                if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
                                 {
-                                    if (intraprocess_delivery(unsentChange->getChange(), remoteReader))
-                                    {
-                                        max_ack_seq = seqNum;
-                                    }
-                                    else
-                                    {
-                                        remoteReader->set_change_to_status(seqNum, UNDERWAY, false);
-                                    }
+                                    max_ack_seq = seqNum;
                                 }
                                 else
                                 {
-                                    if (group.add_data(*(unsentChange->getChange()),
-                                            remoteReader->expects_inline_qos()))
-                                    {
-                                        remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
-
-                                        if (is_remote_and_reliable)
-                                        {
-                                            activateHeartbeatPeriod = true;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        logError(RTPS_WRITER, "Error sending change " << seqNum);
-                                    }
+                                    remoteReader->set_change_to_status(seqNum, UNDERWAY, false);
                                 }
                             }
                             else
                             {
-                                if (remoteReader->is_local_reader())
+                                if (group.add_data(*(unsentChange->getChange()),
+                                        remoteReader->expects_inline_qos()))
                                 {
-                                    if (intraprocess_gap(remoteReader, seqNum))
+                                    remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
+
+                                    if (is_remote_and_reliable)
                                     {
-                                        max_ack_seq = seqNum;
-                                    }
-                                    else
-                                    {
-                                        remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
+                                        activateHeartbeatPeriod = true;
                                     }
                                 }
                                 else
                                 {
-                                    if (unsentChange != nullptr && is_remote_and_reliable)
-                                    {
-                                        gaps.add(seqNum);
-                                    }
+                                    logError(RTPS_WRITER, "Error sending change " << seqNum);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (remoteReader->is_local_reader())
+                            {
+                                if (intraprocess_gap(remoteReader, seqNum))
+                                {
+                                    max_ack_seq = seqNum;
+                                }
+                                else
+                                {
                                     remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
                                 }
-                            } // Relevance
-                        };
-                remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
-                if (remoteReader->is_local_reader() && max_ack_seq != SequenceNumber_t::unknown())
-                {
-                    remoteReader->acked_changes_set(max_ack_seq + 1);
-                }
-            }
-            catch (const RTPSMessageGroup::timeout&)
+                            }
+                            else
+                            {
+                                if (unsentChange != nullptr && is_remote_and_reliable)
+                                {
+                                    gaps.add(seqNum);
+                                }
+                                remoteReader->set_change_to_status(seqNum, UNDERWAY, true);
+                            }
+                        } // Relevance
+                    };
+            remoteReader->for_each_unsent_change(max_sequence, unsent_change_process);
+            if (remoteReader->is_local_reader() && max_ack_seq != SequenceNumber_t::unknown())
             {
-                logError(RTPS_WRITER, "Max blocking time reached");
+                remoteReader->acked_changes_set(max_ack_seq + 1);
             }
-        } // Readers loop
-    }
-    else
-    {
-        // This casuistic is not contemplated yet.
-        assert(0);
-    }
+        }
+        catch (const RTPSMessageGroup::timeout&)
+        {
+            logError(RTPS_WRITER, "Max blocking time reached");
+        }
+    } // Readers loop
 }
 
 void StatefulWriter::send_all_unsent_changes(
