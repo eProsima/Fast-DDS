@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_SHAREDMEM_CHANNEL_RESOURCE_INFO_
-#define _FASTDDS_SHAREDMEM_CHANNEL_RESOURCE_INFO_
+#ifndef _FASTDDS_SHAREDMEM_CHANNEL_RESOURCE_
+#define _FASTDDS_SHAREDMEM_CHANNEL_RESOURCE_
 
 #include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastrtps/transport/ChannelResource.h>
@@ -163,6 +163,8 @@ private:
                 memcpy(receive_buffer, buffer->data(), buffer->size());
                 receive_buffer_size = static_cast<uint32_t>(buffer->size());
 
+                buffer.reset(); // Forzes buffer release
+
                 return (receive_buffer_size > 0);
             }
             else
@@ -195,4 +197,4 @@ private:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_SHAREDMEM_CHANNEL_RESOURCE_INFO_
+#endif // _FASTDDS_SHAREDMEM_CHANNEL_RESOURCE_

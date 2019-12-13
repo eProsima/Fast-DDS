@@ -45,6 +45,8 @@ public:
 	static const uint32_t maximum_message_size = std::numeric_limits<uint32_t>::max();
 	static const uint32_t default_segment_size = s_maximumMessageSize;
 	static const uint32_t default_port_queue_capacity = 64;
+	static const SharedMemTransportDescriptor::OverflowPolicy default_overflow_policy =
+        SharedMemTransportDescriptor::OverflowPolicy::DISCARD;
 
     RTPS_DllAPI SharedMemTransport(const SharedMemTransportDescriptor&);
     void clean();
@@ -222,6 +224,27 @@ private:
 
 	std::shared_ptr<SharedMemManager::Port> find_port(
         uint32_t port_id);
+
+	bool push_wait(
+        const std::shared_ptr<SharedMemManager::Buffer>& buffer,
+		const fastrtps::rtps::Locator_t& remote_locator,
+		const std::chrono::microseconds& timeout);
+
+	bool push_fail(
+        const std::shared_ptr<SharedMemManager::Buffer>& buffer,
+		const fastrtps::rtps::Locator_t& remote_locator,
+		const std::chrono::microseconds& timeout);
+	
+	bool push_discard(
+        const std::shared_ptr<SharedMemManager::Buffer>& buffer,
+		const fastrtps::rtps::Locator_t& remote_locator,
+		const std::chrono::microseconds& timeout);
+
+	std::function<bool(
+			SharedMemTransport&,
+            const std::shared_ptr<SharedMemManager::Buffer>& buffer,
+			const fastrtps::rtps::Locator_t& remote_locator,
+			const std::chrono::microseconds& timeout)> push_lambda_;
 };
 
 } // namespace rtps

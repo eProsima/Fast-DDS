@@ -67,7 +67,6 @@ class SharedMemTests: public ::testing::Test
         void HELPER_SetDescriptorDefaults();
 
         SharedMemTransportDescriptor descriptor;
-        SharedMemTransportDescriptor descriptorOnlyOutput;
         std::unique_ptr<std::thread> senderThread;
         std::unique_ptr<std::thread> receiverThread;
         std::unique_ptr<std::thread> timeoutThread;
@@ -77,7 +76,7 @@ TEST_F(SharedMemTests, locators_with_kind_16_supported)
 {
     // Given
     SharedMemTransport transportUnderTest(descriptor);
-    transportUnderTest.init();
+    ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t supportedLocator;
     supportedLocator.kind = LOCATOR_KIND_SHMEM;
@@ -122,7 +121,7 @@ TEST_F(SharedMemTests, opening_and_closing_input_channel)
 {
     // Given
     SharedMemTransport transportUnderTest(descriptor);
-    transportUnderTest.init();
+    ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t genericInputChannelLocator;
     genericInputChannelLocator.kind = LOCATOR_KIND_SHMEM;
@@ -141,15 +140,15 @@ TEST_F(SharedMemTests, closing_input_channel_leaves_other_channels_unclosed)
 {
     // Given
     SharedMemTransport transportUnderTest(descriptor);
-    transportUnderTest.init();
+    ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t genericInputChannelLocator;
     genericInputChannelLocator.kind = LOCATOR_KIND_SHMEM;
     genericInputChannelLocator.port = g_input_port; // listen port
 
     Locator_t otherInputChannelLocator;
-    genericInputChannelLocator.kind = LOCATOR_KIND_SHMEM;
-    genericInputChannelLocator.port = g_input_port + 1; // listen port
+    otherInputChannelLocator.kind = LOCATOR_KIND_SHMEM;
+    otherInputChannelLocator.port = g_input_port + 1; // listen port
 
     // Then
     ASSERT_TRUE  (transportUnderTest.OpenInputChannel(genericInputChannelLocator, nullptr, 0x00FF));
@@ -166,35 +165,12 @@ TEST_F(SharedMemTests, closing_input_channel_leaves_other_channels_unclosed)
     ASSERT_FALSE (transportUnderTest.IsInputChannelOpen(genericInputChannelLocator));
     ASSERT_FALSE (transportUnderTest.IsInputChannelOpen(otherInputChannelLocator));
 }
-/*
-TEST_F(SharedMemTests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_in_descriptor)
-{
-    // Given
-    SharedMemTransport transportUnderTest(descriptorOnlyOutput);
-    transportUnderTest.init();
 
-    Locator_t genericOutputChannelLocator;
-    genericOutputChannelLocator.kind = LOCATOR_KIND_SHMEM;
-    genericOutputChannelLocator.port = g_output_port;
-    SendResourceList send_resource_list;
-    transportUnderTest.OpenOutputChannel(send_resource_list, genericOutputChannelLocator);
-    ASSERT_FALSE(send_resource_list.empty());
-
-    Locator_t destinationLocator;
-    destinationLocator.kind = LOCATOR_KIND_SHMEM;
-    destinationLocator.port = g_output_port + 1;
-
-    // Then
-    std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
-    ASSERT_FALSE(send_resource_list.at(0)->send(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size(),
-            destinationLocator, std::chrono::microseconds(100)));
-}
-*/
 TEST_F(SharedMemTests, RemoteToMainLocal_returns_input_locator)
 {
     // Given
     SharedMemTransport transportUnderTest(descriptor);
-    transportUnderTest.init();
+    ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t remote_locator;
     remote_locator.kind = LOCATOR_KIND_SHMEM;
@@ -211,7 +187,7 @@ TEST_F(SharedMemTests, transform_remote_locator_returns_input_locator)
 {
     // Given
     SharedMemTransport transportUnderTest(descriptor);
-    transportUnderTest.init();
+    ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t remote_locator;
     remote_locator.kind = LOCATOR_KIND_SHMEM;
@@ -227,7 +203,7 @@ TEST_F(SharedMemTests, all_shared_mem_locators_are_local)
 {
     // Given
     SharedMemTransport transportUnderTest(descriptor);
-    transportUnderTest.init();
+    ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t shared_mem_locator;
     shared_mem_locator.kind = LOCATOR_KIND_SHMEM;
@@ -241,7 +217,7 @@ TEST_F(SharedMemTests, match_if_port_AND_address_matches)
 {
     // Given
     SharedMemTransport transportUnderTest(descriptor);
-    transportUnderTest.init();
+    ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t locatorAlpha;
     locatorAlpha.kind = LOCATOR_KIND_SHMEM;
@@ -259,40 +235,10 @@ TEST_F(SharedMemTests, match_if_port_AND_address_matches)
     ASSERT_FALSE(transportUnderTest.DoInputLocatorsMatch(locatorAlpha, locatorBeta));
 }
 
-TEST_F(SharedMemTests, send_to_wrong_port)
-{
-    //Given
-    SharedMemTransport transportUnderTest(descriptor);
-    transportUnderTest.init();
-
-    Locator_t genericOutputChannelLocator;
-    genericOutputChannelLocator.kind = LOCATOR_KIND_SHMEM;
-    genericOutputChannelLocator.port = g_output_port;
-    SendResourceList send_resource_list;
-    transportUnderTest.OpenOutputChannel(send_resource_list, genericOutputChannelLocator);
-    ASSERT_FALSE(send_resource_list.empty());
-
-    //Then
-    Locator_t wrongLocator;
-    wrongLocator.kind = LOCATOR_KIND_SHMEM;
-    wrongLocator.port = g_output_port+1;
-    std::vector<octet> message = { 'H','e','l','l','o' };
-
-    LocatorList_t locator_list;
-    locator_list.push_back(wrongLocator);
-
-    Locators locators_begin(locator_list.begin());
-    Locators locators_end(locator_list.end());
-
-    ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), &locators_begin,
-                &locators_end, (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
-}
-
-#ifndef __APPLE__
 TEST_F(SharedMemTests, send_and_receive_between_ports)
 {
     SharedMemTransport transportUnderTest(descriptor);
-    transportUnderTest.init();
+    ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t unicastLocator;
     unicastLocator.kind = LOCATOR_KIND_SHMEM;
@@ -335,62 +281,282 @@ TEST_F(SharedMemTests, send_and_receive_between_ports)
     sem.wait();
     senderThread->join();
 }
-/*
-TEST_F(SharedMemTests, send_and_receive_between_allowed_sockets_using_unicast_to_multicast)
-{
-    std::vector<IPFinder::info_IP> interfaces;
-    GetIP4s(interfaces);
 
-    for(const auto& interface : interfaces)
-    {
-        descriptor.interfaceWhiteList.push_back(interface.name);
-    }
-    SharedMemTransport transportUnderTest(descriptor);
-    transportUnderTest.init();
+TEST_F(SharedMemTests, port_and_segment_overflow_fail)
+{
+    SharedMemTransportDescriptor my_descriptor;
+
+    my_descriptor.port_overflow_policy = SharedMemTransportDescriptor::OverflowPolicy::FAIL;
+    my_descriptor.segment_overflow_policy = SharedMemTransportDescriptor::OverflowPolicy::FAIL;
+    my_descriptor.segment_size = 16;
+    my_descriptor.port_queue_capacity = 4;
+
+    SharedMemTransport transportUnderTest(my_descriptor);
+    ASSERT_TRUE(transportUnderTest.init());
 
     Locator_t unicastLocator;
-    unicastLocator.port = g_default_port;
     unicastLocator.kind = LOCATOR_KIND_SHMEM;
-    IPLocator::setIPv4(unicastLocator, "239.255.1.4");
-
-    Locator_t outputChannelLocator;
-    outputChannelLocator.port = g_default_port + 1;
-    outputChannelLocator.kind = LOCATOR_KIND_SHMEM;
-    IPLocator::setIPv4(outputChannelLocator, interfaces.at(0).name);
+    unicastLocator.port = g_default_port;
 
     MockReceiverResource receiver(transportUnderTest, unicastLocator);
     MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
 
-    SendResourceList send_resource_list;
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator)); // Includes loopback
-    ASSERT_FALSE(send_resource_list.empty());
-    ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
-    octet message[5] = { 'H','e','l','l','o' };
-
     Semaphore sem;
+    bool is_first_message_received = false;
     std::function<void()> recCallback = [&]()
     {
-        EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
-        sem.post();
+        is_first_message_received = true;
+        sem.wait();
     };
-
     msg_recv->setCallback(recCallback);
 
-    auto sendThreadFunction = [&]()
-    {
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, unicastLocator, std::chrono::microseconds(100)));
-    };
+    Locator_t outputChannelLocator;
+    outputChannelLocator.kind = LOCATOR_KIND_SHMEM;
+    outputChannelLocator.port = g_default_port + 1;
 
-    senderThread.reset(new std::thread(sendThreadFunction));
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    senderThread->join();
-    sem.wait();
+    SendResourceList send_resource_list;
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
+    ASSERT_FALSE(send_resource_list.empty());
+    octet message[4] = { 'H','e','l','l'};
+
+    LocatorList_t locator_list;
+    locator_list.push_back(unicastLocator);
+
+    {
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+        // Internally the segment is bigger than "my_descriptor.segment_size" so a bigger buffer is tried 
+        // to cause segment overflow
+        octet message[4096] = { 'H','e','l','l'};
+
+        EXPECT_FALSE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+    }
+
+    // At least 4 msgs of 4 bytes are allowed
+    for(int i=0;i<4;i++)
+    {
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+
+        // At least 4 msgs of 4 bytes are allowed
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+    }
+
+    // Wait until the receiver get the first message
+    while(!is_first_message_received)
+    {
+        std::this_thread::yield();
+    }
+
+    // The receiver has poped a message so now 3 messages are in the
+    // port's queue
+
+    // Push a 4th should go well
+    {
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+    } 
+
+    // Push a 5th will cause port overflow
+    {
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+
+        EXPECT_FALSE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+    } 
+
+    sem.disable();
+        
 }
-*/
-#endif
+
+TEST_F(SharedMemTests, port_and_segment_overflow_discard)
+{
+    SharedMemTransportDescriptor my_descriptor;
+
+    my_descriptor.port_overflow_policy = SharedMemTransportDescriptor::OverflowPolicy::DISCARD;
+    my_descriptor.segment_overflow_policy = SharedMemTransportDescriptor::OverflowPolicy::DISCARD;
+    my_descriptor.segment_size = 16;
+    my_descriptor.port_queue_capacity = 4;
+
+    SharedMemTransport transportUnderTest(my_descriptor);
+    ASSERT_TRUE(transportUnderTest.init());
+
+    Locator_t unicastLocator;
+    unicastLocator.kind = LOCATOR_KIND_SHMEM;
+    unicastLocator.port = g_default_port;
+
+    MockReceiverResource receiver(transportUnderTest, unicastLocator);
+    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+
+    Semaphore sem;
+    bool is_first_message_received = false;
+    std::function<void()> recCallback = [&]()
+    {
+        is_first_message_received = true;
+        sem.wait();
+    };
+    msg_recv->setCallback(recCallback);
+
+    Locator_t outputChannelLocator;
+    outputChannelLocator.kind = LOCATOR_KIND_SHMEM;
+    outputChannelLocator.port = g_default_port + 1;
+
+    SendResourceList send_resource_list;
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
+    ASSERT_FALSE(send_resource_list.empty());
+    octet message[4] = { 'H','e','l','l'};
+
+    LocatorList_t locator_list;
+    locator_list.push_back(unicastLocator);
+
+    {
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+        // Internally the segment is bigger than "my_descriptor.segment_size" so a bigger buffer is tried 
+        // to cause segment overflow
+        octet message[4096] = { 'H','e','l','l'};
+
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+    }
+
+    // At least 4 msgs of 4 bytes are allowed
+    for(int i=0;i<4;i++)
+    {
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+
+        // At least 4 msgs of 4 bytes are allowed
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+    }
+
+    // Wait until the receiver get the first message
+    while(!is_first_message_received)
+    {
+        std::this_thread::yield();
+    }
+
+    // The receiver has poped a message so now 3 messages are in the
+    // port's queue
+
+    // Push a 4th should go well
+    {
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+    } 
+
+    // Push a 5th will not cause overflow
+    {
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+    } 
+
+    sem.disable();
+}
+
+TEST_F(SharedMemTests, port_overflow_wait)
+{
+    SharedMemTransportDescriptor my_descriptor;
+
+    my_descriptor.port_overflow_policy = SharedMemTransportDescriptor::OverflowPolicy::WAIT;
+    // segment overflow WAIT is not supported
+    my_descriptor.segment_overflow_policy = SharedMemTransportDescriptor::OverflowPolicy::FAIL;
+    my_descriptor.segment_size = 16;
+    my_descriptor.port_queue_capacity = 4;
+
+    SharedMemTransport transportUnderTest(my_descriptor);
+    ASSERT_TRUE(transportUnderTest.init());
+
+    Locator_t unicastLocator;
+    unicastLocator.kind = LOCATOR_KIND_SHMEM;
+    unicastLocator.port = g_default_port;
+
+    MockReceiverResource receiver(transportUnderTest, unicastLocator);
+    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+
+    Semaphore sem;
+    bool is_first_message_received = false;
+    std::function<void()> recCallback = [&]()
+    {
+        is_first_message_received = true;
+        sem.wait();
+    };
+    msg_recv->setCallback(recCallback);
+
+    Locator_t outputChannelLocator;
+    outputChannelLocator.kind = LOCATOR_KIND_SHMEM;
+    outputChannelLocator.port = g_default_port + 1;
+
+    SendResourceList send_resource_list;
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
+    ASSERT_FALSE(send_resource_list.empty());
+    octet message[4] = { 'H','e','l','l'};
+
+    LocatorList_t locator_list;
+    locator_list.push_back(unicastLocator);
+
+    // At least 4 msgs of 4 bytes are allowed
+    for(int i=0;i<4;i++)
+    {
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+
+        // At least 4 msgs of 4 bytes are allowed
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+    }
+
+    // Wait until the receiver get the first message
+    while(!is_first_message_received)
+    {
+        std::this_thread::yield();
+    }
+
+    // The receiver has poped a message so now 3 messages are in the
+    // port's queue
+
+    // Push a 4th should go well
+    {
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+
+        EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+            (std::chrono::steady_clock::now()+ std::chrono::microseconds(100))));
+    } 
+
+    // Push a 5th will wait 1(s) and then fail
+    {
+        Locators locators_begin(locator_list.begin());
+        Locators locators_end(locator_list.end());
+
+        auto t1 = std::chrono::high_resolution_clock::now();
+
+        EXPECT_FALSE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+            (std::chrono::steady_clock::now()+ std::chrono::seconds(1))));
+
+        EXPECT_TRUE(std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::high_resolution_clock::now() - t1).count() >= 1000);
+    } 
+
+    sem.disable();
+}
 
 void SharedMemTests::HELPER_SetDescriptorDefaults()
 {
+    
 }
 
 int main(int argc, char **argv)

@@ -71,7 +71,7 @@ public:
 
     class Port
     {
-private:
+    private:
 
         std::unique_ptr<SharedMemSegment> port_segment_;
 
@@ -79,7 +79,7 @@ private:
 
         std::unique_ptr<MultiProducerConsumerRingBuffer<BufferDescriptor> > buffer_;
 
-public:
+    public:
 
         Port(
                 std::unique_ptr<SharedMemSegment>&& port_segment,
@@ -109,21 +109,23 @@ public:
             }
         }
 
-        bool push(
-                const BufferDescriptor& buffer_descriptor)
+        /**
+         * Enqueue a buffer in the port.
+         * If the port queue is full, blocks until push can be done.
+         * @param[out] listeners_active false if no active listeners => buffer not enqueued
+         */
+        void push(
+                const BufferDescriptor& buffer_descriptor,
+                bool* listeners_active)
         {
-            bool ret;
-
             do
             {
                 std::unique_lock<SharedMemSegment::mutex> lock_full(node_->full_cv_mutex);
                 std::unique_lock<SharedMemSegment::mutex> lock_empty(node_->empty_cv_mutex);
-                //boost::interprocess::scoped_lock<SharedMemSegment::mutex> lock_full(node_->full_cv_mutex);
-                //boost::interprocess::scoped_lock<SharedMemSegment::mutex> lock_empty(node_->empty_cv_mutex);
-
+            
                 try
                 {
-                    ret = buffer_->push(buffer_descriptor);
+                    *listeners_active = buffer_->push(buffer_descriptor);
 
                     lock_empty.unlock();
                     node_->empty_cv.notify_all();
@@ -136,8 +138,75 @@ public:
                     node_->full_cv.wait(lock_full);
                 }
             } while (1);
+        }
 
-            return ret;
+        /**
+         * Enqueue a buffer in the port.
+         * If the port queue is full, blocks until push can be done or timeout is reached
+         * @param[out] listeners_active false if no active listeners => buffer not enqueued
+         * @param[in] timeout max wait timeout in microseconds
+         * @throw std::exception& if timeout is reached
+         */
+        void timed_push(
+                const BufferDescriptor& buffer_descriptor,
+                bool* listeners_active,
+                const std::chrono::microseconds& timeout)
+        {
+            do
+            {
+                std::unique_lock<SharedMemSegment::mutex> lock_full(node_->full_cv_mutex);
+                std::unique_lock<SharedMemSegment::mutex> lock_empty(node_->empty_cv_mutex);
+            
+                try
+                {
+                    *listeners_active = buffer_->push(buffer_descriptor);
+
+                    lock_empty.unlock();
+                    node_->empty_cv.notify_all();
+
+                    break;
+                }
+                catch (const std::exception&)
+                {
+                    lock_empty.unlock();
+                    // TODO(Adolfo): Could timed_wait have a problem if clock time is changed while waiting?
+                    if(!node_->full_cv.timed_wait(
+                        lock_full, 
+                        boost::get_system_time() + boost::posix_time::microseconds(timeout.count())))
+                    {
+                        throw std::runtime_error("Timeout");
+                    }
+                }
+            } while (1);
+        }
+
+        /**
+         * Try to enqueue a buffer in the port.
+         * If the port queue is full returns inmediatelly with false value.
+         * @param[out] listeners_active false if no active listeners => buffer not enqueued
+         */
+        bool try_push(
+                const BufferDescriptor& buffer_descriptor,
+                bool* listeners_active)
+        {
+            std::unique_lock<SharedMemSegment::mutex> lock_full(node_->full_cv_mutex);
+            std::unique_lock<SharedMemSegment::mutex> lock_empty(node_->empty_cv_mutex);
+            
+            try
+            {
+                *listeners_active = buffer_->push(buffer_descriptor);
+
+                lock_empty.unlock();
+                node_->empty_cv.notify_all();
+
+                return true;
+            }
+            catch (const std::exception&)
+            {
+                lock_empty.unlock();
+            }
+
+            return false;
         }
 
         /**

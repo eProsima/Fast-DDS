@@ -31,8 +31,10 @@ public:
 
     SharedMemManager(
             const std::string& domain_name)
-        : global_segment_(domain_name) // TODO: How to do this?
+        : global_segment_(domain_name)
     {
+        per_allocation_extra_size_ = 
+            SharedMemSegment::compute_per_allocation_extra_size(std::alignment_of<BufferNode>::value);
     }
 
     struct BufferNode
@@ -148,8 +150,10 @@ private:
                 buffer_node->data_size = size;
                 buffer_node->ref_count.store(0, std::memory_order_relaxed);
 
+                // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
                 new_buffer = std::make_shared<SharedMemBuffer>(segment_, segment_id_, buffer_node);
 
+                // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
                 allocated_nodes_.push_back(buffer_node);
             }
             catch (const std::exception&)
@@ -244,6 +248,8 @@ private:
             auto segment = shared_mem_manager_.find_segment(buffer_descriptor.source_segment_id);
             auto buffer_node =
                     static_cast<BufferNode*>(segment->get_address_from_offset(buffer_descriptor.buffer_node_offset));
+
+            // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
             buffer_ref = std::make_shared<SharedMemBuffer>(segment, buffer_descriptor.source_segment_id, buffer_node);
 
             // If the cell has been read by all listeners
@@ -292,6 +298,10 @@ private:
         {
         }
 
+        /**
+         * Enqueue a buffer in the port.
+         * If the port queue is full, blocks until push can be done
+         */
         void push(
                 const std::shared_ptr<Buffer>& buffer)
         {
@@ -300,15 +310,97 @@ private:
             SharedMemBuffer* shared_mem_buffer = std::static_pointer_cast<SharedMemBuffer>(buffer).get();
             shared_mem_buffer->increase_ref();
 
-            if (!global_port_->push({shared_mem_buffer->segment_id(), shared_mem_buffer->node_offset()}))
+            bool are_listeners_active;
+
+            try
+            {
+                global_port_->push({shared_mem_buffer->segment_id(), shared_mem_buffer->node_offset()}, 
+                        &are_listeners_active);
+
+                if (!are_listeners_active)
+                {
+                    shared_mem_buffer->decrease_ref();
+                }
+            }
+            catch(std::exception&)
             {
                 shared_mem_buffer->decrease_ref();
+                throw;
             }
+        }
+
+        /**
+         * Try to enqueue a buffer in the port.
+         * If the port queue is full returns inmediatelly with false value.
+         */
+        bool try_push(
+            const std::shared_ptr<Buffer>& buffer)
+        {
+            assert(std::dynamic_pointer_cast<SharedMemBuffer>(buffer));
+
+            SharedMemBuffer* shared_mem_buffer = std::static_pointer_cast<SharedMemBuffer>(buffer).get();
+            shared_mem_buffer->increase_ref();
+
+            bool ret;
+            bool are_listeners_active;
+
+            try
+            {
+                ret = global_port_->try_push({shared_mem_buffer->segment_id(), shared_mem_buffer->node_offset()}, 
+                        &are_listeners_active);
+
+                if (!are_listeners_active)
+                {
+                    shared_mem_buffer->decrease_ref();
+                }
+            }
+            catch(std::exception&)
+            {
+                shared_mem_buffer->decrease_ref();
+                throw;
+            }
+
+            return ret;
         }
 
         std::shared_ptr<Listener> create_listener()
         {
             return std::make_shared<Listener>(shared_mem_manager_, global_port_);
+        }
+
+        /**
+         * Try to enqueue a buffer in the port.
+         * If the port queue is full blocks until push can be done or timeout is reached
+         * @param[in] timeout max wait timeout in microseconds
+         * @throw std::exception& if timeout is reached
+         */
+        void timed_push(
+            const std::shared_ptr<Buffer>& buffer,
+            const std::chrono::microseconds& timeout)
+        {
+            assert(std::dynamic_pointer_cast<SharedMemBuffer>(buffer));
+
+            SharedMemBuffer* shared_mem_buffer = std::static_pointer_cast<SharedMemBuffer>(buffer).get();
+            shared_mem_buffer->increase_ref();
+
+            bool are_listeners_active;
+
+            try
+            {
+                global_port_->timed_push({shared_mem_buffer->segment_id(), shared_mem_buffer->node_offset()}, 
+                        &are_listeners_active,
+                        timeout);
+
+                if (!are_listeners_active)
+                {
+                    shared_mem_buffer->decrease_ref();
+                }
+            }
+            catch(std::exception&)
+            {
+                shared_mem_buffer->decrease_ref();
+                throw;
+            }
         }
 
 private:
@@ -319,10 +411,21 @@ private:
 
     }; // Port
 
+    /**
+     * Creates a shared-memory segment
+     * @param size size of the segment
+     * @param max_buffers maximum, at a time, allocated buffers
+     * @return A shared_ptr to the segment
+     */
     std::shared_ptr<Segment> create_segment(
-            uint32_t size)
+            uint32_t size, uint32_t max_allocations)
     {
-        return std::make_shared<Segment>(size);
+        // Every buffer allocated implies two internal allocations, node and payload.
+        // Every internal allocation consumes 'per_allocation_extra_size_' bytes
+        auto allocation_extra_size = max_allocations * 
+            ((sizeof(BufferNode) + per_allocation_extra_size_) + per_allocation_extra_size_);
+
+        return std::make_shared<Segment>(size + allocation_extra_size);
     }
 
     std::shared_ptr<Port> open_port(
@@ -333,6 +436,8 @@ private:
     }
 
 private:
+
+    uint32_t per_allocation_extra_size_;
 
     std::unordered_map<SharedMemSegment::Id::type, std::shared_ptr<SharedMemSegment>,
             boost::hash<SharedMemSegment::Id::type> > ids_segments_;
@@ -347,7 +452,7 @@ private:
 
         std::shared_ptr<SharedMemSegment> segment;
 
-        // TODO: Garbage collector for opened but unused segments????
+        // TODO (Adolfo): Garbage collector for opened but unused segments????
 
         try
         {

@@ -56,6 +56,8 @@ SharedMemTransportDescriptor::SharedMemTransportDescriptor()
     : TransportDescriptorInterface(SharedMemTransport::maximum_message_size, s_maximumInitialPeersRange)
 	, segment_size(SharedMemTransport::default_segment_size)
 	, port_queue_capacity(SharedMemTransport::default_port_queue_capacity)
+	, port_overflow_policy(SharedMemTransport::default_overflow_policy)
+	, segment_overflow_policy(SharedMemTransport::default_overflow_policy)
 {
 }
 
@@ -63,7 +65,9 @@ SharedMemTransportDescriptor::SharedMemTransportDescriptor(
         const SharedMemTransportDescriptor& t)
     : TransportDescriptorInterface(t)
 	, segment_size(t.segment_size)
-	, port_queue_capacity(SharedMemTransport::default_port_queue_capacity)
+	, port_queue_capacity(t.port_queue_capacity)
+	, port_overflow_policy(t.port_overflow_policy)
+	, segment_overflow_policy(t.segment_overflow_policy)
 {
 }
 
@@ -205,27 +209,23 @@ void SharedMemTransport::clean()
 bool SharedMemTransport::CloseInputChannel(
 		const Locator_t& locator)
 {
-	std::vector<SharedMemChannelResource*> channel_resources;
+	std::lock_guard<std::recursive_mutex> lock(input_channels_mutex_);
 
+	for (auto it = input_channels_.begin(); it != input_channels_.end(); it++)
 	{
-		std::lock_guard<std::recursive_mutex> lock(input_channels_mutex_);
+		if( (*it)->locator() == locator)
+		{
+			(*it)->disable();
+			(*it)->release();
+			(*it)->clear();
+			delete (*it);
+			input_channels_.erase(it);
 
-		if (!IsInputChannelOpen(locator))
-			return false;
-
-		channel_resources = std::move(input_channels_);
+			return true;
+		}
 	}
 
-	// We now disable and release the channels
-	for (SharedMemChannelResource* channel : channel_resources)
-	{
-		channel->disable();
-		channel->release();
-		channel->clear();
-		delete channel;
-	}
-
-	return true;
+	return false;
 }
 
 bool SharedMemTransport::DoInputLocatorsMatch(
@@ -239,8 +239,35 @@ bool SharedMemTransport::init()
 {
 	try
 	{
+		switch (configuration_.port_overflow_policy)
+		{
+		case SharedMemTransportDescriptor::OverflowPolicy::DISCARD:
+			push_lambda_ = &SharedMemTransport::push_discard;
+			break;
+		case SharedMemTransportDescriptor::OverflowPolicy::FAIL:
+			push_lambda_ = &SharedMemTransport::push_fail;
+			break;
+		case SharedMemTransportDescriptor::OverflowPolicy::WAIT:
+			push_lambda_ = &SharedMemTransport::push_wait;
+			break;
+		default:
+			throw std::runtime_error("unknown port_overflow_policy");
+		}
+	
+		switch (configuration_.segment_overflow_policy)
+		{
+		case SharedMemTransportDescriptor::OverflowPolicy::DISCARD:
+		case SharedMemTransportDescriptor::OverflowPolicy::FAIL:
+			break;
+		case SharedMemTransportDescriptor::OverflowPolicy::WAIT:
+			throw std::runtime_error("segment_overflow_policy WAIT not implemented");
+			break;
+		default:
+			throw std::runtime_error("unknown port_overflow_policy");
+		}
+
 		shared_mem_manager_ = std::make_shared<SharedMemManager>(SHMEM_MANAGER_DOMAIN);
-		shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size);
+		shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size, configuration_.port_queue_capacity);
 	}
 	catch (std::exception& e)
 	{
@@ -272,7 +299,8 @@ SharedMemChannelResource* SharedMemTransport::CreateInputChannelResource(
 		uint32_t maxMsgSize,
 		TransportReceiverInterface* receiver)
 {
-	return new SharedMemChannelResource(this, shared_mem_manager_->open_port(locator.port,1)->create_listener(), maxMsgSize, locator, receiver);
+	return new SharedMemChannelResource(this, shared_mem_manager_->open_port(locator.port,configuration_.port_queue_capacity)
+			->create_listener(), maxMsgSize, locator, receiver);
 }
 
 bool SharedMemTransport::OpenOutputChannel(
@@ -344,8 +372,10 @@ std::shared_ptr<SharedMemManager::Buffer> SharedMemTransport::copy_to_shared_buf
         const octet* send_buffer,
         uint32_t send_buffer_size)
 {
-	std::shared_ptr<SharedMemManager::Buffer> shared_buffer = shared_mem_segment_->alloc_buffer(send_buffer_size);	
+	assert(shared_mem_segment_);
 
+	std::shared_ptr<SharedMemManager::Buffer> shared_buffer = shared_mem_segment_->alloc_buffer(send_buffer_size);	
+	
 	memcpy(shared_buffer->data(), send_buffer, send_buffer_size);
 
 	return shared_buffer;
@@ -362,10 +392,10 @@ bool SharedMemTransport::send(
 
     bool ret = true;
 
+	std::shared_ptr<SharedMemManager::Buffer> shared_buffer;
+
 	try
 	{
-		std::shared_ptr<SharedMemManager::Buffer> shared_buffer;
-		
 		shared_buffer = copy_to_shared_buffer(send_buffer, send_buffer_size);
 
 		while (it != *destination_locators_end)
@@ -386,14 +416,22 @@ bool SharedMemTransport::send(
 				break;
 			}
 		}
-
 	}
 	catch(const std::exception& e)
 	{
 		logWarning(RTPS_MSG_OUT, e.what());
-		ret = false;
+
+		// Segment overflow with discard policy doesn't return error.
+		if(!shared_buffer && configuration_.segment_overflow_policy == SharedMemTransportDescriptor::OverflowPolicy::DISCARD)
+		{
+			ret = true;
+		}
+		else
+		{
+			ret = false;	
+		}
 	}
-	
+
     return ret;
 }
 
@@ -413,29 +451,85 @@ std::shared_ptr<SharedMemManager::Port> SharedMemTransport::find_port(uint32_t p
 	}
 }
 
-bool SharedMemTransport::send(
-		const std::shared_ptr<SharedMemManager::Buffer>& buffer,
-		const Locator_t& remote_locator,
-		const std::chrono::microseconds& timeout)
+bool SharedMemTransport::push_wait(
+        const std::shared_ptr<SharedMemManager::Buffer>& buffer,
+        const Locator_t& remote_locator,
+        const std::chrono::microseconds& timeout)
 {
-	if (!IsLocatorSupported(remote_locator) /*|| buffer->size > configuration()->sendBufferSize*/)
-	{
-		return false;
-	}
-	
+	(void)timeout;
+
 	try
 	{
-		find_port(remote_locator.port)->push(buffer);
+		find_port(remote_locator.port)->timed_push(buffer, timeout);
 	}
 	catch (const std::exception& error)
 	{
 		logWarning(RTPS_MSG_OUT, error.what());
 		return false;
+	}	
+
+	return true;
+}
+
+
+bool SharedMemTransport::push_discard(
+        const std::shared_ptr<SharedMemManager::Buffer>& buffer,
+        const Locator_t& remote_locator,
+        const std::chrono::microseconds& timeout)
+{
+	(void)timeout;
+
+	try
+	{
+		find_port(remote_locator.port)->try_push(buffer);
+	}
+	catch (const std::exception& error)
+	{
+		logWarning(RTPS_MSG_OUT, error.what());
+		return false;
+	}	
+
+	return true;
+}
+
+bool SharedMemTransport::push_fail(
+        const std::shared_ptr<SharedMemManager::Buffer>& buffer,
+        const Locator_t& remote_locator,
+        const std::chrono::microseconds& timeout)
+{
+	(void)timeout;
+
+	try
+	{
+		return find_port(remote_locator.port)->try_push(buffer);
+	}
+	catch (const std::exception& error)
+	{
+		logWarning(RTPS_MSG_OUT, error.what());
+		return false;
+	}	
+
+	return true;
+}
+
+bool SharedMemTransport::send(
+		const std::shared_ptr<SharedMemManager::Buffer>& buffer,
+		const Locator_t& remote_locator,
+		const std::chrono::microseconds& timeout)
+{
+	if (!IsLocatorSupported(remote_locator))
+	{
+		return false;
+	}
+
+	if(!push_lambda_(*this, buffer, remote_locator, timeout))
+	{
+		return false;
 	}
 
 	logInfo(RTPS_MSG_OUT, "SharedMemTransport: " << buffer->size() << " bytes to port " << remote_locator.port);
 
-	return true;
+	return true;		
 }
 
 /**

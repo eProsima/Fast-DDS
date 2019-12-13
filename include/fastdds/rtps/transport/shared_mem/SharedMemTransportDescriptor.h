@@ -40,7 +40,11 @@ typedef struct SharedMemTransportDescriptor : public TransportDescriptorInterfac
 
 	uint32_t segment_size;
 	uint32_t port_queue_capacity;
-	int port_overflow_policy;
+
+	enum class OverflowPolicy { DISCARD, FAIL, WAIT };
+
+	OverflowPolicy port_overflow_policy;
+	OverflowPolicy segment_overflow_policy;
 }SharedMemTransportDescriptor;
 
 } // namespace rtps
