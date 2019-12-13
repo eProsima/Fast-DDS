@@ -57,10 +57,12 @@ bool BuiltinSubscriber::delete_instance()
     return false;
 }
 
+/*** PARTICIPANT BUILTIN TOPIC DATA ***/
+
 ParticipantBuiltinTopicData* BuiltinSubscriber::get_participant_data(
         const fastrtps::rtps::InstanceHandle_t& participant_handle)
 {
-    std::lock_guard<std::mutex> lock(g_mtx);
+    std::lock_guard<std::mutex> lock(part_mutex_);
     auto it = participant_data_.find(participant_handle);
     if (it != participant_data_.end())
     {
@@ -77,7 +79,7 @@ void BuiltinSubscriber::add_participant_data(
     data.key(BuiltinTopicKey(fastrtps::rtps::iHandle2GUID(participant_handle)));
     data.user_data(pqos.user_data);
 
-    std::lock_guard<std::mutex> lock(g_mtx);
+    std::lock_guard<std::mutex> lock(part_mutex_);
     participant_data_[participant_handle] = data;
 }
 
@@ -89,14 +91,14 @@ void BuiltinSubscriber::add_participant_data(
     data.key(BuiltinTopicKey(fastrtps::rtps::iHandle2GUID(participant_handle)));
     data.user_data(user_data);
 
-    std::lock_guard<std::mutex> lock(g_mtx);
+    std::lock_guard<std::mutex> lock(part_mutex_);
     participant_data_[participant_handle] = data;
 }
 
 void BuiltinSubscriber::delete_participant_data(
         const fastrtps::rtps::InstanceHandle_t& participant_handle)
 {
-    std::lock_guard<std::mutex> lock(g_mtx);
+    std::lock_guard<std::mutex> lock(part_mutex_);
     auto it = participant_data_.find(participant_handle);
     if (it != participant_data_.end())
     {
@@ -104,10 +106,12 @@ void BuiltinSubscriber::delete_participant_data(
     }
 }
 
+/*** TOPIC BUILTIN TOPIC DATA ***/
+
 TopicBuiltinTopicData* BuiltinSubscriber::get_topic_data(
         const fastrtps::rtps::InstanceHandle_t& topic_handle)
 {
-    std::lock_guard<std::mutex> lock(g_mtx);
+    std::lock_guard<std::mutex> lock(topic_mutex_);
     auto it = topic_data_.find(topic_handle);
     if (it != topic_data_.end())
     {
@@ -128,14 +132,14 @@ void BuiltinSubscriber::add_topic_data(
     data.type_name(type_name);
     data.fill_with_topic_qos(tqos);
 
-    std::lock_guard<std::mutex> lock(g_mtx);
+    std::lock_guard<std::mutex> lock(topic_mutex_);
     topic_data_[topic_handle] = data;
 }
 
 void BuiltinSubscriber::delete_topic_data(
         const fastrtps::rtps::InstanceHandle_t& topic_handle)
 {
-    std::lock_guard<std::mutex> lock(g_mtx);
+    std::lock_guard<std::mutex> lock(topic_mutex_);
     auto it = topic_data_.find(topic_handle);
     if (it != topic_data_.end())
     {
@@ -143,10 +147,12 @@ void BuiltinSubscriber::delete_topic_data(
     }
 }
 
+/*** PUBLICATION BUILTIN TOPIC DATA ***/
+
 PublicationBuiltinTopicData* BuiltinSubscriber::get_publication_data(
         const fastrtps::rtps::InstanceHandle_t& writer_handle)
 {
-    std::lock_guard<std::mutex> lock(g_mtx);
+    std::lock_guard<std::mutex> lock(pub_mutex_);
     auto it = publication_data_.find(writer_handle);
     if (it != publication_data_.end())
     {
@@ -171,7 +177,7 @@ void BuiltinSubscriber::add_publication_data(
     data.type_name(type_name);
     data.fill_with_publication_qos(pqos, dwqos);
 
-    std::lock_guard<std::mutex> lock(g_mtx);
+    std::lock_guard<std::mutex> lock(pub_mutex_);
     publication_data_[writer_handle] = data;
 }
 
@@ -179,14 +185,14 @@ void BuiltinSubscriber::add_publication_data(
         const fastrtps::rtps::InstanceHandle_t& writer_handle,
         const PublicationBuiltinTopicData& data)
 {
-    std::lock_guard<std::mutex> lock(g_mtx);
+    std::lock_guard<std::mutex> lock(pub_mutex_);
     publication_data_[writer_handle] = data;
 }
 
 void BuiltinSubscriber::delete_publication_data(
         const fastrtps::rtps::InstanceHandle_t& writer_handle)
 {
-    std::lock_guard<std::mutex> lock(g_mtx);
+    std::lock_guard<std::mutex> lock(pub_mutex_);
     auto it = publication_data_.find(writer_handle);
     if (it != publication_data_.end())
     {
@@ -194,6 +200,57 @@ void BuiltinSubscriber::delete_publication_data(
     }
 }
 
+/*** SUBSCRIPTION BUILTIN TOPIC DATA ***/
+
+SubscriptionBuiltinTopicData* BuiltinSubscriber::get_subscription_data(
+        const fastrtps::rtps::InstanceHandle_t& reader_handle)
+{
+    std::lock_guard<std::mutex> lock(sub_mutex_);
+    auto it = subscription_data_.find(reader_handle);
+    if (it != subscription_data_.end())
+    {
+        return &it->second;
+    }
+    return nullptr;
+}
+
+void BuiltinSubscriber::add_subscription_data(
+        const fastrtps::rtps::InstanceHandle_t& reader_handle,
+        const fastrtps::rtps::InstanceHandle_t& participant_handle,
+        std::string topic_name,
+        std::string type_name,
+        const SubscriberQos& sqos,
+        const DataReaderQos& drqos)
+{
+    SubscriptionBuiltinTopicData data;
+    data.key(BuiltinTopicKey(fastrtps::rtps::iHandle2GUID(reader_handle)));
+    data.participant_key(BuiltinTopicKey(fastrtps::rtps::iHandle2GUID(participant_handle)));
+    data.name(topic_name);
+    data.type_name(type_name);
+    data.fill_with_subscription_qos(sqos, drqos);
+
+    std::lock_guard<std::mutex> lock(sub_mutex_);
+    subscription_data_[reader_handle] = data;
+}
+
+void BuiltinSubscriber::add_subscription_data(
+        const fastrtps::rtps::InstanceHandle_t& reader_handle,
+        const SubscriptionBuiltinTopicData& data)
+{
+    std::lock_guard<std::mutex> lock(sub_mutex_);
+    subscription_data_[reader_handle] = data;
+}
+
+void BuiltinSubscriber::delete_subscription_data(
+        const fastrtps::rtps::InstanceHandle_t& reader_handle)
+{
+    std::lock_guard<std::mutex> lock(sub_mutex_);
+    auto it = subscription_data_.find(reader_handle);
+    if (it != subscription_data_.end())
+    {
+        subscription_data_.erase(it);
+    }
+}
 
 } /* namespace dds */
 } /* namespace fastdds */

@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
-*/
+ */
 
 /**
  * @file SubscriptionBuiltinTopicData.hpp
-*/
+ */
 
 #ifndef _FASTDDS_SUBCRIPTION_BUILTIN_TOPIC_DATA_HPP_
 #define _FASTDDS_SUBCRIPTION_BUILTIN_TOPIC_DATA_HPP_
 
 #include <fastdds/dds/topic/BuiltinTopicKey.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/topic/qos/DataReaderQos.hpp>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -32,7 +36,30 @@ namespace dds {
 class SubscriptionBuiltinTopicData
 {
 public:
+
     SubscriptionBuiltinTopicData() {}
+
+    SubscriptionBuiltinTopicData(
+            const fastrtps::rtps::ReaderProxyData& data)
+    {
+        key_ = data.guid();
+        participant_key_ = BuiltinTopicKey(fastrtps::rtps::iHandle2GUID(data.RTPSParticipantKey()));
+        name_ = data.topicName();
+        type_name_ = data.typeName();
+        durability_ = data.m_qos.m_durability;
+        deadline_ = data.m_qos.m_deadline;
+        latency_budget_ = data.m_qos.m_latencyBudget;
+        liveliness_ = data.m_qos.m_liveliness;
+        reliability_ = data.m_qos.m_reliability;
+        ownership_ = data.m_qos.m_ownership;
+        destination_order_ = data.m_qos.m_destinationOrder;
+        user_data_ = data.m_qos.m_userData;
+        time_based_filter_ = data.m_qos.m_timeBasedFilter;
+        presentation_ = data.m_qos.m_presentation;
+        partition_ = data.m_qos.m_partition;
+        topic_data_ = data.m_qos.m_topicData;
+        group_data_ = data.m_qos.m_groupData;
+    }
 
     ~SubscriptionBuiltinTopicData() {}
 
@@ -224,26 +251,45 @@ public:
         group_data_ = group_data;
     }
 
+    void fill_with_subscription_qos(
+            const SubscriberQos& sqos,
+            const DataReaderQos& drqos)
+    {
+        durability_ = drqos.durability;
+        deadline_ = drqos.deadline;
+        latency_budget_ = drqos.latency_budget;
+        liveliness_ = drqos.liveliness;
+        reliability_ = drqos.reliability;
+        ownership_ = drqos.ownership;
+        destination_order_ = drqos.destination_order;
+        user_data_ = drqos.user_data;
+        time_based_filter_ = drqos.time_based_filter;
+        presentation_ = sqos.presentation;
+        partition_ = sqos.partition;
+        topic_data_ = sqos.topic_data;
+        group_data_ = sqos.group_data;
+    }
+
     bool operator ==(
             const SubscriptionBuiltinTopicData& other)
     {
         return (key_ == other.key() &&
-                participant_key_ == other.participant_key() &&
-                name_.compare(other.name()) &&
-                type_name_.compare(other.type_name()) &&
-                durability_ == other.durability() &&
-                deadline_ == other.deadline() &&
-                latency_budget_ == other.latency_budget() &&
-                liveliness_ == other.liveliness() &&
-                reliability_ == other.reliability() &&
-                ownership_ == other.ownership() &&
-                destination_order_ == other.destination_order() &&
-                user_data_ == other.user_data() &&
-                time_based_filter_ == other.time_based_filter() &&
-                presentation_ == other.presentation() &&
-                partition_ == other.partition() &&
-                topic_data_ == other.topic_data() &&
-                group_data_ == other.group_data());
+               participant_key_ == other.participant_key() &&
+               name_.compare(other.name()) &&
+               type_name_.compare(other.type_name()) &&
+               durability_ == other.durability() &&
+               deadline_ == other.deadline() &&
+               latency_budget_ == other.latency_budget() &&
+               liveliness_ == other.liveliness() &&
+               reliability_ == other.reliability() &&
+               ownership_ == other.ownership() &&
+               destination_order_ == other.destination_order() &&
+               user_data_ == other.user_data() &&
+               time_based_filter_ == other.time_based_filter() &&
+               presentation_ == other.presentation() &&
+               partition_ == other.partition() &&
+               topic_data_ == other.topic_data() &&
+               group_data_ == other.group_data());
     }
 
 private:

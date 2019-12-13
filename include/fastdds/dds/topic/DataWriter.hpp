@@ -26,6 +26,7 @@
 
 #include <dds/core/status/Status.hpp>
 #include <dds/core/status/State.hpp>
+#include <fastdds/dds/topic/SubscriptionBuiltinTopicData.hpp>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -232,6 +233,10 @@ public:
 
     ReturnCode_t get_matched_subscriptions(
             std::vector<fastrtps::rtps::InstanceHandle_t>& subscription_handles) const;
+
+    ReturnCode_t get_matched_subscription_data(
+            SubscriptionBuiltinTopicData& subscription_data,
+            const fastrtps::rtps::InstanceHandle_t& subscription_handle) const;
 
 private:
 
