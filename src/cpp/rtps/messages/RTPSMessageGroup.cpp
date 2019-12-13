@@ -590,14 +590,45 @@ bool RTPSMessageGroup::add_gap(
     // Check preconditions. If fail flush and reset.
     check_and_maybe_flush();
 
+    const EntityId_t& readerId = get_entity_id(sender_.remote_guids());
+
+    if (!create_gap_submessage(gap_initial_sequence, gap_bitmap, readerId))
+    {
+        return false;
+    }
+
+    return insert_submessage();
+}
+
+bool RTPSMessageGroup::add_gap(
+        const SequenceNumber_t& gap_initial_sequence,
+        const SequenceNumberSet_t& gap_bitmap,
+        const GUID_t& reader_guid)
+{
+    // Check preconditions. If fail flush and reset.
+    check_and_maybe_flush(reader_guid.guidPrefix);
+
+    const EntityId_t& readerId = reader_guid.entityId;
+
+    if (!create_gap_submessage(gap_initial_sequence, gap_bitmap, readerId))
+    {
+        return false;
+    }
+
+    return insert_submessage(reader_guid.guidPrefix);
+}
+
+bool RTPSMessageGroup::create_gap_submessage(
+    const SequenceNumber_t& gap_initial_sequence,
+    const SequenceNumberSet_t& gap_bitmap,
+    const EntityId_t& reader_id)
+{
 #if HAVE_SECURITY
     uint32_t from_buffer_position = submessage_msg_->pos;
 #endif
 
-    const EntityId_t& readerId = get_entity_id(sender_.remote_guids());
-
     if (!RTPSMessageCreator::addSubmessageGap(submessage_msg_, gap_initial_sequence, gap_bitmap,
-        readerId, endpoint_->getGuid().entityId))
+        reader_id, endpoint_->getGuid().entityId))
     {
         logError(RTPS_WRITER, "Cannot add GAP submsg to the CDRMessage. Buffer too small");
         return false;
@@ -629,7 +660,7 @@ bool RTPSMessageGroup::add_gap(
     }
 #endif
 
-    return insert_submessage();
+    return true;
 }
 
 bool RTPSMessageGroup::add_acknack(

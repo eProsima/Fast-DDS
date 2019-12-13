@@ -128,6 +128,18 @@ class Endpoint;
                 const SequenceNumberSet_t& gap_bitmap);
 
         /**
+         * Adds one GAP message to the group.
+         * @param gap_initial_sequence Start of consecutive sequence numbers.
+         * @param gap_bitmap Bitmap of non-consecutive sequence numbers.
+         * @param reader_guid GUID of the destination reader.
+         * @return True when message was added to the group.
+         */
+        bool add_gap(
+                const SequenceNumber_t& gap_initial_sequence,
+                const SequenceNumberSet_t& gap_bitmap,
+                const GUID_t& reader_guid);
+
+        /**
          * Adds a ACKNACK message to the group.
          * @param seq_num_set Set of missing sequence numbers.
          * @param count Counting identifier.
@@ -191,6 +203,11 @@ class Endpoint;
                 const GuidPrefix_t& destination_guid_prefix);
 
         bool add_info_ts_in_buffer(const Time_t& timestamp);
+
+        bool create_gap_submessage(
+                const SequenceNumber_t& gap_initial_sequence,
+                const SequenceNumberSet_t& gap_bitmap,
+                const EntityId_t& reader_id);
 
         const RTPSMessageSenderInterface& sender_;
             
