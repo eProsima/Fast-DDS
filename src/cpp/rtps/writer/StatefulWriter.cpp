@@ -197,7 +197,6 @@ void StatefulWriter::unsent_change_added_to_history(
 
     if (!matched_readers_.empty())
     {
-
         if (!isAsync())
         {
             //TODO(Ricardo) Temporal.
@@ -565,7 +564,6 @@ void StatefulWriter::send_any_unsent_changes()
         RTPSWriterCollector<ReaderProxy*> relevantChanges;
         StatefulWriterOrganizer notRelevantChanges;
         bool force_piggyback_hb = false; // Force piggyback HB if old samples not acknowledged.
-        bool at_least_one_remote = false;
 
         NetworkFactory& network = mp_RTPSParticipant->network_factory();
         locator_selector_.reset(true);
@@ -574,11 +572,6 @@ void StatefulWriter::send_any_unsent_changes()
 
         for (ReaderProxy* remoteReader : matched_readers_)
         {
-            if (!remoteReader->is_local_reader())
-            {
-                at_least_one_remote = true;
-            }
-
             SequenceNumber_t min_history_seq = get_seq_num_min();
             SequenceNumber_t max_ack_seq = SequenceNumber_t::unknown();
             auto unsent_change_process = [&](const SequenceNumber_t& seq_num, const ChangeForReader_t* unsentChange)
@@ -647,7 +640,7 @@ void StatefulWriter::send_any_unsent_changes()
 
         if (m_pushMode)
         {
-            if (at_least_one_remote)
+            if (there_are_remote_readers_)
             {
                 // Clear all relevant changes through the local controllers first
                 for (std::unique_ptr<FlowController>& controller : m_controllers)
@@ -893,6 +886,7 @@ bool StatefulWriter::matched_reader_add(
     // Add info of new datareader.
     rp->start(rdata);
     locator_selector_.add_entry(rp->locator_selector_entry());
+    matched_readers_.push_back(rp);
     update_reader_info(true);
 
     std::set<SequenceNumber_t> not_relevant_changes;
@@ -1009,8 +1003,6 @@ bool StatefulWriter::matched_reader_add(
     {
         send_heartbeat_to_nts(*rp);
     }
-
-    matched_readers_.push_back(rp);
 
     logInfo(RTPS_WRITER, "Reader Proxy " << rp->guid() << " added to " << this->m_guid.entityId << " with "
                                          << rp->reader_attributes().remote_locators().unicast.size() << "(u)-"
