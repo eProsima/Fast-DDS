@@ -46,6 +46,21 @@ public:
     {
     }
 
+    /**
+     * RTPSGapBuilder constructor.
+     *
+     * @param group Referemce to the @ref RTPSMessageGroup that will be used to send GAP messages.
+     * @param reader_guid Specific destination reader guid
+     */
+    explicit RTPSGapBuilder(
+            RTPSMessageGroup& group,
+            const GUID_t& reader_guid)
+        : with_specific_destination_(true)
+        , group_(group)
+        , reader_guid_(reader_guid)
+    {
+    }
+
     ~RTPSGapBuilder();
 
     /**
@@ -76,10 +91,12 @@ public:
 
 private:
 
-    RTPSMessageGroup& group_;            ///< Reference to the message group used to output messages.
-    bool is_gap_pending_ = false;        ///< Whether a GAP message is pending to be added.
-    SequenceNumber_t initial_sequence_;  ///< Contiguous range initial sequence.
-    SequenceNumberSet_t gap_bitmap_;     ///< Bitmap with non-contiguous sequences.
+    bool is_gap_pending_ = false;             ///< Whether a GAP message is pending to be added.
+    bool with_specific_destination_ = false;  ///< Whether a specific reader_guid is used.
+    RTPSMessageGroup& group_;                 ///< Reference to the message group used to output messages.
+    SequenceNumber_t initial_sequence_;       ///< Contiguous range initial sequence.
+    SequenceNumberSet_t gap_bitmap_;          ///< Bitmap with non-contiguous sequences.
+    GUID_t reader_guid_;                      ///< Specific destination reader guid.
 };
 
 } /* namespace rtps */
