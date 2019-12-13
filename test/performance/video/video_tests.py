@@ -16,6 +16,29 @@ import argparse
 import subprocess
 import os
 
+
+def assert_positive_int(str_number, str_name):
+    """
+    Check whether a string represents a positive integer.
+
+    :param str_number: The string representation.
+    :param str_name: The name to print on error.
+    :return: The string representation if it was a positive interger.
+        Exits with error code 12 otherwise.
+    """
+    # Check that samples is positive
+    if str.isdigit(str_number) and int(str_number) > 0:
+        return str(str_number)
+    else:
+        print(
+            '"{}" must be a positive integer, NOT {}'.format(
+                str_name,
+                str_number
+            )
+        )
+        exit(1)  # Exit with error
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
@@ -31,28 +54,28 @@ if __name__ == '__main__':
         '--number_of_samples',
         help='The number of measurements to take for each payload',
         required=False,
-        default=10000
+        default='10000'
     )
     parser.add_argument(
         '-H',
         '--height',
         help='Height of the video',
         required=False,
-        default=720
+        default='720'
     )
     parser.add_argument(
         '-w',
         '--width',
         help='Width of the video',
         required=False,
-        default=1024
+        default='1024'
     )
     parser.add_argument(
         '-r',
         '--frame_rate',
         help='Frame rate of the video [Hz]',
         required=False,
-        default=30
+        default='30'
     )
     parser.add_argument(
         '-t',
@@ -71,26 +94,48 @@ if __name__ == '__main__':
     # Parse arguments
     args = parser.parse_args()
     xml_file = args.xml_file
-    samples = str(args.number_of_samples)
-    height = str(args.height)
-    width = str(args.width)
-    frame_rate = str(args.frame_rate)
-    test_duration = str(args.test_duration)
+    security = args.security
 
-    # Security flag
-    security = False
-    if args.security:
-        security = True
+    # XML options
+    xml_options = []
+    if xml_file:
+        if not os.path.isfile(xml_file):
+            print('XML file "{}" is NOT a file'.format(xml_file))
+            exit(1)  # Exit with error
+        else:
+            xml_options = ['--xml', xml_file]
+
+    samples = assert_positive_int(str(args.number_of_samples), "number_of_samples")
+    height = assert_positive_int(str(args.height), "height")
+    width = assert_positive_int(str(args.width), "width")
+    frame_rate = assert_positive_int(str(args.frame_rate), "frame_rate")
+    test_duration = assert_positive_int(str(args.test_duration), "test_duration")
 
     # Environment variables
     executable = os.environ.get('VIDEO_TEST_BIN')
     certs_path = os.environ.get('CERTS_PATH')
 
+    # Check that executable exists
+    if executable:
+        if not os.path.isfile(executable):
+            print('VIDEO_TEST_BIN does NOT specify a file')
+            exit(1)  # Exit with error
+    else:
+        print('VIDEO_TEST_BIN is NOT set')
+        exit(1)  # Exit with error
+
     # Security
     security_options = []
     if security is True:
         if certs_path:
-            security_options = ['--security=true', '--certs=' + certs_path]
+            if os.path.isdir(certs_path):
+                security_options = ['--security=true', '--certs=' + certs_path]
+            else:
+                print('CERTS_PATH does NOT specify a directory')
+                exit(1)  # Exit with error
+        else:
+            print('Cannot find CERTS_PATH environment variable')
+            exit(1)  # Exit with error
 
     # Domain
     domain = str(os.getpid() % 230)
@@ -104,8 +149,6 @@ if __name__ == '__main__':
         samples,
         '--testtime',
         test_duration,
-        '--xml',
-        xml_file,
         '--width',
         width,
         '--height',
@@ -117,8 +160,6 @@ if __name__ == '__main__':
     sub_command = [
         executable,
         'subscriber',
-        '--xml',
-        xml_file,
     ]
 
     # Manage security
@@ -127,7 +168,9 @@ if __name__ == '__main__':
         sub_command += security_options
 
     pub_command += domain_options
+    pub_command += xml_options
     sub_command += domain_options
+    sub_command += xml_options
 
 
     print('Publisher command: {}'.format(
@@ -140,8 +183,8 @@ if __name__ == '__main__':
     )
 
     # Spawn processes
-    subscriber = subprocess.Popen(pub_command)
-    publisher = subprocess.Popen(sub_command)
+    publisher = subprocess.Popen(pub_command)
+    subscriber = subprocess.Popen(sub_command)
     # Wait until finish
     subscriber.communicate()
     publisher.communicate()

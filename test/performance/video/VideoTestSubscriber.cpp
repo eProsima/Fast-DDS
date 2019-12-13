@@ -101,7 +101,7 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
     InitGStreamer();
 
     // Create RTPSParticipant
-    std::string participant_profile_name = "participant_profile";
+    std::string participant_profile_name = "sub_participant_profile";
     ParticipantAttributes PParam;
 
     if (m_forcedDomain >= 0)
@@ -112,7 +112,7 @@ bool VideoTestSubscriber::init(int nsam, bool reliable, uint32_t pid, bool hostn
     {
         PParam.rtps.builtin.domainId = pid % 230;
     }
-    PParam.rtps.setName("Participant_sub");
+    PParam.rtps.setName("video_test_subscriber");
     PParam.rtps.properties = part_property_policy;
 
     if (m_sXMLConfigFile.length() > 0)
